@@ -1,152 +1,149 @@
-Return-Path: <linux-kernel+bounces-229962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96950917697
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:04:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 573ED9176A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:11:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7F051C210D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 03:04:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC34F2844B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 03:11:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC2C45BFC;
-	Wed, 26 Jun 2024 03:04:41 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399994DA1F;
+	Wed, 26 Jun 2024 03:11:42 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFEE31758D;
-	Wed, 26 Jun 2024 03:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C4B175BE;
+	Wed, 26 Jun 2024 03:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719371081; cv=none; b=MPa72UWLPYU3wv053N5jCEghfyiQaErsMwG614jvWQ1cPq59P0Sf8XNVOxRE85pLWhu5DlstwMifbJhAp4qZ/gcLkPUmZsPuxAuCPMrg6yIeB0jPwKe8UzmbkSX/NmF517IJ/3A1ehPSekFVeA7RDNI1NHSaUjeyLzigs+qB9n4=
+	t=1719371501; cv=none; b=c7sm3W/Qbv9v6rJXFiUeRyKTYzFnmxG27ypDMueJx6/wUiI/43WQf63KwdA7tG2w5TqyGO2ZGHddrKqhFePvG6wdVOM4x50434ISNlYrUqjN7R+AxIG2UFyzWxsJROy2gvg4dMAss4Wd+hu2qFPSltB0yDBBchSibZAzlxDqjkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719371081; c=relaxed/simple;
-	bh=uOsXLYT9YtQy7XEYasw7NhSEItptuk93aPBkVEsCnss=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cJAw3Pmf12oiHaP9og7WPpj7xSYYeHDOHhiPIqZ3bllBO1TKF9PNixsjHsRzjn9uDdTpZ57iyZtVuSAnDA1+h84Ra3JoleyuUTJmJMKN5NgmyoODjJT+wg9urrYC1Zn3qeZWwHM77bCBs6IIWn2xumGZ2mvC1Ce6VMtUz/yVes0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4W864B5jgxz4f3jMJ;
-	Wed, 26 Jun 2024 11:04:26 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id DC2AD1A0189;
-	Wed, 26 Jun 2024 11:04:33 +0800 (CST)
-Received: from [10.174.177.174] (unknown [10.174.177.174])
-	by APP1 (Coremail) with SMTP id cCh0CgAnUn4+hXtmg8pmAQ--.51587S3;
-	Wed, 26 Jun 2024 11:04:31 +0800 (CST)
-Message-ID: <13b4dd18-8105-44e0-b383-8835fd34ac9e@huaweicloud.com>
-Date: Wed, 26 Jun 2024 11:04:30 +0800
+	s=arc-20240116; t=1719371501; c=relaxed/simple;
+	bh=yEIKBg2dq7ItxUKJqU0GXR9rDKwAoReU+U/nwhIgGOg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mBPf+O0VCgn/hMdh1J9XZwbYJbQCuksV+5nsaLGRityBOa5QBIY+b0TttGvRoq0dNn+/PBwj+w05wXDvQLh8mrOaYjlCByoarTkthGKihgfHrGdNmTdq58zvhEsXSIlgls9tqyaEKN4VNonJJyq0fz50P1RtcvkdfmlTcQtOhMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4W86DK6H2xznXr8;
+	Wed, 26 Jun 2024 11:11:29 +0800 (CST)
+Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
+	by mail.maildlp.com (Postfix) with ESMTPS id 918C8180064;
+	Wed, 26 Jun 2024 11:11:35 +0800 (CST)
+Received: from huawei.com (10.67.174.121) by kwepemd100013.china.huawei.com
+ (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Wed, 26 Jun
+ 2024 11:11:34 +0800
+From: Chen Ridong <chenridong@huawei.com>
+To: <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
+	<longman@redhat.com>, <adityakali@google.com>, <sergeh@kernel.org>
+CC: <bpf@vger.kernel.org>, <cgroups@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH V2] cgroup/cpuset: Prevent UAF in proc_cpuset_show()
+Date: Wed, 26 Jun 2024 03:05:00 +0000
+Message-ID: <20240626030500.460628-1-chenridong@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] cachefiles: some bugfixes for clean object/send
- req/poll
-To: netfs@lists.linux.dev, dhowells@redhat.com, jlayton@kernel.org
-Cc: hsiangkao@linux.alibaba.com, jefflexu@linux.alibaba.com,
- zhujia.zj@bytedance.com, linux-erofs@lists.ozlabs.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- yangerkun@huawei.com, houtao1@huawei.com, yukuai3@huawei.com,
- wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>
-References: <20240515125136.3714580-1-libaokun@huaweicloud.com>
-Content-Language: en-US
-From: Baokun Li <libaokun@huaweicloud.com>
-In-Reply-To: <20240515125136.3714580-1-libaokun@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAnUn4+hXtmg8pmAQ--.51587S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxAw4UCF43uFWfurW8JrW8JFb_yoW5Wr1UpF
-	Wak3W3GrykWryIkan3Z3WxtFyFy3yfX3W3Gr4xX345A3s8XF1FyrWIgr1jqFyDCrZ7Gr4a
-	vr4q9Fna9ryjv3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
-	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
-	xK8VAvwI8IcIk0rVW3JVWrJr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IUbPEf5UUUUU==
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAQAGBV1jkH8nxAABsx
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemd100013.china.huawei.com (7.221.188.163)
 
-A gentle ping.
+An UAF can happen when /proc/cpuset is read as reported in [1].
 
-On 2024/5/15 20:51, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
->
-> Hi all!
->
-> This is the second version of this patch series. Thank you, Jia Zhu and
-> Gao Xiang, for the feedback in the previous version.
->
-> We've been testing ondemand mode for cachefiles since January, and we're
-> almost done. We hit a lot of issues during the testing period, and this
-> patch set fixes some of the issues related to reopen worker/send req/poll.
-> The patches have passed internal testing without regression.
->
-> Patch 1-3: A read request waiting for reopen could be closed maliciously
-> before the reopen worker is executing or waiting to be scheduled. So
-> ondemand_object_worker() may be called after the info and object and even
-> the cache have been freed and trigger use-after-free. So use
-> cancel_work_sync() in cachefiles_ondemand_clean_object() to cancel the
-> reopen worker or wait for it to finish. Since it makes no sense to wait
-> for the daemon to complete the reopen request, to avoid this pointless
-> operation blocking cancel_work_sync(), Patch 1 avoids request generation
-> by the DROPPING state when the request has not been sent, and Patch 2
-> flushes the requests of the current object before cancel_work_sync().
->
-> Patch 4: Cyclic allocation of msg_id to avoid msg_id reuse misleading
-> the daemon to cause hung.
->
-> Patch 5: Hold xas_lock during polling to avoid dereferencing reqs causing
-> use-after-free. This issue was triggered frequently in our tests, and we
-> found that anolis 5.10 had fixed it, so to avoid failing the test, this
-> patch was pushed upstream as well.
->
-> Comments and questions are, as always, welcome.
-> Please let me know what you think.
->
-> Thanks,
-> Baokun
->
-> Changes since v1:
->    * Collect RVB from Jia Zhu and Gao Xiang.(Thanks for your review!)
->    * Pathch 1,2：Add more commit messages.
->    * Pathch 3：Add Fixes tag as suggested by Jia Zhu.
->    * Pathch 4：No longer changing "do...while" to "retry" to focus changes
->      and optimise commit messages.
->    * Pathch 5: Drop the internal RVB tag.
->
-> [V1]: https://lore.kernel.org/all/20240424033409.2735257-1-libaokun@huaweicloud.com
->
-> Baokun Li (3):
->    cachefiles: stop sending new request when dropping object
->    cachefiles: flush all requests for the object that is being dropped
->    cachefiles: cyclic allocation of msg_id to avoid reuse
->
-> Hou Tao (1):
->    cachefiles: flush ondemand_object_worker during clean object
->
-> Jingbo Xu (1):
->    cachefiles: add missing lock protection when polling
->
->   fs/cachefiles/daemon.c   |  4 ++--
->   fs/cachefiles/internal.h |  3 +++
->   fs/cachefiles/ondemand.c | 52 +++++++++++++++++++++++++++++++++++-----
->   3 files changed, 51 insertions(+), 8 deletions(-)
->
+This can be reproduced by the following methods:
+1.add an mdelay(1000) before acquiring the cgroup_lock In the
+ cgroup_path_ns function.
+2.$cat /proc/<pid>/cpuset   repeatly.
+3.$mount -t cgroup -o cpuset cpuset /sys/fs/cgroup/cpuset/
+$umount /sys/fs/cgroup/cpuset/   repeatly.
 
+The race that cause this bug can be shown as below:
+
+(umount)		|	(cat /proc/<pid>/cpuset)
+css_release		|	proc_cpuset_show
+css_release_work_fn	|	css = task_get_css(tsk, cpuset_cgrp_id);
+css_free_rwork_fn	|	cgroup_path_ns(css->cgroup, ...);
+cgroup_destroy_root	|	mutex_lock(&cgroup_mutex);
+rebind_subsystems	|
+cgroup_free_root 	|
+			|	// cgrp was freed, UAF
+			|	cgroup_path_ns_locked(cgrp,..);
+
+When the cpuset is initialized, the root node top_cpuset.css.cgrp
+will point to &cgrp_dfl_root.cgrp. In cgroup v1, the mount operation will
+allocate cgroup_root, and top_cpuset.css.cgrp will point to the allocated
+&cgroup_root.cgrp. When the umount operation is executed,
+top_cpuset.css.cgrp will be rebound to &cgrp_dfl_root.cgrp.
+
+The problem is that when rebinding to cgrp_dfl_root, there are cases
+where the cgroup_root allocated by setting up the root for cgroup v1
+is cached. This could lead to a Use-After-Free (UAF) if it is
+subsequently freed. The descendant cgroups of cgroup v1 can only be
+freed after the css is released. However, the css of the root will never
+be released, yet the cgroup_root should be freed when it is unmounted.
+This means that obtaining a reference to the css of the root does
+not guarantee that css.cgrp->root will not be freed.
+
+Fix this problem by using rcu_read_lock in proc_cpuset_show().
+As cgroup root_list is already RCU-safe, css->cgroup is safe.
+This is similar to commit 9067d90006df ("cgroup: Eliminate the
+need for cgroup_mutex in proc_cgroup_show()")
+
+[1] https://syzkaller.appspot.com/bug?extid=9b1ff7be974a403aa4cd
+
+Fixes: a79a908fd2b0 ("cgroup: introduce cgroup namespaces")
+Signed-off-by: Chen Ridong <chenridong@huawei.com>
+---
+ include/linux/cgroup.h |  3 +++
+ kernel/cgroup/cpuset.c | 11 +++++++++--
+ 2 files changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/cgroup.h b/include/linux/cgroup.h
+index 2150ca60394b..bae7b54957fc 100644
+--- a/include/linux/cgroup.h
++++ b/include/linux/cgroup.h
+@@ -786,6 +786,9 @@ struct cgroup_namespace *copy_cgroup_ns(unsigned long flags,
+ int cgroup_path_ns(struct cgroup *cgrp, char *buf, size_t buflen,
+ 		   struct cgroup_namespace *ns);
+ 
++int cgroup_path_ns_locked(struct cgroup *cgrp, char *buf, size_t buflen,
++			  struct cgroup_namespace *ns);
++
+ #else /* !CONFIG_CGROUPS */
+ 
+ static inline void free_cgroup_ns(struct cgroup_namespace *ns) { }
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index c12b9fdb22a4..e57762f613d6 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -5052,8 +5052,15 @@ int proc_cpuset_show(struct seq_file *m, struct pid_namespace *ns,
+ 		goto out;
+ 
+ 	css = task_get_css(tsk, cpuset_cgrp_id);
+-	retval = cgroup_path_ns(css->cgroup, buf, PATH_MAX,
+-				current->nsproxy->cgroup_ns);
++	rcu_read_lock();
++	spin_lock_irq(&css_set_lock);
++	/* In case the root has already been unmounted. */
++	if (css->cgroup)
++		retval = cgroup_path_ns_locked(css->cgroup, buf, PATH_MAX,
++			current->nsproxy->cgroup_ns);
++
++	spin_unlock_irq(&css_set_lock);
++	rcu_read_unlock();
+ 	css_put(css);
+ 	if (retval == -E2BIG)
+ 		retval = -ENAMETOOLONG;
 -- 
-With Best Regards,
-Baokun Li
+2.34.1
 
 
