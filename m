@@ -1,121 +1,100 @@
-Return-Path: <linux-kernel+bounces-230899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 817B291838E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:01:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0872A918390
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:01:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B49141C21F4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:01:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B4D1B27214
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:01:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE4E31850AC;
-	Wed, 26 Jun 2024 14:01:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE3C21836FB;
+	Wed, 26 Jun 2024 14:01:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="EUnvvgGV"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XiKW5po0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52A6C136;
-	Wed, 26 Jun 2024 14:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5BEC136;
+	Wed, 26 Jun 2024 14:01:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719410471; cv=none; b=Sg719MfNrfgoGtjgREyFVDeqR/2ubQulgNlqOoFCzn0J5ApcRiS/epblJBXOC7UnExL6wQe1N/yG6Xd4lA9nAu/uL5e2I1yzSIgUfmbZ3+ZaMJwrN6DPtECmxQD2lqVvAXV0B3OZTMuGAaxPYPEKPo6Av8MH02taGvp/8Nnp4N4=
+	t=1719410465; cv=none; b=XkSlnRtd39gpXLDHW/l3ygZhdnRV8est3KhfuzRfua1AUM4V3NIrJuQ8QY4CQ3JPilGx7nEMlz5y4UbaavR6OLMVmklUWwRhdoRmrONW293k022yltby8gIoUBd/IpvX/KrqpF30hEm8s3OpJcqQyNxwRn2k5Yd8Rmpr+eL6M/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719410471; c=relaxed/simple;
-	bh=hII3Q92Ova8i4hUPBYvI76xLncvZJuiw2a5GonhEhIU=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=WmZozminVkJ+nVpON0SFR5Rcpxf+P24xtOYHih6EYlJ6TGS45LIRpKzMkxTNPi8AoL3VPbM9+FTWOpq+aT/E+3YZOWpaw5e1++6RCaRNHzTruC/fy3zmrIt8nJvKoyqMsH+jwrnOw75OL8oV0nB0cjoRsMLH0Kpx9chsvZJuHt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=EUnvvgGV; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719410447; x=1720015247; i=markus.elfring@web.de;
-	bh=hII3Q92Ova8i4hUPBYvI76xLncvZJuiw2a5GonhEhIU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=EUnvvgGVHt8s666lwyG481E93VX8sXDxYOb5Zjx398BsDgn02UtYX/1KFYtgqdxD
-	 A31V3266VyuXemqpCMBaPm62y4vCaQjr/OPQ2PH3wy4iDK5HKw1AlAr0mFd25ffH4
-	 5Xd7ArChrbbw7kS/IWs/5I+KU+4fJLVaGjubMLjvdI/DKPit5jQ5wdejTB7ECe5qz
-	 kKgtBtM5zXJWGxPPP879g4xtpaTqTIBxB8YbQ8Uci2BsUHde2BJIyVNdG2M/ixEHf
-	 +j3ICIOTsvHvFXdFvTj+bf/SBqJoMV6lHlZoHXcHBojslnek6gLMtHxI6LA+eHwOc
-	 DRq9VU9WGPz71uLRvQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N1uAv-1sTZnb44Wv-00rWRL; Wed, 26
- Jun 2024 16:00:47 +0200
-Message-ID: <17b2f95a-b6ce-47d5-a826-9cfd1ff3f419@web.de>
-Date: Wed, 26 Jun 2024 16:00:40 +0200
+	s=arc-20240116; t=1719410465; c=relaxed/simple;
+	bh=Y6I6wohTOcfHXnc2xlk4UwZF0BqadzOjW0083GuqF7k=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=erUvF8eKk/Bhy9+hi5i7+WubPuMMxQ88ZjCYsZqZIz5SVzGRCxDiwS5YBRWnfygT2F4MBMvnOMXdaY+xllh5LAwTngWJYRg5z1lGgjONW+cYBXfX4ZyaHMStHeO3Rb6tHlzVxC8R+FIhljrzO9UJKXuKulFsq4jCXqUOk2S6jAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XiKW5po0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39D4DC116B1;
+	Wed, 26 Jun 2024 14:01:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719410464;
+	bh=Y6I6wohTOcfHXnc2xlk4UwZF0BqadzOjW0083GuqF7k=;
+	h=Date:From:To:Subject:References:In-Reply-To:From;
+	b=XiKW5po0uVzl3fyqJ38W+/TlmxEg9XC09/fBEK6DxRXqogVwpf7icO+WJdgtyJMLo
+	 JWV+2cDhv7amoguLF3e8456hJZmyDP3cPtM/QuPOj68CYX1+E2fOWLWdZTkljQsIcd
+	 kAdOY+2Nti6TOIxuSp45UdRGnd1thejwYrxrrHdvbvuS/xy1F5Mz5LqQWzNBVTA3Vx
+	 9aXRz1tu7adiOyb9uYIkKRsyZisywClVsletC5RQ6TO0KLQyRu4nFkLUXvsN0Sdcgj
+	 nFjgE3x5iB0ThHpPTtiYPppQVoJyjjdCrkNxxZ/9yb3YTkTWgKrsPeCRUxEFsgwvNm
+	 ibgNJb/FaGelQ==
+Date: Wed, 26 Jun 2024 16:01:01 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Arnd Bergmann <arnd@kernel.org>, Hans Hu <hanshu@zhaoxin.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Wentong Wu <wentong.wu@intel.com>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] i2c: viai2c: turn common code into a proper module
+Message-ID: <zxdgdwtw5o7juwd45ydnjmswz4j7rwxw2xcr6psvph3wkdyzj3@4mto7xnuddiw>
+References: <20240528120710.3433792-1-arnd@kernel.org>
+ <bi3lwgeh5egvd4g6aspwvefibk3cviwuzinvgkmnwy4f3bvua4@nf5a6w77cr7v>
+ <5shzq44g75xykn2tdbutbqa4u5by3sijvztam2x2scey5rglox@kgh7lul4j2el>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Gerd Bayer <gbayer@linux.ibm.com>, Ma Ke <make24@iscas.ac.cn>,
- linux-s390@vger.kernel.org, netdev@vger.kernel.org,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Alexandra Winter <wintera@linux.ibm.com>,
- =?UTF-8?Q?Christian_Borntr=C3=A4ger?= <borntraeger@linux.ibm.com>,
- "David S. Miller" <davem@davemloft.net>, Heiko Carstens <hca@linux.ibm.com>,
- Niklas Schnelle <schnelle@linux.ibm.com>, Stefan Raspl
- <raspl@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>,
- Thorsten Winkler <twinkler@linux.ibm.com>,
- Wenjia Zhang <wenjia@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org
-References: <4ab328297c12d1c286c56dbc01d611b77ea2da03.camel@linux.ibm.com>
-Subject: Re: [PATCH] s390/ism: Add check for dma_set_max_seg_size in
- ism_probe()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <4ab328297c12d1c286c56dbc01d611b77ea2da03.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:0DEVK3hEYZce4m2x0HcOm4kkmWuuBi11g0rGzGdPbe4Qpn87svX
- 5XQ/MZieW0HABaYEKtAWwdpHqkAP18mCyF/gG4lKTvfy65YCTDuexqWaq+EE8RdwaO0/Jds
- cV1hbtXBiXVClTpKNZX22cIEAuDQ/HXrquHnhSkGzAfcPjLwFZiUQ+kJLl7pJ/k8CF0eqv6
- gzweJJL6vF5HCPxct+6GA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:UETjU5nTgts=;lV8DTmeBl0SijkeRl00bzdeTllM
- 3cplHKVNgNZmEI1glocO11M0214gpAfGNRcyhNSDRtxzb3SjvtJyrPr08xF9B/lxFUQcg6HLy
- f5IQSKFO3BqwCcKNs3AxyXSIHJ+unNyGqEowWKsuGOent9OYnzIb8/oC1uH9s7lwrGEqjjPU3
- zUKEHv/3+XBFuSAgaviI5Pt5jv0qoAI6eXdCASAnSNxY4nVH34tJ0qNk0myTbubWIt8zcrUOW
- H5M+xGbUG76+ZdRNSp74mOdjwZYX2LzhCmSwMt8GNtaESsApL8VmskQro751KLFUGA0s00Qg2
- ZU40mBWi9MzpAVFdB3gZedU80NdnucbVNqerRSCCh6fceMiUAmCubDIMvHCUuHizG1rwochpA
- l6SGCYZ6RjvOfCGcWv88zTmJS4Ju6MveZD5C9I26S1c8Xt6xzsbVZskIxSdc9uxgvtvQrgtmr
- Nl0LYYMCa+WnXShvtp3IyqAjakhvst3068SQ7bFtl3bYOcIOTfDgknOI4iokUZx9pDGWBibad
- SfesNl7CIxq2jpJjsXvwKxLqVzNNkvLjVYJXNaEaQ2zeXGqRKjlEZ3VlNHTbNhlZ+/92zkQ/B
- y47KlYUMziiacqVQHWfdCZ2VrOGAfnoENhJYOKn8J9gYtjfcMoQed0vypiHvntO433aGYYBw+
- CDSr9YhS3PW1dBO+En5PKgLZloI3KRJkZKQoey626F0WP0/EdBzXYScgJUHWZbBXsvzLf1W2m
- L+8nF/aizMwkL8fE7nltxmBMLALuJuOsr9Lggno9gJfX7YkQBtEFSMwzyTxYxtJqI8NCEKLPh
- WS8avs4PHSX6lJIUdgujAGhUi8GzGMazDd+seYdPMvVJU=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5shzq44g75xykn2tdbutbqa4u5by3sijvztam2x2scey5rglox@kgh7lul4j2el>
 
-> > As the possible failure of the dma_set_max_seg_size(), we should
-> > better check the return value of the dma_set_max_seg_size().
->
-> I think formally you're correct. dma_set_max_seg_size() could return an
-> error if dev->dma_parms was not present.
->
-> However, since ISM devices are PCI attached (and will remain PCI
-> attached I believe) we can take the existance of dev->dma_parms for
-> granted since pci_device_add() (in drivers/pci/probe.c) will make that
-> point to the pci_dev's dma_parms for every PCI device.
->
-> So I'm not sure how important this fix is.
+On Wed, Jun 26, 2024 at 12:42:03PM GMT, Wolfram Sang wrote:
+> On Tue, Jun 04, 2024 at 10:00:04AM GMT, Wolfram Sang wrote:
+> > On Tue, May 28, 2024 at 02:06:30PM +0200, Arnd Bergmann wrote:
+> > > From: Arnd Bergmann <arnd@arndb.de>
+> > > 
+> > > The i2c-viai2c-common.c file is used by two drivers, but is not a proper
+> > > abstraction and can get linked into both modules in the same configuration,
+> > > which results in a warning:
+> > > 
+> > > scripts/Makefile.build:236: drivers/i2c/busses/Makefile: i2c-viai2c-common.o is added to multiple modules: i2c-wmt i2c-zhaoxin
+> > > 
+> > > The other problems with this include the incorrect use of a __weak function
+> > > when both are built-in, and the fact that the "common" module is sprinked
+> > > with 'if (i2c->plat == ...)' checks that have knowledge about the differences
+> > > between the drivers using it.
+> > > 
+> > > Avoid the link time warning by making the common driver a proper module
+> > > with MODULE_LICENCE()/MODULE_AUTHOR() tags, and remove the __weak function
+> > > by slightly rearranging the code.
+> > > 
+> > > This adds a little more duplication between the two main drivers, but
+> > > those versions get more readable in the process.
+> > > 
+> > > Fixes: a06b80e83011 ("i2c: add zhaoxin i2c controller driver")
+> > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > 
+> > Andi, I am tempted to include this in my for-current pull request this
+> > week. Are you okay with this or do you want to review it more closely?
+> 
+> Meh, I forgot about it. Andi, do you plan a PR for rc6?
 
-Another function call can fail eventually.
+yes, sorry, will take it.
 
-dma_set_seg_boundary()
-https://elixir.bootlin.com/linux/v6.10-rc5/source/include/linux/dma-mappin=
-g.h#L562
+Sorry for having missed it.
 
-Will it become relevant to complete the error detection
-and corresponding exception handling any further?
-
-Regards,
-Markus
+Andi
 
