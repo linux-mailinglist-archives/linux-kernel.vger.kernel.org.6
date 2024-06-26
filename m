@@ -1,166 +1,101 @@
-Return-Path: <linux-kernel+bounces-230056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06FDC9177DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:07:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 946369177EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:08:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72E3D2829FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:07:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F996283475
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF9313CFBC;
-	Wed, 26 Jun 2024 05:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PvpYFcDY"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FF2013E8B6;
+	Wed, 26 Jun 2024 05:08:34 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 030EF28E7;
-	Wed, 26 Jun 2024 05:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98ADC13541B
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 05:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719378440; cv=none; b=Pt0ZYmH+aLeyR2Ulzt2VnJC4Vy1CjWglcr7JvEINBPYumJmQBIf1fIagjJ0me283mzErMsvzt6PoN6cxtbJgBdLcTXN90IHCUpzJO36dlR7580Ma6ZTsacGPbpirOhAsWaUtK2h3ZkE4k0PEnXgPSSU+8dWLicn3+zgMQcA+Kh4=
+	t=1719378514; cv=none; b=uRQKm2oXcJ5nWGxljo0+4PG3KuvjUJGlxobNjc0WLTcE+vUcrVSMaZv2deweYrTdn76mA0hbcJiqkxOYcaYtQs5gmnkhEeCU/4NKLYZZyOtKSKPLd7yrQ2qnpx0P4+3y0lWaF+SY7rFj5Up4l6iHVx8J+QBFf6dWEjFiDcr9MCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719378440; c=relaxed/simple;
-	bh=yNSF7dMHw70nchoGScXJKl5A+rJnoqJjPWleT+gFbWU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eqZId4QGEYipcZcmXLLMDZcLlH0/+EIeYzedS+yhp1Enq5x1ihhhsQqamJbXc66vE//6pPtMd2MunapW3C23vXfXfNkhflIReu8mtyD/frHQtE9gUF9tUzjE5yJdKZ+jd315Eo4pxSB+Hw8fQFu8iarz68SljEv+lvK7BbQFTiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PvpYFcDY; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1f9b52ef481so51286605ad.1;
-        Tue, 25 Jun 2024 22:07:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719378438; x=1719983238; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S2gTDiOVkD5QASIl+OkG6+1XhEwWWwFrDP5G6UmkUPc=;
-        b=PvpYFcDYrt2GXb/09J2Z6y8jlBE88bi4+uB/qLZ4ixp+mKdd0UO2R1Rs69Hd8OB3cq
-         sOg3rP88GmkLwJLRpJ/VjyiRpjBf2xYYH3VOAFxQBWQW9aOxL6aHEoiEWIkCvilKk/sa
-         qJ7H8HRoGrKpBPGm+RqoVzGG0jwT6yU8ctnayH5jbthpaEEPXhYFuFh/qJ+G/0pY6j4a
-         SMG2CGMtlXXyAly0/5bzQYuRmsJ9chEFsdBl3oxYYXJmnKlQ6ve2OYGCaB45N9AHqUul
-         ziFGbXJWFDUaGoSsrOahlyz6UrvpYQ4rjfPlC3la27WaD3kLqjqSGMDjJvV5ED0t9/JQ
-         SCuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719378438; x=1719983238;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S2gTDiOVkD5QASIl+OkG6+1XhEwWWwFrDP5G6UmkUPc=;
-        b=H6NPxAjtl+MC8O0rgWl5RLHT6eP5vxo92WBjyMqWCSxB2P8UDcpdJB/gAMk8Q9xzxp
-         ZDeKZZ50dO+bqUzGd5Zydfs6EwhkHyJSoZnkwm+ylyZvlfZDTDYGm6+XlmqpuzFtJwrr
-         hD8USihLFXSE+wRRcDEGuPVTu2MMcqrW9wuPU8j/UHfTd1kHWsPWfA4Ul6lbVZl0Wm0V
-         17DkfDzGiofQgfES5Jd1BJIQ3bpoRHbuXCd/ZkM2Xb3yUfHhi7liYHbSCGbmHOMjPCB6
-         mqM/HXyuHkNE0Rv326RktRfdcWs86FvZSjC8r+36mxoWn95CJUIbwZKtNbFJV8NAMYOI
-         +09Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUeGPGH+6Ecml6HVAQ72W8ZgQYlgghy5NBNknNEfK8xrEdVTkmC4Wsa7fEIiyehV0Yvvre7NkjgCK/alWo5cPTiSnKGw8EDqUAmupxi5KS/VaXx6PCWRlJ8AJL4ev47BiqWsuuB8PZb
-X-Gm-Message-State: AOJu0YwX5MpAdpi0wFxlmqdIdelCczy1qEvy9j4JbMU3VkF98Np2cOcR
-	QBIhSKM2zEXAUB5U1ryPSkaMhe8Rk5i7NuPNLIjbU0zvF/Atr7My
-X-Google-Smtp-Source: AGHT+IFTITSBnLp37a1zKaOM7iuWXbD3QmfxqYU7B4lsHRUzsRel9G6KTm0gA6YcFuSdROOcTXy7ig==
-X-Received: by 2002:a17:902:e5c1:b0:1f6:a606:539e with SMTP id d9443c01a7336-1fa23f3600amr103829625ad.61.1719378438127;
-        Tue, 25 Jun 2024 22:07:18 -0700 (PDT)
-Received: from localhost.localdomain ([43.135.72.207])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb2f2a06sm90305755ad.31.2024.06.25.22.07.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 22:07:17 -0700 (PDT)
-From: Jinliang Zheng <alexjlzheng@gmail.com>
-X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
-To: hch@infradead.org
-Cc: alexjlzheng@gmail.com,
-	alexjlzheng@tencent.com,
-	chandan.babu@oracle.com,
-	djwong@kernel.org,
+	s=arc-20240116; t=1719378514; c=relaxed/simple;
+	bh=s8/bKSMzxbPYL2YDrso9pxTE2BrdkuAXokNsr8M8Tbc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k9t5sfGwAwY8oQwQVjMu9t315zbpBLqVvY1/MtK52egCpV0ffmTpOXTsxtcOloK1BVSV0T67PkcoXPapdzvqlB+f2ShaQQkfH+uAxhYtCL5kaq/w5odpG4ulu60XNBupgFZLNjBdkVc6FjRb8hWLlefbidaqnRttDbXVt1wJv3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sMKtA-0008S7-6c; Wed, 26 Jun 2024 07:08:12 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sMKt6-0053GQ-NY; Wed, 26 Jun 2024 07:08:08 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sMKt6-00FzBr-23;
+	Wed, 26 Jun 2024 07:08:08 +0200
+Date: Wed, 26 Jun 2024 07:08:08 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-doc@vger.kernel.org, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org
-Subject: Re: [PATCH] xfs: make xfs_log_iovec independent from xfs_log_vec and release it early
-Date: Wed, 26 Jun 2024 13:07:15 +0800
-Message-ID: <20240626050715.25210-1-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.41.1
-In-Reply-To: <Znqq7GUFnwFj-SFI@infradead.org>
-References: <Znqq7GUFnwFj-SFI@infradead.org>
+	Dent Project <dentproject@linuxfoundation.org>,
+	kernel@pengutronix.de
+Subject: Re: [PATCH net-next v4 1/7] net: ethtool: pse-pd: Expand C33 PSE
+ status with class, power and extended state
+Message-ID: <ZnuiOIqmFSUzMQwP@pengutronix.de>
+References: <20240625-feature_poe_power_cap-v4-0-b0813aad57d5@bootlin.com>
+ <20240625-feature_poe_power_cap-v4-1-b0813aad57d5@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240625-feature_poe_power_cap-v4-1-b0813aad57d5@bootlin.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, 25 Jun 2024 04:33:00 -0700, Christoph Hellwig wrote:
-> > --- a/fs/xfs/xfs_log.c
-> > +++ b/fs/xfs/xfs_log.c
-> > @@ -2526,6 +2526,8 @@ xlog_write(
-> >  			xlog_write_full(lv, ticket, iclog, &log_offset,
-> >  					 &len, &record_cnt, &data_cnt);
-> >  		}
-> > +		if (lv->lv_flags & XFS_LOG_VEC_DYNAMIC)
-> > +			kvfree(lv->lv_iovecp);
+On Tue, Jun 25, 2024 at 02:33:46PM +0200, Kory Maincent wrote:
+> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
 > 
-> This should porbably be a function paramter to xlog_write, with
-> xlog_cil_write_chain asking for the iovecs to be freed because they
-> are dynamically allocated, and the other two not becaue the iovecs
-> are on-stack.  With that we don't need to grow a new field in
-> struct xfs_log_vec.
-
-xlog_write() will write all xfs_log_iovec on the lv chain linked list to iclog.
-We seem to have no way to distinguish whether the xfs_log_iovec on the lv_chain
-list is on the stack by adding new parameters to xlog_write().
-
+> This update expands the status information provided by ethtool for PSE c33.
+> It includes details such as the detected class, current power delivered,
+> and extended state information.
 > 
-> >  	list_for_each_entry(lip, &tp->t_items, li_trans) {
-> >  		struct xfs_log_vec *lv;
-> > +		struct xfs_log_iovec *lvec;
-> >  		int	niovecs = 0;
-> >  		int	nbytes = 0;
-> >  		int	buf_size;
-> > @@ -339,18 +339,23 @@ xlog_cil_alloc_shadow_bufs(
-> >  			 * the buffer, only the log vector header and the iovec
-> >  			 * storage.
-> >  			 */
-> > -			kvfree(lip->li_lv_shadow);
-> > -			lv = xlog_kvmalloc(buf_size);
-> > -
-> > -			memset(lv, 0, xlog_cil_iovec_space(niovecs));
-> > +			if (lip->li_lv_shadow) {
-> > +				kvfree(lip->li_lv_shadow->lv_iovecp);
-> > +				kvfree(lip->li_lv_shadow);
-> > +			}
-> > +			lv = xlog_kvmalloc(sizeof(struct xfs_log_vec));
-> > +			memset(lv, 0, sizeof(struct xfs_log_vec));
-> > +			lvec = xlog_kvmalloc(buf_size);
-> > +			memset(lvec, 0, xlog_cil_iovec_space(niovecs));
-> 
-> This area can use quite a bit of a redo.  The xfs_log_vec is tiny,
-> so it doesn't really need a vmalloc fallback but can simply use
-> kmalloc.
-> 
-> But more importantly there is no need to really it, you just
-> need to allocate it.  So this should probably become:
-> 
-> 	lv = lip->li_lv_shadow;
-> 	if (!lv) {
-> 		/* kmalloc and initialize, set lv_size to zero */
-> 	}
-> 
-> 	if (buf_size > lv->lv_size) {
-> 		/* grow case that rallocates ->lv_iovecp */
-> 	} else {
-> 		/* same or smaller, optimise common overwrite case */
-> 		..
-> 	}
+> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 
-If we take the memory allocation of xfs_log_vec out of the if branch below, we
-have to face the corner case of buf_size = 0.
+Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de> 
 
-But the release and reallocation of xfs_log_vec in this patch is indeed
-redundant. I've optimized it in [PATCH v2] and [PATCH v3].
+Thank you!
 
-Link to [PATCH v3]:
-- https://lore.kernel.org/linux-xfs/20240626044909.15060-1-alexjlzheng@tencent.com/T/#t
-
-Thank you for your suggestion. :)
-Jinliang Zheng
+Regards,
+Oleksij
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
