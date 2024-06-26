@@ -1,149 +1,207 @@
-Return-Path: <linux-kernel+bounces-229888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C25199175A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 03:30:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEED29175AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 03:31:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 005CA1C21D31
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 01:30:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E54A1C21D4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 01:31:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B67717BBA;
-	Wed, 26 Jun 2024 01:30:25 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664F913ADA;
+	Wed, 26 Jun 2024 01:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="h8tBGxgR"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35CB2F9C9
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 01:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8822D045;
+	Wed, 26 Jun 2024 01:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719365424; cv=none; b=Y6mmSMeGBpO0rhvzNa6tJhsNHH1Yr8VaFvGyWJDQ0EiZPN/U6I9rItm6ony/gL4TkYO+R5ouZcM4ZS0vP+YbFLCYKenJXPA87shkp5CF38lmdwfcKwbQNrVcEEpxNlODypdpd5oVPZAzGZYqs/THi+TL4pKx8vRSPHcyTPj8Cvc=
+	t=1719365444; cv=none; b=kd6llay5tbzo2nuMJc1pIIP56mdQUZpCJsPPw7QR1v5KmFtf1ttNvfaJywG+ZvD4HFi42MnCpeaZUb53rpcvkSJZKy6jPGUCxBjHJnKcW0xKHrxjalyCWV3lTvvvHZ/B/JHzG//XzOoweEf9E+Jt6deagfT57DB5C+eNlj7cJF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719365424; c=relaxed/simple;
-	bh=p2zkOZD+8+T1dAuryaMFbTjK8h6djut6lMgkrePaOWk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=MpOhbymq40qUxDKzauk1mFY2TH/SvWCSNbDJFPSqrQ7HUBpGVm5dj25C6oZ8VteLefXZpwlMWQuieow2kUv4cOn/O7ZddlkGQItuZJQuFzVo0SXLwOntPhv3u6WoUYthkA+TvNQ+YZ9TG7tUZZa8PJonmHnwOmmIezgsq+BHkRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-375df29cb12so76318575ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 18:30:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719365422; x=1719970222;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=D/LozekO3Rawr7o5vm0SBlhMDQbth1dTopz64bhOVSI=;
-        b=YbScV9pNbURTbbXSqtMd9H4yfbHkzV9aIoz+WnaZS37aMGbqvg8bKWUGvbRoOM4MWK
-         GKX8C4mooKI5uus3jzGOR1CROuIijmLyLLEr7F99fMruFz2B/B+TxftZ1pTpme3rXrRc
-         u9uPCVVd2aUsW0Bpm7JpHnJCnY/Ft40uFT8WCRv2OwYP68a0xs0MvZMR97/NCTrL//fl
-         wn6/ZdVlU+LKnE6qjMO8tj9CPdkbAl4IuzVg0i9ZMQZxi6ALnVwJTJ+efde0swjQLCVV
-         IDZviF4w/CA9AhY/JY5ET+nczIU1OF6g3NEUbAmO7XM/GfLJmCDYEqyRBSPl4uHU0kzT
-         zsew==
-X-Forwarded-Encrypted: i=1; AJvYcCUdL65QK3IL5p4MmoSKKUUJkN+I1vfcZKxx2TnVq4178R+CDSsUIQOk4DwqGEXtsY4yAi7XEzodUN5WHc8vFZfWq2XwiGg44u9nkKup
-X-Gm-Message-State: AOJu0YyUSlK2XqZSFxo8rT2jNedvzkdWWNoz78LlOt8XGyi8N4QotMFn
-	ugJsMfCqFbi7Xkn8jpnELjl0Vrp0b/R6ekVISlJWV2tMhEzg9xhMzIxcByKEUwxQ+I9VlITRc9P
-	+bk898JOkYrT9ZUuLFVAQXUAI/ZfQ5sPMHwQRMUUNFbj5DU9OcQ7JPKQ=
-X-Google-Smtp-Source: AGHT+IGI0fxQLvY8mOI7xe2da3Qu72XrkZlHdyAcx9r1eo2GONZMZz+PZXMIgaS/ogLXtWRbNiZ05Z6ireQSysqwJwVWsSTUJRnL
+	s=arc-20240116; t=1719365444; c=relaxed/simple;
+	bh=ExsyB0vwp1t6uljWXtJ/KJ3LWtK9Y9Hgn2nrXwlpp3k=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=btXsRwph18QG+gOHQa7DbdI6kfasJcYJlVW1zwGirN/FsccNZIKrz0eRbasIDIL0LRLq+g7F6hRcchrX1CI8JoHQZkjdqFAZy7s2TPf/Va9vgQ64lNymY9zmmLI/YWpVuorq/ZW8bGunDboM7GC2gpneoYQ/F+jaI6u20YxFtEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=h8tBGxgR; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+Received: from [192.168.68.112] (ppp118-210-79-194.adl-adc-lon-bras32.tpg.internode.on.net [118.210.79.194])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 673A820009;
+	Wed, 26 Jun 2024 09:30:36 +0800 (AWST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1719365438;
+	bh=X7FD5oPv28K3sYjsKRmxtB3gZH81Qm9pRxGi9lHMBZI=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=h8tBGxgRPSDXyEaS+3XN2CMKE6rsFD+erg3JYsLIiR2ICZ5WkHG/t4Ufi4P5BH9/4
+	 Wo5AHi/oSm9GHwzc3EvzMh+wjC23WbywSwe3mY1g7ZpBO9dbD+gUpgtE7S41Fr4vG+
+	 1x9bKnuITzfo0t0s1OPlwTqDDETsJ5h66HkNHbA77cC9x2amCOhSrkR7Wm2eSXOAT2
+	 PdJBMVK35Hmd1qCQs93gcHZGYKc9tOTerrR6/I+2V6bFXdP0CMOF3Hf8Ofu6rAWSMB
+	 Wbj7jSPSjeUK/ZNazF8PVCYy0qTh8D8dg1GpK6zo1Wiowmh4rCgeiBd9dsa9sFkEer
+	 yHMvBHsH/JLHA==
+Message-ID: <4391083991a16c435c5d8849eb5ee2be2f03793c.camel@codeconstruct.com.au>
+Subject: Re: [PATCH 02/17] ARM: dts: aspeed: minerva: Add spi-gpio
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Yang Chen <yangchen.openbmc@gmail.com>, joel@jms.id.au,
+ patrick@stwcx.xyz,  linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org,  linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Cc: Jerry.Lin@quantatw.com
+Date: Wed, 26 Jun 2024 11:00:35 +0930
+In-Reply-To: <20240625121835.751013-3-yangchen.openbmc@gmail.com>
+References: <20240625121835.751013-1-yangchen.openbmc@gmail.com>
+	 <20240625121835.751013-3-yangchen.openbmc@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:184f:b0:376:42a0:b2e7 with SMTP id
- e9e14a558f8ab-37642a0b586mr7471625ab.4.1719365422380; Tue, 25 Jun 2024
- 18:30:22 -0700 (PDT)
-Date: Tue, 25 Jun 2024 18:30:22 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003d868e061bc0f554@google.com>
-Subject: [syzbot] [usb?] [bluetooth?] WARNING in btusb_submit_intr_urb/usb_submit_urb
-From: syzbot <syzbot+8693a0bb9c10b554272a@syzkaller.appspotmail.com>
-To: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Tue, 2024-06-25 at 20:18 +0800, Yang Chen wrote:
+> From: Yang Chen <yang.chen@quantatw.com>
+>=20
+> Add spi-gpio for TPM device.
+>=20
+> Signed-off-by: Yang Chen <yang.chen@quantatw.com>
+> ---
+>  .../aspeed/aspeed-bmc-facebook-minerva.dts    | 21 +++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+>=20
+> diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dts b/a=
+rch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dts
+> index e20e31917d6c..7d96a3638448 100644
+> --- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dts
+> +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dts
+> @@ -22,6 +22,8 @@ aliases {
+>  		i2c19 =3D &imux19;
+>  		i2c20 =3D &imux20;
+>  		i2c21 =3D &imux21;
+> +
+> +		spi1 =3D &spi_gpio;
+>  	};
+> =20
+>  	chosen {
+> @@ -49,6 +51,25 @@ led-fan-fault {
+>  			default-state =3D "off";
+>  		};
+>  	};
+> +
+> +	spi_gpio: spi-gpio {
+> +		status =3D "okay";
+> +		compatible =3D "spi-gpio";
+> +		#address-cells =3D <1>;
+> +		#size-cells =3D <0>;
+> +
+> +		gpio-sck =3D <&gpio0 ASPEED_GPIO(Z, 3) GPIO_ACTIVE_HIGH>;
+> +		gpio-mosi =3D <&gpio0 ASPEED_GPIO(Z, 4) GPIO_ACTIVE_HIGH>;
+> +		gpio-miso =3D <&gpio0 ASPEED_GPIO(Z, 5) GPIO_ACTIVE_HIGH>;
+> +		num-chipselects =3D <1>;
+> +		cs-gpios =3D <&gpio0 ASPEED_GPIO(Z, 0) GPIO_ACTIVE_LOW>;
+> +
+> +		tpmdev@0 {
+> +			compatible =3D "infineon,slb9670", "tcg,tpm_tis-spi";
+> +			spi-max-frequency =3D <33000000>;
+> +			reg =3D <0>;
+> +		};
+> +	};
 
-syzbot found the following issue on:
+I poked at your series with the following script:
 
-HEAD commit:    66cc544fd75c Merge tag 'dmaengine-fix-6.10' of git://git.k..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=14280161980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3f7b9f99610e0e87
-dashboard link: https://syzkaller.appspot.com/bug?extid=8693a0bb9c10b554272a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16f59c82980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12b955b6980000
+```
+$ cat dtb-check
+#!/usr/bin/bash
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/b4d37fd1f3c8/disk-66cc544f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/04c8b576cea2/vmlinux-66cc544f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/05e217dc3c31/bzImage-66cc544f.xz
+set -euo pipefail
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8693a0bb9c10b554272a@syzkaller.appspotmail.com
+DTB=3D"$1"
 
-------------[ cut here ]------------
-usb 1-1: BOGUS urb xfer, pipe 1 != type 3
-WARNING: CPU: 0 PID: 4491 at drivers/usb/core/urb.c:504 usb_submit_urb+0xc4e/0x18c0 drivers/usb/core/urb.c:503
-Modules linked in:
-CPU: 0 PID: 4491 Comm: kworker/u9:1 Not tainted 6.10.0-rc4-syzkaller-00164-g66cc544fd75c #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Workqueue: hci0 hci_power_on
-RIP: 0010:usb_submit_urb+0xc4e/0x18c0 drivers/usb/core/urb.c:503
-Code: f8 48 c1 e8 03 0f b6 04 18 84 c0 0f 85 b1 08 00 00 45 8b 07 48 c7 c7 40 90 6d 8c 48 8b 34 24 4c 89 e2 89 e9 e8 23 9a 3c fa 90 <0f> 0b 90 90 48 8b 5c 24 30 41 89 dc 4c 89 e7 48 c7 c6 b0 4b f2 8e
-RSP: 0018:ffffc9000d817798 EFLAGS: 00010246
-RAX: 6d750bdfc6b7f400 RBX: dffffc0000000000 RCX: ffff888030053c00
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: 0000000000000001 R08: ffffffff81585822 R09: fffffbfff1c39994
-R10: dffffc0000000000 R11: fffffbfff1c39994 R12: ffff88801c2e7560
-R13: ffff88801a2af400 R14: 0000000000000001 R15: ffffffff8c6d8e28
-FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000559f0e1c6bd8 CR3: 000000002e10e000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- btusb_submit_intr_urb+0x3dd/0x7b0 drivers/bluetooth/btusb.c:1409
- btusb_open+0x1a1/0x770 drivers/bluetooth/btusb.c:1865
- hci_dev_open_sync+0x2cc/0x2b40 net/bluetooth/hci_sync.c:4889
- hci_dev_do_open net/bluetooth/hci_core.c:485 [inline]
- hci_power_on+0x1c7/0x6b0 net/bluetooth/hci_core.c:1012
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
- worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+rm -f arch/arm/boot/dts/"$DTB"
+make CHECK_DTBS=3Dy "$DTB" 2>&1 |
+    sed "/should not be valid under {'type': 'object'}/d" > curr.log
+diff -u ref.log curr.log
+```
 
+I ran this after creating a reference output prior to your series using
+the same `make CHECK_DTBS=3Dy` command.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+This patch gave the following output (which I expect Rob's bot will
+follow up with at some point as well):
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+```
+--- ref.log     2024-06-26 10:48:23.767078834 +0930
++++ curr.log    2024-06-26 10:55:56.857034132 +0930
+@@ -1,4 +1,6 @@
+   DTC_CHK arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dtb
++/home/andrew/src/kernel.org/linux/origin/build.aspeed_g5/arch/arm/boot/dts=
+/aspeed/aspeed-bmc-facebook-minerva.dtb: /: spi-gpio: {'status': ['okay'], =
+'compatible': ['spi-gpio'], '#address-cells': [[1]], '#size-cells': [[0]], =
+'gpio-sck': [[62, 203, 0]], 'gpio-mosi': [[62, 204, 0]], 'gpio-miso': [[62,=
+ 205, 0]], 'num-chipselects': [[1]], 'cs-gpios': [[62, 200, 1]], 'tpmdev@0'=
+: {'compatible': ['infineon,slb9670', 'tcg,tpm_tis-spi'], 'spi-max-frequenc=
+y': [[33000000]], 'reg': [[0]]}} is not of type 'array'
++       from schema $id: http://devicetree.org/schemas/gpio/gpio-consumer.y=
+aml#
+ /home/andrew/src/kernel.org/linux/origin/build.aspeed_g5/arch/arm/boot/dts=
+/aspeed/aspeed-bmc-facebook-minerva.dtb: timer: 'clocks' does not match any=
+ of the regexes: 'pinctrl-[0-9]+'
+        from schema $id: http://devicetree.org/schemas/timer/arm,arch_timer=
+.yaml#
+ /home/andrew/src/kernel.org/linux/origin/build.aspeed_g5/arch/arm/boot/dts=
+/aspeed/aspeed-bmc-facebook-minerva.dtb: sdram@1e6e0000: compatible: ['aspe=
+ed,ast2600-sdram-edac', 'syscon'] is too long
+@@ -38,3 +40,17 @@
+        from schema $id: http://devicetree.org/schemas/fsi/aspeed,ast2600-f=
+si-master.yaml#
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dtb: /ahb/apb/fsi@1e7=
+9b100: failed to match any schema with compatible: ['aspeed,ast2600-fsi-mas=
+ter', 'fsi-master']
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dtb: /ahb/apb/dma-con=
+troller@1e79e000: failed to match any schema with compatible: ['aspeed,ast2=
+600-udma']
++/home/andrew/src/kernel.org/linux/origin/build.aspeed_g5/arch/arm/boot/dts=
+/aspeed/aspeed-bmc-facebook-minerva.dtb: spi-gpio: $nodename:0: 'spi-gpio' =
+does not match '^spi(@.*|-([0-9]|[1-9][0-9]+))?$'
++       from schema $id: http://devicetree.org/schemas/spi/spi-gpio.yaml#
++/home/andrew/src/kernel.org/linux/origin/build.aspeed_g5/arch/arm/boot/dts=
+/aspeed/aspeed-bmc-facebook-minerva.dtb: spi-gpio: gpio-sck: False schema d=
+oes not allow [[62, 203, 0]]
++       from schema $id: http://devicetree.org/schemas/spi/spi-gpio.yaml#
++/home/andrew/src/kernel.org/linux/origin/build.aspeed_g5/arch/arm/boot/dts=
+/aspeed/aspeed-bmc-facebook-minerva.dtb: spi-gpio: gpio-miso: False schema =
+does not allow [[62, 205, 0]]
++       from schema $id: http://devicetree.org/schemas/spi/spi-gpio.yaml#
++/home/andrew/src/kernel.org/linux/origin/build.aspeed_g5/arch/arm/boot/dts=
+/aspeed/aspeed-bmc-facebook-minerva.dtb: spi-gpio: gpio-mosi: False schema =
+does not allow [[62, 204, 0]]
++       from schema $id: http://devicetree.org/schemas/spi/spi-gpio.yaml#
++/home/andrew/src/kernel.org/linux/origin/build.aspeed_g5/arch/arm/boot/dts=
+/aspeed/aspeed-bmc-facebook-minerva.dtb: spi-gpio: 'sck-gpios' is a require=
+d property
++       from schema $id: http://devicetree.org/schemas/spi/spi-gpio.yaml#
++/home/andrew/src/kernel.org/linux/origin/build.aspeed_g5/arch/arm/boot/dts=
+/aspeed/aspeed-bmc-facebook-minerva.dtb: spi-gpio: Unevaluated properties a=
+re not allowed ('#address-cells', '#size-cells', 'gpio-miso', 'gpio-mosi', =
+'gpio-sck', 'tpmdev@0' were unexpected)
++       from schema $id: http://devicetree.org/schemas/spi/spi-gpio.yaml#
++/home/andrew/src/kernel.org/linux/origin/build.aspeed_g5/arch/arm/boot/dts=
+/aspeed/aspeed-bmc-facebook-minerva.dtb: tpmdev@0: $nodename:0: 'tpmdev@0' =
+does not match '^tpm(@[0-9a-f]+)?$'
++       from schema $id: http://devicetree.org/schemas/tpm/tcg,tpm_tis-spi.=
+yaml#
+```
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Can you please address these and go over the rest of the patches to
+shore them up against the current bindings?
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Thanks,
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Andrew
 
