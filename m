@@ -1,160 +1,169 @@
-Return-Path: <linux-kernel+bounces-231083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AF069185F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:35:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE5489185E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:32:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27464B21053
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:33:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0E2C1C2260B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797521850A9;
-	Wed, 26 Jun 2024 15:33:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2A018A94E;
+	Wed, 26 Jun 2024 15:32:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="H95uvPwO"
-Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01olkn2081.outbound.protection.outlook.com [40.92.98.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FAPwT8OR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0E8A92F;
-	Wed, 26 Jun 2024 15:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.98.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719415989; cv=fail; b=BD6n9Ju7fqH8R2xAM6U7STO3h94owo+EBVP1aySidijoiArC+r2JumjN9nKxWrCsZ/zAkgrjKQ57yTVn5+30wfc5zfcF8gx3d3YyPlPRCWHYNQYrQdSKxbCEO3htAA8//jxk0YBhPBLCgh5g8fns3rVUOjhEDy8BaSrBBOsaP9U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719415989; c=relaxed/simple;
-	bh=dNihwMZwaLHdAf8sigYpMaMG+J4T0vcLn8L4VoPA7CY=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=QV8NOxp3sn94kh3udU1c8n+vVefSoFScS94mF04sjAG5mhoSDBjq3WMDwkbmhZtdft4mK7nAyPXRR0XaJ9qQRuVQs3k/ckswndcK0+f0g9ixNTJZofWcYuxG3CTMXeG0OHk6miNptZwi+yxxxcPIsTgGrcj0OQNcN5T60JnDa4E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=H95uvPwO; arc=fail smtp.client-ip=40.92.98.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=L4iCbu9OMVRLMlVK2/gPa42uOIN3AAzOhmp9BT/A9V2haq8Aumx/ukdPcvicQ6NI562wXND0iNvs9AAbbWt5h30Ku2vcj90qg2egb2lMziVTBh+Udl3SYXeE4t48MHfN7UyRCo5w9a66EZGQ4IlRqtjh+tgNIoYhnfGMhr4xQhFvYglmEqZikrMmlTL3BYI7RIHoMrIsd9Yjr930hwCarP4Nr/TxKLtrDz2IuHYlcts50doR88KKOaOCNMGj3ES96s3lYJXxQ1KeI9zTyjveGVMUFXI/3r8j51zOshmBZDOJ5OfeMJQ+EchR6IX4usOCYF3z/baAVyd5yw9RAlw/5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vIu1aLMx/43/STFkKMCFChSyAHmP0HDgAsOoNcneNF8=;
- b=grxp6SVR/FLpYHomyek17ffegyhejTfgku1bpv4+aVRQMakqeCimgzPCY9A62fUrp2/XgXJlqseBbADt50BzbT+Aex5/teDvyv3UQCS5OsEYXwH0RfdGwhux9rwN08upbYjX/GswJjcSE+GY+zl2ienFRiUyKConw6iSJE6KwJnIgKGz5ylk7Vr3S1xZUl9F7Qsj02tTQIFXdnYdDS5fzvAMNIjncIvaFIGipA2y/c+TGhNutoXR7lejC2Ey8Gn9/XsVEibvBNnA9R/Q35845ZaQCekDnofLB6WSZxSZvEzRP/H1DgoKvB+u7UNEzTiEg5aEDl3Lfet9F4xutytB8A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vIu1aLMx/43/STFkKMCFChSyAHmP0HDgAsOoNcneNF8=;
- b=H95uvPwOgWICMeJpCd4YI6Gwn5E3ncPQ4rD4Bs/9pS6Ayi2n7u4nDaAHbxgsubovE7+z+jMkwEOikK6l0KBjk9r+UGf/8FHG6HHPJDmiRFi4UeTlnyOm4So3l89RCQNYOZ7MAdDV4WN1EqYStDOb7wLgLzDb/CzZOa8gJHRHmuwfuW9BilxWL5nxEgk4cqRh29joJZVHpgo12IiWKdHIIeGQrmNeOXJrligkz+VpMesawfSNkblj9Q00wOOBMByXjtMmMFGkxG6yhdyhuO3ytORBHIguCFNudOWoBdUt9UbbSKORUZpeQ9ATErDV/EUGvcdsmc0C1D1ehNzOKKiLDg==
-Received: from TY3P286MB2754.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:256::8)
- by TYYP286MB3441.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:2f6::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.32; Wed, 26 Jun
- 2024 15:33:05 +0000
-Received: from TY3P286MB2754.JPNP286.PROD.OUTLOOK.COM
- ([fe80::670b:45a6:4c30:d899]) by TY3P286MB2754.JPNP286.PROD.OUTLOOK.COM
- ([fe80::670b:45a6:4c30:d899%4]) with mapi id 15.20.7698.025; Wed, 26 Jun 2024
- 15:33:05 +0000
-From: Songyang Li <leesongyang@outlook.com>
-To: bhelgaas@google.com
-Cc: linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	leesongyang@outlook.com
-Subject: [PATCH] PCI: Clear AER uncorrectable status according to error types
-Date: Wed, 26 Jun 2024 23:32:30 +0800
-Message-ID:
- <TY3P286MB2754DE49E4D1CB87C9256D21B4D62@TY3P286MB2754.JPNP286.PROD.OUTLOOK.COM>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [/jDDApqGfZ39y6/VnohVUU4Yuvzzr3ot]
-X-ClientProxiedBy: TYCP286CA0168.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:3c6::18) To TY3P286MB2754.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:256::8)
-X-Microsoft-Original-Message-ID:
- <20240626153230.21590-1-leesongyang@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD6AA92F;
+	Wed, 26 Jun 2024 15:32:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719415967; cv=none; b=DWVWuGxhdM3Ing++O8HnWOi/pYuTwzH9oa9C5YANTdPZQoMH0/NLMI9W+9khKNdHnoKJzOV6O1m2rTrPVa9BTJr3mTb61o/U5hcppue0yPK5uBmKh89ZGNAoZrGpEtgNxFKjLKUrHl2MvJmwTlLn5BgJpx/UtZ5gaqL2gEqVchY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719415967; c=relaxed/simple;
+	bh=XLZgUGWnFwdF6CG/Qm/K9+0HUIhsiTbRK9QlW8rpaMQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Or9PNh6cLY+4vuhBpuCnV+FW6h/A965lZCI7XkyTrMX9V8Fks5khK6jAHColfSMdFuCgjX0CkFj/xzkt2/lybURCL3kfTiPf0aa6vhuNTxnpwSuaR1XhmHf/sdaWP/cGp9+2Fsxrz0OKV6qstpUFUyWyP8LG0iJ+MPHBNWuAoGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FAPwT8OR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0389EC116B1;
+	Wed, 26 Jun 2024 15:32:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719415967;
+	bh=XLZgUGWnFwdF6CG/Qm/K9+0HUIhsiTbRK9QlW8rpaMQ=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=FAPwT8ORSBdpZtpl9FlBITgsZZDzFGtWF8ek+/Y6Dp8iPlgRGXEdbbqpcL3+qzFtW
+	 qjmc9k+2wkkhQJLx55WSzgIEzhAvCwo6JcEzcrstWCpslKkWVaWCkj+/D30TjXm5e0
+	 7f4MzI24zdD1QDvz03kaoSvjy9aiBVeCz4wnFQgZWknqLsWMXV4c6A2v3yKomiqffV
+	 2xmvKdf9iNWPW7NbjmmTwOYdrB/1AsORRe12NaZH0vnVDtS2ZZHQfpXaZu7xy4sM9H
+	 czl4+ucICF5yV3WphHKNwk2cgPiZHk96FPldYSjCjXxgVvvQdkxIgTPGVz1G/QI4e3
+	 WAQQrvzZioPhw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 033F3CE0E79; Wed, 26 Jun 2024 08:32:46 -0700 (PDT)
+Date: Wed, 26 Jun 2024 08:32:45 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org
+Subject: Re: [PATCH rcu 1/6] rcu: Remove full ordering on second EQS snapshot
+Message-ID: <e7f182fd-3f2f-4fff-87e2-808dc384b97a@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <81f4e616-8125-4934-a8e2-fd5beae90995@paulmck-laptop>
+ <20240604222652.2370998-1-paulmck@kernel.org>
+ <ZmBYOaQQQKapFGZo@localhost.localdomain>
+ <26b85288-dd54-4ace-978d-39681de8fcad@paulmck-laptop>
+ <Znwtpmu9Vs8R6iAV@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY3P286MB2754:EE_|TYYP286MB3441:EE_
-X-MS-Office365-Filtering-Correlation-Id: 72802a6c-021d-4e02-4f22-08dc95f545c1
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199026|3412199023|440099026|1710799026;
-X-Microsoft-Antispam-Message-Info:
-	swwDWH0b1PpFl21NIL4l4/osV9+4ZE5ZS6u2nlntUjVqCa993DDXhlx3ZcrZ/Uyvs2zSd+pvzP/QsoV73BDDaQnn69fFhB1hAHxjpkB/NTMmETPmIiP42d7OlpSt+l3gmJJA2VAqO+TC9M3IF6NtD2C5Iak/+xufS7OxMP83Pt2uiF1lsFcdgHYy6JSP6phQKqZ4+b+yH/+nl1617ajcQl8QVUJM1GUYnKPDZQffwGOjQCBmNkNvqefg88uytE0hYWvkKaMCfdM8+HFmpbbc+okCeUkwh8vTYkhD9PJGO4qW3DNRZcc1sgh7MW1LWkqxqLX+cBdCGHoAJGPgsKaxfoboqHGjf5+afWT5YYSPw+4RYUPDtZRzPaJYHXuNr98ewCtsMQaEPMvypVUsT3BaIfFfjsfovasLyGC+i74+w84cCPjsGnYLUOF1Cvq8uXIBKz2M35Lngkg4lPgYmbqXwGHQpjPpodw9JMK0q2H2E3/gRrxGgwokbQeeZKDkquO2zd0/XdzigOsm9X5xZWZfck+XANzVQR9XHV6LySzTfHureTHi/7/JG/HCQGu3MdyEB7CfgijDUJm6Cy3soJVzPfa6Np6iN7Yvjc4f08KADHyQqkycXESqaui/59hvGcs7
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?TNFkG9f/uEy6kLcNfpnihbFUhXJRgFtHD9/76GMEse3Ganvw2chGka+EM99U?=
- =?us-ascii?Q?KUQGTRzj6/tJq2OGeYQ2/ghh7lQQtJfNzbJoMSxfC/2mp3MvnrW82H/vk/2F?=
- =?us-ascii?Q?7SkcJDSIB8XTKZBXzXv4slJW/zy6u6Ogbq3LkwWxFoU4wBQnwRbDzJaMqjHy?=
- =?us-ascii?Q?m+hz1UwADC6sMn1vg6x6IBtEjxb8Nlkrnld9XhUsFJpKk0nFqGK2UXcLIGQ6?=
- =?us-ascii?Q?22AiUnCtN1LJKI6VU6LS5x1DE+utnIpD25CedbSG+zA4PzAKw870WCRpsAKf?=
- =?us-ascii?Q?1kSHIoYTKU6RZqbLxiGrN7DhDtun3z9qNPMzOKTnk5L+yicXh3vQQ7yMVv6N?=
- =?us-ascii?Q?+c69VuFVKk7AlLwcwBJco2AemAtiOwwekJzJPMSZjVffdZ9k8yyT8CpT1/rX?=
- =?us-ascii?Q?Uthuex5A6mUeKq5vCQyyutF0lig7CmRcqfipWQjfC3o6ELCMTaYqPXWXP4DS?=
- =?us-ascii?Q?YRYNeccNYUW23gCv4BV8VEo4Wp3wDZO0TgdfJL+B8/teYbY39JYe8LU4/akU?=
- =?us-ascii?Q?7hd6qsE+VufGppdB/zu0n7e9IbSB9FbDS7kqOa44/Lrv1NfCe0NeSsnSYT82?=
- =?us-ascii?Q?rZ8VUXi5mOD7IGxcXn1khMZI8zlZEBXxFU/9ZIoN8gR3hRqI8IkygWfIe4yx?=
- =?us-ascii?Q?42p9QoNgb0R5hIWu52xEW6I6lWi5cjkl410rRyr0Lay8dtyaDjYKmtesnf42?=
- =?us-ascii?Q?zGQT0lYJP2dwr1R06eXtfgaKNkoAzlATwhMmeKTaIIFwnqvHEMkZlOJ+hNbd?=
- =?us-ascii?Q?gF532Qyt0aOZr1FqVH66KZUS+JTASPG/JVnYL+waEclTqZqumGYPpwNpNWu8?=
- =?us-ascii?Q?fRv6GFHiTR9SkpuHl7eIDiLza7BlJlcchBCl749w5EXkZet7sAWySQLRZEOV?=
- =?us-ascii?Q?g2j5Vq+k/UehczGlglSAzVgMVgw/YJ40GvQNxBjmiE7unCOsnyrTRnS2DDsh?=
- =?us-ascii?Q?XVjh1WLT2g7A9Rvgt/qeiTepgkn6Umqdz9YKF0dibU0hYNy90gVFHFydFKHW?=
- =?us-ascii?Q?QKqbLXDx35yyvRXJZPVCisqInDQWQGOJ2aP3s4VyZ4cLoK1t5UI1oKY9FCdm?=
- =?us-ascii?Q?78HxoAXjGUcjIvCh5djEeu04r6sgzNF4B6uKjKT89dKXhgA2lA4n1DoYC3tN?=
- =?us-ascii?Q?by+fCXKzwOWyMXcr53afrekCgZ5ckkNwcCImuL+6pnwITp1QlNJpx0dQ3QSA?=
- =?us-ascii?Q?jAbgrjxrsGnDoef1VERdcGnUxCV/xNM66i5f62lxRtUIaOTb4IDRwdNB+ScT?=
- =?us-ascii?Q?ytuqGqwPu1fivbIdwhWr?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 72802a6c-021d-4e02-4f22-08dc95f545c1
-X-MS-Exchange-CrossTenant-AuthSource: TY3P286MB2754.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 15:33:05.1111
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYP286MB3441
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Znwtpmu9Vs8R6iAV@localhost.localdomain>
 
-The AER recovery process use pci_aer_clear_nonfatal_status() to clear
-non-fatal error status after successfully recovering from non-fatal error.
-However, the fatal error status clearing for successful recovery of AER
-fatal error was overlooked.
-Therefore, this patch wants:
-When the error type is non-fatal, use pci_aer_clear_nonfatal_status()
-to clear non-fatal error status.
-When the error type is fatal, use pci_aer_clear_fatal_status()
-to clear fatal error status.
+On Wed, Jun 26, 2024 at 05:03:02PM +0200, Frederic Weisbecker wrote:
+> Le Wed, Jun 05, 2024 at 11:44:42AM -0700, Paul E. McKenney a écrit :
+> > On Wed, Jun 05, 2024 at 02:21:13PM +0200, Frederic Weisbecker wrote:
+> > > Le Tue, Jun 04, 2024 at 03:26:47PM -0700, Paul E. McKenney a écrit :
+> > > > From: Frederic Weisbecker <frederic@kernel.org>
+> > > > 
+> > > > When the grace period kthread checks the extended quiescent state
+> > > > counter of a CPU, full ordering is necessary to ensure that either:
+> > > > 
+> > > > * If the GP kthread observes the remote target in an extended quiescent
+> > > >   state, then that target must observe all accesses prior to the current
+> > > >   grace period, including the current grace period sequence number, once
+> > > >   it exits that extended quiescent state. Also the GP kthread must
+> > > >   observe all accesses performed by the target prior it entering in
+> > > >   EQS.
+> > > > 
+> > > > or:
+> > > > 
+> > > > * If the GP kthread observes the remote target NOT in an extended
+> > > >   quiescent state, then the target further entering in an extended
+> > > >   quiescent state must observe all accesses prior to the current
+> > > >   grace period, including the current grace period sequence number, once
+> > > >   it enters that extended quiescent state. Also the GP kthread later
+> > > >   observing that EQS must also observe all accesses performed by the
+> > > >   target prior it entering in EQS.
+> > > > 
+> > > > This ordering is explicitly performed both on the first EQS snapshot
+> > > > and on the second one as well through the combination of a preceding
+> > > > full barrier followed by an acquire read. However the second snapshot's
+> > > > full memory barrier is redundant and not needed to enforce the above
+> > > > guarantees:
+> > > > 
+> > > >     GP kthread                  Remote target
+> > > >     ----                        -----
+> > > >     // Access prior GP
+> > > >     WRITE_ONCE(A, 1)
+> > > >     // first snapshot
+> > > >     smp_mb()
+> > > >     x = smp_load_acquire(EQS)
+> > > >                                // Access prior GP
+> > > >                                WRITE_ONCE(B, 1)
+> > > >                                // EQS enter
+> > > >                                // implied full barrier by atomic_add_return()
+> > > >                                atomic_add_return(RCU_DYNTICKS_IDX, EQS)
+> > > >                                // implied full barrier by atomic_add_return()
+> > > >                                READ_ONCE(A)
+> > > >     // second snapshot
+> > > >     y = smp_load_acquire(EQS)
+> > > >     z = READ_ONCE(B)
+> > > > 
+> > > > If the GP kthread above fails to observe the remote target in EQS
+> > > > (x not in EQS), the remote target will observe A == 1 after further
+> > > > entering in EQS. Then the second snapshot taken by the GP kthread only
+> > > > need to be an acquire read in order to observe z == 1.
+> > > > 
+> > > > Therefore remove the needless full memory barrier on second snapshot.
+> > > > 
+> > > > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> > > > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > > > ---
+> > > >  kernel/rcu/tree.c | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > > > index 28c7031711a3f..f07b8bff4621b 100644
+> > > > --- a/kernel/rcu/tree.c
+> > > > +++ b/kernel/rcu/tree.c
+> > > > @@ -321,7 +321,7 @@ static bool rcu_dynticks_in_eqs(int snap)
+> > > >   */
+> > > >  static bool rcu_dynticks_in_eqs_since(struct rcu_data *rdp, int snap)
+> > > >  {
+> > > > -	return snap != rcu_dynticks_snap(rdp->cpu);
+> > > > +	return snap != ct_dynticks_cpu_acquire(rdp->cpu);
+> > > 
+> > > I guess I'm going to add a comment here to elaborate on the fact
+> > > it relies on the ordering enforced before the first snapshot. Would
+> > > you prefer a delta patch or an updated patch?
+> > 
+> > Either works, just tell me which you are doing when you submit the patch.
+> > Either way, I will arrange for there to be a single combined commit.
+> 
+> Ok before I resend, how does the following comment look like?
+> 
+> /*
+>  * The first failing snapshot is already ordered against the accesses
+>  * performed by the remote CPU after it exiting idle.
 
-Signed-off-by: Songyang Li <leesongyang@outlook.com>
----
- drivers/pci/pcie/err.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
- mode change 100644 => 100755 drivers/pci/pcie/err.c
+s/exiting/exits/
 
-diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
-old mode 100644
-new mode 100755
-index 31090770fffc..14e1e0daecb8
---- a/drivers/pci/pcie/err.c
-+++ b/drivers/pci/pcie/err.c
-@@ -258,7 +258,10 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
- 	 */
- 	if (host->native_aer || pcie_ports_native) {
- 		pcie_clear_device_status(dev);
--		pci_aer_clear_nonfatal_status(dev);
-+		if (state == pci_channel_io_normal)
-+			pci_aer_clear_nonfatal_status(dev);
-+		else if (state == pci_channel_io_frozen)
-+			pci_aer_clear_fatal_status(dev);
- 	}
- 
- 	pci_walk_bridge(bridge, pci_pm_runtime_put, NULL);
--- 
-2.34.1
+>  * The second snapshot therefore only needs to order against accesses
+>  * performed by the remote CPU prior it entering idle and therefore can
+>  * solely on acquire semantics.
+>  */
 
+s/prior it entering/prior to entering/
+s/solely/rely solely/
+
+Other than those nits, looks good to me!  
+
+								Thanx, Paul
 
