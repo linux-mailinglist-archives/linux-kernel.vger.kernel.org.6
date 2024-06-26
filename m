@@ -1,199 +1,110 @@
-Return-Path: <linux-kernel+bounces-231027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4E9E91853A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:06:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7951691851D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:02:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8BAFB2C861
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:02:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAB531C22D2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F94188CCB;
-	Wed, 26 Jun 2024 15:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C591891AC;
+	Wed, 26 Jun 2024 15:01:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KRE7ME/f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Bzp/c9Or"
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B385A186E33;
-	Wed, 26 Jun 2024 15:02:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C3B219EB
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 15:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719414125; cv=none; b=KVzj6QPNUb6Hhn2kgxJ8ESbTxoTIgD1fGv+OBOvyZSUmP7F3WD/by7qfEfW0Bk1C+E6+e1MsibPGgLQEeAKiOXCbI8RyxuC71a5xjxQnW1k1DSJkV6AmKnZFmwq1VRl5kU/NNL3VBskaKsoyh5KTJOG2ue6jAgWh+AX2tCy7DV8=
+	t=1719414109; cv=none; b=urvWPLAIBCPp80a+W0Uwt6nAXslJOOQZEAI65TjOf8ATLOb8jWGtcCD6hxIuCIqWnb+3fAdog19EX/Wkb26Naplzxk3Ro2p2VrGap2k4A63Sn/T0Lg7hOLwzfoahWdcMG55Zd9fH1fJOYLFy85fnmvexkWSHl8hpqcpBAGWtJwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719414125; c=relaxed/simple;
-	bh=fgMMM7pNiJxo+jmp2NMUAPW1f/KDpo2M0f8YCbewTSs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l7QKGj6Y0kbbUOT8+s+PB8gFlvT9KWhav/L1//A2NbuMNQLMO8LFrBLJJPqpMGccfkooJgBsbKZRU/wKtYnzFl6vdMsfuV6S8pkqIjX1Nna+ASEv3GflKLts05eUfq/J7rNl9nC/raO9U6G4pDadT5n/DPF6yZNXqnC7U+K1zFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KRE7ME/f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA0EEC116B1;
-	Wed, 26 Jun 2024 15:01:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719414125;
-	bh=fgMMM7pNiJxo+jmp2NMUAPW1f/KDpo2M0f8YCbewTSs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KRE7ME/fBH+rbV9VoOpFrdt/9Cgtz2ZR+BfinfbTIX1tSU/RRBahafOnNoWtz42bi
-	 pCOzSDwAKYAELnpfMZ9xdmKXf+R3YjRZAnGAM+KMvTjX+HQ+LVDJRumjecPyaKq4hq
-	 NmEvtNv9E8wU9Uq/LPUchAvcltjsGl4/LV6+wwA5hBTrk+/cpX9NDepTnDqKtC/5vO
-	 yB6Lo9UWW9aa1JRPp22W4158dneYTX1oZdV1wnPgYWu8+XvjWU47Mgq591MmXCJU+s
-	 tXh7g6T5VZVELUps3bxEDexzxn89ZPqDVWT/BOVaL3qaQNjhgI7tyZq1elvvjneAIw
-	 9WfHskj4MX+0A==
-Date: Wed, 26 Jun 2024 10:01:31 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Rob Herring <robh@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Jingoo Han <jingoohan1@gmail.com>, quic_vbadigan@quicinc.com, quic_skananth@quicinc.com, 
-	quic_nitegupt@quicinc.com, linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 1/7] dt: bindings: add qcom,qps615.yaml
-Message-ID: <4ivdeyp74faiztnrimxtdvslf4kcnmxd3omx2255pdfl27v55e@w7otowwnfeah>
-References: <20240626-qps615-v1-0-2ade7bd91e02@quicinc.com>
- <20240626-qps615-v1-1-2ade7bd91e02@quicinc.com>
+	s=arc-20240116; t=1719414109; c=relaxed/simple;
+	bh=PK/s4HBULviBheKUttSYV2eJRz8+Cb+6AYgus4Dxk6I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QuQXwun7JiPpC3XBUIwjn5qEfqrBPEzQrjPgUjCw5AxZAF0EY/1KigP9zQcbU7eqJuRUZXdEAYgjNi1FwIcoBJbOaOF//12be0toKbPpB7clR/UGWBQN8P7iP9ShVhm3tEWwICJkAH2XDacIasZr/O9qO3zUC7CVwE2aGsmyI9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Bzp/c9Or; arc=none smtp.client-ip=209.85.167.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3d55cfebcc5so887694b6e.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 08:01:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719414107; x=1720018907; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ttyQ/o7Vgxk0yGUj/ek3iXp7cLp/I4AxUIUIqxODvtI=;
+        b=Bzp/c9OraxG8HfyqAV8ZhhMo6aSbPanIdzSrE5QOcq/aV5w/+ylooedc94cxJPrjfY
+         qs2wIVstd/iC84kTJZUT5yTJmCFBBqmbwJwuQZpzbpD4gAsAfq/VlvVT5UXY5MFF3GdM
+         7Wv9FqWSzq8t239Qd3PTmL0PqAHdK7ZoJp+4SsA9x2OJIkmV4f5vPMdaYvwpqnbXaqaz
+         2gatSFtSyh8baz4Eb2nxf3fR+pOmmEv5RaFE3SiDEI6oksdT6K10uA3saxkQQP3xNHKD
+         OIGttXjVIGFuaUf8qhyhJudtPGV6Tftk9rHgQbn6UCR3/N5UjUVQoXoGmEQ47cU2bcyQ
+         YfLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719414107; x=1720018907;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ttyQ/o7Vgxk0yGUj/ek3iXp7cLp/I4AxUIUIqxODvtI=;
+        b=CXyY36yF8mndh+JHHGHLYWn7RgS7owD5muhcX9hKU2RTNe/xtkR3JCGn4lwy/LNdD+
+         C5rS0A+43MkCjT/9U20zcV3xCZG0jbmzRLS3xy3TFl8T7ej9H1P80oqGD/bMZ2BhFEHe
+         tTIpEmQDnh5R0GrEnA0xOKOZzRYmnaIpyfZmDMsJHjZMF6uNqdCoyM+EnUfaPhSDNvX0
+         2DgQxv5bx7HWeSXfGEzXTJwTt/Ty+luFsZMnRNaerDdPLLTw5tC1d+QlmWK84qhNJEVR
+         6yMqVzMA23psiEvSwu7hICnZ6x97Bep9kP4Wdyxrv7NM2ifbkJzSMrHU6G4uCHbQhm1A
+         46Kg==
+X-Forwarded-Encrypted: i=1; AJvYcCWYa0xDULbkuCCTlchKXyXF7Irf/DGQM9MAgK125m5E7dZlxERDZNp1AdWDEP4psafNFpZxvn7u04CWIiArkLOSv58ybDD7M/0uBdCE
+X-Gm-Message-State: AOJu0YzNTkOiXuS8wpZLXLy9yvHuO7j58ZbQyNDwwOeV9qXQPwFKx4s0
+	ec1xARZ4LgphofOtvfdQZiTW+npPNGh4eOgLOvGQQzaDkM7ZV2V+mZ4weXFkrvA=
+X-Google-Smtp-Source: AGHT+IGpub5V1HnsVQQgPXpSo9KWHdiL1Hawoz3c1OyBqSL6oM9wSfME+uNBi7tvbERbi6DLKhPbXA==
+X-Received: by 2002:a05:6808:1708:b0:3d2:2d1d:3796 with SMTP id 5614622812f47-3d545964be8mr11659338b6e.18.1719414106811;
+        Wed, 26 Jun 2024 08:01:46 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d561e56766sm229248b6e.30.2024.06.26.08.01.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Jun 2024 08:01:46 -0700 (PDT)
+Message-ID: <f63da6b3-cfc3-4452-a638-126c53955c9c@baylibre.com>
+Date: Wed, 26 Jun 2024 10:01:45 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240626-qps615-v1-1-2ade7bd91e02@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/7] spi: bitbang: Implement support for MOSI idle
+ state configuration
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
+ lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ nuno.sa@analog.com, corbet@lwn.net, marcelo.schmitt1@gmail.com
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-spi@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1719351923.git.marcelo.schmitt@analog.com>
+ <7e2231edf30e1769f12273032c04b8a951e28837.1719351923.git.marcelo.schmitt@analog.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <7e2231edf30e1769f12273032c04b8a951e28837.1719351923.git.marcelo.schmitt@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 26, 2024 at 06:07:49PM GMT, Krishna chaitanya chundru wrote:
-> qps615 is a driver for Qualcomm PCIe switch driver which controls
-> power & configuration of the hardware.
-> Add a bindings document for the driver.
+On 6/25/24 4:53 PM, Marcelo Schmitt wrote:
+> Some SPI peripherals may require strict MOSI line state when the controller
+> is not clocking out data.
+> Implement support for MOSI idle state configuration (low or high) by
+> setting the data output line level on controller setup and after transfers.
+> Bitbang operations now call controller specific set_mosi_idle() call back
+> to set MOSI to its idle state.
+> The MOSI line is kept at its idle state if no tx buffer is provided.
 > 
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> Acked-by: Nuno Sa <nuno.sa@analog.com>
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
 > ---
->  .../devicetree/bindings/pci/qcom,qps615.yaml       | 73 ++++++++++++++++++++++
->  1 file changed, 73 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/qcom,qps615.yaml b/Documentation/devicetree/bindings/pci/qcom,qps615.yaml
-> new file mode 100644
-> index 000000000000..f090683f9e2f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/qcom,qps615.yaml
-> @@ -0,0 +1,73 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pci/qcom,pcie-qps615.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm QPS615 PCIe switch
-> +
-> +maintainers:
-> +  - Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> +
-> +description: |
-> +  Qualcomm QPS615 PCIe switch has one upstream and three downstream
-> +  ports. One of the downstream ports is used as endpoint device of
-> +  Ethernet MAC. Other two downstream ports are supposed to connect
-> +  to external device.
 
-Hopefully this isn't the only possible use of QPS615, so I'd suggest
-that you omit the rbg3gen2-specific integration details from this
-binding. In other words, describe the QPS615, not the QPS615 in rb3gen2.
+Reviewed-by: David Lechner <dlechner@baylibre.com>
 
-> +
-> +  The power controlled by the GPIO's, if we enable the GPIO's the
-> +  power to the switch will be on.
-> +
-> +  The QPS615 PCIe switch is configured through I2C interface before
-> +  PCIe link is established.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - pci1179,0623
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  vdd-supply:
-> +    description: |
-
-'|' means "preserve formatting", but there's nothing here to preserve,
-please drop it.
-
-> +      Phandle to the vdd input voltage which are fixed regulators which
-> +      in are mapped to the GPIO's.
-
-The binding for a regulator consumer should not document how the
-providing regulator is implemented. Only thing to describe here it which
-"supply pin" this refers to, which turns this into "vdd input" or "vdd
-pin supply" (if that's what the datasheet call this pin on the QPS615)
-and as such you can drop the description because the name of the
-property already states that.
-
-> +
-> +  switch-i2c-cntrl:
-
-I'd prefer you call it "i2c-adapter" or perhaps "i2c-bus", because it's
-not "the switch controller".
-
-> +    description: |
-> +      phandle to i2c controller which is used to configure the PCIe
-> +      switch.
-
-"Reference to the i2c adapter/bus used to configure the QPS615"
-
-But I wonder if this somehow should be described on the particular i2c
-bus and be referenced from here instead.
-
-It's not obvious how to describe these components that sits on two
-different busses - although I believe this binding refers to the
-"configuration interface" sitting on the i2c bus, abut it's described on
-the PCIe bus as it relates to power sequencing.
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - vdd-supply
-> +  - switch-i2c-cntrl
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    pcie {
-> +        #address-cells = <3>;
-> +        #size-cells = <2>;
-> +
-> +        pcie@0 {
-> +            device_type = "pci";
-> +            reg = <0x0 0x0 0x0 0x0 0x0>;
-> +            #address-cells = <3>;
-> +            #size-cells = <2>;
-> +            ranges;
-> +
-> +            bus-range = <0x01 0xff>;
-> +
-> +            qps615@0 {
-> +                compatible = "pci1179,0623";
-> +                reg = <0x10000 0x0 0x0 0x0 0x0>;
-> +
-> +                vdd-supply = <&vdd>;
-> +		switch-i2c-cntrl = <&foo>;
-
-Indentation looks off here.
-
-Regards,
-Bjorn
-
-> +            };
-> +        };
-> +    };
-> 
-> -- 
-> 2.42.0
-> 
 
