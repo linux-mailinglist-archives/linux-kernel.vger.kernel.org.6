@@ -1,349 +1,175 @@
-Return-Path: <linux-kernel+bounces-230933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D2C29183F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:25:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6842E9183F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:26:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE9721F243D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:25:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B439BB23284
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE3B1862B8;
-	Wed, 26 Jun 2024 14:24:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57B421850A6;
+	Wed, 26 Jun 2024 14:25:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AZsUVX8W"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="JNyAP8IJ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="H+gPqfNZ"
+Received: from wfhigh6-smtp.messagingengine.com (wfhigh6-smtp.messagingengine.com [64.147.123.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3297718629C;
-	Wed, 26 Jun 2024 14:24:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705AA45C07
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 14:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719411899; cv=none; b=BoN7n8V0+RLfPxSxweR4UkfYW+jNWbd9ni0Ds1i2J8lBHBk7U0VAXXpKpxQS8r7/T+KZ2XDKPBMAcBNalnKzMGOrq2WTPnFFGBmwSwOYEsCOOJVdBD/wdh9zMO+J9ANnsHscY03RelD4IxKNShOxOhteyD5qHtPAhQ3pm3+8ifg=
+	t=1719411951; cv=none; b=PyKCILCERVwsWI2XqXoov5L+99QlFCClwe7dR7YrTQj32OYgxYU7hVie44ri950zqYG44e/02pVe1FdlO+9x2m20oAaRlYFFbZmQTQ0CxjgXOgqCVayzS89/Z2FDoC8soZxrL9o+V768/3KffZ5jzjgC2rXdYmz6XxeIdp8AeBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719411899; c=relaxed/simple;
-	bh=LY3O0wyzOO4ZZUjTNY0ik3V8d3QYy42Ys12z6P4sDMo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tX19MQTdPfvAFQmU3zOAEYlY73hXTiVbiHaUghgXoZeR9djqbhf9frfSghYQZ1BnjtFlXqlqhEZGAqlQOMx0smLEnubKJLrjX9QqaibdrG5l59gb3miVnBaGv68yrNq+7IPAdfZN0+GtyeuPlr5o2+CLkuRBju0PuNMX8UCpAIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AZsUVX8W; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52cdfb69724so4865810e87.1;
-        Wed, 26 Jun 2024 07:24:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719411895; x=1720016695; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ljVB1XBgItVGRvkSmQ9UaPN/JmF21Go3KK/z7Y69xCA=;
-        b=AZsUVX8WgHeWhCJtwH3w+grBab3R9lPgqoPu180ShsIKnbrvCJLVYHs8vRcoFAoJY6
-         iE39w9Jl26C+mz8bjWoWUbxyZTa8r4Z3mCGOtj9MyJ+JDujvBjEIOCB8KPcLmh1rV90m
-         22PpHjMWuwbY4pqpObdZkrzoI1LESBPFUQr2C//O5D++s4/Z6+zNErAbLh0fLG419z8k
-         rEJI3uz+b0WVrKpJU5RVhxr/9tuwZ0PEWYejfE0Vuaz6KERTB1G/DeC3Z1/RLnM5Se+k
-         cNQb1KJj5XEIvfQYIGkBURSRBIv+/AZFBs4G6rI962p2bpoCsCPDzfcerlhwa3Pqzmq0
-         o8VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719411895; x=1720016695;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ljVB1XBgItVGRvkSmQ9UaPN/JmF21Go3KK/z7Y69xCA=;
-        b=KkeSpRiwVZGG2Dcma7ktp3M3u2/yx+saaa8YrEMtQvedvnBzD0XR2XLAXEnhV/WuLb
-         yAIlUxyCH34O/6GuvJXKKC34wGhkOJSTXGVKh03ozhg1llUXlQBwiVY+WyAL5w8vWE1Z
-         NUnhWB1s17OFftNhs6jHO0wXDRDcuZWkNoKR0QC33hL0eQXgktYRs/WiPQFUJNShvoKt
-         bFlILID75s3IUrHtxiCKrP6f8CzXs+BO5HZGAGwXCjMOK2IpE1HxpUZVR5RjwOJ4ot3H
-         YblFmw+lZKFFnAansHdaV9X9AKWetqs7JGBU3dSzv6MN+YgG0PMB3S0YNgOWdxQbobrb
-         EwlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVd3/akefzCgWhRmUANHLhrRb14bZ3DftCZGeeM+jl5u6iUozUY57rChgYntqhIm6ov4iSuzW+69LFMFzKdmrsYw1utXV+Rxgwhj8EQ+rWktbXzauo6fHZnZKYU8MCRp46NMGo/clq/xXXJ4k9vuQ1dPqy8ag3UkkZw785NE3NjshSgDd8jt0bFhwFT+l405vkynZGkKz763NgYlsELus0=
-X-Gm-Message-State: AOJu0YyVVPT2R657c1OAR7zlYyGLsoYrIukiW8+a2KGXxb6AVmosX1vP
-	PE3fRYp3+V9rd6txljozGjSZgV838TpN+oRENhLaq6JZiJqxVNaW/QAkISkT
-X-Google-Smtp-Source: AGHT+IHTAQcNp5YYs54BdIdaQJj4RqgXe5l9b6vOR/BXji2N9RKcowKQKcnJW/uHP6GOmlNCDpNkVg==
-X-Received: by 2002:ac2:598e:0:b0:52c:e159:a998 with SMTP id 2adb3069b0e04-52ce183b3c3mr5566341e87.29.1719411895014;
-        Wed, 26 Jun 2024 07:24:55 -0700 (PDT)
-Received: from localhost.localdomain ([195.239.203.83])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cda72b401sm1496705e87.136.2024.06.26.07.24.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 07:24:54 -0700 (PDT)
-From: Alex Vdovydchenko <keromvp@gmail.com>
-X-Google-Original-From: Alex Vdovydchenko <xzeol@yahoo.com>
-To: Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Delphine CC Chiu <Delphine_CC_Chiu@Wiwynn.com>
-Cc: Alex Vdovydchenko <xzeol@yahoo.com>,
-	linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-i2c@vger.kernel.org
-Subject: [PATCH 2/2] hwmon: add MP5920 driver
-Date: Wed, 26 Jun 2024 17:24:34 +0300
-Message-ID: <20240626142439.1407175-3-xzeol@yahoo.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240626142439.1407175-1-xzeol@yahoo.com>
-References: <20240626142439.1407175-1-xzeol@yahoo.com>
+	s=arc-20240116; t=1719411951; c=relaxed/simple;
+	bh=oSOXDQj45nSmvfW7XngrB/BJE/MrOtHFWIJ3F1tBBPI=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=As2SsELl3pPTTv27pQfO7gMUyNGqozyMReiIaAS6yPQB+FFbUmMO5nog2e6Id/4nq2gs6B2mUJ0SpDQpT8vVRasleHQJEe7dXY0CvC2hMQFnUxy9P1EtdmfMuCUrlgkiQ1Z2JWAdSQJ4FD7A8dFfnlWWhaNXAMgX5HSUsLthwy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=JNyAP8IJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=H+gPqfNZ; arc=none smtp.client-ip=64.147.123.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.west.internal (Postfix) with ESMTP id 35FFB18000AC;
+	Wed, 26 Jun 2024 10:25:48 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Wed, 26 Jun 2024 10:25:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1719411947; x=1719498347; bh=oSkUtGm1/7
+	apiNd36dGqMrJF/4sWZLpzUDaGM8MrITM=; b=JNyAP8IJXZ0FO/oGWwcE3OTqmX
+	yZPnpiRnYvupJBZS6Wtl216dp5wwsBB6J9SOcMcW7IiB3SeoiTCOx7mAyZIgr2x9
+	BR0SKBMYW+qXNKyMkkEa8eDMZ2axvuuS2JPbag/+sTv+sPFSTOz4dxTfS9pSUlva
+	H3lAvtbffz8ov1sqehFJ7uMKWM+JxkYlTRrHlujUu+vR310YTLJCNAafzI3OJSVr
+	tjrnPFsKK926b4xqGpUuULOYJm5vbH9CTglGq5tF2VN869u+z7FLpDQVVg8q7nXC
+	8nsO71aUmf/WexGuPgGHj8qsfQKJa3jHMa/AaUek9A/+pCam95H8MoHg7hYA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1719411947; x=1719498347; bh=oSkUtGm1/7apiNd36dGqMrJF/4sW
+	ZLpzUDaGM8MrITM=; b=H+gPqfNZPlU53o+ER9abzC32ux7ZvqXcdyVGWUEjmC55
+	BjQ2KqlwYuQY69Ngx7UdwUSnB8KEideGXj9e/obcCaWY9KKfli6/lFBftb/poNfT
+	VjsxthaAsyUf+HGgbDtNVzJrK7vmSFBGQQNoHRn2qX+AOpc6Zo2gPXX/ddLC/HfY
+	pDfw6p26fTKPKqF7ehXc6ByLp4l5a0F0LYrDtyKthWslrKnSxyYDQf0evqzHEeKQ
+	GiQRinZcesSwa1+poGXkWqeqGrgvf71wXfVQXDjsoxs/CDY3hB5fCXIjp+z6B5s5
+	MqrQi+2LofW6Y7/NUT0sCdLIwqy33LYqbMb7hkdBcg==
+X-ME-Sender: <xms:6iR8Zi3cDU_PmEJfOjSTC8EV56DFKcDAnGPe9yvGEKuqCLLGOpoF-A>
+    <xme:6iR8ZlFJKWTLA8hA4Y5YX3Us7x-z-ab56zQqb4qdamhNxyazakElDNa19co-lmBc8
+    4j3eOGjzcsXcecijfU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrtddvgdejjecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
+    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
+    hnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:6iR8Zq5Vf4mbIbZYcuMH_cvhwTAxH4VJLL4jKfSs-11Sp5VaqdjxlQ>
+    <xmx:6iR8Zj07fRdWESlFqSGPJdtW_PtMbOQw3S_MkE5daifip9j8u9-txA>
+    <xmx:6iR8ZlHLCkL2_VawczFLvr73wWy1yC_ixQ4CBOTkOm-2B5cg5OQVWQ>
+    <xmx:6iR8Zs_z1f6yNflmfzZ_9uP-L0vr-PqRAV8dQFOzAIt22jQzQ_7JHg>
+    <xmx:6yR8Zq6mDn6E2JExQpY8g0V-jQHMf2volYODna8PvFr39DnU0KgI4XMC>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 79E53B6008F; Wed, 26 Jun 2024 10:25:46 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-538-g1508afaa2-fm-20240616.001-g1508afaa
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-Id: <dcf9574a-0f1b-4131-befd-39f47d4f9002@app.fastmail.com>
+In-Reply-To: <ZnwTwnSsnZ8Td9GZ@xhacker>
+References: <20240625040500.1788-1-jszhang@kernel.org>
+ <20240625040500.1788-3-jszhang@kernel.org> <mvmikxvonjh.fsf@suse.de>
+ <ZnwTwnSsnZ8Td9GZ@xhacker>
+Date: Wed, 26 Jun 2024 16:25:26 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Jisheng Zhang" <jszhang@kernel.org>, "Andreas Schwab" <schwab@suse.de>
+Cc: "Paul Walmsley" <paul.walmsley@sifive.com>,
+ "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] riscv: uaccess: use input constraints for ptr of __put_user
+Content-Type: text/plain
 
-Add support for MPS Hot-Swap controller mp5920. This driver exposes
-telemetry and limits value readings and writtings.
+On Wed, Jun 26, 2024, at 15:12, Jisheng Zhang wrote:
+> On Wed, Jun 26, 2024 at 03:12:50PM +0200, Andreas Schwab wrote:
+>> On Jun 25 2024, Jisheng Zhang wrote:
+>> 
+>> > I believe the output constraints "=m" is not necessary, because
+>> > the instruction itself is "write", we don't need the compiler
+>> > to "write" for us.
+>> 
+>> No, this is backwards.  Being an output operand means that the *asm* is
+>> writing to it, and the compiler can read the value from there afterwards
+>> (and the previous value is dead before the asm).
+>
+> Hi Andreas,
+>
+> I compared tens of __put_user() caller's generated code between orig
+> version and patched version, they are the same. Sure maybe this is
+> not enough. 
+>
+> But your explanation can be applied to x86 and arm64 __put_user()
+> implementations, asm is also writing, then why there's no output
+> constraints there?(see the other two emails)? Could you please help
+> me to understand the tricky points?
 
-Signed-off-by: Alex Vdovydchenko <xzeol@yahoo.com>
----
- Documentation/hwmon/index.rst  |  1 +
- Documentation/hwmon/mp5920.rst | 91 +++++++++++++++++++++++++++++++++
- drivers/hwmon/pmbus/Kconfig    |  9 ++++
- drivers/hwmon/pmbus/Makefile   |  1 +
- drivers/hwmon/pmbus/mp5920.c   | 93 ++++++++++++++++++++++++++++++++++
- 5 files changed, 195 insertions(+)
- create mode 100644 Documentation/hwmon/mp5920.rst
- create mode 100644 drivers/hwmon/pmbus/mp5920.c
+I think part of the reason for the specific way the x86
+user access is written is to work around bugs in old
+compiler versions, as well as to take advantage of the
+complex addressing modes in x86 assembler, see this bit
+that dates back to the earliest version of the x86_64
+codebase and is still left in place:
 
-diff --git a/Documentation/hwmon/index.rst b/Documentation/hwmon/index.rst
-index e92a3d5c7..9eba7e402 100644
---- a/Documentation/hwmon/index.rst
-+++ b/Documentation/hwmon/index.rst
-@@ -168,6 +168,7 @@ Hardware Monitoring Kernel Drivers
-    mp2975
-    mp2993
-    mp5023
-+   mp5920
-    mp5990
-    mp9941
-    mpq8785
-diff --git a/Documentation/hwmon/mp5920.rst b/Documentation/hwmon/mp5920.rst
-new file mode 100644
---- /dev/null
-+++ b/Documentation/hwmon/mp5920.rst
-@@ -0,0 +1,91 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+Kernel driver mp5920
-+====================
-+
-+Supported chips:
-+
-+  * MPS MP5920
-+
-+    Prefix: 'mp5920'
-+
-+  * Datasheet
-+
-+    Publicly available at the MPS website : https://www.monolithicpower.com/en/mp5920.html
-+
-+Authors:
-+
-+	Tony Ao <tony_ao@wiwynn.com>
-+	Alex Vdovydchenko <xzeol@yahoo.com>
-+
-+Description
-+-----------
-+
-+This driver implements support for Monolithic Power Systems, Inc. (MPS)
-+MP5920 Hot-Swap Controller.
-+
-+Device compliant with:
-+
-+- PMBus rev 1.3 interface.
-+
-+Device supports direct and linear format for reading input voltage,
-+output voltage, output current, input power and temperature.
-+
-+The driver exports the following attributes via the 'sysfs' files
-+for input voltage:
-+
-+**in1_input**
-+
-+**in1_label**
-+
-+**in1_rated_max**
-+
-+**in1_rated_min**
-+
-+**in1_crit**
-+
-+**in1_alarm**
-+
-+The driver provides the following attributes for output voltage:
-+
-+**in2_input**
-+
-+**in2_label**
-+
-+**in2_rated_max**
-+
-+**in2_rated_min**
-+
-+**in2_alarm**
-+
-+The driver provides the following attributes for output current:
-+
-+**curr1_input**
-+
-+**curr1_label**
-+
-+**curr1_crit**
-+
-+**curr1_alarm**
-+
-+**curr1_rated_max**
-+
-+The driver provides the following attributes for input power:
-+
-+**power1_input**
-+
-+**power1_label**
-+
-+**power1_max**
-+
-+**power1_rated_max**
-+
-+The driver provides the following attributes for temperature:
-+
-+**temp1_input**
-+
-+**temp1_max**
-+
-+**temp1_crit**
-+
-+**temp1_alarm**
-diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
---- a/drivers/hwmon/pmbus/Kconfig
-+++ b/drivers/hwmon/pmbus/Kconfig
-@@ -371,6 +371,15 @@ config SENSORS_MP5023
- 	  This driver can also be built as a module. If so, the module will
- 	  be called mp5023.
- 
-+config SENSORS_MP5920
-+	tristate "MPS MP5920"
-+	help
-+	  If you say yes here you get hardware monitoring support for Monolithic
-+	  MP5920.
-+
-+	  This driver can also be built as a module. If so, the module will
-+	  be called mp5920.
-+
- config SENSORS_MP5990
- 	tristate "MPS MP5990"
- 	help
-diff --git a/drivers/hwmon/pmbus/Makefile b/drivers/hwmon/pmbus/Makefile
---- a/drivers/hwmon/pmbus/Makefile
-+++ b/drivers/hwmon/pmbus/Makefile
-@@ -39,6 +39,7 @@ obj-$(CONFIG_SENSORS_MP2888)	+= mp2888.o
- obj-$(CONFIG_SENSORS_MP2975)	+= mp2975.o
- obj-$(CONFIG_SENSORS_MP2993)	+= mp2993.o
- obj-$(CONFIG_SENSORS_MP5023)	+= mp5023.o
-+obj-$(CONFIG_SENSORS_MP5920)	+= mp5920.o
- obj-$(CONFIG_SENSORS_MP5990)	+= mp5990.o
- obj-$(CONFIG_SENSORS_MP9941)	+= mp9941.o
- obj-$(CONFIG_SENSORS_MPQ7932)	+= mpq7932.o
-diff --git a/drivers/hwmon/pmbus/mp5920.c b/drivers/hwmon/pmbus/mp5920.c
-new file mode 100644
---- /dev/null
-+++ b/drivers/hwmon/pmbus/mp5920.c
-@@ -0,0 +1,95 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Hardware monitoring driver for MP5920 and compatible chips.
-+ *
-+ * Copyright (c) 2019 Facebook Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-+ * GNU General Public License for more details.
-+ */
-+#include <linux/err.h>
-+#include <linux/i2c.h>
-+#include <linux/init.h>
-+#include <linux/jiffies.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include "pmbus.h"
-+
-+static struct pmbus_driver_info mp5920_info = {
-+	pages = 1,
-+	format[PSC_VOLTAGE_IN] = direct,
-+	format[PSC_VOLTAGE_OUT] = direct,
-+	format[PSC_CURRENT_OUT] = direct,
-+	format[PSC_POWER] = direct,
-+	format[PSC_TEMPERATURE] = direct,
-+	m[PSC_VOLTAGE_IN] = 2266,
-+	b[PSC_VOLTAGE_IN] = 0,
-+	R[PSC_VOLTAGE_IN] = -1,
-+	m[PSC_VOLTAGE_OUT] = 2266,
-+	b[PSC_VOLTAGE_OUT] = 0,
-+	R[PSC_VOLTAGE_OUT] = -1,
-+	m[PSC_CURRENT_OUT] = 546,
-+	b[PSC_CURRENT_OUT] = 0,
-+	R[PSC_CURRENT_OUT] = -2,
-+	m[PSC_POWER] = 5840,
-+	b[PSC_POWER] = 0,
-+	R[PSC_POWER] = -3,
-+	m[PSC_TEMPERATURE] = 1067,
-+	b[PSC_TEMPERATURE] = 20500,
-+	R[PSC_TEMPERATURE] = -2,
-+	func[0] = PMBUS_HAVE_VIN  | PMBUS_HAVE_VOUT |
-+		PMBUS_HAVE_IOUT | PMBUS_HAVE_POUT |
-+		PMBUS_HAVE_TEMP,
-+};
-+
-+static int mp5920_probe(struct i2c_client *client)
-+{
-+	struct device *dev =  &client->dev;
-+	int chip_id;
-+
-+	if (!i2c_check_functionality(client->adapter,
-+				     I2C_FUNC_SMBUS_READ_WORD_DATA))
-+		return -ENODEV;
-+
-+	chip_id = i2c_smbus_read_word_data(client, PMBUS_MFR_ID);
-+	if (chip_id < 0) {
-+		dev_err(dev, "Failed to read MFR ID");
-+		return chip_id;
-+	}
-+
-+	return pmbus_do_probe(client, &mp5920_info);
-+}
-+
-+static const struct of_device_id mp5920_of_match[] = {
-+	{ .compatible = "mps,mp5920" },
-+	{}
-+};
-+
-+static const struct i2c_device_id mp5920_id[] = {
-+	{"mp5920", 0},
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, mp5920_id);
-+
-+static struct i2c_driver mp5920_driver = {
-+	.driver = {
-+		.name = "mp5920",
-+		.of_match_table = mp5920_of_match,
-+	},
-+	.probe = mp5920_probe,
-+	.id_table = mp5920_id,
-+};
-+module_i2c_driver(mp5920_driver);
-+
-+MODULE_AUTHOR("Tony Ao <tony_ao@wiwynn.com>");
-+MODULE_AUTHOR("Alex Vdovydchenko <xzeol@yahoo.com>");
-+MODULE_DESCRIPTION("PMBus driver for MP5920 HSC");
-+MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(PMBUS);
--- 
-2.43.0
+/* FIXME: this hack is definitely wrong -AK */
+struct __large_struct { unsigned long buf[100]; };
+#define __m(x) (*(struct __large_struct __user *)(x))
 
+Using the memory input constraint means that x86 can use
+a load from a pointer plus offset, but riscv doesn't
+actually do this. The __large_struct I think was needed
+either to prevent the compiler from reading the data
+outside of the assembly, or to tell the compiler about
+the fact that there is an actual memory access if
+__put_user() was pointed at kernel memory.
+
+If you just copy from the arm64 version that uses an
+"r"(address) constraint instead of the "m"(*address)
+version, it should be fine for any user space access.
+
+The output constraint is technically still be needed
+if we have code like this one where we actually write to
+something in kernel space:
+
+int f(void)
+{
+     int a = 1;
+     int b = 2;
+     __put_kernel_nofault(&a, &b, int, error);
+     return a;
+error:
+     return -EFAULT;
+}
+
+In this case, __put_kernel_nofault() writes the value
+of b into a, but the compiler can safely assume that
+a is not changed by the assembly because there is no
+memory output, and would likely just return a constant '1'. 
+
+For put_user(), this cannot happen because the compiler
+doesn't know anything about the contents of the __user
+pointer. For __put_kernel_nofault(), we rely on the
+callers never using it on pointers they access, which
+is probably a reasonable assumption, but not entirely
+correct.
+
+     Arnd
 
