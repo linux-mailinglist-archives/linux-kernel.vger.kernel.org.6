@@ -1,469 +1,409 @@
-Return-Path: <linux-kernel+bounces-231184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2BBC918746
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:25:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45F3A918771
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:32:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 636D7B24CE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:23:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6068B2559A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BB8F1849EF;
-	Wed, 26 Jun 2024 16:23:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F06418F2C8;
+	Wed, 26 Jun 2024 16:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="TshAX6CC"
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2078.outbound.protection.outlook.com [40.107.241.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DjUTPaiz"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3FD18EFCA;
-	Wed, 26 Jun 2024 16:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.78
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719419015; cv=fail; b=LwxUHD8m/dUCnG7FUmqH6L5fC8pj7qTZIS/vjh5q9acxvr/tBQPlj8AjehfhwzWSsOE9ukuj7wojyziIwIUkxrfpKzLlVKrpNmpoKyVvPfrK/iCnz5kUgr+yUvy8Wl6IgBab0vmorCqgYA3d68gwAgPqRElR8d/nWEv7SQPN4W8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719419015; c=relaxed/simple;
-	bh=HnUmKtm8IYuAlz2NKhIF9N7D9pHIOVQcjj8WGLhCa1I=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=YvvMb2x6RvvDprVOwygqkgjHfOlg03ee0t4FRLvL1YHWemR08CItkZi3vbdrZmTUL1SShKBgqnYNCf8XdlIF3ijxj1+XydjIWgu/obX9K4J48Msqa9OA4QlhCMGcY3OkJV5S+1eMsWQh/9fpmvISsBPBHve2xLucRb7PnlWTjeg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=TshAX6CC; arc=fail smtp.client-ip=40.107.241.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KHDEj/Vz2bAmTT5dPtSJNcg6Ha+fh5Z5WOmeKLRJZFYb1pPI3Whv3C6mfBylVv3mWwqbx3TvQgMnZd/PnblaxuOuaiDeYzC5adWGh+U7Rb3lg1y9byB1mK4NkxmFhl9sET3ruKy3ZWAQ7VROQRu81H1xtkKbzq5TuJaPVC0HU226lyJuGA1TqUIOTU52gyUCqAH9/ZHODEpH87sh5jkolWZS8fSjKpoWGY9IPMFaMqIOBti4suFJ1CIsif+uIgsJNYTryjBFmP8s+gJjnJvalKV+4DCx0JPQWjXw3myB9RY7FnPeTOPF/CAvq7F0gSnILYPx4a09moWpmz9v976K4g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MXJ/Lew46VwXSUqdTwDtk/jxfV+likybFQmXm3AIvN0=;
- b=asdtEHJ0jm1352M4bEekjwxkjUTXj3z7nGh/ErauCK2XfB+VWR5mPvaLKCIshCm9nUQSCzZGzs1JUhsXBZH5qWlPLwRpWD4CUNJGgoGjjr0m223IUGqqOBioCv2jWbckTo12m5ziY8vxU1j2fq8eSiQRJnbdSE62BLZwMKPfReTKDYQp5gQXPHvvC8mx6SJA7LCLQKQPHanmt4RhQFDHbZkJ2VNZokktYa/eFHUDJmtqEJXGOUf0WnIGIfqwC/jxKRmtPJQvA2PHdhLjQEZ86c9lT+/IBlzxUX2g2WjE/48RT5W+EPvbEghrtH7Gp6gCtsydl228CtUd5XCH8/GJVw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MXJ/Lew46VwXSUqdTwDtk/jxfV+likybFQmXm3AIvN0=;
- b=TshAX6CCNLhs4RlBcDhru3FZ5NeP4m7vUpiNvo9F/U1ZGXIxi8fxszftVVDR8yajfW8jL7zlBGW5t0qWQ+3ExjIdK+kVBo75UO2FSmd/VHBcTnS08582XvG8h1FHPuEjlUC2GLV+8Hj72nDH6ngvKJa8NbqldDZCgNBHlcRT5lQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PA4PR04MB8063.eurprd04.prod.outlook.com (2603:10a6:102:ba::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.32; Wed, 26 Jun
- 2024 16:23:24 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7698.025; Wed, 26 Jun 2024
- 16:23:24 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: krzk@kernel.org
-Cc: Frank.Li@nxp.com,
-	conor+dt@kernel.org,
-	davem@davemloft.net,
-	devicetree@vger.kernel.org,
-	edumazet@google.com,
-	imx@lists.linux.dev,
-	krzk+dt@kernel.org,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	robh@kernel.org
-Subject: [PATCH v2 1/1] dt-bindings: net: convert enetc to yaml
-Date: Wed, 26 Jun 2024 12:23:07 -0400
-Message-Id: <20240626162307.1748759-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BY3PR05CA0053.namprd05.prod.outlook.com
- (2603:10b6:a03:39b::28) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E23D18E748;
+	Wed, 26 Jun 2024 16:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719419117; cv=none; b=R7izLH5KnBq7WUkISwpxboDGogKX7OOGOT870QJvmfLQ5NwrbO8HuoGYhAoIbBKwmwyplovgwnC3+HHA1GLgHzrw2NJte9IVqxDhaHlX65KKMagmycRgDi9BsZ5Fncm4ZcfqR8uq/ICOtb0Ku1oVLfYQEVMxS+sEelzmKF0kcW8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719419117; c=relaxed/simple;
+	bh=ggR9OUkv6n9Uao5V1JPt4joQ1Y/bFJzJndk4jmqEBM8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O+xJ9bKAehiYqqcK7nufqwEVYPi/3NVTpgQ6bSONVWsb6YBEHekJL6nxNUAlad6UmfsLsPG7lIh04Jqvacuhet7roaIfLrVgdcZRj2/QlvK0ReCxtAL59cuTNDwaOWRZxdPb6QQWnt0rHAEa7Qp6Fp7sbiUAYDdb88eAF/GgUmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DjUTPaiz; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f480624d0fso55123935ad.1;
+        Wed, 26 Jun 2024 09:25:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719419114; x=1720023914; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=xKaHSHDAstECmX9YsonrrOznKMZQa6FFUjDl2vRb8lY=;
+        b=DjUTPaiz7CTO1l+5JrBlnFDy34Pt92Dmgf1rQZK9zCYr7JkamFvlal5o0nYHL6T4xw
+         DO3rJ+YtyNGvij0PCVPRKvoxyfEwmJTiu5QfoecNK1j7hn367xZ9ACn/NMF1/6mQckLA
+         x/cgzjGb9+KFXLKBIksZDXzBu66kpP/NoT7nJc96I4imfVMNaxIDQoHYgOfPMJT8o/fe
+         jd1ZoWiqK0T69oGmybztu7hnUyq8JDBytOVPK+KWzl3CeIt/rgAiVL4mhqYkLO1835HS
+         FKzusLoapdhQQ6GgtG59VsuZO9EmC78ljXdxIROtqF9oC6j8RgJaQc/OA1myeiqiqxHw
+         6NDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719419114; x=1720023914;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xKaHSHDAstECmX9YsonrrOznKMZQa6FFUjDl2vRb8lY=;
+        b=rGCQ6cYTke0GoEii6JIM78JKa2k2x/FaCr7i4FC0D+emooIf6aUszNgg+fsIf1lKM9
+         ZTyxZNXLVRW8y8JSkPMNgevu4HE6XwNDWhq5Z/LVkOzRXY3qFqEKgWeQ1f2eGxWKJaZg
+         cyU9ZkbZ/INdpqJO8rNF/eD/nbEPcsXk/hBfK+mphhOTiQkkM6Cd7uyGA/HKEqq2ZTze
+         dCR0W0q4NApHLVej52wXm1f81/JCRuQAXmBv+qcPaXH7ENAy/fogVE1kKzyucEGIVhdx
+         Zoabeqjtx5oD0ruKVkCCcRvX5S6guqQkGt/ddVBRtQ13EI6GdyxdhQNQ8xuKqM4Cf8dN
+         OBCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbqbJKcaKH5WMtc/XtbyQhGZAZRHQ4B1qVS/XPBlY7X7UQFEGae8fPDeUEk/iplC2z7Sqirse33zsG7V4uXHDqlUuqikgS2H5cNfQ9jmDjVbSEtiQLXzsfNVVIcFS7pqCcU2erLJ2gOKHbePp17rKlkn1Gwci45VVrWlJErzvDNTWVJiRU1gVP5XVtRTCL0Q9ga2y/Dy7+5Z3ryM2bDoI=
+X-Gm-Message-State: AOJu0YyCWxDqxbkK54yPJ1eQa1H77+vJb+Y7wbQs0yRRTbV/9qR+V8Ij
+	HWR2UL2ypqGuT6+rPyld5hAoIEnjWVyD4glL9mfeeQI7cC3mxu/e
+X-Google-Smtp-Source: AGHT+IE4F1gTMJ87/HyLHM0OKKoQSygLkRslMekBU/I70HJ61Ovis6kXvkAxp5EKTn2Giy7ovgH1aQ==
+X-Received: by 2002:a17:902:f54c:b0:1f6:225e:67a1 with SMTP id d9443c01a7336-1fa2413cddemr129709585ad.56.1719419114302;
+        Wed, 26 Jun 2024 09:25:14 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb32b9edsm101435165ad.118.2024.06.26.09.25.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Jun 2024 09:25:13 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <05b7ac27-2faf-4038-9d96-ec82dbdd8c94@roeck-us.net>
+Date: Wed, 26 Jun 2024 09:25:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PA4PR04MB8063:EE_
-X-MS-Office365-Filtering-Correlation-Id: 44e547bb-1715-4717-78ad-08dc95fc4d49
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230038|376012|52116012|7416012|366014|1800799022|38350700012;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?OZ+nPs01WJxympdNvrkSe+Qsje0yy4lMntN8LfzZECmqvO46KssgNbARVnL7?=
- =?us-ascii?Q?k61W8oq6ZGcWiP1dQPAJ0hIpLj55biZqhRg4/ZMJDnX55pdmcRBHx0TubTQ5?=
- =?us-ascii?Q?yoHyelWFZpVxqe9gu5YxaAego2HQ8vWHVOlUki7f3HocCEoInYu5gsQ2S0ev?=
- =?us-ascii?Q?RcN0xdKgWy+ER/cSKieoUrr4pmJRGZ3W1U4J3w7bA8YGMT2ctX/n/vD7rkxw?=
- =?us-ascii?Q?KVvD9t6W7JPvddnK+y7etAu+stCX/23GcUXYuN5iBIgZkwaMqSUrT0aQCoJc?=
- =?us-ascii?Q?h3/3N+nT6tGiokKEMcCw96ZlmkotxiHaBv0dEHqZPXg2ElQhMdRbA60j2JrA?=
- =?us-ascii?Q?T48OX0+vrf1ZIC4DTyHiyho/ok8H0DLEvjAYWtsdJSfeHxWH6P6czVSlXYkQ?=
- =?us-ascii?Q?nGmL1nOldiBZm1Vqby1Lidu3+bk59Ljigg4DUk0X5rGL+kQxGqmdxZI42UJp?=
- =?us-ascii?Q?zR+4HYun56fW0l6FcgxKFWp5odVMbcweJnkqVQebwl9Q0k+k7gxpjHbMm30a?=
- =?us-ascii?Q?XG1l7jkdhgPW+YwQaikzahbCdOO9jEthhTY6VTX/YTSsfHhkDVYJyZ//+eVu?=
- =?us-ascii?Q?JWjm5GBHT5egTWQ/XwGmqg6QW/xe+mL4FBu436G0FVP0/0zQxL9VjWZE/9nS?=
- =?us-ascii?Q?2KsG3Vhqp3CEJOJreUBNs2CVYi43KriTjhUY0kjJ00AKZAoHetG4oV2C/34G?=
- =?us-ascii?Q?zNbQF31qJq8YQIusmZZJYPs/IH+F2REKSkb36HrI4RNpnm75QUPDHFaO/dqR?=
- =?us-ascii?Q?BXF2S2tG/1HBq3CwhviL4fNYXhMrcbU8Qh6JE1xGpZaV2F8LzzxjZwT8/DpO?=
- =?us-ascii?Q?0Sdkev3FdxoR0jdJhtwESvzQIZafqgU2481Qmwe64od8rS8AsBheUJ/6hDLn?=
- =?us-ascii?Q?IvEFJsJ6ktr4fMTXGU8Rl7eAiVSkidMdUeLKocp032zqaBgcr18IJkRKvl9P?=
- =?us-ascii?Q?sI7X9c+x8uogOTSGYWQjmXDiaG/l1F4rSt1YWnh8O5O8LQX0fWDjVYmeVtLi?=
- =?us-ascii?Q?jOqDLIeZJhmK9pbQZnQnQjwiB79mXta3gPf0eL/PzvLdIk8VHL3Y1fyTR1Pw?=
- =?us-ascii?Q?0kLQCkvBm1Z6jhiSBDhvOKapDGxkdHm1ge7WntMPbSGpQwffuC/6eUEW63A0?=
- =?us-ascii?Q?RrQXZXBtWNikigA3FBeOOWnZk9T7Le1cGkpRECs/Fu0X3LYeA2Eo+bgFpRiE?=
- =?us-ascii?Q?4F01bzd83QH4++/409Z/lHZu9SEs9Nn4+GhzU40TzG48GccwDDrUHtq4UUR8?=
- =?us-ascii?Q?hdQh9EyJ4uRvP+XRxaoZs2/HvEWUsFTow/6cZqI8QdNzLjqlIv5q8kdMkB/1?=
- =?us-ascii?Q?uFaF31jIDzE5D3VTu0OmJ/+cHZLOt8O3qgPvz7mKlw+Mjba/DmFDtj+eZIXU?=
- =?us-ascii?Q?JuI2GBk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230038)(376012)(52116012)(7416012)(366014)(1800799022)(38350700012);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?zGVJ+xo0VWZ889OYfcsmaJLfpsLFbG+xxrLr0zBtrWElicYSlFNSvUKbPXOq?=
- =?us-ascii?Q?DWeMzatcx6YYDX0L0tFd8XwCGFNdUNz0/MBlwqR8EBe+CYR5qtzpZdn8xMmz?=
- =?us-ascii?Q?Udy3ACM0UUW+qrQqh/CA3sDk/Z+8vJKhMRSKRPkyQekamLle1SxMETBHYPK6?=
- =?us-ascii?Q?EFjusaiXilvj7EqIxWGWyGW2PMI59YmGmD056GUITRoKWHRwZj8CkrWXnmj2?=
- =?us-ascii?Q?SwctR5KJJ+L0LNvYYm2MuS8RmmvyXntDNuOh26YZGvC8IuRWSg6S1qmHwbkl?=
- =?us-ascii?Q?EojBUyypBlaLCY8CZ5T8i7vLCOAGxJnXq7qDwBIEoMcoUtU7U/ONSHdqt4dI?=
- =?us-ascii?Q?buyySl4PFNOTt0A84qy+9McRiRwD4P9fDnIsza0ycfzGgayp1fz0orStgJjv?=
- =?us-ascii?Q?OgR6KzbeJQNkdXN566jJNKs1UYIpdnbAYH2/MjTUE93xJF1kfqOHT5ki5Aac?=
- =?us-ascii?Q?dPQmAWdtLmZw+MuvUI79FMWwUUb5T2A+sky+NazT46KIBXJky1tYy2YMEmww?=
- =?us-ascii?Q?W2ngNhL+sVCqESsWWbEKsuDSc654u45Ps0tXHbJ+LaM67fmhgoqvnC1WLVOK?=
- =?us-ascii?Q?rfKRf7CuyXQ5zO+5Ks680zX9wet2bwO8Laf2ecVPj1Vky8ZBhbXRiWigxUPy?=
- =?us-ascii?Q?Jh3qeY4w3cJSfhXnL3XtvksxnSO3kJ68i9I4PnJQW38WZOs29PMLnI9zwvxW?=
- =?us-ascii?Q?ut0rM8SJCHR+DhxVKNd123KYu09Y3cQLsESN0P34UTXLRtRKBwFR5kSOFQpC?=
- =?us-ascii?Q?BqbDiWKSf2PGSy8rkZuGinw+jxrvbmM3vQosCFlGBinkOuMrMKxbbMOVTmVN?=
- =?us-ascii?Q?Rm3IPdQpDHSsBrgZoNJwrvmpfIfLYpDewyaEMf4lc2Ve8z7AWWlfrbbXaiqf?=
- =?us-ascii?Q?CARAGECZaneFbFonHAQj5XsyIK4lXrDP2dkLVSXSIcn6nC8pAQ4X0TGJ5NWv?=
- =?us-ascii?Q?dmQMKmXqLoC/+flTdivmyWr9amxCCuabcSp9/u6+mB0dZC/0JAtwynYA6viJ?=
- =?us-ascii?Q?8PTtq9PT472ANLWJQB+9qdK++XhJxLOGaHECP7YlTgFdW4yjwp6rI8x6U6LC?=
- =?us-ascii?Q?oUZui4W1/Pn1lpkBKYiHSatdKx1/U+5y4bxXd7O7L+YH5DrNzNrFl+AmabqX?=
- =?us-ascii?Q?wPc0IKUUsY+L3hmjDPb5S1CvI/hTlhJa34PeBb+rLV+V2cnhGYpSvv+FAN/Y?=
- =?us-ascii?Q?cC2fta+rjN3AHfSZ02enYbW3HiK4sFq5ORjAEV/5Wif4Be+EUC+6pXWDpZe7?=
- =?us-ascii?Q?R4DsFcQ6X0CdQoagxNh2Kme9TBCQcFzrjuTcJ5nE8K7713PrN12I/wosEsck?=
- =?us-ascii?Q?Zni1MS0f3s1jccbAP6V0k8PW6modWBT6jEqpc4UOFq+t6nKghdi2wmXg1mkA?=
- =?us-ascii?Q?1iK65dQfYEpTsqksR7+9bIoeLpZbDHgDOEt87LyVY6Br4Tq17x/HYoyxB98A?=
- =?us-ascii?Q?hb8WdCDkTl5FJtdOKzzGaRE51qup30JjPpKE/eqZSqBDgZFlMAk644jWPC6C?=
- =?us-ascii?Q?WMh6ti0YyHhbBvZSMPfIgN1AVxcJsHo/YY0328rtZR0ur80K3fi+3OIybgMb?=
- =?us-ascii?Q?sZRLI+igQYva2QlQRlq4BOGyXqv1pzXtG5mpO+qX?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 44e547bb-1715-4717-78ad-08dc95fc4d49
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 16:23:24.3197
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rtgDAD+4WKPk0PrZV2ooJO0bHnBMa46HVK0ahaFAPE8LSJe3BgMVMk4IgT36AHKbusaGupz+cXQdkIU5N8Zg/w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB8063
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] hwmon: add MP5920 driver
+To: Alex Vdovydchenko <keromvp@gmail.com>, Jean Delvare <jdelvare@suse.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Delphine CC Chiu <Delphine_CC_Chiu@Wiwynn.com>
+Cc: Alex Vdovydchenko <xzeol@yahoo.com>, linux-hwmon@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-i2c@vger.kernel.org
+References: <20240626142439.1407175-1-xzeol@yahoo.com>
+ <20240626142439.1407175-3-xzeol@yahoo.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20240626142439.1407175-3-xzeol@yahoo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Convert enetc device binding file to yaml. Split to 3 yaml files,
-'fsl,enetc.yaml', 'fsl,enetc-mdio.yaml', 'fsl,enetc-ierb.yaml'.
+On 6/26/24 07:24, Alex Vdovydchenko wrote:
+> Add support for MPS Hot-Swap controller mp5920. This driver exposes
+> telemetry and limits value readings and writtings.
 
-Additional Changes:
-- Add pci<vendor id>,<production id> in compatible string.
-- Ref to common ethernet-controller.yaml and mdio.yaml.
-- Remove fixed-link part.
+limit
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
-Change from v1 to v2
-- renamee file as fsl,enetc-mdio.yaml, fsl,enetc-ierb.yaml, fsl,enetc.yaml
-- example include pcie node
----
- .../bindings/net/fsl,enetc-ierb.yaml          |  35 ++++++
- .../bindings/net/fsl,enetc-mdio.yaml          |  53 ++++++++
- .../devicetree/bindings/net/fsl,enetc.yaml    |  50 ++++++++
- .../devicetree/bindings/net/fsl-enetc.txt     | 119 ------------------
- 4 files changed, 138 insertions(+), 119 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/net/fsl,enetc-ierb.yaml
- create mode 100644 Documentation/devicetree/bindings/net/fsl,enetc-mdio.yaml
- create mode 100644 Documentation/devicetree/bindings/net/fsl,enetc.yaml
- delete mode 100644 Documentation/devicetree/bindings/net/fsl-enetc.txt
+writings
 
-diff --git a/Documentation/devicetree/bindings/net/fsl,enetc-ierb.yaml b/Documentation/devicetree/bindings/net/fsl,enetc-ierb.yaml
-new file mode 100644
-index 0000000000000..ce88d7ce07a5e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/fsl,enetc-ierb.yaml
-@@ -0,0 +1,35 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/fsl,enetc-ierb.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Integrated Endpoint Register Block
-+
-+description:
-+  The fsl_enetc driver can probe on the Integrated Endpoint Register
-+  Block, which preconfigures the FIFO limits for the ENETC ports.
-+
-+maintainers:
-+  - Frank Li <Frank.Li@nxp.com>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - fsl,ls1028a-enetc-ierb
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    ierb@1f0800000 {
-+        compatible = "fsl,ls1028a-enetc-ierb";
-+        reg = <0xf0800000 0x10000>;
-+    };
-diff --git a/Documentation/devicetree/bindings/net/fsl,enetc-mdio.yaml b/Documentation/devicetree/bindings/net/fsl,enetc-mdio.yaml
-new file mode 100644
-index 0000000000000..60740ea56cb08
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/fsl,enetc-mdio.yaml
-@@ -0,0 +1,53 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/fsl,enetc-mdio.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: ENETC the central MDIO PCIe endpoint device
-+
-+description:
-+  In this case, the mdio node should be defined as another PCIe
-+  endpoint node, at the same level with the ENETC port nodes
-+
-+maintainers:
-+  - Frank Li <Frank.Li@nxp.com>.
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - pci1957,ee01
-+      - const: fsl,enetc-mdio
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+
-+allOf:
-+  - $ref: mdio.yaml
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    pcie@1f0000000 {
-+        compatible = "pci-host-ecam-generic";
-+        reg = <0x01 0xf0000000 0x0 0x100000>;
-+        #address-cells = <3>;
-+        #size-cells = <2>;
-+
-+        mdio@0,3 {
-+            compatible = "pci1957,ee01", "fsl,enetc-mdio";
-+            reg = <0x000300 0 0 0 0>;
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+
-+            ethernet-phy@2 {
-+                reg = <0x2>;
-+            };
-+        };
-+    };
-diff --git a/Documentation/devicetree/bindings/net/fsl,enetc.yaml b/Documentation/devicetree/bindings/net/fsl,enetc.yaml
-new file mode 100644
-index 0000000000000..843c27e357f2d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/fsl,enetc.yaml
-@@ -0,0 +1,50 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/fsl,enetc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: ENETC ethernet
-+
-+description:
-+  Depending on board design and ENETC port type (internal or
-+  external) there are two supported link modes specified by
-+  below device tree bindings.
-+
-+maintainers:
-+  - Frank Li <Frank.Li@nxp.com>
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - pci1957,e100
-+      - const: fsl,enetc
-+
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+
-+allOf:
-+  - $ref: ethernet-controller.yaml
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    pcie@1f0000000 {
-+        compatible = "pci-host-ecam-generic";
-+        reg = <0x01 0xf0000000 0x0 0x100000>;
-+        #address-cells = <3>;
-+        #size-cells = <2>;
-+
-+        ethernet@0,0 {
-+            compatible = "pci1957,e100", "fsl,enetc";
-+            reg = <0x000000 0 0 0 0>;
-+            phy-handle = <&sgmii_phy0>;
-+            phy-connection-type = "sgmii";
-+        };
-+    };
-diff --git a/Documentation/devicetree/bindings/net/fsl-enetc.txt b/Documentation/devicetree/bindings/net/fsl-enetc.txt
-deleted file mode 100644
-index 9b9a3f197e2d3..0000000000000
---- a/Documentation/devicetree/bindings/net/fsl-enetc.txt
-+++ /dev/null
-@@ -1,119 +0,0 @@
--* ENETC ethernet device tree bindings
--
--Depending on board design and ENETC port type (internal or
--external) there are two supported link modes specified by
--below device tree bindings.
--
--Required properties:
--
--- reg		: Specifies PCIe Device Number and Function
--		  Number of the ENETC endpoint device, according
--		  to parent node bindings.
--- compatible	: Should be "fsl,enetc".
--
--1. The ENETC external port is connected to a MDIO configurable phy
--
--1.1. Using the local ENETC Port MDIO interface
--
--In this case, the ENETC node should include a "mdio" sub-node
--that in turn should contain the "ethernet-phy" node describing the
--external phy.  Below properties are required, their bindings
--already defined in Documentation/devicetree/bindings/net/ethernet.txt or
--Documentation/devicetree/bindings/net/phy.txt.
--
--Required:
--
--- phy-handle		: Phandle to a PHY on the MDIO bus.
--			  Defined in ethernet.txt.
--
--- phy-connection-type	: Defined in ethernet.txt.
--
--- mdio			: "mdio" node, defined in mdio.txt.
--
--- ethernet-phy		: "ethernet-phy" node, defined in phy.txt.
--
--Example:
--
--	ethernet@0,0 {
--		compatible = "fsl,enetc";
--		reg = <0x000000 0 0 0 0>;
--		phy-handle = <&sgmii_phy0>;
--		phy-connection-type = "sgmii";
--
--		mdio {
--			#address-cells = <1>;
--			#size-cells = <0>;
--			sgmii_phy0: ethernet-phy@2 {
--				reg = <0x2>;
--			};
--		};
--	};
--
--1.2. Using the central MDIO PCIe endpoint device
--
--In this case, the mdio node should be defined as another PCIe
--endpoint node, at the same level with the ENETC port nodes.
--
--Required properties:
--
--- reg		: Specifies PCIe Device Number and Function
--		  Number of the ENETC endpoint device, according
--		  to parent node bindings.
--- compatible	: Should be "fsl,enetc-mdio".
--
--The remaining required mdio bus properties are standard, their bindings
--already defined in Documentation/devicetree/bindings/net/mdio.txt.
--
--Example:
--
--	ethernet@0,0 {
--		compatible = "fsl,enetc";
--		reg = <0x000000 0 0 0 0>;
--		phy-handle = <&sgmii_phy0>;
--		phy-connection-type = "sgmii";
--	};
--
--	mdio@0,3 {
--		compatible = "fsl,enetc-mdio";
--		reg = <0x000300 0 0 0 0>;
--		#address-cells = <1>;
--		#size-cells = <0>;
--		sgmii_phy0: ethernet-phy@2 {
--			reg = <0x2>;
--		};
--	};
--
--2. The ENETC port is an internal port or has a fixed-link external
--connection
--
--In this case, the ENETC port node defines a fixed link connection,
--as specified by Documentation/devicetree/bindings/net/fixed-link.txt.
--
--Required:
--
--- fixed-link	: "fixed-link" node, defined in "fixed-link.txt".
--
--Example:
--	ethernet@0,2 {
--		compatible = "fsl,enetc";
--		reg = <0x000200 0 0 0 0>;
--		fixed-link {
--			speed = <1000>;
--			full-duplex;
--		};
--	};
--
--* Integrated Endpoint Register Block bindings
--
--Optionally, the fsl_enetc driver can probe on the Integrated Endpoint Register
--Block, which preconfigures the FIFO limits for the ENETC ports. This is a node
--with the following properties:
--
--- reg		: Specifies the address in the SoC memory space.
--- compatible	: Must be "fsl,ls1028a-enetc-ierb".
--
--Example:
--	ierb@1f0800000 {
--		compatible = "fsl,ls1028a-enetc-ierb";
--		reg = <0x01 0xf0800000 0x0 0x10000>;
--	};
--- 
-2.34.1
+> 
+
+Is there a patch 1/2 and/or a summary patch ?
+
+> Signed-off-by: Alex Vdovydchenko <xzeol@yahoo.com>
+> ---
+>   Documentation/hwmon/index.rst  |  1 +
+>   Documentation/hwmon/mp5920.rst | 91 +++++++++++++++++++++++++++++++++
+>   drivers/hwmon/pmbus/Kconfig    |  9 ++++
+>   drivers/hwmon/pmbus/Makefile   |  1 +
+>   drivers/hwmon/pmbus/mp5920.c   | 93 ++++++++++++++++++++++++++++++++++
+>   5 files changed, 195 insertions(+)
+>   create mode 100644 Documentation/hwmon/mp5920.rst
+>   create mode 100644 drivers/hwmon/pmbus/mp5920.c
+> 
+> diff --git a/Documentation/hwmon/index.rst b/Documentation/hwmon/index.rst
+> index e92a3d5c7..9eba7e402 100644
+> --- a/Documentation/hwmon/index.rst
+> +++ b/Documentation/hwmon/index.rst
+> @@ -168,6 +168,7 @@ Hardware Monitoring Kernel Drivers
+>      mp2975
+>      mp2993
+>      mp5023
+> +   mp5920
+>      mp5990
+>      mp9941
+>      mpq8785
+> diff --git a/Documentation/hwmon/mp5920.rst b/Documentation/hwmon/mp5920.rst
+> new file mode 100644
+> --- /dev/null
+> +++ b/Documentation/hwmon/mp5920.rst
+> @@ -0,0 +1,91 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +Kernel driver mp5920
+> +====================
+> +
+> +Supported chips:
+> +
+> +  * MPS MP5920
+> +
+> +    Prefix: 'mp5920'
+> +
+> +  * Datasheet
+> +
+> +    Publicly available at the MPS website : https://www.monolithicpower.com/en/mp5920.html
+> +
+> +Authors:
+> +
+> +	Tony Ao <tony_ao@wiwynn.com>
+> +	Alex Vdovydchenko <xzeol@yahoo.com>
+> +
+> +Description
+> +-----------
+> +
+> +This driver implements support for Monolithic Power Systems, Inc. (MPS)
+> +MP5920 Hot-Swap Controller.
+> +
+> +Device compliant with:
+> +
+> +- PMBus rev 1.3 interface.
+> +
+> +Device supports direct and linear format for reading input voltage,
+> +output voltage, output current, input power and temperature.
+> +
+> +The driver exports the following attributes via the 'sysfs' files
+> +for input voltage:
+> +
+> +**in1_input**
+> +
+> +**in1_label**
+> +
+> +**in1_rated_max**
+> +
+> +**in1_rated_min**
+> +
+> +**in1_crit**
+> +
+> +**in1_alarm**
+> +
+> +The driver provides the following attributes for output voltage:
+> +
+> +**in2_input**
+> +
+> +**in2_label**
+> +
+> +**in2_rated_max**
+> +
+> +**in2_rated_min**
+> +
+> +**in2_alarm**
+> +
+> +The driver provides the following attributes for output current:
+> +
+> +**curr1_input**
+> +
+> +**curr1_label**
+> +
+> +**curr1_crit**
+> +
+> +**curr1_alarm**
+> +
+> +**curr1_rated_max**
+> +
+> +The driver provides the following attributes for input power:
+> +
+> +**power1_input**
+> +
+> +**power1_label**
+> +
+> +**power1_max**
+> +
+> +**power1_rated_max**
+> +
+> +The driver provides the following attributes for temperature:
+> +
+> +**temp1_input**
+> +
+> +**temp1_max**
+> +
+> +**temp1_crit**
+> +
+> +**temp1_alarm**
+> diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
+> --- a/drivers/hwmon/pmbus/Kconfig
+> +++ b/drivers/hwmon/pmbus/Kconfig
+> @@ -371,6 +371,15 @@ config SENSORS_MP5023
+>   	  This driver can also be built as a module. If so, the module will
+>   	  be called mp5023.
+>   
+> +config SENSORS_MP5920
+> +	tristate "MPS MP5920"
+> +	help
+> +	  If you say yes here you get hardware monitoring support for Monolithic
+> +	  MP5920.
+> +
+> +	  This driver can also be built as a module. If so, the module will
+> +	  be called mp5920.
+> +
+>   config SENSORS_MP5990
+>   	tristate "MPS MP5990"
+>   	help
+> diff --git a/drivers/hwmon/pmbus/Makefile b/drivers/hwmon/pmbus/Makefile
+> --- a/drivers/hwmon/pmbus/Makefile
+> +++ b/drivers/hwmon/pmbus/Makefile
+> @@ -39,6 +39,7 @@ obj-$(CONFIG_SENSORS_MP2888)	+= mp2888.o
+>   obj-$(CONFIG_SENSORS_MP2975)	+= mp2975.o
+>   obj-$(CONFIG_SENSORS_MP2993)	+= mp2993.o
+>   obj-$(CONFIG_SENSORS_MP5023)	+= mp5023.o
+> +obj-$(CONFIG_SENSORS_MP5920)	+= mp5920.o
+>   obj-$(CONFIG_SENSORS_MP5990)	+= mp5990.o
+>   obj-$(CONFIG_SENSORS_MP9941)	+= mp9941.o
+>   obj-$(CONFIG_SENSORS_MPQ7932)	+= mpq7932.o
+> diff --git a/drivers/hwmon/pmbus/mp5920.c b/drivers/hwmon/pmbus/mp5920.c
+> new file mode 100644
+> --- /dev/null
+> +++ b/drivers/hwmon/pmbus/mp5920.c
+> @@ -0,0 +1,95 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Hardware monitoring driver for MP5920 and compatible chips.
+> + *
+> + * Copyright (c) 2019 Facebook Inc.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License as published by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+> + * GNU General Public License for more details.
+
+This blob is unnecessary; it is covered by the SPDX license reference above.
+
+> + */
+> +#include <linux/err.h>
+> +#include <linux/i2c.h>
+> +#include <linux/init.h>
+> +#include <linux/jiffies.h>
+
+Not needed or used.
+
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include "pmbus.h"
+> +
+> +static struct pmbus_driver_info mp5920_info = {
+> +	pages = 1,
+> +	format[PSC_VOLTAGE_IN] = direct,
+> +	format[PSC_VOLTAGE_OUT] = direct,
+> +	format[PSC_CURRENT_OUT] = direct,
+> +	format[PSC_POWER] = direct,
+> +	format[PSC_TEMPERATURE] = direct,
+> +	m[PSC_VOLTAGE_IN] = 2266,
+> +	b[PSC_VOLTAGE_IN] = 0,
+> +	R[PSC_VOLTAGE_IN] = -1,
+> +	m[PSC_VOLTAGE_OUT] = 2266,
+> +	b[PSC_VOLTAGE_OUT] = 0,
+> +	R[PSC_VOLTAGE_OUT] = -1,
+> +	m[PSC_CURRENT_OUT] = 546,
+> +	b[PSC_CURRENT_OUT] = 0,
+> +	R[PSC_CURRENT_OUT] = -2,
+> +	m[PSC_POWER] = 5840,
+> +	b[PSC_POWER] = 0,
+> +	R[PSC_POWER] = -3,
+> +	m[PSC_TEMPERATURE] = 1067,
+> +	b[PSC_TEMPERATURE] = 20500,
+> +	R[PSC_TEMPERATURE] = -2,
+> +	func[0] = PMBUS_HAVE_VIN  | PMBUS_HAVE_VOUT |
+> +		PMBUS_HAVE_IOUT | PMBUS_HAVE_POUT |
+> +		PMBUS_HAVE_TEMP,
+> +};
+> +
+> +static int mp5920_probe(struct i2c_client *client)
+> +{
+> +	struct device *dev =  &client->dev;
+> +	int chip_id;
+> +
+> +	if (!i2c_check_functionality(client->adapter,
+> +				     I2C_FUNC_SMBUS_READ_WORD_DATA))
+> +		return -ENODEV;
+> +
+> +	chip_id = i2c_smbus_read_word_data(client, PMBUS_MFR_ID);
+> +	if (chip_id < 0) {
+> +		dev_err(dev, "Failed to read MFR ID");
+> +		return chip_id;
+> +	}
+
+What is the point of reading the chip ID without doing anything with it ?
+
+> +
+> +	return pmbus_do_probe(client, &mp5920_info);
+> +}
+> +
+> +static const struct of_device_id mp5920_of_match[] = {
+> +	{ .compatible = "mps,mp5920" },
+> +	{}
+> +};
+> +
+> +static const struct i2c_device_id mp5920_id[] = {
+> +	{"mp5920", 0},
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(i2c, mp5920_id);
+> +
+> +static struct i2c_driver mp5920_driver = {
+> +	.driver = {
+> +		.name = "mp5920",
+> +		.of_match_table = mp5920_of_match,
+> +	},
+> +	.probe = mp5920_probe,
+> +	.id_table = mp5920_id,
+> +};
+> +module_i2c_driver(mp5920_driver);
+> +
+> +MODULE_AUTHOR("Tony Ao <tony_ao@wiwynn.com>");
+> +MODULE_AUTHOR("Alex Vdovydchenko <xzeol@yahoo.com>");
+> +MODULE_DESCRIPTION("PMBus driver for MP5920 HSC");
+> +MODULE_LICENSE("GPL");
+> +MODULE_IMPORT_NS(PMBUS);
 
 
