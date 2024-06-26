@@ -1,120 +1,137 @@
-Return-Path: <linux-kernel+bounces-231294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28186918A4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:46:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEB1E918A50
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:46:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6B252817CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:46:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65A251F21F06
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8F2190460;
-	Wed, 26 Jun 2024 17:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="K7rO6ztX"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A34218FDBF;
-	Wed, 26 Jun 2024 17:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EF04190076;
+	Wed, 26 Jun 2024 17:46:28 +0000 (UTC)
+Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id E7A8018A93B
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 17:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719423972; cv=none; b=GczYcb5YYQaOvxIM+3RCJWi29y8oFG9vwL4jIKLhqNmZJzux+iaToR0H5RXHmanxs+fo5Y6Fh+XR2lmO9Ob0Fov3l83kpaw8WkPYj+bOwPyuqX6aVEUMsVXcNOdyh1HhSqTLcOG11J9dZzkdUXd6/sXJ/PHD8ltW6dfW8GXvgzg=
+	t=1719423987; cv=none; b=nFvFHkbBhBOgQgVDVtAeHe3RCoStYl2dtZv1Kfug72Sd0j9OwaQ+ZBs3uWgRggPLQyPVjLK9DpaE8ohfuDUHki/2x2h0bC3k8+GotIfMo+hN3CZ9TSdOZ7nowXc1Rg6EeRtvCQcVsx8IUZLIIR10XKqHj2rpEsnOeMK9awDMPFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719423972; c=relaxed/simple;
-	bh=v0Vh4kAkmKCJro2vJe6FJUdsNe+J9F0n0qvBZYaqEMY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Pq2FrvaLJl03I8ax2tBrPdbw7Xiso2Rg1eQszWwmiVDjJ5mLSfvjN+nIVoBtKzBapQ1+Jvfrq3ViUXFNZ+QHRolf++xXjzp3Nn/+UiLsVird8Hh8Gcwo6OkKdlHZ2BIdTCt+l8mVW16VlaLhPyGA+rapkMNl9zldMt92e55GTCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=K7rO6ztX; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1719423968;
-	bh=v0Vh4kAkmKCJro2vJe6FJUdsNe+J9F0n0qvBZYaqEMY=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=K7rO6ztXaBSACwy14eiHwe4hrwfzRq5yJy1iqhmvYCDKsiBoSHGcpTQfoZL32bfGs
-	 AlaBzTi8sk2IF8OyyAL8Wd6xq24K6CzLDz+/ozJ4gSKYCAhgkAcHqQsrwShLb93nzT
-	 /GgSMJnyEMBpAbpQ39/oULIfSMlGdNv3J+S/oqCZGaNfTgSLDIPIZhrXjnWjQKtDUx
-	 5QWDM2KjxIus5KQEbw4+dUpDHXBHU65TSQvHg5cVpLOjNq41x9l2qoxQgPM3O85R2d
-	 hTrPMYsJUXUNUoURTASSdK1rvxDARVMd/1VZLbCu5MiGMEwfEPmYwUA9qb0ambYCCc
-	 7vwcdDloLSu+A==
-Received: from nicolas-tpx395.localdomain (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 5CF0A37810CD;
-	Wed, 26 Jun 2024 17:46:06 +0000 (UTC)
-Message-ID: <f04e25bf3c09c55049775e8f012cb653cb4682ba.camel@collabora.com>
-Subject: Re: [PATCH v7 6/6] arm64: dts: rockchip: Add VPU121 support for
- RK3588
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Jianfeng Liu <liujianfeng1994@gmail.com>, sebastian.reichel@collabora.com
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, 
- ezequiel@vanguardiasur.com.ar, frattaroli.nicolas@gmail.com,
- heiko@sntech.de,  kernel@collabora.com, krzk+dt@kernel.org,
- linkmauve@linkmauve.fr,  linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org,  linux-rockchip@lists.infradead.org,
- p.zabel@pengutronix.de, robh@kernel.org,  sigmaris@gmail.com,
- detlev.casanova@collabora.com
-Date: Wed, 26 Jun 2024 13:46:03 -0400
-In-Reply-To: <20240621092234.280171-1-liujianfeng1994@gmail.com>
-References: <20240618183816.77597-7-sebastian.reichel@collabora.com>
-	 <20240621092234.280171-1-liujianfeng1994@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+	s=arc-20240116; t=1719423987; c=relaxed/simple;
+	bh=UDy2EAAAedZm8c+seUJoRJmo7fvPySwdZEOjQGes8Qg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yc9Er/QGe6WIYCsKrdv54mV0eFMQYmMCdMgLD1iVkTdCQuJPUbuz6jIXHfvNfGrjbwDci+yTFlevs4Lt8ypaDnMXtfHvd7Rqyf252By0IU6nWp6cnndqooMsbGkbcT18galODT0N33vP9d94ZVnK/sIZ0w1jdVUkQsIOZ/fCBlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
+Received: (qmail 712417 invoked by uid 1000); 26 Jun 2024 13:46:24 -0400
+Date: Wed, 26 Jun 2024 13:46:24 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: syzbot <syzbot+8693a0bb9c10b554272a@syzkaller.appspotmail.com>
+Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+  linux-usb@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org,
+  syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [usb?] [bluetooth?] WARNING in
+ btusb_submit_intr_urb/usb_submit_urb
+Message-ID: <6d1f6bcc-2918-48cd-bbb3-e8cca46622a1@rowland.harvard.edu>
+References: <a6eb3c4e-411f-4fbf-a85c-f3435170341d@rowland.harvard.edu>
+ <000000000000d6c39d061bcdb82c@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000d6c39d061bcdb82c@google.com>
 
-Hi Jianfeng,
+On Wed, Jun 26, 2024 at 09:44:03AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+> WARNING in btusb_submit_intr_urb/usb_submit_urb
 
-Le vendredi 21 juin 2024 =C3=A0 17:22 +0800, Jianfeng Liu a =C3=A9crit=C2=
-=A0:
-> Hi Sebastian,
->=20
-> Detlev is working on rkvdec2 and gstreamer can't deal with two h264
+As expected.  The interesting information is in the console log:
 
-Just to clarify, since you are right that it won't work well with GStreamer=
-. It
-does work with multiple decoders (it exposes them all), it is simply that i=
-t
-will randomly pick one when decoding, and it may not pick the best one.
+[  100.266326][   T25] btusb 1-1:0.0: Ep ffff8880234bee00 epaddr 9b epattr 67
+[  100.280938][   T53] btusb 1-1:0.0: Pipe 404d8280 ep ffff8880234bee00
+[  100.287918][   T53] usb 1-1: Error pipe 404d8280 ep ffff8880234beea0 epaddr 8b
 
-> stateless decoders. So it's better to disable h264 decoding feature of
-> this vpu121, just like what we have done for rk3399. If your multicore
-> patch can handle the jpeg enc node at fdb50000 with other VEPU121 nodes
-> properly, we can just use compatible string "rockchip,rk3399-vpu" instead
-> of "rockchip,rk3568-vpu".
+Notice the difference in the "ep" values (the addresses of the endpoint 
+descriptors).  The kernel thinks two different endpoints are the same.
 
-In the long term, I'd like to stop having to do "like downstream" and expos=
-e
-them all. I believe the fix is fairly straightforward in GStreamer. We need=
- to
-expose in the generated element the width/height ranges, and for H.264 the
-supported profiles and level. With that, we at least won't randomly fail at
-decoding 4K, and it should be good enough.
+The reason is that the two descriptors have the same direction and 
+address, but the parsing code in config.c doesn't realize they are 
+duplicates because they differ in the value of the reserved bits in 
+bEndpointAddress.  You can see this in the epaddr values above: 0x9b 
+versus 0x8b.
 
-For RK3588, which is a new SoC, its not a problem to upstream something tha=
-t
-does not work with existing userspace. It would only be a regression if we =
-where
-to enable VDPU121 on RK3399, as now updating linux would cause bugs with
-existing userspace.
+Let's see what happens if we reject endpoint descriptors in which any of 
+the reserved bits in bEndpointAddress are set.
 
-For users, it would be best if we get this sorted out in GStreamer by the t=
-ime
-we have a second decoder. Note that I have some vacation coming up this mon=
-th,
-so there might be extra delays. Yet, its logical to merge this (the "worst"
-decoder) first, since then randomly picking a better one won't be a regress=
-ion.
+Alan Stern
 
-Nicolas
+#syz test: upstream 66cc544fd75c
+
+Index: usb-devel/drivers/bluetooth/btusb.c
+===================================================================
+--- usb-devel.orig/drivers/bluetooth/btusb.c
++++ usb-devel/drivers/bluetooth/btusb.c
+@@ -1398,6 +1398,7 @@ static int btusb_submit_intr_urb(struct
+ 	}
+ 
+ 	pipe = usb_rcvintpipe(data->udev, data->intr_ep->bEndpointAddress);
++	dev_info(&data->intf->dev, "Pipe %x ep %p\n", pipe, data->intr_ep);
+ 
+ 	usb_fill_int_urb(urb, data->udev, pipe, buf, size,
+ 			 btusb_intr_complete, hdev, data->intr_ep->bInterval);
+@@ -4283,6 +4284,9 @@ static int btusb_probe(struct usb_interf
+ 
+ 		if (!data->intr_ep && usb_endpoint_is_int_in(ep_desc)) {
+ 			data->intr_ep = ep_desc;
++			dev_info(&intf->dev, "Ep %p epaddr %x epattr %x\n",
++					ep_desc, ep_desc->bEndpointAddress,
++					ep_desc->bmAttributes);
+ 			continue;
+ 		}
+ 
+Index: usb-devel/drivers/usb/core/urb.c
+===================================================================
+--- usb-devel.orig/drivers/usb/core/urb.c
++++ usb-devel/drivers/usb/core/urb.c
+@@ -208,8 +208,11 @@ int usb_pipe_type_check(struct usb_devic
+ 	ep = usb_pipe_endpoint(dev, pipe);
+ 	if (!ep)
+ 		return -EINVAL;
+-	if (usb_pipetype(pipe) != pipetypes[usb_endpoint_type(&ep->desc)])
++	if (usb_pipetype(pipe) != pipetypes[usb_endpoint_type(&ep->desc)]) {
++		dev_info(&dev->dev, "Error pipe %x ep %p epaddr %x\n",
++				pipe, &ep->desc, ep->desc.bEndpointAddress);
+ 		return -EINVAL;
++	}
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(usb_pipe_type_check);
+Index: usb-devel/drivers/usb/core/config.c
+===================================================================
+--- usb-devel.orig/drivers/usb/core/config.c
++++ usb-devel/drivers/usb/core/config.c
+@@ -287,6 +287,13 @@ static int usb_parse_endpoint(struct dev
+ 		goto skip_to_next_endpoint_or_interface_descriptor;
+ 	}
+ 
++	if (d->bEndpointAddress &
++			~(USB_ENDPOINT_DIR_MASK | USB_ENDPOINT_NUMBER_MASK)) {
++		dev_notice(ddev, "config %d interface %d altsetting %d has an invalid endpoint descriptor with address 0x%02x, skipping\n",
++		    cfgno, inum, asnum, d->bEndpointAddress);
++		goto skip_to_next_endpoint_or_interface_descriptor;
++	}
++
+ 	/* Only store as many endpoints as we have room for */
+ 	if (ifp->desc.bNumEndpoints >= num_ep)
+ 		goto skip_to_next_endpoint_or_interface_descriptor;
+
 
