@@ -1,519 +1,249 @@
-Return-Path: <linux-kernel+bounces-230504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 057B9917DC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:26:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7717D917DC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 289F21C21770
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:26:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 025021F25B04
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1323F178376;
-	Wed, 26 Jun 2024 10:26:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1015017B50B;
+	Wed, 26 Jun 2024 10:27:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K7cwz19/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FXvgXEWV"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2048.outbound.protection.outlook.com [40.107.244.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE2B8176FD8;
-	Wed, 26 Jun 2024 10:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719397597; cv=none; b=C0DkN/HFMMBc1+iHorMsEwtm9JdG1qvVFPqXomoXV2EDsbA8aCwNl1HmI/j+2mZe/I4ZdVf/4gTO3B3YvzHX1EIYj2rqYX8lTqA8B2ZCQHSc+YV306SpVD4ElRXizjX0dc4nF78C0AH3+QbNI3gVKxR3EosC5KynA/bnfiqMEoo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719397597; c=relaxed/simple;
-	bh=aZu+Mw0vfm4/9w7mYiCaTAnZdqPaRT0XCeUV9gyIA/I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pQhaGMrnSxFeEYmD3u+jUn424ABcOs0brBsNBfyPXeaTb3O9dD2IVpkFn06c5Wj5QtiLWtSrDlNM+V7UtLQPKZ7pc4GTtRsISVPPq5q8Hgv3AnB2omGCHVIzXC1iaJZI9MXUuOeAuoca827jVFQAWgIfD0mb4dtrNke25grudn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K7cwz19/; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.helo=mgamail.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719397595; x=1750933595;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=aZu+Mw0vfm4/9w7mYiCaTAnZdqPaRT0XCeUV9gyIA/I=;
-  b=K7cwz19/8xs3WFKjmY8hdqP5XwgnyQh4YThAKpBU9r2CQQ1aHc/uQxVe
-   35yKP6Y2vIEPoXvwGfcmylWOLUQUFCvYUpOZhp+sPUpj+64ZE1ExvLLk/
-   aWFSxl75s+//xV+Fn6C3cYAkDTybbzOyrTX2tBxdTGbUjkkhnKuLJFKaq
-   ZiuP2e1GoJjWeWP4rxrgTTBG+rm2J5PfNE03XkJJ2+hUbe536eJDGbv4K
-   MiMzQS5z/Hhp+xO6Cb3HydpJO/9siYCBxy48+c3mCNAHg2RkvdtZmfzQp
-   qzPpHX8cZL/x3HNnVxrGvp9ZdIqdxxO/hyy77O4ZD/yGuG8BaDSY24VVr
-   Q==;
-X-CSE-ConnectionGUID: vsiYa5cWQPurpoE6ak3CrQ==
-X-CSE-MsgGUID: mn4Pf3P+Sb6NGEB7+ewqtw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="16289598"
-X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
-   d="scan'208";a="16289598"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 03:26:34 -0700
-X-CSE-ConnectionGUID: alq2O/tdTzC+p2wktYbNcA==
-X-CSE-MsgGUID: yw3vwxmvRmyD9IvLd1iJKw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
-   d="scan'208";a="44053625"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa010.fm.intel.com with ESMTP; 26 Jun 2024 03:26:28 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 7E75B346; Wed, 26 Jun 2024 13:26:27 +0300 (EEST)
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: lkp@intel.com
-Cc: ardb@kernel.org,
-	bp@alien8.de,
-	brijesh.singh@amd.com,
-	corbet@lwn.net,
-	dave.hansen@linux.intel.com,
-	hpa@zytor.com,
-	jan.kiszka@siemens.com,
-	jgross@suse.com,
-	kbingham@kernel.org,
-	kirill.shutemov@linux.intel.com,
-	linux-doc@vger.kernel.org,
-	linux-efi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	luto@kernel.org,
-	michael.roth@amd.com,
-	mingo@redhat.com,
-	oe-kbuild-all@lists.linux.dev,
-	peterz@infradead.org,
-	rick.p.edgecombe@intel.com,
-	sandipan.das@amd.com,
-	tglx@linutronix.de,
-	thomas.lendacky@amd.com,
-	x86@kernel.org
-Subject: [PATCH] x86/64/mm: Make 5-level paging support unconditional
-Date: Wed, 26 Jun 2024 13:26:23 +0300
-Message-ID: <20240626102624.1059275-1-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <202406260735.rkb4c8N7-lkp@intel.com>
-References: <202406260735.rkb4c8N7-lkp@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F81116089A;
+	Wed, 26 Jun 2024 10:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719397626; cv=fail; b=rWVeGZKk9K5N+9FjE7qsYDuiCoBoDAhjwHjvyHdq458LnxrysuN43TqgZ4EfbQwMs5PQs5jb1sJE9MNhQ3veC5F9n0crRuLV02t28aRRKNVaEHcJrZyctbykbRlIQzHChZWC28unBeIfYiRN4IbAIl6DwzTy7Z4584PpDgtE4HI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719397626; c=relaxed/simple;
+	bh=0aAoj28BtZ4IW5jsHbQB0qNP0ucM6tR8jcjCtQOLpIE=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=bDuTA0iQQpy03WL7+SNbc6mYDIJgnFvOVSZlZ7v/pnn/168IrJM2M+Aa2+g7Nxc6/QgkbL8CY+KWTUqZAaYfguv5FJrJR48zkybcKxAYM4X4hw5CS7BOC+Zvo1hKihXegTtTZrhVSyTm8kS9EfHjktxclIe0mPvNlyRUoBgxP98=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FXvgXEWV; arc=fail smtp.client-ip=40.107.244.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=OLAEUdjkqu/kzUyiRPcmVlAGPp+Qg/b4BT7ka6uWXEzU4FQw26xWA6Gl+USD2vEfPXBIiE1aq1XRumKOOaOGIHwx9i3TeSENpqDr0DqL02kMGrrXQ6or9bBMCDcco8rOqe8fmqZDqiG8uNmwd3SysutxauUbO/hMh77zaSFncZ3INR9iNF2kwdeCd7UNzGHLnEA98eY7FkIJHYrzzLeugwoQJYWr5PmJGNRNdBoVEfeLimwb7NjX2z3NgJav1AdAmXQY9U00+VVqzur73WlzBGHtt3ThU5sg5iJs+lH3hkE6xqMFjF4OQxO8reJPo7DvPhYtLK1rh8bfPY9lwUBkPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UeSRcQz++9NrVy0jjK6A4BzJp/ctZweA7pwBZRIjUo0=;
+ b=PAtEBfExwO/dRzdalXWTzzOmmxYjNZSAkYJdvwim6dbN7Mhnd1+4YUK/nwgsojHggaFYCUo8IhLJ3IkbIGxDsgnQw/FcPe8W2CFX1MpjHnxfm0FH+poXwDzb6lu0sIe+QRh9mqbemgEBmuwnLv5irjrQfloaJUxH8SeN8odnrXDL/OCKNTqmKeV+l0x+nsum+2/QaSQ3ZPEqGbZoHXTXzxDBSc3dcNsdenBTJ6giMJ26PS61+78U7PBUMK+9sSSXiTMZ478J2kopCtD+dYg/4E7W4ME+Rf5/7b9Dhzk433J1BWDaloGg67PjT5arT1q9Tcc9ghsIV0Du5BjN+U4OzA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UeSRcQz++9NrVy0jjK6A4BzJp/ctZweA7pwBZRIjUo0=;
+ b=FXvgXEWVTXgFNMV0fAvVt7YR772xQfbx+QoasqcizT+KaSXtpkdjlSJRY0738uo43vfonNQLwXtstwpvm9GH4RytFNOUFs0svQE6GwH1cSmmm7K3yjA6AIeeuXltkSAmOJ6sGtkP++Y6s+SllBVRYJleQMjAdUVb3H9x+M0CXT9sDfuNF2kVMHUZiXPfGk0XqBYD7/qaTT8H3ms/PIf+Ly3l5Efa9miNS5JBOg1aWmigdSziJgc6zg9UhxyAlnnbU13sbqCkpwbAm/KW1mHhwBpcK3u5W6Og/GKmMN/AKlOGLmCOMoEJda4DDQNppSKf9p/oWe3NEJOj+paQFDjygA==
+Received: from SJ0PR13CA0141.namprd13.prod.outlook.com (2603:10b6:a03:2c6::26)
+ by DS0PR12MB9039.namprd12.prod.outlook.com (2603:10b6:8:de::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.32; Wed, 26 Jun
+ 2024 10:27:01 +0000
+Received: from SJ5PEPF000001C9.namprd05.prod.outlook.com
+ (2603:10b6:a03:2c6:cafe::24) by SJ0PR13CA0141.outlook.office365.com
+ (2603:10b6:a03:2c6::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.37 via Frontend
+ Transport; Wed, 26 Jun 2024 10:27:01 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SJ5PEPF000001C9.mail.protection.outlook.com (10.167.242.37) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7677.15 via Frontend Transport; Wed, 26 Jun 2024 10:27:01 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 26 Jun
+ 2024 03:26:47 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 26 Jun
+ 2024 03:26:46 -0700
+Received: from dev-l-177.mtl.labs.mlnx (10.127.8.11) by mail.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 26 Jun 2024 03:26:43 -0700
+From: Dragos Tatulea <dtatulea@nvidia.com>
+Subject: [PATCH vhost v2 00/24] vdpa/mlx5: Pre-create HW VQs to reduce LM
+ downtime
+Date: Wed, 26 Jun 2024 13:26:36 +0300
+Message-ID: <20240626-stage-vdpa-vq-precreate-v2-0-560c491078df@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANzse2YC/4WNQQ7CMAwEv1L5jFESSltx4h+oB5O41AcaSCILV
+ PXvRP0Ax9nVzq6QOQlnuDQrJFbJEpcK7tCAn2l5MEqoDM641nS2x1yohhpehPrGV2KfmApj34X
+ Jnu2dgxmgrmszyWc330DnmAuMNZ4ll5i++5/avfyrVosGB2/a4TQZT46ui0oQOvr4hHHbth+xI
+ fm3xgAAAA==
+To: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?utf-8?q?Eugenio_P=C3=A9rez?=
+	<eperezma@redhat.com>, Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky
+	<leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, Si-Wei Liu
+	<si-wei.liu@oracle.com>
+CC: <virtualization@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<linux-rdma@vger.kernel.org>, <netdev@vger.kernel.org>, Cosmin Ratiu
+	<cratiu@nvidia.com>, Dragos Tatulea <dtatulea@nvidia.com>, Zhu Yanjun
+	<yanjun.zhu@linux.dev>
+X-Mailer: b4 0.13.0
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001C9:EE_|DS0PR12MB9039:EE_
+X-MS-Office365-Filtering-Correlation-Id: 41c7d58c-b7fc-4322-f2eb-08dc95ca8444
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230038|36860700011|376012|7416012|1800799022|82310400024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cjhYM1VaYWRUOTlMRHVQbXFRczFaK1pvcEMrbmtPR1J6UkRtckNiSWtKL0Mz?=
+ =?utf-8?B?WlRkRTJlT3laUngxTUZQSExiamYxc3Z2b0IrczdwQ2NHT25KNzhOcFg1ZUY3?=
+ =?utf-8?B?NkdIcCtJM0F5eU03NkJaUUFJVDhzeDJNa01KdEhzMUpxRFhySUw2NDBVeVZv?=
+ =?utf-8?B?ODdlRUpSSFRsWno5RW9hVm14YU9xbnhyOCtvcHllbkdYdnlvWTR2cEx5V3dv?=
+ =?utf-8?B?aUd0L1pZVm1pTlVCRjJyZ0xSYU5KN0QrZHV6WHZiQkxScmo5UEhIQnIyYUVs?=
+ =?utf-8?B?Njk2U0hJV3d2d1FwcDRqTTlSdlJhbE9WZGFaSUNjVUN2QkVnc1gvaEhPNVNy?=
+ =?utf-8?B?dWQ1QTNtQTA4K3M2aWRjeDdCVUNxRFl1bE9FcXB3S2FoeFlwNDY3NGZaK2U5?=
+ =?utf-8?B?Y3RuVkFDeUl3UUdwUmFaTnJOT3pHdXcwMStKMjlkNW12bEZKb1R2VWlZRTRm?=
+ =?utf-8?B?Tk9jR3BwazNhdEN6L1NNRHFQSVU5Z2lSdC9DVEFCWlJXVmpzeWwxaUR3VXpH?=
+ =?utf-8?B?ZFRRM2lPZ2ZGQjd5aFpyTnpwbGpyb2h5K3JPclBuZTRzUUFzeTliQmlYMGxy?=
+ =?utf-8?B?eXNQcnZKTnVYRUszcW9ZWkxDRDhDbGRBZCtzNmY1YTZxS2xxZzViNEJGMUZV?=
+ =?utf-8?B?Rk9aM0cxNXZsclJSQVhtSy8zM0lJOXd1L2RWN3ExRllpMU9vN1JoenpGcFFl?=
+ =?utf-8?B?S1J1QmR6eFBGeTAwRWtpVUZZTXNsb2M4bE1BT1F0VC9mVkNTb3BNNVVncitR?=
+ =?utf-8?B?R0xnWTBtdWZaWmVtN29jRTNsNER4eDNDR0R3ajBpWFZrV3BHOUVJUTZ1eWxF?=
+ =?utf-8?B?QW8yUmF3RkdLaDhwcHRmek5uUnhGcWdFZmdLMDhMRmpLSFVjbFJjTXFxRUZT?=
+ =?utf-8?B?WElTVkpxOUJGbWI4V0J5c3lOdzhPWmVMcXdZME9ZaVVpMlZIT2I1WURsUENu?=
+ =?utf-8?B?cUl4UVh1S3c5bGloaHdnc3JGWVdTZUt1NHM5akw4QjRaQ0tmSHZhMTFlREdZ?=
+ =?utf-8?B?TXorRU1pVVRmclNuZjVJM0dBMVBkOTU1OE1LczM0dlRJSGxjci9YTVNmOWV2?=
+ =?utf-8?B?L3RhOWpzTGxIejl4TzNhSVVHNXRzSGlZNHlXTFB6R1l4TUd3dytmQ0RlNmk4?=
+ =?utf-8?B?bmNtc09Sd0N4VWhiWDQwc1VPS1poc2IvY1V6QnZHOXBMak83ckcyWlpIY1Jh?=
+ =?utf-8?B?Y0xDR0RTcXdrR3hoRi9GVnZrcmV6eEJ4Mnp5akM0WWcrcWt6eXg2WjdvMlY1?=
+ =?utf-8?B?Nlh5YWhIdlVIeE4zTnlIQkU0K3owZURPK3NhdnNNOGRtVHJqU1Ztb2dBTndG?=
+ =?utf-8?B?dTB3dGdNc3VRNWxMN0JmblZ5cENLYUFBemlqQ2FoK1FHeHBOUmsrekZRbXI4?=
+ =?utf-8?B?QkhMOVdRamQ3N21tdXVDS1o1WHh6K3U5TEt6Z3dhSm1PZW5FUFNmYng1c0hh?=
+ =?utf-8?B?elRUemNmSndKMEJYNTBNZXBVRlVZdHI1WjRCMUs4Z01jbElHcVYxSk11aU9C?=
+ =?utf-8?B?elJvMVlMRUVJQ1lUemJZeTgrdVJLMGxKdU1BWDZRVGlIekJLVURvRnJ2T0hP?=
+ =?utf-8?B?ZW5DKzZJMTM2bUxYSFkxa0NXQ05LOXhVUjBRVUFUKzNJeWZCVWlMQUlFUzdS?=
+ =?utf-8?B?YUsvWUZqSUEwdElLdDlPeklXVlNHa21hOGQzSEM3U3pMR2RpQ2FQd29CeGs4?=
+ =?utf-8?B?MEJWa1ZvbFFiZ1ZYeUtSVEpnS0I1ODJXZXFzVk5kbjJtODcwMlRvS2E4WlBX?=
+ =?utf-8?B?NE55VUVuckdOUmV0WDJLcnNhT0dmeUFJYzhscnJ4OXljOUhWc1p6aEs2aTlW?=
+ =?utf-8?B?Vkt3anJkMWE1N096c1RmM01iZ25BWjBpa0hRL1hxUmhTZlZOVmlLZzBoVGNE?=
+ =?utf-8?B?Rk1JdVdMS1E5cTBvV1RZTjJxcmFsLzFOZEpZUHhxWWZzVGpIREtSckdaRm0y?=
+ =?utf-8?B?bXBpMm0vM3VUT1JhS3hHQTdUaVZ1eHhzWWhLU1lZTzN4OXdWdVJOY28vVUR4?=
+ =?utf-8?B?UStWZDB0TTVnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230038)(36860700011)(376012)(7416012)(1800799022)(82310400024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 10:27:01.3561
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 41c7d58c-b7fc-4322-f2eb-08dc95ca8444
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001C9.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB9039
 
-Both Intel and AMD CPUs support 5-level paging, which is expected to
-become more widely adopted in the future.
+According to the measurements for vDPA Live Migration downtime [0], one
+large source of downtime is the creation of hardware VQs and their
+associated resources on the devices on the destination VM.
 
-Remove CONFIG_X86_5LEVEL and ifdeffery for it to make it more readable.
+Previous series ([1], [2]) addressed the source part of the Live
+Migration downtime. This series addresses the destination part: instead
+of creating hardware VQs and their dependent resources when the device
+goes into the DRIVER_OK state (which is during downtime), create "blank"
+VQs at device creation time and only modify them to the received
+configuration before starting the VQs (DRIVER_OK state).
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Suggested-by: Borislav Petkov <bp@alien8.de>
+The caveat here is that mlx5_vdpa VQs don't support modifying the VQ
+size. VQs will be created with a convenient default size and when this
+size is changed, they will be recreated.
+
+The beginning of the series consists of refactorings and preparation.
+
+After that, some preparations are made:
+- Allow creation of "blank" VQs by not configuring them during
+  create_virtqueue() if there are no modified fields.
+- The VQ Init to Ready state transition is consolidated into the
+  resume_vq().
+- Add error handling to suspend/resume code paths.
+
+Then VQs are created at device creation time.
+
+Finally, the special cases that need full VQ resource recreation are
+handled.
+
+On a 64 CPU, 256 GB VM with 1 vDPA device of 16 VQps, the full VQ
+resource creation + resume time was ~370ms. Now it's down to 60 ms
+(only VQ config and resume). The measurements were done on a ConnectX6DX
+based vDPA device.
+
+[0] https://lore.kernel.org/qemu-devel/1701970793-6865-1-git-send-email-si-wei.liu@oracle.com/
+[1] https://lore.kernel.org/lkml/20231018171456.1624030-2-dtatulea@nvidia.com
+[2] https://lore.kernel.org/lkml/20231219180858.120898-1-dtatulea@nvidia.com
+
 ---
-
- v2:
-  - Fix 32-bit build by wrapping p4d_set_huge() and p4d_clear_huge() in
-    #if CONFIG_PGTABLE_LEVELS > 4
+Changes in v2:
+- Renamed a function based on v1 review.
+- Addressed small nits from v1 review.
+- Added improvement numbers in commit message instead of only cover
+  letter.
+- Link to v1: https://lore.kernel.org/r/20240617-stage-vdpa-vq-precreate-v1-0-8c0483f0ca2a@nvidia.com
 
 ---
- Documentation/arch/x86/cpuinfo.rst            |  8 +++----
- .../arch/x86/x86_64/5level-paging.rst         |  9 --------
- arch/x86/Kconfig                              | 22 +------------------
- arch/x86/boot/compressed/pgtable_64.c         | 11 ++--------
- arch/x86/boot/header.S                        |  4 ----
- arch/x86/include/asm/disabled-features.h      |  9 +-------
- arch/x86/include/asm/page_64.h                |  2 --
- arch/x86/include/asm/page_64_types.h          |  7 ------
- arch/x86/include/asm/pgtable_64_types.h       | 18 ---------------
- arch/x86/kernel/alternative.c                 |  2 +-
- arch/x86/kernel/head64.c                      |  5 -----
- arch/x86/kernel/head_64.S                     |  2 --
- arch/x86/mm/init.c                            |  4 ----
- arch/x86/mm/pgtable.c                         |  2 +-
- drivers/firmware/efi/libstub/x86-5lvl.c       |  2 +-
- .../arch/x86/include/asm/disabled-features.h  |  9 +-------
- 16 files changed, 11 insertions(+), 105 deletions(-)
+Dragos Tatulea (24):
+      vdpa/mlx5: Clarify meaning thorough function rename
+      vdpa/mlx5: Make setup/teardown_vq_resources() symmetrical
+      vdpa/mlx5: Drop redundant code
+      vdpa/mlx5: Drop redundant check in teardown_virtqueues()
+      vdpa/mlx5: Iterate over active VQs during suspend/resume
+      vdpa/mlx5: Remove duplicate suspend code
+      vdpa/mlx5: Initialize and reset device with one queue pair
+      vdpa/mlx5: Clear and reinitialize software VQ data on reset
+      vdpa/mlx5: Rename init_mvqs
+      vdpa/mlx5: Add support for modifying the virtio_version VQ field
+      vdpa/mlx5: Add support for modifying the VQ features field
+      vdpa/mlx5: Set an initial size on the VQ
+      vdpa/mlx5: Start off rqt_size with max VQPs
+      vdpa/mlx5: Set mkey modified flags on all VQs
+      vdpa/mlx5: Allow creation of blank VQs
+      vdpa/mlx5: Accept Init -> Ready VQ transition in resume_vq()
+      vdpa/mlx5: Add error code for suspend/resume VQ
+      vdpa/mlx5: Consolidate all VQ modify to Ready to use resume_vq()
+      vdpa/mlx5: Forward error in suspend/resume device
+      vdpa/mlx5: Use suspend/resume during VQP change
+      vdpa/mlx5: Pre-create hardware VQs at vdpa .dev_add time
+      vdpa/mlx5: Re-create HW VQs under certain conditions
+      vdpa/mlx5: Don't reset VQs more than necessary
+      vdpa/mlx5: Don't enable non-active VQs in .set_vq_ready()
 
-diff --git a/Documentation/arch/x86/cpuinfo.rst b/Documentation/arch/x86/cpuinfo.rst
-index 8895784d4784..0ea70924c89e 100644
---- a/Documentation/arch/x86/cpuinfo.rst
-+++ b/Documentation/arch/x86/cpuinfo.rst
-@@ -171,10 +171,10 @@ For example, when an old kernel is running on new hardware.
- 
- c: The kernel disabled support for it at compile-time.
- ------------------------------------------------------
--For example, if 5-level-paging is not enabled when building (i.e.,
--CONFIG_X86_5LEVEL is not selected) the flag "la57" will not show up [#f1]_.
-+For example, if Linear Address Masking (LAM) is not enabled when building (i.e.,
-+CONFIG_ADDRESS_MASKING is not selected) the flag "lam" will not show up.
- Even though the feature will still be detected via CPUID, the kernel disables
--it by clearing via setup_clear_cpu_cap(X86_FEATURE_LA57).
-+it by clearing via setup_clear_cpu_cap(X86_FEATURE_LAM).
- 
- d: The feature is disabled at boot-time.
- ----------------------------------------
-@@ -197,5 +197,3 @@ missing at runtime. For example, AVX flags will not show up if XSAVE feature
- is disabled since they depend on XSAVE feature. Another example would be broken
- CPUs and them missing microcode patches. Due to that, the kernel decides not to
- enable a feature.
--
--.. [#f1] 5-level paging uses linear address of 57 bits.
-diff --git a/Documentation/arch/x86/x86_64/5level-paging.rst b/Documentation/arch/x86/x86_64/5level-paging.rst
-index 71f882f4a173..ad7ddc13f79d 100644
---- a/Documentation/arch/x86/x86_64/5level-paging.rst
-+++ b/Documentation/arch/x86/x86_64/5level-paging.rst
-@@ -22,15 +22,6 @@ QEMU 2.9 and later support 5-level paging.
- Virtual memory layout for 5-level paging is described in
- Documentation/arch/x86/x86_64/mm.rst
- 
--
--Enabling 5-level paging
--=======================
--CONFIG_X86_5LEVEL=y enables the feature.
--
--Kernel with CONFIG_X86_5LEVEL=y still able to boot on 4-level hardware.
--In this case additional page table level -- p4d -- will be folded at
--runtime.
--
- User-space and large virtual address space
- ==========================================
- On x86, 5-level paging enables 56-bit userspace virtual address space.
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 54ad2462e9ef..f95a5048ad09 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -408,8 +408,7 @@ config DYNAMIC_PHYSICAL_MASK
- 
- config PGTABLE_LEVELS
- 	int
--	default 5 if X86_5LEVEL
--	default 4 if X86_64
-+	default 5 if X86_64
- 	default 3 if X86_PAE
- 	default 2
- 
-@@ -1498,25 +1497,6 @@ config X86_PAE
- 	  has the cost of more pagetable lookup overhead, and also
- 	  consumes more pagetable space per process.
- 
--config X86_5LEVEL
--	bool "Enable 5-level page tables support"
--	default y
--	depends on X86_64
--	help
--	  5-level paging enables access to larger address space:
--	  up to 128 PiB of virtual address space and 4 PiB of
--	  physical address space.
--
--	  It will be supported by future Intel CPUs.
--
--	  A kernel with the option enabled can be booted on machines that
--	  support 4- or 5-level paging.
--
--	  See Documentation/arch/x86/x86_64/5level-paging.rst for more
--	  information.
--
--	  Say N if unsure.
--
- config X86_DIRECT_GBPAGES
- 	def_bool y
- 	depends on X86_64
-diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
-index c882e1f67af0..61b9ca61bde1 100644
---- a/arch/x86/boot/compressed/pgtable_64.c
-+++ b/arch/x86/boot/compressed/pgtable_64.c
-@@ -10,12 +10,10 @@
- #define BIOS_START_MIN		0x20000U	/* 128K, less than this is insane */
- #define BIOS_START_MAX		0x9f000U	/* 640K, absolute maximum */
- 
--#ifdef CONFIG_X86_5LEVEL
- /* __pgtable_l5_enabled needs to be in .data to avoid being cleared along with .bss */
- unsigned int __section(".data") __pgtable_l5_enabled;
- unsigned int __section(".data") pgdir_shift = 39;
- unsigned int __section(".data") ptrs_per_p4d = 1;
--#endif
- 
- /* Buffer to preserve trampoline memory */
- static char trampoline_save[TRAMPOLINE_32BIT_SIZE];
-@@ -113,18 +111,13 @@ asmlinkage void configure_5level_paging(struct boot_params *bp, void *pgtable)
- 	 * Check if LA57 is desired and supported.
- 	 *
- 	 * There are several parts to the check:
--	 *   - if the kernel supports 5-level paging: CONFIG_X86_5LEVEL=y
- 	 *   - if user asked to disable 5-level paging: no5lvl in cmdline
- 	 *   - if the machine supports 5-level paging:
- 	 *     + CPUID leaf 7 is supported
- 	 *     + the leaf has the feature bit set
--	 *
--	 * That's substitute for boot_cpu_has() in early boot code.
- 	 */
--	if (IS_ENABLED(CONFIG_X86_5LEVEL) &&
--			!cmdline_find_option_bool("no5lvl") &&
--			native_cpuid_eax(0) >= 7 &&
--			(native_cpuid_ecx(7) & (1 << (X86_FEATURE_LA57 & 31)))) {
-+	if (!cmdline_find_option_bool("no5lvl") &&
-+	    native_cpuid_eax(0) >= 7 && (native_cpuid_ecx(7) & BIT(16))) {
- 		l5_required = true;
- 
- 		/* Initialize variables for 5-level paging */
-diff --git a/arch/x86/boot/header.S b/arch/x86/boot/header.S
-index b5c79f43359b..32361cef909e 100644
---- a/arch/x86/boot/header.S
-+++ b/arch/x86/boot/header.S
-@@ -361,12 +361,8 @@ xloadflags:
- #endif
- 
- #ifdef CONFIG_X86_64
--#ifdef CONFIG_X86_5LEVEL
- #define XLF56 (XLF_5LEVEL|XLF_5LEVEL_ENABLED)
- #else
--#define XLF56 XLF_5LEVEL
--#endif
--#else
- #define XLF56 0
- #endif
- 
-diff --git a/arch/x86/include/asm/disabled-features.h b/arch/x86/include/asm/disabled-features.h
-index c492bdc97b05..19cf1678fcaa 100644
---- a/arch/x86/include/asm/disabled-features.h
-+++ b/arch/x86/include/asm/disabled-features.h
-@@ -38,12 +38,6 @@
- # define DISABLE_OSPKE		(1<<(X86_FEATURE_OSPKE & 31))
- #endif /* CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS */
- 
--#ifdef CONFIG_X86_5LEVEL
--# define DISABLE_LA57	0
--#else
--# define DISABLE_LA57	(1<<(X86_FEATURE_LA57 & 31))
--#endif
--
- #ifdef CONFIG_MITIGATION_PAGE_TABLE_ISOLATION
- # define DISABLE_PTI		0
- #else
-@@ -149,8 +143,7 @@
- #define DISABLED_MASK13	0
- #define DISABLED_MASK14	0
- #define DISABLED_MASK15	0
--#define DISABLED_MASK16	(DISABLE_PKU|DISABLE_OSPKE|DISABLE_LA57|DISABLE_UMIP| \
--			 DISABLE_ENQCMD)
-+#define DISABLED_MASK16	(DISABLE_PKU|DISABLE_OSPKE|DISABLE_UMIP|DISABLE_ENQCMD)
- #define DISABLED_MASK17	0
- #define DISABLED_MASK18	(DISABLE_IBT)
- #define DISABLED_MASK19	(DISABLE_SEV_SNP)
-diff --git a/arch/x86/include/asm/page_64.h b/arch/x86/include/asm/page_64.h
-index cc6b8e087192..3b8cb6a8b122 100644
---- a/arch/x86/include/asm/page_64.h
-+++ b/arch/x86/include/asm/page_64.h
-@@ -60,7 +60,6 @@ static inline void clear_page(void *page)
- 
- void copy_page(void *to, void *from);
- 
--#ifdef CONFIG_X86_5LEVEL
- /*
-  * User space process size.  This is the first address outside the user range.
-  * There are a few constraints that determine this:
-@@ -91,7 +90,6 @@ static __always_inline unsigned long task_size_max(void)
- 
- 	return ret;
- }
--#endif	/* CONFIG_X86_5LEVEL */
- 
- #endif	/* !__ASSEMBLY__ */
- 
-diff --git a/arch/x86/include/asm/page_64_types.h b/arch/x86/include/asm/page_64_types.h
-index c2f3c50a2787..666a5d6ab910 100644
---- a/arch/x86/include/asm/page_64_types.h
-+++ b/arch/x86/include/asm/page_64_types.h
-@@ -48,14 +48,7 @@
- /* See Documentation/arch/x86/x86_64/mm.rst for a description of the memory map. */
- 
- #define __PHYSICAL_MASK_SHIFT	52
--
--#ifdef CONFIG_X86_5LEVEL
- #define __VIRTUAL_MASK_SHIFT	(pgtable_l5_enabled() ? 56 : 47)
--/* See task_size_max() in <asm/page_64.h> */
--#else
--#define __VIRTUAL_MASK_SHIFT	47
--#define task_size_max()		((_AC(1,UL) << __VIRTUAL_MASK_SHIFT) - PAGE_SIZE)
--#endif
- 
- #define TASK_SIZE_MAX		task_size_max()
- #define DEFAULT_MAP_WINDOW	((1UL << 47) - PAGE_SIZE)
-diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
-index 09df8939b997..2c77489ac86c 100644
---- a/arch/x86/include/asm/pgtable_64_types.h
-+++ b/arch/x86/include/asm/pgtable_64_types.h
-@@ -23,7 +23,6 @@ typedef struct { pmdval_t pmd; } pmd_t;
- 
- extern unsigned int __pgtable_l5_enabled;
- 
--#ifdef CONFIG_X86_5LEVEL
- #ifdef USE_EARLY_PGTABLE_L5
- /*
-  * cpu_feature_enabled() is not available in early boot code.
-@@ -37,10 +36,6 @@ static inline bool pgtable_l5_enabled(void)
- #define pgtable_l5_enabled() cpu_feature_enabled(X86_FEATURE_LA57)
- #endif /* USE_EARLY_PGTABLE_L5 */
- 
--#else
--#define pgtable_l5_enabled() 0
--#endif /* CONFIG_X86_5LEVEL */
--
- extern unsigned int pgdir_shift;
- extern unsigned int ptrs_per_p4d;
- 
-@@ -48,8 +43,6 @@ extern unsigned int ptrs_per_p4d;
- 
- #define SHARED_KERNEL_PMD	0
- 
--#ifdef CONFIG_X86_5LEVEL
--
- /*
-  * PGDIR_SHIFT determines what a top-level page table entry can map
-  */
-@@ -67,17 +60,6 @@ extern unsigned int ptrs_per_p4d;
- 
- #define MAX_POSSIBLE_PHYSMEM_BITS	52
- 
--#else /* CONFIG_X86_5LEVEL */
--
--/*
-- * PGDIR_SHIFT determines what a top-level page table entry can map
-- */
--#define PGDIR_SHIFT		39
--#define PTRS_PER_PGD		512
--#define MAX_PTRS_PER_P4D	1
--
--#endif /* CONFIG_X86_5LEVEL */
--
- /*
-  * 3rd level page
-  */
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index 37596a417094..f1c519abb925 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -457,7 +457,7 @@ void __init_or_module noinline apply_alternatives(struct alt_instr *start,
- 	DPRINTK(ALT, "alt table %px, -> %px", start, end);
- 
- 	/*
--	 * In the case CONFIG_X86_5LEVEL=y, KASAN_SHADOW_START is defined using
-+	 * KASAN_SHADOW_START is defined using
- 	 * cpu_feature_enabled(X86_FEATURE_LA57) and is therefore patched here.
- 	 * During the process, KASAN becomes confused seeing partial LA57
- 	 * conversion and triggers a false-positive out-of-bound report.
-diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-index ec36ad7117ae..ec3a7e2ea222 100644
---- a/arch/x86/kernel/head64.c
-+++ b/arch/x86/kernel/head64.c
-@@ -52,13 +52,11 @@ extern pmd_t early_dynamic_pgts[EARLY_DYNAMIC_PAGE_TABLES][PTRS_PER_PMD];
- static unsigned int __initdata next_early_pgt;
- pmdval_t early_pmd_flags = __PAGE_KERNEL_LARGE & ~(_PAGE_GLOBAL | _PAGE_NX);
- 
--#ifdef CONFIG_X86_5LEVEL
- unsigned int __pgtable_l5_enabled __ro_after_init;
- unsigned int pgdir_shift __ro_after_init = 39;
- EXPORT_SYMBOL(pgdir_shift);
- unsigned int ptrs_per_p4d __ro_after_init = 1;
- EXPORT_SYMBOL(ptrs_per_p4d);
--#endif
- 
- unsigned long page_offset_base __ro_after_init = __PAGE_OFFSET_BASE_L4;
- EXPORT_SYMBOL(page_offset_base);
-@@ -69,9 +67,6 @@ EXPORT_SYMBOL(vmemmap_base);
- 
- static inline bool check_la57_support(void)
- {
--	if (!IS_ENABLED(CONFIG_X86_5LEVEL))
--		return false;
--
- 	/*
- 	 * 5-level paging is detected and enabled at kernel decompression
- 	 * stage. Only check if it has been enabled there.
-diff --git a/arch/x86/kernel/head_64.S b/arch/x86/kernel/head_64.S
-index 330922b328bf..4b2b2138c163 100644
---- a/arch/x86/kernel/head_64.S
-+++ b/arch/x86/kernel/head_64.S
-@@ -659,12 +659,10 @@ SYM_DATA_START_PTI_ALIGNED(init_top_pgt)
- SYM_DATA_END(init_top_pgt)
- #endif
- 
--#ifdef CONFIG_X86_5LEVEL
- SYM_DATA_START_PAGE_ALIGNED(level4_kernel_pgt)
- 	.fill	511,8,0
- 	.quad	level3_kernel_pgt - __START_KERNEL_map + _PAGE_TABLE_NOENC
- SYM_DATA_END(level4_kernel_pgt)
--#endif
- 
- SYM_DATA_START_PAGE_ALIGNED(level3_kernel_pgt)
- 	.fill	L3_START_KERNEL,8,0
-diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
-index eb503f53c319..5a980a452f4c 100644
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -173,11 +173,7 @@ __ref void *alloc_low_pages(unsigned int num)
-  * randomization is enabled.
-  */
- 
--#ifndef CONFIG_X86_5LEVEL
--#define INIT_PGD_PAGE_TABLES    3
--#else
- #define INIT_PGD_PAGE_TABLES    4
--#endif
- 
- #ifndef CONFIG_RANDOMIZE_MEMORY
- #define INIT_PGD_PAGE_COUNT      (2 * INIT_PGD_PAGE_TABLES)
-diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index 93e54ba91fbf..a3ef75c06c58 100644
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -691,7 +691,7 @@ void native_set_fixmap(unsigned /* enum fixed_addresses */ idx,
- }
- 
- #ifdef CONFIG_HAVE_ARCH_HUGE_VMAP
--#ifdef CONFIG_X86_5LEVEL
-+#if CONFIG_PGTABLE_LEVELS > 4
- /**
-  * p4d_set_huge - setup kernel P4D mapping
-  *
-diff --git a/drivers/firmware/efi/libstub/x86-5lvl.c b/drivers/firmware/efi/libstub/x86-5lvl.c
-index 77359e802181..f1c5fb45d5f7 100644
---- a/drivers/firmware/efi/libstub/x86-5lvl.c
-+++ b/drivers/firmware/efi/libstub/x86-5lvl.c
-@@ -62,7 +62,7 @@ efi_status_t efi_setup_5level_paging(void)
- 
- void efi_5level_switch(void)
- {
--	bool want_la57 = IS_ENABLED(CONFIG_X86_5LEVEL) && !efi_no5lvl;
-+	bool want_la57 = !efi_no5lvl;
- 	bool have_la57 = native_read_cr4() & X86_CR4_LA57;
- 	bool need_toggle = want_la57 ^ have_la57;
- 	u64 *pgt = (void *)la57_toggle + PAGE_SIZE;
-diff --git a/tools/arch/x86/include/asm/disabled-features.h b/tools/arch/x86/include/asm/disabled-features.h
-index c492bdc97b05..19cf1678fcaa 100644
---- a/tools/arch/x86/include/asm/disabled-features.h
-+++ b/tools/arch/x86/include/asm/disabled-features.h
-@@ -38,12 +38,6 @@
- # define DISABLE_OSPKE		(1<<(X86_FEATURE_OSPKE & 31))
- #endif /* CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS */
- 
--#ifdef CONFIG_X86_5LEVEL
--# define DISABLE_LA57	0
--#else
--# define DISABLE_LA57	(1<<(X86_FEATURE_LA57 & 31))
--#endif
--
- #ifdef CONFIG_MITIGATION_PAGE_TABLE_ISOLATION
- # define DISABLE_PTI		0
- #else
-@@ -149,8 +143,7 @@
- #define DISABLED_MASK13	0
- #define DISABLED_MASK14	0
- #define DISABLED_MASK15	0
--#define DISABLED_MASK16	(DISABLE_PKU|DISABLE_OSPKE|DISABLE_LA57|DISABLE_UMIP| \
--			 DISABLE_ENQCMD)
-+#define DISABLED_MASK16	(DISABLE_PKU|DISABLE_OSPKE|DISABLE_UMIP|DISABLE_ENQCMD)
- #define DISABLED_MASK17	0
- #define DISABLED_MASK18	(DISABLE_IBT)
- #define DISABLED_MASK19	(DISABLE_SEV_SNP)
+ drivers/vdpa/mlx5/net/mlx5_vnet.c  | 429 +++++++++++++++++++++++++------------
+ drivers/vdpa/mlx5/net/mlx5_vnet.h  |   1 +
+ include/linux/mlx5/mlx5_ifc_vdpa.h |   2 +
+ 3 files changed, 293 insertions(+), 139 deletions(-)
+---
+base-commit: c8fae27d141a32a1624d0d0d5419d94252824498
+change-id: 20240617-stage-vdpa-vq-precreate-76df151bed08
+
+Best regards,
 -- 
-2.43.0
+Dragos Tatulea <dtatulea@nvidia.com>
 
 
