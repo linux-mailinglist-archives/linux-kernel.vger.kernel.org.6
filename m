@@ -1,85 +1,125 @@
-Return-Path: <linux-kernel+bounces-229851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9CC091752C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 02:12:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8324991752D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 02:12:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 877291F218F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 00:12:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 391B01F219E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 00:12:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A73ECF;
-	Wed, 26 Jun 2024 00:12:05 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9EF7F
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 00:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC121FBB;
+	Wed, 26 Jun 2024 00:12:38 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A783D819;
+	Wed, 26 Jun 2024 00:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719360725; cv=none; b=XrzV7WDLQy3MJcILviNOZYrVXQzaf5TKyHbE2sAYpQle5D0DOtaIJIkwri4E+Fv0wLItsWmic3iXR+qxo9QMhfoPEct8v1kRdg36tVdFnEHZcVV1r2BQjUnBAzxro092jEJkjEw3b9gmw7gRJqeLUpOvH4VTPyetyZNCZAME8YE=
+	t=1719360757; cv=none; b=bPKpeJSpwLcPnuyYSqdjtXVTyFlW0VPE2I3nv9mUPNp1g/0LHi6q5rwSATEs62cJvA4NuGkXQ88Ucd2cHhNTUJC2cHlLAFRZCiXzX6/WMmX3YGVw+6XUlx4o2ETpNbmtmPIgh5hZaO0vAmZTtcwiR/A+7cyuORJSd2ac+DOPmi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719360725; c=relaxed/simple;
-	bh=N5d5mGPYaFZcI4PKUpL0MZo0/O+sJUGDzDx2B8Tv6yI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=A3vlFYe6NapaL0rHWT4YfXpeE7cLkgWQQpaeKjFl3jE7z5YtDm4gJLroQ/MZuk7xrIRJB5Y9AANUlWR01r/fwZ8fmVKKAQPPt/hwvkvXjHPN8hwmPR/e3dX/nDstr9joXiiqKm2Q7wbuxRRePFpNNOiHojbNYs7SAFsrvTtcZbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7ebff1004acso770312339f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 17:12:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719360723; x=1719965523;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2wNDzpOvjU23Xb9gyWLJ9lNTYA8nnWJGKNNlbizL8xY=;
-        b=UMJYwBPbeQ2g7n/7cPBCrSSBtBZLhetweq/2mm0tduUNce6AhNGiYguVQZFS22+NPU
-         i+6RDmjWoLeupe0inwAq3E+a/hNx7zL2OiEG9KeE+A2QpobOPU9MHYhD35yikwhlGxGt
-         oOIv5T7mR0WqGjgkiBrUQgv1FXJxtoJaJ0ALFVfXvkdkXs9N/aDwu+tnzMQDoC0Q+wgw
-         eIYpghzN+Nw35wRZqtZ2aZWZnE74U4kAa1vPvHZiy7I04rCOKKmpeB70b7WPc7+gUBnp
-         7rS/cbZ+K/Vrh4uluAIvq5HSP/wzOlpAE/bgFNnJ2+LCKsNLoWDB0PNI3sRJJO6l0yya
-         YIbQ==
-X-Gm-Message-State: AOJu0YzaYc2nnoo6+jZCsPGLs/0bp7Z+GHauHZgtTExf7sOf4Brylo4N
-	Om1z2T8PeOx/ACf355WMgYWuuWZbWPY39tHbaRPFKMccEAjoqBtIbZ6X7Bt7OllZWTMC1pefH6I
-	73ho/QMao3u45XuSU1LWZZClyCvkckqI1f8o8O7zBfPzGmM+PQzMnrpY=
-X-Google-Smtp-Source: AGHT+IEXCpWuKyVmok53XsAucC2S3qrmysQ0+EnSbSEN3mm5idyARJNZEQzK/Vta1MR6KuZpvL+VYD/LOUWEYaZIJkZxFaHnrUEe
+	s=arc-20240116; t=1719360757; c=relaxed/simple;
+	bh=Di2v1aCgxQbeNZ3G+5jaCus/A3dLdp3TNrO30NfoLj8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m7yp60KU5XhgDGiqA/IbpuhY4Piai/qbvh1BWlC+bZ+N/l/Bnc/jyC3ue5MATd+jSOf7pfSLzAntcxS/F3LTRO3jhcvyMeWHCn4Yd3fOLCAx+rSytgMGtwznz1lHzw8IYeeJromUpCzMOeZ5HxyJpKvdsRtOuiuJqgz4+i+NjuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8DADD339;
+	Tue, 25 Jun 2024 17:12:58 -0700 (PDT)
+Received: from [192.168.20.22] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F00693F766;
+	Tue, 25 Jun 2024 17:12:29 -0700 (PDT)
+Message-ID: <ce332c4d-d564-45b5-ae4d-87b569976276@arm.com>
+Date: Tue, 25 Jun 2024 19:12:28 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:14ca:b0:7f3:a80e:8cf8 with SMTP id
- ca18e2360f4ac-7f3a80e8dc2mr22217539f.2.1719360722961; Tue, 25 Jun 2024
- 17:12:02 -0700 (PDT)
-Date: Tue, 25 Jun 2024 17:12:02 -0700
-In-Reply-To: <CAMc0M-_mB+uvhQvZ=u3KjFNREwMzSRiEKKUDnzQMhrOsbFtUvQ@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000221663061bbfdd71@google.com>
-Subject: Re: [syzbot] [bcachefs?] WARNING: kmalloc bug in __snapshot_t_mut
-From: syzbot <syzbot+770e99b65e26fa023ab1@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, peili.dev@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 02/14] arm64: Detect if in a realm and set RIPAS RAM
+Content-Language: en-US
+To: Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Steven Price <steven.price@arm.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
+ Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
+ <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
+ Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+References: <20240605093006.145492-1-steven.price@arm.com>
+ <20240605093006.145492-3-steven.price@arm.com> <20240612104023.GB4602@myrica>
+From: Jeremy Linton <jeremy.linton@arm.com>
+In-Reply-To: <20240612104023.GB4602@myrica>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Hi,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+On 6/12/24 05:40, Jean-Philippe Brucker wrote:
+> On Wed, Jun 05, 2024 at 10:29:54AM +0100, Steven Price wrote:
+>> From: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>
+>> Detect that the VM is a realm guest by the presence of the RSI
+>> interface.
+>>
+>> If in a realm then all memory needs to be marked as RIPAS RAM initially,
+>> the loader may or may not have done this for us. To be sure iterate over
+>> all RAM and mark it as such. Any failure is fatal as that implies the
+>> RAM regions passed to Linux are incorrect - which would mean failing
+>> later when attempting to access non-existent RAM.
+>>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> Co-developed-by: Steven Price <steven.price@arm.com>
+>> Signed-off-by: Steven Price <steven.price@arm.com>
+> 
+>> +static bool rsi_version_matches(void)
+>> +{
+>> +	unsigned long ver_lower, ver_higher;
+>> +	unsigned long ret = rsi_request_version(RSI_ABI_VERSION,
+>> +						&ver_lower,
+>> +						&ver_higher);
+> 
+> There is a regression on QEMU TCG (in emulation mode, not running under KVM):
+> 
+>    qemu-system-aarch64 -M virt -cpu max -kernel Image -nographic
+> 
+> This doesn't implement EL3 or EL2, so SMC is UNDEFINED (DDI0487J.a R_HMXQS),
+> and we end up with an undef instruction exception. So this patch would
+> also break hardware that only implements EL1 (I don't know if it exists).
 
-Reported-and-tested-by: syzbot+770e99b65e26fa023ab1@syzkaller.appspotmail.com
+To note: i've found out the hard way this set breaks a qemu+kvm+ACPI 
+setup as well, for roughly the same reason. I imagine we want kernels 
+which can boot in either a realm or a normal guest.
 
-Tested on:
+I delayed the version check a bit and then, did enough that 
+arm_smcccc_1_1_invoke() could replace arm_smccc_smc() in 
+invoke_rsi_fn_smc_with_res(). Which naturally gets it booting again, the 
+larger implications i've not considered yet.
 
-commit:         55027e68 Merge tag 'input-for-v6.10-rc5' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10f3a389980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bf5def5af476d39a
-dashboard link: https://syzkaller.appspot.com/bug?extid=770e99b65e26fa023ab1
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=170174c1980000
 
-Note: testing is done by a robot and is best-effort only.
+
+
+> 
+> The easiest fix is to detect the SMC conduit through the PSCI node in DT.
+> SMCCC helpers already do this, but we can't use them this early in the
+> boot. I tested adding an early probe to the PSCI driver to check this, see
+> attached patches.
+> 
+> Note that we do need to test the conduit after finding a PSCI node,
+> because even though it doesn't implement EL2 in this configuration, QEMU
+> still accepts PSCI HVCs in order to support SMP.
+> 
+> Thanks,
+> Jean
+> 
+
 
