@@ -1,87 +1,120 @@
-Return-Path: <linux-kernel+bounces-231547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 524339199CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 23:34:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67E5C9199D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 23:35:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52AD31C21303
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:34:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2086D284800
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C99C194083;
-	Wed, 26 Jun 2024 21:34:07 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA53E19309B;
+	Wed, 26 Jun 2024 21:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vp/8tqwL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60EC4190698
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 21:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25A62AF1A;
+	Wed, 26 Jun 2024 21:35:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719437646; cv=none; b=d+CvQ9DiBqAKlI4iafdeThWU4TtFBkSl/aRcLeR+ANVLx/MtqLBXrLyu68TYVqxOtNHjxi863CnWexoIVObU21FbpuqmmFLwvFSDZDqkgKkapMFCM0Gi1n+LTUh9h1ZqFTKRZeLxd/gspQifIgYXZxerj3UTtAwn8cywEVKTfls=
+	t=1719437711; cv=none; b=DzMcPXiQU4xf1zHH46u7it6B6HwiJCbzxeEpqc1T2rRdlpeNURjSuCQEZwU64TC3QZ8zrYK0bWQckosb0b7qFjDS9Rni9TegkLLfkLfk4PTtIcNqWYQrgLm5ZQsZW51uPhtsQ1QJKQslNeRGxzcnhFd6ZUcHUUUsydTDnGIbAYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719437646; c=relaxed/simple;
-	bh=lxyUyI7Ml7rGG22Ce9B1f+w1Bv/1wiDQpwFGxLAqsg0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=kADQHYOjkOaVfGPc+wRo9crAr6N700rBaiwRFu1exF+Wh8tFALOlmFjb6wBXKFHfnlb9LVyF2pQbkPorx1YJMCAagRM72u06dCT4v+Ol44dpRDYetQlJ7L6tTfFtPF5X39kOevi1H+Jq0cLfDFbcN0+moYw490TfJ4kXfcWjA6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-37625537d64so113313975ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 14:34:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719437644; x=1720042444;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G/wMDiKgLoFg9RcAgb7EI/542G1u2cd8KM50iNDh2t8=;
-        b=S23l9eSvUbj2QRqjneHKwwPD03R5yREFTKo+AIZjDRNJgBboaWaO/gazAY3q+1ljcF
-         E9X11Nti0eKCvGTvLuhmHomNJRXkqBpi1WWrbeSYcAq/QNJP5Ds3s30XQG7Zm37WKJiB
-         o0wx25lMMgRpd/Ij9A0z25nZOyeiAH9AEMJXB5SwO0PQk/+ds4RhS/kw9i5D7zrERmWt
-         OnyXVeiT9Jk1mETA7UuKhVvaVmtEymQDfWPTCcK/ibNfZPvOHGALFyA2BpnA3qhI91ie
-         IhjdV61N17f2AO28YwJGSSX+zL134r90jvhorlqG30ctdG7Kb+/enj5sW42EuLW70g+R
-         ffRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHGPqH5TEwELTZLvVBBl/nWi7ASLxHpHxewRPdrxWc0bq7JBK/sUzWRAGKVuzlx2XNERejFe/6QJ0xF0P2KrolZ3ZhJ+DJhoo2NJaR
-X-Gm-Message-State: AOJu0Yz3vxbUseEAcws0LOGJG2s2YKQGlprtdoaxMHYPt//f0oCiEOiL
-	1nYMJT3Ayy+ESbgAToGfWbpe/MZXOt/gPUZWTwgglCU3LsvpOPxn7m1uP7ceaOC3YsekgzwvXmV
-	5tAYeHHe+DtIux98NDf/bMwBeJJjc6vRARzlaSljeSyRJ650nWKp3NZ4=
-X-Google-Smtp-Source: AGHT+IFfy+Nbjrf2pKL0wh1L3WWKDsM5FXclSrHWOcJREVsHFK3u0Rm90ZSuxk4ROSbHWYVpL3QFeINWnPTJTzRZFDwTRmOfMqbh
+	s=arc-20240116; t=1719437711; c=relaxed/simple;
+	bh=s0GeOvESFSBrRi+DN+LV5hCsx1lZA+34LfdNK7H/BjY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mUvdXLzW0I/ceDS/IPogTzwpl+s3AsyWigrb7rvZETDff66TcgfJNQsFPraq1TVu8GiaLJmjYQ7HS/nGEVUxnVTP/i9Yz7Swssg6T8+vX95vecUWOPBqI88bYyTcp1y//WRdQ7WX2mnXfFlSGKRXheHH2L/dSk0BFRPNSt56I/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vp/8tqwL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83B57C116B1;
+	Wed, 26 Jun 2024 21:35:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719437710;
+	bh=s0GeOvESFSBrRi+DN+LV5hCsx1lZA+34LfdNK7H/BjY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Vp/8tqwLmUV0dpY+5G8PSbp0C94GyCfYCdhzDxYX5hLTjrHz+2FEunJDuJpg7uhQJ
+	 8VQDPRLapN3ArwFx1H/jXPizTFxCFwGfRWadUVAS9H10eMP5gNsir/WtXSTd1eVIsy
+	 Na6/IXVRnU+JdIwyWxjzFVjeyIxScxsnmdvkhIaUo3k/2Mlu/mwccIv4AVb+g03bNq
+	 TdCUBm8QR0fnv0zME3/1Z08lHbnlkbv2V5T28Tg6bz+p0znXTpdssQUQEmfVRWLaQW
+	 c6rNlSCfONB+d+pm/up857qhaWDrpo5MUuLlXp8dJ3CuP4ZuCxt4o32GQ7dmCMBtK3
+	 V4y+7OQz4PDXw==
+Message-ID: <43732a44-1f90-4119-9e52-000b5a6a2f99@kernel.org>
+Date: Wed, 26 Jun 2024 23:35:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d9c:b0:36c:5520:9597 with SMTP id
- e9e14a558f8ab-3763f70d037mr11866155ab.6.1719437644570; Wed, 26 Jun 2024
- 14:34:04 -0700 (PDT)
-Date: Wed, 26 Jun 2024 14:34:04 -0700
-In-Reply-To: <f3ab10ab-38e0-4856-9d89-3b5409da0e55@rowland.harvard.edu>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000004b0dc061bd1c6e2@google.com>
-Subject: Re: [syzbot] [usb?] [bluetooth?] WARNING in btusb_submit_intr_urb/usb_submit_urb
-From: syzbot <syzbot+8693a0bb9c10b554272a@syzkaller.appspotmail.com>
-To: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
-	stern@rowland.harvard.edu, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2] cgroup/rstat: Avoid thundering herd problem by kswapd
+ across NUMA nodes
+To: Yosry Ahmed <yosryahmed@google.com>,
+ "Christoph Lameter (Ampere)" <cl@linux.com>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>, tj@kernel.org,
+ cgroups@vger.kernel.org, hannes@cmpxchg.org, lizefan.x@bytedance.com,
+ longman@redhat.com, kernel-team@cloudflare.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <a45ggqu6jcve44y7ha6m6cr3pcjc3xgyomu4ml6jbsq3zv7tte@oeovgtwh6ytg>
+ <CAJD7tkZT_2tyOFq5koK0djMXj4tY8BO3CtSamPb85p=iiXCgXQ@mail.gmail.com>
+ <qolg56e7mjloynou6j7ar7xzefqojp4cagzkb3r6duoj5i54vu@jqhi2chs4ecj>
+ <CAJD7tka0b52zm=SjqxO-gxc0XTib=81c7nMx9MFNttwVkCVmSg@mail.gmail.com>
+ <u3jrec5n42v35f3xiigfqabajjt4onh44eyfajewnzbfqxaekw@5x2daobkkbxh>
+ <CAJD7tkaMeevj2TS_aRj_WXVi26CuuBrprYwUfQmszJnwqqJrHw@mail.gmail.com>
+ <d3b5f10a-2649-446c-a6f9-9311f96e7569@kernel.org>
+ <CAJD7tkZ0ReOjoioACyxQ848qNMh6a93hH616jNPgX3j72thrLg@mail.gmail.com>
+ <zo6shlmgicfgqdjlfbeylpdrckpaqle7gk6ksdik7kqq7axgl6@65q4m73tgnp3>
+ <CAJD7tkZ_aba9N9Qe8WeaLcp_ON_jQvuP9dg4tW0919QbCLLTMA@mail.gmail.com>
+ <ntpnm3kdpqexncc4hz4xmfliay3tmbasxl6zatmsauo3sruwf3@zcmgz7oq5huy>
+ <CAJD7tkYqF0pmnw+PqmzPGh7NLeM2KfCwKLMhkFw3sxBOZ3biAA@mail.gmail.com>
+ <a1e847a6-749b-87e8-221f-f9beb6c2ab59@linux.com>
+ <CAJD7tkbq-dyhmgBOC0+=FeJ19D-fRpE_pz44cH7fCvtHgr45uQ@mail.gmail.com>
+Content-Language: en-US
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+In-Reply-To: <CAJD7tkbq-dyhmgBOC0+=FeJ19D-fRpE_pz44cH7fCvtHgr45uQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Reported-and-tested-by: syzbot+8693a0bb9c10b554272a@syzkaller.appspotmail.com
+On 26/06/2024 00.59, Yosry Ahmed wrote:
+> On Tue, Jun 25, 2024 at 3:35 PM Christoph Lameter (Ampere) <cl@linux.com> wrote:
+>>
+>> On Tue, 25 Jun 2024, Yosry Ahmed wrote:
+>>
+>>>> In my reply above, I am not arguing to go back to the older
+>>>> stats_flush_ongoing situation. Rather I am discussing what should be the
+>>>> best eventual solution. From the vmstats infra, we can learn that
+>>>> frequent async flushes along with no sync flush, users are fine with the
+>>>> 'non-determinism'. Of course cgroup stats are different from vmstats
+>>>> i.e. are hierarchical but I think we can try out this approach and see
+>>>> if this works or not.
+>>>
+>>> If we do not do sync flushing, then the same problem that happened
+>>> with stats_flush_ongoing could occur again, right? Userspace could
+>>> read the stats after an event, and get a snapshot of the system before
+>>> that event.
+>>>
+>>> Perhaps this is fine for vmstats if it has always been like that (I
+>>> have no idea), or if no users make assumptions about this. But for
+>>> cgroup stats, we have use cases that rely on this behavior.
+>>
+>> vmstat updates are triggered initially as needed by the shepherd task and
+>> there is no requirement that this is triggered simultaenously. We
+>> could actually randomize the intervals in vmstat_update() a bit if this
+>> will help.
+> 
+> The problem is that for cgroup stats, the behavior has been that a
+> userspace read will trigger a flush (i.e. propagating updates). We
+> have use cases that depend on this. If we switch to the vmstat model
+> where updates are triggered independently from user reads, it
+> constitutes a behavioral change.
 
-Tested on:
+I implemented a variant using completions as Yosry asked for:
+ 
+https://lore.kernel.org/all/171943668946.1638606.1320095353103578332.stgit@firesoul/
 
-commit:         66cc544f Merge tag 'dmaengine-fix-6.10' of git://git.k..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=146c143a980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3f7b9f99610e0e87
-dashboard link: https://syzkaller.appspot.com/bug?extid=8693a0bb9c10b554272a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15e096c1980000
-
-Note: testing is done by a robot and is best-effort only.
+--Jesper
 
