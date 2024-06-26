@@ -1,138 +1,134 @@
-Return-Path: <linux-kernel+bounces-231207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F40DC9187AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:43:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 697B8918799
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:40:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C704B2C098
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:40:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C35E228A9E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0374A18FDB8;
-	Wed, 26 Jun 2024 16:39:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7749918E75D;
+	Wed, 26 Jun 2024 16:39:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="a4Z5JZV/"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UVEeMRkK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE6A18FC6C;
-	Wed, 26 Jun 2024 16:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B742518EFEB;
+	Wed, 26 Jun 2024 16:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719419958; cv=none; b=LPZH/bDgphMrFRdsvk4FiUIgR3Z9xA2tLjwfVnVKWU3pPW2p3iGtJQSTk27GDeMiW5uOH2vUZrA9Lpwkl4jgowkIvbS+3ScelAnE2nAik2oah4jCIuHSfh2VyVEtg7bhk28oKwPCelElmsd2ZBnve/z1O1HbnA5+eesGOIimXnY=
+	t=1719419994; cv=none; b=p8SwQtCtyxJlBsF44YDagg1ykhMiAeTFtst6NR/LToG5roSnziwpei+JWQ94Zeu3eXlzZEvbMy6tw2bQqYvPg35Rt9uOSDE57rMuUBZVR6A1xzXiUoptLz599a1Q/jqX2h6eRekdIYtJMZmwMSaWTBjIDT0u2HcgACYdyXx301k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719419958; c=relaxed/simple;
-	bh=yOlDxBZu3pWz8NnSvstlkkupmt0K7U89lTu4e4ns5ds=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=utRrDBaIHLtaU1SAvo10cwdgVImexjVLxwqzSC/GBlKvMOi2UWnF/YzOg7xVYY3qucS1VOnVm0JeCZypkr4zH2eB20PMsbA8i678tU5JCxWskLisMCmRmZUOjjZexLIQMdAVuD1xv/PlZGoC0EF7P82SpL+MKF9Ckc+m0ZaoU1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=a4Z5JZV/; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QAfUG2023737;
-	Wed, 26 Jun 2024 16:39:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	53BRxXB+20bEEGJgP9JLStrQZG51nI9iZGonm6T2Zms=; b=a4Z5JZV/gJIVCwSc
-	K2n4yo2Hmhr7BLu5/lwp7q0x53s+YUBPgOkFaDVSdvvMCRdcNRcMhaiITsfsSYgU
-	DodA1mEZ56eNw8VDaMURRRQo1dmWUMzy6vksIuRzPhhj/L8JsvZnLNdPQZtdhH/A
-	et1+YmvWOFau4vGeJ15hXhXySaySaktC/yz1I7AuP4Ph4yzl3yQ3+rPGMuNCrM1n
-	xcZg2SrSmkCGDIBjGqzGtkvxqp8z0tWAWtWocj/PICe5KmaQMfYogQuhBOo1IMhn
-	YVCcapwO9V3M6pNNJpDYGk6voE+rbWGO+QMOPODQrE2dEBQ6VIg2e4TjcAaM2X7u
-	LKKxUA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywp6yt4tg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 16:39:13 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45QGdCOS024087
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 16:39:12 GMT
-Received: from [10.48.244.230] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Jun
- 2024 09:39:11 -0700
-Message-ID: <8bd4fa77-a7f7-41eb-bf2f-7f21dc15856c@quicinc.com>
-Date: Wed, 26 Jun 2024 09:39:11 -0700
+	s=arc-20240116; t=1719419994; c=relaxed/simple;
+	bh=2PIGptfu7Q6IJYjxdK4gnMcXpRqy+KgrEzlHWeWHipg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gdVy4vL0FedeTks7hkRByOQLkKo8EIDewXcrXIc8ou5XLRboPm1JAGfwDZy3PPl/wr8GVN/Y/Dyv/ypUvcn+bk6T6AvkRHcUOuzGavHdJXHniCc6GegrQrY0W+6MFodAIYrr+17XXPRs282D5/+tiyC6QTtuhZ30rgsodnTRoLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UVEeMRkK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10966C32789;
+	Wed, 26 Jun 2024 16:39:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719419994;
+	bh=2PIGptfu7Q6IJYjxdK4gnMcXpRqy+KgrEzlHWeWHipg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UVEeMRkK91SZfmGSS4KOvWnt+VMC1hj25VJkNV95C414FgBfOEXos8yU+6ls5YVX+
+	 rGKvDVSHjHvMd/SgQJVBKWeV5R4by02/TT0prfUcJcC0beCPDQhOQkPcJhXhON+v9H
+	 fgTApVTS3doKRbsSMiXFP8wKi3XGjV9Anq37vAFVNwuSCJekV0aowMTieJTL1qks7w
+	 uyZQ2niXeXh1qkR1Rtd66AoP68zG4qzehgVRYVlAgBQbnQ8WR5CV0/l5SCJtbyWe4U
+	 Ktd4GlozG/zGYUnfWJf+sUKyObD1mpqjYw2MeeyDxvgoQsKm6cb6VKOsQQMHkJf2K+
+	 OMPttVlqoz74A==
+Date: Wed, 26 Jun 2024 17:39:49 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Atish Kumar Patra <atishp@rivosinc.com>
+Cc: Samuel Holland <samuel.holland@sifive.com>,
+	linux-riscv@lists.infradead.org, kvm-riscv@lists.infradead.org,
+	Atish Patra <atishp@atishpatra.org>,
+	Anup Patel <anup@brainfault.org>, Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] drivers/perf: riscv: Reset the counter to
+ hpmevent mapping while starting cpus
+Message-ID: <20240626-spyglass-clutter-4ff4d7b26dd4@spud>
+References: <20240626-misc_perf_fixes-v3-0-de3f8ed88dab@rivosinc.com>
+ <20240626-misc_perf_fixes-v3-2-de3f8ed88dab@rivosinc.com>
+ <96ff4dd2-db66-4653-80e9-97d4f1381581@sifive.com>
+ <CAHBxVyHx9hTRPosizV_yn6DUZi-MTNTrAbJdkV3049D-qsDHcw@mail.gmail.com>
+ <20240626-eraser-unselect-99e68a1f5a3e@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: dvb-frontends: add missing MODULE_DESCRIPTION()
- macros
-Content-Language: en-US
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20240611-md-drivers-media-dvb-frontends-v1-1-a378ed102f69@quicinc.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240611-md-drivers-media-dvb-frontends-v1-1-a378ed102f69@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: LpzqAaSJMV-S1T0EuJB2RFLCOU2jeWI3
-X-Proofpoint-ORIG-GUID: LpzqAaSJMV-S1T0EuJB2RFLCOU2jeWI3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-26_07,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 bulkscore=0
- phishscore=0 adultscore=0 mlxscore=0 suspectscore=0 malwarescore=0
- clxscore=1015 lowpriorityscore=0 spamscore=0 priorityscore=1501
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406260122
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="FU7Zc89k4QCiR7WV"
+Content-Disposition: inline
+In-Reply-To: <20240626-eraser-unselect-99e68a1f5a3e@spud>
 
-On 6/11/2024 8:21 PM, Jeff Johnson wrote:
-> With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/dvb-frontends/au8522_decoder.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/dvb-frontends/mb86a16.o
-> 
-> Add the missing invocations of the MODULE_DESCRIPTION() macro.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->  drivers/media/dvb-frontends/au8522_decoder.c | 1 +
->  drivers/media/dvb-frontends/mb86a16.c        | 1 +
->  2 files changed, 2 insertions(+)
-> 
-> diff --git a/drivers/media/dvb-frontends/au8522_decoder.c b/drivers/media/dvb-frontends/au8522_decoder.c
-> index acc27376c246..d02a92a81c60 100644
-> --- a/drivers/media/dvb-frontends/au8522_decoder.c
-> +++ b/drivers/media/dvb-frontends/au8522_decoder.c
-> @@ -25,6 +25,7 @@
->  #include "au8522_priv.h"
->  
->  MODULE_AUTHOR("Devin Heitmueller");
-> +MODULE_DESCRIPTION("Auvitek AU8522 QAM/8VSB demodulator driver and video decoder");
->  MODULE_LICENSE("GPL");
->  
->  static int au8522_analog_debug;
-> diff --git a/drivers/media/dvb-frontends/mb86a16.c b/drivers/media/dvb-frontends/mb86a16.c
-> index 0fc45896e7b8..9033e39d75f4 100644
-> --- a/drivers/media/dvb-frontends/mb86a16.c
-> +++ b/drivers/media/dvb-frontends/mb86a16.c
-> @@ -1854,5 +1854,6 @@ struct dvb_frontend *mb86a16_attach(const struct mb86a16_config *config,
->  	return NULL;
->  }
->  EXPORT_SYMBOL_GPL(mb86a16_attach);
-> +MODULE_DESCRIPTION("Fujitsu MB86A16 DVB-S/DSS DC Receiver driver");
->  MODULE_LICENSE("GPL");
->  MODULE_AUTHOR("Manu Abraham");
-> 
-> ---
-> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-> change-id: 20240611-md-drivers-media-dvb-frontends-ed357c23fc53
-> 
-Following up to see if anything else is needed from me. Hoping to see this in
-linux-next so I can remove it from my tracking spreadsheet :)
 
-/jeff
+--FU7Zc89k4QCiR7WV
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Jun 26, 2024 at 05:37:07PM +0100, Conor Dooley wrote:
+> On Wed, Jun 26, 2024 at 09:18:46AM -0700, Atish Kumar Patra wrote:
+> > On Wed, Jun 26, 2024 at 6:24=E2=80=AFAM Samuel Holland
+> > <samuel.holland@sifive.com> wrote:
+> > >
+> > > On 2024-06-26 2:23 AM, Atish Patra wrote:
+> > > > From: Samuel Holland <samuel.holland@sifive.com>
+> > > >
+> > > > Currently, we stop all the counters while a new cpu is brought onli=
+ne.
+> > > > However, the hpmevent to counter mappings are not reset. The firmwa=
+re may
+> > > > have some stale encoding in their mapping structure which may lead =
+to
+> > > > undesirable results. We have not encountered such scenario though.
+> > > >
+> > >
+> > > This needs:
+> > >
+> > > Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+> > >
+> >=20
+> > Oops. Sorry I missed that.
+> >=20
+> > @Alexandre Ghiti
+>=20
+> What's Alex going to be able to do?
+>=20
+> > @Palmer Dabbelt : Can you add that while picking up
+> > the patch or should I respin a v4 ?
+>=20
+> b4 should pick the signoff up though. "perf: RISC-V: Check standard
+> event availability" seems to be missing your signoff though...
+
+Huh, this doesn't really make sense. I meant:
+	b4 should pick the signoff up, though "perf: RISC-V: Check standard
+	event availability" seems to be missing your signoff...
+
+--FU7Zc89k4QCiR7WV
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnxEVAAKCRB4tDGHoIJi
+0hINAP48KsydcVtxBdutJ7PLHDXPIJwaexLkCAn12KujpGyUXwD/ayGbi7swPtlU
+FUXHQj/AMQOOQenoBkNfM/k44jEYCQE=
+=a7Yq
+-----END PGP SIGNATURE-----
+
+--FU7Zc89k4QCiR7WV--
 
