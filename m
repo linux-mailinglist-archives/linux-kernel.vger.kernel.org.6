@@ -1,125 +1,225 @@
-Return-Path: <linux-kernel+bounces-230499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5220A917DAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:18:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5349B917DA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:18:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 824FA288A86
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:18:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 088EF2886DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:18:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66CB3177999;
-	Wed, 26 Jun 2024 10:18:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B49617839B;
+	Wed, 26 Jun 2024 10:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="u8Mx57jx"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FL/1rLlN"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F88176ABF
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 10:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74E7176AD0
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 10:18:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719397124; cv=none; b=EIJwnaZwYYWJxApqf/4B4JTpb6w+x5nxHRsT02KZ12/6ypJuKBoulKa1xS/j+nlXqvVJ9+MY0cID1+HAyiJhFqxy2/j224wNJl0PU1WKJ2l+z6KUqUI/zEigERAIHTWi8p+I8RSDQi2/HsFC4JkgM64dpMzNXZmhb2BxsZGjNLU=
+	t=1719397098; cv=none; b=QkfQM7rGfEP8Mb/B9SUNXGkbtlub0v/sHTWqKNdYi/ZtWnsGZ/W8vXku7vS12Ad6DizBFfaEdbBLQZms7Qc5aDr32cW1xhJL/odThKJratVhgbKbsu3LRFm/Zari6mXs7WhIKyJutEvXwR+xskR1uV/V23kKE+Gryqsbm74n3HE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719397124; c=relaxed/simple;
-	bh=53Zj3oupdMLAkxnb/p1TFSSkwzxhFsLrokzhHfDoKFs=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=LbBySlG4LfTswn9v91lBDFF+Gf2LzTMRinQ+Y6mE7fyT6YbZtIhOrRsBwzEfRaoQ4Qsc8QaWMV1JIRuE16nVbrGGI0UgzLOcszm53ujlPfpetflR26xHLF1FLpp33O0PkATvHvDXjI+koeYJ7K++vVlQVBchGfK9Ctk7NO3uWCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=u8Mx57jx; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719397090; x=1720001890; i=markus.elfring@web.de;
-	bh=GDfZxGNUScq9YaFwJpm3DeNY9vXyehcx9Z/G4rNFFu8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=u8Mx57jxnQA2HGD/gqjBu6F8uG5HKfa2F+2OBaRwkr+20LWk4RYqw447eO6jBvn8
-	 X7Mcesplc1Yl1OZoJp2nRkOfxRC+p4MyzDaU884Kc2nOs2bOZKMcshkWyzAQRJ6jK
-	 OHjgYBnCvFSgm451jc43H/jLjN+4IsmYw8fgSOR9hom1SB9yscjI5n2gng9BGKamS
-	 TWUBM3eKePNFEcPLox/5lyhan7VWMKgmwGWs4HcuVsQHIX+/n4QOIJiSOaUI1+Cfg
-	 C2VLkVnl6ZF/2niC0x77oaau7l3YPTS7lF8MDtEHv/Mph5e3uAjp2QS2q1H0CoFp6
-	 ILRzqZ1A9A3unx0vuA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M7elj-1sGeZb1TB7-00EUgG; Wed, 26
- Jun 2024 12:18:10 +0200
-Message-ID: <84c7c61a-9de2-47d7-8420-87a2b389e684@web.de>
-Date: Wed, 26 Jun 2024 12:18:08 +0200
+	s=arc-20240116; t=1719397098; c=relaxed/simple;
+	bh=HxFLn3EKFP9/3frs9V6iy9Q1+ai79dM4oSUWkrspkNY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SBRbcSX49wnL5KIsMtBJDrpHp4Yi2v0Kz/rsr+Konrn9wM2pSdk8mRc7/3Op+77EgKc5LYiryvb4mHbOzrnTjJ/97zy87hufC7FuR66cJ0O/FGEJKmkRdKIFsmdmK5bs0cWC69Z9DHdodFtX6IOpmP6lbT73DKEvDl/Fdmw6X4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FL/1rLlN; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57d1d614049so37509a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 03:18:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719397094; x=1720001894; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6bdjU3nE5ZipGzXPlrfx4tB5EjZjaLf/s1zAFQ4DTHQ=;
+        b=FL/1rLlN4StONzTTMqTS41LTLU5ZQTKm9+rF3c0+VuLgHk5lnbGed4BtNRiYSASwC+
+         kss4tFI1nBqblO7j2VR7x3C/FONV0as4aaMbL3Mb8qcT6DuYjjF+W1hKsMvMKwif1gU5
+         uGCQlNbraj668ebjVaqBAOR/CzOVkh8PSvOOta2lAm2aD7tduKtC1OM27OluSx1cOmt5
+         0M9ndOAlFoexzZY5Md2uKCRHAZy0X1CEI7AqNxHXlbRFk82I90ndUbrXQr5fdbdK5H3s
+         QWzlC9L/Ct9UUINI2RU6rIcLCl9oP7k5NGMBW6fL12WbboOioNw8hZSNNKqsDGogm7AE
+         uwzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719397094; x=1720001894;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6bdjU3nE5ZipGzXPlrfx4tB5EjZjaLf/s1zAFQ4DTHQ=;
+        b=pgaDV3LtgkdKt9uUReRQpdku4kK/wlQsHbM3DIy+qJ3xpSno4urLtNE9lNq1QwXkbE
+         0iesffCQbJ3Xq/mfesaqUjQT7Ybk3B95m7kVu7IIwBpItUcpNAkOtGyd73PVyhFSVmKq
+         oI5YTGsiy2QtyRwdOFIDEoxwsw/zTTUMNoad8T6g6SSsyXztVZA4mzjY3SsX57pGywDq
+         Crjo3FT5/z0i3E2F8EbaXoq8hMJUZlxGHt5JIASrlrNt+YMC2xN+noC/nmjeZuSYpEw2
+         PxpNo/XFADeI8pYM7DaJHQJuqVFkDhGOMaDkff7jSK9id27DldxWG4VYh9F7DlThDPQ0
+         Jh6w==
+X-Forwarded-Encrypted: i=1; AJvYcCUvEia2NJH32E3AfnJNKND+nXgO2QMwOa2DTOB16IOGc//VwZGu4F4bpq2GaEMJRWktN+eOhlkCBKbEQVUJfAUfsKW02MVc2vH1w/ba
+X-Gm-Message-State: AOJu0YzWetAhnlJGA0PCNQYzEKznMWygnYdrPUNNtLvQAejbiBEZbh5I
+	lg+QROj7msE3d/z1DAEEfrAF4Cj6HDVX3sFntc4DFZTe0WPsdyM2nzUN9emwNlc=
+X-Google-Smtp-Source: AGHT+IFBNccWMI7NTYfI9iYETbbac/VKuBb+ZnQdRhtrnkDqFlLEVtbm0dPVcl4LOR3fqWpc0urpjg==
+X-Received: by 2002:a05:6402:340d:b0:582:5195:3a7a with SMTP id 4fb4d7f45d1cf-58251957777mr3714663a12.35.1719397094033;
+        Wed, 26 Jun 2024 03:18:14 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d3053558esm6965474a12.64.2024.06.26.03.18.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 03:18:13 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Pavel Machek <pavel@ucw.cz>,
+	Lee Jones <lee@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rahul Tanwar <rtanwar@maxlinear.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dmaengine@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	linux-phy@lists.infradead.org,
+	linux-gpio@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] dt-bindings: intel,lgm: drop inactive maintainers from intel
+Date: Wed, 26 Jun 2024 12:18:09 +0200
+Message-ID: <20240626101809.25227-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Ma Ke <make24@iscas.ac.cn>, dri-devel@lists.freedesktop.org,
- Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
- Thomas Zimmermann <tzimmermann@suse.de>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240626011656.2763368-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH] drm/gma500: fix null pointer dereference in
- psb_intel_lvds_get_modes
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240626011656.2763368-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:01rFRwMVi3531kRlSNqKJqy4VVaSc7+o4NHk0MEHOFFnMzxhibA
- OivBn4+Jls90kxeCzxTEwynhxV0OwQNDGRzP4wVoPgwaVfgWvb/PoSayUoqslQu9/Z7Y9zQ
- 4d285myX/qYl+Aa+0vSnFYUU554DZdMMHnkwQpYDvrWQae1VihS6vbtWKxpYmS+nKkR2iV6
- ldUqX3PD7wEBblXES11lw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:/inCr0aeIyA=;nhO+xV00Cmbe7kK9azANZthrrjl
- PBrZsmpM0GtlAby7gaDXVpqMPIXRglE3SBCutqGW5fJHCG7RqgbPfDxb4k7rbMBsUKOgNJJpx
- j7wS/agVibvRNb90iGvtO2xKjnYy5CHBg9JV0xtch4paWLQFy7pbFaNOsuO8Nr9RJW0G+4qHu
- mexbUT9rnWQAdTUz1rLOJbaU60QF/qlVITn4uPN5pbLNlSsYVKNFU+5Cvm7RNTrgpIaJu+EWv
- 8R3mqfpDsyTQm9pZa/OEVaI9lIkqN4MwaifT1aMTClWs1FzALN7L1qJg8dP0MoiXUk1WYeWYh
- 5z7dYWGwA0wEvaPlgNZhKCBryhrPHMrQuzHA8vZVSR8TclHpWlvuffqVipnuHHwrREJW/3nx3
- ojhdX5N3Fo48hMJkF6Vvb+UCrHQ/9biZ171+bXiqEtn+l0+XlpFdwb1vwrLOdMHcm+8lViNTr
- Wan7w8dZUkkvJeWZ7cDOc+dDDrdryk2SaDyIWvpG2mv9J6U/WL2AaKh3g3tLVnKeij4S8R5zo
- 50wag07jxlQv7FHdFSKKWrhgtvcfXZRW9kfhGA/IWDSeZOLCejZupPSWPLF+/tZEBb9rlDPfl
- dvoaCV+sBtBeU0tcE72DohGfKkpPfVxj1UMkoWc6Lk0G852MAUaT8lht2lNIiGuz/I1+i3i02
- N/px5BICmuIdqET1HOAkIdEK8QcIzoZJDu6jgi0zozqBr1tNyxh8MSKr0T3PnqWoFOuZNtGBY
- wcyoryzCv6M0u3VGX3oiu39xRcQEmYuEHfZ8C1spLSOQikSAl5VKrFXTZZdXGoesdlPJhsYnI
- 5gg0I/Z2+rnCr24QYTFiBy/HQWRYOlioF0xWWMdzJsK7o=
+Content-Transfer-Encoding: 8bit
 
-> In psb_intel_lvds_get_modes(), the return value of drm_mode_duplicate() =
-is
-> assigned to mode, which will lead to a possible NULL pointer dereference
-> on failure of drm_mode_duplicate(). Add a check to avoid npd.
+Emails to chuanhua.lei@intel.com, mallikarjunax.reddy@intel.com,
+yixin.zhu@intel.com and vadivel.muruganx.ramuthevar@linux.intel.com
+bounce with the same message:
 
-1. Can a wording approach (like the following) be a better change descript=
-ion?
+  Your message wasn't delivered to Yixin.zhu@intel.com because the
+  address couldn't be found or is unable to receive email.
 
-   A null pointer is stored in the local variable =E2=80=9Cmode=E2=80=9D a=
-fter a call
-   of the function =E2=80=9Cdrm_mode_duplicate=E2=80=9D failed. This point=
-er was passed to
-   a subsequent call of the function =E2=80=9Cdrm_mode_probed_add=E2=80=9D=
- where an undesirable
-   dereference will be performed then.
-   Thus add a corresponding return value check.
+The Intel LGM SoC was apparently part of Home Gateway division which was
+acquired by Maxlinear, so switch maintenance of affected bindings to the
+only known non-bouncing Maxlinear address: Rahul Tanwar.
 
+I do not know if Rahul Tanwar or Maxlinear want to maintain the
+bindings, so regardless of this change we should consider bindings
+abandoned and probably drop soon.
 
-2. Would you like to add any tags (like =E2=80=9CFixes=E2=80=9D and =E2=80=
-=9CCc=E2=80=9D) accordingly?
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml    | 2 +-
+ Documentation/devicetree/bindings/dma/intel,ldma.yaml         | 3 +--
+ Documentation/devicetree/bindings/leds/leds-lgm.yaml          | 3 +--
+ Documentation/devicetree/bindings/mtd/intel,lgm-ebunand.yaml  | 2 +-
+ Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml | 2 +-
+ Documentation/devicetree/bindings/phy/intel,lgm-usb-phy.yaml  | 2 +-
+ Documentation/devicetree/bindings/pinctrl/intel,lgm-io.yaml   | 2 +-
+ 7 files changed, 7 insertions(+), 9 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml b/Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml
+index 76609a390429..bd7f96515ab9 100644
+--- a/Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml
++++ b/Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml
+@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Intel Lightning Mountain SoC's Clock Controller(CGU)
+ 
+ maintainers:
+-  - Rahul Tanwar <rahul.tanwar@linux.intel.com>
++  - Rahul Tanwar <rtanwar@maxlinear.com>
+ 
+ description: |
+   Lightning Mountain(LGM) SoC's Clock Generation Unit(CGU) driver provides
+diff --git a/Documentation/devicetree/bindings/dma/intel,ldma.yaml b/Documentation/devicetree/bindings/dma/intel,ldma.yaml
+index d6bb553a2c6f..af96d52922f6 100644
+--- a/Documentation/devicetree/bindings/dma/intel,ldma.yaml
++++ b/Documentation/devicetree/bindings/dma/intel,ldma.yaml
+@@ -7,8 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Lightning Mountain centralized DMA controllers.
+ 
+ maintainers:
+-  - chuanhua.lei@intel.com
+-  - mallikarjunax.reddy@intel.com
++  - Rahul Tanwar <rtanwar@maxlinear.com>
+ 
+ allOf:
+   - $ref: dma-controller.yaml#
+diff --git a/Documentation/devicetree/bindings/leds/leds-lgm.yaml b/Documentation/devicetree/bindings/leds/leds-lgm.yaml
+index 8b3b3bf1eaf2..4ea6cf0af836 100644
+--- a/Documentation/devicetree/bindings/leds/leds-lgm.yaml
++++ b/Documentation/devicetree/bindings/leds/leds-lgm.yaml
+@@ -7,8 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Intel Lightning Mountain (LGM) SoC LED Serial Shift Output (SSO) Controller driver
+ 
+ maintainers:
+-  - Zhu, Yi Xin <Yixin.zhu@intel.com>
+-  - Amireddy Mallikarjuna reddy <mallikarjunax.reddy@intel.com>
++  - Rahul Tanwar <rtanwar@maxlinear.com>
+ 
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/mtd/intel,lgm-ebunand.yaml b/Documentation/devicetree/bindings/mtd/intel,lgm-ebunand.yaml
+index 07bc7e3efd3a..2582380bf657 100644
+--- a/Documentation/devicetree/bindings/mtd/intel,lgm-ebunand.yaml
++++ b/Documentation/devicetree/bindings/mtd/intel,lgm-ebunand.yaml
+@@ -10,7 +10,7 @@ allOf:
+   - $ref: nand-controller.yaml
+ 
+ maintainers:
+-  - Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
++  - Rahul Tanwar <rtanwar@maxlinear.com>
+ 
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml b/Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml
+index ca818f83579b..5af7e5f7e634 100644
+--- a/Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml
+@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Intel Lightning Mountain(LGM) eMMC PHY
+ 
+ maintainers:
+-  - Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
++  - Rahul Tanwar <rtanwar@maxlinear.com>
+ 
+ description: |+
+   Bindings for eMMC PHY on Intel's Lightning Mountain SoC, syscon
+diff --git a/Documentation/devicetree/bindings/phy/intel,lgm-usb-phy.yaml b/Documentation/devicetree/bindings/phy/intel,lgm-usb-phy.yaml
+index 653a12286637..823a5fabf749 100644
+--- a/Documentation/devicetree/bindings/phy/intel,lgm-usb-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/intel,lgm-usb-phy.yaml
+@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Intel LGM USB PHY
+ 
+ maintainers:
+-  - Vadivel Murugan Ramuthevar <vadivel.muruganx.ramuthevar@linux.intel.com>
++  - Rahul Tanwar <rtanwar@maxlinear.com>
+ 
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/pinctrl/intel,lgm-io.yaml b/Documentation/devicetree/bindings/pinctrl/intel,lgm-io.yaml
+index 1144ca2896e3..1cd19db1aa50 100644
+--- a/Documentation/devicetree/bindings/pinctrl/intel,lgm-io.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/intel,lgm-io.yaml
+@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Intel Lightning Mountain SoC pinmux & GPIO controller
+ 
+ maintainers:
+-  - Rahul Tanwar <rahul.tanwar@linux.intel.com>
++  - Rahul Tanwar <rtanwar@maxlinear.com>
+ 
+ description: |
+   Pinmux & GPIO controller controls pin multiplexing & configuration including
+-- 
+2.43.0
 
-3. How do you think about to append parentheses to the function name
-   in the summary phrase?
-
-
-4. How do you think about to put similar results from static source code
-   analyses into corresponding patch series?
-
-
-Regards,
-Markus
 
