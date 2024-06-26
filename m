@@ -1,282 +1,233 @@
-Return-Path: <linux-kernel+bounces-231421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFA5D919885
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:50:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E02D8919886
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:51:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3311A1F232C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:50:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E0FD1C21CE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:51:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4381922E5;
-	Wed, 26 Jun 2024 19:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D21D1922FD;
+	Wed, 26 Jun 2024 19:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="bbf0Qftf"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s8FvtpXL"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3CC8BE6C;
-	Wed, 26 Jun 2024 19:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B200019069C
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 19:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719431397; cv=none; b=VqhjZHnAZJ7b6Va8N51OQboMYw8aGVnzOfp244IfIwS4TKnRc/VDHJ9UIU9QT8QKMTekstEWi1zk6fV3Jn16zQ12xqsTmofjwbWbp/jl1XcVoiEAZlMzmDEXjwuIZ7BDbMKtQqVXWQ9Jsdqzuh6R5i8jYHU8RLw8jYuvhO0iu+U=
+	t=1719431486; cv=none; b=lRJ5JijLoL472h2o4BbRPnkPP7vyBxnR1smZPEYcDxTmMYCO62C0w5MWr/fZxl8U+SdqhxZNiqQ7FG6iFA8ULDWmzlxtcMTeborynvSruWRNmSWPvCVcnEPrlRztzHIDvRL4JXhioKyFbAqop//4EhvI3C1x0jwzEGQr388Yc9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719431397; c=relaxed/simple;
-	bh=JAD5NpqAScyMw0Aq0kKYE1zsri013+0aGA4PPi+n6Lg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SeB/alXO2ds3tN5NJekCWa0cnjpRUNDoWaChpoPWzJZfg8Etjx8rxO+wD8MvQ2Z3ojFpiQsjuau9oxVHnb9lhU1sO1LWw+zp0Y94qf0tGz2RpStAuKHsCF+QwsAYkyoJ7bH7fxHimgWTE+ASEER1byhBNXsrM0ygbPMGX8ST93o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=bbf0Qftf; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
-	s=ds202307; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=ejH671jgIMLpW0hCTvm7LSeaZ0xSwEqIcM9JRDwujLI=; b=bbf0QftfQykx9mJOJHmUhZr+CF
-	ovEyqcOD7Fp0/MG/6TFV/uzxBeVPk4hFNIE1mleBbrmAkgf3aQFdt68wCLe3GLMqQ6wF/WmRy0rA6
-	Yr70j+CKbs10202cB5AjQqe3wCGeIgYwyvmyp+tabmm8bpsBDRZFDyTFA+ykajFHWnhRgUZRlEcBg
-	AoeBdwRmK/WKIrAYl7Ot8vBBli3JP0EbbFYeTcvK4CpaVit0XWa0YdZJQTeUwLIr68slK3nEsdPIu
-	fmEvBXE0Luqg56J9Xh3ORPEVVxmosKPbmlWY2nXCcbKe0eK7V4j3s8j6CuDYzwlPyTDZO9gkAlSB6
-	2RljYM0A==;
-Received: from [2001:9e8:9eb:ec01:3235:adff:fed0:37e6] (port=59144 helo=lindesnes.fjasle.eu)
-	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <nicolas@fjasle.eu>)
-	id 1sMYeC-003IUV-As;
-	Wed, 26 Jun 2024 21:49:40 +0200
-Date: Wed, 26 Jun 2024 21:49:23 +0200
-From: Nicolas Schier <nicolas@fjasle.eu>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Brian Norris <briannorris@chromium.org>, linux-kbuild@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [PATCH] Makefile: add comment to discourage tools/* addition for
- kernel builds
-Message-ID: <20240626-tangible-steady-elephant-dbae4f@lindesnes>
-References: <20240619062145.3967720-1-masahiroy@kernel.org>
- <ZnSkmmpCY2Aj5VpU@google.com>
- <CAK7LNASZi3A_BzFACOvZhwByHaVon-Cd5H++uygsv4m_fhDOyQ@mail.gmail.com>
+	s=arc-20240116; t=1719431486; c=relaxed/simple;
+	bh=wHznnM78MYZ8sRXjvyDL3Ud+SD69Me0ZAd2Rh2id1As=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=giOq+v5JawMt/EhAN7EqrNBELbEQHBBRnyUKIytOwQ29YtA5dwUvbmYHCmycDugyEHcj7UeYjmRO3yDV6UNiVUxwzGBe5XWNaR31yh7BEQJGneLH8bv3Zf3eehnhXZzZRATNxOD2U8rtPyxf48Vs8n7q0j/r7AvIMNJDR2H9rig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s8FvtpXL; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57d2fc03740so928667a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 12:51:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719431483; x=1720036283; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/9wy7DyYPhVWOxmxXBwLSUmvyHRJRdJyP7og1FLAuaU=;
+        b=s8FvtpXLv2bDdDCeErwHGlzQo4XFUev5K/D/lY7fuIi/hUKiVDTRGRBdxX3L2vJmll
+         OOXl/PkLmDfjWNKkNp98YxYv8L6BXuG4S/cnoKJsRHn5aMb92mE6qMhBOe01RVx3pxLK
+         lSHqaEnzHSGrDVi6U9wo8GFxfIcnsityyxRc3B8hKIg/vvy4C2R5hp089+ylPdki5Q9k
+         IaM8OwM2HE4Y/tKQFQZUXw9gbJG+GmIqyKQur4rMTUzu2i/pwbs1fgIiwmNl2sfx6Gue
+         nK0T/pAoh9Z9dZlOK5Ljvx/43y5QtXT2er3azo5E45VuUxrfu1OiqyBJn160nGERaplp
+         cCYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719431483; x=1720036283;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/9wy7DyYPhVWOxmxXBwLSUmvyHRJRdJyP7og1FLAuaU=;
+        b=r2xrzwxg35j1pD/2Z+TWnJj/nAoE+GOgCytXD5MPQlx1Ac6t2z7ub2dnC8rjhgqRHi
+         kkKaM++5hlqkBdjjH3S5HWLyh6yR+XCfEzsEqI6TyXrwLDSmkplBIyaK6U5L0EewnTvE
+         OlFq5QtJJZLGJivZ+Qq6WOopEoA4+KPvZqQKHzhaLuJh1Xbrhrusefl+KaGZOibLqLOX
+         Zv1iiytgNnWY5Zdyd8C/WFKxI3urED0kk+DtHmYfJS4m8TGEj7QtNQHiMf3Scw2qu7ju
+         wwehwqSrnXzV9QlZxAB++5pSdK6Vbd96otYeaKym1IT+6pje72jRk368AsLGAck5Tow3
+         gIpg==
+X-Forwarded-Encrypted: i=1; AJvYcCXtiRcFJ7zz1qjKL3iWnjnd784SWoPgBFANrVwcNjehzNCbwPWElDrxp49yXvyAtT7jq7X6sJbFg1EO6i2Z1ygIMnjM1Fyisd+Fvodu
+X-Gm-Message-State: AOJu0Yw8hnd689iFkFqow2YM9//JCS9sOMvYedUCp9iFk5oH9CERCkhz
+	7dgpxETPFNkskolECEHGM5g6iemVyaAAaBREgGuCcHXS9Lu8KXRHv7p/c33SVzZIJl6LLWQnm+V
+	fi+kQbPJdkhjird70OO+hFVOmWNzNRmPHDuVEQw==
+X-Google-Smtp-Source: AGHT+IFtl2JuRCY1sm+cgT5dlCY0NBxa6gNIDGmESPez43089CZJjtIzEUHE9NB+Jp3sKGTdotqHG+Syxm6o8J3p7xk=
+X-Received: by 2002:a50:c2c2:0:b0:57c:c171:2fb5 with SMTP id
+ 4fb4d7f45d1cf-57d7002209amr4698203a12.5.1719431482998; Wed, 26 Jun 2024
+ 12:51:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNASZi3A_BzFACOvZhwByHaVon-Cd5H++uygsv4m_fhDOyQ@mail.gmail.com>
+References: <20240625085525.931079317@linuxfoundation.org>
+In-Reply-To: <20240625085525.931079317@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 27 Jun 2024 01:21:10 +0530
+Message-ID: <CA+G9fYu7SvvK41RVCLgDBoV0phAMbfASkw++HP-prWo532KUJQ@mail.gmail.com>
+Subject: Re: [PATCH 6.1 000/131] 6.1.96-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 27, 2024 at 04:02:46AM +0900, Masahiro Yamada wrote:
-> On Fri, Jun 21, 2024 at 6:52 AM Brian Norris <briannorris@chromium.org> wrote:
-> >
-> > On Wed, Jun 19, 2024 at 03:21:42PM +0900, Masahiro Yamada wrote:
-> > > Kbuild provides scripts/Makefile.host to build host programs used for
-> > > building the kernel. Unfortunately, there are two exceptions that opt
-> > > out of Kbuild. The build system under tools/ is a cheesy replica, and
-> > > is always a disaster. I was recently poked about a problem in the tools
-> > > build issue, which I do not maintain (and nobody maintains). [1]
-> >
-> > (Side note: I hope I haven't placed undue burden on you; I understood
-> > you don't maintain tools/ and that it didn't use Kbuild. I only "poked"
-> > you because the original bug report I was replying to had you and
-> > linux-kbuild on CC already. And I appreciate your engagement, even if
-> > the bugs are due to intentional forking.)
-> 
-> 
-> I did not mean to express my complaint particularly with the previous thread.
-> 
-> It is not the first time that the tools/ build issue arose.
-> 
-> 
-> I will drop the references to the threads.
-> 
-> 
-> 
-> > But anyway, I agree that clearer documentation and recommendations could
-> > be helpful here. To that end, some dumb questions below, as I'm not sure
-> > if this fully serves its purpose as-is:
-> >
-> > > Without a comment, somebody might believe this is the right location
-> > > because that is where objtool lives, even when a more robust Kbuild
-> > > syntax satisfies their needs. [2]
-> > >
-> > > [1]: https://lore.kernel.org/linux-kbuild/ZnIYWBgrJ-IJtqK8@google.com/T/#m8ece130dd0e23c6f2395ed89070161948dee8457
-> > > [2]: https://lore.kernel.org/all/20240618200501.GA1611012@google.com/
-> > >
-> > > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> > > ---
-> > >
-> > >  Makefile | 5 +++++
-> > >  1 file changed, 5 insertions(+)
-> > >
-> > > diff --git a/Makefile b/Makefile
-> > > index 471f2df86422..ba070596ad4e 100644
-> > > --- a/Makefile
-> > > +++ b/Makefile
-> > > @@ -1331,6 +1331,11 @@ prepare: tools/bpf/resolve_btfids
-> > >  endif
-> > >  endif
-> > >
-> > > +# README
-> > > +# The tools build system is not a part of Kbuild. Before adding yet another
-> > > +# tools/* here, please consider if the standard "hostprogs" syntax satisfies
-> > > +# your needs.
-> > > +
-> >
-> > Some clarifying questions / statements-as-questions:
-> >
-> > * nothing in tools/ uses Kbuild, right? (even stuff that uses KBUILD_*
-> >   names is just an imitative port, right?)
-> 
-> 
-> Correct.
-> 
-> You can build a tool from multiple directory locations.
-> 
-> For example, you can compile the 'perf' in multiple locations.
-> 
-> 
-> [1] From the top of the kernel tree
-> 
->    $ make tools/perf
-> 
-> 
-> [2] From the tools/ directory
-> 
->    $ cd tools
->    $ make perf
-> 
-> 
-> [3] From the tools/perf/ directory
-> 
->    $ cd tools/perf
->    $ make
-> 
-> 
-> 
-> When you do [2] or [3], the top-level Makefile is not parsed.
-> 
-> If necessary, the tools build system copies code from Kbuild.
-> 
-> 
-> 
-> 
-> > * not everything in tools/ is actually promoted to a high-level target,
-> >   that affects this top-level Makefile. Are you only concerned about
-> >   stuff that pretends to be integrated in the top-level kernel Makefile?
-> >   (If not, then it seems like placing the README comments only in this
-> >   Makefile is a poor choice.)
-> 
-> 
-> The tool build is integrated as a pattern rule in the top Makefile.
-> (tools/%)
-> 
-> 
-> So, you can build other tools from the top Makefile.
-> 
-> 
-> See commit ea01fa9f63aef, which did not get Ack from any Kbuild
-> maintainer, and caused subsequent troubles, and the benefit
-> of which I still do not understand.
-> 
-> 
-> Supporting "make tools/perf" in addition to "make -C tools perf"
-> only saved a few characters to type.
-> 
-> 
-> So, the problem remains, unless I revert ea01fa9f63aef.
-> 
-> I decided to not care about it too much, as long as
-> such tools are not used during the kernel build.
-> 
-> I am really worried about objtool and resolve_btfids,
-> as these two are used for building the kernel.
-> 
-> 
-> 
-> 
-> 
-> 
-> > * is the "standard hostprogs" recommendation a general recommendation,
-> >   for all sorts of kept-in-the-kernel-tree host tools? Is the
-> >   recommendation to "use Kbuild" or to "avoid putting your tool in
-> >   tools/*"? Is it possible (recommended?) to plumb Kbuild stuff into
-> >   tools/, even if other parts won't migrate?
-> 
-> 
-> I do not know.
-> 
-> They are different build systems with different designs.
-> 
-> Kbuild always works in the top of the output directory.
-> Kbuild changes the working directory at most once if O= is given,
-> but otherwise, it never changes the working directory during the build.
-> 
-> 
-> The tools/ build system changes the working directory every time
-> it invokes a new Make, and compiles the tool in its source directory.
-> 
-> 
-> I do not know if all tools want to Kbuild.
-> (the same applied to kselftest)
-> 
-> I think I can convert objtool and resolve_btfids to the Kbuild way.
-> 
-> 
-> >
-> > As is, I can't tell if this is telling people to avoid adding new stuff
-> > to tools/ entirely, or just to only add to tools/ if you're able to
-> > remain completely isolated from the rest of the kernel build -- as soon
-> > as you want to play some part in the Kbuild-covered part of the tree,
-> > you need to use Kbuild.
-> 
-> 
-> See the code in the top Makefile.
-> 
-> 'prepare' depends on tools/objtool and tools/bpf/resolve_btfids.
-> 
-> If other tools are not prerequisites of 'scripts',
-> Kbuild will not compile them.
-> 
-> 
-> 
-> 
-> >
-> > If I'm inferring the right answers to the above, then maybe an improved
-> > wording could be something like:
-> >
-> > "The tools build system is not a part of Kbuild and tends to introduce
-> > its own unique issues. If you need to integrate a new tool into Kbuild,
-> > please consider locating that tool outside the tools/ tree and using the
-> > standard Kbuild "hostprogs" syntax instead of adding a new tools/* entry
-> > here."
-> 
-> 
-> 
-> I am fine with this description.
-> 
-> 
-> Nicolas suggested a link to Documentation/kbuild/makefiles.rst
-> 
-> We can combine the two.
-> 
-> 
-> # The tools build system is not a part of Kbuild and tends to introduce
-> # its own unique issues. If you need to integrate a new tool into Kbuild,
-> # please consider locating that tool outside the tools/ tree and using the
-> # standard Kbuild "hostprogs" syntax instead of adding a new tools/* entry
-> # here. See Documentation/kbuild/makefiles.rst for details.
+On Tue, 25 Jun 2024 at 15:28, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.1.96 release.
+> There are 131 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 27 Jun 2024 08:54:55 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.1.96-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.1.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-yeah, thanks. Sounds good to me, too.
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Kind regards,
-Nicolas
+## Build
+* kernel: 6.1.96-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 80ee32f97e81cdbd2585b8b81e943f50e8078a08
+* git describe: v6.1.95-132-g80ee32f97e81
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1.9=
+5-132-g80ee32f97e81
+
+## Test Regressions (compared to v6.1.94-218-g0891d95b9db3)
+
+## Metric Regressions (compared to v6.1.94-218-g0891d95b9db3)
+
+## Test Fixes (compared to v6.1.94-218-g0891d95b9db3)
+
+## Metric Fixes (compared to v6.1.94-218-g0891d95b9db3)
+
+## Test result summary
+total: 237419, pass: 204833, fail: 2499, skip: 29697, xfail: 390
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 133 total, 133 passed, 0 failed
+* arm64: 37 total, 37 passed, 0 failed
+* i386: 27 total, 27 passed, 0 failed
+* mips: 24 total, 24 passed, 0 failed
+* parisc: 3 total, 3 passed, 0 failed
+* powerpc: 34 total, 34 passed, 0 failed
+* riscv: 9 total, 9 passed, 0 failed
+* s390: 12 total, 12 passed, 0 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 6 total, 6 passed, 0 failed
+* x86_64: 31 total, 31 passed, 0 failed
+
+## Test suites summary
+* boot
+* kselft[
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-timesync-off
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* libgpiod
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-smoketest
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
