@@ -1,55 +1,63 @@
-Return-Path: <linux-kernel+bounces-230717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B4AA9180FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:37:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0D9B918104
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:38:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 245BF281BAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:37:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E38A31C2180E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33CA6180A64;
-	Wed, 26 Jun 2024 12:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0BE2181CE9;
+	Wed, 26 Jun 2024 12:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HpV14F3C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="n0y3RmNr"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76BB7D53B;
-	Wed, 26 Jun 2024 12:37:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E60D53B;
+	Wed, 26 Jun 2024 12:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719405447; cv=none; b=bxhKl5Twn1yd5hsVF/cCySjmCZ7z3mo3U2r4cCNupvI00Vdhp4YvrEUENUP/nNax/HGibfRpyQitHiMz8wyt/DIR3aS5v9ckNzZuUsALWk2bhoYfMkUdRddf+Xho8GmiKwS6csWR79K9b8tWq93WyJnrJdbE2kIrQ8VfGLy3veM=
+	t=1719405493; cv=none; b=BWK8I+jedCRvX3R+jTbucXLSERoBhqBvmIGsh1RK5y7KuYlHTpQ/GFmEj5qerHXnB872/7fCbVCIubmao9JMDiXIeiF3pWlGyv7XX+vbsFi7g14hfPCi9vaF8TekPYnesHz95EljaVtSUcSfRLH5E6LbEuRsfe9kuHzhvTBc2nQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719405447; c=relaxed/simple;
-	bh=pQb/7G7/wHAHw21/xcFGrhcwpBfvJ00H8L5TVaEoaIY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=nXISJlk9jXooqjd9i3EwGPMyNfNrvol3bmTHG0DcGJKmXtEGUqgWkkGUsVzZVq1rQoykxYKpiWwNYZ/AWZyxc8KP6CMwlH0PuG+1oNSEGMn6Wjf/phDa8/N6QW8/g9q7mxMR3aB3L1oSMqREYcg3lv3L6/8rdhNqN3n2ox4LDvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HpV14F3C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75B85C2BD10;
-	Wed, 26 Jun 2024 12:37:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719405447;
-	bh=pQb/7G7/wHAHw21/xcFGrhcwpBfvJ00H8L5TVaEoaIY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=HpV14F3CDcfzkuE0MFodrYnh9P0lMSTXD0wKXrqklcoTw3PXD6bGYW2Day0fYcF5A
-	 MpJ2zClXQ6X8evyNRBXSAKhuVAsZKVu3vgHbXKMrwXk0oL8cZ6WBcUPjadXxyzVfma
-	 bvA7gPqLaFiq3asvjSrFwMiPrX3NOSMSbydCbluPe+j0Lom7tvSkR20X5F3jbjxeHZ
-	 xPuNCeGuzwksuLqwgXVVs+ywZw+R2hrSgPHQhT5OgmaL/qZIiMkInZNLnW+SGEOdA/
-	 ICTe2cZobv/F2gnlZQhGp7BUISWjKXxouTaMm9ddsg7wYgNflN4qlDei1jGigBWrNm
-	 Bvsigvt0Dcd2g==
-From: Mark Brown <broonie@kernel.org>
-To: mario.limonciello@amd.com, linux-kernel@vger.kernel.org, 
- Vyacheslav Frantsishko <itmymaill@gmail.com>
-Cc: linux-sound@vger.kernel.org
-In-Reply-To: <20240626070334.45633-1-itmymaill@gmail.com>
-References: <0e571211-8921-4548-a093-6c5719c866c4@amd.com>
- <20240626070334.45633-1-itmymaill@gmail.com>
-Subject: Re: [PATCH] ASoC: amd: yc: Fix non-functional mic on ASUS M5602RA
-Message-Id: <171940544619.1360002.3077526009321111718.b4-ty@kernel.org>
-Date: Wed, 26 Jun 2024 13:37:26 +0100
+	s=arc-20240116; t=1719405493; c=relaxed/simple;
+	bh=QI95BY7P5ffry8E75+8X2Nu1sYmep1coAT3CeCVp23s=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=NZkgpKGc8WqIqzJmbZfl3qOQD4Ir1E4Ph91zgcHKshLvczcXyDyXJduPkNumSXiUnEuFnOWumB8oVcRxlGkHdh705eWqFMmmMjrDvcQLGvbjyiJSkOhJqEn9jtpBaDFRb9QLoTqleApxrR11EhU584abPLP167L/0vIrGpp6t1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=n0y3RmNr; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QAfbs6016153;
+	Wed, 26 Jun 2024 12:37:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=kVkerdnbW8izeltyxqtyeM
+	ddKmGBDmuMuo/iyHHdP+Q=; b=n0y3RmNry4611Bti6RkLag+gbMMiNs8OlgC220
+	lICvRRvPs+Pu2JbNpDUMQHW0z6PJ2vSBlAA/EUB54lZ2zmL3CMS3R90pX0vlVLyf
+	iWUblRxKUSpAfFMqMh/yhe+sHaXKyJWk0clhwm068Z1cvZv6LB1Q/+vJcrYVOb25
+	BTIJI/SzGENHuvW/+UM1pjqzmuZf1o84oeVACA8i1/Fq01fNpDa3U160p9WYxiF2
+	3GaJypGCrdG5raQJijsb/w2catqWgeJAOfSQ6B+r2XIoxFgi08RRISdSP7iysUut
+	3TKgkeJD/NpH03UifI7r9SBi3qHUTsyzJFW1EVBMLENJ4F9w==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 400gcm8gf4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Jun 2024 12:37:57 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45QCbu6p011629
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Jun 2024 12:37:56 GMT
+Received: from hu-krichai-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 26 Jun 2024 05:37:51 -0700
+From: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Subject: [PATCH RFC 0/7] PCI: enable Power and configure the QPS615 PCIe
+ switch
+Date: Wed, 26 Jun 2024 18:07:48 +0530
+Message-ID: <20240626-qps615-v1-0-2ade7bd91e02@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,39 +66,121 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-d4707
+X-B4-Tracking: v=1; b=H4sIAJwLfGYC/12MsQ7CIBRFf6V5sxhAisapiYkf4Go6kAe1bxBaU
+ KJp+HcJo+O59+RskFwkl+DcbRBdpkTBVxC7DnA2/uEY2coguVRcS8XWJWnRs8kYjqi5xaOCKi/
+ RTfRpoTvcrhcY6zhTeoX4bfEs2vXfyYJxpk4oDtr0zlgc1jchedxjeMJYSvkBNO8cEKMAAAA=
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>,
+        Lorenzo Pieralisi
+	<lpieralisi@kernel.org>,
+        =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
+	<kw@linux.com>,
+        Rob Herring <robh@kernel.org>, Bjorn Helgaas
+	<bhelgaas@google.com>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>
+CC: <quic_vbadigan@quicinc.com>, <quic_skananth@quicinc.com>,
+        <quic_nitegupt@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Krishna chaitanya chundru
+	<quic_krichai@quicinc.com>
+X-Mailer: b4 0.13-dev-83828
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1719405471; l=3225;
+ i=quic_krichai@quicinc.com; s=20230907; h=from:subject:message-id;
+ bh=QI95BY7P5ffry8E75+8X2Nu1sYmep1coAT3CeCVp23s=;
+ b=n3duV+bozAKVlOFbHTuhupYhTAjmgO00d5BPvds8I34A67WeyETwN79dkEgyLaka6u9pMhKyB
+ 0wRDoTAKP/6D3jQo3Hl5lgVJ7hrXhFVo7nmwnvjdcD78Jq0vKb+NyK+
+X-Developer-Key: i=quic_krichai@quicinc.com; a=ed25519;
+ pk=10CL2pdAKFyzyOHbfSWHCD0X0my7CXxj8gJScmn1FAg=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: MHRd72PLuQDDIqFmg5R2gu56KZJRHT5_
+X-Proofpoint-ORIG-GUID: MHRd72PLuQDDIqFmg5R2gu56KZJRHT5_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-26_07,2024-06-25_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ mlxlogscore=601 clxscore=1011 mlxscore=0 phishscore=0 impostorscore=0
+ adultscore=0 malwarescore=0 lowpriorityscore=0 priorityscore=1501
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406260094
 
-On Wed, 26 Jun 2024 10:03:34 +0300, Vyacheslav Frantsishko wrote:
-> The Vivobook S 16X IPS needs a quirks-table entry for the internal microphone to function properly.
-> 
-> 
+QPS615 is the PCIe switch which has one upstream and three downstream
+ports. One of the downstream ports is used as endpoint device of Ethernet
+MAC. Other two downstream ports are supposed to connect to external
+device. One Host can connect to QPS615 by upstream port.
 
-Applied to
+QPS615 switch power is controlled by the GPIO's. After powering on
+the switch will immediately participate in the link training. if the
+host is also ready by that time PCIe link will established. 
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+The QPS615 needs to configured certain parameters like de-emphasis,
+disable unused port etc before link is established. These settings
+vary from platform to platform.
 
-Thanks!
+As the controller starts link training before the probe of pwrctl driver,
+the PCIe link may come up before configuring the switch itself.
+To avoid this introduce two functions in pci_ops to start_link() &
+stop_link() which will disable the link training if the PCIe link is
+not up yet.
 
-[1/1] ASoC: amd: yc: Fix non-functional mic on ASUS M5602RA
-      commit: 63b47f026cc841bd3d3438dd6fccbc394dfead87
+Now PCI pwrctl device is the child of the pci-pcie bridge, if we want
+to enable the suspend resume for pwrctl device there may be issues
+since pci bridge will try to access some registers in the config which
+may cause timeouts or Un clocked access as the power can be removed in
+the suspend of pwrctl driver.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+To solve this make PCIe controller as parent to the pci pwr ctrl driver
+and create devlink between host bridge and pci pwrctl driver so that
+pci pwrctl driver will go suspend only after all the PCIe devices went
+to suspend.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+In pci pwrctl driver use stop_link() to keep the link in D3cold and
+start_link() to bring back link to D0.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+This series is developed on top the series:
+https://lore.kernel.org/lkml/20240612082019.19161-1-brgl@bgdev.pl/
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+we are sending this series to get coments on the usage of stop_link
+and start_link which is being add in this series.
 
-Thanks,
-Mark
+Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+---
+Krishna chaitanya chundru (7):
+      dt: bindings: add qcom,qps615.yaml
+      arm64: dts: qcom: qcs6490-rb3gen2: Add qps615 node
+      pci: Change the parent of the platform devices for child OF nodes
+      pci: Add new start_link() & stop_link function ops
+      pci: dwc: Add support for new pci function op
+      pci: qcom: Add support for start_link() & stop_link()
+      pci: pwrctl: Add power control driver for qps615
+
+ .../devicetree/bindings/pci/qcom,qps615.yaml       |  73 ++++++
+ arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts       |  55 ++++
+ drivers/pci/bus.c                                  |   5 +-
+ drivers/pci/controller/dwc/pcie-designware-host.c  |  19 ++
+ drivers/pci/controller/dwc/pcie-qcom.c             | 108 +++++++-
+ drivers/pci/pwrctl/Kconfig                         |   7 +
+ drivers/pci/pwrctl/Makefile                        |   1 +
+ drivers/pci/pwrctl/core.c                          |   7 +-
+ drivers/pci/pwrctl/pci-pwrctl-qps615.c             | 278 +++++++++++++++++++++
+ include/linux/pci.h                                |   2 +
+ 10 files changed, 541 insertions(+), 14 deletions(-)
+---
+base-commit: d737627471e5b3962eedae870aa0475d6c9bba18
+change-id: 20240624-qps615-faa0cc60dc74
+
+Best regards,
+-- 
+Krishna chaitanya chundru <quic_krichai@quicinc.com>
 
 
