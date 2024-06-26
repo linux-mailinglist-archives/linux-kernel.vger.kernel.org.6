@@ -1,76 +1,115 @@
-Return-Path: <linux-kernel+bounces-230308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E5ED917B1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:39:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F956917B22
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:39:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1C551C23DBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:39:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF2B8281D67
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1833A166302;
-	Wed, 26 Jun 2024 08:39:04 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D021662F7;
+	Wed, 26 Jun 2024 08:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="CQ4Rtrw1"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5335F161304
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 08:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940BC161304
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 08:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719391143; cv=none; b=WI179FglpbPN+xzG7JhbO7rFCuWwVvfVDg9KWBdcB5dxiFhZB/0NbtEJivjOfnBx+2mKFQr2wMtoWjqclKokXlYAa1smG1zqVJ+692ZD4DhLl1GGSPtlk7hDLxj+8HqQxNQRzAtvLlHMGFyzucDP/z2tuvgAvAtWTrXjlAI6E8E=
+	t=1719391184; cv=none; b=tuwscp2XjY0PRXC1j8JcgcLIiRVwcY1iAbdFG5QIo2aRQGD8Bhab35by0KTOnogFPE4KhffemdjjBvsrbWNtQAzeOC/axjPwrde1PXh/N+cbRZ0Yd3W3T3MW1dIBp+kYjXe8g1dKkkzF/VwZZYxfvs5MFMh7WvTE5eKtMDZIVww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719391143; c=relaxed/simple;
-	bh=pKneCHe5SunQeF4kZhf26wXuY7csMkwjabd/cThdPc8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=PslT8zH3dyk8sTzdRLsocsOFk+LDv7dh6/MzPXjjYJ6SN2FMOlyNYEEEECR7fYCE5t8+7HYkS2S6nH+TDUp2yQ4/bHEZ7fqfX7vrrFPhYGWggI5cnl+ThTrism8fM0bKnDa92POcZkJRo8P3KdZd+clVMwFuIgG5n/DG4xtjzdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-376117f5fcfso81855375ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 01:39:02 -0700 (PDT)
+	s=arc-20240116; t=1719391184; c=relaxed/simple;
+	bh=NLR+N75GA2geLHdSgsfuC4nIH+6DQelAEiCMDVcetsw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QPLHYPRmjOifIQG2/+nOaSjU9PSOwBZAHaymxfzOqGftBZ+G97yEUVNsT7ZADTVG02ZKh4tzVKapKKe8p6STdHD5HneJNOjz1GnLQsct7iGzvgbgxfOw3BWCOSPT929tadRnRrCn8a3FSNJGEV3J4Q52wGX7felBqW4XWc1YsjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=CQ4Rtrw1; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-424a2dabfefso16105085e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 01:39:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719391181; x=1719995981; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D9yKfF45fFxX0NqrzvUPKwtywpvOvpdxxd5cgWduHSI=;
+        b=CQ4Rtrw1p07b3jX3rxQWJa5yw/7IaTLdpGaC83AbDhvjkCbLW050TOnuC+Stk+QpPp
+         +AWU/gMLyaqoTLk5Gl0T4Tw+5zeeWkTNNkjCW/JjaPDp9JGdpjAYVj94NV6rubKhf8gT
+         s1NnNiXZsFVWsI2EQsKcRJ41bc+Um404Nzx0mF14xtTYyQPPG27IC0rrjvWm9w0wli7Z
+         JCp2ps1YgzABQxzht3MaNDPeNOd70uUsomzIx/KDOeOLpCpAs4TF7fUfLzulbTrR4jza
+         2lNPKKWky05TuwOuEClTm8J0lWCG7To7bl/wGZevA3Rqlk2oK9IKj7KabRzdCJdk3Fek
+         EERA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719391141; x=1719995941;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pKneCHe5SunQeF4kZhf26wXuY7csMkwjabd/cThdPc8=;
-        b=ov2FfvwZEryLEXXi/zHE1XScAscaxRlRruIAJ2rSNrim0ZLipeMLdbESZPlA/DTEF5
-         sKYjfapOgtK9di7BCnCzoRAG8fD1T8R/G8aqr+4koY4KctWWvY9IGk1LgaY/ZObC2r5D
-         DJOb1VdT+qXyZzp2m6KbfVO0pPxolYL2J2w6I0DPOX1VdKiSEujZCzgIvf3Fe9HD/ozN
-         85zatjuSYQ8aAmNNdeDknYDIQELwMpfT32sE44NUcGNRbibnxD8g8iSRyzIvcYcoVlzV
-         b7QHXMCgjm/B/JsS/UQEFF9eRms0ZtB51iOV2ZfbeGCubY8v5dSSm5At4bymCG3gTfa+
-         3dxw==
-X-Gm-Message-State: AOJu0YxXrQMkDChPMlRzQ8SmcKrQ37/S20r8BwaBxta1H+aC0JTyQ/Yg
-	IupK7NL32CTYlavOOTJZMNg9AGZt5ATkICr9n4v+AWSKmyt6HCHvxTPG29OAAgEstgXsdzzFBLw
-	og5L+Oi7GVElhqVJGXgZkIJkqN/GJCpyWmnWzGkEs6qUUls0DEwZlq0c=
-X-Google-Smtp-Source: AGHT+IHCMw5eK6tLV+VNd7j8HmHqNRTtsxfdWaAi1QfbDj1nX6uASqcwEr9SnYpcxGLhJW65zU9fx54iLIGuz3R8Pxw+3V+7W2sz
+        d=1e100.net; s=20230601; t=1719391181; x=1719995981;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=D9yKfF45fFxX0NqrzvUPKwtywpvOvpdxxd5cgWduHSI=;
+        b=D0QkTxR0x+tHrrO1m8Mi9XU3YDHQoO+5icL1uCimMCJ66uJlaY4jrFRveluE+jBcx6
+         WuwAP4nKcMsc6bmdxnWECbMnWT7F71n52WsPlqCP0led1sJmkJkAmnH1ua1JF7KOgDGE
+         69LXNP3bYmGfiRlzs14GK9SCVt9RWngoexvfY97IBsQOoBEHXnUp6regULS2lir0RNuz
+         fgWJoy0UHQ3/Zysj/CI43hELbWCjUDU8MUgZHHEBnmwNxHN61qc7Rlgay53cCUTJKmcw
+         2u80cHQ15rBozenbrmRinUxRM3gaXrFSjfpTpBVQhbA8X2pp9gSrl6u5IMwaSNbj3OPs
+         7NgA==
+X-Forwarded-Encrypted: i=1; AJvYcCVo61dTHIDOAjdmC91cLK5KtmqJQgHOvputC27YT0xrDa1i0LBTuJYBe1W5OIhm3dzskmC5gaFOAxiiZKCW400kTsjsBaTrfp05ucng
+X-Gm-Message-State: AOJu0YwM1nnClKW19oKVqcE+wz8QQTZ+HEVRejunYnrUaYcbEbASq3jg
+	3W2I38CDf6GbagAK6m5v6WSydGXTLbt7QL3HMywQW4M3tEQbuFk2S9oT/q98H4s=
+X-Google-Smtp-Source: AGHT+IEs6lBo5otfDhtsB1Twa+uJYgIAh5Rq06nVGafEYvg+dnsr4+FgYr6Io6O6eVtAAkKgbX30UA==
+X-Received: by 2002:a5d:6985:0:b0:362:a1e8:15b with SMTP id ffacd0b85a97d-366e949d36bmr8249196f8f.28.1719391180762;
+        Wed, 26 Jun 2024 01:39:40 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:a149:6586:c473:97d7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3670ca007adsm2458411f8f.25.2024.06.26.01.39.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 01:39:40 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: linux-gpio@vger.kernel.org,
+	Shiji Yang <yangshiji66@outlook.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Alban Bedel <albeu@free.fr>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	linux-kernel@vger.kernel.org,
+	Jonas Gorski <jonas.gorski@gmail.com>
+Subject: Re: [PATCH v2] gpio: ath79: convert to dynamic GPIO base allocation
+Date: Wed, 26 Jun 2024 10:39:39 +0200
+Message-ID: <171939117715.9694.13266518943488176229.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <TYCP286MB089598EA71E964BD8AB9EFD3BCD62@TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM>
+References: <TYCP286MB089598EA71E964BD8AB9EFD3BCD62@TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:13a1:b0:376:46d5:6583 with SMTP id
- e9e14a558f8ab-37646d56846mr9480135ab.5.1719391141488; Wed, 26 Jun 2024
- 01:39:01 -0700 (PDT)
-Date: Wed, 26 Jun 2024 01:39:01 -0700
-In-Reply-To: <000000000000aaf7ec06186a8d13@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000037fd9c061bc6f27a@google.com>
-Subject: Re: [syzbot] KASAN: use-after-free Read in __ext4_check_dir_entry (2)
-From: syzbot <syzbot+11af34d3c0711f233fd4@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-***
 
-Subject: KASAN: use-after-free Read in __ext4_check_dir_entry (2)
-Author: norbert.kaminski@infogain.com
+On Wed, 26 Jun 2024 08:33:18 +0800, Shiji Yang wrote:
+> ath79 target has already been converted to device tree based
+> platform. Using dynamic GPIO numberspace base to suppress the
+> warning:
+> 
+> gpio gpiochip0: Static allocation of GPIO base is deprecated, use dynamic allocation.
+> 
+> Tested on Atheros AR7241 and AR9344.
+> 
+> [...]
 
-#syz dup: KASAN: slab-out-of-bounds Read in __ext4_check_dir_entry
+Applied, thanks!
+
+[1/1] gpio: ath79: convert to dynamic GPIO base allocation
+      commit: 9a473c2a093e0d1c466bf86073230e2c8b658977
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
