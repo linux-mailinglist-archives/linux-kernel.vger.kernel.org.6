@@ -1,167 +1,292 @@
-Return-Path: <linux-kernel+bounces-230864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AD6E9182E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:43:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 914B99182D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:42:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C04CF1C22767
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:43:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49990282CC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E85183098;
-	Wed, 26 Jun 2024 13:43:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82094184108;
+	Wed, 26 Jun 2024 13:42:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Q1qRqmvJ"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CaWmclw/"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF3C1836ED
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 13:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF6FC1E890;
+	Wed, 26 Jun 2024 13:42:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719409392; cv=none; b=tJ1Stsh0L7k/iuNijHrSuRdMNyE6Q+yA9jGj9GrkJAPrSmwSG3b4Tz1iVwPlMFq1QEafKvRmDlEWuDEUHLVKTDiefYGgEMT4cqF33Xp505q7LynUgHMO01pS88w86wi0hLIU+6a3hDCK8juPU/8lMjGLXw4mHRcDYfkdkKRd6fI=
+	t=1719409325; cv=none; b=VvmT2SzNJ4OrZcifJ/zBnEpyxypfaUDoP4qIBWW1E/yDEXl8VO4Q6G1XvAX7d+VyVdB6Ev4MsCokXphr4y/QxgylQ3rVSuCFFHso9y2AQgZT0Hdkem1eK/lspcafq+cw1TFi/qP5d54T4GApP5yY+XO6Kdm9nCRXzbvpy1yEkLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719409392; c=relaxed/simple;
-	bh=0xeMt1QS8pxWIRl0DKfsdNz0h5THwnRPo+wjOwGflxY=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=rw4pXJVKtapytpgjY0n+z9t8NgH2vZsh1+DziYVb/TqFZo+/KqksL87j3YmwUJCLDg1VLS2EXYrwKQ8SooCKCW8CUrXD3iHzzSKQlQkNP3XDpGk1dztp8jZZd9KXn7KZj3Is8aqZrkUBiF2jRDvCGxCGtszgaXNDbDhYXSvANtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Q1qRqmvJ; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240626134308euoutp016c8a9973052cae7e4d097bd08543f757~ckbqqRW1f0748207482euoutp01J
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 13:43:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240626134308euoutp016c8a9973052cae7e4d097bd08543f757~ckbqqRW1f0748207482euoutp01J
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1719409388;
-	bh=/yUABgL+x+gdFXA755hwqvKNyM2Jmx1pG2JW3TQlbMI=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=Q1qRqmvJnivbtO6wQ273TV1p/2Ol36gaVd9qGMfwZbhj56879vHlv0lnXYXb4gxG3
-	 AzvezftdljaN/Q3769eTiQI3lrJq+2er64g35OvIne9TBk/3Hpn8o7XwIgwLg0zCrC
-	 fQ40fHA64y4DOfxLM7/OahFBYo3Yrvm6bkqfh9tk=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240626134308eucas1p2ff99c2f6ded1ab18af290c158ebe6f46~ckbqbrgzS1568615686eucas1p2U;
-	Wed, 26 Jun 2024 13:43:08 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id 7F.B0.09875.CEA1C766; Wed, 26
-	Jun 2024 14:43:08 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240626134308eucas1p1b9e36aeac3aac63006be3d26734582ec~ckbqFiGXH2850528505eucas1p1Y;
-	Wed, 26 Jun 2024 13:43:08 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240626134308eusmtrp13be4bc287570c5c93bb182ee0afa87f2~ckbqFIN_R2095720957eusmtrp1k;
-	Wed, 26 Jun 2024 13:43:08 +0000 (GMT)
-X-AuditID: cbfec7f4-131ff70000002693-7a-667c1aec0050
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id C5.10.09010.BEA1C766; Wed, 26
-	Jun 2024 14:43:07 +0100 (BST)
-Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240626134307eusmtip1027f7fd4c6cb87876b50c984a9ca6fe2~ckbpwrkXx0546105461eusmtip1O;
-	Wed, 26 Jun 2024 13:43:07 +0000 (GMT)
-Received: from localhost (106.110.32.44) by CAMSVWEXC01.scsc.local
-	(2002:6a01:e347::6a01:e347) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Wed, 26 Jun 2024 14:43:06 +0100
-Date: Wed, 26 Jun 2024 15:43:01 +0200
-From: Joel Granados <j.granados@samsung.com>
-To: Baolu Lu <baolu.lu@linux.intel.com>
-CC: David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] iommu/intel: Enable pci capabilities before assigning
- cache tags
-Message-ID: <20240626134301.y3es4r4go5736mi6@joelS2.panther.com>
+	s=arc-20240116; t=1719409325; c=relaxed/simple;
+	bh=7sY4DvBd+42DdRB69MfJg/sYGx3Q0KlzO7+txFWMzJU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Td/Gz28LDNGeUsZUZ5a8kfEKVOd9g740G5G2pTDwFA5/AUR/OyXL3j+b4u475/k3Rar0sf4BzbTGLuuud44zNgLbmTmTLiynrDnmYOJH5STdzmNo0+4V0fQ/Llo70oZ7c0ZfEQe087BQeVuzzV+VPBGUaNg37qN2vUTf4olz8mI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CaWmclw/; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4248e28de9eso30264645e9.2;
+        Wed, 26 Jun 2024 06:42:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719409322; x=1720014122; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=L8BeqKvtu81yy7xc7ZCBkEW2RL3ioT7E1XvmV51sVYE=;
+        b=CaWmclw/UTJxSlVK/6jV9/foo+GaNsUBLDPOXlwpot1cJDeHAy5doaorh/lrUSBJpl
+         zWaJhAkRpEBGBwShgPGuFPM17FmSvTDyX18G1xshkgcA2nZoMcvWylrgiTihseGTh+e8
+         MFXlxBvRs9RmMCCEY+q3Kh3jq9MrZ0+34F3yZr5hNibxgtI+hS4QZ0nVwWfBj+YF6Fkk
+         Xyfn/08J3wtLNSIWMYhLk5W40sZ1MsUvskCsKXKY2XHRbUpaXkqVbbYG3SjpFofGjs8t
+         Kglg1KDVPtPFkvtdNKKqI1ADQ2JigLQTP1TgSjxqrzmy6H/Ngpj21qb4WLzFmPujoa/U
+         lkWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719409322; x=1720014122;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=L8BeqKvtu81yy7xc7ZCBkEW2RL3ioT7E1XvmV51sVYE=;
+        b=tYQ97cqB+SOIdetHS2AzvlMRHjyRLwCJXLbK4M5uqJNUXisgw5weySG4EpvaUDbolY
+         H64amBSAeIkwZvBkOwUue3A0tfteMaHL3VQ7e8f6Tzc01k3TN+uzTkexrfQMQIAKAZJt
+         UIkke/UC9Dnq+4q5UTjxz+mBa6Ex4BGsLDi5CkQWUr1lqnLl4+kWXNSmIagrVo4MuhtE
+         BmA5ilH8pNjb6OtTfieXFLUO7TdHpb50sNkH1LaNHeDtPCN8VrXrxqPXcOBkzfSVF70w
+         B8mCdHL7HsUjJ07sR/jQLOs65d5PYOgM4btujFWbAAJQ8QUsIz0qVoEnuJnHAddhIc7U
+         GOtw==
+X-Forwarded-Encrypted: i=1; AJvYcCVMXzvzyo6WOIp3wDlaSpz/WAk8IF50oqpEoRGahRFfysp1nsW5jwSI39zmS1kkuqMUDe4djv4p736V6Xumg2ayc14MRlVcSH1Y2Iifijb+04BQWTxz1CFwpFoK+C0WsjeKDttfCmSJxqPe0TVJGmQ6nTEHzBih23mAD/nr7IpDHtEyBL8wQrs/wki+/4rU8Ml3xLCtk9poAZsttmvLCy31ibqjKGWg3Wdr0Ql46AbB55JERnUY4xTqwA==
+X-Gm-Message-State: AOJu0YzLlkP/TZkmbPbxKv2dBHSgGo3iCiRcALgvExvaPfqKc7uGvAJj
+	fJNFm+Xxw2On42+uP09lVccJDfJ9m2+aYSQIGdWHcmaV3Z96mUWJ
+X-Google-Smtp-Source: AGHT+IFMOO8EMlp6gEGvgRVvAXSflnqACiSa0Ac1BeE9fhjDlq2n0Dhu0CRIp9CRhdx6gtpsSsSfyQ==
+X-Received: by 2002:a05:6000:4020:b0:366:e991:b9ac with SMTP id ffacd0b85a97d-366e991ba88mr7840059f8f.14.1719409321919;
+        Wed, 26 Jun 2024 06:42:01 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a2f694asm15865447f8f.77.2024.06.26.06.42.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 06:42:01 -0700 (PDT)
+Message-ID: <53ae33f72d2326a58db3bcf629fc522db3acf550.camel@gmail.com>
+Subject: Re: [PATCH v5 6/7] iio: adc: Add support for AD4000
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org, 
+ lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org, 
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+  nuno.sa@analog.com, dlechner@baylibre.com, corbet@lwn.net, 
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-spi@vger.kernel.org,  linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Date: Wed, 26 Jun 2024 15:45:52 +0200
+In-Reply-To: <ZnwU3MovTWfrovrE@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1719351923.git.marcelo.schmitt@analog.com>
+	 <eb5f7b73bdf3ac89117e28f26ee3f54ba849163e.1719351923.git.marcelo.schmitt@analog.com>
+	 <f6dc458f759c47154eee16354c807c020028512e.camel@gmail.com>
+	 <ZnwU3MovTWfrovrE@debian-BULLSEYE-live-builder-AMD64>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <33c93a17-b888-47a8-be54-8fb0f7fee0ec@linux.intel.com>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBKsWRmVeSWpSXmKPExsWy7djPc7pvpGrSDN4dFLXYPHErm8XElZOZ
-	LX59sbDonL2B3eLyrjlsFgc/PGG1aLlj6sDu8eTgPCaPNfPWMHpsXqHlsWlVJ5vHvJOBHi82
-	z2T0+LxJLoA9issmJTUnsyy1SN8ugSvj1cf37AVnuCsWdLk2MG7k7GLk5JAQMJH4fPMtaxcj
-	F4eQwApGiZNbFjNCOF8YJaYv+sUC4XxmlLh/uYkVpmXS0XNQieWMEht+/2eCqzr6ZQbUsM2M
-	Ep1z28FaWARUJb686WIEsdkEdCTOv7nDDGKLCKhLNDXuZQNpYBY4xSjxv28NG0hCWCBc4t6T
-	3ewgNq+Ag8TV78uhbEGJkzOfsIDYzECDFuz+BFTPAWRLSyz/xwES5hRwlti/8QDUqYoSXxff
-	Y4GwayXWHjvDDmG/4ZDY9TAUwnaRuPX1CFSNsMSr41ugamQkTk/uAXtTQmAyo8T+fx/YIZzV
-	jBLLGr8yQVRZS7RcecIOcoSEgKPEhbO6ECafxI23ghBn8klM2jadGSLMK9HRJgTRqCax+t4b
-	lgmMyrOQPDYLyWOzEB5bwMi8ilE8tbQ4Nz212CgvtVyvODG3uDQvXS85P3cTIzDxnP53/MsO
-	xuWvPuodYmTiYDzEKMHBrCTCG1pSlSbEm5JYWZValB9fVJqTWnyIUZqDRUmcVzVFPlVIID2x
-	JDU7NbUgtQgmy8TBKdXAlJBcd54hYvXWLAtev56mU/2tjD/McgyuRr7Q2G7bnHfQ6oj179nT
-	f525arVC582Okv9l6zhEPi97lD7Z5cP3FTsqFhXrxrZUqzsrqBYYLszduWf1y+0rMsRVl61/
-	Kth/dPLaU1LCQtMeKfSFxZb6nXL8+dV7zUK1/iubF7xQWTDr6+qEO4wnLPmTLLnSrhx7Gz71
-	WFJLvRc/y5RZAmZ7IkW/TpRjNnm27/K1zhNllw1+BHy6YK+qrxRrsKxsdv3nU14SykpmwpF5
-	7l/Z7A7lXdUo+pJcnD6793R+xl/1V3/esiksL1W4XfvZe9+PvwIfcwLe1p5/3L89ZJOFldu/
-	toj9WzRZs+0aLX3EF176osRSnJFoqMVcVJwIAF5XOKGrAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGIsWRmVeSWpSXmKPExsVy+t/xu7qvpWrSDD6us7TYPHErm8XElZOZ
-	LX59sbDonL2B3eLyrjlsFgc/PGG1aLlj6sDu8eTgPCaPNfPWMHpsXqHlsWlVJ5vHvJOBHi82
-	z2T0+LxJLoA9Ss+mKL+0JFUhI7+4xFYp2tDCSM/Q0kLPyMRSz9DYPNbKyFRJ384mJTUnsyy1
-	SN8uQS/j1cf37AVnuCsWdLk2MG7k7GLk5JAQMJGYdPQcSxcjF4eQwFJGidZTG9kgEjISG79c
-	ZYWwhSX+XOtigyj6yChx/f1cZghnM6PE0QNnGEGqWARUJb686QKz2QR0JM6/ucMMYosIqEs0
-	Ne4F62YWOMUo8b9vDdgKYYFwiXtPdrOD2LwCDhJXvy9nh5h6nVHi+IfVbBAJQYmTM5+wgNjM
-	QFMX7P4EFOcAsqUllv/jAAlzCjhL7N94AOpURYmvi++xQNi1Eq/u72acwCg8C8mkWUgmzUKY
-	tICReRWjSGppcW56brGRXnFibnFpXrpecn7uJkZgBG479nPLDsaVrz7qHWJk4mA8xCjBwawk
-	whtaUpUmxJuSWFmVWpQfX1Sak1p8iNEUGBYTmaVEk/OBKSCvJN7QzMDU0MTM0sDU0sxYSZzX
-	s6AjUUggPbEkNTs1tSC1CKaPiYNTqoGp0jjOJ0jCK26a0ZW6Mycme3qGb/bgaDlxYK+QVsa2
-	V7e11Fozi3s+lMd4fgx5vuC3zVr5jQEO7xZLrtv7h+1WkcyLq0+cJdr8tVd3rZ943aWwfOvT
-	+oV2LDeWv7z29rtl+Ru1hcUFLdHZT1cvFS69OEd6qoTEEs5Nd9tnWIjds160V5Br4sQmp8W6
-	dcVJfOmbcydMusfau+uv/IZ31WZBM9nn/FBuulb9eDXnJ4MUzdcLDvlO/7KuriWgzvBSsG1W
-	3voM2a6937/seyk+1bw611LpzbTgGdJBm8oS7T++YaoXZTYv/3XshvAJ39mRCcbN1r3Z+vee
-	PLV4WS/CKr3gmfgLkbVV/ptd5ePXvpmkxFKckWioxVxUnAgAXzNkbkkDAAA=
-X-CMS-MailID: 20240626134308eucas1p1b9e36aeac3aac63006be3d26734582ec
-X-Msg-Generator: CA
-X-RootMTR: 20240626011143eucas1p11de7bd84765b20cf746a3146d75a04c8
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240626011143eucas1p11de7bd84765b20cf746a3146d75a04c8
-References: <20240625-jag-ats_cache_tag_fix-v1-1-67f956e3fa93@samsung.com>
-	<CGME20240626011143eucas1p11de7bd84765b20cf746a3146d75a04c8@eucas1p1.samsung.com>
-	<33c93a17-b888-47a8-be54-8fb0f7fee0ec@linux.intel.com>
 
-On Wed, Jun 26, 2024 at 09:09:04AM +0800, Baolu Lu wrote:
-> On 6/25/24 9:49 PM, Joel Granados via B4 Relay wrote:
-> > From: Joel Granados<j.granados@samsung.com>
-> > 
-> > Enable the pci capabilities by calling iommu_enable_pci_caps before we
-> > assign a cache tag. The cache_tag_assign_domain call in
-> > dmar_domain_attach_device uses the device_domain_info->ats_enabled
-> > element to decide on the cache_tag_type value. Therefore ats_enabled
-> > needs to be evaluated before the call to the tag cache assignment.
-> > 
-> > Signed-off-by: Joel Granados<j.granados@samsung.com>
-> > ---
-> > The "what" and "why" are included in the commit message.
-> > 
-> > Tried to place cache_tag_assign_domain before the early return in
-> > "if(dev_is_real_dma_subdevice(dev))". This means that the call to
-> > iommu_enable_pci_caps landed before the setup functions [1] which is not
-> > an issue as they seem to be orthogonal (I would like to be proven wrong
-> > here).
-> > 
-> > An alternative to this patch would be to use a different way of checking
-> > if the device is ATS enabled in __cache_tag_assign_domain.
-> > 
-> > Comments greatly appreciated
-> 
-> Thank you very much for the patch. But we already have a similar patch
-> which has been picked by Joerg for 6.10-rc.
-> 
-> https://lore.kernel.org/linux-iommu/20240620062940.201786-1-baolu.lu@linux.intel.com/
-Completely missed this. I'll give it a try tomorrow and report back.
+On Wed, 2024-06-26 at 10:17 -0300, Marcelo Schmitt wrote:
+> On 06/26, Nuno S=C3=A1 wrote:
+> > On Tue, 2024-06-25 at 18:55 -0300, Marcelo Schmitt wrote:
+> > > Add support for AD4000 series of low noise, low power, high speed,
+> > > successive approximation register (SAR) ADCs.
+> > >=20
+> > > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> > > ---
+> > > =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+> > > =C2=A0drivers/iio/adc/Kconfig=C2=A0 |=C2=A0 12 +
+> > > =C2=A0drivers/iio/adc/Makefile |=C2=A0=C2=A0 1 +
+> > > =C2=A0drivers/iio/adc/ad4000.c | 711 ++++++++++++++++++++++++++++++++=
++++++++
+> > > =C2=A04 files changed, 725 insertions(+)
+> > > =C2=A0create mode 100644 drivers/iio/adc/ad4000.c
+> > >=20
+>=20
 
-Best
+...
 
--- 
+> >=20
+> > nit: you could reduce the scope of the above prepare functions...
+>=20
+> Not sure I got what you mean with this comment Nuno.
+> Would it be preferable to prepare the 3-wire/4-wire transfers within the
+> switch
+> cases in probe?
+>=20
 
-Joel Granados
+These functions are only called from probe() right? So they could closer to=
+ the
+probe function. Anyways a nitpick comment :)
+
+...
+
+>=20
+> >=20
+> >=20
+> > iio_device_claim_direct_scoped()?
+>=20
+> I had iio_device_claim_direct_scoped() in v4 but was asked to use a local
+> lock to protect the read modify write cycle here.
+> >=20
+> > > +		if (ret < 0)
+> > > +			return ret;
+> > > +
+> > > +		mutex_lock(&st->lock);
+> >=20
+> > guard()?
+>=20
+> This guard() stuff is somewhat new to me.
+> Will check out if can use it here.
+
+should be doable...=20
+
+>=20
+> >=20
+> > > +		ret =3D ad4000_read_reg(st, &reg_val);
+> > > +		if (ret < 0)
+> > > +			goto err_unlock;
+> > > +
+> > > +		span_comp_en =3D val2 =3D=3D st->scale_tbl[1][1];
+> > > +		reg_val &=3D ~AD4000_CFG_SPAN_COMP;
+> > > +		reg_val |=3D FIELD_PREP(AD4000_CFG_SPAN_COMP,
+> > > span_comp_en);
+> > > +
+> > > +		ret =3D ad4000_write_reg(st, reg_val);
+> > > +		if (ret < 0)
+> > > +			goto err_unlock;
+> > > +
+> > > +		st->span_comp =3D span_comp_en;
+> > > +err_unlock:
+> > > +		iio_device_release_direct_mode(indio_dev);
+> > > +		mutex_unlock(&st->lock);
+> > > +		return ret;
+> > > +	default:
+> > > +		return -EINVAL;
+> > > +	}
+> > > +}
+> > > +
+> ...
+> > > +
+> > > +static int ad4000_probe(struct spi_device *spi)
+> > > +{
+> > > +	const struct ad4000_chip_info *chip;
+> > > +	struct device *dev =3D &spi->dev;
+> > > +	struct iio_dev *indio_dev;
+> > > +	struct ad4000_state *st;
+> > > +	int ret;
+> > > +
+> > > +	indio_dev =3D devm_iio_device_alloc(dev, sizeof(*st));
+> > > +	if (!indio_dev)
+> > > +		return -ENOMEM;
+> > > +
+> > > +	chip =3D spi_get_device_match_data(spi);
+> > > +	if (!chip)
+> > > +		return -EINVAL;
+> > > +
+> > > +	st =3D iio_priv(indio_dev);
+> > > +	st->spi =3D spi;
+> > > +
+> > > +	ret =3D devm_regulator_get_enable(dev, "vdd");
+> > > +	if (ret)
+> > > +		return dev_err_probe(dev, ret, "Failed to enable VDD
+> > > supply\n");
+> > > +
+> > > +	ret =3D devm_regulator_get_enable(dev, "vio");
+> > > +	if (ret)
+> > > +		return dev_err_probe(dev, ret, "Failed to enable VIO
+> > > supply\n");
+> >=20
+> > devm_regulator_bulk_get_enable()? Do we have any ordering constrains?
+>=20
+> No ordering constraints, but vdd and vio are optional while ref is requir=
+ed
+> and
+> we need to get the voltage of ref.
+> devm_regulator_bulk_get_enable_read_voltage()? and discard vdd and vio
+> voltages?
+
+Hmmm, vdd and vio do not look like optional to me :). Anyways I meant
+devm_regulator_bulk_get_enable() only for vdd and vio and still treat ref
+separately.
+
+>=20
+> >=20
+> > > +
+> > > +	ret =3D devm_regulator_get_enable_read_voltage(dev, "ref");
+> > > +	if (ret < 0)
+> > > +		return dev_err_probe(dev, ret,
+> > > +				=C2=A0=C2=A0=C2=A0=C2=A0 "Failed to get ref regulator
+> > > reference\n");
+> > > +	st->vref_mv =3D ret / 1000;
+> > > +
+> > > +	st->cnv_gpio =3D devm_gpiod_get_optional(dev, "cnv",
+> > > GPIOD_OUT_HIGH);
+> > > +	if (IS_ERR(st->cnv_gpio))
+> > > +		return dev_err_probe(dev, PTR_ERR(st->cnv_gpio),
+> > > +				=C2=A0=C2=A0=C2=A0=C2=A0 "Failed to get CNV GPIO");
+> > > +
+> > > +	ret =3D device_property_match_property_string(dev, "adi,sdi-pin",
+> > > +						=C2=A0=C2=A0=C2=A0 ad4000_sdi_pin,
+> > > +						=C2=A0=C2=A0=C2=A0
+> > > ARRAY_SIZE(ad4000_sdi_pin));
+> > > +	if (ret < 0 && ret !=3D -EINVAL)
+> > > +		return dev_err_probe(dev, ret,
+> > > +				=C2=A0=C2=A0=C2=A0=C2=A0 "getting adi,sdi-pin property
+> > > failed\n");
+> > > +
+> > > +	/* Default to usual SPI connections if pin properties are not
+> > > present
+> > > */
+> > > +	st->sdi_pin =3D ret =3D=3D -EINVAL ? AD4000_SDI_MOSI : ret;
+> > > +	switch (st->sdi_pin) {
+> > > +	case AD4000_SDI_MOSI:
+> > > +		indio_dev->info =3D &ad4000_reg_access_info;
+> > > +		indio_dev->channels =3D &chip->reg_access_chan_spec;
+> > > +
+> > > +		/*
+> > > +		 * In "3-wire mode", the ADC SDI line must be kept high
+> > > when
+> > > +		 * data is not being clocked out of the controller.
+> > > +		 * Request the SPI controller to make MOSI idle high.
+> > > +		 */
+> > > +		spi->mode |=3D SPI_MOSI_IDLE_HIGH;
+> > > +		ret =3D spi_setup(spi);
+> > > +		if (ret < 0)
+> > > +			return ret;
+> > > +
+> > > +		ret =3D ad4000_prepare_3wire_mode_message(st, indio_dev-
+> > > > channels);
+> > > +		if (ret)
+> > > +			return ret;
+> > > +
+> > > +		ret =3D ad4000_config(st);
+> > > +		if (ret < 0)
+> > > +			dev_warn(dev, "Failed to config device\n");
+> > > +
+> >=20
+> > Should this be a warning? Very suspicious :)
+>=20
+> This devices have some many possible wiring configurations.
+> I didn't want to fail just because reg access fail.
+> Maybe ADC SDI was wired to VIO but dt don't have adi,sdi-pin =3D "high".
+> Reg access will fail but sample read should work.
+
+Well, to me that really is a configuration failure and we should treat it a=
+s
+such. If we are in the so called "reg_access_info" which I read as "we can
+access registers", failing to do so should be treated as an error.=20
+
+So, setting scale would also fail and we then have a broken interface :)
+
+- Nuno S=C3=A1
+>=20
 
