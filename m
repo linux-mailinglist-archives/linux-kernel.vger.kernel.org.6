@@ -1,97 +1,100 @@
-Return-Path: <linux-kernel+bounces-231097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A228918629
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:45:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF41791862D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:46:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA86B1C21EFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:44:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B4A81C22047
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8930518E762;
-	Wed, 26 Jun 2024 15:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864B7186E38;
+	Wed, 26 Jun 2024 15:46:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="syYgb2Zq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="OcE9UTKQ"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3CB18E745;
-	Wed, 26 Jun 2024 15:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9C0BE71;
+	Wed, 26 Jun 2024 15:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719416692; cv=none; b=U8L32pboe1JUygIjZvevLWOM0FLeEFfzQphh018PgdDcFGLKvV1mJlKd9EeQmEQVwKCMIjnVm9SpiNkRhWznd/LahjlkTlGJaGwAQbCWxXYh6326B00XPiAmnhJbIE5tCqxgwnHgLcZwBmN6s5GSIktJ3FKx236MdcS+4qdkOkA=
+	t=1719416759; cv=none; b=uZhyXDTUzPtWPZ88t/5xxr97TrDiIVBqKD2JB5CP3fIEPh2OXfA/azLGTsbMhCvpmeqMUBqW5r+pbxDSqqw5c7S/PNaDb2HBPE18oAP8JauqOIu1adwchewrh+5hs1h9RBxWXBhtj1vb5/7DydEdG8FTIkDFl3zOH7Q9rBLF37U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719416692; c=relaxed/simple;
-	bh=n4OVtT18I3FXKBdUsf9p+/05XLMgkzCu5iBmKdJSptU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jtc0d9vqdZtnH/UfWKZF+XhjVwzTmx8ZdHcXQQIvYhAek6kLyt27eBg1/b+9k4UgZEEdbLhH1RodmzTWsiahEutzDChbBsCwO69Pwn93QAL/mQeKgxbhZSC7kU3N/zGBXOspPMsfWqx5fUo/PGf6ot0tyxD5z2XvqOYy5YdNGI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=syYgb2Zq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C952C116B1;
-	Wed, 26 Jun 2024 15:44:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719416692;
-	bh=n4OVtT18I3FXKBdUsf9p+/05XLMgkzCu5iBmKdJSptU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=syYgb2ZqRg/UNp+WtArfo2u/rtjCYUDuT0Y0QsegV9F8edrHaQmiy3ZrRtkqAktpB
-	 XWpRbzO3ZxL8t0TEXFtReC9KRXEYmmu9do/4yLFPEffcY3LCta1Z/3CmvMPQ1i02Z/
-	 N40XkEtBlK8hxNTL/E0Gi318B6o1lbwlMvmG43VtgwcVihtBaI/oklQSJax7R8Hgpp
-	 c/arl3iHLbnD4VymI3Kqr7Bhze7uXnzEIO6hUNMgZHY7b01OymjW42MT+kvp5FcrIr
-	 7zlqfxm+Bk+OnfCH+ofbAqZ47Q7AmhVLYiD1eJ9Kdu+EevWojpCH3FHVdhPyFVt6ra
-	 98XFQe+9sNWVQ==
-Date: Wed, 26 Jun 2024 16:44:46 +0100
-From: Lee Jones <lee@kernel.org>
-To: Conor Dooley <conor@kernel.org>
-Cc: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>, Chris Zhong <zyw@rock-chips.com>,
-	Zhang Qing <zhangqing@rock-chips.com>,
-	Chris Morgan <macromorgan@hotmail.com>,
-	Furkan Kardame <f.kardame@manjaro.org>,
-	Michael Riesch <michael.riesch@wolfvision.net>,
-	kernel@collabora.com, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] dt-bindings: mfd: rk817: Fixup clocks and
- reference dai-common
-Message-ID: <20240626154446.GD2504017@google.com>
-References: <20240622-rk809-fixes-v2-0-c0db420d3639@collabora.com>
- <20240622-rk809-fixes-v2-1-c0db420d3639@collabora.com>
- <20240622-exquisite-absently-e35b2cf335e3@spud>
+	s=arc-20240116; t=1719416759; c=relaxed/simple;
+	bh=WsxxdpCJ7n1faWx8RGOLhkTER8GXTEI/NlAf6ouiQoU=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=A2IF9K0HkfYwR8WUqCeYVg+Y3jTMBql3s5mQqYQ4MCMEbpGHlwyWoRAyLgySiNARQe2WUSRBzxaXffEhcv/GD39d1g3yvBuGKuc+YyZBEY10oIrCSRIstxrnnE0lMDz6k1peqYqg1rDSovvt19TZ+ZZVyWkIBowYwR06Bs16mE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=OcE9UTKQ; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719416735; x=1720021535; i=markus.elfring@web.de;
+	bh=WsxxdpCJ7n1faWx8RGOLhkTER8GXTEI/NlAf6ouiQoU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=OcE9UTKQ350ha43cj0MdiaOcjHDJhiAhXV0Uf4ZQfYmcQCGhYBXtjyJkI1bqPiYO
+	 q0inqogxaAlV4sWnBCBxg+9KVPv/QA42bn2J6RpOcMsCQzzb9B8JnXNuWKOnHUi53
+	 pfh4rocEsOppjADy389cpGr5+zM9/MGcEWANpgK0YzEEfzjl9cMwZNoN2zzymuPyN
+	 TuGiNm+AJq6JXsrzNOxEdX3K6UALXvlmGcvXu9RmJh3bVmqCQjlWYGpeiO/xXHnmN
+	 0LhurSbm4tA3Mqe/bRA7+9mwRw34/6hOwzqAbNA7l2XJGGCXlx/ogAWhYjKrYEbyE
+	 AJ3Uy4JuBsqRdRuprQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MjBRZ-1sqaFu0u2v-00qSjc; Wed, 26
+ Jun 2024 17:45:35 +0200
+Message-ID: <19107df8-db13-4876-b281-0cb21cd2e63a@web.de>
+Date: Wed, 26 Jun 2024 17:45:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240622-exquisite-absently-e35b2cf335e3@spud>
+User-Agent: Mozilla Thunderbird
+To: Ma Ke <make24@iscas.ac.cn>, dmaengine@vger.kernel.org,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+ Sia Jee Heng <jee.heng.sia@intel.com>, Vinod Koul <vkoul@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240626085416.2831017-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH] dmaengine: dw-axi-dmac: Add check for
+ dma_set_max_seg_size in dw_probe()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240626085416.2831017-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:ETHdg9yI00hLJVV4BIO87Jb2ea6kuBY1d9HknyVwb5uvyb4496c
+ daiHbz5xFMBrt1rKuOc6dxQ2OW3+CM9TMhxbmm/A6XQe7NaZvarqSJqqRJ5uYGi5RsCkIxZ
+ LydFZqMKXFsxt8RYivDd7b5/PzlY7mXx5dqcJaO9LH1ts6Wn7R6N0qsqGE2WrDl2n6hE/0A
+ lAJc0cIVUABiaX2ryKrEg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:L785cS3qAz4=;uZ5nwsCrqlOV990zwAit3kh24fJ
+ mGFHRqke3EXQQ3mipUsNXTKZkqDJ3x7grILf6RSICeYdG9TcVIKoSLrAIsDTfOg9WLoQs3Nbb
+ We71aEsPxehG5XDPhlP2UpxRnAf8AT9++p2BssU2xuD02fwlEMTBwEy9oaRfq3h1b1ltrQ7Gb
+ 83b+xOh/Yru9Hn+GylrgbDcxETWk1McFs1b4qnVznzspAZRQNN+55zXWg5PUw4aer06zNvzCw
+ 9Jg1JEw2/Nbzwv5dYxNZTrOOExXoPvAlak8q6Ae2hGv7LiMCTabm7inTMS7aQUjbB0Kv0CT8+
+ WqtqT3KWlAFeapsA0q8u2rWz5soDEu5cE7GEa2GzUzMx3UvbhOrzHMvYgdI5BU3l7HNOkS3qX
+ +oTWSfaq9F070GgpRmWY7LCe/KprBhzKnJPhON+qN0z0Vpl3gsgC4ETaYvlL8LA3+hJGXC8zs
+ nOcseRBSuR55/sJe7LqnDCH4ImH39Dw6pjG3t3DQ5DDQUeoc2OXTzvzlykubb6P0onYDV7x65
+ ieEIt/8Ba8c9NVK6GsL2lCPJXXmkCiCYHShw6EJknRdsGtQ6Qm0J/OuT3zWWhg+gI8T4ZZxu4
+ cKtmZY33066TxmwcmbZduaMceKu6ikOZbwqMEus9O+HxvaMeeMEgvZHPH0XEPyLfrQvsWzlOW
+ iZNT+bSSoxdh99zDdNg7epQp1GrKEISxsRubqClo+eyRrF6rXCFKZMH3y+vI1UE8ci7EphObx
+ PdHbAj377L7h90kqbbdKMi0myKYxG/X/FHbAyivBAVxqCLy6D9e5Xy7SpGtZf3w4dBV+dKjRr
+ KjF4HZKecQ28b2lznogtBmzL9fq+L28hq73Ny522YDeE4=
 
-On Sat, 22 Jun 2024, Conor Dooley wrote:
+> As the possible failure of the dma_set_max_seg_size(), we should better
+> check the return value of the dma_set_max_seg_size().
 
-> On Sat, Jun 22, 2024 at 12:57:18AM +0300, Cristian Ciocaltea wrote:
-> > Ensure 'clocks' property does not allow more than one item and add the
-> > missing reference to dai-common schema.
-> > 
-> > While at it, move 'clocks*' and '#sound-dai-cells' properties to keep
-> > the list ordered alphabetically.
-> > 
-> > Additionally, drop all useless/redundant descriptions.
-> > 
-> > Fixes: 6c38ca03406e ("dt-bindings: mfd: rk808: Convert bindings to yaml")
-> > Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> 
-> I'd argue that these should not all be the same commit, but w/e.
+Please avoid the repetition of a function name in such a change description.
+Can it be improved with corresponding imperative wordings?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.10-rc5#n94
 
-Are you arguing that, or not? :)
-
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
--- 
-Lee Jones [李琼斯]
+Regards,
+Markus
 
