@@ -1,93 +1,136 @@
-Return-Path: <linux-kernel+bounces-230078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82B6591781D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:29:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0EEF91781E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:29:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 250B91F21EBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:29:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 570B11F21C3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:29:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F3D1465A5;
-	Wed, 26 Jun 2024 05:29:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CBEC14534D;
+	Wed, 26 Jun 2024 05:29:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R9yJSgqx"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B01114036F
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 05:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815A014036F;
+	Wed, 26 Jun 2024 05:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719379745; cv=none; b=Wpyx1p/N25GfSBEGdQmKlqCiVAgfvBd1NpvfcTam5wZEoosMS1nP5NYDx4VROn5QqdTyobAqp21hTy5NvK5T+FzvS/dpEg8FjKGHC74iZ0ligeVlQdwLFAQltjox7QdweLv9Jx2aHrYrVEkwhzg7t57YAc5BaVCv2zRpHPL0f8U=
+	t=1719379779; cv=none; b=NlTHPtIavIxit5d1QquSXxc1vdZGyjKlK+6vsJxgYvFMvzeTxtrk+I1DV691VUF2bTikOvmyzHll2s8jofHDIBrek8RrUBXcFgdS5CeuCWr7OI1ClKMVSjeZYqGqzARAFeUnziSsrBpL4bj9tuH47wTRCE0+8Yq6KKmkz+5bmKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719379745; c=relaxed/simple;
-	bh=z46Img2M9tES2OAFsmy0WpYkrZexbG4QVHz5Vc5X7Zk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=SlSSFNeoq5+jzHyM1Orz2V/+l1RFdfbEJS4dRj9aIsWlWdDfB1gFG7x3YxZPACmxXf8HPLHjbM4KmFrSKdU0yU6zCgqQO9/At18Ye5xLqEmqf1W3YXCWCG/hZkLDxJLtUBqRi9z1WlsvZm208DwD85zC+zLuzclBGuHjWU9drbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-375d2ddeffbso90587925ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 22:29:03 -0700 (PDT)
+	s=arc-20240116; t=1719379779; c=relaxed/simple;
+	bh=uFUDHfOATdCQfctrUYTO/i+6L8wVIn6qHVPmAPKlvhM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hMR0p7RPBxvf8fZQpKZRMwA2j5KJNbwVnoR8+LUVKGAEPYILZzTmmNfPnfV93pHNVUo5J8+rrJlhtCbWv+YY3/qwZOoRoZpZ4klfmheqiySfVTtjDPo4G3fdvsC2guoY63akN7SyLKODcCWVRvyyCAL04z3Z0mfRNonKf4wTUBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R9yJSgqx; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70675977d0eso2968274b3a.0;
+        Tue, 25 Jun 2024 22:29:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719379777; x=1719984577; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z1UMNR3lBOm9dLCk3YB9oRVcUY1hRbwOIUju5ln0iPk=;
+        b=R9yJSgqxWqzfPB3y7FnOB1LXs0SqE7ax084RjDe/p7uC2bz7k0ccuI9/l+kwl1pw/N
+         9Wm35Uq5/Bha2avJM8Bq8pDwDlnZSaspdUyxktyEnP2Pd4DbsdfPrlyB/YPlLa0is553
+         yxCY4VxfsD20GQKHDKwIkB4t9Uo0WlA1KAwCPsc3KGv79x5DsLR9VOZG9e+oVqhVJfxe
+         t86tr4eBoI9cqnu59b0l4b+pt4j3EKc3XleSoEIak70MxGCuXmKhxXTvjuRlL2G+ajyN
+         2zry33/byirllvE2hxr8QDZhTf1gIKt6Rsh0S0ZkXprst3yTTAbRBUzQJYJg7ApI+m9k
+         PskA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719379742; x=1719984542;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o7jLFVxsran+Hxnl2Rjm/F6ukvXu6ukvDYfTlI6b4gg=;
-        b=Ag11HWHkPQhZz7H86J2HM2d8JFlgWtJosj5sXdrT1U4p6kLHY1MJJb+IwNTfwA1K8N
-         q3Fjv99+hISwLd9rUKmsE9G+/NYJ4koOz8hH4Xb6u9cUaknQc7SwXF5z/CUFW+EXe3sb
-         kj1it4NQOzdgIZqNmhIZEi7vehqdD0ihTHXeCZn22S33LqvDmEIfvYpsEdW5wBcwAA8q
-         olGP4MJuR+DQUczduUJd/F2vSU63MQUno2T9pkyCf90b6OtdVBFuQ99EI8C2mH3Q/Pqq
-         UYnjBMfh7P2WQPYYleZl8nIB2qlE0B9HeKrg8D9ITgRH9xacp4e0deHeyPKNdjeXvvMf
-         /Scg==
-X-Forwarded-Encrypted: i=1; AJvYcCWZsFI1MQ7S805j/PCrp8LPHc5aPcoqEngCTHQ2gfNU/R1KMKM5KhtT/ZOeTYiqGJ2lVc3WN2qQLhUTLIGTTvSWSzqGwbkKlelubWS9
-X-Gm-Message-State: AOJu0YzDMZNC0ey2GJL1/M5gNiS1eXEmTvz0Cxp+bH2x4VVk/5loVpDI
-	ZaQDL849lKVGAjKJGu6x6lXaGFrxr6K0gH0biwN8YUOAjmxvqhRVk81et3xNZ/OKN81x/Q8QbG1
-	l+zUyGdcPQkxI4EBkMi+APJrL4MmEc/WR4rtveCwsX/eiWlV7kqPxHVw=
-X-Google-Smtp-Source: AGHT+IFlgf0qW4V2vp2uiO2LtpRA9jZ0J28yl5GlbXreZyyCGWbyKG3jnTZuA0un7Ca8uwcdDb/1n51YlQ8U33kMNYg94mF7vofE
+        d=1e100.net; s=20230601; t=1719379777; x=1719984577;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z1UMNR3lBOm9dLCk3YB9oRVcUY1hRbwOIUju5ln0iPk=;
+        b=NEg8zu3hJFBIDKlWHy/D81Y4N6edmHVBBzgeOSrghgVct9lojUhRs8jod18fQgHbuV
+         1gxc5IEH9ig+uaopb8rjSlVFEtOtS+nUqmzL6ZOQzUVk63RmANkfmFT3rlwzVunpkbVb
+         Lan36UVc2n1Gs9kavz61s7YVwFBPFpblLsUZxGXeu7s8s9xCTUsKE4FyPmJL+4YjQE0B
+         8SBwFAjw+ZEK79+HOx4i505+1Lq45oa99GKlNLrL/HDC42uqO8S9hyFdQDepZGm5VeVp
+         YXz5BeK1gYfCCWKANmDGiLjeAkPzNy2iVRD0dVb1OQqmaAFhbW5mmQvl/aT1Ho95LLG2
+         XDOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUtp4mNarHQwE0coj/lDxMvNcYu5V8FFFa+S9S4y9AyDAOEWxh+RCYXmELgSAFSea13aVRkvVYAeTeuHRXHTJl9Y+y0ol2EvE+4/g==
+X-Gm-Message-State: AOJu0YzzecqOa5vHrcsphB2tsTiQw0jq418j+zbCRtbwbqWtsVbtPDo4
+	PJkCf1ssLxdBBpjt//vluXMaZZdT4FR6BfzFR1J5OtyQBMdNVjvO9Ruopw==
+X-Google-Smtp-Source: AGHT+IHLo7afNRBB4dWnC4QnsXtYuzvf67ZizJ8Q7nl2hrFrF+F3rv5aZW3KtuJVwdcsY24kW6IxTw==
+X-Received: by 2002:a05:6a00:3cc8:b0:706:8ce7:d582 with SMTP id d2e1a72fcca58-7068ce7dbeemr8374473b3a.17.1719379777465;
+        Tue, 25 Jun 2024 22:29:37 -0700 (PDT)
+Received: from rigel.home.arpa ([118.209.204.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70661b9f2f6sm7804000b3a.187.2024.06.25.22.29.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 22:29:37 -0700 (PDT)
+From: Kent Gibson <warthog618@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	brgl@bgdev.pl,
+	linus.walleij@linaro.org
+Cc: Kent Gibson <warthog618@gmail.com>
+Subject: [PATCH 0/4] gpiolib: cdev: directionless line reconfiguration
+Date: Wed, 26 Jun 2024 13:29:21 +0800
+Message-Id: <20240626052925.174272-1-warthog618@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fe7:b0:375:e698:d0f3 with SMTP id
- e9e14a558f8ab-3763f49d3dfmr7074855ab.0.1719379742684; Tue, 25 Jun 2024
- 22:29:02 -0700 (PDT)
-Date: Tue, 25 Jun 2024 22:29:02 -0700
-In-Reply-To: <0000000000009ce262061963e5e4@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000cc087d061bc44a72@google.com>
-Subject: Re: [syzbot] [hams?] WARNING: refcount bug in ax25_release (3)
-From: syzbot <syzbot+33841dc6aa3e1d86b78a@syzkaller.appspotmail.com>
-To: davem@davemloft.net, duoming@zju.edu.cn, edumazet@google.com, 
-	jreuter@yaina.de, kuba@kernel.org, linux-hams@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	ralf@linux-mips.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-syzbot has bisected this issue to:
+The behaviour of request reconfiguration without a direction flag set is
+ill-defined and badly behaved, for both uAPI v1 and v2.  I'll will refer
+to such a configuration as 'directionless' here.  That refers to the
+configuration requested, not the actual state of the line.
 
-commit 9fd75b66b8f68498454d685dc4ba13192ae069b0
-Author: Duoming Zhou <duoming@zju.edu.cn>
-Date:   Fri Mar 18 00:54:04 2022 +0000
+The configuration validation used during reconfiguration is borrowed from
+the line request operation, where, to verify the intent of the user, the
+direction must be set to in order to effect a change to the electrical
+configuration of a line. But that validation does not allow for the
+directionless case, making it possible to clear flags set previously
+without specifying the line direction.
 
-    ax25: Fix refcount leaks caused by ax25_cb_del()
+Adding to the inconsistency, those changes are not immediately applied,
+but will take effect when the line value is next get or set.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12f83301980000
-start commit:   568ebdaba637 MAINTAINERS: adjust file entry in FREESCALE Q..
-git tree:       net-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=11f83301980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=16f83301980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e78fc116033e0ab7
-dashboard link: https://syzkaller.appspot.com/bug?extid=33841dc6aa3e1d86b78a
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=121324ae980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1607cdda980000
+For example, by requesting a reconfiguration with no flags set, an output
+line requested with active low and open drain flags set could have those
+flags cleared, inverting the sense of the line and changing the line drive
+to push-pull on the next line value set.
 
-Reported-by: syzbot+33841dc6aa3e1d86b78a@syzkaller.appspotmail.com
-Fixes: 9fd75b66b8f6 ("ax25: Fix refcount leaks caused by ax25_cb_del()")
+This series addresses directionless reconfiguration behaviour for both
+uAPI versions.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Patch 1 disallows reconfiguration without direction for uAPI v1.
+
+Patch 2 ignores reconfiguration of a line without direction for uAPI v2.
+A different approach is used, compared to uAPI v1, as v2 allows for
+reconfiguration of multiple lines with different configurations.
+It is more useful to skip directionless lines rather than returning an
+error, as it allows for reconfiguration of a subset of requested lines.
+
+Patches 3 and 4 update the documentation for uAPI v1 and v2, respectively,
+to describe the updated behaviour.
+
+Cheers,
+Kent.
+
+Kent Gibson (4):
+  gpiolib: cdev: Disallow reconfiguration without direction (uAPI v1)
+  gpiolib: cdev: Ignore reconfiguration without direction
+  Documentation: gpio: Reconfiguration with unset direction (uAPI v1)
+  Documentation: gpio: Reconfiguration with unset direction (uAPI v2)
+
+ .../gpio/gpio-handle-set-config-ioctl.rst     |  5 +++-
+ .../gpio/gpio-v2-line-set-config-ioctl.rst    |  7 +++--
+ drivers/gpio/gpiolib-cdev.c                   | 28 +++++++++++--------
+ 3 files changed, 26 insertions(+), 14 deletions(-)
+
+-- 
+2.39.2
+
 
