@@ -1,85 +1,114 @@
-Return-Path: <linux-kernel+bounces-229970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F111B9176AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:15:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6FA49176B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:16:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD4171F22E29
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 03:15:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FA501F223D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 03:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F6F3AC16;
-	Wed, 26 Jun 2024 03:15:06 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F2C561FEA;
+	Wed, 26 Jun 2024 03:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="eW1UdU77"
+Received: from xry111.site (xry111.site [89.208.246.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE83153E23
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 03:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E20134C6;
+	Wed, 26 Jun 2024 03:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719371706; cv=none; b=iXWc+hS/dYqk/8IHVUI/f3LEw8lGrivykWWqsUC+z6PEZFd49RkmjRP9GVzN2+ITChziV7HGf0ZQFN+COrzn3GotYWZ2J4j3rxv0FZXD7A2QMKsx2estKhg7PGGBGe0hFXjAdFsUX+MhEtqMtyqFUg6UtG0A/7D9Pbnwc+A7e/o=
+	t=1719371754; cv=none; b=S3IpvUiK/nVAfxtpPYiCOPn4N8/cyQlefMhbaMHGWv2S25aSLJWISMcsVb09ZnEblatnN/ceNPGjNSKSAjjlNy9/QJjHwgTrKRyvO1ZS3iWlvpLWxAwSxqjziA2gHAUY7UPGFtvnQk1Cm4IKKZm0UjviOZvY7/EhIKHkUXQ7t/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719371706; c=relaxed/simple;
-	bh=B/9kev/b+OPHJyKD+P/1RpUxfYUuBYu32+qtnZZrdJ4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=l+4c12XH/MG/ThjUwfqDvgPynjgE0JrfFRcDEWVDYeSvmWYAqhL+wKlDIJ/b8mb/HBhMYnBBgUbyrzBpCtpSN8gdn6kD7ZEYwWuOC8g8kWME2mbH01n3SLU+7j+Z66hzwKzc6XqAbrpoVTNz+abojFsjNFlg2sJYR39nSxOwkwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-375beb12e67so78047325ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 20:15:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719371704; x=1719976504;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eg+OVAYla1xqJxnAOOPnyXpOu7qZLXXRCUe1aFJ4Occ=;
-        b=qlgwoOIATcneUlmygRKAtX0CKZkcHf0IUBLKp5+Izc3jT8wEFQit/bJUm6wGlIvoZv
-         cq1MPHWSz1WyEo5G7HoL9GZHKlSquFHGuyfOP5Xntqe+40kjCNeKcVxC4o2wmhiMABwd
-         DJCdu+WA15lY8t+ci9M/uwPhW6L+WjgbEOAqi+JXD7lPW9tSr3fzj49UAP6mkt/v324+
-         dfW1mxx5aXiOYNP18CKJMH5vMwK/Wwx0B0WpYJbkaWnSh+Uup96mz6mx0GE2U92KJb/2
-         ePGaWGDjLCUWBOKLa7cKUV9Q5ik+6Hu3FImiKHQIpMrO2DU4PZtVsDmj2g+pJWdovqhY
-         AIvQ==
-X-Gm-Message-State: AOJu0YyJFJ6hSEdiiv6winP0U0DH+9Pd9se/K02U/1naa8TbyKIaDbB0
-	bAReZphrY8Mb46qxF7tMd9nSCkFa/L/6NkV7cDnJ9T/Ki42B0VWOu3vafMN7lfsJMCej/YDlqGt
-	KrOdNsYKdmzP93PWX40OYBbkUEJtuQEf5t2Aec4Z2bDfeVawT1GkqCTk=
-X-Google-Smtp-Source: AGHT+IFasCS1ybkmXz4Xb9X5tx9TnRJCLjpNQ641MCMnnaQvtWqqLkIqeWP0Q/nbgw6XO9YnTjvqtIQZTRoW8aSy0CtPtfiy+3nQ
+	s=arc-20240116; t=1719371754; c=relaxed/simple;
+	bh=FQS+D+ZzbS4ClYxxY1k60wyNI6dxzh9Y5+6vean5MV8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=awV9kbxc8/GZEXmXAyaBnoSDW3+3TjwF6EEwaX6ptVuTblbVmGrbzLzg8wv5BxukEDcHED8q9ZV9EXsE2JEQhLk3KRhkSMtc2a65OiN9/+YSYDraBj+/MmiW6oK9cs8YjtMoA5UiJ9zshht7UyYu1Zx0AUi+AyBekxYTQOMpGJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=eW1UdU77; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
+	s=default; t=1719371751;
+	bh=FQS+D+ZzbS4ClYxxY1k60wyNI6dxzh9Y5+6vean5MV8=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=eW1UdU77ZJEgpSuregPJiyETC+M5hUNwizR/1qDy+Igpo3DB8mGKqvr0u/PERL52h
+	 T+ZYo5dgMtkDpIXVyLix8QvFnB7IknCbvo24DDNCfGry6lSxiDSbR6fF5/MvhjesYO
+	 cz97bkW8P+W7gH9Vz2l+SXYVhk1agTkT1oLPQmCM=
+Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id 5ED67674A5;
+	Tue, 25 Jun 2024 23:15:49 -0400 (EDT)
+Message-ID: <6ba5b3a01715326d2a0aee11db5cbc7cb7bce59d.camel@xry111.site>
+Subject: Re: [PATCH v3] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
+From: Xi Ruoyao <xry111@xry111.site>
+To: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, axboe@kernel.dk, 
+	torvalds@linux-foundation.org, loongarch@lists.linux.dev
+Date: Wed, 26 Jun 2024 11:15:47 +0800
+In-Reply-To: <20240625151807.620812-1-mjguzik@gmail.com>
+References: <20240625151807.620812-1-mjguzik@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:15c5:b0:375:da97:f21a with SMTP id
- e9e14a558f8ab-3763f6e1665mr10111325ab.3.1719371704013; Tue, 25 Jun 2024
- 20:15:04 -0700 (PDT)
-Date: Tue, 25 Jun 2024 20:15:03 -0700
-In-Reply-To: <CAMc0M--Cxg2Om4Obb8Hv3vqzbrKs3ddHDcXKCxhP=ODH44S3iA@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a7ac1a061bc26b73@google.com>
-Subject: Re: [syzbot] [kvm?] WARNING in __kvm_gpc_refresh (2)
-From: syzbot <syzbot+fd555292a1da3180fc82@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, peili.dev@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Tue, 2024-06-25 at 17:18 +0200, Mateusz Guzik wrote:
+> The newly used helper also checks for empty ("") paths.
+>=20
+> NULL paths with any flag value other than AT_EMPTY_PATH go the usual
+> route and end up with -EFAULT to retain compatibility (Rust is abusing
+> calls of the sort to detect availability of statx).
+>=20
+> This avoids path lookup code, lockref management, memory allocation and
+> in case of NULL path userspace memory access (which can be quite
+> expensive with SMAP on x86_64).
+>=20
+> Benchmarked with statx(..., AT_EMPTY_PATH, ...) running on Sapphire
+> Rapids, with the "" path for the first two cases and NULL for the last
+> one.
+>=20
+> Results in ops/s:
+> stock:=C2=A0=C2=A0=C2=A0=C2=A0 4231237
+> pre-check: 5944063 (+40%)
+> NULL path: 6601619 (+11%/+56%)
+>=20
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> ---
+>=20
+> Diffed against fs-next and assumes c050122bdbb4 ("fs: new helper
+> vfs_empty_path()") from vfs.empty.path is already applied.
+>=20
+> WARNING: io_uring remains untested (modulo compilation). I presume
+> Jens has a handy way of making sure things still work.=20
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+For non-io_uring part:
 
-Reported-and-tested-by: syzbot+fd555292a1da3180fc82@syzkaller.appspotmail.com
+On LoongArch the time usage of 10000000 calls:
 
-Tested on:
+baseline
+Glibc fstat: ./a.out  0.44s user 3.56s system 99% cpu 4.013 total
+bare statx:  ./a.out  0.39s user 3.54s system 99% cpu 3.927 total
 
-commit:         55027e68 Merge tag 'input-for-v6.10-rc5' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16ea803a980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e40800950091403a
-dashboard link: https://syzkaller.appspot.com/bug?extid=fd555292a1da3180fc82
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16eeb53e980000
+patched
+Glibc fstat: ./a.out  0.49s user 1.34s system 99% cpu 1.841 total
+bare statx:  ./a.out  0.42s user 1.32s system 99% cpu 1.748 total
+statx NULL:  ./a.out  0.44s user 1.29s system 99% cpu 1.734 total
 
-Note: testing is done by a robot and is best-effort only.
+Tested-by: Xi Ruoyao <xry111@xry111.site>
+
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
