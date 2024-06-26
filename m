@@ -1,145 +1,206 @@
-Return-Path: <linux-kernel+bounces-230024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 500FF917770
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:34:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA444917773
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:34:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B66B6B2457F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 04:34:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F244281150
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 04:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B10613B28A;
-	Wed, 26 Jun 2024 04:33:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA0813AA3C;
+	Wed, 26 Jun 2024 04:34:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="koPQBPRr"
-Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.219])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0DA13A404;
-	Wed, 26 Jun 2024 04:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.219
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yHD5kVbu"
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931FC13A405
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 04:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719376430; cv=none; b=carOJMLEfYAbRlBfP+8se19E8Z0i3Pt94WUDstXuop1bngcQxHM6xz7aAb9VXaBA4tbW24+taslo/Ggl7l8ZSxDjpY9pU+5cDVnJSwu9T692Xfq9owY4/FUCeo9DARfVVdBuIOZAM6qZfhUWtP3t7+dUOLTVHLD5Frh+OmeFizI=
+	t=1719376487; cv=none; b=SS+zbuBu8yOUVaQJEAG2jka9saNi7hzDwazIKFXueKfp3VYMIMBGqTZ+ZpEEYV9V+n6CvWhPSSoxg67OX5ZZX/vuxVOEq3QpmWNS5hf54H894dQHXpGNs7lNcvLUt6hHpHGu7/Jn3tPFwmPDkEn3SNUcLzPCLBdhCEkwcL0lpH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719376430; c=relaxed/simple;
-	bh=5FBDKrgKM4bBLhlI29ixgHfey9ibUTQTSdkgIvJzWeU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cRL6pgWQmPWxH+4nTS6JtQDq39hqN1OrDliQUlGDYIQ5q/q6mo8qs419PgOfFPw3437lTo8J6KpI98wSNMZv1F15e3SzRdj8uDne0P30GdOgxUkRFpYAmsF3Xi9XLIrXsZBJNZfSBjz+lh6K3h1mEqD9+4PN+8OlpEUyJh0wXN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=koPQBPRr; arc=none smtp.client-ip=45.254.50.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=ZLi/E
-	p1EGjtsxREnkh4R2fNt0gBVDDmLr+/Dsf0yMRs=; b=koPQBPRrfCTOqxjhum2kl
-	CsAU0Z3v5X6RZMemadmCTtbsuoy8uCrttQPc/+6Tk8As5Sq3AHhrvgmyPyxwXTQW
-	AftaK2fDnl90WQiHgCVvNBt4Rofh4Z5cE7SFNxiVu/sysIqG1651k4oByHLdhdLz
-	xk8Ub7WQjGfWgqYkTsV2Nk=
-Received: from localhost.localdomain (unknown [193.203.214.57])
-	by gzga-smtp-mta-g0-5 (Coremail) with SMTP id _____wD3fyTomXtmoLEPAg--.31175S4;
-	Wed, 26 Jun 2024 12:32:41 +0800 (CST)
-From: ran xiaokai <ranxiaokai627@163.com>
-To: ziy@nvidia.com
-Cc: yang.yang29@zte.com.cn,
-	si.hao@zte.com.cn,
-	akpm@linux-foundation.org,
-	baohua@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	peterx@redhat.com,
-	ran.xiaokai@zte.com.cn,
-	ranxiaokai627@163.com,
-	ryan.roberts@arm.com,
-	svetly.todorov@memverge.com,
-	vbabka@suse.cz,
-	willy@infradead.org
-Subject: Re: [PATCH 2/2] kpageflags: fix wrong KPF_THP on non-pmd-mappable compound pages
-Date: Wed, 26 Jun 2024 04:32:40 +0000
-Message-Id: <20240626043240.1156168-1-ranxiaokai627@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <D29M7U8SPSYJ.39VMTRSKXW140@nvidia.com>
-References: <D29M7U8SPSYJ.39VMTRSKXW140@nvidia.com>
+	s=arc-20240116; t=1719376487; c=relaxed/simple;
+	bh=M6WBnQVFtvyi2wfyjqjz4MRvXlMKTTXIHg+isqJ9GL8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JiBJjjshWOdGxtBu5t5CNHX3XsOi9gZyDpOTPQL6Sy7oslGDRAJZqhJ0pQdfd+mqxnncN+OvKbVfAeGmC4rpKtoTUcoG4gsP7Sg33xdbkHKh3bUpHIIcE8F0rlf6kobNnFQNK4dl48YoBzUsXW7kHSLURg+3nmp2in9SmEzWLhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yHD5kVbu; arc=none smtp.client-ip=209.85.167.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3c9cc681e4fso3324668b6e.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 21:34:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719376484; x=1719981284; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=VG4jlRyCD+JGeMHjtnplqjiPI6rXDpxs/+8GzPHHLGY=;
+        b=yHD5kVbuO2A82L6K6GK+HLCnGsu+Lt24iqX4+uJDybrdF1jnHR5qMtfVguz4jRVLN0
+         R4rFReOdYqvIoBvZ7mRBK8k9TYk5ZjfQCV0p98qMhxG5AQLojTBdVQmulrkbRNimxBFK
+         1mRbVJ0c9eZAjdN3XqhHjbAdExYH2YaryFuZoYsBhPIm21nSURxMJhgFdcMvPdg+4qDr
+         fbzI5S0d5k2ycSczb5D7/xYH/9HHj4Olu0zkRL00M5qK9mTMgj90XlN2Y7IMaX6ATOb2
+         1e1YuA3OxOWpgiNJUOO0SSQq63ugInM5A69VZjHuHMBl3iwExkm2JOdOIZrJfS05CABC
+         AXQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719376484; x=1719981284;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VG4jlRyCD+JGeMHjtnplqjiPI6rXDpxs/+8GzPHHLGY=;
+        b=A/GaQVvCNvi7Q0lENMBKTq/49uJUZdP2qP/59Ere0guUlLOsjK1B0I/af7+dHuCDYJ
+         w4EQdmPW0+abz1D8vTMNECxoZoQzrK6PRB9orJA1AiWoKuz4eA+c5A+EGPUGfi+knHYi
+         lbZ/u+0+DqpfP7+TB111VfC9ZhwS7Kbn6SfPwq7kEAvHKjuUqwgYLvxbiFBr4vvPyihD
+         WxEdy2RxqAdDuWEKwFR87NPTnlSyhtWlO55M0bnIsagKsxt8TZMotteup0gKBOl26BCb
+         CzYZrPg0HwZHj0WaaLeEBx/R6jlemnW9A0I9jduqcY4VsipjUdFgLAoWJximhHbPVrFI
+         CJUw==
+X-Forwarded-Encrypted: i=1; AJvYcCUnxZU/PO/z28E3BF5CeX4k/og4Q4Of/gF9HubjB9u6y7jzA2U8EfuOyVptuwreDhmZJH1Y1aMU6wNZOq5i1dX44AN3xGmTPWQoy3QC
+X-Gm-Message-State: AOJu0YzQEPHRR63/kCei5KX4mmbbkJKRtfn1ImiEcD38M10LwYf+qA45
+	hMPB1+N+MHYWELeTxPf69VFiT5FfvcUOG6EJ5vHi4m9e68gI0rn7UWfd3VrMzow=
+X-Google-Smtp-Source: AGHT+IF3TEvGQGK56opiow5WQuF34xaU6ta0N1F6/fCI9qz1DpGK6+xYltdN/QIwdgVNxBwrPte07w==
+X-Received: by 2002:a05:6808:d4b:b0:3d5:1a20:e8d9 with SMTP id 5614622812f47-3d5459654c0mr10675896b6e.24.1719376484472;
+        Tue, 25 Jun 2024 21:34:44 -0700 (PDT)
+Received: from localhost ([122.172.82.13])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7068af60b61sm4155236b3a.134.2024.06.25.21.34.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 21:34:43 -0700 (PDT)
+Date: Wed, 26 Jun 2024 10:04:41 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Huacai Chen <chenhuacai@loongson.cn>,
+	"Rafael J . Wysocki" <rafael@kernel.org>, loongarch@lists.linux.dev,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Binbin Zhou <zhoubinbin@loongson.cn>
+Subject: Re: [PATCH 2/2] cpufreq: Add Loongson-3 CPUFreq driver support
+Message-ID: <20240626043441.tsmvhzw4mmf6xjzj@vireshk-i7>
+References: <20240612064205.2041548-1-chenhuacai@loongson.cn>
+ <20240612064205.2041548-3-chenhuacai@loongson.cn>
+ <20240625075645.m372bpbe7m2dozil@vireshk-i7>
+ <CAAhV-H5wSzhD373L61Mxvu-7ZUSGh9LmC4yBoaHm_5rAxsu-5w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3fyTomXtmoLEPAg--.31175S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7AF1kuFWrAw4xtF18KrWfKrg_yoW8ury5pr
-	WrGasrAr4kKF98urn2qFnFyry0q3s8WF4Uta4ak3W3Z3ZrZr92kFWjvw1FkFnrZryxAws2
-	va1DWFy2vas8ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JUvksDUUUUU=
-X-CM-SenderInfo: xudq5x5drntxqwsxqiywtou0bp/1tbiqRoKTGVOBGSxdwACs6
+In-Reply-To: <CAAhV-H5wSzhD373L61Mxvu-7ZUSGh9LmC4yBoaHm_5rAxsu-5w@mail.gmail.com>
 
-> On Tue Jun 25, 2024 at 10:49 PM EDT, ran xiaokai wrote:
-> > From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+On 26-06-24, 11:51, Huacai Chen wrote:
+> On Tue, Jun 25, 2024 at 3:56 PM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > On 12-06-24, 14:42, Huacai Chen wrote:
+> > > +struct loongson3_freq_data {
+> > > +     unsigned int cur_cpu_freq;
 > >
-> > KPF_COMPOUND_HEAD and KPF_COMPOUND_TAIL are set on "common" compound
-> > pages, which means of any order, but KPF_THP should only be set
-> > when the folio is a 2M pmd mappable THP. Since commit 19eaf44954df
-> > ("mm: thp: support allocation of anonymous multi-size THP"),
-> > multiple orders of folios can be allocated and mapped to userspace,
-> > so the folio_test_large() check is not sufficient here,
-> > replace it with folio_test_pmd_mappable() to fix this.
+> > You never use it. Remove it.
+> Emm, it is used in loongson3_cpufreq_get().
+
+Yeah, you are just filling it there and reading immediately after
+that, which can be done directly too. But you don't use it anywhere
+else.
+
+> > > +static int loongson3_cpufreq_target(struct cpufreq_policy *policy, unsigned int index)
+> > > +{
+> > > +     unsigned int cpu = policy->cpu;
+> > > +     unsigned int package = cpu_data[cpu].package;
+> > > +
+> > > +     if (!cpu_online(cpu))
+> > > +             return -ENODEV;
+> > > +
+> > > +     /* setting the cpu frequency */
+> > > +     mutex_lock(&cpufreq_mutex[package]);
 > >
-> > Also kpageflags is not only for userspace memory but for all valid pfn
-> > pages,including slab pages or drivers used pages, so the PG_lru and
-> > is_anon check are unnecessary here.
-> 
-> But THP is userspace memory. slab pages or driver pages cannot be THP.
+> > No locking required here. Core doesn't call them in parallel.
 
-I see, the THP naming implies userspace memory. Not only compound order.
- 
+s/Core/CPUFreq core/
+
+> I'm a bit confused, I think different cores may call .target() in
+> parallel.
+
+Not for same policy, but for different yes.
+
+> Cores in the same package share the same
+> LOONGARCH_IOCSR_SMCMBX register, so I think the lock is required.
+
+If that is the access you are protecting, then you better move the
+lock to do_service_request() instead, which gets called from other
+places too.
+
+What exactly is a package here though ? A group of CPUs doing DVFS
+together ? Governed by the same policy structure ? In that case, you
+don't need a lock as the cpufreq core guarantees to not call multiple
+target_index() routines in parallel for the same policy.
+
+> > > +     msg.id          = cpu;
+> > > +     msg.cmd         = CMD_GET_FREQ_LEVEL_NUM;
+> > > +     msg.extra       = 0;
+> > > +     msg.complete    = 0;
+> > > +     ret = do_service_request(&msg);
+> > > +     if (ret < 0)
+> > > +             return ret;
+> > > +     max_level = msg.val;
+> > > +
 > >
-> > Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
-> > ---
-> >  fs/proc/page.c | 14 ++++----------
-> >  1 file changed, 4 insertions(+), 10 deletions(-)
 > >
-> > diff --git a/fs/proc/page.c b/fs/proc/page.c
-> > index 2fb64bdb64eb..3e7b70449c2f 100644
-> > --- a/fs/proc/page.c
-> > +++ b/fs/proc/page.c
-> > @@ -146,19 +146,13 @@ u64 stable_page_flags(const struct page *page)
-> >  		u |= kpf_copy_bit(k, KPF_COMPOUND_HEAD, PG_head);
-> >  	else
-> >  		u |= 1 << KPF_COMPOUND_TAIL;
-> > +
-> Unnecessary new line.
+> > > +     msg.id          = cpu;
+> > > +     msg.cmd         = CMD_GET_FREQ_BOOST_LEVEL;
+> > > +     msg.extra       = 0;
+> > > +     msg.complete    = 0;
+> > > +     ret = do_service_request(&msg);
+> > > +     if (ret < 0)
+> > > +             return ret;
+> > > +     boost_level = msg.val;
+> >
+> > This stuff is repeated a lot, maybe create a generic function for this
+> > ?
+> Do you means move the msg filling into do_service_request()?
 
-yes, will fix.
+Yeah, the filling of the msg structure, the call to
+do_service_request() and returning msg.val.
 
-> 
-> >  	if (folio_test_hugetlb(folio))
-> >  		u |= 1 << KPF_HUGE;
-> > -	/*
-> > -	 * We need to check PageLRU/PageAnon
-> > -	 * to make sure a given page is a thp, not a non-huge compound page.
-> > -	 */
-> > -	else if (folio_test_large(folio)) {
-> > -		if ((k & (1 << PG_lru)) || is_anon)
-> > -			u |= 1 << KPF_THP;
-> > -		else if (is_huge_zero_folio(folio)) {
-> > +	else if (folio_test_pmd_mappable(folio)) {
-> > +		u |= 1 << KPF_THP;
-> 
-> lru and anon check should stay.
+> > > +static int __init cpufreq_init(void)
+> > > +{
+> > > +     int i, ret;
+> > > +
+> > > +     ret = platform_driver_register(&loongson3_platform_driver);
+> > > +     if (ret)
+> > > +             return ret;
+> >
+> > What is the use of this platform driver ? I thought the whole purpose
+> > of the platform device/driver in your case was to probe this driver.
+> > In that case cpufreq_init() should only be doing above and not the
+> > below part. The rest should be handled in the probe() function of the
+> > driver.
+> This driver file is now a very basic version, in future it will be a
+> little like intel_pstate that has more than one cpufreq_drivers
+> (active/passive, hwp/nohwp, etc.), so it will register different
+> cpufreq_drivers depends on the result of configure_cpufreq_info().
 
-thanks, will fix.
+At this moment we can only review the current version on its merit.
+For the current version, the way things are done is simply wrong. We
+can review later once you have more things to add to this. So simplify
+it to the best of our understanding for now and make as many changes
+later as you need.
 
-> 
-> > +		if (is_huge_zero_folio(folio))
-> >  			u |= 1 << KPF_ZERO_PAGE;
-> > -			u |= 1 << KPF_THP;
-> > -		}
-> >  	} else if (is_zero_pfn(page_to_pfn(page)))
-> >  		u |= 1 << KPF_ZERO_PAGE;
-> >  
-> 
-> -- 
-> Best Regards,
-> Yan, Zi
+> > > +     ret = cpufreq_register_driver(&loongson3_cpufreq_driver);
+> > > +     if (ret)
+> > > +             goto err;
+> > > +
+> > > +     pr_info("cpufreq: Loongson-3 CPU frequency driver.\n");
+> >
+> > Make this pr_debug if you want.. There is not much use of this for the
+> > user.
+> Emm, I just want to see a line in dmesg.
 
+Yeah, a debug message is what you need then. We don't want to print
+too much unnecessarily on the console, unless there is an error.
+
+-- 
+viresh
 
