@@ -1,263 +1,191 @@
-Return-Path: <linux-kernel+bounces-229963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34F4891769A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:06:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADA7291769F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:07:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 952A9B20A3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 03:06:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 553EF1F23B8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 03:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8AD4776F;
-	Wed, 26 Jun 2024 03:06:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5077845C07;
+	Wed, 26 Jun 2024 03:07:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ZZtwYt12"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2071.outbound.protection.outlook.com [40.107.96.71])
+	dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b="etL4M3jC"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD3A11CB8;
-	Wed, 26 Jun 2024 03:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719371193; cv=fail; b=uTUYYoXOHnqPYVSOQ/Hj68FQDUro/D9G3oinGVORWi8vBaGi6h6IpxrCGIZuP8LFXfr+UuAfT0w7xCYWkCeFZdNcO6eFFmwo2plc9rXvPRlNefZYOaQY/8uJgTlx1SGGcaoKL7esIRHOxhFUXui/sZasNOq8DFb9+ubvgUPquyk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719371193; c=relaxed/simple;
-	bh=yGYxhXknp37Dqe/cQWa+DfmWHRuI2k7OWe+X43pnpVs=;
-	h=Content-Type:Date:Message-Id:Subject:Cc:To:From:References:
-	 In-Reply-To:MIME-Version; b=GXnv1KcSHHsIkqkUv3UaZrbYvOz/jFSCwcFmrEynvsLVbf6OverDLynQg4+30kMZakhJyl78o0b+U2M0b118fenEtyUisvrAHyE939PFcPnc7YZzu+W+afOHhF7KI7leWiQGVUjFmnvzQxFT/s9YPzIE5ajWg448GBRUn6YgwwM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ZZtwYt12; arc=fail smtp.client-ip=40.107.96.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=V0G/dPoudccftF1m4Li0gI7c0VgPiN/k/rWp7gdmjaIN4vUqp+rFXKoEjNAYIJK5sEr1CeBIlXDFIU0te2K/pD0Ej7pjety/BY3rHfU1ZF7N0ZS6oX9bwi3urdEDizmve4WJm/iquirfAJ31s1tttIvYnMJnxodjA+nvE9VUAqJMK6C52aZhVSBOOT0LStnqi4HRRwXjRE2Sl79lrvhjHUTC+g1tP1Nqc+QsheuheT3qWoeyfPoAn6cLQuYYId0s9xkmsmeoFU14yMNph30pXjy1wzCfqjGSxQgg8xadPiaU/vfIiAAymOoZYwUhw5g5ECOJEUD8uTRJx9Mdnypa3w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0+4IYZlkeXl9toBrOKmc+F8Ua4qecJwfGAK2IuM0npQ=;
- b=HvtAYyYPhn0HJO4IQb894kPndSQVvgQ1XQFab2nGPFfKwcWI00nOuTn/ZL6aHHJ80xnbBfFJTJIDMXiEuYJbjtWeX2ErCEgEqnrr1yYDWytEZI2/ZX236zK1MMh1UILJwdy1RZL5srDrzg+nFC6Ll9ZDIjn12L5Z5MvoCkqpfIEjzbaMXBp2V5+9nAIjEV812c/4NS7ppQTJ6Qq28gy8a2ICqmmzlHhdcdnQ567s+TfyiVQ8Zsrq5/4heBAEoIxK/ifmcqMSVjUEh5bE65rRKnvQosJecUoeXnW7TW2F1J3SPMO1W5XQAeN92tL/izaUZ6igobxUnqlSBS2vfgmHnw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0+4IYZlkeXl9toBrOKmc+F8Ua4qecJwfGAK2IuM0npQ=;
- b=ZZtwYt12Pobvyu2hbdMQq+ms+OZFjhRdn2XDBajF+cx9ZAIoiACNenPosLn0C39SEWywBFi6C1ga+h/rP3xCM399oQgnwQATnJOm6exliar1/d0uZYVeML5PfOWuypYZPfsc0YqlgzKfYDsQkWXju2GEe4nBPYj4gRVQWV3yaFEuhCT5gMQ73b9MZfvjGBKjKMY9GYDMu1zrTPMpCHtpBc/+zCKGmEosEaWrg9W40sG43U4eTodqBvO81h2GbrK08DKx60GTBkqyRwcpYYJYbFcmB0ReNlNNgIN9EVXtq+QS9K8RnMSslAM4jiHPIXb2zPLBe9azGY193uTrZhOS2Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB5744.namprd12.prod.outlook.com (2603:10b6:8:73::18) by
- MW6PR12MB8950.namprd12.prod.outlook.com (2603:10b6:303:24a::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7698.30; Wed, 26 Jun 2024 03:06:27 +0000
-Received: from DS7PR12MB5744.namprd12.prod.outlook.com
- ([fe80::f018:13a9:e165:6b7e]) by DS7PR12MB5744.namprd12.prod.outlook.com
- ([fe80::f018:13a9:e165:6b7e%4]) with mapi id 15.20.7698.025; Wed, 26 Jun 2024
- 03:06:27 +0000
-Content-Type: multipart/signed;
- boundary=160d1fe3209212974da81d836de7ddfd79b4a6816f2f2b1065ec16097dbe;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Tue, 25 Jun 2024 23:06:25 -0400
-Message-Id: <D29M7U8SPSYJ.39VMTRSKXW140@nvidia.com>
-Subject: Re: [PATCH 2/2] kpageflags: fix wrong KPF_THP on non-pmd-mappable
- compound pages
-Cc: <vbabka@suse.cz>, <svetly.todorov@memverge.com>,
- <ran.xiaokai@zte.com.cn>, <baohua@kernel.org>, <ryan.roberts@arm.com>,
- <peterx@redhat.com>, <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
- <linux-fsdevel@vger.kernel.org>
-To: "ran xiaokai" <ranxiaokai627@163.com>, <akpm@linux-foundation.org>,
- <willy@infradead.org>
-From: "Zi Yan" <ziy@nvidia.com>
-X-Mailer: aerc 0.17.0
-References: <20240626024924.1155558-1-ranxiaokai627@163.com>
- <20240626024924.1155558-3-ranxiaokai627@163.com>
-In-Reply-To: <20240626024924.1155558-3-ranxiaokai627@163.com>
-X-ClientProxiedBy: MN2PR15CA0027.namprd15.prod.outlook.com
- (2603:10b6:208:1b4::40) To DS7PR12MB5744.namprd12.prod.outlook.com
- (2603:10b6:8:73::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D15F1BF31;
+	Wed, 26 Jun 2024 03:07:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719371234; cv=none; b=FL22v4wCr2Fa92NJc+p5d/BbtmkJbrdlhQryHHzPHs46hiOfWRgvVpzBqNE2cJVvhoC9ULXl772GoWXgEZkIFr0i+5YA9fs7Yri4cfUt/GYX+UEtqfherxTsjbjA4p5NPboiJp54nJfEx65wiC0zQa89G51SywoaxurVFTlhuFg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719371234; c=relaxed/simple;
+	bh=LOCeZobGYXk8vuo4lDVp0pDi03DTdrwg74DCLcMVjRQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Gicnl6BR10WOnq2A91QHMQ37QFcUw21/mT8cWbUk8lO4hLSldwIA38Ci0u+eL0NWqS2e2MR3y0f6Xx5O2m5XfC0JSKgA4FJdswnvsx2LlxDcAzdW5rcyEXd/I/tw3FN64yUaQDvo2TSnO54AjXQGG5W7ejCAngpc9bLOpqCUwgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com; spf=pass smtp.mailfrom=arinc9.com; dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b=etL4M3jC; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arinc9.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B935840003;
+	Wed, 26 Jun 2024 03:07:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com; s=gm1;
+	t=1719371229;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1qDoIFqHWKLMrP+v9EU5xxxCReh4uHlGU6sBI8d0nIE=;
+	b=etL4M3jCTeRri7CqNc5cuJFVBzbxOz4bNo+wAbG9rnjM+a5VKbUknpdd/Y7j1KX/icVYyC
+	SGko0OAFYO+1BY2SUnuORbFbFM8zzNEpAxnEjwkjKsSuRzBJrMMg6K3QIxSat9MvxGbvMR
+	KZFuYK5fx0DCs0Vy4ljMGQu0u25iCqN5kszjsclzRkrkxwtsu3pi9E5L06qdzHFeDmaKeW
+	ftwFi3x8/WIaDEnh6CEo5Yh6SVcZ+bznL1oZiKfvp+688t4jvwznLLmxSMGFMtnyfKqf95
+	b7H0B242ywlr2ZvSdzFTekPQ6y+Hy0TnFDF6WJpZ8Xqv9laeALLhpBGyRg6+CA==
+Message-ID: <d4009f46-618c-46c3-8f35-a8db9150862e@arinc9.com>
+Date: Wed, 26 Jun 2024 06:07:04 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB5744:EE_|MW6PR12MB8950:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4e979874-ca47-4f88-ac6e-08dc958cf861
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230038|1800799022|366014|7416012|376012;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aU1vVHJCOUc3Qnd6S3kreWRXa0lvR082Nmc0a3cxSk9GTk9ReTNBRVVQbXpC?=
- =?utf-8?B?dzZSNmE5UVZibmFaNWIvN0pVcWw4NVlZckF6TVZZZFVtM0NWQkorMG8xbFBN?=
- =?utf-8?B?TExHYWF3cUhZOVBXQlRJVThVdkZxTERydU5qdzl2eituaGltOC92cEhmbGxF?=
- =?utf-8?B?SmlYTlliUjdVdHdxajRQMVVacnJvNG03eFhnTUVocUl3QVNiYmg0eElpaFdZ?=
- =?utf-8?B?Wm1MRUU0NC9qa3dSaWRQN2JFbkpEV3pEQ2gxWXkzTlVaOEViZWFuTW9mUjNp?=
- =?utf-8?B?d1VQbHJERW8xOUF3Z3piTXFKaHkzci9XZlpoMnBHQUdwdWtyb1EyL0o4czRj?=
- =?utf-8?B?VTRQT1lWU0laWS9lU01SdXlydFEybWNQNW9Kd3RoR3pISDdlVlFFdzFlQm10?=
- =?utf-8?B?MVFPRStIODBTSi9TV1lkREg4MllsUUFHZlVjV0QzS2s1eitsR2lUakxySGh0?=
- =?utf-8?B?TU9FeGtoWGY2bGpwd05QNU1aai84Q1E2UWxKaEVLOEFhVlFPQkt2WXZLdTlN?=
- =?utf-8?B?MlFQM0JjWGMxM2cxSTI5YjF6dVhPRGc0VmRkaEVxaWhad1ZXeURxeUZ3OEJ0?=
- =?utf-8?B?ZG1seGh4cGxhWkdob3I4MHBvdmlpZk5HRk40K2twWnJkMjFiMmxvU0M1QkZu?=
- =?utf-8?B?UmVMM2F2dU0vUjROcTc4ODQ2WGxZblo1eS9hbmlueWgyNTNaelpqemVYcGVQ?=
- =?utf-8?B?aXJQR1RidmZUS1dOMEZwR2wrSFp3RHdlRHpxeGFmVDRlcnpnQ0ZUNis0bGlV?=
- =?utf-8?B?V1QxdTBZNnhFUnFPcjdVcWIxUXVYU0xrMFJycXI3V0xBcmtRZDl5bmtCWTZn?=
- =?utf-8?B?VWFpVWo0L0xSMlVHQjByTEd1WkxNcDRzVE9VVVlHbncyMFpWQzlsZHMrMWpk?=
- =?utf-8?B?Ri8wZU5VN2FtMzNRVkhDYVQ1V29nd1dtcTd1RDVMS3ZucXMyaU02RGl4Sy9Z?=
- =?utf-8?B?Nk5vSEZuNHZCMVhMMmpydWZoU0RJSllEWWptMTlQT2VmUklHS3R3ZGhvZGpE?=
- =?utf-8?B?dHRZM2N2NWpKcGMrb2g5OFltck1vdTJieUNHWHYwWCtPZWFoUHJkeCtBUU1Q?=
- =?utf-8?B?RGphcEhHN1BSNXAvWm5KdTlWZVFVbEZpYXhhUURaWWVxTE5vS0pZMFd0WHdK?=
- =?utf-8?B?WjE4QzhYTEQycks2cldsSVFHbGs0d3RxSmh0MHFwd3B3c1JtbSt0ZGd4S01q?=
- =?utf-8?B?Y0wzZnJEOGFCZ05rSmMwV2tkVUxZR28zTS9wak5MRlQzOWJJWUlmVkxBVjEy?=
- =?utf-8?B?Y0RhbWMySDFFOWxRWHVxVWZxSFlVWVdtS3hHcmhRejNub2w3aktES1hEbzdO?=
- =?utf-8?B?QXBKTktwazYxTExkZHd1L2c4UzF0LytoNTVmdXorb3RJQmxqVmtWYWtsZjhC?=
- =?utf-8?B?NnBwRTNvSmpWYm5qTE80VEdocWlQWTgwVWtpb0tTMVFiZjRla0RZdFM2YUtY?=
- =?utf-8?B?YkczOUpRaEFmRUUxdnFtNEhZVTBYMElsOW80ZGJBdXFSSkE4S21GQTNGTFFD?=
- =?utf-8?B?c3RDK2pVWklGNXBtZFptdmN2VEtnZnRnblA1VDBpNFYvMWdRbjAvUTdsbWpT?=
- =?utf-8?B?bVdxYTkzWGhVcVpJQ1gzTDYzTXJLelByaXFXVlRGSXJYTWhOSS8vcVdkR2xN?=
- =?utf-8?B?Q2pQSWZLTmVhNWY4U3F2Tzl6UkFwdlRRK3h3YTd0SXArVkVaZ1BVT2tEM01a?=
- =?utf-8?B?YW1xN3c4ZnEzMUpoQUZlazFFemw4c2twRTdTVWpGa21kTXk0TVMzeTkrUGRP?=
- =?utf-8?Q?pF+/2oyE6zc3VanL/T7Jbt3yN6NMGOPP07VX8Xe?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB5744.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230038)(1800799022)(366014)(7416012)(376012);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?cVRBWEhxU2MxMkNsQnRMa2QyMVFEdzRMY1ZETmVzaHYwK1FjSjdNeWpRRWp3?=
- =?utf-8?B?MjVJazNlaFdUNDEzVDh2ai9pUEFSWjZhaTFVYzdtK1pydXdGMVBmNzJCWmxY?=
- =?utf-8?B?c3ZOMHhXNUFBeWN4dEFGL21SOGlGTDQzVml5QVNmMFhoY0h3TnM0QTd3WjYw?=
- =?utf-8?B?RmtJRWhmYXhTbkFnQ0VzcG1lKzV3cGV1Ujh5d2FwZ29RbjZGZDNNRWJ2Mi82?=
- =?utf-8?B?bFRPd0hpYUZjZ0QyeWNwUUdJSTRtSFlNTkwvUVIrbUdlNHZZOFdtZERvRGl4?=
- =?utf-8?B?Wjl0cU9WMjMrZ1VnaEJFUlNxWEthZ3lvQ2d5RDk1dFhVeHFWNGhxTjIvZEZ4?=
- =?utf-8?B?ZTgzeEQyaEJLN0lCVm5YZWVGRHV3U040ZVQ5c25CeWIvaWRGUU9LQTRUSXhH?=
- =?utf-8?B?NDk2RUJLWFZBMjd3ZG03NThCZDhWSlp5S2dqVlFGT01JUVRHZ2pjOGxFUW1o?=
- =?utf-8?B?aXdJUk4zcmlLTExQeUJjUmNtYzRBaXRNS1hibTVwd25FQzc4dU5ieGZXZXRV?=
- =?utf-8?B?YS9UVmc1NitRSktHYkcxZHU5RkNaTUFvWC80WHpDekFtdVNha01zUkgveFBn?=
- =?utf-8?B?c1g4UmFyOUdTK2E2YWN5ZkptTnUvOWlrS1RQNFpWVUJBeVdqbG9CVUVsMjVB?=
- =?utf-8?B?UFNlbEhoMFRpclBmTkIvTlpxOUQrMXN1YzBwV3ZLL29xK1BIeFAvMXJDUlBB?=
- =?utf-8?B?UXZaYzc1WVhDam1hUjhnMkZOdnVvakZiVmJQME5wQk9WNUxsQlZ0T3N4enJ0?=
- =?utf-8?B?d0hPT0dzZ3VvekFHVDd4QlA1TEs1UmFHRSt6clFmd1FCSkYzMjJIZW9HeW9i?=
- =?utf-8?B?ejJ3Vzc3UnJ2RUFIcUxkcUgwNzRGcnlYeExLc1JhWnFDSUhWVlhFcFhmTjYr?=
- =?utf-8?B?R1JoRWIyK29ST2oxUUFMNWhlWkVsUWowUFp1a0h3RlBDaHg5ZGV6RXl4K0pn?=
- =?utf-8?B?bmZBSFRJbzlKNlE1SEY5OExZbjdiWDZwQ081S2RIbnZveUxpWnhMeEhUTG4y?=
- =?utf-8?B?UUtpWlN2eFIxSzlBNFl3TmZVTWxKa1NLVzZYNlY3Z3hxdEtoOFdlc2VtTzFi?=
- =?utf-8?B?cnduMWJrSXplbUNCNlNOYmlsSlhFQlBNWWF0NE15cU9WUFBDc2xZdmNlSGUw?=
- =?utf-8?B?Y2hqbDVjTVo0NTFoRURRd3hOUFJlQm5BVlgySDhKMHVaa1FyTE9sSGxyaEI1?=
- =?utf-8?B?RXdkTnN2K0hCZWdmNEoyZm1Lb0JKalRoK1RUaWJYNzk4V3RyL1NjcVFQWVRT?=
- =?utf-8?B?Y1RJSjV4bWxudHE1bDMyYW9xRk9jRFNZU0hnVkVnNDdkNTFNMWdLTFZRcm15?=
- =?utf-8?B?VlAxeEN3RDRnNTl3aVpJR3pGT20rbDBvdWkrb2NSbCtZUi9oblBLcmF6Tnpt?=
- =?utf-8?B?KzZsc3dEWE5zSzltKzNXbnAvNFZEMWs3MnpiR201eC80OThLd3FkRTJkWDZC?=
- =?utf-8?B?V3YxejMwVHA5c3V3bFVoZTRacnJGajE0MVA0RDQyTWo1ZVBDUEFwRFB4N0dT?=
- =?utf-8?B?SVRCODJOcDBBVGcxNWc2SXlBbkFuNUdPWmtWN1F2bEZzYXhnYnJOeFV2bnVW?=
- =?utf-8?B?L1FJTmNIdVpCOVdMUWJjakFhNVdpWkdZeTgzemE0KzY4R3B6azhlRXpZMlJP?=
- =?utf-8?B?TUJFTjhTUHF1blc0NkxBZ2IyK3R5Q0NsaGQ1UHd5VFZUN3c0anN6QXZJRXI0?=
- =?utf-8?B?bDhCQzNJWEI3anJVUmc3YjdhSDVYcEl2WWlVL1FwczZ3OWFCMjRQVmxtQXUv?=
- =?utf-8?B?Q1RpbXVUSXlQcmthOHBIell4Z0RmT1REcUpxa05USS9GYXhwUW8wdlZCaTRj?=
- =?utf-8?B?dTgxZ2xNTjBOU3NLdzgrZ3dJQ041LzFoRVptdUpDdnJyay9qVlM2Vnd5eWRZ?=
- =?utf-8?B?VThFd1c1SGFkZm0vOFo2YWllRms3c3BlZVRsU051cmFlUjRMeDVZNVJOaldZ?=
- =?utf-8?B?b0xRbldtcThwektjVTEwd2wveXlURTFmcStNSTBUOFVSdUNkOHhnaWFiT3Z4?=
- =?utf-8?B?NWszZXAzYVRQOXd1Z0R2Nm04dDE0S041MTc4YktCOEhQcitlSUtSb3pnVGFE?=
- =?utf-8?B?dWlJOUp0cUFWMitFVTQrZUF3akwzMHJuUGtCSjVnTVd6YlVKYno2MmltY050?=
- =?utf-8?Q?f+Ow=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4e979874-ca47-4f88-ac6e-08dc958cf861
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB5744.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 03:06:27.6038
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5eFZbUB3ibpzZFz/k3fLInFrK5OTWJ3hJ89HDTlq9fUW1l9YhoMqleqDxAIBk9c0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8950
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: mt7622: fix switch probe on bananapi-r64
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Linux regressions mailing list <regressions@lists.linux.dev>,
+ Paolo Abeni <pabeni@redhat.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Daniel Golle <daniel@makrotopia.org>, frank-w@public-files.de,
+ Frank Wunderlich <linux@fw-web.de>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
+References: <20240516204847.171029-1-linux@fw-web.de>
+ <698cf562-1ca9-4aa3-be7e-a1474b612c5b@leemhuis.info>
+ <0cba095c-3d55-416a-a7ad-b359129731cf@arinc9.com>
+ <714da201-654b-4183-8e5e-8ff0b64fe621@leemhuis.info>
+ <2cac4cf68304e81abffbd9ff0387ee100323c2b7.camel@redhat.com>
+ <b49c801c-6628-40a6-8294-0876d8871ba7@leemhuis.info>
+ <e92c3ca0-c9be-44ac-a4fc-57ca5ebedbc5@leemhuis.info>
+ <1807a142-1534-4fa4-ad4b-d1c03af014c2@arinc9.com>
+ <58d8ddea-71cc-427a-94cc-a95f6bce61d2@collabora.com>
+ <16e9c06e-9908-455d-a387-614fefe5bcf8@arinc9.com>
+ <5e87d31c-b059-4f9a-93f7-dc87465ed14a@collabora.com>
+ <4416ef22-78cc-4ce5-b61d-69ff0903811e@arinc9.com>
+ <bd6b6929-d34d-4bd5-9cb0-bc8fe850ee46@leemhuis.info>
+ <af561268-9793-4b5d-aa0f-d09698fd6fb0@arinc9.com>
+ <750a60a6-4585-4bd2-97be-cf944e51fbdb@leemhuis.info>
+ <7a2ea06b-ae4e-4374-82c2-4de4184e06c3@arinc9.com>
+ <40035548-c76b-4b0d-915f-c513eaadbc5d@leemhuis.info>
+ <bb7e9cae-d627-4f38-9da2-b40fb3c349fe@arinc9.com>
+ <4647181b-e5a0-4f6e-9aba-1bcde763d678@collabora.com>
+Content-Language: en-US
+From: =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
+In-Reply-To: <4647181b-e5a0-4f6e-9aba-1bcde763d678@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: arinc.unal@arinc9.com
 
---160d1fe3209212974da81d836de7ddfd79b4a6816f2f2b1065ec16097dbe
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On 25/06/2024 11.49, AngeloGioacchino Del Regno wrote:
+> Il 25/06/24 10:17, Arınç ÜNAL ha scritto:
+>> On 25/06/2024 09.57, Linux regression tracking (Thorsten Leemhuis) wrote:
+>>> On 25.06.24 08:17, Arınç ÜNAL wrote:
+>>>> On 25/06/2024 08.56, Linux regression tracking (Thorsten Leemhuis) wrote:
+>>>>> On 17.06.24 13:08, Arınç ÜNAL wrote:
+>>>>>> On 17/06/2024 11:33, Linux regression tracking (Thorsten Leemhuis)
+>>>>>> wrote:
+>>>>>> [...]
+>>>>>> I've submitted a patch series that fixes the regression. Angelo argued
+>>>>>> against the way the regression is fixed. I've very clearly argued
+>>>>>> back why
+>>>>>> I find Angelo's approach wrong. There's been no response back. I don't
+>>>>>> understand why reverting the patch is the likely outcome
+>>>>>
+>>>>> Long story short: because that how things like that are handled in the
+>>>>> Linux kernel project, as Linus wants it like that. See some of the
+>>>>> quotes from https://docs.kernel.org/process/handling-regressions.html
+>>>>> for details.
+>>>>>
+>>>>>> whilst the
+>>>>>> standing argument points towards applying the said patch series. If a
+>>>>>> revert happens before this discussion with Angelo finalises, this
+>>>>>> will set
+>>>>>> a precedent that will tell maintainers that they can have their way
+>>>>>> by just
+>>>>>> not replying to the ongoing discussions.
+>>>>>>
+>>>>>> That said, the decision of resolving the regression by either
+>>>>>> reverting the
+>>>>>> patch or applying the patch series shall not depend on whether or not
+>>>>>> Angelo is pleased but rather there're no counter-arguments left on the
+>>>>>> points brought, meaning the decision shall be made depending on the
+>>>>>> argument that stands.
+>>>>>>
+>>>>>> Therefore, I suggest that unless Angelo responds back with a
+>>>>>> counter-argument in the window of a week or two, as you've described, my
+>>>>>> patch series shall be applied.
+>>>>>
+>>>>> It looks more and more like we are stuck here (or was there progress and
+>>>>> I just missed it?) while the 6.10 final is slowly getting closer. Hence:
+>>>>
+>>>> There hasn't been progress at all. I believe I have clearly described the
+>>>> way out of this issue.
+>>>>
+>>>>> AngeloGioacchino, should we ask the net maintainers to revert
+>>>>> 868ff5f4944aa9 ("net: dsa: mt7530-mdio: read PHY address of switch from
+>>>>> device tree") for now to resolve this regression? Reminder, there is
+>>>>> nothing wrong with that commit per se afaik, it just exposes a problem
+>>>>> that needs to be fixed first before it can be reapplied.
+>>>>
+>>>> Are you suggesting the patch shall be reverted first, then the DT patch
+>>>> applied, then the reverted patch applied back?
+>>>
+>>> Yeah.
+>>>
+> 
+> Sorry, I've lost your reply in the long stack of emails that I get every day.
+> 
+> I'm not suggesting to revert the patch, but to fix it such that it does not
+> break devices using old devicetrees, as it was the case before.
+> 
+> Even though, in a way, when you update the kernel, you do also update the
+> devicetrees with it just because it's almost effortless to do so, doing that
+> is not mandatory.
+> 
+> ...and that's why the driver, which was - in a way - faulty before, getting
+> the switch to work even though the devicetree node was wrong, must still be
+> compatible.
+> 
+> I do want to apply the devicetree fix, but I also do *not* want to see *driver*
+> changes that go against the backward compatibility rule of devicetree when this
+> is not strictly necessary (when it is - it's okay to make an exception)...
+> 
+> ...and this is not one of the cases in which it's strictly necessary.
 
-On Tue Jun 25, 2024 at 10:49 PM EDT, ran xiaokai wrote:
-> From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
->
-> KPF_COMPOUND_HEAD and KPF_COMPOUND_TAIL are set on "common" compound
-> pages, which means of any order, but KPF_THP should only be set
-> when the folio is a 2M pmd mappable THP. Since commit 19eaf44954df
-> ("mm: thp: support allocation of anonymous multi-size THP"),
-> multiple orders of folios can be allocated and mapped to userspace,
-> so the folio_test_large() check is not sufficient here,
-> replace it with folio_test_pmd_mappable() to fix this.
->
-> Also kpageflags is not only for userspace memory but for all valid pfn
-> pages,including slab pages or drivers used pages, so the PG_lru and
-> is_anon check are unnecessary here.
+I understand that you receive emails often. It seems you've not read my
+point of view in the previous emails because of it, so it is preventing us
+from having a proper discussion to come to a mutual agreement. I don't
+intend to repeat myself for it to be lost in your inbox again.
 
-But THP is userspace memory. slab pages or driver pages cannot be THP.
+I'm hoping that you manage to read this; Daniel has been working on a patch
+[1] to make old device trees not hosted on the Linux repository with PHY
+address wrongfully described as "0" work.
 
->
-> Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
-> ---
->  fs/proc/page.c | 14 ++++----------
->  1 file changed, 4 insertions(+), 10 deletions(-)
->
-> diff --git a/fs/proc/page.c b/fs/proc/page.c
-> index 2fb64bdb64eb..3e7b70449c2f 100644
-> --- a/fs/proc/page.c
-> +++ b/fs/proc/page.c
-> @@ -146,19 +146,13 @@ u64 stable_page_flags(const struct page *page)
->  		u |=3D kpf_copy_bit(k, KPF_COMPOUND_HEAD, PG_head);
->  	else
->  		u |=3D 1 << KPF_COMPOUND_TAIL;
-> +
-Unnecessary new line.
+As I see the extend of the reported regression is limited to the BPI-R64
+board, fixing the device tree source file for it - and mt7622-rfb1.dts as
+the only remaining DTS file with wrong PHY address described in the Linux
+repository - is enough to resolve the regression. Then Daniel's patch can
+come in to address the device tree source files I've described above.
+Although I don't find that patch necessary, I won't stand against it.
 
->  	if (folio_test_hugetlb(folio))
->  		u |=3D 1 << KPF_HUGE;
-> -	/*
-> -	 * We need to check PageLRU/PageAnon
-> -	 * to make sure a given page is a thp, not a non-huge compound page.
-> -	 */
-> -	else if (folio_test_large(folio)) {
-> -		if ((k & (1 << PG_lru)) || is_anon)
-> -			u |=3D 1 << KPF_THP;
-> -		else if (is_huge_zero_folio(folio)) {
-> +	else if (folio_test_pmd_mappable(folio)) {
-> +		u |=3D 1 << KPF_THP;
+So I suggest to apply my DT patch series [2] without taking any other steps
+to resolve the reported regression.
 
-lru and anon check should stay.
+[1] https://lore.kernel.org/all/11f5f127d0350e72569c36f9060b6e642dfaddbb.1714514208.git.daniel@makrotopia.org/
+[2] https://lore.kernel.org/all/20240314-for-mediatek-mt7531-phy-address-v1-0-52f58db01acd@arinc9.com/
 
-> +		if (is_huge_zero_folio(folio))
->  			u |=3D 1 << KPF_ZERO_PAGE;
-> -			u |=3D 1 << KPF_THP;
-> -		}
->  	} else if (is_zero_pfn(page_to_pfn(page)))
->  		u |=3D 1 << KPF_ZERO_PAGE;
-> =20
-
---=20
-Best Regards,
-Yan, Zi
-
-
---160d1fe3209212974da81d836de7ddfd79b4a6816f2f2b1065ec16097dbe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQJDBAABCgAtFiEE6rR4j8RuQ2XmaZol4n+egRQHKFQFAmZ7hbMPHHppeUBudmlk
-aWEuY29tAAoJEOJ/noEUByhUul4P/iqrNJOmfuigzJKCzAzPrdOo9Kn+F8w0mtip
-Y2MYTrO8xfC/EMM3Do/186DavEL3lmnm1qyT1DwYcrIFx1Tpx9QrJLdjel37bbbw
-jb3wlCEA+tRTk4VYs9KyEQsnrPZQouHT6tCFXjExZIXlcVjW8NTRzJboQSISDOXk
-SkNWFVuerxnklPbfC2q8BwrL2QGU9ZfMrdITYiSQsx2qF5X3WunEiZyfFHcqbfWI
-sr7ETDdqo/wBmjVnXozdD8SOYamcjjKwc5XHFikwbEDOwaC/J7vROxuWWPwW631K
-tAHV0RF7Lanxdoovk1vbf6wopubCRsJjA24AsGKuLtsCSTUInhjOMXEK+hO3wL8e
-mijMJuAONnf+/qtUTIC4FZZqvVwmSLH81v+fb5qtQhaztTNVD9ECRgB9o4BJlaHJ
-yq9YMnWiWefFQ3FxcFhNhZ56hExFqV4CCG9emCb6cj0eyLM05XWLXAElceenIK3j
-4wB1xRp1uKBMMgsqG8Bj0p5p1sJDRu9kCDkVUA52gKfFFomhyGz1bASoI9Dn39IW
-AbeakLtX5RxDMiOI8uiztxXcxSqbaqtelIiky3i17rh5GLCjqhJWRhh5LW0BHW1X
-cqnvn4onZ/L+cGCJ1ZuUUuEeSY31tGf8aBghUq5IhXvcZGF9lc8Uzu/XQpSW4iwN
-nNJ/3hWg
-=Pkrs
------END PGP SIGNATURE-----
-
---160d1fe3209212974da81d836de7ddfd79b4a6816f2f2b1065ec16097dbe--
+Arınç
 
