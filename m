@@ -1,268 +1,162 @@
-Return-Path: <linux-kernel+bounces-230398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DE88917C42
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:17:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78214917C47
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:17:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50A9628E17B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:17:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDD221F285C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:17:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7BB16D9C1;
-	Wed, 26 Jun 2024 09:15:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44EEF17836A;
+	Wed, 26 Jun 2024 09:16:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K1+apxTf"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UMH8gDM4"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67DEA16A948
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 09:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ADAE16FF5F;
+	Wed, 26 Jun 2024 09:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719393336; cv=none; b=pIMSmjN4l5RDgBwdCUY5aiP/cSePgaz+xh/NY4AoyDN71TMyP2PEjnKlIvAiAqsA8wm+JwpMrBuYuTA9+v2cruaKHU7Ow1DfrxHRL8S025O8mes9gQMuFXbdX8L1IxNXWI31D7xEqJ0S2zKSg++BHkid9P78KpAvbeI3KRSWYcM=
+	t=1719393383; cv=none; b=hknFPVqqrRBo5IHk8jbxiJkyu6MEIcpit2zPUFcXocBum1WYXe9OoXlfF/r9HaRJbn0E34S7rPV3GAoIzvvn31ZBF8bGfIwUEXEaJvknOEr0WCoYFSTlCRgHmz7/J2wBxZfrM+WWkEyNFIOcfCw5udfcQ5b2XDSKCyLDswzkB2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719393336; c=relaxed/simple;
-	bh=1oJhdzOe6APUUeZ5Bt3L+6w0fBQ8DcMKY89ZYua6KfA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nbSjZF9ZppicoUNK1PnOpWCBxCc7ipuVQYf7RS2h8yRIKwgKQZK4TIOfw8HuYbzeuzlGerlcqzPAmvc1ftSOHm/SzgPc785jlpZIZE4P4c0fRpFdr9Q9jX1gD63MOZnA0DFrw7JtGNP9QHyDcNyQnO5yY8rc7fSRyvMePF5Wvcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K1+apxTf; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52ce674da85so3307159e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 02:15:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719393332; x=1719998132; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qqYdOJxs+VFbdv5Sum02xSfIfK4O1Ds0i5uQR9Cc/Lg=;
-        b=K1+apxTfpF4xceOTFoLPUYFz6xb7/rywQRM9IwVA2sQNCI3N9/Q1Y9Ua8RvowrNxWH
-         7VGajRiYbN+L5ER59DR00Z4mRbJIVplpTh5UCW+l1mdmyuRo6zhM7Ujt7/ay2OVLGFOJ
-         i3qcI9gGgNQWQsNUlOEhd29OTQUlUXmXHpC8FsFUUrpceuScDVrqCz0Bn+yU3oXAiavQ
-         LLVXQn35bLOh0t59TNo1lATpKIdVM6+GHOXlQbpM68LwuMcDNNlBdeLjE6Lz6L2T/Gt7
-         h8XXzQWk+4keCX9ICc0PIVMI1EjPmFK7U3Y3AZuKJQOMezz0jih844q9pz1M/n1MKfNG
-         zLTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719393332; x=1719998132;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qqYdOJxs+VFbdv5Sum02xSfIfK4O1Ds0i5uQR9Cc/Lg=;
-        b=GD+aq67nIbjFS6Ni1YSQJUhfSm6cNduw5EWnB2tChQP+CU8F1+Hh7LFTI+oGGLx2Ur
-         3XOtK0/MMlB5XXd0tf3GjzSvfejqkP8PdMzXqbb8+H2HKsx8cuAGPrygpOJ5V/XzT27A
-         yfSVX9nlbZluntCb3wJUdYGnN7DxCJ3deLJqIJzSpA9zTzyQAjK6KdCXsXwCxOWKoXHk
-         9gYc8qbOMTxuTfeUzd/Q7gI//DdkpkjduEherQJQVD+rN7NviP/U4hGqC/J/cl/AZKyE
-         EL580oFffE8kOHRSr+jvoMDPBvWLkieVzO9P8YeG6+QcHYRNNDQsy6hkPGfR0AgQjzu8
-         zEEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVo+hF6mrLreZiGXikogPfNiVRR8xhg+QZ9O/7g6HPRinO/qBpFIxFpbtXYZEWU1adO+DmU/LYPMpyTrGfrlw2X+Sw7vEEUxX+mMxoj
-X-Gm-Message-State: AOJu0Yz3MP7b9ruEinEEOv0dYKltPNugvnws/7ts2ON2nVKHhl6I96m/
-	nfoV4YBC52iiVWk9JP43k8Fmq3RW4uj+/EQMezP1dVnxJMy7Ibuh12gk3NA6qko=
-X-Google-Smtp-Source: AGHT+IEoPEZ+Z1GDHwYgi6YwL3Dp42WEH58e9eBo3wjc+0KVQYyGcZlw/ZsNg8ZiVT7ZuwxnNv3rXg==
-X-Received: by 2002:a19:e014:0:b0:52c:dfe6:6352 with SMTP id 2adb3069b0e04-52ce185db23mr7675461e87.48.1719393332427;
-        Wed, 26 Jun 2024 02:15:32 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cd641f655sm1496404e87.162.2024.06.26.02.15.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 02:15:31 -0700 (PDT)
-Date: Wed, 26 Jun 2024 12:15:30 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 3/3] drm/panel: add lincoln lcd197 support
-Message-ID: <xc4laokjirwetexrcgfxq4kk3wrqn2i7k2kiqe7ivylhgmjw3w@pwwde5mlwxit>
-References: <20240625142552.1000988-1-jbrunet@baylibre.com>
- <20240625142552.1000988-4-jbrunet@baylibre.com>
- <irzer3be5fj2rg2bmc2oqxqtaw6jybbdkgv3jgxpyhdvojwv24@e4i2v6d454nz>
- <1jmsn8gjq6.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1719393383; c=relaxed/simple;
+	bh=wwMKvTP5ix+jQqsN6j7YJMV47ttdquG+q3DZ1VedhmQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k+9k8p7Zsmgc1UECn88Ut+aC4zDLs5ZLquAQatPu16mrS52bUoEMizmw/wbRgzz5+vuprNLxRbg75h3aSQKBnTF76pm0KzyQ7wJqsLIb/iU+1p5gXS2776RgzrlapMwuTVwoLaeoU43oHXtEFEYnPLTv45OEbHyZG9IwhFnyUXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UMH8gDM4; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45Q8QlVs007520;
+	Wed, 26 Jun 2024 09:16:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:content-transfer-encoding
+	:mime-version; s=pp1; bh=CoJm/UwfgFASPfG3yn4p2poc7RwIzICa/4+EoHD
+	wo7s=; b=UMH8gDM4QrQUVGjPixdAhTuGFk5UK/H/Nuq6I7B67Nq+8ndoiwPwfZS
+	qdri7EpI26N7+zmBdxAVVSDr4/EBF+gm/E3f+MXyvHKLWwghkceyJwEsQm/xO+Ot
+	QgFTijHeXTeSf3Kvd5P4cXaHQaTCT9xz80vUUnS1PwPoEDZYY2aLkKBWlLtIxrYO
+	3b76I1w5TzQbbOd9tsUBJDUvaQpIr21BlHq2hBApwZccpLh9vcomzm9bETtQaQzN
+	47QukyRfPjEBTZaf+RObf+vsekrgMX+YrKM5CQDWhgzrM38aqE2ZiOT9eKLZ9f0A
+	hnNPV7NqljOCp3r/YleT9/PlhOQPfBw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 400emg897y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Jun 2024 09:16:07 +0000 (GMT)
+Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45Q9G6Ur018726;
+	Wed, 26 Jun 2024 09:16:06 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 400emg897v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Jun 2024 09:16:06 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45Q8MXQB018096;
+	Wed, 26 Jun 2024 09:16:05 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yx8xubkty-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Jun 2024 09:16:05 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45Q9G16I54591858
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 26 Jun 2024 09:16:03 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A451820040;
+	Wed, 26 Jun 2024 09:16:01 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 201D720043;
+	Wed, 26 Jun 2024 09:15:55 +0000 (GMT)
+Received: from li-fdfde5cc-27d0-11b2-a85c-e224154bf6d4.ibm.com.com (unknown [9.43.51.102])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 26 Jun 2024 09:15:54 +0000 (GMT)
+From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+        Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+        Chen Yu <yu.c.chen@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>, acme@redhat.com,
+        Fernand Sieber <sieberf@amazon.com>,
+        linux-perf-users <linux-perf-users@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+Subject: [PATCH v5 0/3] Introduce --task-name and --fuzzy-name options in perf sched map
+Date: Wed, 26 Jun 2024 14:45:47 +0530
+Message-ID: <20240626091550.46707-1-vineethr@linux.ibm.com>
+X-Mailer: git-send-email 2.43.2
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: JSUDXZ_NcT2HZeT1nglUdce-ZbOndBRJ
+X-Proofpoint-ORIG-GUID: 3EzdLUgJiKzl445pTNncxoAjA6FCWjLa
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1jmsn8gjq6.fsf@starbuckisacylon.baylibre.com>
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-26_03,2024-06-25_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
+ adultscore=0 clxscore=1015 mlxscore=0 lowpriorityscore=0 suspectscore=0
+ malwarescore=0 impostorscore=0 priorityscore=1501 spamscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2406260067
 
-On Wed, Jun 26, 2024 at 11:02:25AM GMT, Jerome Brunet wrote:
-> On Wed 26 Jun 2024 at 07:41, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
-> 
-> > On Tue, Jun 25, 2024 at 04:25:50PM GMT, Jerome Brunet wrote:
-> >> Add support for the Lincoln LCD197 1080x1920 DSI panel.
-> >> 
-> >> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> >> ---
-> >>  drivers/gpu/drm/panel/Kconfig                |  11 +
-> >>  drivers/gpu/drm/panel/Makefile               |   1 +
-> >>  drivers/gpu/drm/panel/panel-lincoln-lcd197.c | 333 +++++++++++++++++++
-> >>  3 files changed, 345 insertions(+)
-> >>  create mode 100644 drivers/gpu/drm/panel/panel-lincoln-lcd197.c
-> >> 
-> >
-> > [...]
-> >
-> >> +
-> >> +	mipi_dsi_dcs_write_seq(lcd->dsi, 0xB9, 0xFF, 0x83, 0x99);
-> >
-> > - Please use lowercase hex instead
-> > - Please consider switching to _multi() functions.
-> 
-> Could you be a bit more specific about these '_multi' function ?
-> I've looked at 'drm_mipi_dsi.h' and can't really make what you mean.
-> 
-> Maybe I'm not looking in the right place.
+This patchset aims to reduce the amount of output printed on the terminal
+when using perf sched map, allowing users to focus only on the tasks of
+interest.
 
-What is your baseline? Please see commits 966e397e4f60 ("drm/mipi-dsi:
-Introduce mipi_dsi_*_write_seq_multi()") and f79d6d28d8fe
-("drm/mipi-dsi: wrap more functions for streamline handling") (and
-66055636a146 ("drm/mipi-dsi: fix handling of ctx in mipi_dsi_msleep") as
-it fixes a mistake in those two).
+This helps in visualizing how a benchmark or a task is spread over
+the available CPUs while also knowing which CPUs are idle(.) and which
+are not(-). This will be more useful as number of CPUs increase.
 
-> 
-> >
-> >
-> >> +	usleep_range(200, 300);
-> >
-> > This will require new helper msm_dsi_usleep_range(ctx, 200, 300);
-> 
-> I don't really understand why I would need something else to just sleep
-> ? Could you add some context please ?
-> 
-> Isn't 'msm_' usually something Qcom specific ?
+Changelog:
+=========
+Changes in v5:
+- Split the changes into different commits. (Namhyung Kim)
+- Rebase against perf-tools-next commit c7a5592e8e4d ("perf mem: Fix a
+  segfault with NULL event->name")
+- Link to v4: https://lore.kernel.org/all/20240618180708.14144-1-vineethr@linux.ibm.com/
 
-Yes, mipi_dsi_usleep_range(). Mea culpa.
+Changes in v4:
+- Handle possible memory allocation failures. (Chen Yu)
+- Link to v3: https://lore.kernel.org/all/20240617125006.31654-1-vineethr@linux.ibm.com/
 
-> >> +	mipi_dsi_dcs_write_seq(lcd->dsi, 0xB6, 0x92, 0x92);
-> >> +	mipi_dsi_dcs_write_seq(lcd->dsi, 0xCC, 0x00);
-> >> +	mipi_dsi_dcs_write_seq(lcd->dsi, 0xBF, 0x40, 0x41, 0x50, 0x49);
-> >> +	mipi_dsi_dcs_write_seq(lcd->dsi, 0xC6, 0xFF, 0xF9);
-> >> +	mipi_dsi_dcs_write_seq(lcd->dsi, 0xC0, 0x25, 0x5A);
-> >> +	mipi_dsi_dcs_write_seq(lcd->dsi, MIPI_DCS_SET_ADDRESS_MODE, 0x02);
-> >> +
-> >> +	err = mipi_dsi_dcs_exit_sleep_mode(lcd->dsi);
-> >> +	if (err < 0) {
-> >> +		dev_err(panel->dev, "failed to exit sleep mode: %d\n", err);
-> >> +		goto poweroff;
-> >> +	}
-> >> +	msleep(120);
-> >> +
-> >> +	err = mipi_dsi_dcs_read(lcd->dsi, MIPI_DCS_GET_DISPLAY_ID, display_id, 3);
-> >
-> > This probably needs new _multi helper too.
-> >
-> >> +	if (err < 0) {
-> >> +		dev_err(panel->dev, "Failed to read display id: %d\n", err);
-> >> +	} else {
-> >> +		dev_dbg(panel->dev, "Display id: 0x%02x-0x%02x-0x%02x\n",
-> >> +			display_id[0], display_id[1], display_id[2]);
-> >> +	}
-> >> +
-> >> +	lcd->prepared = true;
-> >
-> > Should not be required anymore.
-> 
-> The whole driver is heavily inspired by what is already in
-> drivers/gpu/drm/panel/ and a lot are doing something similar.
-> 
-> Maybe there has been a change since then and the existing have been
-> reworked yet. Would you mind pointing me that change if that is
-> the case ?
+Changes in v3:
+- Print the sched-out timestamp as a row when using the --command-name
+  option. (Namhyung Kim)
+- Refactor the code.
+- Rebase against perf-tools-next commit eae7044b67a6 ("perf hist: Honor
+  symbol conf.skip_empty")
+- Link to v2: https://lore.kernel.org/all/20240608124915.33860-1-vineethr@linux.ibm.com/
 
-See d2aacaf07395 ("drm/panel: Check for already prepared/enabled in
-drm_panel")
+Changes in v2:
+- Add support for giving multiple command-names in CSV. (Namhyung Kim)
+- Add fuzzy name matching option. (Chen Yu)
+- Add Reviewed-and-tested-by tag from Athira Rajeev.
+- Rebase against perf-tools-next commit d2307fd4f989 ("perf maps: Add/use
+  a sorted insert for fixup overlap and insert")
+- Link to v1: https://lore.kernel.org/all/20240417152521.80340-1-vineethr@linux.ibm.com/
 
-> 
-> >
-> >> +
-> >> +	return 0;
-> >> +
-> >> +poweroff:
-> >> +	gpiod_set_value_cansleep(lcd->enable_gpio, 0);
-> >> +	gpiod_set_value_cansleep(lcd->reset_gpio, 1);
-> >> +	regulator_disable(lcd->supply);
-> >> +
-> >> +	return err;
-> >> +}
-> >> +
-> >
-> >> +
-> >> +static const struct drm_display_mode default_mode = {
-> >> +	.clock = 154002,
-> >> +	.hdisplay = 1080,
-> >> +	.hsync_start = 1080 + 20,
-> >> +	.hsync_end = 1080 + 20 + 6,
-> >> +	.htotal = 1080 + 204,
-> >> +	.vdisplay = 1920,
-> >> +	.vsync_start = 1920 + 4,
-> >> +	.vsync_end = 1920 + 4 + 4,
-> >> +	.vtotal = 1920 + 79,
-> >> +	.flags = DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC,
-> >> +};
-> >> +
-> >> +static int lincoln_lcd197_panel_get_modes(struct drm_panel *panel,
-> >> +					  struct drm_connector *connector)
-> >> +{
-> >> +	struct drm_display_mode *mode;
-> >> +
-> >> +	mode = drm_mode_duplicate(connector->dev, &default_mode);
-> >> +	if (!mode) {
-> >> +		dev_err(panel->dev, "failed to add mode %ux%u@%u\n",
-> >> +			default_mode.hdisplay, default_mode.vdisplay,
-> >> +			drm_mode_vrefresh(&default_mode));
-> >> +		return -ENOMEM;
-> >> +	}
-> >> +
-> >> +	drm_mode_set_name(mode);
-> >> +	drm_mode_probed_add(connector, mode);
-> >> +	connector->display_info.width_mm = 79;
-> >> +	connector->display_info.height_mm = 125;
-> >
-> > drm_connector_helper_get_modes_fixed()
-> 
-> Thanks for the hint
-> 
-> >
-> >> +
-> >> +	return 1;
-> >> +}
-> >> +
-> >
-> >
-> >> +
-> >> +static void lincoln_lcd197_panel_shutdown(struct mipi_dsi_device *dsi)
-> >> +{
-> >> +	struct lincoln_lcd197_panel *lcd = mipi_dsi_get_drvdata(dsi);
-> >> +
-> >> +	drm_panel_disable(&lcd->panel);
-> >> +	drm_panel_unprepare(&lcd->panel);
-> >> +}
-> >
-> > I think the agreement was that there should be no need for the panel's
-> > shutdown, the DRM driver should shutdown the panel.
-> 
-> I'm happy to drop that if there is such agreement. Again, most panel
-> drivers do implement that callback so I just did the same.
-> 
-> Could you point me to this 'agreement' please, so I can get a better
-> understanding of it ? 
+Madadi Vineeth Reddy (3):
+  perf sched map: Add task-name option to filter the output map
+  perf sched map: Add support for multiple task names using CSV
+  perf sched map: Add --fuzzy-name option for fuzzy matching in task
+    names
 
-Quoting one of commit messages:
-
-    It's the responsibility of a correctly written DRM modeset driver to
-    call drm_atomic_helper_shutdown() at shutdown time and that should be
-    disabling / unpreparing the panel if needed. Panel drivers shouldn't
-    be calling these functions themselves.
-
-I could not describe it better.
+ tools/perf/Documentation/perf-sched.txt |  10 ++
+ tools/perf/builtin-sched.c              | 224 ++++++++++++++++++++----
+ 2 files changed, 198 insertions(+), 36 deletions(-)
 
 -- 
-With best wishes
-Dmitry
+2.43.2
+
 
