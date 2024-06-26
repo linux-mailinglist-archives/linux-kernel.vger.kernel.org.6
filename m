@@ -1,125 +1,105 @@
-Return-Path: <linux-kernel+bounces-229852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8324991752D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 02:12:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73BE6917530
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 02:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 391B01F219E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 00:12:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F14C1B21F07
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 00:17:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC121FBB;
-	Wed, 26 Jun 2024 00:12:38 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A783D819;
-	Wed, 26 Jun 2024 00:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93266441F;
+	Wed, 26 Jun 2024 00:17:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M6iqPDsD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3F015C0
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 00:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719360757; cv=none; b=bPKpeJSpwLcPnuyYSqdjtXVTyFlW0VPE2I3nv9mUPNp1g/0LHi6q5rwSATEs62cJvA4NuGkXQ88Ucd2cHhNTUJC2cHlLAFRZCiXzX6/WMmX3YGVw+6XUlx4o2ETpNbmtmPIgh5hZaO0vAmZTtcwiR/A+7cyuORJSd2ac+DOPmi0=
+	t=1719361019; cv=none; b=OMY0aL0ku8Qw/6oesFH/Hy/s5xC9eNMkr5UMNbR7Nmzg5i6zJWBIZKjn62Fm2qKq+eZysFVpSogyQ96cjajLfcWMhBhHUiQbPAWW7j7WJywPyEmV6czcBa/DyTppXUmYz2W31E3g6Pzg1nzFvq451ruX5OFgNjvLDn5k/6DzuYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719360757; c=relaxed/simple;
-	bh=Di2v1aCgxQbeNZ3G+5jaCus/A3dLdp3TNrO30NfoLj8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m7yp60KU5XhgDGiqA/IbpuhY4Piai/qbvh1BWlC+bZ+N/l/Bnc/jyC3ue5MATd+jSOf7pfSLzAntcxS/F3LTRO3jhcvyMeWHCn4Yd3fOLCAx+rSytgMGtwznz1lHzw8IYeeJromUpCzMOeZ5HxyJpKvdsRtOuiuJqgz4+i+NjuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8DADD339;
-	Tue, 25 Jun 2024 17:12:58 -0700 (PDT)
-Received: from [192.168.20.22] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F00693F766;
-	Tue, 25 Jun 2024 17:12:29 -0700 (PDT)
-Message-ID: <ce332c4d-d564-45b5-ae4d-87b569976276@arm.com>
-Date: Tue, 25 Jun 2024 19:12:28 -0500
+	s=arc-20240116; t=1719361019; c=relaxed/simple;
+	bh=ZgdySlI6yCFoybjZygFc7ygwQwV4JIsqn7odc3kRDYo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KFSOp28QdIdq0VFPEPfQAp3ZVKjmHz1JICNZjL1aoaXshgcdUAmbm0QR/z0eqpx8qWxLK/oKTwvJ8F2fx3su2z86kyXQE4wab/2m0GtH9Es0tW4aiDZ3SSkyVS7Thl9hom4W6UeDCI8eif+WWBKDWmKp/EBlSZbK5FTywmJw+xU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M6iqPDsD; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719361017;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=zdU+rDDqlIgpLxiqowKiFIoMTlc4uejP8unMxUUC8sQ=;
+	b=M6iqPDsDqkM3LPwISHiy/HG1eEnupkRBqff8ojKWPvhZmBYIucxBPY2Ts3xEO2J8HcncYs
+	xsOCw98IGSUrMyfhV2lq7bFrjSR8dI5SMkfYWQFs9TBDLV2QgBFBQ4ojgujDeKrza/tQ1l
+	LKyxhHtsi0ScM+gaflUidWMC8fS9jtE=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-583-MBZNVlmGOCyCMcXoEicPAQ-1; Tue,
+ 25 Jun 2024 20:16:55 -0400
+X-MC-Unique: MBZNVlmGOCyCMcXoEicPAQ-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 30284195609E;
+	Wed, 26 Jun 2024 00:16:54 +0000 (UTC)
+Received: from llong.com (unknown [10.22.10.23])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7F3C71956087;
+	Wed, 26 Jun 2024 00:16:52 +0000 (UTC)
+From: Waiman Long <longman@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Charan Teja Kalla <quic_charante@quicinc.com>
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Waiman Long <longman@redhat.com>
+Subject: [PATCH] mm: Prevent derefencing NULL ptr in pfn_section_valid()
+Date: Tue, 25 Jun 2024 20:16:39 -0400
+Message-Id: <20240626001639.1350646-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 02/14] arm64: Detect if in a realm and set RIPAS RAM
-Content-Language: en-US
-To: Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Steven Price <steven.price@arm.com>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
- Suzuki K Poulose <suzuki.poulose@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
- <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
- Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-References: <20240605093006.145492-1-steven.price@arm.com>
- <20240605093006.145492-3-steven.price@arm.com> <20240612104023.GB4602@myrica>
-From: Jeremy Linton <jeremy.linton@arm.com>
-In-Reply-To: <20240612104023.GB4602@myrica>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Hi,
+Commit 5ec8e8ea8b77 ("mm/sparsemem: fix race in accessing
+memory_section->usage") changed pfn_section_valid() to add a READ_ONCE()
+call around "ms->usage" to fix a race with section_deactivate() where
+ms->usage can be cleared.  The READ_ONCE() call, by itself, is not enough
+to prevent NULL pointer dereference.  We need to check its value before
+dereferencing it.
 
-On 6/12/24 05:40, Jean-Philippe Brucker wrote:
-> On Wed, Jun 05, 2024 at 10:29:54AM +0100, Steven Price wrote:
->> From: Suzuki K Poulose <suzuki.poulose@arm.com>
->>
->> Detect that the VM is a realm guest by the presence of the RSI
->> interface.
->>
->> If in a realm then all memory needs to be marked as RIPAS RAM initially,
->> the loader may or may not have done this for us. To be sure iterate over
->> all RAM and mark it as such. Any failure is fatal as that implies the
->> RAM regions passed to Linux are incorrect - which would mean failing
->> later when attempting to access non-existent RAM.
->>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> Co-developed-by: Steven Price <steven.price@arm.com>
->> Signed-off-by: Steven Price <steven.price@arm.com>
-> 
->> +static bool rsi_version_matches(void)
->> +{
->> +	unsigned long ver_lower, ver_higher;
->> +	unsigned long ret = rsi_request_version(RSI_ABI_VERSION,
->> +						&ver_lower,
->> +						&ver_higher);
-> 
-> There is a regression on QEMU TCG (in emulation mode, not running under KVM):
-> 
->    qemu-system-aarch64 -M virt -cpu max -kernel Image -nographic
-> 
-> This doesn't implement EL3 or EL2, so SMC is UNDEFINED (DDI0487J.a R_HMXQS),
-> and we end up with an undef instruction exception. So this patch would
-> also break hardware that only implements EL1 (I don't know if it exists).
+Fixes: 5ec8e8ea8b77 ("mm/sparsemem: fix race in accessing memory_section->usage")
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ include/linux/mmzone.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-To note: i've found out the hard way this set breaks a qemu+kvm+ACPI 
-setup as well, for roughly the same reason. I imagine we want kernels 
-which can boot in either a realm or a normal guest.
-
-I delayed the version check a bit and then, did enough that 
-arm_smcccc_1_1_invoke() could replace arm_smccc_smc() in 
-invoke_rsi_fn_smc_with_res(). Which naturally gets it booting again, the 
-larger implications i've not considered yet.
-
-
-
-
-> 
-> The easiest fix is to detect the SMC conduit through the PSCI node in DT.
-> SMCCC helpers already do this, but we can't use them this early in the
-> boot. I tested adding an early probe to the PSCI driver to check this, see
-> attached patches.
-> 
-> Note that we do need to test the conduit after finding a PSCI node,
-> because even though it doesn't implement EL2 in this configuration, QEMU
-> still accepts PSCI HVCs in order to support SMP.
-> 
-> Thanks,
-> Jean
-> 
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 8f9c9590a42c..b1dcf6ddb406 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -1980,8 +1980,9 @@ static inline int subsection_map_index(unsigned long pfn)
+ static inline int pfn_section_valid(struct mem_section *ms, unsigned long pfn)
+ {
+ 	int idx = subsection_map_index(pfn);
++	struct mem_section_usage *usage = READ_ONCE(ms->usage);
+ 
+-	return test_bit(idx, READ_ONCE(ms->usage)->subsection_map);
++	return usage ? test_bit(idx, usage->subsection_map) : 0;
+ }
+ #else
+ static inline int pfn_section_valid(struct mem_section *ms, unsigned long pfn)
+-- 
+2.39.3
 
 
