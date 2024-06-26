@@ -1,116 +1,137 @@
-Return-Path: <linux-kernel+bounces-231216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA0889187C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:45:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 056579187C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:46:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6431E28B99F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:45:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A31101F241BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D28618FC9F;
-	Wed, 26 Jun 2024 16:45:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F217518FDA0;
+	Wed, 26 Jun 2024 16:45:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R4hoGwXy"
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jWA5VqzL"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2624818FC94
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 16:45:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1DFE18F2FB;
+	Wed, 26 Jun 2024 16:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719420312; cv=none; b=P4DC4SvADNqb+d21kBbc6NBOukrgVGyNFLryAxdZeWn0Xvl/HpkuwftkSNAsou+7Vm20kkSuS+moXpmaipPNkkJxQPltap6poI+rhyK0Qe5P910UN2uOIC1B/SU6CNUOeUbXxZKY3XOSrnIq4SPMGCaqS6ETREf04/MSx3SH48Y=
+	t=1719420326; cv=none; b=EeYqtLXuwdkzuyKBitcEmT1KTbcggpv76ZWubStdAXj4tB8m4J9bwSXY7zlYLa05rj0ko0RFhLMKZjRDmXsjyPPt83fm20iRtr3ky2WGPSj3X0MjVm5Sgnk7JGqUkon3DNgocG1D3Zz1I9WfxvY/5EAIPTDZk+QIX1Hj5DnVYFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719420312; c=relaxed/simple;
-	bh=/XTlK8CNVzTiVxxB1xDjgvENhRkAWNqgof0AvwLMnTA=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=f/k+89s0oEQhkAYagh3gHolNQmiiuUeiPJMuqy1pdypKUskYdNMEIlO4C6uP8GrFDAGXCnrvc0i0+jGk5hRdTyj2BOiv6FabKgk4ncze3MlvkLBWZKJ609kn8JU/Ma7JyMEg6fpX6/njUYkTj8uF+K0fSvP23Srm/wrZu+eks8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R4hoGwXy; arc=none smtp.client-ip=209.85.217.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-48f463dbbd2so1698592137.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 09:45:10 -0700 (PDT)
+	s=arc-20240116; t=1719420326; c=relaxed/simple;
+	bh=2Uzn37QnW/sB+xogUrcLf3O9WMjn2ZQf2EU2y2FpU0o=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JkKzR5MeREqFOGQiDPdIuq7CgqzZidVTobKrLIUgGRHqai2jkXMZ0KJL4B9yeyIIV8EtvvzhaqDT65JeWp4qz4LNjSsl8VARvHVqEk43W/iMS4bV6ZgbcaUiVj5mZ+gCto4PAZqVvjkjK+mST2z9T2l3IFwG/jpXkXk9XvEzpEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jWA5VqzL; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a724598cfe3so582508266b.1;
+        Wed, 26 Jun 2024 09:45:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719420309; x=1720025109; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=AkHDlUR7ZAep2s6CTxvJnI8Ne4BYMt6q67j2gv0FYCk=;
-        b=R4hoGwXyGB4S5wLzn0sAbeo3I4uUd2z0CegGtQ1hEAEiHTZVJKzWu0iNmkMiJTICNR
-         lKRlmQetAi6yPzob6hqgUi2Sw3zmmAilq+Lwg+MQ74BxjjpsG+4S0lwfCr/u16KH9vBX
-         UJjvR8PuM2Zj5MHAK8cJjDP7D/cInWQPronpnIITR/1ItxThwR9cXBbzmmf3eoUxiRWR
-         S6PFPPSBy4l5Pn4n9ymxkg34g1tSMNv1AtQnmtr3JaX06MrxiTN+9/SVmCB8hWyvkrvP
-         TbCiqFaKmbge/3LiXdFv4FlfVBPoMEXQZOFArMp+1EVVX08dqMXmL8OiZ1jUT2KiSs6G
-         XXug==
+        d=gmail.com; s=20230601; t=1719420323; x=1720025123; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DpdLLGkG+TIt8lLvN2sr4YidzuKVAO190LfJyAXBO6E=;
+        b=jWA5VqzLEZMdaJqRGjtgiR7xCOXRKxTzXlTPP62kFrUZMgUZZtU3J4bP87nemP2MKK
+         WZD7lc0B/YVVXy+PrWNZbXHrwckCHTqr9Ds5zat1tMOfwD6lyeczwJ6lAC7J6yBLZvIj
+         wACeQk7+HkTwrOFMVwE/m0oKZun4aBMCh+EE6Gp1IUETtMISoy14KQj36DehGfYjuQGR
+         S4qkJUJCXCwT1HA/GD4ntiYdBIRF0RuXdjcfGI/A3JKKPqErhhvCqcuIPkSU7WRDUMa4
+         ZXz7dLD3/eRHNX3190gAGAXRvULA5jYpEfDmkeK1yWtgAAnNk/AGFbvQRHFhXaodslsH
+         6wfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719420309; x=1720025109;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AkHDlUR7ZAep2s6CTxvJnI8Ne4BYMt6q67j2gv0FYCk=;
-        b=EKd3/pcBBDMxEPnEhbiIeM7yb8+2Du29POnJhUxIjsUwe6CpMv2/UUZyk3SY57dU7J
-         YFebFAQZXV1In6Iwr3aC6LP/3aPc2qGwpaUWNtYn8CHWOHKHov0x34pdOweMsInoCLn+
-         EIEGxlyv3kONYkGL3CXgme4hU7orqrHPPYp1FA4y553B1PCKA9F6GqE+7P2NurI1iLmN
-         iLfGdCDHpTH0mRNuKWg5R8l6GgU8XSaUyCf+ROc1BFnkl3yYlMjQW+bHsio6fs0q8qe3
-         kKsyrij+vKUV1ygHKIdGMnZnZhJvEqvhfHI/izOyhjUHYiYIEIwO9hxzbIk5wIRINkhX
-         1ENA==
-X-Gm-Message-State: AOJu0Yx92iEUc1ScQxwUB0X3q6l4wjXcbbSQsmdNCjo1HJVQ8h1epFzK
-	CAvf6GBoRAHhMmdctRfRMOgNA6lJpLbo3FZDXROsnn3i1fkCj3KmD4RgT0LhcCTTOaDH6JhKvrT
-	nwVDB+nCCad7hC2dpvqsmkp2/0dWv+8NBAF+iZkhJte22im8D77sZ7A==
-X-Google-Smtp-Source: AGHT+IERDTeo9SUWlwbISbmX+LCiLsiuQ1dzl43YSoAXQ8Dz2vixJVMLChWoKkQj5/ZsdWmFforvxh7nXH2rV/z1Zg4=
-X-Received: by 2002:ac5:cb4c:0:b0:4ef:668f:2438 with SMTP id
- 71dfb90a1353d-4ef668f245fmr8617396e0c.0.1719420308489; Wed, 26 Jun 2024
- 09:45:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719420323; x=1720025123;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DpdLLGkG+TIt8lLvN2sr4YidzuKVAO190LfJyAXBO6E=;
+        b=gDvVLqAl5S3MMGF+8sMhdAUebFuAtCEfG0zBQ7OWGcLawmHaheOvfZNmQtSI4w0iXJ
+         thfnz2UVE6/zj8ga+0YPHFi2JWTQi+e7rccBrTAKRtMkWv3bH/Zsn7oDcl1q5/bt0xk7
+         wX9urbKtj5vqnRyc7iVD6h7bPgu5V0p/AuYZHCqlXsjlCE+SJOqQU8N52wH6DJdXmGrG
+         pE+Dn6WiM0l6e2GfiIt9gFE0EMrH0r6htgstOHmzI+iKOXhx3otjkxephe6sm/xgzxgM
+         LEOBC+rGjz0nIaV5Uj6WdtpkbWYDcJfJN9hzXERJ3eAjNpiKWy/E9g0qMLx7gNsMWlR+
+         gjWg==
+X-Forwarded-Encrypted: i=1; AJvYcCXHnfMIjRt24VtXAtc4EG0v2HBciOwSKXP2VZ2OREQZvFHMIKNw+m2eaPEjJ6pT8BDxfXGBTByGy/fLdaR6+0PwKSnT06Sn0BBsVvP9
+X-Gm-Message-State: AOJu0YzGtDA3nrDcktTkdRvTCLAPXIW+XNVEk/CNcLMfjItb5eqYEnxA
+	tOaDqIsf8kLGzXsDZLKny61o+qv3lFSIWnV0F+EUSYLM6/CDRFTq
+X-Google-Smtp-Source: AGHT+IG/CSAouP4IJG+hBEjoPTqguJSobv59Lf4z4OxCLmpyxQZTUQE/vqFO9BkhT0uyablhjvvtVw==
+X-Received: by 2002:a17:907:104c:b0:a72:455f:e8b with SMTP id a640c23a62f3a-a724599a00cmr851759266b.0.1719420322789;
+        Wed, 26 Jun 2024 09:45:22 -0700 (PDT)
+Received: from [127.0.1.1] (31-179-0-202.dynamic.chello.pl. [31.179.0.202])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7258814940sm302889966b.7.2024.06.26.09.45.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 09:45:22 -0700 (PDT)
+From: Roman Storozhenko <romeusmeister@gmail.com>
+Date: Wed, 26 Jun 2024 18:45:17 +0200
+Subject: [PATCH] cpupower: Disable direct build of the 'bench' subproject
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 26 Jun 2024 22:14:56 +0530
-Message-ID: <CA+G9fYv-rWNXZ9JxA19qSP0r+jhPDaMJejKbckN72kT1UpQ3QA@mail.gmail.com>
-Subject: mm: huge_memory.c:2736:31: error: variable 'page' is uninitialized
- when used here [-Werror,-Wuninitialized]
-To: open list <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>, 
-	lkft-triage@lists.linaro.org, clang-built-linux <llvm@lists.linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Lance Yang <ioworker0@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240626-fix_bench_compilation-v1-1-d039bd5fa551@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAJxFfGYC/x2M0QpAQBAAf0X77OqsS/gV6TpnscXRnaTk320ep
+ 2bmgUSRKUGbPRDp4sR7ECjyDPziwkyKR2FAjUZXWKmJbztQ8Iv1+3bw6k4plEOqG2zK2pcGpD0
+ iifh/u/59PyOZtAlnAAAA
+To: Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Roman Storozhenko <romeusmeister@gmail.com>
+X-Mailer: b4 0.14.0
 
-The x86_64 clang builds failed on Linux next due to these warnings / errors.
+Execution of the 'make' command in the 'bench' subfolder causes the
+following error:
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+$ make O=cpupower/build/ DESTDIR=cpupower/install/ -j8
+"  CC      " cpupower/build//main.o
+"  CC      " cpupower/build//parse.o
+/bin/sh: 1: "  CC      "cpupower/build//system.o
+  CC      : not found
+  make: *** [Makefile:21: cpupower/build//main.o] Error 127
+  make: *** Waiting for unfinished jobs....
+  /bin/sh: 1:   CC      : not found
+  /bin/sh: 1:   CC      : not found
+  make: *** [Makefile:21: cpupower/build//parse.o] Error 127
+  make: *** [Makefile:21: cpupower/build//system.o] Error 127
 
-Build error:
-------
-mm/huge_memory.c:2736:31: error: variable 'page' is uninitialized when
-used here [-Werror,-Wuninitialized]
- 2736 |         folio_remove_rmap_pmd(folio, page, vma);
-      |                                      ^~~~
-/builds/linux/mm/huge_memory.c:2700:19: note: initialize the variable
-'page' to silence this warning
- 2700 |         struct page *page;
-      |                          ^
-      |                           = NULL
-1 error generated.
+The makefile uses variables defined in the main project makefile and it
+is not intended to run standalone. The reason is that 'bench' subproject
+depends on the 'libcpupower' library, see the 'compile-bench' target in
+the main makefile.
+Add a check that prevents standalone execution of the 'bench' makefile.
 
-patch that is causing this build failures,
-  mm/vmscan: avoid split lazyfree THP during shrink_folio_list()
+Signed-off-by: Roman Storozhenko <romeusmeister@gmail.com>
+---
+ tools/power/cpupower/bench/Makefile | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-metadata:
+diff --git a/tools/power/cpupower/bench/Makefile b/tools/power/cpupower/bench/Makefile
+index a4b902f9e1c4..34e5894476eb 100644
+--- a/tools/power/cpupower/bench/Makefile
++++ b/tools/power/cpupower/bench/Makefile
+@@ -1,4 +1,9 @@
+ # SPDX-License-Identifier: GPL-2.0
++ifeq ($(MAKELEVEL),0)
++$(error This Makefile is not intended to be run standalone, but only as a part \
++of the  main one in the parent dir)
++endif
++
+ OUTPUT := ./
+ ifeq ("$(origin O)", "command line")
+ ifneq ($(O),)
 
---
-  git_describe: next-20240625
-  git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
-  git_short_log: 0fc4bfab2cd4 ("Add linux-next specific files for 20240625")
-  arch: x86_64
-  toolchain: clang-18
+---
+base-commit: 0fc4bfab2cd45f9acb86c4f04b5191e114e901ed
+change-id: 20240626-fix_bench_compilation-a2e892938c34
 
-Links:
- - https://storage.tuxsuite.com/public/linaro/lkft/builds/2iNfPlsMdxsqZTOC14r1xZZxq8X/
- - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240625/testrun/24448204/suite/build/test/clang-18-lkftconfig/details/
+Best regards,
+-- 
+Roman Storozhenko <romeusmeister@gmail.com>
 
---
-Linaro LKFT
-https://lkft.linaro.org
 
