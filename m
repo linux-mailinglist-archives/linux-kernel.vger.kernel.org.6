@@ -1,158 +1,260 @@
-Return-Path: <linux-kernel+bounces-231541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9518A9199BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 23:23:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 127289199BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 23:23:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 501F12832B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:23:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC2D228460C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A08193092;
-	Wed, 26 Jun 2024 21:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F3A19309D;
+	Wed, 26 Jun 2024 21:23:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kHFElrjU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Eqe8GxgF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C9C16A928;
-	Wed, 26 Jun 2024 21:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719436985; cv=none; b=G7c858fKpHuBTqf5z/fS9ELBpYyif1jtLRjH3NCKeVQc4Jjvr4IWQ5JtciE7kFsGL2z6GA8GJfujPzmOtnITwVZbTxG3JondFBwA8w+JcRCOwmkhOvCBHzO9P5qhkv4t3n0f3gz907bpLDcq1Wvob2U69Wk6npXr7WG9E6hOwaA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719436985; c=relaxed/simple;
-	bh=f4nVLOzta92hqUMfbJwPA04s+mQnQATUqGTW4c+CO3s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K1MpiRB6qnXNmStMl+khLEyTFvl3l77ZGLcAjdx1JPZrxzn8CjKrjiliHkl+1M6BaphGAWjZeXCg5PrB6e0sOGd5HEdI3wO6+HUTJJy0CLe/SorNgq+Su4HMPqLoW4UqsMBbxm1OxXtQ/KkqO6ru3C5kqDgNao0zZbWo2BXpKJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kHFElrjU; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F119193084
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 21:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719437028; cv=fail; b=eRcGIQH1QPRmbwjpH8BOt23FHJAfvdl3uwtu66yyBa4Hep9W4/NpcAeYd9qW63XymQsWoRLm2Eh5kIc6+Itrsczy246/dyQ3GCItsp7RmVRhwDFU1MJ2TjTlAwNIf30Bt7ezqgtmGs9spUGbFPQL7Y7w73qtg6sP9/xiCFEeOI4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719437028; c=relaxed/simple;
+	bh=t6RM892yp4lM4z2+xNXsrvJ9FgaVg+LQ5xKnzwv5uhQ=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=QNT5FNY3jQxe3Nfv8k5vXP3GySSB9lw+5KCmbzdufSoHjONcAGXkorZ6N4MVCy1JJH8f0rF3Sxwy1REDVLotOy3FPyoLwSxxA/BEC6U+rlCI2wVDOLHiyhhR8LTPpb3+QfBP+3KWyPH7kDi6QUC0NHmFk0+q8tbj74tauS32dXA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Eqe8GxgF; arc=fail smtp.client-ip=192.198.163.8
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719436984; x=1750972984;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=f4nVLOzta92hqUMfbJwPA04s+mQnQATUqGTW4c+CO3s=;
-  b=kHFElrjUhr0ruf2kLfo0ZosVeHwAOle0At2FGy++0XzkYWB0Jy/BL7i8
-   tT0f2w3EGSvS46ecEfbV+i6k4Re3gyCUdq9QKkrNZNAFhHeWaFRPqaBWC
-   h+HyQgRrUKiC0kVrI8qNDqaEiwuPCe6W1IDFS2gB1LpOYo8qdA/rkQwU9
-   AdYa4M+feMo9ENXBiF3rVbNN+YI8LAM6M3MDY9sPkcc5Jok03I86FsEgk
-   NBXEEbUJzn8GUEdufs1pOObtg4Aw38LKCS4+VetCy/fNtJVeYNGPAtYCv
-   v/43haQhAMMUEFJwdhWE09eKVRux/NRpFp6wj0XOrB34Sh/bIdsvc1J7U
-   A==;
-X-CSE-ConnectionGUID: dxZO9einTzGV0JgrQ6kZVw==
-X-CSE-MsgGUID: YOT2yJLsQXiahSLkPHOKYQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="20307547"
+  t=1719437025; x=1750973025;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=t6RM892yp4lM4z2+xNXsrvJ9FgaVg+LQ5xKnzwv5uhQ=;
+  b=Eqe8GxgFaADltq4FVL7hHnYIJ+MyZ9SyDqTv+uW2AzU8CQV6O6Mx3mak
+   YRR5LPfqRyOJh/ZLzXW/mDl0kklAYwx1cqZ0Xp8vxLtWgMNgK2EF7PcsY
+   QhFqH3cVuj5PWUagGRXNjQ6KKL0WbDxfOyHnuq0zZsgEERwtPio+F4098
+   UjqNFkBTx7gSkR1XhQj36/7LRjqfHZo6BOtCLlCuuZPgjg7pB9LoHGehG
+   FrLTjEk5999AEtqIW2Dj0pr8FZrJJFYr3qeiOBjZ6iT/jyYc4WIqTkUBQ
+   fQjwJyeIckiMPyed5f4e97F3ZC3SXD2xxwCzLsbRnS5f9rL20uW6O4fFk
+   w==;
+X-CSE-ConnectionGUID: xlalyDz2SZCbnmdj2BsELw==
+X-CSE-MsgGUID: 2/tWj+X+T2uPhJSfEUJ35A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="34067713"
 X-IronPort-AV: E=Sophos;i="6.08,268,1712646000"; 
-   d="scan'208";a="20307547"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 14:23:03 -0700
-X-CSE-ConnectionGUID: eucNGz6ARgWIexgd0PGxqw==
-X-CSE-MsgGUID: vVdluytuQzCpKty0TEu4kA==
+   d="scan'208";a="34067713"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 14:23:45 -0700
+X-CSE-ConnectionGUID: mtYgaDkiS8iZIOrnae+qKQ==
+X-CSE-MsgGUID: 7gR3AV3WQvqYsFkIZ5sliA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,268,1712646000"; 
-   d="scan'208";a="43962303"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 26 Jun 2024 14:22:59 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sMa6S-000FZD-24;
-	Wed, 26 Jun 2024 21:22:56 +0000
-Date: Thu, 27 Jun 2024 05:22:09 +0800
-From: kernel test robot <lkp@intel.com>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>, tglx@linutronix.de,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	tsbogend@alpha.franken.de, daniel.lezcano@linaro.org,
-	paulburton@kernel.org, peterz@infradead.org, mail@birger-koblitz.de,
-	bert@biot.com, john@phrozen.org, sander@svanheule.net
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
-	kabel@kernel.org, ericwouds@gmail.com,
-	Chris Packham <chris.packham@alliedtelesis.co.nz>,
-	Markus Stockhausen <markus.stockhausen@gmx.de>
-Subject: Re: [PATCH v2 6/8] clocksource: realtek: Add timer driver for
- rtl-otto platforms
-Message-ID: <202406270511.czjiMAQk-lkp@intel.com>
-References: <20240624012300.1713290-7-chris.packham@alliedtelesis.co.nz>
+   d="scan'208";a="48592268"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 26 Jun 2024 14:23:45 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 26 Jun 2024 14:23:44 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 26 Jun 2024 14:23:44 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.48) by
+ edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 26 Jun 2024 14:23:44 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=VTimJiNajQmc9To7QejakSQTe9sElL9815+E6GjFk/ZJ2/tY17+9IwlzLpnbABWRBk7EERWjAeEZVYTCp/UGV3/qoOy7xiQWjUKrA0eAetaoXs3tpR7O/p4AVQI/fJWbpCxAu5ZLOsGODGz7v9631RRPRbqA8NchKoZeYD09nZSftCMlN8hVshCTu/vah5yJ5ro4iPxi2aLb8aHuDbvDlx6WquGKDtEGzRFw9QWR6dqPq7aLC6HvWBq//umipPYJDaItQ3LkladhLQezuljUxn/sGi7Ya2hqwNQgYcKjxh0DFVKYZbsNev2U4tAapLVb8TVDob61CltdTdIWHMhYzg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=h2/IBH5eu8I1wOP7FUOCVyobdLh5CNbzhTWvISK58nU=;
+ b=TiKwq6ES1Xmn3FUXsKInJPBA3AaBoAqKdVHLcZIU64E0L7HmQOsVKLT3gcTl0u8ojJ/Ye1UFUSXL/JmL2BygpMFDKBlhMi1CziwNDKtuEVFVLoWA2I4fYPelH6NWchm8XXQiDeyGlS5yXJMm+osJ9bgxfPU++8pQJU/BoCJOcTAKeTOVW88WUI/ztjV7+4yk8yxXXt69pSA9MxltiIMsNc+gGhNVqUn8Z+nRNQM6xGJvaH6YhAaivFmXgF6f0NmBtuxXRhmYD91LPQarPDw23h5FuJs7zCFMuT/4LQVxmhkIPilAhh5cbLrDOfyFq8naignzfJ8fI51m+fWY2yqyHg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by MW4PR11MB7056.namprd11.prod.outlook.com (2603:10b6:303:21a::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.32; Wed, 26 Jun
+ 2024 21:23:41 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.7698.025; Wed, 26 Jun 2024
+ 21:23:41 +0000
+Message-ID: <d82a0882-1b92-476f-bc14-e8edb6ec43ca@intel.com>
+Date: Wed, 26 Jun 2024 14:23:39 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v21 14/18] x86/resctrl: Fill out rmid_read structure for
+ smp_call*() to read a counter
+To: Tony Luck <tony.luck@intel.com>
+CC: Fenghua Yu <fenghua.yu@intel.com>, Maciej Wieczor-Retman
+	<maciej.wieczor-retman@intel.com>, Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>, "Drew
+ Fustini" <dfustini@baylibre.com>, Dave Martin <Dave.Martin@arm.com>,
+	<x86@kernel.org>, <linux-kernel@vger.kernel.org>, <patches@lists.linux.dev>
+References: <20240621223859.43471-1-tony.luck@intel.com>
+ <20240621223859.43471-15-tony.luck@intel.com>
+ <8df55906-23b1-4772-ab11-703da64d5ebb@intel.com>
+ <ZnxtZc140S11gFKL@agluck-desk3.sc.intel.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <ZnxtZc140S11gFKL@agluck-desk3.sc.intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW2PR2101CA0014.namprd21.prod.outlook.com
+ (2603:10b6:302:1::27) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240624012300.1713290-7-chris.packham@alliedtelesis.co.nz>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|MW4PR11MB7056:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0303b840-9ddd-4908-c4bb-08dc9626407b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230038|1800799022|366014|376012;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?K3U1Wi95TkRBajhEcWg5QWVmSi9aS0QxVnFMZUJiU3dxYkZPUVB0ZGJraHl4?=
+ =?utf-8?B?RlpJRWlpMCtxR01lL3VjVkpya1E5MUl4eU9HUGRXb0NGaHJrcHFheUVTVitK?=
+ =?utf-8?B?YWhqVE03TXVoNHdmOGRxeUlSWUc5dktQanlrbkNZYWtRZXRPc1lQNHFRUStM?=
+ =?utf-8?B?YXJhT21LZ0hyNFdodGt3dm8wSzhOa3hGNVgyamd6bklobUIyWTgxMi84Q2pE?=
+ =?utf-8?B?TTZMWTNCakNBSmE0Um1adStQL0FxWTJOME5LdFliU0JPMnpybjJkOVJ6UStq?=
+ =?utf-8?B?RFRFWjdCZjRPdEp3Ykp0Q1lsbWJ2Q0JPYnNnT3FKQkUwcUNWZXpFMnpoS0x1?=
+ =?utf-8?B?Q0hsanZ2emlQN0g2M1A5ZkticzhOU0VLZkFZcjJFUU0xcXNMZmJFZUI0T0FU?=
+ =?utf-8?B?S045Ri90RjZkN3plWkRQZnVHbWR4N1NFRmxBNTNuTVRLcVgwTHByZWRKL2dK?=
+ =?utf-8?B?U0RjMGxZeXI3MHZHZklBOENmYUZBdGxVSStOYkFmRUZBNzZNZWVKNDNielNm?=
+ =?utf-8?B?TjJPeVNQR3ZmcTdrSzRFUmliekd5STlpd09iRGkyc210d1h5Wm1HNUFIakU3?=
+ =?utf-8?B?WGloZ2RGVnZELzBFakRNNGFFYkxUSFdKUEduU3lCR05YUDdoOXlKYkhvUWlt?=
+ =?utf-8?B?czU5QVdTZzRpNG5raFJydWJXRlVCZks1YWIyRUlkN1hSS1NzcHVnMVJhQWdn?=
+ =?utf-8?B?U2hHMVRVVkkrOXdVc2RjSmNMbldVZHE4WXNGV21uRUVUNU44YTc5ZXBUYnhU?=
+ =?utf-8?B?MkhCODZtRFhWNlJJRXU1cWl0STJoekVkenovWGd3UFNjUk0zWmxmQnU1b1U4?=
+ =?utf-8?B?VEFzckVFUUQ2S2QxcjlzWlJDcXlrVUc4YVZIVU9kTHVVNUxLbXlVSXVkWW9V?=
+ =?utf-8?B?UGQ2Zlh6N3NRZUxTRUxScTRqUXZSVklBWWh6VjBtekFnK0tWcmxpbGIzOEVz?=
+ =?utf-8?B?QzBHTGxnd3lIMmF3cU4rdmlVTXlWdDZuWDQ5ejhXTElEd0xnb3lKeGMxL2tj?=
+ =?utf-8?B?aUNrUFoyNzdKTUJrU1Q5Wm9iMS80WGhCNms5aUxuY1dJVEJCTFJqRUtSci9z?=
+ =?utf-8?B?UElOYlFGTXZBRU5kVVc4VjhkWDhNSTV0blh2NzNRQ2xScndpVnA2N04rQjFV?=
+ =?utf-8?B?djQ3M0JrbHpYdjlIYWhRL2xaN1hhVXBFdHZTMXZmbjJRRzZ3V3pqcVVWUDdm?=
+ =?utf-8?B?QVc2QXBGNkxPeDlFekNRcWxPdmVPcmxWRzF6L2NlTzdoaWF5T3J4WUJtV3hD?=
+ =?utf-8?B?SHdZLzU2K1d6Z084eHMwRGF1ZnZSSGZpc21CdnF5SmFmcERMNlRaNFNZdU12?=
+ =?utf-8?B?bEtqcFpjb2p0aE00WlpzTHFSQ2JWUTlWcjJ0RE5YVXd6d2d3NWxUTGRCaUhU?=
+ =?utf-8?B?L0ZZMzVhN2ZhYzlub0wzc0hpTmFEdEExYkpGd3RWU0ZuUE5LQmgvekYyUXYx?=
+ =?utf-8?B?d2JlZEhIMTdVb2haTEludDIyUzBwNHV2em1XWVY4RkdkUjhGMkVCSUVVSnRE?=
+ =?utf-8?B?UnplcTFiaFJ0cmN1a0IxWHZCcHBFZnB1cnlzUE5nRjdOaksySXpMS09iU3g0?=
+ =?utf-8?B?N0V6RWYrVDFyV0twNFZTd0RPRXp6UVN1QXRRUlgzVi9pRHYzLzdTd0g3cGZT?=
+ =?utf-8?B?eTFyUlZsSFhrMUJDTzdyMGdWWWtoN284YXQwM2R2V0RTZjFpQ0o5b1N0ejhM?=
+ =?utf-8?B?ZjYxSnRRcjdzYVQ2Z0xLRy91cFJHZWdRT0VGR3ZRR1QvMGpGbGQ1T25ta1lN?=
+ =?utf-8?Q?sw7E92wGbml/lVWSGHKhFRacctRE67QFtgmZeoW?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230038)(1800799022)(366014)(376012);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Uk10Z1JIS0RwcllibVJsTTE3RnJrUE5aTjlxbDcrTFRFTytKRUMxZTNTdXRR?=
+ =?utf-8?B?NXVPdEJoYk1WQmMvTFllNVVzYW1LMHNjS292S3lZSCtHSldJejV1dndMSFNF?=
+ =?utf-8?B?bGRobWdVb2phOFFUSUg2T2VMWGw1NXZhQjlVMVFDamZvaWFuRGdySUFCeWtE?=
+ =?utf-8?B?SHo5K2JackVxQUMvUHl2c21KWCtVYnhtQ2dlVXhpTThYWEg0aGZVUk5Ca3hP?=
+ =?utf-8?B?T2M3ZThFWmhOWUtUeFNUcmVDK0dxdHpDQ3g5Nk85TkJJYW05SWFCN1BZSTBl?=
+ =?utf-8?B?b3l1d3QvQkFKNDV5eU1hczVHaGZaL3ZyK0liZWVEcTIxclFET2JIRjUybTBN?=
+ =?utf-8?B?QlhtY1gxYXQ1cFlaYUlGQnNKR3NoU0VwZ1o3SU9Yc2U3azVESlRhaE8ydHBo?=
+ =?utf-8?B?ZUtaTitiMkZWTlNiaHRkTFBGaE12U0VodDlvZzRKWnZ4S0ZuOGluSlZQd3dr?=
+ =?utf-8?B?WUZVeHRQWW56Zk1NSWQwRWVHVVZySzU1bk82ajNocmR0aEVodDIyTHJNTXA0?=
+ =?utf-8?B?enNMWDdwa1BlZU8xN1Y0ZVJtL1pGNEc1SGFXaWNTWkQwL0lJWDlKRjZua1NL?=
+ =?utf-8?B?bXUzY0ZJZEJMZStzb1VUck1vUEIxTFVwU2tYUmxzenNLa2c2c20xa28rOXlB?=
+ =?utf-8?B?bnZ4Z0U1YXdDcExlSE93VUpnekluYlFhMjVmeXZad0tkTER5WDNheUlMTHlW?=
+ =?utf-8?B?cnBvT0RiUXFpKzUvZmovY0NzRXVrdlp2L1BBVGJhU3dzeCsySWw5VHZzSUYy?=
+ =?utf-8?B?T0JNNlFqOFVJQUQvUHhnZVUzc2FmZHhlQ29KMUZjeXhTaFQyNnJZMnN5aVJU?=
+ =?utf-8?B?dnlERm5uM3hWK3lkOTRRMWc3bU4wWUo3RzU5aCs0QUJjVjhhU1g3bXRGTzc1?=
+ =?utf-8?B?MFpmZmh4d0FrUW9TbzRZNFN1dy8wMDJUMExpTXgxSjdGaGxJaUJSbEdPRUNM?=
+ =?utf-8?B?TGJzdDVadXdNMjF1RFdlZCs1UjMvUEp0L3hJZG1FNFhaMit2QnJjTVkwK3Ju?=
+ =?utf-8?B?VWdOREZQQnIxSkFXaGRTdzl6b3YxeWRlL3RwK0JvSlM2aWZSR3lVa1dxeWZp?=
+ =?utf-8?B?cDRxTGxLMWhJcGJQcTNEcXJ1RlRnczFrR1Q1bU54NUFwYXRNVzFDQW90R1I4?=
+ =?utf-8?B?Z05Fd0lvNXJxY3IwWGVhbURuS2pFcnJ5ZFJlYXpkZlBSblBGZ0ZXOGRFNSsx?=
+ =?utf-8?B?amJYYm9UZ0pLYjd5NGlLUkUyTTUzK2tkcUo4K1Z6YWx5cTNzTEs2UjZSa2tW?=
+ =?utf-8?B?blF4TXRwYmhQeU0wNzBoTksrOEQ1SWR4YzNFK1g3SVUzNDFOVFdrZW1ZTlNP?=
+ =?utf-8?B?YXdDbUpMb24yc245VmlmYzVOb3JIS0VhL25OQ0FIM1ZRVTBxZzhKeEVvdkhK?=
+ =?utf-8?B?SGtseGZ0dzhHbVZQVTVkeEErbUZua3NtaEVKZXVnTHVRcTZlY2J4TEc1Tyt3?=
+ =?utf-8?B?RlN4S283V0hQU3RWeWZXcjZXU1VFWlZNOStxR0R6K1NhTmtiNjRLM3RWbnhk?=
+ =?utf-8?B?VDdYS29VaC9qZ3JLRVVhUFlEYjg0cUFKUGJJc1BWVGd4NnVhLzQ3UFkrMWdM?=
+ =?utf-8?B?SWc1YUoyR0JjVTAxNU9lV3IwdUVIWkdkUGVCQUgzd1ZtaVV4cVF3cHE5Vkcw?=
+ =?utf-8?B?T0dobE9CZDh3U2tJL0xkdkh0K1dMRkgvNFAyU1hOZUMzclFWMGZ4L2tFalVk?=
+ =?utf-8?B?QWFLa0FxNHBBKzl4VHFQRVMrOWp5byszVk9WUXRvYnBWS1dLeSs3bnp1NHJT?=
+ =?utf-8?B?NzRGeXpxTDJRb0FpMjIraEE4dmNPUXlkT2FmV3c0NnJXVG0zUllPT2ZSc1FM?=
+ =?utf-8?B?N2FNS1FJTkNzaXdFTXdGTTlEVStGWXNQVTNLa2l0NEZvYnVQVHlVbHBIbjl1?=
+ =?utf-8?B?akFOY1pBWnNoK0dSb2dURVBLaktJV0M1ZktuTVBuRHhGdThMY2NxanF6K05U?=
+ =?utf-8?B?cWREZDVEOE5MZnVRTVZYaWVOdmtjSU5sc3FyMU5kQmhtYUc4Nm1ERGw3aHZq?=
+ =?utf-8?B?UTJNUW84dEs1MDJHWXMyVnYzbmtiNGE2YlQ5Q0RYQSs4blc5KzdsRjh4OXl5?=
+ =?utf-8?B?R08vMmVIZEIxWnBaNHltOTV4RnJ2VThIZVRmamFWR00zQkZkR0l3MGFBV0M3?=
+ =?utf-8?B?bzlveDZFMTlMTUJ4b2hwUFNIYk9IYXI3VzBEOWtXNEgvL2lXTGxuanUyUlFh?=
+ =?utf-8?B?TUE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0303b840-9ddd-4908-c4bb-08dc9626407b
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 21:23:41.6088
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gkqCYAbxqu53if1mBqi7tYNI/RhF0G4NV0v0dT7VrmmAKLmxXDb4WjjBdmLkgFyw7W0EQ1ZEzM7LdQ1G/G3AsUrWMvyRLZwm5TuJla/uSHY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB7056
+X-OriginatorOrg: intel.com
 
-Hi Chris,
+Hi Tony,
 
-kernel test robot noticed the following build warnings:
+On 6/26/24 12:35 PM, Tony Luck wrote:
+>>> diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
+>>> index ff4e74594a19..877d898e8fd0 100644
+>>> --- a/arch/x86/kernel/cpu/resctrl/monitor.c
+>>> +++ b/arch/x86/kernel/cpu/resctrl/monitor.c
+>>> @@ -785,6 +785,7 @@ static void mbm_update(struct rdt_resource *r, struct rdt_mon_domain *d,
+>>>    	rr.first = false;
+>>>    	rr.r = r;
+>>>    	rr.d = d;
+>>> +	rr.ci = NULL;
+>>
+>> This keeps using a struct rmid_read with random data from stack and initialize members based on
+>> knowledge about how the called functions use this struct. Could you please add initialization to
+>> all these places that use struct rmid_read with whatever is on the stack? This includes
+>> mon_add_all_files() introduced in this series.
+>> Something like below should do (in mon_add_all_files() - done as part of patch 10, mbm_update(),
+>> and mon_add_all_files():
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on tip/timers/core tip/irq/core tip/smp/core linus/master v6.10-rc5 next-20240625]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+(I see now that I wrote mon_add_all_files() twice ... the latter was intended to
+be rdtgroup_mondata_show()).
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Chris-Packham/mips-dts-realtek-use-serial-instead-of-uart-in-node-name/20240626-054938
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20240624012300.1713290-7-chris.packham%40alliedtelesis.co.nz
-patch subject: [PATCH v2 6/8] clocksource: realtek: Add timer driver for rtl-otto platforms
-config: m68k-randconfig-r081-20240627 (https://download.01.org/0day-ci/archive/20240627/202406270511.czjiMAQk-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240627/202406270511.czjiMAQk-lkp@intel.com/reproduce)
+>> 	struct rmid_read rr = {0};
+> 
+> I'm making that change to the three places that struct rmid_read
+> is defined as a local variable.
+> 
+> Should I also remove "useless" assignments now that the structure
+> is zeroed by the compiler. I.e. in the above snip the rr.first = false;
+> and rr.ci = NULL;
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406270511.czjiMAQk-lkp@intel.com/
+Indeed. Those are now unnecessary.
 
-All warnings (new ones prefixed by >>):
+"useless" assignments are subjective. When considering this rr.ci assignment I
+think it is insightful to consider its lack of a partner in mon_event_read().
+Of course, rr.ci should not be set to NULL in mon_event_read() but I think it
+highlights how issues can creep in since without proper struct initialization in
+rdtgroup_mondata_show() and mon_add_all_files() rr.ci will contain garbage
+in non-SNC/non-sum flows.
 
-   In file included from drivers/gpu/drm/tegra/hdmi.c:35:
->> drivers/gpu/drm/tegra/hdmi.h:122: warning: "ACR_ENABLE" redefined
-     122 | #define ACR_ENABLE         (1 << 31)
-         | 
-   In file included from arch/m68k/include/asm/m520xsim.h:19,
-                    from arch/m68k/include/asm/mcfsim.h:24,
-                    from arch/m68k/include/asm/io_no.h:35,
-                    from arch/m68k/include/asm/io.h:6,
-                    from include/linux/io.h:14,
-                    from include/linux/irq.h:20,
-                    from include/asm-generic/hardirq.h:17,
-                    from ./arch/m68k/include/generated/asm/hardirq.h:1,
-                    from include/linux/hardirq.h:11,
-                    from include/linux/interrupt.h:11,
-                    from include/linux/kernel_stat.h:9,
-                    from include/linux/cgroup.h:26,
-                    from include/linux/memcontrol.h:13,
-                    from include/linux/swap.h:9,
-                    from include/linux/suspend.h:5,
-                    from include/linux/regulator/consumer.h:35,
-                    from drivers/gpu/drm/tegra/hdmi.c:17:
-   arch/m68k/include/asm/m52xxacr.h:47: note: this is the location of the previous definition
-      47 | #define ACR_ENABLE      0x00008000      /* Enable this ACR */
-         | 
+> 
+> I suspect there are others.
+> 
+> Or do they serve as useful hints to human readers of the code?
 
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for COMMON_CLK
-   Depends on [n]: !HAVE_LEGACY_CLK [=y]
-   Selected by [y]:
-   - REALTEK_OTTO_TIMER [=y] && GENERIC_CLOCKEVENTS [=y]
+You are of course welcome to keep those you find useful to readers of the
+code. My goals with this suggestion was to (a) stop passing garbage in
+struct rmid_read fields, (b) use struct rmid_read consistently.
 
-
-vim +/ACR_ENABLE +122 drivers/gpu/drm/tegra/hdmi.h
-
-edec4af4c3d6d22 Thierry Reding 2012-11-15  119  
-edec4af4c3d6d22 Thierry Reding 2012-11-15  120  #define ACR_SUBPACK_CTS(x) (((x) & 0xffffff) << 8)
-edec4af4c3d6d22 Thierry Reding 2012-11-15  121  #define ACR_SUBPACK_N(x)   (((x) & 0xffffff) << 0)
-edec4af4c3d6d22 Thierry Reding 2012-11-15 @122  #define ACR_ENABLE         (1 << 31)
-edec4af4c3d6d22 Thierry Reding 2012-11-15  123  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Reinette
 
