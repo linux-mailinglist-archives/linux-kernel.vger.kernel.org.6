@@ -1,84 +1,90 @@
-Return-Path: <linux-kernel+bounces-231073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2409B9185C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:29:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 645EA9185CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:29:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2F07285F37
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:29:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 170AA1F26F55
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:29:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6985818E74B;
-	Wed, 26 Jun 2024 15:28:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A692118F2F8;
+	Wed, 26 Jun 2024 15:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NF3L7F+Z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q0G6ftgT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4071849EF;
-	Wed, 26 Jun 2024 15:28:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FD318F2EE;
+	Wed, 26 Jun 2024 15:28:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719415690; cv=none; b=RKkvbDU5bbzf+BI99rSbxEskGvXe3p24kTZiuacOFBSXSKE1XlNfajpGU1D+CvfnSuM1jx+apg9QQvy5AiVL5JtSSQCjOjOSvg7DvvCdFrx82JEnEJUfEPfYvwqYOMMtsgIp+soB9S5elEsakNS+Qca4pOTCSVXZIihzmvHeIRU=
+	t=1719415695; cv=none; b=oG2Ialg1SSl4XoZzxrP/oj68ZL+VV8wJ9yvgtaIvnXl4hadBM7cnTJkU9FS8o9TNhe8YMC4UVWDj1BJ2UgiuZIQACRyXdFMTcitROrsWD+8p/413O1E3ERjZntOaXfORTAAeseOsbM3f27BHnZ8BADfcYjWK14LgPONIKJbVPRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719415690; c=relaxed/simple;
-	bh=oftg5qyHh7ZU1QzTy8K/ZsT7RByc3bxl2UZLBCjkcZg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=AqON60xdmXYEn1VYvND2VY0z8oJ0HjRn5wacaYSdwfOOaNJX4QNRaAu/i3bOdsb9PPlFg7QQHgDDEMIlcAtO1nZZO8BKJBFhMibnn+wggRCaTjkM5PBxCZ9hlhtd6yvjNx4gl4H1H6/1pbrQJ846QF2rzDpfnR6svmjlA40e6nA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NF3L7F+Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAE2CC116B1;
-	Wed, 26 Jun 2024 15:28:08 +0000 (UTC)
+	s=arc-20240116; t=1719415695; c=relaxed/simple;
+	bh=tFhf50VxgCVDRMaLLZ7bIRAbv+PYecT8vC7dzG/iSmw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nQEIO4BNA4ZWyRSpIkoj2XfvpC8Osm9GNFASPJpMwdwUT61h2ygZFtwG/2d1d3Vcw9DmJY2Dgt2rBgWNeQfIeJrC8/pGdSn3yoJ5Lg0ZT9rdzfHWigOfMc42GEQdaxkRjcdNe2UTs66DCHCm6M92/0iBhqJ/nNnRmpa0UOMZmFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q0G6ftgT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA0FBC32782;
+	Wed, 26 Jun 2024 15:28:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719415690;
-	bh=oftg5qyHh7ZU1QzTy8K/ZsT7RByc3bxl2UZLBCjkcZg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=NF3L7F+Z7pjsFsieNVeNJG+Irbp1h1ptHoruy5m8IVASS8BHfNdy8mYgDjFaVIQEV
-	 wOWSkv1E7/2p1/lM8jUxvlwxLxBBCyMIryBnZZsYgNRX5OTZw9EKBcAVva8Nz7hclH
-	 g9f5w9MtHMIB6zsm+TXSnlZfj1SXrMZNf+0/zNS9ClprXGObQRAZRPzQGzgV4UCjfh
-	 BfuFPDLkhViZGJAGFJcmSE88nE/42RychMwtMXE5WUDgw5+G7Tj+AuhU9WpD7Zb/sJ
-	 hgsH3NDrNAq2SjQ9I4JaDPDAFfY7Bs5FL0O0st++SRU9043AS9l8DUsojWWcnDSVSg
-	 qcq4ht8EGygcQ==
-From: Lee Jones <lee@kernel.org>
-To: Tony Lindgren <tony@atomide.com>, Lee Jones <lee@kernel.org>, 
- Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-hardening@vger.kernel.org
-In-Reply-To: <20240620-omap-usb-tll-counted_by-v1-1-77797834bb9a@gmail.com>
-References: <20240620-omap-usb-tll-counted_by-v1-0-77797834bb9a@gmail.com>
- <20240620-omap-usb-tll-counted_by-v1-1-77797834bb9a@gmail.com>
-Subject: Re: (subset) [PATCH 1/2] mfd: omap-usb-tll: annotate struct
- usbtll_omap with __counted_by
-Message-Id: <171941568853.2512668.12265367798667134639.b4-ty@kernel.org>
-Date: Wed, 26 Jun 2024 16:28:08 +0100
+	s=k20201202; t=1719415694;
+	bh=tFhf50VxgCVDRMaLLZ7bIRAbv+PYecT8vC7dzG/iSmw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=q0G6ftgTuTPQqoEuVcoCvm920j7zLNyTQC8JVpkH/ImDnIvXzYKt/Y9nRTHZpaG5X
+	 LtdZisRgt8DcsKabOWn7WLEDL302SH2YPt2oLRJzj2CgElllX8AuiL2+ZhR2snNE7U
+	 1Waa3zQuHUoAgwhs20d23TbvuSD8N/qBYEXtpft1wEoQq+F6vuqWrr/kW1Dmj32EoL
+	 heXvcXAABFM5UN7KDExCLwrhYSsEVatxkTd8kljusdvU9ZPTzkbdAK79TprcDuwXB6
+	 ke7yztkXBdWHMYcqr4wSyYCtAoJkskTazgOnsbHCxUc+zVJ2k4ofgSKwfcHpQw8enh
+	 bhb+VdB4MAXOQ==
+Date: Wed, 26 Jun 2024 16:28:10 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Alex Vdovydchenko <keromvp@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alex Vdovydchenko <xzeol@yahoo.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: hwmon: Add MPS mp5920
+Message-ID: <20240626-fox-turbofan-2043195a11f5@spud>
+References: <20240626142439.1407175-1-xzeol@yahoo.com>
+ <20240626142439.1407175-2-xzeol@yahoo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ziKWwK8V1pwVfHbP"
+Content-Disposition: inline
+In-Reply-To: <20240626142439.1407175-2-xzeol@yahoo.com>
 
-On Thu, 20 Jun 2024 23:22:33 +0200, Javier Carrasco wrote:
-> Use the __counted_by compiler attribute for the "struct clk *ch_clk[]"
-> flexible array member to improve the results of array bound sanitizers.
-> 
-> The comments for the variables are no longer needed as it is now clear
-> what is what.
-> 
-> 
-> [...]
 
-Applied, thanks!
+--ziKWwK8V1pwVfHbP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[1/2] mfd: omap-usb-tll: annotate struct usbtll_omap with __counted_by
-      commit: 621a62fdd279b06c23bc6c3073b8fe52b5dc356c
+On Wed, Jun 26, 2024 at 05:24:33PM +0300, Alex Vdovydchenko wrote:
+> Add support for MPS mp5920 controller
+>=20
+> Signed-off-by: Alex Vdovydchenko <xzeol@yahoo.com>
 
---
-Lee Jones [李琼斯]
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
+--ziKWwK8V1pwVfHbP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnwzigAKCRB4tDGHoIJi
+0gPrAP4iXQJRtv9v0s2wMtpjVIcMPJdlLGSlQXH8nD7fj0YTtgEAxDK9HUJhqu0m
+tAYNYPucDMSaWwbgwI4LGf5noOIWoQQ=
+=Dnxc
+-----END PGP SIGNATURE-----
+
+--ziKWwK8V1pwVfHbP--
 
