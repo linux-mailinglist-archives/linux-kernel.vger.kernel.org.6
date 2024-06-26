@@ -1,208 +1,264 @@
-Return-Path: <linux-kernel+bounces-230352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C805D917B9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:02:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3768D917BA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:02:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49E3A1F27818
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:02:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA8331F27B36
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E49E15ECF7;
-	Wed, 26 Jun 2024 09:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A2F168489;
+	Wed, 26 Jun 2024 09:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="e1QRhIcs"
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2070.outbound.protection.outlook.com [40.107.249.70])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="k7LQ+avH"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D63515B97E;
-	Wed, 26 Jun 2024 09:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719392534; cv=fail; b=LljYZ0baYJ+QEUM/1LFezSZy/ylxOrtTweTVfyG2vSJIKBEU8bQg0Rwgxd2KCQpPZDcdYzGG5vJIzTYm5PXw7egi1IFLw+39VT0Ai0H/3DSV6Ulw81sr3pPXFnq6EdMfQSX2lIlwkk33nwfD2bW1wbtU3i+iws7SwNIzoTT11a8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719392534; c=relaxed/simple;
-	bh=TOGzJbMdfYMZ8S7KZ8P78JCQjsf6MvNQ8TN0adlxFH0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=aoOKqdjkPZBGFv2797lSXe5HZtcWMDUGG8GL0nM1RqcAv3/ZojWak9Ru3y1Hr8cPsCySlrREw1VBhLEs+EAOsMcIoBSZ5Z+/SL7q6C6lBFfy6dNK/m21Lz27MMJc/QDqxtW9/+G8aji34EayWGfU+YVAZB2zu6Jp8k2MHaRW0Jk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=e1QRhIcs; arc=fail smtp.client-ip=40.107.249.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ARQqQqsVtBbBS6J0z1hq7CG7e8Dd0Otm8Cczl+jPC/o6moWk3Vsg9K1LOQUD+gX84irqQc9c9PeXlCPW9elHjZK0VBVAGYHxAMWwTNyLCDfVqUXGd92SlPHs+0Fneh7+s6ct0+GzB1FpFe/7fVBRpAJCJedCb1vmAnIlIWOHsq48nPKx1ypPnYTKnz2/CpU9/P37RNuzTFtR5V0Y8KSuC4S9XHFGxIlrUN4mC3sxPoj5uRbxaiWAPnd0tfIA6VsRfYkgcErWZKT4/HeggZqABpbbIJXStSEtAMCSRr5UP2X9Lall1aVPX/ujea87MmGuDApD8gBQ4Z7GWVSg/ZLZ2g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Dsk7f5SF4NtyIilKoLJC8UGHQXW3e1wkIRtuBdYRkn4=;
- b=YOQJPWAcDej+o0r++4ACFrmsYDEltwySgVER174b8eXiP1F1lADY1RS8QzRWKYeV4gjjrAB8u4keE6P2XJhNj11Ldey8yqeyYQ2R0nkOZE7jeU/KQSLuxNULjYvDRnY0zGpNA7bFHdbyNJ7xNmtBIPoppiewe5rjAK2m+3lNRL0IcIpT+jp9csy4sDYRpcO/4HVKRw4R67YTu3LO6vX9b2cLbtbqi4082nDjbFEPoiswhUlkXUoL0d/fvPFn0DIJfmZXJxo/7FyIC35+qGpGUYxpxhhkT35BsQcEO0dzUyuDn8i+rIvyDG4KypNCUo0Iwd2X2nuDY1zXcDZzS68Zeg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Dsk7f5SF4NtyIilKoLJC8UGHQXW3e1wkIRtuBdYRkn4=;
- b=e1QRhIcsHzDa+djESBO7+BkqNigexid3RC4N/9GcGNlYMLJj91TTFXhVQrmjX0A0HXRvJPooGHyUANaEHFHiSFxBd4bwMpSTaKp6m0FjPSOo8MrNMTIyMqQf0QOVoR6cHGpJEgjgNMDveHBtoA/ZqID4KRT8jvSL8XbMDEO3xcw=
-Received: from AM6PR04MB5941.eurprd04.prod.outlook.com (2603:10a6:20b:9e::16)
- by PA2PR04MB10278.eurprd04.prod.outlook.com (2603:10a6:102:408::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.30; Wed, 26 Jun
- 2024 09:02:09 +0000
-Received: from AM6PR04MB5941.eurprd04.prod.outlook.com
- ([fe80::9f4e:b695:f5f0:5256]) by AM6PR04MB5941.eurprd04.prod.outlook.com
- ([fe80::9f4e:b695:f5f0:5256%4]) with mapi id 15.20.7698.025; Wed, 26 Jun 2024
- 09:02:09 +0000
-From: Peng Fan <peng.fan@nxp.com>
-To: Ma Ke <make24@iscas.ac.cn>, "vkoul@kernel.org" <vkoul@kernel.org>,
-	"shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de"
-	<s.hauer@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"festevam@gmail.com" <festevam@gmail.com>
-CC: "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] dmaengine: mxs-dma: Add check for dma_set_max_seg_size in
- mxs_dma_probe()
-Thread-Topic: [PATCH] dmaengine: mxs-dma: Add check for dma_set_max_seg_size
- in mxs_dma_probe()
-Thread-Index: AQHax6U6K3n1xgA4ak+cFYNyaLS+5rHZv5Vg
-Date: Wed, 26 Jun 2024 09:02:09 +0000
-Message-ID:
- <AM6PR04MB594141B66F1DEB2354ADDF7B88D62@AM6PR04MB5941.eurprd04.prod.outlook.com>
-References: <20240626084515.2829595-1-make24@iscas.ac.cn>
-In-Reply-To: <20240626084515.2829595-1-make24@iscas.ac.cn>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AM6PR04MB5941:EE_|PA2PR04MB10278:EE_
-x-ms-office365-filtering-correlation-id: da59e4a9-d426-40f9-cf25-08dc95bea900
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230038|1800799022|366014|7416012|376012|38070700016;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?hTzcZJ2/BbQmPSREVa3gZBdCTpb2d/xNJycHgMPK2/Mevt9EXf65yf0EtSqC?=
- =?us-ascii?Q?nYvJ0yvnUGD/oQ0g/GLzMYinyOY1cOjRCQo2FRME5dV5Q/2VtlIq3BZWPu3j?=
- =?us-ascii?Q?/olZi/5JrS5mYcTqA5gVFWMOd4YIxNA2YGAzhfNxmRnny8jiWDolp36uOmo4?=
- =?us-ascii?Q?WkUM9q3EhZP7mYm0t4hl/fpHVLYN8riDk3k9P6+cx6x8KExJAOWUxW1ArYS3?=
- =?us-ascii?Q?TCtsLr5V2rl1eWQzx8+42EgB+nbFoDZhV/f8+rBsp5ETwGyKnrXmoELTWAuj?=
- =?us-ascii?Q?0F2xbzAn6McJlAAgunraFcwQsvmbmlLWcT08ridSIsZKfaTUc7hFPw37ZZns?=
- =?us-ascii?Q?b+KScJk/UCUsLwWhipHUMU0Bs0FpmAgzJzuDez+HjUMirRyFRXfLFrVy5NjM?=
- =?us-ascii?Q?msF0YeBXpgN4I/QyBKfWeYaQDCbLhscVpGyJAwORtu62Jvne2/fIabUAS/Xw?=
- =?us-ascii?Q?kC6qKZbckDTgn2/LYU0BS5IXStQuv6k0Y7Cl2ICTv8QaqJzPS3s1KFgWW4no?=
- =?us-ascii?Q?nSH1mmsKoa4MTz8KhtLXCxKrb3J0fWRUDZpz0/4PP/DrpOYRNQt2hJ3LVSsY?=
- =?us-ascii?Q?WVVh743ImJRiY1BkmCaqssLZpZg4mNTSPA2A1GuO+doCTlhIPfQIK9kG5jhs?=
- =?us-ascii?Q?YYMlxhf4nks7dIVlqgCYayL7PGWdQgRwaUJ9Sh6cCOAIYEFwMWk4nUFkPs+Q?=
- =?us-ascii?Q?fnYhalI1+KLc2GzZIJKvn1GZE1c6bFlpYI4DR9oBcoholhHHENKcaQDLt8oS?=
- =?us-ascii?Q?m4oZa82WDE6u/rSuNSLxXLXRWm2BfEMUrBp7l7kF+T+JRF50i7dnpOA08Aqi?=
- =?us-ascii?Q?8scuEXpArZYpefgM88iaq7It6gFM0S8CJD8/lyRe9qm6IWTbJnvDAx0B/wxv?=
- =?us-ascii?Q?LN9/z4mNfPaAssDchg4feCIJI5m1RywUtrTTctrLdg/WlXJigsgoI7qmYrZm?=
- =?us-ascii?Q?i9rFL5p1AMKeAyybNw5976xFgg30Dn5pkfSmNq4BA9oy9s66CE7ONVSvb0eQ?=
- =?us-ascii?Q?63ZCS3EUf+f1rYxwY39O4MSfinoOLYU5Owi8RmChmV2jhDwByo+XrHSyhuT9?=
- =?us-ascii?Q?JO+P3MWFqe31TKkZEoWIU8IS3ed6YBCVia0YQ06XMwmn/rRl+dgSRcZs90pG?=
- =?us-ascii?Q?lVthvbV8qhMLVUEtNv0lchXhRy9xd3IR3PZPCw+j1Upk7JD4GvQ4grEUSN0x?=
- =?us-ascii?Q?BxgxZ+yTftx3p65Y/OmTz7ch2czdyndk02op2kWomsLBA4SZB0rskpNhJFXz?=
- =?us-ascii?Q?vNTuRLgLy2eDF/V16+sZw1rX3AcKOUVGHNEp5K9tcKUH/Izd81o8eoF1MgzI?=
- =?us-ascii?Q?New8j+r3U5dhAUtnaHRgYmnW?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB5941.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230038)(1800799022)(366014)(7416012)(376012)(38070700016);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?LSh5K3rQ57inFgusQsUaZqy+ugtXDuV/dTRS8vGHaX6fuCkJhdGptd5L7nJM?=
- =?us-ascii?Q?eO6aWYJaXa4kZ/LHzKE9lICq+G82NMkG0fm/qPu9G9ytErDdQjoGy4AQ9Pal?=
- =?us-ascii?Q?37RWZ6UpdaN//BQFOCUyuqVP/F4dxrJl+j9BHzxEH/KgP6o4LYMs5fP2EINt?=
- =?us-ascii?Q?vCi5RNldt3Q2H2Bb5EliZsOXspFFblHG2Ce7884547x/qZwkdZFqOXXxa37p?=
- =?us-ascii?Q?1IpYEfgidc1WoIwlMsRo43n2EYgCjEz5MIVFHOYeBKMDoKXAA26vu6kRTgVd?=
- =?us-ascii?Q?/PJ8cbswXyM3FYE37JktR1gurdJPeTertt+5clhdGAYZqGu8Rw45eREAaGiP?=
- =?us-ascii?Q?D3Ah2ZojdeBUPnuDKOydjpyYyyX+dg4W1TkhKxh1eHyNUFw6zcdvxGq5ubz2?=
- =?us-ascii?Q?vKrHKajibtkEMsjb9wKY9UTLBZyGF4GD6Wy38/Qqf04cJY8eSCGmElgdE5sn?=
- =?us-ascii?Q?3E9RMocU6Uc6J/Q2eBBvlYBZlL87JEtBQF1lSYCm0JZpzTjq/ekwrOkt0WNY?=
- =?us-ascii?Q?b++4xvOXOQZqwm7vyLZ7gBt8cJ58Alxj4obchQ1laYErv+S2bEDsaGKTaPlY?=
- =?us-ascii?Q?U/4Amiyr+cyCYAePZFNtLd3zkm/s1enRP9C/E0g9liK6q58KKj1H1YNBa74q?=
- =?us-ascii?Q?Sw45+4bVEOCTna4dROb+xZbuMI1aCB0WlsXOXrZZl5QfYAKI40gLYud98FZ/?=
- =?us-ascii?Q?8MzgFJNPh+Egw54LYzf36xXCrwxSsvX24H5ua6kqUgAIMghQXfL6c6mU2F6T?=
- =?us-ascii?Q?eoEwsupAmL8PysSfpdChjrCOTcZppo8gVYqLv/qS6q/nARmX0COGa9MVt6mB?=
- =?us-ascii?Q?UThwS/1vCslEPJADd3Ieo7DggFMX2DWuOwjXN+tZGxPG8XLyWBPUz0PzpAd1?=
- =?us-ascii?Q?PRYGlwmNN2e29lDUXs+qCuwqOL5Dd+kaFYVGbMBm92HH3Lo7ATrTiaV/ocK3?=
- =?us-ascii?Q?cHKEsBozBj6mRO4JKVS+0yGGLWcgGmUj3OGqFRHzBdw3IsxXtlw/u/gdgB8F?=
- =?us-ascii?Q?9Tan4wOmuu5gA7KgnSivvM3p0xglruNAk9EE4KqqAD8LuPmoJEDx9QoAFYl8?=
- =?us-ascii?Q?xBKxvxpQekwYaIDwbswm5CifFvfe2dgSHQH731CwDAi8az4DE7QQr1C7OtWF?=
- =?us-ascii?Q?IwN+Z5XaMJPcQ23d/XCUVXouWNMfwwc088mkkM45FbnAV5/5/Hhj4+y4Qezj?=
- =?us-ascii?Q?3zPYpKdZ3ja86ukquBTh+RuNAKU+/iq3jwv9vxH/GPtdkBvUJP+c6PKcg5/V?=
- =?us-ascii?Q?2kD51JRaL2IHn/XFhr2G5GoN4gOABzjH2/8PNoMRhTMTYvTgH+WFQZ06IPHq?=
- =?us-ascii?Q?zwT3qsLraASZldw7HhoEgKbpyZxg0HXMTCG8lhnAi8MQhoV0ynITxEY1nspY?=
- =?us-ascii?Q?obiBhfQJmFbGOF9Wxjn7wanYiRC2y9cpNaSMe1o1F+kUU97BnMh3fH4UaisG?=
- =?us-ascii?Q?Q88DYaIlDfhPBnbdrcS6i5q1rMmLd8/8FImm5jvPsHNG1cRu/OENHXVqssgS?=
- =?us-ascii?Q?PGpMe74lsCfSNjzg6vHJ/xK4PJPQcJcLe9ejPh8M/kgXSjXceFDOgkyEGc5q?=
- =?us-ascii?Q?T/AyF6nf1ivjqxRJxyU=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0229413AD11
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 09:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719392568; cv=none; b=UzHelFc1nXe1bOclZMS6K18qzZS2NlhDqxpWcYyiNRRVqLrVZOAkYFFbWtQf2BCP2/qZOeWtqL2WuTnJa9D2jY75UWbNXnDsIrJWU/pXeBCnCpSV5azQtCQHGflZH0qzq3aej9uBMhhb3V9v2T8R6kvEFEFWqJdvH3Fd31HVQOc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719392568; c=relaxed/simple;
+	bh=L5CRjH5CIRWSq0cXg4uQabflXtldF0p/sZ7iyN6kuC0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YG5dqj1y0kiTme1EJpAzDh9SYNnIcyFFrsBYNE+J7MkP+Bv/yss4kNltROsZZd8IOgYtIVE2Go8dXTYeicTtVXg6vkUzgnCMYlde6NiDzKehn2AZS1H12fND+yCnktsjdI9hkSeOXEwX84UqZMZuP9OPulB1K85LZeGWTKLiATE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=k7LQ+avH; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45Q92NJl080522;
+	Wed, 26 Jun 2024 04:02:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1719392543;
+	bh=54wAaIiD4m/ykE4XdWH2yMXSOmQcPrBTGoqUxFBoCqE=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=k7LQ+avHqscHnVOc0VdiAtB7B/JKvP5Qa3kwTIP7QuD2pscjy+QFvtvfkb31fzPdN
+	 nFCmjNFTAhM1LKXywlGyn8qj3ytYVn0w4y0VUrxGKxHHPCNwPU/h4mhWBTcK96bYI/
+	 UYPkAnRBhXxeQMVVsa3/7ON6xvoxGjA2PodelLtw=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45Q92NYJ086438
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 26 Jun 2024 04:02:23 -0500
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 26
+ Jun 2024 04:02:22 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 26 Jun 2024 04:02:22 -0500
+Received: from [172.24.227.31] (uda0496377.dhcp.ti.com [172.24.227.31])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45Q92Gk9119268;
+	Wed, 26 Jun 2024 04:02:17 -0500
+Message-ID: <fb95b645-acf7-49a1-b938-a749b20003d4@ti.com>
+Date: Wed, 26 Jun 2024 14:32:16 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM6PR04MB5941.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: da59e4a9-d426-40f9-cf25-08dc95bea900
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jun 2024 09:02:09.1046
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: FRs0IT7ctGgTYfE6fCNP9AbDpffpN7qZuv+IMkaPzQSXbTKNuZe2Vn8+wViHJs1zn4IwdE7S7hC2XLFDrOCmog==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2PR04MB10278
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/bridge: display-connector: Fix
+ atomic_get_input_bus_fmt hook
+To: <neil.armstrong@linaro.org>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Tomi Valkeinen
+	<tomi.valkeinen@ideasonboard.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart
+	<Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej
+ Skrabec <jernej.skrabec@gmail.com>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Sam Ravnborg <sam@ravnborg.org>
+CC: DRI Development List <dri-devel@lists.freedesktop.org>,
+        Linux Kernel List
+	<linux-kernel@vger.kernel.org>,
+        Devarsh Thakkar <devarsht@ti.com>,
+        Jayesh
+ Choudhary <j-choudhary@ti.com>, Jai Luthra <j-luthra@ti.com>
+References: <20240625095049.328461-1-a-bhatia1@ti.com>
+ <1de36429-a27a-4244-8e39-4cb0b09b2689@linaro.org>
+Content-Language: en-US
+From: Aradhya Bhatia <a-bhatia1@ti.com>
+In-Reply-To: <1de36429-a27a-4244-8e39-4cb0b09b2689@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-> Subject: [PATCH] dmaengine: mxs-dma: Add check for
-> dma_set_max_seg_size in mxs_dma_probe()
 
-Please read
-https://lore.kernel.org/all/ZiocjS6tbeTt2mPD@matsya/
 
-Regards,
-Peng.
+On 25/06/24 19:46, Neil Armstrong wrote:
+> On 25/06/2024 11:50, Aradhya Bhatia wrote:
+>> The display-connector acts as a pass-through bridge. To truly reflect
+>> that, this bridge should accept the same input format, as it expects to
+>> output. That in turn should be the same as what the preceding bridge has
+>> to output.
+>>
+>> While the get_output_fmt hook does exactly that by calling the same hook
+>> of the previous bridge, the get_input_fmt hook should simply propagate
+>> the expected output format as its required input format.
+>>
+>> Let's say bridge(n) converts YUV bus format to RGB before transmitting
+>> the video signals. B is supposed to be RGB and A is YUV. The
+>> get_input_fmt hook of bridge(n) should receive RGB as its expected
+>> output format for it to select YUV as its required input format.
+>>
+>> Moreover, since the display-connector is a pass-through bridge, X and Y
+>> should both be RGB as well.
+>>
+>>      +-------------+            +-------------+
+>> A   |             |   B    X   |             |   Y
+>> --->|  Bridge(n)  +--->    --->| Display     +--->
+>>      |             |            | Connector   |
+>>      |             |            |             |
+>>      +-------------+            +-------------+
+>>
+>> But that's not what's happening at the moment.
+>>
+>> The core will call get_output_fmt hook of display-connector, which will
+>> call the same hook of bridge(n). Y will get set to RGB because B is RGB.
+>>
+>> Now the core will call get_input_fmt hook of display-connector with Y =
+>> RGB as its expected output format. This hook will in turn call the
+>> get_input_fmt hook of bridge(n), with expected output as RGB. This hook
+>> will then return YUV as its required input format, which will set X =
+>> YUV.
+>>
+>> This is where things get off the track. The core will then call
+>> bridge(n)'s get_input_fmt hook but this time the expected output will
+>> have changed to X = YUV, instead of what ideally should have been X =
+>> RGB. We don't know how bridge(n)'s input format requirement will change
+>> now that its expected output format isn't RGB but YUV.
+>>
+>> Ideally, formats Y, X, B need to be the same and the get_input_fmt hook
+>> for bridge(n) should be called with these as its expected output format.
+>> Calling that hook twice can potentially change the expected output
+>> format - which can then change the required input format again, or it
+>> might just throw an -ENOTSUPP error.
+>>
+>> While many bridges don't utilize these APIs, or in a lot of cases A and
+>> B are same anyway, it is not the biggest problem, but one that should be
+>> fixed anyway.
+>>
+>> Fix this.
+>>
+>> Fixes: 7cd70656d128 ("drm/bridge: display-connector: implement bus
+>> fmts callbacks")
+>> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+>> ---
+>>   drivers/gpu/drm/bridge/display-connector.c | 40 +---------------------
+>>   1 file changed, 1 insertion(+), 39 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/bridge/display-connector.c
+>> b/drivers/gpu/drm/bridge/display-connector.c
+>> index ab8e00baf3f1..eebf1fbcdd23 100644
+>> --- a/drivers/gpu/drm/bridge/display-connector.c
+>> +++ b/drivers/gpu/drm/bridge/display-connector.c
+>> @@ -131,50 +131,12 @@ static u32
+>> *display_connector_get_output_bus_fmts(struct drm_bridge *bridge,
+>>                                     num_output_fmts);
+>>   }
+>>   -/*
+>> - * Since this bridge is tied to the connector, it acts like a
+>> passthrough,
+>> - * so concerning the input bus formats, either pass the bus formats
+>> from the
+>> - * previous bridge or MEDIA_BUS_FMT_FIXED (like
+>> select_bus_fmt_recursive())
+>> - * when atomic_get_input_bus_fmts is not supported.
+>> - * This supports negotiation if the bridge chain has all bits in place.
+>> - */
+>> -static u32 *display_connector_get_input_bus_fmts(struct drm_bridge
+>> *bridge,
+>> -                    struct drm_bridge_state *bridge_state,
+>> -                    struct drm_crtc_state *crtc_state,
+>> -                    struct drm_connector_state *conn_state,
+>> -                    u32 output_fmt,
+>> -                    unsigned int *num_input_fmts)
+>> -{
+>> -    struct drm_bridge *prev_bridge = drm_bridge_get_prev_bridge(bridge);
+>> -    struct drm_bridge_state *prev_bridge_state;
+>> -
+>> -    if (!prev_bridge ||
+>> !prev_bridge->funcs->atomic_get_input_bus_fmts) {
+>> -        u32 *in_bus_fmts;
+>> -
+>> -        *num_input_fmts = 1;
+>> -        in_bus_fmts = kmalloc(sizeof(*in_bus_fmts), GFP_KERNEL);
+>> -        if (!in_bus_fmts)
+>> -            return NULL;
+>> -
+>> -        in_bus_fmts[0] = MEDIA_BUS_FMT_FIXED;
+>> -
+>> -        return in_bus_fmts;
+>> -    }
+>> -
+>> -    prev_bridge_state =
+>> drm_atomic_get_new_bridge_state(crtc_state->state,
+>> -                                prev_bridge);
+>> -
+>> -    return prev_bridge->funcs->atomic_get_input_bus_fmts(prev_bridge,
+>> prev_bridge_state,
+>> -                                 crtc_state, conn_state, output_fmt,
+>> -                                 num_input_fmts);
+>> -}
+>> -
+>>   static const struct drm_bridge_funcs display_connector_bridge_funcs = {
+>>       .attach = display_connector_attach,
+>>       .detect = display_connector_detect,
+>>       .edid_read = display_connector_edid_read,
+>>       .atomic_get_output_bus_fmts =
+>> display_connector_get_output_bus_fmts,
+>> -    .atomic_get_input_bus_fmts = display_connector_get_input_bus_fmts,
+>> +    .atomic_get_input_bus_fmts =
+>> drm_atomic_helper_bridge_propagate_bus_fmt,
+>>       .atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
+>>       .atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
+>>       .atomic_reset = drm_atomic_helper_bridge_reset,
+>>
+>> base-commit: 62c97045b8f720c2eac807a5f38e26c9ed512371
+> 
+> This will break dw-hdmi YUV output negociation because returning
+> output_format
+> it won't even try to select something else than the connector output_fmt.
+> 
+> This is limitation of the bus_fmt negociation, it negociates in
+> backwards, but
+> if the last one uses bridge_propagate_bus_fmt, and a bridge before
+> depends on the
+> display support, it will be constrained by the first output_fmt.
+> 
 
->=20
-> As the possible failure of the dma_set_max_seg_size(), we should
-> better check the return value of the dma_set_max_seg_size().
->=20
-> Fixes: a580b8c5429a ("dmaengine: mxs-dma: add dma support for
-> i.MX23/28")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
->  drivers/dma/mxs-dma.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/dma/mxs-dma.c b/drivers/dma/mxs-dma.c index
-> cfb9962417ef..90cbb9b04b02 100644
-> --- a/drivers/dma/mxs-dma.c
-> +++ b/drivers/dma/mxs-dma.c
-> @@ -798,7 +798,9 @@ static int mxs_dma_probe(struct
-> platform_device *pdev)
->  	mxs_dma->dma_device.dev =3D &pdev->dev;
->=20
->  	/* mxs_dma gets 65535 bytes maximum sg size */
-> -	dma_set_max_seg_size(mxs_dma->dma_device.dev,
-> MAX_XFER_BYTES);
-> +	ret =3D dma_set_max_seg_size(mxs_dma->dma_device.dev,
-> MAX_XFER_BYTES);
-> +	if (ret)
-> +		return ret;
->=20
->  	mxs_dma->dma_device.device_alloc_chan_resources =3D
-> mxs_dma_alloc_chan_resources;
->  	mxs_dma->dma_device.device_free_chan_resources =3D
-> mxs_dma_free_chan_resources;
-> --
-> 2.25.1
->=20
+Thanks Neil!
 
+I haven't been able to completely understand your concern above, but
+here is what I was able to catch. Let me know if I missed something.
+
+Are you concerned that since dw-hdmi (drm/bridge/synopsis/dw-hdmi.c) has
+10+ output formats to offer, all of them won't be negotiated against the
+dw-hdmi's get_input_fmt(), but just the first output_fmt?
+Because the propagate_bus_fmt() API can only pass one format at a time?
+
+
+> a bridge before depends on the display support,
+
+Also, could you help me with what you mean here by 'display support'?
+
+
+Regards
+Aradhya
 
