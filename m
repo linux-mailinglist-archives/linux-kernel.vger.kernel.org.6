@@ -1,206 +1,118 @@
-Return-Path: <linux-kernel+bounces-230025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA444917773
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:34:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A643091779B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:50:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F244281150
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 04:34:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7A541C214FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 04:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA0813AA3C;
-	Wed, 26 Jun 2024 04:34:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AC5B13D28C;
+	Wed, 26 Jun 2024 04:50:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yHD5kVbu"
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="NDvzdFfg";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="rdDcWB8l"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931FC13A405
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 04:34:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B2213B2B1;
+	Wed, 26 Jun 2024 04:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719376487; cv=none; b=SS+zbuBu8yOUVaQJEAG2jka9saNi7hzDwazIKFXueKfp3VYMIMBGqTZ+ZpEEYV9V+n6CvWhPSSoxg67OX5ZZX/vuxVOEq3QpmWNS5hf54H894dQHXpGNs7lNcvLUt6hHpHGu7/Jn3tPFwmPDkEn3SNUcLzPCLBdhCEkwcL0lpH4=
+	t=1719377415; cv=none; b=Kv8XmjHUz9RfFXvBJD34ie1vVqYCpUOF13kZum7U74hB5OmovUzUEM640NqcKmIBThqvP2T6wUOQIZc67dXktL6aERQQjdUw619Plj9xtbPWypi/3fg2PpMbz9x7WJKNy3DQ+TUmuOrKv1rHo1fvVmMcGvJusnsXWVJMFKNgBIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719376487; c=relaxed/simple;
-	bh=M6WBnQVFtvyi2wfyjqjz4MRvXlMKTTXIHg+isqJ9GL8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JiBJjjshWOdGxtBu5t5CNHX3XsOi9gZyDpOTPQL6Sy7oslGDRAJZqhJ0pQdfd+mqxnncN+OvKbVfAeGmC4rpKtoTUcoG4gsP7Sg33xdbkHKh3bUpHIIcE8F0rlf6kobNnFQNK4dl48YoBzUsXW7kHSLURg+3nmp2in9SmEzWLhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yHD5kVbu; arc=none smtp.client-ip=209.85.167.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3c9cc681e4fso3324668b6e.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 21:34:45 -0700 (PDT)
+	s=arc-20240116; t=1719377415; c=relaxed/simple;
+	bh=JNT6n7gJQS1ekI8Tauqvdq8JctJu4XPq5pK/wqzf1n0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h8mnn/wXnudMQwpa6XFGdW7/VjAXnJxu0INZHPf5tfXuUNjbg9HBEqagMXlR8f0f5RPb86q3Ig+0dKyy8lAfK/j5JOmN5PkpFCi71RGPGU2JJNpji/Ji5lo72kgWvf/qwQ1IpNt/o8EXX6aEhPalou7KQnYhP38+kNPCBCKFIIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=NDvzdFfg; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=rdDcWB8l reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719376484; x=1719981284; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=VG4jlRyCD+JGeMHjtnplqjiPI6rXDpxs/+8GzPHHLGY=;
-        b=yHD5kVbuO2A82L6K6GK+HLCnGsu+Lt24iqX4+uJDybrdF1jnHR5qMtfVguz4jRVLN0
-         R4rFReOdYqvIoBvZ7mRBK8k9TYk5ZjfQCV0p98qMhxG5AQLojTBdVQmulrkbRNimxBFK
-         1mRbVJ0c9eZAjdN3XqhHjbAdExYH2YaryFuZoYsBhPIm21nSURxMJhgFdcMvPdg+4qDr
-         fbzI5S0d5k2ycSczb5D7/xYH/9HHj4Olu0zkRL00M5qK9mTMgj90XlN2Y7IMaX6ATOb2
-         1e1YuA3OxOWpgiNJUOO0SSQq63ugInM5A69VZjHuHMBl3iwExkm2JOdOIZrJfS05CABC
-         AXQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719376484; x=1719981284;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VG4jlRyCD+JGeMHjtnplqjiPI6rXDpxs/+8GzPHHLGY=;
-        b=A/GaQVvCNvi7Q0lENMBKTq/49uJUZdP2qP/59Ere0guUlLOsjK1B0I/af7+dHuCDYJ
-         w4EQdmPW0+abz1D8vTMNECxoZoQzrK6PRB9orJA1AiWoKuz4eA+c5A+EGPUGfi+knHYi
-         lbZ/u+0+DqpfP7+TB111VfC9ZhwS7Kbn6SfPwq7kEAvHKjuUqwgYLvxbiFBr4vvPyihD
-         WxEdy2RxqAdDuWEKwFR87NPTnlSyhtWlO55M0bnIsagKsxt8TZMotteup0gKBOl26BCb
-         CzYZrPg0HwZHj0WaaLeEBx/R6jlemnW9A0I9jduqcY4VsipjUdFgLAoWJximhHbPVrFI
-         CJUw==
-X-Forwarded-Encrypted: i=1; AJvYcCUnxZU/PO/z28E3BF5CeX4k/og4Q4Of/gF9HubjB9u6y7jzA2U8EfuOyVptuwreDhmZJH1Y1aMU6wNZOq5i1dX44AN3xGmTPWQoy3QC
-X-Gm-Message-State: AOJu0YzQEPHRR63/kCei5KX4mmbbkJKRtfn1ImiEcD38M10LwYf+qA45
-	hMPB1+N+MHYWELeTxPf69VFiT5FfvcUOG6EJ5vHi4m9e68gI0rn7UWfd3VrMzow=
-X-Google-Smtp-Source: AGHT+IF3TEvGQGK56opiow5WQuF34xaU6ta0N1F6/fCI9qz1DpGK6+xYltdN/QIwdgVNxBwrPte07w==
-X-Received: by 2002:a05:6808:d4b:b0:3d5:1a20:e8d9 with SMTP id 5614622812f47-3d5459654c0mr10675896b6e.24.1719376484472;
-        Tue, 25 Jun 2024 21:34:44 -0700 (PDT)
-Received: from localhost ([122.172.82.13])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7068af60b61sm4155236b3a.134.2024.06.25.21.34.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 21:34:43 -0700 (PDT)
-Date: Wed, 26 Jun 2024 10:04:41 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Huacai Chen <chenhuacai@loongson.cn>,
-	"Rafael J . Wysocki" <rafael@kernel.org>, loongarch@lists.linux.dev,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Binbin Zhou <zhoubinbin@loongson.cn>
-Subject: Re: [PATCH 2/2] cpufreq: Add Loongson-3 CPUFreq driver support
-Message-ID: <20240626043441.tsmvhzw4mmf6xjzj@vireshk-i7>
-References: <20240612064205.2041548-1-chenhuacai@loongson.cn>
- <20240612064205.2041548-3-chenhuacai@loongson.cn>
- <20240625075645.m372bpbe7m2dozil@vireshk-i7>
- <CAAhV-H5wSzhD373L61Mxvu-7ZUSGh9LmC4yBoaHm_5rAxsu-5w@mail.gmail.com>
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1719377411; x=1750913411;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=PyotQWY+vhDeX6zc3eagaZBEBtHJTWwRgB86lW0uB1w=;
+  b=NDvzdFfgYVIrEFL3Yx1gkL8Kqxl24R+jEeZKjA9jaYDmtYfSkebrSHUG
+   5QWT2Ydf9RN8yLxnAv3Hu3m6Mu5Eb5pBKCkyqtXEaxTPdh9DkCjBkudpK
+   cNr/JoqvcWtnGz3HBV5/gJEZalJLvmreO70SaIyyNWYfWezH+s7Hplgfs
+   JEH2mcerrEbrp23H8R2kGmVk/g9BPFoZ3RVou3XVEBeQ+CWCPDYkrISC9
+   BMre/gCtg3QITB+Woc6ZcMWGJuxvY8DkF3JaJMq8Hcc5gV4qVxVdkK6Q+
+   CKUnX9NBtoJF63qHPOWai5KiagxkcyYKKwTHKyufi33MhD4RhXpP0ELeO
+   Q==;
+X-CSE-ConnectionGUID: DLYO0bOJRn2SOU8zwygVtg==
+X-CSE-MsgGUID: T0XYMbzOSD+5UwkLbT618Q==
+X-IronPort-AV: E=Sophos;i="6.08,265,1712613600"; 
+   d="scan'208";a="37587111"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 26 Jun 2024 06:50:08 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E05AA160B1D;
+	Wed, 26 Jun 2024 06:50:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1719377404; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=PyotQWY+vhDeX6zc3eagaZBEBtHJTWwRgB86lW0uB1w=;
+	b=rdDcWB8lWIRAgWyjinUmEWXwvz9SmJcSwajwy05Ce7f9lnN/rqniTBbeombDvIYH6V8Gxc
+	JImMfVAnEtyoI6yTyrpO9F+nh1XATBvEBC0osYqXqtcln7+4d4hygY14t31F1Xgv5bqBsQ
+	0DnZQbxSIQ+BH7i9aAGupoS8zZT12FuvoWWEigRD+//j4s/rsWdLThLP6yWAg34urpcAvd
+	BNoahIUjyAz9pRX7TVfnXT+dQoGpPcafV+pVXq7LPRdSkFrTn3f7rOsI9dUtC2k2OBZwhk
+	/aBka9jlMkGmeyuXXUzGYBJOoehgghp+OzfwVY+6urL2GwnUjv79D834IY9vYA==
+From: Paul Gerber <paul.gerber@ew.tq-group.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>
+Cc: Paul Gerber <paul.gerber@ew.tq-group.com>,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] dt-bindings: display: simple: Add AUO G104STN01 panel
+Date: Wed, 26 Jun 2024 06:36:27 +0200
+Message-ID: <20240626044727.2330191-1-paul.gerber@ew.tq-group.com>
+X-Mailer: git-send-email 2.44.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAhV-H5wSzhD373L61Mxvu-7ZUSGh9LmC4yBoaHm_5rAxsu-5w@mail.gmail.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 26-06-24, 11:51, Huacai Chen wrote:
-> On Tue, Jun 25, 2024 at 3:56 PM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > On 12-06-24, 14:42, Huacai Chen wrote:
-> > > +struct loongson3_freq_data {
-> > > +     unsigned int cur_cpu_freq;
-> >
-> > You never use it. Remove it.
-> Emm, it is used in loongson3_cpufreq_get().
+Add AUO G104STN01 10.4" LCD-TFT LVDS panel compatible string.
 
-Yeah, you are just filling it there and reading immediately after
-that, which can be done directly too. But you don't use it anywhere
-else.
+Signed-off-by: Paul Gerber <paul.gerber@ew.tq-group.com>
+---
 
-> > > +static int loongson3_cpufreq_target(struct cpufreq_policy *policy, unsigned int index)
-> > > +{
-> > > +     unsigned int cpu = policy->cpu;
-> > > +     unsigned int package = cpu_data[cpu].package;
-> > > +
-> > > +     if (!cpu_online(cpu))
-> > > +             return -ENODEV;
-> > > +
-> > > +     /* setting the cpu frequency */
-> > > +     mutex_lock(&cpufreq_mutex[package]);
-> >
-> > No locking required here. Core doesn't call them in parallel.
+Tested on TQ MBa8MPxL with TQMa8MPxL.
 
-s/Core/CPUFreq core/
+ .../devicetree/bindings/display/panel/panel-simple.yaml         | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> I'm a bit confused, I think different cores may call .target() in
-> parallel.
-
-Not for same policy, but for different yes.
-
-> Cores in the same package share the same
-> LOONGARCH_IOCSR_SMCMBX register, so I think the lock is required.
-
-If that is the access you are protecting, then you better move the
-lock to do_service_request() instead, which gets called from other
-places too.
-
-What exactly is a package here though ? A group of CPUs doing DVFS
-together ? Governed by the same policy structure ? In that case, you
-don't need a lock as the cpufreq core guarantees to not call multiple
-target_index() routines in parallel for the same policy.
-
-> > > +     msg.id          = cpu;
-> > > +     msg.cmd         = CMD_GET_FREQ_LEVEL_NUM;
-> > > +     msg.extra       = 0;
-> > > +     msg.complete    = 0;
-> > > +     ret = do_service_request(&msg);
-> > > +     if (ret < 0)
-> > > +             return ret;
-> > > +     max_level = msg.val;
-> > > +
-> >
-> >
-> > > +     msg.id          = cpu;
-> > > +     msg.cmd         = CMD_GET_FREQ_BOOST_LEVEL;
-> > > +     msg.extra       = 0;
-> > > +     msg.complete    = 0;
-> > > +     ret = do_service_request(&msg);
-> > > +     if (ret < 0)
-> > > +             return ret;
-> > > +     boost_level = msg.val;
-> >
-> > This stuff is repeated a lot, maybe create a generic function for this
-> > ?
-> Do you means move the msg filling into do_service_request()?
-
-Yeah, the filling of the msg structure, the call to
-do_service_request() and returning msg.val.
-
-> > > +static int __init cpufreq_init(void)
-> > > +{
-> > > +     int i, ret;
-> > > +
-> > > +     ret = platform_driver_register(&loongson3_platform_driver);
-> > > +     if (ret)
-> > > +             return ret;
-> >
-> > What is the use of this platform driver ? I thought the whole purpose
-> > of the platform device/driver in your case was to probe this driver.
-> > In that case cpufreq_init() should only be doing above and not the
-> > below part. The rest should be handled in the probe() function of the
-> > driver.
-> This driver file is now a very basic version, in future it will be a
-> little like intel_pstate that has more than one cpufreq_drivers
-> (active/passive, hwp/nohwp, etc.), so it will register different
-> cpufreq_drivers depends on the result of configure_cpufreq_info().
-
-At this moment we can only review the current version on its merit.
-For the current version, the way things are done is simply wrong. We
-can review later once you have more things to add to this. So simplify
-it to the best of our understanding for now and make as many changes
-later as you need.
-
-> > > +     ret = cpufreq_register_driver(&loongson3_cpufreq_driver);
-> > > +     if (ret)
-> > > +             goto err;
-> > > +
-> > > +     pr_info("cpufreq: Loongson-3 CPU frequency driver.\n");
-> >
-> > Make this pr_debug if you want.. There is not much use of this for the
-> > user.
-> Emm, I just want to see a line in dmesg.
-
-Yeah, a debug message is what you need then. We don't want to print
-too much unnecessarily on the console, unless there is an error.
-
+diff --git a/Documentation/devicetree/bindings/display/panel/panel-simple.yaml b/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
+index 5067f5c0a272..8d75284845db 100644
+--- a/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
++++ b/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
+@@ -64,6 +64,8 @@ properties:
+         # AU Optronics Corporation 10.4" (800x600) color TFT LCD panel
+       - auo,g104sn02
+         # AU Optronics Corporation 12.1" (1280x800) TFT LCD panel
++      - auo,g104stn01
++        # AU Optronics Corporation 10.4" (800x600) color TFT LCD panel
+       - auo,g121ean01
+         # AU Optronics Corporation 15.6" (1366x768) TFT LCD panel
+       - auo,g156xtn01
 -- 
-viresh
+2.44.1
+
 
