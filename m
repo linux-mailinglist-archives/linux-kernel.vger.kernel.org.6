@@ -1,224 +1,214 @@
-Return-Path: <linux-kernel+bounces-230403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DE92917C4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:18:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC9C7917C45
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:17:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7D2B28F473
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:18:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69B7D1F2835D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:17:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46AA916DC30;
-	Wed, 26 Jun 2024 09:17:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 929C016EB69;
+	Wed, 26 Jun 2024 09:16:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="a39n9O97"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gNuS/5C+"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7248168486;
-	Wed, 26 Jun 2024 09:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC7316EB53;
+	Wed, 26 Jun 2024 09:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719393442; cv=none; b=YTaZw0+taiulPkQInH4p0gnS31ysykLtaakIzAf/PzejlrAjIo9WiwLI6e+fhUbAZO5QnKstua/Yj6U5qP2YfOcb73OIxLutp0gLoovWe/tWX68y2dUTRrh62+O1+yGYtzNtdIiYOgxW3tNL9kSQks5weyzgQft/pLMNMBXAWL0=
+	t=1719393365; cv=none; b=I6h0M2McX4eR/Hel19XYmu+pEvI+o3FHIFUdGuFMk+Q5WJ4xzA7VCS/wFcVaTFAgN7zKEsyO8uhoRO19UuHHUHKYOqFCNOUjfflGnkfb6do5T0CMi5R3lAbG4y8nhTLOh/UtfPVSEn+Fr46Kdo5DyUKoojU1ewInmZfmkhMdW7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719393442; c=relaxed/simple;
-	bh=tYPyX6886SAJdc9m6hgCgPEn28NWpQzFqWmfB546fS8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TXlhGu2F0BCrCEgOvP22UEagijm8o4btdDQyk8vmdtUYGE0K8ZQfVHpNr4jIKApWv9MJ1fBduSP8sQvWXST823y+3XdmLPoiDf+vFsg+/ThpzVqvuS2WPwCQVGvaNVQTA1eed/am6KUzrgFytbiw+vR6iuEY3NmgD2j2ULE+HDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=a39n9O97; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45Q8SXeH006364;
-	Wed, 26 Jun 2024 09:17:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pp1; bh=YTbEobxX0rS76
-	TFeDHHtgoJ3WXZMfYodjrAvpvqJhJE=; b=a39n9O97KESMHoqrEfcY8d2K0UyRJ
-	HbtDnngVCwFDudbc/7MBwtouaMcemNSyGoGOyiQ0F06/sXNh32AlOw/FHy2OTcIq
-	/bacGFLuc10ti7DRkgKTZsfMnahqXXSend4zkZ3wXOsK0rx8C6QrDSKqSDtbK5T2
-	9lKWLzIxiabv5gq07HfGY45ZtLykkT6HlOzsDcxs29Voq3jigeSMOo5woOfnS7ow
-	bqZtB8aIPVIkNHIY1j2WmKj8JVDP506bN4gr20pjQc3njoF11S1vW7ncywn6NOdM
-	kzWQiilQtmPBegLBw+o0foLG+tvJrDAvsQMYgvT2lJrZAHdLKF0Favi1Q==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 400fgng3nc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 09:17:08 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45Q9H7JC014220;
-	Wed, 26 Jun 2024 09:17:07 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 400fgng3n7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 09:17:07 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45Q7UlDf000402;
-	Wed, 26 Jun 2024 09:17:06 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yxbn3ayt7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 09:17:06 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45Q9H3dx49479998
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 26 Jun 2024 09:17:05 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E8A082005A;
-	Wed, 26 Jun 2024 09:17:02 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2E70E2004B;
-	Wed, 26 Jun 2024 09:16:56 +0000 (GMT)
-Received: from li-fdfde5cc-27d0-11b2-a85c-e224154bf6d4.ibm.com.com (unknown [9.43.51.102])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 26 Jun 2024 09:16:55 +0000 (GMT)
-From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-        Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-        Chen Yu <yu.c.chen@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>, acme@redhat.com,
-        Fernand Sieber <sieberf@amazon.com>,
-        linux-perf-users <linux-perf-users@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-Subject: [PATCH v5 3/3] perf sched map: Add --fuzzy-name option for fuzzy matching in task names
-Date: Wed, 26 Jun 2024 14:45:50 +0530
-Message-ID: <20240626091550.46707-4-vineethr@linux.ibm.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20240626091550.46707-1-vineethr@linux.ibm.com>
-References: <20240626091550.46707-1-vineethr@linux.ibm.com>
+	s=arc-20240116; t=1719393365; c=relaxed/simple;
+	bh=MMtXv5Ri6gnu/ZvxtyFF8jeukfcqm67vgKUvtekW57o=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P5+p7Dou+rfUZLvUkpE7uee727Rc/YSXA4Qp0BuhmhE5/TAKpUPac1hDipcNP1QUWmLZ86LmhDrTi+yvmKe8ar9NjsYrHguj6XbF7JZF05KJ/rpv9H1OavZd9YDKskad9AAIg9Nngv2MfKIBSODHkEIFGTVj7/9t9rzbr5We5Hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gNuS/5C+; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ebec2f11b7so71490011fa.2;
+        Wed, 26 Jun 2024 02:16:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719393362; x=1719998162; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Eto0wDQ+VnHOvIV84i+qZbXGq9+6luYSO1FuNV/i1EM=;
+        b=gNuS/5C+VDbFMQAJEgvNxr8YSCFShhYRtwXcqurKVK0ZAcbKwGfJ3BwlP0+TLcnQKC
+         th1nteG5eFd69Vt/yR9JZ6w9c3EYlHo5sxPUzneXTzfcBvRFAaqvcAaffsdwPQLq4boF
+         WmzAYXK5RXDu+uLzzrwRyT+Tl+P23i2al5iec7YQPZ3U11G3Sq4GHkiAw+1M7E9YUZnB
+         T6dYiccDaD2uIVl41I+45EAgIZc367FOgkaQoNkHi4ql6Lz9/Aac/QObMxkmkd0YafIs
+         jEEBV3Am5smBrMvIPRjCYKTXJMZ8sJ3WtOnlqB8N6Y4VuIBgUcZsJEOhg0hgEX6cwQyu
+         Espw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719393362; x=1719998162;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Eto0wDQ+VnHOvIV84i+qZbXGq9+6luYSO1FuNV/i1EM=;
+        b=LI9sNUq11zIr+rnkSnKXPbjcSf5jduF1jWOMaIpzkJpEy3xNWChWYPGnlhecDx2NFC
+         Wrm6VBgN4Z7FTVBDxaWYWSo/eY+b5yRoAAGvP0t0FvBqiav0W8cJryucuTJnRKgCpuz7
+         +a3hQ4FfRIjU9u5cxXZ3TEKEtwPkBX/U8R1IRI36ukLI/mjvNdz034484pq2rsBhGN+/
+         L48cTgRAg3RyHREJNuzLfWJFGvRGWIIR/UOgBmnvz0dzcDAblI40ImmbIJhjO+MGXLiw
+         W22bh0jb+DckLGNfjdh/Ifr728sz1NDVQtpF25MLW7DCNigfCK6/MvXl2yCM9IAVjNzS
+         7Q1g==
+X-Forwarded-Encrypted: i=1; AJvYcCXPBswy/V2zsa5ZgBIgsV2kNwbKLiWy/AT1PsUsQHIp09sIGc4GUjTbvPoNYnMET2lf7G0NE+sJUYsVNS+m+zLtL1rWZT4p/Pfq3jUgB1NQAQPcjZ4ECkrQUcUiF7YnUKAm96QMqaUwaQ==
+X-Gm-Message-State: AOJu0YzYEdsIjWuNVVlY+9/btOdAycTT4XvxCg4KrtOBrkk12tQC5qcl
+	/3VAOfHDABw5uXKlcvZCSSZ2VBNacVeev9TC3APUA8PthomdedNO
+X-Google-Smtp-Source: AGHT+IH3CGPS2TZW4EbFb0VD5oUjqGvL3TfaspIt5F5OYeRa/0TR/mOSL97U7IIWNPSpBzA7tuqQqw==
+X-Received: by 2002:a2e:3218:0:b0:2ec:55f3:40d with SMTP id 38308e7fff4ca-2ec5b346102mr56875141fa.30.1719393361493;
+        Wed, 26 Jun 2024 02:16:01 -0700 (PDT)
+Received: from pc636 (host-90-233-219-252.mobileonline.telia.com. [90.233.219.252])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec53b7c876sm11450641fa.62.2024.06.26.02.16.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 02:16:00 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Wed, 26 Jun 2024 11:15:58 +0200
+To: Hailong Liu <hailong.liu@oppo.com>
+Cc: Uladzislau Rezki <urezki@gmail.com>, Baoquan He <bhe@redhat.com>,
+	Nick Bowler <nbowler@draconx.ca>, linux-kernel@vger.kernel.org,
+	Linux regressions mailing list <regressions@lists.linux.dev>,
+	linux-mm@kvack.org, sparclinux@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: PROBLEM: kernel crashes when running xfsdump since ~6.4
+Message-ID: <ZnvcToH1h-sVtikh@pc636>
+References: <Zno52QBG0g5Z+otD@MiWiFi-R3L-srv>
+ <ZnqcuKt2qrR-wmH3@pc636>
+ <ZnqspTVl/76jM9WD@MiWiFi-R3L-srv>
+ <Znq6tEtCgB6QnnJH@pc638.lan>
+ <Znq/8/HAc/0p6Ja0@MiWiFi-R3L-srv>
+ <ZnrjZRq5-_hemrbD@pc636>
+ <ZnrnADHvOiNcZv9t@MiWiFi-R3L-srv>
+ <Znr1IQ1mssdNNXbv@pc638.lan>
+ <ZnsjIB2byIxSgbjc@pc636>
+ <20240626051206.mx2r4iy3wpexykay@oppo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: eLGAuKoBOWZ16HksXPOGGGszb8clGvKc
-X-Proofpoint-GUID: _NnUdIRmtGhsYSwgeFaeFf_tsdxUrRMZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-26_03,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- suspectscore=0 lowpriorityscore=0 clxscore=1015 impostorscore=0
- priorityscore=1501 bulkscore=0 malwarescore=0 phishscore=0 mlxlogscore=999
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406260067
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240626051206.mx2r4iy3wpexykay@oppo.com>
 
-The --fuzzy-name option can be used if fuzzy name matching is required.
-For example, "taskname" can be matched to any string that contains
-"taskname" as its substring.
+On Wed, Jun 26, 2024 at 01:12:06PM +0800, Hailong Liu wrote:
+> On Tue, 25. Jun 22:05, Uladzislau Rezki wrote:
+> > > > > > > /**
+> > > > > > >  * cpumask_next - get the next cpu in a cpumask
+> > > > > > >  * @n: the cpu prior to the place to search (i.e. return will be > @n)
+> > > > > > >  * @srcp: the cpumask pointer
+> > > > > > >  *
+> > > > > > >  * Return: >= nr_cpu_ids if no further cpus set.
+> > > > > >
+> > > > > > Ah, I got what you mean. In the vbq case, it may not have chance to get
+> > > > > > a return number as nr_cpu_ids. Becuase the hashed index limits the
+> > > > > > range to [0, nr_cpu_ids-1], and cpu_possible(index) will guarantee it
+> > > > > > won't be the highest cpu number [nr_cpu_ids-1] since CPU[nr_cpu_ids-1] must
+> > > > > > be possible CPU.
+> > > > > >
+> > > > > > Do I miss some corner cases?
+> > > > > >
+> > > > > Right. We guarantee that a highest CPU is available by doing: % nr_cpu_ids.
+> > > > > So we do not need to use *next_wrap() variant. You do not miss anything :)
+> > > > >
+> > > > > Hailong Liu has proposed more simpler version:
+> > > > >
+> > > > > <snip>
+> > > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > > > > index 11fe5ea208aa..e1e63ffb9c57 100644
+> > > > > --- a/mm/vmalloc.c
+> > > > > +++ b/mm/vmalloc.c
+> > > > > @@ -1994,8 +1994,9 @@ static struct xarray *
+> > > > >  addr_to_vb_xa(unsigned long addr)
+> > > > >  {
+> > > > >         int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
+> > > > > +       int cpu = cpumask_nth(index, cpu_possible_mask);
+> > > > >
+> > > > > -       return &per_cpu(vmap_block_queue, index).vmap_blocks;
+> > > > > +       return &per_cpu(vmap_block_queue, cpu).vmap_blocks;
+> > > > > <snip>
+> > > > >
+> > > > > which just takes a next CPU if an index is not set in the cpu_possible_mask.
+> > > > >
+> > > > > The only thing that can be updated in the patch is to replace num_possible_cpu()
+> > > > > by the nr_cpu_ids.
+> > > > >
+> > > > > Any thoughts? I think we need to fix it by a minor change so it is
+> > > > > easier to back-port on stable kernels.
+> > > >
+> > > > Yeah, sounds good since the regresson commit is merged in v6.3.
+> > > > Please feel free to post this and the hash array patch separately for
+> > > > formal reviewing.
+> > > >
+> > > Agreed! The patch about hash array i will post later.
+> > >
+> > > > By the way, when I am replying this mail, I check the cpumask_nth()
+> > > > again. I doubt it may take more checking then cpu_possible(), given most
+> > > > of systems don't have gaps in cpu_possible_mask. I could be dizzy at
+> > > > this moment.
+> > > >
+> > > > static inline unsigned int cpumask_nth(unsigned int cpu, const struct cpumask *srcp)
+> > > > {
+> > > >         return find_nth_bit(cpumask_bits(srcp), small_cpumask_bits, cpumask_check(cpu));
+> > > > }
+> > > >
+> > > Yep, i do not think it is a big problem based on your noted fact.
+> > >
+> > Checked. There is a difference:
+> >
+> > 1. Default
+> >
+> > <snip>
+> > ...
+> > +   15.95%     6.05%  [kernel]        [k] __vmap_pages_range_noflush
+> > +   15.91%     1.74%  [kernel]        [k] addr_to_vb_xa <---------------
+> > +   15.13%    12.05%  [kernel]        [k] vunmap_p4d_range
+> > +   14.17%    13.38%  [kernel]        [k] __find_nth_bit <--------------
+> > +   10.62%     0.00%  [kernel]        [k] ret_from_fork_asm
+> > +   10.62%     0.00%  [kernel]        [k] ret_from_fork
+> > +   10.62%     0.00%  [kernel]        [k] kthread
+> > ...
+> > <snip>
+> >
+> > 2. Check if cpu_possible() and then fallback to cpumask_nth() if not
+> >
+> > <snip>
+> > ...
+> > +    6.84%     0.29%  [kernel]          [k] alloc_vmap_area
+> > +    6.80%     6.70%  [kernel]          [k] native_queued_spin_lock_slowpath
+> > +    4.24%     0.09%  [kernel]          [k] free_vmap_block
+> > +    2.41%     2.38%  [kernel]          [k] addr_to_vb_xa <-----------
+> > +    1.94%     1.91%  [kernel]          [k] xas_start
+> > ...
+> > <snip>
+> >
+> > It is _worth_ to check if an index is in possible mask:
+> >
+> > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > index 45e1506d58c3..af20f78c2cbf 100644
+> > --- a/mm/vmalloc.c
+> > +++ b/mm/vmalloc.c
+> > @@ -2542,7 +2542,10 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
+> >  static struct xarray *
+> >  addr_to_vb_xa(unsigned long addr)
+> >  {
+> > -       int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
+> > +       int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
+> IIUC, use nr_cpu_ids here maybe incorrect.
+> 
+> take b101 as example, nr_cpu_ids is 3. if index is 2 cpumask_nth(2, cpu_possible_mask);
+> might return 64.
+>
+But then a CPU2 becomes possible? Cutting by % nr_cpu_ids generates values < nr_cpu_ids.
+So, last CPU is always possible and we never do cpumask_nth() on a last possible CPU.
 
-Sample output for --task-name wdav --fuzzy-name
-=============
- .  *A0  .   .   .   .   -   .   131040.641346 secs A0 => wdavdaemon:62509
- .   A0 *B0  .   .   .   -   .   131040.641378 secs B0 => wdavdaemon:62274
- -  *-   -   -   -   -   -   -   131040.641379 secs
-*C0  .   B0  .   .   .   .   .   131040.641572 secs C0 => wdavdaemon:62283
- C0  .   B0  .  *D0  .   .   .   131040.641572 secs D0 => wdavdaemon:62277
- C0  .   B0  .   D0  .  *E0  .   131040.641578 secs E0 => wdavdaemon:62270
-*-   -   -   -   -   -   -   -   131040.641581 secs
+What i miss here?
 
-Suggested-by: Chen Yu <yu.c.chen@intel.com>
-Reviewed-and-tested-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-Signed-off-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
----
- tools/perf/Documentation/perf-sched.txt |  3 +++
- tools/perf/builtin-sched.c              | 22 +++++++++++++++-------
- 2 files changed, 18 insertions(+), 7 deletions(-)
-
-diff --git a/tools/perf/Documentation/perf-sched.txt b/tools/perf/Documentation/perf-sched.txt
-index 3095e280eb92..938b41a3befa 100644
---- a/tools/perf/Documentation/perf-sched.txt
-+++ b/tools/perf/Documentation/perf-sched.txt
-@@ -137,6 +137,9 @@ OPTIONS for 'perf sched map'
- 	task name(s).
- 	('-' indicates other tasks while '.' is idle).
- 
-+--fuzzy-name::
-+	Given task name(s) can be partially matched (fuzzy matching).
-+
- OPTIONS for 'perf sched timehist'
- ---------------------------------
- -k::
-diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
-index ecb43deb9d74..c801c38e8b9a 100644
---- a/tools/perf/builtin-sched.c
-+++ b/tools/perf/builtin-sched.c
-@@ -157,6 +157,7 @@ struct perf_sched_map {
- 	struct perf_cpu_map	*color_cpus;
- 	const char		*color_cpus_str;
- 	const char		*task_name;
-+	bool			fuzzy;
- 	struct perf_cpu_map	*cpus;
- 	const char		*cpus_str;
- };
-@@ -1599,12 +1600,16 @@ static struct CommandList *parse_commands(const char *commands)
- 	return cmd_list;
- }
- 
--static bool sched_match_task(const char *comm_str, struct CommandList *cmd_list)
-+static bool sched_match_task(const char *comm_str, struct CommandList *cmd_list, bool fuzzy_match)
- {
- 	bool match_found = false;
- 
--	for (int i = 0; i < cmd_list->command_count && !match_found; i++)
--		match_found = !strcmp(comm_str, cmd_list->command_list[i]);
-+	for (int i = 0; i < cmd_list->command_count && !match_found; i++) {
-+		if (fuzzy_match)
-+			match_found = !!strstr(comm_str, cmd_list->command_list[i]);
-+		else
-+			match_found = !strcmp(comm_str, cmd_list->command_list[i]);
-+	}
- 
- 	return match_found;
- }
-@@ -1727,7 +1732,8 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
- 			 */
- 			tr->shortname[0] = '.';
- 			tr->shortname[1] = ' ';
--		} else if (!sched->map.task_name || sched_match_task(str, cmd_list)) {
-+		} else if (!sched->map.task_name || sched_match_task(str, cmd_list,
-+								sched->map.fuzzy)) {
- 			tr->shortname[0] = sched->next_shortname1;
- 			tr->shortname[1] = sched->next_shortname2;
- 
-@@ -1756,15 +1762,15 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
- 	 * Check which of sched_in and sched_out matches the passed --task-name
- 	 * arguments and call the corresponding print_sched_map.
- 	 */
--	if (sched->map.task_name && !sched_match_task(str, cmd_list)) {
--		if (!sched_match_task(thread__comm_str(sched_out), cmd_list))
-+	if (sched->map.task_name && !sched_match_task(str, cmd_list, sched->map.fuzzy)) {
-+		if (!sched_match_task(thread__comm_str(sched_out), cmd_list, sched->map.fuzzy))
- 			goto out;
- 		else
- 			goto sched_out;
- 
- 	} else {
- 		str = thread__comm_str(sched_out);
--		if (!(sched->map.task_name && !sched_match_task(str, cmd_list)))
-+		if (!(sched->map.task_name && !sched_match_task(str, cmd_list, sched->map.fuzzy)))
- 			proceed = 1;
- 	}
- 
-@@ -3707,6 +3713,8 @@ int cmd_sched(int argc, const char **argv)
-                     "display given CPUs in map"),
- 	OPT_STRING(0, "task-name", &sched.map.task_name, "task",
- 		"map output only for the given task name(s)."),
-+	OPT_BOOLEAN(0, "fuzzy-name", &sched.map.fuzzy,
-+		"given command name can be partially matched (fuzzy matching)"),
- 	OPT_PARENT(sched_options)
- 	};
- 	const struct option timehist_options[] = {
--- 
-2.43.2
-
+--
+Uladzislau Rezki
 
