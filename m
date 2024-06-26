@@ -1,89 +1,86 @@
-Return-Path: <linux-kernel+bounces-230447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95716917CF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:51:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E25B1917CCD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:44:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34EC31F23690
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:51:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7026E284B12
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:44:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F8F1741D7;
-	Wed, 26 Jun 2024 09:50:43 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E7516EB4A;
+	Wed, 26 Jun 2024 09:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fXFrLmYD"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C4016DC0F;
-	Wed, 26 Jun 2024 09:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 664F716DC02;
+	Wed, 26 Jun 2024 09:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719395443; cv=none; b=mW5uTJ8OgHEilnP226UFku4ld/IPb9hBrXqY4IyvGkLIwxvS3gyUrz1jYsHIrvCXqndUDWPeXvsVBFxv89YYyUCNlyHbQDeFMJVJ0pwmrWYei8PdEeb3aHrDNIktJ/4Z9u3Dkjzla41nmHqCucXgfibZxUz4gwnOvuSIF1d3l/k=
+	t=1719395078; cv=none; b=ksXUf7PKxHuZjgHHE2C5EyUPchPCe4xN4piwafvNIZ6cXX6gIM7sQD00PBc1Snm2MS1J0aGDd8tRowXfIuxLzDN+3dMZaIWGQGzjI5YdCWmHpttp76jqrNSj1kWv0Xqgad7JMXKWcP0PFcbf/cArU0m9q/bsmN/WpUjGNOsLoNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719395443; c=relaxed/simple;
-	bh=6ODZGI61b1WJDcimhYjCBP/Mw49nF+azQMXjE7SdsdI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FmXKurlVHiLPt+PpBX6D7i4qPF6hrwuhUctnufkFWiJs4NpSgRhu5t8Gf+M+vMJWlhomzzdkGYkYavCy4HlV3taUbfjcw5fB7RJL3HqDaW6LxO4BFaF4nh/rDiMp3pD57CV2qPjtaVp7F5ExY0o5+df4rZ9hpPiafDO7DieiX98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4W8H4l6t1KznXgs;
-	Wed, 26 Jun 2024 17:50:31 +0800 (CST)
-Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
-	by mail.maildlp.com (Postfix) with ESMTPS id 22048180086;
-	Wed, 26 Jun 2024 17:50:38 +0800 (CST)
-Received: from hulk-vt.huawei.com (10.67.174.26) by
- dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 26 Jun 2024 17:50:37 +0800
-From: Xiu Jianfeng <xiujianfeng@huawei.com>
-To: <hannes@cmpxchg.org>, <mhocko@kernel.org>, <roman.gushchin@linux.dev>,
-	<shakeel.butt@linux.dev>, <muchun.song@linux.dev>,
-	<akpm@linux-foundation.org>
-CC: <cgroups@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] mm: memcg: remove redundant seq_buf_has_overflowed()
-Date: Wed, 26 Jun 2024 09:42:32 +0000
-Message-ID: <20240626094232.2432891-1-xiujianfeng@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1719395078; c=relaxed/simple;
+	bh=BEyHuN9KYaz/HgLYtzWccIdPuHn7PvQuBdSB2pJ8+dw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HLCx6Hmu5EhsEmtogx+xLk6zZaEcju+4gSaXAn+2k8QIqjSocVREUUQoZrxZyxDb7OCHBtLBIvmzjWSMgHAXazI6XhNM9/dqdIY2LAXMUmXe1uiF7cW46RvKmUQ417HB3TZlYo76qexuaaut//+4BpERdMA/lqbxQXQ4FNvAQQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fXFrLmYD; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=XzfMdj8RGEXjKOpU3zqHY7Vw5JxOu6m7qj04nFi/KTU=; b=fXFrLmYD4+4DSzF+sPAyI4PYMs
+	MQWE0ReZKAfC+5fkT+sdd+u8LYbumJ/AoYgCW0BewpVHIbh2FNmpeJQQZSY4JqniXLmD6KW+OcAYs
+	HxYtNKvVN0T7akfHN+2LMSKfOCKZ3bN3Jzxt429WJSOx4cbvQb0c0TZOKqiFj4aOPei6ehJr+Qogl
+	xT6qtP47UQ92MhXEMWjiRQhwtzoEvI7CIgWknb6zOdyCl5Ww/4lfSNAKjx7CuB1S0V8t3oEaiGuO5
+	h6MR06GEChqELdPObj0CNUl7JeEYC9bTLMWvmLj9jPTYZZ0/Fw+9YTK2+37z0rlzazchYrZk3VOB7
+	QEY6kAdw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sMPAy-00000008YjG-36PX;
+	Wed, 26 Jun 2024 09:44:00 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 138CD30057C; Wed, 26 Jun 2024 11:42:45 +0200 (CEST)
+Date: Wed, 26 Jun 2024 11:42:45 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	kernel test robot <lkp@intel.com>, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+	Borislav Petkov <bp@alien8.de>
+Subject: Re: arch/x86/include/asm/cmpxchg_32.h:149:9: error: inline assembly
+ requires more registers than available
+Message-ID: <20240626094245.GD31592@noisy.programming.kicks-ass.net>
+References: <CAFULd4YR-VkAOKiS5yxSUYi0YMzY1p=pkYe4dOkgFs+A=9AFFA@mail.gmail.com>
+ <CAHk-=wi_KMO_rJ6OCr8mAWBRg-irziM=T9wxGC+J1VVoQb39gw@mail.gmail.com>
+ <CAHk-=whPqqZVSeJiQsMvsAxtAmtR9iAuB4gg_1sUK2D-uBPpLw@mail.gmail.com>
+ <CAFULd4YAeF7=q7DYUh016kabxS8b32qRbFqDBJQrvLq6RjwEVg@mail.gmail.com>
+ <CAHk-=wiHo2YeA=TOUf8vxFLOc0+BoH8USaiT25fnX2ynXbrZkg@mail.gmail.com>
+ <CAHk-=wgdCs0883dpvZpyna76q9eVcTMvvUVAaBuJMPyrgOhNig@mail.gmail.com>
+ <CAFULd4ZW23_RNye6YGbsT0Uo-vOQBM_tBbSJRhh=0HZzXuC_8Q@mail.gmail.com>
+ <CAHk-=wiWEgSo2Tb_bih7mnS27zAPL+RGg_7yX4qK1f710-j-Ng@mail.gmail.com>
+ <20240626092841.GC31592@noisy.programming.kicks-ass.net>
+ <CAFULd4ZUBaK+FNSKfiJzzZNFQM1bWorZGmaY=fb-sFN2uPK4MA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpeml500023.china.huawei.com (7.185.36.114)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFULd4ZUBaK+FNSKfiJzzZNFQM1bWorZGmaY=fb-sFN2uPK4MA@mail.gmail.com>
 
-Both the end of memory_stat_format() and memcg_stat_format() will call
-WARN_ON_ONCE(seq_buf_has_overflowed()). However, memory_stat_format()
-is the only caller of memcg_stat_format(), when memcg is on the default
-hierarchy, seq_buf_has_overflowed() will be executed twice, so remove
-the reduntant one.
+On Wed, Jun 26, 2024 at 11:33:09AM +0200, Uros Bizjak wrote:
 
-Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
----
- mm/memcontrol.c | 3 ---
- 1 file changed, 3 deletions(-)
+> Please see the thread at [1].
+> 
+> [1] https://lore.kernel.org/lkml/CACT4Y+bG+a0w6j6v1AmBE7fqqMSPyPEm4QimCzCouicmHT8FqA@mail.gmail.com/
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 974bd160838c..776d22bc66a2 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -1846,9 +1846,6 @@ static void memcg_stat_format(struct mem_cgroup *memcg, struct seq_buf *s)
- 			       vm_event_name(memcg_vm_event_stat[i]),
- 			       memcg_events(memcg, memcg_vm_event_stat[i]));
- 	}
--
--	/* The above should easily fit into one page */
--	WARN_ON_ONCE(seq_buf_has_overflowed(s));
- }
- 
- static void memcg1_stat_format(struct mem_cgroup *memcg, struct seq_buf *s);
--- 
-2.34.1
-
+Ha, handy these archives, much better than my memory indeed.
 
