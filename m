@@ -1,118 +1,141 @@
-Return-Path: <linux-kernel+bounces-231219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF6809187CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:46:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73BB49187D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:46:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C38D1C22226
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:46:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 694C81C20C8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E04AD190071;
-	Wed, 26 Jun 2024 16:45:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509B718FDA7;
+	Wed, 26 Jun 2024 16:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rCrnr7/z"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Rtl7T5vH"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87CDA18FDB9
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 16:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD9218FC8B;
+	Wed, 26 Jun 2024 16:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719420334; cv=none; b=s8M370ML8NU/y3FOva4Z0f8g0etxTASPlYRhO7L4rsmAkcIRnFdZrWdkZn8tIXni2sOHL7mSYGa6lglCjfErNAkA5q8/a+Hm8bi0oCgup2/OZuiCpSaPMauksZDNhrWxKMbncSIUmZOUhjb4dIIO8cdn1fpP0O7pBhirpfj8wAQ=
+	t=1719420357; cv=none; b=XDesUNgXEEHMGX8D2CkJRWZNkuto/AqEXWEP+yjPN4/uXiAdJ26sLy8sLTN1CUZ8EesGF7dRVj3I2WsROccN34aiU3+JjJ0eNaJj27MDsxb31lYuAtVujY2q+rE4xyn6fY4qgUKPR6VAdMbEyEH8tGZZPS40b9QQhbGxS8wNqfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719420334; c=relaxed/simple;
-	bh=ZPNT7OG2mW/9pvHmz2sQtLlVN8m1tuuNdy6sfBuHWUA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Jm0k8DjL5i9II51jFMfu+CWfO0VtU914pCK7f04oVICLz8jT65M5mdeTgwrf6xZ98tMxeRlQuRu3dF33GkcG9G40Q88Zuxv/YFqjQUjQhxiooNPUGCgbTug2pt90uw3adu6ph9zmTUSULB4BpDPUfmbTseYyfqx0NCYsfSWWTcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rCrnr7/z; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ec1620a956so83254911fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 09:45:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719420329; x=1720025129; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lz0cNwBgLN/q1pisbwzHSTSwITTngcdDir0qSu+izhw=;
-        b=rCrnr7/zd406IBSeFR/ILKqr4ONq6f8WLiu1u7J74wOoMeqdR4qm1eb9838HOEWf1+
-         xGvJucETxsnXo6f3KEPvXox96s/0LMQ+pnoFDTMHRzeuyCHFpGl/4RGh7Q4tVNvmSeRC
-         TTCaKp9qGm4xmjwo4HrI2BDWJ/VcTOF6bmw06Bpb3VPSXwO6hnEgCYx6VpEPLadsrShg
-         T63IlSQKsfCajYQkK5h7xQVgYeqnL/arIfxJf3lH3vB29wlFQWAMRK0JX45x9pS6kwSi
-         0jTBi50AAqEj6egcpAb4DjFUwcjIZKqrfbZU6vr8zPHGswWvfAJzUaSBtpHkpHVVR2r7
-         shtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719420329; x=1720025129;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lz0cNwBgLN/q1pisbwzHSTSwITTngcdDir0qSu+izhw=;
-        b=VFDHluMPf+AyovgbgWjHBJaD1cz0jRUP7RKoxeWv5+VqaSwCBQmVCT6m6nOuCVb4E5
-         VdeaghYaPKNnCxpKHl7nIyylV+juucyw3kkUDznYgJci62OXCBEapv7Y9rJweTJObJ/g
-         RnZMT8Iri39RzkG+DjfPjYE7OTnnE32nSFEKgHj58sndhG54W5z9fvbbogu0NiLCU+SM
-         cHstUpScckt9QMdfFN+Alnvk+ynK+XujugrVN0hrTN/mSK0xZYgEGZYNrljvpvTIXI6f
-         ep1xnVhncyVSwMGQVlR0HzqUIqkAaHfDxJOBw51oGxzMfY6TMVnzaZQS8rHUooXNzLho
-         zyQA==
-X-Forwarded-Encrypted: i=1; AJvYcCUYflft3vvjcAyKII4aeZQGzGWB+x+say5fjESitLS5jFVOMNEnt1V5YwtdnfUfgPXsJgnkNB48Xw9FVBlozyuzduzmgxqefimYxOHG
-X-Gm-Message-State: AOJu0Yy+opRh35yLB6LQStwY3MHkNHgGCX5NAbF5kJOvvdH35tEv46Q/
-	5ewFR6sCZF+OO5x5VQw2WWoVbr6yLZXsbgaXqBFI+o3fufY/0HTXtYRgsrqJ1Lg=
-X-Google-Smtp-Source: AGHT+IHZkdTYNY9XjPg8vTYUIU2x/RrHKqAmZArKRjfj6RPD4xbNZZAz/zyjT5CN9xjWCBkBDvABhw==
-X-Received: by 2002:a05:651c:1991:b0:2ec:5bb2:c236 with SMTP id 38308e7fff4ca-2ec5bb2c276mr86596561fa.33.1719420328949;
-        Wed, 26 Jun 2024 09:45:28 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c825f752sm31945865e9.20.2024.06.26.09.45.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 09:45:28 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-To: Jessica Zhang <quic_jesszhan@quicinc.com>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Michael Walle <mwalle@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Gunnar Dibbern <gunnar.dibbern@lht.dlh.de>
-In-Reply-To: <20240626144433.3097793-1-mwalle@kernel.org>
-References: <20240626144433.3097793-1-mwalle@kernel.org>
-Subject: Re: [PATCH v2 0/2] drm/panel: initial support for the Ortustech
- COM35H3P70ULC
-Message-Id: <171942032809.3067283.16387497426069805586.b4-ty@linaro.org>
-Date: Wed, 26 Jun 2024 18:45:28 +0200
+	s=arc-20240116; t=1719420357; c=relaxed/simple;
+	bh=Bs9vJpXDcIIrDVNNhhluvol44x76LKbhRs7LW1G5KdI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=T1MveaTqkP/rsbHHeQjMKIwGUTUqmpU0EK1zFGlhtC7ELrn3FEwAVcaxTcHaO31aXh0ZoO7syZpZXm11cW3CWyQroGmRmFlXJx46tW0r6mDjmYGsVkTmIA0ehb351+LZTgR9RTIMJYsCh/U4n3sz6MVmwF6lH3n5C2pyNmvk39Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Rtl7T5vH; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QAfP7b015339;
+	Wed, 26 Jun 2024 16:45:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	nXT+VIQRF66ya1CgSTFCuI8yOpJzFj18D5aSjmsocEs=; b=Rtl7T5vHlY+rAr+8
+	1D/3RkDBxCw3agjiZDsrY9C3QuvRWQnHqJNyiqZphjH1yUonsHwADFq6hQy30kfh
+	jMMJxZdeDnkiygLPgCIwvNPWFHyTHmAGaPoQRoDexHJqcQwu93AWAnXM5ehej1F1
+	NuOTsmXxu12hbiEot8vGVQrqaS2ebhA+9OkPM5/TE3v2mMb/1VQgtbhc/5DRq1IE
+	jAZ8Y7/pkLu46teORcsWUpvWJpn5g9+6pl3ygMzlif+fpXQSOf+HHhWRSNmQPgdy
+	2SJbsa/Plue5PPcQkhvurZItDmh6rExtuqsoJQJ8PFim4u3WXn58y/Rvxk66/ELn
+	P8zNbg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 400gcm93q4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Jun 2024 16:45:44 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45QGjhUU004980
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Jun 2024 16:45:43 GMT
+Received: from [10.48.244.230] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Jun
+ 2024 09:45:42 -0700
+Message-ID: <b1868e2d-7181-4713-8db9-b4d8a29e3fe6@quicinc.com>
+Date: Wed, 26 Jun 2024 09:45:42 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] vDPA: add missing MODULE_DESCRIPTION() macros
+Content-Language: en-US
+To: Zhu Lingshan <lingshan.zhu@intel.com>,
+        "Michael S. Tsirkin"
+	<mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Xuan Zhuo
+	<xuanzhuo@linux.alibaba.com>,
+        =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+	<eperezma@redhat.com>
+CC: <virtualization@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <20240611-md-drivers-vdpa-v1-1-efaf2de15152@quicinc.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240611-md-drivers-vdpa-v1-1-efaf2de15152@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: jIQF7VIgf1vsRVBFcLziamNaYZDNV3Xr
+X-Proofpoint-ORIG-GUID: jIQF7VIgf1vsRVBFcLziamNaYZDNV3Xr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-26_07,2024-06-25_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ mlxlogscore=999 clxscore=1015 mlxscore=0 phishscore=0 impostorscore=0
+ adultscore=0 malwarescore=0 lowpriorityscore=0 priorityscore=1501
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406260122
 
-Hi,
-
-On Wed, 26 Jun 2024 16:44:31 +0200, Michael Walle wrote:
-> Add initial support for the 480x640 DSI panel from Ortustech. The
-> panel uses an Ilitek ILI9806E panel driver IC.
+On 6/11/2024 12:22 PM, Jeff Johnson wrote:
+> With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/vdpa/vdpa.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/vdpa/ifcvf/ifcvf.o
 > 
-> v2:
->  - use drm_connector_helper_get_modes_fixed(), thanks Dmitry.
->  - slight header files cleanup
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
 > 
-> [...]
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>  drivers/vdpa/ifcvf/ifcvf_main.c | 1 +
+>  drivers/vdpa/vdpa.c             | 1 +
+>  2 files changed, 2 insertions(+)
+> 
+> diff --git a/drivers/vdpa/ifcvf/ifcvf_main.c b/drivers/vdpa/ifcvf/ifcvf_main.c
+> index 80d0a0460885..ccf64d7bbfaa 100644
+> --- a/drivers/vdpa/ifcvf/ifcvf_main.c
+> +++ b/drivers/vdpa/ifcvf/ifcvf_main.c
+> @@ -894,4 +894,5 @@ static struct pci_driver ifcvf_driver = {
+>  
+>  module_pci_driver(ifcvf_driver);
+>  
+> +MODULE_DESCRIPTION("Intel IFC VF NIC driver for virtio dataplane offloading");
+>  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/vdpa/vdpa.c b/drivers/vdpa/vdpa.c
+> index 8d391947eb8d..1ca445e31acb 100644
+> --- a/drivers/vdpa/vdpa.c
+> +++ b/drivers/vdpa/vdpa.c
+> @@ -1538,4 +1538,5 @@ core_initcall(vdpa_init);
+>  module_exit(vdpa_exit);
+>  
+>  MODULE_AUTHOR("Jason Wang <jasowang@redhat.com>");
+> +MODULE_DESCRIPTION("vDPA bus");
+>  MODULE_LICENSE("GPL v2");
+> 
+> ---
+> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+> change-id: 20240611-md-drivers-vdpa-391206d17ec3
+> 
+Following up to see if anything else is needed from me. Hoping to see this in
+linux-next so I can remove it from my tracking spreadsheet :)
 
-Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
-
-[1/2] dt-bindings: display: panel: add Ilitek ili9806e panel controller
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/b7a0c0e9d80756da52d5c88f24b5253a08108724
-[2/2] drm/panel: add Ilitek ILI9806E panel driver
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/baf272bac637d3275bb83c17ac849b44a4590655
-
--- 
-Neil
-
+/jeff
 
