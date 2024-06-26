@@ -1,41 +1,42 @@
-Return-Path: <linux-kernel+bounces-230361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36DDA917BC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:08:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EF17917BC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:08:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E5DAB236B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:08:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EEC11C246B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:08:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F8516A921;
-	Wed, 26 Jun 2024 09:08:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80090144D1D;
+	Wed, 26 Jun 2024 09:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="T6oho/y4"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2053.outbound.protection.outlook.com [40.107.215.53])
+	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="QFU35eT0"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2051.outbound.protection.outlook.com [40.107.117.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C38316849C;
-	Wed, 26 Jun 2024 09:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C2716A959;
+	Wed, 26 Jun 2024 09:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.51
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719392885; cv=fail; b=L9Unn25apV53j8MtMkUz9lBFYXdbFlQ9Bkoj9IU8BdYO9jEablrHvpfnGusyG+UwF5zWzVhmc9WnmpfEbOXjRQSbGB+OXEMd8h21llSxy+TORlWZ6LzJo2VwjRd4MqKTGacjQKMrh9Wg2hf3bWchwMt720C6jK0JZ3ZgugZSFuo=
+	t=1719392891; cv=fail; b=WUtj2kWsdx1XXwkeE+6NEslxegYp+zCUDrprahTjjh3v0UCfCV0/kBb4M7iDpaMVW6gsndgTH1X7lDc0CIAROhNouywf3u4hTUjQ4n5CzbkOROjFECgd7vuzZ6mJ000nEtMEhYMvvOw36hK8yNDtYYI1cBj+TfelXGwhb4a0CBo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719392885; c=relaxed/simple;
-	bh=g3QlpPOuv2Eq68R1MCgAfCyqN9Jh7IId0/oexsFF0Kk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=d3xZkkmiqt47Axux96mznQj1c2mltO8EGRo4t/kibiQCuWlgxxy3pjUmbGx/5FBiaNgtdiEM2p3cObtheDangQFAX3N3zUtqosV0xjRb9YkRLukveqZtaIlU3fqpwqB/YG8swfLH4LFGh4dPNCVqMLSISr7V5NOkhCN92/pfiBw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=T6oho/y4; arc=fail smtp.client-ip=40.107.215.53
+	s=arc-20240116; t=1719392891; c=relaxed/simple;
+	bh=qye1+odmSLvcZWpLGZXShZcJWroDKnJ7ydMvngFvmyI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=c7KJ65l7wG/SBeyXU4g+CwJIIl31RqoSkRIDLAA+ZXxRE2BNtlWWTRbmXfvK7cWE9i5W+jx3rTvd+dOY96X/ofzpWv4IQPZdIbnHdX0QbpJj7grELlyF3IhSZt4vrrUPbX11kUseP+esNweQR+0+8K5tkHohWf2tSl/TaExn1iQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=QFU35eT0; arc=fail smtp.client-ip=40.107.117.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiwynn.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=V//5mvLrls4MzAhnuE/s6GEawAoS3gEWM64FNR4VQhVBB658Gftq7rg4BIUBpSeY+XnvdGItsjUbhXk+OB4hOk7WtWGURkY+InvkJKlHXFMh/ean6sHPtgm78H/fzKkzmIqaIUEJIq+UITI9vfCUCZ5JLiRBEeZ64mOyOCHFmQ36xKesYaMhg2b+IXkiihoo4RNkCc5KJlRMYYa53vy2GmVcmDCiF8IziJA+cIwSFSLhAngllTyfMOFOs5vkwhdM6FBzlwmi261l2iJm6zKyAbDJYMVZ1XN329cKS3qthZXiZrwvvf6R+LKrrol8bf8UD+OHeIaZF0YTtbYalVnLGg==
+ b=W0RQC9k8z6XlcmAysOkl3FLcdpenSj3ne7ynV6vlj0W7cV2bYZ4P2sf19m5h6FHnZrlf9Nm65wkUmeSFzAa52scsESk6mHhcldzjEKsdKiZvLXLji23oI0w3avyK050HIOTbTOTlKgdbvqALDSGRCuNvbdgFJ6JmiZ1+gmzEUKfkfEhk9jkK6We8LyZ8jdY2b+G0pj3H9Sb4YKN6KBt2RzzjcpqSfXVGJbvEjKBWq3hBXMEUaGt67Pt22AfrSxsuOlvffJdcydw3265dbMtGbhuOGHFSaXkYOLwfoSDiT+5S3Wzip0hBjoQPNultp/UfEOse/GGq6xUvTCT9MZk4Uw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=31CYjOTVsj1JPdS59aXrPrSDTJGFqo4mbfw2xTuR3OQ=;
- b=hyiK/ionUwPTXbSODy9lNK/9yJyUEG1StUh9ghx8VMmibeEKWaFiqTSyw5q6TiV7wKlSpNlUwjHXch+a1uFsdN2cS9glwYtdOcxL0i69TzPx5LtYiUGdhy1ZGe4qpBIrqmk3ZsEwnCX4THfiz4H/slqRDRo6jgM5O/j2BaRGlOUExPR+Ur3fAvFN/Jw879VCrU3DOSEPN/zlUSxGPng0lhtEbb36lK5lNMmb1vvZdqNkaOPE8K+IFnzzNpCg5MBhHLKosPRM3REYrKIk5f484L04oMRSfc8BI9a0xnmooMyK8FvKXvvyq2zRue0vGDFuuTOsBSFS6nEY6E8fOFUhjg==
+ bh=vF4Vr+mnAo6sL4NqnPknKFu4wSGhcaCxskXcr5n8QwA=;
+ b=gNlfcG13Ts3TRNDDBcKIsoymRKXJ3JIA4ZUZv3hJKDJOc/4c5P1ZAtuHfLGc+t+KRtY1Dij/XVPWdramk74vCqVB7BAix+L104rrgCptP07LPL1TgInDT18WD/fHtA3nYFZ3sboujl6VcE3oRTz/17Kdu2RqwSzXHHMwH6dDdtLTsWaqkHsGPU8d2AJKRiyaRggRodqVQF/aTNeHZ/RnbbUsRkCzYhhF4t+w4csp284NFp6pOQnHH0bS2jmBuUsjSmPfiv4g/166XOfDTfrPXlpaArflZCnB6AAvn9ld+BhPxY+p61R0Y+PmwUyqeqpJoyk2koPdTA0fpbkY7b/VVw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  211.20.1.79) smtp.rcpttodomain=stwcx.xyz smtp.mailfrom=wiwynn.com; dmarc=fail
  (p=quarantine sp=quarantine pct=100) action=quarantine
@@ -43,17 +44,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiwynn.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=31CYjOTVsj1JPdS59aXrPrSDTJGFqo4mbfw2xTuR3OQ=;
- b=T6oho/y4UKw7zcZIxXNCDyj7NsI3XRfme7ZAvmZ4iiFczqeRFnH0Jc6+8iDeDTmybso73FaDL3uJxefvqKq8KQRGHy7UrhE0kIVmo/X+Sh8baePf/O8WhKWbNbXvpHAAM1FwfJoY4qqK4f6BPkwTR3g1CQd77TY17Hj8ir+xUWzxm53xT+Vw1n3U6CBZ2CCPRaqBagYkNGUZZj2WChWgrGjDZJD/o5HsxlSQYLbFxO6+IacDUA0o3ZOlOtuTWHJNJm6FAHK6cXDmoFU3PsYU4XT8pD3uEydUEqn8TqfR46o5VEHlTJ5BS59oG/34HfzzxNMYO1cGXmfdq3uNtiCApQ==
-Received: from KL1PR02CA0001.apcprd02.prod.outlook.com (2603:1096:820:c::6) by
- TYZPR04MB7453.apcprd04.prod.outlook.com (2603:1096:405:42::14) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7719.20; Wed, 26 Jun 2024 09:07:59 +0000
+ bh=vF4Vr+mnAo6sL4NqnPknKFu4wSGhcaCxskXcr5n8QwA=;
+ b=QFU35eT02Xj0uYZFbA8BtsDU6ytYndQpev8E9SXzOWjVlo4TVLYYkpkh/HFXunwSmWdyeMUghUrrFA9JiLTlgCSIM9T85I2IEKjasGI2QACV91SIn1ESJHF1aCk9pzw6pKqUsw3x6LsP+eoTPzGL49+vRR9pBkrAGL1CsoC0XDaoBmMZuJYxv4PwrEz0df0kx8EuNuSXX3cKmeIGKE/Gv2BWb1MoPVKSAQKnQGMjgQB9TaLrBG0F6sgNr+WtTfV/De+Yejjxb4l/aJXVamLbI51z72F6CdGaNeJbzvLU+uqWzX+pZfp5h3aachNvNfA2sDoYb1pqls4ts9s0OkGZdw==
+Received: from KL1PR02CA0018.apcprd02.prod.outlook.com (2603:1096:820:c::23)
+ by TYSPR04MB7237.apcprd04.prod.outlook.com (2603:1096:400:470::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.22; Wed, 26 Jun
+ 2024 09:08:03 +0000
 Received: from HK2PEPF00006FB4.apcprd02.prod.outlook.com
- (2603:1096:820:c:cafe::2c) by KL1PR02CA0001.outlook.office365.com
- (2603:1096:820:c::6) with Microsoft SMTP Server (version=TLS1_2,
+ (2603:1096:820:c:cafe::e5) by KL1PR02CA0018.outlook.office365.com
+ (2603:1096:820:c::23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.22 via Frontend
- Transport; Wed, 26 Jun 2024 09:07:58 +0000
+ Transport; Wed, 26 Jun 2024 09:08:03 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 211.20.1.79)
  smtp.mailfrom=wiwynn.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=quarantine header.from=wiwynn.com;
@@ -62,24 +64,26 @@ Received-SPF: Fail (protection.outlook.com: domain of wiwynn.com does not
  client-ip=211.20.1.79; helo=localhost.localdomain;
 Received: from localhost.localdomain (211.20.1.79) by
  HK2PEPF00006FB4.mail.protection.outlook.com (10.167.8.10) with Microsoft SMTP
- Server id 15.20.7677.15 via Frontend Transport; Wed, 26 Jun 2024 09:07:58
+ Server id 15.20.7677.15 via Frontend Transport; Wed, 26 Jun 2024 09:08:02
  +0000
 From: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
-To: patrick@stwcx.xyz
-Cc: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
+To: patrick@stwcx.xyz,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-aspeed@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v9 00/26] Add i2c-mux and eeprom devices for Meta Yosemite 4
-Date: Wed, 26 Jun 2024 17:07:16 +0800
-Message-Id: <20240626090744.174351-1-Delphine_CC_Chiu@wiwynn.com>
+Subject: [PATCH v9 01/26] ARM: dts: aspeed: yosemite4: Revise i2c-mux devices
+Date: Wed, 26 Jun 2024 17:07:17 +0800
+Message-Id: <20240626090744.174351-2-Delphine_CC_Chiu@wiwynn.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240626090744.174351-1-Delphine_CC_Chiu@wiwynn.com>
+References: <20240626090744.174351-1-Delphine_CC_Chiu@wiwynn.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,134 +93,558 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: HK2PEPF00006FB4:EE_|TYZPR04MB7453:EE_
+X-MS-TrafficTypeDiagnostic: HK2PEPF00006FB4:EE_|TYSPR04MB7237:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: d2f94421-34da-4a6c-67fb-08dc95bf7956
+X-MS-Office365-Filtering-Correlation-Id: 0b5bd7a1-e228-4063-e75f-08dc95bf7bfd
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230038|1800799022|82310400024|36860700011|7416012|376012;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?wHnqjFToLiaN5KSGxAylKenHdSIUDqWxKQzzArIRsR36Sx44064YQvouZggg?=
- =?us-ascii?Q?u3wnR6C3GkQRpLBHVt1+wwRoo/ASTry4AiONVMHpzOYbmtCtJmZkRAoS1j1D?=
- =?us-ascii?Q?TbJo1anG6qZphbFRXPMFDWi600GZDSZPkVbPrjm8p++Dq1HpxyPto++caO1c?=
- =?us-ascii?Q?Uz9ub24KiGqWNKJR0WjWlDgGyYJnzSxGTcAUr/KS3kODvKzfwFdEBh9aPRFg?=
- =?us-ascii?Q?pKo7o0zdd8PUzijdg0Kouq2qWCfZJatTTNwmbHW4qWfIqNwMOuwd450Z1aSe?=
- =?us-ascii?Q?RyaSpep2wPlT/eEG4Ob8PvHmrMhOTyxDe6v1wvLAAD/lfzZEVS893PBC0rkI?=
- =?us-ascii?Q?BgKutwBLYXSeMCWNUjvdu2Uvxo/WdDVlLs9lfltikxrRP10ag8W1hv/pCsE7?=
- =?us-ascii?Q?9So2ELDLkOiUoLk48D9Extz7vBF5bTyPZ/2kb5BwaGo9tUE96s1PUW6soKQT?=
- =?us-ascii?Q?KeY+MV8D2KWYg8A6+PCcIiJsmcyhk2pEz5FrpdZoI5UmwNE/D5R+0Z9Keptm?=
- =?us-ascii?Q?jkuBEEWjOyzlQ43E66x+zzxtmLI4Q35jUeNeWBq4+Zogl8vtJ1edWzsGgirY?=
- =?us-ascii?Q?gFsZ0U0RL5m15MKG52FBQH+Z8nEnWjdszqO/Av1c2qlBboo5T/irMYGYEQ/k?=
- =?us-ascii?Q?VMcwCEVq5xomIapECewxP84l+Ju4JS3XhM4zPk6BuB3kjrKuwYENIG8dxp8t?=
- =?us-ascii?Q?FTZaUjtwEc8wFVegXc7Wo04giqkLXqSRIy31jjdQm85P1RoKfHExghaG10nO?=
- =?us-ascii?Q?tzY7TY+WA60YADBRGkwO/rdGkmo9+DSOOpdYqWtpDf6pmrPuaenrfRzJd58f?=
- =?us-ascii?Q?i7s9M9+mMPuQkkoKfNKtCcceKOk2cqrVvkjarmYPnQc74MMoAknNKvmlM/+Q?=
- =?us-ascii?Q?CAWDgOB4hid4N4+jIJ0JT2tEE7YFaDZ5Iog3zZyREvxvcDrDb3F0/z0JfinP?=
- =?us-ascii?Q?KerJi/q1kENAuWMR6c2OyguKl9M/9+TKiJR5Cz5Z3t+7LQaA4F08Py2F7xvC?=
- =?us-ascii?Q?wovu5IOPZvEXxRKzYrqjNUuhPlKtbrOpu6+lRFD7WtOckHX9RcqYY9rmbMxv?=
- =?us-ascii?Q?AKcIitfvv/wCcY5A4jU5XxFEqIxesZ1AzjyHRxGlyc9j6h/D/AN2s6r3WN7c?=
- =?us-ascii?Q?DfkV2vKFBaGYJLVCVqgTJnxyd51hkIssXX/y0JyQv+82322V1P6WYwvFswrO?=
- =?us-ascii?Q?roiSU0vUL9cUJzwjGHTYxhoTWRWtBsjyCTJu+lH+lI6EPygq3hLuB46sgOrw?=
- =?us-ascii?Q?tuGwED/GI+3CXtcV75P+UmJsUqoUbRlckGHEJacvSZFCPeJ2UJn/n8ZcLPTt?=
- =?us-ascii?Q?T+7Snzm8ou1k9pL6a57TWV4KoaxuZTR3TSbrnrZfJFMEHBn9XRmhqdQD5+9q?=
- =?us-ascii?Q?CngTL9Mw5CFghc0PsYUxoOMdSznAAiYMKZp9E8WIArojzq4few=3D=3D?=
+	=?us-ascii?Q?s71O3thihTnDec49/WeIGco2H/j1yQq04jdMZYt0r/Eg0FZu2iYJbYyqO/Sf?=
+ =?us-ascii?Q?lGKlK2w5ZfNSw/kClMBICHFnRSUv9J83nC712AoXZ/yLpPrMwkxNu4ecV696?=
+ =?us-ascii?Q?sT5JCfmr46gMyE0X7CiE6nbDzq5cVfdfLJuLC5moZQgLFBVcblY/Xo5c8d9O?=
+ =?us-ascii?Q?iYQIBFQdOUFBNr45EKOOlKgzOj3AEJ0e7q3O/q++PguC/awm27lMzyqZKpNb?=
+ =?us-ascii?Q?zb0hGdE8c4xmGni+dQv5uDzBh7FS/bz70rWrTUpJCyWZ8l0KWEyQ6rJ8ajQa?=
+ =?us-ascii?Q?N8mhRE+0hxEdwMwevrlnEmNdlfwzBn3X+jSJsyImZTQuotIoqutHp2skZYW+?=
+ =?us-ascii?Q?h2OBSrRb1TFCBR9tbPd0rtfgxGhRSM8jgA6Elx+QEbjVm1vwugvhUZOBDyTE?=
+ =?us-ascii?Q?YHVvroQqXT0d+ok0AKYDbgd3o7Qn0Pw0H5Wf1ul5xfz0E+lz5Uj9Bi2xs2gg?=
+ =?us-ascii?Q?F/MRkuNOn36PjaToOJjiSPsd3ajAtoUHUcmkbzzjHlqy0lYRAFaQcxNOCxpp?=
+ =?us-ascii?Q?vRU5XaTCEqQRHhs9WsNcKisEuief0e/ULwFGDuXKtF46oGVTV0IDB837LUvp?=
+ =?us-ascii?Q?Vd0idBFDeo9dLFzCd27f7GQzoUaRdfl6zUNlm1Lb3mr9ePI1epNtOmNBGO2f?=
+ =?us-ascii?Q?UirH7FPdIa7LQL4wJDFGes1s36nfz6krw5kaZDLcaefd9k62B+2WJHiEfzGq?=
+ =?us-ascii?Q?LLV9rw9II0Mw/wsQpH3joKM2H/uRmKT3eogLGbcBkbBzgg9rFd9wB0gXeXhn?=
+ =?us-ascii?Q?Y6I8T7CAix2DEYVyyxxlNFANhkmztkWYij+wxVN1dYUaHhN5cYVVOIIr/hUc?=
+ =?us-ascii?Q?XEcAtoiFW3rZGB/57oVx0bidu80eUaJm5ps05T/ydrTeL160hSDslS+h7hmg?=
+ =?us-ascii?Q?GCL0FZieekM+Z2yw0yS/SzVAlCT6xeU188WjFo5ruS2ZWHSucI7oARTPzT8r?=
+ =?us-ascii?Q?yuBmP4+HwfX3uEj6bfFh1dIlcquSHI2vIoGbA2eadfso+EjFwIypzOWyGuag?=
+ =?us-ascii?Q?9SHCcks04ihWwf+O+BNfIF7Y08sI9yqJNYskEU/M+BcWY2H2bJnsrYUp6hl2?=
+ =?us-ascii?Q?XPeUtG8rZ6fVBlrcsqI8IqZ6+xl0SQjqUEndeFuSU5NO4bs39e8W/MPKQgyq?=
+ =?us-ascii?Q?jyFW0N+JD2hyqCb/r/qOsilZcLJMNh52fp8+xlvvp3nU85J5CIsPEldXsD3t?=
+ =?us-ascii?Q?P+aISFWwGC4PkQHzhS7dgCrBSflh08REe7k9F3K6l54MDFw7Axsp8Bj1ZNEi?=
+ =?us-ascii?Q?zHM1G5iZjSIDKY6ATQ/qONNhUG6Xa1H1iXWldLl5BsLBgnG4mJkmPf82xwL5?=
+ =?us-ascii?Q?14L5vyTNsbQ1CDj8mFl/2OObYUT9ZoqW5tcdZtqRmWeurt/HZFTKDSg/IEbS?=
+ =?us-ascii?Q?aQKjtZ5LTpdQg6jGRT5GblvdYt5p+CNFfVg5Z6nT+uJZxx20wg=3D=3D?=
 X-Forefront-Antispam-Report:
 	CIP:211.20.1.79;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:localhost.localdomain;PTR:211-20-1-79.hinet-ip.hinet.net;CAT:NONE;SFS:(13230038)(1800799022)(82310400024)(36860700011)(7416012)(376012);DIR:OUT;SFP:1101;
 X-OriginatorOrg: wiwynn.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 09:07:58.3797
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 09:08:02.8953
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d2f94421-34da-4a6c-67fb-08dc95bf7956
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0b5bd7a1-e228-4063-e75f-08dc95bf7bfd
 X-MS-Exchange-CrossTenant-Id: da6e0628-fc83-4caf-9dd2-73061cbab167
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=da6e0628-fc83-4caf-9dd2-73061cbab167;Ip=[211.20.1.79];Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource:
 	HK2PEPF00006FB4.apcprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR04MB7453
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYSPR04MB7237
 
-Changelog:
-  - v9
-    - add XDP710 support
-    - add RTQ6056 support
-    - add MP5990 support
-  - v8
-    - add fan led config
-  - v7
-    - Revise pca9506 i2c address
-  - v6
-    - Revise i2c duty-cycle for meeting 400khz spec
-  - v5
-    - Support medusa board adc sensors
-    - support NIC eeprom
-  - v4
-    - Re-format gpio linename
-    - Revise i2c device node names
-    - Split patches by logic changes
-  - v3
-    - Correct patch for revising gpio name
-  - v2
-    - Revise mx31790 fan tach config
-    - Add mctp config for NIC
-    - Support mux to cpld
-    - Revise gpio name
-  - v1
-    - Add gpio and eeprom behind i2c-mux
-    - Remove redundant idle-state setting for i2c-mux
-    - Enable adc 15, wdt2,spi gpio for yosemite4 use
-    - Revise quad mode to dual mode to avoid WP pin influnece the SPI
-    - Revise power sensor adm1281 for yosemite4 schematic change
-    - Add gpio pca9506 I/O expander for yosemite4 use
-    - remove space for adm1272 compatible
-    - enable interrupt setting for pca9555
-    - add eeprom for yosemite4 medusa board/BSM use
-    - remove temperature sensor for yosemite4 schematic change
-    - add power sensor for power module reading
-    - Revise adc128d818 adc mode for yosemite4 schematic change
-    - Revise ina233 for yosemite4 schematic change
-    - Remove idle state setting for yosemite4 NIC connection
-    - Initialize bmc gpio state
-    - Revise mx31790 fan tach config
-    - Add mctp config for NIC
-    - Support mux to cpld
-    - Revise gpio name
+Revise Yosemite 4 devicetree for devices behind i2c-mux
+- Add gpio and eeprom behind i2c-mux
+- Remove redundant idle-state setting for i2c-mux
 
-Delphine CC Chiu (26):
-  ARM: dts: aspeed: yosemite4: Revise i2c-mux devices
-  ARM: dts: aspeed: yosemite4: Enable adc15
-  ARM: dts: aspeed: yosemite4: Enable spi-gpio setting
-  ARM: dts: aspeed: yosemite4: Enable watchdog2
-  ARM: dts: aspeed: yosemite4: Revise quad mode to dual mode
-  ARM: dts: aspeed: yosemite4: Revise power sensor adm1281 for schematic
-    change
-  ARM: dts: aspeed: yosemite4: Add gpio pca9506
-  ARM: dts: aspeed: yosemite4: Remove space for adm1272 compatible
-  ARM: dts: aspeed: yosemite4: Enable interrupt setting for pca9555
-  ARM: dts: aspeed: yosemite4: Add power sensor for power module reading
-  ARM: dts: aspeed: yosemite4: Add eeprom for yosemite4 use
-  ARM: dts: aspeed: yosemite4: Remove temperature sensor for yosemite4
-    schematic change
-  ARM: dts: aspeed: yosemite4: Revise adc128d818 adc mode for yosemite4
-    schematic change
-  ARM: dts: aspeed: yosemite4: Revise ina233 config for yosemite4
-    schematic change
-  ARM: dts: aspeed: yosemite4: Remove idle state setting for yosemite4
-    NIC connection
-  ARM: dts: aspeed: yosemite4: Initialize bmc gpio state
-  ARM: dts: aspeed: yosemite4: Revise mx31790 fan tach config
-  ARM: dts: aspeed: yosemite4: add mctp config for NIC
-  ARM: dts: aspeed: yosemite4: support mux to cpld
-  ARM: dts: aspeed: yosemite4: support medusa board adc sensors
-  ARM: dts: aspeed: yosemite4: support NIC eeprom
-  ARM: dts: aspeed: yosemite4: Revise i2c duty-cycle
-  ARM: dts: aspeed: yosemite4: add fan led config
-  ARM: dts: aspeed: yosemite4: add XDP710
-  ARM: dts: aspeed: yosemite4: add RTQ6056 support
-  ARM: dts: aspeed: yosemite4: add MP5990 support
+Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+---
+ .../aspeed/aspeed-bmc-facebook-yosemite4.dts  | 381 ++++++++++++++++--
+ 1 file changed, 347 insertions(+), 34 deletions(-)
 
- .../aspeed/aspeed-bmc-facebook-yosemite4.dts  | 1410 +++++++++++++++--
- 1 file changed, 1306 insertions(+), 104 deletions(-)
-
+diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
+index 98477792aa00..66855efa0b4b 100644
+--- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
++++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
+@@ -17,6 +17,25 @@ aliases {
+ 		serial6 = &uart7;
+ 		serial7 = &uart8;
+ 		serial8 = &uart9;
++
++		i2c16 = &imux16;
++		i2c17 = &imux17;
++		i2c18 = &imux18;
++		i2c19 = &imux19;
++		i2c20 = &imux20;
++		i2c21 = &imux21;
++		i2c22 = &imux22;
++		i2c23 = &imux23;
++		i2c24 = &imux24;
++		i2c25 = &imux25;
++		i2c26 = &imux26;
++		i2c27 = &imux27;
++		i2c28 = &imux28;
++		i2c29 = &imux29;
++		i2c30 = &imux30;
++		i2c31 = &imux31;
++		i2c32 = &imux32;
++		i2c33 = &imux33;
+ 	};
+ 
+ 	chosen {
+@@ -259,9 +278,109 @@ &i2c8 {
+ 	bus-frequency = <400000>;
+ 	i2c-mux@70 {
+ 		compatible = "nxp,pca9544";
+-		idle-state = <0>;
+ 		i2c-mux-idle-disconnect;
+ 		reg = <0x70>;
++
++		imux16: i2c@0 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0>;
++
++			gpio@49 {
++				compatible = "nxp,pca9537";
++				reg = <0x49>;
++			};
++
++			eeprom@50 {
++				compatible = "atmel,24c128";
++				reg = <0x50>;
++			};
++
++			eeprom@51 {
++				compatible = "atmel,24c128";
++				reg = <0x51>;
++			};
++
++			eeprom@54 {
++				compatible = "atmel,24c128";
++				reg = <0x54>;
++			};
++		};
++
++		imux17: i2c@1 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <1>;
++			gpio@49 {
++				compatible = "nxp,pca9537";
++				reg = <0x49>;
++			};
++
++			eeprom@50 {
++				compatible = "atmel,24c128";
++				reg = <0x50>;
++			};
++
++			eeprom@51 {
++				compatible = "atmel,24c128";
++				reg = <0x51>;
++			};
++
++			eeprom@54 {
++				compatible = "atmel,24c128";
++				reg = <0x54>;
++			};
++		};
++
++		imux18: i2c@2 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <2>;
++			gpio@49 {
++				compatible = "nxp,pca9537";
++				reg = <0x49>;
++			};
++
++			eeprom@50 {
++				compatible = "atmel,24c128";
++				reg = <0x50>;
++			};
++
++			eeprom@51 {
++				compatible = "atmel,24c128";
++				reg = <0x51>;
++			};
++
++			eeprom@54 {
++				compatible = "atmel,24c128";
++				reg = <0x54>;
++			};
++		};
++
++		imux19: i2c@3 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <3>;
++			gpio@49 {
++				compatible = "nxp,pca9537";
++				reg = <0x49>;
++			};
++
++			eeprom@50 {
++				compatible = "atmel,24c128";
++				reg = <0x50>;
++			};
++
++			eeprom@51 {
++				compatible = "atmel,24c128";
++				reg = <0x51>;
++			};
++
++			eeprom@54 {
++				compatible = "atmel,24c128";
++				reg = <0x54>;
++			};
++		};
+ 	};
+ };
+ 
+@@ -270,15 +389,174 @@ &i2c9 {
+ 	bus-frequency = <400000>;
+ 	i2c-mux@71 {
+ 		compatible = "nxp,pca9544";
+-		idle-state = <0>;
+ 		i2c-mux-idle-disconnect;
+ 		reg = <0x71>;
++
++		imux20: i2c@0 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0>;
++			gpio@49 {
++				compatible = "nxp,pca9537";
++				reg = <0x49>;
++			};
++
++			eeprom@50 {
++				compatible = "atmel,24c128";
++				reg = <0x50>;
++			};
++
++			eeprom@51 {
++				compatible = "atmel,24c128";
++				reg = <0x51>;
++			};
++
++			eeprom@54 {
++				compatible = "atmel,24c128";
++				reg = <0x54>;
++			};
++		};
++
++		imux21: i2c@1 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <1>;
++			gpio@49 {
++				compatible = "nxp,pca9537";
++				reg = <0x49>;
++			};
++
++			eeprom@50 {
++				compatible = "atmel,24c128";
++				reg = <0x50>;
++			};
++
++			eeprom@51 {
++				compatible = "atmel,24c128";
++				reg = <0x51>;
++			};
++
++			eeprom@54 {
++				compatible = "atmel,24c128";
++				reg = <0x54>;
++			};
++		};
++
++		imux22: i2c@2 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <2>;
++			gpio@49 {
++				compatible = "nxp,pca9537";
++				reg = <0x49>;
++			};
++
++			eeprom@50 {
++				compatible = "atmel,24c128";
++				reg = <0x50>;
++			};
++
++			eeprom@51 {
++				compatible = "atmel,24c128";
++				reg = <0x51>;
++			};
++
++			eeprom@54 {
++				compatible = "atmel,24c128";
++				reg = <0x54>;
++			};
++		};
++
++		imux23: i2c@3 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <3>;
++
++			gpio@49 {
++				compatible = "nxp,pca9537";
++				reg = <0x49>;
++			};
++
++			eeprom@50 {
++				compatible = "atmel,24c128";
++				reg = <0x50>;
++			};
++
++			eeprom@51 {
++				compatible = "atmel,24c128";
++				reg = <0x51>;
++			};
++
++			eeprom@54 {
++				compatible = "atmel,24c128";
++				reg = <0x54>;
++			};
++		};
+ 	};
+ };
+ 
+ &i2c10 {
+ 	status = "okay";
+ 	bus-frequency = <400000>;
++	i2c-mux@74 {
++		compatible = "nxp,pca9544";
++		i2c-mux-idle-disconnect;
++		reg = <0x74>;
++
++		imux28: i2c@0 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0>;
++
++			gpio@20 {
++				compatible = "nxp,pca9506";
++				reg = <0x20>;
++				gpio-controller;
++				#gpio-cells = <2>;
++			};
++
++			gpio@21 {
++				compatible = "nxp,pca9506";
++				reg = <0x21>;
++				gpio-controller;
++				#gpio-cells = <2>;
++			};
++
++			gpio@22 {
++				compatible = "nxp,pca9506";
++				reg = <0x22>;
++				gpio-controller;
++				#gpio-cells = <2>;
++			};
++
++			gpio@23 {
++				compatible = "nxp,pca9506";
++				reg = <0x23>;
++				gpio-controller;
++				#gpio-cells = <2>;
++			};
++
++			gpio@24 {
++				compatible = "nxp,pca9506";
++				reg = <0x24>;
++				gpio-controller;
++				#gpio-cells = <2>;
++				gpio-line-names =
++				"","","","",
++				"NIC0-MAIN-PWR-EN","NIC1-MAIN-PWR-EN",
++				"NIC2-MAIN-PWR-EN","NIC3-MAIN-PWR-EN",
++				"","","","","","","","",
++				"","","","","","","","",
++				"","","","","","","","";
++			};
++		};
++
++		imux29: i2c@1 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <1>;
++		};
++	};
+ };
+ 
+ &i2c11 {
+@@ -440,16 +718,14 @@ eeprom@51 {
+ 		reg = <0x51>;
+ 	};
+ 
+-	i2c-mux@71 {
+-		compatible = "nxp,pca9846";
++	i2c-mux@74 {
++		compatible = "nxp,pca9546";
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-
+-		idle-state = <0>;
+ 		i2c-mux-idle-disconnect;
+-		reg = <0x71>;
++		reg = <0x74>;
+ 
+-		i2c@0 {
++		imux30: i2c@0 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <0>;
+@@ -457,26 +733,26 @@ i2c@0 {
+ 			adc@1f {
+ 				compatible = "ti,adc128d818";
+ 				reg = <0x1f>;
+-				ti,mode = /bits/ 8 <2>;
++				ti,mode = /bits/ 8 <1>;
+ 			};
+ 
+ 			pwm@20{
+-				compatible = "max31790";
++				compatible = "maxim,max31790";
++				pwm-as-tach = <4 5>;
+ 				reg = <0x20>;
+-				#address-cells = <1>;
+-				#size-cells = <0>;
+ 			};
+ 
+ 			gpio@22{
+ 				compatible = "ti,tca6424";
+ 				reg = <0x22>;
++				gpio-controller;
++				#gpio-cells = <2>;
+ 			};
+ 
+-			pwm@23{
+-				compatible = "max31790";
+-				reg = <0x23>;
+-				#address-cells = <1>;
+-				#size-cells = <0>;
++			pwm@2f{
++				compatible = "maxim,max31790";
++				pwm-as-tach = <4 5>;
++				reg = <0x2f>;
+ 			};
+ 
+ 			adc@33 {
+@@ -499,34 +775,34 @@ gpio@61 {
+ 			};
+ 		};
+ 
+-		i2c@1 {
++		imux31: i2c@1 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-			reg = <0>;
++			reg = <1>;
+ 
+ 			adc@1f {
+ 				compatible = "ti,adc128d818";
+ 				reg = <0x1f>;
+-				ti,mode = /bits/ 8 <2>;
++				ti,mode = /bits/ 8 <1>;
+ 			};
+ 
+ 			pwm@20{
+-				compatible = "max31790";
++				compatible = "maxim,max31790";
++				pwm-as-tach = <4 5>;
+ 				reg = <0x20>;
+-				#address-cells = <1>;
+-				#size-cells = <0>;
+ 			};
+ 
+ 			gpio@22{
+ 				compatible = "ti,tca6424";
+ 				reg = <0x22>;
++				gpio-controller;
++				#gpio-cells = <2>;
+ 			};
+ 
+-			pwm@23{
+-				compatible = "max31790";
+-				reg = <0x23>;
+-				#address-cells = <1>;
+-				#size-cells = <0>;
++			pwm@2f{
++				compatible = "maxim,max31790";
++				pwm-as-tach = <4 5>;
++				reg = <0x2f>;
+ 			};
+ 
+ 			adc@33 {
+@@ -554,12 +830,10 @@ i2c-mux@73 {
+ 		compatible = "nxp,pca9544";
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+-
+-		idle-state = <0>;
+ 		i2c-mux-idle-disconnect;
+ 		reg = <0x73>;
+ 
+-		i2c@0 {
++		imux32: i2c@0 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			reg = <0>;
+@@ -570,10 +844,10 @@ adc@35 {
+ 			};
+ 		};
+ 
+-		i2c@1 {
++		imux33: i2c@1 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-			reg = <0>;
++			reg = <1>;
+ 
+ 			adc@35 {
+ 				compatible = "maxim,max11617";
+@@ -596,9 +870,48 @@ mctp@10 {
+ 
+ 	i2c-mux@72 {
+ 		compatible = "nxp,pca9544";
+-		idle-state = <0>;
+ 		i2c-mux-idle-disconnect;
+ 		reg = <0x72>;
++
++		imux24: i2c@0 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0>;
++			temperature-sensor@1f {
++				compatible = "ti,tmp421";
++				reg = <0x1f>;
++			};
++		};
++
++		imux25: i2c@1 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <1>;
++			temperature-sensor@1f {
++				compatible = "ti,tmp421";
++				reg = <0x1f>;
++			};
++		};
++
++		imux26: i2c@2 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <2>;
++			temperature-sensor@1f {
++				compatible = "ti,tmp421";
++				reg = <0x1f>;
++			};
++		};
++
++		imux27: i2c@3 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <3>;
++			temperature-sensor@1f {
++				compatible = "ti,tmp421";
++				reg = <0x1f>;
++			};
++		};
+ 	};
+ };
+ 
 -- 
 2.25.1
 
