@@ -1,225 +1,139 @@
-Return-Path: <linux-kernel+bounces-231149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3901918705
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:13:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88E429186DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:09:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DC84B2AE82
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:09:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 438E128142D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957D8190499;
-	Wed, 26 Jun 2024 16:04:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D6EE190674;
+	Wed, 26 Jun 2024 16:05:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PkqfJP0f"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UfdZj7pj"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A041190493
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 16:04:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177D118EFCC;
+	Wed, 26 Jun 2024 16:05:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719417863; cv=none; b=k6YgbL7ZRGLiQ8FHjulmZcaiu5Bzt3zwE6GDSK4/SUWDytgBoZ5zyeGu54GET26F+oEMtspBBoCpB6VhvTE2c+oxhmp+Z9aU/kLUoEvTntoTDtNf0LfM0M0xkha/sm7qyVera+hMkOE4vG50sDPfIA0eTg02D3FlFEmXqY9a5wM=
+	t=1719417915; cv=none; b=hIm6cC8VCmbQfPzzNhJslUwpCxzIKDwItP+goJ4KurqrvCMrPJaP3TYEFGBAjW8PBAIL2vifYHvjZLDrL1NlEXaQyixcjxIzldGtBT7r1tIBXtRMUYmKOUD/YKjO20t7TPc02jHwALyS0KAT3XmCEi/mgpk1/LpbNReZ3X6kAQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719417863; c=relaxed/simple;
-	bh=yNTzG0J7wNN4igxR6F/IrxrlToSh8eTK5c9Wq8lBZA4=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=iwO0NHBH7C9O3YcA/f4g/JC4/mCrFC4gJWyhih4GrZRtHDpnC0j+jxPHvaOReqE7Q5SyUEJ8jBzzFgl5Bgu0hWEP5AVouSzCA2Vg/3pk1EuUVWviZz9aAvNumbk/f7jxiCA9QGAMc5yly5xGaD5C3Os+LLg/ZK2k9+HMkTD+Ejo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PkqfJP0f; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719417861;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DHjTMyH5Rwk5yjh+iWMH6LJrfct1/DpGEQ3xLofZHeo=;
-	b=PkqfJP0fxyB6rNJ/bz5GAykM0oFP9YoNywJpDOjeVKttzwg8gVPl4TDV+3iBc7Yq4LK8+4
-	l1RXsC0ntxfnEdh947uJ14v8M6PVdeVQnuJw1pXmlxsV58ybE7AuXW8/grHIO19585MJMH
-	ME1+oqvYWXMpebBp7yIVs1sPn4kNYAg=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-207-BwFBdAbBPTequAeccflQsw-1; Wed, 26 Jun 2024 12:04:18 -0400
-X-MC-Unique: BwFBdAbBPTequAeccflQsw-1
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6af35481ea6so107338496d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 09:04:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719417858; x=1720022658;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=DHjTMyH5Rwk5yjh+iWMH6LJrfct1/DpGEQ3xLofZHeo=;
-        b=oJt+Cq3Mz+jrsAFy+kv/B7M0MjMyQdYs5eX4bXPeeESu53qlc3Q0rRPV1yjVxfU4LM
-         UtNpczegn/jyyHGJF1Z+QCvy8YmvLEa/IcG7aVrV0qmLwMP+rWe3iT+4ZY+0Ewl5xPyy
-         8h3Ty/r4KoSt4rCUjoVdjfInSzu9YwQZrIgGPCRctRGpCGqY8xZ+hqyyKesauoDthd7s
-         ko66mjPfL0CFue0B86iam9sIquFU1XXXAcCLTCRrYypzkI8NaSTfo5fCdyRB/d52Fog2
-         nnwezPNCiGvR87NQBW17bE/ZIHGkkdl44LS78o6wdEq+sHshEsWejC2WMbXNyBH6/NN2
-         6ZNA==
-X-Forwarded-Encrypted: i=1; AJvYcCWJ+3erEjwSlFWS/htkhdxL7huZod0Mflt6Kzi0l+Q03B5+suX+CEbw/F/YsX3dgoJ3oKjLSJ6Bsa4zZ2PC23/U49BMrU2GTJvLqHVq
-X-Gm-Message-State: AOJu0YzvNqG36VDBn3gzIXgESvoa/Miafm69zB3Sn5+9muzhO2GbdAk6
-	TgBJmBdcFJLoP2L0askNeUQ92DH2iqqPhy/mUoteZ02er2IKyHgZzJpW6NJIChjoL/zco/Lv2aA
-	dS7Z6Vyzya8ddxXm9TJysCYuZ7sY3Phs/QYcjZv6g8CWxmKrla1zS++/qc905xg==
-X-Received: by 2002:ad4:5bef:0:b0:6b5:474a:8f74 with SMTP id 6a1803df08f44-6b5474a96b1mr116364126d6.29.1719417857772;
-        Wed, 26 Jun 2024 09:04:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH7mtK9WggPDqb2LDlMb/2bFXu9tv4zKoByK+QchHf6bUv6I5JnQc+16tYBiRf6dJ+/0v+J9w==
-X-Received: by 2002:ad4:5bef:0:b0:6b5:474a:8f74 with SMTP id 6a1803df08f44-6b5474a96b1mr116363476d6.29.1719417856953;
-        Wed, 26 Jun 2024 09:04:16 -0700 (PDT)
-Received: from localhost ([240d:1a:c0d:9f00:523b:c871:32d4:ccd0])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b51ed18e44sm56047916d6.40.2024.06.26.09.04.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 09:04:16 -0700 (PDT)
-Date: Thu, 27 Jun 2024 01:04:11 +0900 (JST)
-Message-Id: <20240627.010411.908967860275845205.syoshida@redhat.com>
-To: kuniyu@amazon.com
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
- syzkaller@googlegroups.com
-Subject: Re: [PATCH net] af_unix: Fix uninit-value in __unix_walk_scc()
-From: Shigeru Yoshida <syoshida@redhat.com>
-In-Reply-To: <20240625195849.55006-1-kuniyu@amazon.com>
-References: <20240625152713.1147650-1-syoshida@redhat.com>
-	<20240625195849.55006-1-kuniyu@amazon.com>
-X-Mailer: Mew version 6.9 on Emacs 29.3
+	s=arc-20240116; t=1719417915; c=relaxed/simple;
+	bh=PA5oNQKseHeifX+TmtJH+qhwEpeNW1Dck9bJz62Oo0c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Ay0sHPahekXE8vLG3ZEMlfD5acypyG3STTlFLp5m9e6iKCpiPECsQqjR10ht7IfaFj31E/PF7vkE8J1lzOWK3/9JYJ+EPX5IORJ89//0l5AmkeZ6cZWLpTzbvh5pd4WtYggBisUorucS8mgiI6rYjdfFqMQwSsxuNjhfTZ2ZnuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UfdZj7pj; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QAfa5Y029266;
+	Wed, 26 Jun 2024 16:05:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	SP0Z/riTEA3aysdgIqwT0ua236dKkY1TkPD4qdytLQE=; b=UfdZj7pj9bQTYF/N
+	TxNCUv3bSIvo8e1tIeFhDWa4CBJBNBxrZHLeqog5OmFjjvCNssNmMi8Z97A2ulYT
+	llNuulQ3JcaHIWw5kGpwyDUgpXaASbZ9SzFkPjefLBP1fEOJxrbPviMdM4gNP0A6
+	JU1FycaKx0a0OY27DMesIb2wCJV4z8Rw9szhvPsKfanIv0BeNylDxt8yNCp0C7pM
+	KFkRbRpLu6nUcpJDIXyM0vWiTfPEEdVpFIfv7DC/iQynF4J4cYlbRc4LMkJxF8YG
+	zCCy/lYIUHGW5AzLnL3O/YSMr0V41cr5B5s7mllfIagm/3ItH/TRysHNGq6NSlby
+	MAqi8Q==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywnm6srgd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Jun 2024 16:05:06 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45QG55Vj010780
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Jun 2024 16:05:05 GMT
+Received: from [10.48.244.230] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Jun
+ 2024 09:05:05 -0700
+Message-ID: <fec0d711-ea96-4f94-9a9e-5d1b16d29d0f@quicinc.com>
+Date: Wed, 26 Jun 2024 09:05:04 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] greybus: add missing MODULE_DESCRIPTION() macros
+Content-Language: en-US
+To: Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
+        Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: <greybus-dev@lists.linaro.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <20240607-md-drivers-greybus-v1-1-31faa0b21105@quicinc.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240607-md-drivers-greybus-v1-1-31faa0b21105@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: fBk-TPsg2gkDr-FPVlHw_IM-_LUCcRlo
+X-Proofpoint-ORIG-GUID: fBk-TPsg2gkDr-FPVlHw_IM-_LUCcRlo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-26_07,2024-06-25_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ priorityscore=1501 suspectscore=0 phishscore=0 clxscore=1015 spamscore=0
+ mlxscore=0 malwarescore=0 mlxlogscore=999 lowpriorityscore=0
+ impostorscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2406140001 definitions=main-2406260117
 
-On Tue, 25 Jun 2024 12:58:48 -0700, Kuniyuki Iwashima wrote:
-> From: Shigeru Yoshida <syoshida@redhat.com>
-> Date: Wed, 26 Jun 2024 00:27:13 +0900
->> KMSAN reported uninit-value access in __unix_walk_scc() [1].
->> 
->> In the list_for_each_entry_reverse() loop, when the vertex's index equals
->> it's scc_index, the loop uses the variable vertex as a temporary variable
->> that points to a vertex in scc. And when the loop is finished, the variable
->> vertex points to the list head, in this case scc, which is a local variable
->> on the stack.
+On 6/7/2024 1:56 PM, Jeff Johnson wrote:
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/greybus/greybus.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/greybus/gb-es2.o
 > 
-> Thanks for the fix !
+> Add all missing invocations of the MODULE_DESCRIPTION() macro.
 > 
-> More precisely, it's not even scc and might underflow the call
-> stack of __unix_walk_scc():
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>  drivers/greybus/core.c | 1 +
+>  drivers/greybus/es2.c  | 1 +
+>  2 files changed, 2 insertions(+)
 > 
->   container_of(&scc, struct unix_vertex, scc_entry)
-> 
-> 
->> 
->> However, the variable vertex is used under the label prev_vertex. So if the
->> edge_stack is not empty and the function jumps to the prev_vertex label,
->> the function will access invalid data on the stack. This causes the
->> uninit-value access issue.
->> 
->> Fix this by introducing a new temporary variable for the loop.
->> 
->> [1]
->> BUG: KMSAN: uninit-value in __unix_walk_scc net/unix/garbage.c:478 [inline]
->> BUG: KMSAN: uninit-value in unix_walk_scc net/unix/garbage.c:526 [inline]
->> BUG: KMSAN: uninit-value in __unix_gc+0x2589/0x3c20 net/unix/garbage.c:584
->>  __unix_walk_scc net/unix/garbage.c:478 [inline]
-> 
-> Could you validate the test case below without/with your patch
-> and post it within v2 with your SOB tag ?
-> 
-> I ran the test below and confrimed the bug with a manual WARN_ON()
-> but didn't see KMSAN splat, so what version of clang do you use ?
-
-Thank you for your comment!
-
-I ran the test below without my patch several times, but it couldn't
-catch KMSAN splat.
-
-Perhaps this issue depends on the state of the stack. Even the repro
-created by syzkaller takes a few minutes to catch the issue on my
-environment.
-
-I used the following version of clang:
-
-$ clang --version
-clang version 18.1.6 (Fedora 18.1.6-3.fc40)
-Target: x86_64-redhat-linux-gnu
-Thread model: posix
-InstalledDir: /usr/bin
-Configuration file: /etc/clang/x86_64-redhat-linux-gnu-clang.cfg
-
-Thanks,
-Shigeru
-
-> 
-> ---8<---
-> From: Kuniyuki Iwashima <kuniyu@amazon.com>
-> Date: Tue, 25 Jun 2024 19:46:59 +0000
-> Subject: [PATCH] selftest: af_unix: Add test case for backtrack after
->  finalising SCC.
-> 
-> syzkaller reported a KMSAN splat in __unix_walk_scc() while backtracking
-> edge_stack after finalising SCC.
-> 
-> Let's add a test case exercising the path.
-> 
-> Signed-off-by: Kuniyuki Iwashima <kuniyu@amazon.com>
-> 
-> diff --git a/tools/testing/selftests/net/af_unix/scm_rights.c b/tools/testing/selftests/net/af_unix/scm_rights.c
-> index 2bfed46e0b19..d66336256580 100644
-> --- a/tools/testing/selftests/net/af_unix/scm_rights.c
-> +++ b/tools/testing/selftests/net/af_unix/scm_rights.c
-> @@ -14,12 +14,12 @@
->  
->  FIXTURE(scm_rights)
->  {
-> -	int fd[16];
-> +	int fd[32];
->  };
->  
->  FIXTURE_VARIANT(scm_rights)
->  {
-> -	char name[16];
-> +	char name[32];
->  	int type;
->  	int flags;
->  	bool test_listener;
-> @@ -172,6 +172,8 @@ static void __create_sockets(struct __test_metadata *_metadata,
->  			     const FIXTURE_VARIANT(scm_rights) *variant,
->  			     int n)
->  {
-> +	ASSERT_LE(n * 2, sizeof(self->fd) / sizeof(self->fd[0]));
-> +
->  	if (variant->test_listener)
->  		create_listeners(_metadata, self, n);
->  	else
-> @@ -283,4 +285,23 @@ TEST_F(scm_rights, cross_edge)
->  	close_sockets(8);
+> diff --git a/drivers/greybus/core.c b/drivers/greybus/core.c
+> index 95c09d4f3a86..c28bb973f67c 100644
+> --- a/drivers/greybus/core.c
+> +++ b/drivers/greybus/core.c
+> @@ -375,5 +375,6 @@ static void __exit gb_exit(void)
+>  	tracepoint_synchronize_unregister();
 >  }
+>  module_exit(gb_exit);
+> +MODULE_DESCRIPTION("Greybus 'core' driver");
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_AUTHOR("Greg Kroah-Hartman <gregkh@linuxfoundation.org>");
+> diff --git a/drivers/greybus/es2.c b/drivers/greybus/es2.c
+> index 1ee78d0d90b4..db4d033925e6 100644
+> --- a/drivers/greybus/es2.c
+> +++ b/drivers/greybus/es2.c
+> @@ -1456,5 +1456,6 @@ static struct usb_driver es2_ap_driver = {
 >  
-> +TEST_F(scm_rights, backtrack_from_scc)
-> +{
-> +	create_sockets(10);
-> +
-> +	send_fd(0, 1);
-> +	send_fd(0, 4);
-> +	send_fd(1, 2);
-> +	send_fd(2, 3);
-> +	send_fd(3, 1);
-> +
-> +	send_fd(5, 6);
-> +	send_fd(5, 9);
-> +	send_fd(6, 7);
-> +	send_fd(7, 8);
-> +	send_fd(8, 6);
-> +
-> +	close_sockets(10);
-> +}
-> +
->  TEST_HARNESS_MAIN
-> ---8<---
+>  module_usb_driver(es2_ap_driver);
+>  
+> +MODULE_DESCRIPTION("Greybus 'AP' USB driver for 'ES2' controller chips");
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_AUTHOR("Greg Kroah-Hartman <gregkh@linuxfoundation.org>");
+> 
+> ---
+> base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
+> change-id: 20240607-md-drivers-greybus-a13b64e41256
 > 
 
+Following up to see if anything else is needed from me. Hoping to see this in
+linux-next so I can remove it from my tracking spreadsheet :)
+
+/jeff
 
