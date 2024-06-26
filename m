@@ -1,119 +1,119 @@
-Return-Path: <linux-kernel+bounces-230703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E1CC9180CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:18:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 740D59180D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:19:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5054F1F21C77
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:18:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F73F1F224ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7699181B84;
-	Wed, 26 Jun 2024 12:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="OrNn3f1X"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9862F181CF2;
+	Wed, 26 Jun 2024 12:19:14 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC9613D89B;
-	Wed, 26 Jun 2024 12:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC6AE17F51C;
+	Wed, 26 Jun 2024 12:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719404320; cv=none; b=EeD+1/MDkdImTTA4D0AdDNBQwy/zSzlDEAWL9NneXX/kRHHII1klQxzr5Xu+JCRzlW6H/8DAEyjqJqRy78awGWBwAreeW8Ki+knZOmdH1LdXknRZMkq3b7hBcEJE9nbo9zPzBOwkhMzyMNJu56fhZUr3+z/kfI9F/JAQSUJxXfY=
+	t=1719404354; cv=none; b=uTOKvZ+NcGHYOZYbChiDaDwnCojjim67N6mbHNPXU+b2C/7qTVXMUQt2BbuoqlYqR2t0L7vSYIIwVUbOFb3TF8qULe/zEnm07awb/3MMQe/dsD2P0kr3GNmqJygN7xusMCu4NlL0Si4/YotNe5+H625LFZIf5uQlLeg5wXRCSLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719404320; c=relaxed/simple;
-	bh=2x37NzR/2lEZeNq0vRkCFXPL3a+/btL9FCqu5MrlKVg=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=ub9bN7jjxJ7bVRoGsVfjaGxhsJ4NYHC6gVbXHthTs1FQSfhs0/dEOxiDAkWF4Bu9ewrAO9AS594ZR/faym4+6KWThcThq4Yx1SJomydg/PJl0Z46K1FdiD74MStT8JbZXHjVmatPH70czFr7J8xyVtEivSF2aPjwluVlE5ieMbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=OrNn3f1X; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719404288; x=1720009088; i=markus.elfring@web.de;
-	bh=yUPAIAof3AkzY+BmPwggZrxS5owZtdhbXK8kkUOSg5c=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=OrNn3f1X2IUD5M4sIr9wqstdaJaB72n7F4OiQN/C4hhyFZd/tw7A0+GNPYfGQNtq
-	 k8O8NLzl8Xdqtvq/09CWapuEueBn8eQSTCoYftkMbwTerLYwQJg+yKutf66C0zLaM
-	 FB4pN9iBH0PSn5BIgZclTJxldgH4GcPK+LWGkUeA/ios8DseolRFH0jZbIFDNO+uG
-	 6jVjb3M8fm7HgucbaEaGev2Z0vazbQ6s+5Y/QjG9vqFjg7xLFfJSxf/NizWb74q19
-	 XbOfIOcCD6czEahZilGZfnPCrbcVsD7c/shJFP0wLwIhd+p5nEfp3Jt+Yn9j+P0tm
-	 XFTZLD7DGXSYBdgKQA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N30ZN-1sSSoc3rPZ-00sdVt; Wed, 26
- Jun 2024 14:18:07 +0200
-Message-ID: <7efdcd35-7511-491a-a0b2-c500ebb2256d@web.de>
-Date: Wed, 26 Jun 2024 14:18:06 +0200
+	s=arc-20240116; t=1719404354; c=relaxed/simple;
+	bh=wnVtmWQ6PmYLBeKxwt/VIXua22iiG221nO/TfX26YHU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YF8BvUsSYvQxzk2+KXbdmE3YThSKbKvXYUvBekjMXajYOS1tQfEfT2C+dLtaAoNyy5iYCLEZcnMeFyMezXrohy10EoGGwcrdv2eJMl0hpjLAkASYhiE+NkQyP3lHFReE7Bz2vHRINBJkX+N9GJ/do8D05Dsjww/RwJH+YHAobH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-03 (Coremail) with SMTP id rQCowABXeiwWB3xm0Y2VEg--.247S2;
+	Wed, 26 Jun 2024 20:18:41 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	mykolal@fb.com,
+	shuah@kernel.org,
+	make24@iscas.ac.cn,
+	iii@linux.ibm.com
+Cc: bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests/bpf: improve file descriptor closure handling
+Date: Wed, 26 Jun 2024 20:18:28 +0800
+Message-Id: <20240626121828.2859797-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Ma Ke <make24@iscas.ac.cn>, dri-devel@lists.freedesktop.org,
- spice-devel@lists.freedesktop.org, virtualization@lists.linux.dev,
- Daniel Vetter <daniel@ffwll.ch>, Dave Airlie <airlied@redhat.com>,
- Gerd Hoffmann <kraxel@redhat.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, David Airlie <airlied@gmail.com>
-References: <20240626064024.2811255-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH] drm/qxl: fix null pointer dereference in qxl_add_mode
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240626064024.2811255-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:C60OHFSjUuj7c1Ny1z+3dfhRyGU9CgYduGDl5Y0uOjNWFaNRIBg
- pZn9Q1V4E276IQizd99IZn+VBG3/z4MThrqGn+8Zf43SzQz9WiXCEuvVJq53xuWJGmsubrO
- A+k/2CYu4mODi/iGDVY6OwkP55j6PQzl9r/vRNqwosZBvTUXyQcRdzvzfXq0RKHg/Y6SccJ
- tIoZ/gnAkHy1336uFBbig==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:8l6RBOATA38=;k3Ef5uHGkoup54xiTgrtslyJhyB
- 8qsV6Y68qgY1O30UVdyYKXiZJiWeypvHKHgXUYOTEpgUR1F6dstjJ1FWWM1SFR+3YC+BJIEUB
- Uy86NirTHEraqqqf5DVheVAnFIPyCogdGluIZknBWrx09x2M3V+ganzKkjy885E6F2E23h1vc
- Hma/UYfAs3KN6AfrAZhU8wRyfi3Nh0z2zXv2OYj/mDRndnB7SGBq6ZBy7yZSzWL/6lpB/lpiV
- N32AqwSRwVx2k/o55YSMxDCyJzkYSaSbdRNy/uO40QWLE69mLKc6Ir7eLBGNYUXn9jzvmMLap
- ODT37KSAGcydgciEDT4y3M2UJ8W+XS/GVLaKNAcjGiIarKUU4medUIn2Fc4rNa7WGjEqZ302H
- a4g04HAn8U95oYPkX6M0+Dqsrbdb2cXvfVPrfN/FNiDsINxoClU4UcBF6FWrH3O1r+1oO5E3W
- qdMTQA0l0bT6o0YuHTpr8LpkxNXfmAK1WyvtaSOLE18AvxqfYvBFJi/Ae/8xGLJ0dPnMHzwHd
- RIiASKB6tyTkjNLqX/dQIPDwsZC7R8DQ2j0ZgPEw7HC6g8lMI8PI7J839xXk3aKXW60bo9GAB
- NxemrNOs+c87ww5r/EQaRinoJe9x1ZcrUlttenTgiv0MZu1ALqZdFMK+H+3aCETpOr3oQu1uY
- ZtyTcf1F+XYPiYAWkFtcFMXcEBWSkkjYwlj8Onl6SgMR7iLNLh1pfYSx03d1QWrisg8t22cTZ
- qaHfMBT3NnkZwruCDIBxKDL7yQdjpsvNUTNtTWjXOa24He+gL7cmaxfWMZsyb4NOBGGtaHQO/
- i32qOJYTULauwOM+r/guAnVvsBUiYHFmOHcisD9uF8y78=
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowABXeiwWB3xm0Y2VEg--.247S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7uF4ftw17uw43ZF1kWryrCrg_yoW8JFyUpa
+	y8tw1jkFyrWr17Jr18Gwn7XF10gF4kJry5CF47tFy3uw45XryxJF1Ska15Kr95KrZavan0
+	yw1ayr9Ikr4DAFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWUWVWUuwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
+	rcIFxwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
+	MIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUeVyIUUUUU
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-> In qxl_add_mode(), the return value of drm_cvt_mode() is assigned to mod=
-e,
-> which will lead to a possible NULL pointer dereference on failure of
-> drm_cvt_mode(). Add a check to avoid npd.
+serial_test_fexit_stress() has a non-robust handling of file descriptor
+closure. If an error occurs, the function may exit without closing open
+file descriptors, potentially causing resource leaks.
 
-1. Can a wording approach (like the following) be a better change descript=
-ion?
+Fix the issue by closing file descriptors in reverse order and starting
+from the last opened. Ensure proper closure even if an error occurs early.
 
-   A null pointer is stored in the local variable =E2=80=9Cmode=E2=80=9D a=
-fter a call
-   of the function =E2=80=9Cdrm_cvt_mode=E2=80=9D failed. This pointer was=
- used
-   in subsequent statements where an undesirable dereference
-   will be performed then.
-   Thus add a corresponding return value check.
+Fixes: 8fb9fb2f1728 ("selftests/bpf: Query BPF_MAX_TRAMP_LINKS using BTF")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ tools/testing/selftests/bpf/prog_tests/fexit_stress.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
+diff --git a/tools/testing/selftests/bpf/prog_tests/fexit_stress.c b/tools/testing/selftests/bpf/prog_tests/fexit_stress.c
+index 596536def43d..b1980bd61583 100644
+--- a/tools/testing/selftests/bpf/prog_tests/fexit_stress.c
++++ b/tools/testing/selftests/bpf/prog_tests/fexit_stress.c
+@@ -49,11 +49,14 @@ void serial_test_fexit_stress(void)
+ 	ASSERT_OK(err, "bpf_prog_test_run_opts");
+ 
+ out:
+-	for (i = 0; i < bpf_max_tramp_links; i++) {
++	if (i >= bpf_max_tramp_links)
++		i = bpf_max_tramp_links - 1;
++	while (i >= 0) {
+ 		if (link_fd[i])
+ 			close(link_fd[i]);
+ 		if (fexit_fd[i])
+ 			close(fexit_fd[i]);
++		i--;
+ 	}
+ 	free(fd);
+ }
+-- 
+2.25.1
 
-2. Would you like to add any tags (like =E2=80=9CFixes=E2=80=9D and =E2=80=
-=9CCc=E2=80=9D) accordingly?
-
-
-3. How do you think about to append parentheses to the function name
-   in the summary phrase?
-
-
-Regards,
-Markus
 
