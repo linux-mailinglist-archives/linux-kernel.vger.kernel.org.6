@@ -1,54 +1,62 @@
-Return-Path: <linux-kernel+bounces-230556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2FA1917E8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:43:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 172C2917E99
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:44:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE659289401
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:43:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1F39282411
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937211836C3;
-	Wed, 26 Jun 2024 10:41:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB6117C9F0;
+	Wed, 26 Jun 2024 10:42:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U6/KVl26"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Bm/UXCCK"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07711822F9;
-	Wed, 26 Jun 2024 10:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F272617C22E
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 10:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719398503; cv=none; b=h8s5UDVxfkzuzhINaSe/S8jJV5DYw/IPV8gTnLd1TPxxi8IQ2BgRcxYAf5hNLkrxHyq9A/4Aqge8p3fGc/g8CfdtgDKY7VuPWyXVppD+c0AG/ujT2Kn+qsws0G1ng/wXv658SEwW//upE6NrZjpGP45A08hq9w+B2L3XfNv1h0o=
+	t=1719398528; cv=none; b=Nq5xNcMfTyVWnxwhU0uo/Khk7h7BQBG+Y7vtzADF9GULkJLt97FmzsK8b50LnI9me1bVH8+QmG5/VhS3FsepOs72CE9xCfk1njsZki+cQ1gyDFt0cV1yWjmfggwIdic0Due/2w1/lCse88U0IqcOEO8OPPSGn1B/FOFGvnXrg30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719398503; c=relaxed/simple;
-	bh=5liAa5eq+JjIRvMH4LLV+J2ftrJA8xP0V0652DuHtkE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nEmbitIYYN0PNBGqz6zD6TSThwGlox9iqBdvWDrQUVQE/UhaiRFetmfe9F5XrTgGlHD2uSyQJZEs5SxymDoTJAZgkOHPN/mC3y4AQtvW7M9PnSj52Vu170zbTtIMcwzvjCWOkIV3NBBtLUNVS9lS0H/9mTshj5zpLSnk0ZPJNd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U6/KVl26; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A620DC32786;
-	Wed, 26 Jun 2024 10:41:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719398503;
-	bh=5liAa5eq+JjIRvMH4LLV+J2ftrJA8xP0V0652DuHtkE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U6/KVl26xDBLftI1+kDRvccEqK2MWbddiTESoO0Esin9P86fdZ7jGHqry8xatNikm
-	 iGGX8Aws55BlWxKicoIsQDu5vOUFMSe9dB2elSQlDKOzahCVEvl5ReiVDpyW6R1Mg0
-	 N63h+53UB634bkgUhbHsKTV8L0MjgOP1YSGRf+WNmUMsLJZ2rP87g3AqDpXPJdPRRm
-	 Gl9LjvCvHi8qNIV0/7c+9atP/HzS/55sQbny3kl9anMD/mE1924kKfpeteQQ7Ct2pB
-	 F4F9y1qpdcnpav2mazBGZaxPE64hEklMGk/byd1lyWNNazEafJjxWgOheX5bmRg+96
-	 RFtHDhv/W3Oag==
-Date: Wed, 26 Jun 2024 11:41:38 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Zhu Jun <zhujun2@cmss.chinamobile.com>
-Cc: ivan.orlov0322@gmail.com, perex@perex.cz, tiwai@suse.com,
-	shuah@kernel.org, linux-sound@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests/alsa:Add memset to initialize memory
-Message-ID: <755d4876-9ce5-436e-aeeb-200f02ad7819@sirena.org.uk>
-References: <20240626095817.5037-1-zhujun2@cmss.chinamobile.com>
+	s=arc-20240116; t=1719398528; c=relaxed/simple;
+	bh=OEEz1hMBvDFfTJm7nGtUmDHLys55gExQu4PeuQJ6F2k=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gqdfLe4GF9xj27XzhDRsgUUmQxp6K9kBf8mzSAtjXrLMHtJBM/MK5MReNd4mhiabgIfGUJSdc5NDHhHhlTKa0F1VETocSYB9gjZRxBQ3HYn63cG3lqBx3KsHv0UAt1qSIAvFXg49epfg0iHyLyXFXm+isPhknH+0au1Dn4aNClQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Bm/UXCCK; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=OEEz
+	1hMBvDFfTJm7nGtUmDHLys55gExQu4PeuQJ6F2k=; b=Bm/UXCCKqzcK9VIl283x
+	TYeOdeJhHWUvZ9uFCPIVYzgR4FiHX2DjjeBaQ1Qoq7o2EIS6lCnW8ubia5w7++/0
+	kqcL0MMFE4lKOUbI37YCQI8c1xOLIqMg5or2n/DefPEM9OuE2xuClAEXANOkOFOg
+	RpjCM3OYd36GbA0fHgtt4tHQ8gMQxa1y1ki+pEEtTOqn/Cjc4kx3qv7La80PjcZ9
+	TMYzuXJ75P9HnS7kEFrFtwYSK/aBLrtHjShXVAAHpkIS4dx6OYW/J7FdYTVmpaOj
+	tVf68kCR9qanIsaqUbHxT8JGf8InV6Oi7Bza/LiH5qszj1QH0t7lWEZGPY8KjpxY
+	3A==
+Received: (qmail 539353 invoked from network); 26 Jun 2024 12:42:03 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Jun 2024 12:42:03 +0200
+X-UD-Smtp-Session: l3s3148p1@C4E5qsgbArsgAwDPX0AHAIitiwsdozO7
+Date: Wed, 26 Jun 2024 12:42:03 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Arnd Bergmann <arnd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
+	Hans Hu <hanshu@zhaoxin.com>, Arnd Bergmann <arnd@arndb.de>, Wentong Wu <wentong.wu@intel.com>, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] i2c: viai2c: turn common code into a proper module
+Message-ID: <5shzq44g75xykn2tdbutbqa4u5by3sijvztam2x2scey5rglox@kgh7lul4j2el>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Arnd Bergmann <arnd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, Hans Hu <hanshu@zhaoxin.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Wentong Wu <wentong.wu@intel.com>, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20240528120710.3433792-1-arnd@kernel.org>
+ <bi3lwgeh5egvd4g6aspwvefibk3cviwuzinvgkmnwy4f3bvua4@nf5a6w77cr7v>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,35 +64,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="942wIzHHpXhuyjzx"
+	protocol="application/pgp-signature"; boundary="ipkf5kaljj6yrtxh"
 Content-Disposition: inline
-In-Reply-To: <20240626095817.5037-1-zhujun2@cmss.chinamobile.com>
-X-Cookie: Results vary by individual.
+In-Reply-To: <bi3lwgeh5egvd4g6aspwvefibk3cviwuzinvgkmnwy4f3bvua4@nf5a6w77cr7v>
 
 
---942wIzHHpXhuyjzx
+--ipkf5kaljj6yrtxh
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 26, 2024 at 02:58:17AM -0700, Zhu Jun wrote:
-> Add memset to initialize the requested memory
+On Tue, Jun 04, 2024 at 10:00:04AM GMT, Wolfram Sang wrote:
+> On Tue, May 28, 2024 at 02:06:30PM +0200, Arnd Bergmann wrote:
+> > From: Arnd Bergmann <arnd@arndb.de>
+> >=20
+> > The i2c-viai2c-common.c file is used by two drivers, but is not a proper
+> > abstraction and can get linked into both modules in the same configurat=
+ion,
+> > which results in a warning:
+> >=20
+> > scripts/Makefile.build:236: drivers/i2c/busses/Makefile: i2c-viai2c-com=
+mon.o is added to multiple modules: i2c-wmt i2c-zhaoxin
+> >=20
+> > The other problems with this include the incorrect use of a __weak func=
+tion
+> > when both are built-in, and the fact that the "common" module is sprink=
+ed
+> > with 'if (i2c->plat =3D=3D ...)' checks that have knowledge about the d=
+ifferences
+> > between the drivers using it.
+> >=20
+> > Avoid the link time warning by making the common driver a proper module
+> > with MODULE_LICENCE()/MODULE_AUTHOR() tags, and remove the __weak funct=
+ion
+> > by slightly rearranging the code.
+> >=20
+> > This adds a little more duplication between the two main drivers, but
+> > those versions get more readable in the process.
+> >=20
+> > Fixes: a06b80e83011 ("i2c: add zhaoxin i2c controller driver")
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>=20
+> Andi, I am tempted to include this in my for-current pull request this
+> week. Are you okay with this or do you want to review it more closely?
 
-Why?
+Meh, I forgot about it. Andi, do you plan a PR for rc6?
 
---942wIzHHpXhuyjzx
+
+--ipkf5kaljj6yrtxh
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ78GIACgkQJNaLcl1U
-h9B6lwgAgO34y5xxu4pQjPXhvISych0YvoDsDFvW7n12BQ6Xmo80RCY4lQrxMs32
-BRKKoaUe3vux5+8mOjs7/skY3V43ToRyoN5gFIwXOf21Gg/EogUYxAKXYrd1MXai
-mlXG7ukuEbXf5g9UdxPeyj2bV71Ft/HOHnlflckQCJh+6xkpeMy+Gmq+fQF9+a1/
-mZkunXXibYE71ZeWGsyT7KaSRH7PJ9e8kCxeagDTiIorv3bah24w2+Mu1e/cD/xQ
-UPHCH+nvt8RMC+KQgC6t9yDZoytHKw5ulpN1nOcD/SKLt2a2FJmMkSlHTHJcIYRV
-JHfHD8h4U33BFJl6YFhbqWTDw7F6ng==
-=Zfgl
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZ78HsACgkQFA3kzBSg
+KbYD4Q//fvSD0PMr13iTwlPy0ZvqeVG4v/LlpV6icKX3bHzq8jEvD5LtA7rxHr7K
+WYT58zsAx68bqPSTPrIzn3ZeAeIchTHm/UdJx/h/enADQ8Y0MDHKYh0dv9X53Tmm
+mRZhh247YEFowJLB9wnLs5X74vpKE5Xf1OfVN8F31BZYR4/gaY6de0nL1VR/5yU8
+XeL3OyKPCoTD2SKgHsEC30RO0kQWPBjj/Xsc/pkWLF1EyEEzUT12c+qvO3dFVxgT
+vQwcI+1u4iXU0gYnpHxjHb8cEP0MXq4rRJuROHv/5J8MXPK/WiCy7CcFI/XcudaC
+JmsE8NdxS7yhBFfPeLM9n/XMN4sZzOh6lz539e2+A4GkTR25VpbHteMi9/nlaMh+
+hLkpCwDx0NNLq9tKJBWtqUAICeRb0ASatWbv5hxP07Ym6f+Wl4b4FSZFGRu57ESZ
+rkYSAcv5qFeXpW5qt0/DU2e9uJzqA+zSnHgolNGXwKDJBEGBZTAm98DwVA4ETeF1
+8UK6PuqoI/i/xoSljAaOnu9PM7BEAW/N921EWd1RIF0TwRTl5gRIw9GYeeR7ZaPi
+1IwVmYEc5R5TjEBcJFWRipPvwpqaZqsW1v5u/Ij2ud9GqOKxYTvsK7EvertX/WdG
+6i6T8v2sgT6Mjiv7Uq9YfixD0KXJelYlo90MERh6U+xW6rWqtnM=
+=Upt4
 -----END PGP SIGNATURE-----
 
---942wIzHHpXhuyjzx--
+--ipkf5kaljj6yrtxh--
 
