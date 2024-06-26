@@ -1,132 +1,98 @@
-Return-Path: <linux-kernel+bounces-230208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8088E9179D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:37:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A07D9179D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:37:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B24651C20DFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:37:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9684281710
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BCD415F323;
-	Wed, 26 Jun 2024 07:37:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 236F815B968;
+	Wed, 26 Jun 2024 07:37:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LTSGT5eJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aApLDCYU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8721FBB;
-	Wed, 26 Jun 2024 07:37:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648A31FBB;
+	Wed, 26 Jun 2024 07:37:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719387455; cv=none; b=q2FrthtLFHTUixRtxswg9sC8GZlkfRt+oYbT2YQ0cIuwjWpQjsWZ2ohKkul02icY29on53y8tRlP4p4Y/UD9X3l9ppz4VzeawAJxVLaaWLRKJUL9nM9egDXxgfa9WTFDcTAsW60xM09YimL0CHHWnlDSs8KqE3wkyCXt68EOAA8=
+	t=1719387450; cv=none; b=S8vBt177Tej20yzjgi96qwnvYuOAuL+p2d3JkKptgrn8Oa5Yo825xqjRGaaDrmw/kKH0nQ2D/7Dp93Z9p4rD4BpM9zPx3Vgp2NzDnfiM1sfxlrQkgwZI6cjNOJMj177rY0v2kcBhFS5fljT3nnb1e9vrokCoKNvvnsQp2BvDfyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719387455; c=relaxed/simple;
-	bh=ndOzFlNF7mgXZbFomdTEHkww/+uY25Qtzri+zDpcuNU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DnOeX7IQQkhygJz9q3N2BuTq6udat8f3pF2W+BgKCqo+gmwNHKSVbRyiGjd4sCr1Dxv/k6ishLCIvQF5G3XwK9mrmCXFrC9vQXALQbjHEo2CG13gkhEzbGukrTSnzGsti/NtEGAacikMPRbkLVttjkHFPY/MCvP+1xuciInqNYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LTSGT5eJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 903C5C32789;
-	Wed, 26 Jun 2024 07:37:32 +0000 (UTC)
+	s=arc-20240116; t=1719387450; c=relaxed/simple;
+	bh=nRSlKVcpayELllH5UVKhFKJKcDAvMvdyHvTbz1LOGLU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a3esfDW10J3Os70gTqES3b1VrbhlQY+Yx6xi7j5kCQrGRZ+ZYh9jYHaN/jCe0iXfkqabjQvbxSWLBc/4ZPwnmpmhqekbhSENs4+nHfjXkTtc8K/yDMgaUGfkM8JotW5a5X+xIbe+y6t06B2/i2S9/WR6/JGtqMx4MB0lU4VoTuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aApLDCYU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8B51C2BD10;
+	Wed, 26 Jun 2024 07:37:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719387455;
-	bh=ndOzFlNF7mgXZbFomdTEHkww/+uY25Qtzri+zDpcuNU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=LTSGT5eJpaTgQVTluRtjprVjIcx53X7vmbk1X7v+8wg93zEvg+wfgByOPa2yjy4Aq
-	 isnyIW4pGbQ9hZTyoRjVCtHzkfC8d2jQHzUJrYUGhIVwNZ2b4hyAv5jd+aEMgmGEj3
-	 xmFuYL2l5mF42JYtCjwMrGcOzrJ1bEz2A2c4R0ecUYjQAE/OeTT7T6t11zHwTVsSj7
-	 Xe6fgdpTYunXVod1KtwtENq3wJx89AzVH2UkCJf9mzBLjoDEaMtjgzcsVmovTkeKLu
-	 FSPtXdzza1bzyhaSWyYh7q7y8weh/yGVRBQ1Qaepj0MqV9NpFE9ZCDNdHel4+Nqyth
-	 BGFfrj+djDicg==
-From: Amit Shah <amit@kernel.org>
-To: seanjc@google.com,
-	pbonzini@redhat.com,
-	x86@kernel.org,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: amit.shah@amd.com,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	hpa@zytor.com,
-	kim.phillips@amd.com,
-	david.kaplan@amd.com
-Subject: [PATCH v2] KVM: SVM: let alternatives handle the cases when RSB filling is required
-Date: Wed, 26 Jun 2024 09:37:19 +0200
-Message-ID: <20240626073719.5246-1-amit@kernel.org>
-X-Mailer: git-send-email 2.45.2
+	s=k20201202; t=1719387449;
+	bh=nRSlKVcpayELllH5UVKhFKJKcDAvMvdyHvTbz1LOGLU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aApLDCYUcHF0LOtt35jiJ4sozSrPxRHWtPg7n9ePn2DdqbBUM0vTDdYCI9iRlcPed
+	 i6F1LgrTd2cLmSQYC4UQB33BT2rnB2gWiWmq6x8VIWpAjJJWVgltMTGrfhdSLnnULp
+	 oFbNO0ruteElkkQhG6x+kkCwt2F+X9heTxnCICtpTMBcO6dOq49CD4UVmE42EPd97+
+	 eESn53hbAri2/8JY8pcX/jPbt5JZV9BoGeGbDzM7toY969hk5yN7qwzZdy09Kqo9IW
+	 g8eIA4ecKcZg4bBLKUxDhDiffQZQrXjjxAWu7+x/Lv3P8bnvQWh45Cr4WWa8cU5jSL
+	 Hf4yEXVwFLM8Q==
+Message-ID: <040eb302-df2b-4ad4-a12d-58aad53f5f39@kernel.org>
+Date: Wed, 26 Jun 2024 10:37:23 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2] net: ti: icssg-prueth: Split out common
+ object into module
+To: MD Danish Anwar <danishanwar@ti.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Diogo Ivo <diogo.ivo@siemens.com>, Andrew Lunn <andrew@lunn.ch>,
+ Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+ Eric Dumazet <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, srk@ti.com,
+ Vignesh Raghavendra <vigneshr@ti.com>, kernel test robot <lkp@intel.com>,
+ Thorsten Leemhuis <linux@leemhuis.info>
+References: <20240606073639.3299252-1-danishanwar@ti.com>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20240606073639.3299252-1-danishanwar@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Amit Shah <amit.shah@amd.com>
 
-Remove superfluous RSB filling after a VMEXIT when the CPU already has
-flushed the RSB after a VMEXIT when AutoIBRS is enabled.
 
-The initial implementation for adding RETPOLINES added an ALTERNATIVES
-implementation for filling the RSB after a VMEXIT in
+On 06/06/2024 10:36, MD Danish Anwar wrote:
+> icssg_prueth.c and icssg_prueth_sr1.c drivers use multiple common .c
+> files. These common objects are getting added to multiple modules. As a
+> result when both drivers are enabled in .config, below warning is seen.
+> 
+> drivers/net/ethernet/ti/Makefile: icssg/icssg_common.o is added to multiple modules: icssg-prueth icssg-prueth-sr1
+> drivers/net/ethernet/ti/Makefile: icssg/icssg_classifier.o is added to multiple modules: icssg-prueth icssg-prueth-sr1
+> drivers/net/ethernet/ti/Makefile: icssg/icssg_config.o is added to multiple modules: icssg-prueth icssg-prueth-sr1
+> drivers/net/ethernet/ti/Makefile: icssg/icssg_mii_cfg.o is added to multiple modules: icssg-prueth icssg-prueth-sr1
+> drivers/net/ethernet/ti/Makefile: icssg/icssg_stats.o is added to multiple modules: icssg-prueth icssg-prueth-sr1
+> drivers/net/ethernet/ti/Makefile: icssg/icssg_ethtool.o is added to multiple modules: icssg-prueth icssg-prueth-sr1
+> 
+> Fix this by building a new module (icssg.o) for all the common objects.
+> Both the driver can then depend on this common module.
+> 
+> This also fixes below error seen when both drivers are built.
+> ERROR: modpost: "icssg_queue_pop"
+> [drivers/net/ethernet/ti/icssg-prueth-sr1.ko] undefined!
+> ERROR: modpost: "icssg_queue_push"
+> [drivers/net/ethernet/ti/icssg-prueth-sr1.ko] undefined!
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202405182038.ncf1mL7Z-lkp@intel.com/
+> Fixes: 487f7323f39a ("net: ti: icssg-prueth: Add helper functions to configure FDB")
+> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
 
-commit 117cc7a908c836 ("x86/retpoline: Fill return stack buffer on vmexit")
-
-Later, X86_FEATURE_RSB_VMEXIT was added in
-
-commit 2b129932201673 ("x86/speculation: Add RSB VM Exit protections")
-
-The AutoIBRS (on AMD CPUs) feature implementation added in
-
-commit e7862eda309ecf ("x86/cpu: Support AMD Automatic IBRS")
-
-used the already-implemented logic for EIBRS in
-spectre_v2_determine_rsb_fill_type_on_vmexit() -- but did not update the
-code at VMEXIT to act on the mode selected in that function -- resulting
-in VMEXITs continuing to clear the RSB when RETPOLINES are enabled,
-despite the presence of AutoIBRS.
-
-Signed-off-by: Amit Shah <amit.shah@amd.com>
-
----
-v2:
- - tweak commit message re: Boris's comments.
----
- arch/x86/kvm/svm/vmenter.S | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/kvm/svm/vmenter.S b/arch/x86/kvm/svm/vmenter.S
-index a0c8eb37d3e1..2ed80aea3bb1 100644
---- a/arch/x86/kvm/svm/vmenter.S
-+++ b/arch/x86/kvm/svm/vmenter.S
-@@ -209,10 +209,8 @@ SYM_FUNC_START(__svm_vcpu_run)
- 7:	vmload %_ASM_AX
- 8:
- 
--#ifdef CONFIG_MITIGATION_RETPOLINE
- 	/* IMPORTANT: Stuff the RSB immediately after VM-Exit, before RET! */
--	FILL_RETURN_BUFFER %_ASM_AX, RSB_CLEAR_LOOPS, X86_FEATURE_RETPOLINE
--#endif
-+	FILL_RETURN_BUFFER %_ASM_AX, RSB_CLEAR_LOOPS, X86_FEATURE_RSB_VMEXIT
- 
- 	/* Clobbers RAX, RCX, RDX.  */
- 	RESTORE_HOST_SPEC_CTRL
-@@ -348,10 +346,8 @@ SYM_FUNC_START(__svm_sev_es_vcpu_run)
- 
- 2:	cli
- 
--#ifdef CONFIG_MITIGATION_RETPOLINE
- 	/* IMPORTANT: Stuff the RSB immediately after VM-Exit, before RET! */
--	FILL_RETURN_BUFFER %rax, RSB_CLEAR_LOOPS, X86_FEATURE_RETPOLINE
--#endif
-+	FILL_RETURN_BUFFER %rax, RSB_CLEAR_LOOPS, X86_FEATURE_RSB_VMEXIT
- 
- 	/* Clobbers RAX, RCX, RDX, consumes RDI (@svm) and RSI (@spec_ctrl_intercepted). */
- 	RESTORE_HOST_SPEC_CTRL
--- 
-2.45.2
-
+Reviewed-by: Roger Quadros <rogerq@kernel.org>
 
