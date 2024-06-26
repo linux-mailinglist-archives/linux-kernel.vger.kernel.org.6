@@ -1,190 +1,241 @@
-Return-Path: <linux-kernel+bounces-231609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5115F919ACA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:41:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69158919AD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:42:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06147284C61
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:41:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEEB82859A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA58193079;
-	Wed, 26 Jun 2024 22:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 653361940A1;
+	Wed, 26 Jun 2024 22:42:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BfKutt2A"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZdyOxEX+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84FDA175567
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 22:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877CA193072;
+	Wed, 26 Jun 2024 22:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719441655; cv=none; b=UktdEPtIp6Pkl3PXSqMZc0tGNeciy7jqToTGBDeq9ncUOHFpv2W1jRvpb/xA9ypfzN1rq0JTL03B0Tz5ASfSsuiJ1Y9PQfXf+6A/rBaCIsYhs2P7iU5Ml8IljsQVZXdtXydvQ4pGF2XOByfQbu5xLiuRg5JR0j9LLoai7KbEFAE=
+	t=1719441769; cv=none; b=R3MtBfRK8asC4tGLlY6HsFgzSQfP55jv1rMN6yYn2oK9i5kbMNCIdNr0xWc7dH//7y7GBMw7Up/egvU37pHj7Rj8tiVxospwPJLhalQsc7uderyRkNso+uxiSuTYS7XlzumeFEjBgcNepqglTdoEVc43JYojjfeHL64SPr22u6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719441655; c=relaxed/simple;
-	bh=GNZbPGkqmPc4rH7ugcmel6+9l1/+c8fibLHekmnoXOE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kq+uSUNSu+EWl6gGPzEAyQxdlvNXH44FqexlG/24g/GmXq2j6QiSx3+kKI2R0kHFDllEQG5devCupnosAtRQNy0WD+kP7jFommC8zppZS4LcozZCfn7Bx+3GenFXSynrznSqd22RBQvjXyHdFX4hq/0iN62hWF1MKnmMVH1NKf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BfKutt2A; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-57d1d45ba34so980130a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 15:40:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719441652; x=1720046452; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=DiJIwUHGJKAddL1l5PHQCjx9Ibq/P+A4R2VYZRioi9Y=;
-        b=BfKutt2AkYxme8KqLTSI0oRJwZ0WLBc9WqzfQ4/wUUHgjeaeRD19KA4TeeuTMm7NO1
-         iv6ZOPSsDarErpOuqvdCM1hVsFii1ysVK3ClrhitgWxhQcpsYnXjC9F7va5B9LlaCxC4
-         r+219bgzjyRm9fBDTpVFGwx1NpzbzCXniAddUg91M23unqziT3cxHtuQ23lvODV63DQa
-         1rnCwb0Udz2j92ph1b0minGP9BoqQPyzc49HRLMGGXwQ0BD1yTb73LlNHMwpOW6/39Gm
-         eS0bByjX4eGkM/flYH41dHEYqz34CN/xno8jVzFslJaUujmdMYzts92Ato8j0N/SKA0/
-         UZaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719441652; x=1720046452;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DiJIwUHGJKAddL1l5PHQCjx9Ibq/P+A4R2VYZRioi9Y=;
-        b=mdEPDZLUFaubqELu34e1eiIhfRPAkV2haryRDYhNMVwr7fOGl31NtXxh46pRahOB7D
-         +KGTrqpORbFK7dIlQZPstWurL9O2qDXE/IYwcU2pPrVi8vfL/wNE17TeypPwLVg+NW+k
-         ZxqB5eJ4r5Ox9bE9gb3naLAkh4Ht3HlUqga3RSV2RQevAoVb5eWsnJg+zvno17vIuNvr
-         2F6VPqqtrwFUyQ82E9UtgvV1hfpIBBvToLhDE3d159bOyb8rr+zigY1hgPeUJtXRbkCx
-         J3SXcdquZuPK9zULJFellhZNNLjBDicSVYE6MN48r0uBl4tJd5VXtVNwtz+iF2SEIK9Q
-         Rztw==
-X-Forwarded-Encrypted: i=1; AJvYcCUw3GOHN7pbjaO5PliZB8Cr4NyFEHFU7b+1ydeqpCX+C8e5weuUzoKj3XBlRN7xecnuvllGwep3wasMBIR0VkzWIDPpvpwbKPLu4xU6
-X-Gm-Message-State: AOJu0YzLopGZjXyf1b3iRKjU67ozJg9GtMTsqtJapgeQ+EzZUjzkl8nS
-	ZiDtePNzXElxBAP/8hqMB1Iu+QhboxNcaNpxhRBU9UQm/I7wsOCqTLA7xmrG/68=
-X-Google-Smtp-Source: AGHT+IHBDqzyAQaqAblMBYZ/REnw/xBnckkWEvFRfvbnVeW0ScRJWnXj7RChoQ3nKge40kbFdsUXOg==
-X-Received: by 2002:a50:a417:0:b0:57c:9c5d:d195 with SMTP id 4fb4d7f45d1cf-57d4bdc9e02mr8073153a12.27.1719441651591;
-        Wed, 26 Jun 2024 15:40:51 -0700 (PDT)
-Received: from [192.168.215.29] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-584d17b0618sm65946a12.57.2024.06.26.15.40.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Jun 2024 15:40:50 -0700 (PDT)
-Message-ID: <c1ec95ac-3831-4d78-a572-c95c0ee493a2@linaro.org>
-Date: Thu, 27 Jun 2024 00:40:49 +0200
+	s=arc-20240116; t=1719441769; c=relaxed/simple;
+	bh=6Gvpn1YxFj/EbKU8uOHwNsaKTjA1vZNHzno/TrAxfGU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZoNlvAik/6O8c7EF9oO/4LjIiLxqVJ1MEgYMdFlc/qnXrLmiRXx2NqJqm73gHF8iSB4BTRXr2h3jpecuofyrSG5AU0rr7xrG1R8nd+0qwHiduZsVDdHJbh6aenUwVvCIiByhREKHqPVhXvqdKJx3a1r5LcJ7Lbp4H1n1C3Qn87E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZdyOxEX+; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719441768; x=1750977768;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6Gvpn1YxFj/EbKU8uOHwNsaKTjA1vZNHzno/TrAxfGU=;
+  b=ZdyOxEX+5Nk+Z/ld5DU35XRLRknFyTXhcNM1Ojx755Am+Qi6VZwXjPCv
+   IAyOgESIN9d9FO7T0dy0yJfmNA5hpAxnSgmefFjCHYsNxNbvlyZjv6fCi
+   zL2nJik364mxNAbt3rEonyoylkNYVKj+7CRl4UTys8lIJ+Px57mfW2NVo
+   hgr08+ER7WQrfYmA3qPOLsBJIVKdiU9b6HVw7nTqBv3XUHUoxwwUH+tM1
+   +mnz5A+Q8+epybz6EHKWRk0w7GTKT0LuietxHK9U9PbMRdkxUbANFu7wO
+   1/jEC9tTdpucxuHHGqxYtGGeDynC4FT1b+K4jxqYLNO0IsNFqiFKeNyFd
+   A==;
+X-CSE-ConnectionGUID: 0Sq7LgNIRyShsHo3doVe9Q==
+X-CSE-MsgGUID: 3o1jPyeURJOZzk+o90UODQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="16222940"
+X-IronPort-AV: E=Sophos;i="6.08,268,1712646000"; 
+   d="scan'208";a="16222940"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 15:42:47 -0700
+X-CSE-ConnectionGUID: F6sHt5gXT8msrSf3kPT+gQ==
+X-CSE-MsgGUID: PSGbGGpwTnuo8zO3f3rnCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,268,1712646000"; 
+   d="scan'208";a="48612906"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 26 Jun 2024 15:42:43 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sMbLd-000FdG-0g;
+	Wed, 26 Jun 2024 22:42:41 +0000
+Date: Thu, 27 Jun 2024 06:42:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: admiyo@os.amperecomputing.com, Jeremy Kerr <jk@codeconstruct.com.au>,
+	Matt Johnston <matt@codeconstruct.com.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] mctp pcc: Implement MCTP over PCC Transport
+Message-ID: <202406270625.2MuBj55z-lkp@intel.com>
+References: <20240625185333.23211-4-admiyo@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/3] drm/msm/adreno: Add support for X185 GPU
-To: Rob Clark <robdclark@gmail.com>
-Cc: Akhil P Oommen <quic_akhilpo@quicinc.com>,
- freedreno <freedreno@lists.freedesktop.org>,
- dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
- Bjorn Andersson <andersson@kernel.org>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>, Daniel Vetter <daniel@ffwll.ch>,
- David Airlie <airlied@gmail.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Marijn Suijten <marijn.suijten@somainline.org>, Sean Paul <sean@poorly.run>,
- linux-kernel@vger.kernel.org
-References: <20240623110753.141400-1-quic_akhilpo@quicinc.com>
- <20240623110753.141400-3-quic_akhilpo@quicinc.com>
- <5947559d-30dd-4da1-93cc-a15dc65cb77d@linaro.org>
- <20240626082422.zcsari27yoskayuo@hu-akhilpo-hyd.qualcomm.com>
- <CAF6AEGvCaGq8ukxra_bzc=4pUf8y5NndKRagQspD0=uCZdBfoA@mail.gmail.com>
- <853849b4-69f2-488f-ab17-dc550c235e3d@linaro.org>
- <CAF6AEGsFExhokWqHka-cwFGqyYgo61OL=7F=o5ouRm-LoHh9Dw@mail.gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <CAF6AEGsFExhokWqHka-cwFGqyYgo61OL=7F=o5ouRm-LoHh9Dw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240625185333.23211-4-admiyo@os.amperecomputing.com>
 
-On 27.06.2024 12:32 AM, Rob Clark wrote:
-> On Wed, Jun 26, 2024 at 2:38 PM Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
->>
->> On 26.06.2024 8:43 PM, Rob Clark wrote:
->>> On Wed, Jun 26, 2024 at 1:24 AM Akhil P Oommen <quic_akhilpo@quicinc.com> wrote:
->>>>
->>>> On Mon, Jun 24, 2024 at 03:53:48PM +0200, Konrad Dybcio wrote:
->>>>>
->>>>>
->>>>> On 6/23/24 13:06, Akhil P Oommen wrote:
->>>>>> Add support in drm/msm driver for the Adreno X185 gpu found in
->>>>>> Snapdragon X1 Elite chipset.
->>>>>>
->>>>>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
->>>>>> ---
->>>>>>
->>>>>>   drivers/gpu/drm/msm/adreno/a6xx_gmu.c      | 19 +++++++++++++++----
->>>>>>   drivers/gpu/drm/msm/adreno/a6xx_gpu.c      |  6 ++----
->>>>>>   drivers/gpu/drm/msm/adreno/adreno_device.c | 14 ++++++++++++++
->>>>>>   drivers/gpu/drm/msm/adreno/adreno_gpu.h    |  5 +++++
->>>>>>   4 files changed, 36 insertions(+), 8 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
->>>>>> index 0e3dfd4c2bc8..168a4bddfaf2 100644
->>>>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
->>>>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
->>>>>> @@ -830,8 +830,10 @@ static int a6xx_gmu_fw_start(struct a6xx_gmu *gmu, unsigned int state)
->>>>>>      */
->>>>>>     gmu_write(gmu, REG_A6XX_GMU_CM3_CFG, 0x4052);
->>>>>> +   if (adreno_is_x185(adreno_gpu)) {
->>>>>> +           chipid = 0x7050001;
->>>>>
->>>>> What's wrong with using the logic below?
->>>>
->>>> patchid is BITS(7, 0), not (15, 8) in the case of x185. Due to the
->>>> changes in the chipid scheme within the a7x family, this is a bit
->>>> confusing. I will try to improve here in another series.
->>>
->>> I'm thinking we should just add gmu_chipid to struct a6xx_info, tbh
->>>
->>> Maybe to start with, we can fall back to the existing logic if
->>> a6xx_info::gmu_chipid is zero so we don't have to add it for _every_
->>> a6xx/a7xx
->>
->> If X185 is not the only occurence, I'd second this..
-> 
-> basically all a7xx are "special" compared to the original logic, so we
-> can start with using gmu_chipid for just a7xx
+Hi,
 
-That works
+kernel test robot noticed the following build errors:
 
-Konrad
+[auto build test ERROR on rafael-pm/linux-next]
+[also build test ERROR on rafael-pm/bleeding-edge linus/master v6.10-rc5 next-20240625]
+[cannot apply to horms-ipvs/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/admiyo-os-amperecomputing-com/mctp-pcc-Check-before-sending-MCTP-PCC-response-ACK/20240626-052432
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/20240625185333.23211-4-admiyo%40os.amperecomputing.com
+patch subject: [PATCH v3 3/3] mctp pcc: Implement MCTP over PCC Transport
+config: powerpc-allyesconfig (https://download.01.org/0day-ci/archive/20240627/202406270625.2MuBj55z-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project ad79a14c9e5ec4a369eed4adf567c22cc029863f)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240627/202406270625.2MuBj55z-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406270625.2MuBj55z-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/net/mctp/mctp-pcc.c:8:
+   In file included from include/linux/if_arp.h:22:
+   In file included from include/linux/skbuff.h:17:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:8:
+   In file included from include/linux/cacheflush.h:5:
+   In file included from arch/powerpc/include/asm/cacheflush.h:7:
+   In file included from include/linux/mm.h:2253:
+   include/linux/vmstat.h:500:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     500 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     501 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:507:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     507 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     508 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:519:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     519 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     520 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:528:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     528 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     529 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   In file included from drivers/net/mctp/mctp-pcc.c:17:
+   include/acpi/acpi_drivers.h:72:43: warning: declaration of 'struct acpi_pci_root' will not be visible outside of this function [-Wvisibility]
+      72 | struct pci_bus *pci_acpi_scan_root(struct acpi_pci_root *root);
+         |                                           ^
+   drivers/net/mctp/mctp-pcc.c:214:19: error: incomplete definition of type 'struct acpi_device'
+     214 |         dev_dbg(&acpi_dev->dev, "Adding mctp_pcc device for HID  %s\n",
+         |                  ~~~~~~~~^
+   include/linux/dev_printk.h:165:18: note: expanded from macro 'dev_dbg'
+     165 |         dynamic_dev_dbg(dev, dev_fmt(fmt), ##__VA_ARGS__)
+         |                         ^~~
+   include/linux/dynamic_debug.h:274:7: note: expanded from macro 'dynamic_dev_dbg'
+     274 |                            dev, fmt, ##__VA_ARGS__)
+         |                            ^~~
+   include/linux/dynamic_debug.h:250:59: note: expanded from macro '_dynamic_func_call'
+     250 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
+         |                                                                  ^~~~~~~~~~~
+   include/linux/dynamic_debug.h:248:65: note: expanded from macro '_dynamic_func_call_cls'
+     248 |         __dynamic_func_call_cls(__UNIQUE_ID(ddebug), cls, fmt, func, ##__VA_ARGS__)
+         |                                                                        ^~~~~~~~~~~
+   include/linux/dynamic_debug.h:224:15: note: expanded from macro '__dynamic_func_call_cls'
+     224 |                 func(&id, ##__VA_ARGS__);                       \
+         |                             ^~~~~~~~~~~
+   include/linux/acpi.h:792:8: note: forward declaration of 'struct acpi_device'
+     792 | struct acpi_device;
+         |        ^
+   drivers/net/mctp/mctp-pcc.c:215:3: error: call to undeclared function 'acpi_device_hid'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     215 |                 acpi_device_hid(acpi_dev));
+         |                 ^
+   drivers/net/mctp/mctp-pcc.c:215:3: note: did you mean 'acpi_device_dep'?
+   include/acpi/acpi_bus.h:41:6: note: 'acpi_device_dep' declared here
+      41 | bool acpi_device_dep(acpi_handle target, acpi_handle match);
+         |      ^
+   drivers/net/mctp/mctp-pcc.c:216:15: error: call to undeclared function 'acpi_device_handle'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     216 |         dev_handle = acpi_device_handle(acpi_dev);
+         |                      ^
+   drivers/net/mctp/mctp-pcc.c:216:13: error: incompatible integer to pointer conversion assigning to 'acpi_handle' (aka 'void *') from 'int' [-Wint-conversion]
+     216 |         dev_handle = acpi_device_handle(acpi_dev);
+         |                    ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/net/mctp/mctp-pcc.c:220:20: error: incomplete definition of type 'struct acpi_device'
+     220 |                 dev_err(&acpi_dev->dev, "FAILURE to lookup PCC indexes from CRS");
+         |                          ~~~~~~~~^
+   include/linux/dev_printk.h:154:44: note: expanded from macro 'dev_err'
+     154 |         dev_printk_index_wrap(_dev_err, KERN_ERR, dev, dev_fmt(fmt), ##__VA_ARGS__)
+         |                                                   ^~~
+   include/linux/dev_printk.h:110:11: note: expanded from macro 'dev_printk_index_wrap'
+     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
+         |                         ^~~
+   include/linux/acpi.h:792:8: note: forward declaration of 'struct acpi_device'
+     792 | struct acpi_device;
+         |        ^
+   drivers/net/mctp/mctp-pcc.c:225:17: error: incomplete definition of type 'struct acpi_device'
+     225 |         dev = &acpi_dev->dev;
+         |                ~~~~~~~~^
+   include/linux/acpi.h:792:8: note: forward declaration of 'struct acpi_device'
+     792 | struct acpi_device;
+         |        ^
+   drivers/net/mctp/mctp-pcc.c:271:10: error: incomplete definition of type 'struct acpi_device'
+     271 |         acpi_dev->driver_data = mctp_pcc_dev;
+         |         ~~~~~~~~^
+   include/linux/acpi.h:792:8: note: forward declaration of 'struct acpi_device'
+     792 | struct acpi_device;
+         |        ^
+   drivers/net/mctp/mctp-pcc.c:326:27: error: variable has incomplete type 'struct acpi_driver'
+     326 | static struct acpi_driver mctp_pcc_driver = {
+         |                           ^
+   drivers/net/mctp/mctp-pcc.c:326:15: note: forward declaration of 'struct acpi_driver'
+     326 | static struct acpi_driver mctp_pcc_driver = {
+         |               ^
+>> drivers/net/mctp/mctp-pcc.c:337:1: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]
+     337 | module_acpi_driver(mctp_pcc_driver);
+         | ^
+         | int
+>> drivers/net/mctp/mctp-pcc.c:337:20: error: a parameter list without types is only allowed in a function definition
+     337 | module_acpi_driver(mctp_pcc_driver);
+         |                    ^
+   6 warnings and 10 errors generated.
+
+
+vim +/int +337 drivers/net/mctp/mctp-pcc.c
+
+   325	
+ > 326	static struct acpi_driver mctp_pcc_driver = {
+   327		.name = "mctp_pcc",
+   328		.class = "Unknown",
+   329		.ids = mctp_pcc_device_ids,
+   330		.ops = {
+   331			.add = mctp_pcc_driver_add,
+   332			.remove = mctp_pcc_driver_remove,
+   333		},
+   334		.owner = THIS_MODULE,
+   335	};
+   336	
+ > 337	module_acpi_driver(mctp_pcc_driver);
+   338	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
