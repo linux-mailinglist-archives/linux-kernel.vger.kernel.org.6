@@ -1,72 +1,133 @@
-Return-Path: <linux-kernel+bounces-231397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74A6191983F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:25:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF4D5919840
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:25:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 176A21F22C69
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:25:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 839C8283D21
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 270B2191473;
-	Wed, 26 Jun 2024 19:24:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 869A9191499;
+	Wed, 26 Jun 2024 19:25:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="wV0z22DX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Dt5sSxXd"
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A2A15B7
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 19:24:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA1515B7
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 19:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719429897; cv=none; b=Pa7o8QwEAIZI2/FvsqYqV5AEUCth8xu+z8daPp5h3BYvANLin4FJP0RnQ+e1OS9tO1ECbct7Su3MGr3Nw3jPCvNFhhrMhSVTWTQrQJJELE59ojFSVaIad4aQGh5VDc5oO4A1oqMhjEc4qvJT/pP0FUr6UqHndZG+/QyVT+JYbXo=
+	t=1719429936; cv=none; b=BFwzQl/H3XOoBa8i1qAa2VqqJIZzq7FLXdPhZjwE3+UJPnHVYgipHstGZc8zLpYm/tKhDjb0LSKLkPzheKF2LWwxuCfu3bUiqXDRcdd/VtSe/ll3NnLftkVYIa7iO0L1vC1JgqrAd+IYdDCbnSYYN/WBIAPqHW2zSz5MDTF6/xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719429897; c=relaxed/simple;
-	bh=L9zv1zyg6ZWXDVeXJlJkvdGhYyFdYxzY1zw9yYHh1Uc=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=P9u2hPrHi9w23aXlaj0n6i3eSkxod+wjdA+eCu+a0IJ9qPX/2DA1S8K54sxwj0nbhXfOQmaX6HJn7jZtoF++u+VteJREExLCWpF+5LYcOk76boImXeCkrQr9rfGqhf33xSfjSafuqkTPztxgMQ/fetKZZUZmGKYl7bJjJUSn28k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=wV0z22DX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D86FC116B1;
-	Wed, 26 Jun 2024 19:24:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1719429896;
-	bh=L9zv1zyg6ZWXDVeXJlJkvdGhYyFdYxzY1zw9yYHh1Uc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=wV0z22DXSxzOeOhpjs7JU2h0sNhs3+EaJG7CkjUmKgK+xNzbvC9WNthGXlAPitnho
-	 YWnqSP43zyoSfIDzMLIIejcFbjF6BfX1kpVIqv6ctYYXK8QyKRRcTSxL+lFnDT9Khu
-	 WYUEOoNpI2yqF4p1IZ1jZ2pu+ytWAVnw3JWp7GlI=
-Date: Wed, 26 Jun 2024 12:24:56 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Michal Hocko <mhocko@suse.com>, Christian Brauner <brauner@kernel.org>,
- "Eric W. Biederman" <ebiederm@xmission.com>, Jens Axboe <axboe@kernel.dk>,
- Jinliang Zheng <alexjlzheng@tencent.com>, Mateusz Guzik
- <mjguzik@gmail.com>, Matthew Wilcox <willy@infradead.org>, Tycho Andersen
- <tandersen@netflix.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -mm 0/2] memcg: deuglify mm_update_next_owner()
-Message-Id: <20240626122456.a9eb021e4ccbfbb1b6b93d1c@linux-foundation.org>
-In-Reply-To: <20240626152835.GA17910@redhat.com>
-References: <20240626152835.GA17910@redhat.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719429936; c=relaxed/simple;
+	bh=Xx0UgYqXqz8oX6S2jDQnTn7hCBO131a23udEubagAuI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mI+A7xQdU4zr6nCqNgFZojDqf58xSk0RZ4Ts0LbKB5CgrrJNLnrUBPZRIdEmT3Yz48qoo9hWl2VGjd58QI4/3Q5jwlCooYigtSO/qAtz0wW38KTWf5rfFoGlGGgv+1Jg0JTgUvKV5cAJH5QzOQUh4SJ5SQLTOiI/ncy5X1e9tRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Dt5sSxXd; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3762c172d94so3072805ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 12:25:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1719429934; x=1720034734; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9AuhQXICJYgi+8HhiIxGyyUjo5Wfz9/NG9/QSsLxyyk=;
+        b=Dt5sSxXdQ0UlzBU0DG1d+I1X7NYowjhR8L9aXdmERSrgRWtScDBcfTKblq3ueZaBx8
+         Ni6DEK/So1AY+1FaUxA5Fo9v9UY9lRdrg/lxhYMTrRSLGAMdVyWQYMDEslxq6+zERYtF
+         IP4syj4rfM2uVSyJB6q2LCNoLVdM7jJK2PBhQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719429934; x=1720034734;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9AuhQXICJYgi+8HhiIxGyyUjo5Wfz9/NG9/QSsLxyyk=;
+        b=h6AanxHfN7pFKgvJcB4oJM2wND1vaNI2PpdDu8Uk/ZcPO/4HPcBWU5wWwZb9kpcFMJ
+         1ixhc6kR+NJeZWCQDM/pW0CzEoLWoIizzkX2aOiyshjRdlKMWHErsn6WBERk5iwlFHmM
+         /us594z3frkMB6YMxjskmvXCgL+7OnWUVGEf3xv/fkyOLAr4Jss1R04ZEV+5EYBDo9T8
+         hBThEroTSy28pjfZ6mIF7imbKLt1tdhLn/CVpWv4SBcKVaqh0qczkgkIawVZFbcuUqUX
+         9rnFRWQEDhzpqa1XfZ6XAOa9Mp1vabthdkuzdB0Co9TV9JN7jznmP8NjX5jiFCdfD7EP
+         3r1g==
+X-Gm-Message-State: AOJu0Yytq30NLl4JF2tdaOHaipt8UZYBJCMyXNJYVEzxHwPuH+uFGAaF
+	F4kdDit+2/pdbQLE83lOQO86Az/mNcTGY3pUL/Sof+E6bzxzdfTLVMWGYaZUlGsxaJSauXqLgZr
+	H
+X-Google-Smtp-Source: AGHT+IHc7cNmqC8XQ1K7MI9KHdiJjhxNl9Nr1dtw6UpPt16PdnXhfW9pac2d9TdCfRhJQqg1tX73ZQ==
+X-Received: by 2002:a05:6602:3148:b0:7f3:9ef8:30a4 with SMTP id ca18e2360f4ac-7f39ef8334dmr1257790239f.1.1719429934165;
+        Wed, 26 Jun 2024 12:25:34 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b9d11e98b8sm3320562173.114.2024.06.26.12.25.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Jun 2024 12:25:33 -0700 (PDT)
+Message-ID: <7275eb85-67ae-4d70-84ae-702a478eb98a@linuxfoundation.org>
+Date: Wed, 26 Jun 2024 13:25:33 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] selftests/resctrl: Fix non-contiguous CBM for AMD
+To: Reinette Chatre <reinette.chatre@intel.com>, shuah@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ ilpo.jarvinen@linux.intel.com, maciej.wieczor-retman@intel.com,
+ peternewman@google.com, eranian@google.com, fenghua.yu@intel.com,
+ Babu Moger <babu.moger@amd.com>, Shuah Khan <skhan@linuxfoundation.org>
+References: <3a6c9dd9dc6bda6e2582db049bfe853cd836139f.1717622080.git.babu.moger@amd.com>
+ <96d276c11e69cfb1e29d50a12c8043555c06b404.1718144237.git.babu.moger@amd.com>
+ <4be0449a-1337-4fc6-8ed6-fec10cc74bd6@intel.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <4be0449a-1337-4fc6-8ed6-fec10cc74bd6@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, 26 Jun 2024 17:28:35 +0200 Oleg Nesterov <oleg@redhat.com> wrote:
+On 6/26/24 10:55, Reinette Chatre wrote:
+> Hi Shuah,
+> 
+> Could you please consider this fix for inclusion into kselftests?
+> 
+> Thank you very much.
+> 
+> Reinette
+> 
+> On 6/11/24 3:18 PM, Babu Moger wrote:
+>> The non-contiguous CBM test fails on AMD with:
+>> Starting L3_NONCONT_CAT test ...
+>> Mounting resctrl to "/sys/fs/resctrl"
+>> CPUID output doesn't match 'sparse_masks' file content!
+>> not ok 5 L3_NONCONT_CAT: test
+>>
+>> AMD always supports non-contiguous CBM but does not report it via CPUID.
+>>
+>> Fix the non-contiguous CBM test to use CPUID to discover non-contiguous
+>> CBM support only on Intel.
+>>
+>> Fixes: ae638551ab64 ("selftests/resctrl: Add non-contiguous CBMs CAT test")
+>> Signed-off-by: Babu Moger <babu.moger@amd.com>
+>> Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+>> ---
+>> v3: Reworked changelong.
+>>
+>> v2: Moved the non-contiguous CBM verification to a new function
+>>      arch_supports_noncont_cat.
+>>
+>> v1: This was part of the series
+>>      https://lore.kernel.org/lkml/cover.1708637563.git.babu.moger@amd.com/
+>>      Sending this as a separate fix per review comments.
+>> ---
+>>   tools/testing/selftests/resctrl/cat_test.c | 32 +++++++++++++++-------
+>>   1 file changed, 22 insertions(+), 10 deletions(-)
+>>
 
-> On top of mm-optimize-the-redundant-loop-of-mm_update_owner_next.patch
+Applied to linux-kselftest fixes branch for 6.10-rc6
 
-What should we do with
-mm-optimize-the-redundant-loop-of-mm_update_owner_next.patch?  It
-prevents a hard lockup splat so I'm inclined to merge it into 6.10-rcX
-and cc:stable.  Further improvements (this series) can be made in the
-normal fashion?
+thanks,
+-- Shuah
 
 
