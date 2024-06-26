@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-230819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F32D8918248
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:25:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBE0291824D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:25:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEDFB2825FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:25:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AC841C21871
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0799D181BB8;
-	Wed, 26 Jun 2024 13:25:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799B1181B80;
+	Wed, 26 Jun 2024 13:25:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WjcDgGmP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EXyXNWNo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4294217D34D;
-	Wed, 26 Jun 2024 13:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A841822F3;
+	Wed, 26 Jun 2024 13:25:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719408312; cv=none; b=hZSD4aDuxBc7gj8dto6hhjU5MQHmB4jhYtEoNNcnipxAaabpbTTFMVK/dL9jZAnqap0IIaTdqFQBFZG+Xh55kgqY6Uz5NnlVQbTudJGSJrHIGH0svI5m2igVhsFpbGWSEROZuju7Ib/Ny5iMjCAIqRRG7EVlg3msxURNo6Hkqyw=
+	t=1719408316; cv=none; b=ZccrZgGIk4McNaMSuQs9Dx4WlIrebeBQlFZTVSa72oujB3/6KZgIFmgfVjvrNqNu4TxwdnM30E5brLB6LbNBVwib3A52THmaKmGXHSvuFp37SQ9H3IMv2+svtT2EeNEh27QdSBRlVgZqi0CG9ND7HHP16oqNiQl78NBsIdGZOzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719408312; c=relaxed/simple;
-	bh=Z37XRrmWvVILWMnkjGGDKcM3OK2JNge9DvmvgsYx/vs=;
+	s=arc-20240116; t=1719408316; c=relaxed/simple;
+	bh=EGit2F4HKLGhDNiVHa9AMMoIirVo0tUW+pFwmlWOOG4=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=WLKiU2W1Hxa9TQ8LHaKG53igk6D7mRyCsFNjgNcJFBQ7uWbXuBzxAChHuwo3tK7BSs837UTArfDJF4Og2xxptO5FnQpj2ULrTrCsWWKK3dMacAKK06jA/LeZAKgUyi9tFzH/BEtYJbghLw91OA1Gx0xUskpbO9NMOUTLLID7+/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WjcDgGmP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98D42C32789;
-	Wed, 26 Jun 2024 13:25:11 +0000 (UTC)
+	 Message-Id:Subject; b=awx8+TCQl5Jm9LhKJ3vecgwTW7WafqYBbs9uU55nHYtS4GHs6tibpRlp4zeZAu3COdbMYEHnI6oOxn4OoK9AMwx1Eu/D67qv/9cz+RfkrV5xr3vy4l7v7YNG7thY8Ae4jvsGxkQ4Zo73QAmZfwk9vWgp3RSlW2vxr3bHgcqMXvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EXyXNWNo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C1B5C2BD10;
+	Wed, 26 Jun 2024 13:25:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719408311;
-	bh=Z37XRrmWvVILWMnkjGGDKcM3OK2JNge9DvmvgsYx/vs=;
+	s=k20201202; t=1719408316;
+	bh=EGit2F4HKLGhDNiVHa9AMMoIirVo0tUW+pFwmlWOOG4=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=WjcDgGmPDPxeGeVOYqx3XflypyDVyUQ8wwWqn4i5CK2w6bQod3AHMFd6BRvJxJg4P
-	 E2vdQuxkw9e7npfhsTClna0ER5pDDv7KGl/O6S0CexOQBEhwJFGdcDaXttsDmyJ+Sb
-	 9bDK5Y0k3hi9tY/l6nlF4EmcAEUAGqFRlafKkVk+ksStQYleLe20M1V4LsGrishE1u
-	 UvseVSo2ae9Zm5dsBI0hCJOVyIScEHwuKcAqBq4eU2doQSv/RRBUjH7f3k1gpeLqKH
-	 ui21FEnDnQb/jteeNC/6sWcHYL47PGqyTsbQUaVD1B45Sw+pKdxafb0KqoKTc779uv
-	 gzaTn5YdX3g2A==
-Date: Wed, 26 Jun 2024 07:25:10 -0600
+	b=EXyXNWNod6EqpAqfmrmiFgNdiuCFX/Pgutt4Tgsm4VOJYzoh2p7naEqWVArXxbU64
+	 iVyB7J/NDaoqaLm65W2gPcnStDTzZe4vVoFbNlhmCw8fNxvwEwfesOraQvfJ29Byl4
+	 rxsE7imU4Ie9lDENJzZWClHQJuLcH4K2YH3Q4sWQV3o0NGZ/+1hw6rQHT8gn5u+ZWY
+	 01C4eilyiokLcDmFAbMVF8No3KXyqule+Uus9tg9i7x2Bzyhrdsdcyf/YWrewWB+c3
+	 M+HOtjSAj/sZckt2hxV4uFgOYDFFP3pQRywH+uTY+lE8k7oRqRmqf1nceYSrMp/xa8
+	 +wFrY8lw6wdVw==
+Date: Wed, 26 Jun 2024 07:25:14 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,33 +50,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Andy Yan <andyshrk@163.com>
-Cc: dsimic@manjaro.org, linux-kernel@vger.kernel.org, 
- linux-rockchip@lists.infradead.org, heiko@sntech.de, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-In-Reply-To: <20240623083413.2051412-1-andyshrk@163.com>
-References: <20240623083413.2051412-1-andyshrk@163.com>
-Message-Id: <171940790600.2950728.17625531433842246632.robh@kernel.org>
-Subject: Re: [PATCH] arm64: dts: rockchip: Fix the i2c address of es8316 on
- Cool Pi 4B
+To: Nikita Travkin <nikita@trvn.ru>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, devicetree@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ phone-devel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Anton Bambura <jenneron@postmarketos.org>, 
+ Cristian Cozzolino <cristian_ci@protonmail.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+In-Reply-To: <20240623-msm8916-lg-initial-v1-0-6fbcf714d69b@trvn.ru>
+References: <20240623-msm8916-lg-initial-v1-0-6fbcf714d69b@trvn.ru>
+Message-Id: <171940791013.2950956.14057690637549910661.robh@kernel.org>
+Subject: Re: [PATCH 0/3] Introduce msm8916 based LG devices
 
 
-On Sun, 23 Jun 2024 16:34:13 +0800, Andy Yan wrote:
-> According to the hardware design, the i2c address of audio codec es8316
-> on Cool Pi 4B is 0x10.
+On Sun, 23 Jun 2024 14:26:29 +0500, Nikita Travkin wrote:
+> This series introduces two msm8916-based LG devices:
 > 
-> This fix the read/write error like bellow:
-> es8316 7-0011: ASoC: error at soc_component_write_no_lock on es8316.7-0011 for register: [0x0000000c] -6
-> es8316 7-0011: ASoC: error at soc_component_write_no_lock on es8316.7-0011 for register: [0x00000003] -6
-> es8316 7-0011: ASoC: error at soc_component_read_no_lock on es8316.7-0011 for register: [0x00000016] -6
-> es8316 7-0011: ASoC: error at soc_component_read_no_lock on es8316.7-0011 for register: [0x00000016] -6
+> - LG Leon LTE (c50)
+> - LG LG K10 (m216)
 > 
-> Fixes: 3f5d336d64d6 ("arm64: dts: rockchip: Add support for rk3588s based board Cool Pi 4B")
-> Signed-off-by: Andy Yan <andyshrk@163.com>
+> The devices only have basic support for now.
+> 
+> Signed-off-by: Nikita Travkin <nikita@trvn.ru>
 > ---
+> Anton Bambura (1):
+>       arm64: dts: qcom: msm8916-lg-c50: add initial dts for LG Leon LTE
 > 
->  arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Cristian Cozzolino (1):
+>       arm64: dts: qcom: msm8916-lg-m216: Add initial device tree
+> 
+> Nikita Travkin (1):
+>       dt-bindings: arm: qcom: Add msm8916 based LG devices
+> 
+>  Documentation/devicetree/bindings/arm/qcom.yaml |   2 +
+>  arch/arm64/boot/dts/qcom/Makefile               |   2 +
+>  arch/arm64/boot/dts/qcom/msm8916-lg-c50.dts     | 140 +++++++++++++
+>  arch/arm64/boot/dts/qcom/msm8916-lg-m216.dts    | 251 ++++++++++++++++++++++++
+>  4 files changed, 395 insertions(+)
+> ---
+> base-commit: f76698bd9a8ca01d3581236082d786e9a6b72bb7
+> change-id: 20240621-msm8916-lg-initial-8d4a399ec3c2
+> 
+> Best regards,
+> --
+> Nikita Travkin <nikita@trvn.ru>
+> 
+> 
 > 
 
 
@@ -94,9 +115,19 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y rockchip/rk3588s-coolpi-4b.dtb' for 20240623083413.2051412-1-andyshrk@163.com:
+New warnings running 'make CHECK_DTBS=y qcom/msm8916-lg-c50.dtb qcom/msm8916-lg-m216.dtb' for 20240623-msm8916-lg-initial-v1-0-6fbcf714d69b@trvn.ru:
 
-arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts:286.25-300.4: Warning (i2c_bus_reg): /i2c@fec90000/audio-codec@11: I2C bus unit address format error, expected "10"
+arch/arm64/boot/dts/qcom/msm8916-lg-c50.dtb: /soc@0/audio-codec@771c000: failed to match any schema with compatible: ['qcom,msm8916-wcd-digital-codec']
+arch/arm64/boot/dts/qcom/msm8916-lg-m216.dtb: /soc@0/audio-codec@771c000: failed to match any schema with compatible: ['qcom,msm8916-wcd-digital-codec']
+arch/arm64/boot/dts/qcom/msm8916-lg-m216.dtb: /soc@0/i2c@78b9000/touchscreen@34: failed to match any schema with compatible: ['melfas,mip4_ts']
+arch/arm64/boot/dts/qcom/msm8916-lg-c50.dtb: /soc@0/power-manager@b088000: failed to match any schema with compatible: ['qcom,msm8916-acc']
+arch/arm64/boot/dts/qcom/msm8916-lg-c50.dtb: /soc@0/power-manager@b098000: failed to match any schema with compatible: ['qcom,msm8916-acc']
+arch/arm64/boot/dts/qcom/msm8916-lg-c50.dtb: /soc@0/power-manager@b0a8000: failed to match any schema with compatible: ['qcom,msm8916-acc']
+arch/arm64/boot/dts/qcom/msm8916-lg-c50.dtb: /soc@0/power-manager@b0b8000: failed to match any schema with compatible: ['qcom,msm8916-acc']
+arch/arm64/boot/dts/qcom/msm8916-lg-m216.dtb: /soc@0/power-manager@b088000: failed to match any schema with compatible: ['qcom,msm8916-acc']
+arch/arm64/boot/dts/qcom/msm8916-lg-m216.dtb: /soc@0/power-manager@b098000: failed to match any schema with compatible: ['qcom,msm8916-acc']
+arch/arm64/boot/dts/qcom/msm8916-lg-m216.dtb: /soc@0/power-manager@b0a8000: failed to match any schema with compatible: ['qcom,msm8916-acc']
+arch/arm64/boot/dts/qcom/msm8916-lg-m216.dtb: /soc@0/power-manager@b0b8000: failed to match any schema with compatible: ['qcom,msm8916-acc']
 
 
 
