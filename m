@@ -1,249 +1,160 @@
-Return-Path: <linux-kernel+bounces-230242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69CCC917A41
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:56:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F56E917A44
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:57:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D82E1C23695
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:56:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A93E91F2426C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A427D15F316;
-	Wed, 26 Jun 2024 07:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="OMqpQy+G"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2062.outbound.protection.outlook.com [40.107.93.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1543415ECF3;
+	Wed, 26 Jun 2024 07:57:02 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C172E15ECF3;
-	Wed, 26 Jun 2024 07:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719388583; cv=fail; b=ETla4w5i1PbfTnC/dZTBhAm2E+phCC1WYNWl908G5dNnJ2f7HFp3q+WaeWYlqVPZPUsvIRuT3xashrf/Pn96AIvKB/Ng9PbOIe111TTt2uXGl0Of4WTo2TMf9v5oc9nKRT0AJpXFi3b6zG4o0DrurgdS1G9yAKPtT/goeWYlqiI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719388583; c=relaxed/simple;
-	bh=hu1dKRcnmnl6J89SrKVjiesVGRrTTW8Ego+m/bBL0lg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=HoQzh25JPUZFeGlJQ0YXI+pii4mqNWMKIHov6ocV4FItRnf98hUCHooXsS2hCexVqKeZhrcaB0Du8UwLncAqug1VGliIDTJvV1ED4izqkB3eZ4PV6NKleavx1NpPO1CZfGhi0v1XThZQp5kNa5/93+cWNzw0jDvGSnKwOUFFXwg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=OMqpQy+G; arc=fail smtp.client-ip=40.107.93.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=HB1TW+D1wdwVCw5epMpQ1EPybywF6wdirJ6n8+qan+ap0gWg5BGYTg1emRUaU5PtnORg19SjuTHutJIZUNBOnkfH8PqCyNJgVHnNfNZFtWCLKWDFRAm5O7LhgsRi7RmHecTG+t9rVn2GwkF07wJgX12dnu6D9ulZ1l5KVljHiS1YG7RDUnZnUjF6t0Z9tslbyZh60BXAUFJn1HrGI7bNtdr3By+zXXI0z3dGWutOH1xGtlYp07gTAAJ4mPBjLtr266NDVPaJejjGCUQUhUhPnZRwcF3otq8yPb1R+w4EbirUxvXm76IEdyny5+AuXbAqs4Zhm+X3vBmhHU5ob0tLvw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CDK9SJyS7cgfCvxf6oVXUNtbVdHnWQuQdrb2juar6DE=;
- b=h/ZiOWeLZ+RwxsB2kQNUBsybznxyEbyJmRxxHTWxv7lKF+Ue//NOo78HQpKQxVIOn5UOh45pkXFGVCz/a9Oz8fHN/amgDZPqcwF5grQyuXN2sYdgHmHphs20/S6zaQpx75gjQycX3aS/q1D6pFL0x6h33oNLZQZhhe2YUg+daGbft1hQy3WZ3nomBYOnwak/q441Q9RsyccHe1tUOecBfjrvGplXjGkTb0pHiv/W4Xwyg4Y087S7YJ+bwQWlMXE9UYYy8ZjmWGtznIAkyyfanvsOxWpSQQ6SgwYVTAdlibM601Yix9ok7KtKy0aOZqyuFWpFX87hibIa4Nywq+wu9A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CDK9SJyS7cgfCvxf6oVXUNtbVdHnWQuQdrb2juar6DE=;
- b=OMqpQy+GR0RL/0/TMEi87HGzW5xycczTOa0sPPk/aTs8LExYuSrsvq1aJsxgMyw7xNEvwRR+b9w2LpWht9TIj/RMmDInzR6/kWgqtyIryOzmROuQf8DbQn9c9Wk5m8EfCtPKBYfZzUOo05hKqGQCvijYDE3J3Ts7HOWVrF23urE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from LV8PR12MB9207.namprd12.prod.outlook.com (2603:10b6:408:187::15)
- by SJ2PR12MB7943.namprd12.prod.outlook.com (2603:10b6:a03:4c8::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.32; Wed, 26 Jun
- 2024 07:56:18 +0000
-Received: from LV8PR12MB9207.namprd12.prod.outlook.com
- ([fe80::3a37:4bf4:a21:87d9]) by LV8PR12MB9207.namprd12.prod.outlook.com
- ([fe80::3a37:4bf4:a21:87d9%7]) with mapi id 15.20.7698.025; Wed, 26 Jun 2024
- 07:56:18 +0000
-Message-ID: <e1132f04-9569-4f64-9b6a-96cd810ef5b8@amd.com>
-Date: Wed, 26 Jun 2024 13:26:09 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] cpufreq/amd-pstate-ut: Handle the inconsistency
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- rafael@kernel.org, viresh.kumar@linaro.org, gautham.shenoy@amd.com,
- perry.yuan@amd.com, skhan@linuxfoundation.org, li.meng@amd.com,
- ray.huang@amd.com
-References: <20240625134127.4464-1-Dhananjay.Ugwekar@amd.com>
- <20240625134127.4464-2-Dhananjay.Ugwekar@amd.com>
- <95bdfe3e-610f-43de-be2e-294cf2576fc8@amd.com>
- <e9811d4e-60bb-49ea-80da-5d4597ef8705@amd.com>
-Content-Language: en-US
-From: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-In-Reply-To: <e9811d4e-60bb-49ea-80da-5d4597ef8705@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MA0P287CA0014.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:d9::16) To LV8PR12MB9207.namprd12.prod.outlook.com
- (2603:10b6:408:187::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3C014532F
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 07:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719388621; cv=none; b=l8O8vRM4iKC+IflzHI2J9q7aNpvNZ83D2OfNQgOEUOw9F2zOLcHiJTnhXt8AyrRNl/hb0tUK7+QqWVfexF3EP6+AFMCjcOrAqzLT1pRzcG/nkQIbJb5CQssH7LmnHHAmhdihrnmsuyUpFkjtdXwttZp+u+S2Gb5UKBYz4QsAPDM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719388621; c=relaxed/simple;
+	bh=F93Fn46r5Pmll9Oshc2Sa4+Wtzu2QvPfx1KZHQZK8ZQ=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=NWg63rdge/RQ9dAqv4MRMORHiuzJJY4BLMXV8coOvO9K/skbRMlYkrU/XdqHduLWB2M1crjuuiZcs3RDMgqK/EOPoRQrTCJqv2J4R+LjVkJA2NcjsNQcuHkILGghoVqoPbIjqDvF65GXa9eVbIltd+alr/L4Aauz1WTFhpIEGkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4W8DSh4SGszxTqV;
+	Wed, 26 Jun 2024 15:52:36 +0800 (CST)
+Received: from kwepemd200019.china.huawei.com (unknown [7.221.188.193])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4AF72180087;
+	Wed, 26 Jun 2024 15:56:56 +0800 (CST)
+Received: from [10.173.127.72] (10.173.127.72) by
+ kwepemd200019.china.huawei.com (7.221.188.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 26 Jun 2024 15:56:55 +0800
+Subject: Re: [PATCH] migrate_pages: modify max number of pages to migrate in
+ batch
+To: "Huang, Ying" <ying.huang@intel.com>, Zhenneng Li <lizhenneng@kylinos.cn>
+CC: Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240624045120.121261-1-lizhenneng@kylinos.cn>
+ <87o77pzuq3.fsf@yhuang6-desk2.ccr.corp.intel.com>
+From: Miaohe Lin <linmiaohe@huawei.com>
+Message-ID: <1ffa1043-673b-fdd3-a33c-444c2e99fc54@huawei.com>
+Date: Wed, 26 Jun 2024 15:56:54 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9207:EE_|SJ2PR12MB7943:EE_
-X-MS-Office365-Filtering-Correlation-Id: ae6252fd-2ba8-4218-b410-08dc95b57631
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230038|366014|1800799022|376012;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?S2krWlZsUE91dUZUVzQvTnVrZTdGeWcrZzJRR0pNQ01TdU0yUXFYZG93L2RV?=
- =?utf-8?B?RnM3SlRkNnRyVHZNZFdXMDNqYktsMWgxZFhwTjdxT3JtU3NqV2E5aGwwQTd0?=
- =?utf-8?B?dS8zaSt1RW44TXFaalpGVXFpa0xtZk5zcWtVaW5VTHpveW5GY0JSZmF6aUVE?=
- =?utf-8?B?UGdrY2U5WGYvcmNhN0pXYzhoL0JZVTdieHlRRGhyclV5dElnOHY1N0NTMjQx?=
- =?utf-8?B?enFMR2JyQzdwRllhQ2ZyMmhCa2h4eUdxWXhzZngvb2c5SW5CcWM2aU0ybzkv?=
- =?utf-8?B?b3BuS2Yvem5OMzZXQVB1eTVvN2YyRWNrUjEyMzZwbDFVT1lEaTM4N0xDLzl6?=
- =?utf-8?B?OHRjaHBXV05MemxvNDJFV25tWlNlNHhQL21hM1NBWlliekNaM3pUOXVPTmtM?=
- =?utf-8?B?UUJFVitJWkg1NFlJQnJNRUQrSmpwK3BrWnFCMzRWT1grc215SkxqcG4xZTRq?=
- =?utf-8?B?dzBFdzVpTndpd1RaZ0hpNStSSHJNM3g1RFM1ckIxMUU4SXFwSUxQVDViOFB3?=
- =?utf-8?B?VjZLaVhRNFRESGtuMDF4TUN5TERhTTBFTG5NT0VTbUxNbTVqWWRKTE1nNitK?=
- =?utf-8?B?OXBWaUpUTXVXdXdTZ0N6QnZyc1lJWUdXVnpRZWtEZXl5K0lXNGVWRWc1d3Zn?=
- =?utf-8?B?ZXpvYzdlV0s3UHRkek8xWVU0c2c3V1dUbFlRazh1bTIxeFQ2WHRBOFlwOC84?=
- =?utf-8?B?NUxNS2FCNFp3WndoNVBreHE4YUdZVis1ZEwvMFZjYi8yeEdSTktGNEdiV0ly?=
- =?utf-8?B?Ry9hSk1OK3NYZWFJSzFVektqaWVWdmdJTEtOSUFweldKYmVRQlhwZnNIOXh6?=
- =?utf-8?B?dzlqYS9wMGlDUEZnYjlseXRFNVFzenlvbXJYS0RvVXJNSUVqbi8rVnBuem5n?=
- =?utf-8?B?VElGQUYxQTNqbjh3anhsQ2dYU2R6alF2NGRTVmhNZnduTE41bFUzbktqWFVG?=
- =?utf-8?B?N3VYWDN3TVRIRG1JMXY2RHJtb2taQ1ZSYm1UVTRRaUZ3QTFZcmkvdkJoa2Zw?=
- =?utf-8?B?VTByUHpVRXBOYVdJbzd3KzF3cHZXeWZ6Q29JcTVvQ1pIcWhwc0lYd1VRS0x0?=
- =?utf-8?B?VlAyTCtISVNLYUZZYmhYSHdRVmY1dmYzcXhaWGJlSnF4QkxZdEVXVllGVzFF?=
- =?utf-8?B?c2V3MVI5MEZBUFdSZnJWOEdFZ2RuaFZqYkNMZXNBekk3NkJFSTEzbTFobXM0?=
- =?utf-8?B?MkIwL25HTzEvdnN3Wk5tYnBlb1RoVHVlRGFxWDJYL3dJRytUb2hLbnIwTTFW?=
- =?utf-8?B?dEFyZ3YrSFYxOGtZcWhCd1Q3VTRDVi92alRiVG1weTZBc0dMOXpjY1BKSnhR?=
- =?utf-8?B?anU0ekNTczM3T0VhWlJicU83d3FKZ0s0ZkZBV2xCUzZkc2FKWGdtU2V1eFZa?=
- =?utf-8?B?czZ4dUgvT1IyVmZqRXkzU2ZQSUVyMlpnYWY3TGJYNmp3a0NJRElkelpSSWs2?=
- =?utf-8?B?RWdZcTh5M1RrOEloWDhCc0VhUllNOXpxSS9ZMXZEN2JpbFU1WE9xMVhwa1Y2?=
- =?utf-8?B?NVdPQ3dxRGJ2VUhHTTA4VzdPUnFSOGFEZ2Y5NEIyOEk5a2Frcmk5VmcxT3dM?=
- =?utf-8?B?VmxHWmJZckp5TzVyQlA3akVtQzFKQVRQOHRxNCtCaC90ekpyTlU3SUVFZ2No?=
- =?utf-8?B?SWUvNkpOUFNabm16ZXBqUXJYVmdTc3hsNDd4Y2I1NEFHNFgzYmlXRHZhZmZ5?=
- =?utf-8?B?TzRpeFBuQnJwczFNY3pCSWdEK2Q3ak5tandRbnczeDBpcDBYeVRKUkE4cDBH?=
- =?utf-8?Q?GphZcIJK2ClXGmaf0iER7ByGMT82n3aKFJsqYCv?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9207.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230038)(366014)(1800799022)(376012);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NUZ2T2JOMEE2RHhkMHpuWFlOa0JoNm91U2h6N3FkNVB0Um96SWtpSEp2a3ov?=
- =?utf-8?B?a2I0NVFvU3M3RTI2Q2EwVFA2aEdGOTFtSFRFaTRScG41ZkxadnI1OHJxdlky?=
- =?utf-8?B?ZG9sS1Q5OVduVHZkdmM2WGVzTnpaS2RPN3o1SmFhUlVzRWpyKzhHTVlTUFUr?=
- =?utf-8?B?dUFiQUx5bkhTR3czclB4L2VSRFlxYXR6cWVCRmNVRDhGTHRyUVNhZit2NDVC?=
- =?utf-8?B?cUJ0SnplTTliYTFvRXYzcGhTdWdhTnNUZUxJNUFvUlQ0L25NK3FEUXlDTXVX?=
- =?utf-8?B?VlY0RGdLVlhhb0VwUFZ0WmV2ZFlyWEM5dVdOZTZzZmllSWljY2lweHF6dEli?=
- =?utf-8?B?Ymh0dGgza2syY2dESFdaVUdzYWZvR2s1eEsxN2RVVjd6a0RWb1ovUjdnOE1M?=
- =?utf-8?B?L1U1L1VoWnUyNlg3bHF5NHFranh4UnFkYktmSTVIOVc5VGF5UTJpWDd0R2Nt?=
- =?utf-8?B?Y1p4T1l1bzVmYmlVMUZzclBrUitscmQ2c0EyTXl3WUdINmJWU0Q1c3V4VE5o?=
- =?utf-8?B?eFpERXBkNk83U05lZnNvRWFldEdKWkxEcXVnZ0wyM0tQa2RNUDRvSTNFU2JW?=
- =?utf-8?B?d2tKbzhRaDJmNVFTUHFCd1Ewd1ZMQllXQXZmc20ySDhVYnZLSmdIVVVZdWJL?=
- =?utf-8?B?b1lkTDJCLy96cFh1ZERkcGttSHF1OVQ1c2lnbTlvbDhEZFh0bG1mbGFJcjlR?=
- =?utf-8?B?YVNzRmREYyt4Ty83bjFDbWZvQXlXdTFIOFNxVTlqaXMzNlBmeVpDU1FFVkt6?=
- =?utf-8?B?eE9qaDR5aERySEVScEFYczVkLzBPS1VnRTl5anBQbi9WeUlWeC8reDhld0VI?=
- =?utf-8?B?S0NHWDV5ZnVwOEFaclZlOGJlcWNGc1VSQ25RQndsL0hrcHpNT0sydEE1dHdK?=
- =?utf-8?B?b2JiKzRnSkt3c2RFZis0UWFiZUx2R1VielA4WE9ISmFqK3hJM2hObit1Q3Jl?=
- =?utf-8?B?OGdDeU1TNzQxWE5aK3NYL2VtYmN5QS9wNTZFL2w2aVFxTlFWeGJlVmROaFBr?=
- =?utf-8?B?Szhidm1xNzBoemsyTW14V0crc21PWW91dVgvVzNocnVMNUpGYU80c0RaeWpy?=
- =?utf-8?B?a0J0R253NmdWenJ2VHBzMXYyU25JMHZVQzhxQUxmU3hWVlN1SGI3ZW9rdGVF?=
- =?utf-8?B?TU1UVHUyc3QvcW8ydE1BemVlLzVUYmV1TjRiQm5Ua21RS1dmSi8xRjZkdXhm?=
- =?utf-8?B?SnpSMU44ZDc5TTVRbTlwSjhkckpWd204a0RhajhXRUVhem9uZ1R0U0MwYkt1?=
- =?utf-8?B?S3VrdUI5VmtqMXdvelFIQ0J5ckhjUVB4U2JoUjBESmJ6MXlSQmZQVEs2elY3?=
- =?utf-8?B?UFVFa1hUc1UxOHU2NUtDMEE5aS9SOE43MHBIaTl0cDVzbnhGdHFDWWhIT3Vu?=
- =?utf-8?B?bU5ldWE4eEJ1U1BLenRSajdneWd2bUZhMCtaNlJsaFQ4Uy96VU5OZlFUS3di?=
- =?utf-8?B?UlhzVStMaXo2amlkbUkxejFzbFNsVTJtTUZsRkVmdHpPNkMwM21XdStCajBT?=
- =?utf-8?B?aEJweUp5TlpNR0wzeFRxQXBFbk9uZFFYTzR4bzJ3NnRwZUtwSFdETTlFZUV1?=
- =?utf-8?B?L2pnNTdhU29FTVVMQkhQSzFJZUVBTHhCVklBaTU2WDB6c1ZDNm9QMEdFNlZD?=
- =?utf-8?B?TStLNXM3THU2YjZvcVpFbHc4WGFWdUZMRDdSL0hESE9UaXp2cWk1Z2Z1ZkIy?=
- =?utf-8?B?TUREeGVLdUlJMmhKeXRCL3VpckdLL08yS0hpc2VOTFFFUGFvQW1kWEtUYysz?=
- =?utf-8?B?SG5zakpUdlJRald0RnpjSis5NTJ0MkQ3U0Zzc1RFaXZXSkMwbldoSndqYlUr?=
- =?utf-8?B?MjNpaEF4bDk4NjFnc2V2TlQxNEdyOXVTbHhYZnhnd0hKTEFBeTI4MWRrUXdw?=
- =?utf-8?B?ZGZMeGdKSjNUSy9jTGZpK2lURURzNTJpUE5ub2FsZXQ0S0dEZXI3VE5QeFVu?=
- =?utf-8?B?MlBtazY3bCtLZ0tnTkZPRmNZNHd6TmhZN1Z1VWRvZVFMd3ROanBGR3puQ082?=
- =?utf-8?B?dTFMTlNTZDl6VFdnVG9yY2NMcU5oVXJTYmxjSE9nT1JTeXdzLzhjUW1DaVp1?=
- =?utf-8?B?U290MFdjQUxCOFpsOGtoRE4vRGVzcWdoQy9ZQmdybTVRdlpqamJvakRMS2V3?=
- =?utf-8?Q?p8b26b9I+OHRRLAQZf0emh/Nr?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ae6252fd-2ba8-4218-b410-08dc95b57631
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9207.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 07:56:18.5338
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: q/1sGgIJdWcVHPIqdPbDdQfqymXoP4WUBQoLuUxxFKEaow7uDcr7nboPaTxqO13tW/QXq+puYXeglGgsYpwugg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7943
+In-Reply-To: <87o77pzuq3.fsf@yhuang6-desk2.ccr.corp.intel.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd200019.china.huawei.com (7.221.188.193)
 
-Hello Mario,
-
-On 6/25/2024 8:41 PM, Mario Limonciello wrote:
-> On 6/25/2024 08:51, Dhananjay Ugwekar wrote:
->> Minor modification, the commit subject is supposed to be
->> "cpufreq/amd-pstate-ut: Handle the inconsistency between nominal_freq and other *_freq units"
->>
->> The second half disappeared due to the word wrapping I guess.
+On 2024/6/25 9:17, Huang, Ying wrote:
+> Hi, Zhenneng,
 > 
-> I had some other feedback on the series, so when you submit a v2 can you try to fix the title on the first patch?
-
-Yup, will do!
-
-Thanks,
-Dhananjay
-
+> Zhenneng Li <lizhenneng@kylinos.cn> writes:
 > 
->>
->> Regards,
->> Dhananjay
->>
->> On 6/25/2024 7:11 PM, Dhananjay Ugwekar wrote:
->>> cpudata->nominal_freq being in MHz whereas other frequencies being in
->>> KHz breaks the amd-pstate-ut frequency sanity check. This fixes it.
->>>
->>> Fixes: 14eb1c96e3a3 ("cpufreq: amd-pstate: Add test module for amd-pstate driver")
->>> Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
->>> ---
->>>   drivers/cpufreq/amd-pstate-ut.c | 12 +++++++-----
->>>   1 file changed, 7 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/drivers/cpufreq/amd-pstate-ut.c b/drivers/cpufreq/amd-pstate-ut.c
->>> index fc275d41d51e..66b73c308ce6 100644
->>> --- a/drivers/cpufreq/amd-pstate-ut.c
->>> +++ b/drivers/cpufreq/amd-pstate-ut.c
->>> @@ -202,6 +202,7 @@ static void amd_pstate_ut_check_freq(u32 index)
->>>       int cpu = 0;
->>>       struct cpufreq_policy *policy = NULL;
->>>       struct amd_cpudata *cpudata = NULL;
->>> +    u32 nominal_freq_khz;
->>>         for_each_possible_cpu(cpu) {
->>>           policy = cpufreq_cpu_get(cpu);
->>> @@ -209,13 +210,14 @@ static void amd_pstate_ut_check_freq(u32 index)
->>>               break;
->>>           cpudata = policy->driver_data;
->>>   -        if (!((cpudata->max_freq >= cpudata->nominal_freq) &&
->>> -            (cpudata->nominal_freq > cpudata->lowest_nonlinear_freq) &&
->>> +        nominal_freq_khz = cpudata->nominal_freq*1000;
->>> +        if (!((cpudata->max_freq >= nominal_freq_khz) &&
->>> +            (nominal_freq_khz > cpudata->lowest_nonlinear_freq) &&
->>>               (cpudata->lowest_nonlinear_freq > cpudata->min_freq) &&
->>>               (cpudata->min_freq > 0))) {
->>>               amd_pstate_ut_cases[index].result = AMD_PSTATE_UT_RESULT_FAIL;
->>>               pr_err("%s cpu%d max=%d >= nominal=%d > lowest_nonlinear=%d > min=%d > 0, the formula is incorrect!\n",
->>> -                __func__, cpu, cpudata->max_freq, cpudata->nominal_freq,
->>> +                __func__, cpu, cpudata->max_freq, nominal_freq_khz,
->>>                   cpudata->lowest_nonlinear_freq, cpudata->min_freq);
->>>               goto skip_test;
->>>           }
->>> @@ -229,13 +231,13 @@ static void amd_pstate_ut_check_freq(u32 index)
->>>             if (cpudata->boost_supported) {
->>>               if ((policy->max == cpudata->max_freq) ||
->>> -                    (policy->max == cpudata->nominal_freq))
->>> +                    (policy->max == nominal_freq_khz))
->>>                   amd_pstate_ut_cases[index].result = AMD_PSTATE_UT_RESULT_PASS;
->>>               else {
->>>                   amd_pstate_ut_cases[index].result = AMD_PSTATE_UT_RESULT_FAIL;
->>>                   pr_err("%s cpu%d policy_max=%d should be equal cpu_max=%d or cpu_nominal=%d !\n",
->>>                       __func__, cpu, policy->max, cpudata->max_freq,
->>> -                    cpudata->nominal_freq);
->>> +                    nominal_freq_khz);
->>>                   goto skip_test;
->>>               }
->>>           } else {
+>> We restrict the number of pages to be migrated to no more than
+>> HPAGE_PMD_NR or NR_MAX_BATCHED_MIGRATION, but in fact, the
+>> number of pages to be migrated may reach 2*HPAGE_PMD_NR-1 or 2
+>> *NR_MAX_BATCHED_MIGRATION-1, it's not in inconsistent with the context.
 > 
+> Yes.  It's not HPAGE_PMD_NR exactly.
+> 
+>> Please refer to the patch: 42012e0436d4(migrate_pages: restrict number
+>> of pages to migrate in batch)
+>>
+>> Signed-off-by: Zhenneng Li <lizhenneng@kylinos.cn>
+>> ---
+>>  mm/migrate.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/mm/migrate.c b/mm/migrate.c
+>> index 781979567f64..7a4b37aac9e8 100644
+>> --- a/mm/migrate.c
+>> +++ b/mm/migrate.c
+>> @@ -1961,7 +1961,7 @@ int migrate_pages(struct list_head *from, new_folio_t get_new_folio,
+>>  			break;
+>>  	}
+>>  	if (nr_pages >= NR_MAX_BATCHED_MIGRATION)
+>> -		list_cut_before(&folios, from, &folio2->lru);
+>> +		list_cut_before(&folios, from, &folio->lru);
+> 
+> If the first entry of the list "from" is a THP with size HPAGE_PMD_NR,
+> "folio" will be the first entry of from, so that "folios" will be empty.
+> Right?
+
+If "folios" list is empty, the "from" list is left unmodified. So we will reach "goto again" and
+retry this ops again and again. This causes soft-lockup in my test env.
+
+[  635.267324] watchdog: BUG: soft lockup - CPU#8 stuck for 26s! [bash:1031]
+[  635.277957] Kernel panic - not syncing: softlockup: hung tasks
+[  635.279519] CPU: 8 PID: 1031 Comm: bash Tainted: G             L     6.10.0-rc5-00327-g47fd2329f867 #45
+[  635.279796] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.14.0-0-g155821a1990b-prebuilt.qemu.org 04/01/2014
+[  635.279796] Call Trace:
+[  635.279796]  <IRQ>
+[  635.279796]  panic+0x326/0x350
+[  635.280827]  watchdog_timer_fn+0x226/0x270
+[  635.280827]  ? __pfx_watchdog_timer_fn+0x10/0x10
+[  635.280827]  __hrtimer_run_queues+0x1a8/0x360
+[  635.280827]  hrtimer_interrupt+0xfe/0x240
+[  635.280827]  __sysvec_apic_timer_interrupt+0x71/0x1f0
+[  635.280827]  sysvec_apic_timer_interrupt+0x6a/0x80
+[  635.280827]  </IRQ>
+[  635.280827]  <TASK>
+[  635.282706]  asm_sysvec_apic_timer_interrupt+0x1a/0x20
+[  635.282928] RIP: 0010:migrate_pages_batch+0x780/0xd50
+[  635.282928] Code: 6c 24 28 41 89 46 0c 48 8b 44 24 70 03 54 24 04 c7 44 24 58 f4 ff ff ff 41 01 56 04 48 39 c8 0f 84 d0 03 00 00 e8 d0 5c fa ff <c7> 44 24 54 00 00 00 00 48 8b 94 24 80 00 00 00 48 8b 02 48 8d 6a
+[  635.282928] RSP: 0018:ffffa76f88e57a00 EFLAGS: 00000246
+[  635.282928] RAX: 0000000000000000 RBX: ffffa76f88e57c50 RCX: ffffa76f88e57c60
+[  635.284331] RDX: ffffa76f88e57b78 RSI: ffffffffa7d1eb10 RDI: ffffa76f88e57b78
+[  635.284331] RBP: ffffdbcfc5000000 R08: 0000000000000000 R09: 0000000000000002
+[  635.284331] R10: 0000000000000007 R11: 0000000000000000 R12: ffffa76f88e57b70
+[  635.285800] R13: ffffa76f88e57ba8 R14: ffffa76f88e57bd0 R15: ffffa76f88e57b70
+[  635.285800]  ? __pfx_alloc_migration_target+0x10/0x10
+[  635.285800]  ? __pfx_alloc_migration_target+0x10/0x10
+[  635.286824]  migrate_pages+0xaa7/0xd70
+[  635.286824]  ? __pfx_alloc_migration_target+0x10/0x10
+[  635.287433]  ? folio_lruvec_lock_irq+0x6a/0xf0
+[  635.287433]  ? folio_isolate_lru+0x198/0x2a0
+[  635.287433]  do_migrate_range+0x194/0x740
+[  635.287433]  offline_pages+0x4ab/0x6e0
+[  635.288614]  memory_subsys_offline+0x9e/0x1d0
+[  635.288803]  ? _raw_spin_unlock_irqrestore+0x2c/0x50
+[  635.289119]  device_offline+0xe2/0x110
+[  635.289119]  state_store+0x6d/0xc0
+[  635.289119]  kernfs_fop_write_iter+0x12c/0x1d0
+[  635.290093]  vfs_write+0x380/0x540
+[  635.290093]  ksys_write+0x64/0xe0
+[  635.290551]  do_syscall_64+0xb9/0x1d0
+[  635.290551]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  635.290551] RIP: 0033:0x7f99f5514887
+[  635.290551] Code: 10 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 f3 0f 1e fa 64 8b 04 25 18 00 00 00 85 c0 75 10 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 51 c3 48 83 ec 28 48 89 54 24 18 48 89 74 24
+[  635.291480] RSP: 002b:00007ffe05712888 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+[  635.291480] RAX: ffffffffffffffda RBX: 0000000000000008 RCX: 00007f99f5514887
+[  635.292980] RDX: 0000000000000008 RSI: 000055c97b961e10 RDI: 0000000000000001
+[  635.292980] RBP: 000055c97b961e10 R08: 00007f99f55d1460 R09: 000000007fffffff
+[  635.292980] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000008
+[  635.292980] R13: 00007f99f561b780 R14: 00007f99f5617600 R15: 00007f99f5616a00
+[  635.294155]  </TASK>
+[  635.294155] Kernel Offset: 0x26a00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+[  635.294155] ---[ end Kernel panic - not syncing: softlockup: hung tasks ]---
+
+Thanks.
+.
+
 
