@@ -1,155 +1,142 @@
-Return-Path: <linux-kernel+bounces-230428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DEC4917CB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:40:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3EBC917CDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:47:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 336722813CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:40:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6700628580F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D4716CD1F;
-	Wed, 26 Jun 2024 09:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bdawimxG"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A278016D4CC;
+	Wed, 26 Jun 2024 09:47:43 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765178BEF
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 09:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F13515F3E2;
+	Wed, 26 Jun 2024 09:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719394831; cv=none; b=tV0L/JXwgtrO+3ZzQrOnmqwKedKdZ3+wI6Gzao3fuptnuqBJkHkgmqW8gs4rHYsZhdpX56IiBNPRZMvZ3VocF8Qm2+mDXHoRJwrD7d7/BSxMIU/QQWvl7g9ZLRtiNzFoAE833Vhn/xCLDpo42fGYLFJPC0dWFtsqACNC6DTf6Cw=
+	t=1719395263; cv=none; b=r2gcPjsxJiF875v2Te4xGz83HCpbfnBoOWlZh8+mlY8g1PkwVIyu6oungpFOn8TcJwgz2V9ONYRWVD2TaD2ySW+GO9XxmAfi/v7y/2o7tvviS2Ml8qfF1sWDnSoD3ZCjzoe56BkTQqUY1HXm+wxBaR5fZBZvvyFDHIMwNhnbiWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719394831; c=relaxed/simple;
-	bh=k82nMA+Wm14VeiZOlk+Jy4YSnv7N4cfsGX9UH8oVLFI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LzxS/WNOTA07P4+GYKa8iutDeEQw4IHjN0wZv+i2fbgAj+aReDPNOb27lbsM7vtS/hcp6IVCpOUnM+iaELP6CSG97tBJwxiE1fu45j5iskMK/8WgvzZxOT20PSAouFFD0Ecrx4hTUyz7kxECiCAMTOm4DNdc2PR4mskufvNeJA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bdawimxG; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2eaea28868dso85529181fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 02:40:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719394826; x=1719999626; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=VJVxa6mZ7QUxnMkLO5J2DpWrOna/tZjUpTwDiT5EA+E=;
-        b=bdawimxGRTz74jchktW07Ut97aEqkl02cQXSnkNXZ+X6h7FQ6bK5PCvWnoJ8ZU2pzj
-         BURbcM4HMPLv66uFJSPb2L1q1uTiRY8EgVQRMXrrnshq2vM9pfa0iPlsn1NPVhjev4Yy
-         QxAwwWTHK7nvdw7/qDviT4NgUe9+wrl6+EXnjzYHpEbzLNCgapwbzvAQ/vnlltM1nPc9
-         NHfD4Qzejff1NsxSOL0Uohb4P3aBfSi89Ew0j0XqDE5jKvA29hfbBIL1GqVkbrpZHN2R
-         lMgEDXVXYmHDlOYSVvw7ngtIO39DPXO4iOoJlYMzl/vy8ovgSntCzg4PS22tURWE7Hvi
-         kIjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719394826; x=1719999626;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VJVxa6mZ7QUxnMkLO5J2DpWrOna/tZjUpTwDiT5EA+E=;
-        b=EeLDDxMTCtNSnYMO7r/2iPJNSKFGaxPzOMWSuXrGdYjUE3jJQJQlxEiIzJ3u8G65sQ
-         H4IDBhhXcPKzpfv2tdvEbSS3XC89cDZyTRa/sHwl9TCbzcYoAJuOv3qJmwNcgEDjk/7V
-         HohRHLAf/VLeVMA1KnYgTlGDuFqVujbDwXIWDZFz7sQuLIVqVIz/5SK3864wgy7l7hNZ
-         H8H6oEoiGuxHCFvInNzU0Dz+8+vFbN1fvoggSfqEVBayQgLYS1mWekaquhm6ZS/b+Qz5
-         AvQZnLI0k1ekQ8er0eKt8MarpZ11WlHZV8W57BR0O1Vts72YaAu8rqycRaK0URCPd1KA
-         u3SA==
-X-Forwarded-Encrypted: i=1; AJvYcCWSnZXQrzjO+KCSURdfOd2ctR6ak0zf6Qw5mH/I9PhJRBBgMI0ITX3GdWxxvxAaxLvcHVGgW/om748iIYAU6iI6B3ZvNBNQAhyL8m/x
-X-Gm-Message-State: AOJu0YxOoYGJTf+13aA50nPpvCpcmPRAPZQPt8Pjmi5H3ivvHWkPId9Q
-	EaCdxagDC1UgDci3rgsJD5hB4Ze6Nzi/jY5JcT7tFd+OPYbAdV0V3+Rl1rHIoAA=
-X-Google-Smtp-Source: AGHT+IF1aRHpvffeoKVxMUqf/Je7OTdeHpQ3LkR+Zr4iM+o7N8X8sT75e+83tdbwwGnVk/wm0A+rDg==
-X-Received: by 2002:a05:6512:12d1:b0:52c:dcdc:f186 with SMTP id 2adb3069b0e04-52ce1832c15mr9842293e87.27.1719394823525;
-        Wed, 26 Jun 2024 02:40:23 -0700 (PDT)
-Received: from [192.168.215.29] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a724474d636sm404109666b.33.2024.06.26.02.40.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Jun 2024 02:40:23 -0700 (PDT)
-Message-ID: <61070233-5f51-4cac-bf30-816a8bcf58dc@linaro.org>
-Date: Wed, 26 Jun 2024 11:40:21 +0200
+	s=arc-20240116; t=1719395263; c=relaxed/simple;
+	bh=PAhCxBgLcYR0QuNHwNTpftUmpwDzIpBMz2w/ct/55pQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iwXKMj4HQTRVMLVeO8ltvvo4hPAyoLEI4Nby+GxEixb1g5TEjbJBQ2ArP/pgRPM8BhqJnfyi0SjBOaRQ7eNu7PZ8xcr6UbcAWEjDloWoYAh/Mbil++UfyMZwR8vytX67Jka09QUJbnVSjm56MmmHrNHzGq3zsJRTY8obTJ46KSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4W8GwN6MXdzxTTH;
+	Wed, 26 Jun 2024 17:43:16 +0800 (CST)
+Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
+	by mail.maildlp.com (Postfix) with ESMTPS id A1A35180086;
+	Wed, 26 Jun 2024 17:47:36 +0800 (CST)
+Received: from huawei.com (10.67.174.121) by kwepemd100013.china.huawei.com
+ (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Wed, 26 Jun
+ 2024 17:47:36 +0800
+From: Chen Ridong <chenridong@huawei.com>
+To: <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
+	<longman@redhat.com>, <adityakali@google.com>, <sergeh@kernel.org>,
+	<mkoutny@suse.com>
+CC: <cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH V3] cgroup/cpuset: Prevent UAF in proc_cpuset_show()
+Date: Wed, 26 Jun 2024 09:41:01 +0000
+Message-ID: <20240626094101.472912-1-chenridong@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: pm8916: add temp-alarm thermal zone
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240625-pm8916-tz-v1-1-a4c1f61e92dd@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240625-pm8916-tz-v1-1-a4c1f61e92dd@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemd100013.china.huawei.com (7.221.188.163)
 
-On 25.06.2024 10:16 PM, Dmitry Baryshkov wrote:
-> Define the themal zones using the temperature values in stage1 for this
-> platform so that the spmi-temp-alarm driver becomes active.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/pm8916.dtsi | 31 ++++++++++++++++++++++++++++++-
->  1 file changed, 30 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/pm8916.dtsi b/arch/arm64/boot/dts/qcom/pm8916.dtsi
-> index 4b2e8fb47d2d..2def48f2d101 100644
-> --- a/arch/arm64/boot/dts/qcom/pm8916.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/pm8916.dtsi
+An UAF can happen when /proc/cpuset is read as reported in [1].
 
-hmm
+This can be reproduced by the following methods:
+1.add an mdelay(1000) before acquiring the cgroup_lock In the
+ cgroup_path_ns function.
+2.$cat /proc/<pid>/cpuset   repeatly.
+3.$mount -t cgroup -o cpuset cpuset /sys/fs/cgroup/cpuset/
+$umount /sys/fs/cgroup/cpuset/   repeatly.
 
-> @@ -4,8 +4,37 @@
->  #include <dt-bindings/interrupt-controller/irq.h>
->  #include <dt-bindings/spmi/spmi.h>
->  
-> -&spmi_bus {
-> +/ {
-> +	thermal-zones {
-> +		pm8150-thermal {
+The race that cause this bug can be shown as below:
 
-hmm
+(umount)		|	(cat /proc/<pid>/cpuset)
+css_release		|	proc_cpuset_show
+css_release_work_fn	|	css = task_get_css(tsk, cpuset_cgrp_id);
+css_free_rwork_fn	|	cgroup_path_ns(css->cgroup, ...);
+cgroup_destroy_root	|	mutex_lock(&cgroup_mutex);
+rebind_subsystems	|
+cgroup_free_root 	|
+			|	// cgrp was freed, UAF
+			|	cgroup_path_ns_locked(cgrp,..);
 
-Konrad
+When the cpuset is initialized, the root node top_cpuset.css.cgrp
+will point to &cgrp_dfl_root.cgrp. In cgroup v1, the mount operation will
+allocate cgroup_root, and top_cpuset.css.cgrp will point to the allocated
+&cgroup_root.cgrp. When the umount operation is executed,
+top_cpuset.css.cgrp will be rebound to &cgrp_dfl_root.cgrp.
+
+The problem is that when rebinding to cgrp_dfl_root, there are cases
+where the cgroup_root allocated by setting up the root for cgroup v1
+is cached. This could lead to a Use-After-Free (UAF) if it is
+subsequently freed. The descendant cgroups of cgroup v1 can only be
+freed after the css is released. However, the css of the root will never
+be released, yet the cgroup_root should be freed when it is unmounted.
+This means that obtaining a reference to the css of the root does
+not guarantee that css.cgrp->root will not be freed.
+
+Fix this problem by using rcu_read_lock in proc_cpuset_show().
+As cgroup root_list is already RCU-safe, css->cgroup is safe.
+This is similar to commit 9067d90006df ("cgroup: Eliminate the
+need for cgroup_mutex in proc_cgroup_show()")
+
+[1] https://syzkaller.appspot.com/bug?extid=9b1ff7be974a403aa4cd
+
+Fixes: a79a908fd2b0 ("cgroup: introduce cgroup namespaces")
+Signed-off-by: Chen Ridong <chenridong@huawei.com>
+---
+ kernel/cgroup/cpuset.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index c12b9fdb22a4..7f4536c9ccce 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -21,6 +21,7 @@
+  *  License.  See the file COPYING in the main directory of the Linux
+  *  distribution for more details.
+  */
++#include "cgroup-internal.h"
+ 
+ #include <linux/cpu.h>
+ #include <linux/cpumask.h>
+@@ -5052,8 +5053,15 @@ int proc_cpuset_show(struct seq_file *m, struct pid_namespace *ns,
+ 		goto out;
+ 
+ 	css = task_get_css(tsk, cpuset_cgrp_id);
+-	retval = cgroup_path_ns(css->cgroup, buf, PATH_MAX,
+-				current->nsproxy->cgroup_ns);
++	rcu_read_lock();
++	spin_lock_irq(&css_set_lock);
++	/* In case the root has already been unmounted */
++	if (css->cgroup)
++		retval = cgroup_path_ns_locked(css->cgroup, buf, PATH_MAX,
++					       current->nsproxy->cgroup_ns);
++
++	spin_unlock_irq(&css_set_lock);
++	rcu_read_unlock();
+ 	css_put(css);
+ 	if (retval == -E2BIG)
+ 		retval = -ENAMETOOLONG;
+-- 
+2.34.1
+
 
