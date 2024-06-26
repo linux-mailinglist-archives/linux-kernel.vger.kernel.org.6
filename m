@@ -1,107 +1,153 @@
-Return-Path: <linux-kernel+bounces-231326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55F92918E28
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 20:20:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22236918E2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 20:22:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A1561F25B96
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:20:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 789E228B0E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:21:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73035190499;
-	Wed, 26 Jun 2024 18:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31CB5190489;
+	Wed, 26 Jun 2024 18:21:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ekoVEJOn"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fbYU32NS"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D471190462;
-	Wed, 26 Jun 2024 18:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F3E190486
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 18:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719426040; cv=none; b=o9D91xt8zmL64LHnNpIYoJWLvsxc/viCHQtl/d0ES2NImzOsYi8BPhrGUwE7WKYURgTCIYDRhe+y9Pi8uQNJk6oWUClp9ONdgFDOagjZXhqwFElLrTdkHKnY6SiEcgQ1v8AS12iCaqJIRVcqCm+XFbEO9PAy/ImBVLU065oLwY0=
+	t=1719426109; cv=none; b=qrEw9mWeelG6lC1T/lxuBauG+6FvCFZknLHzphpT0CpfK6bjPBRt/GinoF9IjXQqF7E/byUQacwZ7vc7YbDfFpiuOLENLOd4AOiGBW4HoCgG0mpaNTHX4iDLl1eNPz/OzTBmVY6M1E+fCSYeX+7UeeU9WocNJrxLTP9L3KM4wuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719426040; c=relaxed/simple;
-	bh=z27AxN76ZfzbtD0CwX3/5wDGi1LekqzkOCwGwmnzDHQ=;
+	s=arc-20240116; t=1719426109; c=relaxed/simple;
+	bh=6TYIPbPS4R6iweSpc2w1PZdKid1Wu6t/ISBPYdapvbM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eeGeDGrQXFrG0kIyEjeG5jIHQ1kCqv8e2NqQrNhA0+mH4BD/VVR9OA1lJAOiSVHm9OfRlDEUYFuZq3sRDwP0dg9duKudLt2KAnjHTw+PdOwP5QAokm+INGMjCpbc9IKzsJKm+Yhn3pEChlFvN1Ny6erLKHuJEiVmyyH18nXM9rI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ekoVEJOn; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8CDA040E0185;
-	Wed, 26 Jun 2024 18:20:36 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 16O2WKeMzR4y; Wed, 26 Jun 2024 18:20:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1719426032; bh=51qt3WM+PNcXiXQa/UQX9tYSNmBsISQmLiUi2BYhe64=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ekoVEJOnlkf8oIDtlfa7mIjpOjxbtKwRTTjZ4O3nmjk8UTY2ZTKDO+hq6aDm03HHj
-	 o1ieljxyJov3OaDCIiKseGOxDp+uwlM8UnNDAtHdZ3uNK7d7vEw5Fp+UBvjjLgqcqH
-	 1QdZnkiTNUVbW18urUJwRP3y1GIWhWK4vHR2kijurQq6OAJ+uHSKwrJguV5kISNGz8
-	 U8UlNFichQ5rYp7doVLw+gCwOG5mKFEJmR6OqlfZZbDKU9ITfSA4uXIi53uthNQlmb
-	 np3Dn+DJLx4IlhoHBG4Js0equT1b3vwmw79bH1bUbB5ZAwQdP290YJxdT71C2D4+sv
-	 f5by/uEZKCKLk89gGLLlLevTFa48bnQCfvKU3ya+GiUw0CitsR8jaUVx/DBF02JHW4
-	 OzDCoPWJyKoO6p0UYHZ4CN6zJu99t4mGx7y8bGIjoMHCCi1+IxqAMgnQ9qkNsHm4lQ
-	 LiE/J1Hp3aR4pdSSlo3Hczdez5dPsY0IKYqXMSh0dXwS6L/p/xSB7C3a8FYGmVrLnZ
-	 nEZkB/+zECRmS+evIUSTT5/fCNwiotSD1Z0/DTdZ24RQ8JUPiSn4BvGah9xUcqgN7Y
-	 y8U8DGzoc5euBIJKG9v/xW1uVYeebdWQYrG84tr6qrBwC2WWks7Q0LPPPrjcoIxmYs
-	 /nTOtBiSqLLOJLpDQjhQlj3s=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B068040E021D;
-	Wed, 26 Jun 2024 18:20:14 +0000 (UTC)
-Date: Wed, 26 Jun 2024 20:20:13 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Naik, Avadhut" <avadnaik@amd.com>
-Cc: Avadhut Naik <avadhut.naik@amd.com>, x86@kernel.org,
-	linux-edac@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tony.luck@intel.com, rafael@kernel.org, tglx@linutronix.de,
-	mingo@redhat.com, rostedt@goodmis.org, lenb@kernel.org,
-	mchehab@kernel.org, james.morse@arm.com, airlied@gmail.com,
-	yazen.ghannam@amd.com, john.allen@amd.com
-Subject: Re: [PATCH v2 4/4] EDAC/mce_amd: Add support for FRU Text in MCA
-Message-ID: <20240626182013.GEZnxb3TpU6VgROX8g@fat_crate.local>
-References: <20240625195624.2565741-1-avadhut.naik@amd.com>
- <20240625195624.2565741-5-avadhut.naik@amd.com>
- <20240626120429.GQZnwDzQ47y1fOlFTp@fat_crate.local>
- <ff9efb14-f3e5-4c4e-8285-7da853e6ffb7@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sJ65M+/D4R9UmVrXtsNHd9knrndsSqOnzVvEhl6g6yKrFK761phXrtM39PdFYj7aXxqCb4Vp+7VIDF48qz/n2X3Z1PwlVoMxxHC8uKWvoEjGxvDeJF4wJNNNkhYHcUWWXsl7vX3OIy7v8ySnmX3ToKIMxwyQmm+M4yDsLLLwARc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fbYU32NS; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52cdf2c7454so8612689e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 11:21:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719426106; x=1720030906; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=//MpmAILITzcKEizX/9gxPn9UDOA+9PRAYCNpg/DcRs=;
+        b=fbYU32NSCLChz93v6SvxehylSi91JXAVA0I7Iz1fvcq4LbVVs0mRyRCVxAprAv+RbP
+         CuDSPKJ2O+HNwe6zIGFI/4FRgcWsRDmexIGuneZtraj2I/E83LDkGyt1V0fG152OF262
+         5QjVOBCkf+IY5iKtLh7EdKXnSEwoQoukGmxL8gzBzLuAPX9bumVYy9kf5PwcVyA6M9j4
+         ECGDc+f1sRMqrvDHyvh8lSmAxE4PT5k0TfKOS4KadOMH9JP3SI8j4t6hPYogXGGcgE3U
+         q9KrzxTt+Hxcb8hqs2Rdap/JwqcyA2EsF2F8Tde/adb8HGOLQV8ezYVCEbUVV+U064on
+         ZyBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719426106; x=1720030906;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=//MpmAILITzcKEizX/9gxPn9UDOA+9PRAYCNpg/DcRs=;
+        b=Z7TK+WA9yqqWXfTyY84ogUTimAwwfTV/ekX57RU0vkaxCYmDoWFJP+B5EYgIpbWgWx
+         yNoRCUY7cyRN0rzmnbA9vJt1bunX2/Hn0RWmI/cK7fhn0rbn4P1hFrZde+M2JscZOaeW
+         tHwk6OZ1N8NNiw78E+dpiQ5O+RM2VHUFbS55Cs23O86cCLonQEjRKaXqz81SIXJDO36W
+         aeuWQTuijSGqfTvU7yRnUtBoBcXwKWHpaV5bMOJp9BE7L1E3WZXymUky3cWgnb+/9MqD
+         Ol+DpZm4sQhx9MLcAVkx8bzPHWqPkFRz6l52wYKmlYIks5hqX+OKxshgHSJXtcYrXvEA
+         dLhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXOGzZ2ABPAl8+pSlpj8ITPVVSe2mDd8Q8KWOpFZyo7BvIpX3KbAhLT5ZQOnPqwATuugGdQTF+A8bTr3Uf7KzdEPW5fxB0XSiDweSgt
+X-Gm-Message-State: AOJu0YwvTQ3Wsz54uscyN2NVtJWzAtpMhhPX4gtSDQVA0SsrJiSkofvx
+	2PR683ZLtVs29hCjxW4uT+nzcVArGEp5SWQQZyPuh4vF4jn02najSxPFRzhgfQM=
+X-Google-Smtp-Source: AGHT+IHJ4p//CH+AaNp/ZmyKwZ/tji9Ag3MV6cZw2C1QzU/zz+/aY3hOnCofp3e1KT6QUiZEBrnMNA==
+X-Received: by 2002:a05:6512:308c:b0:52c:c9e4:3291 with SMTP id 2adb3069b0e04-52ce185ce9amr11764612e87.60.1719426105827;
+        Wed, 26 Jun 2024 11:21:45 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cdcdb981esm1450255e87.122.2024.06.26.11.21.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 11:21:45 -0700 (PDT)
+Date: Wed, 26 Jun 2024 21:21:43 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	angelogioacchino.delregno@collabora.com, andersson@kernel.org, konrad.dybcio@linaro.org, 
+	mturquette@baylibre.com, sboyd@kernel.org, ilia.lin@kernel.org, rafael@kernel.org, 
+	viresh.kumar@linaro.org, ulf.hansson@linaro.org, quic_sibis@quicinc.com, 
+	otto.pflueger@abscue.de, neil.armstrong@linaro.org, luca@z3ntu.xyz, abel.vesa@linaro.org, 
+	danila@jiaxyga.com, quic_ipkumar@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH v3 1/9] soc: qcom: cpr3: Fix 'acc_desc' usage
+Message-ID: <jgboqj56nfeuv7qmi34chan46u5urdxyezqhfmqdq3clvcv2k6@k7aktead5qbk>
+References: <20240626104002.420535-1-quic_varada@quicinc.com>
+ <20240626104002.420535-2-quic_varada@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ff9efb14-f3e5-4c4e-8285-7da853e6ffb7@amd.com>
+In-Reply-To: <20240626104002.420535-2-quic_varada@quicinc.com>
 
-On Wed, Jun 26, 2024 at 01:00:30PM -0500, Naik, Avadhut wrote:
-> > 
-> > Why are you clearing it if you're overwriting it immediately?
-> > 
-> Since its a local variable, wanted to ensure that the memory is zeroed out to prevent
-> any issues with the %s specifier, used later on.
+On Wed, Jun 26, 2024 at 04:09:54PM GMT, Varadarajan Narayanan wrote:
+> cpr3 code assumes that 'acc_desc' is available for SoCs
+> implementing CPR version 4 or less. However, IPQ9574 SoC
+> implements CPRv4 without ACC. This causes NULL pointer accesses
+> resulting in crashes. Hence, check is 'acc_desc' is populated
+> before using it.
+> 
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> ---
+>  drivers/pmdomain/qcom/cpr3.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/pmdomain/qcom/cpr3.c b/drivers/pmdomain/qcom/cpr3.c
+> index c7790a71e74f..c28028be50d8 100644
+> --- a/drivers/pmdomain/qcom/cpr3.c
+> +++ b/drivers/pmdomain/qcom/cpr3.c
+> @@ -2399,12 +2399,12 @@ static int cpr_pd_attach_dev(struct generic_pm_domain *domain,
+>  		if (ret)
+>  			goto exit;
+>  
+> -		if (acc_desc->config)
+> +		if (acc_desc && acc_desc->config)
+>  			regmap_multi_reg_write(drv->tcsr, acc_desc->config,
+>  					       acc_desc->num_regs_per_fuse);
+>  
+>  		/* Enable ACC if required */
+> -		if (acc_desc->enable_mask)
+> +		if (acc_desc && acc_desc->enable_mask)
+>  			regmap_update_bits(drv->tcsr, acc_desc->enable_reg,
+>  					   acc_desc->enable_mask,
+>  					   acc_desc->enable_mask);
+> @@ -2676,7 +2676,7 @@ static int cpr_probe(struct platform_device *pdev)
+>  	desc = data->cpr_desc;
+>  
+>  	/* CPRh disallows MEM-ACC access from the HLOS */
+> -	if (!data->acc_desc && desc->cpr_type < CTRL_TYPE_CPRH)
+> +	if (!data->acc_desc && desc->cpr_type < CTRL_TYPE_CPR4)
+>  		return -EINVAL;
+>  
+>  	drv = devm_kzalloc(dev, sizeof(*drv), GFP_KERNEL);
+> @@ -2703,7 +2703,7 @@ static int cpr_probe(struct platform_device *pdev)
+>  
+>  	mutex_init(&drv->lock);
+>  
+> -	if (desc->cpr_type < CTRL_TYPE_CPRH) {
+> +	if (desc->cpr_type < CTRL_TYPE_CPR4) {
 
-What issues?
+This is incorrect. This disables ACC usage for CPR4, while GFX CPR on
+MSM8998 (which is CPR4) seems to use ACC.
 
-> Would you recommend removing that and using initializer instead for the string?
-
-I'd recommend looking at what the code does and then really thinking whether
-that makes any sense.
+>  		np = of_parse_phandle(dev->of_node, "qcom,acc", 0);
+>  		if (!np)
+>  			return -ENODEV;
+> -- 
+> 2.34.1
+> 
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+With best wishes
+Dmitry
 
