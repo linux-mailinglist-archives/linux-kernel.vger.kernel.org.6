@@ -1,158 +1,134 @@
-Return-Path: <linux-kernel+bounces-230151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C82D91791C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:44:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CC1391791E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:44:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 113CD283219
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:44:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6419B2209E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:44:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEDB014D70C;
-	Wed, 26 Jun 2024 06:44:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8FD15216A;
+	Wed, 26 Jun 2024 06:44:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ke+aOl+C"
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="L6SYCSY6"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA48171AD
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 06:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6B913CFBC
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 06:44:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719384246; cv=none; b=aJ/KlEkfM8PSoHu1jLxAs3szqL3oLp6vn+z0O/sduqPAf7OzZ1QxaqBf09RQk8qJEpI1HETNXTuzazcwimZFvrbDlqlQjFl8r+a3icg7VssuMfjrGBfXfCdcIBILUt86MkwJAnrBnTBCp/3scrnGK5Ax78X04/lJijA2aHnSVL0=
+	t=1719384284; cv=none; b=G3X7tc3dM2N6T2qbzawmXjmSBLjzgY4zG3RJ1B2PNBSZLfAgjAQ2N3faxxQAS4K3SllYI4FeoVseAvVc6hVtd/wc286VGY3K2tQe91amnSoK2i3V9Aej303gif6wnTs9F9iDVXz4pFv/S/6pdL/c1SCQ53xs3d8snAyWuaCIqes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719384246; c=relaxed/simple;
-	bh=CnrFWiV6+PQGf6bq++sRF//4nL5UuefToDuOKiRZGGQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eUQGBb80+4bHSLLYvnXgSdAn6vamARcSaawMacseqrL3Qj++up5pE35+9upH64WXTJYzt+DHfWdVrUqZ9J8gq01M/WfsquNFf4N0CvUEGE+w2cxQw6HlyDYGwZwyY7K/BmQv+axyMLKlbYszYYflf/8Hs1iVgJtxgAvLfctZQIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ke+aOl+C; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3d562b35fb6so96249b6e.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 23:44:04 -0700 (PDT)
+	s=arc-20240116; t=1719384284; c=relaxed/simple;
+	bh=sQtjV/DsknBaEV9QRJ2DhYybsbw/HxK5/e0h7fXanDc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C7/R3J3yrdv2rgGi3cJp/RBCTe3toGhqJOoKl3g3bTHKrKX5io6bL91dIM7JN3snfXvncvTUo8pqe0wyyGhfvFLyqr6WkmIVBjKilLQ3TwZMSFhBp/pLXZUTtPBjumecuqIfofcq6rI7WUzYUqPhFtCZmkC/8pjvOmurTmotBzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=L6SYCSY6; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ec0f3b9cfeso75424641fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 23:44:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719384243; x=1719989043; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jNw0dskDHLVIQXzCGgLODiSI5oPf0Z65i8AIhbRzTM0=;
-        b=ke+aOl+CR3kGOri2VW+veSaV3AS63icy5EUGr1YiM7BveOAg3r83+g3nxo9+ExlKJG
-         pi5v0KZoFZRZBeA5vhKP5CXSPLhijVYhg83e9MtEp8OXS70/F+bFU+XkrW7usqufR2LI
-         /cjjw84bwUwv/o+WYfu/ncFH+CzYKhblKc9Q449dprwc+HhAidaI5SSnZjKxKPFpu/08
-         MXuhqSCa4QnxCmgH07efXudrQQ0UFhgjagYyHkQROR3H4JW6R6j4zVKCrpy74hpK7lQg
-         h9hii5hl4JQoWRODdHZJNqhbuRSrWRbpPK+vkLCAl77as7wbVzMeKLlk2n/jZPc/kJ59
-         drMA==
+        d=suse.com; s=google; t=1719384280; x=1719989080; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=upm213LCndXRtkYBP/k1fZtAF3Nih3cvlnubABHsAAU=;
+        b=L6SYCSY6kLFpWh4T72JDTaf4TpC8Bh0pR2OGXwcHYg3+hEvHZsQctYFX4qIR2fW50c
+         R1aFnYhsTJYTsLs54r2tqYoLyDSPbtSMeUwjv47xrF4PA1Yaab6GLN6IW5nQOqwsew0y
+         LNx1SKDUnRdkHlkpMBQCCMAGBw7K0tdL3s5yCyLyx81TxaXhP/plqf4BTeVubg9FWIC3
+         KmaxQXqldb+JOrHv1vgFngZ6G1KVhEzTAbucntdoYotJjqXj5U4WuNSnEcpH6ByaPhoL
+         x+9jAW29zu/B9SVCnLRQSGqpkTZ4yVIWMwQXFvVWlJ51+yGUUCSWx6iCju4jFu0ipj81
+         HMRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719384243; x=1719989043;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jNw0dskDHLVIQXzCGgLODiSI5oPf0Z65i8AIhbRzTM0=;
-        b=tNeaonz0H9VcFwYrjFj+KCq3bqi8dAsxwnhI8VeuGwmZwKfYDVZx9UqHpAuozbtU1n
-         La/k4r47fudvy/hjJvqhFeLFEZ62785oahtLO/STpzyBBbDq5iOo7h7J8t2dmhS8yDn8
-         3ew7IeX94HnIqUO16EjQfAhmfM+aFXivRiN+LBiuaxWaXENqtMueV9O2OkDlDV1edneB
-         hI7qJpZ02SxBkbLHx2FcJjT0IYT/qK++DInexSi/R1m7aSef/kKWWh8Q4Q9GpzroObSa
-         ftlbi1y10D8+lnO/e0b0rAMMR2Lzixqb8SKhr0gqWDH14xbBTELsfHGagyX52MT0gM7n
-         hsKA==
-X-Forwarded-Encrypted: i=1; AJvYcCWiOQsajfsuoBdLf3QpM2qglXDwcsxsazDRqXri1/H9ZbTzDzWe+6ISADG2cED3RedP7TioA9ESIjD9IxuE8V1fQiSKivLpzNmaEQdg
-X-Gm-Message-State: AOJu0YyK5xokaiBDAZppHq06Rf0BuHF8HnzQBp4XljB0LG0wgs8DNDkV
-	fH947a8JmOrmvptgSITR93R6aKtuRrNaw0P32DXejsKaODngsFbT
-X-Google-Smtp-Source: AGHT+IEh4Y/5K7DnRvm22rOOcOL3Obh8b2E7hfzm7A4/EcLjkbK17Ij8bQ9YtNn+GqFGTh1tj6wJ/w==
-X-Received: by 2002:a05:6808:1701:b0:3d5:4256:26d4 with SMTP id 5614622812f47-3d542562770mr11477631b6e.7.1719384243533;
-        Tue, 25 Jun 2024 23:44:03 -0700 (PDT)
-Received: from localhost.localdomain ([43.135.72.207])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7068c719371sm4311312b3a.102.2024.06.25.23.44.01
+        d=1e100.net; s=20230601; t=1719384280; x=1719989080;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=upm213LCndXRtkYBP/k1fZtAF3Nih3cvlnubABHsAAU=;
+        b=KxFLOn355JxfLtiUP2fkuCy6ED4nM8SujUDQmvOxh63yuaZHCaEHJ+lyvf94VZo7Ks
+         /fypqw3f2nYPG7z+FP0VW0l093JOYGbwmii/SqkCiP97hxwhgViL2IGjzwnhEK/SdcCe
+         6Muxw008WKOjoHw/NEXXCwqffnabO4JfIwgtouiOlZXiIj+huHL3Yr9GuIVvk6EZT+c+
+         xvbSk8YqG4WD6gGfg5yEukV804tQZ7yVLDOHwCHA7Duje/k3tCS88vMrKqF21UreBDrw
+         opcuUF+xnVQWVQHIgxE8Bx6ypc9JFADePRZlnF2QwmO8fC0lP/p16wZXrtG/O/OJDwvQ
+         JRzQ==
+X-Gm-Message-State: AOJu0YxvcS9IRC1uQTQzYcLKWvx5VVL65DO+wYUH4z2Og4ZX8tkr/vz/
+	gtHUcpmd3mDDib++wH3erCSlF03KLE+KDh/b56ydyHKpEd+0iPN/DDrCPxZrG7M=
+X-Google-Smtp-Source: AGHT+IFvp94Jq8r/nW0sLoomFwIYcAmOhp9Np+bFI/GlYSL6wmdtpfyAAqMD+4qFqLR0lqPPsouG9w==
+X-Received: by 2002:a2e:3203:0:b0:2ec:5430:7f6b with SMTP id 38308e7fff4ca-2ec59587bdfmr55241741fa.49.1719384280499;
+        Tue, 25 Jun 2024 23:44:40 -0700 (PDT)
+Received: from u94a ([2401:e180:8840:49da:ed05:227a:7b40:7717])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-716bb22dffesm8178043a12.83.2024.06.25.23.44.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 23:44:03 -0700 (PDT)
-From: Jinliang Zheng <alexjlzheng@gmail.com>
-X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
-To: mhocko@suse.com
-Cc: akpm@linux-foundation.org,
-	alexjlzheng@gmail.com,
-	alexjlzheng@tencent.com,
-	axboe@kernel.dk,
-	brauner@kernel.org,
-	ebiederm@xmission.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	mjguzik@gmail.com,
-	oleg@redhat.com,
-	tandersen@netflix.com,
-	willy@infradead.org
-Subject: Re: [PATCH v2] mm: optimize the redundant loop of mm_update_next_owner()
-Date: Wed, 26 Jun 2024 14:43:59 +0800
-Message-ID: <20240626064359.79119-1-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.41.1
-In-Reply-To: <ZnU-wlFE5usvo9ah@tiehlicka>
-References: <ZnU-wlFE5usvo9ah@tiehlicka>
+        Tue, 25 Jun 2024 23:44:39 -0700 (PDT)
+Date: Wed, 26 Jun 2024 14:44:31 +0800
+From: Shung-Hsi Yu <shung-hsi.yu@suse.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, cve@kernel.org
+Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	Stanislav Fomichev <sdf@google.com>, Eduard Zingerman <eddyz87@gmail.com>, 
+	Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Andrii Nakryiko <andrii@kernel.org>
+Subject: Re: CVE-2024-38564: bpf: Add BPF_PROG_TYPE_CGROUP_SKB attach type
+ enforcement in BPF_LINK_CREATE
+Message-ID: <sgnl2ithdfmum4jlgbqcbhenm2roioypqk2ndmyq4xd2h4svwp@s3dmiiaxh3jf>
+References: <2024061955-CVE-2024-38564-b069@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024061955-CVE-2024-38564-b069@gregkh>
 
-On Fri, 21 Jun 2024 10:50:10 +0200, Michal Hocko wrote:
-> On Thu 20-06-24 19:30:19, Oleg Nesterov wrote:
-> > Can't review, I forgot everything about mm_update_next_owner().
-> > So I am sorry for the noise I am going to add, feel free to ignore.
-> > Just in case, I see nothing wrong in this patch.
-> > 
-> > On 06/20, alexjlzheng@gmail.com wrote:
-> > >
-> > > When mm_update_next_owner() is racing with swapoff (try_to_unuse()) or /proc or
-> > > ptrace or page migration (get_task_mm()), it is impossible to find an
-> > > appropriate task_struct in the loop whose mm_struct is the same as the target
-> > > mm_struct.
-> > >
-> > > If the above race condition is combined with the stress-ng-zombie and
-> > > stress-ng-dup tests, such a long loop can easily cause a Hard Lockup in
-> > > write_lock_irq() for tasklist_lock.
-> > >
-> > > Recognize this situation in advance and exit early.
-> > 
-> > But this patch won't help if (say) ptrace_access_vm() sleeps while
-> > for_each_process() tries to find another owner, right?
-> > 
-> > > @@ -484,6 +484,8 @@ void mm_update_next_owner(struct mm_struct *mm)
-> > >  	 * Search through everything else, we should not get here often.
-> > >  	 */
-> > >  	for_each_process(g) {
-> > > +		if (atomic_read(&mm->mm_users) <= 1)
-> > > +			break;
-> > 
-> > I think this deserves a comment to explain that this is optimization
-> > for the case we race with the pending mmput(). mm_update_next_owner()
-> > checks mm_users at the start.
-> > 
-> > And. Can we drop tasklist and use rcu_read_lock() before for_each_process?
-> > Yes, this will probably need more changes even if possible...
-> > 
-> > 
-> > Or even better. Can't we finally kill mm_update_next_owner() and turn the
-> > ugly mm->owner into mm->mem_cgroup ?
+On Wed, Jun 19, 2024 at 03:36:13PM GMT, Greg Kroah-Hartman wrote:
+> In the Linux kernel, the following vulnerability has been resolved:
 > 
-> Yes, dropping the mm->owner should be a way to go. Replacing that by
-> mem_cgroup sounds like an improvemnt. I have a vague recollection that
+> bpf: Add BPF_PROG_TYPE_CGROUP_SKB attach type enforcement in BPF_LINK_CREATE
+> 
+> bpf_prog_attach uses attach_type_to_prog_type to enforce proper
+> attach type for BPF_PROG_TYPE_CGROUP_SKB. link_create uses
+> bpf_prog_get and relies on bpf_prog_attach_check_attach_type
+> to properly verify prog_type <> attach_type association.
+> 
+> Add missing attach_type enforcement for the link_create case.
+> Otherwise, it's currently possible to attach cgroup_skb prog
+> types to other cgroup hooks.
+> 
+> The Linux kernel CVE team has assigned CVE-2024-38564 to this issue.
+> 
+> 
+> Affected and fixed versions
+> ===========================
+> 
+> 	Issue introduced in 5.7 with commit af6eea57437a and fixed in 6.6.33 with commit 6675c541f540
+> 	Issue introduced in 5.7 with commit af6eea57437a and fixed in 6.8.12 with commit 67929e973f5a
+> 	Issue introduced in 5.7 with commit af6eea57437a and fixed in 6.9.3 with commit b34bbc766510
+> 	Issue introduced in 5.7 with commit af6eea57437a and fixed in 6.10-rc1 with commit 543576ec15b1
 
-Sorry for the late reply.
+I'd like to dispute the affected commit for this CVE.
 
-Replacing that by mem_cgroup maybe a good idea, a rcu lock looks good, too.
-But before the above optimization is implemented, I recommend using this
-patch to alleviate it. Both [PATCH] and [PATCH v2] are acceptable, they only
-differ in the commit log.
+The commit that introduced the issue should instead be commit
+4a1e7c0c63e02 ("bpf: Support attaching freplace programs to multiple
+attach points") in 5.10.
 
-Thanks for your reply. :)
-Jinliang Zheng
+When link_create() was added in commit af6eea57437a, it uses
+bpf_prog_get_type(attr->link_create.prog_fd, ptype) to resolve struct
+bpf_prog, which effectively does the requried
 
-> this has some traps on the way. E.g. tasks sharing the mm but living in
-> different cgroups. Things have changes since the last time I've checked
-> and for example memcg charge migration on task move will be deprecated
-> soon so chances are that there are less roadblocks on the way.
-> -- 
-> Michal Hocko
-> SUSE Labs
+	prog->type == attach_type_to_prog_type(attach_type)
+
+check through bpf_prog_get_ok(), and thus would not allow
+BPF_PROG_TYPE_CGROUP_SKB to be attached to other cgroup hooks.
+
+It is in commit 4a1e7c0c63e02 ("bpf: Support attaching freplace programs
+to multiple attach points") that had bpf_prog_get_type() replaced with
+bpf_prog_get() and lead to the removal of such check, making it possible
+to attach BPF_PROG_TYPE_CGROUP_SKB to other cgroup hooks.
+
+[...]
 
