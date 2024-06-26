@@ -1,132 +1,100 @@
-Return-Path: <linux-kernel+bounces-230901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F229F918397
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:03:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3C0C9183AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:08:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A89BE1F23E3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:03:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0E42B24D37
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:08:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1AA118411F;
-	Wed, 26 Jun 2024 14:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51471849D1;
+	Wed, 26 Jun 2024 14:08:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K21gvrpq"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SjpLzzPc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F9A181D1F
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 14:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D1218411D
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 14:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719410616; cv=none; b=EkphcFTMYMcUYv5H4d7GplkrTtG5/5gb9GQCwFH7gX6rTwlLHKuKRENiD4DieKsaAIq72fyrzZS94BdNdalrE3qUF4FFGEDxrGpqVKbQSF3cUys2pJCw3m1/rXpuniCta2Uxw8XIYe/Co61EJT+tr+OjejXoWxztQuB7g5BtMRE=
+	t=1719410894; cv=none; b=nuA8LbE7+oa/+CenvNUnMuoumxCge7+ORyGf3R6n41ZIUj+t+ewGUURlPgMZC4F/FxZU9PXR9a63bqAZT1qt3bq3R4VXOxIwcdDmvaJRrJLfz6DAfObQGBqG6mdsrKzOLsJO8/7ZZ6o9wMgoOHKi9OM0og1sH7zo11yKdMJbkg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719410616; c=relaxed/simple;
-	bh=zO0ET6/ST7Go9gIMb2eyBEc5Sg5in16GY49d0Ky8J/Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Qid18o2WnBfyrY8OC8oEtCZQFa/9R8jCSlQydSt/Q5LJF3cS0nI9af9tijVySHbw9i7RF9lS1zlZdT/ZxcDjDhorIipt1GGJp5Fa/L0WzcA+rwGNbjAzc1niCcELJ2yj/9lcLUtkBRt1OhRY/V06U6nTsE8V7O1uXIWyrCQQkvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K21gvrpq; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57d0f929f79so312705a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 07:03:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719410613; x=1720015413; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=a8J/0rbvyVLHrEXRHvUI44ewOQgj0kI0R2lTjROyuIg=;
-        b=K21gvrpqud1vpGq9f2PXLaebGO1yLaUEx9Y1y4F8IFbKeuhPe7hY0esdlyc6fV66Eq
-         ZfV6MxjLuBQ7LIY1rQLOmhzzddMRlCa+VvXpyX9YdH3EV3ei2fsmCwZZsK5ydbD3cvgp
-         KKOO1UCVfQAqBqJTQIK+4HROR5XraG9pDFhU3cxaH6nSUYt58zdPV2w5NR+c8Ij8qTOn
-         cTbB0+Z4QauMt7yQUa/YmaSzJ4HCtuhyn9EOrWNc0/fyzC3CY5dT+sIw0XvPLamu5zT/
-         XlY5F+hPIuRF1MMyoiP2Lfz2rn+Olnz1d3uV1n9aFpnLdoETO0bSGHr94dp8xMZrG0g8
-         IoJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719410613; x=1720015413;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=a8J/0rbvyVLHrEXRHvUI44ewOQgj0kI0R2lTjROyuIg=;
-        b=Lbmb2/HYefwxl3uznwV4LJ5eTmp85zrnJHtXvgt/1M/S+EGrhe38xFsCs8I4VGZ/9V
-         Ql3cNPBBCf59C0sCdMwvdj89T1ZHGWa2dzazLEIocB9W47YL1J1e9bZgbEC8FI5f0lgu
-         dSNh/adkRK/1lsrEH6gOWXniu/rQ+IXMkIOuCQReB+tQTZEk8+WEXWdFtAG2Iw8jjvl3
-         1TkfTo7P9DJNnfWNiEZj+wZ19gcM86PcpugsCJnHvjCoVVxao84M/M4H0wuLYSM2FUho
-         e1NDeZsOMFfSPvA0MEJm4rYH1MP74mGfLqX6QpRqV4jgGIFwFTGc1hDAQZtuBTRJIv7K
-         8INw==
-X-Gm-Message-State: AOJu0Ywyl2zrgpzeXMJVwtoBv24WxZfRKUNzmIVngRgxdom3YfWIxtst
-	spMNZStALpM9D2IqmFYIxy+54AKBFBVAB8TQpiKnOj6I5aSTFSuk
-X-Google-Smtp-Source: AGHT+IGwnJigcVlekJc4wuhQ5CyFPJkiRM/TvW9TOjWhYvxkbyUS/ofbTHF/oNZGwslIbIrTilh92g==
-X-Received: by 2002:a17:906:2690:b0:a6f:586b:6c1 with SMTP id a640c23a62f3a-a7245c2db6cmr683232866b.56.1719410612919;
-        Wed, 26 Jun 2024 07:03:32 -0700 (PDT)
-Received: from pc638.lan (host-185-121-47-193.sydskane.nu. [185.121.47.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a725bc1b3e1sm270143766b.8.2024.06.26.07.03.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 07:03:32 -0700 (PDT)
-From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-To: linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Baoquan He <bhe@redhat.com>,
-	Hailong Liu <hailong.liu@oppo.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Nick Bowler <nbowler@draconx.ca>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: [PATCH v2] mm: vmalloc: Check if a hash-index is in cpu_possible_mask
-Date: Wed, 26 Jun 2024 16:03:30 +0200
-Message-Id: <20240626140330.89836-1-urezki@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1719410894; c=relaxed/simple;
+	bh=b+jYDaoyUxMFh/qdWC8py4dZMe3nHVTyCOcKzwiM5zE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ddIf9C0EpXyWC65kEiMqDcq0qmMGtfpAX5d2HyMxHU2B6ye3Qd/tvuGFRe81ZtK9K9RoOinqxMYH4KljJ1Z/+HWHuvNRIpUhPwYy5y5J4J9onyWc2wSO4V65KQfJzM/oB1bUWFKRJ8dxZJR3Kz2nJIfMZaZiqio4q+hp5hhehLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SjpLzzPc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E39E0C116B1;
+	Wed, 26 Jun 2024 14:08:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719410893;
+	bh=b+jYDaoyUxMFh/qdWC8py4dZMe3nHVTyCOcKzwiM5zE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SjpLzzPcxejybWPIyzdt1epNmYo6f3DQFwL3z6EC2ZvHYxUY06/SsKyFa2nawyLAp
+	 lPrsi58YHewjPtsii1bHg8lSDXkljI28P6Q7ndXssMyVdHX7Nv+L6Mi+dttZvS8Z15
+	 zBLx7jbVyRkGpWzbuZZgFq7BC0nWlII9vE5GK/2d1WiBUHxxP+5RWh/uxerKsb0Gtb
+	 pYE82HjmAH4rfpt+NolTJG5yUuXv6PPJs1pVAi0lDZFeU8wZ2GjSFasWzP2PoPQAuQ
+	 nbqUEMa//lNxCmhzwdgRXOl8qegPTR4PVRz8pZnO+3w+bhfUgCpF6++GyfCcoqbBbI
+	 1n/MAnPUKCfDw==
+Date: Wed, 26 Jun 2024 21:54:07 +0800
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Andreas Schwab <schwab@suse.de>
+Cc: Arnd Bergmann <arnd@arndb.de>, Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] riscv: uaccess: use input constraints for ptr of
+ __put_user
+Message-ID: <Znwdf2c1pYetrsHe@xhacker>
+References: <20240625040500.1788-1-jszhang@kernel.org>
+ <20240625040500.1788-3-jszhang@kernel.org>
+ <acd2e53f-b5c1-49c5-86e2-bc09eb917163@app.fastmail.com>
+ <ZnwKXWzRz9B5FbLM@xhacker>
+ <ZnwObmA70Bfx9yCn@xhacker>
+ <mvma5j7omh1.fsf@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <mvma5j7omh1.fsf@suse.de>
 
-The problem is that there are systems where cpu_possible_mask
-has gaps between set CPUs, for example SPARC. In this scenario
-addr_to_vb_xa() hash function can return an index which accesses
-to not-possible and not setup CPU area using per_cpu() macro.
+On Wed, Jun 26, 2024 at 03:35:54PM +0200, Andreas Schwab wrote:
+> On Jun 26 2024, Jisheng Zhang wrote:
+> 
+> > no output constraints either. It just uses "r" input constraints to tell
+> > gcc to read the store address into one proper GP reg.
+> 
+> Again, this is backwards.  Being an input operand means the asm is using
+> this operand as an input to the instructions.  The compiler needs to
+> arrange to put the value in the allocated operand location according to
+> the constraint.
 
-A per-cpu vmap_block_queue is also used as hash table, incorrectly
-assuming the cpu_possible_mask has no gaps. Fix it by adjusting an
-index to a next possible CPU.
+Hi Andreas,
 
-v1 -> v2:
- - update a commit message.
+Your information is clearly received. What confused me is:
 
-Fixes: 062eacf57ad9 ("mm: vmalloc: remove a global vmap_blocks xarray")
-Reported-by: Nick Bowler <nbowler@draconx.ca>
-Closes: https://lore.kernel.org/linux-kernel/ZntjIE6msJbF8zTa@MiWiFi-R3L-srv/T/
-Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
----
- mm/vmalloc.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+why x86 and arm64 don't put the "addr" of __put_user into output
+constraints? Especially the following comments, why this is "read"
+from memory?
 
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index b4c42da9f3901..6b783baf12a14 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -2544,7 +2544,15 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
- static struct xarray *
- addr_to_vb_xa(unsigned long addr)
- {
--	int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
-+	int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
-+
-+	/*
-+	 * Please note, nr_cpu_ids points on a highest set
-+	 * possible bit, i.e. we never invoke cpumask_next()
-+	 * if an index points on it which is nr_cpu_ids - 1.
-+	 */
-+	if (!cpu_possible(index))
-+		index = cpumask_next(index, cpu_possible_mask);
- 
- 	return &per_cpu(vmap_block_queue, index).vmap_blocks;
- }
--- 
-2.39.2
+ * Tell gcc we read from memory instead of writing: this is because
+ * we do not write to any memory gcc knows about, so there are no
+ * aliasing issues.
 
+can you please kindly help me understand the tricky points here?
+
+thanks
+> 
+> -- 
+> Andreas Schwab, SUSE Labs, schwab@suse.de
+> GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
+> "And now for something completely different."
 
