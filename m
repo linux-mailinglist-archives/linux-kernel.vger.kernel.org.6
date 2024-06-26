@@ -1,292 +1,126 @@
-Return-Path: <linux-kernel+bounces-230314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D79B917B2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:42:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F0BF917B2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:43:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7E22284277
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:42:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 323801C24632
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:43:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E861662E8;
-	Wed, 26 Jun 2024 08:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E4F16A925;
+	Wed, 26 Jun 2024 08:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u9+jzSnz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kuANMXAP"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC54E161304
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 08:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC23C1662E8;
+	Wed, 26 Jun 2024 08:42:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719391327; cv=none; b=e0VLB11pVneVDCTE3qmYXyx+ky7Cx7RDI7nahgnSa9mAxMe6bucJbGmkoMeSn6dLyCFZO00qNdOCe6bI0YgebS6vPgd+2zSBNSPIkUrGPS4qUHd0fhnY2g3UlxXg6I8fTxA0yRoHuiHZ0dWp2dt6iELAbXMjVXFExl3NEa97O/Y=
+	t=1719391358; cv=none; b=LsuEyPFIjwrRpzG46cMyUMZG6iHaM1hDss9W7Lzy74HuPy+WLz+yrrlArLu5RTZUi3w0MNJWyobw6vCJgqX0DruOJwwOlW1uWV4X0RNFhlIUMEzLXFyOeXM7hg696xT08BS0raMLlMkjbaA2p/gyOWeKpaoPDIW2CyfgnhflgH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719391327; c=relaxed/simple;
-	bh=S3cTJq0D8wadO/sI5sOPrvLtWcPVaif86bP86Z/8TBM=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oaS+XdZEIBD1CVthQiaJAZoAX74g2BbvG7FQYglgCB5ktj9P9WZNNzhbjH2bzUJgiiJSeexztC4u3hiH5dOuTBtoIgLr1DbT8lS+GL3d2VBqcxXrJ/Px8afYUvwQqC+d2/eoBPRalbgk337zvYsNbc6b7AEvbbcyBwUsMzjeuX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u9+jzSnz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4724BC2BD10;
-	Wed, 26 Jun 2024 08:42:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719391327;
-	bh=S3cTJq0D8wadO/sI5sOPrvLtWcPVaif86bP86Z/8TBM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=u9+jzSnz8nuZ1+TyS61jUTAxDUGAsxVzcTciZgUhn/ug9xR6SS4y+Nw94lUTMIfOj
-	 gbYdVfDohtbC4VgoVkSG8WX0rnPfqtU1V3PSW/9vmv61RUswGXReEkMXwGEJQJjN7Y
-	 VYa6bYhamWAr5YbypZZLUpW7iLmciwVjzZUazYIBrb23F5vbl5XO0R33pu8GhO4R8o
-	 dgLrjFmAXyPuxkEn2vbfRRV2N2QGv9CKDAYPCwPqSAQ1kHv+cPzKKExnrAVbv+CRWM
-	 3s3y4qky0dXqOdZyN8x/PDmQok0b3LfbblbVBInEtfdZyBtKW8+Dm3bkTdi6LBqh+S
-	 ov9W3MoVyOHWQ==
-Received: from [104.132.45.100] (helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sMOE8-007Q72-TZ;
-	Wed, 26 Jun 2024 09:42:05 +0100
-Date: Wed, 26 Jun 2024 09:41:59 +0100
-Message-ID: <87tthgrt7s.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Tangnianyao <tangnianyao@huawei.com>
-Cc: <tglx@linutronix.de>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>,
-	<guoyang2@huawei.com>,
-	<wangwudi@hisilicon.com>
-Subject: Re: [RESEND PATCH] irqchip/gic-v4.1: Use the ITS of the NUMA node where current cpu is located
-In-Reply-To: <60de5bd6-51db-e327-5808-280407a6285d@huawei.com>
-References: <20240625014019.3914240-1-tangnianyao@huawei.com>
-	<86wmmdihkf.wl-maz@kernel.org>
-	<60de5bd6-51db-e327-5808-280407a6285d@huawei.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/28.2
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1719391358; c=relaxed/simple;
+	bh=NIJDJMmeeX4kQrmpyk63xP+IDzdCUnO9xCVu0XWuAFs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pAkhIMWJIzps/sLVfhRpOD9DRfBV48YTz69lYMo+b7qoU6BCgYxYckQvpaOk00IRQE6+x90wJi/v7wRsgctAinGuFNV/diKSaqJIUcI1qljC3gdqnMo+QHAeatOkYUPJXJx6FP12VcTzvJMM6OLV5Lmj+/xbOHdz91u7f7Yka4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kuANMXAP; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2c8911c84daso2060942a91.3;
+        Wed, 26 Jun 2024 01:42:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719391356; x=1719996156; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P1oK8NcMDzD3lUAFEI9IAJSbWCdUq0p3gSwC8g+BGLE=;
+        b=kuANMXAPbUl5meWGzEtCJNxmbIpAgOrM9hmOHd9zuA2I52jC0wvXIlv3fdcHaV9Gks
+         VySzI/HaURIKVcBKKi5ddSn6ZNnEfXCqxQkVF6QwKov4rBEoNfnmHN+dmdSs68RpjDm+
+         lSnWE4TldJAf6zsvz/EgpIIhQ418J8e6V+ik8AFcBH8Y0pH0fuF7wtDgzu+YeaME5dhT
+         yCSl3NMtW1FNpdIhX2QezR4peisSytvHtzkWR68qDv/CPn+J8O7if0EKRihkr8Z9PK5Z
+         kJTYj5WVndiPFpCM/HRJLigcft6jdOqXwDlo04ochp1U+hPr34mItAQYnzOWPkaePhI6
+         PnYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719391356; x=1719996156;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=P1oK8NcMDzD3lUAFEI9IAJSbWCdUq0p3gSwC8g+BGLE=;
+        b=pQER0bAiLRF9P7IOnoHFXpBfwRspQh2OA8QqgY5X0aHnuNQ7JacmUYHRNLw+N7slaW
+         h8nliZTFf1hup7RVOruXIXjLY3genGzZmG9LWwXu2uDxNlbrPvOguvfqCjfGv7xlBU+F
+         DoDgDOEOhFyBIQFZ6louaEcYZBvA0/VjDLB6kZhU6mgYRB+Zg6xz1HmpZHcoTwQOGyH0
+         QVeAGUtPc9gO3XOvMJAS0E07fCyR49XpDZI2icaDlyAiv8ScMyHxcfvGk+VMVOBJKncZ
+         BqMDq98G1+IhsHd+FC9ey/RoK1jvsIEW11Ztsnsq4xJs7+OpKiPpricdP/QQPt50UOY+
+         VfDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVrMiK22Y3JMkq/FPgRrA9lIX0s2Q1cG9UWn5sh7kxLS5PnSPmb44t4OvIJO6T8DJqkkW6DgOz4hZPH3J+dDHkXGWlgb5S2LNButUpmVT5xZ4poeloGdEjgWYWYJhxWmAeu5ITXIGQ4Ot76djWJ/xrtuvaKsHTP8NHkGYk0EPfIZhEHiVqIzPTK0j0=
+X-Gm-Message-State: AOJu0YwZjHApKLvMcVjP/5hhidBE+InYwk0pKP/4NNnnlwyWu5zHciSw
+	BhmDxhAikGjeFLlikjktgtaVwoj9KquaRxvcP8WLbjKvw3P8WozB9UIzPDj0dQ/Zt7VscvytcKZ
+	eKrAIjXycSN9D0BLs5H2smH6L+O0=
+X-Google-Smtp-Source: AGHT+IFfx5cks4hwYgRaWfw56XsTFZxH625ucUiDN42lL9a2aKReANnBK8EmxF35px00U/PDXov4/azle99Pc/L0zgE=
+X-Received: by 2002:a17:90a:b014:b0:2c2:c61f:e09 with SMTP id
+ 98e67ed59e1d1-2c8613d204dmr9193625a91.20.1719391355929; Wed, 26 Jun 2024
+ 01:42:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 104.132.45.100
-X-SA-Exim-Rcpt-To: tangnianyao@huawei.com, tglx@linutronix.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, guoyang2@huawei.com, wangwudi@hisilicon.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <20240620205453.81799-1-jhubbard@nvidia.com> <20240620205453.81799-3-jhubbard@nvidia.com>
+ <CAH5fLgizj3RDCXMe0zJ4jjJrtui-R9x65NtHZh=r+vPQaPqN+A@mail.gmail.com>
+In-Reply-To: <CAH5fLgizj3RDCXMe0zJ4jjJrtui-R9x65NtHZh=r+vPQaPqN+A@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 26 Jun 2024 10:42:23 +0200
+Message-ID: <CANiq72n5b+64z4rVs9f+1miR8R0xnSJXLz4KKcKj+pxkOy_fVA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] Makefile: improve comment documentation for the
+ rust-analyzer target
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: John Hubbard <jhubbard@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>, Greg KH <greg@kroah.com>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	linux-kbuild@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 26 Jun 2024 03:22:52 +0100,
-Tangnianyao <tangnianyao@huawei.com> wrote:
-> 
-> 
-> 
-> On 6/25/2024 15:53, Marc Zyngier wrote:
-> > On Tue, 25 Jun 2024 02:40:19 +0100,
-> > Nianyao Tang <tangnianyao@huawei.com> wrote:
-> >> When GICv4.1 enabled, guest sending IPI use the last ITS reported.
-> >> On multi-NUMA environment with more than one ITS, it makes IPI performance
-> >> various from VM to VM, depending on which NUMA the VM is deployed on.
-> >> We can use closer ITS instead of the last ITS reported.
-> > Closer to *what*? the SGI sender? or the receiver? Something else?
-> 
-> VSGI sender.
-> VSGI sender use original find_4_1_its to inject vsgi, it always find the last reported
-> 4_1 ITS, regardless of which NUMA the VSGI sender cpu is located on.
+On Wed, Jun 26, 2024 at 10:08=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
+wrote:
+>
+> Is "symbol browsing database" the right word here? It's not actually a
+> list of symbols, but instructions for how to compile the code.
 
-So your concern is about cross-node MMIO accesses?  You should capture
-this in your commit message.
+Yeah, I think the sentence mixes a bit what the file is with what
+(some of) the users of the file do with it.
 
-> 
-> >
-> >> Modify find_4_1_its to find the ITS of the NUMA node where current
-> >> cpu is located and save it with per cpu variable.
-> > But find_4_1_its() isn't only used for SGIs. Is it valid to do this
-> > trick for all use cases?
-> 
-> To consider this case, I've implemented original find_4_1_its function, finding a
-> 4_1 ITS in system and return, even NUMA is not match. Would it  be enough to be
-> compatitable with other code ?
+What about something like (getting inspiration from the official documentat=
+ion):
 
-That's not what I'm asking.
+    # Generate `rust-project.json` (a file that describes the
+structure of non-Cargo Rust projects) for `rust-analyzer` (an
+implementation of the Language Server Protocol).
 
-The same helper is also used when invalidating a doorbell, configuring
-VSGIs, tearing down of a VPE. Do you see similar issues with these
-functionalities not a local ITS? Or is your issue specific to VSGI
-generation?
+I would avoid mentioning `compile_commands.json`, since they are
+slightly different the Rust one does not really contain the compile
+commands.
 
-> A new find_4_1_its can firstly select 4_1 ITS on the same NUMA as the current
-> cpu(VSGI sender), and if fail to find, then return 4_1 ITS on other NUMA.
-> 
-> >
-> >> (There's format issues with the previous patch, resend it)
-> > In the future, please move this sort of comment to a note after the
-> > --- delimiter.
-> 
-> ok, get it.
-> 
-> >
-> >> Signed-off-by: Nianyao Tang <tangnianyao@huawei.com>
-> >> ---
-> >>  drivers/irqchip/irq-gic-v3-its.c | 27 ++++++++++++++++++---------
-> >>  1 file changed, 18 insertions(+), 9 deletions(-)
-> >>
-> >> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-> >> index 3c755d5dad6e..d35b42f3b2af 100644
-> >> --- a/drivers/irqchip/irq-gic-v3-its.c
-> >> +++ b/drivers/irqchip/irq-gic-v3-its.c
-> >> @@ -193,6 +193,8 @@ static DEFINE_RAW_SPINLOCK(vmovp_lock);
-> >>  
-> >>  static DEFINE_IDA(its_vpeid_ida);
-> >>  
-> >> +static DEFINE_PER_CPU(struct its_node *, its_on_cpu);
-> > I don't really get the "its_on_cpu" name. "local_its" would at least
-> > indicate a notion being "close".
-> 
-> I want to mean ITS on the current cpu NUMA node.
-> Yes, "local_its" is better.
-> 
-> >
-> >> +
-> >>  #define gic_data_rdist()		(raw_cpu_ptr(gic_rdists->rdist))
-> >>  #define gic_data_rdist_cpu(cpu)		(per_cpu_ptr(gic_rdists->rdist, cpu))
-> >>  #define gic_data_rdist_rd_base()	(gic_data_rdist()->rd_base)
-> >> @@ -4058,19 +4060,25 @@ static struct irq_chip its_vpe_irq_chip = {
-> >>  
-> >>  static struct its_node *find_4_1_its(void)
-> >>  {
-> >> -	static struct its_node *its = NULL;
-> >> +	struct its_node *its = NULL;
-> >> +	struct its_node *its_non_cpu_node = NULL;
-> >> +	int cpu = smp_processor_id();
-> >>  
-> >> -	if (!its) {
-> >> -		list_for_each_entry(its, &its_nodes, entry) {
-> >> -			if (is_v4_1(its))
-> >> -				return its;
-> >> -		}
-> >> +	if (per_cpu(its_on_cpu, cpu))
-> >> +		return per_cpu(its_on_cpu, cpu);
-> >>  
-> >> -		/* Oops? */
-> >> -		its = NULL;
-> >> -	}
-> >> +	list_for_each_entry(its, &its_nodes, entry) {
-> >> +		if (is_v4_1(its) && its->numa_node == cpu_to_node(cpu)) {
-> >> +			per_cpu(its_on_cpu, cpu) = its;
-> >> +			return its;
-> >> +		} else if (is_v4_1(its))
-> >> +			its_non_cpu_node = its;
-> >> +	}
-> > Why do you consider the NUMA node instead of the ITS' own affinity?
-> > SVPET gives you some notion of distance with the RDs, and that'd
-> > probably be useful.
-> 
-> I assumed BIOS should report NUMA node following real topology, use NUMA node
-> for simplicity.
+As for "IDE", I am happy either way (i.e. removing it or not). Another
+alternative that may clarify by giving context could be "Editor / IDE"
+(since one may use LSP with "simple editors" and not "full IDEs"
+anyway).
 
-NUMA is about CPU memory access, and doesn't quite describe how the
-ITS fits there. I know people have abused this when the GIC didn't
-have this notion, but we're over that now. The ITS has the most
-precise information (ITS->RD->CPU), and we also need to make this work
-for systems that do not use ACPI.
+With that changed, if Masahiro wants to pick these two up:
 
-This is pretty easy to do as we inherit the VPE table from the ITS on
-secondary CPUs, and that's the right spot to populate your table.
+    Acked-by: Miguel Ojeda <ojeda@kernel.org>
 
-I'd expect something like this to do the trick:
+Otherwise I am happy to take them too.
 
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index 40ebf1726393..bfcbc5a46c1c 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -119,6 +119,8 @@ struct its_node {
- 	int			vlpi_redist_offset;
- };
- 
-+static DEFINE_PER_CPU(struct its_node *, local_4_1_its);
-+
- #define is_v4(its)		(!!((its)->typer & GITS_TYPER_VLPIS))
- #define is_v4_1(its)		(!!((its)->typer & GITS_TYPER_VMAPP))
- #define device_ids(its)		(FIELD_GET(GITS_TYPER_DEVBITS, (its)->typer) + 1)
-@@ -2729,6 +2731,8 @@ static u64 inherit_vpe_l1_table_from_its(void)
- 		}
- 		val |= FIELD_PREP(GICR_VPROPBASER_4_1_SIZE, GITS_BASER_NR_PAGES(baser) - 1);
- 
-+		*this_cpu_ptr(&local_4_1_its) = its;
-+
- 		return val;
- 	}
- 
-@@ -2766,6 +2770,8 @@ static u64 inherit_vpe_l1_table_from_rd(cpumask_t **mask)
- 		gic_data_rdist()->vpe_l1_base = gic_data_rdist_cpu(cpu)->vpe_l1_base;
- 		*mask = gic_data_rdist_cpu(cpu)->vpe_table_mask;
- 
-+		*this_cpu_ptr(&local_4_1_its) = *per_cpu_ptr(&local_4_1_its, cpu);
-+
- 		return val;
- 	}
- 
-@@ -4078,8 +4084,9 @@ static struct irq_chip its_vpe_irq_chip = {
- 
- static struct its_node *find_4_1_its(void)
- {
--	static struct its_node *its = NULL;
-+	struct its_node *its;
- 
-+	its = *this_cpu_ptr(&local_4_1_its);
- 	if (!its) {
- 		list_for_each_entry(its, &its_nodes, entry) {
- 			if (is_v4_1(its))
-
-
-*if* there is no matching affinity between ITS and RDs, you can then
-fallback to NUMA nodes. But using the architected mechanism should be
-the first port of call.
-
-> 
-> >
-> >>  
-> >> -	return its;
-> >> +	if (!per_cpu(its_on_cpu, cpu) && its_non_cpu_node)
-> >> +		per_cpu(its_on_cpu, cpu) = its_non_cpu_node;
-> >> +
-> >> +	return its_non_cpu_node;
-> >>  }
-> > Urgh. Mixing init and runtime is awful. Why isn't this initialised
-> > when a CPU comes up? We already have all the infrastructure.
-> 
-> The original find_4_1_its use "static struct its_node *its" to save 4_1 ITS, and
-> it's init inside this function. So, to follow this, I tried to not modify this usage.
-
-Sure, but this is already bad, and you're making it worse. Please take
-this as an opportunity to make things better.
-
-> >
-> > But the biggest question is "what sort of performance improvement does
-> > this bring"? You give no numbers, no way to evaluate anything.
-> >
-> > I've asked for that times and times again: if your changes are
-> > claiming a performance improvement, please back it up. It's not that
-> > hard. 
-> 
-> On a 2-socket environment, reported as 2-NUMA, each socket with one ITS
-> and 32 cpu, GICv4.1 enabled.
-> For performance, I deploy a 4U8G guest, 4 vcpu on same socket.
-> When I deploy guest on socket0, kvm-unit-tests ipi_hw result is 850ns. It
-> test the delay from one vcpu sending ipi to another vcpu receiving ipi in guest.
-> When I deploy guest on socket1, the result is 750ns.
-> The reason is VSGI sender always use lasted reported ITS to inject VSGI.
-> The access from cpu to other-socket ITS will cost 100ns more compared to cpu
-> to local ITS.
-
-Right, this is exactly the sort of information I want to capture in a
-commit message. Because a 12% reduction in IPI latency is *huge*, and
-justifies the change. Please add it when you respin the patch.
-
-Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Cheers,
+Miguel
 
