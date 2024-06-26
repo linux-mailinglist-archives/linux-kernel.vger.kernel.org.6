@@ -1,143 +1,203 @@
-Return-Path: <linux-kernel+bounces-230879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FA08918340
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:50:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8A1491833B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:50:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28E55B22DEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:50:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D28511C212A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F167018C357;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D27EE18C350;
 	Wed, 26 Jun 2024 13:47:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h+cbKdaj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MOY4waer"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2827E18C332;
-	Wed, 26 Jun 2024 13:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23EEF18A930;
+	Wed, 26 Jun 2024 13:47:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719409632; cv=none; b=sWtTh+qtFL/oi77X9OvbD6XLsh3ScaSq1hEoxwJGrzIWadjw7s0q+CnuauJ4/Dbf0SXa0QdsVWtcxACQmLB+P+kjg8RBkQ1a48jhBIJPhY9swLa6noXG6g21UBU7bLf4ji6c/v5Kzie8RerWnrsUcdlWibk4VPiJInAtZaHCi3U=
+	t=1719409631; cv=none; b=Nskh2wVHuRaa1O99Cj8Bm2HLncELHf9gg0S5cO2MFcWf+DJ5QWmj/ztOFLWN1l4l8ciQuY7JXlYUnYmvGsl9VASxHIctID9OA+uMiG7uHw6UjU2l3IUGF2WJ8DgYPPmgYVbEt7mGVws101olWQ31yrKIwXWeBs9anrWNFpZ5xZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719409632; c=relaxed/simple;
-	bh=LzCekQcIoqruWg0rYojXSnFhC5ZmixAWJ/RcdTynxwE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NMU7dvbAuGMUBpS2jJr8JUd/J1kRUqGSW9761EUBcngxvQPvr4Mak7lZNzFq6M1DBdGKTCucNeKVGCix0y2jYcuwyd3Ey6ieRrRUUQn5U6e7NPwRzSXXjojpaKd3FBxKyqLAyTk7VI+ItInMx0+0LLGdgwWkm/YP63WiAMdp9yQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h+cbKdaj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6D5DC32789;
-	Wed, 26 Jun 2024 13:47:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719409632;
-	bh=LzCekQcIoqruWg0rYojXSnFhC5ZmixAWJ/RcdTynxwE=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=h+cbKdaj87xqGJRf6aGqu7Veq6bWYSw+tpcCpJe1WWWx1QFazkbvD3sWZmgDFp35A
-	 A8jVUlMyr8xdIhefZvVKFpvqCBbVpECRYUYwYIzeTQLavfyhe6xCY/jMqgCOch/Kcw
-	 2949FDXwnV4sn4EIssDnbRu4GvyKoF9w9q3Z9mhXbSd3f40hk0klL3vDS+oMoQffGU
-	 1F6WY8HsfD4yiw4DQwpjeg80cbLPFqEYmdRcYlP4UG0g4TKo0FESMGLc5h3nIQnei9
-	 yuokhFtLRxWDxQH2B/CgENQOQu0rgmADpzo87xE6pdlh/pSE7OJFcnfBxPyQ7v0ZSz
-	 ks/NucI+s47Pg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id B212DCE0E79; Wed, 26 Jun 2024 06:47:10 -0700 (PDT)
-Date: Wed, 26 Jun 2024 06:47:10 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Breno Leitao <leitao@debian.org>, sandipan.das@amd.com,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, leit@meta.com,
-	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>,
-	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] perf/x86/amd: Warn only on new bits set
-Message-ID: <cc187abf-fbcc-4d4d-8764-faa9d1ceadd1@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240524141021.3889002-1-leitao@debian.org>
- <20240625115734.GX31592@noisy.programming.kicks-ass.net>
- <e17a924d-9699-465f-8bef-cde4411e2146@paulmck-laptop>
- <20240626085153.GA31592@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1719409631; c=relaxed/simple;
+	bh=rSsKiSc4dFI2tkoNlNTsDyIXyV57SbU85aojGhTzijM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IS4L1n5z0jO+9GfrS7x+Wa7lw9lsHTpb7S7XR6iot1aDA3Q/HIzX6bPm7ic4H1lEeodrZx5zyLFW1dNryAiVtf55rvRX5jPFj7iSinw5tyogS/a9X9ONHknpaPUWhGO0UTfRYhifi03+RetQSmuhRGjU94nZlVpb/H9+yiDS4CE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MOY4waer; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a6fdd947967so486955566b.2;
+        Wed, 26 Jun 2024 06:47:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719409628; x=1720014428; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RFl4a85rkCgH8ys4lWAdMJzDTuxnq6IRXeCuLnaU+Ko=;
+        b=MOY4waermEgQGuDE/Z8Y91XE2m4Ji5CPK4kC3p6Mnk2ayoMVI/SG65zt2wESlXtPfK
+         4KJ4dT4BFUpOpaqoqBlWyqtgZYxrT3/8odwLGRYevviDiMv3u7BAjD7RUzEyHt9YuKK5
+         PyXWs1hBKTH9vAuyEruOFF3/bHxu4fYyxjQDfEfEbzdkQ1G1fYGeJy8RNL/IUF816Hlz
+         8DMRrZjLvgY8p/ZJnJ4NUBnKKINfgZR8Qli/2ZiwTeDwklD+CYaVSCNTrIH/Mr/WvXQT
+         tZTWS4RHhJLwZZeQ+AJs86bufZTrzfKtVErT6dvxHXJQuZs4VFxORPXmfXFmDK01rV/i
+         kc/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719409628; x=1720014428;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RFl4a85rkCgH8ys4lWAdMJzDTuxnq6IRXeCuLnaU+Ko=;
+        b=Jnt35k//YwAVGuzHfZh8oJyhuoIesVL/tvbkqP0HEX8lnlYYeSrhRkx8Uz47TFmy3n
+         kCT2mmAk4/sMf1DMa4O0lGbfA5wwhDqD0FSCglggbXAzCO/UDnPedWOvbZbwqM9rlzPJ
+         EfqLAFhs3FbD6bisISS2jTTIhysCDFhbNfrzoRpxygkCR3Hkf9pk/kVmDJlPXjttsPCF
+         i0SQiGcf/K449qks1Sv77AJGFXWueLdGytrZ2igq43eECxIdhgw0XnBXOX2yUAglLdst
+         w5sme/tI2ApZ+uPfUfQoA7CirHzA7Xhh98WOwH1alnItst7faEuWNPTcgRtVFJKLS7Y6
+         aaFg==
+X-Forwarded-Encrypted: i=1; AJvYcCVoYWzSe3SpUqdUjR/pFPb+AQ8AeNv6+vEvMb/FqwD1Jj/8rWL2+IT4AJtujG9kDovVVffMBBtAWAWjdodOZON+2mpYJo4c29u3bAG3cRyAzBtEtQt3KFN8KHk5I20ToPonF0rVhgBRe6YEhUnFfy2/nY8fUZooUev6k9iSU2y/8BMAKNNFWs245rr/OZlHApRW3vR2BDOI4CgWpWCAcVX2RCN6StbQPQiVQNx0upsDi6wXGX1JFHRRe/rAjEihGgNy7pJRWrtxIPs9FTb25FK90L8e+kYWWDzptlkH6AE3o+U1SPJzGLYfFB4QFHQNG5DA0OYjE/Yk1t3OLy5peSrFpj3DZN/YUVKM7ne8IrVCKunUcT8Fv2sewFa5Nl0f/pH5RrwFLCw5cLR5rD9iAdkkckIboLLpMrTNgT4eC1KmyG+g4wjBPGXju9FeykxzWr/gHQ3pi3eeJdldectuPPLgZFNve5eWRnnYzvUUmT73ZT9koxqV0yjXMkxAx6fpF+DgPiZuVQ==
+X-Gm-Message-State: AOJu0YxHsN5weWDKj5nJu5tI3DNP8gz9E11kO3w4rW4xJSJWUBRqFnQM
+	7RKQEuGE3D6RX391dTfXUL4lQ/V4+llJST0mSkd2z4Fl9tEMsB6m
+X-Google-Smtp-Source: AGHT+IGD5mGfND6mvQHeN5VakSdcpLJO5iAUu9YTrHEpvfoG3vNqvyJwqGy3yIJ4e8gaM2b8isOyjg==
+X-Received: by 2002:a17:907:c01a:b0:a72:8c5e:f3d with SMTP id a640c23a62f3a-a728c5e112amr201037566b.49.1719409628168;
+        Wed, 26 Jun 2024 06:47:08 -0700 (PDT)
+Received: from [192.168.42.3] ([163.114.131.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7244cbce5bsm425759166b.79.2024.06.26.06.47.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Jun 2024 06:47:07 -0700 (PDT)
+Message-ID: <09bdd7e5-75ca-42d5-8e59-a8ec05da89c7@gmail.com>
+Date: Wed, 26 Jun 2024 14:47:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240626085153.GA31592@noisy.programming.kicks-ass.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v13 11/13] net: add SO_DEVMEM_DONTNEED setsockopt
+ to release RX frags
+To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
+ linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Richard Henderson <richard.henderson@linaro.org>,
+ Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
+ <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Steffen Klassert
+ <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+ David Ahern <dsahern@kernel.org>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>,
+ Nikolay Aleksandrov <razor@blackwall.org>, David Wei <dw@davidwei.uk>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>,
+ Shailend Chand <shailend@google.com>,
+ Harshitha Ramamurthy <hramamurthy@google.com>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
+ <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>,
+ Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>
+References: <20240625024721.2140656-1-almasrymina@google.com>
+ <20240625024721.2140656-12-almasrymina@google.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <20240625024721.2140656-12-almasrymina@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 26, 2024 at 10:51:53AM +0200, Peter Zijlstra wrote:
-> On Tue, Jun 25, 2024 at 07:47:06AM -0700, Paul E. McKenney wrote:
-> > On Tue, Jun 25, 2024 at 01:57:34PM +0200, Peter Zijlstra wrote:
-> > > On Fri, May 24, 2024 at 07:10:20AM -0700, Breno Leitao wrote:
-> > > > Warning at every leaking bits can cause a flood of message, triggering
-> > > > vairous stall-warning mechanisms to fire, including CSD locks, which
-> > > > makes the machine to be unusable.
-> > > > 
-> > > > Track the bits that are being leaked, and only warn when a new bit is
-> > > > set.
-> > > > 
-> > > > Suggested-by: Paul E. McKenney <paulmck@kernel.org>
-> > > > Signed-off-by: Breno Leitao <leitao@debian.org>
-> > > > ---
-> > > >  arch/x86/events/amd/core.c | 9 +++++++--
-> > > >  1 file changed, 7 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/arch/x86/events/amd/core.c b/arch/x86/events/amd/core.c
-> > > > index 1fc4ce44e743..df0ba2382d13 100644
-> > > > --- a/arch/x86/events/amd/core.c
-> > > > +++ b/arch/x86/events/amd/core.c
-> > > > @@ -941,11 +941,12 @@ static int amd_pmu_v2_snapshot_branch_stack(struct perf_branch_entry *entries, u
-> > > >  static int amd_pmu_v2_handle_irq(struct pt_regs *regs)
-> > > >  {
-> > > >  	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
-> > > > +	static atomic64_t status_warned = ATOMIC64_INIT(0);
-> > > > +	u64 reserved, status, mask, new_bits;
-> > > >  	struct perf_sample_data data;
-> > > >  	struct hw_perf_event *hwc;
-> > > >  	struct perf_event *event;
-> > > >  	int handled = 0, idx;
-> > > > -	u64 reserved, status, mask;
-> > > >  	bool pmu_enabled;
-> > > >  
-> > > >  	/*
-> > > > @@ -1010,7 +1011,11 @@ static int amd_pmu_v2_handle_irq(struct pt_regs *regs)
-> > > >  	 * the corresponding PMCs are expected to be inactive according to the
-> > > >  	 * active_mask
-> > > >  	 */
-> > > > -	WARN_ON(status > 0);
-> > > > +	if (status > 0) {
-> > > > +		new_bits = atomic64_fetch_or(status, &status_warned) ^ atomic64_read(&status_warned);
-> > > > +		// A new bit was set for the very first time.
-> > > > +		WARN(new_bits, "New overflows for inactive PMCs: %llx\n", new_bits);
-> > > > +	}
-> > > 
-> > > Why not just a WARN_ON_ONCE() instead? This really shouldn't be
-> > > happening in the first place.
-> > 
-> > We did consider that, but seeing the full set of bits that shouldn't
-> > have been happening in the first place helps with debuggging.
-> > 
-> > But is there a better way to accumulate and print the full set of
-> > unexpected bits?
-> 
-> Dunno, I was just wondering if the whole thing wasn't massive overkill.
-> The changelog wasn't really explaining much here.
+On 6/25/24 03:47, Mina Almasry wrote:
+> Add an interface for the user to notify the kernel that it is done
+> reading the devmem dmabuf frags returned as cmsg. The kernel will
+> drop the reference on the frags to make them available for reuse.
 
-For me, the two additional executable lines of code seems to be a small
-price to pay to be able to see all the bits, not just the first one that
-happened to be set.
+The sock_devmem_dontneed loop is a bit crude, but that can
+be handled by follow up patches.
 
-							Thanx, Paul
+Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
+
+> diff --git a/net/core/sock.c b/net/core/sock.c
+> index 9abc4fe259535..040c66ac26244 100644
+> --- a/net/core/sock.c
+> +++ b/net/core/sock.c
+...
+>   
+> +#ifdef CONFIG_PAGE_POOL
+> +static noinline_for_stack int
+> +sock_devmem_dontneed(struct sock *sk, sockptr_t optval, unsigned int optlen)
+> +{
+> +	unsigned int num_tokens, i, j, k, netmem_num = 0;
+> +	struct dmabuf_token *tokens;
+> +	netmem_ref netmems[16];
+> +	int ret = 0;
+> +
+> +	if (sk->sk_type != SOCK_STREAM || sk->sk_protocol != IPPROTO_TCP)
+> +		return -EBADF;
+> +
+> +	if (optlen % sizeof(struct dmabuf_token) ||
+> +	    optlen > sizeof(*tokens) * 128)
+> +		return -EINVAL;
+> +
+> +	tokens = kvmalloc_array(128, sizeof(*tokens), GFP_KERNEL);
+> +	if (!tokens)
+> +		return -ENOMEM;
+> +
+> +	num_tokens = optlen / sizeof(struct dmabuf_token);
+> +	if (copy_from_sockptr(tokens, optval, optlen)) {
+> +		kvfree(tokens);
+> +		return -EFAULT;
+> +	}
+> +
+> +	xa_lock_bh(&sk->sk_user_frags);
+> +	for (i = 0; i < num_tokens; i++) {
+> +		for (j = 0; j < tokens[i].token_count; j++) {
+> +			netmem_ref netmem = (__force netmem_ref)__xa_erase(
+> +				&sk->sk_user_frags, tokens[i].token_start + j);
+> +
+> +			if (netmem &&
+> +			    !WARN_ON_ONCE(!netmem_is_net_iov(netmem))) {
+> +				netmems[netmem_num++] = netmem;
+> +				if (netmem_num == ARRAY_SIZE(netmems)) {
+> +					xa_unlock_bh(&sk->sk_user_frags);
+> +					for (k = 0; k < netmem_num; k++)
+> +						WARN_ON_ONCE(!napi_pp_put_page(netmems[k]));
+> +					netmem_num = 0;
+> +					xa_lock_bh(&sk->sk_user_frags);
+> +				}
+> +				ret++;
+> +			}
+> +		}
+> +	}
+> +
+> +	xa_unlock_bh(&sk->sk_user_frags);
+> +	for (k = 0; k < netmem_num; k++)
+> +		WARN_ON_ONCE(!napi_pp_put_page(netmems[k]));
+> +
+> +	kvfree(tokens);
+> +	return ret;
+> +}
+> +#endif
+
+-- 
+Pavel Begunkov
 
