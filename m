@@ -1,346 +1,299 @@
-Return-Path: <linux-kernel+bounces-230636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4F40917FB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:31:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC1EB917FB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:31:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 239E81F27401
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:31:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFF7B1C20AAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9439E17F38D;
-	Wed, 26 Jun 2024 11:30:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 379D217F383;
+	Wed, 26 Jun 2024 11:31:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="IuKFCHnZ"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2045.outbound.protection.outlook.com [40.107.215.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="N6ikJ4xA"
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29EDC1591EE;
-	Wed, 26 Jun 2024 11:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719401454; cv=fail; b=uN3nO3fEkxQspd9NfT+xMjqksdhS61VBHOSw0ScPgEZi8vNbA4tyoMYIDRAbQGqeEARtFRsWf2gKffdt1NEA80xcni3F9niEq7fSRnAKGIV3y5Z8toQf7BP+0FeDRH853llM593cY3ivL/pl0kA5NC8d5F8aYDvyHgnhTEitEkU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719401454; c=relaxed/simple;
-	bh=K5aj5z24fFV+B7Bs/Zoma5PRvDHMp4HqXl6snvShnY8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bu4pG6jHsx7iRr5aOW0Cs0BjGMVLj5oZ2bzkQIojkozGSWSUKcpxrxpxhDeAuWxSbl3EaOPdQFclQ2ChLt8pFG73w2eVgUqPPQ41U/FgaQAe7II6eCNig784bi+1Y0aTpcWb9/eBobbt5JKJH/G0+BExZY7zlnnr3W5SIUYnQhg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=IuKFCHnZ; arc=fail smtp.client-ip=40.107.215.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LQdXiemieWO0iMf2JrHVuOkNPZNZ1GcDrYOIHn3nrn8GZ1dMc9avXlCA5dKbnfewwJx1dAGF73wgh0uawHwpy+tULWnAgye9bngyNXlqnaf5biTjGeSzlSmT3rFbjt5GhUzRyy2jdGWfiYo1J4nea6tIy0eCoGtrU+3GskVC0+70yjBdvse18NcCjRcnR2PBXalIoVRXBEYiEXUl7OCkPqa6FDGdZeG7Eq5/wKExyDICMNFesYQ0OesthsevNb8XCT1sgfYUgUR6Az5pOr2rEI6lxFfWbJajh27NA4qVnFoGv72cz83BFv95713/nvxhZFEXzGokUAlRa98Oq1udoQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=41jJPNm0cjyq/D5dkQDMA9IA9Xt9vDwZ8WR1Rj18iPE=;
- b=eA/q63KLlpLSG9CH3+47o/ZQGexhYKPmFfx7dkV+VlBt8FWPnQzqlQwI4tjAV4ek3yllHhadkZr/BfnpjwDDXOivugcp9rCsxiejamfAXhqlDqyjpZ6WHvCOK+dTHMUzGdgSIopx8fPQtt6y3AIRiRUQSOjwGM247xIPAiIeWIVJL0Ldv8GrkNYLku5Y5xZrBOwyT53nEZq+1dxNgs4KFc5hbVxkYeGcT6nTSTijilPLUHOLjlACcEKT5izq/RyIBzBzYLfhmcPbPdoPkQVnIbyqvLTjBeXGaWL6UZwKrfBmGECvtCkEaxksGIfvqmGyjttzPfhDqnv4OeSo+BpD5Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 58.252.5.68) smtp.rcpttodomain=redhat.com smtp.mailfrom=oppo.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=oppo.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=41jJPNm0cjyq/D5dkQDMA9IA9Xt9vDwZ8WR1Rj18iPE=;
- b=IuKFCHnZu4o+Mb23Fk7CmVL/r3+TGPJJJ32S99evl+D2ZzCyvm+0Zr3PCtsm780J+kjS9I4H8cfCUSKOluCzytxpUz8Ilfj7m1Ycqbp1zAuWDYmO0vhVs6lZvYLrA7AYHGs/giTp4INwXMtIHXO7l0NMOx+m7WQ7heUPk/Jy5Vs=
-Received: from PS1PR01CA0012.apcprd01.prod.exchangelabs.com
- (2603:1096:300:75::24) by KL1PR02MB6612.apcprd02.prod.outlook.com
- (2603:1096:820:106::5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.30; Wed, 26 Jun
- 2024 11:30:47 +0000
-Received: from HK3PEPF0000021C.apcprd03.prod.outlook.com
- (2603:1096:300:75:cafe::47) by PS1PR01CA0012.outlook.office365.com
- (2603:1096:300:75::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.38 via Frontend
- Transport; Wed, 26 Jun 2024 11:30:47 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
- smtp.mailfrom=oppo.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=oppo.com;
-Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
- 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
- client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
-Received: from mail.oppo.com (58.252.5.68) by
- HK3PEPF0000021C.mail.protection.outlook.com (10.167.8.38) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7677.15 via Frontend Transport; Wed, 26 Jun 2024 11:30:47 +0000
-Received: from oppo.com (172.16.40.118) by mailappw31.adc.com (172.16.56.198)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 26 Jun
- 2024 19:30:45 +0800
-Date: Wed, 26 Jun 2024 19:30:39 +0800
-From: Hailong Liu <hailong.liu@oppo.com>
-To: Baoquan He <bhe@redhat.com>, Uladzislau Rezki <urezki@gmail.com>
-CC: Uladzislau Rezki <urezki@gmail.com>, Nick Bowler <nbowler@draconx.ca>,
-	<linux-kernel@vger.kernel.org>, Linux regressions mailing list
-	<regressions@lists.linux.dev>, <linux-mm@kvack.org>,
-	<sparclinux@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: PROBLEM: kernel crashes when running xfsdump since ~6.4
-Message-ID: <20240626113039.a2rvjarq6zbrgjis@oppo.com>
-References: <Znq6tEtCgB6QnnJH@pc638.lan>
- <Znq/8/HAc/0p6Ja0@MiWiFi-R3L-srv>
- <ZnrjZRq5-_hemrbD@pc636>
- <ZnrnADHvOiNcZv9t@MiWiFi-R3L-srv>
- <Znr1IQ1mssdNNXbv@pc638.lan>
- <ZnsjIB2byIxSgbjc@pc636>
- <20240626051206.mx2r4iy3wpexykay@oppo.com>
- <ZnvcToH1h-sVtikh@pc636>
- <20240626100342.2dudj6fjjx6srban@oppo.com>
- <ZnvytLzoLrVwymXv@MiWiFi-R3L-srv>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 808961591EE
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 11:31:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719401486; cv=none; b=pdYO9ULdEwXcntt/P5H1ePL5Ll+9AJNOt9hi0bj+e6scfpeUhKqoUjgppBEgnaRj+DpEY4e6kNtxRA6nHi00W6VlNkSx75gm1+aPXzGj8PH6nveSckJrBZ/H5csGcFXa02e4Koq6q5+sf4Yi9udYuRj9oQeRdoY/3Czk/m5cu5U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719401486; c=relaxed/simple;
+	bh=1X6to8bGiqgpXC+o9ZtO65B27wg3IH7uiof4yQKpVz0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kGH0pQWxlbTXB4N0F9ZOyhboTvn/y4TxH1NEo6hAPkK9DHv0d1+hS2YecOAFbUbszgl8uZZXBJbQzGwWy1f5gtJx7BFzsy9Vd2GAPi/Z0ULoi/r+6c90lDzwmbZy/1trPk6vWNaa29MV2qyvaU3IsOVlPVOUZYVxWK0/U5eoO9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=N6ikJ4xA; arc=none smtp.client-ip=209.85.217.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-48f3d9a9905so1694052137.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 04:31:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1719401483; x=1720006283; darn=vger.kernel.org;
+        h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tCGrLdUXZf1KUzp2b0BQzDqTV+d5Gym79io2a2Y5nVw=;
+        b=N6ikJ4xA2sIcZ8g8ZwgCCkhLMcqAZmLCXboGFRRq856zKY1LGJeKtEsFMICSitRh1m
+         Ae/SU7TcLaUJf8EMhg5C6ZS/4FVXx8nwSgIwRj/TGF+fvdRfAnEaiBi+De5oPNsVWRR8
+         CgIaDC6hO4rC2Bq8iV6XOzdGKguW00qy26EoE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719401483; x=1720006283;
+        h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=tCGrLdUXZf1KUzp2b0BQzDqTV+d5Gym79io2a2Y5nVw=;
+        b=bqLAhL2fGqVXt5EEjE/e4pWXr5ANbqaULifQ1ELCU4nwfWxF+SpOpsGUISjAI+icqa
+         gounMVkPyW2zuUPyGgTN+P+ozlCsyoPy+2uvOSoFlR7CMCleNv3YhEEgjnfpf9VaZOcm
+         vPC9uz4H/beQDEkHiOSPrdyrBS6epNprFVkE1pqbhcOA3ulWD4l+/GfE6Cxwrfiy6lqL
+         jankf0M8JvGWhBedHxOVnEAvOYmcQQuvL9eyaDoHechyK+4WDXZC7XXDPcvL4EHVLekn
+         Ux6jI+ERDegERQ1eohf4DnRWD40d2cFktdPE/aj8fnPZCz+entMEALrEYkihzDRT1Oq5
+         DRXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXMQut3gD5YAq1OnpaCx0bJdccXHKB7euTtRm/1VKD9jyFJ2AU5iDnnjROA324NRePdAIYRcXrTMYv4zE+f7ix86MsjyeGU7mUPju6i
+X-Gm-Message-State: AOJu0YyNXvdYjEUU4rMVFzl2PyAi1Gene3kf1qVnFEkM3v8+Nya4L7gR
+	np+o9suNJQnuhKLFFYzYLOXkVi0fbsi0Gk0tR7pXrNPZZBMEbKbFLArCIjpvEQ==
+X-Google-Smtp-Source: AGHT+IG1WbmaYK7tAScwsNCXvXSVcxF5XxPSiv1CIo11s/FzBSqV+Sr5de8ApxEZMpawXpMQ1Wxo6A==
+X-Received: by 2002:a05:6102:2276:b0:48f:392a:f891 with SMTP id ada2fe7eead31-48f4c0dcd51mr9897775137.21.1719401483391;
+        Wed, 26 Jun 2024 04:31:23 -0700 (PDT)
+Received: from [10.178.66.211] ([192.19.176.219])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-444e0d07b28sm37861781cf.36.2024.06.26.04.31.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Jun 2024 04:31:22 -0700 (PDT)
+Message-ID: <baa71bf0-49af-49c1-93c4-a4c647ca0f94@broadcom.com>
+Date: Wed, 26 Jun 2024 12:31:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZnvytLzoLrVwymXv@MiWiFi-R3L-srv>
-X-ClientProxiedBy: mailappw31.adc.com (172.16.56.198) To mailappw31.adc.com
- (172.16.56.198)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: HK3PEPF0000021C:EE_|KL1PR02MB6612:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0fbfe83f-8117-4abb-f6c6-08dc95d36c94
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230038|36860700011|376012|1800799022|82310400024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MWdJRkErbCt2SENYL0lZWkdDaUdETWlnMHVuQjZaMHF4Q0IvSkJhV21DNDhS?=
- =?utf-8?B?OUlIczV1aUUyRW1rUVdRYytkOXBrT0VweEZOQ1RKZU5Oa2hZRzh3NXIrMGww?=
- =?utf-8?B?VlltSnVOb0F0TkhwdjF5UW5WQWNpVGlnT0lDb0p3U0g3Y0U5UThPb2R0UWlq?=
- =?utf-8?B?cmlQdFhDd2U1elFYZ1AxOHRDZUJBMGlwMldFa1hLdStBNU02NUprcXF4ZzVs?=
- =?utf-8?B?NGZVNlpnTjN5bGZJblMxQXFEdEh0YjBPd0ZBSjEvL2RsSmR1MHA2N0Z2Y3NC?=
- =?utf-8?B?a0dxQXhFTEtrWUJWT1M1MEROOUJ4TGJDNlRjT0VSRDE5S05IUVdDK3lIcW9N?=
- =?utf-8?B?T2x5ZS9nTDB5aFpnNlVZNnF1VUF6YmlGcEo1NzhWZ3p6eWRWU0E2TklvZmFx?=
- =?utf-8?B?aXg2UkJwMmQxTnIwazE5NzltWjJrQzdXOU1OL0FJWHdPTmExQXlSNjVQT3Zv?=
- =?utf-8?B?UFBLanR5V3Q5UHU5aC9odmdhTi9UK2tiUS9aMzNlc1V4QnlWb2RsS0FYbXpz?=
- =?utf-8?B?WWRnSTN2cWNDT0cybnVsSnFXVW0vMURwVzZhWXhaTFU1RzJQK3N6cWF0a2dz?=
- =?utf-8?B?NVpjTUdXaUlJTnkxcjFPRTJtcTJhaHFlZTBndEljOVhrd0dsRWw5azF0TTZH?=
- =?utf-8?B?YVBVRSthZGZwVVpOS0dXaDVPbUdudjliUnJTL1hrWVl1UzlnKzI4LzhZSzhv?=
- =?utf-8?B?a1EzckQxTm9KbnJYUUZLSXRFdWsydmdOcWc1SFB3bUxPeUhVK1NoNWs1dWJv?=
- =?utf-8?B?UXFnNnRGS3lId0x3SGxKM3lGdW1iRUJjWVdsRDFObUVLd3MxVU9xWDIvdjZp?=
- =?utf-8?B?SmJybnBockJOUUJVVVJIL2kzWW9mYWtkVCtzc0xTcnNmZTBsZVR4cGxhVldx?=
- =?utf-8?B?QkhzTlRNQm9qbmI4L3lucEM4bkVuTnZPY3NKWTFLd3l1NU0xbVNHdnRXVEJz?=
- =?utf-8?B?b1VERUwwUmU2K1ArU2pnYmZQY1Fldm02ek1sclYwOHVXaGdmdkV6dTVnb1FU?=
- =?utf-8?B?Zm43b1pmNkxoSlZLNUJ4SjNRUzBDMEZYRWNxUW1lclJwVkxhdEZrYkZJeTRN?=
- =?utf-8?B?aEphMTZ0bVhic2hZRFI5QytSYnI3U3MyRXFIcCtWMmZZNDdlL3RpVXVMZ1Vk?=
- =?utf-8?B?MVRRYmlFaU1EMWdHc0lzTnpvRlNxNnNKTG0zUmluZHR3bUtoVm9jcXU3dDd2?=
- =?utf-8?B?bVRXbCtRQXk3NzZCWHBYd1ZMWGtEMDd3YjhQeFBqYXJJMHl1UmtTNC8wZkNV?=
- =?utf-8?B?TUdNUFhhODBlczUrN01QTHlqa2Y1d1VLSWJqNElpQW9ON29vRzBIWTFXeGlt?=
- =?utf-8?B?R3U4NWdPalZQZHBQK0hIMHFCOGhiQ3g4R0VDbU5sNWFhclRHVDllVXovdWFK?=
- =?utf-8?B?bHdyMXFOVGQ3S1RCdzYvWWZGT0Eybm9LZVZaSUhXN3hHUGRNUHY4b0lhSjJw?=
- =?utf-8?B?bVNZUG4rZjFTd3VJVjl4MGxqVklXcjFnTTJQalhEM2xZeFNPQ1NES2FidkFH?=
- =?utf-8?B?Q2FNVmxybVJKOFdXY0Vka0sxc1Bhc1Z0Zml2RDd6RTdQWE5KcCtRUmluWmJC?=
- =?utf-8?B?RVVXTTI1V0JiZVRHVUNrNThRb3ByQU93UzlyZWJBaWc2MWFxZzVqZkFCbXNp?=
- =?utf-8?B?bGlMSTlGaTl2RkFlUjlsdzhjTkxmMEJXOVlEQ05tMTRyZG9PSHQ1aWtiNzVz?=
- =?utf-8?B?WjlFbU1JS0VyRHF0ZXFIR3d3dlhTNWZ0cmFDQUU4NHhBUEp5NUlmOWl4aUpK?=
- =?utf-8?B?QnNtSjhnNkQ2K3ZsbnNTa3lsNGZMd1dYVW1qSHNwTG1ia1NGMEs5RE5pWjRF?=
- =?utf-8?B?Q3cxaXgwTnJSMlgyeTU2L0pPZFB2eWs5bHhvdFZSUEFuQUM5QjVUaDBpOWVR?=
- =?utf-8?B?UVVhYVlXR3ZvSFJ1d0F4aU1zRnRrdEZyL1A2K0dONURPb21sTFUxditkQndr?=
- =?utf-8?Q?owDFn2VAHBx8DXP+GJdRI6RQzEFmujs4?=
-X-Forefront-Antispam-Report:
-	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230038)(36860700011)(376012)(1800799022)(82310400024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 11:30:47.0545
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0fbfe83f-8117-4abb-f6c6-08dc95d36c94
-X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	HK3PEPF0000021C.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR02MB6612
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/7] dt-bindings: interrupt-controller: Add bcm2712 MSI-X
+ DT bindings
+To: Stanimir Varbanov <svarbanov@suse.de>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jim Quinlan <jim2101024@gmail.com>,
+ Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Andrea della Porta <andrea.porta@suse.com>,
+ Phil Elwell <phil@raspberrypi.com>, Jonathan Bell <jonathan@raspberrypi.com>
+References: <20240626104544.14233-1-svarbanov@suse.de>
+ <20240626104544.14233-2-svarbanov@suse.de>
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20240626104544.14233-2-svarbanov@suse.de>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000aa6268061bc95a6d"
 
-On Wed, 26. Jun 18:51, Baoquan He wrote:
-> On 06/26/24 at 06:03pm, Hailong Liu wrote:
-> > On Wed, 26. Jun 11:15, Uladzislau Rezki wrote:
-> > > On Wed, Jun 26, 2024 at 01:12:06PM +0800, Hailong Liu wrote:
-> > > > On Tue, 25. Jun 22:05, Uladzislau Rezki wrote:
-> > > > > > > > > > /**
-> > > > > > > > > >  * cpumask_next - get the next cpu in a cpumask
-> > > > > > > > > >  * @n: the cpu prior to the place to search (i.e. return will be > @n)
-> > > > > > > > > >  * @srcp: the cpumask pointer
-> > > > > > > > > >  *
-> > > > > > > > > >  * Return: >= nr_cpu_ids if no further cpus set.
-> > > > > > > > >
-> > > > > > > > > Ah, I got what you mean. In the vbq case, it may not have chance to get
-> > > > > > > > > a return number as nr_cpu_ids. Becuase the hashed index limits the
-> > > > > > > > > range to [0, nr_cpu_ids-1], and cpu_possible(index) will guarantee it
-> > > > > > > > > won't be the highest cpu number [nr_cpu_ids-1] since CPU[nr_cpu_ids-1] must
-> > > > > > > > > be possible CPU.
-> > > > > > > > >
-> > > > > > > > > Do I miss some corner cases?
-> > > > > > > > >
-> > > > > > > > Right. We guarantee that a highest CPU is available by doing: % nr_cpu_ids.
-> > > > > > > > So we do not need to use *next_wrap() variant. You do not miss anything :)
-> > > > > > > >
-> > > > > > > > Hailong Liu has proposed more simpler version:
-> > > > > > > >
-> > > > > > > > <snip>
-> > > > > > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > > > > > > > index 11fe5ea208aa..e1e63ffb9c57 100644
-> > > > > > > > --- a/mm/vmalloc.c
-> > > > > > > > +++ b/mm/vmalloc.c
-> > > > > > > > @@ -1994,8 +1994,9 @@ static struct xarray *
-> > > > > > > >  addr_to_vb_xa(unsigned long addr)
-> > > > > > > >  {
-> > > > > > > >         int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
-> > > > > > > > +       int cpu = cpumask_nth(index, cpu_possible_mask);
-> > > > > > > >
-> > > > > > > > -       return &per_cpu(vmap_block_queue, index).vmap_blocks;
-> > > > > > > > +       return &per_cpu(vmap_block_queue, cpu).vmap_blocks;
-> > > > > > > > <snip>
-> > > > > > > >
-> > > > > > > > which just takes a next CPU if an index is not set in the cpu_possible_mask.
-> > > > > > > >
-> > > > > > > > The only thing that can be updated in the patch is to replace num_possible_cpu()
-> > > > > > > > by the nr_cpu_ids.
-> > > > > > > >
-> > > > > > > > Any thoughts? I think we need to fix it by a minor change so it is
-> > > > > > > > easier to back-port on stable kernels.
-> > > > > > >
-> > > > > > > Yeah, sounds good since the regresson commit is merged in v6.3.
-> > > > > > > Please feel free to post this and the hash array patch separately for
-> > > > > > > formal reviewing.
-> > > > > > >
-> > > > > > Agreed! The patch about hash array i will post later.
-G> > > > > >
-> > > > > > > By the way, when I am replying this mail, I check the cpumask_nth()
-> > > > > > > again. I doubt it may take more checking then cpu_possible(), given most
-> > > > > > > of systems don't have gaps in cpu_possible_mask. I could be dizzy at
-> > > > > > > this moment.
-> > > > > > >
-> > > > > > > static inline unsigned int cpumask_nth(unsigned int cpu, const struct cpumask *srcp)
-> > > > > > > {
-> > > > > > >         return find_nth_bit(cpumask_bits(srcp), small_cpumask_bits, cpumask_check(cpu));
-> > > > > > > }
-> > > > > > >
-> > > > > > Yep, i do not think it is a big problem based on your noted fact.
-> > > > > >
-> > > > > Checked. There is a difference:
-> > > > >
-> > > > > 1. Default
-> > > > >
-> > > > > <snip>
-> > > > > ...
-> > > > > +   15.95%     6.05%  [kernel]        [k] __vmap_pages_range_noflush
-> > > > > +   15.91%     1.74%  [kernel]        [k] addr_to_vb_xa <---------------
-> > > > > +   15.13%    12.05%  [kernel]        [k] vunmap_p4d_range
-> > > > > +   14.17%    13.38%  [kernel]        [k] __find_nth_bit <--------------
-> > > > > +   10.62%     0.00%  [kernel]        [k] ret_from_fork_asm
-> > > > > +   10.62%     0.00%  [kernel]        [k] ret_from_fork
-> > > > > +   10.62%     0.00%  [kernel]        [k] kthread
-> > > > > ...
-> > > > > <snip>
-> > > > >
-> > > > > 2. Check if cpu_possible() and then fallback to cpumask_nth() if not
-> > > > >
-> > > > > <snip>
-> > > > > ...
-> > > > > +    6.84%     0.29%  [kernel]          [k] alloc_vmap_area
-> > > > > +    6.80%     6.70%  [kernel]          [k] native_queued_spin_lock_slowpath
-> > > > > +    4.24%     0.09%  [kernel]          [k] free_vmap_block
-> > > > > +    2.41%     2.38%  [kernel]          [k] addr_to_vb_xa <-----------
-> > > > > +    1.94%     1.91%  [kernel]          [k] xas_start
-> > > > > ...
-> > > > > <snip>
-> > > > >
-> > > > > It is _worth_ to check if an index is in possible mask:
-> > > > >
-> > > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > > > > index 45e1506d58c3..af20f78c2cbf 100644
-> > > > > --- a/mm/vmalloc.c
-> > > > > +++ b/mm/vmalloc.c
-> > > > > @@ -2542,7 +2542,10 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
-> > > > >  static struct xarray *
-> > > > >  addr_to_vb_xa(unsigned long addr)
-> > > > >  {
-> > > > > -       int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
-> > > > > +       int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
-> > > > IIUC, use nr_cpu_ids here maybe incorrect.
-> > > >
-> > > > take b101 as example, nr_cpu_ids is 3. if index is 2 cpumask_nth(2, cpu_possible_mask);
-> > > > might return 64.
-> > > >
-> > > But then a CPU2 becomes possible? Cutting by % nr_cpu_ids generates values < nr_cpu_ids.
-> > > So, last CPU is always possible and we never do cpumask_nth() on a last possible CPU.
-> > >
-> > > What i miss here?
-> > >
-> > Sorry, I forget to reply to all :), I write a demo to test as follows:
-> >
-> > static int cpumask_init(void)
-> > {
-> >        struct cpumask mask;
-> >        unsigned int cpu_id;
-> >        cpumask_clear(&mask);
-> >
-> >        cpumask_set_cpu(1, &mask);
-> >        cpumask_set_cpu(3, &mask);
-> >        cpumask_set_cpu(5, &mask);
-> >
-> >        cpu_id = find_last_bit(cpumask_bits(&mask), NR_CPUS) + 1;
-> >        pr_info("cpu_id:%d\n", cpu_id);
-> >
-> >        for (; i < nr_cpu_ids; i++) {
-> >                pr_info("%d: cpu_%d\n", i, cpumask_nth(i, &mask));
-> >        }
-> >
-> >        return 0;
-> > }
-> >
-> > [    1.337020][    T1] cpu_id:6
-> > [    1.337338][    T1] 0: cpu_1
-> > [    1.337558][    T1] 1: cpu_3
-> > [    1.337751][    T1] 2: cpu_5
-> > [    1.337960][    T1] 3: cpu_64
-> > [    1.338183][    T1] 4: cpu_64
-> > [    1.338387][    T1] 5: cpu_64
-> > [    1.338594][    T1] 6: cpu_64
-> >
-> > In summary, the nr_cpu_ids = last_bit + 1, and cpumask_nth() return the nth cpu_id.
->
-> I think just using below change for a quick fix is enough. It doesn't
-> have the issue cpumask_nth() has and very simple. For most of systems,
-> it only adds an extra cpu_possible(idex) checking.
->
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index 633363997dec..59a8951cc6c0 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -2542,7 +2542,10 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
->  static struct xarray *
->  addr_to_vb_xa(unsigned long addr)
->  {
-> -	int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
-> +	int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
+--000000000000aa6268061bc95a6d
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+
+
+On 26/06/2024 11:45, Stanimir Varbanov wrote:
+> Adds DT bindings for bcm2712 MSI-X interrupt peripheral controller.
+> 
+> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
+> ---
+>   .../brcm,bcm2712-msix.yaml                    | 74 +++++++++++++++++++
+>   1 file changed, 74 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2712-msix.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2712-msix.yaml b/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2712-msix.yaml
+> new file mode 100644
+> index 000000000000..ca610e4467d9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2712-msix.yaml
+> @@ -0,0 +1,74 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/interrupt-controller/brcm,bcm2712-msix.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +	if (!cpu_possible(idex))
-> +		index = cpumask_next(index, cpu_possible_mask);
->
->  	return &per_cpu(vmap_block_queue, index).vmap_blocks;
->  }
->
-Agreed! This is a very simple solution.
+> +title: Broadcom bcm2712 MSI-X Interrupt Peripheral support
+> +
+> +maintainers:
+> +  - Stanimir Varbanov <svarbanov@suse.de>
+> +
+> +description: >
+> +  This interrupt controller is used to provide intterupt vectors to the
+> +  generic interrupt controller (GIC) on bcm2712. It will be used as
+> +  external MSI-X controller for PCIe root complex.
+> +
+> +allOf:
+> +  - $ref: /schemas/interrupt-controller/msi-controller.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - "brcm,bcm2712-mip-intc"
+> +  reg:
+> +    maxItems: 1
+> +    description: >
+> +      Specifies the base physical address and size of the registers
+> +
+> +  interrupt-controller: true
+> +
+> +  "#interrupt-cells":
+> +    const: 2
+> +
+> +  msi-controller: true
+> +
+> +  brcm,msi-base-spi:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: The SGI number that MSIs start.
+> +
+> +  brcm,msi-num-spis:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: The number of SGIs for MSIs.
+> +
+> +  brcm,msi-offset:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: Shift the allocated MSIs up by N.
+> +
+> +  brcm,msi-pci-addr:
+> +    $ref: /schemas/types.yaml#/definitions/uint64
+> +    description: MSI-X message address.
+> +
+> +additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupt-controller
+> +  - "#interrupt-cells"
+> +  - msi-controller
 
-If cpumask is b1000001, addresses being distributed across different
-CPUs could theoretically lead to such a situation, but it has not been
-encountered in practice. I’m just pointing out the possibility here.
+ From the implementation of the driver, it looks like all properties are 
+required, except for brcm,msi-offset which has a fallback to the value 0.
+-- 
+Florian
 
-  CPU_0  CPU_6  CPU_6  CPU_6  CPU_6  CPU_6
-    |      |      |      |      |      |
-    V      V      V      V      V      V
-0     10     20     30     40     50     60
-|------|------|------|------|------|------|..
+--000000000000aa6268061bc95a6d
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-Thanks again for your reply, I learned a lot.
-
---
-help you, help me,
-Hailong.
+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
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBVgwggRAoAMCAQICDBP8P9hKRVySg3Qv5DANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAxMjE4MTFaFw0yNTA5MTAxMjE4MTFaMIGW
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xGTAXBgNVBAMTEEZsb3JpYW4gRmFpbmVsbGkxLDAqBgkqhkiG
+9w0BCQEWHWZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tMIIBIjANBgkqhkiG9w0BAQEFAAOC
+AQ8AMIIBCgKCAQEA+oi3jMmHltY4LMUy8Up5+1zjd1iSgUBXhwCJLj1GJQF+GwP8InemBbk5rjlC
+UwbQDeIlOfb8xGqHoQFGSW8p9V1XUw+cthISLkycex0AJ09ufePshLZygRLREU0H4ecNPMejxCte
+KdtB4COST4uhBkUCo9BSy1gkl8DJ8j/BQ1KNUx6oYe0CntRag+EnHv9TM9BeXBBLfmMRnWNhvOSk
+nSmRX0J3d9/G2A3FIC6WY2XnLW7eAZCQPa1Tz3n2B5BGOxwqhwKLGLNu2SRCPHwOdD6e0drURF7/
+Vax85/EqkVnFNlfxtZhS0ugx5gn2pta7bTdBm1IG4TX+A3B1G57rVwIDAQABo4IB3jCCAdowDgYD
+VR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3Vy
+ZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEG
+CCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWdu
+MmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93
+d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6
+hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNy
+bDAoBgNVHREEITAfgR1mbG9yaWFuLmZhaW5lbGxpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggr
+BgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUUwwfJ6/F
+KL0fRdVROal/Lp4lAF0wDQYJKoZIhvcNAQELBQADggEBAKBgfteDc1mChZjKBY4xAplC6uXGyBrZ
+kNGap1mHJ+JngGzZCz+dDiHRQKGpXLxkHX0BvEDZLW6LGOJ83ImrW38YMOo3ZYnCYNHA9qDOakiw
+2s1RH00JOkO5SkYdwCHj4DB9B7KEnLatJtD8MBorvt+QxTuSh4ze96Jz3kEIoHMvwGFkgObWblsc
+3/YcLBmCgaWpZ3Ksev1vJPr5n8riG3/N4on8gO5qinmmr9Y7vGeuf5dmZrYMbnb+yCBalkUmZQwY
+NxADYvcRBA0ySL6sZpj8BIIhWiXiuusuBmt2Mak2eEv0xDbovE6Z6hYyl/ZnRadbgK/ClgbY3w+O
+AfUXEZ0xggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52
+LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwT
+/D/YSkVckoN0L+QwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIPjFjatO3FViD852
+arRCh1IzzJWpMmwIKzUEKxBI+J7tMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcN
+AQkFMQ8XDTI0MDYyNjExMzEyM1owaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZI
+AWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEH
+MAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQCbkeqpkVucTGYewe2sEN/HMMVtYH9emDMh
+izPrz82ZXDcELttYaztqBpsU3/MOBhGjFK1r7BiubstNodJLTFGWak/wzpLPoxiM7JcbFAwpcgwz
+W60UJFwcJV8bXKIHqfhYG8tO9JiItUZowKSIpZBveYwNMz2L9Lbj5ojjhtVx+GwN0B554g5JO2Jb
+MIzwHgb3o+Cw2GYTDgaB1HwtqiVibSkJytDv2euyHbYJIAaC5LWK3DapBHcdD0xD4+v+oQvE3K0k
+b9KkuW6INM5FThB49OTDDNYNUGtbZEvWZb92gwT4ZvUHA/CmDLjHkmHdriRWO9XGhYuiK4V6AxT4
+0rwG
+--000000000000aa6268061bc95a6d--
 
