@@ -1,167 +1,118 @@
-Return-Path: <linux-kernel+bounces-230324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8330B917B44
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:46:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4591917B48
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:48:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6B601C21FA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:46:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11CF71C219A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A816A16A37C;
-	Wed, 26 Jun 2024 08:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="aHugTBZI"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E99516848F;
+	Wed, 26 Jun 2024 08:48:39 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA173B1A1
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 08:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D271D3B1A1
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 08:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719391574; cv=none; b=HDkYdIgWQtzor3tOgbVRPmiJLy4/1HhLUBV17p7UIEhmNjFIDyG71WEj8U6WrSwYW/oTAcj0oOyFEFwaJTnAhT2G2YhfwxMrgLR1cKo6UEaV4xwR3+bLt0YP2/2OYsGe6+yZZJMzYhvnP7KOgFV02V7HeQ2yHvAtAfHOTYpIx/k=
+	t=1719391719; cv=none; b=ETUaD7J/+iMJloDedXR2o3X3uPdW2sLf+Epbh1vO+rdh09HKbj1Z6wAV9dwqo2m01zAvONGHfeWYGKlhvLfn8WOdPO1W3G6LNuIWL8LShi02s/zpaGWB+bbIECDFt2oHTwjYFPglt/H2TxMXBPvGW5se4RPvPaN+ngrjpTjUpTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719391574; c=relaxed/simple;
-	bh=a4k0vpYgW5Q44Zgxxl4VntJc5r2rzGgeLjih3avWkW8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CMohuy29ZjbPGY4fOjiPDDSVrOCcRh7EsmXQ+ZmQbzlIQj+Gnc2QO97AP/D1roAgMW3aTQIbUoes3bQdupTltkJQlX9PBX8m5898RAcIUzGkZY0Ik0cvbtGg1cmAFp1XNjkN7QCw2jQ8BJ2P7b0MZ+b01rruDbAYy0uMlvzqWoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=aHugTBZI; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ec52fbb50cso41926561fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 01:46:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1719391571; x=1719996371; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yDRFjTdMNUzEUOE9x05fu2SY9ut8HJs3+qpIaAb+KZo=;
-        b=aHugTBZIVL9GF+ymdhJbq13kCQeT3TeE+IEDMSOAYxRLB7sPqAQoisz0pC8P3bHhN1
-         rVG+a1Im4PBoR6wDvOHwRgFkQy8eDwD4jFnwsnTfCdz2ysfZp9EZChi1WeZGeF3Tf7qj
-         n/wE/zUERf7KtPFXD3PbWU5Q24XrgV69xKI4xHquCgOnlkAWLpcsyxCXJcy+B5FRLOdx
-         gzIDrxI/mketvJmQoNoqNzeFolTiX2frytpzrUihLyY1waTR5i5tCUavxSVrH/kXOXgI
-         zHbcjgtTxVv9rT0YHJMWWhM+PTIqqW7n5SnBD4nBx4GZEY/vv5dOHxYhoS3sziF0Lxjf
-         7bvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719391571; x=1719996371;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yDRFjTdMNUzEUOE9x05fu2SY9ut8HJs3+qpIaAb+KZo=;
-        b=Fr56+YMTj6vasQaQpeOOYX4Anxhe6blOONhCXrcmh1yscL6Hnkg43BRY6XP97in7nf
-         EC002SSOCewVGWvsnOTU3EVFsR9sd/GxvzD56IfCMeAbQWhPL9y+BKJYbf+nHFSxaioL
-         WEBmN8i6yM2qQMRof0U2gZ1fNd5mVSBGr7J8yNkmRmGpfPqUdME8h6PoOckFlZKns+T9
-         yhrgYOl6gezTY3dv8b3WbpQtm4rl7NGwEi64ANPjEctZbOqVsDvocX1IcZejtkdMWUyz
-         3SD6jMFfcLU+/7bDROW6DQ7MTjCLumEEGe5y2sCbC5YgHAfqv/yjO+XpjXxJutend4qo
-         d9XQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWn5EoxbmgPisb7OjZch70Ppxgxj7vGNbNrLcUUrATz/l7BIs3Ykh9HKWsXzZw9JJ1pNj4oaIZajQ8UNyGy8kIkf5jk+S/UCOqHj6hr
-X-Gm-Message-State: AOJu0YxMK/lvuSOJCUWrKYk/gz/ruTCvaqgdDlnwvXgm2FbvLTA2DjgV
-	ReAjkkZSBINCTkRcpgJuk+kgvNp4wf468N7KrIAJtpyy0SnK0W4Ax//MTHqgyyo=
-X-Google-Smtp-Source: AGHT+IHloQsSwgyR/8V2BcW+2VgGBMcenO+xh/ZmE7Aj/s5neytXluSwzLViJkSqVnLOOauGHTYTdw==
-X-Received: by 2002:a2e:9b0c:0:b0:2ec:54f3:7b65 with SMTP id 38308e7fff4ca-2ec5b2f034fmr61845241fa.36.1719391570779;
-        Wed, 26 Jun 2024 01:46:10 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb7d245asm94901975ad.232.2024.06.26.01.46.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 01:46:10 -0700 (PDT)
-Date: Wed, 26 Jun 2024 10:45:55 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	John Ogness <john.ogness@linutronix.de>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] bpf: defer printk() inside __bpf_prog_run()
-Message-ID: <ZnvVQ5cs9F0b7paI@pathway.suse.cz>
-References: <345098dc-8cb4-4808-98cf-fa9ab3af4fc4@I-love.SAKURA.ne.jp>
- <87ed8lxg1c.fsf@jogness.linutronix.de>
- <60704acc-61bd-4911-bb96-bd1cdd69803d@I-love.SAKURA.ne.jp>
- <87ikxxxbwd.fsf@jogness.linutronix.de>
- <ea56efca-552f-46d7-a7eb-4213c23a263b@I-love.SAKURA.ne.jp>
- <CAADnVQ+hxHsQpfOkQvq4d5AEQsH41BHL+e_RtuxUzyh-vNyYEQ@mail.gmail.com>
- <7edb0e39-a62e-4aac-a292-3cf7ae26ccbd@I-love.SAKURA.ne.jp>
+	s=arc-20240116; t=1719391719; c=relaxed/simple;
+	bh=51mXIHmEmsttyOopkteiJ918HLyzBaY8B/B/PTB4fcM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=K5RyfgstiDxd/a0xzicld6goJwijzNnd7sEbVkpQVa5pOcGlwoQm6Xzxhui59G1EyHlgiYrMXote+qSMUc4hqEZe+KpudY+0TARzo3wuEyIX9hGiNvQ+b3TThrNtS0VQqMfn3Qv7VmsX3AByGLY4OdDKA74Zyfg7sx8fu23oujc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i53875b6a.versanet.de ([83.135.91.106] helo=phil.lan)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sMOJf-0000RH-21; Wed, 26 Jun 2024 10:47:47 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org
+Cc: Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se,
+	jernej.skrabec@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	victor.liu@nxp.com,
+	quentin.schulz@cherry.de,
+	heiko@sntech.de,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Heiko Stuebner <heiko.stuebner@cherry.de>
+Subject: [PATCH RESEND] drm: bridge: dw-mipi-dsi: Allow sync-pulses to override the burst vid-mode
+Date: Wed, 26 Jun 2024 10:47:22 +0200
+Message-Id: <20240626084722.832763-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7edb0e39-a62e-4aac-a292-3cf7ae26ccbd@I-love.SAKURA.ne.jp>
+Content-Transfer-Encoding: 8bit
 
-On Wed 2024-06-26 08:52:44, Tetsuo Handa wrote:
-> On 2024/06/26 4:32, Alexei Starovoitov wrote:
-> >>>>> On 2024-06-25, Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
-> >>>>>> syzbot is reporting circular locking dependency inside __bpf_prog_run(),
-> >>>>>> for fault injection calls printk() despite rq lock is already held.
-> > 
-> > If you want to add printk_deferred_enter() it
-> > probably should be in should_fail_ex(). Not here.
-> > We will not be wrapping all bpf progs this way.
-> 
-> should_fail_ex() is just an instance.
-> Three months ago you said "bpf never calls printk()" at
-> https://lkml.kernel.org/r/CAADnVQLmLMt2bF9aAB26dtBCvy2oUFt+AAKDRgTTrc7Xk_zxJQ@mail.gmail.com ,
-> but bpf does indirectly call printk() due to debug functionality.
-> 
-> We will be able to stop wrapping with printk_deferred_enter() after the printk
-> rework completes ( https://lkml.kernel.org/r/ZXBCB2Gv1O-1-T6f@alley ). But we
-> can't predict how long we need to wait for all console drivers to get converted.
-> 
-> Until the printk rework completes, it is responsibility of the caller to guard
-> whatever possible printk() with rq lock already held.
+From: Heiko Stuebner <heiko.stuebner@cherry.de>
 
-Honestly, even the current printk rework does not solve the deadlock
-with rq lock completely. The console_lock/console_sem will still be needed for
-serialization with early consoles. It might need to be used when
-printing emergency messages while there is still a boot console.
+The state right now is that if the panel has the burst-mode flag it
+will take precedence over the sync-pulses mode.
 
-I am sure that it might be solved but I am not aware of any plan at
-the moment.
+While sync-pulses are only relevant for the video-mode, the burst-mode
+flag affects both the video-mode as well as the calculated lane_mbps.
 
-I have just got a crazy idea. printk() needs to take the rq lock in
-console_unlock() only when there is a waiter for the lock. The problem
-might be gone if we offloaded the wakeup into an irq_work.
+Looking at drivers like the nwl-dsi [0] it only enables burst mode when
+the panel's flags do not contain the sync_pulse flag.
 
-It is just an idea. I haven't thought much of all consequences and
-scenarios. It might violate some basic locking rule and might not work.
-Anyway, it would require special variant for unlocking semaphore which would
-be used in console_unlock().
+So handle things similar for dw-dsi in that it selects the video-mode
+with sync-pulses if that flag is set and only after that, checks for
+the burst-mode. So panels selecting a combination of both burst and
+sync-pulses get the sync-pulse mode.
 
-> If you think that only
-> individual function that may call printk() (e.g. should_fail_ex()) should be
-> wrapped, just saying "We will not be wrapping all bpf progs this way" does not
-> help, for we need to scatter migrate_{disable,enable}() overhead as well as
-> printk_deferred_{enter,exit}() to individual function despite majority of callers
-> do not call e.g. should_fail_ex() with rq lock already held. Only who needs to
-> call e.g. should_fail_ex() with rq lock already held should pay the cost. In this
-> case, the one who should pay the cost is tracing hooks that are called with rq
-> lock already held. I don't think that it is reasonable to add overhead to all
-> users because tracing hooks might not be enabled or bpf program might not call
-> e.g. should_fail_ex().
-> 
-> If you have a method that we can predict whether e.g. should_fail_ex() is called,
-> you can wrap only bpf progs that call e.g. should_fail_ex(). But it is your role
-> to maintain list of functions that might trigger printk(). I think that you don't
-> want such burden (as well as all users don't want burden/overhead of adding
-> migrate_{disable,enable}() only for the sake of bpf subsystem).
+The case this fixes can be found on the ltk050h3148w . It does need the
+lane-rate to be calculated according to burst formulas [1], but without
+sync-pulses we see the output shifted around 20 pixels to the right,
+meaning that the last 20 pixels from each line appear at the start of
+the next display line.
 
-Yeah, converting printk() into printk_deferred() or using
-printk_deferred_enter() around particular code paths is a whac-a-mole
-game.
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/gpu/drm/bridge/nwl-dsi.c#n301
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=6c9dbee84cd005bed5f9d07b3a2797ae6414b435
 
-Best Regards,
-Petr
+Fixes: 93e82bb4de01 ("drm/bridge: synopsys: dw-mipi-dsi: Fix hcomponent lbcc for burst mode")
+Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
+---
+resend, because I messed up and somehow forgot to include _all_
+mailing lists.
+
+ drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
+index 824fb3c65742e..28dd858a751bd 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
+@@ -605,10 +605,10 @@ static void dw_mipi_dsi_video_mode_config(struct dw_mipi_dsi *dsi)
+ 	 */
+ 	val = ENABLE_LOW_POWER;
+ 
+-	if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_BURST)
+-		val |= VID_MODE_TYPE_BURST;
+-	else if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
++	if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
+ 		val |= VID_MODE_TYPE_NON_BURST_SYNC_PULSES;
++	else if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_BURST)
++		val |= VID_MODE_TYPE_BURST;
+ 	else
+ 		val |= VID_MODE_TYPE_NON_BURST_SYNC_EVENTS;
+ 
+-- 
+2.39.2
+
 
