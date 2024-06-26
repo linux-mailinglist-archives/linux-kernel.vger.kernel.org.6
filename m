@@ -1,167 +1,336 @@
-Return-Path: <linux-kernel+bounces-230469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20875917D45
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:06:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D34E917D49
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:07:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9E4F281180
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:06:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0440828316C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:07:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57AB91741E2;
-	Wed, 26 Jun 2024 10:06:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="lPdISokD"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B57176AAA;
+	Wed, 26 Jun 2024 10:07:09 +0000 (UTC)
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0165725774
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 10:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCBB525774;
+	Wed, 26 Jun 2024 10:07:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719396406; cv=none; b=b2Z5K/F6RxCmOMMhmbKh7KSV+ZGNA9xloUDkK7hJMqRZZtzSZ6WldKrGjtM5AxNa1mZGs0Cd2WInBY4DuGmXnrCVakOfEJtXUgKVOi9x693VRkgHcC6q3OxD5N54sx02ZN5IOkhCn4a/M4v4ZeLM0Uh6+R3Xgiy/6nTZtk1WS9s=
+	t=1719396428; cv=none; b=YSal+jDuQvJkrSIhCz6fim1yqVJzeGTGINtd3LGLTwLsMBDxLi2xn0yZX5AIhF/+gXyCRrOOtR3jVEmTmRehl28t/OOlSEwbp1eg4Duv3IUL/6gTu1PBpr48X2FxzTXZPCZQ+UqUm0kVAfjswuXie2sm7UQhR+zu0fwqLfTtwN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719396406; c=relaxed/simple;
-	bh=DJ2QP0BaVusK1ZEM98l1QNG5qOn3csmrosSZGE+PPr8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L6rS0g5AeuQS4AUwDBm9Fy/VfrbIr9Xwr7L+ZatcR3Nq/U3zZtFZKvhwgNGzI9ObPVyO38gUTS1WsLOn74ciLdd18VXfHSUQMaJ6QbBlzcSE+qFn9NbtRLL3C+58Y1DkoY/Mr6J9l/KALCfMfuau0TCh5+a2Ew898y8uUBt54oM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=lPdISokD; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-158-144-210.elisa-laajakaista.fi [91.158.144.210])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 963882C5;
-	Wed, 26 Jun 2024 12:06:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1719396372;
-	bh=DJ2QP0BaVusK1ZEM98l1QNG5qOn3csmrosSZGE+PPr8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lPdISokDpNVRl5+YV68dIQbOZNjTXHlF4StquoOHvZ8DEzxobbYoqAetIgGOHtUqa
-	 Bza7A/qVWYNM9a8J+ERQ7WVeWe+Eu5gpPxToe3jnpear/jPMs5JS5ZkWMnSd2yH+dO
-	 RU39NwbeuV/yjNUBbfwezoIx4bqer/9850SBuXG4=
-Message-ID: <5b52e560-1fca-4824-9f80-91526bf25062@ideasonboard.com>
-Date: Wed, 26 Jun 2024 13:06:31 +0300
+	s=arc-20240116; t=1719396428; c=relaxed/simple;
+	bh=aR/97qeSbn18O3NS4bsqOWeOeOT+obXcoaLAykOPu1g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PUZr1mlLlRu62GlAPs4I6cs98nd8N3kHXp5VSFXAFTZaW2vEf/iB7jkA9rD2HIz40W2irvXSxg+YVxSjBjkUt2c2UzFdnYk8vRZaQZFaoThYjhir9R3uAGsTv8jl4JcC9uvcJ1yo1i6Cef+mUA+Lvup5hhzQzY2OTb9vcw6P4kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e02bda4aba3so6639581276.3;
+        Wed, 26 Jun 2024 03:07:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719396425; x=1720001225;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SbcDecEpoCfuC6cxB+0B2qANyo8ssQBOCs0i1cC/tic=;
+        b=bWxxC69EGlWyvjvHp5EaIj1PTaFjFmZ0lpAfvb12h2rnifyCgR2vehaqrfgE0cBpWN
+         bZQpt91uWikz3qGckJMzjTiGdOLraQ/KJ2avTaU0iYXFnGVVWTRdQD8MrovuamAAPqCH
+         CKWSxqXvqRoS5pwwjDRXpgzR9boeGOt8WqU80nj8BzOAuxZwlmuIhEOcA8O4Q5nhuXpu
+         Q3ZVbV9EDQnicqvQcckpAJ2rCJqYnib99B+qNbGIr6ltYSbJY3nYjn8GGhtpMG2EgyVS
+         rSzZJTvYJSuon0byPpWUHP/1OgFQGA3/NiNoHtW+Uz3r6d0GU+MrYsxwfcXiPcdDOrYT
+         bYfg==
+X-Forwarded-Encrypted: i=1; AJvYcCWLaIUWwlPo+0OQxHP+DqUVQIWY10vX/ydE0Q5Q2SknrcrpXpW0TT2lzG2Ns+bwCQ9VIJCNPfU/LOvw0Gd40TbQmqvVmQKK0ZnK4ZeCSnq/eK9jQFQBa0QuJoYLd9SU409oalc4z3bwZT2mMehZ0NLWLW9VyQw23N4AxR9gr+OMEYQiQf31Zqwuf0hF/54pb6yKehHwRlCiGqMqlXBHJ16If9VJTXy2
+X-Gm-Message-State: AOJu0YzFNsr6BZo8lSi6PbUy8ebVLRYtGh6HaoA1zmhj0SLEm4Vu6mOe
+	BkIrp/eLDthhMaTN3NeJRjI9CyhoeUy3jGUhbPtayeo3WAkzYTZxUlCD+wkZ
+X-Google-Smtp-Source: AGHT+IGumklIXAna1x2FNMfdIwzRc3e+xnhGRUCODVFCZUtWexWpLOOyXq1Gz3EmuZf+mvfIYwD2/A==
+X-Received: by 2002:a05:6902:348:b0:dfb:b21:b5dc with SMTP id 3f1490d57ef6-e0303f5cf47mr10161891276.25.1719396424864;
+        Wed, 26 Jun 2024 03:07:04 -0700 (PDT)
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e02e65db5ecsm4274565276.62.2024.06.26.03.07.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Jun 2024 03:07:04 -0700 (PDT)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-648b9d03552so1335657b3.2;
+        Wed, 26 Jun 2024 03:07:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWwldvCz5DFk/FgZ08OrB90pGkp/7sPEOkxNRuc8/WthZ3unMJgxKF9Z8hCPNaHuIME9ZDDp0Ry6FuoWq4vvYK60OQm2IhCWNZJwMgao/PbaFL/yCrBfrss5mStNZa9AKxerG43jUFv7JEvIx0nRdNaB62Pn131KhtM0WJwOBMi3ncNhTnuApWH1O+K52J91GjXl2wpJ7on6xSbGA3d0bclCcUl356a
+X-Received: by 2002:a05:690c:ecd:b0:632:5b24:c0c with SMTP id
+ 00721157ae682-643a990bee0mr114814987b3.5.1719396423455; Wed, 26 Jun 2024
+ 03:07:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/11] drm/bridge: cdns-dsi: Fix OF node pointer
-To: Aradhya Bhatia <a-bhatia1@ti.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Jyri Sarha <jyri.sarha@iki.fi>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>
-Cc: DRI Development List <dri-devel@lists.freedesktop.org>,
- Linux Kernel List <linux-kernel@vger.kernel.org>,
- Dominik Haller <d.haller@phytec.de>, Sam Ravnborg <sam@ravnborg.org>,
- Thierry Reding <treding@nvidia.com>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
- Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
- Devarsh Thakkar <devarsht@ti.com>, Jayesh Choudhary <j-choudhary@ti.com>,
- Jai Luthra <j-luthra@ti.com>
-References: <20240622110929.3115714-1-a-bhatia1@ti.com>
- <20240622110929.3115714-2-a-bhatia1@ti.com>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <20240622110929.3115714-2-a-bhatia1@ti.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240610233221.242749-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240610233221.242749-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240610233221.242749-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 26 Jun 2024 12:06:51 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVOvdU4ajB_f9OtQ8ao0Aodg+Rb9eGTmbNGC8o+aW-hzg@mail.gmail.com>
+Message-ID: <CAMuHMdVOvdU4ajB_f9OtQ8ao0Aodg+Rb9eGTmbNGC8o+aW-hzg@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 3/4] clk: renesas: Add family-specific clock driver
+ for RZ/V2H(P)
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Prabhakar,
 
-On 22/06/2024 14:09, Aradhya Bhatia wrote:
-> Fix the OF node pointer passed to the of_drm_find_bridge() call to find
-> the next bridge in the display chain.
-> 
-> To find the next bridge in the pipeline, we need to pass "np" - the OF
-> node pointer of the next entity in the devicetree chain. Passing
-> "of_node" to of_drm_find_bridge will make the function try to fetch the
-> bridge for the cdns-dsi which is not what's required.
-> 
-> Fix that.
-
-The code looks fine, but I'd write the subject and desc from a different 
-perspective. The subject could be something like "Fix connecting to a 
-sink bridge", and the desc could first say that connecting the sink to a 
-DSI panel works, but connecting to a bridge fails, as wrong OF node is 
-passed to of_drm_find_bridge().
-
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-
-  Tomi
-
-> Fixes: e19233955d9e ("drm/bridge: Add Cadence DSI driver")
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+On Tue, Jun 11, 2024 at 1:32=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add family-specific clock driver for RZ/V2H(P) SoCs.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > ---
->   drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-> index 7457d38622b0..b016f2ba06bb 100644
-> --- a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-> +++ b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-> @@ -952,7 +952,7 @@ static int cdns_dsi_attach(struct mipi_dsi_host *host,
->   		bridge = drm_panel_bridge_add_typed(panel,
->   						    DRM_MODE_CONNECTOR_DSI);
->   	} else {
-> -		bridge = of_drm_find_bridge(dev->dev.of_node);
-> +		bridge = of_drm_find_bridge(np);
->   		if (!bridge)
->   			bridge = ERR_PTR(-EINVAL);
->   	}
+> v1->v2
+> - Introduced family specific config option
+> - Now using register indexes for CLKON/CLKMON/RST/RSTMON
+> - Introduced PLL_CONF macro
+> - Dropped function pointer to get PLL_CLK1/2 offsets
+> - Added range check for core clks
+> - Dropped NULLified clocks check
+> - Updated commit description
 
+Thanks for the update!
+
+> --- /dev/null
+> +++ b/drivers/clk/renesas/rzv2h-cpg.c
+
+> +/**
+> + * struct rzv2h_cpg_priv - Clock Pulse Generator Private Data
+> + *
+> + * @rcdev: Reset controller entity
+> + * @dev: CPG device
+> + * @base: CPG register block base address
+> + * @clks: Array containing all Core and Module Clocks
+> + * @num_core_clks: Number of Core Clocks in clks[]
+> + * @num_mod_clks: Number of Module Clocks in clks[]
+> + * @num_resets: Number of Module Resets in info->resets[]
+> + * @num_hw_resets: Number of resets supported by HW
+> + * @last_dt_core_clk: ID of the last Core Clock exported to DT
+> + * @info: Pointer to platform data
+> + */
+> +struct rzv2h_cpg_priv {
+> +       struct reset_controller_dev rcdev;
+> +       struct device *dev;
+> +       void __iomem *base;
+> +
+> +       struct clk **clks;
+> +       unsigned int num_core_clks;
+> +       unsigned int num_mod_clks;
+> +       unsigned int num_resets;
+> +       unsigned int num_hw_resets;
+
+This is not really used, so please drop it.
+
+> +       unsigned int last_dt_core_clk;
+> +
+> +       const struct rzv2h_cpg_info *info;
+> +};
+
+> +static struct clk
+> +*rzv2h_cpg_clk_src_twocell_get(struct of_phandle_args *clkspec,
+> +                              void *data)
+> +{
+> +       unsigned int clkidx =3D clkspec->args[1];
+> +       struct rzv2h_cpg_priv *priv =3D data;
+> +       struct device *dev =3D priv->dev;
+> +       const char *type;
+> +       int range_check;
+> +       struct clk *clk;
+> +
+> +       switch (clkspec->args[0]) {
+> +       case CPG_CORE:
+> +               type =3D "core";
+> +               if (clkidx > priv->last_dt_core_clk) {
+> +                       dev_err(dev, "Invalid %s clock index %u\n", type,=
+ clkidx);
+> +                       return ERR_PTR(-EINVAL);
+> +               }
+> +               clk =3D priv->clks[clkidx];
+> +               break;
+> +
+> +       case CPG_MOD:
+> +               type =3D "module";
+> +               range_check =3D 15 - (clkidx % 16);
+> +               if (range_check < 0 || clkidx >=3D priv->num_mod_clks) {
+
+range_check is never negative
+(leftover from sparse number space?)
+
+> +                       dev_err(dev, "Invalid %s clock index %u\n", type,
+> +                               clkidx);
+> +                       return ERR_PTR(-EINVAL);
+> +               }
+> +               clk =3D priv->clks[priv->num_core_clks + clkidx];
+> +               break;
+> +
+> +       default:
+> +               dev_err(dev, "Invalid CPG clock type %u\n", clkspec->args=
+[0]);
+> +               return ERR_PTR(-EINVAL);
+> +       }
+> +
+> +       if (IS_ERR(clk))
+> +               dev_err(dev, "Cannot get %s clock %u: %ld", type, clkidx,
+> +                       PTR_ERR(clk));
+> +       else
+> +               dev_dbg(dev, "clock (%u, %u) is %pC at %lu Hz\n",
+> +                       clkspec->args[0], clkspec->args[1], clk,
+> +                       clk_get_rate(clk));
+> +       return clk;
+> +}
+
+> +/**
+> + * struct mod_clock - Module clock
+> + *
+> + * @hw: handle between common and hardware-specific interfaces
+> + * @off: register offset
+> + * @bit: ON/MON bit
+> + * @monoff: monitor register offset
+> + * @monbit: montor bit
+> + * @priv: CPG private data
+> + */
+> +struct mod_clock {
+> +       struct clk_hw hw;
+> +       u8 on_index;
+> +       u8 on_bit;
+> +       u16 mon_index;
+> +       u8 mon_bit;
+
+I noticed clock on and clock mon bits are related.
+Clock on bits use only the lower 16 bits in a register, while clock
+monitor bits use all 32 bits, hence:
+
+    mon_index =3D on_index / 2
+    mon_bit =3D (on_index % 2) * 16 + on_bit
+
+Except for clocks without monitor bits, and for CGC_SPI_clk_spi and
+CGC_SPI_clk_spix2, which share an on-bit, but have separate mon-bits.
+So you cannot use these formulas.
+
+Reset bits do not have such a relationship, as resets marked reserved
+are skipped in the reset monitoring bit range.
+
+
+> +       struct rzv2h_cpg_priv *priv;
+> +};
+> +
+> +#define to_mod_clock(_hw) container_of(_hw, struct mod_clock, hw)
+> +
+> +static int rzv2h_mod_clock_endisable(struct clk_hw *hw, bool enable)
+> +{
+> +       struct mod_clock *clock =3D to_mod_clock(hw);
+> +       unsigned int reg =3D GET_CLK_ON_OFFSET(clock->on_index);
+> +       struct rzv2h_cpg_priv *priv =3D clock->priv;
+> +       u32 bitmask =3D BIT(clock->on_bit);
+> +       struct device *dev =3D priv->dev;
+> +       u32 value;
+> +       int error;
+> +
+> +       dev_dbg(dev, "CLK_ON 0x%x/%pC %s\n", reg, hw->clk,
+> +               enable ? "ON" : "OFF");
+> +
+> +       value =3D bitmask << 16;
+> +       if (enable)
+> +               value |=3D bitmask;
+> +
+> +       writel(value, priv->base + reg);
+> +
+> +       if (!enable)
+> +               return 0;
+> +
+> +       reg =3D GET_CLK_MON_OFFSET(clock->mon_index);
+
+What if a clock does not have a clock monitor bit?
+Clock bits in registers CPG_CLKON_22 and later do not have corresponding
+clock monitor bits.
+
+> +       bitmask =3D BIT(clock->mon_bit);
+> +       error =3D readl_poll_timeout_atomic(priv->base + reg, value,
+> +                                         value & bitmask, 0, 10);
+> +       if (error)
+> +               dev_err(dev, "Failed to enable CLK_ON %p\n",
+> +                       priv->base + reg);
+> +
+> +       return error;
+> +}
+
+> --- /dev/null
+> +++ b/drivers/clk/renesas/rzv2h-cpg.h
+
+> +/**
+> + * struct rzv2h_cpg_info - SoC-specific CPG Description
+> + *
+> + * @core_clks: Array of Core Clock definitions
+> + * @num_core_clks: Number of entries in core_clks[]
+> + * @last_dt_core_clk: ID of the last Core Clock exported to DT
+> + * @num_total_core_clks: Total number of Core Clocks (exported + interna=
+l)
+> + *
+> + * @mod_clks: Array of Module Clock definitions
+> + * @num_mod_clks: Number of entries in mod_clks[]
+> + * @num_hw_mod_clks: Number of Module Clocks supported by the hardware
+> + *
+> + * @resets: Array of Module Reset definitions
+> + * @num_resets: Number of entries in resets[]
+> + * @num_hw_resets: Number of resets supported by the hardware
+> + *
+> + * @crit_mod_clks: Array with Module Clock IDs of critical clocks that
+> + *                 should not be disabled without a knowledgeable driver
+> + * @num_crit_mod_clks: Number of entries in crit_mod_clks[]
+> + */
+> +struct rzv2h_cpg_info {
+> +       /* Core Clocks */
+> +       const struct cpg_core_clk *core_clks;
+> +       unsigned int num_core_clks;
+> +       unsigned int last_dt_core_clk;
+> +       unsigned int num_total_core_clks;
+> +
+> +       /* Module Clocks */
+> +       const struct rzv2h_mod_clk *mod_clks;
+> +       unsigned int num_mod_clks;
+> +       unsigned int num_hw_mod_clks;
+> +
+> +       /* Resets */
+> +       const struct rzv2h_reset *resets;
+> +       unsigned int num_resets;
+> +       unsigned int num_hw_resets;
+
+This is not really used, so please drop it.
+
+> +
+> +       /* Critical Module Clocks that should not be disabled */
+> +       const unsigned int *crit_mod_clks;
+> +       unsigned int num_crit_mod_clks;
+> +};
+> +
+> +#endif /* __RENESAS_RZV2H_CPG_H__ */
+
+The rest LGTM.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
