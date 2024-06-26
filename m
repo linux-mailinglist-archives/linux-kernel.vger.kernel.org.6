@@ -1,144 +1,161 @@
-Return-Path: <linux-kernel+bounces-230304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6FA0917B0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:34:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E8B9917B11
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:36:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A7901F24DCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:34:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 934701F232C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E66916193C;
-	Wed, 26 Jun 2024 08:34:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828AD161904;
+	Wed, 26 Jun 2024 08:36:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fzWnw1BG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FqrN5GCD"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81FE9144D1D;
-	Wed, 26 Jun 2024 08:34:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF96144D1D
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 08:36:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719390881; cv=none; b=O3fDq3pHaBH46b/zQC4Fcr5VurksifB3s93mBEChc3etkTKeI4YA5Of3X2nqCFuxw3lUfKTEE/8RQeuJprDBFiouYLG7EgS2oETNnP7LGLRIpFZP1roJqh/TyarXgUqp/NqjtIqi+AAaTgYFvEeVARuc9qGuPTity/P1/zHnnwA=
+	t=1719390967; cv=none; b=UNTV7lH61SiT5KjtlZFdI65c8QOtsAgIfhlka1xjd8GEqVf7mlnRNCZ50vHoOw4H8DmeutG1/PN23eJsWnwRbVxD8ldl9zgcEtWhXmr7NnmBrpHu0SSWtBiMdzMqL32+H+0tWLK6HPXMtGJbjvfFEgGhEtMAXPpPNm7vmXwyP3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719390881; c=relaxed/simple;
-	bh=xBoNb+oucNRvx18Qte8FmaDQkUGbw1rD8O/lpKaCdsQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fEkYSjxCUoLu2NV9pKIdhBp9fvm0l3Mqq4e2TwiQyjEhXjzFUldrXZLaQr4SBZFHa33EvE1VerB5jlLvj3nSeC3sakJ7O9KPtAFe0HXlHbOoVopQ+GZmSNH8IW6plG7tuID7n9w4jRwiHL5bwcKyOHePwp775W15+Ite93p/x7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fzWnw1BG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9265FC2BD10;
-	Wed, 26 Jun 2024 08:34:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719390881;
-	bh=xBoNb+oucNRvx18Qte8FmaDQkUGbw1rD8O/lpKaCdsQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fzWnw1BGeYY9Y8ukyOiLMfNSkpoB6ms7tQCOyjqHiNeKKXvS46yv57YIXntGWDCSA
-	 +wOMg2jISjrqSvrt9fdRM9kQLsz17PmWtnvGIG4COHV/ZScLeoDbr36jtP2WyIHtk0
-	 EFa7s9TvnMBRI3dIPw5pNY+MJ9rOpbrZCZh0U+lVcLNgGCL3EUjwRcvVdB7LlZT3OL
-	 AViHQbHz2Cgb7p54BTa/hJZbQiKLvFvKS9Lf6od2dvEiCQSlNDDMHPt5vfJHSn2qCp
-	 QfkQTJbzr9BtF6US+z99WldBORrixoYxjRXZpkFqCP7iWxOlSSq18Wvh3Z4/481FTc
-	 /u8wo+QoPMhYg==
-Message-ID: <9fae9adb-1b78-4f7d-94c5-6aed661ec614@kernel.org>
-Date: Wed, 26 Jun 2024 10:34:35 +0200
+	s=arc-20240116; t=1719390967; c=relaxed/simple;
+	bh=wX/3eNlv4pSj8hA264JHx8pY0K5oIemXUUhlMCxrH8w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KLgsqCqlyicKOaMMKdBZoFl4Sn02UHruoxSBDeZSPkRbjMmLxKQyasaRTE06jAwRhqhojgguD2Fb9svlJaMIm6ak8/f8B9m1VfGNLdFDmcNA9EK8HSxQZx6mer2SLv91hv3zWXYsaKmyzTcLt9fVZfv6A8FLCT2A7arWfqVSgEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FqrN5GCD; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6b4ff803ef2so28126776d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 01:36:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719390965; x=1719995765; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F6fPnNtBvpnTerhI3bBMQd3FP8HRZAvOd3Sy7HCVoG8=;
+        b=FqrN5GCDFUnJLVfoHI5w2V+RYBblHthhU6LOy2hMG/+IsVhyke/CDUN7bowul5BYxc
+         mI88atRNjqQunvtovIS+RWPHzQVtu4i/PcjQtZOP+hsBK7jCTbdHyx3MdM3JoNx8BV4B
+         nt8IIfUoAEsSgq0BggI35xEN8QwlEAT0apE0MBjvk/SvRGKZ8uajKFOwnBFFbqazYa4Y
+         up6X9VbOvVTPJOK5s93rjEVv148GeKwDT9FzWomb36tgTJqaRdbfOEqk20ipy2cBswOD
+         HCRDBfS9nZmp7QIMlK3rj9NmBHsRxofc22iPBRXuLo9bNiGJ/Brtb8v9Lg12Ala4GqpQ
+         Bisg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719390965; x=1719995765;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=F6fPnNtBvpnTerhI3bBMQd3FP8HRZAvOd3Sy7HCVoG8=;
+        b=IlqERKRDxb4Qa+DAwl8mXw5w+3aMwRCFopip/gpUKn8o1pDmR+JEyQgORvkjzXgKV1
+         6ZLuDoctexrTN4Qh0KB83hmqYzYL0Ipg1MZ6PeqY88pqCSK1F9kE+OxAA8DUj+UTf514
+         9LkungCEEEOTeghiBUv43NWwBpaxbYp7RG5AZx6VJQq2UpzjFJI1TY+BtYt/wp5+Ipy9
+         DbBa7WAneW2lxIOIlDhCwjeOxSEbuX50smcWGT75nQePw3KtkLmKS+LDSco8sB4VHfrH
+         38ZkhQpgHrR1zoDIJjaqqgG9Zyijuj6xKgj8aJ9NpDLeDhAS5dbP1GV5LeP0P3QhDsmu
+         O3Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCWHjxwuGXLpzSkIaOBv54g0UT5S7/GbnE9xlcO8+cvmf4zz74/6iDNbEa0cjucH/AKKGI8UXDoCVgv/Y0AylDHMy3oqtQ1gIfnbZmA9
+X-Gm-Message-State: AOJu0YzzgXnSXH865C3y3N89wec/kSOURfXbikPzy4QnjfZf9d+VliVV
+	qn6BLP4vFRFlWK6gUdTyVI3KUVQIJMbRdDv2NjwuD067i/c7EoNje+0Kd5mhxLYOr7RDCSLOqqx
+	2s28q//nW/+qrunNYcv3TTesxJ+OD4qaAUvGe
+X-Google-Smtp-Source: AGHT+IEY2qGzs3eefVpH1eqwqrjPitN3YZKD+2oF225ZMXD6dZBX9n7O3a9qk77dlfiaQfv7fi2X6XxAmRNMZPXnh2M=
+X-Received: by 2002:a05:6214:29e1:b0:6b4:7910:2b60 with SMTP id
+ 6a1803df08f44-6b5409a5064mr122854286d6.6.1719390965051; Wed, 26 Jun 2024
+ 01:36:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 2/3] dt-bindings: iio: proximity: Add TYHX HX9023S
-To: Yasin Lee <yasin.lee.x@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>, yasin.lee.x@outlook.com
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org
-References: <20240625-add-tyhx-hx9023s-sensor-driver-v8-0-0c224e3bddbc@gmail.com>
- <20240625-add-tyhx-hx9023s-sensor-driver-v8-2-0c224e3bddbc@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240625-add-tyhx-hx9023s-sensor-driver-v8-2-0c224e3bddbc@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240621094901.1360454-1-glider@google.com> <20240621094901.1360454-2-glider@google.com>
+ <5a38bded-9723-4811-83b5-14e2312ee75d@intel.com> <ZnsRq7RNLMnZsr6S@boqun-archlinux>
+ <3748b5db-6f92-41f8-a86d-ed0e73221028@paulmck-laptop> <Znscgx8ssMlYUF5R@boqun-archlinux>
+In-Reply-To: <Znscgx8ssMlYUF5R@boqun-archlinux>
+From: Alexander Potapenko <glider@google.com>
+Date: Wed, 26 Jun 2024 10:35:25 +0200
+Message-ID: <CAG_fn=U699fy+zQtEE2wiTD2meyYe+DWrvk7PV_=T1xW+Md+pw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] lib/Kconfig.debug: disable LOCK_DEBUGGING_SUPPORT
+ under KMSAN
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, Dave Hansen <dave.hansen@intel.com>, elver@google.com, 
+	dvyukov@google.com, dave.hansen@linux.intel.com, peterz@infradead.org, 
+	akpm@linux-foundation.org, x86@kernel.org, linux-kernel@vger.kernel.org, 
+	kasan-dev@googlegroups.com, 
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 25/06/2024 17:58, Yasin Lee wrote:
-> A capacitive proximity sensor
-> 
-> Signed-off-by: Yasin Lee <yasin.lee.x@gmail.com>
+On Tue, Jun 25, 2024 at 9:38=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
+rote:
+>
+> On Tue, Jun 25, 2024 at 12:06:52PM -0700, Paul E. McKenney wrote:
+> > On Tue, Jun 25, 2024 at 11:51:23AM -0700, Boqun Feng wrote:
+> > > On Fri, Jun 21, 2024 at 09:23:25AM -0700, Dave Hansen wrote:
+> > > > On 6/21/24 02:49, Alexander Potapenko wrote:
+> > > > >  config LOCK_DEBUGGING_SUPPORT
+> > > > >         bool
+> > > > > -       depends on TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT &=
+& LOCKDEP_SUPPORT
+> > > > > +       depends on TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT &=
+& LOCKDEP_SUPPORT && !KMSAN
+> > > > >         default y
+> > > >
+> > > > This kinda stinks.  Practically, it'll mean that anyone turning on =
+KMSAN
+> > > > will accidentally turn off lockdep.  That's really nasty, especiall=
+y for
+> > > > folks who are turning on debug options left and right to track down
+> > > > nasty bugs.
+> > > >
+> > > > I'd *MUCH* rather hide KMSAN:
+> > > >
+> > > > config KMSAN
+> > > >         bool "KMSAN: detector of uninitialized values use"
+> > > >         depends on HAVE_ARCH_KMSAN && HAVE_KMSAN_COMPILER
+> > > >         depends on DEBUG_KERNEL && !KASAN && !KCSAN
+> > > >         depends on !PREEMPT_RT
+> > > > + depends on !LOCKDEP
+> > > >
+> > > > Because, frankly, lockdep is way more important than KMSAN.
+> > > >
+> > > > But ideally, we'd allow them to coexist somehow.  Have we even disc=
+ussed
+> > > > the problem with the lockdep folks?  For instance, I'd much rather =
+have
+> > > > a relaxed lockdep with no checking in pfn_valid() than no lockdep a=
+t all.
+> > >
+> > > The only locks used in pfn_valid() are rcu_read_lock_sched(), right? =
+If
+> > > so, could you try (don't tell Paul ;-)) replace rcu_read_lock_sched()
+> > > with preempt_disable() and rcu_read_unlock_sched() with
+> > > preempt_enable()? That would avoid calling into lockdep. If that work=
+s
+> > > for KMSAN, we can either have a special rcu_read_lock_sched() or call
+> > > lockdep_recursion_inc() in instrumented pfn_valid() to disable lockde=
+p
+> > > temporarily.
+> > >
+> > > [Cc Paul]
+> >
+> > Don't tell me what?  ;-)
+> >
+>
+> Turn out that telling you is a good idea ;-)
+>
+> > An alternative is to use rcu_read_lock_sched_notrace() and
+> > rcu_read_unlock_sched_notrace().  If you really want to use
+>
+> Yes, I think this is better than what I proposed.
 
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-
----
-
-<form letter>
-This is an automated instruction, just in case, because many review tags
-are being ignored. If you know the process, you can skip it (please do
-not feel offended by me posting it here - no bad intentions intended).
-If you do not know the process, here is a short explanation:
-
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions, under or above your Signed-off-by tag. Tag is "received", when
-provided in a message replied to you on the mailing list. Tools like b4
-can help here. However, there's no need to repost patches *only* to add
-the tags. The upstream maintainer will do that for tags received on the
-version they apply.
-
-https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
-</form letter>
-
-This should be clear:
-*Tag is "received", when provided in a message replied to you on the
-mailing list.*
-
-Best regards,
-Krzysztof
-
+Thanks for your comments!
+Yes, that's what I was actually looking into after Dave's answer on
+the other thread
+(https://groups.google.com/g/kasan-dev/c/ZBiGzZL36-I/m/WtNuKqP9EQAJ)
+I'll still need to rework the code calling virt_to_page() to avoid
+deadlocks from there though.
 
