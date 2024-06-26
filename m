@@ -1,137 +1,113 @@
-Return-Path: <linux-kernel+bounces-230098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2B8B917858
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:50:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDB99917854
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:50:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80EE7B230D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:50:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF2D01C22813
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E04AB155327;
-	Wed, 26 Jun 2024 05:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2929614B07E;
+	Wed, 26 Jun 2024 05:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gowTIA0W"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QO4pS3Zl"
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D1714B957;
-	Wed, 26 Jun 2024 05:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C41014A61B
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 05:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719380999; cv=none; b=eUbriafvv85cX0Ni98UUlkXmZKKvGb89bDVYUQnKMVbROVGdg5xviRltgLNoIhL/mSCOf0JeOZxVy/9pZgwl6WaokYmM21bVfn6o4LjvrP8SRr0vR9PtMtYtpwOBsLNXeKLbUs+2wnPsAv5NYdPFWyW11vefY6SsUx1yqSZ7W6c=
+	t=1719380996; cv=none; b=Stn7ZFITipriAqtxv3InnR7fZluW8YVcmrCKb1sb9p5jhWAywJajC7bhH5Pniw/ca/7SREIEZ6r04U+V3hHiNOwxuhMDx1IUTtta4IOSBfs3vQrMOUr/uHy74ISTzKz2UP/pIHiHkld1xoHTwvFYwnAobzu5F3QPmwDdDLiYnc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719380999; c=relaxed/simple;
-	bh=v5K9W0GO9PpzxtYq7caERQlS2z7z7pdua1mzI8qQKIg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c/lMmE4ukCqZrBgMnLT0+5C6plcSCcZg4vWEMGGwqIGvE3NzvmItlB3WSc0BknhkbEsBq5557wcYXja0DAKWyTHphoRvVEXArSvPlgDeOpJ4gg/T086wksVGEJYlYWt2vqKaVMhs33HRoXBFZOBVF/+vpAffg8oxzPzlscsw5gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gowTIA0W; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ec50a5e230so46345271fa.0;
-        Tue, 25 Jun 2024 22:49:57 -0700 (PDT)
+	s=arc-20240116; t=1719380996; c=relaxed/simple;
+	bh=pSUvHg/FzekfJ7fdRGi6Oo5VjVSirznSLEDasE0EhDg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bF2weww1EicUdkTPWsJLSyHgG+84b/83o/l3GnG5aQSaZIA1+NjizjyXgI6viLosB51pb9xhG4tpSchcXCJ9UXpKO8iwfDs3mqQ00TnAjTycZ1bVbBKZGfke4GienhKfPgGHPc0KHQcs3bQ+DpiRia6Dyg/+vagfMkFP2rp0dq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QO4pS3Zl; arc=none smtp.client-ip=209.85.166.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-375dbfde049so26201605ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 22:49:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719380996; x=1719985796; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v5K9W0GO9PpzxtYq7caERQlS2z7z7pdua1mzI8qQKIg=;
-        b=gowTIA0WVyMYoRD4Lndnyyfwe1yyPFnQ5xMqu856aE5cUzDskO84Ib2EMrYmpoFV4+
-         nlGNIMP6wHs4X1teK9AJ/Qm4nQIyRxQ8Eds5/hEFaawM0AjwFBs5Kvg0pOxCFS2rVRya
-         CUPsBBobIve8i0Yos++CWCWIbYIUPJoVjVs0ze1mj8H8ErumqKZowy9xIzYQstOxitLO
-         VxdVuGtvoFAyEf49uOYLeOs3eFYHhq4P1b4shPb6lmg9UJe6z9XEZDbKqyWNVrQF28L1
-         uLS5rA4kmhA+qvkU+VEbtCHOFBYFC9ydh61u+uOZyr6N6SUqTu7ig+K5OC2XM1pgzvG4
-         hspA==
+        d=linaro.org; s=google; t=1719380994; x=1719985794; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=12OtczYzVv5c0Y6UxFLwv0NJ7af5+oHW6u8zmvXCXqY=;
+        b=QO4pS3ZlpkoEZYpKvNVq98dJRLWP7k3bXKJ54wDkqKP14Wd4Q8Wp5pp1A38HfHeTMs
+         IFnLL/Vg5D4dgxnp5/aJzvvdJ36tM7GDidUOY/buMUWzH74Pa7m+VFgEAsLuAYy3i6h0
+         VJkVFlwBAhchZCf8/rJ7B+8+op+m6OAKUha46en4hbwJF2R1TsjmWoDq8jVQXC3kZeie
+         IwZ3GdioSFD8GV+KYYuW98jqlAUQZSykkxvWTjjhWRm3d+eqRk4Mm8Ic/Ihc0FptL8ky
+         su5P4vxnMsEjlDHy5YlY46G3o4JOYwIJ08udbC3UuoBTYcwSNX3wSe6Ct2oyUQ5sjYgP
+         9qaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719380996; x=1719985796;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v5K9W0GO9PpzxtYq7caERQlS2z7z7pdua1mzI8qQKIg=;
-        b=FHQlQItxBDFwThmb4EZdMnbcTCfiv9VPeqY380Go7Gxw8fqzNw9szxFmtqPFzFI2Nv
-         MNZNzyFyIQBtJCf+bduTuqSe4/6fb/mB1t2pm4Oa2S1xIPQCrfXeO7ddHiMYdpKvy//f
-         +A39fnhy+ruvGArYJPJ1kPL0CZg+AWbzbVmFaLJtEfO6TyKmHhIfS2J6fR6g7rNsRoRg
-         h6EjxLPH6j8C36ExuEJCZDV8zrzFgrE+6bgov8/qCvQLUrhmyVzLkaDq7K0c2GQ+8XLs
-         Qfm5c96QNmvcM5hsoiA3SKlf+cvfXph15r8/vD9WhTAIg3q8XuDGdNCSZXJ2WgH4RbQ2
-         Xo2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXSTc2TwOdRLl/mwdnJ1KIf8ltpjFFFMw0AYFonjp79hTa0VoH/mPulNzGkrrNoFvpdb9lko/9h7AtAz89EHUjQ/9sX+4pBdUZRxAnvA7e4pg5z6WUtVGikw3B6uBf8dAHjynK8U+N4oooceAWl1ME2m1I2ADToSe6KZ4uibapxypHcIwkiCzSB0VjlojfH7RNH8/1j0feAhRS6sUwJ+lhvnC+yNw==
-X-Gm-Message-State: AOJu0YycfRzdUzJnDBI/yBb+2WGLhzywnL/GOrorFa0RHhE3GQhuL7sl
-	vZZpD5zjQomUuBZVf9JV1W9i8ayB4oiTDd1TLRUA7nmSReAK6Dq7Qg1cC0TVCQoyv28VyxqDbdL
-	5uKuNp7BHTyE85SD3EjtOMliU7bl0wx/m
-X-Google-Smtp-Source: AGHT+IHqPmoNHc/D6CitRQRrrwA72PsfsO3G0YCKPJaaFQm8Pb0gFDwLXSmWJ6pDvgH5ty5s6ZH5XOcaJ8l9Q9r4Q+A=
-X-Received: by 2002:a05:651c:158:b0:2ec:55b5:ed51 with SMTP id
- 38308e7fff4ca-2ec5b269428mr53995721fa.9.1719380995389; Tue, 25 Jun 2024
- 22:49:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719380994; x=1719985794;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=12OtczYzVv5c0Y6UxFLwv0NJ7af5+oHW6u8zmvXCXqY=;
+        b=EDk8OnpY53Lq2sVNWnBQPruiD1Et+rC+l+UUwmm6roGdZgJW5zIXOtSkK/EpPp0jQv
+         wWoNtH9P0foUtfdrmBUbeig9tK/VDmCj1VFXyLCQQWF8LkXGf99yUpyJvGjlTM/obSFT
+         A6zHU2xDAGzwyvbwzx2qUv3uVDNLbnhe4QnnG1SsMmkWMDVRLghqdnLaSmjsdHMkH6Zo
+         XLs5AazOymoPbxLElT38zrK+r9PzFlVl/Hu9jmlgHoVjeY0IqozHsUO1mPbOsUeH75HO
+         AqACNwqEQ/Kph1nXJUMUJMAp+yMtQaAkYSqtgqj+3Gl3pxdbqxtdnSlWUjy4mVyhDKNp
+         ++Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCUEi78r8E6WaHFLz+efBN05IYoqYNITZvHkhO9N8ZIDUv1u8N8M+C23WJk2vqi766VZnTuSxfFlYG7Ka/HjUusNbaCc1d4o1yWxSrSf
+X-Gm-Message-State: AOJu0YyyCbiswK6RHJ/K3bTigrP21SiznkGZHKseIB8TBcc1l0MIRvtO
+	LiJ6a0Mb6X3dab/GhGl71ADyksT/Yfm/LuqVqLkebYTTi7eHOIdUoC+k+G8zUDg=
+X-Google-Smtp-Source: AGHT+IEruyYyO2J474+j3YG7PqVzM5F1n4MH37X/lEz8RG6Cun4J9A3nA85+az/CEkOVv4lV6sR+rw==
+X-Received: by 2002:a05:6e02:1a84:b0:375:9c7e:d04 with SMTP id e9e14a558f8ab-3763b0c07fbmr136526305ab.10.1719380994100;
+        Tue, 25 Jun 2024 22:49:54 -0700 (PDT)
+Received: from localhost ([122.172.82.13])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-716ba5b5f58sm8075825a12.73.2024.06.25.22.49.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 22:49:53 -0700 (PDT)
+Date: Wed, 26 Jun 2024 11:19:51 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Nikunj Kela <nkela@quicinc.com>,
+	Prasad Sodagudi <psodagud@quicinc.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/7] OPP: Introduce an OF helper function to inform if
+ required-opps is used
+Message-ID: <20240626054951.w6amlrqyaljdjk2w@vireshk-i7>
+References: <20240619140849.368580-1-ulf.hansson@linaro.org>
+ <20240619140849.368580-5-ulf.hansson@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240624-b4-sc7180-camss-v3-0-89ece6471431@gmail.com>
- <4d2f4a52-826e-44be-b242-55b50708692d@linaro.org> <CADgMGSt2sRecrrYrG3t4RtgGn8QJzr1N+iRSWFKQVPgA6Pk8tw@mail.gmail.com>
- <a06505c7-fd8e-4135-94d3-d05d9b4dc90d@linaro.org> <74215bff-933b-4d11-be2f-c1d5b5788f9e@linaro.org>
-In-Reply-To: <74215bff-933b-4d11-be2f-c1d5b5788f9e@linaro.org>
-From: george chan <gchan9527@gmail.com>
-Date: Wed, 26 Jun 2024 13:49:42 +0800
-Message-ID: <CADgMGStpV1XZCKavw8pgW+ReTCaDZ+_52367HvWOGHLPfb0pYw@mail.gmail.com>
-Subject: Re: [PATCH RFT v3 0/5] Add sc7180 camss subsys support
-To: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	cros-qcom-dts-watchers@chromium.org, Bjorn Andersson <andersson@kernel.org>, 
-	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240619140849.368580-5-ulf.hansson@linaro.org>
 
-On Wed, Jun 26, 2024 at 7:44=E2=80=AFAM Bryan O'Donoghue
-<bryan.odonoghue@linaro.org> wrote:
->
-> On 25/06/2024 17:57, Konrad Dybcio wrote:
-> > On 24.06.2024 5:03 PM, george chan wrote:
-> >> On Mon, Jun 24, 2024 at 9:50=E2=80=AFPM Bryan O'Donoghue
-> >> <bryan.odonoghue@linaro.org> wrote:
-> >>>
-> >>> On 24/06/2024 13:13, George Chan via B4 Relay wrote:
-> >>>> - Add RFT tag to all patches, since no tested-by at all.
-> >>>
-> >>> Have you not tested this updated series ?
-> >>>
-> >>> ---
-> >>> bod
-> >>
-> >> Do you wanna add my tested-by too? It just feels weird to add my
-> >> tested-by that way.
-> >
-> > "RFT" means "I didn't actually test this" or "please provide more testi=
-ng",
-> > not "there have not been tested-by's from others"
-> >
-> > Konrad
->
-> Exactly, RFT says to me "someone else needs to add testing here".
->
-
-gotcha.
-
-> In your next drop with the changes and RBs please drop RFT - unless you
-> want someone else to test it for you.
->
-
-If the test result on sm7125 is convincing then I have no problem.
-
-> I don't think that's required right now since the set seems
-> straight-forward enough and TBH the bit of 7180 hardware I have sits in
-> a box unopened and will likely stay that way for the next few months at
-> least.
->
-> I think your example video is proof enough the thing works ;)
-Nice to hear.
->
+On 19-06-24, 16:08, Ulf Hansson wrote:
+> As being shown from a subsequent change to genpd, it's useful to understand
+> if a device's OF node has an OPP-table described and whether it contains
+> OPP nodes that makes use of the required-opps DT property.
+> 
+> For this reason, let's introduce an OPP OF helper function called
+> dev_pm_opp_of_has_required_opp().
+> 
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 > ---
-> bod
+>  drivers/opp/of.c       | 32 ++++++++++++++++++++++++++++++++
+>  include/linux/pm_opp.h |  6 ++++++
+>  2 files changed, 38 insertions(+)
+
+Applied. Thanks.
+
+-- 
+viresh
 
