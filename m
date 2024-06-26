@@ -1,100 +1,94 @@
-Return-Path: <linux-kernel+bounces-230946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD760918430
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:31:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DE77918444
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:33:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99E4F288579
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:31:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59AD2286D82
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE67318754C;
-	Wed, 26 Jun 2024 14:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 588FF18732C;
+	Wed, 26 Jun 2024 14:31:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IBx8LZaN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DlE9DOCw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F80186295;
-	Wed, 26 Jun 2024 14:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B08C18A932
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 14:31:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719412233; cv=none; b=LDDcYEAYZE2L6KV37+K1JMdqzjVgDCP9RInnU4KL8FK1gJP/euy0/Q2hWwBP0ckeYfDlDHL0NT5r7pinz+BJUziQhS+Tf2ikz6NblnYnkQ4DyMQzbg6knmIqFqogAR1Bu77DFLe6ojGmphUF0U/HXfchV29STBd5UmYLs3e/N6U=
+	t=1719412289; cv=none; b=lrt2H4NIkL5CZduToyG4WZJSHM5luxgGQLda2Ra/zlPCHtT2tJMA/3/3Thc1wrfZKYz2HRRi2mLEBaePTQxhFaoiTxEDIdIM91a1l+sNCON4T5CtCETIbX/zbnyRctIMfSwPIJRDsRbx+luGrD3I+0IWVPnLQIV375Ip/GNv2d4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719412233; c=relaxed/simple;
-	bh=K5WCWCG8V47pPDg/ygPM4ZRiyfsSbygbFQeDkm7lcn8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qcSwnb+eMEr7DZyHXGlLj7riT2oIVZvh/1uTiyWGGi305rsmwgeodU+JueEV7l8TxFKsSTFKtsUrwUCgpSyOsfKgEGjt4jsqU4WYh057lMfFuRFH8O5fHPRSrt62qyXnrsE0EVzRQHyyYQY+HWu6YcJqfChrZCDXwPSnSPx1M94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IBx8LZaN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5155C116B1;
-	Wed, 26 Jun 2024 14:30:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719412232;
-	bh=K5WCWCG8V47pPDg/ygPM4ZRiyfsSbygbFQeDkm7lcn8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IBx8LZaNrreiIDRoAYmMyFCkC/QSvYT03FTy7GXHSNnbw+TcDOxJQqhiyPWwK03fv
-	 DS1fegFC3oGDk4e+fCCv0YOKKLiHfARLNo5J+is6tBH4UzpauZv6BvWc8+QApGZRDG
-	 URcPuV/HKJo70rgL36fvyHEWhI6Mi02yIv2kUh5c1dhJFBOsDkq9fNIoCJSDDVHyMI
-	 940Ta0FK7McMkUU5MJ+SATK0JiT07oxFLY/dNWbpNzlbhJlKvpjPpVO6S2U1XvIn9R
-	 MT1NepaxHA18ai0KRg+9VjAwX3I0HHorDGHp7rJeHiDa/qUJUzVSN17WCmsUB8CoLd
-	 wET9cDw0f3bzQ==
-Message-ID: <15b164aa-601f-4dad-8115-14a715608319@kernel.org>
-Date: Wed, 26 Jun 2024 23:30:32 +0900
+	s=arc-20240116; t=1719412289; c=relaxed/simple;
+	bh=JeS0VLtIHqHzguAD+J/WuRa62ph6abcgqSsalttRgOo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=uyrlASeA0nxM8N6XrGGkPDx3dofqTZUIr4K3Hea5J1vyvuHmbLAmpECR7PY8B+m+nRa+NGLSGN+sy+v9SpauMDNRqtTIkWVPyfkcuMcjPo4stwzP0POBpxUi2Y+vvgUF0ix9cTjCcxRwWQ5Jn2wiXl6x3DA7NL526H1YiMkIQkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DlE9DOCw; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719412287;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JeS0VLtIHqHzguAD+J/WuRa62ph6abcgqSsalttRgOo=;
+	b=DlE9DOCwmcbBMVAW33SEhKyJXsV7O78THXVvAn4q16OpNsek8jWWuNrtw4rKYt23p22JyK
+	xwHeoFT7DdLdZ3j1X5ZLceL6d1hUcFkeGsAGFI6gqpD3QtW4nOuE9YpHAmisoT0dHfmU6t
+	SB64m/Hk5PhToEyMBqLKI1x/bG8O4cQ=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-475-WcCNtfL_Mh27LDvmAy3dMA-1; Wed,
+ 26 Jun 2024 10:31:21 -0400
+X-MC-Unique: WcCNtfL_Mh27LDvmAy3dMA-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6ADFF1955F16;
+	Wed, 26 Jun 2024 14:31:18 +0000 (UTC)
+Received: from RHTRH0061144 (dhcp-17-72.bos.redhat.com [10.18.17.72])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8D59F1956050;
+	Wed, 26 Jun 2024 14:31:15 +0000 (UTC)
+From: Aaron Conole <aconole@redhat.com>
+To: Adrian Moreno <amorenoz@redhat.com>
+Cc: netdev@vger.kernel.org,  echaudro@redhat.com,  horms@kernel.org,
+  i.maximets@ovn.org,  dev@openvswitch.org,  Pravin B Shelar
+ <pshelar@ovn.org>,  "David S. Miller" <davem@davemloft.net>,  Eric Dumazet
+ <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>,  Paolo Abeni
+ <pabeni@redhat.com>,  Shuah Khan <shuah@kernel.org>,
+  linux-kselftest@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v5 07/10] selftests: openvswitch: add
+ emit_sample action
+In-Reply-To: <20240625205204.3199050-8-amorenoz@redhat.com> (Adrian Moreno's
+	message of "Tue, 25 Jun 2024 22:51:50 +0200")
+References: <20240625205204.3199050-1-amorenoz@redhat.com>
+	<20240625205204.3199050-8-amorenoz@redhat.com>
+Date: Wed, 26 Jun 2024 10:31:14 -0400
+Message-ID: <f7tfrszg4i5.fsf@redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/2] PM / devfreq: exynos: Use Use
- devm_clk_get_enabled() helpers
-To: Anand Moon <linux.amoon@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240510094034.12493-1-linux.amoon@gmail.com>
- <CANAwSgTRfEChziyys251-FezSevSq9pxHLJixVCAybJhq5YAqw@mail.gmail.com>
-From: Chanwoo Choi <chanwoo@kernel.org>
-Content-Language: en-US
-In-Reply-To: <CANAwSgTRfEChziyys251-FezSevSq9pxHLJixVCAybJhq5YAqw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-24. 6. 17. 17:24에 Anand Moon 이(가) 쓴 글:
-> Hi All,
-> 
-> On Fri, 10 May 2024 at 15:10, Anand Moon <linux.amoon@gmail.com> wrote:
->>
->> The devm_clk_get_enabled() helpers:
->>     - call devm_clk_get()
->>     - call clk_prepare_enable() and register what is needed in order to
->>      call clk_disable_unprepare() when needed, as a managed resource.
->>
->> This simplifies the code and avoids the calls to clk_disable_unprepare().
->>
->> While at it, use dev_err_probe consistently, and use its return value
->> to return the error code.
->>
->> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> 
-> Gentle ping?
-> 
-> Thanks
-> -Anand
-> 
+Adrian Moreno <amorenoz@redhat.com> writes:
 
-Applied it. Thanks.
-I'm sorry for late reply.
+> Add sample and emit_sample action support to ovs-dpctl.py.
+>
+> Refactor common attribute parsing logic into an external function.
+>
+> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
+> ---
 
--- 
-Best Regards,
-Samsung Electronics
-Chanwoo Choi
+Reviewed-by: Aaron Conole <aconole@redhat.com>
 
 
