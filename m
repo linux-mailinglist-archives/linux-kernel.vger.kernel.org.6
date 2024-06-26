@@ -1,212 +1,113 @@
-Return-Path: <linux-kernel+bounces-231248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE7C391882D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:07:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 590F1918836
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:08:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 409642835BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:07:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C1A4285252
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:08:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D68513AA4C;
-	Wed, 26 Jun 2024 17:07:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F81190055;
+	Wed, 26 Jun 2024 17:07:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oltmanns.dev header.i=@oltmanns.dev header.b="VEgcI4vv"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fPoDdK0u"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03C4F17F370;
-	Wed, 26 Jun 2024 17:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA4518FDDB;
+	Wed, 26 Jun 2024 17:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719421661; cv=none; b=PFV+I2EzAtSjl86SXy3RbDtwKbpa55+iCmRVVFpiTJfwAmiOuQ4Iak4J9nfg4GMKFe2sh+CwEtpPymydjj+lVjhAtpdb20gTXDPkDEds5AudmYwM63jbwzWDM+F/YYw6Uc8+nWCtxxYid7R3MZjnnD0lMWEHSZGGvytziXNAXOk=
+	t=1719421670; cv=none; b=f/tpWNYORKDKPuVZb1c1KxOKItdEHx84BNDP8XblzPHzFAMb0h0dcV5bNHnodK44nC2squMz6ampLxBFORxbrQx/SSIcSAj3CrNdQO5qys0kZCBSgLqBy0toPPt9X4Gjn7m0zN8SiiuGHp4lMqrKX4CLrY0de3ZrqPTWl71+Kx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719421661; c=relaxed/simple;
-	bh=TMmpUeG6AgeBLdnpM+s0li9NSssKRCHhHc2Ibal07EQ=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=NwlMAUwZADBOqVZsgcz1Lu1vcdiFOAHfPDepp9Ex6rujNFWUdqExfEAjgfyegPGjggP4IvZJduAEnvHUifKv2yJYHeP20f+x/EzSqodKS0Za51uuDUAHNdTh7yb/Rld7NL2MtIsuo+n4TJJGCdwAQBkDfxXIC3Ki/koNpUo2TA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oltmanns.dev; spf=pass smtp.mailfrom=oltmanns.dev; dkim=pass (2048-bit key) header.d=oltmanns.dev header.i=@oltmanns.dev header.b=VEgcI4vv; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oltmanns.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oltmanns.dev
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4W8Smx29Hwz9sTk;
-	Wed, 26 Jun 2024 19:07:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
-	s=MBO0001; t=1719421649;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TMmpUeG6AgeBLdnpM+s0li9NSssKRCHhHc2Ibal07EQ=;
-	b=VEgcI4vveCe7PzZUbnLJjFgOYUrCLf+1Xz+DL5HQC+/XDt9dQMmvtgL0MMXOzTk8NUgFrx
-	BkpaB1W5uFUHQCty/47PffMM72gdJ3aH9kikvegJEiBe7IlUzkUjusb6R+hMS0NOEPthgx
-	nkasDb1OBBjtH7Ptna1yU+2yPj7jOYFXLcwPE+JxiyNDQcKchLIpvv9/6S3OcHOdmJ0v4Z
-	h+bzjYiiGqUxLv3Xu5ocpyraPN4DN2EyeJk5QAB0jPMEgt9l3M1hvW2bO834nqBH4pcKfZ
-	7r7qZRlQURbkLVHtTbcbHZYJAm2AZ2jqhjfcQ86bQl8gnVFrfS3b5JM8F19neQ==
-Date: Wed, 26 Jun 2024 19:07:19 +0200 (GMT+02:00)
-From: Frank Oltmanns <frank@oltmanns.dev>
-To: "Pafford, Robert J." <pafford.9@buckeyemail.osu.edu>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	=?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>,
-	Purism Kernel Team <kernel@puri.sm>, Ondrej Jirman <megi@xff.cz>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, stable@vger.kernel.org
-Message-ID: <1b359d7e-fe85-48ca-87aa-37ab7e34aaf6@oltmanns.dev>
-In-Reply-To: <DM6PR01MB58043A518B836D1CC3509554F7D62@DM6PR01MB5804.prod.exchangelabs.com>
-References: <20240310-pinephone-pll-fixes-v4-1-46fc80c83637@oltmanns.dev> <DM6PR01MB58047C810DDD5D0AE397CADFF7C22@DM6PR01MB5804.prod.exchangelabs.com> <87wmmjfxcj.fsf@oltmanns.dev> <DM6PR01MB58043A518B836D1CC3509554F7D62@DM6PR01MB5804.prod.exchangelabs.com>
-Subject: Re: [PATCH v4 1/5] clk: sunxi-ng: common: Support minimum and
- maximum rate
+	s=arc-20240116; t=1719421670; c=relaxed/simple;
+	bh=kbZfnvVRofJofrXjdAQ0NM3qIZEy7Cwc+QUG2rU3NVc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EK/VyOaJ4WcRIIag7f5c4iXaRbNOhcOdObrT8cNvolyixbJB1J6KtL4wL7Kr0Kn3OWCfexopvSAjYyStGOQGw6T3VerNMUBxxNUW+V9xxW8EAR7fwaQEmnYliTmTDNnuZ9qmMTUIRdBON9VgCxJSzqDe7Bq63oheXylwMvz0DiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fPoDdK0u; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QAfPoS003769;
+	Wed, 26 Jun 2024 17:07:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	tASF8765k3yZcy7NfGgI2MYdpJ9SJ7bI4KsPBk3R1i8=; b=fPoDdK0ufwcoOAfu
+	nqhwUnrO8JRu3Uybb2z10mapo/Phj1cc/Gg12n7mlfR6GK72Wpmv85vcbTq7AhGL
+	vsY+PYIxhaj8KHL3DbLZarZOG9jkO1VHD9qJ6ao+TVQyoLiYB+P2sENRRaZ1khwf
+	LVhHuT2WuNSD1gKN7HFFneWfHzvyQNnNbjirKeWvltrcIczbMlZVthvJjpnkx6Yu
+	8kZTom7Dt5f1l3JFYFUk+dsRtPkQMVvmZ8WB4CpjJpNOnmyLRo+wjQlR3r0UdAWZ
+	6SlxWI6FvOGVcRkxUjmoxCaLJUmCt0u0TnY1c55dqmVTu4bYzAbm7+Zu8aKuNHNc
+	P8tiBg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywmaf2n1d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Jun 2024 17:07:39 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45QH7cQL001386
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Jun 2024 17:07:38 GMT
+Received: from [10.48.244.230] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Jun
+ 2024 10:07:37 -0700
+Message-ID: <e9cfefc0-e197-42aa-935e-de4d66b5f47d@quicinc.com>
+Date: Wed, 26 Jun 2024 10:07:36 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Correlation-ID: <1b359d7e-fe85-48ca-87aa-37ab7e34aaf6@oltmanns.dev>
-X-Rspamd-Queue-Id: 4W8Smx29Hwz9sTk
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] cxl: add missing MODULE_DESCRIPTION() macros
+Content-Language: en-US
+To: Dave Jiang <dave.jiang@intel.com>,
+        Jonathan Cameron
+	<Jonathan.Cameron@Huawei.com>
+CC: Davidlohr Bueso <dave@stgolabs.net>,
+        Alison Schofield
+	<alison.schofield@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Ira
+ Weiny <ira.weiny@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>, <linux-cxl@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+References: <20240607-md-drivers-cxl-v2-1-0c61d95ee7a7@quicinc.com>
+ <20240607151046.00002ae2@Huawei.com>
+ <aef7c12f-cefa-4823-b3a2-920c12990afa@quicinc.com>
+ <73d13869-cb80-4226-b8fe-3e45fb7d2518@intel.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <73d13869-cb80-4226-b8fe-3e45fb7d2518@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: nz9dXlV86oDCxcZRSP7OeQQ3rD5TKYbW
+X-Proofpoint-GUID: nz9dXlV86oDCxcZRSP7OeQQ3rD5TKYbW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-26_08,2024-06-25_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 spamscore=0 bulkscore=0 phishscore=0 malwarescore=0
+ clxscore=1015 mlxscore=0 lowpriorityscore=0 priorityscore=1501
+ mlxlogscore=800 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2406140001 definitions=main-2406260125
 
-Hi Robert,
+On 6/26/2024 9:41 AM, Dave Jiang wrote:
+> On 6/26/24 9:02 AM, Jeff Johnson wrote:
+>> Following up to see if anything else is needed from me. Hoping to see this in
+>> linux-next so I can remove it from my tracking spreadsheet :)
+> 
+> I have it locally queued, but will probably push to linux-next after rc6 drops. 
 
-26.06.2024 18:03:24 Pafford, Robert J. <pafford.9@buckeyemail.osu.edu>:
-
-> Hi Frank,
->
-> Moving to a new for loop makes sense. Let me know when you have a patch
-
-The patch is here, strange you didn't receive it:
-https://lore.kernel.org/all/20240623-sunxi-ng_fix_common_probe-v1-1-7c97e32=
-824a1@oltmanns.dev/
-
-
-> and I'll be glad to test it on my board. I do also wonder if this may
-> have contributed to some of the HDMI issues seen in the other thread.
-
-My thought's exactly!
-
-Best regards,
-=C2=A0 Frank
-
->
-> Best,
-> Robert
->
->> Hi Robert,
->>
->> I'm truly sorry for the trouble the patch has caused you and for my late
->> reply!
->>
->> On 2024-06-14 at 23:52:08 +0000, "Pafford, Robert J." <pafford.9@buckeye=
-mail.osu.edu> wrote:
->>>> The Allwinner SoC's typically have an upper and lower limit for their
->>>> clocks' rates. Up until now, support for that has been implemented
->>>> separately for each clock type.
->>>>
->>>> Implement that functionality in the sunxi-ng's common part making use =
-of
->>>> the CCF rate liming capabilities, so that it is available for all cloc=
-k
->>>> types.
->>>>
->>>> Suggested-by: Maxime Ripard <mripard@kernel.org>
->>>> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
->>>> Cc: stable@vger.kernel.org
->>>> ---
->>>> =C2=A0 drivers/clk/sunxi-ng/ccu_common.c | 19 +++++++++++++++++++
->>>> =C2=A0 drivers/clk/sunxi-ng/ccu_common.h |=C2=A0 3 +++
->>>> =C2=A0 2 files changed, 22 insertions(+)
->>>
->>> This patch appears to cause a buffer under-read bug due to the call to =
-'hw_to_ccu_common', which assumes all entries
->>> in the desc->hw_clocks->hws array are contained in ccu_common structs.
->>>
->>> However, not all clocks in the array are contained in ccu_common struct=
-s. For example, as part
->>> of the "sun20i-d1-ccu" driver, the "pll-video0" clock holds the 'clk_hw=
-' struct inside of a 'clk_fixed_factor' struct,
->>> as it is a fixed factor clock based on the "pll-video0-4x" clock, creat=
-ed with the CLK_FIXED_FACTOR_HWS macro.
->>> This results in undefined behavior as the hw_to_ccu_common returns an i=
-nvalid pointer referencing memory before the
->>> 'clk_fixed_factor' struct.
->>>
->>
->> Great catch! At first glance, it seems to me that calling
->> clk_hw_set_rate_range() in sunxi_ccu_probe() should not have happenend
->> in the loop that iterates over the hw_clks.
->>
->> Instead we should add one more loop that iterates over the ccu_clks.
->> Note, that there is already one such loop but, unfortunately, we can't
->> use that as it happens before the hw_clks loop and we can only call
->> clk_hw_set_rate_range() after the hw_clk has been registered.
->>
->> Hence, I propose to move the offending code to a new loop:
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for (i =3D 0; i < desc->num_c=
-cu_clks; i++) {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 struct ccu_common *cclk =3D desc->ccu_clks[i];
->>
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 if (!cclk)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 continue=
-;
->>
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 if (cclk->max_rate)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_hw_s=
-et_rate_range(&cclk->hw, common->min_rate,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 common->max_rate);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 else
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 WARN(ccl=
-k->min_rate,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 "No max_rate, ignoring min_rate of clock %d - %s\n",
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 i, cclk->hw.init->name);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>
->> I haven't tested (or even compiled) the above, but I'll test and send a
->> patch within the next few days for you to test.
->>
->> Thanks again,
->> =C2=A0 Frank
->>
->>>
->>> I have attached kernel warnings from a system based on the "sun8i-t113s=
-.dtsi" device tree, where the memory contains
->>> a non-zero value for the min-rate but a zero value for the max-rate, tr=
-iggering the "No max_rate, ignoring min_rate"
->>> warning in the 'sunxi_ccu_probe' function.
->>>
->>> [...]
+thanks for the update!
+/jeff
 
 
