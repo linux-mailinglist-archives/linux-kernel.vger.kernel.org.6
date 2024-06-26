@@ -1,131 +1,138 @@
-Return-Path: <linux-kernel+bounces-230086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4955F917831
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:34:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 228ED917836
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:36:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AACD1C21AB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:34:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1BE0B22084
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64601474BA;
-	Wed, 26 Jun 2024 05:34:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51F214600D;
+	Wed, 26 Jun 2024 05:36:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tmMGT4Ct"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="vqLnR0gY"
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C4B2F5E;
-	Wed, 26 Jun 2024 05:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32E6C2F5E
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 05:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719380083; cv=none; b=uh9QQdycxDwosqVlMHTiNvQY9RnhHQMSm0hDH6/OGHbLVSoguNXp/qt1ee5oHKA2WCmc9KOCBOaJjvIjYAhmNLKroMvIy5PTFXdHN/N9wsbN+XJrBPiVNywUqJjY1I6rI4rlB9qiD3Bzq+oFJIfR8f5uUfaUS0bB26f1rMOXUDU=
+	t=1719380206; cv=none; b=ttIp/8pilJDxb0e7myMuJXjcKAZZ3h7oiPmrN7YmwAuBvpKS/8NT/dVI8EYidLPE3bisRQxU4gC4DxWRI/uQOeEUL3Uslxdszb4mJw8/lXIdUaHqoA2uKhwsfx1A3niS/gynMKso4za9QPT7SvXQpMBKQHI1hg3Ub1XOs+kTt9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719380083; c=relaxed/simple;
-	bh=SuWvqN8B1pUjcJ2bF1x2UYwmAnEJqRPmd+gWediLTaM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O9shdUFChJH5QHL2WqHHC2Z8VLSHHpHb2Bto5GvkoMazo7pBD+d3ARMxW+a4iQevYYYLtY3S8kGYTMLxUl76yrav9G714w/edT5XiKTb/iWDEv9LKbENDj42bLfor/XO6AIBQv4OUhIq1xcEXOxHZE9S2g/QrwOKvOwsok8R0ZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tmMGT4Ct; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0088C2BD10;
-	Wed, 26 Jun 2024 05:34:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719380082;
-	bh=SuWvqN8B1pUjcJ2bF1x2UYwmAnEJqRPmd+gWediLTaM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tmMGT4Ct4Jp2ZQIYj+5v9vlxHr9S2vHpVvRaTsCjW2Xp2UF/dgNyNSvmxXnm8++bz
-	 eCywY2BHWasTKjKo6OMG0N99Qh3KPpmjuFCcyPW+XRjDvXcAgS93cq2+C2pOlJUr5s
-	 Hy9AWT9Gjf5idqa1DWKJkbfY8EQBm78oVpICRfG7XjMrcQuxN5LOAWZ1/6QjSzehiB
-	 dE8UhRNhzwabvCaSXBSqdjuU6ItR9jmsiY5G3B+/3WR3oMK0mle187JPq8qwDwo4DV
-	 VSG5fs88ZG8xAkRrUUuYCEsz+uDNZu57RU0FagMGh5Tj1eCsaV9bQfLI5GHwTuM0gc
-	 U3AvfxlvTKTdw==
-Date: Wed, 26 Jun 2024 08:34:37 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Zhu Yanjun <yanjun.zhu@linux.dev>
-Cc: Anand Khoje <anand.a.khoje@oracle.com>,
-	Jesse Brandeburg <jesse.brandeburg@intel.com>,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, saeedm@mellanox.com, tariqt@nvidia.com,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	davem@davemloft.net
-Subject: Re: [PATCH v5] net/mlx5: Reclaim max 50K pages at once
-Message-ID: <20240626053437.GM29266@unreal>
-References: <20240624153321.29834-1-anand.a.khoje@oracle.com>
- <0b926745-f2c9-4313-a874-4b7e059b8d64@intel.com>
- <1f9868a7-a336-4a79-bc51-d29461295444@oracle.com>
- <c5a8b1b0-ce6e-4c35-aa00-2a4a1469b3ce@linux.dev>
+	s=arc-20240116; t=1719380206; c=relaxed/simple;
+	bh=HMR2KyYL8Z2r7JjFAwLkfq/xdGrtXmiJ5Wwg40Ii2sE=;
+	h=From:Content-Type:Mime-Version:Subject:Message-Id:Date:Cc:To; b=LdE6GN0LDVGXcE6V1N2EAfJ+nP9Fq9jVaPuYX07o/ZSVPSBrDgsueBZiifTH04m7St6zRXYU/A4MYvt4p65xbVsZmiU7aHZQfXzWQGm/NfM2d+p0X5o+j6ARpg+A+wJYvPC8weDMJq8lFn2WZqsiXgr4bvZE05Skiz/6xfttu/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=vqLnR0gY; arc=none smtp.client-ip=209.85.161.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5c1acd482e4so3411352eaf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 22:36:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1719380204; x=1719985004; darn=vger.kernel.org;
+        h=to:cc:date:message-id:subject:mime-version
+         :content-transfer-encoding:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5xoGmgspSdBUAHUJqXx7P8wqOEZDQ8GrzwQ5Y9V0VsI=;
+        b=vqLnR0gY4vU/won87C1CeA4c8yB9+owekpEf893dVovj9Hsv2q+StT5at+A/TljyhM
+         pY1PUSnn0auy3Wf81ZQY06e9Kf9MW/L3kVw45igGIIcj/7dt4d/kCUIQC3LzZcBZNh/P
+         ZlW93yS8GLegzZUKTiLkisPPk0OksLI07WMC0fCL7e1vm2Syl19by0BKazS0u9Kz7tRj
+         6TZZmGBd5m0UOUiXqWnOkdVu8eWKztf5L2ZKNvIjZNoD4E28XMrBwHhOVQPYMsmpHPg6
+         cNkxExpNSMdTnVZQZmVekHLA7RiEKG+6HunnioWk2gRUUfNVIwfbNWMlKhz77eiReayY
+         s+JQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719380204; x=1719985004;
+        h=to:cc:date:message-id:subject:mime-version
+         :content-transfer-encoding:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5xoGmgspSdBUAHUJqXx7P8wqOEZDQ8GrzwQ5Y9V0VsI=;
+        b=fAFNETC7QZRUlD3DzJyX8HzL1XVAFlg89Wcm5zcP0DeGJ8JISXSS1YB3gQ/uiT7Z7t
+         9670kdQd/SCsu6kljteCKcjmrqPFq5n4a6l0PPEkk4Kcp+5KnC6F+jsxFJZarIdY7bk4
+         O7zLnykbS14J5wzs1T40jRCaXmj3VZRbhdLqJhlAGSgAy2r/ggm8E+EiUhybeuAcEW7j
+         qZleLe1pqvWEU31+rBhK3A5M2718mVMsOEPFwSJca7F6uh61XZx3e2aobjoccoaJug01
+         Ky3wilLT0X9z2LhOmFrE3w+14ZSE91QbDU40WDA75SkRmNfyIMTXZ27oqyzZi6yxX1Sh
+         zG5A==
+X-Forwarded-Encrypted: i=1; AJvYcCUb8zusiwFpr3fZC+PUQZfOhLt9+w5G3zQVnze7byKtbd6fuPIG5mshGXccj9aBFwCM6QMTkT5EpEIDBKJSzuTpc6T/zSMsENNDM8yW
+X-Gm-Message-State: AOJu0YzSXRvggzkc89Uy319a1j0JBUdZWye4SsN3qLKpxRB8mPrhUmXF
+	bYj3rlsx0hZ54N028khwvW7kma15Q+aEPW33xHMzx1IdHmYV9sscJ83XzWYPpQM=
+X-Google-Smtp-Source: AGHT+IHIm4hgF1JV++efoOuA8VVxoHAW1Q4zjQmqoslSdwHThRFL0aUyjbdMSUOiHfb8JQhkCNjnDA==
+X-Received: by 2002:a05:6359:6ec7:b0:1a2:5bf6:2266 with SMTP id e5c5f4694b2df-1a25bf6c9c9mr349095155d.15.1719380204009;
+        Tue, 25 Jun 2024 22:36:44 -0700 (PDT)
+Received: from smtpclient.apple ([2604:3d08:8e80:cf0:8977:5a8e:a205:ae3])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-719e81277b0sm6308830a12.82.2024.06.25.22.36.43
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 25 Jun 2024 22:36:43 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+Content-Type: text/plain;
+	charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c5a8b1b0-ce6e-4c35-aa00-2a4a1469b3ce@linux.dev>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [PATCH] timekeeping: Use min() to fix Coccinelle warning
+Message-Id: <3F9C4695-42B1-4A0A-846E-6FC3BFA7E97E@toblux.com>
+Date: Tue, 25 Jun 2024 22:36:32 -0700
+Cc: jstultz@google.com,
+ sboyd@kernel.org,
+ linux-kernel@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>
+X-Mailer: Apple Mail (2.3774.600.62)
 
-On Wed, Jun 26, 2024 at 04:19:17AM +0800, Zhu Yanjun wrote:
-> 在 2024/6/25 13:00, Anand Khoje 写道:
-> > 
-> > On 6/25/24 02:11, Jesse Brandeburg wrote:
-> > > On 6/24/2024 8:33 AM, Anand Khoje wrote:
-> > > 
-> > > > --- a/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
-> > > > +++ b/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
-> > > > @@ -608,6 +608,7 @@ enum {
-> > > >       RELEASE_ALL_PAGES_MASK = 0x4000,
-> > > >   };
-> > > > +#define MAX_RECLAIM_NPAGES -50000
-> > > Can you please explain why this is negative? There doesn't seem to be
-> > > any reason mentioned in the commit message or code.
-> > > 
-> > > At the very least it's super confusing to have a MAX be negative, and at
-> > > worst it's a bug. I don't have any other context on this code besides
-> > > this patch, so an explanation would be helpful.
-> > > 
-> > > 
-> > > 
-> > Hi Jesse,
-> > 
-> > The way Mellanox ConnectX5 driver handles 'release of allocated pages
-> > from HCA' or 'allocation of pages to HCA', is by sending an event to the
-> > host. This event will have number of pages in it. If the number is
-> > positive, that indicates HCA is requesting that number of pages to be
-> > allocated. And if that number is negative, it is the HCA indicating that
-> > that number of pages can be reclaimed by the host.
-> > 
-> > In this patch we are restricting the maximum number of pages that can be
-> > reclaimed to be 50000 (effectively this would be -50000 as it is
-> > reclaim). This limit is based on the capability of the firmware as it
-> > cannot release more than 50000 back to the host in one go.
-> > 
-> > I hope that explains.
-> 
-> To be honest, I am also obvious why this MACRO is defined as a negative
-> number. From the above, I can understand why. I think, perhaps many people
-> also wonder why it is defined as a negative. IMO, it is better that you put
-> the above explanations into the source code as comments.
-> When users check the source code, from the comments, users will know why it
-> is defined as a negative number.
+Hi Thomas,
 
-I see no problem with adding a comment to the code, but I think that it
-won't help anyone. The whole reclaim/give page logic inside the mlx5
-driver is written with the assumption that the number of pages is
-negative for reclaim and positive for give.
+On 24. Jun 2024, at 23:36, Thomas Gleixner <tglx@linutronix.de> wrote:
+> On Mon, Jun 24 2024 at 08:24, Thorsten Blum wrote:
+> 
+>> Fixes the following Coccinelle/coccicheck warning reported by
+>> minmax.cocci:
+>> 
+>> WARNING opportunity for min()
+> 
+> I'm fine with the change, but not so much with the change log.
+> 
+> You cannot fix a coccinelle warning. You can only fix the code which
+> triggers the warning, right?
+> 
+> 'Opportunity to use min()' is nothing else than an opportunity, but
+> what's the benefit of replacing correct code with it? What does this
+> fix?
+> 
+> It fixes nothing. So calling it a fix is confusing at best.
 
-Thanks
+I think it's pretty common to "fix a warning" -- there are thousands of
+commits in the kernel using this wording in the summary alone -- even
+when the change doesn't actually "fix" anything other than removing the
+warning.
 
+However, how about 'resolve' instead?
+
+ timekeeping: Use min() to resolve Coccinelle warning
+
+> What you want to say is something like this:
 > 
-> Thanks a lot.
-> Zhu Yanjun
+> Subject: timekeeping: Replace open coded min()
 > 
-> > 
-> > Thanks,
-> > 
-> > Anand
-> > 
+> Replace open coded min() because $GOOD_REASON
 > 
+> Discovered by minmax.cocci
 > 
+> $GOOD_REASON is not 'coccinelle emitted a warning'.
+
+Removing a warning can be a good reason in itself to refactor code,
+because fewer warnings make "real" warnings and potential problems
+become more noticeable and thus more likely to get fixed. In short, it
+improves maintainability.
+
+To me this is obvious, but I'm happy to add something like "refactor
+code to remove warning and improve overall maintainability" to the
+commit message.
+
+Thanks,
+Thorsten
 
