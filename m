@@ -1,62 +1,74 @@
-Return-Path: <linux-kernel+bounces-231169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE3E8918765
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:30:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E2C0918715
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:15:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA7CBB2C230
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:14:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C3271F23F28
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:15:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C25190054;
-	Wed, 26 Jun 2024 16:13:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A1518EFF6;
+	Wed, 26 Jun 2024 16:14:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Da3Nlcy7"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="BF7+8s2B"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF596186E38;
-	Wed, 26 Jun 2024 16:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F9018E776
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 16:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719418394; cv=none; b=f5cBUoE8GkHvS/6mrHrr5UH7MbnUlcSdw5iZppNPjkneH3cw84fWSyoHBVx36Mds/8oD3WxFn4BCYmBywP5kFH/lBwuO+YZpFuZz4liMcqfMD6eL7K/mJNxc0cHItbuR0EsyuToYAq6iVMzY+zJXQFD1A/FKuB1ovzOmZJq/RuE=
+	t=1719418472; cv=none; b=IpzZChwh56aCdwuyZY/WgFEyh0JfmZGQAmURZ8uGpVAenb9itBFtuYrNeyAxe7nQr19wieD04zWPMaR/NltIHaH6Ndso/EZH8KzmVvkR4F4P0BZoA4YsE2zlK357LhbZ11PVHz3ib8XATbMlNE6TpTDn0TZwBjZRPgZKKl4Wlhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719418394; c=relaxed/simple;
-	bh=cqv8wMsZGMicMGelqOIAueCpYEuxWW3/ddi8n7JgvTI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RS/dxmHdYl19P8curDb7hBf3FqE0HmxywAUr7gs8pOD/dCMW8xzSyyNYoElN8VE3ZQ/kdX7O82otUIpAbKoDxQgIS7RDiT2WYfYtToyyIKFbINHFIIhV0GGkzDGfpSEy9KsHrNkJLKdZ6t1/ptuRCyqpEazHMBXIzcs5THAB+dU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Da3Nlcy7; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QAfUNu018095;
-	Wed, 26 Jun 2024 16:13:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	OCee+xk48e8TmS+YyR/KGRCV69PaDy104CZaVduY+Sk=; b=Da3Nlcy7uWMuYl9Y
-	jnpQN2JcD0C9K789jAn1JIOdfR/Ld+SaNwMOti72yNQuX7+sXnSo2kXITgOYb1dN
-	D05tWWxi23EIxP6U9fIcEXaXWaBiITXGQbTcr0wCcC2LHUMzS89u5Ca7GWYjoCT1
-	0CzFym4qPFbJOknvgA6751N+ixXmZoRadMrtSXv5F8azbaHttbLytozRge94fc6A
-	7T1MOyshVc4ZSZY/97sCsA8zwsoAN1hc9tL0+hAYJ2yz2gVGAXpxbDwLGZvTs/y5
-	oAuMjQsgFG1jMW/kL7uFSTIl/cND5Q4A8YgYnkLPv2IOnb1Fx07Nb1cmOaFO9nxh
-	m91TSA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywppv9tnk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 16:13:08 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45QGD7Yr004184
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 16:13:07 GMT
-Received: from [10.48.244.230] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Jun
- 2024 09:13:06 -0700
-Message-ID: <4f44ace3-c940-4952-8ef4-b4d220bba9d1@quicinc.com>
-Date: Wed, 26 Jun 2024 09:13:06 -0700
+	s=arc-20240116; t=1719418472; c=relaxed/simple;
+	bh=5atelX/vUS0AFl7mEPkUdeZjy2hqDtlRXR/m6bHx+R8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W0W3qfWiPBZpFCkZmlu7NBEggoAs9x/DdTR6hhVNFjdQFATLOa734q41cmsRJ1nMlXIc2OJy37U9b1df/UO/i8eD6vMFF1PbBHA1vWuRJsBPHpsumaqe5cwKTBOK3JUZJ+6ctVbI9D0JY8Cb9oE9JNa0IjhdS5dt+jIUBkkrEFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=BF7+8s2B; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-376243a112cso26735495ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 09:14:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1719418470; x=1720023270; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kDDEvuft6YUbchcNAvdNgKui7TGEyIpJ9wmKFGBqMjA=;
+        b=BF7+8s2BxLrcl7qOVp0UlxsC8uigX58i1fnndEPXQCkO72+un1kp2KGYrstYGWkm2B
+         aomuWuP6IQEPRj/dOeSqeydkIduwWga5Ud78qVXvLy6lCnkTQtB10vMYt9j6jaBBJc27
+         uqqb0G/iBQ7CcqvA0Iy3eIrxbzBvpocEBqR6iIDEN6ugPgEkQ+qwYZC0Oyq8jrXsFK7M
+         7254GaLkVll1DKuVTIACy9yQqVhlmi2rK7j2M/FwRqCaDTCYmUW4Vy+zcppcNX47MAnP
+         JDDHqFa86WSu6VRxoeDXwDZ9KxsMZwZC3jAsBt0OIn8WLCcIhH9uXPXoQJGOLjsFUk6Z
+         VPww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719418470; x=1720023270;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kDDEvuft6YUbchcNAvdNgKui7TGEyIpJ9wmKFGBqMjA=;
+        b=FVY8tmzV7sJY7wVGm1N65+zuQsSI9ZNmxhQQgn/aNtpmoIq2AkMLcxzI6eiYYZExWF
+         JycygZhlXRHcLe6ettlAw8rjHCJ1dT8Face0Fgt/OgFM+TlysBuHfUEDAYWKevbpEQrl
+         0CHUeDbymJF6HjFu6M/Jtbs3oW5T+J7cVeG5t+jZPa40t05IskmaMP9xoF2DWXGdgPji
+         opKrAS8RSzecYRcjQRxZMLMbRCKRL/0evQRDizXCPHpGezdtrG3d3kYGpk5B32FR4Vyx
+         adJsgcmHzEvlyUOT8FEYZ5gL2D++dK0MkSmJ6bGYLA1SKJaTYhJnqhP2ZbCMaoCpoSlg
+         Dz1w==
+X-Forwarded-Encrypted: i=1; AJvYcCWcMHYFurLa7yZ+zFoYWmh+OakWzzfku/W8Gnx8ttjvzTUKPgKU9RUCZr8PbA7pROgEJmmhJ11nlMfPI/qgLzdnvctfihp4NO4i1UTQ
+X-Gm-Message-State: AOJu0Yxv///SFDWRl9ZuHKSke86jNlNS13S3pglQcdMcadYWPEQztiyq
+	94M7nn8vvebhjo32JQ0hq0W9iiPlC/zIQ6q5tB1lL52MThi3E3k4EwddLiMicbeE16S280CLhgZ
+	3
+X-Google-Smtp-Source: AGHT+IELKQLJZTF+x62RjW2AmmDAddWE/zXZ9jt/OXnsyiCchr7jyoc/sCxp83/vqAiFW8alxf17RA==
+X-Received: by 2002:a92:c569:0:b0:375:c473:4a8c with SMTP id e9e14a558f8ab-3763e166c2dmr137718185ab.32.1719418469797;
+        Wed, 26 Jun 2024 09:14:29 -0700 (PDT)
+Received: from [100.64.0.1] ([147.124.94.167])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3772b4c8b06sm5483315ab.53.2024.06.26.09.14.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Jun 2024 09:14:29 -0700 (PDT)
+Message-ID: <acd4c562-1f4f-4cd0-8ff8-e24e3e70d25e@sifive.com>
+Date: Wed, 26 Jun 2024 11:14:27 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,59 +76,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: ti: add missing MODULE_DESCRIPTION() macros
+Subject: Re: [PATCH v2 01/10] dt-bindings: riscv: Add pointer masking ISA
+ extensions
+To: Conor Dooley <conor@kernel.org>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org,
+ devicetree@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+ linux-kernel@vger.kernel.org, Anup Patel <anup@brainfault.org>,
+ kasan-dev@googlegroups.com, Atish Patra <atishp@atishpatra.org>,
+ Evgenii Stepanov <eugenis@google.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Rob Herring <robh+dt@kernel.org>,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20240625210933.1620802-1-samuel.holland@sifive.com>
+ <20240625210933.1620802-2-samuel.holland@sifive.com>
+ <20240626-refined-cadmium-d850b9e15230@spud>
 Content-Language: en-US
-To: Benoit Parrot <bparrot@ti.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20240609-md-drivers-media-platform-ti-vpe-v1-1-b9e6a85f2a10@quicinc.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240609-md-drivers-media-platform-ti-vpe-v1-1-b9e6a85f2a10@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Samuel Holland <samuel.holland@sifive.com>
+In-Reply-To: <20240626-refined-cadmium-d850b9e15230@spud>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: W-DWlZfnvw7scx1Q3PguZrpQlxHW_WTS
-X-Proofpoint-ORIG-GUID: W-DWlZfnvw7scx1Q3PguZrpQlxHW_WTS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-26_07,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- clxscore=1015 priorityscore=1501 mlxlogscore=999 mlxscore=0 adultscore=0
- lowpriorityscore=0 phishscore=0 suspectscore=0 impostorscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2406260118
 
-On 6/9/2024 2:32 PM, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/platform/ti/vpe/ti-vpdma.o
-> 
-> Add the missing invocations of the MODULE_DESCRIPTION() macro.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->  drivers/media/platform/ti/vpe/vpdma.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/media/platform/ti/vpe/vpdma.c b/drivers/media/platform/ti/vpe/vpdma.c
-> index f8998a8ad371..da90d7f03f82 100644
-> --- a/drivers/media/platform/ti/vpe/vpdma.c
-> +++ b/drivers/media/platform/ti/vpe/vpdma.c
-> @@ -1173,4 +1173,5 @@ EXPORT_SYMBOL(vpdma_create);
->  
->  MODULE_AUTHOR("Texas Instruments Inc.");
->  MODULE_FIRMWARE(VPDMA_FIRMWARE);
-> +MODULE_DESCRIPTION("TI VPDMA helper library");
->  MODULE_LICENSE("GPL v2");
-> 
-> ---
-> base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
-> change-id: 20240609-md-drivers-media-platform-ti-vpe-2ebb82b6182d
+Hi Conor,
 
-Following up to see if anything else is needed from me. Hoping to see this in
-linux-next so I can remove it from my tracking spreadsheet :)
+On 2024-06-26 11:01 AM, Conor Dooley wrote:
+> On Tue, Jun 25, 2024 at 02:09:12PM -0700, Samuel Holland wrote:
+>> The RISC-V Pointer Masking specification defines three extensions:
+>> Smmpm, Smnpm, and Ssnpm. Document the behavior of these extensions as
+>> following the current draft of the specification, which is 1.0.0-rc2.
+> 
+> You say draft, but the actual extension has already completed public
+> review, right?
 
-/jeff
+Correct. The spec is frozen, and public review is complete. Here's the tracking
+ticket for details: https://jira.riscv.org/browse/RVS-1111
+
+I use the word draft because it is still an -rc version, but I can reword this
+if you prefer.
+
+Regards,
+Samuel
+
+>> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+>> ---
+>>
+>> Changes in v2:
+>>  - Update pointer masking specification version reference
+>>
+>>  .../devicetree/bindings/riscv/extensions.yaml  | 18 ++++++++++++++++++
+>>  1 file changed, 18 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Documentation/devicetree/bindings/riscv/extensions.yaml
+>> index cfed80ad5540..b6aeedc53676 100644
+>> --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
+>> +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+>> @@ -128,6 +128,18 @@ properties:
+>>              changes to interrupts as frozen at commit ccbddab ("Merge pull
+>>              request #42 from riscv/jhauser-2023-RC4") of riscv-aia.
+>>  
+>> +        - const: smmpm
+>> +          description: |
+>> +            The standard Smmpm extension for M-mode pointer masking as defined
+>> +            at commit 654a5c4a7725 ("Update PDF and version number.") of
+>> +            riscv-j-extension.
+>> +
+>> +        - const: smnpm
+>> +          description: |
+>> +            The standard Smnpm extension for next-mode pointer masking as defined
+>> +            at commit 654a5c4a7725 ("Update PDF and version number.") of
+>> +            riscv-j-extension.
+>> +
+>>          - const: smstateen
+>>            description: |
+>>              The standard Smstateen extension for controlling access to CSRs
+>> @@ -147,6 +159,12 @@ properties:
+>>              and mode-based filtering as ratified at commit 01d1df0 ("Add ability
+>>              to manually trigger workflow. (#2)") of riscv-count-overflow.
+>>  
+>> +        - const: ssnpm
+>> +          description: |
+>> +            The standard Ssnpm extension for next-mode pointer masking as defined
+>> +            at commit 654a5c4a7725 ("Update PDF and version number.") of
+>> +            riscv-j-extension.
+>> +
+>>          - const: sstc
+>>            description: |
+>>              The standard Sstc supervisor-level extension for time compare as
+>> -- 
+>> 2.44.1
+>>
+
 
