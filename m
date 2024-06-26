@@ -1,159 +1,166 @@
-Return-Path: <linux-kernel+bounces-230525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54E72917E16
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:33:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7095917E20
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:34:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0943C1F2561F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:33:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A9E41F24A8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:34:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1524188CDD;
-	Wed, 26 Jun 2024 10:28:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7717B18C332;
+	Wed, 26 Jun 2024 10:28:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="MlUzY1d2"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jmx56Hm8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7251862AF
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 10:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38AAA18A92B;
+	Wed, 26 Jun 2024 10:28:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719397699; cv=none; b=AeeweubmQSlCjvCk/r7Bw7S3MaxCjVnUtlcWnLdnjTb0y/YnW9+K6Wo0h+TqoS5xEMoildzmKqdIYsraxvvUqphmwJ7okAn/DhbJwtrv5fgsKiVhE4VXVI7CtAdMpJDY2NJuDBvI23C94O8WdXsu4W/z7eDRzk+k96o4Gp4vE3I=
+	t=1719397707; cv=none; b=rj9j5/UHEeoW/H97kQ1cTGy7IpZrDZDASQc4uH8F/kT/ofIC8d3T7Zb3L3o4JIJDqwI4Wof26TNHDTTLqjHt70IivPsri7OICickYXSMREuxCiiDQ1kq6KzHTO59H5dMI0cV6mnxTBWJlHICppbAgAEIAj4jKCvPOEDiBi2EKzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719397699; c=relaxed/simple;
-	bh=4utsmcNSL79n4TbI1mKr3zoEV7tqKldysQtdjN2wbis=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hCzBk5A+3oOpCSSw4484NK1lHgcSc8dp6XLKaYmMUqHDJcqZGlg3TO+UBuQdN76nzTcy7+pwygj2B888chdEMmxPtkVwJfWbtVefCOU6Ax5C/5htotlvwauun01NF0OlCIC4SMfsJfg21kmbX/+9HnZy0fy3YvxsU86VQCoOY68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=MlUzY1d2; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-158-144-210.elisa-laajakaista.fi [91.158.144.210])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E92152C5;
-	Wed, 26 Jun 2024 12:27:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1719397672;
-	bh=4utsmcNSL79n4TbI1mKr3zoEV7tqKldysQtdjN2wbis=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MlUzY1d2UDfNYnp4hA9j1zuXzdGQVgichrx2/tPw26uVzHtUpmNkWowEbeWA44fV6
-	 PMOpwbbboeF6vPto4u3oZNd7FdRBk98Kuv75vb97ivA+yBVydoY1ANtahgD8mfTPH+
-	 vpOWjGGM6hlzZV9AV5dqay/6HGN3qrOmAjV2ExlE=
-Message-ID: <476eab03-09b6-4a38-85e3-0ff61a7d7a56@ideasonboard.com>
-Date: Wed, 26 Jun 2024 13:28:10 +0300
+	s=arc-20240116; t=1719397707; c=relaxed/simple;
+	bh=R8koNdIOIs1xSzrQoGWQfGJPVAZmC0McFmOxHDebHL8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HzZsOLlryCBiSbiMg0JYsUHqjaqqiDqz8IZvs7Eev2fbXN7tTi/iHWbsHEYZb09os5qWIzeUpXfqXF+XEGnBFvYfgjrWBmmckfH89qCFEIAFDGPo7ItAiAmhtLgdyWbVLctzWsz+6evs4GFu7fAfHMtaMXdJqZ2HMCwe0N3C4QY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jmx56Hm8; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719397706; x=1750933706;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=R8koNdIOIs1xSzrQoGWQfGJPVAZmC0McFmOxHDebHL8=;
+  b=jmx56Hm8CWLf562Fih0J+If8vsIVIaD8Ej1+2nWww1zpVdnkhttEf2il
+   6pc85vpjXA3/MRt1vPUgzyoTXyCWdkzx0UfedZxn5wFSjYNXIj5NTWwzU
+   2HkP99wuEfA7NgNsW8pOi+SRFGEf21mCkQJOqxZY/e36ukEba8oKsfhhp
+   mnerc/bRPpGi8N3kxBNs9JKPDOhcKbX9S2jJ5OV6IBqOf0GB14Jv9kgJD
+   VeKmBXj866yoRjPgGX7xe2xqN1TmoUW9TfwwyuA33mM33JGbwzSXpHfph
+   Ouzn1Swn2+9VL0ZAqKQTQ0725bzA52nAT0UH7qgY9REVCCa/zIStLKQvr
+   A==;
+X-CSE-ConnectionGUID: yRUAwlIqQhCsDHxgZD0nRA==
+X-CSE-MsgGUID: TX4BljKTS2+os3mxwG1mTQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="19351636"
+X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
+   d="scan'208";a="19351636"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 03:28:26 -0700
+X-CSE-ConnectionGUID: tJoVEplgSQeDKyi7EUs7qQ==
+X-CSE-MsgGUID: nPmW/HKWQ1Gw4O20Z0Xhgg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
+   d="scan'208";a="44611032"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.245.246.93])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 03:28:22 -0700
+From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Dave Jiang <dave.jiang@intel.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cxl/acpi: Warn on unsupported platform config detection
+Date: Wed, 26 Jun 2024 12:28:19 +0200
+Message-ID: <21841700.4csPzL39Zc@fdefranc-mobl3>
+In-Reply-To: <667b4f4a46cc6_563929472@dwillia2-xfh.jf.intel.com.notmuch>
+References:
+ <20240619125949.167936-1-fabio.m.de.francesco@linux.intel.com>
+ <667b4f4a46cc6_563929472@dwillia2-xfh.jf.intel.com.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 04/11] drm/bridge: cdns-dsi: Fix the link and phy init
- order
-To: Aradhya Bhatia <a-bhatia1@ti.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Jyri Sarha <jyri.sarha@iki.fi>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>
-Cc: DRI Development List <dri-devel@lists.freedesktop.org>,
- Linux Kernel List <linux-kernel@vger.kernel.org>,
- Dominik Haller <d.haller@phytec.de>, Sam Ravnborg <sam@ravnborg.org>,
- Thierry Reding <treding@nvidia.com>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
- Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
- Devarsh Thakkar <devarsht@ti.com>, Jayesh Choudhary <j-choudhary@ti.com>,
- Jai Luthra <j-luthra@ti.com>
-References: <20240622110929.3115714-1-a-bhatia1@ti.com>
- <20240622110929.3115714-5-a-bhatia1@ti.com>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <20240622110929.3115714-5-a-bhatia1@ti.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On 22/06/2024 14:09, Aradhya Bhatia wrote:
-> The order of init of DSI link and DSI phy is wrong. The DSI link needs
-> to be configured before the DSI phy is getting configured. Otherwise,
-> the D-Phy is unable to lock in on the incoming PLL Reference clock[0].
-> 
-> Fix the order of inits.
-> 
-> [0]: See section 12.6.5.7.3 "Start-up Procedure" in J721E SoC TRM
->       TRM Link: http://www.ti.com/lit/pdf/spruil1
-> 
-> Fixes: fced5a364dee ("drm/bridge: cdns: Convert to phy framework")
-> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
-> ---
->   drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-> index d89c32bae2b9..03a5af52ec0b 100644
-> --- a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-> +++ b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
-> @@ -778,8 +778,8 @@ static void cdns_dsi_bridge_enable(struct drm_bridge *bridge)
->   
->   	WARN_ON_ONCE(cdns_dsi_check_conf(dsi, mode, &dsi_cfg, false));
->   
-> -	cdns_dsi_hs_init(dsi);
->   	cdns_dsi_init_link(dsi);
-> +	cdns_dsi_hs_init(dsi);
->   
->   	writel(HBP_LEN(dsi_cfg.hbp) | HSA_LEN(dsi_cfg.hsa),
->   	       dsi->regs + VID_HSIZE1);
+On Wednesday, June 26, 2024 1:14:18=E2=80=AFAM GMT+2 Dan Williams wrote:
 
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Hi Dan,
 
-  Tomi
+> Fabio M. De Francesco wrote:
+> > Each Host Bridge instance has a corresponding CXL Host Bridge Structure
+> > (CHBS) ACPI table that identifies its capabilities. CHBS tables can be
+> > two types: RCRB and CHBCR.
+> >=20
+> > If a Host Bridge is attached to a device that is operating in Restricted
+> > CXL Device Mode (RCD), BIOS publishes an RCRB with the base address of
+> > registers that describe its capabilities.
+> >=20
+> > However, the new (CXL 2.0+) Component registers (e.g., Extended Security
+> > Capability), can only be accessed by means of a base address published
+> > with a CHBCR.
+> >=20
+> > An algorithm to locate a CHBCR associated with an RCRB would be too
+> > invasive to land without some concrete motivation.
+> >=20
+> > Therefore, just print a message to inform of unsupported config.
+> >=20
+> > Count how many different CHBS "Version" types are detected by
+> > cxl_get_chbs_iter(). Then make cxl_get_chbs() print a warning if that s=
+um
+> > is greater than 1.
+> >=20
+> > Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.=
+com>
+> > ---
+> >  drivers/cxl/acpi.c | 20 ++++++++++++++------
+> >  1 file changed, 14 insertions(+), 6 deletions(-)
+> >=20
+
+snip
+
+> > @@ -533,6 +537,10 @@ static int cxl_get_chbs(struct device *dev, struct=
+=20
+acpi_device *hb,
+> > =20
+> >  	acpi_table_parse_cedt(ACPI_CEDT_TYPE_CHBS, cxl_get_chbs_iter,=20
+ctx);
+> > =20
+> > +	if (ctx->count > 1)
+> > +		/* Disclaim eRCD support given some component register=20
+may only be found via CHBCR */
+> > +		dev_info(dev, "Unsupported platform config, mixed=20
+Virtual Host and Restricted CXL Host hierarchy.");
+>=20
+> I believe this is already queued, but my personal preference is that
+> multiline statements include brackets, or move the comment above the "if
+> ()", so either:
+>=20
+> 	/* Disclaim eRCD support given some component register may only be=20
+found via CHBCR */
+> 	if (ctx->count > 1)
+> 		dev_info(dev, "Unsupported platform config, mixed Virtual=20
+Host and Restricted CXL Host hierarchy.");
+>=20
+> ...or:
+>=20
+> 	if (ctx->count > 1) {
+> 		/* Disclaim eRCD support given some component register=20
+may only be found via CHBCR */
+> 		dev_info(dev, "Unsupported platform config, mixed Virtual=20
+Host and Restricted CXL Host hierarchy.");
+> 	}
+>=20
+> ...but don't spin the patch just for that fixup.
+>=20
+I'll send v2 mainly for Alison's comments and so I will also add brackets h=
+ere=20
+(the second solution meets my preferences).
+
+Thank you,
+
+=46abio
+
+
+
 
 
