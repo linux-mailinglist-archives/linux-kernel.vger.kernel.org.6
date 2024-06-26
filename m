@@ -1,193 +1,179 @@
-Return-Path: <linux-kernel+bounces-231183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE80C91873D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:23:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52B8391877B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:34:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F00431C21031
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:23:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79622B28D54
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:22:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 904FB18F2CB;
-	Wed, 26 Jun 2024 16:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A2418EFF5;
+	Wed, 26 Jun 2024 16:22:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YPv+SDn7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (1024-bit key) header.d=phytec.com header.i=@phytec.com header.b="gf/tc57s"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2105.outbound.protection.outlook.com [40.107.94.105])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2271118E758;
-	Wed, 26 Jun 2024 16:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719418986; cv=none; b=UkE6E3Lto6R3TbZgyOqb1qBOqRybfpZrVT1w4nntNkT7CYKGLgqQ7dYU1AVJkVdTJ7JPh5gMKzoY2+MtzK0p/ItD7bMFGwvVivV3uR+ZkSthMRKUAtJCnrOewnbN0OpuizKfl6EZxnNg6O/1CJ3HWC3nFCOdx6idk1CkwInBcAg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719418986; c=relaxed/simple;
-	bh=6gFjRqnmAlZ+KmWeNakm51Ebba0HMPjTrguhw4sm/E0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ne7ONDYM4siVWJW6R29+PHHY34RqM3SYiY+qmdU/K7275DL6Haq7Pw3dMhSGDmEQGvWnoe1PwlgFqMzYM/XnShP4PP/2kYp87/M0CzTgqYFhU4nSuXQCParwq7W9sLQhCTLFhfYrdq++ifpdsO7HwYSV+nl8MYHaDRJK/ptREXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YPv+SDn7; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719418984; x=1750954984;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=6gFjRqnmAlZ+KmWeNakm51Ebba0HMPjTrguhw4sm/E0=;
-  b=YPv+SDn7/EhbHb3HgVmYD1gHLPuUSgtsAH/+SVu0IMUDFIzLBUn+NavU
-   DeNMJQxUwS8PREfnIyBJRjHNsWle//Hr2XzOw8crUDtGkLS/WBWSDimcm
-   j878TWe3w7agPSbOeFSqmCd1qCzvUVAtTcP0WVB4su1zNSeNmC1gjcFrf
-   fuN3sBkLnQI+1iiHXvA8qCtwWJU+/8zisrVs4sxnm6Qb41m4n4oP0iqo4
-   hMyfCVynLvrCQDfcTJAkSDuCNb0RZ3jn8/FTWG6dR9d8lZM4LpOgd53sS
-   ORus+ZB/O/FjJHsJv5sp9BCIJbVTf9qLT+ZJWn3jkHm1KJxyTUJYC2Jlq
-   w==;
-X-CSE-ConnectionGUID: EB1HoWh4R6ikNx7AIbO69A==
-X-CSE-MsgGUID: Eul6hx8DTPWticHZs8pJhA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="16651449"
-X-IronPort-AV: E=Sophos;i="6.08,267,1712646000"; 
-   d="scan'208";a="16651449"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 09:23:03 -0700
-X-CSE-ConnectionGUID: aqVxw+UeSm2pAi9hLFlh0g==
-X-CSE-MsgGUID: 49XKsDlLR0O245zfXBJvQg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,267,1712646000"; 
-   d="scan'208";a="43930121"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 26 Jun 2024 09:23:00 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sMVQ9-000FNi-1r;
-	Wed, 26 Jun 2024 16:22:57 +0000
-Date: Thu, 27 Jun 2024 00:21:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: ran xiaokai <ranxiaokai627@163.com>, akpm@linux-foundation.org,
-	willy@infradead.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, vbabka@suse.cz,
-	svetly.todorov@memverge.com, ran.xiaokai@zte.com.cn,
-	baohua@kernel.org, ryan.roberts@arm.com, peterx@redhat.com,
-	ziy@nvidia.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/2] kpageflags: fix wrong KPF_THP on non-pmd-mappable
- compound pages
-Message-ID: <202406262300.iAURISyJ-lkp@intel.com>
-References: <20240626024924.1155558-3-ranxiaokai627@163.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F29118EFE4;
+	Wed, 26 Jun 2024 16:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.105
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719418951; cv=fail; b=Lp3nRbRvJtMJ7BMcHGjIde2aRUwNJWh2OJRCIrBEjeXvr34nFqbLtyf2WdAmSdpkIPrs0IS2CRLOTMGEmnTs9l5uPkdHsnKc9OLX4FVYFB2jqoBZTDbxI9Nnm4dSswb+SJJIt+Fwpoq2HchE1MEh0itvL0ncfMF6Zz1gkwJtrNA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719418951; c=relaxed/simple;
+	bh=bOro1hIjNHINYAcxIK2Gze0HZhEsLkpLBHyHH7fKN0Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=MTI0Dp1+SN3XLCa76luyRMHAg/hXA/3GgoapUpuazSTJQcnvsWBtZ5LNkWobeKgwazuSZ7S4PJoRNxE/eXh1Ryk8YKXTcrzKMfiUDENx1HFwJyowlbH8AQP/XsXIVLh4TlaNXBPch2LmlLWti86Rpg9nEccq1ZRNjVgUSlwaNUo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=phytec.com; spf=pass smtp.mailfrom=phytec.com; dkim=pass (1024-bit key) header.d=phytec.com header.i=@phytec.com header.b=gf/tc57s; arc=fail smtp.client-ip=40.107.94.105
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=phytec.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nmbPTLZoDyh222X/yn4hIQFhkixo5cjoiPr3KbvQdQf4SJcGDh/cvoYElBAH5Vksn031KzQTtDLBFf4fH2jP9jIboHWo7dpGhJYvK/1eGGt4iPs20QIXLxCSq0ZV/N+0oydETossn3hogvvIhyoLDJDfUOqKY4KmYFQNYEzagG5UbcgC41moGuzZB/qghR7ORtQGrM/nvayMwGBVY3jr8uoBmGcnXXQGb1YzbioIqODM71r5RfLFtvxPuMk7Ax7FvRnqXtOVQR942WGicCEtBU7Eo/L2ZfXeb9yhB9CZw0YpwClWU2BIT8JVTcEM+L0ymGvlScCWqDw2gb3+vir9pg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dPrf+dLEOmfkGex5atRoKlk9BbGRaT+gHbLQTxSKrmk=;
+ b=Yjh/Up+y20y4nqYXHWSTjq2kNGCNm5OTs63SvEPQqKJDPHjWtrVAeecCL6HGkfzU0dKwVrJUL+27jd+/qw/VZyuSfsFpjsu/z7+ULk9buqK1sJtIZqs6MnadzFDH8CXCSEtvIeScr95ifPKldp0Y3PKl5ToQ6UjLAFGlsY/V/Wy2nMLtgVMCGd0Pejy71LsOSTw3M2uKe62De84rqC7KMwUt09PVsTPT1itMOcSNZC/KeIG0jiOm0FsNkxXmZsq5uoBvZltye1dnA7mNWVirG33kzby2DuvEPTKbrSqtZXGx8e7Srsyq++R8sbZ3E/NFQUfbYqXihgFmNMaG8S61vQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=phytec.com; dmarc=pass action=none header.from=phytec.com;
+ dkim=pass header.d=phytec.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=phytec.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dPrf+dLEOmfkGex5atRoKlk9BbGRaT+gHbLQTxSKrmk=;
+ b=gf/tc57s7NtjT/cRW4ROxc/HCUcAJ87MrKBEYAbH8blFBpc56bkmtuJYZS4L2KmWaRvm0GCm1Zj2vAALJjouAZGqTSFIlRnGlVMV5d3MvEt3Z29v8p9qLvS8zrkOY0pQp9W+eLDsM9NiTJFSgsrB6pBAjYwlkh2N9VzliqK0zxY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=phytec.com;
+Received: from SJ2PR22MB4354.namprd22.prod.outlook.com (2603:10b6:a03:537::8)
+ by MN0PR22MB5638.namprd22.prod.outlook.com (2603:10b6:208:4a5::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.32; Wed, 26 Jun
+ 2024 16:22:15 +0000
+Received: from SJ2PR22MB4354.namprd22.prod.outlook.com
+ ([fe80::789c:e41e:1367:383d]) by SJ2PR22MB4354.namprd22.prod.outlook.com
+ ([fe80::789c:e41e:1367:383d%3]) with mapi id 15.20.7698.025; Wed, 26 Jun 2024
+ 16:22:15 +0000
+From: Garrett Giordano <ggiordano@phytec.com>
+To: andersson@kernel.org,
+	mathieu.poirier@linaro.org,
+	w.egorov@phytec.de
+Cc: linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	upstream@lists.phytec.de
+Subject: [PATCH 1/2] remoteproc: k3-dsp: Fix log levels where appropriate
+Date: Wed, 26 Jun 2024 09:22:02 -0700
+Message-Id: <20240626162203.3484272-1-ggiordano@phytec.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: CH2PR12CA0006.namprd12.prod.outlook.com
+ (2603:10b6:610:57::16) To SJ2PR22MB4354.namprd22.prod.outlook.com
+ (2603:10b6:a03:537::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240626024924.1155558-3-ranxiaokai627@163.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR22MB4354:EE_|MN0PR22MB5638:EE_
+X-MS-Office365-Filtering-Correlation-Id: 883acc58-d716-4b72-2e98-08dc95fc23fb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230038|366014|52116012|376012|1800799022|38350700012;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?RRfVjrwaYybBbVWf9k1liNpjyr5EWpnN27CGaDoSbDFKL5rhQ22RGi2ck8QD?=
+ =?us-ascii?Q?i8rs6ThEBvTE//XKWjiRxqF/JaP+3VcccRT6L7dahj8kO+lVtsKoULeoTmd3?=
+ =?us-ascii?Q?/JifgO14nGaL8ndHgorpxm/fagpSgW6RZL3bfBRUS+SBu5oAU9MtkG8xZwWw?=
+ =?us-ascii?Q?ndt5pV+ZLIdNzVswjV37vIUma4ZJ6xlpdv+ixOVyUBGuXc+EBL53dM6bAooI?=
+ =?us-ascii?Q?S5RlyoylXH30iQisptj62xjMfu9ywatsLf3aR/DU/9nw9m7Dlq84Z49LOsXy?=
+ =?us-ascii?Q?IeTMVyUw52P8VSEpcNp9bSboU0jjErcQ8yedDspt/Unk+N/zeO4dWwu5zNft?=
+ =?us-ascii?Q?mSfsGY/ig/hrGHmpVEXrnnUUWL1OGbkgssb5pwQQ+z/wJJHhITzZX3XfsbVy?=
+ =?us-ascii?Q?qGqylWFoYp+EbOKsTyY4NBpcOqXdVdBF2rJTrhhJ/MeCqU5+dNPUGjyLwHz/?=
+ =?us-ascii?Q?k1THCGZCIulLuDPshihStZg1JqKjAQ0gsPkGEar6OB0S3uD0xDPqKUIfefA0?=
+ =?us-ascii?Q?IrmtMPEmqx/S8yKoYBKAnicOi1LRz7FxkemdLTpevi0K3G8iLJ+Nh9prGP+R?=
+ =?us-ascii?Q?IyyzYd4WsCAtVExS8Hh23UyruMrRed1BThaKlMPvsmUctpIAskVGy0uvZIke?=
+ =?us-ascii?Q?s+cKibFlH15FSXeBDGS8CrYM/45q0YlIHo8L0+0AllL8hmaM29GDDSfkJxbj?=
+ =?us-ascii?Q?GS0PYcZQ8qOLEBKLo/4XKfvU3rhmS8utQEJm+1klvlFLY6Isg81wKAxnN9jk?=
+ =?us-ascii?Q?r4IDiHuk98oZDdsORTSxbchzevRwVabAIYI9X/DH9VSQntEFYiS1oStzieGk?=
+ =?us-ascii?Q?THBF/fu0UsLml/HycfNINU+aQ1hui6OnXPW/T2t4P3emhIJWx+x4IzirkViT?=
+ =?us-ascii?Q?n0XGI9EroGrivtcHCK+xceO3l2UJies4MfBW7pzSAJIPKUr43WM/dMgpaPgu?=
+ =?us-ascii?Q?RO9MRrvZ7K+WCgwhe7m+XijkFBcJNZK5OoyEVRNFHjCm3j/DjZU3d2XBFIhs?=
+ =?us-ascii?Q?mtyj4p1QBtbM2aWYYD7PZ5wFf8x+mF0zgVZI6C0haF0jrNFf7ZCPNdJdWrcO?=
+ =?us-ascii?Q?+3A7tzrGuvstocXsXwUgC6G5JyeBEpuKyHX3VbSCHxiVAuTqDDkGNJfCyCwB?=
+ =?us-ascii?Q?a4T0zCQj/GLTRYNLJJDkfHOmx2l85k5jVexP/65+MYIVIzEbj7+cgEBKmOVq?=
+ =?us-ascii?Q?m+1gAqI1QzFaw0EprCCn1nyoTZqR/3YLpfPEXuJYUC9x2Kmm7upwt1kNSFDz?=
+ =?us-ascii?Q?7KFfUYCON+/i1OaO2bbjpD9CFqAaI4stle+FmBf44oBq55FTizQRIEn0jh4P?=
+ =?us-ascii?Q?u2e5Xb2d2A/Ukcner0HC+f7GKzApGlvkIEY/XcszXYjSGfexPZvZuulN0TgF?=
+ =?us-ascii?Q?suRIElI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR22MB4354.namprd22.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230038)(366014)(52116012)(376012)(1800799022)(38350700012);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?c/pDk0E4tq+eSREZOOLe4J2Jqle5ujMgxoZn9zwWV1V109ZCcIT5I2EohQ9Z?=
+ =?us-ascii?Q?dyw7DD/X+lJahSuafB2j9BKUxJlgiL//j52v/13dKyKowsFRpkpZlphxx00i?=
+ =?us-ascii?Q?zPOPEILkp/c1arHFgZJ7ZS2yBGZkYIKGiRp5q4KgIdtu5R/BGGplQJ4H1uEj?=
+ =?us-ascii?Q?z6a6FV2NsTGhMZXMjL0wUXIbYATxS1FyE40RbWu5RgQYEMMOta1UiRuBf36A?=
+ =?us-ascii?Q?q7FE/Qe+8ajnsrDrBOpkMBISZN9bTcHyUH615zIT4AlClfNRif6YTUToxMXe?=
+ =?us-ascii?Q?8vqIuTBilvsG9QeTmOb8QCAJQ6mfIKOh2vjK12spkjEIw0N0cTd/CN6ITZvP?=
+ =?us-ascii?Q?B++3gnFy59zFXSNvuGjZZNwkBjWQ4N24tlDAsw5Zqcju1PLyAnF34h/2O63o?=
+ =?us-ascii?Q?4ZCSr01H0wVgI2Grn8wwreS7UzokRy8wHgbdqjMVZxGXROJ/MUHN7qbenryE?=
+ =?us-ascii?Q?yoWGM/BnhF+oJWgL51He9QiAYw0Iy24ERwR9M9Ka9oLkAPnlTS+hMW9rof09?=
+ =?us-ascii?Q?an/2WJfWoQ7UzWRyRHqAr/PrEC84JJ+aqWo/x+VYFi6if+dfBUmrOn5mM7FD?=
+ =?us-ascii?Q?IDhq4NqnAwf3y+UPUG44Ywitky360rX+CTV71lweHsYlSL5SB0CmYfurhiSN?=
+ =?us-ascii?Q?AM2szlLbOBjs73/kDa7tuaLhkGBSpTxxHTyNT++dNj8NHoquo5FGAUN9EPed?=
+ =?us-ascii?Q?lwLsKRVTSM2KpDZ9v5EKF8i8yE7y6BWpv+FyOtInnyXjFuZDQb0fWIUUwxPy?=
+ =?us-ascii?Q?dgJE5XBcNjxwPS9bTl84+ENTU3aW005yteEr0O98SrPM2afAwQ1zOfOXrn60?=
+ =?us-ascii?Q?uws2a0VcrmqYssJjW4n0/QcGa8wvqn8c0ctsgbPy7JS+Dsov4LBVRI+ft1tj?=
+ =?us-ascii?Q?fZtoLQQED8DJLV1CjgFM6pX8/qhkS4Ahgnt6kwXGg7E/tEwo3kKlkf/W+d2v?=
+ =?us-ascii?Q?m5q0gMTilS5OYaMuH1CwRkXluj8vmG+XdFrAlHhFogISYtHOObwioHwXIW5L?=
+ =?us-ascii?Q?a+GtIb99LQsupv//m43sqDWnOgK5JlVf/iZrADAvirflSRHdD/kiW0d3L6lp?=
+ =?us-ascii?Q?UnJLPMJqrY2PkayvAKXpEGeOGhiSuk2cLusLd0tdGquoN7zcUi87qBOHazmr?=
+ =?us-ascii?Q?nuaRbo4yoF5ER6VMvLSMcx4kDsmeLIwz3bP8/pUu9R0DTyEWb8bgPdCS82y8?=
+ =?us-ascii?Q?Bdypz1UXxl1KmM6np9QpWNKFfhuaUV/uZoACZ6/2eyloArhUWnEpxo4ndn0W?=
+ =?us-ascii?Q?k+MQEM8gWPjRPifXD7KA9dFcwQiegcrbV9t8vHAZDYGWn02mxduNq/7w4JW5?=
+ =?us-ascii?Q?06Qq9aFKHn7o/GpE/FMGQcUNnfZ7Bjw1WG85NREjG7tbDlO+RmlcykMrPwly?=
+ =?us-ascii?Q?wkP0YlNIy5xZfn0ujMtgNOhPc5v1Hkew7PHDm+9hwxIXc59n4P6u6bTZl8CQ?=
+ =?us-ascii?Q?I6rG+HQ8gJTKJH5UZLsUFhBeYh7uFzyOj8yxQ3Uv/f2FGnO1mU5B/XPjMNTb?=
+ =?us-ascii?Q?DCNOGWMBwo+qL7JQzsb4fA8FmtRCG6FqmDNXcNuwpJGogeLNKfqiPN6lfzwf?=
+ =?us-ascii?Q?ZT3OHDFRGIzsVktPo+++e7dznKG4X2dG8DHKCrtb?=
+X-OriginatorOrg: phytec.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 883acc58-d716-4b72-2e98-08dc95fc23fb
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR22MB4354.namprd22.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 16:22:14.9727
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 67bcab1a-5db0-4ee8-86f4-1533d0b4b5c7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: iaCUWaKdLJrdSvOOLUh1NSz8T0ApAmlyd4T0q6UH28oGubgZp+z57/9EUPTOiIztsvAXo5fxkIjs0XZZDpYSKw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR22MB5638
 
-Hi ran,
+Driver was logging information as errors. Changed dev_err to dev_info
+where appropriate.
 
-kernel test robot noticed the following build errors:
+Signed-off-by: Garrett Giordano <ggiordano@phytec.com>
+---
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[auto build test ERROR on akpm-mm/mm-everything]
-[also build test ERROR on linus/master v6.10-rc5 next-20240625]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/ran-xiaokai/mm-Constify-folio_order-folio_test_pmd_mappable/20240626-113027
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20240626024924.1155558-3-ranxiaokai627%40163.com
-patch subject: [PATCH 2/2] kpageflags: fix wrong KPF_THP on non-pmd-mappable compound pages
-config: x86_64-allnoconfig (https://download.01.org/0day-ci/archive/20240626/202406262300.iAURISyJ-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240626/202406262300.iAURISyJ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406262300.iAURISyJ-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> fs/proc/page.c:151:35: error: passing 'const struct folio *' to parameter of type 'struct folio *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-     151 |         else if (folio_test_pmd_mappable(folio)) {
-         |                                          ^~~~~
-   include/linux/huge_mm.h:438:58: note: passing argument to parameter 'folio' here
-     438 | static inline bool folio_test_pmd_mappable(struct folio *folio)
-         |                                                          ^
-   1 error generated.
-
-
-vim +151 fs/proc/page.c
-
-   108	
-   109	u64 stable_page_flags(const struct page *page)
-   110	{
-   111		const struct folio *folio;
-   112		unsigned long k;
-   113		unsigned long mapping;
-   114		bool is_anon;
-   115		u64 u = 0;
-   116	
-   117		/*
-   118		 * pseudo flag: KPF_NOPAGE
-   119		 * it differentiates a memory hole from a page with no flags
-   120		 */
-   121		if (!page)
-   122			return 1 << KPF_NOPAGE;
-   123		folio = page_folio(page);
-   124	
-   125		k = folio->flags;
-   126		mapping = (unsigned long)folio->mapping;
-   127		is_anon = mapping & PAGE_MAPPING_ANON;
-   128	
-   129		/*
-   130		 * pseudo flags for the well known (anonymous) memory mapped pages
-   131		 */
-   132		if (page_mapped(page))
-   133			u |= 1 << KPF_MMAP;
-   134		if (is_anon) {
-   135			u |= 1 << KPF_ANON;
-   136			if (mapping & PAGE_MAPPING_KSM)
-   137				u |= 1 << KPF_KSM;
-   138		}
-   139	
-   140		/*
-   141		 * compound pages: export both head/tail info
-   142		 * they together define a compound page's start/end pos and order
-   143		 */
-   144		if (page == &folio->page)
-   145			u |= kpf_copy_bit(k, KPF_COMPOUND_HEAD, PG_head);
-   146		else
-   147			u |= 1 << KPF_COMPOUND_TAIL;
-   148	
-   149		if (folio_test_hugetlb(folio))
-   150			u |= 1 << KPF_HUGE;
- > 151		else if (folio_test_pmd_mappable(folio)) {
-   152			u |= 1 << KPF_THP;
-   153			if (is_huge_zero_folio(folio))
-   154				u |= 1 << KPF_ZERO_PAGE;
-   155		} else if (is_zero_pfn(page_to_pfn(page)))
-   156			u |= 1 << KPF_ZERO_PAGE;
-   157	
-   158		/*
-   159		 * Caveats on high order pages: PG_buddy and PG_slab will only be set
-   160		 * on the head page.
-   161		 */
-   162		if (PageBuddy(page))
-   163			u |= 1 << KPF_BUDDY;
-   164		else if (page_count(page) == 0 && is_free_buddy_page(page))
-   165			u |= 1 << KPF_BUDDY;
-   166	
-   167		if (PageOffline(page))
-   168			u |= 1 << KPF_OFFLINE;
-   169		if (PageTable(page))
-   170			u |= 1 << KPF_PGTABLE;
-   171		if (folio_test_slab(folio))
-   172			u |= 1 << KPF_SLAB;
-   173	
-
+diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+index 3555b535b168..57d21f8ae3b7 100644
+--- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+@@ -327,7 +327,7 @@ static int k3_dsp_rproc_start(struct rproc *rproc)
+ 		goto put_mbox;
+ 	}
+ 
+-	dev_err(dev, "booting DSP core using boot addr = 0x%x\n", boot_addr);
++	dev_info(dev, "booting DSP core using boot addr = 0x%x\n", boot_addr);
+ 	ret = ti_sci_proc_set_config(kproc->tsp, boot_addr, 0, 0);
+ 	if (ret)
+ 		goto put_mbox;
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.25.1
+
 
