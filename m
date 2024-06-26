@@ -1,451 +1,183 @@
-Return-Path: <linux-kernel+bounces-230445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B6FD917CEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:50:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E16C917CE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:49:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71617B268BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:50:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 619021C2289A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D2017836D;
-	Wed, 26 Jun 2024 09:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7385416D33A;
+	Wed, 26 Jun 2024 09:49:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NcPfaLW8"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gBJeiEh8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02CAC176FB6;
-	Wed, 26 Jun 2024 09:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC1716CD1F
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 09:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719395381; cv=none; b=AeLTnla/ubFavqEYIRF1IVe5btkWycHQsx1etP3r999OvS61P7dgjv4qn2f3wvvejw/omVf1jXSznUA0sYuMoOaNl16m7f/errALI+AbSwd+2vw1AlAEo45itHDCTa1d1tXrz+uJ9mNr0t9VAnYVqQiYQZuuwyUhio0CGHIephc=
+	t=1719395368; cv=none; b=B7RjM9Wz45H04W/lAMAR47khWLrlboy0LBi4T+bNdebqnGt9NnsHp5AnR8JYM73+2ZvpFXmQVuRpHT6x8Vgz4HAZDoqtqwDlBvdAFZI0VL0HZg5IPbn0qeCAXNBpYmBjXVDHyDaQd0+NEJ/9Hdd13glGfSbcY783+3nw3nao7Zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719395381; c=relaxed/simple;
-	bh=IOUUbFt04p0fm+KoPwHLHtwRY5b4egjVPzPVSrIfvcI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IMIlL6jYVzvBCNM+CzsJnZowy/UjzIAFalXUNBF2watHGLsaMkQpdyPcxLQfajAsXeVO2ipWvzAYvOLHVHwCmQq3Vbb39LCDl6C+bf2tP0GQMkfTf5Z+CSPa5U67ktXr81SHZ5HFbDfWG0wsUidURmCR++yoeJLt4TzZSnRG5AI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NcPfaLW8; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70679845d69so2509042b3a.1;
-        Wed, 26 Jun 2024 02:49:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719395379; x=1720000179; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/QKGlRE6HEz2d2uJeXQz+MuFsll73BEXvmMYpS7vlCY=;
-        b=NcPfaLW8bTBrEklAeSgn0J/5UNrYSt57eVHWWJZc7qOP+fqL2zs0RGhe4tHw1MgJRa
-         ZjBtP9E2+YscnOqqpvwnWOmWLK81nGIRe12r1qUT5bl4X8bO13IY4DoQMDnMY6+dVmTy
-         UfU42w2ZmWJXKo8JSdRaB//MfD5zmvhpFvgnCMmTZJ2esQ34WJzFX0vp42HvgK6zmysH
-         Px/9A+l/KzwQksNpMxIa9473WImNiaYpktUGOurHFOHXqcevKplhT9BE28xprjcr9kaS
-         2q+54AI8Jewj3Ak5tcrdbeihkPAtFRWw1Rgv0Amd/uJZcPUj79O9jcsYGbAoFfcJEZRA
-         PipQ==
+	s=arc-20240116; t=1719395368; c=relaxed/simple;
+	bh=DWIGWxbl+woKwQpaluXg5n45wCq4JDHrOc+cad4B7fY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BQ4dRcxTZ0ErmYdZmBhBuI/kde+vq7kPdFXYUGtx0TbiQ2KNJfCi/Lz5EdgLG+uxyjBRZTye1UvVJm0rrNnxaRQ+dalwmAHAq7v5P+eBXoHU30l/iYfsPDEPHd6Rpn4gz7wMveANq3jFbvfLOvz+ufLm0dUKwUJCpyLaUoSKazc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gBJeiEh8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719395365;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4djDjoucdiNC3v37pUz0oafRQ2jw1kRnVn3jy6AlRSM=;
+	b=gBJeiEh8EVP1Ty6IJSFEGbZpDTodpYnrQNFtgVM8gD5AVjVld4WCMMGdTWmMvGpDNUAJlt
+	XqjTi+VlXYAvJTpj0jh9JsbSCTw2Hp63iLqmPYj7Uwuu0Xj99jomrntDpEzDMMydTr1Txt
+	rAJBa5YjU1TRs868bOR/9v+0BrFkjdU=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-639-I2VkV8kYO8yljK_aml0XvQ-1; Wed, 26 Jun 2024 05:49:24 -0400
+X-MC-Unique: I2VkV8kYO8yljK_aml0XvQ-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42490e94105so21468985e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 02:49:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719395379; x=1720000179;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/QKGlRE6HEz2d2uJeXQz+MuFsll73BEXvmMYpS7vlCY=;
-        b=PUrhAvEkS5fn2RkQMZ5kmJTJZUF0cjwK9ePsqPbGYO/4oR1a4N7ZKekzjW6TtFOlDu
-         /O6lTxnHcvZlVjonDsi/fNvekTsAeywYgtqeiSrsNewfHoe/1OE7DysrGermPFJWhamt
-         jpfkhKMdiuinHyJiepnDS8wnk0W8d3ko9lXL7ce7DhxMrk15awiJp3mDx4NTS8CcuKUE
-         rsowrQEbFv5RR9fXip08X0kSkJQMDz4zmKv62uZe6ooKyao+WG3LciHt+64xx/bnMHsM
-         ci2ZBn+nseOa+eclVGyDWEMKlAWbMZ2sFGcdctqUtEPjC9Nn6N9MUvstneDnuifIgKCw
-         P3vA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5jLnmN0SALIiNAHfwf0rMzvI8cYO6pvgQ6ZYbXP6piclfKM2n7OHCKDoH/ilTIOYkGGv8KDeD96duXNk8qZp/ynshR/gAu//XWkQloRNGA2ZnqrAW8+g7fQ2vA2yp26RfDxKxilqYtwMowf0nX0e9ehCNNfJJxwFVtLREhf4pNGDC7Q==
-X-Gm-Message-State: AOJu0YzBnsxqi4P2PfDRAMvm7an63M2IqF/Cdr+eP60047gw5PReHgw6
-	tQ0VnApOJu0FD4ToAKD1XaPfOjTpAfzSHsChhlnggpS8dOFTyOHS
-X-Google-Smtp-Source: AGHT+IFtlArLppb9vSADfw6PIa7JO7Zgc7hG/5di+hrfk4Cqy9QxBunZPD4GBMT+8RS2C8WaeBJqxw==
-X-Received: by 2002:a05:6a20:bf28:b0:1bd:91b0:10a5 with SMTP id adf61e73a8af0-1bd91b0126cmr1256004637.47.1719395379094;
-        Wed, 26 Jun 2024 02:49:39 -0700 (PDT)
-Received: from localhost.localdomain (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fa6aa7030bsm29726665ad.288.2024.06.26.02.49.35
+        d=1e100.net; s=20230601; t=1719395363; x=1720000163;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4djDjoucdiNC3v37pUz0oafRQ2jw1kRnVn3jy6AlRSM=;
+        b=XrdM+nE8PNEt1q83ZJ3GpIUF6GffDdVbLRvdjvlgUwbW4Eg07uCb1ObfdeIPRqxt5g
+         dQpBXAGLi0gTnqfd01fJ7ZEUwJp+XtcQayD6jWkydhDPOaWCwwjv3z+R+8kUzLSFbtp6
+         JTZWuUbrks9dsfaF6tqgybxt4Gp6CR64NJesOnSzt7XvbUd+5FV/1XKNiJ/KLPFpsZnG
+         6qOtUsSWrJFSZIDLvzJXEXQWrKUbSVE1F/xTnbTjB5RHS1lMYS6hBhPddUHGzitL8ich
+         lPfUUMyKnB5Tz8Ygecl1dJjVEJNsUyN1JmCOBLxxKtCsj84En1x1CzxP3aC/0LjLytUO
+         GIEA==
+X-Forwarded-Encrypted: i=1; AJvYcCV3bmqbBdeyiwxYE6JpKzczX6OOMA4xCh5x2AWhJnwbQ6/BN2XdoLWGkigY58PXHgIGAY65CloenmXd4LSO7izY3WbQHVqu8u1f32fF
+X-Gm-Message-State: AOJu0YxaHxO9KIP5HMm1OY/PoYm6xWc5dRywCK/SSb6zVvD+zbXDw5uW
+	1UIog9RmCFPKlAl5XQJPotchpA/aBJB5TFE+WvKFMHbdt6BhCe0q1om+load8MYYnksyAqU2g1K
+	7wJDZUTx+TPtLVIEMU8KXeQGpPfac9reVxsZhTTNm2fYGA34Z8h4hq0a4e0YgKw==
+X-Received: by 2002:a05:600c:4a21:b0:424:aa73:83db with SMTP id 5b1f17b1804b1-424aa7385d9mr16426425e9.3.1719395363234;
+        Wed, 26 Jun 2024 02:49:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE/3FLpYFj1lNUdvagVZ//NSmf/wAzF1F50kld50FSwNHiB4Iwf5oXPdzRER19Pywz3nR5htA==
+X-Received: by 2002:a05:600c:4a21:b0:424:aa73:83db with SMTP id 5b1f17b1804b1-424aa7385d9mr16426215e9.3.1719395362335;
+        Wed, 26 Jun 2024 02:49:22 -0700 (PDT)
+Received: from localhost ([2a01:e11:1007:ea0:8374:5c74:dd98:a7b2])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a2f696csm15283695f8f.82.2024.06.26.02.49.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 02:49:38 -0700 (PDT)
-From: Shan-Chun Hung <shanchun1218@gmail.com>
-To: ulf.hansson@linaro.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	adrian.hunter@intel.com,
-	p.zabel@pengutronix.de,
-	pbrobinson@gmail.com,
-	serghox@gmail.com,
-	mcgrof@kernel.org,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	forbidden405@outlook.com,
-	tmaimon77@gmail.com,
-	andy.shevchenko@gmail.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: ychuang3@nuvoton.com,
-	schung@nuvoton.com,
-	Shan-Chun Hung <shanchun1218@gmail.com>
-Subject: [PATCH v2 2/2] mmc: sdhci-of-ma35d1: Add Nuvoton MA35D1 SDHCI driver
-Date: Wed, 26 Jun 2024 17:49:00 +0800
-Message-Id: <20240626094900.581552-3-shanchun1218@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240626094900.581552-1-shanchun1218@gmail.com>
-References: <20240626094900.581552-1-shanchun1218@gmail.com>
+        Wed, 26 Jun 2024 02:49:21 -0700 (PDT)
+Date: Wed, 26 Jun 2024 11:49:20 +0200
+From: Davide Caratti <dcaratti@redhat.com>
+To: =?iso-8859-1?Q?Asbj=F8rn_Sloth_T=F8nnesen?= <ast@fiberby.net>
+Cc: Ilya Maximets <i.maximets@ovn.org>, Jamal Hadi Salim <jhs@mojatatu.com>,
+	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	David Ahern <dsahern@kernel.org>, Simon Horman <horms@kernel.org>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH net-next 2/9] net/sched: cls_flower: prepare
+ fl_{set,dump}_key_flags() for ENC_FLAGS
+Message-ID: <ZnvkIHCsqnDLlVa9@dcaratti.users.ipa.redhat.com>
+References: <20240611235355.177667-1-ast@fiberby.net>
+ <20240611235355.177667-3-ast@fiberby.net>
+ <ZnVR3LsBSvfRyTDD@dcaratti.users.ipa.redhat.com>
+ <0fa312be-be5d-44a1-a113-f899844f13be@fiberby.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <0fa312be-be5d-44a1-a113-f899844f13be@fiberby.net>
 
-Add the SDHCI driver for the MA35D1 platform. It is based upon the
-SDHCI interface, but requires some extra initialization.
+hello Asbjørn,
 
-Signed-off-by: Shan-Chun Hung <shanchun1218@gmail.com>
----
- drivers/mmc/host/Kconfig           |  14 ++
- drivers/mmc/host/Makefile          |   1 +
- drivers/mmc/host/sdhci-of-ma35d1.c | 291 +++++++++++++++++++++++++++++
- 3 files changed, 306 insertions(+)
- create mode 100644 drivers/mmc/host/sdhci-of-ma35d1.c
+thanks for your patience!
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index bb0d4fb0892a..31cd076e1c53 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -252,6 +252,20 @@ config MMC_SDHCI_OF_SPARX5
+On Fri, Jun 21, 2024 at 02:45:28PM +0000, Asbjørn Sloth Tønnesen wrote:
+> 
+> Could you please post your iproute2 code?
 
-	  If unsure, say N.
+sure, will clean it up and share it today in ML.
+ 
+> > from
+> > 
+> > https://lore.kernel.org/netdev/20240611235355.177667-2-ast@fiberby.net/
+> > 
+> > Now: functional tests on TCA_FLOWER_KEY_ENC_FLAGS systematically fail. I must
+> > admit that I didn't complete 100% of the analysis, but IMO there is at least an
+> > endianness problem here. See below:
+> > 
+> > On Tue, Jun 11, 2024 at 11:53:35PM +0000, Asbjørn Sloth Tønnesen wrote:
 
-+config MMC_SDHCI_OF_MA35D1
-+	tristate "SDHCI OF support for the MA35D1 SDHCI controller"
-+	depends on ARCH_MA35
-+	depends on MMC_SDHCI_PLTFM
-+	depends on COMMON_CLK
-+	depends on OF || COMPILE_TEST
-+	help
-+	  This selects the MA35D1 Secure Digital Host Controller Interface.
-+
-+	  If you have a controller with this interface, say Y or M here. You
-+	  also need to enable an appropriate bus interface.
-+
-+	  If unsure, say N.
-+
- config MMC_SDHCI_CADENCE
-	tristate "SDHCI support for the Cadence SD/SDIO/eMMC controller"
-	depends on MMC_SDHCI_PLTFM
-diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
-index f53f86d200ac..3ccffebbe59b 100644
---- a/drivers/mmc/host/Makefile
-+++ b/drivers/mmc/host/Makefile
-@@ -88,6 +88,7 @@ obj-$(CONFIG_MMC_SDHCI_OF_ESDHC)	+= sdhci-of-esdhc.o
- obj-$(CONFIG_MMC_SDHCI_OF_HLWD)		+= sdhci-of-hlwd.o
- obj-$(CONFIG_MMC_SDHCI_OF_DWCMSHC)	+= sdhci-of-dwcmshc.o
- obj-$(CONFIG_MMC_SDHCI_OF_SPARX5)	+= sdhci-of-sparx5.o
-+obj-$(CONFIG_MMC_SDHCI_OF_MA35D1)	+= sdhci-of-ma35d1.o
- obj-$(CONFIG_MMC_SDHCI_BCM_KONA)	+= sdhci-bcm-kona.o
- obj-$(CONFIG_MMC_SDHCI_IPROC)		+= sdhci-iproc.o
- obj-$(CONFIG_MMC_SDHCI_NPCM)		+= sdhci-npcm.o
-diff --git a/drivers/mmc/host/sdhci-of-ma35d1.c b/drivers/mmc/host/sdhci-of-ma35d1.c
-new file mode 100644
-index 000000000000..e260aeb12d7f
---- /dev/null
-+++ b/drivers/mmc/host/sdhci-of-ma35d1.c
-@@ -0,0 +1,291 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2024 Nuvoton Technology Corp.
-+ *
-+ * Author: Shan-Chun Hung <shanchun1218@gmail.com>
-+ */
-+
-+#include <linux/align.h>
-+#include <linux/array_size.h>
-+#include <linux/bits.h>
-+#include <linux/build_bug.h>
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/dev_printk.h>
-+#include <linux/device.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/err.h>
-+#include <linux/math.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/minmax.h>
-+#include <linux/mmc/card.h>
-+#include <linux/mmc/host.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/pinctrl/consumer.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/reset.h>
-+#include <linux/sizes.h>
-+#include <linux/types.h>
-+
-+#include "sdhci-pltfm.h"
-+#include "sdhci.h"
-+
-+#define MA35_SYS_MISCFCR0	0x070
-+#define MA35_SDHCI_MSHCCTL	0x508
-+#define MA35_SDHCI_MBIUCTL	0x510
-+
-+#define MA35_SDHCI_CMD_CONFLICT_CHK	BIT(0)
-+#define MA35_SDHCI_INCR_MSK		GENMASK(3, 0)
-+#define MA35_SDHCI_INCR16		BIT(3)
-+#define MA35_SDHCI_INCR8		BIT(2)
-+
-+struct ma35_priv {
-+	struct regmap		*regmap;
-+	struct reset_control	*rst;
-+	struct pinctrl		*pinctrl;
-+	struct pinctrl_state	*pins_uhs;
-+	struct pinctrl_state	*pins_default;
-+};
-+
-+struct ma35_restore_data {
-+	u32	reg;
-+	u32	width;
-+};
-+
-+static const struct ma35_restore_data restore_data[] = {
-+	{ SDHCI_CLOCK_CONTROL,		sizeof(u32)},
-+	{ SDHCI_BLOCK_SIZE,		sizeof(u32)},
-+	{ SDHCI_INT_ENABLE,		sizeof(u32)},
-+	{ SDHCI_SIGNAL_ENABLE,		sizeof(u32)},
-+	{ SDHCI_AUTO_CMD_STATUS,	sizeof(u32)},
-+	{ SDHCI_HOST_CONTROL,		sizeof(u32)},
-+	{ SDHCI_TIMEOUT_CONTROL,	sizeof(u8) },
-+	{ MA35_SDHCI_MSHCCTL,		sizeof(u16)},
-+	{ MA35_SDHCI_MBIUCTL,		sizeof(u16)},
-+};
-+
-+/*
-+ * If DMA addr spans 128MB boundary, we split the DMA transfer into two
-+ * so that each DMA transfer doesn't exceed the boundary.
-+ */
-+static void ma35_adma_write_desc(struct sdhci_host *host, void **desc,
-+				  dma_addr_t addr, int len, unsigned int cmd)
-+{
-+	int tmplen, offset;
-+
-+	if (likely(!len || (ALIGN(addr, SZ_128M) == ALIGN(addr+len-1, SZ_128M)))) {
-+		sdhci_adma_write_desc(host, desc, addr, len, cmd);
-+		return;
-+	}
-+
-+	offset = addr & (SZ_128M - 1);
-+	tmplen = SZ_128M - offset;
-+	sdhci_adma_write_desc(host, desc, addr, tmplen, cmd);
-+
-+	addr += tmplen;
-+	len -= tmplen;
-+	sdhci_adma_write_desc(host, desc, addr, len, cmd);
-+}
-+
-+static void ma35_set_clock(struct sdhci_host *host, unsigned int clock)
-+{
-+	u32 ctl;
-+
-+	/* If the clock frequency exceeds MMC_HIGH_52_MAX_DTR,
-+	 * disable command conflict check.
-+	 */
-+	ctl = sdhci_readw(host, MA35_SDHCI_MSHCCTL);
-+	if (clock > MMC_HIGH_52_MAX_DTR)
-+		ctl &= ~MA35_SDHCI_CMD_CONFLICT_CHK;
-+	else
-+		ctl |= MA35_SDHCI_CMD_CONFLICT_CHK;
-+	sdhci_writew(host, ctl, MA35_SDHCI_MSHCCTL);
-+
-+	sdhci_set_clock(host, clock);
-+}
-+
-+static int ma35_start_signal_voltage_switch(struct mmc_host *mmc,
-+					      struct mmc_ios *ios)
-+{
-+	struct sdhci_host *host = mmc_priv(mmc);
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct ma35_priv *priv = sdhci_pltfm_priv(pltfm_host);
-+
-+	switch (ios->signal_voltage) {
-+	case MMC_SIGNAL_VOLTAGE_180:
-+		if (!IS_ERR(priv->pinctrl) && !IS_ERR(priv->pins_uhs))
-+			pinctrl_select_state(priv->pinctrl, priv->pins_uhs);
-+		break;
-+	case MMC_SIGNAL_VOLTAGE_330:
-+		if (!IS_ERR(priv->pinctrl) && !IS_ERR(priv->pins_default))
-+			pinctrl_select_state(priv->pinctrl, priv->pins_default);
-+		break;
-+	default:
-+		dev_err(mmc_dev(host->mmc), "Unsupported signal voltage!\n");
-+		return -EINVAL;
-+	}
-+
-+	return sdhci_start_signal_voltage_switch(mmc, ios);
-+}
-+
-+static void ma35_voltage_switch(struct sdhci_host *host)
-+{
-+	/* Wait for 5ms after set 1.8V signal enable bit */
-+	fsleep(5000);
-+}
-+
-+static int ma35_execute_tuning(struct mmc_host *mmc, u32 opcode)
-+{
-+	struct sdhci_host *host = mmc_priv(mmc);
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct ma35_priv *priv = sdhci_pltfm_priv(pltfm_host);
-+	int idx;
-+	u32 regs[ARRAY_SIZE(restore_data)] = { };
-+
-+	/* Limitations require a reset of SD/eMMC before tuning and
-+	 * saving the registers before resetting, then restoring
-+	 * after the reset.
-+	 */
-+	for (idx = 0; idx < ARRAY_SIZE(restore_data); idx++) {
-+		if (restore_data[idx].width == sizeof(u32))
-+			regs[idx] = sdhci_readl(host, restore_data[idx].reg);
-+		else if (restore_data[idx].width == sizeof(u16))
-+			regs[idx] = sdhci_readw(host, restore_data[idx].reg);
-+		else if (restore_data[idx].width == sizeof(u8))
-+			regs[idx] = sdhci_readb(host, restore_data[idx].reg);
-+	}
-+
-+	reset_control_assert(priv->rst);
-+	reset_control_deassert(priv->rst);
-+
-+	for (idx = 0; idx < ARRAY_SIZE(restore_data); idx++) {
-+		if (restore_data[idx].width == sizeof(u32))
-+			sdhci_writel(host, regs[idx], restore_data[idx].reg);
-+		else if (restore_data[idx].width == sizeof(u16))
-+			sdhci_writew(host, regs[idx], restore_data[idx].reg);
-+		else if (restore_data[idx].width == sizeof(u8))
-+			sdhci_writeb(host, regs[idx], restore_data[idx].reg);
-+	}
-+
-+	return sdhci_execute_tuning(mmc, opcode);
-+}
-+
-+static const struct sdhci_ops sdhci_ma35_ops = {
-+	.set_clock		= ma35_set_clock,
-+	.set_bus_width		= sdhci_set_bus_width,
-+	.set_uhs_signaling	= sdhci_set_uhs_signaling,
-+	.get_max_clock		= sdhci_pltfm_clk_get_max_clock,
-+	.reset			= sdhci_reset,
-+	.adma_write_desc	= ma35_adma_write_desc,
-+	.voltage_switch	= ma35_voltage_switch,
-+};
-+
-+static const struct sdhci_pltfm_data sdhci_ma35_pdata = {
-+	.ops = &sdhci_ma35_ops,
-+	.quirks = SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
-+	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN | SDHCI_QUIRK2_BROKEN_DDR50 |
-+		   SDHCI_QUIRK2_ACMD23_BROKEN,
-+};
-+
-+static void ma35_sdhci_pltfm_free(void *data)
-+{
-+	sdhci_pltfm_free(data);
-+}
-+
-+static int ma35_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct sdhci_pltfm_host *pltfm_host;
-+	struct sdhci_host *host;
-+	struct ma35_priv *priv;
-+	int err;
-+	u32 extra, ctl;
-+
-+	host = sdhci_pltfm_init(pdev, &sdhci_ma35_pdata, sizeof(struct ma35_priv));
-+	if (IS_ERR(host))
-+		return PTR_ERR(host);
-+
-+	err = devm_add_action_or_reset(dev, ma35_sdhci_pltfm_free, pdev);
-+	if (err)
-+		return dev_err_probe(dev, err, "Failed to register sdhci_pltfm_free action\n");
-+
-+	/* Extra adma table cnt for cross 128M boundary handling. */
-+	extra = DIV_ROUND_UP_ULL(dma_get_required_mask(dev), SZ_128M);
-+	extra = min(extra, SDHCI_MAX_SEGS);
-+
-+	host->adma_table_cnt += extra;
-+	pltfm_host = sdhci_priv(host);
-+	priv = sdhci_pltfm_priv(pltfm_host);
-+
-+	pltfm_host->clk = devm_clk_get_optional_enabled(dev, NULL);
-+	if (IS_ERR(pltfm_host->clk))
-+		return dev_err_probe(dev, IS_ERR(pltfm_host->clk), "failed to get clk\n");
-+
-+	err = mmc_of_parse(host->mmc);
-+	if (err)
-+		return err;
-+
-+	priv->rst = devm_reset_control_get_exclusive(dev, NULL);
-+	if (IS_ERR(priv->rst))
-+		return dev_err_probe(dev, PTR_ERR(priv->rst), "failed to get reset control\n");
-+
-+	sdhci_get_of_property(pdev);
-+
-+	priv->pinctrl = devm_pinctrl_get(dev);
-+	if (!IS_ERR(priv->pinctrl)) {
-+		priv->pins_default = pinctrl_lookup_state(priv->pinctrl, "default");
-+		priv->pins_uhs = pinctrl_lookup_state(priv->pinctrl, "state_uhs");
-+		pinctrl_select_state(priv->pinctrl, priv->pins_default);
-+	}
-+
-+	if (!(host->quirks2 & SDHCI_QUIRK2_NO_1_8_V)) {
-+		u32 reg;
-+
-+		priv->regmap = syscon_regmap_lookup_by_phandle(dev_of_node(dev), "nuvoton,sys");
-+
-+		if (!IS_ERR(priv->regmap)) {
-+			/* Enable SDHCI voltage stable for 1.8V */
-+			regmap_read(priv->regmap, MA35_SYS_MISCFCR0, &reg);
-+			reg |= BIT(17);
-+			regmap_write(priv->regmap, MA35_SYS_MISCFCR0, reg);
-+		}
-+
-+		host->mmc_host_ops.start_signal_voltage_switch =
-+					ma35_start_signal_voltage_switch;
-+	}
-+
-+	host->mmc_host_ops.execute_tuning = ma35_execute_tuning;
-+
-+	err = sdhci_add_host(host);
-+	if (err)
-+		return err;
-+
-+	/* Enable INCR16 and INCR8 */
-+	ctl = sdhci_readw(host, MA35_SDHCI_MBIUCTL);
-+	ctl &= ~MA35_SDHCI_INCR_MSK;
-+	ctl |= MA35_SDHCI_INCR16|MA35_SDHCI_INCR8;
-+	sdhci_writew(host, ctl, MA35_SDHCI_MBIUCTL);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id sdhci_ma35_dt_ids[] = {
-+	{ .compatible = "nuvoton,ma35d1-sdhci" },
-+	{}
-+};
-+
-+static struct platform_driver sdhci_ma35_driver = {
-+	.driver	= {
-+		.name	= "sdhci-ma35",
-+		.of_match_table = sdhci_ma35_dt_ids,
-+	},
-+	.probe	= ma35_probe,
-+	.remove_new = sdhci_pltfm_remove,
-+};
-+module_platform_driver(sdhci_ma35_driver);
-+
-+MODULE_DESCRIPTION("SDHCI platform driver for Nuvoton MA35");
-+MODULE_AUTHOR("Shan-Chun Hung <shanchun1218@google.com>");
-+MODULE_LICENSE("GPL v2");
---
-2.25.1
+[...]
+ 
+> It is always preferred to have a well-defined endianness for binary protocols, even
+> if it might only be used locally for now.
+
+given the implementation of fl_set_key_flags() in patch 2,
+
+	key = be32_to_cpu(nla_get_be32(tb[fl_key]));
+	mask = be32_to_cpu(nla_get_be32(tb[fl_mask]));
+
+when fl_key and fl_mask are TCA_FLOWER_KEY_ENC_FLAGS and TCA_FLOWER_KEY_ENC_FLAGS_MASK,
+I assume that we want to turn them to network ordering, like it's already being done for
+TCA_FLOWER_KEY_FLAGS and TCA_FLOWER_KEY_FLAGS_MASK.
+
+So, we must htonl() the policy mask in the second hunk in patch 7,something like:
+
+@@ -746,9 +746,9 @@ static const struct nla_policy fl_policy[TCA_FLOWER_MAX + 1] = {
+ 	[TCA_FLOWER_L2_MISS]		= NLA_POLICY_MAX(NLA_U8, 1),
+ 	[TCA_FLOWER_KEY_CFM]		= { .type = NLA_NESTED },
+ 	[TCA_FLOWER_KEY_ENC_FLAGS]	= NLA_POLICY_MASK(NLA_U32,
+-							  TUNNEL_FLAGS_PRESENT),
++							  htonl(TCA_FLOWER_KEY_ENC_FLAGS_POLICY_MASK)),
+ 	[TCA_FLOWER_KEY_ENC_FLAGS_MASK]	= NLA_POLICY_MASK(NLA_U32,
+-							  TUNNEL_FLAGS_PRESENT),
++							  htonl(TCA_FLOWER_KEY_ENC_FLAGS_POLICY_MASK)),
+ };
+
+And for the same reason, the flower code in patch 3 needs to be changed as follows:
+
+@@ -676,8 +680,10 @@ static const struct nla_policy fl_policy[TCA_FLOWER_MAX + 1] = {
+ 	[TCA_FLOWER_KEY_ENC_UDP_SRC_PORT_MASK]	= { .type = NLA_U16 },
+ 	[TCA_FLOWER_KEY_ENC_UDP_DST_PORT]	= { .type = NLA_U16 },
+ 	[TCA_FLOWER_KEY_ENC_UDP_DST_PORT_MASK]	= { .type = NLA_U16 },
+-	[TCA_FLOWER_KEY_FLAGS]		= { .type = NLA_U32 },
+-	[TCA_FLOWER_KEY_FLAGS_MASK]	= { .type = NLA_U32 },
++	[TCA_FLOWER_KEY_FLAGS]		= NLA_POLICY_MASK(NLA_U32,
++							  ntohl(TCA_FLOWER_KEY_FLAGS_POLICY_MASK)),
++	[TCA_FLOWER_KEY_FLAGS_MASK]	= NLA_POLICY_MASK(NLA_U32,
++							  ntohl(TCA_FLOWER_KEY_FLAGS_POLICY_MASK)),
+ 	[TCA_FLOWER_KEY_ICMPV4_TYPE]	= { .type = NLA_U8 },
+ 	[TCA_FLOWER_KEY_ICMPV4_TYPE_MASK] = { .type = NLA_U8 },
+ 	[TCA_FLOWER_KEY_ICMPV4_CODE]	= { .type = NLA_U8 },
+
+Otherwise it will break the following use case (taken from tc_flower.sh kselftest):
+
+# tc qdisc add dev lo clsact
+# tc filter add dev lo ingress protocol ip pref 1 handle 101 flower ip_flags frag action continue
+RTNETLINK answers: Invalid argument
+We have an error talking to the kernel
+
+because TCA_FLOWER_KEY_FLAGS_POLICY_MASK and TCA_FLOWER_KEY_ENC_FLAGS_POLICY_MASK
+are in host byte order _ so netlink policy mask validation will fail unless we turn
+the mask to network byte order.
+
+(And I see we don't have a tdc selftest  for 'ip_flags', this might be a
+good chance to add it :-) )
+
+-- 
+davide
+
 
