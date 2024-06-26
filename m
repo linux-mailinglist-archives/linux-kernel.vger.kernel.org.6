@@ -1,156 +1,167 @@
-Return-Path: <linux-kernel+bounces-230863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 992389182E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:43:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AD6E9182E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:43:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51E411F21E65
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:43:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C04CF1C22767
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD61186283;
-	Wed, 26 Jun 2024 13:42:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E85183098;
+	Wed, 26 Jun 2024 13:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QqyNICxT"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Q1qRqmvJ"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA0C18412F;
-	Wed, 26 Jun 2024 13:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF3C1836ED
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 13:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719409346; cv=none; b=CbtbzpGcMB6j/cNSujC8Sz99Vpzociu4rJPW9H8Ssj4XqOKMamfgP6coOUwOk1t7RA+Zkctlh5RUakPZbsrNYGqGRkYHdhnkYLzgNe2unSOJ5Lhzm4CBDHIGOVubrZl6jKj6rz5bk8mUeUcZuhFdjLzLdr8wx5Vs9aunEv7hp04=
+	t=1719409392; cv=none; b=tJ1Stsh0L7k/iuNijHrSuRdMNyE6Q+yA9jGj9GrkJAPrSmwSG3b4Tz1iVwPlMFq1QEafKvRmDlEWuDEUHLVKTDiefYGgEMT4cqF33Xp505q7LynUgHMO01pS88w86wi0hLIU+6a3hDCK8juPU/8lMjGLXw4mHRcDYfkdkKRd6fI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719409346; c=relaxed/simple;
-	bh=D6DrSixvJMhLJsy7OBcG0oar56V4B7uTvyItqNhYmNU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LqPPd2vInyzGGgW516zTd9WefAKZlQKBhxA9BlLHqoqk/kuUGHoNmEvbYzb05jLqeNHFf7wkYy6jPApvpY5fFywkVOoxKrwfoyK887pP5xdGFyEWihIqBjdN4jSzzajNTB8I+eoPAzCCpSIKmRRB8IqNZPqtfuQIT0of98VDfRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QqyNICxT; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57d1679ee83so331754a12.2;
-        Wed, 26 Jun 2024 06:42:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719409343; x=1720014143; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+FdmqDIycq2mg5V0lsvCxzsdDO8aUqmZjoj0FE/lExQ=;
-        b=QqyNICxTpcHzL4hO/3SyrJqQqJ37KVaM2hX5WUpc+w9K2rPcBp3As4qzlbg91eOfFB
-         an+hjPA6I/2YL9d53K6FHqp312LlKo+w8IxR1kpkrDoF/4DpZbtZR6SkMarCs+ysbhQo
-         Pt7WGrEh848ZXvR1TQhkreHNRJ/4OB6xkbK0sfBtjgn79vpblF2P3yQr0IIBdVP8CspZ
-         zRV5REH/bfq4VzBWB93AVgnzN1Kcpr8wzAtdyEdz7LRg1XD17m0dQMtOTDT1DFc1eFxI
-         Q1bZkV4DDAD23+vux+VZ4CPMGVbBe5kZpmXcIcmMBFt91j23QHDazjyG78S0e2ijbpCM
-         YcHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719409343; x=1720014143;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+FdmqDIycq2mg5V0lsvCxzsdDO8aUqmZjoj0FE/lExQ=;
-        b=DKkFEiRFA8rl3tQ8aDR8eRivEGU6v7djP2F9mVHytWALLTOfeMIADxjpzBuCIPbSkb
-         N0qm0FS2E5h9lQ5HxB7/MdCPbhDtcd5bEoU5EnDRBswcojgDY6eQsUXZtQuyBQcTE1xa
-         peZf7l7jD/GkV74nHD4AWwNYLrp3yrp9mm5Z97A9C8uzeSQ0Mh82I0fW9dsnfTfeVimr
-         oRDvjqwgoHlKL16XeN3cYrFbg71AnunsyvSko8Sdw3/zc5Y6+X6asUYlasa0kBOXLmMJ
-         LFlsc8Px+qEDQbzZdyr9b5qEIv7PoE1BeVxUPsGWkKHtf5RDb2MlzoYfMrnb92nq2nA9
-         h3jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUstwAnh26W/mxm3bNzYY++a6OaFWhWS/Sx7qORkEJxOGlbUEnTnniMIABFx16/aj4qRzlq6l2tU2rzNdWdDfwH/90OBO9pyfxpV1VS2x6zeaBe+U3XeXvdTI+6VACHNGjnQKwZbLRqshIF9BHXbuQutjfWvz4ScJ0UrmNxsLGbQm2nSoU11zgyeDtgiaZzqeAo5NFtNN8i1Ks2zBgOM/VAbX/ovIuGfP6CR2G83Xs4g/3Esalo8VG9snyXGBj6uBFRKibuBnN3CDPmaRmzdyLRimYMl3GErmeghLK5UI4SDiUVIPtYTDu1TnBLBhds+z4Xkb5adUTr20P9JXl8XJbNt9d9lhw2Zo6zyJep6d9Vpf1zwvKeJu4fURf+/Cv8EmNFAWypgX9pJcIEUQLmhNMOedJXRNt3pwPj/Cd08ecWEBy6KPM1EZJQZEPQbrDb7Oy4kC9H364OBGDUrDChSxpR0rIYmpjE3CSLaoFqETFxmuUpuf804eZ8pjdKXr9QdSt8eRmEFg==
-X-Gm-Message-State: AOJu0Ywcsq6hPgKSVc8CWw8eIYKISqZRzRhxVBq9Fio6fzT2SNrrhdCZ
-	ZAtGe2zXnLmqArBAi6kVO9I2SPXirn7hviOnp8vyc38L2J2z8rEZ
-X-Google-Smtp-Source: AGHT+IGSGpl/VlVQhxEFYrK07OrwK0X9sCyxv8xjTYoLcqAK5RzUy2KJrXSwjqhZzrye8okazO8J4A==
-X-Received: by 2002:a17:906:c096:b0:a6f:86fd:72b8 with SMTP id a640c23a62f3a-a715f97972bmr751303866b.42.1719409343065;
-        Wed, 26 Jun 2024 06:42:23 -0700 (PDT)
-Received: from [192.168.42.3] ([163.114.131.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf48b24asm619850066b.57.2024.06.26.06.42.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Jun 2024 06:42:22 -0700 (PDT)
-Message-ID: <6524676c-fbc0-4ea0-b320-f605d34da007@gmail.com>
-Date: Wed, 26 Jun 2024 14:42:28 +0100
+	s=arc-20240116; t=1719409392; c=relaxed/simple;
+	bh=0xeMt1QS8pxWIRl0DKfsdNz0h5THwnRPo+wjOwGflxY=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=rw4pXJVKtapytpgjY0n+z9t8NgH2vZsh1+DziYVb/TqFZo+/KqksL87j3YmwUJCLDg1VLS2EXYrwKQ8SooCKCW8CUrXD3iHzzSKQlQkNP3XDpGk1dztp8jZZd9KXn7KZj3Is8aqZrkUBiF2jRDvCGxCGtszgaXNDbDhYXSvANtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Q1qRqmvJ; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240626134308euoutp016c8a9973052cae7e4d097bd08543f757~ckbqqRW1f0748207482euoutp01J
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 13:43:08 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240626134308euoutp016c8a9973052cae7e4d097bd08543f757~ckbqqRW1f0748207482euoutp01J
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1719409388;
+	bh=/yUABgL+x+gdFXA755hwqvKNyM2Jmx1pG2JW3TQlbMI=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=Q1qRqmvJnivbtO6wQ273TV1p/2Ol36gaVd9qGMfwZbhj56879vHlv0lnXYXb4gxG3
+	 AzvezftdljaN/Q3769eTiQI3lrJq+2er64g35OvIne9TBk/3Hpn8o7XwIgwLg0zCrC
+	 fQ40fHA64y4DOfxLM7/OahFBYo3Yrvm6bkqfh9tk=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240626134308eucas1p2ff99c2f6ded1ab18af290c158ebe6f46~ckbqbrgzS1568615686eucas1p2U;
+	Wed, 26 Jun 2024 13:43:08 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id 7F.B0.09875.CEA1C766; Wed, 26
+	Jun 2024 14:43:08 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240626134308eucas1p1b9e36aeac3aac63006be3d26734582ec~ckbqFiGXH2850528505eucas1p1Y;
+	Wed, 26 Jun 2024 13:43:08 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240626134308eusmtrp13be4bc287570c5c93bb182ee0afa87f2~ckbqFIN_R2095720957eusmtrp1k;
+	Wed, 26 Jun 2024 13:43:08 +0000 (GMT)
+X-AuditID: cbfec7f4-131ff70000002693-7a-667c1aec0050
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id C5.10.09010.BEA1C766; Wed, 26
+	Jun 2024 14:43:07 +0100 (BST)
+Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240626134307eusmtip1027f7fd4c6cb87876b50c984a9ca6fe2~ckbpwrkXx0546105461eusmtip1O;
+	Wed, 26 Jun 2024 13:43:07 +0000 (GMT)
+Received: from localhost (106.110.32.44) by CAMSVWEXC01.scsc.local
+	(2002:6a01:e347::6a01:e347) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Wed, 26 Jun 2024 14:43:06 +0100
+Date: Wed, 26 Jun 2024 15:43:01 +0200
+From: Joel Granados <j.granados@samsung.com>
+To: Baolu Lu <baolu.lu@linux.intel.com>
+CC: David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] iommu/intel: Enable pci capabilities before assigning
+ cache tags
+Message-ID: <20240626134301.y3es4r4go5736mi6@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v13 10/13] tcp: RX path for devmem TCP
-To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
- linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
- Jonathan Corbet <corbet@lwn.net>,
- Richard Henderson <richard.henderson@linaro.org>,
- Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
- <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- Ilias Apalodimas <ilias.apalodimas@linaro.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Steffen Klassert
- <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>,
- David Ahern <dsahern@kernel.org>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Shuah Khan <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>,
- Nikolay Aleksandrov <razor@blackwall.org>, David Wei <dw@davidwei.uk>,
- Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>,
- Shailend Chand <shailend@google.com>,
- Harshitha Ramamurthy <hramamurthy@google.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
- <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>,
- Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>
-References: <20240625024721.2140656-1-almasrymina@google.com>
- <20240625024721.2140656-11-almasrymina@google.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20240625024721.2140656-11-almasrymina@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <33c93a17-b888-47a8-be54-8fb0f7fee0ec@linux.intel.com>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBKsWRmVeSWpSXmKPExsWy7djPc7pvpGrSDN4dFLXYPHErm8XElZOZ
+	LX59sbDonL2B3eLyrjlsFgc/PGG1aLlj6sDu8eTgPCaPNfPWMHpsXqHlsWlVJ5vHvJOBHi82
+	z2T0+LxJLoA9issmJTUnsyy1SN8ugSvj1cf37AVnuCsWdLk2MG7k7GLk5JAQMJH4fPMtaxcj
+	F4eQwApGiZNbFjNCOF8YJaYv+sUC4XxmlLh/uYkVpmXS0XNQieWMEht+/2eCqzr6ZQbUsM2M
+	Ep1z28FaWARUJb686WIEsdkEdCTOv7nDDGKLCKhLNDXuZQNpYBY4xSjxv28NG0hCWCBc4t6T
+	3ewgNq+Ag8TV78uhbEGJkzOfsIDYzECDFuz+BFTPAWRLSyz/xwES5hRwlti/8QDUqYoSXxff
+	Y4GwayXWHjvDDmG/4ZDY9TAUwnaRuPX1CFSNsMSr41ugamQkTk/uAXtTQmAyo8T+fx/YIZzV
+	jBLLGr8yQVRZS7RcecIOcoSEgKPEhbO6ECafxI23ghBn8klM2jadGSLMK9HRJgTRqCax+t4b
+	lgmMyrOQPDYLyWOzEB5bwMi8ilE8tbQ4Nz212CgvtVyvODG3uDQvXS85P3cTIzDxnP53/MsO
+	xuWvPuodYmTiYDzEKMHBrCTCG1pSlSbEm5JYWZValB9fVJqTWnyIUZqDRUmcVzVFPlVIID2x
+	JDU7NbUgtQgmy8TBKdXAlJBcd54hYvXWLAtev56mU/2tjD/McgyuRr7Q2G7bnHfQ6oj179nT
+	f525arVC582Okv9l6zhEPi97lD7Z5cP3FTsqFhXrxrZUqzsrqBYYLszduWf1y+0rMsRVl61/
+	Kth/dPLaU1LCQtMeKfSFxZb6nXL8+dV7zUK1/iubF7xQWTDr6+qEO4wnLPmTLLnSrhx7Gz71
+	WFJLvRc/y5RZAmZ7IkW/TpRjNnm27/K1zhNllw1+BHy6YK+qrxRrsKxsdv3nU14SykpmwpF5
+	7l/Z7A7lXdUo+pJcnD6793R+xl/1V3/esiksL1W4XfvZe9+PvwIfcwLe1p5/3L89ZJOFldu/
+	toj9WzRZs+0aLX3EF176osRSnJFoqMVcVJwIAF5XOKGrAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGIsWRmVeSWpSXmKPExsVy+t/xu7qvpWrSDD6us7TYPHErm8XElZOZ
+	LX59sbDonL2B3eLyrjlsFgc/PGG1aLlj6sDu8eTgPCaPNfPWMHpsXqHlsWlVJ5vHvJOBHi82
+	z2T0+LxJLoA9Ss+mKL+0JFUhI7+4xFYp2tDCSM/Q0kLPyMRSz9DYPNbKyFRJ384mJTUnsyy1
+	SN8uQS/j1cf37AVnuCsWdLk2MG7k7GLk5JAQMJGYdPQcSxcjF4eQwFJGidZTG9kgEjISG79c
+	ZYWwhSX+XOtigyj6yChx/f1cZghnM6PE0QNnGEGqWARUJb686QKz2QR0JM6/ucMMYosIqEs0
+	Ne4F62YWOMUo8b9vDdgKYYFwiXtPdrOD2LwCDhJXvy9nh5h6nVHi+IfVbBAJQYmTM5+wgNjM
+	QFMX7P4EFOcAsqUllv/jAAlzCjhL7N94AOpURYmvi++xQNi1Eq/u72acwCg8C8mkWUgmzUKY
+	tICReRWjSGppcW56brGRXnFibnFpXrpecn7uJkZgBG479nPLDsaVrz7qHWJk4mA8xCjBwawk
+	whtaUpUmxJuSWFmVWpQfX1Sak1p8iNEUGBYTmaVEk/OBKSCvJN7QzMDU0MTM0sDU0sxYSZzX
+	s6AjUUggPbEkNTs1tSC1CKaPiYNTqoGp0jjOJ0jCK26a0ZW6Mycme3qGb/bgaDlxYK+QVsa2
+	V7e11Fozi3s+lMd4fgx5vuC3zVr5jQEO7xZLrtv7h+1WkcyLq0+cJdr8tVd3rZ943aWwfOvT
+	+oV2LDeWv7z29rtl+Ru1hcUFLdHZT1cvFS69OEd6qoTEEs5Nd9tnWIjds160V5Br4sQmp8W6
+	dcVJfOmbcydMusfau+uv/IZ31WZBM9nn/FBuulb9eDXnJ4MUzdcLDvlO/7KuriWgzvBSsG1W
+	3voM2a6937/seyk+1bw611LpzbTgGdJBm8oS7T++YaoXZTYv/3XshvAJ39mRCcbN1r3Z+vee
+	PLV4WS/CKr3gmfgLkbVV/ptd5ePXvpmkxFKckWioxVxUnAgAXzNkbkkDAAA=
+X-CMS-MailID: 20240626134308eucas1p1b9e36aeac3aac63006be3d26734582ec
+X-Msg-Generator: CA
+X-RootMTR: 20240626011143eucas1p11de7bd84765b20cf746a3146d75a04c8
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240626011143eucas1p11de7bd84765b20cf746a3146d75a04c8
+References: <20240625-jag-ats_cache_tag_fix-v1-1-67f956e3fa93@samsung.com>
+	<CGME20240626011143eucas1p11de7bd84765b20cf746a3146d75a04c8@eucas1p1.samsung.com>
+	<33c93a17-b888-47a8-be54-8fb0f7fee0ec@linux.intel.com>
 
-On 6/25/24 03:47, Mina Almasry wrote:
-> In tcp_recvmsg_locked(), detect if the skb being received by the user
-> is a devmem skb. In this case - if the user provided the MSG_SOCK_DEVMEM
-> flag - pass it to tcp_recvmsg_devmem() for custom handling.
+On Wed, Jun 26, 2024 at 09:09:04AM +0800, Baolu Lu wrote:
+> On 6/25/24 9:49 PM, Joel Granados via B4 Relay wrote:
+> > From: Joel Granados<j.granados@samsung.com>
+> > 
+> > Enable the pci capabilities by calling iommu_enable_pci_caps before we
+> > assign a cache tag. The cache_tag_assign_domain call in
+> > dmar_domain_attach_device uses the device_domain_info->ats_enabled
+> > element to decide on the cache_tag_type value. Therefore ats_enabled
+> > needs to be evaluated before the call to the tag cache assignment.
+> > 
+> > Signed-off-by: Joel Granados<j.granados@samsung.com>
+> > ---
+> > The "what" and "why" are included in the commit message.
+> > 
+> > Tried to place cache_tag_assign_domain before the early return in
+> > "if(dev_is_real_dma_subdevice(dev))". This means that the call to
+> > iommu_enable_pci_caps landed before the setup functions [1] which is not
+> > an issue as they seem to be orthogonal (I would like to be proven wrong
+> > here).
+> > 
+> > An alternative to this patch would be to use a different way of checking
+> > if the device is ATS enabled in __cache_tag_assign_domain.
+> > 
+> > Comments greatly appreciated
 > 
-> tcp_recvmsg_devmem() copies any data in the skb header to the linear
-> buffer, and returns a cmsg to the user indicating the number of bytes
-> returned in the linear buffer.
+> Thank you very much for the patch. But we already have a similar patch
+> which has been picked by Joerg for 6.10-rc.
 > 
-> tcp_recvmsg_devmem() then loops over the unaccessible devmem skb frags,
-> and returns to the user a cmsg_devmem indicating the location of the
-> data in the dmabuf device memory. cmsg_devmem contains this information:
-> 
-> 1. the offset into the dmabuf where the payload starts. 'frag_offset'.
-> 2. the size of the frag. 'frag_size'.
-> 3. an opaque token 'frag_token' to return to the kernel when the buffer
-> is to be released.
-> 
-> The pages awaiting freeing are stored in the newly added
-> sk->sk_user_frags, and each page passed to userspace is get_page()'d.
-> This reference is dropped once the userspace indicates that it is
-> done reading this page.  All pages are released when the socket is
-> destroyed.
+> https://lore.kernel.org/linux-iommu/20240620062940.201786-1-baolu.lu@linux.intel.com/
+Completely missed this. I'll give it a try tomorrow and report back.
 
-Reviewed-by: Pavel Begunkov <asml.silence@gmail.com>
+Best
 
 -- 
-Pavel Begunkov
+
+Joel Granados
 
