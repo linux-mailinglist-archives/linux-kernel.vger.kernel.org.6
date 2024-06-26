@@ -1,123 +1,133 @@
-Return-Path: <linux-kernel+bounces-230488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E128917D8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:16:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7736917D92
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:16:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54B6428510A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:15:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D79A1F23FAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:16:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A817217A918;
-	Wed, 26 Jun 2024 10:15:46 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD60179658;
+	Wed, 26 Jun 2024 10:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JjXtKRq+"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC96176FB6
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 10:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B151779B7;
+	Wed, 26 Jun 2024 10:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719396946; cv=none; b=rMJ2QF/C/oCvZWz0OSDq9/4e7tqbN4EmqeM+O41pyyASaxYT4Fp4ZZPlSUFRjOqgYrrcu83E/MdO/IZjZ8i61Zcaqq+cLpfzuJpaBWSqUG48K40rV06K73Netl+JxbI824EdeMqHPAxnnCqkUMP8y23gWGlVgDhwEfkgTJnpdC4=
+	t=1719396969; cv=none; b=nN+ly/BjMY/A9ibZsc97P+XLFUvbyr3jBpPW3A6TQFAj9i1ma6z5jtabigARrA9ICUOZwqEMkcw4VDsf0kU7wdnw38O4FZ6nIYzyOHhAc0BpdzP5PMD7wvdSLV3JxXqp3uiV9JqrDlpV7ZJ2W9JsViXRnquN1tkK1bIi5D0lRsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719396946; c=relaxed/simple;
-	bh=7Vv/38yXXS6Mw/kIpaWszQSVXYeuVTY8r2rsU6ywIuA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k+s4/gMX1iaFns10BayQA3vmQeTq3zhBxA44bv7/nTOg/KFVGtZfsNW1P7Sv2tLRCpLAu1dxR9Y/l2n0d3KDoX5YCMG/ol+7DkzcDl3d0VHyVcshSVTFdULMquOTgXII21B0AF+/o2GEC8//hl2HQtdV6VRqoDzyPO+VfvvEM/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1sMPgQ-0006E2-4e; Wed, 26 Jun 2024 12:15:22 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1sMPgO-0056aZ-Rj; Wed, 26 Jun 2024 12:15:20 +0200
-Received: from pengutronix.de (p5de45302.dip0.t-ipconnect.de [93.228.83.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 62EB32F3FC2;
-	Wed, 26 Jun 2024 10:15:20 +0000 (UTC)
-Date: Wed, 26 Jun 2024 12:15:20 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>, 
-	Jakub Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>, 
-	linux-arm-kernel@lists.infradead.org, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Herve Codina <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>, 
-	=?utf-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Jesse Brandeburg <jesse.brandeburg@intel.com>, 
-	Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>, Piergiorgio Beruto <piergiorgio.beruto@gmail.com>, 
-	Oleksij Rempel <o.rempel@pengutronix.de>, =?utf-8?Q?Nicol=C3=B2?= Veronese <nicveronese@gmail.com>, 
-	Simon Horman <horms@kernel.org>, mwojtas@chromium.org, Nathan Chancellor <nathan@kernel.org>, 
-	Antoine Tenart <atenart@kernel.org>, kernel@pengutronix.de
-Subject: Re: [PATCH net-next v13 00/13] Introduce PHY listing and
- link_topology tracking
-Message-ID: <20240626-expert-gharial-of-amplitude-79e83f-mkl@pengutronix.de>
-References: <20240607071836.911403-1-maxime.chevallier@bootlin.com>
- <20240626-worm-of-remarkable-leadership-24f339-mkl@pengutronix.de>
- <20240626120137.10c2ad61@fedora-5.home>
+	s=arc-20240116; t=1719396969; c=relaxed/simple;
+	bh=FlJBMKh6pYOgBkI3JanFh1HtuN0ra91QyvCdfw8LFlM=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YEtmZ+6vIuz4osQvEMLCHdYmTzSla2Ryyr/rPIiXUSP48JbauI9NcjlXJ90JAcnZN+/49KpkgvQ779Odi4rSl4Vo0uuQqmM5h6nrEqZYKPKw494VzdpgygHxxMhHgg7WVrZplMlg3EPCDGFPv/vICOhE/OQn8/C49tEer8LJHGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=JjXtKRq+; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45QAFoum102072;
+	Wed, 26 Jun 2024 05:15:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1719396950;
+	bh=YmMi7eqXgj2Ayl0xxOQqOV1H5iE1uA0DZcl9PqL50IU=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=JjXtKRq+f1iilEjQurR8RXX30QhtEIq4twQLqfaSG2SJnqPoYEbPVAxSqM+EKlEwY
+	 +ax7eMFjev6O1XQlITugvmu8O1zUkjPrF4trdvKXUchuPFN3u1AtEd2RttqIHE/r12
+	 BJibhJ/WJFoqWoZkvnZTgyBePDc1KhrZu/M7LLFI=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45QAFodL017583
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 26 Jun 2024 05:15:50 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 26
+ Jun 2024 05:15:49 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 26 Jun 2024 05:15:49 -0500
+Received: from dhruva.dhcp.ti.com (dhruva.dhcp.ti.com [172.24.227.68])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45QAFRVH091997;
+	Wed, 26 Jun 2024 05:15:47 -0500
+From: Dhruva Gole <d-gole@ti.com>
+To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Roger Quadros <rogerq@kernel.org>,
+        Andrew
+ Davis <afd@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Dhruva Gole
+	<d-gole@ti.com>
+Subject: [RFT][PATCH 2/2] arm64: dts: ti: k3-am62x-sk-common: Fix graph_child_address warns
+Date: Wed, 26 Jun 2024 15:45:20 +0530
+Message-ID: <20240626101520.1782320-3-d-gole@ti.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240626101520.1782320-1-d-gole@ti.com>
+References: <20240626101520.1782320-1-d-gole@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="45kzkz4ehdxunhp2"
-Content-Disposition: inline
-In-Reply-To: <20240626120137.10c2ad61@fedora-5.home>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
+Fix the following warnings when compiling dtbs with W=1:
 
---45kzkz4ehdxunhp2
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+../arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi:343.10-353.6: Warning (graph_child_address): /bus@f0000/i2c@20000000/tps6598x@3f/connector/ports: graph node has single child node 'port@0', #address-cells/#size-cells are not necessary
+../arch/arm64/boot/dts/ti/k3-am62-main.dtsi:633.22-643.5: Warning (graph_child_address): /bus@f0000/dwc3-usb@f900000/usb@31000000: graph node has single child node 'port@0', #address-cells/#size-cells are not necessary
 
-On 26.06.2024 12:01:37, Maxime Chevallier wrote:
-> Thanks for giving this a test.
+Cc: Roger Quadros <rogerq@kernel.org>
+Signed-off-by: Dhruva Gole <d-gole@ti.com>
+---
+ arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi | 17 ++++-------------
+ 1 file changed, 4 insertions(+), 13 deletions(-)
 
-I was looking at this to figure out if it's possible to use/reuse/abuse
-this for CAN transceiver switching. Although Oleksij coded a CAN
-transceiver struct phy_device POC integration, we're using the "other"
-PHY framework from drivers/phy, i.e. struct phy now.
+diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
+index ce7ab338f468..465743d6cc21 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
+@@ -340,15 +340,9 @@ connector {
+ 			self-powered;
+ 			data-role = "dual";
+ 			power-role = "sink";
+-			ports {
+-				#address-cells = <1>;
+-				#size-cells = <0>;
+-
+-				port@0 {
+-					reg = <0>;
+-					usb_con_hs: endpoint {
+-						remote-endpoint = <&usb0_hs_ep>;
+-					};
++			port {
++				usb_con_hs: endpoint {
++					remote-endpoint = <&usb0_hs_ep>;
+ 				};
+ 			};
+ 		};
+@@ -475,12 +469,9 @@ &usbss1 {
+ 
+ &usb0 {
+ 	bootph-all;
+-	#address-cells = <1>;
+-	#size-cells = <0>;
+ 	usb-role-switch;
+ 
+-	port@0 {
+-		reg = <0>;
++	port {
+ 		usb0_hs_ep: endpoint {
+ 		    remote-endpoint = <&usb_con_hs>;
+ 	       };
+-- 
+2.34.1
 
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---45kzkz4ehdxunhp2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmZ76jUACgkQKDiiPnot
-vG+gRAf/WTo2sBmipgFQU528oVB0wkUX7yBWwy/ft0FsxHVVEdtQqq9q/EKwGOLY
-E0M+Kq7EyF+TKTDZRdghlMftZ3HUvwz30RaHbm/fUr6miC1G9k1UsncoySO3eafn
-7gdEqpG1xrdtgtNqizfmD4MIqs2FUnfQoVQ5Q6KSrs7aT50zMf24UG7zprZ7VMth
-9QBnnsQVq9a8zqAU0pFnCnUPYbf2f2uYLKupYVmp9E2YA7zlvr8OuMy+7xaWalIR
-RI0e9mjH7qpWPzDKrtCQ4h57Lo7J8NFRg6TeeHUiTxnpv7ygA8DUN1DvgJs88zpg
-k3QESogcJa73i5OswBY3vdD9k+3cXA==
-=lKXj
------END PGP SIGNATURE-----
-
---45kzkz4ehdxunhp2--
 
