@@ -1,147 +1,173 @@
-Return-Path: <linux-kernel+bounces-230426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D687917CAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:38:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B6C8917CA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:37:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E755B28365D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:38:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CBC51C219A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F33016E88D;
-	Wed, 26 Jun 2024 09:38:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 108D216CD0B;
+	Wed, 26 Jun 2024 09:37:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b="hYPbyF7h"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D8WDNRF1"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44BCF12B144
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 09:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0978BEF
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 09:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719394706; cv=none; b=lyUoqJ8exVU6Ie84ymDkLDmuINE3RvVhUF0jW05f1XcrUesC3mAhqcA/n+eVvWeCjfTDP4G3MCWZZJZ6XAporUOUkmpMVeTm8UMias1mSOGJjXErNK5CJfn67GORMEZaV4r8cCaBsxMxrHh11aRwt5rgUSIm5ho03oGGmGrk368=
+	t=1719394628; cv=none; b=IGid6cvIgIrW5g7Z+jLHpiglRq+Hat+YtXu4vHHM7g4HEfE2XzO3qHSDqkKXCO8VbrS4k0XA3KryrIQJC76XK87OxKhiYS4qgEiDBf/6N5lHACm7M6G51aJZultO1IDAf9vgPbXzXMxkh1GTUD/JuiZYM4n3Fhfx5GCDUHYQUV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719394706; c=relaxed/simple;
-	bh=VMgxm/Ef7XHNkgrpqem5t2A+iBBaltsqNuNFFFlZROE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rTyEb5M8mWzt+uUaRdwXf71lSUj0hY+SMfcjPSEm98AaMHS78xpg7zDHq0I1LEP17OYlVNiMOsc7LOFmLUrt1M2xFMfbk2+8V4qTjDugY3F/mv4Z7M5mpyIS9RpmAxixnk7VS9RAfTSf2LxYapH1FyYTSbCVc+XJyPpNuwUYtYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org; spf=pass smtp.mailfrom=endlessos.org; dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b=hYPbyF7h; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=endlessos.org
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-70b2421471aso4601238a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 02:38:25 -0700 (PDT)
+	s=arc-20240116; t=1719394628; c=relaxed/simple;
+	bh=IOe74BviUgYXIjE1Ibu85GUlLOQUmCeF+sTT7UuVvYY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YUYTmIn70mFeYTlY+TVTwRN5wtegeIdbH+xHMYf2fzVHqSZqNm1sRfYD9ZdAyANt55UbUIyKIhrMXekSDM0UhqdJRwdZPUvoZoP/rmzLuzRDwYIOHNOBphxW+fCoflh02NchX37KnD5MwuEfLlya2iVe2IMmgIrhkIo4a9JTsAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D8WDNRF1; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a72477a6096so444299466b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 02:37:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessos.org; s=google; t=1719394704; x=1719999504; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K8+v3noNoyPjynJix5Z6KWWDUhj0ABP/SpdUpbNFskg=;
-        b=hYPbyF7hEXoNJRpZ0k0dZdUb3ZqCMxZenL9iP+0zd3armOWxzF+voEOFMx3ZvG+A7M
-         0rICP3hI1gTiAj2RRGphCUY3uZ55dx830DAM6lXhHiWQctnuU/N4AH1XKK5+0Xy2ckzd
-         aAf+w0Q/O++2DSWO30h2PWykXH/QORroUdKKZpY1gIol7WwiOgiDpe589GVfjCTkBoM7
-         FXb30Pm8aoiShIqHQPykabZiJ935Q7kT95mEX5NpFuAh0+8L19ToHVa5JtjBE1Vw2Ipj
-         LU/879XXLhIZj1stAqLB/tGrFJ8uq7csopfLODifEePZ0Zbr8EMEpVWByC8rd+4m+b1J
-         Qs8Q==
+        d=linaro.org; s=google; t=1719394625; x=1719999425; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=AEVD+w0TTAAVvcUXpjCC9r3Xtde98FGUdgCPdfiAa2c=;
+        b=D8WDNRF1wtHlVOi23WMvuW6ndEJWZfUiDtPKX6qz8NUjnDMP6VkLgWUgAr4dx7gKDO
+         tINk5E/NqWrYKYTLl37gZ1z26s9RTZM0QAqxCy8wYQMVGrrJkVBk/tbjkaR03UGg3evt
+         ydzmBVo35cBIyTfv7f3SFOXAdJtrPC/edYz6FVdzF0KKU5VtR35RvXV2fqFnFWbh5ih7
+         jghFpWlO6l39fTKlmMO6JAA5ExKm/M8sFE1ctUP2X8wQ0U19/b8i6HKs4kIORPZdDwOU
+         fsxzc2EQBE+UGvXkdoMJ3/6MFoyXWJK8P2N4Kloz8cbApXFfYLsqYMkp3uGNgeWELuPb
+         ODyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719394704; x=1719999504;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K8+v3noNoyPjynJix5Z6KWWDUhj0ABP/SpdUpbNFskg=;
-        b=T5QOApAStu44eiVnOehvdZqjYy44xapQrfvbOGe3YfHW65TuRGZpSOVIKdmp2MssBl
-         EGkbRJgBjp/ZndTJ3AbdfkHARlvbR8JiLO/XXS+dj3cljPW/JusjmwhLLBTVnncKhujP
-         fUbGKAMp+CtuZRcf93BzSm/zncf4pC/bL2QSCjZVdQSYSzG9EKWjYl9t5lfFvHVWI2g8
-         qnV1Z6wph09Vpm4FU3YHxWn+46kkvwH81dwm7RugvmAW9GHype+xBlodse+W5u8Zcm4R
-         c7k6Z8Gk2RF+NK7ScAdcBEVscGwawmCe5GNLuH83Fs2samzRws4vIpkBpcQr6ai1Gz2F
-         6U6A==
-X-Forwarded-Encrypted: i=1; AJvYcCX4U9yeTTSSep2Bdt02nARITdq/DqshJGn0wMt7ohI0Ppu18O+Ok+TdcXpMFFEDgMDbdqRgPNkKtCeF4zu+BDcrCFx0kT7zzzzfKNBI
-X-Gm-Message-State: AOJu0YyDkzKa5td0Bx+rO4TVfV1U2fTVbhEcqF6eDyuyPASNW/lMY5br
-	UwsX8s++shNSSbNCuBK8JQG0zAmqMlQrfjVsuuaMc77ecMcejZXNMTzjPw90RYc=
-X-Google-Smtp-Source: AGHT+IEC3KSzdYFibbSuDaV54ZQfYOq+YaBYF/YhFaYzGn4bpoJpyTfuPOdLMIDcdRzSetN4TJ0NrA==
-X-Received: by 2002:a05:6a20:4f24:b0:1bd:1972:370e with SMTP id adf61e73a8af0-1bd19723884mr4741524637.48.1719394704435;
-        Wed, 26 Jun 2024 02:38:24 -0700 (PDT)
-Received: from localhost.localdomain ([123.51.167.56])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1f9eb3c6d47sm95676685ad.178.2024.06.26.02.38.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 02:38:24 -0700 (PDT)
-From: Jian-Hong Pan <jhp@endlessos.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>,
-	David Box <david.e.box@linux.intel.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Nirmal Patel <nirmal.patel@linux.intel.com>,
-	Jonathan Derrick <jonathan.derrick@linux.dev>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux@endlessos.org,
-	Jian-Hong Pan <jhp@endlessos.org>,
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH v7 2/4] PCI/ASPM: Add notes about enabling PCI-PM L1SS to pci_enable_link_state(_locked)
-Date: Wed, 26 Jun 2024 17:37:00 +0800
-Message-ID: <20240626093659.14346-2-jhp@endlessos.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240626092821.14158-2-jhp@endlessos.org>
-References: <20240626092821.14158-2-jhp@endlessos.org>
+        d=1e100.net; s=20230601; t=1719394625; x=1719999425;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AEVD+w0TTAAVvcUXpjCC9r3Xtde98FGUdgCPdfiAa2c=;
+        b=JF1WKRr0S29lu2mz33DwBRaomX4Sr8enK+ebhW6tA/48IpS1XyDhsje+8QDMx6/2Q9
+         2nqO49GVIE4b85YTBaE07nc04GSIbiAIgSTgiS71Un68yVvOCmaFB7Wn8Qj0KJt3Wrtn
+         MYmLDy/VqoEPGcqW6vOcVpek+BUiFk+mx+9L73JSoGDWKUCkWd3UoVehVmx4TGXcf/v6
+         7WyqXPqd9ZjZdqfdmbPx1+605KoElOIjjXt8hcN0XrArt+Mi+Sh+HG++eQIXUkJ5Itgl
+         1vQRglxNAwX9RTplY9q7GAD+DXbbJvLFGQqjO01FA9D6RzlOfah/ZrFWk+BTOWsqCY0W
+         f/6A==
+X-Forwarded-Encrypted: i=1; AJvYcCUWeVRKUeAQbZoWJTDBWUhGIfq48PPlDB1qCGs7qB9JSPXQOA4s1ZVT4lVOyi0WyxTEZsStTReZ6/W01SDEilnDin+oY2lm7ym7wv3B
+X-Gm-Message-State: AOJu0YwAm1BMmhhAd5zTHIZ0GxEaJ+jy5tOLHGdlsGdajKDxQ27YyuIy
+	DaSoOvqgLEBOS2M1FIbR+r2v5PEA/+q5SO/WhjpAovttLD43+pRdaTnql/G6Zuw=
+X-Google-Smtp-Source: AGHT+IHMd5gcTGXG0btMMetTthXNYoimPBO8ehjkfI6u1J6Ceh0RTvs6sjMc+EPy7NGvsHh8ni7voA==
+X-Received: by 2002:a17:906:a8d:b0:a6f:4c10:8da6 with SMTP id a640c23a62f3a-a7245b45a69mr587403866b.2.1719394624617;
+        Wed, 26 Jun 2024 02:37:04 -0700 (PDT)
+Received: from [192.168.215.29] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a725cc93794sm246743566b.170.2024.06.26.02.37.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Jun 2024 02:37:04 -0700 (PDT)
+Message-ID: <a33ac27f-ab88-40a7-9cb0-9d27342fed09@linaro.org>
+Date: Wed, 26 Jun 2024 11:37:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/3] drm/msm/adreno: Add support for X185 GPU
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc: freedreno <freedreno@lists.freedesktop.org>,
+ dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ Rob Clark <robdclark@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, Daniel Vetter <daniel@ffwll.ch>,
+ David Airlie <airlied@gmail.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>, Sean Paul <sean@poorly.run>,
+ linux-kernel@vger.kernel.org
+References: <20240623110753.141400-1-quic_akhilpo@quicinc.com>
+ <20240623110753.141400-3-quic_akhilpo@quicinc.com>
+ <5947559d-30dd-4da1-93cc-a15dc65cb77d@linaro.org>
+ <20240626082422.zcsari27yoskayuo@hu-akhilpo-hyd.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20240626082422.zcsari27yoskayuo@hu-akhilpo-hyd.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-According to "PCIe r6.0, sec 5.5.4", add note about D0 requirement in
-pci_enable_link_state() kernel-doc.
+On 26.06.2024 10:24 AM, Akhil P Oommen wrote:
+> On Mon, Jun 24, 2024 at 03:53:48PM +0200, Konrad Dybcio wrote:
+>>
+>>
+>> On 6/23/24 13:06, Akhil P Oommen wrote:
+>>> Add support in drm/msm driver for the Adreno X185 gpu found in
+>>> Snapdragon X1 Elite chipset.
+>>>
+>>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+>>> ---
+>>>
+>>>   drivers/gpu/drm/msm/adreno/a6xx_gmu.c      | 19 +++++++++++++++----
+>>>   drivers/gpu/drm/msm/adreno/a6xx_gpu.c      |  6 ++----
+>>>   drivers/gpu/drm/msm/adreno/adreno_device.c | 14 ++++++++++++++
+>>>   drivers/gpu/drm/msm/adreno/adreno_gpu.h    |  5 +++++
+>>>   4 files changed, 36 insertions(+), 8 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+>>> index 0e3dfd4c2bc8..168a4bddfaf2 100644
+>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+>>> @@ -830,8 +830,10 @@ static int a6xx_gmu_fw_start(struct a6xx_gmu *gmu, unsigned int state)
+>>>   	 */
+>>>   	gmu_write(gmu, REG_A6XX_GMU_CM3_CFG, 0x4052);
+>>> +	if (adreno_is_x185(adreno_gpu)) {
+>>> +		chipid = 0x7050001;
+>>
+>> What's wrong with using the logic below?
+> 
+> patchid is BITS(7, 0), not (15, 8) in the case of x185. Due to the
+> changes in the chipid scheme within the a7x family, this is a bit
+> confusing. I will try to improve here in another series.
 
-Signed-off-by: Jian-Hong Pan <jhp@endlessos.org>
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
----
-v3:
-- Fix as readable comments
+Ohh I overlooked this.. sounds a bit unfortunate.. 
 
-v4:
-- The same
+Seems like it doesn't really fit the "else" branch anyway, let's
+keep it for now then
 
-v5:
-- Tweak and simplify the commit message
-
-v6, v7:
-- The same
-
- drivers/pci/pcie/aspm.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-index cee2365e54b8..bd0a8a05647e 100644
---- a/drivers/pci/pcie/aspm.c
-+++ b/drivers/pci/pcie/aspm.c
-@@ -1442,6 +1442,9 @@ static int __pci_enable_link_state(struct pci_dev *pdev, int state, bool locked)
-  * touch the LNKCTL register. Also note that this does not enable states
-  * disabled by pci_disable_link_state(). Return 0 or a negative errno.
-  *
-+ * Note: Ensure devices are in D0 before enabling PCI-PM L1 PM Substates, per
-+ * PCIe r6.0, sec 5.5.4.
-+ *
-  * @pdev: PCI device
-  * @state: Mask of ASPM link states to enable
-  */
-@@ -1458,6 +1461,9 @@ EXPORT_SYMBOL(pci_enable_link_state);
-  * can't touch the LNKCTL register. Also note that this does not enable states
-  * disabled by pci_disable_link_state(). Return 0 or a negative errno.
-  *
-+ * Note: Ensure devices are in D0 before enabling PCI-PM L1 PM Substates, per
-+ * PCIe r6.0, sec 5.5.4.
-+ *
-  * @pdev: PCI device
-  * @state: Mask of ASPM link states to enable
-  *
--- 
-2.45.2
-
+Konrad
 
