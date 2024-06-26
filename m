@@ -1,130 +1,151 @@
-Return-Path: <linux-kernel+bounces-230747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2243C918166
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:49:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01F2F918165
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:49:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54D621C22FDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:49:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1486289540
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:49:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB778184117;
-	Wed, 26 Jun 2024 12:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D276C1836C7;
+	Wed, 26 Jun 2024 12:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="IHjhTNHz"
-Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ouGTUB8p"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4793A1822F1
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 12:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47CE119BC6;
+	Wed, 26 Jun 2024 12:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719406130; cv=none; b=VoSkz34O16DxQBGDqCfqWAVcSPqXJBrPKYgs3kgwh2RGERj0torLbi76sXfzWaPEZEBHg54wscQeuvPcc+ZBv3VacA4z902ZHpdqQFgckNxYiRNxzjWV/cDr3NDz6IKrh1NfV5b56sM+Osi2XOhSCO/2DGF1sPcJbzxVrGMY4Jo=
+	t=1719406128; cv=none; b=Sn1bFvOIHNJ23HP38zAeZOi+6muXhDaHts04SfTTfoi8yxi1Ek9/heaLmZ9NGnTikFI/ppMBfnj0/r1+6DvaxC/I0Se3lpCLOZm6e+yEv/lr0nYCJ/n/reE2CfMCxyaK3n+w+YsZEkyTQ380EfbxVOKhB6d/HboyjYNynTnJdUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719406130; c=relaxed/simple;
-	bh=UD81cMwmUcHhRvplZaRd5shbhDnIzw+Ks4kxSd3Hivs=;
-	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
-	 MIME-Version:Content-Type; b=OP190aQJhaleX+KceLzpQzqUL4eK5LsorW2y3j9JGOSdu8AyGrDht9UQRW1pKiCORaGZ9jnGNn2xeGPCVIqRHiONlfMP5LPm3RK5BUyxYx6tg3WeiMAhX3v5dE37zxWV03QB/fNO12hs7Rveb38CYZYXIOtvjdGh1r8Ey/VnL+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=IHjhTNHz; arc=none smtp.client-ip=35.89.44.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6002a.ext.cloudfilter.net ([10.0.30.222])
-	by cmsmtp with ESMTPS
-	id MQ90se0rArtmgMS4oseBnh; Wed, 26 Jun 2024 12:48:42 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id MS4mstlAfiKqRMS4ns3fPA; Wed, 26 Jun 2024 12:48:41 +0000
-X-Authority-Analysis: v=2.4 cv=I9quR8gg c=1 sm=1 tr=0 ts=667c0e29
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=T1WGqf2p2xoA:10 a=-Ou01B_BuAIA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=nIAznLeY9BhABaY2-0MA:9 a=QEXdDO2ut3YA:10
- a=AjGcO6oz07-iQ99wixmX:22 a=nmWuMzfKamIsx3l42hEX:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
-	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=u0ctgDJnqsEISZjxnaetzAzJdwXXNoK5bJuVrmyecYY=; b=IHjhTNHzyltP0hrQckBsRKe8zv
-	ezVvOBDAR3kXRWJHjFdX92kRXH/qJkklPYE1udraBfFnM14mocgnqEGq8PBxeaa9lcOlPq8UKvBG9
-	8BBpUu5uy4zsDSCdUP9H5px05zNI7Ev2+kzxsdy4htGq4e/3lSxtpp5QiegrKsOVXE9XCrYfMqYjK
-	iaNyMCbs5f6+6C/720bgi7MiyaHhPyJ225SXOQYMizua2ZxaFHRS3hDaDPau+gJF5nD7iETLnGrRz
-	eZfjWQ8e0dzJ+wa3snf0zmpDCowYgPRmE4+cso4h52TuenH5a/34SU1uYakG0s8xs6EV4sh9f8L+I
-	HA8SkHXA==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:45932 helo=[10.0.1.47])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1sMS4i-002rXt-0S;
-	Wed, 26 Jun 2024 06:48:36 -0600
-Subject: Re: [PATCH 6.6 000/192] 6.6.36-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240625085537.150087723@linuxfoundation.org>
-In-Reply-To: <20240625085537.150087723@linuxfoundation.org>
-From: Ron Economos <re@w6rz.net>
-Message-ID: <8ef227cf-7477-edf5-d802-1e186d92bfeb@w6rz.net>
-Date: Wed, 26 Jun 2024 05:48:25 -0700
-User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1719406128; c=relaxed/simple;
+	bh=zNMzXNtaGkFXqoNCuCZI1KiwCqFEAZ3HXo636YRRIUM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QgnzxVe/7Tthj52122JaajRGY7pkwxMCeCRHJaJrsLMrCjx0irv+MBQEGJpCrSrI2t5vUPtPbkNAk8+Lu3kmUxHkH3qBHi88Y83xEcvzopIDBr5wdJkrqAOv7DMpeRRZp/zRMEVkoGPmLlVET3EU16++OAIXjsq5CcLqLCdEwPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ouGTUB8p; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QCSqvh017661;
+	Wed, 26 Jun 2024 12:48:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:subject:from:to:cc:date:in-reply-to:references
+	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
+	fsIQQtLTm4Gg90CEu/3VEdMQqSTEw/mf7ZgROk28Brk=; b=ouGTUB8pTd51hSeL
+	uKGarIfX1ARuHp3nilRQ0yOFRwnxk1gwr7D44CR6AwV8laoJIGj8pg6pDV6+KIOZ
+	hYJIUD8b0BwodtchL9SJIv5PnXiqZCjslVS0jElCRsORdZ2w/73dO00G2Hc1DAm6
+	1wny0Z9zYF2Ip80FXZKBLbMo6Yhz/WT29q7DlWYT4cwI2SbBWLefRWXgQlTMUCwj
+	1trOGMd+QJ5bn4yUnz5PN02FCZ7U7n1wBUz/hZPMv3mKdjfOmFk3mS3IW2EY4IJp
+	yOoqw8J79zANpJA8UGf+Wrm8WOsIVgH2DOsMYjXTDsauoNsGvxDI6QMC5v2yEm5R
+	VTAOqw==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 400k1581k4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Jun 2024 12:48:41 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45QCUCOW000627;
+	Wed, 26 Jun 2024 12:48:40 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yxaen4b0x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Jun 2024 12:48:40 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45QCmYa754722832
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 26 Jun 2024 12:48:36 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8BEFE20049;
+	Wed, 26 Jun 2024 12:48:34 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5032D20040;
+	Wed, 26 Jun 2024 12:48:34 +0000 (GMT)
+Received: from [9.152.224.39] (unknown [9.152.224.39])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 26 Jun 2024 12:48:34 +0000 (GMT)
+Message-ID: <4ab328297c12d1c286c56dbc01d611b77ea2da03.camel@linux.ibm.com>
+Subject: Re: [PATCH] s390/ism: Add check for dma_set_max_seg_size in
+ ism_probe()
+From: Gerd Bayer <gbayer@linux.ibm.com>
+To: Ma Ke <make24@iscas.ac.cn>, wintera@linux.ibm.com, twinkler@linux.ibm.com,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        Wenjia
+ Zhang <wenjia@linux.ibm.com>
+Cc: linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, hca@linux.ibm.com, gor@linux.ibm.com,
+        agordeev@linux.ibm.com, borntraeger@linux.ibm.com, svens@linux.ibm.com,
+        davem@davemloft.net, Stefan Raspl <raspl@linux.ibm.com>
+Date: Wed, 26 Jun 2024 14:48:30 +0200
+In-Reply-To: <20240626081215.2824627-1-make24@iscas.ac.cn>
+References: <20240626081215.2824627-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40app2) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1sMS4i-002rXt-0S
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:45932
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 23
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfN1TTBlPFsNe4CO8YUuvpVkofZZw9UP+LiXwPTLYtqOj2wnPQ/82ikgLdIxSt4GMv1YwhcH6HI0BJuwesDJ4782CWGPIpNg8/2GHEEzmxht5H1eEYxZj
- j2/oi3YTNhnm92qv882d7caEtrZNKo/O4WA6HWwc6LOHSi0oXQXZ2bsqZXwVmNVyNer+RavHrgPIL/7EabWpy+Rd6Roa74f6nEc=
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 3ImCsWcLqj6CUkocrVdSXFwLnfAiHS1L
+X-Proofpoint-GUID: 3ImCsWcLqj6CUkocrVdSXFwLnfAiHS1L
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-26_06,2024-06-25_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1011 suspectscore=0 spamscore=0 malwarescore=0 priorityscore=1501
+ impostorscore=0 phishscore=0 adultscore=0 mlxscore=0 bulkscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406260092
 
-On 6/25/24 2:31 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.36 release.
-> There are 192 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 27 Jun 2024 08:54:55 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.36-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Hi Ma Ke,
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+On Wed, 2024-06-26 at 16:12 +0800, Ma Ke wrote:
+> As the possible failure of the dma_set_max_seg_size(), we should
+> better check the return value of the dma_set_max_seg_size().
 
-Tested-by: Ron Economos <re@w6rz.net>
+I think formally you're correct. dma_set_max_seg_size() could return an
+error if dev->dma_parms was not present.
 
+However, since ISM devices are PCI attached (and will remain PCI
+attached I believe) we can take the existance of dev->dma_parms for
+granted since pci_device_add() (in drivers/pci/probe.c) will make that
+point to the pci_dev's dma_parms for every PCI device.
+
+So I'm not sure how important this fix is.
+
+> Fixes: 684b89bc39ce ("s390/ism: add device driver for internal shared
+> memory")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
+> =C2=A0drivers/s390/net/ism_drv.c | 4 +++-
+> =C2=A01 file changed, 3 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/s390/net/ism_drv.c b/drivers/s390/net/ism_drv.c
+> index e36e3ea165d3..9ddd093a0368 100644
+> --- a/drivers/s390/net/ism_drv.c
+> +++ b/drivers/s390/net/ism_drv.c
+> @@ -620,7 +620,9 @@ static int ism_probe(struct pci_dev *pdev, const
+> struct pci_device_id *id)
+> =C2=A0		goto err_resource;
+> =C2=A0
+> =C2=A0	dma_set_seg_boundary(&pdev->dev, SZ_1M - 1);
+> -	dma_set_max_seg_size(&pdev->dev, SZ_1M);
+> +	ret =3D dma_set_max_seg_size(&pdev->dev, SZ_1M);
+> +	if (ret)
+> +		return ret;
+> =C2=A0	pci_set_master(pdev);
+> =C2=A0
+> =C2=A0	ret =3D ism_dev_init(ism);
+
+BTW, I've dropped ubraun@linux.ibm.com and sebott@linux.ibm.com as
+their emails won't work any longer, anyhow. Instead I've added Niklas
+Schnelle, Wenjia Zhang and Stefan Raspl.
+
+Thanks, Gerd
 
