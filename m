@@ -1,112 +1,154 @@
-Return-Path: <linux-kernel+bounces-230462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D2C3917D20
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:02:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 816B9917D26
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:02:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B64C01F2486C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:02:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A45761C234AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF29176FC0;
-	Wed, 26 Jun 2024 10:02:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4EF4176229;
+	Wed, 26 Jun 2024 10:02:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z0pxryrR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="du7x+dTM"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F28115F308
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 10:02:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48EC116F90F
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 10:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719396124; cv=none; b=rJEq7c+uimYydcDj1nW3fdU3rbO7Dl6An5gqVbWdK65Q5bKzvAhFzegt7HvJtqtv3PzkuW47WcngpxYCGuTTzU1JG0KYCsEPUsCcEUKIrbfB3ruw41hBQVHPPxnHFkT0z2khEjYg6RkYGja7TYbzRrqNpuZ8IckUsYsrqBUI7Qg=
+	t=1719396145; cv=none; b=SN2pFuw1adcCYNgxVqR4AlgQfMZzOpl7rq15xneg8u1/lWVnxp6QkjeeGEMyVEFgyfQEDPGGdzbs6o98fUsY21Bfxfn3Sc8GpK0KpQ82IxDY5S2sqGOA73BENvZbLaLLcEpVygEr+/ypHh5tCTLWZCCBfvQqGZruR3MeZL2ds80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719396124; c=relaxed/simple;
-	bh=gdrItU7Ucw4I2XnC8bz1GVIEN51yJvk0w7JU+tNIQTY=;
+	s=arc-20240116; t=1719396145; c=relaxed/simple;
+	bh=UIal9mSNuB7WVuajAQysXy9I34dokLqqKQSl/SD8Ip0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IkkTgNa2uX1pceVCBU/g5wsTyawnq/5nvpWnVwtXBHu2YH/PKxJ4gmBokECmd8Xr/oQu4eKlV1a+2b8CcAVRF9bib7n/vOORHhK9LzmXAMUq/fdotDVk0TpI/CVMWWUjFr6toXrC6fA0Vv8KmduDQVEr7W98FVzigNM7Df/grQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z0pxryrR; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719396121;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gdrItU7Ucw4I2XnC8bz1GVIEN51yJvk0w7JU+tNIQTY=;
-	b=Z0pxryrROVf8za+/kUcaTdkikhjdczuAsfRht1NHwYnIXKr7dlQdomMXsPuORZMbSxlRZg
-	fsFl7sBkNXGEGwFX5GjZAx7RZCh2CDwB2w+l+BTmo89EeFEjfex3f7mByIleTzpztcYB8v
-	c2iZb4S5so1wN57r1KD6sD5UfNKPCZs=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-507-tdO6bZYGP5O5_TVtW7GR0w-1; Wed, 26 Jun 2024 06:01:58 -0400
-X-MC-Unique: tdO6bZYGP5O5_TVtW7GR0w-1
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2c7a8fa8013so8251282a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 03:01:58 -0700 (PDT)
+	 To:Cc:Content-Type; b=HiPFfidoJ5gI9YIgpLOAoPxTAIX0YC9XrN8K+gg/S0pXGGxsXFY8JyF5jlHtQS8Jj87PCy/14Q5QnI/cXKMktHnhLD36L0aOsi8wkSH+cTMhTU7DAqEq3a6VlzWGxXVSRJSokoJBlVVGIVCvQWJjCluQFJgXd3sB7gfu8I1CKoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=du7x+dTM; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52cecba8d11so2191892e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 03:02:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719396141; x=1720000941; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UIal9mSNuB7WVuajAQysXy9I34dokLqqKQSl/SD8Ip0=;
+        b=du7x+dTMouYAHhW8HOS87M+/C9zoDazOHKSh9wJFqYNeyoHIVPrMbzNIN79GPhRJx2
+         o6j/Uf8VuM3LNN6rFDCkJm0gGew55fB9XGqTbgEhaVdA3x3fiwGG5Z5kQKJl5DOYem+H
+         y+dXUs7iPh0GRTtZ+anSWlWocB2LtT8Z4VQ1Eg4cuOUyk7fn98Ppm9j5wYOWj1j6A5kW
+         4ri0R0Ksz6vG8NWrW4K5/AGzhkRG8Stfb7UIbvxUSDNH1AtaO6l1g32JN0MVRd4TPdJy
+         Q4TeZbyHGYM6yqBfUeQ6wXvm8++xP7LWtNA0CMJbmuafkbdDI/QXF21K9NSGy5VBSNTB
+         mfjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719396117; x=1720000917;
+        d=1e100.net; s=20230601; t=1719396141; x=1720000941;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gdrItU7Ucw4I2XnC8bz1GVIEN51yJvk0w7JU+tNIQTY=;
-        b=a7RPKYiB4ahXeoNTBB7PXb7zs2HfRzU2C9EVOUVY6muTznDxGwo8WcNuXTlIhhEfAZ
-         R3b/i4azFUkRhs98wmf9kcIRhpYF0YrHWubOnCNeFIOksugDrKL/XWx9Hkh3fPQKJdiZ
-         28mDwx+UlRFCmlNEhyAh9mk7j6vhqww4lK5M51nU/AAsdYc4NyNJFa0xl4mqXvUsmn7O
-         HkMCtzoiJ4gjoZ6faXz0ku1EJMpvBC9wPbhC8BsMhtF2gqBFZ52M+GrHtDk3YbgWVRxQ
-         2LTQ66f1gMwgpnRSqZS3GJ/EhakxKYHrpRQgEsENKFep6yrA/veQ5SSyJf5gtnUaBbpu
-         18hQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXriN6lR4XW2976fmrOAJ4MU0sHfp5FUuYCTWYKRiDp+WXtNHH5GmziWi+NRF/HmMxzV0fp9bvfckwiIzJycBOA+RYKsDPa/+3mIwoI
-X-Gm-Message-State: AOJu0YxmXsJYPfkyqRNDqZ4HkOVPTPfydPqkBofbLh1P39nPFu7KGcLz
-	mtkx1yPUuFuXoSXrEUOlyGp8ish6m/Tb3CtoAIQuC9O8uYjBdx+cW07ElO61wbFhKaGPJ6jQIpg
-	wzosEZcgR11mDkrPv+4Hw70vDWtcG2kSfgyjuUXaigjK3mspmBNouvNkDxmCWdG85s43MSDzFob
-	X6ddDy69WLn8FTV4NjgkVZ1fNfSXZZ8bVubySs
-X-Received: by 2002:a17:90a:17a5:b0:2c2:41cf:b0f0 with SMTP id 98e67ed59e1d1-2c858297582mr9204892a91.43.1719396117071;
-        Wed, 26 Jun 2024 03:01:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHP5pWyEB+/l3J6qcO21zK7BoGGmi0UDpkfJ7f4rzYXNXczhdeTMPXJZJp+/qspBHnJ6tS4vqXrd+ILXABKKY4=
-X-Received: by 2002:a17:90a:17a5:b0:2c2:41cf:b0f0 with SMTP id
- 98e67ed59e1d1-2c858297582mr9204863a91.43.1719396116441; Wed, 26 Jun 2024
- 03:01:56 -0700 (PDT)
+        bh=UIal9mSNuB7WVuajAQysXy9I34dokLqqKQSl/SD8Ip0=;
+        b=l/7csYPcxSrCRjOkJm2g2P9P+RdTrW50FhYywIZ9+ObN3WZ8dQo5vu4qrR8JcCcIp+
+         joU3DdzGfSYAKYcOx2BHLlnFDveIj5Xj6YPXbcFK24HYCLpouxLbaS+wCUbsmWngfBHi
+         v882y84MIoi2ADYQJ1BRX299yP1ABaKB+aowa7ZojJlVHGkdw8XUoQRfR2QOXrEzboGV
+         YDseK7Q5IuHygYA9YwE41v4wCFAf6LJJK72I+rhj00PDyE4am0sfl32sGJRsNDD+tydo
+         gDZATnjiOmPScM/5N/67oxIqISXP5qEtND4wJQp0YVckHVc8q1vmHhlOulMlOwm0uhj9
+         j7Pg==
+X-Forwarded-Encrypted: i=1; AJvYcCWv5Y1nkikiX3MLPLQu+/n6g3RL78oGsOOm5rhAWsAf+kIEKcqP87HW3IRDKrOy9w/mW7PImme7gXcm5tMsbbPxL+8VCiEl5IFHnQ4W
+X-Gm-Message-State: AOJu0YwJ7SaAwdBfOAcHnCY4TUz2lIHBOojHHIIsN1KWjw8MsrAaHSf2
+	1zbzP9bqAmRDgjGY5UPVSp/ESPB/Mdxp8ePwY7Ffv4xhOVQpKJJRmG1Z5FHWRX+JcYGfHYiAsEi
+	nE2WBRgbXA1w3nAL2hhXHU0IEQreHuWHAq1tWeA==
+X-Google-Smtp-Source: AGHT+IEEH1F7Tv7LomODsunYV84Dtc4zLrPpgRRnnl78k+rzuBYmNhragIOzGe8Zi41e1oTPofFlhnZh4uvVT5y70J8=
+X-Received: by 2002:a05:6512:2254:b0:52c:8fd7:2252 with SMTP id
+ 2adb3069b0e04-52ce18324cdmr7591081e87.11.1719396141307; Wed, 26 Jun 2024
+ 03:02:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240611235355.177667-1-ast@fiberby.net> <20240611235355.177667-3-ast@fiberby.net>
- <ZnVR3LsBSvfRyTDD@dcaratti.users.ipa.redhat.com> <0fa312be-be5d-44a1-a113-f899844f13be@fiberby.net>
- <ZnvkIHCsqnDLlVa9@dcaratti.users.ipa.redhat.com>
-In-Reply-To: <ZnvkIHCsqnDLlVa9@dcaratti.users.ipa.redhat.com>
-From: Davide Caratti <dcaratti@redhat.com>
-Date: Wed, 26 Jun 2024 12:01:45 +0200
-Message-ID: <CAKa-r6uqO20RB-fEVRifAEE_hLA50Zch=wbKtX8vNt5m6kE5_Q@mail.gmail.com>
-Subject: Re: [RFC PATCH net-next 2/9] net/sched: cls_flower: prepare
- fl_{set,dump}_key_flags() for ENC_FLAGS
-To: =?UTF-8?B?QXNiasO4cm4gU2xvdGggVMO4bm5lc2Vu?= <ast@fiberby.net>
-Cc: Ilya Maximets <i.maximets@ovn.org>, Jamal Hadi Salim <jhs@mojatatu.com>, 
-	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, David Ahern <dsahern@kernel.org>, 
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240504-pinctrl-cleanup-v2-0-26c5f2dc1181@nxp.com> <AM6PR04MB594163BAB898D8689A94056F88CE2@AM6PR04MB5941.eurprd04.prod.outlook.com>
+In-Reply-To: <AM6PR04MB594163BAB898D8689A94056F88CE2@AM6PR04MB5941.eurprd04.prod.outlook.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 26 Jun 2024 12:02:09 +0200
+Message-ID: <CACRpkdb17buPQVupCRDthvAgMKpvKvRWEN5GbA7pyF9NxymGEg@mail.gmail.com>
+Subject: Re: [PATCH v2 00/20] pinctrl: Use scope based of_node_put() cleanups
+To: Peng Fan <peng.fan@nxp.com>
+Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Dvorkin Dmitry <dvorkin@tibbo.com>, Wells Lu <wellslutw@gmail.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Emil Renner Berthing <kernel@esmil.dk>, Jianlong Huang <jianlong.huang@starfivetech.com>, 
+	Hal Feng <hal.feng@starfivetech.com>, Orson Zhai <orsonzhai@gmail.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
+	Viresh Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, 
+	"soc@kernel.org" <soc@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Patrice Chotard <patrice.chotard@foss.st.com>, 
+	Heiko Stuebner <heiko@sntech.de>, Damien Le Moal <dlemoal@kernel.org>, 
+	Ludovic Desroches <ludovic.desroches@microchip.com>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Aisheng Dong <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Chester Lin <chester62515@gmail.com>, 
+	Matthias Brugger <mbrugger@suse.com>, 
+	"Ghennadi Procopciuc (OSS)" <ghennadi.procopciuc@oss.nxp.com>, Sean Wang <sean.wang@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
+	Joel Stanley <joel@jms.id.au>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Tony Lindgren <tony@atomide.com>, Stephen Warren <swarren@wwwdotorg.org>, 
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, 
+	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
+	"linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>, 
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, 
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
+	"imx@lists.linux.dev" <imx@lists.linux.dev>, 
+	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>, 
+	"openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>, 
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 26, 2024 at 11:49=E2=80=AFAM Davide Caratti <dcaratti@redhat.co=
-m> wrote:
+On Tue, Jun 18, 2024 at 1:52=E2=80=AFPM Peng Fan <peng.fan@nxp.com> wrote:
+
+> > Subject: [PATCH v2 00/20] pinctrl: Use scope based of_node_put()
+> > cleanups
 >
-> So, we must htonl() the policy mask in the second hunk in patch 7,somethi=
-ng like:
->
+> st/stm32/renesas patches are picked. Would you handle the remaining
+> ones?
 
-or maybe better (but still untested), use NLA_BE32, like netfilter does in =
-[1]
+Hm right, I applied all that apply cleanly:
+971c8b4c08e7 (HEAD -> devel) pinctrl: samsung: Use scope based
+of_node_put() cleanups
+3a882554a3bb pinctrl: k210: Use scope based of_node_put() cleanups
+7f500f2011c0 pinctrl: freescale: mxs: Fix refcount of child
+d7f5120a944a pinctrl: pinconf-generic: Use scope based of_node_put() cleanu=
+ps
+240c5f238d59 pinctrl: bcm: bcm63xx: Use scope based of_node_put() cleanups
+3a0278cfb448 pinctrl: mediatek: Use scope based of_node_put() cleanups
+c957ae7e7e68 pinctrl: nomadik: Use scope based of_node_put() cleanups
+3dcc01b36f18 pinctrl: s32cc: Use scope based of_node_put() cleanups
+7c2aabb56f92 pinctrl: at91: Use scope based of_node_put() cleanups
+56c42f6c7b2c pinctrl: rockchip: Use scope based of_node_put() cleanups
+8c5dc2a5b3a7 pinctrl: spear: Use scope based of_node_put() cleanups
+794e5dc533b0 pinctrl: sprd: Use scope based of_node_put() cleanups
+8fa99c00351c pinctrl: starfive: Use scope based of_node_put() cleanups
+11eefc0ac884 pinctrl: tegra: Use scope based of_node_put() cleanups
 
-[1] https://elixir.bootlin.com/linux/latest/A/ident/NF_NAT_RANGE_MASK
+Can you look into rebasing the remaining ones?
 
---=20
-davide
+I am a bit unsure about Samsung, Krzysztof usually pick these, but no big
+deal I guess, if he objects I can just take it out again.
 
+Yours,
+Linus Walleij
 
