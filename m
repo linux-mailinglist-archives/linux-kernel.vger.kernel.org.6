@@ -1,134 +1,131 @@
-Return-Path: <linux-kernel+bounces-231258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F1759189ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:16:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A8469189F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:17:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 184B51F22324
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:16:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8E2BB2171D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567AC190040;
-	Wed, 26 Jun 2024 17:15:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA30318A945;
+	Wed, 26 Jun 2024 17:17:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UoYJ4F5v"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="VMU3PUH2"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0945E16F0DC;
-	Wed, 26 Jun 2024 17:15:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994C416F0DC
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 17:17:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719422154; cv=none; b=WvM/0RTZeIS97PFCukqOjT6OLQeKqnNX5cRVOcElD6zxBTZ3MYrhUuujHr0lTsocgrJeVMgywnJa3f6zMB++UV7s/G0BsXcLhvQnyhyH8i9+dFzNNBXjiOonRAoi+eKMrY8lCZD3dGB0Uv4dDSCEar9TIkS0DApJ2ffQrNpnBHs=
+	t=1719422230; cv=none; b=nSnjvyqd7uuxm5mGL3ecptjzAJZ5qdiJpi6C1POpmoLOUbnGbcu6bxZuhz4yKrE6MCUbrO2KsucotX+igH10yJbZAMmQGhHoe80VqiZ4lfnR9N+tvRNz4PN9F20H6QswTqlQ3oXnBCPZH4s1FdDbkUd/jZyEZyvcxhEFkJm8OxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719422154; c=relaxed/simple;
-	bh=KFeMYf0yXCblwTWoR2tyu0Q3uNiNDyWPSL3bCRQW11c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=mHp6/W5vonrnUJiCtvrJ9sVC7fADqdJcsx/O4rLye+irGDzGBBWToF/mXfNpgN5RIiX539ihlLc1J1iFrSreuCdz9P/U5lnxXU1RlXKo19ZVdQDqhIc6SpVCPr/QktN+Kn0OkxFfI2TEklqu2S1k2K8PmpvMrZYFHWJSA2tKTKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UoYJ4F5v; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QAg4LC025153;
-	Wed, 26 Jun 2024 17:15:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=fzDlqpudN0m8ccLoLjmKvZ
-	jR/yGpFYqoSRyzyV4xtvM=; b=UoYJ4F5vN0yd4wqXHBOFqZfX+1Rhj84Yhjs8rU
-	M5yhD2Du176QZyMMHbB4IiNfJZReGnSZqji48gu4JFtf9VEjaujpwvMnx2pjmKQv
-	evs1WvlmUy/f7WG837Fk0Z+iUYXqriqjQaQ47PTTk+sC72kUdvGRXZgnI5zUgfJY
-	xhMhSQX/V/nnkWV0gVa/QHZ1pc6dUf40QcTDG7YfwdvtaBSmorH8Mujlo/1KSoPa
-	bvDbk3degHnR7gAPU++uM5YDMcuj30CkoC+4kCPFFbtWVQn/mKEWg9xaCLjIJR/C
-	uarFHUX39GevrTZSUFIeLTsMZIaAYfBnTa4w+VDGbJb5vzug==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywp6yt7b6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 17:15:46 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45QHFiWl009815
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 17:15:44 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Jun
- 2024 10:15:44 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Wed, 26 Jun 2024 10:15:43 -0700
-Subject: [PATCH v2] media: videobuf2: add missing MODULE_DESCRIPTION()
- macro
+	s=arc-20240116; t=1719422230; c=relaxed/simple;
+	bh=RYtqPNzmP2LS2A3MM+323p7B2fymwB8mip9tfprdIks=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QEvJSdF418/iWhNsW9nmi0v9S1U/Qx2RgLNj027xtrZA3RtrmGMjxSLmaJaW96uArsYp8b1BdNYiFYDI8wGdbERM6xNyHrGcnrY0t3kyIh920YCPZsykXZGXi7QfwmYnkkJzAxk1K5CJoIXydrsHyoqDT3zSf17Xbno9Cf+IB+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=VMU3PUH2; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2c825f0b381so4065205a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 10:17:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1719422228; x=1720027028; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sfc+bItioWOLi2TuWFqieQ4WdP0MPgrB+J5zxVf671w=;
+        b=VMU3PUH2A+LlDWzCVT7M55+S3S8AKyO6+gOAurgBe8gvChjafdmvpRq23fmX3qECUu
+         GtWmsMU0/9bKRSGYy+LOpJnItCDpm3ZO2x/06YOBAxVogi3mo09Bb+wHPDyUd21PJRdo
+         rpDO5BUijhMLiAjq/Zh9b+fEjY42HK4mvQ0FScNYlSQ6E17t8IhvuhKg6wsA23WgOnvY
+         t/jDsaJsB7R19c6imzwlPC8uhxemMl54zdt1rtlfl9Xvau/IJvQh74w2VtHFvE0MDNFy
+         TYalodumO6vWzWApezs01Vipi8PkfmfME2U3H6hkiHKhbxB8K0+NoJHRV6NTUoswKFoR
+         347g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719422228; x=1720027028;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sfc+bItioWOLi2TuWFqieQ4WdP0MPgrB+J5zxVf671w=;
+        b=ncE+xBDgqK/OlS6UsKuj1Un/IimREkNcQI6uxFKALHp/KO5CWuAjw8vzVRJd8qLseE
+         M0krUSfoPEH1UUNJl21lM4MW0slDVklYdlhA2+lr2TftxyMgkgAIrIHY1GFscqQ3aur4
+         4IA9+8rzC9VWU01OI8XT5t8adOY5YT+XUluWbtaS6O1uuFeJ8HqA7rZTGvb9J0nwshei
+         pkYOouUnc1J5ABxZBAfBx9PfCjOE/Rn+/pRPE88lRKX3Njyho26eU0EhoKDtDjB6IbaN
+         xpGlck+45y3MP+VUnQsUoTKS+ER2fbW0QtAAHMzYOWf5RPbJbazed6p2ZXCM+zRTN6HI
+         adRw==
+X-Forwarded-Encrypted: i=1; AJvYcCV115Qz7bzxVHKKjmHBb5ZQQMrWvyjxYxmXgICPudfdK6LheSuAj4A+SfbIUAWoPeoQOz4uelZWOmhiHCSGF71i+tuAOqq4FyrJb1D0
+X-Gm-Message-State: AOJu0YyaweoNS5sdVFFWP/QGIYGACNPaoYS3CH+G/NcFI5O3uApZI4DW
+	bKyMDHom5k7csqJnAcbnEXj0f2jjTrvWt90w5Sh+KAKD9u3FW8pC3Omr0tJqnTU=
+X-Google-Smtp-Source: AGHT+IFRRYAJqPRgI7bs8MXpEZG6vyONCJH7c7jAbKBR0F7SXl7y1eqCXlLYI6Wy4OsF9R8wyxyQng==
+X-Received: by 2002:a17:90b:b0b:b0:2c8:53be:fa21 with SMTP id 98e67ed59e1d1-2c853befb16mr11452942a91.34.1719422227952;
+        Wed, 26 Jun 2024 10:17:07 -0700 (PDT)
+Received: from jesse-desktop.. (pool-108-26-179-17.bstnma.fios.verizon.net. [108.26.179.17])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c8f3b5ad36sm83217a91.26.2024.06.26.10.16.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 10:17:07 -0700 (PDT)
+From: Jesse Taube <jesse@rivosinc.com>
+To: linux-riscv@lists.infradead.org
+Cc: Ard Biesheuvel <ardb@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Jesse Taube <jesse@rivosinc.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Wende Tan <twd2.me@gmail.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>,
+	Chen Jiahao <chenjiahao16@huawei.com>,
+	"Mike Rapoport (IBM)" <rppt@kernel.org>,
+	"Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH v2 1/3] RISC-V: pi: Force hidden visibility for all symbol references
+Date: Wed, 26 Jun 2024 13:16:50 -0400
+Message-ID: <20240626171652.366415-1-jesse@rivosinc.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240626-md-drivers-media-common-videobuf2-v2-1-6b2ea3d07353@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAL5MfGYC/5WOSw6CMBRFt0I69hla+Ygj92EY9POQl9hWW2gwh
- L1b2IHDk9x77l1ZxEAY2a1YWcBEkbzLIE4F06N0TwQymZkoRVU2XIA1YAIlDBEsGpKgvbXeQSK
- DXs2DALwMqr42bVN2gmXPO+BAy7Hx6DMrGRFUkE6Pu/lFbl7Ayjhh2OMjxcmH7/Eo8b30z3jiw
- KFqRC0Vb8VguvtnJk1On3OU9du2/QDlppqp8wAAAA==
-To: Tomasz Figa <tfiga@chromium.org>,
-        Marek Szyprowski
-	<m.szyprowski@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.14.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: zCwOKPLLEKjmBbMlzoY8rEj7KcKrM8JI
-X-Proofpoint-ORIG-GUID: zCwOKPLLEKjmBbMlzoY8rEj7KcKrM8JI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-26_08,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 bulkscore=0
- phishscore=0 adultscore=0 mlxscore=0 suspectscore=0 malwarescore=0
- clxscore=1015 lowpriorityscore=0 spamscore=0 priorityscore=1501
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406260127
+Content-Transfer-Encoding: 8bit
 
-With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/common/videobuf2/videobuf2-dvb.o
+Eliminate all GOT entries in the .pi section, by forcing hidden
+visibility for all symbol references, which informs the compiler that
+such references will be resolved at link time without the need for
+allocating GOT entries.
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+Include linux/hidden.h in Makefile, like arm64, for the
+hidden visibility attribute.
 
-Acked-by: Tomasz Figa <tfiga@chromium.org>
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+Signed-off-by: Jesse Taube <jesse@rivosinc.com>
 ---
-While doing these cleanups, in most cases I've taken the descriptions
-directly from code comments, Kconfig descriptions, or git logs, but in
-this case I didn't see a nice concise description so I invented this
-one. Please suggest a replacement if this isn't an appropriate
-description.
----
-Changes in v2:
-- Updated description per Tomasz and added the Acked-by tag
-- Link to v1: https://lore.kernel.org/r/20240612-md-drivers-media-common-videobuf2-v1-1-4625ab172fd9@quicinc.com
----
- drivers/media/common/videobuf2/videobuf2-dvb.c | 1 +
+ arch/riscv/kernel/pi/Makefile | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/common/videobuf2/videobuf2-dvb.c b/drivers/media/common/videobuf2/videobuf2-dvb.c
-index 8c15bcd07eef..a5d69bc75769 100644
---- a/drivers/media/common/videobuf2/videobuf2-dvb.c
-+++ b/drivers/media/common/videobuf2/videobuf2-dvb.c
-@@ -19,6 +19,7 @@
- /* ------------------------------------------------------------------ */
- 
- MODULE_AUTHOR("Gerd Knorr <kraxel@bytesex.org> [SuSE Labs]");
-+MODULE_DESCRIPTION("Videobuf2 helpers library for simple DVB cards");
- MODULE_LICENSE("GPL");
- 
- /* ------------------------------------------------------------------ */
-
----
-base-commit: 55027e689933ba2e64f3d245fb1ff185b3e7fc81
-change-id: 20240612-md-drivers-media-common-videobuf2-e3fb58676092
+diff --git a/arch/riscv/kernel/pi/Makefile b/arch/riscv/kernel/pi/Makefile
+index 50bc5ef7dd2f..1ef7584be0c3 100644
+--- a/arch/riscv/kernel/pi/Makefile
++++ b/arch/riscv/kernel/pi/Makefile
+@@ -5,6 +5,7 @@ KBUILD_CFLAGS	:= $(subst $(CC_FLAGS_FTRACE),,$(KBUILD_CFLAGS)) -fpie \
+ 		   -Os -DDISABLE_BRANCH_PROFILING $(DISABLE_STACKLEAK_PLUGIN) \
+ 		   $(call cc-option,-mbranch-protection=none) \
+ 		   -I$(srctree)/scripts/dtc/libfdt -fno-stack-protector \
++		   -include $(srctree)/include/linux/hidden.h \
+ 		   -D__DISABLE_EXPORTS -ffreestanding \
+ 		   -fno-asynchronous-unwind-tables -fno-unwind-tables \
+ 		   $(call cc-option,-fno-addrsig)
+-- 
+2.45.2
 
 
