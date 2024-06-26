@@ -1,134 +1,105 @@
-Return-Path: <linux-kernel+bounces-230818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E71C918245
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:25:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F32D8918248
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:25:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46C241F22C4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:25:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEDFB2825FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:25:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACCA518309C;
-	Wed, 26 Jun 2024 13:24:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0799D181BB8;
+	Wed, 26 Jun 2024 13:25:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="ZP9aKADi"
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WjcDgGmP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5188A181BB8
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 13:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4294217D34D;
+	Wed, 26 Jun 2024 13:25:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719408287; cv=none; b=BumAMuA03P7iRoErYPTRpEeFyhM7jkfzsWgv1oGHQVeAGWdE+5cHaJ6KdiMgGUMZIWXZTi+b+Xfvv4hREkKSN6LtwCmKPIb53zXM/ZIHDfmiouBNWWuIWGl1G0yphnm/IuZZjY5dIvxkdQTb4rI8o/ZEu7eWXlO2YODhWR1u318=
+	t=1719408312; cv=none; b=hZSD4aDuxBc7gj8dto6hhjU5MQHmB4jhYtEoNNcnipxAaabpbTTFMVK/dL9jZAnqap0IIaTdqFQBFZG+Xh55kgqY6Uz5NnlVQbTudJGSJrHIGH0svI5m2igVhsFpbGWSEROZuju7Ib/Ny5iMjCAIqRRG7EVlg3msxURNo6Hkqyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719408287; c=relaxed/simple;
-	bh=0gdryHBCLxjbkn2nn9kVoQ75BunZ6TaLK7IoY+AEzJ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SY5Yu9srIhGQ4f5APSENSwelPesKt0N4JvPOXnjwW/iDabGhT4RWIiMQLEZctTqMBy8RyxAGPPZmwtxmFLoO9TFwd6M+D6wCc+cJ6AwDR1IoyHaAAsdShToXTOSpY5NtNNoxH33lKjUddWmltRK/Ps69JmNUxZvZPyLap4J0030=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=ZP9aKADi; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3c9cc681ee4so3475554b6e.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 06:24:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1719408283; x=1720013083; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Wkp55ahjVZ0Rfp573fGCok3PgZ8FQzhwmhHHebz4g1I=;
-        b=ZP9aKADioZThtluG5R6R6SBUdoG84x+ycRWK1vh8HPzLhHiTSmL5Yup12rqKJFx2P5
-         e4Cs36G80h4RNKSKUU6sIi1mwHV7HQ9OY7jTGwXtkwHvb3JM1VbWLG2QTcPeDwzwuMe7
-         fdTv5IWG/d3hsSCxIQyEtNVIbPu/JtmEP7XKYqW3PDRNNRlyDfmTnLejNmmZb3RHvPY0
-         gefO2iuBf8OOod9vMvSLvrMBSMdDdMLwKdkyXHsn5zfVuKt/eX6wUaDlfdesAiWZC3jx
-         dwWDCGJ4XfuRdytRTcnucHMs0nbASOaqpKMpMSl9jXrzNv6kQv737WVFF9/FemOWvP9E
-         PBSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719408283; x=1720013083;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wkp55ahjVZ0Rfp573fGCok3PgZ8FQzhwmhHHebz4g1I=;
-        b=siYVzW5RVzwlieObpM9WaylhGLOSKkRErAtg8Sl97SDBdY5mW2LWTwcYvHDlrLvQnX
-         ozhxsiwtz+ToJL49cGOKzUEfc7a2VZxcP2SKrAkR/mWleG4sK4BnX4SA8MGqFMW6vjc3
-         z9Rz1LvCHxUpPJkH+RRWmXh0k1n0pE6sm1zdOVEDg6ZHLiUqBDf1Hcux9jYcCH6fS4E/
-         tW0lYH65LFLtlxTixwWaL5jZkMjQj7OglEv+8kn+q/9PxG2F7kAIXz+kd+RSp4Vd+Iwm
-         Zqdo9I2Vx9HlL/Yo/yEgpvUBQCdkekPOGdbcyJ/is7jeMzYiJxV2PIsko1GKi1omkWWu
-         Z4qA==
-X-Forwarded-Encrypted: i=1; AJvYcCVJJ5Gd1oOXjiZ8AL0KUxbxgkpBjegHacfDhdOkYXHoLM6tv80DamoGuh4O5xPCHeYzCzzlRanmYQHPTMSExkeZj1lySQnJ4EINdqz7
-X-Gm-Message-State: AOJu0YxWxTL9NCiJRyRbhQ4SwydNgW1KQTN65eCk8cojrF+reVb3e9AI
-	vCjKzWiQaGBFvdqtW+pQqkdIbebFq9hvJ7BFE9jKawWpKvbjgmb3uD22Z2Fn7g8=
-X-Google-Smtp-Source: AGHT+IGjUEEcz36KEcz+5nyRJUX3HiZuhEGJ4dUtFILeDTtVRJBPYTVudg8HhkaZzHTox5uiPEmTvA==
-X-Received: by 2002:a05:6808:f87:b0:3d2:83:341c with SMTP id 5614622812f47-3d545a89b08mr12556384b6e.51.1719408283452;
-        Wed, 26 Jun 2024 06:24:43 -0700 (PDT)
-Received: from [100.64.0.1] ([147.124.94.167])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d5344086c5sm2320908b6e.0.2024.06.26.06.24.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Jun 2024 06:24:42 -0700 (PDT)
-Message-ID: <96ff4dd2-db66-4653-80e9-97d4f1381581@sifive.com>
-Date: Wed, 26 Jun 2024 08:24:38 -0500
+	s=arc-20240116; t=1719408312; c=relaxed/simple;
+	bh=Z37XRrmWvVILWMnkjGGDKcM3OK2JNge9DvmvgsYx/vs=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=WLKiU2W1Hxa9TQ8LHaKG53igk6D7mRyCsFNjgNcJFBQ7uWbXuBzxAChHuwo3tK7BSs837UTArfDJF4Og2xxptO5FnQpj2ULrTrCsWWKK3dMacAKK06jA/LeZAKgUyi9tFzH/BEtYJbghLw91OA1Gx0xUskpbO9NMOUTLLID7+/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WjcDgGmP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98D42C32789;
+	Wed, 26 Jun 2024 13:25:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719408311;
+	bh=Z37XRrmWvVILWMnkjGGDKcM3OK2JNge9DvmvgsYx/vs=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=WjcDgGmPDPxeGeVOYqx3XflypyDVyUQ8wwWqn4i5CK2w6bQod3AHMFd6BRvJxJg4P
+	 E2vdQuxkw9e7npfhsTClna0ER5pDDv7KGl/O6S0CexOQBEhwJFGdcDaXttsDmyJ+Sb
+	 9bDK5Y0k3hi9tY/l6nlF4EmcAEUAGqFRlafKkVk+ksStQYleLe20M1V4LsGrishE1u
+	 UvseVSo2ae9Zm5dsBI0hCJOVyIScEHwuKcAqBq4eU2doQSv/RRBUjH7f3k1gpeLqKH
+	 ui21FEnDnQb/jteeNC/6sWcHYL47PGqyTsbQUaVD1B45Sw+pKdxafb0KqoKTc779uv
+	 gzaTn5YdX3g2A==
+Date: Wed, 26 Jun 2024 07:25:10 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] drivers/perf: riscv: Reset the counter to hpmevent
- mapping while starting cpus
-To: Atish Patra <atishp@rivosinc.com>, linux-riscv@lists.infradead.org,
- kvm-riscv@lists.infradead.org
-Cc: Atish Patra <atishp@atishpatra.org>, Anup Patel <anup@brainfault.org>,
- Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Andrew Jones <ajones@ventanamicro.com>,
- Conor Dooley <conor.dooley@microchip.com>,
- Palmer Dabbelt <palmer@rivosinc.com>,
- Alexandre Ghiti <alexghiti@rivosinc.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org
-References: <20240626-misc_perf_fixes-v3-0-de3f8ed88dab@rivosinc.com>
- <20240626-misc_perf_fixes-v3-2-de3f8ed88dab@rivosinc.com>
-Content-Language: en-US
-From: Samuel Holland <samuel.holland@sifive.com>
-In-Reply-To: <20240626-misc_perf_fixes-v3-2-de3f8ed88dab@rivosinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Andy Yan <andyshrk@163.com>
+Cc: dsimic@manjaro.org, linux-kernel@vger.kernel.org, 
+ linux-rockchip@lists.infradead.org, heiko@sntech.de, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <20240623083413.2051412-1-andyshrk@163.com>
+References: <20240623083413.2051412-1-andyshrk@163.com>
+Message-Id: <171940790600.2950728.17625531433842246632.robh@kernel.org>
+Subject: Re: [PATCH] arm64: dts: rockchip: Fix the i2c address of es8316 on
+ Cool Pi 4B
 
-On 2024-06-26 2:23 AM, Atish Patra wrote:
-> From: Samuel Holland <samuel.holland@sifive.com>
+
+On Sun, 23 Jun 2024 16:34:13 +0800, Andy Yan wrote:
+> According to the hardware design, the i2c address of audio codec es8316
+> on Cool Pi 4B is 0x10.
 > 
-> Currently, we stop all the counters while a new cpu is brought online.
-> However, the hpmevent to counter mappings are not reset. The firmware may
-> have some stale encoding in their mapping structure which may lead to
-> undesirable results. We have not encountered such scenario though.
+> This fix the read/write error like bellow:
+> es8316 7-0011: ASoC: error at soc_component_write_no_lock on es8316.7-0011 for register: [0x0000000c] -6
+> es8316 7-0011: ASoC: error at soc_component_write_no_lock on es8316.7-0011 for register: [0x00000003] -6
+> es8316 7-0011: ASoC: error at soc_component_read_no_lock on es8316.7-0011 for register: [0x00000016] -6
+> es8316 7-0011: ASoC: error at soc_component_read_no_lock on es8316.7-0011 for register: [0x00000016] -6
 > 
-
-This needs:
-
-Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
-
-otherwise your commit message looks fine to me.
-
-> Signed-off-by: Atish Patra <atishp@rivosinc.com>
+> Fixes: 3f5d336d64d6 ("arm64: dts: rockchip: Add support for rk3588s based board Cool Pi 4B")
+> Signed-off-by: Andy Yan <andyshrk@163.com>
 > ---
->  drivers/perf/riscv_pmu_sbi.c | 2 +-
+> 
+>  arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/perf/riscv_pmu_sbi.c b/drivers/perf/riscv_pmu_sbi.c
-> index a2e4005e1fd0..94bc369a3454 100644
-> --- a/drivers/perf/riscv_pmu_sbi.c
-> +++ b/drivers/perf/riscv_pmu_sbi.c
-> @@ -762,7 +762,7 @@ static inline void pmu_sbi_stop_all(struct riscv_pmu *pmu)
->  	 * which may include counters that are not enabled yet.
->  	 */
->  	sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_COUNTER_STOP,
-> -		  0, pmu->cmask, 0, 0, 0, 0);
-> +		  0, pmu->cmask, SBI_PMU_STOP_FLAG_RESET, 0, 0, 0);
->  }
->  
->  static inline void pmu_sbi_stop_hw_ctrs(struct riscv_pmu *pmu)
-> 
+
+
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y rockchip/rk3588s-coolpi-4b.dtb' for 20240623083413.2051412-1-andyshrk@163.com:
+
+arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts:286.25-300.4: Warning (i2c_bus_reg): /i2c@fec90000/audio-codec@11: I2C bus unit address format error, expected "10"
+
+
+
+
 
 
