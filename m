@@ -1,160 +1,124 @@
-Return-Path: <linux-kernel+bounces-230279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E3C1917AC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:20:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DC81917ACD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:22:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E7561C21E7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:20:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC1E928754E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:22:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7EAE16191A;
-	Wed, 26 Jun 2024 08:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3919161314;
+	Wed, 26 Jun 2024 08:21:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u9JLOF7l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="BxYZylXp"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F63160796;
-	Wed, 26 Jun 2024 08:19:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B49E71750;
+	Wed, 26 Jun 2024 08:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719389997; cv=none; b=leGbUA0IZKVzRwkmGdm3kHYIxX/mzXvUujZPXy3Zst1ZtykbvkhAYVJL9j+nGFj1M7jl1LbzbA81tgMs9xkHvumliH/aqepB2emgCcggnr8fdcYbiNnyfxLydFru7MUP0WYvVFLw/0SN77HcSregGrrqi2SgXXA/qd6lHBklSy8=
+	t=1719390113; cv=none; b=orSi21ASzArBIjPp14Kc+3Tf0N8ELYEich+d4NDPmCg92IEBcYuc6hNWjbSm8Xqxp1lO/n0RW1zd3zVacIAOTMEB+xcHd8afRyyeqHQRZk++sfHUTBLscixv0Kgxvvx6PWdNjypE07xZHWj9gv3EhcYQLNgOFB2uMdvLSSGqlXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719389997; c=relaxed/simple;
-	bh=E4oJGv2ln2F2mkHKg0UbQEmnSuGrODj0fkfA9bN5peI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sCtAavcIdeNx1MYRbu/YGFXWgQ06QtysS2wjThcHZ83UyjZ0appv8eqQD/hqdPsmrGxcxqS2GJMmQlsO+8o/uJZlvhzlGC6iBusHPoePsCm4VG3o+hAGSnkLrCM0uydfa7h8RHXGdLLtcP3cRhOJ6Vk+PpgDdQYxD232nuJWDRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u9JLOF7l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86D6AC4AF09;
-	Wed, 26 Jun 2024 08:19:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719389996;
-	bh=E4oJGv2ln2F2mkHKg0UbQEmnSuGrODj0fkfA9bN5peI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u9JLOF7l/LQc72Xi9LTPGpSarhpjtdwbfoclqsxQ4iynBlNSbXJk65aStw3Xpoo6k
-	 PZMrYCk1rk34uMZuA/XV+5t6IpjQP0sfJvVrXnH/KZzRPGvk4GwEUe1TG33dIuEIsd
-	 qAFKqEAowip7IvdR2uU61HTUjklCO15fZNX1m0Tj8k52OYAxrA857O198pLHhlzgce
-	 KklT+2wAYffkn6ZOIppL/74dnQFGyT1biwMrXNkZ5XSLn0zBuMRvLKaB7eLrY9m77O
-	 V/7It5joG3n9XpJd8UjLFVY/WVviLc/0F93UXaI5fJpYkECg8kxygu9qXZljdZRVQP
-	 7ez6oestrwL8g==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sMNss-000000000hd-25Eq;
-	Wed, 26 Jun 2024 10:20:06 +0200
-Date: Wed, 26 Jun 2024 10:20:06 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	linux-arm-msm@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	Stephen Boyd <swboyd@chromium.org>, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v4 8/8] serial: qcom-geni: Rework TX in FIFO mode to fix
- hangs/lockups
-Message-ID: <ZnvPNiWWIIsugbhN@hovoldconsulting.com>
-References: <20240610222515.3023730-1-dianders@chromium.org>
- <20240610152420.v4.8.I1af05e555c42a9c98435bb7aee0ee60e3dcd015e@changeid>
- <Znlp1_F1u-70D3QQ@hovoldconsulting.com>
- <CAD=FV=XmuKUKvCq7gG+wM-jAAgHLHnYw4NteFEKz5Fmczd=U7g@mail.gmail.com>
- <ZnqoKDnUMxqf7QRy@hovoldconsulting.com>
- <CAD=FV=Ux+ro90xnEEnALiwtjnOk+LT_qaHmE8jS7adWgBPSDbg@mail.gmail.com>
+	s=arc-20240116; t=1719390113; c=relaxed/simple;
+	bh=iPZDnVrroO2D1Flc6sqGZhiSJ4YlhKmPPUk41D8XZyg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jfD4HlmVCO0sx76umf20z2Cw39vLM9X2Ikl7BM8wyH/KAzRordPCruGYuXnw7TpOGX3kvdy3BtwL4UIIttTI7Z5TcHokmvA48NxTu5ONg2PvP/X/AdtuNy7JX3uJS67FQzvSMzQRNAuZCFRiu/XHg4IIi6y5AuN3z82f03aFVK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BxYZylXp; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 438841C000E;
+	Wed, 26 Jun 2024 08:21:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1719390102;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=b8qnKg4uujdTlh3ooNhu0wfOHPZK7SlfbfmzSG+uLRY=;
+	b=BxYZylXp9trrwUQ1wFN+TlgqJQ/Ytf9R5TR2jXUZGgQDaWBdd6A5Ue3YhaXYzA5kPpHztp
+	zh20ycAPIWnD3Horl4hshgEMCUKC+6uSkZMXSddddXG1//PDVw8xoQp+4aFav/2a0Idda6
+	WlFSlbJoaiOscjDvbk9bxXwWHtl1+C8fOVfQKpzgvHkBcM/WKzgN9tkSUTMDruz+TPr0Cs
+	DM+erYYbiqSEJDx0vZPXmlSnQGlJ1GnrE1rEyxbUHdgFyBYlkt7I2ICkQffDFn5wxbeRcC
+	7sYa9LCgva36Q30xCVNVKgSRpAHvWeT8C5Adn4I3BE4vey+0H1MI6+dDGti24Q==
+Date: Wed, 26 Jun 2024 10:21:40 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Sai Krishna Gajula <saikrishnag@marvell.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>, Oleksij
+ Rempel <o.rempel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org"
+ <netdev@vger.kernel.org>, Dent Project <dentproject@linuxfoundation.org>,
+ "kernel@pengutronix.de" <kernel@pengutronix.de>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH net-next v4 4/7] net: pse-pd: Add new power limit get
+ and set c33 features
+Message-ID: <20240626102140.1aac4593@kmaincent-XPS-13-7390>
+In-Reply-To: <BY3PR18MB4707C5C95955ED5CA2D7CA60A0D52@BY3PR18MB4707.namprd18.prod.outlook.com>
+References: <20240625-feature_poe_power_cap-v4-0-b0813aad57d5@bootlin.com>
+	<20240625-feature_poe_power_cap-v4-4-b0813aad57d5@bootlin.com>
+	<BY3PR18MB4707C5C95955ED5CA2D7CA60A0D52@BY3PR18MB4707.namprd18.prod.outlook.com>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD=FV=Ux+ro90xnEEnALiwtjnOk+LT_qaHmE8jS7adWgBPSDbg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Tue, Jun 25, 2024 at 07:29:38AM -0700, Doug Anderson wrote:
-> On Tue, Jun 25, 2024 at 4:21 AM Johan Hovold <johan@kernel.org> wrote:
+On Tue, 25 Jun 2024 18:49:26 +0000
+Sai Krishna Gajula <saikrishnag@marvell.com> wrote:
 
-> > Right. But with a 16 1-byte word FIFO, we may be able to kick of a
-> > really long transfer and just keep it running until it needs to be
-> > kicked again (cf. enabling TX). The console code can easily insert
-> > characters in the FIFO while the transfer is running (and would only
-> > have to wait for 16 characters to drain in the worst case).
-> >
-> > Effectively, most of the identified issues would just go away, as
-> > there's basically never any need to cancel anything except at port
-> > shutdown.
-> 
-> Yeah, though you'd still have to make sure that the corner cases
-> worked OK. You'll have to pick _some_ sort of fixed transfer size and
-> make sure that all the special cases / console / kdb work if they show
-> up right at the end of the transfer.
+> > + * Return: 0 on success and failure value on error  */ int
+> > +pse_ethtool_set_pw_limit(struct pse_control *psec,
+> > +			     struct netlink_ext_ack *extack,
+> > +			     const unsigned int pw_limit)
+> > +{
+> > +	int uV, uA, ret;
+> > +	s64 tmp_64;
+> > +
+> > +	ret =3D regulator_get_voltage(psec->ps);
+> > +	if (!ret) {
+> > +		NL_SET_ERR_MSG(extack,
+> > +			       "Can't read current voltage");
+> > +		return ret;
+> > +	}
+> > +	if (ret < 0) {
+> > +		NL_SET_ERR_MSG(extack,
+> > +			       "Error reading current voltage");
+> > +		return ret;
+> > +	} =20
+>=20
+> Is there any significance of checking "ret" value against '0' and '< 0'
+> separately?  Just trying to understand, these checks reflect regulator
+> failure etc..?
 
-Yes, there are some details like that would need to be worked out.
+In fact having ret =3D 0 is not an error for regulator_get_voltage() but wi=
+th a 0
+value I can't calculate the currrent.
+I will update the error message and return value:
 
-> I was also a bit curious if there could be power implications with
-> leaving an active TX command always in place. Perhaps geni wouldn't be
-> able to drop some resources? Do you happen to know?
+NL_SET_ERR_MSG(extack, "Can't calculate the current, PSE voltage read is 0"=
+);
+return -ERANGE;
+=20
+>  [...] =20
+> Reviewed-by: Sai Krishna <saikrishnag@marvell.com>
 
-Hmm, good point. I'll see if I can ask someone with access to docs.
+Thanks!
 
-But I guess we can still continue to stop the command on stop_tx() (as
-we are considering anyway) to avoid that.
-
-> > I didn't do an in-depth analysis of the slowdown, but I did rerun the
-> > tests now and I'm still seeing a 22-24% slowdown on x1e80100 with rc5.
-> > This is a new platform so I compared with sc8280xp, which shows similar
-> > numbers even if it's slightly faster to begin with:
-> >
-> >                                         sc8280xp        x1e80100
-> >
-> >         rc5 full series                 61 s            67 s
-> >         rc5 last patch reverted         50 s            54 s
-> >
-> > I have a getty running and cat a 10x dmesg file of 543950 bytes to
-> > /dev/ttyMSM0 from an ssh session (just catting in a serial console gives
-> > similar numbers).
-> 
-> That's really weird / unexpected. Your hardware should be fancier than
-> mine so, if anything, I'd expect it to be faster. Is there something
-> causing you really bad interrupt latency or something? ...or is some
-> clock misconfigured and "geni" is behaving sub-optimally?
-
-That may be the case. I'm not seeing more interrupts with the last patch
-applied, and not more time spent servicing interrupts (based on a quick
-look at top), so it may just be geni taking a lot of time to start or
-stop commands.
-
-> ...although it wouldn't explain the slowness, I'd at least be a little
-> curious if you've confirmed that you're running with a 16-word FIFO
-> depth. See the function geni_se_get_tx_fifo_depth() where newer
-> hardware can actually have larger FIFO depths.
-
-No, I had confirmed that it is using 16 words (64 bytes).
- 
-> Just in case it matters, I'd be curious if you have
-> `CONFIG_IRQ_TIME_ACCOUNTING=y`
-
-I do, yes.
-
-> Oh: one last thing to confirm: do you have kernel console output
-> disabled for your tests? I've been doing tests with the kernel console
-> _not_ enabled over the serial port and just an agetty there. I could
-> believe things might be different if the kernel console was sending
-> messages over the same port.
-
-Yes, there has been no console output during my tests, and I get similar
-results with the console disabled.
-
-Johan
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
