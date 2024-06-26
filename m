@@ -1,211 +1,286 @@
-Return-Path: <linux-kernel+bounces-231324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3D32918E21
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 20:18:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B93F3918E1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 20:18:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5825A287829
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:18:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB7E91C21701
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1297B190486;
-	Wed, 26 Jun 2024 18:18:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A668190482;
+	Wed, 26 Jun 2024 18:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="j5o1QJIw"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2tLXVKKT"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2052.outbound.protection.outlook.com [40.107.236.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02DA414A0B8;
-	Wed, 26 Jun 2024 18:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719425915; cv=none; b=WCxHmdV3tNNhlXQeytU3amtMjxO5n6Dr6WDT3M6IPlMPGdx851225Zj/Sfi8MIMCbtJQaMG+j91aZxnOAw6MEyIIys2uRAVyz+7SEKJuGN8xrN4vtCuRErlkfDhcyQ1T2ohX+C1n4/IDudTbhxUOtkJjy6/UABlPXoEy7Hw4+Hk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719425915; c=relaxed/simple;
-	bh=WGeoyyLVhK3cLhQ7DcCKMD+Kd77iU04WzDA7AjlBRAA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qHpf5oU4MpSYkGAT94q5jmKd3swyVJEZsF7klBJq/xc31186AnDiBETFb9m6ukysbqpQFY/G8Qd2KFQl2W0xgrAQ131V3zymwQ8T4cSpz5HmMaSZh/ako7q/wdpoka9IveEzU3GEDMbyv2Qiok2wFX6+W6UWVU+VmkG9hpVm/Uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=j5o1QJIw; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 90DC140E021E;
-	Wed, 26 Jun 2024 18:18:28 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Txi98T6lQtmU; Wed, 26 Jun 2024 18:18:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1719425904; bh=lYNYfiKZ02/BE03DsGOOWO9xzev2BP8d1KQA4kQbUwE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j5o1QJIwGo6fp8AqB3Pb/PDZIgNgWLF1406cZ7DbW1QFovRhnpHMioo/r9O+MkUOh
-	 nSTe0IrK+tccDUOJPN4odL16/b5UMwvJKH6TYuTcOF1Si9AnS+Ydj8wrP5mPjchU7p
-	 6tyFbNuOWEVM7mI+WOUO+KImS1+hviz3TOwRJ2wBxdxcrpV+/i5EACB+isyJQdzzUA
-	 iDXU8UMqMNlI+6aYb/FExqYczw4rYGQjq069dpzDVMSCYkegSUlhgw6w3novNNxERp
-	 dKD9RmYvlAPpe2TvQWjq7AcmhhwgmyNWJUyPtfRWNf4CoCsABxgUfuMKzRGcTj9fDo
-	 EzEC+jBPfIHL6POkgQaTHpNCTzqLCqoO13hs/krxSq/qQJiKx8UC6rEkH0AB0Whv4a
-	 Caqdt0jqR5e8ziz+GAc2oW0uNzP5FUMivbrrSTfL8hCh2mRNcda1UtScbvoEuz/7CZ
-	 d7mSYQihaMqWmyXo9VAHwK5DQ/q3H4h9lGu6q8O40aSy/Cipm9qVc2CU3R7XhkOFd/
-	 GykmyN/mKVHwkCDIey1CSzurFLa3VVwYI1BhLOxmoBDXUmc+yS5bR21celA/SO5pb0
-	 uk7LO2VC6/GTJJlUdZlk8EMgQJTB78Wk6ZFpvemjaVWGZ966PsdDoWRaOQqWjQ1S2m
-	 KNtG7JbsujFapOzCiLlrErZM=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 277E640E01D6;
-	Wed, 26 Jun 2024 18:18:06 +0000 (UTC)
-Date: Wed, 26 Jun 2024 20:18:05 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Naik, Avadhut" <avadnaik@amd.com>
-Cc: x86@kernel.org, linux-edac@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tony.luck@intel.com,
-	rafael@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-	rostedt@goodmis.org, lenb@kernel.org, mchehab@kernel.org,
-	james.morse@arm.com, airlied@gmail.com, yazen.ghannam@amd.com,
-	john.allen@amd.com, Avadhut Naik <avadhut.naik@amd.com>
-Subject: Re: [PATCH v2 2/4] x86/mce, EDAC/mce_amd: Add support for new
- MCA_SYND{1,2} registers
-Message-ID: <20240626181805.GDZnxbXRJlCecNeDGW@fat_crate.local>
-References: <20240625195624.2565741-1-avadhut.naik@amd.com>
- <20240625195624.2565741-3-avadhut.naik@amd.com>
- <20240626111036.GOZnv3LFCPnYfrRYSE@fat_crate.local>
- <6c318161-9ae4-4965-b8f3-e38bf1393628@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DCE14A0B8;
+	Wed, 26 Jun 2024 18:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719425906; cv=fail; b=PNlnFjUjdFPIcwniC8lmKpCc01m3QvJw9Zy5qS0HnBsLw/w/5pnL2DljSQrKAbsHz4h+H3gm2abqvXk1THfcdzHZXomQj4Ng/yR41Kr6uWySJ+bUuP0BlSvu+29YACR6wjZgRO5+T7My4f9OOuYfoA0dBw8mR5r4tTBelPyFTr4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719425906; c=relaxed/simple;
+	bh=3LP0yOCvPXB9cgZIQdi4gCf10FMJ6d+qkCldOmPp0mY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=T+/82mED1XUvNeFvre5ycsyArABGLri4OB3VS7SAJS4JUH5FPD2f/1sEpIq4MfzB3la2x/Qw7R9+5qaQ0N4gJlD3TA7huJtDke0bzZ9rwRJ1hp7N2lc7etu4JtWl04CT+vyOZ9Ur5v8rd0agCQtRtDV56f8tXGhWE3E0r8y9YQ4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2tLXVKKT; arc=fail smtp.client-ip=40.107.236.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=NVXaG+TN9Va041fTazJCjIaBcKC4c3YFKug1gpCu+odxtVc/w/DeHmLU22FGqGkbj6jYUWTYfx+Ld9YZCQcAfuRHVnBf3ghfAyX3PDmyO1kV+WlwG7j/vzap0DLTorR1hmSKP4fBk6zsGhVJJatzAMcoXGuM5qNo207Kne4FrgdPeAwlWpAFVxRYU8JIrmBcO8LBdnPPE7582Ac9SyAttzcSrCnK6L/01VZ0wh0YYsipOIWNLfWKqE++zsWrw05cVDZ5G/3Ken3sVSl3x7yvxljz6kW8X1NKyJ0HuhYs6xAs+nI6j2O39eq57x9WGael6+AGOK6f9IZPiq/+6ZUX1Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1M9PWTHtX6d3WQ2Pr4dkBAAYEFUKoLsxk2cJwOrfwkA=;
+ b=RQCyVVvoy6MUFf2YgC3myld2y27jW8rMHm6jg4FpgEayzZtCgHX+fRf3aUVGa16LabEf8zvQJsz+92ia60tIsnN57s86uG8ppgDoOlPZPmH0eNrtPRk5s97fAewenABoL37dakopLJZEk5R4lNh6Hv0vHFyjjuGOb3WNlrW6HDDxsnhlUbhub81bfPaVBT2iYm5JhqpMofxaTTKbP4DAAgckDxWgORkgLeYp3pXZQFOR0cN4ue/p4RgnLrliFtgoBOHIi/gmjilXVjXDC2PStAuqJ6uISOOYWAFhMydSj9x2xlNyXKzapXYXzJJ2401+gx+2u7vzAU/RGNABaC3qAg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1M9PWTHtX6d3WQ2Pr4dkBAAYEFUKoLsxk2cJwOrfwkA=;
+ b=2tLXVKKTu28PzdSgG+QSbz2xlfMHugvWzt1Kc7sBQSeO/OJOzG/K4O52FnQJooCV8ZE4BSEtKxNV7wlaJlCsSy5+5IfPsZyEb01CQt9agOpI1C8b76rjkFJeFDKpUDRrnNX/cMaxC4RV6iUh1rsldEmO1gbTib9qAYRPYRq3GCM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by BL1PR12MB5849.namprd12.prod.outlook.com (2603:10b6:208:384::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.21; Wed, 26 Jun
+ 2024 18:18:21 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%5]) with mapi id 15.20.7698.025; Wed, 26 Jun 2024
+ 18:18:21 +0000
+Message-ID: <681732d3-76ba-47ba-9cce-362c6fe094cb@amd.com>
+Date: Wed, 26 Jun 2024 13:18:17 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] x86/cpu/amd: Clarify amd_get_highest_perf()
+To: Borislav Petkov <bp@alien8.de>
+Cc: "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+ Perry Yuan <perry.yuan@amd.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+ "H . Peter Anvin" <hpa@zytor.com>, Huang Rui <ray.huang@amd.com>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Nikolay Borisov <nik.borisov@suse.com>, Peter Zijlstra
+ <peterz@infradead.org>,
+ "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
+ <linux-kernel@vger.kernel.org>,
+ "open list:AMD PSTATE DRIVER" <linux-pm@vger.kernel.org>
+References: <20240626042043.2410-1-mario.limonciello@amd.com>
+ <20240626042043.2410-2-mario.limonciello@amd.com>
+ <20240626171421.GRZnxMbcI83xe1SLtB@fat_crate.local>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20240626171421.GRZnxMbcI83xe1SLtB@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN7PR04CA0165.namprd04.prod.outlook.com
+ (2603:10b6:806:125::20) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <6c318161-9ae4-4965-b8f3-e38bf1393628@amd.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|BL1PR12MB5849:EE_
+X-MS-Office365-Filtering-Correlation-Id: 923f5f66-793f-4897-bc56-08dc960c5c45
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230038|1800799022|366014|7416012|376012;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?a3VpbDJpQ09DRWdtUFd4cVpPdmdkMWxPb1BuVWFTTEpONnlndVZpWnhzM1Uz?=
+ =?utf-8?B?ZHJ4Y0FzYjJqK0ZqZTNrZklTOWhKeTBVUjJ6ZVFMU2k4ZkhRTXZidlg3cG4w?=
+ =?utf-8?B?NElnQWdvUFJGVHdHcmdJMjJpY3ozQkNKQWl4SVVON0tzWjlmV3FvNTJkMTln?=
+ =?utf-8?B?Z2ZFaWxydy9SaGFvLzJNeUk2MzlJVmc3TloxcnpyeEpMSkdCRXluSnE2TUpW?=
+ =?utf-8?B?Z1htY3ZuMCsyNm9aVzNBZWJMMXJlVDZld0ZpdC8yZkkzZmo0NWhPUVlSb3hl?=
+ =?utf-8?B?YnZnTmFMUEdOWVhXWUtsQjVNcFBsOS9XWlR6d3RKRXRTbEZTcnFvR0lZNzJF?=
+ =?utf-8?B?MUx1YnRvWFNhRUhLUFRYd0xmTzRoclBGYUV4MFp4eVpIUXA4Y243K2dVL2tF?=
+ =?utf-8?B?SHpIWEF5Wi9CWnJJeDdyQUZ1bmJrN2pFWnIzVk1vWlUwVjVsRW1DTHo0WW5G?=
+ =?utf-8?B?Qlk5ZTB1ZlJTV3UzUTVqNzZnL3V2TTRnODdtZ212SE5FanBRVXpsRFR5WFVw?=
+ =?utf-8?B?UXc3S3F5R3FlUHdjQ3JCRllkVEpHUlVrcDZaUDVIY2pSVkZBZHFXVTBRQ0VQ?=
+ =?utf-8?B?bEJpMk5wSmtub3pNVTNtUi95cnVWN1pkNzlUUE9KZFV4LzZmYUkyZnR5QS9s?=
+ =?utf-8?B?SC8xMTZQanhna1R1L2ZJQVlMQ1ZOQ1hDQ2dhY1BZTFpyd05GUzRIVmtmdjZP?=
+ =?utf-8?B?TGZCSUdYQi9MdHp4aUhTZ3pkai81MFFRMndXN1I3Y1ZMVG5BbG1ZYndVZUt4?=
+ =?utf-8?B?QXhmbERiMVhaY01mUWxHdldwdVBRUktUT2FFREJCekRDbTZQeU5tYXo5SGVM?=
+ =?utf-8?B?MVF2Y3dGUWtRcC8zWG5wM0VDalB2RXJrYUJqbGFENDIzemJvdCt1MllXWXMr?=
+ =?utf-8?B?WHUycVlxdEJ4UDJNSUtwQk1Cc3Z4cW1PYU1zcnBuUE9tbnRaaHpnNFpCVkgx?=
+ =?utf-8?B?bW5aU2o3cURMNTdQaXRFaVNTM1ZGd3hvSHV6bHR6WG03ZUgvK2hRZFBKNUtP?=
+ =?utf-8?B?SmIxREJ4WEgwV216eVZhc3ZJTEs2VWFPZ1VzZ3gzRVZxdVZOVitUVDMxWmhw?=
+ =?utf-8?B?a0p2NmNVbm5laTZVNkJYRWw5SXBtWEhxWEx4cUV5V1R6czU4RGNrR2ZlSzNk?=
+ =?utf-8?B?OUtTOFF4bVVlZTZtNWZPR3VCVlZBUTBNUkxVRG9kd1dFR1M2eE42bE5xNVov?=
+ =?utf-8?B?KzJlUVlyTEt5N0N3ZGszRTkwdnYzUWxWZ2pNM1ZwTldFbVpBMHFCU1Vmck9J?=
+ =?utf-8?B?WnZMR1FKVjB5a2NnUXVyVVg4NUJCWnpnVGxISmJPajFjOTNVRFNmakhUZkVR?=
+ =?utf-8?B?SjRMWVFreVhPOU9vNkk0RWpabnkyenRvVjVZUTNVQ0E5STVZL2NoVHcyMHpO?=
+ =?utf-8?B?enk4ZmFSaDM0U0M5NGhZRkJWM3piSnpZZUFXdU5nYkFJaC9lQk5uUXNIL25u?=
+ =?utf-8?B?Nitscld6M0g5VDliUE84NUx3aEZmWVN0cjZZd2dXVU13ajhkenZ1b1F1UW0w?=
+ =?utf-8?B?OUFTRENVNlNabGp2SEZWSHdQRVl6Rmt0M0dVemk5ZjI2Qk9DdFQyTC9GSHpu?=
+ =?utf-8?B?UDFnMmRvdDNBWURiM0s1QmRjK24xR0V4TmR4YU12VlBsMkp3VTkvUlk4MERS?=
+ =?utf-8?B?U3ZoZFdYV2d0WXJRMG5yNFFvdFNnVXBERFJFbHFpMVZYREtMZ3duNlFEMzBw?=
+ =?utf-8?B?d2tuVmM2b1JEMmVoczM2TjRGallwQ241QU41SlZhVlZPRDFWT2RjRFVrMSt1?=
+ =?utf-8?B?VHBQTnlrSlF6a0RsUGlsNFRwWGF0UFVMOThUa1IvWGhOZWpuTUZPVHNHbkZh?=
+ =?utf-8?B?bm1VbzVGVTlOZDdJejR3QT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230038)(1800799022)(366014)(7416012)(376012);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aFlXbC9NbVdQc0pXQU9FYkpJTVdFNDhMMEd1MWEyYU42Q2pxbkVRU2xLYTRj?=
+ =?utf-8?B?V1NHVTUzdzVJRGdnTXdmVHQwMkxvdTgvcUpjeWJBdGptZ0lZM2VLVlBWeWtR?=
+ =?utf-8?B?Z2NRb2xnejc1TE8xRTV6VG50MWZuMTNQZ3RHM2V5TVlkeGFha0UvSlVpTENZ?=
+ =?utf-8?B?c01sOUkzMHJvN1Z0bnZTUzNsN2FhZXFGN1oyY2FGZmNxZnhqNUlld2M2dDV2?=
+ =?utf-8?B?dzVmZnRtZ0ZPTFUyVkRWVlRocWtxeEpibFRTeXBCbEpkOE9LdG9uaytRUzRH?=
+ =?utf-8?B?azNla0pnWEZCaktqYkIzdjBvQjB5c25GeThTMnNzcFVQNVllV0dRUUtSK3hB?=
+ =?utf-8?B?Zk53RUpOWW5EaE11UGNVWitMVTcraXArUDByRlVsMUZzVlloSFpodVRmbkIy?=
+ =?utf-8?B?dVJVOWpVWExIa1h2NDI1d2lHS0ZPekE5OVFjRmxNUjRGTy80RW9vQzZqMy9D?=
+ =?utf-8?B?Z2pzbGxjbncwN2gwUGl2UkVQemVia1RDemNrbElGSGNoeDZaRkRTRDZTME5K?=
+ =?utf-8?B?VHorNGI5MzdxNDcwYXpaWlJNRlRVUDV5Rmd3cjRUL1BWcTNlRTJZU0xDYmZt?=
+ =?utf-8?B?STRpNXJoR0tSOUY1V0kwbEF6Nnc2QW9MNmRacnN2NnY1TzRVUVhUUWFsQU42?=
+ =?utf-8?B?UlhEaCt5VE83MTRDZ1F5MDNGUmF2bkVEWnd2Y1QwY29DaVNOZnE2NWFVcHgz?=
+ =?utf-8?B?M1A5YUFVbEdpZmNCMURIWW9TWk15QXRjdkhDWG9qU3BuaDB1c1NWSm9CWnZi?=
+ =?utf-8?B?bGEwOU42SFZ2ekhtbmFFSmh2UkUyR1pLeHladlRKMENxbEhucW95Q0ROeUh4?=
+ =?utf-8?B?UGxFMmdKR2hWR1V1Vis0REd2amludTYreW8yUGZLeDVhR2QwZkdyT29WM0pR?=
+ =?utf-8?B?VVdLWm9GeFhMbTNDUDBvMDRYWWxsZGxKNzdHTVNlVHhNQ1JxS3ZINjM5eUFv?=
+ =?utf-8?B?d1NzYnVGekZ0K0RPSlpoMmkyaUpzTzdKb2xrUHFWWVVTNExWa3UzUCsxK0x0?=
+ =?utf-8?B?aEIxY0N0K3F6c1pWbG95eXV6aTVOZ1hXWEs3Q09sVU5TSnRPcURDakxkTWFa?=
+ =?utf-8?B?eWk3Q01PRDFnVTJmR1FoUnF1ZWVXRElEcDBTZ3BLaHJHeTBXRXo3SHE3ejlK?=
+ =?utf-8?B?MHFhR085MmRzVy9KUTE1LzJMM3FJcmpEbFB3dkdzTDRpTURiRmI3bnNMWlp2?=
+ =?utf-8?B?NG1FQ2JRKzlSOFluREVmaDF0K044a2RQT2Z5bzFkSVZqa3ZpZ1lmU0ZoVkZa?=
+ =?utf-8?B?Wm40Z29VWTVxcXBHZWZ0WnloMDMyQ3N0ZC9NaDVrWnp0akFwajNoZVhNSUdB?=
+ =?utf-8?B?YkNPeE5pSlRWSERsN0M3elZLNHN3bUgyNk1IZWRDdkZaajM3M21DN1ZGSjVC?=
+ =?utf-8?B?WVJ1b1JNc2luNGtRcUVsNDhya0VJL2RMbGtDbzFvaGxyZHNvUXBqOUYrL29I?=
+ =?utf-8?B?c05FYWhvYlVuNjd3SEF0SzlScTcxV3pyYjNPSXNoYW9CUGxwN1F4TmN4cy9m?=
+ =?utf-8?B?TXgxeEFiS3pETlhXRDQ3aTJLU3kzU210cnRGemUxV0V0Q1N3T2JKOGlBVi9a?=
+ =?utf-8?B?RUtiYUFvNW4xT0ZzSXZvNk1QY1dPQ1JxTzEvVTZLV1prUm5SMS9aRk95MU5n?=
+ =?utf-8?B?V2huRmVvNUtsVFB2YU90TDZibWNiYTUrb0pmQTIwSXYxU1BJeit5OTFyOGMx?=
+ =?utf-8?B?SnkvYnBlVitIOGJrQXlCM1QwdXpkNFNSblNveUcwd1ZJa2s0ZGlibGpoL3Bl?=
+ =?utf-8?B?NUxGUGZ4REx6SjZHdXRXeDdKTXpwQWFRWDdlOXZ6cVE5R3ZESGZQaHhqTENa?=
+ =?utf-8?B?L3BZK0JVSTRCQkpWSTRqS05YSm9heHFBRllHK1NBcmV3WVY0c2RXQjZRWWtG?=
+ =?utf-8?B?RExTeXk4dTFBclN2OGZNTlpkL0NmMlVWVG9KMldURkc1czZNYmFSL3krU1Z0?=
+ =?utf-8?B?c2RhMlpvbm5RV3hNQ0ErUTFyK3F0cG95d2UvdmlhaGF4TjJiUFhoUGVyeVhZ?=
+ =?utf-8?B?S1dxZEMyTktFbFZYaDRjY3QrblVLdXE0RXFJYW5uS21nZkVGTUhKblFhS2h2?=
+ =?utf-8?B?Njh1Rnk5Mk0zVEhabHdxQldyamE2Q2daL1plVHZIanlVRGxqWjVRWEdsRGN4?=
+ =?utf-8?Q?7qYE3W4vk0u3vO9nZ1aERV7yT?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 923f5f66-793f-4897-bc56-08dc960c5c45
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 18:18:21.3860
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4YzmghpG4KXTwwjZwEQm8sr03GiTVXDkzgOCrxtnAQ4bvNtP4Pml2VcCkgrcnV3wX76c3cUzKDN4CHHQoPh5uQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5849
 
-On Wed, Jun 26, 2024 at 12:24:20PM -0500, Naik, Avadhut wrote:
+On 6/26/2024 12:14, Borislav Petkov wrote:
+> On Tue, Jun 25, 2024 at 11:20:42PM -0500, Mario Limonciello wrote:
+>>   static inline int rdmsrl_amd_safe(unsigned msr, unsigned long long *p)
+>>   {
+>>   	u32 gprs[8] = { 0 };
+>> @@ -1194,15 +1198,27 @@ u32 amd_get_highest_perf(void)
+>>   {
+>>   	struct cpuinfo_x86 *c = &boot_cpu_data;
+>>   
+>> -	if (c->x86 == 0x17 && ((c->x86_model >= 0x30 && c->x86_model < 0x40) ||
+>> -			       (c->x86_model >= 0x70 && c->x86_model < 0x80)))
+>> -		return 166;
+>> +	if (cpu_feature_enabled(X86_FEATURE_ZEN2)) {
+>> +		switch (c->x86_model) {
+>> +		case 0x30 ... 0x40:
+>> +		case 0x70 ... 0x80:
 > 
+> Well, it was < 0x40 and < 0x80
 > 
-> On 6/26/2024 06:10, Borislav Petkov wrote:
-> > On Tue, Jun 25, 2024 at 02:56:22PM -0500, Avadhut Naik wrote:
-> >> AMD's Scalable MCA systems viz. Genoa will include two new registers:
-> > 
-> > "viz."?
-> > 
-> Right. Will mention Zen4 instead of Genoa.
-
-I still don't know what "viz." means...
-
-> Yes, I catch your drift. Will reword the commit message to explain that the
-> new syndrome registers are going to be exported through the tracepoint
-> in a dynamic array, as they are vendor-specific, so that usersapce error
-> decoding tools can retrieve the supplemental error information within them.
-
-Again, why?
-
-Why is it important to have them in the tracepoint?
-
-> >> Note: Checkpatch warnings/errors are ignored to maintain coding style.
-> > 
-> > This goes...
-> > 
-> >>
-> >> [Yazen: Drop Yazen's Co-developed-by tag and moved SoB tag.]
-> > 
-> > Yes, you did but now your SOB chain is wrong:
-> > 
-> >> Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
-> >> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-> > 
-> > This tells me Avadhut is the author, Yazen handled it and he's sending it to
-> > me. But nope, he isn't. So it needs another Avadhut SOB underneath.
-> > 
-> > Audit all patches pls.
-> > 
-> Wasn't aware of this chronology. Thanks for this information!
-
-Well, there's documentation for that which you should've read already, before
-sending patches:
-
-https://kernel.org/doc/html/latest/process/development-process.html
-
-and
-
-https://kernel.org/doc/html/latest/process/submitting-patches.html
-
-especially.
-
-> So, IIUC, the sequence for this patch should be as follows?
+> You're making it <=.
 > 
-> Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
-> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-> Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
 
-Yes, now I leave it to you to explain why. Hint: it is in those docs above.
+Good catch, I'll adjust to 0x3f and 0x7f.
 
+>> +			return CPPC_HIGHEST_PERF_DEFAULT;
+>> +		default:
+>> +			return CPPC_HIGHEST_PERF_MAX;
+>> +		}
+>> +	}
+>>   
+>> -	if (c->x86 == 0x19 && ((c->x86_model >= 0x20 && c->x86_model < 0x30) ||
+>> -			       (c->x86_model >= 0x40 && c->x86_model < 0x70)))
+>> -		return 166;
+>> +	if (cpu_feature_enabled(X86_FEATURE_ZEN3)) {
+>> +		switch (c->x86_model) {
+>> +		case 0x20 ... 0x30:
+>> +		case 0x40 ... 0x70:
 > 
-> >> ---
-> > 
-> > ... right under those three "---" as such notes do not belong in the commit
-> > message. Remember that for the future.
-> > 
-> Okay. Will move the note here.
-
-Or remove it completely. checkpatch is crap - I know. No need to have it in
-every patch.
-
-> Had considered this. But struct mce_hw_err *err wouldn't really be used in
-> mce_read_aux() in patch 1. Only struct mce m, which is already available, will
-> be used.
-
-So?
-
-> Hence, deferred the change to this patch where usage of struct mce_hw_err *err
-> is actually introduced in mce_read_aux().
+> Ditto.
 > 
-> Do you prefer having this change in patch 1 instead?
+> Also, ontop:
+> 
+> diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+> index 73559db78433..5d496de4e141 100644
+> --- a/arch/x86/kernel/cpu/amd.c
+> +++ b/arch/x86/kernel/cpu/amd.c
+> @@ -1204,7 +1204,7 @@ u32 amd_get_highest_perf(void)
+>   		case 0x70 ... 0x80:
+>   			return CPPC_HIGHEST_PERF_DEFAULT;
+>   		default:
+> -			return CPPC_HIGHEST_PERF_MAX;
+> +			break;
+>   		}
+>   	}
+>   
+> @@ -1214,7 +1214,7 @@ u32 amd_get_highest_perf(void)
+>   		case 0x40 ... 0x70:
+>   			return CPPC_HIGHEST_PERF_DEFAULT;
+>   		default:
+> -			return CPPC_HIGHEST_PERF_MAX;
+> +			break;
+>   		}
+>   	}
+>   
+> so that you don't have so many redundant returns in the function.
+> 
 
-I prefer a patch to contain one logical and complete change only. Because this
-makes review easier. You should try reviewing patches sometimes too and you'll
-know.
+This uncovers a case that I'm not really sure what to do about.
 
-> > So that vendor data layout - is that ABI too? Or are we free to shuffle the
-> > fields around in the future or even remove some?
-> > 
-> > This all needs to be specified somewhere explicitly so that nothing relies on
-> > that layout.
-> > 
-> > And I'm not sure that that's enough because when userspace tools start using
-> > them, then they're practically an ABI so you can't change them even if you
-> > wanted to.
-> > 
-> > So is libtraceevent or all the other libraries going to parse this as a blob
-> > and it is always going to remain such?
-> > 
-> > But then the tools which interpret it need to know its layout and if it
-> > changes, perhaps check kernel version which then becomes RealUgly(tm).
-> > 
-> > So you might just as well dump the separate fields one by one, without
-> > a dynamic array.
-> > 
-> > Or do a dynamic array but specify that their layout in struct
-> > mce_hw_er.vendor.amd are cast in stone so that we're all clear on what goes
-> > where.
-> > 
-> > Questions over questions...
-> > 
-> Should we document this where struct mce_hw_err is defined, in
-> arch/x86/include/asm/mce.h? Or do you have any other recommendations?
+Right now acpi-cpufreq uses this function and if the CPU isn't special 
+cased you'll get the value as 255.  This is totally wrong for newer SoCs 
+though.  That's what prompted this series in the first place that I saw 
+different behavior in amd-pstate and acpi-cpufreq.
 
-I don't know. If I knew I wouldn't have questions which you can read again and
-try to answer.
+So I think we need to have something that is:
 
--- 
-Regards/Gruss,
-    Boris.
+switch (zen1) {
+case ...
+default)
+	return 255;
+}
+switch (zen2) {
+case ...
+default)
+	return 255;
+}
+switch (zen3) {
+case ...
+default)
+	break;
+}
+switch (zen4) {
+case ...
+default)
+	break;
+}
 
-https://people.kernel.org/tglx/notes-about-netiquette
+return 255;
+
+(This is no functional changes)
+
+And then patch 2 or patch 3 change the "default" return to 166 and if 
+there is functional issues then they need to be special cased.
+
 
