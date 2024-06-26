@@ -1,153 +1,119 @@
-Return-Path: <linux-kernel+bounces-230418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 445D5917C8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:33:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF6F7917C95
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:34:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E37241F21D78
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:33:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75D051F2210A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A584B16A930;
-	Wed, 26 Jun 2024 09:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7670B16DECE;
+	Wed, 26 Jun 2024 09:33:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DBsbQeMZ"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kK/5HHxh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC308BEF
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 09:33:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64AD16A92B;
+	Wed, 26 Jun 2024 09:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719394405; cv=none; b=UBWLyAzZ0g10/ZQ8hd/XVjnGt0p+IQtl3LNclMZmmyBLseKSXToXrcAxWJes2lPn5g+52bJhbv7oK5y7GrAM5C3uJnsiVHIsnBzU1bJPbQmq237tasWmTHDXs0+XgtROkqzsu49ccqBtMul7uMg12xyRKJSN6TZ7cxOY/HFRmRo=
+	t=1719394427; cv=none; b=kut+kkMmdUImcH7vyVyURUuouprQ6dM6P0nnl2nyUDAj4pkc/oQkDJJp9SE/sB71asgfSFKLd5sZQ7OYy+/SXadl1M2TH4HvjG6p/ww07zGwUFLpyaHzghKWT8n2eyU14PxoXbS7xpN3dQv3mZXpmfGYZherYGnfOIpT7WiWaLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719394405; c=relaxed/simple;
-	bh=BLr+UZM1tjC7FJ2r2FmEjZapNn4NPffHqyznS7e3aIQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fSUWZ6voGTPZK53dYY+D4O2pfG0TBzTFdCTeLqQi6F/7PUcZjt7THbgBTXJsqbWVdKKE0eyi0PUaYwThVWG5CUZqFftyWWjFbrG7isLXeRsSMES4Y4FsBRGjQ4xGtfhhRwi3ENXpJ2OShCbV/KhaLxAgnhJghktdjBzhRTk++XQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DBsbQeMZ; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ec17eb4493so87579511fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 02:33:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719394402; x=1719999202; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9V49/0pew242ZgNtxXQHjpBzNVHDt7hGxiTQwTXbALU=;
-        b=DBsbQeMZGq6V39eJBdXG3WvFOwiJw9tQ29Kew44ZKR2t/Nb4rS+OXs18/2ZdzsRcag
-         JqL+BaqCrRJdy8qTZCm6zXH4mFXC1fvz/mihMNv1OoRmyddIf2JL/XCNiYQqDGiJcO2G
-         RDnnMOYKlz+rB7swVhrGApUF4DBASQRpu9hUOiX48Xz2FFUHNg6ypvJ56l7UtWOTb+LS
-         Sgq1tECIkEXQFZg8RxmjwvM80MrxKbG7EnjM6zsXGB3L/uOjWtcMlCXjaM5bJlHASYwF
-         O6+pxxkQ9ytAal3odZCNLJlR77eOR5TUZAnNKNN3Ecu56bI1U27gu5dfDFI4W3rIrqDR
-         sPQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719394402; x=1719999202;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9V49/0pew242ZgNtxXQHjpBzNVHDt7hGxiTQwTXbALU=;
-        b=vpACSg2rFipebkRl5yLKhZLBeys7rikxLHPCDtyFCzacZks7e6BcA2KNaJz3sy8xrX
-         2AvAYiLACb168jBpo1kwZMpZp5mC87imI0z9dcXrEc7efj6NDnpBpyMP9qgs720slJJi
-         vcOcK8TL32oJR9qoKPVym5d/cOpWIuu5gGaKx2cegxRrjtfzaY9Io2EiNumGjyUejiH0
-         e1MsxQu0cV/1wqGDb57lYFBv7bl89GUVBJONQetAPHFLsAGF5azcwXPn4u24nWv1saxJ
-         tVmGtSHoHACuhtIPa8wXl4EJlMf/Eom0pz3SC+V4ZxjVb55E7+f3ElzyVTZHGuD2fnFX
-         JwwA==
-X-Forwarded-Encrypted: i=1; AJvYcCXpttr0R9VADAzc7/xK4iq8kR07PYqhlXl3WQBkEDatq0uRl1QmrXjVY75ld6/dAOwazBgAXKYC31880P5HhBBhKLdNcAHc+NiHhdau
-X-Gm-Message-State: AOJu0Yyg2wjmqzl4WUp8WlXhLLwNmg8ZUCPhLPparoirI8Hl8zn7Aet1
-	DdhsRsJxQD4QdAZv+ItWVsQIWN4l31QU9aR3D3bIil+7McNxDaOUFKKX6IoXMbtAWCsVd9gj2eV
-	SdkIvO353MuaX5UdRvtv5dL7++yc=
-X-Google-Smtp-Source: AGHT+IEcVRLtuoU/fhayFG07fR0EbbCVk+f99Sk3JFVCJ1Z0wTWy6WXp57DQFwoTZC1sLStYobjeoAjMj4l3m3f/P1Q=
-X-Received: by 2002:a2e:6a12:0:b0:2ed:5af6:e846 with SMTP id
- 38308e7fff4ca-2ed5af6ea7dmr9443931fa.50.1719394401391; Wed, 26 Jun 2024
- 02:33:21 -0700 (PDT)
+	s=arc-20240116; t=1719394427; c=relaxed/simple;
+	bh=EbfiOlmbYgzxHeaGEJru1qN0I6Ch6Nlbu6LOKQXKdU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=PI8ay5tH0QB8aC3VJqXnpgjWTkP5eDVNafhuXzFFA/eJVdPNXKT9tvrAPNLUlNuvDH3TZdCJa11CaGsfHRS0ooJcZ5O7/Cu4569+oDMTG2Q/U07h1J9Sl0lx+2KX/Yodk9DQlxlHayC+xbCYzDR2iJD6QR2ucv9HwCXdB9Q47K0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kK/5HHxh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C0CDC2BD10;
+	Wed, 26 Jun 2024 09:33:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719394427;
+	bh=EbfiOlmbYgzxHeaGEJru1qN0I6Ch6Nlbu6LOKQXKdU8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=kK/5HHxhxNvIQh9kncbgt2LUPODnmWVPzu4FdoMdRpkEBbsFo/jlfkMEp7SuKR0ir
+	 qsa6qcgcwdZniUAaEDtwfGFMpKg5C9uonLhxC4GzrJJhC8RGYKFj8dHCdzD4JZ+BJ3
+	 W6kM8lRU6to1NQyls2STMWDorzLl/RC2UBUyh4wKXHXPDYsZk53H5/yfDtFGvIawq3
+	 S4q+DNnNZhC8Odci3lYPiBumptf4Tg2I3hrsukMNC+FXcC8LBOX32qDS5djmClCjKU
+	 gxC98B+4orXRU10EQM3ws3ED2UjjOwQ4iIJLPTtPA9KOj3dn5v6SQ3YiwS/p1NuQTN
+	 lxnxUOL2OSUSA==
+Date: Wed, 26 Jun 2024 11:33:41 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Tony Luck <tony.luck@intel.com>, EDAC Mailing List
+ <linux-edac@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Mauro Carvalho Chehab
+ <m.chehab@huawei.com>, Shengwei Luo <luoshengwei@huawei.com>, Daniel
+ Ferguson <danielf@os.amperecomputing.com>, Jose <shiju.jose@huawei.com>,
+ Jason Tian <jason@os.amperecomputing.com>, Jonathan Cameron
+ <jonathan.cameron@huawei.com>, Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [GIT PULL for v6.10-rc6] edac fixes for kernel 6.11
+Message-ID: <20240626113322.5e263aa0@coco.lan>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.42; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAFULd4YVOwxQ4JDaOdscX_vtJsqJBJ5zhd0RtXXutW=Eqh29Qw@mail.gmail.com>
- <CAHk-=wg1h4w_m=Op1U4JsyDjsvqG0Kw1EOVMQ+=5GX_XytdorQ@mail.gmail.com>
- <CAFULd4YR-VkAOKiS5yxSUYi0YMzY1p=pkYe4dOkgFs+A=9AFFA@mail.gmail.com>
- <CAHk-=wi_KMO_rJ6OCr8mAWBRg-irziM=T9wxGC+J1VVoQb39gw@mail.gmail.com>
- <CAHk-=whPqqZVSeJiQsMvsAxtAmtR9iAuB4gg_1sUK2D-uBPpLw@mail.gmail.com>
- <CAFULd4YAeF7=q7DYUh016kabxS8b32qRbFqDBJQrvLq6RjwEVg@mail.gmail.com>
- <CAHk-=wiHo2YeA=TOUf8vxFLOc0+BoH8USaiT25fnX2ynXbrZkg@mail.gmail.com>
- <CAHk-=wgdCs0883dpvZpyna76q9eVcTMvvUVAaBuJMPyrgOhNig@mail.gmail.com>
- <CAFULd4ZW23_RNye6YGbsT0Uo-vOQBM_tBbSJRhh=0HZzXuC_8Q@mail.gmail.com>
- <CAHk-=wiWEgSo2Tb_bih7mnS27zAPL+RGg_7yX4qK1f710-j-Ng@mail.gmail.com> <20240626092841.GC31592@noisy.programming.kicks-ass.net>
-In-Reply-To: <20240626092841.GC31592@noisy.programming.kicks-ass.net>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Wed, 26 Jun 2024 11:33:09 +0200
-Message-ID: <CAFULd4ZUBaK+FNSKfiJzzZNFQM1bWorZGmaY=fb-sFN2uPK4MA@mail.gmail.com>
-Subject: Re: arch/x86/include/asm/cmpxchg_32.h:149:9: error: inline assembly
- requires more registers than available
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, kernel test robot <lkp@intel.com>, 
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 26, 2024 at 11:28=E2=80=AFAM Peter Zijlstra <peterz@infradead.o=
-rg> wrote:
->
-> On Tue, Jun 25, 2024 at 11:31:05AM -0700, Linus Torvalds wrote:
->
-> > The thing is, when cmpxchg doesn't fail, then oldp should already be "o=
-ld", no?
->
-> Correct.
->
-> > I mean, by the very definition, atomic_try_cmpxchg() can *not* be
-> > successful if the new value didn't match the old one.
-> >
-> > I mean, just look at the very doc you point to - the "definition" is
-> >
-> >   bool atomic_try_cmpxchg(atomic_t *ptr, int *oldp, int new)
-> >   {
-> >     int ret, old =3D *oldp;
-> >     ret =3D atomic_cmpxchg(ptr, old, new);
-> >     if (ret !=3D old)
-> >       *oldp =3D ret;
-> >     return ret =3D=3D old;
-> >   }
-> >
-> > iow, it only returns success of "ret =3D=3D old", and "old" by definiti=
-on
-> > is "the contents of oldp".
-> >
-> > (Here "oldp" is a local variable, not something that can be changing).
-> >
-> > So I *think* the whole
-> >
-> >     if (ret !=3D old)
-> >       *oldp =3D ret;
-> >
-> > is actually counter-productive, and could/should be just that simpler
-> > unconditional *oldp =3D ret,
->
-> IIRC the reason I added that conditional is because at the time the GCC
-> compiler I tried it on generated slightly better code like this.
+Hi Borislav,
 
-Please see the thread at [1].
+Please pull from:
+  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-edac tags/edac/v6.10-1
 
-[1] https://lore.kernel.org/lkml/CACT4Y+bG+a0w6j6v1AmBE7fqqMSPyPEm4QimCzCou=
-icmHT8FqA@mail.gmail.com/
+For two patches that fix UEFI 2.6+ implementation of the ARM trace event, 
+as the original implementation was incomplete.
 
-Uros.
+The patches on this series was sent at:
+	https://lore.kernel.org/all/20240321-b4-arm-ras-error-vendor-info-v5-rc3-v5-0-850f9bfb97a8@os.amperecomputing.com/
 
->
-> ISTR it emitting some superfluous assignments with the unconditional
-> store variant. Typically what seemed to happen is that since the
-> cmpxchg() user would have a loop termination on ret =3D=3D old, it was ab=
-le
-> to recognise it only needed that assignment in the failure case. Without
-> the condition on it would also do that assignment in the success case.
->
-> But yeah, otherwise it doesn't matter.
+I did a couple of changes at the first patch addressing some coding style
+issues. At the second patch, I replaced the original description to a proper
+one identifying precisely why the patch is needed and what it does.
+
+In summary:
+changeset e9279e83ad1f ("trace, ras: add ARM processor error trace event")
+was incomplete: it added a trace event that was reporting only some fields
+of the CPER record generated for ARM processor from UEFI 2.6 spec.
+
+Those are not enough to actually parse such events on userspace, nor to
+take any actions like isolating problematic CPU cores.
+
+The patch was validated with the help of an ARM EINJ code for QEMU:
+
+	https://github.com/mchehab/rasdaemon/wiki/error-injection
+
+I tested the ghes and cper reports both with and without this change,
+using different versions of rasdaemon, with and without support for
+the extended trace event. Those are a summary of the test results:
+
+- adding more fields to the trace events didn't break userspace API:
+  both versions of rasdaemon handled it;
+
+- the rasdaemon patches to handle the new trace report was missing
+  a backward-compatibility logic. I fixed already. With that, rasdaemon
+  can handle both old and new trace events.
+
+Btw, rasdaemon has gained support for the extended trace since its
+version 0.5.8 (released in 2021). I didn't saw any issues there
+complain about troubles on it, so either distros used on ARM servers
+are using an old version of rasdaemon, or they're carrying on the trace
+event changes as well.
+
+Regards,
+Mauro
+
+---
+
+
+The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
+
+
+Thanks,
+Mauro
 
