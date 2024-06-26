@@ -1,171 +1,164 @@
-Return-Path: <linux-kernel+bounces-231589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DB22919AA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:30:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3797F919AAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:32:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6D28B23023
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:30:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2FC51F23261
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7E3193079;
-	Wed, 26 Jun 2024 22:29:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79614193075;
+	Wed, 26 Jun 2024 22:32:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eXyxkJ5V"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LenWavY3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F8E53364;
-	Wed, 26 Jun 2024 22:29:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B3C168483;
+	Wed, 26 Jun 2024 22:32:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719440992; cv=none; b=ssIO7LL7eQ0crmbyRI0K/QdDjQkFJ12ouoyviQGtFr8BlsKsPOyo6buCe2bulfK3BlZ+TrKf8ORKDZfMUGOlwT0Na1QJ3mDnSLiPoChIiezQe1O94X0B3EJn7UVKzQuyGOo++jCx98Cb5TsMVxQbWISqkv5dscRgqZYDn59Hrvg=
+	t=1719441157; cv=none; b=dFNoZyGdyW0wS/2J5frnJ9ZSgtcYdSyqB1mYnus17lF4J0zDm04VUP9k9tPA7X6TFoBjyqgyw/kq8z9++TK+Y48fsw6serfS/FQIKcUcR96C5tu1Vb6Cs/S1lm+qbgYZrQTSUln/SZfFNzN3H7WgXD4ItcIbwcHlBkNiNvh9iq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719440992; c=relaxed/simple;
-	bh=HKPx6wQS4nFnsGS0OoSu2HweUTQzD8xHGbwcpQf4KI0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=H/JfBjFXwQM4KQSOw7zQBBLatuqoUdD4yv7Uj+/oTgME/6rCFhSbSCJwTYftcV4jcuf1fScatLKT4ww+dLy/LqF7z1LYiTsCE1BZ/c/GHPwpmuR2d38Pyj0sb7/rHn+OlN2QOu9itL9I+0Qq2Fxmmr0jTdO06CtDyonWsd4eJ9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eXyxkJ5V; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719440989; x=1750976989;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=HKPx6wQS4nFnsGS0OoSu2HweUTQzD8xHGbwcpQf4KI0=;
-  b=eXyxkJ5VDZMk8oeBTwRohBcCUadLxF++wyB9XiTEkF9NX7OF6doFlpf1
-   /csLdUvMY89VJ9/oFi3fG7xIfXUQGCfBDBQnydp0CcWp3cx5BK89axek7
-   3mG+FcND+wWifkDxlGHOTRgi8DTAIWr68jcEhE5yZSrNI7ZpOa5+AEorN
-   qfzFMKn3i9zOypgQjDWwnd3K2k5um+hGqMI+ssJJwDlcP2wfYyGH1FcDh
-   NWqDrHRpc4p0OU36zox7Y5wvNxLgVAFZ1nErH3L50w+xU7a44JSBl6PL/
-   rdltfMfWIHtv7nEFrOML8OAWtyrDmru1zMWX1+bM/eY1DHn32D8VlCM8y
-   A==;
-X-CSE-ConnectionGUID: 1nMZZhrxQ2aPiVZw1FkJow==
-X-CSE-MsgGUID: n/E8Fve7TQ2fi6lDT8U/sw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="16691753"
-X-IronPort-AV: E=Sophos;i="6.08,268,1712646000"; 
-   d="scan'208";a="16691753"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 15:29:47 -0700
-X-CSE-ConnectionGUID: OWvueI1bTI+q4M0XRZrvMw==
-X-CSE-MsgGUID: NBCe1hEXSsqfulSIZIrJ7g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,268,1712646000"; 
-   d="scan'208";a="49319741"
-Received: from rfrazer-mobl3.amr.corp.intel.com (HELO vcostago-mobl3) ([10.124.222.58])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 15:29:48 -0700
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jesse Brandeburg
- <jesse.brandeburg@intel.com>, Tony
- Nguyen <anthony.l.nguyen@intel.com>
-Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, Faizal Rahim
- <faizal.abdul.rahim@linux.intel.com>
-Subject: Re: [PATCH net 1/1] igc: Fix double reset adapter triggered from a
- single taprio cmd
-In-Reply-To: <20240625082656.2702440-1-faizal.abdul.rahim@linux.intel.com>
-References: <20240625082656.2702440-1-faizal.abdul.rahim@linux.intel.com>
-Date: Wed, 26 Jun 2024 15:29:47 -0700
-Message-ID: <87ed8j72xw.fsf@intel.com>
+	s=arc-20240116; t=1719441157; c=relaxed/simple;
+	bh=kk9N8S/9pjJldXV6CMVRpAD3Z0nGrY99ofJV3fvXtDg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=klwskcUDOMgYLdXm1Zm9fVSHd1HgThvF1lHqUa+pHK0FZB2ojfAswwaN3f/El9ktZMxBAV/8ULPpZIRLH3Npc48t2hUANQmUOxF3YmFSCsa96dyoza5liRoHbm6SrwLBl8nPOmAe/Xm0EbqkscwYdtlvHfjQ3d0Yk7Tes2KsrfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LenWavY3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C10BFC116B1;
+	Wed, 26 Jun 2024 22:32:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719441157;
+	bh=kk9N8S/9pjJldXV6CMVRpAD3Z0nGrY99ofJV3fvXtDg=;
+	h=From:Subject:Date:To:Cc:From;
+	b=LenWavY3RR1u7fsla77j3LoWys7mobMCJ868xPwsHHjVhhrGa2zkR8FfKufAQNyKW
+	 8Halrva5mTGE0v3uBo3PXs0ytVoM3tJaJ9nzH07p+MGQUuHminXLoJ3nMecRe9P1tq
+	 Z5RQ6jskfaq08g133uVl2FlVocD8raPacTpI3CZR5AfoA7i61foKrpSGRVE2SswBnf
+	 ltRutt1pcygewz0dduJXRGFRj8ZyZhH8gnGnbnU/L7+X3/qO5C2Xl1NAU6YxJjz7Om
+	 w2TuGRS556hg2TtDOLNRj4+3oEssYXiSDCBT9Zz1X8jx3DtZvoLYfFfD3tnJUrocot
+	 /ag5Jm/ExjRFA==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Subject: [PATCH v2 00/12] arm64: Add support for Armv9.4 PMU fixed
+ instruction counter
+Date: Wed, 26 Jun 2024 16:32:24 -0600
+Message-Id: <20240626-arm-pmu-3-9-icntr-v2-0-c9784b4f4065@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPiWfGYC/32NQQ6CQAxFr0K6tqYMKMrKexgWMFOgUQbSQaIh3
+ N2RA7h8L/nvrxBYhQOUyQrKiwQZfQRzSMD2te8YxUUGQyanMxVY64DT8MIMryjWz4qUZ8XJOUd
+ 0MRB3k3Ir7715ryL3EuZRP/vFkv7sv9qSIqEtGmec5bbNmtuD1fPzOGoH1bZtX5matbyzAAAA
+To: Russell King <linux@armlinux.org.uk>, 
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>, Will Deacon <will@kernel.org>, 
+ Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+ James Morse <james.morse@arm.com>, 
+ Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Zenghui Yu <yuzenghui@huawei.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, 
+ James Clark <james.clark@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-perf-users@vger.kernel.org, kvmarm@lists.linux.dev
+X-Mailer: b4 0.14-dev
 
-Faizal Rahim <faizal.abdul.rahim@linux.intel.com> writes:
+This series adds support for the optional fixed instruction counter 
+added in Armv9.4 PMU. Most of the series is a refactoring to remove the 
+index to counter number conversion which dates back to the Armv7 PMU 
+driver. Removing it is necessary in order to support more than 32 
+counters without a bunch of conditional code further complicating the 
+conversion.
 
-> Following the implementation of "igc: Add TransmissionOverrun counter"
-> patch, when a taprio command is triggered by user, igc processes two
-> commands: TAPRIO_CMD_REPLACE followed by TAPRIO_CMD_STATS. However, both
-> commands unconditionally pass through igc_tsn_offload_apply() which
-> evaluates and triggers reset adapter. The double reset causes issues in
-> the calculation of adapter->qbv_count in igc.
->
-> TAPRIO_CMD_REPLACE command is expected to reset the adapter since it
-> activates qbv. It's unexpected for TAPRIO_CMD_STATS to do the same
-> because it doesn't configure any driver-specific TSN settings. So, the
-> evaluation in igc_tsn_offload_apply() isn't needed for TAPRIO_CMD_STATS.
->
-> To address this, commands parsing are relocated to
-> igc_tsn_enable_qbv_scheduling(). Commands that don't require an adapter
-> reset will exit after processing, thus avoiding igc_tsn_offload_apply().
->
-> Fixes: d3750076d464 ("igc: Add TransmissionOverrun counter")
-> Signed-off-by: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
-> ---
->  drivers/net/ethernet/intel/igc/igc_main.c | 33 ++++++++++++-----------
->  1 file changed, 17 insertions(+), 16 deletions(-)
->
-> diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
-> index 87b655b839c1..33069880c86c 100644
-> --- a/drivers/net/ethernet/intel/igc/igc_main.c
-> +++ b/drivers/net/ethernet/intel/igc/igc_main.c
-> @@ -6310,21 +6310,6 @@ static int igc_save_qbv_schedule(struct igc_adapter *adapter,
->  	size_t n;
->  	int i;
->
-> -	switch (qopt->cmd) {
-> -	case TAPRIO_CMD_REPLACE:
-> -		break;
-> -	case TAPRIO_CMD_DESTROY:
-> -		return igc_tsn_clear_schedule(adapter);
-> -	case TAPRIO_CMD_STATS:
-> -		igc_taprio_stats(adapter->netdev, &qopt->stats);
-> -		return 0;
-> -	case TAPRIO_CMD_QUEUE_STATS:
-> -		igc_taprio_queue_stats(adapter->netdev, &qopt->queue_stats);
-> -		return 0;
-> -	default:
-> -		return -EOPNOTSUPP;
-> -	}
-> -
->  	if (qopt->base_time < 0)
->  		return -ERANGE;
->
-> @@ -6433,7 +6418,23 @@ static int igc_tsn_enable_qbv_scheduling(struct igc_adapter *adapter,
->  	if (hw->mac.type != igc_i225)
->  		return -EOPNOTSUPP;
->
-> -	err = igc_save_qbv_schedule(adapter, qopt);
-> +	switch (qopt->cmd) {
-> +	case TAPRIO_CMD_REPLACE:
-> +		err = igc_save_qbv_schedule(adapter, qopt);
-> +		break;
-> +	case TAPRIO_CMD_DESTROY:
-> +		err = igc_tsn_clear_schedule(adapter);
-> +		break;
-> +	case TAPRIO_CMD_STATS:
-> +		igc_taprio_stats(adapter->netdev, &qopt->stats);
-> +		return 0;
-> +	case TAPRIO_CMD_QUEUE_STATS:
-> +		igc_taprio_queue_stats(adapter->netdev, &qopt->queue_stats);
-> +		return 0;
-> +	default:
-> +		return -EOPNOTSUPP;
-> +	}
-> +
+Patches 1-2 are a fix and cleanup for the threshold support. Patch 1 is 
+a dependency of patch 12.
 
-Yeah, moving the command parsing to be done earlier sounds like the
-right fix:
+Patches 3-4 move the 32-bit Arm PMU drivers into drivers/perf/ and drop 
+non-DT probe support. These can be taken first if there's no comments on 
+them.
 
-Acked-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Patch 5 is new to v2 and implements the common pattern of the linux/ 
+header including the asm/ header of the same name.
 
+Patch 6 changes struct arm_pmu.num_events to a bitmap of events, and 
+updates all the users. This removes the index to counter conversion 
+on the PMUv3 and Armv7 drivers.
 
->  	if (err)
->  		return err;
->
-> --
-> 2.25.1
->
+Patch 7 updates various register accessors to use 64-bit values matching 
+the register size.
 
+Patches 8-9 update KVM PMU register accesses to use shared accessors 
+from asm/arm_pmuv3.h.
+
+Patches 10-11 rework KVM and perf PMU defines for counter indexes and 
+number of counters.
+
+Patch 12 finally adds support for the fixed instruction counter.
+
+I tested this on FVP with VHE host and a guest. I tested the Armv7 PMU 
+changes with QEMU.
+
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+Changes in v2:
+- Include threshold fix patches and account for threshold support in 
+  counter assignment.
+- Add patch including asm/arm_pmuv3.h from linux/perf/arm_pmuv3.h
+- Fix compile error for Apple PMU
+- Minor review comments detailed in individual patches
+- Link to v1: https://lore.kernel.org/r/20240607-arm-pmu-3-9-icntr-v1-0-c7bd2dceff3b@kernel.org
+
+---
+Rob Herring (Arm) (12):
+      perf: arm_pmuv3: Avoid assigning fixed cycle counter with threshold
+      perf: arm_pmuv3: Drop unnecessary IS_ENABLED(CONFIG_ARM64) check
+      perf/arm: Move 32-bit PMU drivers to drivers/perf/
+      perf: arm_v6/7_pmu: Drop non-DT probe support
+      perf: arm_pmuv3: Include asm/arm_pmuv3.h from linux/perf/arm_pmuv3.h
+      perf: arm_pmu: Remove event index to counter remapping
+      perf: arm_pmuv3: Prepare for more than 32 counters
+      KVM: arm64: pmu: Use arm_pmuv3.h register accessors
+      KVM: arm64: pmu: Use generated define for PMSELR_EL0.SEL access
+      arm64: perf/kvm: Use a common PMU cycle counter define
+      KVM: arm64: Refine PMU defines for number of counters
+      perf: arm_pmuv3: Add support for Armv9.4 PMU instruction counter
+
+ arch/arm/include/asm/arm_pmuv3.h                   |  20 +++
+ arch/arm/kernel/Makefile                           |   2 -
+ arch/arm64/include/asm/arm_pmuv3.h                 |  55 +++++++-
+ arch/arm64/include/asm/kvm_host.h                  |   8 +-
+ arch/arm64/include/asm/sysreg.h                    |   1 -
+ arch/arm64/kvm/pmu-emul.c                          |  15 +-
+ arch/arm64/kvm/pmu.c                               |  87 +++---------
+ arch/arm64/kvm/sys_regs.c                          |  11 +-
+ arch/arm64/tools/sysreg                            |  30 ++++
+ drivers/perf/Kconfig                               |  12 ++
+ drivers/perf/Makefile                              |   3 +
+ drivers/perf/apple_m1_cpu_pmu.c                    |   4 +-
+ drivers/perf/arm_pmu.c                             |  11 +-
+ drivers/perf/arm_pmuv3.c                           | 154 +++++++++++----------
+ .../perf_event_v6.c => drivers/perf/arm_v6_pmu.c   |  26 +---
+ .../perf_event_v7.c => drivers/perf/arm_v7_pmu.c   |  90 ++++--------
+ .../perf/arm_xscale_pmu.c                          |  15 +-
+ include/kvm/arm_pmu.h                              |   8 +-
+ include/linux/perf/arm_pmu.h                       |  10 +-
+ include/linux/perf/arm_pmuv3.h                     |  11 +-
+ 20 files changed, 301 insertions(+), 272 deletions(-)
+---
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+change-id: 20240607-arm-pmu-3-9-icntr-04375ddd0082
+
+Best regards,
 -- 
-Vinicius
+Rob Herring (Arm) <robh@kernel.org>
+
 
