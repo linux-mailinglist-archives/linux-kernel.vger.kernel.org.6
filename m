@@ -1,151 +1,202 @@
-Return-Path: <linux-kernel+bounces-230746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01F2F918165
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:49:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 03989918195
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:04:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1486289540
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:49:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3FE128178A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:04:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D276C1836C7;
-	Wed, 26 Jun 2024 12:48:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06CE31822CB;
+	Wed, 26 Jun 2024 13:03:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ouGTUB8p"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pd/i5zHI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47CE119BC6;
-	Wed, 26 Jun 2024 12:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E972181CFF
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 13:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719406128; cv=none; b=Sn1bFvOIHNJ23HP38zAeZOi+6muXhDaHts04SfTTfoi8yxi1Ek9/heaLmZ9NGnTikFI/ppMBfnj0/r1+6DvaxC/I0Se3lpCLOZm6e+yEv/lr0nYCJ/n/reE2CfMCxyaK3n+w+YsZEkyTQ380EfbxVOKhB6d/HboyjYNynTnJdUk=
+	t=1719407037; cv=none; b=D3T1po0sO1dtNXQ/Vy4/FdfsXcaspLip8dgsJXOog5nI6TnEWS0kFCvcq3uTjmDvzSP+9cQuMy8XGmEjKSHL8AWVpeyw+2VAy8bj43wx1c8dNIEBNWHNkIptUOgB1jYJ2GQpFuTZ0onjtHo0hfT2W72V+hAN3ryzYwSHGG/quMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719406128; c=relaxed/simple;
-	bh=zNMzXNtaGkFXqoNCuCZI1KiwCqFEAZ3HXo636YRRIUM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QgnzxVe/7Tthj52122JaajRGY7pkwxMCeCRHJaJrsLMrCjx0irv+MBQEGJpCrSrI2t5vUPtPbkNAk8+Lu3kmUxHkH3qBHi88Y83xEcvzopIDBr5wdJkrqAOv7DMpeRRZp/zRMEVkoGPmLlVET3EU16++OAIXjsq5CcLqLCdEwPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ouGTUB8p; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QCSqvh017661;
-	Wed, 26 Jun 2024 12:48:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:subject:from:to:cc:date:in-reply-to:references
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	fsIQQtLTm4Gg90CEu/3VEdMQqSTEw/mf7ZgROk28Brk=; b=ouGTUB8pTd51hSeL
-	uKGarIfX1ARuHp3nilRQ0yOFRwnxk1gwr7D44CR6AwV8laoJIGj8pg6pDV6+KIOZ
-	hYJIUD8b0BwodtchL9SJIv5PnXiqZCjslVS0jElCRsORdZ2w/73dO00G2Hc1DAm6
-	1wny0Z9zYF2Ip80FXZKBLbMo6Yhz/WT29q7DlWYT4cwI2SbBWLefRWXgQlTMUCwj
-	1trOGMd+QJ5bn4yUnz5PN02FCZ7U7n1wBUz/hZPMv3mKdjfOmFk3mS3IW2EY4IJp
-	yOoqw8J79zANpJA8UGf+Wrm8WOsIVgH2DOsMYjXTDsauoNsGvxDI6QMC5v2yEm5R
-	VTAOqw==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 400k1581k4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 12:48:41 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45QCUCOW000627;
-	Wed, 26 Jun 2024 12:48:40 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yxaen4b0x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 12:48:40 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45QCmYa754722832
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 26 Jun 2024 12:48:36 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8BEFE20049;
-	Wed, 26 Jun 2024 12:48:34 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5032D20040;
-	Wed, 26 Jun 2024 12:48:34 +0000 (GMT)
-Received: from [9.152.224.39] (unknown [9.152.224.39])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 26 Jun 2024 12:48:34 +0000 (GMT)
-Message-ID: <4ab328297c12d1c286c56dbc01d611b77ea2da03.camel@linux.ibm.com>
-Subject: Re: [PATCH] s390/ism: Add check for dma_set_max_seg_size in
- ism_probe()
-From: Gerd Bayer <gbayer@linux.ibm.com>
-To: Ma Ke <make24@iscas.ac.cn>, wintera@linux.ibm.com, twinkler@linux.ibm.com,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        Wenjia
- Zhang <wenjia@linux.ibm.com>
-Cc: linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, hca@linux.ibm.com, gor@linux.ibm.com,
-        agordeev@linux.ibm.com, borntraeger@linux.ibm.com, svens@linux.ibm.com,
-        davem@davemloft.net, Stefan Raspl <raspl@linux.ibm.com>
-Date: Wed, 26 Jun 2024 14:48:30 +0200
-In-Reply-To: <20240626081215.2824627-1-make24@iscas.ac.cn>
-References: <20240626081215.2824627-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40app2) 
+	s=arc-20240116; t=1719407037; c=relaxed/simple;
+	bh=Uta7Ar4IuN68vM/aeq1mQnasHGnsAdafsPir9UrleIA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nn6DHeQbweqLBOHJtEJGXUxCdw+nEhigdA9eTVR29EVVVqxLzvvkX5nsgQUDs5PNh0JQjapVkKK15nDkM9LgB84W73FcNKcKaS+iOQM/ni0Fe4uJbNwvz+Tw+FMkMKp0s+SrM0Kx50e8CkZEC91CvQKQT2luChiILBgqUsfKuK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pd/i5zHI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91FF3C2BD10;
+	Wed, 26 Jun 2024 13:03:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719407036;
+	bh=Uta7Ar4IuN68vM/aeq1mQnasHGnsAdafsPir9UrleIA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Pd/i5zHIn/AQu7DnXglDjXVDP9Kqs1JHUD2n7nhTlLi8yjm2IKz+JBZx+4Yr+VtVE
+	 e7yHGcUPsRbgcbw2P9+0iAa3eQIuPxdxCvD4zQ0061JLX7KAItn2oMa+/oo7u6EDKu
+	 InxF+MFcm1V/lYROQX9e8N+GxCkVpWhXIeDRiX1glTL0WRzxgq4B6Rtu/igGkMkHjJ
+	 kKbqnRgp6CKAu2f9hX6M/ujgXDcLOn2TSFJ7iTZJAYpwPGfOf02rZC1mJD1CS20bqy
+	 b3G+YD1AUQjI6Cbskf2xxrUstH05FMPGqFtukjg1/JATbW2sStWEYgcPcvdhb0UfS+
+	 VYyYxbL50Koew==
+Date: Wed, 26 Jun 2024 20:49:50 +0800
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] riscv: uaccess: use input constraints for ptr of
+ __put_user
+Message-ID: <ZnwObmA70Bfx9yCn@xhacker>
+References: <20240625040500.1788-1-jszhang@kernel.org>
+ <20240625040500.1788-3-jszhang@kernel.org>
+ <acd2e53f-b5c1-49c5-86e2-bc09eb917163@app.fastmail.com>
+ <ZnwKXWzRz9B5FbLM@xhacker>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 3ImCsWcLqj6CUkocrVdSXFwLnfAiHS1L
-X-Proofpoint-GUID: 3ImCsWcLqj6CUkocrVdSXFwLnfAiHS1L
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-26_06,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- clxscore=1011 suspectscore=0 spamscore=0 malwarescore=0 priorityscore=1501
- impostorscore=0 phishscore=0 adultscore=0 mlxscore=0 bulkscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406260092
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZnwKXWzRz9B5FbLM@xhacker>
 
-Hi Ma Ke,
+On Wed, Jun 26, 2024 at 08:32:38PM +0800, Jisheng Zhang wrote:
+> On Tue, Jun 25, 2024 at 07:54:30AM +0200, Arnd Bergmann wrote:
+> > On Tue, Jun 25, 2024, at 06:04, Jisheng Zhang wrote:
+> > > I believe the output constraints "=m" is not necessary, because
+> > > the instruction itself is "write", we don't need the compiler
+> > > to "write" for us. So tell compiler we read from memory instead
+> > > of writing.
+> > >
+> > > Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+> > 
+> > I think this is a bit too confusing: clearly there is no
+> > read access from the __user pointer, so what you add in here
+> > is not correct. There also needs to be a code comment about
+> 
+> Here is my understanding: the __put_user is implemented with
+> sd(or its less wider variant, sw etc.), w/o considering the
+> ex_table, the previous code can be simplified as below:
+> 
+> __asm__ __volatile__ (
+> 	"sw	%z2, %1\n"
+> 	: "+r" (err), "=m" (*(ptr))
+> 	: "rJ" (__x));
+> 
+> Here ptr is really an input, just tells gcc where to store,
+> And the "store" action is from the "sw" instruction, I don't
+> need the gcc generates "store" instruction for me. so IMHO,
+> there's no need to use output constraints here. so I changed
+> it to
+> 
+> __asm__ __volatile__ (
+> 	"sw	%z1, %2\n"
+> 	: "+r" (err)
+> 	: "rJ" (__x), "m"(*(ptr)));
+> 
+> The key here: is this correct?
+> 
+> 
+> Here is the put_user piece code and comments from x86
+> 
+> /*
+>  * Tell gcc we read from memory instead of writing: this is because
+>  * we do not write to any memory gcc knows about, so there are no
+>  * aliasing issues.
+>  */
+> #define __put_user_goto(x, addr, itype, ltype, label)                   \
+>         asm goto("\n"                                                   \
+>                 "1:     mov"itype" %0,%1\n"                             \
+>                 _ASM_EXTABLE_UA(1b, %l2)                                \
+>                 : : ltype(x), "m" (__m(addr))                           \
+>                 : : label)
 
-On Wed, 2024-06-26 at 16:12 +0800, Ma Ke wrote:
-> As the possible failure of the dma_set_max_seg_size(), we should
-> better check the return value of the dma_set_max_seg_size().
+Here is the simplified put_user piece code of arm64:
 
-I think formally you're correct. dma_set_max_seg_size() could return an
-error if dev->dma_parms was not present.
+#define __put_mem_asm(store, reg, x, addr, err, type)                   \
+        asm volatile(                                                   \
+        "1:     " store "       " reg "1, [%2]\n"                       \
+        "2:\n"                                                          \
+        _ASM_EXTABLE_##type##ACCESS_ERR(1b, 2b, %w0)                    \
+        : "+r" (err)                                                    \
+        : "rZ" (x), "r" (addr))
 
-However, since ISM devices are PCI attached (and will remain PCI
-attached I believe) we can take the existance of dev->dma_parms for
-granted since pci_device_add() (in drivers/pci/probe.c) will make that
-point to the pci_dev's dma_parms for every PCI device.
+no output constraints either. It just uses "r" input constraints to tell
+gcc to read the store address into one proper GP reg.
 
-So I'm not sure how important this fix is.
-
-> Fixes: 684b89bc39ce ("s390/ism: add device driver for internal shared
-> memory")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
-> =C2=A0drivers/s390/net/ism_drv.c | 4 +++-
-> =C2=A01 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/s390/net/ism_drv.c b/drivers/s390/net/ism_drv.c
-> index e36e3ea165d3..9ddd093a0368 100644
-> --- a/drivers/s390/net/ism_drv.c
-> +++ b/drivers/s390/net/ism_drv.c
-> @@ -620,7 +620,9 @@ static int ism_probe(struct pci_dev *pdev, const
-> struct pci_device_id *id)
-> =C2=A0		goto err_resource;
-> =C2=A0
-> =C2=A0	dma_set_seg_boundary(&pdev->dev, SZ_1M - 1);
-> -	dma_set_max_seg_size(&pdev->dev, SZ_1M);
-> +	ret =3D dma_set_max_seg_size(&pdev->dev, SZ_1M);
-> +	if (ret)
-> +		return ret;
-> =C2=A0	pci_set_master(pdev);
-> =C2=A0
-> =C2=A0	ret =3D ism_dev_init(ism);
-
-BTW, I've dropped ubraun@linux.ibm.com and sebott@linux.ibm.com as
-their emails won't work any longer, anyhow. Instead I've added Niklas
-Schnelle, Wenjia Zhang and Stefan Raspl.
-
-Thanks, Gerd
+> 
+> 
+> As can be seen, x86 also doesn't put the (addr) in output constraints,
+> I think x86 version did similar modification in history, but when I tried
+> to searh the git history, the comment is there from the git first day.
+> 
+> Any hint or suggestion is appreciated!
+> 
+> > why you do it this way, as it's not clear that this is
+> > a workaround for old compilers without
+> > CONFIG_CC_HAS_ASM_GOTO_OUTPUT.
+> > 
+> > > index 09d4ca37522c..84b084e388a7 100644
+> > > --- a/arch/riscv/include/asm/uaccess.h
+> > > +++ b/arch/riscv/include/asm/uaccess.h
+> > > @@ -186,11 +186,11 @@ do {								\
+> > >  	__typeof__(*(ptr)) __x = x;				\
+> > >  	__asm__ __volatile__ (					\
+> > >  		"1:\n"						\
+> > > -		"	" insn " %z2, %1\n"			\
+> > > +		"	" insn " %z1, %2\n"			\
+> > >  		"2:\n"						\
+> > >  		_ASM_EXTABLE_UACCESS_ERR(1b, 2b, %0)		\
+> > > -		: "+r" (err), "=m" (*(ptr))			\
+> > > -		: "rJ" (__x));					\
+> > > +		: "+r" (err)			\
+> > > +		: "rJ" (__x), "m"(*(ptr)));					\
+> > >  } while (0)
+> > > 
+> > 
+> > I suspect this could just be a "r" constraint instead of
+> > "m", treating the __user pointer as a plain integer.
+> 
+> I tried "r", the generated code is not as good as "m"
+> 
+> for example
+> __put_user(0x12, &frame->uc.uc_flags);
+> 
+> with "m", the generated code will be
+> 
+> ...
+> csrs    sstatus,a5
+> li      a4,18
+> sd      a4,128(s1)
+> csrc    sstatus,a5
+> ...
+> 
+> 
+> with "r", the generated code will be
+> 
+> ...
+> csrs    sstatus,a5
+> li      a4,18
+> addi    s1,s1,128
+> sd      a4,0(s1)
+> csrc    sstatus,a5
+> ...
+> 
+> As can be seen, "m" can make use of the 'offset' of
+> sd, so save one instruction.
+> 
+> > 
+> > For kernel pointers, using "m" and "=m" constraints
+> > correctly is necessary since gcc will often access the
+> > same data from C code as well. For __user pointers, we
+> > can probably get away without it since no C code is
+> > ever allowed to just dereference them. If you do that,
+> > you may want to have the same thing in the __get_user
+> > side.
+> > 
+> >       Arnd
 
