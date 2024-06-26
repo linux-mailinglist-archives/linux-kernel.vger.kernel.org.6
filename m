@@ -1,233 +1,147 @@
-Return-Path: <linux-kernel+bounces-229884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2941917588
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 03:23:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EB4B917591
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 03:25:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78566282AB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 01:23:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DED322827E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 01:25:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA156D527;
-	Wed, 26 Jun 2024 01:23:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86BED52F;
+	Wed, 26 Jun 2024 01:25:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gkdcp6gO"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mawQ2szt"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0A4D51D
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 01:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76BBFC15B;
+	Wed, 26 Jun 2024 01:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719365000; cv=none; b=Eh5HPuzOJoLD9MeAVEqMw3+3ARNvK0MprpeUTjFbSKyBUtQv+mm6pc7C4lhQTzRyqThL4FbrNooqYrmyrbFgLDarTwBLtKQfMWFnKFINC44bo1G+51t//lb0L+k4i6uAUL8lK5c78WfDvleKJx6+O5RCxSfMkHHpAYE9kfGH2Qk=
+	t=1719365124; cv=none; b=uPMtBHpHvU8KxWlZbxsAQmSfYDuPjyovvhFsgb3dueUq/4gMkvO+e1NpIMo4MhQE3akwA5xC/scxzKvXVySFIzI1FZ5vgNaLtLZy/aeVi5JjWnMBXFOfCyE8/5lXZBHNnzJD7WMLEKaKUia5868pOARlojQfqqoeJH+283HfLSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719365000; c=relaxed/simple;
-	bh=i41zU70QSzKoh7Z0WpJNbSsRYnogskxrw8Sg0DP8yDg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=jIen9z5+VfmPK0ELTabJzlTdC5skLJ1Y/XP83B0kmuPUR7R9M7/oJSpMEqi2WslSIVyvUGtnxUWIJj7KWcKDiNLgvOuctW/NayA1bLid5gOUplhXLWShTGpjb2hK+nQL+ntMkAuwMrehrtPitrEeCFFGaZGnK73G9TySBUZkJWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gkdcp6gO; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1f4a5344ec7so401525ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 18:23:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719364998; x=1719969798; darn=vger.kernel.org;
-        h=in-reply-to:references:from:subject:cc:to:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G4B0rJOt+TwGvnGU5npNqzbhof2wF8oGmpu7vqDya1w=;
-        b=Gkdcp6gOoPtxWvcyH2ErBn0862Mk6oFgGywEGUVcMrlPtBhjdvWQQMBRgQ+mIpC3E+
-         KqUEvnB4XyXJ+PJ5857A0OYo2jugToyXeEksZOeXzGx7qNJ/J2cmMnuGjodclhnebbOI
-         bDbEzj2BZplZiXwaCVPBEmny6Ke4WO64aPO4boN5JDqO7mhTtr7GfMacga7y0nF/KvYm
-         dyXpotU/hS9m/aMd2/t/w+kkjizuasnnkEZ35D95spjDJnqr4xwq0wVIzkbj5zlTlq2C
-         oP+6llM/ZwYy9RhuBl0RipMtd6hqt+X9zxum8q3+kCKSzicv3boClg68qQjXR2X2HPkG
-         hxNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719364998; x=1719969798;
-        h=in-reply-to:references:from:subject:cc:to:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=G4B0rJOt+TwGvnGU5npNqzbhof2wF8oGmpu7vqDya1w=;
-        b=bcvdaz2E3grLFXEO0e5C05GgqIUf/RCcDKwRYdJk6sVT26pnRXGNtzlf0fO1yEc38V
-         OzkiyrrCjX4SJJCMgs50E8a0dPHLh7y8BIgrvANnY/PMKt/Kc9lptt50dgMBqAgXVx72
-         8cRPNsnL/Dm3EGMQtLp8cAwO05FEYwuTiPU0IkwVGbpwKzuUqU1of20GJVG9c/ZTlEtM
-         8E0CUDW81Rm2MZKHhpPrvqKgYrN+LW3lm7biG8lblx1pxARmB0jhHHpEPiJa68o7/HVI
-         K2zeVlTabwTPi1yoFAAgucK+qnHAy/vnzlREW+tbEQNjfGvUtiYVgw/1/srD9L0gTAkE
-         QQbA==
-X-Gm-Message-State: AOJu0YzKJLkeBp13ZN8k21eR6JIAV5q+UqVRluq/zBebspeQcu6nU2QO
-	xGSGa317aP1LE9QnHq0aVXwtQ9YL7t9cCV1ZL170uG4WmGVLatWKThcCBQ==
-X-Google-Smtp-Source: AGHT+IEqVqDw1A2NGO/alG4xT0pZfiNKGUIkmcWKhLu+8DBykPZWCX+p598Z0xCi0cvGZzLtolmp2Q==
-X-Received: by 2002:a17:902:7441:b0:1f4:a04e:8713 with SMTP id d9443c01a7336-1fa5e6bde38mr60633605ad.28.1719364997855;
-        Tue, 25 Jun 2024 18:23:17 -0700 (PDT)
-Received: from localhost (118-211-5-80.tpgi.com.au. [118.211.5.80])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb3c5d29sm87734655ad.154.2024.06.25.18.23.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Jun 2024 18:23:17 -0700 (PDT)
+	s=arc-20240116; t=1719365124; c=relaxed/simple;
+	bh=Ndh4pksjNlQtMzYnaJHT5uZ3ndlkL7BpBPYDeEHRUnw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=soUU/tdwIP95YUiA040JjYo0PjcLBVCKAiCtmNC+W8kQsiCNp1ILFANKoy1aXg0LfgZq2mxC9cQZoJQhgUie95q3kZa9vpHTfDyvnYMYFrNucaYQnyb4c/9Hpls4JAK2wo+WBB6R1fuDGmqHkLJ0seCTqvwsGF7Y4usADRWNwGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mawQ2szt; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45PHHwFO017133;
+	Wed, 26 Jun 2024 01:24:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=feWcUDacOX0TL4eKrI4uOckm
+	oA7/WGU54oNJ9MGsWhw=; b=mawQ2sztEp4mGfXVy2Tl7F5ZSAw/RsjaTNe9U5Hz
+	WDXMQdvQKKrzv8vG62vH8ZTv1WFvWlHKlMQb1Sk6PjvElnks1zcfbOsgsWXiO0eo
+	LhTussDCt0JM5O33DUM2e2opA99TU3D1lj65VRpRwQC5KwYzQGFLhH3BPg3AJjM3
+	2ejyDWM7fGvBxRKWfB6l0bY5yPonzXn3n1GlO2rEYJl+HdhmhCCqr0y1gUapXZjJ
+	jwYyklxZ3geGpi16TbUPxHTv9v85GJCB5MjMQu/kYauXKtv4pFQaz1jSegrT+wKp
+	gnlWkmhZ7Ajxu4W4QiEZ3Cr+zxFOU4oe3KdqaJ1icx6yVQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywqw9fq7c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Jun 2024 01:24:55 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45Q1Os6a023762
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Jun 2024 01:24:54 GMT
+Received: from jiegan-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 25 Jun 2024 18:24:47 -0700
+Date: Wed, 26 Jun 2024 09:24:43 +0800
+From: JieGan <quic_jiegan@quicinc.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+CC: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Alexander Shishkin
+	<alexander.shishkin@linux.intel.com>,
+        Konrad Dybcio <konradybcio@gmail.com>,
+        Mike Leach <mike.leach@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Jinlong Mao
+	<quic_jinlmao@quicinc.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Tingwei Zhang
+	<quic_tingweiz@quicinc.com>,
+        Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+        "Tao
+ Zhang" <quic_taozha@quicinc.com>,
+        Trilok Soni <quic_tsoni@quicinc.com>,
+        "Song
+ Chai" <quic_songchai@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <andersson@kernel.org>,
+        <quic_yijiyang@quicinc.com>, <quic_yuanjiey@quicinc.com>,
+        <quic_liuxin@quicinc.com>, <quic_yanzl@quicinc.com>,
+        <quic_xinlon@quicinc.com>, <quic_xueqnie@quicinc.com>,
+        <quic_sijiwu@quicinc.com>
+Subject: Re: [PATCH] Coresight: Set correct cs_mode for TPDM to fix disable
+ issue
+Message-ID: <Zntt23e+YhHboh30@jiegan-gv.ap.qualcomm.com>
+References: <20240625021212.1443304-1-quic_jiegan@quicinc.com>
+ <2e78b732-aed7-4de5-b5ac-0da5b78af342@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 26 Jun 2024 11:23:11 +1000
-Message-Id: <D29K0SVIUJDR.2HQTLIJG4R7VG@gmail.com>
-To: "LEROY Christophe" <christophe.leroy2@cs-soprasteria.com>, "Andrew
- Morton" <akpm@linux-foundation.org>, "Jason Gunthorpe" <jgg@nvidia.com>,
- "Peter Xu" <peterx@redhat.com>, "Oscar Salvador" <osalvador@suse.de>,
- "Michael Ellerman" <mpe@ellerman.id.au>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>, "linuxppc-dev@lists.ozlabs.org"
- <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH v6 21/23] powerpc/64s: Use contiguous PMD/PUD instead of
- HUGEPD
-From: "Nicholas Piggin" <npiggin@gmail.com>
-X-Mailer: aerc 0.17.0
-References: <cover.1719240269.git.christophe.leroy@csgroup.eu>
- <23f3fe9e8fe37cb164a369850d4569dddf359fdf.1719240269.git.christophe.leroy@csgroup.eu> <D28TSEV6QV38.2NWPFRY8KCQK7@gmail.com> <a8f76535-2d5a-4f25-83be-31aab1cd38c4@cs-soprasteria.com>
-In-Reply-To: <a8f76535-2d5a-4f25-83be-31aab1cd38c4@cs-soprasteria.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <2e78b732-aed7-4de5-b5ac-0da5b78af342@arm.com>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: kkoD60b3GGk3It8n4j0bU9_XMhF9TnGP
+X-Proofpoint-GUID: kkoD60b3GGk3It8n4j0bU9_XMhF9TnGP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-25_20,2024-06-25_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ priorityscore=1501 clxscore=1015 impostorscore=0 mlxscore=0
+ lowpriorityscore=0 malwarescore=0 mlxlogscore=812 phishscore=0 bulkscore=0
+ adultscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2406140001 definitions=main-2406260009
 
-On Tue Jun 25, 2024 at 3:20 PM AEST, LEROY Christophe wrote:
->
->
-> Le 25/06/2024 =C3=A0 06:49, Nicholas Piggin a =C3=A9crit=C2=A0:
-> > On Tue Jun 25, 2024 at 12:45 AM AEST, Christophe Leroy wrote:
-> >> On book3s/64, the only user of hugepd is hash in 4k mode.
-> >>
-> >> All other setups (hash-64, radix-4, radix-64) use leaf PMD/PUD.
-> >>
-> >> Rework hash-4k to use contiguous PMD and PUD instead.
-> >>
-> >> In that setup there are only two huge page sizes: 16M and 16G.
-> >>
-> >> 16M sits at PMD level and 16G at PUD level.
-> >>
-> >> pte_update doesn't know page size, lets use the same trick as
-> >> hpte_need_flush() to get page size from segment properties. That's
-> >> not the most efficient way but let's do that until callers of
-> >> pte_update() provide page size instead of just a huge flag.
-> >>
-> >> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> >=20
-> > [snip]
-> >=20
-> >> +static inline unsigned long hash__pte_update(struct mm_struct *mm,
-> >> +					 unsigned long addr,
-> >> +					 pte_t *ptep, unsigned long clr,
-> >> +					 unsigned long set,
-> >> +					 int huge)
-> >> +{
-> >> +	unsigned long old;
-> >> +
-> >> +	old =3D hash__pte_update_one(ptep, clr, set);
-> >> +
-> >> +	if (IS_ENABLED(CONFIG_PPC_4K_PAGES) && huge) {
-> >> +		unsigned int psize =3D get_slice_psize(mm, addr);
-> >> +		int nb, i;
-> >> +
-> >> +		if (psize =3D=3D MMU_PAGE_16M)
-> >> +			nb =3D SZ_16M / PMD_SIZE;
-> >> +		else if (psize =3D=3D MMU_PAGE_16G)
-> >> +			nb =3D SZ_16G / PUD_SIZE;
-> >> +		else
-> >> +			nb =3D 1;
-> >> +
-> >> +		WARN_ON_ONCE(nb =3D=3D 1);	/* Should never happen */
-> >> +
-> >> +		for (i =3D 1; i < nb; i++)
-> >> +			hash__pte_update_one(ptep + i, clr, set);
-> >> +	}
-> >>   	/* huge pages use the old page table lock */
-> >>   	if (!huge)
-> >>   		assert_pte_locked(mm, addr);
-> >>  =20
-> >> -	old =3D be64_to_cpu(old_be);
-> >>   	if (old & H_PAGE_HASHPTE)
-> >>   		hpte_need_flush(mm, addr, ptep, old, huge);
-> >>  =20
-> >=20
-> > We definitely need a bit more comment and changelog about the atomicity
-> > issues here. I think the plan should be all hash-side access just
-> > operates on PTE[0], which should avoid that whole race. There could be
-> > some cases that don't follow that. Adding some warnings to catch such
-> > things could be good too.
->
-> That seems to be the case indeed, as we have the following in=20
-> hash_page_mm():
->
-> #ifndef CONFIG_PPC_64K_PAGES
-> 	/*
-> 	 * If we use 4K pages and our psize is not 4K, then we might
-> 	 * be hitting a special driver mapping, and need to align the
-> 	 * address before we fetch the PTE.
-> 	 *
-> 	 * It could also be a hugepage mapping, in which case this is
-> 	 * not necessary, but it's not harmful, either.
-> 	 */
-> 	if (psize !=3D MMU_PAGE_4K)
-> 		ea &=3D ~((1ul << mmu_psize_defs[psize].shift) - 1);
-> #endif /* CONFIG_PPC_64K_PAGES */
+On Tue, Jun 25, 2024 at 01:24:11PM +0100, Suzuki K Poulose wrote:
+> On 25/06/2024 03:12, Jie Gan wrote:
+> > The coresight_disable_source_sysfs function should verify the
+> > mode of the coresight device before disabling the source.
+> > However, the mode for the TPDM device is always set to
+> > CS_MODE_DISABLED, resulting in the check consistently failing.
+> > As a result, TPDM cannot be properly disabled.
+> > 
+> > To fix the issue:
+> > Configure CS_MODE_SYSFS/CS_MODE_PERF during the enablement of TPDM.
+> > Configure CS_MODE_DISABLED during the disablement of TPDM.
+> > 
+> > Fixes: 1f5149c7751c("coresight: Move all sysfs code to sysfs file")
+> 
+> That looks like the wrong commit. This was a problem since the original
+> TPDM driver. I would say :
+> 
+> Fixes: b3c71626a933 ("Coresight: Add coresight TPDM source driver")
+I will correct the Fixes tag and re-send the patch.
 
-Yeah, for that one it works (comment needs updating to say that it
-*is* necessary). I think that's the main thing but there's other
-possible places where it might not hold -- KVM too, not just the
-hash refill.
+> 
+> > Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
+> 
+> Otherwise, the patch looks good to me.
+> 
+> Please could you also fixup "dummy" source driver in a separate patch.
+Sure.
 
-> >=20
-> > I'd been meaning to do more on this sooner, sorry. I've started
-> > tinkering with adding a bit of debug code. I'll see if I can help with
-> > adding a bit of comments.
->
-> Yes would we very welcome, I guess you'll send it as followup/fixup=20
-> patch to the series ?
-
-Yeah, the basic approach I think is good, so it wouldn't be a
-big rework.
-
->
-> >=20
-> > [snip]
-> >=20
-> >> diff --git a/arch/powerpc/mm/book3s64/hugetlbpage.c b/arch/powerpc/mm/=
-book3s64/hugetlbpage.c
-> >> index 5a2e512e96db..83c3361b358b 100644
-> >> --- a/arch/powerpc/mm/book3s64/hugetlbpage.c
-> >> +++ b/arch/powerpc/mm/book3s64/hugetlbpage.c
-> >> @@ -53,6 +53,16 @@ int __hash_page_huge(unsigned long ea, unsigned lon=
-g access, unsigned long vsid,
-> >>   		/* If PTE permissions don't match, take page fault */
-> >>   		if (unlikely(!check_pte_access(access, old_pte)))
-> >>   			return 1;
-> >> +		/*
-> >> +		 * If hash-4k, hugepages use seeral contiguous PxD entries
-> >> +		 * so bail out and let mm make the page young or dirty
-> >> +		 */
-> >> +		if (IS_ENABLED(CONFIG_PPC_4K_PAGES)) {
-> >> +			if (!(old_pte & _PAGE_ACCESSED))
-> >> +				return 1;
-> >> +			if ((access & _PAGE_WRITE) && !(old_pte & _PAGE_DIRTY))
-> >> +				return 1;
-> >> +		}
-> >>  =20
-> >>   		/*
-> >>   		 * Try to lock the PTE, add ACCESSED and DIRTY if it was
-> >=20
-> > I'm hoping we wouldn't have to do this, if we follow the PTE[0] rule.
->
-> But we still need all entries to be updated so that page walker which=20
-> don't know they must use PTE[0] get the right information ?
-
-Ah yeah. Maybe for ACCESSED|DIRTY we can slightly adjust that rule
-and apply it to all PTEs. If we can do that then it takes care of
-a few other cases too.
-
-Bug what is the consequence of two pte_update racing? Let's say
-page_vma_mkclean_one vs setting dirty. Can you end up with some
-PTEs dirty and some not?
+> 
+> Suzuki
+> 
 
 Thanks,
-Nick
+Jie
 
