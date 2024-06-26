@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-230291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EE7D917AE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:26:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51356917AE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:26:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D9982881D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:26:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CFAE285F62
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:26:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC769161304;
-	Wed, 26 Jun 2024 08:26:30 +0000 (UTC)
-Received: from 189.cn (ptr.189.cn [183.61.185.104])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D08144D1D;
-	Wed, 26 Jun 2024 08:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.61.185.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B371B1662F8;
+	Wed, 26 Jun 2024 08:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tFlo4sTf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088B316133E
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 08:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719390390; cv=none; b=WmCngbsGMYNCcNYJzBue7p80fZr/PseRVvEPrSqD5o5x1Vu2u3xa/P5jGu5lgD/UuvF86kOHeY3l6uQDKP4R1xdYVdnsrbd04d/Uqh2Xyf3wMtCtBA5mvGflJzfjkt22/mn6yUevZbd0x1V79OfXULlFjYQDzmo1NecoHhjQtVQ=
+	t=1719390391; cv=none; b=J5JCkZ/PvkBgjSpK/JE1/WiSljZmlbBG6RgrVlWJEydtkIjt9jCCMtg5ZJj7RzQGAxGLe5ExeKrGaSa7s8MdV1drtkxSct6eSOh2MEdi8aG1lDRtE71bp05MCVK7Fu2+y0bkQHAT7SbQMHu66mv8njOErsrF3YbTLGGaxij3O3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719390390; c=relaxed/simple;
-	bh=41WVn3qyloXsUi/SRq4AoTEiB6Nz7RIdAF4U67QT33Q=;
+	s=arc-20240116; t=1719390391; c=relaxed/simple;
+	bh=XbiR1/BgJHYty7bevHcBo3nrwQe/zawJwGacx+h0PaM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iQSjWdgMqJCMhQjTqMCl/C6I65/4JIeKeudz0sYmneb6wuAsBTH/QrADIY1Xa/0xIzbVAqiX+tD701cL3eroM1krh2IO7X3Pp9jZyzGrGytC1SbF4pVa9stKyvqGYv7TQeRuTf1F0m+7KtBQZORfRoO3fblBMEbBXJRqs0hVzTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn; spf=pass smtp.mailfrom=189.cn; arc=none smtp.client-ip=183.61.185.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=189.cn
-HMM_SOURCE_IP:10.64.8.41:52346.1035618608
-HMM_ATTACHE_NUM:0000
-HMM_SOURCE_TYPE:SMTP
-Received: from clientip-39.156.73.12 (unknown [10.64.8.41])
-	by 189.cn (HERMES) with SMTP id D6DAD1002AB;
-	Wed, 26 Jun 2024 16:26:06 +0800 (CST)
-Received: from  ([39.156.73.12])
-	by gateway-153622-dep-9dc64869d-cgdr8 with ESMTP id 341c2eea31894564a47544999d022694 for john.ogness@linutronix.de;
-	Wed, 26 Jun 2024 16:26:22 CST
-X-Transaction-ID: 341c2eea31894564a47544999d022694
-X-Real-From: chensong_2000@189.cn
-X-Receive-IP: 39.156.73.12
-X-MEDUSA-Status: 0
-Sender: chensong_2000@189.cn
-Message-ID: <7252f93a-ef60-49f8-ae93-73d269cc62f8@189.cn>
-Date: Wed, 26 Jun 2024 16:26:05 +0800
+	 In-Reply-To:Content-Type; b=Azj0typBI3D4hQHhHI2JOn/hUHfERPBANMyPyS6JHZ92s7BQYJdOLyLfTYB+ey8yjCaXTr+13XT9cxWUJ9tNiE0/J9CqoKu+whI7FfdJLOQWMBE4ry6Q3xsyWtu0FYp6uGTUeq496WY28FS3AjovH/07p2QcKmH6NY7+4DVKNgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tFlo4sTf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53FDFC4AF07;
+	Wed, 26 Jun 2024 08:26:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719390390;
+	bh=XbiR1/BgJHYty7bevHcBo3nrwQe/zawJwGacx+h0PaM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tFlo4sTfsiO0U16eIxo0+7V/+LMf9TCi02eBP5tYY5HnnlJKFnDSCco5d0/bHF4S9
+	 6CqbrA9Yix5cpgkhHZEkFCdecHIRQhL+bgTx8JvI6pox6TJTQUYrinn2Wt8vNuJ74/
+	 St7iJB3SD4rBeB2Y224hPncDWeM6//3hF29ousX8mKMFnJnMO48Yj2UTbzjEz5hMze
+	 Tm3zd2j8fHPFsn+0CrWjppsG9Pgwk/dcinzYr6Uiy+M98Vqcght35VmXc02wuZGbJd
+	 q9q4pvBRgSefoA+Ra4jDnydt021FlMUCEh+2PeQc8F0HrYbgMWSbeHnsVdMCH7j/gE
+	 F2kv0pakv4mkA==
+Message-ID: <aecc0724-027e-4405-887c-1a0701517e81@kernel.org>
+Date: Wed, 26 Jun 2024 16:26:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,43 +49,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: a question about how to debug this case in ftrace
-To: John Ogness <john.ogness@linutronix.de>,
- Andrew Halaney <ahalaney@redhat.com>
-Cc: Derek Barbosa <debarbos@redhat.com>, pmladek@suse.com,
- rostedt@goodmis.org, senozhatsky@chromium.org,
- linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- williams@redhat.com, jlelli@redhat.com
-References: <ZnGlt4uQRP_4nWu4@debarbos-thinkpadt14sgen2i.remote.csb>
- <6802e81c-1926-4195-812a-1a5fe13bcdde@189.cn>
- <xiune2bsqgin5ksk33q5bkihuz5qrv5casjofdyopes55zfcpc@uvvnlwxb4wcp>
- <4d198032-d4e1-4a84-8f56-1b31157e9323@189.cn>
- <e6b0ba9e-e8f6-4c42-9f63-e3b67d7edbf0@189.cn>
- <8734p0jhdc.fsf@jogness.linutronix.de>
+Subject: Re: [PATCH v1] erofs: fix possible memory leak in z_erofs_gbuf_exit()
+To: Sandeep Dhavale <dhavale@google.com>, linux-erofs@lists.ozlabs.org,
+ Gao Xiang <xiang@kernel.org>, Yue Hu <huyue2@coolpad.com>,
+ Jeffle Xu <jefflexu@linux.alibaba.com>, Chunhai Guo <guochunhai@vivo.com>
+Cc: hsiangkao@linux.alibaba.com, kernel-team@android.com,
+ linux-kernel@vger.kernel.org
+References: <20240624220206.3373197-1-dhavale@google.com>
 Content-Language: en-US
-From: Song Chen <chensong_2000@189.cn>
-In-Reply-To: <8734p0jhdc.fsf@jogness.linutronix.de>
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20240624220206.3373197-1-dhavale@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-not really, sounds like it meets my expectation of merging logs either 
-way, "printk:console ftrace event" in cmdline? I searched it in code or 
-google, no luck.
+On 2024/6/25 6:02, Sandeep Dhavale wrote:
+> Because we incorrectly reused of variable `i` in `z_erofs_gbuf_exit()`
+> for inner loop, we may exit early from outer loop resulting in memory
+> leak. Fix this by using separate variable for iterating through inner loop.
+> 
+> Fixes: f36f3010f676 ("erofs: rename per-CPU buffers to global buffer pool and make it configurable")
+> 
+> Signed-off-by: Sandeep Dhavale <dhavale@google.com>
 
-Song
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-在 2024/6/26 15:25, John Ogness 写道:
-> On 2024-06-26, Song Chen <chensong_2000@189.cn> wrote:
->> ohh, by the way, i'm curious why softlockup/hardlockup/hungtask don't
->> have ftrace dump as well as rcu stall, or is it possible to add a
->> parameter in cmdline to redirect
->> softlockup/hardlockup/hungtask/rcustall warning either to ftrace or
->> printk.
-> 
-> Are you aware of the printk:console ftrace event? If you enable it, all
-> printk output also goes into the ftrace buffers.
-> 
-> John Ogness
-> 
-> 
+Thanks,
 
