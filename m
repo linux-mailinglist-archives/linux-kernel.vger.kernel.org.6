@@ -1,152 +1,86 @@
-Return-Path: <linux-kernel+bounces-230331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39153917B5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:50:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01606917B53
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:49:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4AA6B22EE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:50:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32B4A1C24A25
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:49:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5B7166310;
-	Wed, 26 Jun 2024 08:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IvpsOpwm"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A83815F41F
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 08:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504E416848F;
+	Wed, 26 Jun 2024 08:49:08 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED7E166310;
+	Wed, 26 Jun 2024 08:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719391825; cv=none; b=H5NLKBysfVBm0+z2a0wdTh7uo6wXPwQ8WtU/7JbqvIahgYSMOAp8Rwdft1yBJEQAUMGeOZAECLjK1aJ2iJS47kL5xfii3xADM2nabhxpFv/CU+IlrpbUgLHW4h3cf3YgsuKj91j//AAAZR5XUNsRMDu5K87n2k9/vcyqx9qYnMA=
+	t=1719391747; cv=none; b=uhCQSxFstm82PcQ4ic04ssmjiN5Cemr5Ry4ArKqNNx8SvACJT6Bc+v5byOzO3szLEPgxv9Hh1oZ1KfD8uSnFbENKMWrHXDynrn/NyWA9CNb2aHD/wph+U7md+pYKu+0C2pDv4c3Ujyq3J4lREtui7yD8BB+Ylz1hkyaV8RE38gE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719391825; c=relaxed/simple;
-	bh=hbgIrvLNG3JVyk+XOg/DvdfZjiWKR0LtGTMHMqm6PJM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=egI+D4/mRbvnSpu1gfV0QICLQyiQdncoczGL+28BPSTLS4vk4rCvkzbSaMMjvKAGV0m0HGVAAWFcv5wcK/bAz3Q8SjSnx7ks55R5vUbaihD2mn0cj7b6vHIEeQyDivhBPiryKLu4cwo80LaatSjWluy7hpkWrCtaOrIQotA4yxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IvpsOpwm; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719391823; x=1750927823;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=hbgIrvLNG3JVyk+XOg/DvdfZjiWKR0LtGTMHMqm6PJM=;
-  b=IvpsOpwmMQY1dK68wAOOvwaH9JOArx+VzrYJxz1YULSUfFBPONb72Scq
-   xTvkSXwLBlO4AoytdfuvZTckYMVXtRsJ2i5xqLFb/rGCRchQ+Stz7wEvq
-   TtVKkaHidwnwnbxTnm5g8OvTBYzhR9pQFe46j4bAiyflKkaWyR7HCTB11
-   19ys8/20lKAeNYtkPE0l3JIT48ZChhuSQ/iHdeZJN0IYWw1fk/9fCWjNF
-   ZnmKM0/DTC3RpTrX6kC3EWk8116AvNH7aHdJwux4ZdKUKcWoPHikB0TYK
-   mwdiBagoD/kwWN0iAoI2QfSvv0ji7WOcM50eFLy6cM6A0J5eki4QmXYFI
-   Q==;
-X-CSE-ConnectionGUID: ktDN+RrPTI6AYwMJUMfgLg==
-X-CSE-MsgGUID: q5s7YauoTTSBO8iut8Honw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="33983960"
-X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
-   d="scan'208";a="33983960"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 01:50:22 -0700
-X-CSE-ConnectionGUID: 5HnKgUo+S8Kzqy/b6pxSmQ==
-X-CSE-MsgGUID: vNboYoUMT2id2AEudTcF3g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
-   d="scan'208";a="44038581"
-Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 01:50:19 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Tvrtko Ursulin <tursulin@igalia.com>
-Cc: linux-mm@kvack.org,  linux-kernel@vger.kernel.org,
-  kernel-dev@igalia.com,  Tvrtko Ursulin <tvrtko.ursulin@igalia.com>,  Mel
- Gorman <mgorman@suse.de>,  Peter Zijlstra <peterz@infradead.org>,  Ingo
- Molnar <mingo@redhat.com>,  Rik van Riel <riel@surriel.com>,  Johannes
- Weiner <hannes@cmpxchg.org>,  "Matthew Wilcox (Oracle)"
- <willy@infradead.org>,  Dave Hansen <dave.hansen@intel.com>,  Andi Kleen
- <ak@linux.intel.com>,  Michal Hocko <mhocko@suse.com>,  David Rientjes
- <rientjes@google.com>
-Subject: Re: [PATCH] mm/numa_balancing: Teach mpol_to_str about the
- balancing mode
-In-Reply-To: <20240625132605.38428-1-tursulin@igalia.com> (Tvrtko Ursulin's
-	message of "Tue, 25 Jun 2024 14:26:05 +0100")
-References: <20240625132605.38428-1-tursulin@igalia.com>
-Date: Wed, 26 Jun 2024 16:48:27 +0800
-Message-ID: <87r0ckozs4.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1719391747; c=relaxed/simple;
+	bh=1ODE0XKaeMtnd8mzTknDOkALaTc8RLBP04scttwZkuE=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=XxmX0PQKyp9WCMvxPeFne0F6B1i5DvFfNAT7eyfeLFdHyhoeyfAHEPleqtlltm6pcJMftXW8kQt6Uv1w04NSR3FEOmIb24MqEqB8oMYPdrj1j4E90Xrqzg76o5cmtKR0oGEB+k9dWMuijXo2trNLpKG8crBk8n5Q5sZ3O/giZy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app01-12001 (RichMail) with SMTP id 2ee1667bd5fd0ad-819a2;
+	Wed, 26 Jun 2024 16:49:01 +0800 (CST)
+X-RM-TRANSID:2ee1667bd5fd0ad-819a2
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from ubuntu.localdomain (unknown[10.54.5.255])
+	by rmsmtp-syy-appsvr09-12009 (RichMail) with SMTP id 2ee9667bd5fc2b7-a3e8b;
+	Wed, 26 Jun 2024 16:49:01 +0800 (CST)
+X-RM-TRANSID:2ee9667bd5fc2b7-a3e8b
+From: Zhu Jun <zhujun2@cmss.chinamobile.com>
+To: perex@perex.cz
+Cc: tiwai@suse.com,
+	shuah@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	broonie@kernel.org,
+	zhujun2@cmss.chinamobile.com
+Subject: [PATCH] selftests/alsa:Fix printf format string in pcm-test.c
+Date: Wed, 26 Jun 2024 01:48:59 -0700
+Message-Id: <20240626084859.4350-1-zhujun2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
 
-Tvrtko Ursulin <tursulin@igalia.com> writes:
+Inside of test_pcm_time() arguments are printed via printf
+but '%d' is used to print @flags (of type unsigned int).
+Use '%u' instead, just like we do everywhere else.
 
-> From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
->
-> If a task has had MPOL_F_NUMA_BALANCING set it is useful to show that in
+Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+---
+ tools/testing/selftests/alsa/pcm-test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-IIUC, MPOL_F_NUMA_BALANCING works for VMA area via mbind() too.
+diff --git a/tools/testing/selftests/alsa/pcm-test.c b/tools/testing/selftests/alsa/pcm-test.c
+index de664dedb541..914efcdce1ec 100644
+--- a/tools/testing/selftests/alsa/pcm-test.c
++++ b/tools/testing/selftests/alsa/pcm-test.c
+@@ -383,7 +383,7 @@ static void test_pcm_time(struct pcm_data *data, enum test_class class,
+ 		goto __close;
+ 	}
+ 	if (rrate != rate) {
+-		snprintf(msg, sizeof(msg), "rate mismatch %ld != %d", rate, rrate);
++		snprintf(msg, sizeof(msg), "rate mismatch %ld != %u", rate, rrate);
+ 		goto __close;
+ 	}
+ 	rperiod_size = period_size;
+-- 
+2.17.1
 
-> procfs. Teach the mpol_to_str helper about its existance and while at it
-> update the comment to account for "weighted interleave" when suggesting
-> a recommended buffer size.
 
-Otherwise LGTM, Thanks!
 
-Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
-
-> Signed-off-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-> References: bda420b98505 ("numa balancing: migrate on fault among multiple bound nodes")
-> Cc: Huang Ying <ying.huang@intel.com>
-> Cc: Mel Gorman <mgorman@suse.de>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Rik van Riel <riel@surriel.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> Cc: Dave Hansen <dave.hansen@intel.com>
-> Cc: Andi Kleen <ak@linux.intel.com>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: David Rientjes <rientjes@google.com>
-> ---
->  mm/mempolicy.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
->
-> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-> index aec756ae5637..d147287c4505 100644
-> --- a/mm/mempolicy.c
-> +++ b/mm/mempolicy.c
-> @@ -3293,8 +3293,9 @@ int mpol_parse_str(char *str, struct mempolicy **mpol)
->   * @pol:  pointer to mempolicy to be formatted
->   *
->   * Convert @pol into a string.  If @buffer is too short, truncate the string.
-> - * Recommend a @maxlen of at least 32 for the longest mode, "interleave", the
-> - * longest flag, "relative", and to display at least a few node ids.
-> + * Recommend a @maxlen of at least 42 for the longest mode, "weighted
-> + * interleave", the longest flag, "balancing", and to display at least a few
-> + * node ids.
->   */
->  void mpol_to_str(char *buffer, int maxlen, struct mempolicy *pol)
->  {
-> @@ -3331,12 +3332,15 @@ void mpol_to_str(char *buffer, int maxlen, struct mempolicy *pol)
->  		p += snprintf(p, buffer + maxlen - p, "=");
->  
->  		/*
-> -		 * Currently, the only defined flags are mutually exclusive
-> +		 * The below two flags are mutually exclusive:
->  		 */
->  		if (flags & MPOL_F_STATIC_NODES)
->  			p += snprintf(p, buffer + maxlen - p, "static");
->  		else if (flags & MPOL_F_RELATIVE_NODES)
->  			p += snprintf(p, buffer + maxlen - p, "relative");
-> +
-> +		if (flags & MPOL_F_NUMA_BALANCING)
-> +			p += snprintf(p, buffer + maxlen - p, "balancing");
->  	}
->  
->  	if (!nodes_empty(nodes))
 
