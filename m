@@ -1,155 +1,374 @@
-Return-Path: <linux-kernel+bounces-231141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F30199186B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:06:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C1389186BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:06:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8D1028310B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:06:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ED43282E49
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F9918F2D7;
-	Wed, 26 Jun 2024 16:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517DD18F2F4;
+	Wed, 26 Jun 2024 16:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FJkoJt9v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mMNWZ6g1"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90CF218F2CC;
-	Wed, 26 Jun 2024 16:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719417681; cv=none; b=XgCt7GDFu9OEipJgMZ1MnaAyq6/6UMXn22QVTA2LyzJvZxsBr47NTFuud/gi7s1roDNMLZtwm1uRO2GSregYQQKnUD9f8yXfxf+JTTbyZOWMG5D5d4hfOtGUwMI1zyupbOFusnG7PoB1n/Is1ylcRfufWnY2QUDwspxYRiMjztQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719417681; c=relaxed/simple;
-	bh=nyv3bEUAakqLC7rtOzRHOgPOsPXjI0dRN38MP/V4ocg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X2Oj0AuY/vsu6nxa5tTeIQ07UE26AsoCNAVWvlNp0npnoHcQuVrfrbnUNHP93JjMnFPobpI1LwJ31cGcgv0Cpodn/LNkjgMblMIeIlJ6LqaecZUE0CKIhDgt2ilb8sGJV0AEJT5OHnSwSrQJJSXGUvz6rVV9d4T/KtQIUOpPhwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FJkoJt9v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D334C116B1;
-	Wed, 26 Jun 2024 16:01:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719417681;
-	bh=nyv3bEUAakqLC7rtOzRHOgPOsPXjI0dRN38MP/V4ocg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FJkoJt9v6CUbHgJB4OqNjVcNwf7o/wx/KhKF0GYKtBWuaw3WaaN/4d8Gwt0KSeVXa
-	 Nk4og+i76ei30mfMjgYjQ1oxVoaA4ZVDGOoGl9aUMEpWCuZ9WBKXGyuSe5RSzNIHxx
-	 kVRL3qVCJRECsnwkVYZoe40szEAQnHbx0kbxspTGbjWc95Ou4M7NezIj4mkZVA5lsq
-	 NudAOXZ0VZgyjJpyFdosSWbISF1iSQgUnpT0/LIBegeCfucQaJUAzQ3cnzyznO/DbW
-	 iXFK5zPihTlY/Ok4th03aEqd6Jn7jv8jqQzVI4dC/mfmV1LtZ4xnynyYEv986EPpZ2
-	 1u6wgyXo8jTYg==
-Date: Wed, 26 Jun 2024 17:01:16 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Samuel Holland <samuel.holland@sifive.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	linux-kernel@vger.kernel.org, Anup Patel <anup@brainfault.org>,
-	kasan-dev@googlegroups.com, Atish Patra <atishp@atishpatra.org>,
-	Evgenii Stepanov <eugenis@google.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH v2 01/10] dt-bindings: riscv: Add pointer masking ISA
- extensions
-Message-ID: <20240626-refined-cadmium-d850b9e15230@spud>
-References: <20240625210933.1620802-1-samuel.holland@sifive.com>
- <20240625210933.1620802-2-samuel.holland@sifive.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4E818E764;
+	Wed, 26 Jun 2024 16:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719417710; cv=fail; b=cQN4hilSadM6AB5YS6jqXbUjSkzn378JMmzr3bTj1M5GnPl9l2grBp3u1uUhGkNOWjiOwSD94ZnjY6VrgoqfzdrmsO4d+IPVfBMdvVei3XMBW5vt5NZIGdNwL/Lw/3Ttfv7h3NeX3/zt6hNND+vW3rOGQbbB+OIfCUE+JKcbYsc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719417710; c=relaxed/simple;
+	bh=XRBVYeDPQIwLupUlrKT7pzIs8ydrTMHXfs34B3Fj97w=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=VojoN4aRTjcIongdavrgXcNzPHKRB+JnOn7e7MHzm8BdwYUlzB7U/JDFCl3fZLpHJXfpybQ+K7ANK6+WcmPZb9buwUJ57rjoToXvZ1xcfRoB7+nwzs+647gz2MPXqPmQd5y880CGFEM2iHuYDdKtKyPYwCVzFerUqGph+fLbrBE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mMNWZ6g1; arc=fail smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719417708; x=1750953708;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=XRBVYeDPQIwLupUlrKT7pzIs8ydrTMHXfs34B3Fj97w=;
+  b=mMNWZ6g1zjL8qCD4O2E7uNwpCPEFZD5wq2/G2Z6wolrq7aLpDVOdKJAy
+   /fSedO5r+nIaWlzlnJi9usUovVpDr9/2RZVbPEw7X/RmOGyBHu9BmUy6C
+   T/e5Ln0hHSPp/RabJi+WT2WOq2aHdwzwQXhNnekFIYKRic3NxXeb3VQF6
+   i1/HVf6Nbu4Zsj8BOQoiNTO7wfCgNkCIo6Gba6wQ4XgMGneXPzgr42F3y
+   0EOv+M8et86xygrURqQlr6Zv68g1J5i4KS2DfrJ8einWud/Hi0JhavLpU
+   RCJsFPV7I4nqCmXHSr+aEKUsI9XKUwm6rbiY+WXT0avJAhx0FsYEMNgvC
+   w==;
+X-CSE-ConnectionGUID: m4+E4m8dSoKeZQ0OC0pB2A==
+X-CSE-MsgGUID: z4/EisftRDm+EJo7Upl7fg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="16461459"
+X-IronPort-AV: E=Sophos;i="6.08,267,1712646000"; 
+   d="scan'208";a="16461459"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 09:01:46 -0700
+X-CSE-ConnectionGUID: ZYyoq7RgSru0wxoRM8XiTQ==
+X-CSE-MsgGUID: pf7lIPBiTAeijgjukl5Arg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,267,1712646000"; 
+   d="scan'208";a="44766293"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by orviesa008.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 26 Jun 2024 09:01:42 -0700
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 26 Jun 2024 09:01:41 -0700
+Received: from fmsmsx602.amr.corp.intel.com (10.18.126.82) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 26 Jun 2024 09:01:41 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 26 Jun 2024 09:01:41 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.101)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 26 Jun 2024 09:01:40 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=B1hfAl0aZxeteTNNYJ5hS7sJKF3YBpXaaKaCbTEqf2BlRVrrKdZa85L0k5eS5Xrklpgo01Yb7pa22s2oHFedDGyK2bsggXId9cb2TGBK5oz+u/itiL8A9ChlfrLMmyjie9m7qpzbhDW+vhskXV3inu5mlaDBtFCH8s14LkUcP/uUgbfUGcvrbuLSFvp6ClqD1omZLrb2K1Wd8+Lx9PkQp03uQpbSKRQlVdCF3gWAAoA8zndIStRlSNEN3MRkMrJnOi7+vhVfEmwGDMBc4VFuCpgDksexjcWHrV47Xo0fn7bMCyv3ElDL9vQh3JjkNd1dSuD4kqJFQrVhW4wvXn8pLA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6y7QGVA1GjCnJS6YEMX9kD3b9fAEiXQb9LPQmQDGF6c=;
+ b=L2rETJLvy5drO4CvhCyHqQKKOeB8X1cB4fNaxaw33HN29PMCjP6Nw/tVUu71LsvQvHf1R0Rsdu4giv/zZ24vQydtLZ2B44Sq+ind/9hORQs//iW/1LTa/b0TBzBPQqttusOYZFNYHhzUVYMsUb+NgvXtmxLOai/yApfns0uIyNg/m1hazuLnrUYFI8wrqyA9yAikRZQ7xKa4/aZF3efwAiWDfwVzoJuHyVHtfbu+71XVJMSYCnzH1tXouW9doUAHr0DtKZwuCEbTA/4e7AtF10v2Q7uaDHbiMwPzt3sO0sS900CM8VGRZ1VNpa5TpU659GpVoifsS4Ygnm9bWNK1gg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BYAPR11MB2854.namprd11.prod.outlook.com (2603:10b6:a02:c9::12)
+ by DM4PR11MB6237.namprd11.prod.outlook.com (2603:10b6:8:a9::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.28; Wed, 26 Jun
+ 2024 16:01:37 +0000
+Received: from BYAPR11MB2854.namprd11.prod.outlook.com
+ ([fe80::8a98:4745:7147:ed42]) by BYAPR11MB2854.namprd11.prod.outlook.com
+ ([fe80::8a98:4745:7147:ed42%5]) with mapi id 15.20.7698.025; Wed, 26 Jun 2024
+ 16:01:37 +0000
+Date: Wed, 26 Jun 2024 12:01:29 -0400
+From: Rodrigo Vivi <rodrigo.vivi@intel.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Alex Deucher <alexander.deucher@amd.com>, Christian
+ =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, David Airlie
+	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, Jani Nikula
+	<jani.nikula@linux.intel.com>, Joonas Lahtinen
+	<joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>, Rob
+ Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean
+ Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, Neil
+ Armstrong <neil.armstrong@linaro.org>, Jessica Zhang
+	<quic_jesszhan@quicinc.com>, <amd-gfx@lists.freedesktop.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<intel-gfx@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
+	<freedreno@lists.freedesktop.org>
+Subject: Re: [PATCH v5] drm/display: split DSC helpers from DP helpers
+Message-ID: <Znw7WYxcW_iKE4B7@intel.com>
+References: <20240623-panel-sw43408-fix-v5-1-5401ab61e738@linaro.org>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240623-panel-sw43408-fix-v5-1-5401ab61e738@linaro.org>
+X-ClientProxiedBy: SJ0PR05CA0204.namprd05.prod.outlook.com
+ (2603:10b6:a03:330::29) To BYAPR11MB2854.namprd11.prod.outlook.com
+ (2603:10b6:a02:c9::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="2g5NVOE5lfng/7+O"
-Content-Disposition: inline
-In-Reply-To: <20240625210933.1620802-2-samuel.holland@sifive.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR11MB2854:EE_|DM4PR11MB6237:EE_
+X-MS-Office365-Filtering-Correlation-Id: 67e39589-c4c3-436b-cab9-08dc95f94246
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230038|366014|376012|7416012|1800799022;
+X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?jqsdiZ9Mo/oy1ktij0aixgR2BvJHCjasQvYRBr5OaUx/mzJo9hfhEZNOPA?=
+ =?iso-8859-1?Q?EH3jRPT0FRbpfVeJjY+G3Kx6MXrlFJdUqhNn9oiExWJIRVVk91OeCc70tZ?=
+ =?iso-8859-1?Q?obM4+VPDrQAv/6J3MGHWJIFlh98IrBRIivP0/jh+NuhAiHMUfZODkmY06K?=
+ =?iso-8859-1?Q?BrA/Y37cwssFWksMACyCq8lHVXB/v56+8hS1eLEWT+HkcDaCcPWolJmdq1?=
+ =?iso-8859-1?Q?EBmJV0FV/VsN5N5YW3Eo4Ew7IHvzxysLA22fH/2k90FOt13sqqRq5No5CP?=
+ =?iso-8859-1?Q?4BwM5zs3GtU2e9x2BF//Sxn60b/Q8qQCWPgVpnnauwcTRUrz+3lN9BWPLx?=
+ =?iso-8859-1?Q?KfEnCKV1gTzbLiraea9JBiOgVh7cRKALz0repzznaRwzAiJoEldnoSR602?=
+ =?iso-8859-1?Q?uimDSpPNArmqtAQzGX8tboevXaDtxNu+dp3gobAWsJipbLoqtZuAvObIP9?=
+ =?iso-8859-1?Q?P/k1JFxSj+yU6kb/uwDTKvqfeab/obS347v67lVOrVvB4IRTwundwP8Pcb?=
+ =?iso-8859-1?Q?cqpEeX3IW5vfVBV1IuRYV6OEnYC54R9hcIRibq76/bwmKoSc8UmpdrlPMg?=
+ =?iso-8859-1?Q?iVnD8gCtff6inbj7ZNOhw4aw6fYH8Py0DfFXlk89StIXvkEMpdNU5J6fcQ?=
+ =?iso-8859-1?Q?xLSSo2O4A4zKS972adFgygaA3hFUwV00hXU0uq/QOSaftFwQgrGLAbtQD7?=
+ =?iso-8859-1?Q?aZNF419JT8PNMRpHz4LZmBCzCWDz2lHb3/YT24oMxllpeQj5VkmA7KfYGG?=
+ =?iso-8859-1?Q?xUuXFLRIOt0PjKXXopXJoK/UuxQ+Iulpbz8DS3I95tgq52ztP0CdCc82xh?=
+ =?iso-8859-1?Q?zTW2FV1pspajFUb0dVz3Bh1WWMXmumGGsHl8WVVJisdD/S0rczisu5BUwp?=
+ =?iso-8859-1?Q?k7JNhDfplGkdab0S0BrQ58xAprB+lMetFSqt3+tBNzhDPzUqFNHRv2w86w?=
+ =?iso-8859-1?Q?hJwUMpUqx/9iQ57bGMcodL0RLy0JNzVi0XmcSA4sxx4JLfjj8wZOhhmtqI?=
+ =?iso-8859-1?Q?Arle/rZ/HBNM8DfEUWJkqmb6zYfCWScHwupZ55aj4HZea0TT0Y2kfaZaKV?=
+ =?iso-8859-1?Q?IVccn20gTDKzLcWZUUoH2S0m7y9MZldexbrblWRY3VKHhHhMqe4yQRZuiO?=
+ =?iso-8859-1?Q?tge0b0swOK8YDJshwMosglSBPXdfKnMR/3S6S+2kn2dFvIvh9PrXKS4O63?=
+ =?iso-8859-1?Q?cNM2dq1qJy06QVUI5JAd2G530i9N881xqlgrC+1EDXiQ55bw5kiyOPe44z?=
+ =?iso-8859-1?Q?sZTgNydJP4OmnUlmyTPjXaBlH7cTh67IV867SaI6gdZ3xAVh0B948/hHSP?=
+ =?iso-8859-1?Q?rUQM?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB2854.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230038)(366014)(376012)(7416012)(1800799022);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?mP+n6ubT218sRiPMFRebtea7Re4iKCs69abWpIzOsQtnFhfpCZhCK36Bcc?=
+ =?iso-8859-1?Q?fcKJ3X5LL6tTIKzK+PXrVTilbGxOU7P4psl1JGwEzmHZfyfROgcwjA6aut?=
+ =?iso-8859-1?Q?DCT4HgDg36AhG5KUr3jgHgeRtCtB9+RXeKARYdrhQTFzL7MDmyhIgSIVbD?=
+ =?iso-8859-1?Q?PzRTsaFXoH+IhzlP7IdcTyR9F3g3pf5SOaGbnAj3gCB7GhwbWFw6sXsHrk?=
+ =?iso-8859-1?Q?UY7JagzHU65IWCaTkbAQXjbrHbuICYSJSjosa4R8o4yeNPg52mTVVws8Xr?=
+ =?iso-8859-1?Q?8Xr2GugfVee/ZqYxsrNjeeCxi1qlpB/+mWkpvojo520unVOgF4xZg0mOcC?=
+ =?iso-8859-1?Q?Dp5aU7JTUa5ZC34kVNeGCB3K/8IfCmHbDvZP/PsK3ZiJJyBsr36359g7to?=
+ =?iso-8859-1?Q?Eir2dcIsnHc6/K7qowuZ0M1GjiG80VppwCtsk+PzejIYXVY3XQEOarp62C?=
+ =?iso-8859-1?Q?I50lpYhb8gEFdxKabHBiSzb3Gx1vQhwJdJIv+wWRTkGUI0Q9Opbzwdm5tD?=
+ =?iso-8859-1?Q?aNikdXIRNbBfjnBWhBkSV7dODeOkpBts5tYFAEKH6Kpsw75cG6fPI5izy1?=
+ =?iso-8859-1?Q?U6FHdfquFjvb27t6hPdJVeDAaeJ0USlfLNOXKg3RlYlIcBEwkKP+4Bfs6W?=
+ =?iso-8859-1?Q?6NRWRF4asTNgW7e7mtcstxgF7QyOrJCD9iTECr6PMGz44ZmXmV3iJYWqm0?=
+ =?iso-8859-1?Q?OSZSZ1KYl+SVK9i3CPqgKYinhM+yZJFWPsHxTqdZDn0r0sDS3f+OxNP/SM?=
+ =?iso-8859-1?Q?eZ4k2VO9fdV64H82+fiFf9uQj6nhO2kjpz+2mRGOUmJfRT+iEmQY0N9QLT?=
+ =?iso-8859-1?Q?JaqauONs1EqqLWR/OFMpRkmtqr5oin6mYq5XPJrLcOHavxie3x496xIAUS?=
+ =?iso-8859-1?Q?dYBN9aRMxgqk8PconWI8I+N6oA9Y+4yYBhaghP47nwGt6yinMblt76HHqc?=
+ =?iso-8859-1?Q?QiinAtLwd/9VfsJoghwCeT6J8T1ziHp5nRsuX3BF+h8SYgK2HlAR3iRwK2?=
+ =?iso-8859-1?Q?QMZ6m4j1eyW6TnCzc/oyvKlh1TYPB+GlIX5+AdOaafbXG7DHjkK4wvt3V/?=
+ =?iso-8859-1?Q?s8hlQB9cX/wJFnxG+srMk2QiGhhGw2P0dKniSwfKhTQPgRRhk+405Oeae3?=
+ =?iso-8859-1?Q?BfoCrgJaaLDTiScErdj9dFq0JoePgNU5jADwbAQaa8O4qUlubQhbx94LvZ?=
+ =?iso-8859-1?Q?QCM3LRewDpoyHFjcln+kwq99PyTVj7nB2+P+b3yO29S7FziMXrD6LryeI2?=
+ =?iso-8859-1?Q?QOC1PpQfXnGO3RRdr8Mk4HLULoZuutCBw+XG1cNgmqUjM6gviSkzC0xjTG?=
+ =?iso-8859-1?Q?4RL6lxxpBwvqinoPfk3eKQHbMVugif31Rk2cxpyOgu772PEyUAkajfbCO6?=
+ =?iso-8859-1?Q?Dow52OifdGk+6bgvsp3DWFYAGjHZZYDOsONsIdamHWs2wHZ0kfCduSpNJG?=
+ =?iso-8859-1?Q?QeAI56PSgwDO5EFVG2qZ9xkQ7PvXpRicMfwWk/Std+azBw7oDesz3tNYrN?=
+ =?iso-8859-1?Q?tXtAd+QPfCqZP7BFoej1OsX6wmSyhAidU6mOjH2FkqbiaDL+F0wOLAPfvC?=
+ =?iso-8859-1?Q?fQRGdjghDSGHeuxVO2RIepoIb2Jv5yynXkuBvOTHS2RApkAWYhAhCZbd9K?=
+ =?iso-8859-1?Q?mO628q5PTIbW6jOgo7DvK9iZwNbbr8rBJ2?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 67e39589-c4c3-436b-cab9-08dc95f94246
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB2854.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 16:01:37.3442
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: RQoDfpKWlhgx1VXhqjII4HIyUpHqEV/pkVE/aCNY1RngaRncgCnYY3BJF6MZJeD4TkNKDuFEjfjp4jshBdzzNw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6237
+X-OriginatorOrg: intel.com
 
-
---2g5NVOE5lfng/7+O
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Jun 25, 2024 at 02:09:12PM -0700, Samuel Holland wrote:
-> The RISC-V Pointer Masking specification defines three extensions:
-> Smmpm, Smnpm, and Ssnpm. Document the behavior of these extensions as
-> following the current draft of the specification, which is 1.0.0-rc2.
-
-You say draft, but the actual extension has already completed public
-review, right?
-
->=20
-> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+On Sun, Jun 23, 2024 at 01:44:19AM +0300, Dmitry Baryshkov wrote:
+> Currently the DRM DSC functions are selected by the
+> DRM_DISPLAY_DP_HELPER Kconfig symbol. This is not optimal, since the DSI
+> code (both panel and host drivers) end up selecting the seemingly
+> irrelevant DP helpers. Split the DSC code to be guarded by the separate
+> DRM_DISPLAY_DSC_HELPER Kconfig symbol.
+> 
+> Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+> Reviewed-by: Marijn Suijten <marijn.suijten@somainline.org>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
->=20
+> To: Alex Deucher <alexander.deucher@amd.com>
+> To: Christian König <christian.koenig@amd.com>
+> To: Pan, Xinhui <Xinhui.Pan@amd.com>
+> To: David Airlie <airlied@gmail.com>
+> To: Daniel Vetter <daniel@ffwll.ch>
+> To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> To: Maxime Ripard <mripard@kernel.org>
+> To: Thomas Zimmermann <tzimmermann@suse.de>
+> To: Jani Nikula <jani.nikula@linux.intel.com>
+> To: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+> To: Rodrigo Vivi <rodrigo.vivi@intel.com>
+> To: Tvrtko Ursulin <tursulin@ursulin.net>
+> To: Rob Clark <robdclark@gmail.com>
+> To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> To: Sean Paul <sean@poorly.run>
+> To: Marijn Suijten <marijn.suijten@somainline.org>
+> To: Neil Armstrong <neil.armstrong@linaro.org>
+> To: Jessica Zhang <quic_jesszhan@quicinc.com>
+> Cc: amd-gfx@lists.freedesktop.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: intel-gfx@lists.freedesktop.org
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: freedreno@lists.freedesktop.org
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> 
+> Changes in v5:
+> - Drop applied patches
+> - Link to v4: https://lore.kernel.org/r/20240528-panel-sw43408-fix-v4-0-330b42445bcc@linaro.org
+> 
+> Changes in v4:
+> - Reoder patches so that fixes come first, to be able to land them to
+>   drm-misc-fixes
+> - Link to v3: https://lore.kernel.org/r/20240522-panel-sw43408-fix-v3-0-6902285adcc0@linaro.org
+> 
+> Changes in v3:
+> - Split DRM_DISPLAY_DSC_HELPER from DRM_DISPLAY_DP_HELPER
+> - Added missing Fixes tags
+> - Link to v2: https://lore.kernel.org/r/20240510-panel-sw43408-fix-v2-0-d1ef91ee1b7d@linaro.org
+> 
 > Changes in v2:
->  - Update pointer masking specification version reference
->=20
->  .../devicetree/bindings/riscv/extensions.yaml  | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Do=
-cumentation/devicetree/bindings/riscv/extensions.yaml
-> index cfed80ad5540..b6aeedc53676 100644
-> --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
-> +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
-> @@ -128,6 +128,18 @@ properties:
->              changes to interrupts as frozen at commit ccbddab ("Merge pu=
-ll
->              request #42 from riscv/jhauser-2023-RC4") of riscv-aia.
-> =20
-> +        - const: smmpm
-> +          description: |
-> +            The standard Smmpm extension for M-mode pointer masking as d=
-efined
-> +            at commit 654a5c4a7725 ("Update PDF and version number.") of
-> +            riscv-j-extension.
+> - use SELECT instead of DEPEND to follow the reverted Kconfig changes
+> - Link to v1: https://lore.kernel.org/r/20240420-panel-sw43408-fix-v1-0-b282ff725242@linaro.org
+> ---
+>  drivers/gpu/drm/amd/amdgpu/Kconfig | 1 +
+>  drivers/gpu/drm/display/Kconfig    | 6 ++++++
+>  drivers/gpu/drm/display/Makefile   | 3 ++-
+>  drivers/gpu/drm/i915/Kconfig       | 1 +
+>  drivers/gpu/drm/msm/Kconfig        | 1 +
+>  drivers/gpu/drm/panel/Kconfig      | 6 +++---
+>  6 files changed, 14 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/amd/amdgpu/Kconfig b/drivers/gpu/drm/amd/amdgpu/Kconfig
+> index 4232ab27f990..5933ca8c6b96 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/Kconfig
+> +++ b/drivers/gpu/drm/amd/amdgpu/Kconfig
+> @@ -6,6 +6,7 @@ config DRM_AMDGPU
+>  	depends on !UML
+>  	select FW_LOADER
+>  	select DRM_DISPLAY_DP_HELPER
+> +	select DRM_DISPLAY_DSC_HELPER
+>  	select DRM_DISPLAY_HDMI_HELPER
+>  	select DRM_DISPLAY_HDCP_HELPER
+>  	select DRM_DISPLAY_HELPER
+> diff --git a/drivers/gpu/drm/display/Kconfig b/drivers/gpu/drm/display/Kconfig
+> index 479e62690d75..a2e42014ffe0 100644
+> --- a/drivers/gpu/drm/display/Kconfig
+> +++ b/drivers/gpu/drm/display/Kconfig
+> @@ -59,6 +59,12 @@ config DRM_DISPLAY_DP_TUNNEL_STATE_DEBUG
+>  
+>  	  If in doubt, say "N".
+>  
+> +config DRM_DISPLAY_DSC_HELPER
+> +	bool
+> +	depends on DRM_DISPLAY_HELPER
+> +	help
+> +	  DRM display helpers for VESA DSC (used by DSI and DisplayPort).
 > +
-> +        - const: smnpm
-> +          description: |
-> +            The standard Smnpm extension for next-mode pointer masking a=
-s defined
-> +            at commit 654a5c4a7725 ("Update PDF and version number.") of
-> +            riscv-j-extension.
-> +
->          - const: smstateen
->            description: |
->              The standard Smstateen extension for controlling access to C=
-SRs
-> @@ -147,6 +159,12 @@ properties:
->              and mode-based filtering as ratified at commit 01d1df0 ("Add=
- ability
->              to manually trigger workflow. (#2)") of riscv-count-overflow.
-> =20
-> +        - const: ssnpm
-> +          description: |
-> +            The standard Ssnpm extension for next-mode pointer masking a=
-s defined
-> +            at commit 654a5c4a7725 ("Update PDF and version number.") of
-> +            riscv-j-extension.
-> +
->          - const: sstc
->            description: |
->              The standard Sstc supervisor-level extension for time compar=
-e as
-> --=20
-> 2.44.1
->=20
+>  config DRM_DISPLAY_HDCP_HELPER
+>  	bool
+>  	depends on DRM_DISPLAY_HELPER
+> diff --git a/drivers/gpu/drm/display/Makefile b/drivers/gpu/drm/display/Makefile
+> index 629df2f4d322..df8f22c7e916 100644
+> --- a/drivers/gpu/drm/display/Makefile
+> +++ b/drivers/gpu/drm/display/Makefile
+> @@ -6,7 +6,8 @@ drm_display_helper-y := drm_display_helper_mod.o
+>  drm_display_helper-$(CONFIG_DRM_DISPLAY_DP_HELPER) += \
+>  	drm_dp_dual_mode_helper.o \
+>  	drm_dp_helper.o \
+> -	drm_dp_mst_topology.o \
+> +	drm_dp_mst_topology.o
+> +drm_display_helper-$(CONFIG_DRM_DISPLAY_DSC_HELPER) += \
+>  	drm_dsc_helper.o
+>  drm_display_helper-$(CONFIG_DRM_DISPLAY_DP_TUNNEL) += \
+>  	drm_dp_tunnel.o
+> diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
+> index faa253b27664..db400aad88fa 100644
+> --- a/drivers/gpu/drm/i915/Kconfig
+> +++ b/drivers/gpu/drm/i915/Kconfig
+> @@ -11,6 +11,7 @@ config DRM_I915
+>  	select SHMEM
+>  	select TMPFS
+>  	select DRM_DISPLAY_DP_HELPER
+> +	select DRM_DISPLAY_DSC_HELPER
 
---2g5NVOE5lfng/7+O
-Content-Type: application/pgp-signature; name="signature.asc"
+Acked-by: Rodrigo Vivi <rodrigo.vivi@intel.com> #i915
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnw7TAAKCRB4tDGHoIJi
-0lzdAP9FEjY6nhgecyj1qyL7BY1ORdvCG0mlA35ivg61fW7EsgEAwwWyBymmuOic
-KbI1oP/Agz7PwvDvQ4h4QigAxWc+jQs=
-=tYy9
------END PGP SIGNATURE-----
-
---2g5NVOE5lfng/7+O--
+>  	select DRM_DISPLAY_HDCP_HELPER
+>  	select DRM_DISPLAY_HDMI_HELPER
+>  	select DRM_DISPLAY_HELPER
+> diff --git a/drivers/gpu/drm/msm/Kconfig b/drivers/gpu/drm/msm/Kconfig
+> index 1931ecf73e32..6dcd26180611 100644
+> --- a/drivers/gpu/drm/msm/Kconfig
+> +++ b/drivers/gpu/drm/msm/Kconfig
+> @@ -111,6 +111,7 @@ config DRM_MSM_DSI
+>  	depends on DRM_MSM
+>  	select DRM_PANEL
+>  	select DRM_MIPI_DSI
+> +	select DRM_DISPLAY_DSC_HELPER
+>  	default y
+>  	help
+>  	  Choose this option if you have a need for MIPI DSI connector
+> diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+> index bf4eadfe21cb..afae8b130e9a 100644
+> --- a/drivers/gpu/drm/panel/Kconfig
+> +++ b/drivers/gpu/drm/panel/Kconfig
+> @@ -349,7 +349,7 @@ config DRM_PANEL_LG_SW43408
+>  	depends on OF
+>  	depends on DRM_MIPI_DSI
+>  	depends on BACKLIGHT_CLASS_DEVICE
+> -	select DRM_DISPLAY_DP_HELPER
+> +	select DRM_DISPLAY_DSC_HELPER
+>  	select DRM_DISPLAY_HELPER
+>  	help
+>  	  Say Y here if you want to enable support for LG sw43408 panel.
+> @@ -558,7 +558,7 @@ config DRM_PANEL_RAYDIUM_RM692E5
+>  	depends on OF
+>  	depends on DRM_MIPI_DSI
+>  	depends on BACKLIGHT_CLASS_DEVICE
+> -	select DRM_DISPLAY_DP_HELPER
+> +	select DRM_DISPLAY_DSC_HELPER
+>  	select DRM_DISPLAY_HELPER
+>  	help
+>  	  Say Y here if you want to enable support for Raydium RM692E5-based
+> @@ -916,7 +916,7 @@ config DRM_PANEL_VISIONOX_R66451
+>  	depends on OF
+>  	depends on DRM_MIPI_DSI
+>  	depends on BACKLIGHT_CLASS_DEVICE
+> -	select DRM_DISPLAY_DP_HELPER
+> +	select DRM_DISPLAY_DSC_HELPER
+>  	select DRM_DISPLAY_HELPER
+>  	help
+>  	  Say Y here if you want to enable support for Visionox
+> 
+> ---
+> base-commit: 2102cb0d050d34d50b9642a3a50861787527e922
+> change-id: 20240420-panel-sw43408-fix-ff6549c121be
+> 
+> Best regards,
+> -- 
+> Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> 
 
