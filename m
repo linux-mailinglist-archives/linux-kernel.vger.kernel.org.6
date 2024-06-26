@@ -1,99 +1,230 @@
-Return-Path: <linux-kernel+bounces-230052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A5B09177D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:05:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 629179177D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:04:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DD72283BC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:05:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20F6D28362D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:04:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95FD713D255;
-	Wed, 26 Jun 2024 05:05:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432C8145FEB;
+	Wed, 26 Jun 2024 05:04:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t9QIlV0/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Vg3LFFNu"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB9DD13AD28
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 05:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EBEE44C84;
+	Wed, 26 Jun 2024 05:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719378308; cv=none; b=dy4yJND9gAUTkxEdGUYJ57eahSgtGbvuWR9HKHBYVNI7iishEVfj2lli06dMBOhoy92pkEe57WDQod+3vkEHqGq0+5GEvNrdn9L24DF32fqryXuCG3+XVgBtxz+LdsLCQHLDntBXmW28VP1zUSgnF7uKHJJYhwoE3DLoHA/Xavo=
+	t=1719378279; cv=none; b=YWo+CW3PWzMsi3k+R1SbwlgK2dUUQgkQdzDVL84oRvSVc5UvBArzrfIOwgH1YFXyCiWhw9iDnpSPGcfIK0uTZbw0HPyfpIuQtu+J2UNKrbv7h+y1kR7yzM2WA1sDmMS1YpMybLIKVvZThJiIoNSfCd4gaOiRcRH8HW48gBnLD6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719378308; c=relaxed/simple;
-	bh=ZgawbklMa0mTB5ICZcmT/KCFPnybBd1Xaek6KxkvUbI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cUYRgGXFBYSfPzjmsPu2LqQPzwxuRobbqLt8h1Uv057UYroKggJrP0sjBJpRftKJS9VRZUl1mZHz7Y2qyrcXoMzzuslUQFrDWZ4qubdirVigyPqIgVoyiyF6HYHXVRJY0ays4yE7LY7BnBmO9A3tNNE+ZCSPQecR2ycGsy+YHOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t9QIlV0/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26E53C2BD10;
-	Wed, 26 Jun 2024 05:05:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719378308;
-	bh=ZgawbklMa0mTB5ICZcmT/KCFPnybBd1Xaek6KxkvUbI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t9QIlV0/SC7HxMudJw6Ky0kIVQSVXvyKMQjeg2ZwMYeym6As/VTEnofLKm/Q+gGWv
-	 Mqa9qwGs5iBk/RLOIclzSkeLL4j4U4OcOQcPutH1hKjMcKeFd3bXeUNTckccLTeFfH
-	 h81j0xm2ONnSt9F4d8HvoajM66BIharie8NS8Sj3FNyHhTLeVCoIdeX2KUIS0EwPxO
-	 a5dKCk87HBXQ/Q+gESk6dyiBTDsCbKxOTPDqABWREcihu331rYNRmgR/uF3CZ5y8NJ
-	 2nk2d5fjxqLM/Dros0WrDYEhqKILl9J4PRni5Na3Lod5pk05XPwqdsTFH6mqhd4eM5
-	 z+I6V9OJVmULQ==
-Date: Wed, 26 Jun 2024 08:02:41 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Guanshun Liu <lgs156412@gmail.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] memblock: export memblock_free() to free reserved
- memory.
-Message-ID: <Znug8e2cUzuA9qGu@kernel.org>
-References: <20240625121652.1189095-1-lgs156412@gmail.com>
+	s=arc-20240116; t=1719378279; c=relaxed/simple;
+	bh=3f0mE/4mzIp6wtCcpHKP6DnnLRcQQV5PsqbfjtH6/v8=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=gF3FjE+/6Fg+glvwMYjg23DGQKeDPlVWW6NfGMxVVjPNHLjNQ5cZSVsOBEcKeQaFwQbFDVgP3o8+Rl2Z1iZ7ziYt5K55QU0/6n7COI7ryZLl0YMUesFRpao02jX4zHTscOYTC7et23xUbN6mc7OfUrQVwoifI7M8MqVN48RyOp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Vg3LFFNu; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
+Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45Q4u0kS032238;
+	Wed, 26 Jun 2024 05:04:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-type:mime-version:subject:from:in-reply-to:date:cc
+	:content-transfer-encoding:message-id:references:to; s=pp1; bh=I
+	RcWdAktzJsy1wZBlGKvwOpueAhV8pRseCZB5gpHOGk=; b=Vg3LFFNuvwD29LT3f
+	bCPgW2dtVGx1q7nsCQHt/wD1S1Km9sAVoabkDb47sHZEuiG5yGv4ZiAlcf8hQbXE
+	DMT4Gs8uy1b+kmtzys0+Cwdhf4L2+/RJaPoZ36eEuyoqOvqPawOOShsTVgTpOya6
+	GgM/M/yIsYDtZ0vmqF5NFrhyv416VunyXlGNCuJV88e+K1AVaNhul9s0+bWmkL/3
+	pqDb20FVprh3HLUdcathO1RYs+Q662BU7zDdMidHdHu91UV9bmKiJZx78Qz33yc5
+	kFHEqgfviO3A7ueRhpRLDViQBPynkQ8SHHmChrP93zbPHNf4dtVthz/AKSdj/kQp
+	MWyFw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 400anwr6x3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Jun 2024 05:04:28 +0000 (GMT)
+Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45Q54RoR013085;
+	Wed, 26 Jun 2024 05:04:27 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 400anwr6x1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Jun 2024 05:04:27 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45Q3VLtt000397;
+	Wed, 26 Jun 2024 05:04:26 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yxbn39y4t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Jun 2024 05:04:26 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45Q54KjC42991884
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 26 Jun 2024 05:04:23 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C934D20049;
+	Wed, 26 Jun 2024 05:04:20 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A289E20040;
+	Wed, 26 Jun 2024 05:04:18 +0000 (GMT)
+Received: from smtpclient.apple (unknown [9.43.122.99])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 26 Jun 2024 05:04:18 +0000 (GMT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240625121652.1189095-1-lgs156412@gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [PATCH V4 1/3] tools/perf: Fix the string match for
+ "/tmp/perf-$PID.map" files in dso__load
+From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+In-Reply-To: <CAM9d7ci2raJmUjb7X2m6O1mCJm5xYLEWS8g_gC7tTjvshm1XFQ@mail.gmail.com>
+Date: Wed, 26 Jun 2024 10:34:06 +0530
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+        Ian Rogers <irogers@google.com>, LKML <linux-kernel@vger.kernel.org>,
+        linux-perf-users <linux-perf-users@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, akanksha@linux.ibm.com,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Kajol Jain <kjain@linux.ibm.com>,
+        Disha Goel <disgoel@linux.vnet.ibm.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <41C6FBA0-98FB-458A-AA01-77B9604D56C2@linux.vnet.ibm.com>
+References: <20240623064850.83720-1-atrajeev@linux.vnet.ibm.com>
+ <722cb4bc-89d4-4e03-a80d-ffe05be52c05@intel.com>
+ <f65ff3cf-1724-45a1-ad88-200d72251042@intel.com>
+ <CAM9d7ci2raJmUjb7X2m6O1mCJm5xYLEWS8g_gC7tTjvshm1XFQ@mail.gmail.com>
+To: Namhyung Kim <namhyung@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+X-Mailer: Apple Mail (2.3774.600.62)
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: VqVtTy1pBQUK1kYK-MFx1i6-MM_B1xml
+X-Proofpoint-GUID: fuqKPiywl43EIW4S8iLYmijvQYqCAObm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-26_02,2024-06-25_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
+ impostorscore=0 priorityscore=1501 mlxlogscore=999 mlxscore=0 bulkscore=0
+ clxscore=1015 lowpriorityscore=0 malwarescore=0 spamscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2406260036
 
-On Tue, Jun 25, 2024 at 08:16:52PM +0800, Guanshun Liu wrote:
-> On architectures that support the preservation of memblock metadata
-> after __init, allow drivers to call memblock_free() to free a
-> reservation configured in dts. This is a hack to support the
 
-"This is a hack" implies that it's not a proper solution, right?
 
-And anyway, memblock_free() will not actually free the memory after __init.
+> On 25 Jun 2024, at 11:29=E2=80=AFPM, Namhyung Kim =
+<namhyung@kernel.org> wrote:
+>=20
+> Hello,
+>=20
+> On Tue, Jun 25, 2024 at 5:02=E2=80=AFAM Adrian Hunter =
+<adrian.hunter@intel.com> wrote:
+>>=20
+>> On 25/06/24 14:57, Adrian Hunter wrote:
+>>> On 23/06/24 09:48, Athira Rajeev wrote:
+>>>> Perf test for perf probe of function from different CU fails
+>>>> as below:
+>>>>=20
+>>>>     ./perf test -vv "test perf probe of function from different CU"
+>>>>     116: test perf probe of function from different CU:
+>>>>     --- start ---
+>>>>     test child forked, pid 2679
+>>>>     Failed to find symbol foo in =
+/tmp/perf-uprobe-different-cu-sh.Msa7iy89bx/testfile
+>>>>       Error: Failed to add events.
+>>>>     --- Cleaning up ---
+>>>>     "foo" does not hit any event.
+>>>>       Error: Failed to delete events.
+>>>>     ---- end(-1) ----
+>>>>     116: test perf probe of function from different CU              =
+     : FAILED!
+>>>>=20
+>>>> The test does below to probe function "foo" :
+>>>>=20
+>>>>     # gcc -g -Og -flto -c =
+/tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-foo.c
+>>>>     -o /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-foo.o
+>>>>     # gcc -g -Og -c =
+/tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-main.c
+>>>>     -o /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-main.o
+>>>>     # gcc -g -Og -o =
+/tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile
+>>>>     /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-foo.o
+>>>>     /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-main.o
+>>>>=20
+>>>>     # ./perf probe -x =
+/tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile foo
+>>>>     Failed to find symbol foo in =
+/tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile
+>>>>        Error: Failed to add events.
+>>>>=20
+>>>> Perf probe fails to find symbol foo in the executable placed in
+>>>> /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7
+>>>>=20
+>>>> Simple reproduce:
+>>>>=20
+>>>> # mktemp -d /tmp/perf-checkXXXXXXXXXX
+>>>>   /tmp/perf-checkcWpuLRQI8j
+>>>>=20
+>>>> # gcc -g -o test test.c
+>>>> # cp test /tmp/perf-checkcWpuLRQI8j/
+>>>> # nm /tmp/perf-checkcWpuLRQI8j/test | grep foo
+>>>>   00000000100006bc T foo
+>>>>=20
+>>>> # ./perf probe -x /tmp/perf-checkcWpuLRQI8j/test foo
+>>>>   Failed to find symbol foo in /tmp/perf-checkcWpuLRQI8j/test
+>>>>      Error: Failed to add events.
+>>>>=20
+>>>> But it works with any files like /tmp/perf/test. Only for
+>>>> patterns with "/tmp/perf-", this fails.
+>>>>=20
+>>>> Further debugging, commit 80d496be89ed ("perf report: Add support
+>>>> for profiling JIT generated code") added support for profiling JIT
+>>>> generated code. This patch handles dso's of form
+>>>> "/tmp/perf-$PID.map" .
+>>>>=20
+>>>> The check used "if (strncmp(self->name, "/tmp/perf-", 10) =3D=3D =
+0)"
+>>>> to match "/tmp/perf-$PID.map". With this commit, any dso in
+>>>> /tmp/perf- folder will be considered separately for processing
+>>>> (not only JIT created map files ). Fix this by changing the
+>>>> string pattern to check for "/tmp/perf-%d.map". Add a helper
+>>>> function is_perf_pid_map_name to do this check. In "struct dso",
+>>>> dso->long_name holds the long name of the dso file. Since the
+>>>> /tmp/perf-$PID.map check uses the complete name, use =
+dso___long_name for
+>>>> the string name.
+>>>>=20
+>>>> With the fix,
+>>>>     # ./perf test "test perf probe of function from different CU"
+>>>>     117: test perf probe of function from different CU              =
+     : Ok
+>>>>=20
+>>>> Signed-off-by: Athira Rajeev<atrajeev@linux.vnet.ibm.com>
+>>>=20
+>>> Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
+>>>=20
+>>=20
+>> Although it could use a Fixes tag
+>>=20
+>=20
+> Thanks, I will add
+>=20
+> Fixes: 56cbeacf1435 ("perf probe: Add test for regression introduced
+> by switch to die_get_decl_file()")
+>=20
+> Namhyung
+>=20
+Hi Adrian,
+Thanks for the review.
 
-> freeing of bootsplash reservations passed to Linux by the bootloader.
-> 
-> Signed-off-by: Guanshun Liu <lgs156412@gmail.com>
-> ---
->  mm/memblock.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/mm/memblock.c b/mm/memblock.c
-> index 6d18485571b4..20e7f81fc076 100644
-> --- a/mm/memblock.c
-> +++ b/mm/memblock.c
-> @@ -848,6 +848,9 @@ void __init_memblock memblock_free(void *ptr, size_t size)
->  	if (ptr)
->  		memblock_phys_free(__pa(ptr), size);
->  }
-> +#ifdef CONFIG_ARCH_KEEP_MEMBLOCK
-> +EXPORT_SYMBOL_GPL(memblock_free);
-> +#endif
->  
->  /**
->   * memblock_phys_free - free boot memory block
-> -- 
-> 2.25.1
-> 
+Thanks Namhyung for adding the Fixes tag and pulling the fix
 
--- 
-Sincerely yours,
-Mike.
+Athira
+
 
