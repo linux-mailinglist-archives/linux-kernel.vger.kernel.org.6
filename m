@@ -1,123 +1,92 @@
-Return-Path: <linux-kernel+bounces-231145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 992929186CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:08:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5391D9186C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:07:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C624D1C23105
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:07:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 842C81C22C11
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1877A18FDD4;
-	Wed, 26 Jun 2024 16:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38ED18FDC1;
+	Wed, 26 Jun 2024 16:02:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="afnHNbd1"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ctQar+2m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24FA18FDD1;
-	Wed, 26 Jun 2024 16:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B38E18FDAF;
+	Wed, 26 Jun 2024 16:02:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719417743; cv=none; b=RZ9YFbkaJxlomoA9u05ol10X6+RUWBc/rUyyw85OwrzFJwR6MfqRVyvJ5agiI5g8+KqeIeXQRi09iJ6o063paCEayKRoJ0IWS4a11y9hx5D5lqV3R7mGfqfecq61AWFBkVqYPZIykt4Kb38fGyEAlNaXTvwQSaixRqP9ysneUfQ=
+	t=1719417728; cv=none; b=Ipz5fHNxer4dcKekKMqr2T3YUAIwpZWog8+jszxgFQu7FhRtv+53b3aK+JcAXHnSGsRmq8VtPUSiEWppZTuyKCxD9xAuH7HxYy9Gfw9tfdBuK6zvPC3TLLMjMcmocsksejVXrkCTF2aYuyA6zoFm9gMuZsNFini1JnnG99FhXTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719417743; c=relaxed/simple;
-	bh=Nks4r5sngP4w71v87g0KsbMCsvS6aoQosHoCsuWrV3M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FjLwopfPkAzyhOb1OmQCLRow+eEpXVUaDKbslVrdfPXV3Eqi0lORE0hqx78qivWOLWBjqfFXWY2yNwZvg20cXNDLDFV7urvuS1khH29rJTnd5X/o7mq44RdC5M4rlmK6EJbTSTfxHmeVU3mnkhz4+67938D0U9AvN5rZT1u/Jzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=afnHNbd1; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QAfO6F003678;
-	Wed, 26 Jun 2024 16:02:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	d5lv7XvXAWTWI+Kn7k5U1DXldo9c2WgCrQLyKqLylZ0=; b=afnHNbd1TgLzRu/L
-	pZfuVfInFGnE3vRaodxR7+sO2SmsADe9/Py6Tn1YKivAgHfPHM9OjgTJ2jTjL3xo
-	3JC9kfqGbKb+7T4YtgF1VifNK0+4ucuyvEirtTLeOkAAtp7eKtVuekWizxky4Jo9
-	52fCN/HmbarJ03Zqo8BWO+4oNBdbfcTceE6unWI3/AhtUVaqlUJcYkDTNKUdARDp
-	sfs6egqbFg13F4e1QRi0zUU1LlqNWTuU9F048OH58xoNe4uJE3TIsLssTGWHGGz6
-	OAJJCZ2r5L3noJHarctEwM2U2Kmw93y5EP/jkFsxgGREUimYmnn85dHsrZDQQdn8
-	6TtFgw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywmaf2g1x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 16:02:11 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45QG2ALV005842
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 16:02:10 GMT
-Received: from [10.48.244.230] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Jun
- 2024 09:02:04 -0700
-Message-ID: <aef7c12f-cefa-4823-b3a2-920c12990afa@quicinc.com>
-Date: Wed, 26 Jun 2024 09:02:03 -0700
+	s=arc-20240116; t=1719417728; c=relaxed/simple;
+	bh=NkNUoH7PH+wvdzx1J3nfu698r76uEJurORUYg1U5GGo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=YDs0Ml8c1IVJVEO9RAg0p87QF4xXfp5KsPneDiJho+27Gi0K548NcLDtuIpWwMugWruCQATvaGfa3nM0OutfrfYbue+rawPhnHGgojXmPAZupNzUEMRzq2RLJAoHWfQfJTXEoaNR8gOpdIbhYMRo88xNeVAkZHmP5Cdkg35Eibs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ctQar+2m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F79BC32789;
+	Wed, 26 Jun 2024 16:02:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719417727;
+	bh=NkNUoH7PH+wvdzx1J3nfu698r76uEJurORUYg1U5GGo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=ctQar+2mvvi0orc/Sa0k87jKvMsvw0WD2udMSLDtcb0l1XAP7thtRL6lC923qpA0H
+	 OVmDU3QGVcqbQT0H3XFDmGCCNI3iss6JG1s3Wp8n3mlQSgMaSdCdwUEo8QlF+8IHGk
+	 kVbaK4kgTI9mvlac7sJfDvKenkku2+fYGe3tPj1ypspM2Vkz5Cl0wRK13na/EtqB+X
+	 aB0wsoZoFyPI61GeLeMPN4H+kqWML3DuK5OojXo2TcHqUxXFwIFXpdx+6ju6JN5wuV
+	 j9UCosJXJv1DWhKBp+GfhYs4phAyiIGvRC1rGjcBB4geovEfTIefJIxBBcrgNB6r52
+	 aUXpG/rCpm7nw==
+From: Lee Jones <lee@kernel.org>
+To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
+ Trilok Soni <quic_tsoni@quicinc.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Kees Cook <kees@kernel.org>, 
+ =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
+Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+ phone-devel@vger.kernel.org
+In-Reply-To: <20240624-sy7802-v5-0-7abc9d96bfa6@apitzsch.eu>
+References: <20240624-sy7802-v5-0-7abc9d96bfa6@apitzsch.eu>
+Subject: Re: (subset) [PATCH v5 0/3] Add sy7802 flash led driver
+Message-Id: <171941772410.2536029.16123233056884497719.b4-ty@kernel.org>
+Date: Wed, 26 Jun 2024 17:02:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] cxl: add missing MODULE_DESCRIPTION() macros
-Content-Language: en-US
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-CC: Davidlohr Bueso <dave@stgolabs.net>, Dave Jiang <dave.jiang@intel.com>,
-        Alison Schofield <alison.schofield@intel.com>,
-        Vishal Verma
-	<vishal.l.verma@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Dan Williams
-	<dan.j.williams@intel.com>, <linux-cxl@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20240607-md-drivers-cxl-v2-1-0c61d95ee7a7@quicinc.com>
- <20240607151046.00002ae2@Huawei.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240607151046.00002ae2@Huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ZL9Kcr36Hzgjj98mQT7fIs5NNKrA6Sq9
-X-Proofpoint-GUID: ZL9Kcr36Hzgjj98mQT7fIs5NNKrA6Sq9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-26_07,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 spamscore=0 bulkscore=0 phishscore=0 malwarescore=0
- clxscore=1011 mlxscore=0 lowpriorityscore=0 priorityscore=1501
- mlxlogscore=752 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2406140001 definitions=main-2406260117
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-On 6/7/2024 7:10 AM, Jonathan Cameron wrote:
-> On Fri, 7 Jun 2024 06:57:15 -0700
-> Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
+On Mon, 24 Jun 2024 23:25:11 +0200, André Apitzsch wrote:
+> This series introduces a driver for the Silergy SY7802 charge pump used
+> in the BQ Aquaris M5 and X5 smartphones.
 > 
->> make allmodconfig && make W=1 C=1 reports:
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/core/cxl_core.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_pci.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_mem.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_acpi.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_pmem.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_port.o
->>
->> Add the missing invocations of the MODULE_DESCRIPTION() macro.
->>
->> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> The implementation is based on information extracted from downstream as
+> the datasheet provided by a distributor of the hardware didn't include
+> any information about the i2c register description.
 > 
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> 
-> Thanks,
+> [...]
 
-Following up to see if anything else is needed from me. Hoping to see this in
-linux-next so I can remove it from my tracking spreadsheet :)
+Applied, thanks!
 
-/jeff
+[1/3] dt-bindings: leds: Add Silergy SY7802 flash LED
+      commit: 8c063929fe3d24d9c2c9544d1c1e2add4190b80b
+[2/3] leds: sy7802: Add support for Silergy SY7802 flash LED controller
+      commit: d0838d7c837820733c4e6b9c6d16323d307ebd96
+
+--
+Lee Jones [李琼斯]
+
 
