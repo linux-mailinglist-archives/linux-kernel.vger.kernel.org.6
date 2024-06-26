@@ -1,122 +1,169 @@
-Return-Path: <linux-kernel+bounces-231159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB6DB9186F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:12:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2FC79186F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:12:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17CF01C22178
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:12:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96AE7282A8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:12:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1967619004A;
-	Wed, 26 Jun 2024 16:08:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 884AB19007A;
+	Wed, 26 Jun 2024 16:08:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MhlNy5lc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d07QHLT4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53DCF18FDD5;
-	Wed, 26 Jun 2024 16:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3576019006F
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 16:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719418125; cv=none; b=XbTFPKIRYPjYVsD5anPKrUhp4mulJao9NUNXmPFyALzZ4TqblfsGU9QvEQcroE6OhiKr2+coEGAWgSu3EIxiimbk5hkSF3IRga9n4Bq2ied2Fg5ztqQ67osJAwijD2qWj1YldqSZ4c2avHyyAwsNrhmgGZ17lZ585iE+JMEXN40=
+	t=1719418136; cv=none; b=V/AraX9PxAi7jcg+SXyIoXYQsBlIvA+kFsokELxL/KOtaoa6SxxZuWxTQVU/fS14nB16L9hnuW9LDC+iGdRugqJeMWHJTKZXg7VY7UHcFUNLsjilLuRNt15sedi+3mCNHPQwtAkwCCqG/yjUGuVsr42wAl1FxCEsg6vAxUaQUOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719418125; c=relaxed/simple;
-	bh=K8GPWaRo22t47jtcUUzGs4LSuBj4VURWjO3QytmzkM4=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=mTYpTHacWvV2O5X8po7+WDqVHVp1KnD0DcVDOr+TwygjUzzYR4vY7wVu9J/i4Hc77ea0oh+RFPqgwuhO32RxSYk5Ir05VUUSQWvNgzvsq6MzHPP6tbX+AIMQJN15ohNMZ3VO8oCSvULxRzma6TnS+uapKqWWocpv4izBFLoKeWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MhlNy5lc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A306C4AF07;
-	Wed, 26 Jun 2024 16:08:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719418125;
-	bh=K8GPWaRo22t47jtcUUzGs4LSuBj4VURWjO3QytmzkM4=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=MhlNy5lcZdRfj0RT33ZpNR7keqYYzgf7n1xVnDk1vyT1gYbWJjCBrQXtJ0Og1Z25z
-	 j82UpFRZ70z0+bSLic4+VPMe4doI4yAzmGOKxtcxVt2BCKS6rN2/318n1WRZtX8njX
-	 LLPO9avgIGFTSW7X2N6a9n98k2tkqenl0+/Cv6up+b9fsGRPk71geVBmUTmNwbUs/X
-	 hofarhV+bs5IQvI3uhtNxc+Tps0lBDlb8w3jh2ew7/pZXMrOra6eblaobeOn5emAEj
-	 +y5nl/HlYqsO3hTM0dBHjsqftiFzIRNCZ1ZmzOLvFmX29UpsLfL4u60S/hCnYIQ8H+
-	 z4x/YdWa2x4kA==
-From: Lee Jones <lee@kernel.org>
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Christian Marangi <ansuelsmth@gmail.com>
-In-Reply-To: <20240626160027.19703-1-ansuelsmth@gmail.com>
-References: <20240626160027.19703-1-ansuelsmth@gmail.com>
-Subject: Re: [PATCH v8 00/20] leds: leds-lp55xx: overhaul driver
-Message-Id: <171941812315.2542017.2142891856682487960.b4-ty@kernel.org>
-Date: Wed, 26 Jun 2024 17:08:43 +0100
+	s=arc-20240116; t=1719418136; c=relaxed/simple;
+	bh=xo/Fvy3VWe+IOb9gaFCgMqegSWf3xAl4oMjZiNogyys=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=SILGr80uNbyqfRTD5ynkYDmc/qn0Fkm45CndIQzX3eIryHObcCin5fVsm9K4Dl7w9sK3z1ez2VY+QGZG+7wiWNjr/bCWfN8GZeOrbIWk2Gf8TaLV2gROFKJY/HrfIjC6waqaHoCc5JTl82UbzM5IQ4pOyPHRzJXVco4uqs677hQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d07QHLT4; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719418134;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eOXoFSz42GQtnLTfmd+KYCNYIISW1s5m+Yb3vhlcrdw=;
+	b=d07QHLT4NQGoek7Dj6XGZ/ZSd4ZOcpUpC8RAznx7We6oKOUHDfawBhV2ojU972P6bSVCnH
+	jJV2YYA8hhvjFPv3Fcmp91fVZ+c5R07OBhqRyIm0lxhI6pz1TYCWJs1YFlFawgM54iyl7+
+	N3sSlTATjI8bSDc6ULuw/TnJxJzoZC8=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-670-ijwfvbFdPQiK5P7fvHmsNw-1; Wed, 26 Jun 2024 12:08:52 -0400
+X-MC-Unique: ijwfvbFdPQiK5P7fvHmsNw-1
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6b4f87eb2e1so104985696d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 09:08:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719418132; x=1720022932;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eOXoFSz42GQtnLTfmd+KYCNYIISW1s5m+Yb3vhlcrdw=;
+        b=MHjMesNg5OMVeACsNiKbn02vQK2ao1OnN0uuSuOZbfjvtrBjbJtMLFNDrWx7Ep/0aC
+         DoGu+7aaj7v1LN2uvY2HwPgotMObG6gvkuUmhNgbqRPQs7iUjxzu7Hb437FckTg4zCp1
+         k/Mj9OLh9Gi/kkEF9YPRnkNF5LJdzV5+vkTjjRe1OjdCbz4rkXdcxfC0QsPdM6Ev8xhe
+         Y84SPKdMS/Zxv64SyQ6UJBfIC7KHj3xTkHc3Re489tk9wnOW50uhkPFJFO/qEeIologg
+         M1NhbrYC3AaCO+mulZ1/NUqyfkzUI2Sm1HNhD1AMYxxSvbTtwqHirB3zOHbncUhLbNyr
+         uLZA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/bGt3K2xCkZM2Tx2b69ouft59FxaotFLbsDVlW4MlzoYKI2lmttH7cwVDRVjSB5JNRnE1qGINZPq56W/iJdnYn3XCduO80hVpnPJB
+X-Gm-Message-State: AOJu0Yx7lUda3nb4x+GTDuzKgbdYuLMUUvdlwEW5mExPrd54fyANYuqb
+	m7+YS5CPXHJzWfhP2PwWHiJw6CHByR3wj7qrsyjc5mlmgQOCYIrL3hvvhtdat3gyY/mM/LNPfu6
+	OZ5Gt5Ox5NlkzV55OETrEONFpacM8l56NvV36c/4DttON3JOoDjlRfFFk1RoiKDyMMkBm2w==
+X-Received: by 2002:a0c:e413:0:b0:6b0:7b72:4e1 with SMTP id 6a1803df08f44-6b540d34701mr107893966d6.65.1719418131839;
+        Wed, 26 Jun 2024 09:08:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFLkbLeXZob5Ys+oMUQQ1Zl7PQDQFc/oBoDS0ZXL7TrOaVEasSAaj57ZMlGv6EUEyv9i4yF+w==
+X-Received: by 2002:a0c:e413:0:b0:6b0:7b72:4e1 with SMTP id 6a1803df08f44-6b540d34701mr107893606d6.65.1719418131367;
+        Wed, 26 Jun 2024 09:08:51 -0700 (PDT)
+Received: from starship ([2607:fea8:fc01:7b7f:6adb:55ff:feaa:b156])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b52b16e9basm46889376d6.6.2024.06.26.09.08.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 09:08:51 -0700 (PDT)
+Message-ID: <cefafca99f046a89e111e6972ed02199ef95c250.camel@redhat.com>
+Subject: Re: [PATCH 1/1] KVM: selftests: pmu_counters_test: increase
+ robustness of LLC cache misses
+From: Maxim Levitsky <mlevitsk@redhat.com>
+To: kvm@vger.kernel.org
+Cc: Paolo Bonzini <pbonzini@redhat.com>, linux-kselftest@vger.kernel.org, 
+ Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, Sean
+ Christopherson <seanjc@google.com>
+Date: Wed, 26 Jun 2024 12:08:50 -0400
+In-Reply-To: <20240621204305.1730677-2-mlevitsk@redhat.com>
+References: <20240621204305.1730677-1-mlevitsk@redhat.com>
+	 <20240621204305.1730677-2-mlevitsk@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: 7bit
 
-On Wed, 26 Jun 2024 18:00:05 +0200, Christian Marangi wrote:
-> This long series is (as requested) a big overhaul of the lp55xx based
-> LED driver.
+On Fri, 2024-06-21 at 16:43 -0400, Maxim Levitsky wrote:
+> Currently this test does a single CLFLUSH on its memory location
+> but due to speculative execution this might not cause LLC misses.
 > 
-> As notice for these kind of LED chip there was the bad habit of copy
-> the old driver and just modify it enough to make it work with the new
-> model. Till v4 I was also doing the same by following the pattern and
-> the code format of previous driver.
+> Instead, do a cache flush on each loop iteration to confuse the prediction
+> and make sure that cache misses always occur.
 > 
-> [...]
+> Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
+> ---
+>  .../selftests/kvm/x86_64/pmu_counters_test.c  | 20 +++++++++----------
+>  1 file changed, 9 insertions(+), 11 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c b/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
+> index 96446134c00b7..ddc0b7e4a888e 100644
+> --- a/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
+> +++ b/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
+> @@ -14,8 +14,8 @@
+>   * instructions that are needed to set up the loop and then disabled the
+>   * counter.  1 CLFLUSH/CLFLUSHOPT/NOP, 1 MFENCE, 2 MOV, 2 XOR, 1 WRMSR.
+>   */
+> -#define NUM_EXTRA_INSNS		7
+> -#define NUM_INSNS_RETIRED	(NUM_BRANCHES + NUM_EXTRA_INSNS)
+> +#define NUM_EXTRA_INSNS		5
+> +#define NUM_INSNS_RETIRED	(NUM_BRANCHES * 2 + NUM_EXTRA_INSNS)
+>  
+>  static uint8_t kvm_pmu_version;
+>  static bool kvm_has_perf_caps;
+> @@ -133,9 +133,8 @@ static void guest_assert_event_count(uint8_t idx,
+>   * doesn't need to be clobbered as the input value, @pmc_msr, is restored
+>   * before the end of the sequence.
+>   *
+> - * If CLFUSH{,OPT} is supported, flush the cacheline containing (at least) the
+> - * start of the loop to force LLC references and misses, i.e. to allow testing
+> - * that those events actually count.
+> + * If CLFUSH{,OPT} is supported, flush the cacheline containing the CLFUSH{,OPT}
+> + * instruction on each loop iteration to ensure that LLC cache misses happen.
+>   *
+>   * If forced emulation is enabled (and specified), force emulation on a subset
+>   * of the measured code to verify that KVM correctly emulates instructions and
+> @@ -145,10 +144,9 @@ static void guest_assert_event_count(uint8_t idx,
+>  #define GUEST_MEASURE_EVENT(_msr, _value, clflush, FEP)				\
+>  do {										\
+>  	__asm__ __volatile__("wrmsr\n\t"					\
+> -			     clflush "\n\t"					\
+> -			     "mfence\n\t"					\
+> -			     "1: mov $" __stringify(NUM_BRANCHES) ", %%ecx\n\t"	\
+> -			     FEP "loop .\n\t"					\
+> +			     " mov $" __stringify(NUM_BRANCHES) ", %%ecx\n\t"	\
+> +			     "1: " clflush "\n\t"				\
+> +			     FEP "loop 1b\n\t"					\
+>  			     FEP "mov %%edi, %%ecx\n\t"				\
+>  			     FEP "xor %%eax, %%eax\n\t"				\
+>  			     FEP "xor %%edx, %%edx\n\t"				\
+> @@ -163,9 +161,9 @@ do {										\
+>  	wrmsr(pmc_msr, 0);							\
+>  										\
+>  	if (this_cpu_has(X86_FEATURE_CLFLUSHOPT))				\
+> -		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "clflushopt 1f", FEP);	\
+> +		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "clflushopt .", FEP);	\
+>  	else if (this_cpu_has(X86_FEATURE_CLFLUSH))				\
+> -		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "clflush 1f", FEP);	\
+> +		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "clflush .", FEP);	\
+>  	else									\
+>  		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "nop", FEP);		\
+>  										\
 
-Applied, thanks!
+Any update? The test patched with this patch survived about 3 days of running
+in a loop.
 
-[01/20] dt-bindings: leds-lp55xx: Limit pwr-sel property to ti,lp8501
-        commit: 468434a059a7d1fad4b98c2ca080817b1520cbdc
-[02/20] dt-bindings: leds-lp55xx: Add new ti,lp5569 compatible
-        commit: a6ca48430de6e87644203bdca03f4065f5b9df7a
-[03/20] leds: leds-lp55xx: Generalize stop_all_engine OP
-        commit: a9b202b9cf0e817be756a720920ad4b522e6f6aa
-[04/20] leds: leds-lp55xx: Generalize probe/remove functions
-        commit: db30c2891bfc74acb8823edee5f39cbc36bd9a4d
-[05/20] leds: leds-lp55xx: Generalize load_engine function
-        commit: 4d310b96f2db602830c40f82a75ede799b243cce
-[06/20] leds: leds-lp55xx: Generalize load_engine_and_select_page function
-        commit: 409a9dc53682b9f02793584d17721ab3e1b9c86f
-[07/20] leds: leds-lp55xx: Generalize run_engine function
-        commit: 42a9eaac9784e9b3df56f1947526d7d4d0ed9b26
-[08/20] leds: leds-lp55xx: Generalize update_program_memory function
-        commit: 31379a57cf2f155eb147ace86547b7143592945a
-[09/20] leds: leds-lp55xx: Generalize firmware_loaded function
-        commit: a3df1906fb9aa9ff45149e0a3c6434b2cef4f6e7
-[10/20] leds: leds-lp55xx: Generalize led_brightness function
-        commit: c63580b27a2c638cbae2fc26484b0bf29f303134
-[11/20] leds: leds-lp55xx: Generalize multicolor_brightness function
-        commit: 794826b2d87538a0fa5429957439f82bb7f32b53
-[12/20] leds: leds-lp55xx: Generalize set_led_current function
-        commit: 01e0290d17b2fb9717ee80fed512b32e0460b14c
-[13/20] leds: leds-lp55xx: Generalize turn_off_channels function
-        commit: e35bc5d8a023a55a5f895d6648a455ed83dc0db2
-[14/20] leds: leds-lp55xx: Generalize stop_engine function
-        commit: 43e91e5eb9c8b36ddd1dc239e0d8c36cc034e8ca
-[15/20] leds: leds-lp55xx: Generalize sysfs engine_load and engine_mode
-        commit: 082a4d3f068734eb242e38892d0977ef271c0143
-[16/20] leds: leds-lp55xx: Generalize sysfs engine_leds
-        commit: 8913c2c14728851f110e0d439d5bb2360c767cd2
-[17/20] leds: leds-lp55xx: Generalize sysfs master_fader
-        commit: 5a15b2ab57095a7c8597d42efbfe452844578785
-[18/20] leds: leds-lp55xx: Support ENGINE program up to 128 bytes
-        commit: b9d55087dfa950aecece1cf864d3918a12694c25
-[19/20] leds: leds-lp55xx: Drop deprecated defines
-        commit: 49d943a426d1e2c034ff2f132f65590dbdc01fbd
-[20/20] leds: leds-lp5569: Add support for Texas Instruments LP5569
-        commit: 30c6743cc89cdb357d1f8a98978da0f7c138130b
-
---
-Lee Jones [李琼斯]
+Best regards,
+	Maxim Levitsky
 
 
