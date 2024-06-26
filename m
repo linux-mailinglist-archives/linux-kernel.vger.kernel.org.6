@@ -1,107 +1,78 @@
-Return-Path: <linux-kernel+bounces-231282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69AAD918A28
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:32:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBFCC918A2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:32:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B5C11C23185
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:32:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 177BB1C2105C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD54A190047;
-	Wed, 26 Jun 2024 17:31:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8917019004A;
+	Wed, 26 Jun 2024 17:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g4IYeIuC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Ny6xfVjl"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F2514532F;
-	Wed, 26 Jun 2024 17:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248BE14532F;
+	Wed, 26 Jun 2024 17:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719423119; cv=none; b=qWticggmhLD20RcHoMcXSdrUxdA2ean0wS1yrbd54FGc203YtZTY7zgD2qxppUcOfqryKrViMpudhklos7opf+S+JZ83HsZpRlngRpDgJySrxHxAZIjEsFPk1D9xYojV0bpJzQScyaCx2UrslWefDEjFTWWaEyah6tCSkfhCWz0=
+	t=1719423140; cv=none; b=S7bGzDNDcwjUtY89a1x51s7ij5t2R1Pvp7P/tz9kYY8S1i6FMCzWd2eWlMyYS+vT/pQ/GB62oUa/8CwjVtOCZdRrOjXDNIWYWNY6vCkJtf1pIv3nBWKqBZxgYCk/VEiD6Eu7U/2OqnR67Soy+kwKagbdCJYIhE5SxLfwviwxz5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719423119; c=relaxed/simple;
-	bh=bgYoAiD8CvH9vNhk+zX4YQSH6S0k8Ew4gkWwTOzazV4=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=RvjIVWcDSXonQgWilRqttUIWs6NgNu20AV0JDRQZ3dofuzrLjHBy8KnvPpK4gTpDZilHzDE4ljzyZkjBLJZLwhsyyFMEJYnxWWG7KVSB6kgMsSghyw1PLhUSwbzHSYiSeb9C3txZsKwJ3h+B92z6Yg54/zsmfkjZT/RNQ7qv1Qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g4IYeIuC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A58F0C116B1;
-	Wed, 26 Jun 2024 17:31:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719423118;
-	bh=bgYoAiD8CvH9vNhk+zX4YQSH6S0k8Ew4gkWwTOzazV4=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=g4IYeIuCanVePZMW3hpekPLgDETXrfYnffoBGXTrlwF/6BGz36iUjS+LdkXK3hPBB
-	 cYALT+KXvBQkQva4NbbbsR4rgk27cpIFfMEZsGtaPQhVUjyVfr/LN158o25/Bxefzt
-	 n+kuaxvXvn4JIo+PgfdLy4+PbsAI94WNs/GB6tqe2DuBuwwABIC/r2HUoO82pXqaFz
-	 ODzJhB0ZMzvp8ZphOjuNWZvn1UzR7wQLFx60ByPlFsq+RIu65GA33vkLx2Ovjlw9j8
-	 w+NuHXpFCtvsGq2jqRX/Dvb+CwK8Rd52nkbr9FkTB+5qvvhWMM14qDKt4/vdMnqNM2
-	 oCZljRXuPIE3g==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Banajit Goswami <bgoswami@quicinc.com>, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org, 
- linux-arm-msm@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20240625165736.722106-1-krzysztof.kozlowski@linaro.org>
-References: <20240625165736.722106-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH 1/2] ASoC: codecs: lpass-macro: Gracefully handle
- unknown version
-Message-Id: <171942311637.1650281.3350190675006482081.b4-ty@kernel.org>
-Date: Wed, 26 Jun 2024 18:31:56 +0100
+	s=arc-20240116; t=1719423140; c=relaxed/simple;
+	bh=g3M9qq5WIiQ5+XT2FOnvuWrVwkbkFlUU30JxxnoL4gE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ndwLm/JMEF/DN7VtTxex/euUzJLzEDzZYpnwFJZbRmdRdjyM7keYOkO+/0c+e9S+xexvqBMtpn4UYMyR3MrfBlLVhNG2UVhs58060YZJTAtvbtktEgheieH/SbJC3sH6uW5Q/vRfdu0+ijFqQaspCbCcHStsFeopfQnIFsN9UDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Ny6xfVjl; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Asyx6kO5JxFxGPhIzsOJBUaJNZZe6zy3iTpvyHsXWKQ=; b=Ny6xfVjlKr/rBVETyIYZyYUT3S
+	BIq7bSi2VNzid/d2B5nJaaTzqgDkkA9EvfQXFCDTqgFZ/5jDcvAt79fyT97q1T7ncHnDaoTs47sr1
+	iSa4DM5HGIdQ2IWnp9yCihBQXz6MWKfMgQlFUaDoWNxhL6IGJ3aaaAhmJvynVQq85ovg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sMWVB-0013ru-Cg; Wed, 26 Jun 2024 19:32:13 +0200
+Date: Wed, 26 Jun 2024 19:32:13 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Marek Vasut <marex@denx.de>
+Cc: netdev@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, kernel@dh-electronics.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: phy: phy_device: Fix PHY LED blinking code comment
+Message-ID: <9656eb1a-921b-4f2e-b01f-7df7d890254e@lunn.ch>
+References: <20240626030638.512069-1-marex@denx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-d4707
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240626030638.512069-1-marex@denx.de>
 
-On Tue, 25 Jun 2024 18:57:35 +0200, Krzysztof Kozlowski wrote:
-> Qualcomm LPASS macro codec driver parses registers in order to
-> detect version of the codec.  It recognizes codecs v2.0 - v2.8, however
-> we know that there are earlier versions and 'enum lpass_codec_version'
-> has also v1.0, v1.1 and v1.2.  If by any chance we run on unrecognized
-> version, driver will use random value from the stack as the codec
-> version.
+On Wed, Jun 26, 2024 at 05:06:17AM +0200, Marek Vasut wrote:
+> Fix copy-paste error in the code comment. The code refers to
+> LED blinking configuration, not brightness configuration. It
+> was likely copied from comment above this one which does
+> refer to brightness configuration.
 > 
-> [...]
+> Fixes: 4e901018432e ("net: phy: phy_device: Call into the PHY driver to set LED blinking")
+> Signed-off-by: Marek Vasut <marex@denx.de>
 
-Applied to
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+There is a lot of context in this patch. Do you have some odd git diff
+settings?
 
-Thanks!
-
-[1/2] ASoC: codecs: lpass-macro: Gracefully handle unknown version
-      commit: ebc1a54051b58d1aa3a8855faac8bf16b88b8af7
-[2/2] ASoC: codecs: lpass-macro: Use enum for handling codec version
-      commit: 06462d6f3fb3c445b5abac7b134d9fe9e361113f
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+    Andrew
 
