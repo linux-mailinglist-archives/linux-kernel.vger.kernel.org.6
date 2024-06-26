@@ -1,129 +1,182 @@
-Return-Path: <linux-kernel+bounces-230562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2655D917EA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:45:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADEF5917EA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:45:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57AA21C21C57
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:45:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6911728A4CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5FD17F4FF;
-	Wed, 26 Jun 2024 10:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Q62gMyFh"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C41F1802DB;
+	Wed, 26 Jun 2024 10:44:24 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8244917B515;
-	Wed, 26 Jun 2024 10:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4130C17F38D
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 10:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719398661; cv=none; b=FJR05SB2hl3pMTf9ypqG3ha5peXayFIMj+Ac3PvHYWLaPUQDdXuTmCor1X+oMANN18NpeMl3ADyF4RvDYB17AOISTwXedII0+YcOmchDoYgKpmVXAdPuZ/QuD+WnjIZeChE+LkW4t+FWH9v+yBeBGzYwJFPOIkmCzh0LGOQKd+M=
+	t=1719398663; cv=none; b=Tlg+EYoGBG8SW6lz+PUf1mVyDrdCLSxQ3QIPvzDxeO5t5sHLrrUQSpmLUGgWL3bYbTmYLFMEKWVgK0xf3z7Et07KzNksWVzVPJlxyxMkdKfubTQZuXByTTwffxXEyj8sR5lFtc2knuOnty/a3wxmqGbbPPeOiQEUEbD8YdjNZHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719398661; c=relaxed/simple;
-	bh=R3GRbyGx9M/Hr1OVX2dpxLLQAI7cK3ppn/bP+mhwYmo=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A456MZTad7rp7rP9nwTc5HEKG4X2u+kEf+l8JOnI7jjnBUZcfu8RwSYZOeQwrtRA8Nb6TIf40V7PCkzScSJMOX9pfi0SqTQZvWoOe3LTsiJ4JAgjxciiHbkSYdjvQB7xeDRcmISOgOTpknn89kjyr81/yoHFVW5nTXCvEOydLGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Q62gMyFh; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QAfUiE023737;
-	Wed, 26 Jun 2024 10:44:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=vguv0t621FLX2XUylRpzIQ2j
-	7OgLYF8Khqo1WBObp2A=; b=Q62gMyFhRW/PfqBj3yiGbu5lwyKazW2A2u9O6F85
-	cR75opeY/wtBmEixla4iULdq0LKXjX01UzDW8KVYPXffJWNlyKKg3blI4LjqGpf7
-	YsEnUYjUnKxJLuq0SP2yHzReV9jbvu05O5l1sqf/07i5QN4DIF0ucB+Gix1Auvvy
-	ufO8ppmOkeh9680vTY/MuSo4B9WGt8SS/a36xK9dX21WvaGDKYjsqPhfkZlacDq3
-	Y6uYPOaCN6Z+7N/BRScz4n1bvqOwa215QO7vwyNwlGmM+4jW+3QMlzalCwAtQvKk
-	kTva4KUBq5ey+q4Pbb4Ww2Br7syNW2FdIWzK1hl70HVUlw==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywp6ys9pn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 10:44:13 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45QAiCgU001685
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 10:44:12 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 26 Jun 2024 03:44:06 -0700
-Date: Wed, 26 Jun 2024 16:14:02 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <angelogioacchino.delregno@collabora.com>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <ulf.hansson@linaro.org>, <quic_sibis@quicinc.com>,
-        <abel.vesa@linaro.org>, <otto.pflueger@abscue.de>,
-        <quic_rohiagar@quicinc.com>, <luca@z3ntu.xyz>,
-        <quic_ipkumar@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v2 0/7] Enable CPR for IPQ9574
-Message-ID: <Znvw8hLozRvWo0Ng@hu-varada-blr.qualcomm.com>
-References: <20240624050254.2942959-1-quic_varada@quicinc.com>
- <5xgjszacvtnjftygwvtonb4npspaceutnvnnniebxntii4tmud@xag2c6j2svqa>
- <ZnkXJWXI/mfP/vG+@hu-varada-blr.qualcomm.com>
- <ncfhv75xjnuz4bdkhzqmiqrg3khez57bwcvrhp6unmwxrlol7o@etkokfnjuuru>
+	s=arc-20240116; t=1719398663; c=relaxed/simple;
+	bh=K52ZKYW4LxJx3jZQJjUTcvv4AGVHnJr36PDvjhH55jc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qHcqa59TZ5K9Qd8yQUJha7izi16D/SG8OpOahbrap+ezIvDEcMCRnvvg0gB7ndckyGc2gBTT8OUAvljjR1ODqKucfoxDZaHqxVq9l3L+3IEvWBQpz8BY0QOOZEBSbPCUJF8ybmev2XqZDWyk11md5SaM5g9tmLzzKJCShxNzphQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3737b3ae019so83790025ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 03:44:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719398661; x=1720003461;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SOnO1ZTNDPvvJs+AkqyLoYKe/Db3dQpJ5HKxLtBlyRE=;
+        b=aWO4nZazzLOjZudp0v4dWFOvFOdw2eYs5gZUoWKAfcyjFT5nk9fDKXirnVEKx8wj0d
+         ounE+ZXY2lmf2g7zLZxG1tObGVojpBVc1HqSD/xBkv0/heo5rvOtj2bQ/Aj2eIOl8RF2
+         yAAekj0qOT5KkN41ffzAUzsecjAs93vh+GgGJSS6aAWZbSWASXcXhBDBM1WfbZODRumo
+         GH9hbeA9HodPXZ0PTY2e9fdFPRGSIWhScNtpC5iA4KbF0mYdFDJ06SCvAGTNzyI7//cq
+         Oxkb+whmKeflwb9bVLV8oHMuGGljswRzdTQobMrjtEEkLsxNPLHbOY9wdGOR7kTwhah9
+         qbEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW2NPkCP9VlO7fd7dLzka+jSmtSgQIEsc6h0l4eRlubUB0awzQhE2oLgt7AR6rKIiSGu8upj4bPGUdgsEr7E5w66SUu+orYt7l2P2Bc
+X-Gm-Message-State: AOJu0YxEREK3fu1BxKxkkkLOH6TV8cdQJVmm/PyMPN6rZA0nNC+KJwiO
+	iCEeNRErrwBOuQMx/NXqAel0pXbRG1+0O+MGyRoA4GU7EQU5j5gHbfqPxLvJWjYpSpXC4e0SHAy
+	t9lFucaWfPVkkdWYTSTAY6zIl8zFFqj97J1AK9VcUFGXDcTMJHwGtmQQ=
+X-Google-Smtp-Source: AGHT+IFyFL0O5V0tG3U+JWBjb72BivY8NivTO/MOk5RpndV24uZJFn4rhHMjdTB69qeWCoiSIENbN4hRRjXTcefpgt0LtVQB+KEk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ncfhv75xjnuz4bdkhzqmiqrg3khez57bwcvrhp6unmwxrlol7o@etkokfnjuuru>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 05w_-6934JLRQNeQCr-mK1byMQXusmqZ
-X-Proofpoint-ORIG-GUID: 05w_-6934JLRQNeQCr-mK1byMQXusmqZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-26_05,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=693 bulkscore=0
- phishscore=0 adultscore=0 mlxscore=0 suspectscore=0 malwarescore=0
- clxscore=1015 lowpriorityscore=0 spamscore=0 priorityscore=1501
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406260081
+X-Received: by 2002:a05:6e02:b21:b0:374:a021:f1b2 with SMTP id
+ e9e14a558f8ab-3763f7424b5mr7861035ab.5.1719398661393; Wed, 26 Jun 2024
+ 03:44:21 -0700 (PDT)
+Date: Wed, 26 Jun 2024 03:44:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000070a181061bc8b256@google.com>
+Subject: [syzbot] [kernel?] kernel BUG in __jump_label_patch
+From: syzbot <syzbot+03cfa0c5a0bcba3bf195@syzkaller.appspotmail.com>
+To: ardb@kernel.org, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	jbaron@akamai.com, jpoimboe@kernel.org, linux-kernel@vger.kernel.org, 
+	mingo@redhat.com, peterz@infradead.org, rostedt@goodmis.org, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jun 24, 2024 at 11:02:35AM +0300, Dmitry Baryshkov wrote:
-> On Mon, Jun 24, 2024 at 12:20:13PM GMT, Varadarajan Narayanan wrote:
-> > On Mon, Jun 24, 2024 at 08:39:55AM +0300, Dmitry Baryshkov wrote:
-> > > On Mon, Jun 24, 2024 at 10:32:47AM GMT, Varadarajan Narayanan wrote:
-> > > > This series tries to enable CPR on IPQ9574, that implements
-> > > > CPRv4. Since [1] is older, faced few minor issues. Those are
-> > > > addressed in [2].
-> > > >
-> > > > dt_binding_check and dtbs_check passed.
-> > > >
-> > > > Depends:
-> > > > 	[1] https://lore.kernel.org/lkml/20230217-topic-cpr3h-v14-0-9fd23241493d@linaro.org/T/
-> > > > 	[2] https://github.com/quic-varada/cpr/commits/konrad/
-> > >
-> > > Please include [2] into your patchset.
-> >
-> > Did not include them because Konrad has agreed to post them this week.
-> > And, I don't have an MSM8998 target to test those changes.
->
-> At least CPRh-related patches should have been included, so that we
-> could review and comment them.
+Hello,
 
-Have posted v3 including the patches that I had added on top of Konrad's
-changes (skipped 2 of them as they are rebase of Konrad's patches to
-top of tree linux-next), and addressed other review comments too.
+syzbot found the following issue on:
 
-Please review.
+HEAD commit:    f76698bd9a8c Add linux-next specific files for 20240621
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=174ca546980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ca79e3c3b9118bd0
+dashboard link: https://syzkaller.appspot.com/bug?extid=03cfa0c5a0bcba3bf195
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1053f741980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16b7883e980000
 
-Thanks
-Varada
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/f204c5d02251/disk-f76698bd.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/50289c7e8999/vmlinux-f76698bd.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c360e133a94f/bzImage-f76698bd.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+03cfa0c5a0bcba3bf195@syzkaller.appspotmail.com
+
+jump_label: Fatal kernel bug, unexpected op at preempt_notifier_register+0x10/0xe0 kernel/sched/core.c:4788 [ffffffff81639840] (eb 12 90 48 c7 != 66 90 0f 1f 00)) size:2 type:1
+------------[ cut here ]------------
+kernel BUG at arch/x86/kernel/jump_label.c:73!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 0 UID: 0 PID: 28186 Comm: syz-executor226 Not tainted 6.10.0-rc4-next-20240621-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+RIP: 0010:__jump_label_patch+0x463/0x490 arch/x86/kernel/jump_label.c:73
+Code: e8 52 ae 5f 00 48 c7 c7 e0 41 c5 8b 48 8b 0c 24 48 89 ce 48 89 ca 4d 89 e8 4c 8b 4c 24 08 41 54 e8 a2 a1 56 0a 48 83 c4 08 90 <0f> 0b e8 96 9b 59 0a e8 21 ae 5f 00 90 0f 0b e8 19 ae 5f 00 90 0f
+RSP: 0018:ffffc9000a7ff620 EFLAGS: 00010292
+RAX: 0000000000000097 RBX: 0000000000000085 RCX: 1a06c80092f08800
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: ffffc9000a7ff748 R08: ffffffff81739789 R09: 1ffff920014ffe60
+R10: dffffc0000000000 R11: fffff520014ffe61 R12: 0000000000000001
+R13: ffffffff8bc56001 R14: ffffffff929c38a0 R15: ffffffff8bc56001
+FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055558d6acce8 CR3: 000000002b0e8000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ arch_jump_label_transform_queue+0x68/0x100 arch/x86/kernel/jump_label.c:137
+ __jump_label_update+0x177/0x3a0 kernel/jump_label.c:493
+ __static_key_slow_dec_cpuslocked+0x250/0x410 kernel/jump_label.c:293
+ __static_key_slow_dec kernel/jump_label.c:301 [inline]
+ static_key_slow_dec+0x51/0xa0 kernel/jump_label.c:316
+ kvm_destroy_vm arch/x86/kvm/../../../virt/kvm/kvm_main.c:1364 [inline]
+ kvm_put_kvm+0xf3b/0x1300 arch/x86/kvm/../../../virt/kvm/kvm_main.c:1388
+ kvm_vm_release+0x46/0x50 arch/x86/kvm/../../../virt/kvm/kvm_main.c:1411
+ __fput+0x24a/0x8a0 fs/file_table.c:422
+ task_work_run+0x24f/0x310 kernel/task_work.c:180
+ exit_task_work include/linux/task_work.h:38 [inline]
+ do_exit+0xa27/0x28e0 kernel/exit.c:876
+ do_group_exit+0x207/0x2c0 kernel/exit.c:1025
+ get_signal+0x16a1/0x1740 kernel/signal.c:2909
+ arch_do_signal_or_restart+0x96/0x830 arch/x86/kernel/signal.c:310
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0xc9/0x370 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f6bcd95a559
+Code: Unable to access opcode bytes at 0x7f6bcd95a52f.
+RSP: 002b:00007f6bcd915228 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: 0000000000000001 RBX: 00007f6bcd9e4328 RCX: 00007f6bcd95a559
+RDX: 00000000000f4240 RSI: 0000000000000081 RDI: 00007f6bcd9e432c
+RBP: 00007f6bcd9e4320 R08: 00007f6bcd9156c0 R09: 00007f6bcd9156c0
+R10: 00007f6bcd9156c0 R11: 0000000000000246 R12: 00007f6bcd9e432c
+R13: 00007f6bcd9b1074 R14: 6d766b2f7665642f R15: 00007ffd999e9ad8
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__jump_label_patch+0x463/0x490 arch/x86/kernel/jump_label.c:73
+Code: e8 52 ae 5f 00 48 c7 c7 e0 41 c5 8b 48 8b 0c 24 48 89 ce 48 89 ca 4d 89 e8 4c 8b 4c 24 08 41 54 e8 a2 a1 56 0a 48 83 c4 08 90 <0f> 0b e8 96 9b 59 0a e8 21 ae 5f 00 90 0f 0b e8 19 ae 5f 00 90 0f
+RSP: 0018:ffffc9000a7ff620 EFLAGS: 00010292
+RAX: 0000000000000097 RBX: 0000000000000085 RCX: 1a06c80092f08800
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: ffffc9000a7ff748 R08: ffffffff81739789 R09: 1ffff920014ffe60
+R10: dffffc0000000000 R11: fffff520014ffe61 R12: 0000000000000001
+R13: ffffffff8bc56001 R14: ffffffff929c38a0 R15: ffffffff8bc56001
+FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055558d6acce8 CR3: 000000002b0e8000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
