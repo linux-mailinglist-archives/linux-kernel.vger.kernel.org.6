@@ -1,95 +1,85 @@
-Return-Path: <linux-kernel+bounces-229849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00413917526
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 02:10:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9CC091752C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 02:12:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA972282689
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 00:10:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 877291F218F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 00:12:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FC1E1FDA;
-	Wed, 26 Jun 2024 00:10:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="httPedXo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A73ECF;
+	Wed, 26 Jun 2024 00:12:05 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E307F;
-	Wed, 26 Jun 2024 00:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9EF7F
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 00:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719360606; cv=none; b=PPWH62nFp7uaugOEYa0FkJU0ofyT/+oJPvcWYCdWZSexQXlu15uPXpLMDJI4Gapcs+eRDLbfX2WEeMHIN5fZlxlE9M0L4aMcwzPZGo9omJCtE6pjviIuS6ERI1V387rg7EvnQrGwiPRwhtOcH+Z+TVIPoSFasf9P/vDQKtZv+bg=
+	t=1719360725; cv=none; b=XrzV7WDLQy3MJcILviNOZYrVXQzaf5TKyHbE2sAYpQle5D0DOtaIJIkwri4E+Fv0wLItsWmic3iXR+qxo9QMhfoPEct8v1kRdg36tVdFnEHZcVV1r2BQjUnBAzxro092jEJkjEw3b9gmw7gRJqeLUpOvH4VTPyetyZNCZAME8YE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719360606; c=relaxed/simple;
-	bh=dB+q9SXCmgblK6huzubzEYiI5y+MRgII+TE/QeqpFcw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=swGBsMbzau982nqsiG4f+1OGSDsQhxPFE9qNFCxCllmFRtZpOv1jvfShfJSxcun1qtKEiihKgqdDNM/xq3VgzsHr58cRLUTxQNqL35z2QX2m+ry+aKsZjRbv7/el8ZB1uZZ9srMocM0F5QNTHjWsR6emP4HX4utvF+dpjME9t/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=httPedXo; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719360605; x=1750896605;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=dB+q9SXCmgblK6huzubzEYiI5y+MRgII+TE/QeqpFcw=;
-  b=httPedXoh9AB08l4zWWhJBJwcFJ4RFrPi04kelrYttUt7ZIKQQUbgtwL
-   dEqLGCUNJp1iLGxknc5sXfUfkj2onI5/wjq00JPsNJsL5KjR6jGxbJG0q
-   JU9PvaEIKYc0IwTd1uBNlGMNa3p7R/i/+TqNC8NuBFrtJ6Lu06jjLTEgx
-   ROOSJqy7wqZGyMZhm0KxZukM7UphR8cAjxY8fqUGy+wUf4ZilAh3HvH+S
-   3H2xiib/aiinniaghgLlOBAL5qlhzlot7jgkOZodjtnrL9oHkBguGJRf4
-   rSSKu2nhErdkSi5KPt24uVwdv2dsPu6OTyYxU2AYxje/egRBNW0y4CBcu
-   w==;
-X-CSE-ConnectionGUID: T4am8ZaFT+ujzcV55NwUtA==
-X-CSE-MsgGUID: YxY+gmQkR8iRM0TtqDXIIQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="16555580"
-X-IronPort-AV: E=Sophos;i="6.08,265,1712646000"; 
-   d="scan'208";a="16555580"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 17:10:04 -0700
-X-CSE-ConnectionGUID: q5o93v8eTheytNGsibSGeQ==
-X-CSE-MsgGUID: KCs9W1AAS2SQ2ZYJJ84f4A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,265,1712646000"; 
-   d="scan'208";a="43682292"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2) ([10.209.71.144])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 17:10:03 -0700
-Date: Tue, 25 Jun 2024 17:10:01 -0700
-From: Alison Schofield <alison.schofield@intel.com>
-To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cxl/acpi: Warn on unsupported platform config detection
-Message-ID: <ZntcWQ7pMtOpuT4a@aschofie-mobl2>
-References: <20240619125949.167936-1-fabio.m.de.francesco@linux.intel.com>
+	s=arc-20240116; t=1719360725; c=relaxed/simple;
+	bh=N5d5mGPYaFZcI4PKUpL0MZo0/O+sJUGDzDx2B8Tv6yI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=A3vlFYe6NapaL0rHWT4YfXpeE7cLkgWQQpaeKjFl3jE7z5YtDm4gJLroQ/MZuk7xrIRJB5Y9AANUlWR01r/fwZ8fmVKKAQPPt/hwvkvXjHPN8hwmPR/e3dX/nDstr9joXiiqKm2Q7wbuxRRePFpNNOiHojbNYs7SAFsrvTtcZbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7ebff1004acso770312339f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 17:12:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719360723; x=1719965523;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2wNDzpOvjU23Xb9gyWLJ9lNTYA8nnWJGKNNlbizL8xY=;
+        b=UMJYwBPbeQ2g7n/7cPBCrSSBtBZLhetweq/2mm0tduUNce6AhNGiYguVQZFS22+NPU
+         i+6RDmjWoLeupe0inwAq3E+a/hNx7zL2OiEG9KeE+A2QpobOPU9MHYhD35yikwhlGxGt
+         oOIv5T7mR0WqGjgkiBrUQgv1FXJxtoJaJ0ALFVfXvkdkXs9N/aDwu+tnzMQDoC0Q+wgw
+         eIYpghzN+Nw35wRZqtZ2aZWZnE74U4kAa1vPvHZiy7I04rCOKKmpeB70b7WPc7+gUBnp
+         7rS/cbZ+K/Vrh4uluAIvq5HSP/wzOlpAE/bgFNnJ2+LCKsNLoWDB0PNI3sRJJO6l0yya
+         YIbQ==
+X-Gm-Message-State: AOJu0YzaYc2nnoo6+jZCsPGLs/0bp7Z+GHauHZgtTExf7sOf4Brylo4N
+	Om1z2T8PeOx/ACf355WMgYWuuWZbWPY39tHbaRPFKMccEAjoqBtIbZ6X7Bt7OllZWTMC1pefH6I
+	73ho/QMao3u45XuSU1LWZZClyCvkckqI1f8o8O7zBfPzGmM+PQzMnrpY=
+X-Google-Smtp-Source: AGHT+IEXCpWuKyVmok53XsAucC2S3qrmysQ0+EnSbSEN3mm5idyARJNZEQzK/Vta1MR6KuZpvL+VYD/LOUWEYaZIJkZxFaHnrUEe
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240619125949.167936-1-fabio.m.de.francesco@linux.intel.com>
+X-Received: by 2002:a05:6602:14ca:b0:7f3:a80e:8cf8 with SMTP id
+ ca18e2360f4ac-7f3a80e8dc2mr22217539f.2.1719360722961; Tue, 25 Jun 2024
+ 17:12:02 -0700 (PDT)
+Date: Tue, 25 Jun 2024 17:12:02 -0700
+In-Reply-To: <CAMc0M-_mB+uvhQvZ=u3KjFNREwMzSRiEKKUDnzQMhrOsbFtUvQ@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000221663061bbfdd71@google.com>
+Subject: Re: [syzbot] [bcachefs?] WARNING: kmalloc bug in __snapshot_t_mut
+From: syzbot <syzbot+770e99b65e26fa023ab1@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, peili.dev@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jun 19, 2024 at 02:59:41PM +0200, Fabio M. De Francesco wrote:
+Hello,
 
-Fabio,
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-cxl/acpi does a lot of platform config work. "...unsupported platform
-config detection" gives no hint that this is about CHBS's or an eRCD.
-Please offer something more specific. Thanks.
+Reported-and-tested-by: syzbot+770e99b65e26fa023ab1@syzkaller.appspotmail.com
 
---Alison
+Tested on:
 
-snip...
+commit:         55027e68 Merge tag 'input-for-v6.10-rc5' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10f3a389980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bf5def5af476d39a
+dashboard link: https://syzkaller.appspot.com/bug?extid=770e99b65e26fa023ab1
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=170174c1980000
 
+Note: testing is done by a robot and is best-effort only.
 
