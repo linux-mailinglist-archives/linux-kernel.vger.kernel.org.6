@@ -1,121 +1,160 @@
-Return-Path: <linux-kernel+bounces-231413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D6C7919877
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:45:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C84B5919879
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:47:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B55C01C219E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:45:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3ADC6B21107
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:47:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF155192B61;
-	Wed, 26 Jun 2024 19:45:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE5A1922E5;
+	Wed, 26 Jun 2024 19:46:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="J6AEFK33"
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="bPqgu9v6"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F85183083
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 19:45:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B604CBE6C;
+	Wed, 26 Jun 2024 19:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719431124; cv=none; b=WFd4PZn6BkQwIxhoWJSnqObng0q2PVrWGhgGlIRxBwdaqVM3O4upK8DuEbGnoOCoZkDF3lWk3CaMsxIOfwhPtQBwO7Pm00daOlc5/KoA2lsD8jTxo2O9kqvjLuNQ36BO0MzaUK7gzGGZNpLHUY8Xvt4gt1/rXYATMDmQDex42go=
+	t=1719431213; cv=none; b=jvdkwVofhYdft3uZQ45QWwlNtYssGVblB5xos5uJK09gMtQ75BNPFbXM2jRmN8MEb7mfIQytGnU/8gJlHNb1AkTZJmVUZ2Ac3kSjEOQqFnJ2elRcU9WBmVKFqZRsPK+Su+JPHessHoUk08pkbVWMX6n511PWZbQ2TdKav0x8lIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719431124; c=relaxed/simple;
-	bh=Hj2QWYGExHbz2eIVjGAcVAcoQqrqcYG5sIGyrw5LnkA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bCbIdNxuOhiLApg0iZjbaRXplntvdDq2ckuO/Qarqtff6l8IeHoBQmwjoP/Yk+LqJ3Eu8v5g/dUkpVFzmR5/PYWO8zIkCRquYjgnP1u6o7caY8YsDK3xTN7QkA5cgipzNi+lK9ZEZTQs8PjRwx89lMJ540Cow8BPj6nANe9Inpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=J6AEFK33; arc=none smtp.client-ip=209.85.210.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-700cd2cba7bso1044541a34.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 12:45:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719431122; x=1720035922; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gADk6rDKIWbFLVEuG73ynnBZ3KXbCJ0Mu03G97si6N8=;
-        b=J6AEFK33pbKHXkptzcq0ZA+3Gw6Nj+3p7VHND32sBKQkT5/f4sDJZHoKMGuZJNVcZb
-         dpXGF34G+xHVKu+y0Nu5ZW3+30lV0uLKa87JIt/LOAhgwx+9Rwtbt1lex793RJ5juucU
-         zt9dLKMMjXxRkiALIKztqvFMkPMU9V7KLjwwvw5/+ZztYaliIYkVFyXj+D97O3rscUKk
-         edkzrCZbiRL4Z3+K98GAMNhNW4IK/gv0rvMGMDRWd+Ql9Y6YcANeV2vFdgsV1bBWabVV
-         hmds8ye4b66u5LSTZ4myPRg9xBp065Ai3gm5ruK3v5dBC+orbJbzFTmdY0v2NasVvGa2
-         NCDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719431122; x=1720035922;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gADk6rDKIWbFLVEuG73ynnBZ3KXbCJ0Mu03G97si6N8=;
-        b=hoCz1jM3IxWkpk66DgbfXOa82rfykFtanQApSplM/9w0yRyFETwPBY/fbuuWgvUA46
-         1nTsIjswmwRJyGk2ibo7rxwuTzP/gHUrwp0GOcZ2N1be+CJWRe/b9OwDW0hsmxKikrde
-         UCGz5PWR9Nu8gRBgANr7yN+4e3gkSH6teb1yeiYU+cv7eZHrTZ8u8ZV1IAmS+dOGhbrq
-         vc6zKceGk6rq150ccKcJ8TSr/aMQK9Kok288neDzDI73vzGdl05mJVfZtZRlrmf2lHKA
-         w35BHYFRZcL1QkSD0+jdzpK/K9bEfOufA8FuF8PaU4PXqx7zQ6ZZfVwGeLcq4NqzAOmZ
-         aeow==
-X-Forwarded-Encrypted: i=1; AJvYcCViIADeD5Zc/vbNuT3qs6CmutI65RTJYVye5viWJNflwq2qrOrRvkzdtIx9s+un4a6DIJeCGPJ0nwY2Mqczp5lqkzs59EjM5tKDQKdc
-X-Gm-Message-State: AOJu0YyfS2VjU/I9A0mKv0SHnPis0KvZ/o7dkQaGEdgfiFnacOtbmLQB
-	n1D77AZdb2b4V9URXf5w+iVt9VkwxSd0i3al0bmy5gdQZyiuE5TxaNE2E54Icow=
-X-Google-Smtp-Source: AGHT+IG2ddYJtEHIdb4D6/2WU/XZrENIz9ZWFcePTFUFMlVMxlP2HxzPACNC4QZa/OPlJtiOuuhoBA==
-X-Received: by 2002:a05:6830:113:b0:6f9:6246:a14f with SMTP id 46e09a7af769-700b1293fe7mr13282187a34.30.1719431122030;
-        Wed, 26 Jun 2024 12:45:22 -0700 (PDT)
-Received: from freyr.lechnology.com (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7016c03820asm64154a34.80.2024.06.26.12.45.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 12:45:21 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	=?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
-	linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] spi: axi-spi-engine: remove platform_set_drvdata()
-Date: Wed, 26 Jun 2024 14:45:17 -0500
-Message-ID: <20240626-spi-axi-spi-engine-remove-drvdata-v1-1-1752e372dd5d@baylibre.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1719431213; c=relaxed/simple;
+	bh=g/ioBzCSVDqSPBS6IBljlwJBhjN2Mdqu60+lQO8OqSw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QNimfmaAfnH6+JydYQQrDxYPJXddyoEVhf4BjhxmnZNGJ2yZYydaiZobUxiE8FEZi5aHAsq6XPSsa6ctRzidnG3VQVYmU6VBIl4Gh5gCHbiMlVKYfGxL59Q8XJaL7kUAigYmRFN+GsJbjuNlrvM9ESSksr00guxOdQO7RkkTyhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=bPqgu9v6; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=SVeZo/sykfAtUGNgIOtWwp6zcpPi0nW7pbSEEQYvGSE=; b=bPqgu9v6Yddrpt/6usqzHdnAH3
+	IbvbdhdmEJT8f+O0emYcG81B8UdEZXBvlZzvcHU1pWTaSC21iThWCByp6zKcO1yg7nvIJW80reEPb
+	3T0TyTz1E+QPtJLjW0QF3HIEoJkn/QIm2Km+pd91yfeINiFHhVc3IftjXhFaf1t1OtrxVGkPxWuyl
+	xbSH8sCLdw+9Y75BnW2UKJwneosX17Mv+gb8H0gjUeKCIZOn1dn5zPa6f4l5vu5OwFLo1LzA/7Q1o
+	X6RNafkNweLCdcfIQumRiqbfI4xAZjYjsk79bZQwx0iVaMPuXhfWMt6hAYPmoLg8KoZ3RlG97OCQ2
+	9mQLGoZg==;
+Received: from 179-125-70-190-dinamico.pombonet.net.br ([179.125.70.190] helo=quatroqueijos.cascardo.eti.br)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1sMYbB-007p7w-OE; Wed, 26 Jun 2024 21:46:34 +0200
+Date: Wed, 26 Jun 2024 16:46:26 -0300
+From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+To: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Gwendal Grignou <gwendal@chromium.org>, dlunev@chromium.org
+Subject: Re: [PATCH v2 2/2] fat: always use dir_emit_dots and ignore . and ..
+ entries
+Message-ID: <ZnxwEtmYeZcKopJK@quatroqueijos.cascardo.eti.br>
+References: <20240625175133.922758-1-cascardo@igalia.com>
+ <20240625175133.922758-3-cascardo@igalia.com>
+ <871q4kae58.fsf@mail.parknet.co.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.12.4
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <871q4kae58.fsf@mail.parknet.co.jp>
 
-platform_get_drvdata() is never called in the AXI SPI Engine driver, so
-platform_set_drvdata() is not needed. Remove it. This also lets us
-avoid the final error check in the probe function.
+On Wed, Jun 26, 2024 at 06:47:15AM +0900, OGAWA Hirofumi wrote:
+> Thadeu Lima de Souza Cascardo <cascardo@igalia.com> writes:
+> 
+> > Instead of only using dir_emit_dots for the root inode and explictily
+> > requiring the . and .. entries to emit them, use dir_emit_dots for all
+> > directories.
+> >
+> > That allows filesystems with directories without the . or .. entries to
+> > still show them.
+> 
+> Unacceptable to change the correct behavior to broken format. And
+> unlikely break the userspace, however this still has the user visible
+> change of seek pos.
+> 
+> Thanks.
+> 
 
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
- drivers/spi/spi-axi-spi-engine.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+I agree that if this breaks userspace with a good filesystem or regresses
+in a way that real applications would break, that this needs to be redone.
 
-diff --git a/drivers/spi/spi-axi-spi-engine.c b/drivers/spi/spi-axi-spi-engine.c
-index 103a68bd4f19..447e5a962dee 100644
---- a/drivers/spi/spi-axi-spi-engine.c
-+++ b/drivers/spi/spi-axi-spi-engine.c
-@@ -700,13 +700,7 @@ static int spi_engine_probe(struct platform_device *pdev)
- 	if (host->max_speed_hz == 0)
- 		return dev_err_probe(&pdev->dev, -EINVAL, "spi_clk rate is 0");
- 
--	ret = devm_spi_register_controller(&pdev->dev, host);
--	if (ret)
--		return ret;
--
--	platform_set_drvdata(pdev, host);
--
--	return 0;
-+	return devm_spi_register_controller(&pdev->dev, host);
- }
- 
- static const struct of_device_id spi_engine_match_table[] = {
+However, I spent a few hours doing some extra testing (I had already run
+some xfstests that include directory testing) and I failed to find any
+issues with this fix.
 
----
-base-commit: f66ed82666bc582434d57359d2d83d6f40c925e4
-change-id: 20240626-spi-axi-spi-engine-remove-drvdata-cf390daaa2ab
+If this would break, it would have broken the root directory. In the case
+of a directory including the . and .. entries, the d_off for the .. entry
+will be set for the first non-dot-or-dotdot entry. For ., it will be set as
+1, which, if used by telldir (or llseek), will emit the .. entry, as
+expected.
 
+For the case where both . and .. are absent, the first real entry will have
+d_off as 2, and it will just work.
+
+So everything seems to work as expected. Do you see any user visible change
+that would break any applications?
+
+Thanks.
+Cascardo.
+
+> > Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+> > ---
+> >  fs/fat/dir.c | 24 +++++++++---------------
+> >  1 file changed, 9 insertions(+), 15 deletions(-)
+> >
+> > diff --git a/fs/fat/dir.c b/fs/fat/dir.c
+> > index 4e4a359a1ea3..e70781569de5 100644
+> > --- a/fs/fat/dir.c
+> > +++ b/fs/fat/dir.c
+> > @@ -583,15 +583,14 @@ static int __fat_readdir(struct inode *inode, struct file *file,
+> >  	mutex_lock(&sbi->s_lock);
+> >  
+> >  	cpos = ctx->pos;
+> > -	/* Fake . and .. for the root directory. */
+> > -	if (inode->i_ino == MSDOS_ROOT_INO) {
+> > -		if (!dir_emit_dots(file, ctx))
+> > -			goto out;
+> > -		if (ctx->pos == 2) {
+> > -			fake_offset = 1;
+> > -			cpos = 0;
+> > -		}
+> > +
+> > +	if (!dir_emit_dots(file, ctx))
+> > +		goto out;
+> > +	if (ctx->pos == 2) {
+> > +		fake_offset = 1;
+> > +		cpos = 0;
+> >  	}
+> > +
+> >  	if (cpos & (sizeof(struct msdos_dir_entry) - 1)) {
+> >  		ret = -ENOENT;
+> >  		goto out;
+> > @@ -671,13 +670,8 @@ static int __fat_readdir(struct inode *inode, struct file *file,
+> >  	if (fake_offset && ctx->pos < 2)
+> >  		ctx->pos = 2;
+> >  
+> > -	if (!memcmp(de->name, MSDOS_DOT, MSDOS_NAME)) {
+> > -		if (!dir_emit_dot(file, ctx))
+> > -			goto fill_failed;
+> > -	} else if (!memcmp(de->name, MSDOS_DOTDOT, MSDOS_NAME)) {
+> > -		if (!dir_emit_dotdot(file, ctx))
+> > -			goto fill_failed;
+> > -	} else {
+> > +	if (memcmp(de->name, MSDOS_DOT, MSDOS_NAME) &&
+> > +	    memcmp(de->name, MSDOS_DOTDOT, MSDOS_NAME)) {
+> >  		unsigned long inum;
+> >  		loff_t i_pos = fat_make_i_pos(sb, bh, de);
+> >  		struct inode *tmp = fat_iget(sb, i_pos);
+> 
+> -- 
+> OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
