@@ -1,150 +1,207 @@
-Return-Path: <linux-kernel+bounces-231594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD22A919AB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:33:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50676919AB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:33:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FE0E1F24C3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:33:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 821CF1C220B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271D81946BB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF631946C2;
 	Wed, 26 Jun 2024 22:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TjPa1rQ+"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y7A8KtU3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2BE0194133;
-	Wed, 26 Jun 2024 22:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D171946A4;
+	Wed, 26 Jun 2024 22:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719441162; cv=none; b=FrMO0HLyGG9bGeH8nVaXr3bpDCkiIXcBUSEv28JH69rpoCRBId8/01N+leREeLDYe9qxu/9UJICWh5q71jTwR+5pgpWbRDP4BaArLBTjnUKqubV6W9X9SgdX2508Ed7Z7QMQlEj37XiLsA3eng9YKhcXMos16bgD5XcAGY/i8qY=
+	t=1719441162; cv=none; b=WyPwzIoP9qmAMpv0hEdQ6Y28C2hD1NIAWSz6fE0VxB5eibNdiF3wteOrZw0+6uOUnJ7jicDuzrUz2dj2FAFf9bzb//4UVZQ184UksMSHVx/KxwNN25aXPhgLonCl2/ilJNDNIxOQmruFGrXo5Yt1eEnP8ln1BkcGOCt8Nb9shro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719441162; c=relaxed/simple;
-	bh=nQS61/CVQjJorMBycN9kyNZ19xcC2CiHekPCBW6Y/+g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=khF8ipbIusHgA+6W5WXhiT/lA5nEg6UuV/8bhbg7DF3NQ2U5i+OVP5/D6B7xNV3fe6yE/YMePr/79ARI5t4bOY1S3LzvpWq1jHA52hhDzroXQL0P18b4r3DOZGMLNbZDucqNn+D3bWBfnT2gPyf0lXBkhUpDuXDxXeM6Uy1rlAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TjPa1rQ+; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57d0eca877cso1039315a12.2;
-        Wed, 26 Jun 2024 15:32:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719441159; x=1720045959; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U36grdanXj9yAh+pNda5S+WRPO+QWYAY7LoWhNNT3IY=;
-        b=TjPa1rQ+df3L1dtWq+4vrErYELr3NvbBfo8ZFTn1FP2a0iLXmP9bADNYu7pPGxXM+G
-         bE2Yvl7psG6DXG2KK08KLc0YN2BKxwFdKhCV8b7p+Ifs71oWUlFTPcR/LlvSBaOp0DlG
-         8cjFBXNLWCCFcAS6SLt3u8BejCUSTfL9QBadkrpBQu0HeLSiCJZ4J12utkzbyqk0XpZK
-         ibSP9yJZK67e8B9Yz/5V9329P9fol7oq/J//ueUXyVW+kYR+r+xAFN8IGDWGfSm5i5Lw
-         6YPE+uEakW32UQvoMOQOzVaNshlQaK2ymTGc5G633a9u6q1h9itSlTRxMGfsASiLhrM3
-         3fFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719441159; x=1720045959;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U36grdanXj9yAh+pNda5S+WRPO+QWYAY7LoWhNNT3IY=;
-        b=mjeAWy/BtWutrxJh9Nfxo50ev9rgx3eWefzA9nywSGwYgd0DjjchlEzSsZ9Uq/D/y3
-         44Od3/yn7LL4UQ80dIgsr6Bz+WwkSujHTxAP+S1pLE2RAHn0syd/Y0dZgRxXnBNqdLTz
-         wX21SXMRXM4El33Xfdvk0tkeM32k9ON8KjKyV0+OZfPUsAcaz+lCsszq+Kqzt8E7/b0U
-         LhYe2g/5saFZBu77CSa9NSXOR5ROU19BRqyJCoa+QkT6S/nWOmxJ/O14R4+5IjwrURhh
-         DazplymDMc1HHQ5/QIpl+kjXDIe7Ae8nJQFMIbraNQD/X6ZwrfGV729hx7QPbaRkRPcq
-         LN1A==
-X-Forwarded-Encrypted: i=1; AJvYcCWvom27xcJaTelpld1W+M2w6Y0gEvNNfcp6RIje8IXwD/P71FpYto5EGy80P1TPzMSrAkWurMMdX9snjFFI0SmtF3Ahu7B+V43gea0GX3GEiP7xQUaLGYnCB8d7pXR3a3bCTW0MBwTn3U1WGg==
-X-Gm-Message-State: AOJu0YxQXp0d4GzuqNLJz8T9NcayO7e3ycppcM5BC64F3CbM32um3jnQ
-	EcDimjvcDH72Q2WJMILkLMonissN23FKapx4SHT+lLNdMdTBYYrha1+4yNctEmdOMMmcEBX4uOb
-	gE5AT+XPALkiKnOcBpB0v7KE/DB4=
-X-Google-Smtp-Source: AGHT+IHb98roHx5g3sBxWkKskttk5XU+NH37JopqIA/4bV6IWCJPWXBdw3kCMp992cniMQGn3EC2cUYVZE3FHSqDqKw=
-X-Received: by 2002:a50:871a:0:b0:57d:7ef:573b with SMTP id
- 4fb4d7f45d1cf-57d4bdd02bcmr10384352a12.38.1719441158804; Wed, 26 Jun 2024
- 15:32:38 -0700 (PDT)
+	bh=UXu/vYT7z9xueyiMh9oVfGVDaCYh7CYZteWRCP/n2vw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=O4BAEFxzcPR5BvV3eHbgc223MzKHUQzNr10q3IN8MfDAyW5aw2vKftfGr6c4HFBh8DjMjGq0RP91l1Y8sIJremxdfIgiUeK0wnBcd9sIka7u9yIMoQdLU2iXyGYvTvPWk4xMfXskWEGifLin88h2nyUIRUJRfAXCq/eAl8aDpAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y7A8KtU3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAD2AC116B1;
+	Wed, 26 Jun 2024 22:32:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719441162;
+	bh=UXu/vYT7z9xueyiMh9oVfGVDaCYh7CYZteWRCP/n2vw=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=Y7A8KtU3icL5K+CqxnTpfga9PToceSLSRlHeYiuez22VIG2THH6IZBsL4zncldrgH
+	 V3fiyEYZsIDKLDnLWD7w2WSznTttuCquhxJnh6/Prt0Prehg+VLopjIHYWV/UXGrth
+	 POIKJXUOlr0gCwxUuqj9cmhk2uaWqapW4eWWRNG75sc/QgHJj4sm3yNpzEMeQIsAeT
+	 aRu0R6pZbHmXmGiBxe+PegdczKon/MU/jKuWvzICnLhA7WmgexgDEJYfoXwDqe1HlL
+	 4HY3zqY76HPJ2g/rh0CaCGCua1Foi4WBuAA/+mwI8lK/r7Tpm+tBjA3wokmDBTl3yy
+	 bXONyZNqEdULw==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Date: Wed, 26 Jun 2024 16:32:27 -0600
+Subject: [PATCH v2 03/12] perf/arm: Move 32-bit PMU drivers to
+ drivers/perf/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240623110753.141400-1-quic_akhilpo@quicinc.com>
- <20240623110753.141400-3-quic_akhilpo@quicinc.com> <5947559d-30dd-4da1-93cc-a15dc65cb77d@linaro.org>
- <20240626082422.zcsari27yoskayuo@hu-akhilpo-hyd.qualcomm.com>
- <CAF6AEGvCaGq8ukxra_bzc=4pUf8y5NndKRagQspD0=uCZdBfoA@mail.gmail.com> <853849b4-69f2-488f-ab17-dc550c235e3d@linaro.org>
-In-Reply-To: <853849b4-69f2-488f-ab17-dc550c235e3d@linaro.org>
-From: Rob Clark <robdclark@gmail.com>
-Date: Wed, 26 Jun 2024 15:32:26 -0700
-Message-ID: <CAF6AEGsFExhokWqHka-cwFGqyYgo61OL=7F=o5ouRm-LoHh9Dw@mail.gmail.com>
-Subject: Re: [PATCH v1 2/3] drm/msm/adreno: Add support for X185 GPU
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Akhil P Oommen <quic_akhilpo@quicinc.com>, freedreno <freedreno@lists.freedesktop.org>, 
-	dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	Bjorn Andersson <andersson@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, Sean Paul <sean@poorly.run>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240626-arm-pmu-3-9-icntr-v2-3-c9784b4f4065@kernel.org>
+References: <20240626-arm-pmu-3-9-icntr-v2-0-c9784b4f4065@kernel.org>
+In-Reply-To: <20240626-arm-pmu-3-9-icntr-v2-0-c9784b4f4065@kernel.org>
+To: Russell King <linux@armlinux.org.uk>, 
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>, Will Deacon <will@kernel.org>, 
+ Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+ James Morse <james.morse@arm.com>, 
+ Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Zenghui Yu <yuzenghui@huawei.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, 
+ James Clark <james.clark@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-perf-users@vger.kernel.org, kvmarm@lists.linux.dev
+X-Mailer: b4 0.14-dev
 
-On Wed, Jun 26, 2024 at 2:38=E2=80=AFPM Konrad Dybcio <konrad.dybcio@linaro=
-.org> wrote:
->
-> On 26.06.2024 8:43 PM, Rob Clark wrote:
-> > On Wed, Jun 26, 2024 at 1:24=E2=80=AFAM Akhil P Oommen <quic_akhilpo@qu=
-icinc.com> wrote:
-> >>
-> >> On Mon, Jun 24, 2024 at 03:53:48PM +0200, Konrad Dybcio wrote:
-> >>>
-> >>>
-> >>> On 6/23/24 13:06, Akhil P Oommen wrote:
-> >>>> Add support in drm/msm driver for the Adreno X185 gpu found in
-> >>>> Snapdragon X1 Elite chipset.
-> >>>>
-> >>>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
-> >>>> ---
-> >>>>
-> >>>>   drivers/gpu/drm/msm/adreno/a6xx_gmu.c      | 19 +++++++++++++++---=
+It is preferred to put drivers under drivers/ rather than under arch/.
+The PMU drivers also depend on arm_pmu.c, so it's better to place them
+all together.
+
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ arch/arm/kernel/Makefile                                     |  2 --
+ drivers/perf/Kconfig                                         | 12 ++++++++++++
+ drivers/perf/Makefile                                        |  3 +++
+ arch/arm/kernel/perf_event_v6.c => drivers/perf/arm_v6_pmu.c |  3 ---
+ arch/arm/kernel/perf_event_v7.c => drivers/perf/arm_v7_pmu.c |  3 ---
+ .../perf_event_xscale.c => drivers/perf/arm_xscale_pmu.c     |  3 ---
+ 6 files changed, 15 insertions(+), 11 deletions(-)
+
+diff --git a/arch/arm/kernel/Makefile b/arch/arm/kernel/Makefile
+index 89a77e3f51d2..aaae31b8c4a5 100644
+--- a/arch/arm/kernel/Makefile
++++ b/arch/arm/kernel/Makefile
+@@ -78,8 +78,6 @@ obj-$(CONFIG_CPU_XSC3)		+= xscale-cp0.o
+ obj-$(CONFIG_CPU_MOHAWK)	+= xscale-cp0.o
+ obj-$(CONFIG_IWMMXT)		+= iwmmxt.o
+ obj-$(CONFIG_PERF_EVENTS)	+= perf_regs.o perf_callchain.o
+-obj-$(CONFIG_HW_PERF_EVENTS)	+= perf_event_xscale.o perf_event_v6.o \
+-				   perf_event_v7.o
+ AFLAGS_iwmmxt.o			:= -Wa,-mcpu=iwmmxt
+ obj-$(CONFIG_ARM_CPU_TOPOLOGY)  += topology.o
+ obj-$(CONFIG_VDSO)		+= vdso.o
+diff --git a/drivers/perf/Kconfig b/drivers/perf/Kconfig
+index 7526a9e714fa..aa9530b4064f 100644
+--- a/drivers/perf/Kconfig
++++ b/drivers/perf/Kconfig
+@@ -56,6 +56,18 @@ config ARM_PMU
+ 	  Say y if you want to use CPU performance monitors on ARM-based
+ 	  systems.
+ 
++config ARM_V6_PMU
++	depends on ARM_PMU && (CPU_V6 || CPU_V6K)
++	def_bool y
++
++config ARM_V7_PMU
++	depends on ARM_PMU && CPU_V7
++	def_bool y
++
++config ARM_XSCALE_PMU
++	depends on ARM_PMU && CPU_XSCALE
++	def_bool y
++
+ config RISCV_PMU
+ 	depends on RISCV
+ 	bool "RISC-V PMU framework"
+diff --git a/drivers/perf/Makefile b/drivers/perf/Makefile
+index 29b1c28203ef..d43df81d52f7 100644
+--- a/drivers/perf/Makefile
++++ b/drivers/perf/Makefile
+@@ -6,6 +6,9 @@ obj-$(CONFIG_ARM_DSU_PMU) += arm_dsu_pmu.o
+ obj-$(CONFIG_ARM_PMU) += arm_pmu.o arm_pmu_platform.o
+ obj-$(CONFIG_ARM_PMU_ACPI) += arm_pmu_acpi.o
+ obj-$(CONFIG_ARM_PMUV3) += arm_pmuv3.o
++obj-$(CONFIG_ARM_V6_PMU) += arm_v6_pmu.o
++obj-$(CONFIG_ARM_V7_PMU) += arm_v7_pmu.o
++obj-$(CONFIG_ARM_XSCALE_PMU) += arm_xscale_pmu.o
+ obj-$(CONFIG_ARM_SMMU_V3_PMU) += arm_smmuv3_pmu.o
+ obj-$(CONFIG_FSL_IMX8_DDR_PMU) += fsl_imx8_ddr_perf.o
+ obj-$(CONFIG_FSL_IMX9_DDR_PMU) += fsl_imx9_ddr_perf.o
+diff --git a/arch/arm/kernel/perf_event_v6.c b/drivers/perf/arm_v6_pmu.c
+similarity index 99%
+rename from arch/arm/kernel/perf_event_v6.c
+rename to drivers/perf/arm_v6_pmu.c
+index d9fd53841591..f7593843bb85 100644
+--- a/arch/arm/kernel/perf_event_v6.c
++++ b/drivers/perf/arm_v6_pmu.c
+@@ -31,8 +31,6 @@
+  * enable the interrupt.
+  */
+ 
+-#if defined(CONFIG_CPU_V6) || defined(CONFIG_CPU_V6K)
 -
-> >>>>   drivers/gpu/drm/msm/adreno/a6xx_gpu.c      |  6 ++----
-> >>>>   drivers/gpu/drm/msm/adreno/adreno_device.c | 14 ++++++++++++++
-> >>>>   drivers/gpu/drm/msm/adreno/adreno_gpu.h    |  5 +++++
-> >>>>   4 files changed, 36 insertions(+), 8 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm=
-/msm/adreno/a6xx_gmu.c
-> >>>> index 0e3dfd4c2bc8..168a4bddfaf2 100644
-> >>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> >>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> >>>> @@ -830,8 +830,10 @@ static int a6xx_gmu_fw_start(struct a6xx_gmu *g=
-mu, unsigned int state)
-> >>>>      */
-> >>>>     gmu_write(gmu, REG_A6XX_GMU_CM3_CFG, 0x4052);
-> >>>> +   if (adreno_is_x185(adreno_gpu)) {
-> >>>> +           chipid =3D 0x7050001;
-> >>>
-> >>> What's wrong with using the logic below?
-> >>
-> >> patchid is BITS(7, 0), not (15, 8) in the case of x185. Due to the
-> >> changes in the chipid scheme within the a7x family, this is a bit
-> >> confusing. I will try to improve here in another series.
-> >
-> > I'm thinking we should just add gmu_chipid to struct a6xx_info, tbh
-> >
-> > Maybe to start with, we can fall back to the existing logic if
-> > a6xx_info::gmu_chipid is zero so we don't have to add it for _every_
-> > a6xx/a7xx
->
-> If X185 is not the only occurence, I'd second this..
+ #include <asm/cputype.h>
+ #include <asm/irq_regs.h>
+ 
+@@ -445,4 +443,3 @@ static struct platform_driver armv6_pmu_driver = {
+ };
+ 
+ builtin_platform_driver(armv6_pmu_driver);
+-#endif	/* CONFIG_CPU_V6 || CONFIG_CPU_V6K */
+diff --git a/arch/arm/kernel/perf_event_v7.c b/drivers/perf/arm_v7_pmu.c
+similarity index 99%
+rename from arch/arm/kernel/perf_event_v7.c
+rename to drivers/perf/arm_v7_pmu.c
+index a3322e2b3ea4..fdd936fbd188 100644
+--- a/arch/arm/kernel/perf_event_v7.c
++++ b/drivers/perf/arm_v7_pmu.c
+@@ -17,8 +17,6 @@
+  *  counter and all 4 performance counters together can be reset separately.
+  */
+ 
+-#ifdef CONFIG_CPU_V7
+-
+ #include <asm/cp15.h>
+ #include <asm/cputype.h>
+ #include <asm/irq_regs.h>
+@@ -2002,4 +2000,3 @@ static struct platform_driver armv7_pmu_driver = {
+ };
+ 
+ builtin_platform_driver(armv7_pmu_driver);
+-#endif	/* CONFIG_CPU_V7 */
+diff --git a/arch/arm/kernel/perf_event_xscale.c b/drivers/perf/arm_xscale_pmu.c
+similarity index 99%
+rename from arch/arm/kernel/perf_event_xscale.c
+rename to drivers/perf/arm_xscale_pmu.c
+index 7a2ba1c689a7..3d8b72d6b37f 100644
+--- a/arch/arm/kernel/perf_event_xscale.c
++++ b/drivers/perf/arm_xscale_pmu.c
+@@ -13,8 +13,6 @@
+  * PMU structures.
+  */
+ 
+-#ifdef CONFIG_CPU_XSCALE
+-
+ #include <asm/cputype.h>
+ #include <asm/irq_regs.h>
+ 
+@@ -745,4 +743,3 @@ static struct platform_driver xscale_pmu_driver = {
+ };
+ 
+ builtin_platform_driver(xscale_pmu_driver);
+-#endif	/* CONFIG_CPU_XSCALE */
 
-basically all a7xx are "special" compared to the original logic, so we
-can start with using gmu_chipid for just a7xx
+-- 
+2.43.0
 
-BR,
--R
-
-> Konrad
 
