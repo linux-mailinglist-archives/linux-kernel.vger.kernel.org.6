@@ -1,132 +1,157 @@
-Return-Path: <linux-kernel+bounces-230271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72C37917AAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:16:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC23D917AB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:18:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9678E1C20C22
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:16:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19EC11C21B76
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B8F0166312;
-	Wed, 26 Jun 2024 08:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE1FF16078E;
+	Wed, 26 Jun 2024 08:18:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="s3TNqbdI"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="izV3PQ1V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE241607A5;
-	Wed, 26 Jun 2024 08:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A4E1D699;
+	Wed, 26 Jun 2024 08:18:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719389784; cv=none; b=pQ+yG6xoG0X7ouOyipjiZwBaaDVszhqaSmefAyz0h5Zglbi681Xj9UZJKuk0YInsSZKQ8opeZ3BKgaMps17Gnk4NKegpX5fjBXO/ypJXyVxVG96LaCqa1DYkv6BKnVMpyrQiw1B54p474U8r4P2PR0PC998KANwpuM8QYvcjk/4=
+	t=1719389881; cv=none; b=uc8XGq8I3VH/mgFoiW4JKM5h2Yv7bRjEoErmTUk7H06lMPvMcgo2clUAaCqx6R0EG+HBWeyyIo/3/SWn7KKiUJLpxBQEqebHy/424I9oN+TrLcbX0Nz3ZD3M4Sc9K2xHnt3E2sD5/8CE9AqJ+dB4MnTtOL0d5dl84o5iEDgsCQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719389784; c=relaxed/simple;
-	bh=uo0b3ziM5aHxc9KxibrJRLCwVCeLFONGwX1Jma/wC/I=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XmxgaBj8NTecVFegFYa3DShGPilxLEaVd1oecvoVMh1eNV71LxS2yBFzMIKi86ATMKLbmugpCIuLS73BSecAvRSMmsfJw+KDbH0iPLgNDDsR5FbLGN/FukeCqvMd4X/z9maDjzlgXOjTbFQbP+L9ARIZjB3tOVk5+/qNP5aq4T0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=s3TNqbdI; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45Q8G9Xi061421;
-	Wed, 26 Jun 2024 03:16:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1719389769;
-	bh=3C0uHGOqSVziV3txa6MMh3IsvviPc4mebKQzDXCHUYo=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=s3TNqbdIWGgiNkGnTIolWzvFI/1KnkxfKGow6wDveRXFGJ9vkSd9qbA6rPrCJ2Zf4
-	 PhsF9nObHuO6l6Rfy0FcPtV1PP/hdoeldq8+FonnxQeljAbNwHbH8aZGBTBAHsRCbf
-	 aG4YQWfafHeOMgeHi6pmo43FJwmqXw5J8B8DUM3M=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45Q8G9bo057273
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 26 Jun 2024 03:16:09 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 26
- Jun 2024 03:16:08 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 26 Jun 2024 03:16:09 -0500
-Received: from localhost (dhruva.dhcp.ti.com [172.24.227.68])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45Q8G8oM119119;
-	Wed, 26 Jun 2024 03:16:08 -0500
-Date: Wed, 26 Jun 2024 13:46:07 +0530
-From: Dhruva Gole <d-gole@ti.com>
-To: Mario Limonciello <mario.limonciello@amd.com>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Viresh Kumar
-	<viresh.kumar@linaro.org>,
-        "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
-        Sibi Sankar <quic_sibis@quicinc.com>,
-        Dietmar Eggemann
-	<dietmar.eggemann@arm.com>,
-        Yipeng Zou <zouyipeng@huawei.com>,
-        "Rafael J .
- Wysocki" <rafael.j.wysocki@intel.com>
-Subject: Re: [PATCH 1/2] cpufreq: Allow drivers to advertise boost enabled
-Message-ID: <20240626081607.zgjs5edtwrritbpq@dhruva>
-References: <20240626041135.1559-1-mario.limonciello@amd.com>
- <20240626041135.1559-2-mario.limonciello@amd.com>
+	s=arc-20240116; t=1719389881; c=relaxed/simple;
+	bh=n6LQpTZniLWj96fcVDYP880SPoRh9yDjthbIkIjvARQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RP0BPfHOwALI+2ln+rnWykagmMOMLgzcUeCrUfc8xrtrgR/5/22cGuDLvIplJCHoqwDQ6JBhnmU3bqqxlC5o0KvuZ9JLLdnMuBHZJtMOhzbSeV6m7t5k3oxdJiKnwOZ8W7RUl3NuD6GPEMcCRWT3p7BT9FMUhjRXQNCpmb/drRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=izV3PQ1V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5997BC2BD10;
+	Wed, 26 Jun 2024 08:17:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719389880;
+	bh=n6LQpTZniLWj96fcVDYP880SPoRh9yDjthbIkIjvARQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=izV3PQ1Vu227dyoe74lzMQ3nOLACDoJw72OZcuNZWtmGUgBupMYRlVi3KbFUm52t6
+	 48u9O/g0V8fPA2FXfbFe5YMJ2irBYCZxPTFh3shjbN9iJEa7EkVUFeYxUpVSV0Uzd3
+	 eYTg+jSyvcDseYC8bS6NAzoPWHdYp4BbYng0qjUIOOrBg/oXNMoEaNQK2kJw6tS9cd
+	 T+hYTqBLbmfQYJnWcs2zyEnXkKRIu+qrOGja457PuVb+o6yzO4rL06B7jbtYFGaaYn
+	 snLhzmz9ugJ8gNN2lFeihJNjlzoeH08dLOJjxGTRTFTNghToZnZ+vqBkMxYU3xMvfm
+	 PxsOBSq+QZVxA==
+Message-ID: <327d6dd1-3f31-4b49-96f0-afd754eae086@kernel.org>
+Date: Wed, 26 Jun 2024 10:17:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240626041135.1559-2-mario.limonciello@amd.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] dt-bindings: ata: ahci-fsl-qoriq: add
+ fsl,ls1046a-ahci and fsl,ls1012a-ahci
+To: Frank Li <Frank.Li@nxp.com>, Damien Le Moal <dlemoal@kernel.org>,
+ Niklas Cassel <cassel@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>,
+ "open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)"
+ <linux-ide@vger.kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Cc: imx@lists.linux.dev
+References: <20240625205752.4007067-1-Frank.Li@nxp.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240625205752.4007067-1-Frank.Li@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Jun 25, 2024 at 23:11:34 -0500, Mario Limonciello wrote:
-> The behavior introduced in commit f37a4d6b4a2c ("cpufreq: Fix per-policy
-> boost behavior on SoCs using cpufreq_boost_set_sw()") sets up the boost
-> policy incorrectly when boost has been enabled by the platform firmware
-> initially even if a driver sets the policy up.
+On 25/06/2024 22:57, Frank Li wrote:
+> Add compatible string 'fsl,ls1046a-ahci' and 'fsl,ls1012a-ahci' compatible
+> string. Allow 'fsl,ls1012a-ahci' fallback to 'fsl,ls1043a-ahci'.
 > 
-> This is because policy_has_boost_freq() assumes that there is a frequency
-> table set up by the driver and that the boost frequencies are advertised
-> in that table. This assumption doesn't work for acpi-cpufreq or
-> amd-pstate. Only use this check to enable boost if it's not already
-> enabled instead of also disabling it if alreayd enabled.
+> ls1046a ahci ecc disable bit is difference with other chips.
 > 
-> Fixes: f37a4d6b4a2c ("cpufreq: Fix per-policy boost behavior on SoCs using cpufreq_boost_set_sw()")
-> Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Suggested-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > ---
-> Cc: Sibi Sankar <quic_sibis@quicinc.com>
-> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: Dhruva Gole <d-gole@ti.com>
-> Cc: Yipeng Zou <zouyipeng@huawei.com>
-> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> v14->v15:
->  * Use Viresh's suggestion
-> ---
->  drivers/cpufreq/cpufreq.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  .../devicetree/bindings/ata/fsl,ahci.yaml     | 19 ++++++++++++-------
+>  1 file changed, 12 insertions(+), 7 deletions(-)
 > 
-> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> index 1fdabb660231..270ea04fb616 100644
-> --- a/drivers/cpufreq/cpufreq.c
-> +++ b/drivers/cpufreq/cpufreq.c
-> @@ -1430,7 +1430,8 @@ static int cpufreq_online(unsigned int cpu)
->  		}
+> diff --git a/Documentation/devicetree/bindings/ata/fsl,ahci.yaml b/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
+> index 162b3bb5427ed..a244bc603549d 100644
+> --- a/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
+> +++ b/Documentation/devicetree/bindings/ata/fsl,ahci.yaml
+> @@ -11,13 +11,18 @@ maintainers:
 >  
->  		/* Let the per-policy boost flag mirror the cpufreq_driver boost during init */
-> -		policy->boost_enabled = cpufreq_boost_enabled() && policy_has_boost_freq(policy);
-> +		if (cpufreq_boost_enabled() && policy_has_boost_freq(policy))
-> +			policy->boost_enabled = true;
+>  properties:
+>    compatible:
+> -    enum:
+> -      - fsl,ls1021a-ahci
+> -      - fsl,ls1043a-ahci
+> -      - fsl,ls1028a-ahci
+> -      - fsl,ls1088a-ahci
+> -      - fsl,ls2080a-ahci
+> -      - fsl,lx2160a-ahci
+> +    oneOf:
+> +      - items:
+> +          - const: fsl,ls1012a-ahci
+> +          - const: fsl,ls1043a-ahci
+> +      - enum:
+> +          - fsl,ls1021a-ahci
+> +          - fsl,ls1043a-ahci
+> +          - fsl,ls1046a-ahci
 
-Reviewed-by: Dhruva Gole <d-gole@ti.com>
+Where is the driver change for this?
 
--- 
+Your commit does not explain why you are doing it and without driver
+change adding new support it is not obvious. This probably applies to
+all your patches.
+
 Best regards,
-Dhruva
+Krzysztof
+
 
