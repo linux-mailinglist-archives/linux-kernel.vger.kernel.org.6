@@ -1,336 +1,125 @@
-Return-Path: <linux-kernel+bounces-230924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E4B39183D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:22:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1750E9183E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:22:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 701041C2121E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:22:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2BAC1F2374C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:22:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AF711849DB;
-	Wed, 26 Jun 2024 14:21:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7415A186286;
+	Wed, 26 Jun 2024 14:22:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="liuL8SuY";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FVOTb8Ch"
-Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="FXJj/gM+"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1140318508E;
-	Wed, 26 Jun 2024 14:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AACC1849DB
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 14:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719411714; cv=none; b=lOikMTHHeZRMO9BZre8TLqpGT5PFdeZhjxiDLnSDnArtKa5j/N2cNIFb23lsYvP1LGOeJlKFkkIlPTmmPhihG7SDA3ZU9NEocWGnUoUnctAso8YcrNNDjRot7pjv4pNsUxHMQ6b7idKIIr4Ca2dfJo0HMVPkac4M1tj5hwt57y0=
+	t=1719411755; cv=none; b=puAug7yagDMp/621OjTF9zmsoiQvXjdpn2VklfAdBJoUt0qrdJJL5RyNc8bXF5oWAtwkypW8z4CDXf5Maj7/nRr1btm1+Cz06KWnypZtTmTiykinHrgxfoK6r01KQnsVghu3BSDdKPtQHHEDxnACIqzOf6+yoWRmGY5ids7wL5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719411714; c=relaxed/simple;
-	bh=+UHISq9d9dCxudteCn3VFbXjHOe8z8uLLj+CpDvMMUA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IuGhD/BFDpVo4io2BZbGMnzW2Xi9oYR0zBssxBaOlB0/xJ69We/IhAsbpG23y2JPxXNsaOlZ96KcmZle7Uv8Y60u/T2NEImOc3RDnnN+IH3DrvovnHBAgQJw28da5qu8dZrSEe5C/AwhffmCg4jTSziOc8sbPUzWa+qOrmV5Iq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=liuL8SuY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FVOTb8Ch; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id BDB381140232;
-	Wed, 26 Jun 2024 10:21:48 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Wed, 26 Jun 2024 10:21:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1719411708;
-	 x=1719498108; bh=M5ThTnpuJkC5dGI62CAlp5mAcnBkqRFL99DOX0uCYHQ=; b=
-	liuL8SuYdz3VtDOhbTITHcJ3iqFEVFjIDdhCA8LDxzSh6AnJ0356R2Jxml6KSjtj
-	zZJia09Y52E/8yoLqVzR5Ntr3AQNCttQDMpelFkXEkzz1FBaaepFsqy2xMqeyt5B
-	GHP0hudSrBlYqV6lgzqN10M5pMH7jlDds/BLdGCUuPw3CbZ8AVZRc3ADshe26ACd
-	imKvrBRn9WJvxa1RkyAa2EowdHjP6J0m/prX3d9+oOYBg9zfsvn6MYjE97yR6BOY
-	1tfrPVjyMPhM4D/gamJ6ADCP+PM2Rfb2wois//fLEJOhvqk36h7crc8ckUDwJbnH
-	l+IqZAJ/V9lQPDaIYtYEUg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1719411708; x=
-	1719498108; bh=M5ThTnpuJkC5dGI62CAlp5mAcnBkqRFL99DOX0uCYHQ=; b=F
-	VOTb8Chxpd2R8fp06Qb4658tldw5UzLB92qBvFEqmuxrrtqMxxa29NOKDL962XWQ
-	mBTC3EBX4+CrYg3jQbErPw8QzztaxLSilvG9gnUyl4VCvZDw9ReDBGPoeGoYCZqN
-	6T8Uh4BvXWxv7Ih7mqId5jvMiXYsJqi38zCh7BOp507Wf4EI9AbLSXxFpwWcwkYR
-	zrXQk6O0kZCb9wS6zBIXa2az/ox5ZKKgnBKGNfJKOu3YqVSm7SqepN9Pqtv2EHvN
-	3kE07713Lc9EjnwiEqc7XvfNmJ0PjRvmN5fczPAOwEVMmQqDTvwh3QKBOvl4qb/2
-	04MdsW5Cq6Drhm0sS3OKw==
-X-ME-Sender: <xms:_CN8ZgAypncUR3g3EuZ1gs0OoXKRrndQ3RNmEwZsAoQfpqUogS-lAg>
-    <xme:_CN8ZihmpaLJ1PZI3t3rFQP9WDeyYME5_9OPZ2MKBZ6wWwYrIHoT6Kq0e6WIOvWWP
-    Ey6IS02pA3r05_e1KA>
-X-ME-Received: <xmr:_CN8ZjnHdK6HGDvJDwN5priyuYye7GthzNHotXaNRR6D6kUm-NbIWGj42DhXoXqJmiyCOV5M_0aXB9Z_iAs83EZBk34TF4o>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrtddvgdejhecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeenucfhrhhomheppfhikhhl
-    rghsucfunpguvghrlhhunhguuceonhhikhhlrghsrdhsohguvghrlhhunhgusehrrghgnh
-    grthgvtghhrdhsvgeqnecuggftrfgrthhtvghrnhepveetgedtvddvhfdtkeeghfeffeeh
-    teehkeekgeefjeduieduueelgedtheekkeetnecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepnhhikhhlrghsrdhsohguvghrlhhunhgusehrrghg
-    nhgrthgvtghhrdhsvg
-X-ME-Proxy: <xmx:_CN8Zmx1JY4sriUwQEEL52C7R-1XqxRg3paLlgeA7Q7RBJsbo-eCjQ>
-    <xmx:_CN8ZlTLRVG6vPfuNBdgiM0hGTIx9VK5gwNzZuq1YM9GZwHqjA_X9A>
-    <xmx:_CN8ZhanuxlSFIPJPkMQOiJamc_3jGneOhsSpEVyEMvbnqLhabDjBg>
-    <xmx:_CN8ZuR56RsXJqsw-YLVjvn5s56Hc00dlC8cA8IucuLMUpiW1_US9g>
-    <xmx:_CN8ZkEXBAGZp9zZZsHfn3rjV3sCZk_aOx7xEMXg_y3GEXLuoriz5OEi>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 26 Jun 2024 10:21:47 -0400 (EDT)
-Date: Wed, 26 Jun 2024 16:21:46 +0200
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, Allen Pais <allen.lkml@gmail.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mmc: sdhi: Convert from tasklet to BH workqueue
-Message-ID: <20240626142146.GK3655345@ragnatech.se>
-References: <20240626085015.32171-2-wsa+renesas@sang-engineering.com>
+	s=arc-20240116; t=1719411755; c=relaxed/simple;
+	bh=pam71S/q3brfmLgFHhm3OjGNc+Gd/rysVsROrFeD7DM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B5iiuphpMvor/YjjKyVqxWOAiMUuFhvi0YEtdycR9/hVPH7rFt3/ZQ7D0/WY5bPlZRwKEDN5ZObHU1lsm5dFUT/1OJUSkFjrfGzDNcnEEVDFD44rgaKuuI4xLTd4UIAnt1UWVgKYJBZYMAds8oizWMD6xJcqDVEgPejFJUL6OdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=FXJj/gM+; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ebe40673d8so78070721fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 07:22:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719411750; x=1720016550; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=W7iH3JSmiJaSnX32RaYcorOWmDrnkufENWf0l16tdfQ=;
+        b=FXJj/gM+dPwr36YLoA9RH2s5ulPFGvtAtkDgb/C0B4CannmhAZ5fdIYjRzV8t6yErM
+         k789dkFTt1jgsPYx0faM+WEIX0tjbKuiwsWxZIMMw+SGbRBPVJXt+osR3hLZS+oB5ROz
+         TsRKAerjfmetdqisxegsOvnoTiUAanLYnGNU+0nO/kBAgqSZCPE7aA+ZkxZhFHsy6uwv
+         zbXCFrYPM3XS6kEqzqc90c7WpAfL3OnMBMe4ipPfBmS+yBsJWqwx4GV9bUjhTHYLLPjg
+         +sk65klEtoCouX64vcSBAWAx8OjNk0N0ObNY/jp4v9M3CKu+NRyxfrPOVq+JC5wutvxd
+         wdYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719411750; x=1720016550;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W7iH3JSmiJaSnX32RaYcorOWmDrnkufENWf0l16tdfQ=;
+        b=cyzLQjRJFVCmBQCJAyD8Hy5By1aLzpQmXIVeLL+25F4k+RUdSmsnbgKfCWHCeEnuZe
+         +CaHunapbT82I8uolVGzumBTyvU7riV/Y86nrWFZPt5yxYBFvuToCxhM6ZrIcIW9noAr
+         So0LMaJSlogFIn/xiDIPgi2CZWuG9UAa4UlY9V64EcRVGs2vB7UqUDQNMjHwVABFfHU0
+         o1LKuj5m7nFWpkMmWyzUKfBbfZKkYRqvpKykTJasR8YBaPC5ESFXSxxe6hNW5TmRTyfB
+         EpbP0Fu9p912EDMCvn+WBfxgEEQ02pJjCNNZ9TimvholoxsOytrbuILA7MtktAaYwPIV
+         mc8A==
+X-Forwarded-Encrypted: i=1; AJvYcCXDqdOm+URLStsxQSqAymELnt9V0TsbDq7h7udyRy26tpC/pSMIS8iVser7nHvcHgYhrocqPbuwptJUQNypv5U7BSrfS6huzFXGnj2i
+X-Gm-Message-State: AOJu0YxwAT804GlWgOvbmh2S8j6iCGwZMlzP/zhg+7Tvd1qs/Ddz3Bi7
+	FaCICCjVIUfNLTEQc5sCt3njAbZoKjg4TlT4eMXy3csmwfpgYGq9JlRIGjcEu84=
+X-Google-Smtp-Source: AGHT+IHetDfsyqoRDtAkMQd5EyaDyXrcIZOcAmh59cPqxsnGl3jMLCu9/rXhsZFogKqN/Bv732PNYg==
+X-Received: by 2002:a2e:8416:0:b0:2ea:8308:841e with SMTP id 38308e7fff4ca-2ec5b345df8mr57301091fa.24.1719411750430;
+        Wed, 26 Jun 2024 07:22:30 -0700 (PDT)
+Received: from toaster.lan ([2a01:e0a:3c5:5fb1:7be7:aef1:af9e:fff6])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-424c823c28asm27141105e9.5.2024.06.26.07.22.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 07:22:30 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	dri-devel@lists.freedesktop.org,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 0/3] drm: panel: add support lincolntech LCD197 panel
+Date: Wed, 26 Jun 2024 16:22:06 +0200
+Message-ID: <20240626142212.1341556-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240626085015.32171-2-wsa+renesas@sang-engineering.com>
 
-Hi Allen and Wolfram,
+This patchset adds support for the Lincolntech LCD197 1080x1920 DSI panel.
 
-Nice work.
+Changes since v1 [1]:
+ * Rebased on drm-misc-next
+ * Drop vendor prefix change (lincolntech recently added)
+ * Use mipi_dsi_dcs_*multi()
+ * Drop the shutdown callback
+ * Insert mipi_dsi_usleep_range() for _multi usage as suggested.
+ * Downcase hexadecimal values
 
-On 2024-06-26 10:48:21 +0200, Wolfram Sang wrote:
-> From: Allen Pais <allen.lkml@gmail.com>
-> 
-> The only generic interface to execute asynchronously in the BH context is
-> tasklet; however, it's marked deprecated and has some design flaws. To
-> replace tasklets, BH workqueue support was recently added. A BH workqueue
-> behaves similarly to regular workqueues except that the queued work items
-> are executed in the BH context.
-> 
-> This patch converts the SDHI driver from tasklet to BH workqueue.
-> 
-> Based on the work done by Tejun Heo <tj@kernel.org>
-> 
-> Signed-off-by: Allen Pais <allen.lkml@gmail.com>
-> [wsa: fixed build faliures, corrected whitespace issues]
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+[1]: https://lore.kernel.org/lkml/20240625142552.1000988-1-jbrunet@baylibre.com
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Jerome Brunet (3):
+  dt-bindings: panel-simple-dsi: add lincoln LCD197 panel bindings
+  drm/mipi-dsi: add mipi_dsi_usleep_range helper
+  drm/panel: add lincolntech lcd197 support
 
-> ---
-> 
-> Tested on a Renesas Salvator X board with a R-Car M3-W SoC. Same
-> performance as with tasklets. Thank you Allen for your work!
-> 
-> 
->  drivers/mmc/host/renesas_sdhi.h               |  4 ++-
->  drivers/mmc/host/renesas_sdhi_core.c          |  2 ++
->  drivers/mmc/host/renesas_sdhi_internal_dmac.c | 26 +++++++++----------
->  drivers/mmc/host/renesas_sdhi_sys_dmac.c      |  9 +++----
->  drivers/mmc/host/tmio_mmc.h                   |  3 ++-
->  drivers/mmc/host/tmio_mmc_core.c              |  4 +--
->  6 files changed, 26 insertions(+), 22 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_sdhi.h
-> index 586f94d4dbfd..f12a87442338 100644
-> --- a/drivers/mmc/host/renesas_sdhi.h
-> +++ b/drivers/mmc/host/renesas_sdhi.h
-> @@ -11,6 +11,7 @@
->  
->  #include <linux/dmaengine.h>
->  #include <linux/platform_device.h>
-> +#include <linux/workqueue.h>
->  #include "tmio_mmc.h"
->  
->  struct renesas_sdhi_scc {
-> @@ -67,7 +68,7 @@ struct renesas_sdhi_dma {
->  	dma_filter_fn filter;
->  	void (*enable)(struct tmio_mmc_host *host, bool enable);
->  	struct completion dma_dataend;
-> -	struct tasklet_struct dma_complete;
-> +	struct work_struct dma_complete;
->  };
->  
->  struct renesas_sdhi {
-> @@ -93,6 +94,7 @@ struct renesas_sdhi {
->  	unsigned int tap_set;
->  
->  	struct reset_control *rstc;
-> +	struct tmio_mmc_host *host;
->  };
->  
->  #define host_to_priv(host) \
-> diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-> index 58536626e6c5..04874791541f 100644
-> --- a/drivers/mmc/host/renesas_sdhi_core.c
-> +++ b/drivers/mmc/host/renesas_sdhi_core.c
-> @@ -970,6 +970,8 @@ int renesas_sdhi_probe(struct platform_device *pdev,
->  	if (IS_ERR(host))
->  		return PTR_ERR(host);
->  
-> +	priv->host = host;
-> +
->  	if (of_data) {
->  		mmc_data->flags |= of_data->tmio_flags;
->  		mmc_data->ocr_mask = of_data->tmio_ocr_mask;
-> diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-> index 422fa63a2e99..d4b66daeda66 100644
-> --- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-> +++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-> @@ -337,7 +337,7 @@ static bool renesas_sdhi_internal_dmac_dma_irq(struct tmio_mmc_host *host)
->  		writel(status ^ dma_irqs, host->ctl + DM_CM_INFO1);
->  		set_bit(SDHI_DMA_END_FLAG_DMA, &dma_priv->end_flags);
->  		if (test_bit(SDHI_DMA_END_FLAG_ACCESS, &dma_priv->end_flags))
-> -			tasklet_schedule(&dma_priv->dma_complete);
-> +			queue_work(system_bh_wq, &dma_priv->dma_complete);
->  	}
->  
->  	return status & dma_irqs;
-> @@ -352,7 +352,7 @@ renesas_sdhi_internal_dmac_dataend_dma(struct tmio_mmc_host *host)
->  	set_bit(SDHI_DMA_END_FLAG_ACCESS, &dma_priv->end_flags);
->  	if (test_bit(SDHI_DMA_END_FLAG_DMA, &dma_priv->end_flags) ||
->  	    host->data->error)
-> -		tasklet_schedule(&dma_priv->dma_complete);
-> +		queue_work(system_bh_wq, &dma_priv->dma_complete);
->  }
->  
->  /*
-> @@ -440,9 +440,9 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
->  	renesas_sdhi_internal_dmac_enable_dma(host, false);
->  }
->  
-> -static void renesas_sdhi_internal_dmac_issue_tasklet_fn(unsigned long arg)
-> +static void renesas_sdhi_internal_dmac_issue_work_fn(struct work_struct *work)
->  {
-> -	struct tmio_mmc_host *host = (struct tmio_mmc_host *)arg;
-> +	struct tmio_mmc_host *host = from_work(host, work, dma_issue);
->  	struct renesas_sdhi *priv = host_to_priv(host);
->  
->  	tmio_mmc_enable_mmc_irqs(host, TMIO_STAT_DATAEND);
-> @@ -454,7 +454,7 @@ static void renesas_sdhi_internal_dmac_issue_tasklet_fn(unsigned long arg)
->  		/* on CMD errors, simulate DMA end immediately */
->  		set_bit(SDHI_DMA_END_FLAG_DMA, &priv->dma_priv.end_flags);
->  		if (test_bit(SDHI_DMA_END_FLAG_ACCESS, &priv->dma_priv.end_flags))
-> -			tasklet_schedule(&priv->dma_priv.dma_complete);
-> +			queue_work(system_bh_wq, &priv->dma_priv.dma_complete);
->  	}
->  }
->  
-> @@ -484,9 +484,11 @@ static bool renesas_sdhi_internal_dmac_complete(struct tmio_mmc_host *host)
->  	return true;
->  }
->  
-> -static void renesas_sdhi_internal_dmac_complete_tasklet_fn(unsigned long arg)
-> +static void renesas_sdhi_internal_dmac_complete_work_fn(struct work_struct *work)
->  {
-> -	struct tmio_mmc_host *host = (struct tmio_mmc_host *)arg;
-> +	struct renesas_sdhi_dma *dma_priv = from_work(dma_priv, work, dma_complete);
-> +	struct renesas_sdhi *priv = container_of(dma_priv, typeof(*priv), dma_priv);
-> +	struct tmio_mmc_host *host = priv->host;
->  
->  	spin_lock_irq(&host->lock);
->  	if (!renesas_sdhi_internal_dmac_complete(host))
-> @@ -544,12 +546,10 @@ renesas_sdhi_internal_dmac_request_dma(struct tmio_mmc_host *host,
->  	/* Each value is set to non-zero to assume "enabling" each DMA */
->  	host->chan_rx = host->chan_tx = (void *)0xdeadbeaf;
->  
-> -	tasklet_init(&priv->dma_priv.dma_complete,
-> -		     renesas_sdhi_internal_dmac_complete_tasklet_fn,
-> -		     (unsigned long)host);
-> -	tasklet_init(&host->dma_issue,
-> -		     renesas_sdhi_internal_dmac_issue_tasklet_fn,
-> -		     (unsigned long)host);
-> +	INIT_WORK(&priv->dma_priv.dma_complete,
-> +		  renesas_sdhi_internal_dmac_complete_work_fn);
-> +	INIT_WORK(&host->dma_issue,
-> +		  renesas_sdhi_internal_dmac_issue_work_fn);
->  
->  	/* Add pre_req and post_req */
->  	host->ops.pre_req = renesas_sdhi_internal_dmac_pre_req;
-> diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-> index 9cf7f9feab72..5a6f41318645 100644
-> --- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-> +++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-> @@ -312,9 +312,9 @@ static void renesas_sdhi_sys_dmac_start_dma(struct tmio_mmc_host *host,
->  	}
->  }
->  
-> -static void renesas_sdhi_sys_dmac_issue_tasklet_fn(unsigned long priv)
-> +static void renesas_sdhi_sys_dmac_issue_work_fn(struct work_struct *work)
->  {
-> -	struct tmio_mmc_host *host = (struct tmio_mmc_host *)priv;
-> +	struct tmio_mmc_host *host = from_work(host, work, dma_issue);
->  	struct dma_chan *chan = NULL;
->  
->  	spin_lock_irq(&host->lock);
-> @@ -401,9 +401,8 @@ static void renesas_sdhi_sys_dmac_request_dma(struct tmio_mmc_host *host,
->  			goto ebouncebuf;
->  
->  		init_completion(&priv->dma_priv.dma_dataend);
-> -		tasklet_init(&host->dma_issue,
-> -			     renesas_sdhi_sys_dmac_issue_tasklet_fn,
-> -			     (unsigned long)host);
-> +		INIT_WORK(&host->dma_issue,
-> +			  renesas_sdhi_sys_dmac_issue_work_fn);
->  	}
->  
->  	renesas_sdhi_sys_dmac_enable_dma(host, true);
-> diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-> index 2af5730c21f4..a75755f31d31 100644
-> --- a/drivers/mmc/host/tmio_mmc.h
-> +++ b/drivers/mmc/host/tmio_mmc.h
-> @@ -21,6 +21,7 @@
->  #include <linux/scatterlist.h>
->  #include <linux/spinlock.h>
->  #include <linux/interrupt.h>
-> +#include <linux/workqueue.h>
->  
->  #define CTL_SD_CMD 0x00
->  #define CTL_ARG_REG 0x04
-> @@ -153,7 +154,7 @@ struct tmio_mmc_host {
->  	bool			dma_on;
->  	struct dma_chan		*chan_rx;
->  	struct dma_chan		*chan_tx;
-> -	struct tasklet_struct	dma_issue;
-> +	struct work_struct	dma_issue;
->  	struct scatterlist	bounce_sg;
->  	u8			*bounce_buf;
->  
-> diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-> index 2780f0a29871..b61a6310311d 100644
-> --- a/drivers/mmc/host/tmio_mmc_core.c
-> +++ b/drivers/mmc/host/tmio_mmc_core.c
-> @@ -608,7 +608,7 @@ static void tmio_mmc_cmd_irq(struct tmio_mmc_host *host, unsigned int stat)
->  			} else {
->  				tmio_mmc_disable_mmc_irqs(host,
->  							  TMIO_MASK_READOP);
-> -				tasklet_schedule(&host->dma_issue);
-> +				queue_work(system_bh_wq, &host->dma_issue);
->  			}
->  		} else {
->  			if (!host->dma_on) {
-> @@ -616,7 +616,7 @@ static void tmio_mmc_cmd_irq(struct tmio_mmc_host *host, unsigned int stat)
->  			} else {
->  				tmio_mmc_disable_mmc_irqs(host,
->  							  TMIO_MASK_WRITEOP);
-> -				tasklet_schedule(&host->dma_issue);
-> +				queue_work(system_bh_wq, &host->dma_issue);
->  			}
->  		}
->  	} else {
-> -- 
-> 2.43.0
-> 
-> 
+ .../display/panel/panel-simple-dsi.yaml       |   2 +
+ drivers/gpu/drm/panel/Kconfig                 |  11 +
+ drivers/gpu/drm/panel/Makefile                |   1 +
+ .../gpu/drm/panel/panel-lincolntech-lcd197.c  | 262 ++++++++++++++++++
+ include/drm/drm_mipi_dsi.h                    |   7 +
+ 5 files changed, 283 insertions(+)
+ create mode 100644 drivers/gpu/drm/panel/panel-lincolntech-lcd197.c
 
 -- 
-Kind Regards,
-Niklas Söderlund
+2.43.0
+
 
