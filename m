@@ -1,189 +1,209 @@
-Return-Path: <linux-kernel+bounces-230196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 207439179B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:29:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00E5E9179B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:31:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C99CB2873C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:29:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68BC91F24A1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:31:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1FB15B0FC;
-	Wed, 26 Jun 2024 07:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A5415AD90;
+	Wed, 26 Jun 2024 07:30:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BVkKvZVF"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nKkfUCB+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A622645978;
-	Wed, 26 Jun 2024 07:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9866B29414;
+	Wed, 26 Jun 2024 07:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719386987; cv=none; b=sEttuC1US5+DIBRuu+hbyxE9nTX0Yp4MZ0BQr/DqMqgZ+YjseJh3Fu8yfKkP9TE3o73hFQ5MY6n0fL1onECiXmFJn76/8Ue148prMELHP4tnAq5KkZyQNckSBojlq7us86SYt02eCkRe6gsHfpEw0uHRnSZ6w1lClTPXeEjqr7s=
+	t=1719387052; cv=none; b=oORtMUyPTwmAjAA3HqaZAuNI3VSbtTwuDX+m4p2YDOyZZHJej7eJKdf7XtgkUxTYi+TYmdbsVezFRX0CfbioT62fXkeiLFO5gp0hAkrMLaL2f0nM+eqM+jg+ebRn5QTJxbFMgfgNDQUM76eXgn2zNeb+qlHs5N6eK2xop6ebA1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719386987; c=relaxed/simple;
-	bh=btPQt6h4XwprAHYKvRyqIyBal4wkclf3SJRV4OeaJKQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M0SwtZnIZi3pHypgCD+88+K9HbR0MY920E+ldoRtncwyngOuHzA7JQJ7/pwOxQCZ8zCzl/06cCBfaow3Eszgh1yBKFDsFBqzjI16G3lLybDK2oXdXmSMvKhUn8j/I2KHptBppkcA8trRhLSLGUpAMbiKu7gwHBmGBfuoxm9sB2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BVkKvZVF; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57cf8880f95so7489027a12.3;
-        Wed, 26 Jun 2024 00:29:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719386984; x=1719991784; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XvsLfYrxWOLYQugRQzs49q155HgDaGdoFenRxpUZgAs=;
-        b=BVkKvZVFmpIIYLgGMSkjF7OuJfsplR3QUTyCNxfNpYU/ah4w+PDVgTDcdyKTU8NQAk
-         WSOCgkW+IulpiIMoEqyrDf7oBjVVUXCzv/YsK6QMcFXT+dXhSUoNO9THr6ywnrzn1akA
-         YCe4pI//KhTlvhO0/nHRX4nGaXy6TSQRu46QSG4iHAj3+I0qRlBCN8awTB5zQ/kUmlse
-         qDzBEaxELx2oSC1IMefmOpqWyKt9xU6UQ0vFNR1zOdQ/6CY/Xq1QZMIRQ/evXiDQBIvc
-         ArPP8fq/HSOSgrOyIPGBCi3ynleuw3PVg+gfikPBcYCypXO97E3Iat9gJjjzmxFbiEUa
-         5b+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719386984; x=1719991784;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XvsLfYrxWOLYQugRQzs49q155HgDaGdoFenRxpUZgAs=;
-        b=mOADmEgJZ+rI4OMG7SNzzs5UCbq72Q2JzeSdROcLwgGU0VxTz2CRPkU2kGjPev3KnB
-         NzpmRND+UR9CGg0YBJ5rRVhIiF0pptj5/hqQ9f2lbqHJFvQ/+06JO3BM0rE4kBUkgwHV
-         WYBkMBsJEgRCc/qvVF2LnUnLCyPi9DnXAIvjcEjZtPnHHpxaIdST3L79+5bypNWD+tDB
-         /7ZsmHQAfXC/evOqQkmInn3L1ep+kgFtzixkGM23F6cicp8p9l8cVRBJo9/zqlCuTyOX
-         whJUW0V/eolWtrSwMMmM4XDpMmt/uehMX6PfVIunKtoYbPsVXdRTAKzGabhdbE/xwcuw
-         XovA==
-X-Forwarded-Encrypted: i=1; AJvYcCVICZa+0e6ZUug8EBU9jTZenGDqmPV7zxCjPlXc80IxTiocW/B9yC56xYjEBtJiqEXG1HQ0vJzF9KCm+Ax6ySDOd3ewc4r1k5hdY1pUuJoa9xXPsgC1tc861gUM39w8ej1Eg2phIJo=
-X-Gm-Message-State: AOJu0Yx+gvyBGLPL3qxzP9R1bdQBaDsuEErF7k0gIATAGYL+Z/uUD9cu
-	tQ8/ubYmHaoeL0bB3Uxbh2K0B2awT27D9prkvivJSAc62QxQ4t76uy7whK//3INYDP0MVdQ3Ts0
-	L7rXW4Vb83aRZjhkL68/74IEhdKQ=
-X-Google-Smtp-Source: AGHT+IGuTpoA0mcypNBslKf6qwgEHhL6gvANk+W+gmPwXKESWU0iyT3xhAEY0exEl6rRiF0piHwaElmvhXTznngSSu0=
-X-Received: by 2002:a50:a6d9:0:b0:579:e6ff:c61f with SMTP id
- 4fb4d7f45d1cf-57d4bd79eb6mr7551629a12.25.1719386983674; Wed, 26 Jun 2024
- 00:29:43 -0700 (PDT)
+	s=arc-20240116; t=1719387052; c=relaxed/simple;
+	bh=zOVMpDTFFB1iUIaRHdgZB/DQUUlyw1zqiK79M86MG3c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MZ3eANdJh2bU7eB2o+Zv6NfjMdo2lG6V5iAzO+5hbCrRMwiJVRFU2nomG5+j3jzRFe6nyaMFdSSmkfZKbACFLyESt8wREFQvVc5xpuHyeoQRz7kNMgJwK/5zmY5URNcE4NQoUciC74mtKNA7eySSL4qtOcifFk4Ra87Rj5w9jTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nKkfUCB+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93957C2BD10;
+	Wed, 26 Jun 2024 07:30:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719387052;
+	bh=zOVMpDTFFB1iUIaRHdgZB/DQUUlyw1zqiK79M86MG3c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nKkfUCB+lmo2sYtEUkKIgRw5h3aVUIBLHAOV/LHuzU9nlNwAOETQtroF13gfeHwmP
+	 wxmHbDAOzTBPPO3SMYnwUbMnNgvZ9Yew0uWVW5RWs4H61MKCs1is5pMxvweiBCvKSE
+	 hyqCSzWmGQZmN64vnxmVN16syltOXJ7i7HKjTQrnooCCvPA/nr4Mk6dGmCDUEz5v4F
+	 MWRJ0boKr07jDQ2iWOd+NenoiDlhOFgEH744qflgFwWEbKu4fXOsiEKF4qi9VfJ3Pf
+	 SSHAOR0eEDWLdAq8DzZltzLi6hkdIKJo8uB3k/KJZSXLCRXA0pET24E7K1nsf8vx3c
+	 YUdKeM2Rnek6Q==
+Message-ID: <ce81dc9d-bc13-45e2-828e-6570b506ed25@kernel.org>
+Date: Wed, 26 Jun 2024 09:30:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240622-fix-help-issue-v2-1-6c19e28a4ec1@gmail.com> <0a5ab4c0-e397-4dda-92f8-a23bcb42765c@linuxfoundation.org>
-In-Reply-To: <0a5ab4c0-e397-4dda-92f8-a23bcb42765c@linuxfoundation.org>
-From: Roman Storozhenko <romeusmeister@gmail.com>
-Date: Wed, 26 Jun 2024 09:29:31 +0200
-Message-ID: <CALsPMBMUAEwFOSfkjrd2Os+6YKunrAnkNHrJ6eU3DOvaE6BrsQ@mail.gmail.com>
-Subject: Re: [PATCH v2] cpupower: Make help command available for custom
- install dir
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>, 
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/3] dt-bindings: rng: Add Rockchip RNG bindings
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Aurelien Jarno <aurelien@aurel32.net>, Olivia Mackall
+ <olivia@selenic.com>, Herbert Xu <herbert@gondor.apana.org.au>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@debian.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Dragan Simic <dsimic@manjaro.org>,
+ Martin Kaiser <martin@kaiser.cx>, Ard Biesheuvel <ardb@kernel.org>,
+ linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1719106472.git.daniel@makrotopia.org>
+ <b28ccedac0a51f8a437f7ceb5175e3b70696c8c2.1719106472.git.daniel@makrotopia.org>
+ <a31bc0f2-4f82-4e15-95b8-c17dc46e7bf5@kernel.org>
+ <ZngeUxK6r0qqBj28@makrotopia.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <ZngeUxK6r0qqBj28@makrotopia.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 25, 2024 at 9:29=E2=80=AFPM Shuah Khan <skhan@linuxfoundation.o=
-rg> wrote:
->
-> On 6/22/24 07:01, Roman Storozhenko wrote:
-> > When the 'cpupower' utility installed in the custom dir, it fails to
-> > render appropriate help info for a particular subcommand:
-> > $ LD_LIBRARY_PATH=3Dlib64/ bin/cpupower help monitor
-> > with error message like 'No manual entry for cpupower-monitor.1'
-> > The issue is that under the hood it calls 'exec' function with
-> > the following args: 'man cpupower-monitor.1'. In turn, 'man' search
-> > path is defined in '/etc/manpath.config'. Of course it contains only
-> > standard system man paths.
-> > Make subcommands help available for a user by setting up 'MANPATH'
-> > environment variable to the custom installation man pages dir. That
-> > variable value will be prepended to the man pages standard search paths
-> > as described in 'SEARCH PATH' section of MANPATH(5).
-> >
-> > Signed-off-by: Roman Storozhenko <romeusmeister@gmail.com>
-> > ---
-> > Changes in v2:
-> > - Fixed spelling errors
-> > - Simplified man pages search approach by the 'MANPATH' variable usage
-> > - Link to v1: https://lore.kernel.org/r/20240621-fix-help-issue-v1-1-79=
-06998d46eb@gmail.com
-> > ---
-> >   tools/power/cpupower/utils/cpupower.c | 41 ++++++++++++++++++++++++++=
-++++-----
-> >   1 file changed, 35 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/tools/power/cpupower/utils/cpupower.c b/tools/power/cpupow=
-er/utils/cpupower.c
-> > index 9ec973165af1..1b1b79c572ad 100644
-> > --- a/tools/power/cpupower/utils/cpupower.c
-> > +++ b/tools/power/cpupower/utils/cpupower.c
-> > @@ -12,6 +12,8 @@
-> >   #include <unistd.h>
-> >   #include <errno.h>
-> >   #include <sched.h>
-> > +#include <libgen.h>
-> > +#include <limits.h>
-> >   #include <sys/types.h>
-> >   #include <sys/stat.h>
-> >   #include <sys/utsname.h>
-> > @@ -80,14 +82,17 @@ static void print_help(void)
-> >
-> >   static int print_man_page(const char *subpage)
-> >   {
-> > -     int len;
-> > -     char *page;
-> > +     char *page, *man_path, *exec_dir;
-> > +     char exec_path[PATH_MAX];
-> > +     int subpage_len;
-> >
-> > -     len =3D 10; /* enough for "cpupower-" */
-> > -     if (subpage !=3D NULL)
-> > -             len +=3D strlen(subpage);
-> > +     if (!subpage)
-> > +             return -EINVAL;
-> >
-> > -     page =3D malloc(len);
-> > +     subpage_len =3D 10; /* enough for "cpupower-" */
-> > +     subpage_len +=3D strlen(subpage);
-> > +
-> > +     page =3D malloc(subpage_len);
-> >       if (!page)
-> >               return -ENOMEM;
-> >
-> > @@ -97,6 +102,30 @@ static int print_man_page(const char *subpage)
-> >               strcat(page, subpage);
-> >       }
-> >
-> > +     /* Get current process image name full path */
-> > +     if (readlink("/proc/self/exe", exec_path, PATH_MAX) > 0) {
->
-> Using /proc/self/exe is Linux and platform specific and not a
-> good solution. Did you loom into using argv[0]?
+On 23/06/2024 15:08, Daniel Golle wrote:
+> Hi Krzysztof,
+> 
+> thank you for your patiente and repeated review of this series.
+> 
+> On Sun, Jun 23, 2024 at 09:03:15AM +0200, Krzysztof Kozlowski wrote:
+>> On 23/06/2024 05:32, Daniel Golle wrote:
+>>> From: Aurelien Jarno <aurelien@aurel32.net>
+>>>
+>>> Add the True Random Number Generator on the Rockchip RK3568 SoC.
+>>>
+>>> Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
+>>> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+>>
+>> My comments from v2, which I reminded at v3, were not addressed.
+>>
+>> Respond to each of them and acknowledge that you are going to implement
+>> the change.
+> 
+> Your comments to v1which I'm aware of are:
+> https://patchwork.kernel.org/comment/25087874/
 
-Yes, it is not the best solution. I would rather prefer to have a portable,
-POSIX-based one. But after exploring possible options I came to the
-conclusion that unfortunately such a solution doesn't exist.
-According to C11 language standard:
-"If the value of argc is greater than zero, the string pointed to by argv[0=
-]
-represents the program name;....".
-Notice - program name, not the absolute path to the program. The actual
-value of argv is under control of the calling environment.
-You could look at the nice discussion of the topic for example here:
-https://www.reddit.com/r/C_Programming/comments/dgcmhd/exactly_how_reliable=
-_is_argv0_at_being_the/
-Besides - this utility is a part of the Linux Kernel source tree and theref=
-ore
-has no requirement of the portability to another OSes.
+We talk about comments from v2, not v1.
 
->
-> thanks,
-> -- Shuah
+> 
+>>> +++ b/Documentation/devicetree/bindings/rng/rockchip-rng.yaml
+>> Filename matching compatible, so "rockchip,rk3568-rng.yaml"
+> 
+> I've changed the filename.
+> 
+>>> +title: Rockchip TRNG bindings
+> 
+>> Drop "bindings"
+> 
+> I've changed the title accordingly (now: "Rockchip TRNG" in v4).
+> 
+>>> +description:
+>>> +  This driver interface with the True Random Number Generator present in some
+>>
+>> Drop "This driver interface" and make it a proper sentence. Bindings are
+>> not about drivers.
+> 
+> This has been addressed by Aurelien and further improved by me in v3.
+> 
+>>> +  clocks:
+>>> +    minItems: 2
+> 
+>> Drop minItems.
+> 
+> Aurelien did that in v2.
+> 
+>>> +  clock-names:
+>>> +    items:
+>>> +      - const: clk
+>>> +      - const: hclk
+>>
+>> You need to explain what are these in clocks. Also you need better
+>> names. A clock name "clk" is useless.
+> 
+> Clocks now have meaningful names and descriptions.
+> 
+>>> +  reset-names:
+>>> +    items:
+>>> +      - const: reset
+>>
+>> Drop reset-names entirely, not useful.
+> 
+> Aurelien did so in v2.
+> 
+> Your comments to v2 which I'm aware of are:
+> https://patchwork.kernel.org/comment/25111597/
+> 
+>>> Add the RNG bindings for the RK3568 SoC from Rockchip
+> 
+>> Use subject prefixes matching the subsystem (git log --oneline -- ...),
+>> so it is rng, not RNG. Also, you are not adding all-Rockhip RNG but a
+>> specific device.
+>>
+>> Subject: drop second, redundant "bindings".
+> 
+> I've changed 'RNG' into 'rng' in the subject and spelled it out in the
+> commit message.
+
+And where did you drop the redundant bindings? You just quoted the
+sentence and ignored it.
 
 
+Best regards,
+Krzysztof
 
---=20
-Kind regards,
-Roman Storozhenko
 
