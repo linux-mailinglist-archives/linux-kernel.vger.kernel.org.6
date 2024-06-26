@@ -1,181 +1,167 @@
-Return-Path: <linux-kernel+bounces-230865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43F8C9182F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:45:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30326918281
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:33:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69FC31C22367
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:45:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 633E81C23D37
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:33:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A6E184121;
-	Wed, 26 Jun 2024 13:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7978A184126;
+	Wed, 26 Jun 2024 13:33:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mork.no header.i=@mork.no header.b="KGNsPbGF"
-Received: from dilbert.mork.no (dilbert.mork.no [65.108.154.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G75Rmuus"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DED41836E8;
-	Wed, 26 Jun 2024 13:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.108.154.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9DA181BBF;
+	Wed, 26 Jun 2024 13:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719409507; cv=none; b=r73GdbPJ8a7NeB0u6lorGJpgFDC7KUj4GawldkKwtYuVwcdMZg9HUE97sWFni4liJ9Xh18GMCcbaJ9M7iRdiffd2h8yA7/0Of+bMxn20AVjN9bgzA4JZ8tKWEjhwuiF4Q0qiEamGwRej7T32B3Nd+K44CEtuorTyLSNDGeK9waA=
+	t=1719408782; cv=none; b=CfSXvsH9ol2EXxAEN2SQTCYUJ2haQLqIEoYZvfnJ44euzUd67+nX/JTXtAIUED2Rs+NuQmWS8dKPE345dHWLN+1xVd6UMrhegIp+uQu3YVUfVNRCFCkm62MtbLNqka+bYKracY/26bf7BMWIfOwV+FqzkMfqIl/vRIiZaMwuYx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719409507; c=relaxed/simple;
-	bh=mAVRzzjl2ml2u8Gmy2oB6sT+YlAVVokF49bVXnJUqi8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=BM7ubBFnw09LuLpPygcrYq+feUACOVyq4x0nkLtuXDalbRHcAlerzIjtwHEb5bMmT1diN7ACYxtD9kzC0qhn78yIAIg23tc16VZMNVVs/bBWmPA768e0kGU1WYGm1rDvJBqQwJB9P4LfWYaUqJhJqdKD4SNBWxc2UDnIC+Iz+BE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mork.no; spf=pass smtp.mailfrom=miraculix.mork.no; dkim=pass (1024-bit key) header.d=mork.no header.i=@mork.no header.b=KGNsPbGF; arc=none smtp.client-ip=65.108.154.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mork.no
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=miraculix.mork.no
-Received: from canardo.dyn.mork.no ([IPv6:2a01:799:10da:6900:0:0:0:1])
-	(authenticated bits=0)
-	by dilbert.mork.no (8.17.1.9/8.17.1.9) with ESMTPSA id 45QDWY7F785538
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
-	Wed, 26 Jun 2024 14:32:35 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mork.no; s=b;
-	t=1719408754; bh=kx9LHtWevguXGUlSVbRkqpwgE6B/HVVWlJYSESFJwrA=;
-	h=From:To:Cc:Subject:Date:Message-Id:From;
-	b=KGNsPbGFmIs6ninv526omMMespR1WgnKV4dKhVF8mudTO/qTMeNSTOkahKOcGBVDn
-	 LZSpFZQYYu1i7UyUM8dZCollOTWL2wW5tfyX9WBF/Vsz7jLgGXaM6UVd2jDcDnwfMO
-	 Pm87OB2yUaCO/NMNscGrxG3WrhF0a3OqMrtPUwGg=
-Received: from miraculix.mork.no ([IPv6:2a01:799:964:4b0a:9af7:269:d286:bcf0])
-	(authenticated bits=0)
-	by canardo.dyn.mork.no (8.17.1.9/8.17.1.9) with ESMTPSA id 45QDWYQF3643882
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
-	Wed, 26 Jun 2024 15:32:34 +0200
-Received: (nullmailer pid 2316567 invoked by uid 1000);
-	Wed, 26 Jun 2024 13:32:34 -0000
-From: =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>
-To: linux-usb@vger.kernel.org
-Cc: Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>, stable@vger.kernel.org
-Subject: [PATCH] USB: serial: option: add Fibocom FM350-GL
-Date: Wed, 26 Jun 2024 15:32:23 +0200
-Message-Id: <20240626133223.2316555-1-bjorn@mork.no>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1719408782; c=relaxed/simple;
+	bh=BtIEJ29GmbJjobMmhUF/L75Shxh4CvTEph4ds53y3CE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hEOxo2KdYN1vK8iWuI9K5kG7AIsNcATQ8Y6Ua4L4AFt0vy4FwMWJuJNa5LtzFIFcHUXmFcZPjYgiSTGvssf0wh67OKTlMcdeG45e2/YZMU5n0mGwLbIOfQkLVE+l5hRt6vcttiwzcLFQ0MuQ3+eHWuYlND3Cen00h1xeshSrzn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G75Rmuus; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7066f68e22cso3082388b3a.2;
+        Wed, 26 Jun 2024 06:33:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719408780; x=1720013580; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=U4SpG465Zq0wFUQJD4T6CGPlHVUtjrzjJUeqwICCVB0=;
+        b=G75Rmuus+EXmc2Kii4VxerNR72vBNVLbomkr+hGZ1yn7wlbFSfOH8RWlVVCCNCJF8N
+         Prp66LhTMOlloXzJChjnZVsX6lCQMH2jMoIdLiAl0l1n7q7wbmJ82q+tpaQgS+IZuREY
+         BSJynVaWdpUF0lEfFe3+9uxfnXcI6A0hLBrwya48nPOu4zhOHYWMFCEklhKPC7UaIEsG
+         5aMh95Pd12pjKTylQgVqcP6p8fCr6uqrFk7LoAnIPUiUkATpC6VbEYxJdSxw/3zbSWDi
+         1P5ZNZW81Qe+eVVF1rJNvhczoMJfvk6kw9oWEfeKiwBu9/aoWpMG4FQy1Z7Y33cS/vU2
+         gdNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719408780; x=1720013580;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U4SpG465Zq0wFUQJD4T6CGPlHVUtjrzjJUeqwICCVB0=;
+        b=hsVJ/cE82dxFywRH4aNbAwebJukcgKy7WCwquA1YXffEUEnh2dFLgRpLFphGvOcS8s
+         ZPzUNstyLx7qBVdLmLzgDgwCfs9SZpvxAU6m8ZX0ZK59tLond4OQjE7CyM6HB+/ylyox
+         77cT6vymU2UcaFn8zb+iGA/FL20piIGD0UB5LSp8LvWyE/Hl+LCjUt2JwKj0Td+LP/dL
+         d0SUwSFXaqHmzPn2PEdLSbpJr10f9X6QserPgUyzy7DuATMR0UHioLzHuO2+ZMfbJCvn
+         w4MqFchbNWecUhJVJNVFyuT78AQ3lp6LZEQZO5oz1PbfWUZI2tN1mhdp6snunWBd0bGK
+         jC0g==
+X-Forwarded-Encrypted: i=1; AJvYcCVybCFrE22G1FwUKJXGfsYRIboJjB0STRTw3/Xb83szYHcBT/o9dbbKCRhA1pXhJxMhrzjg/KkrenpP6ZL0BuH0GUN8Vs/XA4rPwAoRJMXbDYrQIyUjt6cPf4cfW78omM5iguA/fiIcQmCgh2UpZ25tlwzyQOIgpOyPBO/7V7uwtYWqsNPq4PZXfRoB3QuzGJqVU1L5TEUaf+OfIqNDlrSRNCtM46ZMBZFqo2JjMxcOsbWsp8wYkGf/0g==
+X-Gm-Message-State: AOJu0YyN+Wp9qr0VcLBUHmvbtEkJGKUorjSaR/9cYTHYSP8msncvxipf
+	j3FdQAkomWQe1RxpBGiBfUySrzHyFuBVEHiJ4Y9uZYEuUTDA5dy6
+X-Google-Smtp-Source: AGHT+IER57KcsE5A6v0eX5mNYLuzZpa08lQwfGmIk/QpxqLOfeNqNB0VfK27wnjYzWXj4yOGmexT+g==
+X-Received: by 2002:aa7:9a1d:0:b0:706:6ad6:1866 with SMTP id d2e1a72fcca58-70671012a58mr10321399b3a.30.1719408780319;
+        Wed, 26 Jun 2024 06:33:00 -0700 (PDT)
+Received: from localhost ([2804:30c:96b:f700:cc1d:c0ae:96c9:c934])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-716bb22dffesm8796040a12.83.2024.06.26.06.32.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 06:32:59 -0700 (PDT)
+Date: Wed, 26 Jun 2024 10:34:24 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
+	lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org, nuno.sa@analog.com, dlechner@baylibre.com,
+	corbet@lwn.net, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 5/7] dt-bindings: iio: adc: Add AD4000
+Message-ID: <ZnwY4MqCYFKUNtL3@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1719351923.git.marcelo.schmitt@analog.com>
+ <10678612efbbd97bb47a31f4a062607cf35b03f9.1719351923.git.marcelo.schmitt@analog.com>
+ <20240626-handbrake-mustang-38c2aab3f04b@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 1.0.3 at canardo
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240626-handbrake-mustang-38c2aab3f04b@spud>
 
-FM350-GL is 5G Sub-6 WWAN module which uses M.2 form factor interface.
-It is based on Mediatek's MTK T700 CPU. The module supports PCIe Gen3
-x1 and USB 2.0 and 3.0 interfaces.
+On 06/26, Conor Dooley wrote:
+> On Tue, Jun 25, 2024 at 06:55:03PM -0300, Marcelo Schmitt wrote:
+> > Add device tree documentation for AD4000 series of ADC devices.
+> > 
+> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> > ---
+> >  .../bindings/iio/adc/adi,ad4000.yaml          | 190 ++++++++++++++++++
+> >  MAINTAINERS                                   |   7 +
+...
+> > +properties:
+> > +  compatible:
+> > +    oneOf:
+> > +      - const: adi,ad4000
+> > +      - items:
+> > +          - enum:
+> > +              - adi,ad4004
+> > +              - adi,ad4008
+> > +          - const: adi,ad4000
+> 
+> > +      - const: adi,ad4001
+> > +      - items:
+> > +          - enum:
+> > +              - adi,ad4005
+> > +          - const: adi,ad4001
+> 
+> > +      - const: adi,ad4002
+> > +      - items:
+> > +          - enum:
+> > +              - adi,ad4006
+> > +              - adi,ad4010
+> > +          - const: adi,ad4002
+> 
+> > +      - const: adi,ad4003
+> > +      - items:
+> > +          - enum:
+> > +              - adi,ad4007
+> > +              - adi,ad4011
+> > +          - const: adi,ad4003
+> 
+> > +      - const: adi,ad4020
+> > +      - items:
+> > +          - enum:
+> > +              - adi,ad4021
+> > +              - adi,ad4022
+> > +          - const: adi,ad4020
+> 
+> > +      - const: adi,adaq4001
+> 
+> > +      - const: adi,adaq4003
+> 
+> I think some blank lines, maybe like the above, would go a long way with
+> this list of compatibles.
+> 
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  spi-max-frequency:
+> > +    maximum: 102040816 # for VIO > 2.7 V, 81300813 for VIO > 1.7 V
+> > +
+> > +  adi,sdi-pin:
+> > +    $ref: /schemas/types.yaml#/definitions/string
+> > +    enum: [ high, low, cs ]
+> 
+>     enum: [ high, low, cs, sdi ]
+>     default: sdi
+> 
+> I'd do this, so that the default is documented in the binding, not in
+> the description text.
+> 
+> Otherwise, this looks good to me.
 
-The manufacturer states that USB is "for debug" but it has been
-confirmed to be fully functional, except for modem-control requests on
-some of the interfaces.
-
-USB device composition is controlled by AT+GTUSBMODE=<mode> command.
-Two values are currently supported for the <mode>:
-
-40: RNDIS+AT+AP(GNSS)+META+DEBUG+NPT+ADB
-41: RNDIS+AT+AP(GNSS)+META+DEBUG+NPT+ADB+AP(LOG)+AP(META)(default value)
-
-Mode 40 corresponds to:
-
-T:  Bus=03 Lev=02 Prnt=02 Port=00 Cnt=01 Dev#= 22 Spd=480  MxCh= 0
-D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=0e8d ProdID=7126 Rev= 0.01
-S:  Manufacturer=Fibocom Wireless Inc.
-S:  Product=FM350-GL
-C:* #Ifs= 8 Cfg#= 1 Atr=a0 MxPwr=500mA
-A:  FirstIf#= 0 IfCount= 2 Cls=e0(wlcon) Sub=01 Prot=03
-I:* If#= 0 Alt= 0 #EPs= 1 Cls=02(comm.) Sub=02 Prot=ff Driver=rndis_host
-E:  Ad=82(I) Atr=03(Int.) MxPS=  64 Ivl=125us
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=rndis_host
-E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 3 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
-E:  Ad=84(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=86(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 6 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=06(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 7 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=88(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=07(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-
-Mode 41 corresponds to:
-
-T:  Bus=03 Lev=02 Prnt=02 Port=00 Cnt=01 Dev#=  7 Spd=480  MxCh= 0
-D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=0e8d ProdID=7127 Rev= 0.01
-S:  Manufacturer=Fibocom Wireless Inc.
-S:  Product=FM350-GL
-C:* #Ifs=10 Cfg#= 1 Atr=a0 MxPwr=500mA
-A:  FirstIf#= 0 IfCount= 2 Cls=e0(wlcon) Sub=01 Prot=03
-I:* If#= 0 Alt= 0 #EPs= 1 Cls=02(comm.) Sub=02 Prot=ff Driver=rndis_host
-E:  Ad=82(I) Atr=03(Int.) MxPS=  64 Ivl=125us
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=rndis_host
-E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 3 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=84(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
-E:  Ad=86(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 6 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=06(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 7 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=88(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=07(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 8 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=89(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=08(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 9 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-E:  Ad=8a(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=09(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Bjørn Mork <bjorn@mork.no>
----
- drivers/usb/serial/option.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
-index 8a5846d4adf6..599439bddfb7 100644
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -2224,6 +2224,10 @@ static const struct usb_device_id option_ids[] = {
- 	{ USB_DEVICE_AND_INTERFACE_INFO(MEDIATEK_VENDOR_ID, MEDIATEK_PRODUCT_7106_2COM, 0x02, 0x02, 0x01) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(MEDIATEK_VENDOR_ID, MEDIATEK_PRODUCT_DC_4COM2, 0xff, 0x02, 0x01) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(MEDIATEK_VENDOR_ID, MEDIATEK_PRODUCT_DC_4COM2, 0xff, 0x00, 0x00) },
-+	{ USB_DEVICE_AND_INTERFACE_INFO(MEDIATEK_VENDOR_ID, 0x7126, 0xff, 0x00, 0x00),
-+	  .driver_info = NCTRL(2) },
-+	{ USB_DEVICE_AND_INTERFACE_INFO(MEDIATEK_VENDOR_ID, 0x7127, 0xff, 0x00, 0x00),
-+	  .driver_info = NCTRL(2) | NCTRL(3) | NCTRL(4) },
- 	{ USB_DEVICE(CELLIENT_VENDOR_ID, CELLIENT_PRODUCT_MEN200) },
- 	{ USB_DEVICE(CELLIENT_VENDOR_ID, CELLIENT_PRODUCT_MPL200),
- 	  .driver_info = RSVD(1) | RSVD(4) },
--- 
-2.39.2
-
+Ack, will do.
+Thanks
 
