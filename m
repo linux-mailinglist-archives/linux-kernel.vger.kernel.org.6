@@ -1,167 +1,163 @@
-Return-Path: <linux-kernel+bounces-231065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C4279185B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:27:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEDA59185BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:27:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C98C1C21470
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:27:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A788A288629
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6235318A94F;
-	Wed, 26 Jun 2024 15:27:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qvvJEJL1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FA9D18C35D;
+	Wed, 26 Jun 2024 15:27:28 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA502B2DA;
-	Wed, 26 Jun 2024 15:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A9B18C34C
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 15:27:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719415634; cv=none; b=RL7Bzika7JZdXNBtsO7y/S2NfgLYIBLZMPZT9SB+YJ1pp77ivGEqpiUWnQvZbJHIWN6O65ThAuocpdb2ExlHnr1BWqK+kevJpop2pBs9pN7lDh9PmiIlYAyFtZkmPvXUA9h1R4cn957w5ZlDykT1L3BPKjj1nhEGA771fvzGiMU=
+	t=1719415648; cv=none; b=NfHJitWHUmmuy8SN4hNcNhcmVm5OcIJNA1NlOhSaTh3jzLP6eaxkFLuHiBJjCdcfCsLLpeSorAvcviY054Xpa3U1N7+OkoKFPg/20sRNqxaVneTXZFcivxGgcPn5S4jD2Xz9x29gtGvky3SONs+/gPnwuQXNj5sYzVMthlOt+VE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719415634; c=relaxed/simple;
-	bh=JgOdhfKoNF4gZsjDSQJd3zN1wwMai50AgDm2boUHMwY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=vEbLtCeqmMJRu4/hvrkHtIj/BKEXpYJvqnYZuLe9lk1frE1qdLOBBBY7mENL0xEGwfuG/8iR64gOjGxaKiuHxb/TRsLviPpnVCiWwxSBnlk7HBkzlwU00u7SiXsXeg5x705dKO/a90A6niZUdvG8oEPAByfdUnu4efOrrwBi1V0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qvvJEJL1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 302AFC116B1;
-	Wed, 26 Jun 2024 15:27:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719415634;
-	bh=JgOdhfKoNF4gZsjDSQJd3zN1wwMai50AgDm2boUHMwY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=qvvJEJL1PQMATVQudld62ezk/sGU5VALsZQ88gMUJfXYwd78OJ1KSjcCXtUEb+4Ou
-	 gUxtXGKUNqck1BU8kBQQjQegHi8oF00MTlLpH/wd6SXlgcWCiKJ/tY6tNB/6oW+FL4
-	 5Ugi3/42ACTF7gJT/2EhxXqMBMONML9GsXtBv6MpRKEBjzixZgzW4h5bxUTVcswW/X
-	 692fH9ZwsRfZ1MKnaxrPlWxJdHWUVf+qTXa0j2o0uP6N3Xob2iUykNJXm0lA8zd9ig
-	 2ve/a9TAR+c7M2SQlo2ADfGPLbLU/H9BI82rUuvb9qw+Xb8m5gpUN+sCxXA2MupN0c
-	 nfRNOBEcFrHoA==
-Date: Wed, 26 Jun 2024 10:27:12 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Stanimir Varbanov <svarbanov@suse.de>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Jim Quinlan <jim2101024@gmail.com>,
-	Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Phil Elwell <phil@raspberrypi.com>,
-	Jonathan Bell <jonathan@raspberrypi.com>
-Subject: Re: [PATCH 5/7] PCI: brcmstb: add phy_controllable flag
-Message-ID: <20240626152712.GA1467478@bhelgaas>
+	s=arc-20240116; t=1719415648; c=relaxed/simple;
+	bh=BleCr8Mhu+R2zsdCbIvZ23wKYL4W8NBBCOEQ5yWtMi8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Yq/qUKPZLTXr1Q80tb71ky9b3mTXhDBV8p0+mYxtxV4oZeEyxg1VS7yIiI+XmNaDERhQFp22//LmYzayNNwEK9dEncj6mydqSOq3TinoxaV0U5ve9raxjQ3ZO5aruLiooDAhz7GpsT4H00Sq54bjFAAvRxiNnJip28fE1fgMmdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-7ec0802fd0dso989577039f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 08:27:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719415645; x=1720020445;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=muFjIliOCSevMBNmjRAbmoaEq6b90Bcb5SmnFYYXYFk=;
+        b=JbufY1UusGTb8bcFy5su0UGkJQhhrDTScrHEJkkgfqkVwDxMYZH0PizA8h8J2JMY5a
+         vw4fH9gWgVux1Ra2/GPF0baq7Inq2OCP47jMZc+lUebR4XZhuaIbUd88F+ICNqO6ejTS
+         lfUcPzvEvSUoFjtogaBjX2PY5O2wrcTjzEFef1Zemn66bnBCCFEDSgtSV3YBXU8am30l
+         YGOz2qEBSTRCJP0UwDpI8jwcY5TH0R0CeTbVvl8/xsVlykv2Ec4+br0Cb5YvEl6A8JSX
+         61NeN2GrAncflxpG7YwV6DVXON0AG/IxqdubK10hOKLW1NRqUde10UuGnLSCzWVRb5lE
+         cfwA==
+X-Forwarded-Encrypted: i=1; AJvYcCUl9ItXuBxikWmq7gYTycyBv0rrhU77dJf7pE8fIeiWWFI1RjxX+p5/K4wLejfaS6qfckFfXwe09jCafmlKbX7zXmslUBFSLi6jj3pL
+X-Gm-Message-State: AOJu0YzKkkIz9s91lqICZVj0JM1GeY+D2hsGs0Ie39W6PxM4bgxJiDHY
+	3eNoG7PcW+Fwd63nvtE16EzYnH1X2PbhEe1yzDJo4D43wzROJ4IRr01CYs4bax17fph1+qf24Ai
+	PzpWKDhwwYqYZmwtkKLdjCxG9CPqmPv67QIWF/vOMAqctrYZo8YV7eyY=
+X-Google-Smtp-Source: AGHT+IEEOn46GmPzIxcvI3oueipDiyudUO/wN+BmtrD/3uGY/zkrVbOhscGYR+fTax/ksuVCyOi7sYIwZ+o8D7kTf2NJdceQ9R3a
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240626104544.14233-6-svarbanov@suse.de>
+X-Received: by 2002:a05:6602:3424:b0:7f3:80a7:9ca6 with SMTP id
+ ca18e2360f4ac-7f3a15669cdmr45293239f.3.1719415645698; Wed, 26 Jun 2024
+ 08:27:25 -0700 (PDT)
+Date: Wed, 26 Jun 2024 08:27:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c88c57061bcca691@google.com>
+Subject: [syzbot] [fs?] linux-next test error: BUG: sleeping function called
+ from invalid context in mas_alloc_nodes
+From: syzbot <syzbot+2e16d05f747636051a3e@syzkaller.appspotmail.com>
+To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
+	sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-Match the capitalization of the subject line, s/add/Add/ as in
-previous patch.
+Hello,
 
-On Wed, Jun 26, 2024 at 01:45:42PM +0300, Stanimir Varbanov wrote:
-> Not all PCIe can control the phy block, add a flag
-> in config structure to take that fact into account.
-> 
-> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
-> ---
->  drivers/pci/controller/pcie-brcmstb.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
-> index 4ca509502336..ff8e5e672ff0 100644
-> --- a/drivers/pci/controller/pcie-brcmstb.c
-> +++ b/drivers/pci/controller/pcie-brcmstb.c
-> @@ -224,6 +224,7 @@ enum pcie_type {
->  struct pcie_cfg_data {
->  	const int *offsets;
->  	const enum pcie_type type;
-> +	bool phy_controllable;
->  	void (*perst_set)(struct brcm_pcie *pcie, u32 val);
->  	void (*bridge_sw_init_set)(struct brcm_pcie *pcie, u32 val);
->  };
-> @@ -1301,11 +1302,17 @@ static int brcm_phy_cntl(struct brcm_pcie *pcie, const int start)
->  
->  static inline int brcm_phy_start(struct brcm_pcie *pcie)
->  {
-> +	if (!pcie->cfg->phy_controllable)
-> +		return 0;
-> +
->  	return pcie->rescal ? brcm_phy_cntl(pcie, 1) : 0;
->  }
->  
->  static inline int brcm_phy_stop(struct brcm_pcie *pcie)
->  {
-> +	if (!pcie->cfg->phy_controllable)
-> +		return 0;
-> +
->  	return pcie->rescal ? brcm_phy_cntl(pcie, 0) : 0;
->  }
->  
-> @@ -1498,6 +1505,7 @@ static const int pcie_offsets_bmips_7425[] = {
->  static const struct pcie_cfg_data generic_cfg = {
->  	.offsets	= pcie_offsets,
->  	.type		= GENERIC,
-> +	.phy_controllable = true,
->  	.perst_set	= brcm_pcie_perst_set_generic,
->  	.bridge_sw_init_set = brcm_pcie_bridge_sw_init_set_generic,
->  };
-> @@ -1505,6 +1513,7 @@ static const struct pcie_cfg_data generic_cfg = {
->  static const struct pcie_cfg_data bcm7425_cfg = {
->  	.offsets	= pcie_offsets_bmips_7425,
->  	.type		= BCM7425,
-> +	.phy_controllable = true,
->  	.perst_set	= brcm_pcie_perst_set_generic,
->  	.bridge_sw_init_set = brcm_pcie_bridge_sw_init_set_generic,
->  };
-> @@ -1512,6 +1521,7 @@ static const struct pcie_cfg_data bcm7425_cfg = {
->  static const struct pcie_cfg_data bcm7435_cfg = {
->  	.offsets	= pcie_offsets,
->  	.type		= BCM7435,
-> +	.phy_controllable = true,
->  	.perst_set	= brcm_pcie_perst_set_generic,
->  	.bridge_sw_init_set = brcm_pcie_bridge_sw_init_set_generic,
->  };
-> @@ -1519,6 +1529,7 @@ static const struct pcie_cfg_data bcm7435_cfg = {
->  static const struct pcie_cfg_data bcm4908_cfg = {
->  	.offsets	= pcie_offsets,
->  	.type		= BCM4908,
-> +	.phy_controllable = true,
->  	.perst_set	= brcm_pcie_perst_set_4908,
->  	.bridge_sw_init_set = brcm_pcie_bridge_sw_init_set_generic,
->  };
-> @@ -1532,6 +1543,7 @@ static const int pcie_offset_bcm7278[] = {
->  static const struct pcie_cfg_data bcm7278_cfg = {
->  	.offsets	= pcie_offset_bcm7278,
->  	.type		= BCM7278,
-> +	.phy_controllable = true,
->  	.perst_set	= brcm_pcie_perst_set_7278,
->  	.bridge_sw_init_set = brcm_pcie_bridge_sw_init_set_7278,
->  };
-> @@ -1539,6 +1551,7 @@ static const struct pcie_cfg_data bcm7278_cfg = {
->  static const struct pcie_cfg_data bcm2711_cfg = {
->  	.offsets	= pcie_offsets,
->  	.type		= BCM2711,
-> +	.phy_controllable = true,
->  	.perst_set	= brcm_pcie_perst_set_generic,
->  	.bridge_sw_init_set = brcm_pcie_bridge_sw_init_set_generic,
->  };
-> -- 
-> 2.43.0
-> 
+syzbot found the following issue on:
+
+HEAD commit:    0fc4bfab2cd4 Add linux-next specific files for 20240625
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=11294561980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=df444fac2868e4e3
+dashboard link: https://syzkaller.appspot.com/bug?extid=2e16d05f747636051a3e
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/16d20f206142/disk-0fc4bfab.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4ced1cf03d35/vmlinux-0fc4bfab.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/68553962499b/bzImage-0fc4bfab.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+2e16d05f747636051a3e@syzkaller.appspotmail.com
+
+BUG: sleeping function called from invalid context at include/linux/sched/mm.h:337
+in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 5093, name: udevd
+preempt_count: 1, expected: 0
+RCU nest depth: 0, expected: 0
+3 locks held by udevd/5093:
+ #0: ffff88805c08e420 (sb_writers#5){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:409
+ #1: ffff88807d7a5128 (&type->i_mutex_dir_key#5){++++}-{3:3}, at: inode_lock include/linux/fs.h:799 [inline]
+ #1: ffff88807d7a5128 (&type->i_mutex_dir_key#5){++++}-{3:3}, at: open_last_lookups fs/namei.c:3582 [inline]
+ #1: ffff88807d7a5128 (&type->i_mutex_dir_key#5){++++}-{3:3}, at: path_openat+0x7e9/0x35e0 fs/namei.c:3821
+ #2: ffff88807d7a4ed8 (&simple_offset_lock_class){+.+.}-{2:2}, at: spin_lock include/linux/spinlock.h:351 [inline]
+ #2: ffff88807d7a4ed8 (&simple_offset_lock_class){+.+.}-{2:2}, at: mtree_alloc_cyclic+0x217/0x330 lib/maple_tree.c:6586
+Preemption disabled at:
+[<0000000000000000>] 0x0
+CPU: 1 UID: 0 PID: 5093 Comm: udevd Tainted: G        W          6.10.0-rc5-next-20240625-syzkaller #0
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ __might_resched+0x5d4/0x780 kernel/sched/core.c:8520
+ might_alloc include/linux/sched/mm.h:337 [inline]
+ slab_pre_alloc_hook mm/slub.c:3926 [inline]
+ slab_alloc_node mm/slub.c:4017 [inline]
+ kmem_cache_alloc_noprof+0x5d/0x2a0 mm/slub.c:4044
+ mt_alloc_one lib/maple_tree.c:162 [inline]
+ mas_alloc_nodes+0x26c/0x840 lib/maple_tree.c:1242
+ mas_node_count_gfp lib/maple_tree.c:1322 [inline]
+ mas_wr_preallocate+0x4ca/0x6b0 lib/maple_tree.c:4351
+ mas_insert lib/maple_tree.c:4389 [inline]
+ mas_alloc_cyclic+0x3f7/0xae0 lib/maple_tree.c:4451
+ mtree_alloc_cyclic+0x239/0x330 lib/maple_tree.c:6587
+ simple_offset_add+0x105/0x1b0 fs/libfs.c:289
+ shmem_mknod+0xfa/0x1e0 mm/shmem.c:3438
+ lookup_open fs/namei.c:3516 [inline]
+ open_last_lookups fs/namei.c:3585 [inline]
+ path_openat+0x1aaf/0x35e0 fs/namei.c:3821
+ do_filp_open+0x235/0x490 fs/namei.c:3851
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1417
+ do_sys_open fs/open.c:1432 [inline]
+ __do_sys_openat fs/open.c:1448 [inline]
+ __se_sys_openat fs/open.c:1443 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1443
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fd6237169a4
+Code: 24 20 48 8d 44 24 30 48 89 44 24 28 64 8b 04 25 18 00 00 00 85 c0 75 2c 44 89 e2 48 89 ee bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 76 60 48 8b 15 55 a4 0d 00 f7 d8 64 89 02 48 83
+RSP: 002b:00007ffd504c9180 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00007fd6237169a4
+RDX: 0000000000080241 RSI: 00007ffd504c96c8 RDI: 00000000ffffff9c
+RBP: 00007ffd504c96c8 R08: 0000000
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
