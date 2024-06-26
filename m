@@ -1,62 +1,74 @@
-Return-Path: <linux-kernel+bounces-231196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68C0D918778
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:34:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8AFC91878C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:38:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69D501C21269
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:34:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C6F6B22651
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A0F18F2EA;
-	Wed, 26 Jun 2024 16:33:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA99318F2EA;
+	Wed, 26 Jun 2024 16:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="pY67NDG9"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zwRHRWV9"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452AB1891D0;
-	Wed, 26 Jun 2024 16:33:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5773518F2CA
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 16:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719419630; cv=none; b=jE7YLQuHZZEjF2hhMS51ySoABCy6jgjRgAYmjDjn6WSkk1Ta1BtN42Vx6KdJ0PGkv2x/INOklOXrfiYQL23s29kcRWumFCZ8dph7nSFVzqkXrNAsMfhbMbdD7E3XCAM6/x2GNR60l8vugzKs+8h1oG/731mSDqbo2x9rj8+g++k=
+	t=1719419718; cv=none; b=bpK+iO6l+gXh/SPVAp+Ldl/PZJOvZwa88bjAb8znZiTwGXBTz2h35XpOyxI9pn1azM+Urk+bTDZ4a5r/3ZWi85NnBh2xU/bd8GzrzpuvWv77j/qPjp+Yuom8GISKi7kSYMJxJ7V6GaYz485QlZ+Gr0vvWIta1o5pevOU0r0wkxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719419630; c=relaxed/simple;
-	bh=YQY/Xi1Gb1tt/jaqRVo07BJZLQKnrQMKV6tif6YwiiY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gmY7j+XDqprIBbRU/oaVd70rlamRhyIa095HMqGPrDkHFzllTjs3RI7bh3agp5LLztfcy6luKA9dpFupgcjQyKxckVMr1jH4cGoC7RtRhi2MjUBdDG0yFPedStaD4JYHjnj3twMRkM18WbC1AzqmV54gUOgzD9x/BJGleYKc5X8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=pY67NDG9; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4W8S1y3tYJzlhw8y;
-	Wed, 26 Jun 2024 16:33:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1719419616; x=1722011617; bh=6ny5mb2NbK52sUNMrSeXYyT/
-	VKWcErgnneCbH+jSyGw=; b=pY67NDG9B0FqG3yGrtYTxT/ESIlfUqnnni8s8KgZ
-	QSb/uQzSA7qDyb7bszEqlXx/9any89K1gpi6gvo9cfbA0lLeEJvBtt/JpBYSa/PP
-	cnCVjold3SEfAIsJNymU47MN1bCR7IC0FBsHlFAYhXN5xRXgw7/PF+VORI4dgpqL
-	O6LIokyhGKrg2Azd/8OnvfpFD92R/SmfoxYJ8ogPU0PRPXo9EOcrV87hQUPOFKJn
-	U6fhtacgrcndR9nbQrGcqDS7aEc0z/TmHBDETCmO4mXfmosqzWgo9LquHxNi5ri0
-	NItpn/izlUMEI1OK51wZ+Eo2Wty2Vexr22eAmSsr7fziyg==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id IOoAp_9bYx9O; Wed, 26 Jun 2024 16:33:36 +0000 (UTC)
-Received: from [100.96.154.26] (unknown [104.132.0.90])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4W8S1q0nG5zll9bG;
-	Wed, 26 Jun 2024 16:33:35 +0000 (UTC)
-Message-ID: <d1768030-28fe-476b-9161-2b26f296c0dd@acm.org>
-Date: Wed, 26 Jun 2024 09:33:33 -0700
+	s=arc-20240116; t=1719419718; c=relaxed/simple;
+	bh=kgGAP2jiX9oay6z5BxbbxJlZ5+1RVmCwiBdWsINvYMM=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=BVRzsbagLdXBuGAmrGr+XfOwIRsOcv5uudLUc2La+iQKTdBd4uFjyRP0EDmpGkgm5HFOurHL8Nwb39ukevn1unL1csbcM7wNZyRVzhWeFb+OegxfxHPauXW2tBQBJnge4KF0tpvSO65o7/svcVTap/BEhiAgA7ZmiBVbIgH4MZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zwRHRWV9; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4255fa23f7bso4953065e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 09:35:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719419715; x=1720024515; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IVNombFGh6XnGXwdeuW//QrSGHhjwRxXK5+Bp5Yi1fc=;
+        b=zwRHRWV9ZF20Ai9uvhdKcVYYdTZ3BubjHyt10E6GL1mvsm+c36nTjwOmiVV+w0x3Ey
+         r2N9fpINH6NCUKLTZf98fxScNUhfGtlhrGfiqvbSuXTKI+yDYSBCf3h2rVCOMbAlMUZq
+         N2Mr+tctPB1wqZDGfqxiJxYDBegRWoB/v4/l9Tl3edag0YCgsIEhADPi3et0nUC0k+7q
+         Ac/C3vk6VGydtGA/7n84Z80x5PV8ePMs9JH331kgu3MoVxH6e6JOyL9dkQhs5Abk5Sky
+         UpicJMuN7XKe1eSKo+qyZoRj88Jdz0YSxNSGZuWyoebzh5R+TNZ+RBmL+1NLGIDku5S5
+         Fz8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719419715; x=1720024515;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=IVNombFGh6XnGXwdeuW//QrSGHhjwRxXK5+Bp5Yi1fc=;
+        b=AeC5tSSrt5oi/SMTl+0GLZT5l0U3GWryehwfRe9lmfBs/unNrKnCPiEov+lh3RK+PK
+         TGR+H2/93Mkp3VI88aI586FZ7S8uMDmU9Bp3XRPrMpljBA6AasabcpUlXV5xrrU5IxuH
+         O4Jn/MGI9pVFaV+HRCpRlHMESuLypER3jWMTqcwjn5j9ixkEidpEcENmCnh8sKwPDEks
+         PqJz1NVUmOQvEwyq5xPsgWDXbReMSW0G8JDCCT9yD6lccSqNZpawJ5cO0mHMhMxasYIK
+         WrkzOaVuNBspWRdP6FtNUwQo34Ozt9dNub69Xg9zX8KrenN2Tb9zvcOBFxUF5PJPk13X
+         nQWw==
+X-Gm-Message-State: AOJu0Yy9kX2DbXq+fEAxzpoPux9A/UhYc5tgQK7Iikt5s7iV5EyUHdEj
+	WCSV0c4nF/4owYoBNks0dpSuBrgoVuF9xjBREoVUAg4KfcvS14LdVwyXrCv9yeI=
+X-Google-Smtp-Source: AGHT+IF/H3qe3QkAkh67maafTcj7zPClcHcEdJ3mjvr0P7EcQetcMG/YNSoiIEG0zx2IAQ4inoE7dw==
+X-Received: by 2002:a05:600c:3c8d:b0:421:a575:99c9 with SMTP id 5b1f17b1804b1-4248fe3fa35mr63895905e9.20.1719419713858;
+        Wed, 26 Jun 2024 09:35:13 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:afc0:84d8:433a:2d67? ([2a01:e0a:982:cbb0:afc0:84d8:433a:2d67])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c82519c8sm32498645e9.16.2024.06.26.09.35.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Jun 2024 09:35:13 -0700 (PDT)
+Message-ID: <bc7edabf-fec7-4626-bba1-03a78c87b500@linaro.org>
+Date: Wed, 26 Jun 2024 18:35:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,58 +76,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: ufs: core: quiesce request queues before check
- pending cmds
-To: Ziqi Chen <quic_ziqichen@quicinc.com>,
- =?UTF-8?B?UGV0ZXIgV2FuZyAo546L5L+h5Y+LKQ==?= <peter.wang@mediatek.com>,
- "quic_rampraka@quicinc.com" <quic_rampraka@quicinc.com>,
- "quic_nguyenb@quicinc.com" <quic_nguyenb@quicinc.com>,
- "quic_nitirawa@quicinc.com" <quic_nitirawa@quicinc.com>,
- "beanhuo@micron.com" <beanhuo@micron.com>,
- "avri.altman@wdc.com" <avri.altman@wdc.com>,
- "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
- "junwoo80.lee@samsung.com" <junwoo80.lee@samsung.com>,
- "mani@kernel.org" <mani@kernel.org>,
- "quic_cang@quicinc.com" <quic_cang@quicinc.com>
-Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
- "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
- "quic_asutoshd@quicinc.com" <quic_asutoshd@quicinc.com>,
- "quic_mnaresh@quicinc.com" <quic_mnaresh@quicinc.com>,
- "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <1717754818-39863-1-git-send-email-quic_ziqichen@quicinc.com>
- <d3fc4d2b-81b0-4ab2-9606-5f4a5fb8b867@acm.org>
- <efc80348-46c0-4307-a363-a242a7b44d94@quicinc.com>
- <b1173b6f-445c-4d6d-9c78-b0351da2893a@acm.org>
- <ee45ce9429b1f69147c1a01e07b050275b4009bf.camel@mediatek.com>
- <3c7e776e-df2e-4718-995f-5e5dfa3cc916@acm.org>
- <272184ed-2fd8-413a-816c-9470bf9332da@quicinc.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <272184ed-2fd8-413a-816c-9470bf9332da@quicinc.com>
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v2 2/3] drm/mipi-dsi: add mipi_dsi_usleep_range helper
+To: Jerome Brunet <jbrunet@baylibre.com>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+References: <20240626142212.1341556-1-jbrunet@baylibre.com>
+ <20240626142212.1341556-3-jbrunet@baylibre.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240626142212.1341556-3-jbrunet@baylibre.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 6/26/24 6:18 AM, Ziqi Chen wrote:
-> On 6/26/2024 12:13 AM, Bart Van Assche wrote:
->> ufshcd_wait_for_doorbell_clr() should be removed and 
->> ufshcd_clock_scaling_prepare() should use blk_mq_freeze_*().
->> See also my patch "ufs: Simplify the clock scaling mechanism
->> implementation" from 5 years ago 
->> (https://lore.kernel.org/linux-scsi/20191112173743.141503-5-bvanassche@acm.org/).
->
-> The defect of blk_mq_freeze_*() is that it would bring in significant 
-> latency and performance regression. I don't think it is what many people 
-> want to see.
+On 26/06/2024 16:22, Jerome Brunet wrote:
+> Like for mipi_dsi_msleep(), usleep_range() may often be called
+> in between mipi_dsi_dcs_*() functions and needs a multi compatible
+> counter part.
+> 
+> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>   include/drm/drm_mipi_dsi.h | 7 +++++++
+>   1 file changed, 7 insertions(+)
+> 
+> diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
+> index 71d121aeef24..0f520eeeaa8e 100644
+> --- a/include/drm/drm_mipi_dsi.h
+> +++ b/include/drm/drm_mipi_dsi.h
+> @@ -10,6 +10,7 @@
+>   #define __DRM_MIPI_DSI_H__
+>   
+>   #include <linux/device.h>
+> +#include <linux/delay.h>
+>   
+>   struct mipi_dsi_host;
+>   struct mipi_dsi_device;
+> @@ -297,6 +298,12 @@ ssize_t mipi_dsi_generic_read(struct mipi_dsi_device *dsi, const void *params,
+>   			msleep(delay);	\
+>   	} while (0)
+>   
+> +#define mipi_dsi_usleep_range(ctx, min, max)	\
+> +	do {					\
+> +		if (!(ctx)->accum_err)		\
+> +			usleep_range(min, max);	\
+> +	} while (0)
+> +
+>   /**
+>    * enum mipi_dsi_dcs_tear_mode - Tearing Effect Output Line mode
+>    * @MIPI_DSI_DCS_TEAR_MODE_VBLANK: the TE output line consists of V-Blanking
 
-This can be solved by inserting a synchronize_srcu_expedited() call
-between the blk_freeze_queue_start() and the
-blk_mq_freeze_queue_wait_timeout() calls. With that call added, the
-latency of the new code should be lower than that of the
-io_schedule_timeout(msecs_to_jiffies(20)) call in the current code.
-
-blk_mq_freeze_*() is only slow if the RCU grace period is not expedited.
-
-Bart.
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
