@@ -1,147 +1,280 @@
-Return-Path: <linux-kernel+bounces-231653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31533919B6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 01:52:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50A97919B73
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 01:56:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54FA61C227C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 23:52:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6132EB210AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 23:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6821F1946AC;
-	Wed, 26 Jun 2024 23:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD701946B5;
+	Wed, 26 Jun 2024 23:56:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jej5LGXt"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H3UbqpiE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A32F16DC02;
-	Wed, 26 Jun 2024 23:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719445962; cv=none; b=e75zhzErJjQSi+dapCWLUvxtfN6rLgy4esM3gfUrSuJTLEjbrjNEaHSN73n6NK4FTZ845o+qMuPESLic+IP3UjV5MyQyYzft1fv+2fTWAHPn8nymuQiECFT84pbvImX9VEXJ6QN+76NqnbD8g0QEE5h8CnXL0RXdKacs0Jq2VEM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719445962; c=relaxed/simple;
-	bh=eXSVMa9ZuGhU5Zc7b9bA7AKEgXdN1amXW0Cfbus4K54=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CFu6cL1Ax0Klan9U8beTgoe+gucxkc+JAHCX1bEXkJt6tQpAlIjR47lqhON/L9kVBtnnd4fsXC1XFgWklGQvQB9UP21mgmPcDgmuD8NK4Lrxg+wvW1HrKjOmzDhdhSgmuzfB/RAeZjbkRLlOoa3NxdtQAlmPJz6VhIZDFBG53P0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jej5LGXt; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-36743abace4so9591f8f.1;
-        Wed, 26 Jun 2024 16:52:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719445959; x=1720050759; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WMXhWUzOZmgUOn1YwRUYJlzcPBfHyRxlCCVEehfQ2t4=;
-        b=jej5LGXtFYKv2TCGVaxx1l2/hrLuvNoBCSrNgOF9MttSnThZh0XDvTYPnhN3RfElr+
-         fSce67jHwC9ODXvr5EVzkHBfMXmpeQAGKuYNyRjHq1YfvjUOO4slvd4CbugbBlUqDUDE
-         Wcr4F97yFzIwvzzthFyAzKKxrPorPO8tw3PwJCIYPNh6ncU20i8yNVHDgSysI6OubIEv
-         QgIMJvIfiZ9uULxDWTYRwHxpsDxQPA2OxszuIlHhB52cmJFWi7YBuX/Nup3Z95QXdOyk
-         yavhaNK7zISMYSTft9oQJUM1tQLFUHCIgp4i3aWt/9cXO7XfweDG4zJnRqrW+4dMfMGJ
-         gP8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719445959; x=1720050759;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WMXhWUzOZmgUOn1YwRUYJlzcPBfHyRxlCCVEehfQ2t4=;
-        b=k3q5FZsKtyU6Sng6aot0fkkXoUqxz+5Xo/QmWyRVxHyc5xaJZiSgWYdK91mznN7KSl
-         txGMlpNoNnn43kCCtAbVpU61xpVFStG/mUbW7FVclp2ug5brq3TUj7Y96wiIM09+vFBh
-         RLffGipsjgnWJt924WnJIPOPFyHhMjgA6l2IJJ1R+UakmygHn7CNxAIaFBFLkk8B0WXp
-         ZFDosyd5OVTsg8eQdh7wbCQGPkWvyC5bU/sDbNvGQR6BIyIBE47FZ4KTFZp9/0PChxHg
-         OFlKpbwNDKHM6/yU7v18qltcgjuXCDh/XrNBbiIBzq1WqoLjDn0FbCb/nkROLLjL53WX
-         dmFg==
-X-Forwarded-Encrypted: i=1; AJvYcCW295bnEzNRtx9YotBFo+TziW1H2fybanpq6LwjZ4PhRiuitLmSOinfgnthAm8p4vDwrGdX4LqG3Bq8kCjZz9b0XQv1F/1s0sjDYnjjmraqAxd72n9JwHLp50+fFrfMaKw5
-X-Gm-Message-State: AOJu0YzfaBDgN8iAcCMTxwwCO+AMhZuG52xY2gaZ7vKtFZv0m4kX11vX
-	91kfrV/A+j8oyo973Hws/vBkA6cpLmJpjwhQqgLxctCAr6JgnHdQ7x8FQ44QRZTpmuFQO4iO7++
-	u/Tn0oVZC+UZ64O8Nd4KjXxuKGvY=
-X-Google-Smtp-Source: AGHT+IEw+d6UF8o9wW6PP5hCb7Yi7hDQqEZZpibIcHoZXKTmFmTLguJhRgy+c3KS13Th3zEBTWT7dWWftytyJTtImaw=
-X-Received: by 2002:adf:f70e:0:b0:367:42ce:f004 with SMTP id
- ffacd0b85a97d-36742cef648mr173224f8f.23.1719445959275; Wed, 26 Jun 2024
- 16:52:39 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E545194159;
+	Wed, 26 Jun 2024 23:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719446169; cv=fail; b=g4xVps2ftGGetKabwe0tTPR1//DhbrN69CfRiQe32Nj7OH5lQE6VZPkyxilMI/fhlYFYmYuNUKcGfryJ0K5Bl1y6WA4VAEuEIEzA9gv68S+l6puAGrwr7H66EXHUKTQGoJttImEImegeL/lHf9GQOXaWVdAUYpeLic8EsKSnxCo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719446169; c=relaxed/simple;
+	bh=u56XqYVNW7eGams8M/hOEpW9CnFyPGjlpnuQ1C9YemA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=WXZG+im+PA9h9vwul/6DN30nvLmPDJQ64tSbizSwLKuHhxxRDjdCW+mlM+G8AaNIoqxfGND+UrhLuUrz/fLwVciJKrmnfI83MexulYmg9YEikVgteD+HysfdhsVzkjok+3ees7OWd5V7Sh1qR7+pMcrW4IwNOeOhqOubo8rUyfU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H3UbqpiE; arc=fail smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719446168; x=1750982168;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=u56XqYVNW7eGams8M/hOEpW9CnFyPGjlpnuQ1C9YemA=;
+  b=H3UbqpiEK++JZFxfsIL4IlCLcqUdY+kE1hWRcKMqKoB5Bnw44pQVIyNl
+   6jh/POPImIbYVa9Sbw0UUsoAJ7Q4CblM3nxbAvOxpRflLZS4eGViWIZIZ
+   RvMzSNraTG5v39EdAitN9YVEjUmPi0ReTFMWV2wO/AFuLE6gsx4xZFl0L
+   Rp24g2Lberqn6+mZLNoW7fWqMc8QTv5sIQWbWErBhSgPTUMt+CqbjCaMJ
+   g6wlYEh3LjrVZu9dufwSqDCG9gF+nqAQHyURoLlR4gkNUGbEaFzmuiyY4
+   GmBFKHTt67jHhPXhwpmT9OBGfRNbiPzIB3UMHAn6mwN617R0bE3I4XPMa
+   Q==;
+X-CSE-ConnectionGUID: 6LSU8aQFSwSY2sF8cEce8Q==
+X-CSE-MsgGUID: TA+tiOeGQ5uUmhwat98qNQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="16386996"
+X-IronPort-AV: E=Sophos;i="6.08,268,1712646000"; 
+   d="scan'208";a="16386996"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 16:56:07 -0700
+X-CSE-ConnectionGUID: vvcGxW//RqKyXF7iZxq6wA==
+X-CSE-MsgGUID: 6FV8eEM0QBiIRAEwiRae8g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,268,1712646000"; 
+   d="scan'208";a="44303499"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by orviesa009.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 26 Jun 2024 16:56:07 -0700
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 26 Jun 2024 16:56:06 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 26 Jun 2024 16:56:06 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.49) by
+ edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 26 Jun 2024 16:56:06 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FJmJb86sxo68NdD3PalgPPHrkppbos2wq9PzMs39VBC479PiEUZJcYXbAnvnGusDNLel6ADfal8yk8IMHOSEiNPNqDM9GVLBa2vZkSHnH4vVXe7OQQF/4S/4TIMMWg93j8xd1sxGEhHpyRzLfyYluN6N/d8LeRTVfx4JpRHVkwnLEjf+p3Fu2eKnsRyMYUqm/AMNZIgoIzYeYhUV5mxQXukpoKdE7m5IwTCtKVFLy2FjBQlAgMiJjJQK9r7YrZoQV+1ls2zwVRDkpT+Fox4ty5xGhp+UVqUAA3mKKVN+M1P7psCimor4mR4X3+4WRH9pbIo8IadUN2Ooy7508OsnOQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=d+INiWfE85x5nkthnmaQmYkSd8GvPiAHTyDRULbyKqA=;
+ b=U+OEfOSKn4px0HbgUJe6S41NjP+Y71GcxV1D10QhK1Rt/LCIKssZTlYqWl+IYl2a56FdJltGbCQ0tY/+7R7bp5CJCATsKChTmiN0QmbEQ8XPvKmrOwDuOESaTtrdX9RHDN2jP47VpSkdQoz0oB0/29iVtpFAH/zfEsIbECJQZz7F1ampdN7t/PvzWbjqcGr1j3qUXn2o1nwwGP8VrEqoUgFiN+QWkEH9KliDROfs0U6xv/WL5r8qWMxlPgGVcV9sKLVxKiFqZTSxCMVo50+XYQHfl/u1tb26XOuWgbBOOnwDGAyZk4fwjqUlw7LLEo1qMB86JeSQ5CY9mxUmacjkcg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
+ by DS0PR11MB7412.namprd11.prod.outlook.com (2603:10b6:8:152::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.32; Wed, 26 Jun
+ 2024 23:56:00 +0000
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1%5]) with mapi id 15.20.7698.032; Wed, 26 Jun 2024
+ 23:55:59 +0000
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: Jason Gunthorpe <jgg@nvidia.com>, "Zhao, Yan Y" <yan.y.zhao@intel.com>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+	"peterx@redhat.com" <peterx@redhat.com>, "ajones@ventanamicro.com"
+	<ajones@ventanamicro.com>
+Subject: RE: [PATCH] vfio: Reuse file f_inode as vfio device inode
+Thread-Topic: [PATCH] vfio: Reuse file f_inode as vfio device inode
+Thread-Index: AQHawJxm3I/CN7lO/0SZyxULdM6QfbHaGjEAgACpYlA=
+Date: Wed, 26 Jun 2024 23:55:59 +0000
+Message-ID: <BN9PR11MB5276951FB77A98CBD6CCF79C8CD62@BN9PR11MB5276.namprd11.prod.outlook.com>
+References: <20240617095332.30543-1-yan.y.zhao@intel.com>
+ <20240626133528.GE2494510@nvidia.com>
+In-Reply-To: <20240626133528.GE2494510@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|DS0PR11MB7412:EE_
+x-ms-office365-filtering-correlation-id: 0f6f2f4c-f7f2-437a-42d9-08dc963b8763
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?wnTKcuyHgd6t3GyTDoLi9Ppo1UcUqn0qoBPtIg/fQ+jZsAmhxRz9oJKEplZG?=
+ =?us-ascii?Q?dAOCmUAtWozDPQK5IcWuj9ME6I8qgnu7wF4WyRmAyk/x4NmTucqa9q1v/qVv?=
+ =?us-ascii?Q?b4tqlzJRlO5BXO1xYfQN/3/qIhJZmkjIEIc5JMqV/qDy/lEDdonKPCk8OhKf?=
+ =?us-ascii?Q?CTHe7R0VCZEa29e4l2G4g+xmLZGeY8bf2jfP/vtsapnAGFoKjOBZNS92tGUt?=
+ =?us-ascii?Q?BYrIB9KLyo7BCxedvwEFXKFg0OtbCk0Lj3nyNZIIULt0YJZJEEUYudlN7dNz?=
+ =?us-ascii?Q?i2ikW4/9H/fM7cXW/wC7W0cpvOF0HSO7eZMZx5+3cCzBPZwJWoQ75sEg6REJ?=
+ =?us-ascii?Q?J/3E7QylIynbiaUR3iqwGaUsYpg+jLSfiTJmKexzrGqY5c7AUN7O2EkSuPPL?=
+ =?us-ascii?Q?3R2EuF91nCTDKDlU1/RwrSNnC5IdbvHfIo7gF4SyKGv/xAT2nGL0Y9uHgiWZ?=
+ =?us-ascii?Q?KyT86OuVbAi+ntNludDgE7BA5DWtHGhe6CdF9Yic9wXIz5ufGwDswtHn9gKv?=
+ =?us-ascii?Q?QN7muQmMXAxhzkANWKxqk+OhPxwojIAHlP3LB5lR2+tI9eQnArcn2Bt/kgCt?=
+ =?us-ascii?Q?NGTtITDZXCdNxsrJLIPEb2dwRAByqhAehlZlqwUr/GTsZt4FJUpN3HZNssvl?=
+ =?us-ascii?Q?W3UTDWiYijz3XkTSyzDlb3yeWj31aQZJPWVbVlw46U2VL/gkir0ACOEG1qpg?=
+ =?us-ascii?Q?65POwotS1jzaDM+87xbTpDgP0BMoJnGjQ65CnBihJtABxDv4aBEX5FUZbpUU?=
+ =?us-ascii?Q?qnMStoinQ0UpYErQE0U1ybnG/j3zhQ943+NGnpcDBsF5QuuBgJOoQhNO6woh?=
+ =?us-ascii?Q?xDuMTnw3h+//ge7DyP7tAHbDzBb7poLq6CZ0b+E8X76OAJqBDFbeH26zx2Lx?=
+ =?us-ascii?Q?BazeMdGSBe2ZfnU+sqpMzxYWRW3SejcwXKEGKXhFAn8Ix4uWacWTox0DtLwp?=
+ =?us-ascii?Q?eK53JriNIyH0krScWtCVbo57j52D9AAK1TD9Kb3UHqc0FL+GiQE2p15Btbh7?=
+ =?us-ascii?Q?nJaTQ9BGox8Shhe+xOlEatFgK5dGyi7CuZW2uJOA+3gJ4kbWNaKfIEMHZ1dh?=
+ =?us-ascii?Q?tuY1IESWVRktt3afhW37SFRCc0u1stUJOTTgTIK9ScJf8Bi6j2wlewa6YYN/?=
+ =?us-ascii?Q?NR/tphsShPlVsoqMDjtV4DDQTqxolu9q4UKtUz1K1pb09nuDGI4Y2kswZrab?=
+ =?us-ascii?Q?0QcnbjDvufEErfXaiP9FQSbSqBFMF4Ys7jbW15xMrbrLcKoEBeMzb7Zw5ihk?=
+ =?us-ascii?Q?hZVmnjRWR3kFrbXNQcvMp76/HovgxJMiwmZxpC0bm1F+P4uwQGstTUVnyN6T?=
+ =?us-ascii?Q?HWu0BAO9+KSqM3VMi90wTF2CwPVrksi860cPzk7TDOXzjIgUCXSra1xS8dMR?=
+ =?us-ascii?Q?rgFH+versIh9mjjhIolZFmRp+0pN/ZIkF6IgpXuEsLdevLjksA=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?//j71jGJ0c0+c6JX8giBAlIZAqr3JNJMb3lYoDPhTfsfWGXOUFaYRozKlfAO?=
+ =?us-ascii?Q?T0HVf2r8V+ubuZj6ni70qw5pCPFdL8qtM/G9hF6MQW81uguWe+yF1Vqqj7qY?=
+ =?us-ascii?Q?5rspwsHdGnDT+AALFxbcIFFPeG+OB+OqnaPYcLsE0MVT0bNgMgZV3rJS23G1?=
+ =?us-ascii?Q?WoJ9WlqQgdr7mlQDn+rLxRQlF4h82sPGIPgIjsd10AlLlg1eMzxNDFQsyyH+?=
+ =?us-ascii?Q?6t1Nd6OZ6o+6Pk9eIJlIY2QGpbBIkkrmnJgRathZZkBd1dUtofJTOWH0yYi4?=
+ =?us-ascii?Q?65ApjND7VIQxnV33KI9hKd3kVEIy32s1LyqNDenQYih5+VHYNuWjAI/6M4zM?=
+ =?us-ascii?Q?CTberRFnEzZllViItULeNBStTpyJoWEzJwkfTZ19r4w8jMP7MNbsBwh3BCTJ?=
+ =?us-ascii?Q?ErwrAPXZKOrjhdvlr07DcCMsJHLN/omhD+/kT2P8r6q9eGlE1N374QRoA3q7?=
+ =?us-ascii?Q?eiNfzXQJrAyIzKJC2D8qYb/1mp4QYOGOP87vFYe6foI7PRDAZrGEWgXgKMz1?=
+ =?us-ascii?Q?n01Gcg9jVDFBkq0puWpJGzhOcwoy8q+eDguNSDjzdr3Ow3SIWv+S19xpq3Yr?=
+ =?us-ascii?Q?Wx5Usi5u7CWfRokaJSZohyOK60bYcUrHmm7ZYCBSPW3BJ8Rfig20bsSVQ5jb?=
+ =?us-ascii?Q?HUgL43MaTrOL1o7XjEv0Cx8iCKvyimfRNM2dTPyPmDg2MD5+pu+72HzN4LLV?=
+ =?us-ascii?Q?qUHyOy7svcCjmEl773aS8cizWmTmADtgAMljNjB7QNdSSPR9JKBy8uc67TLO?=
+ =?us-ascii?Q?zU+r1T79scKPj/ZClx83ucIG06mkEDISziviTksU9shji+cgpM7AkkLAdiuF?=
+ =?us-ascii?Q?fSjuivOwnWuc+dYnhdHBj3f1XGh4KwXf5pXruaEUob5s+WfsqrmtfhqlnDO1?=
+ =?us-ascii?Q?UQXQRgSe+FCak69eJ7oZYF7BMs4emc/9B1CYSZekgNSwesIBbIz1z8njuMdW?=
+ =?us-ascii?Q?48HM9puGs6UDIW0Ft4QBfkTEaVcxPahROhgB6fuwyqyGlumlBYHnHbV9sheA?=
+ =?us-ascii?Q?RLTMYPyLCaMXpbOZhf42xxplSuSb+CrvTGB3kGWZAU72rqNe0YD2UTBhD9sz?=
+ =?us-ascii?Q?xkrXqUgB0NGfviP+rQGE9U0rOrHd/idMJs6XOzi75oWgIax1xGKZIOG3q5jU?=
+ =?us-ascii?Q?xrfm6rR6KmAKtjq1cNxU2FsnlrnFnIDHbMTSRhJhC+wautpW136ETdYjONTs?=
+ =?us-ascii?Q?v8uwZjx5vjSzZZRhfNk74MNipiLzhOKcyleB8NEYwZvbssnN1AEsUNPN+6Sx?=
+ =?us-ascii?Q?anl3GA2XF8mRnVbjqw0IpYqQRmsY4ZiWwCKIxMXgw2m3J+KwzYR9nvgD4+9c?=
+ =?us-ascii?Q?6Qc0gzmK2ZP565Oip3/Ig648ZNwwpR1BBM352KfqWdOrtSf4cEMCZexgAWnN?=
+ =?us-ascii?Q?h7sn1JpHVggQIysxG20fMspOsq3Nhp3vqy/SL1OATlVoLdXi6jsowuY1Xpcv?=
+ =?us-ascii?Q?QmC9l6Frf4F83ZpwP64C3sk7Vcvkb70OYyYfMht4TgTDVdLPrgLSdrI/lRkn?=
+ =?us-ascii?Q?KRYGo0tXdqToYvY8MLs29/2k8Anobtb64R9gWbBsDq62y+gFHlpFMn7pMlFx?=
+ =?us-ascii?Q?9kMOiqsp06Uc5cqcx1MuLuJFL2o+H2eyEbbmbdKf?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <345098dc-8cb4-4808-98cf-fa9ab3af4fc4@I-love.SAKURA.ne.jp>
- <87ed8lxg1c.fsf@jogness.linutronix.de> <60704acc-61bd-4911-bb96-bd1cdd69803d@I-love.SAKURA.ne.jp>
- <87ikxxxbwd.fsf@jogness.linutronix.de> <ea56efca-552f-46d7-a7eb-4213c23a263b@I-love.SAKURA.ne.jp>
- <CAADnVQ+hxHsQpfOkQvq4d5AEQsH41BHL+e_RtuxUzyh-vNyYEQ@mail.gmail.com>
- <7edb0e39-a62e-4aac-a292-3cf7ae26ccbd@I-love.SAKURA.ne.jp>
- <CAADnVQKoHk5FTN=jywBjgdTdLwv-c76nCzyH90Js-41WxPK_Tw@mail.gmail.com>
- <744c9c43-9e4f-4069-9773-067036237bff@I-love.SAKURA.ne.jp>
- <20240626122748.065a903b@rorschach.local.home> <f6c23073-dc0d-4b3f-b37d-1edb82737b5b@I-love.SAKURA.ne.jp>
- <20240626183311.05eaf091@rorschach.local.home> <6264da10-b6a0-40b8-ac26-c044b7f7529c@I-love.SAKURA.ne.jp>
-In-Reply-To: <6264da10-b6a0-40b8-ac26-c044b7f7529c@I-love.SAKURA.ne.jp>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 26 Jun 2024 16:52:27 -0700
-Message-ID: <CAADnVQJo=FksArWw+m-wb1zKmRTVhJrKWBOiT0wmyK8uvZ268w@mail.gmail.com>
-Subject: Re: [PATCH] bpf: defer printk() inside __bpf_prog_run()
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Steven Rostedt <rostedt@goodmis.org>, John Ogness <john.ogness@linutronix.de>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Petr Mladek <pmladek@suse.com>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0f6f2f4c-f7f2-437a-42d9-08dc963b8763
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jun 2024 23:55:59.8228
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: rHREe/4zE9tP/kLrBFou29JBF+yijrP9QtkFt1wHZz2uPSKQoXS3l1XkYr6FYePd76wpErW6mvr6t2CXRYMkgQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7412
+X-OriginatorOrg: intel.com
 
-On Wed, Jun 26, 2024 at 4:09=E2=80=AFPM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
->
-> On 2024/06/27 7:33, Steven Rostedt wrote:
-> > So you are saying that because a BPF hook can attach to a tracepoint
-> > that is called with rq locks held, it should always disable preemption
-> > and call printk_deferred_enter(), because it *might* hit an error path
-> > that will call printk?? In other words, how the BPF hook is used
-> > determines if the rq lock is held or not when it is called.
->
-> Yes.
->
+> From: Jason Gunthorpe <jgg@nvidia.com>
+> Sent: Wednesday, June 26, 2024 9:35 PM
+>=20
+> On Mon, Jun 17, 2024 at 05:53:32PM +0800, Yan Zhao wrote:
+> > Reuse file f_inode as vfio device inode and associate pseudo path file
+> > directly to inode allocated in vfio fs.
 > >
-> > I can use that same argument for should_fail_ex(). Because how it is
-> > used determines if the rq lock is held or not when it is called. And it
-> > is the function that actually calls printk().
->
-> Strictly speaking, KASAN/KMSAN/KCSAN etc. *might* call printk() at any lo=
-cation.
-> In that aspect, just wrapping individual function that explicitly calls p=
-rintk()
-> might not be sufficient. We will need to widen section for deferring prin=
-tk(),
-> but we don't want to needlessly call migrate_disable()/preempt_disable()/
-> printk_deferred_enter() due to performance reason. We need to find a bala=
-nced
-> location for calling migrate_disable()/preempt_disable()/printk_deferred_=
-enter().
-> I consider __bpf_prog_run() as a balanced location.
-
-Tetsuo,
-your repeated invalid arguments are not making this thread productive.
-Told you already that the same can happen without bpf in the picture.
-
+> > Currently, vfio device is opened via 2 ways:
+> > 1) via cdev open
+> >    vfio device is opened with a cdev device with file f_inode and addre=
+ss
+> >    space associated with a cdev inode;
+> > 2) via VFIO_GROUP_GET_DEVICE_FD ioctl
+> >    vfio device is opened via a pseudo path file with file f_inode and
+> >    address space associated with an inode in anon_inode_fs.
 > >
-> > Sorry, but it makes no sense to put the burden of the
-> > printk_deferred_enter() on the BPF hook logic. It should sit solely
-> > with the code that actually calls printk().
->
-> How do you respond to Petr Mladek's comment
->
->   Yeah, converting printk() into printk_deferred() or using
->   printk_deferred_enter() around particular code paths is a whac-a-mole
->   game.
+> > In commit b7c5e64fecfa ("vfio: Create vfio_fs_type with inode per devic=
+e"),
+> > an inode in vfio fs is allocated for each vfio device. However, this in=
+ode
+> > in vfio fs is only used to assign its address space to that of a file
+> > associated with another cdev inode or an inode in anon_inode_fs.
+> >
+> > This patch
+> > - reuses cdev device inode as the vfio device inode when it's opened vi=
+a
+> >   cdev way;
+> > - allocates an inode in vfio fs, associate it to the pseudo path file,
+> >   and save it as the vfio device inode when the vfio device is opened v=
+ia
+> >   VFIO_GROUP_GET_DEVICE_FD ioctl.
+> >
+> > File address space will then point automatically to the address space o=
+f
+> > the vfio device inode. Tools like unmap_mapping_range() can then zap al=
+l
+> > vmas associated with the vfio device.
+> >
+> > Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+> > ---
+> >  drivers/vfio/device_cdev.c |  9 ++++---
+> >  drivers/vfio/group.c       | 21 ++--------------
+> >  drivers/vfio/vfio.h        |  2 ++
+> >  drivers/vfio/vfio_main.c   | 49 +++++++++++++++++++++++++++-----------
+> >  4 files changed, 43 insertions(+), 38 deletions(-)
+> >
+> > diff --git a/drivers/vfio/device_cdev.c b/drivers/vfio/device_cdev.c
+> > index bb1817bd4ff3..a4eec8e88f5c 100644
+> > --- a/drivers/vfio/device_cdev.c
+> > +++ b/drivers/vfio/device_cdev.c
+> > @@ -40,12 +40,11 @@ int vfio_device_fops_cdev_open(struct inode
+> *inode, struct file *filep)
+> >  	filep->private_data =3D df;
+> >
+> >  	/*
+> > -	 * Use the pseudo fs inode on the device to link all mmaps
+> > -	 * to the same address space, allowing us to unmap all vmas
+> > -	 * associated to this device using unmap_mapping_range().
+> > +	 * mmaps are linked to the address space of the inode of device cdev.
+> > +	 * Save the inode of device cdev in device->inode to allow
+> > +	 * unmap_mapping_range() to unmap all vmas.
+> >  	 */
+> > -	filep->f_mapping =3D device->inode->i_mapping;
+> > -
+> > +	device->inode =3D inode;
+>=20
+> This doesn't seem right.. There is only one device but multiple file
+> can be opened on that device.
+>=20
+> We expect every open file to have a unique inode otherwise the
+> unmap_mapping_range() will not function properly.
+>=20
 
-Exactly. wrapping bpf with printk_deferred_enter() is such a whac-a-mole.
-It doesn't fix an issue.
+Does it mean that the existing code is already broken? there is only
+one vfio-fs inode per device (allocated at vfio_init_device()).
+
+And if we expect unique inode per open file then there will be a list
+of inodes tracked under vfio_pci_core_device for unmap_mapping_range()
+but it's also not the case today:
+
+static void vfio_pci_zap_bars(struct vfio_pci_core_device *vdev)
+{
+	struct vfio_device *core_vdev =3D &vdev->vdev;
+	loff_t start =3D VFIO_PCI_INDEX_TO_OFFSET(VFIO_PCI_BAR0_REGION_INDEX);
+	loff_t end =3D VFIO_PCI_INDEX_TO_OFFSET(VFIO_PCI_ROM_REGION_INDEX);
+	loff_t len =3D end - start;
+
+	unmap_mapping_range(core_vdev->inode->i_mapping, start, len, true);
+}
 
