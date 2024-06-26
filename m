@@ -1,116 +1,171 @@
-Return-Path: <linux-kernel+bounces-231296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77F41918A54
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:48:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A5FB918A57
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:49:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BFBA1F2221F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:48:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18F3F1F22812
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD17190060;
-	Wed, 26 Jun 2024 17:48:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDBE118FDDC;
+	Wed, 26 Jun 2024 17:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="vpFq88Qn"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="E6q+vW9r"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24A3155A26;
-	Wed, 26 Jun 2024 17:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DC5DF4D
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 17:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719424110; cv=none; b=lyCbaoraFNsQfJtWTvTK3cFJQ3uSCQlqypWieFl9/Yf83AfP6+07EB6+JTEAxeBvZ6jHKXvBrz/7ib8s7GdNVyOSEtAtYTO1lIfegFqECD1I+e6WSi2UBC5P+ittTBoxKUr5A7A9NTPphwnFSBb9iZx/eDnoYaq/fbDkNjrYrO8=
+	t=1719424165; cv=none; b=C3mHvwhXxSd2W5s65LUIALHCOldYUWup/CBOHWu/v3EDzV1GiVHEmkkXQP6qA/cyOWHwQRwQKBBrJNJ9m9or8uU0wl7U0q0b1uk0Is9hlR3KO40AyfWDh/GAKu7TozwlnpcXYK5e95Mspnl7RySx8sLWXznybdAGLQTqsqN0xXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719424110; c=relaxed/simple;
-	bh=s35+qZTcqhwM8W3AinynCg6kiFRF8n8VyM1SZPYKXqw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=ncc4/ucIM9cs40sd4jP53J/g+YYEl6xmyAMyo/rgPVdjFZvFgGXjgOw9ZXU4G1UoVoINA1bQ16MasKRYHJFux8OJ8diyuXHz2ycFTqFLk+FfE2Qm5Bkd4DLor9NCcDcwhCJGhRzP6tzHc+UcpFpfJAOr8aaSwtdU+tMR1bbQQuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=vpFq88Qn; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719424097; x=1720028897; i=markus.elfring@web.de;
-	bh=ckRm9hxi4SLgTfnZQvPFzAXNKifH/3B+TbZxccPOSOQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=vpFq88QnbNH7HmABo7mPWqDsYuyoVpVSdhObFfvIR9X2L4hKxModF4fvj+qmuct4
-	 UGGbQvc823sEgwSGcNK5DDbJ0jbjLMsNcjIZpt40GOrMvNT7KSZ77nCP+MxgMyjsp
-	 hIj2gRbNTSbqxWbP2JJkfzsCLWOwn3a8McPXZUpjfTuyFLc6OHeRsbxCHlijKwJyl
-	 GNt7m+VXTSOpNR2swCAuq2CGrhF9FrKTIkf3qSNo5ka3hrByiEy3tI+yPKTS2ZDGQ
-	 msctZq47Tvoze2jko6mK3Y5/7Fu1udGa86VsRDYmaSOtufEZRLmhdrzRzYWgZ/dIW
-	 Kcn8NTdAtHYKyI1Pqw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N79RI-1sNiYf0i1E-00xIMV; Wed, 26
- Jun 2024 19:48:17 +0200
-Message-ID: <db2d2cee-64d8-491d-b8a5-f0362ddc269a@web.de>
-Date: Wed, 26 Jun 2024 19:48:12 +0200
+	s=arc-20240116; t=1719424165; c=relaxed/simple;
+	bh=11XUoTD2Hu///11ckZyja/9S06mcVvMDAbp4g6XcidI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LtRtECqHoNnZ6gUil3QpVYSfE/p83rbl673+FpqsoAmDeYGBZRvVFggAPNxi17tDQOhcQ9W7TxOJlRrsdseW+T0Yq1GwS9L+V52kfhajuXpOQfEi/tOUweVZK7vuUtEoCD6JP2YothGzrWezBDs60MxAYHoMjzRWYC1kXfJy8ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=E6q+vW9r; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42556143aacso838755e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 10:49:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1719424161; x=1720028961; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sX7Zj9l5V8x3qQly+roBBZUclWmvPtx7Y0rt4ZV8Wcw=;
+        b=E6q+vW9rkmNAo9cjowQYWnz48PejIRnx5GP+8XVftnCHqcbNVLqGPUQLTEbBl60urz
+         RxvxRsRL4qqRLTs2TxvfmOgqq+PuGv4iExh77UypAT3PdmiTydZO2uIfhCTiit0tXXbB
+         ILoH/58FodiFXEa2+5y5fcxAwXbQf8u5gisLA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719424161; x=1720028961;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sX7Zj9l5V8x3qQly+roBBZUclWmvPtx7Y0rt4ZV8Wcw=;
+        b=P7ojp1sYqed7Nzo7L78a8svG2DtScabaDayHLtB6Zflov8uPJS6E4EvePD9Roj5J3P
+         VNnU9Qhvcg1l/fhrE3Y9r+XoyW6C+8eEal3amjkaG1rqA+aFR7GSUfL43ZXN0Ugbqf3j
+         Qat/urSzgb975xiVp3Lfe7kygcxGN0EBwrzWA0LdCH3mtN1LD4FpqVvfSI+xRkxRtNhj
+         PbRdDug+3z4IKa70QCdX7BzCH0MupLodt1o/kTyEN9oTcKF0eXBIY+/AON/nm2Rt8GpZ
+         eFXpAAL62u4GMeafA8Vfa8OISxbYi6xT89yN+U3arcWv4kccTWPWHXrQa5ItT4VgctMS
+         PpVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX7ZBcZj7mN0uYaucQirDPUWM0JKWo2gJU4Q0yVcgG8hzCJ1V9PGTVGhZSlEetXbcBh4ToVOkYe5Fj+i+RpJRI3+nQmwk/96oKSy8uh
+X-Gm-Message-State: AOJu0YzmV6H6b0U712sThndUFouBeJhez4dtB/rdVO+xnRoBlz4mw8/3
+	ODcqsjjKpy9YJxwOTaPxdXqCKGR1o6wY+HmhbGYdbJN56w3utOPwgiyjaAyzl4o=
+X-Google-Smtp-Source: AGHT+IFr3ZABZiy03lqUeRPhYzyS7ggrE9v3MW97jwVlfg/GFjNRcktMFhWpPbw+eCxkNBqIbjZUYA==
+X-Received: by 2002:a5d:457a:0:b0:366:e496:1caa with SMTP id ffacd0b85a97d-366e4961e22mr6278822f8f.5.1719424161485;
+        Wed, 26 Jun 2024 10:49:21 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a2f8268sm16355746f8f.79.2024.06.26.10.49.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 10:49:21 -0700 (PDT)
+Date: Wed, 26 Jun 2024 19:49:19 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Oded Gabbay <ogabbay@kernel.org>, Tomeu Vizoso <tomeu@tomeuvizoso.net>,
+	Jeffrey Hugo <quic_jhugo@quicinc.com>, linux-kernel@vger.kernel.org,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Russell King <linux+etnaviv@armlinux.org.uk>,
+	Christian Gmeiner <christian.gmeiner@gmail.com>,
+	David Airlie <airlied@gmail.com>, etnaviv@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] drm/etnaviv: Create an accel device node if compute-only
+Message-ID: <ZnxUn312E5c79jKh@phenom.ffwll.local>
+Mail-Followup-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Oded Gabbay <ogabbay@kernel.org>,
+	Tomeu Vizoso <tomeu@tomeuvizoso.net>,
+	Jeffrey Hugo <quic_jhugo@quicinc.com>, linux-kernel@vger.kernel.org,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Russell King <linux+etnaviv@armlinux.org.uk>,
+	Christian Gmeiner <christian.gmeiner@gmail.com>,
+	David Airlie <airlied@gmail.com>, etnaviv@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+References: <20240424063753.3740664-1-tomeu@tomeuvizoso.net>
+ <8c55dba5-6308-685e-13da-e728197d8101@quicinc.com>
+ <CAAObsKD4-k7Ya4Mi=vEPaC9DucbnVGDO5SaEUt-_o2_Bg+_FgA@mail.gmail.com>
+ <CAAObsKCm49y-nUph=m9c+-eG37SaGKG93-1etwOQab4f5MXxOg@mail.gmail.com>
+ <20240509144118.baib2pftmpk5nikr@GABBAY.>
+ <ZnvCsJfdZdLvw1ZN@phenom.ffwll.local>
+ <kzk46s2hqrbipehnqhcx47q5mtkdjc3oeeobr2jwinw2ch3pra@37xuwtyakeus>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Christian Marangi <ansuelsmth@gmail.com>, linux-leds@vger.kernel.org,
- devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
- Jacek Anaszewski <jacek.anaszewski@gmail.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Lee Jones <lee@kernel.org>, Pavel Machek <pavel@ucw.cz>,
- Rob Herring <robh@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240620210401.22053-11-ansuelsmth@gmail.com>
-Subject: Re: [PATCH v7 10/20] leds: leds-lp55xx: Generalize led_brightness
- function
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240620210401.22053-11-ansuelsmth@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Ey+tkCJX0xs2Ahlx0Ke1CKYmRvYbATtl65O1+zpFb+F2XLFr/fv
- FlqwzFGNauBuiyxAh0BZoGf/3bxKEpAbS6kSTkCH2huMdcTAeo9vB3FYKt0kd5kuMzafdT8
- VIrNFbkGyyostHbcJGhsM1GWh++Iukfjzy39cw66f+q4x0AkDVGSfYxagUkB6Fl9dptU+Ch
- qvttwJ90jgeokGBRp+qfA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:l1iGpyGvBs4=;7BKbWR2rkr7FYKX7wZXDU40C0Ij
- UtQYiP0pJsBPidm+sQgK7NrqSH51wEjn6zXI1c2OBVALaLFz0MDVInhFv+30ig6TGR565aQP9
- +CEccUH33fxSFqUPRTDBqtDNKlvFyjVOldzZ01dtFbF+cvkB2wU4w2k6+zJrYjn1+Aqepew1Y
- qtmYt3QQ07zfFF9cmyblKH/4LLUZVye6L6seVp3a1getIo1Et7LgadCF6jfLq36KgyZBoycM6
- QAHDDR6psIzDygR1S9dQKgW1MBy4ZBaCEhofHD4+V4ltek1wad5ZsYnPZ9klDt+a9QGS1RCVh
- uE6axgQq3mzP/VhJw/beU2LuZdP2MCYlMdie+lOV5MIBHYes8UG1YT45UMzvljAi3NoOSBV9Y
- WV2pVjYZm/ji9YJKj66cIrubzl9v9opiJbi3LauHGX0QfGAU/QW037cXIiutxS0Gx3bgqju3B
- 2yuHSgYgZo6x74HbzyLz7nQ8N/JqtdQfn7JQlJpoXGvzgnO+gJ8a8cw4aWyTkfS9V1ZBD0kT3
- IdVNbqBw8AWfwpOe1aRajT2/xMhjo+hab+KgXV1Owz1P7kD73LcyjbfZsq/Bvq7HPmbaB6ovT
- jZNVJfPXFVOW3gN6DGsXgHB+E0m5leeTAO1FKaxA7p1AZi0/WGrjhWqxSivGK3XbeYWK3pAVF
- 0sN+V35IkQ9qTBzhL093sGak99KT6HjHT12EvvZQrO+K6X5uRiUNLJEntBgqEZGVGYcG6HJN7
- mHnGIpUOuJVwIzmpyrUjXXjlZjEJQaWHLnEl6vKWFPQae0AkWCyyY/SaqYACvF7CxNF28/b4O
- gYm8NoAX2llnvZ2eNy11Ob9yGV8zufN+D+2MJ627IiKKY=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <kzk46s2hqrbipehnqhcx47q5mtkdjc3oeeobr2jwinw2ch3pra@37xuwtyakeus>
+X-Operating-System: Linux phenom 6.8.9-amd64 
 
-=E2=80=A6
-> +++ b/drivers/leds/leds-lp55xx-common.c
-> @@ -242,6 +242,20 @@ void lp55xx_firmware_loaded_cb(struct lp55xx_chip *=
-chip)
-=E2=80=A6
-> +int lp55xx_led_brightness(struct lp55xx_led *led)
-> +{
-=E2=80=A6
-> +	mutex_lock(&chip->lock);
-> +	ret =3D lp55xx_write(chip, cfg->reg_led_pwm_base.addr + led->chan_nr,
-> +			   led->brightness);
-> +	mutex_unlock(&chip->lock);
-> +	return ret;
-> +}
-=E2=80=A6
+On Wed, Jun 26, 2024 at 11:42:24AM +0300, Dmitry Baryshkov wrote:
+> On Wed, Jun 26, 2024 at 09:26:40AM GMT, Daniel Vetter wrote:
+> > On Thu, May 09, 2024 at 05:41:18PM +0300, Oded Gabbay wrote:
+> > > On Thu, May 09, 2024 at 03:53:01PM +0200, Tomeu Vizoso wrote:
+> > > > Oded, Dave,
+> > > > 
+> > > > Do you have an opinion on this?
+> > > > 
+> > > > Thanks,
+> > > > 
+> > > > Tomeu
+> > > Hi Tomeu,
+> > > 
+> > > Sorry for not replying earlier, I was down with Covid (again...).
+> > > 
+> > > To your question, I don't have an objection to what you are
+> > > suggesting. My personal view of accel is that it is an integral part of 
+> > > DRM and therefore, if there is an *existing* drm driver that wants to 
+> > > create an accel node, I'm not against it. 
+> > 
+> > Yeah, there's a continum from "clearly 3d gpu" to "compute AI
+> > accelerator", with everything possible in-between shipping somewhere.
+> > Collaboration is the important part, hair-splitting on where exactly the
+> > driver should be is kinda secondary. I mean beyond "don't put a pure 3d
+> > driver into accel or vice versa" of course :-)
+> > 
+> > > There is the question of why you want to expose an accel node, and
+> > > here I would like to hear Dave's and Sima's opinion on your suggested
+> > > solution as it may affect the direction of other drm drivers.
+> > 
+> > So existing userspace that blindly assumes that any render node will give
+> > it useful 3d acceleration, then that's broken already.
+> > 
+> > - kernel with new driver support but old mesa without that driver already
+> >   gives you that, even for a pure 3d chip.
+> > 
+> > - intel (and I think also amd) have pure compute chips without 3d, so this
+> >   issue already exists
+> > 
+> > Same for the other directions, 3d gpus have variable amounts of compute
+> > chips nowadays.
+> > 
+> > That leaves imo just the pragmatic choice, and if we need to complicate
+> > the init flow of the kernel driver just for a different charnode major,
+> > then I don't really see the point.
+> > 
+> > And if we do see the point in this, I think the right approach would be if
+> > we split the init flow further into allocating the drm_device, and then in
+> > a 2nd step either allocate the accel or render uapi stuff as needed. The
+> > DRIVER_FOO flags just aren't super flexible for this kinda of stuff and
+> > have a bit a midlayer taste to them.
+> 
+> Being able to defer render allocation would be extremely useful for MSM
+> too as it's not currently possible to mask the driver_features during
+> drm_dev_init()
 
-Would you become interested to apply a statement like =E2=80=9Cguard(mutex=
-)(&chip->lock);=E2=80=9D?
-https://elixir.bootlin.com/linux/v6.10-rc5/source/include/linux/mutex.h#L1=
-96
-
-Regards,
-Markus
+Eh I think less driver_features and more explicit (like
+drm_mode_config_init() instead of also having to set DRIVER_MODESET) stuff
+would be better in general. But they keep popping up, because it's an easy
+hack to get things going. Over the years I've managed to remove a lot of
+them tough.
+-Sima
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
