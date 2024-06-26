@@ -1,92 +1,115 @@
-Return-Path: <linux-kernel+bounces-231272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9A4B918A0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:26:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 280C1918A13
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:27:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B824B25219
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:26:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6CE7285C97
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:27:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2995818FDC8;
-	Wed, 26 Jun 2024 17:26:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE7819006C;
+	Wed, 26 Jun 2024 17:26:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="R8E9OSZL"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="THZBAYg6"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A081618EFC7
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 17:26:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3724F18FDD4;
+	Wed, 26 Jun 2024 17:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719422780; cv=none; b=WUZtG91KpJ9SjI1fk5ong7LBXxxgWaI1wAkA4MLqk/+uesnpNFD6ftCp81asojAYfVbknQGv+vEOp4EOBvIvXNmSElFvYGDg1HgK5e6/jvMAqjptzMf3tQr0H1DeoAeE0qFULLVE2SumuQFkPhJy8GJBINFe/3A07iIpZSeAfs8=
+	t=1719422810; cv=none; b=mccflGDDJDeV+Aa/HeQu3Nx4ylkXx0QClJSZPaunid6XgSLMzMTZe+DZsJ6wIUGupKEUUS8fJhwYpTCZQgKo6RD1ZeEsafOumMEQ6Rszy85+OUoruydgZqTcYqzFR4wh7EZoIrkUxBR4SeG6XsThKUb+XehFMXoBw2zLr50G7EM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719422780; c=relaxed/simple;
-	bh=hdziQqMIHtmWYYC3U6YBP0fNbpLTLhpowDVrFRHdLqM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MS8TzxceWAa9Eek4rBk6L63qADjFzWIdRhGfZbYUjNElOWSps7ljsSF4tCLcBZu+H6voGV+BGCzol1TVxfcNSCHXCHg9jsC45scVE2ouSVknuQghYy13kSuqxs1G6W/eMH7SApdBID0uRESrl5nVd1dkrzlc21ILAB8G5pbx1Ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=R8E9OSZL; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-35f090093d8so4567169f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 10:26:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1719422777; x=1720027577; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hdziQqMIHtmWYYC3U6YBP0fNbpLTLhpowDVrFRHdLqM=;
-        b=R8E9OSZLLjUbI1zH3h2O/eD9WtOrhjUg6/BvIu+VGv1Csjv1WrHzAMrFy+hCRYx7V+
-         LzajrXuly7+gIBq8rQ5/tiGJxHw5fVhbv2Oyc9k785VGaCDenL1AzSRmPDJzT6BdIQhI
-         2aYNNTaVYSiN+XIOe1ehUtLBe3kiVMJ6Xg0wQHBxxL5Fttx1X+ymXe5I1lqJG8ffoIKC
-         erApeAyHX7bUoqKjmZMURVlri+9+RBLeFhJBcF0Qc0JBODyiYWfJ8wo3PQXiG5RlqeZ3
-         32eeFW95q/2n0m/ZPX8XaMPm6U8hGD51eLkVBJoALC4YuVC9P+SGzCeOhsYkPTpeHGXA
-         5j0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719422777; x=1720027577;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hdziQqMIHtmWYYC3U6YBP0fNbpLTLhpowDVrFRHdLqM=;
-        b=UiN7xwMTL/hNpGVll3C8s8twFbf7E2n57a1x/V8rXYDi4dPQ2+LQhBeE+hH3LCTWp3
-         qdaIay3YeZpn7HchQDyBK0K8kT4MkYTRkDke8GMrun7aMCYHovNkxtmiiAurG+p3EEpw
-         ptMXczEvib5hQv8xOT6DkP/uHqC1VCHsrbgBrvh47WT32pOGZaF4pPzRBxpOlFTGi/yY
-         nZVxVS6jq1PyW/RxJ15fbPpnXLgIx9Vk0shFx6XyeQXhyP7sPYrFsWV+fRlS8ZJ9vH/H
-         vCQZZ+Mst8OkymJVPfwOLM0Cv3xUhT70PTh2Qn2eXrEnCWGNBsWkg6heXCslTKeloB2A
-         fqmw==
-X-Forwarded-Encrypted: i=1; AJvYcCXyy/IAMWhCQqy9jg5/pbJtK2oOLIVlGB90e9AvxrhVI55bQbPoez5077PPGzf2Oqg5taTGvBqfaxuUPvjb2gebAKy8dGWx5RGzTpMb
-X-Gm-Message-State: AOJu0YzsXGKc8+s/MovByOGF+I5NKdNV2UQF4cfT6zJVyIVEB8vvgRal
-	aYDHsfUiKmk8v7cApPVWD1/lnkuBjrd2XPt6ypsON4DB48dCZef4ptDXeXDnZql3RZH+x/kU4xn
-	bCtenA9tZVwpLuLQpQVZlqXIxxalcxs7mWfAFWg==
-X-Google-Smtp-Source: AGHT+IFahjV2p+0jb7TmBNawhEs+kITz8DpgAILl/YOsslr05y3/eAw+boWA26XBNXr//vtV4EDunrUcL09OOlQ4xTM=
-X-Received: by 2002:a5d:6c63:0:b0:366:ead8:6019 with SMTP id
- ffacd0b85a97d-366ead86044mr11222202f8f.49.1719422776897; Wed, 26 Jun 2024
- 10:26:16 -0700 (PDT)
+	s=arc-20240116; t=1719422810; c=relaxed/simple;
+	bh=0yMnKGY439ZJXOuVIw2kqCCYUMshb58EVAHnlZdiX8E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c3b93M8aGfLuNllf+WRBbV0x+t8DzPsyLUoUkBgJTErUu4QY0KZezUVdOhBNhY1AydBPH/o6OPXTt5XaRobLzdSukVQxqbUHFhA220BhB4Rv6zRhxCNxjQIe2yssO49AO7BmVeU7p0I0nLRszmpwvlS8EkrhCdMI/QRBIJa86jY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=THZBAYg6; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=shjrQOgLm3XfFHmcQBDx0vYvLb6ShIsh3+fZWsScilM=; b=THZBAYg6BuxoU53DcDGfN8IP6l
+	R451SX0J+E/Sz4UUSDzM2ZH7F5hIBbxe0MTCREd0Rn5JG5lStHz/nyw7AhE8BKOFAWT2hvH4yHqyW
+	T+XexreCT2bQVOJqVc7bg05rkbA7LZliRwMTgVjYbA3U9zct4QBhOX3QjEHzjoJIzEEI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sMWPg-0013pv-6T; Wed, 26 Jun 2024 19:26:32 +0200
+Date: Wed, 26 Jun 2024 19:26:32 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Devi Priya <quic_devipriy@quicinc.com>
+Cc: Devi Priya <quic_devipriy@quicinc.com>, catalin.marinas@arm.com,
+	u-kumar1@ti.com, linux-arm-kernel@lists.infradead.org,
+	krzk+dt@kernel.org, geert+renesas@glider.be,
+	neil.armstrong@linaro.org, nfraprado@collabora.com,
+	mturquette@baylibre.com, linux-kernel@vger.kernel.org,
+	dmitry.baryshkov@linaro.org, netdev@vger.kernel.org,
+	konrad.dybcio@linaro.org, m.szyprowski@samsung.com, arnd@arndb.de,
+	richardcochran@gmail.com, will@kernel.org, sboyd@kernel.org,
+	andersson@kernel.org, p.zabel@pengutronix.de,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	conor+dt@kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH V5 4/7] dt-bindings: clock: Add ipq9574 NSSCC clock and
+ reset definitions
+Message-ID: <eeea33c7-02bd-4ea4-a53f-fd6af839ca90@lunn.ch>
+References: <20240626143302.810632-1-quic_devipriy@quicinc.com>
+ <20240626143302.810632-5-quic_devipriy@quicinc.com>
+ <171941612020.3280624.794530163562164163.robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240625122605.857462-1-jmeneghi@redhat.com> <ZnryTZqwlz61s0D4@kbusch-mbp.dhcp.thefacebook.com>
- <ZnxHwNflN3l9EN8p@kbusch-mbp.dhcp.thefacebook.com>
-In-Reply-To: <ZnxHwNflN3l9EN8p@kbusch-mbp.dhcp.thefacebook.com>
-From: Randy Jennings <randyj@purestorage.com>
-Date: Wed, 26 Jun 2024 10:26:08 -0700
-Message-ID: <CAPpK+O0SneKwOKqPZ+aw7=_1=xqKHOs0p6+reeA+r0=u2rLiyg@mail.gmail.com>
-Subject: Re: [PATCH v8 0/2] nvme: queue-depth multipath iopolicy
-To: Keith Busch <kbusch@kernel.org>
-Cc: John Meneghini <jmeneghi@redhat.com>, hch@lst.de, sagi@grimberg.me, 
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	emilne@redhat.com, jrani@purestorage.com, chaitanyak@nvidia.com, 
-	hare@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <171941612020.3280624.794530163562164163.robh@kernel.org>
 
-> I fixed up the suggestions from Christoph while applying. Thanks,
-> patches are now in nvme-6.11.
-Thank you very much!
+On Wed, Jun 26, 2024 at 09:35:20AM -0600, Rob Herring (Arm) wrote:
+> 
+> On Wed, 26 Jun 2024 20:02:59 +0530, Devi Priya wrote:
+> > Add NSSCC clock and reset definitions for ipq9574.
+> > 
+> > Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > ---
+> >  Changes in V5:
+> > 	- Dropped interconnects and added interconnect-cells to NSS
+> > 	  clock provider so that it can be  used as icc provider.
+> > 
+> >  .../bindings/clock/qcom,ipq9574-nsscc.yaml    |  74 +++++++++
+> >  .../dt-bindings/clock/qcom,ipq9574-nsscc.h    | 152 ++++++++++++++++++
+> >  .../dt-bindings/reset/qcom,ipq9574-nsscc.h    | 134 +++++++++++++++
+> >  3 files changed, 360 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
+> >  create mode 100644 include/dt-bindings/clock/qcom,ipq9574-nsscc.h
+> >  create mode 100644 include/dt-bindings/reset/qcom,ipq9574-nsscc.h
+> > 
+> 
+> My bot found errors running 'make dt_binding_check' on your patch:
+> 
+> yamllint warnings/errors:
+> 
+> dtschema/dtc warnings/errors:
+> Error: Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.example.dts:26.26-27 syntax error
+> FATAL ERROR: Unable to parse input tree
 
-Sincerely,
-Randy Jennings
+Hi Devi
+
+Version 4 of these patches had the same exact problem. There was not
+an email explaining it is a false positive etc, so i have to assume it
+is a real error. So why has it not been fixed?
+
+Qualcomm patches are under a microscope at the moment because of how
+bad things went a couple of months ago with patches. You cannot ignore
+things like this, because the damage to Qualcomm reputation is going
+to make it impossible to get patches merged soon.
+
+	Andrew
 
