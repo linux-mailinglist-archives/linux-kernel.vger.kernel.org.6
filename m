@@ -1,114 +1,109 @@
-Return-Path: <linux-kernel+bounces-230276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0D45917ABF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:19:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84B81917AC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:19:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E398E1C23BE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:19:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4069F285A67
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:19:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E8F1662E9;
-	Wed, 26 Jun 2024 08:18:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890A31684BA;
+	Wed, 26 Jun 2024 08:18:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="N3WVX5Pm"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="uR1QIQpk"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B461607BD;
-	Wed, 26 Jun 2024 08:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF8815FA60
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 08:18:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719389920; cv=none; b=WjB+vz3Tk54IB/lO7wk7u4g2VdORaezooDm//UwxdApfZsaqtAj8iIgtUzQbcLyijnxQN/l5cIwkusCxNUlHH+B0hBHdp54YG2ls1mCjvdyoD3wCdMsHb+N5zhZ1+qMwxfjRiqlVrgjJOA33bd7U4YqvHpL5xyraU8MRzkRXwxw=
+	t=1719389925; cv=none; b=qeKcOs8QPbc57YaH3IP37HtFezKWb3cNcvuGaiilJyMoxe1zcX2n6lwmEkJzmpEwWp/oU4qhqBSxeMgJ3oN9UL3GhBDFWABc3Q/Ruq/QWtLSKixJhM80KbCtGcICnO0ic/Y+3LI/QTjw7GFpiG4U0ixXhtUwPBppOto3PWN2Lr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719389920; c=relaxed/simple;
-	bh=tLqxjdvKncjvyf03Lhs0i9bSG7lfZSHlzhwH58h2wN0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Ihb4A9Th0qdGjafePAHgy56VlBMiC/JmrI50Y2Flk8VP/R2+97DGDR3jKYdQO8VpTkwABP/pdYca21AOkcmxYajF2yLVtN5V+ZZJWfzu1oXa6wsR0Zd3Hf706g/4Fme8BRU3PJG2VqECKvFHIWUcPbUHourOjVU6sdVM2M7zDPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=N3WVX5Pm; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-Received: from pecola.lan (unknown [159.196.93.152])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 423DC200EE;
-	Wed, 26 Jun 2024 16:18:31 +0800 (AWST)
+	s=arc-20240116; t=1719389925; c=relaxed/simple;
+	bh=NSqa2kAEd9Iv1e72CviFTjembB5wPUawAMWFyJ4kKJo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Lh/yNZMPDtvI4IU8+LmyGAs8Gczytwa+mfhMr5MuWf+On8FuR8KDgsBkXxnG2wYFgCGcJQ14xDZE3Vsat52EPc0y29HxDtBB67v5M2yT07beJEty5oRTe7TgPvJBLNcNvYFeb/bkMWl6uA06cOcD9wZW8U2fSdGzk1WUFyyCxj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=uR1QIQpk; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ec0f3b9cfeso76326931fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 01:18:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1719389913;
-	bh=tLqxjdvKncjvyf03Lhs0i9bSG7lfZSHlzhwH58h2wN0=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=N3WVX5PmAnQAqeowtVcZ488EtThGN08BtJWVXcoy22JwMyw501suKxzDx8T7zKjM2
-	 tdVm4H7Pn1oMa3vej7VwUHZPgHzwfS9Lk9oWPVMo8IlmlR2FTpTHH6D5zEM2Sv00dj
-	 CPGGtYnzPHAHQpkBQ15TjkVeopHfXc6ozGXDY4xqdmxDhQPRH08C9tDsosQ9ASuBei
-	 wsWQlDxHPsZo9T23leb7BrD3BSUb4HQ8K3wdJwJbfIpEg0wLCDBDY4koSuJFhIDI7y
-	 TqzW0Ekk7zslyVwI7j3EhZ2n8ItW+kkEz0lyxR9peXgGTZDEagg9R+05/nm13gjsKq
-	 4/9zy4Y+pwlfQ==
-Message-ID: <b4ba5fa7834fdfb1a1e26ff0e01b9bb235de63b5.camel@codeconstruct.com.au>
-Subject: Re: [PATCH 1/2] dt-bindings: i3c: dw: Add property to select IBI ops
-From: Jeremy Kerr <jk@codeconstruct.com.au>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Aniket
- <aniketmaurya@google.com>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>,  Joel Stanley <joel@jms.id.au>, Billy Tsai
- <billy_tsai@aspeedtech.com>, Rob Herring <robh@kernel.org>,  Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Date: Wed, 26 Jun 2024 16:18:31 +0800
-In-Reply-To: <c15045b4-2e5f-4fcc-b25c-76a5e4973e93@linaro.org>
-References: <20240626052238.1577580-1-aniketmaurya@google.com>
-	 <20240626052238.1577580-2-aniketmaurya@google.com>
-	 <e28ba03d1df1c0c5aec987411c40e44fc351ce0d.camel@codeconstruct.com.au>
-	 <c15045b4-2e5f-4fcc-b25c-76a5e4973e93@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719389923; x=1719994723; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3850Fx9RZmAEeBVhGsAovnMam9xtT8LNg4P+ZWop5vE=;
+        b=uR1QIQpkllPyFxi3B255i4PLw3YCLI87is00ClC8Eu+k5nD4lw1nBjY/SQvqE7hff+
+         ifegGJxqggM8px+bcGKQoq4UN4HdlV+iQm64fVIbpgGnfRWC3NyjNdX/ngbLHB+YXZy3
+         dqYDqhu3dpaq300bG76g8V5BM6mQDmDzVreIzSyBtzY6TnFCXOYkAuZrwh53v4ogUXGO
+         v4O6JxnPbF7xaarb7+2SNa9clZKzenr2B41vN8xHQiZsnyujNVVVl+DAQzaMQ0JwG9yC
+         wXigXF6N0XTFUj6NNK3xCIMuQVelLiFzC0uAEYm9txroqhWACs+4xrr1aPSKqLgxwtZe
+         r1Gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719389923; x=1719994723;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3850Fx9RZmAEeBVhGsAovnMam9xtT8LNg4P+ZWop5vE=;
+        b=JXpHz/len5EQ1eysd8ZFTOdUAhx/fTgKn/2urEtBZegzPDFLeIGBol8g16n1fpGn/X
+         hRyDFU/A/S4IJeEF8wPQ8OHWiOYeR4i94jjZ0m7MqV0Z+XI5xkSAt/Fk3WQoyrijBTkH
+         2H4JfqsaW2g2RF2dEeV1H3ZCOO+1sZuwLl11/KidWVX/i/uoXvhVHyUQjwhVild3+8ZK
+         drnB0QQwwDvQW7N3cAWhTOF2zKuUkYOeTD+kGZQGCmRcZRIzC6ki4eKY5LL8HoNusmnU
+         w56cbyR4cTj3EdnBzVTsYYS2TnAja/jo23U6H1wG4Y+CzRqIKSu0l10w97ocRxcx5Sgx
+         +1yw==
+X-Forwarded-Encrypted: i=1; AJvYcCVnuIYtEz9ZBMZfnQ6z69LdkXgAxKfByghlHpkutgWh3iOwDo9HOecqjw2vkmMMJjc4Z0A7qX8OakjkVh9gyHcnGWN4Wdy2yxnO3Rds
+X-Gm-Message-State: AOJu0YzD7Wditc+/sDqaCma99pBYig3H6KzRLzZNwuHBDDXpjsk9D16l
+	oakHpCUriQcGhOpd+XqLgASgWNosckQ+d7QC6ensO9OwhS3PEenb0U9hGYs3JcE=
+X-Google-Smtp-Source: AGHT+IEWVAt1TEvKvv++Hfb7gwDHylSEYmBfiE1+nF4beh9Jfz2aCXQAEjR76W0zgm+iy8kNzjSoEg==
+X-Received: by 2002:ac2:5183:0:b0:52c:9635:46d with SMTP id 2adb3069b0e04-52ce064f4eemr6136863e87.41.1719389922791;
+        Wed, 26 Jun 2024 01:18:42 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:a149:6586:c473:97d7])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c8246828sm16232965e9.5.2024.06.26.01.18.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 01:18:42 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Aapo Vienamo <aapo.vienamo@linux.intel.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: graniterapids: Add missing raw_spinlock_init()
+Date: Wed, 26 Jun 2024 10:18:41 +0200
+Message-ID: <171938991825.8608.11339070228901947974.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240625135343.673745-1-aapo.vienamo@linux.intel.com>
+References: <20240625135343.673745-1-aapo.vienamo@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Krysztof,
-
-> > > +=C2=A0 ibi-capable:
-> > > +=C2=A0=C2=A0=C2=A0 description: Set to select IBI ops.
->=20
-> What are IBI ops? Standard form letter:
->=20
-> You described the desired Linux feature or behavior, not the actual
-> hardware.
-
-In this case it is the actual hardware; my understanding is that the
-gateware IP can be configured to support in-band-interrupts or not,
-before being baked-in to hardware.
-
-> > Wouldn't the compatible string select whether the hardware instance
-> > supports IBI or not?
-> >=20
-> > I'd imagine that each specific synthesis of the DW IP would imply
-> > corresponding hardware settings, and so would warrant its own
-> > compatible
-> > value.
-> >=20
-> > Maybe one for the DT folks: would this work better as individual
-> > properties? Is there a policy here?
->=20
-> Usually if feature is specific to given hardware, e.g. always capable
-> of foobar, then it can be deduced from compatible, so no need for new
-> property.
-
-Sounds good.
-
-Aniket: the hardware you're dealing with there may need a new, specific
-compatible property, which will dictate whether we enable IBIs in the
-driver.
-
-For cases where no other special behaviour is required, we can
-represent this just as an entry in the OF match table.
-
-Cheers,
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
 
-Jeremy
+On Tue, 25 Jun 2024 16:53:43 +0300, Aapo Vienamo wrote:
+> Add the missing raw_spin_lock_init() call to gnr_gpio_probe().
+> 
+> 
+
+Applied, thanks!
+
+[1/1] gpio: graniterapids: Add missing raw_spinlock_init()
+      commit: 888119571b7c9518faeeeb2b431ffc4455e0028d
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
