@@ -1,167 +1,169 @@
-Return-Path: <linux-kernel+bounces-231093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F6CE91861A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:42:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 378BB918620
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:43:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADED81C21C29
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:42:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B752A1F21C47
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:43:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81DBD18E745;
-	Wed, 26 Jun 2024 15:42:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8543518E74B;
+	Wed, 26 Jun 2024 15:43:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BisweaEA"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tyY2b6VM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1280218C355
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 15:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B497F18C355;
+	Wed, 26 Jun 2024 15:43:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719416546; cv=none; b=KWsNm507WHliZP6yn8s9NDqXD9iG0itYGJ1POb5VGqoqABb5NVeJDs3PCV59NcY8MZpiKxESeU7JRcJ3NjUTjdiX2h7TnfiVgTTnUGKjm6gYcTxkH8HdEeMuJRMCIJSuYxRG/WN/NDGlqjX63yPTrtM3y7qbbVlb87a/xI//mkU=
+	t=1719416580; cv=none; b=mzaB223W6xBj12urQlZswqdZCPE3TLWvEF2SfOXnYec1pkVBej12NzXnucY4HMmGwtu+vSmWyG/+m+dcKboDiN53qCLz6vQGA1CBKxzpHCpTe5MVio9tuipLH8mZQkqLLZvrOo/JhsHw7LoxO0iak+t5mP5RY0plDt3KSr16vT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719416546; c=relaxed/simple;
-	bh=XRowxFSkrysMUs9XyN0Exv9sB2feFYzAvaPvT89v0go=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Kcdf4+U/mR7Ix8Ez40RrubLvcMB9yGNrEcs1LsXWZbypfDql8ulDm+epfKeObHoI6cWtrPNY74rpL0gW7klLRAmJeXRE8DUg70XIWTBtvUayMwU2+6d8L78BO6zktVTc2a1fKL7LiZdRNJQP2UQvJKNOw9CIDScYiaqPYdRj5jQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BisweaEA; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57d07673185so552036a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 08:42:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719416543; x=1720021343; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sz4Tt/Ks/Na1pwZwDOP6Ac4gN9u4dueDw72ykvSRJ3c=;
-        b=BisweaEAztHt03VNrk88j42Xe8Y50NPt+yWiUoVLjRz9u2gLcEVyquP5U5YRDGMzDY
-         6GflCg1jcFoCJIQ8CzeLdvIVvlfDOFRH9x5wp5DzcqtNBRR7jBIliaZsER0FfM/y9Ffe
-         UMLDqKuujBu11mq1E3E4q1Q3N1JXcCeTAV0+ayJcaEP8RjMG0mz9dzSAbzAFSRxnQklp
-         rSyVpEC0RT8E0G/Lyi3qKT06prUp5lt57MOgkGYgCa66y7SJjcAv23BqYEgbVvjUr5lP
-         4i5wA5NF9G28fmEy6kpgTILi7J+7u58PFwkfsJWcrspGjZTDiHZn1IWyA9CEcng+Ibew
-         CzWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719416543; x=1720021343;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sz4Tt/Ks/Na1pwZwDOP6Ac4gN9u4dueDw72ykvSRJ3c=;
-        b=fjn9eTwOhhQbyt92Bji9N4z9zeVhXc6BWEfXjXY6l+XXib3u3PTy4cZPBTA1Yv2Jbk
-         kklaYTGGw9ItB6R3kkNDT/37xk4NsqZDPILQ+ob1NbCEfycUXOsUwXSLdsiUZKfl+bem
-         i5sFMMisPmT7ayx8r2pv2ZQ4YdWBDyOaWorStUyqvN90NOedln7xxviVkEblDyvhf3ne
-         W1odw3ogJN/l9uCZ6eSIEux50WEoushQh20Ar69543zic/7e+vKSmSCWdhgJbt/oc9vk
-         lF/dbtwWZGP9IH4v0SKXrh4t9J4vOIP2Lr1bjzvLOF6JPFeyj7+Jb6uBe1YztpFzGfSV
-         bZTw==
-X-Forwarded-Encrypted: i=1; AJvYcCVb/0B1ioWTBggMP4kYA4tD7wqom+15aXZLzmi0VFUbO4R8hMfEC5aEcMuIA9EIJD694mIqKIz9JbQ8XCUuFyCS+ekGR8b3ev/KKop0
-X-Gm-Message-State: AOJu0YyKAOrps0dcdswUi5mQdgi0tgb6moI7DCRjp+Mv2PVuMBg+mf67
-	z741G3y1v00pq45ISPMNKAQrX1l68Cn5O7U+g5RGkw6KBemqMeBKf/4gdplgA7Q=
-X-Google-Smtp-Source: AGHT+IFZgo0qywXUrbYFvzsX7j5NG3UwUTK5YD3F6ShNKbFTpBUUBLsG6g1DyGpehW77M6FgbbubwA==
-X-Received: by 2002:aa7:cb50:0:b0:57d:4b56:da11 with SMTP id 4fb4d7f45d1cf-57d4b56da8emr10735227a12.11.1719416543275;
-        Wed, 26 Jun 2024 08:42:23 -0700 (PDT)
-Received: from [192.168.215.29] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d303da2b5sm7362066a12.6.2024.06.26.08.42.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Jun 2024 08:42:22 -0700 (PDT)
-Message-ID: <45c95955-51a7-489f-993e-252e8bd63dbd@linaro.org>
-Date: Wed, 26 Jun 2024 17:42:20 +0200
+	s=arc-20240116; t=1719416580; c=relaxed/simple;
+	bh=CpQt0/nezvz6yjM0TSMKFmO70MvqCYKmLYQM5eitJyM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lvO4ogr7MxY94zMgRVxsw8iLFzMpb/p+mVeQXQ9tKtTx2ypkzvoMZsyUR2+cReUBUkLyqtJwRuBFW1g9TGGv2UW+z5sNgsKNGoUw7a/OdUwvw66dkAxoncJI4u+r7oS297Ha2UHrEMngeaxJNiyeDSy1UsqmIKBp5Qa+dXmeCYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tyY2b6VM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63250C116B1;
+	Wed, 26 Jun 2024 15:42:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719416580;
+	bh=CpQt0/nezvz6yjM0TSMKFmO70MvqCYKmLYQM5eitJyM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tyY2b6VM7D/S7eoBcyi4ksyFtbmenVsqVbtfVTpT4P/akkyBgCmLOq9ZWkz+xjmOz
+	 h+Uy8a+uleRvUdsVGMQOC7Cl2beOd6ppt4PjhboxPh9bYyhlCrTKLH7Ixd5h/zQJJQ
+	 C+zg3DUobDA0UfpDO/ieEB2DxiUNX8lHAoGEl40KeRTJa+86i0TG5yDD4wwlLjs4/2
+	 Ma4dp3C8PGPrP5QD2eGNYiK/xag48BZNQb+zkcyxxC1rlKQb6s77TltgpyyzmKA8pQ
+	 9V5WqN6chKG9h0W09nEF6kj5SH4I/9bdgwsqTwOd68lqBsn5VrTuLPwTcx77BN6wXy
+	 wQdZ229zGihRg==
+Date: Wed, 26 Jun 2024 16:42:55 +0100
+From: Lee Jones <lee@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 00/20] leds: leds-lp55xx: overhaul driver
+Message-ID: <20240626154255.GC2504017@google.com>
+References: <20240620210401.22053-1-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/5] arm64: dts: qcom: sdx75: update reserved memory
- regions for mpss
-To: Naina Mehta <quic_nainmeht@quicinc.com>, andersson@kernel.org,
- mathieu.poirier@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, manivannan.sadhasivam@linaro.org
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240618131342.103995-1-quic_nainmeht@quicinc.com>
- <20240618131342.103995-4-quic_nainmeht@quicinc.com>
- <e5b7a888-8ca3-463a-a2de-cf719e58d7a0@linaro.org>
- <c186bd2e-a132-fbe6-2212-dcdb93a6c14a@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <c186bd2e-a132-fbe6-2212-dcdb93a6c14a@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240620210401.22053-1-ansuelsmth@gmail.com>
 
-On 24.06.2024 1:21 PM, Naina Mehta wrote:
+On Thu, 20 Jun 2024, Christian Marangi wrote:
+
+> This long series is (as requested) a big overhaul of the lp55xx based
+> LED driver.
 > 
+> As notice for these kind of LED chip there was the bad habit of copy
+> the old driver and just modify it enough to make it work with the new
+> model. Till v4 I was also doing the same by following the pattern and
+> the code format of previous driver.
 > 
-> On 6/18/2024 7:08 PM, Konrad Dybcio wrote:
->>
->>
->> On 6/18/24 15:13, Naina Mehta wrote:
->>> Rename qdss@88800000 memory region as qlink_logging memory region
->>> and add qdss_mem memory region at address of 0x88500000.
->>> Split mpss_dsmharq_mem region into 2 separate regions and
->>> reduce the size of mpssadsp_mem region.
->>>
->>> Signed-off-by: Naina Mehta <quic_nainmeht@quicinc.com>
->>> ---
->>
->> Alright, we're getting somewhere. The commit message should however motivate
->> why such changes are necessary. For all we know, the splitting in two is
->> currently done for no reason, as qdss_mem and qlink_logging_mem are contiguous
->> - does the firmware have some expectations about them being separate?
->>
+> Since Lee didn't like this, here is the BIG series that generalize
+> pretty much anything in the 4 model currently supported.
 > 
-> Since different DSM region size is required for different modem firmware, mpss_dsmharq_mem region being split into 2 separate regions.
-> This would provide the flexibility to remove the region which is
-> not required for a particular platform.
-> qlink_logging is being added at the memory region at the address of
-> 0x88800000 as the region is being used by modem firmware.
+> Indeed, although the LED chip have fundamental difference (page
+> support), things can be generalized and produce slimmer drivers by
+> putting everything in the lp55xx-common shared module.
+> 
+> This result in the new model lp5569 being very small with only the
+> selftest portion to be custom.
+> 
+> Lee also wasn't clear by the meaning of ENGINE in these LED driver,
+> so here some simple explaination. This is very common on these TI LED
+> chip. The ENGINE (there are always 3) is just some kind of processor
+> that execute a program (precompiled code ASM like) loaded in the SRAM.
+> Sysfs is used to load the pattern, and to start and stop the engine.
+> 
+> These pattern can do all kind of complex thing with LEDs. Old LED chip
+> had 32bytes of space for the pattern but newer one (like lp5569) have
+> pages and if correctly configured can have massive pattern.
+> These pattern can do all kind of magic like loops that make the LED
+> pulse, change color and all kind of stuff.
+> 
+> (For Lee, sorry if you will have to repeat some review that I might
+>  have missed in the lp5569 driver)
+> 
+> Changes v7:
+> - Add Suggested-by tag
+> - Fix checkpatch error for complex macro (rework define)
+> - Add missing values for fader conversion
+> - Align some function with redundant new line
+> - Capitalize every commit title
+> Changes v6:
+> - Fix compilation warning for ret unused in read_poll_timeout
+>   (no idea why this is flagged only on some particular arch...)
+> - Fix missing bitfield.h in lp55x-common.c (again it seems this
+>   header gets included in the flow if the arch use them or not...)
+> Changes v5:
+> - Big generalization patch
+> - Rework lp5569 driver with new generalized functions
+> - Drop all copyright header in lp5569 as the driver got reworked
+>   entirely and it's not based on previous one anymore.
+> Changes v4:
+> - Fix reported buffer overflow due to a copypaste error
+> - Add comments to describe fw size logic
+> Changes v3:
+> - Add ACK tag to DT patch
+> - Enlarge and support program size up to 128bytes
+> Changes v2:
+> - Add ACK tag to DT patch
+> - Fix compilation error with target that doesn't
+>   include bitfield.h
+> 
+> Christian Marangi (20):
+>   dt-bindings: leds-lp55xx: Limit pwr-sel property to ti,lp8501
+>   dt-bindings: leds-lp55xx: Add new ti,lp5569 compatible
+>   leds: leds-lp55xx: Generalize stop_all_engine OP
+>   leds: leds-lp55xx: Generalize probe/remove functions
+>   leds: leds-lp55xx: Generalize load_engine function
+>   leds: leds-lp55xx: Generalize load_engine_and_select_page function
+>   leds: leds-lp55xx: Generalize run_engine function
+>   leds: leds-lp55xx: Generalize update_program_memory function
+>   leds: leds-lp55xx: Generalize firmware_loaded function
+>   leds: leds-lp55xx: Generalize led_brightness function
+>   leds: leds-lp55xx: Generalize multicolor_brightness function
+>   leds: leds-lp55xx: Generalize set_led_current function
+>   leds: leds-lp55xx: Generalize turn_off_channels function
+>   leds: leds-lp55xx: Generalize stop_engine function
+>   leds: leds-lp55xx: Generalize sysfs engine_load and engine_mode
+>   leds: leds-lp55xx: Generalize sysfs engine_leds
+>   leds: leds-lp55xx: Generalize sysfs master_fader
+>   leds: leds-lp55xx: Support ENGINE program up to 128 bytes
+>   leds: leds-lp55xx: Drop deprecated defines
+>   leds: leds-lp5569: Add support for Texas Instruments LP5569
+> 
+>  .../devicetree/bindings/leds/leds-lp55xx.yaml |  11 +
+>  drivers/leds/Kconfig                          |  16 +-
+>  drivers/leds/Makefile                         |   1 +
+>  drivers/leds/leds-lp5521.c                    | 405 +---------
+>  drivers/leds/leds-lp5523.c                    | 734 ++---------------
+>  drivers/leds/leds-lp5562.c                    | 261 +-----
+>  drivers/leds/leds-lp5569.c                    | 544 +++++++++++++
+>  drivers/leds/leds-lp55xx-common.c             | 743 +++++++++++++++++-
+>  drivers/leds/leds-lp55xx-common.h             | 163 ++--
+>  drivers/leds/leds-lp8501.c                    | 313 +-------
+>  10 files changed, 1540 insertions(+), 1651 deletions(-)
+>  create mode 100644 drivers/leds/leds-lp5569.c
 
-Ok, now put that in the commit message :)
+For whatever reason, this no longer applies.
 
-And I suppose:
+Please rebase it on Linux -next or for-leds-next and resubmit.
 
-"This would provide the flexibility to remove the region which is not
-required for a particular platform." - but you still pass both to the
-remoteproc in patch 4. Are these regions mutually exclusive?
-
-Konrad
+-- 
+Lee Jones [李琼斯]
 
