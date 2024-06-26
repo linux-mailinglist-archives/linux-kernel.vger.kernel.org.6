@@ -1,170 +1,128 @@
-Return-Path: <linux-kernel+bounces-230338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40134917B6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:54:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7691B917B5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:50:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69FE61C24210
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:53:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A79811C23511
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:50:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9CE8168492;
-	Wed, 26 Jun 2024 08:53:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A5215F41F;
+	Wed, 26 Jun 2024 08:50:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="o2oEClm+"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XSC82Qah"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 721D8EEC3;
-	Wed, 26 Jun 2024 08:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49EB91534F8;
+	Wed, 26 Jun 2024 08:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719392032; cv=none; b=OkVMEhww7KKOceIvNivIJM2eftRTS0/LCnODOamM6RrAXCeoztG0Wx0rGkPz/GY2ZCQ3YqMb0jQVOTVcsR1GmYv5ijbPfKpAlNc+ctTeWEeDqOaLFSl90QbNuUOIY6S3A5KKe4XXs8jsv+pl1j+vbUFnC06b/5YroYD6k9v/Wmo=
+	t=1719391808; cv=none; b=p/lBcLDz7OjlVK30sX9Jp4sCPpDKoSYKTBfhNgGi9t5n1vN8zQOfeTzXUBlUwqZqgm9e8vkqCZVt1S9VA4fhhut0YCrtc4uWqRNAoaXZsGMDsc/Kvx2HtfrwSMZgkpWJR/7F9NDMaAAzcSHMdiI6KsXUktv3Fh2C5FGhuAqgdK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719392032; c=relaxed/simple;
-	bh=cbTxet+FZ4Bu2+e7qEqSm8laeIUnXZOfao48nnF/iNg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JdcVAfD6ejS9Ex9AEyM8hEjlTAVSCXSEzWgjPvR0NsbjApA3epLO/9+xsFcFdjUTq6SFZ4MrsuA+GrtrsAQfYnsPKwC8WmPR1GkecSHc8atFoljN3NainmiIYKMHgB9WEZGbKRPtuK7TfWKUG2wPVyw3XOF74H15oNy0TcHF/XU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=o2oEClm+; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45Q4anhj001756;
-	Wed, 26 Jun 2024 08:53:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vtiWjzaRVELuAtYmqwTMNPx5ECIiXFHRCQkUzUemNYg=; b=o2oEClm+Rjm0NcdE
-	ftM8otmZ/iA3C1qYZvxQCq4DhVpP3rHzwaE7RKsxlMVJxcK+5X8le2ZprCeTBccl
-	P117yWt8kanYlCJWrH0LW5pY7zk+zEv1amTYgqLZBn0f2t4kunMGK1SQxj0IgngB
-	GVuaMvyJXka5Y/QBs+YGMsGfJDd6BTY/1VWCxRvIKe1b+ockMEwUIQOUuQENUK6t
-	F8pHtxMhINh5aYewMes9+a7ok6gLxqZfWoht/QXr4uhn6w+v+2L9TZN86WWEgG2f
-	9kowNGL5NVZ4KszT85vlDrpEnDyaKHfL84SNGcgUH0Hic6cRoq5kHd7hCxFgsZM/
-	3+73HA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 400c468k21-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 08:53:32 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45Q8rU0F022444
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 08:53:30 GMT
-Received: from [10.231.195.67] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Jun
- 2024 01:53:28 -0700
-Message-ID: <f7faff80-864a-4411-ad28-4f1151bc1e51@quicinc.com>
-Date: Wed, 26 Jun 2024 16:53:27 +0800
+	s=arc-20240116; t=1719391808; c=relaxed/simple;
+	bh=TH9ocGf0t4tmZuZh3WEwgOQQT8qJPfwDAACN9DZf/FY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rqPFDkBPk/hM91BqcqTZVBgEyZNYTE5EvRD5z6tdIgeQQgjo/zBm/EfKklsz+Dn/+h0AEyVrSL3tm7ONJiE5T5T5x5CiWsh7pVhK1VtJmkCqyx2Um32Icn/VPWBkWpNQIUgFF+ctQsFap1DYsCVC7eVp+Z92yEY1Rp8tPnFkaWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XSC82Qah; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42499b98d4cso14308055e9.2;
+        Wed, 26 Jun 2024 01:50:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719391805; x=1719996605; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=QQz4kMO+LVo3JUvqwvrWDdXDqDW105QydyrvwjnrXVg=;
+        b=XSC82QahGe3S1OA7CPrPn3k7xRnroEyKLQVaRnmyN6+MtAmhdpd31rZMIoKa5dletG
+         QioCAofH6qFfP/Rh5QTZ+6QzYCJDZzBeUOFGdYVhjyZnlSeifoLh11m6XMWv2gKQzqYO
+         RwqSmEJ//vd4Y3XARxZPG8wTfbB52+JsD5Z9EKWhJxQtJx+QYSpVocnLThd5gKLR2JYj
+         ZEEnGdlC+3rNyYx4AaTQWd0/pneRSpo4CScVYyq0btYDxks3fICwRWaEacRGtcMjORDy
+         H03ULNm+YJ9iKMFEsppfjIGTCxE54lqxu9ipBOnWtBDsog+3VZ41oWWBQHxoGK1D6By5
+         ChCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719391805; x=1719996605;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QQz4kMO+LVo3JUvqwvrWDdXDqDW105QydyrvwjnrXVg=;
+        b=iVGLgoGSJSEFHnRB0yNeXKj72031BVcsnJZUmQP/WaDy7gnaEIGTZ1DzkbDsvA6zHS
+         aRfFPDWyuuzxXXALGG0L9FhRCU2qYJzFBEYQBYLuefvkwI/KesRuyuJHA3VdOrRT0FDs
+         OXqJXPH1Qazra4PkKnbHFcue2L3vo1C2oOHlT8KFIR6840Uy3YsXaSZr82vwqCuKIuD0
+         yFWbW39dDRAtmUdZWzDntayTUzxrFIlzhSbFZc78s2S0dc+JGSAHw+6tnaRdviFZ+t2g
+         ZLg8em24T1/YhJhejvC7v2pwu3sLbAQk9scpGtNW2TA07PJA6lCwsJs4UMJidGPpDK5g
+         OjCw==
+X-Forwarded-Encrypted: i=1; AJvYcCWDqmI0BjT2O2dGCY1jD7zcIhxElKXJDM1pBQFyqTJjmRxnY/GumzlE4eHt7mu+U39UquDrBqfk0ZpM6XHczi1tDz4e9ORNrTcnC18N
+X-Gm-Message-State: AOJu0Yz3VtsKRu1kEln3gOTTtQcMg+B9ubD3ctFo1FPWc3gOtHlraSqE
+	uO3ly1ZEhB/Vsp2Y6KBepyYXFchqMPRERPTuFwlzqns3JyxHdNALJ4qmtJyX9PU=
+X-Google-Smtp-Source: AGHT+IESG/WfXg8XZdNYiKy4dyUNqkHu6mZw5n0OHCQsSIv52g5S3mtrz284MfM7DqcRG3W+2dfCww==
+X-Received: by 2002:a05:600c:3b20:b0:424:761f:edbb with SMTP id 5b1f17b1804b1-4248e448891mr71365825e9.31.1719391805370;
+        Wed, 26 Jun 2024 01:50:05 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c82515a1sm17250325e9.12.2024.06.26.01.50.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 01:50:05 -0700 (PDT)
+Message-ID: <de6378671c260d0548a299797f3288fe6f95e246.camel@gmail.com>
+Subject: Re: [PATCH v2 3/8] iio: add child nodes support in iio backend
+ framework
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Olivier Moysan <olivier.moysan@foss.st.com>,
+ fabrice.gasnier@foss.st.com,  Nuno Sa <nuno.sa@analog.com>, Jonathan
+ Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 26 Jun 2024 10:53:57 +0200
+In-Reply-To: <20240625150717.1038212-4-olivier.moysan@foss.st.com>
+References: <20240625150717.1038212-1-olivier.moysan@foss.st.com>
+	 <20240625150717.1038212-4-olivier.moysan@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: invalid vht params rate 1920 100kbps nss 2 mcs 9
-To: Kalle Valo <kvalo@kernel.org>, James Prestwood <prestwoj@gmail.com>
-CC: Paul Menzel <pmenzel@molgen.mpg.de>, <linux-wireless@vger.kernel.org>,
-        <ath10k@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>
-References: <fba24cd3-4a1e-4072-8585-8402272788ff@molgen.mpg.de>
- <1faa7eee-ed1e-477b-940d-a5cf4478cf73@gmail.com> <87iky7mvxt.fsf@kernel.org>
- <37ba6cb0-d887-4fcf-b7dc-c93a5fc5900f@gmail.com> <875xu6mtgh.fsf@kernel.org>
-Content-Language: en-US
-From: Baochen Qiang <quic_bqiang@quicinc.com>
-In-Reply-To: <875xu6mtgh.fsf@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: VFgmVXFK74dkMqecOEk-jiqHlF8M2vwT
-X-Proofpoint-GUID: VFgmVXFK74dkMqecOEk-jiqHlF8M2vwT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-26_03,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- mlxscore=0 lowpriorityscore=0 phishscore=0 mlxlogscore=999 adultscore=0
- priorityscore=1501 malwarescore=0 clxscore=1015 suspectscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2406260066
 
+On Tue, 2024-06-25 at 17:07 +0200, Olivier Moysan wrote:
+> Add an API to support IIO generic channels binding:
+> http://devicetree.org/schemas/iio/adc/adc.yaml#
+> This new API is needed, as generic channel DT node isn't populated as a
+> device.
+> Add devm_iio_backend_fwnode_get() to allow an IIO device backend
+> consumer to reference backend phandles in its child nodes.
+>=20
+> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
+> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+> ---
+> =C2=A0drivers/iio/industrialio-backend.c | 62 +++++++++++++++++++++------=
+---
+> =C2=A0include/linux/iio/backend.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 |=C2=A0 2 +
+> =C2=A02 files changed, 45 insertions(+), 19 deletions(-)
 
+...
 
-On 6/18/2024 6:33 PM, Kalle Valo wrote:
-> + baochen
-> 
-> James Prestwood <prestwoj@gmail.com> writes:
-> 
->> Hi Kalle,
->>
->> On 6/17/24 8:27 AM, Kalle Valo wrote:
->>> James Prestwood <prestwoj@gmail.com> writes:
->>>
->>>> Hi Paul,
->>>>
->>>> On 6/16/24 6:10 AM, Paul Menzel wrote:
->>>>> Dear Linux folks,
->>>>>
->>>>>
->>>>> Linux 6.10-rc3 (commit a3e18a540541) logged the warning below when
->>>>> connecting to a public WiFi:
->>>>>
->>>>>      ath10k_pci 0000:3a:00.0: invalid vht params rate 1920 100kbps
->>>>> nss 2 mcs 9
->>>> This has been reported/discussed [1]. It was hinted that there was a
->>>> firmware fix for this, but none that I tried got rid of it. I got fed
->>>> up enough with the logs filling up with this I patched our kernel to
->>>> remove the warning. AFAICT it appears benign (?). Removing the warning
->>>> was purely "cosmetic" so other devs stopped complaining about it :)
->>>>
->>>> [1] https://www.mail-archive.com/ath10k@lists.infradead.org/msg13406.html
->>> More reliable link to the discussion:
->>>
->>> https://lore.kernel.org/ath10k/76a816d983e6c4d636311738396f97971b5523fb.1612915444.git.skhan@linuxfoundation.org/
->>>
->>> I think we should add this workaround I mentioned in 2021:
->>>
->>>     "If the firmware still keeps sending invalid rates we should add a
->>>      specific check to ignore the known invalid values, but not all of
->>>      them."
->>>
->>>     https://lore.kernel.org/ath10k/87h7mktjgi.fsf@codeaurora.org/
->>>
->>> I guess that would be mcs == 7 and rate == 1440?
->>
->> I think its more than this combination (Paul's are different). 
-> 
-> Good point.
-> 
->> So how many combinations are we willing to add here? Seems like that
->> could get out of hand if there are more than a few invalid
->> combinations. 
-> 
-> Yeah, but there haven't been that many different values reported yet,
-> right? And I expect that ath10k user base will just get smaller in the
-> future so the chances are that we will get less reports.
-> 
->> Would we also want to restrict the workaround to specific
->> hardware/firmware?
-> 
-> Good idea, limiting per hardware would be simple to implement using
-> hw_params. Of course we could even limit this per firmware version using
-> enum ath10k_fw_features, but not sure if that's worth all the extra work.
-> 
-> Baochen, do you know more about this firmware bug? Any suggestions?
-OK, there are two issues here:
+> --- a/include/linux/iio/backend.h
+> +++ b/include/linux/iio/backend.h
+> @@ -153,6 +153,8 @@ int iio_backend_extend_chan_spec(struct iio_dev
+> *indio_dev,
+> =C2=A0				 struct iio_chan_spec *chan);
+> =C2=A0void *iio_backend_get_priv(const struct iio_backend *conv);
+> =C2=A0struct iio_backend *devm_iio_backend_get(struct device *dev, const =
+char
+> *name);
+> +struct iio_backend *devm_iio_backend_fwnode_get(struct device *dev, cons=
+t
+> char *name,
+> +						struct fwnode_handle *node);
 
-1. invalid HT rate: "ath10k_pci 0000:02:00.0: invalid ht params rate 1440 100kbps nss 2 mcs 7".
+node -> fwnode
 
-As commented by Wen quite some time ago, this has been fixed from firmware side, and firmware newer than [ver:241] has the fix included.
+- Nuno S=C3=A1
 
-2. invaid VHT rate: "ath10k_pci 0000:3a:00.0: invalid vht params rate 1920 100kbps nss 2 mcs 9".
-
-After checking with firmware team, I thought this is because there is a mismatch in rate definition between host and firmware: In host, the rate for 'nss 2 mcs 9' is defined as {1560, 1733}, see supported_vht_mcs_rate_nss2[]. While in firmware this is defined as {1730, 1920}. So seems we can update host definition to avoid this issue.
-
-
-> 
 
