@@ -1,124 +1,85 @@
-Return-Path: <linux-kernel+bounces-229930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6319D917624
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 04:27:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8392917629
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 04:30:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82B9C1C223FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 02:27:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9AA81C21E77
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 02:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AECE922324;
-	Wed, 26 Jun 2024 02:27:00 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B4772AF1F;
+	Wed, 26 Jun 2024 02:30:04 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A57733CFC;
-	Wed, 26 Jun 2024 02:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A709B28DDF
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 02:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719368820; cv=none; b=ih7EE3oBI1U4AE382GOVFayTAq/hFf2xJgwigsmGWHC/OMSuT+f61y23xm7OINmt+xPptNv9/+ciWRElUh/0KYwIRpRooMXRh0zSAeVjYufUQfcEYYJXvrJlYICu+tT776ko46NHB0OdgJXwB/HrCC97alRD5QMBXlVUSQg0ZTo=
+	t=1719369004; cv=none; b=LTTnZIF6IkGwiBVgCuKRScGqv6RqvH5doCv2c9MCjgWpURV4ePQBTmPU2I5sfg7CkSEjelatQw1Ski9/IDoYhBw/NrBZmVagr5ujA6h/93ct2HslQWdCzKbzLXb+giDNQXk9jWXtyUZQqZXuH94sozGk4PB1b08Q8x9HXIJV7Iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719368820; c=relaxed/simple;
-	bh=4sv6GkcBtIMVu6YqAkBTIFOuXy/QrdA6g9iW/ATOHCQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=CccOUjAf+HYc97zdXzKDuPClGZO9GdnMHAKpuUDySirz3z8qwwJdRxQXEdfvN6bz0OFbQ3nXWj4LCn7oFKD7ISGgkthBCNCt2Xta+e/HgAKV3/PnBBGjr+Jm83JG4ioxAQBNS3P8AJqeLTICjzYargWZFl8w1zGL8SEFerI5t34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4W857p4TBJz1SF2T;
-	Wed, 26 Jun 2024 10:22:30 +0800 (CST)
-Received: from kwepemd200011.china.huawei.com (unknown [7.221.188.251])
-	by mail.maildlp.com (Postfix) with ESMTPS id 424DB140382;
-	Wed, 26 Jun 2024 10:26:54 +0800 (CST)
-Received: from kwepemd100011.china.huawei.com (7.221.188.204) by
- kwepemd200011.china.huawei.com (7.221.188.251) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Wed, 26 Jun 2024 10:26:53 +0800
-Received: from kwepemd100011.china.huawei.com ([7.221.188.204]) by
- kwepemd100011.china.huawei.com ([7.221.188.204]) with mapi id 15.02.1258.034;
- Wed, 26 Jun 2024 10:26:53 +0800
-From: duchangbin <changbin.du@huawei.com>
-To: Adrian Hunter <adrian.hunter@intel.com>
-CC: duchangbin <changbin.du@huawei.com>, Peter Zijlstra
-	<peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, "Arnaldo Carvalho de
- Melo" <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Nathan
- Chancellor <nathan@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
-	<jolsa@kernel.org>, "Ian Rogers" <irogers@google.com>, "Liang, Kan"
-	<kan.liang@linux.intel.com>, "Nick Desaulniers" <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
-	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"llvm@lists.linux.dev" <llvm@lists.linux.dev>
-Subject: Re: [PATCH v4 1/5] perf: support specify vdso path in cmdline
-Thread-Topic: [PATCH v4 1/5] perf: support specify vdso path in cmdline
-Thread-Index: AQHaxrEVrjKiye8CdEijfxK9i0rUjrHX8X6AgAFhooA=
-Date: Wed, 26 Jun 2024 02:26:53 +0000
-Message-ID: <7eef4826a2f3494ea1dc92ed98d543fb@huawei.com>
-References: <20240625033740.223009-1-changbin.du@huawei.com>
- <20240625033740.223009-2-changbin.du@huawei.com>
- <5a9e8dae-e9d9-4a97-98f5-d76be9068342@intel.com>
-In-Reply-To: <5a9e8dae-e9d9-4a97-98f5-d76be9068342@intel.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-imapappendstamp: kwepemd100011.china.huawei.com (15.02.1258.034)
-x-ms-exchange-messagesentrepresentingtype: 1
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <AD7EF75FA422E447A377B39F2A6A74CA@huawei.com>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1719369004; c=relaxed/simple;
+	bh=NfKw3QLsQyQKyrV9Qz6FfoNyETXxTukRSvZbp9gGM64=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=BLTbTqCLTsgF5ou5f3LCx/Nuf2E0BotHDS43kuVVgKGSBlzqhyiCaVoi0lpkHAycu2pmZS9szMwfF8J2rWjYH6Q6Kaqu6HRlQ8H3X/v6fv0U7dhQupNWUq66q6QkZl6BhYMFPvxJgWGDPMRdMOZaXwpBUlwJLSB8zr1pMoiAn58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7eee4ffd19eso883897839f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 19:30:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719369002; x=1719973802;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vnVewDyENMNioIj1j3KhanDDCJ8KuMLCh8kk++cX2jg=;
+        b=Qih+owQLX6WrRGwkgY8AuXCeEMG2n2UeU5raxqnDGfyfjEsbqzpYyT3ogd5bVBctPy
+         g3OkolM3RRQMkNYB5sTvcM5WN+wlHpSi1ymPehqA3BTaGqat2EhoJDF8+rCDIq3o7zhQ
+         K9/vMiz1glq6fMPL7CHl7QZAzdErt48vcaACf5bebRufKw7fMiY0gqd9/sLKpMHD9F4u
+         Re1/rxuEZ/cyzaEnvdfhPPkgC4ybeqte24R8nEpmkNzvRhFHOC8ibwfqEv9p2j1xVOso
+         M4z3Xbhn2E7ntTD9rG8yIjEZod9Sl3PNmvD+GG6TNa5EutkXCkV6CpzqYLkT61sw3a/M
+         M4aw==
+X-Gm-Message-State: AOJu0YwkVLgVUGwLWc+2gY4LP0cQlWdBLXMOxfDwOEfuPLVhvoNuaeWi
+	wJx3YOhO4JZzAOkbNjFFD7gFBvFG/9Ze6qe4MuOPuHxSRalqGW14Lh0tyEg8jfVoElF3xuU0zGw
+	hAw1w0uaxwJepguXn1Wy+gFbPrBGXWD/YtcasxfKQAPC2WP74685uqdA=
+X-Google-Smtp-Source: AGHT+IE4/mpR7l1Pxkm903wem7njRdFPjgDSw5I9yFWb+K2Uutv2c0BQd6872xchaCDqGHhr/om2x1s4T0Nv7F0KwQN/TZ70CRF4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Received: by 2002:a05:6602:3424:b0:7f3:80a7:9ca6 with SMTP id
+ ca18e2360f4ac-7f3a15669cdmr38813739f.3.1719369001947; Tue, 25 Jun 2024
+ 19:30:01 -0700 (PDT)
+Date: Tue, 25 Jun 2024 19:30:01 -0700
+In-Reply-To: <CAMc0M-_V0ZiMRsmH-A5cqL2cj0WcTwmYA6x6eP0anGkGVphkyA@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009964b0061bc1caa3@google.com>
+Subject: Re: [syzbot] [kvm?] WARNING in __kvm_gpc_refresh (2)
+From: syzbot <syzbot+fd555292a1da3180fc82@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, peili.dev@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-T24gVHVlLCBKdW4gMjUsIDIwMjQgYXQgMDQ6MjA6NDlQTSArMDMwMCwgQWRyaWFuIEh1bnRlciB3
-cm90ZToNCj4gT24gMjUvMDYvMjQgMDY6MzcsIENoYW5nYmluIER1IHdyb3RlOg0KPiA+IFRoZSB2
-ZHNvIGR1bXBlZCBmcm9tIHByb2Nlc3MgbWVtb3J5IChpbiBidWlsZGlkLWNhY2hlKSBsYWNrcyBk
-ZWJ1Z2dpbmcNCj4gPiBpbmZvLiBUbyBhbm5vdGF0ZSB2ZHNvIHN5bWJvbHMgd2l0aCBzb3VyY2Ug
-bGluZXMgd2UgbmVlZCBzcGVjaWZ5IGENCj4gPiBkZWJ1Z2dpbmcgdmVyc2lvbi4NCj4gPiANCj4g
-PiBGb3IgeDg2LCB3ZSBjYW4gZmluZCB0aGVtIGZyb20geW91ciBsb2NhbCBidWlsZCBhcw0KPiA+
-IGFyY2gveDg2L2VudHJ5L3Zkc28vdmRzb3szMiw2NH0uc28uZGJnLiBPciB0aGV5IG1heSByZXNp
-ZGUgaW4NCj4gPiAvbGliL21vZHVsZXMvPHZlcnNpb24+L3Zkc28vdmRzb3szMiw2NH0uc28gb24g
-VWJ1bnR1LiBCdXQgbm90aWNlIHRoYXQNCj4gPiB0aGUgYnVpbGRpZCBoYXMgdG8gbWF0Y2guDQo+
-ID4gDQo+ID4gJCBzdWRvIHBlcmYgcmVjb3JkIC1hDQo+ID4gJCBzdWRvIHBlcmYgcmVwb3J0IC0t
-b2JqZHVtcD1sbHZtLW9iamR1bXAgXA0KPiA+ICAgLS12ZHNvIGFyY2gveDg2L2VudHJ5L3Zkc28v
-dmRzbzY0LnNvLmRiZyxhcmNoL3g4Ni9lbnRyeS92ZHNvL3Zkc28zMi5zby5kYmcNCj4gPiANCj4g
-PiBTYW1wbGVzOiAxN0sgb2YgZXZlbnQgJ2N5Y2xlczpQJywgNDAwMCBIeiwgRXZlbnQgY291bnQg
-KGFwcHJveC4pOiAxNzYwDQo+ID4gX192ZHNvX2Nsb2NrX2dldHRpbWUgIC93b3JrL2xpbnV4LWhv
-c3QvYXJjaC94ODYvZW50cnkvdmRzby92ZHNvNjQuc28uZA0KPiA+IFBlcmNlbnTilIIgICAgICAg
-bW92cSAgICAtNDgoJXJicCksJXJzaQ0KPiA+ICAgICAgICDilIIgICAgICAgdGVzdHEgICAlcmF4
-LCVyYXgNCj4gPiAgICAgICAg4pSCICAgICA7ICAgICAgICAgICAgICAgcmV0dXJuIHZyZWFkX2h2
-Y2xvY2soKTsNCj4gPiAgICAgICAg4pSCICAgICAgIG1vdnEgICAgJXJheCwlcmR4DQo+ID4gICAg
-ICAgIOKUgiAgICAgOyAgICAgICAgICAgICAgIGlmICh1bmxpa2VseSghdmRzb19jeWNsZXNfb2so
-Y3ljbGVzKSkpDQo+ID4gICAgICAgIOKUgiAgICAg4oaRIGpzICAgICAgZWINCj4gPiAgICAgICAg
-4pSCICAgICDihpEgam1wICAgICA3NA0KPiA+ICAgICAgICDilIIgICAgIDsgICAgICAgICAgICAg
-ICB0cy0+dHZfc2VjID0gdmRzb190cy0+c2VjOw0KPiA+ICAgMC4wMiDilIIxNDc6ICAgbGVhcSAg
-ICAyKCVyYngpLCVyYXgNCj4gPiAgICAgICAg4pSCICAgICAgIHNobHEgICAgJDQsICVyYXgNCj4g
-PiAgICAgICAg4pSCICAgICAgIGFkZHEgICAgJXIxMCwlcmF4DQo+ID4gICAgICAgIOKUgiAgICAg
-OyAgICAgICAgICAgICAgIHdoaWxlICgoc2VxID0gUkVBRF9PTkNFKHZkLT5zZXEpKSAmIDEpIHsN
-Cj4gPiAgIDkuMzgg4pSCMTUyOiAgIG1vdmwgICAgKCVyMTApLCVlY3gNCj4gPiANCj4gPiBXaGVu
-IGRvaW5nIGNyb3NzIHBsYXRmb3JtIGFuYWx5c2lzLCB3ZSBhbHNvIG5lZWQgc3BlY2lmeSB0aGUg
-dmRzbyBwYXRoIGlmDQo+ID4gd2UgYXJlIGludGVyZXN0ZWQgaW4gaXRzIHN5bWJvbHMuDQo+IA0K
-PiBXb3VsZCBpdCBiZSBwb3NzaWJsZSB0byBhZGQgdmRzbyBhbmQgdmRzbyBkZWJ1ZyB0byB0aGUg
-YnVpbGQtaWQNCj4gY2FjaGUgYW5kIGVuc3VyZSBwZXJmIGNhbiBmaW5kIGl0IHRoZXJlPw0KPiAN
-Cj4gVHlwaWNhbGx5LCBnZXR0aW5nIGRzb3MgZnJvbSBhbm90aGVyIG1hY2hpbmUgaXMgaGFuZGxl
-ZCB2aWENCj4gYnVpbGQtaWQgY2FjaGUgZS5nLiB3aGF0IHBlcmYtYXJjaGl2ZSBkb2VzDQo+IA0K
-SG1tLiBJIGFncmVlIHRoaXMgaXMgYmV0dGVyIGFsdGVybmF0aXZlIGFwcHJvYWNoIGZvciBjcm9z
-cy1tYWNoaW5lIGFuYWx5c2lzLg0KV2hlbiBjb2xsZWN0aW5nIHZkc29zIHRvIGJ1aWxkaWQgY2Fj
-aGUsIEkgdGhpbmsgd2UgY2FuIHVzZSB0aGUgbG9jYWwgc2VhcmNoZWQNCm9iamVjdHMgKHdpdGgg
-ZGVidWcgc3ltYm9scykgaW5zdGVhZCBpZiBpdHMgYnVpbGQtaWQgbWF0Y2hlcyB2ZHNvcyBmcm9t
-IHByb2Nlc3MNCmR1bXBpbmcgKHRoZSByZWFsIGNvZGUgcmFuKS4NCg0KQ3VycmVudGx5IEkganVz
-dCBmb2xsb3cgd2hhdCBwZXJmIGRvZXMgZm9yIHZtbGludXggc28gdG8gcmV1c2UgbW9zdCBvZiBl
-eGlzdGluZw0KY29kZS4gTWF5YmUgdm1saW51eCBpcyB0b28gYmlnIHRvIGFkZCB0byBidWlsZGlk
-LWNhaGNlPw0KDQpDYW4gd2Uga2VlcCBvdXIgY3VycmVudCBzdHJhdGVneSBmb3Igbm93PyBJJ2xs
-IHRoaW5rIGFib3V0IGFib3ZlIG9wdGlvbnMgd2hlbg0KSSBoYXZlIG1vcmUgdGltZS4NCg0KLS0g
-DQpDaGVlcnMsDQpDaGFuZ2JpbiBEdQ0K
+Hello,
+
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+
+Reported-and-tested-by: syzbot+fd555292a1da3180fc82@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         55027e68 Merge tag 'input-for-v6.10-rc5' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=122496ae980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e40800950091403a
+dashboard link: https://syzkaller.appspot.com/bug?extid=fd555292a1da3180fc82
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14250ac1980000
+
+Note: testing is done by a robot and is best-effort only.
 
