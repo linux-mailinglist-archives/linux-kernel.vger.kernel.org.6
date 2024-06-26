@@ -1,133 +1,127 @@
-Return-Path: <linux-kernel+bounces-231398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF4D5919840
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:25:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C760919844
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:26:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 839C8283D21
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:25:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 838621C210E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:26:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 869A9191499;
-	Wed, 26 Jun 2024 19:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87D5191473;
+	Wed, 26 Jun 2024 19:26:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Dt5sSxXd"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	dkim=pass (2048-bit key) header.d=fooishbar-org.20230601.gappssmtp.com header.i=@fooishbar-org.20230601.gappssmtp.com header.b="MXyKsdrz"
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA1515B7
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 19:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 111ED15B7
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 19:26:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719429936; cv=none; b=BFwzQl/H3XOoBa8i1qAa2VqqJIZzq7FLXdPhZjwE3+UJPnHVYgipHstGZc8zLpYm/tKhDjb0LSKLkPzheKF2LWwxuCfu3bUiqXDRcdd/VtSe/ll3NnLftkVYIa7iO0L1vC1JgqrAd+IYdDCbnSYYN/WBIAPqHW2zSz5MDTF6/xg=
+	t=1719429978; cv=none; b=e1a6cHzNONIC9+R0NKuVLKuzpkAOlv6eWK897mvIwkCw36QlVEvzUmrxT1ZqDfxCIMslcF2/Jn6RaiczoQy0bH3gNwFoHfNTFatz+WSJ3INhXuhBmYf8Qt1ull545R3riRaW7MGSiujxxtA2iit9q1DRwO2oRPmLw8/I2LqhpX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719429936; c=relaxed/simple;
-	bh=Xx0UgYqXqz8oX6S2jDQnTn7hCBO131a23udEubagAuI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mI+A7xQdU4zr6nCqNgFZojDqf58xSk0RZ4Ts0LbKB5CgrrJNLnrUBPZRIdEmT3Yz48qoo9hWl2VGjd58QI4/3Q5jwlCooYigtSO/qAtz0wW38KTWf5rfFoGlGGgv+1Jg0JTgUvKV5cAJH5QzOQUh4SJ5SQLTOiI/ncy5X1e9tRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Dt5sSxXd; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3762c172d94so3072805ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 12:25:34 -0700 (PDT)
+	s=arc-20240116; t=1719429978; c=relaxed/simple;
+	bh=GVl4BQ6sqlR4mjMHtG/aBZ04wixynHgTyVj8qKUVA2Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NoWnKPppN+osd2PmKoGk261edPxnB7oQUWlaerBOCRq5nkwQDeOmFSjleNfM52RZdSTTPuZhsYawfETmNw+4IfLSSu7UH8ANpJNKLtNJwRv4ljRI+gkLLMk5EqgRPfKxomkxIAtqqaAWVRKzqoh2YstSUTkMW69dwUgRbEFwiUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=none smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar-org.20230601.gappssmtp.com header.i=@fooishbar-org.20230601.gappssmtp.com header.b=MXyKsdrz; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=fooishbar.org
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dff0712ede2so6776551276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 12:26:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1719429934; x=1720034734; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9AuhQXICJYgi+8HhiIxGyyUjo5Wfz9/NG9/QSsLxyyk=;
-        b=Dt5sSxXdQ0UlzBU0DG1d+I1X7NYowjhR8L9aXdmERSrgRWtScDBcfTKblq3ueZaBx8
-         Ni6DEK/So1AY+1FaUxA5Fo9v9UY9lRdrg/lxhYMTrRSLGAMdVyWQYMDEslxq6+zERYtF
-         IP4syj4rfM2uVSyJB6q2LCNoLVdM7jJK2PBhQ=
+        d=fooishbar-org.20230601.gappssmtp.com; s=20230601; t=1719429976; x=1720034776; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GVl4BQ6sqlR4mjMHtG/aBZ04wixynHgTyVj8qKUVA2Q=;
+        b=MXyKsdrz5ZIOhr1AtpeEPYBI/+4JvC75ugSpqlskLxLxINIWcuYGemxysPaJsMngnM
+         q259U8xN1eaJ5y2+IL5WPHHksHysveqwlwTiO2RFisH0Z+1H3bnAFRpm8l2djjflvO49
+         WuToqhne6YcjCmA7R80Q2vM1g1yxP7r0kBkOHaXqj3D3MKJxMF3lXVEQVsRWmVC9RGHf
+         ATttALM/oh4QnwgNDx7gHXgpQeMHwfdC7SAeX/tcDdZWSp13WCYAbH6okTmHM4SAis+r
+         7da14cxaNiCVMhyxJhvHwbddOw8+MWN2moaFfXYIvs2pNjEsK9HIq/YaAXHDccnyFd89
+         QrIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719429934; x=1720034734;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9AuhQXICJYgi+8HhiIxGyyUjo5Wfz9/NG9/QSsLxyyk=;
-        b=h6AanxHfN7pFKgvJcB4oJM2wND1vaNI2PpdDu8Uk/ZcPO/4HPcBWU5wWwZb9kpcFMJ
-         1ixhc6kR+NJeZWCQDM/pW0CzEoLWoIizzkX2aOiyshjRdlKMWHErsn6WBERk5iwlFHmM
-         /us594z3frkMB6YMxjskmvXCgL+7OnWUVGEf3xv/fkyOLAr4Jss1R04ZEV+5EYBDo9T8
-         hBThEroTSy28pjfZ6mIF7imbKLt1tdhLn/CVpWv4SBcKVaqh0qczkgkIawVZFbcuUqUX
-         9rnFRWQEDhzpqa1XfZ6XAOa9Mp1vabthdkuzdB0Co9TV9JN7jznmP8NjX5jiFCdfD7EP
-         3r1g==
-X-Gm-Message-State: AOJu0Yytq30NLl4JF2tdaOHaipt8UZYBJCMyXNJYVEzxHwPuH+uFGAaF
-	F4kdDit+2/pdbQLE83lOQO86Az/mNcTGY3pUL/Sof+E6bzxzdfTLVMWGYaZUlGsxaJSauXqLgZr
-	H
-X-Google-Smtp-Source: AGHT+IHc7cNmqC8XQ1K7MI9KHdiJjhxNl9Nr1dtw6UpPt16PdnXhfW9pac2d9TdCfRhJQqg1tX73ZQ==
-X-Received: by 2002:a05:6602:3148:b0:7f3:9ef8:30a4 with SMTP id ca18e2360f4ac-7f39ef8334dmr1257790239f.1.1719429934165;
-        Wed, 26 Jun 2024 12:25:34 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b9d11e98b8sm3320562173.114.2024.06.26.12.25.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Jun 2024 12:25:33 -0700 (PDT)
-Message-ID: <7275eb85-67ae-4d70-84ae-702a478eb98a@linuxfoundation.org>
-Date: Wed, 26 Jun 2024 13:25:33 -0600
+        d=1e100.net; s=20230601; t=1719429976; x=1720034776;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GVl4BQ6sqlR4mjMHtG/aBZ04wixynHgTyVj8qKUVA2Q=;
+        b=tsMIXNZZ5KBxuj5lzWnt94xyWTgEpiKPnXBap5zHv4+d5arbvkLyhTqS7XFmVnG5zg
+         qLu055xHky7biqt4vDPf9CZaHWiGLs8uRVbazPZIZ7tQcWRb1EW9PQpR/44vFHDUPDsv
+         9FY/QDv889vbn/vH7Nyihy7i4KSdgBqusWY7YGP+vXIvFnRg1zGAu6v0GtsFe8ia7Qvv
+         lI3t8Ma41BlWD5MUphg4+ZMQ81z6S6qIdYir+EoM+XIpDobSXqaKfl7LBfQ3Ad5v7YXM
+         mahUp3tGSDgClWuhUKvB72I9vEsKEfLFprDOUsObQfI74GBTQGirlxZg34rYF9cojBfH
+         61oA==
+X-Forwarded-Encrypted: i=1; AJvYcCU3AWO9Gc+7S8sSrzMN0c0mp0HtZPb87ra9uHnkhIqHAFQ2deiDsESlwxDwfl9xwPk6tu9eFMEytiMoOtZkTB0+s0qoIbwdRCNTMP6V
+X-Gm-Message-State: AOJu0YwLixh/+wks/OWEmhh2PdC9mhJ2nWCw+g1vRpiKP/0zVYwbp3ro
+	A5dURb/GKro/xaXJ7jzSwuBPBnLLwemM1q9XRaScN9t9Om3Vmjm3+33uwQDcr4vFxqXffBq7rlm
+	Xks42V7G56lrEtp0T9mHXZIoqEA3x7Baw1zvihQ==
+X-Google-Smtp-Source: AGHT+IFt9KNQizJBtwoRXxWdC6bUl1zuw9W0N9wHHiqYCJjNt45BiH7o0/gvXjy2ppmL5ZWgdXc1asVtAQt+LlPdi30=
+X-Received: by 2002:a25:b2a3:0:b0:e02:be9e:ba8 with SMTP id
+ 3f1490d57ef6-e0303ffb60cmr11195525276.44.1719429975867; Wed, 26 Jun 2024
+ 12:26:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] selftests/resctrl: Fix non-contiguous CBM for AMD
-To: Reinette Chatre <reinette.chatre@intel.com>, shuah@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- ilpo.jarvinen@linux.intel.com, maciej.wieczor-retman@intel.com,
- peternewman@google.com, eranian@google.com, fenghua.yu@intel.com,
- Babu Moger <babu.moger@amd.com>, Shuah Khan <skhan@linuxfoundation.org>
-References: <3a6c9dd9dc6bda6e2582db049bfe853cd836139f.1717622080.git.babu.moger@amd.com>
- <96d276c11e69cfb1e29d50a12c8043555c06b404.1718144237.git.babu.moger@amd.com>
- <4be0449a-1337-4fc6-8ed6-fec10cc74bd6@intel.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <4be0449a-1337-4fc6-8ed6-fec10cc74bd6@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240424063753.3740664-1-tomeu@tomeuvizoso.net>
+ <97eadcba7cabe56f0f4b4d753bd3d53f8540ef4b.camel@pengutronix.de>
+ <CAAObsKAQ=pWQ8MR1W7WwK1nVEeiCFNC3k+NZKsu4Fkts-_+zWg@mail.gmail.com>
+ <CAPj87rO7zyDsqUWnkF0pZeNFnNK2UnAVJy4RmB3jmPkKQ+zbEw@mail.gmail.com>
+ <CAAObsKBm3D_3ctFyK-rfpM-PU6ox1yoaMA1EES9yR-nRmU4rYw@mail.gmail.com>
+ <CAAObsKAt563VNzDcF4rGkWPcxBPzKcq=Hj5RY6K20FWR43nvUQ@mail.gmail.com>
+ <ZnvDJVeT3rz-hnv9@phenom.ffwll.local> <7cee6b78bc2375d9b014f9671b0d72ae65eba73c.camel@pengutronix.de>
+ <CAPj87rPB=N2vJ-5C7xXORYstK3=TpX+jZ7mCr7oxY2wpXeaTTQ@mail.gmail.com> <ZnxVWrFJKbVO8PZ0@phenom.ffwll.local>
+In-Reply-To: <ZnxVWrFJKbVO8PZ0@phenom.ffwll.local>
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Wed, 26 Jun 2024 20:26:04 +0100
+Message-ID: <CAPj87rPnA1eKR_b7gAhDiMZRcVt8xPS9xnsscqVQ_a_qO_tD4A@mail.gmail.com>
+Subject: Re: [PATCH] drm/etnaviv: Create an accel device node if compute-only
+To: Daniel Stone <daniel@fooishbar.org>, Lucas Stach <l.stach@pengutronix.de>, 
+	Tomeu Vizoso <tomeu@tomeuvizoso.net>, linux-kernel@vger.kernel.org, 
+	Oded Gabbay <ogabbay@kernel.org>, Russell King <linux+etnaviv@armlinux.org.uk>, 
+	Christian Gmeiner <christian.gmeiner@gmail.com>, David Airlie <airlied@gmail.com>, 
+	etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	Daniel Stone <daniels@collabora.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/26/24 10:55, Reinette Chatre wrote:
-> Hi Shuah,
-> 
-> Could you please consider this fix for inclusion into kselftests?
-> 
-> Thank you very much.
-> 
-> Reinette
-> 
-> On 6/11/24 3:18 PM, Babu Moger wrote:
->> The non-contiguous CBM test fails on AMD with:
->> Starting L3_NONCONT_CAT test ...
->> Mounting resctrl to "/sys/fs/resctrl"
->> CPUID output doesn't match 'sparse_masks' file content!
->> not ok 5 L3_NONCONT_CAT: test
->>
->> AMD always supports non-contiguous CBM but does not report it via CPUID.
->>
->> Fix the non-contiguous CBM test to use CPUID to discover non-contiguous
->> CBM support only on Intel.
->>
->> Fixes: ae638551ab64 ("selftests/resctrl: Add non-contiguous CBMs CAT test")
->> Signed-off-by: Babu Moger <babu.moger@amd.com>
->> Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
->> ---
->> v3: Reworked changelong.
->>
->> v2: Moved the non-contiguous CBM verification to a new function
->>      arch_supports_noncont_cat.
->>
->> v1: This was part of the series
->>      https://lore.kernel.org/lkml/cover.1708637563.git.babu.moger@amd.com/
->>      Sending this as a separate fix per review comments.
->> ---
->>   tools/testing/selftests/resctrl/cat_test.c | 32 +++++++++++++++-------
->>   1 file changed, 22 insertions(+), 10 deletions(-)
->>
+On Wed, 26 Jun 2024 at 18:52, Daniel Vetter <daniel@ffwll.ch> wrote:
+> On Wed, Jun 26, 2024 at 11:39:01AM +0100, Daniel Stone wrote:
+> > On Wed, 26 Jun 2024 at 09:28, Lucas Stach <l.stach@pengutronix.de> wrote:
+> > > So we are kind of stuck here between breaking one or the other use-
+> > > case. I'm leaning heavily into the direction of just fixing Mesa, so we
+> > > can specify the type of screen we need at creation time to avoid the
+> > > renderonly issue, porting this change as far back as reasonably
+> > > possible and file old userspace into shit-happens.
+> >
+> > Yeah, honestly this sounds like the best solution to me too.
+>
+> Yeah mesa sounds kinda broken here ...
+>
+> What might work in the kernel is if you publish a fake 3d engine that's
+> too new for broken mesa, if that's enough to make it fail to bind? And if
+> mesa still happily binds against that, then yeah it's probably too broken
+> and we need etnaviv-v2 (as a drm driver uapi name, I think that's what
+> mesa filters?) for anything new (including the NN-only ones).
+>
+> I would still try to avoid that, but just in case someone screams about
+> regressions.
 
-Applied to linux-kselftest fixes branch for 6.10-rc6
+It's not just etnaviv, it's literally every Mesa driver which works
+with decoupled render/display. So that would be etnaviv-v2,
+panfrost-v2, panthor-v2, v3d-v2, powervr-v2, ... albeit those don't
+tend to have multiple instances.
 
-thanks,
--- Shuah
+Anyway, I'm still leaning towards the answer being: this is not an
+etnaviv regression caused by NPU, it's a longstanding generic Mesa
+issue for which the answer is to fix the known fragility.
 
+Cheers,
+Daniel
 
