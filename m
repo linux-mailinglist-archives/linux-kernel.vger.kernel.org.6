@@ -1,119 +1,193 @@
-Return-Path: <linux-kernel+bounces-231179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6097491872E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:19:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE80C91873D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:23:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A55F1F22244
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:19:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F00431C21031
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA97818EFE4;
-	Wed, 26 Jun 2024 16:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 904FB18F2CB;
+	Wed, 26 Jun 2024 16:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bBTbTprP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YPv+SDn7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1544D1849EF;
-	Wed, 26 Jun 2024 16:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2271118E758;
+	Wed, 26 Jun 2024 16:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719418791; cv=none; b=eKuYkVwRzBKHnd1ZcEO/eZjUAA4487gHB6Cd5TIJ4FDrRP03QELCAQXqieu6fappMl3b3+q0fe5sBfnq4ccaf8OAinyV839/RRae840THzC7mvwt9qnjQ4re3mpWnCxV77NWNRF8ScF+hP89pLj9tXy6kR5PDAXZKvUCct1TdBk=
+	t=1719418986; cv=none; b=UkE6E3Lto6R3TbZgyOqb1qBOqRybfpZrVT1w4nntNkT7CYKGLgqQ7dYU1AVJkVdTJ7JPh5gMKzoY2+MtzK0p/ItD7bMFGwvVivV3uR+ZkSthMRKUAtJCnrOewnbN0OpuizKfl6EZxnNg6O/1CJ3HWC3nFCOdx6idk1CkwInBcAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719418791; c=relaxed/simple;
-	bh=BUh3Ifno2dFKujCDeYuJWfZRRg+3vWHuLYdKNNNbz/s=;
+	s=arc-20240116; t=1719418986; c=relaxed/simple;
+	bh=6gFjRqnmAlZ+KmWeNakm51Ebba0HMPjTrguhw4sm/E0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RgE4RbHGC7goLwWf5AIZPNdDpEmP9E/FqghSUDUEES4wuKf89MhuCSkrF4vRvhX+jj0cUXC5dOpySD4me1sCLEthXcqmVeddQ26DyV/LOGP1d8z2jZhdXQ9ltT9SXryBRIrgVR+64i7QlEqB/JZ6Qo0aTXcskp0+NV9t9cbWRSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bBTbTprP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C643C116B1;
-	Wed, 26 Jun 2024 16:19:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719418790;
-	bh=BUh3Ifno2dFKujCDeYuJWfZRRg+3vWHuLYdKNNNbz/s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bBTbTprPD0N7cG1vof5PeK8t/e/6l98FsFMZpzBnqytLVamav5mq0sJ7/0GG5zq/R
-	 r9A5JRlqGR8WgqN+ON3cJEgihK6ossxggV9gA1y3EbOw948C875mig51mUE2Exlb2w
-	 i6elRNwgTVQC7c0RXbe5LnuxXi8Z14hpwT0O0iNsptFl+O+WklsMn3ZdUQeyUATMAP
-	 5/8Zi1Ge9viEX/y1ALMs8xOaZ719GdWfIZWHDufeAFbojKgPiyIFHixkMN7sKzQoQK
-	 luRW2CkllVkSCqOgCyLcYKjgBzQO6BjCsf0cg1Low61AFIhy3CzhAuhSmt/j7Qcwi0
-	 gxwEaczpmALWg==
-Date: Wed, 26 Jun 2024 17:19:45 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Lee Jones <lee@kernel.org>
-Cc: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>, Chris Zhong <zyw@rock-chips.com>,
-	Zhang Qing <zhangqing@rock-chips.com>,
-	Chris Morgan <macromorgan@hotmail.com>,
-	Furkan Kardame <f.kardame@manjaro.org>,
-	Michael Riesch <michael.riesch@wolfvision.net>,
-	kernel@collabora.com, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] dt-bindings: mfd: rk817: Fixup clocks and
- reference dai-common
-Message-ID: <20240626-prozac-wrongness-3f432b67468e@spud>
-References: <20240622-rk809-fixes-v2-0-c0db420d3639@collabora.com>
- <20240622-rk809-fixes-v2-1-c0db420d3639@collabora.com>
- <20240622-exquisite-absently-e35b2cf335e3@spud>
- <20240626154446.GD2504017@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ne7ONDYM4siVWJW6R29+PHHY34RqM3SYiY+qmdU/K7275DL6Haq7Pw3dMhSGDmEQGvWnoe1PwlgFqMzYM/XnShP4PP/2kYp87/M0CzTgqYFhU4nSuXQCParwq7W9sLQhCTLFhfYrdq++ifpdsO7HwYSV+nl8MYHaDRJK/ptREXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YPv+SDn7; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719418984; x=1750954984;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6gFjRqnmAlZ+KmWeNakm51Ebba0HMPjTrguhw4sm/E0=;
+  b=YPv+SDn7/EhbHb3HgVmYD1gHLPuUSgtsAH/+SVu0IMUDFIzLBUn+NavU
+   DeNMJQxUwS8PREfnIyBJRjHNsWle//Hr2XzOw8crUDtGkLS/WBWSDimcm
+   j878TWe3w7agPSbOeFSqmCd1qCzvUVAtTcP0WVB4su1zNSeNmC1gjcFrf
+   fuN3sBkLnQI+1iiHXvA8qCtwWJU+/8zisrVs4sxnm6Qb41m4n4oP0iqo4
+   hMyfCVynLvrCQDfcTJAkSDuCNb0RZ3jn8/FTWG6dR9d8lZM4LpOgd53sS
+   ORus+ZB/O/FjJHsJv5sp9BCIJbVTf9qLT+ZJWn3jkHm1KJxyTUJYC2Jlq
+   w==;
+X-CSE-ConnectionGUID: EB1HoWh4R6ikNx7AIbO69A==
+X-CSE-MsgGUID: Eul6hx8DTPWticHZs8pJhA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="16651449"
+X-IronPort-AV: E=Sophos;i="6.08,267,1712646000"; 
+   d="scan'208";a="16651449"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 09:23:03 -0700
+X-CSE-ConnectionGUID: aqVxw+UeSm2pAi9hLFlh0g==
+X-CSE-MsgGUID: 49XKsDlLR0O245zfXBJvQg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,267,1712646000"; 
+   d="scan'208";a="43930121"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 26 Jun 2024 09:23:00 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sMVQ9-000FNi-1r;
+	Wed, 26 Jun 2024 16:22:57 +0000
+Date: Thu, 27 Jun 2024 00:21:13 +0800
+From: kernel test robot <lkp@intel.com>
+To: ran xiaokai <ranxiaokai627@163.com>, akpm@linux-foundation.org,
+	willy@infradead.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, vbabka@suse.cz,
+	svetly.todorov@memverge.com, ran.xiaokai@zte.com.cn,
+	baohua@kernel.org, ryan.roberts@arm.com, peterx@redhat.com,
+	ziy@nvidia.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/2] kpageflags: fix wrong KPF_THP on non-pmd-mappable
+ compound pages
+Message-ID: <202406262300.iAURISyJ-lkp@intel.com>
+References: <20240626024924.1155558-3-ranxiaokai627@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ViRgtctp4xtl5K9D"
-Content-Disposition: inline
-In-Reply-To: <20240626154446.GD2504017@google.com>
-
-
---ViRgtctp4xtl5K9D
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240626024924.1155558-3-ranxiaokai627@163.com>
 
-On Wed, Jun 26, 2024 at 04:44:46PM +0100, Lee Jones wrote:
-> On Sat, 22 Jun 2024, Conor Dooley wrote:
->=20
-> > On Sat, Jun 22, 2024 at 12:57:18AM +0300, Cristian Ciocaltea wrote:
-> > > Ensure 'clocks' property does not allow more than one item and add the
-> > > missing reference to dai-common schema.
-> > >=20
-> > > While at it, move 'clocks*' and '#sound-dai-cells' properties to keep
-> > > the list ordered alphabetically.
-> > >=20
-> > > Additionally, drop all useless/redundant descriptions.
-> > >=20
-> > > Fixes: 6c38ca03406e ("dt-bindings: mfd: rk808: Convert bindings to ya=
-ml")
-> > > Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> >=20
-> > I'd argue that these should not all be the same commit, but w/e.
->=20
-> Are you arguing that, or not? :)
+Hi ran,
 
-I said w/e and acked it, you can apply it!
+kernel test robot noticed the following build errors:
 
->=20
-> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
+[auto build test ERROR on akpm-mm/mm-everything]
+[also build test ERROR on linus/master v6.10-rc5 next-20240625]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
---ViRgtctp4xtl5K9D
-Content-Type: application/pgp-signature; name="signature.asc"
+url:    https://github.com/intel-lab-lkp/linux/commits/ran-xiaokai/mm-Constify-folio_order-folio_test_pmd_mappable/20240626-113027
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20240626024924.1155558-3-ranxiaokai627%40163.com
+patch subject: [PATCH 2/2] kpageflags: fix wrong KPF_THP on non-pmd-mappable compound pages
+config: x86_64-allnoconfig (https://download.01.org/0day-ci/archive/20240626/202406262300.iAURISyJ-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240626/202406262300.iAURISyJ-lkp@intel.com/reproduce)
 
------BEGIN PGP SIGNATURE-----
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406262300.iAURISyJ-lkp@intel.com/
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnw/oQAKCRB4tDGHoIJi
-0gm7AP0f9bOQyJ6SVNBWC7D2GOSMWzC2XNP53cujm8o0SojWcwEA6L4vjn8dcnWK
-BiK/C/J6XQrOCndjkBTNhoVL9nRi2go=
-=i8sf
------END PGP SIGNATURE-----
+All errors (new ones prefixed by >>):
 
---ViRgtctp4xtl5K9D--
+>> fs/proc/page.c:151:35: error: passing 'const struct folio *' to parameter of type 'struct folio *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
+     151 |         else if (folio_test_pmd_mappable(folio)) {
+         |                                          ^~~~~
+   include/linux/huge_mm.h:438:58: note: passing argument to parameter 'folio' here
+     438 | static inline bool folio_test_pmd_mappable(struct folio *folio)
+         |                                                          ^
+   1 error generated.
+
+
+vim +151 fs/proc/page.c
+
+   108	
+   109	u64 stable_page_flags(const struct page *page)
+   110	{
+   111		const struct folio *folio;
+   112		unsigned long k;
+   113		unsigned long mapping;
+   114		bool is_anon;
+   115		u64 u = 0;
+   116	
+   117		/*
+   118		 * pseudo flag: KPF_NOPAGE
+   119		 * it differentiates a memory hole from a page with no flags
+   120		 */
+   121		if (!page)
+   122			return 1 << KPF_NOPAGE;
+   123		folio = page_folio(page);
+   124	
+   125		k = folio->flags;
+   126		mapping = (unsigned long)folio->mapping;
+   127		is_anon = mapping & PAGE_MAPPING_ANON;
+   128	
+   129		/*
+   130		 * pseudo flags for the well known (anonymous) memory mapped pages
+   131		 */
+   132		if (page_mapped(page))
+   133			u |= 1 << KPF_MMAP;
+   134		if (is_anon) {
+   135			u |= 1 << KPF_ANON;
+   136			if (mapping & PAGE_MAPPING_KSM)
+   137				u |= 1 << KPF_KSM;
+   138		}
+   139	
+   140		/*
+   141		 * compound pages: export both head/tail info
+   142		 * they together define a compound page's start/end pos and order
+   143		 */
+   144		if (page == &folio->page)
+   145			u |= kpf_copy_bit(k, KPF_COMPOUND_HEAD, PG_head);
+   146		else
+   147			u |= 1 << KPF_COMPOUND_TAIL;
+   148	
+   149		if (folio_test_hugetlb(folio))
+   150			u |= 1 << KPF_HUGE;
+ > 151		else if (folio_test_pmd_mappable(folio)) {
+   152			u |= 1 << KPF_THP;
+   153			if (is_huge_zero_folio(folio))
+   154				u |= 1 << KPF_ZERO_PAGE;
+   155		} else if (is_zero_pfn(page_to_pfn(page)))
+   156			u |= 1 << KPF_ZERO_PAGE;
+   157	
+   158		/*
+   159		 * Caveats on high order pages: PG_buddy and PG_slab will only be set
+   160		 * on the head page.
+   161		 */
+   162		if (PageBuddy(page))
+   163			u |= 1 << KPF_BUDDY;
+   164		else if (page_count(page) == 0 && is_free_buddy_page(page))
+   165			u |= 1 << KPF_BUDDY;
+   166	
+   167		if (PageOffline(page))
+   168			u |= 1 << KPF_OFFLINE;
+   169		if (PageTable(page))
+   170			u |= 1 << KPF_PGTABLE;
+   171		if (folio_test_slab(folio))
+   172			u |= 1 << KPF_SLAB;
+   173	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
