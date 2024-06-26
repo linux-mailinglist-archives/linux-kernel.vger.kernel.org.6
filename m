@@ -1,147 +1,169 @@
-Return-Path: <linux-kernel+bounces-230104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED3E5917867
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:58:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E281791785C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:51:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7399A1F21F43
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:58:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B5DE282078
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4975214D2A4;
-	Wed, 26 Jun 2024 05:58:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06DA8149C57;
+	Wed, 26 Jun 2024 05:51:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="e9rC+Fmg";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0Y5SL1IM";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="X7GhUBHi";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="C/bdMNXX"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vj/LXfZO"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6819B14A4D0;
-	Wed, 26 Jun 2024 05:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBEA5139D10;
+	Wed, 26 Jun 2024 05:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719381514; cv=none; b=GPruFIEtYz2TdXeckvxTUD62YJMWRbcVooHYiDhEaqfS4FZQ55/kI8GOfcffOsk86SjzIe3IIoIxzMBjk8KjjfeDMBY7JZlKnr0+hsGU3GsuZMPzWXYFInvG3S3vWr3GnrlHNspN0G1hMXxWgcFXaeQx/Ms7IG4nm7L+3ZdQwkE=
+	t=1719381093; cv=none; b=kq/hsj+yPEhq1ualwRg/aauD/Z0FL2LtocIYqSvxuMOcgxP60E8P3a5e4XXjDc0mY7cM+lzmqOHrslsCPLPbnvEFk1z1LyJkwL0yoKqFfBOZtjv+HZkJtc2lT0qOFGphC7fzbanmeG+rfEgBIxBIJ3tO0X6reLUZiPYVbDVGmpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719381514; c=relaxed/simple;
-	bh=inVXOAMIdOZjO3QO75g9cTCjaOkAQugpokklTpMiCRI=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Zf40JiwYc0yqwsGokMsmtXzSDla+3NYR1g8TsnDL953j1+1DVipU5ORXpUeg1GCCvu0G986SNxolT/Zl0q9/ivRYQw2yRwjeXcFNb3J0/5+rV5F56fqWxbcfY8Ek3eP+SWJ8g6NYxAMuW7YW3DglayEFddpxCCV4+UMVsUxecEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=e9rC+Fmg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0Y5SL1IM; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=X7GhUBHi; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=C/bdMNXX; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id EB8FB1FB3E;
-	Wed, 26 Jun 2024 05:49:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1719380995; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j/rEw1FTMyOhY9HcnraTtAszd9vB9c1FXutJrwG1tbw=;
-	b=e9rC+Fmg7+qpgN6VhN1hDSByLi5jKcsnpqp3/hS5cTGB+SkcIuJzoIVCyJg4/mje2CCOih
-	PNiHaYpJ0/aFrvODbJFyZVYg5YejyZq0YAJgCugu+tAyT353PWBZ8ImiI+ZKHz0xRIoluO
-	i5UAsugD0oQTt6RCHk11jC92SDqhRnc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1719380995;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j/rEw1FTMyOhY9HcnraTtAszd9vB9c1FXutJrwG1tbw=;
-	b=0Y5SL1IMYVt16dABNhPuEGxRB3SD+Q7hWlnKeCTtEaqEL9t3ry3iNMquJP3UEQoUPkVRoF
-	WnIMFKLbmIWEmOAw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1719380994; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j/rEw1FTMyOhY9HcnraTtAszd9vB9c1FXutJrwG1tbw=;
-	b=X7GhUBHiXtwPhA49sxEFcxjL2Vi07x8dZg1bMj5EGvRIA8V6lEVmgXwtdOtqlgOdrncBH0
-	PZdbAhK3rkAEUHeYE+XzgyQhv+IJk8dg45cxwgg0mJCPsIXoGbscvAy7MYcjYGyerueHTq
-	VQF+BZeAKu4UEcTiYk74aF4Yy9NXyMs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1719380994;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j/rEw1FTMyOhY9HcnraTtAszd9vB9c1FXutJrwG1tbw=;
-	b=C/bdMNXXI2TMRncdE+24AqnfuZ8sEmhADpcy35Kgvm04mIf0d7fvJHsUbSJKY65ECZwNZQ
-	7Zl3fCceBpoFg9CA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8B3DA13ABD;
-	Wed, 26 Jun 2024 05:49:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id nao+IAKse2YeLQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Wed, 26 Jun 2024 05:49:54 +0000
-Date: Wed, 26 Jun 2024 07:50:21 +0200
-Message-ID: <878qysl0bm.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Dirk Su <dirk.su@canonical.com>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Stefan Binding <sbinding@opensource.cirrus.com>,
-	Kailang Yang <kailang@realtek.com>,
-	"Luke D. Jones" <luke@ljones.dev>,
-	Shenghao Ding <shenghao-ding@ti.com>,
-	Simon Trimmer <simont@opensource.cirrus.com>,
-	Athaariq Ardhiansyah <foss@athaariq.my.id>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	linux-sound@vger.kernel.org (open list:SOUND),
-	linux-kernel@vger.kernel.org (open list)
-Subject: Re: [PATCH] ALSA: hda/realtek: fix mute/micmute LEDs don't work for EliteBook 645/665 G11.
-In-Reply-To: <20240626021437.77039-1-dirk.su@canonical.com>
-References: <20240626021437.77039-1-dirk.su@canonical.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1719381093; c=relaxed/simple;
+	bh=MHp/zhusMFMz7uCcBaQsQqttODzjyCKr/GtDgI6hQkw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xapskr68LZz1amgK3wFy9ZJEMv137Vnhhss5OjiZJmaUhIK+9XxCEqBSGeK1PYPC2GCqUJr/ZkHd0DGcuXSDhi6fBbAwDjeTrZLXrcYiw0FJQNXL5BR0sNTEU5IqGo4Jy8LFDPJVvpvAq4i0qV/ASePeGWNKOhNglSNTl0HLqHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=vj/LXfZO; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (unknown [193.209.96.36])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 072A373E;
+	Wed, 26 Jun 2024 07:51:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1719381067;
+	bh=MHp/zhusMFMz7uCcBaQsQqttODzjyCKr/GtDgI6hQkw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vj/LXfZO2Tl3iAaaoMh7OLzFFO1HNUdCnhr9a+k0O1OxFMxd9kj+Kun2tDEc21lZA
+	 4/cp5SoG2Lu0ylCPfGluEO48cOmD4mfO4mog4ieRbpnbvWqi0Spo1E7Y1a/YXa+WB2
+	 O225teShT5kSQQxCl4+jpEBd+OMWJ32gGXvfVWUw=
+Date: Wed, 26 Jun 2024 08:51:08 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH] drm: renesas: Move RZ/G2L MIPI DSI driver to rz-du
+Message-ID: <20240626055108.GA10453@pendragon.ideasonboard.com>
+References: <20240625123244.200533-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -3.30
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240625123244.200533-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Wed, 26 Jun 2024 04:14:36 +0200,
-Dirk Su wrote:
+Hi Prabhakar,
+
+Thank you for the patch.
+
+On Tue, Jun 25, 2024 at 01:32:44PM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > 
-> HP EliteBook 645/665 G11 needs ALC236_FIXUP_HP_MUTE_LED_MICMUTE_VREF quirk to
-> make mic-mute/audio-mute working.
+> All the RZ/G2L DU specific components are located under the rz-du folder,
+> so it makes sense to move the RZ/G2L MIPI DSI driver there instead of
+> keeping it in the rcar-du folder. This change improves the organization
+> and modularity of the driver configuration by grouping related settings together.
+
+I was thinking the same the other day. Thanks for beating me at sending
+a patch :-)
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+Do you or Biju has committer rights to drm-misc to push this patch ?
+
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+>  drivers/gpu/drm/renesas/rcar-du/Kconfig                   | 8 --------
+>  drivers/gpu/drm/renesas/rcar-du/Makefile                  | 2 --
+>  drivers/gpu/drm/renesas/rz-du/Kconfig                     | 8 ++++++++
+>  drivers/gpu/drm/renesas/rz-du/Makefile                    | 2 ++
+>  .../gpu/drm/renesas/{rcar-du => rz-du}/rzg2l_mipi_dsi.c   | 0
+>  .../drm/renesas/{rcar-du => rz-du}/rzg2l_mipi_dsi_regs.h  | 0
+>  6 files changed, 10 insertions(+), 10 deletions(-)
+>  rename drivers/gpu/drm/renesas/{rcar-du => rz-du}/rzg2l_mipi_dsi.c (100%)
+>  rename drivers/gpu/drm/renesas/{rcar-du => rz-du}/rzg2l_mipi_dsi_regs.h (100%)
 > 
-> Signed-off-by: Dirk Su <dirk.su@canonical.com>
+> diff --git a/drivers/gpu/drm/renesas/rcar-du/Kconfig b/drivers/gpu/drm/renesas/rcar-du/Kconfig
+> index 53c356aed5d5..39af73cf2092 100644
+> --- a/drivers/gpu/drm/renesas/rcar-du/Kconfig
+> +++ b/drivers/gpu/drm/renesas/rcar-du/Kconfig
+> @@ -60,14 +60,6 @@ config DRM_RCAR_MIPI_DSI
+>  	select DRM_MIPI_DSI
+>  	select RESET_CONTROLLER
+>  
+> -config DRM_RZG2L_MIPI_DSI
+> -	tristate "RZ/G2L MIPI DSI Encoder Support"
+> -	depends on DRM && DRM_BRIDGE && OF
+> -	depends on ARCH_RENESAS || COMPILE_TEST
+> -	select DRM_MIPI_DSI
+> -	help
+> -	  Enable support for the RZ/G2L Display Unit embedded MIPI DSI encoders.
+> -
+>  config DRM_RCAR_VSP
+>  	bool "R-Car DU VSP Compositor Support" if ARM
+>  	default y if ARM64
+> diff --git a/drivers/gpu/drm/renesas/rcar-du/Makefile b/drivers/gpu/drm/renesas/rcar-du/Makefile
+> index b8f2c82651d9..6f132325c8b7 100644
+> --- a/drivers/gpu/drm/renesas/rcar-du/Makefile
+> +++ b/drivers/gpu/drm/renesas/rcar-du/Makefile
+> @@ -14,5 +14,3 @@ obj-$(CONFIG_DRM_RCAR_DU)		+= rcar-du-drm.o
+>  obj-$(CONFIG_DRM_RCAR_DW_HDMI)		+= rcar_dw_hdmi.o
+>  obj-$(CONFIG_DRM_RCAR_LVDS)		+= rcar_lvds.o
+>  obj-$(CONFIG_DRM_RCAR_MIPI_DSI)		+= rcar_mipi_dsi.o
+> -
+> -obj-$(CONFIG_DRM_RZG2L_MIPI_DSI)	+= rzg2l_mipi_dsi.o
+> diff --git a/drivers/gpu/drm/renesas/rz-du/Kconfig b/drivers/gpu/drm/renesas/rz-du/Kconfig
+> index 5f0db2c5fee6..8ec14271ebba 100644
+> --- a/drivers/gpu/drm/renesas/rz-du/Kconfig
+> +++ b/drivers/gpu/drm/renesas/rz-du/Kconfig
+> @@ -10,3 +10,11 @@ config DRM_RZG2L_DU
+>  	help
+>  	  Choose this option if you have an RZ/G2L alike chipset.
+>  	  If M is selected the module will be called rzg2l-du-drm.
+> +
+> +config DRM_RZG2L_MIPI_DSI
+> +	tristate "RZ/G2L MIPI DSI Encoder Support"
+> +	depends on DRM && DRM_BRIDGE && OF
+> +	depends on ARCH_RENESAS || COMPILE_TEST
+> +	select DRM_MIPI_DSI
+> +	help
+> +	  Enable support for the RZ/G2L Display Unit embedded MIPI DSI encoders.
+> diff --git a/drivers/gpu/drm/renesas/rz-du/Makefile b/drivers/gpu/drm/renesas/rz-du/Makefile
+> index 663b82a2577f..2987900ea6b6 100644
+> --- a/drivers/gpu/drm/renesas/rz-du/Makefile
+> +++ b/drivers/gpu/drm/renesas/rz-du/Makefile
+> @@ -6,3 +6,5 @@ rzg2l-du-drm-y := rzg2l_du_crtc.o \
+>  
+>  rzg2l-du-drm-$(CONFIG_VIDEO_RENESAS_VSP1)	+= rzg2l_du_vsp.o
+>  obj-$(CONFIG_DRM_RZG2L_DU)		+= rzg2l-du-drm.o
+> +
+> +obj-$(CONFIG_DRM_RZG2L_MIPI_DSI)	+= rzg2l_mipi_dsi.o
+> diff --git a/drivers/gpu/drm/renesas/rcar-du/rzg2l_mipi_dsi.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> similarity index 100%
+> rename from drivers/gpu/drm/renesas/rcar-du/rzg2l_mipi_dsi.c
+> rename to drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> diff --git a/drivers/gpu/drm/renesas/rcar-du/rzg2l_mipi_dsi_regs.h b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h
+> similarity index 100%
+> rename from drivers/gpu/drm/renesas/rcar-du/rzg2l_mipi_dsi_regs.h
+> rename to drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h
 
-Thanks, applied now.
+-- 
+Regards,
 
-
-Takashi
+Laurent Pinchart
 
