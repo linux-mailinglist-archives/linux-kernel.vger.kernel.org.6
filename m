@@ -1,93 +1,108 @@
-Return-Path: <linux-kernel+bounces-231090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C35FF91860F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:39:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EC1091860C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:39:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D4AD1F212F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:39:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19F0028429E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:39:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A6618E762;
-	Wed, 26 Jun 2024 15:39:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 553D118C35B;
+	Wed, 26 Jun 2024 15:39:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="l94VoYcn"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aiRfV30b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2D118C34B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907B918C34A;
 	Wed, 26 Jun 2024 15:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719416359; cv=none; b=XoLVyoU8oAt+6wS0ZRJ5sKXpEoFlfOeKRS5grybSyCPvnBfu0W8yvrcTSq3A0n89t0ZfKXdPQNH8ZlIywNNYRUjOzwiXJMttE/KMDx5d8bktBeeF3iSLoR8RlPM2dRMwDZzp/QZr9kK3V1lIg2j3sfhEjdgP27NQjhtoeUA3RW8=
+	t=1719416357; cv=none; b=b9wFLZPSoV78Yl7A72jjk0Z2sHDWdAU6SqJck1dTybgXW6hi0dCoYEIxnPw3izIuSixogOVuCL229N/3aCs+Qp6Ns3/XKykgIL6maWmFfY/cG0ruWlALhL7imWXeY8HZwbeyl6AfQkIGHsOBSvC8f3KAoVbnX5RqWQvVu8GAXb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719416359; c=relaxed/simple;
-	bh=0adLUO8t8jDrE8KFJgKgS1xWlQGXyFePt2oJdFvjdc0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=PtC0ahYpgAbSUViZxwe7N1WqGn+BayvOtHu8w11zM6oem1ddFkYtyK7cwzj1xA6YFSEZ80RfF9tiF7awCFAujQp1csobLwv7GdIoQnbuzDZAxfOJ0k0ajUCioing697MJjYyU5+uWnP+ByIidxZylCEduAzQ2Satq8JTlanXs1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=l94VoYcn; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 0B59845E2B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1719416351; bh=PgEyPeBVA82w0vwwqwOb+4wIK5bkzxbeIhbog1W2lJg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=l94VoYcnEQvybRqbGOduVQTU6AtC4I7bw3N9EcXUx33AIYaAKMv+fDtVj3Lqmc+E9
-	 ufiGoUy66ihk2IiTPqdlehJfrOQLhQgkJXFUOfMO4I7/oZujEqiIH1M+8LP5NpazYe
-	 /N4vRK8foLhs0HRGEARpb2hMWBlAMHPHV5JETRKnQRhet4WH2B2lBZNpW2wH6plozS
-	 Zi+hOlJRE0fiLHiESdXQDGc8/TVqS/efqgNDwgcVedDIvQz2ewpm3SGcnJj8Hh/0MB
-	 xlL7p8qWPpnVQUquyE8DUJUXh87LLr46mKLCME4nHB5htcodRzDP6r9iTq3G/lRzzn
-	 T8RxzcwHOU96w==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 0B59845E2B;
-	Wed, 26 Jun 2024 15:39:10 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Jiri Kastner <cz172638@gmail.com>, linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cz172638@gmail.com, Steven Rostedt
- <rostedt@goodmis.org>
-Subject: Re: [PATCH] Documentation/tools/rv: fix document header
-In-Reply-To: <20240626150727.156397-1-cz172638@gmail.com>
-References: <20240626150727.156397-1-cz172638@gmail.com>
-Date: Wed, 26 Jun 2024 09:39:09 -0600
-Message-ID: <87ikxv3e8y.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1719416357; c=relaxed/simple;
+	bh=IhtfoX2xoWChAu+Pe7FH52ll/R7Au3OdYNJJdaxYtFE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kg8xYPdyJCZSsokLTKiyiRJgC3dwgoTV+//QRrQl7dXF1JrqjGrgs/3QdmlASeGGT3ri/bbrTlkG+C/q3wH0vLgnE1bhulpTpop5D6ebZn+FKuITOTmUlazS+T9N1U137+a5YBKEygco95krlyNEVJBbG8G3z8/x102/Ysatmn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aiRfV30b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DCC5C32789;
+	Wed, 26 Jun 2024 15:39:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719416357;
+	bh=IhtfoX2xoWChAu+Pe7FH52ll/R7Au3OdYNJJdaxYtFE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aiRfV30bum5kTG4yK4BM1hS8H8MOrxY3vfMduOAdKjNjmmOwAcwjnzTKHHMVJGiZd
+	 OSSyMAY5XgVtDyvACP2ZpyI9eDelZimE7s3/4se8wSj9yaGRlNqEJlk8H/VvcXE6Ax
+	 q1uOphO8cUPZl+I+URTXP8zLdyl6m3JiTE3I37SFHLwcGSbCr/ooxbVhWW/Q6QQzXy
+	 5HPCuDCEiii+trR0Dje2IuCYx9KTq2nqjaKebQro7R9cFzeUTSGAIFuuqbdCdrD3RE
+	 fwK/a+4WT7gYy2S6zrMdBL6TyAR/U/G+W+96JRPyQZZQXzbLcePsQeuhR/FfXuUyV/
+	 Ht0uuIJ6Amq4w==
+Date: Wed, 26 Jun 2024 16:39:10 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+	Robert Moore <robert.moore@intel.com>, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev,
+	Aishwarya.TCV@arm.com
+Subject: Re: [PATCH 2/5] ACPI: sysfs: use device lifecycle for _STR result
+Message-ID: <d599e864-9961-44e3-8b9b-bc41a8044319@sirena.org.uk>
+References: <20240613-acpi-sysfs-groups-v1-0-665e0deb052a@weissschuh.net>
+ <20240613-acpi-sysfs-groups-v1-2-665e0deb052a@weissschuh.net>
+ <a72495c3-c996-4be7-bc64-ba10d5400971@sirena.org.uk>
+ <111f7a2c-403b-40b3-9e25-8c4a040d8dfb@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ThsiVx38b9ZxGlco"
+Content-Disposition: inline
+In-Reply-To: <111f7a2c-403b-40b3-9e25-8c4a040d8dfb@t-8ch.de>
+X-Cookie: Results vary by individual.
 
-Jiri Kastner <cz172638@gmail.com> writes:
 
-> align header of document with filename and rest of the content
->
-> Signed-off-by: Jiri Kastner <cz172638@gmail.com>
-> ---
->  Documentation/tools/rv/rv-mon.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/tools/rv/rv-mon.rst b/Documentation/tools/rv/rv-mon.rst
-> index af0f329a7c9c..bed937120dca 100644
-> --- a/Documentation/tools/rv/rv-mon.rst
-> +++ b/Documentation/tools/rv/rv-mon.rst
-> @@ -1,7 +1,7 @@
->  .. SPDX-License-Identifier: GPL-2.0
->  
->  =======
-> -rv-list
-> +rv-mon
->  =======
+--ThsiVx38b9ZxGlco
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-A nit, but you should adjust the "=====" lines to match the new length
-of the heading text.
+On Tue, Jun 25, 2024 at 11:56:18PM +0200, Thomas Wei=DFschuh wrote:
+> On 2024-06-25 21:57:13+0000, Mark Brown wrote:
 
-Thanks,
+> > <2>[   50.236703] acpi LNXTHERM:08: Resources present before probing
 
-jon
+> This does make sense, the device is not yet bound to a driver.
+> Which apparently precludes the usage of devres.
+
+Oh, yes - I really wouldn't expect that to work at all, devres is all
+about tying things to the device being bound so trying to use it outside
+of that is not something I'd expect to go well.
+
+> I'm also wondering why the _STR attribute behaved differently in the
+> first place.
+> Does the patch below work better?
+
+That patch applied on top of -next appears to resolve the issue.
+
+--ThsiVx38b9ZxGlco
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ8Nh4ACgkQJNaLcl1U
+h9D87wf/VyUjV4W7+iYgqIYNd/24zKKwbxyauIimxphLw7n6u+synEimAReZyfYK
+HI/AFPsvBAYPcEoxXpNKI7P9fglF57aZiPZ9sVDYen2eu0TzVMzoHb9ulBVldtjD
+v8ZIyVuLR+I2dML06fiCtu2ILNvj64qogHCPdYx5VwAfCifR0upX4WHVKVMHxO14
+QsfvS26j4ltxXJaBCZUaLvdEDnUS5lcwdo2t/c3Nz2Ghi0i43SUoYCD5RpDVlojh
+fCB0Vv5m7UFZ82nRW/rcziIZiemckDIu2mx+TLEH5frIuj5eJNQeD4XGbtb06Y2e
+x8e1qU7j1Qq1ctHhaTsuJIt9frRlrw==
+=Vt/1
+-----END PGP SIGNATURE-----
+
+--ThsiVx38b9ZxGlco--
 
