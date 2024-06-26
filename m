@@ -1,56 +1,61 @@
-Return-Path: <linux-kernel+bounces-231234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDB309187F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:54:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 055219187F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:55:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3286DB23EB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:54:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36D6C1C2229B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:55:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080E218FC7E;
-	Wed, 26 Jun 2024 16:54:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 135B718FC8B;
+	Wed, 26 Jun 2024 16:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LN4JmXCc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F6WTeWn0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE4B18F2FB
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 16:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518F71F94C;
+	Wed, 26 Jun 2024 16:55:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719420868; cv=none; b=CqrwSqZf7/RyA/4mjACB6GlLL9Bmr+8kNyNtR0aQBtZwN2C8XtmIH1uxgtmxPe1Ua93G5an16iv0qA7OvIe+0a/k0eRZe1t+U3Nh6zE+b1VYKfWM3N/gNtfCnhbupqgHThoiKb98EWMsEZw1lX5+LECURmaMWT/ayqy+8yI7Jz8=
+	t=1719420901; cv=none; b=JIqRYPVRTcu9od4QJEI0eSQkxPlat43EgKUIOX14+XXdi1o5Pzyy1SSP3fjg1rJpPBAuL0KEEIZcU8IB7luzDj94pU3lrSL3zp9SL1/2ZQHnfwPpQ7WLSrgG1bIuBLKc2CqH5vQHZ2R1GNisNlOfkA9/39VtvRyfjUMczgilNU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719420868; c=relaxed/simple;
-	bh=vuQ95v/XobD4p57iVF+boo7bRhPNg5WjVwCG2jX4hE8=;
+	s=arc-20240116; t=1719420901; c=relaxed/simple;
+	bh=guTEOVrfyugyFbl4bTnst/wvSCcXeILGp5gqdzHoRbI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tK57R+wcVpj+nLJBwOy7uyjnQsD3HJDvLcYIaJdSVdvJNBzDQnTjmQRET3PoTIlPBhnFgLVxbAMP1taWJx2ropYIYyd0VvLbz9+Z2I2iQlLZcpMRBj3pbCwjRBIZWjcwIwfLCSp4aXw0m7yRzOaEnGLKv9IdqcjluPJ7LE0NH6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LN4JmXCc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CBC4C116B1;
-	Wed, 26 Jun 2024 16:54:27 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=dukXDHjSzQESqPN3Lw2SGXfP2mLpxeU3E+Kve9bDx0VNxfx6ueN9N0uU9yOJ+h9k4XUdKBBpN2SA74ugIaszVQ5Fzl3qftp/RuBWCAaWJgfZWs614qJs0/FRyMPoFpANcVjir6AS95Rv7ABmyFqdx5TyYy5GVw5QedhQubDJ/UE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F6WTeWn0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69285C116B1;
+	Wed, 26 Jun 2024 16:54:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719420868;
-	bh=vuQ95v/XobD4p57iVF+boo7bRhPNg5WjVwCG2jX4hE8=;
+	s=k20201202; t=1719420900;
+	bh=guTEOVrfyugyFbl4bTnst/wvSCcXeILGp5gqdzHoRbI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LN4JmXCcpc3Ja5dPcrcqKeuOqyyAboTn8KDXhrHKF1MoH62+We4Uw4w9CHP7yWrZP
-	 tbJHxcaLCqaMBujOOK2526j21K9Mi5MNA97OO0213urR/YAWepIeqrFSj5nyw8tsjK
-	 mjcAfh2NmTsm6i28ux2HmerKXgtI+O1gdm8qjLLYhVno9FVjOFS9YQEE/MQSAVjRQB
-	 qRSNojsTISMxz/vMIoWt1KaAXWwaMbqYoWla6/tP6u2IXHxwpgCr8JM28Rfu/Uaa1N
-	 XuRo3bqH4Klfo66yXyPUeRGgrp2SBaBNfBHmCC3CRE7YnmW4GP/VsYUeCG7ZaMPPWk
-	 JMKpTqmEt1Jjw==
-Date: Wed, 26 Jun 2024 10:54:24 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: John Meneghini <jmeneghi@redhat.com>
-Cc: hch@lst.de, sagi@grimberg.me, linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org, emilne@redhat.com,
-	jrani@purestorage.com, randyj@purestorage.com,
-	chaitanyak@nvidia.com, hare@kernel.org
-Subject: Re: [PATCH v8 0/2] nvme: queue-depth multipath iopolicy
-Message-ID: <ZnxHwNflN3l9EN8p@kbusch-mbp.dhcp.thefacebook.com>
-References: <20240625122605.857462-1-jmeneghi@redhat.com>
- <ZnryTZqwlz61s0D4@kbusch-mbp.dhcp.thefacebook.com>
+	b=F6WTeWn0h/Zrswno15KKNmdcaNuoMu516iIBTN3mNiUj/aQj6CrCoE47x3nQ43tN6
+	 SOOV5owGQZoh6/xyw3Bf2ikI9VBkRPKSIRRzu+FLbtsSuuzLiRqCBxop3eN0yQHvEn
+	 LufDBsHf+zAvDFVmYbf1hiwXW8F93FjtAHSCxZVevshIKmB+MUn2ucWp9IBA9yQD9K
+	 rWp8cfKJIPuhgBw4tSbJCuXJ4ezPgBp05JjsmdibLvy04Yo4Ihm6hf3veRYG98KGst
+	 fbT8oHEFIH822B8PRX5xTXMRHpRZ85KYu6Qrk8tTie0zaQcNQwJqO5lZYmJMnZbluu
+	 iodm2HMIqepyQ==
+Date: Wed, 26 Jun 2024 17:54:55 +0100
+From: Simon Horman <horms@kernel.org>
+To: Aaron Conole <aconole@redhat.com>
+Cc: netdev@vger.kernel.org, dev@openvswitch.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Pravin B Shelar <pshelar@ovn.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Shuah Khan <shuah@kernel.org>, Stefano Brivio <sbrivio@redhat.com>,
+	=?utf-8?Q?Adri=C3=A1n?= Moreno <amorenoz@redhat.com>
+Subject: Re: [PATCH net-next v3 6/7] selftests: net: Use the provided dpctl
+ rather than the vswitchd for tests.
+Message-ID: <20240626165455.GA3104@kernel.org>
+References: <20240625172245.233874-1-aconole@redhat.com>
+ <20240625172245.233874-7-aconole@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,15 +64,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZnryTZqwlz61s0D4@kbusch-mbp.dhcp.thefacebook.com>
+In-Reply-To: <20240625172245.233874-7-aconole@redhat.com>
 
-On Tue, Jun 25, 2024 at 10:37:33AM -0600, Keith Busch wrote:
-> On Tue, Jun 25, 2024 at 08:26:03AM -0400, John Meneghini wrote:
-> > Please add this to nvme-6.11.
+On Tue, Jun 25, 2024 at 01:22:44PM -0400, Aaron Conole wrote:
+> The current pmtu test infrastucture requires an installed copy of the
+> ovs-vswitchd userspace.  This means that any automated or constrained
+> environments may not have the requisite tools to run the tests.  However,
+> the pmtu tests don't require any special classifier processing.  Indeed
+> they are only using the vswitchd in the most basic mode - as a NORMAL
+> switch.
 > 
-> This looks good to me! I'll give another day for potential
-> comments/reviews, but I think this okay for 6.11.
+> However, the ovs-dpctl kernel utility can now program all the needed basic
+> flows to allow traffic to traverse the tunnels and provide support for at
+> least testing some basic pmtu scenarios.  More complicated flow pipelines
+> can be added to the internal ovs test infrastructure, but that is work for
+> the future.  For now, enable the most common cases - wide mega flows with
+> no other prerequisites.
+> 
+> Enhance the pmtu testing to try testing using the internal utility, first.
+> As a fallback, if the internal utility isn't running, then try with the
+> ovs-vswitchd userspace tools.
+> 
+> Additionally, make sure that when the pyroute2 package is not available
+> the ovs-dpctl utility will error out to properly signal an error has
+> occurred and skip using the internal utility.
 
-I fixed up the suggestions from Christoph while applying. Thanks,
-patches are now in nvme-6.11.
+Hi Aaron,
+
+I don't feel strongly about this, but it does feel like the
+change to ovs-dpctl.py could live in a separate patch.
+
+> Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
+> Signed-off-by: Aaron Conole <aconole@redhat.com>
+
+The above not withstanding,
+
+
+Reviewed-by: Simon Horman <horms@kernel.org>
+
+I have tested pmtu.sh with this change on Fedora 40 both
+with python3-pyroute2 installed, which uses ovs-dpctl,
+and without, which uses ovs-vswitchd userspace tools.
+
+Tested-by: Simon Horman <horms@kernel.org>
+
+...
 
