@@ -1,240 +1,163 @@
-Return-Path: <linux-kernel+bounces-230007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5BAA917736
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:21:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EA1791773B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:22:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 035C5284176
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 04:21:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8A381F23BB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 04:22:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC0DE13A404;
-	Wed, 26 Jun 2024 04:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC28413AD2A;
+	Wed, 26 Jun 2024 04:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q7nzxwK6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Q2HbgHBW"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2084.outbound.protection.outlook.com [40.107.243.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E1A33CFC;
-	Wed, 26 Jun 2024 04:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719375683; cv=none; b=dlV+ijcwlOcDcDixBDAdHcUDXoLINuJ+RMUfHlVYJaN9FIKyuzwLu+c061Pd518l/kVcVKJSRlkdkVaJzqznXM+Ni5hmPFJCwNmVQVpM1TJQZUBFK0cfjsjRR9j35cnehuC/IOWBL5RxRUw+aIUm5VQ2IUgMtF7ZY7JMSvXyjuE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719375683; c=relaxed/simple;
-	bh=Yz3MlfJG2BhYwuDYDp011mvqwoaVZRUustBqjrMx34M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q/pWYmG3q7knLpTjLjCLnA21Ndx4R3+Yt0Jj3rl9Vf0OFT7dM0qC8BvdDDTvyW56eycTjWJj1EAaLlkqvoMKKABnjYVx5r6/6LMAQiIbtBuXMb+jTYdGiLmCRt9NzeRdVDkpMgweXnLvWRFS4I92TZFV2mJN+NNDjPzTD/Tgr+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q7nzxwK6; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719375681; x=1750911681;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Yz3MlfJG2BhYwuDYDp011mvqwoaVZRUustBqjrMx34M=;
-  b=Q7nzxwK6jK3wy6LJanHI4KmiY7ZBntpclBT2edUtcRfDrvibXarhz2Kb
-   8r8L1yw/Q9QHPRfjr5zB05ntlNrMHFscuVQ+TarSRY6YxteQ2RZpy9trn
-   b6dtnMept32nnELNsFN/4SaCKqIJbk4CqVmKH3MvL4I6280El4VL8tls7
-   FAx6AgfmT0cPuxJAer1YuQ4x3XlfYlOA8dUQIEplJl4FqNHK7fNPAy0bc
-   LB54T/HKjhubAZqNa3Oo5bsWSCXb2WCrqYRVwawbdo7eRMgpfujRymK6/
-   cd0VtpEe4XQ44EnDPjuXznI/UZstU4lv99LI5GXprlQkZJ+XvpW4j997O
-   Q==;
-X-CSE-ConnectionGUID: jX/ZHGgZT9+UXLawmhyDJQ==
-X-CSE-MsgGUID: TGcnYFxKQJ+dYWg9JIT8Mw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="38940396"
-X-IronPort-AV: E=Sophos;i="6.08,265,1712646000"; 
-   d="scan'208";a="38940396"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 21:21:20 -0700
-X-CSE-ConnectionGUID: +8eUPmsXS3WmwCCzRKgP/A==
-X-CSE-MsgGUID: HOv0waBtR8y8G+++wxQYaA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,265,1712646000"; 
-   d="scan'208";a="48847102"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 25 Jun 2024 21:21:16 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sMK9i-000EyU-03;
-	Wed, 26 Jun 2024 04:21:14 +0000
-Date: Wed, 26 Jun 2024 12:20:21 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Ethan D. Twardy" <ethan.twardy@gmail.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
-	Aswin Unnikrishnan <aswinunni01@gmail.com>,
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH 1/4] kbuild: rust: Expand rusttest target for macros
-Message-ID: <202406261127.VzakF8rL-lkp@intel.com>
-References: <20240624030327.90301-2-ethan.twardy@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DAC278C95;
+	Wed, 26 Jun 2024 04:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719375705; cv=fail; b=pdAAMaebi+nyNDsbVcoPRlp89LoqbSEG5e/lL9pwkv3DJZ7+1jjJ4FesMz+9mz4pJYVCFt76LrWG4wn2+2lBC2ugUW8HWtEgWVpsCRnNN4XtbeozrjCjsOuZS/Gk9Zt86ikewWOMMw5iq99f716uxOSumW41gYdpINlUNU8xpZI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719375705; c=relaxed/simple;
+	bh=0ML53bo8IrNAxQoJvcqDmODvUDdLcyc9KXT16SDuBIE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=b36LP/C4rmY3UcbDRBJYYTsaYOjEXqjhdkkmY4orNosCF7o/YJbP9CySijHAs/0ggIlhOzc6yYtmiC6D+C8Cm+ud0n4LwKSKJ25W8OmYtQh5g5h2svjWyI7AOH1fZf+fTrgsLP5fsA1PQw65p58kZ7XJZPbTQ10w8nAyGMm2ZTc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Q2HbgHBW; arc=fail smtp.client-ip=40.107.243.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Ks4sL0AH1yhTlHyGOXbtntPN1kSSRf9gVsxkiAnBVfKR5SEHizyt3JKj1X5uWtWyiH6HuYh/K2b54cug+ON70U20bJuETyjuWO4hMMXOkwGb9+OW4m78ipQCJTZeEITV+FbOpIOHrg6lKvfzWkrC44nIm7b8jLbd+dl5T7yXi21jB+rcTMk4AbOiEyLEa9QPXMRgbFNOOA15jL6qje93/HkPrk1Xox3pFgDG3T1sXvZDxAIC11THJLFDTvxE+34oUvnWXIxEY0IYKfGnUR63oTuS7pAsxhNoIB9K27xsAnfLXr4phjVgLA22SWXv5zvAI2e2iC3KSc3Qz9kTNU8RHQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wFJcL3hQNjJ3pLghJFw4NEr8m5YkyiXqud5I28/kP64=;
+ b=Im8YyXaoQDv2AkYLCEhLE2T87vqFGNNQOI5dKTOkjfSfKw6H+Ogh1EpuRe8UmBW5inGOx+L35S8ciLCoxfXH0RimpxN5dDJmoLoGoceKmE7gQnbG03oKcrB6xmyFi8JgK0oXCPcf0rnZe4+jyOu2MCnBjRTPTtJG4OTokCbIrCDJJ/Hh6ef+0KT+Huns+DquzeTiy4gaBUACSwJU2ZzUHRuqmmLKuiVW6vYHSZkRw3tNe4dXeccqccdGlsvj4ItoUCrz/aaxf+gKRpozA7R86vWATG3K2b7uQwseB25cWHB1IxU1E4rY7Q6EeOEvCJQDEcnj3Lb3HzZEa9d2qYsWUw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=alien8.de smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wFJcL3hQNjJ3pLghJFw4NEr8m5YkyiXqud5I28/kP64=;
+ b=Q2HbgHBWFVWTUyjH4pEgwH1iDrApFUld8VyqXLMGtL3v5OLxpSH/tAx/mE0QYAArtqqkwgHWPKDrzgJt2eAlrpI3eWcQbS1oa7uWKbbp7XKlEia86ZVYwfIHK5kjxQiLP7Dvk3bFBjjy/UVic7ghzpzFJYF0JfLRc9o985Xlgu4=
+Received: from PH2PEPF00003857.namprd17.prod.outlook.com (2603:10b6:518:1::79)
+ by SJ0PR12MB6902.namprd12.prod.outlook.com (2603:10b6:a03:484::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.29; Wed, 26 Jun
+ 2024 04:21:41 +0000
+Received: from SN1PEPF000397B3.namprd05.prod.outlook.com
+ (2a01:111:f403:f90d::1) by PH2PEPF00003857.outlook.office365.com
+ (2603:1036:903:48::3) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.20 via Frontend
+ Transport; Wed, 26 Jun 2024 04:21:41 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SN1PEPF000397B3.mail.protection.outlook.com (10.167.248.57) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7677.15 via Frontend Transport; Wed, 26 Jun 2024 04:21:41 +0000
+Received: from AUS-P9-MLIMONCI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 25 Jun
+ 2024 23:21:39 -0500
+From: Mario Limonciello <mario.limonciello@amd.com>
+To: Borislav Petkov <bp@alien8.de>, "Gautham R . Shenoy"
+	<gautham.shenoy@amd.com>, Perry Yuan <perry.yuan@amd.com>
+CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	"Dave Hansen" <dave.hansen@linux.intel.com>, "maintainer:X86 ARCHITECTURE
+ (32-BIT AND 64-BIT)" <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
+	Huang Rui <ray.huang@amd.com>, Mario Limonciello <mario.limonciello@amd.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>, Viresh Kumar
+	<viresh.kumar@linaro.org>, Nikolay Borisov <nik.borisov@suse.com>, Peter
+ Zijlstra <peterz@infradead.org>, "open list:X86 ARCHITECTURE (32-BIT AND
+ 64-BIT)" <linux-kernel@vger.kernel.org>, "open list:AMD PSTATE DRIVER"
+	<linux-pm@vger.kernel.org>
+Subject: [PATCH 0/2] Fixes for wrong performance levels in acpi-cpufreq
+Date: Tue, 25 Jun 2024 23:20:41 -0500
+Message-ID: <20240626042043.2410-1-mario.limonciello@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240624030327.90301-2-ethan.twardy@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF000397B3:EE_|SJ0PR12MB6902:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4d172aaf-d240-4c93-5c77-08dc95977ac4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230038|36860700011|7416012|376012|1800799022|82310400024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?KoqzcTIWBD1BgaFG3Z1wAaGDDARk6dQk4tYCcYy3LhIm+suKpS+nII/RPU7q?=
+ =?us-ascii?Q?i9fCY4h5lYyUV6tj+JkWopQx7mJqq7Nuw2BTroBDjs8QpR9SajJuWocDMj5o?=
+ =?us-ascii?Q?g1uffimJo7znf/xidO0UQ0jNPfdiZH7FEiCXoliS/La84LEpg0qXiRm2xIYJ?=
+ =?us-ascii?Q?ZnHlaLYdbP+XojD5L1mBWQGCEyqz8Ej5cnRgssq9N0dtiiOSSb7OqJ/ESkLj?=
+ =?us-ascii?Q?BtWYdV7nOSxEpOPWknGFs3RGR8wdQYK6W6HR1AMA/UDLs0M6Ah5uaZMFEv+Z?=
+ =?us-ascii?Q?fq1haqK/zBWtlv4Kr7LnSrSk1qISV7WeW8NAgq4YmG0qAANy7nkqoARaGw18?=
+ =?us-ascii?Q?IDbOkyuysbAX5zan22NHy2zdisbAGiUOxJFzcoNHOMoP5C/Q4hzbp9o6h9/S?=
+ =?us-ascii?Q?iiFyYKj4qNQCCh5g26YbXQ7o8Lg/tf0p7NdLaaImJeqxqW3PsXf/RNuyE1ks?=
+ =?us-ascii?Q?iAYNsvZesUkF44SfNckfRihcX5dqbmbtsmatV37eWzKIR9rgF+kavki5wRyM?=
+ =?us-ascii?Q?n7z0TMD5N0EetVNAQgPWQxGYSd/wIgAAJjtkJPhaop+opOYql6XpFjD5gQVz?=
+ =?us-ascii?Q?VO6f4tsX0R43/qdtm1ucfFxoGfLoCYn8PC7OiC3DG9LYpea335ar+AXrVEna?=
+ =?us-ascii?Q?QXgQfayE/uzbFHHVRXu19/qso+C5Ojb1Oj5nr68/gLSfjgUbJ74gYrR5Kulc?=
+ =?us-ascii?Q?+bQArYqxrahUe2GoLOotTJbjOEK2AO7at4HW+UPg8Ga+44OEW9P8oXx6ZLD5?=
+ =?us-ascii?Q?SA4p53zthVsbf+lSljY8ycpcKmNSuDu8ersMLj7efmFXnqmwZbHTEBY1smO2?=
+ =?us-ascii?Q?C4lkZo2v5B3vDjEBOXIQ2UTtvdmN6XhEfO22zRZHs5vLJ2Rgbcn1CFcgI4Ux?=
+ =?us-ascii?Q?9jY8wCaRwR8dVgAzJQvj9/ABLhzbNfw4jrMSCPQFxXCX4uqVuijp9YC4P1gt?=
+ =?us-ascii?Q?qRWlN2o8F9zkInJIO/7J+vFMe/4pyguLU8jbNfgp6eOaUiaXWv8Ts4z3ST13?=
+ =?us-ascii?Q?/dZ2k7BQasVnwBR8Uzl3mRvxtrXpqXeaRuYJcGyZsPIE++90IWGyEbW2HVDh?=
+ =?us-ascii?Q?vAGrEpQXIHqM5qMBIKC4kekqrgLKCQ3Lpiuqyd1G+BLAMR3cmNcHf6vF03tR?=
+ =?us-ascii?Q?XbkN5QNFjP8V3l/4LAIBvoDFyRQnm2/0M6QdeHrL1eo4BJSAjXysHBqrfW+d?=
+ =?us-ascii?Q?QxREWacKcRwbJS7VvnqABUfCj/IQAJVHVEt/2SxYq3801CyNDdrIV4KMZtTr?=
+ =?us-ascii?Q?lEL3AxWMqGwzrYy+X+uEvSSr8xxP6CCTIU7Ms/dKabTsK4baaE6Ua6UHlSPr?=
+ =?us-ascii?Q?NNAKbNkfCE7QwBLWshEDgBRuxuzm3jFMl758ay/ryH55GJAco3YP7H9IMk2S?=
+ =?us-ascii?Q?3ximcUBluWFg2GNuxzPtFn0MnQOxRFwoJjdXMl4pH3gHjkqSVQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230038)(36860700011)(7416012)(376012)(1800799022)(82310400024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 04:21:41.1275
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4d172aaf-d240-4c93-5c77-08dc95977ac4
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF000397B3.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6902
 
-Hi Ethan,
+In testing with amd-pstate disabled, I noticed that family 0x19 model 0x70
+(Phoenix) was reporting an inccorrect max frequency.  This is because the
+perf levels used to look it up are wrong.
 
-kernel test robot noticed the following build warnings:
+The correct values are stored in amd-pstate, but there is no reason to
+store it in two places. Move the amd-pstate values over to one place
+so that both drivers get the right values.
 
-[auto build test WARNING on a126eca844353360ebafa9088d22865cb8e022e3]
+Mario Limonciello (2):
+  x86/cpu/amd: Clarify amd_get_highest_perf()
+  cpufreq: amd-pstate: Use amd_get_highest_perf() to lookup perf values
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ethan-D-Twardy/kbuild-rust-Expand-rusttest-target-for-macros/20240625-230535
-base:   a126eca844353360ebafa9088d22865cb8e022e3
-patch link:    https://lore.kernel.org/r/20240624030327.90301-2-ethan.twardy%40gmail.com
-patch subject: [PATCH 1/4] kbuild: rust: Expand rusttest target for macros
-config: x86_64-rhel-8.3-rust (https://download.01.org/0day-ci/archive/20240626/202406261127.VzakF8rL-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240626/202406261127.VzakF8rL-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406261127.VzakF8rL-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> rust/Makefile:151: warning: overriding recipe for target 'rusttestlib-build_error'
->> rust/Makefile:143: warning: ignoring old recipe for target 'rusttestlib-build_error'
->> rust/Makefile:171: warning: overriding recipe for target 'rusttestlib-uapi'
->> rust/Makefile:156: warning: ignoring old recipe for target 'rusttestlib-uapi'
-
-
-vim +151 rust/Makefile
-
-    59	
-    60	core-cfgs = \
-    61	    --cfg no_fp_fmt_parse
-    62	
-    63	alloc-cfgs = \
-    64	    --cfg no_global_oom_handling \
-    65	    --cfg no_rc \
-    66	    --cfg no_sync
-    67	
-    68	quiet_cmd_rustdoc = RUSTDOC $(if $(rustdoc_host),H, ) $<
-    69	      cmd_rustdoc = \
-    70		OBJTREE=$(abspath $(objtree)) \
-    71		$(RUSTDOC) $(if $(rustdoc_host),$(rust_common_flags),$(rust_flags)) \
-    72			$(rustc_target_flags) -L$(objtree)/$(obj) \
-    73			--output $(rustdoc_output) \
-    74			--crate-name $(subst rustdoc-,,$@) \
-    75			$(if $(rustdoc_host),,--sysroot=/dev/null) \
-    76			@$(objtree)/include/generated/rustc_cfg $<
-    77	
-    78	# The `html_logo_url` and `html_favicon_url` forms of the `doc` attribute
-    79	# can be used to specify a custom logo. However:
-    80	#   - The given value is used as-is, thus it cannot be relative or a local file
-    81	#     (unlike the non-custom case) since the generated docs have subfolders.
-    82	#   - It requires adding it to every crate.
-    83	#   - It requires changing `core` which comes from the sysroot.
-    84	#
-    85	# Using `-Zcrate-attr` would solve the last two points, but not the first.
-    86	# The https://github.com/rust-lang/rfcs/pull/3226 RFC suggests two new
-    87	# command-like flags to solve the issue. Meanwhile, we use the non-custom case
-    88	# and then retouch the generated files.
-    89	rustdoc: rustdoc-core rustdoc-macros rustdoc-compiler_builtins \
-    90	    rustdoc-alloc rustdoc-kernel
-    91		$(Q)cp $(srctree)/Documentation/images/logo.svg $(rustdoc_output)/static.files/
-    92		$(Q)cp $(srctree)/Documentation/images/COPYING-logo $(rustdoc_output)/static.files/
-    93		$(Q)find $(rustdoc_output) -name '*.html' -type f -print0 | xargs -0 sed -Ei \
-    94			-e 's:rust-logo-[0-9a-f]+\.svg:logo.svg:g' \
-    95			-e 's:favicon-[0-9a-f]+\.svg:logo.svg:g' \
-    96			-e 's:<link rel="alternate icon" type="image/png" href="[/.]+/static\.files/favicon-(16x16|32x32)-[0-9a-f]+\.png">::g' \
-    97			-e 's:<a href="srctree/([^"]+)">:<a href="$(realpath $(srctree))/\1">:g'
-    98		$(Q)for f in $(rustdoc_output)/static.files/rustdoc-*.css; do \
-    99			echo ".logo-container > img { object-fit: contain; }" >> $$f; done
-   100	
-   101	rustdoc-macros: private rustdoc_host = yes
-   102	rustdoc-macros: private rustc_target_flags = --crate-type proc-macro \
-   103	    --extern proc_macro
-   104	rustdoc-macros: $(src)/macros/lib.rs FORCE
-   105		+$(call if_changed,rustdoc)
-   106	
-   107	rustdoc-core: private rustc_target_flags = $(core-cfgs)
-   108	rustdoc-core: $(RUST_LIB_SRC)/core/src/lib.rs FORCE
-   109		+$(call if_changed,rustdoc)
-   110	
-   111	rustdoc-compiler_builtins: $(src)/compiler_builtins.rs rustdoc-core FORCE
-   112		+$(call if_changed,rustdoc)
-   113	
-   114	# We need to allow `rustdoc::broken_intra_doc_links` because some
-   115	# `no_global_oom_handling` functions refer to non-`no_global_oom_handling`
-   116	# functions. Ideally `rustdoc` would have a way to distinguish broken links
-   117	# due to things that are "configured out" vs. entirely non-existing ones.
-   118	rustdoc-alloc: private rustc_target_flags = $(alloc-cfgs) \
-   119	    -Arustdoc::broken_intra_doc_links
-   120	rustdoc-alloc: $(RUST_LIB_SRC)/alloc/src/lib.rs rustdoc-core rustdoc-compiler_builtins FORCE
-   121		+$(call if_changed,rustdoc)
-   122	
-   123	rustdoc-kernel: private rustc_target_flags = --extern alloc \
-   124	    --extern build_error --extern macros=$(objtree)/$(obj)/libmacros.so \
-   125	    --extern bindings --extern uapi
-   126	rustdoc-kernel: $(src)/kernel/lib.rs rustdoc-core rustdoc-macros \
-   127	    rustdoc-compiler_builtins rustdoc-alloc $(obj)/libmacros.so \
-   128	    $(obj)/bindings.o FORCE
-   129		+$(call if_changed,rustdoc)
-   130	
-   131	quiet_cmd_rustc_test_library = RUSTC TL $<
-   132	      cmd_rustc_test_library = \
-   133		OBJTREE=$(abspath $(objtree)) \
-   134		$(RUSTC) $(rust_common_flags) \
-   135			@$(objtree)/include/generated/rustc_cfg $(rustc_target_flags) \
-   136			--crate-type $(if $(rustc_test_library_proc),proc-macro,rlib) \
-   137			--out-dir $(objtree)/$(obj)/test --cfg testlib \
-   138			--sysroot $(objtree)/$(obj)/test/sysroot \
-   139			-L$(objtree)/$(obj)/test \
-   140			--crate-name $(subst rusttest-,,$(subst rusttestlib-,,$@)) $<
-   141	
-   142	rusttestlib-build_error: $(src)/build_error.rs rusttest-prepare FORCE
- > 143		+$(call if_changed,rustc_test_library)
-   144	
-   145	rusttestlib-macros: private rustc_target_flags = --extern proc_macro
-   146	rusttestlib-macros: private rustc_test_library_proc = yes
-   147	rusttestlib-macros: $(src)/macros/lib.rs rusttest-prepare FORCE
-   148		+$(call if_changed,rustc_test_library)
-   149	
-   150	rusttestlib-build_error: $(src)/build_error.rs $(obj)/compiler_builtins.o FORCE
- > 151		+$(call if_changed,rustc_test_library)
-   152	
-   153	rusttestlib-uapi: $(src)/uapi/lib.rs \
-   154	    $(obj)/compiler_builtins.o \
-   155	    $(obj)/uapi/uapi_generated.rs FORCE
- > 156		+$(call if_changed,rustc_test_library)
-   157	
-   158	rusttestlib-kernel: private rustc_target_flags = --extern alloc \
-   159	    --extern build_error --extern macros=$(objtree)/$(obj)/libmacros.so \
-   160	    --extern bindings --extern uapi
-   161	rusttestlib-kernel: $(src)/kernel/lib.rs rustdoc-compiler_builtins \
-   162	    rustdoc-alloc rusttestlib-bindings rusttestlib-uapi rusttestlib-build_error \
-   163	    $(obj)/libmacros.so \
-   164	    $(obj)/bindings.o FORCE
-   165		+$(call if_changed,rustc_test_library)
-   166	
-   167	rusttestlib-bindings: $(src)/bindings/lib.rs rusttest-prepare FORCE
-   168		+$(call if_changed,rustc_test_library)
-   169	
-   170	rusttestlib-uapi: $(src)/uapi/lib.rs rusttest-prepare FORCE
- > 171		+$(call if_changed,rustc_test_library)
-   172	
+ arch/x86/kernel/cpu/amd.c    | 44 ++++++++++++++++++++++++++++++------
+ drivers/cpufreq/amd-pstate.c | 21 ++---------------
+ 2 files changed, 39 insertions(+), 26 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
 
