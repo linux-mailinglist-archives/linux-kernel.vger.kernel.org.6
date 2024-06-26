@@ -1,126 +1,151 @@
-Return-Path: <linux-kernel+bounces-230316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F0BF917B2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:43:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E840917B2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:42:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 323801C24632
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:43:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4546B285972
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E4F16A925;
-	Wed, 26 Jun 2024 08:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A4515F316;
+	Wed, 26 Jun 2024 08:42:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kuANMXAP"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dEEXq9Ob"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC23C1662E8;
-	Wed, 26 Jun 2024 08:42:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79522167DA8
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 08:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719391358; cv=none; b=LsuEyPFIjwrRpzG46cMyUMZG6iHaM1hDss9W7Lzy74HuPy+WLz+yrrlArLu5RTZUi3w0MNJWyobw6vCJgqX0DruOJwwOlW1uWV4X0RNFhlIUMEzLXFyOeXM7hg696xT08BS0raMLlMkjbaA2p/gyOWeKpaoPDIW2CyfgnhflgH0=
+	t=1719391350; cv=none; b=c+pt4JUry919UoQqzM1f5Vf7adZuLGK3LHBA5xZGQZPQx9KyZTzYWKGEMsU0Pnzjz2VtWndPkhtS12YyJMAP46+gQwrCPdET1bhbsERp/bDafyc5zh/pN/c8VEAm/uUfMxPlxe67isLmz9vO9HLHwQOpjUAOrN6iXis1aXs3/LA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719391358; c=relaxed/simple;
-	bh=NIJDJMmeeX4kQrmpyk63xP+IDzdCUnO9xCVu0XWuAFs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pAkhIMWJIzps/sLVfhRpOD9DRfBV48YTz69lYMo+b7qoU6BCgYxYckQvpaOk00IRQE6+x90wJi/v7wRsgctAinGuFNV/diKSaqJIUcI1qljC3gdqnMo+QHAeatOkYUPJXJx6FP12VcTzvJMM6OLV5Lmj+/xbOHdz91u7f7Yka4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kuANMXAP; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2c8911c84daso2060942a91.3;
-        Wed, 26 Jun 2024 01:42:36 -0700 (PDT)
+	s=arc-20240116; t=1719391350; c=relaxed/simple;
+	bh=4CUIbUqVEh/bPjVMiA0Lgb2N/JCUZEE9OAiPQzAgEr4=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OdARw8u5UbahuJX6S0kW2ILrcgBVUnO1lgSSQgSHWGAyVNVMDpU8D+c11A8L3+urJVV2pqQ1lMYvytmHjdotuRWjOjEmm1Dh1H6ZNJxJNpDQoYphZMPA95F0V6dlGe8X0j199stYirKYmNtocvTDkZ3KirEAWzg/G/H98zIIp1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dEEXq9Ob; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ebe6495aedso68516961fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 01:42:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719391356; x=1719996156; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P1oK8NcMDzD3lUAFEI9IAJSbWCdUq0p3gSwC8g+BGLE=;
-        b=kuANMXAPbUl5meWGzEtCJNxmbIpAgOrM9hmOHd9zuA2I52jC0wvXIlv3fdcHaV9Gks
-         VySzI/HaURIKVcBKKi5ddSn6ZNnEfXCqxQkVF6QwKov4rBEoNfnmHN+dmdSs68RpjDm+
-         lSnWE4TldJAf6zsvz/EgpIIhQ418J8e6V+ik8AFcBH8Y0pH0fuF7wtDgzu+YeaME5dhT
-         yCSl3NMtW1FNpdIhX2QezR4peisSytvHtzkWR68qDv/CPn+J8O7if0EKRihkr8Z9PK5Z
-         kJTYj5WVndiPFpCM/HRJLigcft6jdOqXwDlo04ochp1U+hPr34mItAQYnzOWPkaePhI6
-         PnYw==
+        d=linaro.org; s=google; t=1719391346; x=1719996146; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2Oh0VR40TRUiFXajEyAtrpMuiTr3n0qWoEDC9cdem7E=;
+        b=dEEXq9ObmakIdU1ncLbs2e1P4X+pnXySWY5WBo0kTFDx4vTsZHtZ1zs7pYWdkUk5Es
+         mNoWD0zyeaWG2SISQpaQRBU6D2Qylg3CzX+UTPIHH2CYmgslpXodgHsImJrf9SvW/gh7
+         MdnmGkKwigUr5hwXAwblx6TKmbdNNCc5M/mnwN+ZuBtHOxL9qPHHHHtWfqD5VjBZJCed
+         0lSah1NUdFxgCyxBYsDeW6g7+U13l+cshJ3HlawQvYfcu+pmSXMYBILLXhY5eLTS08bG
+         sC8y79nf19amrdh6/QpTRNgUhr0+Ge3XxF1NtMjQc7FR7EZGri9zvokllYQlPBT6cL5I
+         ExYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719391356; x=1719996156;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P1oK8NcMDzD3lUAFEI9IAJSbWCdUq0p3gSwC8g+BGLE=;
-        b=pQER0bAiLRF9P7IOnoHFXpBfwRspQh2OA8QqgY5X0aHnuNQ7JacmUYHRNLw+N7slaW
-         h8nliZTFf1hup7RVOruXIXjLY3genGzZmG9LWwXu2uDxNlbrPvOguvfqCjfGv7xlBU+F
-         DoDgDOEOhFyBIQFZ6louaEcYZBvA0/VjDLB6kZhU6mgYRB+Zg6xz1HmpZHcoTwQOGyH0
-         QVeAGUtPc9gO3XOvMJAS0E07fCyR49XpDZI2icaDlyAiv8ScMyHxcfvGk+VMVOBJKncZ
-         BqMDq98G1+IhsHd+FC9ey/RoK1jvsIEW11Ztsnsq4xJs7+OpKiPpricdP/QQPt50UOY+
-         VfDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVrMiK22Y3JMkq/FPgRrA9lIX0s2Q1cG9UWn5sh7kxLS5PnSPmb44t4OvIJO6T8DJqkkW6DgOz4hZPH3J+dDHkXGWlgb5S2LNButUpmVT5xZ4poeloGdEjgWYWYJhxWmAeu5ITXIGQ4Ot76djWJ/xrtuvaKsHTP8NHkGYk0EPfIZhEHiVqIzPTK0j0=
-X-Gm-Message-State: AOJu0YwZjHApKLvMcVjP/5hhidBE+InYwk0pKP/4NNnnlwyWu5zHciSw
-	BhmDxhAikGjeFLlikjktgtaVwoj9KquaRxvcP8WLbjKvw3P8WozB9UIzPDj0dQ/Zt7VscvytcKZ
-	eKrAIjXycSN9D0BLs5H2smH6L+O0=
-X-Google-Smtp-Source: AGHT+IFfx5cks4hwYgRaWfw56XsTFZxH625ucUiDN42lL9a2aKReANnBK8EmxF35px00U/PDXov4/azle99Pc/L0zgE=
-X-Received: by 2002:a17:90a:b014:b0:2c2:c61f:e09 with SMTP id
- 98e67ed59e1d1-2c8613d204dmr9193625a91.20.1719391355929; Wed, 26 Jun 2024
- 01:42:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719391346; x=1719996146;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2Oh0VR40TRUiFXajEyAtrpMuiTr3n0qWoEDC9cdem7E=;
+        b=EzIZMyd/hSsOVDkQfRKO4VGjCZwVj8pUcBfM8BgUvrRma+2Pr14vYVYjyt5QQnqPN8
+         jSsesRHXB4svMgqUNw97g3YtaFNo+YqtnCVqJJycu+vKooe0G6L3Z0/qIDEVjyVa20j7
+         eokGCXKTylEam1DQdrIRa8g9G/f0D2feEdTU4rQ/2tuI4ZOnNiB/hDMhzZIE2NDS+zGV
+         BNMkLAEnuXp8RXQmiv/+eaEY/riI3zqZKHRssg11rvksR8FbpZryJkgyffpZMxJHwso0
+         cLWb1WgxPf2TBi6G/qm9qmx0RU9xcThfzFaPhyZHqvL6jTQKkw7v1hpyq/OlA8CLa9TB
+         MMTw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQ/NexX149hLtFFpop7YGbY6BgXQSRXCeweO5vp4Pg5RpIx50HsQEXDt3NQvTUYdnu7sMsQiYIsfSh6GDaLZCkxAjbUbF57qHdJQ4a
+X-Gm-Message-State: AOJu0Yx+MbcZHOPA+D2BmP62loe00DdPlZXvs056b79hEgUev11PcD35
+	vA4hFgBcXpdDRoZj+MjF/fh+b5tPEQH4Jhq1xvdJfxbongF8KkMZsxULxT+NgsY=
+X-Google-Smtp-Source: AGHT+IFrbNPIOjz4l8L0QPdLiBhOanVgKGAzX1JGKORXX+GcNOkKakHvdEgvdrxZRYI3gB9j/fY5+Q==
+X-Received: by 2002:ac2:5b4c:0:b0:52c:dcd4:8953 with SMTP id 2adb3069b0e04-52ce1839881mr6045361e87.36.1719391346204;
+        Wed, 26 Jun 2024 01:42:26 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cec517173sm501360e87.244.2024.06.26.01.42.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 01:42:25 -0700 (PDT)
+Date: Wed, 26 Jun 2024 11:42:24 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Oded Gabbay <ogabbay@kernel.org>, Tomeu Vizoso <tomeu@tomeuvizoso.net>, 
+	Jeffrey Hugo <quic_jhugo@quicinc.com>, linux-kernel@vger.kernel.org, 
+	Lucas Stach <l.stach@pengutronix.de>, Russell King <linux+etnaviv@armlinux.org.uk>, 
+	Christian Gmeiner <christian.gmeiner@gmail.com>, David Airlie <airlied@gmail.com>, etnaviv@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] drm/etnaviv: Create an accel device node if compute-only
+Message-ID: <kzk46s2hqrbipehnqhcx47q5mtkdjc3oeeobr2jwinw2ch3pra@37xuwtyakeus>
+References: <20240424063753.3740664-1-tomeu@tomeuvizoso.net>
+ <8c55dba5-6308-685e-13da-e728197d8101@quicinc.com>
+ <CAAObsKD4-k7Ya4Mi=vEPaC9DucbnVGDO5SaEUt-_o2_Bg+_FgA@mail.gmail.com>
+ <CAAObsKCm49y-nUph=m9c+-eG37SaGKG93-1etwOQab4f5MXxOg@mail.gmail.com>
+ <20240509144118.baib2pftmpk5nikr@GABBAY.>
+ <ZnvCsJfdZdLvw1ZN@phenom.ffwll.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620205453.81799-1-jhubbard@nvidia.com> <20240620205453.81799-3-jhubbard@nvidia.com>
- <CAH5fLgizj3RDCXMe0zJ4jjJrtui-R9x65NtHZh=r+vPQaPqN+A@mail.gmail.com>
-In-Reply-To: <CAH5fLgizj3RDCXMe0zJ4jjJrtui-R9x65NtHZh=r+vPQaPqN+A@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 26 Jun 2024 10:42:23 +0200
-Message-ID: <CANiq72n5b+64z4rVs9f+1miR8R0xnSJXLz4KKcKj+pxkOy_fVA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] Makefile: improve comment documentation for the
- rust-analyzer target
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: John Hubbard <jhubbard@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>, Greg KH <greg@kroah.com>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	linux-kbuild@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZnvCsJfdZdLvw1ZN@phenom.ffwll.local>
 
-On Wed, Jun 26, 2024 at 10:08=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
->
-> Is "symbol browsing database" the right word here? It's not actually a
-> list of symbols, but instructions for how to compile the code.
+On Wed, Jun 26, 2024 at 09:26:40AM GMT, Daniel Vetter wrote:
+> On Thu, May 09, 2024 at 05:41:18PM +0300, Oded Gabbay wrote:
+> > On Thu, May 09, 2024 at 03:53:01PM +0200, Tomeu Vizoso wrote:
+> > > Oded, Dave,
+> > > 
+> > > Do you have an opinion on this?
+> > > 
+> > > Thanks,
+> > > 
+> > > Tomeu
+> > Hi Tomeu,
+> > 
+> > Sorry for not replying earlier, I was down with Covid (again...).
+> > 
+> > To your question, I don't have an objection to what you are
+> > suggesting. My personal view of accel is that it is an integral part of 
+> > DRM and therefore, if there is an *existing* drm driver that wants to 
+> > create an accel node, I'm not against it. 
+> 
+> Yeah, there's a continum from "clearly 3d gpu" to "compute AI
+> accelerator", with everything possible in-between shipping somewhere.
+> Collaboration is the important part, hair-splitting on where exactly the
+> driver should be is kinda secondary. I mean beyond "don't put a pure 3d
+> driver into accel or vice versa" of course :-)
+> 
+> > There is the question of why you want to expose an accel node, and
+> > here I would like to hear Dave's and Sima's opinion on your suggested
+> > solution as it may affect the direction of other drm drivers.
+> 
+> So existing userspace that blindly assumes that any render node will give
+> it useful 3d acceleration, then that's broken already.
+> 
+> - kernel with new driver support but old mesa without that driver already
+>   gives you that, even for a pure 3d chip.
+> 
+> - intel (and I think also amd) have pure compute chips without 3d, so this
+>   issue already exists
+> 
+> Same for the other directions, 3d gpus have variable amounts of compute
+> chips nowadays.
+> 
+> That leaves imo just the pragmatic choice, and if we need to complicate
+> the init flow of the kernel driver just for a different charnode major,
+> then I don't really see the point.
+> 
+> And if we do see the point in this, I think the right approach would be if
+> we split the init flow further into allocating the drm_device, and then in
+> a 2nd step either allocate the accel or render uapi stuff as needed. The
+> DRIVER_FOO flags just aren't super flexible for this kinda of stuff and
+> have a bit a midlayer taste to them.
 
-Yeah, I think the sentence mixes a bit what the file is with what
-(some of) the users of the file do with it.
+Being able to defer render allocation would be extremely useful for MSM
+too as it's not currently possible to mask the driver_features during
+drm_dev_init()
 
-What about something like (getting inspiration from the official documentat=
-ion):
-
-    # Generate `rust-project.json` (a file that describes the
-structure of non-Cargo Rust projects) for `rust-analyzer` (an
-implementation of the Language Server Protocol).
-
-I would avoid mentioning `compile_commands.json`, since they are
-slightly different the Rust one does not really contain the compile
-commands.
-
-As for "IDE", I am happy either way (i.e. removing it or not). Another
-alternative that may clarify by giving context could be "Editor / IDE"
-(since one may use LSP with "simple editors" and not "full IDEs"
-anyway).
-
-With that changed, if Masahiro wants to pick these two up:
-
-    Acked-by: Miguel Ojeda <ojeda@kernel.org>
-
-Otherwise I am happy to take them too.
-
-Cheers,
-Miguel
+-- 
+With best wishes
+Dmitry
 
