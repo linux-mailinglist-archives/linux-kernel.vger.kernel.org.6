@@ -1,132 +1,119 @@
-Return-Path: <linux-kernel+bounces-231226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 987599187EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:50:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA2AB9187E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:49:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D76FB2959E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:48:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84CB5286363
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D81B18FC94;
-	Wed, 26 Jun 2024 16:48:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855E918FC81;
+	Wed, 26 Jun 2024 16:49:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SXUtAY1V"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kc3QfTfG"
+Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE9F18A930;
-	Wed, 26 Jun 2024 16:48:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F01E18F2C9;
+	Wed, 26 Jun 2024 16:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719420489; cv=none; b=tclfW5FAnkYdSTZWtGR48OuJkqHBz1aB6A4Uwx7S0C0dDg5OsxznHc5h4UeTiIK64uJSsNTFFMa7KOLVxlofIfWIVc+APoGrks81udcaPgITKu6HYYPNtdRjJ7626Xm1ygrQKcCkgd9DQrRROD7kaWaYANoymp7rXgMKzf0Czao=
+	t=1719420554; cv=none; b=PPZtGQjOPtCaHWAF5xr/O+dO3p7xwEPR9+0867XgdDjYxpBwcq0vzByDr7zUi/MOTaKWHIWOocObV3dAxoxpEXtD0pNLpDP8Df+wtAjZvJbSY4t59xn5tz5vu1/b/jj4dIg443RXTdaIa90OXZe2a+QymMC81K+mjaaQoPbld1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719420489; c=relaxed/simple;
-	bh=v9c9gCDD50kJKTR98CPtlOUOthy3lH05Vb7day1o2k4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LzQ22nmhczn45/ZPNh2ssLC9MvkxqV0rVNskTJ3UX5htWQbk0LjEJYM7vBMA5XVP777f6SGXbBhvSKAN9YzR8159+J9bXzyfnYvrn99AYOoQyxDR53VYDfQ5qNBsbSCWtKg64JBdjNJ3A57DVvRPU2F3lYWIIMRGrWqbg69YNzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SXUtAY1V; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QAfTUS015135;
-	Wed, 26 Jun 2024 16:48:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8ETWPLAHJDK6OPrtKtGmoQayVyELxnRSARfONBaSNs4=; b=SXUtAY1VOmA6Y4Y/
-	GtRX8x/NradVg+t/EW/y0qoxgIkKTENZNS7YARqEnxwrn5U9ypWtkfkIln9rFn1r
-	Qv49odflaYAPCwp3AzwBqilfLx4l4a6XiKEr49CvSRyUdAr+AqgFJiWZxOhxM7Hp
-	tqgk8zMl1Qmtl+K2MqS9bKOEG+ZFHRgEfg5MDlRP4NDmpeVfOf2Vf92/EyCWsxTC
-	ScqbuzzSZB8QgvOZrCC881JelCDM3ho6KNeJBinKzGUKNg2jmfq++dAfmxnnDpAg
-	+00AxtL9mtONvUXTvvLieaxls/PwfIABIMTPZvtuGvyN16FJ/TFZw7iJUG1J1pXm
-	NgGVwQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywqsht8k0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 16:48:02 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45QGm1ic019622
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 16:48:01 GMT
-Received: from [10.48.244.230] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Jun
- 2024 09:48:01 -0700
-Message-ID: <e4e37dfe-9d1b-4428-9067-7b9f584d2466@quicinc.com>
-Date: Wed, 26 Jun 2024 09:48:01 -0700
+	s=arc-20240116; t=1719420554; c=relaxed/simple;
+	bh=R/sU3LomlfmbktD1TecaWmSZrosmdGAXK829uqCJn18=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DOGrfA13gBR0Mtd4C1o87jtexkGmuWnZ4WgP001QluxBNg/nasyVGINWqv6Og1ZitS7lvz4nV1rRfyf0mqT3pr0305PgXNy5+QTlNQcGETWPV7iTNNmBy5AK7gp/nZsZY1gfBB9/9+qo8U29g+KhR6Y6cA4XLKjcizYm1Qq5nqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kc3QfTfG; arc=none smtp.client-ip=209.85.161.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5ba33b08550so3270498eaf.2;
+        Wed, 26 Jun 2024 09:49:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719420552; x=1720025352; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R/sU3LomlfmbktD1TecaWmSZrosmdGAXK829uqCJn18=;
+        b=Kc3QfTfGBLYOqDp2HnkyCn13SdVtGtAB1bZIJ/76+1j+ofwsLo4nXpqdB2Iwo6DjgV
+         qLhNVqr+WfSVNtOYb2jpDpbZNH0zFNNDn0EOwShTNHEUWdZ9w0GLcKkN3rj25jvMWU14
+         ZUpY3DKw/GzfePex6qtt82Ru6f1WBdon8iY7h8dkKWgWe7KkSFbcoimx+j66VqhvuALf
+         sNAePJ7dN270MDKFW8XAl7c6e9hL+/17n9ajFhLo2swvt0cjQ/VmfrNDzrHIMno+JtNa
+         X/L+92Rbgb4a1HALT1eI6PBNd/Fl5gmuVJAmhX48V35lCGeY8q0d2ihTEgGlMd3SSftn
+         QEIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719420552; x=1720025352;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R/sU3LomlfmbktD1TecaWmSZrosmdGAXK829uqCJn18=;
+        b=AIlgdVUfru+Wf0GRVAxF/bS9BBmStE3A6OiH9WfrGMpLSbgltZ2JxIQmLp1tLnIZzm
+         +CU6ipqnLYluYTG/Dxa2+pkvmh0G7srJIJKfNjCgyLTJ3TQbmpZuJISd3+64IJdLX37Z
+         eRzbGRM6aBZHHhb/uMHkYZJ4Pg2QwVZVEFypWMprBOhNNgzPUYSFvmUvIvoHurzqlVTw
+         b+r16BkKiF19O210THZ05yOwQKlwCr9W17PdUT3U4v2CUyDNGJIikpSujl6zk5uFbHZL
+         HSeWpJAUtGzh1tfonUrjdZbeuh0w8hgcQrvb/PWMm0/e46xdJ+YTUUOkRCv1UmupsIaX
+         Cglg==
+X-Forwarded-Encrypted: i=1; AJvYcCUtRo3QS2IWx9s/uVAfu44Lzvt6EeDkBUqjekRSzDdhW69VMUk7IVYz1x3Xu+kPKGzcj5VTzD4u6DG9PM60eziUNkP5h76bBq/O9hpGGKKnfIg1rRKYu9xIlk8kX+9o4PoPgp0Z/KxubiBDD/7Kb1Q+UlgPwzIP/WsWaAE/dN138Q1We08=
+X-Gm-Message-State: AOJu0YxeZPNPeSE35LwZrmp2VccQn7KNALPTSI13P0NJFQUeN566HAj+
+	0t5b5y6J/FYOCBo0MoRShNHM5tj1vxlAGu27gPaKZnhx9dS91A+WZ420/mk15jVFXsqzAfDFMTw
+	TW5uqv4nAumClVDYSaN/PXFzghnY=
+X-Google-Smtp-Source: AGHT+IEYzwhsc0CdVCOM20AmgWixKrtF0jZhSamyAdDQzQrcpEqM4F5/z5NPQizyuRgCamjyEDoVi8wHdRcXZOKRKkE=
+X-Received: by 2002:a4a:ea36:0:b0:5c2:23ee:bc33 with SMTP id
+ 006d021491bc7-5c229fde83dmr1613387eaf.5.1719420552396; Wed, 26 Jun 2024
+ 09:49:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: uvc: add missing MODULE_DESCRIPTION() macro
-Content-Language: en-US
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20240612-md-drivers-media-common-v1-1-b5603c85f629@quicinc.com>
- <171824064052.2248009.2434759914694160537@ping.linuxembedded.co.uk>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <171824064052.2248009.2434759914694160537@ping.linuxembedded.co.uk>
+References: <20240615174904.39012-1-krzysztof.kozlowski@linaro.org> <dcd6afee-b17d-4633-af7a-4a5dbf68be94@linaro.org>
+In-Reply-To: <dcd6afee-b17d-4633-af7a-4a5dbf68be94@linaro.org>
+From: Robert Nelson <robertcnelson@gmail.com>
+Date: Wed, 26 Jun 2024 11:48:46 -0500
+Message-ID: <CAOCHtYh8YucHNwV6+S-3vfHvygs=5_UGVwPt6R+i+qBTc3eOTA@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: omap am5729-beagleboneai: drop unneeded ti,enable-id-detection
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, "Andrew F. Davis" <afd@ti.com>, 
+	Roger Quadros <rogerq@ti.com>
+Cc: Tony Lindgren <tony@atomide.com>, devicetree@vger.kernel.org, 
+	linux-omap@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, kernel test robot <lkp@intel.com>, linux-kernel@vger.kernel.org, 
+	Rob Herring <robh@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ye5-Y8z40Kwc-fLbLKBSE4xKcMQyDXnO
-X-Proofpoint-GUID: ye5-Y8z40Kwc-fLbLKBSE4xKcMQyDXnO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-26_08,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1011
- bulkscore=0 phishscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0
- mlxscore=0 impostorscore=0 mlxlogscore=999 priorityscore=1501 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2406260123
+Content-Transfer-Encoding: quoted-printable
 
-On 6/12/2024 6:04 PM, Kieran Bingham wrote:
-> Quoting Jeff Johnson (2024-06-13 00:58:59)
->> With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/common/uvc.o
->>
->> Add the missing invocation of the MODULE_DESCRIPTION() macro.
->>
->> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> 
-> Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+On Wed, Jun 26, 2024 at 6:34=E2=80=AFAM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 15/06/2024 19:49, Krzysztof Kozlowski wrote:
+> > There is a ti,enable-id-detection property in the Extcon Palmas
+> > (extcon-palmas), but not in the Extcon USB GPIO binding and driver.
+> >
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Closes: https://lore.kernel.org/oe-kbuild-all/202406152004.F2fNnorG-lkp=
+@intel.com/
+> > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>
+> Tony,
+>
+> Do you still pick up patches for OMAP? Any comments on this?
 
-Following up to see if anything else is needed from me. Hoping to see this in
-linux-next so I can remove it from my tracking spreadsheet :)
+Krzysztof,
 
-/jeff
+It looks like Tony didn't send his final MAINTAINERS update:
 
-> 
->> ---
->>  drivers/media/common/uvc.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/media/common/uvc.c b/drivers/media/common/uvc.c
->> index 9c0ba7a6c185..c54c2268fee6 100644
->> --- a/drivers/media/common/uvc.c
->> +++ b/drivers/media/common/uvc.c
->> @@ -180,4 +180,5 @@ const struct uvc_format_desc *uvc_format_by_guid(const u8 guid[16])
->>  }
->>  EXPORT_SYMBOL_GPL(uvc_format_by_guid);
->>  
->> +MODULE_DESCRIPTION("USB Video Class common code");
->>  MODULE_LICENSE("GPL");
->>
->> ---
->> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
->> change-id: 20240612-md-drivers-media-common-01f67d64768a
->>
+https://lore.kernel.org/linux-arm-kernel/20240419055249.GE5156@atomide.com/=
+T/
 
+@Andrew F. Davis
+and @Roger Quadros have you guys set up a git tree for omap patches?
+
+Regards,
+
+--
+Robert Nelson
+https://rcn-ee.com/
 
