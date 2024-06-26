@@ -1,104 +1,82 @@
-Return-Path: <linux-kernel+bounces-230131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F4F99178E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:28:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A9219178E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:28:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B03871C217F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:28:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57C36286947
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC3A153598;
-	Wed, 26 Jun 2024 06:28:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D1F1514FB;
+	Wed, 26 Jun 2024 06:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P3piVmjK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UpbWcsvZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60AF114D2A8;
-	Wed, 26 Jun 2024 06:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1865813A869;
+	Wed, 26 Jun 2024 06:28:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719383314; cv=none; b=RDlrW9+fVJkhzaA2VHihLNlMepbxlGduFKwaVvsRVQlgHM7bgFBAQgxCqlruSodPoovaThW9vmto9lQyjS1qKXPJ81v9nM8d/dShE5MbZREDRGq83HGkxvmh+yVnNkN2yzi56L41q20FMXxChxZcT7KiGlgueknRHV1B1YtTyQs=
+	t=1719383314; cv=none; b=uZ3Csl3FTPtHDO1IGjfabrRyDH3sZr+rsQtW9Q8b3PnQlBI1/UFe+ns3d0qLSgSwSAH07etVXKFtqa8VNPb9ZC2VXMqhUJfe1I7qzIjysa2kjy4JsbjOJZ+Mn8GMq7oaNSp3StfbbpfoW5hSWDL57hxRqu+n49MVkCMcQ2HwJOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719383314; c=relaxed/simple;
-	bh=hSJglXZYv5KAZogk1GoXR1+rsFxvyZYlzU5jgV1gLYI=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=c77EtoeZ+aa6Mi26VD9OzYOyhCvUv/94l9JFk6VMyjN/wuVf8eVhbm25kGfKAYRljJYs14TS5w+BPpozSx8V1v/Q9qp2ojWMsk5D1ktxybPPZ94Mm/B2CsRsfPgqnjogVpiXCQzfXzZWnYyK5dLrGSklsZCh9mIphPJUVSp62Q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P3piVmjK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BD4AC2BD10;
-	Wed, 26 Jun 2024 06:28:30 +0000 (UTC)
+	bh=9jEpfg2N6J4shrk3c2BQLjUO0Oh8yhjDyDDFjwgJmF0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CcOfU5tv3jBafRMVsUzDK0xQiYwPYlzxvxdHxyH8VLSGdUO0ithY+YsVEX66h4ZZTJ7OjchmZUfzQ3OsAJdRpRjS/rCO9WeueMDBFlDZW29IrMi6JbuhGqdGe0zL0ND7m1zpiM7RTlTgXA3jB8rb1qb/yMPljoosaelUPwQuwhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UpbWcsvZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57E87C32782;
+	Wed, 26 Jun 2024 06:28:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719383314;
-	bh=hSJglXZYv5KAZogk1GoXR1+rsFxvyZYlzU5jgV1gLYI=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=P3piVmjKn7J1QV5gzfNXeeO7wmxgfFsVN78j8VFq5jWrsV/vFQQygCKRTS1mMcrPf
-	 sVWeXtl164fnP3Dj+/XFs2w0aWTvWDlcjI8DQ4pPtZVbWcJmxcJZyNJK+2mnbQrOqB
-	 hBRsYxk2HBCum+obj2YF4ApHJ6/e0GwXmceBIUMNIZUXZLwBBLQ8to/R8trXoQX2ty
-	 kmfIri7NNZzqghuAdvBtqpIqqJmTD+/6iqxODNLz5klJISMJs6zU8oNqt2E2BI+RAi
-	 OK6itTDfwnDfo198T7sZX/j+i61lb1bnZbZUqjnZGgo0JJo52V9LWq5e/uzjTNqLaS
-	 UdKyGzchhP7rA==
-From: Kalle Valo <kvalo@kernel.org>
-To: Arend Van Spriel <aspriel@gmail.com>
-Cc: Jacobe Zang <jacobe.zang@wesion.com>,  arend.vanspriel@broadcom.com,
-  duoming@zju.edu.cn,  bhelgaas@google.com,  minipli@grsecurity.net,
-  linux-wireless@vger.kernel.org,  brcm80211@lists.linux.dev,
-  brcm80211-dev-list.pdl@broadcom.com,  megi@xff.cz,  robh@kernel.org,
-  efectn@protonmail.com,  krzk+dt@kernel.org,  conor+dt@kernel.org,
-  heiko@sntech.de,  nick@khadas.com,  jagan@edgeble.ai,
-  dsimic@manjaro.org,  devicetree@vger.kernel.org,
-  linux-arm-kernel@lists.infradead.org,
-  linux-rockchip@lists.infradead.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] dt-bindings: net: wireless: brcm4329-fmac: add
- pci14e4,449d
-References: <20240624081906.1399447-1-jacobe.zang@wesion.com>
-	<20240624081906.1399447-6-jacobe.zang@wesion.com>
-	<89f2564f-788e-495d-97ce-f1fa8a921d50@gmail.com>
-Date: Wed, 26 Jun 2024 09:28:28 +0300
-In-Reply-To: <89f2564f-788e-495d-97ce-f1fa8a921d50@gmail.com> (Arend Van
-	Spriel's message of "Tue, 25 Jun 2024 20:23:09 +0200")
-Message-ID: <87pls4gqur.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=k20201202; t=1719383313;
+	bh=9jEpfg2N6J4shrk3c2BQLjUO0Oh8yhjDyDDFjwgJmF0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UpbWcsvZXyok0rtpT+Af+1xZBhZm+izvj8SKJMUxtIdULTRz22LhN838Im7/SLnf+
+	 wpxD3koR8IIME2G4+Zzq1U18rzpKg2HeQu404xYcVyG2tab+FVI0iySeGfVxgJErOt
+	 1KiufFfbz0ssMdOy19N8g5n3Gz2BqBaMH5RlNr1L3nJgfIDaCQv4ogIr1Iajchwm44
+	 9ICgw/ilndevhOStH+a+dqGRXpAMQ/ZW6qsWVdvaK97iia/zQinZBZ+ax1SZDCE8Hf
+	 ltvYOSYfC4ebDr9JFzy1FtkUbk01dKyCWy8F40A0Iaz8EEvTIOC+mP9BBPUqlcmuFP
+	 UztnB10h13IrA==
+Message-ID: <afffc35d-ca69-47b8-8a09-6a5fe4a80479@kernel.org>
+Date: Wed, 26 Jun 2024 15:28:31 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/6] ata: libata-scsi: Fix offsets for the fixed format
+ sense data
+To: Igor Pylypiv <ipylypiv@google.com>, Niklas Cassel <cassel@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>, Hannes Reinecke <hare@suse.de>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Jason Yan <yanaijie@huawei.com>, linux-ide@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Akshat Jain <akshatzen@google.com>,
+ stable@vger.kernel.org
+References: <20240624221211.2593736-1-ipylypiv@google.com>
+ <20240624221211.2593736-3-ipylypiv@google.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20240624221211.2593736-3-ipylypiv@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Arend Van Spriel <aspriel@gmail.com> writes:
+On 6/25/24 07:12, Igor Pylypiv wrote:
+> Correct the ATA PASS-THROUGH fixed format sense data offsets to conform
+> to SPC-6 and SAT-5 specifications. Additionally, set the VALID bit to
+> indicate that the INFORMATION field contains valid information.
 
-> On 6/24/2024 10:19 AM, Jacobe Zang wrote:
->> AP6275P Wi-Fi module connected via the PCIe interface.
->
-> Repeating my remark from v1 series although I gained some knowledge
-> what chip it should be now ;-)
->
->> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
->> ---
->>   .../devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml      | 1 +
->>   1 file changed, 1 insertion(+)
->> diff --git
->> a/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
->> b/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
->> index b9e39a62c3b32..fd22ade92210c 100644
->> --- a/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
->> +++ b/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
->> @@ -53,6 +53,7 @@ properties:
->>             - pci14e4,4488  # BCM4377
->>             - pci14e4,4425  # BCM4378
->>             - pci14e4,4433  # BCM4387
->> +          - pci14e4,449d  # BCM4329
->
-> This should BCM43752 iso BCM4329.
-
-My simple english parser threw an exception here ;)
+This needs to go before patch 1. Then patch 1 modification introducing the new
+function ata_scsi_set_passthru_sense_fields() will be doing so using the
+corrected code.
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+Damien Le Moal
+Western Digital Research
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
