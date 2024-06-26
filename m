@@ -1,169 +1,183 @@
-Return-Path: <linux-kernel+bounces-231094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 378BB918620
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:43:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B7C6918623
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:43:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B752A1F21C47
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:43:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DDBFB249A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:43:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8543518E74B;
-	Wed, 26 Jun 2024 15:43:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99B318E75C;
+	Wed, 26 Jun 2024 15:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tyY2b6VM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="V3ziSCsC"
+Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B497F18C355;
-	Wed, 26 Jun 2024 15:43:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E42418E746
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 15:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719416580; cv=none; b=mzaB223W6xBj12urQlZswqdZCPE3TLWvEF2SfOXnYec1pkVBej12NzXnucY4HMmGwtu+vSmWyG/+m+dcKboDiN53qCLz6vQGA1CBKxzpHCpTe5MVio9tuipLH8mZQkqLLZvrOo/JhsHw7LoxO0iak+t5mP5RY0plDt3KSr16vT8=
+	t=1719416602; cv=none; b=C0BLNvWq1q5kpbbO4coHxAGSFUEcQut2EPY/M76i4UfSSItJg9wjLqo/75Ekew45aAPbfBeU0lxnzibTDWnmqx/ORGzKBQrWqlBrtMhuPXubKvVqJwl2n99WVHPwQWFh0FqWZq+u56IwlwPKp6pr64JEjR9EfTADDPTyB18k2QM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719416580; c=relaxed/simple;
-	bh=CpQt0/nezvz6yjM0TSMKFmO70MvqCYKmLYQM5eitJyM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lvO4ogr7MxY94zMgRVxsw8iLFzMpb/p+mVeQXQ9tKtTx2ypkzvoMZsyUR2+cReUBUkLyqtJwRuBFW1g9TGGv2UW+z5sNgsKNGoUw7a/OdUwvw66dkAxoncJI4u+r7oS297Ha2UHrEMngeaxJNiyeDSy1UsqmIKBp5Qa+dXmeCYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tyY2b6VM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63250C116B1;
-	Wed, 26 Jun 2024 15:42:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719416580;
-	bh=CpQt0/nezvz6yjM0TSMKFmO70MvqCYKmLYQM5eitJyM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tyY2b6VM7D/S7eoBcyi4ksyFtbmenVsqVbtfVTpT4P/akkyBgCmLOq9ZWkz+xjmOz
-	 h+Uy8a+uleRvUdsVGMQOC7Cl2beOd6ppt4PjhboxPh9bYyhlCrTKLH7Ixd5h/zQJJQ
-	 C+zg3DUobDA0UfpDO/ieEB2DxiUNX8lHAoGEl40KeRTJa+86i0TG5yDD4wwlLjs4/2
-	 Ma4dp3C8PGPrP5QD2eGNYiK/xag48BZNQb+zkcyxxC1rlKQb6s77TltgpyyzmKA8pQ
-	 9V5WqN6chKG9h0W09nEF6kj5SH4I/9bdgwsqTwOd68lqBsn5VrTuLPwTcx77BN6wXy
-	 wQdZ229zGihRg==
-Date: Wed, 26 Jun 2024 16:42:55 +0100
-From: Lee Jones <lee@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 00/20] leds: leds-lp55xx: overhaul driver
-Message-ID: <20240626154255.GC2504017@google.com>
-References: <20240620210401.22053-1-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1719416602; c=relaxed/simple;
+	bh=yBf7BjQ0TET4RNxCRr0z5OE/8zpvjn5itH58dt/E6Yg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EPit8YMNDXUfHeWVDTUYEIoqRNeabpdFS5RSgWDYJmZgc+D3rlFk2QCEEFqyHivh1FCYGibFsNPmxJnTszzD0mFFHwZs2F9Qe4sH+4200LsuNgH+FQJMp3UU+pqRd7ogJK6xWtavYx7SDOfLIbqAXis06RQnovYbvhF9yHiVfr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=V3ziSCsC; arc=none smtp.client-ip=209.85.161.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5b9706c84e5so3755474eaf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 08:43:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719416599; x=1720021399; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=L4BM1nm1eXhxPHZf+r3STp6lra6HVOKE5lqVSxFWKI8=;
+        b=V3ziSCsCzMt0neFs88m41XqYWpLG9SFFsvujEHfu9zOCfNUjRIdZS2Ak0EtyDiiSu+
+         XeApb+hq1rFUGyG23Qcu9aeAdgCaGV2n6RMRMtoGh9Ha6RYbcB3+nLdw5Z81sQQcjndx
+         EN5jgYvQtH6x3Vl2tFLfe84J6kqnBSux9aCBHaGH9/87iTQiQjzGH/vrBaRP5LxH9qZv
+         Iiut6hJKvMOJCTDSnCpas2/kNvaIoaOOZLOA2rvG6aFygi6p6CU2hZYBnRZqkiE4x9Er
+         /IiSel4DQKSYHMuPw9SjJ8wcigiQ+s6luE+l+piFpNXrvlRRLA6YgN0BKkhDoUXLXThy
+         D0qA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719416599; x=1720021399;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=L4BM1nm1eXhxPHZf+r3STp6lra6HVOKE5lqVSxFWKI8=;
+        b=hn2nZOCeF9j/qvjXRHVf7qygBBV0uRFlyMWsGLRB64GBNtOepB3ck9cDansfkUUhha
+         7wpO2dSUnyZJe38OELGLe9ODvGujEOxypGmi+dkGXPQpHtcwHcHKosmDX0ZFM/0ElPWt
+         korrxyubOL4mlRPptb8CaJEDNDslClkCP8DVGiduMwZXUZG/pL3ZdfmjA1+DD+kOzwfc
+         +6UC6s0iHLhY8373kbdamjPCnigx/coUDiIr8x5aYhUztuA4UtHCgWtKqNMyGWImLe5G
+         pdaEQR0mZwPbmaruvWc/nmu2eJF8k8sc3IWCxmvVNqFm7oPDsDBrO847FyOCCt+rGoIJ
+         ySGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGN4Pwb49ys7NE36PgqKWA3+TfiDMLUJR+bInxz2XWViiuinpTm/5iIYuY4RZxT3jBTujJjF3iHhluF6fSAX8V0YA2yf92ztJ6xttn
+X-Gm-Message-State: AOJu0YwttZOOiyVKHnbNXqgGE79br0idys/kSYNrXn0RisVGyOlultD+
+	9KyPlTvXIrsucKXEVYwJVKWmN926y8nUU/Kex5a9N4I49/HpubBKtqghTcY8k3A=
+X-Google-Smtp-Source: AGHT+IGx7aFcTxf1GenpaKQHv67xvK5YmcOttQKW/seQI/OiieGIay/0iltoy3aIGzodsou6GFy57A==
+X-Received: by 2002:a4a:8515:0:b0:5ba:ffcb:c760 with SMTP id 006d021491bc7-5c1ebb01d47mr11473795eaf.5.1719416598936;
+        Wed, 26 Jun 2024 08:43:18 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5c1d58ff8f4sm2162338eaf.41.2024.06.26.08.43.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Jun 2024 08:43:18 -0700 (PDT)
+Message-ID: <55d0cc07-c877-4510-a052-4458ee964615@baylibre.com>
+Date: Wed, 26 Jun 2024 10:43:17 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240620210401.22053-1-ansuelsmth@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 7/7] docs: iio: Add documentation for AD4000
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
+ lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ nuno.sa@analog.com, corbet@lwn.net, marcelo.schmitt1@gmail.com
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-spi@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1719351923.git.marcelo.schmitt@analog.com>
+ <e553a7c6ba88b3d8ae2db0963212fdce0919805a.1719351923.git.marcelo.schmitt@analog.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <e553a7c6ba88b3d8ae2db0963212fdce0919805a.1719351923.git.marcelo.schmitt@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 20 Jun 2024, Christian Marangi wrote:
+On 6/25/24 4:55 PM, Marcelo Schmitt wrote:
+> Document wiring configurations for the AD4000 series of ADCs.
+> 
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> ---
+>  Documentation/iio/ad4000.rst | 131 +++++++++++++++++++++++++++++++++++
+>  Documentation/iio/index.rst  |   1 +
+>  MAINTAINERS                  |   1 +
+>  3 files changed, 133 insertions(+)
+>  create mode 100644 Documentation/iio/ad4000.rst
+> 
+> diff --git a/Documentation/iio/ad4000.rst b/Documentation/iio/ad4000.rst
+> new file mode 100644
+> index 000000000000..de8fd3ae6e62
+> --- /dev/null
+> +++ b/Documentation/iio/ad4000.rst
+> @@ -0,0 +1,131 @@
+> +.. SPDX-License-Identifier: GPL-2.0-only
+> +
+> +=============
+> +AD4000 driver
+> +=============
+> +
+> +Device driver for Analog Devices Inc. AD4000 series of ADCs.
+> +
+> +Supported devices
+> +=================
+> +
+> +* `AD4000 <https://www.analog.com/AD4000>`_
+> +* `AD4001 <https://www.analog.com/AD4001>`_
+> +* `AD4002 <https://www.analog.com/AD4002>`_
+> +* `AD4003 <https://www.analog.com/AD4003>`_
+> +* `AD4004 <https://www.analog.com/AD4004>`_
+> +* `AD4005 <https://www.analog.com/AD4005>`_
+> +* `AD4006 <https://www.analog.com/AD4006>`_
+> +* `AD4007 <https://www.analog.com/AD4007>`_
+> +* `AD4008 <https://www.analog.com/AD4008>`_
+> +* `AD4010 <https://www.analog.com/AD4010>`_
+> +* `AD4011 <https://www.analog.com/AD4011>`_
+> +* `AD4020 <https://www.analog.com/AD4020>`_
+> +* `AD4021 <https://www.analog.com/AD4021>`_
+> +* `AD4022 <https://www.analog.com/AD4022>`_
+> +* `ADAQ4001 <https://www.analog.com/ADAQ4001>`_
+> +* `ADAQ4003 <https://www.analog.com/ADAQ4003>`_
+> +
+> +Wiring connections
+> +------------------
+> +
+> +Devices of the AD4000 series can be connected to the SPI host controller in a
+> +few different modes.
+> +
+> +CS mode, 3-wire turbo mode
+> +^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-> This long series is (as requested) a big overhaul of the lp55xx based
-> LED driver.
-> 
-> As notice for these kind of LED chip there was the bad habit of copy
-> the old driver and just modify it enough to make it work with the new
-> model. Till v4 I was also doing the same by following the pattern and
-> the code format of previous driver.
-> 
-> Since Lee didn't like this, here is the BIG series that generalize
-> pretty much anything in the 4 model currently supported.
-> 
-> Indeed, although the LED chip have fundamental difference (page
-> support), things can be generalized and produce slimmer drivers by
-> putting everything in the lp55xx-common shared module.
-> 
-> This result in the new model lp5569 being very small with only the
-> selftest portion to be custom.
-> 
-> Lee also wasn't clear by the meaning of ENGINE in these LED driver,
-> so here some simple explaination. This is very common on these TI LED
-> chip. The ENGINE (there are always 3) is just some kind of processor
-> that execute a program (precompiled code ASM like) loaded in the SRAM.
-> Sysfs is used to load the pattern, and to start and stop the engine.
-> 
-> These pattern can do all kind of complex thing with LEDs. Old LED chip
-> had 32bytes of space for the pattern but newer one (like lp5569) have
-> pages and if correctly configured can have massive pattern.
-> These pattern can do all kind of magic like loops that make the LED
-> pulse, change color and all kind of stuff.
-> 
-> (For Lee, sorry if you will have to repeat some review that I might
->  have missed in the lp5569 driver)
-> 
-> Changes v7:
-> - Add Suggested-by tag
-> - Fix checkpatch error for complex macro (rework define)
-> - Add missing values for fader conversion
-> - Align some function with redundant new line
-> - Capitalize every commit title
-> Changes v6:
-> - Fix compilation warning for ret unused in read_poll_timeout
->   (no idea why this is flagged only on some particular arch...)
-> - Fix missing bitfield.h in lp55x-common.c (again it seems this
->   header gets included in the flow if the arch use them or not...)
-> Changes v5:
-> - Big generalization patch
-> - Rework lp5569 driver with new generalized functions
-> - Drop all copyright header in lp5569 as the driver got reworked
->   entirely and it's not based on previous one anymore.
-> Changes v4:
-> - Fix reported buffer overflow due to a copypaste error
-> - Add comments to describe fw size logic
-> Changes v3:
-> - Add ACK tag to DT patch
-> - Enlarge and support program size up to 128bytes
-> Changes v2:
-> - Add ACK tag to DT patch
-> - Fix compilation error with target that doesn't
->   include bitfield.h
-> 
-> Christian Marangi (20):
->   dt-bindings: leds-lp55xx: Limit pwr-sel property to ti,lp8501
->   dt-bindings: leds-lp55xx: Add new ti,lp5569 compatible
->   leds: leds-lp55xx: Generalize stop_all_engine OP
->   leds: leds-lp55xx: Generalize probe/remove functions
->   leds: leds-lp55xx: Generalize load_engine function
->   leds: leds-lp55xx: Generalize load_engine_and_select_page function
->   leds: leds-lp55xx: Generalize run_engine function
->   leds: leds-lp55xx: Generalize update_program_memory function
->   leds: leds-lp55xx: Generalize firmware_loaded function
->   leds: leds-lp55xx: Generalize led_brightness function
->   leds: leds-lp55xx: Generalize multicolor_brightness function
->   leds: leds-lp55xx: Generalize set_led_current function
->   leds: leds-lp55xx: Generalize turn_off_channels function
->   leds: leds-lp55xx: Generalize stop_engine function
->   leds: leds-lp55xx: Generalize sysfs engine_load and engine_mode
->   leds: leds-lp55xx: Generalize sysfs engine_leds
->   leds: leds-lp55xx: Generalize sysfs master_fader
->   leds: leds-lp55xx: Support ENGINE program up to 128 bytes
->   leds: leds-lp55xx: Drop deprecated defines
->   leds: leds-lp5569: Add support for Texas Instruments LP5569
-> 
->  .../devicetree/bindings/leds/leds-lp55xx.yaml |  11 +
->  drivers/leds/Kconfig                          |  16 +-
->  drivers/leds/Makefile                         |   1 +
->  drivers/leds/leds-lp5521.c                    | 405 +---------
->  drivers/leds/leds-lp5523.c                    | 734 ++---------------
->  drivers/leds/leds-lp5562.c                    | 261 +-----
->  drivers/leds/leds-lp5569.c                    | 544 +++++++++++++
->  drivers/leds/leds-lp55xx-common.c             | 743 +++++++++++++++++-
->  drivers/leds/leds-lp55xx-common.h             | 163 ++--
->  drivers/leds/leds-lp8501.c                    | 313 +-------
->  10 files changed, 1540 insertions(+), 1651 deletions(-)
->  create mode 100644 drivers/leds/leds-lp5569.c
+The datasheet also has the same diagram in _Figure 55. CS Mode, 4-Wire Turbo Mode
+Connection Diagram_. So maybe we should call this "register support mode" or
+something like that instead of mentioning 3 or 4-wire?
 
-For whatever reason, this no longer applies.
+> +
+> +Datasheet "3-wire" mode is what most resembles standard SPI connection which,
+> +for these devices, comprises of connecting the controller CS line to device CNV
+> +pin and other SPI lines as usual. This configuration is (misleadingly) called
+> +"CS Mode, 3-Wire Turbo Mode" connection in datasheets.
+> +NOTE: The datasheet definition of 3-wire mode for the AD4000 series is NOT the
+> +same of standard spi-3wire mode.
+> +This is the only connection mode that allows configuration register access but
+> +it requires the SPI controller to support the ``SPI_MOSI_IDLE_HIGH`` feature.
+> +
+> +Omit the ``adi,sdi-pin`` property in device tree to select this mode.
+> +
+> +::
+> +
+> +                                         +-------------+
+> +     + ----------------------------------| SDO         |
+> +     |                                   |             |
+> +     |               +-------------------| CS          |
+> +     |               v                   |             |
+> +     |    +--------------------+         |     HOST    |
+> +     |    |        CNV         |         |             |
+> +     +--->| SDI   AD4000   SDO |-------->| SDI         |
+> +          |        SCK         |         |             |
+> +          +--------------------+         |             |
+> +                    ^                    |             |
+> +                    +--------------------| SCLK        |
+> +                                         +-------------+
+> +
 
-Please rebase it on Linux -next or for-leds-next and resubmit.
+I think the rest of the explanations are good.
 
--- 
-Lee Jones [李琼斯]
 
