@@ -1,225 +1,148 @@
-Return-Path: <linux-kernel+bounces-230224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14EB1917A02
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:44:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EC48917A05
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:46:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C19DB2837D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:44:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C16D31F21A5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:46:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B630C15CD58;
-	Wed, 26 Jun 2024 07:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA4815D5C4;
+	Wed, 26 Jun 2024 07:46:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="N8/5WSXV"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2074.outbound.protection.outlook.com [40.107.100.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="PDRuAxX5"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB6215B980;
-	Wed, 26 Jun 2024 07:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719387867; cv=fail; b=kp+NxQlhtfx6k+gEAaHtuN9RfxOhCfJ/4Eh/dAi92bfu1Jl3JajDE8/VELF7HDOhHPRmYOIfXKDlnleZ2KPlvj5zrbWofpUenhNntiPozHGGn9n0ZsLvq+uSezouRR6oHKPO0k95grNCN/1Qo7MBr4fxOp2wDW6IWzLk8nJ8znQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719387867; c=relaxed/simple;
-	bh=Dgt3icfkmQsAyKl5DP8ipKYrWEE0JqUlQ2tpRNZMbDU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Lntz39V7UfYkTqRYUi+JKrl9Hzn3LoH0AuLlxvoBK1KgYBTrAAE6V3jS71LROYUZCNhSUZv/ccVJyrJoxKz9lbFaIUMDil+Hq5Yp2j0jQObuhX61kRrUwMdZPIulp45xU4QG9jl/wNDqrGfPbi3z9sp6Rj/eTwR+jjfqV0euE9M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=N8/5WSXV; arc=fail smtp.client-ip=40.107.100.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nXBjxQWZQn8vQAVJ3/QBJPp4hR2/l8u68g+24Ly/7yLIopHVldALpYNL+AyrAL4x6DjpGtHcFWZM/kuLRXbj7Ho83j2A1R6bRzMH7dJqK/xBjyKieOL88geOJ+FNxdI+oRmE3e24uXgUkG04M4Ul+y0o0VFE9aqBv6hcIM4sqfV7Au/a8CwDa1lM8Zt8AX1X9MUqnVRTVW/6LNfBainRnqIzG+kdzdneOUz/tYfch5u79RZJ9kUFWh5K5rPAdQZKuOCQXZRvK8MRZzcn8CRoMRkHOUVCNzOgiJQ7+okNALIDbNMgwy5AXsbUjdgwLj2knMETP/WzxvV8gZbQ5QG+Aw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2LYXGth3DQap4L+9NSPyjx/dxhgr4c5CraECk/HdOUo=;
- b=bkKvHjcJE9MMS1cgKcdifib8IWHY6fEadOi5BT0AJUoJ+Lbp2rhapQRGhUxgCvTU3mxPyZuPhpQ2m1z41hpyWGQo+FgZUWEMLxQtR4+e38iDmhB9b2ukUosXFNPjLQwAZgCtXeU0D3BzsuNR6rFoXzuy6yeBSJAm0tFAwErRq/rC9upkRUSfYkg2EkRfwO1094Fb29IoZLasJ86yGz7VenEj7oURVaclwVADGBuY1jCYacMeKikYJ+Wv04u9CjcdVhYXGvSnbYgV4WYJiC7Y3POA4H1mKKFcvjjhXjCiQB39dPsaqX+BePDI9OQZbzS0EnK6WtRWZHO7UQPPCzkW6w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2LYXGth3DQap4L+9NSPyjx/dxhgr4c5CraECk/HdOUo=;
- b=N8/5WSXVxnF/hOsgHeQEfKwVWn0bvTGvQNIBFUOF9G/LpW+QHEwURjh/4MyZZYA65JPHssExvJKJnlEqwllmOGItY2VV5kdkSA/PNPon0FTwZQcZTR+YcWil0jDOZunULNIaAvV7PLN6JYPGZyH/9tVMDRbNX+skNrZlMCJ8FOk=
-Received: from MW4P223CA0007.NAMP223.PROD.OUTLOOK.COM (2603:10b6:303:80::12)
- by CH3PR12MB8209.namprd12.prod.outlook.com (2603:10b6:610:123::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.30; Wed, 26 Jun
- 2024 07:44:22 +0000
-Received: from CO1PEPF000044FB.namprd21.prod.outlook.com
- (2603:10b6:303:80:cafe::c1) by MW4P223CA0007.outlook.office365.com
- (2603:10b6:303:80::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.23 via Frontend
- Transport; Wed, 26 Jun 2024 07:44:22 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1PEPF000044FB.mail.protection.outlook.com (10.167.241.201) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7741.0 via Frontend Transport; Wed, 26 Jun 2024 07:44:21 +0000
-Received: from sindhu.amdval.net (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 26 Jun
- 2024 02:44:12 -0500
-From: Sandipan Das <sandipan.das@amd.com>
-To: <linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <x86@kernel.org>, <peterz@infradead.org>, <mingo@kernel.org>,
-	<acme@kernel.org>, <namhyung@kernel.org>, <mark.rutland@arm.com>,
-	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
-	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
-	<tglx@linutronix.de>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<hpa@zytor.com>, <ravi.bangoria@amd.com>, <ananth.narayan@amd.com>,
-	<sandipan.das@amd.com>
-Subject: [PATCH] perf/x86/amd/uncore: Avoid PMU registration if counters are unavailable
-Date: Wed, 26 Jun 2024 13:14:04 +0530
-Message-ID: <20240626074404.1044230-1-sandipan.das@amd.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946704596E
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 07:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719387965; cv=none; b=Nw5eO+Tu5EuijBl02FEztos/XoG2WVZwJNoym0WWzfkSGffgpBawcBmWKGSpapU+HGZ1o6OGq2poAlm85gDrx1yDvpbt3WGu+7Vt2G7E/XOyfr2fbihrPZe7Lh3YCMdxRMmFI7K2o9j8zBhe7KwoutPJLBQhHv7PmqwgNIxgyBo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719387965; c=relaxed/simple;
+	bh=+S/ZylBo7OkDhqSowKwWFObaRLnN9nAxnObxD0rGb+Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Lh+zkGOVqwGcjM6ubcaI2qI+vKpGQoncuyT0VJIvCMau9QsjlXslsdRzaX+ngfZLA0/xZyUiD/oFuR+ZduC1BPqQI1lEPW6BkLszd2hOCBhvUtuwNOW3XLyC3O7HHZPJBlfSBKQ2ytwYoDP87cDxFaIvUtnAuZIuRQfI7mqxdEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=PDRuAxX5; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52cdf579dd2so3869334e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 00:46:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1719387962; x=1719992762; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6nCZo+jWMRZ6cgUq9Mxe++DtYRLBTMuxAvEuWj2mzpc=;
+        b=PDRuAxX5PEoFRCnLtzb8Qail2JRo6XlJkOioQfY/45Q2Pe5Q4H1J/Zu/9KyxNujnRg
+         S2J0xUcVG4F+oPIm4+Eu5LhVZAYM5/fLmUMAhuzLqeTy2ImN1BIrqO4aFYIdDLNui4Ee
+         zQwemIPBseh0/06zstorqGL/VsXG0M2rI5dIFNewRRQ+MN4PyT+wGyhK3+hg98tvrBf2
+         Kjm82niL0hF4Qi1ELGQKJACSn83OG1GjL5s6SuIM5WoCHD+9AX/c1sNt/uOr1n/dWFfU
+         aPE+pPHRQPFLSxyks5E72AX50YoeEwEQaoLgAOcnFB0JxhNyMd1pAuBqXBcOVL6kbRkv
+         xG1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719387962; x=1719992762;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6nCZo+jWMRZ6cgUq9Mxe++DtYRLBTMuxAvEuWj2mzpc=;
+        b=Gs3knmX6HgWeJkGLa5VJZam7usZXx0JLhJInU1Tv9mPGlJiFOgvgN0y95osbh00bb9
+         4FWVwNp7IMndVKs+ax1S5rtPuuW4o/dqaLLrosUCMUeBJB8lJW+4snncVUR8o60fx45C
+         v4hS3jId06HVEwZ7frU/err6vP9zthDzzT/8ikO6EOJLGrjSK29DaE1TNcWZpr7sxHf/
+         2rdI/+QQVfqfpbJcSmybu3Tf6WQe1neBja7w5GdSorz5yblgffx7DpqIvAw35enhaHoH
+         YpGXsgEayiS5bsBX4RoA3leUAb3jtUClVqOF8lfe7+4eSqhi906QaJi1TCl8YPQSok+Z
+         VLGA==
+X-Forwarded-Encrypted: i=1; AJvYcCWVR5EePQmzxCs2NhmTxV6i2LSnw4cQnowdz3momSsGgecoaC22fVlXbUsV8Ak0tivpVZbezlit8jVga/9HYbbPTd1SLWQukoegbht2
+X-Gm-Message-State: AOJu0YyKberuzNgPacsfmJ1NZeiWEh6qRuD1WXc7zbsmJsrED75RGBH7
+	GsvRlRHgySD7VHwcBJTUVC2RgB1xJFfyOqwN/Ca7h/zhh5F/FO6SiFXZ5xwOAs0=
+X-Google-Smtp-Source: AGHT+IGQX0elEmsIgSgrE2SLocb/u9Th6sLY7fmx7i7FDBNC/6k6+LF/g+fLJC0OABw8GNYDkrkA2Q==
+X-Received: by 2002:a05:6512:138a:b0:52c:f521:b1c6 with SMTP id 2adb3069b0e04-52d3ad9e8efmr2137151e87.30.1719387961780;
+        Wed, 26 Jun 2024 00:46:01 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.70])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c8246b1dsm15205005e9.6.2024.06.26.00.46.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Jun 2024 00:46:00 -0700 (PDT)
+Message-ID: <76fc0a6c-b20c-4ae0-bb4f-0023cb66962a@tuxon.dev>
+Date: Wed, 26 Jun 2024 10:45:59 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000044FB:EE_|CH3PR12MB8209:EE_
-X-MS-Office365-Filtering-Correlation-Id: e1a09c9b-ca13-462d-9284-08dc95b3cb3f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230038|1800799022|82310400024|36860700011|7416012|376012;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?HAHbiQsMWJ7ABXSynZWb2oaPqvRIzjy9CQWMdl6rNDpSO+hl0pOtDCGNFwrE?=
- =?us-ascii?Q?ddZIMUiOOx22oR7E4wWGAlIkdlx927JyXLk+Jg6goi5q8gxKgH8J6Tcbqmbn?=
- =?us-ascii?Q?qBGWUivLfqTQHL3k49exXiEyOfRlDwxvfGGWvObHDNU4gzbN6oPW4MCB2Pto?=
- =?us-ascii?Q?zVZxYOsYqEi6vJfIhfY9oeZdy2LvKqzQLDj6trR4heUvpYeAzK5H+YQOiBYG?=
- =?us-ascii?Q?RvYtSofFvqsuWseq4Z7ZRtt3t+zVpvQcPsZ5m7DyL3n/GJtv3JNkcSuxNdeJ?=
- =?us-ascii?Q?nTS5yb/siug3W9CKSZwBwqx/Da66tI1d1oRDkalOWxbP/qtB7ovMU5wBzEM2?=
- =?us-ascii?Q?hNkEtGp78RnkDQmNz5KouDyE3qbTFQ2I1SU7ZZL8sno2UEv0Kx9YsynyJcAy?=
- =?us-ascii?Q?3se8A68FiVFJvirCKmuJWU2le62mMm1k9arkVdcgPNyKgSsqD4kQB0cMXjPi?=
- =?us-ascii?Q?ZDQa7sZjjgwaXTwIMJDtCsL4fBkC3/ulH8aHSvAm+B6F3kR90jczapOSqOzO?=
- =?us-ascii?Q?/OSrtiuGhidy52Od3AoMFCMhfPOvHe9IPe5TjTPdrZpngg+kk+J/IeO2mAJH?=
- =?us-ascii?Q?I8GTMdflcO/w2AR65J05YHOsNgzd++cXkeH6NfNZ3VXkR+K0hVhtUuTWAMVe?=
- =?us-ascii?Q?pGdudN9IViZrUCsm6Yl55MtrZILlI0VZpxsn533HXTHMcllusOKH62mPbHNW?=
- =?us-ascii?Q?N1rqOvxG7XzRQgHaAxxy6S7p/BTprxFv7dDH5N9fn2gVVm2iOnxxJWKShZ6Z?=
- =?us-ascii?Q?GPQyyJF/p3ppmrGiiipytIqKy1OXBCiFEP+ntpXrqDbyG7vdcX1paSCJpJWJ?=
- =?us-ascii?Q?MbfRxc3p5TtdU1pNVdHJ4dMKD7YhU+P8JhlSI4EbWYQ84G7Czk3GU6ekhezd?=
- =?us-ascii?Q?kjw0i+cWIYPc8+notS7jtTvsVNmjLESWEGuUdJ38ejsmZGA4dtmMbyRWcg1H?=
- =?us-ascii?Q?H1E7E1tu5wYsK8LaJNVYVRL0cpGcELUyLQ/jhMYHAaAGaHEpluBcasna9LUX?=
- =?us-ascii?Q?iBd05X4q4JbtD6rMshy8gUsxemlDUoXjn4UnmAn4ZP3Q7ShJ5WyLqSpv1onS?=
- =?us-ascii?Q?p9CPukfNuQDlfPz/LUNIud2+BNU8ZXyf4oN9bOiI/Uhv7zEaNANj6riwr82B?=
- =?us-ascii?Q?0vV4THS9Tcymmy4vR2MlbqrRKTzTP2vaIUC9GjLFtl3RRb5z+MBYRos+GZEU?=
- =?us-ascii?Q?YVdMZt/Fb7mnYWsXvuXd1kX7W5P/jmweEDX7Pydy6qF/J7Jpo8w2sM1crLLD?=
- =?us-ascii?Q?23UpQdTv01wbXY+LdVwPuRQnbbc1pFtTtt+TONQNFrA/Q6++5RW3oWSFgp5j?=
- =?us-ascii?Q?F7MC8fsbTKq6bcesfBKrkRNryIRpR9Dyb8WR6nzg8s4vUMTqUwvuHOR4t0Z6?=
- =?us-ascii?Q?+ZL/HTjKHSFNEeWh/IAPtFZNpOEBsalyzDjNd6ahxIJrOn9vzw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230038)(1800799022)(82310400024)(36860700011)(7416012)(376012);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 07:44:21.9674
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e1a09c9b-ca13-462d-9284-08dc95b3cb3f
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000044FB.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8209
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] mmc: tmio: Use MMC core APIs to control the vqmmc
+ regulator
+Content-Language: en-US
+To: Prabhakar <prabhakar.csengg@gmail.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
+ linux-mmc@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20240624153229.68882-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240624153229.68882-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20240624153229.68882-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-X86_FEATURE_PERFCTR_NB and X86_FEATURE_PERFCTR_LLC are derived from
-CPUID leaf 0x80000001 ECX bits 24 and 28 respectively and denote the
-availability of DF and L3 counters. When these bits are not set, the
-corresponding PMUs have no counters and hence, should not be registered.
 
-Fixes: 07888daa056e ("perf/x86/amd/uncore: Move discovery and registration")
-Signed-off-by: Sandipan Das <sandipan.das@amd.com>
----
- arch/x86/events/amd/uncore.c | 22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
 
-diff --git a/arch/x86/events/amd/uncore.c b/arch/x86/events/amd/uncore.c
-index 4ccb8fa483e6..b78e05ab4a73 100644
---- a/arch/x86/events/amd/uncore.c
-+++ b/arch/x86/events/amd/uncore.c
-@@ -654,17 +654,20 @@ int amd_uncore_df_ctx_init(struct amd_uncore *uncore, unsigned int cpu)
- {
- 	struct attribute **df_attr = amd_uncore_df_format_attr;
- 	struct amd_uncore_pmu *pmu;
-+	int num_counters;
- 
- 	/* Run just once */
- 	if (uncore->init_done)
- 		return amd_uncore_ctx_init(uncore, cpu);
- 
-+	num_counters = amd_uncore_ctx_num_pmcs(uncore, cpu);
-+	if (!num_counters)
-+		goto done;
-+
- 	/* No grouping, single instance for a system */
- 	uncore->pmus = kzalloc(sizeof(*uncore->pmus), GFP_KERNEL);
--	if (!uncore->pmus) {
--		uncore->num_pmus = 0;
-+	if (!uncore->pmus)
- 		goto done;
--	}
- 
- 	/*
- 	 * For Family 17h and above, the Northbridge counters are repurposed
-@@ -674,7 +677,7 @@ int amd_uncore_df_ctx_init(struct amd_uncore *uncore, unsigned int cpu)
- 	pmu = &uncore->pmus[0];
- 	strscpy(pmu->name, boot_cpu_data.x86 >= 0x17 ? "amd_df" : "amd_nb",
- 		sizeof(pmu->name));
--	pmu->num_counters = amd_uncore_ctx_num_pmcs(uncore, cpu);
-+	pmu->num_counters = num_counters;
- 	pmu->msr_base = MSR_F15H_NB_PERF_CTL;
- 	pmu->rdpmc_base = RDPMC_BASE_NB;
- 	pmu->group = amd_uncore_ctx_gid(uncore, cpu);
-@@ -785,17 +788,20 @@ int amd_uncore_l3_ctx_init(struct amd_uncore *uncore, unsigned int cpu)
- {
- 	struct attribute **l3_attr = amd_uncore_l3_format_attr;
- 	struct amd_uncore_pmu *pmu;
-+	int num_counters;
- 
- 	/* Run just once */
- 	if (uncore->init_done)
- 		return amd_uncore_ctx_init(uncore, cpu);
- 
-+	num_counters = amd_uncore_ctx_num_pmcs(uncore, cpu);
-+	if (!num_counters)
-+		goto done;
-+
- 	/* No grouping, single instance for a system */
- 	uncore->pmus = kzalloc(sizeof(*uncore->pmus), GFP_KERNEL);
--	if (!uncore->pmus) {
--		uncore->num_pmus = 0;
-+	if (!uncore->pmus)
- 		goto done;
--	}
- 
- 	/*
- 	 * For Family 17h and above, L3 cache counters are available instead
-@@ -805,7 +811,7 @@ int amd_uncore_l3_ctx_init(struct amd_uncore *uncore, unsigned int cpu)
- 	pmu = &uncore->pmus[0];
- 	strscpy(pmu->name, boot_cpu_data.x86 >= 0x17 ? "amd_l3" : "amd_l2",
- 		sizeof(pmu->name));
--	pmu->num_counters = amd_uncore_ctx_num_pmcs(uncore, cpu);
-+	pmu->num_counters = num_counters;
- 	pmu->msr_base = MSR_F16H_L2I_PERF_CTL;
- 	pmu->rdpmc_base = RDPMC_BASE_LLC;
- 	pmu->group = amd_uncore_ctx_gid(uncore, cpu);
--- 
-2.43.0
+On 24.06.2024 18:32, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> Use the mmc_regulator_enable_vqmmc() and mmc_regulator_disable_vqmmc() APIs
+> to enable/disable the vqmmc regulator.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>\
 
+Tested-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com> # on RZ/G3S
+
+> ---
+> v2->v3
+> - Included RB tags
+> 
+> v1->v2
+> - New patch
+> ---
+>  drivers/mmc/host/tmio_mmc_core.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+> index 93e912afd3ae..2ec1a74c85bc 100644
+> --- a/drivers/mmc/host/tmio_mmc_core.c
+> +++ b/drivers/mmc/host/tmio_mmc_core.c
+> @@ -897,8 +897,8 @@ static void tmio_mmc_power_on(struct tmio_mmc_host *host, unsigned short vdd)
+>  	 * It seems, VccQ should be switched on after Vcc, this is also what the
+>  	 * omap_hsmmc.c driver does.
+>  	 */
+> -	if (!IS_ERR(mmc->supply.vqmmc) && !ret) {
+> -		ret = regulator_enable(mmc->supply.vqmmc);
+> +	if (!ret) {
+> +		ret = mmc_regulator_enable_vqmmc(mmc);
+>  		usleep_range(200, 300);
+>  	}
+>  
+> @@ -911,8 +911,7 @@ static void tmio_mmc_power_off(struct tmio_mmc_host *host)
+>  {
+>  	struct mmc_host *mmc = host->mmc;
+>  
+> -	if (!IS_ERR(mmc->supply.vqmmc))
+> -		regulator_disable(mmc->supply.vqmmc);
+> +	mmc_regulator_disable_vqmmc(mmc);
+>  
+>  	if (!IS_ERR(mmc->supply.vmmc))
+>  		mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, 0);
 
