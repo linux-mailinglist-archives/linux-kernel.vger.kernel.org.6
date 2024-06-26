@@ -1,123 +1,126 @@
-Return-Path: <linux-kernel+bounces-231049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B803D918578
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:13:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F694918585
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:15:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8EDE1C221E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:13:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E89D71F26B58
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65A618A932;
-	Wed, 26 Jun 2024 15:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E6118A93E;
+	Wed, 26 Jun 2024 15:15:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E5BGYU+I"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KffZscbZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19AF1836F9;
-	Wed, 26 Jun 2024 15:13:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9427FC14F;
+	Wed, 26 Jun 2024 15:15:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719414829; cv=none; b=tv2FIDzdch5adIIIO5qvN+Z11tg2+zkSNJ+AXIIyoq3YRT8PLupQNtoNN904KAGwh0M/VvkAYw9LqUjUgCwoPRnZuYzYM1EgXMcclXJKX2xH6uAxIt4LQdO5VNa30KtdT0yVt0w9u0befl6p2jfGx2D1cLLZL0R3pRBD5hckUVs=
+	t=1719414949; cv=none; b=hmSqxW/4l92AoW4ZeIrYACelUxIp+2ncgBhIOF2mBj1zQaLzTAAsDrWs41FEBVC4CrzvfavHjIzrmg9jIq6HuT8vDpr3KooougIxPgWGeTmae+N6E7iZw4LKWV5/iw2m2/zBZehiqFt1iFgU2nK7Nw0hyAg4TbsQCoOJpecirW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719414829; c=relaxed/simple;
-	bh=nyFfYXcb8BHeCVoCZIVl/CHDqWGfVZeZvhuIHlrHsVA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KtDrFWCC/h1GAdu94zsVYVyaUIMUCZ3Wmw7BxNS4qlpQRl6OiEtKyeERjsjy12FkcGqAipJQsictijDVcmpH+B2rcfKEGEUei6+IShP8gRt33zLWilxMlom6qrtQtMCK219S1l1n+nXogS//nvdTmiqxvjxbRRr4pgPZ8iJhDdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E5BGYU+I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44B2DC116B1;
-	Wed, 26 Jun 2024 15:13:46 +0000 (UTC)
+	s=arc-20240116; t=1719414949; c=relaxed/simple;
+	bh=UpQC2H0uM70uE62+a4eyqSjsiSzz3ws6dnp8Q28LdaA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=YtanqXclkxoKrnCe3X3xwCK7ncOVh7MUTmP8iI6ZTn4C9ljDDn3lC4tkuMUNyrCYppdLjad1St1zskXqZSKFlQ9/1DJ/9g9sn4x6gxM2mdczidyVk0yewdJIDYNl7h8mK/NBm/v4StatrDaHBPweCStUMAZi1jHJNKKfmjYoJW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KffZscbZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CABE0C116B1;
+	Wed, 26 Jun 2024 15:15:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719414828;
-	bh=nyFfYXcb8BHeCVoCZIVl/CHDqWGfVZeZvhuIHlrHsVA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E5BGYU+IwcgJQ6wzQoc8q3zuJLZ9s2znsJkN2Qr3X9/Cb0eNV3SpZM/USpdlJTQGu
-	 8EqcZZWEuuEJc2FsvqCE1RgDsYSM+cwsgs/uZfnEI1gW/KGo8jFhnrE7uvEi1anaWN
-	 DOgC9lo1TVq9C0LFW9qDF7ojk8D976NnIwkvCIkNRae6M+r2L9tsbjJAVbfOaw1fzf
-	 +BWWGHS4tBiAfL1AZHAXAfcMBVYNtK5d/XPhdUhU4geWcsA77NyEYIDdIFzGbl9wLH
-	 AM55/hnVqLmm5rODA8gHNA5zBwsQMwEgzEnkCxG7rWyJMj9oTkJi229m1e50GwOahp
-	 qvo9Bl3kHrBOw==
-Date: Wed, 26 Jun 2024 16:13:43 +0100
-From: Lee Jones <lee@kernel.org>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-	William Breathitt Gray <wbg@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-pwm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Thorsten Scherer <T.Scherer@eckelmann.de>
-Subject: Re: [PATCH v2 0/5] mfd: stm32-timers: Make register definition more
- flexible
-Message-ID: <20240626151343.GA2504017@google.com>
-References: <cover.1718791090.git.u.kleine-koenig@baylibre.com>
+	s=k20201202; t=1719414949;
+	bh=UpQC2H0uM70uE62+a4eyqSjsiSzz3ws6dnp8Q28LdaA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=KffZscbZfm1m1k+FV8X2wDXxCDswg03shB/KMu/mxR7fQxOX97ntfEYmoGfb4w8iN
+	 bY6DfYd7xslnWK8jlmfEygy7xKoScfwAwU1N2Jh4B0fCSflS4KxN0W/Yek0BeewAxU
+	 D01MdCfQHEG3LZJGMHVxiB6/0u1O2I7Ez6ixK0y6mRNLnc4gP8BquwoxwcnWMERw83
+	 IlgPmEbojht79NzIe5LBULPQVFFHYwfOyC0PPmKfX2eIKv3juHQWpHnYKCJawBK/aZ
+	 KAYCYdl6ZGnEYvkaHzfo/WptbmDFOU2XAZoegr5aQWU0TOa95UiOGnvNYoAmX0q/A9
+	 sxi2YhUtTLXIA==
+Date: Wed, 26 Jun 2024 10:15:46 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Damien Le Moal <dlemoal@kernel.org>
+Cc: Yihang Li <liyihang9@huawei.com>, cassel@kernel.org,
+	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
+	john.g.garry@oracle.com, yanaijie@huawei.com,
+	linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+	linuxarm@huawei.com, chenxiang66@hisilicon.com,
+	prime.zeng@huawei.com,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [bug report] scsi: SATA devices missing after FLR is triggered
+ during HBA suspended
+Message-ID: <20240626151546.GA1466906@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cover.1718791090.git.u.kleine-koenig@baylibre.com>
+In-Reply-To: <b39b4a5b-07b7-483b-9c42-3ac80503120d@kernel.org>
 
-On Wed, 19 Jun 2024, Uwe Kleine-König wrote:
+On Mon, Jun 24, 2024 at 09:10:41AM +0900, Damien Le Moal wrote:
+> On 6/22/24 12:31 PM, Yihang Li wrote:
+> > Hi Damien,
+> > 
+> > Thanks for your reply.
+> > 
+> > On 2024/6/19 7:11, Damien Le Moal wrote:
+> >> On 6/18/24 22:29, Yihang Li wrote:
+> >>> Hi Damien,
+> >>>
+> >>> I found out that two issues is caused by commit 0c76106cb975 ("scsi: sd:
+> >>> Fix TCG OPAL unlock on system resume") and 626b13f015e0 ("scsi: Do not
+> >>> rescan devices with a suspended queue").
+> >>>
+> >>> The two issues as follows for the situation that there are ATA disks
+> >>> connected with SAS controller:
+> >>
+> >> Which controller ? What is the driver ?
+> > 
+> > I'm using the hisi_sas_v3_hw driver and it supports HiSilicon's SAS controller.
+> 
+> I do not have access to this HBA, but I have one that uses libsas/pm8001 driver
+> so I will try to test with that.
+> 
+> >>> (1) FLR is triggered after all disks and controller are suspended. As a
+> >>> result, the number of disks is abnormal.
+> >>
+> >> I am assuming here that FLR means PCI "Function Level Reset" ?
+> > 
+> > Yes, I am talking about the PCI "Function Level Reset"
+> > 
+> >> FLR and disk/controller suspend execution timing are unrelated. FLR can be
+> >> triggered at any time through sysfs. So please give details here. Why is FLR
+> >> done when the system is being suspended ?
+> > 
+> > Yes, it is because FLR can be triggered at any time that we are testing the
+> > reliability of executing FLR commands after disk/controller suspended.
+> 
+> "can be triggered" ? FLR is not a random asynchronous event. It is an action
+> that is *issued* by a user with sys admin rights. And such users can do a lot
+> of things that can break a machine...
+> 
+> I fail to see the point of doing a function reset while the device is
+> suspended. But granted, I guess the device should comeback up in such case,
+> though I would like to hear what the PCI guys have to say about this.
+> 
+> Bjorn,
+> 
+> Is reseting a suspended PCI device something that should be/is supported ?
 
-> Hello,
-> 
-> (implicit) v1 is available at
-> https://lore.kernel.org/lkml/cover.1718352022.git.u.kleine-koenig@baylibre.com
-> .
-> 
-> Changes introduced here:
-> 
->  - Split the patch removing TIM_DIER_CC_IE() and use appropriate subject
->    prefixes. Lee and William didn't like the patch touching both
->    include/linux/mfd/stm32-timers.h and
->    drivers/counter/stm32-timer-cnt.c not having a hint to the counter
->    subsystem (at least that's my interpretation of their feedback).
->    Not mentioning mfd didn't seem to be considerably better in my eyes,
->    so I split this patch.
->  - Fix typo noticed by Thorsten.
->  - Update subject prefix of the last patch to match what is usually done
->    for pwm.
-> 
-> I have some further updates to the pwm-stm32 driver that will probably
-> go in before v6.10-rc1. They shouldn't conflict, still I'd prefer to let
-> the pwm patch go in via my tree as I might have some further changes for
-> that driver. So if this is merged using the mfd or counter tree, please
-> skip the pwm patch. A stable branch would be welcome in this case.
-> 
-> Best regards
-> Uwe
-> 
-> 
-> Uwe Kleine-König (5):
->   mfd: stm32-timers: Unify alignment of register definition
->   mfd: stm32-timers: Add some register definitions with a parameter
->   counter: stm32-timer-cnt: Use TIM_DIER_CCxIE(x) instead of
->     TIM_DIER_CCxIE(x)
->   mfd: stm32-timers: Drop unused TIM_DIER_CC_IE
->   pwm: stm32: Make use of parametrised register definitions
-> 
->  drivers/counter/stm32-timer-cnt.c |   4 +-
->  drivers/pwm/pwm-stm32.c           |  22 ++--
->  include/linux/mfd/stm32-timers.h  | 179 ++++++++++++++++--------------
->  3 files changed, 107 insertions(+), 98 deletions(-)
-> 
-> base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+I doubt it.  The PCI core should be preserving all the generic PCI
+state across suspend/resume.  The driver should only need to
+save/restore device-specific things the PCI core doesn't know about.
 
-Applied patches 1-4 and submitted for build testing.
+A reset will clear out most state, and the driver doesn't know the
+reset happened, so it will expect most device state to have been
+preserved.
 
-If all is good, I'll sent out a PR for William.
-
-Note to self: ib-mfd-counter-5.11
-
--- 
-Lee Jones [李琼斯]
+Bjorn
 
