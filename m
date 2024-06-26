@@ -1,142 +1,98 @@
-Return-Path: <linux-kernel+bounces-230484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 371F2917D80
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:14:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CF70917D89
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:15:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 694EE1C22F0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:14:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8358228501C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:15:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC6117A918;
-	Wed, 26 Jun 2024 10:14:29 +0000 (UTC)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB16617C7AF;
+	Wed, 26 Jun 2024 10:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pSJhfLsL"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9C58177999;
-	Wed, 26 Jun 2024 10:14:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 467F5178388
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 10:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719396869; cv=none; b=prVnnBK0NwbhO9aIvAnNUviJUflWVr+d5psaiCVNSLzRKgUQv1nA9EgLCWlSYntGADDGZQAj+njwzDujf/+Wpgp+veUQ6iFvzHR5YYfwtdDYDCV4Pxpgy7mMM29DsB50BngDbRUYXLOYSmYhC4B+Mv3DbfIQERP6cNHy+gX0pC4=
+	t=1719396882; cv=none; b=jtHhyka2u4owO+QwDgRy2eqvfADi+Mcu6QYbVKffyvgp394aevVLsh41oyGVoMUim4psxaSRhbMQC280mDiqvBGoFvXPsRnyZ1qLPkxN60Tem+lyiWRAZLHywdjs8DK5DdaclYWDyPcgWl9AK7BSYuzVQcAYJKsdGCT57FjIp7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719396869; c=relaxed/simple;
-	bh=EFghCQtGsVstgFyVTq7nBnhnV4HXH+r8uYETXbGkEIw=;
+	s=arc-20240116; t=1719396882; c=relaxed/simple;
+	bh=6XQ2pTvFVEbYAST3NGhXhfNbq20t52CTftouk2JNdhE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bX3XM2cytAxvFMZZEcXbL+9wdJsHPatK5+b9d0I9ZyxMDzHzW9fMfeS8ip/RIZ83w69iS/uFA5jLXX0GqXYrNls+x8dld4kIqmt4P2nX8GK6zmqr6MleOJFElM743UdQt6c6QRIsHzH6aYOhuOIEFxyanSuoH6/hYNxk2QQtwms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-648b9d03552so1407987b3.2;
-        Wed, 26 Jun 2024 03:14:27 -0700 (PDT)
+	 To:Cc:Content-Type; b=uZKWbOD8ykTi5cqMSmhguxMVq7lyUSiZxJhfYXGnL8uboOJleBAhysDKh9BhKXl2NbQKv1q0xSEBjgZJMoZK0AGDDcT50ovD0lhBBQ7VZ93i8mm/PSl3AFcKd2ukBg73kqyKTjrAioIxVKkoO0lqHqbzSjQo+mcaXzYTCq8zz7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pSJhfLsL; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52cdebf9f6fso5263734e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 03:14:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719396879; x=1720001679; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6XQ2pTvFVEbYAST3NGhXhfNbq20t52CTftouk2JNdhE=;
+        b=pSJhfLsLH61fDM7ZeFtEGBa0TNpskhhdJpIOYhKhSB0Wdn1GwCuvPZpTPMIwM/ajen
+         MgBGTesykaq9Pff6ULts1Qh3PMyCORrAThVfekHylF/N5C9HFEE4te/ggL+bV6lchFh3
+         02V7xWRIYZ++4GzIgNqVZCIVCdH78kd6qwwqH4x780B0EZtXNI4MbhB6VaUAZPB5qiZq
+         /fGJhtXkUe9/id6DS6gtTJVrmWAMJiB1mmI7OaxYfgOZ7Fpea74jJvgzaagmE83W6ZA6
+         MEWUi2PLSy3RNPKB9GBPezEcsw8+3IU6qu7fDWLJtUdmU8F5+/OJ71NMcJsod/3lpyLj
+         Ej9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719396866; x=1720001666;
+        d=1e100.net; s=20230601; t=1719396879; x=1720001679;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sncjNyIrIrmggFhsEKZPA3iqH4wFfpQzTy5GCSI2ZxI=;
-        b=rkaH3+MHrPM9VPle0Qk7tFEKh+AuTk4KVXFt5FiDIYi16OHAkcyRMw2B5cfj7awi/M
-         Yjehrc9E+LVUwPMX+1wTrUgMQ1eW/ib4Jy7iKLzODiDm9zHBSNVta08ZRktqq4kwTew9
-         m50pol2Q4Zh6OWCuXNsjVWIMogbIEfjzdPUedjKk6XFKTVFf1hwRtJfrOq2frVSeZ1H7
-         75z6jMUuRsc6BF15BAhdsGdlqWHRAS9eN+nh7yD4XNUemP2H+eWF3U60bQHG1WXIM8EV
-         IiH1/jO0C3PN7anptdDiDwLy0VbGKXywlsp5+TZkFfqzE6Z4E5MkGmpR2lvyssTEHGpm
-         S6Ug==
-X-Forwarded-Encrypted: i=1; AJvYcCVzNbCjZ66UBb/vK/fNVE60Bg+AfCmFkfQ6DLaWBb11Ek0BB9VF5che2eclnXZMO+nCPk+xs3AdFomTidzLVbrY056IV8nO9kosBLL9v2mCcF8iN50aTo/z2vdazD6b23cOKIPAROTdLYsxnwYQIgxqXeH+msDJ/HlVsi88CGAWLf47Qot8F0ZgR1JRpc4ZDvJEymE1/9Vtn+uJ593AP/pa6XwYc3t2
-X-Gm-Message-State: AOJu0Yw6KS7KT18gO6zc/iKGCqAKiw7fcrsnXcBVogiW0RjeVca1evMW
-	9zFwX1xJDoEyujHKIFJpovxc3qwPAOQjcMK2ZaM3WkNSlsaWnss6OwFF3Mv6
-X-Google-Smtp-Source: AGHT+IHzc8MVWoNoyOiUPyavdWjN3pj+SILTBNjziQ4ffhEHkhdcAQvdwLIcYpy6emBuTTv4RGw+zA==
-X-Received: by 2002:a05:690c:6f10:b0:646:ebea:1da2 with SMTP id 00721157ae682-646ebea1e5dmr50052457b3.38.1719396865622;
-        Wed, 26 Jun 2024 03:14:25 -0700 (PDT)
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-63f125a3e0dsm38290027b3.59.2024.06.26.03.14.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Jun 2024 03:14:25 -0700 (PDT)
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-643f1ee4b3cso33715567b3.3;
-        Wed, 26 Jun 2024 03:14:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXVuivCycz3e/07Gvy12uE2KJd5vftMYRuRzGuyG5V+Nb0hNWg/R9q50BjTm3BZ39iukNZj8EAf4ONFMkwjwQBIkYDJg3C1j8ERB+EY60Mq/WF/vOo+M92o3HicTWcMgOSc6ahrXxqS0C7+XTSnchswHzMWaBQj1iC8IYAvVsySFjsOK7aVt9YU0j3B9Lhn/AKIlW5lI6yfjyekyrqAnYhTxF6blAmL
-X-Received: by 2002:a81:6057:0:b0:61a:bc2d:5186 with SMTP id
- 00721157ae682-643aba46495mr103660557b3.32.1719396864518; Wed, 26 Jun 2024
- 03:14:24 -0700 (PDT)
+        bh=6XQ2pTvFVEbYAST3NGhXhfNbq20t52CTftouk2JNdhE=;
+        b=IPchPxAVY7eW/2BVI9G4rwjGFgmqTWELutBOok7rJodJNJ/cSml6/o7R3VNkI103Ln
+         E4VO6ABUhcfRLEfc616LK+0Z8MNvqBiP4qE+QdLWTDG+lKUUd+PTlicoCKHwDR3gXh8c
+         qSqvp+o6ApX/lI5prLEyZaMAeh9mz3tQ2uOhJ1ov1dFG2a7cEhbf6FwKikbDa5FpA6A+
+         FAsYZ+uquChnO1LirrGd5E72sGqsiZvqYZ+aD4AoPUxtb4KOdWVzvw9Bzc4WctHt7WlD
+         /OeWZlGDL+/ZVApdV7Fx+F5/DOqnt8iptUbqSrk1VjBDIgEeGBYU3d5c3s97LkL+UcJf
+         zJjA==
+X-Forwarded-Encrypted: i=1; AJvYcCU52BD1V0otiMuAiPoJqCT+uG55qO31Zu8yfzsW9HKJz6WJmph8W2QE9/7XLQkdUpRtZQWhSShBWEm42UtP72FlbL5j6qQWyxB7FYFe
+X-Gm-Message-State: AOJu0YyYw5Wj7oox+d/rtfIhFdBBPIfTdGVvU+YKhWQMWdoQv6pck5EJ
+	9zUvUbQ1GuQR6/ey4fjCKBa1Eg65loo581wW28T8vZPoKY858Vnz9fBSBygfMelbdaWxtkDoxH2
+	XDfaah1citO+W55lQ81U1XmmwnpWo3+fjEp3ZwQ==
+X-Google-Smtp-Source: AGHT+IGd0xNNrA5h4U5v1nImX7eX0z63kjBSZzzGeZCpZWttZ5iQa/kspmC0q9On0PVRRo7UKWbhGIaE9NhldX0tep0=
+X-Received: by 2002:a05:6512:230b:b0:52d:a55b:fa9d with SMTP id
+ 2adb3069b0e04-52da55bfbccmr2105965e87.38.1719396879156; Wed, 26 Jun 2024
+ 03:14:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610233221.242749-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240610233221.242749-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240610233221.242749-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 26 Jun 2024 12:14:13 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUErrk1nq78vyvYoj4TkBiDhjMtbHExF3c2u9q5kWPH9A@mail.gmail.com>
-Message-ID: <CAMuHMdUErrk1nq78vyvYoj4TkBiDhjMtbHExF3c2u9q5kWPH9A@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 4/4] clk: renesas: Add RZ/V2H(P) CPG driver
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20240621091637.2299310-1-nichen@iscas.ac.cn>
+In-Reply-To: <20240621091637.2299310-1-nichen@iscas.ac.cn>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 26 Jun 2024 12:14:27 +0200
+Message-ID: <CACRpkdYv3uoO4iASNtRVaioX9gP_XsUs9CSECsB3=oj8aSA2AA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: mlxbf3: Fix return value check for devm_platform_ioremap_resource
+To: Chen Ni <nichen@iscas.ac.cn>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 11, 2024 at 1:32=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi Chen,
+
+On Fri, Jun 21, 2024 at 11:16=E2=80=AFAM Chen Ni <nichen@iscas.ac.cn> wrote=
+:
+
+> Fix return value check for devm_platform_ioremap_resource() in
+> mlxbf3_pinctrl_probe().
 >
-> Add RZ/V2H(P) CPG driver.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> v1->v2
-> - Updated commit description
-> - Dropped pll_clk1/clk2_offset
-> - Made r9a09g057_mod_clks/r9a09g057_resets as static const
-> - Now using register indexes
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 
-Thanks for the update!
+Well spotted! Patch applied.
 
-> --- /dev/null
-> +++ b/drivers/clk/renesas/r9a09g057-cpg.c
-
-> +static const struct rzv2h_mod_clk r9a09g057_mod_clks[] =3D {
-> +       DEF_MOD("scif_0_clk_pck", CLK_PLLCM33_DIV16, 8, 15, 4, 15),
-
-So this relates to module clock 8 * 16 + 15 =3D 143 in DTS...
-
-> +};
-> +
-> +static const struct rzv2h_reset r9a09g057_resets[] =3D {
-> +       DEF_RST(9, 5, 4, 6),            /* SCIF_0_RST_SYSTEM_N */
-> +};
-> +
-> +static const unsigned int r9a09g057_crit_mod_clks[] __initconst =3D {
-> +       MOD_CLK_BASE + 5,               /* ICU_0_PCLK_I */
-> +       MOD_CLK_BASE + 19,              /* GIC_0_GICCLK */
-
-So these relate to module clocks 5 and 19 in DTS.
-
-Actually none of these clocks are created in the driver yet, so I think
-these critical clocks belong to the patch that will introduce them.
-
-I am wondering if critical clocks should just use a flag in DEF_MOD()
-instead...
-
-The rest LGTM.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
 
