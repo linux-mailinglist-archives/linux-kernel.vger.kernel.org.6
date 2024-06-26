@@ -1,169 +1,173 @@
-Return-Path: <linux-kernel+bounces-229855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A22C5917538
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 02:25:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A83691753B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 02:30:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F7D31F22E53
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 00:25:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ACAD283D88
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 00:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE3ED79E5;
-	Wed, 26 Jun 2024 00:25:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A351B6FDC;
+	Wed, 26 Jun 2024 00:30:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="np9iFzKL"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HVhVmB4n"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D93D1FDA;
-	Wed, 26 Jun 2024 00:25:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906A21847
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 00:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719361523; cv=none; b=NYnHABCqv7prrKVpcgNSGIHGcaUjQNnhcCN7exfHcmiy/tVBzip3jVRfSHGcxnqDRNTnVVRoiBfkZMLNNTUgp8gN8K6uLaT+C04Ffe3AzrHvt/AFzLTFGH+sG6yvMwJCZprTVWcN5y+4Uv+pCIWb5qeTtVO1Cub8J96kaMX08mQ=
+	t=1719361842; cv=none; b=rT24N+OQUuygBUsdwEN9h55iyWDLdiysWHd9paJwU1AF9bSpRd9ehuDJJxqz0HhWY/njeN4Nt5RQUhlUTtFmHTqvucDO6JVKAx3Ar2RrnVvAiBuJS0zQ0Vwedt38OV5z84Z4UDZ21+OASZwJqk0lces7MbM7z5wm5shpfxHCR2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719361523; c=relaxed/simple;
-	bh=pdvH9UYQ/SqS+nHU6W6FNxWXK9lUyuz9ljcuqj5ktlg=;
+	s=arc-20240116; t=1719361842; c=relaxed/simple;
+	bh=//lbaRqY5eoLuH4cVGLi2EsZ7aNqiiSDMS7zZVy2wIo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WCtNjbA2VoKm24pJfUjjOn9WdW/k8O2DGowQeSuzLkR7IzzX3cgUv+pufXEznEhk4Pmfa+Mr6jqz64Nuxu9dCgh9AxBwZ8vT7rY3BwTeXNHd4sMAh3mqlNa9LuHfXCPbSq6fRl2XZhWq+nRgigcTqWXwrkTa8+KwnGvynORN2+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=np9iFzKL; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719361521; x=1750897521;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=pdvH9UYQ/SqS+nHU6W6FNxWXK9lUyuz9ljcuqj5ktlg=;
-  b=np9iFzKLsFz1QS3GA1bSSOTYKOAZvdMVVx2kzMNFtJdvdIyyTfWQwzoT
-   7b12z0O2fQg9sGeflfF202c2asQnvbcqwNaIJ7a9SGdFmlFKMao9Vsbmv
-   RXzZvOMo1mn2/Iy6CaLrcSc1/WRTh5YKL55AjuLHIYm750DPiTSxzAxQF
-   gLZe7ycyVagkzd8MJgn6S4TjUpjabyqNHQYzsef9lhSHT+jgRJGJXiEKU
-   wZk4ykHcCnHrFWv4Ioyi86yOsLw2yjEH+jC/QbkRQxK4sSGnJyW4rBrQG
-   olA5fxap7sfHpp2hezHUcIq7WybzHiBk6d5Vp9yA52bOffnteaJeXF/+X
-   A==;
-X-CSE-ConnectionGUID: Gqj4rdvCQMSlShS+0dgkLg==
-X-CSE-MsgGUID: L1yRYoHEQnSBVSxmE7f96A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="27551453"
-X-IronPort-AV: E=Sophos;i="6.08,265,1712646000"; 
-   d="scan'208";a="27551453"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 17:25:21 -0700
-X-CSE-ConnectionGUID: VFKVk0CLRoyaeAVqjy9c6g==
-X-CSE-MsgGUID: Or6R2Nf1SCmTOt4t1u9WuQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,265,1712646000"; 
-   d="scan'208";a="43919377"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 25 Jun 2024 17:25:18 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sMGTM-000Ept-1f;
-	Wed, 26 Jun 2024 00:25:16 +0000
-Date: Wed, 26 Jun 2024 08:24:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: David Lin <yu-hao.lin@nxp.com>, linux-wireless@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	briannorris@chromium.org, kvalo@kernel.org, francesco@dolcini.it,
-	tsung-hsien.hsieh@nxp.com, David Lin <yu-hao.lin@nxp.com>
-Subject: Re: [PATCH 42/43] wifi: nxpwifi: add Makefile and Kconfig files for
- nxpwifi compilation
-Message-ID: <202406260848.0pH4xjvI-lkp@intel.com>
-References: <20240621075208.513497-43-yu-hao.lin@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QM9jltv2yTND5j+mPEGmiCre79llOQ7rwWeyXe0bZA7qJe5M+msNQLGR509x+Axs/V7myjheV88r65A0aUSh/6zNvdH/oD6luGmd82Dma4wQuVO/d1YNB2vBpbc7Mcu//DGCmvD9Y0O5Ah6xiVvmVIPokqn+yGqv8R5GZYGYEp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HVhVmB4n; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f480624d0dso52007215ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 17:30:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719361841; x=1719966641; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=i23/JHna8Kw5DlU8qzmRWS+LzRQQ+oAyxg9Kg6RIE+I=;
+        b=HVhVmB4nMUueVIppBPYhu3oj2poxdny/dxItr7vGadnFfT7Vs9vDkpXjfwf8L99qhT
+         D4lo9VXkZ6z48bWMUI8BcWzGwaW+HN8seLhz0g68GFqK2jwRapmrrCXgpY/wa8hQpJ1P
+         I4XwZxgVbxbZEnfk0Cy9S810GcEzOfSfvje6tddHHN9nZRiuCKAFrVkvh0Y/Rft1VPEN
+         9h2JbJeTtO6qA/ZBW40qtk9acmL2gBuOpfQFpQblO3+RpZMdFvHBmiVvejHLZFj4Ekbu
+         B5ZxOjnfH/IbwdCiUWAivZMyyNfGD7Cq/rDrbfsZXvka8FN4jxmy2Lzvw9Mm3Lc55ILs
+         EckQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719361841; x=1719966641;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=i23/JHna8Kw5DlU8qzmRWS+LzRQQ+oAyxg9Kg6RIE+I=;
+        b=F+0GKDtXUdrMXDB6ncvtKGfILwJs2h+YigtVzzDs3M1ZtazECyYGrcbw/g7Hg1WS78
+         SOp8gaSVijWVsEfD6FdkODMN1B6Hm1UuzQvSzh/VdlFzVlI8bk9fsXuynd1waS3Fb1ue
+         X90S6KkL6/oYUNv2BSIAHVitdz//IGBlMzfV7Vuzdre2Rg3g+DBfZZi+F1gS/ysBvowR
+         IjZCjYD80K2WHrIU/lNNNr+cnjPurG4u3wSI9+iJ4b5DFxEFDAnSTEKfy8NhZdZghRCB
+         v4iOiteYk929T0MtLMPYa9T/WYD5AxxdlVePx0RCzaPWXT4WTEfQtxmSLCwLoiFOpWga
+         P7Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCXaJakhyMIvWAiEAdFUWg5qto8YIFYjn4GGSu59P15hUBZfjuGAK7O6Rm0YB4yHsyCbi9sfxHLr666Y9ZQYAifKEz1JLpLqQnnd7/CZ
+X-Gm-Message-State: AOJu0YzIYDAbb/VRqrUlJdWj19vYT+6HBRjzRa8ZBQ1C1BJAbmBH7Cb9
+	/pKBe9idLjesY8G6da7L1RwJjQONNIKt6ywKPM6PrbIPDp0IZwgHCwM9bMc0Cg==
+X-Google-Smtp-Source: AGHT+IFx/AHTzD88KwcwaUMpPa/wWT49rpSS1KTboIK2UJ56CegkPm+jg5af9OdvUO9x64xl23dIbw==
+X-Received: by 2002:a17:90b:4f8c:b0:2c7:aafb:8e3c with SMTP id 98e67ed59e1d1-2c861246c21mr8421073a91.18.1719361840450;
+        Tue, 25 Jun 2024 17:30:40 -0700 (PDT)
+Received: from google.com (148.98.83.34.bc.googleusercontent.com. [34.83.98.148])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c8d81d29desm234795a91.53.2024.06.25.17.30.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 17:30:39 -0700 (PDT)
+Date: Wed, 26 Jun 2024 00:30:35 +0000
+From: Igor Pylypiv <ipylypiv@google.com>
+To: Hannes Reinecke <hare@suse.de>
+Cc: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>,
+	Tejun Heo <tj@kernel.org>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Jason Yan <yanaijie@huawei.com>, linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 6/6] ata: libata-scsi: Check ATA_QCFLAG_RTF_FILLED
+ before using result_tf
+Message-ID: <ZnthK-NjkSgIiGiE@google.com>
+References: <20240624221211.2593736-1-ipylypiv@google.com>
+ <20240624221211.2593736-7-ipylypiv@google.com>
+ <7d085940-2ad1-4f44-83bb-33d852e80da0@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240621075208.513497-43-yu-hao.lin@nxp.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7d085940-2ad1-4f44-83bb-33d852e80da0@suse.de>
 
-Hi David,
+On Tue, Jun 25, 2024 at 08:26:59AM +0200, Hannes Reinecke wrote:
+> On 6/25/24 00:12, Igor Pylypiv wrote:
+> > qc->result_tf contents are only valid when the ATA_QCFLAG_RTF_FILLED flag
+> > is set. The ATA_QCFLAG_RTF_FILLED flag should be always set for commands
+> > that failed or for commands that have the ATA_QCFLAG_RESULT_TF flag set.
+> > 
+> > For ATA errors and ATA PASS-THROUGH commands the ATA_QCFLAG_RTF_FILLED
+> > flag should be always set. Added WARN_ON_ONCE() checks to generate
+> > a warning when ATA_QCFLAG_RTF_FILLED is not set and libata needs to
+> > generate sense data.
+> > 
+> > Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
+> > ---
+> >   drivers/ata/libata-scsi.c | 10 ++++++++++
+> >   1 file changed, 10 insertions(+)
+> > 
+> > diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+> > index e5669a296d81..7a8a08692ce9 100644
+> > --- a/drivers/ata/libata-scsi.c
+> > +++ b/drivers/ata/libata-scsi.c
+> > @@ -246,6 +246,9 @@ static void ata_scsi_set_passthru_sense_fields(struct ata_queued_cmd *qc)
+> >   	struct ata_taskfile *tf = &qc->result_tf;
+> >   	unsigned char *sb = cmd->sense_buffer;
+> >
+> > +	if (WARN_ON_ONCE(!(qc->flags & ATA_QCFLAG_RTF_FILLED)))
+> > +		return;
+> > +
+> >   	if ((sb[0] & 0x7f) >= 0x72) {
+> >   		unsigned char *desc;
+> >   		u8 len;
+> > @@ -928,6 +931,9 @@ static void ata_gen_passthru_sense(struct ata_queued_cmd *qc)
+> >   	unsigned char *sb = cmd->sense_buffer;
+> >   	u8 sense_key, asc, ascq;
+> > +	if (WARN_ON_ONCE(!(qc->flags & ATA_QCFLAG_RTF_FILLED)))
+> > +		return;
+> > +
+> >   	/*
+> >   	 * Use ata_to_sense_error() to map status register bits
+> >   	 * onto sense key, asc & ascq.
+> > @@ -971,6 +977,10 @@ static void ata_gen_ata_sense(struct ata_queued_cmd *qc)
+> >   		ata_scsi_set_sense(dev, cmd, NOT_READY, 0x04, 0x21);
+> >   		return;
+> >   	}
+> > +
+> > +	if (WARN_ON_ONCE(!(qc->flags & ATA_QCFLAG_RTF_FILLED)))
+> > +		return;
+> > +
+> >   	/* Use ata_to_sense_error() to map status register bits
+> >   	 * onto sense key, asc & ascq.
+> >   	 */
+> 
+> Hmm. Not sure if we really need the WARN_ON() here or whether a simple
+> logging message wouldn't be sufficient; after all, we continue fine here.
+> 
 
-kernel test robot noticed the following build warnings:
+My worry about adding a simple log statement is that it might cause a log
+spam if things go wrong for some reason.
 
-[auto build test WARNING on 238d636723a30311e20fde0a361662e829fe488b]
+This code is more like a "this should never happen" comment and we always
+expect ATA_QCFLAG_RTF_FILLED to be present when generating sense data
+based on ATA registers.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/David-Lin/wifi-nxpwifi-add-11ac-c/20240625-161306
-base:   238d636723a30311e20fde0a361662e829fe488b
-patch link:    https://lore.kernel.org/r/20240621075208.513497-43-yu-hao.lin%40nxp.com
-patch subject: [PATCH 42/43] wifi: nxpwifi: add Makefile and Kconfig files for nxpwifi compilation
-config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20240626/202406260848.0pH4xjvI-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240626/202406260848.0pH4xjvI-lkp@intel.com/reproduce)
+If WARN_ON_ONCE() is too much for this case I guess we can just remove it
+and silently return?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406260848.0pH4xjvI-lkp@intel.com/
+Damien, Niklas, what are your thoughts on this?
 
-All warnings (new ones prefixed by >>):
+Thanks,
+Igor
 
-   drivers/net/wireless/nxp/nxpwifi/11n_rxreorder.c: In function 'nxpwifi_11n_dispatch_amsdu_pkt':
->> drivers/net/wireless/nxp/nxpwifi/11n_rxreorder.c:40:47: warning: variable 'rx_hdr' set but not used [-Wunused-but-set-variable]
-      40 |                         struct rx_packet_hdr *rx_hdr;
-         |                                               ^~~~~~
---
-   drivers/net/wireless/nxp/nxpwifi/sta_event.c: In function 'nxpwifi_sta_event_link_lost':
->> drivers/net/wireless/nxp/nxpwifi/sta_event.c:21:13: warning: variable 'reason_code' set but not used [-Wunused-but-set-variable]
-      21 |         u16 reason_code;
-         |             ^~~~~~~~~~~
---
-   drivers/net/wireless/nxp/nxpwifi/sta_rx.c: In function 'nxpwifi_process_rx_packet':
->> drivers/net/wireless/nxp/nxpwifi/sta_rx.c:78:25: warning: variable 'rx_pkt_len' set but not used [-Wunused-but-set-variable]
-      78 |         u16 rx_pkt_off, rx_pkt_len;
-         |                         ^~~~~~~~~~
-
-
-vim +/rx_hdr +40 drivers/net/wireless/nxp/nxpwifi/11n_rxreorder.c
-
-148be2798f7a0c David Lin 2024-06-21  17  
-148be2798f7a0c David Lin 2024-06-21  18  /* This function will dispatch amsdu packet and forward it to kernel/upper
-148be2798f7a0c David Lin 2024-06-21  19   * layer.
-148be2798f7a0c David Lin 2024-06-21  20   */
-148be2798f7a0c David Lin 2024-06-21  21  static int nxpwifi_11n_dispatch_amsdu_pkt(struct nxpwifi_private *priv,
-148be2798f7a0c David Lin 2024-06-21  22  					  struct sk_buff *skb)
-148be2798f7a0c David Lin 2024-06-21  23  {
-148be2798f7a0c David Lin 2024-06-21  24  	struct rxpd *local_rx_pd = (struct rxpd *)(skb->data);
-148be2798f7a0c David Lin 2024-06-21  25  	int ret;
-148be2798f7a0c David Lin 2024-06-21  26  
-148be2798f7a0c David Lin 2024-06-21  27  	if (le16_to_cpu(local_rx_pd->rx_pkt_type) == PKT_TYPE_AMSDU) {
-148be2798f7a0c David Lin 2024-06-21  28  		struct sk_buff_head list;
-148be2798f7a0c David Lin 2024-06-21  29  		struct sk_buff *rx_skb;
-148be2798f7a0c David Lin 2024-06-21  30  
-148be2798f7a0c David Lin 2024-06-21  31  		__skb_queue_head_init(&list);
-148be2798f7a0c David Lin 2024-06-21  32  
-148be2798f7a0c David Lin 2024-06-21  33  		skb_pull(skb, le16_to_cpu(local_rx_pd->rx_pkt_offset));
-148be2798f7a0c David Lin 2024-06-21  34  		skb_trim(skb, le16_to_cpu(local_rx_pd->rx_pkt_length));
-148be2798f7a0c David Lin 2024-06-21  35  
-148be2798f7a0c David Lin 2024-06-21  36  		ieee80211_amsdu_to_8023s(skb, &list, priv->curr_addr,
-148be2798f7a0c David Lin 2024-06-21  37  					 priv->wdev.iftype, 0, NULL, NULL, false);
-148be2798f7a0c David Lin 2024-06-21  38  
-148be2798f7a0c David Lin 2024-06-21  39  		while (!skb_queue_empty(&list)) {
-148be2798f7a0c David Lin 2024-06-21 @40  			struct rx_packet_hdr *rx_hdr;
-148be2798f7a0c David Lin 2024-06-21  41  
-148be2798f7a0c David Lin 2024-06-21  42  			rx_skb = __skb_dequeue(&list);
-148be2798f7a0c David Lin 2024-06-21  43  			rx_hdr = (struct rx_packet_hdr *)rx_skb->data;
-148be2798f7a0c David Lin 2024-06-21  44  
-148be2798f7a0c David Lin 2024-06-21  45  			if (priv->bss_role == NXPWIFI_BSS_ROLE_UAP)
-148be2798f7a0c David Lin 2024-06-21  46  				ret = nxpwifi_uap_recv_packet(priv, rx_skb);
-148be2798f7a0c David Lin 2024-06-21  47  			else
-148be2798f7a0c David Lin 2024-06-21  48  				ret = nxpwifi_recv_packet(priv, rx_skb);
-148be2798f7a0c David Lin 2024-06-21  49  			if (ret == -1)
-148be2798f7a0c David Lin 2024-06-21  50  				nxpwifi_dbg(priv->adapter, ERROR,
-148be2798f7a0c David Lin 2024-06-21  51  					    "Rx of A-MSDU failed");
-148be2798f7a0c David Lin 2024-06-21  52  		}
-148be2798f7a0c David Lin 2024-06-21  53  		return 0;
-148be2798f7a0c David Lin 2024-06-21  54  	}
-148be2798f7a0c David Lin 2024-06-21  55  
-148be2798f7a0c David Lin 2024-06-21  56  	return -1;
-148be2798f7a0c David Lin 2024-06-21  57  }
-148be2798f7a0c David Lin 2024-06-21  58  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> Cheers,
+> 
+> Hannes
+> -- 
+> Dr. Hannes Reinecke                  Kernel Storage Architect
+> hare@suse.de                                +49 911 74053 688
+> SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+> HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+> 
 
