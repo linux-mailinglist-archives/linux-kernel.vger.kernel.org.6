@@ -1,105 +1,150 @@
-Return-Path: <linux-kernel+bounces-231593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF22D919AB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:33:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD22A919AB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:33:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99DC31F24716
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:33:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FE0E1F24C3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B03C19414E;
-	Wed, 26 Jun 2024 22:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271D81946BB;
+	Wed, 26 Jun 2024 22:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jqnRnP7k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TjPa1rQ+"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3525194131;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2BE0194133;
 	Wed, 26 Jun 2024 22:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719441160; cv=none; b=Aqw+ugn5ud/qAMxjy8DWZWlhwY1BJ5TrGGoiGtQMjuHB/vRKfYnFgtT3W7jDcAtUU9c2xeoyeqDFZ3q/FUNlK6HVQocA+e/z2L+/ueQQ6yhEuVa1gEatavjxiVGkxzZz5tYw+HR3XTZxx9hfA9YcZJLExNpZoZf/EkP9mYvfzPE=
+	t=1719441162; cv=none; b=FrMO0HLyGG9bGeH8nVaXr3bpDCkiIXcBUSEv28JH69rpoCRBId8/01N+leREeLDYe9qxu/9UJICWh5q71jTwR+5pgpWbRDP4BaArLBTjnUKqubV6W9X9SgdX2508Ed7Z7QMQlEj37XiLsA3eng9YKhcXMos16bgD5XcAGY/i8qY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719441160; c=relaxed/simple;
-	bh=WFW4O9a/P3vJBEq/1R2/A6s4nHRFlDzLuQG5qk6khFQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BsfxrZbdpV5eYQ4J2djZDww/JXFmjvk+aDLefos5PEKL5sbMHnFG8/VSdGWHx0XJ3aisTQO+Nv73AdXj5m1N8h802PwnBWRCTcV3nni4vuGVRMtKNZu1F2thXlyajrJ5O/oOlRKkOYaAePMGblHdEBr//5/I+1jvmCPPl/b2Hh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jqnRnP7k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C836C4AF07;
-	Wed, 26 Jun 2024 22:32:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719441160;
-	bh=WFW4O9a/P3vJBEq/1R2/A6s4nHRFlDzLuQG5qk6khFQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=jqnRnP7kq3HQQ6yTW0IAppr/Mqyt5PEzSwDm8LbWM0gG7EGy7/OIMN01Xf2XPDnUy
-	 DvS79Lywp5m8Ahl0QbN0gj3imZpqFy4SpwqPijMiRvgY+cSomahgvPg8LAgc1Qcsfe
-	 Gc15rJrNgJPH82M0T39zxMkOjsBOyX8YGsbsJtjiokgfQJyHUsM8YqYduZ0FxdFz+y
-	 4QHfUnbF+VquXUuRyd+AbYlR1aV8tbnCMfb8kOKcg1HwU8VlvGYstP0rmvmsVK4zlv
-	 B9X0A9vv2yL7uFwSPP3p6Ijm6+WYrsNfs4RuExi6QzKMPQu9z+mKVM52/20asaCeD+
-	 r8nsoBCTHYLVQ==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Date: Wed, 26 Jun 2024 16:32:26 -0600
-Subject: [PATCH v2 02/12] perf: arm_pmuv3: Drop unnecessary
- IS_ENABLED(CONFIG_ARM64) check
+	s=arc-20240116; t=1719441162; c=relaxed/simple;
+	bh=nQS61/CVQjJorMBycN9kyNZ19xcC2CiHekPCBW6Y/+g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=khF8ipbIusHgA+6W5WXhiT/lA5nEg6UuV/8bhbg7DF3NQ2U5i+OVP5/D6B7xNV3fe6yE/YMePr/79ARI5t4bOY1S3LzvpWq1jHA52hhDzroXQL0P18b4r3DOZGMLNbZDucqNn+D3bWBfnT2gPyf0lXBkhUpDuXDxXeM6Uy1rlAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TjPa1rQ+; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57d0eca877cso1039315a12.2;
+        Wed, 26 Jun 2024 15:32:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719441159; x=1720045959; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U36grdanXj9yAh+pNda5S+WRPO+QWYAY7LoWhNNT3IY=;
+        b=TjPa1rQ+df3L1dtWq+4vrErYELr3NvbBfo8ZFTn1FP2a0iLXmP9bADNYu7pPGxXM+G
+         bE2Yvl7psG6DXG2KK08KLc0YN2BKxwFdKhCV8b7p+Ifs71oWUlFTPcR/LlvSBaOp0DlG
+         8cjFBXNLWCCFcAS6SLt3u8BejCUSTfL9QBadkrpBQu0HeLSiCJZ4J12utkzbyqk0XpZK
+         ibSP9yJZK67e8B9Yz/5V9329P9fol7oq/J//ueUXyVW+kYR+r+xAFN8IGDWGfSm5i5Lw
+         6YPE+uEakW32UQvoMOQOzVaNshlQaK2ymTGc5G633a9u6q1h9itSlTRxMGfsASiLhrM3
+         3fFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719441159; x=1720045959;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=U36grdanXj9yAh+pNda5S+WRPO+QWYAY7LoWhNNT3IY=;
+        b=mjeAWy/BtWutrxJh9Nfxo50ev9rgx3eWefzA9nywSGwYgd0DjjchlEzSsZ9Uq/D/y3
+         44Od3/yn7LL4UQ80dIgsr6Bz+WwkSujHTxAP+S1pLE2RAHn0syd/Y0dZgRxXnBNqdLTz
+         wX21SXMRXM4El33Xfdvk0tkeM32k9ON8KjKyV0+OZfPUsAcaz+lCsszq+Kqzt8E7/b0U
+         LhYe2g/5saFZBu77CSa9NSXOR5ROU19BRqyJCoa+QkT6S/nWOmxJ/O14R4+5IjwrURhh
+         DazplymDMc1HHQ5/QIpl+kjXDIe7Ae8nJQFMIbraNQD/X6ZwrfGV729hx7QPbaRkRPcq
+         LN1A==
+X-Forwarded-Encrypted: i=1; AJvYcCWvom27xcJaTelpld1W+M2w6Y0gEvNNfcp6RIje8IXwD/P71FpYto5EGy80P1TPzMSrAkWurMMdX9snjFFI0SmtF3Ahu7B+V43gea0GX3GEiP7xQUaLGYnCB8d7pXR3a3bCTW0MBwTn3U1WGg==
+X-Gm-Message-State: AOJu0YxQXp0d4GzuqNLJz8T9NcayO7e3ycppcM5BC64F3CbM32um3jnQ
+	EcDimjvcDH72Q2WJMILkLMonissN23FKapx4SHT+lLNdMdTBYYrha1+4yNctEmdOMMmcEBX4uOb
+	gE5AT+XPALkiKnOcBpB0v7KE/DB4=
+X-Google-Smtp-Source: AGHT+IHb98roHx5g3sBxWkKskttk5XU+NH37JopqIA/4bV6IWCJPWXBdw3kCMp992cniMQGn3EC2cUYVZE3FHSqDqKw=
+X-Received: by 2002:a50:871a:0:b0:57d:7ef:573b with SMTP id
+ 4fb4d7f45d1cf-57d4bdd02bcmr10384352a12.38.1719441158804; Wed, 26 Jun 2024
+ 15:32:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240626-arm-pmu-3-9-icntr-v2-2-c9784b4f4065@kernel.org>
-References: <20240626-arm-pmu-3-9-icntr-v2-0-c9784b4f4065@kernel.org>
-In-Reply-To: <20240626-arm-pmu-3-9-icntr-v2-0-c9784b4f4065@kernel.org>
-To: Russell King <linux@armlinux.org.uk>, 
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
- Adrian Hunter <adrian.hunter@intel.com>, Will Deacon <will@kernel.org>, 
- Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
- James Morse <james.morse@arm.com>, 
- Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Zenghui Yu <yuzenghui@huawei.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, 
- James Clark <james.clark@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-perf-users@vger.kernel.org, kvmarm@lists.linux.dev
-X-Mailer: b4 0.14-dev
+References: <20240623110753.141400-1-quic_akhilpo@quicinc.com>
+ <20240623110753.141400-3-quic_akhilpo@quicinc.com> <5947559d-30dd-4da1-93cc-a15dc65cb77d@linaro.org>
+ <20240626082422.zcsari27yoskayuo@hu-akhilpo-hyd.qualcomm.com>
+ <CAF6AEGvCaGq8ukxra_bzc=4pUf8y5NndKRagQspD0=uCZdBfoA@mail.gmail.com> <853849b4-69f2-488f-ab17-dc550c235e3d@linaro.org>
+In-Reply-To: <853849b4-69f2-488f-ab17-dc550c235e3d@linaro.org>
+From: Rob Clark <robdclark@gmail.com>
+Date: Wed, 26 Jun 2024 15:32:26 -0700
+Message-ID: <CAF6AEGsFExhokWqHka-cwFGqyYgo61OL=7F=o5ouRm-LoHh9Dw@mail.gmail.com>
+Subject: Re: [PATCH v1 2/3] drm/msm/adreno: Add support for X185 GPU
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Akhil P Oommen <quic_akhilpo@quicinc.com>, freedreno <freedreno@lists.freedesktop.org>, 
+	dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+	Bjorn Andersson <andersson@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Sean Paul <sean@poorly.run>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The IS_ENABLED(CONFIG_ARM64) check for threshold support is unnecessary.
-The purpose is to not enable thresholds on arm32, but if threshold is
-non-zero, the check against threshold_max() just above here will have
-errored out because threshold_max() is always 0 on arm32.
+On Wed, Jun 26, 2024 at 2:38=E2=80=AFPM Konrad Dybcio <konrad.dybcio@linaro=
+.org> wrote:
+>
+> On 26.06.2024 8:43 PM, Rob Clark wrote:
+> > On Wed, Jun 26, 2024 at 1:24=E2=80=AFAM Akhil P Oommen <quic_akhilpo@qu=
+icinc.com> wrote:
+> >>
+> >> On Mon, Jun 24, 2024 at 03:53:48PM +0200, Konrad Dybcio wrote:
+> >>>
+> >>>
+> >>> On 6/23/24 13:06, Akhil P Oommen wrote:
+> >>>> Add support in drm/msm driver for the Adreno X185 gpu found in
+> >>>> Snapdragon X1 Elite chipset.
+> >>>>
+> >>>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+> >>>> ---
+> >>>>
+> >>>>   drivers/gpu/drm/msm/adreno/a6xx_gmu.c      | 19 +++++++++++++++---=
+-
+> >>>>   drivers/gpu/drm/msm/adreno/a6xx_gpu.c      |  6 ++----
+> >>>>   drivers/gpu/drm/msm/adreno/adreno_device.c | 14 ++++++++++++++
+> >>>>   drivers/gpu/drm/msm/adreno/adreno_gpu.h    |  5 +++++
+> >>>>   4 files changed, 36 insertions(+), 8 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm=
+/msm/adreno/a6xx_gmu.c
+> >>>> index 0e3dfd4c2bc8..168a4bddfaf2 100644
+> >>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> >>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> >>>> @@ -830,8 +830,10 @@ static int a6xx_gmu_fw_start(struct a6xx_gmu *g=
+mu, unsigned int state)
+> >>>>      */
+> >>>>     gmu_write(gmu, REG_A6XX_GMU_CM3_CFG, 0x4052);
+> >>>> +   if (adreno_is_x185(adreno_gpu)) {
+> >>>> +           chipid =3D 0x7050001;
+> >>>
+> >>> What's wrong with using the logic below?
+> >>
+> >> patchid is BITS(7, 0), not (15, 8) in the case of x185. Due to the
+> >> changes in the chipid scheme within the a7x family, this is a bit
+> >> confusing. I will try to improve here in another series.
+> >
+> > I'm thinking we should just add gmu_chipid to struct a6xx_info, tbh
+> >
+> > Maybe to start with, we can fall back to the existing logic if
+> > a6xx_info::gmu_chipid is zero so we don't have to add it for _every_
+> > a6xx/a7xx
+>
+> If X185 is not the only occurence, I'd second this..
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
-v2:
- - new patch
----
- drivers/perf/arm_pmuv3.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+basically all a7xx are "special" compared to the original logic, so we
+can start with using gmu_chipid for just a7xx
 
-diff --git a/drivers/perf/arm_pmuv3.c b/drivers/perf/arm_pmuv3.c
-index 8ed5c3358920..3e51cd7062b9 100644
---- a/drivers/perf/arm_pmuv3.c
-+++ b/drivers/perf/arm_pmuv3.c
-@@ -1045,7 +1045,7 @@ static int armv8pmu_set_event_filter(struct hw_perf_event *event,
- 		return -EINVAL;
- 	}
- 
--	if (IS_ENABLED(CONFIG_ARM64) && th) {
-+	if (th) {
- 		config_base |= FIELD_PREP(ARMV8_PMU_EVTYPE_TH, th);
- 		config_base |= FIELD_PREP(ARMV8_PMU_EVTYPE_TC,
- 					  armv8pmu_event_threshold_control(attr));
+BR,
+-R
 
--- 
-2.43.0
-
+> Konrad
 
