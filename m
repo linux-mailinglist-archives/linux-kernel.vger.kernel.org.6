@@ -1,113 +1,95 @@
-Return-Path: <linux-kernel+bounces-231605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1AA1919ABE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:36:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84D99919AC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:36:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 440CEB2177B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:36:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 983661C21C8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C078194139;
-	Wed, 26 Jun 2024 22:33:16 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77563194158;
+	Wed, 26 Jun 2024 22:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="HPD+KyCU"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE79194120;
-	Wed, 26 Jun 2024 22:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D78816D33A;
+	Wed, 26 Jun 2024 22:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719441195; cv=none; b=fULitN5xLyE7G9EttlpjUhMZs/ZLRQXUzoHwVxBEIRMywMAOIruqJIdZX+mcLHf4sE1PGVRQmdaU5AJONzP8KExFKv9pVo56je74VrRmt6cGed7AKqeRfILIdXVPyLbgM66ar2q/FgwfUCuvHl6IF2bNPVWg5Sd9DxJjCArIl9k=
+	t=1719441284; cv=none; b=CzAbZ9QUP3GCnHG4v0xZeGifNhMp0Da1DD5iX5usmPJBYMhCJcByfYuSL4qZ/jO8CRiBbn9G43ppCrJjGzeNGTnYAoa9EyK6nR/N9ylrq5sTnfdDBlFWI31mwdOas9/mp2bgUhXDokzG8PnwpIIZqKPwJdYSs7kH07auvWv3cuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719441195; c=relaxed/simple;
-	bh=JQYBQcqcfLjdYNmJlkp5aPNCO8WC2EaCSgh4coPDav8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M6xkW1qgeuRMin2n6sZ4sGGdT8Ny93LtEE4MuJ5Fn4YQr07ulpQ5gh2GbbsytC1ugtz4b4B5dNQMR2fJ35A8PNnlZE/DNHmzhbbNV3AgrwhOpiJ8nKK2bsw72UxeH6O4+0NDTngIJPGH0kzwOHLVfxrXSLSLL9Zcmk6Mi9vHZEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 618AFC116B1;
-	Wed, 26 Jun 2024 22:33:13 +0000 (UTC)
-Date: Wed, 26 Jun 2024 18:33:11 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, John Ogness
- <john.ogness@linutronix.de>, Alexei Starovoitov <ast@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>, Yonghong Song
- <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, KP
- Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo
- <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, Petr Mladek
- <pmladek@suse.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, bpf
- <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] bpf: defer printk() inside __bpf_prog_run()
-Message-ID: <20240626183311.05eaf091@rorschach.local.home>
-In-Reply-To: <f6c23073-dc0d-4b3f-b37d-1edb82737b5b@I-love.SAKURA.ne.jp>
-References: <345098dc-8cb4-4808-98cf-fa9ab3af4fc4@I-love.SAKURA.ne.jp>
-	<87ed8lxg1c.fsf@jogness.linutronix.de>
-	<60704acc-61bd-4911-bb96-bd1cdd69803d@I-love.SAKURA.ne.jp>
-	<87ikxxxbwd.fsf@jogness.linutronix.de>
-	<ea56efca-552f-46d7-a7eb-4213c23a263b@I-love.SAKURA.ne.jp>
-	<CAADnVQ+hxHsQpfOkQvq4d5AEQsH41BHL+e_RtuxUzyh-vNyYEQ@mail.gmail.com>
-	<7edb0e39-a62e-4aac-a292-3cf7ae26ccbd@I-love.SAKURA.ne.jp>
-	<CAADnVQKoHk5FTN=jywBjgdTdLwv-c76nCzyH90Js-41WxPK_Tw@mail.gmail.com>
-	<744c9c43-9e4f-4069-9773-067036237bff@I-love.SAKURA.ne.jp>
-	<20240626122748.065a903b@rorschach.local.home>
-	<f6c23073-dc0d-4b3f-b37d-1edb82737b5b@I-love.SAKURA.ne.jp>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719441284; c=relaxed/simple;
+	bh=/D23BNJJrMHedj1VDlfPxn1b8cpcMtjGEKw2trHD+fw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=qlirq5/EKLrg/E1mZJpkLpXcCNZaFJ6YpUGiARdyWEwGahD4FzbhXHqeopJM4li489azBKYZwRoi0EKmOhgdtmCEIZYlqpoC2krqyH1qPJhfp3ciQpoZl7r2Tp3WgDVqK4PPUPv9AWtudZIxwJdwoUyi2g0zD76Ok75heWfbqQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=HPD+KyCU; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 7859345E2B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1719441282; bh=gMOPHcarQixtV+jPYg5ZGtLbw0+AFN5Ero2NvFfEWDk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=HPD+KyCUi5/bvPHqjOfoNO1sLltTNlwofqndxXFWPw6bBvN3Xsv5v/s0j2n63IpOJ
+	 f4bcwqsCAZ7DB9v39OOJt4B/pKcc7QjQzg8rQNabYB+ySF6X6z6h/kAx9nnLTSXJWX
+	 FMhWburEUbWNHLuSND6uW1FzXwx8YVD/zW71mnDlyG+NG2UtbSx2kA6F1vVnzjtai2
+	 Is4FX0SqQRl2L/8mSxU/NqmW8as34y0wlJr+mnNCm5CRY6hSC+LNKP4+4pl0ca1V/g
+	 Xr9zv2ssG16h1P9PLmAnNJ40Rk6NVbmNLdrAsTW9hd09/vebbkX5IViVlfT7yJc86c
+	 JTVk98HQhjuuw==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 7859345E2B;
+	Wed, 26 Jun 2024 22:34:42 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: SeongJae Park <sj@kernel.org>
+Cc: SeongJae Park <sj@kernel.org>, Federico Vaga <federico.vaga@vaga.pv.it>,
+ Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, Avadhut Naik
+ <avadhut.naik@amd.com>, Alex Shi <alexs@kernel.org>, Yanteng Si
+ <siyanteng@loongson.cn>, Hu Haowen <2023002089@link.tyut.edu.cn>,
+ workflows@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/7] Docs: Move magic-number from process to staging
+In-Reply-To: <20240624185312.94537-4-sj@kernel.org>
+References: <20240624185312.94537-1-sj@kernel.org>
+ <20240624185312.94537-4-sj@kernel.org>
+Date: Wed, 26 Jun 2024 16:34:41 -0600
+Message-ID: <878qyrz62m.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On Thu, 27 Jun 2024 07:15:25 +0900
-Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
+SeongJae Park <sj@kernel.org> writes:
 
-> On 2024/06/27 1:27, Steven Rostedt wrote:
-> > On Wed, 26 Jun 2024 09:02:22 +0900
-> > Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
-> >   
-> >> On 2024/06/26 8:56, Alexei Starovoitov wrote:  
-> >>> You are missing the point. The bug has nothing to do with bpf.    
-> >>
-> >> The bug is caused by calling tracing hooks with rq lock held.
-> >> If tracing hooks do not exist, this bug does not exist.  
-> > 
-> > Could you expand on this. What tracing hooks are called with rq lock
-> > held? You mean the scheduling events?  
-> 
-> Yes, trace_sched_switch().
-> __schedule() calls trace_sched_switch() hook with rq lock held.
-> 
->  #2: ffff8880b943e798 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:559
-> 
->  __bpf_prog_run include/linux/filter.h:691 [inline]
->  bpf_prog_run include/linux/filter.h:698 [inline]
->  __bpf_trace_run kernel/trace/bpf_trace.c:2403 [inline]
->  bpf_trace_run4+0x334/0x590 kernel/trace/bpf_trace.c:2446
->  __traceiter_sched_switch+0x98/0xd0 include/trace/events/sched.h:222
->  trace_sched_switch include/trace/events/sched.h:222 [inline]
->  __schedule+0x2587/0x4a20 kernel/sched/core.c:6742
->  preempt_schedule_notrace+0x100/0x140 kernel/sched/core.c:7017
+> 'Other material' section on 'process/index' is for unsorted documents.
+> However we also have a dedicated place for the purpose, 'staging/'.
+> Move 'magic-number' from the section to 'staging/' directory.
+>
+> Signed-off-by: SeongJae Park <sj@kernel.org>
+> ---
+>  Documentation/process/index.rst                           | 1 -
+>  Documentation/staging/index.rst                           | 1 +
+>  Documentation/{process => staging}/magic-number.rst       | 0
+>  Documentation/translations/it_IT/process/magic-number.rst | 2 +-
+>  Documentation/translations/sp_SP/process/magic-number.rst | 2 +-
+>  Documentation/translations/zh_CN/process/magic-number.rst | 2 +-
+>  Documentation/translations/zh_TW/process/magic-number.rst | 2 +-
+>  7 files changed, 5 insertions(+), 5 deletions(-)
+>  rename Documentation/{process => staging}/magic-number.rst (100%)
 
-So you are saying that because a BPF hook can attach to a tracepoint
-that is called with rq locks held, it should always disable preemption
-and call printk_deferred_enter(), because it *might* hit an error path
-that will call printk?? In other words, how the BPF hook is used
-determines if the rq lock is held or not when it is called.
+I'll apply this for now, but I really think that this file, which has
+little to say about Git-era kernels, should just be removed.
 
-I can use that same argument for should_fail_ex(). Because how it is
-used determines if the rq lock is held or not when it is called. And it
-is the function that actually calls printk().
+Thanks,
 
-Sorry, but it makes no sense to put the burden of the
-printk_deferred_enter() on the BPF hook logic. It should sit solely
-with the code that actually calls printk().
-
--- Steve
+jon
 
