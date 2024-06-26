@@ -1,91 +1,118 @@
-Return-Path: <linux-kernel+bounces-231313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16EF2918DE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 20:07:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6862918DED
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 20:08:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7C602820C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:07:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98702287D8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:08:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C84E719046B;
-	Wed, 26 Jun 2024 18:07:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A726919046B;
+	Wed, 26 Jun 2024 18:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cHaNHdkZ"
-Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="XW0D2251"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5283C143894
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 18:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE76F18F2F9;
+	Wed, 26 Jun 2024 18:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719425252; cv=none; b=fbd2RAYa0tiCVfOE/+b/hEACju33Ak7YGPeKFCNWfoIN1W3cVLAAnuBH33c0CP2Q/0kyT9E7qY2+2NK0jnceaj5u9OOClW0nLkGzlsrC/Ks/Suz9gMnE7JjSZgnkElrChWWoG6VwEBE6NH2Ipxm0QFzAuMgYldrHebZGOCKzwmo=
+	t=1719425314; cv=none; b=HeOp5efVamAvrhIM5+8Bu1IdOcsZ6ndnYvYEpwfUtiDvBrq+JiT+V4jaTfzrMVCKX7gaIhd+T4H1KPWtVeN3hgHu4fHpRqhMcl2ENCqPmJvcJC1EoFg/uErBrLsdLewoOjTpJ1Fj0uiqPD9klbB2r6ZEfxsJ/zjIbjpM5BcKUHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719425252; c=relaxed/simple;
-	bh=ChwYTbtsnCLanGl+61dAeM3cusuLWtix85Mu0FY6kF4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gdTxS+gUZzRW4CjpoW5NaoXfJ2jdp23qTMQVYWfGIkRqpRBQKYtJPkjvYxCDaHvglHlhfSUz06/FdjTlGlvvLNBzD/inMaPnMOqpCVbc2eTNRn39hRTkY5azsE12GucRytePzZZ3iZDnyv0CJUY01ftwDVCxAgQ5eP6bh7OqH5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cHaNHdkZ; arc=none smtp.client-ip=95.215.58.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: shakeel.butt@linux.dev
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1719425248;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1XztXgyyt6OtvILQrb9rH4AWH9T5KNs/lYkpK11kd2o=;
-	b=cHaNHdkZBRs81HNTRh86DPfpkSuvoClF6xKLTOV1jUqpiHW2kj5ex0mN825VRJii6AZ8fs
-	FxvcSLdExgi3VucaeSsjWaAteIaVvvgYgMOFo+cPHyNr8QEEIlVtlL0mK/nb3eI4yDxq5L
-	5r1xN6OENtnT3MRxJ533FelLsNwd8Q8=
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: hannes@cmpxchg.org
-X-Envelope-To: mhocko@kernel.org
-X-Envelope-To: muchun.song@linux.dev
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: cgroups@vger.kernel.org
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: willy@infradead.org
-Date: Wed, 26 Jun 2024 18:07:23 +0000
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Muchun Song <muchun.song@linux.dev>, linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org, linux-mm@kvack.org,
-	Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v2 00/14] mm: memcg: separate legacy cgroup v1 code and
- put under config option
-Message-ID: <ZnxY23b_0g5_gtpJ@google.com>
-References: <20240625005906.106920-1-roman.gushchin@linux.dev>
- <rkztmxmrsjw7cdwh3jcbhte3izirveb544vc7qbmpxpc6gmgia@htjd3ozkxpcd>
+	s=arc-20240116; t=1719425314; c=relaxed/simple;
+	bh=nqFkuvGoEfXIbghEsJeiHvKOUVP3ZAtCwu76efKGlWc=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=XsTFhPW4GqgjUDakVyw5PhwtraUfhxiV9rPhlh7QK/Cr2LrbRtbkFsq7I26s9VUMcysZtAlHIXdCOrrNyFyQ94XfNnjRcdSPfhrj22vaBzTJlJKVYNePPvhJtNDAeOXU70pMe7Sptoe2w9xu0g6V217ieVeGODtlYZT1SJul174=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=XW0D2251; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719425305; x=1720030105; i=markus.elfring@web.de;
+	bh=3dI9ANn3NzfSRMZEIZoWOqEEKDQKH+9ITjk5MkK8hRk=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=XW0D2251HCSpveMJlNBKTKgHBa+5Wj1l8cNZkQVODfBbK/XqfL+PldlsQDTmmhfv
+	 XdIOyN7e3AIgYPGXRUjx7/VgKggKnZJqkxtaJLG7djJLLyb8hsrk56Hh50TXdR7Hp
+	 niFon2UqoETgrtusfoI5Tcm8g/fQFRxsXm+8ctJaGRwvhHRSPwx8AFJqswYj50eSY
+	 Ybb02ZrCR9PL5V/E2CKmkALZ/ZMWsnsHrCEfCU9m8nI8+KLFvqpM9uW8hNO7o2sWu
+	 kd/z8D8xXc5R1xywdaetkr95TtzFgbrbXAn1lm6M4Obsj88MoRbfwUflK+9xvZQ5O
+	 GA568MY29lpvhdAzJQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MWzD3-1rpkTB40N7-00Mbgu; Wed, 26
+ Jun 2024 20:08:25 +0200
+Message-ID: <dbf9ef52-78d4-476c-a2fe-11e6527e8ff3@web.de>
+Date: Wed, 26 Jun 2024 20:08:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <rkztmxmrsjw7cdwh3jcbhte3izirveb544vc7qbmpxpc6gmgia@htjd3ozkxpcd>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+To: Christian Marangi <ansuelsmth@gmail.com>, linux-leds@vger.kernel.org,
+ devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+ Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240626160027.19703-16-ansuelsmth@gmail.com>
+Subject: Re: [PATCH v8 15/20] leds: leds-lp55xx: Generalize sysfs engine_load
+ and engine_mode
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240626160027.19703-16-ansuelsmth@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:fPDmXKJlV7r/oBmEGitj9+YMtDqRudhRY1yZfuiNo1dxzYVIF4M
+ Zw6FqROj5+VNgOGMkOgCpTsHDYdn+3FEEtMf+68QghnhOT7xDqksTNF4Czb3ABsc/qTCShD
+ nvEAUKsm6VFXIsjqxCvmohgQM+uTLZnGxA4W4v6JVUR/HApodd0Qv6zU9iXAWQjTzpa9hx5
+ o2zbqbAsYWJ3z+8kglhbg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:0tt96DqzZBo=;0REToPgJUHF4zxt46RPxGHQepoF
+ XMBW+1OsRNXPIC4BVitL2U46JE7jeLGjXsyHpePYGwYekSPyHDQNZRWAAOA0IGF+8+NfQSmn4
+ J8ofU4HisOwcgqEpgHhX9G6KC2CCWgljBx2XBFMp+dGgQVcgwgSNRI2nsmveRtPKjGKN237pk
+ kXXozf+QAbi0PDNqgNzPdykdhwBCwPyZvw2YPDfP994Bk99XRAwgfNM0SgQ8se1BAjoc4s4Ha
+ cTo1BmD3az7slZuEuGQG1CBPumu6s8UhWlBIwc+jc3d7ph8+I6CEYucGugs02LKUsqjtssZko
+ mNIvXwLA5uTt5PLIEHlbMEuhnFqbs2Itkk72bQYZxZ7kAL5u69z6KGffgrCq10vHD6euGfLWZ
+ tGc1aP38a7MDKQKw+jl2oIN1dvZXlQfuh6xCaBPmJb+UrsOrzlNUODdoymoIRdjs133NOXAIK
+ KiF0QF/NmazDSMRf4KbejAEKl/jW6Y1y3Lk8sOWQg5/KdyublpZ+FNgE4GvxQpi/NuhitCyQQ
+ 8Mj+gr2s0oiXEQ5+ARd4LL/IoJRxPWS2YZymfipxzGvcDmVzshNex1AtB+y9fq9xtNN03prBH
+ 5DIEEt8DXIwZlTMS3ZwijRpUzg0AJVcC6vRpRaSmCq887/9r5ohgyEOjxr8EOYoQ1RjH4asug
+ ul9czitHj0keg5aT5UEPZzsmF9kUzT4+s4DG8xdIJSsne5KtElF+AuapCVMMw1UlgtQBHfIXY
+ Ubp4xTq8UKFlWruBq2c641eFpQmGfCbnEzHLA1rG+1dhcyMxu5GmF5sQfjmIKAtiH1fHORlKG
+ 1CeKeGLchSeO8yI6TywecmVArL7oZ0SrYWz9BYQqQyjQ4=
 
-On Tue, Jun 25, 2024 at 10:03:53AM -0700, Shakeel Butt wrote:
-> On Mon, Jun 24, 2024 at 05:58:52PM GMT, Roman Gushchin wrote:
-> > Cgroups v2 have been around for a while and many users have fully adopted them,
-> > so they never use cgroups v1 features and functionality. Yet they have to "pay"
-> > for the cgroup v1 support anyway:
-> > ...
-> > Suggested-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> > Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
-> 
-> For the series:
-> 
-> Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+=E2=80=A6
+> +++ b/drivers/leds/leds-lp55xx-common.c
+=E2=80=A6
+> +ssize_t lp55xx_store_engine_load(struct device *dev,
+> +				 struct device_attribute *attr,
+> +				 const char *buf, size_t len, int nr)
+=E2=80=A6
+> +	mutex_lock(&chip->lock);
+> +
+> +	chip->engine_idx =3D nr;
+> +	lp55xx_load_engine(chip);
+> +	ret =3D lp55xx_update_program_memory(chip, buf, len);
+> +
+> +	mutex_unlock(&chip->lock);
+> +
+> +	return ret;
+> +}
+=E2=80=A6
 
-Thank you!
+Under which circumstances would you become interested to apply a statement
+like =E2=80=9Cguard(mutex)(&chip->lock);=E2=80=9D?
+https://elixir.bootlin.com/linux/v6.10-rc5/source/include/linux/mutex.h#L1=
+96
+
+Regards,
+Markus
 
