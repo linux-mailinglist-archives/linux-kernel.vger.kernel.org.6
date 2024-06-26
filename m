@@ -1,73 +1,94 @@
-Return-Path: <linux-kernel+bounces-230993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 514FB9184AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:44:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 368A19184B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:44:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 748081C237F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:44:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6B051F278FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE2F186E36;
-	Wed, 26 Jun 2024 14:42:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F92187339;
+	Wed, 26 Jun 2024 14:43:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="UiMYVNhQ"
-Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BNgNNh09";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="p9jvFE6y";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YIatmv/p";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="r1noKhJz"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF5A1862BD
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 14:42:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8495A1862BD
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 14:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719412973; cv=none; b=O68CqOd1q5Zhj+Ou9K1O+vBrKbWKRGvHbNqHXdMqIczLDm1GywvSZgSHoxtoJvJCF7hYjnqaLTxBqoZZuNovqRgnvMe90uUUKrNPIOgB5gtbJ3R5r9xybnp9aqAfZ4CKjcOZsz3Psx4n2IFHQsHYCqjEPFRYsazvWGk4RORjnfQ=
+	t=1719413000; cv=none; b=CKoCA2pCUnjs3lTOAsUTGDYddQtFMZYShmHSrwcU1xywH//bnMnFl5iL5jQWdgo/S5JPwBkCwO3lTjU3GExG1t3c9rfV9qphyiI8oNDwHlEygjeBazOHLr9+Y5R8aR5wKL3LR86tZEKUGTNlbGIrHfEZDkqxXYjkUuZ6Ic41fPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719412973; c=relaxed/simple;
-	bh=K7aP/eHDt4GdGK/74zQ1CLj8aftrYuNuSeKAYMxdWTc=;
+	s=arc-20240116; t=1719413000; c=relaxed/simple;
+	bh=mLiegvf3JRy6/Q26rXO8CoGI+4CEg4WfV/925O1yk/w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A6qwNDdGcpKJQr6ZUv8D/GG6mdBMbXjX5tMy2xcfSsAP419rpbC3Edrm1luZ/lkV/YxldIBdz2b1H6S3twdqodC7c0iE46rOvMyCCvjw3RzFW2QYq23EuVaGdegqqLa1gvgqFPPmN97ZsnL9lnPJgH85MSInKz+eh+qfQ+Uu0Ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=UiMYVNhQ; arc=none smtp.client-ip=209.85.161.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5ba33b08550so3186116eaf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 07:42:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719412971; x=1720017771; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=m6xILt2X5QE+PcAs6cHxc/Zb3Y2A3nIUAiSP4m+Ryi8=;
-        b=UiMYVNhQzajOc5BWpHQPZr3Q9zFr52rx34l1JfmC8cEyRwcSkC0p9V4TDsQW0Zl5CZ
-         +M+4uLyFZdMJ5BgZ83XzIhjGv8WDdCUHnirUjIDYoH/MWGDjOVre90BLooxMNKODWWvB
-         DkRzc09p8ZuU0SjsP3wDOn23Vq7+dixMH0D1XDABWqv26qEfX/gU0+YlZd1CGYCYSO0q
-         qVQBbyqYasUPTrhsX2Ql/VSQ1Uquz4dDkNrs1DgrmlSwdf8sBvNsDxVDae1oMp3SA4WO
-         kU1+vd35gfgHH3Baxcx3RBOq67Xw+bD3D33Jjn/z5TYJisukcfNNijrE0yxnr8TyK07I
-         Mm9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719412971; x=1720017771;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=m6xILt2X5QE+PcAs6cHxc/Zb3Y2A3nIUAiSP4m+Ryi8=;
-        b=gVN0ALq7BCQIK0ekFl/ABq/dZRJqFXttHXAwjk44lbW2qYs1kBbTBfxGBZ4qfazAfk
-         g00lk/3TXhIi1GbVGCBqPhl5m+8z1pcaxV7L3IsydGf3UScX8N0aviIgkKcRjkhbOCAv
-         wSkOxK3F642QucizpEZ20zj0ADOfUd/2VGG8umGZR5fgWSEqHfyKK9UuZqAbhBo/ATKD
-         hzFGpv8fMEYqynYwT4MWpmYp8LrSdY0fsSD1+oGM+fwltQkL8g15njEtdJcMIsKZsHPn
-         Bfncfd9fSiuiVeCTFE/DKdGncQ5Mdi4K6dZuj5NBfYmOHcld3ey5cGidwA0eBKgiwQLK
-         db+A==
-X-Forwarded-Encrypted: i=1; AJvYcCXouYRh/qS0WPkFBcMIcFAkMq5jjvRFHwNFyF1nqpyVmiPkQwAxNFBOhJBhq1/6DSu4mw1pboY8q8DIHsBiuEV6tWP2bqwSZq/Fxgwp
-X-Gm-Message-State: AOJu0YwGQdID8hUi/VL6Cf9qlZITmmW6wibV4b+4VqUwK/eGcpLxBCpi
-	iBdIKSWpqNwUboXdXnUTQY1QOt9/RiLHKdb0IQAG5RnNYdOyc0OlZSzbXj5o3R0=
-X-Google-Smtp-Source: AGHT+IHNFQQ5Jp0CR9h0pMLQqG7aefDgqmLSddqW/x1VdakRqiSbDrAgGJC5DBOjhlouQlhPHHmtaw==
-X-Received: by 2002:a4a:868d:0:b0:5bd:b695:5bf1 with SMTP id 006d021491bc7-5c1eedee62cmr10336148eaf.9.1719412971183;
-        Wed, 26 Jun 2024 07:42:51 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5c1d91e5f59sm2056578eaf.25.2024.06.26.07.42.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Jun 2024 07:42:50 -0700 (PDT)
-Message-ID: <d2649e69-4c71-4aa9-88e2-9d3f15549e1b@baylibre.com>
-Date: Wed, 26 Jun 2024 09:42:49 -0500
+	 In-Reply-To:Content-Type; b=TeTtrfLvsqrfIf9gJK3AICjbFM0eSA2FD5AdDgGM/ijPs8FPJEH4NiRJNPCU9p3OazH69s43mtwYBquAchLMo51RbRPhwcTctt7YfrJ0Z8BWT/oJBWqa2XAyolUG72t/3nXcFNGnOJVMWHoj4M2HoMK5ksz3CQvvFHwGZhDpwqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BNgNNh09; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=p9jvFE6y; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YIatmv/p; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=r1noKhJz; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 73E031FB5C;
+	Wed, 26 Jun 2024 14:43:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1719412996; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=V2PRcsaRZQeSJLSrUbeR75m0IOIxxXlKKX0TYw9wUW0=;
+	b=BNgNNh091JnO0f5ChUI4NqtzyH+7sAAk8nk6zU47sAGzh+Fa98iiBu5muCiNvrsN/WaDcD
+	3JHSblJQ45tfdn1014jwvcEdcX3t+odxTm0rpt1dLG6GJzAKhPvbe9ZNsexXR0rUGGnCsw
+	4d+0SoI8SUBq2PSMlHdBwfIRizzSkqU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1719412996;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=V2PRcsaRZQeSJLSrUbeR75m0IOIxxXlKKX0TYw9wUW0=;
+	b=p9jvFE6y39kg7R045roU/dHfbIVW4CkVXLH/KWZ8FcB0Dz9hEqUsGIW77sQoHMSf3Id9ek
+	09fNEkwjRu7AkKBw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1719412995; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=V2PRcsaRZQeSJLSrUbeR75m0IOIxxXlKKX0TYw9wUW0=;
+	b=YIatmv/pBAY6RohOA+3whraK/xU007HprNhKczPMgRE4w4YhaDE3kIj78pXwAxvKQr0LzP
+	yAvI98cxBnH0/21KulCpHgonRnnENNAs2kxckUCwOWkbJ8r6wX7hbP5Byc5sqnwuntZAJs
+	vO5zBS9pQ4lPCRDvAcpBIBabQXvhRQ4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1719412995;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=V2PRcsaRZQeSJLSrUbeR75m0IOIxxXlKKX0TYw9wUW0=;
+	b=r1noKhJz96i/TmHuHzbhExrlmTmiUup4xQDX/Ntwp6gSh15ZstfkoijGatCjcnZlMXf9Hb
+	WDOgHXgmg8qhObCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 61CC4139C2;
+	Wed, 26 Jun 2024 14:43:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id BHkzFgIpfGb+WQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Wed, 26 Jun 2024 14:43:14 +0000
+Message-ID: <1cff31c5-766a-4b17-a7b2-a523253b0a2e@suse.de>
+Date: Wed, 26 Jun 2024 16:43:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,150 +96,274 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] iio: adc: ad4695: Add driver for AD4695 and
- similar ADCs
-To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Michael Hennerich <michael.hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Jonathan Corbet <corbet@lwn.net>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, Ramona Gradinariu <ramona.gradinariu@analog.com>
-References: <20240624-iio-adc-ad4695-v3-0-a22c302f06bf@baylibre.com>
- <20240624-iio-adc-ad4695-v3-2-a22c302f06bf@baylibre.com>
- <f02cac02f9404bf6dcc5a8274b51d836960871ee.camel@gmail.com>
+Subject: Re: [PATCH v3 1/7] drm/radeon: remove load callback
+To: Wu Hoi Pok <wuhoipok@gmail.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ "Pan, Xinhui" <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240624151122.23724-1-wuhoipok@gmail.com>
+ <20240624151122.23724-2-wuhoipok@gmail.com>
 Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <f02cac02f9404bf6dcc5a8274b51d836960871ee.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20240624151122.23724-2-wuhoipok@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: -4.29
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-4.29 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[amd.com,gmail.com,ffwll.ch,lists.freedesktop.org,vger.kernel.org];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[radeon_device.dev:url,imap1.dmz-prg2.suse.org:helo]
 
-On 6/26/24 6:47 AM, Nuno Sá wrote:
-> Hi David,
-> 
-> minor stuff from me..
-> 
-> 
-> ...
-> 
->> +
->> +static int ad4695_write_chn_cfg(struct ad4695_state *st,
->> +				struct ad4695_channel_config *cfg)
->> +{
->> +	u32 mask = 0, val = 0;
->> +
->> +	mask |= AD4695_REG_CONFIG_IN_MODE;
->> +	val |= FIELD_PREP(AD4695_REG_CONFIG_IN_MODE, cfg->bipolar ? 1 : 0);
->> +
-> 
-> nit: don't need to OR the first assignments and so initializing the variables.
+Hi
 
-:+1:
+Am 24.06.24 um 17:10 schrieb Wu Hoi Pok:
+> Remove ".load" callback form "kms_driver", and move "struct drm_device"
+> into radeon_device. Patch 2 to 7 follows up with changing the way of
+> accessing drm_device, from "rdev->ddev" to "rdev_to_drm(rdev)" which is
+> "&rdev->ddev".
 
-> 
->> +	mask |= AD4695_REG_CONFIG_IN_PAIR;
->> +	val |= FIELD_PREP(AD4695_REG_CONFIG_IN_PAIR, cfg->pin_pairing);
->> +
->> +	mask |= AD4695_REG_CONFIG_IN_AINHIGHZ_EN;
->> +	val |= FIELD_PREP(AD4695_REG_CONFIG_IN_AINHIGHZ_EN, cfg->highz_en ? 1
->> : 0);
->> +
->> +	return regmap_update_bits(st->regmap, AD4695_REG_CONFIG_IN(cfg-
->>> channel),
->> +				  mask, val);
->> +}
->> +
->> +/**
->> + * ad4695_read_one_sample - Read a single sample using single-cycle mode
->> + * @st: The AD4695 state
->> + * @address: The address of the channel to read
->> + *
->> + * Upon return, the sample will be stored in the raw_data field of @st.
->> + *
->> + * Context: can sleep, must be called with iio_device_claim_direct held
->> + * Return: 0 on success, a negative error code on failure
->> + */
->> +static int ad4695_read_one_sample(struct ad4695_state *st, unsigned int
->> address)
->> +{
->> +	struct spi_transfer xfer[2] = { };
->> +	int ret;
->> +
->> +	ret = ad4695_set_single_cycle_mode(st, address);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/*
->> +	 * Setting the first channel to the temperature channel isn't
->> supported
->> +	 * in single-cycle mode, so we have to do an extra xfer to read the
->> +	 * temperature.
->> +	 */
->> +	if (address == AD4695_CMD_TEMP_CHAN) {
->> +		/* We aren't reading, so we can make this a short xfer. */
->> +		st->cnv_cmd2 = AD4695_CMD_TEMP_CHAN << 3;
->> +		xfer[0].bits_per_word = 8;
-> 
-> nit: isn't this the default?
+This is not going to build, so it cannot go in.
 
-yes (looks like leftover from testing when I was trying 16 instead of 8)
+This should be the final patch. First add rdev_to_drm() and convert the 
+driver to use it (that's one patch). Then change radeon_device.dev from 
+a pointer to a value in a second patch.
 
-> 
->> +		xfer[0].tx_buf = &st->cnv_cmd2;
->> +		xfer[0].len = 1;
->> +		xfer[0].cs_change = 1;
->> +		xfer[0].cs_change_delay.value = AD4695_T_CONVERT_NS;
->> +		xfer[0].cs_change_delay.unit = SPI_DELAY_UNIT_NSECS;
->> +
->> +		/* Then read the result and exit conversion mode. */
->> +		st->cnv_cmd = AD4695_CMD_EXIT_CNV_MODE << 11;
->> +		xfer[1].bits_per_word = 16;
->> +		xfer[1].tx_buf = &st->cnv_cmd;
->> +		xfer[1].rx_buf = &st->raw_data;
->> +		xfer[1].len = 2;
->> +
->> +		return spi_sync_transfer(st->spi, xfer, 2);
->> +	}
->> +
+Best regards
+Thomas
 
-...
 
->> +
->> +static int ad4695_parse_channel_cfg(struct iio_dev *indio_dev)
->> +{
->> +	struct device *dev = indio_dev->dev.parent;
->> +	struct ad4695_state *st = iio_priv(indio_dev);
-> 
-> Why not passing in struct ad4695_state directly?
+>
+> Signed-off-by: Wu Hoi Pok <wuhoipok@gmail.com>
+> ---
+>   drivers/gpu/drm/radeon/radeon.h     | 11 ++++++++---
+>   drivers/gpu/drm/radeon/radeon_drv.c | 27 ++++++++++++++++++---------
+>   drivers/gpu/drm/radeon/radeon_drv.h |  1 -
+>   drivers/gpu/drm/radeon/radeon_kms.c | 18 ++++++------------
+>   4 files changed, 32 insertions(+), 25 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/radeon/radeon.h b/drivers/gpu/drm/radeon/radeon.h
+> index 0999c8eaae94..69bb30ced189 100644
+> --- a/drivers/gpu/drm/radeon/radeon.h
+> +++ b/drivers/gpu/drm/radeon/radeon.h
+> @@ -2297,7 +2297,7 @@ typedef void (*radeon_wreg_t)(struct radeon_device*, uint32_t, uint32_t);
+>   
+>   struct radeon_device {
+>   	struct device			*dev;
+> -	struct drm_device		*ddev;
+> +	struct drm_device		ddev;
+>   	struct pci_dev			*pdev;
+>   #ifdef __alpha__
+>   	struct pci_controller		*hose;
+> @@ -2440,10 +2440,13 @@ struct radeon_device {
+>   	u64 gart_pin_size;
+>   };
+>   
+> +static inline struct drm_device *rdev_to_drm(struct radeon_device *rdev)
+> +{
+> +	return &rdev->ddev;
+> +}
+> +
+>   bool radeon_is_px(struct drm_device *dev);
+>   int radeon_device_init(struct radeon_device *rdev,
+> -		       struct drm_device *ddev,
+> -		       struct pci_dev *pdev,
+>   		       uint32_t flags);
+>   void radeon_device_fini(struct radeon_device *rdev);
+>   int radeon_gpu_wait_for_idle(struct radeon_device *rdev);
+> @@ -2818,6 +2821,8 @@ struct radeon_device *radeon_get_rdev(struct ttm_device *bdev);
+>   
+>   /* KMS */
+>   
+> +int radeon_driver_load_kms(struct radeon_device *dev, unsigned long flags);
+> +
+>   u32 radeon_get_vblank_counter_kms(struct drm_crtc *crtc);
+>   int radeon_enable_vblank_kms(struct drm_crtc *crtc);
+>   void radeon_disable_vblank_kms(struct drm_crtc *crtc);
+> diff --git a/drivers/gpu/drm/radeon/radeon_drv.c b/drivers/gpu/drm/radeon/radeon_drv.c
+> index 7bf08164140e..ae9cadceba83 100644
+> --- a/drivers/gpu/drm/radeon/radeon_drv.c
+> +++ b/drivers/gpu/drm/radeon/radeon_drv.c
+> @@ -259,7 +259,8 @@ static int radeon_pci_probe(struct pci_dev *pdev,
+>   			    const struct pci_device_id *ent)
+>   {
+>   	unsigned long flags = 0;
+> -	struct drm_device *dev;
+> +	struct drm_device *ddev;
+> +	struct radeon_device *rdev;
+>   	int ret;
+>   
+>   	if (!ent)
+> @@ -300,28 +301,37 @@ static int radeon_pci_probe(struct pci_dev *pdev,
+>   	if (ret)
+>   		return ret;
+>   
+> -	dev = drm_dev_alloc(&kms_driver, &pdev->dev);
+> -	if (IS_ERR(dev))
+> -		return PTR_ERR(dev);
+> +	rdev = devm_drm_dev_alloc(&pdev->dev, &kms_driver, typeof(*rdev), ddev);
+> +	if (IS_ERR(rdev))
+> +		return PTR_ERR(rdev);
+> +
+> +	rdev->dev  = &pdev->dev;
+> +	rdev->pdev = pdev;
+> +	ddev = rdev_to_drm(rdev);
+> +	ddev->dev_private = rdev;
+>   
+>   	ret = pci_enable_device(pdev);
+>   	if (ret)
+>   		goto err_free;
+>   
+> -	pci_set_drvdata(pdev, dev);
+> +	pci_set_drvdata(pdev, ddev);
+> +
+> +	ret = radeon_driver_load_kms(rdev, flags);
+> +	if (ret)
+> +		goto err_agp;
+>   
+> -	ret = drm_dev_register(dev, ent->driver_data);
+> +	ret = drm_dev_register(ddev, flags);
+>   	if (ret)
+>   		goto err_agp;
+>   
+> -	radeon_fbdev_setup(dev->dev_private);
+> +	radeon_fbdev_setup(ddev->dev_private);
+>   
+>   	return 0;
+>   
+>   err_agp:
+>   	pci_disable_device(pdev);
+>   err_free:
+> -	drm_dev_put(dev);
+> +	drm_dev_put(ddev);
+>   	return ret;
+>   }
+>   
+> @@ -569,7 +579,6 @@ static const struct drm_ioctl_desc radeon_ioctls_kms[] = {
+>   static const struct drm_driver kms_driver = {
+>   	.driver_features =
+>   	    DRIVER_GEM | DRIVER_RENDER | DRIVER_MODESET,
+> -	.load = radeon_driver_load_kms,
+>   	.open = radeon_driver_open_kms,
+>   	.postclose = radeon_driver_postclose_kms,
+>   	.unload = radeon_driver_unload_kms,
+> diff --git a/drivers/gpu/drm/radeon/radeon_drv.h b/drivers/gpu/drm/radeon/radeon_drv.h
+> index 02a65971d140..6c1eb75a951b 100644
+> --- a/drivers/gpu/drm/radeon/radeon_drv.h
+> +++ b/drivers/gpu/drm/radeon/radeon_drv.h
+> @@ -117,7 +117,6 @@
+>   long radeon_drm_ioctl(struct file *filp,
+>   		      unsigned int cmd, unsigned long arg);
+>   
+> -int radeon_driver_load_kms(struct drm_device *dev, unsigned long flags);
+>   void radeon_driver_unload_kms(struct drm_device *dev);
+>   int radeon_driver_open_kms(struct drm_device *dev, struct drm_file *file_priv);
+>   void radeon_driver_postclose_kms(struct drm_device *dev,
+> diff --git a/drivers/gpu/drm/radeon/radeon_kms.c b/drivers/gpu/drm/radeon/radeon_kms.c
+> index a16590c6247f..d2df194393af 100644
+> --- a/drivers/gpu/drm/radeon/radeon_kms.c
+> +++ b/drivers/gpu/drm/radeon/radeon_kms.c
+> @@ -91,7 +91,7 @@ void radeon_driver_unload_kms(struct drm_device *dev)
+>   /**
+>    * radeon_driver_load_kms - Main load function for KMS.
+>    *
+> - * @dev: drm dev pointer
+> + * @rdev: radeon dev pointer
+>    * @flags: device flags
+>    *
+>    * This is the main load function for KMS (all asics).
+> @@ -101,24 +101,18 @@ void radeon_driver_unload_kms(struct drm_device *dev)
+>    * (crtcs, encoders, hotplug detect, etc.).
+>    * Returns 0 on success, error on failure.
+>    */
+> -int radeon_driver_load_kms(struct drm_device *dev, unsigned long flags)
+> +int radeon_driver_load_kms(struct radeon_device *rdev, unsigned long flags)
+>   {
+> -	struct pci_dev *pdev = to_pci_dev(dev->dev);
+> -	struct radeon_device *rdev;
+> +	struct pci_dev *pdev = rdev->pdev;
+> +	struct drm_device *dev = rdev_to_drm(rdev);
+>   	int r, acpi_status;
+>   
+> -	rdev = kzalloc(sizeof(struct radeon_device), GFP_KERNEL);
+> -	if (rdev == NULL) {
+> -		return -ENOMEM;
+> -	}
+> -	dev->dev_private = (void *)rdev;
+> -
+>   #ifdef __alpha__
+>   	rdev->hose = pdev->sysdata;
+>   #endif
+>   
+>   	if (pci_find_capability(pdev, PCI_CAP_ID_AGP))
+> -		rdev->agp = radeon_agp_head_init(dev);
+> +		rdev->agp = radeon_agp_head_init(rdev_to_drm(rdev));
+>   	if (rdev->agp) {
+>   		rdev->agp->agp_mtrr = arch_phys_wc_add(
+>   			rdev->agp->agp_info.aper_base,
+> @@ -147,7 +141,7 @@ int radeon_driver_load_kms(struct drm_device *dev, unsigned long flags)
+>   	 * properly initialize the GPU MC controller and permit
+>   	 * VRAM allocation
+>   	 */
+> -	r = radeon_device_init(rdev, dev, pdev, flags);
+> +	r = radeon_device_init(rdev, flags);
+>   	if (r) {
+>   		dev_err(dev->dev, "Fatal error during GPU init\n");
+>   		goto out;
 
-Probably because that is how it was done in the ADI tree driver
-I started with. Changing it to two parameters would be fine.
-
-> 
-> ...
-> 
->>
->> +
->> +	/* Needed for debugfs since it only access registers 1 byte at a
->> time. */
->> +	ret = regmap_set_bits(st->regmap, AD4695_REG_SPI_CONFIG_C,
->> +			      AD4695_REG_SPI_CONFIG_C_MB_STRICT);
->> +	if (ret)
->> +		return ret;
->> +
-> 
-> Question... do we gain something but not doing the above? Because debugfs is
-> optional and always doing it even when it's not present looks unnecessary. 
-
-I haven't got to a place where we need to read or write a 2 byte register
-yet, so I'm not sure. My plan is to defer worrying about it until then
-and update this if necessary in a future patch when it actually makes a
-difference. But for now, this is harmless because we are only reading
-and writing single byte registers.
-
-> 
-> - Nuno Sá
-> 
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
 
