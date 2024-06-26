@@ -1,211 +1,150 @@
-Return-Path: <linux-kernel+bounces-231278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0766918A1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:29:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0672918A20
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:30:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D948A1C22561
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:29:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10AFCB24D09
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ACE118FDCF;
-	Wed, 26 Jun 2024 17:29:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D76019004F;
+	Wed, 26 Jun 2024 17:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gDGcqQHu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g6MHgkGn"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD8F18FDC2
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 17:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D501317E8EE
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 17:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719422980; cv=none; b=AptGClFL1csA/wzyDums5xMYEUx2jnqS70X4DO/iCBdDZ9JQRr7Z6bWJmfBCrt8r+7BnyfnNZZO2HrGmWmJurobM7hBhM0TspOPG+ZN0tb6+Ez+KDCZ39VhobKNOxsPmOgqT4iRzLTSHIreZsW2OqJsx4KWRe7vHHODlsTkSUdw=
+	t=1719423011; cv=none; b=J6HUNOpnSiJYg+LOwMbVhqmkDjgyeKUanIwhX9Ug/JE5pFvbTnlN61CWZtNvYWtO3JCu+bN6D+xQ1JYqWoRFhON8MGYtXzrEI9gvsL2wa1lX9exFS448S0XCioDGO3ZuOKaC8GSZE407wjOnHhh2RSbzUzvJSG3roQfxdljbJt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719422980; c=relaxed/simple;
-	bh=F8lJb+2w1Y21E5VOznQl3Rx2squALjSmsxn2Z/8lvx8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rSOSdhZG5K0QXpnS7DAy++9zpB699l7fqZKzzDNMuYS3ASvhwhyoHnczL2CLGz/0PmCEd8KTysiVH0IxvWbt0WKd1pZ6iKEc0oxbid5NC6wyrkryafRxRKIJ724Vis0y/dkrf8hnM0mWZtbMgFCnUPQWp+Io4RKlRhw9xj1kq6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gDGcqQHu; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719422977;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7DcTLE3yWDjyk1xqGcYEiqY3CH5ei9AFFdK+76Cq7DU=;
-	b=gDGcqQHu2nwc3tyAHzGP7n4yGW5rLHCGabJS6ROPd9YCmZqaTBeZnmSE/Tt4V6xvv1/VD4
-	VJqnfYQuNvoVJoD09Dpp2F9f9jhRgMgbDChHLy8R7rpOmzxA0mFhCaXyO32HgLpXn87u6v
-	gZedolUdwni0mHrizUfmY8JQ+Bpbtyc=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-404-WcdWtPHdM2CntBk_D8xCWw-1; Wed, 26 Jun 2024 13:29:36 -0400
-X-MC-Unique: WcdWtPHdM2CntBk_D8xCWw-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4218447b900so5107025e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 10:29:35 -0700 (PDT)
+	s=arc-20240116; t=1719423011; c=relaxed/simple;
+	bh=8sXyupVnGH4Qtqm8zwEM1lKR41kejqbIjZNf3OjwrB8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TS+Fa325KIWBdJblzxYxDz9CS1M//lzN9ji8G0jR8AnuYoG7vLTgwpK2FPZtgFHYBCNLYm79L25/kmNWSIyFjFti9O5dar60rtpo0Z6ZGG6IGwLj07iLnjX/i4CPpI923FJRRw+BkHnEAuCdbGfc0Q/nhxTGEcRDjrCMaaeslN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g6MHgkGn; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a725a918edaso305866566b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 10:30:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719423008; x=1720027808; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=WCgWzUpyWlRjMO4dTBVp6mnu22NxWEBxaahLaEKuteU=;
+        b=g6MHgkGnhweEPh4jft8CD6H9/D9llSvCcPPg9wGkUrn2UY8ap0gUvd/tJiP/N9Sfx9
+         CUvtU7t/0yLNay8NEJW7YV1I8MKTpDj6vC1xf4XuisMQuekiIHei9mG0pJXp1vzYDRwE
+         5k+kHEYlVoF15BdM2zU+ktKXHPNkh/iEaapccW88LfQ+6jNa4cww5I9GzdFC2l63kg86
+         igMEJ4qBSrVwjo3lg0a8ovkzeHOJ+z63qIMSmlq/TrULy7/khtmiz4u0KNIFWNpAkccQ
+         H4hv66Fpx5aVyTxNT7FurwglznF96J/0Kl8+wodDkL+tommg479rlUjDlyNI7T3eDnuu
+         7PAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719422975; x=1720027775;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7DcTLE3yWDjyk1xqGcYEiqY3CH5ei9AFFdK+76Cq7DU=;
-        b=n7UQXPlXF1i7p0IsRd4tRNrU4n0TF6nxF55BGM/ZuhFHFNlrtALlmTvvDfSvRbcX6x
-         efo48XlHmBFPG3FX4OfP2O06CnFFlr8ZgfiwTub9gJZsqwtNJ5bDCEGxpvjyw7Ke8brD
-         dM8QOYlihr2d/YnxKuEykpD8GsjBfl1Rfc2kerW/L1CNj6YD8hRQYxOOqCCvieXhTU5M
-         97RdH8Hj9OZLHKBr4A+ElHqg8ZIKGGtaF5rd+Zi4f+mogOig9VC9LEgVFbBM26AltA2O
-         UQJ+nVNye+Vg/yG5NnG3X2SHm3mA8hYAO5dziUW5loSWCg8n7dx231KgqyG9NapIIv37
-         7LJA==
-X-Forwarded-Encrypted: i=1; AJvYcCW8I+Diysf5Qb4o6dZALTS7DTaZxC98e9rj09IzsTY5fgtb3C2+Kw84m6pBInvw76jMQ3KHgYCeuMxIn5uW986gCqUTqb7Wvv+rFlbb
-X-Gm-Message-State: AOJu0YyNxVUvUSvlBqwSOajnPEzLQP6qqWcrLeP55HuM7DenMAGJBbF1
-	qKvjQKxZr1r5o70kftZMn53kNfuUa3xxtLdlcZADfKruLAyf8v14VXpXbDFdwR2oyYTSvLzXh6y
-	v53r7Q+IcFsP/FudWh/N0+lARXm/ox9yWso8SPzWtVRAxUhsOLAVI7ReAgSd7nA==
-X-Received: by 2002:a05:600c:4447:b0:424:84fb:9fd2 with SMTP id 5b1f17b1804b1-4256313f2c0mr3065335e9.19.1719422974825;
-        Wed, 26 Jun 2024 10:29:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGSJpDCQJurGIE7lyw9ReuWhLy1leQmGYFlkjt/vBoG7Sq3e5X5HASbNrYiOLVbuaVEjuZxeg==
-X-Received: by 2002:a05:600c:4447:b0:424:84fb:9fd2 with SMTP id 5b1f17b1804b1-4256313f2c0mr3064875e9.19.1719422974045;
-        Wed, 26 Jun 2024 10:29:34 -0700 (PDT)
-Received: from localhost ([2a01:e11:1007:ea0:8374:5c74:dd98:a7b2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c84245f0sm33743165e9.33.2024.06.26.10.29.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 10:29:33 -0700 (PDT)
-Date: Wed, 26 Jun 2024 19:29:32 +0200
-From: Davide Caratti <dcaratti@redhat.com>
-To: =?iso-8859-1?Q?Asbj=F8rn_Sloth_T=F8nnesen?= <ast@fiberby.net>
-Cc: Ilya Maximets <i.maximets@ovn.org>, Jamal Hadi Salim <jhs@mojatatu.com>,
-	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	David Ahern <dsahern@kernel.org>, Simon Horman <horms@kernel.org>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH net-next 2/9] net/sched: cls_flower: prepare
- fl_{set,dump}_key_flags() for ENC_FLAGS
-Message-ID: <ZnxP_IHSJWg8FhfO@dcaratti.users.ipa.redhat.com>
-References: <20240611235355.177667-1-ast@fiberby.net>
- <20240611235355.177667-3-ast@fiberby.net>
- <ZnVR3LsBSvfRyTDD@dcaratti.users.ipa.redhat.com>
- <0fa312be-be5d-44a1-a113-f899844f13be@fiberby.net>
- <ZnvkIHCsqnDLlVa9@dcaratti.users.ipa.redhat.com>
- <CAKa-r6uqO20RB-fEVRifAEE_hLA50Zch=wbKtX8vNt5m6kE5_Q@mail.gmail.com>
- <d2df2837-070b-4669-8a35-c3d1341849d2@fiberby.net>
+        d=1e100.net; s=20230601; t=1719423008; x=1720027808;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WCgWzUpyWlRjMO4dTBVp6mnu22NxWEBxaahLaEKuteU=;
+        b=p/YozVAqPoFQ5tTxx10HOUM7WHIMDQZmaW03NsShFDvXYxg1Crj5FwLQihPpLbRGFS
+         cA+3+axKPy90tTY/pHI203jjfyQzmTFtU+17e6+HJUO5K2Q3h/OTRGohTpXhiVsxauwv
+         evbJ4TsXaUfxqpQZoOvSg/Gwr4EtiHe8O50N+e1JP0+kvjH+4TEIZT5UWCKGeGrnzo0s
+         mwXW4p2WQqIUzkMHhEzmj/fTQBQPYRuiraecPtimXajFO+WApsvECVd0jNItqiYB3QmC
+         fnBGOsagJRHgN5pKQDvFewhR/WCti88Cz6perDQerldFSJQhrvA2IAPnm8RNi53Ck1h2
+         KRRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWULwE2+1M9H3svdG3ToLlryOoHO4tVzUQ26P2/PuF+L2lJ8a5qQFmhIlTXkIwyqrvXVWJwUaTvMgCCii1J8eREOIztLFHDy/Kxr9AE
+X-Gm-Message-State: AOJu0YzNPzg6r/D4ZejAZlclMNxp75Mc17cx/LhArg/dL6AGE0Xxfg7f
+	1Bq6AYlfBJzHtL1c5CslMRGvL8kZuU7Y6Gq9zmDD7QLPJv7NHhWkLcSM3CWoeBs=
+X-Google-Smtp-Source: AGHT+IEPOdKJSLTaOk1Lz7Q6vRdgL/e1q63ekUHDJ6Nj4SBln6eqPEfJtlq8mZ3XKgraXpiS4DaqMQ==
+X-Received: by 2002:a17:906:278d:b0:a72:4160:105 with SMTP id a640c23a62f3a-a7245c8094emr863873866b.61.1719423008060;
+        Wed, 26 Jun 2024 10:30:08 -0700 (PDT)
+Received: from [192.168.215.29] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a725a6f7217sm296313166b.69.2024.06.26.10.30.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Jun 2024 10:30:07 -0700 (PDT)
+Message-ID: <fa0ad0eb-6f5e-47bf-b8b6-233521f84ad2@linaro.org>
+Date: Wed, 26 Jun 2024 19:30:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d2df2837-070b-4669-8a35-c3d1341849d2@fiberby.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: msm8916-lg-c50: add initial dts for
+ LG Leon LTE
+To: Nikita Travkin <nikita@trvn.ru>, Bjorn Andersson <andersson@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht,
+ Anton Bambura <jenneron@postmarketos.org>
+References: <20240623-msm8916-lg-initial-v1-0-6fbcf714d69b@trvn.ru>
+ <20240623-msm8916-lg-initial-v1-3-6fbcf714d69b@trvn.ru>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20240623-msm8916-lg-initial-v1-3-6fbcf714d69b@trvn.ru>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-hello Asbjørn,
-
-On Wed, Jun 26, 2024 at 11:55:31AM +0000, Asbjørn Sloth Tønnesen wrote:
-> Hi Davide,
+On 23.06.2024 11:26 AM, Nikita Travkin wrote:
+> From: Anton Bambura <jenneron@postmarketos.org>
 > 
-> On 6/26/24 10:01 AM, Davide Caratti wrote:
-> > On Wed, Jun 26, 2024 at 11:49 AM Davide Caratti <dcaratti@redhat.com> wrote:
-> > > 
-> > > So, we must htonl() the policy mask in the second hunk in patch 7,something like:
+> Add initial device-tree for LG Leon LTE (lg-c50), currently supported
+> features:
+> - eMMC;
+> - MicroSD;
+> - usb in peripheral mode;
+> - WiFi/BT;
+> - vibration;
+> - keys.
 > 
-> Good catch.
-> 
-> > or maybe better (but still untested), use NLA_BE32, like netfilter does in [1]
-> > 
-> > [1] https://elixir.bootlin.com/linux/latest/A/ident/NF_NAT_RANGE_MASK
-> 
-> Yes, that is better. It should work, as it triggers a htonl() in nla_validate_mask().
+> Signed-off-by: Anton Bambura <jenneron@postmarketos.org>
+> Signed-off-by: Nikita Travkin <nikita@trvn.ru>
+> ---
 
-NLA_BE32 proved to fix the byte ordering problem:
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
- - it allows to set TCA_FLOWER_KEY_ENC_FLAGS_MASK and read it back consistently
- - it sets correct FLOW_DIS_F_* bits in 'enc_control'
-
-FTR, I used this hunk on top of your RFC series:
-
--- >8 --
---- a/net/sched/cls_flower.c
-+++ b/net/sched/cls_flower.c
-@@ -679,9 +679,9 @@ static const struct nla_policy fl_policy[TCA_FLOWER_MAX + 1] = {
-        [TCA_FLOWER_KEY_ENC_UDP_SRC_PORT_MASK]  = { .type = NLA_U16 },
-        [TCA_FLOWER_KEY_ENC_UDP_DST_PORT]       = { .type = NLA_U16 },
-        [TCA_FLOWER_KEY_ENC_UDP_DST_PORT_MASK]  = { .type = NLA_U16 },
--       [TCA_FLOWER_KEY_FLAGS]          = NLA_POLICY_MASK(NLA_U32,
-+       [TCA_FLOWER_KEY_FLAGS]          = NLA_POLICY_MASK(NLA_BE32,
-                                                          TCA_FLOWER_KEY_FLAGS_POLICY_MASK),
--       [TCA_FLOWER_KEY_FLAGS_MASK]     = NLA_POLICY_MASK(NLA_U32,
-+       [TCA_FLOWER_KEY_FLAGS_MASK]     = NLA_POLICY_MASK(NLA_BE32,
-                                                          TCA_FLOWER_KEY_FLAGS_POLICY_MASK),
-        [TCA_FLOWER_KEY_ICMPV4_TYPE]    = { .type = NLA_U8 },
-        [TCA_FLOWER_KEY_ICMPV4_TYPE_MASK] = { .type = NLA_U8 },
-@@ -744,9 +744,9 @@ static const struct nla_policy fl_policy[TCA_FLOWER_MAX + 1] = {
-        [TCA_FLOWER_KEY_SPI_MASK]       = { .type = NLA_U32 },
-        [TCA_FLOWER_L2_MISS]            = NLA_POLICY_MAX(NLA_U8, 1),
-        [TCA_FLOWER_KEY_CFM]            = { .type = NLA_NESTED },
--       [TCA_FLOWER_KEY_ENC_FLAGS]      = NLA_POLICY_MASK(NLA_U32,
-+       [TCA_FLOWER_KEY_ENC_FLAGS]      = NLA_POLICY_MASK(NLA_BE32,
-                                                          TCA_FLOWER_KEY_ENC_FLAGS_POLICY_MASK),
--       [TCA_FLOWER_KEY_ENC_FLAGS_MASK] = NLA_POLICY_MASK(NLA_U32,
-+       [TCA_FLOWER_KEY_ENC_FLAGS_MASK] = NLA_POLICY_MASK(NLA_BE32,
-                                                          TCA_FLOWER_KEY_ENC_FLAGS_POLICY_MASK),
- };
-
--- >8 --
-
-but I think I found another small problem. You removed FLOW_DISSECTOR_KEY_ENC_FLAGS
-from TC flower, re-using 'enc_control' instead; however, the FLOW_DISSECTOR_KEY_ENC_CONTROL
-bit is set only if flower tries to match 'enc_ipv4' or 'enc_ipv6'. We don't notice
-the problem with 'ip_flags' because AFAIS flow dissector copies those bits even with
-no relevant FLOW_DISSECTOR_KEY* requested. When matching tunnel flags instead, we
-will end up in skb_flow_dissect_tunne_info() with 
-
-
-	/* A quick check to see if there might be something to do. */
-	if (!dissector_uses_key(flow_dissector,
-				FLOW_DISSECTOR_KEY_ENC_KEYID) &&
-	    !dissector_uses_key(flow_dissector,
-				FLOW_DISSECTOR_KEY_ENC_IPV4_ADDRS) &&
-	    !dissector_uses_key(flow_dissector,
-				FLOW_DISSECTOR_KEY_ENC_IPV6_ADDRS) &&
-	    !dissector_uses_key(flow_dissector,
-				FLOW_DISSECTOR_KEY_ENC_CONTROL) &&
-	    !dissector_uses_key(flow_dissector,
-				FLOW_DISSECTOR_KEY_ENC_PORTS) &&
-	    !dissector_uses_key(flow_dissector,
-				FLOW_DISSECTOR_KEY_ENC_IP) &&
-	    !dissector_uses_key(flow_dissector,
-				FLOW_DISSECTOR_KEY_ENC_OPTS))
-		return;
-
- 
-^^ a kernel that returns without loading tunnel info, because "there is nothing
-to do". So, the attempt to put a valid value in patch9 regardless of the address
-family is not sufficient. IMO it can be fixed with the following hunk:
-
--- >8 --
---- a/net/sched/cls_flower.c
-+++ b/net/sched/cls_flower.c
-@@ -2199,7 +2199,8 @@ static void fl_init_dissector(struct flow_dissector *dissector,
-        FL_KEY_SET_IF_MASKED(mask, keys, cnt,
-                             FLOW_DISSECTOR_KEY_ENC_IPV6_ADDRS, enc_ipv6);
-        if (FL_KEY_IS_MASKED(mask, enc_ipv4) ||
--           FL_KEY_IS_MASKED(mask, enc_ipv6))
-+           FL_KEY_IS_MASKED(mask, enc_ipv6) ||
-+           FL_KEY_IS_MASKED(mask, enc_control))
-                FL_KEY_SET(keys, cnt, FLOW_DISSECTOR_KEY_ENC_CONTROL,
-                           enc_control);
-        FL_KEY_SET_IF_MASKED(mask, keys, cnt,
--- >8 --
-
-at least it passes my functional test (that I didn't send yet, together with
-iproute bits :(  promise will do that now)
-
--- 
-davide
-
+Konrad
 
