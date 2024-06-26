@@ -1,360 +1,306 @@
-Return-Path: <linux-kernel+bounces-230393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CE10917C32
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:15:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4D83917C2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:15:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42AC8B26C49
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:15:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13D361C24CE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3983E17C7BF;
-	Wed, 26 Jun 2024 09:12:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BC016D9C0;
+	Wed, 26 Jun 2024 09:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AUUCfUVa"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hv2C2vEJ"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0155516A949;
-	Wed, 26 Jun 2024 09:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719393174; cv=fail; b=e4R5ZEGrGPiJF388m601Kq4DGDJ2TIQN5FT/Gmv2/iQibdhGQKafNlGbF6Z1WF9cM++0hqtVlSRTi1N2jZiScn9FN8HYYNkqPfsJJZwJH2MB/sY0zhEnAYR/xihke62kMwgf6ok0IoQGo/JnTsbFjlQLAqHsY8pO4n6JHjYPmgQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719393174; c=relaxed/simple;
-	bh=coDlGR8UuLHCnnrOY0yiexMkXYqT7JC0YKIVcFay/54=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=oEITA4LFW87YEwVZzvbRj031eGwpq1hDUwxV2mltucKsDQlUWy2+5MaVbDDXu4u+x5POxdS2D7aRZgZXNr7wEJfFBocRsYgq6WgNH3/GVzQy1o9frs6/cMAxy0P3lJ/sCsjTiEXQPMuzPx96tS1se+sjhXUBYGjDcmMIlW1hYF0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AUUCfUVa; arc=fail smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719393173; x=1750929173;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   in-reply-to:mime-version;
-  bh=coDlGR8UuLHCnnrOY0yiexMkXYqT7JC0YKIVcFay/54=;
-  b=AUUCfUVawmhGeC95+hH/HYqghX3Dw+wEb1eiZxaLWTvKVgFxrldwA/7i
-   biTKpHwEBoG2D/Ad6d9r8JYnNeAdmgX1LdP6ySzeSYZfomXmnwXSmlSZ6
-   mi0d8XSfE86A9ChwMNxBCMfiScKHzGMVs7i8aHbPEHLjNMKgHAjXOas8y
-   XOErtdo+nLMZ0cHIvHjExswCfVwlWlToU5Ty6KbQ5N9yrFqtDuu6G/fDy
-   C68GkxD7st/5+gDzB8/O5G19x44O9pxrtk++T4uts9DA1hEkol5LA7kbH
-   IdTgP1+JGsAhfDDJTP3rKdk3cyhpCSdr4fi1PIUJFyHUVcKgQ2J47EvMl
-   A==;
-X-CSE-ConnectionGUID: xNoBhAQTRouJVFsMStbZLA==
-X-CSE-MsgGUID: C5onywCASP+sVnQkZtpWZQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="19343119"
-X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
-   d="scan'208";a="19343119"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 02:12:52 -0700
-X-CSE-ConnectionGUID: 4QYMS7guQXa3i72jddkMzQ==
-X-CSE-MsgGUID: 7F36oU2IQUKEBobBj/Vj0A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
-   d="scan'208";a="43752214"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 26 Jun 2024 02:12:52 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 26 Jun 2024 02:12:52 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 26 Jun 2024 02:12:51 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 26 Jun 2024 02:12:51 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.169)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 26 Jun 2024 02:12:51 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SyQQBdJmoIKqzV/tTLlJPbC/mbwo7OCTSsjN1GefmhA/S991egqjozygZkNBR9v3EOZtSecIXf1coxLUULKp72zX2+XX92VgLScQWSsLYIcbKQElQexywg8NE+bFm0ro69APOxsiEDq2W9ApTJIfq6LDSsTMd896COXASvvGVEoRXymi5tJ/oax51M/o1IXzj6JaexmEvWYT9rTZaqqg99CxNtjE9mBFcTzXYeYiMo/a9OJJeBRSBBvZNZYN83RPaKzGzxzwVQEOzhLDpCVC4XVn/4bx6qpO6/FMo0kDuTo8ZpuYJtShwh0BzJQDCflfDbkBQ0Ue0AEJ+Cw7koEgoA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XZZ9zM8WodYE1L27j54Deo+mIrny3j59pKDISxbTSiA=;
- b=SGLJ5MmJRipI0boeaqTLXjSN2zc5MrDy7LcQhIBTbyMtbgrz/yWsyPmUv+QK5Etp9vqJ5UzIIz6I0WQ1VtB24oM/fcMRpA/OmcKc9/e9MNAUxrnmUxSPMLoGgdKcBz/EfXqS/6sMsiBK/i67fh6Tl6fAZfiLsdCvMOnMSd8I0HHrTWG1PXY4fHC4qXn6FczH+qyVBODzRhyqj7gEqk0wX915Of8wBJpK065/GZbVtu1qqdV0M5d+GD4rFV0b3OMO8bf2RTc1woU2ngHxJRvXE8QjuxveH2fpCCxNVVXSCqOlnh9gWkKojQTVh4PctmFqAET1J24G46OBQs7BT2HTJg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
- IA1PR11MB8200.namprd11.prod.outlook.com (2603:10b6:208:454::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7698.32; Wed, 26 Jun 2024 09:12:44 +0000
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca%6]) with mapi id 15.20.7698.025; Wed, 26 Jun 2024
- 09:12:44 +0000
-Date: Wed, 26 Jun 2024 17:11:32 +0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: "Tian, Kevin" <kevin.tian@intel.com>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"alex.williamson@redhat.com" <alex.williamson@redhat.com>, "jgg@nvidia.com"
-	<jgg@nvidia.com>, "peterx@redhat.com" <peterx@redhat.com>,
-	"ajones@ventanamicro.com" <ajones@ventanamicro.com>
-Subject: Re: [PATCH] vfio: Reuse file f_inode as vfio device inode
-Message-ID: <ZnvbRFcfcufERwr7@yzhao56-desk.sh.intel.com>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <20240617095332.30543-1-yan.y.zhao@intel.com>
- <ZnQBEmjEFoO39rRO@yzhao56-desk.sh.intel.com>
- <BN9PR11MB527603C378C5D0DA1294ED268CD62@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <BN9PR11MB527603C378C5D0DA1294ED268CD62@BN9PR11MB5276.namprd11.prod.outlook.com>
-X-ClientProxiedBy: SI2PR01CA0024.apcprd01.prod.exchangelabs.com
- (2603:1096:4:192::20) To DS7PR11MB5966.namprd11.prod.outlook.com
- (2603:10b6:8:71::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7018016A948;
+	Wed, 26 Jun 2024 09:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719393139; cv=none; b=eA6dqigwy+toXHjwqCo4WcNW0L8gdzuw1BrVS2Dfd+pMDPdJXxLhBQMHhxjVTHpKK4ELlqW1hzO92C38CqJ3Y5MBRhMSHtGUKFSENKhtO7nd9iOZbYi+sbZs+4WCGMrftrxU6xMRor4oBSgMEMM1zw7ZMz/e40CULP8mp4/aDlM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719393139; c=relaxed/simple;
+	bh=CanSw/ga/v+NZ5681NPAHHodTA0bxrOv2IrK+wa7u/E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y1nsKuD7pfiyMch6YKdlV1uiuV/BcxME/iUUndWcsmopcr43ZJ5Ka/EoZWFC0FLkz3khsyQFWOidfUGYV17VV/EtB1M43wAVnZ/4rjn1FVpFX1qz4HJTpE674bwzVAXKwUyuGIsOhYRTlzGIQpBrm31IV63PHQvTdqKQMZMaTVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hv2C2vEJ; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a6fe7a0cb58so243997766b.1;
+        Wed, 26 Jun 2024 02:12:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719393135; x=1719997935; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FongEw4DVTz7Uk7t+o0KVv9EUD1iaAZOmKGMy2sDWqU=;
+        b=Hv2C2vEJYpUtFh9GgMU4kw+z5BbpvwlYzoUAOgoNEyHCDqeW2YOnIW7/G8pkezhpz1
+         oRLcR7m7JK1vlk4E4kVCnI2cogEOX+lfmhHc4RNtz/SoRKCcGksw9v0AJnLFjy99aWNa
+         aggi7EkxSYKv19Sk4DtO1p2cc1ScWTuTOi5lgF8TqvtsAgjfBi4Yro9L/r7c7GN7YVA1
+         wNiF60D4qW1oMCfdtyfkmuUY+NS30LUXZ/M5ZZKOXvhQWxQTZUAKznj2ywiMEcO84/8V
+         JEk+2kGJE6GxoVLpUW8Ep6IxUYUYPOaqDWo3T2dbhFgp/tiNLrLhyMcrjOlMiSYMJgF/
+         t6ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719393135; x=1719997935;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FongEw4DVTz7Uk7t+o0KVv9EUD1iaAZOmKGMy2sDWqU=;
+        b=at4w0W3RW6/El4jv+XsBdq/cOcsR8zNAg7t1m7D7TdODahSo3K6XYTiKCESk2YBX1g
+         KrYkMBEdiSF1EAAExuLexf2MPencoX3PFv9PKIUZGEqmcunZVfvXr0oW9BruchCPRK49
+         NppH5AjY03q9+1O9UtVjJ923hTbOBxhWTuVnuQAgSlVRIuZg9VDNDEx9cF4wvWpEBBUm
+         +FA0uQbuSISoxvL7TH6EFpuDDSaT6xBfdYn/M5N4BERnudwN2zZPqYoXH5qbHUhgqhVk
+         3nFAfoAg6s1K0Jg/LhXtGp8uDOfmwb3fZnkWSeY0ALFoAOhDrnPNH82yBFB2vsuMxWdb
+         ng+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV2QHGq/9mqUbAnFK6RCMLtFM30yGFKVv+z4XcKM8WE7Z8ZZAsnHd1Pnj2bxDr3pIAMgSO87lbj0cSR5B1iSRxNhXE2ZpuvDmQ9IS6ICY7nqFhXUpfr4PW/k3AxSEoMhs8bmtVzPOHf+xY4mqsRz3zgnwDahjjwcqYQY2jhOqUR4MgjGHWw
+X-Gm-Message-State: AOJu0YzZ+HyPK9UDr8bVu3XRXM9USpSQMHMk0sNWLEVtTVV7hJ0HbvU5
+	lIomvF2M8MyE404IjmsZTNFKbo9Tc4BJwZB3IXQmBbAKKEWBB4I=
+X-Google-Smtp-Source: AGHT+IGb5T6cpB/7EWvmhQ43Jf3bxUsfnnaogIExV5juuGP3ucFrS+SngbbnT41X1ojvJgNGssHk3Q==
+X-Received: by 2002:a50:d5d3:0:b0:57c:7c44:74df with SMTP id 4fb4d7f45d1cf-57d4bdcabb7mr8935735a12.29.1719393133298;
+        Wed, 26 Jun 2024 02:12:13 -0700 (PDT)
+Received: from ?IPV6:2a02:810b:f40:4600:79e0:cc0d:71b1:3c08? ([2a02:810b:f40:4600:79e0:cc0d:71b1:3c08])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d30413446sm7045617a12.31.2024.06.26.02.12.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Jun 2024 02:12:12 -0700 (PDT)
+Message-ID: <5a15b138-4e03-4487-8a53-b7ff3527701f@gmail.com>
+Date: Wed, 26 Jun 2024 11:12:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|IA1PR11MB8200:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3e9a0916-5da8-4df6-343e-08dc95c02355
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230038|1800799022|366014|376012;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Wt5wROWpuAhFMiwriWYFDH4uuZzuHwFGr96iZZNVxI621LKOtapS8wcnfzK0?=
- =?us-ascii?Q?OjOUegg0bEJ2XxbvvEA2Mdvov3/bfKPV2BQjdt+CUs6NlYwyucPsCfPwP/N6?=
- =?us-ascii?Q?9Ck9KpX9UtAufsF/YsQcqlpyNh4gT5u8mGrktrA8yY8N2NUviKXenvpW5Bz7?=
- =?us-ascii?Q?3FLzU4MknYp/1ZeVnBaNnT1F981DjFDyxVTHWXzMgHwt4dDAjtBekB7rtIGp?=
- =?us-ascii?Q?uzGsR9Gz6botqLYNgonsoADzWUNARSvQG0DNDkbwOdi/H2+Op6ugU6TMZGZR?=
- =?us-ascii?Q?ENJa9PhBdsitfQPLxRuM5UmQD4IktCK0XoptDHEunAAul/5iGysYFTCGqYk2?=
- =?us-ascii?Q?XnSdh6BD14Ro7ODemkQcAdui4TixHX0XU+Bx4iqnLqIrSHyetlOGLIn9Ptr1?=
- =?us-ascii?Q?BrPQ1I6XGnGPn+fXRprFu1XJ47ImPaF13VI+Kz8lYxL9wp/dmh4tmTj7deja?=
- =?us-ascii?Q?Ji3X+c0gAtOAot6/pprT6cGFrAb2cKxmNYzYIC+5qM8Zq7jkQNqgmqe00Qd2?=
- =?us-ascii?Q?PMsdMC5/c3Mq8bIzzLyiADkW5QTmBFtxwijZ2GIr9ZRhXgRZNLAt45bWsC5G?=
- =?us-ascii?Q?+3SY0dJ1A87DqHf0SD/w09kTiKp/3YMGtiqB+MP2jXbLlgdiiah+21NgwzAD?=
- =?us-ascii?Q?GFugdk7gFYi0blVjLTI965BrfhqhDoh/R7l9TI3Rx4+BaLeoyMFUo6d25eDZ?=
- =?us-ascii?Q?5W7g7LesGdSaffLux6IYrdvWeYIQhHuwaQ67o0K5xLFTIgyoMABq53iENQ4i?=
- =?us-ascii?Q?ILXDd5Wvh0B6Y0rFY1vPaKSZWlUqeOcaVUCCeTPXfBiCIpTnRamgp6r9fYOj?=
- =?us-ascii?Q?QJrvO4XyDBoJfEolF3szSolBvQXgQbu9Y3+0spQWfZR+hSsVVsXdmgE/RVM6?=
- =?us-ascii?Q?XlnPMvCdX5atPLMpDoobnbAvyzw66bNi5BBX9/t4pR8ZkylezFuGHddsFuGb?=
- =?us-ascii?Q?IUtOEFCzJXdc7GH+iyBmOOUCRjy3tdxj0u1Gs+00oNyilW2Hptk3EbIA0mAh?=
- =?us-ascii?Q?ebge1+ePgsIBTs6VuR+upgdTieebKNqgKeACLGsSpJW+E2m1iizuI7Dgacyz?=
- =?us-ascii?Q?YBSGf0jRQV5lxYrM3DjpBvQwFCITKXijZYDmUWlyTt2X7oGwhOBtMuUEWyZd?=
- =?us-ascii?Q?rukC27JBC+GDsyAPMx52MhGRmQalR6h7NhB0mcEK9MadBK8RNwtmCv/X4wzh?=
- =?us-ascii?Q?WYd6Pwnf3LlHhwB806LzFxuuuKiM4kvwchOg3jSVcgq9270USltLLg1p0FQd?=
- =?us-ascii?Q?3j1BfN8p7z4XgODjUOAyNKR7/PFHo5WpJDNnOJJrRcw3qpJe2vjg4TaNmgzp?=
- =?us-ascii?Q?9OTjevwhdyDGCDgkzMW/UhPq?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230038)(1800799022)(366014)(376012);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Wu2xq0yTr2Gm3U5sGJobt8xqaNN8YIkQgJXUH8LQ17EPDVDebbECdK+pivxo?=
- =?us-ascii?Q?Y8CcN5rPT99hozK3Wyqd2Q5zKlL9oNKlhiIVFrDnoC+hF9JTXWeqlxZtTjXD?=
- =?us-ascii?Q?HnN4qW1lDdU7sZ8IWpW2svT+AXB9VMbHtftZojvy7gZduHQAh/kklroOH2Uf?=
- =?us-ascii?Q?I1ajJGhfwe5PCr2WzJauZ9xyTdRO/x9Too/Ydjx6OgvHq28ABQc44DUn77g+?=
- =?us-ascii?Q?Vgm0COVd/2wS/ivNUt8mTerX2tvIbSZB0Q/q86DEiEIKV22rJqShBBnIXyyJ?=
- =?us-ascii?Q?YtcBTnfR5kcpnXopyrT/+lEbnK7+JdjBmMudGB9S5rCcp7qd1M3BO1Uo8IKX?=
- =?us-ascii?Q?bvQkd1RWnXoPJe+It0tzYjgr3qTiJjPNR/OI701KyaZPOZ6fZZkyiUrIox7R?=
- =?us-ascii?Q?gGdRPIWEiQIdJQn+zcKNZuFLb5MP/CvglpaLTUBfd5NcWv3ws0QIA2y73wQf?=
- =?us-ascii?Q?qY7v/ZyY1xkpN/fPymB5HAHSay6zTPvu5NkHbBxebQHkK8d5pmchNvS9Rtvt?=
- =?us-ascii?Q?asXGWqLz9HoHDhN+iuWwrWPa3vNWBjaZfDiEL37AzLlvYzgD3yaTCgFNviCu?=
- =?us-ascii?Q?rmWscrknfzgI6Tcgkg2hl5DN6qjnBWrwmkNXz3R8ypXt+AFGiYO4IHrF9G4f?=
- =?us-ascii?Q?uHVN7FBiJiPflsiT1baj46i1+NeOa8K4O2mmx6CibBW4E3tc6kRgKmP5P5fg?=
- =?us-ascii?Q?6cjuHP1N4yr5DxvfNoRk0DuAXg8sj5oGM2k1/43DWtI5UwH93Nrr1ZttwGZh?=
- =?us-ascii?Q?dupq3A2MIAoPWISy9L/8TiS70yYnOiWLycPrF5LhqyCEMlQbVVAfS7rsOB4l?=
- =?us-ascii?Q?jXg6DKc8Zs31Me6mJZsuZ9u2WjZWWsjFheqLIO2rJRBKz6++nXCz6elUKQ+9?=
- =?us-ascii?Q?ywaOJDhqKKkOew8HM38fc4xhcobPyTW1821O2xJCdBySISiBHpf8D/09y8xh?=
- =?us-ascii?Q?SiwGheVoXL3k1Qs4jgnIsbKH6/zo/8e5dAZVk51rwtNuFaV+3xH+M4PJGa3n?=
- =?us-ascii?Q?S0U2rj2HkwgTjBpR9QCxKOb2ajZNZh7k0zT6CXx1Pes5NpxK+9ufYfW30Lc6?=
- =?us-ascii?Q?ZM6oEivXL/1fZ90kXbuYs8QrKP6KvbKIsPEdqarYqYaypcrpY0UNETaRZPGU?=
- =?us-ascii?Q?SL+pdb3pF/yrEYne4XagNR4PwORUWfn1Y0V/B/JfXHL/qyxYdPvlb/YlFr6h?=
- =?us-ascii?Q?CVJmPpmwsXW1gnsbCautoZm0TnYo1DYfprR03do2PRXtc6htKeijRwJvqIfL?=
- =?us-ascii?Q?40swhCnB9GBT1E6T7F3Iptsq1nKk7WYU9xHC44hNsK8Tun3X/lYeann9IbHo?=
- =?us-ascii?Q?VgNbGm/WnQcE0mM55aEAzDdKSRnhtVU+HK4ejQTyZEyDjGId4bg5sX2ifd05?=
- =?us-ascii?Q?ifTQ+Es/9TLyzroVF7XBL1PgariaHob7MTe8Y639b+rPsORRHsLpnNl/G5b3?=
- =?us-ascii?Q?pykdXH1szD71dyXbrujhCBqfblXfWdTa0zCgV2C7cqQ2KhbCUSiLZvNV6SFI?=
- =?us-ascii?Q?QnabXmZlpCOTE3qlwSRgkpUB9yHJJ6JcuYFUVM3XLO8nO6g4QZj/UGwF+5aY?=
- =?us-ascii?Q?TGr6LP/IyltWMfV3JOQRmIrN9vDpO2+fS/fk1hK3?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3e9a0916-5da8-4df6-343e-08dc95c02355
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 09:12:43.9853
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mcOjw+tICaff5cGZ6nc/hYxKTnZWvou3bM08P4zQFR/WuPg4oCbvirtjGMJcZSG1mUzqRadHuBaklxwSJeVbUQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB8200
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/4] media: rockchip: Introduce the rkvdec2 driver
+To: Detlev Casanova <detlev.casanova@collabora.com>,
+ linux-kernel@vger.kernel.org
+Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Dragan Simic <dsimic@manjaro.org>, Diederik de Haas <didi.debian@cknow.org>,
+ Andy Yan <andy.yan@rock-chips.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+ Daniel Almeida <daniel.almeida@collabora.com>,
+ Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ Jonas Karlman <jonas@kwiboo.se>, linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev
+References: <20240620142532.406564-1-detlev.casanova@collabora.com>
+ <20240620142532.406564-3-detlev.casanova@collabora.com>
+ <c7882f94-e2cb-4023-a53e-87ebc8fa3460@gmail.com> <3815203.kQq0lBPeGt@arisu>
+Content-Language: en-US
+From: Alex Bee <knaerzche@gmail.com>
+In-Reply-To: <3815203.kQq0lBPeGt@arisu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 26, 2024 at 04:36:26PM +0800, Tian, Kevin wrote:
-> > From: Zhao, Yan Y <yan.y.zhao@intel.com>
-> > Sent: Thursday, June 20, 2024 6:15 PM
-> > 
-> > On Mon, Jun 17, 2024 at 05:53:32PM +0800, Yan Zhao wrote:
-> > ...
-> > > diff --git a/drivers/vfio/group.c b/drivers/vfio/group.c
-> > > index ded364588d29..aaef188003b6 100644
-> > > --- a/drivers/vfio/group.c
-> > > +++ b/drivers/vfio/group.c
-> > > @@ -268,31 +268,14 @@ static struct file *vfio_device_open_file(struct
-> > vfio_device *device)
-> > >  	if (ret)
-> > >  		goto err_free;
-> > >
-> > > -	/*
-> > > -	 * We can't use anon_inode_getfd() because we need to modify
-> > > -	 * the f_mode flags directly to allow more than just ioctls
-> > > -	 */
-> > > -	filep = anon_inode_getfile("[vfio-device]", &vfio_device_fops,
-> > > -				   df, O_RDWR);
-> > > +	filep = vfio_device_get_pseudo_file(device);
-> > If getting an inode from vfio_fs_type is not a must, maybe we could use
-> > anon_inode_create_getfile() here?
-> > Then changes to group.c and vfio_main.c can be simplified as below:
-> 
-> not familiar with file system, but at a glance the anon_inodefs is similar
-> to vfio's own pseudo fs so it might work. anyway what is required here
-> is to have an unique inode per vfio device to hold an unique address space
-> and anon_inode_create_getfile() appears to achieve it.
-Right.
- 
-> > 
-> > diff --git a/drivers/vfio/group.c b/drivers/vfio/group.c
-> > index ded364588d29..7f2f7871403f 100644
-> > --- a/drivers/vfio/group.c
-> > +++ b/drivers/vfio/group.c
-> > @@ -269,29 +269,22 @@ static struct file *vfio_device_open_file(struct
-> > vfio_device *device)
-> >                 goto err_free;
-> > 
-> >         /*
-> > -        * We can't use anon_inode_getfd() because we need to modify
-> > -        * the f_mode flags directly to allow more than just ioctls
-> > +        * Get a unique inode from anon_inodefs
-> >          */
-> > -       filep = anon_inode_getfile("[vfio-device]", &vfio_device_fops,
-> > -                                  df, O_RDWR);
-> > +       filep = anon_inode_create_getfile("[vfio-device]", &vfio_device_fops, df,
-> > +                                         O_RDWR, NULL);
-> >         if (IS_ERR(filep)) {
-> >                 ret = PTR_ERR(filep);
-> >                 goto err_close_device;
-> >         }
-> > -
-> > -       /*
-> > -        * TODO: add an anon_inode interface to do this.
-> > -        * Appears to be missing by lack of need rather than
-> > -        * explicitly prevented.  Now there's need.
-> > -        */
-> 
-> why removing this comment?
-I found it's confusing, as now an anon_inode is available but
-"filep->f_mode |= (FMODE_PREAD | FMODE_PWRITE)" still cannot be avoided.
-To avoid it, the file needs be opened through do_dentry_open() interface,
-which is not easily achieved.
+Hi Detlev,
 
+Am 25.06.24 um 18:56 schrieb Detlev Casanova:
+> Hi Alex,
+>
+> On Sunday, June 23, 2024 5:33:28 A.M. EDT you wrote:
+>> Hi Detlev,
+>>
+>> Am 20.06.24 um 16:19 schrieb Detlev Casanova:
+>>> This driver supports the second generation of the Rockchip Video
+>>> decoder, also known as vdpu34x.
+>>> It is currently only used on the RK3588(s) SoC.
+>>>
+>>> There are 2 decoders on the RK3588 SoC that can work in pair to decode
+>>> 8K video at 30 FPS but currently, only using one core at a time is
+>>> supported.
+>>>
+>>> Scheduling requests between the two cores will be implemented later.
+>>>
+>>> The core supports H264, HEVC, VP9 and AVS2 decoding but this driver
+>>> currently only supports H264.
+>>>
+>>> The driver is based on rkvdec and they may share some code in the
+>>> future.
+>>> The decision to make a different driver is mainly because rkvdec2 has
+>>> more features and can work with multiple cores.
+>>>
+>>> The registers are mapped in a struct in RAM using bitfields. It is IO
+>>> copied to the HW when all values are configured.
+>>> The decision to use such a struct instead of writing buffers one by one
+>>>
+>>> is based on the following reasons:
+>>>    - Rockchip cores are known to misbehave when registers are not written
+>>>    
+>>>      in address order,
+>>>    
+>>>    - Those cores also need the software to write all registers, even if
+>>>    
+>>>      they are written their default values or are not related to the task
+>>>      (this core will not start decoding some H264 frames if some VP9
+>>>      registers are not written to 0)
+>>>    
+>>>    - In the future, to support multiple cores, the scheduler could be
+>>>    
+>>>      optimized by storing the precomputed registers values and copy them
+>>>      to the HW as soos as a core becomes available.
+>>>
+>>> This makes the code more readable and may bring performance improvements
+>>> in future features.
+>>>
+>>> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+>>> ---
+>>>
+>>>    drivers/staging/media/Kconfig                |    1 +
+>>>    drivers/staging/media/Makefile               |    1 +
+>>>    drivers/staging/media/rkvdec2/Kconfig        |   15 +
+>>>    drivers/staging/media/rkvdec2/Makefile       |    3 +
+>>>    drivers/staging/media/rkvdec2/TODO           |    9 +
+>>>    drivers/staging/media/rkvdec2/rkvdec2-h264.c |  739 +++++++++++
+>>>    drivers/staging/media/rkvdec2/rkvdec2-regs.h |  345 +++++
+>>>    drivers/staging/media/rkvdec2/rkvdec2.c      | 1253 ++++++++++++++++++
+>>>    drivers/staging/media/rkvdec2/rkvdec2.h      |  130 ++
+>>>    9 files changed, 2496 insertions(+)
+>>>    create mode 100644 drivers/staging/media/rkvdec2/Kconfig
+>>>    create mode 100644 drivers/staging/media/rkvdec2/Makefile
+>>>    create mode 100644 drivers/staging/media/rkvdec2/TODO
+>>>    create mode 100644 drivers/staging/media/rkvdec2/rkvdec2-h264.c
+>>>    create mode 100644 drivers/staging/media/rkvdec2/rkvdec2-regs.h
+>>>    create mode 100644 drivers/staging/media/rkvdec2/rkvdec2.c
+>>>    create mode 100644 drivers/staging/media/rkvdec2/rkvdec2.h
+>> ...
+>>
+>>> +static inline void rkvdec2_memcpy_toio(void __iomem *dst, void *src,
+>>> size_t len) +{
+>>> +#ifdef CONFIG_ARM64
+>>> +	__iowrite32_copy(dst, src, len);
+>>> +#elif defined(CONFIG_ARM)
+>> I guess that can get an "#else" since memcpy_toio exists for all archs.
+>>
+>>> +	memcpy_toio(dst, src, len);
+>>> +#endif
+>>> +}
+>>> +
+>> ...
+>>
+>>> +	/* Set timeout threshold */
+>>> +	if (pixels < RKVDEC2_1080P_PIXELS)
+>>> +		regs->common.timeout_threshold = RKVDEC2_TIMEOUT_1080p;
+>>> +	else if (pixels < RKVDEC2_4K_PIXELS)
+>>> +		regs->common.timeout_threshold = RKVDEC2_TIMEOUT_4K;
+>>> +	else if (pixels < RKVDEC2_8K_PIXELS)
+>>> +		regs->common.timeout_threshold = RKVDEC2_TIMEOUT_8K;
+>>> +
+>> Did you test if it works with anything > 8K? If so, you propably want to
+>> make the check above
+>>
+>> +	else
+>> +		regs->common.timeout_threshold = RKVDEC2_TIMEOUT_8K;
+>>
+>> Otherwise the timeout may not be set/contain invalid values from any former
+>> stream.
+> That's right, but it would be set to 0 because of the memset.
+> RKVDEC2_TIMEOUT_8K might not be enough for bigger frame sizes, so I'll set it
+> to the maximum value (0xffffffff) when frames are bigger than 8K and also adapt
+> the watchdog time: RKVDEC2_TIMEOUT_8K is around 100 ms, but 0xffffffff is arnoud
+> 5.3 seconds (reg032/axi_clock_freq)
+>
+> I'll do more tests with this as well.
+>
+>> ...
+>>
+>>> +
+>>> +static const struct rkvdec2_coded_fmt_desc rkvdec2_coded_fmts[] = {
+>>> +	{
+>>> +		.fourcc = V4L2_PIX_FMT_H264_SLICE,
+>>> +		.frmsize = {
+>>> +			.min_width = 16,
+>>> +			.max_width =  65520,
+>>> +			.step_width = 16,
+>>> +			.min_height = 16,
+>>> +			.max_height =  65520,
+>>> +			.step_height = 16,
+>>> +		},
+>>> +		.ctrls = &rkvdec2_h264_ctrls,
+>>> +		.ops = &rkvdec2_h264_fmt_ops,
+>>> +		.num_decoded_fmts =
+> ARRAY_SIZE(rkvdec2_h264_decoded_fmts),
+>>> +		.decoded_fmts = rkvdec2_h264_decoded_fmts,
+>>> +		.subsystem_flags =
+> VB2_V4L2_FL_SUPPORTS_M2M_HOLD_CAPTURE_BUF,
+>>> +	},
+>>> +};
+>>> +
+>> Note, that this is also given to userspace (VIDIOC_ENUM_FRAMESIZES) and
+>> this is already incorrect in the old rkvdec driver (and hantro): From
+>> userspace perspective we do not have a restriction in
+>> step_width/step_width, as we are aligning any given width/height to HW
+>> requirements in the driver - what we should give to userspace is
+>> fsize->type = V4L2_FRMSIZE_TYPE_CONTINUOUS; fsize->stepwise.min_height =
+>> 1; fsize->stepwise.min_width = 1; fsize->stepwise.max_height = 65520;
+>> fsize->stepwise.max_width = 65520;
+> Is fsize->stepwise.min_height = 1; and fsize->stepwise.min_width = 1 correct ?
+> Or do you mean fsize->stepwise.step_height = 1; and fsize->stepwise.setp_width
+> = 1 ?
+>
+> It would give this instead:
+>
+> .frmsize = {
+> 	.min_width = 16,
+> 	.max_width =  65520,
+> 	.step_width = 1,
+> 	.min_height = 16,
+> 	.max_height =  65520,
+> 	.step_height = 1,
+> },
+>
+> and .vidioc_enum_framesizes sets fsize->type = V4L2_FRMSIZE_TYPE_CONTINUOUS;
+You can't adapt this here, because this .frmsize is also given to the
+v4l2_apply_frmsize_constraints helper, which does the actual alignment to
+HW requirements and requires the HW step_with and step_height.
+IIRC, we also align framesizes which are below minimum HW requirement, at
+least in rkvdec1 driver and it looks a lot like this is done here the same:
+so this should be .min_height = 1 and .min_width = 1. (I remember because
+there are VP9 conformance tests with very small framesizes). And yes, it
+looks like you've had to set .step_width and .step_height to 1 for
+V4L2_FRMSIZE_TYPE_CONTINUOUS, not sure why that is required.
 
-> >         filep->f_mode |= (FMODE_PREAD | FMODE_PWRITE);
-> > 
-> >         /*
-> > -        * Use the pseudo fs inode on the device to link all mmaps
-> > -        * to the same address space, allowing us to unmap all vmas
-> > -        * associated to this device using unmap_mapping_range().
-> > +        * mmaps are linked to the address space of the filep->f_inode.
-> > +        * Save the inode in device->inode to allow unmap_mapping_range() to
-> > +        * unmap all vmas.
-> >          */
-> > -       filep->f_mapping = device->inode->i_mapping;
-> > +       device->inode = filep->f_inode;
-> > 
-> >         if (device->group->type == VFIO_NO_IOMMU)
-> >                 dev_warn(device->dev, "vfio-noiommu device opened by user "
-> > 
-> > diff --git a/drivers/vfio/vfio_main.c b/drivers/vfio/vfio_main.c
-> > index a5a62d9d963f..c9dac788411b 100644
-> > --- a/drivers/vfio/vfio_main.c
-> > +++ b/drivers/vfio/vfio_main.c
-> > @@ -192,8 +192,6 @@ static void vfio_device_release(struct device *dev)
-> >         if (device->ops->release)
-> >                 device->ops->release(device);
-> > 
-> > -       iput(device->inode);
-> > -       simple_release_fs(&vfio.vfs_mount, &vfio.fs_count);
-> >         kvfree(device);
-> >  }
-> > 
-> > @@ -248,22 +246,6 @@ static struct file_system_type vfio_fs_type = {
-> >         .kill_sb = kill_anon_super,
-> >  };
-> 
-> then vfio_fs_type can be removed too.
-Right. Thanks for catching it.
+So, imho, the final rkvdec2_enum_framesizes should look like
 
-> > 
-> > -static struct inode *vfio_fs_inode_new(void)
-> > -{
-> > -       struct inode *inode;
-> > -       int ret;
-> > -
-> > -       ret = simple_pin_fs(&vfio_fs_type, &vfio.vfs_mount, &vfio.fs_count);
-> > -       if (ret)
-> > -               return ERR_PTR(ret);
-> > -
-> > -       inode = alloc_anon_inode(vfio.vfs_mount->mnt_sb);
-> > -       if (IS_ERR(inode))
-> > -               simple_release_fs(&vfio.vfs_mount, &vfio.fs_count);
-> > -
-> > -       return inode;
-> > -}
-> > -
-> >  /*
-> >   * Initialize a vfio_device so it can be registered to vfio core.
-> >   */
-> > @@ -282,11 +264,6 @@ static int vfio_init_device(struct vfio_device *device,
-> > struct device *dev,
-> >         init_completion(&device->comp);
-> >         device->dev = dev;
-> >         device->ops = ops;
-> > -       device->inode = vfio_fs_inode_new();
-> > -       if (IS_ERR(device->inode)) {
-> > -               ret = PTR_ERR(device->inode);
-> > -               goto out_inode;
-> > -       }
-> > 
-> >         if (ops->init) {
-> >                 ret = ops->init(device);
-> > @@ -301,9 +278,6 @@ static int vfio_init_device(struct vfio_device *device,
-> > struct device *dev,
-> >         return 0;
-> > 
-> >  out_uninit:
-> > -       iput(device->inode);
-> > -       simple_release_fs(&vfio.vfs_mount, &vfio.fs_count);
-> > -out_inode:
-> >         vfio_release_device_set(device);
-> >         ida_free(&vfio.device_ida, device->index);
-> >         return ret;
-> > 
-> > 
-> > > diff --git a/drivers/vfio/vfio.h b/drivers/vfio/vfio.h
-> > > index 50128da18bca..1f8915f79fbb 100644
-> > > --- a/drivers/vfio/vfio.h
-> > > +++ b/drivers/vfio/vfio.h
-> > > @@ -35,6 +35,7 @@ struct vfio_device_file *
-> > >  vfio_allocate_device_file(struct vfio_device *device);
-> > >
-> > >  extern const struct file_operations vfio_device_fops;
-> > > +struct file *vfio_device_get_pseudo_file(struct vfio_device *device);
-> > >
-> > >  #ifdef CONFIG_VFIO_NOIOMMU
-> > >  extern bool vfio_noiommu __read_mostly;
-> > > @@ -420,6 +421,7 @@ static inline void vfio_cdev_cleanup(void)
-> > >  {
-> > >  }
-> > >  #endif /* CONFIG_VFIO_DEVICE_CDEV */
-> > > +struct file *vfio_device_get_pseduo_file(struct vfio_device *device);
-> > Sorry, this line was included by mistake.
++static int rkvdec2_enum_framesizes(struct file *file, void *priv,
++                   struct v4l2_frmsizeenum *fsize)
+....
++    fmt = rkvdec2_find_coded_fmt_desc(fsize->pixel_format);
++    if (!fmt)
++        return -EINVAL;
++
++    fsize->type = V4L2_FRMSIZE_TYPE_CONTINUOUS;
++    fsize->stepwise.min_height = 1;
++    fsize->stepwise.max_height = fmt->frmsize.max_height;
++    fsize->stepwise.min_width = 1;
++    fsize->stepwise.max_width = fmt->frmsize.max_width;
++    fsize->stepwise.min_width = 1;
++    fsize->stepwise.step_height = 1;
++    fsize->stepwise.step_width = 1;
++    return 0;
++}
+
+Note: Not even build tested :)
+Jonas: maybe you can add a fixup patch to your rkvdec patches as well.
+
+Regards,
+
+Alex
+
+>> I guess this new driver should be an
+>> opportunity to fix that and distinguish between internal and external
+>> frame size requirements and the .vidioc_enum_framesizes callback should
+>> adapted accordingly. Regards, Alex
+> Detlev.
 
