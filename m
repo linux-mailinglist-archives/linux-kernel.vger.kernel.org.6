@@ -1,89 +1,126 @@
-Return-Path: <linux-kernel+bounces-229918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0BAC917601
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 04:08:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD065917604
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 04:09:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 531EE1F22FEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 02:08:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 020021C21856
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 02:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 588231D699;
-	Wed, 26 Jun 2024 02:08:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FD5BE6C;
+	Wed, 26 Jun 2024 02:09:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XEpNxKHZ"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fVo+cvq9"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 665C6FBFC
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 02:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6421C68C;
+	Wed, 26 Jun 2024 02:09:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719367702; cv=none; b=idShluV2IbvD38Y9yD0E6E+33XwPIqsFqXt+rVniPZ3BpH9yFD7I5vrYGUThXWTHtNkAr+TrYW4zYctUd3teJy6hrKAkoZO36U6MRWoRCOkoMv/Hy27VQdd3BCOV5++70PWhx+VzapBQgXQwkI3+dGCzyjFlK24v4fuZkZ//QGM=
+	t=1719367756; cv=none; b=Rtt/tcQTUvQf361hfFrR0WI5+qOnxOXgWM6UNN3E5FILagF/JVV2WCV+Zk4C6zXq52fz3fXzmABGS4wEsNxjWHK54N75BwW5Z67mO2M7BjCFziBsChpDo0ppHR3Pun1Q1nT9Hkh6IAphY7LtEsqo5ZYVZD+E2q3x8tyRMP0lMqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719367702; c=relaxed/simple;
-	bh=n/fPFzaj5kKSWYjO/3QwxalPySZCfCdjgXhSIwJ31B8=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ihcCcLtDPH2kGA5/M5kta2fmu1dT+s2NMhSr3A3pHKeNPyKG9sEt0e9h0TiatD9jhztZbmoCLI23J0qt93xkTkRlX4HiGglrJPWHYWtkRWXLSoE6ABQsAAWcsCiESVc9IxcvFDMVhPsRkQS6Yki9eaGXOxjHhRgilF0LCLlrxsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XEpNxKHZ; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-6e4381588c8so7618404a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 19:08:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719367701; x=1719972501; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EAQsYppA3Wyp6dfOfIsDIc976yQGokb2kdxJBPM7hKc=;
-        b=XEpNxKHZVaq7JsjciuB6XN78miGFskIZRu/2W570yKOP1qoSRaltK2Bvi7xGssow3r
-         s5yEYGJzUANz6HGL/ErMGuUaNLrLLhU7SHumSj69CK/d1GjGN8DGR2pcS6i7R4A5l1kt
-         aZLAnNwPiK0XWsMZj5kji1UBl2p6OmJ/D54mY/rmnCclws9Lm4KUC/5GKeMf08cmvcdK
-         mnEVhNpGr+l8oUcG1KCQif5vcXlInKvE1iqzle96svwnAClaUILl1QUOSfHpgcE4Az1F
-         aeg1w4Fhqgf7Uk6AEeZL0dTTT1dtopVC8WDm1/XKt8UWQvY0B3CmjUXesoRQc4o8T/fY
-         QCsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719367701; x=1719972501;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EAQsYppA3Wyp6dfOfIsDIc976yQGokb2kdxJBPM7hKc=;
-        b=uXS6fdlG3/yvKSS3qF1qscsnLUBQCZ/nn9mw6/yzoSASLGruK85quRMRPBNpp0ScSD
-         CLdwYNWfo+AIbHYVdBkmnLfRU/85JIuJdC3S12H9Is+KEP7Fx0DBjkhmbFrXac9ZE8Q2
-         MmzE+tRwSyJWke802rAp+kmGFaCaUIdHUrXXG+KRtBjlIAkHbvcDYiBfnPBxq+cK2p5F
-         sZcLL2W25VgiELXTIShmkbZ8tBuEEIMc/fXHvoljexS9aBNfeNAknQP4WM5O+1NvNd+I
-         WvpBgtrlxMWag3Wb7LgX/A73uG0NeLzpS3scuXSnrNH6HZOwat1VAU6WchQ66ksap2p7
-         rPYA==
-X-Forwarded-Encrypted: i=1; AJvYcCXxpPdt3apAfc56MW02DuIJm8ONB2zWx/ew6Mcz4o+GLafXvtJ7oXlu+mKFIo+4gstbuBSbzafhQ6R3kGH75zTujjokI6kkBfAR3z+F
-X-Gm-Message-State: AOJu0YwbIwJO4NoVXxtouX2t8UTCuH/BRir2O7ruKyu14y13QvfzodE4
-	9CanVuGYbHdhFcUXGBEYmcYseTS4SGN98Zx8O3faVx6w8C63lmZg9bB0hKTYLMefL1AfRAPWucr
-	dGA==
-X-Google-Smtp-Source: AGHT+IEYLu5aiHogpqRtID4ElfT6aHF+xNB/7Ttv9nlZrt9fi6FggQYa66FXVmO9bEFuRoXGB83Q04brZug=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a63:3813:0:b0:710:bf4f:52a2 with SMTP id
- 41be03b00d2f7-71b5f351a09mr24996a12.7.1719367700358; Tue, 25 Jun 2024
- 19:08:20 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Tue, 25 Jun 2024 19:08:18 -0700
+	s=arc-20240116; t=1719367756; c=relaxed/simple;
+	bh=gJAvJvUWGrrEiCwtoTwQH9cDQpKtkLOcnQBp+ZrFuk8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eXBRvwJZP48t2p8Cs2AFnwwoDOWPWqvrzWuw1DH/CDfs6/annFzFfAkCUNSXWEA+wHwWfywgPMXLdPeYpHAlPRx5VlmHmlr66yUm0IKnGBr4A51amU/xBPJQkMQbZraaVoF4pHXQFVpf1gYkJN0opvDKmSl+2coSGPD8cSCbQN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fVo+cvq9; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719367755; x=1750903755;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=gJAvJvUWGrrEiCwtoTwQH9cDQpKtkLOcnQBp+ZrFuk8=;
+  b=fVo+cvq9C+YO2hOOE1exXVZFPS6iTbVQ/r2kPTJ0QTfY+WaFa0vJ3w6i
+   d6qpXgOKaFIYvrOOXi3iJMLApe/DXTY72aswh+4ZkBO2RqLqdvyTk6T4y
+   4JdxnQXdnONX/IjahGPKgbmzgi2j1fhJGUjShE0zWzI6ozlKdUXSKgren
+   QtsCL6bVMJ+PhfLofB7kW7dKgbMEVXndvgYvaHP3bZG4km4jOfIdVPbOT
+   VPawy/MqY9DHjLYYtJ0cxXZeKriFA8OkWbni5d6rTzf2cntSBicim49Om
+   0geLt6KGT89aHG59ghT560KgDoP3ZbUhxfboATwnzfDfzyKNXFSx3xVLE
+   g==;
+X-CSE-ConnectionGUID: Uw7WgJUbRxCX93Qzqbc31Q==
+X-CSE-MsgGUID: +oT2wvhQQ9W4hgUxYHD/cw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="16563387"
+X-IronPort-AV: E=Sophos;i="6.08,265,1712646000"; 
+   d="scan'208";a="16563387"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 19:09:15 -0700
+X-CSE-ConnectionGUID: D9YuBf2jQgS/eyhnB77QkA==
+X-CSE-MsgGUID: JsvHagXqQp2Rt5YIEfg9LQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,265,1712646000"; 
+   d="scan'208";a="44275977"
+Received: from qunyang-mobl1.ccr.corp.intel.com (HELO [10.238.2.59]) ([10.238.2.59])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 19:09:10 -0700
+Message-ID: <edfc5edc-4bf7-4bc6-b760-c9d4341acc9d@linux.intel.com>
+Date: Wed, 26 Jun 2024 10:09:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
-Message-ID: <20240626020818.3158096-1-seanjc@google.com>
-Subject: [ANNOUNCE] PUCK Agenda - 2024.06.26 - No topic
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v19 110/130] KVM: TDX: Handle TDX PV MMIO hypercall
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "Yamahata, Isaku" <isaku.yamahata@intel.com>
+Cc: "Zhang, Tina" <tina.zhang@intel.com>,
+ "seanjc@google.com" <seanjc@google.com>, "Yuan, Hang" <hang.yuan@intel.com>,
+ "Huang, Kai" <kai.huang@intel.com>, "Chen, Bo2" <chen.bo@intel.com>,
+ "sagis@google.com" <sagis@google.com>,
+ "isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
+ "Aktas, Erdem" <erdemaktas@google.com>,
+ "Chatre, Reinette" <reinette.chatre@intel.com>,
+ "pbonzini@redhat.com" <pbonzini@redhat.com>,
+ "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>
+References: <cover.1708933498.git.isaku.yamahata@intel.com>
+ <a4421e0f2eafc17b4703c920936e32489d2382a3.1708933498.git.isaku.yamahata@intel.com>
+ <560f3796-5a41-49fb-be6e-558bbe582996@linux.intel.com>
+ <07e410205a9eb87ab7f364b7b3e808e4f7d15b7f.camel@intel.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <07e410205a9eb87ab7f364b7b3e808e4f7d15b7f.camel@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-No topic for tomorrow, but I'll be online.
 
-Third warning (give or take), no PUCK next week.
 
-Future Schedule:
-July  3rd - CANCELED
-July 10th - No topic
-July 17th - No topic
+On 6/26/2024 5:09 AM, Edgecombe, Rick P wrote:
+> On Tue, 2024-06-25 at 14:54 +0800, Binbin Wu wrote:
+>>> +               gpa = vcpu->mmio_fragments[0].gpa;
+>>> +               size = vcpu->mmio_fragments[0].len;
+>> Since MMIO cross page boundary is not allowed according to the input
+>> checks from TDVMCALL, these mmio_fragments[] is not needed.
+>> Just use vcpu->run->mmio.phys_addr and vcpu->run->mmio.len?
+> Can we add a comment or something to that check, on why KVM doesn't handle it?
+> Is it documented somewhere in the TDX ABI that it is not expected to be
+> supported?
+TDX GHCI doesn't have such restriction.
+
+According to the reply from Isaku in the below link, I think current 
+restriction is due to software implementation for simplicity.
+https://lore.kernel.org/kvm/20240419173423.GD3596705@ls.amr.corp.intel.com/
++       /* Disallow MMIO crossing page boundary for simplicity. */
++       if (((gpa + size - 1) ^ gpa) & PAGE_MASK)
+                 goto error;
+
+According to 
+https://lore.kernel.org/all/165550567214.4207.3700499203810719676.tip-bot2@tip-bot2/,
+for Linux as TDX guest, it rejects EPT violation #VEs that split pages 
+based on the reason "MMIO accesses are supposed to be naturally aligned 
+and therefore never cross page boundaries" to handle the 
+load_unaligned_zeropad() case.
+
+I am not sure "MMIO accesses are supposed to be naturally aligned" is 
+true for all other OS as TDX guest, though.
+
+Any suggestion?
+
 
