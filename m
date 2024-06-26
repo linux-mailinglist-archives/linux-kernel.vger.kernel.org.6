@@ -1,106 +1,142 @@
-Return-Path: <linux-kernel+bounces-230688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF00C918094
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:08:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4BFC91809D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:09:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF1831C2203C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:08:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 592CA288B1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:09:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 935B4180A8E;
-	Wed, 26 Jun 2024 12:08:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D4441822D9;
+	Wed, 26 Jun 2024 12:08:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e98xr7uQ"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UDlzKdLF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DB4B180A8B
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 12:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF40180A7C;
+	Wed, 26 Jun 2024 12:08:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719403704; cv=none; b=baEL6XIHJCDBrkCA4EcxAyCvGuX97OZFHhmNJAcEc2QsFh3RvfKOwJ5NizA9LOWuXVHVwBK1cdrhy7JImEwJZUMVhkKhnBxmrrs3X7gmWOEUJf/0DWOtcHf4wUiyGQFkNqSSvnSrXDCcv3PKKaFsC4e/rNdXHlCgq8rsukg0ynw=
+	t=1719403719; cv=none; b=ep/Lv6xW3+Ifu5K2YHzMBwhssksKa7EV+mXj5NaVm2qkz5D9DNn3V+WtTEawsxW9pL5UO3KOjN4qmw99Zp+3HETuE4z5Sh33nN1p07zHhvGSTOloUlbRCE8O5frlTjtF8EGe5e8PlO6OwYKI4Wz9ZmlG/E0CfySwqmuyIHKAP3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719403704; c=relaxed/simple;
-	bh=sNM0t5btmwmRWxg9oFqKPaxYC2URMv4IMNPh+tlcPuk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ft+ne/O4DVeuEVjylWA+ugrlS1FzpWiN5JDyt7ytgf4GbfvzVzjlCuYzDa8DoiVbcW1x3PK4jHzbXMTcdkhXUbJMmAFTIr0Y18HjWw5UBt/2ZXW1P4vodhdLraMD+yv4nFnSAs3TsCn3WDJ7c7H/OIOsPZpdUOPcTklTrPkcISQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e98xr7uQ; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52cecba8d11so2332156e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 05:08:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719403701; x=1720008501; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sNM0t5btmwmRWxg9oFqKPaxYC2URMv4IMNPh+tlcPuk=;
-        b=e98xr7uQZhOm7vUbGkUM3VWkQXRrvP3U8JgJM0vCds8yORRFubKAWjRpApatMNCM4P
-         VaY+Iqf3eyQ8YyKAlg5bxkWxy68yy8Mnf3y25+CWV+zl0HvTXUVG1Agw0Z9v60XljERS
-         6taRBd8kyLgsKue02uRnp6QwMi0Gjxs/ssOGNe5lq708UqBWgNEdF4VGS3Z06WS3QFIp
-         xch8ZVTGEzLkeVvgGBhEQgjP3M57uA39v6iO8hzTgupujL+B30alc3kZkSp4Hy+hMkko
-         4gCBCEaPeC/s821mVP/GpwyUF7cz2mgV0qdEMxMpm6AkeYpQ74nUZ1NRBsO5iRJQc7H8
-         tGcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719403701; x=1720008501;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sNM0t5btmwmRWxg9oFqKPaxYC2URMv4IMNPh+tlcPuk=;
-        b=h22V7Ck9CiZuxQmo2xOIic+dsU2smf42mxhv7QXl728qetxI78ZszUn5hytNX3/slh
-         3omKtQTSIYxtrcjCzmxY8aEuKiJ2bLECxLwynQyQFpaDUz41ZOSsrFZHA4SkCTYTkVqU
-         GycJLNdFYcc3vGBLg4izSaEXyR+AGUTt2Q7J+jQyP5HSc3Hbrfc3D0DsZ6uoIq1M8p9T
-         wddhviQ7wwsbdPhuYp+ctQf4wsAlae63VOcLIb6GAnyth1opfwCcs9L1k0p6U0knD58x
-         7ITneFrT+w4Ty4WL3gPHom3U5Gkzzn6Mp/I4Et4//p94w+O3kdprb6vZik3EdARL0q4p
-         5xEg==
-X-Forwarded-Encrypted: i=1; AJvYcCXrmcVoH5RHNV+8QUTY7/WILwbbeXmOmKuSEEc0eleYR2NbZc+h38l/sJ4V4OajphUQ/SXCmu053/OrRfKEdt6e9mB541ojoaVXkOwn
-X-Gm-Message-State: AOJu0Yy4RghaNhLmQg2TZM++wNqCxgC6DLpSjuYPxg1tOanKqbbwFHb3
-	mYzh+wLxAF2T20Etc/ujGST4wxY0nymRjXfW7cFSJK1XYy965145JJnb9M2y2Mxt4dnxSlYddyI
-	g2X8wcvvBpu+gP9+5elBOuVoXcMMTNeb4Szf2WQ==
-X-Google-Smtp-Source: AGHT+IE7XMxIQJJ1aCimYjEWSyFZvjRjaUXV7rV4COqu6M3ZQ2Zfzl0Y1tYmHaO9gdJvOLgTXmM+4eAs2D6EvjQdW6U=
-X-Received: by 2002:a05:6512:2004:b0:52c:dbc2:ea1 with SMTP id
- 2adb3069b0e04-52ce18324b7mr5665556e87.6.1719403701264; Wed, 26 Jun 2024
- 05:08:21 -0700 (PDT)
+	s=arc-20240116; t=1719403719; c=relaxed/simple;
+	bh=6+8bqp4cDtpRaRrmfUU+dpvgtMMlgSZQodg1El7MI5E=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=k2DlSWfeEXhn2yQTDjFN/eSqZBoPkQCleYJYKmzZaGt5mQyaY8pIRtl0U8FctXISC8DtOj+lURv8d8oai01Dm0zZe5hLI5wEmIA9jnqVN4jm04TGjIJQQ3R93mfhrNCU5005NxlxxeUJjvJ2N6asyuGAGr/yILPq/aOEzBkuw5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UDlzKdLF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B5371C32789;
+	Wed, 26 Jun 2024 12:08:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719403718;
+	bh=6+8bqp4cDtpRaRrmfUU+dpvgtMMlgSZQodg1El7MI5E=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=UDlzKdLFC0mXugOqHR4s+aAKbkIRyvmyNRi4Obm1D6H9lD9rFhoPX2TddF2txIWHp
+	 1F8jIIo/JVw/CIRdEZVYaFgYfefE6u1e8cxaL8VGVPlR9hI/p7L2ppqIXKr0H3e80U
+	 ErV9Eycea64kjjP2ZqrEJCpZzzJgjyRsqYIURm4OMYGjdYJyny08bEoBZoFbvhKaUF
+	 GU+WdaHsT0tN6l3CR9PC7j52pXC1O4Ak/jqCjh6CfbKfSCgvXImDPBuA43P8sAS6Tr
+	 Pz0P/XO+BIXUJfNY/ndQFAx3tgsMm/DANQ8FOWzW6A3kcDJYo0vZVRp13xqb905Cx3
+	 3YPebud5/dkQg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2D31C30653;
+	Wed, 26 Jun 2024 12:08:38 +0000 (UTC)
+From: Luigi Leonardi via B4 Relay <devnull+luigi.leonardi.outlook.com@kernel.org>
+Subject: [PATCH net-next v3 0/3] ioctl support for AF_VSOCK and
+ virtio-based transports
+Date: Wed, 26 Jun 2024 14:08:34 +0200
+Message-Id: <20240626-ioctl_next-v3-0-63be5bf19a40@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240625043525.279711-1-manikandan.m@microchip.com>
-In-Reply-To: <20240625043525.279711-1-manikandan.m@microchip.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 26 Jun 2024 14:08:10 +0200
-Message-ID: <CACRpkdbWJN1DKckGqqhTX=nJ=0QE6-7pobZw377iKM1DDrMGUQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] Convert Atmel PIO3 Pinctrl and GPIO bindings to yaml
-To: Manikandan Muralidharan <manikandan.m@microchip.com>
-Cc: brgl@bgdev.pl, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, 
-	claudiu.beznea@tuxon.dev, arnd@arndb.de, durai.manickamkr@microchip.com, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMIEfGYC/x2MQQqAIBAAvyJ7ThArob4SEaVrLYSGSgjS37OOA
+ zNTIGIgjDCyAgFviuRdhbZhoI/V7cjJVAYpZCeUVJy8TufiMCdut00b0w9KqBZqcAW0lP/ZBA4
+ T/yyYn+cFLWo0gGYAAAA=
+To: Stefano Garzarella <sgarzare@redhat.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Stefan Hajnoczi <stefanha@redhat.com>, 
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+ =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+ Luigi Leonardi <luigi.leonardi@outlook.com>, 
+ Daan De Meyer <daan.j.demeyer@gmail.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1719403717; l=2183;
+ i=luigi.leonardi@outlook.com; s=20240626; h=from:subject:message-id;
+ bh=6+8bqp4cDtpRaRrmfUU+dpvgtMMlgSZQodg1El7MI5E=;
+ b=IWWqvzJ+wnZA9iJ5U6GbU25eUB91GRaT6iBrG0OwHjrkK+izvBFFcKxzBLy8WlPe7dE9aaGNU
+ f+xPdDS3YU4CVbMfqX62lWk26eorcsZcbT4gx0vnmd7AdJG1Jz277m3
+X-Developer-Key: i=luigi.leonardi@outlook.com; a=ed25519;
+ pk=RYXD8JyCxGnx/izNc/6b3g3pgpohJMAI0LJ7ynxXzi8=
+X-Endpoint-Received: by B4 Relay for luigi.leonardi@outlook.com/20240626
+ with auth_id=177
+X-Original-From: Luigi Leonardi <luigi.leonardi@outlook.com>
+Reply-To: luigi.leonardi@outlook.com
 
-Hi Manikandan,
+This patch series introduce the support for ioctl(s) in AF_VSOCK.
+The only ioctl currently available is SIOCOUTQ, which returns
+the number of unsent or unacked packets. It is available for
+SOCK_STREAM, SOCK_SEQPACKET and SOCK_DGRAM.
 
-thanks for working on AT91!
+As this information is transport-dependent, a new optional callback
+is introduced: unsent_bytes.
 
-On Tue, Jun 25, 2024 at 6:35=E2=80=AFAM Manikandan Muralidharan
-<manikandan.m@microchip.com> wrote:
+The first patch add ioctl support in AF_VSOCK, while the second
+patch introduce support for SOCK_STREAM and SOCK_SEQPACKET
+in all virtio-based transports: virtio_transport (G2H),
+vhost-vsock (H2G) and vsock-loopback.
 
-> This patch series cleans-up the compatible property of PIO3 Pinctrl
-> and GPIO bank nodes in DT and includes the text to yaml conversion of
-> Atmel PIO3 Pinctrl and GPIO bindings.
+The latest patch introduce two tests for this new feature.
+More details can be found in each patch changelog.
 
-The patches:
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+v2->v3
+Applied all reviewers' suggetions:
+    - Minor style and code changes
+    - atomic_int replaced with an existing spin_lock.
+Introduced lock_sock on ioctl call.
+Rebased to latest net-next
 
-I assume it will be merged through the SoC tree.
+v1->v2
+Applied all Stefano's suggestions:
+    - vsock_do_ioctl has been rewritten
+    - ioctl(SIOCOUTQ) test is skipped when it is not supported
+    - Minor variable/function name changes
+    - rebased to latest net-next
 
-Yours,
-Linus Walleij
+Signed-off-by: Luigi Leonardi <luigi.leonardi@outlook.com>
+---
+Luigi Leonardi (3):
+      vsock: add support for SIOCOUTQ ioctl for all vsock socket types.
+      vsock/virtio: add SIOCOUTQ support for all virtio based transports
+      test/vsock: add ioctl unsent bytes test
+
+ drivers/vhost/vsock.c                   |  4 +-
+ include/linux/virtio_vsock.h            |  7 +++
+ include/net/af_vsock.h                  |  3 ++
+ net/vmw_vsock/af_vsock.c                | 60 +++++++++++++++++++++--
+ net/vmw_vsock/virtio_transport.c        |  4 +-
+ net/vmw_vsock/virtio_transport_common.c | 35 ++++++++++++++
+ net/vmw_vsock/vsock_loopback.c          |  7 +++
+ tools/testing/vsock/util.c              |  6 +--
+ tools/testing/vsock/util.h              |  3 ++
+ tools/testing/vsock/vsock_test.c        | 85 +++++++++++++++++++++++++++++++++
+ 10 files changed, 206 insertions(+), 8 deletions(-)
+---
+base-commit: 50b70845fc5c22cf7e7d25b57d57b3dca1725aa5
+change-id: 20240626-ioctl_next-fbbcdd596063
+
+Best regards,
+-- 
+Luigi Leonardi <luigi.leonardi@outlook.com>
+
+
 
