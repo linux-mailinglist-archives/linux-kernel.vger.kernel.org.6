@@ -1,154 +1,119 @@
-Return-Path: <linux-kernel+bounces-230702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C67BC9180CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:17:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E1CC9180CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:18:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01DA31C22133
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:17:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5054F1F21C77
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:18:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDC4181B8F;
-	Wed, 26 Jun 2024 12:17:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7699181B84;
+	Wed, 26 Jun 2024 12:18:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mL9OoxX4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="OrNn3f1X"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067FD181322;
-	Wed, 26 Jun 2024 12:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC9613D89B;
+	Wed, 26 Jun 2024 12:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719404240; cv=none; b=rluZfUT5RizWhuv3uC1n1yucSknnt/DYQOXk29pGLCF0O/rOPJA2ZedpAPvbsx4yqUEu9+DBgKH5RMT8VaHClogjaDr0OyV6VIit5lyx3FKm/RV7p5YIlomNUXP3nINgK/bb7k7qH0kehSFZO3oMHfMNi4bKU9UYd3175N21xFs=
+	t=1719404320; cv=none; b=EeD+1/MDkdImTTA4D0AdDNBQwy/zSzlDEAWL9NneXX/kRHHII1klQxzr5Xu+JCRzlW6H/8DAEyjqJqRy78awGWBwAreeW8Ki+knZOmdH1LdXknRZMkq3b7hBcEJE9nbo9zPzBOwkhMzyMNJu56fhZUr3+z/kfI9F/JAQSUJxXfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719404240; c=relaxed/simple;
-	bh=NgHQJ/f7ZMOymE04cazuO98/ZYo4mHfGTUGjnrhn5Ns=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SUTE1lMhwD851C73LcVl704un7xcnQ1cD2p94HrsSRDwb00bLbdwfWvEIhc0t88490i/I4XegGA20gQsmvphR5iTIQQOK7fIyBNCEuiD+I00DD0x0dTAfVu8wVskSGsXvkUfR8svJgZUauxvZmyltWr01Bt638R8wf+435gW9kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mL9OoxX4; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719404239; x=1750940239;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=NgHQJ/f7ZMOymE04cazuO98/ZYo4mHfGTUGjnrhn5Ns=;
-  b=mL9OoxX4AZ7qRSen/K7yE8PhQ4Qqw4LsCZcnvOzEmZth+n9pORKNLStz
-   SX+kEywzmq+Pn6gqO/eqZlVMj3BbB4AiwVMhdD0Z/SQNWAuYG+x8VFI+r
-   KLeq+wWIZFddpCqZXPNZYcxJIQERjxO3wQt+GXe9wvQ5qpZTn6rffnd5o
-   SzRtHzMZ8DtSuTEuK0ICpA9flnLYIWFmM3ZVZ/73FEi0Gl6pHI1mijkFw
-   xCO5/VQyp4UW0C6WqYpjpU0aLgnVejzf56ASbEc81nAImMn0/RdM/wzQj
-   mHMCm6k13D0sjG4Vh+21kSRjVWz/p8JfBxwf0z14NTQMqmtUdNYsu9gD6
-   Q==;
-X-CSE-ConnectionGUID: nqPjZ4lPTRG6WHI6fhDDdA==
-X-CSE-MsgGUID: 33A4v9NAQpe2nulsiIdQNg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="16154116"
-X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
-   d="scan'208";a="16154116"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 05:17:18 -0700
-X-CSE-ConnectionGUID: VmGDXlRHTO6ON8CSwkIhRg==
-X-CSE-MsgGUID: +LvSAK+zSaSNHKz+srMAzg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
-   d="scan'208";a="81529479"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa001.jf.intel.com with ESMTP; 26 Jun 2024 05:17:15 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 9E2DB346; Wed, 26 Jun 2024 15:17:14 +0300 (EEST)
-Date: Wed, 26 Jun 2024 15:17:14 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Zhiquan Li <zhiquan1.li@intel.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, rafael@kernel.org, hpa@zytor.com, 
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/acpi: fix panic while AP online later with kernel
- parameter maxcpus=1
-Message-ID: <qtd7pvvw7vgev5ecqjmrvcule7eqyyqxbqg4bu3k37bwhyxtzt@gdp4sjr6expl>
-References: <20240626073920.176471-1-zhiquan1.li@intel.com>
+	s=arc-20240116; t=1719404320; c=relaxed/simple;
+	bh=2x37NzR/2lEZeNq0vRkCFXPL3a+/btL9FCqu5MrlKVg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=ub9bN7jjxJ7bVRoGsVfjaGxhsJ4NYHC6gVbXHthTs1FQSfhs0/dEOxiDAkWF4Bu9ewrAO9AS594ZR/faym4+6KWThcThq4Yx1SJomydg/PJl0Z46K1FdiD74MStT8JbZXHjVmatPH70czFr7J8xyVtEivSF2aPjwluVlE5ieMbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=OrNn3f1X; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719404288; x=1720009088; i=markus.elfring@web.de;
+	bh=yUPAIAof3AkzY+BmPwggZrxS5owZtdhbXK8kkUOSg5c=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=OrNn3f1X2IUD5M4sIr9wqstdaJaB72n7F4OiQN/C4hhyFZd/tw7A0+GNPYfGQNtq
+	 k8O8NLzl8Xdqtvq/09CWapuEueBn8eQSTCoYftkMbwTerLYwQJg+yKutf66C0zLaM
+	 FB4pN9iBH0PSn5BIgZclTJxldgH4GcPK+LWGkUeA/ios8DseolRFH0jZbIFDNO+uG
+	 6jVjb3M8fm7HgucbaEaGev2Z0vazbQ6s+5Y/QjG9vqFjg7xLFfJSxf/NizWb74q19
+	 XbOfIOcCD6czEahZilGZfnPCrbcVsD7c/shJFP0wLwIhd+p5nEfp3Jt+Yn9j+P0tm
+	 XFTZLD7DGXSYBdgKQA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N30ZN-1sSSoc3rPZ-00sdVt; Wed, 26
+ Jun 2024 14:18:07 +0200
+Message-ID: <7efdcd35-7511-491a-a0b2-c500ebb2256d@web.de>
+Date: Wed, 26 Jun 2024 14:18:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240626073920.176471-1-zhiquan1.li@intel.com>
+User-Agent: Mozilla Thunderbird
+To: Ma Ke <make24@iscas.ac.cn>, dri-devel@lists.freedesktop.org,
+ spice-devel@lists.freedesktop.org, virtualization@lists.linux.dev,
+ Daniel Vetter <daniel@ffwll.ch>, Dave Airlie <airlied@redhat.com>,
+ Gerd Hoffmann <kraxel@redhat.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, David Airlie <airlied@gmail.com>
+References: <20240626064024.2811255-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH] drm/qxl: fix null pointer dereference in qxl_add_mode
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240626064024.2811255-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:C60OHFSjUuj7c1Ny1z+3dfhRyGU9CgYduGDl5Y0uOjNWFaNRIBg
+ pZn9Q1V4E276IQizd99IZn+VBG3/z4MThrqGn+8Zf43SzQz9WiXCEuvVJq53xuWJGmsubrO
+ A+k/2CYu4mODi/iGDVY6OwkP55j6PQzl9r/vRNqwosZBvTUXyQcRdzvzfXq0RKHg/Y6SccJ
+ tIoZ/gnAkHy1336uFBbig==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:8l6RBOATA38=;k3Ef5uHGkoup54xiTgrtslyJhyB
+ 8qsV6Y68qgY1O30UVdyYKXiZJiWeypvHKHgXUYOTEpgUR1F6dstjJ1FWWM1SFR+3YC+BJIEUB
+ Uy86NirTHEraqqqf5DVheVAnFIPyCogdGluIZknBWrx09x2M3V+ganzKkjy885E6F2E23h1vc
+ Hma/UYfAs3KN6AfrAZhU8wRyfi3Nh0z2zXv2OYj/mDRndnB7SGBq6ZBy7yZSzWL/6lpB/lpiV
+ N32AqwSRwVx2k/o55YSMxDCyJzkYSaSbdRNy/uO40QWLE69mLKc6Ir7eLBGNYUXn9jzvmMLap
+ ODT37KSAGcydgciEDT4y3M2UJ8W+XS/GVLaKNAcjGiIarKUU4medUIn2Fc4rNa7WGjEqZ302H
+ a4g04HAn8U95oYPkX6M0+Dqsrbdb2cXvfVPrfN/FNiDsINxoClU4UcBF6FWrH3O1r+1oO5E3W
+ qdMTQA0l0bT6o0YuHTpr8LpkxNXfmAK1WyvtaSOLE18AvxqfYvBFJi/Ae/8xGLJ0dPnMHzwHd
+ RIiASKB6tyTkjNLqX/dQIPDwsZC7R8DQ2j0ZgPEw7HC6g8lMI8PI7J839xXk3aKXW60bo9GAB
+ NxemrNOs+c87ww5r/EQaRinoJe9x1ZcrUlttenTgiv0MZu1ALqZdFMK+H+3aCETpOr3oQu1uY
+ ZtyTcf1F+XYPiYAWkFtcFMXcEBWSkkjYwlj8Onl6SgMR7iLNLh1pfYSx03d1QWrisg8t22cTZ
+ qaHfMBT3NnkZwruCDIBxKDL7yQdjpsvNUTNtTWjXOa24He+gL7cmaxfWMZsyb4NOBGGtaHQO/
+ i32qOJYTULauwOM+r/guAnVvsBUiYHFmOHcisD9uF8y78=
 
-On Wed, Jun 26, 2024 at 03:39:20PM +0800, Zhiquan Li wrote:
-> The issue was found on the platform that using "Multiprocessor Wakeup
-> Structure"[1] to startup secondary CPU, which is usually used by
-> encrypted guest.   When restrict boot time CPU to 1 with the kernel
+> In qxl_add_mode(), the return value of drm_cvt_mode() is assigned to mod=
+e,
+> which will lead to a possible NULL pointer dereference on failure of
+> drm_cvt_mode(). Add a check to avoid npd.
 
-Nit: too many spaces after period.
+1. Can a wording approach (like the following) be a better change descript=
+ion?
 
-> parameter "maxcpus=1" and bring other CPUs online later, there will be
-> a kernel panic as below.
-> 
-> The variable acpi_mp_wake_mailbox to hold the virtual address of MP
-> Wakeup Structure mailbox will be set as readonly after initialization.
+   A null pointer is stored in the local variable =E2=80=9Cmode=E2=80=9D a=
+fter a call
+   of the function =E2=80=9Cdrm_cvt_mode=E2=80=9D failed. This pointer was=
+ used
+   in subsequent statements where an undesirable dereference
+   will be performed then.
+   Thus add a corresponding return value check.
 
-  The variable acpi_mp_wake_mailbox, which holds the virtual address of
-  the MP Wakeup Structure mailbox, will be set as read-only after init.
 
-> If the first AP is brought online laster, the attemption to update it
-> results in panic.
+2. Would you like to add any tags (like =E2=80=9CFixes=E2=80=9D and =E2=80=
+=9CCc=E2=80=9D) accordingly?
 
-  If the first AP gets online later, after init, the attempt to update
-  the variable results in panic.
 
-> Not like the physical address of MP Wakeup Structure mailbox, the
-> readonly attribute is not necessary for its virtual address.
+3. How do you think about to append parentheses to the function name
+   in the summary phrase?
 
-This sentence doesn't make sense to me. Just drop it.
 
-> [1] Details about the MP Wakeup structure can be found in ACPI v6.4, in
->     the "Multiprocessor Wakeup Structure" section.
-> 
->   BUG: unable to handle page fault for address: ffffffff83086978
->   #PF: supervisor write access in kernel mode
->   #PF: error_code(0x0003) - permissions violation
->   PGD 3832067 P4D 3833067 PUD 3834063 PMD 80000000030001a1
->   Oops: Oops: 0003 [#1] PREEMPT SMP NOPTI
->   CPU: 0 PID: 175 Comm: systemd-udevd Not tainted 6.10.0-rc4+ #14
->   Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS unknown 2/2/2022
->   RIP: 0010:acpi_wakeup_cpu+0xb2/0xe0
->   Call Trace:
->    <TASK>
->    ? __die+0x20/0x70
->    ? page_fault_oops+0x80/0x140
->    ? exc_page_fault+0xdc/0x180
->    ? asm_exc_page_fault+0x22/0x30
->    ? _raw_read_unlock+0x18/0x40
->    ? acpi_wakeup_cpu+0xb2/0xe0
->    do_boot_cpu+0xeb/0x1f0
->    native_kick_ap+0xcb/0x150
->    ? __pfx_cpuhp_kick_ap_alive+0x10/0x10
->    cpuhp_invoke_callback+0x2d0/0x480
->    ? __pfx_trace_rb_cpu_prepare+0x10/0x10
->    __cpuhp_invoke_callback_range+0x78/0xe0
->    cpuhp_up_callbacks+0x28/0x100
->    _cpu_up+0xb9/0x120
->    cpu_up+0x91/0xe0
->    cpu_subsys_online+0x4d/0xe0
->    device_online+0x5f/0x80
->    online_store+0x8f/0xc0
->    kernfs_fop_write_iter+0x125/0x1c0
->    vfs_write+0x35c/0x480
->    ksys_write+0x5f/0xe0
->    do_syscall_64+0x63/0x170
->    entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
-The stack dump doesn't add value to the commit message. Drop it.
-
-But it is worth noting that the memremap() function that initializes the
-variable cannot be moved into acpi_parse_mp_wake() because memremap() is
-not yet functional at this point in the boot process.
-
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Regards,
+Markus
 
