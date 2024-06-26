@@ -1,73 +1,62 @@
-Return-Path: <linux-kernel+bounces-231101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D645A918631
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:48:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 434FD918635
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:48:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 330D2B239DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:48:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7E691F21C56
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B4A18A92C;
-	Wed, 26 Jun 2024 15:47:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373A018E748;
+	Wed, 26 Jun 2024 15:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hh9gRjsx"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="I6KpqcSu"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F02B1F94C;
-	Wed, 26 Jun 2024 15:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D5018413F;
+	Wed, 26 Jun 2024 15:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719416875; cv=none; b=cYULsy0lNQlQMMbCeZW4Mco/ilWHcS/4kqd7Ze8qgM0s7KZA+GbqAS52Bkgek5JUrR7XNMGc5aAJs/ctbv5QouKXzefpK89msjoBtvB2rlHu+B6FQpBfulPX03/00E3JHOSqKwHhMuEwjeKbewQZygRgwP7tLrhB1Gt5Lro4yXc=
+	t=1719416917; cv=none; b=NNDpYSdTxy63p0Dvr8HlwMaRIy411MIyiGJPv/N2IKKneVuR/i48xkVMDZpPEkOBdDowYS4PqfCjmsNKtkwnqW3ilT5HRkNs8kjfibqr1FI/cXHsXZnVGVPXfgdmNw/1rX6TrsEtulIqQPSr0awv/P/dPOeC0fF4kS7/UwDHRIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719416875; c=relaxed/simple;
-	bh=iIwbTdgH6YrONpmP1QKayaTmhFJ+XFBFXOn324NrzLM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kbPF9652/9FSOa19RhhiA9tcrTk5fNl6VkwEkSpJ4hkaFWItELNT4yNZ0m4/ARQ9yzNiZ8pqpUZMom/7By4EeC9R5pZ5EiknWtTZ72/Z45wAsNAq0AHwRqeMHKIRp6D0NDchCsUicjZSvr9bZVQnvX/XSml8920UhN3kpo+DRaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hh9gRjsx; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7066f68e22cso3226644b3a.2;
-        Wed, 26 Jun 2024 08:47:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719416874; x=1720021674; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JXfvd0m+3+tN0rU0XB0XqzYmYVrFO9u31ZbFfeNGbqY=;
-        b=Hh9gRjsxjPfDzcTylqzZ8r0G9/EVaZUs1cEHW0KuScCacvDZtmGreC0vzxvbpqr2i7
-         uHZqdrQtnexHcaFXPUPlGnnZ6pzvMWtDoJDTLf2in/QyiyXyj+Tid5OAIbIjG/lCVPEs
-         fPft3nlX9FkKtleTqvCmINvgRNEd7yKKb61oatko5NCJsb2rBjd5Onr9/M63xY4El9Q5
-         ve2qhX7b/hYRO1dXcsf/eBCW88QNCWhRVURKBMDhVVlefbGE5r0/EIbYFA1t5FaOEDRA
-         GLYogrZwiW7TP/ByLffDiriQqZJr7WRKmkLxa7Np6G+Eey8u4itU3vZkysFEjTPb6b+X
-         DDNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719416874; x=1720021674;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JXfvd0m+3+tN0rU0XB0XqzYmYVrFO9u31ZbFfeNGbqY=;
-        b=cPZh53uF2DrpnAXMoFhFAHPAjJ83n8zBAngpC+MA9Zi2PXy+qZyzWj6nDwTgMt1mI/
-         XECg0+EJgBn1MkF3WhHxtVCFMdQMQSmATzu41SUj9BhSZ/qgbk6wQcEntpJWBMdocwZa
-         BmsaE1rHWCozGER4nsfzE/VEslW7VfDWMqmvF5H1VHf9XhfBOFrmQGB6V7P9ykdSgH2c
-         dzJD2kxLN6oa3i7dlIcoEdgv3guzeTfE2e4TAinEibUXeQ4vS3xK3A3XJUPDX8+sRN6n
-         d7VArHB3q852k8LgcKgncJ37zif8Uad1reN198CTzj1UkTnJOUDManakd9tA18p36NWM
-         JByw==
-X-Forwarded-Encrypted: i=1; AJvYcCVq34VdiUv92hQCdsQP7NPXjwfj32PEc/zsMEB/a3goP/1Hfxd5tIT/l4LHh5hGPOyBXPA21Tbrw4DEVt4NWDrIaVG/TWqQEiWcjCgi/oBpavEitq1HJSb6cFqWX5iMjIMI62OHtG1VMQxULk4IcA==
-X-Gm-Message-State: AOJu0YxbD274aHmYI/9vSyGj1UZk1VYmNKSraERL8F/QG8eMVpc1pT6w
-	mI1dRQWAkx2iNiuY+TYWtNIunlwxdm4KbPv5YscVQQhKBVt029zU
-X-Google-Smtp-Source: AGHT+IHTwZkDn97M57gb+TXkmFzxBvuEOvlZ68cTG4QgvSt0Au0lYg2lm7cTfeBVxk2kgb34opLNFw==
-X-Received: by 2002:a05:6a00:2d12:b0:706:7052:205 with SMTP id d2e1a72fcca58-70670ee94c2mr14161244b3a.18.1719416873578;
-        Wed, 26 Jun 2024 08:47:53 -0700 (PDT)
-Received: from [192.168.50.95] ([118.32.98.101])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-706a8d0388fsm1451661b3a.157.2024.06.26.08.47.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Jun 2024 08:47:53 -0700 (PDT)
-Message-ID: <ee434711-e4b1-47cf-a47a-6ba15ec6241d@gmail.com>
-Date: Thu, 27 Jun 2024 00:47:47 +0900
+	s=arc-20240116; t=1719416917; c=relaxed/simple;
+	bh=FzzowXyGnIPOeCOLkhjjrNoMLDhPzrwp81kcDqhZgHY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jUamhqEs/pLLpfXHJBRxfnxkpwrgQUnV72xJjJiDu3hv4VykX/69G+1AYwfiJxEnJoei2UyThX4wWXQ/Z4cxwiE5hkxIvtmoJBgTQ/wJMXZdV0H6JozHiM0XoRfWFX7bowWABEqHzxIR4LpwXvrzlF1linjHHx77DUVOfdOM8UQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=I6KpqcSu; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QAfVJh029258;
+	Wed, 26 Jun 2024 15:48:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	d6IzhZJiiJo63llI9ttpBLLWYn+B921/b5BIFdB4ok4=; b=I6KpqcSurNwiqzk6
+	ouHQCQgpIwR3DyHlAz9MgSsZSmY6GGDsYWGY/Q+gWw2HL0nDyiXHu+ekkKhX0fPy
+	y+zgw60VmUwXenlGAqAwjq5GT52j+84bDDnr0+KuKx+QBkv3uxWO8azl/aS7MV9d
+	DXbHLT+Y0WQBKB6gB8TVKmtf3bybnWeBBxZ31BLfCCtcdupVHOclQvZxeDgUJWV/
+	GMVGjAVbHpyhBrTZYjCUy2rJT/5vVVmlsGRLeYEtnjssa5N2mZGOtPtp1npmIjGK
+	VOupMS7N/eKtudLq/3OTcplTvaJkRpXqtMY+AYq+ZUWGI4SAKCB6XBiT9VuM4SJr
+	orw9/w==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywnm6sq84-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Jun 2024 15:48:14 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45QFmDkE018812
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Jun 2024 15:48:13 GMT
+Received: from [10.110.92.181] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Jun
+ 2024 08:48:08 -0700
+Message-ID: <1c65ae7a-ac35-4c80-aa06-9ca921a7c919@quicinc.com>
+Date: Wed, 26 Jun 2024 08:48:02 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,62 +64,118 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf unwind-libunwind: Add malloc() failure handling
-To: Namhyung Kim <namhyung@kernel.org>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>,
- Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>
-Cc: kan.liang@linux.intel.com, Yang Jihong <yangjihong1@huawei.com>,
- Ze Gao <zegao2021@gmail.com>, Leo Yan <leo.yan@linux.dev>,
- Ravi Bangoria <ravi.bangoria@amd.com>, Austin Kim <austindh.kim@gmail.com>,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- MichelleJin <shjy180909@gmail.com>
-References: <20240619204211.6438-2-yskelg@gmail.com>
- <171937445590.2860437.11253278806338067490.b4-ty@kernel.org>
+Subject: Re: [PATCH v2] of: reserved_mem: Restructure code to call reserved
+ mem init functions earlier
+To: Rob Herring <robh@kernel.org>
+CC: <broonie@kernel.org>, <catalin.marinas@arm.com>, <conor@kernel.org>,
+        <devicetree@vger.kernel.org>, <hch@lst.de>, <iommu@lists.linux.dev>,
+        <kernel@quicinc.com>, <linux-kernel@vger.kernel.org>,
+        <m.szyprowski@samsung.com>, <nathan@kernel.org>,
+        <oe-kbuild-all@lists.linux.dev>, <robin.murphy@arm.com>,
+        <saravanak@google.com>, <will@kernel.org>
+References: <202406181626.126X1Nbz-lkp@intel.com>
+ <20240620001027.2326275-1-quic_obabatun@quicinc.com>
+ <20240626151622.GA3139921-robh@kernel.org>
 Content-Language: en-US
-From: Yunseong Kim <yskelg@gmail.com>
-In-Reply-To: <171937445590.2860437.11253278806338067490.b4-ty@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
+In-Reply-To: <20240626151622.GA3139921-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: g3TZyqMQhSuc0Ixry-udpwaVYhV5XTxF
+X-Proofpoint-ORIG-GUID: g3TZyqMQhSuc0Ixry-udpwaVYhV5XTxF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-26_07,2024-06-25_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ priorityscore=1501 suspectscore=0 phishscore=0 clxscore=1015 spamscore=0
+ mlxscore=0 malwarescore=0 mlxlogscore=973 lowpriorityscore=0
+ impostorscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2406140001 definitions=main-2406260115
 
-Hi Namhyung,
 
-On 6/26/24 1:01 오후, Namhyung Kim wrote:
-> On Thu, 20 Jun 2024 05:42:12 +0900, yskelg@gmail.com wrote:
-
->> This patch resolve following warning.
+On 6/26/2024 8:16 AM, Rob Herring wrote:
+> On Wed, Jun 19, 2024 at 05:10:27PM -0700, Oreoluwa Babatunde wrote:
+>> After all the reserved memory regions have been added to the
+>> reserved_mem array, a region specific initialization function is called
+>> on each of reserved memory regions in a loop to initialize them.
 >>
->> tools/perf/util/evsel.c:1620:9: error: result of comparison of constant
->> -1 with expression of type 'char' is always false
->>  -Werror,-Wtautological-constant-out-of-range-compare
->>  1620 |                 if (c == -1)
->>       |                     ~ ^  ~~
+>> With recent changes made to allow the reserved_mem array be dynamically
+>> allocated, the cma reserved memory regions are not initialized until
+>> after the page tables are setup. This causes the warning seen in the
+>> dump stack below:
 >>
->> [...]
-
-> Applied to perf-tools-next, thanks!
+>> 	WARNING: CPU: 0 PID: 1 at mm/memory.c:2789 __apply_to_page_range+0x360/0x380
+>> 	CPU: 0 PID: 1 Comm: swapper/0 Not tainted 6.10.0-rc1-00007-ga46cccb0ee2d #1
+>> 	Hardware name: Generic DT based system
+>> 	Call trace:
+>> 	unwind_backtrace from show_stack+0x18/0x1c
+>> 	show_stack from dump_stack_lvl+0x54/0x68
+>> 	dump_stack_lvl from __warn+0x74/0x114
+>> 	__warn from warn_slowpath_fmt+0x13c/0x1c0
+>> 	warn_slowpath_fmt from __apply_to_page_range+0x360/0x380
+>> 	__apply_to_page_range from apply_to_page_range+0x24/0x2c
+>> 	apply_to_page_range from __alloc_from_contiguous+0xc4/0x158
+>> 	__alloc_from_contiguous from cma_allocator_alloc+0x3c/0x44
+>> 	cma_allocator_alloc from arch_dma_alloc+0x128/0x2b4
+>> 	arch_dma_alloc from dma_alloc_attrs+0x90/0x150
+>> 	dma_alloc_attrs from drm_gem_dma_create+0xa4/0x13c
+>> 	drm_gem_dma_create from drm_gem_dma_create_with_handle+0x24/0xac
+>> 	drm_gem_dma_create_with_handle from drm_gem_dma_dumb_create+0x44/0x50
+>> 	drm_gem_dma_dumb_create from drm_client_framebuffer_create+0x9c/0x164
+>> 	drm_client_framebuffer_create from drm_fbdev_dma_helper_fb_probe+0x84/0x23c
+>> 	drm_fbdev_dma_helper_fb_probe from __drm_fb_helper_initial_config_and_unlock+0x2e4/0x4f8
+>> 	__drm_fb_helper_initial_config_and_unlock from drm_fbdev_dma_client_hotplug+0x74/0xb8
+>> 	drm_fbdev_dma_client_hotplug from drm_client_register+0x5c/0x98
+>> 	drm_client_register from aspeed_gfx_probe+0x278/0x3c0
+>> 	aspeed_gfx_probe from platform_probe+0x60/0xb8
+>> 	platform_probe from really_probe+0xd4/0x3b4
+>> 	really_probe from __driver_probe_device+0x90/0x1dc
+>> 	__driver_probe_device from driver_probe_device+0x38/0xd0
+>> 	driver_probe_device from __driver_attach+0x118/0x1dc
+>> 	__driver_attach from bus_for_each_dev+0x84/0xd4
+>> 	bus_for_each_dev from bus_add_driver+0xec/0x1f0
+>> 	bus_add_driver from driver_register+0x84/0x11c
+>> 	driver_register from do_one_initcall+0x84/0x1c8
+>> 	do_one_initcall from kernel_init_freeable+0x1a4/0x230
+>> 	kernel_init_freeable from kernel_init+0x1c/0x138
+>> 	kernel_init from ret_from_fork+0x14/0x28
+>> 	Exception stack(0x9f015fb0 to 0x9f015ff8)
+>> 	5fa0:                                     00000000 00000000 00000000 00000000
+>> 	5fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+>> 	5fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+>> 	---[ end trace 0000000000000000 ]---
+>> 	aspeed_gfx 1e6e6000.display: [drm] fb0: aspeed-gfx-drmd frame buffer device
+>>
+>> Hence, restructure the code to initialize the regions as soon as each
+>> of them are added to the reserved_mem array.
+>>
+>> Fixes: a46cccb0ee2d ("of: reserved_mem: Restruture how the reserved memory regions are processed")
+>> Signed-off-by: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
+>> ---
+>> v2:
+>> - Fix kernel-doc for of_init_reserved_mem_node() in response to the
+>>   below warning from v1:
+>>   https://lore.kernel.org/all/202406181626.126X1Nbz-lkp@intel.com/
+>>
+>> v1:
+>>   https://lore.kernel.org/all/20240617193357.3929092-1-quic_obabatun@quicinc.com/
+>>
+>>  drivers/of/fdt.c             |  2 +-
+>>  drivers/of/of_private.h      |  2 +-
+>>  drivers/of/of_reserved_mem.c | 83 +++++++++++++++++++++---------------
+>>  3 files changed, 50 insertions(+), 37 deletions(-)
+> Applied.
+>
+> In the future, do not send fixes or new versions as replies to previous 
+> threads. The default behavior of b4 is to apply v6 of the series because 
+> that is the 'newest' version.
+>
+> Rob
+ack.
 
 Thank you!
-
->> Add malloc() failure handling in unread_unwind_spec_debug_frame().
->> This make caller find_proc_info() works well when the allocation failure.
->>
->>
-> 
-> Applied to perf-tools-next, thanks!
-> 
-> Best regards,
-> Namhyung
-
-
-Thank you for applying my patch set.
-
-I've been looking up the feedback you provided earlier and analyzing it
-further.
-
-Next time, I will strive to send a more meaningful patch set.
-
-
-Warm regards,
-Yunseong Kim
 
