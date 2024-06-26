@@ -1,156 +1,93 @@
-Return-Path: <linux-kernel+bounces-230238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A584917A39
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:54:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82F6E917A3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:55:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B3F41C23619
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:54:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E176286477
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92CC615FA71;
-	Wed, 26 Jun 2024 07:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NgTcvQuf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E27E15ECF7;
+	Wed, 26 Jun 2024 07:55:06 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C360F1FBB;
-	Wed, 26 Jun 2024 07:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B599115F3E2
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 07:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719388471; cv=none; b=ooUvd7hqyiBzyz5iq9vUz25Dddvih2rZ7MayAmYFYdbLc5KXRQHmxNYX12cZnXgyZl7YyGL3RQ4M5cLWLwcu/Ps/ix2ICQ+DhojXyfVVBO91eGIsnLUrSSjNxPw8h78YbJCrV0HwaEK3JCVOyq1kgtwqjm/3+eryVZ9mmJV7ZqI=
+	t=1719388506; cv=none; b=g8VySs3l4mB0eYBmN/meDH2x+NubBWBzoR/OJdfIqH769ZNmX8EajVHolAzfyL4jSxIN45uPhNK5nKEywVQxiYoIEeWf/tw40R7ZX5B1qAwWLTDILT0kzKguaE/geUcCr3qT0xI6w2JAckaDC9Q5OSToOiU85n0WhtDGYF/3uLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719388471; c=relaxed/simple;
-	bh=SbtxvcursYPrSDJUEzv8uDtSs383JJZUnvYrA/hF/4k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZFbMd9Mo+TnhMIaQ/MOCsZrKE51a9tg2fOMDtxF/13H6UPTeQl9wGEU/rlNOiN2h38djAGBrqSDoNjkiNZR9FlMQmEHETDGoFf261GoeXf/a2QYolA++IvHWDE08AuIgnqXLokko0DYdU2MJkQ5+fCpAr/b44TVPrMbcSThm08s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NgTcvQuf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC22FC4AF0B;
-	Wed, 26 Jun 2024 07:54:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719388470;
-	bh=SbtxvcursYPrSDJUEzv8uDtSs383JJZUnvYrA/hF/4k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NgTcvQufTogBwZufUbCJXr2yc/1vPoRkdHFeGnYJY8ySQj3TD7HgjAALfFMVVoxqq
-	 DusZlvg+ACiJuMUuqPhWYFVSTFJfLT6iImeTXdK/cGyPk4c8enuKMY06YeO10IwX0B
-	 A3e+BWH0VqwyM1s4f1yfv1baYlUbGl+zOTMByjdfcvxGfC8fdtcuwmrnWtQ4PCCQZ9
-	 0O4oX09quJh7KtFuLRz7oYNQUAJHIGQnbDqy+2UOb7fFcUckcmZHeOdddOxu2r/E9j
-	 Hcor/tKZZ8lZV2YcS61nRuUTOXSQseEGXnMENVDnAnbdQz3uPOXXh2lkoQZl0g1gnR
-	 g+HjSVatDOmlA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sMNUG-000000007vt-0yGY;
-	Wed, 26 Jun 2024 09:54:40 +0200
-Date: Wed, 26 Jun 2024 09:54:40 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 2/3] serial: qcom-geni: fix soft lockup on sw flow
- control and suspend
-Message-ID: <ZnvJQDX6NkyRCA8y@hovoldconsulting.com>
-References: <20240624133135.7445-1-johan+linaro@kernel.org>
- <20240624133135.7445-3-johan+linaro@kernel.org>
- <CAD=FV=UauWffRM45FsU2SHoKtkVaOEf=Adno+jV+Ashf7NFHuA@mail.gmail.com>
- <CAD=FV=XPKqjMcWhqk4OKxSOPgDKh-VM4J4oMEdQtgpFBw8WSXA@mail.gmail.com>
+	s=arc-20240116; t=1719388506; c=relaxed/simple;
+	bh=Vpt4Gye2b79EipFlbPUq00vRYctifvkkWdeZO6Gas8o=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=iy5OQhdh5LcQ07N4zOgljtHONELUUCDYs+2JoCrh4lnR6jpQ+MlLSIc421j0GsyIl18oc0CZLbRW7oMoXQ2V6z/oiHFcaGTyoRFOtkUvGW00zKV8DatXQoQaeg1cj5L/5bq+YwxGnTxO0o4Q7ddawVGBI+3CdHpptE8oZJNOhXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3737b3ee909so92471895ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 00:55:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719388504; x=1719993304;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xzDaof2xJ74gCZ5IJDnQJMnrknLYLyty2S5JQ7HI+IM=;
+        b=CLUtS3tuoEtS6WhjzjBN7rrzPlm+vh/x0u/0LlgkMYj/l2t64sopXKH4l+e0nXTFs9
+         FIcjHyRjHUrWE3Og9mXBgHzzWrdJ3dFSJTkUrHucff6fPMXcazpAdqGCMovf5USzdpMd
+         LAsKK/PMLyuHTLJW1L8kwGAWhn7mSQJl6K5FlFf8CxWWLq2Lp8wGQvGt1iALhf9PPQEb
+         M26Ucx6nadxr9YvRW0fZpIChIrhFhtDWeIUD/seHpYtuXa0qV5Y5XSqjHSVE4XUHcQoT
+         e9FdZko/BzzLdRxIrQJn7aHLG8PC84oLiOeWEMwyGj9yZ5gkxPvAJNnUlmnAK+I+6y7r
+         OyXg==
+X-Gm-Message-State: AOJu0YzYHgDewjKSRN2g/El9L2ED4Y2gN/2iprn8GrZxivb0tOho6MCj
+	lZdnxK5Ia7XnMmfuq4mK4BxNcuN1HOxvSzIQZNs6oc3RgSJR/LgWdqvXxUmIOVOjRb5rZrHLHof
+	7jtvT1r43fExsx90ttXXlAbdhhdCzGrc6j5UckMVp8nVOwX5MCvhus8o=
+X-Google-Smtp-Source: AGHT+IHFbrYoCMxpIwQa9iv3WaCUEk+2IKcO/OW35HNSxbp9ei8R3L1Mpz70U0IVCVfOTLEiJhohYjKZ/cD9iEYeZeU8t2D18TO8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD=FV=XPKqjMcWhqk4OKxSOPgDKh-VM4J4oMEdQtgpFBw8WSXA@mail.gmail.com>
+X-Received: by 2002:a05:6e02:180e:b0:375:88ec:810d with SMTP id
+ e9e14a558f8ab-3763b3695demr8702465ab.5.1719388502909; Wed, 26 Jun 2024
+ 00:55:02 -0700 (PDT)
+Date: Wed, 26 Jun 2024 00:55:02 -0700
+In-Reply-To: <20240626074013.30611-1-norbert.kaminski@3mdeb.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f274f6061bc65464@google.com>
+Subject: Re: [syzbot] [ext4?] KASAN: use-after-free Read in
+ __ext4_check_dir_entry (2)
+From: syzbot <syzbot+11af34d3c0711f233fd4@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, norbert.kaminski@infogain.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jun 24, 2024 at 02:58:39PM -0700, Doug Anderson wrote:
-> On Mon, Jun 24, 2024 at 2:23 PM Doug Anderson <dianders@chromium.org> wrote:
-> > On Mon, Jun 24, 2024 at 6:31 AM Johan Hovold <johan+linaro@kernel.org> wrote:
+Hello,
 
-> > > +static void qcom_geni_serial_clear_tx_fifo(struct uart_port *uport)
-> > > +{
-> > > +       struct qcom_geni_serial_port *port = to_dev_port(uport);
-> > > +
-> > >         if (!qcom_geni_serial_main_active(uport))
-> > >                 return;
-> > >
-> > > +       /*
-> > > +        * Increase watermark level so that TX can be restarted and wait for
-> > > +        * sequencer to start to prevent lockups.
-> > > +        */
-> > > +       writel(port->tx_fifo_depth, uport->membase + SE_GENI_TX_WATERMARK_REG);
-> > > +       qcom_geni_serial_poll_bit(uport, SE_GENI_M_IRQ_STATUS,
-> > > +                                       M_TX_FIFO_WATERMARK_EN, true);
-> >
-> > Oh, maybe this "wait for sequencer to start to prevent lockups." is
-> > the part that I was missing? Can you explain more about what's going
-> > on here? Why does waiting for the watermark interrupt to fire prevent
-> > lockups? I would have imagined that the watermark interrupt would be
-> > part of the geni hardware and have nothing to do with the firmware
-> > running on the other end, so I'm not sure why it firing somehow would
-> > prevent a lockup. Was this just by trial and error?
-> 
-> Actually, the more I look at it the more confused I am about your
-> qcom_geni_serial_clear_tx_fifo(). Can you explain and maybe add some
-> inline comments in the function since it's not obvious? Specifically,
-> things I'm confused about with your patch:
-> 
-> 1. The function is named qcom_geni_serial_clear_tx_fifo() which
-> implies that when it finishes that the hardware FIFO will have nothing
-> in it. ...but how does your code ensure this?
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+SYZFAIL: NL802154_CMD_SET_SHORT_ADDR failed
 
-Yeah, I realised after I sent out the series that this may not be the
-case. I was under the impression that cancelling a command would discard
-the data in the FIFO (e.g. when starting the next command) but that was
-probably an error in my mental model.
+2024/06/26 07:54:36 ignoring optional flag "sandboxArg"="0"
+2024/06/26 07:54:37 parsed 1 programs
+2024/06/26 07:54:37 [FATAL] failed to run ["./syz-executor" "setup" "fault" "binfmt_misc" "usb" "802154" "swap"]: exit status 67
+mkdir(/syzcgroup) failed: 17
+mount(binfmt_misc) failed: 16
+SYZFAIL: NL802154_CMD_SET_SHORT_ADDR failed
+ (errno 16: Device or resource busy)
 
-Do you see any way to discard the FIFO in the docs you have access to?
- 
-> 2. If the function is really clearing the FIFOs then why do we need to
-> adjust the watermark level? The fact that you need to adjust the
-> watermark levels implies (to me) that there are things stuck in the
-> FIFO still. ...but then what happens to those characters? When are
-> they sent?
 
-Exactly, there is data there according to the FIFO status, but I
-erroneously interpreted it as a it would be discarded (e.g. when
-starting the next command).
+Tested on:
 
-> 3. On my hardware you're setting the FIFO level to 16 here. The docs I
-> have say that if the FIFO level is "less than" the value you set here
-> then the interrupt will go off and further clarifies that if you set
-> the register to 1 here then you'll get interrupted when the FIFO is
-> empty. So what happens with your solution if the FIFO is completely
-> full? In that case you'd have to set this to 17, right? ...but then I
-> could believe that might confuse the interrupt handler which would get
-> told to start transmitting when there is no room for anything.
+commit:         55027e68 Merge tag 'input-for-v6.10-rc5' of git://git...
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=1000b3b6980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7bff6f9b539bef0c
+dashboard link: https://syzkaller.appspot.com/bug?extid=11af34d3c0711f233fd4
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-Indeed. I may implicitly be relying on the absence of hardware flow
-control as well so that waiting for one character to be sent is what
-makes this work.
-
-> Maybe something is missing in my mental model here and testing your
-> patch and hitting Ctrl-C seems to work, but I don't really understand
-> why so hopefully you can clarify! :-)
-
-I spent too much time trying to reverse engineer this hw over the
-weekend and wanted to get this out as a counter proposal as it indicated
-that we may be able to find a smaller fix. The series addresses the
-serial getty issues, but as I mentioned yesterday there is some
-interaction with the console left to be resolved before this can be an
-alternative.
-
-If it wasn't for the hard lockup I would have sent the whole thing as
-an RFC.
-
-Johan
+Note: no patches were applied.
 
