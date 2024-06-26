@@ -1,250 +1,101 @@
-Return-Path: <linux-kernel+bounces-230611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4D67917F44
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:10:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63E68917F5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:15:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2CBC1C220F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:10:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 957AE1C23776
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B50017D8AF;
-	Wed, 26 Jun 2024 11:10:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A870217FAB2;
+	Wed, 26 Jun 2024 11:15:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="klbJ08a5"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="EGHj0NS8"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA8F149C52;
-	Wed, 26 Jun 2024 11:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7621916631D;
+	Wed, 26 Jun 2024 11:15:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719400244; cv=none; b=Q6w6mKEiqcnht42SWXAgleqZJXkho+sa12shuu0hhR0YYyb68S8qzkYDg7GZukSkdsSfP4PYrzAgVEMkry2YYW7U58n2AF6XzRnXigjjz7p1ruszjAlb3nElg1d8gc8FauRPTmuVdfVasTEIQbqxRQsBri0KGecpof99vtZj/y8=
+	t=1719400530; cv=none; b=OCOZ7R/1F1gP7CXTVO+mp9ti1i+HfrEkDteyG48lIgId/1SDzsPzZzwOKXwaiSvEK6l4UsbbYMtKlVcTEDhy8hgzThxRwNIJyYBFgaJvUe+b0exJT/VnxHY5CViQzmSTk6A8b7+SnYN8E5s94KJGJZ0FiRFNO5haNF7fnTSz+g4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719400244; c=relaxed/simple;
-	bh=y5GB7iZxGrVNLx9zEM0w79I4bjgFC4YG83muA1Hj6Bk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tj79gNNSvwcGFQ+cnDb6avSSdzx742ozxHoQQGRc8ssIQ2fKQM4tFiFc4mtk41eAUIZJv+++g4xFybr+lpcEnrdUQmvoJnOd5EJsUJGhVBZoYklE/z0H0tW1FKHHJ8L6E3+tJB6/HB3dOGgBtfEpu2Kl95mhmxRp6gIt+AJrDOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=klbJ08a5; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-424aa70fbc4so7789705e9.1;
-        Wed, 26 Jun 2024 04:10:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719400241; x=1720005041; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=87aPA93jqh73LcqxNsHjq/adaWYJgqncVxDTzkIZqG8=;
-        b=klbJ08a5DwBldfYtpOoyLy+u0qv5o4wd0bJQKMRlWHu5QJyzQzD6aB/OJqatzIKTua
-         tUc9mGWepimJ4KWkJXS81Y16x/AQSFnKB+WElkDu8Iepn8P9hL+ce5wCDAZLQvC83AsI
-         TQ5XU+JoIrgTaQ8a66/FdhG5j+FV1Jqgd6JUmmVprrH7wOy3OnROhSL1cIhN+xCAvbVW
-         V7pXVzVV2A414qHDLfMM+Pptfg67LMYZAxhJBP1hNmRSFwOmdszcPP55YOcQR8qqsWFb
-         mbY/sck6qGUo81zjdCBirNRIvWXcjqhUEwg5jbbBDZ4s9iZg+o7dMAIlU//d18l77o2v
-         n27Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719400241; x=1720005041;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=87aPA93jqh73LcqxNsHjq/adaWYJgqncVxDTzkIZqG8=;
-        b=bOq9z1dw+gCiQ22kDqLJPTkFkTg2TvCFsjtJ51ZVL7FmvXnPDr34U3zFYKDQ9WM6ML
-         4rt/2Iq0cXmxGySRYyh7tkMXx12yGT5j7J2HzXCQsiPJue0s7U6rl3sVcQz6zJz3UYyN
-         qKfIk40b6316GvipUSW0e+QUV+1/rcYCJbqq510PrZSLkXYkMiXGbOtAZpsFnlmI82JP
-         1fOXaG6lxTPQGmBoVcXf87PPf83FS/e2SQEmBgM0m9NgGUpb4AGWqN/SoG9GuLKcktqY
-         iBjV9A3OVLesWvyUjHOGAK3Cyls48PNhkNarTX7zPALQGTZeqzTlC6p/ZjQlMFyKckY7
-         NC0g==
-X-Forwarded-Encrypted: i=1; AJvYcCWYi1iE+A1KeeR1mJI/HvvC+VTKLrAQuKy3ABfZNIRxWXfjPK0D1ZqLrS+gP+3gVm3JzF7xWb8WDC4upjJ6HdvONmUaEeOgNyVqQ2d4wuPRw/DowrngAhTHWGJ46SXVHAQCL+pTEPY5Kf6HzzEEXMB7EFEPf9gmxp5gtC0qoqUYfVenVA==
-X-Gm-Message-State: AOJu0Yw0vcdYrlJHpHxoCK5Uio9lCFaYF81VV3cEtW4fJ6mYp7U/YVWE
-	WbXcPuvg3SxZ5GnEKsSFDu4SoMPxSThEP2VeTV32CGvV8zUdHJs3
-X-Google-Smtp-Source: AGHT+IEf52+IKIte1UwZtSbMg1MFU4zo8snbtBy8CVYafBcPTevpxEZODaBrOTFHM9OTyO9pQ8/dxA==
-X-Received: by 2002:a05:600c:5686:b0:423:668:4c39 with SMTP id 5b1f17b1804b1-4248cc18115mr76449425e9.1.1719400241030;
-        Wed, 26 Jun 2024 04:10:41 -0700 (PDT)
-Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c8280962sm21609355e9.34.2024.06.26.04.10.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 04:10:40 -0700 (PDT)
-Message-ID: <2c8127ab4e26cc3b12793c942435ccd6cb9f5432.camel@gmail.com>
-Subject: Re: [PATCH v4 5/5] iio: dac: ltc2664: Add driver for LTC2664 and
- LTC2672
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Kim Seer Paller <kimseer.paller@analog.com>,
- linux-kernel@vger.kernel.org,  linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner
- <dlechner@baylibre.com>,  Lars-Peter Clausen <lars@metafoo.de>, Liam
- Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Dimitri
- Fedrau <dima.fedrau@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,  Michael
- Hennerich <michael.hennerich@analog.com>
-Date: Wed, 26 Jun 2024 13:14:32 +0200
-In-Reply-To: <20240619064904.73832-6-kimseer.paller@analog.com>
-References: <20240619064904.73832-1-kimseer.paller@analog.com>
-	 <20240619064904.73832-6-kimseer.paller@analog.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 
+	s=arc-20240116; t=1719400530; c=relaxed/simple;
+	bh=j+5ZIrKLNe8qHa4cOVrSOgiKjZFxNrDxASMdT1AH+lc=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=NuV4VmoaTEX/lann8BJlVumkDxu/SDCvdXuBIp8Ptd0qI+MYcV2NpQz3Hi6tWpdjMWaLHGbwCd01/G+igWgUvyZIu9VWxM0cy2F1q3GWkV6DU8Wah1KZQL+vKpNfnjQSrFIFbUMKBHUc3nC5G2PSXQdFhdUaW0S9b9SGnEYS1wY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=EGHj0NS8; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719400504; x=1720005304; i=markus.elfring@web.de;
+	bh=j+5ZIrKLNe8qHa4cOVrSOgiKjZFxNrDxASMdT1AH+lc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=EGHj0NS8U+mhr1bM4iJZtbR7Wdv3bVcH5DDWAHrfJIPjP4TJzRYGOCVYxQtf6yaP
+	 TklwHbN40eCGDWKZL6xAhntC7RF490MFl1ybmG8e5UdAJ5IxnnEDmxRQ6iLu1Astz
+	 dkQZoAhQIGwlRi/z9Ldm9Y5BF63tsH7TDbTkkVaGxIsuZSTaRK3vQPQTdV4oi8OP8
+	 wgHXJPRpvbAw0wPYrlLnCusPOCZv3S4N6z9iP08ssrwjBqfmp489uxO/H+zmjemg6
+	 NAF+9Vq7FzymBeUIbxNdvG9R8OQGMm7f1Rbq2JbyZ6s3w/Y9JtjJxSNOXoN159w3H
+	 yLJOpy2jMeOy/9LPgg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N7gXQ-1sQ1UI0Lhq-00tec2; Wed, 26
+ Jun 2024 13:15:04 +0200
+Message-ID: <ff6292c5-037e-4e40-af33-1339812965eb@web.de>
+Date: Wed, 26 Jun 2024 13:15:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: Ma Ke <make24@iscas.ac.cn>, dmaengine@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+ kernel@pengutronix.de, Fabio Estevam <festevam@gmail.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ Vinod Koul <vkoul@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240626084515.2829595-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH] dmaengine: mxs-dma: Add check for dma_set_max_seg_size in
+ mxs_dma_probe()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240626084515.2829595-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:57lov0N4ETsqjC1VKjWMt8zCR17LEC/3JrVni7vl/bKEOrRJfED
+ MFZpABEGV73IkJ1ywtkH0HBBSgfsr/SMdjjeRHrsi1PWVuOQyTo3XY4L8hNh3vutkq/2GlR
+ vhxZgkTxcoqTRXa3uG1z0IUp4B+esv9I0Oz2rpH71oOM7r6tCzjFX9oV5e37GVDc6pS+AE4
+ JP7J1pNNFZZuqSP85dPKg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:6AURAV23DnI=;qyr2s9y3EjpMoEg38a4+dzx0BQt
+ guWDWsNXragRlZvjvQlSAUBY0rOxfTgVU9u5mdspYW1OXswMHJAupZYMIsr8Nw9bBXIyv+JMi
+ ARLm7keXUnXAssbu+AXucTqGgJ+rIFmK07oP/523bfjANWirA/Bm7yDPq5G4+tUkUVcFWSdiE
+ 2zpP6+S6Zes0SApia4XOFNNnW09JyHNR+K/wEoLBw0DdziBzlJ9BHHMCaAxwCGahCOZ2h7y4u
+ 12+fzzl+8OYgpAezAJcRmUn7K2zf8eYeGd2LLIZ2asV1SxCS6BUPNPrmESC2vYRBpHZ62Dn0A
+ fGE7dvhBAPIMX1olPGUQf8P7b16rKG2WUNkevGxlP61jadbx9RbcmWFov2xV4UkoYZw3uQ+ut
+ Kxpgks3hChqyUXidQGKV/X0UEHg6k3tAOkBHLfWltObYrxs9cZNPjK/NEDpY8Nv75I6tTQYG9
+ XfiWWPB/ZVBMCpwWbB+Z7WK6zwTe+HHcgDlVeA75X7x/l1MGqiXa4lVfXZD7AqVX/IcMzWGya
+ Anil5+MXdifTjQZmVlB/OEagv571df5B1wVMZZfS0O6lG360YPrbK1OTXlFl7X5WRJV84+VGs
+ wrEy5jNc2swS0j/3x+pOGfDGYBkSxNgLI9Y+zVYKMrAuc4A5SjvBu3dU+BL4BKsS+hHcMmP+T
+ hBYO5pjf54ycvLCeSG2Rxmm+PMv65FqAstPSiZrN49qNl0lhm42NVwp+FlWXU5vVQQsn2qqIC
+ iAj470JWJWEEL8R8MY41e0VLZxn4mHXVyoMKlPRgQQT6p/hZCevoFbRDS0xv+9nhCdM1K7Nqm
+ +suwfs14lLAA/sMkZq4CqqzokOb8HkdsDqxMfKppbof58=
 
-On Wed, 2024-06-19 at 14:49 +0800, Kim Seer Paller wrote:
-> LTC2664 4 channel, 12-/16-Bit Voltage Output SoftSpan DAC
-> LTC2672 5 channel, 12-/16-Bit Current Output Softspan DAC
->=20
-> Co-developed-by: Michael Hennerich <michael.hennerich@analog.com>
-> Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
-> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
-> ---
+> As the possible failure of the dma_set_max_seg_size(), we should better
+> check the return value of the dma_set_max_seg_size().
 
-Just minor nits... Anyways:
+Please avoid the repetition of a function name in such a change description.
+Can it be improved with a corresponding imperative wording?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.10-rc5#n94
 
-Reviewed-by: Nuno Sa <nuno.sa@analog.com>
-
-> =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
-> =C2=A0drivers/iio/dac/Kconfig=C2=A0=C2=A0 |=C2=A0 11 +
-> =C2=A0drivers/iio/dac/Makefile=C2=A0 |=C2=A0=C2=A0 1 +
-> =C2=A0drivers/iio/dac/ltc2664.c | 755 +++++++++++++++++++++++++++++++++++=
-+++
-> =C2=A04 files changed, 768 insertions(+)
-> =C2=A0create mode 100644 drivers/iio/dac/ltc2664.c
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index f4a5b5bc8ccc..7a02d9a196fb 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -13082,6 +13082,7 @@ S:	Supported
-> =C2=A0W:	https://ez.analog.com/linux-software-drivers
-> =C2=A0F:	Documentation/devicetree/bindings/iio/dac/adi,ltc2664.yaml
-> =C2=A0F:	Documentation/devicetree/bindings/iio/dac/adi,ltc2672.yaml
-> +F:	drivers/iio/dac/ltc2664.c
-> =C2=A0
-> =C2=A0LTC2688 IIO DAC DRIVER
-> =C2=A0M:	Nuno S=C3=A1 <nuno.sa@analog.com>
-> diff --git a/drivers/iio/dac/Kconfig b/drivers/iio/dac/Kconfig
-> index fb48dddbcc20..3a7691db3998 100644
-> --- a/drivers/iio/dac/Kconfig
-> +++ b/drivers/iio/dac/Kconfig
-> @@ -371,6 +371,17 @@ config LTC2632
-> =C2=A0	=C2=A0 To compile this driver as a module, choose M here: the
-> =C2=A0	=C2=A0 module will be called ltc2632.
-> =C2=A0
-> +config LTC2664
-> +	tristate "Analog Devices LTC2664 and LTC2672 DAC SPI driver"
-> +	depends on SPI
-> +	select REGMAP
-> +	help
-> +	=C2=A0 Say yes here to build support for Analog Devices
-> +	=C2=A0 LTC2664 and LTC2672 converters (DAC).
-> +
-> +	=C2=A0 To compile this driver as a module, choose M here: the
-> +	=C2=A0 module will be called ltc2664.
-> +
-> =C2=A0config M62332
-> =C2=A0	tristate "Mitsubishi M62332 DAC driver"
-> =C2=A0	depends on I2C
-> diff --git a/drivers/iio/dac/Makefile b/drivers/iio/dac/Makefile
-> index 8432a81a19dc..2cf148f16306 100644
-> --- a/drivers/iio/dac/Makefile
-> +++ b/drivers/iio/dac/Makefile
-> @@ -37,6 +37,7 @@ obj-$(CONFIG_DS4424) +=3D ds4424.o
-> =C2=A0obj-$(CONFIG_LPC18XX_DAC) +=3D lpc18xx_dac.o
-> =C2=A0obj-$(CONFIG_LTC1660) +=3D ltc1660.o
-> =C2=A0obj-$(CONFIG_LTC2632) +=3D ltc2632.o
-> +obj-$(CONFIG_LTC2664) +=3D ltc2664.o
-> =C2=A0obj-$(CONFIG_LTC2688) +=3D ltc2688.o
-> =C2=A0obj-$(CONFIG_M62332) +=3D m62332.o
-> =C2=A0obj-$(CONFIG_MAX517) +=3D max517.o
-> diff --git a/drivers/iio/dac/ltc2664.c b/drivers/iio/dac/ltc2664.c
-> new file mode 100644
-> index 000000000000..9b73b9c6a7a7
-> --- /dev/null
-> +++ b/drivers/iio/dac/ltc2664.c
-> @@ -0,0 +1,755 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * LTC2664 4 channel, 12-/16-Bit Voltage Output SoftSpan DAC driver
-> + * LTC2672 5 channel, 12-/16-Bit Current Output Softspan DAC driver
-> + *
-> + * Copyright 2024 Analog Devices Inc.
-> + */
-> +
->=20
-
-...
-
-> +
-> +static int ltc2664_dac_code_read(struct ltc2664_state *st, u32 chan, u32
-> input,
-> +				 u32 *code)
-> +{
-> +	guard(mutex)(&st->lock);
-> +	*code =3D st->channels[chan].raw[input];
-> +
-> +	return 0;
-
-no need for an error code...
-
-...
-
->=20
-> +static int ltc2664_probe(struct spi_device *spi)
-> +{
-> +	static const char * const regulators[] =3D { "vcc", "iovcc", "v-neg" };
-> +	const struct ltc2664_chip_info *chip_info;
-> +	struct device *dev =3D &spi->dev;
-> +	struct iio_dev *indio_dev;
-> +	struct ltc2664_state *st;
-> +	int ret;
-> +
-> +	indio_dev =3D devm_iio_device_alloc(dev, sizeof(*st));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	st =3D iio_priv(indio_dev);
-> +	st->spi =3D spi;
-> +
-> +	chip_info =3D spi_get_device_match_data(spi);
-> +	if (!chip_info)
-> +		return -ENODEV;
-> +
-> +	st->chip_info =3D chip_info;
-> +
-> +	mutex_init(&st->lock);
-> +
-> +	st->regmap =3D devm_regmap_init_spi(spi, &ltc2664_regmap_config);
-> +	if (IS_ERR(st->regmap))
-> +		return dev_err_probe(dev, PTR_ERR(st->regmap),
-> +				=C2=A0=C2=A0=C2=A0=C2=A0 "Failed to init regmap");
-> +
-> +	ret =3D devm_regulator_bulk_get_enable(dev, ARRAY_SIZE(regulators),
-> +					=C2=A0=C2=A0=C2=A0=C2=A0 regulators);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to enable
-> regulators\n");
-> +
-> +	ret =3D devm_regulator_get_enable_read_voltage(dev, "ref");
-> +	if (ret < 0)
-> +		return dev_err_probe(dev, ret, "Failed to get vref
-> voltage\n");
-> +	else if (ret =3D=3D -ENODEV)
-> +		st->vref_mv =3D chip_info->internal_vref_mv;
-> +	else
-> +		st->vref_mv =3D ret / 1000;
-
-This could be:
-if (ret < 0 && ret !=3D -ENODEV)
-	return ret;
-
-st->vref_mv =3D ret > 0 ? ret / 1000 :  chip_info->internal_vref_mv;
-
-- Nuno S=C3=A1
-
-
+Regards,
+Markus
 
