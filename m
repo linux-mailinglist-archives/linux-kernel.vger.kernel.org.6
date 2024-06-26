@@ -1,64 +1,62 @@
-Return-Path: <linux-kernel+bounces-230829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96DC291826C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:30:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9498091827A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:32:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9AB01C22256
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:30:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB7131C23CD8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:32:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D6C18133E;
-	Wed, 26 Jun 2024 13:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F662185E65;
+	Wed, 26 Jun 2024 13:31:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="exLIIBhL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="AKFlY8A8"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0988825;
-	Wed, 26 Jun 2024 13:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0CA185E74
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 13:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719408644; cv=none; b=e4FZsKEyb/wlToAtVqfyHXtScLAbpBdePa+Odrn+E6SAXu/P8aLRYRfq0O9g2sHy1WNEjZ6z/OgaB4cSA76ysBTZ1ysI+5rZmPFH/6TZBIFaFCnZzxcR2+ycWLzLgOlZK622/S2eSBVRMaD1toSCG1InJ8BXZvrSPcGfTI1er1A=
+	t=1719408698; cv=none; b=jWyjuKnMpZ+1HY+vEekc9K1t17w+qHaFsqBSCtICk/Gru47egxtGnhllWCRWz6hji/TIYGVQEG3OLF3Z0Eanb19Z8Vcqwq/xWguh6UhB222P0xTrBN48/lqMcKNslXxpKo6XMelWyREigvZK1enV5i9kQSAcYZANkCNe1PipVOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719408644; c=relaxed/simple;
-	bh=0fVaUR0kdYT/imczx4lGPFmuFv72qFD2+TqVqLWotK0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BAMIobseraT//k7RvQ/bHM3ceFJMMULWLYGSp3nTO+ACCULqZVLVmfZktarUw+pdztfigi6LJbaUUXDBsUa9E41sy16cRr4++Jj1vR8wb5pP2AWfu2vupzKAA5fGoHa1FHgwlzIktUI6lLkzWbaPNX/p2u08BhrlfaGbMb1UkLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=exLIIBhL; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719408642; x=1750944642;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=0fVaUR0kdYT/imczx4lGPFmuFv72qFD2+TqVqLWotK0=;
-  b=exLIIBhLyz1LvWrp547P7EmTMCahPQ+Sk4F6/A3O+cXBMPJEOO7zEKvc
-   IB9j6a7kL3jjankx+IlGhFFuX/utAIswiLf6X3GyCGKEFD62mCL1bIbcT
-   oveaqXtDTJqux6ASULQe2zrCLI157c9Y4W3Y22PjhU9+GQsNW7+VVRqdD
-   39O9luOQQFVdH0HYsjgN2eevoeeBD11+l+GzOijzC6QXzXDzHoW+1vqO0
-   DHne0BbWe1JnZ8fIaLHl/E3gMEcFSgNT6fjhAC1BMaxU9kmRUKSPT8Dlr
-   3aMrUk1lAtCFDw0abXnFhPf0AUZl4cVoBfA6ZLlDu/mH1bLRkGNchQ/AW
-   A==;
-X-CSE-ConnectionGUID: cmkeoO1CQxOhrYZUGC7w3g==
-X-CSE-MsgGUID: BSVdKVR3QgqPy19c5KGqhA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="20362020"
-X-IronPort-AV: E=Sophos;i="6.08,267,1712646000"; 
-   d="scan'208";a="20362020"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 06:30:41 -0700
-X-CSE-ConnectionGUID: 5ofn5FYPQSaJ7UGWYkm2Qg==
-X-CSE-MsgGUID: PB9cky4oTYyMwKazWTvtIg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,267,1712646000"; 
-   d="scan'208";a="48448185"
-Received: from ncintean-mobl1.ger.corp.intel.com (HELO [10.245.246.76]) ([10.245.246.76])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 06:30:38 -0700
-Message-ID: <437a6141-33e0-4075-be22-b2b364787b6a@linux.intel.com>
-Date: Wed, 26 Jun 2024 15:30:35 +0200
+	s=arc-20240116; t=1719408698; c=relaxed/simple;
+	bh=laiCWkqIzqDn9RQumgzyZB0Vh2hyYS+nQ9Hp1LnFzJ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=eb4ALSN5prTqNJtuOIZ7h4ogv8S2h0XvE5sr30s07gwwc75FwYZr2MVZT7JaDQV6PR6arXjnioWD4WbAoVRBEAeO0VodttzVw1MUM7d+i8PiSzmNr7nFH5wfKrKqDKJcRUJmBgvwZujnuAp3kBbRmYkfIWloPf1DF+nz4WJ6XxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=AKFlY8A8; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45QDUmh6003322;
+	Wed, 26 Jun 2024 08:30:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1719408648;
+	bh=OnjaqgD5fCB3Kqii6KOFHTmJbJLH6HLUW/2JLcRptY0=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=AKFlY8A8c7XPSrDIRWR594GDzZje8alOoOjgch3evoabm0GiKn7nxqrbzl58Nb0TG
+	 fgUXxiMc1os3e7k9/1Dofn11SIFcKCbYyGhmPlOR3PDc6ytfGEB7jhB3HoSpyeLpyD
+	 5jGKH7wGTWx5yrqgJitIr3vOpaNN3waC7KO5aRBY=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45QDUmWN117989
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 26 Jun 2024 08:30:48 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 26
+ Jun 2024 08:30:47 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 26 Jun 2024 08:30:47 -0500
+Received: from [172.24.227.31] (uda0496377.dhcp.ti.com [172.24.227.31])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45QDUeX0009465;
+	Wed, 26 Jun 2024 08:30:40 -0500
+Message-ID: <e62750de-488c-4c5a-b1aa-e431605515c6@ti.com>
+Date: Wed, 26 Jun 2024 19:00:39 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,99 +64,138 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ALSA: hda: intel-dsp-config: Fix Azulle Access 4 quirk
- detection
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
- <amadeuszx.slawinski@linux.intel.com>, Allen Ballway <ballway@chromium.org>,
- LKML <linux-kernel@vger.kernel.org>, Brady Norander
- <bradynorander@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>,
- Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
- Mark Brown <broonie@kernel.org>, linux-sound@vger.kernel.org,
- Mark Hasemeyer <markhas@chromium.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Cezary Rojewski <cezary.rojewski@intel.com>
-References: <20240430212838.1.I77b0636d5df17c275042fd66cfa028de8ad43532@changeid>
- <83e218f9-29f5-4f35-bd0c-b298e3bb9e8c@linux.intel.com>
- <CAEs41JC-vJaMHj6fzmNO=-bu5oURRA-u565sN2=yzBeVtKb=4g@mail.gmail.com>
- <b2375610-4044-49e6-86e9-5c172abb2ffa@linux.intel.com>
- <CAEs41JAPPr3xRR42H6vKic5rVrtV-on4HyT5wNCXxbJtwijnCA@mail.gmail.com>
- <3d44c749-6c81-4c11-9409-b01815fe1a91@linux.intel.com>
- <3d9ef693-75e9-4be0-b1c0-488d3e2d41c5@linux.intel.com>
- <01904abc-5e7c-4006-96d9-83fc5de8bb21@roeck-us.net>
- <fb9ce0ce-dddb-4f88-9ac6-0f6cdd6ccb28@linux.intel.com>
- <7bbf1688-4dfd-4a6f-90f2-ee235027c701@roeck-us.net>
+Subject: Re: [PATCH v4 03/11] drm/bridge: cdns-dsi: Fix Phy _init() and
+ _exit()
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil
+ Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman
+	<jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>, Jyri Sarha <jyri.sarha@iki.fi>,
+        Thomas Zimmermann
+	<tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Daniel Vetter
+	<daniel@ffwll.ch>
+CC: DRI Development List <dri-devel@lists.freedesktop.org>,
+        Linux Kernel List
+	<linux-kernel@vger.kernel.org>,
+        Dominik Haller <d.haller@phytec.de>, Sam
+ Ravnborg <sam@ravnborg.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Kieran
+ Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Nishanth Menon
+	<nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Praneeth Bajjuri
+	<praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
+        Devarsh Thakkar
+	<devarsht@ti.com>,
+        Jayesh Choudhary <j-choudhary@ti.com>, Jai Luthra
+	<j-luthra@ti.com>
+References: <20240622110929.3115714-1-a-bhatia1@ti.com>
+ <20240622110929.3115714-4-a-bhatia1@ti.com>
+ <8fcbc541-d7a3-4d0d-ab0f-74d7f1cd63b5@ideasonboard.com>
 Content-Language: en-US
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <7bbf1688-4dfd-4a6f-90f2-ee235027c701@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8
+From: Aradhya Bhatia <a-bhatia1@ti.com>
+In-Reply-To: <8fcbc541-d7a3-4d0d-ab0f-74d7f1cd63b5@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
+Hi Tomi,
 
+Thanks for reviewing the patches!
 
-On 6/26/24 15:09, Guenter Roeck wrote:
-> On 6/26/24 00:04, Pierre-Louis Bossart wrote:
->>
->>
->> On 6/25/24 23:37, Guenter Roeck wrote:
->>> On Fri, Jun 21, 2024 at 10:35:31AM +0200, Pierre-Louis Bossart wrote:
->>>>
->>>>
->>>> On 6/21/24 08:15, Amadeusz Sławiński wrote:
->>>>> On 6/20/2024 9:27 PM, Allen Ballway wrote:
->>>>>> I filed a bug and after sharing the requested information it looks
->>>>>> like this device won't work on SOF without vendor support. Given
->>>>>> this,
->>>>>> would the original patch returning this device to using HDAudio be
->>>>>> reasonable, or is there an preferred alternative to force this device
->>>>>> into using HDAudio?
->>>>>>
->>>>>
->>>>> And can you share link to the issue on mailing list, so someone
->>>>> reading
->>>>> this thread in the future doesn't have to guess where it is? ;)
->>>>
->>>> https://github.com/thesofproject/linux/issues/4981
->>>>
->>>> I don't know what to do with this configuration.
->>>> We added a quirk to force SOF to be used for ES8336 devices. It worked
->>>> for some, but not for others. Now we have quite a few ES8336-based
->>>> platforms that are broken with zero support from the vendor, with
->>>> obscure I2C/GPIO/clk issues.
->>>> Are we going to tag each one of them and say 'not supported, use
->>>> HDMI only'?
->>>> That's pushing a bit the notion of quirk...It would generate an endless
->>>> stream of patches. The alternative is to do nothing and ask that those
->>>> platforms revert to HDMI audio only with a kernel parameter. That
->>>> latter
->>>> alternative has my vote.
->>>>
->>>
->>> Given that this apparently does not work for many ES8336 devices,
->>> would it make more sense to disable SOF support for those by default
->>> and _enable_ them with a kernel parameter ?
->>
->> Some configurations work, so we would break them.
->>
+On 26/06/24 15:55, Tomi Valkeinen wrote:
+> Hi,
 > 
-> Yes, but for others it is a regression, so arguably the change to
-> force-enable
-> SOF caused a regression and should either be reverted or fixed such that
-> all
-> previously working configurations still work (even more so since fixing
-> the problem one-by-one as affected systems are found is being rejected).
+> On 22/06/2024 14:09, Aradhya Bhatia wrote:
+>> Initialize the Phy during the cdns-dsi _resume(), and de-initialize it
+>> during the _suspend().
+>>
+>> Also power-off the Phy from bridge_disable.
+>>
+>> Fixes: fced5a364dee ("drm/bridge: cdns: Convert to phy framework")
+>> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+>> ---
+>>   drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c | 10 ++++++++--
+>>   1 file changed, 8 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
+>> b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
+>> index 5159c3f0853e..d89c32bae2b9 100644
+>> --- a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
+>> +++ b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
+>> @@ -672,6 +672,10 @@ static void cdns_dsi_bridge_disable(struct
+>> drm_bridge *bridge)
+>>       if (dsi->platform_ops && dsi->platform_ops->disable)
+>>           dsi->platform_ops->disable(dsi);
+>>   +    phy_power_off(dsi->dphy);
+>> +    dsi->link_initialized = false;
+>> +    dsi->phy_initialized = false;
+>> +
+>>       pm_runtime_put(dsi->base.dev);
+>>   }
+>>   @@ -698,7 +702,6 @@ static void cdns_dsi_hs_init(struct cdns_dsi *dsi)
+>>              DPHY_CMN_PDN | DPHY_PLL_PDN,
+>>              dsi->regs + MCTL_DPHY_CFG0);
+>>   -    phy_init(dsi->dphy);
+>>       phy_set_mode(dsi->dphy, PHY_MODE_MIPI_DPHY);
+>>       phy_configure(dsi->dphy, &output->phy_opts);
+>>       phy_power_on(dsi->dphy);
+>> @@ -1120,6 +1123,8 @@ static int __maybe_unused cdns_dsi_resume(struct
+>> device *dev)
+>>       clk_prepare_enable(dsi->dsi_p_clk);
+>>       clk_prepare_enable(dsi->dsi_sys_clk);
+>>   +    phy_init(dsi->dphy);
+>> +
+>>       return 0;
+>>   }
+>>   @@ -1127,10 +1132,11 @@ static int __maybe_unused
+>> cdns_dsi_suspend(struct device *dev)
+>>   {
+>>       struct cdns_dsi *dsi = dev_get_drvdata(dev);
+>>   +    phy_exit(dsi->dphy);
+>> +
+>>       clk_disable_unprepare(dsi->dsi_sys_clk);
+>>       clk_disable_unprepare(dsi->dsi_p_clk);
+>>       reset_control_assert(dsi->dsi_p_rst);
+>> -    dsi->link_initialized = false;
+>>       return 0;
+>>   }
+>>   
+> 
+> So with this patch, phy_init/exit will be called in the resume/suspend
+> functions. That looks fine.
+> 
+> But the phy_power_on/phy_power_off looks odd to me. Here you add
+> phy_power_off() to cdns_dsi_bridge_disable(), which sounds fine. But
+> phy_power_on() is called in cdns_dsi_hs_init(), and that is called in
+> cdns_dsi_bridge_enable() (which sounds fine), but also in
+> cdns_dsi_bridge_pre_enable().
+> 
+> So doesn't that mean cdns_dsi_hs_init() call in cdns_dsi_bridge_enable()
+> is extra, as it effectively does nothing (it exists right away if
+> dsi->phy_initialized == true)?
 
-If you disable SOF, all you get with snd-hda-intel is HDMI outputs.
-There is no alternative if you want local speakers, mic and jack
-support, or extensions based on I2S.
+That's right. When cdns_dsi_hs_init() is called from
+cdns_dsi_bridge_enable(), it is simply expected to return since
+phy_initialized is true.
 
-Some of my Intel colleagues have an ES8336-based platform that works for
-them, they successfully modified the sof_es8336 machine driver to add
-HDMI support, so why would we disable a working config?
-
-I would really err on the side of "if you contributed a working config,
-or helped enable a working config, it will be maintained in the kernel".
+I am not aware about the exact reasoning behind this, but this gets
+addressed when I convert the _bridge_enable() to _bridge_pre_enable()
+and drop the older _bridge_pre_enable() entirely.
 
 
+Regards
+Aradhya
 
