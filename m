@@ -1,128 +1,287 @@
-Return-Path: <linux-kernel+bounces-229914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28EE09175F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 03:58:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5BFA9175FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 04:02:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BEB01F221B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 01:58:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B06B71C208E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 02:02:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E193114F62;
-	Wed, 26 Jun 2024 01:58:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF03D1C68C;
+	Wed, 26 Jun 2024 02:02:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Rs2g/cNn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kpcRmUrS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99A745BFC
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 01:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F075A20322;
+	Wed, 26 Jun 2024 02:02:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719367131; cv=none; b=nODXUntL9r+39P+idT1wXY0kOwLsHZhgnvpmXOGPNOr8F3D/SM39saapPvuEff5CifCMoHCTvpPvOoBDLEO/c2wOo7nKLqLIsMMNw4bQVoWFtiKsUxNjhxMCiLW2hKPxGNb4lMnqB+fAIyTC0Yd2jZGVwmtZxWNctJ/hWQVPTdc=
+	t=1719367339; cv=none; b=qgbOIAYIVe9wq81/Mls4/gD1QQghjjlyf+zsd5O6I0Lcw5qsMwJ87jwr7RXJS89aa2uiC2DVLFN5vkkQHcnepsM0g3Tr/JXJLZ4991v0rDUf2CauYBUkTt8eOv3AeoqWPlQ+nbswNzBktYyYApvf08WXX1hf/Ul07nTk0zrEgLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719367131; c=relaxed/simple;
-	bh=GnG1sbGbs1jtmTvlrH54yNuEYDYvf8DpjOgAllIIWYk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=owbeHEoyygiwwGFK4SUYTY2/LHQjqvnYgjmhdw8ylWD0xzbo8i/Lkxz9p6rjcVJpZYG3KrjQSt8jaY3ODExU+TzMQoIFAX4cSj3W+u32w4x+Wl+QD8drHDl2qrD7nFgd7pq0CQgQYiK4vA7sVGJyeQPYR8HmcSdkm2FXtXeUbxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Rs2g/cNn; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719367128;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GnG1sbGbs1jtmTvlrH54yNuEYDYvf8DpjOgAllIIWYk=;
-	b=Rs2g/cNnnjfNIfJ2XJZsYch+YbHRgYCV6KO7SjYjyz88mcpaXaULK+c9fNDcz5oJogBELb
-	Wmy6sZfA1gAlP9emjNWpKJ7O7BMtscGjyqzfMjqHMLYVDHGn2jVv8o97HW1muB0E1z7Mhw
-	/t8yFJ4L5ikwn0zs5K/PU/rIBz9fqHc=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-507-vIKyfcDdNhOMY83muvBJLQ-1; Tue, 25 Jun 2024 21:58:47 -0400
-X-MC-Unique: vIKyfcDdNhOMY83muvBJLQ-1
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2c6f1c0365eso7323019a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 18:58:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719367126; x=1719971926;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GnG1sbGbs1jtmTvlrH54yNuEYDYvf8DpjOgAllIIWYk=;
-        b=n+shQDV5/qTvhaNJUro6ANEuyFMMsj5yMwQgnBfZny5WFOXkxfpkELLP0ICvZd3HK+
-         rYIS9w3GkA404w4tLnj70lgy/vacQsIRMnNueZ2/YbzA0y9bGznabIPnAF3AHzCnZUk6
-         3ncVZApEMjSZ/iOlSXiz7Kb7vEFeHh5fZr52nsvI65GFqdpJs+hC5ztsVZ38/ij8A5FT
-         bhrIMkjE/YSycHKgsNJ44GQwno9EcUJqp+PuyhLKKCP1Fy31aLneJpOC41SD88EujEAq
-         p7vv/TKpd4QimjrRnFQLuufpvE80HR2+Ut8s9btfaqrmcKyL+TF5cWFSHPsM0QF4u7fw
-         ykhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDCWMRM7pWEtQdsrliemFMgGbb9nZJqosD2gEhwAYo0RIcf5rGg9eklslfn3Z1BxH8wxHgUY8VHun49AK33xDLfaAadm/9CAjZ7VXp
-X-Gm-Message-State: AOJu0YwusVUbxqSkSPakOannR4fQFGl088qyRoLNjgYrR0SfNGsEIgxz
-	FG4RciAhCoRmKaO3/CT7ydVXJCgCN601uYFEUY1SaIpt/DOR1QviWtPnwh1QmQUfwQmo9q/TPn3
-	MCVNkvxMFwPb4m2n7Q7AG2MbzKdT509X+V1Nl3rf7Lb+RbWvu2xp1s72NJvKv09ASwB/HGaJG7u
-	3MBfrJYkbK4o4nrLL/tCcj8fMjJECUsvoJSNXE
-X-Received: by 2002:a17:90a:d98e:b0:2c4:b8e1:89b0 with SMTP id 98e67ed59e1d1-2c850573e58mr8416519a91.30.1719367126330;
-        Tue, 25 Jun 2024 18:58:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE5cItPu7kw+lpFHgT9mFcrgcyIi3eaohdOBIsIuRQUoMjB36Oowm0mQq7gn7+W9fkMRWr+6IMsheb7X2K6btw=
-X-Received: by 2002:a17:90a:d98e:b0:2c4:b8e1:89b0 with SMTP id
- 98e67ed59e1d1-2c850573e58mr8416498a91.30.1719367125794; Tue, 25 Jun 2024
- 18:58:45 -0700 (PDT)
+	s=arc-20240116; t=1719367339; c=relaxed/simple;
+	bh=Q/gXBFW+DSTfTpYsHN1lhrLN83CrHjkMiZzYrMFiL/E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vge46elzVN5ipluMfNuoRD4cM1Wy5NIf7YQicXMynA+41gGS9HOfi+wRAb/2xSw3qDnDzEEAq2gc9P9REaYXsGYhKEWGCIrJDsS85d8Qx1OzOyRZkx22nQryuOj3McvISo7vmUD38OniM78SGee2pRAknuSbNVdB4tzI8siCcsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kpcRmUrS; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719367338; x=1750903338;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Q/gXBFW+DSTfTpYsHN1lhrLN83CrHjkMiZzYrMFiL/E=;
+  b=kpcRmUrSTtUZKtLEoR4pVpkixegBndbMqVpEicxCpdKpIjJC/1Ez1x/4
+   aFr6eCG0l7LpLp+M2zKmEVQ9GhShHGhYcAc2bS/j6QOoGck+AKZy5HLT1
+   OJbJgtPUfpXUeQObmICjCN216HSnFPl0AURxUMu4w9UxCm0wShKzmB1Xw
+   nksjCKkKN+2sW8up8vk9Q0oOfa3GD4a2GX/iOxo+0u6XFjjrBwXbPj7iy
+   Hit3/4bf9Jc49o2zzdgbtnqIHhRqnQL9kRoKDuo9FHVZ5c2PgRFU1LT7T
+   5w2NNGDeWVFcA4RAlFbuxno3TURlumUcQfugS6VrhLViS1e1AFVcQkh6Z
+   w==;
+X-CSE-ConnectionGUID: xFZt+xutQL2Aq5ejoruBUA==
+X-CSE-MsgGUID: /Y6kfKAqR0WpWtxbr+yzaw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="16379685"
+X-IronPort-AV: E=Sophos;i="6.08,265,1712646000"; 
+   d="scan'208";a="16379685"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 19:02:18 -0700
+X-CSE-ConnectionGUID: x/TpQN/dRwy9CEmSl+mEjg==
+X-CSE-MsgGUID: GMq7NKfxTO2cSK6K4CeD5w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,265,1712646000"; 
+   d="scan'208";a="43707028"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 25 Jun 2024 19:02:13 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sMHz8-000EtO-2b;
+	Wed, 26 Jun 2024 02:02:10 +0000
+Date: Wed, 26 Jun 2024 10:01:11 +0800
+From: kernel test robot <lkp@intel.com>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>, tglx@linutronix.de,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	tsbogend@alpha.franken.de, daniel.lezcano@linaro.org,
+	paulburton@kernel.org, peterz@infradead.org, mail@birger-koblitz.de,
+	bert@biot.com, john@phrozen.org, sander@svanheule.net
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
+	kabel@kernel.org, ericwouds@gmail.com,
+	Chris Packham <chris.packham@alliedtelesis.co.nz>,
+	Markus Stockhausen <markus.stockhausen@gmx.de>
+Subject: Re: [PATCH 4/6] clocksource: realtek: Add timer driver for rtl-otto
+ platforms
+Message-ID: <202406260925.EyDSt3VD-lkp@intel.com>
+References: <20240621042737.674128-5-chris.packham@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240624024523.34272-1-jasowang@redhat.com> <20240624024523.34272-4-jasowang@redhat.com>
- <20240624060057-mutt-send-email-mst@kernel.org> <CACGkMEsysbded3xvU=qq6L_SmR0jmfvXdbthpZ0ERJoQhveZ3w@mail.gmail.com>
- <20240625031455-mutt-send-email-mst@kernel.org> <CACGkMEt4qnbiotLgBx+jHBSsd-k0UAVSxjHovfXk6iGd6uSCPg@mail.gmail.com>
- <20240625035638-mutt-send-email-mst@kernel.org> <CACGkMEtY1waRRWOKvmq36Wxio3tUGbTooTe-QqCMBFVDjOW-8w@mail.gmail.com>
- <20240625043206-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20240625043206-mutt-send-email-mst@kernel.org>
-From: Jason Wang <jasowang@redhat.com>
-Date: Wed, 26 Jun 2024 09:58:32 +0800
-Message-ID: <CACGkMEvO+hAd-JeM-LEAavZqogEhSBPQRhSQK6hPMaVyEHH7jQ@mail.gmail.com>
-Subject: Re: [PATCH V2 3/3] virtio-net: synchronize operstate with admin state
- on up/down
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, venkat.x.venkatsubra@oracle.com, 
-	gia-khanh.nguyen@oracle.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240621042737.674128-5-chris.packham@alliedtelesis.co.nz>
 
-On Tue, Jun 25, 2024 at 4:32=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com>=
- wrote:
->
-> On Tue, Jun 25, 2024 at 04:11:05PM +0800, Jason Wang wrote:
-> > On Tue, Jun 25, 2024 at 3:57=E2=80=AFPM Michael S. Tsirkin <mst@redhat.=
-com> wrote:
-> > >
-> > > On Tue, Jun 25, 2024 at 03:46:44PM +0800, Jason Wang wrote:
-> > > > Workqueue is used to serialize those so we won't lose any change.
-> > >
-> > > So we don't need to re-read then?
-> > >
-> >
-> > We might have to re-read but I don't get why it is a problem for us.
-> >
-> > Thanks
->
-> I don't think each ethtool command should force a full config read,
-> is what I mean. Only do it if really needed.
+Hi Chris,
 
-We don't, as we will check config_pending there.
+kernel test robot noticed the following build warnings:
 
-Thanks
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on tip/timers/core tip/irq/core tip/smp/core linus/master v6.10-rc5 next-20240625]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
->
-> --
-> MST
->
+url:    https://github.com/intel-lab-lkp/linux/commits/Chris-Packham/dt-bindings-mips-realtek-Add-rtl930x-soc-compatible/20240625-160622
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20240621042737.674128-5-chris.packham%40alliedtelesis.co.nz
+patch subject: [PATCH 4/6] clocksource: realtek: Add timer driver for rtl-otto platforms
+config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20240626/202406260925.EyDSt3VD-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240626/202406260925.EyDSt3VD-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406260925.EyDSt3VD-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from include/linux/printk.h:573,
+                    from include/linux/kernel.h:31,
+                    from include/linux/clk.h:13,
+                    from drivers/clocksource/timer-rtl-otto.c:5:
+   drivers/clocksource/timer-rtl-otto.c: In function 'rttm_timer_interrupt':
+>> drivers/clocksource/timer-rtl-otto.c:97:38: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+      97 |                  smp_processor_id(), (u32)base)
+         |                                      ^
+   include/linux/dynamic_debug.h:224:29: note: in definition of macro '__dynamic_func_call_cls'
+     224 |                 func(&id, ##__VA_ARGS__);                       \
+         |                             ^~~~~~~~~~~
+   include/linux/dynamic_debug.h:250:9: note: in expansion of macro '_dynamic_func_call_cls'
+     250 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
+         |         ^~~~~~~~~~~~~~~~~~~~~~
+   include/linux/dynamic_debug.h:269:9: note: in expansion of macro '_dynamic_func_call'
+     269 |         _dynamic_func_call(fmt, __dynamic_pr_debug,             \
+         |         ^~~~~~~~~~~~~~~~~~
+   include/linux/printk.h:588:9: note: in expansion of macro 'dynamic_pr_debug'
+     588 |         dynamic_pr_debug(fmt, ##__VA_ARGS__)
+         |         ^~~~~~~~~~~~~~~~
+   drivers/clocksource/timer-rtl-otto.c:96:9: note: in expansion of macro 'pr_debug'
+      96 |         pr_debug("------------- %d %08x\n",     \
+         |         ^~~~~~~~
+   drivers/clocksource/timer-rtl-otto.c:105:9: note: in expansion of macro 'RTTM_DEBUG'
+     105 |         RTTM_DEBUG(to->of_base.base);
+         |         ^~~~~~~~~~
+   drivers/clocksource/timer-rtl-otto.c: In function 'rttm_next_event':
+>> drivers/clocksource/timer-rtl-otto.c:97:38: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+      97 |                  smp_processor_id(), (u32)base)
+         |                                      ^
+   include/linux/dynamic_debug.h:224:29: note: in definition of macro '__dynamic_func_call_cls'
+     224 |                 func(&id, ##__VA_ARGS__);                       \
+         |                             ^~~~~~~~~~~
+   include/linux/dynamic_debug.h:250:9: note: in expansion of macro '_dynamic_func_call_cls'
+     250 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
+         |         ^~~~~~~~~~~~~~~~~~~~~~
+   include/linux/dynamic_debug.h:269:9: note: in expansion of macro '_dynamic_func_call'
+     269 |         _dynamic_func_call(fmt, __dynamic_pr_debug,             \
+         |         ^~~~~~~~~~~~~~~~~~
+   include/linux/printk.h:588:9: note: in expansion of macro 'dynamic_pr_debug'
+     588 |         dynamic_pr_debug(fmt, ##__VA_ARGS__)
+         |         ^~~~~~~~~~~~~~~~
+   drivers/clocksource/timer-rtl-otto.c:96:9: note: in expansion of macro 'pr_debug'
+      96 |         pr_debug("------------- %d %08x\n",     \
+         |         ^~~~~~~~
+   drivers/clocksource/timer-rtl-otto.c:127:9: note: in expansion of macro 'RTTM_DEBUG'
+     127 |         RTTM_DEBUG(to->of_base.base);
+         |         ^~~~~~~~~~
+   drivers/clocksource/timer-rtl-otto.c: In function 'rttm_state_oneshot':
+>> drivers/clocksource/timer-rtl-otto.c:97:38: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+      97 |                  smp_processor_id(), (u32)base)
+         |                                      ^
+   include/linux/dynamic_debug.h:224:29: note: in definition of macro '__dynamic_func_call_cls'
+     224 |                 func(&id, ##__VA_ARGS__);                       \
+         |                             ^~~~~~~~~~~
+   include/linux/dynamic_debug.h:250:9: note: in expansion of macro '_dynamic_func_call_cls'
+     250 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
+         |         ^~~~~~~~~~~~~~~~~~~~~~
+   include/linux/dynamic_debug.h:269:9: note: in expansion of macro '_dynamic_func_call'
+     269 |         _dynamic_func_call(fmt, __dynamic_pr_debug,             \
+         |         ^~~~~~~~~~~~~~~~~~
+   include/linux/printk.h:588:9: note: in expansion of macro 'dynamic_pr_debug'
+     588 |         dynamic_pr_debug(fmt, ##__VA_ARGS__)
+         |         ^~~~~~~~~~~~~~~~
+   drivers/clocksource/timer-rtl-otto.c:96:9: note: in expansion of macro 'pr_debug'
+      96 |         pr_debug("------------- %d %08x\n",     \
+         |         ^~~~~~~~
+   drivers/clocksource/timer-rtl-otto.c:139:9: note: in expansion of macro 'RTTM_DEBUG'
+     139 |         RTTM_DEBUG(to->of_base.base);
+         |         ^~~~~~~~~~
+   drivers/clocksource/timer-rtl-otto.c: In function 'rttm_state_periodic':
+>> drivers/clocksource/timer-rtl-otto.c:97:38: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+      97 |                  smp_processor_id(), (u32)base)
+         |                                      ^
+   include/linux/dynamic_debug.h:224:29: note: in definition of macro '__dynamic_func_call_cls'
+     224 |                 func(&id, ##__VA_ARGS__);                       \
+         |                             ^~~~~~~~~~~
+   include/linux/dynamic_debug.h:250:9: note: in expansion of macro '_dynamic_func_call_cls'
+     250 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
+         |         ^~~~~~~~~~~~~~~~~~~~~~
+   include/linux/dynamic_debug.h:269:9: note: in expansion of macro '_dynamic_func_call'
+     269 |         _dynamic_func_call(fmt, __dynamic_pr_debug,             \
+         |         ^~~~~~~~~~~~~~~~~~
+   include/linux/printk.h:588:9: note: in expansion of macro 'dynamic_pr_debug'
+     588 |         dynamic_pr_debug(fmt, ##__VA_ARGS__)
+         |         ^~~~~~~~~~~~~~~~
+   drivers/clocksource/timer-rtl-otto.c:96:9: note: in expansion of macro 'pr_debug'
+      96 |         pr_debug("------------- %d %08x\n",     \
+         |         ^~~~~~~~
+   drivers/clocksource/timer-rtl-otto.c:151:9: note: in expansion of macro 'RTTM_DEBUG'
+     151 |         RTTM_DEBUG(to->of_base.base);
+         |         ^~~~~~~~~~
+   drivers/clocksource/timer-rtl-otto.c: In function 'rttm_state_shutdown':
+>> drivers/clocksource/timer-rtl-otto.c:97:38: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+      97 |                  smp_processor_id(), (u32)base)
+         |                                      ^
+   include/linux/dynamic_debug.h:224:29: note: in definition of macro '__dynamic_func_call_cls'
+     224 |                 func(&id, ##__VA_ARGS__);                       \
+         |                             ^~~~~~~~~~~
+   include/linux/dynamic_debug.h:250:9: note: in expansion of macro '_dynamic_func_call_cls'
+     250 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
+         |         ^~~~~~~~~~~~~~~~~~~~~~
+   include/linux/dynamic_debug.h:269:9: note: in expansion of macro '_dynamic_func_call'
+     269 |         _dynamic_func_call(fmt, __dynamic_pr_debug,             \
+         |         ^~~~~~~~~~~~~~~~~~
+   include/linux/printk.h:588:9: note: in expansion of macro 'dynamic_pr_debug'
+     588 |         dynamic_pr_debug(fmt, ##__VA_ARGS__)
+         |         ^~~~~~~~~~~~~~~~
+   drivers/clocksource/timer-rtl-otto.c:96:9: note: in expansion of macro 'pr_debug'
+      96 |         pr_debug("------------- %d %08x\n",     \
+         |         ^~~~~~~~
+   drivers/clocksource/timer-rtl-otto.c:163:9: note: in expansion of macro 'RTTM_DEBUG'
+     163 |         RTTM_DEBUG(to->of_base.base);
+         |         ^~~~~~~~~~
+   drivers/clocksource/timer-rtl-otto.c: In function 'rttm_setup_timer':
+>> drivers/clocksource/timer-rtl-otto.c:97:38: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+      97 |                  smp_processor_id(), (u32)base)
+         |                                      ^
+   include/linux/dynamic_debug.h:224:29: note: in definition of macro '__dynamic_func_call_cls'
+     224 |                 func(&id, ##__VA_ARGS__);                       \
+         |                             ^~~~~~~~~~~
+   include/linux/dynamic_debug.h:250:9: note: in expansion of macro '_dynamic_func_call_cls'
+     250 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
+         |         ^~~~~~~~~~~~~~~~~~~~~~
+   include/linux/dynamic_debug.h:269:9: note: in expansion of macro '_dynamic_func_call'
+     269 |         _dynamic_func_call(fmt, __dynamic_pr_debug,             \
+         |         ^~~~~~~~~~~~~~~~~~
+   include/linux/printk.h:588:9: note: in expansion of macro 'dynamic_pr_debug'
+     588 |         dynamic_pr_debug(fmt, ##__VA_ARGS__)
+         |         ^~~~~~~~~~~~~~~~
+   drivers/clocksource/timer-rtl-otto.c:96:9: note: in expansion of macro 'pr_debug'
+      96 |         pr_debug("------------- %d %08x\n",     \
+         |         ^~~~~~~~
+   drivers/clocksource/timer-rtl-otto.c:171:9: note: in expansion of macro 'RTTM_DEBUG'
+     171 |         RTTM_DEBUG(base);
+         |         ^~~~~~~~~~
+   drivers/clocksource/timer-rtl-otto.c: In function 'rttm_cpu_starting':
+>> drivers/clocksource/timer-rtl-otto.c:97:38: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+      97 |                  smp_processor_id(), (u32)base)
+         |                                      ^
+   include/linux/dynamic_debug.h:224:29: note: in definition of macro '__dynamic_func_call_cls'
+     224 |                 func(&id, ##__VA_ARGS__);                       \
+         |                             ^~~~~~~~~~~
+   include/linux/dynamic_debug.h:250:9: note: in expansion of macro '_dynamic_func_call_cls'
+     250 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
+         |         ^~~~~~~~~~~~~~~~~~~~~~
+   include/linux/dynamic_debug.h:269:9: note: in expansion of macro '_dynamic_func_call'
+     269 |         _dynamic_func_call(fmt, __dynamic_pr_debug,             \
+         |         ^~~~~~~~~~~~~~~~~~
+   include/linux/printk.h:588:9: note: in expansion of macro 'dynamic_pr_debug'
+     588 |         dynamic_pr_debug(fmt, ##__VA_ARGS__)
+         |         ^~~~~~~~~~~~~~~~
+   drivers/clocksource/timer-rtl-otto.c:96:9: note: in expansion of macro 'pr_debug'
+      96 |         pr_debug("------------- %d %08x\n",     \
+         |         ^~~~~~~~
+   drivers/clocksource/timer-rtl-otto.c:234:9: note: in expansion of macro 'RTTM_DEBUG'
+     234 |         RTTM_DEBUG(to->of_base.base);
+         |         ^~~~~~~~~~
+
+
+vim +97 drivers/clocksource/timer-rtl-otto.c
+
+    93	
+    94	/* Aggregated control functions for kernel clock framework */
+    95	#define RTTM_DEBUG(base)			\
+    96		pr_debug("------------- %d %08x\n",	\
+  > 97			 smp_processor_id(), (u32)base)
+    98	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
