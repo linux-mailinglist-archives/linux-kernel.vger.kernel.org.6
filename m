@@ -1,217 +1,122 @@
-Return-Path: <linux-kernel+bounces-231386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92B90919755
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:15:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5079A91975D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:17:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47A902827D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:15:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8178C1C209CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:17:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50F6191460;
-	Wed, 26 Jun 2024 19:15:28 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27596191473;
+	Wed, 26 Jun 2024 19:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bdF6c38Q"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4C08BEF
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 19:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91D41862B2
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 19:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719429328; cv=none; b=qmUyGxHHyfXXVlA6xrF1Fd3FUrZ3u0Pq8iye/0ZVO+N6TOMPVpGif9pWeTJMPLpBlgxyTjpKvsva5NkBre+IhRRKfkdVR05wn/wCaYVFSiTfjC5AE5ykU1HYfenli3fMKK+sIo+SuX1igrc3LtNDP5ORMTavwV0GzDdh+vRWpE0=
+	t=1719429442; cv=none; b=SnrSPQ61G7Kin/U4npHnnCx1InU9WbjRtVyeAH7CMYK1dgj8oUe4lM0JRqGelEKBse8vpBZVLCwr4t6ucx4mziifJcTvdX849XFWOx2pj/3nc9xnGysjhWrJwLhHgRn4O604KspdPRIYqDNCg7JvzEcSCQ7uUoCIi96zdV/zK1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719429328; c=relaxed/simple;
-	bh=LSm1xCieSMiIpu0qWWa37+RueD6pwC0mznN1HsrfFl0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Cx0T4jxlk39zOR18P8SGMvNNWRnfPj+LAj1HHXfXniSYZ3lZQ/o0B+V9k0AuwVrIYgULrdIwzl12eol6G7ogFeiBJ0PH3PcPIapHXG2+hi7tsAsSNfeHTqkAHqTOK9gXe5C9joongLMkLzfqrk7uqHC2gLCH+Q8pO3yfwy3oWlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-7f3d5b154f5so71271639f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 12:15:26 -0700 (PDT)
+	s=arc-20240116; t=1719429442; c=relaxed/simple;
+	bh=wZPdg1xi4qRyJlyk7LfqlaJ7fDLSDBw9fw7OGRNwYl8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LEzi+6A0J9EVsbTC3fZwMEcdMUnB/UFizkxTCDP0cVnWzWL3CVxDUpObhDNRRpNOsGQIMl2p5xOSLHLyolaiI67ziLHKhre4AksVRINkQwSFn8UrqCYqbokuHAxJYPEJ59KgTDisqG1y5ylh8hLR4QTWDDOVX8lg9aeT1pzLiQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bdF6c38Q; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52db11b1d31so1900375e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 12:17:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719429438; x=1720034238; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=XI3lZHAHMpMacrGr7sZ7TIX64kTZg51b8AujnGsu14Q=;
+        b=bdF6c38QBUdDjQCXET6Ae6XTz9eVDupe6JNWAxfkoLAy9v6hr0ZSWlAjvaA52Bi987
+         eA86ed5YG9ThpMRAaVIx67Pq1oKjVjFhaYXm18G4A5ipD0oEqlvgW+LwhC4DaXF3SAkB
+         E/pxdVjtDGJUMcRbBBp0xutTR/hgBU9udoeWZxLHkgk/NEIEQ6QxRpjmxyp+68G+KU6M
+         c/u6oTK61jxogveuRB4lhNVEI0WEvWULNBAJIvkjxVfiervIQlzdkWT0UrChocMIzyCd
+         XhgYZMghHlrFJEqLXYRv7tAbkO8DoMAMvjxzcZH68j7kSvIL00R5G/CsX02/pAvsO3ai
+         ZbEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719429326; x=1720034126;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7AYGNY2o7m6l6JhY1sXVIqDWW+rOk3/4SHLTa2tENMw=;
-        b=IDjtgu5Xw1V22FD3+EHL8PvaRK5WYZ1fn0j95EpnmUyAs0M0ynAFYaGmiVS7hLaYN8
-         u29t/77u0LdOC3Usa3WP4OjPRvBs+yc69HiLlaSKQed2HKwF8asiY3rLFB2GjBqSeDVM
-         ArquUofd/YOmGRZPZ/R/HGH5xznhBkDJpTb6tUcn1/78iZgmMyRPuUoupLdKcqZz59h4
-         nhMdQ8fcZ0ABTqHhPJucXGPgsPIKoOzTDXAYjezBWny8TankuRpsvZFn3zbjyGsbqoWI
-         /57dWjkzVqHGiUDAAukg93yaD2cD/nNmlsJHKvCQD1Q3njnx5fQ3+Fj65278Ey0YTFb4
-         bDhg==
-X-Forwarded-Encrypted: i=1; AJvYcCUu2HNXvXt8KUfixz1Wkuirx6nJLPfdL2Ew7EyeQ66ApYx578fXTr3nmWwUUdAOBFcvhMoTiQtniDDg5+65CK9gPuzJ67ovLNIFW1PF
-X-Gm-Message-State: AOJu0Yy0Cle9fHTpZ/OfWHaxiJ11l62/bnGuJEdWn4Firk1wfU1zknGz
-	tWV5QFNJIHFP7hr2h7c1rT1oiPwA3+pUP68wrGR+QlQNjYkBuPdMWHdrVfGAYB9MVN3tuhd32Tc
-	zS1VbZ5+DV0eJ/of6cBBSWikTawqRHYcRuaXIbODSzeb1cwgAQG5IO3U=
-X-Google-Smtp-Source: AGHT+IEy4fFZ3c38YV4ociSNyl0fCnmv7SIi92tjC0Fzsyes+Yn1LT+VsHt0eoZWIIHfDM9Qt1mkTNV28Z5QIIEVjZLRmyjgHf3H
+        d=1e100.net; s=20230601; t=1719429438; x=1720034238;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XI3lZHAHMpMacrGr7sZ7TIX64kTZg51b8AujnGsu14Q=;
+        b=ldQ2ixm2ZqgSqk1ufRLCbBcD8O/0vCTXsY/vglFiLSkqKiS3ykSyuDcLXjJx3wwZ/L
+         4Rm95H/I8/ibbYb31Ebz81UQ1Qhs9lx1IFAYeoWj+QYp5Y8rD5egDslsCay1iIQysL7f
+         Yftl47/vdD7DG8PdGAjDMW1nJwY/KW/FkgQyLeBECZwIGGeX0j3TxLBUKR8W5AOOfMiI
+         5McJrC4tWu8Znp3J5cnzLNLu+tH3mB3ZlSOtuqW7T59DXtiODZcomrODHdB1KpT9EUcR
+         y9I6FI5h0OVKV4iG5X3If5i4v5LeS3SA8GoZQD6s/eBAWe2Sw4pIy7b+izwqom+rE463
+         UMiA==
+X-Forwarded-Encrypted: i=1; AJvYcCVflaCSJD2bEXp+VQW22BlJ6cyKGEypu9uASCg+KHWwE4MXTUJDaGRr0DNwR2xSmJpeSoIr8RbCRC2SKaFqjcfwtyonjMfW6GQj+8GO
+X-Gm-Message-State: AOJu0Yy78A+p3ltUs8E1q0CXCB9UuJ701ZbqP7GMdM6LWtJI0/FVMRTy
+	ksp1dA7nINxWw3s1WidkVTCnBaFKwRb2+aMcq+9n7t5FQSSaxjwzC5cw12fbEto=
+X-Google-Smtp-Source: AGHT+IHV/jft8RtNZmUB7mEGILVCEPrignxw3W0VzQYDTf1gbiJqRpR7V0F3dldHCqlThMgWvlblJQ==
+X-Received: by 2002:a05:6512:60b:b0:52c:c5c4:43d2 with SMTP id 2adb3069b0e04-52cdf8209b9mr8426942e87.47.1719429437950;
+        Wed, 26 Jun 2024 12:17:17 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ce663d1d6sm1018227e87.157.2024.06.26.12.17.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 12:17:17 -0700 (PDT)
+Date: Wed, 26 Jun 2024 22:17:15 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Gokul Sriram P <quic_gokulsri@quicinc.com>
+Cc: sboyd@kernel.org, andersson@kernel.org, bjorn.andersson@linaro.org, 
+	david.brown@linaro.org, devicetree@vger.kernel.org, jassisinghbrar@gmail.com, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com, 
+	robh@kernel.org, sricharan@codeaurora.org, gokulsri@codeaurora.org
+Subject: Re: [PATCH v9 1/8] remoteproc: qcom: Add PRNG proxy clock
+Message-ID: <ga5kczcyn3dqoky4525c74rr7dct5uizun2smvyx3p3u6z6vtm@5vshoozpttod>
+References: <20240621114659.2958170-1-quic_gokulsri@quicinc.com>
+ <20240621114659.2958170-2-quic_gokulsri@quicinc.com>
+ <chi3pzh5ss3mivnhs3qeoen5hsecfcgzaj6qnrgxantvinrri2@bxsbmpufuqpe>
+ <73cb638e-4982-49a2-ba79-0e78402b59ad@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:2710:b0:4b9:7607:f7f8 with SMTP id
- 8926c6da1cb9f-4b9efd7de6fmr244817173.3.1719429325815; Wed, 26 Jun 2024
- 12:15:25 -0700 (PDT)
-Date: Wed, 26 Jun 2024 12:15:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002e944b061bcfd65f@google.com>
-Subject: [syzbot] [net?] [s390?] possible deadlock in smc_vlan_by_tcpsk
-From: syzbot <syzbot+c75d1de73d3b8b76272f@syzkaller.appspotmail.com>
-To: agordeev@linux.ibm.com, alibuda@linux.alibaba.com, davem@davemloft.net, 
-	edumazet@google.com, guwen@linux.alibaba.com, jaka@linux.ibm.com, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
-	tonylu@linux.alibaba.com, wenjia@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <73cb638e-4982-49a2-ba79-0e78402b59ad@quicinc.com>
 
-Hello,
+On Tue, Jun 25, 2024 at 11:03:30AM GMT, Gokul Sriram P wrote:
+> 
+> On 6/22/2024 2:38 AM, Dmitry Baryshkov wrote:
+> > On Fri, Jun 21, 2024 at 05:16:52PM GMT, Gokul Sriram Palanisamy wrote:
+> > > PRNG clock is needed by the secure PIL, support for the same
+> > > is added in subsequent patches.
+> > Which 'same'?
+> > What is 'secure PIL'?
+>   will elaborate in the updated version.
+>   To answer your question, secure PIL is signed PIL image which only
+> TrustZone can authenticate and load.
 
-syzbot found the following issue on:
+Fine. So, the current driver can not load WCSS firmware on IPQ8074, is
+that correct? Or was there some kind of firmware interface change? The
+driver was added in 2018, so I can only hope that at that point it
+worked. Could you please explain, what happened?
 
-HEAD commit:    185d72112b95 net: xilinx: axienet: Enable multicast by def..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=13e0ec8e980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e78fc116033e0ab7
-dashboard link: https://syzkaller.appspot.com/bug?extid=c75d1de73d3b8b76272f
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/e84f50e44254/disk-185d7211.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/df64b575cc01/vmlinux-185d7211.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/16ad5d1d433b/bzImage-185d7211.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c75d1de73d3b8b76272f@syzkaller.appspotmail.com
-
-syz-executor.2[7759] is installing a program with bpf_probe_write_user helper that may corrupt user memory!
-syz-executor.2[7759] is installing a program with bpf_probe_write_user helper that may corrupt user memory!
-======================================================
-WARNING: possible circular locking dependency detected
-6.10.0-rc4-syzkaller-00869-g185d72112b95 #0 Not tainted
-------------------------------------------------------
-syz-executor.2/7759 is trying to acquire lock:
-ffffffff8f5e6f48 (rtnl_mutex){+.+.}-{3:3}, at: smc_vlan_by_tcpsk+0x399/0x4e0 net/smc/smc_core.c:1853
-
-but task is already holding lock:
-ffff88801bed0258 (sk_lock-AF_INET6){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1602 [inline]
-ffff88801bed0258 (sk_lock-AF_INET6){+.+.}-{0:0}, at: smc_connect+0xb7/0xde0 net/smc/af_smc.c:1650
-
-which lock already depends on the new lock.
+> > > Signed-off-by: Nikhil Prakash V <quic_nprakash@quicinc.com>
+> > > Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
+> > > Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+> > > ---
+> > >   drivers/remoteproc/qcom_q6v5_wcss.c | 65 +++++++++++++++++++++--------
+> > >   1 file changed, 47 insertions(+), 18 deletions(-)
 
 
-the existing dependency chain (in reverse order) is:
-
--> #1 (sk_lock-AF_INET6){+.+.}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
-       lock_sock_nested+0x48/0x100 net/core/sock.c:3543
-       do_ipv6_setsockopt+0xbf3/0x3630 net/ipv6/ipv6_sockglue.c:567
-       ipv6_setsockopt+0x5c/0x1a0 net/ipv6/ipv6_sockglue.c:993
-       do_sock_setsockopt+0x3af/0x720 net/socket.c:2312
-       __sys_setsockopt+0x1ae/0x250 net/socket.c:2335
-       __do_sys_setsockopt net/socket.c:2344 [inline]
-       __se_sys_setsockopt net/socket.c:2341 [inline]
-       __x64_sys_setsockopt+0xb5/0xd0 net/socket.c:2341
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (rtnl_mutex){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3134 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
-       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
-       __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       smc_vlan_by_tcpsk+0x399/0x4e0 net/smc/smc_core.c:1853
-       __smc_connect+0x2a4/0x1890 net/smc/af_smc.c:1522
-       smc_connect+0x868/0xde0 net/smc/af_smc.c:1702
-       __sys_connect_file net/socket.c:2049 [inline]
-       __sys_connect+0x2df/0x310 net/socket.c:2066
-       __do_sys_connect net/socket.c:2076 [inline]
-       __se_sys_connect net/socket.c:2073 [inline]
-       __x64_sys_connect+0x7a/0x90 net/socket.c:2073
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(sk_lock-AF_INET6);
-                               lock(rtnl_mutex);
-                               lock(sk_lock-AF_INET6);
-  lock(rtnl_mutex);
-
- *** DEADLOCK ***
-
-1 lock held by syz-executor.2/7759:
- #0: ffff88801bed0258 (sk_lock-AF_INET6){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1602 [inline]
- #0: ffff88801bed0258 (sk_lock-AF_INET6){+.+.}-{0:0}, at: smc_connect+0xb7/0xde0 net/smc/af_smc.c:1650
-
-stack backtrace:
-CPU: 1 PID: 7759 Comm: syz-executor.2 Not tainted 6.10.0-rc4-syzkaller-00869-g185d72112b95 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2187
- check_prev_add kernel/locking/lockdep.c:3134 [inline]
- check_prevs_add kernel/locking/lockdep.c:3253 [inline]
- validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
- __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
- smc_vlan_by_tcpsk+0x399/0x4e0 net/smc/smc_core.c:1853
- __smc_connect+0x2a4/0x1890 net/smc/af_smc.c:1522
- smc_connect+0x868/0xde0 net/smc/af_smc.c:1702
- __sys_connect_file net/socket.c:2049 [inline]
- __sys_connect+0x2df/0x310 net/socket.c:2066
- __do_sys_connect net/socket.c:2076 [inline]
- __se_sys_connect net/socket.c:2073 [inline]
- __x64_sys_connect+0x7a/0x90 net/socket.c:2073
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f0b3687d0a9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f0b3764b0c8 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
-RAX: ffffffffffffffda RBX: 00007f0b369b3f80 RCX: 00007f0b3687d0a9
-RDX: 000000000000001c RSI: 00000000200000c0 RDI: 000000000000000a
-RBP: 00007f0b368ec074 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007f0b369b3f80 R15: 00007fff165a7738
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+With best wishes
+Dmitry
 
