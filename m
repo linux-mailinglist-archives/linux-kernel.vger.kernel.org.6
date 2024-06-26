@@ -1,220 +1,469 @@
-Return-Path: <linux-kernel+bounces-231182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4850D918738
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:22:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2BBC918746
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:25:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE4881F22207
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:22:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 636D7B24CE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:23:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4764518EFE2;
-	Wed, 26 Jun 2024 16:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BB8F1849EF;
+	Wed, 26 Jun 2024 16:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PPGeOZel"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="TshAX6CC"
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2078.outbound.protection.outlook.com [40.107.241.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD5318F2D4
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 16:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719418954; cv=none; b=m9GTIG2DfszFrBsZDBO9d9WzG5FICAtgsT+I9guqDyTmEPLAp8isTAy9x8BXNoDUv620VyLx+0MDm/LaJtphocIxGgiJ4DoYs0bDye7piXhkFC+QbuVwze6V2F3ti/Z3XSMS0XSXsA87j6Qq1W0k5Hc4RWT27pIhuiQi9r82+pc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719418954; c=relaxed/simple;
-	bh=9XhgXHG8+tusH/9LC9l7b0azJTE85BoDuG8tkGn7KF8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J8MZvJMzaCuVb9QEMF/UbJ89aZz/+u4fT3YZDxmo/3JhpwxV0eHPzmfPvoLkwykPevNSKnraMVvNIs+oCNrMXRzgwkwp4bu2PgXn83l+ECU8SE30+hLzpL+K4CNKSYLdg3N37mJTnZQQt9dZNKHHMFYTwsvP6g1I916eoHKEbqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PPGeOZel; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719418951;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=fGxp6Ukd0LTljOubDYeVT+TIf0qV9JZHHFrPwd/iFcE=;
-	b=PPGeOZelEvCF9twefmkf/l9zcIo1PjOOdm3hFEtRgK7f9z2kxiYx2AF+s2OvRIOgDjL+Q+
-	HGieXfHMFTK5pBJ9l4IzaKy7xCSieT9m4dzosobAWhz+K8NRtQS9j474wUpBAR989H0Rnl
-	bPSy0kTTSzWFwQ6v0TbGZrc0PjikMSM=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-395-PGsyOBztMk-ZTGvyOLZZoQ-1; Wed, 26 Jun 2024 12:22:30 -0400
-X-MC-Unique: PGsyOBztMk-ZTGvyOLZZoQ-1
-Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-52ce324c204so3668318e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 09:22:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719418948; x=1720023748;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=fGxp6Ukd0LTljOubDYeVT+TIf0qV9JZHHFrPwd/iFcE=;
-        b=GDy5Hfkna1q+0JtMD7z6SYJeHicttagirD4HJET+B/094aDudq/JexeIFS0Lddwsyf
-         oy55v9PJ7qmbtD2VmcujDuIGr0AB4NQQs/xJcKBVB1DwYb03gXQT5E9FjImM5JmgQV0H
-         S5xu9uO0hkglkYdatnwGbyYmRHCB33ct9LK/JK1ARaaMXbzLVrt/vR7zx9x+VEOnNqsy
-         TIr5XcoVeTkmoTeHtIf6EPtXlTX6XsOhYTTHFFQDEF78Y78WTCZAq51uo0sfR6hHvXnH
-         JQBxZwc5rSxA/vFKcNCEwV/XcjnSuCCIBPGuiumv7Z1ve1CjMI3Yj0x461LtxeqRRVEJ
-         XeLQ==
-X-Gm-Message-State: AOJu0YzaqvlFW8GMm+DoBOKQW2lgTv/pXJstDN6T6H+HX2LrLzKntwmh
-	LTGCBAp6ixkw1nw8IsjJhXUUztfO7D80PeWOjYDTCrZoDOWPbdkSY5v2U1lbO+8PIQkas7Wfp2y
-	YU0STdX2jOqVBY+XkyzQv6GRcgiuGw206uZg3ubavN5gFOskOEEjui4TdjIsWWdFwbslOCc7SFF
-	p/C7Bdz+J6z40krM62dk1itNiHOiMcNVDLXd0ImYiGpQ==
-X-Received: by 2002:a19:750d:0:b0:52c:df10:a8de with SMTP id 2adb3069b0e04-52ce1834580mr6267541e87.21.1719418948444;
-        Wed, 26 Jun 2024 09:22:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFiAMtKflpiz6Zx/dw1ERax0IBJ4gYhZCNcDVi0X2nNDaQR8PXtDtv3586cQ3Hi6OWEfwsKEA==
-X-Received: by 2002:a19:750d:0:b0:52c:df10:a8de with SMTP id 2adb3069b0e04-52ce1834580mr6267518e87.21.1719418947860;
-        Wed, 26 Jun 2024 09:22:27 -0700 (PDT)
-Received: from [192.168.1.34] (p548825e3.dip0.t-ipconnect.de. [84.136.37.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c82519b0sm31626855e9.14.2024.06.26.09.22.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Jun 2024 09:22:27 -0700 (PDT)
-Message-ID: <8f85c31a-e603-4578-bf49-136dae0d4b69@redhat.com>
-Date: Wed, 26 Jun 2024 18:22:26 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3FD18EFCA;
+	Wed, 26 Jun 2024 16:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.78
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719419015; cv=fail; b=LwxUHD8m/dUCnG7FUmqH6L5fC8pj7qTZIS/vjh5q9acxvr/tBQPlj8AjehfhwzWSsOE9ukuj7wojyziIwIUkxrfpKzLlVKrpNmpoKyVvPfrK/iCnz5kUgr+yUvy8Wl6IgBab0vmorCqgYA3d68gwAgPqRElR8d/nWEv7SQPN4W8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719419015; c=relaxed/simple;
+	bh=HnUmKtm8IYuAlz2NKhIF9N7D9pHIOVQcjj8WGLhCa1I=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=YvvMb2x6RvvDprVOwygqkgjHfOlg03ee0t4FRLvL1YHWemR08CItkZi3vbdrZmTUL1SShKBgqnYNCf8XdlIF3ijxj1+XydjIWgu/obX9K4J48Msqa9OA4QlhCMGcY3OkJV5S+1eMsWQh/9fpmvISsBPBHve2xLucRb7PnlWTjeg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=TshAX6CC; arc=fail smtp.client-ip=40.107.241.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KHDEj/Vz2bAmTT5dPtSJNcg6Ha+fh5Z5WOmeKLRJZFYb1pPI3Whv3C6mfBylVv3mWwqbx3TvQgMnZd/PnblaxuOuaiDeYzC5adWGh+U7Rb3lg1y9byB1mK4NkxmFhl9sET3ruKy3ZWAQ7VROQRu81H1xtkKbzq5TuJaPVC0HU226lyJuGA1TqUIOTU52gyUCqAH9/ZHODEpH87sh5jkolWZS8fSjKpoWGY9IPMFaMqIOBti4suFJ1CIsif+uIgsJNYTryjBFmP8s+gJjnJvalKV+4DCx0JPQWjXw3myB9RY7FnPeTOPF/CAvq7F0gSnILYPx4a09moWpmz9v976K4g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MXJ/Lew46VwXSUqdTwDtk/jxfV+likybFQmXm3AIvN0=;
+ b=asdtEHJ0jm1352M4bEekjwxkjUTXj3z7nGh/ErauCK2XfB+VWR5mPvaLKCIshCm9nUQSCzZGzs1JUhsXBZH5qWlPLwRpWD4CUNJGgoGjjr0m223IUGqqOBioCv2jWbckTo12m5ziY8vxU1j2fq8eSiQRJnbdSE62BLZwMKPfReTKDYQp5gQXPHvvC8mx6SJA7LCLQKQPHanmt4RhQFDHbZkJ2VNZokktYa/eFHUDJmtqEJXGOUf0WnIGIfqwC/jxKRmtPJQvA2PHdhLjQEZ86c9lT+/IBlzxUX2g2WjE/48RT5W+EPvbEghrtH7Gp6gCtsydl228CtUd5XCH8/GJVw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MXJ/Lew46VwXSUqdTwDtk/jxfV+likybFQmXm3AIvN0=;
+ b=TshAX6CCNLhs4RlBcDhru3FZ5NeP4m7vUpiNvo9F/U1ZGXIxi8fxszftVVDR8yajfW8jL7zlBGW5t0qWQ+3ExjIdK+kVBo75UO2FSmd/VHBcTnS08582XvG8h1FHPuEjlUC2GLV+8Hj72nDH6ngvKJa8NbqldDZCgNBHlcRT5lQ=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by PA4PR04MB8063.eurprd04.prod.outlook.com (2603:10a6:102:ba::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.32; Wed, 26 Jun
+ 2024 16:23:24 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7698.025; Wed, 26 Jun 2024
+ 16:23:24 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: krzk@kernel.org
+Cc: Frank.Li@nxp.com,
+	conor+dt@kernel.org,
+	davem@davemloft.net,
+	devicetree@vger.kernel.org,
+	edumazet@google.com,
+	imx@lists.linux.dev,
+	krzk+dt@kernel.org,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	robh@kernel.org
+Subject: [PATCH v2 1/1] dt-bindings: net: convert enetc to yaml
+Date: Wed, 26 Jun 2024 12:23:07 -0400
+Message-Id: <20240626162307.1748759-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BY3PR05CA0053.namprd05.prod.outlook.com
+ (2603:10b6:a03:39b::28) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] mm/migrate: move NUMA hinting fault folio
- isolation + checks under PTL
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
- Donet Tom <donettom@linux.ibm.com>
-References: <20240620212935.656243-1-david@redhat.com>
- <20240620212935.656243-3-david@redhat.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240620212935.656243-3-david@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PA4PR04MB8063:EE_
+X-MS-Office365-Filtering-Correlation-Id: 44e547bb-1715-4717-78ad-08dc95fc4d49
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230038|376012|52116012|7416012|366014|1800799022|38350700012;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?OZ+nPs01WJxympdNvrkSe+Qsje0yy4lMntN8LfzZECmqvO46KssgNbARVnL7?=
+ =?us-ascii?Q?k61W8oq6ZGcWiP1dQPAJ0hIpLj55biZqhRg4/ZMJDnX55pdmcRBHx0TubTQ5?=
+ =?us-ascii?Q?yoHyelWFZpVxqe9gu5YxaAego2HQ8vWHVOlUki7f3HocCEoInYu5gsQ2S0ev?=
+ =?us-ascii?Q?RcN0xdKgWy+ER/cSKieoUrr4pmJRGZ3W1U4J3w7bA8YGMT2ctX/n/vD7rkxw?=
+ =?us-ascii?Q?KVvD9t6W7JPvddnK+y7etAu+stCX/23GcUXYuN5iBIgZkwaMqSUrT0aQCoJc?=
+ =?us-ascii?Q?h3/3N+nT6tGiokKEMcCw96ZlmkotxiHaBv0dEHqZPXg2ElQhMdRbA60j2JrA?=
+ =?us-ascii?Q?T48OX0+vrf1ZIC4DTyHiyho/ok8H0DLEvjAYWtsdJSfeHxWH6P6czVSlXYkQ?=
+ =?us-ascii?Q?nGmL1nOldiBZm1Vqby1Lidu3+bk59Ljigg4DUk0X5rGL+kQxGqmdxZI42UJp?=
+ =?us-ascii?Q?zR+4HYun56fW0l6FcgxKFWp5odVMbcweJnkqVQebwl9Q0k+k7gxpjHbMm30a?=
+ =?us-ascii?Q?XG1l7jkdhgPW+YwQaikzahbCdOO9jEthhTY6VTX/YTSsfHhkDVYJyZ//+eVu?=
+ =?us-ascii?Q?JWjm5GBHT5egTWQ/XwGmqg6QW/xe+mL4FBu436G0FVP0/0zQxL9VjWZE/9nS?=
+ =?us-ascii?Q?2KsG3Vhqp3CEJOJreUBNs2CVYi43KriTjhUY0kjJ00AKZAoHetG4oV2C/34G?=
+ =?us-ascii?Q?zNbQF31qJq8YQIusmZZJYPs/IH+F2REKSkb36HrI4RNpnm75QUPDHFaO/dqR?=
+ =?us-ascii?Q?BXF2S2tG/1HBq3CwhviL4fNYXhMrcbU8Qh6JE1xGpZaV2F8LzzxjZwT8/DpO?=
+ =?us-ascii?Q?0Sdkev3FdxoR0jdJhtwESvzQIZafqgU2481Qmwe64od8rS8AsBheUJ/6hDLn?=
+ =?us-ascii?Q?IvEFJsJ6ktr4fMTXGU8Rl7eAiVSkidMdUeLKocp032zqaBgcr18IJkRKvl9P?=
+ =?us-ascii?Q?sI7X9c+x8uogOTSGYWQjmXDiaG/l1F4rSt1YWnh8O5O8LQX0fWDjVYmeVtLi?=
+ =?us-ascii?Q?jOqDLIeZJhmK9pbQZnQnQjwiB79mXta3gPf0eL/PzvLdIk8VHL3Y1fyTR1Pw?=
+ =?us-ascii?Q?0kLQCkvBm1Z6jhiSBDhvOKapDGxkdHm1ge7WntMPbSGpQwffuC/6eUEW63A0?=
+ =?us-ascii?Q?RrQXZXBtWNikigA3FBeOOWnZk9T7Le1cGkpRECs/Fu0X3LYeA2Eo+bgFpRiE?=
+ =?us-ascii?Q?4F01bzd83QH4++/409Z/lHZu9SEs9Nn4+GhzU40TzG48GccwDDrUHtq4UUR8?=
+ =?us-ascii?Q?hdQh9EyJ4uRvP+XRxaoZs2/HvEWUsFTow/6cZqI8QdNzLjqlIv5q8kdMkB/1?=
+ =?us-ascii?Q?uFaF31jIDzE5D3VTu0OmJ/+cHZLOt8O3qgPvz7mKlw+Mjba/DmFDtj+eZIXU?=
+ =?us-ascii?Q?JuI2GBk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230038)(376012)(52116012)(7416012)(366014)(1800799022)(38350700012);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?zGVJ+xo0VWZ889OYfcsmaJLfpsLFbG+xxrLr0zBtrWElicYSlFNSvUKbPXOq?=
+ =?us-ascii?Q?DWeMzatcx6YYDX0L0tFd8XwCGFNdUNz0/MBlwqR8EBe+CYR5qtzpZdn8xMmz?=
+ =?us-ascii?Q?Udy3ACM0UUW+qrQqh/CA3sDk/Z+8vJKhMRSKRPkyQekamLle1SxMETBHYPK6?=
+ =?us-ascii?Q?EFjusaiXilvj7EqIxWGWyGW2PMI59YmGmD056GUITRoKWHRwZj8CkrWXnmj2?=
+ =?us-ascii?Q?SwctR5KJJ+L0LNvYYm2MuS8RmmvyXntDNuOh26YZGvC8IuRWSg6S1qmHwbkl?=
+ =?us-ascii?Q?EojBUyypBlaLCY8CZ5T8i7vLCOAGxJnXq7qDwBIEoMcoUtU7U/ONSHdqt4dI?=
+ =?us-ascii?Q?buyySl4PFNOTt0A84qy+9McRiRwD4P9fDnIsza0ycfzGgayp1fz0orStgJjv?=
+ =?us-ascii?Q?OgR6KzbeJQNkdXN566jJNKs1UYIpdnbAYH2/MjTUE93xJF1kfqOHT5ki5Aac?=
+ =?us-ascii?Q?dPQmAWdtLmZw+MuvUI79FMWwUUb5T2A+sky+NazT46KIBXJky1tYy2YMEmww?=
+ =?us-ascii?Q?W2ngNhL+sVCqESsWWbEKsuDSc654u45Ps0tXHbJ+LaM67fmhgoqvnC1WLVOK?=
+ =?us-ascii?Q?rfKRf7CuyXQ5zO+5Ks680zX9wet2bwO8Laf2ecVPj1Vky8ZBhbXRiWigxUPy?=
+ =?us-ascii?Q?Jh3qeY4w3cJSfhXnL3XtvksxnSO3kJ68i9I4PnJQW38WZOs29PMLnI9zwvxW?=
+ =?us-ascii?Q?ut0rM8SJCHR+DhxVKNd123KYu09Y3cQLsESN0P34UTXLRtRKBwFR5kSOFQpC?=
+ =?us-ascii?Q?BqbDiWKSf2PGSy8rkZuGinw+jxrvbmM3vQosCFlGBinkOuMrMKxbbMOVTmVN?=
+ =?us-ascii?Q?Rm3IPdQpDHSsBrgZoNJwrvmpfIfLYpDewyaEMf4lc2Ve8z7AWWlfrbbXaiqf?=
+ =?us-ascii?Q?CARAGECZaneFbFonHAQj5XsyIK4lXrDP2dkLVSXSIcn6nC8pAQ4X0TGJ5NWv?=
+ =?us-ascii?Q?dmQMKmXqLoC/+flTdivmyWr9amxCCuabcSp9/u6+mB0dZC/0JAtwynYA6viJ?=
+ =?us-ascii?Q?8PTtq9PT472ANLWJQB+9qdK++XhJxLOGaHECP7YlTgFdW4yjwp6rI8x6U6LC?=
+ =?us-ascii?Q?oUZui4W1/Pn1lpkBKYiHSatdKx1/U+5y4bxXd7O7L+YH5DrNzNrFl+AmabqX?=
+ =?us-ascii?Q?wPc0IKUUsY+L3hmjDPb5S1CvI/hTlhJa34PeBb+rLV+V2cnhGYpSvv+FAN/Y?=
+ =?us-ascii?Q?cC2fta+rjN3AHfSZ02enYbW3HiK4sFq5ORjAEV/5Wif4Be+EUC+6pXWDpZe7?=
+ =?us-ascii?Q?R4DsFcQ6X0CdQoagxNh2Kme9TBCQcFzrjuTcJ5nE8K7713PrN12I/wosEsck?=
+ =?us-ascii?Q?Zni1MS0f3s1jccbAP6V0k8PW6modWBT6jEqpc4UOFq+t6nKghdi2wmXg1mkA?=
+ =?us-ascii?Q?1iK65dQfYEpTsqksR7+9bIoeLpZbDHgDOEt87LyVY6Br4Tq17x/HYoyxB98A?=
+ =?us-ascii?Q?hb8WdCDkTl5FJtdOKzzGaRE51qup30JjPpKE/eqZSqBDgZFlMAk644jWPC6C?=
+ =?us-ascii?Q?WMh6ti0YyHhbBvZSMPfIgN1AVxcJsHo/YY0328rtZR0ur80K3fi+3OIybgMb?=
+ =?us-ascii?Q?sZRLI+igQYva2QlQRlq4BOGyXqv1pzXtG5mpO+qX?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 44e547bb-1715-4717-78ad-08dc95fc4d49
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 16:23:24.3197
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rtgDAD+4WKPk0PrZV2ooJO0bHnBMa46HVK0ahaFAPE8LSJe3BgMVMk4IgT36AHKbusaGupz+cXQdkIU5N8Zg/w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB8063
 
-On 20.06.24 23:29, David Hildenbrand wrote:
-> Currently we always take a folio reference even if migration will not
-> even be tried or isolation failed, requiring us to grab+drop an additional
-> reference.
-> 
-> Further, we end up calling folio_likely_mapped_shared() while the folio
-> might have already been unmapped, because after we dropped the PTL, that
-> can easily happen. We want to stop touching mapcounts and friends from
-> such context, and only call folio_likely_mapped_shared() while the folio
-> is still mapped: mapcount information is pretty much stale and unreliable
-> otherwise.
-> 
-> So let's move checks into numamigrate_isolate_folio(), rename that
-> function to migrate_misplaced_folio_prepare(), and call that function
-> from callsites where we call migrate_misplaced_folio(), but still with
-> the PTL held.
-> 
-> We can now stop taking temporary folio references, and really only take
-> a reference if folio isolation succeeded. Doing the
-> folio_likely_mapped_shared() + golio isolation under PT lock is now similar
-> to how we handle MADV_PAGEOUT.
-> 
-> While at it, combine the folio_is_file_lru() checks.
-> 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
+Convert enetc device binding file to yaml. Split to 3 yaml files,
+'fsl,enetc.yaml', 'fsl,enetc-mdio.yaml', 'fsl,enetc-ierb.yaml'.
 
-Donet just reported an issue. I suspect this fixes it -- in any case, this is
-the right thing to do.
+Additional Changes:
+- Add pci<vendor id>,<production id> in compatible string.
+- Ref to common ethernet-controller.yaml and mdio.yaml.
+- Remove fixed-link part.
 
- From 0833b9896e98c8d88c521609c811a220d14a2e7e Mon Sep 17 00:00:00 2001
-From: David Hildenbrand <david@redhat.com>
-Date: Wed, 26 Jun 2024 18:14:44 +0200
-Subject: [PATCH] Fixup: mm/migrate: move NUMA hinting fault folio isolation +
-  checks under PTL
-
-Donet reports an issue during NUMA migration we haven't seen previously:
-
-	[   71.422804] list_del corruption, c00c00000061b3c8->next is
-	LIST_POISON1 (5deadbeef0000100)
-	[   71.422839] ------------[ cut here ]------------
-	[   71.422843] kernel BUG at lib/list_debug.c:56!
-	[   71.422850] Oops: Exception in kernel mode, sig: 5 [#1]
-
-We forgot to convert one "return 0;" to return an error instead from
-migrate_misplaced_folio_prepare() in case the target node is nearly
-full.
-
-Signed-off-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
 ---
-  mm/migrate.c | 2 +-
-  1 file changed, 1 insertion(+), 1 deletion(-)
+Change from v1 to v2
+- renamee file as fsl,enetc-mdio.yaml, fsl,enetc-ierb.yaml, fsl,enetc.yaml
+- example include pcie node
+---
+ .../bindings/net/fsl,enetc-ierb.yaml          |  35 ++++++
+ .../bindings/net/fsl,enetc-mdio.yaml          |  53 ++++++++
+ .../devicetree/bindings/net/fsl,enetc.yaml    |  50 ++++++++
+ .../devicetree/bindings/net/fsl-enetc.txt     | 119 ------------------
+ 4 files changed, 138 insertions(+), 119 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/fsl,enetc-ierb.yaml
+ create mode 100644 Documentation/devicetree/bindings/net/fsl,enetc-mdio.yaml
+ create mode 100644 Documentation/devicetree/bindings/net/fsl,enetc.yaml
+ delete mode 100644 Documentation/devicetree/bindings/net/fsl-enetc.txt
 
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 8beedbb42a93..9ed43c1eea5e 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -2564,7 +2564,7 @@ int migrate_misplaced_folio_prepare(struct folio *folio,
-  		int z;
-  
-  		if (!(sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING))
--			return 0;
-+			return -EAGAIN;
-  		for (z = pgdat->nr_zones - 1; z >= 0; z--) {
-  			if (managed_zone(pgdat->node_zones + z))
-  				break;
-
-base-commit: 4b17ce353e02b47b00e2fe87b862f09e8b9a47e6
+diff --git a/Documentation/devicetree/bindings/net/fsl,enetc-ierb.yaml b/Documentation/devicetree/bindings/net/fsl,enetc-ierb.yaml
+new file mode 100644
+index 0000000000000..ce88d7ce07a5e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/fsl,enetc-ierb.yaml
+@@ -0,0 +1,35 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/net/fsl,enetc-ierb.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Integrated Endpoint Register Block
++
++description:
++  The fsl_enetc driver can probe on the Integrated Endpoint Register
++  Block, which preconfigures the FIFO limits for the ENETC ports.
++
++maintainers:
++  - Frank Li <Frank.Li@nxp.com>
++
++properties:
++  compatible:
++    enum:
++      - fsl,ls1028a-enetc-ierb
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    ierb@1f0800000 {
++        compatible = "fsl,ls1028a-enetc-ierb";
++        reg = <0xf0800000 0x10000>;
++    };
+diff --git a/Documentation/devicetree/bindings/net/fsl,enetc-mdio.yaml b/Documentation/devicetree/bindings/net/fsl,enetc-mdio.yaml
+new file mode 100644
+index 0000000000000..60740ea56cb08
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/fsl,enetc-mdio.yaml
+@@ -0,0 +1,53 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/net/fsl,enetc-mdio.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ENETC the central MDIO PCIe endpoint device
++
++description:
++  In this case, the mdio node should be defined as another PCIe
++  endpoint node, at the same level with the ENETC port nodes
++
++maintainers:
++  - Frank Li <Frank.Li@nxp.com>.
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - pci1957,ee01
++      - const: fsl,enetc-mdio
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++
++allOf:
++  - $ref: mdio.yaml
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    pcie@1f0000000 {
++        compatible = "pci-host-ecam-generic";
++        reg = <0x01 0xf0000000 0x0 0x100000>;
++        #address-cells = <3>;
++        #size-cells = <2>;
++
++        mdio@0,3 {
++            compatible = "pci1957,ee01", "fsl,enetc-mdio";
++            reg = <0x000300 0 0 0 0>;
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            ethernet-phy@2 {
++                reg = <0x2>;
++            };
++        };
++    };
+diff --git a/Documentation/devicetree/bindings/net/fsl,enetc.yaml b/Documentation/devicetree/bindings/net/fsl,enetc.yaml
+new file mode 100644
+index 0000000000000..843c27e357f2d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/fsl,enetc.yaml
+@@ -0,0 +1,50 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/net/fsl,enetc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ENETC ethernet
++
++description:
++  Depending on board design and ENETC port type (internal or
++  external) there are two supported link modes specified by
++  below device tree bindings.
++
++maintainers:
++  - Frank Li <Frank.Li@nxp.com>
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - pci1957,e100
++      - const: fsl,enetc
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++
++allOf:
++  - $ref: ethernet-controller.yaml
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    pcie@1f0000000 {
++        compatible = "pci-host-ecam-generic";
++        reg = <0x01 0xf0000000 0x0 0x100000>;
++        #address-cells = <3>;
++        #size-cells = <2>;
++
++        ethernet@0,0 {
++            compatible = "pci1957,e100", "fsl,enetc";
++            reg = <0x000000 0 0 0 0>;
++            phy-handle = <&sgmii_phy0>;
++            phy-connection-type = "sgmii";
++        };
++    };
+diff --git a/Documentation/devicetree/bindings/net/fsl-enetc.txt b/Documentation/devicetree/bindings/net/fsl-enetc.txt
+deleted file mode 100644
+index 9b9a3f197e2d3..0000000000000
+--- a/Documentation/devicetree/bindings/net/fsl-enetc.txt
++++ /dev/null
+@@ -1,119 +0,0 @@
+-* ENETC ethernet device tree bindings
+-
+-Depending on board design and ENETC port type (internal or
+-external) there are two supported link modes specified by
+-below device tree bindings.
+-
+-Required properties:
+-
+-- reg		: Specifies PCIe Device Number and Function
+-		  Number of the ENETC endpoint device, according
+-		  to parent node bindings.
+-- compatible	: Should be "fsl,enetc".
+-
+-1. The ENETC external port is connected to a MDIO configurable phy
+-
+-1.1. Using the local ENETC Port MDIO interface
+-
+-In this case, the ENETC node should include a "mdio" sub-node
+-that in turn should contain the "ethernet-phy" node describing the
+-external phy.  Below properties are required, their bindings
+-already defined in Documentation/devicetree/bindings/net/ethernet.txt or
+-Documentation/devicetree/bindings/net/phy.txt.
+-
+-Required:
+-
+-- phy-handle		: Phandle to a PHY on the MDIO bus.
+-			  Defined in ethernet.txt.
+-
+-- phy-connection-type	: Defined in ethernet.txt.
+-
+-- mdio			: "mdio" node, defined in mdio.txt.
+-
+-- ethernet-phy		: "ethernet-phy" node, defined in phy.txt.
+-
+-Example:
+-
+-	ethernet@0,0 {
+-		compatible = "fsl,enetc";
+-		reg = <0x000000 0 0 0 0>;
+-		phy-handle = <&sgmii_phy0>;
+-		phy-connection-type = "sgmii";
+-
+-		mdio {
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-			sgmii_phy0: ethernet-phy@2 {
+-				reg = <0x2>;
+-			};
+-		};
+-	};
+-
+-1.2. Using the central MDIO PCIe endpoint device
+-
+-In this case, the mdio node should be defined as another PCIe
+-endpoint node, at the same level with the ENETC port nodes.
+-
+-Required properties:
+-
+-- reg		: Specifies PCIe Device Number and Function
+-		  Number of the ENETC endpoint device, according
+-		  to parent node bindings.
+-- compatible	: Should be "fsl,enetc-mdio".
+-
+-The remaining required mdio bus properties are standard, their bindings
+-already defined in Documentation/devicetree/bindings/net/mdio.txt.
+-
+-Example:
+-
+-	ethernet@0,0 {
+-		compatible = "fsl,enetc";
+-		reg = <0x000000 0 0 0 0>;
+-		phy-handle = <&sgmii_phy0>;
+-		phy-connection-type = "sgmii";
+-	};
+-
+-	mdio@0,3 {
+-		compatible = "fsl,enetc-mdio";
+-		reg = <0x000300 0 0 0 0>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		sgmii_phy0: ethernet-phy@2 {
+-			reg = <0x2>;
+-		};
+-	};
+-
+-2. The ENETC port is an internal port or has a fixed-link external
+-connection
+-
+-In this case, the ENETC port node defines a fixed link connection,
+-as specified by Documentation/devicetree/bindings/net/fixed-link.txt.
+-
+-Required:
+-
+-- fixed-link	: "fixed-link" node, defined in "fixed-link.txt".
+-
+-Example:
+-	ethernet@0,2 {
+-		compatible = "fsl,enetc";
+-		reg = <0x000200 0 0 0 0>;
+-		fixed-link {
+-			speed = <1000>;
+-			full-duplex;
+-		};
+-	};
+-
+-* Integrated Endpoint Register Block bindings
+-
+-Optionally, the fsl_enetc driver can probe on the Integrated Endpoint Register
+-Block, which preconfigures the FIFO limits for the ENETC ports. This is a node
+-with the following properties:
+-
+-- reg		: Specifies the address in the SoC memory space.
+-- compatible	: Must be "fsl,ls1028a-enetc-ierb".
+-
+-Example:
+-	ierb@1f0800000 {
+-		compatible = "fsl,ls1028a-enetc-ierb";
+-		reg = <0x01 0xf0800000 0x0 0x10000>;
+-	};
 -- 
-2.45.2
-
-
--- 
-Cheers,
-
-David / dhildenb
+2.34.1
 
 
