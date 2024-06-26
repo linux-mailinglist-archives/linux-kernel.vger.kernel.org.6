@@ -1,88 +1,117 @@
-Return-Path: <linux-kernel+bounces-231148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0531A9186D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:08:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B78E9186DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:09:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6263C283251
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:08:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26631B2A29C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:08:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50468190470;
-	Wed, 26 Jun 2024 16:04:15 +0000 (UTC)
-Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2A2190063;
+	Wed, 26 Jun 2024 16:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AYlKeEB+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB0618EFCF;
-	Wed, 26 Jun 2024 16:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB1A18EFCF;
+	Wed, 26 Jun 2024 16:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719417854; cv=none; b=CVTKtA3O/nb6sI+/5+l2/DQWayBkHY76J3qb+b5Zc/enpqt9WdyuXqZ+QngI/rYKkoJwa1b+TPUv3IU1ngcNzl6IZMNkiJZveldAZO3C+64eoCWJzEtP6b5sSRE9W4uD6tuUIkd7YKa2yHNUaU7uhhaMIynJeAj5BegLbbcUvrg=
+	t=1719417845; cv=none; b=G1ZwS+e5XfByrMOKvWWaJedAxed3GVX0K2iKCQDEuC7nXiXsSO6CQtoaJdUFdsiYlj6FUB8ab55LwVZ0NrlzFPO7DAVjaXYrPPe8Rtr1CNBXuy4aJAzaN10u8xuJi/FS1XBkCGZA49f2W+4LKZAGSphoZeuRGPj7MGBkHVO9Wow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719417854; c=relaxed/simple;
-	bh=4O4CAULsJeXynfjY6mPTGWkKb6XikVyaPfbpdlls0Fc=;
+	s=arc-20240116; t=1719417845; c=relaxed/simple;
+	bh=+N8RN1iOrnCb689rj04vmHsicxKmCtiJLair6C/x+so=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XLZtVlD/S5JzhDqZFNd3d4ShHHz3bTz1a2LXcsN8RqVKsQZBagKDTmhF5uvDBfekffo+0K+w+amEx/W4/pKjppeU2IytICYJmLt9PCgWbO8gJAriQW1BW4F6Nij09Vs/A1kzawTZfZT9Um0Q81gEWJsNgEkHkjsmGEKkJ+EhJN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
-Received: from [78.30.37.63] (port=40636 helo=gnumonks.org)
-	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <pablo@gnumonks.org>)
-	id 1sMV7p-008D6r-J6; Wed, 26 Jun 2024 18:04:03 +0200
-Date: Wed, 26 Jun 2024 18:04:00 +0200
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Mirsad Todorovac <mtodorovac69@gmail.com>
-Cc: Linux Kernel Build System <linux-kbuild@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	netdev@vger.kernel.org
-Subject: Re: [PROBLEM] make randconfig: net/netfilter/core.c:830: undefined
- reference to `netfilter_lwtunnel_fini'
-Message-ID: <Znw78PpYwAgFZiaB@calendula>
-References: <7a472130-d9c4-4fda-840b-093308f73d3d@gmail.com>
- <Znc4931wlIgvqrfP@calendula>
- <6cdb1346-75ca-472e-8d96-d58a1eaab172@gmail.com>
- <b50bb0bf-4d35-4334-a721-2a092210aecc@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dv/diPhFNJUBSXmxUAZ1g9ZK41aNgqCCQz3G+eMs56DqKEULMufQWkz8sKOVwhgKHbke9wazYbBb+LPloT0m72dfroHZyA+gEtLc/42pvp7e4F8vbbg8XEC1zv0tQZJ9bK6I7Tn1zFNwVHFbSR9Kqrg1TfxXWz1Y4fW3QicnDFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AYlKeEB+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CE0EC116B1;
+	Wed, 26 Jun 2024 16:04:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719417845;
+	bh=+N8RN1iOrnCb689rj04vmHsicxKmCtiJLair6C/x+so=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AYlKeEB+18cSv82iz6CVx3F9OA5fSZxkuD/A0Z+z+S4T2Hz16z01xPgOqYtjSCOZP
+	 nTJ3A+XrlBdvMDqT6wHIwjCxXSvREkDIkNV8QFzzd6gZQGArnkJ2gRjgZ1gJXKV9/i
+	 Npa2tLEWlcatxzs/bqO+FkeI7vglrJolV3jYHCo32hjpbFZynsN8jnHM3vxsqpOhM8
+	 ZUUst3WbiLbYsWS2PFf68tqhCuP4sEZjeEK+5Hl1Scca0NpSXqYSXUvh0n270Jj16z
+	 gELcbNAzEqjYJVBeDTWGSokQHSbou94NiIF6fHIeVcs5rY/mphKhtat+KE2Ig36Wri
+	 igOX/Iou5B9Fg==
+Date: Wed, 26 Jun 2024 18:04:01 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Hans Hu <hanshu@zhaoxin.com>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, Arnd Bergmann <arnd@arndb.de>, Wentong Wu <wentong.wu@intel.com>, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] i2c: viai2c: turn common code into a proper module
+Message-ID: <dceas2m3mllvmoidacnaube7erjvjyrjkis23ppfxboclnnlxq@nlfagnp2ze7y>
+References: <20240528120710.3433792-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b50bb0bf-4d35-4334-a721-2a092210aecc@gmail.com>
-X-Spam-Score: -1.9 (-)
+In-Reply-To: <20240528120710.3433792-1-arnd@kernel.org>
 
-On Sun, Jun 23, 2024 at 12:51:49AM +0200, Mirsad Todorovac wrote:
-> On 6/23/24 00:48, Mirsad Todorovac wrote:
-> > On 6/22/24 22:49, Pablo Neira Ayuso wrote:
-> >> Hi,
-> >>
-> >> There is a fix on the table address this, I will submit is in the next
-> >> pull request.
-> > 
-> > Thank you very much.
-> > 
-> > Please consider adding Reported-by: Mirsad Todorovac <mtodorovac69@gmail.com>
-> >  
-> >> Thanks for reporting
-> > 
-> > No big deal. Anytime :-)
-> 
-> P.S.
-> 
-> Please notify when I could test the same .config with your fix.
+Hi,
 
-Patch is here:
+...
 
-https://git.kernel.org/pub/scm/linux/kernel/git/netfilter/nf.git/commit/?id=aef5daa2c49d510436b733827d4f0bab79fcc4a0
+> +EXPORT_SYMBOL_GPL(viai2c_init);
+> +
+> +MODULE_DESCRIPTION("Via/Wondermedia/Zhaoxin I2C master-mode bus adapter");
+> +MODULE_AUTHOR("Tony Prisk <linux@prisktech.co.nz>");
+
+Do we want to add also Hans here?
+
+> +MODULE_LICENSE("GPL");
+
+...
+
+> +static irqreturn_t wmt_i2c_isr(int irq, void *data)
+> +{
+
+...
+
+> +	/* All the data has been successfully transferred or error occurred */
+> +	if (i2c->ret)
+> +		complete(&i2c->complete);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +
+
+I took the freedom to remove this double blank line.
+
+>  static int wmt_i2c_probe(struct platform_device *pdev)
+>  {
+>  	struct device_node *np = pdev->dev.of_node;
+
+...
+
+> @@ -239,6 +298,16 @@ static int zxi2c_probe(struct platform_device *pdev)
+>  	if (error)
+>  		return error;
+>  
+> +	i2c->irq = platform_get_irq(pdev, 0);
+> +	if (i2c->irq < 0)
+> +		return i2c->irq;
+> +
+> +	error = devm_request_irq(&pdev->dev, i2c->irq, zxi2c_isr,
+> +			       IRQF_SHARED, pdev->name, i2c);
+
+I took the freedom of re-alligning here.
+
+Queued to i2c/i2c-host-fixes with Tested-by Hans.
+
+Thanks,
+Andi
 
