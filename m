@@ -1,279 +1,188 @@
-Return-Path: <linux-kernel+bounces-230591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20B59917EEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:53:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B519E917EF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:54:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD019283CD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:53:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D85491C21EA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:54:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15425181D1B;
-	Wed, 26 Jun 2024 10:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE1117D8AF;
+	Wed, 26 Jun 2024 10:52:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KBqcjTXF"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="oHkDPAqP"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5ABB181D1E;
-	Wed, 26 Jun 2024 10:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2847F17A922
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 10:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719399110; cv=none; b=hJFWi1Q5jmlz2rGt1LiT3YpVXBahA1QeVkzSqEHbQVOhLMieSOkAf1RHKaZ1IFEAAoVFYrTzV5vzOY9ZemRCp9boxiTYPhxy5TZhmu382sTSIV50houvQVM225RuCXf3AEhkhA5f0GdtmzgyrS26QOR2xHTdHVaJThYqiyCAWxI=
+	t=1719399145; cv=none; b=kYcLtTCx3xm0K/LBvctxOWuBEuZoxS1x7ADv5FSnoXA7Lil3yq4tliURYLRGx7yTblCCEflVR2cfGOaDtqgI5iey1aBAfPUtydWRdLV9IaJyDRWmYtIFwjR6DNH7S6lfqTbXVEjKydJoSpt5D1mrh3BZN7Ad3Qz4Njr0WW//qQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719399110; c=relaxed/simple;
-	bh=njPBaVPiJ+OrsgkSQ4O6avilA3ChsvjLomkkhBGXUqg=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f0cQTxYwtEdEISM3AbUoiCak3AxWNjIsXAuT+aPy3m/VGkmvOwF0otvb3INDMjoqYtqEd1cWM0JQEyVXGT+g4+A+X9fP5F5EgDLWk6ZhewZ9LwWnGM0MWPiNl0aggAkyws8Ia4174tY+mNyBjnF+kKSs8HXj3eymodKrZM1YhYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KBqcjTXF; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ec3f875e68so72779241fa.0;
-        Wed, 26 Jun 2024 03:51:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719399105; x=1720003905; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sAF9vjjeL2YSSoAhozbISzvWAPohgaJ/Mqgbub7kNF0=;
-        b=KBqcjTXFDPJvvlzoztZbyO1eEma93laC2aOqIY5/6JNG215CqK8GPlpBk2/b2RJ3FU
-         VQm8F64JyowC9esCIikt0rgN0Vin/m8g7yxSGvDGoYKE21mCv0xeZ8Oaom7HRRcNrwSk
-         4SnEOctnD0Nsn8BfmiIN1Mdjn9fLSTqgymaamKM7hutsLXaxHxSokVBfE1oryr5Y9yH/
-         ZVTefXq5khluu12PKN6Ontb1lcs4LJmQAPARj14zwmPHbyk1/IsaMj+n9rioCU9Zyco7
-         9Dn0TXVSAL3tzpBS6iJf/04cEMWEdyP9eRYz0yyBl8syE90U3Now8wDUCQns1JImDxCg
-         c5dA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719399105; x=1720003905;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sAF9vjjeL2YSSoAhozbISzvWAPohgaJ/Mqgbub7kNF0=;
-        b=WWvim2+9vurNeBy22ZG9YqeCka+RLXpti8gjy7lcPehEDwHWbNwHgIWuTa3jUr+tBT
-         kjYwZhA7zziIMtibap6JHOn8w/WybEw16VdQVE5gdiPpZsUW7AtpcGDuFeTaQD0SqAQR
-         vsMSDs9nF9J3I2cwMVnm3wb3VbxNFTE217QajQoagDRkLT7ugVI/JVap2MSv55reqxeJ
-         HMMDx/m66fOiMnqPZiTYPfnVWwNV50suF9au68kpGXC3qbhJ+NNthwmsDxPNnYg/iWRV
-         NHuc/suKIsrNcjI78X8T+TLOodBbKzskdfODtY7Spt6Ak6yscXGb5KghPGE9z2hfCGhN
-         axDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIS/Mk6sKuxAYN0UiHcirIjImW4Vfsxlj2raGl9XKoggq/Wel4tZ02eQrcMBLH67nJiXLRcMz1qLBvKRT/QfDY4btv9t3WxLHLxEjmuCzxaitf4Ir6wey5W/NvEJqdfC3NrOukyAcFjw==
-X-Gm-Message-State: AOJu0YxL7ih4nOWSuLkYJQy0LtrOAmhcSKwz3YRHcAcGagTpYw6qKnnH
-	lxzShKHJJneeWHEsHN9IsWJiXjKdS8e38yOn3XDbY5DQEOezHS+1
-X-Google-Smtp-Source: AGHT+IFKZSVhxM5coOj5/CC3REPwevHkwWRCxIsgNzYe4QGbxv+o6yN+lc0AxHbPqS/w93Knm6WQlQ==
-X-Received: by 2002:a2e:9104:0:b0:2ec:57c7:c72c with SMTP id 38308e7fff4ca-2ec5b3d4979mr52834821fa.35.1719399104689;
-        Wed, 26 Jun 2024 03:51:44 -0700 (PDT)
-Received: from pc636 (host-90-233-219-252.mobileonline.telia.com. [90.233.219.252])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec54860756sm11434241fa.131.2024.06.26.03.51.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 03:51:44 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Wed, 26 Jun 2024 12:51:42 +0200
-To: Hailong Liu <hailong.liu@oppo.com>
-Cc: Uladzislau Rezki <urezki@gmail.com>, Baoquan He <bhe@redhat.com>,
-	Nick Bowler <nbowler@draconx.ca>, linux-kernel@vger.kernel.org,
-	Linux regressions mailing list <regressions@lists.linux.dev>,
-	linux-mm@kvack.org, sparclinux@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: PROBLEM: kernel crashes when running xfsdump since ~6.4
-Message-ID: <Znvyvof4CnFETJ-v@pc636>
-References: <ZnqspTVl/76jM9WD@MiWiFi-R3L-srv>
- <Znq6tEtCgB6QnnJH@pc638.lan>
- <Znq/8/HAc/0p6Ja0@MiWiFi-R3L-srv>
- <ZnrjZRq5-_hemrbD@pc636>
- <ZnrnADHvOiNcZv9t@MiWiFi-R3L-srv>
- <Znr1IQ1mssdNNXbv@pc638.lan>
- <ZnsjIB2byIxSgbjc@pc636>
- <20240626051206.mx2r4iy3wpexykay@oppo.com>
- <ZnvcToH1h-sVtikh@pc636>
- <20240626100342.2dudj6fjjx6srban@oppo.com>
+	s=arc-20240116; t=1719399145; c=relaxed/simple;
+	bh=XKE4+a/drYSMQk6Mjnwv3FXxUZAUhdgh/aF+cJdKpsM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CLu+G5MTFPSUUIIDttCpKlN1QBA36UeXNKXNb7X4eaj+Myuvz3t8iVhznSkqluQgVDYSxOcOgvXmLIBoZTiktz+OYwcDP3/CKSAnhO7OuZAIiI3rGRUeW4FfRXPh00DkB3194MUM+VWtIJ1U8ONQvOUUJpcO1GpLVgNnRnjUotI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=oHkDPAqP; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-144-210.elisa-laajakaista.fi [91.158.144.210])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 83F424CF;
+	Wed, 26 Jun 2024 12:51:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1719399118;
+	bh=XKE4+a/drYSMQk6Mjnwv3FXxUZAUhdgh/aF+cJdKpsM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oHkDPAqP2yDAOiCYfCuX64Ev8wXb81U5lDLyYcCilaG1LQ6BbTs/ELZWDFSURhNgZ
+	 vxAM1Q6Gmfr0ypt3TyICwUb8hAvj0uORQBIyM34eD4PHfhIAMu6jM7TQTh8RZnbncG
+	 dDKMLV3UqGTYsCbwHB+waFqW8JD+ah2RcMYbccc4=
+Message-ID: <52c08932-4f09-44f5-91b7-40812b0bea4f@ideasonboard.com>
+Date: Wed, 26 Jun 2024 13:52:17 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240626100342.2dudj6fjjx6srban@oppo.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 06/11] drm/bridge: cdns-dsi: Wait for Clk and Data
+ Lanes to be ready
+To: Aradhya Bhatia <a-bhatia1@ti.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Jyri Sarha <jyri.sarha@iki.fi>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>
+Cc: DRI Development List <dri-devel@lists.freedesktop.org>,
+ Linux Kernel List <linux-kernel@vger.kernel.org>,
+ Dominik Haller <d.haller@phytec.de>, Sam Ravnborg <sam@ravnborg.org>,
+ Thierry Reding <treding@nvidia.com>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
+ Devarsh Thakkar <devarsht@ti.com>, Jayesh Choudhary <j-choudhary@ti.com>,
+ Jai Luthra <j-luthra@ti.com>
+References: <20240622110929.3115714-1-a-bhatia1@ti.com>
+ <20240622110929.3115714-7-a-bhatia1@ti.com>
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Content-Language: en-US
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20240622110929.3115714-7-a-bhatia1@ti.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 26, 2024 at 06:03:42PM +0800, Hailong Liu wrote:
-> On Wed, 26. Jun 11:15, Uladzislau Rezki wrote:
-> > On Wed, Jun 26, 2024 at 01:12:06PM +0800, Hailong Liu wrote:
-> > > On Tue, 25. Jun 22:05, Uladzislau Rezki wrote:
-> > > > > > > > > /**
-> > > > > > > > >  * cpumask_next - get the next cpu in a cpumask
-> > > > > > > > >  * @n: the cpu prior to the place to search (i.e. return will be > @n)
-> > > > > > > > >  * @srcp: the cpumask pointer
-> > > > > > > > >  *
-> > > > > > > > >  * Return: >= nr_cpu_ids if no further cpus set.
-> > > > > > > >
-> > > > > > > > Ah, I got what you mean. In the vbq case, it may not have chance to get
-> > > > > > > > a return number as nr_cpu_ids. Becuase the hashed index limits the
-> > > > > > > > range to [0, nr_cpu_ids-1], and cpu_possible(index) will guarantee it
-> > > > > > > > won't be the highest cpu number [nr_cpu_ids-1] since CPU[nr_cpu_ids-1] must
-> > > > > > > > be possible CPU.
-> > > > > > > >
-> > > > > > > > Do I miss some corner cases?
-> > > > > > > >
-> > > > > > > Right. We guarantee that a highest CPU is available by doing: % nr_cpu_ids.
-> > > > > > > So we do not need to use *next_wrap() variant. You do not miss anything :)
-> > > > > > >
-> > > > > > > Hailong Liu has proposed more simpler version:
-> > > > > > >
-> > > > > > > <snip>
-> > > > > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > > > > > > index 11fe5ea208aa..e1e63ffb9c57 100644
-> > > > > > > --- a/mm/vmalloc.c
-> > > > > > > +++ b/mm/vmalloc.c
-> > > > > > > @@ -1994,8 +1994,9 @@ static struct xarray *
-> > > > > > >  addr_to_vb_xa(unsigned long addr)
-> > > > > > >  {
-> > > > > > >         int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
-> > > > > > > +       int cpu = cpumask_nth(index, cpu_possible_mask);
-> > > > > > >
-> > > > > > > -       return &per_cpu(vmap_block_queue, index).vmap_blocks;
-> > > > > > > +       return &per_cpu(vmap_block_queue, cpu).vmap_blocks;
-> > > > > > > <snip>
-> > > > > > >
-> > > > > > > which just takes a next CPU if an index is not set in the cpu_possible_mask.
-> > > > > > >
-> > > > > > > The only thing that can be updated in the patch is to replace num_possible_cpu()
-> > > > > > > by the nr_cpu_ids.
-> > > > > > >
-> > > > > > > Any thoughts? I think we need to fix it by a minor change so it is
-> > > > > > > easier to back-port on stable kernels.
-> > > > > >
-> > > > > > Yeah, sounds good since the regresson commit is merged in v6.3.
-> > > > > > Please feel free to post this and the hash array patch separately for
-> > > > > > formal reviewing.
-> > > > > >
-> > > > > Agreed! The patch about hash array i will post later.
-> > > > >
-> > > > > > By the way, when I am replying this mail, I check the cpumask_nth()
-> > > > > > again. I doubt it may take more checking then cpu_possible(), given most
-> > > > > > of systems don't have gaps in cpu_possible_mask. I could be dizzy at
-> > > > > > this moment.
-> > > > > >
-> > > > > > static inline unsigned int cpumask_nth(unsigned int cpu, const struct cpumask *srcp)
-> > > > > > {
-> > > > > >         return find_nth_bit(cpumask_bits(srcp), small_cpumask_bits, cpumask_check(cpu));
-> > > > > > }
-> > > > > >
-> > > > > Yep, i do not think it is a big problem based on your noted fact.
-> > > > >
-> > > > Checked. There is a difference:
-> > > >
-> > > > 1. Default
-> > > >
-> > > > <snip>
-> > > > ...
-> > > > +   15.95%     6.05%  [kernel]        [k] __vmap_pages_range_noflush
-> > > > +   15.91%     1.74%  [kernel]        [k] addr_to_vb_xa <---------------
-> > > > +   15.13%    12.05%  [kernel]        [k] vunmap_p4d_range
-> > > > +   14.17%    13.38%  [kernel]        [k] __find_nth_bit <--------------
-> > > > +   10.62%     0.00%  [kernel]        [k] ret_from_fork_asm
-> > > > +   10.62%     0.00%  [kernel]        [k] ret_from_fork
-> > > > +   10.62%     0.00%  [kernel]        [k] kthread
-> > > > ...
-> > > > <snip>
-> > > >
-> > > > 2. Check if cpu_possible() and then fallback to cpumask_nth() if not
-> > > >
-> > > > <snip>
-> > > > ...
-> > > > +    6.84%     0.29%  [kernel]          [k] alloc_vmap_area
-> > > > +    6.80%     6.70%  [kernel]          [k] native_queued_spin_lock_slowpath
-> > > > +    4.24%     0.09%  [kernel]          [k] free_vmap_block
-> > > > +    2.41%     2.38%  [kernel]          [k] addr_to_vb_xa <-----------
-> > > > +    1.94%     1.91%  [kernel]          [k] xas_start
-> > > > ...
-> > > > <snip>
-> > > >
-> > > > It is _worth_ to check if an index is in possible mask:
-> > > >
-> > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > > > index 45e1506d58c3..af20f78c2cbf 100644
-> > > > --- a/mm/vmalloc.c
-> > > > +++ b/mm/vmalloc.c
-> > > > @@ -2542,7 +2542,10 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
-> > > >  static struct xarray *
-> > > >  addr_to_vb_xa(unsigned long addr)
-> > > >  {
-> > > > -       int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
-> > > > +       int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
-> > > IIUC, use nr_cpu_ids here maybe incorrect.
-> > >
-> > > take b101 as example, nr_cpu_ids is 3. if index is 2 cpumask_nth(2, cpu_possible_mask);
-> > > might return 64.
-> > >
-> > But then a CPU2 becomes possible? Cutting by % nr_cpu_ids generates values < nr_cpu_ids.
-> > So, last CPU is always possible and we never do cpumask_nth() on a last possible CPU.
-> >
-> > What i miss here?
-> >
-> Sorry, I forget to reply to all :), I write a demo to test as follows:
+On 22/06/2024 14:09, Aradhya Bhatia wrote:
+> Once the DSI Link and DSI Phy are initialized, the code needs to wait
+> for Clk and Data Lanes to be ready, before continuing configuration.
+> This is in accordance with the DSI Start-up procedure, found in the
+> Technical Reference Manual of Texas Instrument's J721E SoC[0] which
+> houses this DSI TX controller.
 > 
-> static int cpumask_init(void)
-> {
->        struct cpumask mask;
->        unsigned int cpu_id;
->        cpumask_clear(&mask);
+> If the previous bridge (or crtc/encoder) are configured pre-maturely,
+> the input signal FIFO gets corrupt. This introduces a color-shift on the
+> display.
 > 
->        cpumask_set_cpu(1, &mask);
->        cpumask_set_cpu(3, &mask);
->        cpumask_set_cpu(5, &mask);
+> Allow the driver to wait for the clk and data lanes to get ready during
+> DSI enable.
 > 
->        cpu_id = find_last_bit(cpumask_bits(&mask), NR_CPUS) + 1;
->        pr_info("cpu_id:%d\n", cpu_id);
+> [0]: See section 12.6.5.7.3 "Start-up Procedure" in J721E SoC TRM
+>       TRM Link: http://www.ti.com/lit/pdf/spruil1
 > 
->        for (; i < nr_cpu_ids; i++) {
->                pr_info("%d: cpu_%d\n", i, cpumask_nth(i, &mask));
->        }
+> Fixes: e19233955d9e ("drm/bridge: Add Cadence DSI driver")
+> Tested-by: Dominik Haller <d.haller@phytec.de>
+> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+> ---
+>   drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c | 13 ++++++++++++-
+>   1 file changed, 12 insertions(+), 1 deletion(-)
 > 
->        return 0;
-> }
-> 
-> [    1.337020][    T1] cpu_id:6
-> [    1.337338][    T1] 0: cpu_1
-> [    1.337558][    T1] 1: cpu_3
-> [    1.337751][    T1] 2: cpu_5
-> [    1.337960][    T1] 3: cpu_64
-> [    1.338183][    T1] 4: cpu_64
-> [    1.338387][    T1] 5: cpu_64
-> [    1.338594][    T1] 6: cpu_64
-> 
-> In summary, the nr_cpu_ids = last_bit + 1, and cpumask_nth() return the nth cpu_id.
-> 
-OK, i misread the cpumask_nth(). We should go with *_next() variant instead.
+> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
+> index 426f77092341..126e4bccd868 100644
+> --- a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
+> +++ b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
+> @@ -764,7 +764,7 @@ static void cdns_dsi_bridge_enable(struct drm_bridge *bridge)
+>   	struct phy_configure_opts_mipi_dphy *phy_cfg = &output->phy_opts.mipi_dphy;
+>   	unsigned long tx_byte_period;
+>   	struct cdns_dsi_cfg dsi_cfg;
+> -	u32 tmp, reg_wakeup, div;
+> +	u32 tmp, reg_wakeup, div, status;
+>   	int nlanes;
+>   
+>   	if (WARN_ON(pm_runtime_get_sync(dsi->base.dev) < 0))
+> @@ -781,6 +781,17 @@ static void cdns_dsi_bridge_enable(struct drm_bridge *bridge)
+>   	cdns_dsi_init_link(dsi);
+>   	cdns_dsi_hs_init(dsi);
+>   
+> +	/*
+> +	 * Now that the DSI Link and DSI Phy are initialized,
+> +	 * wait for the CLK and Data Lanes to be ready.
+> +	 */
+> +	tmp = CLK_LANE_RDY;
+> +	for (int i = 0; i < nlanes; i++)
+> +		tmp |= DATA_LANE_RDY(i);
+> +
+> +	WARN_ON_ONCE(readl_poll_timeout(dsi->regs + MCTL_MAIN_STS, status,
+> +					status & tmp, 100, 0));
 
-Thank you for pointing this. Below is updated version with extra comment:
+I think an error print is more suitable than WARN_ON_ONCE(). Other than 
+that:
 
-<snip>
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 45e1506d58c3..03b82fb8ecd3 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -2542,7 +2542,15 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
- static struct xarray *
- addr_to_vb_xa(unsigned long addr)
- {
--       int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
-+       int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
-+
-+       /*
-+        * Please note, nr_cpu_ids points on a highest set
-+        * possible bit, i.e. we never invoke cpumask_next()
-+        * if an index points on it which is nr_cpu_ids - 1.
-+        */
-+       if (!cpu_possible(index))
-+               index = cpumask_next(index, cpu_possible_mask);
- 
-        return &per_cpu(vmap_block_queue, index).vmap_blocks;
- }
-<snip>
+Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 
-Thanks!
+  Tomi
 
---
-Uladzislau Rezki
+> +
+>   	writel(HBP_LEN(dsi_cfg.hbp) | HSA_LEN(dsi_cfg.hsa),
+>   	       dsi->regs + VID_HSIZE1);
+>   	writel(HFP_LEN(dsi_cfg.hfp) | HACT_LEN(dsi_cfg.hact),
+
 
