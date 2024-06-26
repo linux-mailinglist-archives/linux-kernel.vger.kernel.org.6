@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-231407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F759919865
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:43:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 197BD919868
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:43:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D074B2185B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:43:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C362B282F4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169EF192B88;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F1E1922DF;
 	Wed, 26 Jun 2024 19:43:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RqFF3BY8"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AG8uE/iP"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C54192B64
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 19:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B55E192B7F
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 19:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719430994; cv=none; b=RNwqDWLbWxzzBTpuC0DjHYpHl/B/tX2aozLZeZO8u2xLtgDC+BoNiQLxKIpTsjaYspxf8lwfx2oSdPR33BuWErE0bedpo8XA7WPqSsh1YC10z9FhHOeAHgfysbz38rtMToZwjMTHhfFRxKVQ6hN0EnnB5iLM1SVsj69yxMYXOaQ=
+	t=1719430994; cv=none; b=j5Fo0HupysAkDAxmKClcFWc0epdv/s8diBZWS/wTO2fv7aWQLBbczKjumrdRQiFV/OVBsWgPnyO2U8CKdPyZSPTTQwOEZlKhYmbTUy22HCTpmwFzd2rCEwKjWcyMesxT/3VthdH/Py20xyfYxuAkQrgbVISSJ4t1b6f0MdpNcZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719430994; c=relaxed/simple;
-	bh=cSR0gYcxjPBmP6LYpUXWyVrCem1Nc/dEqwkoBvR6aRM=;
+	bh=QWIFihsVD1gKqEZxXoCvx6MZhkayfkQXDw2BS2+6928=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=b3B8omD/gPCBnZJSNAgKL7cgzdX2W6Vv9MXkq0oJB3/kyiAqmapmRfhBZ8sqtSPI+TBBfBWCPN1UCq8mOEo82S5lzO+nEMD60zZaPHiGAWJnhmbpMn/MxmCxTOVSnnQxlllhIm1nZjOwTbqYl6KuO5CQWq1/mNpJJKG1zF0xwlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RqFF3BY8; arc=none smtp.client-ip=209.85.128.51
+	 MIME-Version; b=fzwDNv1XFoSGr6Su0/7blbs8H01ck3lBVrcKThqZbk91Nbq5lbTGWsf73U3rJndd3mr80JMkMFD+u0LilYfVSUinHU/4UM/urM54FfT1jiLVZC8WRE4Wlb32CdJol6oPcOPDVZE8gjZ3/oz6nIfea1p4DAgvMzLm5DFxh433ArE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AG8uE/iP; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-424acfff613so13797435e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 12:43:11 -0700 (PDT)
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42562a984d3so2925215e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 12:43:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719430989; x=1720035789; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1719430992; x=1720035792; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6B6zMz66mId752W71/Awh4RoZkm3MLOugnC6sEYYCNg=;
-        b=RqFF3BY8hvS05OVOt1eDzYCLugrfFsKwbqWl7zV06OKnhPh5nSGckrfh4MgPSuy+Zf
-         fiZc43dmgXfEx+TnCPTXLVM9mQlk3QN+HTcvXtGhl5Rv6qf9CVL9qg1vhuHixWw7wNR7
-         Zs1MeJOy/0SlB2aX48KF+NprqpsywME3smMYLEXcegL/lsMKto81kUeHSzHYU2tAgUS1
-         AARGiRqu0yApnnEns5LOLO+FkYirNEBvy4e74sgnImczvkbNf0RPXXnsWK3JEiUXi7SN
-         rUNYEphPWI9dVY87ba+zB1xIsSYpVFxLNjaR/HTKREiRO9WfDL2CUa4nGrgRkZgx4zsX
-         lDIA==
+        bh=itjEXOXzQyQKcMZI8QbOfOw29V9GALUONSBPehBlPuM=;
+        b=AG8uE/iPAn59Mx6J5sisOyyGnGJtDzYyrcDMuaCfzw2Cbouv+SY1+r7HU66fB53dG6
+         XZXn6w9Iwt9fYkeHM+p5DA8xLvPUhlRSUS+N2OmDMa5V4uukQLzBRmq9kVo7kE6vgUeL
+         peenJT2gQYjmjcKEtW5qsJ3N8APvF4nnPwvuxA/aKqYnxQt0uTch+P+hJhqjeMD0ofY/
+         mmfomjswZ6rPVAm9Q7HNStS8NgplY9sJ8S2CpiaIw++lir6TdmGByyp1JES9wG7PeyEW
+         dV9C2fTGyDnxhrncEB2IWhf3wnb8bfM12DocWea5RUBLZHHJIKtErK6VDOPhxfe7hzvR
+         oidA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719430989; x=1720035789;
+        d=1e100.net; s=20230601; t=1719430992; x=1720035792;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6B6zMz66mId752W71/Awh4RoZkm3MLOugnC6sEYYCNg=;
-        b=tCq6vWktl9Vs1j9eYsYupRQ9eCGudCxJVt5x7ZX26Ul1oU2+m8UtmO/yfD7cpHWOay
-         vHMVQT2GjTKc9p8QrB4W8o9izCLQxDpKhmUVZga/R+LUBJBHRt7+Fg0iLi7U6h1OpVlV
-         86XgsyJBpbE9gwYEvfQCvCiZhF7OvrPAP9dB/nUoi41EvXvV38jRdMk5P3AuzN5iYzdQ
-         y1q2tR8iu27VN/jNCd/z/f2Av8w4JSxeJ4bF5qVFJ76VFuqtEDclT7lFIxYRq8al1SW3
-         PzZVwT3e5CACKFUB9yFoHtHvsR/z9buSubXsoCBiG+e9FgHWrWAwnD1iFsLvBpjFRQ5U
-         CMJg==
-X-Forwarded-Encrypted: i=1; AJvYcCWlmDV+xhI4AzXyfTW9/LU3jbZnM83lnsCkPPw32Pa2d6qArEn1hGfyN0TDntRYQDBcQmdM8hIIi6lqGSuhy/wjApJyfsSfSoqhAUkl
-X-Gm-Message-State: AOJu0YxV+y0NDxrE1rRFQK3bw06EijYwXcu0sQftjOqkvBhOcb6Eh2LB
-	3z0NfJggq1xy4KZxzxUe7wshgbhgy783jMcEYmKxB1Eyupfcj5W0saYhYlhdT9A=
-X-Google-Smtp-Source: AGHT+IHE/9FMLNxeq1ujy3GK1f/VeuXsMI30Klw5I97NuBAg2W8K6Jh0ubTi20bQaUpHSFcBiirkNw==
-X-Received: by 2002:a05:600c:43d4:b0:424:a4a2:9478 with SMTP id 5b1f17b1804b1-424a4a294cemr41167465e9.25.1719430989622;
-        Wed, 26 Jun 2024 12:43:09 -0700 (PDT)
+        bh=itjEXOXzQyQKcMZI8QbOfOw29V9GALUONSBPehBlPuM=;
+        b=ARELqV0NaT5RDr9MPEBwRcVm8KLuNwcy1RpIL9AUt9CoX1EBwGMB/yMkyDwNeHvHZN
+         ymoVFXNFN/UjZZ8KMTjOE9Ntc6pvc+QGru8BbT2g03pMENtDmwayIoH/Kwfe/s0h7sRz
+         N+4kpeautJ9Zl5H5nFl0SOIY/ZPY9H3v+D99vrQsnIzKupiYHtePYxbEX2Mxtmb7PUjA
+         JvljrOgww0KesVRDvhQqVTul5+MOp5GFaarBFKYErLvu08EenG6D8gH9FWcBHkPfRLW1
+         T/c1wd+4xVhVKZfneOV1vepvgQog1VkUfF2lgIQTQDSuPk0dBlhn050srwrl3cyDSLes
+         l4Xg==
+X-Forwarded-Encrypted: i=1; AJvYcCXr4RVjfTGLdVci8T+fwH2CFbex290rVFj1ZqWgiJwo1chNIcdAGUJswoQ5WDUDRgUx0BEjJTnrOq3z6H9MeMVT42yzLvH4hb1XI8KN
+X-Gm-Message-State: AOJu0YyKEfBJvYgjzzfVHkhk6Xuk7GYRy5gQfUrtf7zMoJPHH273/fHl
+	aQwypLp2BItnuNi2ar4sy5WbLV4wRREH3UEPHUalXdNtzEVPeXr4n1Zd7Vs/hRc=
+X-Google-Smtp-Source: AGHT+IHfX7OcBD6RtAgL4xteSdf1Nw93HCLkwb+4A6AZaX/B1Vh/4GYCHbWGaSDfQ4ZAgSMPHvr94Q==
+X-Received: by 2002:a05:600c:3011:b0:424:ac9c:7228 with SMTP id 5b1f17b1804b1-424ac9c7c26mr20195405e9.4.1719430991709;
+        Wed, 26 Jun 2024 12:43:11 -0700 (PDT)
 Received: from gpeter-l.lan ([2a0d:3344:2e8:8510:24d9:a20a:2de5:8eda])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c837eb2bsm36728905e9.39.2024.06.26.12.43.07
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c837eb2bsm36728905e9.39.2024.06.26.12.43.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 12:43:08 -0700 (PDT)
+        Wed, 26 Jun 2024 12:43:10 -0700 (PDT)
 From: Peter Griffin <peter.griffin@linaro.org>
 To: robh@kernel.org,
 	krzk+dt@kernel.org,
@@ -85,9 +85,9 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH 1/3] arm64: dts: exynos: gs101: add syscon-poweroff and syscon-reboot nodes
-Date: Wed, 26 Jun 2024 20:42:58 +0100
-Message-ID: <20240626194300.302327-2-peter.griffin@linaro.org>
+Subject: [PATCH 2/3] soc: samsung: exynos-pmu: add support for PMU_ALIVE non atomic registers
+Date: Wed, 26 Jun 2024 20:42:59 +0100
+Message-ID: <20240626194300.302327-3-peter.griffin@linaro.org>
 X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
 In-Reply-To: <20240626194300.302327-1-peter.griffin@linaro.org>
 References: <20240626194300.302327-1-peter.griffin@linaro.org>
@@ -99,49 +99,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Reboot of gs101 SoC can be handled by setting the
-bit(SWRESET_SYSTEM[1]) of SYSTEM_CONFIGURATION register(PMU + 0x3a00).
+Not all registers in PMU_ALIVE block support atomic set/clear operations.
+GS101_SYSIP_DAT0 and GS101_SYSTEM_CONFIGURATION registers are two regs
+where attempting atomic access fails.
 
-Poweroff of gs101 SoC can be handled by setting bit(DATA[8]) of
-PAD_CTRL_PWR_HOLD register (PMU + 0x3e9c).
-
-Tested using "reboot" and "poweroff -p" commands.
+As documentation on exactly which registers support atomic operations is
+not forthcoming. We default to atomic access, unless the register is
+explicitly added to the tensor_is_atomic() function. Update the comment
+to reflect this as well.
 
 Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 ---
-This feature has a runtime dependency on the following series
-https://lore.kernel.org/linux-arm-kernel/20240621115544.1655458-1-peter.griffin@linaro.org/
-and also the exynos-pmu and clk-gs101 patches in this series to be functional.
----
- arch/arm64/boot/dts/exynos/google/gs101.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/soc/samsung/exynos-pmu.c            | 16 ++++++++++++++--
+ include/linux/soc/samsung/exynos-regs-pmu.h |  4 ++++
+ 2 files changed, 18 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-index a66e996666b8..ce24b80985a2 100644
---- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-+++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-@@ -1394,6 +1394,21 @@ sysreg_apm: syscon@174204e0 {
- 		pmu_system_controller: system-controller@17460000 {
- 			compatible = "google,gs101-pmu", "syscon";
- 			reg = <0x17460000 0x10000>;
-+
-+			poweroff: syscon-poweroff {
-+				compatible = "syscon-poweroff";
-+				regmap = <&pmu_system_controller>;
-+				offset = <0x3e9c>; /* PAD_CTRL_PWR_HOLD */
-+				mask = <0x100>; /* reset value */
-+			};
-+
-+			reboot: syscon-reboot {
-+				compatible = "syscon-reboot";
-+				regmap = <&pmu_system_controller>;
-+				offset = <0x3a00>; /* SYSTEM_CONFIGURATION */
-+				mask = <0x2>; /* SWRESET_SYSTEM */
-+				value = <0x2>; /* reset value */
-+			};
- 		};
+diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
+index 624324f4001c..5556acc7c092 100644
+--- a/drivers/soc/samsung/exynos-pmu.c
++++ b/drivers/soc/samsung/exynos-pmu.c
+@@ -129,14 +129,26 @@ static int tensor_set_bits_atomic(void *ctx, unsigned int offset, u32 val,
+ 	return ret;
+ }
  
- 		pinctrl_gpio_alive: pinctrl@174d0000 {
++static bool tensor_is_atomic(unsigned int reg)
++{
++	switch (reg) {
++	case GS101_SYSIP_DAT0:
++	case GS101_SYSTEM_CONFIGURATION:
++		return false;
++	default:
++		return true;
++	}
++}
++
+ static int tensor_sec_update_bits(void *ctx, unsigned int reg,
+ 				  unsigned int mask, unsigned int val)
+ {
+ 	/*
+ 	 * Use atomic operations for PMU_ALIVE registers (offset 0~0x3FFF)
+-	 * as the target registers can be accessed by multiple masters.
++	 * as the target registers can be accessed by multiple masters. Some
++	 * SFRs don't support this however as reported by tensor_is_atomic()
+ 	 */
+-	if (reg > PMUALIVE_MASK)
++	if (reg > PMUALIVE_MASK || !tensor_is_atomic(reg))
+ 		return tensor_sec_reg_rmw(ctx, reg, mask, val);
+ 
+ 	return tensor_set_bits_atomic(ctx, reg, val, mask);
+diff --git a/include/linux/soc/samsung/exynos-regs-pmu.h b/include/linux/soc/samsung/exynos-regs-pmu.h
+index aa840ed043e1..f411c176536d 100644
+--- a/include/linux/soc/samsung/exynos-regs-pmu.h
++++ b/include/linux/soc/samsung/exynos-regs-pmu.h
+@@ -657,4 +657,8 @@
+ #define EXYNOS5433_PAD_RETENTION_UFS_OPTION			(0x3268)
+ #define EXYNOS5433_PAD_RETENTION_FSYSGENIO_OPTION		(0x32A8)
+ 
++/* For Tensor GS101 */
++#define GS101_SYSIP_DAT0					(0x810)
++#define GS101_SYSTEM_CONFIGURATION				(0x3A00)
++
+ #endif /* __LINUX_SOC_EXYNOS_REGS_PMU_H */
 -- 
 2.45.2.741.gdbec12cfda-goog
 
