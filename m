@@ -1,124 +1,150 @@
-Return-Path: <linux-kernel+bounces-229942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F6DF91765D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 04:51:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFF8891765C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 04:50:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D07381C225C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 02:51:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 994111F23B58
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 02:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC2E93B7A8;
-	Wed, 26 Jun 2024 02:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="PPGQD/Es"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A1A714A81;
-	Wed, 26 Jun 2024 02:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64E453368;
+	Wed, 26 Jun 2024 02:50:26 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F6614A81;
+	Wed, 26 Jun 2024 02:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719370256; cv=none; b=nmiRB6XwppP0hy1nyOQ2bBSh2jiU7vsgbEBhQsI64/+gz4rNREr7NSfkkyR/OYTJUf5A35b19LSKthJ+T6hYaj3cFeaQF6+salqc5r8RPSKmY4MMUpZwFGCGqzN/xsUtFCXPXmQt4SdjJGOUnuFKxFCQbw6j+rUGQv9btfNMYo0=
+	t=1719370226; cv=none; b=ZpFFQQaFwyIIkOi+t7HuA9sJVa98HZH0BndkTt4YjXPkOjLehWOrf5yi9VdQK0CfZiikU6QODrn35eMaNHiLbU0P/EPQXX3m33XlN+9alOmkaQy8durLx6/C+0vSx43EN14zWVPp1fvyhsMCuEyZIBhP13D3wa/dstzzjouZHrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719370256; c=relaxed/simple;
-	bh=I+Mmm7O8zWsVG9k4of9tiyj3aKGe9eU+KFhKPGSFyKM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=r3fSpNCNqMEUcww/oQnOyTvoiCYTXyI+lJxypahmLgYYtoed0kPYN4TNVImTiF0Le8LeOkl3TvWDOy080f+7ZWWuwLpEivab22lHi1+gOktgsjPhVHO/jNPFp2xmA4iyzXzqMTRrKu7/mkxlVOnBZv73jEbAoMr4g1I1H7pVz9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=PPGQD/Es; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=fFFOK
-	vSRi6Ay443e2K7KzltG1+t1YPDbN1yuinD8/Nk=; b=PPGQD/EsvA0Z+MY/IMniF
-	hOPxc8wWMMMHDa1tpDilBGc8lUHnN+ZQgh+p1olSHX5AWzda45w/5lHbj5Y3A23j
-	lxuG58iieCXnxglAAMSH+RmrMgEGGtaRkeuC4XigpkPdAEoTJIMpbQ76emlCqK2R
-	RYnLsm1NJHgsMugixX8wsk=
-Received: from localhost.localdomain (unknown [193.203.214.57])
-	by gzga-smtp-mta-g2-1 (Coremail) with SMTP id _____wDXT0W6gXtm8PInAg--.40265S6;
-	Wed, 26 Jun 2024 10:49:38 +0800 (CST)
-From: ran xiaokai <ranxiaokai627@163.com>
-To: akpm@linux-foundation.org,
-	willy@infradead.org
-Cc: vbabka@suse.cz,
-	svetly.todorov@memverge.com,
-	ran.xiaokai@zte.com.cn,
-	baohua@kernel.org,
-	ryan.roberts@arm.com,
-	peterx@redhat.com,
-	ziy@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 2/2] kpageflags: fix wrong KPF_THP on non-pmd-mappable compound pages
-Date: Wed, 26 Jun 2024 02:49:24 +0000
-Message-Id: <20240626024924.1155558-3-ranxiaokai627@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240626024924.1155558-1-ranxiaokai627@163.com>
-References: <20240626024924.1155558-1-ranxiaokai627@163.com>
+	s=arc-20240116; t=1719370226; c=relaxed/simple;
+	bh=77erm8a/7YTFfct96pxM7WPGDKzSxCqwnSfvAF6MVvY=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=pT1VqVCIjkZ8xua4FoeefpV2lCFML3eQ+UsIARo0DRORsgK48It8QqQzSdr4pvxsgcwAz1TKPfiaQAJ1YpHVVJwJKybokJXeYkEXoBUQ4FytGxhTucMAtdzbHBvjG/07mzQtS80jprfcz5Scw2lRURvNAs2vlOmr+S9MCmA1Jtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.97.1)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1sMIjE-000000005qQ-1zt7;
+	Wed, 26 Jun 2024 02:49:48 +0000
+Date: Wed, 26 Jun 2024 03:49:42 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>, Jens Axboe <axboe@kernel.dk>,
+	Hauke Mehrtens <hauke@hauke-m.de>, Felix Fietkau <nbd@nbd.name>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Dave Chinner <dchinner@redhat.com>, Jan Kara <jack@suse.cz>,
+	Christian Brauner <brauner@kernel.org>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Li Lingfeng <lilingfeng3@huawei.com>,
+	Christian Heusel <christian@heusel.eu>,
+	Min Li <min15.li@samsung.com>, Avri Altman <avri.altman@wdc.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Hannes Reinecke <hare@suse.de>,
+	Mikko Rapeli <mikko.rapeli@linaro.org>, Yeqi Fu <asuk4.q@gmail.com>,
+	Victor Shih <victor.shih@genesyslogic.com.tw>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Li Zhijian <lizhijian@fujitsu.com>,
+	"Ricardo B. Marliere" <ricardo@marliere.net>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org, linux-block@vger.kernel.org
+Subject: [PATCH v3 0/4] block: preparations for NVMEM provider
+Message-ID: <cover.1719368448.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDXT0W6gXtm8PInAg--.40265S6
-X-Coremail-Antispam: 1Uf129KBjvJXoW7ZF4rKrW3uF43urykAryxKrg_yoW8WFykpr
-	Z3GF9rArWkW3Z8Ar18Xw1qkry8Kr98WF4Utayakw1Iv3ZxXwnrKFW8tw4FyFy7XFyxAan2
-	vayDuF13Za4DuaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UMuWJUUUUU=
-X-CM-SenderInfo: xudq5x5drntxqwsxqiywtou0bp/1tbiMwQKTGXAmE8lKgABsN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+On embedded devices using an eMMC it is common that one or more (hw/sw)
+partitions on the eMMC are used to store MAC addresses and Wi-Fi
+calibration EEPROM data.
 
-KPF_COMPOUND_HEAD and KPF_COMPOUND_TAIL are set on "common" compound
-pages, which means of any order, but KPF_THP should only be set
-when the folio is a 2M pmd mappable THP. Since commit 19eaf44954df
-("mm: thp: support allocation of anonymous multi-size THP"),
-multiple orders of folios can be allocated and mapped to userspace,
-so the folio_test_large() check is not sufficient here,
-replace it with folio_test_pmd_mappable() to fix this.
+Typically the NVMEM framework is used to have kernel drivers read and
+use binary data from EEPROMs, efuses, flash memory (MTD), ...
 
-Also kpageflags is not only for userspace memory but for all valid pfn
-pages,including slab pages or drivers used pages, so the PG_lru and
-is_anon check are unnecessary here.
+Using references to NVMEM bits in Device Tree allows the kernel to
+access and apply e.g. the Ethernet MAC address, which can be a requirement
+for userland to come up (e.g. for nfsroot).
 
-Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+The goal of this series is to prepare the block subsystem to allow for
+the implementation of an NVMEM provider similar to other types of
+non-volatile storage, so the same approach already used for EEPROMs, MTD
+(raw flashes) and UBI-managed NAND can also be used for devices storing
+those bits on an eMMC.
+
+Define a device tree schema for block devices and partitions on them,
+which (similar to how it now works also for UBI volumes) can be matched
+by one or more properties.
+
+Also add a simple notification API for other subsystems to be notified
+about additions and removals of block devices, which is going to be used
+by the block-backed NVMEM provider.
+
+Overall, this enables uniform handling across practially all flash
+storage types used for this purpose (MTD, UBI, and soon also MMC or and
+in future maybe also other block devices).
 ---
- fs/proc/page.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+Changes since v2 sent on May 30th 2024 [1] addressing comments from
+Hauke Mehrtens (https://patchwork.kernel.org/comment/25892133/)
+ - Check length of UUID and PARTNAME.
+ - Remove forgotten fallback to get 'partitions' subnode from parent.
+   It is no longer needed and was a left over from earlier development.
+ - Split series into 3 parts, one for each affected subsystem. This is
+   the first part covering only the changes needed in the block
+   subsystem. The second part adds the actual nvmem provider to
+   drivers/nvmem/, the third part is going to make use of it for MMC
+   block devices and cover changes in drivers/mmc.
 
-diff --git a/fs/proc/page.c b/fs/proc/page.c
-index 2fb64bdb64eb..3e7b70449c2f 100644
---- a/fs/proc/page.c
-+++ b/fs/proc/page.c
-@@ -146,19 +146,13 @@ u64 stable_page_flags(const struct page *page)
- 		u |= kpf_copy_bit(k, KPF_COMPOUND_HEAD, PG_head);
- 	else
- 		u |= 1 << KPF_COMPOUND_TAIL;
-+
- 	if (folio_test_hugetlb(folio))
- 		u |= 1 << KPF_HUGE;
--	/*
--	 * We need to check PageLRU/PageAnon
--	 * to make sure a given page is a thp, not a non-huge compound page.
--	 */
--	else if (folio_test_large(folio)) {
--		if ((k & (1 << PG_lru)) || is_anon)
--			u |= 1 << KPF_THP;
--		else if (is_huge_zero_folio(folio)) {
-+	else if (folio_test_pmd_mappable(folio)) {
-+		u |= 1 << KPF_THP;
-+		if (is_huge_zero_folio(folio))
- 			u |= 1 << KPF_ZERO_PAGE;
--			u |= 1 << KPF_THP;
--		}
- 	} else if (is_zero_pfn(page_to_pfn(page)))
- 		u |= 1 << KPF_ZERO_PAGE;
- 
+Changes since v1 sent on March 21st 2024 [2]:
+ - introduce notifications for block device addition and removal for
+   in-kernel users. This allows the nvmem driver to be built as a module
+   and avoids using class_interface and block subsystem internals as
+   suggested in https://patchwork.kernel.org/comment/25771998/ and
+   https://patchwork.kernel.org/comment/25770441/
+
+This series has previously been submitted as RFC on July 19th 2023[3]
+and most of the basic idea did not change since. Another round of RFC
+was submitted on March 5th 2024[4].
+
+[1]: https://patchwork.kernel.org/project/linux-block/list/?series=857192
+[2]: https://patchwork.kernel.org/project/linux-block/list/?series=837150&archive=both
+[3]: https://patchwork.kernel.org/project/linux-block/list/?series=767565
+[4]: https://patchwork.kernel.org/project/linux-block/list/?series=832705
+
+Daniel Golle (4):
+  dt-bindings: block: add basic bindings for block devices
+  block: partitions: populate fwnode
+  block: add support for notifications
+  block: add new genhd flag GENHD_FL_NVMEM
+
+ .../bindings/block/block-device.yaml          | 22 +++++
+ .../devicetree/bindings/block/partition.yaml  | 51 +++++++++++
+ .../devicetree/bindings/block/partitions.yaml | 20 +++++
+ block/Kconfig                                 |  6 ++
+ block/Makefile                                |  1 +
+ block/blk-notify.c                            | 88 +++++++++++++++++++
+ block/partitions/core.c                       | 40 +++++++++
+ include/linux/blkdev.h                        | 10 +++
+ 8 files changed, 238 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/block/block-device.yaml
+ create mode 100644 Documentation/devicetree/bindings/block/partition.yaml
+ create mode 100644 Documentation/devicetree/bindings/block/partitions.yaml
+ create mode 100644 block/blk-notify.c
+
 -- 
-2.15.2
-
-
+2.45.2
 
