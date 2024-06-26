@@ -1,51 +1,59 @@
-Return-Path: <linux-kernel+bounces-231006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41B5E9184D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:51:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14AB89184D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:51:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72CA51C2237C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:50:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE75E28B6BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:51:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A245A185E65;
-	Wed, 26 Jun 2024 14:50:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4118186288;
+	Wed, 26 Jun 2024 14:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LrMF3SoW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3466A8F5C;
-	Wed, 26 Jun 2024 14:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23506185091;
+	Wed, 26 Jun 2024 14:51:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719413450; cv=none; b=TaVajqeUsi0QWA74EuUTY005iRCEQjeOvfmlYX14zmUecnbz3/2ugA4IqfZLUrEvMSdS/ZNENixeScOCj5YQKWRSIZlvHntxbXMdg84fSGv/uPlEE2nSCjc87Aox536spIm+Pe8jYi1aGjEY2wDVyVx3fBTQRjiNy2dxbaqPUSI=
+	t=1719413479; cv=none; b=MU08EZ5ZkCYxqjqdzNE5q6HEX3HUvMUTUuTm/Pyye2zhxmVj5rw7M6RfrUxylphQVgDmLC3Geaz6+KWRpbD9KWIIukFSY+MzZBxhCHWzVH5cq/jwp2KIzRGCjDeeCbYNsSkT0aCTdtfh6V+U7uz4/OrrHCjrrfWOZpXdtZlTHh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719413450; c=relaxed/simple;
-	bh=ADCRnSIW8Y2Q8+ZZVRqQZbbkuphzK59nx6Z6uoam+ng=;
+	s=arc-20240116; t=1719413479; c=relaxed/simple;
+	bh=CSsJfVEUk0CEqbSZnNyO0CexjujJdQgyreLc/rlBhPU=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oh+LE+vhV/QpdoZzYsbF1KyYZme03rZEbOY54ViL5qeB+jnjF/hPou342FeQzTu4D/pdh4z6eXlkJafkIAnMWPzuWUXbNghwL4LJW2oanAAZV3F504QqGIwlSDzGMOMQzn/1jn5SSg/zkq/psQ+x8H8/uR5RU1SiiJK6RSedYro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85CB0C116B1;
-	Wed, 26 Jun 2024 14:50:48 +0000 (UTC)
-Date: Wed, 26 Jun 2024 10:50:46 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Song Chen <chensong_2000@189.cn>
-Cc: John Ogness <john.ogness@linutronix.de>, Andrew Halaney
- <ahalaney@redhat.com>, Derek Barbosa <debarbos@redhat.com>,
- pmladek@suse.com, senozhatsky@chromium.org, linux-rt-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, williams@redhat.com, jlelli@redhat.com
-Subject: Re: a question about how to debug this case in ftrace
-Message-ID: <20240626105046.7ad9299e@rorschach.local.home>
-In-Reply-To: <7252f93a-ef60-49f8-ae93-73d269cc62f8@189.cn>
-References: <ZnGlt4uQRP_4nWu4@debarbos-thinkpadt14sgen2i.remote.csb>
-	<6802e81c-1926-4195-812a-1a5fe13bcdde@189.cn>
-	<xiune2bsqgin5ksk33q5bkihuz5qrv5casjofdyopes55zfcpc@uvvnlwxb4wcp>
-	<4d198032-d4e1-4a84-8f56-1b31157e9323@189.cn>
-	<e6b0ba9e-e8f6-4c42-9f63-e3b67d7edbf0@189.cn>
-	<8734p0jhdc.fsf@jogness.linutronix.de>
-	<7252f93a-ef60-49f8-ae93-73d269cc62f8@189.cn>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	 MIME-Version:Content-Type; b=O/5d0v7ZJDOW/PgJArCmSDdv4rj1wLMH1uL19sfN7MvK9gcIw+sn36o4ant9jVFoWCqAUuAWsGzdwoPgZ0st5jUNy/tsSbAMMKUi7iYcdpQ0In4fRcd4Qw5d9f4rn+o9S3Lj0zO4T7uZ1bFmojmVc6rv2oz99rwysk2UrkTdJ7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LrMF3SoW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 597A2C2BD10;
+	Wed, 26 Jun 2024 14:51:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719413478;
+	bh=CSsJfVEUk0CEqbSZnNyO0CexjujJdQgyreLc/rlBhPU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LrMF3SoWx0sQGD78jCcw2pMfAlGqJYdpaA1GCtAbI9zVs165eeGQEahhTfe1U2LFj
+	 WJ26ubs2kRq5DCv+Gi3n5+71n40b4octIOsG+AN3+pXu7jBDCNHJ7B7IunHgwVm2ZZ
+	 j7pcmHcjUw90H+GpOecyqMOiRYUZ939pxkzqpcg9SsmtBx6NV89d9PwSgqqPNxY7LM
+	 kUCqCPClX1FFdONwQvpRblh4VMQWkyySGh1EHjv/98q5H7+BsUyaeOzbEKygGgNe7w
+	 zhOR9H5smRTzNOEXvHsKVnNgclJ2dFHTtvTLRt7cZGN3CK4HW5fmNmoGStHBkNfjHg
+	 jeJepKRfCEQWw==
+Date: Wed, 26 Jun 2024 07:51:17 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, David Ahern
+ <dsahern@kernel.org>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Andrew Lunn
+ <andrew@lunn.ch>, nex.sw.ncis.osdt.itp.upstreaming@intel.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 1/5] netdevice: convert private flags > BIT(31)
+ to bitfields
+Message-ID: <20240626075117.6a250653@kernel.org>
+In-Reply-To: <20240625114432.1398320-2-aleksander.lobakin@intel.com>
+References: <20240625114432.1398320-1-aleksander.lobakin@intel.com>
+	<20240625114432.1398320-2-aleksander.lobakin@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,16 +63,17 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Wed, 26 Jun 2024 16:26:05 +0800
-Song Chen <chensong_2000@189.cn> wrote:
+On Tue, 25 Jun 2024 13:44:28 +0200 Alexander Lobakin wrote:
+> +	struct_group(__priv_flags,
+> +		unsigned long		priv_flags:32;
+> +		unsigned long		see_all_hwtstamp_requests:1;
+> +		unsigned long		change_proto_down:1;
+> +	);
 
-> not really, sounds like it meets my expectation of merging logs either 
-> way, "printk:console ftrace event" in cmdline? I searched it in code or 
-> google, no luck.
+I don't think we should group them indiscriminately. Better to add the
+asserts flag by flag. Neither of the flags you're breaking out in this
+patch are used on the fast path.
 
-Try adding:
-
-  trace_event=console
-
--- Steve
+Or is the problem that CACHELINE_ASSERT_GROUP_MEMBER doesn't work on
+bitfields?
 
