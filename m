@@ -1,149 +1,241 @@
-Return-Path: <linux-kernel+bounces-231523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DE1791997E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:54:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC22E919981
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:56:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52ACB1C21425
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 20:54:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FFB5B21259
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 20:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E22919306D;
-	Wed, 26 Jun 2024 20:54:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79ED19306A;
+	Wed, 26 Jun 2024 20:56:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WjjofFyt"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gx8dpGog"
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646B48F47;
-	Wed, 26 Jun 2024 20:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D229E8F47
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 20:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719435284; cv=none; b=pwkTR1GiWa/RsFEGYgwFUlqLswfkdc/yNyqbzpeUspQkohJx62Cg9P6UciMw+BfTYcM42xaGkpZEMlNw2EVLc8HRg8gUSqVVXw5L9I7c7S1zm8ZZx5gNynacYzQYkXNM6l5mjuEg4tcF2belEKr+Jooa6vUDIyms5RhZc+kw+Qo=
+	t=1719435381; cv=none; b=lMVjeEmYjYPF9yzCtJnQE2SvULqnF0kWRsVG/4Os8FNXw5okpXXnCQuW007jn3tlB/GLB4b6eNCTmneg+BpO6l3ZhWsZl+2M3sEfZUVz3sFn1ki/QHkC4UxElfMZ9CBkEzW86YNH+GWRGzoBTC5k68bErfckbtg2qNWxfYK2LxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719435284; c=relaxed/simple;
-	bh=zEMXbnBoRRda3mdOzdaRMplmfd7vbWJnu3aq+jGq+Uw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M/KI38tLKrRqImlxByVXBEejR/edYKorYqWs3WDREW9mz1ipVFwfk4+TS3VFbal8Ae1jYU1Lsw5ushfWtX834UwrztIAd3ja7uX7glZRqnenmiYyg5RJt6Z5ta1NndKtLzD8ZekpbGK6imQXPdvGWgcDiT1raU2CEDUngePVBg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WjjofFyt; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=0MaWDSzUymrD19+o4vqZ4gUCAu6OrygEIztpx1MGf1w=; b=WjjofFytOFt+muSmGP6W8FRO/F
-	ogy5ZKRWrwtYxOMni6oqwKFkjpN0NwfCS4PQKP95FyfyKmZQ7VOxlr9a5plK+99kfFpsOfe4i0ry+
-	lh5a4b3Wcdar0cmVRifQfpzEjh0u/nvqzg/rHczCixX4m9nkZn6pJW+J2ZEhwInQRS0LmAGQMDfFw
-	9lvSLfjUUE77tUO3F8TuPum3gG/5e2WZZNPI526tv+N15OUDBgpmkL/QIYem32xteQqTrG6g8kYys
-	lfNXXBRpWANiIoxeyYzz5rT9jWHwILEa/DDC9o+vU08ODcHhE+/QUKnUvg1JlnK6m7gDKjfR76r1V
-	4OBT1DwQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sMZf5-0000000Clbm-2fdN;
-	Wed, 26 Jun 2024 20:54:39 +0000
-Date: Wed, 26 Jun 2024 21:54:39 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Gavin Shan <gshan@redhat.com>
-Cc: David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	djwong@kernel.org, hughd@google.com, torvalds@linux-foundation.org,
-	zhenyzha@redhat.com, shan.gavin@gmail.com
-Subject: Re: [PATCH 0/4] mm/filemap: Limit page cache size to that supported
- by xarray
-Message-ID: <ZnyAD24AQFzlKAhD@casper.infradead.org>
-References: <20240625090646.1194644-1-gshan@redhat.com>
- <20240625113720.a2fa982b5cb220b1068e5177@linux-foundation.org>
- <33d9e4b3-4455-4431-81dc-e621cf383c22@redhat.com>
- <20240625115855.eb7b9369c0ddd74d6d96c51e@linux-foundation.org>
- <f27d4fa3-0b0f-4646-b6c3-45874f005b46@redhat.com>
- <4b05bdae-22e8-4906-b255-5edd381b3d21@redhat.com>
+	s=arc-20240116; t=1719435381; c=relaxed/simple;
+	bh=LeNd1Sl00me4t5CXJexFKouTM8Rr4gR9mY11ueyyc58=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FT4d1dc7c3dUOeOGeLq7z13EgyRIDMQXhUK836nuNG+GrMnY3XKu+zfFosGXn+MPwCYPmJWAfa1r7plp+YggOMxcNy9xxfejTbShzokKFo4/JCGK9aGxsilQ3IMXEDoxO93p6j/Cxq1sVbeITv2t95mKtN+YJYr+7xIr74+JoM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gx8dpGog; arc=none smtp.client-ip=209.85.217.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-48f5ca502ecso1058179137.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 13:56:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719435378; x=1720040178; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ra6xNmZUFmFCQqOuBMuD5M9kR7LWp8krWQ+ZimOxr1M=;
+        b=gx8dpGogl0R3SupSS4bydKYy73CeP7XvlEV+1IPk1yi0Us7lc6TuxeR5f58qdztbpC
+         dxwa09JsAa5pY3VHw4u5gr0kTPqw11gbKC67uDhvxEGJBf2dAFJTyy++VUQlWv2GN6QC
+         ilB2Men9jW+T467sFG+TDfW0meN+m5Esb+neuhPPcRzVhb0B/Hd8wzkwvqmiDSImz7cB
+         2c1chItWqzlsjYcIEydWRUED8zddfljYrrYKYidcmWJt0tI3+SfyDfjDQynWOpq+2DEc
+         /tiYq7GgD6uhAdS8/27UPGwcMhWEiSoph3YiV3k2RQC0iDUKU/jizt0Ag1wc+9kVsRYG
+         gXag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719435378; x=1720040178;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ra6xNmZUFmFCQqOuBMuD5M9kR7LWp8krWQ+ZimOxr1M=;
+        b=L1Mr9z4BUWUqkgCzts7ZFHkD7znj70Lry35gno/6XuB0s9UtvnQeo/Kw/NoL0rULoE
+         B0mtJC5azgR8cyNpL5TD9Jjn9Mv8ip//y8vX45FLorsU75su671pEZkePYFo8cnw1vzg
+         zXPSibKvOR0GGl5A017vJ3CZhDQOxFQAKrTOuqMo7Z+vYmpY2AqOLF4UMGb7bQ42chK3
+         zA4AP947shE/OSY6rpaPgf7tYlsLHTVwUIRRLJmj+B87bTXzdHZ2X/DtE2b0cUnYpbnb
+         MJza5E9D0wa0LrzOcmvRiO91TYXyA3IHwzc+1IXfcQ8Wh88Hr2mgROjUzC2VAPUzGmER
+         jd6A==
+X-Forwarded-Encrypted: i=1; AJvYcCX2/T9kwFhBbouXVzRPiBxE++Pf+D4FGBiS606XAsohb4gF32rf/7qohqFwTpKYylwrJt76qmwTi8CVNioBBeg2v2+H9ciiqIY79ygI
+X-Gm-Message-State: AOJu0Yz4mN5GeiE129jjfHI75OgOYrVVrzIHb0mgF+GAGKZmUiQBMCdP
+	38KGi+aitAn6YfXJJcqot9Az4RVURxtdpQk7h44yeZJAh/XMiBk/hR5SsxZlGtN9ZzG7JceBhji
+	39frL3oDQJn2kI/pAzWHWwsfjLH9etSo0LaHrow==
+X-Google-Smtp-Source: AGHT+IGd+fezczxsF8sdBmQyvjpmWSbG+CgYCWeg/ifXeMZVxI6nVEg79pqM2aK66grjjTiS0WLYLkxQuZGABcjv/vo=
+X-Received: by 2002:a67:f807:0:b0:48f:46db:7a11 with SMTP id
+ ada2fe7eead31-48f52947b56mr8666192137.6.1719435377713; Wed, 26 Jun 2024
+ 13:56:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4b05bdae-22e8-4906-b255-5edd381b3d21@redhat.com>
+References: <20240625085537.150087723@linuxfoundation.org>
+In-Reply-To: <20240625085537.150087723@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 27 Jun 2024 02:26:05 +0530
+Message-ID: <CA+G9fYscT-jC378sz7FVw_GSjQYq64=tKgJfvzB+3Gak=9wdvg@mail.gmail.com>
+Subject: Re: [PATCH 6.6 000/192] 6.6.36-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 26, 2024 at 10:37:00AM +1000, Gavin Shan wrote:
-> On 6/26/24 5:05 AM, David Hildenbrand wrote:
-> > On 25.06.24 20:58, Andrew Morton wrote:
-> > > On Tue, 25 Jun 2024 20:51:13 +0200 David Hildenbrand <david@redhat.com> wrote:
-> > > 
-> > > > > I could split them and feed 1&2 into 6.10-rcX and 3&4 into 6.11-rc1.  A
-> > > > > problem with this approach is that we're putting a basically untested
-> > > > > combination into -stable: 1&2 might have bugs which were accidentally
-> > > > > fixed in 3&4.  A way to avoid this is to add cc:stable to all four
-> > > > > patches.
-> > > > > 
-> > > > > What are your thoughts on this matter?
-> > > > 
-> > > > Especially 4 should also be CC stable, so likely we should just do it
-> > > > for all of them.
-> > > 
-> > > Fine.  A Fixes: for 3 & 4 would be good.  Otherwise we're potentially
-> > > asking for those to be backported further than 1 & 2, which seems
-> > > wrong.
-> > 
-> > 4 is shmem fix, which likely dates back a bit longer.
-> > 
-> > > 
-> > > Then again, by having different Fixes: in the various patches we're
-> > > suggesting that people split the patch series apart as they slot things
-> > > into the indicated places.  In other words, it's not a patch series at
-> > > all - it's a sprinkle of independent fixes.  Are we OK thinking of it
-> > > in that fashion?
-> > 
-> > The common themes is "pagecache cannot handle > order-11", #1-3 tackle "ordinary" file THP, #4 tackles shmem THP.
-> > 
-> > So I'm not sure we should be splitting it apart. It's just that shmem THP arrived before file THP :)
-> > 
-> 
-> I rechecked the history, it's a bit hard to have precise fix tag for PATCH[4].
-> Please let me know if you have a better one for PATCH[4].
-> 
-> #4
->   Fixes: 800d8c63b2e9 ("shmem: add huge pages support")
->   Cc: stable@kernel.org # v4.10+
->   Fixes: 552446a41661 ("shmem: Convert shmem_add_to_page_cache to XArray")
->   Cc: stable@kernel.org # v4.20+
-> #3
->   Fixes: 793917d997df ("mm/readahead: Add large folio readahead")
->   Cc: stable@kernel.org # v5.18+
-> #2
->   Fixes: 4687fdbb805a ("mm/filemap: Support VM_HUGEPAGE for file mappings")
->   Cc: stable@kernel.org # v5.18+
-> #1
->   Fixes: 793917d997df ("mm/readahead: Add large folio readahead")
->   Cc: stable@kernel.org # v5.18+
+On Tue, 25 Jun 2024 at 15:18, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.6.36 release.
+> There are 192 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 27 Jun 2024 08:54:55 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.6.36-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-I actually think it's this:
 
-commit 6b24ca4a1a8d
-Author: Matthew Wilcox (Oracle) <willy@infradead.org>
-Date:   Sat Jun 27 22:19:08 2020 -0400
+Results from Linaro=E2=80=99s test farm.
+The arm build regressions reported as described in the previous emails.
 
-    mm: Use multi-index entries in the page cache
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-    We currently store large folios as 2^N consecutive entries.  While this
-    consumes rather more memory than necessary, it also turns out to be buggy.
-    A writeback operation which starts within a tail page of a dirty folio will
-    not write back the folio as the xarray's dirty bit is only set on the
-    head index.  With multi-index entries, the dirty bit will be found no
-    matter where in the folio the operation starts.
+## Build
+* kernel: 6.6.36-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 580e509ea1348fc97897cf4052be03c248be6ab6
+* git describe: v6.6.35-193-g580e509ea134
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.3=
+5-193-g580e509ea134
 
-    This does end up simplifying the page cache slightly, although not as
-    much as I had hoped.
+## Test Regressions (compared to v6.6.34-268-g0db1e58b51e3)
+* arm, build
+  - clang-18-defconfig
+  - clang-18-lkftconfig
+  - gcc-13-defconfig
+  - gcc-13-lkftconfig
+  - gcc-8-defconfig
 
-    Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-    Reviewed-by: William Kucharski <william.kucharski@oracle.com>
+## Metric Regressions (compared to v6.6.34-268-g0db1e58b51e3)
 
-Before this, we could split an arbitrary size folio to order 0.  After
-it, we're limited to whatever the xarray allows us to split.
+## Test Fixes (compared to v6.6.34-268-g0db1e58b51e3)
+
+## Metric Fixes (compared to v6.6.34-268-g0db1e58b51e3)
+
+## Test result summary
+total: 234233, pass: 204427, fail: 3373, skip: 26007, xfail: 426
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 127 total, 109 passed, 18 failed
+* arm64: 37 total, 37 passed, 0 failed
+* i386: 27 total, 27 passed, 0 failed
+* mips: 24 total, 24 passed, 0 failed
+* parisc: 3 total, 3 passed, 0 failed
+* powerpc: 34 total, 34 passed, 0 failed
+* riscv: 17 total, 17 passed, 0 failed
+* s390: 12 total, 12 passed, 0 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 6 total, 6 passed, 0 failed
+* x86_64: 31 total, 31 passed, 0 failed
+
+## Test suites summary
+* boot
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-ma[
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-smoketest
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
