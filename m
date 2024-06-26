@@ -1,117 +1,139 @@
-Return-Path: <linux-kernel+bounces-230167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3012C91794F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:04:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E0EF917950
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:04:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC6222845A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:04:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2912E284542
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:04:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D0015885E;
-	Wed, 26 Jun 2024 07:04:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38603158A22;
+	Wed, 26 Jun 2024 07:04:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dk/2w8Gj"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jNla57GO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A87CF1FBB;
-	Wed, 26 Jun 2024 07:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4D1E554;
+	Wed, 26 Jun 2024 07:04:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719385440; cv=none; b=FYIdhcwLxsSUGAU1b8Llv26vyfYvU0g1VwfWubUKndaWi36/Ui1aHDbuPKjNrL3Eza21/cAX/2IEs/ptbyxAUAXosJDwobEXYAXfDIptG5JZjI7j1C/E4zngnBAQwzwA0qJMUVDCdluEfwtILRirGNbgL6GKFe0rqoZg50G8Yvc=
+	t=1719385460; cv=none; b=b7DFL830n5RfO2LUKnGex5PffXUbuCZyW13JVN8Au6Nvvj9P3Z6ZIuWqIx3tokq5c2qeoKTiWle6zai+AbglS2GFiFoId0h25LXWjW11eKq6+nXIA3aEgGNQpaXGx5QRgAM+9DOs209pMwO3jl1IRMC3yKjlc0hrMYsvv4+LLK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719385440; c=relaxed/simple;
-	bh=yhiDsGtckWbJdiH+m4+tg0FxsetoSjM547eWaMzugqA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SmE4g+T4FstsO0VJZj2CJf+7Ha1wjUmIUzHhFS8cAyADkno2OMp+AoKYS+LLojri+ZmFInFTB6CXjfR5fwk3PhebPvyKmvPp6VGd4uactZM2gZwJvkmkwqIVEG3OlkV10M/3tamrekJAZkOmmaVa0zJwwFtJEsWYLITZ0TPaxM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dk/2w8Gj; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57d1782679fso7796732a12.0;
-        Wed, 26 Jun 2024 00:03:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719385437; x=1719990237; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CCmw9U2ETNDBLBuD2pt2tF/w6GsMBw1zovesQGm6nj8=;
-        b=Dk/2w8GjuktBoRbBtDNRVWM6zPNNdvqXS/cDLan8zbYRM1BtGj16Mc9ofusu0dbjYY
-         +EzLnbOZlfX1CyPFCzj2owffYtgORvJ3uTayz/ptHNcInp7WsKEZ8OcywtF1nk0UELp2
-         /WGicI0lSB8ABZY84A0DGZ/pXUkRxiboQz/9XSPifjKnboeuTaSv4s/lQ3OcK/2/nYrl
-         NLOErXnd8TCqGVkKmR1/hk10DuLhrByDTBdLfAaSYfisECUmvvTZQywN8Boum4rWJm5v
-         4wwIeRt5ElSajzjhS5BcYeZe6fys2rmpfqZFmM1Tra3uFNqd8KUl/SM72yvdGN46esId
-         rFHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719385437; x=1719990237;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CCmw9U2ETNDBLBuD2pt2tF/w6GsMBw1zovesQGm6nj8=;
-        b=nlYCOVu7If4xeLshVGd3kjY2PWEIRRHG7PmSyg5tFHdNaaeWWWibVXrtehkLig02Zz
-         JoeK+mQE85DA7oPneRRc2mGpvjE0qQimija6e2iHFcT+jCBHaleuzGvAIIVqW7zG4LCz
-         La8ROTkrAscs3slw4+oB339Q8jIPTB5j70qKwojSZ+Agx2X+VYFIEFu5dQvDH3YQ63+n
-         ZkRhld4KdUa36HoQFnAWg+cFp/3X39PWitqZaLn5RjodOSOJI37r03SQeveb0tLNhXXh
-         n1TxjDUx9cBkv3pQ6BzuDbaawOXr9hgnOzzS4ErZZR+YGOxxE9mBVa/BBILtiglZ4O1M
-         Crxg==
-X-Forwarded-Encrypted: i=1; AJvYcCW/N+ICDDbBK8R5sGY+MogDqkVVQ8c96DXEPMy9x4um1PqkAbCbrpLDBA+CyOgYM2UzNCPfWNo7cpq5NZx/OD3V40ZCOelFIlEC8e/E
-X-Gm-Message-State: AOJu0YzZ1CoKbJEL2Ga2/BMv8MCQqTCknu12eYVjMg+k/qKLKap0wYUJ
-	U8d5+BxKMwYVs/IrdJdS5CqHTwcjN1c2zv0SQLPeKqRbBGROE4W0
-X-Google-Smtp-Source: AGHT+IG+YhujMvMhvhUyfqCcrHDikxocG4QadsjpWiXNy+jvs+ekjSV42yHz8cqiWyCcSzweRbZSCA==
-X-Received: by 2002:a17:906:c206:b0:a6f:adf7:b073 with SMTP id a640c23a62f3a-a7245b4cccfmr612328566b.10.1719385436674;
-        Wed, 26 Jun 2024 00:03:56 -0700 (PDT)
-Received: from localhost.localdomain ([95.67.7.157])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf48a038sm582582966b.48.2024.06.26.00.03.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 00:03:56 -0700 (PDT)
-From: Vyacheslav Frantsishko <itmymaill@gmail.com>
-To: mario.limonciello@amd.com,
-	broonie@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: linux-sound@vger.kernel.org,
-	itmymaill@gmail.com
-Subject: [PATCH] ASoC: amd: yc: Fix non-functional mic on ASUS M5602RA
-Date: Wed, 26 Jun 2024 10:03:34 +0300
-Message-ID: <20240626070334.45633-1-itmymaill@gmail.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <0e571211-8921-4548-a093-6c5719c866c4@amd.com>
-References: <0e571211-8921-4548-a093-6c5719c866c4@amd.com>
+	s=arc-20240116; t=1719385460; c=relaxed/simple;
+	bh=gZum9CO4vVWwXuEygpu8fe8HRr2qkCPf+bDqxn8cuoA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P768lnOyCwgJEiFfrGsc/luE6pOtAb4sLyepEivwW/3wregbiT6/TKNsMHj23OCR118sDe2kIrc9RyH4cJ1ZtiHpHCN34lSRwtX5D+ANQ5OFVN70R+CzWKT/DnjK3UYsZxp83FSqbQHoxANKDhCKiv8Onpg2d7gNp8h18s5dKrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jNla57GO; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719385459; x=1750921459;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=gZum9CO4vVWwXuEygpu8fe8HRr2qkCPf+bDqxn8cuoA=;
+  b=jNla57GO7hQ3KAcGjz+RK7nsuTUVkMbaS6dexLVvaptXxeDU8iEs01Vu
+   aR1Y7sDrdT7e0TUPKzhpByHrhmNljOTDJ+RHW5Wokv2iay7jZzcTRsouB
+   CVjIyXxiv210OzYRDJxyxPSiIwZoua36yyAHOPynPwUefiYNVt6bSFtGu
+   3KSZDf6Jr9FH3MZ2dWIc49IMcLTOTEGivjw+q7eNBZgbZvdcQmSu6FcdM
+   TazVf1Kjk1dVeDfJq0d3nAMLz9ww6Sx2/i+kcpyL24qBsDHauw6VxMMQa
+   6/+rmLrB5L16s7pl5/Y+2b73KD0T72OjhLs3/8sZ80YjDVmABb1uuhv2C
+   w==;
+X-CSE-ConnectionGUID: hsfk+OhLQxmMRq8GknaDwA==
+X-CSE-MsgGUID: OkxIR2mRRO2yE6PyoNjNlw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="16402226"
+X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
+   d="scan'208";a="16402226"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 00:04:19 -0700
+X-CSE-ConnectionGUID: UmKkzFF5SyW3mrwTpaO5Ag==
+X-CSE-MsgGUID: +3eImLQSTr6XLx5anQopRg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
+   d="scan'208";a="44561107"
+Received: from ncintean-mobl1.ger.corp.intel.com (HELO [10.245.246.76]) ([10.245.246.76])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 00:04:15 -0700
+Message-ID: <fb9ce0ce-dddb-4f88-9ac6-0f6cdd6ccb28@linux.intel.com>
+Date: Wed, 26 Jun 2024 09:04:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ALSA: hda: intel-dsp-config: Fix Azulle Access 4 quirk
+ detection
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
+ <amadeuszx.slawinski@linux.intel.com>, Allen Ballway <ballway@chromium.org>,
+ LKML <linux-kernel@vger.kernel.org>, Brady Norander
+ <bradynorander@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>,
+ Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+ Mark Brown <broonie@kernel.org>, linux-sound@vger.kernel.org,
+ Mark Hasemeyer <markhas@chromium.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Cezary Rojewski <cezary.rojewski@intel.com>
+References: <20240430212838.1.I77b0636d5df17c275042fd66cfa028de8ad43532@changeid>
+ <83e218f9-29f5-4f35-bd0c-b298e3bb9e8c@linux.intel.com>
+ <CAEs41JC-vJaMHj6fzmNO=-bu5oURRA-u565sN2=yzBeVtKb=4g@mail.gmail.com>
+ <b2375610-4044-49e6-86e9-5c172abb2ffa@linux.intel.com>
+ <CAEs41JAPPr3xRR42H6vKic5rVrtV-on4HyT5wNCXxbJtwijnCA@mail.gmail.com>
+ <3d44c749-6c81-4c11-9409-b01815fe1a91@linux.intel.com>
+ <3d9ef693-75e9-4be0-b1c0-488d3e2d41c5@linux.intel.com>
+ <01904abc-5e7c-4006-96d9-83fc5de8bb21@roeck-us.net>
+Content-Language: en-US
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <01904abc-5e7c-4006-96d9-83fc5de8bb21@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The Vivobook S 16X IPS needs a quirks-table entry for the internal microphone to function properly.
 
-Signed-off-by: Vyacheslav Frantsishko <itmymaill@gmail.com>
----
- sound/soc/amd/yc/acp6x-mach.c | 7 +++++++
- 1 file changed, 7 insertions(+)
 
-diff --git a/sound/soc/amd/yc/acp6x-mach.c b/sound/soc/amd/yc/acp6x-mach.c
-index 1760b5d42460..4e3a8ce690a4 100644
---- a/sound/soc/amd/yc/acp6x-mach.c
-+++ b/sound/soc/amd/yc/acp6x-mach.c
-@@ -283,6 +283,13 @@ static const struct dmi_system_id yc_acp_quirk_table[] = {
- 			DMI_MATCH(DMI_PRODUCT_NAME, "M5402RA"),
- 		}
- 	},
-+        {
-+		.driver_data = &acp6x_card,
-+		.matches = {
-+			DMI_MATCH(DMI_BOARD_VENDOR, "ASUSTeK COMPUTER INC."),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "M5602RA"),
-+		}
-+	},
- 	{
- 		.driver_data = &acp6x_card,
- 		.matches = {
--- 
-2.45.1
+On 6/25/24 23:37, Guenter Roeck wrote:
+> On Fri, Jun 21, 2024 at 10:35:31AM +0200, Pierre-Louis Bossart wrote:
+>>
+>>
+>> On 6/21/24 08:15, Amadeusz Sławiński wrote:
+>>> On 6/20/2024 9:27 PM, Allen Ballway wrote:
+>>>> I filed a bug and after sharing the requested information it looks
+>>>> like this device won't work on SOF without vendor support. Given this,
+>>>> would the original patch returning this device to using HDAudio be
+>>>> reasonable, or is there an preferred alternative to force this device
+>>>> into using HDAudio?
+>>>>
+>>>
+>>> And can you share link to the issue on mailing list, so someone reading
+>>> this thread in the future doesn't have to guess where it is? ;)
+>>
+>> https://github.com/thesofproject/linux/issues/4981
+>>
+>> I don't know what to do with this configuration.
+>> We added a quirk to force SOF to be used for ES8336 devices. It worked
+>> for some, but not for others. Now we have quite a few ES8336-based
+>> platforms that are broken with zero support from the vendor, with
+>> obscure I2C/GPIO/clk issues.
+>> Are we going to tag each one of them and say 'not supported, use HDMI only'?
+>> That's pushing a bit the notion of quirk...It would generate an endless
+>> stream of patches. The alternative is to do nothing and ask that those
+>> platforms revert to HDMI audio only with a kernel parameter. That latter
+>> alternative has my vote.
+>>
+> 
+> Given that this apparently does not work for many ES8336 devices,
+> would it make more sense to disable SOF support for those by default
+> and _enable_ them with a kernel parameter ?
 
+Some configurations work, so we would break them.
+
+We tried to improve things by using ACPI information, but it turns out
+some of the information is broken as well, so it's a multi-level chase
+to figure out how the codec is wired (GPIOs mainly).
+
+There's no good solution here.
 
