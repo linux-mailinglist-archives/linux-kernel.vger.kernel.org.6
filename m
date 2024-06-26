@@ -1,205 +1,129 @@
-Return-Path: <linux-kernel+bounces-230274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6850917AB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:18:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A5E0917ABC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:18:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72AFB1F21A9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:18:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0ABD283E4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:18:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7A901D699;
-	Wed, 26 Jun 2024 08:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF46E168488;
+	Wed, 26 Jun 2024 08:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="iidUtYwe";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="KP2opQ4d"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="E/m4swjr"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD7E161311;
-	Wed, 26 Jun 2024 08:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3491515F400
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 08:18:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719389901; cv=none; b=PC022QGzQhcFMn1dLlAyQZVvqVC6rLzqB9+cqgFipj33KdGJCiSjCcoXLyrZyC0hwsrm05owx1eZXaBTMThZ27YwzhR2T4mmxLfL2i1Tx0/ip4vYXpfCnZzH8uiEaPSfUqFvfhY5IqGer6bP2NJTP5kPXZ3ivk9esk45sGHGVIc=
+	t=1719389907; cv=none; b=KPy/DCHzzetFDYGgxIvdwOSvvMyTtRmdPuw9ZE8jVMm33iJNfCFcoy3InqSPW91PRi7YGmgDDG4lYgEyf6WFD/IFf3kcN2lyda89v9L+ItYd61sp38P9FUrKuI0haB/dxnPhiDxNQs+eaCR/aEEpARvzOcBluagQwJunMY6C8Iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719389901; c=relaxed/simple;
-	bh=PK1WnVjNANttZNlxbEZ0iGraUTJX3Qd/linTeJq922s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=W2VOsxjPFE7urbeQu7LPrUY9nfGgmfOx5TIsP5AMxS7Pk/DaQnX6Yu1rv4+Y3uRTqiQvF3lE551ysRYBx5BVUWOP7k1XWxJv8XYp/dJQhXXIfse6IRpReIzMc8NWoh9SdlG7VZnpZvGAA9/olcSiCHB+luRdCkdA8S3MRETxHrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=iidUtYwe; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=KP2opQ4d reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1719389907; c=relaxed/simple;
+	bh=1kWlGmkS836L4El5Oon+zyjOQtOGaM1Kyz+uLD2KG7g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FAXZP1LCSSviopDzCuC1uLvOCkiOrS8DpBsdEzmWJEqe5dktJVXLnY6OkHC68ktXlh5TB/n8egz4eXuTlf7qox2eaeWJuX7fOkmlKQm17vZ67auleV0Q9dfeukvzu7gD/TUPr2y59CdIaUOw/yZoG7mCqmfUHYCjXJvGXu2IDig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=E/m4swjr; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2eaafda3b5cso66442401fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 01:18:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1719389897; x=1750925897;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=PK1WnVjNANttZNlxbEZ0iGraUTJX3Qd/linTeJq922s=;
-  b=iidUtYwephrbmlFrL5beKdH5AJQtSJ67ZAJ44FI2BbMl+KSx7OVmn2dL
-   tlTub8a3f8qHzP63S4FjfeeptjmSY4/d5uGGlagdrYEZDt3l5IRPCqAzD
-   gfk5iYoqbz7WdbhzCaZdJHUn0HTYhDnRci5MKFxCCSFaRsEzrVdCCo/dC
-   YelB7WXknI0MxOVnp7DAOKEfZrkEzjCZPli730s+0vpXjGaD+XIh2/oOv
-   YLsosyNimZmV0IVxshiapsSv4J4PkQMou83CL5B34RUDNCqq7jKXxXw3h
-   coEvFC8L7tgwZxMJT+MxFQVwahT4vTKMj4Dg2hfSvSysA1HSOr140HM7w
-   A==;
-X-CSE-ConnectionGUID: Brw7EgUVQeuB4OL8ap5cDw==
-X-CSE-MsgGUID: z48TzsmSR7axC/5Xzi+iEQ==
-X-IronPort-AV: E=Sophos;i="6.08,266,1712613600"; 
-   d="scan'208";a="37592941"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 26 Jun 2024 10:18:14 +0200
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DF931163835;
-	Wed, 26 Jun 2024 10:18:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1719389890;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=PK1WnVjNANttZNlxbEZ0iGraUTJX3Qd/linTeJq922s=;
-	b=KP2opQ4duk63H/gCnMEWtD8CuDNmjlyXFPmObV4wOiq6NNtgUJbBFmQl8R85o1qA6R8+Qg
-	BOE9jcDkwlWxUQPPAbVDhZjtC1MHUltafj+5huVCBIGTmmH0lI9GV9fAYt9wIhvfm5z0CQ
-	fx+piiT5Z1CjNcqu6OEuNNHzJBcM07sEbMzsl6EVZFFhLVV1FMjY89ha2PWuktfL8ElttT
-	r0+0gDfwsp7qKTO8GxhQF5ZDvaESTG7A1R0fR6M3rPTcYHO3T1gMshK2kqUM1I1zx9DB6l
-	bEftb+tVtLXmeodNJLQB+GVXEvSVnCiX5ePm0YZTqNeyl8CXqvx9EYSpUaMVoQ==
-Message-ID: <958090771f1b301f00b96d55aac312704866f1bb.camel@ew.tq-group.com>
-Subject: Re: [PATCH 1/2] dt-bindings: soc: ti: pruss: allow ethernet
- controller in ICSSG node
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux@ew.tq-group.com, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>, Vignesh Raghavendra
- <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, Suman Anna
- <s-anna@ti.com>
+        d=suse.com; s=google; t=1719389903; x=1719994703; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4a5xhdHDOpphV49N8LxW9kDtd2hiNqZaaQWvv6k7BAw=;
+        b=E/m4swjruP5JGh2qx+IkiCVA80PjvlobeLENOg6KSD4J4LsH78srOZAgG4Fyqba2p1
+         oDYuyGOxbpDioehMFKNz36vYprLH1SE4ZOKGr03WO3IolmOM5R94hQQ1B17zw6Sh7dqd
+         kCLG5LJYvHQFfnYg4wSTICFiVe6GFVnODwM0jUSia2Fm+7slJ4G+nHRYd64+FjqDHe1b
+         eSTVrAYZi7kFlG5cR4mUzl6jIAFS4YrYwfYIIq2HReC8702D0bMPq5AOQWmMYsXJLvFe
+         cknsA28RN5octsMIdMV5gdcngEWs5PvpunKuylf6wcqLOsAcaRtGkFldjDw+swwBpG0i
+         ueLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719389903; x=1719994703;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4a5xhdHDOpphV49N8LxW9kDtd2hiNqZaaQWvv6k7BAw=;
+        b=tGl1v+DNEBrzoSLhcNkHfmFtafwr1PxooKG7H22hXNmo7Gegu8Ra9pD2KVFmDDbsZp
+         XgbqVXZy5ajdhY41WhiPNcZBBbU5464FV1fVanG4TqUG51BK22jm+PGV9mZUOgM/p9T3
+         upemSCmEN4COLiG+nT1NYWyrrPJi+CxVSsZcXReSMQLy6PJ0SbZhp6YjMnOJcGuTYWnO
+         38n7LL0MN07fcQ49gzMJl1dyti4fzWFOFNnzPyd4oVRrP3LJYBwjMJ0AAYi8yFFLWW45
+         UA6fW94bjhrNn8C0vAhBF3lXU3H8bxHE1q2vu/ev7d8HNd+o6hNZyrKuM3Pn4qPU/wKp
+         UUQg==
+X-Forwarded-Encrypted: i=1; AJvYcCV61WgfV+8Uu9SSJO9F8NODgfnvHaWtcMjDugzycQkNRfu8Gd9wCaeJpghBFvPGMNDcNy3TlLBAb4dqHo+GPAMDZeggcO4aGZulR9dK
+X-Gm-Message-State: AOJu0YwBBoh9m80FQE0PpZiVR87yVc1RJLFeSwS4UYdskpAQHorLksel
+	hqcFDpW7hkohud1L2Otel5pykPVEx2h2T+x2wjSJtNa2RPDEInQOoVprb+3TSjA=
+X-Google-Smtp-Source: AGHT+IHVJ7ZeIx3A9n1K07RjOwzlBHAmVrAatLjc/i5oBAuRVkA0q7re2mdYuT8iRLwXGoTZDedQjA==
+X-Received: by 2002:a05:651c:1a1e:b0:2ec:59b6:ad71 with SMTP id 38308e7fff4ca-2ec59b6ae47mr73713961fa.40.1719389903410;
+        Wed, 26 Jun 2024 01:18:23 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70667a5d6dbsm7559160b3a.79.2024.06.26.01.18.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 01:18:22 -0700 (PDT)
 Date: Wed, 26 Jun 2024 10:18:08 +0200
-In-Reply-To: <643ad6b3-3bbc-4a5d-ac47-6368f2171e87@kernel.org>
-References: <20240619112406.106223-1-matthias.schiffer@ew.tq-group.com>
-	 <89880cda-1140-4ed5-a67f-2201c2825447@kernel.org>
-	 <99cc7afbb891de890ff051606f7a120f796e0fbc.camel@ew.tq-group.com>
-	 <14bebdc5-3239-47fe-b8cc-68daba278d73@kernel.org>
-	 <7adcd6789fb33fef10b7349934374e2cfb5ad164.camel@ew.tq-group.com>
-	 <643ad6b3-3bbc-4a5d-ac47-6368f2171e87@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] bpf: defer printk() inside __bpf_prog_run()
+Message-ID: <ZnvOwGk0cqpx4kkk@pathway.suse.cz>
+References: <345098dc-8cb4-4808-98cf-fa9ab3af4fc4@I-love.SAKURA.ne.jp>
+ <87ed8lxg1c.fsf@jogness.linutronix.de>
+ <60704acc-61bd-4911-bb96-bd1cdd69803d@I-love.SAKURA.ne.jp>
+ <87ikxxxbwd.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87ikxxxbwd.fsf@jogness.linutronix.de>
 
-On Wed, 2024-06-26 at 09:33 +0200, Krzysztof Kozlowski wrote:
->=20
-> On 20/06/2024 10:48, Matthias Schiffer wrote:
-> > On Thu, 2024-06-20 at 10:29 +0200, Krzysztof Kozlowski wrote:
-> > >=20
-> > >=20
-> > > On 20/06/2024 10:26, Matthias Schiffer wrote:
-> > > > On Thu, 2024-06-20 at 09:24 +0200, Krzysztof Kozlowski wrote:
-> > > > > On 19/06/2024 13:24, Matthias Schiffer wrote:
-> > > > > > While the current Device Trees for TI EVMs configure the PRUSS =
-Ethernet
-> > > > > > controller as a toplevel node with names like "icssg1-eth", all=
-owing to
-> > > > > > make it a subnode of the ICSSG has a number of advantages:
-> > > > >=20
-> > > > > What is ICSSG? The sram or ti,prus from the ethernet schema?
-> > > >=20
-> > > > ICSSG (Industrial Communication Subsystem (Group?)) is the main dev=
-ice described by the
-> > > > ti,pruss.yaml binding (ICSS and PRUSS are different variants of sim=
-ilar IP cores); it is the
-> > > > container for the individual PRU, TXPRU and RTU cores which are ref=
-erenced by the ti,prus
-> > > > node of the Ethernet schema.
-> > > >=20
-> > > > The entirety of PRU, TXPRU and RTU cores of one ICSSG, each with it=
-s own firmware, forms one
-> > > > Ethernet controller, which is not quite a hardware device, but also=
- not a fully virtual software
-> > > > device.
-> > >=20
-> > > So it is not really child of ICSSG.
-> > >=20
-> > > >=20
-> > > > The Ethernet controller only exists through the various ICSS subcor=
-es, so it doesn't have an MMIO
-> > > > address of its own. As described, the existing Device Trees define =
-it as a toplevel non-MMIO node;
-> > > > we propose to allow it as a non-MMIO child node of the ICSSG contai=
-ner instead.
-> > > >=20
-> > > > If you consider moving the ethernet node into the ICSSG node a bad =
-approach, we will drop this patch
-> > > > and try to find a different solution to our issue (the Ethernet dev=
-ice staying in deferred state
-> > > > forever when the ICSSG node is disabled on Linux).
-> > >=20
-> > > Just disable the ethernet. That's the expected behavior, I don't get
-> > > what is the problem here.
-> >=20
-> > If the disabling happens as a fixup in the bootloader, it needs to know=
- the name of the Ethernet
-> > controller node (or iterate through the DTB to find references to the d=
-isabled ICSSG node).
->=20
-> Which is already solved for several such cases, including ethernet
-> devices? Aliases?
->=20
-> >=20
-> > The name is currently not used for anything, and not specified in the b=
-inding doc; the example uses
-> > "ethernet", which is too unspecific, as there can be multiple ICSSG/PRU=
-s, with each running a
-> > separate Ethernet controller.
->=20
-> Use existing solutions - aliases.
+On Tue 2024-06-25 17:53:14, John Ogness wrote:
+> On 2024-06-26, Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
+> > On 2024/06/25 23:17, John Ogness wrote:
+> >> On 2024-06-25, Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
+> >>> syzbot is reporting circular locking dependency inside __bpf_prog_run(),
+> >>> for fault injection calls printk() despite rq lock is already held.
+> >>>
+> >>> Guard __bpf_prog_run() using printk_deferred_{enter,exit}() (and
+> >>> preempt_{disable,enable}() if CONFIG_PREEMPT_RT=n) in order to defer any
+> >>> printk() messages.
+> >> 
+> >> Why is the reason for disabling preemption?
+> >
+> > Because since kernel/printk/printk_safe.c uses a percpu counter for deferring
+> > printk(), printk_safe_enter() and printk_safe_exit() have to be called from
+> > the same CPU. preempt_disable() before printk_safe_enter() and preempt_enable()
+> > after printk_safe_exit() guarantees that printk_safe_enter() and
+> > printk_safe_exit() are called from the same CPU.
+> 
+> Yes, but we already have cant_migrate(). Are you suggesting there are
+> configurations where cant_migrate() is true but the context can be
+> migrated anyway?
 
-Understood.
+IMHO, we want to enter printk_safe only with preemption disabled.
+Otherwise, printk() would stay deferred on the given CPU for any
+task scheduled in this section.
 
-I'm not entirely happy that the bootloader needs to know that it is an Ethe=
-rnet controller that is
-provided by the ICSSG, and there isn't a simple way to say "whatever kind o=
-f device that Linux's DTB
-loads into the ICSSG should be disabled".
-
-But I guess for most boards there is only a single kind of ICSSG firmware t=
-hat is used anyways. So
-I'm going with the solution you propose for now.
-
-Best regards,
-Matthias
-
-
->=20
-> >=20
-> > Existing Device trees use "icssgX-eth" for an Ethernet controller runni=
-ng on the ICSSG with label
-> > "&icssgX", but labels are a source concept and don't exist in the compi=
-led DTB by default.
-> >=20
-> > I do have an idea for an alternative approach that does not need change=
-s to the DT bindings: The PRU
-> > Ethernet driver could detect that the referenced ti,prus are disabled a=
-nd not just waiting to be
-> > probed and then fail with ENODEV instead of EPROBE_DEFER.
->=20
-> Sorry, but re-shuffling nodes into incorrect hardware description is not
-> the workaround for your problem.
->=20
-> Best regards,
-> Krzysztof
->=20
-
---=20
-TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
-any
-Amtsgericht M=C3=BCnchen, HRB 105018
-Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
-neider
-https://www.tq-group.com/
+Best Regards,
+Petr
 
