@@ -1,153 +1,255 @@
-Return-Path: <linux-kernel+bounces-230479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28C7B917D5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:11:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00339917E3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:37:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46EB21C2258D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:11:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 314EFB22DE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:37:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6EB17E450;
-	Wed, 26 Jun 2024 10:10:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BFFA17DE2E;
+	Wed, 26 Jun 2024 10:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oJnthlNW"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=silabs.com header.i=@silabs.com header.b="AN3Ua0fH";
+	dkim=pass (1024-bit key) header.d=silabs.com header.i=@silabs.com header.b="SxtpaRPp"
+Received: from mx0b-0024c301.pphosted.com (mx0b-0024c301.pphosted.com [148.163.153.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3CF17D8B2
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 10:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719396620; cv=none; b=ogwzVZ3FzGrtBn9fJ+NJVdkfSQNP4fkDLXwB7xPGpMm2Am5kC5e3/POGH/u1t6UxUFxnMMPjCTsxdMW86iC0lz7Kc6ZFzqoziTkKPSeKnRD740odAu7Xg2aBimSB/zRljwlygOV7y7n8e+dAAVnBRPBIjvpZxvjFIPY767Zru/o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719396620; c=relaxed/simple;
-	bh=lJ28Y3M24JoUrkT0kfRU9mVaVheUptQt841EFO3wEWg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=g6qEvVswgXwgUpcxxLb5qsdNoruuvDq1oQC+A8oxmgnS2hv0FDUA1T8Ek5DyBMQZnJS8m3L+X7ZC/od/XHqEJEJNeNBP+ctMPB+nXbQrSrlm/Env9gjVDA6iASpDtFzUogQBN2Sq3Vqlonay/RbekT762+gAwe+XdVQ6o4scCZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oJnthlNW; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-7f3ca6869e8so40158239f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 03:10:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719396618; x=1720001418; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=59XlO8N85CHKMZTE14dutfLqTOocIO6QaYNJIqLDR0E=;
-        b=oJnthlNWd7xKEZIv5vv9PBCPJpCEjW0QJ8tzOQucNEHZTCq6mD7uXRmfWK6WkhxKEz
-         lJanv1QGLYl8bpYvrz5klqyHTWQ7qgW7IFQm4aZoxEpF8ClPBenv047hnYOxODGfdk0E
-         TY/PDVkNZM7huHvWlhKod3GAsZvUxIcA5E56A4jkJB0DpfXba5DRhu6Fe0yekHT6zw8+
-         hxyr3h1hbUMg+P5Tx5pmVCUDU+9St54UAnUZuqNBHa7kK2aDimIGlbTk6UQaV50UCQKM
-         rc82CRukdsVG6KOryNJcS5nMvGfxicepgKhmRBlm5Tuj/6uEKULCGR9IF95W3NOV+UoA
-         0u6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719396618; x=1720001418;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=59XlO8N85CHKMZTE14dutfLqTOocIO6QaYNJIqLDR0E=;
-        b=R8oyscCFzy8S7hu1cu3B7MbEnwyI5pcL5BCvuZuQsxrn4oVLsSERU98CmVerdziYeY
-         euge+oDLpQ5+Kl7aI65bdAib3J6ZDIwef7a78dB1j5cD/eG5yubenkQnJ8GNWFd/nyEs
-         SJ0AfdidA3clE0QlGP9eeI2+JM3OSStoNxDjIyP0muK0Z4shDdi10ux97KpFhIHmnbh6
-         x5cHB9AzHzOPvrBN594QLJjaxiK17fClW/Ja7KaWnckZp/84cccp0x95h6qzN29LrE7F
-         uiMQjD7V9au8UQwYAoByJd9Fxs/UqHwiM4bQYNpmWVIqiukcZuBMw/TLLWZm6nv9VkDY
-         fVgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVPDxxdboLjIdeFsfSHAMLuKaIv9k6Ojq3YyQNrj/E79K+ptQ00v7SZNaChGiR+JelIcE/f/IGbBSlyq40r/o3jXAyoZIlJQCp5BKso
-X-Gm-Message-State: AOJu0YxfO10eF6Cjdn5tqzncxtEyTLk9IgX8sHlIRQLhPvFyBs07F9Pl
-	mneNI8FUNKzuJVwvz75Yr/tTZwn9ambk1ey1fQSx3xy4fHHgJt1hZdhaAmSJs1w=
-X-Google-Smtp-Source: AGHT+IH5jBZh+2gfhC53GuIZJ8jCOVDi3reMK55I7AmQ0e+4wBYPfNvgxYCPjk0H5YJl3LjlcD09vQ==
-X-Received: by 2002:a05:6602:1549:b0:7eb:776f:d970 with SMTP id ca18e2360f4ac-7f3a75d95e8mr1114379739f.14.1719396617514;
-        Wed, 26 Jun 2024 03:10:17 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b9d121859csm3079108173.137.2024.06.26.03.10.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 03:10:17 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Wed, 26 Jun 2024 12:09:16 +0200
-Subject: [PATCH v3 7/7] dt-bindings: mfd: syscon: Add APM poweroff mailbox
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C86315EFC8;
+	Wed, 26 Jun 2024 10:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.153.153
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719397949; cv=fail; b=PJ9ihwwk+X2IEo7cP/U3acy1aEmAcyRXVm0qE9k3bo3ZMDORRK5SUnUDLac1Rh54Wx4Oh5T5+Anpdci0dwx5HZfhGZtp83gTePcy8f3sTxgyevLvB4ZWOWj4MHVN+HqSDiBduFN6MVBfuuux9bZ/OGhnXX4oIKG3j29TPAOoPXg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719397949; c=relaxed/simple;
+	bh=gw1QoqDjMjGGH9KbxCAtz74SRAo8UsR4IbONgulayYM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=STUZ081ayU56Jdw4q/aAQPLff06mTnrxX8RYvOjIRLtrommHMffG9A07n4UcCKtglRGVcpfMoEL0Sx0rRnNQIWM2Y1IAVqjWgKtWus63z+iBKkHU2a6OJvSEMyZ8O+Tx3qauXYnUO5lB5lLVG7m7Ll+tifJCljeFqXpgpmgW13A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=silabs.com; spf=pass smtp.mailfrom=silabs.com; dkim=pass (2048-bit key) header.d=silabs.com header.i=@silabs.com header.b=AN3Ua0fH; dkim=pass (1024-bit key) header.d=silabs.com header.i=@silabs.com header.b=SxtpaRPp; arc=fail smtp.client-ip=148.163.153.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=silabs.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=silabs.com
+Received: from pps.filterd (m0101742.ppops.net [127.0.0.1])
+	by mx0a-0024c301.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45Q8cXa5032099;
+	Wed, 26 Jun 2024 05:10:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=silabs.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pps12202023;
+	 bh=Xq+stB4HdrZl8cMwx/YiGZCqP4Sx+RthBtfb349fqlA=; b=AN3Ua0fH5hIY
+	tJWBdI86zZipvL5stEVzr8qEdji2APmDnrSuRoJ5laGr+lQbVOpiTxuH4ocW39WS
+	zgYiIJKoskz1C9x3epFvhuQlQ/HRjPjEpxfhs6wcMcDg3UOB8uGmlXO7lz5j5oy3
+	lA0EgJ3y7yO90oghRB/h2/nG8sDTGyKsD03/d2MPPNMUvrTvJtpIPckmATupHMH2
+	gNHYnbOsVYwVm4bO8QgwOGPLeN+w9YthUiY1DJ2PHHxKvIee4uNqM896h+rTbp6Q
+	yA5k2s4Q264hn4LR8afcFtCgzpqTSJhTPiQ9ZJKUU5hdQ8DCsoo1VNFo9Wqj3ZMU
+	aFOgUbnVeg==
+Received: from nam04-mw2-obe.outbound.protection.outlook.com (mail-mw2nam04lp2174.outbound.protection.outlook.com [104.47.73.174])
+	by mx0a-0024c301.pphosted.com (PPS) with ESMTPS id 3yygr8aw1u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Jun 2024 05:10:24 -0500 (CDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Q4w/AfVb/PuXDa0Yq9I9s+ahE9TpFyA/2LiEWbn/Senec6RVBdgx/pY1XpiIeTqBlBrfK2nB2mREBuGFk4VCtm4St6V7C9xjIhufPXxNOkB4sIicNNFXfoBx6VXbM28mKbB9haqC1/CwjxldfZDFg3zTPQiDCS5xY33kFRvwfyLyt5+1iV5XL4Qd1dre8Y1YKvVLLahgtlYgOsl7jzlex1saifF9JIdrWWaQZXy18gxMCVYl+mfg7tJpQFOkC+HndobI7y0KuDxy3VyhXNDVYB4Hzn7OiLGA3AbI1ZZL2O9Rv3IBe2KXPlvtqf7fAWynAPe/2GxsOukpB0ZLHGqjvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Xq+stB4HdrZl8cMwx/YiGZCqP4Sx+RthBtfb349fqlA=;
+ b=D2Fzstg7EPnqflx4hHQPyHMKdaJ5zHHj6IaMUpQNyNUeSaF9/9pCt9Y5RBLVG3h/o9rIOusIRhezA3Mkq4giAxCHgg31JaD5zRXU0PXuffhDMSfgVqvJa7nhjQ3Zju/zT1MHxpARFxSn8PVHGNtUZMFT9QqDsZSnlIjQuAGGENle1gMlGHr4wq7A53F8W2M/1YXCLNDMWINTKb2fc+ptcS/m2Y4HRGEO3obt4gQ4uO8/3+xOzAfl6zsMBXboMNPUqK3ac8UmiVDXxrXEbFuKvjUM8zd8EdXkWUB+3x2q/6LMiOx1KnqtTw8Mk38RXoyAMbCJnmrprPYsftfgPWH3Jw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=silabs.com; dmarc=pass action=none header.from=silabs.com;
+ dkim=pass header.d=silabs.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=silabs.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Xq+stB4HdrZl8cMwx/YiGZCqP4Sx+RthBtfb349fqlA=;
+ b=SxtpaRPps2+s7WMDnRfptCOwjHrs4DjCBotdnCyLLnzDhC2WrSX/z51viE2IiaTb6uFpZQY6ByO0bopW9CVYWSBtQnxgda5jN2sT331THVEapFQIwT4I2bpSdRxjel70zAFucQbowHMBtQnHZ7p++3UKG2acZQ7ztTZD3/KTIIo=
+Received: from MW3PR11MB4714.namprd11.prod.outlook.com (2603:10b6:303:5d::15)
+ by CO1PR11MB5153.namprd11.prod.outlook.com (2603:10b6:303:95::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.30; Wed, 26 Jun
+ 2024 10:10:18 +0000
+Received: from MW3PR11MB4714.namprd11.prod.outlook.com
+ ([fe80::9b77:8d77:3800:f0fd]) by MW3PR11MB4714.namprd11.prod.outlook.com
+ ([fe80::9b77:8d77:3800:f0fd%6]) with mapi id 15.20.7698.025; Wed, 26 Jun 2024
+ 10:10:18 +0000
+Message-ID: <0fc38c1b-1a28-4818-b2cc-a661f037999d@silabs.com>
+Date: Wed, 26 Jun 2024 12:10:00 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/2] ipv6: always accept routing headers with 0
+ segments left
+To: Alexander Aring <aahringo@redhat.com>,
+        Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: alex.aring@gmail.com, davem@davemloft.net, dsahern@kernel.org,
+        edumazet@google.com, jerome.pouiller@silabs.com, kuba@kernel.org,
+        kylian.balan@silabs.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, pabeni@redhat.com,
+        Michael Richardson <mcr@sandelman.ca>
+References: <20240624141602.206398-3-Mathis.Marion@silabs.com>
+ <20240625213859.65542-1-kuniyu@amazon.com>
+ <CAK-6q+gsx15xnA5bEsj3i9hUbN_cqjFDHD0-MtZiaET6tESWmw@mail.gmail.com>
+Content-Language: en-US
+From: Mathis Marion <mathis.marion@silabs.com>
+In-Reply-To: <CAK-6q+gsx15xnA5bEsj3i9hUbN_cqjFDHD0-MtZiaET6tESWmw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO4P265CA0139.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2c4::14) To MN2PR11MB4711.namprd11.prod.outlook.com
+ (2603:10b6:208:24e::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240626-dt-bindings-mfd-syscon-split-v3-7-3409903bb99b@linaro.org>
-References: <20240626-dt-bindings-mfd-syscon-split-v3-0-3409903bb99b@linaro.org>
-In-Reply-To: <20240626-dt-bindings-mfd-syscon-split-v3-0-3409903bb99b@linaro.org>
-To: Orson Zhai <orsonzhai@gmail.com>, 
- Baolin Wang <baolin.wang@linux.alibaba.com>, 
- Chunyan Zhang <zhang.lyra@gmail.com>, Jacky Huang <ychuang3@nuvoton.com>, 
- Shan-Chun Hung <schung@nuvoton.com>, 
- Khuong Dinh <khuong@os.amperecomputing.com>, Lee Jones <lee@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Chuanhua Lei <lchuanhua@maxlinear.com>, 
- Rahul Tanwar <rtanwar@maxlinear.com>, 
- Lars Povlsen <lars.povlsen@microchip.com>, 
- Steen Hegelund <Steen.Hegelund@microchip.com>, 
- Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, 
- Nishanth Menon <nm@ti.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1201;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=lJ28Y3M24JoUrkT0kfRU9mVaVheUptQt841EFO3wEWg=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBme+jTtrYuM01hjhHqNdEtBumYFIQAj1hCW6QmI
- qkgn/4bVjuJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZnvo0wAKCRDBN2bmhouD
- 13oED/4w11Sz6XcfEYcb7aCh448tvr/mT1uzJWylaAQ7h0adW5pLvYy6V8VNcH50TcOFSNz8pKb
- mP+/8qYde/sPaCx26zuPBwf9DyMvVP20grTsTmieBrx8cBd7TaJxf8ZNnl8XOzIcdrqmhaPU+Pv
- MKiUdtVS6Vnj1c8jAj33lufxbePDWl8Ec2kE6cgwtSAj5f9p6cEgfVqA9LnXMpT3VLwt8hluNJ3
- ji1uiFDP2y0D4g6B6arahRnZw+GbNbx8LnjhOs8MIx5OEHYjifdnUCmLL+vs8BQc8NmXNvFUR9a
- O+HUnsCoVL7GMidD69z8RjZ6whWaLHuAp39caMXOLCrE5lopNm5bW+QPpQA2RjVEPPV4waQvzvu
- pnnLbom9fpB8aHVH7zTTqw6AEKFK/uphsxA+9X9MkHAQrsIKPBlali7VxEMAxImoWa7ysFU3Js0
- AsqI8MYxIjz1O5N8PugktWFU6vpSaRy8BvLkt9xlcux2+ln3EQHLzhBysHYX2vejfxON9tZVp/f
- SRV3pAPTp0rNPsfS0McAkplHYhkuDsiQJpL61gURK6MI7mMJCWFVMz7Kcrvk6/DhOH75asCYxdv
- WV8AqbpzacSECz3Vvdf2gb3rIEabhrJZVkJnCko5Qbl0IGYl0XiqRk/i2h1ubOh86X4ofL9PB9C
- Jy0rzXiiGk3H+HQ==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW3PR11MB4714:EE_|CO1PR11MB5153:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4e323937-9fb2-45a2-3d44-08dc95c82642
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230038|366014|376012|7416012|1800799022;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?dmJqZ2JCd1BMZWI3bFk5dkUwVVNzanBwOHdNTjBZeXJkOCs0eWg1MWlYblFH?=
+ =?utf-8?B?ZG5yTnIxSk11WnlUM0JHV3JmbmcvL1IzVEJjNWVpamk1TVI5MW92U2lGQ2tP?=
+ =?utf-8?B?a2FHcGxZMXhkV1hhdElWbUgvT0JtR0ZmY3Y3Mk85VlR3cEV5VlNabUNSSDRi?=
+ =?utf-8?B?QytYRktTMWhDRVFwdUxuMU8wQ0NDNkhJdUNRd1ZtRjREdDVkSzNlQ0JjS0Vu?=
+ =?utf-8?B?cmNyTmRyd2pYUzBVMFZVclM5d21KY3NXV2RJQnNJcDIwRWJBNEpVUFkzVXRB?=
+ =?utf-8?B?d05jVFlsaE9LVEdvV2UydXN6cUNDUXY5WU1jdlZsQWVobCszcFFkTWxFSlYy?=
+ =?utf-8?B?aEVuRVRZYVpja1lrL3g5QzRNVjFBMkhpK1BVdjM1amlqZk0rMnkrWnFFajBL?=
+ =?utf-8?B?SEJ6bk83c0xTS1lsdUZRQ3JvVGNNb2FZdGZ4NjVWclFpY1hjdGhvMEpHTkw4?=
+ =?utf-8?B?S0Z6M2VSZHhKUDdZaHlqUEUxWUZ3ZERUdUQvejhNODNxYlArSlppRlBRSG9q?=
+ =?utf-8?B?Y1I0SnNWUkcyOWtvanNVenorblRDNXA4a2JqTXhIQkRQcXB2VXhablpkVDk0?=
+ =?utf-8?B?djZ5L3MzdC9Cb2dOa3VoVzdCK3JQcEdGREwrU1VQV1Q5bkFzNjRhMjF1a0VH?=
+ =?utf-8?B?UEVEZ09HYldSUHNUcVR1Unc4aDRmME12V3l5aG0wM1lEYzYrTlhkZFFHTXNm?=
+ =?utf-8?B?ZVlQdCtWeGJNb3NXbEprWDJackltczdKbFgxSnkvYzNqQWFpTlhHaTNwT0hl?=
+ =?utf-8?B?bEVvT3d6dHVSS0F6bGs4OFdsajRxc2wrL1ZYQVpibGtkd3VHMGRTRkdUZG1F?=
+ =?utf-8?B?M21LMkJZMGpESUlLK1k2QStNTVJMRUZyVHpNQjMwTThZcmp0MkcyTXlvQzNB?=
+ =?utf-8?B?RDdpb1NmcE9CYUExd0dVdnloaDZONUZrTzVnS3dic3c2M2JBT1FuenIxMS9P?=
+ =?utf-8?B?UGNKanZwZHFGYk9iOEpXT3FYUEJUcVJzR1hlU0dBVnQ0MmlkdHhNU1hnRkpm?=
+ =?utf-8?B?SmtNcjhCRG45Z2NjU1NabVE2Ym5BUkNBUU02dkF0ZEFUa2V6NHlHaWwvQWdB?=
+ =?utf-8?B?WHZrS2U4Z1IwaHdRZTN2bXdyeTBWc0N5WUNWVnJ6M3VITWVKQ1NCWXRqem40?=
+ =?utf-8?B?a2NKVkgvVjQyTnRKMUNLWU9OencvL3c3eWtLZFJ1bHZPY1AycG9rb1ZBZDRs?=
+ =?utf-8?B?eDRqcWEzYkZ4UjhVZVJaMDQxZHNCQjdZZ1dCRWQ5RUNyQWZhb3NOODdWcDcw?=
+ =?utf-8?B?NVdWa212UW0wMUJsd1RZcms1YktSSEw4b0N6UTJQK0FhRDlIUlNQVTVaRlhN?=
+ =?utf-8?B?UUxUN3ZaTDY3VVZLZENNWXpYUlRndTFBVkhTQ0hNNmxMaDdaV2xBaUdmUUtR?=
+ =?utf-8?B?SnRXeUNjU1Z0STJzYVluajlDN2N6dXExSUFGYnhaMUVPUmlDOUFFV2FmOCtU?=
+ =?utf-8?B?VHhrVjBpR0FiMFphM21aWFF1dm96UlgzU25nUGF1UzJvRWo2NDA0ZDhWOWU1?=
+ =?utf-8?B?cGIxbjZNL3M0a2pRd1VIbzdUVHNUS0o2WEdhZ3VMRm1yeis1L3pOdnJia1Rp?=
+ =?utf-8?B?WjRVY0hOcm1VQWZjVHkvUTAzUkYvQkMxdmt3b05aVnBCVGR5NjJEdWZPWTEw?=
+ =?utf-8?B?Y2g3Vzg2OStCL29MSXM3eVd4MFZWSVdReDV5NmVKdUpNTUVXeDVTcWpqM2lI?=
+ =?utf-8?B?ZklHNlk1N2NMK3l0Mnl2Rlo4L1BnYVphS2Q0U0tyWFU5SWZUUDZ4Z25Qa0Qv?=
+ =?utf-8?Q?lyOpDS9TxcvfoACFeA=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR11MB4714.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230038)(366014)(376012)(7416012)(1800799022);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?dUhqOFdyYTNVVHNSMGhZY0lMSEc2czBmWUtOYW1Ic2lFVnJ2dnZraXprVE1t?=
+ =?utf-8?B?TTllMXdHQ09JbXBMeDBkSU9rNDN5SzB1blN5L2dvK2dzdnF3WXdVWWVUdzAv?=
+ =?utf-8?B?T0o5NnhuVXh6bFFWbXFUeHdNdUpSTXoyMmxtYUdNbVRNRnJ4bENBTCtLdk55?=
+ =?utf-8?B?eEhDSEFpNDJEWGdpbXhCRGM1OHdpTGV0TzV4SXk0TGNlZ0g0SGJueEN4QVR1?=
+ =?utf-8?B?d3dsVzh4Y2MyU2QzQnkrRWwyVUVoMTBySUt1VldONllSZC9iWElzbjc0RXE4?=
+ =?utf-8?B?Y0R6VlQwdFVDbXJhOUVaOW81cWtLeE5RR2duU0VmL2V6Rnc1dFFwTjhjaU8z?=
+ =?utf-8?B?MWN4SndyakVQbEVDWEI3d1Q5WUNHOEN1TTl0UzhLNFpWZ05vakRwRldDUmZu?=
+ =?utf-8?B?TWVGRVJ2ZERVQ29JazFNdGswM1dSTk5UOXpINHFsN1IyZkNZZHFzYjhGTWti?=
+ =?utf-8?B?cFRjT0hGKyswMVJ4cjcvY3JaSkV4dENYMVJXbGk2V0dSZ2lSNmZWditQbXF4?=
+ =?utf-8?B?QjdWelk0bkxVUmkrblR6YUZiWkZLcXFtR3JyNHQ1Yk5ZL0UyaVMzRTNOV3E3?=
+ =?utf-8?B?cVZ5SmpEWWgxamN4c3NjcHhOVGZYTWVSZC8yNitpbGFzWTF3a3VpR3lVY3Ew?=
+ =?utf-8?B?VjNVS0FCczl2OWlNT2N1dFA0TmxmMVBGKzlBVTRBVG4yR1NHMGFQRWhqampy?=
+ =?utf-8?B?cW84U3VYUVArYzBOQS9PN292QkNGY0h6d3RITW9qYm4vNkUvQnlNT0QwdkVS?=
+ =?utf-8?B?TVhrN3BKTUdzYXFXeFZTa2dnc1lrNVBXNVFUSW1pUW56VWh1clpEUnZ2VkFh?=
+ =?utf-8?B?SVc0RTkrNGc3S3FhYTFXZ3MyVndWMnV3MzhybVpOU3BDODVZVGVCUUovaVMv?=
+ =?utf-8?B?QTRvdzFzeVhHb2lOVmdUcGpueFNES1VqNHhVTFlNWGdWNnlmTFczR3ZXL1lV?=
+ =?utf-8?B?M3FHV0Z1MmVnaEtFc2RRNjF2TDIwUHZ5YUNaeXdyS0NpNkkvUUgwN1g3M3VF?=
+ =?utf-8?B?MEJyYnhoOCtXN1ZodFV6ZmhmMkVqUEpYYTdBd0R1V0txaDFmU2g5ZExEbEw5?=
+ =?utf-8?B?Z0FPV09MbTA1NXFSeTVSMjc4enhCVzEwQXp5VkRLZWxESGZhN1hxN1g3bVRE?=
+ =?utf-8?B?Qkprbjk2eXRXT1Q0eEJtcVhpOEVrakRjRnhxeFhqTXVFMUVHalhXWXlCSWhz?=
+ =?utf-8?B?UzVEcHZiNFhZN3VQRzQ0c0VlclcwYmM2dXU5UThZMmNKRFVnbzJDam94OGxW?=
+ =?utf-8?B?bHJOOVNyTUtWVmhpcnlxbjVMMmhhZTRzcTYyaTdaVFNWdTIrK0MxYzArZEZn?=
+ =?utf-8?B?bUlaOTRkNENKNzQ0MlJQSlNzRTlKQWh6bWF1aC9saUR6ODJjbzI3eDl5ZGtm?=
+ =?utf-8?B?Ri9aRCtHVC9va0V3TzFBbVlxYWJPcFRQYzMrZUJQZWhpaUJVaHh5Z3htdWRX?=
+ =?utf-8?B?TzR6UWVYQ0UvKysxNGZzeUhHZEtaT3lQRzVuMG5FS0E3YlByd2lWenRFMHNt?=
+ =?utf-8?B?ZU9mamVycjZqY2pVY003REV5WkoxY1ExVzdBZ1kyNW8zQXhBemVhWEJ4bEVT?=
+ =?utf-8?B?Vm1JODlEdUZoRi9tK3FWZjdEU2NzWnB5SHhWOGE0KzdSSFRvbHBWdGlUQm5W?=
+ =?utf-8?B?eW1rbXlxRmwxZUQ2STlsdEdaWkpXbUFCbVRUZ0dyQUZYOXBYTVRQR0V2RmRG?=
+ =?utf-8?B?Qkk3bERpK1FCUFgvMkZ4aUdXcUV6WktTMkJFMEhkWGdMQUZydUNtTW1vam41?=
+ =?utf-8?B?dnJhd1NrOXlOclg1SHR6SXlLZ3RWUHYzdGZIWXJKM1VGRzNvcjkwVkx2Ny9F?=
+ =?utf-8?B?alhOWUo0U1FOTEV2NXVKdUhnVHZEZlFvN2lhWlBxQ1M0MWpaRXdPV0RkY3Iy?=
+ =?utf-8?B?MEdBcWVaaStpRXZZUE1aY095VzcvRzBQc0dLdWhNU0tBVUEvMzZyWmdsNW5a?=
+ =?utf-8?B?N1Iweitmc0FvWVRLWmszZ2FVMWlLbkhUZDBXekFRL1dmaUc1dzlldVRZWHQ2?=
+ =?utf-8?B?bkFEdkxTS3p1dkFPa050UG9palZneTV4MnVVNlU1TmFudmlheURvaDN1b29i?=
+ =?utf-8?B?ejdrS2NzNnFMdzNSMWoyVndWbEVyREhWM1FLR2xGV3lFcVY2VVFuSmdaYTNJ?=
+ =?utf-8?Q?qSQihrVxkSfHZnVxhUk/RA4lg?=
+X-OriginatorOrg: silabs.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4e323937-9fb2-45a2-3d44-08dc95c82642
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR11MB4711.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 10:10:18.1242
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 54dbd822-5231-4b20-944d-6f4abcd541fb
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 69JZ5SI8XTys3H0oQycVRrOXbi5rUdFd1wgvQ8ftGHuN3/ijc03X5Hle6nKJgy4OOav3jUquCeahG23zDZm/pQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB5153
+X-Proofpoint-ORIG-GUID: xN3RwDd7M2iX-GKzzz_9KCKPUiooOQck
+X-Proofpoint-GUID: xN3RwDd7M2iX-GKzzz_9KCKPUiooOQck
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-26_04,2024-06-25_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ priorityscore=1501 mlxlogscore=999 bulkscore=0 mlxscore=0 phishscore=0
+ suspectscore=0 lowpriorityscore=0 clxscore=1011 malwarescore=0 spamscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406260077
 
-Add compatible for an already used syscon poweroff/mailbox block in APM.
+On 26/06/2024 3:45 AM, Alexander Aring wrote:
+> Hi,
+> 
+> On Tue, Jun 25, 2024 at 5:39 PM Kuniyuki Iwashima <kuniyu@amazon.com> wrote:
+>>
+>> From: Mathis Marion <Mathis.Marion@silabs.com>
+>> Date: Mon, 24 Jun 2024 16:15:33 +0200
+>>> From: Mathis Marion <mathis.marion@silabs.com>
+>>>
+>>> Routing headers of type 3 and 4 would be rejected even if segments left
+>>> was 0, in the case that they were disabled through system configuration.
+>>>
+>>> RFC 8200 section 4.4 specifies:
+>>>
+>>>        If Segments Left is zero, the node must ignore the Routing header
+>>>        and proceed to process the next header in the packet, whose type
+>>>        is identified by the Next Header field in the Routing header.
+>>
+>> I think this part is only applied to an unrecognized Routing Type,
+>> so only applied when the network stack does not know the type.
+>>
+>>     https://www.rfc-editor.org/rfc/rfc8200.html#section-4.4
+>>
+>>     If, while processing a received packet, a node encounters a Routing
+>>     header with an unrecognized Routing Type value, the required behavior
+>>     of the node depends on the value of the Segments Left field, as
+>>     follows:
+>>
+>>        If Segments Left is zero, the node must ignore the Routing header
+>>        and proceed to process the next header in the packet, whose type
+>>        is identified by the Next Header field in the Routing header.
+>>
+>> That's why RPL with segment length 0 was accepted before 8610c7c6e3bd.
+>>
+>> But now the kernel recognizes RPL and it's intentionally disabled
+>> by default with net.ipv6.conf.$DEV.rpl_seg_enabled since introduced.
+>>
+>> And SRv6 has been rejected since 1ababeba4a21f for the same reason.
+> 
+> so there might be a need to have an opt-in knob to actually tell the
+> kernel ipv6 stack to recognize or not recognize a next header field
+> for users wanting to bypass certain next header fields to the user
+> space?
+> 
+> - Alex
+> 
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- Documentation/devicetree/bindings/mfd/syscon.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/mfd/syscon.yaml b/Documentation/devicetree/bindings/mfd/syscon.yaml
-index d4e9533cf3fe..70e3a4465b4f 100644
---- a/Documentation/devicetree/bindings/mfd/syscon.yaml
-+++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
-@@ -41,6 +41,8 @@ select:
-           - amlogic,meson8b-analog-top
-           - amlogic,meson8-pmu
-           - amlogic,meson8b-pmu
-+          - apm,merlin-poweroff-mailbox
-+          - apm,mustang-poweroff-mailbox
-           - apm,xgene-csw
-           - apm,xgene-efuse
-           - apm,xgene-mcb
-@@ -133,6 +135,8 @@ properties:
-           - amlogic,meson8b-analog-top
-           - amlogic,meson8-pmu
-           - amlogic,meson8b-pmu
-+          - apm,merlin-poweroff-mailbox
-+          - apm,mustang-poweroff-mailbox
-           - apm,xgene-csw
-           - apm,xgene-efuse
-           - apm,xgene-mcb
-
--- 
-2.43.0
+My point is that if a particular routing header support is disabled
+through system configuration, it should be treated as any unrecognized
+header. From my perspective, doing otherwise causes a regression every
+time a new routing header is supported.
 
 
