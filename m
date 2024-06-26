@@ -1,99 +1,130 @@
-Return-Path: <linux-kernel+bounces-230672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AB53918049
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:55:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA377918009
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:43:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6D88B221E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:54:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBB561C22E1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7981802B2;
-	Wed, 26 Jun 2024 11:54:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5283817F500;
+	Wed, 26 Jun 2024 11:43:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NCw/7D+F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Taq5XDpM"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC1F17D37E;
-	Wed, 26 Jun 2024 11:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16FC22AF1A
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 11:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719402893; cv=none; b=bRZCgSMNFpMPEva2MkZTTBokCC2PYU0H6GgzUW+3vss/QWfFVfhtCJ23jTLYI9w3CBIphGTM9zap+k7N3SqjbA8R0c5eumnwLahXxguezg3t6105Xfi7k8xh27LfemeBagoFU84Cm8LyHJbqv5c1UFlDt7WXpEDmMDBd6Qeg+bM=
+	t=1719402210; cv=none; b=PpHU2Wbctg0pJrXt8yelrXHrd2CfwpBCxYKo4igo6IOMICVeJMPF4fNkEuelPtrG8KLQHJryO3noKurEgERVTueVYUGyDJYZSg1Y3aJUIPNELxQhqbiUM4nnh/L3GtzL1hvxABHrwrlh8QhyR+ZZu3XJYBB0wFTEmTV90B3eQIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719402893; c=relaxed/simple;
-	bh=Z4f5P14gfddhvoGI8bqxaeXaG2n8qogI/Lq5uB6zaFk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ECDgOlra6dUr30l2w+CcBmCKFtFtAVfG4BjqeTqvCPohbeUj+KuQDBbN8x4YvbS6/sYGTa4dbs8CQg4/CmNIDQ2wZ2WscGJ0+WacsmBHfSq44GrvSwGy6nWAXZfFcqFbkdY9SzluYHgMd9h4XrSnKNp/hmINOWTsI2QWGNnSetM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NCw/7D+F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0699BC2BD10;
-	Wed, 26 Jun 2024 11:54:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719402893;
-	bh=Z4f5P14gfddhvoGI8bqxaeXaG2n8qogI/Lq5uB6zaFk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NCw/7D+FJeMBQGQgAiyUNaW8gT4NJwkSTC7qkbozoZjZjxnrBGUUTuoCmLk05nmy0
-	 jyZGh7K/DJzogE/GhCJzNcz1mD6zZWequHuDQTK8KLE/iJBi/3Ft31FozXReiJbqMf
-	 kojVpvBQFE/v7H6KxxOYQvo5RjP82WbsvxhHIu4TdwWD9a7ccTdhoZs0eoEUBjqzsk
-	 N7cG2lKK705bycGl9KUKG93jetVCbKuKKoaHAtFVe+/YAPaQXafLCiGf1L0l5uQpam
-	 g09wLAq7yBA0jmQYJ3tHjUgdm0FGsVefq8qEVnRJ6s41RrEJYK4fuYfFzkRPieIPeS
-	 iofZQrp8UGc+w==
-Date: Wed, 26 Jun 2024 19:40:48 +0800
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: kernel test robot <lkp@intel.com>, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [tip:irq/core 41/49] drivers/irqchip/irq-dw-apb-ictl.c:33:25:
- error: expected '=', ',', ';', 'asm' or '__attribute__' before
- 'dw_apb_ictl_handle_irq'
-Message-ID: <Znv-QA4QM_JLZwo3@xhacker>
-References: <202406250214.WZEjWnnU-lkp@intel.com>
- <87v81y6v6d.ffs@tglx>
+	s=arc-20240116; t=1719402210; c=relaxed/simple;
+	bh=yDgpjULbGpf74flIs/KZFjD95dyQt8UIej7x4ZY1Y44=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QUbN4zgdhe1VPbQoMFQOxGlyyVXi0+tZg4r7NOgmecbuUkFZx69c+qQlH3j9oAdXi2XCOR/oFPolQKHYCmtMgsxnB2gmUWUqVfZ5oI5VnIk29Zrd+gHurUyg7SzqENliJd28HHHroBmmydaa0IiJ2jFrOIDGtUrz6QdiWnRTmWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Taq5XDpM; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a72510ebc3fso504775466b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 04:43:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719402207; x=1720007007; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=u0vlM+qZ0aOaH69nP4epFVl6In7rL2hoACpDR7WfzP8=;
+        b=Taq5XDpMe6bz+08I7PzZUHDP9TmaWxIaLqVlxAaGg2RH1hdeYM2hW6nqtMMLZuUrJl
+         3c9RBoBKhc8FdGrWXAcwErwyOFb6oGbHxkfy5k+eC1mGL3D+Lbvjt+dgbKJdUpX0FdZK
+         4JQwt/AUbZXNDWSKp4eUbgN+EQ6o1k4zQZZcmM3DKQJBd1q1w2REl7KzLKem2Rd6DvGI
+         rjubrtKG7IrKYjD2uuOczvED/FASuhaZEJ8eeSDH106K41vWID4gq2i8TKnaoIs87NAC
+         Gv77V1AakG2wnusisCohNtX3OmAXJR6dquqDa/7XV6ADcmxYvsfv2EbKQENa4IlCTtF2
+         oPdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719402207; x=1720007007;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u0vlM+qZ0aOaH69nP4epFVl6In7rL2hoACpDR7WfzP8=;
+        b=MasgWoSjgJd1xGvpDPHaShL3Q3GUezc2cY7oehsfya4dqJbp8kxK/UM4HCtFwogW4y
+         /inqi+Ugnts/mvIV9XaOj91nwaRnTiDUYOX2fLGDPVHWNnKA8KskEqlV9wJaukgh2MDu
+         KK3j3FyHpRCDJRQX9TaWSBAE6kEHKNly23E7zBV0v6gDNFQYkdknxgt+lzB1u5ysC4nP
+         uonitSxmo9fzMB5vRZAcKUqR48XWaHqMkgbGgaVNBRBElVPmabz215HhMT5XqTJcz0vC
+         aQu4rCoX5tKQoPMnCekJK60Scex7nOp/lcRMpYoMwyEdY+caxllgcyFF8bKxlYzuYJE+
+         07XQ==
+X-Gm-Message-State: AOJu0YwucURE8ftw2nK/htxGKHO4IptoJl/d1QM69AcJCZvVAI3UESfM
+	wp3OudQGRUoJfRYDzoDXEyhoV7y8pkApnkAXGIUI5ze9H0K2BLDFhGfCbg==
+X-Google-Smtp-Source: AGHT+IH0zTf3PRIs+wLpFlt0dnNP1JgTx6WSdgmDhpVsQcy/yQ+0DmXy8dcDqf7xJ4EdVZoGHDqZYQ==
+X-Received: by 2002:a17:906:c1d0:b0:a6f:5922:54e7 with SMTP id a640c23a62f3a-a7242d29bfemr815358266b.65.1719402207101;
+        Wed, 26 Jun 2024 04:43:27 -0700 (PDT)
+Received: from pc638.lan (host-185-121-47-193.sydskane.nu. [185.121.47.193])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72452140e0sm409649266b.217.2024.06.26.04.43.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 04:43:26 -0700 (PDT)
+From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+To: linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Baoquan He <bhe@redhat.com>,
+	Hailong Liu <hailong.liu@oppo.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Nick Bowler <nbowler@draconx.ca>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: [PATCH] mm: vmalloc: Check if a hash-index is in cpu_possible_mask
+Date: Wed, 26 Jun 2024 13:43:24 +0200
+Message-Id: <20240626114324.87334-1-urezki@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87v81y6v6d.ffs@tglx>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 24, 2024 at 08:40:42PM +0200, Thomas Gleixner wrote:
-> On Tue, Jun 25 2024 at 02:06, kernel test robot wrote:
-> > Hi Jisheng,
-> >
-> > First bad commit (maybe != root cause):
-> >
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/core
-> > head:   f2605e1715dd28e8943b557453fed3a40421d3b5
-> > commit: 7cc4f309c933ec5d64eea31066fe86bbf9e48819 [41/49] irqchip/dw-apb-ictl: Support building as module
-> > config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20240625/202406250214.WZEjWnnU-lkp@intel.com/config)
-> > compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-> > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240625/202406250214.WZEjWnnU-lkp@intel.com/reproduce)
-> >
-> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes: https://lore.kernel.org/oe-kbuild-all/202406250214.WZEjWnnU-lkp@intel.com/
-> >
-> > All errors (new ones prefixed by >>):
-> >
-> >>> drivers/irqchip/irq-dw-apb-ictl.c:33:25: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'dw_apb_ictl_handle_irq'
-> >       33 | static void __irq_entry dw_apb_ictl_handle_irq(struct pt_regs *regs)
-> >          |                         ^~~~~~~~~~~~~~~~~~~~~~
-> 
-> That's because the drivers is now selectable via Kconfig, so
-> allmodconfig sets it to M and builds it which does not work on a x86
-> build unsurprisingly.
+The problem is that there are systems where cpu_possible_mask
+has gaps between set CPUs, for example SPARC. In this scenario
+addr_to_vb_xa() hash function can return an index which accesses
+to not-possible and not setup CPU area using per_cpu() macro.
 
-Yes, I didn't take care this.
+A per-cpu vmap_block_queue is also used as hash table assuming
+that incorrectly assumes the cpu_possible_mask has not gaps.
 
-> 
-> Jisheng, please send a delta fix ASAP. Otherwise I have to revert it.
+Fix it by adjusting an index to a next possible CPU.
 
-I missed it. I will send a v2. Even if it's too late, it can be picked
-up in next development window.
+Fixes: 062eacf57ad9 ("mm: vmalloc: remove a global vmap_blocks xarray")
+Reported-by: Nick Bowler <nbowler@draconx.ca>
+Closes: https://lore.kernel.org/linux-kernel/ZntjIE6msJbF8zTa@MiWiFi-R3L-srv/T/
+Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+---
+ mm/vmalloc.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index b4c42da9f3901..6b783baf12a14 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -2544,7 +2544,15 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
+ static struct xarray *
+ addr_to_vb_xa(unsigned long addr)
+ {
+-	int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
++	int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
++
++	/*
++	 * Please note, nr_cpu_ids points on a highest set
++	 * possible bit, i.e. we never invoke cpumask_next()
++	 * if an index points on it which is nr_cpu_ids - 1.
++	 */
++	if (!cpu_possible(index))
++		index = cpumask_next(index, cpu_possible_mask);
+ 
+ 	return &per_cpu(vmap_block_queue, index).vmap_blocks;
+ }
+-- 
+2.39.2
+
 
