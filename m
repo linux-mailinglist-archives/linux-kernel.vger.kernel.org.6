@@ -1,163 +1,172 @@
-Return-Path: <linux-kernel+bounces-231570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 110E9919A4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:00:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E20D919A52
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:03:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7378FB21B5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:00:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2144F2838AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:03:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A395716DECE;
-	Wed, 26 Jun 2024 22:00:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4D7619309A;
+	Wed, 26 Jun 2024 22:03:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TarhnWxt"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i2aH49ek"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D41018FC63
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 22:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74C8482FE;
+	Wed, 26 Jun 2024 22:03:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719439244; cv=none; b=SGCTzKGpCTZejlmOLnpQ1G2IrmD2GsvJ2gzJCB7hfc7Vqn5iFa2wxR1IaqTTCfbg8baMERMRwP2RroL3ST0TANs/vIlUDYnp89R7jWqWHGcd+MhHQ1QF+qTrTAhnc/8ng+DjKWjqPLGJrp865xFg0VT0uk8CBPweVgeZJSmUCK4=
+	t=1719439399; cv=none; b=lFe4NkvQ6ub87XQrG1I1n+Z6WGZXSDCmNr1PE9FJo81vggkex0Bl/M5BYlN4Rodt4qb/k1wzKUU1m7qnBZPmyzbzvPCLbD1us3N1Jp8Nmzr0FoGD2ozv554eBCuEfR/UWtLNlG9x2wYxO7ZMfptZbF1qi5U+SkaI/2yyaWRRh0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719439244; c=relaxed/simple;
-	bh=gvmC1346MmDk0t3iSMJUF+N7dqvo1b3jn0ulpMyO8V0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lRslpMzyHPm5ZxhgZaBbXLYf2lBOczaNWcVPrhQlynhxYCL5nrpUdwDGT0t614Voaj21R2R6JV6SwEAAtBfO6Nf4FaKbL3TbPOV5UZhRCWw0+l9v5HaXA/nqbSUwUBg8BO/nINYVM0j0I99IE9yLOi2ighRAMn2T+qOeL8BXVzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TarhnWxt; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52cdd03d6aaso5206560e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 15:00:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719439241; x=1720044041; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pj/nWr9R0o1AMKMsYJRQq0ZEmOgyeZ/JY1dSLu0yeL0=;
-        b=TarhnWxtEcfmjysr7J/TmjI1WW4qcLJU/R9m7+1MgCSU9673NwetTzvJdunJXeQSw7
-         80lbTGrjiqgPOnIzvrJGShYyp0AZ0+kVjWWgwxgYfJzCSuBE2xETPtjmQFINNKjKCyW9
-         vj3RJeKhHNzTV2Y7Augub8zhAenN6bWuVyq30qpayheCix4+mKKuW0vJ4clJ75PwMbJi
-         DHkEN/YJ6LMz0xS9jCdka9Qkyo1u49lg0b+jdaT2fcDC6f1wVMqumuXPtogdy7X3IQKl
-         FZ8UWEjytg903UVWr1ohIpq7bLaoXQcDYF5FtvalcSOln1MbTUb6fqrWObzK+munKl2Y
-         whnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719439241; x=1720044041;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Pj/nWr9R0o1AMKMsYJRQq0ZEmOgyeZ/JY1dSLu0yeL0=;
-        b=d46E/PsWdW2nGQMb2Y3s4KpOeC6wsyGC4mL3kNX5p3e+IsoB2qOiKtAbJrOdXhuB7T
-         4FhN1s00IM4ph/63t+CQVFXDcL+ByxfrY0aRE+hGyeJ1coowHlaBYLkrVLWhJWH2BKKP
-         Au6S05nQi1L7mOq8geEahL1xIMepaxSkS1LShws+FBnhO1HI1ZFsebEdC4YH/XbhVzOt
-         wM5FE8tpVxW0z7IicjwUk9XKbnFrB11+zFbmQx5zPT+lyoiZOWShtAv7bBtU7RMwlNMQ
-         laMZvWqrrpEJFgpuWIp0I2ovzNAHM8zv0X/pE6vwsSjEunwdZko3J+XTEsZ3dCaprZvt
-         QUFw==
-X-Forwarded-Encrypted: i=1; AJvYcCVPx+O0qnXiNxyOcVZrVqYzTKoiWmcF4I9MIh2lVKDxHratWpHuWDTO12ghXxapsrAz5Y6PhRbI+oeiwcHbEaZiVyas0EPP0j2As+P5
-X-Gm-Message-State: AOJu0YymFeRxVTlY6O6eVExdXqReww/RIe4txvh3mMANvmr32jewskd5
-	Ks0M6aie3Mv5DV8EejAzrIy5zW/8TiqYGblTS8xfGDTXAp3A5Dsn+U4WT9FMGIc=
-X-Google-Smtp-Source: AGHT+IEzkEwlSn3wePny4O5r6XyYn9tUWSErcLZK7yJB3IGNMgVAot+DNy6F2E0jNVxUeXN93S5R8Q==
-X-Received: by 2002:ac2:5617:0:b0:52c:b606:2b2 with SMTP id 2adb3069b0e04-52ce0673b84mr6942987e87.46.1719439238957;
-        Wed, 26 Jun 2024 15:00:38 -0700 (PDT)
-Received: from [192.168.215.29] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a725cc93794sm304031666b.170.2024.06.26.15.00.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Jun 2024 15:00:38 -0700 (PDT)
-Message-ID: <9938a67b-1f6b-4955-b4c0-a9f78c55f276@linaro.org>
-Date: Thu, 27 Jun 2024 00:00:35 +0200
+	s=arc-20240116; t=1719439399; c=relaxed/simple;
+	bh=U+uz0XLNdDwxkcgFdvAHOzYHgj6wcdQxkiGU/K7ilx4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qpbko+WGzbV7mJgCxesl4QdQ9Me2viurpptATVwrfZ02MBXNXya5tbghVfzJFX0Caiul+5pkT41b5lF0NteqU5cB6rnSAItldM9gJfLjNzcDvNGd2rfMUjHRlsc74B5WxJCIYMKLacyIU+CqQ6NH/GM8ZEtnTgAlz34vgbyqSxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i2aH49ek; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05FB7C116B1;
+	Wed, 26 Jun 2024 22:03:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719439399;
+	bh=U+uz0XLNdDwxkcgFdvAHOzYHgj6wcdQxkiGU/K7ilx4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=i2aH49ekwmZgvIvqA4RyZB4v8dJcvuflGXH3st3Zjbiclczeol9qzG7cystiwNNxC
+	 KnQZHMt1k3m3rUAVzowWCQWi1cpcTG6wbddljpWOEyTPG/nWg4UZk+xWrGKiSM0dFt
+	 JNXWQ12gb4n6rovKVlWqWJJng5XDD9IEuganMaE95wGHZEUWaFWP7QpveYNogfq/WZ
+	 u4yONJJC0/yOXssqC7eXxSL9ug9nXXHVOxF0o7M6dFQzKGQLfe8lZyaT+V5Ae8moQV
+	 Bt0qTMZsRMp+xPtMi0efL5GC0NTc/mKFe0t3gP3s0B1oGd9iSPgXTrLF17mq0HrA/X
+	 INUONQS14f2PQ==
+Date: Thu, 27 Jun 2024 00:03:16 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Neeraj upadhyay <neeraj.iitr10@gmail.com>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org
+Subject: Re: [PATCH rcu 2/6] rcu: Remove superfluous full memory barrier upon
+ first EQS snapshot
+Message-ID: <ZnyQJGJGeAbTSEhv@pavilion.home>
+References: <81f4e616-8125-4934-a8e2-fd5beae90995@paulmck-laptop>
+ <20240604222652.2370998-2-paulmck@kernel.org>
+ <CAFwiDX9ynNpmU_Au=J7geJYjE8NLLM-p2x8QDyjmZ1qNBkLXZQ@mail.gmail.com>
+ <ZnwiCsor-cku3ETF@localhost.localdomain>
+ <CAFwiDX8EL8q-ihiXR8GSu5AxmRGs8w4z682nWMMMqDe2phLjuQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 6/6] arm64: dts: qcom: ipq9574: Add icc provider
- ability to gcc
-To: Varadarajan Narayanan <quic_varada@quicinc.com>,
- Georgi Djakov <djakov@kernel.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, andersson@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, quic_anusha@quicinc.com,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <ZjshR0ekcn0gxwOa@hu-varada-blr.qualcomm.com>
- <CAA8EJpqENsojPQmCbma_nQLEZq8nK1fz1K0JdtvLd=kPrH_DBw@mail.gmail.com>
- <1a08ef42-b52f-4c97-90d7-e7fdee7725b4@linaro.org>
- <Zmgb+OjdBNw71sC1@hu-varada-blr.qualcomm.com>
- <176137e5-6312-4d46-97b6-c4494bc1c61b@kernel.org>
- <ZmlAdETV0+6Md8HC@hu-varada-blr.qualcomm.com>
- <e24cfd23-6f77-46a0-b020-9cb3daef6930@kernel.org>
- <Zml4RQ5R5s3mVMnI@hu-varada-blr.qualcomm.com>
- <8e32a8be-dbbf-49ca-92a1-2fe3c8bfb571@kernel.org>
- <ZmpsOdsl9AMTSH88@hu-varada-blr.qualcomm.com>
- <ZnKKjomRQtJS2ZgL@hu-varada-blr.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <ZnKKjomRQtJS2ZgL@hu-varada-blr.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFwiDX8EL8q-ihiXR8GSu5AxmRGs8w4z682nWMMMqDe2phLjuQ@mail.gmail.com>
 
-On 19.06.2024 9:36 AM, Varadarajan Narayanan wrote:
-
-[...]
-
-
-> Tested the patches with both gcc and nsscc providers having
-> 'sync_state' set to icc_sync_state.
+Le Wed, Jun 26, 2024 at 10:49:05PM +0530, Neeraj upadhyay a écrit :
+> On Wed, Jun 26, 2024 at 7:43 PM Frederic Weisbecker <frederic@kernel.org> wrote:
+> >
+> > Le Wed, Jun 12, 2024 at 01:57:20PM +0530, Neeraj upadhyay a écrit :
+> > > On Wed, Jun 5, 2024 at 3:58 AM Paul E. McKenney <paulmck@kernel.org> wrote:
+> > > >
+> > > > From: Frederic Weisbecker <frederic@kernel.org>
+> > > >
+> > > > When the grace period kthread checks the extended quiescent state
+> > > > counter of a CPU, full ordering is necessary to ensure that either:
+> > > >
+> > > > * If the GP kthread observes the remote target in an extended quiescent
+> > > >   state, then that target must observe all accesses prior to the current
+> > > >   grace period, including the current grace period sequence number, once
+> > > >   it exits that extended quiescent state.
+> > > >
+> > > > or:
+> > > >
+> > > > * If the GP kthread observes the remote target NOT in an extended
+> > > >   quiescent state, then the target further entering in an extended
+> > > >   quiescent state must observe all accesses prior to the current
+> > > >   grace period, including the current grace period sequence number, once
+> > > >   it enters that extended quiescent state.
+> > > >
+> > > > This ordering is enforced through a full memory barrier placed right
+> > > > before taking the first EQS snapshot. However this is superfluous
+> > > > because the snapshot is taken while holding the target's rnp lock which
+> > > > provides the necessary ordering through its chain of
+> > > > smp_mb__after_unlock_lock().
+> > > >
+> > > > Remove the needless explicit barrier before the snapshot and put a
+> > > > comment about the implicit barrier newly relied upon here.
+> > > >
+> > > > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> > > > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > > > ---
+> > > >  .../Design/Memory-Ordering/Tree-RCU-Memory-Ordering.rst    | 6 +++---
+> > > >  kernel/rcu/tree.c                                          | 7 ++++++-
+> > > >  2 files changed, 9 insertions(+), 4 deletions(-)
+> > > >
+> > > > diff --git a/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.rst b/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.rst
+> > > > index 5750f125361b0..728b1e690c646 100644
+> > > > --- a/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.rst
+> > > > +++ b/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.rst
+> > > > @@ -149,9 +149,9 @@ This case is handled by calls to the strongly ordered
+> > > >  ``atomic_add_return()`` read-modify-write atomic operation that
+> > > >  is invoked within ``rcu_dynticks_eqs_enter()`` at idle-entry
+> > > >  time and within ``rcu_dynticks_eqs_exit()`` at idle-exit time.
+> > > > -The grace-period kthread invokes ``rcu_dynticks_snap()`` and
+> > > > -``rcu_dynticks_in_eqs_since()`` (both of which invoke
+> > > > -an ``atomic_add_return()`` of zero) to detect idle CPUs.
+> > > > +The grace-period kthread invokes first ``ct_dynticks_cpu_acquire()``
+> > > > +(preceded by a full memory barrier) and ``rcu_dynticks_in_eqs_since()``
+> > > > +(both of which rely on acquire semantics) to detect idle CPUs.
+> > > >
+> > > >  +-----------------------------------------------------------------------+
+> > > >  | **Quick Quiz**:                                                       |
+> > > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > > > index f07b8bff4621b..1a6ef9c5c949e 100644
+> > > > --- a/kernel/rcu/tree.c
+> > > > +++ b/kernel/rcu/tree.c
+> > > > @@ -769,7 +769,12 @@ static void rcu_gpnum_ovf(struct rcu_node *rnp, struct rcu_data *rdp)
+> > > >   */
+> > > >  static int dyntick_save_progress_counter(struct rcu_data *rdp)
+> > > >  {
+> > > > -       rdp->dynticks_snap = rcu_dynticks_snap(rdp->cpu);
+> > > > +       /*
+> > > > +        * Full ordering against accesses prior current GP and also against
+> > > > +        * current GP sequence number is enforced by current rnp locking
+> > > > +        * with chained smp_mb__after_unlock_lock().
+> > > > +        */
+> > >
+> > > It might be worth mentioning that this chained smp_mb__after_unlock_lock()
+> > > is provided by rnp leaf node locking in rcu_gp_init() and rcu_gp_fqs_loop() ?
+> >
+> > Right!
+> >
+> > How about this?
+> >
 > 
-> 	# dmesg | grep synced
-> 	[    3.029820] qcom,gcc-ipq9574 1800000.clock-controller: interconnect provider is in synced state
-> 	[    3.470106] qcom,nsscc-ipq9574 39b00000.clock-controller: interconnect provider is in synced state
+> Looks good to me, thanks! Minor comment (ditto for the other patch) below
 > 
-> I can see that icc_sync_state is getting called and clocks
-> related to paths with zero bandwidth are getting disabled.
 > 
-> Will post the NSSCC patches to get the full picture.
+> >     /*
+> >      * Full ordering against accesses prior current GP and also against
+> 
+> Nit: "prior to current GP" ?
 
-Going back to the original question, does removing interconnects = from
-things like PCIe now make them not work / crash the device, which would
-indicate the NoC clocks were indeed gated?
+Thanks. On a second thought and just to make sure we don't forget why we did
+what we did after a few years, I expanded some more, still ok with the following?
 
-Konrad
+	/*
+	 * Full ordering between remote CPU's post idle accesses and updater's
+	 * accesses prior to current GP (and also the started GP sequence number)
+	 * is enforced by rcu_seq_start() implicit barrier and even further by
+	 * smp_mb__after_unlock_lock() barriers chained all the way throughout the
+	 * rnp locking tree since rcu_gp_init() and up to the current leaf rnp
+	 * locking.
+	 *
+	 * Ordering between remote CPU's pre idle accesses and post grace period's
+	 * accesses is enforced by the below acquire semantic.
+	 */
+
+Thanks.
 
