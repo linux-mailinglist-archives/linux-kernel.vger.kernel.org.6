@@ -1,50 +1,75 @@
-Return-Path: <linux-kernel+bounces-230183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5EA1917985
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:20:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0651917986
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:21:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 591691F23EAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:20:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D4C51C23350
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6F6515A4B0;
-	Wed, 26 Jun 2024 07:20:46 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FAFD1847;
-	Wed, 26 Jun 2024 07:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FEDC159598;
+	Wed, 26 Jun 2024 07:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="G9EeXrw+"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D991158D74
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 07:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719386446; cv=none; b=Sv6FjUiW4BX7dWDB18XzRstTSe4BIGcO26afwwXPOLT/ul20FlpvEMe+M0dRnEsROlvs8AtYl+kg1QPv4A9J/aS2XiNJ4oCUiMjXFOIIbCdidQ1E4OXxFkpsjaH1N1StubIbnNm4J//o0QdvAt/zlJJJDkAmDkcayk7xv8uC0fw=
+	t=1719386471; cv=none; b=P6DE+JtwW5kHn63wiyy7GeAQzHSQwejz3PKFpJ70WYPv7bxCWHX7FWzBV8T/Pn3ncq1jxS923NSwYA9mLWU3v/S5ecIHomXlD2o1OhTEmbE8HDj6ppZ5MAkGFpbK7Vl2SfkLG/DhXmx2pgcGoZ03S5+ihLYPNSA4p6sQ3jvNlYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719386446; c=relaxed/simple;
-	bh=OqEnKKiJjQVSfNPWrE0Mk8R/WYJ1z/AHeH7hQPc6gGw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iJpHxoQ7gKwn6fS3RGE2dtyxVj516dK2Mu0wMGOCOZ/NayxVRkkf6hecjH6ngB8X5+XhnnXGMAOf2rJO1BtFeZ4p1ZZWNRVbZp1cB6Lrsz+VHRKTaGRWj3LPDQ+7WAtOWG9CHfGcpnZ+TLVnMOCjGXzahYpWi1corcpF7DWL5nQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-05 (Coremail) with SMTP id zQCowABXXQE5wXtmX+DcEg--.19512S2;
-	Wed, 26 Jun 2024 15:20:35 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: shuah@kernel.org,
-	usama.anjum@collabora.com,
-	amer.shanawany@gmail.com,
-	make24@iscas.ac.cn,
-	swarupkotikalapudi@gmail.com,
-	kees@kernel.org,
-	luto@kernel.org,
-	akpm@linux-foundation.org
-Cc: linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] selftests/capabilities: Fix possible file leak in copy_fromat_to
-Date: Wed, 26 Jun 2024 15:20:24 +0800
-Message-Id: <20240626072024.2816986-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1719386471; c=relaxed/simple;
+	bh=nASAPLVT8PjYiJQ9E2FDrsk9NF+lkKBEHcRsZ47YKYw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Ke/sMv7e6wXRiSHXsGh8TZEK0g1GZvzVLpVLJ8yhHSHfxQ0iRvUmaFRB4ww++pL8MSGGK+7RA1wa4BW/jFPCdwHVysL25FjcrNX24qN4q/k7I2aI6ScWzc09pudveOgAs5dNS3HCMT9T/D1CfTR4OK/LwT/9FRVQaDaeXd7SQ9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=G9EeXrw+; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from thinkpad-p16sg1.. (S010600cb7a0d6c8b.vs.shawcable.net [96.55.224.203])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 3DE0D20B7009;
+	Wed, 26 Jun 2024 00:21:02 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3DE0D20B7009
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1719386462;
+	bh=moCiPaIn6NwSfydLRZyrKy3vd1OTZl2jw6RofluiaGs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=G9EeXrw+/0mJx1pij6BPmT+TnZdwksClZtLPrzVUXgEKvyh9KLmAN+bY+kJ5kgNom
+	 MFyu/2j/wa+nzn9EqTks0cn7GZH27tnPkawPFxkWRlLsV9rPpRfOLVMYG4x0WX87hS
+	 dE97G7JmI5FAdMeJR770S7ATzYaaz4MdKCiwCrW8=
+From: Shyam Saini <shyamsaini@linux.microsoft.com>
+To: dan.j.williams@intel.com
+Cc: akpm@linux-foundation.org,
+	david@redhat.com,
+	iamjoonsoo.kim@lge.com,
+	james.morse@arm.com,
+	jgg@ziepe.ca,
+	jmorris@namei.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	maz@kernel.org,
+	mhocko@suse.com,
+	osalvador@suse.de,
+	pasha.tatashin@soleen.com,
+	sashal@kernel.org,
+	tyhicks@linux.microsoft.com,
+	vbabka@suse.cz,
+	will.deacon@arm.com,
+	code@tyhicks.com,
+	srivatsa@csail.mit.edu,
+	apais@linux.microsoft.com,
+	vijayb@linux.microsoft.com,
+	tballasi@linux.microsoft.com,
+	bboscaccy@linux.microsoft.com
+Subject: dax alignment problem on arm64 (and other achitectures)
+Date: Wed, 26 Jun 2024 00:20:38 -0700
+Message-Id: <20240626072038.1419889-1-shyamsaini@linux.microsoft.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <CAPcyv4jLmDvQ+e7QSQjOsAccSnhpvm9J5kHsA1OCXcaOm7BrMA@mail.gmail.com>
+References: <CAPcyv4jLmDvQ+e7QSQjOsAccSnhpvm9J5kHsA1OCXcaOm7BrMA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,54 +77,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowABXXQE5wXtmX+DcEg--.19512S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Wr1kAr15ZrW5Xw1ftFW5Jrb_yoW8JF15pa
-	4xJ34aka4IgF47tr1UJ3yvvFy09Fs7JrW7Jr1DG342qr1fGrn7Xr4xKFWUta9ruFZaqayS
-	v392qFZ5Wa1DJ3JanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWUWVWUuwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
-	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
-	rcIFxwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
-	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
-	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
-	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
-	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
-	VFxhVjvjDU0xZFpf9x0JUQZ23UUUUU=
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-The open() function returns -1 on error. openat() and open() initialize
-'from' and 'to', and only 'from' validated with 'if' statement. If the
-initialization of variable 'to' fails, we should better check the value
-of 'to' and close 'from' to avoid possible file leak.
+Hi Dan,
 
-Fixes: 32ae976ed3b5 ("selftests/capabilities: Add tests for capability evolution")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
-Found this error through static analysis.
----
- tools/testing/selftests/capabilities/test_execve.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Restarting this thread to get more insights about dax alignment problem.
+So having a devdax pmem of size 128M is [1] not usable and entire memory
+is wasted? For 256M size devdax pmem, again 126M seems to be wasted and
+only 128M can be hot added/removed. This was observed on ARM64 platform.
 
-diff --git a/tools/testing/selftests/capabilities/test_execve.c b/tools/testing/selftests/capabilities/test_execve.c
-index 47bad7ddc5bc..de187eff177d 100644
---- a/tools/testing/selftests/capabilities/test_execve.c
-+++ b/tools/testing/selftests/capabilities/test_execve.c
-@@ -149,6 +149,10 @@ static void copy_fromat_to(int fromfd, const char *fromname, const char *toname)
- 		ksft_exit_fail_msg("open copy source - %s\n", strerror(errno));
- 
- 	int to = open(toname, O_CREAT | O_WRONLY | O_EXCL, 0700);
-+	if (to == -1) {
-+		close(from);
-+		ksft_exit_fail_msg("open copy destination - %s\n", strerror(errno));
-+	}
- 
- 	while (true) {
- 		char buf[4096];
--- 
-2.25.1
+do we have any potential or existing solution for this problem ?
 
+> >
+> > > Since we last talked about this the enabling for EFI "Special Purpose"
+> > > / Soft Reserved Memory has gone upstream and instantiates device-dax
+> > > instances for address ranges marked with EFI_MEMORY_SP attribute.
+> > > Critically this way of declaring device-dax removes the consideration
+> > > of it as persistent memory and as such no metadata reservation. So, if
+> > > you are willing to maintain the metadata external to the device (which
+> > > seems reasonable for your environment) and have your platform firmware
+> > > / kernel command line mark it as EFI_CONVENTIONAL_MEMORY +
+> > > EFI_MEMORY_SP, then these reserve-free dax-devices will surface.
+> >
+> > Hi Dan,
+> >
+> > This is cool. Does it allow conversion between devdax and fsdax so DAX
+> > aware filesystem can be installed and data can be put there to be
+> > preserved across the reboot?
+> >
+> 
+> It does not because it's not "pmem" by this designation.
+> 
+> Instead if you want fsdax, zero metadata on the device, and the
+> ability to switch from fsdax to devdax I think that could be achieved
+> with a new sysfs attribute at the region-device level. Currently the
+> mode of a namespace with no metadata on it defaults to "raw" mode
+> where "raw" treats the pmem as a persistent memory block device with
+> no DAX capability. There's no reason the default could instead be
+> devdax with pages mapped.
+> 
+> Something like:
+> ndctl disable-region region0
+> echo 1 > /sys/bus/nd/devices/region0/pagemap
+> echo devdax > /sys/bus/nd/devices/region0/raw_default
+
+this interface file seems to be not available
+
+can we use sub-section hotplug feature here, there aren't much details available
+about using that, is it via sysfs ?
+
+I appreciate your help and guidance on this.
+
+Thanks,
+Shyam
+
+[1] https://elixir.bootlin.com/linux/v6.10-rc5/source/drivers/dax/kmem.c#L102
 
