@@ -1,259 +1,197 @@
-Return-Path: <linux-kernel+bounces-230892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15EE6918370
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:55:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AA6B918372
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:57:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C0971C220E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:55:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAA601C21F25
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1562E18411F;
-	Wed, 26 Jun 2024 13:55:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A119184113;
+	Wed, 26 Jun 2024 13:57:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZTSlvyvh"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LSL72Lvu"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7DA913CFBC;
-	Wed, 26 Jun 2024 13:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E326813CFBC
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 13:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719410147; cv=none; b=u9TfYwJ4/zshoYCgJ91eAjVnlPqyLFrzPI/1+WHSqz2y4MpwVHHGuAfx+eTG7+4KGkyPrkh7MsNt27RD+pZ9NoZgi+CopixC4z9O8Twhia3H43i3PP9kiLWWkdHGT+sqxqPVi4e025NZeXCsz4x+RL8RJ2lxQaPfrbpfN9zUG30=
+	t=1719410254; cv=none; b=PCxixKWmXvRfFs9F7g9AT4DPZO88QA0bTbYPSk7E7ZAPNfMm+mQzoppZdSDQuDgeMOPM8udWXLmkugFgWN4UYLPTLsJ+/ZRylDiMXgJ4oV8jy0b945iD03xbofs4GzoHMIPu8qKjZIb6bNGA3Jvtiy3BWajOXvpMzcPDY+z3/1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719410147; c=relaxed/simple;
-	bh=xrcpgoNgxm8C0Kb/r4R1lvvcHBnUSjrEZGydptIEOxE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=Ay/VEHRYZUrCrcz8nSc6CkfU9c+r9sec0wEXWROZLNhVo9Mv/x0YxbsXg7yBrUkZMtAA+QnfYb8IlTHIKYM7Wr0KpBEbfmOBbg0W/Hmj6fgCPmT9eta0xsrdXHE5hJXfOySs1JpYyvJ65I271dviFliXe9e+5OnOj8xR5pB5CJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZTSlvyvh; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 11D77FF80B;
-	Wed, 26 Jun 2024 13:55:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1719410142;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zHHpcdUDLggegxHApua1aann/FKTPhiRh3POfuR1lgs=;
-	b=ZTSlvyvh5zkjPhU7ABPitVfc+ymxhXAB+dFOn3XkM4WDiGZSZcLzos9RfubbU7R8FuuFWq
-	tQWKkGpJq5veA0MQZ2DTH/tJRU6JXzBVTnWEjtbEY01A9sYvq4iy/S7VRLZ6epythFq5as
-	tfHrGKvthedApjlvHBFi7jZY8en0+sZpD9v9SclEOCE2PWsi6Uv0ujDCeSeIKbzWraS3AX
-	GjhNzp0RfasxejYxpUrTVPrk6I7zI9iQNnTIKT5+XaHN3OGW3QDJvT8X0XruGkO+4eqjMN
-	2OhZ7wSk3Rax7C1JBvViN8Bc3iI3MuBdB5SgscoyA0IMFHYl3wrFJbofndrBWA==
+	s=arc-20240116; t=1719410254; c=relaxed/simple;
+	bh=zvKtuKgBaTespiR6RMkqLKklB9Utdfyyjx8B+f3tuDA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cMngDxw+4z/XSO6ScN0TUuIkzNfJkDWRWMieUvvQIiZidDGSDFTER5r0BrBucPL8ksc42l2zvjoHL8e5fH/xppoZDicNUoDouc3vHQfiUnp0we/BEYRwqbbIyNRHhPlZTzCpwPv0abOAB+mAMn9hjd6+DQyHeZo7XSaJdQlmRX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LSL72Lvu; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45QDusO1012190;
+	Wed, 26 Jun 2024 08:56:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1719410214;
+	bh=6ZfQCtFhca3BvaTLDs9BV+HylXiVe8ipVaxzUNzNlt0=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=LSL72LvupNifb3aKaHULhW1ebmQ5Qlx9A0l1JdfBGscokrStfXLolFiGSel3bvUzQ
+	 sSbs/sLbDe9eRO6/nmck2kpZo+yncN3aIWQHA9O6X9JQ23mMgJJaNxKHWScpz8w9FR
+	 RGZ3BHUmkSehfp9VfG7cF+sa3XJet0TN1UNRhvGs=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45QDusK5000531
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 26 Jun 2024 08:56:54 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 26
+ Jun 2024 08:56:53 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 26 Jun 2024 08:56:53 -0500
+Received: from [172.24.227.31] (uda0496377.dhcp.ti.com [172.24.227.31])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45QDukC7000410;
+	Wed, 26 Jun 2024 08:56:46 -0500
+Message-ID: <6f099c5e-0342-48c8-a952-4dc6eb4fd3ae@ti.com>
+Date: Wed, 26 Jun 2024 19:26:45 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 26 Jun 2024 15:55:40 +0200
-Message-Id: <D2A00Y4TJYTS.1RMR2FSNW7KQ2@bootlin.com>
-Subject: Re: [PATCH v3 7/9] reset: eyeq: add platform driver
-Cc: <linux-mips@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>, "Vladimir Kondratiev"
- <vladimir.kondratiev@mobileye.com>, "Gregory CLEMENT"
- <gregory.clement@bootlin.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>
-To: "Philipp Zabel" <p.zabel@pengutronix.de>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzysztof.kozlowski+dt@linaro.org>, "Conor Dooley" <conor+dt@kernel.org>,
- "Michael Turquette" <mturquette@baylibre.com>, "Stephen Boyd"
- <sboyd@kernel.org>, "Linus Walleij" <linus.walleij@linaro.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Lee Jones" <lee@kernel.org>, "Thomas Bogendoerfer"
- <tsbogend@alpha.franken.de>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-X-Mailer: aerc 0.17.0
-References: <20240620-mbly-olb-v3-0-5f29f8ca289c@bootlin.com>
- <20240620-mbly-olb-v3-7-5f29f8ca289c@bootlin.com>
- <e2f129fc42d26cde50e1de0bc80ef0db51b7f693.camel@pengutronix.de>
-In-Reply-To: <e2f129fc42d26cde50e1de0bc80ef0db51b7f693.camel@pengutronix.de>
-X-GND-Sasl: theo.lebrun@bootlin.com
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 05/11] drm/bridge: cdns-dsi: Fix the clock variable for
+ mode_valid()
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil
+ Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman
+	<jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>, Jyri Sarha <jyri.sarha@iki.fi>,
+        Thomas Zimmermann
+	<tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Daniel Vetter
+	<daniel@ffwll.ch>
+CC: DRI Development List <dri-devel@lists.freedesktop.org>,
+        Linux Kernel List
+	<linux-kernel@vger.kernel.org>,
+        Dominik Haller <d.haller@phytec.de>, Sam
+ Ravnborg <sam@ravnborg.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Kieran
+ Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Nishanth Menon
+	<nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Praneeth Bajjuri
+	<praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
+        Devarsh Thakkar
+	<devarsht@ti.com>,
+        Jayesh Choudhary <j-choudhary@ti.com>, Jai Luthra
+	<j-luthra@ti.com>
+References: <20240622110929.3115714-1-a-bhatia1@ti.com>
+ <20240622110929.3115714-6-a-bhatia1@ti.com>
+ <6aca2e93-034f-4731-adc4-4eaa3d148193@ideasonboard.com>
+Content-Language: en-US
+From: Aradhya Bhatia <a-bhatia1@ti.com>
+In-Reply-To: <6aca2e93-034f-4731-adc4-4eaa3d148193@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hello Philipp,
 
-On Tue Jun 25, 2024 at 11:17 AM CEST, Philipp Zabel wrote:
-> On Do, 2024-06-20 at 19:30 +0200, Th=C3=A9o Lebrun wrote:
-> > Add Mobileye EyeQ reset controller driver, for EyeQ5, EyeQ6L and EyeQ6H
-> > SoCs. Instances belong to a shared register region called OLB and gets
-> > spawned as auxiliary device to the platform driver for clock.
-> >=20
-> > There is one OLB instance for EyeQ5 and EyeQ6L. There are seven OLB
-> > instances on EyeQ6H; three have a reset controller embedded:
-> >  - West and east get handled by the same compatible.
-> >  - Acc (accelerator) is another one.
-> >=20
-> > Each instance vary in the number and types of reset domains.
-> > Instances with single domain expect a single cell, others two.
-> >=20
-> > Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
-> > ---
-> >  MAINTAINERS                |   1 +
-> >  drivers/reset/Kconfig      |  14 ++
-> >  drivers/reset/Makefile     |   1 +
-> >  drivers/reset/reset-eyeq.c | 563 +++++++++++++++++++++++++++++++++++++=
-++++++++
->
-> Should this be called reset-eyeq-olb or reset-eyeq5, in case a
-> different eyeq driver will have to be added in the future?
 
-What about keeping reset-eyeq for the simplicity of it and using
-reset-eyeq7 for a theoretical future driver that gets used by EyeQ7 and
-above? Or any other revision.
+On 26/06/24 16:17, Tomi Valkeinen wrote:
+> On 22/06/2024 14:09, Aradhya Bhatia wrote:
+>> Allow the D-Phy config checks to use mode->clock instead of
+>> mode->crtc_clock during mode_valid checks, like everywhere else in the
+>> driver.
+>>
+>> Fixes: fced5a364dee ("drm/bridge: cdns: Convert to phy framework")
+>> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+>> ---
+>>   drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
+>> b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
+>> index 03a5af52ec0b..426f77092341 100644
+>> --- a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
+>> +++ b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
+>> @@ -574,7 +574,7 @@ static int cdns_dsi_check_conf(struct cdns_dsi *dsi,
+>>       if (ret)
+>>           return ret;
+>>   -    phy_mipi_dphy_get_default_config(mode->crtc_clock * 1000,
+>> +    phy_mipi_dphy_get_default_config((mode_valid_check ? mode->clock
+>> : mode->crtc_clock) * 1000,
+>>                        mipi_dsi_pixel_format_to_bpp(output->dev->format),
+>>                        nlanes, phy_cfg);
+>>   
+> 
+> I think this is fine as a fix.
+> 
+> Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> 
+> However... The code looks a bit messy. Maybe the first one is something
+> that could be addressed in this series.
+> 
+> - Return value of phy_mipi_dphy_get_default_config() is not checked
 
-Else it can be reset-eyeq5. OLB might be a concept that gets reused with
-different reset blocks inside (meaning reset-eyeq-olb wouldn't
-distinguish). You tell me if keeping *-eyeq is fine.
+Sure, I can fix that.
 
-> >  4 files changed, 579 insertions(+)
-> >=20
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index f386e9da2cd0..36f4001c7f51 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -14931,6 +14931,7 @@ F:	arch/mips/boot/dts/mobileye/
-> >  F:	arch/mips/configs/eyeq5_defconfig
-> >  F:	arch/mips/mobileye/board-epm5.its.S
-> >  F:	drivers/clk/clk-eyeq5.c
-> > +F:	drivers/reset/reset-eyeq5.c
->
-> See above, and this should match the actual file name.
->
-> Adding the MAINTAINERS change in the driver patches makes these patches
-> depend on each other. Otherwise they could be applied independently. Do
-> you intend this series to be merged together in one tree?
+> 
+> - Using the non-crtc and crtc versions of the timings this way looks
+> bad, but that's not a problem of the driver. It would be better to have
+> a struct that contains the timings, and struct drm_display_mode would
+> contain two instances of that struct. The driver code could then just
+> pick the correct instance, instead of making the choice for each and
+> every field. This would be an interesting coccinelle project ;)
+> 
+> - Calling cdns_dsi_check_conf() in cdns_dsi_bridge_enable() is odd.
+> Everything should already have been checked. In fact, at the check phase
+> the resulting config values could have been stored somewhere, so that
+> they're ready for use by cdns_dsi_bridge_enable(). But this rises the
+> question if the non-crtc and crtc timings can actually be different, and
+> if they are... doesn't it break everything if at the check phase we use
+> the non-crtc ones, but at enable phase we use crtc ones?
 
-I'd prefer splitting it indeed.
+It'd appear that it does. I don't fully understand why the driver uses
+non-crtc_* timing parameters during the check phase, only to use the
+crtc_* timing parameters during _enable().
 
-I had thought there were two reasons the patches were interdependent:
-1. MAINTAINERS file entries.
-2. Kconfig: "depends on COMMON_CLK_EYEQ".
+Since with tidss, both the sets are same, I haven't had to think too
+much about this! =)
 
-About (1): what about creating a new patch that only touches
-MAINTAINERS? It would be taken as part of clk maybe (it contains the
-platform driver that instantiates the other auxdevs)?
+What is the ideal way that this should get addressed though? If we have
+an agreeable resolution then maybe I can fix that as well.
 
-About (2): Kconfig doesn't complain the symbol doesn't exist so it looks
-like a non-issue.
+> 
+> Ah, I see, this is with non-atomic. Maybe after you switch to atomic
+> callbacks, atomic_check could be used so that there's no need for the
+> WARN_ON_ONCE() in enable callback.
+> 
 
-> >  F:	include/dt-bindings/clock/mobileye,eyeq5-clk.h
-> > =20
-> >  MODULE SUPPORT
-> > diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> > index 85b27c42cf65..b79c18b75674 100644
-> > --- a/drivers/reset/Kconfig
-> > +++ b/drivers/reset/Kconfig
-> > @@ -66,6 +66,20 @@ config RESET_BRCMSTB_RESCAL
-> >  	  This enables the RESCAL reset controller for SATA, PCIe0, or PCIe1 =
-on
-> >  	  BCM7216.
-> > =20
-> > +config RESET_EYEQ
-> > +	bool "Mobileye EyeQ reset controller"
-> > +	depends on COMMON_CLK_EYEQ
->
-> Is this a real dependency? It seems to compile just fine without it.
-> Please allow building under COMPILE_TEST without COMMON_CLK_EYEQ set.
+Yes, I think this would be better. We can use atomic_check() to verify
+the crtc_* timing parameters, while the already existing mode_valid()
+can continue checking the non-crtc_* ones.
 
-Not really. This made potential users notice they want the
-clk driver if they want this reset driver. I forgot
-handling test builds (ie COMPILE_TEST).
+I will add this change when I am adding other atomic_* APIs later in the
+series.
 
-Next revision will look like:
 
-config RESET_EYEQ
-	bool "Mobileye EyeQ reset controller"
-	depends on AUXILIARY_BUS
-	depends on MACH_EYEQ5 || MACH_EYEQ6H || COMPILE_TEST
-	default MACH_EYEQ5 || MACH_EYEQ6H
-	help: ...
-
-[...]
-
-> > +
-> > +#include <linux/array_size.h>
-> > +#include <linux/auxiliary_bus.h>
-> > +#include <linux/bitfield.h>
-> > +#include <linux/bits.h>
-> > +#include <linux/bug.h>
-> > +#include <linux/cleanup.h>
-> > +#include <linux/container_of.h>
-> > +#include <linux/device.h>
-> > +#include <linux/err.h>
-> > +#include <linux/errno.h>
-> > +#include <linux/init.h>
-> > +#include <linux/io.h>
-> > +#include <linux/iopoll.h>
-> > +#include <linux/lockdep.h>
-> > +#include <linux/mod_devicetable.h>
-> > +#include <linux/mutex.h>
-> > +#include <linux/of.h>
-> > +#include <linux/platform_device.h>
->
-> Not needed, this being an aux driver now. Please check the other
-> headers as well.
-
-Looking at the diff, <linux/platform_device.h> is the only one.
-
-[...]
-
-> > +static int eqr_probe(struct auxiliary_device *adev,
-> > +		     const struct auxiliary_device_id *id)
-> > +{
-> > +	const struct of_device_id *match;
-> > +	struct device *dev =3D &adev->dev;
-> > +	struct eqr_private *priv;
-> > +	unsigned int i;
-> > +	int ret;
-> > +
-> > +	/*
-> > +	 * We are an auxiliary device of clk-eyeq. We do not have an OF node =
-by
-> > +	 * default; let's reuse our parent's OF node.
-> > +	 */
-> > +	WARN_ON(dev->of_node);
-> > +	device_set_of_node_from_dev(dev, dev->parent);
-> > +	if (!dev->of_node)
-> > +		return -ENODEV;
-> > +
-> > +	/*
-> > +	 * Using our newfound OF node, we can get match data. We cannot use
-> > +	 * device_get_match_data() because it does not match reused OF nodes.
-> > +	 */
-> > +	match =3D of_match_node(dev->driver->of_match_table, dev->of_node);
-> > +	if (!match || !match->data)
-> > +		return -ENODEV;
-> > +
-> > +	priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> > +	if (!priv)
-> > +		return -ENOMEM;
-> > +
-> > +	priv->data =3D match->data;
-> > +	priv->base =3D dev_get_platdata(dev);
->
->   drivers/reset/reset-eyeq.c:437:20: warning: incorrect type in assignmen=
-t (different address spaces)
->   drivers/reset/reset-eyeq.c:437:20:    expected void [noderef] __iomem *=
-base
->   drivers/reset/reset-eyeq.c:437:20:    got void *
->
-> I'd wrap this in a struct or explicitly cast to (void __iomem *) here.
-
-I'll cast to void iomem pointer explicitely.
-
-Thanks for the review Philipp,
-
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Regards
+Aradhya
 
 
