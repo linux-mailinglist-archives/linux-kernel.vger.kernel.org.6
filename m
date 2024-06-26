@@ -1,108 +1,99 @@
-Return-Path: <linux-kernel+bounces-230674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FEEC918055
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:56:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1881918051
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:55:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E5E62832E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:56:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50C281F28A7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301DD1802D9;
-	Wed, 26 Jun 2024 11:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0ACF1802DF;
+	Wed, 26 Jun 2024 11:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ddUkQHX3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="JyaYUA9n"
+Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20E317FAD9
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 11:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30ADD149E06;
+	Wed, 26 Jun 2024 11:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719402981; cv=none; b=B1OEDS5dy6hYh9Fuin6bBzMOcZyCJDtE6XC7H29uXWOjrVk3vU5xFliQcruEcRTRYdgsgIoWtGpoD1TQy8c0qVHooxwLFXNXJc7r2KOy28zoZpKWf1aM12uSjlhnujcvmwqdBgQ27YnAsQYv5RlzW5eSXv15dWc2MBTkFISQOQw=
+	t=1719402949; cv=none; b=jSEM5oUlIQr5uLUmxklG9LcbMUgLST6TU8kLcP9LoJcEePiGn+HsX4k7P72Jo1AmH062RUsteV754Xjnu+8ScBiqEAfCamN/dZ/pFhpkw3RkG3RXBu6oeRWpL//HRlZJleeqZELom71a5J+Vg6SpTEFa/Ahhquj+O8c8F7sxUTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719402981; c=relaxed/simple;
-	bh=lgWICHNHPuubQOwpPjvNZahWKQ8qhmpoYioYgoXyJo0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PRZV5cZapwE2NbOHQKE2S0xgNl4sQko/4bvt44KbnUf61Am1XrkMqfd5cv0IXwGY8QX0s5kcodc8WwyHIzA6lrlGWVhjfW3KWFRdeXtzH7ScTi2YChi9w5mDHfVWceIxLDCyzqKqQSNyDvv39e4sXPxJIM2qCBC87cB4pNzkgio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ddUkQHX3; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719402978;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IeDy1CF3yxC2mGRBAE7SbitMy+vsryV2IcHQr9VWleA=;
-	b=ddUkQHX3nwfa/Nz9x9q6FdkFoHabEEkBWlDZqIoD2y65Y98Se/Oh394AEvEWN5QyrJjy4s
-	iQHQKjVOrmGLEz2+HYMXc73I0Z5WavlGssrXFGvJiiMBw8g7MfeGWgBI0c3pC9EI8n3+L9
-	/x9lIWei/CZQB5X9r4ZUZ4+z7JDtIus=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-517-ThZg6DUDNf6i1AC3i71SbA-1; Wed,
- 26 Jun 2024 07:56:14 -0400
-X-MC-Unique: ThZg6DUDNf6i1AC3i71SbA-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EB2F11955EAB;
-	Wed, 26 Jun 2024 11:56:11 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.94])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 2E6E61956054;
-	Wed, 26 Jun 2024 11:56:06 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 26 Jun 2024 13:54:38 +0200 (CEST)
-Date: Wed, 26 Jun 2024 13:54:32 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Dev Jain <dev.jain@arm.com>
-Cc: shuah@kernel.org, mingo@kernel.org, tglx@linutronix.de,
-	mark.rutland@arm.com, ryan.roberts@arm.com, broonie@kernel.org,
-	suzuki.poulose@arm.com, Anshuman.Khandual@arm.com,
-	DeepakKumar.Mishra@arm.com, aneesh.kumar@kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] selftests: Add a test mangling with uc_sigmask
-Message-ID: <20240626115410.GA27271@redhat.com>
-References: <20240626054847.1463889-1-dev.jain@arm.com>
- <20240626054847.1463889-3-dev.jain@arm.com>
+	s=arc-20240116; t=1719402949; c=relaxed/simple;
+	bh=LexiWfrYm9DMTWjiLp0N38eu6kBfhX6jtR4dGHx5BGw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rS70o8++YWadrkL59vvgvGY8KB0z4a4qj0IIlj4bh+yhQ/Ejy2RehrlYbpn6p+D+shRZ9+pVmxlD5fcRiF8wNVnb8FcZxU7VxvHAAro+Kf6ueN3j9lzqjCaA9ow1sAZXubGDsb3IqPCpg/7kSM2l/UBTQv8RUvMTNMhvIBCxe5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=JyaYUA9n; arc=none smtp.client-ip=193.104.135.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
+	s=202008; t=1719402937;
+	bh=LexiWfrYm9DMTWjiLp0N38eu6kBfhX6jtR4dGHx5BGw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JyaYUA9nkBmZSDRdAjW37V75tgvL6HDpQUnnlE5tlhaJY8qhmxTR/SmZu+UUfCKSC
+	 8gzuKAs/Jt+5NaAxDi42TNtLN2drIEetNQM2h04lHeUVq52XEFnxCpqQf/kzL0FasW
+	 u5ER0d9EzP3YGGdNARwxnz96Rz7e49dK33NWUoZRGvO3uSKEOGkzvCDR40TAyBj83n
+	 tE4VnhZwkTDOsM0fFHizpMqcIwl9yU3KAt3DXTSZPsxwhFU2knmvWi4cuk/4mJtKY8
+	 jftckm8tcX0W4+KFTz3fTBfUyQ+7H7GrUD/fFv2i0Y04Y8OaaSTPvzmvQqrbezCgzb
+	 WLY1MmjWL/GOg==
+Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
+	by mail1.fiberby.net (Postfix) with ESMTPSA id 9B6AC60078;
+	Wed, 26 Jun 2024 11:55:36 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	by x201s (Postfix) with ESMTP id B99592018B3;
+	Wed, 26 Jun 2024 11:55:31 +0000 (UTC)
+Message-ID: <d2df2837-070b-4669-8a35-c3d1341849d2@fiberby.net>
+Date: Wed, 26 Jun 2024 11:55:31 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240626054847.1463889-3-dev.jain@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH net-next 2/9] net/sched: cls_flower: prepare
+ fl_{set,dump}_key_flags() for ENC_FLAGS
+To: Davide Caratti <dcaratti@redhat.com>
+Cc: Ilya Maximets <i.maximets@ovn.org>, Jamal Hadi Salim <jhs@mojatatu.com>,
+ Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ David Ahern <dsahern@kernel.org>, Simon Horman <horms@kernel.org>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240611235355.177667-1-ast@fiberby.net>
+ <20240611235355.177667-3-ast@fiberby.net>
+ <ZnVR3LsBSvfRyTDD@dcaratti.users.ipa.redhat.com>
+ <0fa312be-be5d-44a1-a113-f899844f13be@fiberby.net>
+ <ZnvkIHCsqnDLlVa9@dcaratti.users.ipa.redhat.com>
+ <CAKa-r6uqO20RB-fEVRifAEE_hLA50Zch=wbKtX8vNt5m6kE5_Q@mail.gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Asbj=C3=B8rn_Sloth_T=C3=B8nnesen?= <ast@fiberby.net>
+In-Reply-To: <CAKa-r6uqO20RB-fEVRifAEE_hLA50Zch=wbKtX8vNt5m6kE5_Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 06/26, Dev Jain wrote:
->
-> +int main(int argc, char *argv[])
-> +{
-> +	struct sigaction act, act2;
-> +	sigset_t *set, *oldset;
+Hi Davide,
 
-...
+On 6/26/24 10:01 AM, Davide Caratti wrote:
+> On Wed, Jun 26, 2024 at 11:49 AM Davide Caratti <dcaratti@redhat.com> wrote:
+>>
+>> So, we must htonl() the policy mask in the second hunk in patch 7,something like:
 
-> +	set = malloc(sizeof(sigset_t *));
-> +	if (!set)
-> +		ksft_exit_fail_perror("malloc");
-> +
-> +	oldset = malloc(sizeof(sigset_t *));
+Good catch.
 
-Why malloc() ?
+> or maybe better (but still untested), use NLA_BE32, like netfilter does in [1]
+> 
+> [1] https://elixir.bootlin.com/linux/latest/A/ident/NF_NAT_RANGE_MASK
 
-Can't you simply do
+Yes, that is better. It should work, as it triggers a htonl() in nla_validate_mask().
 
-	sigset_t set, oldset;
-
-and then use sigemptyset(&set) / etc ?
-
-Oleg.
-
+-- 
+Best regards
+Asbjørn Sloth Tønnesen
+Network Engineer
+Fiberby - AS42541
 
