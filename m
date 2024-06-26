@@ -1,141 +1,127 @@
-Return-Path: <linux-kernel+bounces-230200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A5049179C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:32:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 388C59179C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:32:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32F40286A41
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:32:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABEA81F249EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:32:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6370B15B135;
-	Wed, 26 Jun 2024 07:31:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F00A715B115;
+	Wed, 26 Jun 2024 07:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i1hN/Khb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wrwyr0L1"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92EC81FBB;
-	Wed, 26 Jun 2024 07:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A777814A4C1
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 07:32:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719387117; cv=none; b=sPVnUR5lZ6A7yXvui98+MKkztyXhHUEI9hOQqpOdBbwTWfqRFleIFZiBAqIbpuUrJGcLi6INh4ihBfOBSuXameSAvi6kE/gGz5ChmvwOwu0cgtbBwTHXTiVMrDlP/E8ZxXtid5J5sFuo+yJ0+JI/lZomLZe7+8ESU1T3QNehfho=
+	t=1719387157; cv=none; b=QX2WS3mThB7PMjbrr63p5rPNCwZKqGE/U/ZfHyx9PUKVZhhfQjqm12GBrZs2eTmFk8z6e21DPxIsqZ9Zq/qG85EA7/tbDyByc4iXkZkzcXpbhInfJhoEn2QkX4nURSk0OUmiVYh6AOgMlPbLWZutbNFMVUy6Y7VH0nUqE+vHbp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719387117; c=relaxed/simple;
-	bh=+L5YngHDp8qosRb3biMyCjOYaHN+17UPtFt+slcAkP4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=FqcE4BJ6P/zLgit1xfEJya+dSJ5SfnJjfNS8TQjuGKW0emQwiqxhWwRWpq4RpL+a/yCnuZaD9YinvBBcTJbvULYgry4q8S/ibguNhTF4kPKVMnMWNsPEyByt+DNmf+BguigXKd0GEtuNzxYKCQzGm5/3MbThMvrUdQ56OZMotMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i1hN/Khb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75021C2BD10;
-	Wed, 26 Jun 2024 07:31:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719387117;
-	bh=+L5YngHDp8qosRb3biMyCjOYaHN+17UPtFt+slcAkP4=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=i1hN/Khbyx1aHGNAAvofLcrU2vC0nz/L89nu/jftUZxI9swkSxGkECeGRtzZA5+Rr
-	 Fzpm/qpDPMICqkpuPs2xftgSlQmCBHC2LRZovcBPCgvv37Ej0bYP19RuiLUknP/x51
-	 R51dFkM5Wags3oqT/NskIETjS8tgCmfnkg3R7qNVcHfkrEHVvwNAyGsrZGn0dCTyRH
-	 UkIfmkLU1W8LbV/mjiwEkI6uM+tgS+J8uXv+dMd3GRavs8wJU1LE0M2Hln7IXHa8P0
-	 +vS1IXRx/Nlol/gubu9R3soyzz1x0bWnINOHWwkdmTTGcyo+z3SOhe/GA49wnfe7Kx
-	 wCGPMFEGZoKsA==
-Message-ID: <20901d00-0a7b-432f-a6f1-3efc9b5c8a53@kernel.org>
-Date: Wed, 26 Jun 2024 09:31:48 +0200
+	s=arc-20240116; t=1719387157; c=relaxed/simple;
+	bh=7l4Uime447ech62qmw3e1+CoLS03F5S+sN0ntrzvEbs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=J6zkwyz3o1oVeKCs1IBUgfrUvZyzbuKQebzsnet0OSO+wwXPXUfgsCKj+9znZmP2qX52Io1sxyrhilD4GNevC0f7XWhcJSBb7TbIKXIvNqPPOGGSXidtidaZs6sFkqI3Iq8J9vjpZxIBdhaNnRlh0SKEkDqdEqDX+bflhxb8peQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wrwyr0L1; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-362f62ae4c5so146763f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 00:32:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719387154; x=1719991954; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EWdwFGLisZTjIZj5f6mqYa4O5wFiRQ0vmR5lx8cA8wI=;
+        b=wrwyr0L1MGsVwH6dxLRNAqyCP/Fva8xMQbMoHupAcFVJ99AYr0N90Me0NaGaC+pDAN
+         tbj7PobHmcwZy+UTYYX/dx04PyDWTR4kogSIC7gD0Nu2omgLLiVz7nNnKeShUaXpoSeV
+         a0zfIgwxWBcHkW6/VU1i2wrgiZMVc+oeXWOwi02zGsQ2843tuc3oj/jcDlcdxcx+/1rs
+         gSyYcmK2PqILa4CL3+AThOurdrmby1KAe2PRqhmRoxN+T/nej1e21fJpNp9emsl6G3G8
+         WSGlY9jrHMHcMOdFPmelAj7LBBCrBXwt4qPiQyzftOYC0cFnzDozR4/vU7QL6WLuPbXZ
+         01oA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719387154; x=1719991954;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EWdwFGLisZTjIZj5f6mqYa4O5wFiRQ0vmR5lx8cA8wI=;
+        b=EdwLQDql8q1LsxUxplD7Ixob2TmxiFtjXU2LA7UyRSsXy+5CorDdg8TBfhImbaY4v+
+         TZd8SmOK2Au3cmhaA630m/v8x90EumT2uPrSD5nWf/U9S/pDB/FhQoXEUhmTLFoIaI1t
+         piGieBFWhLQR/mzUkTBfdH4qE26HKzelNdv8zU3/9aKDGttE9cI/3cO5i8/OWAIQHOBL
+         pe3UhTOtrvfMQ9LTagEb9bzlyfeI+JMlst0qCnJ+PQpCEjqjiTQxcMo0kqoFlYO61TbT
+         ImRkLbuno3CwTSRoy9CiB/Ncv7LeUeMXLvU/8+Mk3m7gAznHcjDJuF1br5gVcGxqUcRj
+         n1UA==
+X-Forwarded-Encrypted: i=1; AJvYcCVz+E2u8av7Uf2Z62NRiVI62BnHDo1w2aoWIBmLRBGXSZCOO2kABC27vNCbw/7karzbIXO1DQta3jLkYPvxWc+G3NY087sNXtYa/nuq
+X-Gm-Message-State: AOJu0YzncVod4yfc3b9ujQYm2RXXJ1bZVPkXygbdmDnQzP9Dir8wpzKd
+	1WFXpgEmB/xtCS7qcIB86T2fYDwB+jqdOO3PoxkeeP9u3l+r1/GUaR3L3eOZQN4=
+X-Google-Smtp-Source: AGHT+IGJuKO4xRdWJJ6w9hrgqcoyAjnmhy1mlVONlk9q3lHadUvykbc5FStD6K1tQLlvYfQE0ICfmg==
+X-Received: by 2002:adf:e410:0:b0:366:ed80:d054 with SMTP id ffacd0b85a97d-366ed80d15bmr7224161f8f.10.1719387153638;
+        Wed, 26 Jun 2024 00:32:33 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a8c8f07sm14962150f8f.110.2024.06.26.00.32.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 00:32:33 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Kevin Hilman <khilman@baylibre.com>, linux-kernel@vger.kernel.org, 
+ linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+In-Reply-To: <20240625111845.928192-1-jbrunet@baylibre.com>
+References: <20240625111845.928192-1-jbrunet@baylibre.com>
+Subject: Re: [PATCH] arm64: dts: amlogic: sm1: fix spdif compatibles
+Message-Id: <171938715287.1644768.879633042309393465.b4-ty@linaro.org>
+Date: Wed, 26 Jun 2024 09:32:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/3] hwrng: add hwrng driver for Rockchip RK3568 SoC
-To: Daniel Golle <daniel@makrotopia.org>,
- Aurelien Jarno <aurelien@aurel32.net>, Olivia Mackall <olivia@selenic.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@debian.org>,
- Dragan Simic <dsimic@manjaro.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Martin Kaiser <martin@kaiser.cx>, Tony Luck <tony.luck@intel.com>,
- Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <cover.1719365405.git.daniel@makrotopia.org>
- <15b001360cffc0832e7e2748ad900b1336e0fa32.1719365406.git.daniel@makrotopia.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <15b001360cffc0832e7e2748ad900b1336e0fa32.1719365406.git.daniel@makrotopia.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On 26/06/2024 03:37, Daniel Golle wrote:
-> From: Aurelien Jarno <aurelien@aurel32.net>
+Hi,
+
+On Tue, 25 Jun 2024 13:18:43 +0200, Jerome Brunet wrote:
+> The spdif input and output of g12 and sm1 are compatible but
+> sm1 should use the related compatible since it exists.
 > 
-> Rockchip SoCs used to have a random number generator as part of their
-> crypto device, and support for it has to be added to the corresponding
-> driver. However newer Rockchip SoCs like the RK3568 have an independent
-> True Random Number Generator device. This patch adds a driver for it,
-> greatly inspired from the downstream driver.
 > 
-> The TRNG device does not seem to have a signal conditionner and the FIPS
-> 140-2 test returns a lot of failures. They can be reduced by increasing
-> RK_RNG_SAMPLE_CNT, in a tradeoff between quality and speed. This value
-> has been adjusted to get ~90% of successes and the quality value has
-> been set accordingly.
-> 
-> Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
-> [daniel@makrotpia.org: code style fixes]
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 
+Thanks, Applied to https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git (v6.11/arm64-dt)
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+[1/1] arm64: dts: amlogic: sm1: fix spdif compatibles
+      https://git.kernel.org/amlogic/c/b0aba467c329a89e8b325eda0cf60776958353fe
 
-Best regards,
-Krzysztof
+These changes has been applied on the intermediate git tree [1].
+
+The v6.11/arm64-dt branch will then be sent via a formal Pull Request to the Linux SoC maintainers
+for inclusion in their intermediate git branches in order to be sent to Linus during
+the next merge window, or sooner if it's a set of fixes.
+
+In the cases of fixes, those will be merged in the current release candidate
+kernel and as soon they appear on the Linux master branch they will be
+backported to the previous Stable and Long-Stable kernels [2].
+
+The intermediate git branches are merged daily in the linux-next tree [3],
+people are encouraged testing these pre-release kernels and report issues on the
+relevant mailing-lists.
+
+If problems are discovered on those changes, please submit a signed-off-by revert
+patch followed by a corrective changeset.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+
+-- 
+Neil
 
 
