@@ -1,313 +1,272 @@
-Return-Path: <linux-kernel+bounces-231032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A414C918533
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:04:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3139918536
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:04:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A7B628609F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:04:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 500E61F2767E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:04:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7812C188CD4;
-	Wed, 26 Jun 2024 15:04:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAFA71891BB;
+	Wed, 26 Jun 2024 15:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PAvEfs+R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="AEYnIc8W"
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2054.outbound.protection.outlook.com [40.107.241.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D6FF185E52;
-	Wed, 26 Jun 2024 15:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719414264; cv=none; b=idEUqSwafOXFuF2ai6s6dfB22iFwSBvZEV4VwHRsEuQXx/aQz4J+LV7RjMVzrn5nmcuxG7K54c5H/LrGGp7yxoHVwknr0dCA2nWj27UFCZWrZM4wXEU/JlrB14uuFj+WI7uO9rD7GoLSksv16IihicJa830jwLUm3QP1r/4jqbo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719414264; c=relaxed/simple;
-	bh=LvSjkiMtpfF+JoR7xWPevIfICzed4j3soaPcrthxPJs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ANfpTY8mJk5c51b6jAC93Hs5VI2UvnjcRFxEtJ6mPMiKaZP6wg9yHuYbLbVPlcSactb/a5O2xTqFZFYjq5kRHcOyZEPK5Vb1GHyG0ItTX+mETU+3OC1mglt6bkfuMg+hVmBz7JisauEdZ+eqqsEP+u4PXNjWVfLjceg0rEzASbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PAvEfs+R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E6D1C2BD10;
-	Wed, 26 Jun 2024 15:04:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719414264;
-	bh=LvSjkiMtpfF+JoR7xWPevIfICzed4j3soaPcrthxPJs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PAvEfs+R8vToV4fGpUki2wtbg5kBVoLFrVZh15RJvRjs0XHv0NX1QXjYRE0PyhRGV
-	 5frEpP7UXI1j35Cm/fjmi0EfY8itKiHVvMi5uWao4eibXg24+ClJIpdx1b8F0q/Xrv
-	 sCnNoOxQUJvcvpX6WZwaKveGz5l+TynaBMXgiauYrAm+g4QWEVWdbksyW19B/TROdM
-	 tD85klHfANxVNRdiwv5YMcS+g7FKS67VrCYNPsDXuW1FqZt58CZdJB5yWYlpMNJDSt
-	 KRBMAoFpNQb8AvHNbvTIvEzQHw7CyDRT5uenKZi83/iFbEK5awnp7ydP2ltPFN8VZp
-	 xTVenNqCkw21A==
-Date: Wed, 26 Jun 2024 08:04:21 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
-Cc: robh@kernel.org, broonie@kernel.org, catalin.marinas@arm.com,
-	conor@kernel.org, devicetree@vger.kernel.org, hch@lst.de,
-	iommu@lists.linux.dev, kernel@quicinc.com,
-	linux-kernel@vger.kernel.org, m.szyprowski@samsung.com,
-	oe-kbuild-all@lists.linux.dev, robin.murphy@arm.com,
-	saravanak@google.com, will@kernel.org
-Subject: Re: [PATCH v2] of: reserved_mem: Restructure code to call reserved
- mem init functions earlier
-Message-ID: <20240626150421.GA3664@fedora-macbook-air-m2>
-References: <202406181626.126X1Nbz-lkp@intel.com>
- <20240620001027.2326275-1-quic_obabatun@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95C7185E52;
+	Wed, 26 Jun 2024 15:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719414280; cv=fail; b=sgdGafiAYhW4je6nDWWbgVi9x/gzGDzHlP9a5LIQ/o2V5sXyuwPZoCSvRyqqnUjrDt3n8fpeROdzvf2Jj+yDNzKAFkDY7P9Pwb0naYP63X8ajJdjaimgDXHiiKjzImIM67KZ8hpzUnjW1gc4Q18q83aFOCpbPopd9q4uqR7sQ4A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719414280; c=relaxed/simple;
+	bh=rFE3r+rHjppeyXPy/kxk51EavHxdLpG1+T39CchoJE0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=oEsH8PxBaMzwnlOU02a9YhzqwCbb0xi3yzG2Pd7Nc/XFyY0AR1uAe2UAY3dgjDCiTTwPAYAax4iq6C/Y0VBY2xXU+HMZk3Fw/ixoTSGx8y8FW5xef88VuivFLNZaNPHwQLGwbZhibMZ88rFtIt7SLUbl6fNFnvpGX19vDAhq97A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=AEYnIc8W; arc=fail smtp.client-ip=40.107.241.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jGEstg0R+eXVgDamplldWQ5KIfyvU33F15G8EWZm7neW75sZoJd82VArK8are+U2iwjizR2UKzHKlWT0e/Ibq46xrswvIbkkdi16cNE677uKAxM0vN6Kf1ORy6qOF6bBph8/U4+I5X4fzFx0hjoCMyLl5XN/hiold+5JA26NqxZCZ1ULMnzq1RJxrcq8AJhmj7eJHHPBngzCMrFcFcPa3B+ZxLLmQCdNNQYhJsOYnDnm+cGU01B+rlHJE5oDm2youCaUg1L58CJ6NM6n9q0jbv2VeDQRI7ynah6X56w6Lc93l5+qBq4CFTdWcU85RGNdO8NY3XMyo0x39fRDgb8o3w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wUyGOJxm7fFKK8bUKAbMyoTPJwMHu1nDFGng9Z/2EPk=;
+ b=Q9B2jmdd0oS5C5jBXmwdlO7TQJ+u6E031NHlFnUBgFIih/PW56X+ZL2GKCS+5rDBy/OhlIjjtdDMl5MwiM11QFl/lPUCHV5U/eEjlo0YCOeDDqP7vT+d7jKpB3lTdO/EkAIR9j0YB4PWiqX8ddmmW8ewrXwpBgujt2zhJUs5A+YRSpu7qK8TF4bybpW8BKiadgzfw0Bgfv/PBv1eB63FFEBAh+/95qNRtM6LE+4nHPLB5Su4dEi/1IdUg3px4M3gBKEIXgOsQimCyPnIJWKLwuljS00QiXHztKwBEUhcvBFNHUJ9aw6EDR1MeGhAFGgD2UO0eIjb0kOjp8ZKVvp5Kw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wUyGOJxm7fFKK8bUKAbMyoTPJwMHu1nDFGng9Z/2EPk=;
+ b=AEYnIc8WMtj2ufH0Z7VCFsf1LhYJjHqCdAKUzQluGOPs+CIaJ2Vsm+Opr1XOHhOdAn9s8/qOEP4mAPfnMXSpzAxsFheIb0mglyf020m1UpFTjOSoMAv3vojNK3upEEzfzZApVr1+0NOryG1vPtiwvu/5nvz/BRXCGAjewtxNwR4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by GV1PR04MB10200.eurprd04.prod.outlook.com (2603:10a6:150:1ad::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.32; Wed, 26 Jun
+ 2024 15:04:35 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7698.025; Wed, 26 Jun 2024
+ 15:04:35 +0000
+Date: Wed, 26 Jun 2024 11:04:26 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"open list:USB SUBSYSTEM" <linux-usb@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] dt-bindings: usb: Convert fsl-usb to yaml
+Message-ID: <Znwt+vZZ0chXQp+Q@lizhi-Precision-Tower-5810>
+References: <20240625022541.2007010-1-Frank.Li@nxp.com>
+ <b354d11e-9031-47f1-8a23-bbd14ea3d5dd@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b354d11e-9031-47f1-8a23-bbd14ea3d5dd@kernel.org>
+X-ClientProxiedBy: SJ0PR13CA0028.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c0::33) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240620001027.2326275-1-quic_obabatun@quicinc.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|GV1PR04MB10200:EE_
+X-MS-Office365-Filtering-Correlation-Id: e4c880a5-557e-47cb-e046-08dc95f14a76
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230038|366014|52116012|376012|1800799022|38350700012;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?eJQIkdS4EQyQyV0V00jMBEI2e0v92KV+hGvC9kJpCRwQ0Z4s4Pciax7yHbMF?=
+ =?us-ascii?Q?Dtqgnzr+dW0f1vgea/2qgNXDyJGv0P3kZ/kTdRyYI18Ljoknsbto/PYXADwM?=
+ =?us-ascii?Q?qySIUyccuPMXKSFZAa/kyV02Kw81VQ7Leas2LGbqigCZ1bl7HUCdLKTbB9TL?=
+ =?us-ascii?Q?pbqaaFJe15BzDJs5F0zaQbHLdxtmVSs1aIop8S0C8XJCd0fEpaBAwQzDSiFv?=
+ =?us-ascii?Q?868tBSkR0mnVRr0atGIwxWIJMq+jP/K96Q2KW2qNB5EH9w+nTrdKYNODMR5B?=
+ =?us-ascii?Q?9DeiU8ucNfnmboInljbVPdrsjsy0vBeBS7FdHWHhxAgC+NUGfrasUAtRu6LY?=
+ =?us-ascii?Q?qDK6IPosNPx2bnlT8Vo/DbSGVXpsPcKPvcFj+gIIxm7FcrM++wow6yX/rj5x?=
+ =?us-ascii?Q?Co/6kAfApfvk3nL0kRlhRf3zNUa79Ii9DTJ3vfDqfM0c6mhMBrexKMhlRyMI?=
+ =?us-ascii?Q?b3CPOyShYxR6LRQqrKjAdsUjzGIz54J7g+EaYzOfFkhbrV7K6rd6YO/m4Ozj?=
+ =?us-ascii?Q?nfRtjkWqwRjifRJbNdnkjvt5jP1H+LnNFNVZ//zkFWknf9DJQolg3ayavqzP?=
+ =?us-ascii?Q?G4Fg+EYYLtIq/Glpg60/PTcqCuut2WCnEDns2RnmjAxAFXIV3b1S19NjSj7j?=
+ =?us-ascii?Q?ZtP1JZuT1MRVo/ZfUentSAX0s1gL4H2rz0dgSIRTnhBlqmOG75pQ2Dcj7BV/?=
+ =?us-ascii?Q?yr2rWC6Kg6+OKKJFUBHi0+bES+BhENBtHzobcmWvZR1cOxs033Nhdj0U/C8X?=
+ =?us-ascii?Q?vxlxY76AVVMv24v7SBYucJniCZFcX1B25utS/6RYcGER5xxxs15mFhsn5Jzf?=
+ =?us-ascii?Q?fgvXPJuvapt0Ljkz4qMnV5EXSduQnBbg7uHHpFzPU7U78wFLd5AA6S1M+wU+?=
+ =?us-ascii?Q?K5kzkjgL3fT0evHvqxAhebZ913AYvd6XLJX2ky5fTEADmN5PPq6chDYG9CBw?=
+ =?us-ascii?Q?jB+NV5tA414n6eoWZLQU4dd2XdLGARSVIwFQBp46pSiA50Mcg36n6yTsI+Xr?=
+ =?us-ascii?Q?jFqtiGZbVj9OkepqNdENYcXzmHOnPdRw+pYmRHg2x/yWZ6r1jP8DKexG8QeE?=
+ =?us-ascii?Q?ZNmjxTilnutPEKv+Eoy6gMp949nlgDk+lAH/tXSIeQRXrHlvcgEQ/PljQ/V4?=
+ =?us-ascii?Q?jn91OeLHhORYB0xGZtBSLjT2g28wCT60yoG+ZIV50iM4ArU3BV/fVvjf2FpM?=
+ =?us-ascii?Q?0ykyIGV0uTZ4MfrWfNmCSh/AfdSaIJEQJOscigOhk3lwallcNUCjnx/9zTTx?=
+ =?us-ascii?Q?cwThoL9qsPoqq5uDtfZBaO8LYmX7/bruZCCiFeglLjtCXY782UMmblmozCTk?=
+ =?us-ascii?Q?DBH1tUVYkE6z8McOHplM/qQvu8ph49mR89wPrzsWDjFLp+utAK0Uh7P9A6o2?=
+ =?us-ascii?Q?7rRCcKo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230038)(366014)(52116012)(376012)(1800799022)(38350700012);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?UzQ1O/5o7/7+fMotRqZltWoca2pBE4swTVJoBZgXvWgenBoiscalzFUdwJwB?=
+ =?us-ascii?Q?6skXJxVXmwV7jFDiF49h890sQ3HKp+JS92VFLPRcJ2cCPe7U1MYziTKbfCCc?=
+ =?us-ascii?Q?iHuF2S41Tm+upiag4lrpLSpPoPGjOIf8lI8/+oWbCpRONmr7eY//xTHYOx8m?=
+ =?us-ascii?Q?UzcTyc6mBvqcIrwRrahLCF/AXcOeMewPBmGn3TkxGtxKEFJZpOU+y17p9O8f?=
+ =?us-ascii?Q?UR+KhVYbIuM5I79QZIUM00LdtN3PtoFSsfO+pyDoxgZCfHlQwAoFKzYroZUy?=
+ =?us-ascii?Q?J9vamh+IxMTS8epsoa2RyXNto4FV7BwGI9huqwxuK6HsO7iQpDy3XKJYvrWI?=
+ =?us-ascii?Q?guAxHLBZQTITLBmWyUMjku+Elgs5UNFzY1EXRuVed9RrFrUKEmrDAOXkgztV?=
+ =?us-ascii?Q?8bhuZS2aAwlGgu3fKA+J1OwIF1zMIBeJ5sJjv9w9Px6WFrReTChMnnmyctRh?=
+ =?us-ascii?Q?AxYsOlR2a57ZDfq0xAeUue+yE47szVaSlgqmKsS82iaex4yy4Qo7iTRo7iPu?=
+ =?us-ascii?Q?oE5SM5C7CpX8Pb023dghsRkQD+cLRlSDa3soRiDVj80/BAOEwnZXGcrgwy34?=
+ =?us-ascii?Q?MywMDopCB3tZCNsdBAeK/oR9juQjULcU70XsoJyki6nydWZ6EWRi4LrwjpHt?=
+ =?us-ascii?Q?ZWwxaihBUk71S7rlSoMJ8rL2njvMA7FlEQln8XD21oGRa0u6piF1zaf7gjxm?=
+ =?us-ascii?Q?xlAgKM/RK8XMkFKQq7JsOvVaojADUwPJyn5vKe7ItbV77jl+3wsZTPln2MfW?=
+ =?us-ascii?Q?2RhoL0eMr39Rgt6UYhqdjPVvo+mc+/1ydB9RDND0RJfSyAjtanbAaKRAjXbB?=
+ =?us-ascii?Q?3DJmCtM7v4jL3nyOHMv4U2aIxJCR2AaIBPSkBm04ZzcE+XeEYaZFzgC9t0Py?=
+ =?us-ascii?Q?WtetwpwIHgbjSrLkDPtmQ8urS6KPJuCuZW7Aakn1mGvF0HvS7VDiWOAJqqW5?=
+ =?us-ascii?Q?q7u+LQo+SWVitkNICEXL7b1c4jWaorkzCdTyKUnv5RY5HYwo+shsEZ7bC/4N?=
+ =?us-ascii?Q?7Roxx40se0U6G3vpXbDxL+a8mHSFC/jtzSbYJUj5isgO5I34vJchFPmEQsk0?=
+ =?us-ascii?Q?BN9D2M0a0bpRI6/lDnN7heNXAp5pyKaZqtsYGToyEUWdybJQWNo3i+ahNNZo?=
+ =?us-ascii?Q?tIn54BL1bb4Pu+Dz1Zqyi+p/spOI3PILbBtrYTlLvWPB4FUe0W21G3C9LKbd?=
+ =?us-ascii?Q?Ll1pkDoGU1hizTio/WJUjUB466gGtA6SoolztGMziZDys1CFZT/L7hBU4rKE?=
+ =?us-ascii?Q?zhS1GFNHKo5NtD8lsgS/PE4R2chdZdyF+xqeSt5/wSEMorFouTKRU3V/k1UG?=
+ =?us-ascii?Q?G714TNjrd6OviWHakfy50X8v9j6s+IMX8cJsuAohfIvwIgXKLRayNLlBqS1k?=
+ =?us-ascii?Q?j+/QlzKDJTGZ9VD3jSxONtpOxxfwFMcTx4CiD4bFSC0k0i8MeJFdQlCpPbLS?=
+ =?us-ascii?Q?3UUyTk30b80iW8rYW96CUNPxzuyjsWScJ7TPyLyYY9wgtODQR50XljHeCtQR?=
+ =?us-ascii?Q?wiJxPfxPSxpQM/Qkxp766tq6HHWl0GKmBudSVzPBAANOno7j3rYSkBgOIEiv?=
+ =?us-ascii?Q?a+oDJJEnneUxnh7YjAEpMcmkmHAYvBvAn8PtmLW4?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4c880a5-557e-47cb-e046-08dc95f14a76
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 15:04:35.0024
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wwz6kjNQrXrIdM9WK8TCwAyxsG8Tn6CXha0KwWCtEasUViTzPZPxhxDn1Dlu1PMGMarj2VZCGCvZrwdwOXXefA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10200
 
-On Wed, Jun 19, 2024 at 05:10:27PM -0700, Oreoluwa Babatunde wrote:
-> After all the reserved memory regions have been added to the
-> reserved_mem array, a region specific initialization function is called
-> on each of reserved memory regions in a loop to initialize them.
+On Wed, Jun 26, 2024 at 11:26:18AM +0200, Krzysztof Kozlowski wrote:
+> On 25/06/2024 04:25, Frank Li wrote:
+> > Convert fsl-usb binding doc to yaml format.
+> > 
+> > Additional change:
 > 
-> With recent changes made to allow the reserved_mem array be dynamically
-> allocated, the cma reserved memory regions are not initialized until
-> after the page tables are setup. This causes the warning seen in the
-> dump stack below:
 > 
-> 	WARNING: CPU: 0 PID: 1 at mm/memory.c:2789 __apply_to_page_range+0x360/0x380
-> 	CPU: 0 PID: 1 Comm: swapper/0 Not tainted 6.10.0-rc1-00007-ga46cccb0ee2d #1
-> 	Hardware name: Generic DT based system
-> 	Call trace:
-> 	unwind_backtrace from show_stack+0x18/0x1c
-> 	show_stack from dump_stack_lvl+0x54/0x68
-> 	dump_stack_lvl from __warn+0x74/0x114
-> 	__warn from warn_slowpath_fmt+0x13c/0x1c0
-> 	warn_slowpath_fmt from __apply_to_page_range+0x360/0x380
-> 	__apply_to_page_range from apply_to_page_range+0x24/0x2c
-> 	apply_to_page_range from __alloc_from_contiguous+0xc4/0x158
-> 	__alloc_from_contiguous from cma_allocator_alloc+0x3c/0x44
-> 	cma_allocator_alloc from arch_dma_alloc+0x128/0x2b4
-> 	arch_dma_alloc from dma_alloc_attrs+0x90/0x150
-> 	dma_alloc_attrs from drm_gem_dma_create+0xa4/0x13c
-> 	drm_gem_dma_create from drm_gem_dma_create_with_handle+0x24/0xac
-> 	drm_gem_dma_create_with_handle from drm_gem_dma_dumb_create+0x44/0x50
-> 	drm_gem_dma_dumb_create from drm_client_framebuffer_create+0x9c/0x164
-> 	drm_client_framebuffer_create from drm_fbdev_dma_helper_fb_probe+0x84/0x23c
-> 	drm_fbdev_dma_helper_fb_probe from __drm_fb_helper_initial_config_and_unlock+0x2e4/0x4f8
-> 	__drm_fb_helper_initial_config_and_unlock from drm_fbdev_dma_client_hotplug+0x74/0xb8
-> 	drm_fbdev_dma_client_hotplug from drm_client_register+0x5c/0x98
-> 	drm_client_register from aspeed_gfx_probe+0x278/0x3c0
-> 	aspeed_gfx_probe from platform_probe+0x60/0xb8
-> 	platform_probe from really_probe+0xd4/0x3b4
-> 	really_probe from __driver_probe_device+0x90/0x1dc
-> 	__driver_probe_device from driver_probe_device+0x38/0xd0
-> 	driver_probe_device from __driver_attach+0x118/0x1dc
-> 	__driver_attach from bus_for_each_dev+0x84/0xd4
-> 	bus_for_each_dev from bus_add_driver+0xec/0x1f0
-> 	bus_add_driver from driver_register+0x84/0x11c
-> 	driver_register from do_one_initcall+0x84/0x1c8
-> 	do_one_initcall from kernel_init_freeable+0x1a4/0x230
-> 	kernel_init_freeable from kernel_init+0x1c/0x138
-> 	kernel_init from ret_from_fork+0x14/0x28
-> 	Exception stack(0x9f015fb0 to 0x9f015ff8)
-> 	5fa0:                                     00000000 00000000 00000000 00000000
-> 	5fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-> 	5fe0: 00000000 00000000 00000000 00000000 00000013 00000000
-> 	---[ end trace 0000000000000000 ]---
-> 	aspeed_gfx 1e6e6000.display: [drm] fb0: aspeed-gfx-drmd frame buffer device
+> > -	usb@4000 {
+> > -		compatible = "fsl,mpc5121-usb2-dr";
+> > -		reg = <0x4000 0x1000>;
+> > -		#address-cells = <1>;
+> > -		#size-cells = <0>;
+> > -		interrupt-parent = < &ipic >;
+> > -		interrupts = <44 0x8>;
+> > -		dr_mode = "otg";
+> > -		phy_type = "utmi_wide";
+> > -		fsl,invert-drvvbus;
+> > -		fsl,invert-pwr-fault;
+> > -	};
+> > diff --git a/Documentation/devicetree/bindings/usb/fsl-usb.yaml b/Documentation/devicetree/bindings/usb/fsl-usb.yaml
+> > new file mode 100644
+> > index 0000000000000..8b5724e213f09
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/usb/fsl-usb.yaml
 > 
-> Hence, restructure the code to initialize the regions as soon as each
-> of them are added to the reserved_mem array.
+> fsl,usb.yaml
+> or: fsl,usb2.yaml
 > 
-> Fixes: a46cccb0ee2d ("of: reserved_mem: Restruture how the reserved memory regions are processed")
-> Signed-off-by: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
+> > +
+> > +maintainers:
+> > +  - Frank Li <Frank.Li@nxp.com>
+> > +
+> > +description: |
+> 
+> Do not need '|' unless you need to preserve formatting.
 
-This resolves the warning that I see and I see no other warnings
-introduced in any of my virtual boot tests.
+dt_binding_check report error without '|'
+fsl,usb2.yaml:15:11: [error] syntax error: mapping values are not allowed here (syntax)
 
-Tested-by: Nathan Chancellor <nathan@kernel.org>
+"Practice:" impact yaml parse.
 
-> ---
-> v2:
-> - Fix kernel-doc for of_init_reserved_mem_node() in response to the
->   below warning from v1:
->   https://lore.kernel.org/all/202406181626.126X1Nbz-lkp@intel.com/
 > 
-> v1:
->   https://lore.kernel.org/all/20240617193357.3929092-1-quic_obabatun@quicinc.com/
+> > +  The device node for a USB controller that is part of a Freescale
+> > +  SOC is as described in the document "Open Firmware Recommended
+> > +  Practice: Universal Serial Bus" with the following modifications
+> > +  and additions.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    oneOf:
+> > +      - enum:
+> > +          - fsl-usb2-mph
+> > +          - fsl-usb2-dr
+> > +          - fsl-usb2-dr-v2.2
 > 
->  drivers/of/fdt.c             |  2 +-
->  drivers/of/of_private.h      |  2 +-
->  drivers/of/of_reserved_mem.c | 83 +++++++++++++++++++++---------------
->  3 files changed, 50 insertions(+), 37 deletions(-)
+> It cannot be standalone and not-standalone. Cannot be both. Choose one.
 > 
-> diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
-> index 9cde2abd2fc0..ea2dff0478c7 100644
-> --- a/drivers/of/fdt.c
-> +++ b/drivers/of/fdt.c
-> @@ -1239,7 +1239,7 @@ void __init unflatten_device_tree(void)
->  	unittest_unflatten_overlay_base();
->  
->  	/* initialize the reserved memory regions */
-> -	of_init_reserved_mem();
-> +	of_scan_reserved_mem_reg_nodes();
->  }
->  
->  /**
-> diff --git a/drivers/of/of_private.h b/drivers/of/of_private.h
-> index 01b33c4b1e9f..7412aed903df 100644
-> --- a/drivers/of/of_private.h
-> +++ b/drivers/of/of_private.h
-> @@ -181,7 +181,7 @@ static inline struct device_node *__of_get_dma_parent(const struct device_node *
->  #endif
->  
->  int fdt_scan_reserved_mem(void);
-> -void of_init_reserved_mem(void);
-> +void of_scan_reserved_mem_reg_nodes(void);
->  
->  bool of_fdt_device_is_available(const void *blob, unsigned long node);
->  
-> diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
-> index eb54490a0a11..b31001728866 100644
-> --- a/drivers/of/of_reserved_mem.c
-> +++ b/drivers/of/of_reserved_mem.c
-> @@ -97,6 +97,8 @@ static void __init alloc_reserved_mem_array(void)
->  	reserved_mem = new_array;
->  }
->  
-> +static void __init of_init_reserved_mem_node(struct reserved_mem *rmem);
-> +
->  /*
->   * of_reserved_mem_save_node() - save fdt node for second pass initialization
->   */
-> @@ -115,6 +117,12 @@ static void __init of_reserved_mem_save_node(struct device_node *node, const cha
->  	rmem->base = base;
->  	rmem->size = size;
->  
-> +	/*
-> +	 * Run the region specific initialization function for the rmem
-> +	 * node.
-> +	 */
-> +	of_init_reserved_mem_node(rmem);
-> +
->  	reserved_mem_count++;
->  	return;
->  }
-> @@ -201,6 +209,8 @@ static int __init __fdt_reserved_mem_check_root(unsigned long node)
->  	return 0;
->  }
->  
-> +static void __init __rmem_check_for_overlap(void);
-> +
->  /**
->   * of_scan_reserved_mem_reg_nodes() - Store info for the "reg" defined
->   * reserved memory regions.
-> @@ -211,7 +221,7 @@ static int __init __fdt_reserved_mem_check_root(unsigned long node)
->   * size are all stored in the reserved_mem array by calling the
->   * of_reserved_mem_save_node() function.
->   */
-> -static void __init of_scan_reserved_mem_reg_nodes(void)
-> +void __init of_scan_reserved_mem_reg_nodes(void)
->  {
->  	struct device_node *node, *child;
->  	phys_addr_t base, size;
-> @@ -222,6 +232,13 @@ static void __init of_scan_reserved_mem_reg_nodes(void)
->  		return;
->  	}
->  
-> +	/*
-> +	 * Before moving forward, allocate the exact size needed for the
-> +	 * reserved_mem array and copy all previously saved contents
-> +	 * into the new array if successful.
-> +	 */
-> +	alloc_reserved_mem_array();
-> +
->  	for_each_child_of_node(node, child) {
->  		int ret = 0;
->  		const char *uname;
-> @@ -246,6 +263,8 @@ static void __init of_scan_reserved_mem_reg_nodes(void)
->  		if (size)
->  			of_reserved_mem_save_node(child, uname, base, size);
->  	}
-> +	/* check for overlapping reserved regions */
-> +	__rmem_check_for_overlap();
->  }
->  
->  static int __init __reserved_mem_alloc_size(unsigned long node, const char *uname);
-> @@ -526,44 +545,38 @@ static void __init __rmem_check_for_overlap(void)
->  }
->  
->  /**
-> - * of_init_reserved_mem() - allocate and init all saved reserved memory regions
-> + * of_init_reserved_mem_node() - Initialize a saved reserved memory region.
-> + * @rmem: reserved_mem object of the memory region to be initialized.
-> + *
-> + * This function is used to call the region specific initialization
-> + * function on the rmem object passed as an argument. The rmem object
-> + * will contain the base address, size, node name, and device_node of
-> + * the reserved memory region to be initialized.
->   */
-> -void __init of_init_reserved_mem(void)
-> +static void __init of_init_reserved_mem_node(struct reserved_mem *rmem)
->  {
-> -	int i;
-> -
-> -	alloc_reserved_mem_array();
-> -
-> -	of_scan_reserved_mem_reg_nodes();
-> +	int err;
-> +	bool nomap;
-> +	struct device_node *node = rmem->dev_node;
->  
-> -	/* check for overlapping reserved regions */
-> -	__rmem_check_for_overlap();
-> +	nomap = of_property_present(node, "no-map");
->  
-> -	for (i = 0; i < reserved_mem_count; i++) {
-> -		struct reserved_mem *rmem = &reserved_mem[i];
-> -		struct device_node *node = rmem->dev_node;
-> -		int err = 0;
-> -		bool nomap;
-> -
-> -		nomap = of_property_present(node, "no-map");
-> -
-> -		err = __reserved_mem_init_node(rmem);
-> -		if (err != 0 && err != -ENOENT) {
-> -			pr_info("node %s compatible matching fail\n", rmem->name);
-> -			if (nomap)
-> -				memblock_clear_nomap(rmem->base, rmem->size);
-> -			else
-> -				memblock_phys_free(rmem->base, rmem->size);
-> -		} else {
-> -			phys_addr_t end = rmem->base + rmem->size - 1;
-> -			bool reusable = of_property_present(node, "reusable");
-> -
-> -			pr_info("%pa..%pa (%lu KiB) %s %s %s\n",
-> -				&rmem->base, &end, (unsigned long)(rmem->size / SZ_1K),
-> -				nomap ? "nomap" : "map",
-> -				reusable ? "reusable" : "non-reusable",
-> -				rmem->name ? rmem->name : "unknown");
-> -		}
-> +	err = __reserved_mem_init_node(rmem);
-> +	if (err != 0 && err != -ENOENT) {
-> +		pr_info("node %s compatible matching fail\n", rmem->name);
-> +		if (nomap)
-> +			memblock_clear_nomap(rmem->base, rmem->size);
-> +		else
-> +			memblock_phys_free(rmem->base, rmem->size);
-> +	} else {
-> +		phys_addr_t end = rmem->base + rmem->size - 1;
-> +		bool reusable = of_property_present(node, "reusable");
-> +
-> +		pr_info("%pa..%pa (%lu KiB) %s %s %s\n",
-> +			&rmem->base, &end, (unsigned long)(rmem->size / SZ_1K),
-> +			nomap ? "nomap" : "map",
-> +			reusable ? "reusable" : "non-reusable",
-> +			rmem->name ? rmem->name : "unknown");
->  	}
->  }
->  
-> -- 
-> 2.34.1
+> > +      - items:
+> > +          - enum:
+> > +              - fsl-usb2-dr-v2.2
+> > +              - fsl-usb2-dr-v2.5
+> > +          - const: fsl-usb2-dr
+> > +
+> > +  phy_type:
+> > +    $ref: /schemas/types.yaml#/definitions/string
+> > +    enum: [ulpi, serial, utmi, utmi_wide]
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  interrupts:
+> > +    maxItems: 1
+> > +
+> > +  port0:
+> > +    $ref: /schemas/types.yaml#/definitions/flag
+> > +    description:
+> > +      Indicates port0 is connected for fsl-usb2-mph compatible controllers.
+> > +
+> > +  port1:
+> > +    $ref: /schemas/types.yaml#/definitions/flag
+> > +    description:
+> > +      Indicates port1 is connected for "fsl-usb2-mph" compatible controllers.
+> > +
+> > +  fsl,invert-drvvbus:
+> > +    $ref: /schemas/types.yaml#/definitions/flag
+> > +    description:
+> > +      for MPC5121 USB0 only. Indicates the
+> > +      port power polarity of internal PHY signal DRVVBUS is inverted.
+> > +
+> > +  fsl,invert-pwr-fault:
+> > +    $ref: /schemas/types.yaml#/definitions/flag
+> > +    description:
+> > +      for MPC5121 USB0 only. Indicates
+> > +      the PWR_FAULT signal polarity is inverted.
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - interrupts
+> > +  - phy_type
+> 
+> Keep the same order as in "properties:". Preferably this order, so
+> adjust "properties:" to match "required:".
+> 
+> > +
+> > +allOf:
+> > +  - $ref: usb-drd.yaml#
+> > +
+> 
+> 
+> Best regards,
+> Krzysztof
 > 
 
