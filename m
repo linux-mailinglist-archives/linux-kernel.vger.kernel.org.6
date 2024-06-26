@@ -1,162 +1,274 @@
-Return-Path: <linux-kernel+bounces-231529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B80BC91998F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 23:02:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3602F919994
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 23:02:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB6FC1C21CF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:02:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 595F81C22DE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:02:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3597E18C32A;
-	Wed, 26 Jun 2024 21:02:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D82E7193088;
+	Wed, 26 Jun 2024 21:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="wQfDhx4b"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KPkyNZsu"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09842192B63
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 21:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A42814D6EB;
+	Wed, 26 Jun 2024 21:02:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719435723; cv=none; b=mvDpwoCuwif6Gf2/iGeqX2AV9hVU91zwKO+kx+T+bt8D+NuzBZd3yC82uAd9FkpPIUp+L67HIfQtyuFRmd5SAXOGKpkN6wa+XG8IzqAeBVw5hKLStJou1knY7xa4YMdZjVdv+/jaPNoCwC8UqoJF6MXhDLwQiJeIw/CX1dnm51g=
+	t=1719435746; cv=none; b=uA6oPYi0uh4qFckzUL1yNFlQG9Fs3r0jdxzkYUG9quFay/1N5wxlgIusev0dOZwXFZ4zL0SDGILk1MrkLKoKkFGfZTgCmwzHJmyzcsdiVKb8Zrr+BhAUImyMVunnEWqQ7OAX+jCMw/HozieE+xDam+/hpfgjeQpniadRgHDpKFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719435723; c=relaxed/simple;
-	bh=RuIuyy7XCrSnU37wPkziNaMBuPKw2bHWmxGd8XK1xHI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=L0qsvgTarZUiB5zFzWPflTyfSSxZ1ITUX8hBbM5FzrnP9Gt/E9TkThfOfYUXKoJBA4gfUghu1v5kGSHIgdRFrVIREC6XSAPhmL1Wo2kQQQRr41wd+OvC3WYzAqoko3I4hcpvAdXPEj9xqk1/4X11YKUAtJOLj8zqKuI+0cT2C50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=wQfDhx4b; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id CC5AD2C0241;
-	Thu, 27 Jun 2024 09:01:51 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1719435711;
-	bh=RuIuyy7XCrSnU37wPkziNaMBuPKw2bHWmxGd8XK1xHI=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=wQfDhx4b2L825eo7hlHWaee2V9FUXRWEPTN+o4tUse7h+2ksNZwAO4fmadxJS/69M
-	 rJ9K29IqoZ1qx+7CNdVFdORl5enDVC3YAyQQ9NUYISDjDTdgayTB9UhDzNoY5/5NgB
-	 fZr1Od1w1p9wPGR/SCRY1d7dC+pdaPxPL89Ae9Ntycok1TTg+8ADAZUmViScOk8HXQ
-	 1WbfUg8VnxcZbbmXMcMDt744I1rIVRIflzUOGH4LqlEFL/LzrLMeCHGYkcIqceifks
-	 9PJfSz80O6rV8pgOSX1Ok/515+uf/czwLeUjOkbei0JlPU+IoyMML5J4AQAk+hnWz4
-	 Xe0LZa8gqlWFw==
-Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B667c81bf0001>; Thu, 27 Jun 2024 09:01:51 +1200
-Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
- svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 27 Jun 2024 09:01:51 +1200
-Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
- svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
- 15.02.1544.011; Thu, 27 Jun 2024 09:01:51 +1200
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To: Krzysztof Kozlowski <krzk@kernel.org>, "tglx@linutronix.de"
-	<tglx@linutronix.de>, "robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
-	<conor+dt@kernel.org>, "tsbogend@alpha.franken.de"
-	<tsbogend@alpha.franken.de>, "daniel.lezcano@linaro.org"
-	<daniel.lezcano@linaro.org>, "paulburton@kernel.org" <paulburton@kernel.org>,
-	"peterz@infradead.org" <peterz@infradead.org>, "mail@birger-koblitz.de"
-	<mail@birger-koblitz.de>, "bert@biot.com" <bert@biot.com>, "john@phrozen.org"
-	<john@phrozen.org>, "sander@svanheule.net" <sander@svanheule.net>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, "kabel@kernel.org"
-	<kabel@kernel.org>, "ericwouds@gmail.com" <ericwouds@gmail.com>
-Subject: Re: [PATCH v2 3/8] dt-bindings: mips: realtek: Add rtl930x-soc
- compatible
-Thread-Topic: [PATCH v2 3/8] dt-bindings: mips: realtek: Add rtl930x-soc
- compatible
-Thread-Index: AQHaxdUTfhj+IoBSAkG+XrxufOOZIbHVjqYAgAADSgCAA0mCgIAA59oA
-Date: Wed, 26 Jun 2024 21:01:51 +0000
-Message-ID: <5267bf22-0b95-48ab-b207-ead4a697c263@alliedtelesis.co.nz>
-References: <20240624012300.1713290-1-chris.packham@alliedtelesis.co.nz>
- <20240624012300.1713290-4-chris.packham@alliedtelesis.co.nz>
- <e71780a1-8d53-44ae-ac0f-d406de7e26e8@kernel.org>
- <2b33e7d2-24e5-48c3-a2e3-f128f5d7e39b@alliedtelesis.co.nz>
- <365fcddb-095d-4907-97bf-0810818c8265@kernel.org>
-In-Reply-To: <365fcddb-095d-4907-97bf-0810818c8265@kernel.org>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D408E81AC8E45849871C47152307CA11@atlnz.lc>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1719435746; c=relaxed/simple;
+	bh=K1+sLXjoomHXpIUAqhUH58GUUb1l5dhtZyPMeduwCC8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BlXl2Y6N/X3EoHvemGqoAQOo/slZWdklv80Bhzkt44eQHedZ0eXX7on4Y6Ku+jP6l6tfQQRgy2YDsxncHUwO/uarS6v18HNuU6R5BfENQyELyG97NWmkHgwUcFFAWcdGM1ZJ3nF2vVv5HWJzyD38RFv2X/E9LOrg7XJRUZhMxXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KPkyNZsu; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57d106e69a2so1118170a12.0;
+        Wed, 26 Jun 2024 14:02:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719435743; x=1720040543; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SmkVUbtxGq5Kd55y7UpEeg65+sX0oH7l0Siw+Fdlx50=;
+        b=KPkyNZsufVHc195oXLalLJXDv15cfUIHKwFXyyUF5smT5YoAZmhHQ6/mQqvOBDKxef
+         3AojIRJ7XPBCpuKBziGCyW4ZTEWVAa4ztcSDZmbWtBJAEy4mNFHNUNrEMux3o+2k5eFf
+         n3QlAC3jrxv57nnGTPVWkVolLAi7FJu8vldOzQ+h76UOrZyA5o7AawPoPH5OFjtdkH0f
+         MSJ4cj6oAlA/r0hFkwfDXqkawdOJdIBiAyFtWuPo2y/lRZQiwlMBZ6U2Ula1j9guau1c
+         CDx6YVUvW4eDYhkOmQiC4p/HMkDoDfvDlA1BVb/CvxlFle+bP5JWXWlM7WVaD+jsm5F3
+         sJmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719435743; x=1720040543;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SmkVUbtxGq5Kd55y7UpEeg65+sX0oH7l0Siw+Fdlx50=;
+        b=kYqosB2EuQrV7UvMR8h7fEQ5QOTrBmVL/yhixwbgEPPp/2KXm+znDT1HfI9sRQ9i7+
+         S82PiKQbtUznROxW9M0uLp5eupNZl5xR3yG3HchPf3XJzcRSXtWouxdFRAiaicnFrpKz
+         3zJaS9zWj07lzII3wIACmItHVy8EkNbgw9vEOMdyJm3ZwNR8NVVrvkqMYZ8BnJ4DvvQs
+         DRtppgMWpoUilK5TMp9JQkxiLRRovxj/QrOFOnouD/VxNzjpXZpJnB+QlPJ+K6zC+vYE
+         xrBsmRCuvYIduuYemqpbonYNYJvo0QPHmZ+i4TjeyLqa46BHcavL/McC7Q3oUnpPzSaZ
+         1a4g==
+X-Forwarded-Encrypted: i=1; AJvYcCVsb9aBgvvw8qMvvDp8HO1yG3OZbBY32eS3KWIJh0AOPq+UACkyPyaNbydFVGw7W4ZoAof2enYYFnlITT2ZgJrWyMiXu21KIG+HTG9kPoEIGICNvDjyNRqPWcIQ0k0sE9/sHIFv9WzOD4s2dg==
+X-Gm-Message-State: AOJu0YwZyX8lthlEj8tF3gwDYNFWG1EoQ6n5KmhBJTcFBwzOfjA/d+na
+	g9CliHp+fv1pLvS5kr8UtBoX/xXCgQyWDKvFa6UjL0FQnXp+dxcajZG7AUomPR377H9YbrIx8lq
+	+JbXXjSbCsxIkv3kG6+n3ZG6Iv40=
+X-Google-Smtp-Source: AGHT+IGlByTPxbgHve5YOiShodnO9ZK/wz4GslKuSEfF0rTWCXbpIBVF4OiAcQDtsjLA8sjTgIxyq37Ww1xvkNJUUJ8=
+X-Received: by 2002:aa7:c650:0:b0:57c:ff0d:b781 with SMTP id
+ 4fb4d7f45d1cf-584bdabcabfmr95346a12.16.1719435743352; Wed, 26 Jun 2024
+ 14:02:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=CvQccW4D c=1 sm=1 tr=0 ts=667c81bf a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=T1WGqf2p2xoA:10 a=k_WA3fX4g_cc9GZlkBwA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-SEG-SpamProfiler-Score: 0
+References: <20240623110753.141400-1-quic_akhilpo@quicinc.com>
+ <20240623110753.141400-3-quic_akhilpo@quicinc.com> <CAF6AEGti-Qibmb0YCgWypx7S1sVmtu3287a1reMnUgYqMzTKsw@mail.gmail.com>
+ <CAF6AEGvWFUOk-N8oRxZZYm-EWGV61yiLfjZAUSjHdmy9RhDiAA@mail.gmail.com> <20240626204906.kgvtf7xo4dqepvpz@hu-akhilpo-hyd.qualcomm.com>
+In-Reply-To: <20240626204906.kgvtf7xo4dqepvpz@hu-akhilpo-hyd.qualcomm.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Wed, 26 Jun 2024 14:02:10 -0700
+Message-ID: <CAF6AEGvwjMJXNStwAx4whQMv_PdB+wTJ7Bu4X7wpSwRMrajkTQ@mail.gmail.com>
+Subject: Re: [PATCH v1 2/3] drm/msm/adreno: Add support for X185 GPU
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc: freedreno <freedreno@lists.freedesktop.org>, dri-devel@lists.freedesktop.org, 
+	linux-arm-msm@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	David Airlie <airlied@gmail.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	Sean Paul <sean@poorly.run>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-DQpPbiAyNi8wNi8yNCAxOToxMiwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToNCj4gT24gMjQv
-MDYvMjAyNCAwNzowMCwgQ2hyaXMgUGFja2hhbSB3cm90ZToNCj4+IEhpIEtyenlzenRvZiwNCj4+
-DQo+PiBPbiAyNC8wNi8yNCAxNjo0OCwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToNCj4+PiBP
-biAyNC8wNi8yMDI0IDAzOjIyLCBDaHJpcyBQYWNraGFtIHdyb3RlOg0KPj4+PiBBZGQgdGhlIHJ0
-bDkzMHgtc29jIGFuZCBSVEw5MzAyQyBib2FyZCB0byB0aGUgbGlzdCBvZiBSZWFsdGVrIGNvbXBh
-dGlibGUNCj4+PiA5MzB4IG9yIDkzMDI/DQo+PiBPb3BzLiBXaWxsIGZpeC4NCj4+DQo+Pj4+IHN0
-cmluZ3MuDQo+Pj4+DQo+Pj4+IFNpZ25lZC1vZmYtYnk6IENocmlzIFBhY2toYW0gPGNocmlzLnBh
-Y2toYW1AYWxsaWVkdGVsZXNpcy5jby5uej4NCj4+Pj4gLS0tDQo+Pj4+DQo+Pj4+IE5vdGVzOg0K
-Pj4+PiAgICAgICBDaGFuZ2VzIGluIHYyOg0KPj4+PiAgICAgICAtIFVzZSBzcGVjaWZpYyBjb21w
-YXRpYmxlIGZvciBydGw5MzAyLXNvYw0KPj4+PiAgICAgICAtIEZpeCB0byBhbGxvdyBjb3JyZWN0
-IGJvYXJkLCBzb2MgY29tcGF0aWJsZQ0KPj4+Pg0KPj4+PiAgICBEb2N1bWVudGF0aW9uL2Rldmlj
-ZXRyZWUvYmluZGluZ3MvbWlwcy9yZWFsdGVrLXJ0bC55YW1sIHwgNCArKysrDQo+Pj4+ICAgIDEg
-ZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKykNCj4+Pj4NCj4+Pj4gZGlmZiAtLWdpdCBhL0Rv
-Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9taXBzL3JlYWx0ZWstcnRsLnlhbWwgYi9E
-b2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWlwcy9yZWFsdGVrLXJ0bC55YW1sDQo+
-Pj4+IGluZGV4IGY4YWMzMDlkMjk5NC4uMDVkYWE1MzQxN2U1IDEwMDY0NA0KPj4+PiAtLS0gYS9E
-b2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWlwcy9yZWFsdGVrLXJ0bC55YW1sDQo+
-Pj4+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9taXBzL3JlYWx0ZWst
-cnRsLnlhbWwNCj4+Pj4gQEAgLTIwLDUgKzIwLDkgQEAgcHJvcGVydGllczoNCj4+Pj4gICAgICAg
-ICAgICAgIC0gZW51bToNCj4+Pj4gICAgICAgICAgICAgICAgICAtIGNpc2NvLHNnMjIwLTI2DQo+
-Pj4+ICAgICAgICAgICAgICAtIGNvbnN0OiByZWFsdGVrLHJ0bDgzODItc29jDQo+Pj4+ICsgICAg
-ICAtIGl0ZW1zOg0KPj4+PiArICAgICAgICAgIC0gZW51bToNCj4+Pj4gKyAgICAgICAgICAgICAg
-LSByZWFsdGVrLHJ0bDkzMDJjDQo+Pj4gV2h5IGJvYXJkIGhhcyB0aGUgbmFtZSBvZiBTb0M/DQo+
-PiBXaGF0IEkgaGF2ZSBpcyBhY3R1YWxseSBhIHJlZmVyZW5jZSBib2FyZCB3aXRoIHRoZSBuYW1l
-DQo+PiBSVEw5MzAyQ18yeFJUTDgyMjRfMlhHRS4gSWYgZm91bmQgdGhhdCBhIGJpdCBpbmNvbXBy
-ZWhlbnNpYmxlIHNvIEkNCj4+IChvdmVyKSBzaG9ydGVuZWQgaXQuIFRlY2huaWNhbGx5IGl0IHdv
-dWxkIGJlIHNvbWV0aGluZyBsaWtlDQo+PiBjYW1lbyxydGw5MzAyYy0yeC1ydGw4MjI0LTJ4Z2Ug
-d2hpY2ggSSBjYW4gaW5jbHVkZSBpbiB0aGUgbmV4dCByb3VuZC4NCj4gTG9va3MgZmluZSB0byBt
-ZS4NCj4NCj4+Pj4gKyAgICAgICAgICAtIGNvbnN0OiByZWFsdGVrLHJ0bDkzMDItc29jDQo+Pj4g
-RHJvcCB0aGUgLXNvYyBzdWZmaXguIFRoZSBydGw5MzAyIGlzIHRoZSBzb2MuDQo+PiBPbiB0aGF0
-LiBJIGhvcGUgdG8gZXZlbnR1YWxseSBhZGQgInJlYWx0ZWsscnRsOTMwMi1zd2l0Y2giIGZvciB0
-aGUgRFNBDQo+PiBzd2l0Y2ggYmxvY2sgaW4gdGhlIHNhbWUgY2hpcC4gU28ga2VlcGluZyB0aGUg
-LXNvYyBzdWZmaXggd2FzDQo+PiBpbnRlbnRpb25hbCB0byB0cnkgdG8gZGlzYW1iaWd1YXRlIHRo
-aW5ncy4gSSBjYW4gZHJvcCB0aGUgLXNvYyBpZiB0aGUNCj4+IGNvbnNlbnN1cyBpcyB0aGF0IHRo
-ZXJlIGlzIG5vIG5lZWQgdG8gZGlzYW1iaWd1YXRlIHRoZSB0d28uDQo+IFRoYW5rcyBmb3IgZXhw
-bGFuYXRpb24sIGtpbmQgb2YgZGVwZW5kcyBvbiB3aGF0IGV4YWN0bHkgaXMgdGhpcy4gTW9zdCBv
-Zg0KPiBTb0NzIGNvbXByaXNlIG9mIHNldmVyYWwgaXRlbXMuIFRoZSBlbnRpcmUgY2hpcCBpcyB0
-aGUgc29jLCBlLmcuDQo+ICJxY29tLGZvbzEyMzQiLiBJdCBtaWdodCBoYXZlIE1BQy9FdGhlcm5l
-dC93aGF0ZXZlciBpbnNpZGUsIGNvbnRyb2xsYWJsZQ0KPiBieSB0aGUgU29DIChMaW51eCwgYm9v
-dGxvYWRlciwgVEYsIGh5cGVydmlzb3IsIG90aGVyIFZNIGd1ZXN0KSBhbmQgdGhhdA0KPiBwYXJ0
-IGlzICJxY29tLGZvbzEyMzQtZXRoZXJuZXQiLiBSZWdhcmRsZXNzIHdoZXRoZXIgTGludXggT1Mg
-YWN0dWFsbHkNCj4gY29udHJvbHMgaXQgb3Igbm90Lg0KPg0KPiBUaGUgcXVlc3Rpb24gaXMgd2hl
-dGhlciBEU0Egc3dpdGNoIGlzIHBhcnQgb2YgdGhlIFNvQyBvciBub3QuDQoNClRoZSBSVEw5MzAy
-QyBpcyBhIHNpbmdsZSBwYWNrYWdlIGJ1dCBJJ2QgYXNzdW1lIGludGVybmFsbHkgaXQgaGFzIA0K
-bXVsdGlwbGUgZGllcy4NCg0KIEZyb20gdGhlIGJsb2NrIGRpYWdyYW0gaW4gdGhlIGRhdGFzaGVl
-dCB0aGV5IGRvIGhhdmUgYSBwb3J0aW9uIHRoZXkgDQpjYWxsIHRoZSAiU29DIiB3aGljaCBoYXMg
-dGhlIENQVSBhbmQgcGVyaXBoZXJhbHMgbGlrZSBVQVJUcywgR1BJT3MsIFNQSSANCmV0Yy4gVGhh
-dCBpcyBzZXBhcmF0ZSBmcm9tIHRoZSBzd2l0Y2ggYmxvY2sgd2hpY2ggaGFzIGEgYnVuY2ggb2Yg
-TUFDcywgDQpTRVJERVMgYW5kIHZhcmlvdXMgbmV0d29yayBzd2l0Y2ggdGFibGVzLiBTbyBiYXNl
-ZCBvbiB0aGF0IA0KInJlYWx0ZWsscnRsOTMwMi1zb2MiIGFuZCAicmVhbHRlayxydGw5MzAyLXN3
-aXRjaCIgYXMgdHdvIHNlcGFyYXRlIA0KdGhpbmdzIG1ha2Ugc2Vuc2UgdG8gbWUuDQoNCkknbSBz
-dGlsbCB0cnlpbmcgdG8gZmlndXJlIG91dCBhIGJpdCBtb3JlIG9mIHRoZSBkZXRhaWxzLiBUaGUg
-YmxvY2sgDQpkaWFncmFtIGxvb2tzIGEgbG90IGxpa2UgeW91J2QgZXhwZWN0IHRvIHNlZSB3aXRo
-IGEgdHJhZGl0aW9uYWwgRFNBIA0Kc3dpdGNoIHdoZXJlIHlvdSBoYXZlIGEgU29DIEV0aGVybmV0
-IE5JQy9NQUMgY29ubmVjdGVkIHRvIG9uZSBwb3J0IG9mIGEgDQpzd2l0Y2guIEJ1dCBnZXR0aW5n
-IGludG8gdGhlIGRhdGFzaGVldCBpdCBsb29rcyBsaWtlIHdoYXQgdGhleSBjYWxsIHRoZSANCk5J
-QyBpcyBhY3R1YWxseSBqdXN0IHRoZSBETUEgcG9ydGlvbiBvZiB0aGUgc3dpdGNoIGFzIHRoZSBy
-ZWdpc3RlcnMgYXJlIA0KYWxsIGluIHRoYXQgc2Vjb25kIGJsb2NrLiBBcyBpcyB0aGUgTURJTyBp
-bnRlcmZhY2UuIEknbSBjb25zaWRlcmluZyB0aGF0IA0KbWF5YmUgdGhlIERTQSBtb2RlbCBpc24n
-dCByaWdodCBmb3IgdGhpcyBhbmQgSSBzaG91bGQgYmUgbG9va2luZyBhdCANCnN3aXRjaGRldiBp
-bnN0ZWFkLg0KDQo+DQo+IEJlc3QgcmVnYXJkcywNCj4gS3J6eXN6dG9mDQo+
+On Wed, Jun 26, 2024 at 1:49=E2=80=AFPM Akhil P Oommen <quic_akhilpo@quicin=
+c.com> wrote:
+>
+> On Mon, Jun 24, 2024 at 07:28:06AM -0700, Rob Clark wrote:
+> > On Mon, Jun 24, 2024 at 7:25=E2=80=AFAM Rob Clark <robdclark@gmail.com>=
+ wrote:
+> > >
+> > > On Sun, Jun 23, 2024 at 4:08=E2=80=AFAM Akhil P Oommen <quic_akhilpo@=
+quicinc.com> wrote:
+> > > >
+> > > > Add support in drm/msm driver for the Adreno X185 gpu found in
+> > > > Snapdragon X1 Elite chipset.
+> > > >
+> > > > Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+> > > > ---
+> > > >
+> > > >  drivers/gpu/drm/msm/adreno/a6xx_gmu.c      | 19 +++++++++++++++---=
+-
+> > > >  drivers/gpu/drm/msm/adreno/a6xx_gpu.c      |  6 ++----
+> > > >  drivers/gpu/drm/msm/adreno/adreno_device.c | 14 ++++++++++++++
+> > > >  drivers/gpu/drm/msm/adreno/adreno_gpu.h    |  5 +++++
+> > > >  4 files changed, 36 insertions(+), 8 deletions(-)
+> > > >
+> > > > diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/dr=
+m/msm/adreno/a6xx_gmu.c
+> > > > index 0e3dfd4c2bc8..168a4bddfaf2 100644
+> > > > --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> > > > +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> > > > @@ -830,8 +830,10 @@ static int a6xx_gmu_fw_start(struct a6xx_gmu *=
+gmu, unsigned int state)
+> > > >          */
+> > > >         gmu_write(gmu, REG_A6XX_GMU_CM3_CFG, 0x4052);
+> > > >
+> > > > +       if (adreno_is_x185(adreno_gpu)) {
+> > > > +               chipid =3D 0x7050001;
+> > > >         /* NOTE: A730 may also fall in this if-condition with a fut=
+ure GMU fw update. */
+> > > > -       if (adreno_is_a7xx(adreno_gpu) && !adreno_is_a730(adreno_gp=
+u)) {
+> > > > +       } else if (adreno_is_a7xx(adreno_gpu) && !adreno_is_a730(ad=
+reno_gpu)) {
+> > > >                 /* A7xx GPUs have obfuscated chip IDs. Use constant=
+ maj =3D 7 */
+> > > >                 chipid =3D FIELD_PREP(GENMASK(31, 24), 0x7);
+> > > >
+> > > > @@ -1329,9 +1331,18 @@ static int a6xx_gmu_rpmh_arc_votes_init(stru=
+ct device *dev, u32 *votes,
+> > > >         if (!pri_count)
+> > > >                 return -EINVAL;
+> > > >
+> > > > -       sec =3D cmd_db_read_aux_data("mx.lvl", &sec_count);
+> > > > -       if (IS_ERR(sec))
+> > > > -               return PTR_ERR(sec);
+> > > > +       /*
+> > > > +        * Some targets have a separate gfx mxc rail. So try to rea=
+d that first and then fall back
+> > > > +        * to regular mx rail if it is missing
+> > > > +        */
+> > > > +       sec =3D cmd_db_read_aux_data("gmxc.lvl", &sec_count);
+> > > > +       if (PTR_ERR_OR_ZERO(sec) =3D=3D -EPROBE_DEFER) {
+> > > > +               return -EPROBE_DEFER;
+> > > > +       } else if (IS_ERR(sec)) {
+> > > > +               sec =3D cmd_db_read_aux_data("mx.lvl", &sec_count);
+> > > > +               if (IS_ERR(sec))
+> > > > +                       return PTR_ERR(sec);
+> > > > +       }
+> > > >
+> > > >         sec_count >>=3D 1;
+> > > >         if (!sec_count)
+> > > > diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/dr=
+m/msm/adreno/a6xx_gpu.c
+> > > > index 973872ad0474..97837f7f2a40 100644
+> > > > --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> > > > +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> > > > @@ -1319,9 +1319,7 @@ static void a6xx_set_cp_protect(struct msm_gp=
+u *gpu)
+> > > >                 count =3D ARRAY_SIZE(a660_protect);
+> > > >                 count_max =3D 48;
+> > > >                 BUILD_BUG_ON(ARRAY_SIZE(a660_protect) > 48);
+> > > > -       } else if (adreno_is_a730(adreno_gpu) ||
+> > > > -                  adreno_is_a740(adreno_gpu) ||
+> > > > -                  adreno_is_a750(adreno_gpu)) {
+> > > > +       } else if (adreno_is_a7xx(adreno_gpu)) {
+> > > >                 regs =3D a730_protect;
+> > > >                 count =3D ARRAY_SIZE(a730_protect);
+> > > >                 count_max =3D 48;
+> > > > @@ -1891,7 +1889,7 @@ static int hw_init(struct msm_gpu *gpu)
+> > > >         gpu_write(gpu, REG_A6XX_UCHE_CLIENT_PF, BIT(7) | 0x1);
+> > > >
+> > > >         /* Set weights for bicubic filtering */
+> > > > -       if (adreno_is_a650_family(adreno_gpu)) {
+> > > > +       if (adreno_is_a650_family(adreno_gpu) || adreno_is_x185(adr=
+eno_gpu)) {
+> > > >                 gpu_write(gpu, REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE_=
+0, 0);
+> > > >                 gpu_write(gpu, REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE_=
+1,
+> > > >                         0x3fe05ff4);
+> > > > diff --git a/drivers/gpu/drm/msm/adreno/adreno_device.c b/drivers/g=
+pu/drm/msm/adreno/adreno_device.c
+> > > > index c3703a51287b..139c7d828749 100644
+> > > > --- a/drivers/gpu/drm/msm/adreno/adreno_device.c
+> > > > +++ b/drivers/gpu/drm/msm/adreno/adreno_device.c
+> > > > @@ -568,6 +568,20 @@ static const struct adreno_info gpulist[] =3D =
+{
+> > > >                 .zapfw =3D "a740_zap.mdt",
+> > > >                 .hwcg =3D a740_hwcg,
+> > > >                 .address_space_size =3D SZ_16G,
+> > > > +       }, {
+> > > > +               .chip_ids =3D ADRENO_CHIP_IDS(0x43050c01), /* "C512=
+v2" */
+> > > > +               .family =3D ADRENO_7XX_GEN2,
+> > > > +               .fw =3D {
+> > > > +                       [ADRENO_FW_SQE] =3D "gen70500_sqe.fw",
+> > > > +                       [ADRENO_FW_GMU] =3D "gen70500_gmu.bin",
+> > > > +               },
+> > > > +               .gmem =3D 3 * SZ_1M,
+> > > > +               .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
+> > > > +               .quirks =3D ADRENO_QUIRK_HAS_CACHED_COHERENT |
+> > > > +                         ADRENO_QUIRK_HAS_HW_APRIV,
+> > > > +               .init =3D a6xx_gpu_init,
+> > > > +               .hwcg =3D a740_hwcg,
+> > > > +               .address_space_size =3D SZ_16G,
+> > >
+> > > I'm kinda thinking we should drop the address_space_size and add
+> > > instead ADRENO_QUIRK_4G or something along those lines, since there
+> > > are devices with 32 or 64G
+> >
+> > or alternatively put in a correct address_space_size (I guess 2^^48 or =
+2^^56 ?)
+>
+> Although I don't see any reason why the end address couldn't be the
+> 'ttbr0/1 split address', we can keep 256GB as AS size for now. I will
+> check this further and see if we can have a general logic for non-a630_fa=
+mily.
+
+Ahh, good point, I'd overlooked the ttbr0/ttrbr1 split.  Since this is
+actually the userspace address space size it should be the size of
+ttbr0.
+
+For generations that do not support per-process pgtables, the
+address_space_size doesn't really matter (since in that case we don't
+allow userspace to allocate the iova's)
+
+BR,
+-R
+
+> -Akhil
+>
+> >
+> > BR,
+> > -R
+> >
+> > > (a690 is incorrect in this way too)
+> > >
+> > > BR,
+> > > -R
+> > >
+> > > >         }, {
+> > > >                 .chip_ids =3D ADRENO_CHIP_IDS(0x43051401), /* "C520=
+v2" */
+> > > >                 .family =3D ADRENO_7XX_GEN3,
+> > > > diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/=
+drm/msm/adreno/adreno_gpu.h
+> > > > index 77526892eb8c..d9ea8e0f6ad5 100644
+> > > > --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> > > > +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> > > > @@ -448,6 +448,11 @@ static inline int adreno_is_a750(struct adreno=
+_gpu *gpu)
+> > > >         return gpu->info->chip_ids[0] =3D=3D 0x43051401;
+> > > >  }
+> > > >
+> > > > +static inline int adreno_is_x185(struct adreno_gpu *gpu)
+> > > > +{
+> > > > +       return gpu->info->chip_ids[0] =3D=3D 0x43050c01;
+> > > > +}
+> > > > +
+> > > >  static inline int adreno_is_a740_family(struct adreno_gpu *gpu)
+> > > >  {
+> > > >         if (WARN_ON_ONCE(!gpu->info))
+> > > > --
+> > > > 2.45.1
+> > > >
 
