@@ -1,118 +1,114 @@
-Return-Path: <linux-kernel+bounces-230931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55D549183EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:24:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F3EC9183EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:25:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02A901F23537
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:24:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 913DF1C228DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E551850B8;
-	Wed, 26 Jun 2024 14:24:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 135A3186283;
+	Wed, 26 Jun 2024 14:24:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HB4IFK1f"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jRWo4+bO"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203CB45C07;
-	Wed, 26 Jun 2024 14:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8966185E61;
+	Wed, 26 Jun 2024 14:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719411868; cv=none; b=FbavZ3+e/5us5qfICWk8pyKUydGNkjnIV7f2vr5jJS8n5KWsYo3sN3wlcshrI88/nvF9o7d4x07ZO4QUMPjXzGmxMhYPXIcxF3IC36C5PvF/9pD2EIx8YekbUzpPftgbnLzw8bXSbzBf20gXRLzyneYrLchU1rl0k+j/TfnK0cA=
+	t=1719411894; cv=none; b=ZhrYlmhYcXUlP9Aq1tIM/KOhoqCxxV8WLtImt5BkvT7WLS5rO5kHV5+5BE/sEefNGjWs4AgEAevcheQ58wFpxKjL2A63hCxIWHEm5CyTnb1T7QbJm14Jy8r5eewLR5JTycJuEay/x0ZCcU1ztvvqw/LpiAvI/tphwz7AV9uKfn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719411868; c=relaxed/simple;
-	bh=CuHPqyAPRoQfZVkmRu3Q18KTjaKXZmJG02/XUes9hgQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sDlyowcfPmgvPR8ttYlT1Vn3l+ibd7XPo0uv409EvtJTw75xq+jVu0khEWXNQT3k2lOJ89n2IYql/ialKxeaQUTSjgJeSs2pCg/CO6ftdHaWpnpGiGiY76QcUEd8txZAEPbK32yqajgdOuHxNVKP5iJhICFRhrHAOc1/HajCIAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HB4IFK1f; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719411867; x=1750947867;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=CuHPqyAPRoQfZVkmRu3Q18KTjaKXZmJG02/XUes9hgQ=;
-  b=HB4IFK1fabZAkL39ZItTBgQcTZEJkseRy5shpnmV0WotwSs0HuuyoO/o
-   rTdDwdVkC8g47Ny8QC9VpmeWrDs8T8Up/47Vkblq2o0RlLk9mZB+5P0IN
-   qlqEx9Q/v6D+mharkAlQCNHUMV8oyc64cTI2CY6Ni7KWrSBERzJfOFvX9
-   0YuAguYUaDdwfKHpd2mrmK3nVsBTHGIkEytTCy05xzCgS9VMnZ3OVaVhT
-   gljY7kB3RhSrn5cJPjswAax9TYgH08/uX/GcxBuoQaPFdKR6BO+IJOlrL
-   x0iwMUpHP3clm7aQMtYOgyjUD0Mx5tGSxmYcd4m07YIXtAz+kZCXysDYw
-   w==;
-X-CSE-ConnectionGUID: NjaMMb95T1GpfPoP+pmwow==
-X-CSE-MsgGUID: HF0mIf2UQVSwlTyjy6pdqA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="16634417"
-X-IronPort-AV: E=Sophos;i="6.08,267,1712646000"; 
-   d="scan'208";a="16634417"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 07:24:26 -0700
-X-CSE-ConnectionGUID: YVxzdlZZTNCOOsIetqYlkQ==
-X-CSE-MsgGUID: wXROosdSRtqH8MtrKN2U2g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,267,1712646000"; 
-   d="scan'208";a="48943302"
-Received: from kuha.fi.intel.com ([10.237.72.185])
-  by orviesa003.jf.intel.com with SMTP; 26 Jun 2024 07:24:23 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 26 Jun 2024 17:24:22 +0300
-Date: Wed, 26 Jun 2024 17:24:22 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Nikita Travkin <nikita@trvn.ru>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 0/7] usb: typec: ucsi: rework glue driver interface
-Message-ID: <ZnwkloBH6UVzPOjg@kuha.fi.intel.com>
-References: <20240625-ucsi-rework-interface-v3-0-7a6c8e17be3a@linaro.org>
+	s=arc-20240116; t=1719411894; c=relaxed/simple;
+	bh=5A/LPrJoCxitojeJt7eBlNk3snz2b7ebrhihpRcHwVk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=JP5oxBRBUtGwiuib304jxXujWapJkSDMjtRuyaNatT5o6ZtFZP109H6kgDJfBE5DNbNfxscTP1NCFWjO7W82lrNj1D0ZsiVCytleCuXYtLc7LGOYPcvFMv6rCCrAUGGjblk/NNhGdZf8mktf1hS2j53N6SbWeWSF8WWeQZCwsdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jRWo4+bO; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52cd717ec07so6144505e87.0;
+        Wed, 26 Jun 2024 07:24:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719411891; x=1720016691; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SI7tOorPKK3iwm2YfS1Q/1Qsuj151Q4jTdztaPUQtFQ=;
+        b=jRWo4+bOCmVgEAhNcQI9xelFhKTmlnT7a6B0zYwbxe5jFKVBH9KFJaVjRCldcPH+zw
+         8C3B3cGVAMVBmZsMogP66Ke95kfiwbkBL3wFeen8WV1lWhNf0vXWPkTDiYWugBQTUJIA
+         6lW45G315eRFEb3O/Q0V/4d6YjhwJqz5OzQw8VWnqGkPXuqfPh2n2t/KMSd4P9mpDmkE
+         ivMELWqOZON3u/EZp3Me3hF2k+mR6NJtH74MzzSR5C4m2ji0kbUCxQIr0yRprvWJbPjM
+         585f868xK03VtRmjLRIxddsmjDWSL70bh3QCQ8OS5GcAMWM0JrzcGt5XGf7e2xHuxqi9
+         2glA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719411891; x=1720016691;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SI7tOorPKK3iwm2YfS1Q/1Qsuj151Q4jTdztaPUQtFQ=;
+        b=n0TtDZpDDLVfzVPOf4d+powiutVmzeAuwYAYvjyXeAM+H1XSfgxrRX1rL21mtxZVBL
+         U7FaO43upxW/8PxfHYshCKVJp5ZWePuc9QiNPLebT/aHC6N5I643vccEeWjhgLV5yGhG
+         yvD6ocNuoIsS6Uxw5RFsDlquB/ZGW2GYSQIgmCLzlGzmOowK7c9kW7mxW7yX6Xqr8s+r
+         Hnm4eQFJiEkhvuj+IW3+aNgGK/wFaXEP+NDyobr6nNQB61J8Bd3z51fBaoptaw8I9fSf
+         T30t/w4rTulNVFh5yKtLprf/IkA6fwospiWniJxRHbi5ti83QhpYTNC2nQ/aKPxioe6Y
+         Mb6g==
+X-Forwarded-Encrypted: i=1; AJvYcCWuPrdLGQ3QNnt1jqUHZBYzZziSVQS3L0TvQWkTkBYwnY+oLfepp4/JcHNxXxoZDi0l7C8Ma6/bqDKlwJyEU3q1kCxBwddDueUPcKtiY1kXFDLVSWUorWd0F6TuokJwYqACC/5GFTNDcg==
+X-Gm-Message-State: AOJu0Yxk2XpYpsfr1awpMjnXrkDSazrpRCaAjF702RLpJ9vlpnU2iWhU
+	Jw0i8YuYhp8+43OK7vMKi50zX1ITx8NF/OweJZacVbpUnhhQJ5o0
+X-Google-Smtp-Source: AGHT+IG8zpO+JCiXsxXizSvK7r6qfFUwj8kq6cSSw+bYLVfmY8xtSehyJIeuQr4l8KsyE3ox1avFQQ==
+X-Received: by 2002:a05:6512:3a8b:b0:52c:e1d4:8ecd with SMTP id 2adb3069b0e04-52ce1d49146mr8869072e87.8.1719411890583;
+        Wed, 26 Jun 2024 07:24:50 -0700 (PDT)
+Received: from localhost.localdomain ([195.239.203.83])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cda72b401sm1496705e87.136.2024.06.26.07.24.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 07:24:50 -0700 (PDT)
+From: Alex Vdovydchenko <keromvp@gmail.com>
+X-Google-Original-From: Alex Vdovydchenko <xzeol@yahoo.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Alex Vdovydchenko <xzeol@yahoo.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] dt-bindings: hwmon: Add MPS mp5920
+Date: Wed, 26 Jun 2024 17:24:33 +0300
+Message-ID: <20240626142439.1407175-2-xzeol@yahoo.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240626142439.1407175-1-xzeol@yahoo.com>
+References: <20240626142439.1407175-1-xzeol@yahoo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240625-ucsi-rework-interface-v3-0-7a6c8e17be3a@linaro.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 25, 2024 at 05:54:25PM +0300, Dmitry Baryshkov wrote:
-> The interface between UCSI and the glue driver is very low-level. It
-> allows reading the UCSI data from any offset (but in reality the UCSI
-> driver reads only VERSION, CCI an MESSAGE_IN data). All event handling
-> is to be done by the glue driver (which already resulted in several
-> similar-but-slightly different implementations). It leaves no place to
-> optimize the write-read-read sequence for the command execution (which
-> might be beneficial for some of the drivers), etc.
-> 
-> The patchseries attempts to restructure the UCSI glue driver interface
-> in order to provide sensible operations instead of a low-level read /
-> write calls.
-> 
-> If this approach is found to be acceptable, I plan to further rework the
-> command interface, moving reading CCI and MESSAGE_IN to the common
-> control code, which should simplify driver's implementation and remove
-> necessity to split quirks between sync_control and read_message_in e.g.
-> as implemented in the ucsi_ccg.c.
-> 
-> Note, the series was tested only on the ucsi_glink platforms. Further
-> testing is appreciated.
+Add support for MPS mp5920 controller
 
-I tested these on couple of systems that use the acpi mailbox, and
-didn't see any problems. I'll be away for most of July, so if there's
-nothing else, for the series:
+Signed-off-by: Alex Vdovydchenko <xzeol@yahoo.com>
+---
+ Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Tested-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-
-thanks,
-
+diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
+index ff70f0926..cb2fc26d9 100644
+--- a/Documentation/devicetree/bindings/trivial-devices.yaml
++++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+@@ -296,6 +296,8 @@ properties:
+           - mps,mp2975
+             # Monolithic Power Systems Inc. multi-phase controller mp2993
+           - mps,mp2993
++            # Monolithic Power Systems Inc. multi-phase hot-swap controller mp5920
++          - mps,mp5920
+             # Monolithic Power Systems Inc. multi-phase hot-swap controller mp5990
+           - mps,mp5990
+             # Monolithic Power Systems Inc. digital step-down converter mp9941
 -- 
-heikki
+2.43.0
+
 
