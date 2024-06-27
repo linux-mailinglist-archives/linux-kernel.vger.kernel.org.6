@@ -1,153 +1,139 @@
-Return-Path: <linux-kernel+bounces-231990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A830B91A13A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:13:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10EC291A141
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:17:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3424E1F23649
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 08:13:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41A811C21A4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 08:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70BC277101;
-	Thu, 27 Jun 2024 08:13:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8710770F9;
+	Thu, 27 Jun 2024 08:17:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NpJWAkrR"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="q+HYppaU"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA5D446BF;
-	Thu, 27 Jun 2024 08:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E97754279
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 08:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719475998; cv=none; b=H+NtFPwHe1EI9t3BwGD+VVU239PKiTbjDTbU3GmIX+nQ6mmh9vBqM7uDsWcyMa2jUQT3TJzBR4KF+MFUESyGnrCXk65dCYi7TeL0QsaCqYQiKN4vighW7BGUEMDZE73AmHey52EEpBGunPhIDw9Poe0NMPbXz3ZZVuVHCVmuMXs=
+	t=1719476222; cv=none; b=gbqRdutUUX+stXVHkQdmKE6hw0+hKFlmneb0cKb1HlJnd6Avd2e4+ghU/GSXuhUMACLCVPI3F3wkPmFQImn4QBd9GQ5RUzC3wh/rZ2gVmJIPW1j5FU7EkfmhnBq+AVLPe+K5b7HpEU4ItQJOEChW2pbfsY82IF4i66soLzZ5Cvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719475998; c=relaxed/simple;
-	bh=aqwTrcSYiqQJUhfArYN0dEmmLzN0Z0hlc2lvyFyjTgc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jppUajXFCmnm3SOe1CaxJTGStAkziK5qCHZhU2/Q1WKIXwtK1VVed57SJXKRCXIM0FLu6OP1shPbrdlotx8SUbkTOzLgD+b0Wj8DYkdrINpt2u1eAWvpUDPfUY6YzsDy0XFlp7p2ecRjzM2Blnpmwa4PaDGR+YW2Q5mTXvwYRZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NpJWAkrR; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fa07e4f44eso45091145ad.2;
-        Thu, 27 Jun 2024 01:13:17 -0700 (PDT)
+	s=arc-20240116; t=1719476222; c=relaxed/simple;
+	bh=KEm0f3yMC1lTsMQP2mEqK6dYKNV66vYfR0qO4oI6gVE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ox/GyzaK0dGGC18VipdhYOqWbcW2MO12phHo1vbE+lwN4HTCO1AwyNZy0sCkCqzPbBu+H9H2l7Tob5q5zCAWsvaI3JfJMGcyPEW/F6276P+S8w+W8+770cSs1QkP/yX5te3CQyhZPwmH7BrzdjhrN/FiJQNd+DEb+ipCHV8LaZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=q+HYppaU; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ec5fad1984so62876841fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 01:16:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719475997; x=1720080797; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aqwTrcSYiqQJUhfArYN0dEmmLzN0Z0hlc2lvyFyjTgc=;
-        b=NpJWAkrRpVic+B+lXkfstsegROQzN7Yie0McEC4lyKIdUT+tzM1uM3V2tTsAuwb3nx
-         cRHRa8zJWwVigrMjpDV/3e1+zu8cZy6HtvbvCfZlNq1qERS2y/ygVHdGh+A+SblxMy2g
-         gZZ0ttmZ+Du/rd+xOPOdT/CxDD+hkB56hMvfASYuXGjub71eAy6w5wgayXNado56Fozb
-         tv9G9Dsu8NGBqEHhfrYe9oi/JWFiUU7eeJ3/+FT9YQeJena19K8VUVo9jdDNznoCDi7E
-         xENHlD8rIeA5/KUIPPwXlfA377j4HiTBTfkXpZuKCbSAfcZRJccgqghhFpIPdMx1eHyD
-         UDTg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719476217; x=1720081017; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KEm0f3yMC1lTsMQP2mEqK6dYKNV66vYfR0qO4oI6gVE=;
+        b=q+HYppaUKsH1WN7Za/nSVU7nH68GK1bwopSsO08cM3caaJllp/EAZErpIYevAYtH8F
+         AoEUctTlEucWxIaBLUa7bWIlLcw3KPXJXq/02xkh3cSbPHy7v5ctGVz0uHIv3J0zq2/c
+         B2hHibpcaB93quLFzlwBkxDNmzCSrd8VhxHW+JownhVpiumKq+XugW/fEd3xeO8NEo+4
+         7AhWIygGvEEgfYCrnn2RsqzuFe/Q/WzFzMarxWzuYI+noSDVvtFrMXwdFOFsMstwrZuK
+         ecSceisTl6oHUArgA+lCfDTKTPEwxJZnG1FojZGT+Ltsjn01oeQisDUOVcZ8vnESHiAP
+         zDCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719475997; x=1720080797;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aqwTrcSYiqQJUhfArYN0dEmmLzN0Z0hlc2lvyFyjTgc=;
-        b=umAW07wBPmi1SAulMmT0LTcXvkehKRiL/nLEsp2VHuJmKZ0VznUWO5fLZmKUIGd/5Z
-         VZRml2cpzF9TMxgLnQQoYiz2hOGTzDIFrP0u1lohQrHED2nuv/hun/VnIeLCbuzDL6nI
-         3kONMwbDmW7JQUW9ILXn1momt/elhozYMA5nXoUZJmRTi60EhYSsEesWLaSDx12K71DW
-         CiYv288DbjBwF63oW+6czqnLt2DI2XzNgLlzTCcTECjycTSIcBLwvqCJ15gu93qQFGA0
-         JER+we1KzlJpoCdc/nbZH9/88vI/4/cO+UeU9TEHWZLqbPtG+Gqi724KLhsKUkK/FTUu
-         C/3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVYrJRP1StiaZuhyOQT9O8pmV3qHZG84K3sfKSZT7peuf+HE39lkw3nkoyDKLiE4TsNpzeqxE1oREtprJFBEyHHk/xN47WlSTN8NcOkLMfqsaF9L3s3UugNw6k1vR+4tzafRJuLxVRuAYisz3w/egBFuQb+yHeU1KhSCibZY0BPWTy3QPU9
-X-Gm-Message-State: AOJu0YyCu+5GU69oewBILCR1/EnkF7IrzCxkudaLqeh0QHrnmQFuB84s
-	e5yZrjsPueauPgZjnxSBOa8Czyx9ksQwJgI497imb9wKYzKUp4ey
-X-Google-Smtp-Source: AGHT+IE0n90VUhe4DUiFkf3qdpni5UChtIA8uA1O2viLG9jXpeWy1fCOwI7kkSkvPn50aebe+Ahylg==
-X-Received: by 2002:a17:902:d4d2:b0:1f7:3a4:f66f with SMTP id d9443c01a7336-1fa23ef7c2cmr141387655ad.43.1719475996534;
-        Thu, 27 Jun 2024 01:13:16 -0700 (PDT)
-Received: from localhost.localdomain ([221.220.128.96])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1faac8f286fsm7548675ad.82.2024.06.27.01.13.12
+        d=1e100.net; s=20230601; t=1719476217; x=1720081017;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KEm0f3yMC1lTsMQP2mEqK6dYKNV66vYfR0qO4oI6gVE=;
+        b=O0Gc92unSjd8o6Tffp0lnJfuOg9+PpJHF9p0S9R+T3VoS8qfOpbqFbBMMHNElyw1Yb
+         IF9CzBwXXSK2EXrtBB3RhOb/IYF0zVBeXLvLsQmXWQOcvOxxlPNsYY047GXZV/UJwGMU
+         4dkuxnCXJgv5eGpIzzZastF1MGTR155G4XHAp1JdklYiwnvmbT4iagYru8pt8pQrl7Vo
+         XStQ6DZj3IFZOs/+iiYtEgKK7tu3RA77TyfCRBGLxtmHx7HEwz/9mx+m3R4iIJyCc29o
+         4eL5b9sDg/AFjJq1rY7U33t7AyxSFaBZc5+24ge2GpS2tsKt2VQErau5G8fGULhOT0AG
+         JbVw==
+X-Forwarded-Encrypted: i=1; AJvYcCUUIbAywXuRik53y3U39xoigb/vVpWCQYRgdrrZ1kP9bll8fN7lgcQNlS3vDGyU09CpXDXBmXs22OlcTxERPZODyNrwhwCAuCXG3Ga/
+X-Gm-Message-State: AOJu0YwNiKjzwD5KQiTPogBMCRvhcrei4g+mNeX5fa8QmlaKDyEGNx1L
+	bt+M7PPx9uY16fvOn/eRkJoEXQTJpjmVUIOfTS2Ys0gyAtnKIu0yLhEgi0+S2/E=
+X-Google-Smtp-Source: AGHT+IG/lOE4K/dxtmNROMYE5tpBQ4PfaZZjQoprWIxtfxc9uup5H2fD6gZ79Ng0DJruLnzyAi0a+w==
+X-Received: by 2002:a2e:9d88:0:b0:2e9:768a:12b0 with SMTP id 38308e7fff4ca-2ec5b36c1bamr95025771fa.50.1719476213391;
+        Thu, 27 Jun 2024 01:16:53 -0700 (PDT)
+Received: from localhost (p50915e7b.dip0.t-ipconnect.de. [80.145.94.123])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42564bc5176sm14283215e9.45.2024.06.27.01.16.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 01:13:16 -0700 (PDT)
-From: Jianfeng Liu <liujianfeng1994@gmail.com>
-To: nicolas.dufresne@collabora.com
-Cc: conor+dt@kernel.org,
-	detlev.casanova@collabora.com,
-	devicetree@vger.kernel.org,
-	ezequiel@vanguardiasur.com.ar,
-	frattaroli.nicolas@gmail.com,
-	heiko@sntech.de,
-	kernel@collabora.com,
-	krzk+dt@kernel.org,
-	linkmauve@linkmauve.fr,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	liujianfeng1994@gmail.com,
-	p.zabel@pengutronix.de,
-	robh@kernel.org,
-	sebastian.reichel@collabora.com,
-	sigmaris@gmail.com
-Subject: Re: [PATCH v7 6/6] arm64: dts: rockchip: Add VPU121 support for RK3588
-Date: Thu, 27 Jun 2024 16:13:10 +0800
-Message-Id: <20240627081310.583427-1-liujianfeng1994@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <f04e25bf3c09c55049775e8f012cb653cb4682ba.camel@collabora.com>
-References: <f04e25bf3c09c55049775e8f012cb653cb4682ba.camel@collabora.com>
+        Thu, 27 Jun 2024 01:16:52 -0700 (PDT)
+Date: Thu, 27 Jun 2024 10:16:51 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: kelvin.zhang@amlogic.com
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-pwm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Junyi Zhao <junyi.zhao@amlogic.com>
+Subject: Re: [PATCH v8 1/2] pwm: meson: Add support for Amlogic S4 PWM
+Message-ID: <ayemo4ysl5qotj4pfmclxdtshoqgybl4xqmrmkmpbd3vsugf47@pgsezohr4vel>
+References: <20240613-s4-pwm-v8-0-b5bd0a768282@amlogic.com>
+ <20240613-s4-pwm-v8-1-b5bd0a768282@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="rsedrqskqx5olerr"
+Content-Disposition: inline
+In-Reply-To: <20240613-s4-pwm-v8-1-b5bd0a768282@amlogic.com>
 
-Hi Nicolas,
 
-On Wed, 26 Jun 2024 13:46:03 -0400, Nicolas Dufresne wrote:
->Just to clarify, since you are right that it won't work well with GStreamer. It
->does work with multiple decoders (it exposes them all), it is simply that it
->will randomly pick one when decoding, and it may not pick the best one.
+--rsedrqskqx5olerr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I have tested rkvdec2 and vpu121 with gstreamer 1.24.2 on rk356x to decode
-a 4K video, and gstreamer always fall with error:
-"v4l2slh264dec0: Failed to configure H264 decoder".
-I guess that's because 1080p vpu is at fdea0000 which is always
-initialized earlier than rkvdec2 at fdf80200, so gstreamer will always
-choose the 1080p decoder.
+Hello,
 
->In the long term, I'd like to stop having to do "like downstream" and expose
->them all. I believe the fix is fairly straightforward in GStreamer. We need to
->expose in the generated element the width/height ranges, and for H.264 the
->supported profiles and level. With that, we at least won't randomly fail at
->decoding 4K, and it should be good enough.
+On Thu, Jun 13, 2024 at 07:46:35PM +0800, Kelvin Zhang via B4 Relay wrote:
+> From: Junyi Zhao <junyi.zhao@amlogic.com>
+>=20
+> Add support for Amlogic S4 PWM.
+>=20
+> Signed-off-by: Junyi Zhao <junyi.zhao@amlogic.com>
+> Signed-off-by: Kelvin Zhang <kelvin.zhang@amlogic.com>
 
-Not only gstreamer, chromium also has similar issue. Chromium will only
-check video resolution globally before starting to use one decoder: if
-there is a 4K decoder detected before, it will mark 4K resolution as
-supported. But when decoding videos, it will choose the first decoder
-supporting profile like H264. So chromium may use a 1080p decoder to
-decode a 4K video.
+Applied this patch with George Stark's Reviewed-by: to
+https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-=
+next
+=2E
 
-Chromium's code about v4l2 is complicated for me. I may create a bug about
-it. But chrome os doesn't support devices with multi v4l2 decoders like
-rockchip's socs, I don't know if they have the motion to fix it quickly.
+You signed your patch using gpg, that's fine. However I failed to find
+your key to verify that signature. I suggest you to upload your key to
+https://keys.openpgp.org/ (note you have to register your email
+addresses there to make this useful) and read through
+https://korg.docs.kernel.org/pgpkeys.html#submitting-keys-to-the-keyring
+=2E
 
->For RK3588, which is a new SoC, its not a problem to upstream something that
->does not work with existing userspace. It would only be a regression if we where
->to enable VDPU121 on RK3399, as now updating linux would cause bugs with
->existing userspace.
+Best regards
+Uwe
 
-There is an old soc just like RK3399: RK3328, which also has a 1080p
-hantro h264 decoder and a 4K rkvdec h264 decoder. I guess less people care
-about its mainline decoding with gstreamer/chromium so it still has 1080p
-decoder enabled.
+--rsedrqskqx5olerr
+Content-Type: application/pgp-signature; name="signature.asc"
 
->For users, it would be best if we get this sorted out in GStreamer by the time
->we have a second decoder. Note that I have some vacation coming up this month,
->so there might be extra delays. Yet, its logical to merge this (the "worst"
->decoder) first, since then randomly picking a better one won't be a regression.
+-----BEGIN PGP SIGNATURE-----
 
-Happy vacation days! I will also take a look at chromium's code to see if
-I can fix it.
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZ9H/AACgkQj4D7WH0S
+/k4TGwf/Zq7fInk7zIeHl44mqXSTwaWdnCftKpYsQYNhI57+Pr2qmGnMZfWo9Z0g
+qTQZtc9veyYI7od541wZ6cSYR878sstNK+GZzJe4lYeZpbIhYHaTjk2DzjCh5tjy
+NqgBMCvSSK++TZpBTRPbsYgJwemdFsWlB1UdIAEHXe3wkKhy9Kt6nmw78TqnqwDo
+EELQDqhCzF7qZSYXi5SlpvHQyTuKzPRDosvgoM5HDcyUcnTDQ7qsryPnVBV3OJKc
+P9TwMOPaBCckz4MnXpHAw8SfRKYQ/INNLRd9Cng5l2npcVy7FBZ7ZHvfN40xZtlf
+wXZAead9xYAyIMZ5LyDLhS0MjgXbxA==
+=wNYU
+-----END PGP SIGNATURE-----
 
-Best regards,
-Jianfeng
+--rsedrqskqx5olerr--
 
