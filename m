@@ -1,88 +1,111 @@
-Return-Path: <linux-kernel+bounces-231980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EC6F91A11B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:09:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EA4691A122
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:10:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF0EF1C21759
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 08:09:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07F32286393
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 08:10:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1DC57347E;
-	Thu, 27 Jun 2024 08:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F987BB14;
+	Thu, 27 Jun 2024 08:09:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z8hzy0g1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mork.no header.i=@mork.no header.b="UhgkfjoX"
+Received: from dilbert.mork.no (dilbert.mork.no [65.108.154.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6FE223BE;
-	Thu, 27 Jun 2024 08:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99708137930;
+	Thu, 27 Jun 2024 08:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.108.154.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719475770; cv=none; b=MSXPrsV3bmKySgZmbElfhxsBFSxD8dr9pxmUQm0ETzpgth3aPeAu8GrERMthwidPp8W+4K3xjbPiO4CNqIRZ8EMkQa2BrkYNrDTAJHUPI3WtJvfWsPgLh59w57V3qrEPtl8GUWCPFk0EjE4Ot3K6Emhj4NAZ5Mi+uBg8zki5gio=
+	t=1719475791; cv=none; b=Ts55XxiBX8UBJearhU1UZHOo95OzfWAhQJ650oKI7sxfmZOI9Vnmiqw2Pj/6lfegOSIvUl9Ja3QO/eJkj2VJNJwg0ljvl0sDKqnshbiAvi4XCMrk3NIhNpp+xNGI3CzMLD5Q7t+vmS4RGpONCr0u3SoY9kOcQSaAvobgLp6rUYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719475770; c=relaxed/simple;
-	bh=ux6VK6OgKfxrD3reF2GyyseKF9sQnDr7S0hNOTb9Psc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=T0MwoeReQa6tpOmOmmtrzUN3xagYxgwavVhvda80JYpDhiS8vbaNOSoSRNNL+du/EATmOyu1bKQU+MQV6X8TQmtjk9hQjfZ5padxrbRGg5RvpWb3A4vT1qtcEWmWE5lbGl2re4tTIRC2PTOBClAbc2lj1CY7EwKeb9M39XyyiNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z8hzy0g1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDA1DC2BBFC;
-	Thu, 27 Jun 2024 08:09:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719475769;
-	bh=ux6VK6OgKfxrD3reF2GyyseKF9sQnDr7S0hNOTb9Psc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Z8hzy0g1LPbLFsSaJvHMdgFhv5bh1C0bKPqi4CoNZbJQoiy/JTiv9bSvwwZ39G6gh
-	 5/D35OL5Fe9wVdR8Iiqqd4OJAQcr8wj1T1IMN7xcRrYQx4pzfZb+7RRINKvS7ZN+32
-	 cMSuhU7imBYiYDStN5gTmCYEua46f/VUwdrHOADZmXRiPj/4RCnVDNyXUD3VW87X9j
-	 51+MOR1kdR4lBGBQ0gs2PtqU1v8pOz5pNLBe50i7O/rQRMAFhvlziuOjIPtyKuQqvg
-	 ds7sJ1XlTGNTLwtzqhMTiGQftmv/rO40XthhoLK/3cTtJZvYubDHTHZ1uLVyB6pbfb
-	 vIEOWbvqp3bBg==
-From: Lee Jones <lee@kernel.org>
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
- Miaoqian Lin <linmq006@gmail.com>, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, 
- =?utf-8?q?Herv=C3=A9_Codina?= <herve.codina@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-leds@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240625-led-class-device-leak-v2-1-75fdccf47421@bootlin.com>
-References: <20240625-led-class-device-leak-v2-1-75fdccf47421@bootlin.com>
-Subject: Re: (subset) [PATCH v2] Revert "leds: led-core: Fix refcount leak
- in of_led_get()"
-Message-Id: <171947576772.2875250.15838690035445924875.b4-ty@kernel.org>
-Date: Thu, 27 Jun 2024 09:09:27 +0100
+	s=arc-20240116; t=1719475791; c=relaxed/simple;
+	bh=4wqX6OAAhotGiMku/AG1t7B/YGfc5JqSZyFMKW/QnKU=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=Y93rnyZywGk1APcOrCay5yTTSGOGTAkrHxbbijBdD5gpfxK3UoZiiQ7C1026M84HAUrpflSjBCE9Ve8IriZDijZw8sPtHTwZFd7QzDnPYD/x8dBzNzJl+d/WDBGhkTXfZT/IBAvytknvYNgtIHXg4q954Cyn9F2KhXDPhMxBLhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mork.no; spf=pass smtp.mailfrom=miraculix.mork.no; dkim=pass (1024-bit key) header.d=mork.no header.i=@mork.no header.b=UhgkfjoX; arc=none smtp.client-ip=65.108.154.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mork.no
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=miraculix.mork.no
+Received: from canardo.dyn.mork.no ([IPv6:2a01:799:10da:6900:0:0:0:1])
+	(authenticated bits=0)
+	by dilbert.mork.no (8.17.1.9/8.17.1.9) with ESMTPSA id 45R89VNZ857280
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
+	Thu, 27 Jun 2024 09:09:33 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mork.no; s=b;
+	t=1719475771; bh=4wqX6OAAhotGiMku/AG1t7B/YGfc5JqSZyFMKW/QnKU=;
+	h=From:To:Cc:Subject:References:Date:Message-ID:From;
+	b=UhgkfjoXY97WOWqQYRrVNEqClvjsqERPojeO+w1hx2OGPhBWiEfba9JszUaSTcJVe
+	 mwR0ZqC/Z8D/BfBgeqT3lsEs+MLrjtGvMKxKbNJ8cnvhaB41AZJZOo3yH4jVHdK/gL
+	 cawFB5JhN2seAloN3wpKU9fG0+rI4OeddTjoS7Bk=
+Received: from miraculix.mork.no ([IPv6:2a01:799:964:4b0a:9af7:269:d286:bcf0])
+	(authenticated bits=0)
+	by canardo.dyn.mork.no (8.17.1.9/8.17.1.9) with ESMTPSA id 45R89V4D3809957
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
+	Thu, 27 Jun 2024 10:09:31 +0200
+Received: (nullmailer pid 2347208 invoked by uid 1000);
+	Thu, 27 Jun 2024 08:09:31 -0000
+From: =?utf-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>
+To: Johan Hovold <johan@kernel.org>
+Cc: linux-usb@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] USB: serial: option: add Fibocom FM350-GL
+Organization: m
+References: <20240626133223.2316555-1-bjorn@mork.no>
+	<Zn0WSAHHQQr61-Og@hovoldconsulting.com>
+Date: Thu, 27 Jun 2024 10:09:31 +0200
+In-Reply-To: <Zn0WSAHHQQr61-Og@hovoldconsulting.com> (Johan Hovold's message
+	of "Thu, 27 Jun 2024 09:35:36 +0200")
+Message-ID: <87ed8i958k.fsf@miraculix.mork.no>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Virus-Scanned: clamav-milter 1.0.3 at canardo
+X-Virus-Status: Clean
 
-On Tue, 25 Jun 2024 10:34:38 +0200, Luca Ceresoli wrote:
-> This reverts commit da1afe8e6099980fe1e2fd7436dca284af9d3f29.
-> 
-> Commit 699a8c7c4bd3 ("leds: Add of_led_get() and led_put()"), introduced in
-> 5.5, added of_led_get() and led_put() but missed a put_device() in
-> led_put(), thus creating a leak in case the consumer device is removed.
-> 
-> Arguably device removal was not very popular, so this went apparently
-> unnoticed until 2022. In January 2023 two different patches got merged to
-> fix the same bug:
-> 
-> [...]
+Johan Hovold <johan@kernel.org> writes:
+> On Wed, Jun 26, 2024 at 03:32:23PM +0200, Bj=C3=B8rn Mork wrote:
+>> FM350-GL is 5G Sub-6 WWAN module which uses M.2 form factor interface.
+>> It is based on Mediatek's MTK T700 CPU. The module supports PCIe Gen3
+>> x1 and USB 2.0 and 3.0 interfaces.
+>>=20
+>> The manufacturer states that USB is "for debug" but it has been
+>> confirmed to be fully functional, except for modem-control requests on
+>> some of the interfaces.
+>>=20
+>> USB device composition is controlled by AT+GTUSBMODE=3D<mode> command.
+>> Two values are currently supported for the <mode>:
+>>=20
+>> 40: RNDIS+AT+AP(GNSS)+META+DEBUG+NPT+ADB
+>> 41: RNDIS+AT+AP(GNSS)+META+DEBUG+NPT+ADB+AP(LOG)+AP(META)(default value)
+>
+> The order here does not seem to match the usb-devices output below (e.g.
+> with ADB as interface 3 and 5, respectively).=20
+>
+> Could you just update these two lines so we the interface mapping right?
 
-Applied, thanks!
+Thanks, I didn't notice that.
 
-[1/1] Revert "leds: led-core: Fix refcount leak in of_led_get()"
-      commit: 940b27161afc6ec53fc66245a4fb3518394cdc92
+This part was copied from the Fibocom AT+GTUSBMODE documentation and
+seems to list supported functions independently of the resulting USB
+interface order.
 
---
-Lee Jones [李琼斯]
+I'm afraid I can't verify the actual order since I don't have access to
+this module myself, and there is no way to tell the AT, GNSS, META,
+DEBUG, NPT and LOG functons from eacohother based on USB descriptors.
 
+The best I can do is dropping these two lines. Is that better?
+
+
+
+Bj=C3=B8rn
 
