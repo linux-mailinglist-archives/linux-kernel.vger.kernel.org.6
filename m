@@ -1,107 +1,106 @@
-Return-Path: <linux-kernel+bounces-233117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4293D91B268
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 00:54:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B38AD91B26D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:00:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBC411F23725
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:54:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F8ED284C3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 591771A2C16;
-	Thu, 27 Jun 2024 22:54:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952A61A2C1C;
+	Thu, 27 Jun 2024 23:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="1f+ja6sy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iB/M+Vby"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98633131E41;
-	Thu, 27 Jun 2024 22:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1FC1CA9F;
+	Thu, 27 Jun 2024 23:00:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719528866; cv=none; b=gH4i5rwPanuj7PtD3VBGBMTK7hTLd3JqUmwRnmME9kxdA8zzHBf0jJ8Cpu2gUkckoSkhWo/XcAfXIkw+C9EpHVGLG4jdFMpcUcXPjSiNBMNLj2Uo0xeO8EJeh6qhM64l0Q2m07ETtBgXiUTWlN8vILATNZoXBRzZ3lNckxnLqXM=
+	t=1719529235; cv=none; b=WRqgJxzhyRHD+oiOpKA7zl6b8OXjXVgEN5EjSCou8cvEFPX9ZBZYbKxqt5hMIqBbYamQoJYTc/5DXt+fhztLx8VI4HwIxRxeHdUAwxC+9ykBVONz7WF4t46sdh5asFxHnP2ohYI42etvSiUCWo8h5U/gPrrRBwfb9MVzrO+VIFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719528866; c=relaxed/simple;
-	bh=+qEPYpz8xtAY3td5Z6Cp6xlrXoZsas6tJ0SWNWrPBrE=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=OVDkxpPm2JtAp70Nxydl5CfAVLjKpakal9D6JuLpsYBIiOt+fv2MURHooaDcY+acIEBZEROw21JcuWtOgmDg2nxvDwb5Vb2gY+fhjEOlX/A7x3fyX9jTzc8+Np+0UqgKLeYtXxZwmtmbtuNeFQqo3FZwiNMWh54uMXQXSsdaki4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=1f+ja6sy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 056ABC2BBFC;
-	Thu, 27 Jun 2024 22:54:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1719528866;
-	bh=+qEPYpz8xtAY3td5Z6Cp6xlrXoZsas6tJ0SWNWrPBrE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=1f+ja6syF1eHjxkjAo9/tlTkfg97XktIheL7Mj0c0QPK3G2R5zsF3qwIHDYEK6zU2
-	 X+b68C3cQ8uToCehyGamUMQv5hiWgQCeG411Lmq1XzJaIUoa65M0gCHk2lQRDMuIRS
-	 Hk9VPY3PcVUpXSzppOP2+FlJ1I5VW7mg1e7+fxiw=
-Date: Thu, 27 Jun 2024 15:54:25 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Yang Shi <yang@os.amperecomputing.com>
-Cc: peterx@redhat.com, yangge1116@126.com, david@redhat.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- Vivek Kasireddy <vivek.kasireddy@intel.com>
-Subject: Re: [v2 PATCH] mm: gup: do not call try_grab_folio() in slow path
-Message-Id: <20240627155425.a31792e7c4709facfcbd417c@linux-foundation.org>
-In-Reply-To: <20240627221413.671680-1-yang@os.amperecomputing.com>
-References: <20240627221413.671680-1-yang@os.amperecomputing.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719529235; c=relaxed/simple;
+	bh=CIO3N+TLnePbA2/TejlgJ3gpGMe8zDGVeHZgQHrVq7o=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=ChjBZjMvWhz9mpL6vy3JmC0rwCYoBbscXyhkecUC5dAlaeE6E7Q/VwO/YhsjC8X5pEXW/t+W1je6D9re8clNcCA5gT434NXnj3XYZdPnUNWG8bXBXXyI2ya197Z2t6qIbcT2EixYZ9anIf+iLmfMnW8J5lxEHSCg/4MEnqe3YIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iB/M+Vby; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 41567C32786;
+	Thu, 27 Jun 2024 23:00:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719529235;
+	bh=CIO3N+TLnePbA2/TejlgJ3gpGMe8zDGVeHZgQHrVq7o=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=iB/M+Vby4NoZa6eTHGVCNajOD5zqg8dxjfdG6v5M/i+KhcA77g3kDSoQWHc3Kq8Kx
+	 IOx9Ed0iijSjR97z7w2bqYSvx4iJXcZ4EXd+EVx0OlJS6e54YiOYHa3lpajtdCvDuN
+	 I1EG/+D/Yvkgb1lx8JlrDzieiz5W8WPp8/G3okvRqiMS6VXliO/SFjaIbq7IlMiJaR
+	 BHfu9stTZT8cctdHTn5YDugC7iWkAhjOJZ41hgHheEoE7bXCHIGQQMEYDyq5qdTiF2
+	 HSLZBWSSbOS59F3yu/3UsNtBQ0ck7AUUcqH+bJ7XOK5ZP5q2ea61htpEksyS0spTsI
+	 aSS9I10vSiTqw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 2614FC43335;
+	Thu, 27 Jun 2024 23:00:35 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v3 0/7] selftests: net: Switch pmtu.sh to use the
+ internal ovs script.
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171952923514.28606.15428721836548855074.git-patchwork-notify@kernel.org>
+Date: Thu, 27 Jun 2024 23:00:35 +0000
+References: <20240625172245.233874-1-aconole@redhat.com>
+In-Reply-To: <20240625172245.233874-1-aconole@redhat.com>
+To: Aaron Conole <aconole@redhat.com>
+Cc: netdev@vger.kernel.org, dev@openvswitch.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ pshelar@ovn.org, davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, shuah@kernel.org, sbrivio@redhat.com, amorenoz@redhat.com,
+ horms@kernel.org
 
-On Thu, 27 Jun 2024 15:14:13 -0700 Yang Shi <yang@os.amperecomputing.com> wrote:
+Hello:
 
-> The try_grab_folio() is supposed to be used in fast path and it elevates
-> folio refcount by using add ref unless zero.  We are guaranteed to have
-> at least one stable reference in slow path, so the simple atomic add
-> could be used.  The performance difference should be trivial, but the
-> misuse may be confusing and misleading.
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Tue, 25 Jun 2024 13:22:38 -0400 you wrote:
+> Currently, if a user wants to run pmtu.sh and cover all the provided test
+> cases, they need to install the Open vSwitch userspace utilities.  This
+> dependency is difficult for users as well as CI environments, because the
+> userspace build and setup may require lots of support and devel packages
+> to be installed, system setup to be correct, and things like permissions
+> and selinux policies to be properly configured.
 > 
-> In another thread [1] a kernel warning was reported when pinning folio
-> in CMA memory when launching SEV virtual machine.  The splat looks like:
-> 
-> [  464.325306] WARNING: CPU: 13 PID: 6734 at mm/gup.c:1313 __get_user_pages+0x423/0x520
-> [  464.325464] CPU: 13 PID: 6734 Comm: qemu-kvm Kdump: loaded Not tainted 6.6.33+ #6
-> [  464.325477] RIP: 0010:__get_user_pages+0x423/0x520
-> [  464.325515] Call Trace:
-> [  464.325520]  <TASK>
-> [  464.325523]  ? __get_user_pages+0x423/0x520
-> [  464.325528]  ? __warn+0x81/0x130
-> [  464.325536]  ? __get_user_pages+0x423/0x520
-> [  464.325541]  ? report_bug+0x171/0x1a0
-> [  464.325549]  ? handle_bug+0x3c/0x70
-> [  464.325554]  ? exc_invalid_op+0x17/0x70
-> [  464.325558]  ? asm_exc_invalid_op+0x1a/0x20
-> [  464.325567]  ? __get_user_pages+0x423/0x520
-> [  464.325575]  __gup_longterm_locked+0x212/0x7a0
-> [  464.325583]  internal_get_user_pages_fast+0xfb/0x190
-> [  464.325590]  pin_user_pages_fast+0x47/0x60
-> [  464.325598]  sev_pin_memory+0xca/0x170 [kvm_amd]
-> [  464.325616]  sev_mem_enc_register_region+0x81/0x130 [kvm_amd]
-> 
-> ...
->
-> Fixes: 57edfcfd3419 ("mm/gup: accelerate thp gup even for "pages != NULL"")
-> Cc: <stable@vger.kernel.org> [6.6+]
+> [...]
 
-So we want something against Linus mainline for backporting ease.
+Here is the summary with links:
+  - [net-next,v3,1/7] selftests: openvswitch: Support explicit tunnel port creation.
+    https://git.kernel.org/netdev/net-next/c/f94ecbc92092
+  - [net-next,v3,2/7] selftests: openvswitch: Refactor actions parsing.
+    https://git.kernel.org/netdev/net-next/c/37de65a764ed
+  - [net-next,v3,3/7] selftests: openvswitch: Add set() and set_masked() support.
+    https://git.kernel.org/netdev/net-next/c/a4126f90a35f
+  - [net-next,v3,4/7] selftests: openvswitch: Add support for tunnel() key.
+    https://git.kernel.org/netdev/net-next/c/fefe3b7d6bec
+  - [net-next,v3,5/7] selftests: openvswitch: Support implicit ipv6 arguments.
+    https://git.kernel.org/netdev/net-next/c/51458e1084d0
+  - [net-next,v3,6/7] selftests: net: Use the provided dpctl rather than the vswitchd for tests.
+    https://git.kernel.org/netdev/net-next/c/b7ce46fc614d
+  - [net-next,v3,7/7] selftests: net: add config for openvswitch
+    (no matching commit)
 
->    3. Rebased onto the latest mm-unstable
-
-mm-unstable is quite different - memfd_pin_folios() doesn't exist in
-mainline!
-
-So can you please prepare the fix against current -linus?  I'll hang
-onto this patch to guide myself when I redo Vivek's "mm/gup: Introduce
-memfd_pin_folios() for pinning memfd folios" series on top.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
 
