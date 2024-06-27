@@ -1,87 +1,117 @@
-Return-Path: <linux-kernel+bounces-232954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A25091B074
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:32:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC15591B075
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:32:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34A4A284825
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:32:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74A62282577
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:32:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B40619EEA9;
-	Thu, 27 Jun 2024 20:32:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB1F519E82A;
+	Thu, 27 Jun 2024 20:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="seMWQcWx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eEu9W/17"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF6519DF9F;
-	Thu, 27 Jun 2024 20:32:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECFEF19DF67;
+	Thu, 27 Jun 2024 20:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719520329; cv=none; b=A2Io8zlP35RRyi6kRVZF4gIIqucn2bzD2NYwvQnSddbENsFoq7WBZSDhqiZBl/AzbgOQRHSZhI5gt1VWnPOK1v+53hgF+cGWo+m7gJR+ZmeNXDRjKWD/OoklkIbvc4qKZcqO6XagyILyvCwQwsrT26aotpcPst6krnUq4H1JR1Q=
+	t=1719520346; cv=none; b=GPC0O3wmyKlJybRPxRWO2BSOHxGA3mSGh9skLjWLkczxLAnJUcqXp/KuaoPkL7UkKzjQpqmGQqvIyb47EtE2rWA8rzWF8YJ3bVbS8fryheeWyKSqvMcA8k9uWUixqHuCu1AFn+KeMyly2TMQtFA0L8Rl00uxf/FoH2uPurNZN9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719520329; c=relaxed/simple;
-	bh=f/LUCfA5QLVPUl99ZElq63cLHz53TISpyJapyBPiBF4=;
+	s=arc-20240116; t=1719520346; c=relaxed/simple;
+	bh=v6U7Qf4ZNBZGR0sBVEB+RZMiGfFORW+AzZdlVFXhePM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rch1XmfjKXuPoDgUQ7rC0VzsgCx/EzOdRSWJ96Wi15OlLhuGzlrMY/Pf9MUO9dU0XZfmN3tscujCCYrxEOZh297c5BfuSAdLqHTnTj4Ssc0ALGDWnYnCKUuqF0GekCeqGrx8gJvwcyVPCwTTa8fo3MZ5Fz0j3njcye4eLZKdVGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=seMWQcWx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C2F2C2BBFC;
-	Thu, 27 Jun 2024 20:32:09 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ys7x2/kt/7pd2hf6QQEg8FwHwET8G5wyT2CCg33r2Gl7mkT3LDdoCjllJ5whtOjXgMNKCF60ZTDKbDrEpdp1KT+IvUpw5/oCY0xr7wraOa1uQyK5aLpJuT0hsPc/IqdpVh4GyniV5zlBJS01xoVH8rX9HQJK20Al/Lb+gy/dOIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eEu9W/17; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B179C2BBFC;
+	Thu, 27 Jun 2024 20:32:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719520329;
-	bh=f/LUCfA5QLVPUl99ZElq63cLHz53TISpyJapyBPiBF4=;
+	s=k20201202; t=1719520345;
+	bh=v6U7Qf4ZNBZGR0sBVEB+RZMiGfFORW+AzZdlVFXhePM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=seMWQcWxbnmmUGEsSIBNLCuiNqcp3TmbnpEgEfTuTVTiOz15fREUwIpWJ9urKLU8L
-	 l5SHItAGEgaqRDyuBSJOyhmHGaLcOQP+rZYz3vpO2kSd8oku4FzNZuYaqpXOng7oxd
-	 N8dx/t+9imWpICv1ieMHK9yCjYhOyy7dlpT/yavMarrcVLIWtcOmSL1B516sz9SUg7
-	 0efgzYtLhlPTm/Y03cTDVwMSkeZLt/fjfPeSfjLQ829/TEDYPHYMU2uB6pBjfhLxi6
-	 kvylseYzJSN5cDx3XtYoo2YzNZNHMT50MopJL8beZChVOLNaLEyRAuK120nCknkLrl
-	 7XO/MNd1KwB6A==
-Date: Thu, 27 Jun 2024 14:32:08 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Guillaume Stols <gstols@baylibre.com>
-Cc: linux-iio@vger.kernel.org,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	Beniamin Bia <beniamin.bia@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Stefan Popa <stefan.popa@analog.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	dlechner@baylibre.com, linux-kernel@vger.kernel.org,
-	linux-fbdev@vger.kernel.org, jstephan@baylibre.com,
-	Jonathan Cameron <jic23@kernel.org>, devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH 2/9] dt-bindings: iio: adc: adi,ad7606: comment and sort
- the compatible names
-Message-ID: <171952032004.478307.5280182877867747227.robh@kernel.org>
-References: <20240618-cleanup-ad7606-v1-0-f1854d5c779d@baylibre.com>
- <20240618-cleanup-ad7606-v1-2-f1854d5c779d@baylibre.com>
+	b=eEu9W/17qO5p6tqRNHnuzs911pd34uqlX/oQjgnxI7pQfssfxm6Txbad3UslLcHQH
+	 ufVQISz7PGX0K857yk+5nOYHXFQQli5AIup5JWNsstxl3vjRtHpSb/KCvL9Ks5rcDh
+	 Fv9ekqHfXfypX1L3U4yKfK7VKBFmUVzwtxsq86BXV9LNe9pFMmAUkoFDKvO0ugr3sh
+	 WYaAVwxn+JjVT9g/4OLj9TiIoRwmVl4BGccXXd5UeFDOC4lkIZLu8KBfMm9t2ORMfQ
+	 /VJjPj7oJtVzHS4tZncT/w2hmwiZKy1USTIkaCHam7ztT59XrmQCannVH/ALdl0KZU
+	 k6NCAWJAp8qvQ==
+Date: Thu, 27 Jun 2024 13:32:23 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: "Wang, Weilin" <weilin.wang@intel.com>
+Cc: Ian Rogers <irogers@google.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	"Hunter, Adrian" <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Taylor, Perry" <perry.taylor@intel.com>,
+	"Alt, Samantha" <samantha.alt@intel.com>,
+	"Biggers, Caleb" <caleb.biggers@intel.com>
+Subject: Re: [RFC PATCH v14 0/8] TPEBS counting mode support
+Message-ID: <Zn3MV8lCSHLEEXDG@google.com>
+References: <20240624222026.229401-1-weilin.wang@intel.com>
+ <ZnxW4u_TB5agiFJT@google.com>
+ <CO6PR11MB563505F0D97C0E2D5949F583EED62@CO6PR11MB5635.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240618-cleanup-ad7606-v1-2-f1854d5c779d@baylibre.com>
+In-Reply-To: <CO6PR11MB563505F0D97C0E2D5949F583EED62@CO6PR11MB5635.namprd11.prod.outlook.com>
 
-
-On Tue, 18 Jun 2024 14:02:34 +0000, Guillaume Stols wrote:
-> AD7606-8 is referred to as AD7606 by Analog Devices. This comment aims
-> to avoid confusion. Also the compatible names were not sorted by
-> alphabetical order.
+On Wed, Jun 26, 2024 at 06:17:22PM +0000, Wang, Weilin wrote:
 > 
-> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
-> ---
->  Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
+> > -----Original Message-----
+> > From: Namhyung Kim <namhyung@kernel.org>
+> > Sent: Wednesday, June 26, 2024 10:59 AM
+> > To: Wang, Weilin <weilin.wang@intel.com>
+> > Cc: Ian Rogers <irogers@google.com>; Arnaldo Carvalho de Melo
+> > <acme@kernel.org>; Peter Zijlstra <peterz@infradead.org>; Ingo Molnar
+> > <mingo@redhat.com>; Alexander Shishkin
+> > <alexander.shishkin@linux.intel.com>; Jiri Olsa <jolsa@kernel.org>; Hunter,
+> > Adrian <adrian.hunter@intel.com>; Kan Liang <kan.liang@linux.intel.com>;
+> > linux-perf-users@vger.kernel.org; linux-kernel@vger.kernel.org; Taylor, Perry
+> > <perry.taylor@intel.com>; Alt, Samantha <samantha.alt@intel.com>; Biggers,
+> > Caleb <caleb.biggers@intel.com>
+> > Subject: Re: [RFC PATCH v14 0/8] TPEBS counting mode support
+> > 
+> > On Mon, Jun 24, 2024 at 06:20:16PM -0400, weilin.wang@intel.com wrote:
+> > > From: Weilin Wang <weilin.wang@intel.com>
+> > >
+> > > Changes in v14:
+> > >  - Fix the python import test failure. We cannot support PYTHON_PERF
+> > because it
+> > >  will trigger a chain of dependency issues if we add intel-tpebs.c to it. So,
+> > >  only enable tpebs functions in evsel and evlist when PYTHON_PERF is not
+> > >  defined.
+> > 
+> > I think it's easier if we have Ian's python build cleanup first.
+> > 
+> >   https://lore.kernel.org/linux-perf-users/20240625214117.953777-1-
+> > irogers@google.com
+> > 
+> > Let me take a look at it..
+> 
+> Ok, I will hold the cmd option name update until we conclude on this one. 
+> Thanks a lot!
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Please take a look at the current perf-tools-next branch.
+
+Thanks,
+Namhyung
+
 
 
