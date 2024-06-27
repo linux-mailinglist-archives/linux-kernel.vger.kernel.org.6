@@ -1,175 +1,128 @@
-Return-Path: <linux-kernel+bounces-232848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 861AF91AF05
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:26:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51E9391AF08
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E1EC1C22D97
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:26:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F10451F241CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0961E19B3D2;
-	Thu, 27 Jun 2024 18:25:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B151019AA47;
+	Thu, 27 Jun 2024 18:27:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HMeHWTJa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gwmail.gwu.edu header.i=@gwmail.gwu.edu header.b="VA4SpBYt"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9A319ADA3;
-	Thu, 27 Jun 2024 18:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6664B1CD31
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 18:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719512741; cv=none; b=AzYDpGBy8ISKJieEs5kdPkhQtoBsBc/YQa/SKX/EvD+JBo6wFE5NNGePY1aGmASQpTkDyZ/Y+9xLgyWbnF5f3ySOPK6nWyDrel3hII6Clz5rNAsgxofG1v1oEa8TKv9G0n9zJiwfh986H1E7zeUdhZXiYeJDZ+9ZONw34jL9qQE=
+	t=1719512836; cv=none; b=f/cQsQSQxcQ2dFblqG/z1691Xc+/s2Kv/NGs+BuutJLN684WJjX16I5DSEF0un8XemK/9EbDzE1LBwT9AcTH1DdlkSp9j6pyLnxHtnErBlcOsN9nCp5eoAVueH65Lo30TTErxUgwVHIufUazkpZ+9t7dgatxsVN2jTbqLfwza2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719512741; c=relaxed/simple;
-	bh=PQ2lmzlqL1okTuWQlEsOF7zEOb+8es3MD0eL7BCCv5I=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=ZDv5WbLwWVGGOZCP38zOoFKVPLz5ikHO3fyAJTKIodAVI1M+X7tT0G60S7WDwW+zd21Fks5oOyXcq5HKIAph/OVLKx2Q/N2pVBSifgna8Y0RVO8Ip9BL5LXBLeT625zTntDjBOI9D/RyYWOTsQvFtukmCVaWDw+/ukU9sIu1Kms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HMeHWTJa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37D36C2BBFC;
-	Thu, 27 Jun 2024 18:25:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719512740;
-	bh=PQ2lmzlqL1okTuWQlEsOF7zEOb+8es3MD0eL7BCCv5I=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=HMeHWTJa2cYBnDj13BjeII+XxXCSFp/lozdypx5qlnrWct3GUpUDIgCzjxywsU9pF
-	 oyTqvXRZvvkuf8S4i50vedPn9mZc5kF7IDrbLRJM9QypPe8gImDldn7zRxeX1hnjtF
-	 KuWLcxgDVU03l1LxbtOF9hUHZQZUqyDJ/8kSchnyMZA45sRfO7/6BwND54SPbVtM5G
-	 2D9D2Zb0E2CBvnJYaUPC1XwSbfZQFEjo46KruupRvoQ4FnXt+rsL5IG11bCHkqTSRo
-	 d0Lj2C/bxQAXb21xIxd2ubMh7Fv+U9vJ6ERRmbXKYLP0p2P4PoEU26MHQ+wehCDXgE
-	 5jM2iwP8QY0iQ==
-From: Kalle Valo <kvalo@kernel.org>
-To: James Prestwood <prestwoj@gmail.com>
-Cc: Baochen Qiang <quic_bqiang@quicinc.com>,  Paul Menzel
- <pmenzel@molgen.mpg.de>,  linux-wireless@vger.kernel.org,
-  ath10k@lists.infradead.org,  LKML <linux-kernel@vger.kernel.org>
-Subject: Re: invalid vht params rate 1920 100kbps nss 2 mcs 9
-References: <fba24cd3-4a1e-4072-8585-8402272788ff@molgen.mpg.de>
-	<1faa7eee-ed1e-477b-940d-a5cf4478cf73@gmail.com>
-	<87iky7mvxt.fsf@kernel.org>
-	<37ba6cb0-d887-4fcf-b7dc-c93a5fc5900f@gmail.com>
-	<875xu6mtgh.fsf@kernel.org>
-	<f7faff80-864a-4411-ad28-4f1151bc1e51@quicinc.com>
-	<d9f95dcc-6343-4af3-8acc-a150fb4e5923@gmail.com>
-Date: Thu, 27 Jun 2024 21:25:37 +0300
-In-Reply-To: <d9f95dcc-6343-4af3-8acc-a150fb4e5923@gmail.com> (James
-	Prestwood's message of "Thu, 27 Jun 2024 10:42:40 -0700")
-Message-ID: <87a5j6gs4e.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1719512836; c=relaxed/simple;
+	bh=qGmZ54javUBer9i48bf17GmuVyc0Ot8E5Nz9k8mzUBM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=bRV+ZvGrGrmtGWOzk42IPzikXgQozPaWVHyULDpHggcvdMxrEvQen1iHDe1C4SXm2ZnAJXHMQDchPBrHFBKhKaSYiWUdY3uQlRoMin+0c1cF+wgN63Vk/VgJnf5JipW2kIldmbL+XbHF/6GWS7FrIzrb4FHT92dCAatAhqlh2D0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gwmail.gwu.edu; spf=pass smtp.mailfrom=gwmail.gwu.edu; dkim=pass (2048-bit key) header.d=gwmail.gwu.edu header.i=@gwmail.gwu.edu header.b=VA4SpBYt; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gwmail.gwu.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gwmail.gwu.edu
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f9e2affc8cso54117355ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 11:27:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gwmail.gwu.edu; s=google; t=1719512833; x=1720117633; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=puKEntbYEmMEidhzP0NA7FT52xgsmmmBOCRFF0y7bVk=;
+        b=VA4SpBYtlan5nirASRC5+KW85cp1liH+UukJbHGHuIeSSzDRdwvcfaGKIZ2iLaVEzp
+         udeMRxRRseKmdgSANlDFnXO5OhkdouyAI75ygRt3wunIjeyA4CeKaVDxSeGeBsK+PSUQ
+         oM7Ah+Jq+MqOqCLoSqlHqlWhx6UfpKYRFzbqqRRjsQO9gY8PHb/1IZPEU1/K3isTdoFZ
+         WfJT52Gv24Gyhz6obr9XVpty3FHPRst35bbZM3xSd5fRdIjllQvs/exbcDFcgKezx3Ov
+         rU8FnigAmkqbO1LqThohRaKzTP4doWLaFlESbSkLHTeJCNWIZEZL7RXlBMRO8pVS19Hf
+         W/qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719512833; x=1720117633;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=puKEntbYEmMEidhzP0NA7FT52xgsmmmBOCRFF0y7bVk=;
+        b=m+DcsDPDeHBtYgvoofI5iDn/DhFop7y2Gu/8l8iSHVGRaguuSCwQOiOSRrYcDjVfeV
+         GwoTXelhDO1XBDObf687Aa5YnFFKYsR2J615evLD/WmVMMKaIkvC3LLjCUr9gpHgy8T3
+         eO394gCBjjUgtk/9i2N1bbfhhe1Mdv46vW9RRCOQxoiLYzDVfZgJKijswxGmelJj8Y26
+         icl6H2YxNiWqh7ZyEe43nS3T6Rxf6yKKtSvxO2+cnhjSFm+a7cnVxEuZD/MLDvSFMV1V
+         qUWruuOicXX1q/BodRmYi2f7wgW48jhibonvSaYnuDiXy/huhgCPV8eS5JS5S6xofACX
+         W3oA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxSds+CDiW1ag4NsCeOesMe2zatQi9Prx0/o9ckscZRjsqJFLff4orsEiZQbiclDVj5qGnr9TynOCS8pAjx1YISjVAoe2CTyoSAb4h
+X-Gm-Message-State: AOJu0YwzlwXLN0sjtXWJ6YB1VFuZ2N5wKgaXvsuVdiK7Fax31vANw+ed
+	99rYxLmzMsLkDvWK0akY8ht2eKAuERDpSqpgvxmL2LuyukwAJCW2ai/5zde41Q==
+X-Google-Smtp-Source: AGHT+IE7K7ae4HNLZS6+iF+fFNm5LOjTtJFBS3YMKiPav776AhwOPxZBhDFhHhh9h1LgNxSHFxIFWA==
+X-Received: by 2002:a17:90a:784a:b0:2c4:b515:46d4 with SMTP id 98e67ed59e1d1-2c861224475mr11183473a91.3.1719512833539;
+        Thu, 27 Jun 2024 11:27:13 -0700 (PDT)
+Received: from aw-m18-r1.. (syn-023-241-237-137.res.spectrum.com. [23.241.237.137])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91d3eb34bsm94490a91.56.2024.06.27.11.27.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 11:27:13 -0700 (PDT)
+From: Matthew Schwartz <mattschwartz@gwmail.gwu.edu>
+X-Google-Original-From: Matthew Schwartz <mattschwartz@gwu.edu>
+To: mario.limonciello@amd.com
+Cc: dri-devel@lists.freedesktop.org,
+	hdegoede@redhat.com,
+	johns@valvesoftware.com,
+	linux-kernel@vger.kernel.org,
+	maarten.lankhorst@linux.intel.com,
+	mattschwartz@gwmail.gwu.edu,
+	mattschwartz@gwu.edu,
+	me@kylegospodneti.ch,
+	mripard@kernel.org,
+	tzimmermann@suse.de
+Subject: [PATCH V2 1/2] drm: panel-orientation-quirks: Add quirk for Valve Galileo
+Date: Thu, 27 Jun 2024 11:27:02 -0700
+Message-ID: <20240627182702.85260-1-mattschwartz@gwu.edu>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <a160a3b4-1193-490c-aa25-8761142f4e08@amd.com>
+References: <a160a3b4-1193-490c-aa25-8761142f4e08@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-James Prestwood <prestwoj@gmail.com> writes:
+From: John Schoenick <johns@valvesoftware.com>
 
-> HI Baochen,
->
-> On 6/26/24 1:53 AM, Baochen Qiang wrote:
->>
->> On 6/18/2024 6:33 PM, Kalle Valo wrote:
->>> + baochen
->>>
->>> James Prestwood <prestwoj@gmail.com> writes:
->>>
->>>> Hi Kalle,
->>>>
->>>> On 6/17/24 8:27 AM, Kalle Valo wrote:
->>>>> James Prestwood <prestwoj@gmail.com> writes:
->>>>>
->>>>>> Hi Paul,
->>>>>>
->>>>>> On 6/16/24 6:10 AM, Paul Menzel wrote:
->>>>>>> Dear Linux folks,
->>>>>>>
->>>>>>>
->>>>>>> Linux 6.10-rc3 (commit a3e18a540541) logged the warning below when
->>>>>>> connecting to a public WiFi:
->>>>>>>
->>>>>>>   =C2=A0=C2=A0=C2=A0 ath10k_pci 0000:3a:00.0: invalid vht params ra=
-te 1920 100kbps
->>>>>>> nss 2 mcs 9
->>>>>> This has been reported/discussed [1]. It was hinted that there was a
->>>>>> firmware fix for this, but none that I tried got rid of it. I got fed
->>>>>> up enough with the logs filling up with this I patched our kernel to
->>>>>> remove the warning. AFAICT it appears benign (?). Removing the warni=
-ng
->>>>>> was purely "cosmetic" so other devs stopped complaining about it :)
->>>>>>
->>>>>> [1] https://www.mail-archive.com/ath10k@lists.infradead.org/msg13406=
-.html
->>>>> More reliable link to the discussion:
->>>>>
->>>>> https://lore.kernel.org/ath10k/76a816d983e6c4d636311738396f97971b5523=
-fb.1612915444.git.skhan@linuxfoundation.org/
->>>>>
->>>>> I think we should add this workaround I mentioned in 2021:
->>>>>
->>>>>      "If the firmware still keeps sending invalid rates we should add=
- a
->>>>>       specific check to ignore the known invalid values, but not all =
-of
->>>>>       them."
->>>>>
->>>>>      https://lore.kernel.org/ath10k/87h7mktjgi.fsf@codeaurora.org/
->>>>>
->>>>> I guess that would be mcs =3D=3D 7 and rate =3D=3D 1440?
->>>> I think its more than this combination (Paul's are different).
->>> Good point.
->>>
->>>> So how many combinations are we willing to add here? Seems like that
->>>> could get out of hand if there are more than a few invalid
->>>> combinations.
->>> Yeah, but there haven't been that many different values reported yet,
->>> right? And I expect that ath10k user base will just get smaller in the
->>> future so the chances are that we will get less reports.
->>>
->>>> Would we also want to restrict the workaround to specific
->>>> hardware/firmware?
->>> Good idea, limiting per hardware would be simple to implement using
->>> hw_params. Of course we could even limit this per firmware version using
->>> enum ath10k_fw_features, but not sure if that's worth all the extra wor=
-k.
->>>
->>> Baochen, do you know more about this firmware bug? Any suggestions?
->>
->> OK, there are two issues here:
->>
->> 1. invalid HT rate: "ath10k_pci 0000:02:00.0: invalid ht params rate
->> 1440 100kbps nss 2 mcs 7".
->>
->> As commented by Wen quite some time ago, this has been fixed from
->> firmware side, and firmware newer than [ver:241] has the fix
->> included.
->
-> Thanks for pointing this out, I guess I didn't look close enough at
-> the log and missed "ht" vs "vht" when I brought it up on that older
-> thread. I thought i was seeing the same problem even with newer
-> firmware.
->>
->> 2. invaid VHT rate: "ath10k_pci 0000:3a:00.0: invalid vht params
->> rate 1920 100kbps nss 2 mcs 9".
->>
->> After checking with firmware team, I thought this is because there
->> is a mismatch in rate definition between host and firmware: In host,
->> the rate for 'nss 2 mcs 9' is defined as {1560, 1733}, see
->> supported_vht_mcs_rate_nss2[]. While in firmware this is defined as
->> {1730, 1920}. So seems we can update host definition to avoid this
->> issue.
->
-> That would be great!
+Valve's Steam Deck Galileo revision has a 800x1280 OLED panel
 
-Indeed! Baochen, can you work on a patch for ath10k to fix this?
+Suggested-by: John Schoenick <johns@valvesoftware.com>
+Link: https://gitlab.com/evlaV/linux-integration/-/commit/d2522d8bf88b35a8cf6978afbbd55c80d2d53f4f
+Signed-off-by: Matthew Schwartz <mattschwartz@gwu.edu>
+---
+ drivers/gpu/drm/drm_panel_orientation_quirks.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
---=20
-https://patchwork.kernel.org/project/linux-wireless/list/
+diff --git a/drivers/gpu/drm/drm_panel_orientation_quirks.c b/drivers/gpu/drm/drm_panel_orientation_quirks.c
+index 3d127127e7cb..ac8319d38e37 100644
+--- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
++++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
+@@ -427,6 +427,13 @@ static const struct dmi_system_id orientation_data[] = {
+ 		  DMI_EXACT_MATCH(DMI_PRODUCT_VERSION, "1"),
+ 		},
+ 		.driver_data = (void *)&lcd800x1280_rightside_up,
++	}, {	/* Valve Steam Deck */
++		.matches = {
++		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Valve"),
++		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Galileo"),
++		  DMI_EXACT_MATCH(DMI_PRODUCT_VERSION, "1"),
++		},
++		.driver_data = (void *)&lcd800x1280_rightside_up,
+ 	}, {	/* VIOS LTH17 */
+ 		.matches = {
+ 		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "VIOS"),
+-- 
+2.45.2
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
-hes
 
