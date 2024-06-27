@@ -1,93 +1,135 @@
-Return-Path: <linux-kernel+bounces-231809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14A8D919E72
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 06:59:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58DF2919E79
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:02:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 481671C22F21
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 04:59:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E4DE1F25361
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 05:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6DDA1C2AD;
-	Thu, 27 Jun 2024 04:59:04 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8611C6B5;
+	Thu, 27 Jun 2024 05:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mrs/sFje"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A511B949
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 04:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84DF417BB7;
+	Thu, 27 Jun 2024 05:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719464344; cv=none; b=K/6s0PTGJqXWo9nEhRa0IS2xVkPRkPEdYwjKwmkTqAZxBSwkd3rJMuosWu39/MjOETHgP7RmCjWPWRVgcMeP3309vxLz5cAXU6et0+Ux6SZhk63lH3prd4v4JPfefxlaKmAF/Ju3q4MKo/hBZH1l8ykoBMXLZI4hPMQY2mstyR4=
+	t=1719464518; cv=none; b=DSK9ujX4Bk/wWPFVOrThSPA5Th14uz30kBtySvjN8yGBkjanuIUXIv9yX39EZ3y8FamFfcnscxeDscm+SV4uQHQpqaCDoepNRleGrWuwKUFsQfJkXa7AhthwZ+4Yy9Jsa0EPFAxA5T+kvzPnBy9SPySX8FThAKSs4J1hUqNhI4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719464344; c=relaxed/simple;
-	bh=IkQsrKKUn8XRTQXTllxQe4gYZgzHBsRviOw2r7w+Krc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=jLKeoCWX/8joDSysqKvQ/dg/RXugJVt9NxcYdXmce0hpl4wY9opM975DWdweSk4uWb2wPhHoic3dufJg5tm7gchI/jZRt5IJzR/eL/xGPJwQ6um9uHg2zEAJsEJZ75Utjfe41i+mG94AaM39CrcgGzJs1fJmV/1tRFy3OHH62ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-37715aeede6so36883755ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 21:59:02 -0700 (PDT)
+	s=arc-20240116; t=1719464518; c=relaxed/simple;
+	bh=neSvzffn7aVOZHHBR80gHa/jIr/IAwkAvGDm0NDaxHM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=JobiIUyrU+HleA50yw5CClA82/OHUVss98dil3sR5CSNQ91qRVkUf1E+OL3u4HMq+DBL0HEu1nu0HFSZ+0MB5kiQ4ZS41qVdaYS+J0ho7u7StOSLPreRtPNXBQbYpqxgwkxz4VmWVWKi7Y/p7dp9cTWm2AfkLEZIBAV7eV64rB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mrs/sFje; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ee483284b4so825081fa.1;
+        Wed, 26 Jun 2024 22:01:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719464515; x=1720069315; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=UXx9V3mIBIPJ0R/DpHVeLVStS2HGhaz/07TcRzXhw+0=;
+        b=mrs/sFjeq8WnmWdNVyKgD+m3wiNOz3Ymtxdwv+n2KUONrq4250lxV/xaQmiEOxjPOH
+         hG9BWbpQ7JmVdy74ovvAO38x9iWc3R1VtIWoBPIXDxlfH7wE3qVtzvwv7lN12uSGFFFY
+         tW5/K4HfDowNPsdXHBZobHj76QWkDKr2hc6PNXOiGpDHIoWX1S7Wv52B1ucY4+FuhIDg
+         S9VzsNh7BwRZo03vn5rV4K2iq+v8r1xW93yxAzNOz8WrWvoGybpIesg55exNFm3Q7bPE
+         bvMFyxgoOX1Lc3BECuct/A/LQ7e49YnSFoFwoj+2Tg/gTTgvPaLwzj/u0pvXEEbUlFiz
+         d9ZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719464342; x=1720069142;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1719464515; x=1720069315;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7VsPizNXofWfwb6ytZE6j9YZ3mxWUXsZqX+k1ZKLAz0=;
-        b=wVZ4Q5vcX/f85YJnT9PPFsQJ6naCXi0Urs96/SOG1OvokfhSoiUfNXySvXkdglE7mp
-         KL8+mEE1j4j35t3PIs3yoGYytnrxG8PRCedLjuY5v8VBFQG4B5zTWq54sU/Pltn+01yq
-         zdhYPUPqSFBohpJ4YC1K1EymG1VcV5uEl2DDLuEe2qnZSGcLbjx5XwG5uoR0G/fk6UaX
-         hyoQXb3c3dNxEolILSPnY/pggPJM/Ww9qyQy803rj+4X/HF8FE0+PkduEJKkwCXeeUG6
-         UrboeMV3KTzHlaKtWG4HNopckYNcCOQJEDFS+itPauDXp/peiT5hzjAOsIvU1kw4lnUL
-         HYBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXn6a0Rlad8WZSOSn4x4pzCRrfIkxtnInhMrO5M/1zBYnBgEx8Fj+4ihfBfInuXhONxlODkvYDNauN7Fc5YAFX4Gwf5LuxIv4BPR+7E
-X-Gm-Message-State: AOJu0Yx8kYAP6diMM3kWrZvM5LN4mbk1rCv+UhIgAh6HWI9eMSZkW1q7
-	d1/TeWo+oKelmpxWAZL5PfSWKu305Pt6A41ikVBpP0FXqmgwcCKzm+aNpWLR48crkzbxkdugzWs
-	cyoaNOuUXgoJG/8GyAKF/9MmU+tQ1NCjtOZ90gQPyvksg5uQGBLb+Q94=
-X-Google-Smtp-Source: AGHT+IHTP9IvArud6LUgveR74LtuG4oMDICVLPPXWnHbW3sLJ/xx54WkI0jfqyPCq8oqZx96CD1XBK9MWwBFCOLfAWpwaE9vRkKL
+        bh=UXx9V3mIBIPJ0R/DpHVeLVStS2HGhaz/07TcRzXhw+0=;
+        b=moam+J2J8R2Gm8DoaksBMz3gfkZgq0tprY7koGk22NCkh/vwUa79P5LJedxCXzX+EV
+         dfv81COxd1IcvURGUmsBv8fhrqfh5xxjTwcfrYEtxSbIGS9kF5lgY0os0cetAJEgFUKT
+         99tUEQ/Z2WTCvSBmTFgrEXB/AKJDMTojapMHtknx7hR2AHcQVeJe/hefca8zHdTVdsHf
+         fRJLWMGZF6lKV2YM0WmzxumisUMXAO3Rd5a9VSW43zj+StUiSldGr+/78DkSi5g6Hc7L
+         /cYE64SX4JFGSXkur3dTxWWmKqs6vzMxN40BI0auTMtD13E689Kipa/0x4ynS0vmqaJO
+         DGcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV8Os0BqjXHyRtfmPuvnKatLwxukTTjsWQtfJ9ta0HZ4+MXmDxXKHpT6Gya3zKmS29TOmdhZctVAywm6FrpsCCQUIit5fzPhL0UyYDbO/RmOgAiPrYMc84+QdGKsws40VC1rvZvE7t/V7M=
+X-Gm-Message-State: AOJu0YwY7cXSx7Trgnk1ED2p0A6spCKBHyF2xUircoRJqyReDOqs3VbY
+	bcrPN2ar36kGQ/jvErIbH5s/1d4orDOis5vglx6PMqahQ8TA07DE
+X-Google-Smtp-Source: AGHT+IGRWcJ+EBLHzrnk9cuOes9LkkVCvSwVRl6Ra+CZF/cW8kdVhXyyFt+q8ZeDUjuJjF4rRVvGyQ==
+X-Received: by 2002:a05:651c:1986:b0:2ec:5365:34d3 with SMTP id 38308e7fff4ca-2ec560e8d60mr110765591fa.1.1719464512392;
+        Wed, 26 Jun 2024 22:01:52 -0700 (PDT)
+Received: from [192.168.0.103] (p57935a9b.dip0.t-ipconnect.de. [87.147.90.155])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c8469016sm46971025e9.41.2024.06.26.22.01.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Jun 2024 22:01:52 -0700 (PDT)
+Message-ID: <3d8b92c4-9562-473a-be47-26785d621cc3@gmail.com>
+Date: Thu, 27 Jun 2024 07:01:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:15c5:b0:375:da97:f21a with SMTP id
- e9e14a558f8ab-3763f6e1665mr12436205ab.3.1719464342366; Wed, 26 Jun 2024
- 21:59:02 -0700 (PDT)
-Date: Wed, 26 Jun 2024 21:59:02 -0700
-In-Reply-To: <0000000000006293f0061bca5cea@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000054b7cc061bd7fdeb@google.com>
-Subject: Re: [syzbot] [net?] general protection fault in coalesce_fill_reply
-From: syzbot <syzbot+e77327e34cdc8c36b7d3@syzkaller.appspotmail.com>
-To: brett.creeley@amd.com, davem@davemloft.net, drivers@pensando.io, 
-	edumazet@google.com, hengqi@linux.alibaba.com, horms@kernel.org, 
-	jiri@resnulli.us, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, shannon.nelson@amd.com, 
-	syzkaller-bugs@googlegroups.com, vladimir.oltean@nxp.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] staging: nvec: Use x instead of x != NULL to improve
+ readability.
+To: Tom Mounet <tommounet@gmail.com>, Marc Dietrich <marvin24@gmx.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, ac100@lists.launchpad.net,
+ linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org, outreachy@lists.linux.dev
+References: <667c8a0c.050a0220.9e3d5.3b80@mx.google.com>
+Content-Language: en-US
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+In-Reply-To: <667c8a0c.050a0220.9e3d5.3b80@mx.google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-syzbot has bisected this issue to:
+On 6/26/24 23:37, Tom Mounet wrote:
+> Issue identified by checkpatch.
+> 
+> Signed-off-by: Tom Mounet <tommounet@gmail.com>
+> ---
+>   drivers/staging/nvec/nvec.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+> index e5ca78e57..814eb121c 100644
+> --- a/drivers/staging/nvec/nvec.c
+> +++ b/drivers/staging/nvec/nvec.c
+> @@ -300,7 +300,7 @@ int nvec_write_sync(struct nvec_chip *nvec,
+>   {
+>   	mutex_lock(&nvec->sync_write_mutex);
+>   
+> -	if (msg != NULL)
+> +	if (msg)
+>   		*msg = NULL;
+>   
+>   	nvec->sync_write_pending = (data[1] << 8) + data[0];
+> @@ -322,7 +322,7 @@ int nvec_write_sync(struct nvec_chip *nvec,
+>   
+>   	dev_dbg(nvec->dev, "nvec_sync_write: pong!\n");
+>   
+> -	if (msg != NULL)
+> +	if (msg)
+>   		*msg = nvec->last_sync_msg;
+>   	else
+>   		nvec_msg_free(nvec, nvec->last_sync_msg);
 
-commit 55a3982ec721dabd5a4c2f16bfb03deb032e45c2
-Author: Shannon Nelson <shannon.nelson@amd.com>
-Date:   Wed Jun 19 00:32:55 2024 +0000
+Hi Tom,
 
-    ionic: check for queue deadline in doorbell_napi_work
+please answer the why also in the description.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11fc181a980000
-start commit:   50b70845fc5c Merge branch 'add-ethernet-driver-for-tehuti-..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=15fc181a980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e78fc116033e0ab7
-dashboard link: https://syzkaller.appspot.com/bug?extid=e77327e34cdc8c36b7d3
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1599901a980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1429e301980000
+The change history is missing.
 
-Reported-by: syzbot+e77327e34cdc8c36b7d3@syzkaller.appspotmail.com
-Fixes: 55a3982ec721 ("ionic: check for queue deadline in doorbell_napi_work")
+If you send in a third version of this patch please use a change 
+history. Description from Dan under:
+https://staticthinking.wordpress.com/2022/07/27/how-to-send-a-v2-patch/
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Thanks for your support.
+
+Bye Philipp
 
