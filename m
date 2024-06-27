@@ -1,269 +1,209 @@
-Return-Path: <linux-kernel+bounces-232940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D42E91B035
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:15:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64D2891B039
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:17:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A5A1B232DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:15:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 878C71C220F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:17:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B7119D8A4;
-	Thu, 27 Jun 2024 20:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF08119DF4B;
+	Thu, 27 Jun 2024 20:17:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZwDuTe9N"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GAAtSPj6"
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9342619CD15
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 20:14:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5A933FD;
+	Thu, 27 Jun 2024 20:17:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719519293; cv=none; b=bQODyMxshgPIPbh8v5GbJiZtIj4d49yITu6W4ZjAyx9R5aOURwXw5Rh+Mo5VhjP4RUFXKLZam9s6o75V7AZ/p91HL4SXcv3RzIw8HC38K4gugIseO10nrfHr6uaYTlOQlRY35Ir1qSpgK62hwd4JEEPEijzphiKyy/ccKcCdKQw=
+	t=1719519461; cv=none; b=OHIBlrBchw5QAeQGISlZAN601eEqmBm9pKvIcx0RufkPfClAeAZrDP5pNmrJIo9M2BKkpniXIk+C0cB/6o7FND/P0L4Yy5kMxIMBDZFiF0vH+nHstwE5dVlsUhmrzKskt1Uyk1M3LFb3GjorSThJ4gedZOYXS4+vQ39upU3XsqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719519293; c=relaxed/simple;
-	bh=uqMmpT6ErT419I1h+FSljhiSBtZrRu6wn1b0k1Lb7Lo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bVVnFXga0TadigXXwrA9ywjfe7YcVEeSsuxLJL8x5OenQWprDVLtZXnUPdgPrz2PS2K3nCNBCaqDC5Hsqbmu+LA3LujG1vidP2bmbZJuu4Axqagn5PVGiPtZoafBMli/Z3MEdBdU2OXSTUS4vAq4F3n1fbV89U/4Qie+0cA8eRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZwDuTe9N; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52cdbc20faeso8204343e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 13:14:51 -0700 (PDT)
+	s=arc-20240116; t=1719519461; c=relaxed/simple;
+	bh=FChDSKktOd/AYanIA7EevJUZD2WcFV4/Er++/7flXhQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=YSXusQFJxudx3Dvl4oweWVfSwvFyKllv9Qlujj4gSMliDrOLv6eOFUX10agPOLlnPw1DktlNjTQ8iYHCLToUkkZ4y60Nm3H/iWqxvZxAancK4S4IQuAr2kBKV3WqIju2IJ1IiUpMkwzZYWUk+MgFYwnp0fonOycPTcvxecU3h6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GAAtSPj6; arc=none smtp.client-ip=209.85.222.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-80f6521eeddso1907639241.0;
+        Thu, 27 Jun 2024 13:17:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719519290; x=1720124090; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+qSjrjHwVZDBImPSY+J+EMCkVAdKCh5wyCZmCHzUKhc=;
-        b=ZwDuTe9Nah2/mQNeLLpHeOnwbecYyjSsqxttGjWphUKp0+QYHbOwrttjkPR5ewAKUK
-         fBI9L5mUN7a2xkxo9So8yL3O4XYW0YXmnSw+BZjYVms/W+6BZ8jcH43hbBTpckSyAdYc
-         Yo1HW3zF5Gr4D0bYS5+HXOEJRZltd3IeygG4P0Qy3tzVSomMWoVgs/Wqqzd7OZMMxnIV
-         Wa1ociPTMkMUKVBhrsfQQ0pR/pRWR0rjsDs7s1xU6uZ8j7I8YRe36D265LxGAzceL23x
-         8uvDCK23/5qHnMsuyW3Q4BzvH2O/4cI3FDVVcXLfcQpNsuXJn46vIpbfjyaNmr9MQcOg
-         7xBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719519290; x=1720124090;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1719519458; x=1720124258; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+qSjrjHwVZDBImPSY+J+EMCkVAdKCh5wyCZmCHzUKhc=;
-        b=kRYox5lZHpCbCFqxuaNCGleFk3whFKx3YD+eT/e840tIQHfEEXjIHNumy8oPvPdAOz
-         M/cD7tOGJOgx2mIx+nz/Jk97e2nmlvkSVbWAiHB3YLfweSHMpG3VEU7EF4tcEsuif2Ot
-         ZIVOQcBDV2Ab5NvY+e0pWaf0azkBVnhQJWEUvD1+RNsCwdJKqA9dVO4S0X8rDjYzrCwa
-         99KmrDIfQ6w5Kj+MC2mz9ElHhXW0IyDy245d0bn8BegThOJgAo9VZT1cCTYY4QtZwWJQ
-         o5vdcDIakGpiRCTzbzmMaYqKYuzsoUeVNGibjWTU6/LnnH8RixoMyIUoFbrW1g2ZQgbK
-         VYaA==
-X-Forwarded-Encrypted: i=1; AJvYcCXJ2esfHxAECEfr+ew5IBGxSYikBLWX7Pr4VTnNNgCLSbW9YMsJGNpCp9Qo4fsq7AmWV//63zzCchL2WPZPjjV8sgbbv5R8D4OeYLoD
-X-Gm-Message-State: AOJu0YwnCOvPmr2f1G2gtv0lQZeHcrJgLW+k4zGAAdneWi7IboTBJrJw
-	2P7SFUGODJHM95G+FJ5BL6XieMPeJscegp9v8fQAM6NxiVwcoCsp0+EzE33385A=
-X-Google-Smtp-Source: AGHT+IEVpthfVjK7rlkJjNHkNoVz5Gaf8ymrlQmVwlRfVmHkt5P6ksUHBGaSYmDMLGYcn3bOYKcWZw==
-X-Received: by 2002:a05:6512:2308:b0:52c:df6a:eb5f with SMTP id 2adb3069b0e04-52ce1ece4a3mr10797409e87.37.1719519289531;
-        Thu, 27 Jun 2024 13:14:49 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab101dbsm40953e87.74.2024.06.27.13.14.48
+        bh=SfWTtRmgo1E8I0TtuekVypKcxx4UC0A4xdyehBHx0NE=;
+        b=GAAtSPj67kHLnW/X6kO0l7H1MJB9dBYL+2uIeub3S7tmQaZgEyqU+CHEnBoF4s6Dmr
+         H8qRmK++yXFtcBf4L/FWGoibASdlUqsA2F8HnZ0oXfq1M9sf703+uDqAXUmyA6P0HuhB
+         J0fZTsGLfS0QkgNiX4dbVAji7outloLXgnR5azLkFn644el+L9ziKXm3UKTTvys7qr6p
+         25n124vgCGXMQwZmDmpwb7otzvBcxmM9Bj4vvqfaPirBOIJVzGT50iunWvN9R46suU4j
+         HhN2Y76gQQOHm5+/E4lrS/57JUm46NWhFcE3OKb7zy48AqzLrWrnzPz1VQGd/5qRF0lp
+         udcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719519458; x=1720124258;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SfWTtRmgo1E8I0TtuekVypKcxx4UC0A4xdyehBHx0NE=;
+        b=ffZVDjHqICPAMqrzZKEXmtFBUonSwcavMlsLZUp1YzdPZ9wSWUJfBcKNXMy9ok/1jg
+         H0aj3Iukw3G676tCK+RgAL8uydy9wF2a2QTg9X3sy5zo6ysZ01vVz5OC7nZyEo2ur9Ax
+         NIQb+R7wxTEJnYgnG7HfgnNJtWKvsgcxYcBv/IHp3WvpV46CQY8AmgJ+E6iGAvG/0+Gv
+         97ZD6QXfqsPYtdSQtpxduTC20JZE49uV7LB17Vt5aYkRDUG8n994jupYdT8zuGLXVmOC
+         QXsel+EOW5gHqTCt+jIFyU9vJ/9dAx2JMWnAH+I/R+px7TYilsg+5PcfOKhFgkz8ESBp
+         9Tyg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/41FEZVUmmC9wxZFSzpwcY3j4FH2vdzF/PSADULu9/dc2MeB+Z150915sYebanWAgSfr0clvZ67pLmtpWwghMXIzMSu5WRT0ursrB6MyhSQbcuUrKfoRvYlZXX0ryNcjNnbjmKYUqwOam6SN23OZ+47NHRBzMjiNz6EIjvR26zGbOVQ==
+X-Gm-Message-State: AOJu0YyuDFFuyxAy5RjAUFbngYhz2vU+Mu0uFTzoxbKdAj0FPBFHz+hJ
+	3n+ngbajbB9Zf2jcJDZCWB1hjUqcVsfWsDA7lOQk+7WOw1jKP/f3oM1R4A==
+X-Google-Smtp-Source: AGHT+IHR0tAYDBylwArb4Spu8TCeyDyzv0vW6zgLAt6R2VTvPr0551huRj1vxUJvSv/B9E8w/0zdIw==
+X-Received: by 2002:a05:6122:4592:b0:4d4:21cc:5f4f with SMTP id 71dfb90a1353d-4ef6a73950emr12317938e0c.11.1719519457919;
+        Thu, 27 Jun 2024 13:17:37 -0700 (PDT)
+Received: from localhost (fwdproxy-nao-115.fbsv.net. [2a03:2880:23ff:73::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b59e609b9asm1691706d6.106.2024.06.27.13.17.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 13:14:48 -0700 (PDT)
-Date: Thu, 27 Jun 2024 23:14:47 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Nikita Travkin <nikita@trvn.ru>, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org
-Subject: Re: [Linux-stm32] [PATCH v2 6/7] usb: typec: ucsi: extract common
- code for command handling
-Message-ID: <bd7imlksghy5iigc75ob3mghm5zqvn5wrotj5fez3hahq2zv6x@l2bx6mbnijgp>
-References: <20240621-ucsi-rework-interface-v2-0-a399ff96bf88@linaro.org>
- <20240621-ucsi-rework-interface-v2-6-a399ff96bf88@linaro.org>
- <160e7af5-29c8-49a6-ae4f-dbfc3dd608c1@foss.st.com>
- <k2q7g6ka34o2vgoy5s64nwixqa6qjaok72fuxgircwseyn2k7z@pm56aurq42n6>
- <3869dcd0-9936-4712-b7ad-3c66cbe4828a@foss.st.com>
- <CAA8EJpqEYRFOZbN55Eh0SisnR1HQ0iseA1L+1n0QxOrspsmLuQ@mail.gmail.com>
- <1ed93216-9445-4b31-85cf-5b7f35ee91c2@foss.st.com>
+        Thu, 27 Jun 2024 13:17:37 -0700 (PDT)
+From: Nhat Pham <nphamcs@gmail.com>
+To: akpm@linux-foundation.org
+Cc: hannes@cmpxchg.org,
+	kernel-team@meta.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	willy@infradead.org,
+	david@redhat.com,
+	ryan.roberts@arm.com,
+	ying.huang@intel.com,
+	viro@zeniv.linux.org.uk,
+	kasong@tencent.com,
+	yosryahmed@google.com,
+	shakeel.butt@linux.dev,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] cachestat: do not flush stats in recency check
+Date: Thu, 27 Jun 2024 13:17:37 -0700
+Message-ID: <20240627201737.3506959-1-nphamcs@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <000000000000f71227061bdf97e0@google.com>
+References: <000000000000f71227061bdf97e0@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1ed93216-9445-4b31-85cf-5b7f35ee91c2@foss.st.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 27, 2024 at 06:49:02PM GMT, Fabrice Gasnier wrote:
-> On 6/27/24 17:58, Dmitry Baryshkov wrote:
-> > On Thu, 27 Jun 2024 at 18:51, Fabrice Gasnier
-> > <fabrice.gasnier@foss.st.com> wrote:
-> >>
-> >> On 6/25/24 18:49, Dmitry Baryshkov wrote:
-> >>> On Tue, Jun 25, 2024 at 05:24:54PM GMT, Fabrice Gasnier wrote:
-> >>>> On 6/21/24 00:55, Dmitry Baryshkov wrote:
-> >>>>> Extract common functions to handle command sending and to handle events
-> >>>>> from UCSI. This ensures that all UCSI glue drivers handle the ACKs in
-> >>>>> the same way.
-> >>>>>
-> >>>>> The CCG driver used DEV_CMD_PENDING both for internal
-> >>>>> firmware-related commands and for UCSI control handling. Leave the
-> >>>>> former use case intact.
-> >>>>>
-> >>>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> >>>>> ---
-> >>>>>  drivers/usb/typec/ucsi/ucsi.c           | 43 +++++++++++++++++++++++++++
-> >>>>>  drivers/usb/typec/ucsi/ucsi.h           |  7 +++++
-> >>>>>  drivers/usb/typec/ucsi/ucsi_acpi.c      | 46 ++---------------------------
-> >>>>>  drivers/usb/typec/ucsi/ucsi_ccg.c       | 21 ++-----------
-> >>>>>  drivers/usb/typec/ucsi/ucsi_glink.c     | 47 ++---------------------------
-> >>>>>  drivers/usb/typec/ucsi/ucsi_stm32g0.c   | 44 ++--------------------------
-> >>>>>  drivers/usb/typec/ucsi/ucsi_yoga_c630.c | 52 ++-------------------------------
-> >>>>>  7 files changed, 62 insertions(+), 198 deletions(-)
-> >>>>>
-> >>>>> diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
-> >>>>> index 4ba22323dbf9..691ee0c4ef87 100644
-> >>>>> --- a/drivers/usb/typec/ucsi/ucsi.c
-> >>>>> +++ b/drivers/usb/typec/ucsi/ucsi.c
-> >>>>> @@ -36,6 +36,48 @@
-> >>>>>   */
-> >>>>>  #define UCSI_SWAP_TIMEOUT_MS       5000
-> >>>>>
-> >>>>> +void ucsi_notify_common(struct ucsi *ucsi, u32 cci)
-> >>>>> +{
-> >>>>> +   if (UCSI_CCI_CONNECTOR(cci))
-> >>>>> +           ucsi_connector_change(ucsi, UCSI_CCI_CONNECTOR(cci));
-> >>>>> +
-> >>>>> +   if (cci & UCSI_CCI_ACK_COMPLETE &&
-> >>>>> +       test_bit(ACK_PENDING, &ucsi->flags))
-> >>>>> +           complete(&ucsi->complete);
-> >>>>> +
-> >>>>> +   if (cci & UCSI_CCI_COMMAND_COMPLETE &&
-> >>>>> +       test_bit(COMMAND_PENDING, &ucsi->flags))
-> >>>>> +           complete(&ucsi->complete);
-> >>>>
-> >>>> Hi Dmitry,
-> >>>>
-> >>>> I've recently faced some race with ucsi_stm32g0 driver, and have sent a
-> >>>> fix for it [1], as you've noticed in the cover letter.
-> >>>>
-> >>>> To fix that, I've used test_and_clear_bit() in above two cases, instead
-> >>>> of test_bit().
-> >>>
-> >>> Could you possible describe, why do you need test_and_clear_bit()
-> >>> instead of just test_bit()? The bits are cleared at the end of the
-> >>> .sync_write(), also there can be no other command (or ACK_CC) submission
-> >>> before this one is fully processed.
-> >>
-> >> Hi Dmitry,
-> >>
-> >> It took me some time to reproduce this race I observed earlier.
-> >> (I observe this during DR swap.)
-> >>
-> >> Once the ->async_control(UCSI_ACK_CC_CI) call bellow gets completed, and
-> >> before the ACK_PENDING bit gets cleared, e.g. clear_bit(ACK_PENDING), I
-> >> get an asynchronous interrupt.
-> >>
-> >> Basically, Then the above complete() gets called (due to
-> >> UCSI_CCI_ACK_COMPLETE & ACK_PENDING).
-> >>
-> >> Subsequent UCSI_GET_CONNECTOR_STATUS command (from
-> >> ucsi_handle_connector_change) will be unblocked immediately due to
-> >> complete() call has already happen, without UCSI_CCI_COMMAND_COMPLETE
-> >> cci flag, hence returning -EIO.
-> > 
-> > But the ACK_CI is being sent as a response to a command. This means
-> > that the ppm_lock should be locked. The UCSI_GET_CONNECTOR_STATUS
-> > command should wait for ppm_lock to be freed and only then it can
-> > proceed with sending the command. Maybe I'm misunderstanding the case
-> > or maybe there is a loophole somewhere.
-> 
-> There's probably also some miss-understanding at my end, I don't get how
-> the ppm_lock would protext from non atomic async_control()/clear_bit().
-> 
-> Let me share some trace here, I hope it can better show the difference
-> at my end when I get the race.
-> I've added some debug prints around these lines, to trace the set/clear
-> of the COMMAND/ACK_PENDING, main commands and cci flags.
-> 
-> normal case is:
-> ---
-> ucsi_send_command_common: UCSI_SET_UOR
-> set:COMMAND_PENDING
-> ucsi_stm32g0_irq_handler
-> ucsi_notify_common: UCSI_CCI_COMMAND_COMPLETE
-> clr:COMMAND_PENDING
-> ucsi_acknowledge: UCSI_ACK_COMMAND_COMPLETE UCSI_ACK_CONNECTOR_CHANGE
-> set:ACK_PENDING
-> ucsi_stm32g0_irq_handler
-> ucsi_notify_common: UCSI_CCI_ACK_COMPLETE
-> clr:ACK_PENDING
-> ucsi_stm32g0_irq_handler
-> ucsi_notify_common: ucsi_connector_change
-> ucsi_send_command_common: UCSI_GET_CONNECTOR_STATUS
-> set:COMMAND_PENDING
-> ucsi_stm32g0_irq_handler
-> ucsi_notify_common: UCSI_CCI_COMMAND_COMPLETE
-> clr:COMMAND_PENDING
-> ucsi_acknowledge: UCSI_ACK_COMMAND_COMPLETE
-> set:ACK_PENDING
-> ucsi_stm32g0_irq_handler
-> ucsi_notify_common: UCSI_CCI_ACK_COMPLETE
-> clr:ACK_PENDING
-> 
-> racy case:
-> ---
-> ucsi_send_command_common: UCSI_SET_UOR
-> set:COMMAND_PENDING
-> ucsi_stm32g0_irq_handler
-> ucsi_notify_common: UCSI_CCI_COMMAND_COMPLETE
-> clr:COMMAND_PENDING
-> ucsi_acknowledge: UCSI_ACK_COMMAND_COMPLETE UCSI_ACK_CONNECTOR_CHANGE
-> set:ACK_PENDING
-> ucsi_stm32g0_irq_handler              <-- up to here nothing supicious
-> ucsi_notify_common: ucsi_connector_change
-> ucsi_notify_common: UCSI_CCI_ACK_COMPLETE
-> ucsi_stm32g0_irq_handler              <-- 2nd IRQ before clr:ACK_PENDING
-> ucsi_notify_common: ucsi_connector_change
-> ucsi_notify_common: UCSI_CCI_ACK_COMPLETE
-> clr:ACK_PENDING
-> ucsi_send_command_common: UCSI_GET_CONNECTOR_STATUS
-> set:COMMAND_PENDING                   <-- completion already done :-(
-> clr:COMMAND_PENDING
-> ucsi_handle_connector_change: GET_CONNECTOR_STATUS failed (-5)
-> 
-> I notice the two conditions are met above: both ucsi_connector_change()
-> and cci ack completed.
-> 
-> This happens before clear_bit(ACK_PENDING), which lead to anticipate
-> completion of the subsequent UCSI_GET_CONNECTOR_STATUS command.
-> 
-> So the test_and_clear_bit() would address a robustness case?
+syzbot detects that cachestat() is flushing stats, which can sleep, in
+its RCU read section (see [1]). This is done in the
+workingset_test_recent() step (which checks if the folio's eviction is
+recent).
 
-Ah, I see. So the race is for the completion. I fear that your solution
-also doesn't fully solve the problem. The event can arrive after setting
-the bit and before sending the command to the hardware. I thought about
-doing various tricks, like reinit_completion or something close, but the
-issue is that test_and_clear_bit() just makes the race window smaller,
-but doesn't eliminate it completely.
+Move the stat flushing step to before the RCU read section of cachestat,
+and skip stat flushing during the recency check.
 
-It seems the only practical way to handle that is by making sure that
-ucsi_notify_common() can sleep and locks the ppm_lock while
-processing the CCI.
+[1]: https://lore.kernel.org/cgroups/000000000000f71227061bdf97e0@google.com/
 
-> 
-> Please advise,
-> Best Regards,
-> Fabrice
-> 
-> > 
-> >> This is where the test_and_clear_bit() atomic operation helps, to avoid
-> >> non atomic operation:
-> >>
-> >> -> async_control(UCSI_ACK_CC_CI)
-> >> new interrupt may occur here
-> >> -> clear_bit(ACK_PENDING)
+Reported-by: syzbot+b7f13b2d0cc156edf61a@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/cgroups/000000000000f71227061bdf97e0@google.com/
+Debugged-by: Johannes Weiner <hannes@cmpxchg.org>
+Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
+Signed-off-by: Nhat Pham <nphamcs@gmail.com>
+Fixes: b00684722262 ("mm: workingset: move the stats flush into workingset_test_recent()")
+Cc: stable@vger.kernel.org # v6.8+
+---
+ include/linux/swap.h |  3 ++-
+ mm/filemap.c         |  5 ++++-
+ mm/workingset.c      | 14 +++++++++++---
+ 3 files changed, 17 insertions(+), 5 deletions(-)
 
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index bd450023b9a4..e685e93ba354 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -354,7 +354,8 @@ static inline swp_entry_t page_swap_entry(struct page *page)
+ }
+ 
+ /* linux/mm/workingset.c */
+-bool workingset_test_recent(void *shadow, bool file, bool *workingset);
++bool workingset_test_recent(void *shadow, bool file, bool *workingset,
++				bool flush);
+ void workingset_age_nonresident(struct lruvec *lruvec, unsigned long nr_pages);
+ void *workingset_eviction(struct folio *folio, struct mem_cgroup *target_memcg);
+ void workingset_refault(struct folio *folio, void *shadow);
+diff --git a/mm/filemap.c b/mm/filemap.c
+index fedefb10d947..298485d4b992 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -4248,6 +4248,9 @@ static void filemap_cachestat(struct address_space *mapping,
+ 	XA_STATE(xas, &mapping->i_pages, first_index);
+ 	struct folio *folio;
+ 
++	/* Flush stats (and potentially sleep) outside the RCU read section. */
++	mem_cgroup_flush_stats_ratelimited(NULL);
++
+ 	rcu_read_lock();
+ 	xas_for_each(&xas, folio, last_index) {
+ 		int order;
+@@ -4311,7 +4314,7 @@ static void filemap_cachestat(struct address_space *mapping,
+ 					goto resched;
+ 			}
+ #endif
+-			if (workingset_test_recent(shadow, true, &workingset))
++			if (workingset_test_recent(shadow, true, &workingset, false))
+ 				cs->nr_recently_evicted += nr_pages;
+ 
+ 			goto resched;
+diff --git a/mm/workingset.c b/mm/workingset.c
+index c22adb93622a..a2b28e356e68 100644
+--- a/mm/workingset.c
++++ b/mm/workingset.c
+@@ -412,10 +412,12 @@ void *workingset_eviction(struct folio *folio, struct mem_cgroup *target_memcg)
+  * @file: whether the corresponding folio is from the file lru.
+  * @workingset: where the workingset value unpacked from shadow should
+  * be stored.
++ * @flush: whether to flush cgroup rstat.
+  *
+  * Return: true if the shadow is for a recently evicted folio; false otherwise.
+  */
+-bool workingset_test_recent(void *shadow, bool file, bool *workingset)
++bool workingset_test_recent(void *shadow, bool file, bool *workingset,
++				bool flush)
+ {
+ 	struct mem_cgroup *eviction_memcg;
+ 	struct lruvec *eviction_lruvec;
+@@ -467,10 +469,16 @@ bool workingset_test_recent(void *shadow, bool file, bool *workingset)
+ 
+ 	/*
+ 	 * Flush stats (and potentially sleep) outside the RCU read section.
++	 *
++	 * Note that workingset_test_recent() itself might be called in RCU read
++	 * section (for e.g, in cachestat) - these callers need to skip flushing
++	 * stats (via the flush argument).
++	 *
+ 	 * XXX: With per-memcg flushing and thresholding, is ratelimiting
+ 	 * still needed here?
+ 	 */
+-	mem_cgroup_flush_stats_ratelimited(eviction_memcg);
++	if (flush)
++		mem_cgroup_flush_stats_ratelimited(eviction_memcg);
+ 
+ 	eviction_lruvec = mem_cgroup_lruvec(eviction_memcg, pgdat);
+ 	refault = atomic_long_read(&eviction_lruvec->nonresident_age);
+@@ -558,7 +566,7 @@ void workingset_refault(struct folio *folio, void *shadow)
+ 
+ 	mod_lruvec_state(lruvec, WORKINGSET_REFAULT_BASE + file, nr);
+ 
+-	if (!workingset_test_recent(shadow, file, &workingset))
++	if (!workingset_test_recent(shadow, file, &workingset, true))
+ 		return;
+ 
+ 	folio_set_active(folio);
+
+base-commit: a5c6fededf806aba1ff9b0f01278f7d089da5725
 -- 
-With best wishes
-Dmitry
+2.43.0
+
 
