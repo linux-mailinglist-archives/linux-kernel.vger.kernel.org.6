@@ -1,82 +1,162 @@
-Return-Path: <linux-kernel+bounces-232662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2629A91AC7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:21:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6120591AC7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:21:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 571A11C22C3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:21:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9151D1C22C54
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:21:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B811993B5;
-	Thu, 27 Jun 2024 16:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CA521993B4;
+	Thu, 27 Jun 2024 16:21:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="25BpBuEH"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="krwV9Qk0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A54561990C5;
-	Thu, 27 Jun 2024 16:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E98F15278F;
+	Thu, 27 Jun 2024 16:21:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719505289; cv=none; b=P26gbXm5cgo9E9neqFiXz4iPTbL2gEWspptzqQqLP11yw0erXJxPMkUTErfv6vot/OYoPi0KVoMsDVSh9nmkB5Oz1gqu5pialJxlea/5LmdYf2gx2pKW+HB72pnr8XfU9jlPMzWKchg0xS38eSDL3TF5z9dhBO+waUt1KH28O/s=
+	t=1719505303; cv=none; b=jOuX6qY3bYr35E2glPzGv9+vO0dGkOaMOD4GSCY7fajhCZ1Y4MBHfObNk1U+0Py6QE0Ni9IukWrYN2y4ei40YAOKxYIiDaR9QXGbRu7v4kV68fsqvFejgvObzys4Z37ycxyU/iUXPVq5GXJ8IY6rAOSNdMFW2GoGte661VMNwTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719505289; c=relaxed/simple;
-	bh=bYNfD/sWppWfPDl6mDI1Wo+8bcvFnM+UlOUpvz0sOYs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IXj06VT1twlpnaCN+yxcPj83xPnlZLYI7uBArft4AZJf9M3RF52NefjPJcCYE6YaNzLAiuFFhrMMpqH6ZFC3uj0Ni3Vv4Eq4WODKMwfYVP3m1zQYPplFH/teccVSu1rhwWPyRvAkPcgnpd4AspGebBXoKhS4WBfz85Qc8vgNCEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=25BpBuEH; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=MMg+2qG7mpCoM3f9trdLFdHvZyhj2YqLAwH1f1zGavo=; b=25BpBuEH8fEPF5hX24TIa8WVTQ
-	hH49Wm5pArEIoDhIN5wpFS+zOx/5QnIeGZ5Mx6diK/QBg2dbYDMUf1JLagzAL4PDF80mzCEZdrwXe
-	2vwLfO3x/UCSLGg8DqeOJVv6NnE1M/MbCRMoEVBlfYtHb2H7MHSNtK5/D+Mr1u1GMqVo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sMrs7-001Baa-GO; Thu, 27 Jun 2024 18:21:19 +0200
-Date: Thu, 27 Jun 2024 18:21:19 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v2 net-next 2/3] net: phy: aquantia: wait for FW reset
- before checking the vendor ID
-Message-ID: <71d26a69-aee8-42b9-ab7c-1ba11d3fa760@lunn.ch>
-References: <20240627113018.25083-1-brgl@bgdev.pl>
- <20240627113018.25083-3-brgl@bgdev.pl>
+	s=arc-20240116; t=1719505303; c=relaxed/simple;
+	bh=CtyL09YmkjYmx0ltwOtdbd/7qrkuTlx8HCGTtSyncEI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bCI7eX/6d9j3sJQmt3UjwxR8mX0kKy6vbRE+r7jwvpho9q2AXpIAjb1ah/IBUh7rKQYCmszogTzkgKwOqBD/6Di+D8G8nkEdoMxl41CuEtZ3nRDBMowqtUI07rdLUDTM0u1ppmx6LzoVj+8D/cpPA13Dlka8ZibocG6HU/jsZdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=krwV9Qk0; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719505302; x=1751041302;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=CtyL09YmkjYmx0ltwOtdbd/7qrkuTlx8HCGTtSyncEI=;
+  b=krwV9Qk0dXRs18RkBcZFwvDxZj4kQDa7S2r/8tgdbBEiYXmebOVP/6Cw
+   QwQa9IgTg0/Ff7EBvcpE7FBDvTWV6ncYEey/HZMCp+JmZfDjXK/hScKQX
+   FX3r3kqfkOIdyLQXllS1R9CuSfprFTKOIrr+2B8WmKCQ9bJsEiok92Vu/
+   38Oi0hSwA6kAIzw921fodwcMno3uwdNxdsTo+mi5o54aPl/qVeKaOUII0
+   R6xrSAjxkF9M90CCRprUBiDbmgumTPsRHS2ZGRCUwkok7M6Iy/pvhzhKc
+   WXQT8+NNBNGSOTjkIU2aAEQBmCUq4KxcKrgZwb8b7vpbtiy0Gqa8GgZVj
+   Q==;
+X-CSE-ConnectionGUID: ZCDaRLZ0RbC5De4qSmzpbw==
+X-CSE-MsgGUID: QnfPnR+gRBGSClqJx9Lw4g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="16875608"
+X-IronPort-AV: E=Sophos;i="6.09,166,1716274800"; 
+   d="scan'208";a="16875608"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 09:21:41 -0700
+X-CSE-ConnectionGUID: nW2qhl9GTO+kt09O5nYR9Q==
+X-CSE-MsgGUID: hoVk+0XJThu+/h/g4chp6Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,166,1716274800"; 
+   d="scan'208";a="44267677"
+Received: from antondav-mobl.amr.corp.intel.com (HELO [10.209.41.155]) ([10.209.41.155])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 09:21:41 -0700
+Message-ID: <122c7b9adf440b6e42b16195590d3ef8fbdafaeb.camel@linux.intel.com>
+Subject: Re: [PATCH v2 1/3] fs/file.c: add fast path in alloc_fd()
+From: Tim Chen <tim.c.chen@linux.intel.com>
+To: Jan Kara <jack@suse.cz>
+Cc: "Ma, Yu" <yu.ma@intel.com>, viro@zeniv.linux.org.uk, brauner@kernel.org,
+  mjguzik@gmail.com, edumazet@google.com, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, pan.deng@intel.com, tianyou.li@intel.com, 
+ tim.c.chen@intel.com
+Date: Thu, 27 Jun 2024 09:21:40 -0700
+In-Reply-To: <20240627120922.khxiy5xjxlnnyhiy@quack3>
+References: <20240614163416.728752-1-yu.ma@intel.com>
+	 <20240622154904.3774273-1-yu.ma@intel.com>
+	 <20240622154904.3774273-2-yu.ma@intel.com>
+	 <20240625115257.piu47hzjyw5qnsa6@quack3>
+	 <20240625125309.y2gs4j5jr35kc4z5@quack3>
+	 <87a1279c-c5df-4f3b-936d-c9b8ed58f46e@intel.com>
+	 <20240626115427.d3x7g3bf6hdemlnq@quack3>
+	 <690de703aeee089f86beca5cb90d3d43dcd7df56.camel@linux.intel.com>
+	 <3d553b6571eaa878e4ce68898113d73c9c1ed87d.camel@linux.intel.com>
+	 <20240627120922.khxiy5xjxlnnyhiy@quack3>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-3.fc36) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240627113018.25083-3-brgl@bgdev.pl>
 
-On Thu, Jun 27, 2024 at 01:30:16PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> Checking the firmware register before it complete the boot process makes
-> no sense, it will report 0 even if FW is available from internal memory.
-> Always wait for FW to boot before continuing or we'll unnecessarily try
-> to load it from nvmem/filesystem and fail.
-> 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Thu, 2024-06-27 at 14:09 +0200, Jan Kara wrote:
+> On Wed 26-06-24 09:52:50, Tim Chen wrote:
+> > On Wed, 2024-06-26 at 09:43 -0700, Tim Chen wrote:
+> > > On Wed, 2024-06-26 at 13:54 +0200, Jan Kara wrote:
+> > > >=20
+> > > >=20
+> > > > Indeed, thanks for correcting me! next_fd is just a lower bound for=
+ the
+> > > > first free fd.
+> > > >=20
+> > > > > The conditions
+> > > > > should either be like it is in patch or if (!start && !test_bit(0=
+,
+> > > > > fdt->full_fds_bits)), the latter should also have the bitmap load=
+ing cost,
+> > > > > but another point is that a bit in full_fds_bits represents 64 bi=
+ts in
+> > > > > open_fds, no matter fd >64 or not, full_fds_bits should be loaded=
+ any way,
+> > > > > maybe we can modify the condition to use full_fds_bits ?
+> > > >=20
+> > > > So maybe I'm wrong but I think the biggest benefit of your code com=
+pared to
+> > > > plain find_next_fd() is exactly in that we don't have to load full_=
+fds_bits
+> > > > into cache. So I'm afraid that using full_fds_bits in the condition=
+ would
+> > > > destroy your performance gains. Thinking about this with a fresh he=
+ad how
+> > > > about putting implementing your optimization like:
+> > > >=20
+> > > > --- a/fs/file.c
+> > > > +++ b/fs/file.c
+> > > > @@ -490,6 +490,20 @@ static unsigned int find_next_fd(struct fdtabl=
+e *fdt, unsigned int start)
+> > > >         unsigned int maxbit =3D maxfd / BITS_PER_LONG;
+> > > >         unsigned int bitbit =3D start / BITS_PER_LONG;
+> > > > =20
+> > > > +       /*
+> > > > +        * Optimistically search the first long of the open_fds bit=
+map. It
+> > > > +        * saves us from loading full_fds_bits into cache in the co=
+mmon case
+> > > > +        * and because BITS_PER_LONG > start >=3D files->next_fd, w=
+e have quite
+> > > > +        * a good chance there's a bit free in there.
+> > > > +        */
+> > > > +       if (start < BITS_PER_LONG) {
+> > > > +               unsigned int bit;
+> > > > +
+> > > > +               bit =3D find_next_zero_bit(fdt->open_fds, BITS_PER_=
+LONG, start);
+> > >=20
+> > > Say start is 31 (< BITS_PER_LONG)
+> > > bit found here could be 32 and greater than start.  Do we care if we =
+return bit > start?
+> >=20
+> > Sorry, I mean to say that we could find a bit like 30 that is less than
+> > start instead of the other way round.=20
+>=20
+> Well, I propose calling find_next_zero_bit() with offset set to 'start' s=
+o
+> it cannot possibly happen that the returned bit number is smaller than
+> start... But maybe I'm missing something?
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Yes, you're right. the search begin at start bit so it is okay.
 
-    Andrew
+Tim
+
+>=20
+> 									Honza
+
 
