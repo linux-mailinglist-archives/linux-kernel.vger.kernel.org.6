@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-233156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1845891B2FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:54:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 815B591B300
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:54:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C52E228369A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:54:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BA9E28365F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A19F1A38C2;
-	Thu, 27 Jun 2024 23:54:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A871A38E4;
+	Thu, 27 Jun 2024 23:54:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Si5Lb3Xh"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DC5sbAlO"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619581A2FD2
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 23:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB671A38C0
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 23:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719532439; cv=none; b=EdNKrmd41J6snsMCP+QZF2HAVSEEw3ZV3q+ed5TcUIGWq52i6jc+2nwlQx2f2QLrerbvvSnhwyd1JrPSupN7NQtwy0ohY2lmy4wdofP1wFxpuF8zm4J4z/t9eMFTX2XlVM16UYqtu9JH5lti2SuT45p88wklINgt8xdtkSVHvVY=
+	t=1719532440; cv=none; b=Ej5SgSTjf12yd6lJkjwHrPBUAwPkYvLOcfPp7XvkBBo76X48OoAKvpZwU51klAlHUUemtdiFyO1DvLDIbarlnm+H8kNeoCTN0KsaQeUmd4pOOpfReQfAmd6m+d8xRGbIXh29cmk14/qQPxcw2josVxHaS6dZo10An3shFaKiI4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719532439; c=relaxed/simple;
-	bh=+MkSknPEAqqjUaY5k5jJEdYG6RDoEon+9UKGF9CYlpM=;
+	s=arc-20240116; t=1719532440; c=relaxed/simple;
+	bh=em4fT6gc4FKgIY5Dn0mKLeU5n6+xY+c5SD9nUabtX7w=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=A1vy2onduncrF7H1ZbZ56PA8KqUW0GJukcDzcudMrSptiQ217A4f9hQ5IKo6iwyMfuTA0mRaWvuF3S5Kq98rwOQfTsdx1KwaDzT4LwMqy/uXH3r/bn460UT5Yw/dTDHiKZqG6Jh9GKqnHdhrkcw41uI0IV/Fu+wsh8LT39Qc7ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Si5Lb3Xh; arc=none smtp.client-ip=209.85.214.181
+	 MIME-Version; b=Qh7BKVZxx+9uK+WtPTTZ5cXEqkgz5nnre23zFKFxTWjelbuSY9r4dQj5V0fQRLTonFunnsCEJqXflE5Tr1m1+e3WM6Scakvt+EMX0+pWTQ8bzD4Vlf+rsl3gyXRhw03cbveap3xHE8g2abLqX9etj3/ma3GJJzHEws9K7eIfQu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=DC5sbAlO; arc=none smtp.client-ip=209.85.210.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fa244db0b2so2435ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 16:53:56 -0700 (PDT)
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-70675977d0eso68532b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 16:53:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1719532436; x=1720137236; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1719532439; x=1720137239; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=l0t3zZaJBUN3PLJmCz77S8k31xe8bvzplrXd7ftlq5c=;
-        b=Si5Lb3Xhw8a7r7hLUWRbn46sLQxLGrm2uQ/S7I6on3j3h3ExhulvsayL4ax1uh7O7C
-         3Y8OuNocH0X3P4/M6tFgMiHKS/qhvB52XA8RdG8n0GJJ7b6htzjs7qj1KWP1t/pGg0wo
-         KNNx/nA0wW0lXGS9XwfuM0fmdL4eRkLtJbn74=
+        bh=wz8mCbvpvyvinIWniLr2yCzgz2midVzsHqb0HV25yDo=;
+        b=DC5sbAlOPmorlSIRzPpqgia0j31GSR745WHQqvdNDqszMBLEH6xTdi0pKhSUM7ROAH
+         FBBUOwY9lxhRQ0V0sd99DXUSfr2JWVRsvVX5/PyAY9ovgkh0b9W0WAVhqH0MD5ot33Zw
+         RewUUldOum8Y01jhp1eoaqY7s9wF2PDa3wZN0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719532436; x=1720137236;
+        d=1e100.net; s=20230601; t=1719532439; x=1720137239;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=l0t3zZaJBUN3PLJmCz77S8k31xe8bvzplrXd7ftlq5c=;
-        b=a8P3byGtIbblYbCvgQEpwXPpgblVQzCCtfPFKO8sB0X7ej+a9MelsMlwe6GYCByrih
-         d8AoWfXucbjgf4pgY2DmHdvnmAr2Zcw1P8YhNJ+o/OroQEzqiDkgCExhVgOO/MyOQf1g
-         AugSnHy8ZNgmNp0LGspFF9j5CKBQZIDb5SVngF6Sr58ZmHgimjbzOhHi2bw51hOqkd7Z
-         bxA9901uE8sHDorPToI+acDLCpGf/YnHo27eAPAL1yqpYTZ+TlYC4V2Itn8gNbKitqAE
-         cG6eHVHQcE/7tlrso23X7fqmgvuFiwI3lMFrKyojN98XwRBJrb/cw1IKg2AypVHcN6PV
-         aIzw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQ+7UCuJjaKjwPNY2lAHODZHCqchECGV5Vp7EeW2n5PxEfs+4oW5J+JPCLnMhpQkds0/KMGBv4NRxBmXIm+WSCmv0jbBx6nywf/r2H
-X-Gm-Message-State: AOJu0Yx7c70dvCyQqmS/rfnGtkY4GTGgwDv+6DPvmHkS130sWTn8Ggu3
-	0EYlpkOM1k/UDVv7vBLGlf9WifNi62L9TTf4+e2nRZOkRJ5gzkGYDuaSPJvYTA==
-X-Google-Smtp-Source: AGHT+IF2Pj7LKt2106lccDErPzwWRz3ComfRGxrxTvIekxCIfDZ26W10wiBXzjP5JceH/T+LG9fZDg==
-X-Received: by 2002:a17:902:a385:b0:1fa:9149:6b17 with SMTP id d9443c01a7336-1fa9149796dmr37858365ad.68.1719532435693;
-        Thu, 27 Jun 2024 16:53:55 -0700 (PDT)
+        bh=wz8mCbvpvyvinIWniLr2yCzgz2midVzsHqb0HV25yDo=;
+        b=h7Tf85uSI2y4OyTl18bIXTjFSZYocgiPOQXArcfboCao1M1YYcggOTjW5qB0wxnv8k
+         NBMlwetqrW8bAGz4Vg7P65wtMDqlJ49rhUUxm9e+mYzxs/LvuNbpf2uQgvDl+JBcitz7
+         Bl2R/7CRJsM6gI9Yrt7bwuDGH4AyqPYuTAMgWASgJxzNrAcUDU8GN64iMPWnQpCVdAtx
+         IrimA4DVHqkbDQ3M2ZMtvLfMSeuArUyTvwFN3gFA4CbsoJQHjVwNSRBfCGqYKsQDoob5
+         IwYjCyoUsvgiCRpSq7i3wzemyozewQlrb4rKp1t6YoIkgL83a/YEvpjVSgJ0d+kz01lT
+         UgCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUDHrZI6tyM/jEHCNhYYvX6LO0GVVVubNRfie5G8va4AePL2AdlMSdQiUypk1YdUOKLzhY+38mFxtyFT5LpTGOedlftZzzCszqy5tsX
+X-Gm-Message-State: AOJu0YzCkv/ryzFn7zeQi5WZ6uOT92JgSQJlKcJbtbmShI5EmQ+cN6Xz
+	UekpbSdCbAjUfdyJtBMFj88xGOwr2UzFTllUaXm6mYjXtZoWir/KBQLOlkQAeg==
+X-Google-Smtp-Source: AGHT+IGt6uAjd9DFIOlTtILhCIG4SNMhMufSYHw3k2LiUPAd2ggYsmIv8nZuUujU4HrY8cQoqV0l1Q==
+X-Received: by 2002:a05:6a20:4307:b0:1be:c6a5:5e88 with SMTP id adf61e73a8af0-1bec6a563a4mr6295239637.10.1719532438690;
+        Thu, 27 Jun 2024 16:53:58 -0700 (PDT)
 Received: from pc98uv11.mtv.corp.google.com ([2620:15c:9d:2:cf5d:cb26:248e:ee00])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac11d8cd2sm3366595ad.107.2024.06.27.16.53.54
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac11d8cd2sm3366595ad.107.2024.06.27.16.53.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 16:53:55 -0700 (PDT)
+        Thu, 27 Jun 2024 16:53:58 -0700 (PDT)
 From: Daisuke Nojiri <dnojiri@chromium.org>
 To: 
 Cc: Benson Leung <bleung@chromium.org>,
@@ -85,9 +85,9 @@ Cc: Benson Leung <bleung@chromium.org>,
 	linux-kernel@vger.kernel.org,
 	linux-input@vger.kernel.org,
 	devicetree@vger.kernel.org
-Subject: [PATCH v5 1/2] cros_ec_proto: Consolidate ec_response_get_next_event
-Date: Thu, 27 Jun 2024 16:53:07 -0700
-Message-ID: <fc251d6935c1cfc39d7a31d3cfe735d31a0371d1.1719531519.git.dnojiri@chromium.org>
+Subject: [PATCH v5 2/2] dt-bindings: cros-ec-keyboard: Add keyboard matrix v3.0
+Date: Thu, 27 Jun 2024 16:53:08 -0700
+Message-ID: <9ae4d96cc2ce8c9de8755b9beffb78c641100fe7.1719531519.git.dnojiri@chromium.org>
 X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
 In-Reply-To: <cover.1719531519.git.dnojiri@chromium.org>
 References: <cover.1719531519.git.dnojiri@chromium.org>
@@ -99,145 +99,127 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Consolidate struct ec_response_get_next_event_v*.
-
-Let X->Y indicate kernel X sending EC_CMD_GET_NEXT_EVENT to FW Y.
-
-Old->New:
-   Existing kernels send a smaller container (e.g.
-   ec_response_get_next_data) which may or may not fit the last few
-   bytes. The FW copies as many bytes as possible to the container. The
-   kernel processes as many leading bytes as it can understand.
-
-New->Old:
-   New kernels send a bigger container. Existing FW copies as many bytes
-   as it wants, leaving the last few bytes empty. The kernel knows it
-   didn't receive full size data from the returned data length.
+Add support for keyboard matrix version 3.0, which reduces keyboard
+ghosting.
 
 Signed-off-by: Daisuke Nojiri <dnojiri@chromium.org>
 ---
- drivers/platform/chrome/cros_ec_proto.c       | 16 ++++-----
- .../linux/platform_data/cros_ec_commands.h    | 34 +------------------
- include/linux/platform_data/cros_ec_proto.h   |  2 +-
- 3 files changed, 10 insertions(+), 42 deletions(-)
+ include/dt-bindings/input/cros-ec-keyboard.h | 104 +++++++++++++++++++
+ 1 file changed, 104 insertions(+)
 
-diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
-index 945b1b15a04c..a849c29f125b 100644
---- a/drivers/platform/chrome/cros_ec_proto.c
-+++ b/drivers/platform/chrome/cros_ec_proto.c
-@@ -686,7 +686,7 @@ EXPORT_SYMBOL(cros_ec_cmd_xfer_status);
+diff --git a/include/dt-bindings/input/cros-ec-keyboard.h b/include/dt-bindings/input/cros-ec-keyboard.h
+index f0ae03634a96..afc12f6aa642 100644
+--- a/include/dt-bindings/input/cros-ec-keyboard.h
++++ b/include/dt-bindings/input/cros-ec-keyboard.h
+@@ -100,4 +100,108 @@
+ 	MATRIX_KEY(0x07, 0x0b, KEY_UP)		\
+ 	MATRIX_KEY(0x07, 0x0c, KEY_LEFT)
  
- static int get_next_event_xfer(struct cros_ec_device *ec_dev,
- 			       struct cros_ec_command *msg,
--			       struct ec_response_get_next_event_v1 *event,
-+			       struct ec_response_get_next_event *event,
- 			       int version, uint32_t size)
- {
- 	int ret;
-@@ -709,11 +709,11 @@ static int get_next_event(struct cros_ec_device *ec_dev)
- {
- 	struct {
- 		struct cros_ec_command msg;
--		struct ec_response_get_next_event_v1 event;
-+		struct ec_response_get_next_event event;
- 	} __packed buf;
- 	struct cros_ec_command *msg = &buf.msg;
--	struct ec_response_get_next_event_v1 *event = &buf.event;
--	const int cmd_version = ec_dev->mkbp_event_supported - 1;
-+	struct ec_response_get_next_event *event = &buf.event;
-+	int cmd_version = ec_dev->mkbp_event_supported - 1;
- 
- 	memset(msg, 0, sizeof(*msg));
- 	if (ec_dev->suspended) {
-@@ -721,12 +721,12 @@ static int get_next_event(struct cros_ec_device *ec_dev)
- 		return -EHOSTDOWN;
- 	}
- 
--	if (cmd_version == 0)
--		return get_next_event_xfer(ec_dev, msg, event, 0,
--				  sizeof(struct ec_response_get_next_event));
-+	/* The max version we support is v3 */
-+	if (cmd_version > 3)
-+		cmd_version = 3;
- 
- 	return get_next_event_xfer(ec_dev, msg, event, cmd_version,
--				sizeof(struct ec_response_get_next_event_v1));
-+				   sizeof(*event));
- }
- 
- static int get_keyboard_state_event(struct cros_ec_device *ec_dev)
-diff --git a/include/linux/platform_data/cros_ec_commands.h b/include/linux/platform_data/cros_ec_commands.h
-index 070e49c5381e..00c06c130dd5 100644
---- a/include/linux/platform_data/cros_ec_commands.h
-+++ b/include/linux/platform_data/cros_ec_commands.h
-@@ -3475,32 +3475,7 @@ enum ec_mkbp_event {
- BUILD_ASSERT(EC_MKBP_EVENT_COUNT <= EC_MKBP_EVENT_TYPE_MASK);
- 
- union __ec_align_offset1 ec_response_get_next_data {
--	uint8_t key_matrix[13];
--
--	/* Unaligned */
--	uint32_t host_event;
--	uint64_t host_event64;
--
--	struct __ec_todo_unpacked {
--		/* For aligning the fifo_info */
--		uint8_t reserved[3];
--		struct ec_response_motion_sense_fifo_info info;
--	} sensor_fifo;
--
--	uint32_t buttons;
--
--	uint32_t switches;
--
--	uint32_t fp_events;
--
--	uint32_t sysrq;
--
--	/* CEC events from enum mkbp_cec_event */
--	uint32_t cec_events;
--};
--
--union __ec_align_offset1 ec_response_get_next_data_v1 {
--	uint8_t key_matrix[16];
-+	uint8_t key_matrix[18];
- 
- 	/* Unaligned */
- 	uint32_t host_event;
-@@ -3525,7 +3500,6 @@ union __ec_align_offset1 ec_response_get_next_data_v1 {
- 
- 	uint8_t cec_message[16];
- };
--BUILD_ASSERT(sizeof(union ec_response_get_next_data_v1) == 16);
- 
- struct ec_response_get_next_event {
- 	uint8_t event_type;
-@@ -3533,12 +3507,6 @@ struct ec_response_get_next_event {
- 	union ec_response_get_next_data data;
- } __ec_align1;
- 
--struct ec_response_get_next_event_v1 {
--	uint8_t event_type;
--	/* Followed by event data if any */
--	union ec_response_get_next_data_v1 data;
--} __ec_align1;
--
- /* Bit indices for buttons and switches.*/
- /* Buttons */
- #define EC_MKBP_POWER_BUTTON	0
-diff --git a/include/linux/platform_data/cros_ec_proto.h b/include/linux/platform_data/cros_ec_proto.h
-index 8865e350c12a..a795fe260a38 100644
---- a/include/linux/platform_data/cros_ec_proto.h
-+++ b/include/linux/platform_data/cros_ec_proto.h
-@@ -185,7 +185,7 @@ struct cros_ec_device {
- 	bool host_sleep_v1;
- 	struct blocking_notifier_head event_notifier;
- 
--	struct ec_response_get_next_event_v1 event_data;
-+	struct ec_response_get_next_event event_data;
- 	int event_size;
- 	u32 host_event_wake_mask;
- 	u32 last_resume_result;
++/* No numpad */
++#define CROS_TOP_ROW_KEYMAP_V30 \
++	MATRIX_KEY(0x00, 0x01, KEY_F11)		/* T11 */	\
++	MATRIX_KEY(0x00, 0x02, KEY_F1)		/* T1 */	\
++	MATRIX_KEY(0x00, 0x04, KEY_F10)		/* T10 */	\
++	MATRIX_KEY(0x00, 0x0b, KEY_F14)		/* T14 */	\
++	MATRIX_KEY(0x00, 0x0c, KEY_F15)		/* T15 */	\
++	MATRIX_KEY(0x01, 0x02, KEY_F4)		/* T4 */	\
++	MATRIX_KEY(0x01, 0x04, KEY_F7)		/* T7 */	\
++	MATRIX_KEY(0x01, 0x05, KEY_F12)		/* T12 */	\
++	MATRIX_KEY(0x01, 0x09, KEY_F9)		/* T9 */	\
++	MATRIX_KEY(0x02, 0x02, KEY_F3)		/* T3 */	\
++	MATRIX_KEY(0x02, 0x04, KEY_F6)		/* T6 */	\
++	MATRIX_KEY(0x02, 0x0b, KEY_F8)		/* T8 */	\
++	MATRIX_KEY(0x03, 0x02, KEY_F2)		/* T2 */	\
++	MATRIX_KEY(0x03, 0x05, KEY_F13)		/* T13 */	\
++	MATRIX_KEY(0x04, 0x04, KEY_F5)		/* T5 */
++
++#define CROS_MAIN_KEYMAP_V30			/* Keycode */	\
++	MATRIX_KEY(0x00, 0x03, KEY_B)		/* 50 */	\
++	MATRIX_KEY(0x00, 0x05, KEY_N)		/* 51 */	\
++	MATRIX_KEY(0x00, 0x06, KEY_RO)		/* 56 (JIS) */	\
++	MATRIX_KEY(0x00, 0x08, KEY_EQUAL)	/* 13 */	\
++	MATRIX_KEY(0x00, 0x09, KEY_HOME)	/* 80 (Numpad) */	\
++	MATRIX_KEY(0x00, 0x0a, KEY_RIGHTALT)	/* 62 */	\
++	MATRIX_KEY(0x00, 0x10, KEY_FN)		/* 127 */	\
++								\
++	MATRIX_KEY(0x01, 0x01, KEY_ESC)		/* 110 */	\
++	MATRIX_KEY(0x01, 0x03, KEY_G)		/* 35 */	\
++	MATRIX_KEY(0x01, 0x06, KEY_H)		/* 36 */	\
++	MATRIX_KEY(0x01, 0x08, KEY_APOSTROPHE)	/* 41 */	\
++	MATRIX_KEY(0x01, 0x0b, KEY_BACKSPACE)	/* 15 */	\
++	MATRIX_KEY(0x01, 0x0c, KEY_HENKAN)	/* 65 (JIS) */	\
++	MATRIX_KEY(0x01, 0x0e, KEY_LEFTCTRL)	/* 58 */	\
++								\
++	MATRIX_KEY(0x02, 0x01, KEY_TAB)		/* 16 */	\
++	MATRIX_KEY(0x02, 0x03, KEY_T)		/* 21 */	\
++	MATRIX_KEY(0x02, 0x05, KEY_RIGHTBRACE)	/* 28 */	\
++	MATRIX_KEY(0x02, 0x06, KEY_Y)		/* 22 */	\
++	MATRIX_KEY(0x02, 0x08, KEY_LEFTBRACE)	/* 27 */	\
++	MATRIX_KEY(0x02, 0x09, KEY_DELETE)	/* 76 (Numpad) */	\
++	MATRIX_KEY(0x02, 0x0c, KEY_PAGEUP)	/* 85 (Numpad) */	\
++	MATRIX_KEY(0x02, 0x011, KEY_YEN)	/* 14 (JIS) */	\
++								\
++	MATRIX_KEY(0x03, 0x00, KEY_LEFTMETA)	/* Launcher */	\
++	MATRIX_KEY(0x03, 0x01, KEY_GRAVE)	/* 1 */	\
++	MATRIX_KEY(0x03, 0x03, KEY_5)		/* 6 */	\
++	MATRIX_KEY(0x03, 0x04, KEY_S)		/* 32 */	\
++	MATRIX_KEY(0x03, 0x06, KEY_MINUS)	/* 12 */	\
++	MATRIX_KEY(0x03, 0x08, KEY_6)		/* 7 */		\
++	MATRIX_KEY(0x03, 0x09, KEY_SLEEP)	/* Lock */	\
++	MATRIX_KEY(0x03, 0x0b, KEY_BACKSLASH)	/* 29 */	\
++	MATRIX_KEY(0x03, 0x0c, KEY_MUHENKAN)	/* 63 (JIS) */	\
++	MATRIX_KEY(0x03, 0x0e, KEY_RIGHTCTRL)	/* 64 */	\
++								\
++	MATRIX_KEY(0x04, 0x01, KEY_A)		/* 31 */	\
++	MATRIX_KEY(0x04, 0x02, KEY_D)		/* 33 */	\
++	MATRIX_KEY(0x04, 0x03, KEY_F)		/* 34 */	\
++	MATRIX_KEY(0x04, 0x05, KEY_K)		/* 38 */	\
++	MATRIX_KEY(0x04, 0x06, KEY_J)		/* 37 */	\
++	MATRIX_KEY(0x04, 0x08, KEY_SEMICOLON)	/* 40 */	\
++	MATRIX_KEY(0x04, 0x09, KEY_L)		/* 39 */	\
++	MATRIX_KEY(0x04, 0x0b, KEY_ENTER)	/* 43 */	\
++	MATRIX_KEY(0x04, 0x0c, KEY_END)		/* 81 (Numpad) */	\
++								\
++	MATRIX_KEY(0x05, 0x01, KEY_1)		/* 2 */	\
++	MATRIX_KEY(0x05, 0x02, KEY_COMMA)	/* 53 */	\
++	MATRIX_KEY(0x05, 0x03, KEY_DOT)		/* 54 */	\
++	MATRIX_KEY(0x05, 0x04, KEY_SLASH)	/* 55 */	\
++	MATRIX_KEY(0x05, 0x05, KEY_C)		/* 48 */	\
++	MATRIX_KEY(0x05, 0x06, KEY_SPACE)	/* 61 */	\
++	MATRIX_KEY(0x05, 0x07, KEY_LEFTSHIFT)	/* 44 */	\
++	MATRIX_KEY(0x05, 0x08, KEY_X)		/* 47 */	\
++	MATRIX_KEY(0x05, 0x09, KEY_V)		/* 49 */	\
++	MATRIX_KEY(0x05, 0x0b, KEY_M)		/* 52 */	\
++	MATRIX_KEY(0x05, 0x0c, KEY_PAGEDOWN)	/* 86 (Numpad) */	\
++								\
++	MATRIX_KEY(0x06, 0x01, KEY_Z)		/* 46 */	\
++	MATRIX_KEY(0x06, 0x02, KEY_3)		/* 4 */		\
++	MATRIX_KEY(0x06, 0x03, KEY_4)		/* 5 */		\
++	MATRIX_KEY(0x06, 0x04, KEY_2)		/* 3 */		\
++	MATRIX_KEY(0x06, 0x05, KEY_8)		/* 9 */		\
++	MATRIX_KEY(0x06, 0x06, KEY_0)		/* 11 */	\
++	MATRIX_KEY(0x06, 0x08, KEY_7)		/* 8 */		\
++	MATRIX_KEY(0x06, 0x09, KEY_9)		/* 10 */	\
++	MATRIX_KEY(0x06, 0x0b, KEY_DOWN)	/* 84 */	\
++	MATRIX_KEY(0x06, 0x0c, KEY_RIGHT)	/* 89 */	\
++	MATRIX_KEY(0x06, 0x0d, KEY_LEFTALT)	/* 60 */	\
++	MATRIX_KEY(0x06, 0x0f, KEY_ASSISTANT)	/* 128 */	\
++	MATRIX_KEY(0x06, 0x11, KEY_BACKSLASH)	/* 42 (JIS, ISO) */	\
++								\
++	MATRIX_KEY(0x07, 0x01, KEY_U)		/* 23 */	\
++	MATRIX_KEY(0x07, 0x02, KEY_I)		/* 24 */	\
++	MATRIX_KEY(0x07, 0x03, KEY_O)		/* 25 */	\
++	MATRIX_KEY(0x07, 0x04, KEY_P)		/* 26 */	\
++	MATRIX_KEY(0x07, 0x05, KEY_Q)		/* 17 */	\
++	MATRIX_KEY(0x07, 0x06, KEY_W)		/* 18 */	\
++	MATRIX_KEY(0x07, 0x07, KEY_RIGHTSHIFT)	/* 57 */	\
++	MATRIX_KEY(0x07, 0x08, KEY_E)		/* 19 */	\
++	MATRIX_KEY(0x07, 0x09, KEY_R)		/* 20 */	\
++	MATRIX_KEY(0x07, 0x0b, KEY_UP)		/* 83 */	\
++	MATRIX_KEY(0x07, 0x0c, KEY_LEFT)	/* 79 */	\
++	MATRIX_KEY(0x07, 0x11, KEY_102ND)	/* 45 (ISO) */
++
+ #endif /* _CROS_EC_KEYBOARD_H */
 -- 
 2.45.2.803.g4e1b14247a-goog
 
