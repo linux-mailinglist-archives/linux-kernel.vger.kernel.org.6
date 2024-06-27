@@ -1,197 +1,123 @@
-Return-Path: <linux-kernel+bounces-232083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7AC091A2ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:46:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 423A491A2F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:47:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D624282CFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:46:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C20F61F234FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A62213B285;
-	Thu, 27 Jun 2024 09:46:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB3C13AD09;
+	Thu, 27 Jun 2024 09:47:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="XfRHWX7c";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="XfRHWX7c"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QKHsppYI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4AEA4D5BD;
-	Thu, 27 Jun 2024 09:46:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9392B6D1C1
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 09:46:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719481575; cv=none; b=OaJPpOrYroFRQHHht6MfzDEhqbXlTKOk8tW0YcxlhNQYs4lCyTKkYeolli/GlRoFgzVFBJx/dEaKecWqBMGPt+erZ5+5SQ7ODkTzbB7RKJEX3052KC3MY+bWTQQMcETlZ75sBDtceUHp6AFDZ9/PCGOBen+jX+J26gweSK33AbM=
+	t=1719481621; cv=none; b=Hq9uVPyaH70M3dYpa8IDsR4Bn95wCQLFnEi8vpWhGjEfCnXDVH4X5EKZItwM8InjE0Ujqs/Ift/xqDiD+1XinjWcY12ctdSgtJgSq8F+1Ny1EDNI/snbRWX98gqLIM7OzMB8AUP+V2f+7T7jm8E0eyT9tXTON9MgstxRDeAaW0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719481575; c=relaxed/simple;
-	bh=Vc1FxFKKZ4kIsqe09jMpdFUU4Nj/L8/uAl6xy6PikB8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O/bX9/hfKr6xLO/KIoRTyaH4lUCCC+82i5MwZPcMI1x5XFEGeuJCBCuAZ1yjfFOyR9Sxrv4P1FcPZiLUKH72nwVwI18HmHlxao06iglOxjqV/z1+efA4nbDhaUhv+odIthCKSx7uNqULTLWrKZCvP35B85skh9qqISob7M2H/bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=XfRHWX7c; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=XfRHWX7c; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 924C221B7E;
-	Thu, 27 Jun 2024 09:46:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1719481571; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1719481621; c=relaxed/simple;
+	bh=1LihxitQAcSiCHxHIeZv1YeeSfyAPFANIj4xYf5HbCY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fkDx61ccPpEKs4usqnDxmsg2pfkrpvdwJX3g/UXVzDLP0IjhU42RdGi/2uNL0P3Mqreoc8FdntUVRnARbUGytMcwqHhie5K/lR0WjmzqEP3nWXENH4Q/1maffx8GAWHQRCe0FAFG0p1ECc5AasnxHg9JX15vQpZnl1CFF+RqLU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QKHsppYI; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719481618;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Jj9AAp3ne/E3keslQqD3JpnbJj5OzPPBYKAv+9+i9rI=;
-	b=XfRHWX7cglF3W8E5nX9gSJv7E5pesHihnyJUsMKYEJeKevKm0ZL/gG4dxG9FXnptwZsTLi
-	6WF7OGpdDftTUgrrNRmdqEuPfdQ3pwr+uZ6FegT1R/8s1kTZuvf6Tb9U0ZBqL5YFbVzQte
-	W5YSmOo9gicDgDfV5cZJ3b/3ey4IvlM=
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=XfRHWX7c
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1719481571; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Jj9AAp3ne/E3keslQqD3JpnbJj5OzPPBYKAv+9+i9rI=;
-	b=XfRHWX7cglF3W8E5nX9gSJv7E5pesHihnyJUsMKYEJeKevKm0ZL/gG4dxG9FXnptwZsTLi
-	6WF7OGpdDftTUgrrNRmdqEuPfdQ3pwr+uZ6FegT1R/8s1kTZuvf6Tb9U0ZBqL5YFbVzQte
-	W5YSmOo9gicDgDfV5cZJ3b/3ey4IvlM=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 824E7137DF;
-	Thu, 27 Jun 2024 09:46:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id EEtfH+M0fWbFIAAAD6G6ig
-	(envelope-from <mkoutny@suse.com>); Thu, 27 Jun 2024 09:46:11 +0000
-Date: Thu, 27 Jun 2024 11:46:10 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Chen Ridong <chenridong@huawei.com>
-Cc: tj@kernel.org, lizefan.x@bytedance.com, hannes@cmpxchg.org, 
-	longman@redhat.com, adityakali@google.com, sergeh@kernel.org, 
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V3] cgroup/cpuset: Prevent UAF in proc_cpuset_show()
-Message-ID: <6mjie6enbm5ltei4fsanz64ofukbr4gvss7ywi5sjfjxjxing7@efuhtnqvfawd>
-References: <20240626094101.472912-1-chenridong@huawei.com>
+	bh=/aRbMqnFPqElcujOpfk6cQ/iT5TUsEaniaGLjqKo9qI=;
+	b=QKHsppYIeJLrNqaxytIF+pX/JrYKiEDE1YeUK2Iq38tkjeCDAOZCfYKyalG19GLvUgJBqx
+	qSy9kjqE1QOc0xNmmS6eXAnbtlacl62BLEirh8LNlpvfiuJjBdMElWF485/Skb//4YCrAu
+	mpyFBuJnABVjDVYqVw27jPOnHmyxFnI=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-500-p_RBVBGcNSKTkp7ZzBvmtw-1; Thu, 27 Jun 2024 05:46:55 -0400
+X-MC-Unique: p_RBVBGcNSKTkp7ZzBvmtw-1
+Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-52cdec8a6a7so3764532e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 02:46:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719481614; x=1720086414;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/aRbMqnFPqElcujOpfk6cQ/iT5TUsEaniaGLjqKo9qI=;
+        b=w2nJHyjUF1Tn2rTxjXG/qqVTjVrzRVjJQZLhOYr8nieE9NeiM+KwS3EVjhksoBd3Ac
+         tPoFRBIxh6thSeAfj91ZN9kaSzZfOJf3ltB5CeUsFvtCI5pdjdPGJwvjeivBWKusdIZb
+         XvaHh2UqtT55oPhlCNH+vj9LTyYA14gar7AF5svvIR/HhV1RMnLP7DxouavIawM+N+dl
+         oe+9uWdj4ep//DKn/D5CGJ2bdtLXsKqIFFyulShzF8DlRbtUFmE1ZYaEk5Mh6mRYoz9L
+         NPFn80ISxiWBORFUbrYRL15tv5MXMiiYu9Tjz1pThdztIvHm5H4kGeQLDqWJPSF4uLfo
+         F2Gw==
+X-Forwarded-Encrypted: i=1; AJvYcCXNa3ruESsRh567Z2UNzQxI+RH2XGeQhKrn+gtqqYn3ism+4qbDsxNwdCXp7gv4BW83HUDKVUM0raTezGDRa0a/VzVCX3SW9AXeVfs+
+X-Gm-Message-State: AOJu0YymyHp9aeqsGOdsjsTaDcMCucYCJCnFpx+btjhZGfUDNjlJbb/v
+	bbGideP3Xtv1Fy3mMq5DjJF9OqG1Q/cNopzrUcee/hLeTLIsYjR/tks6jbg1PbHNkv0bFFHBlGi
+	MJy1FcWOIbHOd0Vr5Lvd2eL7sT3/WroVKmZJAoimq+GjxIOvrOd9cu4zOug2FZg==
+X-Received: by 2002:a05:6512:324a:b0:52c:9e25:978d with SMTP id 2adb3069b0e04-52ce185e46amr6953676e87.45.1719481614263;
+        Thu, 27 Jun 2024 02:46:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHNBRY4osLL4QYw4x+YKt8+rUQooLZRv8TYqrLSEg+HIfJ8udA+56TenAyL15Sctcq9KkjLag==
+X-Received: by 2002:a05:6512:324a:b0:52c:9e25:978d with SMTP id 2adb3069b0e04-52ce185e46amr6953664e87.45.1719481613904;
+        Thu, 27 Jun 2024 02:46:53 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:c:37e0:38da:a7d9:7cc9:db3e? ([2a01:e0a:c:37e0:38da:a7d9:7cc9:db3e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42564b66fcfsm18056315e9.18.2024.06.27.02.46.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Jun 2024 02:46:53 -0700 (PDT)
+Message-ID: <f85405ee-12ce-49a7-8c44-c4c4915d999d@redhat.com>
+Date: Thu, 27 Jun 2024 11:46:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kwcaihwcr7zw77fe"
-Content-Disposition: inline
-In-Reply-To: <20240626094101.472912-1-chenridong@huawei.com>
-X-Spamd-Result: default: False [-8.11 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SIGNED_PGP(-2.00)[];
-	DWL_DNSWL_MED(-2.00)[suse.com:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	MIME_GOOD(-0.20)[multipart/signed,text/plain];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+,1:+,2:~];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.com:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:dkim]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 924C221B7E
-X-Spam-Flag: NO
-X-Spam-Score: -8.11
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] drm/panic: Miscellaneous fixes
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <cover.1719391132.git.geert+renesas@glider.be>
+Content-Language: en-US, fr
+From: Jocelyn Falempe <jfalempe@redhat.com>
+In-Reply-To: <cover.1719391132.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
---kwcaihwcr7zw77fe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 26/06/2024 10:41, Geert Uytterhoeven wrote:
+> 	Hi all,
+> 
+> Here are two more fixes for the DRM panic code.
+> 
+> Thanks for your comments!
 
-On Wed, Jun 26, 2024 at 09:41:01AM GMT, Chen Ridong <chenridong@huawei.com>=
- wrote:
-> An UAF can happen when /proc/cpuset is read as reported in [1].
->=20
-> This can be reproduced by the following methods:
-> 1.add an mdelay(1000) before acquiring the cgroup_lock In the
->  cgroup_path_ns function.
-> 2.$cat /proc/<pid>/cpuset   repeatly.
-> 3.$mount -t cgroup -o cpuset cpuset /sys/fs/cgroup/cpuset/
-> $umount /sys/fs/cgroup/cpuset/   repeatly.
->=20
-> The race that cause this bug can be shown as below:
->=20
-> (umount)		|	(cat /proc/<pid>/cpuset)
-> css_release		|	proc_cpuset_show
-> css_release_work_fn	|	css =3D task_get_css(tsk, cpuset_cgrp_id);
-> css_free_rwork_fn	|	cgroup_path_ns(css->cgroup, ...);
-> cgroup_destroy_root	|	mutex_lock(&cgroup_mutex);
-> rebind_subsystems	|
-> cgroup_free_root 	|
-> 			|	// cgrp was freed, UAF
-> 			|	cgroup_path_ns_locked(cgrp,..);
+Thanks for your fixes, they are now in drm-misc-next.
 
-Thanks for this breakdown.
+Best regards,
 
-> ...
-> Fix this problem by using rcu_read_lock in proc_cpuset_show().
-> As cgroup root_list is already RCU-safe, css->cgroup is safe.
-> This is similar to commit 9067d90006df ("cgroup: Eliminate the
-> need for cgroup_mutex in proc_cgroup_show()")
+-- 
 
-Apologies for misleading you in my previous message about root_list.
-As I look better at proc_cpuset_show vs proc_cgroup_show, there's a
-difference and task_get_css() doesn't rely on root_list synchronization.
+Jocelyn
 
-I think it could go like this (with my extra comments)
+> 
+> Geert Uytterhoeven (2):
+>    drm/panic: Do not select DRM_KMS_HELPER
+>    drm/panic: Restrict graphical logo handling to built-in
+> 
+>   drivers/gpu/drm/Kconfig     | 1 -
+>   drivers/gpu/drm/drm_panic.c | 3 +--
+>   2 files changed, 1 insertion(+), 3 deletions(-)
+> 
 
-	rcu_read_lock();
-	spin_lock_irq(&css_set_lock);
-	css =3D task_css(tsk, cpuset_cgrp_id); // css is stable wrt task's migrati=
-on thanks to css_set_lock
-	cgrp =3D css->cgroup; // whatever we see here, won't be free'd thanks to R=
-CU lock and cgroup_free_root/kfree_rcu
-	retval =3D cgroup_path_ns_locked(cgrp, buf, PATH_MAX,
-				       current->nsproxy->cgroup_ns);
-	...
-
-Your patch should work thanks to the rcu_read_lock and
-cgroup_free_root/kfree_rcu and the `if (css->cgroup)` guard is
-unnecessary.
-
-So the patch is a functional fix, the reasoning in commit message is
-little off. Not sure if Tejun rebases his for-6.10-fixes (with a
-possible v4), full fixup commit for this may not be worthy.
-
-Michal
-
-
---kwcaihwcr7zw77fe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZn003wAKCRAt3Wney77B
-SanmAQC+BClDX+SIYfecEqNibSmzoe/yog4Ca+xRk1HMt39vcAEA+ZVJ66ekm3kZ
-ZS9DDuzmjib9QKbmvBM7unrDKpsEvgQ=
-=J1g9
------END PGP SIGNATURE-----
-
---kwcaihwcr7zw77fe--
 
