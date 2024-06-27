@@ -1,120 +1,166 @@
-Return-Path: <linux-kernel+bounces-232791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 726D091AE56
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:41:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 796E191AE59
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:42:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0226BB2B31E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:40:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C8B01C21D8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA0BF19AA6E;
-	Thu, 27 Jun 2024 17:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755E219A2AA;
+	Thu, 27 Jun 2024 17:42:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bSC/eHVs"
-Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bRAQV1Dp"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F031865A;
-	Thu, 27 Jun 2024 17:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6461865A
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 17:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719509981; cv=none; b=WjzaAoJk1pFoTblZsCCP0liEDEJX8AmyPAqY8H3fYXt2tWNdyffpXgsV7fasH7Ig0YiEYENJ0YdcugyvKdbAJNsDWGE+YQM5xT09G4jpnVh7ELQKq9TYLYrthKpUPePjvFssLlHJQCJyOXNOHHQrey+NHjvl2D0Yegdb0IFPCWg=
+	t=1719510142; cv=none; b=n1TarK/ISkEEMk/wGFMvHpRxIwISBUpGopJcyHHdGMRsJJpUBvoh27LB8wmbJKSzKSVN2RgqP7dxl5Kx71IdYL7+AKPyQX2bGn2DbaJCO9oDDolynSFEZIVeKvBkOziwEM5ZS8DRmKFWNkvuL7POJuzpCVZSkNWXfpPtNb40Shg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719509981; c=relaxed/simple;
-	bh=aH1Umnhky55B8t61wZo0gg5wGOk7NzGGWbnnWx0lSoY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LOJZUmisMZCRyGCrVwMA+ZNqdzpkxuknMM4/L68I+dyNs4aVN0Hzrz3qtmKihmdcCrOGsjTO3pSgqI74qXo8Amx7fqGaJneBLBBKFW7R8dU/Nok3CoKe3WWigIc041BM7gLTZIxO7k32aXBQnrXF6CDE5PshVIMbvN5sOsRc4jQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bSC/eHVs; arc=none smtp.client-ip=209.85.161.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5c2253cb606so975234eaf.2;
-        Thu, 27 Jun 2024 10:39:39 -0700 (PDT)
+	s=arc-20240116; t=1719510142; c=relaxed/simple;
+	bh=QWiCFle1OjlmoDLkJTUXa/Nbue5uZFbpxYfIHw4qoco=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=G9l28OYHB0WxJX4FEgmGhz5NCzaS8YVHuZK3lp758vjv5smk6XeqUXsE3fmcIvQoC2EmVQFekMJATbqTaxIAm/aNpzoyD9fQZCWYqn0qXB+WxcNIstd0hljeHv3C9WgtGo92XxV7g0PMFitvgyscrflL/YeD+OwSbvwFoWVUADw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bRAQV1Dp; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-62f43c95de4so179783307b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 10:42:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719509978; x=1720114778; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=s7WOcecaaOZ3rsj+Ub16kvTDYOxYiGT65TR4mfDnqck=;
-        b=bSC/eHVsFdJB11sbmUzd3AZ1I1yU5Hy5Ir7ausBQv8sPgdq0lT9dcMQwaXC1dJs6Gt
-         vkXxWmGj2Uz9XS7WKo0ojY4+LmYILTB6FBuRFfh6JVkGmkyY9yPZYaW5D/y4HU1yPSgq
-         r2wOo+EjhNH6gyDJZQJleXdD1QL1zxQM9T3pF4qSxMC7hzPPWuVwxvNQeqGlSF7Fxkoz
-         8GkDculgxYEd8sKb+cRC0zoL1gy+Ps69zKlyy90YjI1fo/hb5wGOIGGIxM6h2q6qC+JV
-         dczG+aJEsaSZ0X//TkUBnYlzX/EbgRdE1q40DIaWAKsTvxxTB2x7qa2/PIyOswOFA8GH
-         22/A==
+        d=google.com; s=20230601; t=1719510140; x=1720114940; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1sQpJMlhaOImbaZsmQPczRmnXse/xZ0ADeEMYCxzlHY=;
+        b=bRAQV1Dp5u5Adi3cLjCobR05EDS+7XtfTblwgoAQ6i0LcBITtl2aeHrQrK6R7gsqrU
+         nGoKGSCKkH7iE1905nRzgCDq7fxDRqVM5XfgQffNnxluFhMafO1kBlDPb65eGwCmQGuA
+         GCN0nkdv2HB+2kyW0I1B4SF71atzgayuRyAUVkPeUu1nrPZriuvch9r/gk1wb/Rj/qta
+         xg0apBKlYyGT8iwS4HhkB4ImrXR3+8KDhlg19rxa1HrXSqFnWV/AMXSJDVzwV9PpDKYp
+         YozyGDw5xHRPwaJXJwwaGU1WGxtaKvszww9E+pxr2sNP8QmHZC3S8tWjbBm9SFiPQno/
+         GjTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719509978; x=1720114778;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s7WOcecaaOZ3rsj+Ub16kvTDYOxYiGT65TR4mfDnqck=;
-        b=nKw9E/dn1OWoxY6k1qennFLzr9lpR7bFQf85yr6FdTRI5P6b54XYuljyp86hhzqQVE
-         XlKc7aMSLPfuJb34mZy8F4MhtnI0EEdYYTI0MVqaRVpN3impg03EERscwWUElPcOTP7x
-         NDAcTtr0wEDT3csFaaXLQy6VlPwM+qZkZbTu2k1QJHqfuoPSh2D01qebHR8DtCr7CiaN
-         EmJOU20Yf82q0oDvi5wCZ/ryzQGwTTzw+74GVqtm4VR4nqujFXdMv8FBldHlRVf3TmRk
-         gZoop6b0pmFSKdADf6PnPohR0Bvr132X6r2C8+CMCJ864CfACUFAzYBu8A5H1tM5Cin5
-         eDlA==
-X-Forwarded-Encrypted: i=1; AJvYcCWtX8PqXxEICJlX62BLHaB460//ZEEttXjImMIE4ZSI1AHhbXTHZXdcCHuHPnRWAxS3QShjtjRkM+rJq6hL1UNaKBFJkGcc8+7IgsGMBZ0KecUfvNsWLe4S+a8i0Qa8wEpHIcPCS/yTT332YTui7Y1CJGL+gO8Ph467WhYnOkn/X4GCUq8WMgcnr+2PDz9BFZm7+6t9AIfAqawMN5kcPn+CH9UydTlFP2CW5YL7VLgC2ug4BwWgiulRXQ==
-X-Gm-Message-State: AOJu0YzrkQaYur3hAaF271Dm6HFgdTyYvtctYS0NWJ+mGQQYoNwTX0dl
-	jUL34SjItvQpSK5+zUhl1W3+YE6oBUSYENLyG2eIqTHElZzAsnhP
-X-Google-Smtp-Source: AGHT+IEGlLzYhJ39db3MWWvG5uOUIm3HV5EiLIKlEss/+fCmWIiT934iZZ4Ky2YFWCnOMl3U2dQAzw==
-X-Received: by 2002:a05:6358:9211:b0:1a6:7c93:963c with SMTP id e5c5f4694b2df-1a67c93ac03mr215407955d.14.1719509978504;
-        Thu, 27 Jun 2024 10:39:38 -0700 (PDT)
-Received: from localhost ([2804:30c:96b:f700:cc1d:c0ae:96c9:c934])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-72749854a9fsm1314642a12.92.2024.06.27.10.39.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 10:39:37 -0700 (PDT)
-Date: Thu, 27 Jun 2024 14:41:05 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>, lars@metafoo.de,
-	Michael.Hennerich@analog.com, jic23@kernel.org, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	nuno.sa@analog.com, corbet@lwn.net, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/7] spi: Enable controllers to extend the SPI
- protocol with MOSI idle configuration
-Message-ID: <Zn2kMVDn5k1OFogA@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1719351923.git.marcelo.schmitt@analog.com>
- <add14694c64b574af742a5dcd5c9461e0ef5210a.1719351923.git.marcelo.schmitt@analog.com>
- <1d2cde40-ad55-4136-bc72-3d71515f7023@baylibre.com>
- <7ed7f957-3e07-42ce-894a-f3f9dcf512ea@sirena.org.uk>
+        d=1e100.net; s=20230601; t=1719510140; x=1720114940;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1sQpJMlhaOImbaZsmQPczRmnXse/xZ0ADeEMYCxzlHY=;
+        b=HMXVutHG+iR225DlE3KOB/KnZ+01C6vVkADdj06kMA03vdITjFrP4wlMdHIhQuBV3n
+         Vkp1uXC7t6kyiS5jDfotJQd/VbxpicUaaOVm9zYSYOMiMhy+muTwle/hh9kPndO7jkhQ
+         Uql7kBc3EO1m+xXjE3NKBt7sYTzuZ0SstjKe7B+Nayp9oPm6pq/lU54JlVkZwMKyp/ZZ
+         8uZY0YrZW1O42X4ayNReC54hOXujCNARXgjT+5LjAlgxsEVWN0NuYuXdBbaXR4qhB4/s
+         hH/C7FvWlXkanNfIx+g9wG8KfKNk96yXxjwJn+COlBro+o+wMOuWDJ0tWGfPsZVackmm
+         NV6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVQVXrAtCUsIySu7eGRF5Fbh+YGEXezqSPy9X7UyBO9867jBBqEJi4O2+yh2AX4HR1oEiCngEfSSKKJH30rYWb61SeIcUTGJZVllAqz
+X-Gm-Message-State: AOJu0Yzgj/6BB0RF3wX+CVwwAabn3RMFIIceK5xFy3c1k/QUExg+0gfV
+	8UxNrvitrVnOxpjAkylMm8jcUAsiKWOiwTZo0rOKP0RpMzK+1WHjpyovNptUeh5mkKTLVE3dPiA
+	1TQ==
+X-Google-Smtp-Source: AGHT+IE8qFFP1ajg6w4kSm8Qn4ro9HS/brjSiPL5I1EbZHI/6XKc4cVAGbMPmz4OZwpyYhZSw4GJu61Pw7M=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:c16:b0:631:9b3b:525d with SMTP id
+ 00721157ae682-642997c4d57mr470617b3.4.1719510140198; Thu, 27 Jun 2024
+ 10:42:20 -0700 (PDT)
+Date: Thu, 27 Jun 2024 10:42:18 -0700
+In-Reply-To: <20240621204305.1730677-2-mlevitsk@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7ed7f957-3e07-42ce-894a-f3f9dcf512ea@sirena.org.uk>
+Mime-Version: 1.0
+References: <20240621204305.1730677-1-mlevitsk@redhat.com> <20240621204305.1730677-2-mlevitsk@redhat.com>
+Message-ID: <Zn2ker_KZ7Fk-7W1@google.com>
+Subject: Re: [PATCH 1/1] KVM: selftests: pmu_counters_test: increase
+ robustness of LLC cache misses
+From: Sean Christopherson <seanjc@google.com>
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
+	linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On 06/26, Mark Brown wrote:
-> On Wed, Jun 26, 2024 at 09:57:32AM -0500, David Lechner wrote:
-> > On 6/25/24 4:53 PM, Marcelo Schmitt wrote:
+On Fri, Jun 21, 2024, Maxim Levitsky wrote:
+> Currently this test does a single CLFLUSH on its memory location
+> but due to speculative execution this might not cause LLC misses.
 > 
-> > > +#define SPI_CONTROLLER_MOSI_IDLE_LOW    BIT(8)  /* Can idle MOSI low */
-> > > +#define SPI_CONTROLLER_MOSI_IDLE_HIGH   BIT(9)  /* Can idle MOSI high */
+> Instead, do a cache flush on each loop iteration to confuse the prediction
+> and make sure that cache misses always occur.
 > 
-> > These two flags above are still not used anywhere and are redundant with
-> > the SPI_MOSI_IDLE_LOW/HIGH flags below so I don't think we should be adding
-> > these.
+> Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
+> ---
+>  .../selftests/kvm/x86_64/pmu_counters_test.c  | 20 +++++++++----------
+>  1 file changed, 9 insertions(+), 11 deletions(-)
 > 
-> Yes.
+> diff --git a/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c b/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
+> index 96446134c00b7..ddc0b7e4a888e 100644
+> --- a/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
+> +++ b/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
+> @@ -14,8 +14,8 @@
+>   * instructions that are needed to set up the loop and then disabled the
+>   * counter.  1 CLFLUSH/CLFLUSHOPT/NOP, 1 MFENCE, 2 MOV, 2 XOR, 1 WRMSR.
+>   */
+> -#define NUM_EXTRA_INSNS		7
+> -#define NUM_INSNS_RETIRED	(NUM_BRANCHES + NUM_EXTRA_INSNS)
+> +#define NUM_EXTRA_INSNS		5
+> +#define NUM_INSNS_RETIRED	(NUM_BRANCHES * 2 + NUM_EXTRA_INSNS)
 
-Oops, my bad. Removed them now for v6.
+The comment above is stale.  I also think it's worth adding a macro to capture
+that the '2' comes from having two instructions in the loop body (three, if we
+keep the MFENCE).
 
+>  static uint8_t kvm_pmu_version;
+>  static bool kvm_has_perf_caps;
+> @@ -133,9 +133,8 @@ static void guest_assert_event_count(uint8_t idx,
+>   * doesn't need to be clobbered as the input value, @pmc_msr, is restored
+>   * before the end of the sequence.
+>   *
+> - * If CLFUSH{,OPT} is supported, flush the cacheline containing (at least) the
+> - * start of the loop to force LLC references and misses, i.e. to allow testing
+> - * that those events actually count.
+> + * If CLFUSH{,OPT} is supported, flush the cacheline containing the CLFUSH{,OPT}
+> + * instruction on each loop iteration to ensure that LLC cache misses happen.
+>   *
+>   * If forced emulation is enabled (and specified), force emulation on a subset
+>   * of the measured code to verify that KVM correctly emulates instructions and
+> @@ -145,10 +144,9 @@ static void guest_assert_event_count(uint8_t idx,
+>  #define GUEST_MEASURE_EVENT(_msr, _value, clflush, FEP)				\
+>  do {										\
+>  	__asm__ __volatile__("wrmsr\n\t"					\
+> -			     clflush "\n\t"					\
+> -			     "mfence\n\t"					\
+
+Based on your testing, it's probably ok to drop the mfence, but I don't see any
+reason to do so.  It's not like that mfence meaningfully affects the runtime, and
+anything easy/free we can do to avoid flaky tests is worth doing.
+
+I'll post and apply a v2, with a prep patch to add a NUM_INSNS_PER_LOOP macro and
+keep the MFENCE (I'll be offline all of next week, and don't want to push anything
+to -next tomorrow, even though the risk of breaking anything is minimal).
+
+> -			     "1: mov $" __stringify(NUM_BRANCHES) ", %%ecx\n\t"	\
+> -			     FEP "loop .\n\t"					\
+> +			     " mov $" __stringify(NUM_BRANCHES) ", %%ecx\n\t"	\
+> +			     "1: " clflush "\n\t"				\
+> +			     FEP "loop 1b\n\t"					\
+>  			     FEP "mov %%edi, %%ecx\n\t"				\
+>  			     FEP "xor %%eax, %%eax\n\t"				\
+>  			     FEP "xor %%edx, %%edx\n\t"				\
+> @@ -163,9 +161,9 @@ do {										\
+>  	wrmsr(pmc_msr, 0);							\
+>  										\
+>  	if (this_cpu_has(X86_FEATURE_CLFLUSHOPT))				\
+> -		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "clflushopt 1f", FEP);	\
+> +		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "clflushopt .", FEP);	\
+>  	else if (this_cpu_has(X86_FEATURE_CLFLUSH))				\
+> -		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "clflush 1f", FEP);	\
+> +		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "clflush .", FEP);	\
+>  	else									\
+>  		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "nop", FEP);		\
+>  										\
+> -- 
+> 2.26.3
 > 
-> > Also, what is the plan for adding these flags to other SPI controllers. For
-> > example, the IMX controller in [1] sounds like it should also support 
-> > SPI_MOSI_IDLE_HIGH. And your comments on an earlier version of this series
-> > made it sound like Raspberry Pi is always SPI_MOSI_IDLE_LOW, so should
-> > have that flag.
-> 
-> I don't think we need a specific plan there, obviously it'd be nice for
-> people to go through and enable but it's also fine to just leave this
-> for someone who needs the support to implement.
 
