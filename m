@@ -1,123 +1,154 @@
-Return-Path: <linux-kernel+bounces-232454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7750D91A90A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:18:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC81891A90D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:20:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A91F51C2099A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:18:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 096521C21BA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957D8196DA2;
-	Thu, 27 Jun 2024 14:18:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62AA4195F1B;
+	Thu, 27 Jun 2024 14:20:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QWYdTwXK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gPE3Bnoi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05A1194C9E;
-	Thu, 27 Jun 2024 14:18:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF98179658;
+	Thu, 27 Jun 2024 14:20:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719497898; cv=none; b=PKR6so5oqWbJ8bDjN2UaBKEzexfnaOOOwyHOtttSHgW2BhX3TtSg5IEY+oxNnxxF1SAhP/kQmEHczODUiu1PBnwHaZIcv9d40acOVJZ3uZU7XIuStaJw7F+y8Xn/ovWQKk338iPencnS6tEGLcINe8MVvf/4SqygXPPwB5eScuo=
+	t=1719498038; cv=none; b=AAiV5MoKlcBybruSgyAIm2sNQ9dCYHydjMCc4bXfUmg48+5LQPJoqTntQMPvQUlwf671btN1uNGKesBfV6amw2AgthBmSMZoUmC+fhe7t0GKaYhTH7V2NHffkdtGY5zBoKEwMNrdo4PRKXQU28N2vXGQzNUbuAKeh9SS68UEosc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719497898; c=relaxed/simple;
-	bh=XNnyFcoQgMDDX/PxDX53Ynh7kN7H7W+RKXPFoaWvh2c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HElEl1yUv4sUluGtxOFOlOMwC848n9fEogVeRJAzX4JhxbBxtoPLJkmhWVVQIxj8Tq+PIh1RTwm7oYymFTb29Ssu3iqP2tJdDfbH5nJmtsj3Oix8jOEqyXqnpkA1Gtz5u830A9gWVR4fRMF3uTPW+dNVYKvi858h/4rOFEFde48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QWYdTwXK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3611CC32786;
-	Thu, 27 Jun 2024 14:18:14 +0000 (UTC)
+	s=arc-20240116; t=1719498038; c=relaxed/simple;
+	bh=6jpdpavsTgvc7X+5C/YGS9Rd1h6rsBawCk2gIEwDWcU=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=HaIbfkpiUQqBTLdt9qEUFjFhG/2eeh3Zrt5kVX/pxAZHsyq8lWw4cevVspuiNyp5Y0JqMF6tebbR21/NXFds/B+ikMMugAJTcXckcxekuPqA+kAElwY/jX/HgmGfLrMjz1l6DLR/diYrHqmVYP49Yocv/QceTbJut58xBN3ygy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gPE3Bnoi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A2F8C2BBFC;
+	Thu, 27 Jun 2024 14:20:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719497898;
-	bh=XNnyFcoQgMDDX/PxDX53Ynh7kN7H7W+RKXPFoaWvh2c=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QWYdTwXKkDOamr4XA8OHoKSj/Jy45V+rH79a+asBY+KwDLn5IDaKRUy/jbZFzuqN7
-	 Dfaxk8ztOxMjpZTa7HoZAFJ7dHhdQn9747XqgckLAY35rUn3Ph3wDpZLdL5sayUebf
-	 QVIraMSe+weXLtr4N5rP9n6dQISNpYWEpm87rCgOJtO1LlIElOfSbrcbxq1GqWfnhh
-	 8C+7qqY+XkA60juDyaHukM6WWRf7q3Md7KjRUsTdRnpBj93+fum4b+eAjq3Z/7BF+W
-	 98rnQi7Lil4CEquc3pkEFr9i45CogtrPxmTVSlM9vNUjGGPlDAqTuiu69XVt+C4CCa
-	 JfbmZyuaysi+g==
-Message-ID: <f7da822a-cf96-4119-ad78-ff89754ffca2@kernel.org>
-Date: Thu, 27 Jun 2024 16:18:14 +0200
+	s=k20201202; t=1719498038;
+	bh=6jpdpavsTgvc7X+5C/YGS9Rd1h6rsBawCk2gIEwDWcU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gPE3BnoiM3lOpSUdHFHE3y0FyHv04P/fktEqlAuSubyYvKniCSFAaWObzgBs1ig99
+	 mASXhCE5+chbUx65o51o8G2ESUOpiWQRBeoPypLQ9ctwcsO1o48cOMzF/nFHwnmyI2
+	 UoP4Ixb/5egOc59mSp+tfZUeJiwsZsMRdCN62//GP0shfzbRZLb2IhqhujgJFfTsKA
+	 L7OwgeMzaWzgKrBlGgcpxjQxs4C8ck4SGPoSwFSBjDAXYMXTjGCAJ6wjOw2OuatoO4
+	 GMlIinVMGjs+BU1nC744kIsGP4dhRjTVHeVlxDsmSbG6gB+85A71d7zwXH7p+b3Daf
+	 qnN2pfgEt8x3g==
+Date: Thu, 27 Jun 2024 23:20:32 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Oleg Nesterov <oleg@redhat.com>, Huacai Chen <chenhuacai@kernel.org>,
+ WANG Xuerui <kernel@xen0n.name>, Andrii Nakryiko
+ <andrii.nakryiko@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, Masami
+ Hiramatsu <mhiramat@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ loongarch@lists.linux.dev
+Subject: Re: [PATCH] uprobe: Do not use UPROBE_SWBP_INSN as static
+ initializer
+Message-Id: <20240627232032.a202e546f59a0290c615510f@kernel.org>
+In-Reply-To: <Zn1ssLPeMj-On_uT@krava>
+References: <20240618194306.1577022-1-jolsa@kernel.org>
+	<CAEf4BzbN4Li2iesQm28ZYEV2nXsLre8_qknmvkSy510EV7h=SA@mail.gmail.com>
+	<20240620193846.GA7165@redhat.com>
+	<CAEf4BzaqgbjPfxKmzF-M7nzGroOwKikA0BM7Tnw7dKzKS+x9ZQ@mail.gmail.com>
+	<20240621120149.GB12521@redhat.com>
+	<ZnV9hvOP5388YJtw@krava>
+	<Zn1ssLPeMj-On_uT@krava>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: sm8650-qrd: add port mapping to
- speakers
-To: Neil Armstrong <neil.armstrong@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240627-topic-sm8650-upstream-was-port-mapping-v1-0-4700bcc2489a@linaro.org>
- <20240627-topic-sm8650-upstream-was-port-mapping-v1-3-4700bcc2489a@linaro.org>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240627-topic-sm8650-upstream-was-port-mapping-v1-3-4700bcc2489a@linaro.org>
+Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 27/06/2024 14:57, Neil Armstrong wrote:
-> Add appropriate mappings of Soundwire ports of WSA8845 speaker
-> to correctly map the Speaker ports to the WSA macro ports.
+On Thu, 27 Jun 2024 15:44:16 +0200
+Jiri Olsa <olsajiri@gmail.com> wrote:
+
+> On Fri, Jun 21, 2024 at 03:17:58PM +0200, Jiri Olsa wrote:
+> > On Fri, Jun 21, 2024 at 02:01:50PM +0200, Oleg Nesterov wrote:
+> > > On 06/20, Andrii Nakryiko wrote:
+> > > >
+> > > > On Thu, Jun 20, 2024 at 12:40 PM Oleg Nesterov <oleg@redhat.com> wrote:
+> > > > >
+> > > > > But I can't understand what does it do, it calls emit_break() and
+> > > > > git grep -w emit_break finds nothing.
+> > > > >
+> > > >
+> > > > It's DEF_EMIT_REG0I15_FORMAT(break, break_op) in
+> > > > arch/loongarch/include/asm/inst.h
+> > > >
+> > > > A bunch of macro magic, but in the end it produces some constant
+> > > > value, of course.
+> > > 
+> > > I see, thanks!
+> > > 
+> > > Then perhaps something like below?
+> > 
+> > lgtm, added loong arch list/folks
 > 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
+> ping
+> 
+> Oleg, do you want to send formal patch?
+> 
+> thanks,
+> jirka
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Yes, can you send v2 patch?
 
-Best regards,
-Krzysztof
+Thank you,
 
+> 
+> > 
+> > for context:
+> >   https://lore.kernel.org/bpf/20240614174822.GA1185149@thelio-3990X/
+> > 
+> > thanks,
+> > jirka
+> > 
+> > > 
+> > > Oleg.
+> > > 
+> > > 
+> > > --- x/arch/loongarch/include/asm/uprobes.h
+> > > +++ x/arch/loongarch/include/asm/uprobes.h
+> > > @@ -9,7 +9,7 @@ typedef u32 uprobe_opcode_t;
+> > >  #define MAX_UINSN_BYTES		8
+> > >  #define UPROBE_XOL_SLOT_BYTES	MAX_UINSN_BYTES
+> > >  
+> > > -#define UPROBE_SWBP_INSN	larch_insn_gen_break(BRK_UPROBE_BP)
+> > > +#define UPROBE_SWBP_INSN	(uprobe_opcode_t)(BRK_UPROBE_BP | (break_op << 15))
+> > >  #define UPROBE_SWBP_INSN_SIZE	LOONGARCH_INSN_SIZE
+> > >  
+> > >  #define UPROBE_XOLBP_INSN	larch_insn_gen_break(BRK_UPROBE_XOLBP)
+> > > --- x/arch/loongarch/kernel/uprobes.c
+> > > +++ x/arch/loongarch/kernel/uprobes.c
+> > > @@ -7,6 +7,13 @@
+> > >  
+> > >  #define UPROBE_TRAP_NR	UINT_MAX
+> > >  
+> > > +static __init int __ck_insn(void)
+> > > +{
+> > > +	BUG_ON(UPROBE_SWBP_INSN != larch_insn_gen_break(BRK_UPROBE_BP));
+> > > +	return 0;
+> > > +}
+> > > +late_initcall(__ck_insn);
+> > > +
+> > >  int arch_uprobe_analyze_insn(struct arch_uprobe *auprobe,
+> > >  			     struct mm_struct *mm, unsigned long addr)
+> > >  {
+> > > 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
