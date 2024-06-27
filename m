@@ -1,101 +1,155 @@
-Return-Path: <linux-kernel+bounces-232861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC4AA91AF30
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:40:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 450AD91AF37
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:41:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 480F4282043
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:40:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C49DAB220AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:41:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D3219AD84;
-	Thu, 27 Jun 2024 18:40:30 +0000 (UTC)
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090E319AD54;
+	Thu, 27 Jun 2024 18:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="f/Z/TI4w"
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA43F198E66;
-	Thu, 27 Jun 2024 18:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 972A013C3D7
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 18:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719513630; cv=none; b=uqSNvrAtiPBgL1uY2kmQ1h2h65aVy8wB9c49kNT8gohNfGy0QbkYi/TtFrPfIB8QJv6x0e/K2sH6Zjyw7AGD2doo0gSHzjyMv0a0fiUDGQ4x+Wtwy6cR2Odh0mx7VWDPxuVfbVcf0b+cN3JZ3xcG54FSXj2PBpjXvGa3WrqiVIM=
+	t=1719513701; cv=none; b=VJxOkH9JHmj4wsPmSBingxYZEKkd+UMC1bXc6o+PsxzXw33xNr5fAgG+sEGRGxvd5dVOhFGdV07JpSF3U1y/7IoxZSKxxGt2E1PGE++GtNBK3+/oEidkCVUCpTNif36AlDqjcqPBbKoYZ0f5YzSNdOasmQpGI6pSdN/2CMudvrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719513630; c=relaxed/simple;
-	bh=KkLyl1RC/EwhIBQ23wSnNwb/PtCW43HptLeyStQCzBE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C37TX/0Z5GOAQKvqqxICo+dEG9VoToRPNN2MEFlnE1dfhbz4ycsYeqH9mhRrxFJ1aohyCDW8OfAIb8wfMZGXNxNVAZB2AyKCloKQvAY2RMxEX8V/fkLEx++JXj6VRpyfTMvRdxWk54rycKPkrgtS14uAInMvUjyFviwp7Wxs/MM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-585e6ad9dbcso279189a12.3;
-        Thu, 27 Jun 2024 11:40:28 -0700 (PDT)
+	s=arc-20240116; t=1719513701; c=relaxed/simple;
+	bh=125TjForjEqo3vPkjAAt5+UZ3IBFofOTgy6dpGc67Gg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G80k36q9kmgc2Dk/NXgGZmbw3ZpTsESq8++pnYRDg6X/oBvlZ+N8FxpXsXPdC52tV4PFb7tPoJMoKUeNMdJKCH9nMEj32Byd8ek4rI151vdnLiA/szevrjbaHUQzKDwSXIroKmOqaOthvfZEnNbnA7PgvHKJqwtlWQClkX8s9Cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=f/Z/TI4w; arc=none smtp.client-ip=209.85.166.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3762c172d94so3737025ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 11:41:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1719513698; x=1720118498; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mBZrzd3l+QBB0qVF57NE+VuAbUtWDCM7+bdK0dPzz00=;
+        b=f/Z/TI4wIdltGwSKSfbKe2Gsv+6dMwvL0M/xZ+ghUjTMcRiRcy3gdz9Pq6BA+IXpU5
+         SSFPg3B6xnMNrXlMFXjJ/jzDcVLrfnzm4Y19LW99atwGakmzfD/dj1jgedghQfbz6Lbb
+         6jlWomI088L/sHt0hDnCr+yWZXSNX07gAdtf8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719513627; x=1720118427;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TRtwt1nHk/eFQfYHJCx8+U3yM4OGoY8sGkg3XpVPOa0=;
-        b=kK5VsnLBsraJ5p55FA2kQZttfc3d0H0mnnKYQ7RiLmxY7EZvGeW4uDTmkXDkS0XhsA
-         CzNf6aisfSN/8nIA6Mh8M2B+VHsWpb5fxtsfUrudK0vAROvf1DKaPZ/PUTVr7SaTtm5Z
-         3y9DRJhyEz55OzTrtYCgLf86H65sf5SeiKhwlnqsNFDltkgr8qWhRsRTnuiSOFtyWAev
-         P6rReUH1VabNM2NKapjx2AM3F5zh3oE8i1E/cbmTiFV9IoASRsFKJBIiD5iArEXUver4
-         jz6167r1qtydDTOK+Qtjr32BpVGXuJLd0CunbJMG3UYe3FZ0jQ3/Ci9DWOViPGgd2vnN
-         7ftw==
-X-Forwarded-Encrypted: i=1; AJvYcCUbX9Py+9ZO6IjEalF3dxgo8fe0li25Da2Y4PP2kgreIWsz0XpJhoDUjUs7ZEbOTLn2STFmUMeCepqB3djCJ8XVWLbTi6AHNbve6yKXVmFFAC96HWCTIporsOGoUQHO0cwPusO1
-X-Gm-Message-State: AOJu0YxLt/lewwB2icvJEp9XOBK2VXo4cdmFuE4VgdUQezrmV5qdpzKK
-	W/hiJsujOyFvGRNQHRJIYnbX6bPEQaQZixjRwW6anTbesZvHdGua
-X-Google-Smtp-Source: AGHT+IGyWL39Gdti/FMrbm7JkEdRxyFNJ+JC9do85JtWo4z+QZkEpUt2llHGxHDQC6aOi9kuwYXphQ==
-X-Received: by 2002:a50:c34d:0:b0:57c:7151:2669 with SMTP id 4fb4d7f45d1cf-57d4a276171mr11107130a12.7.1719513626964;
-        Thu, 27 Jun 2024 11:40:26 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-115.fbsv.net. [2a03:2880:30ff:73::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58612c83578sm28651a12.18.2024.06.27.11.40.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 11:40:26 -0700 (PDT)
-Date: Thu, 27 Jun 2024 11:40:24 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Vladimir Oltean <olteanv@gmail.com>
-Cc: kernel test robot <lkp@intel.com>, linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	kuba@kernel.org, horms@kernel.org, Roy.Pledge@nxp.com,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/4] soc: fsl: qbman: FSL_DPAA depends on COMPILE_TEST
-Message-ID: <Zn2yGBuwiW/BYvQ7@gmail.com>
-References: <20240624162128.1665620-1-leitao@debian.org>
- <202406261920.l5pzM1rj-lkp@intel.com>
- <20240626140623.7ebsspddqwc24ne4@skbuf>
+        d=1e100.net; s=20230601; t=1719513698; x=1720118498;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mBZrzd3l+QBB0qVF57NE+VuAbUtWDCM7+bdK0dPzz00=;
+        b=uMauuCjN1RgEQetWPkzuaDW2QSC2YhMtYE4zTEC8bqj9JwS/HtSqQkiqcx/pHubTsw
+         If0EIcqXSkXOHp5z6jG7Tn8gPF9wrGmObXYXif878p3U8MoNURvcG5yIIIrCQpg5ajMp
+         qXaJ5DARDMuPaEEtNEaChaWR1hNY6jjj1nLB/t5MMrCYXMX8Ljp7rEfuklp6IpGomXfb
+         9FgtSRC6TkHfRRh/GTxuFlzFYg0c5uXz9PgFIUH2ChV5F3gbBnnMR0S7GA6okds/rJbU
+         sfpOFKcxKjsYy0O04MUPxW1tLkewZ4a5orx8ysPkaL0gc+BqbVgPvi3Q+olmFjgcQeYO
+         Al5A==
+X-Forwarded-Encrypted: i=1; AJvYcCUL+Rv/NC1mvv+BptZOuK/ONftJsZy8c39cY7Fj9f17llH0a+qNJ1GuYWy6pUGvcjJp3JD0nFwTBHkDmcusiaV+HmQIUCAPGMV1aH+s
+X-Gm-Message-State: AOJu0YxJyi/F/V7p7QXev2skyV99aUjbWzbuti7u/Qd8dU0j+ubVQd6u
+	ygKW2tJ2vsZeZAXm0J4BvX54KczIlNaiUVlp4/CnXqF3l+KKNQ3iAhSedJfnAQ0=
+X-Google-Smtp-Source: AGHT+IGlpypgBxWhaGGhaei1invqkWl/nU5w0Ksc4S6KUTcLPJ4fg2XtI2N2zdxQFFpO/N8qypPFWw==
+X-Received: by 2002:a05:6e02:15ca:b0:376:4224:7611 with SMTP id e9e14a558f8ab-376422477a7mr156049795ab.3.1719513698699;
+        Thu, 27 Jun 2024 11:41:38 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-37ad4370d30sm272315ab.65.2024.06.27.11.41.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Jun 2024 11:41:37 -0700 (PDT)
+Message-ID: <8facf491-3c4c-4efb-8a14-f34011ffe011@linuxfoundation.org>
+Date: Thu, 27 Jun 2024 12:41:37 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240626140623.7ebsspddqwc24ne4@skbuf>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] selftests/watchdog: convert the test output to KTAP
+ format
+To: Laura Nao <laura.nao@collabora.com>, shuah@kernel.org
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240506111359.224579-1-laura.nao@collabora.com>
+ <20240506111359.224579-3-laura.nao@collabora.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240506111359.224579-3-laura.nao@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello Vladimir,
+On 5/6/24 05:13, Laura Nao wrote:
+> Modify the script output to conform to the KTAP format standard. The
 
-On Wed, Jun 26, 2024 at 05:06:23PM +0300, Vladimir Oltean wrote:
-> On Wed, Jun 26, 2024 at 08:09:53PM +0800, kernel test robot wrote:
+What is script here?
 
-> > All warnings (new ones prefixed by >>):
-> > 
-> > >> drivers/net/ethernet/freescale/dpaa/dpaa_eth.c:3280:12: warning: stack frame size (16664) exceeds limit (2048) in 'dpaa_eth_probe' [-Wframe-larger-than]
-> >     3280 | static int dpaa_eth_probe(struct platform_device *pdev)
-> >          |            ^
-> >    1 warning generated.
-> > --
-> > >> drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c:454:12: warning: stack frame size (8264) exceeds limit (2048) in 'dpaa_set_coalesce' [-Wframe-larger-than]
-> >      454 | static int dpaa_set_coalesce(struct net_device *dev,
-> >          |            ^
-> >    1 warning generated.
+> number of tests executed is determined by the script arguments, and
+> options such as -c, -f, -h, -i, and -p do not impact the total test
+> count.
 > 
-> Arrays of NR_CPUS elements are what it probably doesn't like?
+> No functional change is intended.
 
-Can it use the number of online CPUs instead of NR_CPUS?
+There are functional changes - keep_alive() coupled with changes
+tailored by a script that isn't in the kernel code which isn't
+ideal.
 
-Other than that, I would say we can drop this patch in the meantime, so,
-we can move with the others, while this one is being addressed.
+Why not inlcude the script in this patch series to make it part
+of the kernel?
+
+> 
+> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+> ---
+>   .../selftests/watchdog/watchdog-test.c        | 154 ++++++++++--------
+>   1 file changed, 89 insertions(+), 65 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/watchdog/watchdog-test.c b/tools/testing/selftests/watchdog/watchdog-test.c
+> index 786cc5a26206..90f32de9e194 100644
+> --- a/tools/testing/selftests/watchdog/watchdog-test.c
+> +++ b/tools/testing/selftests/watchdog/watchdog-test.c
+> @@ -22,6 +22,7 @@
+>   #include <sys/ioctl.h>
+>   #include <linux/types.h>
+>   #include <linux/watchdog.h>
+> +#include "../kselftest.h"
+>   
+>   #define DEFAULT_PING_RATE	1
+>   #define DEFAULT_PING_COUNT	5
+> @@ -29,6 +30,7 @@
+>   int fd;
+>   const char v = 'V';
+>   static const char sopts[] = "bdehp:c:st:Tn:NLf:i";
+> +static const char topts[] = "bdeLn:Nst:T";
+>   static const struct option lopts[] = {
+>   	{"bootstatus",          no_argument, NULL, 'b'},
+>   	{"disable",             no_argument, NULL, 'd'},
+> @@ -52,7 +54,7 @@ static const struct option lopts[] = {
+>    * the PC Watchdog card to reset its internal timer so it doesn't trigger
+>    * a computer reset.
+>    */
+> -static void keep_alive(void)
+> +static int keep_alive(void)
+>   {
+>   	int dummy;
+>   	int ret;
+> @@ -60,6 +62,8 @@ static void keep_alive(void)
+>   	ret = ioctl(fd, WDIOC_KEEPALIVE, &dummy);
+>   	if (!ret)
+>   		printf(".");
+> +
+> +	return ret;
+>   }
+
+Are these changes driven by the script that isn't in the kernel code?
+I don't want to see changes to keep_alive() bevator.
+
+thanks,
+-- Shuah
+
 
