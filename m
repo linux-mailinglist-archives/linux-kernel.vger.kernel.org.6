@@ -1,136 +1,133 @@
-Return-Path: <linux-kernel+bounces-232190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3FAE91A4C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:14:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A81A91A4CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:14:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAB471F23540
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:14:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D873D1F235A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 451B7146D7D;
-	Thu, 27 Jun 2024 11:13:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0568C1487ED;
+	Thu, 27 Jun 2024 11:14:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lgMfmJ2K"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="eWoA35Ie";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="utL5o6d+"
+Received: from wfhigh2-smtp.messagingengine.com (wfhigh2-smtp.messagingengine.com [64.147.123.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B818C1459EB
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 11:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1591513BACC;
+	Thu, 27 Jun 2024 11:14:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719486837; cv=none; b=gTBNM+sTTw9g0qL2FIo5wavZfNuuBhCcjaIFp2D3oAKmrTDLF132sABL2iqvocrQJaxVvf12+8AVEl7L6a4aEhm6WZaYnLyWbU/2SUGz6ANYpsyrw9KrblCkCZxAnOXslw/r2IZSOKGYiDX6Gwm3220LaCyd+scnhOvMvjNqNYw=
+	t=1719486889; cv=none; b=ei3Z8/XOwAFpWIehtQhbTrOpoG8FKg6uNdhcHHy+bixsCaky/K1nU7OzVepAWS215XixKiTbMwDesfZzc99pv0F7NbIyeE9g944s+YhBIeF7NzYfimyLX3hvasAELhabLepHw0CLsLtM2qza8C85zMDd8Uf6V/H/b+vSrwqcPRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719486837; c=relaxed/simple;
-	bh=5sFBwc0DRlqfmuA3e4F8SEnbpYW/9mA68h42r8rQVuY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gpa3VKLDFy82ZTBhdZugxEMBY62qwnvFhyojTMk1BOfbjP3nUARfXLz7Omp/cHKfHKXzzNY6X6krSvMCAkjGwBcRMuF2ZjSHyWINDARjzzwMKKwNLnRkxOjKTOF70YHwPBi6r/czyDuIKPv4VHomCtdOmoMYzXHiVo3WACjz5m8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lgMfmJ2K; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52cdfb69724so6131323e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 04:13:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719486834; x=1720091634; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tdkhxg4V+EaWFRe9R6fxXILIl8Q+Rdop2i8/UoriEyI=;
-        b=lgMfmJ2Kx8bcR2ZC62NIydjo0Ucgkz+wDnwDtF+dxX/Tcd5YLrP5963MIxezSgZsGO
-         wTP80uFHKqY+V/k2qOIfdoe7Q9OzV3HKJcq4Gxd1yJgyXGK4gh6U4tfMKoTH9LsTfcYa
-         1kzfzo4RiI5jWmMYK30+6sMedphju4R45tX36jJYh0jmcfxW1JStc8pY1iEg74sEnjcz
-         tnWKej0A0BwUDMtYof7g5rFiJHNJXIne7Kmlmm92UyDk4VyePTcsjw/XXSQhORVQME6R
-         RqneEIWfckKbhwMUgE5+hWjowZh3S6BDtffLCdS6h7QRs3maNbrK3D2yZwhhmYejNgRR
-         eSog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719486834; x=1720091634;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tdkhxg4V+EaWFRe9R6fxXILIl8Q+Rdop2i8/UoriEyI=;
-        b=b/xojdFNCFVPy4w90TFFgXRI2iUftTTOGmad9uRMJ9DU6VUpXvMTfWQ49P99lW0z/5
-         SQ5prj9nVrwRa/vqxUzArywhEkIJghTDJroWrXNja8f7tCQHm3oy8kNFJrkcNpG47Mt+
-         mKyRH2rc90m6cCEixlEtqqrpumEnhFPL5lckhIj8iysTC9Z1kE6Pf6/0YmURLAeeNW0l
-         seDD0xYVJIYrvgxDHnwb62boIftKOZnAH60/lpYvwIl94U4VVJzp+/N04U4jE5FK+UBa
-         HlMjTJn6mT8UN5kU/whAW1sxVQjZ4iTgLLOiEzNXxwON3Sdr1RYRlzMoTcbkVYNH+VQ3
-         tmfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXiD8EaUGqv+INJryZLBUSh3sdqyTKNcbgq2sR2197wCFeqvC/UQEV2Ziv1lJLasOkBWse30Dg8Em3Gzipkqj3W0I0uqLnEHkXUFzE1
-X-Gm-Message-State: AOJu0Yw34DHmk2txcjkOkZB62BLq36j4FBEUQplHlfwvA2UakCLzS32E
-	FM3vW42ntmkMvFpI1H6T5mm7Ye2VbtsYqLOrRegGxtSs7b93qV8Gst4UuZXWxZQ=
-X-Google-Smtp-Source: AGHT+IEdwvrlXULMeBgYsXv7E9ICpsRXSh9tY/qkO+ZPVpF3yvrZOGiOZUlYLCfb7JwzlTJu+GuYfw==
-X-Received: by 2002:a19:e046:0:b0:52c:e171:ba2 with SMTP id 2adb3069b0e04-52ce1835617mr7505956e87.17.1719486833817;
-        Thu, 27 Jun 2024 04:13:53 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e71305d15sm163090e87.162.2024.06.27.04.13.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 04:13:53 -0700 (PDT)
-Date: Thu, 27 Jun 2024 14:13:51 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Ekansh Gupta <quic_ekangupt@quicinc.com>
-Cc: srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org, 
-	gregkh@linuxfoundation.org, quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org, 
-	quic_chennak@quicinc.com, dri-devel@lists.freedesktop.org, arnd@arndb.de, 
-	stable <stable@kernel.org>
-Subject: Re: [PATCH v2] misc: fastrpc: Remove user PD initmem size check
-Message-ID: <62dzilcvsp3efxpxulzkf6e62rzcrhp55k6yjk5fymkqthdfzw@yageexbx6ddz>
-References: <20240627060518.1510124-1-quic_ekangupt@quicinc.com>
+	s=arc-20240116; t=1719486889; c=relaxed/simple;
+	bh=cYYR+xWpqfebO9yx3aTeOVdvVZYNJ+j942X0/SW/VSE=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=iuq5A29bEkZGC5ix9WKbZamsfvbOZe+8HaPuI8S8Dkm5Z1zfHtWKcNJZK1DXX1w/PDGRnv9ECiEOMARBjWHInOqtp/gRMWtefW4+JKV91ZHM/Not6huUbazHRfvpK/wX6NY/GXuFIjd0goCZmgIMSo8ZV73OWUhdR82XRwIkrO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=eWoA35Ie; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=utL5o6d+; arc=none smtp.client-ip=64.147.123.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfhigh.west.internal (Postfix) with ESMTP id E97A5180008D;
+	Thu, 27 Jun 2024 07:14:46 -0400 (EDT)
+Received: from imap44 ([10.202.2.94])
+  by compute3.internal (MEProxy); Thu, 27 Jun 2024 07:14:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1719486886;
+	 x=1719573286; bh=ibMZBiUawSovWXeMUq73em+annDobAZMXPCgXk00oSA=; b=
+	eWoA35IennGyeb3QyvcOTGSCBc1+iLoGsl5D4uIA1sLI+I6R2F0c/xw+EPiBOp6f
+	WqjJbkIitHuBQMdnkBldaTYnX5UUy/9tvlAR5qVsfs+wHtYIjxnZ+gGFgPDeKQ6D
+	I/gn7gMySG6nZLIVKvu29xvXdibGOuj+vuuIjyezxVotCYasWJrephUVAs6IiSKO
+	PE8kfBcWPFjZ3/GJsnLNlPoNbGAs5IqjPh4FYt8pX5e61T691TvMb0XzneuXHjZZ
+	yNnaGtb5of+sgFtiNgjp5MwfBsrGZQpmTrWjY28IMgk2dHZ91LpBZKNXsr0LZ/6X
+	rZr6yycjMXZSooesbeljng==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1719486886; x=
+	1719573286; bh=ibMZBiUawSovWXeMUq73em+annDobAZMXPCgXk00oSA=; b=u
+	tL5o6d+44YnaJM6023MRfejQ2Eojqwg50vEVYqq05f2xCUsSzus7pwhk9tVqLpu1
+	epWFnA55JHLddAQNWng3dsxz+cLgxNPigpaogGeJr63uEbDGEu0rad0PMeLh8QB8
+	SRKV4Rgz9z9Aj0CCaUOolDBKgTiwUNvrO0XEyV8eMj8XIOZfmO5fe0FusKPayh1G
+	4f3qlW0bKYYe2Rpva4qALxk1Cz+As06sCOK651utO1u1JAkT2HLmNMYmnZxZZaWn
+	1HUuWFTh+vwuGoK8icXy+IDCqJIbTyX2GC7dChy4lSxk7Jtg1kyzEOxw3npMJFVY
+	IGisRQ4cvQ8LKNIfbiUKg==
+X-ME-Sender: <xms:pkl9ZhVx-dxHbsCbpRR6aH177i96XHUguQx2Y_rogscP8rRbFA2MXQ>
+    <xme:pkl9ZhkgIO9ERSBpK7On9uVaUwqmIPdKMPpW_AhAEBvPK1zr-iFYY_BtMkFTlPK0v
+    5R5dShbszKFj6SbPq4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrtdeggdefkecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedflfhi
+    rgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
+    eqnecuggftrfgrthhtvghrnhepudefgeeftedugeehffdtheefgfevffelfefghefhjeeu
+    geevtefhudduvdeihefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
+    hilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
+X-ME-Proxy: <xmx:pkl9ZtZ48OmvURA4lXgsM_JPHFttZBs82YwbEmGN74_QrbWSugAngA>
+    <xmx:pkl9ZkUjH-b5nTtm7BmvhoSDdooxfMjb9tFCZZHgWwsNlks82KAVbQ>
+    <xmx:pkl9ZrnG0Yp6C4e6c8OhRgCqor0imlDIfcWo_6ucvyEhLGff_EBJbA>
+    <xmx:pkl9ZhdvTrVuexl7eGQelRn8scPjcX4tXVaRnQcjObcD9DrkrLarzQ>
+    <xmx:pkl9ZpgAF1Nx1ilnQSINakixhdYTHn54iIPnPIlqVq8NNrvtal2Y3RCu>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 415D036A0074; Thu, 27 Jun 2024 07:14:46 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-538-g1508afaa2-fm-20240616.001-g1508afaa
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240627060518.1510124-1-quic_ekangupt@quicinc.com>
+Message-Id: <394042b6-37ef-4011-b799-454036d8bc34@app.fastmail.com>
+In-Reply-To: <Zn0qG5tsMBYcSWW+@alpha.franken.de>
+References: <20240616-mips-mt-fixes-v1-0-83913e0e60fc@flygoat.com>
+ <20240616-mips-mt-fixes-v1-3-83913e0e60fc@flygoat.com>
+ <Zn0qG5tsMBYcSWW+@alpha.franken.de>
+Date: Thu, 27 Jun 2024 12:14:24 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
+Cc: "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ linux-kernel@vger.kernel.org,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH fixes 3/4] MIPS: cps-vec: Replace MT instructions with macros
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 27, 2024 at 11:35:18AM GMT, Ekansh Gupta wrote:
-> For user PD initialization, initmem is allocated and sent to DSP for
-> initial memory requirements like shell loading. This size is passed
-> by user space and is checked against a max size. For unsigned PD
-> offloading, more than 2MB size could be passed by user which would
-> result in PD initialization failure. Remove the user PD initmem size
-> check and allow buffer allocation for user passed size. Any additional
-> memory sent to DSP during PD init is used as the PD heap.
 
-Would it allow malicious userspace to allocate big enough buffers and
-reduce the amount of memory available to the system? To other DSP
-programs?
 
-> 
-> Fixes: 7f1f481263c3 ("misc: fastrpc: check before loading process to the DSP")
-> Cc: stable <stable@kernel.org>
-> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
-> ---
-> Changes in v2:
->   - Modified commit text.
->   - Removed size check instead of updating max file size.
-> 
->  drivers/misc/fastrpc.c | 5 -----
->  1 file changed, 5 deletions(-)
-> 
-> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-> index 5204fda51da3..9d064deeac89 100644
-> --- a/drivers/misc/fastrpc.c
-> +++ b/drivers/misc/fastrpc.c
-> @@ -1389,11 +1389,6 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
->  		goto err;
->  	}
->  
-> -	if (init.filelen > INIT_FILELEN_MAX) {
-> -		err = -EINVAL;
-> -		goto err;
-> -	}
-> -
->  	inbuf.pgid = fl->tgid;
->  	inbuf.namelen = strlen(current->comm) + 1;
->  	inbuf.filelen = init.filelen;
-> -- 
-> 2.34.1
-> 
+=E5=9C=A82024=E5=B9=B46=E6=9C=8827=E6=97=A5=E5=85=AD=E6=9C=88 =E4=B8=8A=E5=
+=8D=8810:00=EF=BC=8CThomas Bogendoerfer=E5=86=99=E9=81=93=EF=BC=9A
+> On Sun, Jun 16, 2024 at 02:25:04PM +0100, Jiaxun Yang wrote:
+>> Replace MT instructions with macros to deal with assemblers
+>> not supporting MT ASE properly.
+>
+> how about simply enforcing the need for a correct toolchain instead
+> of making the code ugly ?
 
--- 
-With best wishes
-Dmitry
+Unfortunately, MT for microMIPS which I'm trying to bring up is only in
+binutils master, it's not in any binutils release yet.
+
+LLVM support is also pending.
+
+Thanks
+>
+> Thomas.
+>
+> --=20
+> Crap can work. Given enough thrust pigs will fly, but it's not necessa=
+rily a
+> good idea.                                                [ RFC1925, 2=
+.3 ]
+
+--=20
+- Jiaxun
 
