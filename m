@@ -1,154 +1,323 @@
-Return-Path: <linux-kernel+bounces-232018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A38891A195
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:35:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A9E791A1A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:37:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D392828199D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 08:35:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E40B1C219D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 08:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7FB380031;
-	Thu, 27 Jun 2024 08:34:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DE284E1C;
+	Thu, 27 Jun 2024 08:37:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sBKHC1G3"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="f4sQNpyS"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A66552F6F
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 08:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F49E7C097;
+	Thu, 27 Jun 2024 08:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719477295; cv=none; b=a1jvfhtturruaJP9zDkV7We+W8X13NYDZCKN8wCHVTBOuohL83d1h1PMYUzfnXRDQk3+wSE8/CSj8u433BQIZ7bqslCE3pR9eRuUWNutww6idB8YpVklVCO44dPGgOkgAD5cY3qrN375I245LyBGRLs7XzPZDRdRRnb1meGzDcU=
+	t=1719477435; cv=none; b=eG3uK5dIHG5XHpoGYW0V+nKOF8zGo1LJsy8lNAcpgECTRtXPgFLHRzc+SFGUYHe/Euk3u1I0ef0rESTElCl+nAunr5JqnZiogkW70a3ITyhJTvivqZ+sO4G3mU6U7++rQorJrNmcAC/9E4MxvHGF8Qf0bbRnOzAPUJwZ9vGyRsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719477295; c=relaxed/simple;
-	bh=jaHYq9qHI0Bww45jO0JOW2KKMuvYkD8u1X20gL+6tFY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y8pBsxn0O+Naq/4Wg57rmfB2iVUb7rqKyr2KkVckWs6sakaTaVJp/BkGTEF3GeDSDgeKJfXRivo94kZ56AEWQRJrLvgJc/Z89bjGDbNrgeOiAbIzk4PrnpC2/6PepPfyIX5jnfXWG5MEP55VCQu/eNgKvg5jtnUlXhqKOeMaO2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sBKHC1G3; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52cd6784aa4so7181150e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 01:34:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719477292; x=1720082092; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jaHYq9qHI0Bww45jO0JOW2KKMuvYkD8u1X20gL+6tFY=;
-        b=sBKHC1G38EbA059ElZrKTQeMlO191hpU47ANsgBmKqq9qONr1eB0gqDDW2vRQP5pJk
-         Guzj6LYgeKtMUSnlV4Y+gELko9XiyVOSLtxRgTCXrqKkfJIT8Pj6LJz3lrdxygHx5f3A
-         luJtMdb/JxG3gJ0zxILNjbjvmy0MSDJQoDKH30unsHJn+Dy2XoVCCThmTNWcsdiYeXfr
-         4EDiW1CSdHW41iCApoWEv/75giSjRty763c2q4sG9/xuMctqkeiGnLNvVJm7puAB0SoT
-         OqnOLnBd+Oe0B5uzz+jjmzzuYgm/QJG5iK4Wwg71XanGZttaRqc+STbeBI+ao1myOVhV
-         SHUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719477292; x=1720082092;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jaHYq9qHI0Bww45jO0JOW2KKMuvYkD8u1X20gL+6tFY=;
-        b=B8DuXDDv6VAmqaQC8MLlvJey+F41rKEDY8Bl4P6GPiqoZTG81L9LwmVNuxXdO/WYkh
-         2juPPLFUx9SilFHDEsTYDtexWSriImb0ze9dONDE3L/gHCyc2As6VS6hT3NyWQnXHxc3
-         EPwg7q2O1RA3n3wjBhRQYRsM4RMFLp3H/KE7nTW8E2F+tYfvJ4YwSwBBN4tcMyT7JeOS
-         XHp1N+74T30LZ3Vnn4z7/xQRIqTYpGhxN3E/hLPDSgY1+UASMfZIdy+b2mB3kkt+wGOV
-         mpSY8P8qXQW7mxJY6j1KSVSW1UD+8vUH1Yk0E848XnYaasjz8yeP8yueNOC2nBRNjXp9
-         BVSw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXHRovJU3fdpeQeefzZisY142YezpgydvvuD7Bk8cwYfkailDjEkdLpUQxW6e+2BVUUSmDPbITxxpzexEPWbjXWgo0UlrljoMghZ0u
-X-Gm-Message-State: AOJu0YzxXXRaJZTxLkpJN/kuKYxewS6dhebyafD+etarlzFHfOqmBO90
-	yF2z95kU+X/geKwPn1c4KKNTSQ/98NXoi9XDGtoIyyXvEu5ad6quJHgEQQBwcbS+45Y2LsMmo3c
-	yTh8OqLj6IzUbxrYO+2CYfdEZRWT3GTDav6QF
-X-Google-Smtp-Source: AGHT+IHlfk5WkDZhxtSr6xoYbVkipq/AGMIGI9Dxm9ats0II6c5lJlSMjq4hKwrgepsNKkozKV3mIVOymMLBYvUkPo4=
-X-Received: by 2002:a05:6512:203b:b0:52c:df55:e112 with SMTP id
- 2adb3069b0e04-52ce1832119mr6963173e87.6.1719477291466; Thu, 27 Jun 2024
- 01:34:51 -0700 (PDT)
+	s=arc-20240116; t=1719477435; c=relaxed/simple;
+	bh=XREYqkvCwbtnY/wTDk2oBMANkBPSKjKF3TFWthonUGA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UNLGZiXKI14uRpKe4IRRPsLzOMjqUkcIGffMUed0X/UdXPIoGnkT+3n1hGanSGvIGiOp0+dLZ/PttW8ORRpoDsDEIYT0028CVngn3L4DpN+WDdYr07+K6ukJCjdf++AURghEqXqefFtqSSn0T4B/ZXP39gYOTXRHVqaYur84HNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=f4sQNpyS; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1719477425;
+	bh=XREYqkvCwbtnY/wTDk2oBMANkBPSKjKF3TFWthonUGA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=f4sQNpySpezWwtUlEczADnMWiKwsxMhyPdXapEZq0VoLPmutf2cJeMw9wtQfdGaYB
+	 cHEqweDX1YFIJkZimqnOZC5LyTlgTX+uygBFFZ7nbDrHRZQyFxGLgbFsJRHws9Ix8a
+	 VQxgGsFYbyeJcAZNlPUyqf5jIWwVHSzEQt4oE/PKzqJMqA10S2Ku+fBZCJPCeVJ/nX
+	 2fnJ11lzRk6irZIL9Kq5wi3+uN2Ok2FXZrgGnIGrlfBoZW+10cnmn3swpLHfBRc1Ep
+	 nzWm2QuBjscLmHodCrScrQA9bYMB8TRyT9aADw07nCMsJzjit599SB41UMJvKgZxic
+	 7NDGEp7U76DuA==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 940C83780626;
+	Thu, 27 Jun 2024 08:37:04 +0000 (UTC)
+Message-ID: <96b436c1-50c3-4091-9577-c00187518779@collabora.com>
+Date: Thu, 27 Jun 2024 10:37:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240621-tracepoint-v3-0-9e44eeea2b85@google.com>
- <20240621-tracepoint-v3-1-9e44eeea2b85@google.com> <ZnrtuaUByT70tJY5@boqun-archlinux>
-In-Reply-To: <ZnrtuaUByT70tJY5@boqun-archlinux>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 27 Jun 2024 10:34:39 +0200
-Message-ID: <CAH5fLgjCAbz39-8EzBxxrWFXFg6VK=ts98BBvpEk8=RZoMuBSA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] rust: add static_key_false
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>, 
-	Ard Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
-	Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, "Peter Zijlstra (Intel)" <peterz@infradaed.org>, 
-	Sean Christopherson <seanjc@google.com>, Uros Bizjak <ubizjak@gmail.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Mark Rutland <mark.rutland@arm.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>, 
-	linux-arm-kernel@lists.infradead.org, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <apatel@ventanamicro.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, 
-	Conor Dooley <conor.dooley@microchip.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	linux-riscv@lists.infradead.org, Huacai Chen <chenhuacai@kernel.org>, 
-	WANG Xuerui <kernel@xen0n.name>, Bibo Mao <maobibo@loongson.cn>, 
-	Tiezhu Yang <yangtiezhu@loongson.cn>, Andrew Morton <akpm@linux-foundation.org>, 
-	Tianrui Zhao <zhaotianrui@loongson.cn>, loongarch@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] dt-bindings: clock: Add MediaTek MT6735 clock and
+ reset bindings
+To: Yassine Oudjana <yassine.oudjana@gmail.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Daniel Golle
+ <daniel@makrotopia.org>, jason-ch chen <Jason-ch.Chen@mediatek.com>,
+ Sam Shih <sam.shih@mediatek.com>, Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Yassine Oudjana <y.oudjana@protonmail.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+References: <20240626202406.846961-1-y.oudjana@protonmail.com>
+ <20240626202406.846961-2-y.oudjana@protonmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240626202406.846961-2-y.oudjana@protonmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 25, 2024 at 6:18=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
-rote:
->
-> Hi Alice,
->
-> On Fri, Jun 21, 2024 at 10:35:26AM +0000, Alice Ryhl wrote:
-> > Add just enough support for static key so that we can use it from
-> > tracepoints. Tracepoints rely on `static_key_false` even though it is
-> > deprecated, so we add the same functionality to Rust.
-> >
-> > It is not possible to use the existing C implementation of
-> > arch_static_branch because it passes the argument `key` to inline
-> > assembly as an 'i' parameter, so any attempt to add a C helper for this
-> > function will fail to compile because the value of `key` must be known
-> > at compile-time.
-> >
-> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
->
-> [Add linux-arch, and related arch maintainers Cced]
->
-> Since inline asms are touched here, please consider copying linux-arch
-> and arch maintainers next time ;-)
+Il 26/06/24 22:24, Yassine Oudjana ha scritto:
+> From: Yassine Oudjana <y.oudjana@protonmail.com>
+> 
+> Add DT bindings for for the main clock and reset controllers of MT6735
+> (apmixedsys, topckgen, infracfg and pericfg).
+> 
+> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
 
-Will do.
+This commit needs just one small nit to be fixed before being ready to be picked,
+check below...
 
-> For x86_64 and arm64 bits:
->
-> Acked-by: Boqun Feng <boqun.feng@gmail.com>
->
-> One thing though, we should split the arch-specific impls into different
-> files, for example: rust/kernel/arch/arm64.rs or rust/arch/arm64.rs.
-> That'll be easier for arch maintainers to watch the Rust changes related
-> to a particular architecture.
+> ---
+>   .../arm/mediatek/mediatek,infracfg.yaml       |  8 +-
+>   .../arm/mediatek/mediatek,pericfg.yaml        |  1 +
+>   .../bindings/clock/mediatek,apmixedsys.yaml   |  4 +-
+>   .../bindings/clock/mediatek,topckgen.yaml     |  4 +-
+>   MAINTAINERS                                   | 12 +++
+>   .../clock/mediatek,mt6735-apmixedsys.h        | 16 ++++
+>   .../clock/mediatek,mt6735-infracfg.h          | 25 ++++++
+>   .../clock/mediatek,mt6735-pericfg.h           | 37 +++++++++
+>   .../clock/mediatek,mt6735-topckgen.h          | 79 +++++++++++++++++++
+>   .../reset/mediatek,mt6735-infracfg.h          | 31 ++++++++
+>   .../reset/mediatek,mt6735-pericfg.h           | 31 ++++++++
+>   11 files changed, 243 insertions(+), 5 deletions(-)
+>   create mode 100644 include/dt-bindings/clock/mediatek,mt6735-apmixedsys.h
+>   create mode 100644 include/dt-bindings/clock/mediatek,mt6735-infracfg.h
+>   create mode 100644 include/dt-bindings/clock/mediatek,mt6735-pericfg.h
+>   create mode 100644 include/dt-bindings/clock/mediatek,mt6735-topckgen.h
+>   create mode 100644 include/dt-bindings/reset/mediatek,mt6735-infracfg.h
+>   create mode 100644 include/dt-bindings/reset/mediatek,mt6735-pericfg.h
+> 
 
-Is that how you would prefer to name these files? You don't want
-static_key somewhere in the filename?
+..snip..
 
-> Another thought is that, could you implement an arch_static_branch!()
-> (instead of _static_key_false!()) and use it for static_key_false!()
-> similar to what we have in C? The benefit is that at least for myself
-> it'll be easier to compare the implementation between C and Rust.
+> diff --git a/include/dt-bindings/clock/mediatek,mt6735-apmixedsys.h b/include/dt-bindings/clock/mediatek,mt6735-apmixedsys.h
+> new file mode 100644
+> index 0000000000000..3dda719fd5d53
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/mediatek,mt6735-apmixedsys.h
+> @@ -0,0 +1,16 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +
+> +#ifndef _DT_BINDINGS_CLK_MT6735_APMIXEDSYS_H
+> +#define _DT_BINDINGS_CLK_MT6735_APMIXEDSYS_H
+> +
+> +#define ARMPLL				0
 
-I can try to include that.
+All of the definitions inside of the clock bindings for MediaTek have a specific
+format and, for consistency, you *shall* follow that.
 
-Alice
+#define CLK_(ip-name)_(clock)    x
+
+For example,
+
+#define CLK_APMIXED_ARMPLL	0
+#define CLK_APMIXED_MAINPLL	1
+... etc
+
+> +#define MAINPLL				1
+> +#define UNIVPLL				2
+> +#define MMPLL				3
+> +#define MSDCPLL				4
+> +#define VENCPLL				5
+> +#define TVDPLL				6
+> +#define APLL1				7
+> +#define APLL2				8
+> +
+> +#endif
+> diff --git a/include/dt-bindings/clock/mediatek,mt6735-infracfg.h b/include/dt-bindings/clock/mediatek,mt6735-infracfg.h
+> new file mode 100644
+> index 0000000000000..a42be76c778d1
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/mediatek,mt6735-infracfg.h
+> @@ -0,0 +1,25 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +
+> +#ifndef _DT_BINDINGS_CLK_MT6735_INFRACFG_H
+> +#define _DT_BINDINGS_CLK_MT6735_INFRACFG_H
+> +
+> +#define CLK_DBG				0
+
+#define CLK_INFRA_DBG	0
+#define CLK_INFRA_GCE	1
+.....etc
+
+> +#define CLK_GCE				1
+> +#define CLK_TRBG			2
+> +#define CLK_CPUM			3
+> +#define CLK_DEVAPC			4
+> +#define CLK_AUDIO			5
+> +#define CLK_GCPU			6
+> +#define CLK_L2C_SRAM			7
+> +#define CLK_M4U				8
+> +#define CLK_CLDMA			9
+> +#define CLK_CONNMCU_BUS			10
+> +#define CLK_KP				11
+> +#define CLK_APXGPT			12
+> +#define CLK_SEJ				13
+> +#define CLK_CCIF0_AP			14
+> +#define CLK_CCIF1_AP			15
+> +#define CLK_PMIC_SPI			16
+> +#define CLK_PMIC_WRAP			17
+> +
+> +#endif
+> diff --git a/include/dt-bindings/clock/mediatek,mt6735-pericfg.h b/include/dt-bindings/clock/mediatek,mt6735-pericfg.h
+> new file mode 100644
+> index 0000000000000..72401f009176a
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/mediatek,mt6735-pericfg.h
+> @@ -0,0 +1,37 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +
+> +#ifndef _DT_BINDINGS_CLK_MT6735_PERICFG_H
+> +#define _DT_BINDINGS_CLK_MT6735_PERICFG_H
+> +
+> +#define CLK_DISP_PWM			0
+
+#define CLK_PERI_DISP_PWM
+#define CLK_PERI_THERM
+....etc
+
+> +#define CLK_THERM			1
+> +#define CLK_PWM1			2
+
+..snip..
+
+> +
+> +#endif
+> diff --git a/include/dt-bindings/clock/mediatek,mt6735-topckgen.h b/include/dt-bindings/clock/mediatek,mt6735-topckgen.h
+> new file mode 100644
+> index 0000000000000..a771910a4b8a6
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/mediatek,mt6735-topckgen.h
+> @@ -0,0 +1,79 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +
+> +#ifndef _DT_BINDINGS_CLK_MT6735_TOPCKGEN_H
+> +#define _DT_BINDINGS_CLK_MT6735_TOPCKGEN_H
+> +
+> +#define AD_SYS_26M_CK			0
+
+#define CLK_TOP_AD_SYS_26M_CK
+#define CLK_TOP_CLKPH_MCK_O
+#define CLK_TOP_DMPLL
+
+....etc
+
+> +#define CLKPH_MCK_O			1
+> +#define DMPLL				2
+
+..snip...
+
+> +
+> +#endif
+> diff --git a/include/dt-bindings/reset/mediatek,mt6735-infracfg.h b/include/dt-bindings/reset/mediatek,mt6735-infracfg.h
+> new file mode 100644
+> index 0000000000000..5d24c7a1317f8
+> --- /dev/null
+> +++ b/include/dt-bindings/reset/mediatek,mt6735-infracfg.h
+> @@ -0,0 +1,31 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +
+> +#ifndef _DT_BINDINGS_RESET_MT6735_INFRACFG_H
+> +#define _DT_BINDINGS_RESET_MT6735_INFRACFG_H
+> +
+
+For resets, the names are, instead...
+
+#define (socmodel)_(ip-name)_(instance)_(reset-name)
+
+so, for example...
+
+#define MT6735_INFRA_RST0_EMI_REG	0
+#define MT6735_INFRA_RST0_DRAMC0_AO	1
+
+and no holes are permitted, so:
+
+#define MT6735_INFRA_RST0_AP_CIRQ_EINT	2
+
+...this means that, unless you know what is at 2, you have to define
+a .rst_idx_map which will effectively map the binding to the actual
+real reset bit in the reset register.
+
+In the driver:
+
+#define RST_NR_PER_BANK		32
+
+static u16 infra_idx_map[] = {
+	[MT6735_INFRA_RST0_EMI_REG] = 0 * RST_NR_PER_BANK + 0
+	......
+	[MT7635_INFRA_RST0_AP_CIRQ_EINT] = 0 * RST_NR_PER_BANK + 3
+	... etc
+};
+
+> +#define RST_EMI_REG			0
+> +#define RST_DRAMC0_AO			1
+> +#define RST_AP_CIRQ_EINT		3
+> +#define RST_APXGPT			4
+> +#define RST_SCPSYS			5
+> +#define RST_KP				6
+> +#define RST_PMIC_WRAP			7
+> +#define RST_CLDMA_AO_TOP		8
+> +#define RST_EMI				16
+> +#define RST_CCIF			17
+> +#define RST_DRAMC0			18
+> +#define RST_EMI_AO_REG			19
+> +#define RST_CCIF_AO			20
+> +#define RST_TRNG			21
+> +#define RST_SYS_CIRQ			22
+> +#define RST_GCE				23
+> +#define RST_M4U				24
+> +#define RST_CCIF1			25
+> +#define RST_CLDMA_TOP_PD		26
+> +#define RST_CBIP_P2P_MFG		27
+> +#define RST_CBIP_P2P_APMIXED		28
+> +#define RST_CBIP_P2P_CKSYS		29
+> +#define RST_CBIP_P2P_MIPI		30
+> +#define RST_CBIP_P2P_DDRPHY		31
+> +
+> +#endif
+> diff --git a/include/dt-bindings/reset/mediatek,mt6735-pericfg.h b/include/dt-bindings/reset/mediatek,mt6735-pericfg.h
+> new file mode 100644
+> index 0000000000000..90ee8ed8923fd
+> --- /dev/null
+> +++ b/include/dt-bindings/reset/mediatek,mt6735-pericfg.h
+> @@ -0,0 +1,31 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +
+> +#ifndef _DT_BINDINGS_RESET_MT6735_PERICFG_H
+> +#define _DT_BINDINGS_RESET_MT6735_PERICFG_H
+> +
+> +#define RST_UART0			0
+
+#define MT6735_PERI_RST0_UART0 ......etc
+
+
+You're almost there, getting this stuff upstream is just one small effort ahead.
+Keep it up!
+
+Cheers,
+Angelo
+
+
 
