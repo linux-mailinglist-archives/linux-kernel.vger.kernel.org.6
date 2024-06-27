@@ -1,110 +1,170 @@
-Return-Path: <linux-kernel+bounces-232589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A7EE91AB47
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:31:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6CDB91AB51
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:32:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63B8C1C20889
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:31:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 071411C20B69
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:32:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15B1A1990A5;
-	Thu, 27 Jun 2024 15:31:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DGcMzJ3i"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE721990AF;
+	Thu, 27 Jun 2024 15:32:26 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 090C6198A2C
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 15:30:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461D2198A34;
+	Thu, 27 Jun 2024 15:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719502260; cv=none; b=XfNudIEQ3VcqXUz8P7oaKLfFs5cUYo1OESZxV24eKbZBo2SlL4jtWOJU1n/P3ib56mOs+al7qN9N2Ue8Y3R8dswlM1HrnIHHgANZ1PkH1SurV6RpRiW24FYYKnT/fYxOedH6dACz2iQxHFplptBUojch0a/fcS6WgJhZO0HWQEQ=
+	t=1719502345; cv=none; b=ZEEjcAmHnMABNADPLKi7YiszfnQ16jKVJcTLX8FMLSN1FkX3nO5K808M5Nly+yMtxmTHzUdb9sXyXns3tRXdWQdyR9CStCbR/HPvaML0pO01T+SBsGJfqTy/2Q25PndGRLpKskOBgKkGLCMc2p8LMLK7NjzBkJP620nttAu7wLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719502260; c=relaxed/simple;
-	bh=ST574pguHikK10RThvE3ToWvprmcnKje0BV9CfOw4cw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oUEoZlPvPfO+SeMB320vafGVV8pEcKDxamqpiwM5QAaMkERrJLBf91muIoOyDkDUpQ9AmZiMeIm9dtUjHXQgMiFPKZbmk5fFQhMPlKi7et5xsENOhylHch+PVO/Aze6GxIWS334HgZzoU0wgc1NLJtjNLRfyr/08PVj/pF2fkpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DGcMzJ3i; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719502257;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ST574pguHikK10RThvE3ToWvprmcnKje0BV9CfOw4cw=;
-	b=DGcMzJ3iqw7hhvpUKDGM1xhMNjxcv7OoOWSwxhsgdxYCna37un1hZqOP6A4O8QIXjdB1Gx
-	YHOKbYE+2YNXizt0OxXLrr5pdMPDBBlrI8iD9krB4mr+2CQeA6pkMrE03aIIkNCwbutZ9O
-	trHmxd9rYsiSoPhKjp2Hpl0m2/BWwmI=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-665-uEjw7J6ZMOCFvC6FClU9cg-1; Thu,
- 27 Jun 2024 11:30:53 -0400
-X-MC-Unique: uEjw7J6ZMOCFvC6FClU9cg-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C014D195609E;
-	Thu, 27 Jun 2024 15:30:50 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.18])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 4FFBB19560A3;
-	Thu, 27 Jun 2024 15:30:46 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Thu, 27 Jun 2024 17:29:17 +0200 (CEST)
-Date: Thu, 27 Jun 2024 17:29:11 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Jiri Olsa <olsajiri@gmail.com>, Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	loongarch@lists.linux.dev
-Subject: Re: [PATCH] uprobe: Do not use UPROBE_SWBP_INSN as static initializer
-Message-ID: <20240627152910.GB21813@redhat.com>
-References: <20240618194306.1577022-1-jolsa@kernel.org>
- <CAEf4BzbN4Li2iesQm28ZYEV2nXsLre8_qknmvkSy510EV7h=SA@mail.gmail.com>
- <20240620193846.GA7165@redhat.com>
- <CAEf4BzaqgbjPfxKmzF-M7nzGroOwKikA0BM7Tnw7dKzKS+x9ZQ@mail.gmail.com>
- <20240621120149.GB12521@redhat.com>
- <ZnV9hvOP5388YJtw@krava>
- <Zn1ssLPeMj-On_uT@krava>
- <20240627232032.a202e546f59a0290c615510f@kernel.org>
+	s=arc-20240116; t=1719502345; c=relaxed/simple;
+	bh=aVbM1IQMkrPPckh5xWOxqYkHnsmPqgtjycwr/CEZgeY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dXUye54xRAy4Kj5n0+unJ/CBv7N98JNEl6pEFtwq8gj9zENH7poUWIVXfhei3NCHfEQom/quMMuzDp3ARh9KvgDb17Z2XecIjAOXjACoXeLLv3dRpC4LTX9oaPpa4xpHqDkF+uP08nAbXtWodBe6LaEbjEao8B7SIp5kqyfI7Vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+From: Yixun Lan <dlan@gentoo.org>
+Subject: [PATCH v2 00/10] riscv: add initial support for SpacemiT K1
+Date: Thu, 27 Jun 2024 15:31:14 +0000
+Message-Id: <20240627-k1-01-basic-dt-v2-0-cc06c7555f07@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240627232032.a202e546f59a0290c615510f@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMKFfWYC/x3MPQqAMAxA4atIZgNtlA5eRRz6EzUIVVoRofTuF
+ sdveK9A5iScYeoKJH4kyxkbqO/A7zZujBKagRSNypDBQ6PS6GwWj+FGbe2gmdn5QNCiK/Eq7z+
+ cl1o/6qWQ5mAAAAA=
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, 
+ Samuel Holland <samuel.holland@sifive.com>, 
+ Anup Patel <anup@brainfault.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Palmer Dabbelt <palmer@sifive.com>, linux-riscv@lists.infradead.org, 
+ linux-serial@vger.kernel.org, Inochi Amaoto <inochiama@outlook.com>, 
+ Meng Zhang <zhangmeng.kevin@spacemit.com>, Yangyu Chen <cyy@cyyself.name>, 
+ Yixun Lan <dlan@gentoo.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4039; i=dlan@gentoo.org;
+ h=from:subject:message-id; bh=aVbM1IQMkrPPckh5xWOxqYkHnsmPqgtjycwr/CEZgeY=;
+ b=owEBzQIy/ZANAwAKATGq6kdZTbvtAcsmYgBmfYXcZao4t4/seNTZQlv12YCD3ueUpvzGIelTI
+ x+XqLaMjFiJApMEAAEKAH0WIQS1urjJwxtxFWcCI9wxqupHWU277QUCZn2F3F8UgAAAAAAuAChp
+ c3N1ZXItZnByQG5vdGF0aW9ucy5vcGVucGdwLmZpZnRoaG9yc2VtYW4ubmV0QjVCQUI4QzlDMzF
+ CNzExNTY3MDIyM0RDMzFBQUVBNDc1OTREQkJFRAAKCRAxqupHWU277UNTD/98/CPAZzXwZUxG50
+ N+CfEzPFoSR+6m6Z+zjvH74DWMIFuLEeghYIrET4c3lEE9WtK3QxuZJNh/3Zf9KOgFaRmHRppb/
+ tfwgMiOpFJOr8RlwT4FUBRvqsbfQfNq8pHfdkdj+adTpXPBqOo2i8zEW+GxuA13T7XKWLWumM8V
+ AJjXlmuOFnlbRRncxhaqXwx0YrDsaLoOKnj9PNYj0wn0fl0Kotx6mqeOXtCiZDiHh56xrW2z5g6
+ /Zd8HaIIr6Ir+7niOSRa6PupQmjZ7o2BEv0FMMR7BL3mOL16ELhgFbrp5jeStt7NuE1eN5c6Ixf
+ kgGzDV0KGymWAVw4rPp6ix7FHy2LhRD1ku/ijbIy1xsCb3xJcOML9AoWir/AvXWOyfVMUJPc8Yy
+ k0JVjw+ex1UCVqaAzgf8ejAVl0d55iT6Xsag1OAnQew5+Wsgm3d121LJoUDdLKuSa7JFj8K0P1+
+ RuvdhxoMTMKK+PwTQqNwIiRKCTwtmJB9Ek764dXGc1XJFzdiWX5kNF3VmcLcqtHtbG1y4BlYqFX
+ xPvHS7BCo3I7Yt4/SfgTR6BHTpkTsOq7rtcdARSOh08+Yj5Y0GZDpn0HEefur6Bjb85AbYFD+li
+ Es2bfCsSg+sz2/klkwIHqYvAHk2EMDoptVQCDlM1Axa0T0Gk+uSRxS7ubmHXHb2TnAaQ==
+X-Developer-Key: i=dlan@gentoo.org; a=openpgp;
+ fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
 
-On 06/27, Masami Hiramatsu wrote:
->
-> On Thu, 27 Jun 2024 15:44:16 +0200
-> Jiri Olsa <olsajiri@gmail.com> wrote:
->
-> > Oleg, do you want to send formal patch?
-> >
-> > thanks,
-> > jirka
->
-> Yes, can you send v2 patch?
+SpacemiT K1 is an ideal chip for some new extension such as RISC-V Vector
+1.0 and Zicond evaluation now. Add initial support for it to allow more
+people to participate in building drivers to mainline for it.
 
-I was waiting for the comments from loongarch maintainers...
+This kernel has been tested upon Banana Pi BPI-F3 board on vendor U-Boot
+bootflow generated by Armbian SDK[1] and patched OpenSBI[2] to enable
+Zicboz, which does not in the vendor dts on its U-Boot. Then successfully
+booted to busybox on initrd with this log[3].
 
-OK, will do today, but the patch won't be even compile tested.
+As previous discussion in patch v1[4], maintainer expect more basic drivers
+ready before really merging it, which would be fine. For other follow-up patches, 
+that are clk, pinctrl/gpio, reset.. My current goal would target at a headless
+system including SD card, emmc, and ethernet.
 
-Oleg.
+P.S: talked to Yangyu, I will help and take care of this patch series, thanks
+---
+Changes in v2:
+ - fix timebase-frequency according to current setting
+ - add other uart dt nodes, fix input frequency
+ - introduce new uart compatible for K1 SoC
+ - add 'k1' prefix to bananapi-f3.dts
+ - fix k1-clint compatible
+ - fix some typos
+ - Link to v1: https://lore.kernel.org/r/tencent_BC64B7B1876F5D10479BD19112F73F262505@qq.com
+
+Link: https://github.com/BPI-SINOVOIP/armbian-build/tree/v24.04.30 [1]
+Link: https://gist.github.com/cyyself/a07096e6e99c949ed13f8fa16d884402 [2]
+Link: https://gist.github.com/cyyself/a2201c01f5c8955a119641f97b7d0280 [3]
+Link: https://lore.kernel.org/r/20240618-hardwood-footrest-ab5ec5bce3cf@wendy [4]
+
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+To: Paul Walmsley <paul.walmsley@sifive.com>
+To: Palmer Dabbelt <palmer@dabbelt.com>
+To: Albert Ou <aou@eecs.berkeley.edu>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+To: Samuel Holland <samuel.holland@sifive.com>
+To: Anup Patel <anup@brainfault.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jiri Slaby <jirislaby@kernel.org>
+To: Lubomir Rintel <lkundrak@v3.sk>
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Palmer Dabbelt <palmer@sifive.com>
+Cc: linux-riscv@lists.infradead.org
+Cc: linux-serial@vger.kernel.org
+Cc: Inochi Amaoto <inochiama@outlook.com>
+Cc: Meng Zhang <zhangmeng.kevin@spacemit.com>
+
+Signed-off-by: Yangyu Chen <cyy@cyyself.name>
+Signed-off-by: Yixun Lan <dlan@gentoo.org>
+
+---
+Yangyu Chen (9):
+      dt-bindings: vendor-prefixes: add spacemit
+      dt-bindings: riscv: Add SpacemiT X60 compatibles
+      dt-bindings: riscv: add SpacemiT K1 bindings
+      dt-bindings: timer: Add SpacemiT K1 CLINT
+      dt-bindings: interrupt-controller: Add SpacemiT K1 PLIC
+      riscv: add SpacemiT SOC family Kconfig support
+      riscv: dts: add initial SpacemiT K1 SoC device tree
+      riscv: dts: spacemit: add Banana Pi BPI-F3 board device tree
+      riscv: defconfig: enable SpacemiT SoC
+
+Yixun Lan (1):
+      dt-bindings: serial: 8250: Add SpacemiT K1 uart compatible
+
+ .../interrupt-controller/sifive,plic-1.0.0.yaml    |   5 +-
+ Documentation/devicetree/bindings/riscv/cpus.yaml  |   1 +
+ .../devicetree/bindings/riscv/spacemit.yaml        |  24 ++
+ Documentation/devicetree/bindings/serial/8250.yaml |   4 +-
+ .../devicetree/bindings/timer/sifive,clint.yaml    |   1 +
+ .../devicetree/bindings/vendor-prefixes.yaml       |   2 +
+ arch/riscv/Kconfig.socs                            |   5 +
+ arch/riscv/boot/dts/Makefile                       |   1 +
+ arch/riscv/boot/dts/spacemit/Makefile              |   2 +
+ arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts    |  19 ++
+ arch/riscv/boot/dts/spacemit/k1.dtsi               | 378 +++++++++++++++++++++
+ arch/riscv/configs/defconfig                       |   1 +
+ 12 files changed, 441 insertions(+), 2 deletions(-)
+---
+base-commit: f2661062f16b2de5d7b6a5c42a9a5c96326b8454
+change-id: 20240626-k1-01-basic-dt-1aa31eeebcd2
+
+Best regards,
+-- 
+Yixun Lan <dlan@gentoo.org>
 
 
