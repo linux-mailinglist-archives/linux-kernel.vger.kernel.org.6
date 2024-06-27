@@ -1,144 +1,121 @@
-Return-Path: <linux-kernel+bounces-232705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E5391AD47
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:56:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBFAF91AD4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:57:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96DF41C26273
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:56:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7179A1F27147
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C0A199EAF;
-	Thu, 27 Jun 2024 16:56:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8585C199EB2;
+	Thu, 27 Jun 2024 16:57:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mrSchKrs"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Ao/PZ+nD"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933D7199EA1;
-	Thu, 27 Jun 2024 16:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C7C199EAB
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 16:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719507375; cv=none; b=dWRx3VR6F/IUY0i8aeLyoy1sDd/vEIdIc7YbSBxwfYPDWA9kW8xwQhWQZ9JlDuiIEd2ymTTRgXm3bX8pfwGK+a7NFykSIYWwu/GLqC0Iwwok+z5oE6rezvnv50EkTY0NGonW7pnvWooMdjguQKzlWTf1ZVPZgR22alENXbnh76Q=
+	t=1719507454; cv=none; b=kRKEB38/9RHnIGCro8x1g/808rgTxYlkhPbVOluEiOfoX0iP2ggcTr+zZ1REG14Mj2aeGLIj/XduRZCcyuXfFBWOyiBoEtoJeGerlIIEJz1BnjGz4MF/psloryPyu7NrdXGl848c1VUySyQB86cnjXxhbOzjBGllCkmUQcZ9xEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719507375; c=relaxed/simple;
-	bh=tXnUP+Q4ipMZHMdFaly9rDmGwdmTVd9/H6CA/PJ6e9g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lsUQAo2t+V+dJ+Q5lPq4QYJ7EEKEDj6mDnvsIGCdN+E4LaRaawj+Dx7J7wKpY/M3K3NnKtVYBG76Dr3K6/b6eXuz4faxXmzwcDowspMzqdlH6TmQY+WJ6qmlT6b/EEzBC0iHlsBWFNvSupS73biczZBy89W94nsoqmTaoEMj6yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mrSchKrs; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719507374; x=1751043374;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tXnUP+Q4ipMZHMdFaly9rDmGwdmTVd9/H6CA/PJ6e9g=;
-  b=mrSchKrshCwg0tvfnXSiLQrW+w0X5whGQDwyswMKSkfp2QD8RmQ7UqbB
-   86AHxZyrh9UKFipL/Z3je6Hy7X/XZSz4quKAq13o/iqcPZFg2S6+ORLrP
-   fRyURy5VH6IjMyEWR9du06xMb7Shl5bE9mmyLP5MBz4lRam4osMPXFLU2
-   L40ZHYvB0INs3mx7WNg2dqtxgb1V9vLtNrwXgOJ9szHSodK1n1TGiztqL
-   +fMEs1lDPLtnn/BAdXBdmwHrs4IoPdRb615nA428Lot6ZhR3I4nQc9Cb5
-   zJdmMsujT0TYpOW4Iq4azXu5sBN0pLolJWulNU4V0U2OOqDRiKTPls5Pj
-   g==;
-X-CSE-ConnectionGUID: AIPFVc2LSqSYKSt/uo6WkA==
-X-CSE-MsgGUID: YP9FTKJlTruLykeNJ9cgbQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="12286788"
-X-IronPort-AV: E=Sophos;i="6.09,166,1716274800"; 
-   d="scan'208";a="12286788"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 09:56:13 -0700
-X-CSE-ConnectionGUID: bsmEuNJtTamAJkDBSbSqeA==
-X-CSE-MsgGUID: dLAGV4qcSZK0xnMWNIgGbQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,166,1716274800"; 
-   d="scan'208";a="45202273"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 27 Jun 2024 09:56:10 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sMsPn-000GMk-1E;
-	Thu, 27 Jun 2024 16:56:07 +0000
-Date: Fri, 28 Jun 2024 00:55:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: Chris Lu <chris.lu@mediatek.com>, Marcel Holtmann <marcel@holtmann.org>,
-	Johan Hedberg <johan.hedberg@gmail.com>,
-	Luiz Von Dentz <luiz.dentz@gmail.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Sean Wang <sean.wang@mediatek.com>,
-	Aaron Hou <aaron.hou@mediatek.com>,
-	Steve Lee <steve.lee@mediatek.com>,
-	linux-bluetooth <linux-bluetooth@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-mediatek <linux-mediatek@lists.infradead.org>,
-	Chris Lu <chris.lu@mediatek.com>
-Subject: Re: [PATCH v5 8/8] Bluetooth: btusb: mediatek: add ISO data
- transmission functions
-Message-ID: <202406280003.brf5D1qt-lkp@intel.com>
-References: <20240626025329.26424-9-chris.lu@mediatek.com>
+	s=arc-20240116; t=1719507454; c=relaxed/simple;
+	bh=FnYTNd4VoG6yJv0fKqSCNSDjS/xt3cKCDoPqBxS46PQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H47phBX93wmHx+2oGetj7lpj7oAFZhrMb4oxEbTXpe5sEIwRvI0mb7x2IpRZcHtMTXGwpDBfEHARNVH1S7xMB2pzjCbAERIqcgz0Kgekt5zAKR6KE9DTARdR5UkEFT0MPeXK1TB9lx2dID+ngE1C4F3wSz9bX1DhyJ8X7TdTQmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Ao/PZ+nD; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52ce6c93103so6265042e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 09:57:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1719507451; x=1720112251; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=i9kjtJnq6QUCFXqe7TVzsRwtJHG6pu+RYcniY0xGCVQ=;
+        b=Ao/PZ+nD+azIvC+WX1isTRRGfp9Qq3zpK8uetUS55m53BBQNRpx4zaXpotY6irP9JQ
+         bZsGQqDWIF6762+9IpI63Ut1hWBB67P4HCHf4rfvXFCzUh1hPHjKckvTqCaTIV8o2U5r
+         NRfo1rY7MBDMhstL2vTZvDi7vrUJsPCv8B47I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719507451; x=1720112251;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=i9kjtJnq6QUCFXqe7TVzsRwtJHG6pu+RYcniY0xGCVQ=;
+        b=Z3pKA9GWVy28NpTmYDDRBE+k8EIa0oBTmrmmnspF3eLXvm1cp0+0NR3PbYSY9dh+jT
+         endolwL8SJK1ivCpk6D9Z/B7Nazwf5UQru1pwfmfm3jwxsA9UfjU7hCtikIdaT4bZZo0
+         itElgPemhd43w8rO7/wnrHkFhoAZvLYC7ObV1vXt8JM7+sigKdcpvwVAaD0B9YKZabIH
+         TLDGpsY5B2n01oeMIdD33lCqtQUA64a+nit/42jXFrjVGiJvAR3LYGevmMutX+oC37Jl
+         C6TPrgPCGN0oGuujmanPG+YUbK3X7wITr/ayUqU7Ymhff/oQBVnFQ44tfBrXLMgvLEw3
+         DJmg==
+X-Forwarded-Encrypted: i=1; AJvYcCVktmkbt1d9khugbMG1inG7RjNeUDqFGf7/XLnp0+kb6B9b0FTP+XbhfNaUQcb/ZTYYdPJM0UyFhWM2zjftdUpBysxDmwItZRGff23T
+X-Gm-Message-State: AOJu0Yzy+xT1uRoUfokystPkPH0HEn5lYA3E+56XflbFvET6vlGnDuwq
+	s6uzyD2hCBiSKdw7Z44vpQPTArzuJvFF8cY/X1v6M8p+f1kTaoQg1NjiOOb5k40sIiMoMi8Nstc
+	oeYz/1A==
+X-Google-Smtp-Source: AGHT+IGFWD9q9MjOMea089NXKkb3cblQVxuZzFhJ5s9/ob2GwPnxRKzQBfm8YIEAcETdBCtxmD3HOA==
+X-Received: by 2002:a05:6512:3986:b0:52d:b226:942a with SMTP id 2adb3069b0e04-52db2269505mr5744820e87.0.1719507450686;
+        Thu, 27 Jun 2024 09:57:30 -0700 (PDT)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e71306010sm264201e87.139.2024.06.27.09.57.29
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Jun 2024 09:57:29 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ec002caf3eso124536971fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 09:57:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU7UUhB1oYTj/Dn6uW9jzMef242P/SS+ATutXNTYJdwOwHhmBoivOtq2v4Szkekq6+DOQEYzKVtqDwEt8pPwifI3bzA/lenZwI8DqOw
+X-Received: by 2002:a2e:6a12:0:b0:2ed:5af6:e846 with SMTP id
+ 38308e7fff4ca-2ed5af6ea7dmr41715831fa.50.1719507449392; Thu, 27 Jun 2024
+ 09:57:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240626025329.26424-9-chris.lu@mediatek.com>
+References: <202406270912.633e6c61-oliver.sang@intel.com> <CAGudoHF7ys8bTCE0G6vLzEbo+_NyQXmAEEGPJ4hx1yoYmBsoUA@mail.gmail.com>
+ <CAGudoHFrMkdo1CoVxJUiEvQ_DyW3hzaCz18GjvLi4ny=o-q9ZQ@mail.gmail.com> <CAHk-=wg7PXo_QbBo8gv27OpbMgAwLh9H46kJRxAmp0FL0QD7HA@mail.gmail.com>
+In-Reply-To: <CAHk-=wg7PXo_QbBo8gv27OpbMgAwLh9H46kJRxAmp0FL0QD7HA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 27 Jun 2024 09:57:13 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjkn=yL6vy5s7ZFgBfDybD3Gjg9C72zXchy-JF0Tp+a+A@mail.gmail.com>
+Message-ID: <CAHk-=wjkn=yL6vy5s7ZFgBfDybD3Gjg9C72zXchy-JF0Tp+a+A@mail.gmail.com>
+Subject: Re: [linux-next:master] [lockref] d042dae6ad: unixbench.throughput
+ -33.7% regression
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev, lkp@intel.com, 
+	Linux Memory Management List <linux-mm@kvack.org>, Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org, 
+	ying.huang@intel.com, feng.tang@intel.com, fengwei.yin@intel.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Chris,
+On Thu, 27 Jun 2024 at 09:32, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+>   getdent subtest:
+>       +4.1   lockref_put_return
+>       +5.7   lockref_get_not_dead
+>      +68.0   native_queued_spin_lock_slowpath
 
-kernel test robot noticed the following build errors:
+For this getdents load, the main call chains that terminate in the
+queued spinlock case seem to be
 
-[auto build test ERROR on bluetooth-next/master]
-[also build test ERROR on next-20240626]
-[cannot apply to bluetooth/master linus/master v6.10-rc5]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+.lockref_get_not_dead.__legitimize_path.try_to_unlazy_next.lookup_fast
+.lockref_get_not_dead.__legitimize_path.try_to_unlazy.lookup_fast
+.lockref_get_not_dead.__legitimize_path.try_to_unlazy.link_path_walk
+.dput.terminate_walk.path_openat.do_filp_open
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Chris-Lu/Bluetooth-btusb-mediatek-remove-the-unnecessary-goto-tag/20240626-114003
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth-next.git master
-patch link:    https://lore.kernel.org/r/20240626025329.26424-9-chris.lu%40mediatek.com
-patch subject: [PATCH v5 8/8] Bluetooth: btusb: mediatek: add ISO data transmission functions
-config: i386-buildonly-randconfig-003-20240627 (https://download.01.org/0day-ci/archive/20240628/202406280003.brf5D1qt-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240628/202406280003.brf5D1qt-lkp@intel.com/reproduce)
+which is interesting because I would have expected the readdir() code
+itself to show up.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406280003.brf5D1qt-lkp@intel.com/
+But the proc_pident_readdir profiles have all gone down, presumably
+because there's just much fewer of them. That part shows no spinlock
+in the profile at all.
 
-All errors (new ones prefixed by >>):
+WTH is that benchmark doing? The only readdir that shows up is for
+what looks like some /proc filesystem thing.
 
-   In file included from drivers/bluetooth/btusb.c:28:
->> drivers/bluetooth/btmtk.h:274:17: error: incompatible integer to pointer conversion passing 'int' to parameter of type 'const void *' [-Wint-conversion]
-     274 |         return PTR_ERR(-EOPNOTSUPP);
-         |                        ^~~~~~~~~~~
-   include/linux/err.h:49:61: note: passing argument to parameter 'ptr' here
-      49 | static inline long __must_check PTR_ERR(__force const void *ptr)
-         |                                                             ^
-   In file included from drivers/bluetooth/btusb.c:28:
->> drivers/bluetooth/btmtk.h:274:9: error: incompatible integer to pointer conversion returning 'long' from a function with result type 'struct urb *' [-Wint-conversion]
-     274 |         return PTR_ERR(-EOPNOTSUPP);
-         |                ^~~~~~~~~~~~~~~~~~~~
-   2 errors generated.
-
-
-vim +274 drivers/bluetooth/btmtk.h
-
-   270	
-   271	static struct urb *alloc_mtk_intr_urb(struct hci_dev *hdev, struct sk_buff *skb,
-   272					      usb_complete_t tx_complete)
-   273	{
- > 274		return PTR_ERR(-EOPNOTSUPP);
-   275	}
-   276	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+            Linus
 
