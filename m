@@ -1,350 +1,363 @@
-Return-Path: <linux-kernel+bounces-233012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAA0D91B115
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:56:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52D5191B11A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:57:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5D33B26F5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:56:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 960D9B228ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:57:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A1419D08E;
-	Thu, 27 Jun 2024 20:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8B919FA81;
+	Thu, 27 Jun 2024 20:57:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gRGXa/+0"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="t8zkxINh"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9254F19FA9F
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 20:56:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A23519E827;
+	Thu, 27 Jun 2024 20:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719521764; cv=none; b=cYHcB+QSMLvNBbXIpfpO7QsJ2M3a1hXFXfH1BZDDkNH6NiC7uJFkyqOHkX1e3uczVFj8XnF7vV7lsFjICbVA/OpWfanTdpmDTJVvbtKbn9/clTkTECuMvg88cZy8X5vuNxEv2/3RXSa79aEM4U7wTfwryTGz3ZHXip1lENcV3eM=
+	t=1719521838; cv=none; b=sHnHtJsZ4xbubn658svVk7ZzXThAsPHKqNrce9xHI2paDj82fS8+IiUyw0bP58wCV6o7JM0kegY/p3B4HZKYCmyycWYiZZjAcKIwBIyHbG+MPf/uKYciHNFRfol7kJ0jTSxc7qeM1DY95pP8Pj7T3+B8ylpdZyMRN2hlTw03v6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719521764; c=relaxed/simple;
-	bh=h/gokKA/eL9d3uvQ86iiXmtz9Do5OKwAUovd4O2lEvM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OBepie/Xpx31T7U+JRIAUqSxaYO2wsbGmFCm1kzam8dlmNQQvqFNYHC7j13OEtLyxGBVt7e5ftAtPKFmW0060tBPAiv1sypDECqC2WjUMm4xqFuGMPPUhYhrzWdjn+vdN4f7p3kohXohLarZgVD2oPhLyW8ZkbC5r+1YT8EqG20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gRGXa/+0; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2c7c61f7ee3so6507490a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 13:56:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719521762; x=1720126562; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cco6EZF2j8OQE92+f3MjOu4YjycnA9o3NZCPpc89uj0=;
-        b=gRGXa/+0aR1gF89enX3KWKGCqIbDrPobmugyQEvZup5PAzfcJ2SIuRuRTPqtciNEUE
-         MAxK2k8601X4g1lBheNge7Qnl+r3YaD6cRbJZSL/cJsvbUON15syAykt4kZJO6+C1ymE
-         s/uqegLwJwCtW1yphJWyJsxsVmKTiZXCXQPwc1GvgFTSoitj9in6xYPH6/FRe3EguHEZ
-         6BcyPQuEg1AjgVcy3qfS9AWC+AzvOH5b40R3DUUCJFVqKfaRhZp6Y1HOhK+VoikV0SwE
-         UdVE/10LYYS8Oe2XZ7UMmz6Jw9UYMpJF/e3GekE0TCEv5lMT/Arzt776eWY+R0En5EJZ
-         4EvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719521762; x=1720126562;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cco6EZF2j8OQE92+f3MjOu4YjycnA9o3NZCPpc89uj0=;
-        b=c4TPnJrGho4bqF2FjqTeQ69g1rGU+c3LaL7QEW3c6qFpSZMvtOTfEJpKdwsCfeA7dB
-         mFP9opjpVufox0SjCS3cf6F2faJEVwAmi0GjtiUKgnC6jETgNmiKHGPg9YLUxxcAKmlG
-         GyYauJSEnwFm42gPx0S+PrXocm4vyM8YJ/lgTsBde3RkeQAMoV5n/LY7LcVttLrjY/C/
-         uto5BVgt3aR9ewBghZ1qMTYeXdmI02xwNSJ6cP8xxZLLo3X+3rKKDYGyAScglssZtEmA
-         d8pB63Txts1myXpkvwMR50PfO9SoiXcAaFa83p/1eMNqhftpXkLRql3dDyjTYs4J1NnI
-         7mog==
-X-Forwarded-Encrypted: i=1; AJvYcCWTd9Y0BVbfcbkwmUcUa7e6UxK2gHgf5seZt7k2MkpXk6zoJN1/6vUw8UKhyo1HQHrNzOWy25M9W7zSoSwFkohzJoNeitsUcxM2bMEL
-X-Gm-Message-State: AOJu0YxIcpAAi320sd0O5oX4b4Hlzk45R/Jh6g0pp/K3Z/FoIvx+6hIi
-	5LYMJkwQYUESKt0LDKHHB7TCScTYdH7rpmkrWkLgcRCiC6JDyt6jSgBFPaNb8yPZyeXeLCRzuI4
-	DsQ==
-X-Google-Smtp-Source: AGHT+IFyz4ki9aGX3jIOrnOMaNPh+xuHBl7iGaMrFplV07Nj7dERB0ologZJCqMGgVX9qvWYMslwrg==
-X-Received: by 2002:a17:90a:348b:b0:2c4:aae7:e27 with SMTP id 98e67ed59e1d1-2c8612dbde6mr13756693a91.23.1719521761469;
-        Thu, 27 Jun 2024 13:56:01 -0700 (PDT)
-Received: from google.com (148.98.83.34.bc.googleusercontent.com. [34.83.98.148])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91d3bc525sm228563a91.45.2024.06.27.13.56.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 13:56:00 -0700 (PDT)
-Date: Thu, 27 Jun 2024 20:55:57 +0000
-From: Igor Pylypiv <ipylypiv@google.com>
-To: Damien Le Moal <dlemoal@kernel.org>
-Cc: Niklas Cassel <cassel@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v3 2/6] ata: libata-scsi: Do not overwrite valid sense
- data when CK_COND=1
-Message-ID: <Zn3R3R_xJFvyNJU-@google.com>
-References: <20240626230411.3471543-1-ipylypiv@google.com>
- <20240626230411.3471543-3-ipylypiv@google.com>
- <785a0460-36d5-4e4a-99ea-114081c55bc7@kernel.org>
+	s=arc-20240116; t=1719521838; c=relaxed/simple;
+	bh=94U5cGjSgJ1hmDnRlX7E28/EM3+Vb46f9mlumivB4cA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=a9vfisPsakpvwRFj3MKd8bCs3gP8MMoCQqHQZO4eLlUsZ7acfpY/nB5bNlliwkXDEMjcX7N/zzSKd5a2h0Fw7pUj7ujjIJU2/mBv2JAQdlyt6PlCfwV1FjMva8ibTfulyIBLaw/duSTx5ieqvoWoxsSq+X/xoYle76Rj4RXKTBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=t8zkxINh; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1719521835;
+	bh=94U5cGjSgJ1hmDnRlX7E28/EM3+Vb46f9mlumivB4cA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=t8zkxINhHkDzCSd9X9ePrVARE6/Y2F+GuQelkWVqy4xKnmOK4Kr8qx4WUT3M/Pk2/
+	 JE3Ah1GvnM8JKWYOhYEdvodc8afdh4KiZgeR+E9mzm4Bb0M8XjKxgAhYmawYvLewfi
+	 ElXtVCOavSOy51PJsjMaqyCfaFpqaekNgIyA4EMgFNvFwRjGRNsnDoBmTfQ3U65YVE
+	 iH3qfeerjb/nI8PPoZKTi0a0MePNnEiVDnhCTkWwZdoXpVF3THr8pq+t27iXB0AgS5
+	 J2hmfZAmLtHK4emxthcFcP46Id4N7K3hBBCAArQcOtzgT1xqHIh1teiga/hwqfYskT
+	 IRur3TRj/84gA==
+Received: from arisu.localnet (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: detlev)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B802037821E5;
+	Thu, 27 Jun 2024 20:57:11 +0000 (UTC)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: Alex Bee <knaerzche@gmail.com>, Jonas Karlman <jonas@kwiboo.se>
+Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Heiko Stuebner <heiko@sntech.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Dragan Simic <dsimic@manjaro.org>, Diederik de Haas <didi.debian@cknow.org>,
+ Andy Yan <andy.yan@rock-chips.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+ Daniel Almeida <daniel.almeida@collabora.com>,
+ Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH v2 4/4] arm64: dts: rockchip: Add rkvdec2 Video Decoder on
+ rk3588(s)
+Date: Thu, 27 Jun 2024 16:56:43 -0400
+Message-ID: <4356151.ejJDZkT8p0@arisu>
+Organization: Collabora
+In-Reply-To: <156b5aaf-8b9a-46b9-82c2-d7e32f4899f5@kwiboo.se>
+References:
+ <20240619150029.59730-1-detlev.casanova@collabora.com>
+ <5790441.DvuYhMxLoT@arisu> <156b5aaf-8b9a-46b9-82c2-d7e32f4899f5@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <785a0460-36d5-4e4a-99ea-114081c55bc7@kernel.org>
+Content-Type: multipart/signed; boundary="nextPart2196199.Mh6RI2rZIc";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
 
-On Thu, Jun 27, 2024 at 09:16:09AM +0900, Damien Le Moal wrote:
-> On 6/27/24 08:04, Igor Pylypiv wrote:
-> > Current ata_gen_passthru_sense() code performs two actions:
-> > 1. Generates sense data based on the ATA 'status' and ATA 'error' fields.
-> > 2. Populates "ATA Status Return sense data descriptor" / "Fixed format
-> >    sense data" with ATA taskfile fields.
-> > 
-> > The problem is that #1 generates sense data even when a valid sense data
-> > is already present (ATA_QCFLAG_SENSE_VALID is set). Factoring out #2 into
-> > a separate function allows us to generate sense data only when there is
-> > no valid sense data (ATA_QCFLAG_SENSE_VALID is not set).
-> > 
-> > As a bonus, we can now delete a FIXME comment in atapi_qc_complete()
-> > which states that we don't want to translate taskfile registers into
-> > sense descriptors for ATAPI.
-> > 
-> > Cc: stable@vger.kernel.org
-> > Reviewed-by: Hannes Reinecke <hare@suse.de>
-> > Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
-> > Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
+--nextPart2196199.Mh6RI2rZIc
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: Alex Bee <knaerzche@gmail.com>, Jonas Karlman <jonas@kwiboo.se>
+Date: Thu, 27 Jun 2024 16:56:43 -0400
+Message-ID: <4356151.ejJDZkT8p0@arisu>
+Organization: Collabora
+In-Reply-To: <156b5aaf-8b9a-46b9-82c2-d7e32f4899f5@kwiboo.se>
+MIME-Version: 1.0
+
+Hi Jonas,
+
+On Monday, June 24, 2024 5:16:33 A.M. EDT Jonas Karlman wrote:
+> Hi Detlev and Alex,
 > 
-> I wonder if we can find the patch that introduced the bug in the first place so
-> that we can add a Fixes tag. I have not checked. This may have been wrong since
-> a long time ago...
-
-This code was first introduced in 2005 in commit b095518ef51c3 ("[libata]
-ATA passthru (arbitrary ATA command execution)").
-
-ATA_QCFLAG_SENSE_VALID was introduced a year later in commit 9ec957f2002b
-("[PATCH] libata-eh-fw: add flags and operations for new EH").
-
-IIUC, ATA_QCFLAG_SENSE_VALID has not been set for ATA drives until 2016
-when the support for fetching the sense data was added in 5b01e4b9efa0
-("libata: Implement NCQ autosense") and commit e87fd28cf9a2d ("libata:
-Implement support for sense data reporting").
-
-To me none of the commits looks like a good candidate for the Fixes tag.
-What are your thoughts on this?
-
-> 
-> > ---
-> >  drivers/ata/libata-scsi.c | 158 +++++++++++++++++++++-----------------
-> >  1 file changed, 86 insertions(+), 72 deletions(-)
+> On 2024-06-20 15:31, Detlev Casanova wrote:
+> > Hi Jonas, Alex,
 > > 
-> > diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-> > index a9e44ad4c2de..26b1263f5c7c 100644
-> > --- a/drivers/ata/libata-scsi.c
-> > +++ b/drivers/ata/libata-scsi.c
-> > @@ -230,6 +230,80 @@ void ata_scsi_set_sense_information(struct ata_device *dev,
-> >  				   SCSI_SENSE_BUFFERSIZE, information);
-> >  }
-> >  
-> > +/**
-> > + *	ata_scsi_set_passthru_sense_fields - Set ATA fields in sense buffer
-> > + *	@qc: ATA PASS-THROUGH command.
-> > + *
-> > + *	Populates "ATA Status Return sense data descriptor" / "Fixed format
-> > + *	sense data" with ATA taskfile fields.
-> > + *
-> > + *	LOCKING:
-> > + *	None.
-> > + */
-> > +static void ata_scsi_set_passthru_sense_fields(struct ata_queued_cmd *qc)
-> > +{
-> > +	struct scsi_cmnd *cmd = qc->scsicmd;
-> > +	struct ata_taskfile *tf = &qc->result_tf;
-> > +	unsigned char *sb = cmd->sense_buffer;
-> > +
-> > +	if ((sb[0] & 0x7f) >= 0x72) {
-> > +		unsigned char *desc;
-> > +		u8 len;
-> > +
-> > +		/* descriptor format */
-> > +		len = sb[7];
-> > +		desc = (char *)scsi_sense_desc_find(sb, len + 8, 9);
-> > +		if (!desc) {
-> > +			if (SCSI_SENSE_BUFFERSIZE < len + 14)
-> > +				return;
-> > +			sb[7] = len + 14;
-> > +			desc = sb + 8 + len;
-> > +		}
-> > +		desc[0] = 9;
-> > +		desc[1] = 12;
-> > +		/*
-> > +		 * Copy registers into sense buffer.
-> > +		 */
-> > +		desc[2] = 0x00;
-> > +		desc[3] = tf->error;
-> > +		desc[5] = tf->nsect;
-> > +		desc[7] = tf->lbal;
-> > +		desc[9] = tf->lbam;
-> > +		desc[11] = tf->lbah;
-> > +		desc[12] = tf->device;
-> > +		desc[13] = tf->status;
-> > +
-> > +		/*
-> > +		 * Fill in Extend bit, and the high order bytes
-> > +		 * if applicable.
-> > +		 */
-> > +		if (tf->flags & ATA_TFLAG_LBA48) {
-> > +			desc[2] |= 0x01;
-> > +			desc[4] = tf->hob_nsect;
-> > +			desc[6] = tf->hob_lbal;
-> > +			desc[8] = tf->hob_lbam;
-> > +			desc[10] = tf->hob_lbah;
-> > +		}
-> > +	} else {
-> > +		/* Fixed sense format */
-> > +		sb[0] |= 0x80;
-> > +		sb[3] = tf->error;
-> > +		sb[4] = tf->status;
-> > +		sb[5] = tf->device;
-> > +		sb[6] = tf->nsect;
-> > +		if (tf->flags & ATA_TFLAG_LBA48)  {
-> > +			sb[8] |= 0x80;
-> > +			if (tf->hob_nsect)
-> > +				sb[8] |= 0x40;
-> > +			if (tf->hob_lbal || tf->hob_lbam || tf->hob_lbah)
-> > +				sb[8] |= 0x20;
-> > +		}
-> > +		sb[9] = tf->lbal;
-> > +		sb[10] = tf->lbam;
-> > +		sb[11] = tf->lbah;
-> > +	}
-> > +}
-> > +
-> >  static void ata_scsi_set_invalid_field(struct ata_device *dev,
-> >  				       struct scsi_cmnd *cmd, u16 field, u8 bit)
-> >  {
-> > @@ -837,10 +911,8 @@ static void ata_to_sense_error(unsigned id, u8 drv_stat, u8 drv_err, u8 *sk,
-> >   *	ata_gen_passthru_sense - Generate check condition sense block.
-> >   *	@qc: Command that completed.
-> >   *
-> > - *	This function is specific to the ATA descriptor format sense
-> > - *	block specified for the ATA pass through commands.  Regardless
-> > - *	of whether the command errored or not, return a sense
-> > - *	block. Copy all controller registers into the sense
-> > + *	This function is specific to the ATA pass through commands.
-> > + *	Regardless of whether the command errored or not, return a sense
-> >   *	block. If there was no error, we get the request from an ATA
-> >   *	passthrough command, so we use the following sense data:
-> >   *	sk = RECOVERED ERROR
-> > @@ -875,63 +947,6 @@ static void ata_gen_passthru_sense(struct ata_queued_cmd *qc)
-> >  		 */
-> >  		scsi_build_sense(cmd, 1, RECOVERED_ERROR, 0, 0x1D);
-> >  	}
-> > -
-> > -	if ((sb[0] & 0x7f) >= 0x72) {
-> > -		unsigned char *desc;
-> > -		u8 len;
-> > -
-> > -		/* descriptor format */
-> > -		len = sb[7];
-> > -		desc = (char *)scsi_sense_desc_find(sb, len + 8, 9);
-> > -		if (!desc) {
-> > -			if (SCSI_SENSE_BUFFERSIZE < len + 14)
-> > -				return;
-> > -			sb[7] = len + 14;
-> > -			desc = sb + 8 + len;
-> > -		}
-> > -		desc[0] = 9;
-> > -		desc[1] = 12;
-> > -		/*
-> > -		 * Copy registers into sense buffer.
-> > -		 */
-> > -		desc[2] = 0x00;
-> > -		desc[3] = tf->error;
-> > -		desc[5] = tf->nsect;
-> > -		desc[7] = tf->lbal;
-> > -		desc[9] = tf->lbam;
-> > -		desc[11] = tf->lbah;
-> > -		desc[12] = tf->device;
-> > -		desc[13] = tf->status;
-> > -
-> > -		/*
-> > -		 * Fill in Extend bit, and the high order bytes
-> > -		 * if applicable.
-> > -		 */
-> > -		if (tf->flags & ATA_TFLAG_LBA48) {
-> > -			desc[2] |= 0x01;
-> > -			desc[4] = tf->hob_nsect;
-> > -			desc[6] = tf->hob_lbal;
-> > -			desc[8] = tf->hob_lbam;
-> > -			desc[10] = tf->hob_lbah;
-> > -		}
-> > -	} else {
-> > -		/* Fixed sense format */
-> > -		sb[0] |= 0x80;
-> > -		sb[3] = tf->error;
-> > -		sb[4] = tf->status;
-> > -		sb[5] = tf->device;
-> > -		sb[6] = tf->nsect;
-> > -		if (tf->flags & ATA_TFLAG_LBA48)  {
-> > -			sb[8] |= 0x80;
-> > -			if (tf->hob_nsect)
-> > -				sb[8] |= 0x40;
-> > -			if (tf->hob_lbal || tf->hob_lbam || tf->hob_lbah)
-> > -				sb[8] |= 0x20;
-> > -		}
-> > -		sb[9] = tf->lbal;
-> > -		sb[10] = tf->lbam;
-> > -		sb[11] = tf->lbah;
-> > -	}
-> >  }
-> >  
-> >  /**
-> > @@ -1634,6 +1649,8 @@ static void ata_scsi_qc_complete(struct ata_queued_cmd *qc)
-> >  	u8 *cdb = cmd->cmnd;
-> >  	int need_sense = (qc->err_mask != 0) &&
-> >  		!(qc->flags & ATA_QCFLAG_SENSE_VALID);
-> > +	int need_passthru_sense = (qc->err_mask != 0) ||
-> > +		(qc->flags & ATA_QCFLAG_SENSE_VALID);
-> >  
-> >  	/* For ATA pass thru (SAT) commands, generate a sense block if
-> >  	 * user mandated it or if there's an error.  Note that if we
-> > @@ -1645,13 +1662,16 @@ static void ata_scsi_qc_complete(struct ata_queued_cmd *qc)
-> >  	 * asc,ascq = ATA PASS-THROUGH INFORMATION AVAILABLE
-> >  	 */
-> >  	if (((cdb[0] == ATA_16) || (cdb[0] == ATA_12)) &&
-> > -	    ((cdb[2] & 0x20) || need_sense))
-> > -		ata_gen_passthru_sense(qc);
-> > -	else if (need_sense)
-> > +	    ((cdb[2] & 0x20) || need_passthru_sense)) {
-> > +		if (!(qc->flags & ATA_QCFLAG_SENSE_VALID))
-> > +			ata_gen_passthru_sense(qc);
-> > +		ata_scsi_set_passthru_sense_fields(qc);
-> > +	} else if (need_sense) {
-> >  		ata_gen_ata_sense(qc);
-> > -	else
-> > +	} else {
-> >  		/* Keep the SCSI ML and status byte, clear host byte. */
-> >  		cmd->result &= 0x0000ffff;
-> > +	}
-> >  
-> >  	ata_qc_done(qc);
-> >  }
-> > @@ -2590,14 +2610,8 @@ static void atapi_qc_complete(struct ata_queued_cmd *qc)
-> >  	/* handle completion from EH */
-> >  	if (unlikely(err_mask || qc->flags & ATA_QCFLAG_SENSE_VALID)) {
-> >  
-> > -		if (!(qc->flags & ATA_QCFLAG_SENSE_VALID)) {
-> > -			/* FIXME: not quite right; we don't want the
-> > -			 * translation of taskfile registers into a
-> > -			 * sense descriptors, since that's only
-> > -			 * correct for ATA, not ATAPI
-> > -			 */
-> > +		if (!(qc->flags & ATA_QCFLAG_SENSE_VALID))
-> >  			ata_gen_passthru_sense(qc);
-> > -		}
-> >  
-> >  		/* SCSI EH automatically locks door if sdev->locked is
-> >  		 * set.  Sometimes door lock request continues to
+> > On Wednesday, June 19, 2024 2:06:40 P.M. EDT Jonas Karlman wrote:
+> >> Hi Alex,
+> >> 
+> >> On 2024-06-19 19:19, Alex Bee wrote:
+> >>> Am 19.06.24 um 17:28 schrieb Jonas Karlman:
+> >>>> Hi Detlev,
+> >>>> 
+> >>>> On 2024-06-19 16:57, Detlev Casanova wrote:
+> >>>>> Add the rkvdec2 Video Decoder to the RK3588s devicetree.
+> >>>>> 
+> >>>>> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> >>>>> ---
+> >>>>> 
+> >>>>>   arch/arm64/boot/dts/rockchip/rk3588s.dtsi | 50
+> >>>>>   +++++++++++++++++++++++
+> >>>>>   1 file changed, 50 insertions(+)
+> >>>>> 
+> >>>>> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+> >>>>> b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi index
+> >>>>> 6ac5ac8b48ab..7690632f57f1 100644
+> >>>>> --- a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+> >>>>> +++ b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+> >>>>> @@ -2596,6 +2596,16 @@ system_sram2: sram@ff001000 {
+> >>>>> 
+> >>>>>   		ranges = <0x0 0x0 0xff001000 0xef000>;
+> >>>>>   		#address-cells = <1>;
+> >>>>>   		#size-cells = <1>;
+> >>>>> 
+> >>>>> +
+> >>>>> +		vdec0_sram: rkvdec-sram@0 {
+> >>>>> +			reg = <0x0 0x78000>;
+> >>>>> +			pool;
+> >>>>> +		};
+> >>>>> +
+> >>>>> +		vdec1_sram: rkvdec-sram@1 {
+> >>>>> +			reg = <0x78000 0x77000>;
+> >>>>> +			pool;
+> >>>>> +		};
+> >>>>> 
+> >>>>>   	};
+> >>>>>   	
+> >>>>>   	pinctrl: pinctrl {
+> >>>>> 
+> >>>>> @@ -2665,6 +2675,46 @@ gpio4: gpio@fec50000 {
+> >>>>> 
+> >>>>>   			#interrupt-cells = <2>;
+> >>>>>   		
+> >>>>>   		};
+> >>>>>   	
+> >>>>>   	};
+> >>>>> 
+> >>>>> +
+> >>>>> +	vdec0: video-decoder@fdc38100 {
+> >>>>> +		compatible = "rockchip,rk3588-vdec";
+> >>>>> +		reg = <0x0 0xfdc38100 0x0 0x500>;
+> >>>>> +		interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH 0>;
+> >>>>> +		clocks = <&cru ACLK_RKVDEC0>, <&cru HCLK_RKVDEC0>,
+> > 
+> > <&cru
+> > 
+> >>>>> CLK_RKVDEC0_CA>, +			 <&cru
+> > 
+> > CLK_RKVDEC0_CORE>, <&cru
+> > 
+> >>>>> CLK_RKVDEC0_HEVC_CA>;
+> >>>>> +		clock-names = "axi", "ahb", "cabac", "core",
+> > 
+> > "hevc_cabac";
+> > 
+> >>>>> +		assigned-clocks = <&cru ACLK_RKVDEC0>, <&cru
+> > 
+> > CLK_RKVDEC0_CORE>,
+> > 
+> >>>>> +				  <&cru CLK_RKVDEC0_CA>, <&cru
+> > 
+> > CLK_RKVDEC0_HEVC_CA>;
+> > 
+> >>>>> +		assigned-clock-rates = <800000000>, <600000000>,
+> >>>>> +				       <600000000>, <1000000000>;
+> >>>>> +		resets = <&cru SRST_A_RKVDEC0>, <&cru SRST_H_RKVDEC0>,
+> > 
+> > <&cru
+> > 
+> >>>>> SRST_RKVDEC0_CA>, +			 <&cru
+> > 
+> > SRST_RKVDEC0_CORE>, <&cru
+> > 
+> >>>>> SRST_RKVDEC0_HEVC_CA>;
+> >>>>> +		reset-names = "rst_axi", "rst_ahb", "rst_cabac",
+> >>>>> +			      "rst_core", "rst_hevc_cabac";
+> >>>>> +		power-domains = <&power RK3588_PD_RKVDEC0>;
+> >>>>> +		sram = <&vdec0_sram>;
+> >>>>> +		status = "okay";
+> >>>>> +	};
+> >>>>> +
+> >>>>> +	vdec1: video-decoder@fdc40100 {
+> >>>>> +		compatible = "rockchip,rk3588-vdec";
+> >>>>> +		reg = <0x0 0xfdc40100 0x0 0x500>;
+> >>>>> +		interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH 0>;
+> >>>>> +		clocks = <&cru ACLK_RKVDEC1>, <&cru HCLK_RKVDEC1>,
+> > 
+> > <&cru
+> > 
+> >>>>> CLK_RKVDEC1_CA>, +			 <&cru
+> > 
+> > CLK_RKVDEC1_CORE>, <&cru
+> > 
+> >>>>> CLK_RKVDEC1_HEVC_CA>;
+> >>>>> +		clock-names = "axi", "ahb", "cabac", "core",
+> > 
+> > "hevc_cabac";
+> > 
+> >>>>> +		assigned-clocks = <&cru ACLK_RKVDEC1>, <&cru
+> > 
+> > CLK_RKVDEC1_CORE>,
+> > 
+> >>>>> +				  <&cru CLK_RKVDEC1_CA>, <&cru
+> > 
+> > CLK_RKVDEC1_HEVC_CA>;
+> > 
+> >>>>> +		assigned-clock-rates = <800000000>, <600000000>,
+> >>>>> +				       <600000000>, <1000000000>;
+> >>>>> +		resets = <&cru SRST_A_RKVDEC1>, <&cru SRST_H_RKVDEC1>,
+> > 
+> > <&cru
+> > 
+> >>>>> SRST_RKVDEC1_CA>, +			 <&cru
+> > 
+> > SRST_RKVDEC1_CORE>, <&cru
+> > 
+> >>>>> SRST_RKVDEC1_HEVC_CA>;
+> >>>>> +		reset-names = "rst_axi", "rst_ahb", "rst_cabac",
+> >>>>> +			      "rst_core", "rst_hevc_cabac";
+> >>>>> +		power-domains = <&power RK3588_PD_RKVDEC1>;
+> >>>>> +		sram = <&vdec1_sram>;
+> >>>>> +		status = "okay";
+> >>>>> +	};
+> >>>> 
+> >>>> This is still missing the iommus, please add the iommus, they should be
+> >>>> 
+> >>>> supported/same as the one used for e.g. VOP2:
+> >>>>    compatible = "rockchip,rk3588-iommu", "rockchip,rk3568-iommu";
+> >>>> 
+> >>>> The VOP2 MMUs does have one extra mmu_cfg_mode flag in AUTO_GATING,
+> >>>> compared to the VDPU381 MMUs, however only the AV1D MMU should be
+> >>>> special on RK3588.
+> >>>> 
+> >>>> Please add the iommus :-)
+> >>> 
+> >>> When looking add the vendor DT/iommu driver I'm seeing serval quirks
+> >>> applied for vdec's iommus. Since it's rightly frowned upon adding such
+> >>> boolean-quirk-properties to upstream devicetrees, we'd at least need
+> >>> additional (fallback-) compatibles, even if it works with the iommu
+> >>> driver
+> >>> as is (what I doubt, but haven't tested). We need to be able to apply
+> >>> those
+> >>> quirks later without changing the devicetree (as usual) and I'm sure RK
+> >>> devs haven't added these quirks for the personal amusement.
+> >> 
+> >> Based on what I investigated the hw should work similar, and the quirks
+> >> mostly seem related to optimizations and sw quirks, like do not zap each
+> >> line, keep it alive even when pm runtime say it is not in use and other
+> >> quirks that seem to be more of sw nature on how to best utilize the hw.
+> > 
+> > I did some testing with the IOMMU but unfortunately, I'm only getting page
+> > fault errors. This may be something I'm doing wrong, but it clearly needs
+> > more investigation.
 > 
-> -- 
-> Damien Le Moal
-> Western Digital Research
+> I re-tested and the addition of sram seem to now cause page faults, the
+> sram also need to be mapped in the iommu.
 > 
-Thanks,
-Igor
+> However, doing more testing revealed that use of iommu present the same
+> issue as seen with hevc on rk3399, after a fail fluster tests continue
+> to fail until a reset.
+> 
+> Seeing how this issue was very similar I re-tested on rk3399 without
+> iommu and cma=1G and could observe that there was no longer any need to
+> reset after a failed test. Interestingly the score also went up from
+> 135 to 137/147.
+> 
+> Digging some more revealed that the iommu also is reset during the
+> internal rkvdec soft reset on error, leaving the iommu with dte_addr=0
+> and paging in disabled state.
+> 
+> Ensuring that the iommu was reconfigured after a failure fixed the issue
+> observed on rk3399 and I now also get 137/147 hevc fluster score using
+> the iommu.
+> 
+> Will send out a rkvdec hevc v2 series after some more testing.
+> 
+> Guessing there is a similar need to reconfigure iommu on rk3588, and my
+> initial tests also showed promising result, however more tests are
+> needed.
+
+I did some testing with the IOMMU. The good news is that it now works with the 
+SRAM.
+I am also able to hack the iommu driver to force a reset in case of an error 
+in the decoder. I'm not sure how to implement that with the IOMMU kernel API 
+though.
+
+Another issue is that resetting the iommu will drop all buffer addresses of 
+other decoding contexts that may be running in parallel.
+
+I *think* that the downstream mpp remaps the buffers in the iommu for each 
+frame, but I'm not sure about that either.
+
+So running fluster with `-j 1` gives me the expected 129/135 passed tests, but 
+`-j 8` will start failing all tests after the first fail (well, first fail 
+because of decoder error).
+
+> Regards,
+> Jonas
+> 
+> >>> If Detlev says
+> >>> iommu is out of scope for this series (which is valid), I'd say it's
+> >>> fine
+> >>> to leave them out for now (as no binding exists) and the HW works
+> >>> (obviously) fine without them.
+> >> 
+> >> Sure, use of MMU can be added later.
+> > 
+> > I'd rather go for that for now. I'll add that IMMU support is missing in
+> > the TODO file.
+> > 
+> >> Regards,
+> >> Jonas
+> >> 
+> >>>> Regards,
+> >>>> Jonas
+> >>>> 
+> >>>>>   };
+> >>>>>   
+> >>>>>   #include "rk3588s-pinctrl.dtsi"
+
+
+--nextPart2196199.Mh6RI2rZIc
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEonF9IvGrXNkDg+CX5EFKUk4x7bYFAmZ90gsACgkQ5EFKUk4x
+7bYa6gf+MiaSK8Y5oLb5OSnCyDTkgoikfs0H7IRjhc9JfuVseIw/XGzQ5T8i83SE
+stQe2/brIQeUu5zchivSMvfmJg+ru2YMamAbT/mnMcpB3yeDrAqNBEvkssw4NHgg
+bu2QBJgjJHOyNshda9CX5tCs1qkZG2O90QF/UPl01LaLxQ9ELSlEAcbDhsl7bwHJ
+2jaPH9Jjx/aKF85ejNCG1/uprnRp0Lt6rSaPl7tmxBbod/kzU92WZmAoDOvoroRr
+d8VKGBINQ5pJKfBo4+tavqd7UR1OAH0cVR4E4b2kGjG57qOU32qizZoF3qr/nQBl
+A3ePYf8XuUKjf33eZ2SkF1kqF2fWOw==
+=JJQJ
+-----END PGP SIGNATURE-----
+
+--nextPart2196199.Mh6RI2rZIc--
+
+
+
 
