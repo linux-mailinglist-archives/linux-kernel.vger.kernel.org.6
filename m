@@ -1,148 +1,103 @@
-Return-Path: <linux-kernel+bounces-232260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D22E591A5E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:58:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D06491A5DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:57:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D95928B269
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:58:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB96FB26CBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C4F015ADBC;
-	Thu, 27 Jun 2024 11:56:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034C71581F9;
+	Thu, 27 Jun 2024 11:56:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DqRg8g0P"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=infogain-com.20230601.gappssmtp.com header.i=@infogain-com.20230601.gappssmtp.com header.b="3ExhrygD"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258711586D5
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 11:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D53514F12C
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 11:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719489369; cv=none; b=UuQD0x3iib8C+6uWYahnV3qkQSKBP8xT9VCQx+uNxf1rzOrAEZKTcOrwoMktqv36stPLzjcG9BlGARtIcST9B6eXu0xsAFq1xXuUdhWrM1bkgiQegEoBOpGM+XPx6AXs801c/9hs/xkroHSGnVMmQImFZdrCJTnOHp0YwbeFmBo=
+	t=1719489366; cv=none; b=hEB67XF2qwaaHEVGSxNcL4rJgrUYlRp81iFu/52r4PgrezAHxR4zxH8sR2VjhcPugdGspfvNSCFN1O8wkeh/9yUeGrI2G873ZV6z2+iRa+1isiuXBD7ShAoB35Ghrh3Lhz4Yj+rhyQZwR1+Hc5ySQBgN8Mp6FQP304DOKfpdq4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719489369; c=relaxed/simple;
-	bh=fhOsLuyqrBwQUqU3KeH1GRGhl2FQpbGrlcG9u9+rBVA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hgXdLx+OYGqNKhzSarHHURoeVWfloAQajfVBhVnwOiiyJ0/WSWx2SL8F+d7pS82WB3wt4HS27ks8eWEqceto2Oq6eSe6BRTdOI2nWZEhPhwy3LqAZABJEkiKUqZQkFJ2kAVfdvFVtymXcp53DFAXt8bmrtnaXdp9RBWX+iDj+SU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DqRg8g0P; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52cdcd26d61so6097579e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 04:56:07 -0700 (PDT)
+	s=arc-20240116; t=1719489366; c=relaxed/simple;
+	bh=FYwN9+WXxNL0s8JGZrDOOlC0+Oy/VpiVqU6F01gXKwY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=gu8RVZHIZJ7utm8sEJN5oMkUkV1lrllQf8jyDL5g27YclhesiSnIgDppIrr3jSs2MxYwQWv2OgbJ1I4gUYS0IrEZxvUSLNVMmJpMRMmvZVACW/3RCiDm4xw0aaJ7t8I06MCY2g4pvT6u53DDX5t0fPoiwfi6iIbmyad7fx1x464=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=infogain.com; spf=fail smtp.mailfrom=infogain.com; dkim=pass (2048-bit key) header.d=infogain-com.20230601.gappssmtp.com header.i=@infogain-com.20230601.gappssmtp.com header.b=3ExhrygD; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=infogain.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=infogain.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52ce6c93103so5780764e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 04:56:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719489366; x=1720094166; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=piU6dixVwevEMvMKFVjdM2+dDBv8tkHRGk2Ym1RU0bw=;
-        b=DqRg8g0PZjbzU30J8J4pKuH5e8zectryeA2Veej7sfuTtcqtQ+zaLeAwaVq5IukZz2
-         7wC2yFD+HhYk2A/1y38DPmrLbPaVo9fH53/SE/a7cTLvobYtn7nG4ce+QfSdJBKaSRtn
-         QtiWnQ5k+6H9SCYjKEGCt3LW7HvirEhmi0A4ZVRp0WcnqYF55ngBwUdmYCpdsL1QhyXB
-         iKryQ9PKtUhRdblnvFVfP4Eq6Iqn7vnLgwNL5B0XIU9059kfDzjIU7NVlOuaCFYbH3xc
-         kyWjrQ8CAQbkt8aymv3IfWRuph0xlurbKxQesEuvulVS9exdQpuPGkR3XjlLIz9kqkNo
-         VZlg==
+        d=infogain-com.20230601.gappssmtp.com; s=20230601; t=1719489360; x=1720094160; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FYwN9+WXxNL0s8JGZrDOOlC0+Oy/VpiVqU6F01gXKwY=;
+        b=3ExhrygDHAe3ZViPQGR8GKO/CNpSx7vvhN6oSw4yhzEFiBAvglmdNhd3tEr4Zyp8vd
+         5HJlrIVfa8yCHDae2JmFxExJ9MKwKRNv2UNCzArhzyTfF2hUoAcNKGJJ3MsJPyBq48Nn
+         kiaf7KKrfwtfi3g8HPHUHYdvH3ErbxCAnq2F8AQqynbftHdtdjoqoeMRwnkIoAHm9zf8
+         zk/GVeE5rzRBnxKlKjMo+nFWUwMchFCneSpVBcsF+sJbggoCrfLXOFGxAVKVdMdQMfnr
+         BaGMSrihD8K5f1zgqclrEYy6Cb8Bw1w9KpoKLNJJjuePbM515qHcHtMYlx0+c3vxt2uP
+         ExOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719489366; x=1720094166;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1719489360; x=1720094160;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=piU6dixVwevEMvMKFVjdM2+dDBv8tkHRGk2Ym1RU0bw=;
-        b=l6R1cY3nIaQK0hyzlgZuLZTI9sRby2OHp14IU9/6gSrN+GQHZr4VnKunH5o4u2n1q2
-         cqkuX1WqYcGoO34JKitvxpUKxLtOg7jY0BKVlf0TvunPk2wHpkV2vxuZhYQENm9HelRG
-         FdDm8/WBtWBOSwZEV+SEB1PDTciSPbxFN0KzB8vro6E+OCfXsaLz4ERwbzUHX3G0jVZl
-         zNqGEpObJt7X9U7p+7Bl51ww29OVfkej8N46Sm6ViOlzBS4yXPby8ruKRnBWKAHGmewY
-         TndCljYWJhMJXV8doCGfWrqfB/tMtHA2/nrlphojEtdwj3/QT/iij958mUzZkH849Lah
-         A11g==
-X-Forwarded-Encrypted: i=1; AJvYcCXaTMqqe2AG1ZJoLJFrnFOHCYySVBWwKz8vy+MWbQAmcIqu/PVH+rdD52LxbReoWk9EEzJgwcn5m9C4xOJd1P5R1fAt+oekB0zmuO/A
-X-Gm-Message-State: AOJu0Yw5rg6pLWI0bVc7RZTaDAUO0UuRyLAiLsn2yoEiwXUM34CQJ/SO
-	rkNRJY7QVSsdRMVmXQ0ez2+k3z4hlu90Hb5A9jK5BgFj4Riqk7nINSiw8ZWAs0Y=
-X-Google-Smtp-Source: AGHT+IHrpS4FaO+MLa+HNiW45CgkKJteDWyaEAeg1DQpUOW+P5vfLDvcO4u786fvHvXTXhgmUZujUg==
-X-Received: by 2002:a05:6512:3091:b0:52c:e54e:f84b with SMTP id 2adb3069b0e04-52ce54ef9fdmr8943991e87.14.1719489366398;
-        Thu, 27 Jun 2024 04:56:06 -0700 (PDT)
-Received: from [192.168.1.195] ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3674369980asm1597552f8f.80.2024.06.27.04.56.05
+        bh=FYwN9+WXxNL0s8JGZrDOOlC0+Oy/VpiVqU6F01gXKwY=;
+        b=IpDizEMzQfzGTy2eUVqiTbPlI4G6evixbnfvfH3FF/rlRjrd1ddRPVA69ftIIcHKTn
+         1nPAe2r+haXsyTBiGKr2ULWUeAWoeCRIkTSlomutR+DB0JJ14eB6R9RgpHbtJ+3JyUft
+         tYhDM/OtkjZMTNGQIx4HWWldcLAq21cg5mUp4JJmErkD8TIJSIEDMnPpfGnYxPUrNGX1
+         B0TufSaUw1zMk25nxvGH7bO/iwnm9qOCnfdD5r2dfZbYD5E2BM82Hzs8j+P+czdX8lVQ
+         W3T8PPXagjGbebDj5ahSEb3CdmDESCQgObLS9ae/AwcecNjjXg6M7ta1Kp2uRl0c8YZo
+         Tjow==
+X-Forwarded-Encrypted: i=1; AJvYcCUqhNn0RA8YJOHoeyKwtE8ieeN+nnTDfRTB4sTHxt/d1XjetTlcA0W3dR4ovyh0qDozTSxd94xqMV/VffmIvWRhLZIZTbiZzEiNkejA
+X-Gm-Message-State: AOJu0Yxyg2WPomCrNWDRE/aXM8mpF2Fu+cK8CSDuGq5qaPWHUltP5c9k
+	6rX/ezX1RQUXbKfcKGPhyUuiqPMlYfjh3jM/Hdm8WxJ2GL7ZXxb9/A9kPu1T8fQjSsURctH1ZLl
+	1
+X-Google-Smtp-Source: AGHT+IE5dEqi32o555lHsYH6cLbWsYyak8HFjN733ejp92fah5sVWgpO97Hsp6G9Neyybv3KzqjyMg==
+X-Received: by 2002:a05:6512:324a:b0:52c:deea:57cb with SMTP id 2adb3069b0e04-52ce182bccamr9414630e87.3.1719489360229;
+        Thu, 27 Jun 2024 04:56:00 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:a31a:e140:9480:20a0:e0ea:447a:fdd3])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a729d779773sm52072066b.103.2024.06.27.04.55.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 04:56:05 -0700 (PDT)
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Thu, 27 Jun 2024 12:55:22 +0100
-Subject: [PATCH 6/6] arm64: dts: x1e80100-qcp: fix wsa soundwire port
- mapping
+        Thu, 27 Jun 2024 04:55:59 -0700 (PDT)
+From: Michal Switala <michal.switala@infogain.com>
+To: kalachev@swemel.ru
+Cc: davem@davemloft.net,
+	kuba@kernel.org,
+	kuznet@ms2.inr.ac.ru,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	syzbot+e738404dcd14b620923c@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com,
+	yoshfuji@linux-ipv6.org
+Subject: Progress in ticket
+Date: Thu, 27 Jun 2024 13:55:44 +0200
+Message-ID: <20240627115544.1090671-1-michal.switala@infogain.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <ZnWSHbkV6qVy1KHd@ural>
+References: <ZnWSHbkV6qVy1KHd@ural>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240626-port-map-v1-6-bd8987d2b332@linaro.org>
-References: <20240626-port-map-v1-0-bd8987d2b332@linaro.org>
-In-Reply-To: <20240626-port-map-v1-0-bd8987d2b332@linaro.org>
-To: Banajit Goswami <bgoswami@quicinc.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, 
- Neil Armstrong <neil.armstrong@linaro.org>, alsa-devel@alsa-project.org, 
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1208;
- i=srinivas.kandagatla@linaro.org; h=from:subject:message-id;
- bh=fhOsLuyqrBwQUqU3KeH1GRGhl2FQpbGrlcG9u9+rBVA=;
- b=owEBbQGS/pANAwAKAXqh/VnHNFU3AcsmYgBmfVNN8VJANE2p5q7a9tQElvD/J+6BThXZJo1SY
- JISlTpiwtmJATMEAAEKAB0WIQQi509axvzi9vce3Y16of1ZxzRVNwUCZn1TTQAKCRB6of1ZxzRV
- N9nEB/wLOagPz2MWymeyiPZmgmKPaDEpckmNiW48ztjNspLG+XaXC/0zZDNJaNW4yBaoDFolpp6
- fU/t9kex0J1DPRyOltkiJ2CIkbyAyNCYOICpax+aogY+C4eFTrNB9YNNRolqlLY3qJ/P4qpgvSJ
- hyyjJxY/Aqj1TB3p3CWzLzMAmlUY10GMZ87Juje7Rn4TisWat05KCZCrQgY67mQWuraYApVY3Pe
- 0qwNcqae067Cc1MKITj6GWJC5OFyjvumStp7sn4Syr6kyYu6MrDSlAaXC+HZd/lmTYj3Z3BWlzZ
- SqI6SNQ/hJC3sveXQrErHVC3Br9w9UBRZM7Bk/qGm1BiD3U1
-X-Developer-Key: i=srinivas.kandagatla@linaro.org; a=openpgp;
- fpr=ED6472765AB36EC43B3EF97AD77E3FC0562560D6
+Content-Transfer-Encoding: 8bit
 
-Existing way of allocating ports dynamically is linear starting from 1 to
-MAX_PORTS. This will not work for x1e80100 as the master ports are
-are not mapped in the same order.
+Hello,
 
-Without this fix only one speaker in a pair of speakers will function.
+I am currently looking at this bug and checked your reproduction.
+Unfortunately, it doesn's set xfrm transformations in the same way as
+syz reproducer. The effect is that in xfrm_lookup_with_ifid, the packet goes to
+the nopol section instead of notransform as in the original.
 
-After this fix along with WSA codec changes both the speakers starts
-working.
-
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- arch/arm64/boot/dts/qcom/x1e80100-qcp.dts | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-index 4edec3212dde..79563ae34890 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-@@ -749,6 +749,7 @@ left_spkr: speaker@0,0 {
- 		sound-name-prefix = "SpkrLeft";
- 		vdd-1p8-supply = <&vreg_l15b_1p8>;
- 		vdd-io-supply = <&vreg_l12b_1p2>;
-+		qcom,port-mapping = <1 2 3 7 10 13>;
- 	};
- 
- 	/* WSA8845, Right Speaker */
-@@ -760,6 +761,7 @@ right_spkr: speaker@0,1 {
- 		sound-name-prefix = "SpkrRight";
- 		vdd-1p8-supply = <&vreg_l15b_1p8>;
- 		vdd-io-supply = <&vreg_l12b_1p2>;
-+		qcom,port-mapping = <4 5 6 7 11 13>;
- 	};
- };
- 
-
--- 
-2.25.1
-
+Regards
+Michal
 
