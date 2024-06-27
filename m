@@ -1,148 +1,172 @@
-Return-Path: <linux-kernel+bounces-232794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42DFA91AE5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:42:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23FC491AE5E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:43:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 743F71C220F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:42:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98B061F2943F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2528B19A28A;
-	Thu, 27 Jun 2024 17:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CDE019AA5C;
+	Thu, 27 Jun 2024 17:42:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z0QkpHXe"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VTdADRzh"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A201C6A7
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 17:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3813D13A276;
+	Thu, 27 Jun 2024 17:42:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719510154; cv=none; b=MclA3+QqHfpyZsfgFOq6LFF8xJku9ND7Bin3v1PCwoSRzHZ89cDBnJ2fDAYWkSxeHWjTEdZZBLxAMfzsMFvm6B2kRXzXxlhppSCBKzEpzpX4j9aGpvXJ1221fPQTlQiAW4fM6Cp7GAsUa+AyGhlTmN7/nQNFuQK9pqaKnQGs4iU=
+	t=1719510167; cv=none; b=mEZzDzTcgBCkNVFxcQgsCXEwiPPR8pdaQ9eEr+SuADJgpJSLhLvUBmqOa32485U3tpS9LlBHMRZ+TDsVLeei4kb8MVKeDto/jeaIol7oe4IM9SZpYsLwqmOkhwymOnurcMgd5KDq1bw02jpaxzvzcJ2qLByQS/d+hwZiI7S8bC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719510154; c=relaxed/simple;
-	bh=YbS9bTV7Wa7Sw8ojDZMeWifV6SyePAyx2+e4doczySo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QUdnmJ4BoHEPIGK2sLrssZTP3qTX16EdIK05ZyxsZ+xwb9BrRkXwB3LqkMUz5+y1YmAfW+dYRJCaaq8FbRw1cYhN9iMPRLMLx6tbyXfTegY3DnF98Md8EkXSeoaE7u5A/TUMAnYaz2QCRvHrV5Rw5v3Sz5A9QOgBbrSanfO/Pnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z0QkpHXe; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719510151;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XGSfXbPPJUEKh22ZKmG3sSq8FqJ5we+pYCxi+DTxmLA=;
-	b=Z0QkpHXevrEy5lWxCVR388Z4d/UWcTtaqVI09duRdvYBdO34DSapET9IJuPoV09sBCDyAI
-	oUWYaSqVj30UTlrCGKJMr9EQFw+X2Fq9YnDXQC55pvsWccn2Um51f8wc/ZOTD3nhEYaLNS
-	oaqFx8+IPY1GlR3E3JUnQRQrY/TtKZw=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-593-AwJKIBsBPtiwRsV4XLzTkA-1; Thu, 27 Jun 2024 13:42:30 -0400
-X-MC-Unique: AwJKIBsBPtiwRsV4XLzTkA-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3670c9e8b7eso1059938f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 10:42:30 -0700 (PDT)
+	s=arc-20240116; t=1719510167; c=relaxed/simple;
+	bh=18BYPSydRsQbk9N5QMUQyO2sQjo6TlTiWGpxHzojhSw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KyidDSNADogLCpwCD4s7io9Y55XSuV3hurXtvRxadQ3+LKzX117Wc0mjLjYa200kUre3NvvOrAOAOT0Ms+2aoQrZnc9kSdHkszwS1KMkrjlbNQQ9qskXRb8AlqcgTpfKRBLdiqQM0YJFwEBaWi1igaag/sZt2KmsWNpwOcgWifU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VTdADRzh; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-79c0abd3eaaso279031685a.2;
+        Thu, 27 Jun 2024 10:42:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719510165; x=1720114965; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=C4gLrZc+w7mUh5pQdRJLrbFMJm3I4uzQamXREb3EHkk=;
+        b=VTdADRzh28n2H/sT3D5a1LX8OHz/HXL1w+c6yJJ3O8tfDPn13l/vZa9ThscMgQoUcB
+         G565NVO28a7Ow9VS3oDJNkU+zsufguKKzu8CvY/y2tvcbY/wkHs1YV5+824+1CtPByc3
+         qBu84k7QAbCJY7zcqAachMXeTCZBdNtqH1jlApUTpmkZUqrhE9WDoNiioWsXiD4DpPRk
+         TUTAz/5heJkLJRRNNjmhO0amMx5puPnAbfMrR2oP6sURcXDWbqI80/Bo9zD5WL05jY/X
+         LLDk+LXpz/2r0yWOtNioOQSujK6ORmbVjZRD6KYHC263fkr92e9arheYOYPwXdIfFzqP
+         +1MQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719510149; x=1720114949;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XGSfXbPPJUEKh22ZKmG3sSq8FqJ5we+pYCxi+DTxmLA=;
-        b=DQGBCb9omYWomFgjXrduD1TaesmCWJRljOa/BGNcvvGtCenG35YhXWxG1xt5g4IBBa
-         10n5VX1xSL//C/kQCw01RSZ9q0BlubUnWZX8OSTAe+RneW7QhnaObYYGByXlQgeqA9R6
-         LqRvv/JLi9gJauMYlMqdszqrgK9DxmZd/YbUBiMTgcIlvhI8zpNNc/atfaIDuc4mgxyW
-         13oyG/hqVzDhh1KdgH0F7HenrrjMCy6b1/8zNNMou8UftIVYDMf8CTtSI2Qr3qArGI2z
-         Jp8xZSmrXzKYUu8cs5WiCX8OGzZyjK9huDrsqGzJIoKhchdKFH4qrjbqyBLkNOp6sxTj
-         Kh+Q==
-X-Gm-Message-State: AOJu0YzXzzVWerLNLVyBjfp38stS2KxX3DRo0EswH4mVFsylanzxhqk8
-	R/E98Fh75Lg1fYEPfn7scQutXW6vcPbjkbI/0OKTZ+qdGcvJSMfoETGz4Uwh0u18CN6Vr14T3u9
-	oRJQcS2I5Q3z+ng5TaZ1MUbBYrDo8g5gd+6Tno5LrvoK1K4eQLnxvkwsdhPZ1Fg==
-X-Received: by 2002:a5d:5904:0:b0:361:e909:60c3 with SMTP id ffacd0b85a97d-36741783c38mr2188525f8f.9.1719510149035;
-        Thu, 27 Jun 2024 10:42:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF3Y5AubVJoQM/z0xq/mp72IULX27NmhHEyumxH4auepDgA554eX1h1C0ROcXp0rCBXygvrFg==
-X-Received: by 2002:a5d:5904:0:b0:361:e909:60c3 with SMTP id ffacd0b85a97d-36741783c38mr2188515f8f.9.1719510148615;
-        Thu, 27 Jun 2024 10:42:28 -0700 (PDT)
-Received: from localhost (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3674357ff03sm2565025f8f.45.2024.06.27.10.42.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 10:42:28 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Thomas Huth <thuth@redhat.com>, dri-devel@lists.freedesktop.org, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
- Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Geert
- Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-kernel@vger.kernel.org, Hamza Mahfooz <hamza.mahfooz@amd.com>
-Subject: Re: [PATCH] drm/fbdev-generic: Fix framebuffer on big endian devices
-In-Reply-To: <20240627173530.460615-1-thuth@redhat.com>
-References: <20240627173530.460615-1-thuth@redhat.com>
-Date: Thu, 27 Jun 2024 19:42:26 +0200
-Message-ID: <87r0cie0zh.fsf@minerva.mail-host-address-is-not-set>
+        d=1e100.net; s=20230601; t=1719510165; x=1720114965;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=C4gLrZc+w7mUh5pQdRJLrbFMJm3I4uzQamXREb3EHkk=;
+        b=k7m2bmjBJa/Q4abT5CwCU1netPiU3stU3Gp+xj8vs3MQ6mnqJw3u6ItlfY1m1v5V5C
+         QmGk41wDsa+zWkmXXQ19mdAgDVZ1f10qG/MuJuneai8kjY6J1tfvkoLZO3BwDL3+rrXP
+         nGroj0jtZ7Ltrf1+2NnGK+stluf5ER4F7MXzTLnr7uZbK2Jn/HOWyALWLlK3CkpsLM6E
+         QjH7ly3/jSvb/5v421rrQVk69B26+KNpI9RWh3h1QhtrR0747Bh8L27gFHzgC0QAj/kJ
+         4v9I0Nf6cVfO68MvmkyKYrEmuaNmgSw6wSlvCeVYmyHPTMxQTL8B4/eUcNRKn5/dFHZB
+         Eo3A==
+X-Forwarded-Encrypted: i=1; AJvYcCV2j8GimkJ7Kvj67PPt1klXhmmuonoh+G9/Rkw0fL8VOOiNf+csakZ87HEq3grZK6jk9HPZgp+N0iGbDAcFYE7VaMofSdFYp0ek/J8nVZgkcwY9LP416+Ryoy1ob9FVJbH55OUUBzE4NKVF9fE=
+X-Gm-Message-State: AOJu0YxuBfv8DPnwIhhN+kXe2v3EnybXed4t8/S1PrNsxyobLaXKvYBa
+	k71rFAam5mSHP3CI7NzTeFW/p5cGuszajwHVoxe2GXGBsEmAd+BA
+X-Google-Smtp-Source: AGHT+IEknF/hbYmxJv5GVjta1oahcOg+apR9zJOpwBaCGfSsnRnL26OuoL00t/4W2nMAYNcE1+tBCw==
+X-Received: by 2002:a05:620a:1913:b0:79b:e8ca:861b with SMTP id af79cd13be357-79be8ca8876mr1614969285a.17.1719510165141;
+        Thu, 27 Jun 2024 10:42:45 -0700 (PDT)
+Received: from [10.102.4.159] ([208.195.13.130])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79d5c7ff033sm75464285a.40.2024.06.27.10.42.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Jun 2024 10:42:44 -0700 (PDT)
+Message-ID: <d9f95dcc-6343-4af3-8acc-a150fb4e5923@gmail.com>
+Date: Thu, 27 Jun 2024 10:42:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: invalid vht params rate 1920 100kbps nss 2 mcs 9
+To: Baochen Qiang <quic_bqiang@quicinc.com>, Kalle Valo <kvalo@kernel.org>
+Cc: Paul Menzel <pmenzel@molgen.mpg.de>, linux-wireless@vger.kernel.org,
+ ath10k@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>
+References: <fba24cd3-4a1e-4072-8585-8402272788ff@molgen.mpg.de>
+ <1faa7eee-ed1e-477b-940d-a5cf4478cf73@gmail.com> <87iky7mvxt.fsf@kernel.org>
+ <37ba6cb0-d887-4fcf-b7dc-c93a5fc5900f@gmail.com> <875xu6mtgh.fsf@kernel.org>
+ <f7faff80-864a-4411-ad28-4f1151bc1e51@quicinc.com>
+Content-Language: en-US
+From: James Prestwood <prestwoj@gmail.com>
+In-Reply-To: <f7faff80-864a-4411-ad28-4f1151bc1e51@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Thomas Huth <thuth@redhat.com> writes:
+HI Baochen,
 
-Hello Thomas,
-
-> Starting with kernel 6.7, the framebuffer text console is not working
-> anymore with the virtio-gpu device on s390x hosts. Such big endian fb
-> devices are usinga different pixel ordering than little endian devices,
-> e.g. DRM_FORMAT_BGRX8888 instead of DRM_FORMAT_XRGB8888.
+On 6/26/24 1:53 AM, Baochen Qiang wrote:
 >
-> This used to work fine as long as drm_client_buffer_addfb() was still
-> calling drm_mode_addfb() which called drm_driver_legacy_fb_format()
-> internally to get the right format. But drm_client_buffer_addfb() has
-> recently been reworked to call drm_mode_addfb2() instead with the
-> format value that has been passed to it as a parameter (see commit
-> 6ae2ff23aa43 ("drm/client: Convert drm_client_buffer_addfb() to drm_mode_addfb2()").
+> On 6/18/2024 6:33 PM, Kalle Valo wrote:
+>> + baochen
+>>
+>> James Prestwood <prestwoj@gmail.com> writes:
+>>
+>>> Hi Kalle,
+>>>
+>>> On 6/17/24 8:27 AM, Kalle Valo wrote:
+>>>> James Prestwood <prestwoj@gmail.com> writes:
+>>>>
+>>>>> Hi Paul,
+>>>>>
+>>>>> On 6/16/24 6:10 AM, Paul Menzel wrote:
+>>>>>> Dear Linux folks,
+>>>>>>
+>>>>>>
+>>>>>> Linux 6.10-rc3 (commit a3e18a540541) logged the warning below when
+>>>>>> connecting to a public WiFi:
+>>>>>>
+>>>>>>       ath10k_pci 0000:3a:00.0: invalid vht params rate 1920 100kbps
+>>>>>> nss 2 mcs 9
+>>>>> This has been reported/discussed [1]. It was hinted that there was a
+>>>>> firmware fix for this, but none that I tried got rid of it. I got fed
+>>>>> up enough with the logs filling up with this I patched our kernel to
+>>>>> remove the warning. AFAICT it appears benign (?). Removing the warning
+>>>>> was purely "cosmetic" so other devs stopped complaining about it :)
+>>>>>
+>>>>> [1] https://www.mail-archive.com/ath10k@lists.infradead.org/msg13406.html
+>>>> More reliable link to the discussion:
+>>>>
+>>>> https://lore.kernel.org/ath10k/76a816d983e6c4d636311738396f97971b5523fb.1612915444.git.skhan@linuxfoundation.org/
+>>>>
+>>>> I think we should add this workaround I mentioned in 2021:
+>>>>
+>>>>      "If the firmware still keeps sending invalid rates we should add a
+>>>>       specific check to ignore the known invalid values, but not all of
+>>>>       them."
+>>>>
+>>>>      https://lore.kernel.org/ath10k/87h7mktjgi.fsf@codeaurora.org/
+>>>>
+>>>> I guess that would be mcs == 7 and rate == 1440?
+>>> I think its more than this combination (Paul's are different).
+>> Good point.
+>>
+>>> So how many combinations are we willing to add here? Seems like that
+>>> could get out of hand if there are more than a few invalid
+>>> combinations.
+>> Yeah, but there haven't been that many different values reported yet,
+>> right? And I expect that ath10k user base will just get smaller in the
+>> future so the chances are that we will get less reports.
+>>
+>>> Would we also want to restrict the workaround to specific
+>>> hardware/firmware?
+>> Good idea, limiting per hardware would be simple to implement using
+>> hw_params. Of course we could even limit this per firmware version using
+>> enum ath10k_fw_features, but not sure if that's worth all the extra work.
+>>
+>> Baochen, do you know more about this firmware bug? Any suggestions?
+> OK, there are two issues here:
 >
-> That format parameter is determined in drm_fbdev_generic_helper_fb_probe()
-> via the drm_mode_legacy_fb_format() function - which only generates
-> formats suitable for little endian devices. So to fix this issue
-> switch to drm_driver_legacy_fb_format() here instead to take the
-> device endianness into consideration.
+> 1. invalid HT rate: "ath10k_pci 0000:02:00.0: invalid ht params rate 1440 100kbps nss 2 mcs 7".
 >
-> Fixes: 6ae2ff23aa43 ("drm/client: Convert drm_client_buffer_addfb() to drm_mode_addfb2()")
-> Closes: https://issues.redhat.com/browse/RHEL-45158
-> Signed-off-by: Thomas Huth <thuth@redhat.com>
-> ---
->  drivers/gpu/drm/drm_fbdev_generic.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> As commented by Wen quite some time ago, this has been fixed from firmware side, and firmware newer than [ver:241] has the fix included.
+Thanks for pointing this out, I guess I didn't look close enough at the 
+log and missed "ht" vs "vht" when I brought it up on that older thread. 
+I thought i was seeing the same problem even with newer firmware.
 >
-> diff --git a/drivers/gpu/drm/drm_fbdev_generic.c b/drivers/gpu/drm/drm_fbdev_generic.c
-> index 97e579c33d84..1e200d815e1a 100644
-> --- a/drivers/gpu/drm/drm_fbdev_generic.c
-> +++ b/drivers/gpu/drm/drm_fbdev_generic.c
-> @@ -84,7 +84,8 @@ static int drm_fbdev_generic_helper_fb_probe(struct drm_fb_helper *fb_helper,
->  		    sizes->surface_width, sizes->surface_height,
->  		    sizes->surface_bpp);
->  
-> -	format = drm_mode_legacy_fb_format(sizes->surface_bpp, sizes->surface_depth);
-> +	format = drm_driver_legacy_fb_format(dev, sizes->surface_bpp,
-> +					     sizes->surface_depth);
->  	buffer = drm_client_framebuffer_create(client, sizes->surface_width,
->  					       sizes->surface_height, format);
->  	if (IS_ERR(buffer))
+> 2. invaid VHT rate: "ath10k_pci 0000:3a:00.0: invalid vht params rate 1920 100kbps nss 2 mcs 9".
+>
+> After checking with firmware team, I thought this is because there is a mismatch in rate definition between host and firmware: In host, the rate for 'nss 2 mcs 9' is defined as {1560, 1733}, see supported_vht_mcs_rate_nss2[]. While in firmware this is defined as {1730, 1920}. So seems we can update host definition to avoid this issue.
+That would be great!
 
-Indeed. Thanks a lot for the detailed explanation and the patch.
-Your fix makes sense to me.
+Thanks,
 
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
-
--- 
-Best regards,
-
-Javier Martinez Canillas
-Core Platforms
-Red Hat
+James
 
 
