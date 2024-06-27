@@ -1,86 +1,78 @@
-Return-Path: <linux-kernel+bounces-232780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14EF591AE35
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:37:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AC4391AE43
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2EC71C20E3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:37:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C55D728DCB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:39:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC721A2FA1;
-	Thu, 27 Jun 2024 17:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A09419CCE0;
+	Thu, 27 Jun 2024 17:34:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="tTiorXtG"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c1ANrSnA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966DF1A2562;
-	Thu, 27 Jun 2024 17:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 433D819B593;
+	Thu, 27 Jun 2024 17:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719509613; cv=none; b=otTD8Vv+aCVkOdFqHpnQwBoCHTNhTIVEHIfI2AAh2FCQZuo82qo8ARHM2TuBYGyKR6LVbL4fiG8WVS8wtUhWnGHfuHfH7f3lwrwguzDljuHvDLu2WXjbeaGdNnF2kWEFnLT6lti/MRAC0s4+yJS76rewb1JldTA+OWIVd0wM23s=
+	t=1719509661; cv=none; b=dfKCzB/qfLf0CwonzccceDmxDEzBECN98s+ic+odoM+lEI8/1xupyNAGOjC4AtZcPvbc9GpGCFh7Pb7f7OclHt3pzaXMP5Jp1Lha+cvgU1kshVo824HaWxIDgfCyac13qcbYV831nqLblbI/ORZttrRdcTRCBz8zeE5IBvAwrZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719509613; c=relaxed/simple;
-	bh=/JDFP9n6PGo01QXfypchoElbcwXuKjpkCu1BCM+9qoI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=EVBE1rJvF9HvPAtGcvlcJ3d8RdzsD9eRzvfeSnLQtCeTODJn5cjspZ1YjKn0+RYhICn0kvHA+SusCCgL6CEDQJ51jUfbgq5PIevSzD0inEEb9w5yvUQeya0LP+v/jKMalJP0pGdRmpMLlFiFTnFGEZXOkaCkMkFcKhSRlfHvGfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=tTiorXtG; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net F05BD45E04
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1719509603; bh=/F0zoivBxY/yAFf6EizQZgWTamhqaIwwJLXJPsffNqw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=tTiorXtGomA4x7G2OjLDGPpYeHkdD4jyTMsnz9pXdnT/u4wPtCLB/Lk828aZkEOVB
-	 wxSKf5UGbSovb/OXApOzV+a34NsDkKJZXnbaU3htbEz9/nYT2cnc3PdwdRqPvZLkJB
-	 T4b4W1ExvU/Q7/sg/yEpAYCTTRkaEa6oSH5Z9avN7kPynPPu7GJjte+MG9yCrlyqLt
-	 IoZHU4DxBTcUMvtsVCaQa8qXIL1IhZsNQ1snnRaH5OP+Z3NgZa2+mns7ApkD1aezg9
-	 z5GvpW+1bkVdemNuMqwzmK0DFHRJzlmCDxmMn7xUrzMiQDVUbzhPixcejXEaMXIv2X
-	 VgMmUhHa0LjYw==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id F05BD45E04;
-	Thu, 27 Jun 2024 17:33:22 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Thomas Huth <thuth@redhat.com>, linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Documentation: Remove IA-64 from kernel-parameters
-In-Reply-To: <20240627162458.387700-1-thuth@redhat.com>
-References: <20240627162458.387700-1-thuth@redhat.com>
-Date: Thu, 27 Jun 2024 11:33:22 -0600
-Message-ID: <878qyqwasd.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1719509661; c=relaxed/simple;
+	bh=jbR50wR7fOEcwPe7PpPCUWslNiFaZWf/UsFbwwEWOyQ=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=b1KgHauxAID83tHbKQxjbx3iVdYKQJ+Z7Fljr48aIBX+hMuhVwPIZOok/6Eu0Hq6PTEhCIiARwuGw6K44qbwnOnRMbadWgVf0AVj3yGfejHK2tz0GRHdL28HY3ryMFHHISt94qxohVwu83SB2MjRoImGDij1sBC/8YJr1gDDUD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c1ANrSnA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2656AC2BBFC;
+	Thu, 27 Jun 2024 17:34:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719509661;
+	bh=jbR50wR7fOEcwPe7PpPCUWslNiFaZWf/UsFbwwEWOyQ=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=c1ANrSnAgX0PVm0X6MnLdAyKbJsIDELUQ+C4A6yY0oB41KzsgmZ5CzsPw9yRP1No5
+	 s1oMf3+fKGEtiMn3VRyDMg8pvzKX2p+Q8wJ+26Mtr7ZVDJzxdFd9n6SWXAsldJ1YPM
+	 NI5GVpVJT00+NYLiliTDWRk5w9Nlo5XRfdGO/W3MjTiMoAPAkJj/CFFMSVrm1dE8bi
+	 69HkhZOg5Nxa1nFWv3WJAcODcm5SnG/9zbB9kZ9TDjEmjqqys2jhldVU9cInrjpCuS
+	 ztOTcuAZy37aJJh6iWxOonfB8eLF3OYOy7BiG9K7iFu2IOpB0Km0nA3XceydIvGodG
+	 G1DdHHT1JCONw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 1D353C433E9;
+	Thu, 27 Jun 2024 17:34:21 +0000 (UTC)
+Subject: Re: [GIT PULL] Btrfs fixes for 6.10-rc6
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <cover.1719501798.git.dsterba@suse.com>
+References: <cover.1719501798.git.dsterba@suse.com>
+X-PR-Tracked-List-Id: <linux-btrfs.vger.kernel.org>
+X-PR-Tracked-Message-Id: <cover.1719501798.git.dsterba@suse.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.10-rc5-tag
+X-PR-Tracked-Commit-Id: a7e4c6a3031c74078dba7fa36239d0f4fe476c53
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 66e55ff12e7391549c4a85a7a96471dcf891cb03
+Message-Id: <171950966111.28398.7864370294577619389.pr-tracker-bot@kernel.org>
+Date: Thu, 27 Jun 2024 17:34:21 +0000
+To: David Sterba <dsterba@suse.com>
+Cc: torvalds@linux-foundation.org, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
 
-Thomas Huth <thuth@redhat.com> writes:
+The pull request you sent on Thu, 27 Jun 2024 17:28:32 +0200:
 
-> IA-64 has been removed from the tree, so we should also remove
-> the corresponding kernel-parameters documentation now.
->
-> Signed-off-by: Thomas Huth <thuth@redhat.com>
-> ---
->  Note: Patch is based on linux-next branch (which already contains
->        some other patches to kernel-parameters.txt)
+> git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.10-rc5-tag
 
-That can make it hard for maintainers to apply; it's better to base
-patches on the tree you are targeting.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/66e55ff12e7391549c4a85a7a96471dcf891cb03
 
->  .../admin-guide/kernel-parameters.rst         |  1 -
->  .../admin-guide/kernel-parameters.txt         | 45 ++-----------------
->  2 files changed, 3 insertions(+), 43 deletions(-)
+Thank you!
 
-Nonetheless it applied just fine to docs-next, so I have done so,
-thanks.
-
-jon
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
