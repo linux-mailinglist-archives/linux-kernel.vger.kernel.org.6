@@ -1,198 +1,142 @@
-Return-Path: <linux-kernel+bounces-231931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AFFD91A081
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:37:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF6A691A082
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:37:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBD601F21BE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:37:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 367111C210AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 748D0535B7;
-	Thu, 27 Jun 2024 07:37:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868A450291;
+	Thu, 27 Jun 2024 07:37:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VcICpKMF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="X65Mrvcn"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A21C3EA76;
-	Thu, 27 Jun 2024 07:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610AE6D1A8
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 07:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719473821; cv=none; b=YRfF16Mt1dTrRM/ZoWGYDHqBkrDOC1TVXNjKDbA3rkf5/ox8BdSFKp0EVljJ4w0M2PRhpF6pX5WQsqlldqq2zulkC7J5dCH1csNJ2zE73zhd0gsajr3TBrgQTs8Veee4HTTzBIEWuGcdgI1nlT8z37Y3b5bw+TV9cEZkNn3C2JM=
+	t=1719473846; cv=none; b=j8mh5kDeVcKTFTIojNfOwQPWJZk0BQoiMulKD+HKlISVpl9xS2MkfkGgoUMMRufj0UwBQzAwRVQFmkfuEHq/Ze9Z1rW8KuFM9QYatWtoZtI/OVh4si0rkJ7qCubmM/CE713yRSvIAjio5+ILifVQXUGnNHDjgDxZWzhHfEhOGRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719473821; c=relaxed/simple;
-	bh=GJvTs8uLp8xqMQpQmNm2+XNXsk73scTBtKxY/yW5KCM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qYfJ2MDEFDVDYySAvHDhKkI+uytInWQdKArqUghQL70JTtQNyF0shKcwqf+9SPEDW0bdLP2cdHuLoVjw6XNTfm8BADAaHSrPcZq1qMmdszCNpSmMzvxAdaY4d/B/juLe/226e/7gSJEKakqutIAI4HDszLj67QrJwOEygnI59Og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VcICpKMF; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719473819; x=1751009819;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GJvTs8uLp8xqMQpQmNm2+XNXsk73scTBtKxY/yW5KCM=;
-  b=VcICpKMFfgcK7vxNgBFiv4VFzxApYRQbDA2mqIpCV5irZkD+9zWRP4m/
-   DtIiSMOKDlN8Y9mdgn3NTCzug0p+qBZbbnF2h6irh9/A53GpWvp+0w7I/
-   6OXY0NWdKtz5RcI7Sb94ooxEskB9W8ck2Z36Gkl3UsUBUHWeZWw/bhO1Z
-   +UYxtFo9pMecr1b046S0cw47nZYJkPkzh7MzcYvYNszSle25mZwF80hYh
-   kXCW8lw8PpPkpV/nV2ud9XgH+cZjRxj3c/j7n3yWtQOOX3JmzpZXT3mk2
-   CeplZf0FV3HAz1J2kKgUZwU/r8ttx76wsbygz7obcd2ea+QA2X5aW4qGY
-   Q==;
-X-CSE-ConnectionGUID: ML6tQYhJS7epG1I8NILw6A==
-X-CSE-MsgGUID: nKkZkZuBQcGSyi7qo2+5xw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="16541221"
-X-IronPort-AV: E=Sophos;i="6.08,269,1712646000"; 
-   d="scan'208";a="16541221"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 00:36:59 -0700
-X-CSE-ConnectionGUID: kWiZWpTMSQuT6XU78eyK0A==
-X-CSE-MsgGUID: qlNvCSGwR8G61kzM5Gcprg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,269,1712646000"; 
-   d="scan'208";a="75473125"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 27 Jun 2024 00:36:56 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sMjgb-000G1i-19;
-	Thu, 27 Jun 2024 07:36:53 +0000
-Date: Thu, 27 Jun 2024 15:36:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>,
-	freedreno <freedreno@lists.freedesktop.org>,
-	dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-	Rob Clark <robdclark@gmail.com>,
-	Bjorn Andersson <andersson@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Akhil P Oommen <quic_akhilpo@quicinc.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 3/3] arm64: dts: qcom: x1e80100: Add gpu support
-Message-ID: <202406271442.d4CbiZMW-lkp@intel.com>
-References: <20240623110753.141400-4-quic_akhilpo@quicinc.com>
+	s=arc-20240116; t=1719473846; c=relaxed/simple;
+	bh=hXbsKE9P+kMorDTh4PaugXdXE0+kw7EJ5lOrjKsj/I4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=gh3rLqA1ebz0SxZmjnBMVPCBvQfqLjBBwr9zRKw6IGwHT/SZLI35bVZ3QLZYzxqHRYy6hCfdGzhgbFoe8z2EaWbAGWlA92AVNhXA6MwK7ZxA/u3avC02DVa7Tvezvw1uitxK87vwOOKzM+XIj9E314q2HALvFEue2djA62lxunM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=X65Mrvcn; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-364c9ec17d1so4701757f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 00:37:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719473843; x=1720078643; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uSt7hWRFsJht1ykRpUwUhslZQwMHYadx10kyHUhna8M=;
+        b=X65MrvcnUwHrZ/VdZNzA/7h+VpSnHnZY/4dkYEtIlBsVXXSuz/EEea0OGJHa/zvHhc
+         Bde4ywbquV68SWfmAjWziQEBrQuWNnEhYfgCa0W6ClcdYhvsrO65jKL4jCg1+rKdpQGl
+         KAJpkQ0jwJRSP+VtyZ6zMbIbS0RLfL4IJa2zrUL815eSDoC9fYM5PsWKsj5WplU+98u5
+         +EE/zfhBHYs6EdZBAQVsQfX0a25qPAXk7zhxPncXPNkESgQa32LFBMwzCjvJ4ildVuQO
+         /Zwqg4ZD9Mfk3dDPMpncA7c+P0cp9/MbNg9fqT1KzoYKTkiRtXk3Zhr1C5GTJIw/UBB5
+         nL8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719473843; x=1720078643;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uSt7hWRFsJht1ykRpUwUhslZQwMHYadx10kyHUhna8M=;
+        b=s+9Mfq14Vq5H4JQhtDxdOvwRyI6I7yRWV1Cgq1WL4JZv2qLVUi/EoYUQXLRRR4NOIe
+         a0tVASnSAVarbW/eWRIszHuricOw8X4erQI8cYJrnlPxtxfwOOjuU/IsrAItUcx8K/LM
+         o+aShNmZrk0meV6YL3j64tBZ4nzGNg6uApEpcKjjY8Lu3j96PH+QOUk6ruH3YQb4hY51
+         4xCdXLcbcOdvqv8ErtQ5+9MOjTQSBekkTdJAsxLJieNDawIK6NclvNdfklnD2EdmH7Ll
+         TPKNjcuvKs69vyjVd7kVvkp+iLg9sqMf5cls7pce2WSoZi3q0SQ8CfOZfj5WzuEqFumt
+         dPIA==
+X-Forwarded-Encrypted: i=1; AJvYcCXwRxHcA0SCT+6OUP/h28IrsM0WfiXLWF0E0vNz879rFnGP6wqY3jS4iFx/tARjaa0jb2ygAfpNX90PYOID4CIudqhxbEswBdvjcb4e
+X-Gm-Message-State: AOJu0YxwYFHL0YFVDJ5KfPoREisz6VZ3BWSSNOw+FlygygvjAd0rcwo6
+	dnTpwJtIW4Yf1YKxvElH+rpO9j4zHQ7u/6KqPHwvxZ6HC8QHzUN8HXhblNvchwc=
+X-Google-Smtp-Source: AGHT+IFCDR3ek9WFRsnqL1Rf0E2mq3qOmsfg2MEHg+17BZ3Z6O2N+Wf9FHrf4pZsNrsp4V3hXqzOFw==
+X-Received: by 2002:a05:6000:2ab:b0:366:ec2c:8647 with SMTP id ffacd0b85a97d-366ec2c86f1mr9630916f8f.46.1719473842640;
+        Thu, 27 Jun 2024 00:37:22 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:fc79:19e9:c4ba:4eb2])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3674357c0e7sm972505f8f.10.2024.06.27.00.37.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 00:37:22 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,  Stephen Boyd
+ <sboyd@kernel.org>,  Neil Armstrong <neil.armstrong@linaro.org>,
+  <linux-kernel@vger.kernel.org>,  <linux-amlogic@lists.infradead.org>,
+  <linux-clk@vger.kernel.org>
+Subject: Re: [RFC PATCH 0/9] reset: amlogic: move reset drivers out of CCF
+In-Reply-To: <f7b13cc0-6155-4b0f-9f63-c35d73c3032f@salutedevices.com> (Jan
+	Dakinevich's message of "Mon, 24 Jun 2024 16:48:08 +0300")
+References: <20240516150842.705844-1-jbrunet@baylibre.com>
+	<f7b13cc0-6155-4b0f-9f63-c35d73c3032f@salutedevices.com>
+Date: Thu, 27 Jun 2024 09:37:21 +0200
+Message-ID: <1jfrsyhm4u.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240623110753.141400-4-quic_akhilpo@quicinc.com>
+Content-Type: text/plain
 
-Hi Akhil,
+On Mon 24 Jun 2024 at 16:48, Jan Dakinevich <jan.dakinevich@salutedevices.com> wrote:
 
-kernel test robot noticed the following build warnings:
+> Jerome,
+>
+> Do you have any updates? I'm looking forward to these changes so I can
+> continue my work on a1 audio clock controller driver.
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on drm-intel/for-linux-next drm-intel/for-linux-next-fixes drm-tip/drm-tip linus/master v6.10-rc5]
-[cannot apply to next-20240626]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+You have been CCed on the whole series.
+You can see for yourself that there is still discussion going on.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Akhil-P-Oommen/dt-bindings-display-msm-gmu-Add-Adreno-X185-GMU/20240626-061111
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20240623110753.141400-4-quic_akhilpo%40quicinc.com
-patch subject: [PATCH v1 3/3] arm64: dts: qcom: x1e80100: Add gpu support
-config: arm64-randconfig-051-20240627 (https://download.01.org/0day-ci/archive/20240627/202406271442.d4CbiZMW-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project ad79a14c9e5ec4a369eed4adf567c22cc029863f)
-dtschema version: 2024.6.dev1+g833054f
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240627/202406271442.d4CbiZMW-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406271442.d4CbiZMW-lkp@intel.com/
-
-dtcheck warnings: (new ones prefixed by >>)
-   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: phy@fd5000: 'vdda-pll-supply' is a required property
-   	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml#
-   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: phy@fda000: 'vdda-phy-supply' is a required property
-   	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml#
-   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: phy@fda000: 'vdda-pll-supply' is a required property
-   	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml#
-   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: phy@fdf000: 'vdda-phy-supply' is a required property
-   	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml#
-   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: phy@fdf000: 'vdda-pll-supply' is a required property
-   	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml#
->> arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: iommu@3da0000: compatible: 'oneOf' conditional failed, one must be fixed:
-   	['qcom,x1e80100-smmu-500', 'qcom,adreno-smmu', 'qcom,smmu-500', 'arm,mmu-500'] is too long
-   	'qcom,x1e80100-smmu-500' is not one of ['qcom,msm8996-smmu-v2', 'qcom,msm8998-smmu-v2', 'qcom,sdm630-smmu-v2', 'qcom,sm6375-smmu-v2']
-   	'qcom,x1e80100-smmu-500' is not one of ['qcom,qcm2290-smmu-500', 'qcom,sc7180-smmu-500', 'qcom,sc7280-smmu-500', 'qcom,sc8180x-smmu-500', 'qcom,sc8280xp-smmu-500', 'qcom,sdm845-smmu-500', 'qcom,sm6115-smmu-500', 'qcom,sm6350-smmu-500', 'qcom,sm6375-smmu-500', 'qcom,sm8150-smmu-500', 'qcom,sm8250-smmu-500', 'qcom,sm8350-smmu-500', 'qcom,sm8450-smmu-500']
-   	'qcom,x1e80100-smmu-500' is not one of ['qcom,qcm2290-smmu-500', 'qcom,sa8775p-smmu-500', 'qcom,sc7280-smmu-500', 'qcom,sc8280xp-smmu-500', 'qcom,sm6115-smmu-500', 'qcom,sm6125-smmu-500', 'qcom,sm8150-smmu-500', 'qcom,sm8250-smmu-500', 'qcom,sm8350-smmu-500', 'qcom,sm8450-smmu-500', 'qcom,sm8550-smmu-500', 'qcom,sm8650-smmu-500']
-   	'qcom,x1e80100-smmu-500' is not one of ['qcom,sc7280-smmu-500', 'qcom,sm8150-smmu-500', 'qcom,sm8250-smmu-500']
-   	'qcom,x1e80100-smmu-500' is not one of ['qcom,msm8996-smmu-v2', 'qcom,sc7180-smmu-v2', 'qcom,sdm630-smmu-v2', 'qcom,sdm845-smmu-v2', 'qcom,sm6350-smmu-v2', 'qcom,sm7150-smmu-v2']
-   	'qcom,sdm845-smmu-v2' was expected
-   	'marvell,ap806-smmu-500' was expected
-   	'qcom,x1e80100-smmu-500' is not one of ['nvidia,tegra186-smmu', 'nvidia,tegra194-smmu', 'nvidia,tegra234-smmu']
-   	'arm,mmu-500' was expected
-   	'qcom,x1e80100-smmu-500' is not one of ['arm,mmu-400', 'arm,mmu-401']
-   	'qcom,x1e80100-smmu-500' is not one of ['arm,smmu-v1', 'arm,smmu-v2', 'arm,mmu-400', 'arm,mmu-401', 'arm,mmu-500', 'cavium,smmu-v2']
-   	'qcom,smmu-v2' was expected
-   	'qcom,smmu-500' was expected
-   	'nvidia,smmu-500' was expected
-   	'arm,smmu-v2' was expected
-   	'arm,smmu-v1' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/arm,smmu.yaml#
->> arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: iommu@3da0000: clock-names: False schema does not allow ['hlos', 'bus', 'iface', 'ahb']
-   	from schema $id: http://devicetree.org/schemas/iommu/arm,smmu.yaml#
->> arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: iommu@3da0000: clocks: False schema does not allow [[150, 14], [51, 55], [51, 56], [150, 0]]
-   	from schema $id: http://devicetree.org/schemas/iommu/arm,smmu.yaml#
-   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: usb@a2f8800: interrupt-names: ['pwr_event', 'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
-   	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
-   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: /soc@0/arbiter@c400000/spmi@c432000/pmic@7: failed to match any schema with compatible: ['qcom,smb2360', 'qcom,spmi-pmic']
-   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: /soc@0/arbiter@c400000/spmi@c432000/pmic@a: failed to match any schema with compatible: ['qcom,smb2360', 'qcom,spmi-pmic']
-   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: /soc@0/arbiter@c400000/spmi@c432000/pmic@b: failed to match any schema with compatible: ['qcom,smb2360', 'qcom,spmi-pmic']
---
-   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: phy@fd5000: 'vdda-pll-supply' is a required property
-   	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml#
-   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: phy@fda000: 'vdda-phy-supply' is a required property
-   	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml#
-   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: phy@fda000: 'vdda-pll-supply' is a required property
-   	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml#
-   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: phy@fdf000: 'vdda-phy-supply' is a required property
-   	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml#
-   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: phy@fdf000: 'vdda-pll-supply' is a required property
-   	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml#
->> arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: iommu@3da0000: compatible: 'oneOf' conditional failed, one must be fixed:
-   	['qcom,x1e80100-smmu-500', 'qcom,adreno-smmu', 'qcom,smmu-500', 'arm,mmu-500'] is too long
-   	'qcom,x1e80100-smmu-500' is not one of ['qcom,msm8996-smmu-v2', 'qcom,msm8998-smmu-v2', 'qcom,sdm630-smmu-v2', 'qcom,sm6375-smmu-v2']
-   	'qcom,x1e80100-smmu-500' is not one of ['qcom,qcm2290-smmu-500', 'qcom,sc7180-smmu-500', 'qcom,sc7280-smmu-500', 'qcom,sc8180x-smmu-500', 'qcom,sc8280xp-smmu-500', 'qcom,sdm845-smmu-500', 'qcom,sm6115-smmu-500', 'qcom,sm6350-smmu-500', 'qcom,sm6375-smmu-500', 'qcom,sm8150-smmu-500', 'qcom,sm8250-smmu-500', 'qcom,sm8350-smmu-500', 'qcom,sm8450-smmu-500']
-   	'qcom,x1e80100-smmu-500' is not one of ['qcom,qcm2290-smmu-500', 'qcom,sa8775p-smmu-500', 'qcom,sc7280-smmu-500', 'qcom,sc8280xp-smmu-500', 'qcom,sm6115-smmu-500', 'qcom,sm6125-smmu-500', 'qcom,sm8150-smmu-500', 'qcom,sm8250-smmu-500', 'qcom,sm8350-smmu-500', 'qcom,sm8450-smmu-500', 'qcom,sm8550-smmu-500', 'qcom,sm8650-smmu-500']
-   	'qcom,x1e80100-smmu-500' is not one of ['qcom,sc7280-smmu-500', 'qcom,sm8150-smmu-500', 'qcom,sm8250-smmu-500']
-   	'qcom,x1e80100-smmu-500' is not one of ['qcom,msm8996-smmu-v2', 'qcom,sc7180-smmu-v2', 'qcom,sdm630-smmu-v2', 'qcom,sdm845-smmu-v2', 'qcom,sm6350-smmu-v2', 'qcom,sm7150-smmu-v2']
-   	'qcom,sdm845-smmu-v2' was expected
-   	'marvell,ap806-smmu-500' was expected
-   	'qcom,x1e80100-smmu-500' is not one of ['nvidia,tegra186-smmu', 'nvidia,tegra194-smmu', 'nvidia,tegra234-smmu']
-   	'arm,mmu-500' was expected
-   	'qcom,x1e80100-smmu-500' is not one of ['arm,mmu-400', 'arm,mmu-401']
-   	'qcom,x1e80100-smmu-500' is not one of ['arm,smmu-v1', 'arm,smmu-v2', 'arm,mmu-400', 'arm,mmu-401', 'arm,mmu-500', 'cavium,smmu-v2']
-   	'qcom,smmu-v2' was expected
-   	'qcom,smmu-500' was expected
-   	'nvidia,smmu-500' was expected
-   	'arm,smmu-v2' was expected
-   	'arm,smmu-v1' was expected
-   	from schema $id: http://devicetree.org/schemas/iommu/arm,smmu.yaml#
->> arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: iommu@3da0000: clock-names: False schema does not allow ['hlos', 'bus', 'iface', 'ahb']
-   	from schema $id: http://devicetree.org/schemas/iommu/arm,smmu.yaml#
->> arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: iommu@3da0000: clocks: False schema does not allow [[146, 14], [51, 55], [51, 56], [146, 0]]
-   	from schema $id: http://devicetree.org/schemas/iommu/arm,smmu.yaml#
-   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: usb@a2f8800: interrupt-names: ['pwr_event', 'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
-   	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
-   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: /soc@0/arbiter@c400000/spmi@c432000/pmic@7: failed to match any schema with compatible: ['qcom,smb2360', 'qcom,spmi-pmic']
-   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: /soc@0/arbiter@c400000/spmi@c432000/pmic@a: failed to match any schema with compatible: ['qcom,smb2360', 'qcom,spmi-pmic']
-   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: /soc@0/arbiter@c400000/spmi@c432000/pmic@b: failed to match any schema with compatible: ['qcom,smb2360', 'qcom,spmi-pmic']
+>
+> On 5/16/24 18:08, Jerome Brunet wrote:
+>> This RFC follows the discussion about having reset driver in the clock tree
+>> [1]. Ideally those should reside in the reset part of tree.
+>> 
+>> Also the code of the amlogic reset driver is very similar between the 2 trees
+>> and could use the same driver code.
+>> 
+>> This RFC moves the reset driver of audio clock controller of the g12 and
+>> sm1 SoC family to the reset tree, using the auxiliary bus.
+>> 
+>> The infrastructure put in place is meant to be generic enough so we may
+>> eventually also move the reset drivers in the meson8b and aoclk clock
+>> controllers.
+>> 
+>> [1] https://lore.kernel.org/linux-clk/e3a85852b911fdf16dd9ae158f42b3ef.sboyd@kernel.org
+>> 
+>> Jerome Brunet (9):
+>>   reset: amlogic: convert driver to regmap
+>>   reset: amlogic: add driver parameters
+>>   reset: amlogic: split the device and platform probe
+>>   reset: amlogic: use reset number instead of register count
+>>   reset: amlogic: add reset status support
+>>   reset: amlogic: add toggle reset support
+>>   reset: amlogic: add auxiliary reset driver support
+>>   clk: meson: add auxiliary reset helper driver
+>>   clk: amlogic: axg-audio: use the auxiliary reset driver
+>> 
+>>  drivers/clk/meson/Kconfig                     |   6 +
+>>  drivers/clk/meson/Makefile                    |   1 +
+>>  drivers/clk/meson/axg-audio.c                 | 108 +--------
+>>  drivers/clk/meson/meson-clk-rst-aux.c         |  84 +++++++
+>>  drivers/clk/meson/meson-clk-rst-aux.h         |  14 ++
+>>  drivers/reset/Kconfig                         |   1 +
+>>  drivers/reset/reset-meson.c                   | 210 ++++++++++++++----
+>>  include/soc/amlogic/meson8b-auxiliary-reset.h |  17 ++
+>>  8 files changed, 293 insertions(+), 148 deletions(-)
+>>  create mode 100644 drivers/clk/meson/meson-clk-rst-aux.c
+>>  create mode 100644 drivers/clk/meson/meson-clk-rst-aux.h
+>>  create mode 100644 include/soc/amlogic/meson8b-auxiliary-reset.h
+>> 
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Jerome
 
