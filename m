@@ -1,227 +1,255 @@
-Return-Path: <linux-kernel+bounces-232763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3275E91AE10
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:31:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DD0C91AE12
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:33:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4F8A286F32
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:31:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AFC7B2451D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA8219A287;
-	Thu, 27 Jun 2024 17:31:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E802A19A28A;
+	Thu, 27 Jun 2024 17:33:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AuW/W7hC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MwKYsLT+"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1DF1865A
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 17:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719509503; cv=fail; b=tKi5u18PzksRUEYPmrlWKFMir+42QVHZ5bM+7OAgwpxgNQw8QaJ0tCJSVb914vAxkv0IVLQUzcfLFuzrOqj0DFB6Zx541kR1G4ZvRYcAaO3u3gvFa3hDuqRfHV29yZlvKqMEKFuNH2tgI2eUKZC5+ocvE2f/cSviUrn+6rR8s5Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719509503; c=relaxed/simple;
-	bh=5Ki7Kazuzc+N5qSxR0PHq7Mb5NOq33Abr8FL2geOAAo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=m+KKWhcT5cyKC90jeghi6HJ+BhEFAGGU9W+5eY6oMr8kM3CHMTXDv5odj0eXUim5+PUnZ+W5Rc+hC7QJwvkujI/lF8WcDjg6WOY4B6JdatIQBTwEe0LPywSxrqnDruKSXeN6w07bI0xX4ra093Z4ksM0GJOCfEY1il3A/yLBAvU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AuW/W7hC; arc=fail smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719509501; x=1751045501;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=5Ki7Kazuzc+N5qSxR0PHq7Mb5NOq33Abr8FL2geOAAo=;
-  b=AuW/W7hCCLzIBn9qitgnk9vlCELKcNphw9xI0icnxEsOIFsp4MUgiyvo
-   WQfHl37AiKJgxlPtP4VUIy8bubqaZvuDfM5XZuPuHuqaFExqW+Ps3Fvk7
-   HMszEy1nPy7+pzH8wyUit/zGLiFTmusiqDDAEDog9QFfzBhdAZwnzon/Z
-   gt230xWpXk1fn4Vna9ifFQrSq+eGzHjpycEq7OUF47Zh0L5/Z03EmCumE
-   TQi2zZaW+kfKSSZXxBiaR2Auuk7ObaJsGWcPVMl+Z0cXKWLc9J8k6b3Wg
-   xIru5cgmrneMReu0GkHkSVJyTz+O/1sXOyPLbXUSvnb8deLtH0fn5lao0
-   w==;
-X-CSE-ConnectionGUID: 71ScmCsSRiCBoVZ3xWV93A==
-X-CSE-MsgGUID: xULxHiB6TTCR5Xa/LFZsdg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="16621080"
-X-IronPort-AV: E=Sophos;i="6.09,166,1716274800"; 
-   d="scan'208";a="16621080"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 10:31:41 -0700
-X-CSE-ConnectionGUID: U5P5rCpwSeC0IuugsANP7w==
-X-CSE-MsgGUID: sasW5H3GTAyE4e8PgbypNA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,166,1716274800"; 
-   d="scan'208";a="44866450"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 27 Jun 2024 10:31:41 -0700
-Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 27 Jun 2024 10:31:40 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 27 Jun 2024 10:31:40 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.168)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 27 Jun 2024 10:31:40 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lyN/H+d2S6pidWHDVIk1zs2usLZbjO+9aw993mfhrp27qPlBcuNnXM3reMNtHqItredbyAlhC3RcwfC5InierSZRAsH5xXoYUvwMl4uGW2l4arUwll6Hjl2hXBtrvwMkguLpMvR44rkwCpIfnhvuvwklHOE9jHHkmqLcDAUTmdSUPvX5j5YImVaaX51cpvaxb4bHz1sYn1G0ZfplP/wgwjyWmAw7JsqwV2o+A55A+KTkNIWQi/Lt2YhgzL6tsiXWzche0bHsJkKc4cwvqVUDIj4dAOOfM/2EFxO0qbZ5uq5m85SsFIapgOjNytHJ90jWzDNt5zMD+9Kn1NhgjL2n+w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5Ki7Kazuzc+N5qSxR0PHq7Mb5NOq33Abr8FL2geOAAo=;
- b=jUVOD/5iKA8knhiAsUAk4tNL+vrfD2DLMnLqu2yv3pdkNBJlGii2do3tT7Y7lE7RuSRf7U6JXGjlynMQ4DeNfIl0nH+SZY05y1h7ouTsL0/jgBEcqFiW7oFaFJprzwkmITAFHRM+5D+gbJaQv0iMjQOXRAV+z6dPODv7iJrvt/OBnxGXG6Vw33LGelWO9HrthW8VJFA+bTYQvB888zNbDG8NrXZvd6cRhbSvLyZ3g67MzZWLDEK6yiRo6mz/knUz+XgpwomjCes2k2yA8rAcFQtHJXhDDMnc3SWLjieemCTwQLVMnRVzglMmXKStSCGnMphHUMXHhfMgiILTltPIbg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
- by LV8PR11MB8605.namprd11.prod.outlook.com (2603:10b6:408:1e5::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.32; Thu, 27 Jun
- 2024 17:31:37 +0000
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361%5]) with mapi id 15.20.7698.025; Thu, 27 Jun 2024
- 17:31:37 +0000
-From: "Luck, Tony" <tony.luck@intel.com>
-To: "Chatre, Reinette" <reinette.chatre@intel.com>
-CC: "Yu, Fenghua" <fenghua.yu@intel.com>, "Wieczor-Retman, Maciej"
-	<maciej.wieczor-retman@intel.com>, Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>, "Drew
- Fustini" <dfustini@baylibre.com>, Dave Martin <Dave.Martin@arm.com>,
-	"x86@kernel.org" <x86@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "patches@lists.linux.dev"
-	<patches@lists.linux.dev>
-Subject: RE: [PATCH v21 14/18] x86/resctrl: Fill out rmid_read structure for
- smp_call*() to read a counter
-Thread-Topic: [PATCH v21 14/18] x86/resctrl: Fill out rmid_read structure for
- smp_call*() to read a counter
-Thread-Index: AQHaxCviQ/AbgqqooEmxvVfuWZc2VrHZJ90AgAFuCZGAAU/+gA==
-Date: Thu, 27 Jun 2024 17:31:37 +0000
-Message-ID: <SJ1PR11MB6083578781B19FC3111BEC32FCD72@SJ1PR11MB6083.namprd11.prod.outlook.com>
-References: <20240621223859.43471-1-tony.luck@intel.com>
- <20240621223859.43471-15-tony.luck@intel.com>
- <8df55906-23b1-4772-ab11-703da64d5ebb@intel.com>
- <ZnxtZc140S11gFKL@agluck-desk3.sc.intel.com>
- <d82a0882-1b92-476f-bc14-e8edb6ec43ca@intel.com>
-In-Reply-To: <d82a0882-1b92-476f-bc14-e8edb6ec43ca@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ1PR11MB6083:EE_|LV8PR11MB8605:EE_
-x-ms-office365-filtering-correlation-id: 3654451d-2924-4598-00d3-08dc96ceff6e
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?eXpsSEFQZ1IyNUdJNWgwZlRnYVoxbmdkNjFYUGxsRGhod2ViT1RWK0p0ZTIy?=
- =?utf-8?B?bGNqQjcxT2dGNG1SUHlLc21FMVp5MWlXT3VMQjNvb2ZqZWZHak9YTytGVmlR?=
- =?utf-8?B?bVhTd2lPYnNmNGM5TCs1c1NwcDZUR0dwZGJiTjdobjNyOS9RbDYvT1FNRGp5?=
- =?utf-8?B?OUlGbVJXZGwzY3FjZy81elIvMGhZVG9KOHBBNnJlRVlqVmtrcThIVXg4QlVh?=
- =?utf-8?B?K1ZldUFJK0lSRVE1RmQ5WjRDb2RoZENMVFprNHY2WmxNcFZMWGc4dDQvYllO?=
- =?utf-8?B?QlZWUW9kTnV1T1IzY203T3RYYzNReUt0NEltY0pRd2FRTkx3UXZmcFRJVXU1?=
- =?utf-8?B?b2ZjbUNQVS92WndHaHV6N1JheW5KSFBzMTRDZjNSeVJWMGUwT3RMMGk3c290?=
- =?utf-8?B?YmFOdTVvRUVJSGNRS1BCNkNLcURTSDlDaDJhdEJuTGJyR0hxakZQbHJCazdC?=
- =?utf-8?B?RllCM29YaFJYSHZTTzkyZS9BRWR4UUI5aUZXWFBWaENGdkdRUlI3emtpNXdK?=
- =?utf-8?B?b0FPRlRJSzRQUitsWXlCd3YzUjQ5b0FpSlVHNWVuR2VqbzZ1eWZZek9jaWd4?=
- =?utf-8?B?UHh0bk1ZaS9WY01IK1JleWNmaEd0WVhzVXdoMURXS3ZJUjhIeThTeWEyQXZ6?=
- =?utf-8?B?emQ5WUNKYUd6d3hZMmhzeHVoNDZJdTdwdVBUSHhSckRrUThMb0xLamx0SVIr?=
- =?utf-8?B?Z2MzYVJhWE9CZVl3alFhQStpTEMwRHZrWUxpOHdLcGZuNXZNcW9RMXAxSVVY?=
- =?utf-8?B?YnJvYkVoRC95U0x4N2hRTEtPU0ZHNFJwbnVuV1oxL3pUNG5YcGtjUEFEbFFR?=
- =?utf-8?B?L3c4V1VsT2pQMUVwODVya3Q2aGlGQ21ocjhsRnF1RUl1TkFRT2RidlpHQ3dx?=
- =?utf-8?B?SUVoVE9QWFpNS2gySUFMb29zMVVrc25rRXVtMzBidzkzeGQ2RnQ2TjN5d1pi?=
- =?utf-8?B?eWNab3E0SU1lbDBwQ0tUdU1ZcDgyQWtSRy8xbjVZWlh5cGtHeFZlM2RmRmY2?=
- =?utf-8?B?a2o2TXNDbGswM2I2Njg5dkdNbVZUVjdKbkxxc0pia09iakc3MjA0NkNNZlNh?=
- =?utf-8?B?MjE4Nk5CVTJMdU9SOW84TlN2d0RMaFRNMm9GUGl6bk01NENpSkZwbElQZjdK?=
- =?utf-8?B?ak9taENHR25NSEtOOFJqOVZvWkdad1A3dk5Uc0FmNWQzbE9ZNEhwT0xJanlz?=
- =?utf-8?B?TlkzaXcyS1B3Qm12a0dWZFlwem5kRzRHdzZOKzlkazljUzdLT2RVbDdrV0Rx?=
- =?utf-8?B?aWVOZTlzNnJxa2JIS2hnaTR5bVhEYnJVazhQcVVMSFhNYnoyV0V4UG9nVlY1?=
- =?utf-8?B?V0ZvLzM3WHNxZVdiUHI4d0crZ0FXT3B6V1pSdThxbE5LRDAwdU8wZkswZzla?=
- =?utf-8?B?cWw0T2Y2SHNCMDEwcUIrd0h3R05kN0MrWGVxdjNGU2lhaHRKYmk5cisvNjFD?=
- =?utf-8?B?eXRzQVdZbnFPdy9HUzloZTZMV1VIWEZtTGlNeHdDaDcrcGFRT2F0bkpUSDFF?=
- =?utf-8?B?NUI4d2RqRStnYVFqNk52N1YrbEVNZzVOd1VsZGtjWDl2VlpNVzg1eDBqVGxC?=
- =?utf-8?B?dEFqSzU2TW5jcEU0bGVxQ3NGUHlKMjdsSWlhdUdrSGJGZDdPZmtTRkN4ZW04?=
- =?utf-8?B?cjJPSE1PMDhzbFkrSVlVUGZocTZ5Z3V1RmtZYm5VSC9OcjBmS01VeXVkMUNU?=
- =?utf-8?B?YzMxTS9UczRIeGg1N3FERHhhKzVINGlnOC95K0Zzcjl4Rm1zdDlyMzRpaEJW?=
- =?utf-8?B?TFY1enQ4WUVZamVEdis2TE16VkJ1TVlEa3FaTm13TWVqQ3hWS250dUdBQUtu?=
- =?utf-8?B?Z2xDUWxpWk9sTkp4TzZKUFZNb25EM2MvSXJxZXdyRUZkTWNHVU5VY1BOeXJN?=
- =?utf-8?B?dE40MFBIUFJsK3pYZHNHSXIvcHRMNzkyY21CQ25YU0pxNlE9PQ==?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?QUFUNk5NZS9SY3hJRjJBbExFcXZkb1lTMHpGTWdZZ25RMnhsMTRuZ2MzdE1C?=
- =?utf-8?B?NlVqOWZ3dGIzNlVSYXVNNXJqNnhBaUxRM29vZGx6TzQyei9QSzFDdVNlSDFM?=
- =?utf-8?B?L3RURUR3blVKcE5NUm5OWTNVTFp0eWdvTTVqMnlZcEZPS1dVd2NacjVLNzI4?=
- =?utf-8?B?aHFXcElQVCtNa1Z3eDVwM2pOOU5rMFdiUDdJT0NqMlVKemhUcmJveE1Cb0da?=
- =?utf-8?B?Vk0rZWEyaUZZWWp1WERtYmlja3BRTnRwZ3RaZUNtdkRpZit4K0grMVA2bzI4?=
- =?utf-8?B?ODlXZml0UytZZ1Zua29PS0sxYkF4T292UnZvNG56UTZxMGxndmRYbExPbS9W?=
- =?utf-8?B?TWxiSnVBWFhjSDVOdnk4REpMK3lUZGdta0FLSjhUbkVYWFVmR29YaGVBVU12?=
- =?utf-8?B?UzBkOGNDZ1hRQ2M1amdmN0dvbkpoRXoxcjFOOU5wY2c1Y1o0WWIrY25malRM?=
- =?utf-8?B?Q0lQVnk5WXM1TkJNa3JDa0pRQkpadFVQN0VVc2ZBenV5cjg3QnlOMzQwelhx?=
- =?utf-8?B?U3VIVlVnRUk1Nmd1VjRIS3p6WUtPejNIOFZUWlp6ZTZFRVdoUUkzaVB0RkIr?=
- =?utf-8?B?UUhEcExSLzU5MUdCcFAvSjgrSTNSdmdSZU1qclBTdnZqVGFkNzIrOFpqTzAy?=
- =?utf-8?B?UFVqci9kTGNGcHNHMTJOcHl5MW9XMlNvejFRRXp0a09xak0yeUxoeHVweENV?=
- =?utf-8?B?akptU29SRU1qL3JnVGxUTk45NWpoV3BFd3J0a0hKdWZkSHlDdHJFdTJOcHNj?=
- =?utf-8?B?dHZNUGN4YjBkckJYOUFIcFZzTG1pYWYxdjY3UktuUnpZdTRidHg0d0JTV0I1?=
- =?utf-8?B?MDFHdGdhV3gvMFplUzVxa0pKYUQ0ZjIrK2NMcWF2cVE3cnFPd3lONGl1cjJR?=
- =?utf-8?B?L2d5dkRsMHFzcFFKTzBBZzE2c0QxYXlRK24yTTRvd0M3bW9QWkJWM3ZlYURK?=
- =?utf-8?B?YVdObEtIaWhqemd3T1l2SmVhU2FJSlRnREdZMmRkTThWMTFKUE5DdXowczla?=
- =?utf-8?B?RWRpV3k4MlhRVUZ4YXp5WmtGdGpyT2FNOUdBYVBHSW8zRktteVVKdnZaOGFq?=
- =?utf-8?B?MG45MkFHb1lYd3JqdXJoUk0yRU1zRWlWd3FBdWZkd3hIQVo3UVBZcDU0alVn?=
- =?utf-8?B?MDlBMzBtdUtRcFY2WncxVFk2ZjJ4cGF3V3JQSDdIdzV2MnlXcGp5OXUzZzhW?=
- =?utf-8?B?ZmdXVDd2c01NUWd5UjVscXAxc1JLUkdHSjVTZ1pXclFXaW1pWkRuYS9xcmt2?=
- =?utf-8?B?YlVTaXIvQ1lHbnpLUm1aeUtoWk1LcktadVlnOWhrNWRPRHgxUGFOR0dkcC9y?=
- =?utf-8?B?WjZuTlM2cktjRDJHbFVDSU5laWhyRW9ialpKa1BULzlza2txcVBQWmJKUjdF?=
- =?utf-8?B?NTA5eEhwcU1NSXh0WEtsUTFPbDVrT25CUnRZYUk0aDJZYll6ckViTHp0MDRh?=
- =?utf-8?B?TnlFNkJCYy9UcE1IaHhJdlNzVUNGWFdEejhxQlhFQmk0ZytKTFo3Z1JyUFVo?=
- =?utf-8?B?cDJ0djRhclVIZ0UvSk1hTFVVZWU0UUgrUTVWSzlodVMvbEFhYzRGSlBHUVEy?=
- =?utf-8?B?aTM3ZFQ4OVpXVXRTUGVPQ3lFZzNKQlNzUWY5bWgvQzBhL2owV2J4Y0RlQlBu?=
- =?utf-8?B?NUhDaXBKblFCMW5TZDBvRitEQkV0WlNtSUJXbE52eTdFSmlQdEh5RHh4WDMr?=
- =?utf-8?B?T1VtbUtXQWtrU2xmT2QwaElpNWVWRWF3TFhSMjc0YTg4S3E0aXdiWjl3aW1y?=
- =?utf-8?B?WUkrQVRlcjMyZklYblFyb0xLcTc2TTg5M1RYWEY5VzNZR2IwNUlsRVpIT1k1?=
- =?utf-8?B?R1NvZG1FbVBUYVIrSE9rYTdpVFVuT0czRHp5NEE4czVaWXR5MkpXZktiVGZa?=
- =?utf-8?B?S3F4Y0luN2pMbk1haVRtMXI0NEkwRHlsWUxvNEVMeFFadS9EUk5WMDJaRDY0?=
- =?utf-8?B?UVAydi9BQkxqUkhRSElmSk5VN0VPcWFjVWsxWlM0YkdENWlEdk90RW5WVmlR?=
- =?utf-8?B?N2gyK3NqTllTTTdkZkREMnNKaUxkVElHaS9GQ0dGVFBKMHA1M1ZzVUhHcG0v?=
- =?utf-8?B?ZXE0NVpDalZhSHNvbTFkN0hUY0ljVVlNZlY3citJZFNZekx4UTN4WEplN3Jt?=
- =?utf-8?Q?UYb760br/9URzuy7bfqQ3YniK?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 184B41865A;
+	Thu, 27 Jun 2024 17:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719509583; cv=none; b=pd92MzfGeCezpe3dDq81AxscD/LPhfilob3gqgNCnJfpP8j8ubpdjtII4bnJQ/Z6lVedth8ctbJ7201Q+ixpFazeMTjTSYrsS5ZrRl8sSM3axigi8K6+ksfa+J8hvOtMrG7eSqbn8bVxpI3KUFw6fPQVtra/ahstFtvIEeJ7Sps=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719509583; c=relaxed/simple;
+	bh=SIdFKMNV0sEQoe8SWXcyAkQIxLMaXDMqlZlW14wZl2Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sIxPC2+MSk5iyo2GgzmRaXxLkvvtsj3P9iU/ui/P0Oy+/by3i7DEHlQIEkN+aLMThvAODiOrNfh655dR6tw/HPVojA4/mcD6mSK4aqTcShuaUxU1Rpsylj/pFvxagKbSCqrVKKNQWseoO5IkFzDriJ4ZGLv6dy/1m0W1ZF5zhAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MwKYsLT+; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52ce6c93103so6321215e87.3;
+        Thu, 27 Jun 2024 10:33:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719509579; x=1720114379; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8XCB5YqkGEtK4iaAJi8X5eEARY9rC+3u0N9QWWLXY6A=;
+        b=MwKYsLT+AnwPSF+oyCmx0phTiGdOtpIrnwt6sc3Cp6I4duoS5FLVAxhNlH4IhkNKre
+         NXsUq/5D60PE6SsKmk8RoQo7i+kpiQYkHOtm4+g2LOWKutp9gWGSveZaWo7V0jIwuEhR
+         ZyqAfEpUO7vDl1S5BFmudqeWVIxDSdZUgGM2JkOkFa1UCBcSMwGOdNC7SUbHLXzhzx/t
+         bR0SxGi9A8pIUFVqvkqqm7UFVsw1ViwBqqIubzi3pU70U07hh/PVCKoTTCyCMxeawYMA
+         rlJhQT3aX4zxzKOVmXwGCmPGftNeaUpCliShdjtWfxCXhfFAHLRxosnh1SVh+I+jRu4v
+         piEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719509579; x=1720114379;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8XCB5YqkGEtK4iaAJi8X5eEARY9rC+3u0N9QWWLXY6A=;
+        b=vtnQLZFHqMVUhe4h4oXny5Or7IQehofs/6dcCY9Z9h9g2TpW4RyRsa1PPT6j2HBwuz
+         9/isuHL/TFDRWMJsp68TtaFPrEtN1Q4ocPVk0yTcAyhcIDXNlAufogB1BJUT9EJw6oP0
+         qOQUuMvobut18gIXVmOCCr0L9kLq3n1HW9TegNiDZVRpESu1z+n19oW+Klb/v1+KmxZ4
+         DbBqyxzkgqDFBl5UQ33PzP4EAHQH3JlQcP0gfxwQ0/VeJi3xenno76kb0Wf9zeSBXu2l
+         Fo+sgPOZS/aB87yCbzKFOy3RNzSHoWnsCxyybBBAtCCNINk1Qz8PKUkHqMqzsKAbhCpY
+         CE3w==
+X-Forwarded-Encrypted: i=1; AJvYcCVuw/kWVvQAziP4j8skFXs91tcMYUabbF5vGEvRhhlu3POnfs750d3h8PtJXx73CNoO8QDmt496Iijvby8Yuf4yZYWqGhj8kak4oNuP5dSkQdAL5eLlJ1A1c3NjG+rjAJnBPwRTSCepkQ==
+X-Gm-Message-State: AOJu0YwlcctfBHxEjTMLqmDH3lyVY2ucPfie5JOszTHwQizyYGiuyKt+
+	ouQSWwmQTAlx/nYxGt4fKVEz4VvnfdSIQkchqhNwA6Ls5aMLj+BX
+X-Google-Smtp-Source: AGHT+IGVmZXVUlOlkEUTUOwuxQMp87hD6qmRM6RGDTTQwwXm5HRzyqMO8TUarcB+rtI/C2rheYOYog==
+X-Received: by 2002:a05:6512:ac8:b0:52d:582e:4111 with SMTP id 2adb3069b0e04-52d582e41d9mr7690031e87.18.1719509578973;
+        Thu, 27 Jun 2024 10:32:58 -0700 (PDT)
+Received: from localhost ([213.79.110.82])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e713204cesm270486e87.245.2024.06.27.10.32.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 10:32:58 -0700 (PDT)
+From: Serge Semin <fancer.lancer@gmail.com>
+To: Michal Simek <michal.simek@amd.com>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Tony Luck <tony.luck@intel.com>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>
+Cc: Serge Semin <fancer.lancer@gmail.com>,
+	Punnaiah Choudary Kalluri <punnaiah.choudary.kalluri@xilinx.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND v6 00/18] EDAC/mc/synopsys: Various fixes and cleanups
+Date: Thu, 27 Jun 2024 20:32:07 +0300
+Message-ID: <20240627173251.25718-1-fancer.lancer@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3654451d-2924-4598-00d3-08dc96ceff6e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jun 2024 17:31:37.1966
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 3d9Zn/qMIYJ2ZrCDEHRdIMV6xLx4y5PSKgYMIJgF1efzAvdV9osTdhG7ky+kMp9akeclO/dUcA+MVvZ9/1/7dg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR11MB8605
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 
-Pj4gT3IgZG8gdGhleSBzZXJ2ZSBhcyB1c2VmdWwgaGludHMgdG8gaHVtYW4gcmVhZGVycyBvZiB0
-aGUgY29kZT8NCj4NCj4gWW91IGFyZSBvZiBjb3Vyc2Ugd2VsY29tZSB0byBrZWVwIHRob3NlIHlv
-dSBmaW5kIHVzZWZ1bCB0byByZWFkZXJzIG9mIHRoZQ0KPiBjb2RlLiBNeSBnb2FscyB3aXRoIHRo
-aXMgc3VnZ2VzdGlvbiB3YXMgdG8gKGEpIHN0b3AgcGFzc2luZyBnYXJiYWdlIGluDQo+IHN0cnVj
-dCBybWlkX3JlYWQgZmllbGRzLCAoYikgdXNlIHN0cnVjdCBybWlkX3JlYWQgY29uc2lzdGVudGx5
-Lg0KDQpSZWluZXR0ZSwNCg0KSSBkdWcgdGhyb3VnaCB0aGUgY29kZSBhbmQgZm91bmQgb25seSB0
-d28gZXhpc3RpbmcgcmVkdW5kYW50IGFzc2lnbm1lbnRzOg0KDQoJcnItPnZhbCA9IDA7IChpbiBt
-b25fZXZlbnRfcmVhZCgpKQ0KYW5kOg0KCXJyLmZpcnN0ID0gZmFsc2U7IChpbiBtYm1fdXBkYXRl
-KCkpDQoNCnBsdXMgYSB0aGlyZCBhZGRlZCBieSBteSBwYXRjaCAxNDoNCglyci5jaSA9IE5VTEw7
-IChpbiBtYm1fdXBkYXRlKCkpDQoNCk5vbmUgb2YgdGhlbSBzZWVtIHBhcnRpY3VsYXJseSBoZWxw
-ZnVsIGhpbnRzLCBzbyBJJ20gZHJvcHBpbmcNCmFsbCB0aHJlZSBpbiB0aGUgbmV4dCByZXYuIG9m
-IHRoZSBzZXJpZXMuDQoNCi1Ub255DQo=
+This patchset is a first one in the series created in the framework of
+my Synopsys DW uMCTL2 DDRC-related work:
+
+[1: In-progress v6] EDAC/mc/synopsys: Various fixes and cleanups
+Link: ---you are looking at it---
+[2: In-progress v4] EDAC/synopsys: Add generic DDRC info and address mapping
+Link: https://lore.kernel.org/linux-edac/20230920192806.29960-1-fancer.lancer@gmail.com
+[3: In-progress v4] EDAC/synopsys: Add generic resources and Scrub support
+Link: https://lore.kernel.org/linux-edac/20230920195720.32047-1-fancer.lancer@gmail.com
+
+Note the patchsets above must be merged in the same order as they are
+placed in the list in order to prevent conflicts. Nothing prevents them
+from being reviewed synchronously though. Any tests are very welcome.
+Thanks in advance.
+
+The main goal of the entire set of the changes provided in the mentioned
+patchsets is to as much as possible specialise the synopsys_edac.c driver
+to be working with the Synopsys DW uMCTL2 DDR controllers of various
+versions and synthesized parameters, and add useful error-detection
+features.
+
+Regarding this series content. It's an initial patchset which
+traditionally provides various fixes, cleanups and modifications required
+for the more comfortable further features development. The main goal of it
+though is to detach the Xilinx Zynq A05 DDRC related code into the
+dedicated driver since first it has nothing to do with the Synopsys DW
+uMCTL2 DDR controller and second it will be a great deal obstacle on the
+way of extending the Synopsys-part functionality.
+
+The series starts with the fixes patches, which in short concern the next
+aspects: touching the ZynqMP-specific CSRs on the Xilinx ZinqMP platform
+only, serializing an access to the ECCCLR/ECCCTL register, adding correct memory
+devices type detection, setting a correct value to the
+mem_ctl_info.scrub_cap field, dropping an erroneous ADDRMAP[4] parsing and
+getting back a correct order of the ECC errors info detection procedure.
+
+Afterwards the patchset provides several cleanup patches required for the
+more coherent code splitting up (Xilinx Zynq A05 and Synopsys DW uMCTL2
+DDRCs) so the provided modifications would be useful in both drivers.
+First of all the next redundant entities are dropped: internal
+CE/UE errors counters, local to_mci() macros definition, some redundant
+ecc_error_info structure fields and redundant info from the error message,
+duplicated dimm->nr_pages debug printout and spaces from the MEM_TYPE
+flags declarations. (The later two updates concern the MCI core part.)
+Secondly before detaching the Zynq A05-related code an unique MC index
+allocation infrastructure is added to the MCI core. It's required since
+after splitting the driver up both supported types of memory devices could
+be correctly probed on the same platform. Note even though it's currently
+unsupported by the synsopsys_edac.c driver it's claimed to be possible by
+the original driver author (it was a reason of having two unrelated
+devices supported in a single driver). Finally the Xilinx Zynq A05 part of
+the driver is moved out to a dedicated driver. After that the
+platform-specific setups API is removed from the Synopsys DW uMCTL2 DDRC
+driver since it's no longer required.
+
+Finally as the cherry on the cake a set of the local coding style
+cleanups are provided: unify the DW uMCTL2 DDRC driver entities naming and
+replace the open-coded "shift/mask" pattern with the kernel helpers like
+BIT/GENMASK/FIELD_x in there. It shall significantly improve the code
+readability.
+
+Changelog v2:
+- Move Synopsys DW uMCTL2 DDRC bindings file renaming to a separate patch.
+  (@Krzysztof)
+- Introduce a new compatible string "snps,dw-umctl2-ddrc" matching the new
+  DT-schema name.
+- Forgot to fix some of the prefix of the SYNPS_ZYNQMP_IRQ_REGS macro
+  in several places. (@tbot)
+- Drop the no longer used "priv" pointer from the mc_init() function.
+  (@tbot)
+- Include "linux/bitfield.h" header file to get the FIELD_GET macro
+  definition. (@tbot)
+- Drop the already merged in patches:
+[PATCH 12/20] EDAC/mc: Replace spaces with tabs in memtype flags definition
+[PATCH 13/20] EDAC/mc: Drop duplicated dimm->nr_pages debug printout
+
+Changelog v3:
+- Drop the no longer used "priv" pointer from the mc_init() function.
+  (@tbot)
+- Drop the merged in patches:
+[PATCH v2 14/19] dt-bindings: memory: snps: Detach Zynq DDRC controller support
+[PATCH v2 15/19] dt-bindings: memory: snps: Use more descriptive device name
+  (@Krzysztof)
+
+Changelog v4:
+- Remove Rob, Krzysztof and DT-mailing list from Cc since the respective
+  patches have already been merged in.
+- Add a new patch
+  [PATCH v4 6/20] EDAC/synopsys: Fix misleading IRQ self-cleared quirk flag
+  detached from the very first patch of the series.
+- Add a new patch
+  [PATCH v4 15/20] EDAC/mc: Re-use generic unique MC index allocation procedure
+- Add a new patch
+  [PATCH v4 18/20] EDAC/synopsys: Unify CSRs macro declarations
+  collecting the changes from various patches of the series.
+- Drop redundant empty lines left by mistake.
+- Drop private counters access from the check_errors() method too.
+- Rebase onto the kernel v6.6-rcX.
+
+Link: https://lore.kernel.org/linux-edac/20230920191059.28395-1-fancer.lancer@gmail.com
+Changelog v5:
+- Fix function names in the zynq_edac.c kdoc.
+- Rebase onto the kernel 6.8-rc3.
+
+Link: https://lore.kernel.org/linux-edac/20240222181324.28242-1-fancer.lancer@gmail.com/
+Changelog v6:
+- Drop the patch with the already applied content:
+  [PATCH v5 01/20] EDAC/synopsys: Fix ECC status data and IRQ disable race condition
+  [PATCH v5 07/20] EDAC/synopsys: Use platform device devm ioremap method
+- Minor commit log changes.
+- Rebase onto the kernel 6.10-rc4 and just resend.
+
+base-commit: 6ba59ff4227927d3a8530fc2973b80e94b54d58f
+Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
+Cc: Punnaiah Choudary Kalluri <punnaiah.choudary.kalluri@xilinx.com>
+Cc: Dinh Nguyen <dinguyen@kernel.org>
+Cc: Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-edac@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+
+Serge Semin (18):
+  EDAC/synopsys: Fix generic device type detection procedure
+  EDAC/synopsys: Fix mci->scrub_cap field setting
+  EDAC/synopsys: Drop erroneous ADDRMAP4.addrmap_col_b10 parse
+  EDAC/synopsys: Fix reading errors count before ECC status
+  EDAC/synopsys: Fix misleading IRQ self-cleared quirk flag
+  EDAC/synopsys: Drop internal CE and UE counters
+  EDAC/synopsys: Drop local to_mci() macro definition
+  EDAC/synopsys: Drop struct ecc_error_info.blknr field
+  EDAC/synopsys: Shorten out struct ecc_error_info.bankgrpnr field name
+  EDAC/synopsys: Drop redundant info from the error messages
+  EDAC/mc: Init DIMM labels in MC registration method
+  EDAC/mc: Add generic unique MC index allocation procedure
+  EDAC/mc: Re-use generic unique MC index allocation procedure
+  EDAC/synopsys: Detach Zynq A05 DDRC support to separate driver
+  EDAC/synopsys: Drop unused platform-specific setup API
+  EDAC/synopsys: Unify CSRs macro declarations
+  EDAC/synopsys: Unify struct/macro/function prefixes
+  EDAC/synopsys: Convert to using BIT/GENMASK/FIELD_x macros
+
+ MAINTAINERS                  |   1 +
+ drivers/edac/Kconfig         |   9 +-
+ drivers/edac/Makefile        |   1 +
+ drivers/edac/dmc520_edac.c   |   4 +-
+ drivers/edac/edac_mc.c       | 135 ++++-
+ drivers/edac/edac_mc.h       |   4 +
+ drivers/edac/pasemi_edac.c   |   5 +-
+ drivers/edac/ppc4xx_edac.c   |   5 +-
+ drivers/edac/synopsys_edac.c | 927 ++++++++++++-----------------------
+ drivers/edac/zynq_edac.c     | 501 +++++++++++++++++++
+ 10 files changed, 932 insertions(+), 660 deletions(-)
+ create mode 100644 drivers/edac/zynq_edac.c
+
+-- 
+2.43.0
+
 
