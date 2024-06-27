@@ -1,117 +1,115 @@
-Return-Path: <linux-kernel+bounces-232089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5386691A30B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:52:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C0A791A30D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:52:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92B7BB20F3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:51:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3CDB281F45
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:52:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D55A413B2A2;
-	Thu, 27 Jun 2024 09:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D672113BACC;
+	Thu, 27 Jun 2024 09:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ylz/Bij7"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iz4+Zwp+"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73CF7D3E3;
-	Thu, 27 Jun 2024 09:51:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED51713AD1D;
+	Thu, 27 Jun 2024 09:52:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719481911; cv=fail; b=RAkT8PxYe2YZ2IRTy4L6LlYbCMwGEUe7MyBMcKL6rR/M3fmd2nFRIN0ivfeOMB5TjIxfmI5Vfz5MKB1PdcUCSmvTMzfP2FfJawGL/4ELwcgwFiODPVCtzV2zFxR+WMQBc/hAtocvQlrb5uJ9NPW5T25/n5+dl3YSq4Qbq/fz2zc=
+	t=1719481939; cv=fail; b=cOPylIxKXeSncRIZhrCc7C5MlrxiENCG1iFNksHCLMgGD4op4QljSbCYfYCzS1dgPNicylkqvh0T4DpFYo0sc2Hz233ip4dzasH65hfS2VJgKZv+fSuknaBGPCdr9LyEcjP+kTfOuneuIWo9dKv+GxJlrQex997JVyFqcIk6Cpg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719481911; c=relaxed/simple;
-	bh=B9GbTfwhxWlarNIEhZVom+9Qwsu3Xx9dXeTlxmox1Jw=;
+	s=arc-20240116; t=1719481939; c=relaxed/simple;
+	bh=bkhGfgj/PN6K7TiZZFOH9Dv/CmPqHkj0DGYVuE4Ve/0=;
 	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=J4NUHeexqM0LHh7xPT02vL6uUJ+ibdmI7gbt3TXFguv741STBL7BuJT1Sj/pS0kpJ0km8NykahmxKi/dJlrVuV6cejaZ/Fa1ZJFtyoufoPk9Gqfh1POu8HcwMPSIz7NbZY43A9FtG2Z1YMNPOLuI6Viep2yaM7i8LzR910JnAAg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ylz/Bij7; arc=fail smtp.client-ip=198.175.65.18
+	 Content-Disposition:In-Reply-To:MIME-Version; b=MG5SdYbKcUfvxS/gTqonGxZa+UxAP5wgHuqKXfPNU0AZibLSkVUafHQzaZb6kcT6z4ZCw/wEPrXPwY7V7PHd0OqYwvvjXvS6D4rHSoRo2QF4BHy/QrnUuSiNE/riRNmkkXteR0b4bxN7/kjis87ul84mAuoPJSOKQBq8BwNhzh8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iz4+Zwp+; arc=fail smtp.client-ip=198.175.65.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719481910; x=1751017910;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=B9GbTfwhxWlarNIEhZVom+9Qwsu3Xx9dXeTlxmox1Jw=;
-  b=Ylz/Bij7+w5SluFEHwdOkn2I8H6I8zPgHyuKz512E+KhWF9FgNbrc9KB
-   3X2FuhIryUgyOjVfO3MayELIGWC3nWYzPmn95MyJiIVNS+O00q28mr/Yh
-   1QsMTG7wmskE5g/fAmyZ9WLJMaHhLzXoOYuHx1CUVg+kUVVSZcL8mYe8H
-   5akGGBLo249kWpPalqR0qwnkhQyWveaiGWzyZbFnD9Bj8h8SX6qgj7BEz
-   Pz5wp227cOJ7a8q9hRs9tkhrpxtK599OdA+GWpQgdPqBfoE3C0nUkaMd+
-   Q5Q/F83BDggLCleY3PS5IN5+QDNrfBXGqa7MC6h6T1LmzxZmNIRfNNJOU
-   A==;
-X-CSE-ConnectionGUID: NE88udwvQcanFiEShFMDNw==
-X-CSE-MsgGUID: dPtfpbKhT/CpIgTyOAJgPg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="16744512"
+  t=1719481938; x=1751017938;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   in-reply-to:mime-version;
+  bh=bkhGfgj/PN6K7TiZZFOH9Dv/CmPqHkj0DGYVuE4Ve/0=;
+  b=iz4+Zwp+H40YtNS/fdhtUqDtRSKGYTlE20/4UgEyyIjGr6iys11iHHnr
+   1lJFgxne8pj1+U4BE2qlwE950WcyLfPY0QhDmEZx9f50dmcTWm+KSCKD9
+   VqyqHyJNNE47I8wXwC0XMqJIcJMGlPlKywdSWXS0jy6GV+3h6G48/ZC9p
+   FkmCGAQ8pg56sBcPs0ocVYbkGHoUp/OretPULpQNFRlIf7Hoev0MCBKPz
+   fkeCshdMBFPwxNpNJG1W6G/YhU6PZDMdLhl+QsxwL8MceuPDFJ4zPESdX
+   5Z0prdt5FNzG+YdtdkAoAO/1RhNAAxJwTMuyYNIKMipkF02zMYFRsCMex
+   Q==;
+X-CSE-ConnectionGUID: SRiNq7nrSEudZA7wBiDkwQ==
+X-CSE-MsgGUID: 5VVgjJs2T+eJBcLLV+UAAg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="16744585"
 X-IronPort-AV: E=Sophos;i="6.08,269,1712646000"; 
-   d="scan'208";a="16744512"
+   d="scan'208";a="16744585"
 Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 02:51:49 -0700
-X-CSE-ConnectionGUID: p0m3mkcnSOyhiWHjx8sAjg==
-X-CSE-MsgGUID: iDKf2zLWS1iTLjywk7IxLA==
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 02:52:18 -0700
+X-CSE-ConnectionGUID: w19zk246Q6Cko504wHJgNg==
+X-CSE-MsgGUID: w2OVGRKsT3qMOItruoiVAA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,269,1712646000"; 
-   d="scan'208";a="48927049"
+   d="scan'208";a="48927276"
 Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 27 Jun 2024 02:51:49 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+  by fmviesa004.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 27 Jun 2024 02:52:17 -0700
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
  fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 27 Jun 2024 02:51:48 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ 15.1.2507.39; Thu, 27 Jun 2024 02:52:17 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 27 Jun 2024 02:51:48 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.49) by
- edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ 15.1.2507.39 via Frontend Transport; Thu, 27 Jun 2024 02:52:17 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.47) by
+ edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 27 Jun 2024 02:51:48 -0700
+ 15.1.2507.39; Thu, 27 Jun 2024 02:52:16 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=I5mF8d9w4kIn4xyD0iEaYy85WGRXH3d2TqTBWJZLov7zzoDqxbfW4Xh0AFYp++y8zmER8M0VbaKC+UA02XScHynxEwNWuu8jn1GsqZw5T7qPXpSG14QbdDdZEexcZ5aj14lw3zWh05GbglAqZyBiAZRtxwZAiGw2l1eVg9KTUX4LYG8OaprJaronnrlV343x9J6RfQY/Zy2eRmG7m6exf9dRg9syqsRFjb0bl2lHKFSOyqs8cOCEsE2Fq1p3OBeW3WR3pNAncubr/GsXNawaedlLECt7C2b7gLoecHWQZH3ZOIOk7MxModso5OH8/6dw0bw3DGrEEPd15PK6wnQ09w==
+ b=KEtlwU8Mt6ojeScNxmsxe1dUgoBzvHKUsnFWxDd9GLSNXuaFZHWNMUDcN9XR0i/I8wW01xcpAQKQ7GYYskPL6rOPy+GUzgxAD7NT4L/a1mkL+ypuoR2Wm4e35yR6jiRuNYkNKlNY47wuRq6oiJKtkkwHHtaZgtfggFZ24iVE9o2bI7U2bUPrPUs9C+F9vAAP4y0espPVWnuCcrEwMaD2uYRBbiiqtOxhEHbd/FsPHyuIW0So6FgzxFrdSeMKjVsWp97bNDGb7+I/Npdp/jFXk4NnqgI3rnGXfJio3GIyDehKcV+0LcdeZUsJ3H27Ear0Jl86k/rK5ArJPcQO3/VodQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dAfURUop+RO+MePSN7hrgvGjjWpg794ZiticO/dktdA=;
- b=hJVVr6I0ROZey1QJ35Ho9P9hcNq/FNkYik/KCxLgiZoY9uyFgmI9pLyIT6w9lcw3Au/CbX7+yEUn0RJd3juLVVUSCbWmJBGgMigvGprp9FsM29OF5ZnMHT8QEcPaOLnpxy6miWulf5asnDl6r+qoY34TcgoBSUDu/rtun/jjES8OPB3hZPFWYB8Of4M4N7TBrFUh5m3s2BT9DaO36sJzVri9ZZeSp26/chGhLGet5lig0PIYBQxHLJuwflAXIdTKViSKJqYDp4QLKFjwQoUXH3U85lMRPVZS+1+Z6IDdU2ruznwE2kJvSRriIQA9jYjL0PncS6WjaRo/0U7CwEg2Ow==
+ bh=2TsvAKliNSCKDWN6Mbko+tuIJe78Na9ESdNkuR0J/is=;
+ b=Ga9Y1fUrl9oYHpitw2xij5SeU9EnpQurT5SgHLXndqArgfXfxIoZIGSG6IcWAjfzCV9mnp5KHswtBH7mVoew+Zk95HtgxSdRiepBs7kOFGPjqUutYstKqNluTd+ePELNh7wcG8YLnbN8qUiPx8jNxzSFVX05xgWreRkjqiMZWKtdRbWX6iuC8mPKzXBU169mY4jXmQWSpGMwX9tT9+LB8Lg1Skq58+5xnef78nmyM0iuoLaC5+3BzbZssFbv014Fa6ZCUTGcGTAdl+V0L6iho5LB8xyviqjcrlLl2Q1OrSxYSUIZy2LEpL6khtTWvKVuAAx2Ig5nP0mgVw7Q+7lKRQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MN0PR11MB6231.namprd11.prod.outlook.com (2603:10b6:208:3c4::15)
- by DS0PR11MB6398.namprd11.prod.outlook.com (2603:10b6:8:c9::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7698.35; Thu, 27 Jun 2024 09:51:46 +0000
-Received: from MN0PR11MB6231.namprd11.prod.outlook.com
- ([fe80::a137:ffd0:97a3:1db4]) by MN0PR11MB6231.namprd11.prod.outlook.com
- ([fe80::a137:ffd0:97a3:1db4%3]) with mapi id 15.20.7698.025; Thu, 27 Jun 2024
- 09:51:46 +0000
-Date: Thu, 27 Jun 2024 11:50:49 +0200
-From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-CC: <fenghua.yu@intel.com>, <shuah@kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<ilpo.jarvinen@linux.intel.com>, <tony.luck@intel.com>
-Subject: Re: [PATCH v2 1/2] selftests/resctrl: Adjust effective L3 cache size
- with SNC enabled
-Message-ID: <ewkiaarsl4s4aofw2uykhup3eyutnzitlow3muzbaqqf4xp53g@6lgc5o2dkmor>
-References: <cover.1715769576.git.maciej.wieczor-retman@intel.com>
- <fe9295c6be677d187b1607185e23993dbfe74761.1715769576.git.maciej.wieczor-retman@intel.com>
- <9fa47acf-86b1-4602-8790-39ed80fd775a@intel.com>
- <n2el3evhluilmjhrwgpkkb7ld2g26zhmctxvm77b3ome6u6egf@hym7rnr3h2o7>
- <9b976e89-0320-430f-9f0f-48e25612ec98@intel.com>
- <b5xggwzdvavhqmxpaeisovp3e2xzjjhvkoqcbt6hg3sv3wzh3i@a7qaatwfpbf6>
- <5bd8e17a-5810-49a2-a07b-88c05ca21af7@intel.com>
-Content-Type: text/plain; charset="iso-8859-1"
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
+ IA0PR11MB8353.namprd11.prod.outlook.com (2603:10b6:208:489::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.26; Thu, 27 Jun
+ 2024 09:52:14 +0000
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca%6]) with mapi id 15.20.7698.033; Thu, 27 Jun 2024
+ 09:52:14 +0000
+Date: Thu, 27 Jun 2024 17:51:01 +0800
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+CC: Jason Gunthorpe <jgg@nvidia.com>, "kvm@vger.kernel.org"
+	<kvm@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "alex.williamson@redhat.com"
+	<alex.williamson@redhat.com>, "peterx@redhat.com" <peterx@redhat.com>,
+	"ajones@ventanamicro.com" <ajones@ventanamicro.com>
+Subject: Re: [PATCH] vfio: Reuse file f_inode as vfio device inode
+Message-ID: <Zn02BUdJ7kvOg6Vw@yzhao56-desk.sh.intel.com>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <20240617095332.30543-1-yan.y.zhao@intel.com>
+ <20240626133528.GE2494510@nvidia.com>
+ <BN9PR11MB5276407FF3276B2D9C2D85798CD72@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5bd8e17a-5810-49a2-a07b-88c05ca21af7@intel.com>
-X-ClientProxiedBy: DB8PR06CA0036.eurprd06.prod.outlook.com
- (2603:10a6:10:100::49) To MN0PR11MB6231.namprd11.prod.outlook.com
- (2603:10b6:208:3c4::15)
+In-Reply-To: <BN9PR11MB5276407FF3276B2D9C2D85798CD72@BN9PR11MB5276.namprd11.prod.outlook.com>
+X-ClientProxiedBy: SI2P153CA0010.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:4:140::13) To DS7PR11MB5966.namprd11.prod.outlook.com
+ (2603:10b6:8:71::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -119,227 +117,243 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR11MB6231:EE_|DS0PR11MB6398:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4b86d586-fb0c-468d-8f5b-08dc968ec1a9
+X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|IA0PR11MB8353:EE_
+X-MS-Office365-Filtering-Correlation-Id: ec62c98c-dbac-46bb-c32d-08dc968ed2c3
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?/0qM1iWF8Yyxu4edRMUyDam8Rb0ny+eS9JKq43rBBq8CRE8ZqyERCuAJfm?=
- =?iso-8859-1?Q?W0CESvzKCq6y0rwGi0RxZgVsPgPnkgYIQoW3w06zghN68bA4zlNx+XQSw1?=
- =?iso-8859-1?Q?XKGlAgJpWZT9eINjTIiA8mRhfT32jZSOLkS7eH763TUSKO9iCpG0wkc3PF?=
- =?iso-8859-1?Q?+8pLNqiTofSnZSBSqmdmYE2XU/YPD3YU3Ad9ETDGFM7I/lxymmhdL/IrZ3?=
- =?iso-8859-1?Q?eBlq2nX2Uu+WOWQpZy03Yynyqh58e5ItmLdCiTBCwUe0GoRaRCs/7AHU7z?=
- =?iso-8859-1?Q?JuhEf8SmPjeCXRHBnbMhBFqNkA3dPBBtDTiAbiKyiAy7jNEAby+rlPNrvC?=
- =?iso-8859-1?Q?4QybdUS2X1owHtuD4oztOa2L5NaJe5KKqhexeZzHMS/FOHAH2adn1n7uEc?=
- =?iso-8859-1?Q?yNDfMNLBd0JYUHYjxjqyJwucVQWndhzUq2CQNxZiPQgwK9uRGFYBEHGnEV?=
- =?iso-8859-1?Q?0+n+T0X6gEc4X6wpgzZCT+KqQQPOCuMDIuigi5+olbq3hrwCTe3M1Q8BvE?=
- =?iso-8859-1?Q?2HS/bSeGMpArKbbThMOZtOsWfcaN+pWPbOEkrSCeY0mWxqxMH01gNDdxe0?=
- =?iso-8859-1?Q?K8YcqaHFd0/pFfUXEg9hhzRmebBf7vEDVRruR6WDlsPF6Qlw0kv9Q9G5my?=
- =?iso-8859-1?Q?LeuYVq1tDJrhcXbougbmGD/eDo9slLgDpDCOZulh//2IF9SJo8pGauX22I?=
- =?iso-8859-1?Q?a2kNq7Pvgk+rfVXXKKNExMbRNdRYYcPLt4pDJNJ8wCr7j1nIbyDE+uvign?=
- =?iso-8859-1?Q?Ge021Q7dHDzVVQK1oK/f7GgroX4719dZbkk0EFDIRjD/07Mw5nSRPprW1I?=
- =?iso-8859-1?Q?jmpbgCB9yTYajdE20iP5HjWsX8j2xyp9ZyevTN57wsYae8QccZzrvmUagg?=
- =?iso-8859-1?Q?XofjJcT0N5J1l5+HotsZQyALzT0MhAPlcHyoChF0fC2139lpYFKLjC45LU?=
- =?iso-8859-1?Q?xA9hpwIYhg6Todpn6ABCQAkt311lasasKxMKCKV90bHiaaYkJUztcRyLjD?=
- =?iso-8859-1?Q?x5WA2F7e36u5fGp+wKeYXVbaEwfHxFImGw/2IeXTZdGCQZnDht8nTFfz96?=
- =?iso-8859-1?Q?63+L90SqFeJkqFdRW0JnIsWhH7rsFW5v3rffHHCr9SsuAiwJ0GQ6nZhJ09?=
- =?iso-8859-1?Q?JA4exiS06gdUhtsiRP501tmEcFe0OnHZRGZxKpE3lF1nGA9ftk2bo1W10n?=
- =?iso-8859-1?Q?pXEQMdsNWBblG42CJyq0nJk/EOoQ70HLe1IN/DxYQPpGc6HnfpxMKHFJR8?=
- =?iso-8859-1?Q?jvreXZYv5d1wFk+ITkj0DRon74cr5hkSyMf+mNEplrsYK6JyfaSng4dVJm?=
- =?iso-8859-1?Q?BJuzxtr0kniWV5JM+AIvk6vAF26D66ew+sTKyWZ+GGPk+dw=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB6231.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?iPeVN/K1BWmgYQBYHBB0pzxFhC6jYGetYUt/gxn3Myki3nOwged851KEonLk?=
+ =?us-ascii?Q?FKx6rltKec3UkDgMeoSS0S0Lb0/mxU4PafsOEvEPjoU5zLCpJcH1WpzgpIiM?=
+ =?us-ascii?Q?toE3BY64MXaOc0A9aZnfzBIy1pbJ0DDNnXnUe5guRtBUSsdL4z7s16z+kouA?=
+ =?us-ascii?Q?8ybSFPaoOpVyotxFBPzUSrJ0+X4Gu6XbLFqmsDK13Z2BvPtKuLYtAlQntKxX?=
+ =?us-ascii?Q?SRylVrpDVwUCvwtxyw7+0mTV5bzbMz/PWqaICI89FT4ZQXWhYq7TI4qa3wvl?=
+ =?us-ascii?Q?qO/4vAAT4az8TvX3uke5wLZ/VLpUdnWntGGPsMWSfaNa7hydJHB+qm6hJYrS?=
+ =?us-ascii?Q?364/NHREhsJDq8oP1hdOEsXiVv7PUCY5s/v8+oj1T8EQZ3Xn8zI+8YVd7anE?=
+ =?us-ascii?Q?hMtpTCLR8gj9WgvPFCnwX1VjKZM/So25Lx7RpF+9mxa3qw9hEoue+gBjLDeV?=
+ =?us-ascii?Q?pLxHZZus20IzQhWCl+4UbJkaHRwsxdutm6t23vhwhTbsrNpCNKpFY3XHprCk?=
+ =?us-ascii?Q?Mwv0NVgqJ1Nij/GkHbyb84JThRooSZ5/ckrJTSk1z5voQ+Y0GomN10BRiy46?=
+ =?us-ascii?Q?Ot1hi9qnezMUyCl77Eri/zGzj8Hy8ZnnIB6Qv1B1IvHD5QsonbbsvNY+wyKa?=
+ =?us-ascii?Q?ZMIQIsK7A943bO3EzDqwkKz3jj711lO6gn7YMMhxiNqYP5ncG4542oXHN+EE?=
+ =?us-ascii?Q?GxnPNKU5x39wo0VNAaLlkL5Y5u7DLIJ6tAodM9MQJpC/HRV6hRc3PLiQC076?=
+ =?us-ascii?Q?YSEopmdEXRD/aIu9d8QNLdhJ+4/RVKixCwK0cJ0/k5SFSOok+lz1sbQYIky8?=
+ =?us-ascii?Q?hZ/6xOr1MNOyuuiSi0n6Hw9kmb333B5HQTz0YLwLCwyi/sMx0RN+4NGdx50U?=
+ =?us-ascii?Q?lXRDKjzu9x/z0F6hv3a1L7nblll0UULFnBWTsyvD1SrwjgNFMzy/wpfDXnYo?=
+ =?us-ascii?Q?Dm0fS7EuHlreCKW3Zgf/ArUKHr3GDNNbTss4Mx6PAf/R8p05rKNtIICuGse1?=
+ =?us-ascii?Q?tSZcYFVrKCNL9pUkXOxDRA+V+dkZw9tKF6wUlPQt7WgIj9FDRZH5GQIiMT62?=
+ =?us-ascii?Q?2WHTh8NjSTZYNeRfYe/tqIrq4fGqDt5a7xvIjXi3Lu0mdKNr/EOKwXw4DK0b?=
+ =?us-ascii?Q?BvzFZNKV77/wm2UQ0TYci2rWq8A/tjHjANBHatp11ALn6OM8YlmxcCNNZnzt?=
+ =?us-ascii?Q?SzDdcHQOn6jMxd+CrMhwfOotGVGhTIhUKyYtuFqpujesbtZokrws0e+ROW41?=
+ =?us-ascii?Q?7jH0fQ4X7kgrgTvtKC3YHLfyk8ilRVE4WAArEjLghrnkDDiItneaOeubLitH?=
+ =?us-ascii?Q?XRUorE8gzZxpp0OtyJS7dsxgzu0OdKNaHrnTr3KQXsS/iQ=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?Gfmuodgr/iyGSi3yk5GMDzulCyPlJI/ZZicY3crZ9w9emwZ2d7JZeEA7om?=
- =?iso-8859-1?Q?tznngylngBF3nDYDEOaZhtXIcBIJzZKQh7gD8AqG6zurBlKHQ6JVEMKDI6?=
- =?iso-8859-1?Q?+zg4sLRi0ouEtAO7hPaXKlNH4gJB/snsG34AAJ5YTw7qA3q6QRUUw8IiJr?=
- =?iso-8859-1?Q?r7UEcUp7b8fLyq98hYewYjSlnQgktoF7yRc6y5VongbgZJSVitIknt7Qu9?=
- =?iso-8859-1?Q?7Jd3+uugRuUX6YUxFSBmBOX8hYB9Pf+wpusVVodsoX46fEsUbknbiTQ/KV?=
- =?iso-8859-1?Q?c5zUmbioBvh3chGAxVQeq0ZdUghRaB4mCAMo2mCr3LfiT0Nws8V7x5b2wB?=
- =?iso-8859-1?Q?7oQGZqhyJqAP0HEEUOLFy56Yrd87xrg4zzrCQllp+qFIKoMrRId+lvpBrc?=
- =?iso-8859-1?Q?2SYqWcYFRD3ZdtuVgVV1Kpjx+snJtpQOcu8cdsLm0veBWu32EuJQDXHqQp?=
- =?iso-8859-1?Q?umuWxziiarMClSjyQnDOTkGV1sFRZkey9HrQLmzHgRieRdpbFKQLuoRokW?=
- =?iso-8859-1?Q?txI91HTjBGuJVHG6/hsmqyW4qWS+HQ/UOZi5c11m7A/IoxpiAwwDqCWiQm?=
- =?iso-8859-1?Q?twR7gAHF8jdqVOKgJ50vdkIIM3jXgA66yaJCxW77yOWDARLmrWHolXtdkx?=
- =?iso-8859-1?Q?vTUbcLIn49iYzx2s/Ri55kHdpjWS3yP837gTcp9o8zKt+4YbIskN3o+D3C?=
- =?iso-8859-1?Q?aAXKEKMpChhpdp8u91Bjw2Myjbx6jjRuc72sEo1TpJripgiFeBunAJ5uZb?=
- =?iso-8859-1?Q?bo+NPQHL3clF4y0S3QEtmWd3OYzK21msZiTo1DsLZvAzRHhJ0YuJr85y12?=
- =?iso-8859-1?Q?TOk7KTIensDSQut7eLNBYgCECM0jmKOx0AAb4Rb7T6xYrjlpYjcK5TntW+?=
- =?iso-8859-1?Q?SXmNHJ/FHspINnfOe0sAuFHN7QzJwYVCs7bkqbV4fdQjZxvMcksWJXK+8h?=
- =?iso-8859-1?Q?XFVpnlppz3jVmjwKnMnCdfAxVABczhi+xS0x8RtqtEUdTuxzunZqGjf/Qa?=
- =?iso-8859-1?Q?DG+SaLQzGR/DBBr1JQi4aKvv6A0uuIDB7ODjQ3mpYbbPUZaj7mJFCc9w+k?=
- =?iso-8859-1?Q?kGZs+OFI9u3HEOB8JSnovczxl4yYcz/1bQN/rCuP77xNkY7oDBoe3mwrap?=
- =?iso-8859-1?Q?636L6T4gUYqBulwM9z/zHpGAZSqWbjjV7nG+fEwW0PMc+eJAy+d0tfpi01?=
- =?iso-8859-1?Q?YfkyqOg6UQB6VoYKYhDLclpmQ46zCoKd5g7y7XkzyLD3CAZWu+2Iy6VLSf?=
- =?iso-8859-1?Q?CYi5Iy+i9+0Kna1o2vna3x0Q7/Gu56jLnf/K5W6SUV2YdH8zZCQhzVRxmK?=
- =?iso-8859-1?Q?wFyc1ZJlS6z3rJi5+mxKEqdaUXCsMLXzDL5q/2c6M4IshMGbXhy8f3d1c6?=
- =?iso-8859-1?Q?mUZ5k3uBZp15W0LSoNzBexlvlM+I/J0HTffPoOnSdpG2ea4ndKiUGNslM+?=
- =?iso-8859-1?Q?FTiJKF8XdiJAD4BGJEMnMjtpMZ5J0aaRG9jvSHTWKgp5809sNUXL2u8iCC?=
- =?iso-8859-1?Q?9G7sQmvWN2gDsXvFnbMn9ob4xsPhgBHqK8GbC1XUuOCF535H0kZ7tIxf/o?=
- =?iso-8859-1?Q?nmzPCHzSgyphECezZfxF9ALt8YDDnsD7nz3oLaWNKJEO5VHBJURF99OXjI?=
- =?iso-8859-1?Q?n8bd52krB+wDq40uDZ9mdqLwaPVKAw0U0UJA7uG8GEDdrzyoG4/+4PMBmK?=
- =?iso-8859-1?Q?7PJ8eE+IsyBfoNRUDG8=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4b86d586-fb0c-468d-8f5b-08dc968ec1a9
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB6231.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?XdZtR7p1spxrAVoOLvzl9sBmyKV7QjVxXp8ANHPz0TDNiXTBZ16ZbqbKdWq+?=
+ =?us-ascii?Q?UEG3bFmar58xY4Hs9QSxKaZHPFnKH2Y96BJI0ujPMOyZ/FgJTRSjyxpz2Yha?=
+ =?us-ascii?Q?Besn/GUHyPSNP03yjzuxKHgJynXWOb/dMIE1Rj+iNlntUSXVPtfClAMc2Nl5?=
+ =?us-ascii?Q?z401BA4H0Q+MDA8IZRPrYVLlNcS/QdX/AJ5vPKFxoXaM5aDO7rZHhukbz13a?=
+ =?us-ascii?Q?8ptqR28ZI25C5te8j4dXn2HtqcgXnYc5XCwK6jFSX0wkJKsoi8pm+NM14aH+?=
+ =?us-ascii?Q?y+Ny1Q1C/oDdH1fvwAHnvEcLr+cs5fH9blTO7VNEYvEDqXLns/cNWfvDORvv?=
+ =?us-ascii?Q?zf5GdPWHsrbFgPs0HF9Q4d2gGECjqRADC0iAlP2+tmzpW5Vw4A9+rvYYkN65?=
+ =?us-ascii?Q?sDsBO6HkifNv7Vvj69cpGpXyheoMV8bg2PKwP30JWvSjzpCrnDel3AFkovUG?=
+ =?us-ascii?Q?Ai+nf8knWxGXDwMgtGcLPVYajGvn7IhH8lAUlcLgCGoFXn4/li2aeXbmT9FW?=
+ =?us-ascii?Q?X5G+1Ycu/nNyk3qfmKKNxpmCgV18Rldqr6+XRG+GLZiKpEooV07ewUlKfxVw?=
+ =?us-ascii?Q?HrvQVpXEKrLGoSLRpC5VZHBXYx6A1jgPuF27dHqdjQ+fxyyo1vAgjS5J08Ex?=
+ =?us-ascii?Q?fzqA7FmeziXRYOEQuD80iuzIxiMwJr7QDcobWzdxWoO4lRb68XA4T84ESY4+?=
+ =?us-ascii?Q?+5pdVybsKyT4ezIsxPhJVn2L8TdGn2lDSSuuCRiR54xJLJ/YfkXOuFbJok0t?=
+ =?us-ascii?Q?/3pHl7xuMYdPdNaYJozsBYgN7tIBaDZiKWk83Y2jUwn/pLp0n9NvZI0fTS6W?=
+ =?us-ascii?Q?XvvKxJ9sVyOeJmIvwAvJi9Bt1/muLxwyJ323/tcXMsKpht5lo+a+K3h5OqhG?=
+ =?us-ascii?Q?Ryl2ZDvnLu9q9zbixwmCzXF1SDnkAd+rx/EL/Zjnm4WawDXJG1lAJaqr7Ui3?=
+ =?us-ascii?Q?iRKJQwytA7pXHqxJxkpBqBPI7dHbas/2lrUkmkg37hMCzBja89h3PcPi6CRd?=
+ =?us-ascii?Q?91Ob4RtsL5vTVRssyJDd/akz41qLUlRZvCI0G7aDlw88szMfp/Q0g0UsJgLy?=
+ =?us-ascii?Q?rCKalt4OFdHjhcR6zm/9tQ1tR/XV8Z6mnHET59vn/hGRQjY9ePQNyTKjFJ+h?=
+ =?us-ascii?Q?NUnYwxioWg5plrgl1zAtQZw7vAM5tmbGjOvb1g8AA72298JdEM7Qmqti9Jqd?=
+ =?us-ascii?Q?we+g9TOjtDGKOtC/X/MG/V9Ukp+FNtW/e8CzMdWWzyiea9V30do+y1R6WRxT?=
+ =?us-ascii?Q?Lsa0gScVM7/vLRjwEKNJg1nOckBJGQvSZ7duedLPdCLdf8PiM4HZzOwQnOsu?=
+ =?us-ascii?Q?LuUB+Bz63FSY4XMSfcx+tEd/sdr0LE76j59nZo7A35qpCSVO/LiQoaosu9SU?=
+ =?us-ascii?Q?/yGGIzZ7dShUFOawLbaj/TjQulARwwhd23gL0b+Q3XHJhqbRtwsG1dnz2k4D?=
+ =?us-ascii?Q?grZ0zBWeJAU3KTbyUKZ1B2ciZH2VLIt0Ov0Iw89VS2nTNZUNHMTAoyhIsAZs?=
+ =?us-ascii?Q?2/Uc5efswFRc4Cd+NjVjtG+Q2xBOMLZ9RFrVDcqyR9+H6+r8o8ClAatM9DZF?=
+ =?us-ascii?Q?w5S8fHspFNQo0kW+3EMcmU8jdJQqJj2Mmr7jvWqH?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: ec62c98c-dbac-46bb-c32d-08dc968ed2c3
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jun 2024 09:51:46.0337
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jun 2024 09:52:14.6987
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0ScIE/j1abGs+8qIcXgS7YYNTJTViROvlNvuhK7+5fN4obqkWWWIC9qiqsPFNUzWOQidrG8KdfnAJ3JtRvJqV1cLOWUSEmZHrvfsmMjPEnE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB6398
+X-MS-Exchange-CrossTenant-UserPrincipalName: /daPJkghKZdbvUoIHL3qZjefe19C8BGCch8GR23NxsXZeJH9Yc6XZrULoCzUiCMIbVQVeClHIeW9TCNiheCHqA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB8353
 X-OriginatorOrg: intel.com
 
-On 2024-06-26 at 09:46:01 -0700, Reinette Chatre wrote:
->Hi Maciej,
->
->On 6/26/24 12:09 AM, Maciej Wieczor-Retman wrote:
->> Hello!,
->> 
->> On 2024-06-25 at 09:28:55 -0700, Reinette Chatre wrote:
->> > Hi Maciej,
->> > 
->> > On 6/25/24 4:04 AM, Maciej Wieczor-Retman wrote:
->> > > Hello,
->> > > sorry it took me so long to get back to this. I prepared the next version with
->> > > your comments applied and Tony's replies taken into account.
->> > 
->> > Thank you very much for sticking with this.
->> > 
->> > > 
->> > > I wanted to briefly discuss this before posting:
->> > > 
->> > > On 2024-05-30 at 16:07:29 -0700, Reinette Chatre wrote:
->> > > > On 5/15/24 4:18 AM, Maciej Wieczor-Retman wrote:
->> > > > > +		return 1;
->> > > > > +	}
->> > > > > +
->> > > > > +	for (i = 1; i <= MAX_SNC ; i++) {
->> > > > > +		if (i * node_cpus >= cache_cpus)
->> > > > > +			return i;
->> > > > > +	}
->> > > > 
->> > > > This is not obvious to me. From the function comments this seems to address the
->> > > > scenarios when CPUs from other nodes are offline. It is not clear to me how
->> > > > this loop addresses this. For example, let's say there are four SNC nodes
->> > > > associated with a cache and only the node0 CPUs are online. The above would
->> > > > detect this as "1", not "4", if I read this right?
->> > > > 
->> > > > I wonder if it may not be easier to just follow what the kernel does
->> > > > (in the new version).
->> > > > User space can learn the number of online and present CPUs from
->> > > > /sys/devices/system/cpu/online and /sys/devices/system/cpu/present
->> > > > respectively. A simple string compare of the contents can be used to
->> > > > determine if they are identical and a warning can be printed if they are not.
->> > > > With a warning when accurate detection cannot be done the simple
->> > > > check will do.
->> > > > 
->> > > > Could you please add an informational message indicating how many SNC nodes
->> > > > were indeed detected?
->> > > 
->> > > Should the information "how many SNC nodes are detected?" get printed every time
->> > > (by which I mean at the end of CMT and MBM tests) or only when we get the error
->> > > "SNC enabled but kernel doesn't support it" happens? Of course in the first case
->> > > if there is only 1 node detected nothing would be printed to avoid noise.
->> > 
->> > I agree that it is not needed to print something about SNC if it is disabled.
->> > hmmm ... so SNC impacts every test but it is only detected by default during CAT
->> > and CMT test, with MBA and MBM "detection" only triggered if the test fails?
->> 
->> Yes, snc_ways() ran before starting CAT and CMT to adjust cache size variable.
->> And then after CAT,CMT,MBM and MBA if the return value indicated failure.
->> 
->> > 
->> > What if the "SNC detection" is moved to be within run_single_test() but instead of
->> > repeating the detection from scratch every time it rather works like get_vendor()
->> > where the full detection is only done on first attempt? run_single_test() can detect if
->> > SNC is enabled and (if number of SNC nodes > 1) print an informational message
->> > that is inherited by all tests.
->> > Any test that needs to know the number of SNC nodes can continue to use the
->> > same function used for detection (that only does actual detection once).
->> > 
->> > What do you think?
->> 
->> I think running the detection once at the start and then reusing the results is
->> a good idea. You're proposing adding a value (global or passed through all the
->> tests) that would get initialized on the first run_single_test()?
->
->I was thinking about a solution similar to get_vendor() that uses a static local
->variable. A global variable could work also.
+On Thu, Jun 27, 2024 at 08:17:02AM +0800, Tian, Kevin wrote:
+> > From: Tian, Kevin
+> > Sent: Thursday, June 27, 2024 7:56 AM
+> > 
+> > > From: Jason Gunthorpe <jgg@nvidia.com>
+> > > Sent: Wednesday, June 26, 2024 9:35 PM
+> > >
+> > > On Mon, Jun 17, 2024 at 05:53:32PM +0800, Yan Zhao wrote:
+> > > > Reuse file f_inode as vfio device inode and associate pseudo path file
+> > > > directly to inode allocated in vfio fs.
+> > > >
+> > > > Currently, vfio device is opened via 2 ways:
+> > > > 1) via cdev open
+> > > >    vfio device is opened with a cdev device with file f_inode and address
+> > > >    space associated with a cdev inode;
+> > > > 2) via VFIO_GROUP_GET_DEVICE_FD ioctl
+> > > >    vfio device is opened via a pseudo path file with file f_inode and
+> > > >    address space associated with an inode in anon_inode_fs.
+> > > >
+> > > > In commit b7c5e64fecfa ("vfio: Create vfio_fs_type with inode per
+> > device"),
+> > > > an inode in vfio fs is allocated for each vfio device. However, this inode
+> > > > in vfio fs is only used to assign its address space to that of a file
+> > > > associated with another cdev inode or an inode in anon_inode_fs.
+> > > >
+> > > > This patch
+> > > > - reuses cdev device inode as the vfio device inode when it's opened via
+> > > >   cdev way;
+> > > > - allocates an inode in vfio fs, associate it to the pseudo path file,
+> > > >   and save it as the vfio device inode when the vfio device is opened via
+> > > >   VFIO_GROUP_GET_DEVICE_FD ioctl.
+> > > >
+> > > > File address space will then point automatically to the address space of
+> > > > the vfio device inode. Tools like unmap_mapping_range() can then zap all
+> > > > vmas associated with the vfio device.
+> > > >
+> > > > Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+> > > > ---
+> > > >  drivers/vfio/device_cdev.c |  9 ++++---
+> > > >  drivers/vfio/group.c       | 21 ++--------------
+> > > >  drivers/vfio/vfio.h        |  2 ++
+> > > >  drivers/vfio/vfio_main.c   | 49 +++++++++++++++++++++++++++-----------
+> > > >  4 files changed, 43 insertions(+), 38 deletions(-)
+> > > >
+> > > > diff --git a/drivers/vfio/device_cdev.c b/drivers/vfio/device_cdev.c
+> > > > index bb1817bd4ff3..a4eec8e88f5c 100644
+> > > > --- a/drivers/vfio/device_cdev.c
+> > > > +++ b/drivers/vfio/device_cdev.c
+> > > > @@ -40,12 +40,11 @@ int vfio_device_fops_cdev_open(struct inode
+> > > *inode, struct file *filep)
+> > > >  	filep->private_data = df;
+> > > >
+> > > >  	/*
+> > > > -	 * Use the pseudo fs inode on the device to link all mmaps
+> > > > -	 * to the same address space, allowing us to unmap all vmas
+> > > > -	 * associated to this device using unmap_mapping_range().
+> > > > +	 * mmaps are linked to the address space of the inode of device cdev.
+> > > > +	 * Save the inode of device cdev in device->inode to allow
+> > > > +	 * unmap_mapping_range() to unmap all vmas.
+> > > >  	 */
+> > > > -	filep->f_mapping = device->inode->i_mapping;
+> > > > -
+> > > > +	device->inode = inode;
+> > >
+> > > This doesn't seem right.. There is only one device but multiple file
+> > > can be opened on that device.
+Maybe we can put this assignment to vfio_df_ioctl_bind_iommufd() after
+vfio_df_open() makes sure device->open_count is 1.
 
-Oh yes, static local is good too, I'll try that.
+e.g.
+-long vfio_df_ioctl_bind_iommufd(struct vfio_device_file *df,
++long vfio_df_ioctl_bind_iommufd(struct vfio_device_file *df, struct inode *inode,
+                                struct vfio_device_bind_iommufd __user *arg)
+ {
+        struct vfio_device *device = df->device;
+@@ -118,6 +111,8 @@ long vfio_df_ioctl_bind_iommufd(struct vfio_device_file *df,
+                goto out_close_device;
 
->
->> And then the SNC status (if enabled) + a warning if the detection could be wrong
->> (because of the online/present cpus ratio) would happen before the test runs?
->
->I do not think this was part of previous tests, but yes, this is a concern where
->a warning would be helpful.
->
->> On the warning placement I think it should be moved out of being printed only on
->> failure. I did some experiments using "chcpu" to enable/disable cores and then
->> run selftests. They didn't have any problems succeeding even though SNC
->> detection detected different mode every time (I added a printf() around the line
->
->I am not surprised here since there has not been much tuning of the CAT test.
->
->> that cache size is modified to show what SNC mode is detected). While I
->> understand these tests shouldn't fail since they just use a different portion of
->> the cache I think the user should be informed it's not really NUMA aware if the
->> detection was wrong:
->
->Seems like there are two warnings to consider:
->(a) SNC detection may be wrong.
->(b) If SNC is enabled and kernel does not support SNC then the tests may fail.
->
->For (a) I think that it is possible to know when SNC detection may be wrong. A test
->similar to the kernel test that compares the "online" and "present" CPUs [1] can
->be used. The /sys/devices/system/cpu/online and /sys/devices/system/cpu/present
->files are available for this. A simpler way may be to just print a warning if
->/sys/devices/system/cpu/offline is not empty and set the number of SNC nodes
->to 1. Instead, a new "snc_unreliable" global can be set that can be used
->to print additional information during test failure.
+        device->cdev_opened = true;
++
++       device->inode = inode;
+        /*
+         * Paired with smp_load_acquire() in vfio_device_fops::ioctl/
 
-The empty offline file is a cool idea, less files to open :)
+ @@ -1266,7 +1296,7 @@ static long vfio_device_fops_unl_ioctl(struct file *filep,
+        int ret;
 
->
->I do think that it is fair to print all the SNC details during detection but
->I am concerned that those messages will be out of sight during test failures
->and I thus do think it is useful to have extra information during test
->failure.
+        if (cmd == VFIO_DEVICE_BIND_IOMMUFD)
+-               return vfio_df_ioctl_bind_iommufd(df, uptr);
++               return vfio_df_ioctl_bind_iommufd(df, filep->f_inode, uptr);
 
-Yeah, I've been thinking about what is the best way to display these for a
-while. Maybe you're right that messages at the top will be lost. What about this
-set of messages:
 
-1. First run of run_single_test()
-	1.1. For all tests:
-		- detected snc mode (if > 1)
-			- check if cpu/offline file is empty, set the global
-			  variable and print a message saying snc mode might be
-			  wrong
+> > >
+> > > We expect every open file to have a unique inode otherwise the
+> > > unmap_mapping_range() will not function properly.
+Even with commit b7c5e64fecfa ("vfio: Create vfio_fs_type with inode per
+device"), in group path,
+vfio_device_open_file() calls anon_inode_getfile(), from which the inode
+returned is always anon_inode_inode, which is no unique even across
+different devices.
 
-2. At the end of tests
-	2.1. For CMT, CAT, MBM, MBA:
-		- test failed
-		- snc detection reports it's enabled
-		- kernel version doesn't support snc
+> 
+> Can you elaborate the reason of this expectation? If multiple open's
+> come from a same process then having them share a single address
+> space per device still makes sense. Are you considering a scenario
+> where a vfio device is opened by multiple processes? is it allowed?
+> 
+> btw Yan's patch appears to impose different behaviors between cdev
+> and group paths. For cdev all open files share the address space of
+> the cdev inode, same effect as sharing that of the vfio-fs inode today.
+> But for group open every open file will get a new inode which kind of
+> matches your expectation but the patch simply overrides
+> vfio_device->inode instead of tracking a list. That sound incomplete.
+Yes, looks it's incomplete for group path.
+What about still using inode in vfio fs as below in group path?
+(I'll post the complete code which have passed my local tests if you think the
+direction is right).
 
-	2.2. Additional message for CMT, CAT (since the cache size is divided):
-		- test failed or succeeded
-		- snc detection reports the offline file is not empty
-		- kernel version supports snc
+BTW, in group path, what's the benefit of allowing multiple open of device?
 
-The 1. message will be printed at the top since it's more informational (what is
-the SNC mode?) and then 2. messages will deal with possible issues / failures
-and will be nicely visible at the end. What do you think about this?
+struct file *vfio_device_get_pseudo_file(struct vfio_device *device)             
+{                                                                                
+        const struct file_operations *fops = &vfio_device_fops;                  
+        struct inode *inode;                                                     
+        struct file *filep;                                                      
+        int ret;                                                                 
+                                                                                 
+        if (!fops_get(fops))                                                     
+                return ERR_PTR(-ENODEV);                                         
+                                                                                 
+        mutex_lock(&device->dev_set->lock);                                      
+        if (device->open_count == 1) {                                           
+                ret = simple_pin_fs(&vfio_fs_type, &vfio.vfs_mount, &vfio.fs_count);
+                if (ret)                                                         
+                        goto err_pin_fs;                                         
+                                                                                 
+                inode = alloc_anon_inode(vfio.vfs_mount->mnt_sb);                
+                if (IS_ERR(inode)) {                                             
+                        ret = PTR_ERR(inode);                                    
+                        goto err_inode;                                          
+                }                                                                
+                device->inode = inode;                                           
+        } else {                                                                 
+                inode = device->inode;                                           
+                ihold(inode);                                                    
+        }                                                                        
+                                                                                 
+        filep = alloc_file_pseudo(inode, vfio.vfs_mount, "[vfio-device]",        
+                                  O_RDWR, fops);                                 
+                                                                                 
+        if (IS_ERR(filep)) {                                                     
+                ret = PTR_ERR(filep);                                            
+                goto err_file;                                                   
+        }                                                                        
+        mutex_unlock(&device->dev_set->lock);                                    
+        return filep;                                                            
+                                                                                 
+err_file:                                                                        
+        iput(inode);                                                             
+err_inode:                                                                       
+        if (device->open_count == 1)                                             
+                simple_release_fs(&vfio.vfs_mount, &vfio.fs_count);              
+err_pin_fs:                                                                      
+        mutex_unlock(&device->dev_set->lock);                                    
+        fops_put(fops);                                                          
+                                                                                 
+        return ERR_PTR(ret);                                                     
+}              
 
->
->Reinette
->
->[1] https://lore.kernel.org/lkml/20240621223859.43471-18-tony.luck@intel.com/
 
--- 
-Kind regards
-Maciej Wieczór-Retman
 
