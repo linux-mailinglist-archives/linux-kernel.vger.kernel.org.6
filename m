@@ -1,96 +1,90 @@
-Return-Path: <linux-kernel+bounces-232198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACA9B91A4E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:18:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F53291A4F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:19:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60A7E1F23731
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:18:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59BF62811F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA311494CA;
-	Thu, 27 Jun 2024 11:18:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE335145B34;
+	Thu, 27 Jun 2024 11:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Gj9HVeOl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i6H3p7IJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CAC0145B34;
-	Thu, 27 Jun 2024 11:18:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3535D13C9CA;
+	Thu, 27 Jun 2024 11:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719487096; cv=none; b=dqFVF+TNtl1cVeUVG2k2gj87mKUqpJ6brCu0ZA6eJkSWI3DJyq9w6N/hIuICZyfjtJ6USg75lbGstwGh0Cd4tLqART29d0GwjjTZfjbnzqmXHjWPhubjofcFmx1Io6btouaaIJ3iqVVvhW0GAlDRz4gLC/NTd4jv0JzHyuRGINw=
+	t=1719487166; cv=none; b=aWx4GGDvx24aBXlIem/xtCoy12oM8Dl20S/VXYt6T41wPRheJ+Is5DZRxqLHMhWtomBtvaKxub+cLykRZatEFTzobyie/NcNx25ICOrWSIcuk56hNSh2RSWYnPK1yRDULAtWYTXaNzghm3/Rm2AAsD7YBIwd1dh9hgoDEqSs6vE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719487096; c=relaxed/simple;
-	bh=E0YEhlQqyrz9Rv1pwfdZuFu0LrVCBtcH1CdILfJjFqs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IPBxeaDKZfeLt9C1pDYhjFmHq3dYNicaxE++V8CZSf+CKIbIrDSS6SiYcCyBqgSRSZ7r9/4bOVq9YuVq4uzyEtZkLjH8t2R2GW0MNS8INOumsJK8PTb+MjsLH4tXVi3jFk22ORls6GdrvLoC+/wFj9Dk4w3cRzCwOEp/bTY9ABA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Gj9HVeOl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A840C32786;
-	Thu, 27 Jun 2024 11:18:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1719487095;
-	bh=E0YEhlQqyrz9Rv1pwfdZuFu0LrVCBtcH1CdILfJjFqs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gj9HVeOlcxMX32l8FkenVufef6x+zWBoAkzbWeZZjOmgBF7O2I+8EfuAygGJaPAfS
-	 SfLWvyMLVlBchCFIseZAEBqQ1KYe6V1vErIQKO4uKLYX96w7R6fjextaR2ZK6YTMy4
-	 suNUOD95jG5d9hJo/o/WSpFiDE0EIm3H/772bpRQ=
-Date: Thu, 27 Jun 2024 13:18:11 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Ekansh Gupta <quic_ekangupt@quicinc.com>
-Cc: srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org,
-	quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org,
-	quic_chennak@quicinc.com, dri-devel@lists.freedesktop.org,
-	arnd@arndb.de, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH v3] misc: fastrpc: Move fastrpc driver to misc/fastrpc/
-Message-ID: <2024062715-ultra-muppet-c899@gregkh>
-References: <20240627104245.1651214-1-quic_ekangupt@quicinc.com>
+	s=arc-20240116; t=1719487166; c=relaxed/simple;
+	bh=H+6JGVxtpgGD00UkpFNftvQvgc/mwsJG9lc8OkK8T88=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FAaOwzIN7dZQWWX3HX0X7YN/1QEcYHLjD4c3XWhzgsz7eIqDXkA0S/98vwPDDAizMaLRrIx0+b2GyjmuLVriV4MXMGBDiu1WZ80C6LRIqmnlGNR+oRfdsQ0fKh3cDsbVVlqHQXdYvsvTX/TPcwXhG1+powPcTxYYc+W6s2aWflo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i6H3p7IJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8870FC2BBFC;
+	Thu, 27 Jun 2024 11:19:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719487166;
+	bh=H+6JGVxtpgGD00UkpFNftvQvgc/mwsJG9lc8OkK8T88=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=i6H3p7IJlZcQod0Na/20Vzrjp8tnU3M6Vk+Ye+BZp4lTcSEtn1RpHj+LoWTDPcYte
+	 t/qNOxum1leyWn5zoDiOwk8+Bkqilvy6dDSIUF+09Yz0rsU2lPkeGLRO0GGobHiPd5
+	 NgzkRtQX43kP7WoxQf8WUAQjmBXU40sFHcHzYsacihsHp/UTjOAjp8Xh8SF97DIwjT
+	 KmDKdUMWaBeGSC9aD5ur3Mg2DZB08UQGSvbWghKVaHmoLHRK0MPfsbq/Spq0pnpYSU
+	 lx34oKb3oKvP2xGdhn1Ar7KxZQQvW/aSHOFU94a9wm/dNdq77nNnPpFEgcWhnNvdlQ
+	 teXRgGTB+OOZw==
+Date: Thu, 27 Jun 2024 13:19:19 +0200
+From: Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: tglx@linutronix.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, tsbogend@alpha.franken.de, daniel.lezcano@linaro.org,
+ paulburton@kernel.org, peterz@infradead.org, mail@birger-koblitz.de,
+ bert@biot.com, john@phrozen.org, sander@svanheule.net,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-mips@vger.kernel.org, ericwouds@gmail.com
+Subject: Re: [PATCH v3 8/9] mips: generic: add fdt fixup for Realtek
+ reference board
+Message-ID: <20240627131919.09b31c03@dellmb>
+In-Reply-To: <20240627043317.3751996-9-chris.packham@alliedtelesis.co.nz>
+References: <20240627043317.3751996-1-chris.packham@alliedtelesis.co.nz>
+	<20240627043317.3751996-9-chris.packham@alliedtelesis.co.nz>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240627104245.1651214-1-quic_ekangupt@quicinc.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 27, 2024 at 04:12:44PM +0530, Ekansh Gupta wrote:
-> Move fastrpc.c from misc/ to misc/fastrpc/. New C files are planned
-> to be added for PD notifications and other missing features. Adding
-> and maintaining new files from within fastrpc directory would be easy.
-> 
-> Example of feature that is being planned to be introduced in a new C
-> file:
-> https://lore.kernel.org/all/20240606165939.12950-6-quic_ekangupt@quicinc.com/
-> 
-> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
-> Changes in v2:
->   - Updated Kconfig.
-> Changes in v3:
->   - Added newline in kconfig.
-> 
->  MAINTAINERS                          |  2 +-
->  drivers/misc/Kconfig                 | 13 +------------
->  drivers/misc/Makefile                |  2 +-
->  drivers/misc/fastrpc/Kconfig         | 16 ++++++++++++++++
->  drivers/misc/fastrpc/Makefile        |  2 ++
->  drivers/misc/{ => fastrpc}/fastrpc.c |  0
->  6 files changed, 21 insertions(+), 14 deletions(-)
->  create mode 100644 drivers/misc/fastrpc/Kconfig
->  create mode 100644 drivers/misc/fastrpc/Makefile
->  rename drivers/misc/{ => fastrpc}/fastrpc.c (100%)
+On Thu, 27 Jun 2024 16:33:16 +1200
+Chris Packham <chris.packham@alliedtelesis.co.nz> wrote:
 
-For now, no, sorry, not a new directory for just one .c file.
+> +static __init int realtek_add_initrd(void *fdt)
+> +{
+> +	int node, err;
+> +	u32 start, size;
+> +
+> +	node = fdt_path_offset(fdt, "/chosen");
+> +	if (node < 0) {
+> +		pr_err("/chosen node not found\n");
 
-If you want to add more stuff, wonderful, then do this as the first
-commit of the series when that actually happens.
+linux/printk.h
 
-sorry, but I'm not going to take this now.
+> +static const struct of_device_id realtek_of_match[] __initconst = {
+> +	{
+> +		.compatible = "realtek,rtl9302",
+> +	},
 
-greg k-h
+One line instead of three?
+
+Marek
 
