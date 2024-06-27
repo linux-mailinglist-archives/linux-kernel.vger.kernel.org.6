@@ -1,55 +1,83 @@
-Return-Path: <linux-kernel+bounces-232565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0166891AB0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:21:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2D0A91AAF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:18:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3323E1C22F81
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:21:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DB6D1F243C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:18:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA4D198A2B;
-	Thu, 27 Jun 2024 15:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B5F0198A28;
+	Thu, 27 Jun 2024 15:18:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LgtqDjns"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SPl5dHh/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E14781591F0;
-	Thu, 27 Jun 2024 15:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 395D51327E5;
+	Thu, 27 Jun 2024 15:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719501706; cv=none; b=h2tWqG5Juo9VQYfT1jCtX39M9zpvDp9BGLOm6i1Bo3kK6D8vJ6tZGxO5rqD+6xUywRgd2I66a+I2ftx0C+3jOnswGkIAlFT3+s+USIXGfkminGOwJ/X+Ktfdcb05jcbFkgkJlzfP/6V3aSFICmMIvp4tvt+hYOrxgkh7SpEz6ZA=
+	t=1719501489; cv=none; b=UbYW5CCdXLB1WOOFUKGsVOmy14zh7F48HIglbp40AyCOaMXPF/yJNhw2i5xHXUSXDjWSGCQFofmWbJIEf6I3ZzoyBMxwuRXYMIi5h3yzAWme2pWXgn50x8iIKY094tlxaRRt3O2PDSK8yhfTM2lZOROqK6AP94NqV9POCBVI/Ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719501706; c=relaxed/simple;
-	bh=2jTe8TkDCFNj+tlAFvYShwxEC623St7oJq/uib3g8p4=;
+	s=arc-20240116; t=1719501489; c=relaxed/simple;
+	bh=t6wOLVRtPvZOPfLZT8uMNs9TY/BtnLK/3szoxyqDWjM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pEwQA9FzfAk6r4Cb+zrKOWDfY/bOhsmkpUgKxv/KfGJW6mBFMJ/g1VzvwtXDpDiZevnYoYPGWN9SeR/gcPz/Hdjj3zv5ELJxkeTW3cTM9RblUmTc+yjHNRBuOi0G4UijnxPMqGsp6aplkwp00dswsVRofyDs2PISsa3WnL7LNnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LgtqDjns; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52877C2BBFC;
-	Thu, 27 Jun 2024 15:21:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719501705;
-	bh=2jTe8TkDCFNj+tlAFvYShwxEC623St7oJq/uib3g8p4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LgtqDjns20o4C/BYAwvgOdfxFhivKA174u5OHSIQWWrKXJ/xYBGgMKd1OQzIS3KG6
-	 Lpeu+p6MB2GRoDjWcsyGcW+zXRhpU7DUHGddbOtKJr54ANBpnPUWv3l+NlecP0N1UN
-	 OUikhwYU/RmHNzuhiqvX7sTB6WLnVGjI1y5GGYcczVU1RynT02PU0QIlu3ES7Xkf0K
-	 bRRleB0GqXQhlLr+44Izp0AGkaMVxmpBfMStYdPwV6/bpzkl+JPct1xJSLECsoPIl4
-	 54vy8oRjoHISUiS6/CWHv6ETuMPL/edqLytl17HNLwp0YNhRp4GJ+2pP0Y8UtRvBfy
-	 ttt9HcB/VQ44g==
-Date: Thu, 27 Jun 2024 17:21:42 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] i2c: testunit: discard write requests while old
- command is running
-Message-ID: <m2sxpply3xx54v7zfu4py7jsq43tcd73gy5ivxliaits4ozo5s@hqd5lmki7mnu>
-References: <20240627111445.29751-4-wsa+renesas@sang-engineering.com>
- <20240627111445.29751-6-wsa+renesas@sang-engineering.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aOrWA6iPYUjJBS8PJWfUX7Rjh+kqOXq5unPb9Bd+GUflwjYDyKPlaGAImgsO6qVLuFYqiuBjRqTRDOwM3mvNZbmbWptL+ZL/9yF/VUUU9alG8hyq7Hx16wSJZY4hNhr41D2oTL5Y+PsSr9jICsIPuaiXQpqZXmaQMKja4Fr8bn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SPl5dHh/; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719501489; x=1751037489;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=t6wOLVRtPvZOPfLZT8uMNs9TY/BtnLK/3szoxyqDWjM=;
+  b=SPl5dHh/h+iSpGc+QFOqD3M3ZJJRex4uxeb8vKLph/88hXCvnYUPPDKu
+   Oj9EDCceYpfKFAyP9feKBYpiGNJgzohxrcCyVw/yIkbicVASjIQxsqDEW
+   zIhqhs2B7PhMfUN4w3Sp0rfa4cuu9knYimzDYPaN+UMvmavmbiFUGBWGr
+   8lAaRGLyZWm9G3MFDQlWyXF0XJ2LhPldBlLnhsNfYRt7ryr+h3CGWqoRF
+   E/jpQRqpCj+0wmnvDnx0UO8xRxo5BcCLr13A6Doh5K5Yfu45NZ9480j0v
+   jOYqj/5nZWwO2bsPrCzyu1QZrX+IX6B9+J0336m24u78lWWTD0PTmghZO
+   A==;
+X-CSE-ConnectionGUID: Y6MxXiwhSGiTQ7YIVQYyHA==
+X-CSE-MsgGUID: NOXhm53DRtGZDkeSEtfKzA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="16459575"
+X-IronPort-AV: E=Sophos;i="6.09,166,1716274800"; 
+   d="scan'208";a="16459575"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 08:16:07 -0700
+X-CSE-ConnectionGUID: TD9i/LBWRNCyaxtUPLZ/6A==
+X-CSE-MsgGUID: lazvx7b7SIi1dmhUrposWg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,166,1716274800"; 
+   d="scan'208";a="45064396"
+Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 08:16:05 -0700
+Date: Thu, 27 Jun 2024 08:22:11 -0700
+From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+To: Brice Goglin <brice.goglin@gmail.com>
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	daniel.sneddon@linux.intel.com, tony.luck@intel.com,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>
+Subject: Re: [PATCH 0/9] Add CPU-type to topology
+Message-ID: <20240627152211.GA5201@ranerica-svr.sc.intel.com>
+References: <20240617-add-cpu-type-v1-0-b88998c01e76@linux.intel.com>
+ <8d757ea3-87a3-4663-ac76-66b04e33e6b3@gmail.com>
+ <20240619015315.3ei5f6rovzdnxovo@desk>
+ <16994d97-0499-4e3b-8890-328e74adc91d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,20 +86,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240627111445.29751-6-wsa+renesas@sang-engineering.com>
+In-Reply-To: <16994d97-0499-4e3b-8890-328e74adc91d@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 
-Hi Wolfram,
+On Wed, Jun 19, 2024 at 11:22:16PM +0200, Brice Goglin wrote:
 
-On Thu, Jun 27, 2024 at 01:14:48PM GMT, Wolfram Sang wrote:
-> When clearing registers on new write requests was added, the protection
-> for currently running commands was missed leading to concurrent access
-> to the testunit registers. Check the flag beforehand.
+[...]
+
+> > There can be many ways to expose this information in sysfs. Like this ...
+> > 
+> > > [1] https://lkml.org/lkml/2020/10/2/1208
+> > ... exposes /sys/devices/system/cpu/types which, in hybrid parts, creates a
+> > subdirectory for each type of CPU. Each subdirectory contains a CPU list
+> > and a CPU map that user space can query.
+> > 
+> > The other way is to expose the CPU-type in a file:
+> > 
+> > 	/sys/devices/system/cpu/cpuN/type
+> > 
+> > that could return the CPU-type of the CPU N. Is there a preference?
 > 
-> Fixes: b39ab96aa894 ("i2c: testunit: add support for block process calls")
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> 
+> I'd vote for the former.
 
-Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
-
-Thanks,
-Andi
++1. With the former you can read all CPUs of a given type in one go whereas
+with the latter you have to iterate over all CPUs. By the time you are done
+CPUs may have gone offline or online.
 
