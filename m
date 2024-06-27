@@ -1,79 +1,51 @@
-Return-Path: <linux-kernel+bounces-231792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC388919E26
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 06:26:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BCA1919E25
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 06:25:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 573D31F246D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 04:26:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CE9F1C22EAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 04:25:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB1E1865A;
-	Thu, 27 Jun 2024 04:26:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD401B947;
+	Thu, 27 Jun 2024 04:25:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="MonBNpYY"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xq/ZSuCj"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81D317BD3
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 04:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438191864C;
+	Thu, 27 Jun 2024 04:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719462405; cv=none; b=RjQx65nenUnw1LL31rBYznk5vB0qaByivINjXrMJ5up2fFX/zZOOZUIOMnb/Q7qH/furHswxEKap8Wn5zTBbYaUn+H9VDaLcD4ySNn2JH5/6sowKx3/Ato0IpnDUZIdFC6DWdZifZW1t/F+iynf9ZEhyPrIrdSRa7OKbhjoxfM4=
+	t=1719462311; cv=none; b=cDUjoognnfY0JBrGh1PVxr8GBWvGRt7byKBhCYaTmuUpjHw2YZvZVacSocDoBBsbpkE4sLVAfZuHa3Sgm/C2CdqlP+6ra4HvZx/ejdIVQKtcZc4NUrq308ruLAmXOCkSmCKhgDwu0FtySrwA7DkCmQynPeM0JB23RDDU8sGbDQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719462405; c=relaxed/simple;
-	bh=YPQPR/zOPIBZ0Ejou+TXRNMDtfnDtofhqtq5z9sZd40=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=msFNgSk9oB5DiYGHKz1mWFAktMDGa0eDUj3PyhMl4Fjtnxh0BpJglmRl+QNE7DNV0GdAs9mhDZPwrGqRZWY2Jr7xiqA21oKVxEWgd9Luz1/2zz13uEWgg0mOYMkbQlk64qHq8wIy6Q7tm5fLG4u0B1392kDi9Hpq0qZVh1sFDuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=MonBNpYY; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
-Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45R4QYuI013788;
-	Thu, 27 Jun 2024 04:26:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:from:subject:to:cc:content-type
-	:content-transfer-encoding; s=pp1; bh=ug6Upa1yHyLRwNwB2/zU7SkZQ4
-	9/o2s2+9f091pULmc=; b=MonBNpYYcfNEtkD3ITfIKGv3blsdg5sPzF02MwdXzt
-	aPL7A8QCalrzw5iJWba9qVnYZnyMPtCwGlRBfKay4N06kag9OwgPmfjAQ3zzPvuQ
-	L5YXSD3XlZj5XNSW25TaHPD5Evii/+jdwVelRk6WTfGc1Bg9WYOdDwTCJiXvq/rZ
-	ozN952xFGA/63Mb+cEE9iv3Mwfudl/iq0t/ZdnI8cH8RvazjYv0Ikzmx2XFN6Zo0
-	zSJo+viM2pEU9bJHut43rijzfzWOVqdNa7gBB2wc2pWn5jSKXa6gXeXP9ADuYFej
-	YUt+fnwzq/kF4LfKti23ezZShP9+l0MSnm9gd9/lwm+w==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4010n2g1p2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Jun 2024 04:26:35 +0000 (GMT)
-Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45R4QZal013831;
-	Thu, 27 Jun 2024 04:26:35 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4010n2g1kh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Jun 2024 04:26:34 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45R2tkWM018096;
-	Thu, 27 Jun 2024 04:21:57 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yx8xugxxb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Jun 2024 04:21:57 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45R4Lt2L23593552
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 27 Jun 2024 04:21:57 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 04EE358045;
-	Thu, 27 Jun 2024 04:21:55 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D347258054;
-	Thu, 27 Jun 2024 04:21:52 +0000 (GMT)
-Received: from [9.43.55.131] (unknown [9.43.55.131])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 27 Jun 2024 04:21:52 +0000 (GMT)
-Message-ID: <32f20573-7e3b-496a-8c02-9234d410113e@linux.vnet.ibm.com>
-Date: Thu, 27 Jun 2024 09:51:51 +0530
+	s=arc-20240116; t=1719462311; c=relaxed/simple;
+	bh=juCSA/JEQdCInY0INwcmkXUwA1/C8FVRgHJ6wrrJoWQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IDHrGjzizdbK9bUEshMtTTHTzylrcaZRzFZXlf0+6u6Ojj1xj7YLoeLtgZevMDyt9u5n1QaXxnkgGt3l50nkh29wKuT7oqtcylYA+Dl3QJQc1QHAyJ2iV6ysdwoesnYDy5nmOu/GlyGOBRT4Fmq7YY3HCjzzCZF4ldEsTGrA7hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=xq/ZSuCj; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=Eq/tnOV8FvjvD57ahIklGr8d03YiQ6JNh+uUQrkfJcM=; b=xq/ZSuCj+0LVtZcWuz1W+dB0r2
+	tSwrzg8WI39OjOWKrOOdQXRSS+Nt6FX6Jqc3KOXiWER7wBrADyiwG2+ABhMmlbiG3j7ESpzBFLIh3
+	T8QvHpdbk+F1J02stpJgAO5F1ZJmQMfT9sEhP1olQM0QZ/botfsTKche+Olhup/hR1TWm6OiMwIXv
+	eo95VF2QnFB9TELQh805/xIHMZvXQWu0IfenZrah99iY67SfvJYyQW2pfywdHAFj0MM3LKnNNe3TB
+	K+tOrBfhATgn2/I1N1PobStdOBU7yw88DLpR7xN4Bj2TAOW52EkH9n2F1ke6K+2q8EI/MLESUum+1
+	5J206szg==;
+Received: from [50.53.4.147] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sMggr-00000009Aec-38lI;
+	Thu, 27 Jun 2024 04:25:03 +0000
+Message-ID: <4090f208-766d-40b2-b64e-f0f700845258@infradead.org>
+Date: Wed, 26 Jun 2024 21:24:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,74 +53,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Content-Language: en-GB
-From: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
-Subject: [linux-next-20240626]Kernel Build Fails on repo linux-next-20240626
-To: jfalempe@redhat.com, akpm@linux-foundation.org, naveen.n.rao@linux.ibm.com,
-        mpe@ellerman.id.au
-Cc: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: PrzC-PZMFxCDSbAhZbMS706piSBDAV8L
-X-Proofpoint-GUID: jU1gCEhovDmcLE1alIxTTBOc0R6ILf0A
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-26_17,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
- phishscore=0 lowpriorityscore=0 clxscore=1011 mlxscore=0
- priorityscore=1501 suspectscore=0 mlxlogscore=561 malwarescore=0
- spamscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2406140001 definitions=main-2406270030
-
-Greetings!!!
-
-
-Kernel Build fails with below error, while building with 
-linux-next(next-20240626) repo.
+Subject: Re: [PATCH v2 2/2] Documentation: best practices for using Link
+ trailers
+To: Thorsten Leemhuis <linux@leemhuis.info>, Jonathan Corbet
+ <corbet@lwn.net>, Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+ Kees Cook <kees@kernel.org>
+Cc: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ workflows@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, ksummit@lists.linux.dev
+References: <20240619-docs-patch-msgid-link-v2-0-72dd272bfe37@linuxfoundation.org>
+ <20240619-docs-patch-msgid-link-v2-2-72dd272bfe37@linuxfoundation.org>
+ <202406211355.4AF91C2@keescook>
+ <20240621-amorphous-topaz-cormorant-cc2ddb@lemur>
+ <87cyo3fgcb.fsf@trenco.lwn.net>
+ <4709c2fa-081f-4307-bc9e-eef928255c08@infradead.org>
+ <62647fab-b3d4-48ac-af4c-78c655dcff26@leemhuis.info>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <62647fab-b3d4-48ac-af4c-78c655dcff26@leemhuis.info>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-arch/powerpc/kernel/nvram_64.c:79:17: error: initialization of ‘void 
-(*)(struct kmsg_dumper *, enum kmsg_dump_reason,  const char *)’ from 
-incompatible pointer type ‘void (*)(struct kmsg_dumper *, enum 
-kmsg_dump_reason)’ [-Werror=incompatible-pointer-types]
-    79 |         .dump = oops_to_nvram
-       |                 ^~~~~~~~~~~~~
-arch/powerpc/kernel/nvram_64.c:79:17: note: (near initialization for 
-‘nvram_kmsg_dumper.dump’)
-arch/powerpc/kernel/nvram_64.c:645:13: error: conflicting types for 
-‘oops_to_nvram’; have ‘void(struct kmsg_dumper *, enum 
-kmsg_dump_reason,  const char *)’
-   645 | static void oops_to_nvram(struct kmsg_dumper *dumper,
-       |             ^~~~~~~~~~~~~
-arch/powerpc/kernel/nvram_64.c:75:13: note: previous declaration of 
-‘oops_to_nvram’ with type ‘void(struct kmsg_dumper *, enum 
-kmsg_dump_reason)’
-    75 | static void oops_to_nvram(struct kmsg_dumper *dumper,
-       |             ^~~~~~~~~~~~~
-arch/powerpc/kernel/nvram_64.c:75:13: error: ‘oops_to_nvram’ used but 
-never defined [-Werror]
-arch/powerpc/kernel/nvram_64.c:645:13: error: ‘oops_to_nvram’ defined 
-but not used [-Werror=unused-function]
-   645 | static void oops_to_nvram(struct kmsg_dumper *dumper,
-       |             ^~~~~~~~~~~~~
-cc1: all warnings being treated as errors
-make[4]: *** [scripts/Makefile.build:244: 
-arch/powerpc/kernel/nvram_64.o] Error 1
-make[4]: *** Waiting for unfinished jobs....
-make[3]: *** [scripts/Makefile.build:485: arch/powerpc/kernel] Error 2
 
-make[2]: *** [scripts/Makefile.build:485: arch/powerpc] Error 2
+On 6/26/24 8:51 PM, Thorsten Leemhuis wrote:
+> On 27.06.24 01:17, Randy Dunlap wrote:
+>> On 6/26/24 4:13 PM, Jonathan Corbet wrote:
+>>> Konstantin Ryabitsev <konstantin@linuxfoundation.org> writes:
+>>>> On Fri, Jun 21, 2024 at 02:07:44PM GMT, Kees Cook wrote:
+>>>>> On Wed, Jun 19, 2024 at 02:24:07PM -0400, Konstantin Ryabitsev wrote:
+>>>>>> +   This URL should be used when referring to relevant mailing list
+>>>>>> +   topics, related patch sets, or other notable discussion threads.
+>>>>>> +   A convenient way to associate ``Link:`` trailers with the commit
+>>>>>> +   message is to use markdown-like bracketed notation, for example::
+>>>>>> ...
+>>>>>> +     Link: https://lore.kernel.org/some-msgid@here # [1]
+>>>>>> +     Link: https://bugzilla.example.org/bug/12345  # [2]
+>>>>>
+>>>>> Why are we adding the extra "# " characters? The vast majority of
+>>>>> existing Link tags don't do this:
+>>>>
+>>>> That's just convention. In general, the hash separates the trailer from the
+>>>> comment:
+>>>>
+>>>>     Trailer-name: actual-trailer-body # comment
+>>>
+>>> Did we ever come to a conclusion on this?  This one character seems to
+>>> be the main source of disagreement in this series, I'm wondering if I
+>>> should just apply it and let the painting continue thereafter...?
+>>
+>> We have used '#' for ages for adding comments to by: tags.
+>> I'm surprised that it's not documented.
+> 
+> I thought it was documented, but either I was wrong or can't find it.
+> But I found process/5.Posting.rst, which provides this example:
+> 
+>         Link: https://example.com/somewhere.html  optional-other-stuff
+> 
+> So no "# " there. So to avoid inconsistencies I guess this should not be
+> applied, unless that document is changed as well.
+
+In my use cases, other-optional-stuff begins with '#'.
 
 
-This issue has been introduced with the below commit.
-
-
-Commit ID: 7e72bb7504d1192ab89809f6192dba1b06f4fa51.
-
-
-Regards,
-
-Venkat.
-
+-- 
+~Randy
 
