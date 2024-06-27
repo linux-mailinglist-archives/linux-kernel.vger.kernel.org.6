@@ -1,59 +1,71 @@
-Return-Path: <linux-kernel+bounces-232873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DAE891AF55
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:53:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEFAE91AF58
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:54:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D01BBB2431C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:53:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A248D1F23739
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D1D19A28B;
-	Thu, 27 Jun 2024 18:53:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4006319AD54;
+	Thu, 27 Jun 2024 18:54:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h2dv/69r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="pRmI6T64"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137581BF40;
-	Thu, 27 Jun 2024 18:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04ED91BF40;
+	Thu, 27 Jun 2024 18:54:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719514411; cv=none; b=eGTlNZl14wM7GLs8DoJXlEQfUoc1h+zyk09gzCFrxBoCCO9SbQedGF/bjfI90iJjB2NnPwNPDBnCP6GSiijhgzBZWozmpGw6pGqYFPbC0nswCVxYX3nt0bgnYXabsetNccobH31PEWjJF6x2gk2oZuz4pDqsDnOU4qFEd91PcJE=
+	t=1719514449; cv=none; b=AwVHmMmaoMlNP81Z3f4CW+IokU+9DdxPvhabpEeEdjaSQTkxNg1odWWJAlt7Jf2DLzKm9Ey/RB+G1ByuHLyaURJyAMZa/de4a1S6U/RNnxqIBmzUfDDnCfTe9+zs3+F+35xyseAztyuOHgEF5CwsoA7ZoHSXd7fouJQPybumlYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719514411; c=relaxed/simple;
-	bh=1KVw3L84epfGHUAL0h2wWcELjpi6bck2ru57OtDq+o0=;
+	s=arc-20240116; t=1719514449; c=relaxed/simple;
+	bh=qqJuWDqgU1d2pzn5L3V2x4FZCNkPm8iX43xFx3zpmkE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dLYLCsGiRX8T6ZSgPaM0j1JDKiO1d5dCYRqFQtM1mSNCUKfNfhGlMPvH1Gn89Za6kTRl87EuMwGj0W3VZ3FmHg68408kaxIWd8cRUF/QQq9EJz1oMp4hmnDVBGYYyb9fTplHywTt4mPFPIo6RY4gx4FJ2ZhubYndAogJy/cok9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h2dv/69r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9C63C2BBFC;
-	Thu, 27 Jun 2024 18:53:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719514410;
-	bh=1KVw3L84epfGHUAL0h2wWcELjpi6bck2ru57OtDq+o0=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=h2dv/69rB3axRUtIhJMznRNXM4daAFP/39wggC8012p1pKPHWiACr5TxRwJZ8obUT
-	 PUYcKFWJDteAamf1Xe9PVnB/Gla+V9nIexu9yBh2xwXCR71xp5W2VcSvz6mOwFQxlq
-	 HHYALLcPdhY0NL9ziXrZo7hvVkelktK/YYScrGsTOAB1rr12/sypUYa6rKCOFx7Quw
-	 5DLp45JH0wuCnma78GFlxmSp3SN9qH26q18ZegFEkeyH83oBSXhDjS6QcCrapK+WYB
-	 BUO2LwEjab7Tyau6cctu/AdBMo0821uxRKa5BhFTQsahW5VxVnorljcawFIrqm67+A
-	 G6GJYIfjlcoAA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 3E1EFCE0A70; Thu, 27 Jun 2024 11:53:29 -0700 (PDT)
-Date: Thu, 27 Jun 2024 11:53:29 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org
-Subject: Re: [PATCH rcu 3/6 v2] rcu/exp: Remove superfluous full memory
- barrier upon first EQS snapshot
-Message-ID: <4a11271a-d873-4f1c-87e6-38874e38ac13@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <81f4e616-8125-4934-a8e2-fd5beae90995@paulmck-laptop>
- <20240604222652.2370998-3-paulmck@kernel.org>
- <Zn1O2qKaIVOXniYH@pavilion.home>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sova/1YK3kAHcZWNaHgBYCFch++a8lCjoutGZqDrcYNjAvKIA53nRpZkrVXOYogyliwFmwjIEq/y2EGsVPgW8JPS8N2hE4b6nVDm+61Mi/wTZVgrSchZfPZegPmaIh5nECuwN37d9XvmdHPeqZwxSCEK9gllx8csHcTEpgM6TC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=pRmI6T64; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=pKvqSGLfcwX/x9spD289lXQYDSmIZJJ94YFu8au6w54=; b=pRmI6T64rhmuSiqJu5QmZBCp2Z
+	enKLABPtVqOOri45SLyrekDLX6eJdbd8C/pd2dgY1JhTxaw/yc+BP6HwEqVvM7cvUdBucK3Q8Cqqt
+	I+mQg59XkPLlfVe+cZ9a9Q52QvBZ6PSwIKHF9A1efwhpIntlkF/Jw8+rQ4XIgUAClBz0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sMuFq-001CUa-Tk; Thu, 27 Jun 2024 20:53:58 +0200
+Date: Thu, 27 Jun 2024 20:53:58 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Ayush Singh <ayush@beagleboard.org>
+Cc: Andrew Davis <afd@ti.com>, Mark Brown <broonie@kernel.org>,
+	Vaishnav M A <vaishnav@beagleboard.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, Michael Walle <mwalle@kernel.org>,
+	jkridner@beagleboard.org, robertcnelson@beagleboard.org,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 7/7] dts: ti: k3-am625-beagleplay: Add mikroBUS
+Message-ID: <9c5263b4-fcda-4678-95ce-c2611af82bc2@lunn.ch>
+References: <20240627-mikrobus-scratch-spi-v5-0-9e6c148bf5f0@beagleboard.org>
+ <20240627-mikrobus-scratch-spi-v5-7-9e6c148bf5f0@beagleboard.org>
+ <4e23ec81-b278-4f2b-815d-64ed9390ca55@ti.com>
+ <cef08d49-a462-4167-8b9d-bf09e8aac92f@beagleboard.org>
+ <70f28343-6738-47f2-97b5-6afa96f1fbcc@ti.com>
+ <93cdd5c5-d54c-46c2-9055-5cd9cc79e2da@beagleboard.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,86 +74,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zn1O2qKaIVOXniYH@pavilion.home>
+In-Reply-To: <93cdd5c5-d54c-46c2-9055-5cd9cc79e2da@beagleboard.org>
 
-On Thu, Jun 27, 2024 at 01:36:58PM +0200, Frederic Weisbecker wrote:
-> When the grace period kthread checks the extended quiescent state
-> counter of a CPU, full ordering is necessary to ensure that either:
+> Can you suggest how something similar will be possible if the board node is
+> a child of the connector node? Maybe it is possible to take a generic dt
+> overlay and change the name of parent node on it or something?
 
-Just to make sure that I understand...
+Maybe that answers my question on an earlier patch.
 
-I need to replace these commits in -rcu:
+So the parent node of the overlay is embedded inside the overlay?
 
-da979d0162fc6 rcu: Remove full ordering on second EQS snapshot
-6411f4185f657 rcu: Remove superfluous full memory barrier upon first EQS snapshot
-dec56ca5f1c34 rcu/exp: Remove superfluous full memory barrier upon first EQS snapshot
+Making a guess without looking at the code... The code loading an
+overlay must first parse the overlay and find that node name. It then
+must somehow traverses the graph, and find that node. It then must
+apply the overlay at that point.
 
-With these three patches, and keep these three commits as they are?
+Could you not take this code apart, so you can pass it the name of the
+node you want to apply the overlay to, rather than read it from the
+overlay itself? The connector should known its own node in the
+graph. So it can find the overlay, load it, and then ask for it to be
+applied over itself.
 
-d43a302fc08a5 rcu: Remove full memory barrier on boot time eqs sanity check
-b1c36aa90cbf1 rcu: Remove full memory barrier on RCU stall printout
-64d68f1d53f77 rcu/exp: Remove redundant full memory barrier at the end of GP
-
-							Thanx, Paul
-
-> * If the GP kthread observes the remote target in an extended quiescent
->   state, then that target must observe all accesses prior to the current
->   grace period, including the current grace period sequence number, once
->   it exits that extended quiescent state.
-> 
-> or:
-> 
-> * If the GP kthread observes the remote target NOT in an extended
->   quiescent state, then the target further entering in an extended
->   quiescent state must observe all accesses prior to the current
->   grace period, including the current grace period sequence number, once
->   it enters that extended quiescent state.
-> 
-> This ordering is enforced through a full memory barrier placed right
-> before taking the first EQS snapshot. However this is superfluous
-> because the snapshot is taken while holding the target's rnp lock which
-> provides the necessary ordering through its chain of
-> smp_mb__after_unlock_lock().
-> 
-> Remove the needless explicit barrier before the snapshot and put a
-> comment about the implicit barrier newly relied upon here.
-> 
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-> Reviewed-by: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
-> ---
->  kernel/rcu/tree_exp.h | 16 +++++++++++++++-
->  1 file changed, 15 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-> index 8a1d9c8bd9f7..1dbad2442e8d 100644
-> --- a/kernel/rcu/tree_exp.h
-> +++ b/kernel/rcu/tree_exp.h
-> @@ -357,7 +357,21 @@ static void __sync_rcu_exp_select_node_cpus(struct rcu_exp_work *rewp)
->  		    !(rnp->qsmaskinitnext & mask)) {
->  			mask_ofl_test |= mask;
->  		} else {
-> -			snap = rcu_dynticks_snap(cpu);
-> +			/*
-> +			 * Full ordering between remote CPU's post idle accesses
-> +			 * and updater's accesses prior to current GP (and also
-> +			 * the started GP sequence number) is enforced by
-> +			 * rcu_seq_start() implicit barrier, relayed by kworkers
-> +			 * locking and even further by smp_mb__after_unlock_lock()
-> +			 * barriers chained all the way throughout the rnp locking
-> +			 * tree since sync_exp_reset_tree() and up to the current
-> +			 * leaf rnp locking.
-> +			 *
-> +			 * Ordering between remote CPU's pre idle accesses and
-> +			 * post grace period updater's accesses is enforced by the
-> +			 * below acquire semantic.
-> +			 */
-> +			snap = ct_dynticks_cpu_acquire(cpu);
->  			if (rcu_dynticks_in_eqs(snap))
->  				mask_ofl_test |= mask;
->  			else
-> -- 
-> 2.45.2
-> 
+	Andrew
 
