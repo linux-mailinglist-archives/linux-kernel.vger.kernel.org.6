@@ -1,85 +1,111 @@
-Return-Path: <linux-kernel+bounces-231661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81A4D919B97
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 02:09:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 826A0919B9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 02:13:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32E83285EA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:09:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4A841C22305
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B6F17F8;
-	Thu, 27 Jun 2024 00:09:11 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C548256D;
+	Thu, 27 Jun 2024 00:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="XZtqf9Ku"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1113F360;
-	Thu, 27 Jun 2024 00:09:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE36A2D;
+	Thu, 27 Jun 2024 00:13:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719446951; cv=none; b=EyV/XUO/X8Kc/i+S1TwCHYS/B9qCUjkXmOpnGJ0K3b7fVWyPST24gBFNu+pSFVSOFgB4bIrvHjM8y0WjK11iAEEy7GljDRWcE5rHTqwj2Eyye5zhxE2kEqIxne0bYj3IwKd/7mehM2VwTKUg7VqlJF7mpYndL2V1ZpK25KdUUGo=
+	t=1719447200; cv=none; b=Mpr87IzSIrOL6WA9mEvVUr0ECdxOf6UlZ4a8M4wnnQe0Kyz2ZmJJ3VsM5kg2VdkKmhyo/80jm7Djvh3LRwlHu2Ie2q2w60fQCE7Pt0pWpwcfZoNgPZ6rUsf6Jl+3AKIqZw+z4xco66lVEPfV9/AHaMc2UZZOnSI+8+v5PM7TFPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719446951; c=relaxed/simple;
-	bh=hKOTBIUw+Fn6pRctY/GNTgAf6aULAkfzPy+AF408o7A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DMR72XNVTa59eT6q+WkDWo2PDKXS24E2+VuxJorC38tdIREn1IxLaXmM45AfW+vMT/KY1r+Slz5/d4VOLLs36K17Pfnvi7GbIGGmGNZMiHK7vpCGRUuGspSvrdSO6oTzsIWjwFWx1Z11CG6EFgZf0Y62WL9EiF5x9xIkwGW1GOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37BCBC116B1;
-	Thu, 27 Jun 2024 00:09:08 +0000 (UTC)
-Date: Wed, 26 Jun 2024 20:09:06 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, John Ogness
- <john.ogness@linutronix.de>, Alexei Starovoitov <ast@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>, Yonghong Song
- <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, KP
- Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo
- <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, Petr Mladek
- <pmladek@suse.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, bpf
- <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] bpf: defer printk() inside __bpf_prog_run()
-Message-ID: <20240626200906.37326e17@rorschach.local.home>
-In-Reply-To: <6264da10-b6a0-40b8-ac26-c044b7f7529c@I-love.SAKURA.ne.jp>
-References: <345098dc-8cb4-4808-98cf-fa9ab3af4fc4@I-love.SAKURA.ne.jp>
-	<87ed8lxg1c.fsf@jogness.linutronix.de>
-	<60704acc-61bd-4911-bb96-bd1cdd69803d@I-love.SAKURA.ne.jp>
-	<87ikxxxbwd.fsf@jogness.linutronix.de>
-	<ea56efca-552f-46d7-a7eb-4213c23a263b@I-love.SAKURA.ne.jp>
-	<CAADnVQ+hxHsQpfOkQvq4d5AEQsH41BHL+e_RtuxUzyh-vNyYEQ@mail.gmail.com>
-	<7edb0e39-a62e-4aac-a292-3cf7ae26ccbd@I-love.SAKURA.ne.jp>
-	<CAADnVQKoHk5FTN=jywBjgdTdLwv-c76nCzyH90Js-41WxPK_Tw@mail.gmail.com>
-	<744c9c43-9e4f-4069-9773-067036237bff@I-love.SAKURA.ne.jp>
-	<20240626122748.065a903b@rorschach.local.home>
-	<f6c23073-dc0d-4b3f-b37d-1edb82737b5b@I-love.SAKURA.ne.jp>
-	<20240626183311.05eaf091@rorschach.local.home>
-	<6264da10-b6a0-40b8-ac26-c044b7f7529c@I-love.SAKURA.ne.jp>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719447200; c=relaxed/simple;
+	bh=FsEmZL7mq/PHCSkhTNbOJqlrMaH7nibO5ZGG4gPoXAE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fS/AbGOlrA2MAe/s1HyivSBZ51BXlfft1KiB6yb4U9zapDefyrrIrgaaHGiHaFbJME9cJSoHMg1Lg61vPYbSV88keD5WNY9LEkYN0D2A4syTTnQR5mKJsbF/1uTh76343OJtU48MWsItgIrtVT+nEkrrQs9rwRLMrXcHprcB1gY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=XZtqf9Ku; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=Y/oie4D7vMLSlRHkXYeX6gGQHuuqioTWp0KRoGukRbU=; b=XZ
+	tqf9Kuz/yKkf10DqErr96j4qpNaXrG6wfrswfQTKClOJWAOlEk+QMrUF8m1SvxvkatiHXALRcL0BZ
+	kPpvFe2dVK9sQswQ7K5ZossXeTx3U4ZaEYyMdru5FmZ5IWL6ENyIAS41oDK9ma92CDFn3Y3WtNYhG
+	KAEhQ/ya3+VOXFE=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sMckv-0015iQ-V6; Thu, 27 Jun 2024 02:12:53 +0200
+Date: Thu, 27 Jun 2024 02:12:53 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bhupesh Sharma <bhupesh.sharma@linaro.org>, kernel@quicinc.com,
+	Andrew Halaney <ahalaney@redhat.com>, linux-arm-msm@vger.kernel.org,
+	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] net: stmmac: Add interconnect support
+Message-ID: <974114ca-98ed-44a7-a038-eb3f71bd03ef@lunn.ch>
+References: <20240625-icc_bw_voting_from_ethqos-v2-0-eaa7cf9060f0@quicinc.com>
+ <20240625-icc_bw_voting_from_ethqos-v2-2-eaa7cf9060f0@quicinc.com>
+ <4123b96c-ae1e-4fdd-aab2-70478031c59a@lunn.ch>
+ <81e97c36-e244-4e94-b752-b06334a06db0@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <81e97c36-e244-4e94-b752-b06334a06db0@quicinc.com>
 
-On Thu, 27 Jun 2024 08:08:57 +0900
-Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
-
-> How do you respond to Petr Mladek's comment
+On Wed, Jun 26, 2024 at 04:36:06PM -0700, Sagar Cheluvegowda wrote:
 > 
->   Yeah, converting printk() into printk_deferred() or using
->   printk_deferred_enter() around particular code paths is a whac-a-mole
->   game.
 > 
-> at https://lkml.kernel.org/r/ZnvVQ5cs9F0b7paI@pathway.suse.cz ?
+> On 6/26/2024 6:07 AM, Andrew Lunn wrote:
+> >> +	plat->axi_icc_path = devm_of_icc_get(&pdev->dev, "axi");
+> >> +	if (IS_ERR(plat->axi_icc_path)) {
+> >> +		ret = (void *)plat->axi_icc_path;
+> > 
+> > Casting	to a void * seems odd. ERR_PTR()?
+> > 
+> > 	Andrew
+> 
+> The output of devm_of_icc_get is a pointer of type icc_path,
+> i am getting below warning when i try to ERR_PTR instead of Void*
+> as ERR_PTR will try to convert a long integer to a Void*.
+> 
+> "warning: passing argument 1 of ‘ERR_PTR’ makes integer from pointer without a cast"
+> 
 
-I agree with that. And your solution is no different than whack-a-mole.
-It's just that you used a bigger hammer to wack the mole.
+https://elixir.bootlin.com/linux/v6.10-rc5/source/drivers/crypto/qce/core.c#L224
+https://elixir.bootlin.com/linux/v6.10-rc5/source/drivers/gpu/drm/msm/adreno/a3xx_gpu.c#L591
+https://elixir.bootlin.com/linux/v6.10-rc5/source/drivers/gpu/drm/msm/adreno/a3xx_gpu.c#L597
+https://elixir.bootlin.com/linux/v6.10-rc5/source/drivers/spi/spi-qup.c#L1052
 
--- Steve
+Sorry, PTR_ERR().
+
+In general, a cast to a void * is a red flag and will get looked
+at. It is generally wrong. So you might want to fixup where ever you
+copied this from.
+
+	Andrew
 
