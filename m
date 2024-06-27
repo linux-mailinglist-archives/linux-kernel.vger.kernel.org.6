@@ -1,55 +1,52 @@
-Return-Path: <linux-kernel+bounces-233116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53CA491B266
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 00:48:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4293D91B268
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 00:54:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFE111F25FB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:48:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBC411F23725
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:54:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7249C1A2C1C;
-	Thu, 27 Jun 2024 22:47:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 591771A2C16;
+	Thu, 27 Jun 2024 22:54:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ml7sVsFv"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="1f+ja6sy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834891A2C1F
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 22:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98633131E41;
+	Thu, 27 Jun 2024 22:54:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719528442; cv=none; b=KSl4D95kyGK+F1QNPPuM038ooc5NPuzO3q0nLNCuSaNxBywX0b4/MNls3En5idWWvv6a1yahYL9Wn8EvFBalRx3BMfQ9Z+QGEUbciFSP9xbHUrdYY/PpBk6qXJGb9ziCAEYxr3/W/nTwM7W2QDOCAF1xC39l5OGnYLNgRc0OnhE=
+	t=1719528866; cv=none; b=gH4i5rwPanuj7PtD3VBGBMTK7hTLd3JqUmwRnmME9kxdA8zzHBf0jJ8Cpu2gUkckoSkhWo/XcAfXIkw+C9EpHVGLG4jdFMpcUcXPjSiNBMNLj2Uo0xeO8EJeh6qhM64l0Q2m07ETtBgXiUTWlN8vILATNZoXBRzZ3lNckxnLqXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719528442; c=relaxed/simple;
-	bh=XhR9dRhGH2Fpol0L63NLsuvdHiR3HGZLERYxyMMGTuA=;
+	s=arc-20240116; t=1719528866; c=relaxed/simple;
+	bh=+qEPYpz8xtAY3td5Z6Cp6xlrXoZsas6tJ0SWNWrPBrE=;
 	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=LXZ9GEMGGK7rmZofO1bbyYMGJhXl7mJcxYU1x4edpgRg1QZKb/C+9Y87a6gx7e75M1q0TfGpYarKFo+iTuKKgu4ACrG1DMvffMP2DbBMgJl7J05/ijy+5EWO9yKUw5rLlUFdX/Q3yI1EjLHQ8zNckBvW/g6nqPoPhK2fWSYXEQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ml7sVsFv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0B7AC2BBFC;
-	Thu, 27 Jun 2024 22:47:21 +0000 (UTC)
+	 Mime-Version:Content-Type; b=OVDkxpPm2JtAp70Nxydl5CfAVLjKpakal9D6JuLpsYBIiOt+fv2MURHooaDcY+acIEBZEROw21JcuWtOgmDg2nxvDwb5Vb2gY+fhjEOlX/A7x3fyX9jTzc8+Np+0UqgKLeYtXxZwmtmbtuNeFQqo3FZwiNMWh54uMXQXSsdaki4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=1f+ja6sy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 056ABC2BBFC;
+	Thu, 27 Jun 2024 22:54:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1719528442;
-	bh=XhR9dRhGH2Fpol0L63NLsuvdHiR3HGZLERYxyMMGTuA=;
+	s=korg; t=1719528866;
+	bh=+qEPYpz8xtAY3td5Z6Cp6xlrXoZsas6tJ0SWNWrPBrE=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ml7sVsFvH8C2/He23axIm4syYXKh5a/OzCai1M7xaJDMfjRsGJma1zvgny7+cXyt+
-	 D9vEF1mTXwBVbFeoYvJSp2wPZNKXFN8vP2eENw1TSZUE3vrEJC/YW58QRApGk/Pzxn
-	 7YRZ71d5GMfPYgyZWIXCM9nqPgij5Iy49kQk76KE=
-Date: Thu, 27 Jun 2024 15:47:21 -0700
+	b=1f+ja6syF1eHjxkjAo9/tlTkfg97XktIheL7Mj0c0QPK3G2R5zsF3qwIHDYEK6zU2
+	 X+b68C3cQ8uToCehyGamUMQv5hiWgQCeG411Lmq1XzJaIUoa65M0gCHk2lQRDMuIRS
+	 Hk9VPY3PcVUpXSzppOP2+FlJ1I5VW7mg1e7+fxiw=
+Date: Thu, 27 Jun 2024 15:54:25 -0700
 From: Andrew Morton <akpm@linux-foundation.org>
-To: Yu Zhao <yuzhao@google.com>
-Cc: Muchun Song <muchun.song@linux.dev>, David Hildenbrand
- <david@redhat.com>, Frank van der Linden <fvdl@google.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>, Peter Xu
- <peterx@redhat.com>, Yang Shi <yang@os.amperecomputing.com>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH mm-unstable v2] mm/hugetlb_vmemmap: fix race with
- speculative PFN walkers
-Message-Id: <20240627154721.69aea29609984bd5422afc97@linux-foundation.org>
-In-Reply-To: <20240627222705.2974207-1-yuzhao@google.com>
-References: <20240627222705.2974207-1-yuzhao@google.com>
+To: Yang Shi <yang@os.amperecomputing.com>
+Cc: peterx@redhat.com, yangge1116@126.com, david@redhat.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ Vivek Kasireddy <vivek.kasireddy@intel.com>
+Subject: Re: [v2 PATCH] mm: gup: do not call try_grab_folio() in slow path
+Message-Id: <20240627155425.a31792e7c4709facfcbd417c@linux-foundation.org>
+In-Reply-To: <20240627221413.671680-1-yang@os.amperecomputing.com>
+References: <20240627221413.671680-1-yang@os.amperecomputing.com>
 X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -60,32 +57,51 @@ Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Thu, 27 Jun 2024 16:27:05 -0600 Yu Zhao <yuzhao@google.com> wrote:
+On Thu, 27 Jun 2024 15:14:13 -0700 Yang Shi <yang@os.amperecomputing.com> wrote:
 
-> While investigating HVO for THPs [1], it turns out that speculative
-> PFN walkers like compaction can race with vmemmap modifications, e.g.,
+> The try_grab_folio() is supposed to be used in fast path and it elevates
+> folio refcount by using add ref unless zero.  We are guaranteed to have
+> at least one stable reference in slow path, so the simple atomic add
+> could be used.  The performance difference should be trivial, but the
+> misuse may be confusing and misleading.
 > 
->   CPU 1 (vmemmap modifier)         CPU 2 (speculative PFN walker)
->   -------------------------------  ------------------------------
->   Allocates an LRU folio page1
->                                    Sees page1
->   Frees page1
+> In another thread [1] a kernel warning was reported when pinning folio
+> in CMA memory when launching SEV virtual machine.  The splat looks like:
 > 
->   Allocates a hugeTLB folio page2
->   (page1 being a tail of page2)
+> [  464.325306] WARNING: CPU: 13 PID: 6734 at mm/gup.c:1313 __get_user_pages+0x423/0x520
+> [  464.325464] CPU: 13 PID: 6734 Comm: qemu-kvm Kdump: loaded Not tainted 6.6.33+ #6
+> [  464.325477] RIP: 0010:__get_user_pages+0x423/0x520
+> [  464.325515] Call Trace:
+> [  464.325520]  <TASK>
+> [  464.325523]  ? __get_user_pages+0x423/0x520
+> [  464.325528]  ? __warn+0x81/0x130
+> [  464.325536]  ? __get_user_pages+0x423/0x520
+> [  464.325541]  ? report_bug+0x171/0x1a0
+> [  464.325549]  ? handle_bug+0x3c/0x70
+> [  464.325554]  ? exc_invalid_op+0x17/0x70
+> [  464.325558]  ? asm_exc_invalid_op+0x1a/0x20
+> [  464.325567]  ? __get_user_pages+0x423/0x520
+> [  464.325575]  __gup_longterm_locked+0x212/0x7a0
+> [  464.325583]  internal_get_user_pages_fast+0xfb/0x190
+> [  464.325590]  pin_user_pages_fast+0x47/0x60
+> [  464.325598]  sev_pin_memory+0xca/0x170 [kvm_amd]
+> [  464.325616]  sev_mem_enc_register_region+0x81/0x130 [kvm_amd]
 > 
->   Updates vmemmap mapping page1
->                                    get_page_unless_zero(page1)
-> 
-> Even though page1->_refcount is zero after HVO, get_page_unless_zero()
-> can still try to modify this read-only field, resulting in a crash.
+> ...
+>
+> Fixes: 57edfcfd3419 ("mm/gup: accelerate thp gup even for "pages != NULL"")
+> Cc: <stable@vger.kernel.org> [6.6+]
 
-Ah.  So we should backport this into earlier kernels, yes?
+So we want something against Linus mainline for backporting ease.
 
-Are we able to identify a Fixes: for this?  Looks difficult.
+>    3. Rebased onto the latest mm-unstable
 
-This seems quite hard to trigger.  Do any particular userspace actions
-invoke the race?
+mm-unstable is quite different - memfd_pin_folios() doesn't exist in
+mainline!
+
+So can you please prepare the fix against current -linus?  I'll hang
+onto this patch to guide myself when I redo Vivek's "mm/gup: Introduce
+memfd_pin_folios() for pinning memfd folios" series on top.
 
 
 
