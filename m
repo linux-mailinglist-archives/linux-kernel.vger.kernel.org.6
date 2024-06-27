@@ -1,217 +1,145 @@
-Return-Path: <linux-kernel+bounces-232211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6ACA91A53E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:30:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 493A591A53F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:30:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 365311F24830
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:30:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E90EC1F24878
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:30:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E2AB14D2B4;
-	Thu, 27 Jun 2024 11:27:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F2A14E2FD;
+	Thu, 27 Jun 2024 11:28:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="iS69jOBe"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V0aJSBxl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29ACC145A1F
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 11:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52DA148FED;
+	Thu, 27 Jun 2024 11:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719487667; cv=none; b=oHGzqK2vKLGnldRXQxph7FGwcqlZ1i98BWLn7zi5e3bruVhu46ZcDvYOh8MaSNI3G4v1EjgqKk+Ljx2HgRqvZAR+kRlcMzf1c631RfXPhQhRtaIlTzA6b792irZjPsvniNajB9cWdCC4XtzlSQ+eNJaZWY/uusWQHtaLAfTVuH8=
+	t=1719487680; cv=none; b=FpOJOr2One9N0GWK69t6kLWUZLZ/41vopWZpOe3SW8tXpn44UJMATjOvwvdBl77nsJ1kJSR238VL1GIiCFH7NwhsiwMk6cHm3u2EKaqt/lUf/6NgdPXF+X1Msp+oERwzevQtWYvqXVZZ0LIkidPSG5QGjLplMNKjRpqSu69eOXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719487667; c=relaxed/simple;
-	bh=0HoB/1HZCOFaM/FV8xXHyPVn8lWDiQRugRGfyLSyjTA=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=ZPCAhSxvcz1w+/1FzCm2JCQlUpOPw435OUqRIqpOE3uuOkN+oR0/SItA/8a2F4Mi/aG15L5fVvA/eE7wq1xZnckXeIe/t7hSKBd5p9owTf/o5pQ2gZ34z2O7YVO3SE2KcTO3ggBamvq+bqRn3kLmdQkUJtSQzm9y6TWcpFzgo+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=iS69jOBe; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240627112736euoutp028a3edc6542bb8f5f069a421f3dc155ec~c2Om9UZnJ1787417874euoutp02n
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 11:27:36 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240627112736euoutp028a3edc6542bb8f5f069a421f3dc155ec~c2Om9UZnJ1787417874euoutp02n
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1719487656;
-	bh=u88LBBG3mbwMObYO4cXTwVKPjC5PKpg2/vkya7BYuM8=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=iS69jOBeUnEb8oajX/mw5nqOQN+Ji65peR2szephYUHKR1gFqRi+4X9YGLPQ0qV2w
-	 2DoY/iRMUotI1Q+v2XV6eOcwjpbxt6Tgnzgh1tXhRKFTP7/GO6fURkLDrpew1r2JHM
-	 sne+lF/AjCBGhi6RiiOcV7kKZKm+D38XZDARYYso=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240627112735eucas1p243d681d5c93d17caab830202cdc51856~c2OmrKpnF0664406644eucas1p2D;
-	Thu, 27 Jun 2024 11:27:35 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id A2.20.09620.7AC4D766; Thu, 27
-	Jun 2024 12:27:35 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240627112735eucas1p19932d1193a24f7b440a55ca4b1a35753~c2OmNNbzf1568215682eucas1p1h;
-	Thu, 27 Jun 2024 11:27:35 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240627112735eusmtrp10bd67c91fe4114869cbcbc7c41488696~c2OmMm45W2865228652eusmtrp1b;
-	Thu, 27 Jun 2024 11:27:35 +0000 (GMT)
-X-AuditID: cbfec7f5-d1bff70000002594-3a-667d4ca76bd2
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id E3.A6.08810.7AC4D766; Thu, 27
-	Jun 2024 12:27:35 +0100 (BST)
-Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240627112735eusmtip2728d94d795a242af793816b6be546941~c2Ol9hvbN2812428124eusmtip2Q;
-	Thu, 27 Jun 2024 11:27:35 +0000 (GMT)
-Received: from localhost (106.210.248.245) by CAMSVWEXC01.scsc.local
-	(2002:6a01:e347::6a01:e347) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Thu, 27 Jun 2024 12:27:34 +0100
-Date: Thu, 27 Jun 2024 13:27:29 +0200
-From: Joel Granados <j.granados@samsung.com>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-CC: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin
-	Murphy <robin.murphy@arm.com>, Kevin Tian <kevin.tian@intel.com>, Jason
-	Gunthorpe <jgg@ziepe.ca>, Jacek Lawrynowicz
-	<jacek.lawrynowicz@linux.intel.com>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/1] iommu/vt-d: Fix missed device TLB cache tag
-Message-ID: <20240627112729.rcadq6ey6bp6dios@joelS2.panther.com>
+	s=arc-20240116; t=1719487680; c=relaxed/simple;
+	bh=5AGW7pZM39ka5fK1CF7IYjzVqdaHxNVUi7SSr7A3uxw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UU1oxyqWZAeAr+sZSMVCDROfVWlTyHLseeYacTkmvcXW7/ZA5xElqsv5KJcFhiwpU4EoX33UY7Qg4029J+Pe9JEO+lBFkXom3nLhW9R4LRk/CoJ/OUSeFL4zIGPxKckV+ETec+lO+dVen1l/fFm06yJNWM4Jb5MQIyKn46HIevE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V0aJSBxl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1C7CC2BBFC;
+	Thu, 27 Jun 2024 11:27:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719487680;
+	bh=5AGW7pZM39ka5fK1CF7IYjzVqdaHxNVUi7SSr7A3uxw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V0aJSBxlNp072UP0ITDI5kx4tWkppIZJlsT8pbpfBIYt4oAmjkOeNqdkzwSvPHHZf
+	 RNnoM0or5OzVYYLf2ToRrj7G/bCfdcdAx76lRt2RH6bqnEicwRHp3xQLhHyoeAw/vg
+	 pxE4Y5NsTW22y6m/eOUQfgLBVtp+UVl/zg3iJEXXxolBuPIQzjd9uS2rjn9VNI4mEr
+	 vGMG4GkFmD0WPupOmz1mqZJNliv0QDCxy0NcNKVgExvlgpzys3VoLX3j75YwCtR6cZ
+	 tlmDn150fGE/TTYjK/4HAmoXoX5Q3MjsFpQWJfYxhIgDEBK4MWc/Px+o5zPB50vmY8
+	 27q6qtDir0S9g==
+Date: Thu, 27 Jun 2024 13:27:57 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org
+Subject: [PATCH rcu 1/6 v2] rcu: Remove full ordering on second EQS snapshot
+Message-ID: <Zn1Mvcl8r5WC6u-r@pavilion.home>
+References: <81f4e616-8125-4934-a8e2-fd5beae90995@paulmck-laptop>
+ <20240604222652.2370998-1-paulmck@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240620062940.201786-1-baolu.lu@linux.intel.com>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJKsWRmVeSWpSXmKPExsWy7djP87rLfWrTDF6u1LfYPHErm8WvLxYW
-	U879ZbWYOeMEo0Xn7A3sFkvfbmW3uLxrDpvFwQ9PWC1a7pg6cHo8OTiPyWPNvDWMHov3vGTy
-	2LSqk81j3slAjxebZzJ6fN4k57H1822WAI4oLpuU1JzMstQifbsEroyNn06yFXSIVvycvoy5
-	gfG/QBcjJ4eEgInEzfff2boYuTiEBFYwSqw41swE4XxhlOi/9YoZwvnMKPFgy2XWLkYOsJZL
-	3/wg4ssZJY7cvcUKV/T67X5GCGcro8TW3TMYQZawCKhKrPnaywpiswnoSJx/c4cZZJKIgLrE
-	sy8BIPXMAguZJL69OMAEUiMs4C5xYc59ZhCbV8BBYvvjx+wQtqDEyZlPWEBsZqA5C3Z/YgOZ
-	wywgLbH8HwdImFPAXmLpyiPsEL8pS0z//pMJwq6VWHvsDDvILgmBdk6JhWf+skEkXCR63j5m
-	hLCFJV4d3wLVLCNxenIPC0TDZEaJ/f8+QHWvZpRY1vgVaqy1RMuVJ1AdjhJrVl9kgoQRn8SN
-	t4IQh/JJTNo2nRkizCvR0SYEUa0msfreG5YJjMqzkLw2C8lrsxBeW8DIvIpRPLW0ODc9tdg4
-	L7Vcrzgxt7g0L10vOT93EyMwNZ3+d/zrDsYVrz7qHWJk4mA8xCjBwawkwhtaUpUmxJuSWFmV
-	WpQfX1Sak1p8iFGag0VJnFc1RT5VSCA9sSQ1OzW1ILUIJsvEwSnVwJSUtOLopQsvO3iMdWwy
-	9t7vvNqw0q1veUXPSvWFvO83SHl5O4YpuQnNSHe/uDk8ytV3Tb5r0Ybdh/w+W8syHdjOtujU
-	zm4mrWvvLBa2um44LD+9yFbm4vtEt8Vcc5WdEp/Pf1TSHPJyWcpi/bOndp6dGWH2aMtFM/EN
-	TK3PJgm/PeX0Y5va020v3H/esY+6VlYw1VXZ69kUlmdXP/yb8ZEv9LUQL0fmlX0coVvbHl3r
-	WLxj23vHsJ6jLdPkTXz6XhYxG+cu9J/wfI61y5ZbezN3eItx352ed/5aQIruVz+R8j/vVHNX
-	sRb3WyUn7dm4KP9W2aJEzypXKRve6rifc+a/S3b3TVj6VSztrr25hbASS3FGoqEWc1FxIgAI
-	JRJevAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrMIsWRmVeSWpSXmKPExsVy+t/xe7rLfWrTDCYc4bXYPHErm8WvLxYW
-	U879ZbWYOeMEo0Xn7A3sFkvfbmW3uLxrDpvFwQ9PWC1a7pg6cHo8OTiPyWPNvDWMHov3vGTy
-	2LSqk81j3slAjxebZzJ6fN4k57H1822WAI4oPZui/NKSVIWM/OISW6VoQwsjPUNLCz0jE0s9
-	Q2PzWCsjUyV9O5uU1JzMstQifbsEvYyNn06yFXSIVvycvoy5gfG/QBcjB4eEgInEpW9+XYxc
-	HEICSxkl9t5bwNjFyAkUl5HY+OUqK4QtLPHnWhcbRNFHRom7U1ugnK2MEtt+bWAGqWIRUJVY
-	87UXrINNQEfi/Js7zCAbRATUJZ59CQAJMwssZJJ4P9cWxBYWcJe4MOc+WCuvgIPE9seP2UFs
-	IQE7icnTmlgg4oISJ2c+YYHo1ZFYsPsTG8hIZgFpieX/OEDCnAL2EktXHmGHuFNZYvr3n0wQ
-	dq3Eq/u7GScwCs9CMmkWkkmzECYtYGRexSiSWlqcm55bbKhXnJhbXJqXrpecn7uJERib2479
-	3LyDcd6rj3qHGJk4GA8xSnAwK4nwhpZUpQnxpiRWVqUW5ccXleakFh9iNAUGxERmKdHkfGBy
-	yCuJNzQzMDU0MbM0MLU0M1YS5/Us6EgUEkhPLEnNTk0tSC2C6WPi4JRqYOKXjFiXdTP1XOcf
-	qYO2FpytoTN6zMQiRQQ8mw8HKlwMXmyxqMlrepC/zKLGpvRPGRn/v+mIGWytOPpnfpwna0X9
-	5/DukG8bxFJXlP4Kv8b4i1tk3c6XCgu6XvYcimOS+rn/lFHXladH1MOffJRd1eao0VnE+nb7
-	P6FVi0oC7e/LT3/3PU5Ky3Ixt0gJc1miCmNlhml49dQTuxP9Jtt6h6Vyr8lf1HGNuXb1xTCx
-	2E0dmpzMKjZCfBcW5Ms2OjLMutDkMC3olM6x92pvp1w0+/dxY4TVx9ybmldZlnvc6PqxL/fq
-	9wOzhLR/rbb3LlwkeWrtAqnntq1yE88/ll7/4+JKxfleDhtdb7g+WfV2phJLcUaioRZzUXEi
-	AHF5p8ZWAwAA
-X-CMS-MailID: 20240627112735eucas1p19932d1193a24f7b440a55ca4b1a35753
-X-Msg-Generator: CA
-X-RootMTR: 20240627112735eucas1p19932d1193a24f7b440a55ca4b1a35753
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240627112735eucas1p19932d1193a24f7b440a55ca4b1a35753
-References: <20240620062940.201786-1-baolu.lu@linux.intel.com>
-	<CGME20240627112735eucas1p19932d1193a24f7b440a55ca4b1a35753@eucas1p1.samsung.com>
+In-Reply-To: <20240604222652.2370998-1-paulmck@kernel.org>
 
-On Thu, Jun 20, 2024 at 02:29:40PM +0800, Lu Baolu wrote:
-> When a domain is attached to a device, the required cache tags are
-> assigned to the domain so that the related caches can be flushed
-> whenever it is needed. The device TLB cache tag is created based
-> on whether the ats_enabled field of the device's iommu data is set.
-> This creates an ordered dependency between cache tag assignment and
-> ATS enabling.
-> 
-> The device TLB cache tag would not be created if device's ATS is
-> enabled after the cache tag assignment. This causes devices with PCI
-> ATS support to malfunction.
-> 
-> The ATS control is exclusively owned by the iommu driver. Hence, move
-> cache_tag_assign_domain() after PCI ATS enabling to make sure that the
-> device TLB cache tag is created for the domain.
-> 
-> Fixes: 3b1d9e2b2d68 ("iommu/vt-d: Add cache tag assignment interface")
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> ---
->  drivers/iommu/intel/iommu.c | 20 ++++++++++----------
->  1 file changed, 10 insertions(+), 10 deletions(-)
-> 
-> Change log:
-> v2:
-> - Reverting the order instead of adding unnecessary run-time overhead.
-> 
-> v1:
-> - https://lore.kernel.org/linux-iommu/20240619015345.182773-1-baolu.lu@linux.intel.com/
-> 
-> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-> index 2e9811bf2a4e..fd11a080380c 100644
-> --- a/drivers/iommu/intel/iommu.c
-> +++ b/drivers/iommu/intel/iommu.c
-> @@ -2114,12 +2114,6 @@ static int dmar_domain_attach_device(struct dmar_domain *domain,
->  	if (ret)
->  		return ret;
->  
-> -	ret = cache_tag_assign_domain(domain, dev, IOMMU_NO_PASID);
-> -	if (ret) {
-> -		domain_detach_iommu(domain, iommu);
-> -		return ret;
-> -	}
-> -
->  	info->domain = domain;
->  	spin_lock_irqsave(&domain->lock, flags);
->  	list_add(&info->link, &domain->devices);
-> @@ -2137,15 +2131,21 @@ static int dmar_domain_attach_device(struct dmar_domain *domain,
->  	else
->  		ret = intel_pasid_setup_second_level(iommu, domain, dev, IOMMU_NO_PASID);
->  
-> -	if (ret) {
-> -		device_block_translation(dev);
-> -		return ret;
-> -	}
-> +	if (ret)
-> +		goto out_block_translation;
->  
->  	if (sm_supported(info->iommu) || !domain_type_is_si(info->domain))
->  		iommu_enable_pci_caps(info);
->  
-> +	ret = cache_tag_assign_domain(domain, dev, IOMMU_NO_PASID);
-> +	if (ret)
-> +		goto out_block_translation;
-> +
->  	return 0;
-> +
-> +out_block_translation:
-> +	device_block_translation(dev);
-> +	return ret;
->  }
->  
->  /**
-> -- 
-> 2.34.1
-> 
+When the grace period kthread checks the extended quiescent state
+counter of a CPU, full ordering is necessary to ensure that either:
 
-Even though this has already been applied, its good to know that it
-works :)
+* If the GP kthread observes the remote target in an extended quiescent
+  state, then that target must observe all accesses prior to the current
+  grace period, including the current grace period sequence number, once
+  it exits that extended quiescent state. Also the GP kthread must
+  observe all accesses performed by the target prior it entering in
+  EQS.
 
-Tested-by: Joel Granados <j.granados@samsung.com>
+or:
 
+* If the GP kthread observes the remote target NOT in an extended
+  quiescent state, then the target further entering in an extended
+  quiescent state must observe all accesses prior to the current
+  grace period, including the current grace period sequence number, once
+  it enters that extended quiescent state. Also the GP kthread later
+  observing that EQS must also observe all accesses performed by the
+  target prior it entering in EQS.
+
+This ordering is explicitly performed both on the first EQS snapshot
+and on the second one as well through the combination of a preceding
+full barrier followed by an acquire read. However the second snapshot's
+full memory barrier is redundant and not needed to enforce the above
+guarantees:
+
+    GP kthread                  Remote target
+    ----                        -----
+    // Access prior GP
+    WRITE_ONCE(A, 1)
+    // first snapshot
+    smp_mb()
+    x = smp_load_acquire(EQS)
+                               // Access prior GP
+                               WRITE_ONCE(B, 1)
+                               // EQS enter
+                               // implied full barrier by atomic_add_return()
+                               atomic_add_return(RCU_DYNTICKS_IDX, EQS)
+                               // implied full barrier by atomic_add_return()
+                               READ_ONCE(A)
+    // second snapshot
+    y = smp_load_acquire(EQS)
+    z = READ_ONCE(B)
+
+If the GP kthread above fails to observe the remote target in EQS
+(x not in EQS), the remote target will observe A == 1 after further
+entering in EQS. Then the second snapshot taken by the GP kthread only
+need to be an acquire read in order to observe z == 1.
+
+Therefore remove the needless full memory barrier on second snapshot.
+
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+Reviewed-by: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
+---
+ kernel/rcu/tree.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 28c7031711a3..b7d943e98a9a 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -321,7 +321,15 @@ static bool rcu_dynticks_in_eqs(int snap)
+  */
+ static bool rcu_dynticks_in_eqs_since(struct rcu_data *rdp, int snap)
+ {
+-	return snap != rcu_dynticks_snap(rdp->cpu);
++	/*
++	 * The first failing snapshot is already ordered against the accesses
++	 * performed by the remote CPU after it exits idle.
++	 *
++	 * The second snapshot therefore only needs to order against accesses
++	 * performed by the remote CPU prior to entering idle and therefore can
++	 * rely solely on acquire semantics.
++	 */
++	return snap != ct_dynticks_cpu_acquire(rdp->cpu);
+ }
+ 
+ /*
 -- 
+2.45.2
 
-Joel Granados
 
