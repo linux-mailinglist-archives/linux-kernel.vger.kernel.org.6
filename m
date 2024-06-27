@@ -1,153 +1,127 @@
-Return-Path: <linux-kernel+bounces-233122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2D4C91B27D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:05:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E037891B27E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:05:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1175A1C220B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:05:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17AAD1C21F65
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25AC1A2FA2;
-	Thu, 27 Jun 2024 23:05:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5728D1A2C1F;
+	Thu, 27 Jun 2024 23:05:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YxNCqxjM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EvTYHFgj"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BABF50297;
-	Thu, 27 Jun 2024 23:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 144911CA9F
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 23:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719529531; cv=none; b=Ep3xYoUSzKuDaRQoJTUVztyxbE3LMhkbNMsNPmzQo2JB8X1EAwegib/u2p1PZfWMCd/ffuojAXG7qdv5G9n4Z1CM9MrGdhMs1TFdJlntB2AFSYMo/h6b+ILrkvgf52plt5JgXDMUgEQHWjHjcEmW4f+Wx3b0H5c8Ro3UWNDNKDY=
+	t=1719529538; cv=none; b=THbLIn0UFCH5DTyJjjD6sxSM0Odvv+XUT4Jb4F2F/rU/W0K/E0DeytMa0XBj2JjDAG1k736D8h18y/jw3yjpAdejEAmw/ihwK2CVEusBIr3XxPXEcnzbHrKhVmvGVlaJVKj+6qjnpRNAsmp1nxv2Jp+QHimNKddNIk5RjQx973s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719529531; c=relaxed/simple;
-	bh=+naB5/Q042PFFIXI5mElAZ8RiZyXqp0O9pcDtXADfas=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DfxDymuN7P8wRZY8ytb9LO4N55W+FQrQmM94GsqDmIe8vpVuZTbAJ1iTYOBUL+Pzg+oqV2EhDFa8x0bfKSDwZVrGtU8ix9rH7R4BcdxXWVncegYCNZbuONGA3uZ8NSI+lJ+W06Y5flxfvQ3j9FZuL49UdnGIY0XGkkR3RjEsPuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YxNCqxjM; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719529528; x=1751065528;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+naB5/Q042PFFIXI5mElAZ8RiZyXqp0O9pcDtXADfas=;
-  b=YxNCqxjMvp1TVv7e3RYGxMe58CoF8hDaViA99vtgjL3Ayb2qrcuBRkBf
-   jm9l2uCveUeuOtzn8GV5AYj7ppHnAMr6+CJNLF9otqYy4KM+AcIpW1jdz
-   Uepw/2PsytLcUf5xlF7yHjIvxJ2Bk0pz3dDficHb+HfsmYuUq+InOoK32
-   acUmlERiksdhNd8aZVzJBGyTS9mmD+dHtsAWI9ir9f0b8YKxosAGHUZbb
-   a2W4aK1Tw0CsgxKI4qCV82rO4IOAoXEMbElRoXicHa9BVblb004NC7APT
-   e0UBSZoOEjKvspZBKoUXGeJ2iaezWf31jHsct5W38yHhnH237HEOib99x
-   Q==;
-X-CSE-ConnectionGUID: ruzR2WtBQnaWSwcH2/CGiw==
-X-CSE-MsgGUID: LABWpI5EQliDTtgJutK6lw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="20456938"
-X-IronPort-AV: E=Sophos;i="6.09,167,1716274800"; 
-   d="scan'208";a="20456938"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 16:05:27 -0700
-X-CSE-ConnectionGUID: TA8xWjJQSumhP3m4MOnxKA==
-X-CSE-MsgGUID: DnUjlU0JRaaOI2HUnzZ+pw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,167,1716274800"; 
-   d="scan'208";a="44384637"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 27 Jun 2024 16:05:20 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sMyB4-000Gbt-16;
-	Thu, 27 Jun 2024 23:05:18 +0000
-Date: Fri, 28 Jun 2024 07:04:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alistair Popple <apopple@nvidia.com>, dan.j.williams@intel.com,
-	vishal.l.verma@intel.com, dave.jiang@intel.com, logang@deltatee.com,
-	bhelgaas@google.com, jack@suse.cz, jgg@ziepe.ca
-Cc: oe-kbuild-all@lists.linux.dev, catalin.marinas@arm.com, will@kernel.org,
-	mpe@ellerman.id.au, npiggin@gmail.com, dave.hansen@linux.intel.com,
-	ira.weiny@intel.com, willy@infradead.org, djwong@kernel.org,
-	tytso@mit.edu, linmiaohe@huawei.com, david@redhat.com,
-	peterx@redhat.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, nvdimm@lists.linux.dev,
-	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org, jhubbard@nvidia.com
-Subject: Re: [PATCH 13/13] mm: Remove devmap related functions and page table
- bits
-Message-ID: <202406280658.1pp5cW2f-lkp@intel.com>
-References: <47c26640cd85f3db2e0a2796047199bb984d1b3f.1719386613.git-series.apopple@nvidia.com>
+	s=arc-20240116; t=1719529538; c=relaxed/simple;
+	bh=QrTJczM+9v1nnIrzsNFJeX7BQwwEuwrIjLO+Nhcgtmk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EQSZ9OQu0ufUoRwf+4LOJAfEEzknVXQ4xw51AJS/4eX+K0FUI+P3L7f1muzbej9o+kdUoGLvnQMDLZ2ydQZka6j1QYXJ1VNMWdxn4uKpkEwMXerKjgX1YeVDpf5qQelbktgo4p8OMUilg8NLYGEWnxfbJ/sQ675Fnuf4xS58w04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EvTYHFgj; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4255f915611so11285e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 16:05:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719529534; x=1720134334; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NR8a5VdpRyFEdAy/+Mk2F6C0FlXuH9wIEADA1ZqHe7o=;
+        b=EvTYHFgj4zc2nEait5SzUiFsQ0FJPTCp8QW3bDS4NDSxydDruNAYW6dG5ZRgHnABj+
+         LX+uAY7JunMMA3Djce4YbwmcapNycV8VYpujuXE102CQx1O8GgM/IQ0ag8gPM4YuXtT2
+         cglbkL7mBgctGkEUL0Y72YH17RSs4+5PTV8xhTJjK/Y2Xs6qk75DwLAmkQ77g/2X/YlC
+         nkMLB/RTL8OXm9ILduT6DoG2hRz1kbFasVnIAqRN8Pu/hQsGVWOQ8NZL8VqefsyDOpEw
+         H1hNnkEKbuywrd64Db0M/W1SLFags796GKR1+qOEgOJGQ6mVr3Hof9yKI7fzP25Q6zWh
+         ssTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719529534; x=1720134334;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NR8a5VdpRyFEdAy/+Mk2F6C0FlXuH9wIEADA1ZqHe7o=;
+        b=cJDTubpDHYnJOstUEjzinvd/RxvFrNk9eJ0A1am7cAZzIORB9EzN+nCMY9bv40qqKN
+         zXKShHabErL8fCvAxAh2YhWm92eDZu4O1j0MLSp82CtWDGDozjxwge7gpkb1k4PC1Dh+
+         8jX2hnsydA5+kXiNPRMux3E6VrlarcW8HzqTPoL3tQZZodcssDwsnaIraa20g0YqslPT
+         f08rOp4wUX+FDtF7e/WRPCEIyfiYC6GVtlXpaEiPMdNjv8/JB7EG07WkxvKAmjwvNT1f
+         UeDjHGo0hh4uYzh6lcTCY6ksakclPTWJF9OF1NTmUPPWpqhlFdqsXiVmNcCJInpaseD4
+         ENYA==
+X-Forwarded-Encrypted: i=1; AJvYcCXZ7j/19XW0UkjEWT+i7NJisUcC8aRUAdAsOOnTMuoFCJlAuRbeGhyE6Er9HXSiXQW8KWjmXHQ8SpH+tR3nPkJ7WphU8vjhKOkTZJJa
+X-Gm-Message-State: AOJu0Yycv/hdm3oBKKAKnBpVatpO5iRjHsEZuvxjxGSGufyaMQS1qylK
+	frjwk5gEvVlgTR7dC2mc/N6NIbdCFdtkD1OWnrI8pwkPpIbU9MhXKAkG9+05yBLmF+Gpy27ZSBG
+	kgs6pmkf4BNy51cmAVRRB650BdF7LeO6eNHCS
+X-Google-Smtp-Source: AGHT+IGIsOUEs4fzUsr6RJzov3tmLjjYLbl4yKDJt58g+5N6N/uFgB7LyjAXKkZkp446078Wh4je+/gZx2psYlFXpNg=
+X-Received: by 2002:a05:600c:5113:b0:421:6c54:3a8 with SMTP id
+ 5b1f17b1804b1-4256c2a9e25mr338085e9.7.1719529534313; Thu, 27 Jun 2024
+ 16:05:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <47c26640cd85f3db2e0a2796047199bb984d1b3f.1719386613.git-series.apopple@nvidia.com>
+References: <20240627222705.2974207-1-yuzhao@google.com> <20240627154721.69aea29609984bd5422afc97@linux-foundation.org>
+In-Reply-To: <20240627154721.69aea29609984bd5422afc97@linux-foundation.org>
+From: Yu Zhao <yuzhao@google.com>
+Date: Thu, 27 Jun 2024 17:04:58 -0600
+Message-ID: <CAOUHufb4O7oCsGcH5VcSoAw5cUiwYjGCfvLBHPZgo-G=HtiLVw@mail.gmail.com>
+Subject: Re: [PATCH mm-unstable v2] mm/hugetlb_vmemmap: fix race with
+ speculative PFN walkers
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Muchun Song <muchun.song@linux.dev>, David Hildenbrand <david@redhat.com>, 
+	Frank van der Linden <fvdl@google.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, Peter Xu <peterx@redhat.com>, 
+	Yang Shi <yang@os.amperecomputing.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Alistair,
+On Thu, Jun 27, 2024 at 4:47=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
+n.org> wrote:
+>
+> On Thu, 27 Jun 2024 16:27:05 -0600 Yu Zhao <yuzhao@google.com> wrote:
+>
+> > While investigating HVO for THPs [1], it turns out that speculative
+> > PFN walkers like compaction can race with vmemmap modifications, e.g.,
+> >
+> >   CPU 1 (vmemmap modifier)         CPU 2 (speculative PFN walker)
+> >   -------------------------------  ------------------------------
+> >   Allocates an LRU folio page1
+> >                                    Sees page1
+> >   Frees page1
+> >
+> >   Allocates a hugeTLB folio page2
+> >   (page1 being a tail of page2)
+> >
+> >   Updates vmemmap mapping page1
+> >                                    get_page_unless_zero(page1)
+> >
+> > Even though page1->_refcount is zero after HVO, get_page_unless_zero()
+> > can still try to modify this read-only field, resulting in a crash.
+>
+> Ah.  So we should backport this into earlier kernels, yes?
+>
+> Are we able to identify a Fixes: for this?  Looks difficult.
+>
+> This seems quite hard to trigger.  Do any particular userspace actions
+> invoke the race?
 
-kernel test robot noticed the following build errors:
+Yes, *very* hard to trigger:
+1. Most hugeTLB use cases I know of are static, i.e., reserved at boot
+time, because allocating at runtime is not reliable at all.
+2. On top of that, someone has to be very unlucky to get tripped over
+above, because the race window is so small -- I wasn't able to trigger
+it with a stress testing that does nothing but that (with THPs
+though).
 
-[auto build test ERROR on f2661062f16b2de5d7b6a5c42a9a5c96326b8454]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Alistair-Popple/mm-gup-c-Remove-redundant-check-for-PCI-P2PDMA-page/20240627-191709
-base:   f2661062f16b2de5d7b6a5c42a9a5c96326b8454
-patch link:    https://lore.kernel.org/r/47c26640cd85f3db2e0a2796047199bb984d1b3f.1719386613.git-series.apopple%40nvidia.com
-patch subject: [PATCH 13/13] mm: Remove devmap related functions and page table bits
-config: powerpc-allmodconfig (https://download.01.org/0day-ci/archive/20240628/202406280658.1pp5cW2f-lkp@intel.com/config)
-compiler: powerpc64-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240628/202406280658.1pp5cW2f-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406280658.1pp5cW2f-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from arch/powerpc/include/asm/book3s/64/mmu-hash.h:20,
-                    from arch/powerpc/include/asm/book3s/64/mmu.h:32,
-                    from arch/powerpc/include/asm/mmu.h:385,
-                    from arch/powerpc/include/asm/paca.h:18,
-                    from arch/powerpc/include/asm/current.h:13,
-                    from include/linux/thread_info.h:23,
-                    from include/asm-generic/preempt.h:5,
-                    from ./arch/powerpc/include/generated/asm/preempt.h:1,
-                    from include/linux/preempt.h:79,
-                    from include/linux/alloc_tag.h:11,
-                    from include/linux/rhashtable-types.h:12,
-                    from include/linux/ipc.h:7,
-                    from include/uapi/linux/sem.h:5,
-                    from include/linux/sem.h:5,
-                    from include/linux/compat.h:14,
-                    from arch/powerpc/kernel/asm-offsets.c:12:
->> arch/powerpc/include/asm/book3s/64/pgtable.h:1371:1: error: expected identifier or '(' before '}' token
-    1371 | }
-         | ^
-   make[3]: *** [scripts/Makefile.build:117: arch/powerpc/kernel/asm-offsets.s] Error 1
-   make[3]: Target 'prepare' not remade because of errors.
-   make[2]: *** [Makefile:1208: prepare0] Error 2
-   make[2]: Target 'prepare' not remade because of errors.
-   make[1]: *** [Makefile:240: __sub-make] Error 2
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [Makefile:240: __sub-make] Error 2
-   make: Target 'prepare' not remade because of errors.
-
-
-vim +1371 arch/powerpc/include/asm/book3s/64/pgtable.h
-
-953c66c2b22a30 Aneesh Kumar K.V  2016-12-12  1370  
-ebd31197931d75 Oliver O'Halloran 2017-06-28 @1371  }
-6a1ea36260f69f Aneesh Kumar K.V  2016-04-29  1372  #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
-ebd31197931d75 Oliver O'Halloran 2017-06-28  1373  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+So I don't think it's worth cc'ing stable, unless Muchun recommends.
 
