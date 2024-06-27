@@ -1,160 +1,139 @@
-Return-Path: <linux-kernel+bounces-232181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F47191A493
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:07:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C599B91A49C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:08:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AE63281CF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:07:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 038451C21A95
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1491F146D7D;
-	Thu, 27 Jun 2024 11:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1A2147C8B;
+	Thu, 27 Jun 2024 11:08:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j/EofhX+"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SniUivUt"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB4713E40C;
-	Thu, 27 Jun 2024 11:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F1EA46B83
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 11:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719486413; cv=none; b=ujnUrln77HDlgkO+kByXBlD89P/zR6NKVB+Mzh1YoHKSD5QNXiquUJacwGsKUGEaGqApiRxWVbd+YHhtYy4FiibZsxNRUUWJXhHVIbCkbvg6qpUkt5R6F+qXBBZQ9hWRb0ERz1NWl2DqukfHme1oxvKK+DwvW1V2ROZ+rJNTDIg=
+	t=1719486504; cv=none; b=KFx++zL4ed47lCG3SOyQwlVoMlh5OT1dm2BKliDekphZjrzOScZssfN6sOHxmxuHnWFVoFWaw0MgEznq60dZ6towC6RgHReh9vFnuVu+mAjYA9Y0tGoMKIMxPh5Qj8F1fmZRIde1/V7gXQkzTF8/6RAhnH6LDUFs/7ZLPqzrYxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719486413; c=relaxed/simple;
-	bh=tZakNtC4I+vYJWJ6QdGkWTcq89B73krB//aJoneJSBk=;
+	s=arc-20240116; t=1719486504; c=relaxed/simple;
+	bh=d2qDTrmbKUsr+Rx4meYIaCNy4rxF3QmIbu+x1J2u7qI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oi7ElwHBool1ycOu81lNxXf+7a5E9XOTKu+0rP5hOAJbcidRiF1FemqA+g2fbijYGW2MyMSarhw8OvRPFFVyCkoydisDsG7BsIeBEGDV6w0p8bR/u/RIRP27Etj+4Kg5Fw6Y5vV82EesYLnmLqpga53ndXkjpXiQ00pPJm0vHVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j/EofhX+; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57d0eca877cso1700162a12.2;
-        Thu, 27 Jun 2024 04:06:51 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=SDcIak/6CXlZiyOmyq65TJ3HTbctz217uwKfKOuu6/xRNlF34mfL0HbCwQ4UbOuYRw8qeKYYWaXEOgoFRZnORwwfu0oIVK2AEgPjMqeKS0owqiazqf6WzWU9n8nR4ECWWb+KGf+ZF2MrUG3uAy1OQ7KSwsTGJOllmyw/AtXrgOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SniUivUt; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ee4ab5958dso4207461fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 04:08:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719486410; x=1720091210; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uZobcV7LUgT3AtmVz+YLZMFY8b9IQxrzUyiNj5oBAUM=;
-        b=j/EofhX+dIzjeLqLDeOKDApspC/JC5+3pVcv4gu/WPdlE3wJJTtKcl8DG8qSCZCWcf
-         v5uWiJ4MQ3ADWip6Cx8bIXWbULQdVnwUMcJtz5+p3ZodMHTkOwERfnQHBvjwmSW8Zb2v
-         Z7pue3UrnF4lJHJ0C78aPlfvxPKHia/eXd6vB8XKHaZwDL2l8+sGhB/Yj7c4YFozZkMx
-         KDGhNbNzVKoq9QJxahwzKcbbAp+pd93Nm8cYeykno2hvsFBUBuqjfaYZd9B8nFOKhKk6
-         o2r7biBEU8m3tGnWhzb72MBFoPVNyu7geNihsf2Ul9eN/sz7jHd2jkJMJGt+9GUUq+LE
-         vDng==
+        d=linaro.org; s=google; t=1719486500; x=1720091300; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=LDIZ8jZNwgR+9ADgTc91LrJE3ciGgVcooiq9Tz2ImAg=;
+        b=SniUivUtEHA81Og4mGlKsZA9+IR1j9Q772AfYEmvjB8/n3PbkqmwkGqBKql7FvyehN
+         Cy0R4bAmDLQSO69VBDni1T0y28rYVwz9oLz9Xyq+Ra9RCg/eaECGCDo5enyJMCXwuIqv
+         7M1/uImXvC4aTDG8O9JZ5KyYncFyiQf8nQcWSnRRYJ0/suhRVdDHto+xPJnP0T6993Ze
+         tlOW/+bzDImw4xYOUFeDJ1hkNeLK+e5qYboUGWzVCk46dYHJLkufJhWtZaGJXJgC/E37
+         iH3cFaCcL7d7R5oyP25IzfTmtKEUAE6OAko2YNSDu51BM41n8coFf9UWGJ3gU3+VSIj8
+         HjDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719486410; x=1720091210;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uZobcV7LUgT3AtmVz+YLZMFY8b9IQxrzUyiNj5oBAUM=;
-        b=rYOUo/aOjudmHmtQxScE7xqigCDStp8be0uCHW8+nuYS28gboe8DM1f/37iDzIKryU
-         qPKqgftnBtpQI7rg+O8RI02ibYs2i0R7O2VaQROKJ+OJXJXRFhWaxSUJ/KeIE5Hv7ApZ
-         PeCZd9BM2qOxUZ4b7PvfPIZjHLl0P14TnwGEhHoSOZL7ncYbkJ/VsAGt793JMUH7cECz
-         xoPMEm6VnxpgYQwOXn/U2THJ6avr3zcrYtuIviDLOM1RSq0EXxvuyUX3li2QsWVfMvCy
-         f6jgp28kJKazgzmJPGyXNqhV6ehTq9w8O5rhqf76LU4YDEYqRkd6kqptP6ucQ8C58nLj
-         562w==
-X-Forwarded-Encrypted: i=1; AJvYcCV/fuXcbgP7VsZHM7YLPjRUhNDcuz3DApVUBqn3RM4Zms4cSC2xDsvWBY6knX2+4H8QNYLSTKC+s3ju7te7P4qjac5h88v1sx9YvRDwgGtTZcOBdADSkoHy0D7jsu6lYlTISIvA96v7wV5pLBqbUZ2nvlbsl8vqYfaDR8A0WVNxgmfcdg==
-X-Gm-Message-State: AOJu0YwJq+v2e1iYk7jJ29tX3uljlsJ2TJpgbDgcVWcumuUfBnO0AlJz
-	/t1TRoxvHaHs5F4Ij3qcTrm+Evp7jXCfI0xTL/JKMJaXXkVjOQbk
-X-Google-Smtp-Source: AGHT+IF9IGb+EAqcYH0xHZ8HF47kVV4+X97fRL+JfZxNkC2UpJv60e/BcSk/SP3WOORT9Eilh3uoUQ==
-X-Received: by 2002:a50:c081:0:b0:57d:519:ba3c with SMTP id 4fb4d7f45d1cf-57d7004c60emr7710603a12.24.1719486409637;
-        Thu, 27 Jun 2024 04:06:49 -0700 (PDT)
-Received: from andrea ([217.201.220.159])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-584d1280e71sm718305a12.37.2024.06.27.04.06.47
+        d=1e100.net; s=20230601; t=1719486500; x=1720091300;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LDIZ8jZNwgR+9ADgTc91LrJE3ciGgVcooiq9Tz2ImAg=;
+        b=hcbILkCjL9ezaJ+vVqEHBH7UxWZJZMD2snthH6ZnAckF15Hn5Gsoo3o816+JA6rXGr
+         aix/FdYb8fjlfdyDPPARbiDfVOHJlCtxGSIfWXV/X5i8srkFGX3tH9nKqbQiwcdfyldA
+         gepADjE4IJpSyMg9QRkeqHbvz4cqOGxnzzqUnLrheohSWTuWjkDpbbu2OEN9VXqOhd0/
+         dufM1VC/VsSaT1QpdzcaciTXDefuXBoKquw6wpow0hRtKGavWyDkYz6VrmdzNR0/Ca0Z
+         APlsMoiuC1rDM0gO9c1XICqWa2hEk7KTJZU7LmS3xGojcolaCJjchUA+F7Uxk5DjIKo6
+         Greg==
+X-Forwarded-Encrypted: i=1; AJvYcCVcj+Xfc3o9i+9MR2jMOVCecIlJ0q+bqELyAZcbmB4RAE23ky9pKwLVzHim/N7O9KojU22iOHxGbuNq4sD3cSg1cGfaF/jsV5/32y17
+X-Gm-Message-State: AOJu0YylEPYP6sv6/eYRyr7NAHcqgLrUk5PIqCZ64M/lhfOhKurO/NQ/
+	DD7Wij8/xoX1IujhCp4DOCDrlijGaF7FxOsLIwfh3a2F6ajEqsO6p0G7CP/C1+c=
+X-Google-Smtp-Source: AGHT+IHwZv+z93couUdcfrBSYJbEjitjwBpwPIxQ5GGLRkyBz5sbtXa96C/INZ7K24jqhX2BnvOu1Q==
+X-Received: by 2002:a2e:9e8f:0:b0:2ec:514f:89af with SMTP id 38308e7fff4ca-2ee4803f58bmr7341271fa.6.1719486500528;
+        Thu, 27 Jun 2024 04:08:20 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ee4a4bef67sm2157101fa.122.2024.06.27.04.08.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 04:06:49 -0700 (PDT)
-Date: Thu, 27 Jun 2024 13:06:42 +0200
-From: Andrea Parri <parri.andrea@gmail.com>
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
-	Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-arch@vger.kernel.org
-Subject: Re: [PATCH v2 01/10] riscv: Implement cmpxchg32/64() using Zacas
-Message-ID: <Zn1Hwpcamaz1YaEM@andrea>
-References: <20240626130347.520750-1-alexghiti@rivosinc.com>
- <20240626130347.520750-2-alexghiti@rivosinc.com>
+        Thu, 27 Jun 2024 04:08:20 -0700 (PDT)
+Date: Thu, 27 Jun 2024 14:08:18 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Gokul Sriram P <quic_gokulsri@quicinc.com>
+Cc: sboyd@kernel.org, andersson@kernel.org, bjorn.andersson@linaro.org, 
+	david.brown@linaro.org, devicetree@vger.kernel.org, jassisinghbrar@gmail.com, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com, 
+	robh@kernel.org, sricharan@codeaurora.org, gokulsri@codeaurora.org
+Subject: Re: [PATCH v9 1/8] remoteproc: qcom: Add PRNG proxy clock
+Message-ID: <dyh3vxosjjfztgwgpb5jtoqhzfyf5jyfndaujqoslepzvbet4o@kx6xaotzazcs>
+References: <20240621114659.2958170-1-quic_gokulsri@quicinc.com>
+ <20240621114659.2958170-2-quic_gokulsri@quicinc.com>
+ <chi3pzh5ss3mivnhs3qeoen5hsecfcgzaj6qnrgxantvinrri2@bxsbmpufuqpe>
+ <73cb638e-4982-49a2-ba79-0e78402b59ad@quicinc.com>
+ <ga5kczcyn3dqoky4525c74rr7dct5uizun2smvyx3p3u6z6vtm@5vshoozpttod>
+ <2617940e-72ad-4214-be26-7a5b15374609@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240626130347.520750-2-alexghiti@rivosinc.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2617940e-72ad-4214-be26-7a5b15374609@quicinc.com>
 
-> -#define __arch_cmpxchg(lr_sfx, sc_sfx, prepend, append, r, p, co, o, n)	\
-> +#define __arch_cmpxchg(lr_sfx, sc_cas_sfx, prepend, append, r, p, co, o, n)	\
->  ({									\
-> +	__label__ zacas, end;						\
->  	register unsigned int __rc;					\
->  									\
-> +	if (IS_ENABLED(CONFIG_RISCV_ISA_ZACAS)) {			\
-> +		asm goto(ALTERNATIVE("nop", "j %[zacas]", 0,		\
-> +				     RISCV_ISA_EXT_ZACAS, 1)		\
-> +			 : : : : zacas);				\
-> +	}								\
-> +									\
->  	__asm__ __volatile__ (						\
->  		prepend							\
->  		"0:	lr" lr_sfx " %0, %2\n"				\
->  		"	bne  %0, %z3, 1f\n"				\
-> -		"	sc" sc_sfx " %1, %z4, %2\n"			\
-> +		"	sc" sc_cas_sfx " %1, %z4, %2\n"			\
->  		"	bnez %1, 0b\n"					\
->  		append							\
->  		"1:\n"							\
->  		: "=&r" (r), "=&r" (__rc), "+A" (*(p))			\
->  		: "rJ" (co o), "rJ" (n)					\
->  		: "memory");						\
-> +	goto end;							\
-> +									\
-> +zacas:									\
-> +	if (IS_ENABLED(CONFIG_RISCV_ISA_ZACAS)) {			\
-> +		__asm__ __volatile__ (					\
-> +			prepend						\
-> +			"	amocas" sc_cas_sfx " %0, %z2, %1\n"	\
-> +			append						\
-> +			: "+&r" (r), "+A" (*(p))			\
-> +			: "rJ" (n)					\
-> +			: "memory");					\
-> +	}								\
+On Thu, Jun 27, 2024 at 03:31:01PM GMT, Gokul Sriram P wrote:
+> 
+> On 6/27/2024 12:47 AM, Dmitry Baryshkov wrote:
+> > On Tue, Jun 25, 2024 at 11:03:30AM GMT, Gokul Sriram P wrote:
+> > > On 6/22/2024 2:38 AM, Dmitry Baryshkov wrote:
+> > > > On Fri, Jun 21, 2024 at 05:16:52PM GMT, Gokul Sriram Palanisamy wrote:
+> > > > > PRNG clock is needed by the secure PIL, support for the same
+> > > > > is added in subsequent patches.
+> > > > Which 'same'?
+> > > > What is 'secure PIL'?
+> > >    will elaborate in the updated version.
+> > >    To answer your question, secure PIL is signed PIL image which only
+> > > TrustZone can authenticate and load.
+> > Fine. So, the current driver can not load WCSS firmware on IPQ8074, is
+> > that correct? Or was there some kind of firmware interface change? The
+> > driver was added in 2018, so I can only hope that at that point it
+> > worked. Could you please explain, what happened?
+> The existing wcss driver can load unsigned PIL images without the
+> involvement of TrustZone. That works even now.
+> With the current change, we are trying to add signed PIL as an option based
+> on "wcss->need_mem_protection" if set. For signed PIL alone, we send a PAS
+> request to TrustZone to authenticate and load.
 
-Is this second IS_ENABLED(CONFIG_RISCV_ISA_ZACAS) check actually needed?
-(just wondering - no real objection)
+I see that you are enabling it unconditionally for IPQ8074. How is it
+going to work?
 
+> I also just noticed that Bjorn had suggested to submit a new driver for the
+> PAS based IPQ WCSS instead of overloading this driver. Will also address
+> that and post a new driver in updated revision.
+> 
+> Regards,
+> Gokul
+> > > > > Signed-off-by: Nikhil Prakash V <quic_nprakash@quicinc.com>
+> > > > > Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
+> > > > > Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+> > > > > ---
+> > > > >    drivers/remoteproc/qcom_q6v5_wcss.c | 65 +++++++++++++++++++++--------
+> > > > >    1 file changed, 47 insertions(+), 18 deletions(-)
+> > 
 
-> +end:;									\
-
-Why the semicolon?
-
-
->  })
->  
->  #define _arch_cmpxchg(ptr, old, new, sc_sfx, prepend, append)		\
-> @@ -156,7 +177,7 @@
->  	__typeof__(ptr) __ptr = (ptr);					\
->  	__typeof__(*(__ptr)) __old = (old);				\
->  	__typeof__(*(__ptr)) __new = (new);				\
-> -	__typeof__(*(__ptr)) __ret;					\
-> +	__typeof__(*(__ptr)) __ret = (old);				\
-
-This is because the compiler doesn't realize __ret is actually
-initialized, right?  IAC, seems a bit unexpected to initialize
-with (old) (which indicates SUCCESS of the CMPXCHG operation);
-how about using (new) for the initialization of __ret instead?
-would (new) still work for you?
-
-  Andrea
+-- 
+With best wishes
+Dmitry
 
