@@ -1,103 +1,101 @@
-Return-Path: <linux-kernel+bounces-232508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F49F91A9FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:55:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8087491AA07
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:57:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF7071F25B06
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:55:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96ADD1C23CEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D676197A6A;
-	Thu, 27 Jun 2024 14:54:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6B5E197A65;
+	Thu, 27 Jun 2024 14:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KXOSHtQ4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wyvw3kj7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98AB719645E;
-	Thu, 27 Jun 2024 14:54:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09F213DBBC;
+	Thu, 27 Jun 2024 14:57:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719500090; cv=none; b=O7zTUFoBNkrSssTupU0jeUyi/wGv+sARH+CsthALqPgc//aG70pw7BE9lCbokzykWsv0PTRQlGz9Dc3LYBakonInfS6bqDQleYohlvIZQ9K0MMznt9X+ue5CYjdHjS9t9QqXSiug+6ey8JsGkka+JvOUzTgvdA+uUzh9kkaU0jE=
+	t=1719500221; cv=none; b=UD8FpDN1OUgT0ebPF9oMfg8Vqq65EJIsrLEEukeMdVlXWbpX19gxFJRm0p0qQFooAuCadLVQfusqpczr9pCmgHed0/vtHOQoC/0nuu6+nwvBt6zV1t/apZ4+qzyTJDVQMqtoDzdLmHkRsp2nfjpoSLd8i1GaXzPi/BXx8lxKsno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719500090; c=relaxed/simple;
-	bh=SsmqDpFLU55wekfIzIylJo3ky20eatPOkukJ2Xq2Rl4=;
+	s=arc-20240116; t=1719500221; c=relaxed/simple;
+	bh=i0jPmHeV6CW8BboUWCjCcCcbiGOGEGkREHGrut7jWv0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZgNhHV+EBqSB1CkfbgOOHrEaytASaoqlW8fkfoWN/nRcotlEF0le5Ou5ox7qywdYqe7sExVi7TCp0BrJkreDzFaoBMR32efOvEQxScch3yl2F0Od+O8Ket/5vFD9MQoJ/vjUwN+TVKRoFlPbNctqmHNu6BGJ9YoWXIFTuGvPpDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KXOSHtQ4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4102C2BBFC;
-	Thu, 27 Jun 2024 14:54:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1719500090;
-	bh=SsmqDpFLU55wekfIzIylJo3ky20eatPOkukJ2Xq2Rl4=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=swziQh3Nbna8gUH4OwaEWV4Mx9qQC2tzxB28YBo9vi9lfsslf0SemyoQmZ+Jq/wJyE9WFWAQJPv11yG868vnjcfDnsFkE8zksz61qzKfd+ZvGL3RRvmYpjMUBx0vfKvJgVUz6g1k0KUX8jHLkbwmjE1EGjVeNyUpyd60ZyLhxz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wyvw3kj7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B55D2C2BBFC;
+	Thu, 27 Jun 2024 14:56:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719500220;
+	bh=i0jPmHeV6CW8BboUWCjCcCcbiGOGEGkREHGrut7jWv0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KXOSHtQ4EWS38UWNcRRQyjhJnAi9rpP0qW0jNqA7dL72G7YAYA3L+aptgh3xz8UYe
-	 V5n2D24xeyagwRH7XxvRwycF/e+YUvCtn/MNk6uS+V4kSgmRn2jD8cxV8mv1/N4eQx
-	 kEbe9mFMfPfav0OXxPQVHL7kzEgcSJL/0c1q23To=
-Date: Thu, 27 Jun 2024 16:54:47 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Nikita Travkin <nikita@trvn.ru>,
+	b=Wyvw3kj7OLX/75jmYALHB97fyIeiAH0iDxbn/BkWcjaAGoC70sXoNhJjKlyOSlBYC
+	 zwAtQhABTFQ/tQ6UZpQQORIkqQhKuS2qk7CkRMZx7b56tZXu/CSgXXyFg3EVHg93Hx
+	 8huPSdgfgEHy4xEOqLNTWJ6D6YqGuZqUK78ohOg5OQKuK8TVUBXKRkT1wirNFZoZNk
+	 k47gmn1A22mUQtYYLu7MlMqyndABXPKAtPQe/RGmfGrHOYeg5IWNWrSfEY6DkdATXs
+	 1plpqQdbEHS6OgqoQjjg8fw57VH/ZQQoZwQj+uO5Ez/y4401OBnFEtuKA8xf82ML/L
+	 bT6MTqIf7kFzQ==
+Date: Thu, 27 Jun 2024 15:56:55 +0100
+From: Conor Dooley <conor@kernel.org>
+To: xianwei.zhao@amlogic.com
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 0/7] usb: typec: ucsi: rework glue driver interface
-Message-ID: <2024062717-foster-document-eb2f@gregkh>
-References: <20240627-ucsi-rework-interface-v4-0-289ddc6874c7@linaro.org>
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Jianxin Pan <jianxin.pan@amlogic.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, Hongyu Chen <hongyu.chen1@amlogic.com>
+Subject: Re: [PATCH 1/3] dt-bindings: power: add Amlogic A5 power domains
+Message-ID: <20240627-fool-willfully-381d32cb7189@spud>
+References: <20240627-a5_secpower-v1-0-1f47dde1270c@amlogic.com>
+ <20240627-a5_secpower-v1-1-1f47dde1270c@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Nb7gwQ9rDGfruR6Q"
+Content-Disposition: inline
+In-Reply-To: <20240627-a5_secpower-v1-1-1f47dde1270c@amlogic.com>
+
+
+--Nb7gwQ9rDGfruR6Q
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240627-ucsi-rework-interface-v4-0-289ddc6874c7@linaro.org>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 27, 2024 at 05:44:39PM +0300, Dmitry Baryshkov wrote:
-> The interface between UCSI and the glue driver is very low-level. It
-> allows reading the UCSI data from any offset (but in reality the UCSI
-> driver reads only VERSION, CCI an MESSAGE_IN data). All event handling
-> is to be done by the glue driver (which already resulted in several
-> similar-but-slightly different implementations). It leaves no place to
-> optimize the write-read-read sequence for the command execution (which
-> might be beneficial for some of the drivers), etc.
-> 
-> The patchseries attempts to restructure the UCSI glue driver interface
-> in order to provide sensible operations instead of a low-level read /
-> write calls.
-> 
-> If this approach is found to be acceptable, I plan to further rework the
-> command interface, moving reading CCI and MESSAGE_IN to the common
-> control code, which should simplify driver's implementation and remove
-> necessity to split quirks between sync_control and read_message_in e.g.
-> as implemented in the ucsi_ccg.c.
-> 
-> Note, the series was tested only on the ucsi_glink platforms. Further
-> testing is appreciated.
-> 
-> Depends: [1], [2]
-> 
-> [1] https://lore.kernel.org/linux-usb/20240612124656.2305603-1-fabrice.gasnier@foss.st.com/
-> 
-> [2] https://lore.kernel.org/linux-usb/20240621-ucsi-yoga-ec-driver-v8-1-e03f3536b8c6@linaro.org/
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
-> Changes in v4:
-> - Rebased on top of Greg's tree to resolve conflicts.
+On Thu, Jun 27, 2024 at 07:47:51PM +0800, Xianwei Zhao via B4 Relay wrote:
+> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+>=20
+> Add devicetree binding document and related header file for
+> Amlogic A5 secure power domains.
+>=20
+> Signed-off-by: Hongyu Chen <hongyu.chen1@amlogic.com>
+> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 
-Nope, still got conflicts, are you sure you updated properly?  Patch 1
-applied, but #2 did not.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-thanks,
+--Nb7gwQ9rDGfruR6Q
+Content-Type: application/pgp-signature; name="signature.asc"
 
-greg k-h
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZn19twAKCRB4tDGHoIJi
+0kGoAP0fbvycpS60F3qceed5hqd3hvVpzthMCcPCceocqcNgggD8DdsmSP5iVjUF
+/SiVKgXplReeg0WEoSoQAy7qQUiHQQU=
+=G7MA
+-----END PGP SIGNATURE-----
+
+--Nb7gwQ9rDGfruR6Q--
 
