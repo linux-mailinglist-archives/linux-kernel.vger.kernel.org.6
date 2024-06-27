@@ -1,227 +1,297 @@
-Return-Path: <linux-kernel+bounces-233128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E018F91B29B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:18:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53C1491B29E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:19:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 394A9B22611
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:18:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D70B11F21292
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:19:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB1A1A2C3C;
-	Thu, 27 Jun 2024 23:17:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34B81A2C3C;
+	Thu, 27 Jun 2024 23:19:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="igTJlcZ/"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2048.outbound.protection.outlook.com [40.107.22.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JOoAfhvh"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1BC19A2AE;
-	Thu, 27 Jun 2024 23:17:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719530275; cv=fail; b=npPxpBX/HVudwEjOYKn9yUPSHlFO7mdche35Yn0TlQp9WwPlmj4k2n8+VRazPpVxlLr0Bpv/LpQo2+MH1Wnklbyxks2+cOs9yZqM8CXndJAR+FzlXZt0kq7Lgj3ZQ4ABZZUk4XDVutPyruS85f6FK+3oQM2Soll3imWv4E22VGU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719530275; c=relaxed/simple;
-	bh=CFKhxKSgUPkRWDtt5WRHu5ORRIPhfc71Dcyn5xV2oeg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=sTOhNBaZSLDYChzVnemzMORrhG3sWGkPRCbM5bk9UA63LS9uqP1FIOQbS7aokRE00s0f/3eefN2VfG+/5nTTDZQFWe3yCND1M+wJ0HqTq0ISy/EAatYhlQabnUjK/RbY1S9LeN+HIwR7NQr1Wk3zKrilWquVWFTc/SsyUckegoU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=igTJlcZ/; arc=fail smtp.client-ip=40.107.22.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=f6KRJMXFQDtjA9KYUzz1mH4PrXZgKm/wLeiI33XzU3i1WJG45HxgvZ6OZjoSM0iPs1KyfaQhGKSuzxZzC3lM+B/rjmvvxXmyVJtLmCFxGPkPiUPNA+XJ1VPwjqTgyvynpQgyADXvRoMK16ytb4CKPI44OQA+Gy6A8vEtPCFbt+nwZ9IioZsTu575zffi0V6WovZ3G0xZiAHOc4XZAa6lDYpeb17zZT9IGfDJQbrgtzBYZmI1liZ+x9R4N8wX43qjlap3piTaFl6gT59TMZmkyJ900EcAqMx9+avu9HFqMN/op/5z4LGjCjcEauzln0f6vq24FLXo2N8rq36zQxHKPg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7E4EwxO9+2VHzWwtpeZBOgb30mpRyJVuZ9X/u04QC14=;
- b=GJHCxEFKvZISAM4e3UrDPtTyi+6OROGV48+I4ie1pQ5F6vsHNWGDKlZ1/7FOXIZ4puJ4tIvypkS7/HNcxbE06j1oPLukmHQY6+x+TfHf6tBOSS9JK8QPEs8hLjEc5cJRp3HhGVZ4+lW0pSiuNzFeK4aEdb+P3jhj+xUMyNfC2sJSwCmL+Da9RlNZlmVyxpHmA/PEm0SxxhjvBnRtp5sRsaOkiPXiSqN9CMKwicSGGv09Y8Ji5SIiaS4JrsGWcq7HILeysJFG1XqD/1eGPHAKEP2irlS3fNpEjVPx11D04C78mAfCbAPtlAbILIIrkrM91uqvTJqj6uYeoGBelFDZgA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7E4EwxO9+2VHzWwtpeZBOgb30mpRyJVuZ9X/u04QC14=;
- b=igTJlcZ/WFITPjzbETmPTCrJEbzzvgv8Ree5h3ljeHVdw2dJjk0Bn3+xFhUNFDDI+Qgrn+X4BLulc5UfKuoK18j9VToDzWmJkuI9hB+9Ff5guBTM62oJ24rH7t0wPkgWtrwdao+dMLwQlqmH/Njnlh8kvyKUstiwAfPVmUCtQqY=
-Received: from AM6PR04MB5941.eurprd04.prod.outlook.com (2603:10a6:20b:9e::16)
- by VI0PR04MB10300.eurprd04.prod.outlook.com (2603:10a6:800:218::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.35; Thu, 27 Jun
- 2024 23:17:50 +0000
-Received: from AM6PR04MB5941.eurprd04.prod.outlook.com
- ([fe80::9f4e:b695:f5f0:5256]) by AM6PR04MB5941.eurprd04.prod.outlook.com
- ([fe80::9f4e:b695:f5f0:5256%4]) with mapi id 15.20.7698.025; Thu, 27 Jun 2024
- 23:17:49 +0000
-From: Peng Fan <peng.fan@nxp.com>
-To: Rob Herring <robh@kernel.org>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-CC: Sudeep Holla <sudeep.holla@arm.com>, Cristian Marussi
-	<cristian.marussi@arm.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, "arm-scmi@vger.kernel.org"
-	<arm-scmi@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 1/2] dt-bindings: firmware: arm,scmi: introduce property
- mbox-rx-timeout-ms
-Thread-Topic: [PATCH 1/2] dt-bindings: firmware: arm,scmi: introduce property
- mbox-rx-timeout-ms
-Thread-Index: AQHaw9fWVQ0S04HfBU6k/eA0824dGrHcL1KAgAAZJZA=
-Date: Thu, 27 Jun 2024 23:17:49 +0000
-Message-ID:
- <AM6PR04MB59415F7793F4D15CCCB7388B88D72@AM6PR04MB5941.eurprd04.prod.outlook.com>
-References: <20240621-scmi-mailbox-v1-v1-0-8ed450735f46@nxp.com>
- <20240621-scmi-mailbox-v1-v1-1-8ed450735f46@nxp.com>
- <20240627214645.GA614300-robh@kernel.org>
-In-Reply-To: <20240627214645.GA614300-robh@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AM6PR04MB5941:EE_|VI0PR04MB10300:EE_
-x-ms-office365-filtering-correlation-id: 6f6dd8bd-dfcd-47aa-701c-08dc96ff5cbc
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?FVpXs4lJx/f1fGwWSNqZt6v0mHyQuY473Qlu2b3HL35kixbidlFfSTMU8xdn?=
- =?us-ascii?Q?0Gn2oZveb8eIeYxJsX1+4iyBD2uSFGCMIHzQKjxc2w6B5QtB/0vWWlWEH90U?=
- =?us-ascii?Q?e6OtHE2dxh8wb+YQDk3caFd9wdODlnca/8LAjcnNIJetis79gIl6CmF638m0?=
- =?us-ascii?Q?xO8XqWD5IaxL4Izhauc3TgDA4lyAnAwCeBdlpKYhtRL7Yrj52R/FGs/KteHk?=
- =?us-ascii?Q?oaB6V8WYR0Qb/V8GI3gV7wxRNGZO4g6W2w3HVq4j3QVGgn+M6+uHQ+jqN7qD?=
- =?us-ascii?Q?eaDO1jWTgS7BF/VCHfAsD47gUPJlGzVTpZa2wKG0MsFFksxrYNm0N3V5Yu/Y?=
- =?us-ascii?Q?+MCmSfqGgDYDOPc0hgbQeg8pVViKQg4p6RPMHTWk3V7JfDWILLvaLAzDLXOR?=
- =?us-ascii?Q?WgPvNTF0CPM+K0xDFqgLTJps66Y5FNnBhz8SxBau0BaWCQNtRHP6RAiraHkS?=
- =?us-ascii?Q?iM9FR2Pu+VEcCsVTCvrXuxyKphXJNMv1NmCFfVPx8lre9JhI3XzAZtnvu6lK?=
- =?us-ascii?Q?I1wqonv/2E/cz2naB6BOZRz3c+Tnxh+WOukxuGbr2gDEF9UxbywzQr5W0fE1?=
- =?us-ascii?Q?zI2etgoyFeURul9T2BqEJ5EXrf02ZFMxeu854rBU9f4+tGfBtYOffg8JUqhc?=
- =?us-ascii?Q?4ux6g+SAHWZEfGHttmdrvFBVWizR+WEoBd6r91S/pyLdIy9MG0W1EqhcbWCs?=
- =?us-ascii?Q?Vz53o6wwX8VNAKTHllzSPmmwFWm9T+u1Fvoj6TuZX9IROnafSniGvwAEQxTz?=
- =?us-ascii?Q?lBAZumjxxGq4FYdr53EC6fUsLDScVyygkt1bpycj2wCRSpwtlWtJ/LnACo3r?=
- =?us-ascii?Q?0H/hutY3xXtPQls06kPme2W0JBG68ha/AAFnJ9ilUwkm40d9z3DpiAr1MOBo?=
- =?us-ascii?Q?f2Hc0xjTipJOUG/B2CcSH0lZXKQJvChWIggt4q9nZHe1/LvjstfMF/pbuI4w?=
- =?us-ascii?Q?J9j98FJRRBoFqbeUp5yDEnCjsX+Lm9MQV5uaI7w7VJI10y/PD6D6X2GU6XV5?=
- =?us-ascii?Q?35tcUe6n6gUN0s9/qOHmCCciKGNB+HpPjYa51eZANi3BZntzGkeHB8G8Df6g?=
- =?us-ascii?Q?Uc49V4SXeqx0m4oVbBHEetmx+qJxca1nnISV9yaRenZ3jEtOCDdAMebPmsRM?=
- =?us-ascii?Q?gaO2CMaxSclfWlo2CNRSAp+mzizj7hEUgPuQ4EVAwa8eF5ZnNq7CAERW5F9s?=
- =?us-ascii?Q?ZsLmTh80PXl4qSohsooE2jo2xQBZgRYi6APT9YX9duCka5V/uGkJTvNxAeQi?=
- =?us-ascii?Q?rtO3NbuApJjgG7Db40nN9M7XRgdZqi/2geNDbH2tNRFOcOqv1yqmJrpNkXN7?=
- =?us-ascii?Q?EWtsOxjF4S1P4/cUlUg2xfXNT5suAAFRkFpqgJwtRBIRBvd2pwe9SLCthjiC?=
- =?us-ascii?Q?soo6pIi8OjlNuxf+edHt21m5GoO8+CmuBHD3EO+zkMltXocwNg=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB5941.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?XHqeZc2anN0/mNqtCN+ZcRTG3m1pBGiL2QN6AeVbPmZmiSqAkWkXc2lGt/xZ?=
- =?us-ascii?Q?HyrLz3vRnyVWb4jhY5W5/tAUv//Dofqd4ZXGTp70igy1yGvW3Jgm9ttScfaT?=
- =?us-ascii?Q?FF6UrNmTb8ZGiUrK1zqneHoc7suUzcSu10p7zEjQEGr/D++rv2UOie62Pl5v?=
- =?us-ascii?Q?MDLKuRHhkGtRnGQCgDpbxUOB4/UleBZj0AveTtWx12kz2mCARSCQ1vvVQ8Lv?=
- =?us-ascii?Q?I9zkXfBlWGK8OjkD0nMU9qnFEhqYVQV2dL96CTlAoMPXs29NAf3Pv5/6Z/ij?=
- =?us-ascii?Q?F2kSB69Mx97yLWKDTfDv0TZpkeHfYYqPPTpcb8UF2kB0ydaMpot/fJRDzX/S?=
- =?us-ascii?Q?XDsSk9EZWJCNKiF6sF8luan7giyZOiyZkf8yWRQQap9jmEnLtpMN99GxH3It?=
- =?us-ascii?Q?s/5jPCy/dvi6lPvZqxpnz3n/OW3d9DtGZwOo/qGWkl0l8xALBNJVLDdpTRJW?=
- =?us-ascii?Q?6lWmoPyRwOt/rbpPtgZG+mV3Y+uIoTbmeHt1fYR6+fWsEfcU9/S20diHBFDP?=
- =?us-ascii?Q?G4dDFoSGp+Q9d5YrGcpKAZJk4tQCkzunXM61FvRW70cugufMz8B4o9AHA2oD?=
- =?us-ascii?Q?qKTqtlykeL7apH+HywoHkRZBNnXdkuulPBmJndR7gVA6pXulZQ9tpVd6pkcn?=
- =?us-ascii?Q?vby0aETsBkj7RSB/AZcyMKC3Qdcac3B8KPRVfrKF209mx533LJmn0maYsEaN?=
- =?us-ascii?Q?dpDid2k0bmnxMcVOHRjNgvakVjc2sICyQ+dLwZqjMP9YyVlLCkoegCeDaBVj?=
- =?us-ascii?Q?Gv5igflseCpxtxbHDqUZD5iDYc36di00iHpzqnxP5PQmC22oDZgb8f8+Z9pA?=
- =?us-ascii?Q?Bgf6IYScEFd/NaG7uIo2d35hKWtA6JjmYO5uryNS2qOBYqgHHixYcuwwxBOA?=
- =?us-ascii?Q?HhLpOz62ddEeFQvQ97cN4j0nhBH1EcodNG6jFsodIts8kA/UaTWA+p8e5Ttz?=
- =?us-ascii?Q?flUgOVK58ct+raGMeqDkQbsPbZ5h+Z4XtnLg0doBVIgTpQpPpgtpLRHdhxT0?=
- =?us-ascii?Q?BgsRXIF7n0wOb34qRfLJnFXVhittTOKTgGvsuVIZZjeSogL6+DfvfP/ghdYx?=
- =?us-ascii?Q?Dwuzz2GoMC6xnQe+LxC2cxm6g4ZlThpLj6u4LgGCRTxG3AIS1sNdsCkQNQg+?=
- =?us-ascii?Q?iltWNp87UqnnXkG5yg0ogbkwaaLaiwaqIQ1rfDnIBOoLV8PV1zj0X6kwZhxC?=
- =?us-ascii?Q?FZszfb3z5335bZEf/4Btjnu4Us1EEmEerFb16ayG1hgvweuIPLN5wkNGt3TT?=
- =?us-ascii?Q?oYcWiYiq6B/ff0IzgVtt8ojVl29LRpWNdWILsMTNUh7hLAAYqeiRP52Fj6/J?=
- =?us-ascii?Q?u/lt8t3tRSRnzbavUQbjwFbUGbMIwHGW0bxbPPwqoR+Y6eg5cwXeoCQxK6Ab?=
- =?us-ascii?Q?vb3h1/gLHMvEbdDp1/Ew8bPuf9NJ0GNN5ctMDA/lL/ix7aCxY8q1V/FXQCto?=
- =?us-ascii?Q?NrCTG2TUTkkxeBPBqlD8vmifmvvnLZ0lpDuSGO7GnaVAL/pd4nmgiXg17Waz?=
- =?us-ascii?Q?T/t7yOuVjIEvGFYzz0IEYaa+q17LN7i+9WY/5tt66u0U9YAFNAIOFMRUYtvl?=
- =?us-ascii?Q?s0e+I6Z9PC+BW/Pdd7Q=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E0D19A2AE
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 23:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719530365; cv=none; b=a4yZh8xxcmbu2Dzhx4ZRLF601gyshkdP2N6UMuNjunYg8Jb/CKpz4nvp90N8ZFrsaKLCv6fEjvAL69SFSukuEsNTdPsEj2JGccbUrpx3GrudmwTl/63Z8fDCJyr7UoqtJplrdB9WaB866D2KQ5BjqW0U+0+kc8FgcDTRS80hc+Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719530365; c=relaxed/simple;
+	bh=DrCqKiL/pCMihlN46mvRvR8EclvzSD4pZGIIsWvU/0I=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=fGEerYbUGufkB4HvVaRqhkW2NTd1MTtiewpf/pHPkS6YIGxTcSc58kdq/YgzGQh59Yp7W3zd3qq9XScItuXVkGNqmKlP4WG/pyvoutwZjKpF9UUjR8vNg2UoPlacXq8dcPTPJLWCSb/LziIGHo2UVqFZOeAfSGlg4jPhR8Ww1hA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--elsk.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JOoAfhvh; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--elsk.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e0322e5d0daso125910276.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 16:19:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719530361; x=1720135161; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=lbeqboMNXPvpri+31lcbyxGvW1jhsLnKPupd3d+M1PU=;
+        b=JOoAfhvhAzH3XsUMbZKccTzpgflGskGhayhrPKY/h5dbGyIj8i8B28XuCJ0HEpeLJe
+         aROHzmluAUF5sJajpdZlPBXTTeqotKQ5+7jsMTgndTw2Bcoj4ALn8bUmCH8IKs+8kVWB
+         GWvJXsspuPe/NIQQFdWKBZBYsk6m0Zvdc2VSxeGPRYb3boRSfgWO5Wjpf9rnQXK7yOUk
+         pWebxjewMvRQ4YEeykJRXySpFjQcPCKUfvZEMwhXz+/G9rHVeBfcLBs6o9E2s50o1OSf
+         o0i6IiH6pi56CsOiB7VAxaJYXblhPKsbAcpuLGgFqmSp0UQF8cz7iS+9Ajz35IbU+pqq
+         sc9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719530361; x=1720135161;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lbeqboMNXPvpri+31lcbyxGvW1jhsLnKPupd3d+M1PU=;
+        b=hAx4TjWvm157X4W4noy6CagfZV5BObItifNUSuAkINL/VoRmD2aeqBGtFwskZYzwwW
+         6cY5tOQyNJdyuvETztpbxeiYabHE2qe65uEZlrvAQYbimQcM+of1rPHRpBTCGQkfp7w/
+         0sGYIobBB+wW0DmQYMmW8lHaeAI54SaZUAF04rgv0wS26LRWsEdrb1thdIEgA1wUMlFd
+         cFqzzIw1GFbgX3SMckZdtFm9XUOPiKJNkN12THnV1q/2/kNFYnba/+o7KlDaXd+qE8+X
+         MrZVbdrYu/TKDlwp6cHe5Qis/B56JY7q3dPkSebgxDUdhRgE6HFwlI2FJE40jlONqMRv
+         IBng==
+X-Forwarded-Encrypted: i=1; AJvYcCUg2hKF+5sfi/vgqHFL4RfuKZUfXKCWv0D2zXMIk3xjGdpcHbQ/kbvrSHP/weEph2pVnn2VWJTz8F4+/zBri9YusyzMDStnDV26Hjum
+X-Gm-Message-State: AOJu0Yz9fkPQJ0T/+eMxqY9Keiw8OYVj0VHW7oolZVCIV+8X2GwMBwa3
+	7MiHLaT3nhPUYgVqOjBj50rDF+Pcx6/gA/wkfAxw+Fkp+02LipfL2p/+WJZJeDIQ14dCWw==
+X-Google-Smtp-Source: AGHT+IFsOjo+uPSs9HOn7YkmxKzwpRo9G4W7RfOuhhYZWC95tEB560alN/cX4ONJq1ishV2MNcawnZEv
+X-Received: from elsk.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:dbd])
+ (user=elsk job=sendgmr) by 2002:a25:51c1:0:b0:e03:5148:9f02 with SMTP id
+ 3f1490d57ef6-e035bff4fe7mr22276.3.1719530361457; Thu, 27 Jun 2024 16:19:21
+ -0700 (PDT)
+Date: Thu, 27 Jun 2024 23:19:18 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM6PR04MB5941.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6f6dd8bd-dfcd-47aa-701c-08dc96ff5cbc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jun 2024 23:17:49.6091
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: EzLfqUsRFr8OnLv1Q/PNx+CbZJwZXwmnjq4fAVo2yAIoazJMp6zGfHBfZZU8ZxghSVM48my7FRkREUqg3U7X8g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10300
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
+Message-ID: <20240627231919.2461945-1-elsk@google.com>
+Subject: [PATCH v3] kconfig: recursive checks drop file/lineno
+From: HONG Yifan <elsk@google.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: HONG Yifan <elsk@google.com>, kernel-team@android.com, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-> Subject: Re: [PATCH 1/2] dt-bindings: firmware: arm,scmi: introduce
-> property mbox-rx-timeout-ms
->=20
-> On Fri, Jun 21, 2024 at 08:46:57PM +0800, Peng Fan (OSS) wrote:
-> > From: Peng Fan <peng.fan@nxp.com>
-> >
-> > System Controller Management Interface(SCMI) firmwares might
-> have
-> > different designs by SCMI firmware developers. So the maximum
-> receive
-> > channel timeout value might also varies in the various designs.
-> >
-> > So introduce property mbox-rx-timeout-ms to let each platform could
-> > set its own timeout value in device tree.
-> >
-> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > ---
-> >  Documentation/devicetree/bindings/firmware/arm,scmi.yaml | 6
-> ++++++
-> >  1 file changed, 6 insertions(+)
-> >
-> > diff --git
-> a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> > b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> > index 4d823f3b1f0e..d6cc2bf4c819 100644
-> > --- a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> > +++ b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
-> > @@ -121,6 +121,12 @@ properties:
-> >        atomic mode of operation, even if requested.
-> >      default: 0
-> >
-> > +  max-rx-timeout-ms:
-> > +    description:
-> > +      An optional time value, expressed in milliseconds, representing,
-> on this
-> > +      platform, the mailbox maximum timeout value for receive
-> channel.
->=20
-> "on this platform"? Doesn't every property apply to the given platform?
+This prevents segfault when getting filename and lineno in recursive
+checks.
 
-Yeah, apply to all the use mailbox.
+If the following snippet is found in Kconfig:
 
->=20
-> > +    default: 0
->=20
-> 0 means no timeout or response is instant?
+[Test code 1]
 
-I should use 30ms same as what the driver currently use.
+config FOO
+        bool
+        depends on BAR
+        select BAR
 
-Thanks,
-Peng.
+... without BAR defined; then if one runs `make tinyconfig`, there is a
+segfault.
 
->=20
-> > +
-> >    arm,smc-id:
-> >      $ref: /schemas/types.yaml#/definitions/uint32
-> >      description:
-> >
-> > --
-> > 2.37.1
-> >
+  Kconfig:34:error: recursive dependency detected!
+  Kconfig:34:	symbol FOO depends on BAR
+  make[4]: *** [scripts/kconfig/Makefile:85: allnoconfig] Segmentation fault
+
+This is because of the following. BAR is a fake entry created by
+sym_lookup() with prop being NULL. In the recursive check, there is a
+NULL check for prop to fall back to stack->sym->prop if stack->prop is
+NULL. However, in this case, stack->sym points to the fake BAR entry
+created by sym_lookup(), so prop is still NULL. prop was then referenced
+without additional NULL checks, causing segfault.
+
+As the previous email thread suggests, the file and lineno for select is
+also wrong:
+
+[Test code 2]
+
+config FOO
+       bool
+
+config BAR
+       bool
+
+config FOO
+       bool "FOO"
+       depends on BAR
+       select BAR
+
+  $ make defconfig
+  *** Default configuration is based on 'x86_64_defconfig'
+  Kconfig:1:error: recursive dependency detected!
+  Kconfig:1: symbol FOO depends on BAR
+  Kconfig:4: symbol BAR is selected by FOO
+  [...]
+
+Kconfig:4 should be Kconfig:10.
+
+This patch deletes the wrong and segfault-prone filename/lineno
+inference completely. With this patch, Test code 1 yields:
+
+error: recursive dependency detected!
+	symbol FOO depends on BAR
+	symbol BAR is selected by FOO
+
+Link: https://lore.kernel.org/linux-kbuild/20240620211112.500465-1-elsk@google.com/
+Signed-off-by: HONG Yifan <elsk@google.com>
+
+--
+v3: Rebase on top of
+    https://lore.kernel.org/linux-kbuild/20240626182212.3758235-1-masahiroy@kernel.org/T/#t
+    & resolve merge conflicts. Fix
+    scripts/kconfig/tests/err_recursive_dep/expected_stderr
+v2: Delete all filenames/lineno completely as suggested by
+    masahiroy@kernel.org
+---
+ scripts/kconfig/symbol.c                      | 40 +++++++------------
+ .../tests/err_recursive_dep/expected_stderr   | 36 ++++++++---------
+ 2 files changed, 33 insertions(+), 43 deletions(-)
+
+diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
+index c05d188a1857..e22c8769f44f 100644
+--- a/scripts/kconfig/symbol.c
++++ b/scripts/kconfig/symbol.c
+@@ -1068,10 +1068,10 @@ static void sym_check_print_recursive(struct symbol *last_sym)
+ {
+ 	struct dep_stack *stack;
+ 	struct symbol *sym, *next_sym;
+-	struct menu *menu = NULL;
+ 	struct menu *choice;
+ 	struct property *prop;
+ 	struct dep_stack cv_stack;
++	enum prop_type type;
+ 
+ 	choice = sym_get_choice_menu(last_sym);
+ 	if (choice) {
+@@ -1094,49 +1094,39 @@ static void sym_check_print_recursive(struct symbol *last_sym)
+ 		if (prop == NULL)
+ 			prop = stack->sym->prop;
+ 
+-		/* for choice values find the menu entry (used below) */
+-		if (sym_is_choice(sym) || sym_is_choice_value(sym)) {
+-			for (prop = sym->prop; prop; prop = prop->next) {
+-				menu = prop->menu;
+-				if (prop->menu)
+-					break;
+-			}
+-		}
++		if (prop == NULL)
++			type = P_UNKNOWN;
++		else
++			type = prop->type;
++
+ 		if (stack->sym == last_sym)
+-			fprintf(stderr, "%s:%d:error: recursive dependency detected!\n",
+-				prop->filename, prop->lineno);
++			fprintf(stderr, "error: recursive dependency detected!\n");
+ 
+ 		if (sym_is_choice(next_sym)) {
+ 			choice = list_first_entry(&next_sym->menus, struct menu, link);
+ 
+-			fprintf(stderr, "%s:%d:\tsymbol %s is part of choice block at %s:%d\n",
+-				menu->filename, menu->lineno,
++			fprintf(stderr, "\tsymbol %s is part of choice block at %s:%d\n",
+ 				sym->name ? sym->name : "<choice>",
+ 				choice->filename, choice->lineno);
+ 		} else if (stack->expr == &sym->dir_dep.expr) {
+-			fprintf(stderr, "%s:%d:\tsymbol %s depends on %s\n",
+-				prop->filename, prop->lineno,
++			fprintf(stderr, "\tsymbol %s depends on %s\n",
+ 				sym->name ? sym->name : "<choice>",
+ 				next_sym->name);
+ 		} else if (stack->expr == &sym->rev_dep.expr) {
+-			fprintf(stderr, "%s:%d:\tsymbol %s is selected by %s\n",
+-				prop->filename, prop->lineno,
++			fprintf(stderr, "\tsymbol %s is selected by %s\n",
+ 				sym->name, next_sym->name);
+ 		} else if (stack->expr == &sym->implied.expr) {
+-			fprintf(stderr, "%s:%d:\tsymbol %s is implied by %s\n",
+-				prop->filename, prop->lineno,
++			fprintf(stderr, "\tsymbol %s is implied by %s\n",
+ 				sym->name, next_sym->name);
+ 		} else if (stack->expr) {
+-			fprintf(stderr, "%s:%d:\tsymbol %s %s value contains %s\n",
+-				prop->filename, prop->lineno,
++			fprintf(stderr, "\tsymbol %s %s value contains %s\n",
+ 				sym->name ? sym->name : "<choice>",
+-				prop_get_type_name(prop->type),
++				prop_get_type_name(type),
+ 				next_sym->name);
+ 		} else {
+-			fprintf(stderr, "%s:%d:\tsymbol %s %s is visible depending on %s\n",
+-				prop->filename, prop->lineno,
++			fprintf(stderr, "\tsymbol %s %s is visible depending on %s\n",
+ 				sym->name ? sym->name : "<choice>",
+-				prop_get_type_name(prop->type),
++				prop_get_type_name(type),
+ 				next_sym->name);
+ 		}
+ 	}
+diff --git a/scripts/kconfig/tests/err_recursive_dep/expected_stderr b/scripts/kconfig/tests/err_recursive_dep/expected_stderr
+index 05d4ced70320..fc2e860af082 100644
+--- a/scripts/kconfig/tests/err_recursive_dep/expected_stderr
++++ b/scripts/kconfig/tests/err_recursive_dep/expected_stderr
+@@ -1,38 +1,38 @@
+-Kconfig:5:error: recursive dependency detected!
+-Kconfig:5:	symbol A depends on A
++error: recursive dependency detected!
++	symbol A depends on A
+ For a resolution refer to Documentation/kbuild/kconfig-language.rst
+ subsection "Kconfig recursive dependency limitations"
+ 
+-Kconfig:11:error: recursive dependency detected!
+-Kconfig:11:	symbol B is selected by B
++error: recursive dependency detected!
++	symbol B is selected by B
+ For a resolution refer to Documentation/kbuild/kconfig-language.rst
+ subsection "Kconfig recursive dependency limitations"
+ 
+-Kconfig:17:error: recursive dependency detected!
+-Kconfig:17:	symbol C1 depends on C2
+-Kconfig:21:	symbol C2 depends on C1
++error: recursive dependency detected!
++	symbol C1 depends on C2
++	symbol C2 depends on C1
+ For a resolution refer to Documentation/kbuild/kconfig-language.rst
+ subsection "Kconfig recursive dependency limitations"
+ 
+-Kconfig:27:error: recursive dependency detected!
+-Kconfig:27:	symbol D1 depends on D2
+-Kconfig:32:	symbol D2 is selected by D1
++error: recursive dependency detected!
++	symbol D1 depends on D2
++	symbol D2 is selected by D1
+ For a resolution refer to Documentation/kbuild/kconfig-language.rst
+ subsection "Kconfig recursive dependency limitations"
+ 
+-Kconfig:37:error: recursive dependency detected!
+-Kconfig:37:	symbol E1 depends on E2
+-Kconfig:42:	symbol E2 is implied by E1
++error: recursive dependency detected!
++	symbol E1 depends on E2
++	symbol E2 is implied by E1
+ For a resolution refer to Documentation/kbuild/kconfig-language.rst
+ subsection "Kconfig recursive dependency limitations"
+ 
+-Kconfig:49:error: recursive dependency detected!
+-Kconfig:49:	symbol F1 default value contains F2
+-Kconfig:51:	symbol F2 depends on F1
++error: recursive dependency detected!
++	symbol F1 default value contains F2
++	symbol F2 depends on F1
+ For a resolution refer to Documentation/kbuild/kconfig-language.rst
+ subsection "Kconfig recursive dependency limitations"
+ 
+-Kconfig:60:error: recursive dependency detected!
+-Kconfig:60:	symbol G depends on G
++error: recursive dependency detected!
++	symbol G depends on G
+ For a resolution refer to Documentation/kbuild/kconfig-language.rst
+ subsection "Kconfig recursive dependency limitations"
+-- 
+2.45.2.803.g4e1b14247a-goog
 
 
