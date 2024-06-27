@@ -1,111 +1,171 @@
-Return-Path: <linux-kernel+bounces-232332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B14A91A6F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:51:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EB9A91A6F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:51:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 401A51F26D63
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:51:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B68091F26F9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07DF178393;
-	Thu, 27 Jun 2024 12:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A321178CEA;
+	Thu, 27 Jun 2024 12:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VjajGwUY"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="D3WZqQWX"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 495B91779A5
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA35C1482F5;
+	Thu, 27 Jun 2024 12:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719492677; cv=none; b=fqTdHWGOBhgP/y661whthvVQVqPFgrt0gET8W9tmVltogDA4tHqgsZwpWyHtG1Hf1bIz39skFN649mTsANUNZy8lxUngWGbnGaMAykJ9lljVUqYQGO4l/hyA1QrdxkNXP1wjq9zU/kNNV5q9rGD3ndJn9yMbQNyou1WpPgHowt0=
+	t=1719492690; cv=none; b=qUMSWRy1Gz3PGZbrjhg6WGnJ/Rj1iMBYZHNnO6bCh4k/aLmmq5OyyAsx5RrbukgVfv9Q/SyeqWdSJUHnSAH4IVskonMATclrIAISfWpKFhICIrNmQwlyi+eQ+DLCZNYkKaoqoqTKBdO0ce4qBdQYNW4hAsKy7siVBoDcW9OrinI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719492677; c=relaxed/simple;
-	bh=qnbeZXhBfFJTTPcTPH/ROnaeI+osEUE7a1CoNefn9Iw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=TAzoUeDap9d7iN1MLVe7/EjhDQC4GDTWopEg9dDvIX7vmU3NjrkW6N5tvLsXfP7kfGoHh8HXksXlK9RMJe7nke8z+nQKqgdutX7VKIkqs46IgtwXtlBAoUb/9ocY0ttjooSu0byTh+04tmTG2rU/hN7GwcQrU1JghUAhehp1mJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VjajGwUY; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a729da840a8so93011166b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 05:51:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719492675; x=1720097475; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/8RdIwO1AqgATS1rruwHtz31wW4pIJuBMnKzZU+n75c=;
-        b=VjajGwUY9K7ewt2dqbIXSYnD868MYkRsyuSVY0SLcGA5ZWas4K357WVLfhdIDQZtPK
-         TIrgcIt/Vuf+hKzPG4Drq2CVb5I6yPdFyuTjkdl5mYZLYoZXpceVUCHM189pK/z+qxaw
-         vquCe6z4w9BdJ6QxpmsKb2t3ilwMC8AtI8xmlgOVpgQbxq2eJWPvLTsBmzHZDOnx1Egp
-         LaeaPikYP4FyIwltGqZrMT4w7ViV+d97u2BrQKSjSVl6Q5aZ3LengpqGK7DALHkvvOm+
-         Vjhu6hDLgg9BpqexvYXbz74g9+SA/Wli0o7V4x6uNa0UQWVOFJG2ja8L23xLmaZt7F0n
-         9izw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719492675; x=1720097475;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/8RdIwO1AqgATS1rruwHtz31wW4pIJuBMnKzZU+n75c=;
-        b=XuUz7gJQMUIqaFXsWgW4kjDiVDlnUPEZ/NfHvMpPLJo5L9mq+kkzzd7WTeWxVi2jw4
-         /6mmcQbFZsrNh8Ry28jY+2xEH4xaEmKB680MduI1N81T4y7q9j4vIwxJG/F7J7dRAU/r
-         YW7SSNKVcfCpWH6htM6n+uFGucqzMHQpUvjEocyWBo1me7F7TffxMbCj2zvo6SjOyUNb
-         BaDKK6P83ikv8coq0QRdxFfDPYZFVcqfdYrr0G3Z3TEu4ldhbxAaEokYp6NNHP0pNl4C
-         mcQNNInOUCv9DKLPYeLnhDfJP1GKzOuZUWn5nyZCdIrysKHrk5k6sHThd+v1A+9qAC0t
-         Mn1A==
-X-Gm-Message-State: AOJu0Yz+eRqyWmaw9kbJQzyXeBIZfw85AXLA4EhilVo+T3+AEv/WdxtJ
-	/9CS/zpEiZxKtp02mvMJNg4gdFDro61dqV+EUD8MlpK/wpT3IKtejA2mczOy3JM=
-X-Google-Smtp-Source: AGHT+IFB8SbhGNvYE/lAYWgisgvNl1xeZNFWFNCj05aBH7pV/cycVghwpgIH6UIUzmGlcNfVH9hzqg==
-X-Received: by 2002:a17:907:36c6:b0:a72:9ebe:29da with SMTP id a640c23a62f3a-a729ebe44ffmr112781066b.35.1719492674604;
-        Thu, 27 Jun 2024 05:51:14 -0700 (PDT)
-Received: from rayden (h-217-31-164-171.A175.priv.bahnhof.se. [217.31.164.171])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a729d71f54csm57247166b.71.2024.06.27.05.51.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 05:51:14 -0700 (PDT)
-Date: Thu, 27 Jun 2024 14:51:12 +0200
-From: Jens Wiklander <jens.wiklander@linaro.org>
-To: arm@kernel.org, soc@kernel.org
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	op-tee@lists.trustedfirmware.org
-Subject: [GIT PULL] OP-TEE fix for v6.11
-Message-ID: <20240627125112.GA2674988@rayden>
+	s=arc-20240116; t=1719492690; c=relaxed/simple;
+	bh=G43gEWKZg+rlGXNL/C54KPYv2KQ3OCfmDFUhBLC4xMA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BB9gNjIxFpMpRfvFPcJPsN0CpFP+XBV6kOfurbTIFlBlqYVqrtxpcl1ZoK4JC+C3+SOf8Db0/fXP6aWjwWeeSy6+rkyyfsquMlgwKl87Bc1oq9F22CaYtOk+db1k8eWHgeiw8xr6LP2YQYUzM0tluQsBZtd4YBo1Fgq2Nd/MLwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=D3WZqQWX; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=EfO/Ili60E4aw0klTOm4lymg/x/5oHDvgXlSEsbvz64=; b=D3WZqQWXy6KVl7cJvum6Rcfx52
+	LQ6YIyqk/Lfa7Liw12YS/5LmUZv17oKflmjqzEZ2AOlyhVs3bZpz8E/tahjNfyj0/oXp1UPlfcmia
+	/ycmaZGr2ndqPMKAt+k1+EBs05sytWrmlrSINN/PCK3xfIifdHzBO/e6wqeCN0lDkCI8KWhU1aRe5
+	v2qr9SUJ+xpNVd+iLxGz6I6hrESkP9iXpGCW/s44hIp7sBXhx/Wge/4X0Zgt/eEHev+YqeOG0QKS0
+	SeqsUx/SIJzrQCC0vCJlNwYupr+vB5Y+AKJXlFa6hu9DjmlGK74xuW4YyWlv1orF5lAvuabgliKYp
+	cWNgQMaA==;
+Received: from 179-125-70-190-dinamico.pombonet.net.br ([179.125.70.190] helo=quatroqueijos.cascardo.eti.br)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1sMoau-00843I-KG; Thu, 27 Jun 2024 14:51:21 +0200
+Date: Thu, 27 Jun 2024 09:51:13 -0300
+From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+To: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Gwendal Grignou <gwendal@chromium.org>, dlunev@chromium.org
+Subject: Re: [PATCH v2 2/2] fat: always use dir_emit_dots and ignore . and ..
+ entries
+Message-ID: <Zn1gQeWToPNkp9nt@quatroqueijos.cascardo.eti.br>
+References: <20240625175133.922758-1-cascardo@igalia.com>
+ <20240625175133.922758-3-cascardo@igalia.com>
+ <871q4kae58.fsf@mail.parknet.co.jp>
+ <ZnxwEtmYeZcKopJK@quatroqueijos.cascardo.eti.br>
+ <87a5j7v517.fsf@mail.parknet.co.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <87a5j7v517.fsf@mail.parknet.co.jp>
 
-Hello arm-soc maintainers,
+On Thu, Jun 27, 2024 at 05:10:44AM +0900, OGAWA Hirofumi wrote:
+> Thadeu Lima de Souza Cascardo <cascardo@igalia.com> writes:
+> 
+> >> Unacceptable to change the correct behavior to broken format. And
+> >> unlikely break the userspace, however this still has the user visible
+> >> change of seek pos.
+> >> 
+> >> Thanks.
+> >> 
+> >
+> > I agree that if this breaks userspace with a good filesystem or regresses
+> > in a way that real applications would break, that this needs to be redone.
+> >
+> > However, I spent a few hours doing some extra testing (I had already run
+> > some xfstests that include directory testing) and I failed to find any
+> > issues with this fix.
+> >
+> > If this would break, it would have broken the root directory. In the case
+> > of a directory including the . and .. entries, the d_off for the .. entry
+> > will be set for the first non-dot-or-dotdot entry. For ., it will be set as
+> > 1, which, if used by telldir (or llseek), will emit the .. entry, as
+> > expected.
+> >
+> > For the case where both . and .. are absent, the first real entry will have
+> > d_off as 2, and it will just work.
+> >
+> > So everything seems to work as expected. Do you see any user visible change
+> > that would break any applications?
+> 
+> First of all, I'm not thinking this is the fix, I'm thinking this as the
+> workaround of broken formatter (because the windows's fsck also think it
+> as broken). So very low priority to support.
+> 
+> As said, I also think low chance to break the userspace. However it
+> changes real offset to pseudo offset. So if userspace saved it to
+> persistent space, breaks userspace. Unlikely, but I think there is no
+> value to change the behavior for workaround.
+> 
+> Thanks.
+> -- 
+> OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
-Please pull this small patch fixing a few missing-field-initializers warnings
-in the optee driver.
+I looked at that perspective, but still wanted to allow users to use such
+filesystems, even if they needed to fsck it first.
 
-Thanks,
-Jens
+But there is the issue that when such filesystems are mounted, they are
+further corrupted, preventing such fsck from correctly fixing and allowing
+access to the data.
 
-The following changes since commit a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6:
+So I started doing some investigation and that lead me to the following
+code from fs/fat/inode.c:
 
-  Linux 6.9 (2024-05-12 14:12:29 -0700)
+static void fat_evict_inode(struct inode *inode)
+{
+	truncate_inode_pages_final(&inode->i_data);
+	if (!inode->i_nlink) {
+		inode->i_size = 0;
+		fat_truncate_blocks(inode, 0);
+	} else
+		fat_free_eofblocks(inode);
+[...]
 
-are available in the Git repository at:
+That is, since the directory has no links, once it is evicted (which
+happens right after reading the number of subdirectories and failing
+verification), it is truncated. That means all clusters are marked as FREE.
+Then, later, if trying to fsck or mount this filesystem again, the
+directory entry is removed or further errors show up (as an EOF is
+expected, not a FREE cluster).
 
-  https://git.linaro.org/people/jens.wiklander/linux-tee.git/ tags/optee-fix-for-v6.11
+And that is caused by attributing a number of 0 links. I looked it up on
+how other filesystems handle this situation and I found out that exfat adds
+2 to the number of subdirectories, just as I am suggesting. When
+enumerating the directories (at its readdir), it also relies on
+dir_emit_dots for all cases.
 
-for you to fetch changes up to e0556255a53d6d3d406a28362dffd972018a997c:
+As for programs persisting the offset, the manpage for telldir has on its
+NOTES section:
 
-  tee: optee: ffa: Fix missing-field-initializers warning (2024-06-27 10:27:31 +0200)
+"""
+Application programs should treat this strictly as an opaque value, making
+no assumptions about its contents.
+"""
 
-----------------------------------------------------------------
-Fix optee missing-field-initializers warning
+I know this doesn't refer to persisting or not that opaque value, but any
+other changes to the directory would change the offset of its current
+subdirectories and given those values are opaque, no assumptions should be
+made. And unless we find such programs in the wild, the same argunent could
+be made that there may be programs that expect . and .. to be at offset 0
+and 1, like every filesystem that uses dir_emit_dots does.
 
-----------------------------------------------------------------
-Mark-PK Tsai (1):
-      tee: optee: ffa: Fix missing-field-initializers warning
+I understand the cautiousness to prevent regressions, but I did the work
+here to test and understand the changes that are being proposed. I even
+looked into another way of preventing the further corruption, but that
+convinced me even more that the right fix is to assign a minimum number of
+links to directories and I found precedence to this.
 
- drivers/tee/optee/ffa_abi.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+Thanks.
+Cascardo.
+
 
