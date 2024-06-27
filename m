@@ -1,107 +1,194 @@
-Return-Path: <linux-kernel+bounces-231995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BD2391A14F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:21:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8106491A150
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:21:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05E501F22CCA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 08:21:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 368541F22CB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 08:21:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBED17A13A;
-	Thu, 27 Jun 2024 08:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94AA77F15;
+	Thu, 27 Jun 2024 08:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YBxOamM9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lBav+fy4"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230D51CAB3;
-	Thu, 27 Jun 2024 08:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764021CAB3
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 08:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719476464; cv=none; b=SE9NG+VMbCjGHLPGP9SBDjWR+UJxg5mt1t1+VZLoS0aHJlfCFEdH6UiVE7zkBUe0xonMGsfO6nTRbp5aq0UuDoe1rTw4epNOXqBT9fdFVC8fAbgOwqYIJzl9Fv1KXU2WbcYXQR/Hu5HE2sBETXvn7z0WRvQN3wmqMlvoNf/swz0=
+	t=1719476511; cv=none; b=N1pgZFYM4ZcMWiPf1qH+87PatrIOyyphC19Izndn0jodpwkAeXYoFFJ/zWtvAZWY1/aekHdiVDab/XVCvKBVUVbV7HoDUw1riT57j9oezoQcAFkxC+GgXZkKtefs5J07E0B1WlaAnk66Q+cymmOdZ7kDFJsnrgGkO+Ia3uDQZXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719476464; c=relaxed/simple;
-	bh=3i/mb3lQF+zYNgRDubFvUfTK5wvAo3uSQa+lQxUp8og=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tfPTA2oVuOOBCMdyXR5JPAQ+e4A375VbsCynNrR6Rc74v+UV7qzYtsCIHg9C0MTEcYLcAqhQ4BX6MFx4s3EcnZHUSP9Hy50cG4NX3bUhVTAShnT3Lnmmveqqt9BEL79jMy4+LzzoprKAcjwSvjCBCX859At77hnixs0E+CpULGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YBxOamM9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B060BC2BBFC;
-	Thu, 27 Jun 2024 08:21:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719476463;
-	bh=3i/mb3lQF+zYNgRDubFvUfTK5wvAo3uSQa+lQxUp8og=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YBxOamM9n7UkfjXL40jWnl3UfjmlblyIqa509kEWzSN2udW/xKeXM1P6vRPu2Jcu9
-	 hbP43hwYVGuDK2y+6VSShT6n0XOtP2ceK3bF5LoTU1N/9b+X/ruccTlefn8jhDYDYX
-	 XyzuMa7UncNOe7m/9omLlzyIILh0kHMZx/mN9HtsBlQ5dBP/XcIhQBzJQuos5Njezl
-	 dRqH2Aq/SXwyXH58WaZiVp6KZpPtfEo434igdbg6YhN6ksTqusy4f7IwArz9Vf1KNj
-	 +J5Ct3BwwMMJ8IoonrjzniTAvejtxoY8c37LR6Gmiq5M6v0X2QbcrWKhUa1IPFFBFN
-	 izXJ+woKqSOuw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sMkNY-0000000020a-3G6u;
-	Thu, 27 Jun 2024 10:21:16 +0200
-Date: Thu, 27 Jun 2024 10:21:16 +0200
-From: Johan Hovold <johan@kernel.org>
-To: =?utf-8?B?QmrDuHJu?= Mork <bjorn@mork.no>
-Cc: linux-usb@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] USB: serial: option: add Fibocom FM350-GL
-Message-ID: <Zn0g_I9VWFgcoUCU@hovoldconsulting.com>
-References: <20240626133223.2316555-1-bjorn@mork.no>
- <Zn0WSAHHQQr61-Og@hovoldconsulting.com>
- <87ed8i958k.fsf@miraculix.mork.no>
+	s=arc-20240116; t=1719476511; c=relaxed/simple;
+	bh=aF/z9701/vx7r4HE8CWjsuNICPLRcQEmaUgi1MxOYaQ=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=oe1F96lRkoi5X5QHgtjb+xY+Ylnc7laxNbG0UDw0K/b46lxDub0DAXF0l3sy5ymxVrsWCarVglEVO9WJ+kP2q8yvu5bPazYWaoIyNGD3LK1ypxEHP2tBHjoSEXd8E7oUJVE+fWAAFFkar0EV7hNdNEKATWgxqwKbuwNe/AqlBds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lBav+fy4; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719476510; x=1751012510;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=aF/z9701/vx7r4HE8CWjsuNICPLRcQEmaUgi1MxOYaQ=;
+  b=lBav+fy4oQPOXaGnWHsTWY8AMuFdMxOGM76xf1Hz0pH6zY41tCH11+yd
+   rWAOrBJr46B4KQkiel6DET5393BdgnEGptOodY+DdG/MTWqQSMm44Y8Vl
+   YDk68giJxEFozpq8psiKl0Zwjv9j0uO1wLsdktMefYVaAVT+cRgnTguRL
+   fROdobKiORnS9rBdIMIFxWCAn3AmjgjqYRJ/kOpj9PmUudbOrdCSJY2e5
+   yhx3dvm2peWPodjdpL5AccAdlK3ImJgsgLBEDVtp/laI+lMe510ZHT7bC
+   HgT6uE7M2WQuRQ4TBy94HFYrhyFE2GZryFmzx45rf+5T7G9Tm+Vpi6ery
+   w==;
+X-CSE-ConnectionGUID: wwJ3kJngSGiGuuiT4iBuzg==
+X-CSE-MsgGUID: uqsWaGCNRD2iIpd9gRH+Cw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="19475694"
+X-IronPort-AV: E=Sophos;i="6.08,269,1712646000"; 
+   d="scan'208";a="19475694"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 01:21:50 -0700
+X-CSE-ConnectionGUID: Z1DfNlJ+S6mb6GgSTs+Iig==
+X-CSE-MsgGUID: Xfpz0GiGRF+TDnmW7qQUtw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,269,1712646000"; 
+   d="scan'208";a="44259763"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.125.248.220]) ([10.125.248.220])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 01:21:48 -0700
+Message-ID: <80d727b4-c1eb-49d1-9b4a-ab3f0a4b54e2@linux.intel.com>
+Date: Thu, 27 Jun 2024 16:21:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87ed8i958k.fsf@miraculix.mork.no>
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, "iommu@lists.linux.dev"
+ <iommu@lists.linux.dev>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] iommu/vt-d: Add helper to flush caches for context
+ change
+To: "Tian, Kevin" <kevin.tian@intel.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>
+References: <20240627023121.50166-1-baolu.lu@linux.intel.com>
+ <20240627023121.50166-2-baolu.lu@linux.intel.com>
+ <BN9PR11MB527642AD41669FCF390297378CD72@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <BN9PR11MB527642AD41669FCF390297378CD72@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 27, 2024 at 10:09:31AM +0200, Bjørn Mork wrote:
-> Johan Hovold <johan@kernel.org> writes:
-> > On Wed, Jun 26, 2024 at 03:32:23PM +0200, Bjørn Mork wrote:
-> >> FM350-GL is 5G Sub-6 WWAN module which uses M.2 form factor interface.
-> >> It is based on Mediatek's MTK T700 CPU. The module supports PCIe Gen3
-> >> x1 and USB 2.0 and 3.0 interfaces.
-> >> 
-> >> The manufacturer states that USB is "for debug" but it has been
-> >> confirmed to be fully functional, except for modem-control requests on
-> >> some of the interfaces.
-> >> 
-> >> USB device composition is controlled by AT+GTUSBMODE=<mode> command.
-> >> Two values are currently supported for the <mode>:
-> >> 
-> >> 40: RNDIS+AT+AP(GNSS)+META+DEBUG+NPT+ADB
-> >> 41: RNDIS+AT+AP(GNSS)+META+DEBUG+NPT+ADB+AP(LOG)+AP(META)(default value)
-> >
-> > The order here does not seem to match the usb-devices output below (e.g.
-> > with ADB as interface 3 and 5, respectively). 
-> >
-> > Could you just update these two lines so we the interface mapping right?
+On 2024/6/27 14:08, Tian, Kevin wrote:
+>> From: Lu Baolu <baolu.lu@linux.intel.com>
+>> Sent: Thursday, June 27, 2024 10:31 AM
+>>
+>> +/*
+>> + * Cache invalidations after change in a context table entry that was present
+>> + * according to the Spec 6.5.3.3 (Guidance to Software for Invalidations). If
+>> + * IOMMU is in scalable mode and all PASID table entries of the device were
+>> + * non-present, set affect_domains to true. Otherwise, false.
 > 
-> Thanks, I didn't notice that.
+> if no PASID is present then the flag should be false.
 > 
-> This part was copied from the Fibocom AT+GTUSBMODE documentation and
-> seems to list supported functions independently of the resulting USB
-> interface order.
-> 
-> I'm afraid I can't verify the actual order since I don't have access to
-> this module myself, and there is no way to tell the AT, GNSS, META,
-> DEBUG, NPT and LOG functons from eacohother based on USB descriptors.
-> 
-> The best I can do is dropping these two lines. Is that better?
+> s/affect_domains/flush_domains/
 
-No, I'll just amend the commit message to clarify that the order is
-unspecified. Thanks.
+Yes.
 
-Johan
+> 
+>> + */
+>> +void intel_context_flush_present(struct device_domain_info *info,
+>> +				 struct context_entry *context,
+>> +				 bool affect_domains)
+>> +{
+>> +	struct intel_iommu *iommu = info->iommu;
+>> +	u16 did = context_domain_id(context);
+>> +	struct pasid_entry *pte;
+>> +	int i;
+>> +
+>> +	assert_spin_locked(&iommu->lock);
+>> +
+>> +	/*
+>> +	 * Device-selective context-cache invalidation. The Domain-ID field
+>> +	 * of the Context-cache Invalidate Descriptor is ignored by hardware
+>> +	 * when operating in scalable mode. Therefore the @did value
+>> doesn't
+>> +	 * matter in scalable mode.
+>> +	 */
+>> +	iommu->flush.flush_context(iommu, did, PCI_DEVID(info->bus, info-
+>>> devfn),
+>> +				   DMA_CCMD_MASK_NOBIT,
+>> DMA_CCMD_DEVICE_INVL);
+>> +
+>> +	/*
+>> +	 * For legacy mode:
+>> +	 * - Domain-selective IOTLB invalidation
+>> +	 * - Global Device-TLB invalidation to all affected functions
+>> +	 */
+>> +	if (!sm_supported(iommu)) {
+>> +		iommu->flush.flush_iotlb(iommu, did, 0, 0,
+>> DMA_TLB_DSI_FLUSH);
+>> +		__context_flush_dev_iotlb(info);
+>> +
+>> +		return;
+>> +	}
+>> +
+>> +	/*
+>> +	 * For scalable mode:
+>> +	 * - Domain-selective PASID-cache invalidation to affected domains
+>> +	 * - Domain-selective IOTLB invalidation to affected domains
+>> +	 * - Global Device-TLB invalidation to affected functions
+>> +	 */
+>> +	if (affect_domains) {
+>> +		for (i = 0; i < info->pasid_table->max_pasid; i++) {
+>> +			pte = intel_pasid_get_entry(info->dev, i);
+>> +			if (!pte || !pasid_pte_is_present(pte))
+>> +				continue;
+>> +
+>> +			did = pasid_get_domain_id(pte);
+>> +			qi_flush_pasid_cache(iommu, did,
+>> QI_PC_ALL_PASIDS, 0);
+>> +			iommu->flush.flush_iotlb(iommu, did, 0, 0,
+>> DMA_TLB_DSI_FLUSH);
+>> +		}
+>> +	}
+>> +
+>> +	__context_flush_dev_iotlb(info);
+>> +}
+>> --
+>> 2.34.1
+>>
+> 
+> this change moves the entire cache invalidation flow inside
+> iommu->lock. Though the directly-affected operations are not in
+> critical path the indirect impact applies to all other paths acquiring
+> iommu->lock given it'll be held unnecessarily longer after this
+> change.
+> 
+> If the only requirement of holding iommu->lock is to walk the pasid
+> table, probably we can collect a bitmap of DID's in the locked walk
+> and then invalidate each in a loop outside of iommu->lock. Here
+> we only care about DIDs associated with the old context entry at
+> this point. New pasid attach will hit new context entry. Concurrent
+> pasid detach then may just come with duplicated invalidations.
+
+The iommu->lock is not only for the PASID table walk. The basic
+schematic here is that once a present context table entry is being
+changed, all PASID entries should not be altered until all the related
+caches have been flushed. This is because the configuration of the
+context entry might also impact PASID translation.
+
+Previously, we did not apply this lock because all those cases involved
+changing the context entry from present to non-present, and we were
+certain that all PASID entries were empty. Now, as we are making it a
+generic helper that also serves scenarios where the entry remains
+present after the change, we need this lock to ensure that no PASID
+entry changes occur at the same time.
+
+Best regards,
+baolu
 
