@@ -1,165 +1,142 @@
-Return-Path: <linux-kernel+bounces-231986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF98091A126
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:10:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F276891A127
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:11:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78F6928658F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 08:10:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E5F61C21781
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 08:11:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3088121B;
-	Thu, 27 Jun 2024 08:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53FE745ED;
+	Thu, 27 Jun 2024 08:10:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bxXYBJmZ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="T5e3TRNw";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="UWJzLCu0";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="SJsXO90Z";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="IF6HcUwx"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19E97347E;
-	Thu, 27 Jun 2024 08:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5428A7347E
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 08:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719475812; cv=none; b=ohTbbjyCd131Jx4amzFQpnbmBE/pXiZvH99gKgZaHzs0HFGNs7+Lj6GA1gYrrsT9/QwqEKFGdavOV+nrJch60UNU2Bztmv9NuMgHQAXoA6aGGNMAfHHN5AS2QCNEWIl2nBgo6ee3O/k8xKraIWlscaxd9Z1nBgT/o2rM3MtSGpc=
+	t=1719475837; cv=none; b=UMpCEaXml9lchRkQCU8qGoUE25YKclxmw7+aevZvBJUjNLlpebSZdDuB1uY48hWrsrfLFugYD+XepOCY+7jIKT9lTnjU3Z3DmM26BHg2L+cQ8ac/1Y/+QsHZr6XQobcJwQLkTDTiRtiAnd6WLqSDCMLILmBrZmeujvqOFCsrqLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719475812; c=relaxed/simple;
-	bh=xDyTyoeI1VuJlGefld+tIbNLH6VCcawSWoGvoI+SWKE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=g/BgBeyCeHlMKJAoUVzXI5K1NBoE4cdkP+hqnjzLnDf/lS4cG3ptYy15IuMAzLjDIr1O6RCR3uft/d0Psv6X+P3isazjffx4NaHAIKnfv9IIa/w1zyiWj94oreHfaNu1En1NbvK9YdcIVYqqj6ufn3HwHEb7jFAB0Fqm13TbQHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bxXYBJmZ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QLWwWS016787;
-	Thu, 27 Jun 2024 08:10:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	N8A3+UZe/s2/aGmK+AWtOXTtUzhTHTpKaxbx7hqese0=; b=bxXYBJmZIsitTjT2
-	i0l2wThLh2RDW7koAEEMBlKJMjGIhY3hbyTdAxAh2gCHtmiKvYQLDwmoEXeHUNp/
-	TVWxLBDRe9ay1eRvFg/W1ZEqqSH9bmIJrst8VFs+tHpQ09ntFuf0lnHRPCRFnbU5
-	RtNsXUWsM6tcH2a/rWudAyrc0VGiC3WK6nesYs9B8e1TvHFcpDs9ivG+oitgq4xU
-	1wnMqlh7HFh41kTjk9nX6f5rVmegD16PORoAifVOEoIoWTmNQsqfonXIklZd+gPq
-	I4/bJRS8o0hqqh+PAX5DIQTxqNnbh0+cCachaVck+1ZZjYBe8zFfn+2bdfOP51Fk
-	kdtzRg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywp6yuqds-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Jun 2024 08:10:00 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45R89xip008426
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Jun 2024 08:09:59 GMT
-Received: from [10.217.216.18] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 27 Jun
- 2024 01:09:54 -0700
-Message-ID: <18692eb6-189c-f67b-3647-8b33f3ee7808@quicinc.com>
-Date: Thu, 27 Jun 2024 13:39:51 +0530
+	s=arc-20240116; t=1719475837; c=relaxed/simple;
+	bh=MNdIV2qk3sEG1FDAhhdiDJnZ7AgICbuvXyhVW1pcZYo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=eyv5sXBg9LQ8Pjr8NO7EDlI4RYh5jzjOUcREBMdqpH3iz7vTuHy/SuPo8YP19Tp3hxai3+cQwsqVnWlnyAuplFsVWePcsC+/ZggSOjR/3eR5F7TfbvEjA0e8+GoSkSKAq9QEbNvrvtvlLgwt6x1ustndORLDMC06iqDebnxGwnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=T5e3TRNw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=UWJzLCu0; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=SJsXO90Z; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=IF6HcUwx; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from hawking.nue2.suse.org (unknown [10.168.4.11])
+	by smtp-out1.suse.de (Postfix) with ESMTP id 56D9E21B62;
+	Thu, 27 Jun 2024 08:10:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1719475833; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O/6bKq4Llc5fVguWZOvySL2EpXqSm5wW1VCRN/H060g=;
+	b=T5e3TRNw5488vzhgVQe8aAo7J4NB8KWUWaZHJo4LGBaTy3ne3FrCpWvGjq2cQtK8i+Alad
+	55EJ5ZMN5w5aHbGtTpj8zg3TIlwtbpolQdk6xiGX48ShQeaKdybr8j6qG2jGvpzdl7DUkr
+	B+supgOhi4HSt8HZixhtdd2kaxs0/4o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1719475833;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O/6bKq4Llc5fVguWZOvySL2EpXqSm5wW1VCRN/H060g=;
+	b=UWJzLCu0nbusV2XQPoU19fjHKw/YjolxGL0/UPRAYbBXsbvUYAuPYNrSFExHdQGDx668zT
+	4HCL2tIeIBsiDtAQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1719475831; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O/6bKq4Llc5fVguWZOvySL2EpXqSm5wW1VCRN/H060g=;
+	b=SJsXO90ZTmZNvd4HrKg1Fo0TWZe72U5/Y04jsZ9hbmds6RxuY7Uu98Z1BGKo82Mivv0D+j
+	vA4qXWao6T3R2ceo0XB3EfYlWQIbD7YZWSBVKBYQhiMGo1aw2G+XGY9NwhSl5Dw88qAK+U
+	t/z53QSdbqtkEce5d5cPR7ixccuJjqg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1719475831;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O/6bKq4Llc5fVguWZOvySL2EpXqSm5wW1VCRN/H060g=;
+	b=IF6HcUwx4qYltG85wA4ByX/ubyFpy9+iwe1K0Zqp5nzBAimsG8e5GwY3L1LwDBOGSu5zYv
+	/rwX5I07a6KRs3CA==
+Received: by hawking.nue2.suse.org (Postfix, from userid 17005)
+	id 476F94A050D; Thu, 27 Jun 2024 10:10:31 +0200 (CEST)
+From: Andreas Schwab <schwab@suse.de>
+To: Celeste Liu <coelacanthushex@gmail.com>
+Cc: "Dmitry V. Levin" <ldv@strace.io>,  Palmer Dabbelt
+ <palmer@rivosinc.com>,  Paul Walmsley <paul.walmsley@sifive.com>,  Albert
+ Ou <aou@eecs.berkeley.edu>,  Guo Ren <guoren@kernel.org>,  =?utf-8?B?Qmo=?=
+ =?utf-8?B?w7ZybiBUw7ZwZWw=?=
+ <bjorn@rivosinc.com>,  Conor Dooley <conor.dooley@microchip.com>,
+  linux-riscv@lists.infradead.org,  linux-kernel@vger.kernel.org,  David
+ Laight <David.Laight@ACULAB.COM>,  Felix Yan <felixonmars@archlinux.org>,
+  Ruizhe Pan <c141028@gmail.com>,  Shiqi Zhang <shiqi@isrc.iscas.ac.cn>,
+  Emil Renner Berthing <emil.renner.berthing@canonical.com>,  "Ivan A.
+ Melnikov" <iv@altlinux.org>
+Subject: Re: [PATCH v5] riscv: entry: set a0 = -ENOSYS only when syscall != -1
+In-Reply-To: <9c102328-6bb3-46b6-bc2f-d011a284d5b0@gmail.com> (Celeste Liu's
+	message of "Thu, 27 Jun 2024 15:47:47 +0800")
+References: <20230801141607.435192-1-CoelacanthusHex@gmail.com>
+	<20240627071422.GA2626@altlinux.org>
+	<9c102328-6bb3-46b6-bc2f-d011a284d5b0@gmail.com>
+X-Yow: Your CHEEKS sit like twin NECTARINES above a MOUTH that knows no
+ BOUNDS --
+Date: Thu, 27 Jun 2024 10:10:31 +0200
+Message-ID: <mvmr0cin6vc.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH 1/2] scsi: ufs: Suspend clk scaling on no request
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        "Martin K.
- Petersen" <martin.petersen@oracle.com>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>, <linux-scsi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_cang@quicinc.com>, <quic_nguyenb@quicinc.com>,
-        <quic_pragalla@quicinc.com>, <quic_nitirawa@quicinc.com>
-References: <20240626103033.2332-1-quic_rampraka@quicinc.com>
- <20240626103033.2332-2-quic_rampraka@quicinc.com>
- <62m4bfyhgzidseda2mduetaq4b2onlpjkxzsc3skc3fx7iw3xh@eyt2nwn2cuoi>
-From: Ram Prakash Gupta <quic_rampraka@quicinc.com>
-In-Reply-To: <62m4bfyhgzidseda2mduetaq4b2onlpjkxzsc3skc3fx7iw3xh@eyt2nwn2cuoi>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: w5YFbWmlXosanD3df6k7R__Owj7UWoDE
-X-Proofpoint-ORIG-GUID: w5YFbWmlXosanD3df6k7R__Owj7UWoDE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-27_04,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 bulkscore=0
- phishscore=0 adultscore=0 mlxscore=0 suspectscore=0 malwarescore=0
- clxscore=1011 lowpriorityscore=0 spamscore=0 priorityscore=1501
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406270061
+Content-Type: text/plain
+X-Spamd-Result: default: False [-4.20 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_NO_TLS_LAST(0.10)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	RCVD_COUNT_ONE(0.00)[1];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	SUBJECT_HAS_EXCLAIM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[strace.io,rivosinc.com,sifive.com,eecs.berkeley.edu,kernel.org,microchip.com,lists.infradead.org,vger.kernel.org,ACULAB.COM,archlinux.org,gmail.com,isrc.iscas.ac.cn,canonical.com,altlinux.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[hawking.nue2.suse.org:helo,suse.de:email];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Spam-Flag: NO
+X-Spam-Score: -4.20
+X-Spam-Level: 
 
+On Jun 27 2024, Celeste Liu wrote:
 
+> suggestion and we found cast long to ulong is implementation-defined
+> behavior in C
 
-On 6/26/2024 11:14 PM, Dmitry Baryshkov wrote:
-> On Wed, Jun 26, 2024 at 04:00:32PM GMT, Ram Prakash Gupta wrote:
->> Currently ufs clk scaling is getting suspended only when the
->> clks are scaled down, but next when high load is generated its
->> adding a huge amount of latency in scaling up the clk and complete
->> the request post that.
->>
->> Now if the scaling is suspended in its existing state, and when high
->> load is generated it is helping improve the random performance KPI by
->> 28%. So suspending the scaling when there is no request. And the clk
->> would be put in low scaled state when the actual request load is low.
->>
->> Making this change as optional for other vendor by having the check
->> enabled using vops as for some vendor suspending without bringing the
->> clk in low scaled state might have impact on power consumption on the
->> SoC.
->>
->> Signed-off-by: Ram Prakash Gupta <quic_rampraka@quicinc.com>
->> ---
->>   drivers/ufs/core/ufshcd.c | 3 ++-
->>   include/ufs/ufshcd.h      | 1 +
->>   2 files changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
->> index 1b65e6ae4137..0dc9928ae18d 100644
->> --- a/drivers/ufs/core/ufshcd.c
->> +++ b/drivers/ufs/core/ufshcd.c
->> @@ -1560,7 +1560,8 @@ static int ufshcd_devfreq_target(struct device *dev,
->>   		ktime_to_us(ktime_sub(ktime_get(), start)), ret);
->>   
->>   out:
->> -	if (sched_clk_scaling_suspend_work && !scale_up)
->> +	if (sched_clk_scaling_suspend_work && (!scale_up ||
->> +				hba->clk_scaling.suspend_on_no_request))
-> 
-> Really a nit: moving !scale_up to the next line would make easier to
-> read.
-> 
-thanks will take care in next patchset.
+There is nothing implementaton-defined in a long to ulong conversion.
 
->>   		queue_work(hba->clk_scaling.workq,
->>   			   &hba->clk_scaling.suspend_work);
->>   
->> diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
->> index bad88bd91995..c14607f2890b 100644
->> --- a/include/ufs/ufshcd.h
->> +++ b/include/ufs/ufshcd.h
->> @@ -457,6 +457,7 @@ struct ufs_clk_scaling {
->>   	bool is_initialized;
->>   	bool is_busy_started;
->>   	bool is_suspended;
->> +	bool suspend_on_no_request;
->>   };
->>   
->>   #define UFS_EVENT_HIST_LENGTH 8
->> -- 
->> 2.17.1
->>
-> 
+-- 
+Andreas Schwab, SUSE Labs, schwab@suse.de
+GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
+"And now for something completely different."
 
