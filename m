@@ -1,134 +1,288 @@
-Return-Path: <linux-kernel+bounces-231974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C752491A100
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:59:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30E9A91A0FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:58:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AAD21F228F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:59:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3C081F224E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4720073466;
-	Thu, 27 Jun 2024 07:59:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874EF7345D;
+	Thu, 27 Jun 2024 07:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LMAD5VKo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wAhdVlnF";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QlolrcAo";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wAhdVlnF";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QlolrcAo"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22FD973440
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 07:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08DF5288BD;
+	Thu, 27 Jun 2024 07:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719475144; cv=none; b=KQMtvvN0WuUmeLb+5IYlECNzv5HqfrbpfqGfDx77XwP0xmuxueM/d0QGIIF9M8i7309pQ3N+xU9HqRFE9Not28r6vhfytE351ZcpCtin20YhHgOz2ynxsLd7uwS6s7Oa54QQvAR9mq3ykljQOEAfMji5j/chGGkO3GjtJyh++iE=
+	t=1719475119; cv=none; b=a+r4IsrzsYSgRa0AiAaUiDRzLg2O3I0yi4QOAj5FLtWrK4HpIBTZLGoFEKVhHefYzDMLYxylI8tzS6zJ+ZQWhKkLZiE/vRZ+tEHjGEekfTSL3SwESsqQo9sLrg8dW5SB1lirPhb0Bdm8ePnZ9KoKeNjG6OpXfIyd4j4jTnwclbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719475144; c=relaxed/simple;
-	bh=xcU1eFpqgSU/Bh/CKmAiD64jwZruaevOEqyVUKJm0pM=;
-	h=From:References:MIME-Version:In-Reply-To:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N+MGHGdUA8y0X0vuU9d7maOc7DVvrACMW2ECYMUlJKOe8o4s9MJWsUR+ZRq354M5NcIyUx9p6cCmnebC8qG8+flvDaafqVc8CggZp3RBOMh/KAGoDTVN1Lq8DNgY3Ljpo+Fhc6jNmpzgwd3Ynh1p/Du3jc4M/cvIjvQdRe5NJrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LMAD5VKo; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719475142;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UeushS7zvrpsIs8SYBcVSJVunv4P3aSomIKJ3BjOrcI=;
-	b=LMAD5VKoUjavtby8V8bi29WRLeb3awsds7IJuhdleTap4Ns2bACafjYymNP+JsN3Qf2aJv
-	9+ZQnik0LkVMRZOV7Q9lsIMK8O0B/SSL8FpvzdxvMJMsjQlJMWuabo39NH0m/Tp5aEHZkE
-	gJe+ItmeXWxMOqSQVvVkKjFtaOJzQm0=
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
- [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-605-EmzT30-DMpG0Jn8re4W6WA-1; Thu, 27 Jun 2024 03:59:00 -0400
-X-MC-Unique: EmzT30-DMpG0Jn8re4W6WA-1
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-7278c31e2acso343402a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 00:58:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719475139; x=1720079939;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:in-reply-to
-         :mime-version:references:from:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UeushS7zvrpsIs8SYBcVSJVunv4P3aSomIKJ3BjOrcI=;
-        b=rWK4gK4m5r8SxDWbLn1r+Z7FDfnL/XVxgV40KxN/7p7Wgv1gqZ2OkqJM5shWWjjI+6
-         uaxa+UArX4PJ8YoTlCxLQYxta33RmgTSAUzna2HisM3bYl+XYaH5efC2kyy7Uk54QGR9
-         k5Rv8DnZtczvocwEYyMi+5JDvRkAY5dgC5G+vAa2zag0vJYkZllvIi2GvIa4BDGvhcMZ
-         fkrSyPMYi40iLUpR/ctNcN/9BHDlN61llXsV78yX/uIsTb/ZpP74iqRQbl3yQ1m3vwkw
-         0nglbA2T7bEfJwdqvf+ZCjz+h9ydw+f9hmLOfXN/hKUjswBYNFbZiymqPvR2lSWbNGyR
-         Fa4A==
-X-Forwarded-Encrypted: i=1; AJvYcCXmRwQsJFSlKTxBX/PioI4oCKWM+wi3/pDQZuR+UjfylHtez9TOhaToPwPRepi5sdO3m4R0VvUC7DuW/GM4O9Th/wtHYrgjT2CSbU+6
-X-Gm-Message-State: AOJu0YyW+7RUUGx67ALXn8rpMsb1Ss5Ge2S+PKDNgRJba3J3K+BlIcy/
-	j+8jflcTKEoPAbajCcP8ZrtxlmwyjQ5TspOnURi4QZKdWSXaBNLoEx/nNxZh8Xtc6Tgfk1WFx6s
-	siQXD7Eeg7sFn4XKyvbe3iR0BAiewfhjJK8gVU1rr9Nz+LOlQojOy6h2H/PTwiXXRZr+iYfSHXq
-	mMcDnIgQJD5optCv+81hQm0KyhFQD5XjcwDjky
-X-Received: by 2002:a05:6a20:6d18:b0:1bd:1b22:dcce with SMTP id adf61e73a8af0-1bd1b22dd3dmr6599034637.30.1719475139138;
-        Thu, 27 Jun 2024 00:58:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEEhtQavUVxjiWNx9N6Un/I/J3BmWyhnPpVIhRhfNfnMVfGkd4OTnKCID/jsmdNPWflpzAhMX/5qaCB6D6jUe0=
-X-Received: by 2002:a05:6a20:6d18:b0:1bd:1b22:dcce with SMTP id
- adf61e73a8af0-1bd1b22dd3dmr6599019637.30.1719475138754; Thu, 27 Jun 2024
- 00:58:58 -0700 (PDT)
-Received: from 311643009450 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 27 Jun 2024 00:58:57 -0700
-From: =?UTF-8?Q?Adri=C3=A1n_Moreno?= <amorenoz@redhat.com>
-References: <20240625205204.3199050-1-amorenoz@redhat.com> <20240625205204.3199050-11-amorenoz@redhat.com>
- <3395bd94-6619-4389-9f07-1964af730372@ovn.org>
+	s=arc-20240116; t=1719475119; c=relaxed/simple;
+	bh=r/ggCtTzDXViToCDpmhQ8dJEM7OOeSw9FvKfcg9YnuI=;
+	h=Date:Message-ID:From:To:Cc:Subject:MIME-Version:Content-Type; b=f2ePYkQErM/mKDR2nseGj4lI1fP8kIyfNFn+kOPiQqJ6IsHZMCwDKNJkNF+weOI/RRCXUPWyzWcb26QyTY9c4KQOksVcGlUAqS0DMGQqxBI7rtSuWSmMnxAP+4wnwKh08Ab1YhNGFMNdOSCzNvGvCojX/SN+wfLOV0k8Kfo8SUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wAhdVlnF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QlolrcAo; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wAhdVlnF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QlolrcAo; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 02B8721B77;
+	Thu, 27 Jun 2024 07:58:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1719475116; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=7FUs+mGtHTT7x23vuUeMYlEQ5nTfea293mfyQqUZ99c=;
+	b=wAhdVlnFOAXPbgUljp7Kb03XdzqWeB9qSbfvx69i/tIph95lFT7MOA/BpSfeTTCn+/KsfD
+	TQUxYCFKxKTVPeNuEFne7KaCPM23lvMml05u4bXkxM9zdxYONQy2+Vdcms7/YkWI0DxnII
+	OGZz3+oK6B2lRHw9/wykoDhAEVv03LI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1719475116;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=7FUs+mGtHTT7x23vuUeMYlEQ5nTfea293mfyQqUZ99c=;
+	b=QlolrcAol8D+5ZipBcepYLH2+adCujhQBmER3iFtI2wdxFJ2PBWVXk59DOoWeBgRnt+PRN
+	Qrbwo2wVnQzm93Dw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=wAhdVlnF;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=QlolrcAo
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1719475116; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=7FUs+mGtHTT7x23vuUeMYlEQ5nTfea293mfyQqUZ99c=;
+	b=wAhdVlnFOAXPbgUljp7Kb03XdzqWeB9qSbfvx69i/tIph95lFT7MOA/BpSfeTTCn+/KsfD
+	TQUxYCFKxKTVPeNuEFne7KaCPM23lvMml05u4bXkxM9zdxYONQy2+Vdcms7/YkWI0DxnII
+	OGZz3+oK6B2lRHw9/wykoDhAEVv03LI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1719475116;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=7FUs+mGtHTT7x23vuUeMYlEQ5nTfea293mfyQqUZ99c=;
+	b=QlolrcAol8D+5ZipBcepYLH2+adCujhQBmER3iFtI2wdxFJ2PBWVXk59DOoWeBgRnt+PRN
+	Qrbwo2wVnQzm93Dw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C6D42137DF;
+	Thu, 27 Jun 2024 07:58:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id yZ/5LasbfWa0AQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 27 Jun 2024 07:58:35 +0000
+Date: Thu, 27 Jun 2024 09:59:03 +0200
+Message-ID: <871q4iizp4.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Linux Sound Mailing List <linux-sound@vger.kernel.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] sound fixes for 6.10-rc6
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <3395bd94-6619-4389-9f07-1964af730372@ovn.org>
-Date: Thu, 27 Jun 2024 00:58:57 -0700
-Message-ID: <CAG=2xmNfdAm1s1bDc6TZJL5wB3p+bOe-r=OwSm-RJ5zJ_3NqkQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v5 10/10] selftests: openvswitch: add emit_sample test
-To: Ilya Maximets <i.maximets@ovn.org>
-Cc: netdev@vger.kernel.org, aconole@redhat.com, echaudro@redhat.com, 
-	horms@kernel.org, dev@openvswitch.org, Pravin B Shelar <pshelar@ovn.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=ISO-8859-2
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-5.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[kernel.org,gmail.com,vger.kernel.org];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 02B8721B77
+X-Spam-Flag: NO
+X-Spam-Score: -5.51
+X-Spam-Level: 
 
-On Wed, Jun 26, 2024 at 01:15:21PM GMT, Ilya Maximets wrote:
-> On 6/25/24 22:51, Adrian Moreno wrote:
-> > Add a test to verify sampling packets via psample works.
-> >
-> > In order to do that, create a subcommand in ovs-dpctl.py to listen to
-> > on the psample multicast group and print samples.
-> >
-> > Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
-> > ---
-> >  .../selftests/net/openvswitch/openvswitch.sh  | 114 +++++++++++++++++-
-> >  .../selftests/net/openvswitch/ovs-dpctl.py    |  73 ++++++++++-
-> >  2 files changed, 181 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/tools/testing/selftests/net/openvswitch/openvswitch.sh b/t=
-ools/testing/selftests/net/openvswitch/openvswitch.sh
-> > index 15bca0708717..aeb9bee772be 100755
-> > --- a/tools/testing/selftests/net/openvswitch/openvswitch.sh
-> > +++ b/tools/testing/selftests/net/openvswitch/openvswitch.sh
-> > @@ -20,7 +20,8 @@ tests=3D"
-> >  	nat_related_v4				ip4-nat-related: ICMP related matches work with SNA=
-T
-> >  	netlink_checks				ovsnl: validate netlink attrs and settings
-> >  	upcall_interfaces			ovs: test the upcall interfaces
-> > -	drop_reason				drop: test drop reasons are emitted"
-> > +	drop_reason				drop: test drop reasons are emitted
-> > +	emit_sample 				emit_sample: Sampling packets with psample"
->
-> There is an extra space character right after emit_sample word.
-> This makes './openvswitch.sh emit_sample' to not run the test,
-> because 'emit_sample' !=3D 'emit_sample '.
->
+Linus,
 
-Wow, good catch! I'll get rid of that space.
+please pull sound fixes for v6.10-rc6 from:
 
-Thanks.
-Adri=C3=A1n
+  git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-6.10-rc6
+
+The topmost commit is 4b3e3810738376b3292d1bf29996640843fbd9a0
+
+----------------------------------------------------------------
+
+sound fixes for 6.10-rc6
+
+This became bigger than usual, as it receives a pile of pending
+ASoC fixes.  Most of changes are for device-specific issues while
+there are a few core fixes that are all rather trivial.
+
+- DMA-engine sync fixes
+- Continued MIDI2 conversion fixes
+- Various ASoC Intel SOF fixes
+- A series of ASoC topology fixes for memory handling
+- AMD ACP fix, curing a recent regression, too
+- Platform / codec-specific fixes for mediatek, atmel, realtek, etc
+
+----------------------------------------------------------------
+
+Aivaz Latypov (1):
+      ALSA: hda/relatek: Enable Mute LED on HP Laptop 15-gw0xxx
+
+Alibek Omarov (1):
+      ASoC: rockchip: i2s-tdm: Fix trcm mode by setting clock on right mclk
+
+Amadeusz S³awiñski (5):
+      ASoC: topology: Fix references to freed memory
+      ASoC: Intel: avs: Fix route override
+      ASoC: topology: Do not assign fields that are already set
+      ASoC: topology: Clean up route loading
+      ASoC: topology: Fix route memory corruption
+
+Andrei Simion (1):
+      ASoC: atmel: atmel-classd: Re-add dai_link->platform to fix card init
+
+Bard Liao (2):
+      ASoC: SOF: Intel: hda-dai: skip tlv for dspless mode
+      ASoC: SOF: Intel: hda-dai: remove skip_tlv label
+
+Chen-Yu Tsai (1):
+      ASoC: mediatek: mt8195: Add platform entry for ETDM1_OUT_BE dai link
+
+Dirk Su (1):
+      ALSA: hda/realtek: fix mute/micmute LEDs don't work for EliteBook 645/665 G11.
+
+Dmitry Baryshkov (1):
+      MAINTAINERS: copy linux-arm-msm for sound/qcom changes
+
+Elinor Montmasson (1):
+      ASoC: fsl-asoc-card: set priv->pdev before using it
+
+Hsin-Te Yuan (1):
+      ASoC: mediatek: mt8183-da7219-max98357: Fix kcontrol name collision
+
+Jack Yu (3):
+      ASoC: rt722-sdca-sdw: add silence detection register as volatile
+      ASoC: rt722-sdca-sdw: add debounce time for type detection
+      ASoC: rt5645: fix issue of random interrupt from push-button
+
+Jai Luthra (2):
+      ALSA: dmaengine: Synchronize dma channel after drop()
+      ASoC: ti: davinci-mcasp: Set min period size using FIFO config
+
+Jeff Johnson (3):
+      ASoC: mxs: add missing MODULE_DESCRIPTION() macro
+      ASoC: fsl: add missing MODULE_DESCRIPTION() macro
+      ASoC: qcom: add missing MODULE_DESCRIPTION() macro
+
+Maciej Strozek (1):
+      ASoC: cs42l43: Increase default type detect time and button delay
+
+Peter Ujfalusi (1):
+      ASoC: SOF: sof-audio: Skip unprepare for in-use widgets on error rollback
+
+Primoz Fiser (1):
+      ASoC: ti: omap-hdmi: Fix too long driver name
+
+Richard Fitzgerald (1):
+      ASoC: cs35l56: Disconnect ASP1 TX sources when ASP1 DAI is hooked up
+
+Shengjiu Wang (1):
+      ALSA: dmaengine_pcm: terminate dmaengine before synchronize
+
+Shuming Fan (1):
+      ASoC: Intel: soc-acpi: mtl: fix speaker no sound on Dell SKU 0C64
+
+Srinivas Kandagatla (1):
+      ASoC: q6apm-lpass-dai: close graph on prepare errors
+
+Takashi Iwai (4):
+      ALSA: seq: Fix missing channel at encoding RPN/NRPN MIDI2 messages
+      ALSA: PCM: Allow resume only for suspended streams
+      ALSA: hda/realtek: Fix conflicting quirk for PCI SSID 17aa:3820
+      ALSA: seq: Fix missing MSB in MIDI2 SPP conversion
+
+Thomas GENTY (1):
+      bytcr_rt5640 : inverse jack detect for Archos 101 cesium
+
+Vijendar Mukunda (3):
+      ASoC: amd: acp: add a null check for chip_pdev structure
+      ASoC: amd: acp: remove i2s configuration check in acp_i2s_probe()
+      ASoC: amd: acp: move chip->flag variable assignment
+
+Vyacheslav Frantsishko (1):
+      ASoC: amd: yc: Fix non-functional mic on ASUS M5602RA
+
+Zhang Yi (1):
+      ASoC: codecs: ES8326: Solve headphone detection issue
+
+---
+ MAINTAINERS                                        |  1 +
+ include/sound/dmaengine_pcm.h                      |  1 +
+ sound/core/pcm_dmaengine.c                         | 22 +++++++++++++
+ sound/core/pcm_native.c                            |  2 ++
+ sound/core/seq/seq_ump_convert.c                   | 10 +++---
+ sound/pci/hda/patch_realtek.c                      | 25 ++++++++++++++-
+ sound/soc/amd/acp/acp-i2s.c                        |  8 -----
+ sound/soc/amd/acp/acp-pci.c                        | 12 ++++---
+ sound/soc/amd/yc/acp6x-mach.c                      |  7 ++++
+ sound/soc/atmel/atmel-classd.c                     |  7 ++--
+ sound/soc/codecs/cs35l56-shared.c                  |  4 +++
+ sound/soc/codecs/cs42l43-jack.c                    |  4 +--
+ sound/soc/codecs/es8326.c                          |  8 +++--
+ sound/soc/codecs/rt5645.c                          | 24 ++++++++++----
+ sound/soc/codecs/rt5645.h                          |  6 ++++
+ sound/soc/codecs/rt722-sdca-sdw.c                  |  4 ++-
+ sound/soc/fsl/fsl-asoc-card.c                      |  3 +-
+ sound/soc/fsl/imx-pcm-dma.c                        |  1 +
+ sound/soc/intel/avs/topology.c                     | 19 ++++++++---
+ sound/soc/intel/boards/bytcr_rt5640.c              | 11 +++++++
+ sound/soc/intel/common/soc-acpi-intel-mtl-match.c  |  2 +-
+ sound/soc/mediatek/mt8183/mt8183-da7219-max98357.c | 10 +++---
+ sound/soc/mediatek/mt8195/mt8195-mt6359.c          |  1 +
+ sound/soc/mxs/mxs-pcm.c                            |  1 +
+ sound/soc/qcom/qdsp6/q6apm-lpass-dais.c            | 32 ++++++++++++-------
+ sound/soc/qcom/sdw.c                               |  1 +
+ sound/soc/rockchip/rockchip_i2s_tdm.c              | 13 ++++++--
+ sound/soc/soc-generic-dmaengine-pcm.c              |  8 +++++
+ sound/soc/soc-topology.c                           | 37 ++++++++++------------
+ sound/soc/sof/intel/hda-dai.c                      |  6 ++--
+ sound/soc/sof/sof-audio.c                          |  2 +-
+ sound/soc/ti/davinci-mcasp.c                       |  9 ++++--
+ sound/soc/ti/omap-hdmi.c                           |  6 +---
+ 33 files changed, 221 insertions(+), 86 deletions(-)
 
 
