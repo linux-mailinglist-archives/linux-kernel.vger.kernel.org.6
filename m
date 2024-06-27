@@ -1,44 +1,62 @@
-Return-Path: <linux-kernel+bounces-232201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78ECF91A4FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:20:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B216391A4FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:21:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 358AA28120B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:20:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5CEA1C210B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:21:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9650149C7E;
-	Thu, 27 Jun 2024 11:20:32 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B607149001;
+	Thu, 27 Jun 2024 11:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="b6+UfSJt"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B95991487FF;
-	Thu, 27 Jun 2024 11:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE837145B34;
+	Thu, 27 Jun 2024 11:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719487232; cv=none; b=jHJZ5XmB7o7H2q2tdlSXUH4REc3UBOBWcO/rA2JcOuZkU08bEQeS12Ykhdacai+VdZQ6Q3idu+mTIZywRiFMItXIk/sCeoMFyHeFx5zciytevVpufHPedh54r1jsa7wmJGx0067lY3uW1aMg6811DWrB0/FIntSqHZug6z3f/ko=
+	t=1719487255; cv=none; b=NLRgUCA/NvwgXl5JYrAvT+WO1GMUdIpT/EZOKWe//CYJkVk6ie6pX8Z4MYCMgi/GvZ/W7dqfBMb1HjSOnysDnRKZLqyMiIk4GGjwzGBkQFe7GvNEdSfr8W+V1Fe/FsOXeaLBf3TFE11JVcD8LkVT0GFBUtvPbGG62zMWJ1A5kVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719487232; c=relaxed/simple;
-	bh=PvUpyOjvw1mgG8WG6FE7OGft/N0VBjo1rF+T7smm0d4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YRTR3gJlkFNkoXEG0jNgpy8af9JpA/rGzdWMzOKzafKQJr1TL05tntwjslGL19qKpvnLm0toHwk3NgKKj5qYBDifUBbMUqkiTVOUXULnRPT7dJWe6s5p5cqhJwrH2GY3ymVqS6DFkKhp/ff8sZA3KUqywC3FWF4ZiH4daQS/vuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4W8x1h0dMCz4f3kvd;
-	Thu, 27 Jun 2024 19:20:08 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 4A7F31A0572;
-	Thu, 27 Jun 2024 19:20:20 +0800 (CST)
-Received: from [10.174.177.174] (unknown [10.174.177.174])
-	by APP1 (Coremail) with SMTP id cCh0CgAHMn7wSn1mf_TkAQ--.45094S3;
-	Thu, 27 Jun 2024 19:20:20 +0800 (CST)
-Message-ID: <e40b80fc-52b8-4f89-800a-3ffa0034a072@huaweicloud.com>
-Date: Thu, 27 Jun 2024 19:20:16 +0800
+	s=arc-20240116; t=1719487255; c=relaxed/simple;
+	bh=VMv77DIEOfU4zmR3Xg7R04YcosJV3phhbj458HcSmFk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=r8qhx6oihc/BrgwtAhNGG5SGwEmy38Ylm1ESFDAq7HTj5x4uUwdXHg1WYvLLWw9IdaCGST4IGZQA/I4fhtW0DpQQk45vd2JgNO71PHk5ClVxKIsehVvJ/gRwQnG/u8frdnhV6mFv+O9UYI90Ph/b2NUEPjSmuoDv6vxlaH3Jwgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=b6+UfSJt; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45R2kkJ6018190;
+	Thu, 27 Jun 2024 11:20:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	OUE7BDXt8xyZYKC7KXK5T2sUjQ7gfHYZIAdwzaUj9cA=; b=b6+UfSJtuTY8IfH3
+	DrIeVJlDcbf57ULf2F1gXW9dE/Kj50zSdzGPIX+XY/3/OcPlQBXrq4clvgTJ0+Xv
+	MsdMoBOexorm1/qQjey6/NxBLV7ZhuaAEet5zqJ+yyVZg8tjfbopFMlKBFnEfuU7
+	4Cql6ZbIa0Z8obZCV2WJpBM6XVvupO9KNt7JZjWKzCtaVAEIP3Z6nlKSCgTFfvVW
+	8R2UFZQY7lpA5A3SKwaheVhvRD7mRRdWuy6I4vIyQx8baOvplWVZtJnyDT9zY474
+	YSfmSTjh3ppitefEDKXYPCxKXaX8HWnc/vMjEzUh91e2bvOQafo7OAxt1oMlkF27
+	3ooOlQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywppvbt9p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Jun 2024 11:20:46 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45RBKjoQ023843
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Jun 2024 11:20:45 GMT
+Received: from [10.204.65.49] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 27 Jun
+ 2024 04:20:42 -0700
+Message-ID: <bf5661dd-9d3b-4e7e-868b-600efdf3d65f@quicinc.com>
+Date: Thu, 27 Jun 2024 16:50:38 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,109 +64,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] cachefiles: flush all requests for the object that
- is being dropped
-To: Jeff Layton <jlayton@kernel.org>
-Cc: netfs@lists.linux.dev, dhowells@redhat.com, hsiangkao@linux.alibaba.com,
- jefflexu@linux.alibaba.com, zhujia.zj@bytedance.com,
- linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
- yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>,
- Baokun Li <libaokun@huaweicloud.com>
-References: <20240515125136.3714580-1-libaokun@huaweicloud.com>
- <20240515125136.3714580-3-libaokun@huaweicloud.com>
- <5bb711c4bbc59ea9fff486a86acce13880823e7b.camel@kernel.org>
+Subject: Re: [PATCH v3] misc: fastrpc: Move fastrpc driver to misc/fastrpc/
 Content-Language: en-US
-From: Baokun Li <libaokun@huaweicloud.com>
-In-Reply-To: <5bb711c4bbc59ea9fff486a86acce13880823e7b.camel@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAHMn7wSn1mf_TkAQ--.45094S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7CF45KrW5JFy3Kw4rtF4rAFb_yoW8Kw4rpF
-	Waya4akFy8uFsrKrs7XFZ8ZrySy3ykZFnrXF1aqa4jyrn0qrnY9r1UKr1DWF1UArs3Jr4x
-	tr4UuF93Kryqq3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
-	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
-	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_
-	Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbXdbU
-	UUUUU==
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAgAHBV1jkHqw9wABsS
+To: Greg KH <gregkh@linuxfoundation.org>
+CC: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <quic_bkumar@quicinc.com>, <linux-kernel@vger.kernel.org>,
+        <quic_chennak@quicinc.com>, <dri-devel@lists.freedesktop.org>,
+        <arnd@arndb.de>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+References: <20240627104245.1651214-1-quic_ekangupt@quicinc.com>
+ <2024062715-ultra-muppet-c899@gregkh>
+From: Ekansh Gupta <quic_ekangupt@quicinc.com>
+In-Reply-To: <2024062715-ultra-muppet-c899@gregkh>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: uPx-b0PPAW9Wk8l-6xF0vTW-rjI7nYNz
+X-Proofpoint-ORIG-GUID: uPx-b0PPAW9Wk8l-6xF0vTW-rjI7nYNz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-27_06,2024-06-27_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ clxscore=1015 priorityscore=1501 mlxlogscore=999 mlxscore=0 adultscore=0
+ lowpriorityscore=0 phishscore=0 suspectscore=0 impostorscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2406270086
 
-On 2024/6/27 19:01, Jeff Layton wrote:
-> On Wed, 2024-05-15 at 20:51 +0800, libaokun@huaweicloud.com wrote:
->> From: Baokun Li <libaokun1@huawei.com>
+
+
+On 6/27/2024 4:48 PM, Greg KH wrote:
+> On Thu, Jun 27, 2024 at 04:12:44PM +0530, Ekansh Gupta wrote:
+>> Move fastrpc.c from misc/ to misc/fastrpc/. New C files are planned
+>> to be added for PD notifications and other missing features. Adding
+>> and maintaining new files from within fastrpc directory would be easy.
 >>
->> Because after an object is dropped, requests for that object are
->> useless,
->> flush them to avoid causing other problems.
+>> Example of feature that is being planned to be introduced in a new C
+>> file:
+>> https://lore.kernel.org/all/20240606165939.12950-6-quic_ekangupt@quicinc.com/
 >>
->> This prepares for the later addition of cancel_work_sync(). After the
->> reopen requests is generated, flush it to avoid cancel_work_sync()
->> blocking by waiting for daemon to complete the reopen requests.
->>
->> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+>> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 >> ---
->>   fs/cachefiles/ondemand.c | 19 +++++++++++++++++++
->>   1 file changed, 19 insertions(+)
+>> Changes in v2:
+>>   - Updated Kconfig.
+>> Changes in v3:
+>>   - Added newline in kconfig.
 >>
->> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
->> index 73da4d4eaa9b..d24bff43499b 100644
->> --- a/fs/cachefiles/ondemand.c
->> +++ b/fs/cachefiles/ondemand.c
->> @@ -564,12 +564,31 @@ int cachefiles_ondemand_init_object(struct
->> cachefiles_object *object)
->>   
->>   void cachefiles_ondemand_clean_object(struct cachefiles_object
->> *object)
->>   {
->> +	unsigned long index;
->> +	struct cachefiles_req *req;
->> +	struct cachefiles_cache *cache;
->> +
->>   	if (!object->ondemand)
->>   		return;
->>   
->>   	cachefiles_ondemand_send_req(object, CACHEFILES_OP_CLOSE, 0,
->>   			cachefiles_ondemand_init_close_req, NULL);
->> +
->> +	if (!object->ondemand->ondemand_id)
->> +		return;
->> +
->> +	/* Flush all requests for the object that is being dropped.
->> */
-> I wouldn't call this a "Flush". In the context of writeback, that
-> usually means that we're writing out pages now in order to do something
-> else. In this case, it looks like you're more canceling these requests
-> since you're marking them with an error and declaring them complete.
-Makes sense, I'll update 'flush' to 'cancel' in the comment and subject.
+>>  MAINTAINERS                          |  2 +-
+>>  drivers/misc/Kconfig                 | 13 +------------
+>>  drivers/misc/Makefile                |  2 +-
+>>  drivers/misc/fastrpc/Kconfig         | 16 ++++++++++++++++
+>>  drivers/misc/fastrpc/Makefile        |  2 ++
+>>  drivers/misc/{ => fastrpc}/fastrpc.c |  0
+>>  6 files changed, 21 insertions(+), 14 deletions(-)
+>>  create mode 100644 drivers/misc/fastrpc/Kconfig
+>>  create mode 100644 drivers/misc/fastrpc/Makefile
+>>  rename drivers/misc/{ => fastrpc}/fastrpc.c (100%)
+> For now, no, sorry, not a new directory for just one .c file.
+>
+> If you want to add more stuff, wonderful, then do this as the first
+> commit of the series when that actually happens.
+>
+> sorry, but I'm not going to take this now.
+Sure, understood. I will bring in the new file/s along with this new directory change.
 
-I am not a native speaker of English, so some of the expressions may
-not be accurate, thank you for correcting me.
-
-Thanks,
-Baokun
->> +	cache = object->volume->cache;
->> +	xa_lock(&cache->reqs);
->>   	cachefiles_ondemand_set_object_dropping(object);
->> +	xa_for_each(&cache->reqs, index, req) {
->> +		if (req->object == object) {
->> +			req->error = -EIO;
->> +			complete(&req->done);
->> +			__xa_erase(&cache->reqs, index);
->> +		}
->> +	}
->> +	xa_unlock(&cache->reqs);
->>   }
->>   
->>   int cachefiles_ondemand_init_obj_info(struct cachefiles_object
->> *object,
+--Ekansh
+> greg k-h
 
 
