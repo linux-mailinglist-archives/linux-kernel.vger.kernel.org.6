@@ -1,137 +1,148 @@
-Return-Path: <linux-kernel+bounces-232619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 445B191ABD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:51:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1847B91ABDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:53:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7A62281D71
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:51:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC0BA282AFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857FF19938D;
-	Thu, 27 Jun 2024 15:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54BA71991B0;
+	Thu, 27 Jun 2024 15:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CEkq0hQn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aMRbxX2m"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC79319923D;
-	Thu, 27 Jun 2024 15:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7342722EF2;
+	Thu, 27 Jun 2024 15:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719503490; cv=none; b=ANSpptXWJ609+z5vJZGrszBKpvu+YkTV++Gsawij4D+aK6ekDjdYzoTcBrZrzzkUAQJXSXutfuzikeUgWpqfIO7w393fnZhvpb6u3Sz45LmmTfTa+CycJpoqDBXgMJ9cRUij657QlJyv3QBQsc5ZDSB3vbU46hsNiw+zDlJG5rE=
+	t=1719503581; cv=none; b=UVu2cbDkidAeqqza6lJCFOwSRErmGlff9yqqyz60qIQJtaBl9XvMhkyAfqSyNncAG5DG6j0h6QX0qFBc/QTz0KpBN3eAi9rUV4YEffvtaJnUI672zLr03QO9zwg8IkAHqDuXz5SBu9A+Cg3uLc0JpEgZz9hW9n5T5tWx2wIldm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719503490; c=relaxed/simple;
-	bh=8sNmBRbLYtnOF9l6k5kdWe+U29xtoepmvDGnR4Vle4M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BmweVlA2cK02WNGYZ5Mzu3qBekqYTfHg1NZ1iU096ltFkAZaHynOLWIit6ROsIpG8ElU/Ttul5gU8r4MXufAfLHaxUoVNU2X9jQ4/fuSQwu8WZAgzGuyy7qS+y44VwZYblrd/F7buiFi4CIes81/MPLD2hQt8fwBSZN4QRqaHgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CEkq0hQn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E56EAC2BBFC;
-	Thu, 27 Jun 2024 15:51:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719503490;
-	bh=8sNmBRbLYtnOF9l6k5kdWe+U29xtoepmvDGnR4Vle4M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CEkq0hQnBZ+KNYUesU7oE5e3CjPxEjIcd+kDInMzgBmoqMrWOBCZjMFuNDFksaLgA
-	 B349Jiu41uqUzX+CtcDiWGgV7bIMsSwNyNw9IkCB1qoOCBS8t6b/XW1rrKG4R1rOUE
-	 4qC7axIyxiMNpaPpA+/n/qgHBa5XDsuGvigOnz73uxhU+lnx6wlHvnZdb+xfT0YMI4
-	 q5ONx4IfGxclT/naaa2lJETxyQD8xhU0w1KzDRdBDoUEryhCEn2oQFRRHeowiWcULD
-	 EvCQQrEphJ4gXeMz8S0mumv4QPuCm8PqJRdbZs4WK0eAqQryrvv9HkA5zZBup742WK
-	 Zxhe4UF9mJ4og==
-Date: Thu, 27 Jun 2024 16:51:22 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Serge Semin <fancer.lancer@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Jose Abreu <Jose.Abreu@synopsys.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Sagar Cheluvegowda <quic_scheluve@quicinc.com>,
-	Abhishek Chauhan <quic_abchauha@quicinc.com>,
-	Andrew Halaney <ahalaney@redhat.com>,
-	Jiawen Wu <jiawenwu@trustnetic.com>,
-	Mengyuan Lou <mengyuanlou@net-swift.com>,
-	Tomer Maimon <tmaimon77@gmail.com>, openbmc@lists.ozlabs.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 06/10] dt-bindings: net: Add Synopsys DW xPCS
- bindings
-Message-ID: <20240627-hurry-gills-19a2496797f3@spud>
-References: <20240627004142.8106-1-fancer.lancer@gmail.com>
- <20240627004142.8106-7-fancer.lancer@gmail.com>
+	s=arc-20240116; t=1719503581; c=relaxed/simple;
+	bh=3geujrC+ESRectbN0luQVxCYhkd9S6Dv+iHYxRRIFq8=;
+	h=Date:From:To:Cc:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=h/cE3r2CB/io9eHpgxgp/zjb76YfEQ8OU2/ISf1US7rVwT1u50HKXJOz4GP6LCNwmjpodS5cQAe7XKWooeuEHAj4IKjH65htqJubNLHLw9RM+Puvsi5ntInCc7UOn640knIDobsfcpRhVrO8WX9fp3A9OVGGdbGgaA0eQtO7woE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aMRbxX2m; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45REp9Nl006588;
+	Thu, 27 Jun 2024 15:52:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:content-type:mime-version; s=pp1;
+	 bh=V/VUW8t4d5EIqHXHXJuVwZYLQiMx7TgtpJhhtXVdvNQ=; b=aMRbxX2m+vAC
+	Tv0K91bPBPkP68GHCHdhdRQ8MqooKxeiQ5IDBIlVGtzQ18YpE8yUxpR+SrU35p/c
+	kD/ZW61DQRtMAOcTig8q2pjk5oESJ3ESqf1qm3AHhJjVEPOzSRkf4fz+GjhcNL+P
+	VyxwayX80sJb5gE/ysCLERNNN7JKpMjNfGSV0C6uJSrWXr4vKZOgn30aTPZhr1I6
+	3+Z96dh+Y3qPiY55PjKsexVYfzu+uMNfRO29AfR3TeW/nMu+e7gkySj1+6dLG74a
+	RcB3qThbAYXz7X44NJeh2+5mBEsYYn7l/Mmv1JOpm3nduy3hvA6pdb+MAgSgMbnx
+	ZCObKbLDbQ==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4013qg97yp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Jun 2024 15:52:57 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45REisQt019591;
+	Thu, 27 Jun 2024 15:52:56 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yx9xqbht7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Jun 2024 15:52:56 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45RFqoZi31982248
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 27 Jun 2024 15:52:52 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A9B0F20043;
+	Thu, 27 Jun 2024 15:52:50 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8C08120040;
+	Thu, 27 Jun 2024 15:52:50 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 27 Jun 2024 15:52:50 +0000 (GMT)
+Date: Thu, 27 Jun 2024 17:52:49 +0200
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Vasily Gorbik <gor@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] s390 fixes for 6.10-rc6
+Message-ID: <Zn2K0ZLW5gU6rCxf@tuxmaker.boeblingen.de.ibm.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: GwQoHdrOiOKap0BmkCL25-3xdrGWuALb
+X-Proofpoint-ORIG-GUID: GwQoHdrOiOKap0BmkCL25-3xdrGWuALb
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="KQdBdOR3fsoaQVmH"
-Content-Disposition: inline
-In-Reply-To: <20240627004142.8106-7-fancer.lancer@gmail.com>
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-27_12,2024-06-27_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ impostorscore=0 mlxlogscore=601 adultscore=0 mlxscore=0 clxscore=1015
+ bulkscore=0 spamscore=0 phishscore=0 priorityscore=1501 lowpriorityscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406270121
 
+Hello Linus,
 
---KQdBdOR3fsoaQVmH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Please pull s390 changes for 6.10-rc6.
 
-On Thu, Jun 27, 2024 at 03:41:26AM +0300, Serge Semin wrote:
-> +  clocks:
-> +    description:
-> +      Both MCI and APB3 interfaces are supposed to be equipped with a clock
-> +      source connected via the clk_csr_i line.
-> +
-> +      PCS/PMA layer can be clocked by an internal reference clock source
-> +      (phyN_core_refclk) or by an externally connected (phyN_pad_refclk) clock
-> +      generator. Both clocks can be supplied at a time.
-> +    minItems: 1
-> +    maxItems: 3
-> +
-> +  clock-names:
-> +    oneOf:
-> +      - minItems: 1
-> +        items:
-> +          - enum: [core, pad]
-> +          - const: pad
-> +      - minItems: 1
-> +        items:
-> +          - const: pclk
-> +          - enum: [core, pad]
-> +          - const: pad
+Thank you,
+Alexander
 
-While reading this, I'm kinda struggling to map "clk_csr_i" to a clock
-name. Is that pclk? And why pclk if it is connected to "clk_csr_i"?
-If two interfaces are meant to be "equipped" with that clock, how come
-it is optional? I'm probably missing something...
+The following changes since commit 693d41f7c938f92d881e6a51525e6c132a186afd:
 
-Otherwise this binding looks fine to me.
+  s390/mm: Restore mapping of kernel image using large pages (2024-06-11 16:20:40 +0200)
 
-Wee bit confused,
-Conor.
+are available in the Git repository at:
 
---KQdBdOR3fsoaQVmH
-Content-Type: application/pgp-signature; name="signature.asc"
+  git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-6.10-7
 
------BEGIN PGP SIGNATURE-----
+for you to fetch changes up to cea5589e958f8aef301ce9d004bc73fa5bb3b304:
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZn2KegAKCRB4tDGHoIJi
-0kCTAQDqWeZ7LyH0ZTe86qqVq1cd1SncHuw8+sZsegmlMUWaWgD/QLzoKs61xpZg
-Gdvue5pIwWCgd5AWlNaYMf/fQIBK7ws=
-=bQ4k
------END PGP SIGNATURE-----
+  s390/boot: Do not adjust GOT entries for undef weak sym (2024-06-25 14:39:42 +0200)
 
---KQdBdOR3fsoaQVmH--
+----------------------------------------------------------------
+s390 updates for 6.10-rc6
+
+- Add missing virt_to_phys() conversion for directed interrupt
+  bit vectors
+
+- Fix broken configuration change notifications for virtio-ccw
+
+- Fix sclp_init() cleanup path on failure and as result - fix
+  a list double add warning
+
+- Fix unconditional adjusting of GOT entries containing undefined
+  weak symbols that resolve to zero
+
+----------------------------------------------------------------
+Halil Pasic (1):
+      s390/virtio_ccw: Fix config change notifications
+
+Heiko Carstens (1):
+      s390/sclp: Fix sclp_init() cleanup on failure
+
+Jens Remus (1):
+      s390/boot: Do not adjust GOT entries for undef weak sym
+
+Niklas Schnelle (1):
+      s390/pci: Add missing virt_to_phys() for directed DIBV
+
+ arch/s390/boot/startup.c         | 11 +++++++----
+ arch/s390/pci/pci_irq.c          |  2 +-
+ drivers/s390/char/sclp.c         |  1 +
+ drivers/s390/virtio/virtio_ccw.c |  4 +++-
+ 4 files changed, 12 insertions(+), 6 deletions(-)
 
