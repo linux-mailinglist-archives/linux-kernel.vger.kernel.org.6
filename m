@@ -1,116 +1,93 @@
-Return-Path: <linux-kernel+bounces-232322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 428B391A6CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:44:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 715E491A6F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:50:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED2DD28724B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:44:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0F2CB277D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:50:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595321662F9;
-	Thu, 27 Jun 2024 12:44:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CAF917C7C7;
+	Thu, 27 Jun 2024 12:50:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="pL4PMpBK"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="VVPE+XSO"
+Received: from out203-205-221-242.mail.qq.com (out203-205-221-242.mail.qq.com [203.205.221.242])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB5515FD0F
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBDC5179663
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.242
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719492265; cv=none; b=PQQYJFmBvaw50ZIKIS1K2xJ1sX6S/9zq8LzUDII0R0mNamVUCsF/HuP2+S+Zz7ZF2H61CA/xdHWpoSBI8y+/QzgRw6i847A5gKaNipWJPSZyw3fqdpmOg83vOl0Ipf6FTPXL+WOyT6eURrNMURF5CIdVN72HfsXjMqmncQPKvXg=
+	t=1719492604; cv=none; b=g++X6rvIbKPr7Fr+BLyYjMAG4fMfK1/Q97FxmeHhfPktmTSe7aj/siZDvn9l8Hu6BOlLPuo5npILZxrkjTiNQ6PpbOtCxTP9ahAkLR4YthpGB4vqoszSZZfPHBD7vL+NTIlXn6GwDX2s0AohKd0V6ryBgagWt7QxxONp0K7Q+KE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719492265; c=relaxed/simple;
-	bh=pi3DHNQCv9R6UCFWH2MdSRk0b7vmsHj+UgIAfiRMFTM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OPvJrzO4jb98mHLdUMuxW3LWpXM3SKT0cE+wf/Zy9mT2cy0axtFE4G1LQn9lvm6z7jyFVSxSvc6WiNpHkN6LVn1EuYExmEpTtVWzHsDl4iwstii+L5tNSs58TxRa2ZnMW8f4agEqOetRhI5/09mNpzPbWfpxBld7Etx1Wz81r9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=pL4PMpBK; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a729da840a8so91896866b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 05:44:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719492261; x=1720097061; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AoHL1adqPi6egt2LDvYCmnfXjH4AiRnMDVVthfhiOGY=;
-        b=pL4PMpBKJZpPtQ1dpNQr5IEn535DwQOzfSkI3UeAuS/RCsjqhO3IdbV3U3o7alSA/O
-         i63eKo9wZQqSr48L2qxMrI4aHyzQkDgopsZJA1l0c6PsD/HBzSqX5E0tJ1ads4uLLHjF
-         npzh7/Im2WLNAj+eYCahku6z/sgleU9i1WFb1AKVjYUj+s8tN67YdOP13dlbi1IuDUnu
-         0R1CkeLqIXGeVoaEYBIDIxDvj4WEMRpAKZ8Xqi0RwYju1Gb6XiYkZB0H0XvboCzCvnHT
-         APBMgXzysyNyJf63pvrbIS3Zu8zDXxBMT0QzSVk6ibQeWVsLIiQYqTj5DX3czJ6JVPrX
-         r/rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719492261; x=1720097061;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AoHL1adqPi6egt2LDvYCmnfXjH4AiRnMDVVthfhiOGY=;
-        b=vmSXrsfpZEwKYmbcqhFHN4tO/NfdpXlOS0HhNjoex1OMc7xUA2RBorkMx4ObeksQpc
-         Stg4RgHcud0UKX1Z4oFrJkkBqu8nyknNikxesZjbPA8oEvy3Y3vZ8/xSyy1zmf/210zN
-         kLS5Q7sgaPsm8kl6UFlHbQrs5kg/U94IETSdFdjZrdH4WqN7V+qENYkCk7YOVFe5is4e
-         qU/zyV2+kHO17YbRg/54TTHZMnuImO+4Cd+2JkTiAxqHhTg0hFiTWIo1S5J9waHcr1J+
-         Dl1q6vNFQjgcX2Vs0xAqZZLhUbXRR+UB4R7VLVasYgnJhxfzisfAvn/XrIF2UyHhH6Vj
-         M1rw==
-X-Forwarded-Encrypted: i=1; AJvYcCVujDhz1JcO6eRpzLLGnGlUIiGVxsvn0qsXpr5l0XmDMNjnFPeCAoNEyw+9U0J/gh2dUPWGsvI+s7RppiXf6aZE2k569zLCHktWVHx5
-X-Gm-Message-State: AOJu0YygUmCV0opi0sMFeywGpytAcLLqI9HhWnVMEx4h4N+EKKEPfCSd
-	8tnhhK6NxuOBEo/4oespdHlM3ZcyskpOJiZCHy/9KW0xQq9rXv6b+8LBZRN9mFw=
-X-Google-Smtp-Source: AGHT+IFeaiSpwuIh7g2JkEWpjFnfDJbPJTm3K8sWRedli0PvmQPwA/kwXIvdntky4Hl+GJAwNEAyPQ==
-X-Received: by 2002:a17:906:99d5:b0:a72:58c3:2696 with SMTP id a640c23a62f3a-a7296f5d2admr226130066b.14.1719492261140;
-        Thu, 27 Jun 2024 05:44:21 -0700 (PDT)
-Received: from ryzen9.fritz.box ([2a01:2a8:8103:2c01:45d5:74ac:5265:59da])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a729d6fdf62sm57030266b.8.2024.06.27.05.44.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 05:44:20 -0700 (PDT)
-From: =?UTF-8?q?Bernhard=20Rosenkr=C3=A4nzer?= <bero@baylibre.com>
-To: florian.fainelli@broadcom.com,
-	bcm-kernel-feedback-list@broadcom.com,
-	gregkh@linuxfoundation.org,
-	umang.jain@ideasonboard.com,
-	wahrenst@gmx.net,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: vchiq_debugfs: Fix build if CONFIG_DEBUG_FS is not set
-Date: Thu, 27 Jun 2024 14:44:19 +0200
-Message-ID: <20240627124419.2498642-1-bero@baylibre.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1719492604; c=relaxed/simple;
+	bh=1s6KL2A5BxKto0IMZbSrcHTZhim/DFbU3qpH6hFSrMQ=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=iSYintI/TZMKI3b5jqCrKf4/cMeMIO7uyuwFLDJunZM3wZBaWhTid/6PdDMEsw7GWQ4XmNKb8pbai5DtosoTAdLrBtHETlUjv/AIrhdheEwNp2lBg9k04hLO7k4RV3fRFqOdSqq4TEw8L6jtvvJtvE/jv9BquuSw+XzKLTaxzSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=VVPE+XSO; arc=none smtp.client-ip=203.205.221.242
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1719492293; bh=3vgEVukpScf348J5ES58QzjOcxzTTmMqGrdr9uaReSY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=VVPE+XSOMTiRZra3o7vY8PzErya5zZNIpYLRboOnmH0KOSoJ9HU65EG2CSBwESKjd
+	 8R4Ht5pAeJa1lhxYLJj1tjRdgen1aGA9+NiwE1CWZf5tMmKmIldbqgN+I+gaRvfhB5
+	 Eslf3CcRxq1pt3Gp2fzCqEeJ6YzSOvRTrIfX8O0U=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
+	by newxmesmtplogicsvrszc19-0.qq.com (NewEsmtp) with SMTP
+	id B3381EBD; Thu, 27 Jun 2024 20:44:51 +0800
+X-QQ-mid: xmsmtpt1719492291tnx2pguym
+Message-ID: <tencent_C7923A5DABDDB2191E4F830DC6A58B8DEB07@qq.com>
+X-QQ-XMAILINFO: MBjwNRQMz5zU6FmzQCNFwtLT1jZBSQ9kGjzLaeGXlw23s0kxWHnFWzs8nbqS2a
+	 w+fer0NSyxk1WTJ/jHJwY0jZG9mYLLjccvcYUFYfWhPi+4SxlJ5qz8mRFy8qL8gK8hHF5iFAG077
+	 bQ2avVy2k9xGrgVeCv7ytTj9YQTDpZ2oYx4IYBhgxDZyGAmc4EqtoSiqtkIRYLB8OtuIaWDdCaq0
+	 lge+cwyXg/Xt8QgQ5GAYgXUlWPnI542L4yIfPnVHpY9PBpedHAfe/EcKp5KnV83us1znvUsBOILr
+	 RqxkIUqvPl662JhF+JUchpBRLc5+E90CCHHRCDSPULOgGBcto53bSlFdWUUsTJiSsRgyXNq0t0Kl
+	 Nd/ATy7+Tfml8+tyGN3MjJs8trM/yr5bCijb9XAxXgZ56eWUcLUbBqsIbd9U/MPGaiprgNbW1pGX
+	 zqLtopPsy0VvHdgU44lwQaXgcNL+le0Sn3xhNfY3FnQxAmwEh6wDVb9n7n8xIerDNBd8Uja3++Tl
+	 oZgzqDkTNJsJj8kKsCrH9eJ1neeRk7rzPYWqaS2pKIEfeCOQHM7R6sHqTHmHnpBJMZOpgD9PT6Xp
+	 jHVeodN3BOQ71zj3RekLnMi3V8HWUbg+cRTfrWNsmkKK5LQCJ5HSp1iLf7M9JZ8Acs83AgbVOLSR
+	 f49Wx4QLippxhS6SeRz1a5pRVNC6MLui9Q/9d4CudndJXBs/GYCejlnP09kmkilz9uyiM2MBwOMz
+	 r6lke81Y2NpDE1RdFZCuOz2KJWc8s0BE7zp1Nacy5rcYV/0OkP/LJ3lG0WW2e099afj/7drgM4RG
+	 rTm+Qj3zgX1AWq2lmc688qXDNR0hS4sY5nU8WE/Zbzk/PaLjLJVsXoKokK1YKYo9r4IguNMh+/v0
+	 3/5YvxAHHkliEFg7Q4O/1jBwhnCAX6fH3zLunBjz4OsZl4kHYPJIE=
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: [syzbot] [net?] KASAN: slab-use-after-free Write in l2tp_session_delete
+Date: Thu, 27 Jun 2024 20:44:52 +0800
+X-OQ-MSGID: <20240627124451.719448-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <0000000000008405e0061bb6d4d5@google.com>
+References: <0000000000008405e0061bb6d4d5@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Commit 42a2f6664e18 ("staging: vc04_services: Move global g_state to
-vchiq_state") adds a parameter to vchiq_debugfs_init, but leaves the
-dummy implementation in the !CONFIG_DEBUG_FS case untouched, causing a
-compile time error.
+delete tunnl session list
 
-Fixes: c3552ab19aeb ("staging: vchiq_debugfs: Fix NPD in vchiq_dump_state")
-Signed-off-by: Bernhard Rosenkränzer <bero@baylibre.com>
----
- .../staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c   | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+#syz test: linux-next f76698bd9a8c
 
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c
-index 1f74d0bb33bae..d5f7f61c56269 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c
-@@ -138,7 +138,7 @@ void vchiq_debugfs_deinit(void)
+diff --git a/net/l2tp/l2tp_ppp.c b/net/l2tp/l2tp_ppp.c
+index 3596290047b2..1fd27c902d80 100644
+--- a/net/l2tp/l2tp_ppp.c
++++ b/net/l2tp/l2tp_ppp.c
+@@ -446,6 +446,7 @@ static int pppol2tp_release(struct socket *sock)
+ 	if (session) {
+ 		struct pppol2tp_session *ps;
  
- #else /* CONFIG_DEBUG_FS */
++		list_del_init(&session->list);
+ 		l2tp_session_delete(session);
  
--void vchiq_debugfs_init(void)
-+void vchiq_debugfs_init(struct vchiq_state *state)
- {
- }
- 
--- 
-2.45.2
+ 		ps = l2tp_session_priv(session);
 
 
