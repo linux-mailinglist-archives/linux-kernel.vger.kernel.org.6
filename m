@@ -1,160 +1,161 @@
-Return-Path: <linux-kernel+bounces-231785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40E07919DFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 05:52:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B0F0919E02
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 05:52:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E762B284D1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 03:52:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 071922814BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 03:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1610719BBA;
-	Thu, 27 Jun 2024 03:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="ZoGCcuI5"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9F017BD3;
-	Thu, 27 Jun 2024 03:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3481864C;
+	Thu, 27 Jun 2024 03:52:33 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A876DF5B;
+	Thu, 27 Jun 2024 03:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719460326; cv=none; b=AYkhnosJH2s8fOAJg6H03wEsBLvumR1q+IqpDIto8N2RXunwEo6aSy5AYwf4kvHs4FXxvy2KoBdr9gj36JR/ZWPiMEHLZ/vaJxrShPN+Xlk9scY8vd7L4xRvDyE1zJ4VG77NcpD3vYV3EIA/vWMInNGyQM2VsRa2oElj4FT470c=
+	t=1719460353; cv=none; b=CfR35vXoFIBrc6lbNWKIaWYdqGdlHU+sgU8X9OQCrIi47Yxtf3c34ae9oDaXmNEVoRa/7Yast03AhJsHVeyZR0jM5zTf4Sdm/LeyTTCpb8CkIIuIxV/XEPXgL7EAO+ENDl0IG2MnD3Y7Uji5wlof/xMKQzgG+gPQlHNEZTtTeHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719460326; c=relaxed/simple;
-	bh=lpzd7Nx5MF1oK1JcTeI2hyeThlXRya7VczRO6yhiGp0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cyrjrBoW9oKhV9kDZ7oaLK4PHm75tYmMNi2Vk+78ZQb5inhlnHW3s15cGDzbTBcPyECYBM9GGuFnJD3C2k4XGqwjx2jXhCwu3VF9ecODZQJdQ/tnpIT7hvFVF8djRbyQqyGTtWGAJO0g7+KNTakI68fRUvDnZjE+96l5DlDcTzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=ZoGCcuI5; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=B1h+6RnRSUxEQ2JIgw5GxEVm9g06YqeVqlOwm92wP1I=; t=1719460324;
-	x=1719892324; b=ZoGCcuI55OXXClPhvhHFIR/8kMpbYq5XdyW+zCfdXeS6fO8UYQsHWnj+seor5
-	gBG6pnccDLu+FCiSO73Bwn/fgK/dnvypmYbDgAS5PwwxyfM9paj19KdBwHxCPpDYkJidINqkK2dqN
-	0+FaQDwls03rzeo9k6Z5WMyvJbrDaZXjsouNGRGDGo1J1gi+rBO78+92B1kGbZlzeTaJPUGthrx/2
-	cgjkImpia77ThzH1LI9uvOuCGeiWWBrRzxG7RwDhdYbyKs3E/0Let44rSpqoMyompiiRX4VkXAPkr
-	YOZ27yanJaoU8WIvOcnwtxsh8Ez6eG4t7mKU2RYPjhb20sJMDQ==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sMgAl-0002OI-Ss; Thu, 27 Jun 2024 05:51:47 +0200
-Message-ID: <62647fab-b3d4-48ac-af4c-78c655dcff26@leemhuis.info>
-Date: Thu, 27 Jun 2024 05:51:47 +0200
+	s=arc-20240116; t=1719460353; c=relaxed/simple;
+	bh=+08d+3ASjumMBxy07yHbvHgVTTUYnsoUO5w1cCPqcyc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DHKzf63uVmYeNDgYJoiq9IQP2mU71iqbp3R6L8UmpFrQIGYOfdMy4uRKzqpoL4Hzpcor5+HwY/JggyycDkfZCMqzfZbrPB7gCZjCGmdiCqoKkk88UYkeL+eNt8eCOzTlizNxQXn+0Aq+AVAFmbwaAsTNdjELhUDLs0wP6UWbFUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 170D8339;
+	Wed, 26 Jun 2024 20:52:54 -0700 (PDT)
+Received: from e116581.blr.arm.com (e116581.arm.com [10.162.41.7])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 48B403F6A8;
+	Wed, 26 Jun 2024 20:52:24 -0700 (PDT)
+From: Dev Jain <dev.jain@arm.com>
+To: shuah@kernel.org,
+	oleg@redhat.com
+Cc: mingo@kernel.org,
+	tglx@linutronix.de,
+	mark.rutland@arm.com,
+	ryan.roberts@arm.com,
+	broonie@kernel.org,
+	suzuki.poulose@arm.com,
+	Anshuman.Khandual@arm.com,
+	DeepakKumar.Mishra@arm.com,
+	aneesh.kumar@kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dev Jain <dev.jain@arm.com>
+Subject: [PATCH v4 0/2] Add test to distinguish between thread's signal mask and ucontext_t
+Date: Thu, 27 Jun 2024 09:22:13 +0530
+Message-Id: <20240627035215.1527279-1-dev.jain@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] Documentation: best practices for using Link
- trailers
-To: Randy Dunlap <rdunlap@infradead.org>, Jonathan Corbet <corbet@lwn.net>,
- Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
- Kees Cook <kees@kernel.org>
-Cc: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- workflows@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, ksummit@lists.linux.dev
-References: <20240619-docs-patch-msgid-link-v2-0-72dd272bfe37@linuxfoundation.org>
- <20240619-docs-patch-msgid-link-v2-2-72dd272bfe37@linuxfoundation.org>
- <202406211355.4AF91C2@keescook>
- <20240621-amorphous-topaz-cormorant-cc2ddb@lemur>
- <87cyo3fgcb.fsf@trenco.lwn.net>
- <4709c2fa-081f-4307-bc9e-eef928255c08@infradead.org>
-From: Thorsten Leemhuis <linux@leemhuis.info>
-Content-Language: en-US, de-DE
-Autocrypt: addr=linux@leemhuis.info; keydata=
- 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 n7RI
-In-Reply-To: <4709c2fa-081f-4307-bc9e-eef928255c08@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1719460324;ddd1b200;
-X-HE-SMSGID: 1sMgAl-0002OI-Ss
+Content-Transfer-Encoding: 8bit
 
-On 27.06.24 01:17, Randy Dunlap wrote:
-> On 6/26/24 4:13 PM, Jonathan Corbet wrote:
->> Konstantin Ryabitsev <konstantin@linuxfoundation.org> writes:
->>> On Fri, Jun 21, 2024 at 02:07:44PM GMT, Kees Cook wrote:
->>>> On Wed, Jun 19, 2024 at 02:24:07PM -0400, Konstantin Ryabitsev wrote:
->>>>> +   This URL should be used when referring to relevant mailing list
->>>>> +   topics, related patch sets, or other notable discussion threads.
->>>>> +   A convenient way to associate ``Link:`` trailers with the commit
->>>>> +   message is to use markdown-like bracketed notation, for example::
->>>>> ...
->>>>> +     Link: https://lore.kernel.org/some-msgid@here # [1]
->>>>> +     Link: https://bugzilla.example.org/bug/12345  # [2]
->>>>
->>>> Why are we adding the extra "# " characters? The vast majority of
->>>> existing Link tags don't do this:
->>>
->>> That's just convention. In general, the hash separates the trailer from the
->>> comment:
->>>
->>>     Trailer-name: actual-trailer-body # comment
->>
->> Did we ever come to a conclusion on this?  This one character seems to
->> be the main source of disagreement in this series, I'm wondering if I
->> should just apply it and let the painting continue thereafter...?
-> 
-> We have used '#' for ages for adding comments to by: tags.
-> I'm surprised that it's not documented.
+This patch series is motivated by the following observation:
 
-I thought it was documented, but either I was wrong or can't find it.
-But I found process/5.Posting.rst, which provides this example:
+Raise a signal, jump to signal handler. The ucontext_t structure dumped
+by kernel to userspace has a uc_sigmask field having the mask of blocked
+signals. If you run a fresh minimalistic program doing this, this field
+is empty, even if you block some signals while registering the handler
+with sigaction().
 
-        Link: https://example.com/somewhere.html  optional-other-stuff
+Here is what the man-pages have to say:
 
-So no "# " there. So to avoid inconsistencies I guess this should not be
-applied, unless that document is changed as well.
+sigaction(2): "sa_mask specifies a mask of signals which should be blocked
+(i.e., added to the signal mask of the thread in which the signal handler
+is invoked) during execution of the signal handler. In addition, the
+signal which triggered the handler will be blocked, unless the SA_NODEFER
+flag is used."
 
-Ciao, Thorsten
+signal(7): Under "Execution of signal handlers", (1.3) implies:
+
+"The thread's current signal mask is accessible via the ucontext_t
+object that is pointed to by the third argument of the signal handler."
+
+But, (1.4) states:
+
+"Any signals specified in act->sa_mask when registering the handler with
+sigprocmask(2) are added to the thread's signal mask.  The signal being
+delivered is also added to the signal mask, unless SA_NODEFER was
+specified when registering the handler.  These signals are thus blocked
+while the handler executes."
+
+There clearly is no distinction being made in the man pages between
+"Thread's signal mask" and ucontext_t; this logically should imply
+that a signal blocked by populating struct sigaction should be visible
+in ucontext_t.
+
+Here is what the kernel code does (for Aarch64):
+
+do_signal() -> handle_signal() -> sigmask_to_save(), which returns
+&current->blocked, is passed to setup_rt_frame() -> setup_sigframe() ->
+__copy_to_user(). Hence, &current->blocked is copied to ucontext_t
+exposed to userspace. Returning back to handle_signal(),
+signal_setup_done() -> signal_delivered() -> sigorsets() and
+set_current_blocked() are responsible for using information from
+struct ksignal ksig, which was populated through the sigaction()
+system call in kernel/signal.c:
+copy_from_user(&new_sa.sa, act, sizeof(new_sa.sa)),
+to update &current->blocked; hence, the set of blocked signals for the
+current thread is updated AFTER the kernel dumps ucontext_t to
+userspace.
+
+Assuming that the above is indeed the intended behaviour, because it
+semantically makes sense, since the signals blocked using sigaction()
+remain blocked only till the execution of the handler, and not in the
+context present before jumping to the handler (but nothing can be
+confirmed from the man-pages), the series introduces a test for
+mangling with uc_sigmask. I will send a separate series to fix the
+man-pages.
+
+The proposed selftest has been tested out on Aarch32, Aarch64 and x86_64.
+
+v3->v4:
+ - Allocate sigsets as automatic variables to avoid malloc()
+
+v2->v3:
+ - ucontext describes current state -> ucontext describes interrupted context
+ - Add a comment for blockage of USR2 even after return from handler
+ - Describe blockage of signals in a better way
+
+v1->v2:
+ - Replace all occurrences of SIGPIPE with SIGSEGV
+ - Fixed a mismatch between code comment and ksft log
+ - Add a testcase: Raise the same signal again; it must not be queued
+ - Remove unneeded <assert.h>, <unistd.h>
+ - Give a detailed test description in the comments; also describe the
+   exact meaning of delivered and blocked
+ - Handle errors for all libc functions/syscalls
+ - Mention tests in Makefile and .gitignore in alphabetical order
+
+v1:
+ - https://lore.kernel.org/all/20240607122319.768640-1-dev.jain@arm.com/
+
+Dev Jain (2):
+  selftests: Rename sigaltstack to generic signal
+  selftests: Add a test mangling with uc_sigmask
+
+ tools/testing/selftests/Makefile              |   2 +-
+ .../{sigaltstack => signal}/.gitignore        |   3 +-
+ .../{sigaltstack => signal}/Makefile          |   3 +-
+ .../current_stack_pointer.h                   |   0
+ .../selftests/signal/mangle_uc_sigmask.c      | 186 ++++++++++++++++++
+ .../sas.c => signal/sigaltstack.c}            |   0
+ 6 files changed, 191 insertions(+), 3 deletions(-)
+ rename tools/testing/selftests/{sigaltstack => signal}/.gitignore (57%)
+ rename tools/testing/selftests/{sigaltstack => signal}/Makefile (53%)
+ rename tools/testing/selftests/{sigaltstack => signal}/current_stack_pointer.h (100%)
+ create mode 100644 tools/testing/selftests/signal/mangle_uc_sigmask.c
+ rename tools/testing/selftests/{sigaltstack/sas.c => signal/sigaltstack.c} (100%)
+
+-- 
+2.34.1
+
 
