@@ -1,129 +1,113 @@
-Return-Path: <linux-kernel+bounces-231765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9326D919DAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 05:02:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96481919DB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 05:03:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20876285341
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 03:02:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E75E1F21BCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 03:03:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE13913FF9;
-	Thu, 27 Jun 2024 03:02:51 +0000 (UTC)
-Received: from cstnet.cn (unknown [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2CBB18B1A;
+	Thu, 27 Jun 2024 03:02:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="jrn2lapp"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0EF8814;
-	Thu, 27 Jun 2024 03:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4058C8F6;
+	Thu, 27 Jun 2024 03:02:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719457371; cv=none; b=fgF8zupecrlDaW7N+z3Q+hAvD0a/oEgLGAalza8U+GwwGNZX4FqvXCYm5N+Y77dXKt455TAqMNq1E37NqzdU6AWjj7TMlUUi+17iPxR9i5x0mnR5o/r1GdV9XTk9noTcEGhFwgKhl/fwF5T3h2WPs8bqnAmnr0i9i0kIFTtq3I0=
+	t=1719457373; cv=none; b=VRaWV8NH7RHnZTu3CVux1R/cQVy08N9fX3NqfDWLkdT8R8UeS9Biwz1roEiJDqT9qlUyZWXE/Eab9ydMklArMy/IW/DORLpbsJsMKnD9aiQ/xLswbYdN9h7F4qzlatg00y2fsxFVHoUhpAy33oZbQM//SONJ7Tbt4RPBHPAlLn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719457371; c=relaxed/simple;
-	bh=mzRu4FOP+Ip89fI4yXRMEnYoS1DyeLQ1AjfU2+P03B4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LYAlxAsGsQ0fhUvBoxJm8d0ad1ZKcPtyPlc8whyrm4USoLLawsdPmDnQMSNvJXcx4ZCNesLzIL/qCCoBGOvt7F+WrDr/qZYycGhEFvlUzBREcqVKk6mIcI6E2KEYdonYw7gZSphrVSnUlW4rmIj3/f/3kO2sp2pjWKr1i+6uPi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from ThinkPad-T480s.. (unknown [180.110.114.157])
-	by APP-05 (Coremail) with SMTP id zQCowACXneU91nxmmgIiAA--.7124S2;
-	Thu, 27 Jun 2024 11:02:23 +0800 (CST)
-From: zhouquan@iscas.ac.cn
-To: linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: oleg@redhat.com,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	andy.chiu@sifive.com,
-	shuah@kernel.org,
-	charlie@rivosinc.com,
-	zhouquan@iscas.ac.cn
-Subject: [PATCH v1 0/2] riscv: Expose orig_a0 to userspace for ptrace to set the actual a0
-Date: Thu, 27 Jun 2024 11:02:21 +0800
-Message-Id: <cover.1719408040.git.zhouquan@iscas.ac.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1719457373; c=relaxed/simple;
+	bh=EhjeL739fXGfFhIzTvZXdH4uFeIjF4K3Lk5/9pGIf1Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yd4oMbfp6m9kBeqpDcbxQtUAldPpgkKZ1GosCoVGfuvtIF/+YEsFmMeE8q+orUinkEF4+GloI8R6Ouk5i1vkdK6TYGRXo6djtFEQKSF859pqqFeSiVXd5KYNh/LxPFuV+cuMMaWjRyNsrjM9pqZD7c7Ar4lmYC9+HibWzok2qjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=jrn2lapp; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 721B240E01D6;
+	Thu, 27 Jun 2024 03:02:48 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id CSK0S82tyIFv; Thu, 27 Jun 2024 03:02:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1719457364; bh=MmExb+MUVFN1kqaecveoMawY6XC3Ia4gBAbZorGaHw0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jrn2lappB4DcGvaoHfXgxjpa2XgDckhGv7L2/YCK1ajydDKHwAJWfL6NwXFvonWBA
+	 eha9CThBndf5js0lVkJCXUVuI4elW0tfs3zV8f2v6L/MkRVPNbsPBoSRbnsG81q9Xl
+	 6TnUl707jxMg3uwA88u3e8B50VjwVMP6ad/vGkCi6zmwe7mCTcUGuKdbPl4oTkPo/e
+	 DQYHuhiN79jkryCGp0s3dpH5FK1QUd+g82UoXAWqxNxrgPlS6pFWybLfJvDai/Nb0o
+	 UIM0skORDzBucuiMRRXpksRlj6P1HKisCR4ORJvV9tkfwCFMJYfv8A7V5P2fNLMHmZ
+	 oujworeL3MxDbeqjewbZdJ0hM+eCbzWGgSqBWUE0S44ko34t6MCzYcrDCnk2Zbklgi
+	 Kf5Zs70vpHFaz6VPgYUbHcDUoeRw4cUiwC36QHhabhyl51arvhEuS4k42+6ygAVj+f
+	 3GryeHMNnvwGk8ni7QJizsy2YBXG2gQ7bqL38faQ70Jyuet3br0O847ABwT4tyNcak
+	 +xKYDDq/98mPUyV9Jq2aNhTUtA7zAQb2Z30XK7QQMsa2KC8Rmx4wfHaO4hzElAHCwa
+	 k1Gm6Dsl+nLuVcsa4a8TlWjJPuDNy8lLHeL4fSuINjAGNjT3RRBXJgnAEmnX21bAV9
+	 aXx65nf1hvkS1h/NKuvAx3zs=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5499E40E0187;
+	Thu, 27 Jun 2024 03:02:29 +0000 (UTC)
+Date: Thu, 27 Jun 2024 05:02:27 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+	Perry Yuan <perry.yuan@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>, Huang Rui <ray.huang@amd.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
+	"open list:AMD PSTATE DRIVER" <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH 2/2] cpufreq: amd-pstate: Use amd_get_highest_perf() to
+ lookup perf values
+Message-ID: <20240627030227.GBZnzWQ5H4MZt3wWNz@fat_crate.local>
+References: <20240626042043.2410-1-mario.limonciello@amd.com>
+ <20240626042043.2410-3-mario.limonciello@amd.com>
+ <20240626171809.GSZnxNUd4tcRT4IB_k@fat_crate.local>
+ <f5251cea-32f2-426d-b3c8-73ce4c562fac@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowACXneU91nxmmgIiAA--.7124S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7tF43Ar1fXryUtFW7GFWDCFg_yoW8tFy3pa
-	95Kwn8Kr1kJFy7t3WxXw4UZrWrAa4kGrW3G3WxZw13Z3y0yryvqr4xKa15t3sxA3y8XryS
-	vF12k3W5C3W7Aa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
-	1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
-	8cxan2IY04v7M4kE6xkIj40Ew7xC0wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
-	VjvjDU0xZFpf9x0JUSiihUUUUU=
-X-CM-SenderInfo: 52kr31xxdqqxpvfd2hldfou0/1tbiCQ4BBmZ8nayl6gAAsk
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <f5251cea-32f2-426d-b3c8-73ce4c562fac@amd.com>
 
-From: Quan Zhou <zhouquan@iscas.ac.cn>
+On Wed, Jun 26, 2024 at 01:19:56PM -0500, Mario Limonciello wrote:
+> I was thinking we would take this patch through superm1/linux-next or
+> linux-pm/linux-next as there is other amd-pstate stuff for the next merge
+> window, but if you'd rather go through x86 then we can wait until after the
+> merge window on this series.
 
-Due to the path that modifies a0 in syscall_enter_from_user_mode before the
-actual execution of syscall_handler [1], the kernel currently saves a0 to
-orig_a0 at the entry point of do_trap_ecall_u as an original copy of a0.
-Once the syscall is interrupted and later resumed, the restarted syscall
-will use orig_a0 to continue execution.
+I can also ACK this once it is ready and you can take it through whichever
+tree you prefer.  
 
-The above rules generally apply except for ptrace(PTRACE_SETREGSET,),
-where the kernel will ignore the tracer's setting of tracee/a0 and
-will restart with the tracee/orig_a0. For the current kernel implementation
-of ptrace, projects like CRIU/Proot will encounter issues where the a0
-setting becomes ineffective when performing ptrace(PTRACE_SETREGSET,).
+I don't think we'll have merge conflicts there.
 
-Here is a suggested solution, expose orig_a0 to userspace so that ptrace
-can choose whether to set orig_a0 based on the actual scenario. In fact,
-x86/orig_eax and loongArch/orig_a0 have adopted similar solutions.
+Thx.
 
-[1] link:
-https://lore.kernel.org/lkml/20230403-crisping-animosity-04ed8a45c625@spud/T/
-
----
-Changes from RFC->v1:
-- Rebased on Linux 6.10-rc5.
-- Updated the patch description.
-- Adjust MAX_REG_OFFSET to match the new bottom of pt_regs (Charlie).
-- Simplify selftest to verify if a0 can be set (Charlie).
-- Fix .gitignore error (Charlie).
-
----
-RFC link:
-https://lore.kernel.org/all/cover.1718693532.git.zhouquan@iscas.ac.cn/
-
-Quan Zhou (2):
-  riscv: Expose orig_a0 in the user_regs_struct structure
-  riscv: selftests: Add a ptrace test to verify syscall parameter
-    modification
-
- arch/riscv/include/asm/ptrace.h              |   7 +-
- arch/riscv/include/uapi/asm/ptrace.h         |   2 +
- tools/testing/selftests/riscv/Makefile       |   2 +-
- tools/testing/selftests/riscv/abi/.gitignore |   1 +
- tools/testing/selftests/riscv/abi/Makefile   |  12 ++
- tools/testing/selftests/riscv/abi/ptrace.c   | 124 +++++++++++++++++++
- 6 files changed, 144 insertions(+), 4 deletions(-)
- create mode 100644 tools/testing/selftests/riscv/abi/.gitignore
- create mode 100644 tools/testing/selftests/riscv/abi/Makefile
- create mode 100644 tools/testing/selftests/riscv/abi/ptrace.c
-
-
-base-commit: f2661062f16b2de5d7b6a5c42a9a5c96326b8454
 -- 
-2.34.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
