@@ -1,158 +1,141 @@
-Return-Path: <linux-kernel+bounces-232347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08C3F91A728
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:59:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B9D191A72B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:00:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 895281F27B1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:59:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B601D1F27C13
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:00:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF0917B4F7;
-	Thu, 27 Jun 2024 12:58:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026DE17E900;
+	Thu, 27 Jun 2024 12:59:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jWpQSEd6"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="Vp6mALM/"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3EDE16DC31
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E42C17839F
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719493131; cv=none; b=nEaisIVsIklVX5D9iIVPUHdKoLdR3F9mBDakWGbT8X7boi0BwHr8DTwv2O2/VRaWrFvZbNUWheyLtwdJvMvdWsKA2Wz60R/9iyxXkankAbtFgkTTuabKoSeZkNn1tuTUn7jkuaAzne483z1IDGaW4Pjyg01RN16D9TC10IWwn1w=
+	t=1719493181; cv=none; b=Jhec40thq8nPlFjdI5kZtoHLNc51KCxPkBZwVx6t1jaFXHZ5tGx9eDYojTkMC91rnVVOTZJ/EgshfW1DqnNThuK8ZsWHWram0qOh2l1XnzoTgLOmLATmVL+4+J2RlCyav39a73ziuB03CCCg9lgRAHwzcQ/q+Wu/uBRLkUu9mdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719493131; c=relaxed/simple;
-	bh=BFJqvvwzgXTKnp7wUm5ylIIF+ac6I/VvpFUBscUMLaQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ITXwKbz6JCoOyKaahknM7qGE6HhjsvZQgfeTcPV5leRxx3SAC1n5CiFpQvmBkn5tBohVvWNlscQCwva83gMBlVyxpR+rAa0GZIUkFat3/+S/R/bxMaA/Whj6bT8k1tk5HD77l85t1jWBCEqHiiVtfXNtRbB2mwbX5I3ToOCjxhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jWpQSEd6; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52cdcd26d61so6172491e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 05:58:49 -0700 (PDT)
+	s=arc-20240116; t=1719493181; c=relaxed/simple;
+	bh=djf+zpDy0cGzml2gdulK4XsNMklzMkCpPiMsnT/SHHg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=am8WzvS6V23K6B1NT/Bi+GRuceoIkG9sRLmkviz/jZX3GqksirWH2UmF23zAIoGMxS45IM7eMmtGetvkXi3apQ4fpl5N00Mfw8qm9+XTMNVagx0DDwaCsVhicq1XNPsVgknw+yahfUEPEP9yZLlhmZBACyoaly034yX4mekXiqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=Vp6mALM/; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57d15b85a34so1666376a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 05:59:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719493128; x=1720097928; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ggWXmRs7jIjON8UjWfc25bUS0kEkQZXlxcRlo0AHzgg=;
-        b=jWpQSEd6anVyS74GIgt1yVL25x7BRquCykpoZL6yshzf4Nzqy/jIk078YaQS5Hke+z
-         HORPXsw4aJqhunr4juiNEW7gCfkAfTuJWafICbhX59acnSjtB8mMkVhGC5wCW/3xP80t
-         5kgkcz9Qf0Nb6F6NJlri3VlgbQXlq05/5PJaXq30tAk0eSTufcugprwgmVBqjFt02ZYd
-         luEdghRuPER72tjurEFt/MZFK51g5l0LjrHXO/d0O3UnQ7cH3tifWczzIqGVLJp3a42B
-         NV9zsh8b/ctMZAf4xYsO+auf5NeDk/v00JP4VDFCfABMlwfg0exMS8dx3tymW0IMI6JJ
-         UoUg==
+        d=ionos.com; s=google; t=1719493178; x=1720097978; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bWHz2FIZmR9jlDrFPN04RMbtkT6hZhyxIzbXRjccwgc=;
+        b=Vp6mALM/+CD/pkSwNNdeufo5f1Ixu0V7uJ85ijBHnYlOpPZTzn8MVMK55v37dBKx+h
+         F4MWczubBW3GCaIurryg/tTgzwN/HedamRM17NkYByZWh1DeE02fZTJaXrBE+iiyLXGH
+         RkjjqRT9Tn0EwnSmRzHtmQZe2efc9SNX6mc225d5Z0vKekScI1tnnASDtTAqY4WL1utg
+         DqtkbATF+TrLoeUAzEPtYwHKqtzcN0EGtsVmOn24a44nor1IlRxM+M463v2F2V5GNqPG
+         0qKxY/WYrebBeF0CB5kvFtB0PDlxlujfm+2qC0Tr+hEtn2KUHtTvGAQkapYfDze1wAuT
+         Lijg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719493128; x=1720097928;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ggWXmRs7jIjON8UjWfc25bUS0kEkQZXlxcRlo0AHzgg=;
-        b=SO9a3ilpNW6NvBhUudoO9/rtgJfb5ac/jx03uUtnde+bcHO5Qti0hT3uWjiaKQOgMq
-         /1+uZDuR2FGJ4mY9tiykFLyyRBIQ/5vjOgU0To27fkMFqD/v75ggiD12CUZVULC9lsbd
-         T8rMboAhRZWagTzse9f5WXDDXL8I/V+6kuJ1yjzXEbiv9U24oHAHWOsLOC0ZXf48oh7o
-         TbfWpyF6eaSDEnbJEnOlG8dRhv6jdLMDlbe+fy6qw/6qhMALrnqqq1ggjV8rJ2Vl1NIb
-         8znr93xnFydWixrwlYJ35lHUTfXtmhaj85DQ3GzZvAygOVQt/F2KBeIHJqFdmW5qXT81
-         IrCg==
-X-Forwarded-Encrypted: i=1; AJvYcCWQuHUb/WqYyhnalBWyEanzfT3OPBvNEAZQ8GI5IwpkXlym0JZL9d15p0bOENRkj1kyl9B8QqaEm/9c0F96juuy/fzX0c4nDyDMENMF
-X-Gm-Message-State: AOJu0YzPfHES5dfiPMmtK0EACGjfmiA3BwU6LihYs2cvisM6oMX9wt7z
-	q0ZsuFkPJbyyNg0mN4aKqq4IZ5mkROqGoXxO4hi92AAHT7F4PFdhzeoNyb+5Olw=
-X-Google-Smtp-Source: AGHT+IEiqcyM7j5d8vMA37q8FTy4bbA4eRCNMZ56T3o6exzKO9FDtm3+D1xRJ3+j2E0oItZOMaGibw==
-X-Received: by 2002:a19:e043:0:b0:52c:e121:c927 with SMTP id 2adb3069b0e04-52ce18647f7mr8070668e87.62.1719493127407;
-        Thu, 27 Jun 2024 05:58:47 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:feeb:faed:66fa:9e6a? ([2a01:e0a:982:cbb0:feeb:faed:66fa:9e6a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42564bc59f5sm26436015e9.42.2024.06.27.05.58.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Jun 2024 05:58:47 -0700 (PDT)
-Message-ID: <bfc333a1-52da-4e4e-9917-09840ac5ebea@linaro.org>
-Date: Thu, 27 Jun 2024 14:58:45 +0200
+        d=1e100.net; s=20230601; t=1719493178; x=1720097978;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bWHz2FIZmR9jlDrFPN04RMbtkT6hZhyxIzbXRjccwgc=;
+        b=kuKaulmcXvWJF7G6P7YZiC1kYiBGPX2Un77PTEFmiFbhT2/HYO/RGLCoPRLhrPK8eE
+         Hp6jx5g5aNRwEIBQLZLu7rQ3NP8V3qP0NoM6ZZ4nF4HhmQYwQfFXSEMjZ8WfZwteBWAM
+         ZPvBiuJSbhyTTEU3lEiI049q4OpvhuNZaZCQMWOjjCct2GC4GxP8ugJuiSvGtNeYJT00
+         pVucP25Gihswy52qm3w2s5DG7x2kOPxHShR/uPYvqafbMtNb/8s5AjGJmYck9RDWqHFz
+         x1Icdevt3H0VYqjMw2Eikfivkx94XeOsUv3Nje5sT+iSJwUL1TrQ8H1TOFRliFt18R92
+         eHGg==
+X-Gm-Message-State: AOJu0YwQTjvb4rsoQIWqQkjpyHLVUvvXQDnckfJCyQy0tT4O++uQxb4g
+	czqZ+xEZj61gcBVjorjEHxS0rD7Sg5YwQwSJh0Ytd44maIcxmbzx39+9xZyVu0EtQ/YESw2/DUX
+	ef1b5IIvDKMJ1L14gYGF+XyXAyjVSvoXZfpghWw==
+X-Google-Smtp-Source: AGHT+IGb36nfDmQg3J0KfNIEsQLDUZQFaR8fiSp4DzS029pm7FdcwFqbfZ9gp9MN4M5+cIA/npuz/aHOpc7E8ST57AI=
+X-Received: by 2002:a05:6402:3491:b0:585:59d1:52da with SMTP id
+ 4fb4d7f45d1cf-58559d1555cmr926476a12.1.1719493177672; Thu, 27 Jun 2024
+ 05:59:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 4/6] ASoC: codecs: wsa884x: parse port-mapping information
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org,
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20240626-port-map-v1-0-bd8987d2b332@linaro.org>
- <20240626-port-map-v1-4-bd8987d2b332@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240626-port-map-v1-4-bd8987d2b332@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240620175703.605111-1-yury.norov@gmail.com> <20240620175703.605111-25-yury.norov@gmail.com>
+In-Reply-To: <20240620175703.605111-25-yury.norov@gmail.com>
+From: Jinpu Wang <jinpu.wang@ionos.com>
+Date: Thu, 27 Jun 2024 14:59:27 +0200
+Message-ID: <CAMGffEnKZK_Du+f=v_PxsJEv4PE=L=vnkejXWW3Eu7gw9vpKSw@mail.gmail.com>
+Subject: Re: [PATCH v4 24/40] RDMA/rtrs: optimize __rtrs_get_permit() by using find_and_set_bit_lock()
+To: Yury Norov <yury.norov@gmail.com>
+Cc: linux-kernel@vger.kernel.org, "Md. Haris Iqbal" <haris.iqbal@ionos.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org, 
+	Alexey Klimov <alexey.klimov@linaro.org>, Bart Van Assche <bvanassche@acm.org>, Jan Kara <jack@suse.cz>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
+	Mirsad Todorovac <mirsad.todorovac@alu.unizg.hr>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Sergey Shtylyov <s.shtylyov@omp.ru>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 27/06/2024 13:55, Srinivas Kandagatla wrote:
-> Add support to parse static master port map information from device tree.
-> This is required for correct port mapping between soundwire device and
-> master ports.
-> 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+On Thu, Jun 20, 2024 at 7:58=E2=80=AFPM Yury Norov <yury.norov@gmail.com> w=
+rote:
+>
+> The function opencodes find_and_set_bit_lock() with a while-loop polling
+> on test_and_set_bit_lock(). Use the dedicated function instead.
+>
+> Signed-off-by: Yury Norov <yury.norov@gmail.com>
+lgtm, thx!
+Reviewed-by: Jack Wang <jinpu.wang@ionos.com>
 > ---
->   sound/soc/codecs/wsa884x.c | 8 ++++++++
->   1 file changed, 8 insertions(+)
-> 
-> diff --git a/sound/soc/codecs/wsa884x.c b/sound/soc/codecs/wsa884x.c
-> index a9767ef0e39d..72ff71bfb827 100644
-> --- a/sound/soc/codecs/wsa884x.c
-> +++ b/sound/soc/codecs/wsa884x.c
-> @@ -1887,6 +1887,14 @@ static int wsa884x_probe(struct sdw_slave *pdev,
->   	wsa884x->sconfig.direction = SDW_DATA_DIR_RX;
->   	wsa884x->sconfig.type = SDW_STREAM_PDM;
->   
-> +	/**
-> +	 * Port map index starts with 0, however the data port for this codec
-> +	 * are from index 1
-> +	 */
-> +	if (of_property_read_u32_array(dev->of_node, "qcom,port-mapping", &pdev->m_port_map[1],
-> +					WSA884X_MAX_SWR_PORTS))
-> +		dev_info(dev, "Static Port mapping not specified\n");
-> +
->   	pdev->prop.sink_ports = GENMASK(WSA884X_MAX_SWR_PORTS, 0);
->   	pdev->prop.simple_clk_stop_capable = true;
->   	pdev->prop.sink_dpn_prop = wsa884x_sink_dpn_prop;
-> 
-
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+>  drivers/infiniband/ulp/rtrs/rtrs-clt.c | 16 ++++------------
+>  1 file changed, 4 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/infiniband/ulp/rtrs/rtrs-clt.c b/drivers/infiniband/=
+ulp/rtrs/rtrs-clt.c
+> index 88106cf5ce55..52b7728f6c63 100644
+> --- a/drivers/infiniband/ulp/rtrs/rtrs-clt.c
+> +++ b/drivers/infiniband/ulp/rtrs/rtrs-clt.c
+> @@ -10,6 +10,7 @@
+>  #undef pr_fmt
+>  #define pr_fmt(fmt) KBUILD_MODNAME " L" __stringify(__LINE__) ": " fmt
+>
+> +#include <linux/find_atomic.h>
+>  #include <linux/module.h>
+>  #include <linux/rculist.h>
+>  #include <linux/random.h>
+> @@ -72,18 +73,9 @@ __rtrs_get_permit(struct rtrs_clt_sess *clt, enum rtrs=
+_clt_con_type con_type)
+>         struct rtrs_permit *permit;
+>         int bit;
+>
+> -       /*
+> -        * Adapted from null_blk get_tag(). Callers from different cpus m=
+ay
+> -        * grab the same bit, since find_first_zero_bit is not atomic.
+> -        * But then the test_and_set_bit_lock will fail for all the
+> -        * callers but one, so that they will loop again.
+> -        * This way an explicit spinlock is not required.
+> -        */
+> -       do {
+> -               bit =3D find_first_zero_bit(clt->permits_map, max_depth);
+> -               if (bit >=3D max_depth)
+> -                       return NULL;
+> -       } while (test_and_set_bit_lock(bit, clt->permits_map));
+> +       bit =3D find_and_set_bit_lock(clt->permits_map, max_depth);
+> +       if (bit >=3D max_depth)
+> +               return NULL;
+>
+>         permit =3D get_permit(clt, bit);
+>         WARN_ON(permit->mem_id !=3D bit);
+> --
+> 2.43.0
+>
 
