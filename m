@@ -1,54 +1,55 @@
-Return-Path: <linux-kernel+bounces-231828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02235919EE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:45:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7E46919EF3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:56:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E54D1C22DCE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 05:45:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BDBA1F23D19
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 05:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F95A28DD0;
-	Thu, 27 Jun 2024 05:45:03 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D6C208D7;
+	Thu, 27 Jun 2024 05:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="QAMnQuyA"
+Received: from lichtman.org (lichtman.org [149.28.33.109])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F471CD31;
-	Thu, 27 Jun 2024 05:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2751CF92;
+	Thu, 27 Jun 2024 05:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719467102; cv=none; b=bSQbi/F3e2XhKCQRPPaMQcM1qgMo17Vv9c5Q/55st5i2YWIVPwpiLEjJCQwDup/elABmxGXOWtNAt06UEWe/XieQ4PIWaAL28OyqTj16Y00v8MAzql84PRJOM0nCc7doxYSJOsBb6qnTeHbmynwaUZP/Ivix3BWuEe4NrZ1BOH4=
+	t=1719467749; cv=none; b=NYbolFVpwNGT3Wq8xARLm64c32qrtbbofMASqUaB7TglDgWw/yXxdrOP4f1CLUHrC7Qtd6R2zere/Q4qmmKgt1hGXeDJ44ibHEN49vqbBDkZynATT6vRmIagDrd471VjRrqyn/mfjUbCvbuyx+JXsb5XXdsSu4YDJ5+oG9qzh4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719467102; c=relaxed/simple;
-	bh=LP3kdRmSdGwbopkqhn7jCAhhTd3gb5/rE7WfLoYZXzI=;
+	s=arc-20240116; t=1719467749; c=relaxed/simple;
+	bh=xOmKMNXZBEG4oHeTtcg85qowauS0P1r2UBuwgImGCuc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BogB6+cSjpfAbTA3rcqiwvDPaMf3fsOaSdocX4V4Dsgym/veEB9tbFGIQIyyiXiSrC/A2RRFouy/jmncxE+pdRhoslr5pYTOUjsiwLW1Y9Xx4NmDt1EdtakOKN+NrzeLIB3qCfpjLXpNoXkQ87DnsPKmg5ItqyUegOQrXCutkVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 70CDD68AFE; Thu, 27 Jun 2024 07:44:55 +0200 (CEST)
-Date: Thu, 27 Jun 2024 07:44:55 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Alistair Popple <apopple@nvidia.com>
-Cc: dan.j.williams@intel.com, vishal.l.verma@intel.com,
-	dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
-	jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
-	will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
-	dave.hansen@linux.intel.com, ira.weiny@intel.com,
-	willy@infradead.org, djwong@kernel.org, tytso@mit.edu,
-	linmiaohe@huawei.com, david@redhat.com, peterx@redhat.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-	jhubbard@nvidia.com, hch@lst.de, david@fromorbit.com
-Subject: Re: [PATCH 10/13] fs/dax: Properly refcount fs dax pages
-Message-ID: <20240627054455.GF14837@lst.de>
-References: <cover.66009f59a7fe77320d413011386c3ae5c2ee82eb.1719386613.git-series.apopple@nvidia.com> <afcfa4f164e5642c4f629c75acf794838c2ac9aa.1719386613.git-series.apopple@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XykoJcOjbng9TpK4ESjcRaGI9FONMQZySrxKtFGqAO8GPxr6UPOb82VFWPzDjTQS589kD3JyG6EGWhgJ5AYoDmQEcE5rQwVFfsx/PDpdyT4ER4GPuJTHQ4Oh9KMcTZ/K7HI900kwkvUDSNpbWagqsSP76+tM+5LR9MTldKCzv3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=QAMnQuyA; arc=none smtp.client-ip=149.28.33.109
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
+Received: by lichtman.org (Postfix, from userid 1000)
+	id 48C46176E38; Thu, 27 Jun 2024 05:48:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
+	t=1719467304; bh=xOmKMNXZBEG4oHeTtcg85qowauS0P1r2UBuwgImGCuc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QAMnQuyAqkYNdiS4cTBN7ITekznek5sm8UKQKbrr0w/zQp7gHxIa3vN80RT61YwGM
+	 GxM47QNvOnmctpeiQR0ZrVu9lzIiZ+1rOl08zWNZv9sgEzKbmb9rdhSufZYY9aCWOL
+	 sFc7Cj/XYVxazlNfT3kI3ZDsqP7GgnwmoUnCKUCo7aTP4OYL8ruCX0InoBz5CTidGM
+	 RgC90HsLiFSISYGvgXJ8fgQ/qEiPNl+rptfWIJD4cKKaRFYKfCllr6/f3ZC8Tit8pU
+	 WweZI4BfXauQeXTsc4i5LGzT9oU0lDuz67R6XpqJCbklEb2LM4vVJxUiv4ihrBqkf+
+	 DWWZbKlP3/Czw==
+Date: Thu, 27 Jun 2024 05:48:24 +0000
+From: Nir Lichtman <nir@lichtman.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Documentation: English corrections in vmalloced kernel
+ stacks
+Message-ID: <20240627054824.GA3723247@lichtman.org>
+References: <20240619215944.GA3571421@lichtman.org>
+ <87msn7xqf2.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,84 +58,10 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <afcfa4f164e5642c4f629c75acf794838c2ac9aa.1719386613.git-series.apopple@nvidia.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <87msn7xqf2.fsf@trenco.lwn.net>
 
-> diff --git a/drivers/dax/device.c b/drivers/dax/device.c
-> index eb61598..b7a31ae 100644
-> --- a/drivers/dax/device.c
-> +++ b/drivers/dax/device.c
-> @@ -126,11 +126,11 @@ static vm_fault_t __dev_dax_pte_fault(struct dev_dax *dev_dax,
->  		return VM_FAULT_SIGBUS;
->  	}
->  
-> -	pfn = phys_to_pfn_t(phys, PFN_DEV|PFN_MAP);
-> +	pfn = phys_to_pfn_t(phys, 0);
->  
->  	dax_set_mapping(vmf, pfn, fault_size);
->  
-> -	return vmf_insert_mixed(vmf->vma, vmf->address, pfn);
-> +	return dax_insert_pfn(vmf->vma, vmf->address, pfn, vmf->flags & FAULT_FLAG_WRITE);
+Noted.
 
-Plenty overly long lines here and later.
-
-Q: hould dax_insert_pfn take a vm_fault structure instead of the vma?
-Or are the potential use cases that aren't from the fault path?
-similar instead of the bool write passing the fault flags might actually
-make things more readable than the bool.
-
-Also at least currently it seems like there are no modular users despite
-the export, or am I missing something?
-
-> +		blk_queue_flag_set(QUEUE_FLAG_DAX, q);
-
-Just as a heads up, setting of these flags has changed a lot in
-linux-next.
-
->  {
-> +	/*
-> +	 * Make sure we flush any cached data to the page now that it's free.
-> +	 */
-> +	if (PageDirty(page))
-> +		dax_flush(NULL, page_address(page), page_size(page));
-> +
-
-Adding the magic dax_dev == NULL case to dax_flush and going through it
-vs just calling arch_wb_cache_pmem directly here seems odd.
-
-But I also don't quite understand how it is related to the rest
-of the patch anyway.
-
-> --- a/mm/mlock.c
-> +++ b/mm/mlock.c
-> @@ -373,6 +373,8 @@ static int mlock_pte_range(pmd_t *pmd, unsigned long addr,
->  	unsigned long start = addr;
->  
->  	ptl = pmd_trans_huge_lock(pmd, vma);
-> +	if (vma_is_dax(vma))
-> +		ptl = NULL;
->  	if (ptl) {
-
-This feels sufficiently magic to warrant a comment.
-
->  		if (!pmd_present(*pmd))
->  			goto out;
-> diff --git a/mm/mm_init.c b/mm/mm_init.c
-> index b7e1599..f11ee0d 100644
-> --- a/mm/mm_init.c
-> +++ b/mm/mm_init.c
-> @@ -1016,7 +1016,8 @@ static void __ref __init_zone_device_page(struct page *page, unsigned long pfn,
->  	 */
->  	if (pgmap->type == MEMORY_DEVICE_PRIVATE ||
->  	    pgmap->type == MEMORY_DEVICE_COHERENT ||
-> -	    pgmap->type == MEMORY_DEVICE_PCI_P2PDMA)
-> +	    pgmap->type == MEMORY_DEVICE_PCI_P2PDMA ||
-> +	    pgmap->type == MEMORY_DEVICE_FS_DAX)
->  		set_page_count(page, 0);
->  }
-
-So we'll skip this for MEMORY_DEVICE_GENERIC only.  Does anyone remember
-if that's actively harmful or just not needed?  If the latter it might
-be simpler to just set the page count unconditionally here.
-
+Thanks,
+Nir
 
