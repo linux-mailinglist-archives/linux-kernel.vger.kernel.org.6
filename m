@@ -1,310 +1,214 @@
-Return-Path: <linux-kernel+bounces-232714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ADC091AD6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:08:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA6AE91AD6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:07:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AD051F21F78
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:08:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBC701C24184
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:07:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F17A199E89;
-	Thu, 27 Jun 2024 17:07:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F1C199EBD;
+	Thu, 27 Jun 2024 17:07:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="u4FcjLQB"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZNVPSyZe"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573241993B6;
-	Thu, 27 Jun 2024 17:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6C5199225
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 17:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719508054; cv=none; b=blyWsPfuyvJ6H97U3VeFoOL1PMK/ICJO4NLkbUsvtfgqtt3hV8ccsaFVvnbBPwEaUhC4J5/ZmYVKSc6QnOiVToqE+oY0kdX8B0L+va6GmLffPhyWGoccZX1OeY9WbTGbHabdo8ZFxiccOOaPqb4tH3ImDydI0KxSosA+M2AcioA=
+	t=1719508052; cv=none; b=G1K39AjPATZISq6B7rRgZGcJlsA6NdrV0DJmozn+UJXKMAvP9dlR5D0gXetMnIWF2/y5AGNX4/jc/ozyFbm3hHqhJoWh7TIRTKufujz7f6AD353/W4mQMCwoq3U7n1igwcWOtGdf8ud/1B5jqihyTWy4SgSIxPjSQw9kue9BlT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719508054; c=relaxed/simple;
-	bh=Z/c+lxJwd7UIuARllGjxVL6q+N2isc3AH0/Vo8Ni5H0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MGwZuQDaEbZ1VaY2kt8Y3vx6Ia6vtS1sxDPXcyxJAYucxLoKRQ12P9ywl08gkh0ABleKtQZO1azSbYofXSmhRirn7/Iz/I2xPubtS/ZT90vip64seyvY+mMn8yxNotDSkOJ/uyJNY/vDS89SPAwyvrToNk7PpictQAOI5B9w+5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=u4FcjLQB; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45RH7AWp063539;
-	Thu, 27 Jun 2024 12:07:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1719508030;
-	bh=BcQL+NqV6utnh+IZGZTuEzll45Xa3ROniFOcHtO7a0s=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=u4FcjLQBTFvh17RASYvDE3PrENT7vP4PqD+ooJJuBeq1FOwEZurxyNgaweGQYF1uP
-	 WZtf5SODIau9Azb05maWB2ohUa9h6n1lUkII0hhNvP9T4ohoQ9g8BA+mfOYNFvAFyk
-	 pGCrKzJERNH61uGpwc3esLSP58qG1FrE/vOkO50A=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45RH7A7Q018299
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 27 Jun 2024 12:07:10 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 27
- Jun 2024 12:07:10 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 27 Jun 2024 12:07:10 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45RH79hX030213;
-	Thu, 27 Jun 2024 12:07:09 -0500
-Message-ID: <4e23ec81-b278-4f2b-815d-64ed9390ca55@ti.com>
-Date: Thu, 27 Jun 2024 12:07:09 -0500
+	s=arc-20240116; t=1719508052; c=relaxed/simple;
+	bh=TilR43KIjFBeRdL1uCN+cULd4RllUEvgtbiOqptaisg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DPt58Ch9oqrJecaf1kANoSWH4mK2K++f659D29PqlzU5wDSjEX6Je89lFeADg5soKgAhWgNfGfV0ByK6aVZYDLE0JUotej9S+I/3ihwDVAVBIAhEg/Zf32fTSIgIUjzylVjCWPtceyJZItRVK7+G74YKG/J9XbETxUSqtr+jR2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZNVPSyZe; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719508049;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qIxdFP2i4FT3D9Pm46UxMYOadfBkfMsZfXfJZXYueno=;
+	b=ZNVPSyZe/0Z0mCskT+b1IFoXwQ3xQneEPw0n5gG5i8d2Dsypw9f/xauTkP58J/CKfKsciM
+	dQpTp8H3/zMjiDGcwOzOuf+He3PdfGa6Y5/I19NW3IZyTV9yRr/0JM/a8pCNLsE87iBFc8
+	uZKtQRt6ODKZWYXqqa7SjKn1u4lclF0=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-218-JVGD5IYuOkyoX8IpN93s3g-1; Thu, 27 Jun 2024 13:07:27 -0400
+X-MC-Unique: JVGD5IYuOkyoX8IpN93s3g-1
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-79bb8a887ffso1009508985a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 10:07:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719508046; x=1720112846;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qIxdFP2i4FT3D9Pm46UxMYOadfBkfMsZfXfJZXYueno=;
+        b=Rs61V7Ev4wMYyLjCK2jQGyGG17YTtvL6lWDINnOKym+OdQ6H1HIKn/bQPcssbYLsd/
+         RVE3T5xPv42fmgJr95+QvlfQsb4txETvCoErCE//41mFzNfzDVF+HJ/4G0PL43U2hTpK
+         n55SKDOmiGhQXwjyIu/rs/3k5aUYJsn3tiq6aH6BS/ZwzUm54IBZ5jcW+FYGYYBbQ4Qz
+         SK3GqCKpq7EYhurqWs2ZoOsGtX01MkWW3QQlerjplQ5GxYm+6UVJigl+OSqEe1VAwuBx
+         FhSYqGf/fNe/kn095fSVsewMO3tfzLdZuU9rzGfUs3XbVOqwt72MBRL0Kbsp+2YsFTb1
+         Dv/w==
+X-Forwarded-Encrypted: i=1; AJvYcCXjba2IUsrzH1DjpVFiVeudhDGGullzAtJgbmyvAkw/+e6Vr145JQVYHYOhontawC9WYcqImZbcdCBaUzYN4xXAF28/J74D88rcESa7
+X-Gm-Message-State: AOJu0YxBrt/zqgKDnxFOqKsALqYQPqb5E98eQJV5AWqZ013pmu26+EeC
+	RyBS0fbCwAqqEtKLfYbRHViflKS7xfTy1KT2b9qHrGWFbOIPunhD9nPX7PQjzNN16qJ2+ZX0JG2
+	egd6HrZZRISpMQlafPUAchty3upsyW+JVpWrgmOGZBLQgTay0Sme+HoNzCdcIzw==
+X-Received: by 2002:a05:620a:394c:b0:79b:eb0f:7781 with SMTP id af79cd13be357-79beb0f7ec3mr1437499085a.53.1719508046040;
+        Thu, 27 Jun 2024 10:07:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGg/oiENJqDup3/M9UZYUuyNol+/22Ovf586SY/3tWxk/8vPIZ1xZuirsW0Zy9NbkOXr7WPng==
+X-Received: by 2002:a05:620a:394c:b0:79b:eb0f:7781 with SMTP id af79cd13be357-79beb0f7ec3mr1437493585a.53.1719508045405;
+        Thu, 27 Jun 2024 10:07:25 -0700 (PDT)
+Received: from x1gen2nano ([2600:1700:1ff0:d0e0::f])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79d5c8117e0sm72061285a.52.2024.06.27.10.07.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 10:07:25 -0700 (PDT)
+Date: Thu, 27 Jun 2024 12:07:22 -0500
+From: Andrew Halaney <ahalaney@redhat.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Vinod Koul <vkoul@kernel.org>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, 
+	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v2 net-next 2/2] net: stmmac: qcom-ethqos: add a
+ DMA-reset quirk for sa8775p-ride
+Message-ID: <td5jbseo7gtu6d4xai6q2zkfmxw4ijimyiromrf52he5hze3w3@fd3kayixf4lw>
+References: <20240627113948.25358-1-brgl@bgdev.pl>
+ <20240627113948.25358-3-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 7/7] dts: ti: k3-am625-beagleplay: Add mikroBUS
-To: Ayush Singh <ayush@beagleboard.org>, Mark Brown <broonie@kernel.org>,
-        Vaishnav M A <vaishnav@beagleboard.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Derek Kiernan <derek.kiernan@amd.com>,
-        Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        Nishanth Menon <nm@ti.com>, Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>, Michael Walle
-	<mwalle@kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>, <jkridner@beagleboard.org>,
-        <robertcnelson@beagleboard.org>
-CC: <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20240627-mikrobus-scratch-spi-v5-0-9e6c148bf5f0@beagleboard.org>
- <20240627-mikrobus-scratch-spi-v5-7-9e6c148bf5f0@beagleboard.org>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20240627-mikrobus-scratch-spi-v5-7-9e6c148bf5f0@beagleboard.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240627113948.25358-3-brgl@bgdev.pl>
 
-On 6/27/24 11:26 AM, Ayush Singh wrote:
-> DONOTMERGE
+On Thu, Jun 27, 2024 at 01:39:47PM GMT, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
-> Add mikroBUS connector and some mikroBUS boards support for Beagleplay.
-> The mikroBUS boards node should probably be moved to a more appropriate
-> location but I am not quite sure where it should go since it is not
-> dependent on specific arch.
+> On sa8775p-ride the RX clocks from the AQR115C PHY are not available at
+> the time of the DMA reset so we need to loop TX clocks to RX and then
+> disable loopback after link-up. Use the existing callbacks to do it just
+> for this board.
 > 
-> Signed-off-by: Ayush Singh <ayush@beagleboard.org>
-> ---
->   arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts | 94 +++++++++++++++++++++++---
->   1 file changed, 86 insertions(+), 8 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts b/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts
-> index 70de288d728e..3f3cd70345c4 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts
-> +++ b/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts
-> @@ -38,6 +38,7 @@ aliases {
->   		serial2 = &main_uart0;
->   		usb0 = &usb0;
->   		usb1 = &usb1;
-> +		mikrobus0 = &mikrobus0;
->   	};
->   
->   	chosen {
-> @@ -227,6 +228,56 @@ simple-audio-card,codec {
->   		};
->   	};
->   
-> +	mikrobus0: mikrobus-connector {
-> +		compatible = "mikrobus-connector";
-> +		pinctrl-names = "default", "pwm_default", "pwm_gpio",
-> +				"uart_default", "uart_gpio", "i2c_default",
-> +				"i2c_gpio", "spi_default", "spi_gpio";
-> +		pinctrl-0 = <&mikrobus_gpio_pins_default>;
-> +		pinctrl-1 = <&mikrobus_pwm_pins_default>;
-> +		pinctrl-2 = <&mikrobus_pwm_pins_gpio>;
-> +		pinctrl-3 = <&mikrobus_uart_pins_default>;
-> +		pinctrl-4 = <&mikrobus_uart_pins_gpio>;
-> +		pinctrl-5 = <&mikrobus_i2c_pins_default>;
-> +		pinctrl-6 = <&mikrobus_i2c_pins_gpio>;
-> +		pinctrl-7 = <&mikrobus_spi_pins_default>;
-> +		pinctrl-8 = <&mikrobus_spi_pins_gpio>;
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
+Sorry, not being very helpful but trying to understand these changes
+and the general cleanup of stmmac... so I'll point out that I'm still
+confused by this based on Russell's last response:
+https://lore.kernel.org/netdev/ZnQLED%2FC3Opeim5q@shell.armlinux.org.uk/
+
+Quote:
+
+    If you're using true Cisco SGMII, there are _no_ clocks transferred
+    between the PHY and PCS/MAC. There are two balanced pairs of data
+    lines and that is all - one for transmit and one for receive. So this
+    explanation doesn't make sense to me.
+
+
+<snip>
+
+> +}
 > +
-> +		mikrobus-gpio-names = "pwm", "int", "rx", "tx", "scl", "sda",
-> +				      "mosi", "miso", "sck", "cs", "rst", "an";
-> +		mikrobus-gpios = <&main_gpio1 11 GPIO_ACTIVE_HIGH>,
-> +				 <&main_gpio1 9 GPIO_ACTIVE_HIGH>,
-> +				 <&main_gpio1 24 GPIO_ACTIVE_HIGH>,
-> +				 <&main_gpio1 25 GPIO_ACTIVE_HIGH>,
-> +				 <&main_gpio1 22 GPIO_ACTIVE_HIGH>,
-> +				 <&main_gpio1 23 GPIO_ACTIVE_HIGH>,
-> +				 <&main_gpio1 7 GPIO_ACTIVE_HIGH>,
-> +				 <&main_gpio1 8 GPIO_ACTIVE_HIGH>,
-> +				 <&main_gpio1 14 GPIO_ACTIVE_HIGH>,
-> +				 <&main_gpio1 13 GPIO_ACTIVE_HIGH>,
-> +				 <&main_gpio1 12 GPIO_ACTIVE_HIGH>,
-> +				 <&main_gpio1 10 GPIO_ACTIVE_HIGH>;
-> +
-> +		spi-controller = <&main_spi2>;
-> +		spi-cs = <0>;
-> +		spi-cs-names = "default";
-> +
-> +		board = <&lsm6dsl_click>;
-> +	};
-> +
-> +	mikrobus_boards {
-> +		thermo_click: thermo-click {
-> +			compatible = "maxim,max31855k", "mikrobus-spi";
+>  static void ethqos_set_func_clk_en(struct qcom_ethqos *ethqos)
+>  {
+> +	qcom_ethqos_set_sgmii_loopback(ethqos, true);
+>  	rgmii_updatel(ethqos, RGMII_CONFIG_FUNC_CLK_EN,
+>  		      RGMII_CONFIG_FUNC_CLK_EN, RGMII_IO_MACRO_CONFIG);
+>  }
+<snip>
+> @@ -682,6 +702,7 @@ static void ethqos_fix_mac_speed(void *priv, unsigned int speed, unsigned int mo
+>  {
+>  	struct qcom_ethqos *ethqos = priv;
+>  
+> +	qcom_ethqos_set_sgmii_loopback(ethqos, false);
 
-I might be missing something, but your solution cannot possibly be
-to list every click board that could be connected (all 1500+ of them)
-to every mikroBUS connector on every device's DT file..
+I'm trying to map out when the loopback is currently enabled/disabled
+due to Russell's prior concerns.
 
-Each click board should have a single DTSO overlay file to describe the
-click board, one per click board total. And then that overlay should
-apply cleanly to any device that has a mikroBUS interface.
+Quote:
 
-Which means you have not completely solved the fundamental problem of
-abstracting the mikroBUS connector in DT. Each of these click device child
-nodes has to be under the parent connector node. Which means a phandle
-to the parent node, which is not generically named. For instance
-if my board has 2 connectors, I would have mikrobus0 and mikrobus1,
-the click board's overlay would look like this:
+    So you enable loopback at open time, and disable it when the link comes
+    up. This breaks inband signalling (should stmmac ever use that) because
+    enabling loopback prevents the PHY sending the SGMII result to the PCS
+    to indicate that the link has come up... thus phylink won't call
+    mac_link_up().
 
-/dts-v1/;
-/plugin/;
+    So no, I really hate this proposed change.
 
-&mikrobus0 {
-	status = "okay";
+    What I think would be better is if there were hooks at the appropriate
+    places to handle the lack of clock over _just_ the period that it needs
+    to be handled, rather than hacking the driver as this proposal does,
+    abusing platform callbacks because there's nothing better.
 
-	mikrobus_board {
-		thermo-click {
-			compatible = "maxim,max31855k", "mikrobus-spi";
-			spi-max-frequency = <1000000>;
-			pinctrl-apply = "spi_default";
-		};
-	};
-};
+looks like currently you'd:
+    qcom_ethqos_probe()
+	ethqos_clks_config(ethqos, true)
+	    ethqos_set_func_clk_en(ethqos)
+		qcom_ethqos_set_sgmii_loopback(ethqos, true) // loopback enabled
+	ethqos_set_func_clk_en(ethqos)
+	    qcom_ethqos_set_sgmii_loopback(ethqos, true) // no change in loopback
+    devm_stmmac_pltfr_probe()
+	stmmac_pltfr_probe()
+	    stmmac_drv_probe()
+		pm_runtime_put()
+    // Eventually runtime PM will then do below
+    stmmac_stmmac_runtime_suspend()
+	stmmac_bus_clks_config(priv, false)
+	    ethqos_clks_config(ethqos, false) // pointless branch but proving to myself
+	                                      // that pm_runtime isn't getting in the way here
+    __stmmac_open()
+	stmmac_runtime_resume()
+	    ethqos_clks_config(ethqos, true)
+		ethqos_set_func_clk_en(ethqos)
+		    qcom_ethqos_set_sgmii_loopback(ethqos, true) // no change in loopback
+    stmmac_mac_link_up()
+	ethqos_fix_mac_speed()
+	    qcom_ethqos_set_sgmii_loopback(ethqos, false); // loopback disabled
 
-I think this solution is almost there, but once you solve the above
-issue, we could just apply the right overlay for our attached click
-board ahead of time and not need the mikroBUS bus driver at all.
+Good chance I foobared tracing that... but!
+That seems to still go against Russell's comment, i.e. its on at probe
+and remains on until a link is up. This doesn't add anymore stmmac wide
+platform callbacks at least, but I'm still concerned based on his prior
+comments.
 
+Its not clear to me though if the "2500basex" mentioned here supports
+any in-band signalling from a Qualcomm SoC POV (not just the Aquantia
+phy its attached to, but in general). So maybe in that case its not a
+concern?
+
+Although, this isn't tied to _just_ 2500basex here. If I boot the
+sa8775p-ride (r2 version, with a marvell 88ea1512 phy attached via
+sgmii, not indicating 2500basex) wouldn't all this get exercised? Right
+now the devicetree doesn't indicate inband signalling, but I tried that
+over here with Russell's clean up a week or two ago and things at least
+came up ok (which made me think all the INTEGRATED_PCS stuff wasn't needed,
+and I'm not totally positive my test proved inband signalling worked,
+but I thought it did...):
+
+    https://lore.kernel.org/netdev/zzevmhmwxrhs5yfv5srvcjxrue2d7wu7vjqmmoyd5mp6kgur54@jvmuv7bxxhqt/
+
+based on Russell's comments, I feel if I was to use his series over
+there, add 'managed = "in-band-status"' to the dts, and then apply this
+series, the link would not come up anymore.
+
+Total side note, but I'm wondering if the sa8775p-ride dts should
+specify 'managed = "in-band-status"'.
+
+Thanks,
 Andrew
 
-> +			spi-max-frequency = <1000000>;
-> +			pinctrl-apply = "spi_default";
-> +		};
-> +
-> +		lsm6dsl_click: lsm6dsl-click {
-> +			compatible = "st,lsm6ds3", "mikrobus-spi";
-> +			spi-max-frequency = <1000000>;
-> +			pinctrl-apply = "spi_default";
-> +		};
-> +	};
->   };
->   
->   &main_pmx0 {
-> @@ -387,6 +438,18 @@ AM62X_IOPAD(0x01f0, PIN_OUTPUT, 5) /* (A18) EXT_REFCLK1.CLKOUT0 */
->   		>;
->   	};
->   
-> +	mikrobus_pwm_pins_default: mikrobus-pwm-default-pins {
-> +		pinctrl-single,pins = <
-> +			AM62X_IOPAD(0x01a4, PIN_INPUT, 2) /* (B20) MCASP0_ACLKX.ECAP2_IN_APWM_OUT */
-> +		>;
-> +	};
-> +
-> +	mikrobus_pwm_pins_gpio: mikrobus-pwm-gpio-pins {
-> +		pinctrl-single,pins = <
-> +			AM62X_IOPAD(0x01a4, PIN_INPUT, 7) /* (B20) MCASP0_ACLKX.GPIO1_11 */
-> +		>;
-> +	};
-> +
->   	mikrobus_i2c_pins_default: mikrobus-i2c-default-pins {
->   		pinctrl-single,pins = <
->   			AM62X_IOPAD(0x01d0, PIN_INPUT_PULLUP, 2) /* (A15) UART0_CTSn.I2C3_SCL */
-> @@ -394,6 +457,13 @@ AM62X_IOPAD(0x01d4, PIN_INPUT_PULLUP, 2) /* (B15) UART0_RTSn.I2C3_SDA */
->   		>;
->   	};
->   
-> +	mikrobus_i2c_pins_gpio: mikrobus-i2c-gpio-pins {
-> +		pinctrl-single,pins = <
-> +			AM62X_IOPAD(0x01d0, PIN_INPUT, 7) /* (A15) UART0_CTSn.GPIO1_22 */
-> +			AM62X_IOPAD(0x01d4, PIN_INPUT, 7) /* (B15) UART0_RTSn.GPIO1_23 */
-> +		>;
-> +	};
-> +
->   	mikrobus_uart_pins_default: mikrobus-uart-default-pins {
->   		pinctrl-single,pins = <
->   			AM62X_IOPAD(0x01d8, PIN_INPUT, 1) /* (C15) MCAN0_TX.UART5_RXD */
-> @@ -401,6 +471,13 @@ AM62X_IOPAD(0x01dc, PIN_OUTPUT, 1) /* (E15) MCAN0_RX.UART5_TXD */
->   		>;
->   	};
->   
-> +	mikrobus_uart_pins_gpio: mikrobus-uart-gpio-pins {
-> +		pinctrl-single,pins = <
-> +			AM62X_IOPAD(0x01d8, PIN_INPUT, 7) /* (C15) MCAN0_TX.GPIO1_24 */
-> +			AM62X_IOPAD(0x01dc, PIN_INPUT, 7) /* (E15) MCAN0_RX.GPIO1_25 */
-> +		>;
-> +	};
-> +
->   	mikrobus_spi_pins_default: mikrobus-spi-default-pins {
->   		pinctrl-single,pins = <
->   			AM62X_IOPAD(0x01b0, PIN_INPUT, 1) /* (A20) MCASP0_ACLKR.SPI2_CLK */
-> @@ -410,6 +487,15 @@ AM62X_IOPAD(0x0198, PIN_INPUT, 1) /* (A19) MCASP0_AXR2.SPI2_D1 */
->   		>;
->   	};
->   
-> +	mikrobus_spi_pins_gpio: mikrobus-spi-gpio-pins {
-> +		pinctrl-single,pins = <
-> +			AM62X_IOPAD(0x0194, PIN_INPUT, 7) /* (B19) MCASP0_AXR3.GPIO1_7 */
-> +			AM62X_IOPAD(0x0198, PIN_INPUT, 7) /* (A19) MCASP0_AXR2.GPIO1_8 */
-> +			AM62X_IOPAD(0x01ac, PIN_INPUT, 7) /* (E19) MCASP0_AFSR.GPIO1_13 */
-> +			AM62X_IOPAD(0x01b0, PIN_INPUT, 7) /* (A20) MCASP0_ACLKR.GPIO1_14 */
-> +		>;
-> +	};
-> +
->   	mikrobus_gpio_pins_default: mikrobus-gpio-default-pins {
->   		bootph-all;
->   		pinctrl-single,pins = <
-> @@ -630,8 +716,6 @@ &main_gpio0 {
->   
->   &main_gpio1 {
->   	bootph-all;
-> -	pinctrl-names = "default";
-> -	pinctrl-0 = <&mikrobus_gpio_pins_default>;
->   	gpio-line-names = "", "", "", "", "",			/* 0-4 */
->   		"SPE_RSTN", "SPE_INTN", "MIKROBUS_GPIO1_7",	/* 5-7 */
->   		"MIKROBUS_GPIO1_8", "MIKROBUS_GPIO1_9",		/* 8-9 */
-> @@ -804,15 +888,11 @@ it66121_out: endpoint {
->   };
->   
->   &main_i2c3 {
-> -	pinctrl-names = "default";
-> -	pinctrl-0 = <&mikrobus_i2c_pins_default>;
->   	clock-frequency = <400000>;
->   	status = "okay";
->   };
->   
->   &main_spi2 {
-> -	pinctrl-names = "default";
-> -	pinctrl-0 = <&mikrobus_spi_pins_default>;
->   	status = "okay";
->   };
->   
-> @@ -876,8 +956,6 @@ &main_uart1 {
->   };
->   
->   &main_uart5 {
-> -	pinctrl-names = "default";
-> -	pinctrl-0 = <&mikrobus_uart_pins_default>;
->   	status = "okay";
->   };
->   
-> 
 
