@@ -1,47 +1,49 @@
-Return-Path: <linux-kernel+bounces-231668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98BBD919BB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 02:19:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C4F6919BB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 02:21:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C47FC1C22420
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:19:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DF851C21EDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:21:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B322A23D0;
-	Thu, 27 Jun 2024 00:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JvAECljf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D011C01;
+	Thu, 27 Jun 2024 00:21:42 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C9A17E9;
-	Thu, 27 Jun 2024 00:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25511367
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 00:21:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719447560; cv=none; b=VGcrCgDLeSRHSqujEOC8TyadezaIG2m2RQIiz53SP8Wci3B0/k7MCTHHVUMs3NL7X8BHcSnSdVZzeQBgA1eCqYggwjaRG0agVSoHTpGAJa30fWhIBNdOs5u2E/Kz3K8pB4NA8BI0GD/4jtvHWFyj/z+NPC4TiOz6+oDPy4WnsRA=
+	t=1719447702; cv=none; b=EjVfCCEAVOG5wPHyyPEODK0fFC0AiirBPFQJJGsUPUaAukRQICXnQED7yOJLGWhkO7OEV1EKyDfyoIpFMibyRboWzC9WugM6wvhSbvogrCpRIH1Ge/TZPrXbTLLLky+Kogq/60lkwjdOPmG4e1kQuJnMfVAaSHnsGpcmtPGT6hQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719447560; c=relaxed/simple;
-	bh=4Sjqdcm/Et8J9GCcvmGd3GMWAtR29LoWgvKP95CeIys=;
+	s=arc-20240116; t=1719447702; c=relaxed/simple;
+	bh=BbklAlU+pIrGt91RZmhRhDoHreDax3IFF3UsG0UJDKs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M2G22hTv3U5boIwQsv1Zo8/wod99XKmR+Owz3YL8KuFJvGsW9zyEQTyDui+O02lWFdJzDfb1Lui+j/J1C3TAc9xd+0Wmoj0gipsSNskLaF+2oxYOkKIiSffw365CZhZZLCVMXtoD2wWmmOUeYf2oz23DXHcawIuB9vBpMtTy8X0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JvAECljf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A46FEC116B1;
-	Thu, 27 Jun 2024 00:19:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719447559;
-	bh=4Sjqdcm/Et8J9GCcvmGd3GMWAtR29LoWgvKP95CeIys=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JvAECljfRKaUWYY5aNax0Tfq2aFFARHHeEkyO3KIBcNGgw44INw7luL6qipn4lZew
-	 DXV6Jn1HMos9ValIUBps1sZHSBj+L0VTD6iZWN+XUfQeHVDOViAj41nww65z+X2SH6
-	 F0mxdo3nx3H9yQ+GGRB17E6AY4qlaJ97UXVI0tJoXaO0cJ5cJpayeB9P0KPrxyEXzV
-	 ydlVNV0mp/p5ST/RGa0lBFZYJQBXNs7EIEvwdbIuuaXzAFqJkSELIT1JKDYCCeU6+B
-	 fR3AZSjoOp5aa45+3WnOf1oVH9FC5s9NW4Cgurd+7w0uIUiW9NqONKeTKlFvx+KruV
-	 LdKTWcckmrcUw==
-Message-ID: <9c8d751c-8d38-40f4-a88d-cfc39c7b6967@kernel.org>
-Date: Thu, 27 Jun 2024 09:19:17 +0900
+	 In-Reply-To:Content-Type; b=tB9BbVWYryNDhtVHAhkuygsNyIEDla2InLLdye97CPhPTpjxMVbm2DKuRgmiZqCiiVf+WxroQriwRAIulX8ivrejJ3tMWzmFs23bRc/TJzq0YjrkweLOKswqMuITZ8XaPJMyuko9YBX9giviAB9zicne4Kd8ua9qLc51Yg+eOEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav111.sakura.ne.jp (fsav111.sakura.ne.jp [27.133.134.238])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 45R0Lc71035807;
+	Thu, 27 Jun 2024 09:21:38 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav111.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav111.sakura.ne.jp);
+ Thu, 27 Jun 2024 09:21:38 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav111.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 45R0LcSQ035803
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Thu, 27 Jun 2024 09:21:38 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <290aac9b-0664-404d-a457-292d69f9b22b@I-love.SAKURA.ne.jp>
+Date: Thu, 27 Jun 2024 09:21:38 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,92 +51,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/6] ata: libata-scsi: Check ATA_QCFLAG_RTF_FILLED
- before using result_tf
-To: Igor Pylypiv <ipylypiv@google.com>, Niklas Cassel <cassel@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>, Hannes Reinecke <hare@suse.de>,
- linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240626230411.3471543-1-ipylypiv@google.com>
- <20240626230411.3471543-7-ipylypiv@google.com>
-From: Damien Le Moal <dlemoal@kernel.org>
+Subject: Re: [PATCH] bpf: defer printk() inside __bpf_prog_run()
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        John Ogness <john.ogness@linutronix.de>,
+        Alexei Starovoitov
+ <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau
+ <martin.lau@linux.dev>,
+        Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+        Yonghong Song <yonghong.song@linux.dev>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+References: <345098dc-8cb4-4808-98cf-fa9ab3af4fc4@I-love.SAKURA.ne.jp>
+ <87ed8lxg1c.fsf@jogness.linutronix.de>
+ <60704acc-61bd-4911-bb96-bd1cdd69803d@I-love.SAKURA.ne.jp>
+ <87ikxxxbwd.fsf@jogness.linutronix.de>
+ <ea56efca-552f-46d7-a7eb-4213c23a263b@I-love.SAKURA.ne.jp>
+ <CAADnVQ+hxHsQpfOkQvq4d5AEQsH41BHL+e_RtuxUzyh-vNyYEQ@mail.gmail.com>
+ <7edb0e39-a62e-4aac-a292-3cf7ae26ccbd@I-love.SAKURA.ne.jp>
+ <CAADnVQKoHk5FTN=jywBjgdTdLwv-c76nCzyH90Js-41WxPK_Tw@mail.gmail.com>
+ <744c9c43-9e4f-4069-9773-067036237bff@I-love.SAKURA.ne.jp>
+ <20240626122748.065a903b@rorschach.local.home>
+ <f6c23073-dc0d-4b3f-b37d-1edb82737b5b@I-love.SAKURA.ne.jp>
+ <20240626183311.05eaf091@rorschach.local.home>
+ <6264da10-b6a0-40b8-ac26-c044b7f7529c@I-love.SAKURA.ne.jp>
+ <20240626200906.37326e17@rorschach.local.home>
 Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20240626230411.3471543-7-ipylypiv@google.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <20240626200906.37326e17@rorschach.local.home>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 6/27/24 08:04, Igor Pylypiv wrote:
-> qc->result_tf contents are only valid when the ATA_QCFLAG_RTF_FILLED flag
-> is set. The ATA_QCFLAG_RTF_FILLED flag should be always set for commands
-> that failed or for commands that have the ATA_QCFLAG_RESULT_TF flag set.
+On 2024/06/27 9:09, Steven Rostedt wrote:
+> On Thu, 27 Jun 2024 08:08:57 +0900
+> Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
 > 
-> Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
-
-Please change "RTF" to "result TF" in the messages below, to be clear (RTF is
-not). Feel free to split the ata_dev_dbg() lines after "dev," to avoid long lines.
-
-With that:
-
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
-
-> ---
->  drivers/ata/libata-scsi.c | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
+>> How do you respond to Petr Mladek's comment
+>>
+>>   Yeah, converting printk() into printk_deferred() or using
+>>   printk_deferred_enter() around particular code paths is a whac-a-mole
+>>   game.
+>>
+>> at https://lkml.kernel.org/r/ZnvVQ5cs9F0b7paI@pathway.suse.cz ?
 > 
-> diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-> index 02af4d5d5799..d5874d4b9253 100644
-> --- a/drivers/ata/libata-scsi.c
-> +++ b/drivers/ata/libata-scsi.c
-> @@ -242,10 +242,16 @@ void ata_scsi_set_sense_information(struct ata_device *dev,
->   */
->  static void ata_scsi_set_passthru_sense_fields(struct ata_queued_cmd *qc)
->  {
-> +	struct ata_device *dev = qc->dev;
->  	struct scsi_cmnd *cmd = qc->scsicmd;
->  	struct ata_taskfile *tf = &qc->result_tf;
->  	unsigned char *sb = cmd->sense_buffer;
->  
-> +	if (!(qc->flags & ATA_QCFLAG_RTF_FILLED)) {
-> +		ata_dev_dbg(dev, "Missing RTF: cannot set ATA PT sense fields.\n");
-> +		return;
-> +	}
-> +
->  	if ((sb[0] & 0x7f) >= 0x72) {
->  		unsigned char *desc;
->  		u8 len;
-> @@ -923,10 +929,16 @@ static void ata_to_sense_error(u8 drv_stat, u8 drv_err, u8 *sk, u8 *asc,
->   */
->  static void ata_gen_passthru_sense(struct ata_queued_cmd *qc)
->  {
-> +	struct ata_device *dev = qc->dev;
->  	struct scsi_cmnd *cmd = qc->scsicmd;
->  	struct ata_taskfile *tf = &qc->result_tf;
->  	u8 sense_key, asc, ascq;
->  
-> +	if (!(qc->flags & ATA_QCFLAG_RTF_FILLED)) {
-> +		ata_dev_dbg(dev, "Missing RTF: cannot generate ATA PT sense data.\n");
-> +		return;
-> +	}
-> +
->  	/*
->  	 * Use ata_to_sense_error() to map status register bits
->  	 * onto sense key, asc & ascq.
-> @@ -970,6 +982,12 @@ static void ata_gen_ata_sense(struct ata_queued_cmd *qc)
->  		ata_scsi_set_sense(dev, cmd, NOT_READY, 0x04, 0x21);
->  		return;
->  	}
-> +
-> +	if (!(qc->flags & ATA_QCFLAG_RTF_FILLED)) {
-> +		ata_dev_dbg(dev, "Missing RTF: cannot generate sense data.\n");
-> +		return;
-> +	}
-> +
->  	/* Use ata_to_sense_error() to map status register bits
->  	 * onto sense key, asc & ascq.
->  	 */
+> I agree with that. And your solution is no different than whack-a-mole.
+> It's just that you used a bigger hammer to wack the mole.
 
--- 
-Damien Le Moal
-Western Digital Research
+What change do you propose?
+
+https://syzkaller.appspot.com/text?tag=Patch&x=121c92fe180000 ?
 
 
