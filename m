@@ -1,101 +1,143 @@
-Return-Path: <linux-kernel+bounces-232642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6419691AC3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:05:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEB8E91AC2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:04:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E096284CE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:05:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70559284DC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F48A199E8D;
-	Thu, 27 Jun 2024 16:05:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4567B199380;
+	Thu, 27 Jun 2024 16:04:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="L/fQAnQy"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IPmCYFzU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 276D519925B;
-	Thu, 27 Jun 2024 16:05:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B071991C3
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 16:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719504311; cv=none; b=gyW5RYoxmlG3Z0R9MBSFEVZwdGj+98fOXUZj+/m5HXChBFlgT0xhCj88N/rFtTuaGp1zKn0+ehDIx2wehFuicJBla2uqJp9udwnQHzkEHqZeKOc3GlZ6TWIgsxQyt5Gqm/uCpHnlZUlB5oZBYfE6YwuS5NcKgTK+0COkEsN4M5E=
+	t=1719504284; cv=none; b=J85MTYx+oGvkO3OxNEYM9B6edA7YkWU631hTl9E3/Ve7MKclO1xwxLthavpip9lUJdWVFcEOS13GDQ5qZjah1+J0tQAPXXz24Mui0o2Pws2RrXRcLT6JLc8prTHmeu6i7mual+BfalxasqfoV48oKs9EMOu6ZY2v/HAEdlSxG6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719504311; c=relaxed/simple;
-	bh=7/AE4qA0WJBEQxdKHPWvxYLKBHXquA6jz3vvqMefh8Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qqe0kJgW4vE5xXzfvU4Cco3pEjC20M9lwEpRJUQpmi0SahyYRm04xh6Y55LbesSmH2FjVyBCI8t9frOV81mWAiepzm3iu8FGz0I6vaN62NPUcZZjBNni5ys7yK0RHTfT7Z7QUxlsFvf5Njjaz/JZWmIy+HLc8hvZubCKe+iIko4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=L/fQAnQy; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	s=arc-20240116; t=1719504284; c=relaxed/simple;
+	bh=+xg+eevwCWNy89yxtQRq2r+EP1xcUe3bwgIph/PpJKA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b8KX40CPBBnX3LBD7rlTKXxCIt3NZNXR4DoHZ2MEeCWKXfS+m38+bWqCjBzAi4DSeHum/7EgQvXIVyyi/lcYYdfTmKEXEI4e0ybA+2vzXlhNrqnoVRMVfM1ui4Qa3+bj7qcjMSnrO6a/8QN0OITKHPWclhRuhjUYKjIfr0Z6U7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IPmCYFzU; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719504281;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IHtUPZptzkhMFmEd2WdOkD9spo21pG/I1JXLQ6QiKXg=;
+	b=IPmCYFzUlFjHamdKYVzLGbqyhQnSs/G8DELVzpAxN/iayWC2y+S+AYlHdMPBl+ejdcNtVM
+	gIPuRdKhMxsct9xH1TtyyGZRqVcra1OIEdFxLc+IpRELo41mQq6Sb6cjdG8/2HA/Dhgyqc
+	8/kJJxr14285v/8cMkiz1iSVC2Q6RWg=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-134-NlcjFHhrMRadlitg845r3g-1; Thu,
+ 27 Jun 2024 12:04:38 -0400
+X-MC-Unique: NlcjFHhrMRadlitg845r3g-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 33301884D1;
-	Thu, 27 Jun 2024 18:05:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1719504306;
-	bh=sGVGfQPHCdLVaLQwQoA6M9uYJaRXYHydouJN1pcCY5g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=L/fQAnQyvrD0jLeqP3Ql3EwHVPPtllqV02J7awwVRJm4elqtYBnRfS7XMyq+E7y6m
-	 Aqocnq0h199W/L4ejGrYF2RwUoP8oZ21S87XjtOv2pFTUds8zsWwsNT0HRk4Xaaiil
-	 uwmC4XmSQKBP7munJCzp15mk7njQ+UbPMj/VnKLwXvPXHaVjfkXV9EgJXwevW8fcXy
-	 UQo/xVKqB0eITKaakzrQUan1ofjZTmhA67o2AQEumjIJ/9oR216CeEO0YLYmE2pw+3
-	 2hkQhsE2jx0zWk0ZiS3tE1Roof/XT559Ku3eYeEC6vzEuKIqoW5FUcCW0a7h8dP3UY
-	 K/5zHVacFMIkg==
-Message-ID: <cadb3878-d744-42e0-8e89-1a3892029ef3@denx.de>
-Date: Thu, 27 Jun 2024 17:08:34 +0200
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 895D21956096;
+	Thu, 27 Jun 2024 16:04:35 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.18])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 0FAB319560A3;
+	Thu, 27 Jun 2024 16:04:30 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 27 Jun 2024 18:03:01 +0200 (CEST)
+Date: Thu, 27 Jun 2024 18:02:55 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Tiezhu Yang <yangtiezhu@loongson.cn>, Jiri Olsa <jolsa@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>, loongarch@lists.linux.dev
+Subject: [PATCH] LoongArch: uprobes: make UPROBE_SWBP_INSN/UPROBE_XOLBP_INSN
+ constant
+Message-ID: <20240627160255.GA25374@redhat.com>
+References: <20240618194306.1577022-1-jolsa@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next,PATCH 2/2] net: stmmac: dwmac-stm32: update err status
- in case different of stm32mp13
-To: Christophe Roullier <christophe.roullier@foss.st.com>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Richard Cochran <richardcochran@gmail.com>, Jose Abreu
- <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240627084917.327592-1-christophe.roullier@foss.st.com>
- <20240627084917.327592-3-christophe.roullier@foss.st.com>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <20240627084917.327592-3-christophe.roullier@foss.st.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240618194306.1577022-1-jolsa@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On 6/27/24 10:49 AM, Christophe Roullier wrote:
-> Second parameter of syscfg property (mask) is mandatory for MP13 but
-> optional for all other cases so need to re init err to 0 for this case
-> to avoid parse issue.
+LoongArch defines UPROBE_SWBP_INSN as a function call and this breaks
+arch_uprobe_trampoline() which uses it to initialize a static variable.
 
-What parse issue ? Please expand this part of the commit message.
+Fixes: ff474a78cef5 ("uprobe: Add uretprobe syscall to speed up return probe")
+Reported-by: Nathan Chancellor <nathan@kernel.org>
+Closes: https://lore.kernel.org/all/20240614174822.GA1185149@thelio-3990X/
+Suggested-by: Andrii Nakryiko <andrii@kernel.org>
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+---
+ arch/loongarch/include/asm/uprobes.h | 6 ++++--
+ arch/loongarch/kernel/uprobes.c      | 8 ++++++++
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
-Basically if this is not MP13, and the dev_dbg() is hit, the function 
-should not return error code because for non-MP13 the missing syscfg 
-phandle in DT is not considered an error. So reset err to 0 in that case 
-to support existing DTs without syscfg phandle.
+diff --git a/arch/loongarch/include/asm/uprobes.h b/arch/loongarch/include/asm/uprobes.h
+index c8f59983f702..18221eb9a8b0 100644
+--- a/arch/loongarch/include/asm/uprobes.h
++++ b/arch/loongarch/include/asm/uprobes.h
+@@ -6,13 +6,15 @@
+ 
+ typedef u32 uprobe_opcode_t;
+ 
++#define __emit_break(imm)	(uprobe_opcode_t)((imm) | (break_op << 15))
++
+ #define MAX_UINSN_BYTES		8
+ #define UPROBE_XOL_SLOT_BYTES	MAX_UINSN_BYTES
+ 
+-#define UPROBE_SWBP_INSN	larch_insn_gen_break(BRK_UPROBE_BP)
++#define UPROBE_SWBP_INSN	__emit_break(BRK_UPROBE_BP)
+ #define UPROBE_SWBP_INSN_SIZE	LOONGARCH_INSN_SIZE
+ 
+-#define UPROBE_XOLBP_INSN	larch_insn_gen_break(BRK_UPROBE_XOLBP)
++#define UPROBE_XOLBP_INSN	__emit_break(BRK_UPROBE_XOLBP)
+ 
+ struct arch_uprobe {
+ 	unsigned long	resume_era;
+diff --git a/arch/loongarch/kernel/uprobes.c b/arch/loongarch/kernel/uprobes.c
+index 87abc7137b73..90462d94c28f 100644
+--- a/arch/loongarch/kernel/uprobes.c
++++ b/arch/loongarch/kernel/uprobes.c
+@@ -7,6 +7,14 @@
+ 
+ #define UPROBE_TRAP_NR	UINT_MAX
+ 
++static __init int check_emit_break(void)
++{
++	BUG_ON(UPROBE_SWBP_INSN  != larch_insn_gen_break(BRK_UPROBE_BP));
++	BUG_ON(UPROBE_XOLBP_INSN != larch_insn_gen_break(BRK_UPROBE_XOLBP));
++	return 0;
++}
++arch_initcall(check_emit_break);
++
+ int arch_uprobe_analyze_insn(struct arch_uprobe *auprobe,
+ 			     struct mm_struct *mm, unsigned long addr)
+ {
+-- 
+2.25.1.362.g51ebf55
 
-With the commit message updated:
 
-Reviewed-by: Marek Vasut <marex@denx.de>
-
-[...]
 
