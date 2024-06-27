@@ -1,53 +1,57 @@
-Return-Path: <linux-kernel+bounces-232583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99D4191AB45
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:30:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB9E291AB37
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:28:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B111B2A88D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:27:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92B331F28E62
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780B6199246;
-	Thu, 27 Jun 2024 15:25:20 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E2AA19939A;
+	Thu, 27 Jun 2024 15:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eH3LbD4L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1C514EC64
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 15:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BEE198E71;
+	Thu, 27 Jun 2024 15:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719501920; cv=none; b=WzDkhWuDO57flEdPAPUFG/4fA+TsbNgAlduvpICZ7U8VKVm9YAer3c2nHZWp/Rz7dqdoUK9sVDeBoiHilGIApmFFOzzrBnQOLcMydn16N85100JOunPmlbOUv9TgbxrgVpaWPVilIgBBjeXarHmFPpFQ0PH7X0oddiLk/PDmM90=
+	t=1719501937; cv=none; b=Xf/dzQEePKzeMsY43Kp0a88sOgjIp0Pg8XmYL9cISUC1YCZ/dVABKdJOiQ+89LVLkGSjtW2c9G/IsFueRbstDqS7NFfMnD0nX2ZSc/Y+lVKMEL9hxhUiMWQ7c7vHs83f1cqejzLL7W2+2Zp4ejB4xD8F+8r0yNdQEGWXHA/7z6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719501920; c=relaxed/simple;
-	bh=KMLjZIT1/+LEZM2TlXdwIk0EpfixpoY2KLbfpRu0jnU=;
+	s=arc-20240116; t=1719501937; c=relaxed/simple;
+	bh=DcIqrfoXRxHNxqbWkcMoWg8BFR191VB6t9DH5BOodQE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZyUFnppq+fRGyudg/2DFrszoC2I6YLjmcF82Kv9waE83UL+GF0ONNBMJuOo5OHBhLoOggStiN4D26Txr9BtV3Ar9fsveH+058iNlD7EZdCF22cQjJ1NF7aOq0ktpELeXbswHNvjeODd8B+q5U/qqEfJQOLw5kWi6cSfEpnNxr4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 2DCFC68BFE; Thu, 27 Jun 2024 17:25:13 +0200 (CEST)
-Date: Thu, 27 Jun 2024 17:25:13 +0200
-From: "hch@lst.de" <hch@lst.de>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: Petr =?utf-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>,
-	"hch@lst.de" <hch@lst.de>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"joro@8bytes.org" <joro@8bytes.org>,
-	"will@kernel.org" <will@kernel.org>,
-	"jgross@suse.com" <jgross@suse.com>,
-	"sstabellini@kernel.org" <sstabellini@kernel.org>,
-	"oleksandr_tyshchenko@epam.com" <oleksandr_tyshchenko@epam.com>,
-	"m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>
-Subject: Re: [RFC 1/1] swiotlb: Reduce calls to swiotlb_find_pool()
-Message-ID: <20240627152513.GA23497@lst.de>
-References: <20240607031421.182589-1-mhklinux@outlook.com> <SN6PR02MB41577686D72E206DB0084E90D4D62@SN6PR02MB4157.namprd02.prod.outlook.com> <20240627060251.GA15590@lst.de> <20240627085216.556744c1@meshulam.tesarici.cz> <SN6PR02MB4157E61B49C8435E38AC968DD4D72@SN6PR02MB4157.namprd02.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=as3YDaEWzrQsMxQT8ymkRM0a77aWGFSy2kuWzl1wa2lianV8G1Racgxv5OKoN883GyVFm5Er7RLyLIJDrDnZBbwmwufCuo0p1/3FoTOJ6OmKwL0sJDfMcz9q7ftwMnPYnKfbnaaLVmkU7Es75qgMrRYAGmLbjB3STsi6Mf4pWoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eH3LbD4L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CEF9C2BBFC;
+	Thu, 27 Jun 2024 15:25:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719501937;
+	bh=DcIqrfoXRxHNxqbWkcMoWg8BFR191VB6t9DH5BOodQE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eH3LbD4LMJBU52nravUhcazsfvfmVmy1p/PKyBtPNa2I3v0IEv/MbXFRfhgbgo+vy
+	 g8O5SLA7juKfFyeRtiaP2rwgDRT2G+XTFFitFYiYUi/cgnRYySoeWVxTtlf+ht0AlT
+	 QuGlRFDxKQV21chZqgny9mdYpNKqS1eFX6nuRDW1/jYGGnNZ5uEQjl5mmPcXY51ad9
+	 qKoppAJqBLynl8o7uilVtC86RdoYIP2ZvocuixFxup4WZnMZ9WWFatdLCqGHIMNWjI
+	 xbnW9CNIcPCLZMELio4RyhfeCCmL8/2cOIU00Y26YYRSuHzjb17AcX9Xc6SBQWYpP8
+	 iVcCEwmTqRodA==
+Date: Thu, 27 Jun 2024 17:25:33 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Tommy Huang <tommy_huang@aspeedtech.com>
+Cc: brendan.higgins@linux.dev, benh@kernel.crashing.org, joel@jms.id.au, 
+	andrew@codeconstruct.com.au, wsa@kernel.org, linux-i2c@vger.kernel.org, 
+	openbmc@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, 
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	BMC-SW@aspeedtech.com
+Subject: Re: [PATCH v2] i2c: aspeed: Update the stop sw state when the bus
+ recovery occurs
+Message-ID: <pbsrfzbd237k5inof3wy6qabdmolmweozkn5kq7jlvstj2nkvo@nzp2sbrxpn44>
+References: <20240608043653.4086647-1-tommy_huang@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,17 +60,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <SN6PR02MB4157E61B49C8435E38AC968DD4D72@SN6PR02MB4157.namprd02.prod.outlook.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20240608043653.4086647-1-tommy_huang@aspeedtech.com>
 
-On Thu, Jun 27, 2024 at 02:59:03PM +0000, Michael Kelley wrote:
-> Conceptually, it's still being used as a boolean function based on
-> whether the return value is NULL.  Renaming it to swiotlb_get_pool()
-> more accurately describes the return value, but obscures the
-> intent of determining if it is a swiotlb buffer.  I'll think about it.
-> Suggestions are welcome.
+Hi Tommy,
 
-Just keep is_swiotlb_buffer as a trivial inline helper that returns
-bool.
+any update on this patch?
 
+Andi
+
+On Sat, Jun 08, 2024 at 12:36:53PM GMT, Tommy Huang wrote:
+> When the i2c bus recovery occurs, driver will send i2c stop command
+> in the scl low condition. In this case the sw state will still keep
+> original situation. Under multi-master usage, i2c bus recovery will
+> be called when i2c transfer timeout occurs. Update the stop command
+> calling with aspeed_i2c_do_stop function to update master_state.
+> 
+> Fixes: f327c686d3ba ("i2c: aspeed: added driver for Aspeed I2C")
+> 
+> Cc: <stable@vger.kernel.org> # v4.13+
+> Signed-off-by: Tommy Huang <tommy_huang@aspeedtech.com>
+> ---
+>  drivers/i2c/busses/i2c-aspeed.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
+> index ce8c4846b7fa..be64e419adf0 100644
+> --- a/drivers/i2c/busses/i2c-aspeed.c
+> +++ b/drivers/i2c/busses/i2c-aspeed.c
+> @@ -25,6 +25,8 @@
+>  #include <linux/reset.h>
+>  #include <linux/slab.h>
+>  
+> +static void aspeed_i2c_do_stop(struct aspeed_i2c_bus *bus);
+> +
+>  /* I2C Register */
+>  #define ASPEED_I2C_FUN_CTRL_REG				0x00
+>  #define ASPEED_I2C_AC_TIMING_REG1			0x04
+> @@ -187,7 +189,7 @@ static int aspeed_i2c_recover_bus(struct aspeed_i2c_bus *bus)
+>  			command);
+>  
+>  		reinit_completion(&bus->cmd_complete);
+> -		writel(ASPEED_I2CD_M_STOP_CMD, bus->base + ASPEED_I2C_CMD_REG);
+> +		aspeed_i2c_do_stop(bus);
+>  		spin_unlock_irqrestore(&bus->lock, flags);
+>  
+>  		time_left = wait_for_completion_timeout(
+> -- 
+> 2.25.1
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
