@@ -1,99 +1,164 @@
-Return-Path: <linux-kernel+bounces-232106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D513691A385
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:10:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B754591A383
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:10:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98032282B73
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:10:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F21E61C21115
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C6413D291;
-	Thu, 27 Jun 2024 10:10:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA77713C807;
+	Thu, 27 Jun 2024 10:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YbdrfXp3"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="CScKeZZ9"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E0C13C831;
-	Thu, 27 Jun 2024 10:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97767381C8;
+	Thu, 27 Jun 2024 10:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719483025; cv=none; b=dPKpggiwkcUbGlEBJTei/WKIeblex2CzltQK/Qngfm6oC8M9+opQzu5rTJl4FdX39FjO3L5QRxZ1N11y/QMcD3Cg25pVIyHYWyxggSnyyLqsmh7I/kcYec1Hca2ePrqfQ58vhLrmM4M0Ol/ZRfNpJuTLkC+y3R6cIqlxXHmSJSE=
+	t=1719483022; cv=none; b=rko4nCsl266Rr8Qd61O+6JKIBfusv56OTU72cV0E83MATYF1XGTLMxS3RSMxyu69zxeiknotgRN0U5PwSnjEXRCzokioYaapmNtBovA56Kpq5fZZS11PBCXGE7C4ysra0TIBpxgtORjQuXdZTq6FNBd3eYPYhqekiF5nZ9NNJ7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719483025; c=relaxed/simple;
-	bh=ngp1FT+UOeOQu3QXLveoVHx3x4aIgCnlqdTftkNgha4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qEE65DjYxRGLOIm+AYqCvbRRduHAFwtOHqcR2iVeVe7kqKq0+lxFBWNt7ejaqsu9kG3Mp0mIO1GY90KZMnn7WmJh7A8axoIW6jd6srz0P/7SsXzMrUuz0xBedfSbZxL+MIkMNqW7YWS27/xzAGkl2yh6zwtnBWgfemsbKZaqF1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YbdrfXp3; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45RAA82j062259;
-	Thu, 27 Jun 2024 05:10:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1719483008;
-	bh=DbAR1yoE7ko87b798yH4OO+KqU4hl93ILHvTCW1Chgs=;
-	h=From:To:CC:Subject:Date;
-	b=YbdrfXp3mWuFuzcHbiSQ8v9iuo4mjc0s6rL1m3tFo4NbbLwxnoIOEiPyU+/19rsHm
-	 MiDECSHiex0qxAJ9BolgaIRbLS3K9oaAMAm8YnuOErd6KrY78VRB0UBO+jhDCrML+y
-	 qG0u9G47nZ+lDpOgBxNnePZfne8dnf76qIITMX4A=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45RAA8T6014605
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 27 Jun 2024 05:10:08 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 27
- Jun 2024 05:10:08 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 27 Jun 2024 05:10:08 -0500
-Received: from a0497641-HP-Z2-Tower-G9-Workstation-Desktop-PC.dhcp.ti.com (a0497641-hp-z2-tower-g9-workstation-desktop-pc.dhcp.ti.com [172.24.227.36])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45RAA4ST019141;
-	Thu, 27 Jun 2024 05:10:05 -0500
-From: Neha Malcom Francis <n-francis@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>, <n-francis@ti.com>
-Subject: [PATCH] arm: dts: k3-j721e-mcu-wakeup: Add bootph-all to chipid
-Date: Thu, 27 Jun 2024 15:40:03 +0530
-Message-ID: <20240627101003.3608397-1-n-francis@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1719483022; c=relaxed/simple;
+	bh=YKvSjQO0kBriuXHtpM5S2HDjrcI9aj+U9VFh4zoTZMg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PZOADgPZJLXg8ooaOOnzmp4Bk7zt7E19ExGl9WLMfwIgndkaRT3ZYXhzz9j3s1gJcblGbV5UQNONGTusqz5QiKmS0ormHyLpwafGe7dA9TVzyq88xtL/NrqT7lvLbHGxV8S7hnwbqgYfjzXGTAIgbiLdIulq5M6SHQLNkf+01JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=CScKeZZ9; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1719483018;
+	bh=YKvSjQO0kBriuXHtpM5S2HDjrcI9aj+U9VFh4zoTZMg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CScKeZZ9hJayTeQlGW/3Ok8Jm4GshJujZzcM6rXvkfujk1wULJ31eu/DM6dXCEV+c
+	 9Y8tFxvckIKBqnI3OBLFAsYpkUvnDXVZNYInGxb6E0MLL23CfrHvUzjiygG5HsOr7N
+	 Oj6cKI5BerncV4nnf38QoDXaU663019BIcIrXrOQbiUIEHLhnGrd3x8kX6Iegb0Zpm
+	 HDE/Ndh/ZzCPTogp+Gss7PAJxvmIKHinrwj6Y/iSZ1Dhs6wkXhwCjwJrKVb26IFZFo
+	 ytE9nyNJ2Uo7bLy77wrQD/AF1yjKiWsmfJuSwepAqnqcGml/wQMhh75SUmQayfts5L
+	 GcXTqREx2+Yww==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 123B537810CD;
+	Thu, 27 Jun 2024 10:10:18 +0000 (UTC)
+Message-ID: <726f2ed3-675f-45e8-94f0-d392181e7f92@collabora.com>
+Date: Thu, 27 Jun 2024 12:10:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mozilla Thunderbird
+Subject: Re: Aw: [PATCH v3 1/2] arm64: dts: mt7986: add dtbs with applied
+ overlays for bpi-r3
+To: Frank Wunderlich <frank-w@public-files.de>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ devicetree@vger.kernel.org, Daniel Golle <daniel@makrotopia.org>,
+ Rob Herring <robh+dt@kernel.org>, Frank Wunderlich <linux@fw-web.de>
+References: <20240608080530.9436-1-linux@fw-web.de>
+ <20240608080530.9436-2-linux@fw-web.de>
+ <trinity-82c94d49-2a78-4470-83cd-3c6747e01849-1719434738199@3c-app-gmx-bs52>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <trinity-82c94d49-2a78-4470-83cd-3c6747e01849-1719434738199@3c-app-gmx-bs52>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add bootph-all property to the chipid node so that it is available at
-bootloader stage for obtaining the SoC ID and revision.
+Il 26/06/24 22:45, Frank Wunderlich ha scritto:
+> any suggestions? hoping it does no laying around so long as v2
+> 
 
-Signed-off-by: Neha Malcom Francis <n-francis@ti.com>
----
- arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+So you're trying to just test that the overlay is valid and can actually be
+overlaid to the base dts?
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi
-index 9349ae07c046..c2417ef614cf 100644
---- a/arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi
-@@ -57,6 +57,7 @@ wkup_conf: bus@43000000 {
- 		chipid: chipid@14 {
- 			compatible = "ti,am654-chipid";
- 			reg = <0x14 0x4>;
-+			bootph-all;
- 		};
- 	};
- 
--- 
-2.34.1
+I'm not sure that this is the right/best way... and I honestly have no time
+to check that *exactly right now*, even though that should be.
+
+I have to be convinced of what I'm doing before applying patches, and I know
+that this was sent a bit of time ago, but I really didn't have any time to
+dig into that... let's see if for some miracle I can do that for this cycle
+otherwise it's going to be the next one.
+
+I mean no disrespect to Rob who suggested this change, but I still want to
+check that on my own before picking it.
+
+Sorry about the delays
+
+Cheers,
+Angelo
+
+
+> regards Frank
+> 
+> 
+>> Gesendet: Samstag, 08. Juni 2024 um 10:05 Uhr
+>> Von: "Frank Wunderlich" <linux@fw-web.de>
+>> An: "Matthias Brugger" <matthias.bgg@gmail.com>, "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>
+>> Cc: "Frank Wunderlich" <frank-w@public-files.de>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org, "Daniel Golle" <daniel@makrotopia.org>, "Rob Herring" <robh+dt@kernel.org>
+>> Betreff: [PATCH v3 1/2] arm64: dts: mt7986: add dtbs with applied overlays for bpi-r3
+>>
+>> From: Frank Wunderlich <frank-w@public-files.de>
+>>
+>> Build devicetree binaries for testing overlays and providing users
+>> full dtb without using overlays.
+>>
+>> Suggested-by: Rob Herring <robh+dt@kernel.org>
+>> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+>> ---
+>> https://lore.kernel.org/all/CAL_JsqK_3xxD0DFwipXO85P=q=EYjUdjE1_8g1MKtvw3vVzx5A@mail.gmail.com/
+>> https://lore.kernel.org/all/CAL_JsqJSi=kJSix=f3787ULZnaCy_Y26Phdhy5y9fat_vkDuUw@mail.gmail.com/
+>>
+>> v2:
+>> make full dtbs multiline for better readability
+>> ---
+>>   arch/arm64/boot/dts/mediatek/Makefile | 21 +++++++++++++++++++++
+>>   1 file changed, 21 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
+>> index 37b4ca3a87c9..0ec5b904d35d 100644
+>> --- a/arch/arm64/boot/dts/mediatek/Makefile
+>> +++ b/arch/arm64/boot/dts/mediatek/Makefile
+>> @@ -15,6 +15,27 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-emmc.dtbo
+>>   dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-nand.dtbo
+>>   dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-nor.dtbo
+>>   dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-sd.dtbo
+>> +mt7986a-bananapi-bpi-r3-emmc-nand-dtbs := \
+>> +	mt7986a-bananapi-bpi-r3.dtb \
+>> +	mt7986a-bananapi-bpi-r3-emmc.dtbo \
+>> +	mt7986a-bananapi-bpi-r3-nand.dtbo
+>> +dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-emmc-nand.dtb
+>> +mt7986a-bananapi-bpi-r3-emmc-nor-dtbs := \
+>> +	mt7986a-bananapi-bpi-r3.dtb \
+>> +	mt7986a-bananapi-bpi-r3-emmc.dtbo \
+>> +	mt7986a-bananapi-bpi-r3-nor.dtbo
+>> +dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-emmc-nor.dtb
+>> +mt7986a-bananapi-bpi-r3-sd-nand-dtbs := \
+>> +	mt7986a-bananapi-bpi-r3.dtb \
+>> +	mt7986a-bananapi-bpi-r3-sd.dtbo \
+>> +	mt7986a-bananapi-bpi-r3-nand.dtbo
+>> +dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-sd-nand.dtb
+>> +mt7986a-bananapi-bpi-r3-sd-nor-dtbs := \
+>> +	mt7986a-bananapi-bpi-r3.dtb \
+>> +	mt7986a-bananapi-bpi-r3-sd.dtbo \
+>> +	mt7986a-bananapi-bpi-r3-nor.dtbo
+>> +dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-sd-nor.dtb
+>> +
+>>   dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-rfb.dtb
+>>   dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986b-rfb.dtb
+>>   dtb-$(CONFIG_ARCH_MEDIATEK) += mt7988a-bananapi-bpi-r4.dtb
+>> --
+>> 2.34.1
+>>
+>>
 
 
