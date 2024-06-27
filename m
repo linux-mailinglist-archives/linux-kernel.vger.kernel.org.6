@@ -1,297 +1,174 @@
-Return-Path: <linux-kernel+bounces-233129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53C1491B29E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:19:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE2E991B2A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:19:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D70B11F21292
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:19:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B375B2256F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:19:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34B81A2C3C;
-	Thu, 27 Jun 2024 23:19:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63C291A2FA2;
+	Thu, 27 Jun 2024 23:19:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JOoAfhvh"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O0SxAQ/5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E0D19A2AE
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 23:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9941A2C2D
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 23:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719530365; cv=none; b=a4yZh8xxcmbu2Dzhx4ZRLF601gyshkdP2N6UMuNjunYg8Jb/CKpz4nvp90N8ZFrsaKLCv6fEjvAL69SFSukuEsNTdPsEj2JGccbUrpx3GrudmwTl/63Z8fDCJyr7UoqtJplrdB9WaB866D2KQ5BjqW0U+0+kc8FgcDTRS80hc+Q=
+	t=1719530388; cv=none; b=CGHAzKM7Qfj0XQ4s014P010BzjSUQSG2dg+qLJsV8QTM3P72hmsetbK1LMEENbhzh67zoOCJTHv95HQzlHBFoK9XCXbxODgleIn8wmXpRDr4KQTTUTYVyq6ldqf5Ea0GAp8G6pxXgeLzcM7X2K/rWP4G4cnMyQTEhAcM14tMYFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719530365; c=relaxed/simple;
-	bh=DrCqKiL/pCMihlN46mvRvR8EclvzSD4pZGIIsWvU/0I=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=fGEerYbUGufkB4HvVaRqhkW2NTd1MTtiewpf/pHPkS6YIGxTcSc58kdq/YgzGQh59Yp7W3zd3qq9XScItuXVkGNqmKlP4WG/pyvoutwZjKpF9UUjR8vNg2UoPlacXq8dcPTPJLWCSb/LziIGHo2UVqFZOeAfSGlg4jPhR8Ww1hA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--elsk.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JOoAfhvh; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--elsk.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e0322e5d0daso125910276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 16:19:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719530361; x=1720135161; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=lbeqboMNXPvpri+31lcbyxGvW1jhsLnKPupd3d+M1PU=;
-        b=JOoAfhvhAzH3XsUMbZKccTzpgflGskGhayhrPKY/h5dbGyIj8i8B28XuCJ0HEpeLJe
-         aROHzmluAUF5sJajpdZlPBXTTeqotKQ5+7jsMTgndTw2Bcoj4ALn8bUmCH8IKs+8kVWB
-         GWvJXsspuPe/NIQQFdWKBZBYsk6m0Zvdc2VSxeGPRYb3boRSfgWO5Wjpf9rnQXK7yOUk
-         pWebxjewMvRQ4YEeykJRXySpFjQcPCKUfvZEMwhXz+/G9rHVeBfcLBs6o9E2s50o1OSf
-         o0i6IiH6pi56CsOiB7VAxaJYXblhPKsbAcpuLGgFqmSp0UQF8cz7iS+9Ajz35IbU+pqq
-         sc9Q==
+	s=arc-20240116; t=1719530388; c=relaxed/simple;
+	bh=PPRwhvydXhxUZQexsx5RnnndFRg7TQ1NyXIyNCDp3+A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pfhbq2koVKyeEG/hXrMbF5aFXSQ/7EXuDFuJ+3zibYpfi7AUaV6w6gTT6mj8dEDSp9HmoAOOp36FQA8Zof4Tk2VY3hvOBWmGLVQtJP14IpS/P5+qJzZyN4n+zFMOLwaLnMntTMZKu4HW/UAUFe7rlScrF11/ouOjEpSSJH9oGnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O0SxAQ/5; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719530385;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D1YXe5ol6L04xULXPymw3GJypJtsSF73vsgstdp57Og=;
+	b=O0SxAQ/5BGxPQGTjLAG6MfEv5DdTuK3RlMQrb77R5g3xQ9eVMxDqYXRclH7FGej5cNSF29
+	9O+Bkn6KVER7O0JRNS1h8zjL1771UJEOrQcrCRmw2sTPkX99NGcBu2byALxEPLe5vmNKbQ
+	gEnu9DKwFkV/tY8z5Nkl/iZFJ1RJBbI=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-390-rBpHui0SN0GPeBXPgXXrbg-1; Thu, 27 Jun 2024 19:19:43 -0400
+X-MC-Unique: rBpHui0SN0GPeBXPgXXrbg-1
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6b52c538d04so184726d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 16:19:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719530361; x=1720135161;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lbeqboMNXPvpri+31lcbyxGvW1jhsLnKPupd3d+M1PU=;
-        b=hAx4TjWvm157X4W4noy6CagfZV5BObItifNUSuAkINL/VoRmD2aeqBGtFwskZYzwwW
-         6cY5tOQyNJdyuvETztpbxeiYabHE2qe65uEZlrvAQYbimQcM+of1rPHRpBTCGQkfp7w/
-         0sGYIobBB+wW0DmQYMmW8lHaeAI54SaZUAF04rgv0wS26LRWsEdrb1thdIEgA1wUMlFd
-         cFqzzIw1GFbgX3SMckZdtFm9XUOPiKJNkN12THnV1q/2/kNFYnba/+o7KlDaXd+qE8+X
-         MrZVbdrYu/TKDlwp6cHe5Qis/B56JY7q3dPkSebgxDUdhRgE6HFwlI2FJE40jlONqMRv
-         IBng==
-X-Forwarded-Encrypted: i=1; AJvYcCUg2hKF+5sfi/vgqHFL4RfuKZUfXKCWv0D2zXMIk3xjGdpcHbQ/kbvrSHP/weEph2pVnn2VWJTz8F4+/zBri9YusyzMDStnDV26Hjum
-X-Gm-Message-State: AOJu0Yz9fkPQJ0T/+eMxqY9Keiw8OYVj0VHW7oolZVCIV+8X2GwMBwa3
-	7MiHLaT3nhPUYgVqOjBj50rDF+Pcx6/gA/wkfAxw+Fkp+02LipfL2p/+WJZJeDIQ14dCWw==
-X-Google-Smtp-Source: AGHT+IFsOjo+uPSs9HOn7YkmxKzwpRo9G4W7RfOuhhYZWC95tEB560alN/cX4ONJq1ishV2MNcawnZEv
-X-Received: from elsk.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:dbd])
- (user=elsk job=sendgmr) by 2002:a25:51c1:0:b0:e03:5148:9f02 with SMTP id
- 3f1490d57ef6-e035bff4fe7mr22276.3.1719530361457; Thu, 27 Jun 2024 16:19:21
- -0700 (PDT)
-Date: Thu, 27 Jun 2024 23:19:18 +0000
+        d=1e100.net; s=20230601; t=1719530383; x=1720135183;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D1YXe5ol6L04xULXPymw3GJypJtsSF73vsgstdp57Og=;
+        b=YzOXOR7agzKx1wRXRkv/uRxvDUkKAJv2wQY4l4zQGPyP3zcja1lQnYCEJnrwGUS8Uj
+         Jf85yTCGRnkzYNWIASaEsA+KpGb/4112n7z2NzA+I2l6YA5E77h3UTTPYjF3Yl5d2Kjp
+         8ZhFw+Cmm5I+tGNG7JXzwNTPLvvCxt7wg4wFaUjPf/YM76BRjv0saTFxxAFhAIoOBWVc
+         3v8RDnF7K48iAEWcuR9ylIWliSDOeoewtkUxy/AX7eCrYGRXeK9SO78mTjmq19L6fD+P
+         W75Pb8kGR/ee3Av01s6lEJbceqrxyAKyTFqEOJ0NKDPfidf0k4rS5c0cdO6y2V26pnUv
+         vbNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWS9EGAtTafte0tpECqSsVqRlyNHHM2jJrqjJAFVR1OpwjfBDJwtUKOBV1p7IIdZ2g6TZDdXMyzmHzWAaIvnulEA1Ca59/hBmPW2kjb
+X-Gm-Message-State: AOJu0YwvAxn3+oIsNirQ32oABQxaKyDpkurv+m8x3MCDSt0YDxo1OazF
+	o4VZwWPffCjazEthzPHhajl54u9UaS0gJNPPvdIDY1KGWpNjJN265frhmIhiZbGLr2QcRrJ7XYc
+	d0DW8GFnudrO5jifFDkPFlbK2jt20dWNvkz9ZkW5PJ82GLtgNKvS0FogmW3GJGg==
+X-Received: by 2002:a05:620a:2905:b0:79c:12a4:538b with SMTP id af79cd13be357-79c12a458a7mr732288885a.2.1719530383186;
+        Thu, 27 Jun 2024 16:19:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFINKkJ5VHiTiiGezMh5c/t5IqK3PUIBzUnqYyYCVAOhNr45JVSecJ4xWQgBsizyziOSOPc1w==
+X-Received: by 2002:a05:620a:2905:b0:79c:12a4:538b with SMTP id af79cd13be357-79c12a458a7mr732286585a.2.1719530382525;
+        Thu, 27 Jun 2024 16:19:42 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79d692ea2ccsm22783185a.88.2024.06.27.16.19.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 16:19:42 -0700 (PDT)
+Date: Thu, 27 Jun 2024 19:19:40 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Yang Shi <yang@os.amperecomputing.com>
+Cc: yangge1116@126.com, david@redhat.com, akpm@linux-foundation.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [v2 PATCH] mm: gup: do not call try_grab_folio() in slow path
+Message-ID: <Zn3zjKnKIZjCXGrU@x1n>
+References: <20240627221413.671680-1-yang@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
-Message-ID: <20240627231919.2461945-1-elsk@google.com>
-Subject: [PATCH v3] kconfig: recursive checks drop file/lineno
-From: HONG Yifan <elsk@google.com>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: HONG Yifan <elsk@google.com>, kernel-team@android.com, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240627221413.671680-1-yang@os.amperecomputing.com>
 
-This prevents segfault when getting filename and lineno in recursive
-checks.
+Yang,
 
-If the following snippet is found in Kconfig:
+On Thu, Jun 27, 2024 at 03:14:13PM -0700, Yang Shi wrote:
+> The try_grab_folio() is supposed to be used in fast path and it elevates
+> folio refcount by using add ref unless zero.  We are guaranteed to have
+> at least one stable reference in slow path, so the simple atomic add
+> could be used.  The performance difference should be trivial, but the
+> misuse may be confusing and misleading.
 
-[Test code 1]
+This first paragraph is IMHO misleading itself..
 
-config FOO
-        bool
-        depends on BAR
-        select BAR
+I think we should mention upfront the important bit, on the user impact.
 
-... without BAR defined; then if one runs `make tinyconfig`, there is a
-segfault.
+Here IMO the user impact should be: Linux may fail longterm pin in some
+releavnt paths when applied over CMA reserved blocks.  And if to extend a
+bit, that include not only slow-gup but also the new memfd pinning, because
+both of them used try_grab_folio() which used to be only for fast-gup.
 
-  Kconfig:34:error: recursive dependency detected!
-  Kconfig:34:	symbol FOO depends on BAR
-  make[4]: *** [scripts/kconfig/Makefile:85: allnoconfig] Segmentation fault
+It's great this patch renamed try_grab_folio() to try_grab_folio_fast(), I
+think that definitely helps on reducing the abuse in the future.  However
+then with that the subject becomes misleading, because it says "do not call
+try_grab_folio()" however after this patch we keep using it.
 
-This is because of the following. BAR is a fake entry created by
-sym_lookup() with prop being NULL. In the recursive check, there is a
-NULL check for prop to fall back to stack->sym->prop if stack->prop is
-NULL. However, in this case, stack->sym points to the fake BAR entry
-created by sym_lookup(), so prop is still NULL. prop was then referenced
-without additional NULL checks, causing segfault.
+Maybe rename the subject to "mm: Fix longterm pin on slow gup and memfd pin
+regress"?
 
-As the previous email thread suggests, the file and lineno for select is
-also wrong:
+> 
+> In another thread [1] a kernel warning was reported when pinning folio
+> in CMA memory when launching SEV virtual machine.  The splat looks like:
+> 
+> [  464.325306] WARNING: CPU: 13 PID: 6734 at mm/gup.c:1313 __get_user_pages+0x423/0x520
+> [  464.325464] CPU: 13 PID: 6734 Comm: qemu-kvm Kdump: loaded Not tainted 6.6.33+ #6
+> [  464.325477] RIP: 0010:__get_user_pages+0x423/0x520
+> [  464.325515] Call Trace:
+> [  464.325520]  <TASK>
+> [  464.325523]  ? __get_user_pages+0x423/0x520
+> [  464.325528]  ? __warn+0x81/0x130
+> [  464.325536]  ? __get_user_pages+0x423/0x520
+> [  464.325541]  ? report_bug+0x171/0x1a0
+> [  464.325549]  ? handle_bug+0x3c/0x70
+> [  464.325554]  ? exc_invalid_op+0x17/0x70
+> [  464.325558]  ? asm_exc_invalid_op+0x1a/0x20
+> [  464.325567]  ? __get_user_pages+0x423/0x520
+> [  464.325575]  __gup_longterm_locked+0x212/0x7a0
+> [  464.325583]  internal_get_user_pages_fast+0xfb/0x190
+> [  464.325590]  pin_user_pages_fast+0x47/0x60
+> [  464.325598]  sev_pin_memory+0xca/0x170 [kvm_amd]
+> [  464.325616]  sev_mem_enc_register_region+0x81/0x130 [kvm_amd]
+> 
+> Per the analysis done by yangge, when starting the SEV virtual machine,
+> it will call pin_user_pages_fast(..., FOLL_LONGTERM, ...) to pin the
+> memory.  But the page is in CMA area, so fast GUP will fail then
+> fallback to the slow path due to the longterm pinnalbe check in
+> try_grab_folio().
+> The slow path will try to pin the pages then migrate them out of CMA
+> area.  But the slow path also uses try_grab_folio() to pin the page,
+> it will also fail due to the same check then the above warning
+> is triggered.
+> 
+> [1] https://lore.kernel.org/linux-mm/1719478388-31917-1-git-send-email-yangge1116@126.com/
+> 
+> Fixes: 57edfcfd3419 ("mm/gup: accelerate thp gup even for "pages != NULL"")
+> Cc: <stable@vger.kernel.org> [6.6+]
+> Reported-by: yangge <yangge1116@126.com>
+> Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
 
-[Test code 2]
+The patch itself looks mostly ok to me.
 
-config FOO
-       bool
+There's still some "cleanup" part mangled together, e.g., the real meat
+should be avoiding the folio_is_longterm_pinnable() check in relevant
+paths.  The rest (e.g. switch slow-gup / memfd pin to use folio_ref_add()
+not try_get_folio(), and renames) could be good cleanups.
 
-config BAR
-       bool
+So a smaller fix might be doable, but again I don't have a strong opinion
+here.
 
-config FOO
-       bool "FOO"
-       depends on BAR
-       select BAR
+Thanks,
 
-  $ make defconfig
-  *** Default configuration is based on 'x86_64_defconfig'
-  Kconfig:1:error: recursive dependency detected!
-  Kconfig:1: symbol FOO depends on BAR
-  Kconfig:4: symbol BAR is selected by FOO
-  [...]
-
-Kconfig:4 should be Kconfig:10.
-
-This patch deletes the wrong and segfault-prone filename/lineno
-inference completely. With this patch, Test code 1 yields:
-
-error: recursive dependency detected!
-	symbol FOO depends on BAR
-	symbol BAR is selected by FOO
-
-Link: https://lore.kernel.org/linux-kbuild/20240620211112.500465-1-elsk@google.com/
-Signed-off-by: HONG Yifan <elsk@google.com>
-
---
-v3: Rebase on top of
-    https://lore.kernel.org/linux-kbuild/20240626182212.3758235-1-masahiroy@kernel.org/T/#t
-    & resolve merge conflicts. Fix
-    scripts/kconfig/tests/err_recursive_dep/expected_stderr
-v2: Delete all filenames/lineno completely as suggested by
-    masahiroy@kernel.org
----
- scripts/kconfig/symbol.c                      | 40 +++++++------------
- .../tests/err_recursive_dep/expected_stderr   | 36 ++++++++---------
- 2 files changed, 33 insertions(+), 43 deletions(-)
-
-diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
-index c05d188a1857..e22c8769f44f 100644
---- a/scripts/kconfig/symbol.c
-+++ b/scripts/kconfig/symbol.c
-@@ -1068,10 +1068,10 @@ static void sym_check_print_recursive(struct symbol *last_sym)
- {
- 	struct dep_stack *stack;
- 	struct symbol *sym, *next_sym;
--	struct menu *menu = NULL;
- 	struct menu *choice;
- 	struct property *prop;
- 	struct dep_stack cv_stack;
-+	enum prop_type type;
- 
- 	choice = sym_get_choice_menu(last_sym);
- 	if (choice) {
-@@ -1094,49 +1094,39 @@ static void sym_check_print_recursive(struct symbol *last_sym)
- 		if (prop == NULL)
- 			prop = stack->sym->prop;
- 
--		/* for choice values find the menu entry (used below) */
--		if (sym_is_choice(sym) || sym_is_choice_value(sym)) {
--			for (prop = sym->prop; prop; prop = prop->next) {
--				menu = prop->menu;
--				if (prop->menu)
--					break;
--			}
--		}
-+		if (prop == NULL)
-+			type = P_UNKNOWN;
-+		else
-+			type = prop->type;
-+
- 		if (stack->sym == last_sym)
--			fprintf(stderr, "%s:%d:error: recursive dependency detected!\n",
--				prop->filename, prop->lineno);
-+			fprintf(stderr, "error: recursive dependency detected!\n");
- 
- 		if (sym_is_choice(next_sym)) {
- 			choice = list_first_entry(&next_sym->menus, struct menu, link);
- 
--			fprintf(stderr, "%s:%d:\tsymbol %s is part of choice block at %s:%d\n",
--				menu->filename, menu->lineno,
-+			fprintf(stderr, "\tsymbol %s is part of choice block at %s:%d\n",
- 				sym->name ? sym->name : "<choice>",
- 				choice->filename, choice->lineno);
- 		} else if (stack->expr == &sym->dir_dep.expr) {
--			fprintf(stderr, "%s:%d:\tsymbol %s depends on %s\n",
--				prop->filename, prop->lineno,
-+			fprintf(stderr, "\tsymbol %s depends on %s\n",
- 				sym->name ? sym->name : "<choice>",
- 				next_sym->name);
- 		} else if (stack->expr == &sym->rev_dep.expr) {
--			fprintf(stderr, "%s:%d:\tsymbol %s is selected by %s\n",
--				prop->filename, prop->lineno,
-+			fprintf(stderr, "\tsymbol %s is selected by %s\n",
- 				sym->name, next_sym->name);
- 		} else if (stack->expr == &sym->implied.expr) {
--			fprintf(stderr, "%s:%d:\tsymbol %s is implied by %s\n",
--				prop->filename, prop->lineno,
-+			fprintf(stderr, "\tsymbol %s is implied by %s\n",
- 				sym->name, next_sym->name);
- 		} else if (stack->expr) {
--			fprintf(stderr, "%s:%d:\tsymbol %s %s value contains %s\n",
--				prop->filename, prop->lineno,
-+			fprintf(stderr, "\tsymbol %s %s value contains %s\n",
- 				sym->name ? sym->name : "<choice>",
--				prop_get_type_name(prop->type),
-+				prop_get_type_name(type),
- 				next_sym->name);
- 		} else {
--			fprintf(stderr, "%s:%d:\tsymbol %s %s is visible depending on %s\n",
--				prop->filename, prop->lineno,
-+			fprintf(stderr, "\tsymbol %s %s is visible depending on %s\n",
- 				sym->name ? sym->name : "<choice>",
--				prop_get_type_name(prop->type),
-+				prop_get_type_name(type),
- 				next_sym->name);
- 		}
- 	}
-diff --git a/scripts/kconfig/tests/err_recursive_dep/expected_stderr b/scripts/kconfig/tests/err_recursive_dep/expected_stderr
-index 05d4ced70320..fc2e860af082 100644
---- a/scripts/kconfig/tests/err_recursive_dep/expected_stderr
-+++ b/scripts/kconfig/tests/err_recursive_dep/expected_stderr
-@@ -1,38 +1,38 @@
--Kconfig:5:error: recursive dependency detected!
--Kconfig:5:	symbol A depends on A
-+error: recursive dependency detected!
-+	symbol A depends on A
- For a resolution refer to Documentation/kbuild/kconfig-language.rst
- subsection "Kconfig recursive dependency limitations"
- 
--Kconfig:11:error: recursive dependency detected!
--Kconfig:11:	symbol B is selected by B
-+error: recursive dependency detected!
-+	symbol B is selected by B
- For a resolution refer to Documentation/kbuild/kconfig-language.rst
- subsection "Kconfig recursive dependency limitations"
- 
--Kconfig:17:error: recursive dependency detected!
--Kconfig:17:	symbol C1 depends on C2
--Kconfig:21:	symbol C2 depends on C1
-+error: recursive dependency detected!
-+	symbol C1 depends on C2
-+	symbol C2 depends on C1
- For a resolution refer to Documentation/kbuild/kconfig-language.rst
- subsection "Kconfig recursive dependency limitations"
- 
--Kconfig:27:error: recursive dependency detected!
--Kconfig:27:	symbol D1 depends on D2
--Kconfig:32:	symbol D2 is selected by D1
-+error: recursive dependency detected!
-+	symbol D1 depends on D2
-+	symbol D2 is selected by D1
- For a resolution refer to Documentation/kbuild/kconfig-language.rst
- subsection "Kconfig recursive dependency limitations"
- 
--Kconfig:37:error: recursive dependency detected!
--Kconfig:37:	symbol E1 depends on E2
--Kconfig:42:	symbol E2 is implied by E1
-+error: recursive dependency detected!
-+	symbol E1 depends on E2
-+	symbol E2 is implied by E1
- For a resolution refer to Documentation/kbuild/kconfig-language.rst
- subsection "Kconfig recursive dependency limitations"
- 
--Kconfig:49:error: recursive dependency detected!
--Kconfig:49:	symbol F1 default value contains F2
--Kconfig:51:	symbol F2 depends on F1
-+error: recursive dependency detected!
-+	symbol F1 default value contains F2
-+	symbol F2 depends on F1
- For a resolution refer to Documentation/kbuild/kconfig-language.rst
- subsection "Kconfig recursive dependency limitations"
- 
--Kconfig:60:error: recursive dependency detected!
--Kconfig:60:	symbol G depends on G
-+error: recursive dependency detected!
-+	symbol G depends on G
- For a resolution refer to Documentation/kbuild/kconfig-language.rst
- subsection "Kconfig recursive dependency limitations"
 -- 
-2.45.2.803.g4e1b14247a-goog
+Peter Xu
 
 
