@@ -1,74 +1,134 @@
-Return-Path: <linux-kernel+bounces-232536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC71891AA84
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:07:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CC6191AA7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:07:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46336B26278
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:07:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49536289B60
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BEC3198A2E;
-	Thu, 27 Jun 2024 15:07:13 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C307A198E78;
+	Thu, 27 Jun 2024 15:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="C+GMefX+"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8186E197A90;
-	Thu, 27 Jun 2024 15:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C2213C821;
+	Thu, 27 Jun 2024 15:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719500832; cv=none; b=LF+Rdh1NpEtKVD2uT6AY5lLQ2tFREoih4X7BRRAMf6a9mEA9AoVYcLAOFBJ6hCH+lW9jekrflQtCzblg81blnfx38h7m2eM19pqD8UnLmR7Y2AMrSAemZSyNhToywoKTW5C8p8waDC6JH/wjkiklptBptdAotp4mjiTZ/d3vVmU=
+	t=1719500789; cv=none; b=j0+SWqXT5sTiLoKX1rztbRtVft1Us4eShGdT6a2mUEf9oiAMWJ/7Vnc8aDIg40BLLRxQvSaajxNGUknQOgt+AHsQRsXHT7O3jwCXDL044HYw5+Wdc7MfoxxhXc9G5eHl4LW2QL44c3JMnx0f9noWQA9yYjjv3/Ou6bsDSo4Sz5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719500832; c=relaxed/simple;
-	bh=hs02989bp1p/bCUJc39bOXew5Ovzy8I/R6oro7OtCVY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ng8Tc0V9eRsK4nRnmIZya3ChBkztLeqyV2BzRHOIZAaQx5DhZyUh7Yguc0Anw6oIFriIs+l2ZMCAcJVekXETHtGThCTcIamKSdJ6mP35cdLq4pI8AE2BV18QuhbQBm/rDLRf06tYszuBZGhwDEhv1JgW9/SCElFwYGipJOkIP0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-From: Guilherme Amadio <amadio@gentoo.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Guilherme Amadio <amadio@gentoo.org>
-Subject: [PATCH 2/2] perf build: warn if libtracefs is not found
-Date: Thu, 27 Jun 2024 17:06:06 +0200
-Message-ID: <20240627150606.2224888-2-amadio@gentoo.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240627150606.2224888-1-amadio@gentoo.org>
-References: <20240627150606.2224888-1-amadio@gentoo.org>
-Reply-To: <Znxp3bpc-5tvaa3m@x1.smtp.subspace.kernel.org>
+	s=arc-20240116; t=1719500789; c=relaxed/simple;
+	bh=Q6CNiPkkdNu7gSD02dlZ4a+giT7+eN+yTgHoayf3dXY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KHOqfddMwRnou/NvSkJO6PvJuYNRp6uEbt6JdYCZ6MaRuTTIxBQo+ouF6AAGSr9WNkDyuiFat63Js3fYetnl+PobTWuZhIRTs5Ik1PKQdX7hPQCSewQcogMoEV9Udj8LP6eESWJ5uMypsfOIpIfblf1KNNxN+HWdP5KYuSATAq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=C+GMefX+; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45RF6BXQ004455;
+	Thu, 27 Jun 2024 10:06:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1719500771;
+	bh=AA7CCvsy3fGdZWB/58CmRJN2Df5l8paTg5EoWlnMJ1o=;
+	h=From:To:CC:Subject:Date;
+	b=C+GMefX+Z+LXjfKt1Xk5de2oyQNswMN6blN7w29ecMgukSinYs0STHdV1KIs9yg9E
+	 a8F9Q5RS9lzVf//XQfH/TO8dWr3im+ac+2m3x8dKKKE3ouBFqKsF69Z1qThkfh/28w
+	 7BMuyTSTR+c5pZImmYFI3RxuWkJpkOaI8HfsBis0=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45RF6Bgd033898
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 27 Jun 2024 10:06:11 -0500
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 27
+ Jun 2024 10:06:11 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 27 Jun 2024 10:06:11 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45RF6BHV001943;
+	Thu, 27 Jun 2024 10:06:11 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Tony Lindgren <tony@atomide.com>, Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Nishanth Menon <nm@ti.com>
+Subject: [PATCH V2] dt-bindings: pinctrl: pinctrl-single: Fix pinctrl-single,gpio-range description
+Date: Thu, 27 Jun 2024 10:06:10 -0500
+Message-ID: <20240627150610.469645-1-nm@ti.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Organization: Texas Instruments, Inc.
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Signed-off-by: Guilherme Amadio <amadio@gentoo.org>
+The binding is supposed to describe the properties of each element
+of the pinctrl-single,gpio-range array entry, however when we use
+"- items:" instead of "items:", it explicitly describes that there
+is just a single entry in the array.
+
+The pinctrl-single,gpio-range property should describe more than one
+entry in the array. Fix the typo and adjust the alignment of the
+description of the entries appropriately.
+
+Fixes: 677a62482bd6 ("dt-bindings: pinctrl: Update pinctrl-single to use yaml")
+Signed-off-by: Nishanth Menon <nm@ti.com>
 ---
- tools/perf/Makefile.config | 2 ++
- 1 file changed, 2 insertions(+)
+Symptom:
+pinctrl-single,gpio-range = <&range 0 21 7>;
+generates no warning
+However,
+pinctrl-single,gpio-range = <&range 0 21 7>, <&range 32 2 7>;
+generates "is too long" warning.
 
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index 987b48f242d3..e99afc7eb4b5 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -1204,6 +1204,8 @@ ifneq ($(NO_LIBTRACEEVENT),1)
-     LIBTRACEFS_VERSION_3 := $(word 3, $(subst ., ,$(LIBTRACEFS_VERSION)))
-     LIBTRACEFS_VERSION_CPP := $(shell expr $(LIBTRACEFS_VERSION_1) \* 255 \* 255 + $(LIBTRACEFS_VERSION_2) \* 255 + $(LIBTRACEFS_VERSION_3))
-     CFLAGS += -DLIBTRACEFS_VERSION=$(LIBTRACEFS_VERSION_CPP)
-+  else
-+    $(warning libtracefs is missing. Please install libtracefs-dev/libtracefs-devel)
-   endif
- endif
+This is just an attempt to fix the binding that is existing.
+
+V1: https://lore.kernel.org/all/20240618165102.2380159-1-nm@ti.com/
+
+Patch is based on next-20240626
+
+ .../devicetree/bindings/pinctrl/pinctrl-single.yaml    | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml b/Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml
+index c11495524dd2..4e7fd00d602a 100644
+--- a/Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-single.yaml
+@@ -75,11 +75,11 @@ properties:
+     description: Optional list of pin base, nr pins & gpio function
+     $ref: /schemas/types.yaml#/definitions/phandle-array
+     items:
+-      - items:
+-          - description: phandle of a gpio-range node
+-          - description: pin base
+-          - description: number of pins
+-          - description: gpio function
++      items:
++        - description: phandle of a gpio-range node
++        - description: pin base
++        - description: number of pins
++        - description: gpio function
  
+   '#gpio-range-cells':
+     description: No longer needed, may exist in older files for gpio-ranges
+
+base-commit: df9574a57d02b265322e77fb8628d4d33641dda9
 -- 
-2.45.2
+2.43.0
 
 
