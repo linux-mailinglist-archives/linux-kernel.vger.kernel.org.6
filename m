@@ -1,67 +1,114 @@
-Return-Path: <linux-kernel+bounces-232918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEE8B91AFDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 21:51:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C08B991AFDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 21:51:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 374CDB20DBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:51:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78F9A286812
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:51:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3652C19ADB3;
-	Thu, 27 Jun 2024 19:51:34 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2AF2D047;
-	Thu, 27 Jun 2024 19:51:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F001419CD1A;
+	Thu, 27 Jun 2024 19:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ncJYO6dW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3966D2D047;
+	Thu, 27 Jun 2024 19:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719517893; cv=none; b=LGeGA/ye/2P6rKOnOySF4SP4yqIIDFjRkpxOMX7AK/J4+hHLXUY5QGBWmHsHf7cheBa5OAbXkRDvH2VO8uOEjpJQW1R0ugviVDwWhbv/SND3geVm7/XcK+GjR+v6Hn+UsJmgqnymvTLgTZO/wbvmCTe7ykCLSg3pUY8Gp8/xguo=
+	t=1719517901; cv=none; b=A4tt0b9N0S/6pUnXINAza0S26GNADWy+udktmqeolW3oEKXYRky3QQwbfEK3sk+8ko+0KwQwiQtxIgHHa8E7KynLMIjXJBxW4L83w5vfUrJhkxUnW30HSX/3xQH/Mlqdn/ZAWTbEpDtb6JM+AiOopr5Zkq6opPcXRlUrQng6GQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719517893; c=relaxed/simple;
-	bh=70LhU90qdQV39rroTRoNGijMZG/8DrhJZReHncgOsp0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=JhbvJ9GsNj8VNEHtbPLrnlCVsi+skvXmOpQ4IqhvWHQCPJOq7fR/4J9CQgWsJKrVKdFRUtGRwh4FyBW6XWCf45vaReoC6JIHqQmAAMau6vBLBsEbd+PiJSYzhSM1hxliIpTuF033TNrHOS2ZqWHRTvFKDn7eXD9TS5S7I141QoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id C47C292009C; Thu, 27 Jun 2024 21:51:22 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id BE4A592009B;
-	Thu, 27 Jun 2024 20:51:22 +0100 (BST)
-Date: Thu, 27 Jun 2024 20:51:22 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-    "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, 
-    linux-kernel@vger.kernel.org, 
-    "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH fixes 3/4] MIPS: cps-vec: Replace MT instructions with
- macros
-In-Reply-To: <394042b6-37ef-4011-b799-454036d8bc34@app.fastmail.com>
-Message-ID: <alpine.DEB.2.21.2406272046020.43454@angie.orcam.me.uk>
-References: <20240616-mips-mt-fixes-v1-0-83913e0e60fc@flygoat.com> <20240616-mips-mt-fixes-v1-3-83913e0e60fc@flygoat.com> <Zn0qG5tsMBYcSWW+@alpha.franken.de> <394042b6-37ef-4011-b799-454036d8bc34@app.fastmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1719517901; c=relaxed/simple;
+	bh=Nu1MRTR8v5XZDzasqGr9q3u/QsN2RJit7rTafzcIyNQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rs9ZVj6qi430hk++56IJDB4AlSIreaIdcoE28XbPkfUPyWuAbuevisUOkEbfAbRgdLcwlrM7t17wIILSsePY0aW5O5ZQgfxX9bCF4PE1drDsyUs/071dvWHXq30IrJ79xiY9Ew9C9QjSXAvS1EO3mahzhA87uahXCwOVj+NhF5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ncJYO6dW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1951C2BBFC;
+	Thu, 27 Jun 2024 19:51:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719517900;
+	bh=Nu1MRTR8v5XZDzasqGr9q3u/QsN2RJit7rTafzcIyNQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ncJYO6dWOutz3bVPLug/SKtimLBtIFl2hZJ2Q1YZ9intQ04YU2is9yRqu0Y99Cbd5
+	 bhfVqX9W4LqJW5DuwPbvxYXYV0R7nPVcFMa6dGisKLYI/xFZhUoPRzf5o9Mvf5g0aK
+	 9BYglQSXNObyOf3Blf200WvjFm5/5SJWGy1FEGPC+5xyRzljYw3AIvhZm3tpmo8K40
+	 fgg3vpGa1XWzyRpRP/ytzSwx8C27OhzvU4ogPO6JytvVMANzjksPoQraxajkzt3QEc
+	 GO/AE0Qfah2TTBZEvKhq1xM0ExorUyyjmLiTpb0gllKaR3BBYMXMCfRNDPMcN4b6zw
+	 RJ5Y6tvKiuZzw==
+Date: Thu, 27 Jun 2024 12:51:40 -0700
+From: Kees Cook <kees@kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Mark Rutland <mark.rutland@arm.com>, David Gow <davidgow@google.com>,
+	Vitor Massaru Iha <vitor@massaru.org>,
+	Ivan Orlov <ivan.orlov0322@gmail.com>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	Rae Moar <rmoar@google.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] kunit: test: Add vm_mmap() allocation resource
+ manager
+Message-ID: <202406271250.A227529@keescook>
+References: <20240612195412.make.760-kees@kernel.org>
+ <20240612195921.2685842-1-kees@kernel.org>
+ <d32df98c-fd3c-466b-bc8f-47cec1c7bebf@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d32df98c-fd3c-466b-bc8f-47cec1c7bebf@roeck-us.net>
 
-On Thu, 27 Jun 2024, Jiaxun Yang wrote:
-
-> > how about simply enforcing the need for a correct toolchain instead
-> > of making the code ugly ?
+On Sat, Jun 22, 2024 at 06:47:39AM -0700, Guenter Roeck wrote:
+> Hi,
 > 
-> Unfortunately, MT for microMIPS which I'm trying to bring up is only in
-> binutils master, it's not in any binutils release yet.
+> On Wed, Jun 12, 2024 at 12:59:18PM -0700, Kees Cook wrote:
+> > For tests that need to allocate using vm_mmap() (e.g. usercopy and
+> > execve), provide the interface to have the allocation tracked by KUnit
+> > itself. This requires bringing up a placeholder userspace mm.
+> > 
+> > This combines my earlier attempt at this with Mark Rutland's version[1].
+> > 
+> > Normally alloc_mm() and arch_pick_mmap_layout() aren't exported for
+> > modules, so export these only for KUnit testing.
+> > 
+> > Link: https://lore.kernel.org/lkml/20230321122514.1743889-2-mark.rutland@arm.com/ [1]
+> 
+> FWIW, not sure I understand what the above link has to do with this patch.
 
- It's not yet in binutils master either.  Has there been any actual chip 
-taped out with this instruction subset supported?
+Both the above Link and this patch were implementing KUnit usercopy
+tests (and the required infrastructure).
 
-  Maciej
+> 
+> > Co-developed-by: Mark Rutland <mark.rutland@arm.com>
+> > Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> > Reviewed-by: David Gow <davidgow@google.com>
+> > Signed-off-by: Kees Cook <kees@kernel.org>
+> 
+> This patch results in a build failure for nommu_kc705_defconfig if kunit tests
+> are also enabled.
+> 
+> ERROR: modpost: vmlinux: local symbol 'arch_pick_mmap_layout' was exported
+> 
+> If CONFIG_ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT=n, CONFIG_MMU=n, and
+> CONFIG_KUNIT=y, arch_pick_mmap_layout is exported. However, if
+> CONFIG_MMU=n, it is declared as static inline function.
+
+I replied in the other thread too, but this has had a fix pending:
+https://lore.kernel.org/lkml/202406271005.4E767DAE@keescook/
+
+I pinged the patch again today.
+
+-Kees
+
+-- 
+Kees Cook
 
