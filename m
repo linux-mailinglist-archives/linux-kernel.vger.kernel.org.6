@@ -1,79 +1,108 @@
-Return-Path: <linux-kernel+bounces-231821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 678F9919EAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:34:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA70C919EB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:34:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9806C1C20DAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 05:34:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72F32288E9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 05:34:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19B1200B7;
-	Thu, 27 Jun 2024 05:33:51 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B79C1CD0C;
+	Thu, 27 Jun 2024 05:34:12 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2F31CD13;
-	Thu, 27 Jun 2024 05:33:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D294D28DC3
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 05:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719466431; cv=none; b=KGiamMUr+hpbTMKKtI5+HklgGNv2dzp1LZ+4eoni9BLVRB7Xn9xYCpNn8BziWlDCdGVJ6D1NeXuhz5abbrEakmC3EQj5PgKCdkH86rM1jjucdj61K/ngLfVUnTn/2v5g0Rypus4vlRiiv7FIqq7TbStNf3IWD+nl9hnVYg67EIA=
+	t=1719466451; cv=none; b=SHbpksBH/2O3Bn6it69egw9398HRcfIw/dgMzLmnYhekaqU4OPDUATrx6MtJwG0N9KeNSA48Eta3qu6Y+KQ3C6ulvyYyHIrYL2hDCIe/ofw5rIAu/7Kl6V+P843k9XfqRBqXANph3nT/yDoN8IsG3BsYjGju8vavBvrHP6VmC2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719466431; c=relaxed/simple;
-	bh=u1VLRD751P6xMITpXH3h1dqGSUMP4GL72rO7Zwx6hkU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hDxwzGImHWenUG7AyiOwJBnDgP1AEl4pkVpLrdDWebaIvJ/JUcqca00nAKgepIS5AS916MpwebSlrCZcuOTIwQZW0Fp6UunSOqF/MI1iNOp4UeMpNVe7GccF9PoAXis+TLkxLljRFr0rFjYxcpMcjxWQJkOy7OMfs5zPJIo/aqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 1840168C4E; Thu, 27 Jun 2024 07:33:44 +0200 (CEST)
-Date: Thu, 27 Jun 2024 07:33:43 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Alistair Popple <apopple@nvidia.com>
-Cc: dan.j.williams@intel.com, vishal.l.verma@intel.com,
-	dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
-	jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
-	will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
-	dave.hansen@linux.intel.com, ira.weiny@intel.com,
-	willy@infradead.org, djwong@kernel.org, tytso@mit.edu,
-	linmiaohe@huawei.com, david@redhat.com, peterx@redhat.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-	jhubbard@nvidia.com, hch@lst.de, david@fromorbit.com
-Subject: Re: [PATCH 04/13] fs/dax: Add dax_page_free callback
-Message-ID: <20240627053343.GD14837@lst.de>
-References: <cover.66009f59a7fe77320d413011386c3ae5c2ee82eb.1719386613.git-series.apopple@nvidia.com> <e626eda568267e1f86d5c30c24bc62474b45f6c3.1719386613.git-series.apopple@nvidia.com>
+	s=arc-20240116; t=1719466451; c=relaxed/simple;
+	bh=LYJA4gHG3laUJKh3RirWz+ba19Ae9E87C/vzol79nZI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=O34aqZfnEBDX8T+HBs2YbtYEVQi/pRuRW/RWglu41GOc8KumQRt/fR/NXgFdaFjXkNTwN48YWkWBgQQirkpy8lPk8++ferQhz8LCcvy0EuCPUJ/gLwTRMBG5aPqslU3wy4qHxLJ7Adxh6O2GM3JRcM4Xxh0DpPFZJ5nm0XrSdL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sMhlc-0004LN-AL; Thu, 27 Jun 2024 07:33:56 +0200
+Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sMhla-005IHZ-CJ; Thu, 27 Jun 2024 07:33:54 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sMhla-005wRX-12;
+	Thu, 27 Jun 2024 07:33:54 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	stable@vger.kernel.org,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>,
+	netdev@vger.kernel.org,
+	Lukasz Majewski <lukma@denx.de>
+Subject: [PATCH net v1 1/1] net: phy: micrel: ksz8081: disable broadcast only if PHY address is not 0
+Date: Thu, 27 Jun 2024 07:33:53 +0200
+Message-Id: <20240627053353.1416261-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e626eda568267e1f86d5c30c24bc62474b45f6c3.1719386613.git-series.apopple@nvidia.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Thu, Jun 27, 2024 at 10:54:19AM +1000, Alistair Popple wrote:
-> When a fs dax page is freed it has to notify filesystems that the page
-> has been unpinned/unmapped and is free. Currently this involves
-> special code in the page free paths to detect a transition of refcount
-> from 2 to 1 and to call some fs dax specific code.
-> 
-> A future change will require this to happen when the page refcount
-> drops to zero. In this case we can use the existing
-> pgmap->ops->page_free() callback so wire that up for all devices that
-> support FS DAX (nvdimm and virtio).
+Do not disable broadcast if we are using address 0 (broadcast) to
+communicate with this device. Otherwise we will use proper driver but no
+communication will be possible and no link changes will be detected.
+There are two scenarios where we can run in to this situation:
+- PHY is bootstrapped for address 0
+- no PHY address is known and linux is scanning the MDIO bus, so first
+  respond and attached device will be on address 0.
 
-Given that ->page_ffree is only called from free_zone_device_folio
-and right next to a switch on the the type, can't we just do the
-wake_up_var there without the somewhat confusing indirect call that
-just back in common code without any driver logic?
+The fixes tag points to the latest refactoring, not to the initial point
+where kszphy_broadcast_disable() was introduced.
+
+Fixes: 79e498a9c7da0 ("net: phy: micrel: Restore led_mode and clk_sel on resume")
+Cc: stable@vger.kernel.org
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ drivers/net/phy/micrel.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
+index 81c20eb4b54b9..67c2e611150d2 100644
+--- a/drivers/net/phy/micrel.c
++++ b/drivers/net/phy/micrel.c
+@@ -590,7 +590,7 @@ static int kszphy_config_init(struct phy_device *phydev)
+ 
+ 	type = priv->type;
+ 
+-	if (type && type->has_broadcast_disable)
++	if (type && type->has_broadcast_disable && phydev->mdio.addr != 0)
+ 		kszphy_broadcast_disable(phydev);
+ 
+ 	if (type && type->has_nand_tree_disable)
+-- 
+2.39.2
 
 
