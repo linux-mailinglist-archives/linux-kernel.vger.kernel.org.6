@@ -1,51 +1,49 @@
-Return-Path: <linux-kernel+bounces-231656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA599919B80
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 01:59:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE87D919B86
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 02:00:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 644A3B22646
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 23:59:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89245285EE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE6EB1946B5;
-	Wed, 26 Jun 2024 23:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KcRPMiBK"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45C31EAE9;
+	Thu, 27 Jun 2024 00:00:39 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9AB194131;
-	Wed, 26 Jun 2024 23:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76EDA2139AF
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 00:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719446364; cv=none; b=uRmH3LVSuzUffavL4vp71Q2EchK5XUadz+UksdlLKA3CelTM0z7090je/BTI7BsZEUYI+/96NCA9ET+HIIStlU98vBRFCcSVkNN1t+oi/74cjyMCPQ3HCreypsiw8oTIi1iDd1YwTEDnqIjlGLcKvlwzy7Lq70QRCwaDMW0ilg8=
+	t=1719446438; cv=none; b=MHv+PqkeHE+ay5JuOL5pXxrKrmfKwIl/m/BUqW8XsMVcpLJjuz1RmBhsuhn2tjADFqM1Z35w12CQ8spM7M+FdSWXWaAYQd+sjcWDc695wa9amfPsUnU8ftq/vpSPm3ifz8kEfiSykdBVw5CQQsPzy2pYdmIhpiCBNjv8I7W5d/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719446364; c=relaxed/simple;
-	bh=DxLRCAVICbLwOm0878hwUG6U+CN6JJNqa9c+zYlLcBE=;
+	s=arc-20240116; t=1719446438; c=relaxed/simple;
+	bh=Sk10eey52vbDd3IyDgSHfm7zsWNrCAc7zSC342M9x2A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R+NRn5kTmI1PYZqUKs29pfwt69OR9xrNc9FPg5de8NmlZeuaJWNwjfFEVNxWEA9LtVmRZrBxCqwzyUwAB6l9ZF6xuwKkId5oIGyddUG4JUJUS+4MNdMSDKiS0nSJXF9rMmOOL+7pE0dh1KptFsVBRBVrQ++eFZigVDYhZ/HDDUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KcRPMiBK; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=sgYM6lwzKouyTUa3YEQEjqMk2OfmUlxgF+rIcH1SYZM=; b=KcRPMiBKWGM78GYlWUEYrBeFrC
-	R2sBZDqHBl8Uc9OjNooyz9R/DD5sFND5vFZ0FZ2cegVHmjV012zR4UQ5R8U5fAlwUgdWUtjOPeEsp
-	6BdLeMq5wZmxrzzxWw0+lHOBqakZ3twyE86faPYQ4vQkrO0ZePwXDYpgJutZOogz9kRgVnv6uvq6A
-	CQE/NRBBHiuVi8K9XTIE8/XA9Xyru/CcR8RRkWOlvG0haatWlWxaMHgS/Kbl2TLIeFP6FnjIEZwzx
-	+eysRmr+6KSraILfaY9n1Qn+gMh2H+Ldnv2gfuahHiC0qbGMfd8qQ7IMUuD4gjjrf9Kr3o7UV1eCE
-	2yxRvryg==;
-Received: from [50.53.4.147] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sMcXp-00000008ghU-3Zaf;
-	Wed, 26 Jun 2024 23:59:21 +0000
-Message-ID: <f7cf6002-239e-459f-a8ec-75cc0406fcc9@infradead.org>
-Date: Wed, 26 Jun 2024 16:59:20 -0700
+	 In-Reply-To:Content-Type; b=A/B2D9oVmjuExSwSgjzr9lVjXTLgQFVHvxrwqH1QI0q1x3SCRslzy2O33sQ/mzW7W9GLJ8HRQKJiicWvpskkrZhhmFjHDpmb6n7E7A1PA+kc2ov6G8R8Sr31LXvoHM2d7SI2kkz1PmEQhch8+9bIhcQxA3UFF60gaI84+FbewXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav412.sakura.ne.jp (fsav412.sakura.ne.jp [133.242.250.111])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 45R00R6a031384;
+	Thu, 27 Jun 2024 09:00:27 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav412.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav412.sakura.ne.jp);
+ Thu, 27 Jun 2024 09:00:26 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav412.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 45R00QoL031381
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Thu, 27 Jun 2024 09:00:26 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <3b332a67-b1ef-4448-9a75-66d9638edeaa@I-love.SAKURA.ne.jp>
+Date: Thu, 27 Jun 2024 09:00:26 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,69 +51,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 09/13] Documentation: core-api: Add math.h macros and
- functions
-To: Devarsh Thakkar <devarsht@ti.com>, mchehab@kernel.org,
- hverkuil-cisco@xs4all.nl, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, benjamin.gaignard@collabora.com,
- sebastian.fricke@collabora.com, akpm@linux-foundation.org,
- gregkh@linuxfoundation.org, andriy.shevchenko@linux.intel.com,
- adobriyan@gmail.com, jani.nikula@intel.com, p.zabel@pengutronix.de,
- airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
- corbet@lwn.net, broonie@kernel.org, linux-doc@vger.kernel.org
-Cc: laurent.pinchart@ideasonboard.com, praneeth@ti.com, nm@ti.com,
- vigneshr@ti.com, a-bhatia1@ti.com, j-luthra@ti.com, b-brnich@ti.com,
- detheridge@ti.com, p-mantena@ti.com, vijayp@ti.com, andrzej.p@collabora.com,
- nicolas@ndufresne.ca, davidgow@google.com, dlatypov@google.com
-References: <20240607131900.3535250-1-devarsht@ti.com>
- <20240607133120.3556488-1-devarsht@ti.com>
+Subject: Re: [PATCH] bpf: defer printk() inside __bpf_prog_run()
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+        John Ogness <john.ogness@linutronix.de>,
+        Alexei Starovoitov
+ <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau
+ <martin.lau@linux.dev>,
+        Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+        Yonghong Song <yonghong.song@linux.dev>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+References: <345098dc-8cb4-4808-98cf-fa9ab3af4fc4@I-love.SAKURA.ne.jp>
+ <87ed8lxg1c.fsf@jogness.linutronix.de>
+ <60704acc-61bd-4911-bb96-bd1cdd69803d@I-love.SAKURA.ne.jp>
+ <87ikxxxbwd.fsf@jogness.linutronix.de>
+ <ea56efca-552f-46d7-a7eb-4213c23a263b@I-love.SAKURA.ne.jp>
+ <CAADnVQ+hxHsQpfOkQvq4d5AEQsH41BHL+e_RtuxUzyh-vNyYEQ@mail.gmail.com>
+ <7edb0e39-a62e-4aac-a292-3cf7ae26ccbd@I-love.SAKURA.ne.jp>
+ <CAADnVQKoHk5FTN=jywBjgdTdLwv-c76nCzyH90Js-41WxPK_Tw@mail.gmail.com>
+ <744c9c43-9e4f-4069-9773-067036237bff@I-love.SAKURA.ne.jp>
+ <20240626122748.065a903b@rorschach.local.home>
+ <f6c23073-dc0d-4b3f-b37d-1edb82737b5b@I-love.SAKURA.ne.jp>
+ <20240626183311.05eaf091@rorschach.local.home>
+ <6264da10-b6a0-40b8-ac26-c044b7f7529c@I-love.SAKURA.ne.jp>
+ <CAADnVQJo=FksArWw+m-wb1zKmRTVhJrKWBOiT0wmyK8uvZ268w@mail.gmail.com>
 Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240607133120.3556488-1-devarsht@ti.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <CAADnVQJo=FksArWw+m-wb1zKmRTVhJrKWBOiT0wmyK8uvZ268w@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-
-On 6/7/24 6:31 AM, Devarsh Thakkar wrote:
-> Add documentation for rounding, scaling, absolute value and 32-bit division
-> related macros and functions exported by math.h header file.
+On 2024/06/27 8:52, Alexei Starovoitov wrote:
+>>> Sorry, but it makes no sense to put the burden of the
+>>> printk_deferred_enter() on the BPF hook logic. It should sit solely
+>>> with the code that actually calls printk().
+>>
+>> How do you respond to Petr Mladek's comment
+>>
+>>   Yeah, converting printk() into printk_deferred() or using
+>>   printk_deferred_enter() around particular code paths is a whac-a-mole
+>>   game.
 > 
-> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Exactly. wrapping bpf with printk_deferred_enter() is such a whac-a-mole.
+> It doesn't fix an issue.
 
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
+Then, what change do you propose?
 
-Thanks.
-
-> ---
-> V13: No change
-> V12: Add Reviewed-by
-> V11: Fix title for math function header
-> V10: Patch introduced
-> V1->V9 (No change)
->  Documentation/core-api/kernel-api.rst | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/Documentation/core-api/kernel-api.rst b/Documentation/core-api/kernel-api.rst
-> index ae92a2571388..7de494e76fa6 100644
-> --- a/Documentation/core-api/kernel-api.rst
-> +++ b/Documentation/core-api/kernel-api.rst
-> @@ -185,6 +185,12 @@ Division Functions
->  .. kernel-doc:: lib/math/gcd.c
->     :export:
->  
-> +Rounding, absolute value, division and 32-bit scaling functions
-> +---------------------------------------------------------------
-> +
-> +.. kernel-doc:: include/linux/math.h
-> +   :internal:
-> +
->  UUID/GUID
->  ---------
->  
-
--- 
-~Randy
 
