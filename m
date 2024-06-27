@@ -1,187 +1,190 @@
-Return-Path: <linux-kernel+bounces-232699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE09E91AD3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:52:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7185F91AD3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:53:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DA111F268A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:52:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF18EB21429
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:53:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6790019A28C;
-	Thu, 27 Jun 2024 16:51:56 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99662199E95;
+	Thu, 27 Jun 2024 16:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="o28PsgEL"
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89769199EA0
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 16:51:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A4C14EC40
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 16:53:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719507115; cv=none; b=lBuz/n2sthyaC8RwMYoEkB0yYWAUgFPgrdcrax3gzLDijhuWF6dRrM8dNHPA/CHy1WBCFOGGirR44TbFYlPYWKNwxX5BM7Di4Gpghe/mRqNJHBEea/dOX3S9d7fOk1t6ZzmiMabQ7vtnwkgphRD/TIjAHaahET3ahGEMBSa7NAU=
+	t=1719507220; cv=none; b=dy45tT14WZYxpBfvecP+3SZHpqZUvLI7/Nz3d5aFTKsTqWpUVw+iKT9f0R5CBxdkocBoz2aV6/nm5UHkKrL3eDwyU7klIPCp8gbBphb0SnDkb67y7fiQ203/2wCWs2VD/c9LQScLCTgO9pw0NpqCoI5foVLnns2Oo1YBv0Tu0Qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719507115; c=relaxed/simple;
-	bh=YFMasvqhkq7Zj/uRTE2wg2o4nt9ClrilJA3cm3H0f+s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FXhIt/igNykcMfgGxbF24Vo8C+nbZguOiUKCIcb6oDznOgd/r/OZYtarzF4Wlzldkjm6qx3/TNZf5iuyhBAF4m+9VkYJBjh4MNqZlbLFD4tQZR06eOUx+MMnTIQ7H/76wdQWKdsAGGnZyfmKF8+iZuw/l1S9ORGdMmHwy4t84oE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sMsLW-0001pw-If; Thu, 27 Jun 2024 18:51:42 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sMsLU-005PWK-Vs; Thu, 27 Jun 2024 18:51:40 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sMsLU-000XF3-2s;
-	Thu, 27 Jun 2024 18:51:40 +0200
-Date: Thu, 27 Jun 2024 18:51:40 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	stable@vger.kernel.org, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-	netdev@vger.kernel.org, Lukasz Majewski <lukma@denx.de>
-Subject: Re: [PATCH net v1 1/1] net: phy: micrel: ksz8081: disable broadcast
- only if PHY address is not 0
-Message-ID: <Zn2YnC5aG0QIXup5@pengutronix.de>
-References: <20240627053353.1416261-1-o.rempel@pengutronix.de>
- <0720eddf-f023-47b4-9eed-93e0b326220e@lunn.ch>
+	s=arc-20240116; t=1719507220; c=relaxed/simple;
+	bh=x1k48BHbgsGtky0kPYy3/3FG4+zHy/gj0cU+iT89aNs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fHXkoITTc6SAEa2hOkYeB+4g9laAbd0fYoHq6ppA1xpQasN654BQs6NAg0r5LlJ8yMgg0aMkQtGIfLp54SQjJk6sgN/NiqSCmHuUabUcULbnSfm2Bve04HS+av+MhdYld5s4Dj7/DuIoL5307qnr/iO8WgNNJu6zn3CFggBRxnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=o28PsgEL; arc=none smtp.client-ip=209.85.167.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3d55ed47cc6so1472897b6e.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 09:53:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1719507218; x=1720112018; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xgRMcFjdAXSfJmpNDWirZ3ZJOzi2fPO0oxRqfISjGUI=;
+        b=o28PsgELTC8P9GKbOXxR5woaYL+FoP4wIK8vvg97kZl6CBUcSX2G7rsxmcdnnGHZTb
+         blrD0Je2umDIk0/lbOd6YOryhzH1amKXR/NGvhJnN6bSP6ChDRXeFy/N0bSTrA7nxAol
+         src16tBLFzlbjhYDEdt7dDO3vOkqpM9EU4llavjp0l83kB8mlwuzxo+6NHeyFhkuhHIs
+         CI+5FHyFckFksLiLYH/+Fy+rMTAoZPqEHKtyVto8vQ6FypWZ7ExfFgwqnxGXLuoT3K64
+         n01av+29uQb7JjrpCzyGLoW51zWUBGj61Uk9zG8QkjVhsGDB7TUu78Nl3oORQHe2oSpJ
+         sdCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719507218; x=1720112018;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xgRMcFjdAXSfJmpNDWirZ3ZJOzi2fPO0oxRqfISjGUI=;
+        b=F/tbWXIlnMfmLavXt3XiYtViqdTYrrLDukxkwqgLqqq+EbQNl1RpQGzlQddhVcBXxE
+         0ZM6dRoIyYoy8PFXrbH6qy2rdONLxjVqaz03nbS49+BvMNvKWSDg9XPL/rnaWM/LuZAQ
+         9VsS6Ur7kY3PAebxEUtVmLQB49nzrBLI19xfk7a9NsIeNm1hwGZ2z5SJjOQuVyE5cS/P
+         nQgwSs4GLXYvL7wFtoQBSZN/v3qJpjEXNt2CRsobgcwJBAkqD3+9QIGPF6Jsj6cNF/Zy
+         ivA8anZsewBcCbb37jdRwQVI/iPwgSAeGOQHCCb/4N99XhZmufnFqIlo6lkNh3SdIUUD
+         Owdw==
+X-Forwarded-Encrypted: i=1; AJvYcCVDVOUT4YVvKYY7wTHun28nVGphbQJH3O0tyZclDmetCUjJoMFcPu7xjBRvT3enwgSD1cBhyecLkR401lt34eycVW6NGC62XMVdvIKQ
+X-Gm-Message-State: AOJu0YyVJrql9hfUqKbBakMWe4PkbP+EDu0QJ+QIps049xaDIUQcEfwZ
+	uvXoUUwooaRxJgLZPn3DqNu5el6gE/3AbB837cQ2PzWu6s2hLytWhxt+cMY0+1xex7WrEsm8tb4
+	s
+X-Google-Smtp-Source: AGHT+IF2xW+HeDrE7uJXd3kjJz80Due0WXPJcpVN5Yx83rJHKpt+8lD+3Y2IF5Rs4BD2GqbvTkP0fw==
+X-Received: by 2002:a05:6808:18a0:b0:3d2:1c91:86df with SMTP id 5614622812f47-3d545a6a3edmr16253593b6e.36.1719507218121;
+        Thu, 27 Jun 2024 09:53:38 -0700 (PDT)
+Received: from ThinkPad-T490.dc1.ventanamicro.com ([103.97.165.210])
+        by smtp.googlemail.com with ESMTPSA id 5614622812f47-3d56779fac1sm296678b6e.45.2024.06.27.09.53.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 09:53:37 -0700 (PDT)
+From: Mayuresh Chitale <mchitale@ventanamicro.com>
+To: linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Mayuresh Chitale <mchitale@ventanamicro.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Andrew Jones <ajones@ventanamicro.com>
+Subject: [PATCH v7] riscv: mm: Add support for Svinval extension
+Date: Thu, 27 Jun 2024 22:23:27 +0530
+Message-Id: <20240627165327.7685-1-mchitale@ventanamicro.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <0720eddf-f023-47b4-9eed-93e0b326220e@lunn.ch>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Andrew,
+The Svinval extension splits SFENCE.VMA instruction into finer-grained
+invalidation and ordering operations and is mandatory for RVA23S64 profile.
+When Svinval is enabled the local_flush_tlb_range_threshold_asid function
+should use the following sequence to optimize the tlb flushes instead of
+a simple sfence.vma:
 
-hm... looks like my previous answer is lost. I had here some hiccups on
-my side. Sending new answer, do not wunder if there will be double
-mail.
+sfence.w.inval
+svinval.vma
+  .
+  .
+svinval.vma
+sfence.inval.ir
 
-On Thu, Jun 27, 2024 at 03:56:42PM +0200, Andrew Lunn wrote:
-> On Thu, Jun 27, 2024 at 07:33:53AM +0200, Oleksij Rempel wrote:
-> > Do not disable broadcast if we are using address 0 (broadcast) to
-> > communicate with this device. Otherwise we will use proper driver but no
-> > communication will be possible and no link changes will be detected.
-> > There are two scenarios where we can run in to this situation:
-> > - PHY is bootstrapped for address 0
-> 
-> What do you mean by bootstrapped to address 0? The strapping pins set
-> it to some other address, but the bootloader wrote to registers and
-> moved it to address 0?
+The maximum number of consecutive svinval.vma instructions that
+can be executed in local_flush_tlb_range_threshold_asid function
+is limited to 64. This is required to avoid soft lockups and the
+approach is similar to that used in arm64.
 
-No no. Just strapping from HW perspective, no SW is involved.
+Signed-off-by: Mayuresh Chitale <mchitale@ventanamicro.com>
+---
+Changes in v7:
+- Use existing svinval macros in the insn-def.h
+- Rename local_sinval_vma_asid to local_sinval_vma
 
-> > - no PHY address is known and linux is scanning the MDIO bus, so first
-> >   respond and attached device will be on address 0.
-> 
-> So in this case, the PHY is really at address X, where X != 0. It
-> responds to all read requests, so the scanning finds it at all
-> addresses. It also stomps over other devices on the bus when scanning
-> for them, or probing them.
-> 
-> I'm not sure the current code is correct. But it is also going to be
-> messy to not break backwards compatibility for DT blobs say the device
-> is at address 0, when in fact it is not.
+Changes in v6:
+- Rebase on latest torvalds/master
 
-It looks like this is the actual case on my board.
+Changes in v5:
+- Reduce tlb flush threshold to 64
+- Improve implementation of local_flush_tlb* functions
 
-> Is it possible to read the devices actual address from registers?
+Changes in v4:
+- Rebase and refactor as per latest changes on torvalds/master
+- Drop patch 1 in the series
 
-Yes.
+Changes in v3:
+- Fix incorrect vma used for sinval instructions
+- Use unified static key mechanism for svinval
+- Rebased on torvalds/master
 
-> I'm wondering if probe should do something like:
-> 
-> int actual_address = phydev_read(phydev, 0x42);
-> 
-> if (actual_address == 0) {
-> 	if (type->has_broadcast_disable) {
-> 		phydev_dbg(phydev, "Disabling broadcast\n");
-> 		kszphy_broadcast_disable(phydev);
-> 	}
-> 
-> } else {
-> 	if (actual_address != 0 &&
-> 	 phydev->mdio.addr != actual_address &&
-> 	 phydev->mdio.addr != 0) {
-> 		if (type->has_broadcast_disable) {
-> 			phydev_dbg(phydev, "Disabling broadcast\n");
-> 			kszphy_broadcast_disable(phydev);
-> 		}
->         return -ENODEV;
-> 	}
-> }
-> 
-> So if the devices really has an address is zero, turn off
-> broadcast. That will stop it stomping over other devices, but the
+Changes in v2:
+- Rebased on 5.18-rc3
+- update riscv_fill_hwcap to probe Svinval extension
 
-If i understand the documentation correctly, disable broadcast bit is
-designed to resolve conflict between two KSZ8081 PHYs on same bus
-in one shot:
-"For applications that require two KSZ8081RNA/RND PHYs to share the same
-MDIO interface with one PHY set to address 0h and the other PHY set to
-address 3h, use PHY address 0h (defaults to broadcast after power-up) to
-set both PHYs’ Register 16h, Bit [9] to ‘1’ to assign PHY address 0h as
-a unique (non-broadcast) PHY address."
+ arch/riscv/mm/tlbflush.c | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-For this scenario, we can't read configured address from the HW in the
-first place, this can be done safely only if (phydev->mdio.addr != 0)
-
-> damage is probably already done in terms of scanning.
-> 
-> If the devices is really at some address other than 0, and we are
-> probing at a different address, and that address is not 0, turn off
-> broadcast and say the device does not exist. I think we need to
-> special case 0 because there are going to be some DT descriptions
-> which say the device is at 0, when in fact it is not. We might want to
-> add a phydev_warn() about this, to try to get the DT fixed.
-
-Assuming there are no other devices on the bus listening for broadcast
-too.
-
-> > The fixes tag points to the latest refactoring, not to the initial point
-> > where kszphy_broadcast_disable() was introduced.
-> > 
-> > Fixes: 79e498a9c7da0 ("net: phy: micrel: Restore led_mode and clk_sel on resume")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> 
-> Do you have a board which is going wrong because of this?
-
-Yes, I can avoid this bug on the DT level. But the code side seems to be
-broken too.
-
-> Do you plan to submit patches for earlier stable releases?
-
-Not so far. Should I?
-
+diff --git a/arch/riscv/mm/tlbflush.c b/arch/riscv/mm/tlbflush.c
+index 9b6e86ce3867..d3396619d8c4 100644
+--- a/arch/riscv/mm/tlbflush.c
++++ b/arch/riscv/mm/tlbflush.c
+@@ -6,6 +6,28 @@
+ #include <linux/hugetlb.h>
+ #include <asm/sbi.h>
+ #include <asm/mmu_context.h>
++#include <asm/cpufeature.h>
++
++#define has_svinval()	riscv_has_extension_unlikely(RISCV_ISA_EXT_SVINVAL)
++
++static inline void local_sfence_inval_ir(void)
++{
++	asm volatile(SFENCE_INVAL_IR() ::: "memory");
++}
++
++static inline void local_sfence_w_inval(void)
++{
++	asm volatile(SFENCE_W_INVAL() ::: "memory");
++}
++
++static inline void local_sinval_vma(unsigned long vma, unsigned long asid)
++{
++	if (asid != FLUSH_TLB_NO_ASID)
++		asm volatile(SINVAL_VMA(%0, %1) : : "r" (vma), "r" (asid) :
++			     "memory");
++	else
++		asm volatile(SINVAL_VMA(%0, zero) : : "r" (vma) : "memory");
++}
+ 
+ /*
+  * Flush entire TLB if number of entries to be flushed is greater
+@@ -26,6 +48,16 @@ static void local_flush_tlb_range_threshold_asid(unsigned long start,
+ 		return;
+ 	}
+ 
++	if (has_svinval()) {
++		local_sfence_w_inval();
++		for (i = 0; i < nr_ptes_in_range; ++i) {
++			local_sinval_vma(start, asid);
++			start += stride;
++		}
++		local_sfence_inval_ir();
++		return;
++	}
++
+ 	for (i = 0; i < nr_ptes_in_range; ++i) {
+ 		local_flush_tlb_page_asid(start, asid);
+ 		start += stride;
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.34.1
+
 
