@@ -1,109 +1,134 @@
-Return-Path: <linux-kernel+bounces-232005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACF6391A174
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:28:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F402691A17A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:31:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67647282C44
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 08:28:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99BC51F24322
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 08:31:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8135881AC4;
-	Thu, 27 Jun 2024 08:28:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C5F27D401;
+	Thu, 27 Jun 2024 08:31:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LEJZDHhV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jrg3Fazd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC9B5757EA;
-	Thu, 27 Jun 2024 08:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB30811E0
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 08:31:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719476921; cv=none; b=tYsM8cl6yVqdgxSITTF6F+xAvhFE6Tk8beMF42EqoVmUPCKHi1k2dKzuLEEsbR/vy8N77hVyOzVMnoKEcRzVKHn86+i4koAWeSpNZ2/o5Xm5wAETvOGWfKCXPg0YgIU1RvOU0T/F2FwP3tVjJ8PL1IDDdDw/MWO8+sY+Pw4fob4=
+	t=1719477099; cv=none; b=GoSHCIDW/TK3JIJqILf06YtlzAUGrQTrsvbk5Yq/7mW4f5s8BC6CO0bhcD0wcLQWSzX50Y8MDdRNkBHdzmjZfElxEivgDG9+2HzxmB6mfDnu8yH/5Qs6O5sDSh2FEEBMv2GhWFruRAREeEs8uxND7ykOS2wiUKo2Zt9GcUExBbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719476921; c=relaxed/simple;
-	bh=n/uEXqzaAS0LB/LRznxb+HuYwPZJVllY5Qhdrwu1MqU=;
+	s=arc-20240116; t=1719477099; c=relaxed/simple;
+	bh=69dNhsMtHWUZwGq4tRdy+zYPCaxQs0hBmwjzWtLSx/c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=evxYHIGhEnMf5DoYustJ8gf2HZL8SL7dc2V3++ITJ2UYtcZtq6s4gjt0dLTX3FEQerWZrCAwyDkUArT0w6CTY1FTjG87YsmzgjpIZTR9b5274U27ro1L8QV5a1W/bUBVDm5nqYDQ00EnMj0km8dIZErx83ZES6EQFZPTWZueI44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LEJZDHhV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF220C2BBFC;
-	Thu, 27 Jun 2024 08:28:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719476921;
-	bh=n/uEXqzaAS0LB/LRznxb+HuYwPZJVllY5Qhdrwu1MqU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LEJZDHhVhcNiVug6kgdBPbYxRjCNx3u1B6goW2YKr70VVSxpBOxlBUHeSuYa69PEO
-	 evUjmHD04cVXV97ioGmV3hC66TnlzhUmiTVfDnx82jeam1/5GVSaKrmaNr8cpBMXOw
-	 8ElIXezAY0pkC1nzBYb5NtlIA8abPWhBuy+YAeh32+IqCX00aDhGxRp3lvyLRCz4yO
-	 xyZs7jyr3zFqI06WgnbXHULic4LJo+85KS/zFk/1Zy9T4+iB8MD92cf7ss7dqUgoYz
-	 jO/xxmlIKNrjscgSLWgU30KlHGdw8b7kuzL9AfjX0Lh1nRVv89E3Db7ACr7prEHib7
-	 AgMu06ztKLyiQ==
-Date: Thu, 27 Jun 2024 09:28:33 +0100
-From: Lee Jones <lee@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Pavel Machek <pavel@ucw.cz>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rahul Tanwar <rtanwar@maxlinear.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-leds@vger.kernel.org,
-	linux-mtd@lists.infradead.org, linux-phy@lists.infradead.org,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: intel,lgm: drop inactive maintainers from
- intel
-Message-ID: <20240627082833.GI2532839@google.com>
-References: <20240626101809.25227-1-krzysztof.kozlowski@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aFMfCmbmgeNx/UUTE0P2AVB+Rfr4rZ8zhFYqEfhl7x3cPPNsukyo1EpOtTLjtZ78v6iZ8s/GFwzJ/9zP+tkSCLswZTn2+v6L9lYiEUObi+bcn5MZwhBpVjw2tmLjwEmmfE+ux4ExrIP+mv534OrLBs3PgiS0V02nmEnwCdINFxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jrg3Fazd; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719477096;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H7fg323TlM/G5nlOhZV+l1V8FOvg18d3mVisBJ/KjeM=;
+	b=Jrg3FazdGCv8FsRiIX6zn65AC/ee0cL1brftYtKGid8sb6WEUh+Wh+zUdZnSZl92ULHHdS
+	OLVA58umawlyJRHit44/odeifHYZ/xkw8DnwS2ZPS8VScl6bJiZI7wVbiTurcRSNrfxsw4
+	CvyOZg04dmcxAjpyLb6awwTJCusicn8=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-444-9LDVHzboOWeU0kNEEk7nyQ-1; Thu,
+ 27 Jun 2024 04:31:24 -0400
+X-MC-Unique: 9LDVHzboOWeU0kNEEk7nyQ-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6163C19560B0;
+	Thu, 27 Jun 2024 08:31:21 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.18])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 0519A300021A;
+	Thu, 27 Jun 2024 08:31:16 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 27 Jun 2024 10:29:47 +0200 (CEST)
+Date: Thu, 27 Jun 2024 10:29:42 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Jinliang Zheng <alexjlzheng@tencent.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Tycho Andersen <tandersen@netflix.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] memcg: mm_update_next_owner: kill the "retry" logic
+Message-ID: <20240627082941.GA21813@redhat.com>
+References: <20240626152835.GA17910@redhat.com>
+ <20240626152924.GA17933@redhat.com>
+ <Zn0bPrHrBGwdrGwU@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240626101809.25227-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <Zn0bPrHrBGwdrGwU@tiehlicka>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Wed, 26 Jun 2024, Krzysztof Kozlowski wrote:
+Michal, thanks for looking at this,
 
-> Emails to chuanhua.lei@intel.com, mallikarjunax.reddy@intel.com,
-> yixin.zhu@intel.com and vadivel.muruganx.ramuthevar@linux.intel.com
-> bounce with the same message:
-> 
->   Your message wasn't delivered to Yixin.zhu@intel.com because the
->   address couldn't be found or is unable to receive email.
-> 
-> The Intel LGM SoC was apparently part of Home Gateway division which was
-> acquired by Maxlinear, so switch maintenance of affected bindings to the
-> only known non-bouncing Maxlinear address: Rahul Tanwar.
-> 
-> I do not know if Rahul Tanwar or Maxlinear want to maintain the
-> bindings, so regardless of this change we should consider bindings
-> abandoned and probably drop soon.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml    | 2 +-
->  Documentation/devicetree/bindings/dma/intel,ldma.yaml         | 3 +--
->  Documentation/devicetree/bindings/leds/leds-lgm.yaml          | 3 +--
+On 06/27, Michal Hocko wrote:
+>
+> On Wed 26-06-24 17:29:24, Oleg Nesterov wrote:
+> > @@ -446,7 +463,6 @@ void mm_update_next_owner(struct mm_struct *mm)
+> >  {
+> >  	struct task_struct *c, *g, *p = current;
+> >
+> > -retry:
+> >  	/*
+> >  	 * If the exiting or execing task is not the owner, it's
+> >  	 * someone else's problem.
+> > @@ -468,16 +484,16 @@ void mm_update_next_owner(struct mm_struct *mm)
+> >  	 * Search in the children
+> >  	 */
+> >  	list_for_each_entry(c, &p->children, sibling) {
+> > -		if (c->mm == mm)
+> > -			goto assign_new_owner;
+> > +		if (c->mm == mm && try_to_set_owner(c, mm))
+> > +			goto ret;
+>
+> You need to unlock tasklist_lock, right? Same for other goto ret.
 
-Acked-by: Lee Jones <lee@kernel.org>
+No. From the patch
 
->  Documentation/devicetree/bindings/mtd/intel,lgm-ebunand.yaml  | 2 +-
->  Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml | 2 +-
->  Documentation/devicetree/bindings/phy/intel,lgm-usb-phy.yaml  | 2 +-
->  Documentation/devicetree/bindings/pinctrl/intel,lgm-io.yaml   | 2 +-
->  7 files changed, 7 insertions(+), 9 deletions(-)
+	+/* drops tasklist_lock if succeeds */
+	+static bool try_to_set_owner(struct task_struct *tsk, struct mm_struct *mm)
+	+{
+	+       bool ret = false;
+	+
+	+       task_lock(tsk);
+	+       if (likely(tsk->mm == mm)) {
+	+               /* tsk can't pass exit_mm/exec_mmap and exit */
+	+               read_unlock(&tasklist_lock);
+	                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
--- 
-Lee Jones [李琼斯]
+try_to_set_owner() drops tasklist right after it verifies that
+tsk->mm == mm under task_lock().
+
+> It should still die but it can do so in a better shape.
+
+Agreed!
+
+Oleg.
+
 
