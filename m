@@ -1,141 +1,94 @@
-Return-Path: <linux-kernel+bounces-231690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 034CE919C11
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 02:46:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44EA4919C19
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 02:51:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2A2728188D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:46:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01D582830D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:51:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E03BC7484;
-	Thu, 27 Jun 2024 00:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mBlNUmVM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F7A5221;
+	Thu, 27 Jun 2024 00:51:40 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69A5A50;
-	Thu, 27 Jun 2024 00:46:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3C64C9A
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 00:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719449198; cv=none; b=dffrzsLCroNS9h1WB8+Yu55SaT96NPALW5h/2VQC3peqhoUQ0TsJRAHHteGw+rESE3dbN9LNOUtCSajqxo84xnNnj7h/OWBurqNALw12isCUzqpyMzNNHzZVpRfqdxvfqRxdXnYMWpDCpvlsXI6hmw3f3OV3o8A24o3xoMk9+bA=
+	t=1719449500; cv=none; b=h9epp7zjY6uN4jz0rgKIBMhgOxXF2kyrSvP4HCdwKeV/NvnK0IQHKr+RsgSYlGQbousNIXckQY5WzorT9vs3mmOdNrhJjDX1fspx8HiNE9oNebTaIUrQjJGGkqtP6TLnKEsUu+mOCY6H/QYHkjboVPOLzDnALvC2hsZNSoYgbPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719449198; c=relaxed/simple;
-	bh=0SG3laByZlaFUISZCHp29XT3JkoNZdaHE8iSnv9r4Ww=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e29aBtSG5yk6cFLdUcnnEn6RFj9wDNBzdPp4zP4Jeksm16qg7avahlVDm3hjcfYB1tuokJ7m8F0h5j8sHtVSHbcpiJavSUIB+oANT8FQcdSqYLj8khQpxh5DFfPrNxtkiohAGM319MfYbv0dYgDPImW5PuOPgaAsYTCHYpKL3b0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mBlNUmVM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B63CC116B1;
-	Thu, 27 Jun 2024 00:46:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719449197;
-	bh=0SG3laByZlaFUISZCHp29XT3JkoNZdaHE8iSnv9r4Ww=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mBlNUmVMzPFiiYZI8a8E65frgk5k1lxp0RkrYfN3Nlf/2A5ch4UMQN/KRSpXjJb2O
-	 djBU41eFDkc5BhBiVK+bvijq7reE+WvVLOjI6abwchbipLi50MqkLBcE9HAZXML2ZB
-	 vcXNkl0oVc41ZWhheArOwYfFHV0uN/gdJSrWAvNZjaO4ES7wR4BNnUbOfdxD7g2qby
-	 10el+2M74ZCpdaxOCG4dY/gaD016jFvumOcdSt4+KsTBMcEqxEPu2v7WSj29kUUMx0
-	 pwpxnw8AxBcF47BxCRsv11U6w9kvZBBbsJL9xFpmJWoMiS8guNVpQsYJOkzW+Fd5BG
-	 bUJejdYs3QDaw==
-Date: Wed, 26 Jun 2024 17:46:34 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Mina Almasry <almasrymina@google.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
- sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Donald Hunter <donald.hunter@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet
- <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, Ivan
- Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>,
- Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer
- <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven
- Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Arnd Bergmann
- <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai
- Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
- <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
- <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav
- Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa
- <jolsa@kernel.org>, Steffen Klassert <steffen.klassert@secunet.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan
- <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>, "Christian
- =?UTF-8?B?S8O2bmln?=" <christian.koenig@amd.com>, Bagas Sanjaya
- <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, Nikolay
- Aleksandrov <razor@blackwall.org>, Pavel Begunkov <asml.silence@gmail.com>,
- David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin
- <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, Harshitha
- Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>,
- Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi
- <pkaligineedi@google.com>, Stanislav Fomichev <sdf@google.com>
-Subject: Re: [PATCH net-next v14 13/13] selftests: add ncdevmem, netcat for
- devmem TCP
-Message-ID: <20240626174634.2adec19d@kernel.org>
-In-Reply-To: <20240626150822.742eaf6a@kernel.org>
-References: <20240625195407.1922912-1-almasrymina@google.com>
-	<20240625195407.1922912-14-almasrymina@google.com>
-	<20240626150822.742eaf6a@kernel.org>
+	s=arc-20240116; t=1719449500; c=relaxed/simple;
+	bh=vINZt9V0NXfDoxsYCTNbn+xHZ3z8ZKH7kGzyBgD28Lk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=GFS105dp+A1fdPdVnCKwwTcsIaawJ2vFrb9+XFhzwV4jou/AwTcfUfTV5vuWyVS/ZUxDhDn6R9N+/MhSD1XHO2cZ/GPXvxm3FDaiF9s9isS+qVT6bvAPtFvYilWP6ecFmrvFp9ebhppCw7vjH1PYJAkzdCOb/CCFAqdsCKOgKFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7f439f51960so22335339f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 17:51:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719449497; x=1720054297;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vH6r4RfLDuG5fT7I6Hsco4u+FaIwHKXQ8MVkHJLPADs=;
+        b=CWC9GU5ukIp11bESqusQD08D2ZZtSKIM4k9WzhP0CsoAulaCMzENZP6jeVA4BmtPLz
+         OUrrZJWDcTD/rCcLApLDLXKfZXVOHnSrXFpqGhLmebcvxO4820s5ObFdDcg1/V0H4oNY
+         0T9WyB22wBlTh+CFbfq/VC53CZ5xfResnLIDVq6cnLI68g+zWbz02roMMDMtkhlXKFlx
+         Uyumw/eO90A/668qyw77oN8TIMd+eiijMzYKrmQFcP5Vwlkk9FEcabYa8f1oMoGE68Ha
+         MvSf8RRQYKI16bO5avz1YReO0xMzA3hyKLmClsGI7AGUMbSFiuQz3eK9hC1GnlHDSUpx
+         sZCQ==
+X-Gm-Message-State: AOJu0YyGohBQGqa8DeDYXEwuL36lSbNtK1+zDeM56+60lpXT2zoIQVU9
+	22D1Y5JpYFTpQ8IXjVZBxP0vKR4OAODcsanlIdLLSquGn0XrXPhroBoc68kO/uqf3gZuCHu74+3
+	e8h+3TDoQVZCO+fzW45rMtuYV0Ik3Zy0PH2Wj5fUiLwIfYwAm5G4M2pA=
+X-Google-Smtp-Source: AGHT+IEa3+8j7LExy1ujCo+1N08IILQqsc8oCJXRfr/T6W1TCd0KsZhSNWQJtg2Ltot48ABelWVe/UG6NbJKuKXDy9t4f+s7xmxz
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6602:154f:b0:7f3:9d18:8e7c with SMTP id
+ ca18e2360f4ac-7f3a746d52fmr47164439f.1.1719449497660; Wed, 26 Jun 2024
+ 17:51:37 -0700 (PDT)
+Date: Wed, 26 Jun 2024 17:51:37 -0700
+In-Reply-To: <0000000000001f253b061bb8a953@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000847e34061bd48823@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [jfs?] INFO: task hung in txBegin
+From: syzbot <syzbot+eda89a33c5856f66f823@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 26 Jun 2024 15:08:22 -0700 Jakub Kicinski wrote:
-> On Tue, 25 Jun 2024 19:54:01 +0000 Mina Almasry wrote:
-> > +CFLAGS += -I../../../net/ynl/generated/
-> > +CFLAGS += -I../../../net/ynl/lib/
-> > +
-> > +LDLIBS += ../../../net/ynl/lib/ynl.a ../../../net/ynl/generated/protos.a  
-> 
-> Not as easy as this.. Please add this commit to your series:
-> https://github.com/kuba-moo/linux/commit/c130e8cc7208be544ec4f6f3627f1d36875d8c47
-> 
-> And here's an example of how you then use ynl.mk to code gen and build
-> for desired families (note the ordering of variables vs includes,
-> I remember that part was quite inflexible..):
-> https://github.com/kuba-moo/linux/commit/5d357f97ccd0248ca6136c5e11ca3eadf5091bb3
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Investigating this further my patches will not work for O=xyz builds
-either. Please squash this into the relevant changes:
+***
 
-diff --git a/tools/testing/selftests/drivers/net/Makefile b/tools/testing/selftests/drivers/net/Makefile
-index db60d2718b35..9966e5b7139b 100644
---- a/tools/testing/selftests/drivers/net/Makefile
-+++ b/tools/testing/selftests/drivers/net/Makefile
-@@ -9,7 +9,8 @@ TEST_PROGS := \
- 	stats.py \
- # end of TEST_PROGS
+Subject: Re: [syzbot] [jfs?] INFO: task hung in txBegin
+Author: lizhi.xu@windriver.com
+
+#syz test: upstream 50736169ecc8
+
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index 92a5b8283528..0209ebe97e7f 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -2123,10 +2123,12 @@ static long wb_writeback(struct bdi_writeback *wb,
+ 			queue_io(wb, work, dirtied_before);
+ 			queued = true;
+ 		}
++		down_write(&work->sb->s_umount);
+ 		if (work->sb)
+ 			progress = writeback_sb_inodes(work->sb, wb, work);
+ 		else
+ 			progress = __writeback_inodes_wb(wb, work);
++		up_write(&work->sb->s_umount);
+ 		trace_writeback_written(wb, work);
  
--# YNL files
-+# YNL files, must be before "include ..lib.mk"
-+EXTRA_CLEAN += $(OUTPUT)/libynl.a
- YNL_GEN_FILES := psp_responder
- TEST_GEN_FILES += $(YNL_GEN_FILES)
- 
-diff --git a/tools/testing/selftests/net/ynl.mk b/tools/testing/selftests/net/ynl.mk
-index 0e01ad12b30e..59cb26cf3f73 100644
---- a/tools/testing/selftests/net/ynl.mk
-+++ b/tools/testing/selftests/net/ynl.mk
-@@ -18,6 +18,4 @@ $(YNL_OUTPUTS): CFLAGS += \
- 
- $(OUTPUT)/libynl.a:
- 	$(Q)$(MAKE) -C $(top_srcdir)/tools/net/ynl GENS="$(YNL_GENS)" libynl.a
--	$(Q)cp $(top_srcdir)/tools/net/ynl/libynl.a ./
--
--EXTRA_CLEAN += libynl.a
-+	$(Q)cp $(top_srcdir)/tools/net/ynl/libynl.a $(OUTPUT)/libynl.a
+ 		/*
 
