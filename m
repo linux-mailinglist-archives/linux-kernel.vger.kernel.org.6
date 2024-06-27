@@ -1,159 +1,169 @@
-Return-Path: <linux-kernel+bounces-231780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A66F919DE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 05:37:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64E26919DEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 05:41:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D929D1F24A04
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 03:37:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 890DC1C21792
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 03:41:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 592E21865A;
-	Thu, 27 Jun 2024 03:37:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD5E1798F;
+	Thu, 27 Jun 2024 03:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nlUiITei"
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tfne+aNt"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1C917758;
-	Thu, 27 Jun 2024 03:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B12CA171B6
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 03:41:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719459461; cv=none; b=JB7foHW8B1bS74LT0xo8HayM0DknZNfa7agqtBsnXDTLbtAKEReA7LNHTM9GP3bRfhWkCNCEOgyTICFqIctQpqmC2NBcMIuuiQzkpfm4euVs0+Cz0BFfAwSwCfZlVp1bh3FaOEm2kvv2SOLXhCPT/4NUC9o3AZPPr03Fd7FRulQ=
+	t=1719459694; cv=none; b=Hg2M7O6bgd1EMdiYT9bRQXLeDPK4vjtQ36xEbXvbHUUs6O8IHNChzAWrXm1ldfJ09b69iGd4J4Obwkc7hYHwWMatPel2l8tzK5RyOBEvtceaB5pImflPTfu/xPuR75Mi1uUTaarBR1n76xo2wIBkO2RmyI0SgEDJLdnllRYTYEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719459461; c=relaxed/simple;
-	bh=wJ7aj6V02RGQPLH6KMM+51qFYpgYMN3gYv3bgJwF+FM=;
-	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
-	 Cc:In-Reply-To:To; b=ruuFZEP4h2986Zh5YSDN4cXgsjD8PCqKLz6srefKv2c1IWj6+EhmFafEAEiyOxT8JkrT6X2YBm8M3UxrMtx2iaz+4ynE8W0+ARTT3sg2C5sYHWl+y0DFqaFAP3240mr5bUH0wo7R5z3SziaKvNm331n59pD3VcJScNcEDmIrFBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nlUiITei; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3d566d5eda9so190857b6e.0;
-        Wed, 26 Jun 2024 20:37:39 -0700 (PDT)
+	s=arc-20240116; t=1719459694; c=relaxed/simple;
+	bh=oliW5vuuwD3vza40p8EWFkbjux6cM39w4FtZNwDHQ5A=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=BFAmuoHYf7Bmw+l5TuqbRYhDqr4lUPhXS4qPQBrCy5GOLvroxN5uzIWExNMzPWeNUdSdS1wg/GOwovL2SpK3OZAVZOrLAlfi1LtidZvMfFwU1WcQK4FhKl4TPMhg6G40HrJt1+VSOg/LnIPAZFtjm98FgmrQtgYqYeevy6lPJfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aniketmaurya.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tfne+aNt; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aniketmaurya.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dff189c7e65so15308127276.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 20:41:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719459458; x=1720064258; darn=vger.kernel.org;
-        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
-         :from:content-transfer-encoding:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=btL9frXHn5bucfqfBQ8J86OleIxFKMIHqIH1Tkvc2+Y=;
-        b=nlUiITeimMEvjKNuFcVeDnY8pw51Ib27QCj/hsDT7W9TwOlCT9MWlRFqAggt7kyHUZ
-         dZMGF3CEVmbQ5a5aEUzO5PzawJT5uO1yaeEvclnGSKx9u9c4ALUqKU/RCEoCHClcRTgl
-         MNFxRUzvqUU1owHQVrdokHSZrBnUDTMiFxaKpHJam8mHd7nxPuy1seRSZ+TbKo2tWMTQ
-         CGxysnZUwynMRIEpGnN95Jy8YunwVoh7mYduOZZocE/XxdVzujd55ftwkBG0hFLe1Sg3
-         b6VZNQzwweZIDsrPosINiobQLNUMLELS0IHcL0VD4zJup1wfTglyfWGIp4Uh/tUs3PbU
-         sreQ==
+        d=google.com; s=20230601; t=1719459691; x=1720064491; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=VfN6LKN9UpV/AtHOiz/7ta4IA3zN6HychBdUUeCjM10=;
+        b=tfne+aNt+z855t5huPdiwx6EqowpcvhdZ6kiJ1VCEKF0E7wEQ8Y5XctuyWxKeI59rp
+         vTY7V3iPmDQ1ilrYvv8it1iTB8WI3jJ3P5fPLJdCSl85q/DzzKuCuIrbGv36REea55B2
+         oFnZJFjcKas46zib2rGAJSByvigRM/R4U9aj0YkXlhSNGUygZ/MBGyeEb+cNqsUWjRLR
+         sKe5U5wGISlBEMi1DbBdmbYvQ0D3kFORDPi8Pjqlj7GS1hL3DC6SBpoNJ/Sg+8dOe3nQ
+         tcwFBIlXnLtzeBkoeYo1fDmZemJ1fnGf7aclBjCupLP5V66bx3ZDZPb+4pXndkyOXedC
+         zDpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719459458; x=1720064258;
-        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
-         :from:content-transfer-encoding:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=btL9frXHn5bucfqfBQ8J86OleIxFKMIHqIH1Tkvc2+Y=;
-        b=Ws+4izpzFaObv+CYr2ISy/0y6Z8y6vUX9NgL7MXUyrz6DakCABxXYIIx4BbEXiRox8
-         ItLAeKtLm/4IH//E1lnVU5owT7rU1O2bK/JeTw2mggdiyTzZb9w7Na80MV+MqP0W4pZX
-         PWLkQ+g272vEw6LqmHRgKFWICnGH96SD0Q1A1E4LkZtgj9f6d+ZqVdcMlJbBW5g2BTZ6
-         G2BiiXbbqrephhNc1xpUZfV71uJLIcSLwT4WQXO8eh9ZvhFBDIAecQO87oadlWLcI7ZW
-         JeJJtJcZkwe2sNeyzSmg0G54RXK6XZcgKUldcMDPNHPbejA3YLU3UuBKmAH+zbiO9t3g
-         qYpA==
-X-Forwarded-Encrypted: i=1; AJvYcCWvQElgaEh9KORdWnQFsMeEzTIVisD3LZiLhW6l97rOldoHI9ABivDiCnCn+JK1s1q6yf+btX8DF2CKdLRuKN0f47UF7YxqD7BsjVQqMKX05XCBbH+O4m10wsKB
-X-Gm-Message-State: AOJu0YxyxDbnNhYyucW80d4KK+1xEUqBQ3cXWk4OBPEaPUZuFs7n4ExL
-	JcTjMuhpBLiO5KvFjyElAtl11LHySQw1VE/TwZ8NpB3bqQWUO5UhibYFy/jFM5Y=
-X-Google-Smtp-Source: AGHT+IGVDdwvf48/nQa5AnQqEU/GPUM5E0o40jNlS5HJEw1xlJF7yk1hxW3f5GLk6bzUTo1BS4p2uQ==
-X-Received: by 2002:a05:6808:170f:b0:3d5:1bd8:ab18 with SMTP id 5614622812f47-3d545979603mr13684952b6e.24.1719459457698;
-        Wed, 26 Jun 2024 20:37:37 -0700 (PDT)
-Received: from smtpclient.apple ([2001:e60:a809:eceb:bd02:cb72:6ee8:4792])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-706b4a07a30sm252681b3a.139.2024.06.26.20.37.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Jun 2024 20:37:37 -0700 (PDT)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From: =?utf-8?B?67CV7KCV7KSA?= <aha310510@gmail.com>
+        d=1e100.net; s=20230601; t=1719459691; x=1720064491;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VfN6LKN9UpV/AtHOiz/7ta4IA3zN6HychBdUUeCjM10=;
+        b=w4jp43FbGqmhq6+SgUEtDmTmx8roqgpWbM69ig6/P/pE+6nCsKzO4Z4B+KO088/kgx
+         IVeDBxl+63E+8nmH3EsaZmr0xzhOncKjp88R/DGj6YVlTDdUY8yxXViq2MX32+Ryre8k
+         3Jj7YII4mBby9jvILwMe14A08W9UFEKSurDxsll0LeUJ9qWAq/4Fpc7c5lqtqDfOX4PP
+         rlUyb4PglSBcaD0kERo4dFAFqN8IvuDpeZBR2Tgy83Pq0KbMtr3WbKiW8Zf8YVSaDlJh
+         iuZflxOZ7Q1W4QJPjvn4HE/AI3cyDWjPquam2InfKRL9UDKtlgMBcywB9oPTWizrLh2E
+         8cvw==
+X-Forwarded-Encrypted: i=1; AJvYcCU7eou0OKOZG2xzk44Xrp2GvXyUyA1TDWSzlfqmHrBsSacXlhAwhgtRSprg0HGbG6Y0tVf0VxedA/OnscLDZ+JmuGrNdozJFLepRtyP
+X-Gm-Message-State: AOJu0Yx0UGpOJevavIQ59DRGxGwuKPXiZHHX85T+wUA1oYT3lEk28aLD
+	0ft9WJWhdXDT9WI2A5rVEBIBMSPDvTVaKhaf/ykYQArW1k4gWUzDHdLz3XL0vd2VHmGjk0PBJuU
+	tO+PIE8BMR7D6FiKrRjb1hJCngQ==
+X-Google-Smtp-Source: AGHT+IGIQNKQcug/qo4053hTb1Q8b5FhJ00vTMf/lKz13G9EggldaPq/x0y3u9c/ZrSftf/dnDAtBduWF27TMMEmXTw=
+X-Received: from aniketm.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:3387])
+ (user=aniketmaurya job=sendgmr) by 2002:a05:6902:1885:b0:df7:b717:10c2 with
+ SMTP id 3f1490d57ef6-e0303eb3559mr475694276.2.1719459691678; Wed, 26 Jun 2024
+ 20:41:31 -0700 (PDT)
+Date: Thu, 27 Jun 2024 03:41:19 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH] vhost/vsock: always initialize seqpacket_allow
-Date: Thu, 27 Jun 2024 12:37:24 +0900
-Message-Id: <4C39A362-74E3-4762-82AD-D8B15AA38B10@gmail.com>
-References: <bcc17a060d93b198d8a17a9b87b593f41337ee28.1715785488.git.mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org,
- syzbot+6c21aeb59d0e82eb2782@syzkaller.appspotmail.com,
- Arseny Krasnov <arseny.krasnov@kaspersky.com>,
- "David S . Miller" <davem@davemloft.net>,
- Stefan Hajnoczi <stefanha@redhat.com>,
- Stefano Garzarella <sgarzare@redhat.com>, Jason Wang <jasowang@redhat.com>,
- =?utf-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, kvm@vger.kernel.org,
- virtualization@lists.linux.dev, netdev@vger.kernel.org
-In-Reply-To: <bcc17a060d93b198d8a17a9b87b593f41337ee28.1715785488.git.mst@redhat.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-X-Mailer: iPhone Mail (21F90)
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
+Message-ID: <20240627034119.3938050-1-aniketmaurya@google.com>
+Subject: [PATCH] i3c: dw: Remove ibi_capable property
+From: Aniket <aniketmaurya@google.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>, Jeremy Kerr <jk@codeconstruct.com.au>, 
+	Joel Stanley <joel@jms.id.au>, Billy Tsai <billy_tsai@aspeedtech.com>
+Cc: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Aniket <aniketmaurya@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-nice patch
+Since DW I3C IP master role always supports IBI, we don't need
+to keep two variants of master ops and select one using this
+property. Hence remove the code.
 
-> 2024. 5. 16. =EC=98=A4=EC=A0=84 12:05, Michael S. Tsirkin <mst@redhat.com>=
- =EC=9E=91=EC=84=B1:
->=20
-> =EF=BB=BFThere are two issues around seqpacket_allow:
-> 1. seqpacket_allow is not initialized when socket is
->   created. Thus if features are never set, it will be
->   read uninitialized.
-> 2. if VIRTIO_VSOCK_F_SEQPACKET is set and then cleared,
->   then seqpacket_allow will not be cleared appropriately
->   (existing apps I know about don't usually do this but
->    it's legal and there's no way to be sure no one relies
->    on this).
->=20
-> To fix:
->    - initialize seqpacket_allow after allocation
->    - set it unconditionally in set_features
->=20
-> Reported-by: syzbot+6c21aeb59d0e82eb2782@syzkaller.appspotmail.com
-> Reported-by: Jeongjun Park <aha310510@gmail.com>
-> Fixes: ced7b713711f ("vhost/vsock: support SEQPACKET for transport").
-> Cc: Arseny Krasnov <arseny.krasnov@kaspersky.com>
-> Cc: David S. Miller <davem@davemloft.net>
-> Cc: Stefan Hajnoczi <stefanha@redhat.com>
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> Acked-by: Arseniy Krasnov <avkrasnov@salutedevices.com>
-> Tested-by: Arseniy Krasnov <avkrasnov@salutedevices.com>
->=20
-> ---
->=20
->=20
-> Reposting now it's been tested.
->=20
-> drivers/vhost/vsock.c | 4 ++--
-> 1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/vhost/vsock.c b/drivers/vhost/vsock.c
-> index ec20ecff85c7..bf664ec9341b 100644
-> --- a/drivers/vhost/vsock.c
-> +++ b/drivers/vhost/vsock.c
-> @@ -667,6 +667,7 @@ static int vhost_vsock_dev_open(struct inode *inode, s=
-truct file *file)
->    }
->=20
->    vsock->guest_cid =3D 0; /* no CID assigned yet */
-> +    vsock->seqpacket_allow =3D false;
->=20
->    atomic_set(&vsock->queued_replies, 0);
->=20
-> @@ -810,8 +811,7 @@ static int vhost_vsock_set_features(struct vhost_vsock=
- *vsock, u64 features)
->            goto err;
->    }
->=20
-> -    if (features & (1ULL << VIRTIO_VSOCK_F_SEQPACKET))
-> -        vsock->seqpacket_allow =3D true;
-> +    vsock->seqpacket_allow =3D features & (1ULL << VIRTIO_VSOCK_F_SEQPACK=
-ET);
->=20
->    for (i =3D 0; i < ARRAY_SIZE(vsock->vqs); i++) {
->        vq =3D &vsock->vqs[i];
-> --
-> MST
->=20
+Signed-off-by: Aniket <aniketmaurya@google.com>
+---
+ drivers/i3c/master/ast2600-i3c-master.c |  1 -
+ drivers/i3c/master/dw-i3c-master.c      | 23 ++---------------------
+ drivers/i3c/master/dw-i3c-master.h      |  1 -
+ 3 files changed, 2 insertions(+), 23 deletions(-)
+
+diff --git a/drivers/i3c/master/ast2600-i3c-master.c b/drivers/i3c/master/ast2600-i3c-master.c
+index 01a47d3dd499..84942dbb6f80 100644
+--- a/drivers/i3c/master/ast2600-i3c-master.c
++++ b/drivers/i3c/master/ast2600-i3c-master.c
+@@ -156,7 +156,6 @@ static int ast2600_i3c_probe(struct platform_device *pdev)
+ 			i3c->sda_pullup);
+ 
+ 	i3c->dw.platform_ops = &ast2600_i3c_ops;
+-	i3c->dw.ibi_capable = true;
+ 	return dw_i3c_common_probe(&i3c->dw, pdev);
+ }
+ 
+diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c-master.c
+index 77a2a1c3fd1d..9aae5c8dba8d 100644
+--- a/drivers/i3c/master/dw-i3c-master.c
++++ b/drivers/i3c/master/dw-i3c-master.c
+@@ -1404,21 +1404,6 @@ static const struct i3c_master_controller_ops dw_mipi_i3c_ops = {
+ 	.attach_i2c_dev = dw_i3c_master_attach_i2c_dev,
+ 	.detach_i2c_dev = dw_i3c_master_detach_i2c_dev,
+ 	.i2c_xfers = dw_i3c_master_i2c_xfers,
+-};
+-
+-static const struct i3c_master_controller_ops dw_mipi_i3c_ibi_ops = {
+-	.bus_init = dw_i3c_master_bus_init,
+-	.bus_cleanup = dw_i3c_master_bus_cleanup,
+-	.attach_i3c_dev = dw_i3c_master_attach_i3c_dev,
+-	.reattach_i3c_dev = dw_i3c_master_reattach_i3c_dev,
+-	.detach_i3c_dev = dw_i3c_master_detach_i3c_dev,
+-	.do_daa = dw_i3c_master_daa,
+-	.supports_ccc_cmd = dw_i3c_master_supports_ccc_cmd,
+-	.send_ccc_cmd = dw_i3c_master_send_ccc_cmd,
+-	.priv_xfers = dw_i3c_master_priv_xfers,
+-	.attach_i2c_dev = dw_i3c_master_attach_i2c_dev,
+-	.detach_i2c_dev = dw_i3c_master_detach_i2c_dev,
+-	.i2c_xfers = dw_i3c_master_i2c_xfers,
+ 	.request_ibi = dw_i3c_master_request_ibi,
+ 	.free_ibi = dw_i3c_master_free_ibi,
+ 	.enable_ibi = dw_i3c_master_enable_ibi,
+@@ -1456,7 +1441,6 @@ static void dw_i3c_hj_work(struct work_struct *work)
+ int dw_i3c_common_probe(struct dw_i3c_master *master,
+ 			struct platform_device *pdev)
+ {
+-	const struct i3c_master_controller_ops *ops;
+ 	int ret, irq;
+ 
+ 	if (!master->platform_ops)
+@@ -1506,12 +1490,9 @@ int dw_i3c_common_probe(struct dw_i3c_master *master,
+ 	master->maxdevs = ret >> 16;
+ 	master->free_pos = GENMASK(master->maxdevs - 1, 0);
+ 
+-	ops = &dw_mipi_i3c_ops;
+-	if (master->ibi_capable)
+-		ops = &dw_mipi_i3c_ibi_ops;
+-
+ 	INIT_WORK(&master->hj_work, dw_i3c_hj_work);
+-	ret = i3c_master_register(&master->base, &pdev->dev, ops, false);
++	ret = i3c_master_register(&master->base, &pdev->dev,
++				  &dw_mipi_i3c_ops, false);
+ 	if (ret)
+ 		goto err_assert_rst;
+ 
+diff --git a/drivers/i3c/master/dw-i3c-master.h b/drivers/i3c/master/dw-i3c-master.h
+index 8cb617b8147e..7e76ca381d9f 100644
+--- a/drivers/i3c/master/dw-i3c-master.h
++++ b/drivers/i3c/master/dw-i3c-master.h
+@@ -38,7 +38,6 @@ struct dw_i3c_master {
+ 	struct clk *core_clk;
+ 	char version[5];
+ 	char type[5];
+-	bool ibi_capable;
+ 	u32 sir_rej_mask;
+ 	/*
+ 	 * Per-device hardware data, used to manage the device address table
+-- 
+2.45.2.741.gdbec12cfda-goog
+
 
