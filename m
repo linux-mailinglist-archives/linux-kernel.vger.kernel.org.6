@@ -1,133 +1,135 @@
-Return-Path: <linux-kernel+bounces-232102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31DE091A34A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:59:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39ECA91A355
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:02:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0F68288114
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:59:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C69BA1F237B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:02:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C09613C3F2;
-	Thu, 27 Jun 2024 09:59:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9B513C67E;
+	Thu, 27 Jun 2024 10:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gUga8pSX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FR0VF5Rl"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6D913A245;
-	Thu, 27 Jun 2024 09:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778834501F;
+	Thu, 27 Jun 2024 10:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719482367; cv=none; b=KzFbr1o+uxHLeqKJAD02xjA6gqX9ydQVF+RYxR1s/sR2/Hb9PC3kWT+iZJ/bHc6QB0K4saAsRiP236H3z+2bYWDvVoisZsFf1JFjW18id7cfeOVU9dfJ5bGBxOShsJVEqPPQu3MLnA4XXj0up6C7ZeGykdchTXC6QCFnSAK6MRg=
+	t=1719482517; cv=none; b=cWNqb1pZVPRL4efekNy5vgaFXUCQXhXzCn18RqHO2WE67LwErf04FR50NByjDYxCiSg7SqtS1aSQUTxUadVIj+7Skjbc+WIr3wku7Phtud0JRmJYvPSy3kOjDZske+XW8LAEx45PfOuBeqmtbGE50TTqCZ1HlpUVyjtHyrDVRs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719482367; c=relaxed/simple;
-	bh=a9Mxfd606of0B4EqCbsaptQNWRMBax7xX9L9ksTGFQE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FEe0JD8zr7N+nMFEBaw167rPjE+jCg9hitQEev+kO/P66amYdeHXabfgrFftHG+6ECld+Sg0aZrK03gArDGv9XlXno8l0WDcKOvDj6K2VpFEB8cx1UT4mr/6uuTPCqNMZXrm2BPr89HGMdEkvCqQk2Qgbkhn4Yk4YLvA7jaDKu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gUga8pSX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE76BC2BBFC;
-	Thu, 27 Jun 2024 09:59:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719482366;
-	bh=a9Mxfd606of0B4EqCbsaptQNWRMBax7xX9L9ksTGFQE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=gUga8pSX1ohH5+wjutqBGqU1EbmbBj1YzyxXG1aPJ7+/k37KssBUcmvBIxsos2OzO
-	 7+PcGgTqMpwzol0322lSIIh3e3OKwFAgKXqFZWMi+VTxTbUpv0JihPw4SSWHD7h3Lx
-	 2AvibcADONJRut0pNsoXaJwoxFp5/Cgo4eXUzKOCBORzx/BTPfJ0kBfvRdCEVJQCtv
-	 aZKd5mMSRyxnnUgvWg485+2iEpzmDlKVjH8lQPdHgJZv0qQxKJFD5TCgtbnzW8aoD0
-	 JLWyS/ULporuwExs8UyW7NbkCI39oLJISoYZnPSt50OeXcSAWdPY8nPeidulMXYyK7
-	 xgNWGA8FcydKg==
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-25cb5ee9d2dso819216fac.1;
-        Thu, 27 Jun 2024 02:59:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXru/Xoh8SlsmR8iyYli2LDaVLIWtyaaOnHxDfELpHMhDcPDmK8lmNKUVnpP4AUcnsR0m/SuvPu2IpPS0Xk/jWcpzkcJzoJDN02FkIa
-X-Gm-Message-State: AOJu0YzeB/UHkGZyrdmtaVepsVrxFWtFF4C0CPYouiIYjSYPjZvpAbB7
-	x3/p3zNDf+Ec8BSgfx9vSnzMVypwM4hkIkbQCJYQ+uUHx/Z5qxrF683kYkhmRAiKT4vPa1n6/FB
-	sQtCaUNR4PnaZkujGMfNoy64tMbI=
-X-Google-Smtp-Source: AGHT+IHnNcgdDe52A+VEKS8n77D4vOj3SjGftsyRxdtqqYFndTXSlX02flgrQRWfoQPxv/NpEri8XwrKHe2CGsr0yms=
-X-Received: by 2002:a05:6820:826:b0:5ba:ca86:a025 with SMTP id
- 006d021491bc7-5c1e5ca2a82mr18128298eaf.0.1719482366137; Thu, 27 Jun 2024
- 02:59:26 -0700 (PDT)
+	s=arc-20240116; t=1719482517; c=relaxed/simple;
+	bh=PYuXoyzrovl+I/Cj82uWg5mIugIlRxhYi+eRZ6sUCic=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EFkXR6MO0Qt9FoHuE4qrHdOp8W8Y3WN/wbF28vDIFWUoNLklVTmBt5TB2n3gDIjqau+RtqnfrLerCUsyhCxG9dMKCb1gcc2umb9tdz8k80k/wuLwo5DXKiQXfuf7SPSAI835T9djPUIgBuaTqbKHIgumrSpaVoB3n5wQWyw1Yc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FR0VF5Rl; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45R0nGvB018804;
+	Thu, 27 Jun 2024 10:01:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	jtCa7cMb9eryGghcwAs7CfCedLjaHIhzuMxL9+IUFLU=; b=FR0VF5RllHY8dNgO
+	/XI6qz3L/T4ihk45xOK8D2GpH0XONghwQPeZey6phiKK79Xrw2sc0sQXw8AlrJkC
+	AuK1UhS7nUhufE6ziuVTHJ09lis5bAr1AlwjBHSUKsoUPNdTJCAwhQP0rIHmffiu
+	1oqd/EvpJjR8cV3djl5UMkRN/pc2BT9wvVMyvJ4pNvvDJosdmrL9LYT+EIqn4ZFq
+	bNnZ6Pt5c24L6lSHMgRsC99X7skIc6WddR9OhFMTYWKlYf0UA0AtXubenzWKiN4u
+	m7euT5ctfH6Q8vpGXGTGhh2i5hPgFJDg9HT1m1wrEI1rgVsMhT56K7NfE/u2D0Yq
+	dqeVCw==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 400f90k6y1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Jun 2024 10:01:11 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45RA1Aa0020729
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Jun 2024 10:01:10 GMT
+Received: from [10.152.201.37] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 27 Jun
+ 2024 03:01:04 -0700
+Message-ID: <2617940e-72ad-4214-be26-7a5b15374609@quicinc.com>
+Date: Thu, 27 Jun 2024 15:31:01 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240626204723.6237-1-mario.limonciello@amd.com>
-In-Reply-To: <20240626204723.6237-1-mario.limonciello@amd.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 27 Jun 2024 11:59:14 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hu1rVOLycx5K4YWOGhtC8YfSYupc8D6qygtXVGtvxJrQ@mail.gmail.com>
-Message-ID: <CAJZ5v0hu1rVOLycx5K4YWOGhtC8YfSYupc8D6qygtXVGtvxJrQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] cpufreq: Allow drivers to advertise boost enabled
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Sibi Sankar <quic_sibis@quicinc.com>, Dhruva Gole <d-gole@ti.com>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, "Gautham R . Shenoy" <gautham.shenoy@amd.com>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Yipeng Zou <zouyipeng@huawei.com>, 
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 1/8] remoteproc: qcom: Add PRNG proxy clock
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <sboyd@kernel.org>, <andersson@kernel.org>, <bjorn.andersson@linaro.org>,
+        <david.brown@linaro.org>, <devicetree@vger.kernel.org>,
+        <jassisinghbrar@gmail.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <mark.rutland@arm.com>,
+        <mturquette@baylibre.com>, <ohad@wizery.com>, <robh@kernel.org>,
+        <sricharan@codeaurora.org>, <gokulsri@codeaurora.org>
+References: <20240621114659.2958170-1-quic_gokulsri@quicinc.com>
+ <20240621114659.2958170-2-quic_gokulsri@quicinc.com>
+ <chi3pzh5ss3mivnhs3qeoen5hsecfcgzaj6qnrgxantvinrri2@bxsbmpufuqpe>
+ <73cb638e-4982-49a2-ba79-0e78402b59ad@quicinc.com>
+ <ga5kczcyn3dqoky4525c74rr7dct5uizun2smvyx3p3u6z6vtm@5vshoozpttod>
+Content-Language: en-US
+From: Gokul Sriram P <quic_gokulsri@quicinc.com>
+In-Reply-To: <ga5kczcyn3dqoky4525c74rr7dct5uizun2smvyx3p3u6z6vtm@5vshoozpttod>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: vwlrfvxYq8a7c7s_Xhjl0t-js0hOpxUn
+X-Proofpoint-GUID: vwlrfvxYq8a7c7s_Xhjl0t-js0hOpxUn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-27_06,2024-06-25_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
+ spamscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0 adultscore=0
+ impostorscore=0 lowpriorityscore=0 phishscore=0 priorityscore=1501
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406270075
 
-On Wed, Jun 26, 2024 at 10:47=E2=80=AFPM Mario Limonciello
-<mario.limonciello@amd.com> wrote:
->
-> The behavior introduced in commit f37a4d6b4a2c ("cpufreq: Fix per-policy
-> boost behavior on SoCs using cpufreq_boost_set_sw()") sets up the boost
-> policy incorrectly when boost has been enabled by the platform firmware
-> initially even if a driver sets the policy up.
->
-> This is because policy_has_boost_freq() assumes that there is a frequency
-> table set up by the driver and that the boost frequencies are advertised
-> in that table. This assumption doesn't work for acpi-cpufreq or
-> amd-pstate. Only use this check to enable boost if it's not already
-> enabled instead of also disabling it if alreayd enabled.
->
-> Reviewed-by: Sibi Sankar <quic_sibis@quicinc.com>
-> Reviewed-by: Dhruva Gole <d-gole@ti.com>
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
-> Fixes: f37a4d6b4a2c ("cpufreq: Fix per-policy boost behavior on SoCs usin=
-g cpufreq_boost_set_sw()")
 
-CC: stable I suppose?
+On 6/27/2024 12:47 AM, Dmitry Baryshkov wrote:
+> On Tue, Jun 25, 2024 at 11:03:30AM GMT, Gokul Sriram P wrote:
+>> On 6/22/2024 2:38 AM, Dmitry Baryshkov wrote:
+>>> On Fri, Jun 21, 2024 at 05:16:52PM GMT, Gokul Sriram Palanisamy wrote:
+>>>> PRNG clock is needed by the secure PIL, support for the same
+>>>> is added in subsequent patches.
+>>> Which 'same'?
+>>> What is 'secure PIL'?
+>>    will elaborate in the updated version.
+>>    To answer your question, secure PIL is signed PIL image which only
+>> TrustZone can authenticate and load.
+> Fine. So, the current driver can not load WCSS firmware on IPQ8074, is
+> that correct? Or was there some kind of firmware interface change? The
+> driver was added in 2018, so I can only hope that at that point it
+> worked. Could you please explain, what happened?
+The existing wcss driver can load unsigned PIL images without the 
+involvement of TrustZone. That works even now.
+With the current change, we are trying to add signed PIL as an option 
+based on "wcss->need_mem_protection" if set. For signed PIL alone, we 
+send a PAS request to TrustZone to authenticate and load.
+I also just noticed that Bjorn had suggested to submit a new driver for 
+the PAS based IPQ WCSS instead of overloading this driver. Will also 
+address that and post a new driver in updated revision.
 
-> Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Suggested-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
-> Cc: Sibi Sankar <quic_sibis@quicinc.com>
-> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: Dhruva Gole <d-gole@ti.com>
-> Cc: Yipeng Zou <zouyipeng@huawei.com>
-> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> v1->v2
->  * Pick up tags
-> ---
->  drivers/cpufreq/cpufreq.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+Regards,
+Gokul
+>>>> Signed-off-by: Nikhil Prakash V <quic_nprakash@quicinc.com>
+>>>> Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
+>>>> Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+>>>> ---
+>>>>    drivers/remoteproc/qcom_q6v5_wcss.c | 65 +++++++++++++++++++++--------
+>>>>    1 file changed, 47 insertions(+), 18 deletions(-)
 >
-> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> index 1fdabb660231..270ea04fb616 100644
-> --- a/drivers/cpufreq/cpufreq.c
-> +++ b/drivers/cpufreq/cpufreq.c
-> @@ -1430,7 +1430,8 @@ static int cpufreq_online(unsigned int cpu)
->                 }
->
->                 /* Let the per-policy boost flag mirror the cpufreq_drive=
-r boost during init */
-> -               policy->boost_enabled =3D cpufreq_boost_enabled() && poli=
-cy_has_boost_freq(policy);
-> +               if (cpufreq_boost_enabled() && policy_has_boost_freq(poli=
-cy))
-> +                       policy->boost_enabled =3D true;
->
->                 /*
->                  * The initialization has succeeded and the policy is onl=
-ine.
-> --
 
