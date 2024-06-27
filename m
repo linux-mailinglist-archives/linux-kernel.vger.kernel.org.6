@@ -1,166 +1,137 @@
-Return-Path: <linux-kernel+bounces-232504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 472D091A9BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:51:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAEC891A9BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:51:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B078BB271FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:51:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27D031C229B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:51:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ADD61991AF;
-	Thu, 27 Jun 2024 14:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4788B1990BC;
+	Thu, 27 Jun 2024 14:48:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="hs3UUanY";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="oeZW2SuR"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UZ9QjJY2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D77198E89;
-	Thu, 27 Jun 2024 14:48:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84410198A0A;
+	Thu, 27 Jun 2024 14:48:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719499731; cv=none; b=e3HD9KxI4SYmx4/Gtn9fu5ek9fXNSn5EXNQ4jc323KKy9XT+McCzlS2UrRKm1F95mi9TO0hJ4ZKGKDZDepAht3wawoEYQpUYeW2NP6c+wu+n3lW0xYP1WfcEKHZOXHfhBswXjLtBO3O+1yfndWJzIOQWNmbyf0YrDBfRp+LKyGU=
+	t=1719499729; cv=none; b=R9fCZ6jTxQUyl0tKFzIBLk/nFNLO0XaLVTU3VSDS/3bT6Ox/tjq0nLRbYWO7Iygc+cQYI4JYpFxL3GTQCmwEwWbbtrheSxi4ullE1nvEZvGREiXhC4+74GkrL8cUS6yGm00F5Lv9gAT9G0FXnFTOmerntu/CIy85GKnTgqsy/fQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719499731; c=relaxed/simple;
-	bh=LEXAqlk1jN2gNzWyszN/AYSSjGLCjTcYyJ3bECCChY0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ot6SJJ0Rq5WIv8ihhoyNpGGeHAKWbMOaW0rCV3Z8dg891RBvwBK2KUQBfRMpv2oR0kF7t/7HUsEIXDJg9WRyyQdeu78TeWgzSAT8A1w6vLMXKNOmoZsBEp7qPRsqO1R46/LLAjHraJUFUr+xEYyfgpQI4VHHm+WtiKF+6IxDL4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=hs3UUanY; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=oeZW2SuR; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4D6EF21B0B;
-	Thu, 27 Jun 2024 14:48:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1719499724; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LEXAqlk1jN2gNzWyszN/AYSSjGLCjTcYyJ3bECCChY0=;
-	b=hs3UUanYQuzbd5Yw/z0ZDPOfeOrHbzarp/BWkTYd0cT0+NH9MhC53ex/6VDyUs8nHzN2s9
-	i/m6u3U2vVzuk3FWMcHS+PCG+oBotPWA+l3FCsZvQEFCoxhOCYLd6MqiNsmGOiU2h4w+oQ
-	3d6q5mh74auSMpD2cGya1YoRmizD5Bk=
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=oeZW2SuR
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1719499723; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LEXAqlk1jN2gNzWyszN/AYSSjGLCjTcYyJ3bECCChY0=;
-	b=oeZW2SuR3JUbdUouOLq/N8uJNXjrUBdxE3OpTLKyCzUI2UVWvHC66tNqE6I6Hr6T0ysH1U
-	ovBoyfajFIahTRUtAQZedw1MgrqIz73csv9EJi1WPbqPehrSHEO9V8G+Wuq0rz/VSj+fCp
-	Q3WsfDUSg6vVTmf+WXglLZShQkIhbdw=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3100D1384C;
-	Thu, 27 Jun 2024 14:48:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id myTFC8t7fWZGewAAD6G6ig
-	(envelope-from <mkoutny@suse.com>); Thu, 27 Jun 2024 14:48:43 +0000
-Date: Thu, 27 Jun 2024 16:48:42 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Li Lingfeng <lilingfeng@huaweicloud.com>
-Cc: tj@kernel.org, josef@toxicpanda.com, hch@lst.de, axboe@kernel.dk, 
-	cgroups@vger.kernel.org, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	yangerkun@huawei.com, yukuai1@huaweicloud.com, houtao1@huawei.com, yi.zhang@huawei.com, 
-	lilingfeng3@huawei.com
-Subject: Re: [PATCH] block: cancel all throttled bios when deleting the cgroup
-Message-ID: <lke5obdxztncs2mtbvgylngxspzzzrmlveibye32cqwog7xw5a@bk22ajawnbtn>
-References: <20240624130940.3751791-1-lilingfeng@huaweicloud.com>
- <5emugcorjnrcgczkmi7njfzwbotpqn6heu7acfho2zfkdsajpv@yrztl7hoa6ky>
- <77ed0b42-60ac-0746-9a5b-23676e9668f2@huaweicloud.com>
+	s=arc-20240116; t=1719499729; c=relaxed/simple;
+	bh=d8LbeMrXrnMpFcQld1fOek1N8Ag6qgXMrlSDVv0fOsQ=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=rfPPP1my2Gr37JPT2BxEVGr1QtzJ7JHzSmxG8+FHOQ5twLcEaZJCfYBdyDWOP78im8KAtYhGNVQfRNGMRBKSjvWM28SOAFDxOzV3XFmcMMHDKQ+uVJAMX8okiXM2l8rzJoK+xU/RBWR7NkE1GsaYcOf5TbnjF0y5O+95wsIHND0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UZ9QjJY2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0F2FC2BBFC;
+	Thu, 27 Jun 2024 14:48:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719499729;
+	bh=d8LbeMrXrnMpFcQld1fOek1N8Ag6qgXMrlSDVv0fOsQ=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=UZ9QjJY26Q6BUnNdFz/EQvNr44kfvbyZqopalZ5LEWXrUykasUFhm6ooxqHC64iJd
+	 1fisXuT/ZmKLKUrSuCCEb+CcixBy3ce3eHkO6EJipIPFeHbXb4CjDXMBJWpAJoY7BE
+	 63SXgkCp1cyi+5EROFfBvEwxNRMvXpU4bSbZqdGVPFEMzIECpB+mOmSMoerW16IQPT
+	 bZ7V+c8+mX7CDEm1Ss8Cf6a/Lm5TQprByolMrAb60N7nBs8E+mo+FTnu2w2zODqQU9
+	 oTXWiu8SFJAwJVth3KOiM9drTaOethNl/tYVIX8Im8G8+rbZjDlB/16pP9JMtPo6tD
+	 cz50r3MP26lBg==
+Date: Thu, 27 Jun 2024 08:48:47 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="e5n4haic7674hghp"
-Content-Disposition: inline
-In-Reply-To: <77ed0b42-60ac-0746-9a5b-23676e9668f2@huaweicloud.com>
-X-Rspamd-Queue-Id: 4D6EF21B0B
-X-Spam-Score: -6.11
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-6.11 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SIGNED_PGP(-2.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.20)[multipart/signed,text/plain];
-	MX_GOOD(-0.01)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	MIME_TRACE(0.00)[0:+,1:+,2:~];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.com:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:dkim,huaweicloud.com:email]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Peter Yin <peteryin.openbmc@gmail.com>
+Cc: Andrew Jeffery <andrew@codeconstruct.com.au>, patrick@stwcx.xyz, 
+ linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
+ linux-aspeed@lists.ozlabs.org, amithash@meta.com, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Joel Stanley <joel@jms.id.au>
+In-Reply-To: <20240627070013.2509150-1-peteryin.openbmc@gmail.com>
+References: <20240627070013.2509150-1-peteryin.openbmc@gmail.com>
+Message-Id: <171949936638.3312359.3954253966631367606.robh@kernel.org>
+Subject: Re: [PATCH v2 00/10] Revise Meta(Facebook) Harma BMC(AST2600)
 
 
---e5n4haic7674hghp
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 27 Jun 2024 15:00:02 +0800, Peter Yin wrote:
+> Summary:
+> Revise linux device tree entry related to Meta(Facebook) Harma
+> specific devices connected to BMC(AST2600) SoC.
+> 
+> Base on: https://lore.kernel.org/all/CAPSyxFRj0twCJG6Lr5UZpznrUHyd_L0Reo=kZSFwCw3FNQ+x+A@mail.gmail.com/
+> 
+> Change log:
+> 
+> v1 -> v2
+>   - Patch 0007  - add fru device
+>   - Patch 0008  - add temperature device
+>   - Patch 0009  - enable mctp controller
+>   - Patch 00010 - fixed dtb_check warning
+> 
+> v1
+>   - Patch 0001 - revise hsc chip
+>   - Patch 0002 - add VR device
+>   - Patch 0003 - add sgpio name
+>   - Patch 0004 - add ina238
+>   - Patch 0005 - add power monitor xdp710
+>   - Patch 0006 - remove multi-host property
+>   - Patch 0007 - remove pca9546
+> 
+> Peter Yin (10):
+>   ARM: dts: aspeed: Harma: revise hsc chip
+>   ARM: dts: aspeed: Harma: add VR device
+>   ARM: dts: aspeed: Harma: add sgpio name
+>   ARM: dts: aspeed: Harma: add ina238
+>   ARM: dts: aspeed: Harma: add power monitor xdp710
+>   ARM: dts: aspeed: Harma: remove multi-host property
+>   ARM: dts: aspeed: Harma: add fru device
+>   ARM: dts: aspeed: Harma: add temperature device
+>   ARM: dts: aspeed: Harma: enable mctp controller
+>   ARM: dts: aspeed: Harma: fixed dtb_check warning
+> 
+>  .../dts/aspeed/aspeed-bmc-facebook-harma.dts  | 146 ++++++++++++++++--
+>  1 file changed, 132 insertions(+), 14 deletions(-)
+> 
+> --
+> 2.25.1
+> 
+> 
+> 
 
-On Tue, Jun 25, 2024 at 07:38:34PM GMT, Li Lingfeng <lilingfeng@huaweicloud=
-=2Ecom> wrote:
-> Thanks for your advice. It's indeed more appropriate to use "flush" inste=
-ad
-> of "cancel" here, I will change it soon.
 
-I saw your v2. Didn't you forget to change also the function name?
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-> I didn't quite get what you mean. Do you mean this patch will cause a cha=
-nge
-> in mechanics, and it is necessary to add an explanation?
->=20
-> (After deleting the original cgroup,
-> =A0Before: the limit of the throttled bios can't be changed and the bios =
-will
-> complete under this limit;
-> =A0Now: the limit will be canceled and the throttled bios will be flushed
-> immediately.)
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
-I mean -- can the new mechanics be exploited to bypass throttling by
-sending IO from a process, migrate it between cgroups and rmdir them?
-That should be covered in the commit log.
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
 
-Thanks,
-Michal
+  pip3 install dtschema --upgrade
 
---e5n4haic7674hghp
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+New warnings running 'make CHECK_DTBS=y aspeed/aspeed-bmc-facebook-harma.dtb' for 20240627070013.2509150-1-peteryin.openbmc@gmail.com:
 
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZn17xwAKCRAt3Wney77B
-SezdAP95BXsHosNRfN2jjr9fIAxjsUPogamYQ3QPCdYAstMlHgEAzphiJpqD/nQo
-teaCw4LZjTAFzrgCrv2kqzg80hEAAwg=
-=Xv+3
------END PGP SIGNATURE-----
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dtb: ftgmac@1e690000: Unevaluated properties are not allowed ('#address-cells', '#size-cells' were unexpected)
+	from schema $id: http://devicetree.org/schemas/net/faraday,ftgmac100.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dtb: /ahb/apb/bus@1e78a000/i2c@700/i2c-mux@70/i2c@0/power-monitor@61: failed to match any schema with compatible: ['isil,isl69260']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dtb: /ahb/apb/bus@1e78a000/i2c@700/i2c-mux@70/i2c@0/power-monitor@62: failed to match any schema with compatible: ['isil,isl69260']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dtb: /ahb/apb/bus@1e78a000/i2c@700/i2c-mux@70/i2c@0/power-monitor@63: failed to match any schema with compatible: ['isil,isl69260']
 
---e5n4haic7674hghp--
+
+
+
+
 
