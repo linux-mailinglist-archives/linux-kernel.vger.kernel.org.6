@@ -1,122 +1,201 @@
-Return-Path: <linux-kernel+bounces-232048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A76491A221
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:03:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2636D91A21F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:03:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1ECDF1F22F43
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:03:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49E1F1C21401
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:03:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A8AC13AA36;
-	Thu, 27 Jun 2024 09:02:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA0021386D1;
+	Thu, 27 Jun 2024 09:02:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="KDSuQTyF"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ZX+pH7ad"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6083137932;
-	Thu, 27 Jun 2024 09:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA2A1386A7
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 09:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719478975; cv=none; b=pKOuvO3hslc8hia3yavl9RoLTa/0qPhifNOcoTR3y8RU9ES1hTKbHkp7WhZRZOKbuDrxLfnESXzabbNMhn3VMHfkpwNfMNzXGkEec2w0X0h6N89qba6kmEDfFrh2lcyyZTEYYsIQpSG1rAP3s4TmeoVnZDWMql/ez0rXhf1ceEI=
+	t=1719478974; cv=none; b=PGJFhXddlFzPv60JtQCCQ89sKx/8O2gmJVZ6SE+Ljo5zlL6FTlnnUvWuOrLweL5JH1IQ2+JBzUXgxkH9ioUu78GOFPCVlg6rYN4fZdx8afszs10GsWEdg03U/5jYf9lh3HzvLSzmX4kOqG4SZcwmmx/witg6UUAliPBGwEMm4Bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719478975; c=relaxed/simple;
-	bh=AXr8LOxjXCxo04s6yQgcKl9EMQEHpGRyMKWbxFVXdMA=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=QLUWTu6w1fv+Dd8+Y44p0iFiMaouHGwhgiIHJQz6SkjMGmeaXlYJNOPDi6n8o7Gc9D7sWGeaQmpLz09o3N7h2UYSuC2NbfYdMmpWoW7FOsKPyw3q3ZKKwCFYWXbgi10oG3Yv4xwmuaFXjgV8FNdNXWd7gPMsB9HQMewT0TYtBao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=KDSuQTyF; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719478952; x=1720083752; i=markus.elfring@web.de;
-	bh=lNAU4ZrBouebgMYq+EQ9UP06r5NrQHboyM8PRW23Ifg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=KDSuQTyFu/aCKuy16MFGNmQyl26I3aCKRHKxCyP4guEt+qg+kLiAhewu7bjs7sbK
-	 7TueNniqqeUSbo4wkAWLP2VFQv+sChH1s5SmRVQZTu39l0D0VFy+YXWXI9JluGaKZ
-	 8vZdFYBsjMg1Jh8F5eoYqlApUxgCJb6BCUP6sDFRy/9oXpYBNdgHCaeo5OLXU5GCB
-	 yDbIhk5KFhIilW1HHVj9pBWBh8V2NNl7ldinBpfqqD83f6mqKI0YwoVYoZnnswqAa
-	 x3TXqXwRKid0IHiRApdwxK3CybvC73m3QAAomj5Ni3XMQ8rDqn/TgrYabcRxFY4zF
-	 lfNu2QxAZK8L20rvag==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MZjET-1rrBoF1NPL-00Q5Gq; Thu, 27
- Jun 2024 11:02:32 +0200
-Message-ID: <d0bef439-5e1d-4ce0-9a24-da74ddc29755@web.de>
-Date: Thu, 27 Jun 2024 11:02:30 +0200
+	s=arc-20240116; t=1719478974; c=relaxed/simple;
+	bh=/HuA9sIM45rfx+JNeCBr0HYCr6cegkyYM2SAT2mdjuU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sy4CbU7/Ypm2UqF2savRJOCrQJIVVYN510eFs1s+HHxNvDGsrhjyxfIwi7BxZQxmYg+FzOz7eDHioqZlubGI1wKne+UlSSJv8KD9AIzP7hCcGj2VdNI23cZjnXJl06ZzYrTNH0lZjYSRqXgaR+JJsYQWv9LCnNSljkbcaVK0Q0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ZX+pH7ad; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57cbc66a0a6so1961135a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 02:02:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1719478970; x=1720083770; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wVJHHFxsFGNC+CpTuC7eFD4WHZBpUTVWHAScPtS50r4=;
+        b=ZX+pH7ad1vFBrJ05WRqXbaTO5//O5eDXZzZHoOwP8MCntjw5t8VsVYmi66L6kqfkV5
+         PtJzxvR8N3x9RTQpQal/ezQTDMgbf/JRRDez3dcWyKGCXjTE10mbIZcXSKaWU16p8OpQ
+         w/v5ZPg0pVzKPJqRUBpW9WlfN779oc0OoTDoqYv8Ca956e6Su9HK/jKyJPR6RQgHgd1Z
+         DwxbZMVuwwZKwNH2V3F4h88UOB3TT4b0WgdUEZcJCmSgAxOw9TibOR4EgSp2phNUIQKN
+         1BWhYsDHgnNQX33HqYS3BxFMq8b93QzgpgRdoBQjImoY6XeHUt/gfC/8lM8+NIO31LZf
+         ad8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719478970; x=1720083770;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wVJHHFxsFGNC+CpTuC7eFD4WHZBpUTVWHAScPtS50r4=;
+        b=Cke9QYVWsrKEG18MmWUSJG94PtYoC7y9XyHTOZhv4DGA9YZxXwurn4ORoJzsAuhiI1
+         hnm0RMJHJX5xBCKs9ZJSmrROIKXEUHsIpks7O8Pq08gflCsUyWqnhKiVSF477aXWM5hZ
+         7hOf9WWl/APYyjXv1wkXTBukiTqKnNHY/EWoknzHmqIKsmTCX+LoFCA4QWwhVliWDBSH
+         a5BSN/n8de5eEvVd3Bgu8eI8H/E9dQBm/doRsAGeIgNjn8xpW4FkRmxCEY49WjRD2a+c
+         tqtPMlpzZ5j3VV8vRMHERLTrg7gCbQhyig34daQrKi0xoISuvebnC3TZULEyub2CF9ac
+         +jpA==
+X-Forwarded-Encrypted: i=1; AJvYcCXVbDvp6332uxqb59D/Nxr3PHK1bdx7wp9S4gOgf2TOXcn02Sn2SuA2X0/qIOx2eEgIAGOsWry1IwO3x9w2mghpDtypy/fPDCNu9W5z
+X-Gm-Message-State: AOJu0YyJfBP9UfLycL78SYyJVfZ0rcDy8XwbXIh1DdBRJaP/U7FDo2Th
+	tTA5bFZQy953K6jCkwsgBpCecBVXhwZFpmMYN0ZJ53scdG3zsInbMSyA2zDKjZ4=
+X-Google-Smtp-Source: AGHT+IHT2KA6PAkiA91MD5h1tmv6NnAKlUvPGpZdZnXekYQ9mnXMlsa4UP45mJuWwiuuVg88RoreOA==
+X-Received: by 2002:a50:a6d2:0:b0:57c:614c:56e7 with SMTP id 4fb4d7f45d1cf-5847c19a927mr1651331a12.18.1719478969031;
+        Thu, 27 Jun 2024 02:02:49 -0700 (PDT)
+Received: from localhost (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-584d0c9e36fsm602358a12.8.2024.06.27.02.02.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 02:02:48 -0700 (PDT)
+Date: Thu, 27 Jun 2024 11:02:47 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Jinliang Zheng <alexjlzheng@tencent.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Tycho Andersen <tandersen@netflix.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] memcg: mm_update_next_owner: move for_each_thread()
+ into try_to_set_owner()
+Message-ID: <Zn0qt4KY8S4E65IM@tiehlicka>
+References: <20240626152835.GA17910@redhat.com>
+ <20240626152930.GA17936@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Ma Ke <make24@iscas.ac.cn>, nouveau@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>,
- Daniel Vetter <daniel@ffwll.ch>, Danilo Krummrich <dakr@redhat.com>,
- Dave Airlie <airlied@redhat.com>, Karol Herbst <kherbst@redhat.com>,
- Lyude Paul <lyude@redhat.com>
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- David Airlie <airlied@gmail.com>
-References: <20240627074204.3023776-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH v3] drm/nouveau: fix null pointer dereference in
- nouveau_connector_get_modes
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240627074204.3023776-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:bBMND2dRohOaAbnQheA0eTytmh14vaPQz2LLerDMaB8xchrWvT5
- A0iDGRRNOFa6jQOvPzZJlW+CC+W21kzFDyDC9s7llKCGUg4XmraB3dlzRCrvg82GhU5o6ns
- GG6aWd+yTCA3XGxMA3wiO86okmI81F4ycTBQgXGB2Btq7ITt6+EbamM3iQG2JkLDlDXXTs0
- FGEDE6rWM21MmrnOfn5bA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:iq3U0hGjdrY=;i3aclESytnqb+3ezW6st8sRH5Q1
- +7Bynnl7lHUgTrZmFonXxACYyjiE66jJOhmGR6GOrAei13cOjilIMErfEOzNbxiWB6MaAiRSX
- jgNK87y6NEW7E5DBvw483sifxrwD0d9E7zuxlnWGd0DCW0Vd23RUqPocdNDf+D/+uRhUME5+6
- Z6e1Zb5OiaMLoriskNwnkTTqTszRvrJoVu/QcktIJBSSl8PJHXiAm7R8jtwulmTMqNPhHkNMM
- k8kP545WhidR5V5sdf89SJxpYb/zpX9J02ZgfNLmb2hg+5E4vaS/rHkvYBfvZFSJz7foEQ8xy
- gJE52owAf6TqA9uTuA+N18cpP8kbUQXsrAts3JfO4lNpbiHHMDNXyLMTG0Zma8YHGA1cZLQcL
- k+ogBL72rmOdZluYLbaVib9Xvhds76H+H7w/6LBSG8YSuGmVADuxm011Hf/eEMCBTTjYUCeZi
- dGZbryt2h0c1KI2VunC0acWgwHVxrcq2Q8p2leZ39V048DUN6KrpEuRHOPnS0vJUIR7rF6gaE
- 4vB1ITqNeRUlkNrkHq1TK21cJFvdPGVOQ2qOY/T0HIrfrA/9o7n6mp0ZkmG0fDG1utiFFZlxX
- skSlvh38QzNvFItY07eBqRQOakE8+lCXyXfwcdKujOPOOTh51YXBHqMmmowHy7wvUuzQM5aPs
- 39iie+YEodXGn4LQA+pqqEHH/ZSDIA2CqINIiBMd+e0ubybAN0P0vCT1+OlI7/euJ7OGTiFgp
- 7+OxvogfFVPaOvqvYKMjOE6Nu/Jq3/bMvNhnwM8pbunMVqTpWkRXCuT/PzVyqQKRFVvOTdy9U
- pN2TKQAKLlSitASzeIPcnKnxzb+t9Zli8trJFefgdpFIo=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240626152930.GA17936@redhat.com>
 
-> In nouveau_connector_get_modes(), the return value of drm_mode_duplicate=
-()
-> is assigned to mode, which will lead to a possible NULL pointer
-> dereference on failure of drm_mode_duplicate(). Add a check to avoid npd=
-.
+On Wed 26-06-24 17:29:30, Oleg Nesterov wrote:
+> mm_update_next_owner() checks the children / real_parent->children to
+> avoid the "everything else" loop in the likely case, but this won't work
+> if a child/sibling has a zombie leader with ->mm == NULL.
+> 
+> Move the for_each_thread() logic into try_to_set_owner(), if nothing else
+> this makes the children/siblings/everything searches more consistent.
+> 
+> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
 
-A) Can a wording approach (like the following) be a better change descript=
-ion?
+Acked-by: Michal Hocko <mhocko@suse.com>
 
-   A null pointer is stored in the local variable =E2=80=9Cmode=E2=80=9D a=
-fter a call
-   of the function =E2=80=9Cdrm_mode_duplicate=E2=80=9D failed. This point=
-er was passed to
-   a subsequent call of the function =E2=80=9Cdrm_mode_probed_add=E2=80=9D=
- where an undesirable
-   dereference will be performed then.
-   Thus add a corresponding return value check.
+> ---
+>  kernel/exit.c | 40 ++++++++++++++++++++++++----------------
+>  1 file changed, 24 insertions(+), 16 deletions(-)
+> 
+> diff --git a/kernel/exit.c b/kernel/exit.c
+> index a1ef5f23d5be..cc56edc1103e 100644
+> --- a/kernel/exit.c
+> +++ b/kernel/exit.c
+> @@ -440,7 +440,7 @@ static void coredump_task_exit(struct task_struct *tsk)
+>  
+>  #ifdef CONFIG_MEMCG
+>  /* drops tasklist_lock if succeeds */
+> -static bool try_to_set_owner(struct task_struct *tsk, struct mm_struct *mm)
+> +static bool __try_to_set_owner(struct task_struct *tsk, struct mm_struct *mm)
+>  {
+>  	bool ret = false;
+>  
+> @@ -456,12 +456,28 @@ static bool try_to_set_owner(struct task_struct *tsk, struct mm_struct *mm)
+>  	return ret;
+>  }
+>  
+> +static bool try_to_set_owner(struct task_struct *g, struct mm_struct *mm)
+> +{
+> +	struct task_struct *t;
+> +
+> +	for_each_thread(g, t) {
+> +		struct mm_struct *t_mm = READ_ONCE(t->mm);
+> +		if (t_mm == mm) {
+> +			if (__try_to_set_owner(t, mm))
+> +				return true;
+> +		} else if (t_mm)
+> +			break;
+> +	}
+> +
+> +	return false;
+> +}
+> +
+>  /*
+>   * A task is exiting.   If it owned this mm, find a new owner for the mm.
+>   */
+>  void mm_update_next_owner(struct mm_struct *mm)
+>  {
+> -	struct task_struct *c, *g, *p = current;
+> +	struct task_struct *g, *p = current;
+>  
+>  	/*
+>  	 * If the exiting or execing task is not the owner, it's
+> @@ -483,19 +499,17 @@ void mm_update_next_owner(struct mm_struct *mm)
+>  	/*
+>  	 * Search in the children
+>  	 */
+> -	list_for_each_entry(c, &p->children, sibling) {
+> -		if (c->mm == mm && try_to_set_owner(c, mm))
+> +	list_for_each_entry(g, &p->children, sibling) {
+> +		if (try_to_set_owner(g, mm))
+>  			goto ret;
+>  	}
+> -
+>  	/*
+>  	 * Search in the siblings
+>  	 */
+> -	list_for_each_entry(c, &p->real_parent->children, sibling) {
+> -		if (c->mm == mm && try_to_set_owner(c, mm))
+> +	list_for_each_entry(g, &p->real_parent->children, sibling) {
+> +		if (try_to_set_owner(g, mm))
+>  			goto ret;
+>  	}
+> -
+>  	/*
+>  	 * Search through everything else, we should not get here often.
+>  	 */
+> @@ -504,14 +518,8 @@ void mm_update_next_owner(struct mm_struct *mm)
+>  			break;
+>  		if (g->flags & PF_KTHREAD)
+>  			continue;
+> -		for_each_thread(g, c) {
+> -			struct mm_struct *c_mm = READ_ONCE(c->mm);
+> -			if (c_mm == mm) {
+> -				if (try_to_set_owner(c, mm))
+> -					goto ret;
+> -			} else if (c_mm)
+> -				break;
+> -		}
+> +		if (try_to_set_owner(g, mm))
+> +			goto ret;
+>  	}
+>  	read_unlock(&tasklist_lock);
+>  	/*
+> -- 
+> 2.25.1.362.g51ebf55
 
-
-B) How do you think about to append parentheses to the function name
-   in the summary phrase?
-
-
-C) How do you think about to put similar results from static source code
-   analyses into corresponding patch series?
-
-
-Regards,
-Markus
+-- 
+Michal Hocko
+SUSE Labs
 
