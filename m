@@ -1,160 +1,124 @@
-Return-Path: <linux-kernel+bounces-232790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BFB091AE4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:40:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A26F491AE52
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:40:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 118D928DBB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:40:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 528661C23032
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63B1119AA5C;
-	Thu, 27 Jun 2024 17:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6922D19ADA8;
+	Thu, 27 Jun 2024 17:39:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NzaGOgRJ"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BIBGGjOv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F099454918;
-	Thu, 27 Jun 2024 17:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1245A1865A
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 17:39:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719509791; cv=none; b=r3HsJ3L91OSyeWcXncd6d+ZzI9aX3JARoVIXTlEsKxcCbEpazMok6I874dp8x5BSl8fBWPL2jz57Qjal2u56rbhjP6Eqnl4wijdDp2zZAPkyvNbqF7BpkDM7dW8+4JDhm54h4yiu6d8nCUw02fxJR3CcV1c3sGvq0ZrNSzw0u9g=
+	t=1719509995; cv=none; b=e17VYMzGiNb+j14cbznQouq/6+VcqJ9R90swM3/YwyGu7GDcyRH2Udxkj6PXzFP9nEazm+gJlkNNkm5XAG4RjUbort+wuzGRPzJG1JlLPu1YQVn1F+LJ0jDk5UR8HKur7tYWai90DmQlOxXwF4XrIVkqnN6HXBCb16yYmuwB8CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719509791; c=relaxed/simple;
-	bh=coYaJMIjArGvpQf7g0A/4peXT7vpXorezIIu1Z6s0aI=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=XS6tnIFybSHkkaavXwmU3Z9rDuu9htpeqvpgMXMdBZKb/vGundJPUTRVGTenyzcOQ0NB0Shu/PrXQ82e82fM4Cg626UtQ+8Wmefh1J8dyEHmMnn33XcmuuBqps/HpYWEldERjWyzQ2TNyC9/hAxz+p+0UHpkpVsNFtLsoeMf6co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NzaGOgRJ; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52cdb0d8107so8349983e87.1;
-        Thu, 27 Jun 2024 10:36:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719509788; x=1720114588; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3yk4H1RLJJRoCdj5bfi9m2iP6KRHwo3a2/6FIyuZ1rs=;
-        b=NzaGOgRJVp3aMksNUZO8HiGFfQvZDXCYmnH5BJnVkbyXvQmHwEaIcF0ub88hYbLJbM
-         Yx7etLm+EZWotlHV2Ts2HNVnYk1ELr+FlL8AgD6tINpKF2t0bZ6E3XlMS75gT8YEl53F
-         HO4AVtOpDAfDZWmPJdnvCiVqk7sBDG3PWI3kQ9l9hqJdUtLCigxoCF6g6gROvKsIbaeQ
-         k/JoZChOd8fHb34cpm6i+LoGVcpbHPxrALJIpTPvax35i7zgFT37CeHn9YD3zY4xseQk
-         SizVA585SVfC2IK7aZmsbEDnWws7l3FlDgHhQHiNTKbeNipMtXiSKQTDhl62CRdWdxvC
-         Jkjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719509788; x=1720114588;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3yk4H1RLJJRoCdj5bfi9m2iP6KRHwo3a2/6FIyuZ1rs=;
-        b=rjv/IwZuyb0HDAjb5sG3N+JH7JRFJ237+qVMCbvvFCJITx8xr3pkCCw+DnBWExQ3Uo
-         O7ssGiQCnCLiLegToqtKfSFw1kFuhx79sURhFoqDoCPp9s8LZ+u41W2L4d4bHUJQ9Kvr
-         RIzpiWUIDVhZtTKHZaJ5a4tkZl8aEW8aJ6SPBsHWX1b2KXlmohk5s5EZCZ8KyZfufJH9
-         a7DysbaPomB72bbGJnY7Sd6L+VVP9tmPr+bzYqV+mzzShpt/DuPxT8kZOt50jQZnDuMB
-         LL75/6kuiPKa+FUHD7T5Z3He7Wox2cN56vQqrWfc12/toGTRh0es06PpP6rqg5UdAu62
-         HL2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVj0WrN8X9fChIZtU6p3GrIdWOYaIKHdz17B/FL/hXTIcY8YbYFa99bkTnFgGyROGMSMEJIrJX/Vh1zsODLlTRnD6OiHXUiMYmUcF4=
-X-Gm-Message-State: AOJu0YztWFF4vmri5CmvlOl3CTROdrhLQ3pJXJTwv5RonYkAtOPYlBch
-	IP5iFCMfNHZhSQi6d4xX9jxAdaiiGH9bc/mIbEkBSGCPYM/7NLmIzgagWQ==
-X-Google-Smtp-Source: AGHT+IFD6a/P2HZh8/mK6o8zcolkgZvVGoo6nIFU70BTOQq/I5nXvKizgLOvUa/6DxvCFFFkIGrfdw==
-X-Received: by 2002:a19:384b:0:b0:52b:c1cc:51f1 with SMTP id 2adb3069b0e04-52cdf7f10ddmr10035006e87.23.1719509785473;
-        Thu, 27 Jun 2024 10:36:25 -0700 (PDT)
-Received: from [192.168.178.20] (dh207-41-166.xnet.hr. [88.207.41.166])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a729d6fdfc5sm80206166b.10.2024.06.27.10.36.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Jun 2024 10:36:25 -0700 (PDT)
-Message-ID: <76d879d2-200d-4b15-8fab-fcd382a4c3e2@gmail.com>
-Date: Thu, 27 Jun 2024 19:36:23 +0200
+	s=arc-20240116; t=1719509995; c=relaxed/simple;
+	bh=M1Pr/ccqxR64Qy5pX519WkVfLnUUaSq7Qjbum1LSRes=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mgMLMJCXEr0/5ObXLykPtjeLvfO4J9S52qKFPVDHoRFR0fJnkL+U4IxtOmYdKFDfS3kI/Ueu1gyBtmMBXxiSQ4DTu9FSyO14cOtT+N/RXV7DPGalo5gn3EkMDuNRisDq0CJtb1GPPmi7zUFYO8MacTvl1hmN9nIEpdBXgZF/EW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BIBGGjOv; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719509993;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=34BYMyGoC6lX3CxmLrEw2DjPDGR7811PFr+ZC7aQ/ZU=;
+	b=BIBGGjOv82g28vIyG0Yi7R1mJiZcTWyw+j9AItF79U9oqtDV/bsj6g7RYbZFB2iw7SStaS
+	Rae4SVqQRGWOQ7d5xBUuofZ/LCEOml/vAYvFZCCJM8Y3BG++P5SnqUWN7GHJraxzQdaGgm
+	ZSGQO/B7POCAbUE4SswZ2phFMrO0U34=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-395-sTRvXhL3ML203UbvsHfRAA-1; Thu,
+ 27 Jun 2024 13:39:49 -0400
+X-MC-Unique: sTRvXhL3ML203UbvsHfRAA-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9D9E2195608A;
+	Thu, 27 Jun 2024 17:39:46 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.18])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 5297819560AA;
+	Thu, 27 Jun 2024 17:39:41 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 27 Jun 2024 19:38:12 +0200 (CEST)
+Date: Thu, 27 Jun 2024 19:38:06 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, Jiri Olsa <jolsa@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>, loongarch@lists.linux.dev
+Subject: Re: [PATCH] LoongArch: uprobes: make
+ UPROBE_SWBP_INSN/UPROBE_XOLBP_INSN constant
+Message-ID: <20240627173806.GC21813@redhat.com>
+References: <20240618194306.1577022-1-jolsa@kernel.org>
+ <20240627160255.GA25374@redhat.com>
+ <CAEf4BzZVmKjfQD1zKMDOD-Zc4pVp+EGgb8h2veg=bXe1Pjn_Uw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Linux Kernel Build System <linux-kbuild@vger.kernel.org>,
- Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
- David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-Subject: =?UTF-8?Q?=5BPROBLEM=5D_make_randconfig=3A_fs/btrfs/ref-verify=2Ec?=
- =?UTF-8?B?OjUwMDoxNjogZXJyb3I6IOKAmHJldOKAmSBtYXkgYmUgdXNlZCB1bmluaXRpYWxp?=
- =?UTF-8?Q?zed_in_this_function_=5B-Werror=3Dmaybe-uninitialized=5D?=
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEf4BzZVmKjfQD1zKMDOD-Zc4pVp+EGgb8h2veg=bXe1Pjn_Uw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Hi all,
+On 06/27, Andrii Nakryiko wrote:
+>
+> Acked-by: Andrii Nakryiko <andrii@kernel.org>
 
-After following Boris' advice in https://lore.kernel.org/lkml/20240404134142.GCZg6uFh_ZSzUFLChd@fat_crate.local/
-on using the randconfig test, this is the second catch:
+Thanks!
 
-KCONFIG_SEED=0xEE80059C
+> > --- a/arch/loongarch/kernel/uprobes.c
+> > +++ b/arch/loongarch/kernel/uprobes.c
+> > @@ -7,6 +7,14 @@
+> >
+> >  #define UPROBE_TRAP_NR UINT_MAX
+> >
+> > +static __init int check_emit_break(void)
+> > +{
+> > +       BUG_ON(UPROBE_SWBP_INSN  != larch_insn_gen_break(BRK_UPROBE_BP));
+> > +       BUG_ON(UPROBE_XOLBP_INSN != larch_insn_gen_break(BRK_UPROBE_XOLBP));
+> > +       return 0;
+> > +}
+> > +arch_initcall(check_emit_break);
+> > +
+>
+> I wouldn't even bother with this, but whatever.
 
-marvin@defiant:~/linux/kernel/linux_torvalds$ time nice make -j 36 bindeb-pkg |& tee ../err-6.10-rc5-05a.log; date
-  GEN     debian
-dpkg-buildpackage --build=binary --no-pre-clean --unsigned-changes -R'make -f debian/rules' -j1 -a$(cat debian/arch)
-dpkg-buildpackage: info: source package linux-upstream
-dpkg-buildpackage: info: source version 6.10.0-rc5-gafcd48134c58-27
-dpkg-buildpackage: info: source distribution jammy
-dpkg-buildpackage: info: source changed by marvin <marvin@defiant>
-dpkg-architecture: warning: specified GNU system type i686-linux-gnu does not match CC system type x86_64-linux-gnu, try setting a correct CC environment variable
- dpkg-source --before-build .
-dpkg-buildpackage: info: host architecture i386
- make -f debian/rules binary
-#
-# No change to .config
-#
-  CALL    scripts/checksyscalls.sh
-  UPD     init/utsversion-tmp.h
-  CC      init/version.o
-  AR      init/built-in.a
-  CHK     kernel/kheaders_data.tar.xz
-  CC [M]  fs/btrfs/ref-verify.o
-  AR      fs/built-in.a
-fs/btrfs/ref-verify.c: In function ‘process_extent_item.isra’:
-fs/btrfs/ref-verify.c:500:16: error: ‘ret’ may be used uninitialized in this function [-Werror=maybe-uninitialized]
-  500 |         return ret;
-      |                ^~~
-cc1: all warnings being treated as errors
-make[7]: *** [scripts/Makefile.build:244: fs/btrfs/ref-verify.o] Error 1
-make[6]: *** [scripts/Makefile.build:485: fs/btrfs] Error 2
-make[5]: *** [scripts/Makefile.build:485: fs] Error 2
-make[4]: *** [Makefile:1934: .] Error 2
-make[3]: *** [debian/rules:74: build-arch] Error 2
-dpkg-buildpackage: error: make -f debian/rules binary subprocess returned exit status 2
-make[2]: *** [scripts/Makefile.package:121: bindeb-pkg] Error 2
-make[1]: *** [/home/marvin/linux/kernel/linux_torvalds/Makefile:1555: bindeb-pkg] Error 2
-make: *** [Makefile:240: __sub-make] Error 2
+Agreed, this looks a bit ugly. I did this only because I can not test
+this (hopefully trivial) patch and the maintainers didn't reply.
 
-real	0m2.583s
-user	0m9.943s
-sys	0m5.607s
-Thu Jun 27 19:14:55 CEST 2024
-marvin@defiant:~/linux/kernel/linux_torvalds$ 
+If LoongArch boots at least once with this change, this run-time check
+can be removed.
 
-This fix does nothing to the algorithm, but it silences compiler -Werror=maybe-uninitialised
+And just in case... I didn't dare to make a more "generic" change, but
+perhaps KPROBE_BP_INSN and KPROBE_SSTEPBP_INSN should be redefined the
+same way for micro-optimization. In this case __emit_break() should be
+probably moved into arch/loongarch/include/asm/inst.h.
 
----
-diff --git a/fs/btrfs/ref-verify.c b/fs/btrfs/ref-verify.c
-index cf531255ab76..0b5ff30e2d81 100644
---- a/fs/btrfs/ref-verify.c
-+++ b/fs/btrfs/ref-verify.c
-@@ -459,6 +459,8 @@ static int process_extent_item(struct btrfs_fs_info *fs_info,
-                iref = (struct btrfs_extent_inline_ref *)(ei + 1);
-        }
- 
-+       ret = -EINVAL;
-+
-        ptr = (unsigned long)iref;
-        end = (unsigned long)ei + item_size;
-        while (ptr < end) {
----
+Oleg.
 
-Hope this helps.
-
-Best regards,
-Mirsad Todorovac
 
