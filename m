@@ -1,137 +1,170 @@
-Return-Path: <linux-kernel+bounces-232503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAEC891A9BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:51:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEFC791A9C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:52:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27D031C229B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:51:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54082B21217
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:52:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4788B1990BC;
-	Thu, 27 Jun 2024 14:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE1C0198823;
+	Thu, 27 Jun 2024 14:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UZ9QjJY2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i9UaZSgT"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84410198A0A;
-	Thu, 27 Jun 2024 14:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2A2197A76;
+	Thu, 27 Jun 2024 14:49:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719499729; cv=none; b=R9fCZ6jTxQUyl0tKFzIBLk/nFNLO0XaLVTU3VSDS/3bT6Ox/tjq0nLRbYWO7Iygc+cQYI4JYpFxL3GTQCmwEwWbbtrheSxi4ullE1nvEZvGREiXhC4+74GkrL8cUS6yGm00F5Lv9gAT9G0FXnFTOmerntu/CIy85GKnTgqsy/fQ=
+	t=1719499799; cv=none; b=ioU9aK7haC6jVd3uwCGT6y9oFvXlCQftg0g2lnE72K7zoo7PjGvFqjbAuuuNdav/GnJSkzqLaVnRWnXsv9PcnNt6ebyVpU52HL9bZxEbzWkfeArNpz+6LEHQ8SB2xNoi+Hprlgant3yZ6sNNuv3e4SYOJiL1pmkVJNgH5PN2MKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719499729; c=relaxed/simple;
-	bh=d8LbeMrXrnMpFcQld1fOek1N8Ag6qgXMrlSDVv0fOsQ=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=rfPPP1my2Gr37JPT2BxEVGr1QtzJ7JHzSmxG8+FHOQ5twLcEaZJCfYBdyDWOP78im8KAtYhGNVQfRNGMRBKSjvWM28SOAFDxOzV3XFmcMMHDKQ+uVJAMX8okiXM2l8rzJoK+xU/RBWR7NkE1GsaYcOf5TbnjF0y5O+95wsIHND0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UZ9QjJY2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0F2FC2BBFC;
-	Thu, 27 Jun 2024 14:48:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719499729;
-	bh=d8LbeMrXrnMpFcQld1fOek1N8Ag6qgXMrlSDVv0fOsQ=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=UZ9QjJY26Q6BUnNdFz/EQvNr44kfvbyZqopalZ5LEWXrUykasUFhm6ooxqHC64iJd
-	 1fisXuT/ZmKLKUrSuCCEb+CcixBy3ce3eHkO6EJipIPFeHbXb4CjDXMBJWpAJoY7BE
-	 63SXgkCp1cyi+5EROFfBvEwxNRMvXpU4bSbZqdGVPFEMzIECpB+mOmSMoerW16IQPT
-	 bZ7V+c8+mX7CDEm1Ss8Cf6a/Lm5TQprByolMrAb60N7nBs8E+mo+FTnu2w2zODqQU9
-	 oTXWiu8SFJAwJVth3KOiM9drTaOethNl/tYVIX8Im8G8+rbZjDlB/16pP9JMtPo6tD
-	 cz50r3MP26lBg==
-Date: Thu, 27 Jun 2024 08:48:47 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1719499799; c=relaxed/simple;
+	bh=MSPWnBepnAe/PUefg7VV7OXpRhMPmlSxkOQzZRLAM/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ewC0xyTA9akTFgrmiHKoVAjmGuRye3sR8d8JNPkszvVNAR4phnUpwVzS5029xACRH1BRJ0nvtlib7XSG8LvB4TolArl1w7nhA0CxhFi+RRrb4TXFnltbjOZmGZQdVo655KcDgGae0WejNgGAq/k2gw/kf7hsYR8W2S22pJ8B6vE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i9UaZSgT; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-70698bcd19eso2432523b3a.0;
+        Thu, 27 Jun 2024 07:49:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719499797; x=1720104597; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=GwArrcoUCt4AMY/a6jxu0EcRR9rZ/1l8YumaA7fhjtc=;
+        b=i9UaZSgTdzNoNa394d7UbTPGuqhF0WtODBTSRvDgsTLUWJpMdveeww5S4YZ0H0mFg9
+         FR7BnDOjc4VBajNiUmq6TOdEVGLw6smmwaoVhzVGr1mrRsaplOi1BgUHifwPA+10Jvwp
+         XihwpQB7TVc0i8zdoN9R/xQ87+vxcDDRUQpkugfBT4TeBtoGGGN4gv+7cdrWkpg8ztxU
+         PrnwMAR5xcK8X17MtY05+e/1eAvSHJNwbntd9Y3iwmNOnxJ1mBtdLStc88WF0RQhblyB
+         W0zwwj3qr9NSKPpVfVos0kj58JPhGqw5pn4jj/vWZtDUpoKAA8nQ7WNVu3XVgQ+aEX8S
+         mOgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719499797; x=1720104597;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GwArrcoUCt4AMY/a6jxu0EcRR9rZ/1l8YumaA7fhjtc=;
+        b=nqfhqJmySvNI5Wh6Kz/C/dTjx9hRtQ1VJ2/BqVqyzIvcMgQfwqj+Hj7Ec6ILU5jL71
+         /9qf4JmboZv1yzzh3v2JIP47pZ+nq/Z1IoaGi1JDTH8kzSci4X5No2eKkW5sg8A8ciIH
+         YVw5U5VpddLkjeRdc31ULH8oeI8/dvZt7hkIBzalbwGiSnS1ThtTNK7AhzM93/W08U2b
+         oRW17AdihQCDUgXbdNU5jcgUXBPi2ETJoxrh2hTmPBPd85s4EDe1E34kgbcgvCQR8UFs
+         lYcJG2BfjVkmimDTgPkj7VPmgOqsrxhGH0HcBwG5UtBkYodusTV6jbE5fx/YKzoc8pmn
+         hpwg==
+X-Forwarded-Encrypted: i=1; AJvYcCVZqxdL7GHnm7M6jx/+b19X3Q6sNhb0p9hob6YZfI2rnFwuRlDMlp1JUw0ISMYnV5jANxQ5H77OZ2YCPnBasG8pbq5pL57b27s2Vw==
+X-Gm-Message-State: AOJu0Yw3a45mcDkE/F33tyMH4bqq2zgVng9dAsJVMPKQxwGo4Xqpe0NY
+	ydh8Y4T78XT82tpoFtrdKajQiZmO7F1uNke8WvZQzbiXL4FdQ+57JNIg2w==
+X-Google-Smtp-Source: AGHT+IHsQpEkulKV0s/uq4j85FZoxxExQxrxSWQHBrXp7jUigL3AqdqNKxH0omWMI3xDPNhICp7irA==
+X-Received: by 2002:a05:6a20:12c5:b0:1be:c5ab:7388 with SMTP id adf61e73a8af0-1bec5ab74ccmr5035245637.25.1719499796772;
+        Thu, 27 Jun 2024 07:49:56 -0700 (PDT)
+Received: from rigel ([118.209.204.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1faac9a7522sm14094895ad.246.2024.06.27.07.49.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 07:49:56 -0700 (PDT)
+Date: Thu, 27 Jun 2024 22:49:52 +0800
+From: Kent Gibson <warthog618@gmail.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org
+Subject: Re: [PATCH 2/4] gpiolib: cdev: Ignore reconfiguration without
+ direction
+Message-ID: <20240627144952.GA433043@rigel>
+References: <20240626052925.174272-1-warthog618@gmail.com>
+ <20240626052925.174272-3-warthog618@gmail.com>
+ <CAMRc=Me1_4xjbt51j+gFVzR71VUwMSAm+dT=UtgOY-1xYoAF5g@mail.gmail.com>
+ <20240627142248.GA414403@rigel>
+ <CAMRc=McA2rY=-k83Pkz-P5yu=bT2nE8JhNMiEAP2zFbf95SQqw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Peter Yin <peteryin.openbmc@gmail.com>
-Cc: Andrew Jeffery <andrew@codeconstruct.com.au>, patrick@stwcx.xyz, 
- linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
- linux-aspeed@lists.ozlabs.org, amithash@meta.com, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Joel Stanley <joel@jms.id.au>
-In-Reply-To: <20240627070013.2509150-1-peteryin.openbmc@gmail.com>
-References: <20240627070013.2509150-1-peteryin.openbmc@gmail.com>
-Message-Id: <171949936638.3312359.3954253966631367606.robh@kernel.org>
-Subject: Re: [PATCH v2 00/10] Revise Meta(Facebook) Harma BMC(AST2600)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=McA2rY=-k83Pkz-P5yu=bT2nE8JhNMiEAP2zFbf95SQqw@mail.gmail.com>
 
+On Thu, Jun 27, 2024 at 04:44:02PM +0200, Bartosz Golaszewski wrote:
+> On Thu, Jun 27, 2024 at 4:22 PM Kent Gibson <warthog618@gmail.com> wrote:
+> >
+> > On Thu, Jun 27, 2024 at 04:06:21PM +0200, Bartosz Golaszewski wrote:
+> > > On Wed, Jun 26, 2024 at 7:29 AM Kent Gibson <warthog618@gmail.com> wrote:
+> > > >
+> > > > linereq_set_config() behaves badly when direction is not set.
+> > > > The configuration validation is borrowed from linereq_create(), where,
+> > > > to verify the intent of the user, the direction must be set to in order to
+> > > > effect a change to the electrical configuration of a line. But, when
+> > > > applied to reconfiguration, that validation does not allow for the unset
+> > > > direction case, making it possible to clear flags set previously without
+> > > > specifying the line direction.
+> > > >
+> > > > Adding to the inconsistency, those changes are not immediately applied by
+> > > > linereq_set_config(), but will take effect when the line value is next get
+> > > > or set.
+> > > >
+> > > > For example, by requesting a configuration with no flags set, an output
+> > > > line with GPIO_V2_LINE_FLAG_ACTIVE_LOW and GPIO_V2_LINE_FLAG_OPEN_DRAIN
+> > > > set could have those flags cleared, inverting the sense of the line and
+> > > > changing the line drive to push-pull on the next line value set.
+> > > >
+> > > > Skip the reconfiguration of lines for which the direction is not set, and
+> > > > only reconfigure the lines for which direction is set.
+> > > >
+> > > > Fixes: a54756cb24ea ("gpiolib: cdev: support GPIO_V2_LINE_SET_CONFIG_IOCTL")
+> > > > Signed-off-by: Kent Gibson <warthog618@gmail.com>
+> > > > ---
+> > > >  drivers/gpio/gpiolib-cdev.c | 12 +++++++-----
+> > > >  1 file changed, 7 insertions(+), 5 deletions(-)
+> > > >
+> > > > diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
+> > > > index f7a129d67b7d..ef08b23a56e2 100644
+> > > > --- a/drivers/gpio/gpiolib-cdev.c
+> > > > +++ b/drivers/gpio/gpiolib-cdev.c
+> > > > @@ -1534,12 +1534,14 @@ static long linereq_set_config(struct linereq *lr, void __user *ip)
+> > > >                 line = &lr->lines[i];
+> > > >                 desc = lr->lines[i].desc;
+> > > >                 flags = gpio_v2_line_config_flags(&lc, i);
+> > > > +               /*
+> > > > +                * Lines not explicitly reconfigured as input or output
+> > > > +                * are left unchanged.
+> > > > +                */
+> > > > +               if (!(flags & GPIO_V2_LINE_DIRECTION_FLAGS))
+> > > > +                       continue;
+> > >
+> > > Series looks good, thanks. I'd say that this bit here calls for at
+> > > least a debug-level message since we don't return an error unlike v1.
+> > > What do you think?
+> > >
+> >
+> > The change to the libgpiod Python bindings makes use of this to support
+> > reconfiguration of subsets, so on its own it isn't an abnormal path and
+> > I'm not sure it warrants even a debug.
+> >
+> > OTOH, I did consider if there should be a check that at least one line
+> > in the reconfig has a direction, returning an error if there are none, but
+> > was on the fence about it and left it out as it added complexity.
+> >
+> > Would that make more sense?
+> > Or do you have a problem with reconfiguring subsets?
+> >
+> > Cheers,
+> > Kent.
+>
+> I see. Ok, I'll take it as is interpreting it as a feature.
+>
 
-On Thu, 27 Jun 2024 15:00:02 +0800, Peter Yin wrote:
-> Summary:
-> Revise linux device tree entry related to Meta(Facebook) Harma
-> specific devices connected to BMC(AST2600) SoC.
-> 
-> Base on: https://lore.kernel.org/all/CAPSyxFRj0twCJG6Lr5UZpznrUHyd_L0Reo=kZSFwCw3FNQ+x+A@mail.gmail.com/
-> 
-> Change log:
-> 
-> v1 -> v2
->   - Patch 0007  - add fru device
->   - Patch 0008  - add temperature device
->   - Patch 0009  - enable mctp controller
->   - Patch 00010 - fixed dtb_check warning
-> 
-> v1
->   - Patch 0001 - revise hsc chip
->   - Patch 0002 - add VR device
->   - Patch 0003 - add sgpio name
->   - Patch 0004 - add ina238
->   - Patch 0005 - add power monitor xdp710
->   - Patch 0006 - remove multi-host property
->   - Patch 0007 - remove pca9546
-> 
-> Peter Yin (10):
->   ARM: dts: aspeed: Harma: revise hsc chip
->   ARM: dts: aspeed: Harma: add VR device
->   ARM: dts: aspeed: Harma: add sgpio name
->   ARM: dts: aspeed: Harma: add ina238
->   ARM: dts: aspeed: Harma: add power monitor xdp710
->   ARM: dts: aspeed: Harma: remove multi-host property
->   ARM: dts: aspeed: Harma: add fru device
->   ARM: dts: aspeed: Harma: add temperature device
->   ARM: dts: aspeed: Harma: enable mctp controller
->   ARM: dts: aspeed: Harma: fixed dtb_check warning
-> 
->  .../dts/aspeed/aspeed-bmc-facebook-harma.dts  | 146 ++++++++++++++++--
->  1 file changed, 132 insertions(+), 14 deletions(-)
-> 
-> --
-> 2.25.1
-> 
-> 
-> 
+I'm totally ok with adding a check that direction is set at least once,
+if you would like that. Can be done with a reasonably minor change to
+gpio_v2_line_config_validate().  Though that would probably still double
+the size of this patch.
 
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y aspeed/aspeed-bmc-facebook-harma.dtb' for 20240627070013.2509150-1-peteryin.openbmc@gmail.com:
-
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dtb: ftgmac@1e690000: Unevaluated properties are not allowed ('#address-cells', '#size-cells' were unexpected)
-	from schema $id: http://devicetree.org/schemas/net/faraday,ftgmac100.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dtb: /ahb/apb/bus@1e78a000/i2c@700/i2c-mux@70/i2c@0/power-monitor@61: failed to match any schema with compatible: ['isil,isl69260']
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dtb: /ahb/apb/bus@1e78a000/i2c@700/i2c-mux@70/i2c@0/power-monitor@62: failed to match any schema with compatible: ['isil,isl69260']
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dtb: /ahb/apb/bus@1e78a000/i2c@700/i2c-mux@70/i2c@0/power-monitor@63: failed to match any schema with compatible: ['isil,isl69260']
-
-
-
-
+Cheers,
+Kent.
 
 
