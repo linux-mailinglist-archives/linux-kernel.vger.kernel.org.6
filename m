@@ -1,103 +1,67 @@
-Return-Path: <linux-kernel+bounces-232917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E35A891AFD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 21:50:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEE8B91AFDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 21:51:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 862B81F23C39
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:50:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 374CDB20DBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE1E19B3CC;
-	Thu, 27 Jun 2024 19:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cauf3q+K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46BB52D047;
-	Thu, 27 Jun 2024 19:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3652C19ADB3;
+	Thu, 27 Jun 2024 19:51:34 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2AF2D047;
+	Thu, 27 Jun 2024 19:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719517798; cv=none; b=Khu8/JErbouGVBsJ0z322iRMPwJx9xwdq5igSf7nvNFdLe8duszbFpdIt0EC1uWtTzY7fSDi8qKjx/OgqXUF93CiZyzPCcx54AVglnTFyY95GVb7qC/JxvOvo/3PWsYfgYZMf69aypdlnUBJbWfVBwO/TibuAk0l87N8G7UezOg=
+	t=1719517893; cv=none; b=LGeGA/ye/2P6rKOnOySF4SP4yqIIDFjRkpxOMX7AK/J4+hHLXUY5QGBWmHsHf7cheBa5OAbXkRDvH2VO8uOEjpJQW1R0ugviVDwWhbv/SND3geVm7/XcK+GjR+v6Hn+UsJmgqnymvTLgTZO/wbvmCTe7ykCLSg3pUY8Gp8/xguo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719517798; c=relaxed/simple;
-	bh=LbeZhTvrMZr4xHjYq9W0eB0sW/WT+bIkqEA5WOLp22k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EtyvzNzP7wDOZWA6IZepYSdOXXHWSEL7XJQhMLPp74N2Sb++dEmKNgYcFEOyv/6MPvh4UyNxZhM61bzP0vKCbAKbqmuAEWPXQDFENvEItuJLwposkmHGudu0p0j53LuMZ/TUHzlywPbL+R6zLOZF1iURe6OTtTxOeDWsrKBZdCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cauf3q+K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFDACC2BBFC;
-	Thu, 27 Jun 2024 19:49:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719517797;
-	bh=LbeZhTvrMZr4xHjYq9W0eB0sW/WT+bIkqEA5WOLp22k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Cauf3q+KQYQjNPaWrsg141tb/JEl1S5eiFZkngyocugydl8zul3a8txXte+5vZT0Q
-	 APKXcBSW++K4W+64pTyLr5fWbELUd1NW6zSmglSdH1VkmXVFQqqdo0KXchv7ZtsiDz
-	 8UH5y8U65YJ2fjGubMXRy1SI2C8V1o8DM8sm2qPaD6OLaP7kD3/C8PvHyj7n+YuBuG
-	 Q2eq4zrCFhU58tBYCGS/vE4JuG1Avfu8lhGWVh3tMeMfKaPIcN/hWIssBrJjkhbbdZ
-	 gk7manOYTOm8Ekl0a7XeEfK35ISq9GFOvrsxLwdpJIuBjUNRftEAit0lx4OOpQSmZL
-	 M9BicI/lma1hw==
-Date: Thu, 27 Jun 2024 12:49:57 -0700
-From: Kees Cook <kees@kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Eric Biederman <ebiederm@xmission.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Alexey Dobriyan <adobriyan@gmail.com>,
-	Laurent Vivier <laurent@vivier.eu>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
-	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] exec: Avoid pathological argc, envc, and bprm->p
- values
-Message-ID: <202406271248.622193ABB@keescook>
-References: <20240621204729.it.434-kees@kernel.org>
- <674c2009-4c55-421c-ba57-10463e00fd62@roeck-us.net>
+	s=arc-20240116; t=1719517893; c=relaxed/simple;
+	bh=70LhU90qdQV39rroTRoNGijMZG/8DrhJZReHncgOsp0=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=JhbvJ9GsNj8VNEHtbPLrnlCVsi+skvXmOpQ4IqhvWHQCPJOq7fR/4J9CQgWsJKrVKdFRUtGRwh4FyBW6XWCf45vaReoC6JIHqQmAAMau6vBLBsEbd+PiJSYzhSM1hxliIpTuF033TNrHOS2ZqWHRTvFKDn7eXD9TS5S7I141QoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id C47C292009C; Thu, 27 Jun 2024 21:51:22 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id BE4A592009B;
+	Thu, 27 Jun 2024 20:51:22 +0100 (BST)
+Date: Thu, 27 Jun 2024 20:51:22 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+    "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, 
+    linux-kernel@vger.kernel.org, 
+    "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH fixes 3/4] MIPS: cps-vec: Replace MT instructions with
+ macros
+In-Reply-To: <394042b6-37ef-4011-b799-454036d8bc34@app.fastmail.com>
+Message-ID: <alpine.DEB.2.21.2406272046020.43454@angie.orcam.me.uk>
+References: <20240616-mips-mt-fixes-v1-0-83913e0e60fc@flygoat.com> <20240616-mips-mt-fixes-v1-3-83913e0e60fc@flygoat.com> <Zn0qG5tsMBYcSWW+@alpha.franken.de> <394042b6-37ef-4011-b799-454036d8bc34@app.fastmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <674c2009-4c55-421c-ba57-10463e00fd62@roeck-us.net>
+Content-Type: text/plain; charset=US-ASCII
 
-On Fri, Jun 21, 2024 at 02:44:05PM -0700, Guenter Roeck wrote:
-> On 6/21/24 13:50, Kees Cook wrote:
-> > Hi,
-> > 
-> > This pair of patches replaces the last patch in this[1] series.
-> > 
-> > Perform bprm argument overflow checking but only do argmin checks for MMU
-> > systems. To avoid tripping over this again, argmin is explicitly defined
-> > only for CONFIG_MMU. Thank you to Guenter Roeck for finding this issue
-> > (again)!
-> > 
+On Thu, 27 Jun 2024, Jiaxun Yang wrote:
+
+> > how about simply enforcing the need for a correct toolchain instead
+> > of making the code ugly ?
 > 
-> That does make me wonder: Is anyone but me testing, much less running,
-> the nommu code in the kernel ?
-> 
-> mps2-an385 trips over the same problem, and xtensa:nommu_kc705_defconfig
-> doesn't even build in linux-next right now (spoiler alert: I suspect that
-> the problem is caused by "kunit: test: Add vm_mmap() allocation resource
-> manager", but I did not have time to bisect it).
+> Unfortunately, MT for microMIPS which I'm trying to bring up is only in
+> binutils master, it's not in any binutils release yet.
 
-This has a fixed pending:
-https://lore.kernel.org/lkml/202406271005.4E767DAE@keescook/
+ It's not yet in binutils master either.  Has there been any actual chip 
+taped out with this instruction subset supported?
 
-> I am kind of tired keeping those tests alive, and I would not exactly
-> shed tears if nommu support would just be dropped entirely.
-
-I haven't ever used the nommu builds, so I don't have a useful opinion
-here. :)
-
--Kees
-
--- 
-Kees Cook
+  Maciej
 
