@@ -1,179 +1,227 @@
-Return-Path: <linux-kernel+bounces-231939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 772C191A0A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:42:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FACB91A0A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:43:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14F7B282E18
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:42:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B86972833FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0087A73446;
-	Thu, 27 Jun 2024 07:42:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9C86CDAB;
+	Thu, 27 Jun 2024 07:42:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="opCS1+a2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M0SQdhPn"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1898153364;
-	Thu, 27 Jun 2024 07:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1359374D4;
+	Thu, 27 Jun 2024 07:42:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719474158; cv=none; b=WzhCDeHhjqCRVK4NysnYM3ElOkLXBXhWXJ8odeZDKEBII/BNCcLif5AZ1do/hG6TmS6lfenFLq/pCuldQMSH4dqOcexdRCwlQB19JqeISrJFMgL5sPyldSYldbkSdF++IOSaU8bRz1ZX/UBgBrdHcS4DHVk14AwihxbrSiFDIfk=
+	t=1719474170; cv=none; b=PmgcwEQVScbFCSJsq4GUS0/qgsqFj7CgNcT0ySph7AOODQKpR7cKFCn9W1F3iVKYzZzulhJ4tv8zor+7/SrTR8gbCnweolK7NxvN42lIpE8mr4PI48MzOutWShbQd6S7xltIb9WAluoEdm0+N0poJ0gcUjJs+H7hPy2Ok8CRFBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719474158; c=relaxed/simple;
-	bh=+6/2eiODOce3fiw5XiGEEaZr7L+CuCqnH8p7dDX7VA8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OM997M2ZAQNaIeHdIPn/16zvWzuvCEsl9rZaKy4wgmdQxJ0wKbhxjUfljIOZimotZVkK36QtwknBJ7Xbj2cZAGxtDGnkJD6OmvOf/IDx+Rrurt0u0uXXaZLMb/Fh0lZJa12wRkqPCUVhLRg1xNND56iyNmx1gmkLFk52k9qxbuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=opCS1+a2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65F42C4AF09;
-	Thu, 27 Jun 2024 07:42:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719474158;
-	bh=+6/2eiODOce3fiw5XiGEEaZr7L+CuCqnH8p7dDX7VA8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=opCS1+a2JVdpqvYfM7Z+r2tDEyViU982n3s9/OA+XP05WjM8GGP+ySvzgOwbG2/qS
-	 tKufkazc/J3RGw8hloKGATgasDNtTYkQ+d1BArS/J4GqKGTS1kjjxhpWbXv1CsYK6D
-	 H4D3gOhkTZrDSBQoYDdypyZ+nfgymi6BRBU/oAP/3xY9SqJ3r3eqxYHFPmQFC3CI0r
-	 wUMJCJM6TtOImjAxdjJSXGRreebOC1CImMeVAP35qu9afzesHPJsP3hWxSaQsngaN6
-	 UbUtJsSRO4GIX97ABaQzzuqE3Pxh4P4j07VU2S/Cy+HLN7a8p44xIx+oJ+gPJXT16k
-	 J0ReQOdEDb7FA==
-Message-ID: <bf87c34e-a4ff-4e03-9d6a-dc365fec06a5@kernel.org>
-Date: Thu, 27 Jun 2024 09:42:28 +0200
+	s=arc-20240116; t=1719474170; c=relaxed/simple;
+	bh=+aYaJeKfwWUFK7GSlzK2t5JQnsS8gzmmHK4bu1Y4nWo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Ly0xsJDP7HbSMdOdYTNgFdrhiyDEQQZpqnB3UFyvlRqIO0JvC/beCZSD8rsPD7hE21IRIM4V5OAlT8w6eRC10Y/c6iPQ/rUYFbD3M3Eo4goBpOAQOyu0ABUYwRyn8kzu9JKZeGj045CtjTASSdvCmHKRKkOSLsYubTkMwJxj4t0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M0SQdhPn; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ec17eb4493so103493541fa.2;
+        Thu, 27 Jun 2024 00:42:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719474166; x=1720078966; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pzyiJnZ7aQCZJPaij9547bOK4rGLg+j8o5jTxY/Qu5I=;
+        b=M0SQdhPnjDhu25wx6pIfEJcOLaON2NQsILIR51tzgXR/QY0S7SIS0BRK1LSJ9MkvB5
+         FF/NWRzI9VHmDnQ4CwCjerncJE7j1nYea1n3oM1cEjjuSWeNvqT9WQFD1nJRLSNnVKqJ
+         PlG8VBOh1Ge9gg3g19G2omB7edfxNKTTSlNi6F+DYBsfLDXh8Akd2TY+EYRho83bWy1H
+         rYEuRnjDk0WGWXdcU9nCK6pqW6xU4YboRVteplQQN72Ypgw/nL1rYHOBprHDKAlYboe5
+         tedgRdgrD22bHu24ibR4BkQ5F8X92Ty0p0XEXkyJv0TNXmbpd2k4X3QACZh+KjHEyIil
+         LrvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719474166; x=1720078966;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pzyiJnZ7aQCZJPaij9547bOK4rGLg+j8o5jTxY/Qu5I=;
+        b=LJ18Gg3bfC4QgZ/7oz6ltACw5OoY2I4ICAKDoIg8tvO9Jh8JCoDz4xFX8Vmn4Xw/Kp
+         IYowf8ImpXTnglt0KY32S1LIAiW0xWtuUBiXH3ijWqigQBmNJhyut1hNhYreWzUEVznd
+         Tgxb5uE2Ma2Lz0OvwXzEdTSZl8fOpH8NumOhi4GdCirGwNbSsOigq2x/A3kYrhZ4SaDH
+         eIhpQ1ZxrUcYulSgnM+YqhWNHEzZ4FSPrH82Plynt3ktvaY1PMPGTZfeiKXUrZTENt+3
+         9/G/vIcEuK8AUQ0pPxQ2fWhy5zMzYXmPZasK7OsQL/CyauH7ILzYBlW8VNjwarkNM0sJ
+         ZWYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWhpLnD01IS2SL/fO1Mm8Rvqu1VEPHL1sPYkupSFS3nHbX1MNnXkzWiR3mtCJ+bvXGgp6nbCCqevdl+GfxTgASg/Vwzjq9SfsHwGy8hrmdkWwL2Z7sGuNcDxkiXKgJ2Z1q1eaXwfUVQW5LodTIOVNqc6svJ3wRqyrxak3MGLEeL3yKLrRRWd9Gg
+X-Gm-Message-State: AOJu0YwH0FdzJjBuf+c1W92RX5QcluDagbc8tThyDBaElDz5HHBbNSO4
+	s8mp2sFGkQLjHDZf1tJF6Yj9x23EmBqyLO3NzaCaaX/Xs1NyaVpS
+X-Google-Smtp-Source: AGHT+IH+GjvCIgWLgMsQlIT9dAtA7mMWQzMchoZbAEPfpQFeI7G7BJ34JtY2D9J95FAtY1dvyrCQbw==
+X-Received: by 2002:a2e:9ecd:0:b0:2ec:51b5:27be with SMTP id 38308e7fff4ca-2ec5b2d4619mr100811781fa.12.1719474165777;
+        Thu, 27 Jun 2024 00:42:45 -0700 (PDT)
+Received: from fedora ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ee4a4bed76sm1457831fa.106.2024.06.27.00.42.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 00:42:44 -0700 (PDT)
+Date: Thu, 27 Jun 2024 10:42:37 +0300
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: [PATCH v5 0/6] Support ROHM BD96801 Scalable PMIC
+Message-ID: <cover.1719473802.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V5 4/7] dt-bindings: clock: Add ipq9574 NSSCC clock and
- reset definitions
-To: Devi Priya <quic_devipriy@quicinc.com>, Andrew Lunn <andrew@lunn.ch>
-Cc: catalin.marinas@arm.com, u-kumar1@ti.com,
- linux-arm-kernel@lists.infradead.org, krzk+dt@kernel.org,
- geert+renesas@glider.be, neil.armstrong@linaro.org, nfraprado@collabora.com,
- mturquette@baylibre.com, linux-kernel@vger.kernel.org,
- dmitry.baryshkov@linaro.org, netdev@vger.kernel.org,
- konrad.dybcio@linaro.org, m.szyprowski@samsung.com, arnd@arndb.de,
- richardcochran@gmail.com, will@kernel.org, sboyd@kernel.org,
- andersson@kernel.org, p.zabel@pengutronix.de, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, conor+dt@kernel.org,
- linux-arm-msm@vger.kernel.org
-References: <20240626143302.810632-1-quic_devipriy@quicinc.com>
- <20240626143302.810632-5-quic_devipriy@quicinc.com>
- <171941612020.3280624.794530163562164163.robh@kernel.org>
- <eeea33c7-02bd-4ea4-a53f-fd6af839ca90@lunn.ch>
- <4bf9dff9-3cb4-4276-8d21-697850e01170@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <4bf9dff9-3cb4-4276-8d21-697850e01170@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="naMxCvaYHuQUKU2V"
+Content-Disposition: inline
 
-On 27/06/2024 07:25, Devi Priya wrote:
-> 
-> 
-> On 6/26/2024 10:56 PM, Andrew Lunn wrote:
->> On Wed, Jun 26, 2024 at 09:35:20AM -0600, Rob Herring (Arm) wrote:
->>>
->>> On Wed, 26 Jun 2024 20:02:59 +0530, Devi Priya wrote:
->>>> Add NSSCC clock and reset definitions for ipq9574.
->>>>
->>>> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
->>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>> ---
->>>>   Changes in V5:
->>>> 	- Dropped interconnects and added interconnect-cells to NSS
->>>> 	  clock provider so that it can be  used as icc provider.
->>>>
->>>>   .../bindings/clock/qcom,ipq9574-nsscc.yaml    |  74 +++++++++
->>>>   .../dt-bindings/clock/qcom,ipq9574-nsscc.h    | 152 ++++++++++++++++++
->>>>   .../dt-bindings/reset/qcom,ipq9574-nsscc.h    | 134 +++++++++++++++
->>>>   3 files changed, 360 insertions(+)
->>>>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
->>>>   create mode 100644 include/dt-bindings/clock/qcom,ipq9574-nsscc.h
->>>>   create mode 100644 include/dt-bindings/reset/qcom,ipq9574-nsscc.h
->>>>
->>>
->>> My bot found errors running 'make dt_binding_check' on your patch:
->>>
->>> yamllint warnings/errors:
->>>
->>> dtschema/dtc warnings/errors:
->>> Error: Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.example.dts:26.26-27 syntax error
->>> FATAL ERROR: Unable to parse input tree
->>
->> Hi Devi
->>
->> Version 4 of these patches had the same exact problem. There was not
->> an email explaining it is a false positive etc, so i have to assume it
->> is a real error. So why has it not been fixed?
->>
->> Qualcomm patches are under a microscope at the moment because of how
->> bad things went a couple of months ago with patches. You cannot ignore
->> things like this, because the damage to Qualcomm reputation is going
->> to make it impossible to get patches merged soon.
->>
-> Hi Andrew,
-> Very sorry for the inconvenience.
-> I had run dt_binding_check locally on V4 patches and did not face any
-> errors. I somehow missed to notice the binding check error that was
-> reported on V4. Thus I went ahead and posted the same in V5.
-> Will ensure such things are not repeated henceforth.
 
-If the warning is expected, e.g. due to missing patches, it's beneficial
-to mention this in the changelog (---). Otherwise all maintainers my
-ignore your patch because you have issues reported by automation.
+--naMxCvaYHuQUKU2V
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Anyway, up to you.
+Support ROHM BD96801 Scalable PMIC
 
-Best regards,
-Krzysztof
+The ROHM BD96801 is automotive grade PMIC, intended to be usable in
+multiple solutions. The BD96801 can be used as a stand-alone, or together
+with separate 'companion PMICs'. This modular approach aims to make this
+PMIC suitable for various use-cases.
 
+This series brings only limited support. The more complete set of
+features was sent in the RFC:
+https://lore.kernel.org/lkml/cover.1712058690.git.mazziesaccount@gmail.com/
+
+The v3: implemented also support for ERRB interrupt and setting a name
+suffix to IRQ domains. That work was postponed and will be continued
+after some unrelated changes to irqdomain code are completed as
+discussed here:
+https://lore.kernel.org/all/87plst28yk.ffs@tglx/
+
+Revision history still tries to summarize changes from the RFC for the
+reviewers.
+
+Revision history:
+v4 =3D> v5:
+	- Drop unintended Makefile change from regulator Makefile
+
+v3 =3D> v4:
+	- Drop patches 7 to 10 (inclusive) until preparatory irqdomain changes
+	   are done.
+	- Cleanups as suggested by Lee.
+	- Change the regulator subdevice name. (MFD and regulators).
+	- Minor styling in MFD driver
+
+v2 =3D> v3: Mostly based on feedback from Thomas Gleixner
+	- Added acks from Krzysztof and Mark
+	- Rebased on v6.10-rc2
+	- Drop name suffix support for legacy IRQ domains (both
+	  irqdomain and regmap)
+	- Improve the commit message for patch 7/10
+
+v1 =3D> v2:
+	- Add support for setting a name suffix for fwnode backed IRQ domains.
+	- Add support for setting a domain name suffix for regmap-IRQ.
+	- Add handling of ERRB IRQs.
+	- Small fixes based on feedback.
+
+RFCv2 =3D> v1:
+	- Drop ERRB IRQ from drivers (but not DT bindings).
+	- Drop configuration which requires STBY - state.
+	- Fix the register lock race by moving it from the regulator
+	  driver to the MFD driver.
+
+RFCv1 =3D> RFCv2:
+	- Tidying code based on feedback form Krzysztof Kozlowski and
+	  Lee Jones.
+	- Documented undocumented watchdog related DT properties.
+	- Added usage of the watchdog IRQ.
+	- Use irq_domain_update_bus_token() to work-around debugFS name
+	  collision for IRQ domains.
+
+---
+
+
+Matti Vaittinen (6):
+  dt-bindings: ROHM BD96801 PMIC regulators
+  dt-bindings: mfd: bd96801 PMIC core
+  mfd: support ROHM BD96801 PMIC core
+  regulator: bd96801: ROHM BD96801 PMIC regulators
+  watchdog: ROHM BD96801 PMIC WDG driver
+  MAINTAINERS: Add ROHM BD96801 'scalable PMIC' entries
+
+ .../bindings/mfd/rohm,bd96801-pmic.yaml       | 173 ++++
+ .../regulator/rohm,bd96801-regulator.yaml     |  63 ++
+ MAINTAINERS                                   |   4 +
+ drivers/mfd/Kconfig                           |  13 +
+ drivers/mfd/Makefile                          |   1 +
+ drivers/mfd/rohm-bd96801.c                    | 273 ++++++
+ drivers/regulator/Kconfig                     |  12 +
+ drivers/regulator/Makefile                    |   1 +
+ drivers/regulator/bd96801-regulator.c         | 908 ++++++++++++++++++
+ drivers/watchdog/Kconfig                      |  13 +
+ drivers/watchdog/Makefile                     |   1 +
+ drivers/watchdog/bd96801_wdt.c                | 416 ++++++++
+ include/linux/mfd/rohm-bd96801.h              | 215 +++++
+ include/linux/mfd/rohm-generic.h              |   1 +
+ 14 files changed, 2094 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd96801-pmic=
+=2Eyaml
+ create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd9680=
+1-regulator.yaml
+ create mode 100644 drivers/mfd/rohm-bd96801.c
+ create mode 100644 drivers/regulator/bd96801-regulator.c
+ create mode 100644 drivers/watchdog/bd96801_wdt.c
+ create mode 100644 include/linux/mfd/rohm-bd96801.h
+
+
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+--=20
+2.45.1
+
+
+--=20
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =3D]=20
+
+--naMxCvaYHuQUKU2V
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmZ9F+kACgkQeFA3/03a
+ocWBsAf/QdlhMUwYBpyafmBY6fG6eGmmEc7uX7uQbX85eva1/Ur06PzQakUS0ZHA
+bpFnT7uYImxTXf6374aR8tjg0TxVp5dQbliG9DpU+QYTItxzpuIh0VI6pwPn7Cj5
+obL85HPfHpm2b7kpXWJG0QsAaUoiwub9ZQa9c/V9Z+nfTcXl9ColK8MxdhS5iW0A
+QCaQ9Z6OMDFC2FDzYBwHOWvPSTgdWGwiJl14ShkkKacFbRww5hEGUH3CKAZ59CO/
+jovqN0X8SehQM91kg8s/flGcbivT5ZEvf1xDpIfCF6ncyeY6Vq2JFnPZ4tHqhp4D
+Sothg/mPj42Dv7LJ62+r2llLDni8Bg==
+=JFFx
+-----END PGP SIGNATURE-----
+
+--naMxCvaYHuQUKU2V--
 
