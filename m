@@ -1,104 +1,88 @@
-Return-Path: <linux-kernel+bounces-231909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFB4591A036
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:17:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7751E91A03D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:17:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0FCA1C20C27
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:17:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3138328812E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1AF2482D3;
-	Thu, 27 Jun 2024 07:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E50E56773;
+	Thu, 27 Jun 2024 07:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mGLI+EBl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HERNeb5T"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0399C2F41;
-	Thu, 27 Jun 2024 07:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A921F5F6;
+	Thu, 27 Jun 2024 07:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719472637; cv=none; b=ZFcgP12bJJbQsgOHfndZV5d1P98l7T0/J/34TeXtfr6jAzD6V47MwXjVgeuPsqSbYVe6pNHgH2h0tw7PoCEmjEwLoRAJuA33NOY70/he3LKQy6V2eZbsdG/WSVmkQOqPd0kO4T1+83eh4uKTLWHhZs1GRRogqpdWf9tn79owJhc=
+	t=1719472648; cv=none; b=SITSCqyfcdyIeejkUD+G8XJqzEkvDQ80DxK7jX73B+cTrfgOiL+i4TBnZE/xM1yLG7JMqwrsJ6uLI+X4QqmikJ5z0iXtw32b5DMth7GMAwanOZ0YHDuuzcFFiXP6VOVHbmgE7XinNloTdTZ3sa/QY/dpIC/bmnS4ST/QFowLzfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719472637; c=relaxed/simple;
-	bh=1SaMfD2tmbpfNXEkMAGBWpGso//fdIqXP6/GKH5prbg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PB2zaGb7NUYRRRXZJFc+SQcVkKSPMwz/HhqId0ADC4UnsGksAT3yjtr4yLhFa05NhL7gHgDws4SzX4xpBDVvKzKVkYJ/YZOzW68zhvIuAPYzgJKiN8sh5xgHMxEFAYmFqF+aVCo/S1YFSoOgRp5MdH/FR/rwB70PDXPpLYOaagI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mGLI+EBl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D3A4C2BBFC;
-	Thu, 27 Jun 2024 07:17:15 +0000 (UTC)
+	s=arc-20240116; t=1719472648; c=relaxed/simple;
+	bh=wMJcr2AWNXAAqsBo+j58KGQEpUUJMlJJ71UaBYzBD/0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=CbjoUqJycZjfzjGe85B6wzr/lTdcOSjO8onil2qbCjn8sjOT7P/zw6zOdAkJyMX8WgB1Gog/bYBmF0eqZx3h4FG+dpWolbL7GNuAUn9atR6pM6N1xpcZ+ycigGTyqJZ6kDSs+jFHsKAa7CuOZCk9mH/R4cIAWt78/XXjdnyEsdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HERNeb5T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0E36C2BBFC;
+	Thu, 27 Jun 2024 07:17:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719472636;
-	bh=1SaMfD2tmbpfNXEkMAGBWpGso//fdIqXP6/GKH5prbg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=mGLI+EBlhln9XA+39mawyx16KBTyQ4k7eF6f/HqJXaqGmsvFObWROwbURkrjeqIdZ
-	 11MZwSFmAwgPBgvoZB1hCbIiwO9Gy449O98IoL3e6jb1PM+ACTKj1bEIvn9CKMGycz
-	 RYMaL+X0VoyI0VMW8dO8W1zIqwtMhjwwDKFhKa7fQhCggdL44xdGeP3cNoI5Jh+ojD
-	 OIfrz9CLlcM2bzvyh8QRLQfe1/I1Uf5lvec/Fp+b63AUqwrhkXdoerxwuDXMYbB3Vq
-	 lU0D0Rju9+6uhr8QeT1BjsEXJkYUr3ijVcjQVnRuevb+K4HhIRk4QXvy7yJcJsQXI+
-	 0/p+px7G0kr2Q==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>,
-	stable@vger.kernel.org
-Subject: [PATCH] f2fs: fix to wait dio completion
-Date: Thu, 27 Jun 2024 15:17:11 +0800
-Message-Id: <20240627071711.1563420-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	s=k20201202; t=1719472648;
+	bh=wMJcr2AWNXAAqsBo+j58KGQEpUUJMlJJ71UaBYzBD/0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=HERNeb5TFl8wr6/bUfHVUH53eTiaDWeEyKLJokpGnAdBM+PnVnvwt5MA7klY17/5Q
+	 GGn4I/pBdr9thz4SDFbRldbx77fbw5wkKMPd1kq9eVSpc2SkluIawQc2088xXs9TSj
+	 Xgx6cLPeCCam+aV2I/tQx+N+X0I5PfS4h2rmIG0F6MIXrq23huuv4UmeeJSRlzPe96
+	 w9iul2HYRPEOzl8nVVKeAaGoWdlB3kOzx8eI2YCioEy7VPI+fD5B/D18BD+omx0jKm
+	 s78cSBo3FIIGIDS/b3H8wR69hfbwydRIDjOK96D9LNytEg/ss67x0hzwXTRmfREnjh
+	 jzH0FD4lyoIOw==
+From: Lee Jones <lee@kernel.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, Lee Jones <lee@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>, 
+ Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, 
+ Bryan Brattlof <bb@ti.com>
+Cc: Vibhore Vardhan <vibhore@ti.com>, linux-pm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org
+In-Reply-To: <20240621-ti-opp-updates-v3-3-d857be6dac8b@ti.com>
+References: <20240621-ti-opp-updates-v3-0-d857be6dac8b@ti.com>
+ <20240621-ti-opp-updates-v3-3-d857be6dac8b@ti.com>
+Subject: Re: (subset) [PATCH v3 3/5] dt-bindings: mfd: syscon: add TI's opp
+ table compatible
+Message-Id: <171947264540.2846153.16605174762988368253.b4-ty@kernel.org>
+Date: Thu, 27 Jun 2024 08:17:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-It should wait all existing dio write IOs before block removal,
-otherwise, previous direct write IO may overwrite data in the
-block which may be reused by other inode.
+On Fri, 21 Jun 2024 11:39:39 -0500, Bryan Brattlof wrote:
+> The JTAG_USER_ID_USERCODE efuse address, which is located inside the
+> WKUP_CTRL_MMR0 range holds information to identify the speed grades of
+> various components on TI's K3 SoCs. Add a compatible to allow the
+> cpufreq driver to obtain the data to limit the maximum frequency for the
+> CPUs under Linux control.
+> 
+> 
+> [...]
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/file.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Applied, thanks!
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 76a6043caf27..f2d0e0de775f 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -1056,6 +1056,13 @@ int f2fs_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 				return err;
- 		}
- 
-+		/*
-+		 * wait for inflight dio, blocks should be removed after
-+		 * IO completion.
-+		 */
-+		if (attr->ia_size < old_size)
-+			inode_dio_wait(inode);
-+
- 		f2fs_down_write(&fi->i_gc_rwsem[WRITE]);
- 		filemap_invalidate_lock(inode->i_mapping);
- 
-@@ -1892,6 +1899,12 @@ static long f2fs_fallocate(struct file *file, int mode,
- 	if (ret)
- 		goto out;
- 
-+	/*
-+	 * wait for inflight dio, blocks should be removed after IO
-+	 * completion.
-+	 */
-+	inode_dio_wait(inode);
-+
- 	if (mode & FALLOC_FL_PUNCH_HOLE) {
- 		if (offset >= inode->i_size)
- 			goto out;
--- 
-2.40.1
+[3/5] dt-bindings: mfd: syscon: add TI's opp table compatible
+      commit: ba5901bc8fd7206fb0db445fa405c72e93e36e46
+
+--
+Lee Jones [李琼斯]
 
 
