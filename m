@@ -1,289 +1,877 @@
-Return-Path: <linux-kernel+bounces-231659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AE6F919B8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 02:01:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10F30919B94
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 02:03:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EC071C22A1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:01:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAD34283359
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:03:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D09413FF9;
-	Thu, 27 Jun 2024 00:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB8542C9D;
+	Thu, 27 Jun 2024 00:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PU3gckWo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CGUtn3Zy"
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50486EEBA
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 00:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719446461; cv=fail; b=NwxZQATEzpQvRteZ4MZa6gCz7VNGkYv4iCc5mNInCpo+6SCtqWcUxyNKy6cZ6iNwvesEf7Iugg9unYjAMu4zR3l6XSH0AZfO06TjuoUY7Ej+fPDdNuxioFCWhj18u3vOqG+hL461RqnuQcAHo0/rznBKZduna+uzYNE1xQL+jVY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719446461; c=relaxed/simple;
-	bh=k724o57brpz9K851F5M6cLdN5C176652QlnTFP7eWt8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=qbSfmnWnHbj3c4pSlaT7WseMLjeYldQilTbci8GS7Rp7BklDDJ/VCv8gk9oCitBPD7opWOH6ZwOVmOKFjh5sR4QWWthjuvOdDWwOml3j4hCDbxpTYKfYY12pB8/SF83wtX5kiNQEYhyuNE0tZ+97UZnqw9xsUxK5MzxPYzi6YTQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PU3gckWo; arc=fail smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719446460; x=1750982460;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=k724o57brpz9K851F5M6cLdN5C176652QlnTFP7eWt8=;
-  b=PU3gckWo626ypvDueX0cTXQ09T5S58LXYi0Y+K3kHlir4P+MQB+dmFiH
-   A8yL1R3xanN5Lcy6IfGmVfTNqduydw3hYFpHq2QpTk1ThCYV3aPGRk7hl
-   5rLDwv/0EdMX5s50NAepqhgYJoDAKg34lpSckM9IKdfL56qo8oAajDq3V
-   jDwetSq9SQYEI+hZ0LOpEICI9GoSqk79W/ICCBdv8RYnjgm1Wm7mBL1ow
-   0JXktBFdzxiSqiz1EJ2DibYhOvwfdD1Zn1moQ2nNgkZEXk4IjaLkjmlVQ
-   cwFSmq7gGaplE5OIhmfxyVqPLngm1+ZKdgh9+pMSJrYaq3/+lIPFlj3Pq
-   Q==;
-X-CSE-ConnectionGUID: hH+TedMeRFi8huWn3Z1IMQ==
-X-CSE-MsgGUID: Nw+WzZVjTRu4nwICdXY6ag==
-X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="34082490"
-X-IronPort-AV: E=Sophos;i="6.08,268,1712646000"; 
-   d="scan'208";a="34082490"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 17:01:00 -0700
-X-CSE-ConnectionGUID: B3hl7SduQGSJ7Alr9HbXag==
-X-CSE-MsgGUID: yl8n4w5+QDCuFH8OikfNUQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,268,1712646000"; 
-   d="scan'208";a="49105614"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by orviesa003.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 26 Jun 2024 17:00:59 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 26 Jun 2024 17:00:58 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 26 Jun 2024 17:00:58 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.175)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 26 Jun 2024 17:00:58 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=L4lWmDNtPndVvpovEo73x8MnIyM0+ePjp/CsiJ2APW8ti+jofcFruuynCnQtGX6asWCR3IHFrrGL8RLAtNXJauWMF319gKk0q1T84qEYnr+RunfpYScxmBImzJm1baasPcW6c1GgUzvIAN2d3xpq1qyHgCW6gpoC50MUIiDThSCWm300nMy8Of5r0p8pUKV40oWZzc4HEDWAFX0WFDef835NbTlEVLEvnaME2M89v6HD7ko/TbQTh5m51mmUAQroaOX7IjcdqYHXOrzmE/FqRIhYW56qA27OQmQi6owommOFFvZclPWURKGSWo5Yeu08Gx0zC+jq/WDwhB4re+mVPg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=k724o57brpz9K851F5M6cLdN5C176652QlnTFP7eWt8=;
- b=MjjhoXPGC0CrUVIFXimaa/XGnlGxLb/5kt+xWYhws0DCXkJUuNqchiBlNVN/Rv8tuf86x9yrXLSKdLl1JWHPtdVPFXI6FA1NapgpaTGvgUgp5pez8mgVIknd56h0lf+L1181JLKu1SwNecket8U/t+FX6JqxMeULxIGujrgp705f4IfJAPg3FgdjiZz5a85fvzwfrOZFnokznTVIQhrJgvHfUPyiqsjggFmjqg+GGpv1yi00Y+kNClaMjklCPYCGYv3W0Ymx1PzVxqy8s4YHuamRpcgZq2zbl4ta1/LYNSrwPHt9YYv5GhAVce+TWchZvyzXITRKEA3DA1YtBOKBLA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
- by PH0PR11MB4999.namprd11.prod.outlook.com (2603:10b6:510:37::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.30; Thu, 27 Jun
- 2024 00:00:56 +0000
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1%5]) with mapi id 15.20.7698.032; Thu, 27 Jun 2024
- 00:00:56 +0000
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Baolu Lu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, "Will
- Deacon" <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, "Jason
- Gunthorpe" <jgg@ziepe.ca>
-CC: "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] iommu/vt-d: Refactor PCI PRI enabling/disabling callbacks
-Thread-Topic: [PATCH] iommu/vt-d: Refactor PCI PRI enabling/disabling
- callbacks
-Thread-Index: AQHat8ObQWY41YP24UCgm5nqr/HB3rHZuRFggABqV4CAALbIwA==
-Date: Thu, 27 Jun 2024 00:00:56 +0000
-Message-ID: <BN9PR11MB52763CC7D59269696F0C22998CD72@BN9PR11MB5276.namprd11.prod.outlook.com>
-References: <20240606034019.42795-1-baolu.lu@linux.intel.com>
- <BN9PR11MB5276E8767AB63378C81130528CD62@BN9PR11MB5276.namprd11.prod.outlook.com>
- <e3888b78-c787-4a2d-bd43-7dcddc2b5bb9@linux.intel.com>
-In-Reply-To: <e3888b78-c787-4a2d-bd43-7dcddc2b5bb9@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|PH0PR11MB4999:EE_
-x-ms-office365-filtering-correlation-id: 8fcf0b93-ae1d-4377-59bc-08dc963c37ff
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?ZnoxdmdkM1NWVjAvYnM2SU9ITml4bStYM0ptRnRMckFpREt3VXJWamJReUlr?=
- =?utf-8?B?aE1WVHlOcEpvT1dYT0VZNFBmMmhxbWtMNDdzbzJoWjFISDBRUTVHMGx2R0pW?=
- =?utf-8?B?ZkptelJrbTUrNVladjdkdm9NUFB6eXQ3RUFzM2pRd1E1cnNZbElXUWk3K0pV?=
- =?utf-8?B?SHloZFNXb3ZKemtVbXdjcHB4dnpqdWZYTjN5UXF1amJXamV0ZTIwS3crSVIx?=
- =?utf-8?B?K2ZNVHlzVlpDdkYzVXo0SzRzSWJZeW1LUGJyWmJYd1NDaExTNGpuOExSWUVR?=
- =?utf-8?B?RmdXVk44UVBPZVJRVStuZTJEMSs4cGxpaXRsSUZyUm9XT3BMdWRuQlMyVWNH?=
- =?utf-8?B?Rzh5c0k0TGFUc0ZsMy90UW9ad1lCTTBYMzhELzc3bjU3WGdqYUFneXlVZHQy?=
- =?utf-8?B?aVdod2wyRDNwbUVVQ2VtZDhrZzlJdmVqNStyYjZwbklDUlZtbGdFaUVmSmtW?=
- =?utf-8?B?aGlORVhwMisxNW5QZnhaemRLVGx3ZkxyWC81Ri9GQ0wxdVBHZzlzempxTVN6?=
- =?utf-8?B?NSt1RUpBZ29sQ1ZVZ3NuT3ZBQi9LK21WUkJmZm1CRjY5Um1mRkxDc3Z3SnpJ?=
- =?utf-8?B?dG9STFZleWtkUlgxb05lNVM5S2pKMXRjendZVllxMGhMekt5WU1vcFlXd2s1?=
- =?utf-8?B?RWk4aEUvS2hmWHNvRjZ4aUZaRWZoU3haNGxlY3YwbEs4TlZFdkVZU29VVUUw?=
- =?utf-8?B?OTZnOTZjSWY0VGt1MXJnd3B0RjJadTRnL0lYc3dPQjE1VWFQcXRDUkNUMGdh?=
- =?utf-8?B?MmwxM2VlWWk0a2dXN2gxL0k4Ykovc2cvSmhTeGNDVnZnNG52aHhuazVNdTJq?=
- =?utf-8?B?dDFZSHJmb1JYOVhTTWJ4NUI0VmJnYkl2RG1zVzFzMHlJeFRQaFJUK1RJb0pt?=
- =?utf-8?B?YjlaV3ZWWFVyTGY3L2xDcnFRZ2hXZ3I5eTBTWTlHeWIrWnFMOUxpUk9Gcmls?=
- =?utf-8?B?MFV1RnpFUGdKUm05R0RrRGVGOE9UQXJkem9WMndnYUdkVXVyTVpXSjJLdFlG?=
- =?utf-8?B?TDd5T24vVzZaNDBOTjBxMTlvS0JFOXFCNllzTkl2eDFVMHdpZnh0N2Fncm0y?=
- =?utf-8?B?R09VQk5wS0NWa256cm42U1dLaWI0RnBIMHVuc1Z5TEtJcVZZaVh3SzZKYklv?=
- =?utf-8?B?NEN6QXJhNkhnYlZBU2llMWkxSmVzeVdHeW5iaTRzNWNBWFRZK2VFMG9GQ3NB?=
- =?utf-8?B?dXY3VWo0Q2ZnQldzdkdhRUlJQ1luOGYyVHpvR3B5d0o5SGZUSUczWmNtc25j?=
- =?utf-8?B?d2preE8xSG9WZ3Y0am01dlcwcklPTzJtN0pSTklQaTlhdDhWZ2dXS1IyZ3lG?=
- =?utf-8?B?KzBab3JQU0IreTY0cjZGTXlYbVU2Y3YzS0V1Uk5ZZ2xxT2E1NWJoZVBkVk4z?=
- =?utf-8?B?R2hHRHFMWHpsbllzc2wxdFI1UG01ZGNldmpxY1VjbW1hR1BWcGMxc3g5d0Nn?=
- =?utf-8?B?YlRJaGdSZm9JZy9HQk1IUnQzcUcycU5PK2lFVlZTdjZSZWlPVFR0djYxTDF0?=
- =?utf-8?B?TXd3Y2NaTFlXR1NHQWpmMGVMdmM3bmc2dHhhUm11M2NwS214M0t3anZEdTI0?=
- =?utf-8?B?TDFjSktja0lmckY1VFpKTXozUEpma1ZHVVl4NVJaV0Qyeklya3dNV1FRUDl6?=
- =?utf-8?B?N3ZsSXorb3l3TDJNY2NzZWwvSnFYb3lBcFdKSDYzeU0zbVdodURpd3NQR3RU?=
- =?utf-8?B?WW1rc2tpWWxBT2RVMDE3aG5TaFQwK3VBQkNPOHFmaGpLcy9ZMGltbzdzdmxx?=
- =?utf-8?B?aUsxVDlGWlVTWkhGa1dVM1VybEYxenpTTnR4cXNiLzg5RDk0bElMZTVTVjZs?=
- =?utf-8?Q?OJ/ecEgoGvWJgOzeOyc6GxMfXMOaeHYnqvyn8=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?N0dORms5MnBvMDV2cTY5bUNlZFNIbFJaN2VZazljem9vM1U0MUVVZ3JPMitm?=
- =?utf-8?B?TTN2VHZLVWxIYWZ2WTNyTG1zNVh1WllYNWI1akhFdFVvWjltd280TWZ4ZFNm?=
- =?utf-8?B?bW1HQUtpTVE2TFFTa3NZYStRT1dueGZwcktTd2wvZnNOem9tMGdnUUh3aEVO?=
- =?utf-8?B?cmNUeE15dytMeXM4YWllL0VEY0E4NmxURmgrL0c5cHpTOXlwb3JPTzgzTGJM?=
- =?utf-8?B?Q1NpMENSRUdXMnovQTJCNG8yWjM2d3l3Zkl0b2l3cXVxc3RkQTJlcUE2Mzg4?=
- =?utf-8?B?QURxMFBKNFFLaXV1RXVBUmZaRk9sWG5RRWgyQTRXRHJoTUJrZ0hrbGdiSS9t?=
- =?utf-8?B?R2dGRUgrK2JsYzdXbk14WHlXejhqT1ZlKzFxTFFtVEx0ZmhhQ2ZaMmt2L05r?=
- =?utf-8?B?USt3bTk5RWlVY2ZWWjFBTTJxTkM5cGdNTHZ2TDhQTkh1S3JZd1ZTQWVqUWdU?=
- =?utf-8?B?enM1VXRUY0FsUmFJb29DVjg4QTlqZGRjREU4a1p3WStVcEFmWENkR3p6NkQ1?=
- =?utf-8?B?Um1nMHplUFBYRWQ0YXBVSG9lS3dZTTByZmI3UjRNM0Z0WHk4ZC9IeDdNaGZQ?=
- =?utf-8?B?Qlhqb1hRVTVxenloR3h3eEhVeUl5Q2F6QWVVMVczcmZwVnRGQW9lZjVnSlpt?=
- =?utf-8?B?NFVma3JZVzQ0MGxVOUhZemozWTlCaFd6NFliMWZZdW94a25Vb2hHa0R3RjlS?=
- =?utf-8?B?d0RmVlkybGIvNGxZSUR1ek1yRHI0TzlBTUZaUWxMazhtVGQ2WThpYTZKR2pV?=
- =?utf-8?B?b1lON0pHTFB3emVyRHU4UzUzbXd2UXY0OWJISXNYVzVXQ3VDTVdrY054Sytr?=
- =?utf-8?B?MjNsT1cyUERQT2hGMitxWlBxMXJlMTIwM2VjT2Y0aDV0S3ZUbGg5VG5hLzBC?=
- =?utf-8?B?Z3FhcXZXcmowaTA4OWh4RW1hOXV5SjRLc2FWK1c5RnY1VE91cmM2WnBHQ1Rt?=
- =?utf-8?B?clhPNVB6bEZIUlZyakpTU0dhYmh0NC81QUFuZ0NpNHc4SGJDUURJYXFyVm1M?=
- =?utf-8?B?Wkd2OU9wbVVkM2JmT2F5VWg3OEd1RlNVNTlpU2J6SFZXNUg2bE9oNGVQaStT?=
- =?utf-8?B?OU9hbWdCZStOS2JOd2kwa2JsdUtFZURpVkc3RjZkVTV6UHhGdVBHRHo2cit0?=
- =?utf-8?B?Si9oRkpuelgyeWR3RUxBdzdxRjZwYjBBcTRqbmJEU1VET3RkY0hMQ2RQSFJz?=
- =?utf-8?B?bzJtdnduMjk1VkI4ZUw2ZGtGUUQwaDUwOFA3M092d0thVW5wR3d5Tlhmc3Fn?=
- =?utf-8?B?TWlmTS8wZkFnVDBEVVZBTzVpOCt6ZktWTVM4b2QwaUI1QWtiSEpzazNpM2da?=
- =?utf-8?B?NStheGpKdVZoV09oYzBWUWhsMXlrSkxFZEZ0d1JidjFKRXg1MWRNaDBBSWtQ?=
- =?utf-8?B?ZG9MZHJhZlFFR0orQmFJMG5XbFBOYzBiZGRvWVlWNERpQUVVSHZ6Zk9UT1VD?=
- =?utf-8?B?YlpBQm45RDNtUDN2amt0eXpuSnNPS01vdGJ4SnZHYkozL3F3aDNKTkp1YWRi?=
- =?utf-8?B?TzZSNnRoVXZTQXdONVJGb2RZdmdJNEJSd1d1dU4rWlNoVmdDM21HT1JaL3NC?=
- =?utf-8?B?SkJaWFVmS3NyUmwzQ0ZuWVZvRitic1JNMlpNL0E0Rk1NZ2tzNUYzNUpzNzdX?=
- =?utf-8?B?U2pTQkswdXdHNkpmRlRTVk9rT0tmbk9iY1dUOCtxNXo1S2IrKzJOSm5DcDNt?=
- =?utf-8?B?ejdoeS9rTDZKVjRPUEpsRnVsYzFwWFR2TkJlaERwdlc4UmJqcm9lUUJLbmNs?=
- =?utf-8?B?dnFqK3ZSbzUzWVhlTVNrekJLSThMeFU1NGZxZG56TmxLOVBBek9mSkpKclJa?=
- =?utf-8?B?MHc5Uk9qRktWc0FtVVVVNzBOdm1meVE5R1ZSajZMMXpFV2RFWXFKZU9XRGlG?=
- =?utf-8?B?eWJhOU56blR5akRKcEhENExiaFRoMm0wVGZGWDBZTnErRUJJMGhMOU1ONVV1?=
- =?utf-8?B?OFZsZmlkTlBHOUhtOUFRUVY4R1pjV3lNOTJDcTZxUEVEbkJwYmFMbmJMaFRU?=
- =?utf-8?B?VHVqZVpSMDNyTExCSmV2WXorSzJyWXZLa2l4dmN6bTVpMDQ2OTVjZ2p3WHM0?=
- =?utf-8?B?cmxLZFlua3lkR2pXMGtSc3BBYUF5ai9CdTJSV0RIOUtVOXJsajk1N0l1czk0?=
- =?utf-8?Q?VNAdajxNYbEg2k+IxswGQNE62?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB3D629
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 00:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719446594; cv=none; b=m4Ky4IcdIuYRizRLyGJqaj8ayHljxPzWJ7WepoKx7gRM9kWYdqfnxcSQ81lcJNTHKKzaFMu6Xm2LXE8reJSfeNO3HTf/jyj8ZIuodMiI8i+ZVMC9gJDyDgoHk1r9zI+yiQNBiNw26Q3tFN7yeq9CJ0R/Jn7QB9GX1q589TsnaGg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719446594; c=relaxed/simple;
+	bh=uFsXPUOM7t0SAHjxeAnchT5Pm+ySSFR3H/fDdydBSGE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p6PHcSD+YOs/nwAu/ZmYS+F8WjNk3kTEyRLJKLeSdqlnXnc1KYm1ejHO8uUE8FAM9kOhIq3XBkmK290sv30nE9buXmQ4DqPRHVlGPYFDoVx9m2MzTFCPcL4No1UK2uhrihQr+aS2ycpaBb4Qm/o7xx2NPTgkv9rUzaOLjaFkSGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CGUtn3Zy; arc=none smtp.client-ip=209.85.221.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-4ef662a4725so1976828e0c.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 17:03:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719446591; x=1720051391; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CaBxld+J1XwtA8Cr0D6dJ73bFize85s5kEmh+05NRl0=;
+        b=CGUtn3ZyyePIuE0Cu/JI4fNE5D+DPy2PyKCPYRavXXVtNxUSWN6ozW1+DZhVuvNYfY
+         IZp/dOeDSyxB64DvvpvNpBvHfyXwbJh+yGqAJXQOmFzADQfCzhVoknIlklOWe8G3J6qe
+         w9CGP7/EdsdnyBlQhNWP/oop7fLE8cfyi6fdI2MeZGOV8tRde2+ks3thjIOJRprQ4jWz
+         +JnJSlk+fhzxskC4++12IIe5RGG3Fu8/x93aLEcntoAJDnfmVQ5OGM5DJu6FhJvC+S8n
+         sw9HDoKV8/aKwvLmsYarPt/7R4dlaZY4uytBY2WDyEfJY4cW+C7CATGaAq1zjqRNoRld
+         uoVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719446591; x=1720051391;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CaBxld+J1XwtA8Cr0D6dJ73bFize85s5kEmh+05NRl0=;
+        b=wIAikbyP5duW3wJePZvNMC3ZHM0p34g6p2OmZumjluussyQN4IAN5XDWDOtcm01648
+         w3w8L2ai8PoS5RWyhvciC0O0pPCmyN7Sxaz74dujaVX0iAUKCFU1aj4+2IifYwAWK+jd
+         3/B7OoQOiZhhrWTPXx0G2+GrNLT7+MCCKuLiDIuQ93+XCo4LILuiVsdopd71S5ibrpiy
+         netFOatSvrNLUBqsGNMA+4w0Q9rVQOcxIYNskgqb64iH9Dm02B9BRQniBsaqXP3fgnSs
+         j3XjgImjAqFXwnxP3CmaV+RFREvqZ5w3BrPVQK05vI+WQ81RKVZC5ncz1tyYxk3r1SrZ
+         N2uA==
+X-Forwarded-Encrypted: i=1; AJvYcCVSkmzC18UspMOWQ8EJbUFQGqUCrB/koaAnOGvix1c/c325fE8b9B1fQKFKOKaC99uO+Cf0Ekg9biYhbKbATKpfxOlBHHETaQApOcYZ
+X-Gm-Message-State: AOJu0YxYod56Xmxn9BWF3lwqibSs38Lrdqjv2Py+ZCVNEacThil8XxTo
+	4wp9X20M9Wh3UHfQZV8nZkN+ohMoRbgy6JGrV+GiQwx9+cVm6+qdVN0+tjKejUBgYa5/rtlafbO
+	iJAlrRXigGTpQAQGlAP0I96g92gk=
+X-Google-Smtp-Source: AGHT+IGJ1AunyRMi67T3jIWGi3K4o1jVtC9XwdtFVTOCOvFMCxLgGqIjW0q5It6QXxQ1QD2nsmxeWWbUHEwn/FYlTvY=
+X-Received: by 2002:a05:6122:3117:b0:4ec:f8f0:7175 with SMTP id
+ 71dfb90a1353d-4ef6a73183bmr11384328e0c.11.1719446590855; Wed, 26 Jun 2024
+ 17:03:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8fcf0b93-ae1d-4377-59bc-08dc963c37ff
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jun 2024 00:00:56.0872
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 0h3BMCnFRVrpkXAJJDCpIFHl52sThzKPpCEbHZ/DIjAYejuEjLBx/54ZbWeyJ/IJJTX+H6CYh0ZoWXYqp9BJOQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB4999
-X-OriginatorOrg: intel.com
+References: <20240622071231.576056-1-21cnbao@gmail.com> <557d7f05-6ba9-482d-b3fb-29eb72cdf09c@arm.com>
+ <CAGsJ_4zQ0vjX1UM62o0Wsgh9XYW0SGv2cyG5gUpbP_+Tx3WZLg@mail.gmail.com>
+ <76876c5f-f769-43f1-ad53-a4af288af467@arm.com> <CAGsJ_4zpn5dMNNNcVcMngT-mJpWV-bzUV+RfQaLLjxMC73xfig@mail.gmail.com>
+ <f9fde05b-0340-49fc-92f9-7fa091580444@arm.com>
+In-Reply-To: <f9fde05b-0340-49fc-92f9-7fa091580444@arm.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Thu, 27 Jun 2024 12:02:59 +1200
+Message-ID: <CAGsJ_4xf_s57g5NmxbzFSZqyU05n4CoF5PFTZO73CE4CmB9fEw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/1] tools/mm: Introduce a tool to assess swap entry
+ allocation for thp_swapout
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: akpm@linux-foundation.org, chrisl@kernel.org, linux-mm@kvack.org, 
+	david@redhat.com, hughd@google.com, kaleshsingh@google.com, 
+	kasong@tencent.com, linux-kernel@vger.kernel.org, v-songbaohua@oppo.com, 
+	ying.huang@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-PiBGcm9tOiBCYW9sdSBMdSA8YmFvbHUubHVAbGludXguaW50ZWwuY29tPg0KPiBTZW50OiBXZWRu
-ZXNkYXksIEp1bmUgMjYsIDIwMjQgOTowNSBQTQ0KPiANCj4gT24gMjAyNC82LzI2IDE0OjUzLCBU
-aWFuLCBLZXZpbiB3cm90ZToNCj4gPj4gRnJvbTogTHUgQmFvbHUgPGJhb2x1Lmx1QGxpbnV4Lmlu
-dGVsLmNvbT4NCj4gPj4gU2VudDogVGh1cnNkYXksIEp1bmUgNiwgMjAyNCAxMTo0MCBBTQ0KPiA+
-Pg0KPiA+PiArLyoNCj4gPj4gKyAqIEludmFsaWRhdGUgdGhlIGNhY2hlcyBmb3IgYSBwcmVzZW50
-LXRvLXByZXNlbnQgY2hhbmdlIGluIGEgY29udGV4dA0KPiA+PiArICogdGFibGUgZW50cnkgYWNj
-b3JkaW5nIHRvIHRoZSBTcGVjIDYuNS4zLjMgKEd1aWRhbmNlIHRvIFNvZnR3YXJlIGZvcg0KPiA+
-PiArICogSW52YWxpZGF0aW9ucykuDQo+ID4+ICsgKg0KPiA+PiArICogU2luY2UgY29udGV4dCBl
-bnRyeSBpcyBub3QgZW5jb2RlZCBieSBkb21haW4taWQgd2hlbiBvcGVyYXRpbmcgaW4NCj4gPj4g
-KyAqIHNjYWxhYmxlLW1vZGUgKHJlZmVyIFNlY3Rpb24gNi4yLjEpLCB0aGlzIHBlcmZvcm1zIGNv
-YXJzZXINCj4gPj4gKyAqIGludmFsaWRhdGlvbiB0aGFuIHRoZSBkb21haW4tc2VsZWN0aXZlIGdy
-YW51bGFyaXR5IHJlcXVlc3RlZC4NCj4gPj4gKyAqLw0KPiA+PiArc3RhdGljIHZvaWQgaW52YWxp
-ZGF0ZV9wcmVzZW50X2NvbnRleHRfY2hhbmdlKHN0cnVjdA0KPiBkZXZpY2VfZG9tYWluX2luZm8N
-Cj4gPj4gKmluZm8pDQo+ID4+ICt7DQo+ID4+ICsJc3RydWN0IGludGVsX2lvbW11ICppb21tdSA9
-IGluZm8tPmlvbW11Ow0KPiA+PiArDQo+ID4+ICsJaW9tbXUtPmZsdXNoLmZsdXNoX2NvbnRleHQo
-aW9tbXUsIDAsIDAsIDAsDQo+ID4+IERNQV9DQ01EX0dMT0JBTF9JTlZMKTsNCj4gPj4gKwlpZiAo
-c21fc3VwcG9ydGVkKGlvbW11KSkNCj4gPj4gKwkJcWlfZmx1c2hfcGFzaWRfY2FjaGUoaW9tbXUs
-IDAsIFFJX1BDX0dMT0JBTCwgMCk7DQo+ID4+ICsJaW9tbXUtPmZsdXNoLmZsdXNoX2lvdGxiKGlv
-bW11LCAwLCAwLCAwLCBETUFfVExCX0dMT0JBTF9GTFVTSCk7DQo+ID4+ICsJX19pb21tdV9mbHVz
-aF9kZXZfaW90bGIoaW5mbywgMCwgTUFYX0FHQVdfUEZOX1dJRFRIKTsNCj4gPj4gK30NCj4gPj4g
-Kw0KPiA+DQo+ID4gdGhpcyBpbnZhbGlkYXRlcyB0aGUgZW50aXJlIGNhY2hlL2lvdGxiIGZvciBh
-bGwgZGV2aWNlcyBiZWhpbmQgdGhpcw0KPiA+IGlvbW11IGp1c3QgZHVlIHRvIGEgUFJJIGVuYWJs
-ZS9kaXNhYmxlIG9wZXJhdGlvbiBvbiBhIHNpbmdsZQ0KPiA+IGRldmljZS4NCj4gPg0KPiA+IE5v
-IHRoYXQncyB3YXkgdG9vIG11Y2guIElmIHRoZXJlIGlzIGEgYnVyZGVuIHRvIGlkZW50aWZ5IGFs
-bCBhY3RpdmUNCj4gPiBESURzIHVzZWQgYnkgdGhpcyBkZXZpY2UgdGhlbiBwYXkgaXQgYW5kIHBl
-bmFsaXplIG9ubHkgdGhhdCBkZXZpY2UuDQo+IA0KPiBZb3UgYXJlIHJpZ2h0LiBXZSBzaG91bGQg
-bm90IHNpbXBsaWZ5IHRoZSBmbG93IGxpa2UgdGhpcy4NCj4gDQo+ID4NCj4gPiBidHcgaW4gY29u
-Y2VwdCBQUkkgd2lsbCBub3QgYmUgZW5hYmxlZC9kaXNhYmxlZCB3aGVuIHRoZXJlIGFyZQ0KPiA+
-IFBBU0lEcyBvZiB0aGlzIGRldmljZSBiZWluZyBhY3RpdmVseSBhdHRhY2hlZC4gU28gYXQgdGhp
-cyBwb2ludA0KPiA+IHRoZXJlIHNob3VsZCBvbmx5IGJlIFJJRCB3aXRoIGF0dGFjaGVkIGRvbWFp
-biB0aGVuIHdlIG9ubHkNCj4gPiBuZWVkIHRvIGZpbmQgdGhhdCBESUQgb3V0IGFuZCB1c2UgaXQg
-dG8gaW52YWxpZGF0ZSByZWxhdGVkIGNhY2hlcy4NCj4gDQo+IFRoZSBhc3N1bXB0aW9uIG9mICJQ
-Ukkgd2lsbCBub3QgYmUgZW5hYmxlZC9kaXNhYmxlZCB3aGVuIHRoZXJlIGFyZQ0KPiBQQVNJRHMg
-b2YgdGhpcyBkZXZpY2UgYmVpbmcgYWN0aXZlbHkgYXR0YWNoZWQiIGlzIG5vdCBhbHdheXMgY29y
-cmVjdC4NCj4gQm90aCB0aGUgcGFzaWQgZG9tYWluIGF0dGFjaG1lbnQgYW5kIFBSSSBhcmUgY29u
-dHJvbGxlZCBieSB0aGUgZGV2aWNlDQo+IGRyaXZlciBhbmQgdGhlcmUgaXMgbm8gb3JkZXIgcnVs
-ZXMgZm9yIHRoZSBkcml2ZXJzLg0KDQpZZWFoLiBOb3Qgc3VyZSBob3cgSSBnb3QgaXQgd3Jvbmcg
-aW4gcHJldmlvdXMgcmVwbHkuIPCfmIoNCg0KPiANCj4gRm9yIGV4YW1wbGUsIHRoZSBpZHhkIGRy
-aXZlciBhdHRhY2hlcyB0aGUgZGVmYXVsdCBkb21haW4gdG8gYSBQQVNJRCBhbmQNCj4gdXNlIGl0
-IGZvciBrZXJuZWwgRU5RQ01EIGFuZCB1c2Ugb3RoZXIgUEFTSURzIGZvciBTVkEgdXNhZ2UuDQo+
-IA0KPiBJIGFtIGNvbnNpZGVyaW5nIHdvcmtpbmcgb3V0IGEgZ2VuZXJpYyBoZWxwZXIgdG8gaGFu
-ZGxlIGNhY2hlcyBhZnRlcg0KPiBjaGFuZ2UgdG8gYSBjb250ZXh0IGVudHJ5IHdoYXQgd2FzIHBy
-ZXNlbnQuIEhvdyBkbyB5b3UgbGlrZSBiZWxvdyBjb2RlDQo+IChjb21waWxlZCBidXQgbm90IHRl
-c3RlZCk/DQo+IA0KPiAvKg0KPiAgICogQ2FjaGUgaW52YWxpZGF0aW9ucyBhZnRlciBjaGFuZ2Ug
-aW4gYSBjb250ZXh0IHRhYmxlIGVudHJ5IHRoYXQgd2FzDQo+IHByZXNlbnQNCj4gICAqIGFjY29y
-ZGluZyB0byB0aGUgU3BlYyA2LjUuMy4zIChHdWlkYW5jZSB0byBTb2Z0d2FyZSBmb3INCj4gSW52
-YWxpZGF0aW9ucykuIElmDQo+ICAgKiBJT01NVSBpcyBpbiBzY2FsYWJsZSBtb2RlIGFuZCBhbGwg
-UEFTSUQgdGFibGUgZW50cmllcyBvZiB0aGUgZGV2aWNlIHdlcmUNCj4gICAqIG5vbi1wcmVzZW50
-LCBzZXQgYWZmZWN0X2RvbWFpbnMgdG8gdHJ1ZS4gT3RoZXJ3aXNlLCBmYWxzZS4NCj4gICAqLw0K
-PiB2b2lkIGludGVsX2NvbnRleHRfZmx1c2hfcHJlc2VudChzdHJ1Y3QgZGV2aWNlX2RvbWFpbl9p
-bmZvICppbmZvLA0KPiAJCQkJIHN0cnVjdCBjb250ZXh0X2VudHJ5ICpjb250ZXh0LA0KPiAJCQkJ
-IGJvb2wgYWZmZWN0X2RvbWFpbnMpDQo+IHsNCj4gCXN0cnVjdCBpbnRlbF9pb21tdSAqaW9tbXUg
-PSBpbmZvLT5pb21tdTsNCj4gCXUxNiBkaWQgPSBjb250ZXh0X2RvbWFpbl9pZChjb250ZXh0KTsN
-Cj4gCXN0cnVjdCBwYXNpZF9lbnRyeSAqcHRlOw0KPiAJaW50IGk7DQo+IA0KPiAJYXNzZXJ0X3Nw
-aW5fbG9ja2VkKCZpb21tdS0+bG9jayk7DQo+IA0KPiAJLyoNCj4gCSAqIERldmljZS1zZWxlY3Rp
-dmUgY29udGV4dC1jYWNoZSBpbnZhbGlkYXRpb24uIFRoZSBEb21haW4tSUQgZmllbGQNCj4gCSAq
-IG9mIHRoZSBDb250ZXh0LWNhY2hlIEludmFsaWRhdGUgRGVzY3JpcHRvciBpcyBpZ25vcmVkIGJ5
-IGhhcmR3YXJlDQo+IAkgKiB3aGVuIG9wZXJhdGluZyBpbiBzY2FsYWJsZSBtb2RlLiBUaGVyZWZv
-cmUgdGhlIEBkaWQgdmFsdWUNCj4gZG9lc24ndA0KPiAJICogbWF0dGVyIGluIHNjYWxhYmxlIG1v
-ZGUuDQo+IAkgKi8NCj4gCWlvbW11LT5mbHVzaC5mbHVzaF9jb250ZXh0KGlvbW11LCBkaWQsIFBD
-SV9ERVZJRChpbmZvLT5idXMsIGluZm8tDQo+ID5kZXZmbiksDQo+IAkJCQkgICBETUFfQ0NNRF9N
-QVNLX05PQklULA0KPiBETUFfQ0NNRF9ERVZJQ0VfSU5WTCk7DQo+IA0KPiAJLyoNCj4gCSAqIEZv
-ciBsZWdhY3kgbW9kZToNCj4gCSAqIC0gRG9tYWluLXNlbGVjdGl2ZSBJT1RMQiBpbnZhbGlkYXRp
-b24NCj4gCSAqIC0gR2xvYmFsIERldmljZS1UTEIgaW52YWxpZGF0aW9uIHRvIGFsbCBhZmZlY3Rl
-ZCBmdW5jdGlvbnMNCj4gCSAqLw0KPiAJaWYgKCFzbV9zdXBwb3J0ZWQoaW9tbXUpKSB7DQo+IAkJ
-aW9tbXUtPmZsdXNoLmZsdXNoX2lvdGxiKGlvbW11LCBkaWQsIDAsIDAsDQo+IERNQV9UTEJfRFNJ
-X0ZMVVNIKTsNCj4gCQlfX2lvbW11X2ZsdXNoX2Rldl9pb3RsYihpbmZvLCAwLCBNQVhfQUdBV19Q
-Rk5fV0lEVEgpOw0KPiANCj4gCQlyZXR1cm47DQo+IAl9DQo+IA0KPiAJLyoNCj4gCSAqIEZvciBz
-Y2FsYWJsZSBtb2RlOg0KPiAJICogLSBEb21haW4tc2VsZWN0aXZlIFBBU0lELWNhY2hlIGludmFs
-aWRhdGlvbiB0byBhZmZlY3RlZCBkb21haW5zDQo+IAkgKiAtIERvbWFpbi1zZWxlY3RpdmUgSU9U
-TEIgaW52YWxpZGF0aW9uIHRvIGFmZmVjdGVkIGRvbWFpbnMNCj4gCSAqIC0gR2xvYmFsIERldmlj
-ZS1UTEIgaW52YWxpZGF0aW9uIHRvIGFmZmVjdGVkIGZ1bmN0aW9ucw0KPiAJICovDQo+IAlpZiAo
-YWZmZWN0X2RvbWFpbnMpIHsNCj4gCQlmb3IgKGkgPSAwOyBpIDwgaW5mby0+cGFzaWRfdGFibGUt
-Pm1heF9wYXNpZDsgaSsrKSB7DQo+IAkJCXB0ZSA9IGludGVsX3Bhc2lkX2dldF9lbnRyeShpbmZv
-LT5kZXYsIGkpOw0KPiAJCQlpZiAoIXB0ZSB8fCAhcGFzaWRfcHRlX2lzX3ByZXNlbnQocHRlKSkN
-Cj4gCQkJCWNvbnRpbnVlOw0KPiANCj4gCQkJZGlkID0gcGFzaWRfZ2V0X2RvbWFpbl9pZChwdGUp
-Ow0KPiAJCQlxaV9mbHVzaF9wYXNpZF9jYWNoZShpb21tdSwgZGlkLA0KPiBRSV9QQ19BTExfUEFT
-SURTLCAwKTsNCj4gCQkJaW9tbXUtPmZsdXNoLmZsdXNoX2lvdGxiKGlvbW11LCBkaWQsIDAsIDAs
-DQo+IERNQV9UTEJfRFNJX0ZMVVNIKTsNCj4gCQl9DQo+IAl9DQo+IA0KPiAJX19pb21tdV9mbHVz
-aF9kZXZfaW90bGIoaW5mbywgMCwgTUFYX0FHQVdfUEZOX1dJRFRIKTsNCj4gfQ0KPiANCg0KbG9v
-a3MgZ29vZCB0byBtZS4NCg==
+On Tue, Jun 25, 2024 at 8:11=E2=80=AFPM Ryan Roberts <ryan.roberts@arm.com>=
+ wrote:
+>
+> On 25/06/2024 01:11, Barry Song wrote:
+> > On Mon, Jun 24, 2024 at 10:35=E2=80=AFPM Ryan Roberts <ryan.roberts@arm=
+.com> wrote:
+> >>
+> >> On 24/06/2024 09:42, Barry Song wrote:
+> >>> On Mon, Jun 24, 2024 at 8:26=E2=80=AFPM Ryan Roberts <ryan.roberts@ar=
+m.com> wrote:
+> >>>>
+> >>>> On 22/06/2024 08:12, Barry Song wrote:
+> >>>>> From: Barry Song <v-songbaohua@oppo.com>
+> >>>>>
+> >>>>> -v2:
+> >>>>>  * add swap-in which can either be aligned or not aligned, by "-a";
+> >>>>>    Ying;
+> >>>>>  * move the program to tools/mm; Ryan;
+> >>>>>  * try to simulate the scenarios swap is full. Chris;
+> >>>>>
+> >>>>> -v1:
+> >>>>>  https://lore.kernel.org/linux-mm/20240620002648.75204-1-21cnbao@gm=
+ail.com/
+> >>>>>
+> >>>>> I tested Ryan's RFC patchset[1] and Chris's v3[2] using this v2 too=
+l:
+> >>>>> [1] https://lore.kernel.org/linux-mm/20240618232648.4090299-1-ryan.=
+roberts@arm.com/
+> >>>>> [2] https://lore.kernel.org/linux-mm/20240614-swap-allocator-v2-0-2=
+a513b4a7f2f@kernel.org/
+> >>>>>
+> >>>>> Obviously, we're rarely hitting 100% even in the worst case without=
+ "-a" and with
+> >>>>> "-s," which is good news!
+> >>>>> If swapin is aligned w/ "-a" and w/o "-s", both Chris's and Ryan's =
+patches show
+> >>>>> a low fallback ratio though Chris's has the numbers above 0% but Ry=
+an's are 0%
+> >>>>> (value A).
+> >>>>>
+> >>>>> The bad news is that unaligned swapin can significantly increase th=
+e fallback ratio,
+> >>>>> reaching up to 85% for Ryan's patch and 95% for Chris's patchset wi=
+thout "-s." Both
+> >>>>> approaches approach 100% without "-a" and with "-s" (value B).
+> >>>>>
+> >>>>> I believe real workloads should yield a value between A and B. With=
+out "-a," and
+> >>>>> lacking large folios swap-in, this tool randomly swaps in small fol=
+ios without
+> >>>>> considering spatial locality, which is a factor present in real wor=
+kloads. This
+> >>>>> typically results in values higher than A and lower than B.
+> >>>>>
+> >>>>> Based on the below results, I believe that:
+> >>>>
+> >>>> Thanks for putting this together and providing such detailed results=
+!
+> >>>>
+> >>>>> 1. We truly require large folio swap-in to achieve comparable resul=
+ts with
+> >>>>> aligned swap-in(based on the result w/o and w/ "-a")
+> >>>>
+> >>>> I certainly agree that as long as we require a high order swap entry=
+ to be
+> >>>> contiguous in the backing store then it looks like we are going to n=
+eed large
+> >>>> folio swap-in to prevent enormous fragmentation. I guess Chris's pro=
+posed layer
+> >>>> of indirection to allow pages to be scattered in the backing store w=
+ould also
+> >>>> solve the problem? Although, I'm not sure this would work well for z=
+Ram?
+> >>>
+> >>> The challenge is that we also want to take advantage of improving zsm=
+alloc
+> >>> to save compressed multi-pages. However, it seems quite impossible fo=
+r
+> >>> zsmalloc to achieve this for a mTHP is scattered but not put together=
+ in
+> >>> zRAM.
+> >>
+> >> Yes understood. I finally got around to watching the lsfmm videos; I b=
+elieve the
+> >> suggested solution with a fs-like approach would be to let the fs hand=
+le the
+> >> compression, which means compressing extents? So even with that approa=
+ch,
+> >> presumably its still valuable to be able to allocate the biggest exten=
+ts possible.
+> >>
+> >>>
+> >>>>
+> >>>> Perhaps another way of looking at this is that we are doing a bad jo=
+b of
+> >>>> selecting when to use an mTHP and when not to use one in the first p=
+lace;
+> >>>> ideally the workload would access the data across the entire mTHP wi=
+th high
+> >>>> temporal locality? In that case, we would expect the whole mTHP to b=
+e swapped in
+> >>>> even with the current page-by-page approach. Figuring out this "auto=
+ sizing"
+> >>>> seems like an incredibly complex problem to solve though.
+> >>>
+> >>> The good news is that this is exactly what we're implementing in our =
+products,
+> >>> and it has been deployed on millions of phones.
+> >>>
+> >>>   *  Allocate mTHP and swap in the entire mTHP  in do_swap_page();
+> >>>   *  If mTHP allocation fails, allocate 16 pages to swap-in in do_swa=
+p_page();
+> >>
+> >> I think we were talking cross-purposes here. What I meant was that in =
+an ideal
+> >> world we would only allocate a (64K) mTHP for a page fault if we had c=
+onfidence
+> >> (via some heuristic) that the virtual 64K area was likely to always be=
+ accessed
+> >> together, else just allocate a small folio. i.e. choose the folio size=
+ to cover
+> >> a single object from user space's PoV. That would have the side effect=
+ that a
+> >> page-by-page swap-in approach (the current approach in mainline) would=
+ still
+> >> effectively result in swapping in the whole folio and therefore reduce
+> >> fragementation in the swap file. (Or thinking about it slightly differ=
+ently, it
+> >> would give us confidence to always swap-in a large folio at a time, be=
+cause we
+> >> know its all highly likely to get used in the near future).
+> >>
+> >> I suspect this is a moot point though, because divinging a suitable he=
+uristic
+> >> with low overhead is basically impossible.
+> >>
+> >>>
+> >>> To be honest, we haven't noticed a visible increase in memory footpri=
+nt. This is
+> >>> likely because Android's anonymous memory exhibits good spatial local=
+ity, and
+> >>> 64KiB strikes a good balance=E2=80=94neither too large nor too small.
+> >>
+> >> Indeed.
+> >>
+> >>>
+> >>> The bad news is that I haven't found a way to convince the community =
+this
+> >>> is universally correct.
+> >>
+> >> I think we will want to be pragmatic and at least implement an option =
+(sysfs?)
+> >> to swap-in a large folio up to a certain size; These test results clea=
+rly show
+> >> the value. And I believe you have real-world data for Android that sho=
+ws the
+> >> same thing.
+> >>
+> >> Just to creep the scope of this thread slightly, after watching yours =
+and Yu
+> >> Zhou's presentations around TAO, IIUC, even with TAO enabled, 64K foli=
+o
+> >> allocation fallback is still above 50%? I still believe that once the =
+Android
+> >> filesystems are converted to use large folios that number will improve
+> >> substantially; especially if the page cache can be convinced to only a=
+llocate
+> >> 64K folios (with 4K fallback). At that point you're predominantly usin=
+g 64K
+> >> folios so intuitively there will be less fragmentation.
+> >
+> > Absolutely agreed. Currently, I reported an allocation fallback rate
+> > slightly above 50%, but
+> > this is not because TAO is ineffective. It's simply because, in the
+> > test, we set up a
+> > conservative 15% virtzone for mTHP. If we increase the zone, we would d=
+efinitely
+> > achieve a lower fallback ratio. However, the issue arises when we need
+> > a large number
+> > of small folios=E2=80=94 for example, for the page cache=E2=80=94becaus=
+e they might
+> > suffer. However,
+> > we should be able to increase the percentage of the virtzone after
+> > some fine-tuning, as
+> > the report was based on an initial test to demonstrate that TAO can
+> > provide guaranteed
+> > mTHP coverage.
+> >
+> > If we can somehow unify the mTHP size for both the page cache and anon,=
+ things
+> > might improve.
+>
+> Indeed. And that implies we might need extra controls for the page cache,=
+ which
+> I don't think Willy will be a fan of. It would be good to get some fragme=
+ntation
+> data for Android with a file system that supports large folios, both with=
+ the
+> page cache folio allocation scheme as it is today, and constrained to 64K=
+ and
+> 4K. Rather than waiting for all the Android file systems to land support =
+for
+> large folios, is it possible to hand roll all the Android partitions as X=
+FS?
+> I've done that in the past for the user data partition at least.
+
+It might be a good idea to evaluate page cache large folios without
+waiting for EROFS
+and F2FS.
+I need to do more research on deploying XFS on Android before getting
+back to you.
+
+>
+> >
+> > Xiang promised to deliver EROFS large folio support. If we also get
+> > this in f2fs, things
+> > will be quite different.
+>
+> Excellent! So Oppo is using only erofs and f2fs? What about ext4? And all=
+ the
+> ancillary things like fscrypt and fsverity, etc? (I've been hand waving a=
+ bit to
+> this point, but it would be good to build a full list of all the componen=
+ts that
+> need large folio support for large folio file-backed memory to be viable =
+on
+> Android, if you can help enumerate that?)
+
+We get all of tmpfs, ext4, f2fs, erofs, vfat and fuse for different folders=
+.
+
+>
+> >
+> >>
+> >> But allocations by the page cache today start at 16K and increment by =
+2 orders
+> >> for every new readahead IIRC. So we end up with lots of large folio si=
+zes, and
+> >> presumably the potential for lots of fallbacks.
+> >>
+> >> All of this is just to suggest that we may end up wanting controls to =
+specify
+> >> which folio sizes the page cache can attempt to use. At that point, ad=
+ding
+> >> similar controls for swap-in doesn't feel unreasonable to me.
+> >>
+> >> Just my 2 cents!
+> >>
+> >>>
+> >>>>
+> >>>>> 2. We need a method to prevent small folios from scattering indiscr=
+iminately
+> >>>>> (based on the result "-a -s")
+> >>>>
+> >>>> I'm confused by this statement; as I undersand it, both my and Chris=
+'s patches
+> >>>> already try to do this. Certainly for mine, when searching for order=
+-0 space, I
+> >>>> search the non-full order-0 clusters first (just like for other orde=
+rs).
+> >>>> Although for order-0 I will still fallback to searching any cluster =
+if no space
+> >>>> is found in an order-0 cluster. What more can we do?
+> >>>>
+> >>>> When run against your v1 of the tool with "-s" (v1 always implicily =
+behaves as
+> >>>> if "-a" is specified, right?) my patch gives 0% fallback. So what's =
+the
+> >>>> difference in v2 that causes higher fallback rate? Possibly just tha=
+t
+> >>>> MEMSIZE_SMALLFOLIO has grown by 3MB so that the total memory matches=
+ the swap
+> >>>> size (64M)?
+> >>>
+> >>> Exactly. From my understanding, we've reached a point where small fol=
+ios are
+> >>> struggling to find swap slots. Note that I always swap out mTHP befor=
+e swapping
+> >>> out small folios. Additionally, I have already swapped in 1MB small
+> >>> folios before
+> >>> swapping out, which means zRAM has 1MB-4KB of redundant space availab=
+le
+> >>> for mTHP to swap out.
+> >>>
+> >>>>
+> >>>> Thanks,
+> >>>> Ryan
+> >>>>
+> >>>>>
+> >>>>> *
+> >>>>> *  Test results on Ryan's patchset:
+> >>>>> *
+> >>>>>
+> >>>>> 1. w/ -a
+> >>>>> ./thp_swap_allocator_test -a
+> >>>>> Iteration 1: swpout inc: 224, swpout fallback inc: 0, Fallback perc=
+entage: 0.00%
+> >>>>> Iteration 2: swpout inc: 231, swpout fallback inc: 0, Fallback perc=
+entage: 0.00%
+> >>>>> Iteration 3: swpout inc: 227, swpout fallback inc: 0, Fallback perc=
+entage: 0.00%
+> >>>>> Iteration 4: swpout inc: 222, swpout fallback inc: 0, Fallback perc=
+entage: 0.00%
+> >>>>> ...
+> >>>>> Iteration 100: swpout inc: 228, swpout fallback inc: 0, Fallback pe=
+rcentage: 0.00%
+> >>>>>
+> >>>>> 2. w/o -a
+> >>>>> ./thp_swap_allocator_test
+> >>>>>
+> >>>>> Iteration 1: swpout inc: 208, swpout fallback inc: 25, Fallback per=
+centage: 10.73%
+> >>>>> Iteration 2: swpout inc: 118, swpout fallback inc: 114, Fallback pe=
+rcentage: 49.14%
+> >>>>> Iteration 3: swpout inc: 63, swpout fallback inc: 163, Fallback per=
+centage: 72.12%
+> >>>>> Iteration 4: swpout inc: 45, swpout fallback inc: 178, Fallback per=
+centage: 79.82%
+> >>>>> Iteration 5: swpout inc: 42, swpout fallback inc: 184, Fallback per=
+centage: 81.42%
+> >>>>> Iteration 6: swpout inc: 31, swpout fallback inc: 193, Fallback per=
+centage: 86.16%
+> >>>>> Iteration 7: swpout inc: 27, swpout fallback inc: 201, Fallback per=
+centage: 88.16%
+> >>>>> Iteration 8: swpout inc: 30, swpout fallback inc: 198, Fallback per=
+centage: 86.84%
+> >>>>> Iteration 9: swpout inc: 32, swpout fallback inc: 194, Fallback per=
+centage: 85.84%
+> >>>>> ...
+> >>>>> Iteration 91: swpout inc: 26, swpout fallback inc: 194, Fallback pe=
+rcentage: 88.18%
+> >>>>> Iteration 92: swpout inc: 35, swpout fallback inc: 196, Fallback pe=
+rcentage: 84.85%
+> >>>>> Iteration 93: swpout inc: 33, swpout fallback inc: 191, Fallback pe=
+rcentage: 85.27%
+> >>>>> Iteration 94: swpout inc: 26, swpout fallback inc: 193, Fallback pe=
+rcentage: 88.13%
+> >>>>> Iteration 95: swpout inc: 39, swpout fallback inc: 189, Fallback pe=
+rcentage: 82.89%
+> >>>>> Iteration 96: swpout inc: 28, swpout fallback inc: 196, Fallback pe=
+rcentage: 87.50%
+> >>>>> Iteration 97: swpout inc: 25, swpout fallback inc: 194, Fallback pe=
+rcentage: 88.58%
+> >>>>> Iteration 98: swpout inc: 31, swpout fallback inc: 196, Fallback pe=
+rcentage: 86.34%
+> >>>>> Iteration 99: swpout inc: 32, swpout fallback inc: 202, Fallback pe=
+rcentage: 86.32%
+> >>>>> Iteration 100: swpout inc: 33, swpout fallback inc: 195, Fallback p=
+ercentage: 85.53%
+> >>>>>
+> >>>>> 3. w/ -a and -s
+> >>>>> ./thp_swap_allocator_test -a -s
+> >>>>> Iteration 1: swpout inc: 224, swpout fallback inc: 0, Fallback perc=
+entage: 0.00%
+> >>>>> Iteration 2: swpout inc: 218, swpout fallback inc: 0, Fallback perc=
+entage: 0.00%
+> >>>>> Iteration 3: swpout inc: 222, swpout fallback inc: 0, Fallback perc=
+entage: 0.00%
+> >>>>> Iteration 4: swpout inc: 220, swpout fallback inc: 6, Fallback perc=
+entage: 2.65%
+> >>>>> Iteration 5: swpout inc: 206, swpout fallback inc: 16, Fallback per=
+centage: 7.21%
+> >>>>> Iteration 6: swpout inc: 233, swpout fallback inc: 0, Fallback perc=
+entage: 0.00%
+> >>>>> Iteration 7: swpout inc: 224, swpout fallback inc: 0, Fallback perc=
+entage: 0.00%
+> >>>>> Iteration 8: swpout inc: 228, swpout fallback inc: 0, Fallback perc=
+entage: 0.00%
+> >>>>> Iteration 9: swpout inc: 217, swpout fallback inc: 0, Fallback perc=
+entage: 0.00%
+> >>>>> Iteration 10: swpout inc: 224, swpout fallback inc: 3, Fallback per=
+centage: 1.32%
+> >>>>> Iteration 11: swpout inc: 211, swpout fallback inc: 12, Fallback pe=
+rcentage: 5.38%
+> >>>>> Iteration 12: swpout inc: 200, swpout fallback inc: 32, Fallback pe=
+rcentage: 13.79%
+> >>>>> Iteration 13: swpout inc: 189, swpout fallback inc: 29, Fallback pe=
+rcentage: 13.30%
+> >>>>> Iteration 14: swpout inc: 195, swpout fallback inc: 31, Fallback pe=
+rcentage: 13.72%
+> >>>>> Iteration 15: swpout inc: 198, swpout fallback inc: 27, Fallback pe=
+rcentage: 12.00%
+> >>>>> Iteration 16: swpout inc: 201, swpout fallback inc: 17, Fallback pe=
+rcentage: 7.80%
+> >>>>> Iteration 17: swpout inc: 206, swpout fallback inc: 6, Fallback per=
+centage: 2.83%
+> >>>>> Iteration 18: swpout inc: 220, swpout fallback inc: 14, Fallback pe=
+rcentage: 5.98%
+> >>>>> Iteration 19: swpout inc: 181, swpout fallback inc: 45, Fallback pe=
+rcentage: 19.91%
+> >>>>> Iteration 20: swpout inc: 223, swpout fallback inc: 8, Fallback per=
+centage: 3.46%
+> >>>>> Iteration 21: swpout inc: 214, swpout fallback inc: 14, Fallback pe=
+rcentage: 6.14%
+> >>>>> Iteration 22: swpout inc: 195, swpout fallback inc: 31, Fallback pe=
+rcentage: 13.72%
+> >>>>> Iteration 23: swpout inc: 223, swpout fallback inc: 0, Fallback per=
+centage: 0.00%
+> >>>>> Iteration 24: swpout inc: 233, swpout fallback inc: 0, Fallback per=
+centage: 0.00%
+> >>>>> Iteration 25: swpout inc: 214, swpout fallback inc: 1, Fallback per=
+centage: 0.47%
+> >>>>> Iteration 26: swpout inc: 229, swpout fallback inc: 1, Fallback per=
+centage: 0.43%
+> >>>>> Iteration 27: swpout inc: 214, swpout fallback inc: 5, Fallback per=
+centage: 2.28%
+> >>>>> Iteration 28: swpout inc: 211, swpout fallback inc: 15, Fallback pe=
+rcentage: 6.64%
+> >>>>> Iteration 29: swpout inc: 188, swpout fallback inc: 40, Fallback pe=
+rcentage: 17.54%
+> >>>>> Iteration 30: swpout inc: 207, swpout fallback inc: 18, Fallback pe=
+rcentage: 8.00%
+> >>>>> Iteration 31: swpout inc: 215, swpout fallback inc: 10, Fallback pe=
+rcentage: 4.44%
+> >>>>> Iteration 32: swpout inc: 202, swpout fallback inc: 22, Fallback pe=
+rcentage: 9.82%
+> >>>>> Iteration 33: swpout inc: 223, swpout fallback inc: 0, Fallback per=
+centage: 0.00%
+> >>>>> Iteration 34: swpout inc: 218, swpout fallback inc: 10, Fallback pe=
+rcentage: 4.39%
+> >>>>> Iteration 35: swpout inc: 203, swpout fallback inc: 30, Fallback pe=
+rcentage: 12.88%
+> >>>>> Iteration 36: swpout inc: 214, swpout fallback inc: 14, Fallback pe=
+rcentage: 6.14%
+> >>>>> Iteration 37: swpout inc: 211, swpout fallback inc: 14, Fallback pe=
+rcentage: 6.22%
+> >>>>> Iteration 38: swpout inc: 193, swpout fallback inc: 28, Fallback pe=
+rcentage: 12.67%
+> >>>>> Iteration 39: swpout inc: 210, swpout fallback inc: 20, Fallback pe=
+rcentage: 8.70%
+> >>>>> Iteration 40: swpout inc: 223, swpout fallback inc: 5, Fallback per=
+centage: 2.19%
+> >>>>> Iteration 41: swpout inc: 224, swpout fallback inc: 7, Fallback per=
+centage: 3.03%
+> >>>>> Iteration 42: swpout inc: 200, swpout fallback inc: 23, Fallback pe=
+rcentage: 10.31%
+> >>>>> Iteration 43: swpout inc: 217, swpout fallback inc: 5, Fallback per=
+centage: 2.25%
+> >>>>> Iteration 44: swpout inc: 206, swpout fallback inc: 18, Fallback pe=
+rcentage: 8.04%
+> >>>>> Iteration 45: swpout inc: 210, swpout fallback inc: 11, Fallback pe=
+rcentage: 4.98%
+> >>>>> Iteration 46: swpout inc: 204, swpout fallback inc: 19, Fallback pe=
+rcentage: 8.52%
+> >>>>> Iteration 47: swpout inc: 228, swpout fallback inc: 0, Fallback per=
+centage: 0.00%
+> >>>>> Iteration 48: swpout inc: 219, swpout fallback inc: 2, Fallback per=
+centage: 0.90%
+> >>>>> Iteration 49: swpout inc: 212, swpout fallback inc: 6, Fallback per=
+centage: 2.75%
+> >>>>> Iteration 50: swpout inc: 207, swpout fallback inc: 15, Fallback pe=
+rcentage: 6.76%
+> >>>>> Iteration 51: swpout inc: 190, swpout fallback inc: 36, Fallback pe=
+rcentage: 15.93%
+> >>>>> Iteration 52: swpout inc: 212, swpout fallback inc: 17, Fallback pe=
+rcentage: 7.42%
+> >>>>> Iteration 53: swpout inc: 179, swpout fallback inc: 43, Fallback pe=
+rcentage: 19.37%
+> >>>>> Iteration 54: swpout inc: 225, swpout fallback inc: 0, Fallback per=
+centage: 0.00%
+> >>>>> Iteration 55: swpout inc: 224, swpout fallback inc: 2, Fallback per=
+centage: 0.88%
+> >>>>> Iteration 56: swpout inc: 220, swpout fallback inc: 8, Fallback per=
+centage: 3.51%
+> >>>>> Iteration 57: swpout inc: 203, swpout fallback inc: 25, Fallback pe=
+rcentage: 10.96%
+> >>>>> Iteration 58: swpout inc: 213, swpout fallback inc: 6, Fallback per=
+centage: 2.74%
+> >>>>> Iteration 59: swpout inc: 207, swpout fallback inc: 18, Fallback pe=
+rcentage: 8.00%
+> >>>>> Iteration 60: swpout inc: 216, swpout fallback inc: 14, Fallback pe=
+rcentage: 6.09%
+> >>>>> Iteration 61: swpout inc: 183, swpout fallback inc: 34, Fallback pe=
+rcentage: 15.67%
+> >>>>> Iteration 62: swpout inc: 184, swpout fallback inc: 39, Fallback pe=
+rcentage: 17.49%
+> >>>>> Iteration 63: swpout inc: 184, swpout fallback inc: 39, Fallback pe=
+rcentage: 17.49%
+> >>>>> Iteration 64: swpout inc: 210, swpout fallback inc: 15, Fallback pe=
+rcentage: 6.67%
+> >>>>> Iteration 65: swpout inc: 178, swpout fallback inc: 48, Fallback pe=
+rcentage: 21.24%
+> >>>>> Iteration 66: swpout inc: 188, swpout fallback inc: 30, Fallback pe=
+rcentage: 13.76%
+> >>>>> Iteration 67: swpout inc: 193, swpout fallback inc: 29, Fallback pe=
+rcentage: 13.06%
+> >>>>> Iteration 68: swpout inc: 202, swpout fallback inc: 22, Fallback pe=
+rcentage: 9.82%
+> >>>>> Iteration 69: swpout inc: 213, swpout fallback inc: 5, Fallback per=
+centage: 2.29%
+> >>>>> Iteration 70: swpout inc: 204, swpout fallback inc: 15, Fallback pe=
+rcentage: 6.85%
+> >>>>> Iteration 71: swpout inc: 180, swpout fallback inc: 45, Fallback pe=
+rcentage: 20.00%
+> >>>>> Iteration 72: swpout inc: 210, swpout fallback inc: 21, Fallback pe=
+rcentage: 9.09%
+> >>>>> Iteration 73: swpout inc: 216, swpout fallback inc: 7, Fallback per=
+centage: 3.14%
+> >>>>> Iteration 74: swpout inc: 209, swpout fallback inc: 19, Fallback pe=
+rcentage: 8.33%
+> >>>>> Iteration 75: swpout inc: 222, swpout fallback inc: 7, Fallback per=
+centage: 3.06%
+> >>>>> Iteration 76: swpout inc: 212, swpout fallback inc: 14, Fallback pe=
+rcentage: 6.19%
+> >>>>> Iteration 77: swpout inc: 188, swpout fallback inc: 41, Fallback pe=
+rcentage: 17.90%
+> >>>>> Iteration 78: swpout inc: 198, swpout fallback inc: 17, Fallback pe=
+rcentage: 7.91%
+> >>>>> Iteration 79: swpout inc: 209, swpout fallback inc: 16, Fallback pe=
+rcentage: 7.11%
+> >>>>> Iteration 80: swpout inc: 182, swpout fallback inc: 41, Fallback pe=
+rcentage: 18.39%
+> >>>>> Iteration 81: swpout inc: 217, swpout fallback inc: 1, Fallback per=
+centage: 0.46%
+> >>>>> Iteration 82: swpout inc: 225, swpout fallback inc: 3, Fallback per=
+centage: 1.32%
+> >>>>> Iteration 83: swpout inc: 222, swpout fallback inc: 8, Fallback per=
+centage: 3.48%
+> >>>>> Iteration 84: swpout inc: 201, swpout fallback inc: 21, Fallback pe=
+rcentage: 9.46%
+> >>>>> Iteration 85: swpout inc: 211, swpout fallback inc: 3, Fallback per=
+centage: 1.40%
+> >>>>> Iteration 86: swpout inc: 209, swpout fallback inc: 14, Fallback pe=
+rcentage: 6.28%
+> >>>>> Iteration 87: swpout inc: 181, swpout fallback inc: 42, Fallback pe=
+rcentage: 18.83%
+> >>>>> Iteration 88: swpout inc: 223, swpout fallback inc: 4, Fallback per=
+centage: 1.76%
+> >>>>> Iteration 89: swpout inc: 214, swpout fallback inc: 14, Fallback pe=
+rcentage: 6.14%
+> >>>>> Iteration 90: swpout inc: 192, swpout fallback inc: 33, Fallback pe=
+rcentage: 14.67%
+> >>>>> Iteration 91: swpout inc: 184, swpout fallback inc: 31, Fallback pe=
+rcentage: 14.42%
+> >>>>> Iteration 92: swpout inc: 201, swpout fallback inc: 32, Fallback pe=
+rcentage: 13.73%
+> >>>>> Iteration 93: swpout inc: 181, swpout fallback inc: 40, Fallback pe=
+rcentage: 18.10%
+> >>>>> Iteration 94: swpout inc: 211, swpout fallback inc: 14, Fallback pe=
+rcentage: 6.22%
+> >>>>> Iteration 95: swpout inc: 198, swpout fallback inc: 25, Fallback pe=
+rcentage: 11.21%
+> >>>>> Iteration 96: swpout inc: 205, swpout fallback inc: 22, Fallback pe=
+rcentage: 9.69%
+> >>>>> Iteration 97: swpout inc: 218, swpout fallback inc: 12, Fallback pe=
+rcentage: 5.22%
+> >>>>> Iteration 98: swpout inc: 203, swpout fallback inc: 25, Fallback pe=
+rcentage: 10.96%
+> >>>>> Iteration 99: swpout inc: 218, swpout fallback inc: 12, Fallback pe=
+rcentage: 5.22%
+> >>>>> Iteration 100: swpout inc: 195, swpout fallback inc: 34, Fallback p=
+ercentage: 14.85%
+> >>>>>
+> >>>>> 4. w/o -a and w/ -s
+> >>>>> thp_swap_allocator_test  -s
+> >>>>> Iteration 1: swpout inc: 173, swpout fallback inc: 60, Fallback per=
+centage: 25.75%
+> >>>>> Iteration 2: swpout inc: 85, swpout fallback inc: 147, Fallback per=
+centage: 63.36%
+> >>>>> Iteration 3: swpout inc: 39, swpout fallback inc: 195, Fallback per=
+centage: 83.33%
+> >>>>> Iteration 4: swpout inc: 13, swpout fallback inc: 220, Fallback per=
+centage: 94.42%
+> >>>>> Iteration 5: swpout inc: 10, swpout fallback inc: 215, Fallback per=
+centage: 95.56%
+> >>>>> Iteration 6: swpout inc: 9, swpout fallback inc: 219, Fallback perc=
+entage: 96.05%
+> >>>>> Iteration 7: swpout inc: 6, swpout fallback inc: 217, Fallback perc=
+entage: 97.31%
+> >>>>> Iteration 8: swpout inc: 6, swpout fallback inc: 215, Fallback perc=
+entage: 97.29%
+> >>>>> Iteration 9: swpout inc: 0, swpout fallback inc: 225, Fallback perc=
+entage: 100.00%
+> >>>>> Iteration 10: swpout inc: 1, swpout fallback inc: 229, Fallback per=
+centage: 99.57%
+> >>>>> Iteration 11: swpout inc: 2, swpout fallback inc: 216, Fallback per=
+centage: 99.08%
+> >>>>> Iteration 12: swpout inc: 2, swpout fallback inc: 229, Fallback per=
+centage: 99.13%
+> >>>>> Iteration 13: swpout inc: 4, swpout fallback inc: 211, Fallback per=
+centage: 98.14%
+> >>>>> Iteration 14: swpout inc: 1, swpout fallback inc: 221, Fallback per=
+centage: 99.55%
+> >>>>> Iteration 15: swpout inc: 2, swpout fallback inc: 223, Fallback per=
+centage: 99.11%
+> >>>>> Iteration 16: swpout inc: 3, swpout fallback inc: 224, Fallback per=
+centage: 98.68%
+> >>>>> Iteration 17: swpout inc: 2, swpout fallback inc: 231, Fallback per=
+centage: 99.14%
+> >>>>> ...
+> >>>>>
+> >>>>> *
+> >>>>> *  Test results on Chris's v3 patchset:
+> >>>>> *
+> >>>>> 1. w/ -a
+> >>>>> ./thp_swap_allocator_test -a
+> >>>>> Iteration 1: swpout inc: 224, swpout fallback inc: 0, Fallback perc=
+entage: 0.00%
+> >>>>> Iteration 2: swpout inc: 231, swpout fallback inc: 0, Fallback perc=
+entage: 0.00%
+> >>>>> Iteration 3: swpout inc: 227, swpout fallback inc: 0, Fallback perc=
+entage: 0.00%
+> >>>>> Iteration 4: swpout inc: 217, swpout fallback inc: 5, Fallback perc=
+entage: 2.25%
+> >>>>> Iteration 5: swpout inc: 215, swpout fallback inc: 12, Fallback per=
+centage: 5.29%
+> >>>>> Iteration 6: swpout inc: 213, swpout fallback inc: 14, Fallback per=
+centage: 6.17%
+> >>>>> Iteration 7: swpout inc: 207, swpout fallback inc: 15, Fallback per=
+centage: 6.76%
+> >>>>> Iteration 8: swpout inc: 193, swpout fallback inc: 33, Fallback per=
+centage: 14.60%
+> >>>>> Iteration 9: swpout inc: 214, swpout fallback inc: 13, Fallback per=
+centage: 5.73%
+> >>>>> Iteration 10: swpout inc: 199, swpout fallback inc: 25, Fallback pe=
+rcentage: 11.16%
+> >>>>> Iteration 11: swpout inc: 208, swpout fallback inc: 14, Fallback pe=
+rcentage: 6.31%
+> >>>>> Iteration 12: swpout inc: 203, swpout fallback inc: 31, Fallback pe=
+rcentage: 13.25%
+> >>>>> Iteration 13: swpout inc: 192, swpout fallback inc: 25, Fallback pe=
+rcentage: 11.52%
+> >>>>> Iteration 14: swpout inc: 193, swpout fallback inc: 36, Fallback pe=
+rcentage: 15.72%
+> >>>>> Iteration 15: swpout inc: 188, swpout fallback inc: 33, Fallback pe=
+rcentage: 14.93%
+> >>>>> ...
+> >>>>>
+> >>>>> It seems Chris's approach can be negatively affected even by aligne=
+d swapin,
+> >>>>> having a low fallback ratio but not 0% while Ryan's patchset hasn't=
+ this
+> >>>>> issue.
+> >>>>>
+> >>>>> 2. w/o -a
+> >>>>> ./thp_swap_allocator_test
+> >>>>> Iteration 1: swpout inc: 209, swpout fallback inc: 24, Fallback per=
+centage: 10.30%
+> >>>>> Iteration 2: swpout inc: 100, swpout fallback inc: 132, Fallback pe=
+rcentage: 56.90%
+> >>>>> Iteration 3: swpout inc: 43, swpout fallback inc: 183, Fallback per=
+centage: 80.97%
+> >>>>> Iteration 4: swpout inc: 30, swpout fallback inc: 193, Fallback per=
+centage: 86.55%
+> >>>>> Iteration 5: swpout inc: 21, swpout fallback inc: 205, Fallback per=
+centage: 90.71%
+> >>>>> Iteration 6: swpout inc: 10, swpout fallback inc: 214, Fallback per=
+centage: 95.54%
+> >>>>> Iteration 7: swpout inc: 16, swpout fallback inc: 212, Fallback per=
+centage: 92.98%
+> >>>>> Iteration 8: swpout inc: 9, swpout fallback inc: 219, Fallback perc=
+entage: 96.05%
+> >>>>> Iteration 9: swpout inc: 6, swpout fallback inc: 220, Fallback perc=
+entage: 97.35%
+> >>>>> Iteration 10: swpout inc: 7, swpout fallback inc: 221, Fallback per=
+centage: 96.93%
+> >>>>> Iteration 11: swpout inc: 7, swpout fallback inc: 222, Fallback per=
+centage: 96.94%
+> >>>>> Iteration 12: swpout inc: 8, swpout fallback inc: 212, Fallback per=
+centage: 96.36%
+> >>>>> ..
+> >>>>>
+> >>>>> Ryan's fallback ratio(around 85%) seems to be a little better while=
+ both are much
+> >>>>> worse than "-a".
+> >>>>>
+> >>>>> 3. w/ -a and -s
+> >>>>> ./thp_swap_allocator_test -a -s
+> >>>>> Iteration 1: swpout inc: 224, swpout fallback inc: 0, Fallback perc=
+entage: 0.00%
+> >>>>> Iteration 2: swpout inc: 213, swpout fallback inc: 5, Fallback perc=
+entage: 2.29%
+> >>>>> Iteration 3: swpout inc: 215, swpout fallback inc: 7, Fallback perc=
+entage: 3.15%
+> >>>>> Iteration 4: swpout inc: 210, swpout fallback inc: 16, Fallback per=
+centage: 7.08%
+> >>>>> Iteration 5: swpout inc: 212, swpout fallback inc: 10, Fallback per=
+centage: 4.50%
+> >>>>> Iteration 6: swpout inc: 215, swpout fallback inc: 18, Fallback per=
+centage: 7.73%
+> >>>>> Iteration 7: swpout inc: 181, swpout fallback inc: 43, Fallback per=
+centage: 19.20%
+> >>>>> Iteration 8: swpout inc: 173, swpout fallback inc: 55, Fallback per=
+centage: 24.12%
+> >>>>> Iteration 9: swpout inc: 163, swpout fallback inc: 54, Fallback per=
+centage: 24.88%
+> >>>>> Iteration 10: swpout inc: 168, swpout fallback inc: 59, Fallback pe=
+rcentage: 25.99%
+> >>>>> Iteration 11: swpout inc: 154, swpout fallback inc: 69, Fallback pe=
+rcentage: 30.94%
+> >>>>> Iteration 12: swpout inc: 166, swpout fallback inc: 66, Fallback pe=
+rcentage: 28.45%
+> >>>>> Iteration 13: swpout inc: 165, swpout fallback inc: 53, Fallback pe=
+rcentage: 24.31%
+> >>>>> Iteration 14: swpout inc: 158, swpout fallback inc: 68, Fallback pe=
+rcentage: 30.09%
+> >>>>> Iteration 15: swpout inc: 168, swpout fallback inc: 57, Fallback pe=
+rcentage: 25.33%
+> >>>>> Iteration 16: swpout inc: 165, swpout fallback inc: 53, Fallback pe=
+rcentage: 24.31%
+> >>>>> Iteration 17: swpout inc: 163, swpout fallback inc: 49, Fallback pe=
+rcentage: 23.11%
+> >>>>> Iteration 18: swpout inc: 172, swpout fallback inc: 62, Fallback pe=
+rcentage: 26.50%
+> >>>>> Iteration 19: swpout inc: 183, swpout fallback inc: 43, Fallback pe=
+rcentage: 19.03%
+> >>>>> Iteration 20: swpout inc: 158, swpout fallback inc: 73, Fallback pe=
+rcentage: 31.60%
+> >>>>> Iteration 21: swpout inc: 147, swpout fallback inc: 81, Fallback pe=
+rcentage: 35.53%
+> >>>>> Iteration 22: swpout inc: 140, swpout fallback inc: 86, Fallback pe=
+rcentage: 38.05%
+> >>>>> Iteration 23: swpout inc: 144, swpout fallback inc: 79, Fallback pe=
+rcentage: 35.43%
+> >>>>> Iteration 24: swpout inc: 132, swpout fallback inc: 101, Fallback p=
+ercentage: 43.35%
+> >>>>> Iteration 25: swpout inc: 133, swpout fallback inc: 82, Fallback pe=
+rcentage: 38.14%
+> >>>>> Iteration 26: swpout inc: 152, swpout fallback inc: 78, Fallback pe=
+rcentage: 33.91%
+> >>>>> Iteration 27: swpout inc: 138, swpout fallback inc: 81, Fallback pe=
+rcentage: 36.99%
+> >>>>> Iteration 28: swpout inc: 152, swpout fallback inc: 74, Fallback pe=
+rcentage: 32.74%
+> >>>>> Iteration 29: swpout inc: 153, swpout fallback inc: 75, Fallback pe=
+rcentage: 32.89%
+> >>>>> Iteration 30: swpout inc: 151, swpout fallback inc: 74, Fallback pe=
+rcentage: 32.89%
+> >>>>> ...
+> >>>>>
+> >>>>> Chris's approach appears to be more susceptible to negative effects=
+ from
+> >>>>> small folios.
+> >>>>>
+> >>>>> 4. w/o -a and w/ -s
+> >>>>> ./thp_swap_allocator_test -s
+> >>>>> Iteration 1: swpout inc: 183, swpout fallback inc: 50, Fallback per=
+centage: 21.46%
+> >>>>> Iteration 2: swpout inc: 75, swpout fallback inc: 157, Fallback per=
+centage: 67.67%
+> >>>>> Iteration 3: swpout inc: 33, swpout fallback inc: 201, Fallback per=
+centage: 85.90%
+> >>>>> Iteration 4: swpout inc: 11, swpout fallback inc: 222, Fallback per=
+centage: 95.28%
+> >>>>> Iteration 5: swpout inc: 10, swpout fallback inc: 215, Fallback per=
+centage: 95.56%
+> >>>>> Iteration 6: swpout inc: 7, swpout fallback inc: 221, Fallback perc=
+entage: 96.93%
+> >>>>> Iteration 7: swpout inc: 2, swpout fallback inc: 221, Fallback perc=
+entage: 99.10%
+> >>>>> Iteration 8: swpout inc: 4, swpout fallback inc: 217, Fallback perc=
+entage: 98.19%
+> >>>>> Iteration 9: swpout inc: 0, swpout fallback inc: 225, Fallback perc=
+entage: 100.00%
+> >>>>> Iteration 10: swpout inc: 3, swpout fallback inc: 227, Fallback per=
+centage: 98.70%
+> >>>>> Iteration 11: swpout inc: 1, swpout fallback inc: 217, Fallback per=
+centage: 99.54%
+> >>>>> Iteration 12: swpout inc: 2, swpout fallback inc: 229, Fallback per=
+centage: 99.13%
+> >>>>> Iteration 13: swpout inc: 1, swpout fallback inc: 214, Fallback per=
+centage: 99.53%
+> >>>>> Iteration 14: swpout inc: 2, swpout fallback inc: 220, Fallback per=
+centage: 99.10%
+> >>>>> Iteration 15: swpout inc: 1, swpout fallback inc: 224, Fallback per=
+centage: 99.56%
+> >>>>> Iteration 16: swpout inc: 3, swpout fallback inc: 224, Fallback per=
+centage: 98.68%
+> >>>>> ...
+> >>>>>
+> >>>>> Barry Song (1):
+> >>>>>   tools/mm: Introduce a tool to assess swap entry allocation for
+> >>>>>     thp_swapout
+> >>>>>
+> >>>>>  tools/mm/Makefile                  |   2 +-
+> >>>>>  tools/mm/thp_swap_allocator_test.c | 233 +++++++++++++++++++++++++=
+++++
+> >>>>>  2 files changed, 234 insertions(+), 1 deletion(-)
+> >>>>>  create mode 100644 tools/mm/thp_swap_allocator_test.c
+> >>>>>
+> >>>>
+> >>>
+> >
+
+Thanks
+Barry
 
