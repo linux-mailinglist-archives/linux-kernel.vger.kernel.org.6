@@ -1,107 +1,118 @@
-Return-Path: <linux-kernel+bounces-232336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBDB691A6FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:52:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 530C291A6F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:52:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 420E2B281C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:52:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F151E1F274C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5245F17837F;
-	Thu, 27 Jun 2024 12:52:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9AE617921D;
+	Thu, 27 Jun 2024 12:52:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O9ORE5cA"
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gomFNyTo"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304DD179965
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 829FF178392
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719492738; cv=none; b=AnTLsZa+uUBYBkNvQh8Dxn0VBM0W6PXSbhaTQDTwBwk84Fl4bPlh9bVH6tekv7zwi3RtBpIjA1K2FxrEgCR6TLD7Kmonqk+pzV62i+quHFu0WH9QGNta2GYNWFLQ3DplCkQZN+uBA7VvezwyKvfKlyKzuk++BGj+NvVmO6icr4c=
+	t=1719492729; cv=none; b=P2sxnNWnlrVwWFsy+hVKGMbnb64tOX1e9dmLUGWjzeSuVD/qbrnB/7FcePkTDnA09Kzca1xBs+aoPpVkDEQU+tf+LpbIjy9Qkf5qKmzFv/PQgOhHnL+YQ/b6wi4wBa/7TQhxfcHsoMD7WlZvsrRRf46Yxb93sJYS6BtSZhOJN10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719492738; c=relaxed/simple;
-	bh=8SEy60tLgqITD2TXVw/zdvXoPhDfJC5BYVCiFB77xfY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VB37bxHAgb0WrNlx7WUJvvVoZ8wDMmfOCo7fbIUyYUERpeMwUrri5ImRLV2BTjK8iIQ+N2ZrypX75mOJVa37S0P1hDALiBPUJYXV82YT6J0FD4rrHJD0bhlgMhrecvVs5MVicObZLHr5jXUFSWleeOIByV3wjVYxseVL1P6xdT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O9ORE5cA; arc=none smtp.client-ip=209.85.210.42
+	s=arc-20240116; t=1719492729; c=relaxed/simple;
+	bh=tra7GUSYxOuDci7FtdSU9K1mGynWhG/R6z58PtzsNuY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TW/RdVJKwaeNyqop7haRletOVLSEA49ibzrU5rpOYj3IBdsZD8ieqn0e+WbfFc1Tk8sriZPmj80fGCpYWsNCfwDbAB2v5KRzdfJFgRPW2oCJlO1fVc0DPxHHQ0uBONix5C+aw1SjXwHaVklfyeVTf+4zlC8pXQMoEfzb3bQzFMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gomFNyTo; arc=none smtp.client-ip=209.85.208.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-700cc97b220so1452225a34.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 05:52:17 -0700 (PDT)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57d457357easo1667116a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 05:52:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719492736; x=1720097536; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4ryvr8s3n24BsAODCzxgbGJ2w9hKSHLd//YXsMR2ZNo=;
-        b=O9ORE5cAQicCbJmnT0Q1V3kyRN38QHbIzmsds28pgnu9mhdMOPY/qXxq7D/g+SrJaY
-         IEg1yso+Z/KqUpNewpFPYhkXZDgrSEaQewmd8d3FtemX2Jem+uuT3VYGDWhvvuf3TAiw
-         /Jyg7VWWME45gWrWnqyK9B3iAmHwDSYAHKV7xogkAXW3WizY11LQtailHXXBMh9xr5HU
-         pZofgq9EC49GgthM17yen+KoMFP1tVdBmMlUhNP/R/F+GOKL6moSJA4BPu9HyOO4nsth
-         MyJiytOi2s7Y1t09rKzOr7Uuo2zKV5crdu+f9I68Q9ajaJ88hTD0osxUytGPJ1ugtGs3
-         +ROg==
+        d=linaro.org; s=google; t=1719492726; x=1720097526; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=v3fWxjkujTAEOZu9H+o5L8JwDxceIiaHODnF69xqvKE=;
+        b=gomFNyToBAdgDn5PmOju2FhScuPRSWPbSAQP25+y86WCtWFwCAq8/hNixwUsWASf5f
+         R7r7dTMtZY+w/ycpAg+wFBq8up2KgQ5TOw6QovgBIdhFTQiLvIDbkV3MA7kajzbQYQZp
+         Mh2fZVlEMDV+6ikklU4cku9bjNCcwKKkI0odifx2b0LNFZdHdI63/VSZOiODfXGNO38Q
+         TITJmMUx2AAThn6DBci5alD5/zlVx1GkfbeJVC3tM+eGAzmy6wYBRKh3P/6EjUct15OE
+         PptfdJLr/XaCU/zzwXzcSa6PVKZzsS9TdFlt+K8Qrqf1P1+C8jmL15yj3hSg8bRZTNUB
+         TWFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719492736; x=1720097536;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4ryvr8s3n24BsAODCzxgbGJ2w9hKSHLd//YXsMR2ZNo=;
-        b=w6SsRgXapSYO4cVgdLopUvPGqnY7ReYKv68iuCDLf6Gt5oox8MNmjxGCn+QAQClJw8
-         fUQvi8+vI6Uz0DvIyA1Rm/ToUbLRddoTFW/uRn38ETT1uCMt4Hw9iS0vycSvOmYkqJPr
-         4MY0aIb49DQYwASkoa9M39lYZ4OpW+QUED6Bx24eRgEfbqvwa1jjUiyqHZobmfI4PPpX
-         64iWAe3hmc1sqOYtG1kqRJm5PVU/usq4RdB5BYPF6V6ui8JYO0wxPdj+TcstjW1DQyuR
-         FLMKYPylUzuF9jgzb6ZUbNztARIJNFOfhCoOqVyHBl9en2GcHXDRJknbe69dkjcxvZy1
-         tAEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUdyFKbP1MGMxbEI/6DGYO26HAzwo8sopiCexAZNwpJh+Tlh3Z0f+yz94ESqV+4i5TanX4qi0f37NZ56c+E8FDt39ZcZi5n+ob5Z4TI
-X-Gm-Message-State: AOJu0Yz/bpF2xWrzIqmzEP79jtgKM1FkCdW/ueDvuCTqNcXI7UF2C5k5
-	16WZSHVESXxpq4VJj4uqplbCRB3maLWXwPRi0adrXdepu7lvEXdBBGi96zpqVQIo8PbAqJHxy1G
-	DgtcCqxUmSWhHqfo2UO23qIPc4jFOQ7wsJtmWiQ==
-X-Google-Smtp-Source: AGHT+IElPGgAHLr98QdJ64fPCzoCXcPRTlPI4/hq2ibEtctDV0vse/UXE4eyXhOsEJFVtJIcPQHhEMKweS4CMOEnALI=
-X-Received: by 2002:a9d:6499:0:b0:6f8:fb33:baac with SMTP id
- 46e09a7af769-700b11b2c34mr14344557a34.13.1719492736273; Thu, 27 Jun 2024
- 05:52:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719492726; x=1720097526;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=v3fWxjkujTAEOZu9H+o5L8JwDxceIiaHODnF69xqvKE=;
+        b=AqdzB/vdVY6k7URNAujPh3q/oSEdoo55zBlH1zo9F40pfEV8VwihH2q0FYChcR//j8
+         CuSgitV7g4k5FLEXyTYEw3ojSSdPnrssEfafudMQZbCEmcnyhoBLhjyrEQ6rf7r3LzGR
+         x4ciT0vU3A2J3L6hp2/K3puXD43sPSVl09tn6CYwhq1r78nYLRgVlk7EBmJKCKoO5bSD
+         tqxaNT/RJhisvz+r4Zd4weaMLJw3X4zFgaj+jmRYfvyLCQ/LDX+Vxc5BdgP4tH+dRs+e
+         C384v30HEaNqRq6cZF+Y9+P722aODjF3zZ8PqmsUq/S9Fx2B8BebRkNSMoRHg3ytYDO/
+         YM2w==
+X-Forwarded-Encrypted: i=1; AJvYcCX6YAvwMJiJYms+V0c0J+3Cce785ZmV7GiyXHsbGGjDTcJn6UsuUL/026FyWIkbQCxWtw2/k+uJdwpFcNfLVIt+8cMAKnnGp+5qfbFj
+X-Gm-Message-State: AOJu0Yy9ovijGVcghAlAhgTHOlS+okSa25i3jHQZvP9TNN/CDT4GBB/E
+	l3l9QZ58qIH/9slFyEkDo5se/alwccWOYfR5IaUsege8QWLlScU7R697qWrZK5A=
+X-Google-Smtp-Source: AGHT+IGET1esYfbROqvvZkY8IDH7ijftBgO2xjdYktEdnF7Izv3Kvy1Oe00gyYjczpk4u/qLWxjp/A==
+X-Received: by 2002:a17:906:a8d:b0:a6f:b940:10b with SMTP id a640c23a62f3a-a7245c824admr801852466b.62.1719492725815;
+        Thu, 27 Jun 2024 05:52:05 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a729d71f271sm57248666b.61.2024.06.27.05.52.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 05:52:05 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: kernel test robot <lkp@intel.com>
+Subject: [PATCH] ASoC: codecs: lpass-wsa-macro: add missing select of common code
+Date: Thu, 27 Jun 2024 14:52:03 +0200
+Message-ID: <20240627125203.171048-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240627065911.4157-1-mark-pk.tsai@mediatek.com>
-In-Reply-To: <20240627065911.4157-1-mark-pk.tsai@mediatek.com>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Thu, 27 Jun 2024 14:52:03 +0200
-Message-ID: <CAHUa44GuctLUKPgGxLd3BU7GA1wTf2ir_BwJuWHbcQD_TOU5=w@mail.gmail.com>
-Subject: Re: [PATCH v2] tee: optee: ffa: Fix missing-field-initializers warning
-To: Mark-PK Tsai <mark-pk.tsai@mediatek.com>
-Cc: Sumit Garg <sumit.garg@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, yj.chiang@mediatek.com, 
-	"ming-jen . chang" <ming-jen.chang@mediatek.com>, op-tee@lists.trustedfirmware.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 27, 2024 at 8:59=E2=80=AFAM Mark-PK Tsai <mark-pk.tsai@mediatek=
-.com> wrote:
->
-> The 'missing-field-initializers' warning was reported
-> when building with W=3D2.
-> This patch use designated initializers for
-> 'struct ffa_send_direct_data' to suppress the warning
-> and clarify the initialization intent.
->
-> Signed-off-by: ming-jen.chang <ming-jen.chang@mediatek.com>
-> Signed-off-by: Mark-PK Tsai <mark-pk.tsai@mediatek.com>
-> ---
->  drivers/tee/optee/ffa_abi.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
+The Qualcomm LPASS WSA macro codec driver uses now parts of common
+module, so it has to select SND_SOC_LPASS_MACRO_COMMON.
 
-I'm picking up this.
+  sound/soc/codecs/lpass-wsa-macro.o: in function `wsa_macro_probe':
+  sound/soc/codecs/lpass-wsa-macro.c:2767:(.text+0x1c9c): undefined reference to `lpass_macro_get_codec_version'
 
-Thanks,
-Jens
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202406272231.th1LtuLk-lkp@intel.com/
+Fixes: 5dcf442bbbca ("ASoC: codecs: lpass-wsa-macro: Prepare to accommodate new codec versions")
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ sound/soc/codecs/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+index a99cb26eb280..36dabc045868 100644
+--- a/sound/soc/codecs/Kconfig
++++ b/sound/soc/codecs/Kconfig
+@@ -2538,6 +2538,7 @@ config SND_SOC_LPASS_MACRO_COMMON
+ config SND_SOC_LPASS_WSA_MACRO
+ 	depends on COMMON_CLK
+ 	select REGMAP_MMIO
++	select SND_SOC_LPASS_MACRO_COMMON
+ 	tristate "Qualcomm WSA Macro in LPASS(Low Power Audio SubSystem)"
+ 
+ config SND_SOC_LPASS_VA_MACRO
+-- 
+2.43.0
+
 
