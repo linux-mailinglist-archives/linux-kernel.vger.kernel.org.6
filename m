@@ -1,137 +1,107 @@
-Return-Path: <linux-kernel+bounces-232323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EB7091A6D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:45:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBDB691A6FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:52:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4A151C20E30
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:45:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 420E2B281C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:52:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A561317839F;
-	Thu, 27 Jun 2024 12:45:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5245F17837F;
+	Thu, 27 Jun 2024 12:52:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WYEqjhng"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O9ORE5cA"
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813A11581E1;
-	Thu, 27 Jun 2024 12:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304DD179965
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719492351; cv=none; b=tr/xUL4B5iJBwpPaI+HoqaQdra3c9qrtep6yX+SntJPHT/vBwETFBjAWkbOdwwWE430YVG/zp2+lM8OwxbmUWcShHAzXONqkZ1a0YTmq2Ea7yHpgXR0sadRJXLbO7u6jzLi84/pjB2KVSLOVWk2PdXXVfNftLtW0E6nD/3RXFWY=
+	t=1719492738; cv=none; b=AnTLsZa+uUBYBkNvQh8Dxn0VBM0W6PXSbhaTQDTwBwk84Fl4bPlh9bVH6tekv7zwi3RtBpIjA1K2FxrEgCR6TLD7Kmonqk+pzV62i+quHFu0WH9QGNta2GYNWFLQ3DplCkQZN+uBA7VvezwyKvfKlyKzuk++BGj+NvVmO6icr4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719492351; c=relaxed/simple;
-	bh=kzLjW83/58j+7eIFdoNOekMG35rdMimMsZmjjIIOGrc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t/KfRZeC/MgT52Aq8PZAp3Tl69NmoyfW1eddSlniuTE3u2jhqjCsG/WJtBkiSkm1Yc+pOhp6XHQFH/zWGH6VoNwVq9lA7EpyKUQY7Fbz9t7YDQJRwv+KrCHwxVi+zcptBt14jDLXHGeWYVXyqJDPlsLJJy+SPkCLiA2sQtyr+qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WYEqjhng; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719492350; x=1751028350;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=kzLjW83/58j+7eIFdoNOekMG35rdMimMsZmjjIIOGrc=;
-  b=WYEqjhngbr+AhKtMm3xbhijVRNtF0LWwqZpJdNBKLZyiZ2eVIfYuXD4C
-   N9RUUFOY5XYBh+nqtvSs3wWsNSOEgkpLig1d4McmCDIWRVELzEuOvS02Z
-   YuaSHpGcBvT6WumS2FJskNYu2W+UflUI0jhoPG3zrxt3+ydJJJTXd64wO
-   ua8D8VSH25OIb7r49aTvshbXOs/GeMEtEnUBYRMWnk1VXPmSHKOdpVt4i
-   KuzfP+qonOS9sA9RfmlBAPZsFxheWHb34yYxRkw6F4RSq2iSI+TN84ikI
-   vxum4h+IdOwARFIAkJmmiTbapUls3Vhc8/kCd62KRlx/A92cKZZInGcKz
-   g==;
-X-CSE-ConnectionGUID: 7RhWomrxQ/Wjun3wiYn0Lw==
-X-CSE-MsgGUID: prbDpuwuRGW/ER4Q+HxI3A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="19501750"
-X-IronPort-AV: E=Sophos;i="6.09,166,1716274800"; 
-   d="scan'208";a="19501750"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 05:45:49 -0700
-X-CSE-ConnectionGUID: BgCU1k5lST237jrSSf5nGw==
-X-CSE-MsgGUID: faB+XbraTrSzCZHWq2RSIQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,166,1716274800"; 
-   d="scan'208";a="67573958"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 05:45:48 -0700
-Date: Thu, 27 Jun 2024 05:51:54 -0700
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Brice Goglin <brice.goglin@gmail.com>,
-	srinivas pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	daniel.sneddon@linux.intel.com, tony.luck@intel.com,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>
-Subject: Re: [PATCH 0/9] Add CPU-type to topology
-Message-ID: <20240627125154.GA4743@ranerica-svr.sc.intel.com>
-References: <20240617-add-cpu-type-v1-0-b88998c01e76@linux.intel.com>
- <8d757ea3-87a3-4663-ac76-66b04e33e6b3@gmail.com>
- <20240619015315.3ei5f6rovzdnxovo@desk>
- <bc75ff55161671e4470849ed51baa547f619889d.camel@linux.intel.com>
- <0021f5f2-67c5-4b20-939d-48c9c1c60cdb@gmail.com>
- <1b99017a-6964-46de-ba3a-09552e7cf072@intel.com>
+	s=arc-20240116; t=1719492738; c=relaxed/simple;
+	bh=8SEy60tLgqITD2TXVw/zdvXoPhDfJC5BYVCiFB77xfY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VB37bxHAgb0WrNlx7WUJvvVoZ8wDMmfOCo7fbIUyYUERpeMwUrri5ImRLV2BTjK8iIQ+N2ZrypX75mOJVa37S0P1hDALiBPUJYXV82YT6J0FD4rrHJD0bhlgMhrecvVs5MVicObZLHr5jXUFSWleeOIByV3wjVYxseVL1P6xdT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O9ORE5cA; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-700cc97b220so1452225a34.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 05:52:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719492736; x=1720097536; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4ryvr8s3n24BsAODCzxgbGJ2w9hKSHLd//YXsMR2ZNo=;
+        b=O9ORE5cAQicCbJmnT0Q1V3kyRN38QHbIzmsds28pgnu9mhdMOPY/qXxq7D/g+SrJaY
+         IEg1yso+Z/KqUpNewpFPYhkXZDgrSEaQewmd8d3FtemX2Jem+uuT3VYGDWhvvuf3TAiw
+         /Jyg7VWWME45gWrWnqyK9B3iAmHwDSYAHKV7xogkAXW3WizY11LQtailHXXBMh9xr5HU
+         pZofgq9EC49GgthM17yen+KoMFP1tVdBmMlUhNP/R/F+GOKL6moSJA4BPu9HyOO4nsth
+         MyJiytOi2s7Y1t09rKzOr7Uuo2zKV5crdu+f9I68Q9ajaJ88hTD0osxUytGPJ1ugtGs3
+         +ROg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719492736; x=1720097536;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4ryvr8s3n24BsAODCzxgbGJ2w9hKSHLd//YXsMR2ZNo=;
+        b=w6SsRgXapSYO4cVgdLopUvPGqnY7ReYKv68iuCDLf6Gt5oox8MNmjxGCn+QAQClJw8
+         fUQvi8+vI6Uz0DvIyA1Rm/ToUbLRddoTFW/uRn38ETT1uCMt4Hw9iS0vycSvOmYkqJPr
+         4MY0aIb49DQYwASkoa9M39lYZ4OpW+QUED6Bx24eRgEfbqvwa1jjUiyqHZobmfI4PPpX
+         64iWAe3hmc1sqOYtG1kqRJm5PVU/usq4RdB5BYPF6V6ui8JYO0wxPdj+TcstjW1DQyuR
+         FLMKYPylUzuF9jgzb6ZUbNztARIJNFOfhCoOqVyHBl9en2GcHXDRJknbe69dkjcxvZy1
+         tAEw==
+X-Forwarded-Encrypted: i=1; AJvYcCUdyFKbP1MGMxbEI/6DGYO26HAzwo8sopiCexAZNwpJh+Tlh3Z0f+yz94ESqV+4i5TanX4qi0f37NZ56c+E8FDt39ZcZi5n+ob5Z4TI
+X-Gm-Message-State: AOJu0Yz/bpF2xWrzIqmzEP79jtgKM1FkCdW/ueDvuCTqNcXI7UF2C5k5
+	16WZSHVESXxpq4VJj4uqplbCRB3maLWXwPRi0adrXdepu7lvEXdBBGi96zpqVQIo8PbAqJHxy1G
+	DgtcCqxUmSWhHqfo2UO23qIPc4jFOQ7wsJtmWiQ==
+X-Google-Smtp-Source: AGHT+IElPGgAHLr98QdJ64fPCzoCXcPRTlPI4/hq2ibEtctDV0vse/UXE4eyXhOsEJFVtJIcPQHhEMKweS4CMOEnALI=
+X-Received: by 2002:a9d:6499:0:b0:6f8:fb33:baac with SMTP id
+ 46e09a7af769-700b11b2c34mr14344557a34.13.1719492736273; Thu, 27 Jun 2024
+ 05:52:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1b99017a-6964-46de-ba3a-09552e7cf072@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20240627065911.4157-1-mark-pk.tsai@mediatek.com>
+In-Reply-To: <20240627065911.4157-1-mark-pk.tsai@mediatek.com>
+From: Jens Wiklander <jens.wiklander@linaro.org>
+Date: Thu, 27 Jun 2024 14:52:03 +0200
+Message-ID: <CAHUa44GuctLUKPgGxLd3BU7GA1wTf2ir_BwJuWHbcQD_TOU5=w@mail.gmail.com>
+Subject: Re: [PATCH v2] tee: optee: ffa: Fix missing-field-initializers warning
+To: Mark-PK Tsai <mark-pk.tsai@mediatek.com>
+Cc: Sumit Garg <sumit.garg@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, yj.chiang@mediatek.com, 
+	"ming-jen . chang" <ming-jen.chang@mediatek.com>, op-tee@lists.trustedfirmware.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 20, 2024 at 08:06:11AM -0700, Dave Hansen wrote:
-> On 6/19/24 14:25, Brice Goglin wrote:
-> > Good point. From this patch series, I understand that the current kernel
-> > side doesn't care about these different E-cores. However it might be
-> > good to expose them as different cpu-types (or better name) to userspace ?
-> > 
-> > Something like type 0 = P-core, 1 = normal E-core, 2 = low power E-core ?
-> 
-> The first priority here is getting the kernel to comprehend these types
-> for architectural purposes: when there are functional differences
-> between the cores.
-> 
-> Let's get that in place, first.  Then we can discuss the possibility of
-> new ABI in the area.
-> 
-> Did the ARM folks ever do a sysfs ABI for big.LITTLE?  I don't see
-> anything obvious in Documentation/ABI/testing/sysfs-devices-system-cpu.
-> 
+On Thu, Jun 27, 2024 at 8:59=E2=80=AFAM Mark-PK Tsai <mark-pk.tsai@mediatek=
+.com> wrote:
+>
+> The 'missing-field-initializers' warning was reported
+> when building with W=3D2.
+> This patch use designated initializers for
+> 'struct ffa_send_direct_data' to suppress the warning
+> and clarify the initialization intent.
+>
+> Signed-off-by: ming-jen.chang <ming-jen.chang@mediatek.com>
+> Signed-off-by: Mark-PK Tsai <mark-pk.tsai@mediatek.com>
+> ---
+>  drivers/tee/optee/ffa_abi.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
 
-ARM has the interface /sys/devices/system/cpu/cpu0/regs/identification
+I'm picking up this.
 
-Here they show the Main ID Register [A]. This register has CPU
-identification fields such as architecture and other details. The
-architecture can be specified as a number or refer to architecture-specific
-features in other registers.
-
-On my DragonBoard 845c, this interface shows different values for different
-types of CPUs.
-
-For functionality, there is also a /sys/devices/system/cpu/aarch32_el0. It
-lists the CPUs that can 32-bit ARM programs on processors in which only a
-subset of CPUs can do it.
-
-ARM gives userspace specific details. This makes more sense to me. Instead
-of reading these details, user space would have to infer these details if
-a CPU type was given in sysfs.
-
-Having said that, Intel does have a CPUID leaf that gives the CPU type. Such
-leaf also has a "Native Model ID". Exposing only the CPU type may not be
-sufficient.
-
-[A]. https://developer.arm.com/documentation/ddi0595/2020-12/AArch64-Registers/MIDR-EL1--Main-ID-Register
+Thanks,
+Jens
 
