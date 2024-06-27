@@ -1,95 +1,116 @@
-Return-Path: <linux-kernel+bounces-231907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 630A891A02C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:15:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E8F791A02F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:15:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9339E1C20E88
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:15:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCE8C2852BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF644D8A3;
-	Thu, 27 Jun 2024 07:15:03 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E2C481D7;
+	Thu, 27 Jun 2024 07:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KPhMUtlz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F39481CD;
-	Thu, 27 Jun 2024 07:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096C52F41
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 07:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719472502; cv=none; b=pz2JhAw1FFUxuA+7uyWdY6p9NU37RYr3jhiLvWE8Zz7CaJw2sumle2kxMfWrRkE+rXu5ySifxuejxkO3MLl8ThIjozYrmrQp39SJZzk5wMwwVAdO2ZoYq90zt3pn7N7gN4hU2MbAsAXqkllUIFR6xMmaFji0XuT/T7kVq/MOIcU=
+	t=1719472530; cv=none; b=ejRqrf1C11s7UU1F4xFpAyk7eY/lHqRA7M/nGcGQQCRQVS96QxFGFenWig5h9fm/LIZ/5q7JeD6/ndfN2r2B0C7fqNhpXKpwZAoN5lTPHvJNUa1tqo+kbdBXbSpy+Y5nrj2oBBkoSpcy6hFEf+7MbbqsQXaLCfJb0gOyw8wplmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719472502; c=relaxed/simple;
-	bh=jFnL01/BRn6CifS5s+AzxpVexhapTe3xGYsLLz7MEbw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CwlgtM3SKGSoxnM0+dlKZotyngPCoPxnnkph0gYFWtzDvUnu7IqROPVJrugCowiOAgH9K4MpZSScQXdqbCc9H2VZZN+9UHwjjCqY5xAgawuANt/5N5EjDcdlJPh/UkBQTk4gbHn+nyubAlNtZAJw99Fblq1ClPTcLHCB5qi89BY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4W8qX75YQzz1HDJP;
-	Thu, 27 Jun 2024 15:12:39 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1BD4518001B;
-	Thu, 27 Jun 2024 15:14:51 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 27 Jun 2024 15:14:50 +0800
-Message-ID: <8b4353dc-f2bb-2c79-83ae-dc9a95572700@huawei.com>
-Date: Thu, 27 Jun 2024 15:14:49 +0800
+	s=arc-20240116; t=1719472530; c=relaxed/simple;
+	bh=vJTYGJ4aYXC9z7eTs4SAfiTyTPPHXRhEbhAa2JgUdbg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gYM4quYAolLl194HSrkmTE6ewbrmV/pmI5XIfvFHG6aaZTDrgOGW7Sw9VjPmCJAbcQt6LyndYEzgD08SkIMe3T/YxQpPLqFUd+9N66lz7GMpeP4p8e6Cdz+tr+l9oO6p6tepFUToKcZgPdHNy5xleY+aeEUg8eAWGQdcj3tLwow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KPhMUtlz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AB8CC32786;
+	Thu, 27 Jun 2024 07:15:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719472529;
+	bh=vJTYGJ4aYXC9z7eTs4SAfiTyTPPHXRhEbhAa2JgUdbg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=KPhMUtlzGjvaRXQjc2bknCW4E+BB67tKU3CHeehRuAUOypxQIyHEfLs9Im69pVWZz
+	 B1SGYfCH7cj/X7IZO6UQKOtNXcaWlBCPNEN8+V0pG+3naTTY+S0xyrQcY77+aBW8T5
+	 ueYx8VpyIryfzaC4LspGexGk49DLZ0uWy9/g2AzOg/HA6flwfpUW5P7XAaASQWp8Mz
+	 VdwqByLt7DwVeXDAsGknlzhceyhWqJeWfgwWiLnK/rSr9DmxR5/VCWVrvRxHhdUbY0
+	 luAjPCf1VLyny0L8yTz68iftdoeINc5O1AZ6EztR8mEKmGM+mKsd8oZ5ho2/Koe8yF
+	 JLO0s9e7HUDIA==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>
+Subject: [PATCH v3] f2fs: fix to avoid racing in between read and OPU dio write
+Date: Thu, 27 Jun 2024 15:15:21 +0800
+Message-Id: <20240627071521.1557830-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH 1/2] ARM: 9258/1: Fix callchain_trace() return value
-Content-Language: en-US
-To: Linus Walleij <linus.walleij@linaro.org>
-CC: <linux@armlinux.org.uk>, <will@kernel.org>, <mark.rutland@arm.com>,
-	<peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-	<namhyung@kernel.org>, <alexander.shishkin@linux.intel.com>,
-	<jolsa@kernel.org>, <irogers@google.com>, <adrian.hunter@intel.com>,
-	<kan.liang@linux.intel.com>, <arnd@arndb.de>, <afd@ti.com>,
-	<akpm@linux-foundation.org>, <rmk+kernel@armlinux.org.uk>,
-	<eric.devolder@oracle.com>, <robh@kernel.org>, <ardb@kernel.org>,
-	<broonie@kernel.org>, <lihuafei1@huawei.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-perf-users@vger.kernel.org>
-References: <20240618032620.2445395-1-ruanjinjie@huawei.com>
- <20240618032620.2445395-2-ruanjinjie@huawei.com>
- <CACRpkdYAjKMSGmR4pc+LEfZ4NQArvgCEwy=ujzjOQus0K9j40w@mail.gmail.com>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <CACRpkdYAjKMSGmR4pc+LEfZ4NQArvgCEwy=ujzjOQus0K9j40w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemi100008.china.huawei.com (7.221.188.57)
 
+If lfs mode is on, buffered read may race w/ OPU dio write as below,
+it may cause buffered read hits unwritten data unexpectly, and for
+dio read, the race condition exists as well.
 
+Thread A			Thread B
+- f2fs_file_write_iter
+ - f2fs_dio_write_iter
+  - __iomap_dio_rw
+   - f2fs_iomap_begin
+    - f2fs_map_blocks
+     - __allocate_data_block
+      - allocated blkaddr #x
+       - iomap_dio_submit_bio
+				- f2fs_file_read_iter
+				 - filemap_read
+				  - f2fs_read_data_folio
+				   - f2fs_mpage_readpages
+				    - f2fs_map_blocks
+				     : get blkaddr #x
+				    - f2fs_submit_read_bio
+				IRQ
+				- f2fs_read_end_io
+				 : read IO on blkaddr #x complete
+IRQ
+- iomap_dio_bio_end_io
+ : direct write IO on blkaddr #x complete
 
-On 2024/6/26 17:50, Linus Walleij wrote:
-> On Tue, Jun 18, 2024 at 5:23 AM Jinjie Ruan <ruanjinjie@huawei.com> wrote:
-> 
->> perf_callchain_store() return 0 on success, -1 otherwise, fix
->> callchain_trace() to return correct bool value. So walk_stackframe() can
->> have a chance to stop walking the stack ahead.
->>
->> Fixes: 70ccc7c0667b ("ARM: 9258/1: stacktrace: Make stack walk callback consistent with generic code")
->> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> 
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> Please put this into Russell's patch tracker.
+In LFS mode, if there is inflight dio, let's wait for its completion,
+this policy won't cover all race cases, however it is a tradeoff which
+avoids abusing lock around IO paths.
 
-Thank you, I'll put it, and could you please help to review another patch?
+Fixes: f847c699cff3 ("f2fs: allow out-place-update for direct IO in LFS mode")
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+v3:
+- wait for direct IO's completion before read IO.
+ fs/f2fs/file.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-> 
-> Yours,
-> Linus Walleij
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 9e171e138943..76a6043caf27 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -4608,6 +4608,10 @@ static ssize_t f2fs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 		f2fs_trace_rw_file_path(iocb->ki_filp, iocb->ki_pos,
+ 					iov_iter_count(to), READ);
+ 
++	/* In LFS mode, if there is inflight dio, wait for its completion */
++	if (f2fs_lfs_mode(F2FS_I_SB(inode)))
++		inode_dio_wait(inode);
++
+ 	if (f2fs_should_use_dio(inode, iocb, to)) {
+ 		ret = f2fs_dio_read_iter(iocb, to);
+ 	} else {
+-- 
+2.40.1
+
 
