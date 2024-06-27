@@ -1,94 +1,171 @@
-Return-Path: <linux-kernel+bounces-233093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7BD691B22B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 00:23:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3066691B218
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 00:18:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1F0A282381
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:23:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AA101C20E14
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:18:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC9F51A2FA2;
-	Thu, 27 Jun 2024 22:22:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27FF81A0B0F;
+	Thu, 27 Jun 2024 22:18:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JVyPk31/"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L46nkxfl"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 114CF1A2572;
-	Thu, 27 Jun 2024 22:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADE02837F;
+	Thu, 27 Jun 2024 22:18:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719526972; cv=none; b=pvww03BcyQ1uq9opdK+tLFf1U8zO6vMxmUvoogwD1JiUE/jlmJb3xwhsqqPGlbbcVjN6ZfXhOWNHArR6dFMLrWZMJHrHxlS81RIkPWSN5AL3SHYXA8KBKSCRtU5u6DZz8OzrSYFxMQthnh2DWCTNaBjRuRh8God5Qy3DCSJ1eRA=
+	t=1719526694; cv=none; b=Yx0roPm6w3NpyE5fhOmACJi6Ndbc12bkphWzQkXOGRj7ig5PIBTxLCJYFjAnLkezrb1x4t6LoCIZEi9wzF5W6LGQvIg2PnR27SeJoHV/0s2Xz9z5UWvzWv8b5jGNiueNOhx7czo2GxJR8fEG6TDG/+/HurNYAYafTgajkNQlROA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719526972; c=relaxed/simple;
-	bh=P/R/XclvRTQG9UOj5wLHoY4ELYddOw315pivumemjKA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KDD1qZqZST8hZRYXR/ddOeaIvN2+UFCuD67RRcPTANO92p8k6QrrxqOQ9l93DyBiRIH+kaUiEBF5GclLaBJUlM65dXvBPsLHOt4WDO3BLoGrfhJ4P3GQy6gjfI20vtOXjAhd6UJaqcSaJt+SfDeFT1SE5N4aO8Q12gVy+5fnt54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JVyPk31/; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 1F899FF803;
-	Thu, 27 Jun 2024 22:22:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1719526968;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WxKgGfDQehzp1iUgUUGOCUkEwku2cVfuL5zbBLx3j0M=;
-	b=JVyPk31/pm8Xu2mnaPsuukmL8vt+083cuM3QQr40cV+y6KxSpMEfMHn1luJoh1O+asMTvX
-	6ar4ljlyZ7OqT5KzMjkXojfJYZzuqMpjxeHMGOjw4T8umdkLcUTYJCaliKT/5zX/Zlq7Yh
-	iZcdVgM9jRm/34YZ6LiIwu7jI7+IJ7I4u+/QCBC6Bwm98Tm9Hn6WT4MgcNayI4PJLsHpSM
-	WHeC4I2QCLc5DNlFOEbJripfvjfa6zMM1BsCUDle5zpjodE2bR80Cd2E85AvKG7Eko119V
-	7HbaGMIS/GLWgtmtaa2nWoSmj3Mt1wOqfCV/nEE5PI+To6wJ39pDn58BAIdBIg==
-Date: Fri, 28 Jun 2024 00:22:47 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Richard Genoud <richard.genoud@bootlin.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Udit Kumar <u-kumar1@ti.com>,
-	Thomas Richard <thomas.richard@bootlin.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	Esteban Blanc <eblanc@baylibre.com>, linux-rtc@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/3] rtc: tps6594: Add power management support
-Message-ID: <171952691796.520431.13640268921597343270.b4-ty@bootlin.com>
-References: <20240618141851.1810000-1-richard.genoud@bootlin.com>
+	s=arc-20240116; t=1719526694; c=relaxed/simple;
+	bh=798SLS/Iw0zEG0OBQgbocKIte0Gk95Vl9PG1Bk3w/U0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HKjeLu65TE5gBRLaxZcdPx+xBRZeyqivXNbRCx/nq5QQtAsCkZRE7omtZihRKXsR7G7TfcptccBPPNJ6eE/5Hg0RLkDfqn0g+6802fAVcGHBzUA1TblNu7KLED40cdk2wYYM/qVOm75oz+oHxKABC76Pu0vCnkUrcTI32VkkaHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L46nkxfl; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719526692; x=1751062692;
+  h=date:from:to:cc:subject:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=798SLS/Iw0zEG0OBQgbocKIte0Gk95Vl9PG1Bk3w/U0=;
+  b=L46nkxfl15WPn4S5IyCOwfPiisXoK6Q6HxeHVWWkymT045Zn71FK4Cxs
+   jwzll/8OgjHH3uBrkxQH9LkmkiJlHpfSW9dcw4tS5lPWpxTaIsSiyvm6k
+   Q5+Lnok9LZUO36tubCVMYC3nok8mv6IZYUYM9e9btmpj0p0S2RFZsUvIf
+   YrRWcoxXVyI83QHTQDWSUwLIJ0zqyvLJszVUfNwjAO7//cMWMkTQQ6cg9
+   T+L1Br5HEt16ohpFebDTA5SUcPD1gIqJjchd9qdU3cv76Dd18bALn+0uE
+   803AymsvmtUrhBqqo5MzOM3ivxVWFRKQoe6P6ztATD2NZ9muXeWUN59my
+   w==;
+X-CSE-ConnectionGUID: Jz59CrcGQ8i6xkGmjbiqQQ==
+X-CSE-MsgGUID: BgeJWbpvROabnjw1WTn5iQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="16572803"
+X-IronPort-AV: E=Sophos;i="6.09,167,1716274800"; 
+   d="scan'208";a="16572803"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 15:18:12 -0700
+X-CSE-ConnectionGUID: yfUl4xnVS+qufN3l1zUNQA==
+X-CSE-MsgGUID: czu3RS6BQRSCCwsTHeJP0Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,167,1716274800"; 
+   d="scan'208";a="82078302"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.54.39.125])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 15:18:11 -0700
+Date: Thu, 27 Jun 2024 15:23:22 -0700
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+To: Sohil Mehta <sohil.mehta@intel.com>
+Cc: X86 Kernel <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>, Dave Hansen
+ <dave.hansen@intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar
+ <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ <linux-perf-users@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Andi Kleen <andi.kleen@intel.com>, Xin Li <xin3.li@intel.com>,
+ jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH v2 1/6] x86/irq: Add enumeration of NMI source reporting
+ CPU feature
+Message-ID: <20240627152102.592a20f5@jacob-builder>
+In-Reply-To: <004f6400-0d35-4c5e-ad31-094be8860f08@intel.com>
+References: <20240611165457.156364-1-jacob.jun.pan@linux.intel.com>
+ <20240611165457.156364-2-jacob.jun.pan@linux.intel.com>
+ <b3b10d29-857e-402b-95b9-1696baa88e81@intel.com>
+ <20240621164615.051217c4@jacob-builder>
+ <004f6400-0d35-4c5e-ad31-094be8860f08@intel.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240618141851.1810000-1-richard.genoud@bootlin.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, 18 Jun 2024 16:18:48 +0200, Richard Genoud wrote:
-> This series add power management support for tps6594_rtc.
+
+On Fri, 21 Jun 2024 18:08:14 -0700, Sohil Mehta <sohil.mehta@intel.com>
+wrote:
+
+> >> diff --git a/arch/x86/kernel/cpu/cpuid-deps.c
+> >> b/arch/x86/kernel/cpu/cpuid-deps.c
+> >> index b7d9f530ae16..39526041e91a 100644
+> >> --- a/arch/x86/kernel/cpu/cpuid-deps.c
+> >> +++ b/arch/x86/kernel/cpu/cpuid-deps.c
+> >> @@ -84,6 +84,7 @@ static const struct cpuid_dep cpuid_deps[] = {
+> >>         { X86_FEATURE_SHSTK,                    X86_FEATURE_XSAVES
+> >> }, { X86_FEATURE_FRED,                     X86_FEATURE_LKGS      },
+> >>         { X86_FEATURE_FRED,                     X86_FEATURE_WRMSRNS
+> >> },
+> >> +       { X86_FEATURE_NMI_SOURCE,		X86_FEATURE_FRED
+> >> }, {}
+> >>  };  
+> > If FRED is never reported by CPUID, then there would not be any calls to
+> > setup_clear_cpu_cap(X86_FEATURE_FRED), so this table does not help clear
+> > the dependent NMI_SOURCE, right?
+> >   
 > 
-> The 1st patch fixes a memleak found in the probe()
-> The 2nd patch simply introduce a private structure as drvdata that will
-> be used in the 3rd patch. (no functionnal change)
-> The 3rd patch introduce the power management support.
+> I thought there was a common function for all features. I expected it to
+> go through each feature and clear the ones whose dependency is missing.
+> But I can't find it easily. Maybe someone else knows this better.
 > 
-> [...]
+> However, anytime do_clear_cpu_cap() is called for any feature it does
+> the below and scans the cpuid_deps table to clear all features with
+> missing dependencies. That would cause X86_FEATURE_NMI_SOURCE to be
+> cleared one way or another.
+I don't think this is true. For a simplified example:
+cpuid_deps has the following feature-depends pairs.
+[1, 3]
+[2, 3]
+now, do_clear_cpu_cap(c, 2)
 
-Applied, thanks!
+Before the loop below __set_bit(feature, disable), bit 2 is set. 
 
-[1/3] rtc: tps6594: Fix memleak in probe
-      https://git.kernel.org/abelloni/c/94d4154792ab
-[2/3] rtc: tps6594: introduce private structure as drvdata
-      https://git.kernel.org/abelloni/c/29bf97586f18
-[3/3] rtc: tps6594: Add power management support
-      https://git.kernel.org/abelloni/c/c88014c7aa5c
+Since there is no other features depend on 2, the loop below will not clear
+any other features. no?
 
-Best regards,
+> 
+> 
+> 	/* Loop until we get a stable state. */
+> 	do {
+> 		changed = false;
+> 		for (d = cpuid_deps; d->feature; d++) {
+> 			if (!test_bit(d->depends, disable))
+> 				continue;
+> 			if (__test_and_set_bit(d->feature, disable))
+> 				continue;
+> 
+> 			changed = true;
+> 			clear_feature(c, d->feature);
+> 		}
+> 	} while (changed);
+> 
+> 
+> > In the next version, I will add runtime disable if HW malfunctions.
+> > i.e. no valid bitmask.
+> >   
+> 
+> I don't think we do this for other features that have a missing
+> dependency. It doesn't seem NMI source is any different from them.
+> 
+NMI source is an optimization with a fallback path *always* available. In
+that sense, it can be disabled at runtime without losing functionality.
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+The closest analogy I can think of are timers for clocksources where we use
+higher ranking/cheaper timers first, and only resort to other timers in
+case the primary/optimal one fails.
+
+e.g.
+root@984fee003c4f:~/jacob# cat
+/sys/devices/system/clocksource/clocksource0/available_clocksource  
+tsc hpet acpi_pm
+
+
+Thanks,
+
+Jacob
 
