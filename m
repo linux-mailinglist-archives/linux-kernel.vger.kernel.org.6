@@ -1,144 +1,195 @@
-Return-Path: <linux-kernel+bounces-232853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8597891AF0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:28:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6CD091AF11
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:28:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C6A11F21B9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:28:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5925E28B468
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82AAD19B590;
-	Thu, 27 Jun 2024 18:27:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6476519AD93;
+	Thu, 27 Jun 2024 18:28:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q7znGRx8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="FlVezMTI"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A6D1CD31;
-	Thu, 27 Jun 2024 18:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E356A197A98
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 18:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719512874; cv=none; b=iuSzD1vfkrxxJA8+mqGTLhXF5WFTCF8r7zxow6ZME9mcDTibA7nfwcouVBHpLfnrs20c1iD2V6Bkxww0UiVUqSOTw320xWn2Fxg+MFcE9A/v0n84/5ZpwRm4pID81O6r5h+8hPsNTiQ475PzwaPpCUs9RZ+G0ylLqjnRPyLwOIc=
+	t=1719512897; cv=none; b=oHdW7ZS95YDsgth9qRasCA3kLViCBWru8wSZWpWAHE5ZcQXn1bApzl+qB/fPe9G/HNgvLRephhdqJEqHIo3g7zt31dqtZ9k4nGXoy3WUbbRFCnKrtlyqTFXdeMKIlla+rm80cNA2aBoGFNoMg9Ow9ETT/EZwDjO5uCh0Aff8Wv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719512874; c=relaxed/simple;
-	bh=56QYmCBCQi/U60YRIiiZR8AMhOLTG5V5s76fX5jQUSM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G3QUaNLI5Q4Fqk5rvXm/M+oGENomV1SPK1Dq9eEhOvCN5qwOMGImokXrBps/oLWnDLtstb48npWdLznOf7pRC8s1rY3+xUMhaAjvgaa/Dc0l0Sh1S9vasz2uU9NyWB3MSWzRHRTdTsVOgZYqAG/uAEwwa/Dmh48oE+jds45mqBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q7znGRx8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3274FC2BBFC;
-	Thu, 27 Jun 2024 18:27:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719512874;
-	bh=56QYmCBCQi/U60YRIiiZR8AMhOLTG5V5s76fX5jQUSM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=q7znGRx8fLQuyLACpS97kAQkC9YTDrHlHEuoimH170Gho8I6SiyxM6S9nIXF33a2E
-	 4xr9N2wLF4+1qbBOskS3CyjBU0lc9GU7yk6mWdz6zSiMCQejH4BrlMLtaG/YCJE+g9
-	 TbzVPqBDllme3w9WDvhd+M4JgDMwCIybxgR8FVCakRBjj8EKS2cM4pDKkWmgp7juuj
-	 8ORbi3ppyeSxnH05mXnW7eUtsk8ni2OZJCw8EaUlUspfl4eecDL/ksyuSiVveW/vTg
-	 LjXge+8hcVW1bLfyfFjodb2uji+8liMkI2hTKxkmhBXk8kiRXSlowjX+ve7j/YSZjv
-	 wKHRNglX8v1fg==
-Date: Thu, 27 Jun 2024 11:27:53 -0700
-From: Kees Cook <kees@kernel.org>
-To: Mirsad Todorovac <mtodorovac69@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Kernel Build System <linux-kbuild@vger.kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Andy Shevchenko <andy@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>, Song Liu <song@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Zhen Lei <thunder.leizhen@huawei.com>,
-	Ard Biesheuvel <ardb@kernel.org>, Xin Li <xin3.li@intel.com>,
-	Michael Roth <michael.roth@amd.com>, linux-mm@kvack.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PROBLEM] randconfig: =?utf-8?B?Li9p?=
- =?utf-8?Q?nclude=2Flinux=2Ffortify-string=2Eh=3A122=3A33=3A_error=3A_?=
- =?utf-8?B?4oCYX19idWlsdGluX3N0cmNweeKAmSBzb3VyYw==?= =?utf-8?Q?e?= argument
- is the same as destination [-Werror=restrict]
-Message-ID: <202406271127.CEAE5F4E@keescook>
-References: <f2d1425e-dc7d-444f-ba8d-4aac0c8fc882@gmail.com>
+	s=arc-20240116; t=1719512897; c=relaxed/simple;
+	bh=znZYdAxiCH+A4HSUYxdQ4KMlHNsFqZCMj0c2MPydib8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QvdrDG0FB86I+YBtRqP49mZw3CvmXM7Sdl5wWTUiNd4Uh4uL6x1naYoFTUbEbNTFuQLQXJDfvaJw9YL2rREDITrq0et2YFGDykHkruAYH6ohJ5ebA2rOZgm7zLjld6tkcGCTz9VzsXFhi2iphzYIhTtlQWisx+VQSQ13s410ELA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=FlVezMTI; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dff06b3f413so7636671276.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 11:28:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1719512895; x=1720117695; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=98TupyMqQC1h7iKyPO2OiBrTMZxN0LnlBq3D8HsG6iQ=;
+        b=FlVezMTIJ/YQ4YAZO1HeMEoptpvxo2jXd8OtgBagb7MKfOcjl8UXlWsLccw9whwbDr
+         WSd399nKg2hNajER0xXnqT9YoXVUd3RwfpWU+I6NXmOPNTyfEoIpTwfOUcFN54F6hI4r
+         hwQsQ+/8n7RRqldW0MSDarJmxBVGQIGr4UkLsiMSt82FKSGYLCHJSnmSrDJGCM0HVANJ
+         Z8ah9LT6y6hyt+xN4deOn0aOt05wUYyOb3HzMlD6h9er01atVnwb31RCidUH36D43Vyr
+         LvZQUEylBWyJuIUkW96WsHQLl5PlZbwmHnrkJMNtXgUutatlzhleoSVoprWtvmrDsH3N
+         jxMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719512895; x=1720117695;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=98TupyMqQC1h7iKyPO2OiBrTMZxN0LnlBq3D8HsG6iQ=;
+        b=CZnyXxEaN4uSW8Y6xNrWqHlbmIj24XKz3X4cZjDX1n76f6IAwmKAA5BmMY4yvfVcS8
+         JNXKOQv/vYkMWBjmLyalsawz1yNwP2rLfHwJKZwcBcHZDINBDRvCGFRKPG7G9Yvow0sU
+         dqbCDVytd8eWW7nGR/ZqhyFtUr/Kb+RtIvp/4dnJHJWSKu5FzPl4mMsolCFuyUK0PBzj
+         OV1vr8JUXgV7i4DX3L86Aodmzv5P5ObJ/DyzrJMTZ7o7Y+1JjMC/HDOWPc3JCbPAA5RL
+         LPHOdg/NaHfRk54tx5cIcieLnbSD5WBtLAT4ah8mEICf/zc97CNgPuBu/CoZ4r0cxiRC
+         GTcA==
+X-Forwarded-Encrypted: i=1; AJvYcCWebszEPtu7zPCwrcDrgKvPrN6s168nalFXIr3bsEdErmcPE330Yac/jSHVZTRoK9+44iu3b4ncAJ+wWobi0tGvGSjla8pCUpmIoSKv
+X-Gm-Message-State: AOJu0YxJioCzn3VheMpWtZ6QYVsSsVzq3bY5IBUvRxnPdR6AQ2NnFY7g
+	ckqCKPq5wrpqADJG0cVZcIQLs0YwUU1GONBgDueMeAmKduX0xy3Wjk0U6nAxhAQvkVEECCyxr2O
+	nrcjiB+48kIUGDkHJJ8ZyGiY6Vyhfm+vn9ZWe
+X-Google-Smtp-Source: AGHT+IHPccPItdwbPf9SbuGTEOB2ovjw2eaRKM0smvqTd0DyTnkstyegr0fB3+Bwc6TtmPyuyZGZolGjCRz5Cl5ngm8=
+X-Received: by 2002:a25:7d47:0:b0:df7:8dca:1ef2 with SMTP id
+ 3f1490d57ef6-e0303f34dd7mr14761280276.34.1719512894883; Thu, 27 Jun 2024
+ 11:28:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f2d1425e-dc7d-444f-ba8d-4aac0c8fc882@gmail.com>
+References: <00000000000076ba3b0617f65cc8@google.com> <CAHC9VhSmbAY8gX=Mh2OT-dkQt+W3xaa9q9LVWkP9q8pnMh+E_w@mail.gmail.com>
+ <20240515.Yoo5chaiNai9@digikod.net> <20240516.doyox6Iengou@digikod.net> <20240627.Voox5yoogeum@digikod.net>
+In-Reply-To: <20240627.Voox5yoogeum@digikod.net>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 27 Jun 2024 14:28:03 -0400
+Message-ID: <CAHC9VhT-Pm6_nJ-8Xd_B4Fq+jZ0kYnfc3wwNa_jM+4=pg5RVrQ@mail.gmail.com>
+Subject: Re: [syzbot] [lsm?] general protection fault in hook_inode_free_security
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Jann Horn <jannh@google.com>, Christian Brauner <brauner@kernel.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Kees Cook <keescook@chromium.org>, 
+	syzbot <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com>, jmorris@namei.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 27, 2024 at 08:25:01PM +0200, Mirsad Todorovac wrote:
-> Hi all,
-> 
-> I hope it will catch your attention, for I couldn't sort out what is wrong with this:
-> 
-> KCONFIG_SEED=0xD859674
-> 
-> on vanilla torvalds tree, commit v6.10-rc4-366-gafcd48134c58
-> 
-> _______________________________________________________________
-> $ time nice make -j 36 bindeb-pkg |& tee ../err-6.10-rc5-08.log; date
->   GEN     debian
-> dpkg-buildpackage --build=binary --no-pre-clean --unsigned-changes -R'make -f debian/rules' -j1 -a$(cat debian/arch)
-> dpkg-buildpackage: info: source package linux-upstream
-> dpkg-buildpackage: info: source version 6.10.0-rc5-gafcd48134c58-34
-> dpkg-buildpackage: info: source distribution jammy
-> dpkg-buildpackage: info: source changed by marvin <marvin@defiant>
-> dpkg-architecture: warning: specified GNU system type i686-linux-gnu does not match CC system type x86_64-linux-gnu, try setting a correct CC environment variable
->  dpkg-source --before-build .
-> dpkg-buildpackage: info: host architecture i386
->  make -f debian/rules binary
-> #
-> # No change to .config
-> #
->   CALL    scripts/checksyscalls.sh
->   UPD     init/utsversion-tmp.h
->   CC      init/version.o
->   AR      init/built-in.a
->   CC      kernel/kallsyms.o
-> In file included from ./include/linux/string.h:374,
->                  from ./arch/x86/include/asm/page_32.h:18,
->                  from ./arch/x86/include/asm/page.h:14,
->                  from ./arch/x86/include/asm/thread_info.h:12,
->                  from ./include/linux/thread_info.h:60,
->                  from ./include/linux/spinlock.h:60,
->                  from ./include/linux/mmzone.h:8,
->                  from ./include/linux/gfp.h:7,
->                  from ./include/linux/mm.h:7,
->                  from ./include/linux/kallsyms.h:13,
->                  from kernel/kallsyms.c:15:
-> kernel/kallsyms.c: In function ‘__sprint_symbol’:
-> ./include/linux/fortify-string.h:122:33: error: ‘__builtin_strcpy’ source argument is the same as destination [-Werror=restrict]
->   122 | #define __underlying_strcpy     __builtin_strcpy
->       |                                 ^
-> ./include/linux/fortify-string.h:787:24: note: in expansion of macro ‘__underlying_strcpy’
->   787 |                 return __underlying_strcpy(p, q);
->       |                        ^~~~~~~~~~~~~~~~~~~
-> cc1: all warnings being treated as errors
-> make[6]: *** [scripts/Makefile.build:244: kernel/kallsyms.o] Error 1
-> make[5]: *** [scripts/Makefile.build:485: kernel] Error 2
-> make[4]: *** [Makefile:1934: .] Error 2
-> make[3]: *** [debian/rules:74: build-arch] Error 2
-> dpkg-buildpackage: error: make -f debian/rules binary subprocess returned exit status 2
-> make[2]: *** [scripts/Makefile.package:121: bindeb-pkg] Error 2
-> make[1]: *** [/home/marvin/linux/kernel/linux_torvalds/Makefile:1555: bindeb-pkg] Error 2
-> make: *** [Makefile:240: __sub-make] Error 2
+On Thu, Jun 27, 2024 at 9:34=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
+>
+> I didn't find specific issues with Landlock's code except the extra
+> check in hook_inode_free_security().  It looks like inode->i_security is
+> a dangling pointer, leading to UAF.
+>
+> Reading security_inode_free() comments, two things looks weird to me:
+>
+> > /**
+> >  * security_inode_free() - Free an inode's LSM blob
+> >  * @inode: the inode
+> >  *
+> >  * Deallocate the inode security structure and set @inode->i_security t=
+o NULL.
+>
+> I don't see where i_security is set to NULL.
 
-Does this patch solve the problem for you?
+The function header comments are known to be a bit suspect, a side
+effect of being detached from the functions for many years, this may
+be one of those cases.  I tried to fix up the really awful ones when I
+moved the comments back, back I didn't have time to go through each
+one in detail.  Patches to correct the function header comments are
+welcome and encouraged! :)
 
-https://lore.kernel.org/lkml/20240604044228.2910712-1-liujinlong@kylinos.cn/
+> >  */
+> > void security_inode_free(struct inode *inode)
+> > {
+>
+> Shouldn't we add this check here?
+> if (!inode->i_security)
+>         return;
 
--Kees
+Unless I'm remembering something wrong, I believe we *should* always
+have a valid i_security pointer each time we are called, if not
+something has gone wrong, e.g. the security_inode_free() hook is no
+longer being called from the right place.  If we add a NULL check, we
+should probably have a WARN_ON(), pr_err(), or something similar to
+put some spew on the console/logs.
 
--- 
-Kees Cook
+All that said, it would be good to hear some confirmation from the VFS
+folks that the security_inode_free() hook is located in a spot such
+that once it exits it's current RCU critical section it is safe to
+release the associated LSM state.
+
+It's also worth mentioning that while we always allocate i_security in
+security_inode_alloc() right now, I can see a world where we allocate
+the i_security field based on need using the lsm_blob_size info (maybe
+that works today?  not sure how kmem_cache handled 0 length blobs?).
+The result is that there might be a legitimate case where i_security
+is NULL, yet we still want to call into the LSM using the
+inode_free_security() implementation hook.
+
+> >       call_void_hook(inode_free_security, inode);
+> >       /*
+> >        * The inode may still be referenced in a path walk and
+> >        * a call to security_inode_permission() can be made
+> >        * after inode_free_security() is called. Ideally, the VFS
+> >        * wouldn't do this, but fixing that is a much harder
+> >        * job. For now, simply free the i_security via RCU, and
+> >        * leave the current inode->i_security pointer intact.
+> >        * The inode will be freed after the RCU grace period too.
+>
+> It's not clear to me why this should be safe if an LSM try to use the
+> partially-freed blob after the hook calls and before the actual blob
+> free.
+
+I had the same thought while looking at this just now.  At least in
+the SELinux case I think this "works" simply because SELinux doesn't
+do much here, it just drops the inode from a SELinux internal list
+(long story) and doesn't actually release any memory or reset the
+inode's SELinux state (there really isn't anything to "free" in the
+SELinux case).  I haven't checked the other LSMs, but they may behave
+similarly.
+
+We may want (need?) to consider two LSM implementation hooks called
+from within security_inode_free(): the first where the existing
+inode_free_security() implementation hook is called, the second inside
+the inode_free_by_rcu() callback immediately before the i_security
+data is free'd.
+
+... or we find a better placement in the VFS for
+security_inode_free(), is that is possible.  It may not be, our VFS
+friends should be able to help here.
+
+> >        */
+> >       if (inode->i_security)
+> >               call_rcu((struct rcu_head *)inode->i_security,
+> >                        inode_free_by_rcu);
+>
+> And then:
+> inode->i_security =3D NULL;
+
+According to the comment we may still need i_security for permission
+checks.  See my comment about decomposing the LSM implementation into
+two hooks to better handle this for LSMs.
+
+> But why call_rcu()?  i_security is not protected by RCU barriers.
+
+I believe the issue is that the inode is protected by RCU and that
+affects the lifetime of the i_security blob.
+
+--=20
+paul-moore.com
 
