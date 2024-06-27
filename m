@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-232807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7651991AE7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:50:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08A5E91AE8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:51:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3063628627B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:50:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4EC71F260D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 091B919A2AE;
-	Thu, 27 Jun 2024 17:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB0119CCE0;
+	Thu, 27 Jun 2024 17:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hdJ64EEn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QHV9svyz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6474C9A;
-	Thu, 27 Jun 2024 17:50:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAAE919AA52;
+	Thu, 27 Jun 2024 17:50:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719510645; cv=none; b=sHTvf/5/jcLA5PI16KR5hJoptEA6KQdB66up2ZB6nAObVpDz0ZaVSHh9zwiiBKxu6VwUwM3WauBy2BzG4iLjIX4qam5Tyw0fHsy7/q91JtzR2bJfz7KbJQJXYgGUVTgJlBvPFJ1C4pKyZtETu3a2MDLeDRViUDGngxHjeOG7xw4=
+	t=1719510656; cv=none; b=KJduMup4fsBmBZmS1ljvvcMSPr8URfJKZNpFW+NPyq+0Z7Ovf9d58gJleSTCflZWNKYhK47tQ6isJdnhmv8C0HJmrLkVsIW3e/j7eBiidM71qLUmDv40vkX23zg1HOMDe1XXBDq8iWpvkSBeR0xN4WvT937Z8BLJ07WJPDOBQ/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719510645; c=relaxed/simple;
-	bh=jobjg9OesfGn+Q6aCcAWa0Gq/nbPQMb6sNYVq2ittnQ=;
+	s=arc-20240116; t=1719510656; c=relaxed/simple;
+	bh=1xNe1u/aXvULtcQUTH3SvYXu4kNm78KffnqOzZDJdnw=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=gtY0HuXb0xO3BJo/8EFsAohJ2vvY/lYBhxobBdUQmVy9uTznaSUj9qNifu25vVS48E1W69dqXx8WskkYzNlwuE/eHarsNX1xmBJ0K/mC8Bw6YV9XBWFmdA80YD13vUYEd2gDHR87EwZ7sjWj0rmHpvIaluGiLUYM9kc5/4LoiiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hdJ64EEn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C9C73C2BD10;
-	Thu, 27 Jun 2024 17:50:44 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=SE/cIlJH5q63hAn9i7tcTmszZYrZZf8gAqN41y3WHRra7XeA4BLR2JvwykkzbI3sbhHa+OkB6JvVNpegg7KnB95l7IpFlsXOc8sqJ7SWSuK1Zcjb/mvkWgj6Tw7lweg3+R9k4KfEWUwNTgGwgECfvvR3v//zPgcbmBgdwvVVUrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QHV9svyz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 771DEC4AF09;
+	Thu, 27 Jun 2024 17:50:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719510644;
-	bh=jobjg9OesfGn+Q6aCcAWa0Gq/nbPQMb6sNYVq2ittnQ=;
+	s=k20201202; t=1719510656;
+	bh=1xNe1u/aXvULtcQUTH3SvYXu4kNm78KffnqOzZDJdnw=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=hdJ64EEnw+ocdIPgMBxcSO0LRAqr3vLx2l2KCjZ/B2DT3wUoG2gUMypr0XRKZ498Z
-	 ozdCKPuHPsG4WZxp271//HfptbaNG6sZeOSfthkltOYB6cZ8VOSS5sW4KHFxUEOfUs
-	 HWpo8zwgK3YGwaMwQVVinVXFUE0aTG90dUgpaR16LAFXjSFV0FgaNI7UJJTAWP+6US
-	 0oPFyIm6WzdMTzww8Z3IYDreBK+N73/6yfjb/ziPxcaMRtZKIFvBZRuELaDKRmHw8U
-	 tCkK4JWLFIaUBjXqVM3jLjIkaNrmE+7CZ0WgOtitDuYYovApX074XBVIgDSePuuc2x
-	 hJWL3H9VhXwwQ==
+	b=QHV9svyzahf3yrCqi8QXPqwP7zRiUAZbQFiqWK8HM/+ZV9P16PfYVUDWyJ7BUNJ7b
+	 IbAR+uVQMHlr1anDnrYhx1vGkb0K9rZRcHJLmboDNT6J17AW9gvgcWSkbSkZ+Wc0vu
+	 VTuKgfjLl5SRafkJYXPGUuRzRGJ43fxoKmwxAcv0GGSFITi6Gxrbc94V+qEOunslE5
+	 oxPXyrYrtXAbxGSeD2r1RKaHo647/dnOgSIVyIbt/MzYtXbToM6G8yPuM4j9n4TRyx
+	 me3AjXcPr6MZOpX0BzgGjHQOAjVpmah+oiu0JL55XjAYJw/H3d9xHxngGU9L8Z+BGn
+	 V/EQlZlQfCwIA==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 8ED99C433A2;
-	Thu, 27 Jun 2024 17:50:44 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 52547C43443;
+	Thu, 27 Jun 2024 17:50:56 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,39 +51,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH -fixes] riscv: patch: Flush the icache right after patching to
- avoid illegal insns
+Subject: Re: [PATCH v2 0/7] riscv: Various text patching improvements
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <171951064458.6762.1867426653510240080.git-patchwork-notify@kernel.org>
-Date: Thu, 27 Jun 2024 17:50:44 +0000
-References: <20240624082141.153871-1-alexghiti@rivosinc.com>
-In-Reply-To: <20240624082141.153871-1-alexghiti@rivosinc.com>
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, rostedt@goodmis.org, mhiramat@kernel.org,
- mark.rutland@arm.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
- aou@eecs.berkeley.edu, bjorn@rivosinc.com, andy.chiu@sifive.com,
- puranjay12@gmail.com, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, conor.dooley@microchip.com
+ <171951065633.6762.12967635589292912560.git-patchwork-notify@kernel.org>
+Date: Thu, 27 Jun 2024 17:50:56 +0000
+References: <20240327160520.791322-1-samuel.holland@sifive.com>
+In-Reply-To: <20240327160520.791322-1-samuel.holland@sifive.com>
+To: Samuel Holland <samuel.holland@sifive.com>
+Cc: linux-riscv@lists.infradead.org, palmer@dabbelt.com, bjorn@rivosinc.com,
+ linux-kernel@vger.kernel.org, ardb@kernel.org, daniel@iogearbox.net,
+ jbaron@akamai.com, jpoimboe@kernel.org, peterz@infradead.org,
+ rostedt@goodmis.org, bpf@vger.kernel.org
 
 Hello:
 
-This patch was applied to riscv/linux.git (fixes)
+This series was applied to riscv/linux.git (for-next)
 by Palmer Dabbelt <palmer@rivosinc.com>:
 
-On Mon, 24 Jun 2024 10:21:41 +0200 you wrote:
-> We cannot delay the icache flush after patching some functions as we may
-> have patched a function that will get called before the icache flush.
+On Wed, 27 Mar 2024 09:04:39 -0700 you wrote:
+> Here are a few changes to minimize calls to stop_machine() and
+> flush_icache_*() in the various text patching functions, as well as
+> to simplify the code.
 > 
-> The only way to completely avoid such scenario is by flushing the icache
-> as soon as we patch a function. This will probably be costly as we don't
-> batch the icache maintenance anymore.
+> This series is based on "[PATCH v3 0/2] riscv: fix patching with IPI"[1].
+> 
+> [1]: https://lore.kernel.org/linux-riscv/20240229121056.203419-1-alexghiti@rivosinc.com/
 > 
 > [...]
 
 Here is the summary with links:
-  - [-fixes] riscv: patch: Flush the icache right after patching to avoid illegal insns
-    https://git.kernel.org/riscv/c/edf2d546bfd6
+  - [v2,1/7] riscv: jump_label: Batch icache maintenance
+    https://git.kernel.org/riscv/c/652b56b18439
+  - [v2,2/7] riscv: jump_label: Simplify assembly syntax
+    https://git.kernel.org/riscv/c/2aa30d19cfbb
+  - [v2,3/7] riscv: kprobes: Use patch_text_nosync() for insn slots
+    https://git.kernel.org/riscv/c/b1756750a397
+  - [v2,4/7] riscv: Simplify text patching loops
+    https://git.kernel.org/riscv/c/5080ca0fe9b5
+  - [v2,5/7] riscv: Pass patch_text() the length in bytes
+    https://git.kernel.org/riscv/c/51781ce8f448
+  - [v2,6/7] riscv: Use offset_in_page() in text patching functions
+    https://git.kernel.org/riscv/c/eaee54875630
+  - [v2,7/7] riscv: Remove extra variable in patch_text_nosync()
+    https://git.kernel.org/riscv/c/47742484ee16
 
 You are awesome, thank you!
 -- 
