@@ -1,133 +1,98 @@
-Return-Path: <linux-kernel+bounces-232110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02F2091A38F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:11:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D513691A385
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:10:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAFD11F2316A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:11:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98032282B73
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099B113C9CA;
-	Thu, 27 Jun 2024 10:10:46 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C6413D291;
+	Thu, 27 Jun 2024 10:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YbdrfXp3"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AB413E05F;
-	Thu, 27 Jun 2024 10:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E0C13C831;
+	Thu, 27 Jun 2024 10:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719483045; cv=none; b=owHwPyX7pH2MV6fsD9aE6jTr77sC/gED75WJ6q2w4e2JmYei10PtjFhuJ0UUPslJAEV5AMAafmYkByEPQAxQ8FmPUaZHvhgl2YzF5im3Wl6GmjgAU+hBranxTM0nEtJsn5OICKc250wBqB3K7R8hbfSZKc5gCvkRfPJLe1ywh98=
+	t=1719483025; cv=none; b=dPKpggiwkcUbGlEBJTei/WKIeblex2CzltQK/Qngfm6oC8M9+opQzu5rTJl4FdX39FjO3L5QRxZ1N11y/QMcD3Cg25pVIyHYWyxggSnyyLqsmh7I/kcYec1Hca2ePrqfQ58vhLrmM4M0Ol/ZRfNpJuTLkC+y3R6cIqlxXHmSJSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719483045; c=relaxed/simple;
-	bh=JumFjepAK5BceEeoilJQ1Y3XfINuUODu8VGkkHsJI0E=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References; b=niwmGEUl5Qr0CaboTxco0Ls11MEIv+H9oDkfAdlF5DUjyz204kwcGOaeSqESgsiLJUYkrxnOvxTkaWjuX9A+huTWluhAlEGwgzhHaM5QJgrE6LigEv06GuiL3GPvoRPze9/94nujZp4o8VrlnxZMMUkX9zc19W6AGYb9B5y/RQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id AE3501A0868;
-	Thu, 27 Jun 2024 12:10:36 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 75CB11A0738;
-	Thu, 27 Jun 2024 12:10:36 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 9FEC3180222F;
-	Thu, 27 Jun 2024 18:10:34 +0800 (+08)
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	shengjiu.wang@gmail.com,
-	linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 3/3] arm64: dts: imx8mp-evk: Add audio XCVR sound card
-Date: Thu, 27 Jun 2024 17:53:01 +0800
-Message-Id: <1719481981-4069-4-git-send-email-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1719481981-4069-1-git-send-email-shengjiu.wang@nxp.com>
-References: <1719481981-4069-1-git-send-email-shengjiu.wang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+	s=arc-20240116; t=1719483025; c=relaxed/simple;
+	bh=ngp1FT+UOeOQu3QXLveoVHx3x4aIgCnlqdTftkNgha4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qEE65DjYxRGLOIm+AYqCvbRRduHAFwtOHqcR2iVeVe7kqKq0+lxFBWNt7ejaqsu9kG3Mp0mIO1GY90KZMnn7WmJh7A8axoIW6jd6srz0P/7SsXzMrUuz0xBedfSbZxL+MIkMNqW7YWS27/xzAGkl2yh6zwtnBWgfemsbKZaqF1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YbdrfXp3; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45RAA82j062259;
+	Thu, 27 Jun 2024 05:10:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1719483008;
+	bh=DbAR1yoE7ko87b798yH4OO+KqU4hl93ILHvTCW1Chgs=;
+	h=From:To:CC:Subject:Date;
+	b=YbdrfXp3mWuFuzcHbiSQ8v9iuo4mjc0s6rL1m3tFo4NbbLwxnoIOEiPyU+/19rsHm
+	 MiDECSHiex0qxAJ9BolgaIRbLS3K9oaAMAm8YnuOErd6KrY78VRB0UBO+jhDCrML+y
+	 qG0u9G47nZ+lDpOgBxNnePZfne8dnf76qIITMX4A=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45RAA8T6014605
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 27 Jun 2024 05:10:08 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 27
+ Jun 2024 05:10:08 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 27 Jun 2024 05:10:08 -0500
+Received: from a0497641-HP-Z2-Tower-G9-Workstation-Desktop-PC.dhcp.ti.com (a0497641-hp-z2-tower-g9-workstation-desktop-pc.dhcp.ti.com [172.24.227.36])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45RAA4ST019141;
+	Thu, 27 Jun 2024 05:10:05 -0500
+From: Neha Malcom Francis <n-francis@ti.com>
+To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>, <n-francis@ti.com>
+Subject: [PATCH] arm: dts: k3-j721e-mcu-wakeup: Add bootph-all to chipid
+Date: Thu, 27 Jun 2024 15:40:03 +0530
+Message-ID: <20240627101003.3608397-1-n-francis@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Add audio XCVR sound card, which supports SPDIF TX & RX,
-eARC RX, ARC RX functions.
+Add bootph-all property to the chipid node so that it is available at
+bootloader stage for obtaining the SoC ID and revision.
 
-HDMI_HPD is shared with the HDMI module so use pinctrl_hog.
-
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+Signed-off-by: Neha Malcom Francis <n-francis@ti.com>
 ---
- arch/arm64/boot/dts/freescale/imx8mp-evk.dts | 27 ++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
-index c2c708c492c0..a64e8a6c830d 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
-@@ -209,6 +209,19 @@ cpu {
+diff --git a/arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi
+index 9349ae07c046..c2417ef614cf 100644
+--- a/arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi
+@@ -57,6 +57,7 @@ wkup_conf: bus@43000000 {
+ 		chipid: chipid@14 {
+ 			compatible = "ti,am654-chipid";
+ 			reg = <0x14 0x4>;
++			bootph-all;
  		};
  	};
  
-+	sound-xcvr {
-+		compatible = "fsl,imx-audio-card";
-+		model = "imx-audio-xcvr";
-+
-+		pri-dai-link {
-+			link-name = "XCVR PCM";
-+
-+			cpu {
-+				sound-dai = <&xcvr>;
-+			};
-+		};
-+	};
-+
- 	reserved-memory {
- 		#address-cells = <2>;
- 		#size-cells = <2>;
-@@ -748,7 +761,15 @@ &wdog1 {
- 	status = "okay";
- };
- 
-+&xcvr {
-+	#sound-dai-cells = <0>;
-+	status = "okay";
-+};
-+
- &iomuxc {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_hog>;
-+
- 	pinctrl_audio_pwr_reg: audiopwrreggrp {
- 		fsl,pins = <
- 			MX8MP_IOMUXC_SAI3_RXC__GPIO4_IO29		0xd6
-@@ -838,6 +859,12 @@ MX8MP_IOMUXC_NAND_READY_B__GPIO3_IO16	0x140
- 		>;
- 	};
- 
-+	pinctrl_hog: hoggrp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_HDMI_HPD__HDMIMIX_HDMI_HPD		0x40000010
-+		>;
-+	};
-+
- 	pinctrl_i2c1: i2c1grp {
- 		fsl,pins = <
- 			MX8MP_IOMUXC_I2C1_SCL__I2C1_SCL		0x400001c2
 -- 
 2.34.1
 
