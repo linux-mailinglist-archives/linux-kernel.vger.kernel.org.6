@@ -1,58 +1,59 @@
-Return-Path: <linux-kernel+bounces-233056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0C7D91B1A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:44:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8D1091B1A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:46:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F160A1C227E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 21:44:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72D0C2826FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 21:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A8131A01D3;
-	Thu, 27 Jun 2024 21:43:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 327FA13B286;
+	Thu, 27 Jun 2024 21:46:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OW9K8bQs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tgVPDYpm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5628E249F9;
-	Thu, 27 Jun 2024 21:43:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7380222F1C;
+	Thu, 27 Jun 2024 21:46:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719524637; cv=none; b=YKl/alV7LH+X9hTBmqXiwcUHQqwIGwWa/+hdEnE9XN5YZgVn6x+Spksu4zbNvPMXAGZvM5nK18FpUSPyQDsNy3CZPTrnEy7/PTlqtPHNG/M9N+VyVq8reLJY4Yyk9xQb/soxD42a1KkovpyHyLqp0Txvbm1wnJk3HuUmtU0opAw=
+	t=1719524807; cv=none; b=lMxs1QMyEt/keBYjpTsNDY1Y4rcoeR19y7wPkVmTGB4JX2sY3jyEXs/sa/99M31dsQNocJ2CpblF/kJaWAOHaNX5dOPR5C0TB0UrutszX/JcKKNp0o3hmcr0hnNdMsPLfMkkwxIPL83cWKqi/Bj0gZaY2fOJQI5DtU9BAkzOZkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719524637; c=relaxed/simple;
-	bh=LoSc8x+ZYO2DbQ6k06wW/rHJbFqw9BW9Fn/mAoYoxNs=;
+	s=arc-20240116; t=1719524807; c=relaxed/simple;
+	bh=eT7//ofd5tzteAOzE4U68eAT4KD8yHlqWwSSc1NQ8fM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lj1Q6KUbSLGkjvuFtqEOp8G4+gINZ0epKf6Q3vwFFxzchc/R6fL7Y9WcAjFeLuwOm0fvWdvX5eyjqvsVgadmJ0KdcPM2uYhwBxQGypM7B4zdLqhL0LU0BztaHYgBUurcS4Ha68sDzn5WLi0SUwjRqav3NEX88zURnpexDovBGY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OW9K8bQs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C76CAC2BBFC;
-	Thu, 27 Jun 2024 21:43:56 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=gLOSaBGDM55WT3tqb8fCdFzEmpWM5SwJhkxaY6vPk4DCMSwMMxltO4/+wkceivfUrLNk3jad3g50XoDMoB0/ejPG4fppCpOPCIWxedz7IFSrhfsF2QNqabFwvy2l9UKGUM27WMoeb+L3ZS1lXX0Hq+BRTSay7pJRw1nHJl86XXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tgVPDYpm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE9AFC2BBFC;
+	Thu, 27 Jun 2024 21:46:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719524637;
-	bh=LoSc8x+ZYO2DbQ6k06wW/rHJbFqw9BW9Fn/mAoYoxNs=;
+	s=k20201202; t=1719524807;
+	bh=eT7//ofd5tzteAOzE4U68eAT4KD8yHlqWwSSc1NQ8fM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OW9K8bQshV4fI4PJ4ukdJ+HwrMS8pqrrVEbuTv1pC2P9Xmpmo20UtxVF0gjbLxHmH
-	 N83WbKbsH6ZOKEqCQm6gxojWE06gwKSN4AqqGKgGk00HwrR/8M388gT08mSLiAsbFt
-	 6VxmcyworkMWTVL9HRWjvqQE8V8b6NdsPMY61dX/K4L0P8zaUfAmdiBWa7reHb63bK
-	 IX9S/Kt2/ohUvq/GRWbuQHQZ0Yg6+7S+Uh2rF9HPLJsBXO7dJ8f7j8LQTAe1yGEgqk
-	 BUq+DEqcGBh4q/4RJfaOgpPSptCUhaEriFBScQns5e/5qnG+nHWucW1W3d8HT50+eh
-	 /RAob/Yfz+18A==
-Date: Thu, 27 Jun 2024 15:43:55 -0600
+	b=tgVPDYpmfniVXzDq7PDl/rvxdO/4gQUDvQTkdhNVajevCk2nhz95jetooJ8+detL6
+	 sXMVmg/Qjf2yPmpGHRijY1HOtF4EP82g/iEACxQle0dkFlHxzU/KdkWZR+KfIWic5s
+	 dQp25Cz7vRPCLFYtCwawZhN+PjLvi7nCNmceM5hjouGadbQj2kd/LDzj4VECcWSi3G
+	 4tyuRG4V8Z60d+k0N1DiNaweoDS9mtr/E4ZA4jI7J0uPhxqKz0Um/rnnumEsnkmNj/
+	 KE5Rva5qpWpcmwi0OXrhA55KCaRehf2h6hs5PenaZDt+c6U5l00RTruHg7LJ+RYEW0
+	 o8T3vV41faddw==
+Date: Thu, 27 Jun 2024 15:46:45 -0600
 From: Rob Herring <robh@kernel.org>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Saravana Kannan <saravanak@google.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH 1/2] of: property: add of_property_for_each_u64
-Message-ID: <20240627214355.GA601888-robh@kernel.org>
-References: <20240621-clk-u64-v1-0-d28a611b2621@nxp.com>
- <20240621-clk-u64-v1-1-d28a611b2621@nxp.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH 1/2] dt-bindings: firmware: arm,scmi: introduce property
+ mbox-rx-timeout-ms
+Message-ID: <20240627214645.GA614300-robh@kernel.org>
+References: <20240621-scmi-mailbox-v1-v1-0-8ed450735f46@nxp.com>
+ <20240621-scmi-mailbox-v1-v1-1-8ed450735f46@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,117 +62,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240621-clk-u64-v1-1-d28a611b2621@nxp.com>
+In-Reply-To: <20240621-scmi-mailbox-v1-v1-1-8ed450735f46@nxp.com>
 
-+Luca
-
-On Fri, Jun 21, 2024 at 08:36:39PM +0800, Peng Fan (OSS) wrote:
+On Fri, Jun 21, 2024 at 08:46:57PM +0800, Peng Fan (OSS) wrote:
 > From: Peng Fan <peng.fan@nxp.com>
 > 
-> Preparing for assigned-clock-rates-u64 support, add function
-> of_property_for_each_u64 to iterate each u64 value
+> System Controller Management Interface(SCMI) firmwares might have
+> different designs by SCMI firmware developers. So the maximum receive
+> channel timeout value might also varies in the various designs.
+> 
+> So introduce property mbox-rx-timeout-ms to let each platform could
+> set its own timeout value in device tree.
 > 
 > Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
->  drivers/of/property.c | 23 +++++++++++++++++++++++
->  include/linux/of.h    | 24 ++++++++++++++++++++++++
->  2 files changed, 47 insertions(+)
+>  Documentation/devicetree/bindings/firmware/arm,scmi.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> diff --git a/drivers/of/property.c b/drivers/of/property.c
-> index 164d77cb9445..b89c3ab01d44 100644
-> --- a/drivers/of/property.c
-> +++ b/drivers/of/property.c
-> @@ -548,6 +548,29 @@ const __be32 *of_prop_next_u32(struct property *prop, const __be32 *cur,
->  }
->  EXPORT_SYMBOL_GPL(of_prop_next_u32);
+> diff --git a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
+> index 4d823f3b1f0e..d6cc2bf4c819 100644
+> --- a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
+> +++ b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
+> @@ -121,6 +121,12 @@ properties:
+>        atomic mode of operation, even if requested.
+>      default: 0
 >  
-> +const __be32 *of_prop_next_u64(struct property *prop, const __be32 *cur,
-> +			       u64 *pu)
+> +  max-rx-timeout-ms:
+> +    description:
+> +      An optional time value, expressed in milliseconds, representing, on this
+> +      platform, the mailbox maximum timeout value for receive channel.
 
-struct property can be const
+"on this platform"? Doesn't every property apply to the given platform?
 
-> +{
-> +	const void *curv = cur;
-> +
-> +	if (!prop)
-> +		return NULL;
-> +
-> +	if (!cur) {
-> +		curv = prop->value;
-> +		goto out_val;
-> +	}
-> +
-> +	curv += sizeof(*cur) * 2;
-> +	if (curv >= prop->value + prop->length)
-> +		return NULL;
-> +
-> +out_val:
-> +	*pu = of_read_number(curv, 2);
-> +	return curv;
-> +}
-> +EXPORT_SYMBOL_GPL(of_prop_next_u64);
-> +
->  const char *of_prop_next_string(struct property *prop, const char *cur)
->  {
->  	const void *curv = cur;
-> diff --git a/include/linux/of.h b/include/linux/of.h
-> index 13cf7a43b473..464eca6a4636 100644
-> --- a/include/linux/of.h
-> +++ b/include/linux/of.h
-> @@ -439,6 +439,18 @@ extern int of_detach_node(struct device_node *);
->   */
->  const __be32 *of_prop_next_u32(struct property *prop, const __be32 *cur,
->  			       u32 *pu);
-> +
-> +/*
-> + * struct property *prop;
-> + * const __be32 *p;
-> + * u64 u;
-> + *
-> + * of_property_for_each_u64(np, "propname", prop, p, u)
-> + *         printk("U64 value: %llx\n", u);
-> + */
-> +const __be32 *of_prop_next_u64(struct property *prop, const __be32 *cur,
-> +			       u64 *pu);
-> +
->  /*
->   * struct property *prop;
->   * const char *s;
-> @@ -834,6 +846,12 @@ static inline const __be32 *of_prop_next_u32(struct property *prop,
->  	return NULL;
->  }
->  
-> +static inline const __be32 *of_prop_next_u64(struct property *prop,
-> +		const __be32 *cur, u64 *pu)
-> +{
-> +	return NULL;
-> +}
-> +
->  static inline const char *of_prop_next_string(struct property *prop,
->  		const char *cur)
->  {
-> @@ -1437,6 +1455,12 @@ static inline int of_property_read_s32(const struct device_node *np,
->  		p;						\
->  		p = of_prop_next_u32(prop, p, &u))
->  
-> +#define of_property_for_each_u64(np, propname, prop, p, u)	\
-> +	for (prop = of_find_property(np, propname, NULL),	\
-> +		p = of_prop_next_u64(prop, NULL, &u);		\
-> +		p;						\
-> +		p = of_prop_next_u64(prop, p, &u))
+> +    default: 0
 
-I think we want to define this differently to avoid exposing struct 
-property and the property data directly. Like this:
+0 means no timeout or response is instant?
 
-#define of_property_for_each_u64(np, propname, u) \
-  for (struct property *_prop = of_find_property(np, propname, NULL),
-         const __be32 *_p = of_prop_next_u64(_prop, NULL, &u);
-         _p;
-         _p = of_prop_next_u64(_prop, _p, &u))
-
-See this discussion for context[1].
-
-Rob
-
-[1] https://lore.kernel.org/all/20240624232122.3cfe03f8@booty/
+> +
+>    arm,smc-id:
+>      $ref: /schemas/types.yaml#/definitions/uint32
+>      description:
+> 
+> -- 
+> 2.37.1
+> 
 
