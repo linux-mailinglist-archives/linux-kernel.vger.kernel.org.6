@@ -1,181 +1,321 @@
-Return-Path: <linux-kernel+bounces-232493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF1F091A99F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:47:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85D4C91A9AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:49:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7046B1F25723
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:47:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1FEFB25D68
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2541993B0;
-	Thu, 27 Jun 2024 14:44:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576C319AD6E;
+	Thu, 27 Jun 2024 14:45:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y+YXnDaM"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="NxhVU6oI"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B7E197545
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 14:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7383219AA56;
+	Thu, 27 Jun 2024 14:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719499494; cv=none; b=sv7D+hLHxFrimioMseY3/P+tkoxdzUdjtjWWqBZBC5nvs++d7zZejFdjXpgRyKRAlhTpQsyU38/Kasr2qyoZOOnviGUvwrIvhK0C1t2w0sQQoczPcWUpXCBsQf6l+fxon/ZIZz6gVRJ1OWfdgsEPB5riZMShOySj7pFxQn2Ei1c=
+	t=1719499502; cv=none; b=aYX/l5BQWFhTGGAlwUzgimsx0PzcnUEgYaRYtqmChlV+QDjnt1Sti4wWsQShBxMp+494ybCd5FtjSyG5SMPN4xKNpBxiwIM9SG5RuhglgQiWRnQwEBRmWYUMRy1zxpYnnTLJ7NjHcfcx30ibWUyvGhVxvyqU6N6GdStTGOF9qyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719499494; c=relaxed/simple;
-	bh=8t+rc0a05n9eyrWDZO2kMieJ1aEfnXGXWDcAD9GfTds=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jZW+Vt6zH3X4E0SVxFq/9n3vLpv8PMyB+dU1yvm1wZtqQ/GqUfyLfQ1ZBZVuD2C7j9KUHRzT2GfqiVy74fWOB6CFYlwlB4WgcSYFJ7lFtS5QCOynYSgAN0Yd+PNPMjnUTo1yMjsR7BmBUIX4HPGGSnk+ig036SYtOhJWJeHLP5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y+YXnDaM; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ec17eb4493so110592681fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 07:44:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719499489; x=1720104289; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dO9vc3WlwnOOdxIv2wYOfRp/f4HDsDDrITVn2Ghy1d0=;
-        b=Y+YXnDaMdWsJTtfAhzELTG4b+I0slocRHSiwTQk8/vbxL8+CoJAdcEmX8CulOG3WhC
-         KvvAZpkiVkUIvztDD+a6nVTLhjNuk61yBTR49rN20uCn/dDdz8XOrlARePfJ3rODLa4n
-         DtFAvy797BQ6rPSOfbBxvNx0e7ddz/2+zMuX03l34/WmNaqS2HxeXaW3L/8snIJwX0D2
-         f7srD37OmbSEG8TITTlWGHrhBO+b3sgQeQAMIkuIUYQrq3fwDJnJYP2FXfh/BNnrJD0w
-         kXOsjHrQnASW2wPpG1HhV8yWXVqIRVi14H6fGG9zewbIfIVNJLkEXkn3NbGIFDrcE6Ds
-         Gu0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719499489; x=1720104289;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dO9vc3WlwnOOdxIv2wYOfRp/f4HDsDDrITVn2Ghy1d0=;
-        b=AMzUz444oqX1kSR64eKyiPcORinIHWbO6E204xg7Rt/KbV7gdzybkjgkZEwE5Sgm18
-         KOYIk1gJzzp7SA0gr4vBGlL1NVJ2z+6dQv5cS6M26ZWM4kQhsa9/+bjl4DrQlNzUrBL4
-         MgKF8yNrGnA357RBotSZRHDKCjuHTfVaSBNVXJZGB8pd8kSQxdoE4SSEL33v9IKCf/5m
-         FUyVV/5qCmiCORIRhyvJCY0Jr7FYMNg8IQexDxHcjI0h4I0LrBGw9dn9E3EFrwt/Zxlw
-         qRgG8+oQF21JzF7UhY6RtSzOAGNiucoJwvY/ObJQtjOpqayPyrbIClBmYxvLzp7hUZVi
-         QAZA==
-X-Forwarded-Encrypted: i=1; AJvYcCU10/vlNICLrbBZg/0mK8R86pg8vxF5/dJ9qv0SP0dOVPj5g7MrLGTBmBOEOHZapN6kQWBW+cTUx9Ekd2mOFA6BzAWOueNZspX/BQQZ
-X-Gm-Message-State: AOJu0YyVj30qKFFWFADlJLo/tJhpCfDN3BZFcYcT01ntY46P4DvtkguK
-	4pLlD3Uy4h1LURp5n99biXjuk0aTA/BArXzu0Oe681TpB9YhNhw66qKJ9nPy/scAEnGBOyHYReb
-	5km8=
-X-Google-Smtp-Source: AGHT+IH7syasty7HaTDsD5E51KorF8XfnrmM9ehc/fLT067hmE63RvbKOsoAR+lMidxzL11uJ8ieFA==
-X-Received: by 2002:a2e:a5cb:0:b0:2ee:4a67:3d82 with SMTP id 38308e7fff4ca-2ee4a673edcmr21435651fa.28.1719499489631;
-        Thu, 27 Jun 2024 07:44:49 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ee4a34447fsm2775911fa.11.2024.06.27.07.44.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 07:44:49 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 27 Jun 2024 17:44:46 +0300
-Subject: [PATCH v4 7/7] usb: typec: ucsi: reorder operations in
- ucsi_run_command()
+	s=arc-20240116; t=1719499502; c=relaxed/simple;
+	bh=wiRhXRt2NhOH8Yp4ES4mussK0B06KmxvL55Tjh5zfak=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YF6PLcagaVBq2kJbonhkjWN02gAZU5tvdOR8PVtl3ZYhIXoje0yUvifJq4JzVQiXTxI8MIDu3kafnID96STFCZbHLK/xP+u9Q2FFk2wecx2ly+BMZglxhFp9rJPphv2eTodZ8UWlAG7eMJCpPpb+2ZzCTsx4/rf7OHUL0z/uEBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=NxhVU6oI; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-144-210.elisa-laajakaista.fi [91.158.144.210])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 274032C5;
+	Thu, 27 Jun 2024 16:44:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1719499474;
+	bh=wiRhXRt2NhOH8Yp4ES4mussK0B06KmxvL55Tjh5zfak=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NxhVU6oIpKM5a+VZtk7haJq3mXvpgIWHgrDnKfwc6+kPBYedfWJOZgMClaDA5iEHG
+	 dGkAOtYUrk7L64FWBBpXoPipUSa7MVyDDgjNyGwsmQ16jek0gy3GIAdT0c5LMAuznI
+	 zwfQAjRdtRrBngJ39azq9+9iQX9zJ3xhHeyzs38g=
+Message-ID: <30545e01-2456-429f-aa1a-ea525270820b@ideasonboard.com>
+Date: Thu, 27 Jun 2024 17:44:54 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] dt-bindings: display: ti: Add schema for AM625 OLDI
+ Transmitter
+To: Aradhya Bhatia <a-bhatia1@ti.com>, Rob Herring <robh@kernel.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Jyri Sarha <jyri.sarha@iki.fi>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Neil Armstrong <neil.armstrong@linaro.org>, David Airlie
+ <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, DRI Development List
+ <dri-devel@lists.freedesktop.org>,
+ Devicetree List <devicetree@vger.kernel.org>,
+ Linux Kernel List <linux-kernel@vger.kernel.org>, Nishanth Menon
+ <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
+ Francesco Dolcini <francesco@dolcini.it>,
+ Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+ Randolph Sapp <rs@ti.com>, Devarsh Thakkar <devarsht@ti.com>,
+ Jayesh Choudhary <j-choudhary@ti.com>, Jai Luthra <j-luthra@ti.com>
+References: <20240511193055.1686149-1-a-bhatia1@ti.com>
+ <20240511193055.1686149-3-a-bhatia1@ti.com>
+ <20240512193459.GF17158@pendragon.ideasonboard.com>
+ <e0433619-75c7-40bc-aafb-f0a875ea7dc3@ti.com>
+ <20240513193009.GA2986074-robh@kernel.org>
+ <cbd44252-2abf-4443-ade7-b1aa32d24e3e@ti.com>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <cbd44252-2abf-4443-ade7-b1aa32d24e3e@ti.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240627-ucsi-rework-interface-v4-7-289ddc6874c7@linaro.org>
-References: <20240627-ucsi-rework-interface-v4-0-289ddc6874c7@linaro.org>
-In-Reply-To: <20240627-ucsi-rework-interface-v4-0-289ddc6874c7@linaro.org>
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: Nikita Travkin <nikita@trvn.ru>, 
- Neil Armstrong <neil.armstrong@linaro.org>, linux-usb@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2214;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=8t+rc0a05n9eyrWDZO2kMieJ1aEfnXGXWDcAD9GfTds=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmfXratpXe2Md2H7XXIFiFlNCnAymp1cbi5Lu3s
- qKILWjJemOJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZn162gAKCRCLPIo+Aiko
- 1Vy9CACQ+eAL9dx+gexu83BB5XxVSv6Vuxl4xliWjn7OFQ5qhxpaKRh9ucFB2OfRdDoDeIVc18T
- MoqzXZJWA2gqYP1kStZ4QPCA6+0iw8+2UHZd9AsQKWvzcrmtuwKzwy1V462QBHKrujuB1iw/5CR
- T/5lE2vCu/gucwCPeeSYreoIpc6c27v32N8foNt1wKRy2iNpl5mhJloJqi00fHLWHDVVYTwzdV1
- 5RKDglkwuPy7nsSYxwg/s/2tRnL8pyw70IotCuYqMpoix5oGImSWc8bxTX73YyyXJ6FCuiDNHPW
- +4ySKPNRD0Ud8QgBYaG+IbKt41a4Heejgijje2FTFn7iNol4
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Streamline control stream of ucsi_run_command(). Reorder operations so
-that there is only one call to ucsi_acknowledge(), making sure that all
-complete commands are acknowledged. This also makes sure that the
-command is acknowledged even if reading MESSAGE_IN data returns an
-error.
+On 14/05/2024 08:08, Aradhya Bhatia wrote:
+> Hi Rob,
+> 
+> Thank you for reviewing the patches!
+> 
+> On 14/05/24 01:00, Rob Herring wrote:
+>> On Mon, May 13, 2024 at 02:07:44PM +0530, Aradhya Bhatia wrote:
+>>> Hi Laurent,
+>>>
+>>> Thank you for reviewing the patches!
+>>>
+>>> On 13-May-24 01:04, Laurent Pinchart wrote:
+>>>> Hi Aradhya,
+>>>>
+>>>> Thank you for the patch.
+>>>>
+>>>> On Sun, May 12, 2024 at 01:00:53AM +0530, Aradhya Bhatia wrote:
+>>>>> Add devicetree binding schema for AM625 OLDI Transmitters.
+>>>>>
+>>>>> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+>>>>> ---
+>>>>>   .../bindings/display/ti/ti,am625-oldi.yaml    | 153 ++++++++++++++++++
+>>>>>   MAINTAINERS                                   |   1 +
+>>>>>   2 files changed, 154 insertions(+)
+>>>>>   create mode 100644 Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml b/Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml
+>>>>> new file mode 100644
+>>>>> index 000000000000..0a96e600bc0b
+>>>>> --- /dev/null
+>>>>> +++ b/Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml
+>>>>> @@ -0,0 +1,153 @@
+>>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>>>> +%YAML 1.2
+>>>>> +---
+>>>>> +$id: http://devicetree.org/schemas/display/ti/ti,am625-oldi.yaml#
+>>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>>> +
+>>>>> +title: Texas Instruments AM625 OLDI Transmitter
+>>>>> +
+>>>>> +maintainers:
+>>>>> +  - Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+>>>>> +  - Aradhya Bhatia <a-bhatia1@ti.com>
+>>>>> +
+>>>>> +description: |
+>>>>> +  The AM625 TI Keystone OpenLDI transmitter (OLDI TX) supports serialized RGB
+>>>>> +  pixel data transmission between host and flat panel display over LVDS (Low
+>>>>> +  Voltage Differential Sampling) interface. The OLDI TX consists of 7-to-1 data
+>>>>> +  serializers, and 4-data and 1-clock LVDS outputs. It supports the LVDS output
+>>>>> +  formats "jeida-18", "jeida-24" and "vesa-18", and can accept 24-bit RGB or
+>>>>> +  padded and un-padded 18-bit RGB bus formats as input.
+>>>>> +
+>>>>> +properties:
+>>>>> +  reg:
+>>>>> +    maxItems: 1
+>>>>> +
+>>>>> +  clocks:
+>>>>> +    maxItems: 1
+>>>>> +    description: serial clock input for the OLDI transmitters
+>>>>> +
+>>>>> +  clock-names:
+>>>>> +    const: s_clk
+>>>>> +
+>>>>> +  ti,companion-oldi:
+>>>>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>>>>> +    description:
+>>>>> +      phandle to companion OLDI transmitter. This property is mandatory for the
+>>>>> +      primarty OLDI TX if the OLDI TXes are expected to work either in dual-lvds
+>>>>> +      mode or in clone mode. This property should point to the secondary OLDI
+>>>>> +      TX.
+>>>>> +
+>>>>> +  ti,secondary-oldi:
+>>>>> +    type: boolean
+>>>>> +    description: Boolean property to mark an OLDI TX as secondary node.
+>>>>> +
+>>>>> +  ti,oldi-io-ctrl:
+>>>>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>>>>> +    description:
+>>>>> +      phandle to syscon device node mapping OLDI IO_CTRL registers found in the
+>>>>> +      control MMR region. This property is needed for OLDI interface to work.
+>>>>> +
+>>>>> +  ports:
+>>>>> +    $ref: /schemas/graph.yaml#/properties/ports
+>>>>> +
+>>>>> +    properties:
+>>>>> +      port@0:
+>>>>> +        $ref: /schemas/graph.yaml#/properties/port
+>>>>> +        description: Parallel RGB input port
+>>>>> +
+>>>>> +      port@1:
+>>>>> +        $ref: /schemas/graph.yaml#/properties/port
+>>>>> +        description: LVDS output port
+>>>>> +
+>>>>> +    required:
+>>>>> +      - port@0
+>>>>> +      - port@1
+>>>>> +
+>>>>> +allOf:
+>>>>> +  - if:
+>>>>> +      properties:
+>>>>> +        ti,secondary-oldi: true
+>>>>> +    then:
+>>>>> +      properties:
+>>>>> +        ti,companion-oldi: false
+>>>>> +        ti,oldi-io-ctrl: false
+>>>>> +        clocks: false
+>>>>> +        clock-names: false
+>>>>> +
+>>>>> +    else:
+>>>>> +      required:
+>>>>> +        - ti,oldi-io-ctrl
+>>>>> +        - clocks
+>>>>> +        - clock-names
+>>>>> +
+>>>>> +required:
+>>>>> +  - reg
+>>>>> +  - ports
+>>>>> +
+>>>>> +additionalProperties: false
+>>>>> +
+>>>>> +examples:
+>>>>> +  - |
+>>>>> +    #include <dt-bindings/soc/ti,sci_pm_domain.h>
+>>>>> +
+>>>>> +    oldi_txes {
+>>>>> +        #address-cells = <1>;
+>>>>> +        #size-cells = <0>;
+>>>>> +        oldi: oldi@0 {
+>>>>> +            reg = <0>;
+>>>>> +            clocks = <&k3_clks 186 0>;
+>>>>> +            clock-names = "s_clk";
+>>>>> +            ti,oldi-io-ctrl = <&dss_oldi_io_ctrl>;
+>>>>
+>>>> What bus does this device live on ? Couldn't the I/O register space be
+>>>> referenced by the reg property ?.
+>>>>
+>>>
+>>> These registers are a part of the system-controller register space
+>>> (ctrl_mmr0). The whole register set is owned by the main_conf[0]
+>>> devicetree node, with sub-nodes pointing to specific regions. That's why
+>>> I cannot reference these registers directly.
+>>
+>> Then what does 'reg' represent? Looks like you just made up an index. If
+>> so, then this should probably be a child of &dss_oldi_io_ctrl instead.
+>> Or it should just be merged into that node.
+>>
+> 
+> I did make up an index when I used the 'reg' property. Similar to how
+> ports can be indexed. The AM65 has 1 OLDI TX. AM62 and AM62P have 2 OLDI
+> TXes each. The index is to help the driver parse through each of them.
+> 
+> If I push these OLDI TX nodes as child nodes under &dss_oldi_io_ctrl,
+> then that would be an inaccurate representation of the hardware.
+> 
+> The OLDI TXes are very well a part of the DSS hardware. As such, the
+> (three) registers that control the functionality have been made a part
+> of the DSS video-port (VP) register space, leaving OLDI TXes with no
+> direct access to the primary bus (cbass_main) where the DSS sits.
+> 
+> The IO control registers, on the other hand, do not affect OLDI
+> functionality in any way. These are just helper registers that merely
+> control the power characteristics of the OLDI data and clock lanes.
 
-Tested-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/usb/typec/ucsi/ucsi.c | 34 ++++++++++++++--------------------
- 1 file changed, 14 insertions(+), 20 deletions(-)
+Just summarizing my understanding from today's code and ref manual (TRM) 
+reading, which mostly repeats what Aradhya said above:
 
-diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
-index 25d2ee5ee8bb..dcd3765cc1f5 100644
---- a/drivers/usb/typec/ucsi/ucsi.c
-+++ b/drivers/usb/typec/ucsi/ucsi.c
-@@ -95,7 +95,7 @@ static int ucsi_acknowledge(struct ucsi *ucsi, bool conn_ack)
- static int ucsi_run_command(struct ucsi *ucsi, u64 command, u32 *cci,
- 			    void *data, size_t size, bool conn_ack)
- {
--	int ret;
-+	int ret, err;
- 
- 	*cci = 0;
- 
-@@ -120,30 +120,24 @@ static int ucsi_run_command(struct ucsi *ucsi, u64 command, u32 *cci,
- 	if (!(*cci & UCSI_CCI_COMMAND_COMPLETE))
- 		return -EIO;
- 
--	if (*cci & UCSI_CCI_NOT_SUPPORTED) {
--		if (ucsi_acknowledge(ucsi, false) < 0)
--			dev_err(ucsi->dev,
--				"ACK of unsupported command failed\n");
--		return -EOPNOTSUPP;
--	}
--
--	if (*cci & UCSI_CCI_ERROR) {
--		/* Acknowledge the command that failed */
--		ret = ucsi_acknowledge(ucsi, false);
--		return ret ? ret : -EIO;
--	}
-+	if (*cci & UCSI_CCI_NOT_SUPPORTED)
-+		err = -EOPNOTSUPP;
-+	else if (*cci & UCSI_CCI_ERROR)
-+		err = -EIO;
-+	else
-+		err = 0;
- 
--	if (data) {
--		ret = ucsi->ops->read_message_in(ucsi, data, size);
--		if (ret)
--			return ret;
--	}
-+	if (!err && data && UCSI_CCI_LENGTH(*cci))
-+		err = ucsi->ops->read_message_in(ucsi, data, size);
- 
--	ret = ucsi_acknowledge(ucsi, conn_ack);
-+	/*
-+	 * Don't ACK connection change if there was an error.
-+	 */
-+	ret = ucsi_acknowledge(ucsi, err ? false : conn_ack);
- 	if (ret)
- 		return ret;
- 
--	return 0;
-+	return err;
- }
- 
- static int ucsi_read_error(struct ucsi *ucsi, u8 connector_num)
+There may be 0, 1 or 2 OLDI instances, depending on the SoC. With two 
+instances, they may be (or are currently always?) connected to the same 
+display controller videoport, and thus can be used for cloning or 
+dual-link lvds.
 
--- 
-2.39.2
+In the TRM the OLDI instances are depicted to be inside DSS (display 
+subsystem), but outside DISPC (display controller). However, the 
+registers to configure and control OLDI are in the DISPC register block. 
+More specifically, in the DISPC VP1 block, which is the videoport to 
+which the OLDIs are connected to, and additionally one bit in the 
+DSS_SYSSTATUS register.
+
+The oldi-io-ctrl points to a system-control module, which contains a 
+register to control OLDI power up/down. But why is it called 
+"oldi-io-ctrl"? The register in question is OLDI_PD_CTRL.
+
+So... How to represent this in the DT?
+
+I think we do want have separate nodes for the OLDIs, so that we can use 
+the of_graph to represent how the data flows. OLDI doesn't have its own 
+register block, and is controlled via DSS. If the OLDI nodes are not 
+children of the DSS node, where could they be?
+
+I think the DT design in these patches matches my understanding of the 
+hardware.
+
+  Tomi
 
 
