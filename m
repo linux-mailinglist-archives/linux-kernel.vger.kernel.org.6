@@ -1,131 +1,172 @@
-Return-Path: <linux-kernel+bounces-233015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59F2A91B11E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:59:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B80391B126
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:03:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BB9B1C23FDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:59:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D2091F22F23
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 21:03:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED8FE19F469;
-	Thu, 27 Jun 2024 20:58:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C451A01D1;
+	Thu, 27 Jun 2024 21:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MwHZsHEU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="irgDDWwq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30FDB14D6EB;
-	Thu, 27 Jun 2024 20:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070EA3FBA5
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 21:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719521936; cv=none; b=gYM9BcaFYZkZb8kCJXqjwkbVp9eRZUYOgy0NzP72cDO3e/TYx9zpCd7e3AAIqgvkhdsOoN6klFbioHiD8NGZ0QohK8c8522s1BQiNz1Q16MmhoeZVXh/AK4J98peGG2x+Dg12WdP5tYFiBhN5TYh0qAqvN4YGQLgINTtplkSDI4=
+	t=1719522198; cv=none; b=aV3YPyAFLNh4lqhrxCTBvC5yiIWwCyKg5F6Vgr2Bq/oOQeK0iR7D6ZNmEqZwknBWg7PuOabTxIBXscGNxX6u7LkKwLGRP0Zrl88OA2OGgDRKzN9whpY9SwA3ErfgfT1nuhf9tt6MQmyURe5zGb1p5MTgC/LdekRNXdIpz3IY334=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719521936; c=relaxed/simple;
-	bh=09WhEq5r3XGQO4dhtl+2n781sC7j21j+wT5LnkW7syo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qo7gtAjAaSmeCTUAUdBMurOvy5p5+A77hNsDERS5hhI6oW6h0G7llUEqeS3xWOzxQX3PVMQgPmGHX1j664t97/qC17gCqpdCciZCjHao/X0dVNjbGHFEsRkMbNsUMmSer4i5clzR3Gh3mNpRBLE9o6D760ha0PZvdvKCpnCivxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MwHZsHEU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A8F4C2BBFC;
-	Thu, 27 Jun 2024 20:58:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719521935;
-	bh=09WhEq5r3XGQO4dhtl+2n781sC7j21j+wT5LnkW7syo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MwHZsHEU0LBEPFP8V7twQLd5G9kEPs5zqsYN12u2t3VDr91wDlRWlhyb5/4t+AuQB
-	 /Xm8aL3W0R/4YWx9z1iD5RnOG7in9GoIZwzLTjnGlAegoWibC7wnbd6yMPEOf5m49a
-	 VJCiozsORs2fto2A3lZ6hSJL67oVsqb19xz5JVH9DY5rOo+kxF8fVHpWNL2qfnyYU1
-	 ocp4qSxDm6V0SxJV0Re6gy61gQAcWOaWOBCyFUsrU+Epvw4/fhTs8jVBvYlLSbJAdO
-	 TOijowy4xrn0G5gH26e6CDayPMkTcmYGcAPZEf/TgdCOoUUABRJLDwXdy5MFyJrOq6
-	 tc+HtDo8OkBsQ==
-Date: Thu, 27 Jun 2024 14:58:54 -0600
-From: Rob Herring <robh@kernel.org>
-To: Tomer Maimon <tmaimon77@gmail.com>
-Cc: kernel test robot <lkp@intel.com>, mturquette@baylibre.com,
-	sboyd@kernel.org, p.zabel@pengutronix.de,
-	krzysztof.kozlowski+dt@linaro.org, tali.perry1@gmail.com,
-	joel@jms.id.au, venture@google.com, yuenn@google.com,
-	benjaminfair@google.com, oe-kbuild-all@lists.linux.dev,
-	openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v25 1/3] dt-bindings: reset: npcm: add clock properties
-Message-ID: <20240627205854.GA501440-robh@kernel.org>
-References: <20240618185819.2155595-2-tmaimon77@gmail.com>
- <202406191439.3NcnExKM-lkp@intel.com>
- <CAP6Zq1h2Sk6H2V-i+PAk_fCy9xdywcYw=w9wT_xcJ2WrqyWbAg@mail.gmail.com>
+	s=arc-20240116; t=1719522198; c=relaxed/simple;
+	bh=nJXTZf9jRv1GnZD10q0JXGqfPKCB/2lBaGZFcH1SZdg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rldOQm0fE/0xZHOvox2L67GcqQAl/PqiPth+0zhFmg8eIwsi/PLa2N+/PZgIA7FVltsXUxpU/sBhXEgn6RI8pWE/CsxuueMV8dQWf4FDkDGkw6fbW8Jnd2NFsn8sZjmueAakXV6It9qsJ04NWeaYbqPOLKfePg8PPeRUUW5T1Rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=irgDDWwq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719522196;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=92YjF2bxhqUCuV4ioUxntWjtFuSZxgrPxjvmc9Xi/h0=;
+	b=irgDDWwqeWEUjEcHeBRQQYjDWH5Ky69iGrTNHdF8VqmEyADR7mbnvjq84hfXf8tNv167ln
+	aI/OyHhfrsl16X/nDh8Zh0KZDKL7cKRZ7KaxbZPh7CKDcONGyIawefYBv3uugAYhxHCBWw
+	tqjOh6Iwz3ywDDYwmtIMHitxLzynFQk=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-235-Hben552dPBiXr5huvMhcjg-1; Thu,
+ 27 Jun 2024 17:03:09 -0400
+X-MC-Unique: Hben552dPBiXr5huvMhcjg-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 17AE41955DC1;
+	Thu, 27 Jun 2024 21:03:06 +0000 (UTC)
+Received: from [10.22.32.240] (unknown [10.22.32.240])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7946E1955BE0;
+	Thu, 27 Jun 2024 21:03:02 +0000 (UTC)
+Message-ID: <66095664-5a14-422a-a703-dec437577a3d@redhat.com>
+Date: Thu, 27 Jun 2024 17:03:01 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAP6Zq1h2Sk6H2V-i+PAk_fCy9xdywcYw=w9wT_xcJ2WrqyWbAg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] blk-cgroup: don't clear stat in blkcg_reset_stats()
+To: Li Lingfeng <lilingfeng@huaweicloud.com>, tj@kernel.org,
+ josef@toxicpanda.com, hch@lst.de, axboe@kernel.dk
+Cc: ming.lei@redhat.com, cgroups@vger.kernel.org,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yangerkun@huawei.com, yukuai1@huaweicloud.com, houtao1@huawei.com,
+ yi.zhang@huawei.com, lilingfeng3@huawei.com
+References: <20240627090856.2345018-1-lilingfeng@huaweicloud.com>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <20240627090856.2345018-1-lilingfeng@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Thu, Jun 20, 2024 at 10:32:26AM +0300, Tomer Maimon wrote:
-> Hi Rob and Krzysztof,
-> 
-> Could you please review this patch?
 
-I would hope by v25 you'd know you just need to look at DT patchwork to 
-see where you are in the queue. Pinging does nothing to help.
+On 6/27/24 05:08, Li Lingfeng wrote:
+> From: Li Lingfeng <lilingfeng3@huawei.com>
+>
+> The list corruption described in commit 6da668063279 ("blk-cgroup: fix
+> list corruption from resetting io stat") has no effect. It's unnecessary
+> to fix it.
+>
+> As for cgroup v1, it does not use iostat any more after commit
+> ad7c3b41e86b("blk-throttle: Fix io statistics for cgroup v1"), so using
+> memset to clear iostat has no real effect.
+> As for cgroup v2, it will not call blkcg_reset_stats() to corrupt the
+> list.
+>
+> The list of root cgroup can be used by both cgroup v1 and v2 while
+> non-root cgroup can't since it must be removed before switch between
+> cgroup v1 and v2.
+> So it may has effect if the list of root used by cgroup v2 was corrupted
+> after switching to cgroup v1, and switch back to cgroup v2 to use the
+> corrupted list again.
+> However, the root cgroup will not use the list any more after commit
+> ef45fe470e1e("blk-cgroup: show global disk stats in root cgroup io.stat").
+>
+> Although this has no negative effect, it is not necessary. Remove the
+> related code.
+You may be right that it may not be necessary in the mainline kernel, it 
+does fix the issue on distros with older kernels or some stable releases 
+where commit ad7c3b41e86b("blk-throttle: Fix io statistics for cgroup 
+v1") may not be present.
 
-Furthermore, you waited a whole 2 days which isn't much.
+>
+> Fixes: 6da668063279 ("blk-cgroup: fix list corruption from resetting io stat")
+I don't think there should be a fixes tag or it will be backported to 
+stable releases.
+> Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+> ---
+>   block/blk-cgroup.c | 24 ------------------------
+>   1 file changed, 24 deletions(-)
+>
+> diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
+> index 37e6cc91d576..1113c398a742 100644
+> --- a/block/blk-cgroup.c
+> +++ b/block/blk-cgroup.c
+> @@ -629,29 +629,6 @@ static void blkg_iostat_set(struct blkg_iostat *dst, struct blkg_iostat *src)
+>   	}
+>   }
+>   
+> -static void __blkg_clear_stat(struct blkg_iostat_set *bis)
+> -{
+> -	struct blkg_iostat cur = {0};
+> -	unsigned long flags;
+> -
+> -	flags = u64_stats_update_begin_irqsave(&bis->sync);
+> -	blkg_iostat_set(&bis->cur, &cur);
+> -	blkg_iostat_set(&bis->last, &cur);
+> -	u64_stats_update_end_irqrestore(&bis->sync, flags);
+> -}
+> -
+> -static void blkg_clear_stat(struct blkcg_gq *blkg)
+> -{
+> -	int cpu;
+> -
+> -	for_each_possible_cpu(cpu) {
+> -		struct blkg_iostat_set *s = per_cpu_ptr(blkg->iostat_cpu, cpu);
+> -
+> -		__blkg_clear_stat(s);
+> -	}
+> -	__blkg_clear_stat(&blkg->iostat);
+> -}
+> -
+>   static int blkcg_reset_stats(struct cgroup_subsys_state *css,
+>   			     struct cftype *cftype, u64 val)
+>   {
+> @@ -668,7 +645,6 @@ static int blkcg_reset_stats(struct cgroup_subsys_state *css,
+>   	 * anyway.  If you get hit by a race, retry.
+>   	 */
+>   	hlist_for_each_entry(blkg, &blkcg->blkg_list, blkcg_node) {
+> -		blkg_clear_stat(blkg);
+>   		for (i = 0; i < BLKCG_MAX_POLS; i++) {
+>   			struct blkcg_policy *pol = blkcg_policy[i];
+>   
 
-> 
-> Thanks,
-> 
-> Tomer
-> 
-> On Wed, 19 Jun 2024 at 09:20, kernel test robot <lkp@intel.com> wrote:
-> >
-> > Hi Tomer,
-> >
-> > kernel test robot noticed the following build warnings:
-> >
-> > [auto build test WARNING on clk/clk-next]
-> > [also build test WARNING on linus/master pza/reset/next v6.10-rc4 next-20240618]
-> > [cannot apply to pza/imx-drm/next]
-> > [If your patch is applied to the wrong git tree, kindly drop us a note.
-> > And when submitting patch, we suggest to use '--base' as documented in
-> > https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> >
-> > url:    https://github.com/intel-lab-lkp/linux/commits/Tomer-Maimon/dt-bindings-reset-npcm-add-clock-properties/20240619-093532
-> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-> > patch link:    https://lore.kernel.org/r/20240618185819.2155595-2-tmaimon77%40gmail.com
-> > patch subject: [PATCH v25 1/3] dt-bindings: reset: npcm: add clock properties
-> > config: arm64-randconfig-051-20240619 (https://download.01.org/0day-ci/archive/20240619/202406191439.3NcnExKM-lkp@intel.com/config)
-> > compiler: aarch64-linux-gcc (GCC) 13.2.0
-> > dtschema version: 2024.6.dev1+g833054f
-> > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240619/202406191439.3NcnExKM-lkp@intel.com/reproduce)
-> >
-> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes: https://lore.kernel.org/oe-kbuild-all/202406191439.3NcnExKM-lkp@intel.com/
-> >
-> > dtcheck warnings: (new ones prefixed by >>)
-> >    arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi:63.7-177.5: Warning (simple_bus_reg): /ahb/apb: simple-bus unit address format error, expected "f0000000"
-> >    arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi:50.35-55.5: Warning (unique_unit_address_if_enabled): /ahb/reset-controller@f0801000: duplicate unit-address (also used in node /ahb/clock-controller@f0801000)
-> >    arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /: memory@0: 'device_type' is a required property
-> >         from schema $id: http://devicetree.org/schemas/memory.yaml#
-> >    arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: system-controller@f0800000: compatible: ['nuvoton,npcm845-gcr', 'syscon'] is too short
-> >         from schema $id: http://devicetree.org/schemas/soc/nuvoton/nuvoton,npcm-gcr.yaml#
-> >    arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: interrupt-controller@dfff9000: 'ppi-partitions' does not match any of the regexes: '^v2m@[0-9a-f]+$', 'pinctrl-[0-9]+'
-> >         from schema $id: http://devicetree.org/schemas/interrupt-controller/arm,gic.yaml#
-> >    arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: ahb: apb:ranges: [[0, 0, 4026531840, 3145728], [4293918720, 0, 4293918720, 90112]] is not of type 'boolean'
-> >         from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
-> > >> arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: reset-controller@f0801000: '#clock-cells' is a required property
-> >         from schema $id: http://devicetree.org/schemas/reset/nuvoton,npcm750-reset.yaml#
-> > >> arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: reset-controller@f0801000: 'clocks' is a required property
-> >         from schema $id: http://devicetree.org/schemas/reset/nuvoton,npcm750-reset.yaml#
+If you are saying that iostat is no longer used in cgroup v1, why not 
+remove the blkcg_reset_stats() and its supporting functions and 
+deprecate the v1 reset_stats control file. The file should still be 
+there to avoid userspace regression, but it will be a nop.
 
-While I think things are too noisy for these 0-day reports, this one 
-rightfully shows the ABI break you are causing. You can't add new 
-required properties.
+Cheers,
+Longman
 
-Rob
 
