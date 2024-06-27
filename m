@@ -1,131 +1,224 @@
-Return-Path: <linux-kernel+bounces-232296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B324691A678
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:20:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE3A391A67C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:21:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03C52284DD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:20:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFF9F1C21B45
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:21:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD36C158218;
-	Thu, 27 Jun 2024 12:20:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DEBC156C74;
+	Thu, 27 Jun 2024 12:20:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wbSekzxP"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FMPDxksu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4917156863
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:20:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1FB3152E17
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719490825; cv=none; b=K6y/AEoi1kyN9G+Mgh0WCNcTWV3WQW7ydlNKAJL0NbLzk3fOYiDexio39r6HqsYDeB+qPST9QxlE4gAzVaK3L8Icjjv+03emCyWkyBJH7js/fscEyLDFXU7hTD4iX1JM1luCNM2kNOuyoWQ263yJMAse5nNNJnVEshOfyhcdhJ0=
+	t=1719490840; cv=none; b=bDBGzs/vAvpku2x3c6wy48B5xJ0sDGBJHor30JEhx1DkCush8gtwJgzqCHShPETiOVBXww9Z9XGEQ99/BVMWqSmbPE0oqzaqDen8WnXHRxak+Zu5eV/7LtssIRThuDJbnwBPu52duaOQSP3k0xtaZLuqd6cjB58oNgoZinNa7IM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719490825; c=relaxed/simple;
-	bh=sUkdPuQbPyTADqcRllGyHnJ7Vi420C9DZGnZln1HFGI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=s/5SdyffR66DY+3hONadf+QesC4tqxeB+WWfQvvZmSbriyW1kevMkNXeaUUIEILuHeqj+Bjf2h1dqU++hVnv5kCr217Z+ECgKm4XmNWduBSZzIdBsfDSH7TKSWOVnLgs5mHL9BewT+YLs33eLy9X+72Cr3wZSmINsV1a9mawtWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wbSekzxP; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42565670e20so3410165e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 05:20:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719490821; x=1720095621; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BzuRu3TYFUavJ3fIbGrdOxztoebeEOJ4/hLXJ9FwGMw=;
-        b=wbSekzxPnztQ5CuzVX6FiYkyBle2uwLKMtJ6Ffrkrc/kn/iWgzWBtILHoKrH//4Dgg
-         /M/fouotxviBfHeTbILWuF4cI54NvBonhh4QV57wiutpdJiTMthiFU3BOYMcxEYf92zM
-         ukal4uN33zsweb1v1AcUEj42+1En0+DL88TjPy93+w3WS8rWwl3X38nlHJOkqoa4uTL3
-         2AC4QTFpE2HiocB+3sYkalH0MZfXVrq5LfwYCqeqx0gaa/V3hbda+Io2GrKAvkYeT0xL
-         U/jNKcEd4jwpwWjWZp4BKU6IRledkCbKN8uIx8ncgKeunISpnSG6fCpuLNl7Tg/42SCH
-         oMsg==
+	s=arc-20240116; t=1719490840; c=relaxed/simple;
+	bh=qN8SMFWQgV9JwErL7cy0n0B3ePu5fSwTpAqf8ftkIo8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=b+1U1dAb1Xm3ClkBhcAVT6Xa5yhtlWKIOf9IKQvfzWjY+X8To9T3YZ0ED0UbAhSpuC1GpRmz6QArCe3JqutSfHfxbqYlxGV+7ZaPeDXyTKXI8F5FmRWCAu+WTnrGR3B7qWKvB8LIGYT+RGIJEh3z41fyf6X9jiKCBrfhpljmszI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FMPDxksu; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719490836;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gPWsol0l+mMURaI6G3cU4DtjhvRK9elf6OO4MFC4Ifs=;
+	b=FMPDxksukRlIvESDSLYrQ9/+bH9qFwlRRpqtaJWUahPEZ5TfIrRKDydH+9pE45CNdidFMH
+	mUP26zZ5pt7NWONRIsYSOK+U+cWWbaRiYsZqe46yfkY7DIz+HPIVJ3PsH110anBUm//8ee
+	vRZ8AjERSWXQj8se/xnyedeUj7UmylM=
+Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com
+ [209.85.219.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-314-_NGtKt7aMqqwPtndVbwWzQ-1; Thu, 27 Jun 2024 08:20:34 -0400
+X-MC-Unique: _NGtKt7aMqqwPtndVbwWzQ-1
+Received: by mail-yb1-f197.google.com with SMTP id 3f1490d57ef6-e02bb41247dso13969250276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 05:20:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719490821; x=1720095621;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BzuRu3TYFUavJ3fIbGrdOxztoebeEOJ4/hLXJ9FwGMw=;
-        b=uvWmMhUJLgfRXBJl3J8ANq2eJHNEmfBTuBFS39pSVFvWYLh2a/GBG2/MjXk5upvfmt
-         Vcsm4wqQIyW7TjYK+HUmEI3XLMiJE7rXm+8VTXwkGNTZDb961/1VJtX1aJQMiRIXep2K
-         3/NqYe8QRcjmKPNYQTYx/0uXPge3BtBtRTDFI2G8kkx1MBYlPl6L3Ge2NwVKFnB9zRKG
-         T2qzL9zEQ+ZQQpJlDHNP4jiUmum76sE0IgQ/6o8onjcRTAds5+OExKKD+QoNi+qVGzBi
-         qji926EJk1l9JU3yc5uyrJN7ytdXEVmBUBUBmpkjC7L8bZRNYUR/lKBYneBh5UgGTpDc
-         Amcg==
-X-Forwarded-Encrypted: i=1; AJvYcCUjwHXXEmutZJ5GdLmh7UZzI0Srev7T+y1nAGxzh6zURcDxAwqYkG73YM0JX/rGIq/EJpKcz+EP6UfWJWz1GTeMUOhZKA3u+gkwErJL
-X-Gm-Message-State: AOJu0Yxf+XWqfv/7RhR4EimIDvLeTqtPD2lNUDRxHzLeexcXXaABwpQv
-	7kHKXfSTXCdc3cv2INVcPRwM5ZrwrT4LsSLBtPXZ9k2c5hVcOqJEbxu8Op7a8b0=
-X-Google-Smtp-Source: AGHT+IHXhFgxyEkcJCCrWQdO9Ydbw+jJMliEDlzXzFMU/AuCxMArjpiJIM4PdWhK15j/MHAd79vk5Q==
-X-Received: by 2002:a05:600c:19cd:b0:424:ade3:c6b7 with SMTP id 5b1f17b1804b1-42564502cc7mr15766815e9.2.1719490821344;
-        Thu, 27 Jun 2024 05:20:21 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c8424b43sm62692885e9.32.2024.06.27.05.20.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 05:20:20 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 3/3] arm64: dts: qcom: sm8550-qrd: add port mapping to speakers
-Date: Thu, 27 Jun 2024 14:20:15 +0200
-Message-ID: <20240627122015.30945-3-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240627122015.30945-1-krzysztof.kozlowski@linaro.org>
-References: <20240627122015.30945-1-krzysztof.kozlowski@linaro.org>
+        d=1e100.net; s=20230601; t=1719490834; x=1720095634;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gPWsol0l+mMURaI6G3cU4DtjhvRK9elf6OO4MFC4Ifs=;
+        b=BIVpchkSvyVxDh0i5o0ttIGMjTbXbJi/Rrw4a9fmH0ayCfwCropzkAqqXW2ZzSBKmS
+         wn1fRll91jLcdAGuUoOK3ew7H24uO21/362sgakaKD6oOOePTRp409umph+MLGq7ZSq+
+         WcRAuSFvEGAjGMBJk+55OhY1Z/FX0ANXwqb/MUpKYIH1NmJRfZQTcv8GefW7leBFHzL5
+         oDBWaDR46ivrjylRMPvdt6SycdaFmxRfzMkjUSqcN/VgperotkUzQNzZY+epzksZ9Nu+
+         f4rPpUA8XTz9odAgweV1X3RkHr0vOwnr0e2+Mamembdv6cBtNQHm3JzlSTXUqLBIIKyl
+         sKyA==
+X-Forwarded-Encrypted: i=1; AJvYcCWkJT9PpTFkPptUaljdIP79WINsMzUfa+GD1PgQfonqSEAbM1KeovcmUHnlnhZBVrvSf/GplZhEp15KQU2IumHgt2ddnUybCi/Q7/X7
+X-Gm-Message-State: AOJu0YxxenyZNKNFNxYMrwgRVP7kPdOIL4Z1c1edEAEW3stz9vSn534r
+	2Rc6k7UaRDPK08FXXf8nUpio42iOtDIeGVTiCZSwLQbK8iBygzlJvjQh5UPfjAcZY+cNZQDu2Y3
+	1sKHREau233TXr4CNDQpEbQwGc2FkFzb0lLhB23sHFfbIklIHM62eObjG9pwWvw==
+X-Received: by 2002:a25:adce:0:b0:e02:c6fe:aea2 with SMTP id 3f1490d57ef6-e0300f5057emr13058041276.7.1719490834238;
+        Thu, 27 Jun 2024 05:20:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFE+keJ4XK5rFmacMpWdGhD/DYdsXTsAoYw7KTLDSw4TQq7OwCqY6mKoi2ZjRknhOwj1gNt4Q==
+X-Received: by 2002:a25:adce:0:b0:e02:c6fe:aea2 with SMTP id 3f1490d57ef6-e0300f5057emr13058023276.7.1719490833871;
+        Thu, 27 Jun 2024 05:20:33 -0700 (PDT)
+Received: from [10.0.0.200] (modemcable096.103-83-70.mc.videotron.ca. [70.83.103.96])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44641e0b648sm5424881cf.8.2024.06.27.05.20.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Jun 2024 05:20:33 -0700 (PDT)
+Message-ID: <d44c633d-d1ef-4f9c-bcac-554ae6a4c661@redhat.com>
+Date: Thu, 27 Jun 2024 08:20:32 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [BUG] ice driver crash on arm64
+From: Luiz Capitulino <luizcap@redhat.com>
+To: Maciej Fijalkowski <maciej.fijalkowski@intel.com>, xmu@redhat.com
+Cc: jesse.brandeburg@intel.com, anthony.l.nguyen@intel.com, poros@redhat.com,
+ netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ magnus.karlsson@intel.com
+References: <8f9e2a5c-fd30-4206-9311-946a06d031bb@redhat.com>
+ <ZnQsdxzumig7CD7c@boxer> <34ffbdcb-b1f9-4cee-9f55-7019a228d3f8@redhat.com>
+ <ZnvdGQ0fUTAIorhS@boxer> <a4549e76-5852-4b9f-82f9-0f2d665ab122@redhat.com>
+Content-Language: en-US, en-CA
+In-Reply-To: <a4549e76-5852-4b9f-82f9-0f2d665ab122@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Add appropriate mappings of Soundwire ports of WSA8845 speaker.  This
-solves second (south) speaker sound distortions when playing audio.
+On 2024-06-26 08:53, Luiz Capitulino wrote:
+> On 2024-06-26 05:19, Maciej Fijalkowski wrote:
+>> On Thu, Jun 20, 2024 at 09:23:42AM -0400, Luiz Capitulino wrote:
+>>> On 2024-06-20 09:19, Maciej Fijalkowski wrote:
+>>>> On Tue, Jun 18, 2024 at 11:23:28AM -0400, Luiz Capitulino wrote:
+>>>>> Hi,
+>>>>>
+>>>>> We have an Ampere Mount Snow system (which is arm64) with an Intel E810-C
+>>>>> NIC plugged in. The kernel is configured with 64k pages. We're observing
+>>>>> the crash below when we run iperf3 as a server in this system and load traffic
+>>>>> from another system with the same configuration. The crash is reproducible
+>>>>> with latest Linus tree 14d7c92f:
+>>>>>
+>>>>> [  225.715759] Unable to handle kernel paging request at virtual address 0075e625f68aa42c
+>>>>> [  225.723669] Mem abort info:
+>>>>> [  225.726487]   ESR = 0x0000000096000004
+>>>>> [  225.730223]   EC = 0x25: DABT (current EL), IL = 32 bits
+>>>>> [  225.735526]   SET = 0, FnV = 0
+>>>>> [  225.738568]   EA = 0, S1PTW = 0
+>>>>> [  225.741695]   FSC = 0x04: level 0 translation fault
+>>>>> [  225.746564] Data abort info:
+>>>>> [  225.749431]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+>>>>> [  225.754906]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+>>>>> [  225.759944]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+>>>>> [  225.765250] [0075e625f68aa42c] address between user and kernel address ranges
+>>>>> [  225.772373] Internal error: Oops: 0000000096000004 [#1] SMP
+>>>>> [  225.777932] Modules linked in: xfs(E) crct10dif_ce(E) ghash_ce(E) sha2_ce(E) sha256_arm64(E) sha1_ce(E) sbsa_gwdt(E) ice(E) nvme(E) libie(E) dimlib(E) nvme_core(E) gnss(E) nvme_auth(E) ixgbe(E) igb(E) mdio(E) i2c_algo_bit(E) i2c_designware_platform(E) xgene_hwmon(E) i2c_designware_core(E) dm_mirror(E) dm_region_hash(E) dm_log(E) dm_mod(E)
+>>>>> [  225.807902] CPU: 61 PID: 7794 Comm: iperf3 Kdump: loaded Tainted: G            E      6.10.0-rc4+ #1
+>>>>> [  225.817021] Hardware name: LTHPC GR2134/MP32-AR2-LT, BIOS F31j (SCP: 2.10.20220531) 08/01/2022
+>>>>> [  225.825618] pstate: 00400009 (nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>>>>> [  225.832566] pc : __arch_copy_to_user+0x4c/0x240
+>>>>> [  225.837088] lr : _copy_to_iter+0x104/0x518
+>>>>> [  225.841173] sp : ffff80010978f6e0
+>>>>> [  225.844474] x29: ffff80010978f730 x28: 0000000000007388 x27: 4775e625f68aa42c
+>>>>> [  225.851597] x26: 0000000000000001 x25: 00000000000005a8 x24: 00000000000005a8
+>>>>> [  225.858720] x23: 0000000000007388 x22: ffff80010978fa60 x21: ffff80010978fa60
+>>>>> [  225.865842] x20: 4775e625f68aa42c x19: 0000000000007388 x18: 0000000000000000
+>>>>> [  225.872964] x17: 0000000000000000 x16: 0000000000000000 x15: 4775e625f68aa42c
+>>>>> [  225.880087] x14: aaa03e61c262c44f x13: 5fb01a5ebded22da x12: 415feff815830f22
+>>>>> [  225.887209] x11: 7411a8ffaab6d3d7 x10: 95af4645d12e6d70 x9 : ffffba83c2faddac
+>>>>> [  225.894332] x8 : c1cbcc6e9552ed64 x7 : dfcefe933cdc57ae x6 : 0000fffde5aa9e80
+>>>>> [  225.901454] x5 : 0000fffde5ab1208 x4 : 0000000000000004 x3 : 0000000000016180
+>>>>> [  225.908576] x2 : 0000000000007384 x1 : 4775e625f68aa42c x0 : 0000fffde5aa9e80
+>>>>> [  225.915699] Call trace:
+>>>>> [  225.918132]  __arch_copy_to_user+0x4c/0x240
+>>>>> [  225.922304]  simple_copy_to_iter+0x4c/0x78
+>>>>> [  225.926389]  __skb_datagram_iter+0x18c/0x270
+>>>>> [  225.930647]  skb_copy_datagram_iter+0x4c/0xe0
+>>>>> [  225.934991]  tcp_recvmsg_locked+0x59c/0x9a0
+>>>>> [  225.939162]  tcp_recvmsg+0x78/0x1d0
+>>>>> [  225.942638]  inet6_recvmsg+0x54/0x128
+>>>>> [  225.946289]  sock_recvmsg+0x78/0xd0
+>>>>> [  225.949766]  sock_read_iter+0x98/0x108
+>>>>> [  225.953502]  vfs_read+0x2a4/0x318
+>>>>> [  225.956806]  ksys_read+0xec/0x110
+>>>>> [  225.960108]  __arm64_sys_read+0x24/0x38
+>>>>> [  225.963932]  invoke_syscall.constprop.0+0x80/0xe0
+>>>>> [  225.968624]  do_el0_svc+0xc0/0xe0
+>>>>> [  225.971926]  el0_svc+0x48/0x1b0
+>>>>> [  225.975056]  el0t_64_sync_handler+0x13c/0x158
+>>>>> [  225.979400]  el0t_64_sync+0x1a4/0x1a8
+>>>>> [  225.983051] Code: 78402423 780008c3 910008c6 36100084 (b8404423)
+>>>>> [  225.989132] SMP: stopping secondary CPUs
+>>>>> [  225.995919] Starting crashdump kernel...
+>>>>> [  225.999829] Bye!
+>>>>>
+>>>>> I was able to find out this is actually a regression introduced in 6.3-rc1
+>>>>> and was able to bisect it down to commit:
+>>>>>
+>>>>> commit 1dc1a7e7f4108bad4af4c7c838f963d342ac0544
+>>>>> Author: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+>>>>> Date:   Tue Jan 31 21:44:59 2023 +0100
+>>>>>
+>>>>>       ice: Centrallize Rx buffer recycling
+>>>>>
+>>>>>       Currently calls to ice_put_rx_buf() are sprinkled through
+>>>>>       ice_clean_rx_irq() - first place is for explicit flow director's
+>>>>>       descriptor handling, second is after running XDP prog and the last one
+>>>>>       is after taking care of skb.
+>>>>>
+>>>>>       1st callsite was actually only for ntc bump purpose, as Rx buffer to be
+>>>>>       recycled is not even passed to a function.
+>>>>>
+>>>>>       It is possible to walk through Rx buffers processed in particular NAPI
+>>>>>       cycle by caching ntc from beginning of the ice_clean_rx_irq().
+>>>>>
+>>>>>       To do so, let us store XDP verdict inside ice_rx_buf, so action we need
+>>>>>       to take on will be known. For XDP prog absence, just store ICE_XDP_PASS
+>>>>>       as a verdict.
+>>>>>
+>>>>>       Signed-off-by: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+>>>>>       Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+>>>>>       Reviewed-by: Alexander Lobakin <alexandr.lobakin@intel.com>
+>>>>>       Link: https://lore.kernel.org/bpf/20230131204506.219292-7-maciej.fijalkowski@intel.com
+>>>>>
+>>>>> Some interesting/important information:
+>>>>>
+>>>>>    * Issue doesn't reproduce when:
+>>>>>       - The kernel is configured w/ 4k pages
+>>>>>       - UDP is used (ie. iperf3 -c <server> -u -b 0)
+>>>>>       - legacy-rx is set
+>>>>>    * The NIC firmware is version 4.30 (we haven't figured out how to update it from arm)
+>>>>>
+>>>>> By taking a quick look at the code, ICE_LAST_OFFSET in ice_can_reuse_rx_page() seems
+>>>>> wrong since Rx buffers are 3k w/ bigger page sizes but just changing it to
+>>>>> ICE_RXBUF_3072 doesn't fix the issue.
+>>>>>
+>>>>> Could you please help taking a look?
+>>>>
+>>>> Thanks for the report. I am on sick leave currently, will try to take
+>>>> alook once I'm back.
+>>>
+>>> I'm sorry to hear that Maciej, I hope you get well soon.
+>>
+>> Thanks I'm back now. Can you tell us also what MTU is used for these
+>> tests? Our validation is working on repro now.
+> 
+> Xiumei,
+> 
+> Can you take a look now that you got the machine back?
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Strangely, I don't see Xiumei's answer on lore (although I did receive the
+email). Just in case, the MTU is 1500.
 
----
-
-Bindings:
-https://lore.kernel.org/all/20240626-port-map-v1-3-bd8987d2b332@linaro.org/
-
-Can be applied independently, if bindings are fine.
----
- arch/arm64/boot/dts/qcom/sm8550-qrd.dts | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sm8550-qrd.dts b/arch/arm64/boot/dts/qcom/sm8550-qrd.dts
-index d27820fb5fc0..de40cb623c8c 100644
---- a/arch/arm64/boot/dts/qcom/sm8550-qrd.dts
-+++ b/arch/arm64/boot/dts/qcom/sm8550-qrd.dts
-@@ -935,6 +935,7 @@ north_spkr: speaker@0,0 {
- 		sound-name-prefix = "SpkrLeft";
- 		vdd-1p8-supply = <&vreg_l15b_1p8>;
- 		vdd-io-supply = <&vreg_l3g_1p2>;
-+		qcom,port-mapping = <1 2 3 7 10 13>;
- 	};
- 
- 	/* WSA8845, Speaker South */
-@@ -948,6 +949,7 @@ south_spkr: speaker@0,1 {
- 		sound-name-prefix = "SpkrRight";
- 		vdd-1p8-supply = <&vreg_l15b_1p8>;
- 		vdd-io-supply = <&vreg_l3g_1p2>;
-+		qcom,port-mapping = <4 5 6 7 11 13>;
- 	};
- };
- 
--- 
-2.43.0
+- Luiz
 
 
