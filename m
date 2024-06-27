@@ -1,137 +1,416 @@
-Return-Path: <linux-kernel+bounces-232695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A22C91AD28
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:49:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90BEE91AD32
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:50:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBC7A1C24D2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:49:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD8D1B264FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:50:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF59E56A;
-	Thu, 27 Jun 2024 16:49:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EED7199E9D;
+	Thu, 27 Jun 2024 16:50:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="icXFnF0X"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="s/+/L4Ce"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31B1B198E66
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 16:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28887E56A;
+	Thu, 27 Jun 2024 16:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719506948; cv=none; b=Zi97sSpkTIdlCESTcW9NaKGZT5c6YwlCc0gsEOBjTP2VNfEXiRJVg4j4Sc3xI7GzhYxUINrTXsdbmzuyv1iNZ/T1xd94AgL0MjGT60ylBeB8IPCSii/laNW/npX6iioyzeMIb/K5P+d/9BlF2tgTCoCJq/wg7eY6Iqj3uyMdcY0=
+	t=1719507038; cv=none; b=tNnYKf7RzYk2pPEmtYUFSlYsgGzAj57rUe/X3/SSSWtFUyT9PhjIGLXDihyCORQmjOKi2SFy8diTHML3htyDB5GpmsaSvprOfYuPvV3M8sdM6Z+1OPfis5qazBvNKy2S14rMl8i9clKFWf0xRu1caGaHEkKIRBScQAVrhnTpfQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719506948; c=relaxed/simple;
-	bh=c/4fRIUAemDzS10rHlCgLgOeocikZUevNTeZx2WBQIY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZwjJqxS7Yetvs8hkFfSHyWBTwMbwu9SZ2UqIegYWzUh/KwfnIQ6aO72kWES62TQWtBF3NgoebrX3I7kRYI6qUGf/LELP3B6mLeI/5i6NxcXGEEtEL3+r7nMuLes/JSkDcG6HusSG1t8zA8356UXfpjy2NPGghX1z3dgySDOsKKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=icXFnF0X; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7065a2f4573so4957229b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 09:49:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719506945; x=1720111745; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xxcFEOlgMZdT3jwSPBKvbM2Hel/+xTILb1M8DFKl18Y=;
-        b=icXFnF0XlfKUfiIZ/77bLs1A3mXy6ePVUmXg12nm7iyhegg3eaUYMQrRzMeNFYSCiV
-         cBFQT39vLeCEZ87AkDiE5osHoixilxUyya7iFfh0fRE+trmHKp3ZG5YpG/sOG7BGZxSS
-         K8FYkC3F+cPwOqYVvHyCTQ80NSK47YsND442ERHkNxEsNYdBxrE40o+cT5wZFGSxw/xo
-         KLUY6eEa1EJl3gJ4WmfgbsWoyt3F3AmocCwLdsQ3VISzaxZ76fSwYRWTObHmrnXhxkuW
-         3pu8yEm516lxU5V1HE7Z7b3nYO4k66kQMLICbuUdNxn7SSQZUQ0H8SnlzagkhhwQnbbL
-         Vrog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719506945; x=1720111745;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xxcFEOlgMZdT3jwSPBKvbM2Hel/+xTILb1M8DFKl18Y=;
-        b=iV2nNiQ2DKF5oFH5XAYB9Y9prYPBJU8lSkubftYZxFKOXhmtknGavAPKRERZMxAw1G
-         75GcqF3twzKSlFhgJCFBD5RGDHtUjk0Hc9Yh6V1plfUWuv4ng6+XRodO823UnwW/zFcH
-         hNuqQWRLFDwuTO5fRsVrPc/TYWaaQid66opiAAx4t7dr8n1JI/41jD/tIoPm0G3ldr/w
-         NCrojiiSBmzZNk7PslsuZ9wh+pqJpg05kLyhAqVzUfaV4mXDwojOyLrSMiabpNGG1Jp0
-         tT+u/xuYCQSLBv8lmRoti2CYmwAMD+4l+D36mW9TJuWjN2zkrmJ4vALJu63sdlmuo+HY
-         BoQA==
-X-Forwarded-Encrypted: i=1; AJvYcCXVFJqrz99X7lzGK0mZ/q1nSIzlyviCi9JRtXHGNdWmcBcCuJ43Dc6wmvYz0br2xTCvT6bmMKc/Y6IHB8V3d9NMZ6t++iUC2xzwJ0c8
-X-Gm-Message-State: AOJu0Yy1zF7xuvjS4BUvMfRlB9Ns8XFqSkMwd+Y3rxrstfyYPVxjIX7V
-	K/ieAEunP3ZhLEb1DLlm4cVg3EJdg4u2qpo1xW+PiQA2VCMMUyQkNjLVmgAm71NwQnjlnwoveWo
-	Ma3ovVSeTu7EwU7Zo9o2yp15D7qzbJ/lW7nMzLg==
-X-Google-Smtp-Source: AGHT+IGuCIcGgabVY++a4Em4rrMpQkk20usuUoDxNeZRMIEMY4XnKjgZq6XSJV5vH34NogeLq+vOfcgAhpt92ibkLbw=
-X-Received: by 2002:a05:6a20:3d8b:b0:1be:c4e6:ed40 with SMTP id
- adf61e73a8af0-1bec4e6ee22mr5759856637.51.1719506945413; Thu, 27 Jun 2024
- 09:49:05 -0700 (PDT)
+	s=arc-20240116; t=1719507038; c=relaxed/simple;
+	bh=PW2WJsrl1K38wdefvdyTnJBCRROT7XlLQLn33txQrLQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HxRl6NR0udq3o2G1qWYqcXHfTO651mtVJSO7iDDii/kK51ZcKzOmqeKUe9JuO8TGeTvXiMdy5YzGRveXTTpdnt+ucnYy7GZaFaqcikWlQTM2tbYJupOnx6b3Pl0xvUv9Sw0193Hv28o8LABksUmMBr+wvkxWv+2dzk9smlzaOMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=s/+/L4Ce; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45RCt2c0027601;
+	Thu, 27 Jun 2024 18:50:01 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	VP2bD61+z+J6l3jmGgfZzieeOpJ8ufLGwpCo2aUvUKw=; b=s/+/L4Ce7GFaX/iW
+	EdvdrcseBtYae6hrx+yjqXPwHnNr0q09mzM99UklISDgPv6Kk/NH/Kh81WJ73wXY
+	zfSlG2NBjR1lN6sTFeBXLyzBvxizX4WIdEkSfiMGyxae3nGi0Ibb82qZtJhYqI/p
+	/pe7g3kVTalTbmBEwxYEMM1YzQyZIJ2I3nOgKoT2wZQkYSL1zpuZ/I0bzxl0cTsf
+	ev09QWZxuRx4PuJZJ+aQyp/NT6Ga02W/cuaEXmzvUPTVNzA6CivysFacAYzV+fBR
+	28lFmdhcD3pR9Iunu7LbtJ32omoq9A7WxHGAQcPBf7FGLkdmOkpZ+9SIq74RPuWK
+	5pqXTg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ywngdp335-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Jun 2024 18:50:00 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 00EDE4002D;
+	Thu, 27 Jun 2024 18:49:47 +0200 (CEST)
+Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D1669226FA3;
+	Thu, 27 Jun 2024 18:49:03 +0200 (CEST)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
+ (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Thu, 27 Jun
+ 2024 18:49:03 +0200
+Received: from [10.48.86.222] (10.48.86.222) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Thu, 27 Jun
+ 2024 18:49:02 +0200
+Message-ID: <1ed93216-9445-4b31-85cf-5b7f35ee91c2@foss.st.com>
+Date: Thu, 27 Jun 2024 18:49:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240627113018.25083-1-brgl@bgdev.pl> <20240627113018.25083-4-brgl@bgdev.pl>
- <ea452581-c903-4106-b912-d307f74f773d@lunn.ch>
-In-Reply-To: <ea452581-c903-4106-b912-d307f74f773d@lunn.ch>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 27 Jun 2024 18:48:51 +0200
-Message-ID: <CAMRc=Memf-fwY2iRXNDz7M4337PcH7quAZ7GHgjauj+Og8PwbQ@mail.gmail.com>
-Subject: Re: [PATCH v2 net-next 3/3] net: phy: aquantia: add support for aqr115c
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Linux-stm32] [PATCH v2 6/7] usb: typec: ucsi: extract common
+ code for command handling
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Nikita Travkin <nikita@trvn.ru>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20240621-ucsi-rework-interface-v2-0-a399ff96bf88@linaro.org>
+ <20240621-ucsi-rework-interface-v2-6-a399ff96bf88@linaro.org>
+ <160e7af5-29c8-49a6-ae4f-dbfc3dd608c1@foss.st.com>
+ <k2q7g6ka34o2vgoy5s64nwixqa6qjaok72fuxgircwseyn2k7z@pm56aurq42n6>
+ <3869dcd0-9936-4712-b7ad-3c66cbe4828a@foss.st.com>
+ <CAA8EJpqEYRFOZbN55Eh0SisnR1HQ0iseA1L+1n0QxOrspsmLuQ@mail.gmail.com>
+Content-Language: en-US
+From: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+In-Reply-To: <CAA8EJpqEYRFOZbN55Eh0SisnR1HQ0iseA1L+1n0QxOrspsmLuQ@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-27_12,2024-06-27_03,2024-05-17_01
 
-On Thu, Jun 27, 2024 at 6:22=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
->
-> On Thu, Jun 27, 2024 at 01:30:17PM +0200, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > Add support for a new model to the Aquantia driver. This PHY supports
-> > Overlocked SGMII mode with 2.5G speeds.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > ---
-> >  drivers/net/phy/aquantia/aquantia_main.c | 39 +++++++++++++++++++++++-
-> >  1 file changed, 38 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy=
-/aquantia/aquantia_main.c
-> > index 974795bd0860..98ccefd355d5 100644
-> > --- a/drivers/net/phy/aquantia/aquantia_main.c
-> > +++ b/drivers/net/phy/aquantia/aquantia_main.c
-> > @@ -29,6 +29,7 @@
-> >  #define PHY_ID_AQR113        0x31c31c40
-> >  #define PHY_ID_AQR113C       0x31c31c12
-> >  #define PHY_ID_AQR114C       0x31c31c22
-> > +#define PHY_ID_AQR115C       0x31c31c33
-> >  #define PHY_ID_AQR813        0x31c31cb2
-> >
-> >  #define MDIO_PHYXS_VEND_IF_STATUS            0xe812
-> > @@ -111,7 +112,6 @@ static u64 aqr107_get_stat(struct phy_device *phyde=
-v, int index)
-> >       int len_h =3D stat->size - len_l;
-> >       u64 ret;
-> >       int val;
-> > -
-> >       val =3D phy_read_mmd(phydev, MDIO_MMD_C22EXT, stat->reg);
-> >       if (val < 0)
-> >               return U64_MAX;
->
-> White space change. And that blank line is actually wanted to separate
-> the variables from the code.
->
+On 6/27/24 17:58, Dmitry Baryshkov wrote:
+> On Thu, 27 Jun 2024 at 18:51, Fabrice Gasnier
+> <fabrice.gasnier@foss.st.com> wrote:
+>>
+>> On 6/25/24 18:49, Dmitry Baryshkov wrote:
+>>> On Tue, Jun 25, 2024 at 05:24:54PM GMT, Fabrice Gasnier wrote:
+>>>> On 6/21/24 00:55, Dmitry Baryshkov wrote:
+>>>>> Extract common functions to handle command sending and to handle events
+>>>>> from UCSI. This ensures that all UCSI glue drivers handle the ACKs in
+>>>>> the same way.
+>>>>>
+>>>>> The CCG driver used DEV_CMD_PENDING both for internal
+>>>>> firmware-related commands and for UCSI control handling. Leave the
+>>>>> former use case intact.
+>>>>>
+>>>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>>>> ---
+>>>>>  drivers/usb/typec/ucsi/ucsi.c           | 43 +++++++++++++++++++++++++++
+>>>>>  drivers/usb/typec/ucsi/ucsi.h           |  7 +++++
+>>>>>  drivers/usb/typec/ucsi/ucsi_acpi.c      | 46 ++---------------------------
+>>>>>  drivers/usb/typec/ucsi/ucsi_ccg.c       | 21 ++-----------
+>>>>>  drivers/usb/typec/ucsi/ucsi_glink.c     | 47 ++---------------------------
+>>>>>  drivers/usb/typec/ucsi/ucsi_stm32g0.c   | 44 ++--------------------------
+>>>>>  drivers/usb/typec/ucsi/ucsi_yoga_c630.c | 52 ++-------------------------------
+>>>>>  7 files changed, 62 insertions(+), 198 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
+>>>>> index 4ba22323dbf9..691ee0c4ef87 100644
+>>>>> --- a/drivers/usb/typec/ucsi/ucsi.c
+>>>>> +++ b/drivers/usb/typec/ucsi/ucsi.c
+>>>>> @@ -36,6 +36,48 @@
+>>>>>   */
+>>>>>  #define UCSI_SWAP_TIMEOUT_MS       5000
+>>>>>
+>>>>> +void ucsi_notify_common(struct ucsi *ucsi, u32 cci)
+>>>>> +{
+>>>>> +   if (UCSI_CCI_CONNECTOR(cci))
+>>>>> +           ucsi_connector_change(ucsi, UCSI_CCI_CONNECTOR(cci));
+>>>>> +
+>>>>> +   if (cci & UCSI_CCI_ACK_COMPLETE &&
+>>>>> +       test_bit(ACK_PENDING, &ucsi->flags))
+>>>>> +           complete(&ucsi->complete);
+>>>>> +
+>>>>> +   if (cci & UCSI_CCI_COMMAND_COMPLETE &&
+>>>>> +       test_bit(COMMAND_PENDING, &ucsi->flags))
+>>>>> +           complete(&ucsi->complete);
+>>>>
+>>>> Hi Dmitry,
+>>>>
+>>>> I've recently faced some race with ucsi_stm32g0 driver, and have sent a
+>>>> fix for it [1], as you've noticed in the cover letter.
+>>>>
+>>>> To fix that, I've used test_and_clear_bit() in above two cases, instead
+>>>> of test_bit().
+>>>
+>>> Could you possible describe, why do you need test_and_clear_bit()
+>>> instead of just test_bit()? The bits are cleared at the end of the
+>>> .sync_write(), also there can be no other command (or ACK_CC) submission
+>>> before this one is fully processed.
+>>
+>> Hi Dmitry,
+>>
+>> It took me some time to reproduce this race I observed earlier.
+>> (I observe this during DR swap.)
+>>
+>> Once the ->async_control(UCSI_ACK_CC_CI) call bellow gets completed, and
+>> before the ACK_PENDING bit gets cleared, e.g. clear_bit(ACK_PENDING), I
+>> get an asynchronous interrupt.
+>>
+>> Basically, Then the above complete() gets called (due to
+>> UCSI_CCI_ACK_COMPLETE & ACK_PENDING).
+>>
+>> Subsequent UCSI_GET_CONNECTOR_STATUS command (from
+>> ucsi_handle_connector_change) will be unblocked immediately due to
+>> complete() call has already happen, without UCSI_CCI_COMMAND_COMPLETE
+>> cci flag, hence returning -EIO.
+> 
+> But the ACK_CI is being sent as a response to a command. This means
+> that the ppm_lock should be locked. The UCSI_GET_CONNECTOR_STATUS
+> command should wait for ppm_lock to be freed and only then it can
+> proceed with sending the command. Maybe I'm misunderstanding the case
+> or maybe there is a loophole somewhere.
 
-Ah, this is accidental, thanks for catching it.
+There's probably also some miss-understanding at my end, I don't get how
+the ppm_lock would protext from non atomic async_control()/clear_bit().
 
-Bart
+Let me share some trace here, I hope it can better show the difference
+at my end when I get the race.
+I've added some debug prints around these lines, to trace the set/clear
+of the COMMAND/ACK_PENDING, main commands and cci flags.
 
->     Andrew
->
-> ---
-> pw-bot: cr
+normal case is:
+---
+ucsi_send_command_common: UCSI_SET_UOR
+set:COMMAND_PENDING
+ucsi_stm32g0_irq_handler
+ucsi_notify_common: UCSI_CCI_COMMAND_COMPLETE
+clr:COMMAND_PENDING
+ucsi_acknowledge: UCSI_ACK_COMMAND_COMPLETE UCSI_ACK_CONNECTOR_CHANGE
+set:ACK_PENDING
+ucsi_stm32g0_irq_handler
+ucsi_notify_common: UCSI_CCI_ACK_COMPLETE
+clr:ACK_PENDING
+ucsi_stm32g0_irq_handler
+ucsi_notify_common: ucsi_connector_change
+ucsi_send_command_common: UCSI_GET_CONNECTOR_STATUS
+set:COMMAND_PENDING
+ucsi_stm32g0_irq_handler
+ucsi_notify_common: UCSI_CCI_COMMAND_COMPLETE
+clr:COMMAND_PENDING
+ucsi_acknowledge: UCSI_ACK_COMMAND_COMPLETE
+set:ACK_PENDING
+ucsi_stm32g0_irq_handler
+ucsi_notify_common: UCSI_CCI_ACK_COMPLETE
+clr:ACK_PENDING
+
+racy case:
+---
+ucsi_send_command_common: UCSI_SET_UOR
+set:COMMAND_PENDING
+ucsi_stm32g0_irq_handler
+ucsi_notify_common: UCSI_CCI_COMMAND_COMPLETE
+clr:COMMAND_PENDING
+ucsi_acknowledge: UCSI_ACK_COMMAND_COMPLETE UCSI_ACK_CONNECTOR_CHANGE
+set:ACK_PENDING
+ucsi_stm32g0_irq_handler              <-- up to here nothing supicious
+ucsi_notify_common: ucsi_connector_change
+ucsi_notify_common: UCSI_CCI_ACK_COMPLETE
+ucsi_stm32g0_irq_handler              <-- 2nd IRQ before clr:ACK_PENDING
+ucsi_notify_common: ucsi_connector_change
+ucsi_notify_common: UCSI_CCI_ACK_COMPLETE
+clr:ACK_PENDING
+ucsi_send_command_common: UCSI_GET_CONNECTOR_STATUS
+set:COMMAND_PENDING                   <-- completion already done :-(
+clr:COMMAND_PENDING
+ucsi_handle_connector_change: GET_CONNECTOR_STATUS failed (-5)
+
+I notice the two conditions are met above: both ucsi_connector_change()
+and cci ack completed.
+
+This happens before clear_bit(ACK_PENDING), which lead to anticipate
+completion of the subsequent UCSI_GET_CONNECTOR_STATUS command.
+
+So the test_and_clear_bit() would address a robustness case?
+
+Please advise,
+Best Regards,
+Fabrice
+
+> 
+>> This is where the test_and_clear_bit() atomic operation helps, to avoid
+>> non atomic operation:
+>>
+>> -> async_control(UCSI_ACK_CC_CI)
+>> new interrupt may occur here
+>> -> clear_bit(ACK_PENDING)
+>>
+>>>
+>>>>
+>>>> https://lore.kernel.org/linux-usb/20240612124656.2305603-1-fabrice.gasnier@foss.st.com/
+>>>>
+>>>>> +}
+>>>>> +EXPORT_SYMBOL_GPL(ucsi_notify_common);
+>>>>> +
+>>>>> +int ucsi_sync_control_common(struct ucsi *ucsi, u64 command)
+>>>>> +{
+>>>>> +   bool ack = UCSI_COMMAND(command) == UCSI_ACK_CC_CI;
+>>>>> +   int ret;
+>>>>> +
+>>>>> +   if (ack)
+>>>>> +           set_bit(ACK_PENDING, &ucsi->flags);
+>>>>> +   else
+>>>>> +           set_bit(COMMAND_PENDING, &ucsi->flags);
+>>>>> +
+>>>>> +   ret = ucsi->ops->async_control(ucsi, command);
+>>>>> +   if (ret)
+>>>>> +           goto out_clear_bit;
+>>>>> +
+>>>>> +   if (!wait_for_completion_timeout(&ucsi->complete, 5 * HZ))
+>>>>> +           ret = -ETIMEDOUT;
+>>>>
+>>>> With test_and_clear_bit(), could return 0, in case of success here.
+>>>
+>>> Oh, I see. So your code returns earlier. I have a feeling that this
+>>> approach is less logical and slightly harder to follow.
+>>
+>> By reading your proposal bellow, I'd agree with you.
+>>>
+>>> Maybe it's easier if it is implemented as:
+>>>
+>>> if (wait_for_completion_timeout(...))
+>>>       return 0;
+>>
+>> Yes, sounds good to me.
+>>
+>>>
+>>> if (ack)
+>>>       clear_bit(ACK_PENDING)
+>>> else
+>>>       clear_bit(COMMAND_PENDING)
+>>>
+>>> return -ETIMEDOUT;
+>>>
+>>>
+>>> OR
+>>>
+>>> if (!wait_for_completion_timeout(...)) {
+>>>       if (ack)
+>>>               clear_bit(ACK_PENDING)
+>>>       else
+>>>               clear_bit(COMMAND_PENDING)
+>>>
+>>>       return -ETIMEDOUT;
+>>> }
+>>
+>> Both seems fine.
+>>
+>> Please advise,
+>> BR,
+>> Fabrice
+>>
+>>>
+>>> return 0;
+>>>
+>>> But really, unless there is an actual issue with the current code, I'd
+>>> prefer to keep it. It makes it clear that the bits are set and then are
+>>> cleared properly.
+>>>
+>>>> I'd suggest to use similar approach here, unless you see some drawback?
+>>>>
+>>>> Best Regards,
+>>>> Fabrice
+>>>>
+>>>>> +
+>>>>> +out_clear_bit:
+>>>>> +   if (ack)
+>>>>> +           clear_bit(ACK_PENDING, &ucsi->flags);
+>>>>> +   else
+>>>>> +           clear_bit(COMMAND_PENDING, &ucsi->flags);
+>>>>> +
+>>>>> +   return ret;
+>>>>> +}
+>>>>> +EXPORT_SYMBOL_GPL(ucsi_sync_control_common);
+>>>>> +
+>>>>>  static int ucsi_acknowledge(struct ucsi *ucsi, bool conn_ack)
+>>>>>  {
+>>>>>     u64 ctrl;
+>>>>> @@ -1883,6 +1925,7 @@ struct ucsi *ucsi_create(struct device *dev, const struct ucsi_operations *ops)
+>>>>>     INIT_WORK(&ucsi->resume_work, ucsi_resume_work);
+>>>>>     INIT_DELAYED_WORK(&ucsi->work, ucsi_init_work);
+>>>>>     mutex_init(&ucsi->ppm_lock);
+>>>>> +   init_completion(&ucsi->complete);
+>>>>>     ucsi->dev = dev;
+>>>>>     ucsi->ops = ops;
+>>>>
+>>>> [snip]
+>>>>
+>>>>>     ucsi->ucsi = ucsi_create(dev, &pmic_glink_ucsi_ops);
+>>>>> diff --git a/drivers/usb/typec/ucsi/ucsi_stm32g0.c b/drivers/usb/typec/ucsi/ucsi_stm32g0.c
+>>>>> index 14737ca3724c..d948c3f579e1 100644
+>>>>> --- a/drivers/usb/typec/ucsi/ucsi_stm32g0.c
+>>>>> +++ b/drivers/usb/typec/ucsi/ucsi_stm32g0.c
+>>>>> @@ -61,11 +61,7 @@ struct ucsi_stm32g0 {
+>>>>
+>>>> [snip]
+>>>>
+>>>>> -
+>>>>> -   ret = ucsi_stm32g0_async_control(ucsi, command);
+>>>>> -   if (ret)
+>>>>> -           goto out_clear_bit;
+>>>>> -
+>>>>> -   if (!wait_for_completion_timeout(&g0->complete, msecs_to_jiffies(5000)))
+>>>>> -           ret = -ETIMEDOUT;
+>>>>> -   else
+>>>>> -           return 0;
+>>>>> -
+>>>>> -out_clear_bit:
+>>>>> -   if (ack)
+>>>>> -           clear_bit(ACK_PENDING, &g0->flags);
+>>>>> -   else
+>>>>> -           clear_bit(COMMAND_PENDING, &g0->flags);
+>>>>> -
+>>>>> -   return ret;
+>>>>> -}
+>>>>> -
+>>>>>  static irqreturn_t ucsi_stm32g0_irq_handler(int irq, void *data)
+>>>>>  {
+>>>>>     struct ucsi_stm32g0 *g0 = data;
+>>>>> @@ -449,13 +416,7 @@ static irqreturn_t ucsi_stm32g0_irq_handler(int irq, void *data)
+>>>>>     if (ret)
+>>>>>             return IRQ_NONE;
+>>>>>
+>>>>> -   if (UCSI_CCI_CONNECTOR(cci))
+>>>>> -           ucsi_connector_change(g0->ucsi, UCSI_CCI_CONNECTOR(cci));
+>>>>> -
+>>>>> -   if (cci & UCSI_CCI_ACK_COMPLETE && test_and_clear_bit(ACK_PENDING, &g0->flags))
+>>>>> -           complete(&g0->complete);
+>>>>> -   if (cci & UCSI_CCI_COMMAND_COMPLETE && test_and_clear_bit(COMMAND_PENDING, &g0->flags))
+>>>>> -           complete(&g0->complete);
+>>>>> +   ucsi_notify_common(g0->ucsi, cci);
+>>>>
+>>>> I can see the fix "test_and_clear_bit()" sent earlier is removed from here.
+>>>>
+>>>> I'd suggest to use similar approach as here, unless you see some drawback?
+>>>>
+>>>> Please advise,
+>>>> Best Regards,
+>>>> Fabrice
+>>>
+> 
+> 
+> 
 
