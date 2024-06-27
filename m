@@ -1,101 +1,83 @@
-Return-Path: <linux-kernel+bounces-231816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBB47919E8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:20:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D550919E92
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:23:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08C011C22395
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 05:20:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CCEC1C226D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 05:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB5D71CAB2;
-	Thu, 27 Jun 2024 05:20:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="LwqoMyqp"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEE471CD39;
+	Thu, 27 Jun 2024 05:23:07 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D1E7484;
-	Thu, 27 Jun 2024 05:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F1A1B94F;
+	Thu, 27 Jun 2024 05:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719465637; cv=none; b=UHHxd3bnIgo0l2vLCSnr3tE9NIQuMouOJb9wmP2yo4/CsEy+vNYGgPmq8kMlSZn+HpM2guBQjtuQP71438vyPjwn+IkayhVRwDqt/BkQ71o+103peB7CWJaJ5atc7j3YU9KhDpYiNW4jKVMzUkBxYDaPrK5klw0oNHDtjvscWDc=
+	t=1719465787; cv=none; b=b1ZWFGnUxPkRsfvVkTNxmTCeDBfHvUG95qNgIRVTk9pW5Hz1DRMCVvN625p5IoOl8qNTsaiegWQ9LSPbluIsjqItlhyeMaGIpsNAIZC+AGFQ81gelL58OohJTivsaNBTah0oWCGj9VcnEsONx8aT2KoEcN5DcdFc9aXTwPb3NNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719465637; c=relaxed/simple;
-	bh=D/X5YwfUNyF7H8xkH0w9pwN7YRo+9twFtmwa8F4Hhg0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ub7FgNPsKjGtj8BYIUS+HSdkubunIWkd/vJwqkQZ4T+6Mmvy8qKzMZRL/E9gINYkaqTHOI9Hjyq2bxDBd9vZSvTlLJWBKa71T5s1SNr1fMcDZ45EpI2R/ku+J9sDK9oDsgsXh5lbzrK+J4oninqi3IuPX0QpZgL38votSiUiK3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=LwqoMyqp; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45R2vmk8001296;
-	Wed, 26 Jun 2024 22:20:29 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pfpt0220; bh=LujTv9Un+e7Gfkpm+Ek8qW0Qp
-	TfwdpmhopdaziKnrX4=; b=LwqoMyqpYtgfnDf7zErvT3WqglLHvvKIVDUxuD05U
-	iov1Jh7X49TpRS3S30Ped/OmV8Sg6JjjjkTEA5zQwywqhXWf0UCyZ1juo2XPegTQ
-	HYlmrLf5vcEGaEg7NeybRqJ3X/iyJDaIDmxCFAgxtdQseZXpzmaEwTNdkg+ovv1b
-	UFl5oU7kHyKeVKbOUvKNv6pOPpt+7xutOmNwpMIGseM2Y1gbWF+mKtn3J7Mjm8VC
-	vleyOTrodoEa178u50pQaKp0iQKjMtFLm+i/4dNMGPSVkc5WNKQ1bdxa65hQy+qz
-	Aay8org0vIhte2i4Xs2VJ+gxFQ77bMFp2JzKn3ItiwqSw==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 400yrt0bxm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 22:20:28 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Wed, 26 Jun 2024 22:20:28 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Wed, 26 Jun 2024 22:20:28 -0700
-Received: from maili.marvell.com (unknown [10.28.36.165])
-	by maili.marvell.com (Postfix) with SMTP id 700623F7071;
-	Wed, 26 Jun 2024 22:20:24 -0700 (PDT)
-Date: Thu, 27 Jun 2024 10:50:23 +0530
-From: Ratheesh Kannoth <rkannoth@marvell.com>
-To: Ma Ke <make24@iscas.ac.cn>
-CC: <wintera@linux.ibm.com>, <twinkler@linux.ibm.com>, <hca@linux.ibm.com>,
-        <gor@linux.ibm.com>, <agordeev@linux.ibm.com>,
-        <borntraeger@linux.ibm.com>, <svens@linux.ibm.com>,
-        <bhelgaas@google.com>, <linux-s390@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] s390/ism: Add check for dma_set_max_seg_size in
- ism_probe()
-Message-ID: <20240627052023.GB1743080@maili.marvell.com>
-References: <20240627021314.2976443-1-make24@iscas.ac.cn>
+	s=arc-20240116; t=1719465787; c=relaxed/simple;
+	bh=FJS3XMhZZmqbpsRqFI1wxC9jK+f50RCr1O8Ebbaclhc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lCohH+RiD8VDFlSsu3CH5M9LKsgzq2IDe/y2l7qcKRswQeusC3jfM3fPk3p5xkjn0HuuMvn806tNLbi/3wwVL57OnuHAWMZwV7Omv71+Fxf173HlnFCgxynF7DwFUphAPHkD/Q+9cTybUY49oeGvdTsSlP3EBEVldXjnyYw41uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 316B468AFE; Thu, 27 Jun 2024 07:22:59 +0200 (CEST)
+Date: Thu, 27 Jun 2024 07:22:59 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Alistair Popple <apopple@nvidia.com>
+Cc: dan.j.williams@intel.com, vishal.l.verma@intel.com,
+	dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
+	jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
+	will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
+	dave.hansen@linux.intel.com, ira.weiny@intel.com,
+	willy@infradead.org, djwong@kernel.org, tytso@mit.edu,
+	linmiaohe@huawei.com, david@redhat.com, peterx@redhat.com,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+	jhubbard@nvidia.com, hch@lst.de, david@fromorbit.com
+Subject: Re: [PATCH 06/13] mm/memory: Add dax_insert_pfn
+Message-ID: <20240627052259.GA14837@lst.de>
+References: <cover.66009f59a7fe77320d413011386c3ae5c2ee82eb.1719386613.git-series.apopple@nvidia.com> <50013c1ee52b5bb1213571bff66780568455f54c.1719386613.git-series.apopple@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240627021314.2976443-1-make24@iscas.ac.cn>
-X-Proofpoint-GUID: 1RgVgEIe1BgXqTi3lr5xIeuaM-kYjrZ3
-X-Proofpoint-ORIG-GUID: 1RgVgEIe1BgXqTi3lr5xIeuaM-kYjrZ3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-27_02,2024-06-25_01,2024-05-17_01
+In-Reply-To: <50013c1ee52b5bb1213571bff66780568455f54c.1719386613.git-series.apopple@nvidia.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On 2024-06-27 at 07:43:14, Ma Ke (make24@iscas.ac.cn) wrote:
-> As the possible failure of the dma_set_max_seg_size(), we should better
-Could you expand on the scenario of failure ?
-> check the return value of the dma_set_max_seg_size().
+On Thu, Jun 27, 2024 at 10:54:21AM +1000, Alistair Popple wrote:
+> +extern void prep_compound_page(struct page *page, unsigned int order);
 
-> +++ b/drivers/s390/net/ism_drv.c
-> @@ -620,7 +620,10 @@ static int ism_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->  		goto err_resource;
->
->  	dma_set_seg_boundary(&pdev->dev, SZ_1M - 1);
-> -	dma_set_max_seg_size(&pdev->dev, SZ_1M);
-> +	ret = dma_set_max_seg_size(&pdev->dev, SZ_1M);
-Same error check is not valid for dma_set_seg_boundary() ?
+No need for the extern.
 
->
+>  static int insert_page_into_pte_locked(struct vm_area_struct *vma, pte_t *pte,
+> -			unsigned long addr, struct page *page, pgprot_t prot)
+> +			unsigned long addr, struct page *page, pgprot_t prot, bool mkwrite)
+
+Overly long line.
+
+> +	retval = insert_page_into_pte_locked(vma, pte, addr, page, prot, mkwrite);
+
+.. same here.
+
+> +vm_fault_t dax_insert_pfn(struct vm_area_struct *vma,
+> +		unsigned long addr, pfn_t pfn_t, bool write)
+
+This could probably use a kerneldoc comment.
+
 
