@@ -1,66 +1,68 @@
-Return-Path: <linux-kernel+bounces-233155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACDC191B2FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:53:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1845891B2FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:54:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 138A9283751
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:53:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C52E228369A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4A31A2FDD;
-	Thu, 27 Jun 2024 23:53:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A19F1A38C2;
+	Thu, 27 Jun 2024 23:54:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ANg6MnLv"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Si5Lb3Xh"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F561A2549
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 23:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619581A2FD2
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 23:53:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719532426; cv=none; b=ioLejMGPR4398rOUKjUNp93KqRi8HB7y+R7cK8deuRsQA83Z7RR5kXcodSBvGg2IhmDk7wCn7Y2LZzzuzArGH0jRbw3avirkeGjpXmZeCz7XbwJ58nmKP/2o2wellEe9ZYZNghUJ/gCefWbka1nCRY5mF/O/ATXYi1NT9nvDrJU=
+	t=1719532439; cv=none; b=EdNKrmd41J6snsMCP+QZF2HAVSEEw3ZV3q+ed5TcUIGWq52i6jc+2nwlQx2f2QLrerbvvSnhwyd1JrPSupN7NQtwy0ohY2lmy4wdofP1wFxpuF8zm4J4z/t9eMFTX2XlVM16UYqtu9JH5lti2SuT45p88wklINgt8xdtkSVHvVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719532426; c=relaxed/simple;
-	bh=8TDzL4LG+A2ddCLi6fgg9V+G2E1PrISrQcbK/zNYedM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rcAka5z1UThvuHUCTwVxoSANszMvWyI4Cxq7YSUUdJADsZ04r2VqMBmiFT/UmsAX3wzc63CYD83uYXk7R7IhExfOsxW/XUAEqrRNFB88cQCyln/WqKb6nkcR8MGPIM53ZJVYhWWc49jxJCo4AvZ71jLI0Nq+PmBW6ub0vu3VDSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ANg6MnLv; arc=none smtp.client-ip=209.85.214.175
+	s=arc-20240116; t=1719532439; c=relaxed/simple;
+	bh=+MkSknPEAqqjUaY5k5jJEdYG6RDoEon+9UKGF9CYlpM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=A1vy2onduncrF7H1ZbZ56PA8KqUW0GJukcDzcudMrSptiQ217A4f9hQ5IKo6iwyMfuTA0mRaWvuF3S5Kq98rwOQfTsdx1KwaDzT4LwMqy/uXH3r/bn460UT5Yw/dTDHiKZqG6Jh9GKqnHdhrkcw41uI0IV/Fu+wsh8LT39Qc7ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Si5Lb3Xh; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1f4c7b022f8so40615ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 16:53:44 -0700 (PDT)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fa244db0b2so2435ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 16:53:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1719532424; x=1720137224; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GvgNRfUrYC3vDPSHgELOXCgco+1ty8Hri5LXWyU0EuU=;
-        b=ANg6MnLv9Nt+cvvg85p7tHx6wWPzblkE5JkOrwBtxxh7KZzqH0/h8E0lN1BGqnCYSv
-         hbsR3B9eeSWxC10BuGLA32B0N63v3ewnnBwazfYnhz0mKDgcGBTqV6ovY5uj3oK0U9GB
-         TUFDgcSof5vgtRJuvtX2ZO1bqUvbbbQ3xUMmI=
+        d=chromium.org; s=google; t=1719532436; x=1720137236; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l0t3zZaJBUN3PLJmCz77S8k31xe8bvzplrXd7ftlq5c=;
+        b=Si5Lb3Xhw8a7r7hLUWRbn46sLQxLGrm2uQ/S7I6on3j3h3ExhulvsayL4ax1uh7O7C
+         3Y8OuNocH0X3P4/M6tFgMiHKS/qhvB52XA8RdG8n0GJJ7b6htzjs7qj1KWP1t/pGg0wo
+         KNNx/nA0wW0lXGS9XwfuM0fmdL4eRkLtJbn74=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719532424; x=1720137224;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GvgNRfUrYC3vDPSHgELOXCgco+1ty8Hri5LXWyU0EuU=;
-        b=qYPF77w78SwsJXQVvgF8Kf7BfN3XjmK1/qxQPCac8CfRwwrDufWMrPV6ZoQw6EnhOv
-         bD+AY+N53mwOobe0IqbPNUcqrBFKmtmL7vGxB5+/KDbk4MCxNgsUi+nWc9UTlg9Ap1Zm
-         KW6IqB/jqW7nZQtnvCmlVEHGpIyhO92mGJFeEIxR4GOJ+Ie5nNUWNoA/FmFQoirdxuDD
-         ISr6ESKH2+/UovaMZnTZh83ABnePdb/VEy62mIcenDGlL/iezbeD7850JGkENOLFk8nO
-         NIBsKtfCfqqxGz3VJRMXLTeym6jKWGmOUPqTSIVx0bisnNyuS79mh9rf2j2w9mI7hC1z
-         jcZw==
-X-Forwarded-Encrypted: i=1; AJvYcCWoZF+kQrUVABVTyZT3hQY36GMA2oCwIJ5xivaSHYZbuUkOZTmcE4PCYlbeKWCoQFCwtRGAqMW+WcvPJRSJWnFPsht+Oi1lYgAxDS2q
-X-Gm-Message-State: AOJu0Yy39VcMrsfbIyamH+quLynrz9lXhZGZSKnp/f3zvWghtYU0Rg5/
-	NclbNUSf0oe30vcjFIKNNz2Q8DImlHIpDKviFqhRBXCug9N9qjg6/7UgNRo+iA==
-X-Google-Smtp-Source: AGHT+IFTGJHi0WhKn1jfdIqcqfPQxr8jYnm7Tq2RVmaHgug3fRpbKxlPiPDM9y6uifF4i205XhWnMg==
-X-Received: by 2002:a17:902:ea08:b0:1f6:5013:7842 with SMTP id d9443c01a7336-1fa23cd95edmr158375265ad.27.1719532424505;
-        Thu, 27 Jun 2024 16:53:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719532436; x=1720137236;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l0t3zZaJBUN3PLJmCz77S8k31xe8bvzplrXd7ftlq5c=;
+        b=a8P3byGtIbblYbCvgQEpwXPpgblVQzCCtfPFKO8sB0X7ej+a9MelsMlwe6GYCByrih
+         d8AoWfXucbjgf4pgY2DmHdvnmAr2Zcw1P8YhNJ+o/OroQEzqiDkgCExhVgOO/MyOQf1g
+         AugSnHy8ZNgmNp0LGspFF9j5CKBQZIDb5SVngF6Sr58ZmHgimjbzOhHi2bw51hOqkd7Z
+         bxA9901uE8sHDorPToI+acDLCpGf/YnHo27eAPAL1yqpYTZ+TlYC4V2Itn8gNbKitqAE
+         cG6eHVHQcE/7tlrso23X7fqmgvuFiwI3lMFrKyojN98XwRBJrb/cw1IKg2AypVHcN6PV
+         aIzw==
+X-Forwarded-Encrypted: i=1; AJvYcCVQ+7UCuJjaKjwPNY2lAHODZHCqchECGV5Vp7EeW2n5PxEfs+4oW5J+JPCLnMhpQkds0/KMGBv4NRxBmXIm+WSCmv0jbBx6nywf/r2H
+X-Gm-Message-State: AOJu0Yx7c70dvCyQqmS/rfnGtkY4GTGgwDv+6DPvmHkS130sWTn8Ggu3
+	0EYlpkOM1k/UDVv7vBLGlf9WifNi62L9TTf4+e2nRZOkRJ5gzkGYDuaSPJvYTA==
+X-Google-Smtp-Source: AGHT+IF2Pj7LKt2106lccDErPzwWRz3ComfRGxrxTvIekxCIfDZ26W10wiBXzjP5JceH/T+LG9fZDg==
+X-Received: by 2002:a17:902:a385:b0:1fa:9149:6b17 with SMTP id d9443c01a7336-1fa9149796dmr37858365ad.68.1719532435693;
+        Thu, 27 Jun 2024 16:53:55 -0700 (PDT)
 Received: from pc98uv11.mtv.corp.google.com ([2620:15c:9d:2:cf5d:cb26:248e:ee00])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac11d8cd2sm3366595ad.107.2024.06.27.16.53.43
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac11d8cd2sm3366595ad.107.2024.06.27.16.53.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 16:53:44 -0700 (PDT)
+        Thu, 27 Jun 2024 16:53:55 -0700 (PDT)
 From: Daisuke Nojiri <dnojiri@chromium.org>
 To: 
 Cc: Benson Leung <bleung@chromium.org>,
@@ -83,10 +85,12 @@ Cc: Benson Leung <bleung@chromium.org>,
 	linux-kernel@vger.kernel.org,
 	linux-input@vger.kernel.org,
 	devicetree@vger.kernel.org
-Subject: [PATCH v5 0/2] Consolidate ec_response_get_next_event
-Date: Thu, 27 Jun 2024 16:53:06 -0700
-Message-ID: <cover.1719531519.git.dnojiri@chromium.org>
+Subject: [PATCH v5 1/2] cros_ec_proto: Consolidate ec_response_get_next_event
+Date: Thu, 27 Jun 2024 16:53:07 -0700
+Message-ID: <fc251d6935c1cfc39d7a31d3cfe735d31a0371d1.1719531519.git.dnojiri@chromium.org>
 X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
+In-Reply-To: <cover.1719531519.git.dnojiri@chromium.org>
+References: <cover.1719531519.git.dnojiri@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,36 +99,145 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
+Consolidate struct ec_response_get_next_event_v*.
+
+Let X->Y indicate kernel X sending EC_CMD_GET_NEXT_EVENT to FW Y.
+
+Old->New:
+   Existing kernels send a smaller container (e.g.
+   ec_response_get_next_data) which may or may not fit the last few
+   bytes. The FW copies as many bytes as possible to the container. The
+   kernel processes as many leading bytes as it can understand.
+
+New->Old:
+   New kernels send a bigger container. Existing FW copies as many bytes
+   as it wants, leaving the last few bytes empty. The kernel knows it
+   didn't receive full size data from the returned data length.
+
+Signed-off-by: Daisuke Nojiri <dnojiri@chromium.org>
 ---
-Changes in v5:
- - Merged changes in cros_ec_commands.h and cros_ec_proto.c
+ drivers/platform/chrome/cros_ec_proto.c       | 16 ++++-----
+ .../linux/platform_data/cros_ec_commands.h    | 34 +------------------
+ include/linux/platform_data/cros_ec_proto.h   |  2 +-
+ 3 files changed, 10 insertions(+), 42 deletions(-)
 
-Changes in v4:
- - Change subject line: ARM:... to dt-bindings:...
- - Add description about keyboard matrix v3.0.
- - Add cover letter.
-
----
-Changes in v3:
- - Remove CROS_KBD_V30 in Kconfig and macros conditionally set in
-   cros-ec-keyboard.dtsi.
-
----
-Changes in v2:
- - Separate cros_ec_commands.h from cros_ec_proto.{c.h}.
- - Remove Change-Id, TEST=, BUG= lines.
-
----
-Daisuke Nojiri (2):
-  cros_ec_proto: Consolidate ec_response_get_next_event
-  dt-bindings: cros-ec-keyboard: Add keyboard matrix v3.0
-
- drivers/platform/chrome/cros_ec_proto.c       |  16 +--
- include/dt-bindings/input/cros-ec-keyboard.h  | 104 ++++++++++++++++++
- .../linux/platform_data/cros_ec_commands.h    |  34 +-----
- include/linux/platform_data/cros_ec_proto.h   |   2 +-
- 4 files changed, 114 insertions(+), 42 deletions(-)
-
+diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
+index 945b1b15a04c..a849c29f125b 100644
+--- a/drivers/platform/chrome/cros_ec_proto.c
++++ b/drivers/platform/chrome/cros_ec_proto.c
+@@ -686,7 +686,7 @@ EXPORT_SYMBOL(cros_ec_cmd_xfer_status);
+ 
+ static int get_next_event_xfer(struct cros_ec_device *ec_dev,
+ 			       struct cros_ec_command *msg,
+-			       struct ec_response_get_next_event_v1 *event,
++			       struct ec_response_get_next_event *event,
+ 			       int version, uint32_t size)
+ {
+ 	int ret;
+@@ -709,11 +709,11 @@ static int get_next_event(struct cros_ec_device *ec_dev)
+ {
+ 	struct {
+ 		struct cros_ec_command msg;
+-		struct ec_response_get_next_event_v1 event;
++		struct ec_response_get_next_event event;
+ 	} __packed buf;
+ 	struct cros_ec_command *msg = &buf.msg;
+-	struct ec_response_get_next_event_v1 *event = &buf.event;
+-	const int cmd_version = ec_dev->mkbp_event_supported - 1;
++	struct ec_response_get_next_event *event = &buf.event;
++	int cmd_version = ec_dev->mkbp_event_supported - 1;
+ 
+ 	memset(msg, 0, sizeof(*msg));
+ 	if (ec_dev->suspended) {
+@@ -721,12 +721,12 @@ static int get_next_event(struct cros_ec_device *ec_dev)
+ 		return -EHOSTDOWN;
+ 	}
+ 
+-	if (cmd_version == 0)
+-		return get_next_event_xfer(ec_dev, msg, event, 0,
+-				  sizeof(struct ec_response_get_next_event));
++	/* The max version we support is v3 */
++	if (cmd_version > 3)
++		cmd_version = 3;
+ 
+ 	return get_next_event_xfer(ec_dev, msg, event, cmd_version,
+-				sizeof(struct ec_response_get_next_event_v1));
++				   sizeof(*event));
+ }
+ 
+ static int get_keyboard_state_event(struct cros_ec_device *ec_dev)
+diff --git a/include/linux/platform_data/cros_ec_commands.h b/include/linux/platform_data/cros_ec_commands.h
+index 070e49c5381e..00c06c130dd5 100644
+--- a/include/linux/platform_data/cros_ec_commands.h
++++ b/include/linux/platform_data/cros_ec_commands.h
+@@ -3475,32 +3475,7 @@ enum ec_mkbp_event {
+ BUILD_ASSERT(EC_MKBP_EVENT_COUNT <= EC_MKBP_EVENT_TYPE_MASK);
+ 
+ union __ec_align_offset1 ec_response_get_next_data {
+-	uint8_t key_matrix[13];
+-
+-	/* Unaligned */
+-	uint32_t host_event;
+-	uint64_t host_event64;
+-
+-	struct __ec_todo_unpacked {
+-		/* For aligning the fifo_info */
+-		uint8_t reserved[3];
+-		struct ec_response_motion_sense_fifo_info info;
+-	} sensor_fifo;
+-
+-	uint32_t buttons;
+-
+-	uint32_t switches;
+-
+-	uint32_t fp_events;
+-
+-	uint32_t sysrq;
+-
+-	/* CEC events from enum mkbp_cec_event */
+-	uint32_t cec_events;
+-};
+-
+-union __ec_align_offset1 ec_response_get_next_data_v1 {
+-	uint8_t key_matrix[16];
++	uint8_t key_matrix[18];
+ 
+ 	/* Unaligned */
+ 	uint32_t host_event;
+@@ -3525,7 +3500,6 @@ union __ec_align_offset1 ec_response_get_next_data_v1 {
+ 
+ 	uint8_t cec_message[16];
+ };
+-BUILD_ASSERT(sizeof(union ec_response_get_next_data_v1) == 16);
+ 
+ struct ec_response_get_next_event {
+ 	uint8_t event_type;
+@@ -3533,12 +3507,6 @@ struct ec_response_get_next_event {
+ 	union ec_response_get_next_data data;
+ } __ec_align1;
+ 
+-struct ec_response_get_next_event_v1 {
+-	uint8_t event_type;
+-	/* Followed by event data if any */
+-	union ec_response_get_next_data_v1 data;
+-} __ec_align1;
+-
+ /* Bit indices for buttons and switches.*/
+ /* Buttons */
+ #define EC_MKBP_POWER_BUTTON	0
+diff --git a/include/linux/platform_data/cros_ec_proto.h b/include/linux/platform_data/cros_ec_proto.h
+index 8865e350c12a..a795fe260a38 100644
+--- a/include/linux/platform_data/cros_ec_proto.h
++++ b/include/linux/platform_data/cros_ec_proto.h
+@@ -185,7 +185,7 @@ struct cros_ec_device {
+ 	bool host_sleep_v1;
+ 	struct blocking_notifier_head event_notifier;
+ 
+-	struct ec_response_get_next_event_v1 event_data;
++	struct ec_response_get_next_event event_data;
+ 	int event_size;
+ 	u32 host_event_wake_mask;
+ 	u32 last_resume_result;
 -- 
 2.45.2.803.g4e1b14247a-goog
 
