@@ -1,78 +1,87 @@
-Return-Path: <linux-kernel+bounces-232792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A26F491AE52
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:40:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 726D091AE56
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:41:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 528661C23032
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:40:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0226BB2B31E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:40:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6922D19ADA8;
-	Thu, 27 Jun 2024 17:39:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BIBGGjOv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1245A1865A
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 17:39:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719509995; cv=none; b=e17VYMzGiNb+j14cbznQouq/6+VcqJ9R90swM3/YwyGu7GDcyRH2Udxkj6PXzFP9nEazm+gJlkNNkm5XAG4RjUbort+wuzGRPzJG1JlLPu1YQVn1F+LJ0jDk5UR8HKur7tYWai90DmQlOxXwF4XrIVkqnN6HXBCb16yYmuwB8CU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719509995; c=relaxed/simple;
-	bh=M1Pr/ccqxR64Qy5pX519WkVfLnUUaSq7Qjbum1LSRes=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mgMLMJCXEr0/5ObXLykPtjeLvfO4J9S52qKFPVDHoRFR0fJnkL+U4IxtOmYdKFDfS3kI/Ueu1gyBtmMBXxiSQ4DTu9FSyO14cOtT+N/RXV7DPGalo5gn3EkMDuNRisDq0CJtb1GPPmi7zUFYO8MacTvl1hmN9nIEpdBXgZF/EW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BIBGGjOv; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719509993;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=34BYMyGoC6lX3CxmLrEw2DjPDGR7811PFr+ZC7aQ/ZU=;
-	b=BIBGGjOv82g28vIyG0Yi7R1mJiZcTWyw+j9AItF79U9oqtDV/bsj6g7RYbZFB2iw7SStaS
-	Rae4SVqQRGWOQ7d5xBUuofZ/LCEOml/vAYvFZCCJM8Y3BG++P5SnqUWN7GHJraxzQdaGgm
-	ZSGQO/B7POCAbUE4SswZ2phFMrO0U34=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-395-sTRvXhL3ML203UbvsHfRAA-1; Thu,
- 27 Jun 2024 13:39:49 -0400
-X-MC-Unique: sTRvXhL3ML203UbvsHfRAA-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9D9E2195608A;
-	Thu, 27 Jun 2024 17:39:46 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.18])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 5297819560AA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA0BF19AA6E;
 	Thu, 27 Jun 2024 17:39:41 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Thu, 27 Jun 2024 19:38:12 +0200 (CEST)
-Date: Thu, 27 Jun 2024 19:38:06 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, Jiri Olsa <jolsa@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>, loongarch@lists.linux.dev
-Subject: Re: [PATCH] LoongArch: uprobes: make
- UPROBE_SWBP_INSN/UPROBE_XOLBP_INSN constant
-Message-ID: <20240627173806.GC21813@redhat.com>
-References: <20240618194306.1577022-1-jolsa@kernel.org>
- <20240627160255.GA25374@redhat.com>
- <CAEf4BzZVmKjfQD1zKMDOD-Zc4pVp+EGgb8h2veg=bXe1Pjn_Uw@mail.gmail.com>
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bSC/eHVs"
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F031865A;
+	Thu, 27 Jun 2024 17:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719509981; cv=none; b=WjzaAoJk1pFoTblZsCCP0liEDEJX8AmyPAqY8H3fYXt2tWNdyffpXgsV7fasH7Ig0YiEYENJ0YdcugyvKdbAJNsDWGE+YQM5xT09G4jpnVh7ELQKq9TYLYrthKpUPePjvFssLlHJQCJyOXNOHHQrey+NHjvl2D0Yegdb0IFPCWg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719509981; c=relaxed/simple;
+	bh=aH1Umnhky55B8t61wZo0gg5wGOk7NzGGWbnnWx0lSoY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LOJZUmisMZCRyGCrVwMA+ZNqdzpkxuknMM4/L68I+dyNs4aVN0Hzrz3qtmKihmdcCrOGsjTO3pSgqI74qXo8Amx7fqGaJneBLBBKFW7R8dU/Nok3CoKe3WWigIc041BM7gLTZIxO7k32aXBQnrXF6CDE5PshVIMbvN5sOsRc4jQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bSC/eHVs; arc=none smtp.client-ip=209.85.161.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5c2253cb606so975234eaf.2;
+        Thu, 27 Jun 2024 10:39:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719509978; x=1720114778; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=s7WOcecaaOZ3rsj+Ub16kvTDYOxYiGT65TR4mfDnqck=;
+        b=bSC/eHVsFdJB11sbmUzd3AZ1I1yU5Hy5Ir7ausBQv8sPgdq0lT9dcMQwaXC1dJs6Gt
+         vkXxWmGj2Uz9XS7WKo0ojY4+LmYILTB6FBuRFfh6JVkGmkyY9yPZYaW5D/y4HU1yPSgq
+         r2wOo+EjhNH6gyDJZQJleXdD1QL1zxQM9T3pF4qSxMC7hzPPWuVwxvNQeqGlSF7Fxkoz
+         8GkDculgxYEd8sKb+cRC0zoL1gy+Ps69zKlyy90YjI1fo/hb5wGOIGGIxM6h2q6qC+JV
+         dczG+aJEsaSZ0X//TkUBnYlzX/EbgRdE1q40DIaWAKsTvxxTB2x7qa2/PIyOswOFA8GH
+         22/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719509978; x=1720114778;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s7WOcecaaOZ3rsj+Ub16kvTDYOxYiGT65TR4mfDnqck=;
+        b=nKw9E/dn1OWoxY6k1qennFLzr9lpR7bFQf85yr6FdTRI5P6b54XYuljyp86hhzqQVE
+         XlKc7aMSLPfuJb34mZy8F4MhtnI0EEdYYTI0MVqaRVpN3impg03EERscwWUElPcOTP7x
+         NDAcTtr0wEDT3csFaaXLQy6VlPwM+qZkZbTu2k1QJHqfuoPSh2D01qebHR8DtCr7CiaN
+         EmJOU20Yf82q0oDvi5wCZ/ryzQGwTTzw+74GVqtm4VR4nqujFXdMv8FBldHlRVf3TmRk
+         gZoop6b0pmFSKdADf6PnPohR0Bvr132X6r2C8+CMCJ864CfACUFAzYBu8A5H1tM5Cin5
+         eDlA==
+X-Forwarded-Encrypted: i=1; AJvYcCWtX8PqXxEICJlX62BLHaB460//ZEEttXjImMIE4ZSI1AHhbXTHZXdcCHuHPnRWAxS3QShjtjRkM+rJq6hL1UNaKBFJkGcc8+7IgsGMBZ0KecUfvNsWLe4S+a8i0Qa8wEpHIcPCS/yTT332YTui7Y1CJGL+gO8Ph467WhYnOkn/X4GCUq8WMgcnr+2PDz9BFZm7+6t9AIfAqawMN5kcPn+CH9UydTlFP2CW5YL7VLgC2ug4BwWgiulRXQ==
+X-Gm-Message-State: AOJu0YzrkQaYur3hAaF271Dm6HFgdTyYvtctYS0NWJ+mGQQYoNwTX0dl
+	jUL34SjItvQpSK5+zUhl1W3+YE6oBUSYENLyG2eIqTHElZzAsnhP
+X-Google-Smtp-Source: AGHT+IEGlLzYhJ39db3MWWvG5uOUIm3HV5EiLIKlEss/+fCmWIiT934iZZ4Ky2YFWCnOMl3U2dQAzw==
+X-Received: by 2002:a05:6358:9211:b0:1a6:7c93:963c with SMTP id e5c5f4694b2df-1a67c93ac03mr215407955d.14.1719509978504;
+        Thu, 27 Jun 2024 10:39:38 -0700 (PDT)
+Received: from localhost ([2804:30c:96b:f700:cc1d:c0ae:96c9:c934])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-72749854a9fsm1314642a12.92.2024.06.27.10.39.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 10:39:37 -0700 (PDT)
+Date: Thu, 27 Jun 2024 14:41:05 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>, lars@metafoo.de,
+	Michael.Hennerich@analog.com, jic23@kernel.org, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	nuno.sa@analog.com, corbet@lwn.net, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/7] spi: Enable controllers to extend the SPI
+ protocol with MOSI idle configuration
+Message-ID: <Zn2kMVDn5k1OFogA@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1719351923.git.marcelo.schmitt@analog.com>
+ <add14694c64b574af742a5dcd5c9461e0ef5210a.1719351923.git.marcelo.schmitt@analog.com>
+ <1d2cde40-ad55-4136-bc72-3d71515f7023@baylibre.com>
+ <7ed7f957-3e07-42ce-894a-f3f9dcf512ea@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,44 +90,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAEf4BzZVmKjfQD1zKMDOD-Zc4pVp+EGgb8h2veg=bXe1Pjn_Uw@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+In-Reply-To: <7ed7f957-3e07-42ce-894a-f3f9dcf512ea@sirena.org.uk>
 
-On 06/27, Andrii Nakryiko wrote:
->
-> Acked-by: Andrii Nakryiko <andrii@kernel.org>
+On 06/26, Mark Brown wrote:
+> On Wed, Jun 26, 2024 at 09:57:32AM -0500, David Lechner wrote:
+> > On 6/25/24 4:53 PM, Marcelo Schmitt wrote:
+> 
+> > > +#define SPI_CONTROLLER_MOSI_IDLE_LOW    BIT(8)  /* Can idle MOSI low */
+> > > +#define SPI_CONTROLLER_MOSI_IDLE_HIGH   BIT(9)  /* Can idle MOSI high */
+> 
+> > These two flags above are still not used anywhere and are redundant with
+> > the SPI_MOSI_IDLE_LOW/HIGH flags below so I don't think we should be adding
+> > these.
+> 
+> Yes.
 
-Thanks!
+Oops, my bad. Removed them now for v6.
 
-> > --- a/arch/loongarch/kernel/uprobes.c
-> > +++ b/arch/loongarch/kernel/uprobes.c
-> > @@ -7,6 +7,14 @@
-> >
-> >  #define UPROBE_TRAP_NR UINT_MAX
-> >
-> > +static __init int check_emit_break(void)
-> > +{
-> > +       BUG_ON(UPROBE_SWBP_INSN  != larch_insn_gen_break(BRK_UPROBE_BP));
-> > +       BUG_ON(UPROBE_XOLBP_INSN != larch_insn_gen_break(BRK_UPROBE_XOLBP));
-> > +       return 0;
-> > +}
-> > +arch_initcall(check_emit_break);
-> > +
->
-> I wouldn't even bother with this, but whatever.
-
-Agreed, this looks a bit ugly. I did this only because I can not test
-this (hopefully trivial) patch and the maintainers didn't reply.
-
-If LoongArch boots at least once with this change, this run-time check
-can be removed.
-
-And just in case... I didn't dare to make a more "generic" change, but
-perhaps KPROBE_BP_INSN and KPROBE_SSTEPBP_INSN should be redefined the
-same way for micro-optimization. In this case __emit_break() should be
-probably moved into arch/loongarch/include/asm/inst.h.
-
-Oleg.
-
+> 
+> > Also, what is the plan for adding these flags to other SPI controllers. For
+> > example, the IMX controller in [1] sounds like it should also support 
+> > SPI_MOSI_IDLE_HIGH. And your comments on an earlier version of this series
+> > made it sound like Raspberry Pi is always SPI_MOSI_IDLE_LOW, so should
+> > have that flag.
+> 
+> I don't think we need a specific plan there, obviously it'd be nice for
+> people to go through and enable but it's also fine to just leave this
+> for someone who needs the support to implement.
 
