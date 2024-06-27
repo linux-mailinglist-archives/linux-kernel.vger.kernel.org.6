@@ -1,110 +1,140 @@
-Return-Path: <linux-kernel+bounces-231827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EC95919EDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:43:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02235919EE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:45:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15524B22342
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 05:43:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E54D1C22DCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 05:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27A41CF92;
-	Thu, 27 Jun 2024 05:43:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CEfCV4wJ"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F95A28DD0;
+	Thu, 27 Jun 2024 05:45:03 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C5C1CA80
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 05:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F471CD31;
+	Thu, 27 Jun 2024 05:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719467001; cv=none; b=NJ4U0UsnZ2kPVuvbKS/bKHlhNB1ObGYWfw1if/wqIY/fZnNu/ujt26sTGHEN5g/UMooG2YbBIFOUy9djlCIx6TTBneRcO5TL9FFT+1MkuDp/JH3dEujp6T7WPYbWiZDxbgmtBSiY+KJ3CuCqRhXtmthh1yonrw8d91VnuntcfqQ=
+	t=1719467102; cv=none; b=bSQbi/F3e2XhKCQRPPaMQcM1qgMo17Vv9c5Q/55st5i2YWIVPwpiLEjJCQwDup/elABmxGXOWtNAt06UEWe/XieQ4PIWaAL28OyqTj16Y00v8MAzql84PRJOM0nCc7doxYSJOsBb6qnTeHbmynwaUZP/Ivix3BWuEe4NrZ1BOH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719467001; c=relaxed/simple;
-	bh=nEnNoZD/xbPYCt/p8kb6fwuRGuVw3yx7KTtbVfKRLyY=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DjNg3IAJ6bz6y+FOKGtxUNTRpsiJFhP6URHjvNnstUwtrebaY798ZHic0IsL4ZX3NtdPP49P9ihVTxjgUe/4+GsMdRdlJ2ygWFkFNuXz4FLEY9rVYEZnvAYJFh2xzCamDWcIcipx0CT3ROqxKQ56F3Y0My7cLVrvy5xqoFsfEJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CEfCV4wJ; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-425624255f3so5103195e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 22:43:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719466998; x=1720071798; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nEnNoZD/xbPYCt/p8kb6fwuRGuVw3yx7KTtbVfKRLyY=;
-        b=CEfCV4wJzfTfkV0XK5giRUpR9/fueEYFAoCjc5m3qQi8/YkSthd63qBq5+2o/RO9rh
-         G6O/yrLDdL/YB36Wed/iQn6fRtGLUoda8Vl5y8kRCt4lrT5vVkpmIwgo5D1BCh6y/zL7
-         cjiPpcASdkbnZEoqVz9u0TiI2xmGomQmj+DMeXCofsV0viUIBtH6QKtbCvtLCjiIZpCB
-         LibbfutO5PCO3fNM5VpFQxpff5RYGQ+egWmglBh9OSZoIPYxVfZbi9eY+I0VzMtcusJs
-         CU4YS/FidL+tbsGgQWH7HN7woeKHimnlfaiG3CRIdF6EmdqNpB245755PG8VWVVND0lU
-         HCmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719466998; x=1720071798;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=nEnNoZD/xbPYCt/p8kb6fwuRGuVw3yx7KTtbVfKRLyY=;
-        b=K9bAEMq7hq2ATLgqc2RYtFQYNjJjT9EY+JLACErqCxiS3bR3SsNF0q4XDyfpkIVg9D
-         cDAC1R2NRMqKvZoUHhJk/Z17ManQ3hoh4QnZeEDfkAI5m1cYqlx2tOj4AYIyMj4xW6qQ
-         KAa5HrCrnSQcV72frySDilJSUDINnGMRBOAU0EBDfjp0BTKHk4Yqy/5gPECU8/MLrGjN
-         UUHC2ms0H3qlO5CJx1TsWpqz1zTue2jAB7dk+r1RT6bqLto447UV4jGr/1AMqXeSaovF
-         UGwQ91MkEGAUHV7qbi1sEkxrVLlrvTd5EhWyutfZX/StT8+aHwa4jZvlVDk4Tuu0aWr2
-         D6Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCWMd38DJ8F9I2WYfhnJmerGcIgQrSS7ilqQ7xzqgGDFfz0YdhrPryyxsIkMvbEw/hFvmU8ANI7sxhUkmVLAzRtvooXtJyT7P1LV21Rv
-X-Gm-Message-State: AOJu0YxUs25l4/iFWKNeIf5lN0H5pdbj7e3yTnKajbNgGe7AaJp/3f9C
-	99JhGEBKLDSL7SQd9VLXL2DRsqDmyvKElcrqKX6aca0KjQ4P0K0RJ5I+/FxjL3c=
-X-Google-Smtp-Source: AGHT+IElihtCwhtC2YyIbh1bFQqDm3x/kQDetaAGUB85To2vJEdORMNNmhZl0LPvMS9rfC0RTss5Fg==
-X-Received: by 2002:a05:600c:548c:b0:421:b906:8088 with SMTP id 5b1f17b1804b1-42564292285mr7220435e9.0.1719466997633;
-        Wed, 26 Jun 2024 22:43:17 -0700 (PDT)
-Received: from nsa.fritz.box ([2001:a61:359b:e801:d44:32b3:6924:10d1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c8285f5csm47444375e9.25.2024.06.26.22.43.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 22:43:17 -0700 (PDT)
-Message-ID: <8a3ac03fcdc5c2c6401d0a990af5d6e9f6c6670d.camel@gmail.com>
-Subject: Re: [PATCH] mux: MAINTAINERS: drop ADGS1408 driver entry
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Peter Rosin
-	 <peda@axentia.se>, linux-kernel@vger.kernel.org
-Date: Thu, 27 Jun 2024 07:43:17 +0200
-In-Reply-To: <20240626140343.145440-1-krzysztof.kozlowski@linaro.org>
-References: <20240626140343.145440-1-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+	s=arc-20240116; t=1719467102; c=relaxed/simple;
+	bh=LP3kdRmSdGwbopkqhn7jCAhhTd3gb5/rE7WfLoYZXzI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BogB6+cSjpfAbTA3rcqiwvDPaMf3fsOaSdocX4V4Dsgym/veEB9tbFGIQIyyiXiSrC/A2RRFouy/jmncxE+pdRhoslr5pYTOUjsiwLW1Y9Xx4NmDt1EdtakOKN+NrzeLIB3qCfpjLXpNoXkQ87DnsPKmg5ItqyUegOQrXCutkVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 70CDD68AFE; Thu, 27 Jun 2024 07:44:55 +0200 (CEST)
+Date: Thu, 27 Jun 2024 07:44:55 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Alistair Popple <apopple@nvidia.com>
+Cc: dan.j.williams@intel.com, vishal.l.verma@intel.com,
+	dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
+	jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
+	will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
+	dave.hansen@linux.intel.com, ira.weiny@intel.com,
+	willy@infradead.org, djwong@kernel.org, tytso@mit.edu,
+	linmiaohe@huawei.com, david@redhat.com, peterx@redhat.com,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+	jhubbard@nvidia.com, hch@lst.de, david@fromorbit.com
+Subject: Re: [PATCH 10/13] fs/dax: Properly refcount fs dax pages
+Message-ID: <20240627054455.GF14837@lst.de>
+References: <cover.66009f59a7fe77320d413011386c3ae5c2ee82eb.1719386613.git-series.apopple@nvidia.com> <afcfa4f164e5642c4f629c75acf794838c2ac9aa.1719386613.git-series.apopple@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <afcfa4f164e5642c4f629c75acf794838c2ac9aa.1719386613.git-series.apopple@nvidia.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Wed, 2024-06-26 at 16:03 +0200, Krzysztof Kozlowski wrote:
-> Emails to Mircea Caprioru bounce:
->=20
-> =C2=A0 Remote Server returned '550 5.1.10 RESOLVER.ADR.RecipientNotFound;=
- Recipient not
-> found by SMTP address lookup'
->=20
-> so clearly this driver is not supported anymore.
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
+> diff --git a/drivers/dax/device.c b/drivers/dax/device.c
+> index eb61598..b7a31ae 100644
+> --- a/drivers/dax/device.c
+> +++ b/drivers/dax/device.c
+> @@ -126,11 +126,11 @@ static vm_fault_t __dev_dax_pte_fault(struct dev_dax *dev_dax,
+>  		return VM_FAULT_SIGBUS;
+>  	}
+>  
+> -	pfn = phys_to_pfn_t(phys, PFN_DEV|PFN_MAP);
+> +	pfn = phys_to_pfn_t(phys, 0);
+>  
+>  	dax_set_mapping(vmf, pfn, fault_size);
+>  
+> -	return vmf_insert_mixed(vmf->vma, vmf->address, pfn);
+> +	return dax_insert_pfn(vmf->vma, vmf->address, pfn, vmf->flags & FAULT_FLAG_WRITE);
 
-Hi Krzysztof,
+Plenty overly long lines here and later.
 
-Mircea is no longer with us and often we just forget to update these entrie=
-s until
-someone yells. But we still want to support this. Can you send a v2 putting=
- me as
-maintainer or should I send a patch myself?
+Q: hould dax_insert_pfn take a vm_fault structure instead of the vma?
+Or are the potential use cases that aren't from the fault path?
+similar instead of the bool write passing the fault flags might actually
+make things more readable than the bool.
 
-Thanks!
-- Nuno S=C3=A1
+Also at least currently it seems like there are no modular users despite
+the export, or am I missing something?
+
+> +		blk_queue_flag_set(QUEUE_FLAG_DAX, q);
+
+Just as a heads up, setting of these flags has changed a lot in
+linux-next.
+
+>  {
+> +	/*
+> +	 * Make sure we flush any cached data to the page now that it's free.
+> +	 */
+> +	if (PageDirty(page))
+> +		dax_flush(NULL, page_address(page), page_size(page));
+> +
+
+Adding the magic dax_dev == NULL case to dax_flush and going through it
+vs just calling arch_wb_cache_pmem directly here seems odd.
+
+But I also don't quite understand how it is related to the rest
+of the patch anyway.
+
+> --- a/mm/mlock.c
+> +++ b/mm/mlock.c
+> @@ -373,6 +373,8 @@ static int mlock_pte_range(pmd_t *pmd, unsigned long addr,
+>  	unsigned long start = addr;
+>  
+>  	ptl = pmd_trans_huge_lock(pmd, vma);
+> +	if (vma_is_dax(vma))
+> +		ptl = NULL;
+>  	if (ptl) {
+
+This feels sufficiently magic to warrant a comment.
+
+>  		if (!pmd_present(*pmd))
+>  			goto out;
+> diff --git a/mm/mm_init.c b/mm/mm_init.c
+> index b7e1599..f11ee0d 100644
+> --- a/mm/mm_init.c
+> +++ b/mm/mm_init.c
+> @@ -1016,7 +1016,8 @@ static void __ref __init_zone_device_page(struct page *page, unsigned long pfn,
+>  	 */
+>  	if (pgmap->type == MEMORY_DEVICE_PRIVATE ||
+>  	    pgmap->type == MEMORY_DEVICE_COHERENT ||
+> -	    pgmap->type == MEMORY_DEVICE_PCI_P2PDMA)
+> +	    pgmap->type == MEMORY_DEVICE_PCI_P2PDMA ||
+> +	    pgmap->type == MEMORY_DEVICE_FS_DAX)
+>  		set_page_count(page, 0);
+>  }
+
+So we'll skip this for MEMORY_DEVICE_GENERIC only.  Does anyone remember
+if that's actively harmful or just not needed?  If the latter it might
+be simpler to just set the page count unconditionally here.
 
 
