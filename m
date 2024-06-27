@@ -1,252 +1,185 @@
-Return-Path: <linux-kernel+bounces-232547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34D3891AAD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:13:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 356E291AAD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:14:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E075828308B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:13:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91761B29236
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C7B198A08;
-	Thu, 27 Jun 2024 15:13:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37024198827;
+	Thu, 27 Jun 2024 15:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ctXKhwdT"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2062.outbound.protection.outlook.com [40.107.243.62])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dxDZNlOj"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 557EF15EFA4;
-	Thu, 27 Jun 2024 15:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719501186; cv=fail; b=N3WCa3raCjYsS8iTHqq/rC29kMiNbQ1HG/Wr7KG4IHmqAVyryd9VAJ2SCkedvy6uSHjPLrqbjWel5+V+v+KNvuzc1YECTRzKUJt4MFxlj6P6nLGhpR2ZanTBXMqa77ZMxwc8idYP5k7bF6ep+mcPNVbHpdjaMDVK/jU4lirs+lU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719501186; c=relaxed/simple;
-	bh=GLySh6kQtPYorQIcVul+wUyvhtQRJV52o8H5EZlEuTU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=D/MvgJuGb5SwqInZ4hYHk3IL/2a92M8G2lqM0dUYpug5Cte1SYsSlkZSmDsuENvqI1NXwDAI5DBe6i/5wkWUNKpol4W0JHF0LQDuPaw7/fcFeePs0fyGXrqbXA6hw92K2hHHllfNpqPUu4HGZchoF/tczBox060kdjWWcTpCeRI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ctXKhwdT; arc=fail smtp.client-ip=40.107.243.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=d/CnBBhiExYYe9+6g16S8BAW2aRMUf8u/IvL3isoW2VZZaMMrr/3V60iOMhG51KQ5LZtJKbjBharjfs24r3o+OxTevsUDtOzkzbCaKR1T11DQLcy6FiJV9YMbepsdGmyASpGApFfXu1znCVFxnSPGvuITWAJJdanPansQ9XP+uKR9MgFWyTNz2HZ/0f0PQzRq8R4ESfj0yabvBGiqAvxBaLURbz1sgOKFwY1ULb+oAk0Eg7Vh+NhCZL7SiafDCWUXi5VIZ9l8IDIDu8KsXIyV8h4oHUBtTTLCdTi83O/QBu2dj8R79bM7504TOJ+34uGV7IbychvFFSxVS/pF+/98w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=g1GLj445z0Aya/qKJD6w083lRo4T0QYwppOQXkABleQ=;
- b=jPWXvh27PCnpXcDMV2Eb7nig5vntTtccBcOy8810RCpc8D1MPW/fJlEHS3uy6cxYYdf0NNKFPAMj0iOyPBYEI+b2c3h9cfXgyvX/ilwEKdtnKzdC9SEI8RwjoV+XMH4DKYrlTTHLm6MdV8t81jOwILaWjKQ0jfk/XwYZc99qVlkYU2S4arnNhG+hW+vRvk95Kl9/bvSFiALd8L8S3WoKKsAqWLvZFPneDuunnffjS121hHDJs7zBIuhdECYiepFJsAfnmv/uNWhEccVO4uKTH+I665S+vf7yMVjmGtER2Sd28XbNiCLRTr9ypN10pNYrlGRCU/TimDmdpJz1Gih4oA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=g1GLj445z0Aya/qKJD6w083lRo4T0QYwppOQXkABleQ=;
- b=ctXKhwdTU331J0H5OeiOxOOTEOqBrtYFCVhwJaM7Sc9qJkVjxE+LsKq5Nn/icivYcScNw7ITZiyqXBpSlyXj3H3P2SVvyaZlsBzpRpdjw50BX5n/i8D4AzmeT3A7vU5e1SC4oVVZWqtQiFIt6rz+T77fK4j2j5W5cfqs0RG1pVk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by PH7PR12MB7938.namprd12.prod.outlook.com (2603:10b6:510:276::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.26; Thu, 27 Jun
- 2024 15:13:00 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%6]) with mapi id 15.20.7719.022; Thu, 27 Jun 2024
- 15:13:00 +0000
-Message-ID: <f4390b09-7c12-44b8-9f6e-6eab81e9fc32@amd.com>
-Date: Thu, 27 Jun 2024 10:12:58 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] cpufreq: amd-pstate: Use amd_get_highest_perf() to
- lookup perf values
-To: "Gautham R.Shenoy" <gautham.shenoy@amd.com>,
- Borislav Petkov <bp@alien8.de>, Perry Yuan <perry.yuan@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
- "H . Peter Anvin" <hpa@zytor.com>, Huang Rui <ray.huang@amd.com>,
- "Rafael J . Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Nikolay Borisov <nik.borisov@suse.com>, Peter Zijlstra
- <peterz@infradead.org>,
- "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
- <linux-kernel@vger.kernel.org>,
- "open list:AMD PSTATE DRIVER" <linux-pm@vger.kernel.org>
-References: <20240626042043.2410-1-mario.limonciello@amd.com>
- <20240626042043.2410-3-mario.limonciello@amd.com>
- <87msn7ezoz.fsf@BLR-5CG11610CF.amd.com>
- <b0682b62-a690-4776-b2bf-444b6838cb05@amd.com>
- <87frsymogx.fsf@BLR-5CG11610CF.amd.com>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <87frsymogx.fsf@BLR-5CG11610CF.amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN7PR04CA0057.namprd04.prod.outlook.com
- (2603:10b6:806:120::32) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE5291990DC
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 15:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719501205; cv=none; b=fNp60UJ6ZF4pOr3/b0UUMjQAUKLYYH/+gcieOx2z4mBcvkyKbYG+7+yPjsOhwPacfxheSMlRZ53bcQR7uaFC9vdSz4cnGxfgwJS1IZ+fJcheBY7qeHiO8fPZAkT3saAQD6DFcGvgt3C4RL4H4oKsI6otwUhKavuun1HtrICEGfI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719501205; c=relaxed/simple;
+	bh=b0Bl3I7ZyZJmDdRgd0Oofe8d/xU1aITCIzFHtf8eK5k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tF86VFunTCkXBBDjPmLf7KMXcU6tF9irWfAuIk6+CoVlJUnr7BWFws/l6NOO/u35uD/wx2sFRVp/e6kwbaORN9Z5JKB/N8Ugu2AmqyUpYfS2l1EnbL8wF8sfQUcvoiancL6poBO46N69yRRTF7NAd0xIbtUtW09ls7bKBpDULdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dxDZNlOj; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45RAmfps018807;
+	Thu, 27 Jun 2024 15:13:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	rK+7UYf8PNqgnM274LQjyDEBBGtV0npEEz4LDNIfdNs=; b=dxDZNlOj+5RkueBY
+	sXHOi2v5NbmdqImdexocnT0dfU2qX7fq05Ikf+BchxtpcI01/hQjyoyqPAJawAlM
+	u8wLMCsyaVE3sTfDEyIUzIFMUCbqnYXEGfYmgeS/yr/hze25wZuvJD1IH0SVULIl
+	iXQ5MYRLtKi8E3nZKkZVPVRIP/zwc+weK85r6mBz6lojk2T7ZgkmT9eMtrRNPJgq
+	yd4AfHiDZyNGzyyQc7MtJMqNx8ElMuNJN+pWwbW94B1RU0UqthJ7GSnedjR1+YXY
+	4mol6m5EsxujC678U4a/XpQMnx+0FRn0oqHAJJ5Rgtz0CYyGl0BoJiKxU7WhtYsp
+	O7S8Vw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 400f90kyy3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Jun 2024 15:13:19 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45RFDI8t030959
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Jun 2024 15:13:18 GMT
+Received: from [10.253.8.118] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 27 Jun
+ 2024 08:13:17 -0700
+Message-ID: <37978ed1-5f28-40c1-8396-24f4aa6a7a23@quicinc.com>
+Date: Thu, 27 Jun 2024 23:13:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|PH7PR12MB7938:EE_
-X-MS-Office365-Filtering-Correlation-Id: fd1bdf44-9fe5-4944-570c-08dc96bba22b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VHB6Vy9hZ21KNzV2bUVtNTR3b2xXZ0pwT2RpS0x5eU5EYmNmeDlWUmYvelo2?=
- =?utf-8?B?WENmRTRJdmpEeG93MkJKaTlWREFBQjh1azJMbXFwYysyQStkaG1VRUkxT0RX?=
- =?utf-8?B?ZVVYeWhyV1laWDdUdjNOT215Q3N6L0Q3VmxxOTlvVGhxVHhwMHVidHN2eWl6?=
- =?utf-8?B?ZlZZRWJ1RG4wMzZ3ekVqbVBSWWMrSGU0MGxmRXZHN1ZlU241ZWNSdld3eWZ4?=
- =?utf-8?B?WTBRUmNmN3dNVUZuVEM5SjRCS1NzdU5jbExkUXViMDVRdk9rQ3M0WWRQTTdH?=
- =?utf-8?B?TFFaM2VaY0w1WEtaMzIvemszK0pvQ2RucDBBcHMzcGVwSTBJY1Z1OU9OSmtp?=
- =?utf-8?B?NUdGUkNSaFlLejlIMXZPT2xnL2YxZ3NScmsvL1pOSlpJWkU1WDM3Q3dmSGJ3?=
- =?utf-8?B?S3ZBU2ZpYWNzZ21JcG5Ub2w3QUtvL045SWRXV3pKK2NrUFNERW5vV25hTFE0?=
- =?utf-8?B?b2dFMWZtVFlNUjZDQmhvWk5KVE5oZ3RmcnpBOTNUcE1pWXUvR2hPSWs4OW9R?=
- =?utf-8?B?c3RTYXUrY0hHd2VkeG5xNjVmeVJMZDFSQ2l4cHQralptNzBMVEorMU9uOGJy?=
- =?utf-8?B?bm9ia0JwNTUwWDBjbzlrNXBXSDJkQjg1blB1aFdRN1d2SDhaNlBkcWlGeHVO?=
- =?utf-8?B?YVJKY056Y2p4bjZ4SzFJVFhEb0V1d2l0OUFTSTdnNzJGVkpRVWVXMUFtTngz?=
- =?utf-8?B?aDBrU0VWaW5zdDZWc3V0V2NmVzRhZ1NwbDBJRDNSNzBPTTUxYk5MdWZaVXZJ?=
- =?utf-8?B?T0p5OGtCTkd0VUFKNHFQQjJMSU5EMnoyVlBYZExKdExsQjNDV2RBQ1hNSHh6?=
- =?utf-8?B?YngweTZDUSt3a0VRRGpOL3VWRnZMOTBISVlxZ2x2Z3dna3dTM3R1bXpqK1By?=
- =?utf-8?B?Ry9BWEpPbjNEbUZISDR4RXhhU1c1WkdRalIrQTFzOWdaVStCc3c0TXduSUVQ?=
- =?utf-8?B?VTJrMmxldnBVWGxDNC9Da0RONXBtWGJ2blBRQ0VtM0pmalJ1Q3NrMjR5Zjlq?=
- =?utf-8?B?ak1FTWJsNTNnMjM0VG9lUUpnWVBmVC9WWjVqK0pTaXV5bUx1am8yaUthRlJq?=
- =?utf-8?B?SSsrZ1NHNlBuZkdYS3g2a0dxcjdYeWt1eThtbEQvR1RwSUMwMUxZR1ZvYzFL?=
- =?utf-8?B?WEh0S1ZiVFFWbWdsSXV1emNBT0ZabkRyM1hJb0xkdThPYkFJeEx4WkpjVmxj?=
- =?utf-8?B?azBjZ05qNWE3ZHIwd21paEtBSHFRRldKWG5XLzh4NVlVQmVncG5nblJhYThL?=
- =?utf-8?B?cCttRzZ4aHV4VEJrRzJISGtZZ2ZmSlEvOFVTbFR2TjY1czRHZVF1OU1QSmhD?=
- =?utf-8?B?eW9UQThIdEhXS0I3MlNnUVRxMUdGREVCYXpRUUN4M2dpZThxdDl1K2cydTNi?=
- =?utf-8?B?NWxrNlNTaXFxbXd5U0toSGFYNnRQekdKRnVSOUhmbURNQmorZW0yOHl6ZGd5?=
- =?utf-8?B?WWtGdDZxTmNON2pqOEFFdTNUK2hKSEltZnhpZS9LeHdFbGxQV2pMdmZWcENq?=
- =?utf-8?B?Q2dXRklwSEJJZ1JycENPL1FHZnhpMXZaVThOMEVHSlY4TjljNGR0Y0JiY0VF?=
- =?utf-8?B?TzljakhFRUVMQ1VCZW9mZ2YzSCttT0M4Z2g0WUlSRUJXTW5FdW1VQUdXV3pD?=
- =?utf-8?B?Z1ZCTTN5Rlc5OTNHRHloaHJ3NFBxU2FKZGNxNmF6YUk0dElKZndmcnJGQmxq?=
- =?utf-8?B?N1lQT3hlb3Q2SGdrTFAvUGxkaGtwTE0zUzNBbzZiVmx4QzZjZm14M3Rsb3lk?=
- =?utf-8?Q?+RZHLje3MjGuNVnnUA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Rm9NZmFoL0U5QVJiU2lGUmsrNnZ4UWtzTTk3TkpMR0tJVWdpanBLQitWTkZE?=
- =?utf-8?B?d0VWUm9TTnVhTlM0ME1uaVhqT24wR0srUjc5UjEvUG14NTc5VmlJM0VqQ0VC?=
- =?utf-8?B?RUlGRFlUNDd0dW9wTzV2Z1UvTmdjRW5sRFQvRWZscmxiNXlZbndpK3VnUldm?=
- =?utf-8?B?QytjVVVwVE9EOGMrNkhQQlgyMUh6YksxbjdvK1hob2Zwc2JPRVBEVVdSd0JK?=
- =?utf-8?B?OHlyNVFRbERqOU14aFI2U0U0aUJCdkJkMWJNMkkzdDhGVTlCWjFEUlRKdEpM?=
- =?utf-8?B?S094Qk9lTnRLOHkvdTZScGpqRVNjNjJMbXhTcjFoUFJGeHJKaVpFK3pORmZl?=
- =?utf-8?B?VzlSNXhSR2MvbWlEa0E0MGpmY215akhhU2FRYlExNnVhcWx1WTIxS3F6T3da?=
- =?utf-8?B?OGx6dG40bXlVVkpOTmx2RzdDbE56Sng1aGpjSGwwVmpXc0tmWkszOGtoejh1?=
- =?utf-8?B?eW81YXl3YWNBM1hkdmJVczhYN2VKcmVBWENFUitpbmVSL3pwK1YzY20rUWpz?=
- =?utf-8?B?YVZqampJbHlvaDd5TmJVSlZ2aDFtdlM5TW44cmowanlKZTR3Vi9iZTBhb2V2?=
- =?utf-8?B?OHp2czNNcmFjTkxadXRzNlJxRk04dk1JRnJ2M29uTXJUMHNYT1MrNFBaYW1D?=
- =?utf-8?B?TnR2amw1WjdEc1VFTE5iTllhQjZkOWZkN0xzRXg0RzM2RUs0ZFdlalVmRHc3?=
- =?utf-8?B?cUlqcWMzNHFBd1ZoclVuSHZxM0dJd1F0UlVnWWtrMTNTRW9PK0pUd2txNXIx?=
- =?utf-8?B?L3hLZlRzemlPM2xObGhObVFCbEdXVzNSbHVXSnJoWTRoVFU3WUx6amhKR1FN?=
- =?utf-8?B?SE5jOUNHcVZTajJIUkhUMTd3Vm9wTEJpb0ZSMmIyekZqUHpHUFpHeG1Sdys2?=
- =?utf-8?B?eG1EOEt1dmxzU2FLTEtheFhCa0ZzOHYzMjJwODdCaVdTcXNQaTdlMmVURG9N?=
- =?utf-8?B?Y1Q0bGRoMVZVeS9oMXhrY0Rzd2pYUHl2dThOM2dwM2g3Z3BPQUNDR3lJNW5j?=
- =?utf-8?B?NHpTTHpNajRBVXF0S1M5ZHJXQ0VDMXkxSVlSNWJmOXBtalkvZ3lvZ0xja21t?=
- =?utf-8?B?RWg1V1oyT0dUa05kSUxxNWhnYXpKendVMWVrS3gwYWpVRFNRNm9DMEx4cXBt?=
- =?utf-8?B?ODBKUHRBd3VTc0FsQks5b3BtbmtabDRmck9UNFBZMFZKZDdYbmpPeEw0eTRh?=
- =?utf-8?B?NHJrcEs3V1RHaFY1YmhkZEpheHQ2bDZaZWNFcGpLQ3IxejVBNDluT1RMdWNs?=
- =?utf-8?B?Vk1GMDE3a2E4cHNRTlIvbUFsVCtycHYrSlVmWVhIVktmNkJRQm1qdEptTTRz?=
- =?utf-8?B?a3QrZUxVV2RJc3NET2RxSlFkU0dYaG8ydHo2TStwSlpyTVNpVjI0UEs0OTJU?=
- =?utf-8?B?SmVyOWFCd2Q1SEJBVkFkaDYzNHNGREhqektpQXZIVUhwRk1TZ3JERFZSd3B0?=
- =?utf-8?B?akFoSGFLUlJUaE0xSnVHRm1lSVdDY2pBY3QyZllPWURFenU1VFA5WXA5eEl1?=
- =?utf-8?B?bnh6OTBpZTNRenB6Rit6WU5yTmJFcXZqK2hJV2JzbkJTckJNZ0s3elJ2bzNa?=
- =?utf-8?B?ZXh0WThtWEgxcmJBa3g3VEh1SnhHZmpraU13MjJYZkRYUEdkZ29MZHhmeVNm?=
- =?utf-8?B?VVJKYXJUNkVsOGJxSGlMRFF3N29CeERwT0ZWeElpeGNrbXVuamRGUjdRUEMz?=
- =?utf-8?B?bGM1T05pY25BdGM5UmRuWlpzeDRLajdwODhYeGl6LzdqZVFsWjI2UzkzMEhD?=
- =?utf-8?B?MXpxd2RvanR2aGpESnN1OHZ2L1lhRVJHTHVLNENxcnRMczY5QUl6RkpFTVpp?=
- =?utf-8?B?UGZmNlpWMEFsb1F3aHRpeVN1TW9iUVVFSnk5ZW1rK01kQ2lZa0tCRTFSSG9k?=
- =?utf-8?B?eGdzdVRiUXRaRXJDbHd0WVQzdEprSDN6MkJOVmlmSWJsQnpEUHZkYlRYSE1T?=
- =?utf-8?B?UHo4ZUlWaVBKSTViclM5Yi9ZdFluVWxMdzJacnBhbWJ5Q21hbVZ6YWl6VGpn?=
- =?utf-8?B?TEtnMW5RSjZNWjhzWUZCcG1sRHFwTW5zcFcrT1hWaGhjemQyWnc4SzFWWm5H?=
- =?utf-8?B?Znd0M2w1ZlVVM056SVBhZzN6MjBPdzJvOGNybFdrK0tSUndIS0lGbnpuUncw?=
- =?utf-8?Q?pG5sgrfUKPGRwZjcXhinFaAm9?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fd1bdf44-9fe5-4944-570c-08dc96bba22b
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jun 2024 15:13:00.4912
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xsoeebgKNfE9WDIp3UF1i0NjIhgpjX4HPAMlMt+mfa8g2usA/Ef7QQ7udkJSVtcZryxVNEMo660Jj2ZR6vsrrQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7938
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] devres: Simple code optimization
+To: Greg KH <gregkh@linuxfoundation.org>
+CC: <rafael@kernel.org>, <linux-kernel@vger.kernel.org>
+References: <d029d754-aeb7-493a-8e48-6acaa53fee1e@quicinc.com>
+ <1719496036-24642-1-git-send-email-quic_zijuhu@quicinc.com>
+ <2024062750-hubcap-parish-7bda@gregkh>
+ <179b5505-f64b-4c29-b2df-2eec9e276904@quicinc.com>
+ <2024062724-bunion-swept-23b9@gregkh>
+Content-Language: en-US
+From: quic_zijuhu <quic_zijuhu@quicinc.com>
+In-Reply-To: <2024062724-bunion-swept-23b9@gregkh>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 1D4SDSzD2msh5c5y0fVul0r5qT1CeLdS
+X-Proofpoint-GUID: 1D4SDSzD2msh5c5y0fVul0r5qT1CeLdS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-27_11,2024-06-27_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
+ spamscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0 adultscore=0
+ impostorscore=0 lowpriorityscore=0 phishscore=0 priorityscore=1501
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406270115
 
-On 6/27/2024 09:47, Gautham R.Shenoy wrote:
-> Mario Limonciello <mario.limonciello@amd.com> writes:
-> 
->> On 6/27/2024 00:12, Gautham R.Shenoy wrote:
-> 
-> [..snip..]
+On 6/27/2024 10:35 PM, Greg KH wrote:
+> On Thu, Jun 27, 2024 at 10:29:43PM +0800, quic_zijuhu wrote:
+>> On 6/27/2024 9:54 PM, Greg KH wrote:
+>>> On Thu, Jun 27, 2024 at 09:47:16PM +0800, Zijun Hu wrote:
+>>>> Initialize an uninitialized struct member for devres_open_group()
+>>>> and simplify devm_percpu_match() implementation.
 >>>
->>>> -	return CPPC_HIGHEST_PERF_MAX;
->>>> +	/*
->>>> +	 * For AMD CPUs with Family ID 19H and Model ID range 0x70 to 0x7f,
->>>> +	 * the highest performance level is set to 196.
->>>> +	 * https://bugzilla.kernel.org/show_bug.cgi?id=218759
->>>> +	 */
->>>> +	if (cpu_feature_enabled(X86_FEATURE_ZEN4)) {
->>>> +		switch (c->x86_model) {
->>>> +		case 0x70 ... 0x7f:
->>>> +			return CPPC_HIGHEST_PERF_PERFORMANCE;
->>>> +		default:
->>>> +			return CPPC_HIGHEST_PERF_DEFAULT;
->>>                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->>> Should this be CPPC_HIGHEST_PERF_MAX ?
+>>> Huge hint, when you say "and" or "also" in a patch, it's a good idea to
+>>> split it up into different commits, right?
 >>>
->>> Without this patchset, this function returns 255 on Genoa (0x10-0x1f)
->>> and Bergamo (0xa0-0xaf) systems. This patchset changes the return value
->>> to 166.
+>> you are right.
+>> i would like to split this change into two changes within a patchset
+>> even if this change is *very* simple.
+>>>>
+>>>> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+>>>> ---
+>>>> This change is intend to replace below one:
+>>>> https://lore.kernel.org/lkml/1718629765-32720-1-git-send-email-quic_zijuhu@quicinc.com/#t
 >>>
->>> The acpi-cpufreq driver computes the max frequency based on the
->>> boost-ratio, which is the ratio of the highest_perf (returned by this
->>> function) to the nominal_perf.
+>>> Why?  SHouldn't this be v2 instead?
 >>>
->>> So assuming a nominal_freq of 2000Mhz, nominal_perf of 159.
+>> this change has different title and maybe be identified as different
+>> patch, so i send it as v1.
+>>>>  drivers/base/devres.c | 5 +++--
+>>>>  1 file changed, 3 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/base/devres.c b/drivers/base/devres.c
+>>>> index 3df0025d12aa..5b1d498e83ab 100644
+>>>> --- a/drivers/base/devres.c
+>>>> +++ b/drivers/base/devres.c
+>>>> @@ -567,6 +567,7 @@ void * devres_open_group(struct device *dev, void *id, gfp_t gfp)
+>>>>  	grp->id = grp;
+>>>>  	if (id)
+>>>>  		grp->id = id;
+>>>> +	grp->color = 0;
+>>>>  
+>>>>  	spin_lock_irqsave(&dev->devres_lock, flags);
+>>>>  	add_dr(dev, &grp->node[0]);
+>>>> @@ -1172,9 +1173,9 @@ static void devm_percpu_release(struct device *dev, void *pdata)
+>>>>  
+>>>>  static int devm_percpu_match(struct device *dev, void *data, void *p)
+>>>>  {
+>>>> -	struct devres *devr = container_of(data, struct devres, data);
+>>>> +	void __percpu *ptr = *(void __percpu **)data;
+>>>>  
+>>>> -	return *(void **)devr->data == p;
+>>>> +	return ptr == (void __percpu *)p;
 >>>
->>> Previously the max_perf = (2000*255/159) ~ 3200Mhz
->>> With this patch max_perf = (2000*166/159) ~ 2100Mhz.
+>>> What exactly is being "optimized" here?
 >>>
->>> Am I missing something ?
->>
->> Yeah; this is exactly what I'm worried about.
->>
->> How does Bergamo handle amd-pstate?  It should probably explode there
->> too.
+>> 1) remove redundant container_of() and devr->data operations
+>>    pointer parameter @data already is address of devr->data.
 > 
-> So amd-pstate driver calls amd_pstate_highest_perf_set() only when
-> hw_prefcore is set.
+> But do we really know that ahead of time?  If so, how, just by virtue of
+> this being the first field?  If so, then no, keep the container_of.
 > 
-> Thus for Genoa and Bergamo, since hw_prefcore is false, the highest_perf
-> is extracted from the MSR_AMD_CPPC_CAP1. See this fragment in
-> pstate_init_perf()
-> 
-> 
-> 	/* For platforms that do not support the preferred core feature, the
-> 	 * highest_pef may be configured with 166 or 255, to avoid max frequency
-> 	 * calculated wrongly. we take the AMD_CPPC_HIGHEST_PERF(cap1) value as
-> 	 * the default max perf.
-> 	 */
-> 	if (cpudata->hw_prefcore)
-> 		highest_perf = amd_pstate_highest_perf_set(cpudata);
-> 	else
-> 		highest_perf = AMD_CPPC_HIGHEST_PERF(cap1);
-> 
-> Hence it doesn't blow up on amd-pstate. So it looks like it would be
-> better if the prefcore check is in the amd_get_highest_perf() function
-> so that it can be invoked from both acpi-cpufreq and amd-pstate drivers.
-> 
+yes. the 2nd parameter for match() must be devr->data by below reasons:
+1) devres.c only call match() by this way match(dev, dr->data, match_data).
+2) all implements of match() don't do such redundant operations to get
+dr->data. such as devm_action_match()/devm_pages_match()/....
+3) API user should only know address devr->data and known nothing about
+devres internal struct devres. so they should not write their match() by
+involving the struct.
 
-Ah; yes this makes more sense then.  I'll work on a modified series 
-during next kernel cycle.
+for below match() type definition, the 1st parameter @dev have already
+have fixed meaning.
+typedef int (*dr_match_t)(struct device *dev, void *res, void *match_data);
+
+suppose your 3rd question have typo error.
+>> 2) compare with right data type
+>>     original type of @p is void __percpu * returned by
+>> __devm_alloc_percpu().
+> 
+> It's pointer math, no need for types, right?
+> 
+yes, it is more simpler for no need for types.
+but it think it is more normative to compare with user original types as
+this change do.
+>> @data is storing a pointer type void __percpu * as shown by below
+>> statement within __devm_alloc_percpu().
+>> *(void __percpu **)p = pcpu;
+> 
+> Again, it's not very obvious so you better document the heck out of it
+> in your changelog text.
+> 
+okay, will add comments after code review done.
+> thanks,
+> 
+> greg k-h
 
 
