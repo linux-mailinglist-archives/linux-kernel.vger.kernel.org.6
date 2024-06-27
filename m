@@ -1,133 +1,163 @@
-Return-Path: <linux-kernel+bounces-232299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED82D91A67F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:21:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC41E91A67A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:21:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4AAEB20B9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:21:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73A8328327A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18AF6157491;
-	Thu, 27 Jun 2024 12:20:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14255158D64;
+	Thu, 27 Jun 2024 12:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="ARC3XNZD"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="anue5/zB"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B518E15573B;
-	Thu, 27 Jun 2024 12:20:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A54781581F9;
+	Thu, 27 Jun 2024 12:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719490857; cv=none; b=a2gDEpnMC9i4OjMTsqwdE9h08sNsInA8pzyOFOOgbL/Uw6EwB8KBjCGvXMqXJnWbmlEAB2AAz1MtCCUvR6dboB+T5s5FQ0QEX4jUFfRYu4UvZDL5q/MDK5jRuwieAq77lTnv3X5Eur9sxO9ZhcI51prdTrv1EK5+uQ3eYY5e/fg=
+	t=1719490827; cv=none; b=RsoWMRWwz0/PYVnfTwmAVkzwEScmm09k5l0ycbD5H37aL/JcHJsontezj+ATMmgNqZfsBaakxBPD1BOMNmyXkoQL9pX5X7smpTs5KvCDFtLdoZloJ+zdgAuvZAqUXF7GFD4cEaGwO9XecNaPqJtRIG5C9ew2cNqWVFA7mqNMnRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719490857; c=relaxed/simple;
-	bh=7N0odRzOw1ltNVEc/R/14XetuMEqhPMVC1+GvkLtPmA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=DTHjaO3spjM4KSCDf9sWEn+zrdK3fM36O7sc3NDoXabtOt0zOy6DKEtRdkIeqDyFX9jnohXqYLqmTHmt2OpBHAMdkgdiTjqhb/Jq2XG+ElpjwHU+QGtlC0Xl4Biv7F74XZVZO7U9gOPJUSGnvCeQgeIpLQ3jUEj2g2zpRQgYhcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=ARC3XNZD; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45R95ARN020835;
-	Thu, 27 Jun 2024 14:20:27 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	AGl8CVfDYYSZflNFW+9FeYoeCPrKt6+mzA+//qho8Gc=; b=ARC3XNZDq7mKTDtw
-	Rd/HVBSE9YxIXlVoQpeT+6Ype3wcHoIr888t2gA9qlKgLMhiKcjMRvnR/Zf4HPL8
-	pSDT/uWI/rQaNF85uvoNSDKw9LNUyhRphQHx82kdlySQg3R+qWm6C4bKFP4vgTYp
-	ZEZ9thnCiLNCdDICQHKES477pNEK4hO10przJi3OV4KkJ3enb1oLOQPOcdShUAD8
-	PRcWAU6eIzNUnkeFvULwpQQgcNW2m9Hdy22WtZFW811UtlVhtyviv0PB7vBmlNO+
-	+aEXimxg/WkGkY5+M6vLdwtxpTjKebOMtP0F+ZBWbntsfiWHNExqzG425KB6cuNX
-	VbPv/g==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ywnxxngmu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Jun 2024 14:20:27 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 462774002D;
-	Thu, 27 Jun 2024 14:20:22 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CAA30218601;
-	Thu, 27 Jun 2024 14:19:08 +0200 (CEST)
-Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Thu, 27 Jun
- 2024 14:19:07 +0200
-Message-ID: <0b155f29-17d1-4863-be38-fb6c1dec4c31@foss.st.com>
-Date: Thu, 27 Jun 2024 14:19:07 +0200
+	s=arc-20240116; t=1719490827; c=relaxed/simple;
+	bh=PUiC+p80y1527E72vWRjZZNVADRcn5j2khxOYSvQAJI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V/fBXdAH9/LFaEe983xLDtWoq5YOkMRAwLEUSYe1T7/o10WBfDzfsgDRQHJkDQWs7DfEXjzXMip4bzNRPtDaP0xA5ty5r0Is8PAG6o0b8BBv+VJJnJgTeWUAwOUB9zt5UqyjcWLP7nqRZl/a7RM8S1eXW4F2emDKo/4FnHqkW0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=anue5/zB; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57cc1c00b97so1624414a12.0;
+        Thu, 27 Jun 2024 05:20:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719490823; x=1720095623; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HfPAvEEoOhqlNc3o5XSKpPKNsQK+jNCsk3UKc8ZzX2E=;
+        b=anue5/zB2FK5jLm7L0co5tXzZzSO8q3cgXbp3yagkR+kjiEG2LQmdTzpCFsgCqOmq5
+         H/2cdBFIYo3zgk1iixEz9DFJalwxJ3U7/aabnUa92hmeEcoFqPPsRJQYqnv/PQFZOyGz
+         3e1B8irLFDNAKG6y1Phc7UsIyPX0AcwOTwv99nciTEYO9MDGTjec9Q35P1aE9trTMhm3
+         1gI+ojja2kwXJojNFER6pe2U7QUKQ6Pf9gIuHrBg/fXsNGcZBMg2/i9VQOObwjsg0Uij
+         TKkSy4yM/iaIEbgccQ/CIlXK1VpN6MWj/JpvYsqQD8Rlq0COy4F+vKvgPHiTw1wRUkIg
+         KhhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719490823; x=1720095623;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HfPAvEEoOhqlNc3o5XSKpPKNsQK+jNCsk3UKc8ZzX2E=;
+        b=ViVe7N2GmPEPqURjZds9bnhjPCgqviQeQaz+OYRsrc9fmzwjI1qkEliJ0xsAiQrEBh
+         J50ConH+9L7XorUUIXri+x1wzQmprkVzU7GTEcwh6uuJ34S9cn3IQVOnkgzLfyaAtiaO
+         5ZIRPga1b7zHeYqhK5XoLFsY2je4Mb+XHVGqysQQqLv60JOdnELceSvdemS8WoaQEmDo
+         K+L2CkGuZ+o3fEW3ZKxt0z0EGtu0ECLkw0tCrbgbOOvgluhnRuNV5QdcA4LiI00FUlRX
+         /7G2iwqNV665CaGKhsR1HHjGgj1c9mij631tjgHDYKLak9Jg5DtILz8v6tsIiUkl4YKS
+         b/KQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXHFlD7CBs3QyKsQMdUMcKO3Wg6F+1361bb2L97K5LhqcCF/Wb0aIqH/dnJ+A3+x2m1x8UkFmwWAX1a130Jv45KuDDqVmqiHAYjLZUKTf6jMSjd8v6R3m/kmr4FEIhXW2JfonYUep2ek4JK2w==
+X-Gm-Message-State: AOJu0YwQQWUaNNjNWfx/PPFS7RXK72THubc+fcFKQxQzQCDMe9B5CZFs
+	tkb9atPqYPyxAcIlBrMJBTIbLIgf8rD+9KkKu8xDKol7mMFoWxYz6hN3he0qQ4anEo71+T5Rh/L
+	Gd1MEVVX5lHzr/OlNlgffoympkekklTMmm+Q=
+X-Google-Smtp-Source: AGHT+IF3Ih0kBarK1vQ38L5gWHqqfPJPR/YBqRJqemKxAXKc6yKtlejb9rsU1Qqbk9DjpFo85XLpqFhIJEd9edEUylo=
+X-Received: by 2002:a17:907:104c:b0:a6f:59dc:4ed2 with SMTP id
+ a640c23a62f3a-a7245b6dc4bmr799923566b.12.1719490822798; Thu, 27 Jun 2024
+ 05:20:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] Series DTs to deliver Ethernet for STM32MP13
-To: Christophe Roullier <christophe.roullier@foss.st.com>,
-        "David S . Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Rob Herring
-	<robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Richard Cochran
-	<richardcochran@gmail.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Liam Girdwood
-	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Marek Vasut
-	<marex@denx.de>
-CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20240610080309.290444-1-christophe.roullier@foss.st.com>
-Content-Language: en-US
-From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
-In-Reply-To: <20240610080309.290444-1-christophe.roullier@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-27_06,2024-06-27_03,2024-05-17_01
+References: <20240614163416.728752-1-yu.ma@intel.com> <20240622154904.3774273-1-yu.ma@intel.com>
+ <20240622154904.3774273-2-yu.ma@intel.com> <20240625115257.piu47hzjyw5qnsa6@quack3>
+ <20240625125309.y2gs4j5jr35kc4z5@quack3> <87a1279c-c5df-4f3b-936d-c9b8ed58f46e@intel.com>
+ <20240626115427.d3x7g3bf6hdemlnq@quack3> <690de703aeee089f86beca5cb90d3d43dcd7df56.camel@linux.intel.com>
+ <3d553b6571eaa878e4ce68898113d73c9c1ed87d.camel@linux.intel.com> <20240627120922.khxiy5xjxlnnyhiy@quack3>
+In-Reply-To: <20240627120922.khxiy5xjxlnnyhiy@quack3>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Thu, 27 Jun 2024 14:20:10 +0200
+Message-ID: <CAGudoHH3QuUfuD5aSGxTFhZqXzce6i1Be2XfEvfRKQ5qG8NDxg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] fs/file.c: add fast path in alloc_fd()
+To: Jan Kara <jack@suse.cz>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>, "Ma, Yu" <yu.ma@intel.com>, viro@zeniv.linux.org.uk, 
+	brauner@kernel.org, edumazet@google.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, pan.deng@intel.com, tianyou.li@intel.com, 
+	tim.c.chen@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi
+On Thu, Jun 27, 2024 at 2:09=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> On Wed 26-06-24 09:52:50, Tim Chen wrote:
+> > On Wed, 2024-06-26 at 09:43 -0700, Tim Chen wrote:
+> > > On Wed, 2024-06-26 at 13:54 +0200, Jan Kara wrote:
+> > > >
+> > > >
+> > > > Indeed, thanks for correcting me! next_fd is just a lower bound for=
+ the
+> > > > first free fd.
+> > > >
+> > > > > The conditions
+> > > > > should either be like it is in patch or if (!start && !test_bit(0=
+,
+> > > > > fdt->full_fds_bits)), the latter should also have the bitmap load=
+ing cost,
+> > > > > but another point is that a bit in full_fds_bits represents 64 bi=
+ts in
+> > > > > open_fds, no matter fd >64 or not, full_fds_bits should be loaded=
+ any way,
+> > > > > maybe we can modify the condition to use full_fds_bits ?
+> > > >
+> > > > So maybe I'm wrong but I think the biggest benefit of your code com=
+pared to
+> > > > plain find_next_fd() is exactly in that we don't have to load full_=
+fds_bits
+> > > > into cache. So I'm afraid that using full_fds_bits in the condition=
+ would
+> > > > destroy your performance gains. Thinking about this with a fresh he=
+ad how
+> > > > about putting implementing your optimization like:
+> > > >
+> > > > --- a/fs/file.c
+> > > > +++ b/fs/file.c
+> > > > @@ -490,6 +490,20 @@ static unsigned int find_next_fd(struct fdtabl=
+e *fdt, unsigned int start)
+> > > >         unsigned int maxbit =3D maxfd / BITS_PER_LONG;
+> > > >         unsigned int bitbit =3D start / BITS_PER_LONG;
+> > > >
+> > > > +       /*
+> > > > +        * Optimistically search the first long of the open_fds bit=
+map. It
+> > > > +        * saves us from loading full_fds_bits into cache in the co=
+mmon case
+> > > > +        * and because BITS_PER_LONG > start >=3D files->next_fd, w=
+e have quite
+> > > > +        * a good chance there's a bit free in there.
+> > > > +        */
+> > > > +       if (start < BITS_PER_LONG) {
+> > > > +               unsigned int bit;
+> > > > +
+> > > > +               bit =3D find_next_zero_bit(fdt->open_fds, BITS_PER_=
+LONG, start);
+> > >
+> > > Say start is 31 (< BITS_PER_LONG)
+> > > bit found here could be 32 and greater than start.  Do we care if we =
+return bit > start?
+> >
+> > Sorry, I mean to say that we could find a bit like 30 that is less than
+> > start instead of the other way round.
+>
+> Well, I propose calling find_next_zero_bit() with offset set to 'start' s=
+o
+> it cannot possibly happen that the returned bit number is smaller than
+> start... But maybe I'm missing something?
+>
 
-On 6/10/24 10:03, Christophe Roullier wrote:
-> STM32MP13 is STM32 SOC with 2 GMACs instances
->      GMAC IP version is SNPS 4.20.
->      GMAC IP configure with 1 RX and 1 TX queue.
->      DMA HW capability register supported
->      RX Checksum Offload Engine supported
->      TX Checksum insertion supported
->      Wake-Up On Lan supported
->      TSO supported
-> 
-> Christophe Roullier (3):
->    ARM: dts: stm32: add ethernet1 and ethernet2 support on stm32mp13
->    ARM: dts: stm32: add ethernet1/2 RMII pins for STM32MP13F-DK board
->    ARM: dts: stm32: add ethernet1 for STM32MP135F-DK board
-> 
->   arch/arm/boot/dts/st/stm32mp13-pinctrl.dtsi | 71 +++++++++++++++++++++
->   arch/arm/boot/dts/st/stm32mp131.dtsi        | 38 +++++++++++
->   arch/arm/boot/dts/st/stm32mp133.dtsi        | 31 +++++++++
->   arch/arm/boot/dts/st/stm32mp135f-dk.dts     | 23 +++++++
->   4 files changed, 163 insertions(+)
-> 
-> 
-> base-commit: 28f961f9d5b7c3d9b9f93cc59e54477ba1278cf9
+You gate it with " if (start < BITS_PER_LONG)" which only covers the
+small initital range, while I'm arguing this should work for any fd.
 
-Series applied on stm32-next.
-
-regards
-Alex
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
