@@ -1,137 +1,109 @@
-Return-Path: <linux-kernel+bounces-231861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0D60919F92
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 08:51:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B653919FEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:04:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B8401F224EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 06:51:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 051612882BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 255E63D982;
-	Thu, 27 Jun 2024 06:51:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A293F13AA47;
+	Thu, 27 Jun 2024 07:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="D3dBNaFK"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b="p9rfRQ8t"
+Received: from bee.tesarici.cz (bee.tesarici.cz [37.205.15.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F28CB20323;
-	Thu, 27 Jun 2024 06:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FF2C13AA20
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 07:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.15.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719471066; cv=none; b=SkDbbQBBwGtnLB5iA1yuCtzRFDcYkSNQ+pefRIUt9S0/SMY5Z1G6fhF/xOSbT5gzClpAgE8TpS9US8wrAMpuy/bV3DhyVTQKDbXqrHKTz/Mkhc3LFxnvLCZQLZg5K2zw45gFie+CQFVKeXKWJcSpSOusf1LiGOmGptNNdVOCwMM=
+	t=1719471677; cv=none; b=XOYFCKoVSgO1b8CoA4AQwFtreYjfowFzKK8CV/QIjKoCahlLSaoVJgDIm6ANg1ajku0LIEgxwkCkhrvWZotQn6e0ypAcCyzzTZo2tymyVEvMQXDqe67dqMx4zlxxT/LxnCPg0pE/q+7KYuNKNzF4bTcaaLBeUTTz+D306gxnHLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719471066; c=relaxed/simple;
-	bh=bQYa/DespjSHuQZ1oFVwziBEd4jeC5kUZa9xTrmlBx4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=mwXJWKn/vFyE2BOC6QPDvH036cM9/WcA8fj5owtBhB2NUzKjoz/ffVeQXqshSq6AMhyIppZ6l35oXUdjGlcCWNb/Ge4OAEjC4by6bKOUEKIpgWcOqVkGOO7+xqHWdgQEf0A/rILpPSrIflIItFis8HCjcCGrtCZEXZV2AC+RVTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=D3dBNaFK; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719471042; x=1720075842; i=markus.elfring@web.de;
-	bh=2atwNxPRI5mO89YD5+6WEYABHJpwprYUB+48+DjiF+c=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=D3dBNaFKfAiEebkKfYwjbBugU8AKqxHn7cZxkn1tqi/7vV3Xv6qlYUvSgrqR8bLx
-	 f/Ad8DM+AHZz0JUXtCKH6YCYF85QbJsNv6pxIo8FY+Rd1fsUMDT7w98+yuWfGCauL
-	 aTS1bPxiqgQON1whv3uE1TiF1/ZznHTPhHMlQVtAUvbu4ZubhI6IwKuCFVXb7WyEP
-	 PerOyysjxiZK8vD/Z9/dTB1gVzOPrfzA8m1/St4mMAuME5yXTlurmu8LqqxEFR9CI
-	 sffxrn3imh0z1qeKno2F3LuX4pdObFhi6Ayx6J5gWyKqLGmBOgPw9osqVoDhlKp5M
-	 K3AdeBGB00UAPAWIlg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MgAJ8-1sov7M3GUo-00nzun; Thu, 27
- Jun 2024 08:50:42 +0200
-Message-ID: <97116eca-6166-49e4-8e21-376b1a711472@web.de>
-Date: Thu, 27 Jun 2024 08:50:40 +0200
+	s=arc-20240116; t=1719471677; c=relaxed/simple;
+	bh=8LLGg7bU1CgDIqmPDPN6aaQerMtJh7O58mTQUHcyZS0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kAs1ppdDy1ebbqeR1bLUf+P14Bvw52P5QEew6OK1NHVHya7RszSWxUNAlG9yC/qZnQHPT8NBonwjYbTHuVRG+66AOmIDm8CSbtFFGDWz5xe4p4BeSQWro0s1S9wgOGq2daa56XoF2hOG4yYywh57o7xoQKSSU7i8svITKKMIeL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz; spf=pass smtp.mailfrom=tesarici.cz; dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b=p9rfRQ8t; arc=none smtp.client-ip=37.205.15.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tesarici.cz
+Received: from meshulam.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-4427-cc85-6706-c595.ipv6.o2.cz [IPv6:2a00:1028:83b8:1e7a:4427:cc85:6706:c595])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by bee.tesarici.cz (Postfix) with ESMTPSA id 7EB9F1D6A67;
+	Thu, 27 Jun 2024 08:52:21 +0200 (CEST)
+Authentication-Results: mail.tesarici.cz; dmarc=fail (p=quarantine dis=none) header.from=tesarici.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tesarici.cz; s=mail;
+	t=1719471141; bh=JqKNk6DK7c39as3qr7GxZRvQ/NXaR2TqXX/2BAiLjxo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=p9rfRQ8t2qyHzmBjsliZOBTEO2ISxen4UX5Sxsfz8PgsUtI20CIfRJu0MK3VXZ2tm
+	 uHCPZP9NV2nljjajcaLakFHetbrN/pnZeva2u6k4o1+a1EJmcbBYKNZGMEqBiWGaOp
+	 WVpLkfsPIgV/OTuKoph7CFY2HUh9svE+P49yg84fZ5Y4mXWKeXMgeD+4Gw861dYuGb
+	 9uD1JECTBxJoRLsbEK5hyAZzY/Z0MH2l7a4p96XSkbJ6z0JUkR5yuicOZoPOb8FbRT
+	 Sxv5cwOeZTe38weQ/3M+A+xW3dfkOTM8kFKGKQ/i6ckA6KUb8+cY0Np+ry2pt/gJ8R
+	 rAwtsJe8amWTQ==
+Date: Thu, 27 Jun 2024 08:52:16 +0200
+From: Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
+To: "hch@lst.de" <hch@lst.de>
+Cc: Michael Kelley <mhklinux@outlook.com>, "robin.murphy@arm.com"
+ <robin.murphy@arm.com>, "joro@8bytes.org" <joro@8bytes.org>,
+ "will@kernel.org" <will@kernel.org>, "jgross@suse.com" <jgross@suse.com>,
+ "sstabellini@kernel.org" <sstabellini@kernel.org>,
+ "oleksandr_tyshchenko@epam.com" <oleksandr_tyshchenko@epam.com>,
+ "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>
+Subject: Re: [RFC 1/1] swiotlb: Reduce calls to swiotlb_find_pool()
+Message-ID: <20240627085216.556744c1@meshulam.tesarici.cz>
+In-Reply-To: <20240627060251.GA15590@lst.de>
+References: <20240607031421.182589-1-mhklinux@outlook.com>
+	<SN6PR02MB41577686D72E206DB0084E90D4D62@SN6PR02MB4157.namprd02.prod.outlook.com>
+	<20240627060251.GA15590@lst.de>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Ma Ke <make24@iscas.ac.cn>, linux-kselftest@vger.kernel.org,
- Amer Al Shanawany <amer.shanawany@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski
- <luto@kernel.org>, Kees Cook <kees@kernel.org>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Shuah Khan <shuah@kernel.org>,
- Swarup Laxman Kotiaklapudi <swarupkotikalapudi@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240627015732.2974078-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH v2] selftests/capabilities: Fix possible file leak in
- copy_fromat_to
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240627015732.2974078-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:9RqA6a/5mc8PH/+0+xqBe9P6nPxuRgIDQ+NQ7ULRr0odF29H2Uv
- 681BUR0GjNbtvSQUAIkP9E5DkaXMygXjrZ1X5XGAVLRu2upcOMF/3a5+xlsOCrMY+Evh1SG
- 1p8uRB+hrkGhq/nLy+EdQpz+ARDJ987ghADEwtQrZ2p5oESbxzxJxAyPJnsgIj2mm3oqgn4
- IM+Qwh3jeQ7DIWa4LHqQg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:YYUSFw9XI64=;pZIvEEh3wcOhYwlK/FvVcGORUMz
- 4vsCNhxgYE/LgQOqwIMOMEtFrj0IZs+f7SuBnftMe61SdN5x3tYMUrP6aKumwexPrl+bA0GvJ
- xFNxYi2dzl2sbGlXxevWqry0HbNCDoOCoEMQSrStpXKJIQPngc//HEQrj0GGVtStQaEw9S7CP
- m8abA1Lldulf/tQc/5PKd1iBXW3zotuSYCRZlcy/GX1X9yYdC/BhI+2VHQrflroA61AvQwa/V
- vaZdDc+H4fse0WE6zQhldWa600k4YD+ce1c6osTkdogcLiVogxnKWiHza6IjB3LyXAgvtlBo9
- lvL6LemG07NZdzInAhfbJ280WrU8zWGxbph8IoOf2OOyVHZMB9hUM5BSLEHLqgcxJDNztSjYS
- YKIaJhL4lBq1eCcErLcJNJJxh0gzrfAOPVYQHlqQNe+Q/VJVJzXLZIgxhvZ5txIX1Rh27Zceo
- QEDgcO2AUJvc0U324Cn+kE6uZXYSbaXEd2OHcvfnd38Yo5LTO4QSM6QRpBN+gHbtT1nRpsEam
- nc+Se8ZeHIa7QMwet24++C6bRGCaFquSsP/j+9Qj2QX91zyrOcwFEGCdcyT2k6V//UQwogqXR
- YArIp/jZoxrOy3L40YZtuFHLPSnWUbk4mfoTvcSjevhCdDQtqTqsh+nOwfLTmnZ4iVVwHVQ9q
- cSAw38zItUq1MDPSAkTRdXfQKkmZgmX5zi42/VHecdxEGaZuttxeqb4J1zVbA7qjceYUAO+1m
- ayznEXrBZ0l6njanB7RPTMOyNy4UkTPwsm87f5y9tY9iqd7tBZPQcfddzlOpaWyo5IFwoGAqA
- B329gHNO1m2EP1GEKgWzHfg+UnKbZTaALe5hzC2DmRakQ=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
->                                        =E2=80=A6 openat() and open() ini=
-tialize
-> 'from' and 'to', and only 'from' validated with 'if' statement.
+On Thu, 27 Jun 2024 08:02:51 +0200
+"hch@lst.de" <hch@lst.de> wrote:
 
-Why do you find such information helpful?
+> On Wed, Jun 26, 2024 at 11:58:13PM +0000, Michael Kelley wrote:
+> > > This patch trades off making many of the core swiotlb APIs take
+> > > an additional argument in order to avoid duplicating calls to
+> > > swiotlb_find_pool(). The current code seems rather wasteful in
+> > > making 6 calls per round-trip, but I'm happy to accept others'
+> > > judgment as to whether getting rid of the waste is worth the
+> > > additional code complexity.  
+> > 
+> > Quick ping on this RFC.  Is there any interest in moving forward?
+> > Quite a few lines of code are affected because of adding the
+> > additional "pool" argument to several functions, but the change
+> > is conceptually pretty simple.  
+> 
+> Yes, this looks sensible to me.  I'm tempted to apply it.
 
+Oh, right. The idea is good, but I was not able to reply immediately
+and then forgot about it.
 
->                                                                 If the
-> initialization of variable 'to' fails,
+For the record, I considered an alternative: Call swiotlb_* functions
+unconditionally and bail out early if the pool is NULL. But it's no
+good, because is_swiotlb_buffer() can be inlined, so this approach
+would replace a quick check with a function call. And then there's also
+swiotlb_tbl_unmap_single()...
 
-The variable assignment will usually succeed.
-A stored return value would eventually indicate a failed function call.
+I have only a very minor suggestion: Could is_swiotlb_buffer() be
+renamed now that it no longer returns a bool? OTOH I have no good
+immediate idea myself.
 
-
->                                        we should better check the value
-> of 'to' and close 'from' to avoid possible file leak. Improve the checki=
-ng
-> of 'from' additionally.
-
-Please split desired changes into separate update steps.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10-rc5#n168
-
-
-How do you think about to use a summary phrase like =E2=80=9CComplete erro=
-r handling
-in copy_fromat_to()=E2=80=9D?
-
-
-=E2=80=A6
-> ---
-> Changes in v2:
-> - modified the patch according to suggestions;
-> - found by customized static analysis tool.
-> ---
-
-* Would you like to replace a duplicate marker line by a blank line?
-
-* I would appreciate further information about the applied tool.
-
-
-Regards,
-Markus
+Petr T
 
