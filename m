@@ -1,130 +1,141 @@
-Return-Path: <linux-kernel+bounces-232474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95CDB91A94C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:35:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 429B591A954
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:35:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C656D1C210F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:35:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F28B12858CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:35:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D6F19884B;
-	Thu, 27 Jun 2024 14:34:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7C2195FEF;
+	Thu, 27 Jun 2024 14:35:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qYlPuCj0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rp+DlHSg"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 598E319882B;
-	Thu, 27 Jun 2024 14:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5181953A1
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 14:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719498871; cv=none; b=UlczgztPyZ2QCuKkvFFgJMIM6VMdfP2FsffgF/GrLy3NzgAKDBF0ycPhmGr+gSx3Z3V4WzSbNfuMl/L2XE9+FEQ+F+jKeBQbDkKVAw+8xKBVqllk2yQ+7x+XOc9zsBJqhA9MePgShW3ZIBV5JlUfhI3YCG4JCjrj3vxnc+CsFq0=
+	t=1719498899; cv=none; b=LBpKEyql4VJvbgQ75BNgRR2lplTsXqOHSAcrECASKTMsw8eqZfMegmPOQqM9a1vvIaVwhJNpcAF0S3a+D1UaeQiyXARLGA79LKKMI3Pz6ptawG8yAJ8/1c/mTUb6DU0O6faQJZTfPDBWgXRwfyhV5HXlgEihzb+EeA97E9eNtQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719498871; c=relaxed/simple;
-	bh=gv4MXPYZvm3lNZmH4AUd269FhyNbFCqWRSyx8/WMyNg=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=ZhMsv3R4w+CkhfI5LNGlKUzmssjN8a5l04RqA1s4H/NMWY7rFBQQb2tFwfQlGblUZQuCQWaKN0cvhp4c/P0oMKqIxm6ReCIyl9ZmW+k7WIKrmlV5GtaBoRoTbAfyp2bus1TW3tmOne1Zk+YuxhOiDgsb9HBewKKlqiuHyboTwFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qYlPuCj0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C50BC2BBFC;
-	Thu, 27 Jun 2024 14:34:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719498870;
-	bh=gv4MXPYZvm3lNZmH4AUd269FhyNbFCqWRSyx8/WMyNg=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=qYlPuCj0oV8Jm9BP3YMEPpjI1Owzalvm09e89g6f/n5FCgTi97K/Yq+fjJowqXrP8
-	 uIYh/tRKVbX0Bfcgm6354axi/B0ptRgdviyfaTjJ2fWgfp6w+B77vVJfNLa30E8lUF
-	 jOg2tmfXhwOq96bNV073BUAn3PcgnRkGHbuZjR/QonTUBGWpSVYpyK77sjTSbPWeMq
-	 BU41asrOKvaqNREPUT6F0eP9JIWoKw+VFXrTPH6xM2vLRyZK88yroP2EPrcB4mjfko
-	 jQ61toqljbTP5BueUKCpqvp8ZRKZWMu9iigXTb6Ux0jk++xUhwU6B60fobefpO4FzL
-	 9oPQ5b3CBOOHw==
-Date: Thu, 27 Jun 2024 08:34:29 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1719498899; c=relaxed/simple;
+	bh=zguDLaxzEP5ll5x1PQ8QZ4iJg4eLozqPD1M8fbq03jI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DGwelnTTGdEHyZ+ZKvB/ThsjQ90axtJPZDiukxQtm4zusAX5pD8X3TJkn1neRmJHS31E8CSd5tz0zbjfH17tq4VICDWcYXTrXqXhwKWCuOUCW9N4ZUzApsxVct0FcWNuUrE+vppUKkUYgs7HfRfqNaEEbwTxg4q416i5MysyoLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rp+DlHSg; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52cdc4d221eso6683182e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 07:34:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719498896; x=1720103696; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Jz1cCr8L4wELlDLV7TgHeFnSV7RSZaDycktjZG7y30g=;
+        b=rp+DlHSg/SQW56Nx+dcc1GBJuObNp5wiIgIFznrqeIw/ugSYS+fScZeeIjDEHx2HG1
+         f/gY97W0+uII4s+j0ikL0oCyxd+fMB6lUNY4Sej0xJ4qQsJxEsHd+h/1lABXO/FIoaZh
+         dUxJbiBBtWEH4m+nOcDrPH8A9wFo0T1P1RJgvAn4dnLUpEevpetuZ5f4Nnpys2jJvqxw
+         d4RbpFLzyYY5AbPfyycWY+ZA+sybs/t5j+FJUVxnkMnMj8k5e032G7QhhgnTefoR+2UL
+         VJslsR3WxmDDdtQPdJZj168hlOdN/bvZ3CvxUBqTgqrdkOgpphifsgM309TffokhLBrd
+         74Ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719498896; x=1720103696;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jz1cCr8L4wELlDLV7TgHeFnSV7RSZaDycktjZG7y30g=;
+        b=HXVJ4Fc+9hatEwtjw6kOnVZR1YNpWKBvc4fGDVw817u3zAXmRGiGBBfK2umNFsaenY
+         QvaIJzfwDU1q7OU9TRWT/RUBKKoG12pvDxspsrZ8Lg0LBfI6teBUEFW/MY+58wsArj/j
+         74lObHjFOyEjWI1ao1P6QB15x7g1BRx1Q0GyLkYg3YRozI/XJae1h3oiwUxm/dVd2eI4
+         0/wPCZw0lmMxoXaWx5fsSyn3snml9oI/YJUngs26QAcPoKlCV6TOwrvtQJJWJn2MNU43
+         oBrhDAbon69qARAgBI2w9VKPNWXDQ4WQxjwWETKV7THsoJ813Vbi46ZBcZa4J8hdNTbq
+         +3yw==
+X-Forwarded-Encrypted: i=1; AJvYcCV2fJ6FV0abXIcy6djFa2d+Qzf47iZM8eYuw6lSeSqD8fI6lQGekvt3Aq8vNS8etU2WhNrxMzpzxYeQbkKasaDX/3WDiLnMBf+U4tPH
+X-Gm-Message-State: AOJu0YzsUm/VmswtQmsj0WBJ/JM5uVgQ9LkmDkiSoJjsAio6l+rxSmsL
+	aEK0QyDW5yVC1dj+0acAKTR4qdBL6i14Qihz7crZ0izr3Sy0Yjrp/Oct1FMLHyA=
+X-Google-Smtp-Source: AGHT+IHgZ1tGepEs1cMlh/0EwKv7vLqC2jcAsTAPu51Jor47f+778HanIWr3gvAKeMkBNwQX0VdDSw==
+X-Received: by 2002:ac2:528c:0:b0:52c:df51:20bc with SMTP id 2adb3069b0e04-52ce18350e0mr7717882e87.16.1719498894488;
+        Thu, 27 Jun 2024 07:34:54 -0700 (PDT)
+Received: from [192.168.1.195] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4249b132fd1sm81927285e9.0.2024.06.27.07.34.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Jun 2024 07:34:53 -0700 (PDT)
+Message-ID: <8bfa46a4-b18e-4d6f-856a-acbeca9398bf@linaro.org>
+Date: Thu, 27 Jun 2024 15:34:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Jonas Karlman <jonas@kwiboo.se>
-Cc: linux-rockchip@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>
-In-Reply-To: <20240626230319.1425316-1-jonas@kwiboo.se>
-References: <20240626230319.1425316-1-jonas@kwiboo.se>
-Message-Id: <171949859482.3298953.17210742633761408276.robh@kernel.org>
-Subject: Re: [PATCH v2 0/2] arm64: dts: rockchip: Add Xunlong Orange Pi 3B
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/6] ASoC: codecs: wsa883x: parse port-mapping information
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Banajit Goswami <bgoswami@quicinc.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org,
+ Neil Armstrong <neil.armstrong@linaro.org>, alsa-devel@alsa-project.org,
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20240626-port-map-v1-0-bd8987d2b332@linaro.org>
+ <20240626-port-map-v1-2-bd8987d2b332@linaro.org>
+ <z7wmi55kimskgfcon2difo6agc5nwkssehao72w3mtq3u2ig4f@msmv2on6mw62>
+Content-Language: en-US
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <z7wmi55kimskgfcon2difo6agc5nwkssehao72w3mtq3u2ig4f@msmv2on6mw62>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
-On Wed, 26 Jun 2024 23:03:10 +0000, Jonas Karlman wrote:
-> This series adds initial support for the Xunlong Orange Pi 3B board.
+
+On 27/06/2024 14:36, Dmitry Baryshkov wrote:
+> On Thu, Jun 27, 2024 at 12:55:18PM GMT, Srinivas Kandagatla wrote:
+>> Add support to parse static master port map information from device tree.
+>>
+>> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+>> ---
+>>   sound/soc/codecs/wsa883x.c | 8 ++++++++
+>>   1 file changed, 8 insertions(+)
+>>
+>> diff --git a/sound/soc/codecs/wsa883x.c b/sound/soc/codecs/wsa883x.c
+>> index a2e86ef7d18f..43156d39480f 100644
+>> --- a/sound/soc/codecs/wsa883x.c
+>> +++ b/sound/soc/codecs/wsa883x.c
+>> @@ -1399,6 +1399,14 @@ static int wsa883x_probe(struct sdw_slave *pdev,
+>>   	wsa883x->sconfig.direction = SDW_DATA_DIR_RX;
+>>   	wsa883x->sconfig.type = SDW_STREAM_PDM;
+>>   
+>> +	/**
+>> +	 * Port map index starts with 0, however the data port for this codec
+>> +	 * are from index 1
+>> +	 */
+>> +	if (of_property_read_u32_array(dev->of_node, "qcom,port-mapping", &pdev->m_port_map[1],
+>> +					WSA883X_MAX_SWR_PORTS))
+>> +		dev_info(dev, "Static Port mapping not specified\n");
 > 
-> The Xunlong Orange Pi 3B is a single-board computer based on the
-> Rockchip RK3566 SoC.
+> dev_info looks strange. It should be either dev_warn or dev_dbg.
+
+dev_dbg should be good in this case!
+
+--srini
 > 
-> Schematic for Orange Pi 3B can be downloaded from:
-> http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/service-and-support/Orange-Pi-3B.html
+>> +
+>>   	pdev->prop.sink_ports = GENMASK(WSA883X_MAX_SWR_PORTS, 0);
+>>   	pdev->prop.simple_clk_stop_capable = true;
+>>   	pdev->prop.sink_dpn_prop = wsa_sink_dpn_prop;
+>>
+>> -- 
+>> 2.25.1
+>>
 > 
-> Changes in v2:
-> - Add DT for v2.1 hw revision, rename initial DT to v1.1:
->   - Ethernet phy io voltage: 3v3 (v1.1) / 1v8 (v2.1)
->   - Etherent reset gpios: GPIO3_C2 (v1.1) / GPIO4_C4 (v2.1)
->   - WiFi/BT: CDW-20U5622 (v1.1) / AP6256 (v2.1)
-> - Rename led node and move led pinctrl props
-> - Use regulator-.* nodename for fixed regulators
-> - Drop rockchip,mic-in-differential prop
-> - Add cap-mmc-highspeed to sdhci node
-> - Add no-mmc and no-sd to sdmmc1 node
-> 
-> Jonas Karlman (2):
->   dt-bindings: arm: rockchip: Add Xunlong Orange Pi 3B
->   arm64: dts: rockchip: Add Xunlong Orange Pi 3B
-> 
->  .../devicetree/bindings/arm/rockchip.yaml     |   8 +
->  arch/arm64/boot/dts/rockchip/Makefile         |   2 +
->  .../dts/rockchip/rk3566-orangepi-3b-v1.1.dts  |  29 +
->  .../dts/rockchip/rk3566-orangepi-3b-v2.1.dts  |  70 ++
->  .../boot/dts/rockchip/rk3566-orangepi-3b.dtsi | 678 ++++++++++++++++++
->  5 files changed, 787 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/rockchip/rk3566-orangepi-3b-v1.1.dts
->  create mode 100644 arch/arm64/boot/dts/rockchip/rk3566-orangepi-3b-v2.1.dts
->  create mode 100644 arch/arm64/boot/dts/rockchip/rk3566-orangepi-3b.dtsi
-> 
-> --
-> 2.45.2
-> 
-> 
-> 
-
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y rockchip/rk3566-orangepi-3b-v1.1.dtb rockchip/rk3566-orangepi-3b-v2.1.dtb' for 20240626230319.1425316-1-jonas@kwiboo.se:
-
-arch/arm64/boot/dts/rockchip/rk3566-orangepi-3b-v2.1.dtb: pmic@20: '#sound-dai-cells', 'assigned-clock-parents', 'assigned-clocks', 'clock-names', 'clocks' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/rockchip,rk809.yaml#
-arch/arm64/boot/dts/rockchip/rk3566-orangepi-3b-v1.1.dtb: pmic@20: '#sound-dai-cells', 'assigned-clock-parents', 'assigned-clocks', 'clock-names', 'clocks' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/rockchip,rk809.yaml#
-
-
-
-
-
 
