@@ -1,120 +1,186 @@
-Return-Path: <linux-kernel+bounces-232577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E05B391AB2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:25:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAD1E91AB19
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:23:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3C0C1C21BB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:25:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 287511F24E0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:23:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E96A919AA62;
-	Thu, 27 Jun 2024 15:23:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF071991C9;
+	Thu, 27 Jun 2024 15:23:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="U+SV9x0E"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="g0RRW0N3"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E35319AA46
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 15:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7048A197A61;
+	Thu, 27 Jun 2024 15:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719501801; cv=none; b=QS4puZw3uv/ciy0NZpL8PIgW42bynj2SFiab0/ZP9wHW7MyCRawaZ5AeMiNyHqXaXdcMl/x6kzg66p5uvo8FlMtlVfjnLynnQV7NHpkOxLqng6mjID+CUhKSVsgQ8EYra1/YjjS1NiUzZJ2ufe/JDDOmIgwNfoiVtDvRPxWLKTA=
+	t=1719501792; cv=none; b=u3ch4BNX38rS/8jTmbRBb4BpLdSzvhG1zo4a5t2CLODze4qXDz9k1W7hBXIslSl2OTy11QkmLvcpDUx6pQ1/Gtp6vk7IeEMLLOU9RIp6t4V83MHUldmRdsjvBt+5hH/GjUP/2zUbwsk02zdu+5d+VNCB51nxHZg7yrNWmbZLnvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719501801; c=relaxed/simple;
-	bh=k7iuqBPgmy4nZnAtT1DilW05j1Pk6QbPYjyaED4GR/w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IwuYwjSQCWxZ4A0StKd1iAuygzhcK39WhyPM4sF7Gk4zGmiYbJwJal/BjPyTtaRGrap23L3K4pSJp+2znoJZ02vuHMHLAJeME+B05BdYWxV1Z1VMlvlFkpCHkGRP+dwAcHgD8EagiYwVVDJcMz2ZHQigEGL5AKAdoDfCAEVkCTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=U+SV9x0E; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ec4eefbaf1so73977691fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 08:23:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719501797; x=1720106597; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jpx1KcQ5akaT1bBDzPSP9F6IViuH6XlSIvtgVZQlUv0=;
-        b=U+SV9x0EkLuWYMcySakVnUakOkc52s/GD4n7IcTdO3F7sACbU0Yx8K++z8Onu8SygK
-         XkzCkd54jDhLc+Wr12yGBkghNGx8rnkFlgg1AegyLVQlmcWAVwtIpcYwFKosUW7fP9dt
-         wDcRk1VlM+KC9byoXIjq/+k9RkO7JiZYzORtl5RX/GgBJVLKwIoNyMCpPBonG0OLxnC4
-         czdz2CxFFOeBRdPvTybhfGKVDqb1qxcQ3n+k54jDrFUTT1bOiIEtj3uKZfx8yf+fqLin
-         t5SKQVNrmyScip6zdmadPII0cUQv/SFKkZWNBH11WU4vjlyBhWVXbsC5Llg1V1pOxU2Z
-         h7Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719501797; x=1720106597;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jpx1KcQ5akaT1bBDzPSP9F6IViuH6XlSIvtgVZQlUv0=;
-        b=NDj/TNFCOFA42LFdtE9AyXLbYfcdO2wAoSc1IMq4aNZzsyJkH5uiURrDSZOsbQfHi9
-         WUwXHeO9l/OvNcs22RPEQzDd7KmNLGtIA6dYqtrK70F2g3/+LOX0zGOmDyu9OHTvJHY1
-         Q/vB+zbMP0FfGS+nugEntOzMd3pzIGiUTEWWFRe3SpHOXbz5GW46Rig3Icp+0W8dy6xM
-         0mHCoOysjJAUVRegXJqdIrgNeJ24k78qfq3W3VVznGJdakwciYkDBOuYA5PDIr8qSH42
-         33N88hQaqwQbRVbX+1jHBIUsQzNA2aYdWnZQB6S7ktIP2/mnwdmFmNKCoNklOcsi1gVu
-         ph6A==
-X-Gm-Message-State: AOJu0YyplcB+70UANxkdfzQ80hwCfnivTAXAehx/bXXr5sEQMRneepGI
-	ZHC+INgLADemc1q8k5ocdu9OYEm3+4limXYv5oVb1Zm9j3JVxAajDWuZmSx+lQt37bETogBcd8Z
-	S
-X-Google-Smtp-Source: AGHT+IEfW2J1aLs8C2mx86xG1gaIK3GqOHl1FAZHCp5/HI8HlO6Jse403WoiVWIs/cdfXCGzzG73rA==
-X-Received: by 2002:a2e:8297:0:b0:2ec:174b:75bb with SMTP id 38308e7fff4ca-2ec5b38ad36mr80664021fa.28.1719501797218;
-        Thu, 27 Jun 2024 08:23:17 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:7fe5:47e9:28c5:7f25])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42564b65731sm31245685e9.14.2024.06.27.08.23.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 08:23:16 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	brgl@bgdev.pl,
-	linus.walleij@linaro.org,
-	Kent Gibson <warthog618@gmail.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH 0/4] gpiolib: cdev: directionless line reconfiguration
-Date: Thu, 27 Jun 2024 17:23:15 +0200
-Message-ID: <171950170548.40188.15774254279072823982.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240626052925.174272-1-warthog618@gmail.com>
-References: <20240626052925.174272-1-warthog618@gmail.com>
+	s=arc-20240116; t=1719501792; c=relaxed/simple;
+	bh=5+b8aWZO+wYMW95/3/7a4Rw1GpZfUelw6aGT8D3zXCs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DU6b6W4avCK9n7a3Gjku+ajoZvFs2cv6KOimKEwGhZkqkgg69WdQuLn+SNsOuXWrcKeXPHKBxQSAbRJEbhDqp3qI3TKinmR00XTmZLpUGFzp9NBXX4QX9E8kMKdHrfT/unKaZclahXRZfEHQ9fmKH5PgFgDFT1PSA6tsu0MCWJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=g0RRW0N3; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1719501788;
+	bh=5+b8aWZO+wYMW95/3/7a4Rw1GpZfUelw6aGT8D3zXCs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=g0RRW0N3BdfNu8vQOro/bv8Fe6N+IX4LhGcXzA47TDcFFvl8PNnwNycwZNlp42Rir
+	 139sftB81/f13kcfbOXx1ofWfQ856h0wnZDpLKUpQBH1m8zCDlMEDZMZfaHRrco5wQ
+	 ppxSTbWpmvpokoWGGBZVZyWiE0TxgtJo2L/XaRXjr8jcFsz1rGh6R/FBgfAQUh3kyU
+	 Xggn4qOdIjql3OUHm7FDwKhYv++FGaRFhruwNAtAUpMUfeWJ1g/DetqSnVFZ0U30lX
+	 230VMJB01LYJIo6HWNA0Pf+vDVu8Ye/Z/KTzUZqb4qUAskMrEqtB4jPRoR0yGJLuJM
+	 cIl6KiuRKizKQ==
+Received: from thinkos.internal.efficios.com (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4W92Q35cD6z180Y;
+	Thu, 27 Jun 2024 11:23:07 -0400 (EDT)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Cc: linux-trace-kernel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Yonghong Song <yhs@fb.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	bpf@vger.kernel.org,
+	Joel Fernandes <joel@joelfernandes.org>
+Subject: [PATCH v5 0/8] Faultable Tracepoints
+Date: Thu, 27 Jun 2024 11:23:32 -0400
+Message-Id: <20240627152340.82413-1-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Wire up the system call tracepoints with Tasks Trace RCU to allow
+the ftrace, perf, and eBPF tracers to handle page faults.
 
+This series does the initial wire-up allowing tracers to handle page
+faults, but leaves out the actual handling of said page faults as future
+work.
 
-On Wed, 26 Jun 2024 13:29:21 +0800, Kent Gibson wrote:
-> The behaviour of request reconfiguration without a direction flag set is
-> ill-defined and badly behaved, for both uAPI v1 and v2.  I'll will refer
-> to such a configuration as 'directionless' here.  That refers to the
-> configuration requested, not the actual state of the line.
-> 
-> The configuration validation used during reconfiguration is borrowed from
-> the line request operation, where, to verify the intent of the user, the
-> direction must be set to in order to effect a change to the electrical
-> configuration of a line. But that validation does not allow for the
-> directionless case, making it possible to clear flags set previously
-> without specifying the line direction.
-> 
-> [...]
+I have tested this against a feature branch of lttng-modules which
+implements handling of page faults for the filename argument of the
+openat(2) system call.
 
-I applied the first two for fixes and will apply the remaining two for the
-upcoming merge window once this gets upstream.
+This v5 addresses comments from the previous round of review [1].
 
-[1/4] gpiolib: cdev: Disallow reconfiguration without direction (uAPI v1)
-      commit: 9919cce62f68e6ab68dc2a975b5dc670f8ca7d40
-[2/4] gpiolib: cdev: Ignore reconfiguration without direction
-      commit: b440396387418fe2feaacd41ca16080e7a8bc9ad
+Steven Rostedt suggested separating tracepoints into two separate
+sections. It is unclear how that approach would prove to be an
+improvement over the currently proposed approach, so those changes were
+not incorporated. See [2] for my detailed reply.
 
-Best regards,
+In the previous round, Peter Zijlstra suggested use of SRCU rather than
+Tasks Trace RCU. See my reply about the distinction between SRCU and
+Tasks Trace RCU [3] and this explanation from Paul E. McKenney about the
+purpose of Tasks Trace RCU [4].
+
+The macros DEFINE_INACTIVE_GUARD and activate_guard are added to
+cleanup.h for use in the __DO_TRACE() macro. Those appear to be more
+flexible than the guard_if() proposed by Peter Zijlstra in the previous
+round of review [5].
+
+This series is based on kernel v6.9.6.
+
+Thanks,
+
+Mathieu
+
+Link: https://lore.kernel.org/lkml/20231120205418.334172-1-mathieu.desnoyers@efficios.com/ # [1]
+Link: https://lore.kernel.org/lkml/e4e9a2bc-1776-4b51-aba4-a147795a5de1@efficios.com/ # [2]
+Link: https://lore.kernel.org/lkml/a0ac5f77-411e-4562-9863-81196238f3f5@efficios.com/ # [3]
+Link: https://lore.kernel.org/lkml/ba543d44-9302-4115-ac4f-d4e9f8d98a90@paulmck-laptop/ # [4]
+Link: https://lore.kernel.org/lkml/20231120221524.GD8262@noisy.programming.kicks-ass.net/ # [5]
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Yonghong Song <yhs@fb.com>
+Cc: Paul E. McKenney <paulmck@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: bpf@vger.kernel.org
+Cc: Joel Fernandes <joel@joelfernandes.org>
+
+Mathieu Desnoyers (8):
+  cleanup.h: Header include guard should match header name
+  cleanup.h guard: Rename DEFINE_ prefix to DECLARE_
+  cleanup.h: Introduce DEFINE_INACTIVE_GUARD and activate_guard
+  tracing: Introduce faultable tracepoints
+  tracing/ftrace: Add support for faultable tracepoints
+  tracing/bpf-trace: Add support for faultable tracepoints
+  tracing/perf: Add support for faultable tracepoints
+  tracing: Convert sys_enter/exit to faultable tracepoints
+
+ drivers/cxl/core/cdat.c                     |  2 +-
+ drivers/cxl/cxl.h                           |  2 +-
+ drivers/gpio/gpiolib.h                      |  2 +-
+ drivers/platform/x86/intel/pmc/core_ssram.c |  2 +-
+ fs/fuse/virtio_fs.c                         |  2 +-
+ fs/pstore/inode.c                           |  4 +-
+ include/linux/bitmap.h                      |  2 +-
+ include/linux/cleanup.h                     | 85 ++++++++++++--------
+ include/linux/cpu.h                         |  2 +-
+ include/linux/cpumask.h                     |  2 +-
+ include/linux/device.h                      |  6 +-
+ include/linux/file.h                        |  4 +-
+ include/linux/firmware.h                    |  2 +-
+ include/linux/gpio/driver.h                 |  4 +-
+ include/linux/iio/iio.h                     |  4 +-
+ include/linux/irqflags.h                    |  4 +-
+ include/linux/mutex.h                       |  6 +-
+ include/linux/of.h                          |  2 +-
+ include/linux/pci.h                         |  4 +-
+ include/linux/percpu.h                      |  2 +-
+ include/linux/preempt.h                     |  6 +-
+ include/linux/rcupdate.h                    |  2 +-
+ include/linux/rwsem.h                       | 10 +--
+ include/linux/sched/task.h                  |  4 +-
+ include/linux/slab.h                        |  4 +-
+ include/linux/spinlock.h                    | 38 ++++-----
+ include/linux/srcu.h                        |  2 +-
+ include/linux/tracepoint-defs.h             | 14 ++++
+ include/linux/tracepoint.h                  | 88 +++++++++++++++------
+ include/sound/pcm.h                         |  6 +-
+ include/trace/bpf_probe.h                   | 20 ++++-
+ include/trace/define_trace.h                |  7 ++
+ include/trace/events/syscalls.h             |  4 +-
+ include/trace/perf.h                        | 22 +++++-
+ include/trace/trace_events.h                | 68 +++++++++++++++-
+ init/Kconfig                                |  1 +
+ kernel/sched/core.c                         |  4 +-
+ kernel/sched/sched.h                        | 16 ++--
+ kernel/trace/bpf_trace.c                    | 11 ++-
+ kernel/trace/trace_events.c                 | 28 +++++--
+ kernel/trace/trace_fprobe.c                 |  5 +-
+ kernel/trace/trace_syscalls.c               | 52 ++++++++++--
+ kernel/tracepoint.c                         | 65 +++++++++------
+ lib/locking-selftest.c                      | 12 +--
+ sound/core/control_led.c                    |  2 +-
+ 45 files changed, 441 insertions(+), 193 deletions(-)
+
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+2.39.2
 
