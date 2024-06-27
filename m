@@ -1,110 +1,89 @@
-Return-Path: <linux-kernel+bounces-232930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B573E91B010
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:04:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BD7091B014
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:05:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0F2CB24330
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:04:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7AEBB23392
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 120D561FCE;
-	Thu, 27 Jun 2024 20:03:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B71519CCFE;
+	Thu, 27 Jun 2024 20:05:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VZfKvwSx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tec+vNI4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8C419D8AF;
-	Thu, 27 Jun 2024 20:03:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C3945BE4;
+	Thu, 27 Jun 2024 20:05:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719518635; cv=none; b=YLlxqQyoUKqq/xP0dID7QbdVbQ8q5M+pButM8dwFyvKNhr0lCxYGFUttnbGgiJ9XiT5pDOHht5uz0Arzx2yto8lpbwwch8PttjfkWdugppiHFZcDzcoOE8esxs5RCzisubQMtdtT7mu+bzTGSeBWbJiOFIzXIgEU6Wmqa3f0qJI=
+	t=1719518745; cv=none; b=ervGFbUDGUEVH/pPJRkWILesyzcL8F0suqzmv7y9vkSBbgBeLZBywfqJFng29690dLcijUfCLvMVkaBXAPBncQQCcvrWjB0YTYhD2DJQlGqCle5PYtXwDwizD7UkV/OaFymJ7Gzo6bQNOEOTZ55sGnMbhTF3p5j9kk6RCYUuPfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719518635; c=relaxed/simple;
-	bh=w5lKM63h2MNeYhdBkKdMcXuUKOZrBvaTgOKjOiaoPm4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=F09m/o/RjPr9wNPgkNmxf+GMOAKVtBD1kuZbT4zyKMUDDBz/GgkaH8Bt6grqdtnZeG34k9ZKcrbJrA/vloTHX6PUol4bzytD8q/31z177EzY10Kj5dqjH+6n9byWzRqnHKxSPwAPTHvIWuTcrOpSaeW7S7uNriNo0C2kby61wcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VZfKvwSx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B497C4AF0C;
-	Thu, 27 Jun 2024 20:03:54 +0000 (UTC)
+	s=arc-20240116; t=1719518745; c=relaxed/simple;
+	bh=FE5LwB4HXBRsoGB9+h+mvR30T3AMRQyyiUCPx6AJibA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aWpwRADPWwjUJv0O0VANh0ny2YVkErBUBokjICps4z9hVPYBoLoqXlbUsxDnDDkSnqqjIM+9pq0ckQioQaRTcXIDb+piZjOEw7iQIBpjCfi6tgS1IrVyCQeHwI4rTIbLID4cqGLwsxB7Afz3rTmPtU55inX2L9lKSdBAoYZu6TE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tec+vNI4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94157C2BBFC;
+	Thu, 27 Jun 2024 20:05:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719518634;
-	bh=w5lKM63h2MNeYhdBkKdMcXuUKOZrBvaTgOKjOiaoPm4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VZfKvwSxz9gdc4BEgN4E0QrlkQtrjOi+Nik/F3wHKeTtcSEWooLK58J2nSuwg0Y4V
-	 sWbwFchkcdgEODs9Syss1zFARdt3wSJhf+IlWoIV+kcDtw5+V3Z6ooa+VyOiCtRaOE
-	 piX1+LQDdxbDxjo2L5uutC/2bnF+cP53alAJgWD1DhsEf9N6TQxhRjj3rO7NZJiTpB
-	 zaVa4LizMqGLoubvPt8Rzh9d0RuqJC5GXcwxcjClW9M9LwoGbeAaRctJyFpC+Yo1j1
-	 f/5RpElQ9QzLtXMU7S1xPbo8DzUWHm5z+3xze+cuNhHIQ5AwX6TYg412LE0qWhGwEm
-	 zbd6Lo2pdF3Lw==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Yicong Yang <yangyicong@hisilicon.com>
-Subject: [PATCH 2/2] perf stat: Fix a segfault with --per-cluster --metric-only
-Date: Thu, 27 Jun 2024 13:03:53 -0700
-Message-ID: <20240627200353.1230407-2-namhyung@kernel.org>
-X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
-In-Reply-To: <20240627200353.1230407-1-namhyung@kernel.org>
-References: <20240627200353.1230407-1-namhyung@kernel.org>
+	s=k20201202; t=1719518744;
+	bh=FE5LwB4HXBRsoGB9+h+mvR30T3AMRQyyiUCPx6AJibA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Tec+vNI4sG/7Ti1RLprvNypZGPCnZzbOElovxV8ey0vBaoA25bDO8+Sdev08E7LqF
+	 tulhYfqmL4+QD3GGENY2J4+RtUiB67WaEDA/CKwNNJp7lwlU7kmdS19OcHnt3DhJn2
+	 Ir2osxCYd/WoCsLCXfHVxSBYA1UKb+v45IlR5XQsMbSm4slNgKPjgtNd0J0L1GS51v
+	 CJAzCQjQhGrs9f3RQPcfqpLIaCEBQQ0eg9uiflzHCiuDezYQrRCgpaeUv0RM6+D1N+
+	 rsxH6wTx0oaKBrCmHtZuXDkbHJJcmN11Isfvs/gjCqegEA0JwxBWB2kEbw88wyfEeQ
+	 clzt1q3VRAhPw==
+Date: Thu, 27 Jun 2024 14:05:43 -0600
+From: Rob Herring <robh@kernel.org>
+To: Kartik Agarwala <agarwala.kartik@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Lee Jones <lee@kernel.org>, linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v2 3/3] dt-bindings: mfd: mt6397: Add reference for
+ mediatek,mt6358-sound
+Message-ID: <20240627200543.GA439514-robh@kernel.org>
+References: <20240617-mt6358-v2-0-5d9f0e99941e@gmail.com>
+ <20240617-mt6358-v2-3-5d9f0e99941e@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240617-mt6358-v2-3-5d9f0e99941e@gmail.com>
 
-The new --per-cluster option was added recently but it forgot to update
-the aggr_header fields which are used for --metric-only option.  And it
-resulted in a segfault due to NULL string in fputs().
+On Mon, Jun 17, 2024 at 05:58:26PM +0530, Kartik Agarwala wrote:
+> Add reference for mediatek,mt6358-sound
+> ---
+>  Documentation/devicetree/bindings/mfd/mt6397.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/mt6397.txt b/Documentation/devicetree/bindings/mfd/mt6397.txt
+> index 10540aa7a..cf7fcc402 100644
+> --- a/Documentation/devicetree/bindings/mfd/mt6397.txt
+> +++ b/Documentation/devicetree/bindings/mfd/mt6397.txt
+> @@ -48,6 +48,7 @@ Optional subnodes:
+>  - codec
+>  	Required properties:
+>  		- compatible: "mediatek,mt6397-codec" or "mediatek,mt6358-sound"
+> +	see ../sound/mediatek,mt6358.yaml
 
-Fixes: cbc917a1b03b ("perf stat: Support per-cluster aggregation")
-Cc: Yicong Yang <yangyicong@hisilicon.com>
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/util/stat-display.c | 3 +++
- 1 file changed, 3 insertions(+)
+No point in adding this as this file should get converted.
 
-diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
-index e8673c9f6b49..462227f663cb 100644
---- a/tools/perf/util/stat-display.c
-+++ b/tools/perf/util/stat-display.c
-@@ -38,6 +38,7 @@
- static int aggr_header_lens[] = {
- 	[AGGR_CORE] 	= 18,
- 	[AGGR_CACHE]	= 22,
-+	[AGGR_CLUSTER]	= 20,
- 	[AGGR_DIE] 	= 12,
- 	[AGGR_SOCKET] 	= 6,
- 	[AGGR_NODE] 	= 6,
-@@ -49,6 +50,7 @@ static int aggr_header_lens[] = {
- static const char *aggr_header_csv[] = {
- 	[AGGR_CORE] 	= 	"core%scpus%s",
- 	[AGGR_CACHE]	= 	"cache%scpus%s",
-+	[AGGR_CLUSTER]	= 	"cluster%scpus%s",
- 	[AGGR_DIE] 	= 	"die%scpus%s",
- 	[AGGR_SOCKET] 	= 	"socket%scpus%s",
- 	[AGGR_NONE] 	= 	"cpu%s",
-@@ -60,6 +62,7 @@ static const char *aggr_header_csv[] = {
- static int aggr_header_num[] = {
- 	[AGGR_CORE] 	= 	2,
- 	[AGGR_CACHE]	= 	2,
-+	[AGGR_CLUSTER]	= 	2,
- 	[AGGR_DIE] 	= 	2,
- 	[AGGR_SOCKET] 	= 	2,
- 	[AGGR_NONE] 	= 	1,
--- 
-2.45.2.803.g4e1b14247a-goog
-
+Rob
 
