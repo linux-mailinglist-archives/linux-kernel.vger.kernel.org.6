@@ -1,118 +1,78 @@
-Return-Path: <linux-kernel+bounces-231718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6753919CC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 03:04:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D0D7919CD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 03:05:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 822D3284DC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 01:04:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12A611F238B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 01:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B5B74BE1;
-	Thu, 27 Jun 2024 01:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB0FE556;
+	Thu, 27 Jun 2024 01:04:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nwfaFDJ/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eAeSSSJY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2407A6FE21;
-	Thu, 27 Jun 2024 01:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C341CAD23;
+	Thu, 27 Jun 2024 01:04:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719450057; cv=none; b=FkgEJl656rQ7V6RkTpAYCqtS2ni91oII2zY4E02pdN9aqQ3RaYf6iZH80MvzfbZgl8q0R/yfFmNAVK0U54TBbWglW0fe1aS2WUMqHAhSivk1EnJfdkgyup1SGb17K1/nih5qaJX3Kk8VfvH0Kf+FF09trKuGk+Pf9j1oqVwUF+E=
+	t=1719450270; cv=none; b=fV5XOA2fx3Ef9XH8gpCTPPto8Oi1vUJYrUS5j1bjCINMoT4MrjFAQ0OL/WWEfeIOCcHQBXXbksnn4E/LSEwtJDde9wvuqIf4m9pu8xYYBesykin6RgQHCcYL0byo7VLPw1iGk9jHicjNhxbAyOmtEuUfdGUsi077ElQtylFAImg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719450057; c=relaxed/simple;
-	bh=cVjMReDf/y0/Eps4SzleHHnDCMnHwvcYHN7Dj4UkNNg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VeiNBurWdn0Ftj7D7500gdk+eyTCSdobeqUDrn+c63gazqNjf5TGDC1+HQ+ROtwXJ4fPvucUTCvP/qEtDgvTfvDYAf770DybC1kI0J4Zzdi+8V9bSYOGZc92ns6qTEo3rc/bUDNvYsKshMmc/ARiRy7BBNT7cV2upn+egNW73NE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nwfaFDJ/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F045DC116B1;
-	Thu, 27 Jun 2024 01:00:54 +0000 (UTC)
+	s=arc-20240116; t=1719450270; c=relaxed/simple;
+	bh=Mr33KWENc+kss1Bvi146WYV4VM2mHPO1fymo8GoonxQ=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=luHJx0Q9OI/RquvoMM0rLvfVEUENoVOy64J5tGE1tag3fnVuTC3jFMaSWIBvpx65w6KiDcNdByyAybwAnoODLSzaryfq2QF3w8zGxwrFoiZNa+d5MuCGugdB0zg6bQOhxIKqZ5VLySDkmbDZJ3RgQ+HcQ/5XcnDPsED51so44n8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eAeSSSJY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6BB7AC116B1;
+	Thu, 27 Jun 2024 01:04:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719450057;
-	bh=cVjMReDf/y0/Eps4SzleHHnDCMnHwvcYHN7Dj4UkNNg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=nwfaFDJ/c30GiYmVc82cD+AdVo7ASrnc05c022cx7CwFpW+ctla+QGAWhR7g1u/0N
-	 FYQFKuzWEbo7DOQHlPOPzqZ9JMeE0rDVK2Z9M4eU1oHAd2ynL1MMg1rhKgKBK5LXIA
-	 N57GBUcpsaC9GC0Vd33/hTbi+JuMNBPY7ftTa2coNIlhKyUl9lKFV375aDLvjgKRlh
-	 W34ZJnjvdQcAdBbpmX5o392KQ/rt6/HfqCiZTEzUsxfJdRLGhocUh1i3gvv/k3wsHo
-	 0HntC5Inb6+MF0og3whrwgsMnla76xGCkDZAFd7OXXdWHpqiiGu+SiRTccaF1IsHZd
-	 ziBcVX92FrFqw==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Wed, 26 Jun 2024 21:00:30 -0400
-Subject: [PATCH 10/10] tmpfs: add support for multigrain timestamps
+	s=k20201202; t=1719450270;
+	bh=Mr33KWENc+kss1Bvi146WYV4VM2mHPO1fymo8GoonxQ=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=eAeSSSJYruejce9MvOgPaYb+9OpH+LXtBUxsncOQKCDUew2D8WlGJJq53+yO8tCFr
+	 Vfm2e1HAGud1MhJgXhPa5I8n0xXL1Hhy86LOE28Hc7A6r15PC2Y0qK0aFtuOc9Bw8G
+	 XzH4mNJl/4KZVom0PPm37D7uLcSiY3Wdm7RBjCkfMz0AuANvu0uiU9+Zvj/gRflhIO
+	 k1ZoF89PSc/Gf8K2GMTiycZvC38BThzpztuB1zzvuYgcmjNWtq6C5upYT0EsCib7o0
+	 DPe+NIJGB7CZYVPI7UTpxkWseR01jpotFVEoQxrFgZXSTPg4S8HlgKoJT533B+qL+/
+	 hK0m8W1lmXJuQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 649E9C43446;
+	Thu, 27 Jun 2024 01:04:30 +0000 (UTC)
+Subject: Re: [GIT PULL] hotfixes for 6.10-rc6
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240626173017.d4d69c597466bdd42da64da3@linux-foundation.org>
+References: <20240626173017.d4d69c597466bdd42da64da3@linux-foundation.org>
+X-PR-Tracked-List-Id: <mm-commits.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240626173017.d4d69c597466bdd42da64da3@linux-foundation.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2024-06-26-17-28
+X-PR-Tracked-Commit-Id: ab1ffc86cb5bec1c92387b9811d9036512f8f4eb
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: afcd48134c58d6af45fb3fdb648f1260b20f2326
+Message-Id: <171945027039.13769.17437527375707006728.pr-tracker-bot@kernel.org>
+Date: Thu, 27 Jun 2024 01:04:30 +0000
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240626-mgtime-v1-10-a189352d0f8f@kernel.org>
-References: <20240626-mgtime-v1-0-a189352d0f8f@kernel.org>
-In-Reply-To: <20240626-mgtime-v1-0-a189352d0f8f@kernel.org>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Steven Rostedt <rostedt@goodmis.org>, 
- Masami Hiramatsu <mhiramat@kernel.org>, 
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
- Chandan Babu R <chandan.babu@oracle.com>, 
- "Darrick J. Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, 
- Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, 
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
- Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: kernel-team@fb.com, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
- linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
- linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=775; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=cVjMReDf/y0/Eps4SzleHHnDCMnHwvcYHN7Dj4UkNNg=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmfLmvmuG1qE25UPrDynn3xIhwH5hC1wcY+8bCj
- oncJyX2Q2OJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZny5rwAKCRAADmhBGVaC
- FZiQEADD/GWDUAnr+QPK/65D/8cdJ2MjbHRshcq6JjFg04ftIlKReTiXHUgZFibwslcU1/KJXqA
- AeCQYsajkGNfClYJdPooe+9fYkC/bZ9TuTbCx8vgEkdy5spW1PqMwKpcYnaOtz0rt+y7f+dDbvZ
- Il5HQomOyFFjic4OS56a9d3g7ZKHKrMT25Wr1E2xXYMp/1TFSnsZ6PzqJZC83R08MKAk9AiLN8W
- ATgs3TQWKeBloEOKCB49jcfGIHtirxKLivKHL04iaZImju21FOjEedEXy021mtUKZyS7/UIF7Vy
- 7tSTQr9F9vTxs93vtzmWUDC0cLFTtfaog4o/C9zuhVTW/mjZ4JmWIalSU6uBqnFqemiucQSCe45
- q9afVDCLHijyoaX+aX1D2/8vYg//+/oDAPzmt0VmULKwekM+f3ZtbPVKqSOI9HaVAhV769zRd9u
- MWeehoAPSlcJTBKBZrQVCIX5aX7q0CQnuN7+t/nESwmDBtRnwLzpAj//XiDM68TFxPn6wHMV+O3
- e0sUqEzWfynVDKhu9OXrLQb1Pq0wfWdW/G60LQlJCK1iST4tmUat5GbRh6rexvj9nTJXgdnyJ0R
- YLi8/dD1+0aE1S1yt8LtuIzPrKFhLnTNMcmcmi1DKRiDPpKRcRqI7FY3mFi18w9FfIKybfXInFJ
- Sm7/fCDwxamE4rw==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Enable multigrain timestamps, which should ensure that there is an
-apparent change to the timestamp whenever it has been written after
-being actively observed via getattr.
+The pull request you sent on Wed, 26 Jun 2024 17:30:17 -0700:
 
-tmpfs only requires the FS_MGTIME flag.
+> git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2024-06-26-17-28
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- mm/shmem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/afcd48134c58d6af45fb3fdb648f1260b20f2326
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index ff7c756a7d02..d650f48444e0 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -4653,7 +4653,7 @@ static struct file_system_type shmem_fs_type = {
- 	.parameters	= shmem_fs_parameters,
- #endif
- 	.kill_sb	= kill_litter_super,
--	.fs_flags	= FS_USERNS_MOUNT | FS_ALLOW_IDMAP,
-+	.fs_flags	= FS_USERNS_MOUNT | FS_ALLOW_IDMAP | FS_MGTIME,
- };
- 
- void __init shmem_init(void)
+Thank you!
 
 -- 
-2.45.2
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
