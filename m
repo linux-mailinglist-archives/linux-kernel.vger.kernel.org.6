@@ -1,173 +1,120 @@
-Return-Path: <linux-kernel+bounces-232884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E90391AF71
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 21:09:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34D7B91AF7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 21:10:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 807331F21B7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:09:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE43F1F2411E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5A419B3D2;
-	Thu, 27 Jun 2024 19:09:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E5719CCFF;
+	Thu, 27 Jun 2024 19:10:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RN86Cslf"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ixUTG1Gp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818AC19A294;
-	Thu, 27 Jun 2024 19:09:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED16019B3CF;
+	Thu, 27 Jun 2024 19:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719515360; cv=none; b=ACQch0m4RmUM2oppdlGjLCj5q0NubSHshOGxFon96nkm0fsYNnW6Y04M8CSOJm/PMmu0VcTl+cE9y7FQhy+RJZ9qf1+PeMy/8+JFhxUgEIg38/77+zbBJ9iUQK7P63EWw53GtI2EVioqrNgE5Dcz8YV4bhdT162Mn0PO5g+rj4M=
+	t=1719515429; cv=none; b=O2nzlXFEZc/r9P5gIK086aLDIrXY4yVtn94wDvyP3kSZbz1SISWaXV0r0Hn4GrxhPzActrUIfjjggpltSixBLnoUvf1Ol4Q53tLRHT5cKtVZktSaefKz9B503QvXwwvL9gCeG95zH56ogpTA3zfU6DrqTg3KcYtVwD83To5I+XE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719515360; c=relaxed/simple;
-	bh=BJFGnMnNLxYSOMjRrF2O+HAjnBxN8qoTJhmm/fQHryE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oyKTAQECKpsbqsW2PZVekjzYzGv2WYk3R4QMXPlKne4CdTEJsLPJPDwujKqSURvwTk8cBNUy0NmVWJtFMzVKwSItCGLhlb0NivnfcWkWmDCfHF8oo41MeEhTHX7OxYCWErtGFpxIsv24vTZ3kYWLQl1roFDUMKr2Pq+kGImketo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RN86Cslf; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-445033fbc24so19050451cf.3;
-        Thu, 27 Jun 2024 12:09:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719515357; x=1720120157; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n0+hj8sR+QbQ9EpFDrzEmuUbfGkJIqPXAt68R7keXiY=;
-        b=RN86CslfAZU5XOk5xT68eqz4E4SAzE9cbdmLQAonYngXi5GPDUfhTI2Py7A+1DrU30
-         YGLloxEdLLGLObsD7vaIr+2Jret7Bki/BWrjCivbXdNTh4IpV6iVyDrhYcZtMH5fFcAI
-         nHXBM8zHDtAi+4R7IQkSW6Z2/gX+4/SupSZGqTpJSsIiu0Zl6yaVbg1wczf8s0lbC8DP
-         QGp8QAa/IA2iA9yDqy3FtZcGUIBk3rITWGtnksBAGe/+Zp2TL5NPqAOpWpTsgzNxbzP8
-         qWQu8i0G0xODcjsZEUpbRNEjrMYv2nrAvU6H5aF2MDanlpG35f2Dt18/7SrWYD1eEbFt
-         8vjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719515357; x=1720120157;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n0+hj8sR+QbQ9EpFDrzEmuUbfGkJIqPXAt68R7keXiY=;
-        b=DuaMOLsYcD35/SofGLcJp+lrO27RekAOjBahbIi9bLtdXX3MfJPpn8Mj0FPodoIhN1
-         R/J9QvUIWNB1j8A/xvAKmqH3NyEUS6eYIVz/gVCVV4O3UdoaFEp5Is9AGL9YGX+awn1Z
-         lUC1iKxL85+ouWkvEJYuYqbAR+wOb7jIMLez7xYjYYPRGHy5WrXyQym2qdnsZMdECRCL
-         JLa9ZmZAgWl9Tlqbeh3LQJgYs8aPR6t7hxgpnPlFc67/COvXgWpaVIiE5EtJDVIzaM31
-         dyldNRcgisucyBDlOJMJcggg0h+ZH6OdiX9f5ggwp2N6ebJDN7ULXqpLv9TH3PMlRQuG
-         pOPw==
-X-Forwarded-Encrypted: i=1; AJvYcCXcLLd9zURKmM8VCMFJeN8FGkh1LvRpO69W2D49hoqzV5ycPRsqUPIaA/85GX4Ne1ptm3JN6aw/fG8pTUirtPYbsDX2mU/cOe8EidYeZGUVqJvXWnsbvSSjt5g68VqzHgTbIaWMNw==
-X-Gm-Message-State: AOJu0Yxi28j4Bp+HQ/P+GmoQNa0bUiy8cTgjWHz8j/J3IFXsNHwDh0pB
-	FMFhvuE3ORtwyiK9oM+Vta46j1iDtXCjjBY5ERbfcgFr1JA8Bxyq5xBv7ekmRrkxsFe7oYyaVPt
-	S9wyCkn6KzRQswnY3RKtLWwdRDSg=
-X-Google-Smtp-Source: AGHT+IHJ471pqo5Z4OLH9K7oi1G5rgMuHfsuIEvK17T/5yx8+pSdZKqFyicuUkS1BBegzznaxD+nRAh7gGFXXsVcn80=
-X-Received: by 2002:a05:6214:923:b0:6b5:4865:948c with SMTP id
- 6a1803df08f44-6b548659960mr121632576d6.27.1719515357302; Thu, 27 Jun 2024
- 12:09:17 -0700 (PDT)
+	s=arc-20240116; t=1719515429; c=relaxed/simple;
+	bh=iEttqArF/Hx/Zfn1jOB2KYxEWeXhcS6OW3osUzjnvZU=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=g2xzfolb30ay9HIGn3QXnYgeWpsCxXy2JwmFFkl8NOwwp81ulXQtvI6WjfhYnIxO+0mlmo81w+6XhKRyhDM9p+TzwAhK7M0JfyWQ8AsomrH9X/renShrIL9uO9yoMks+sjsgrQjHzQWv4Qhi/fOX8+qG03WcNn9DJYwOVGBq4TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ixUTG1Gp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C9F80C4AF09;
+	Thu, 27 Jun 2024 19:10:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719515428;
+	bh=iEttqArF/Hx/Zfn1jOB2KYxEWeXhcS6OW3osUzjnvZU=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=ixUTG1Gp9O2o1cyF47+u+y+zc70OlQI3CizwKpCSouDBs0HpYA+13UyCs8+ua+4ep
+	 kF2r9X+qF9pzSmmsFSZMeYjI27FLhqHSK1F7BJsLN7TnZxtz4Nl5hRw+tp1UWS8Jrd
+	 0beXjd16kdqbF4wO/Yace0Hd2BqUsyvJYt+QVQ9nwcLg4gOHQ9CU/24JCwIULnPW3S
+	 fWQle222ahZa+R5hJgqxKxgdH4/ITbNwHZaDyG/BR8lpyHIWp/uKYsJ4RYaWxmJCIx
+	 vRJkdSO8cSOsG7w0Zau6pI67oSPZjfamA2U/IYqxy9T/BHTntzGUSBxa5mmtueP4jo
+	 aYjyASplvbtzA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B8AC8C43148;
+	Thu, 27 Jun 2024 19:10:28 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <000000000000f71227061bdf97e0@google.com> <20240627163100.GC469122@cmpxchg.org>
-In-Reply-To: <20240627163100.GC469122@cmpxchg.org>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Thu, 27 Jun 2024 12:09:05 -0700
-Message-ID: <CAKEwX=OgbhJhRi3uXe9e7NqApH=+mkoR5-whUwK=aY6gVVZcmQ@mail.gmail.com>
-Subject: Re: [syzbot] [cgroups?] BUG: sleeping function called from invalid
- context in cgroup_rstat_flush
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: syzbot <syzbot+b7f13b2d0cc156edf61a@syzkaller.appspotmail.com>, 
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	lizefan.x@bytedance.com, syzkaller-bugs@googlegroups.com, tj@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2] Bluetooth: btusb: Add Realtek RTL8852BE support ID
+ 0x13d3:0x3591
+From: patchwork-bot+bluetooth@kernel.org
+Message-Id: 
+ <171951542875.5140.14626882814587410505.git-patchwork-notify@kernel.org>
+Date: Thu, 27 Jun 2024 19:10:28 +0000
+References: <632363CB00A11519+20240622040959.7567-1-wangyuli@uniontech.com>
+In-Reply-To: <632363CB00A11519+20240622040959.7567-1-wangyuli@uniontech.com>
+To: WangYuli <wangyuli@uniontech.com>
+Cc: guanwentao@uniontech.com, marcel@holtmann.org, luiz.dentz@gmail.com,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
 
-On Thu, Jun 27, 2024 at 9:31=E2=80=AFAM Johannes Weiner <hannes@cmpxchg.org=
-> wrote:
->
-> On Thu, Jun 27, 2024 at 07:03:21AM -0700, syzbot wrote:
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    7c16f0a4ed1c Merge tag 'i2c-for-6.10-rc5' of git://git.=
-ker..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D1511528e980=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D12f98862a3c=
-0c799
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3Db7f13b2d0cc15=
-6edf61a
-> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for D=
-ebian) 2.40
-> >
-> > Unfortunately, I don't have any reproducer for this issue yet.
-> >
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/50560e9024e5/d=
-isk-7c16f0a4.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/080c27daee72/vmli=
-nux-7c16f0a4.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/c528e0da4544=
-/bzImage-7c16f0a4.xz
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the co=
-mmit:
-> > Reported-by: syzbot+b7f13b2d0cc156edf61a@syzkaller.appspotmail.com
-> >
-> > BUG: sleeping function called from invalid context at kernel/cgroup/rst=
-at.c:351
-> > in_atomic(): 0, irqs_disabled(): 0, non_block: 0, pid: 17332, name: syz=
--executor.4
-> > preempt_count: 0, expected: 0
-> > RCU nest depth: 1, expected: 0
-> > 1 lock held by syz-executor.4/17332:
-> >  #0: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire=
- include/linux/rcupdate.h:329 [inline]
-> >  #0: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock in=
-clude/linux/rcupdate.h:781 [inline]
-> >  #0: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: filemap_cachesta=
-t mm/filemap.c:4251 [inline]
-> >  #0: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: __do_sys_cachest=
-at mm/filemap.c:4407 [inline]
-> >  #0: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: __se_sys_cachest=
-at+0x3ee/0xbb0 mm/filemap.c:4372
-> > CPU: 1 PID: 17332 Comm: syz-executor.4 Not tainted 6.10.0-rc4-syzkaller=
--00330-g7c16f0a4ed1c #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS=
- Google 06/07/2024
-> > Call Trace:
-> >  <TASK>
-> >  __dump_stack lib/dump_stack.c:88 [inline]
-> >  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
-> >  __might_resched+0x5d4/0x780 kernel/sched/core.c:10196
-> >  cgroup_rstat_flush+0x1e/0x50 kernel/cgroup/rstat.c:351
-> >  workingset_test_recent+0x48a/0xa90 mm/workingset.c:473
-> >  filemap_cachestat mm/filemap.c:4314 [inline]
-> >  __do_sys_cachestat mm/filemap.c:4407 [inline]
-> >  __se_sys_cachestat+0x795/0xbb0 mm/filemap.c:4372
-> >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> >  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> Ok yeah, cachestat() holds the rcu read lock, so
-> workingset_test_recent() can't do a sleepable rstat flush.
->
-> I think the easiest fix would be to flush rstat from the root down
-> (NULL) in filemap_cachestat(), before the rcu section, and add a flag
-> to workingset_test_recent() to forego it. Nhat?
+Hello:
 
-You're right. I think it's been broken since this commit:
+This patch was applied to bluetooth/bluetooth-next.git (master)
+by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
 
-b00684722262 mm: workingset: move the stats flush into workingset_test_rece=
-nt()
+On Sat, 22 Jun 2024 12:09:59 +0800 you wrote:
+> Add the support ID(0x13d3, 0x3591) to usb_device_id table for
+> Realtek RTL8852BE.
+> 
+> The device table is as follows:
+> 
+> T:  Bus=01 Lev=02 Prnt=03 Port=00 Cnt=01 Dev#=  5 Spd=12   MxCh= 0
+> D:  Ver= 1.00 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
+> P:  Vendor=13d3 ProdID=3591 Rev= 0.00
+> S:  Manufacturer=Realtek
+> S:  Product=Bluetooth Radio
+> S:  SerialNumber=00e04c000001
+> C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=500mA
+> I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
+> E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+> E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+> I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+> I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+> I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+> I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+> I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+> I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+> 
+> [...]
 
-which moves the stats flushing from the refault step (before rcu read
-lock section) to inside workingset_test_recent(). I believe that's
-6.8, 6.9, and 6.10 we need to fix?
+Here is the summary with links:
+  - [v2] Bluetooth: btusb: Add Realtek RTL8852BE support ID 0x13d3:0x3591
+    https://git.kernel.org/bluetooth/bluetooth-next/c/678c5f695671
 
-The fix sounds reasonable to me :) Let me whip up something real quick.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
