@@ -1,97 +1,96 @@
-Return-Path: <linux-kernel+bounces-232197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD66F91A4E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:18:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ACA9B91A4E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:18:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9374C1F23769
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:18:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60A7E1F23731
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:18:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E27EB149C7E;
-	Thu, 27 Jun 2024 11:17:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA311494CA;
+	Thu, 27 Jun 2024 11:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Gj9HVeOl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71EB41487DF;
-	Thu, 27 Jun 2024 11:17:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CAC0145B34;
+	Thu, 27 Jun 2024 11:18:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719487079; cv=none; b=mnGl4TGnfOAku8j1/EGnxVB4mL8xXhmMOWvYJMkJ2wmYkaRk8kT3nhhwc2enmHQJ26OaO+3SpmkepiZLmXRi0iO5l3M2j3Fc6rSfCoJ5EpMjVUcEC085QL38GZof/9OcDMvWGi10N12BIggl4WBITR6k09RlBLESI2jI6C8Pqq8=
+	t=1719487096; cv=none; b=dqFVF+TNtl1cVeUVG2k2gj87mKUqpJ6brCu0ZA6eJkSWI3DJyq9w6N/hIuICZyfjtJ6USg75lbGstwGh0Cd4tLqART29d0GwjjTZfjbnzqmXHjWPhubjofcFmx1Io6btouaaIJ3iqVVvhW0GAlDRz4gLC/NTd4jv0JzHyuRGINw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719487079; c=relaxed/simple;
-	bh=Uw/ST8RwoFKi35yz0tv1FTezFhU4uD4p5g3xrk6hzdI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gpwfY34d/qHq6z20eVPGn3WjBp2qKvW9x3iG3oEWgbBNDQ1KWALWP3yu3cOsFH++rKvjgmEMYB1Kvb4ddf9laAm2eB5egQzLp8oCkC2lVqFyzVxfuQHqPH8/b3EtmNhUDVAdqwfPSV+fVuv53gkZzBbKZ2YvQJMrTpJD8fy9vfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D731CC32786;
-	Thu, 27 Jun 2024 11:17:56 +0000 (UTC)
-Message-ID: <8587b6cd-2d04-4a2e-b298-e57c792332f1@xs4all.nl>
-Date: Thu, 27 Jun 2024 13:17:55 +0200
+	s=arc-20240116; t=1719487096; c=relaxed/simple;
+	bh=E0YEhlQqyrz9Rv1pwfdZuFu0LrVCBtcH1CdILfJjFqs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IPBxeaDKZfeLt9C1pDYhjFmHq3dYNicaxE++V8CZSf+CKIbIrDSS6SiYcCyBqgSRSZ7r9/4bOVq9YuVq4uzyEtZkLjH8t2R2GW0MNS8INOumsJK8PTb+MjsLH4tXVi3jFk22ORls6GdrvLoC+/wFj9Dk4w3cRzCwOEp/bTY9ABA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Gj9HVeOl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A840C32786;
+	Thu, 27 Jun 2024 11:18:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1719487095;
+	bh=E0YEhlQqyrz9Rv1pwfdZuFu0LrVCBtcH1CdILfJjFqs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Gj9HVeOlcxMX32l8FkenVufef6x+zWBoAkzbWeZZjOmgBF7O2I+8EfuAygGJaPAfS
+	 SfLWvyMLVlBchCFIseZAEBqQ1KYe6V1vErIQKO4uKLYX96w7R6fjextaR2ZK6YTMy4
+	 suNUOD95jG5d9hJo/o/WSpFiDE0EIm3H/772bpRQ=
+Date: Thu, 27 Jun 2024 13:18:11 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Ekansh Gupta <quic_ekangupt@quicinc.com>
+Cc: srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org,
+	quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org,
+	quic_chennak@quicinc.com, dri-devel@lists.freedesktop.org,
+	arnd@arndb.de, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH v3] misc: fastrpc: Move fastrpc driver to misc/fastrpc/
+Message-ID: <2024062715-ultra-muppet-c899@gregkh>
+References: <20240627104245.1651214-1-quic_ekangupt@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: stm32: dcmipp: correct error handling in
- dcmipp_create_subdevs
-To: Alain Volmat <alain.volmat@foss.st.com>,
- Hugues Fruchet <hugues.fruchet@foss.st.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: stable@vger.kernel.org, linux-media@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240624084123.3009122-1-alain.volmat@foss.st.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-In-Reply-To: <20240624084123.3009122-1-alain.volmat@foss.st.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240627104245.1651214-1-quic_ekangupt@quicinc.com>
 
-On 24/06/2024 10:41, Alain Volmat wrote:
-> Correct error handling within the dcmipp_create_subdevs by properly
-> decrementing the i counter when releasing the subdeves.
+On Thu, Jun 27, 2024 at 04:12:44PM +0530, Ekansh Gupta wrote:
+> Move fastrpc.c from misc/ to misc/fastrpc/. New C files are planned
+> to be added for PD notifications and other missing features. Adding
+> and maintaining new files from within fastrpc directory would be easy.
 > 
-> Fixes: 28e0f3772296 ("media: stm32-dcmipp: STM32 DCMIPP camera interface driver")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Alain Volmat <alain.volmat@foss.st.com>
+> Example of feature that is being planned to be introduced in a new C
+> file:
+> https://lore.kernel.org/all/20240606165939.12950-6-quic_ekangupt@quicinc.com/
+> 
+> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
->  drivers/media/platform/st/stm32/stm32-dcmipp/dcmipp-core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Changes in v2:
+>   - Updated Kconfig.
+> Changes in v3:
+>   - Added newline in kconfig.
 > 
-> diff --git a/drivers/media/platform/st/stm32/stm32-dcmipp/dcmipp-core.c b/drivers/media/platform/st/stm32/stm32-dcmipp/dcmipp-core.c
-> index 4acc3b90d03a..4924ee36cfda 100644
-> --- a/drivers/media/platform/st/stm32/stm32-dcmipp/dcmipp-core.c
-> +++ b/drivers/media/platform/st/stm32/stm32-dcmipp/dcmipp-core.c
-> @@ -202,7 +202,7 @@ static int dcmipp_create_subdevs(struct dcmipp_device *dcmipp)
->  	return 0;
->  
->  err_init_entity:
-> -	while (i > 0)
-> +	while (i-- > 0)
->  		dcmipp->pipe_cfg->ents[i - 1].release(dcmipp->entity[i - 1]);
->  	return ret;
->  }
+>  MAINTAINERS                          |  2 +-
+>  drivers/misc/Kconfig                 | 13 +------------
+>  drivers/misc/Makefile                |  2 +-
+>  drivers/misc/fastrpc/Kconfig         | 16 ++++++++++++++++
+>  drivers/misc/fastrpc/Makefile        |  2 ++
+>  drivers/misc/{ => fastrpc}/fastrpc.c |  0
+>  6 files changed, 21 insertions(+), 14 deletions(-)
+>  create mode 100644 drivers/misc/fastrpc/Kconfig
+>  create mode 100644 drivers/misc/fastrpc/Makefile
+>  rename drivers/misc/{ => fastrpc}/fastrpc.c (100%)
 
-I accidentally merged this one, but this patch isn't right.
+For now, no, sorry, not a new directory for just one .c file.
 
-After this change the [i - 1] indices should be changed to [i].
-If i == 1, then the while condition is true, but now i == 0 in the
-actual statement, so you access out-of-bounds values.
+If you want to add more stuff, wonderful, then do this as the first
+commit of the series when that actually happens.
 
-I decided to revert it, since it is better to just get stuck in the
-while loop, then to crash.
+sorry, but I'm not going to take this now.
 
-But a new patch is needed for this.
-
-Regards,
-
-	Hans
+greg k-h
 
