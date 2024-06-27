@@ -1,98 +1,81 @@
-Return-Path: <linux-kernel+bounces-231775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 556E4919DD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 05:26:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E417919DDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 05:33:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8356E1C2193C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 03:26:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59A32283E48
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 03:33:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76A7175A6;
-	Thu, 27 Jun 2024 03:26:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD2B17588;
+	Thu, 27 Jun 2024 03:32:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lwC5zb/8"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BBE134BD
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 03:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="lpZLNEtJ"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8218312E71;
+	Thu, 27 Jun 2024 03:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719458776; cv=none; b=QkdmCerJ02sWxDNl7sIdgQ0GFm7iTIhRfPy17PK83cw0htQl05pEvx07CqAWRGFkRJYz4CFL2hCzkesTNT+YBIdIC7gwoi3K5jg3Gr8T7S1En1IUnJyxlRrVIEZb3dFsBpUC6Hnt+0qi7s2v82h2dQOZZLgtdPfWmAEQyzIVjhA=
+	t=1719459176; cv=none; b=KvmpedRj5F069Nr8FSowPHbfpDlhmdonVos9vdvv74qgku21rT0bmjSQ82ruiX8Hl98XSS7s0hjscrxs5II4H1sfYDW1xzwOgZ2d4EO3pH6BLCguEWa8QKkdQIIbqMhjDZfaCBDWNpY+50RyT7/mlcBh8mcbSt9AcU88uP2YawI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719458776; c=relaxed/simple;
-	bh=uvR+0Gq+x6k+bBQoe6kzaG9QWJVAkKlY2L6BoK1ipuc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Dr2UHcmC9KifPFHYwsyPE0pZkZCCjFGxLKZN/EtW/fYC5IRpFCJboKe2lOb9vMToY5eQtqjfGSsNOkNQ9os8Gl+rgkbtJRWPXVtyUzHM3tQ1nze5DGNAl0p+yARnYm7Jm0ZwXrHWUDXQ9yfcYEZOE25VSExeT8XD+AMRzbpyz4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lwC5zb/8; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-444fdaed647so115251cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 20:26:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719458773; x=1720063573; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=uvR+0Gq+x6k+bBQoe6kzaG9QWJVAkKlY2L6BoK1ipuc=;
-        b=lwC5zb/8qVBLn+WGpyF5MI0w7C1UhP/wOmL1+tOQPikQ3SzgwRBWRu1olgXwt3UCm+
-         Kn6R7/MrsQxJODVNQMl83+BsFjcZ7neXM2T2w/NO13CVvsomrHEPfJiBJvjnX48M9zxU
-         PD+84l+HVn4BEtHL3jWJzA//pafK67wODeHbrniXo/MwuK5vYyRCY++R8S5db9vTgE6b
-         KZZVFqtmm4Wcsqf5XafrtST3TRtZa4aLnhnMtydN7KJ1rag+QefSzZoCPv4XJ4CMWv2s
-         dqZqh5V0W5pJuK8bxt1ngzVev/ODlu7CsDaxM/k0ZY1aFpprWgBddZvSGNteBLa6TUo1
-         N3lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719458773; x=1720063573;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uvR+0Gq+x6k+bBQoe6kzaG9QWJVAkKlY2L6BoK1ipuc=;
-        b=YhGpAod9dTVYQSZtNWcLbHKkpc4kqiF3ipJlegDZ1o/0mPZw+bCEvMgdkMIX8cN7py
-         rFBrIV3eyStlaXu75lIoa/fpzG3BQ0bqcafSipw8fnHX5vrUYkdJp1QNPvY4nti5oJi6
-         IFRRLnbDX6rbjwF8JAKGNFRKLL/lg02V3s1y9VM8f0jOudxL5N9xImOg5b6qLubP3aw5
-         0dp12h2aiBD9Ti/0X/YbE/4HWMEpXmhgm0zEH9ZP0DGUADHlc/kG/lv4AN/vd/sdWtV5
-         P3n4IyS5AQB/9H+K6Ct6e99bh7L+vwbyLdKODTzwu9a5g3ROHLf473BnTduIdLbAO/jO
-         uELQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVYZTrNyA6Ihhv4nCqDTd4QIT0BYO0f/I9V4sXFy8rgJVRwaT6CwysfG8TX3nhhFe76/BGRlLSEZ03gpvpciNzAmbdZcUu3vKW5GbXf
-X-Gm-Message-State: AOJu0Yy/IocvSHp6KBlo4Ylu7pOTT/7CnpTNX5ZLMeo2xUi1IIAv9Xu9
-	uMOyUG0+MunMkQ2sZm3uNItuTfpSDpVJz8JM0OMGMmV3UIE9rBagdwB5s1mVjUEHGYjXy2EBMjt
-	1SVzvMPrXCnBhgmNgQnDSmLTstKIvTAgFAJqc
-X-Google-Smtp-Source: AGHT+IEQMWhh3nV9aez5d+6ni2K86V3OV0VRneIw7UhPzOP7WPGwPZT/EkagkQCNPUx6DvrcYQHDIAVWnJp2vdk7Evs=
-X-Received: by 2002:ac8:6bd6:0:b0:444:dc11:6980 with SMTP id
- d75a77b69052e-4463fc66b03mr1309801cf.1.1719458773311; Wed, 26 Jun 2024
- 20:26:13 -0700 (PDT)
+	s=arc-20240116; t=1719459176; c=relaxed/simple;
+	bh=i6++wE0nJcsEJNTURHFwm9uOlQcbLqb3ZPmL8c3OkKw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PFae93aQcqcRxrVMfnmHrdAjNzyj4/TIvuMqrTTFvxG+zRO4rGK0D81QVsMcFUrkF4qjHDe9puBGpWxCHkVTCN4COI3avBsG2X0W8Dcow1CjTwCM1v6MZB6RYXvbRtVVNduMEhDY8S+51Qtxo5cC0MyKTL73d5cBiHA2vIK6U34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=lpZLNEtJ; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1131)
+	id 0F94220B7009; Wed, 26 Jun 2024 20:32:55 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0F94220B7009
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1719459175;
+	bh=pATsx52MKLGtp/jP76d+irvB+9pqjK29oqzNFhbgVuU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lpZLNEtJtyoOPSXx6CmeYJ2hlYAilbyYGUM6S7iGw4krNuc8ey9GtfXdBaOpmLNrg
+	 8U5AmOQNorI0v9YJqQELDyTb5heq3sCyLUBQLPeDiZ+jBH2xEFAKGLFf4Z8AYkfhkH
+	 V4VnUmiC4YlqRB33ms1Kw5tB2MGBUC/sKi+RsCXI=
+Date: Wed, 26 Jun 2024 20:32:55 -0700
+From: Kelsey Steele <kelseysteele@linux.microsoft.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.1 000/131] 6.1.96-rc1 review
+Message-ID: <20240627033254.GA6902@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <20240625085525.931079317@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240626052238.1577580-1-aniketmaurya@google.com>
- <20240626052238.1577580-3-aniketmaurya@google.com> <07911285-d01c-4456-861a-825c1e9d65cd@linaro.org>
-In-Reply-To: <07911285-d01c-4456-861a-825c1e9d65cd@linaro.org>
-From: "Aniket ." <aniketmaurya@google.com>
-Date: Thu, 27 Jun 2024 08:56:02 +0530
-Message-ID: <CAMmmMt2K9H7WQ53j56kPSiZU+EUfCD0u_yBiyi8vaS4g+iHt8A@mail.gmail.com>
-Subject: Re: [PATCH 2/2] i3c: dw: Select ibi ops for base platform driver
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Jeremy Kerr <jk@codeconstruct.com.au>, 
-	Joel Stanley <joel@jms.id.au>, Billy Tsai <billy_tsai@aspeedtech.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240625085525.931079317@linuxfoundation.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-Hi Krzysztof.
-
-> > The AST2600 platform driver can always select the IBI ops.
+On Tue, Jun 25, 2024 at 11:32:35AM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.96 release.
+> There are 131 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 27 Jun 2024 08:54:55 +0000.
+> Anything received after that time might be too late.
 >
-> So it is deducible from compatible.
+No regressions found on WSL (x86 and arm64).
 
-Yes, you are right. It shouldn't be a DT property.
-Abandoning this patch. I'll send a different patch to always have IBI ops.
+Built, booted, and reviewed dmesg.
 
-Thanks,
-Aniket.
+Thank you. :)
+
+Tested-by: Kelsey Steele <kelseysteele@linux.microsoft.com> 
 
