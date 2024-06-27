@@ -1,114 +1,141 @@
-Return-Path: <linux-kernel+bounces-231870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82363919FB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 08:58:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4970919FB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 08:58:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B316B1C21EA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 06:58:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BE0EB23CE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 06:58:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC3545016;
-	Thu, 27 Jun 2024 06:58:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53CD045BF3;
+	Thu, 27 Jun 2024 06:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="PIRaZpEY"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55DEC43AA1;
-	Thu, 27 Jun 2024 06:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KO7hV5bq"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2AF845016;
+	Thu, 27 Jun 2024 06:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719471525; cv=none; b=ftI6UDrWEhMwEzUIReEpeVb5A6cbF0edlBYsRok23w0+pqZquooX6dAbNTqDr3aziYvLLKXk5wWTZoBUhDco+rf7j9bXZiuRbuy7RuUjYaKEiLeoOBO64Ur9GvF/gLimoIAFbpwjBsFYG0RU0l9nu3cFldAQKmfDhEiIkUMv61c=
+	t=1719471502; cv=none; b=svl3X5ihbeoAZB0n8WiF3vgakidAGb+foMO6paHx7EH9D9UYOizk9CIczvTjSEoK1e1abZdOgMdHaHYS3bNO/33i5Ic80LZ9r79PS5QwebJE1/VrwIbBZl7KCQv/xFOVamrp0fiqTQzUdMs3QY78UAtm457DSsAlS211iNejHbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719471525; c=relaxed/simple;
-	bh=CAiHWTasWQsvNes4gquJBgUiczd3fYgut0h3LyWdH10=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LJN/VZbeAXqLGTCYfPX5jwHkrXDmRpBV90EEFCjIttFdRiAVRw7cY+8K25BxjZWti9PrD/kZOZ+ZrDONHvZR8W3FJKk2VnfZ4UqPXcrRf92080ENdphbbAHgNYbJ0xEG4BEiTzPCoXZ6KfrKRN7Ny8QdFzk5HsK8lKvnPFtgUIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=PIRaZpEY; arc=none smtp.client-ip=220.197.32.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=LsbeIB50EDgsPrzDnKsKFJzpQszBkOYrVjadj/myF5I=;
-	b=PIRaZpEY1NCT+/kZFp4m1lILrLLOfrExLn06eRaO3hABYjq8151HKppNRBLPVt
-	ulsfL9045x2oscTS+0V8/SoaEQXz167ylV/O1KLVnDQ891muiaGbkSoPFOOIHBcE
-	n7mycWSqtGTekBzHRT6vvDR8DDeku14OgOuaTWJYk/Vhs=
-Received: from dragon (unknown [114.218.218.47])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgD3v8ltDX1mxG8aAA--.52621S3;
-	Thu, 27 Jun 2024 14:57:51 +0800 (CST)
-Date: Thu, 27 Jun 2024 14:57:48 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Vitor Soares <ivitro@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Vitor Soares <vitor.soares@toradex.com>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] arm64: dts: imx8mm-verdin: add TPM device
-Message-ID: <Zn0NbIvFdfpMPHAx@dragon>
-References: <20240613134150.318755-1-ivitro@gmail.com>
- <Zm+gjpsGhzjbEgP8@dragon>
- <20240617071842.GA4832@francesco-nb>
+	s=arc-20240116; t=1719471502; c=relaxed/simple;
+	bh=3DkhIs3KmkLvGwvMSZCf0xN19lQ/NqHO2HipSv4we2E=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=L8WJY4Sz4X14klbmp6ahIReD90ddFTkn4tuA8sn8Sba92DclbARhU13UDd1XVdDd893y4wOJuNK5ToJC13jM3rE6CfnO2HhEh08PZRjV3R5m6BkZ7KJYLItZO4zsv7rGzVyKHzKVAfnbUXw2T7lqI6hfrAvuS4Kc4ycoM+8+qbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KO7hV5bq; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52cd6784aa4so7073109e87.3;
+        Wed, 26 Jun 2024 23:58:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719471499; x=1720076299; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=YNIlrh0o3BmVa7KGn3BlNKQKQ/vsv7AGkjBlD87kKPc=;
+        b=KO7hV5bqzIgnzi4C8q00veLnH2Lb2MR2zlqqq0IvvXuk6Khx8QR2IfkYhRieDgIc4A
+         aLpFxDv2VH8O2lFoPLFCYBPF31fImAwoqwA6LHdqikJ11eB6+LoFlhgM51T2YzzveXO5
+         bK8l+/M1nAM+zAc83xJBahPUS4jnSGm60AzA0ijp7FoGBKb9zX2LAf3Xei38NKrI7rY8
+         pyZ3rizq1segI4lb6JDOG4A5GGsAKYFiuAYuJY8UBVx6BOEvIUCYJ8kyiEQLN8C1jMZn
+         iQZDPbrPyLmiHvGm6Y8I41pQlOjeubvV9NHGvkBe+fNrtOFce6nAGYp1OHrpy7WdThK/
+         4iPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719471499; x=1720076299;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YNIlrh0o3BmVa7KGn3BlNKQKQ/vsv7AGkjBlD87kKPc=;
+        b=pLSc59ZWOqQ6Z/QZJQbAQsRknM39TT6iZtWWQs2FXgaayr47IE71jA0mjNrl27+hym
+         suJI8VCLjhDorTGUxAavEN5OVYMz7wMqg4WXLfOGmWC5fsdVsOukQWtjTW1vK7Km9vOU
+         VDzm4AzVOK9KmSNZ8OrquE41g/wZUwiWCzYk71PkfLWrI2moO4RkQM1fCaHkTOhNcoQQ
+         6m1mHp3SEqfu57nz7igx2g3ud2tdNZ/K4vohW0u1gIwvoJ7fN1Hmieu3FxMXWi4/b+51
+         VVyxJhexCRy/yyiH5UvLPz3smbaoyEBC23GqrGK12USsB3RJt/sUiDCEWarQFAT9Tori
+         B99A==
+X-Forwarded-Encrypted: i=1; AJvYcCWt2zboBnqW6k1HIpEnHAxnh+IHROqicBSBuNSBJ5rO/aVjv0/EVfIESkY/UO68lGV8LUgJz6o8agHhzAUrsnXxfZBmwfBveiyxWGw0U0I53gDtEQPNWoLBCsQfxugnmSrxPSP1HC+zyRc=
+X-Gm-Message-State: AOJu0YwCwvo+TbXsred6SXiNuRLrSTEKYstZR+O1vGaBr5ZtK7yK+MPD
+	lIz8MACOnn20gfRVXaVgm8zz0srIv51BHEL4u4WdtWOH3IKwDBeO
+X-Google-Smtp-Source: AGHT+IFC/bjGIL/8NWDtP1TJYmgVedL+vEsfhXN8+YyRJabS2/POCAHTTCF6DNNSr3v30AYUjOEA3w==
+X-Received: by 2002:a05:6512:158f:b0:52c:d76a:867f with SMTP id 2adb3069b0e04-52ce17fcb9dmr9938547e87.0.1719471494560;
+        Wed, 26 Jun 2024 23:58:14 -0700 (PDT)
+Received: from localhost (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42564bc7b09sm11575715e9.47.2024.06.26.23.58.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Jun 2024 23:58:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240617071842.GA4832@francesco-nb>
-X-CM-TRANSID:Ms8vCgD3v8ltDX1mxG8aAA--.52621S3
-X-Coremail-Antispam: 1Uf129KBjvJXoW7WF17XF15Kw15uFyxtF1fJFb_yoW8Wr4Dpr
-	WSkFs5J397Xr43Cr9Iqwn7ur9xKa1fAr4Duwn8KryUtrnIvF98GF1xGr1xur1q9r4fA3yF
-	kF15ZryS9w1rAw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jO8nOUUUUU=
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiEQ8LZWZv-cwmYgAAsM
+Mime-Version: 1.0
+Content-Type: multipart/signed;
+ boundary=7f8dcabb5dc255d60cebfa8d6c3433af39369a68ea1696444b485afea980;
+ micalg=pgp-sha256; protocol="application/pgp-signature"
+Date: Thu, 27 Jun 2024 08:58:13 +0200
+Message-Id: <D2ALRV4G5SZF.229WKTA9B95QN@gmail.com>
+Cc: "Daniel Vetter" <daniel@ffwll.ch>, "David Airlie" <airlied@gmail.com>,
+ "Jonathan Hunter" <jonathanh@nvidia.com>, "Mikko Perttunen"
+ <mperttunen@nvidia.com>, <linux-kernel@vger.kernel.org>,
+ <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v2 3/8] drm/tegra: Call drm_atomic_helper_shutdown() at
+ shutdown time
+From: "Thierry Reding" <thierry.reding@gmail.com>
+To: "Douglas Anderson" <dianders@chromium.org>,
+ <dri-devel@lists.freedesktop.org>, "Maxime Ripard" <mripard@kernel.org>
+X-Mailer: aerc 0.17.0-167-g7c5a1afbda60-dirty
+References: <20240612222435.3188234-1-dianders@chromium.org>
+ <20240612152336.v2.3.Ifb4450979b62976fd5a98847dade2e5b377d47c8@changeid>
+In-Reply-To: <20240612152336.v2.3.Ifb4450979b62976fd5a98847dade2e5b377d47c8@changeid>
 
-On Mon, Jun 17, 2024 at 09:18:42AM +0200, Francesco Dolcini wrote:
-> Hello Shawn,
-> 
-> On Mon, Jun 17, 2024 at 10:33:50AM +0800, Shawn Guo wrote:
-> > On Thu, Jun 13, 2024 at 02:41:50PM +0100, Vitor Soares wrote:
-> > > From: Vitor Soares <vitor.soares@toradex.com>
-> > > 
-> > > Add TPM device found on Verdin iMX8M Mini PID4 0090 variant.
-> > > 
-> > > Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
-> > > ---
-> > >  arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi | 16 +++++++++++-----
-> > >  1 file changed, 11 insertions(+), 5 deletions(-)
-> > > 
-> > > diff --git a/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi b/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
-> > > index 4768b05fd765..c9ae5f0bb526 100644
-> > > --- a/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
-> > > +++ b/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
-> > > @@ -227,15 +227,16 @@ &ecspi2 {
-> > >  	pinctrl-0 = <&pinctrl_ecspi2>;
-> > >  };
-> > >  
-> > > -/* Verdin CAN_1 (On-module) */
-> > > +/* On-module SPI */
-> > >  &ecspi3 {
-> > >  	#address-cells = <1>;
-> > >  	#size-cells = <0>;
-> > > -	cs-gpios = <&gpio5 25 GPIO_ACTIVE_LOW>;
-> > > +	cs-gpios = <&gpio5 25 GPIO_ACTIVE_LOW>, <&gpio4 19 GPIO_ACTIVE_LOW>;
-> > >  	pinctrl-names = "default";
-> > > -	pinctrl-0 = <&pinctrl_ecspi3>;
-> > > +	pinctrl-0 = <&pinctrl_ecspi3>, <&pinctrl_pmic_tpm_ena>;
-> > 
-> > Would it make more sense to have tpm pinctrl in node tpm@1 below?
-> It's the pinctrl of the SPI Chip Select pin, not something about the
-> TPM, I think it's correct to have it into the ecspi node.
+--7f8dcabb5dc255d60cebfa8d6c3433af39369a68ea1696444b485afea980
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-The name pinctrl_pmic_tpm_ena seems confusing then.
+On Thu Jun 13, 2024 at 12:23 AM CEST, Douglas Anderson wrote:
+> Based on grepping through the source code this driver appears to be
+> missing a call to drm_atomic_helper_shutdown() at system shutdown
+> time. Among other things, this means that if a panel is in use that it
+> won't be cleanly powered off at system shutdown time.
+>
+> The fact that we should call drm_atomic_helper_shutdown() in the case
+> of OS shutdown/restart comes straight out of the kernel doc "driver
+> instance overview" in drm_drv.c.
+>
+> Suggested-by: Maxime Ripard <mripard@kernel.org>
+> Reviewed-by: Maxime Ripard <mripard@kernel.org>
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
+> This commit is only compile-time tested.
+>
+> (no changes since v1)
+>
+>  drivers/gpu/drm/tegra/drm.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
 
-Shawn
+Acked-by: Thierry Reding <treding@nvidia.com>
 
+--7f8dcabb5dc255d60cebfa8d6c3433af39369a68ea1696444b485afea980
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmZ9DYUACgkQ3SOs138+
+s6FERw//WlQjtIszEzDkWeZFUGfNYgXGaeeQUylwV9ndafXASfuHpgYc8tePAZfa
+yrchhtD+5LxEYKIKuUuIBkbWr50g/kQ+2+Xtf71w0NMefhYqiFNz1XnxMr5OKScU
+HHa4+6qF9EDxuuEtAIT+WqQde0cA4unqzGb6yaLoBFNCoWThcbf1YqquRq1omnlp
+mx3gtMnG6lS3Rv2CcnrdZQBhozGIj4sEebECSyZtKSsMI32J9l4fMP27qp8HKd7e
+OYOkAVoDsk8V+qZu+Z5liNSMUaQ8OdfDiOoEN7Yjz8HlqDSChbdrxZjleRkYreeT
+eA+vWUXKnDL3jpWouBkV6WyF08n1LgU6ExVNo/N7uaaZwri86mo/WrrE1DpIfVfl
+rpGLIfdmxhgUKevei02C0vZIKHQcJW4mQsnlMk3nI1jaZNUQE/Dq+I9e7RZu9I4D
+0fLJEWN53g5CQQCef5jkCQmig2GR3SD4+YVlHMwtaCRHGEnDV9uwaC6hQEVUjrlG
+6RiX+hPhPq1VPsNUsUwLoW9H7lWF4ec+clXpeQ1m01yF8KnWGkCn5LrKZjY66yor
+A5dqs6nVO1Ysbjiv5e21RZ6iX2eE+HlIjwihezDB66iNdPEKQS9BVI9gP0fO56eD
+eopW9b9ItT4dSRbVRlDcfAt3q8mzVOG/H0bbToLDJgDYVOohII8=
+=ykhp
+-----END PGP SIGNATURE-----
+
+--7f8dcabb5dc255d60cebfa8d6c3433af39369a68ea1696444b485afea980--
 
