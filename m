@@ -1,127 +1,107 @@
-Return-Path: <linux-kernel+bounces-232262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D317891A5EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:59:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C166591A5EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:59:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88CD81F26B7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:59:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D72C28BC32
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5097515217A;
-	Thu, 27 Jun 2024 11:56:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE4915358A;
+	Thu, 27 Jun 2024 11:58:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fKHV+U0H"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FdG5USaa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0DAF14EC61
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 11:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE0513E41F;
+	Thu, 27 Jun 2024 11:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719489415; cv=none; b=VUUWLedyW06i1khgoxiMvY+Ni0xUHQaaDCkdjd8K/hhsgakCM9LvVakDU6iRS6QM47gTdBXHSHQhbiIH50ht7MQx0SifUfPy+KLhxlRb+A3vJV/OXR5vjGXTcpKmsJdlWLel1kb01mLcyguL+E9Kacz3e06GtFpYE4Z5MxOjnTs=
+	t=1719489495; cv=none; b=SRWCJEwnk0Zp/lPO0AvJpG7N9nZPNZpCUMxfZgr8XL68HFmZvAO98BxBQ8v1C/6Tl/PDcbS1kw91mngBbdHqc2gd36qomXc98sY+K6oQCc2n5IzXoo/FYzmfGF5Oi54a3A+ysh6FWym4yyRrFzriBmjVN4pSc/8gZT2A3xyNH7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719489415; c=relaxed/simple;
-	bh=Hjb6Y9xufXv6W4XRLObCOevOAhOQJDuYsB67oNNqo8w=;
+	s=arc-20240116; t=1719489495; c=relaxed/simple;
+	bh=bsdKZ7FH+cF7ZRJHnYvsPuep+j4/x6xeM+rw6kh7mwQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NTsA0MaIHw4h3VN1/bDwHbNqOylg2m6c1wLoxtNtEXJEQVrJy2ch8TwV4ti4qV02+uiwFDAk+Z5WnRq+88lMsvHr8EMCRIKOjS61qfxH8+pzvynuMGFi4DHyqa8HvyAVjGU0zqK/XU9kdbJ5LhLLrfDZIBZx+i52rhp6d5dAeeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fKHV+U0H; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ec0f3b9cfeso93669011fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 04:56:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1719489412; x=1720094212; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=RTscV93mnU/sdtKW3g3pscHnzbtMVWx7thKuq6j5iWA=;
-        b=fKHV+U0HHhYM+bS6fvQVZzUX/sOfqyEuyDc+RLcLRMlaM7h+wz3/df9juKVCuBik0j
-         q7a3lLTtC2ocF+VwBEmc/wDNLdyi1wWc2e2whQDZ/5FVp6rxko3TiLClURVmETRunmP7
-         4Dscx6xO2yMC8blc6PTdTIZcisZTIzRqI6zCGq79Qshm90H5iTMYp5WBqMBN1D1g6w7/
-         v0yyJHteW6UffWK9OC+m/nKOMNyqYe/LVzTDzzfE3r6v3IIRWDg/fA1i5hLwppmwaotj
-         QpWlkX5m9UbEvr909uqEj2rw9WmB0RCAUG4grsHgwjZNISjw8UdJyH4nSPf2Upu43F72
-         /0bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719489412; x=1720094212;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RTscV93mnU/sdtKW3g3pscHnzbtMVWx7thKuq6j5iWA=;
-        b=o7Sq6tAXOVd0F/ZsryQBWBcC1YCGdh+lJtg7GjAOl2ebDbMVOshu2oMvhsashNsbwO
-         qXR0KGHlqxK/1QJZMst+d475NoErgFgopJL4Gg+BHrAp0CVuBNm2czqL5tG9StaFjJR/
-         oBIv+41/1oswYp8ZNoLynBUwfs/ykNaG1JjB9r6ay3p6gVCJoafI9L15waYsdxRCUDJN
-         XO451wiqWaDoYn7jx+tJRLgNKI2KIfaVSDn40k1VWOYAdGGxoE0+Llx/bv2DLwSz4Td6
-         IZ1Xj/LvFn/N8P7axRxs0IMa2GGMzn55qgHr9ptU7pmAFSadE3oATGjK1SUStHrUmPq3
-         QslQ==
-X-Forwarded-Encrypted: i=1; AJvYcCULfndPgSY81fo8wChe02UMQ/0CvGEVmJhLND0n0uVr1LKDCUV9WQM3wGnfFwXt5wA3mTyBd809enX2pPXpDBNFyhvw2lC/xwuzF2tx
-X-Gm-Message-State: AOJu0YzsVsOa+FPJPPNnN1G43SIF/qrmZfW6mwdHU7S9iQntgc1SScUt
-	z6qyYNm47VQyQLkMWoHC5OHnK5ZWjCjT1HFI1++kbJUzSha0n798q9+at0pboeE=
-X-Google-Smtp-Source: AGHT+IFBhzD4ba4RxYT7GBZHeb8AVWfuDT9QQmIqhnkzesUOrfSDBtxMVU19upAdp0geCUqhs/QOCg==
-X-Received: by 2002:a2e:7303:0:b0:2ec:4fec:8bda with SMTP id 38308e7fff4ca-2ec594cfe83mr87404851fa.36.1719489411987;
-        Thu, 27 Jun 2024 04:56:51 -0700 (PDT)
-Received: from localhost (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-584d17b03f3sm779936a12.47.2024.06.27.04.56.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 04:56:51 -0700 (PDT)
-Date: Thu, 27 Jun 2024 13:56:51 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Xiu Jianfeng <xiujianfeng@huawei.com>, hannes@cmpxchg.org,
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, akpm@linux-foundation.org,
-	cgroups@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] mm: memcg: remove redundant
- seq_buf_has_overflowed()
-Message-ID: <Zn1Tg6_9NyxJE7Tk@tiehlicka>
-References: <20240626094232.2432891-1-xiujianfeng@huawei.com>
- <Zn0RGTZxrEUnI1KZ@tiehlicka>
- <CAJD7tkZfkE6EyDAXetjSAKb7Zx2Mw-2naUNHRK=ihegZyZ2mHA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=n7dErV4HC/b0MmayYnIbGa4R96APhKH2OBJ9umWYh1pbN3MJbS+LtjJkLE84F9RnAJ8WZssP6A1wTfUIxyH6QqJCr5TtiKkYt++UD1xQIVVtHP9Cm7kyHllOdjyKIt8aFgd+N7r7RCHqkaP4eNuval0tnzZrdAugICFT7fMSjX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FdG5USaa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA5A7C2BBFC;
+	Thu, 27 Jun 2024 11:58:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719489494;
+	bh=bsdKZ7FH+cF7ZRJHnYvsPuep+j4/x6xeM+rw6kh7mwQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FdG5USaawH1QsUeF2Sr4FzLiX0rqAx4tDdwlTk9AzK6jloq7xqptYqhrGjxRElDlT
+	 3XOk1flWQWt+enajVvssDn+HSznBFmPSU1HB5JmFIehpe39aXkjFcqMUUbTHj5UmZo
+	 z2KLAoZhhsSjsYVfH26Gn+G0ENYU5h1ayy5BStqW+wvqHR1GZR8Pf/cE+q7Xs5o24q
+	 RXveEK68AfpH/RNHL1GEFagzD3tmwiVz0nQqGWbKNLM/Vt+gv4MDxeBFMcpoELc1uZ
+	 Zx7GN9a1c7bplTCeN0k/cRNIav7QEhZipytDw7gMK3N0/eb4wFp0bpVY1BbPBuPwUK
+	 t3ycuu0wcWzMA==
+Date: Thu, 27 Jun 2024 12:58:07 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Christophe Roullier <christophe.roullier@foss.st.com>
+Cc: "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Liam Girdwood <lgirdwood@gmail.com>, Marek Vasut <marex@denx.de>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [net-next,PATCH 0/2] Fixes for stm32-dwmac driver fails to probe
+Message-ID: <3b262c42-30ef-4221-aeba-e6fc5d9549b9@sirena.org.uk>
+References: <20240627084917.327592-1-christophe.roullier@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="uyMFrReHwMXWhVba"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJD7tkZfkE6EyDAXetjSAKb7Zx2Mw-2naUNHRK=ihegZyZ2mHA@mail.gmail.com>
+In-Reply-To: <20240627084917.327592-1-christophe.roullier@foss.st.com>
+X-Cookie: I just had a NOSE JOB!!
 
-On Thu 27-06-24 04:33:50, Yosry Ahmed wrote:
-> On Thu, Jun 27, 2024 at 12:13 AM Michal Hocko <mhocko@suse.com> wrote:
-> >
-> > On Wed 26-06-24 09:42:32, Xiu Jianfeng wrote:
-> > > Both the end of memory_stat_format() and memcg_stat_format() will call
-> > > WARN_ON_ONCE(seq_buf_has_overflowed()). However, memory_stat_format()
-> > > is the only caller of memcg_stat_format(), when memcg is on the default
-> > > hierarchy, seq_buf_has_overflowed() will be executed twice, so remove
-> > > the reduntant one.
-> >
-> > Shouldn't we rather remove both? Are they giving us anything useful
-> > actually? Would a simpl pr_warn be sufficient? Afterall all we care
-> > about is to learn that we need to grow the buffer size because our stats
-> > do not fit anymore. It is not really important whether that is an OOM or
-> > cgroupfs interface path.
-> 
-> Is it possible for userspace readers to break if the stats are
-> incomplete?
 
-They will certainly get an imprecise picture. Sufficient to break I
-dunno.
+--uyMFrReHwMXWhVba
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> If yes, I think WARN_ON_ONCE() may be prompted to make it
-> easier to catch and fix before deployment.
+On Thu, Jun 27, 2024 at 10:49:15AM +0200, Christophe Roullier wrote:
+> Mark Brown found issue during stm32-dwmac probe:
+>=20
+> For the past few days networking has been broken on the Avenger 96, a
+> stm32mp157a based platform.  The stm32-dwmac driver fails to probe:
 
-The only advantage of WARN_ON_ONCE is that the splat is so verbose that
-it gets noticed. And also it panics the system if panic_on_warn is
-enabled. I do not particularly care about the latter but to me it seems
-like the warning is just an over reaction and a simple pr_warn should
-just achieve the similar effect - see my other reply
--- 
-Michal Hocko
-SUSE Labs
+These patches resolve the boot issue I'm seeing on this platform:
+
+Tested-by: Mark Brown <broonie@kernel.org>
+
+--uyMFrReHwMXWhVba
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ9U88ACgkQJNaLcl1U
+h9DnYAf+MRtkI/wgcbZL/MOrZDaxdLzL+NYaZF8qlPgsW2i1ddZHbLEce94FVywY
+8JdeXXr6OLRprSR8iGoL+3AZ5IFD01V6LAI/s4q3S260J5TkrUcVOjI9nWrBA7+Q
+63wPVnM/EA1qu7hvTyrgICtF26O/NypA+dQYCS0FBryEMYE4wL8DGP7PjexzkDTV
+V3AbcEPa5meIo6livs5Sb4mryq9e7fWMKGv0qCNo3nrPdhylbzIhKd0qHdbVo3sF
+tPQdTIc76WPvY1RJ1sLNw+fyoNeZ5elLRGMzRFF0VhdnhUjMY6TFoVQ1/P5pSbUw
+8Kpx6Ap1305I4Do8kQf38/r9OvNEpg==
+=OIp5
+-----END PGP SIGNATURE-----
+
+--uyMFrReHwMXWhVba--
 
