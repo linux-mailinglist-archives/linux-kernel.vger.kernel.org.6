@@ -1,655 +1,262 @@
-Return-Path: <linux-kernel+bounces-232375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B207F91A7E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:30:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CFF691A7E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:30:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 428E7282253
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:30:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E544D282167
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:30:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E64E194081;
-	Thu, 27 Jun 2024 13:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eTC3wh2U"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55682194096;
+	Thu, 27 Jun 2024 13:30:07 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE9919306F
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 13:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D68179950
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 13:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719494997; cv=none; b=qTqtoRRynsVarUYun/O6/Fu160mRdJhrMUBMVmD901OuI3+bkot9hKedSxEK1nv1oYT5DG2AYMNhMbdp+ybbiArYdp5EIp1BN54At4kxY9EyTwxBvvydL84heI36881rFg30T9FhqqepN2PDwHy0qU7Hxo7NxSm0oOllDiOCf6A=
+	t=1719495006; cv=none; b=t1jAPAEYXwSgbaPYlO6ysKzSWqF4rJEMeipG5gxreIXQd5hA9DWvzzh4gLDnvil8ZdCYb/SVKk7nXHqawSRnjiQcY5D2zqOj9WEv2Q/dr1nHFWGiMeNQqdCGwLNtVDernYeNNKJvroSI8lweouSYbJIrZgmVgez699w5Ga8yPM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719494997; c=relaxed/simple;
-	bh=vudGtigX7V42SyW1AcNF6n6KggQ6iALUnH3GLO1F5vI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nvji3Ud6DV3bGFcsDQBNCbq1Daf7u3bXV4sjDmTiyp1fQtNpwDwHQ0cSSA/9P9mdpuTl4TGjlO14203Ukze3TepKAASjosS3igmztcjxxi/euRUqgWF8obUf/MNHpJ8JpLnHhB/+0vTOZXFN/8Merm909/NFNQ+pPsvIC+gAfx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eTC3wh2U; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52ce6a9fd5cso4793603e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 06:29:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719494992; x=1720099792; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YDJJHxSILDQGfJ/+MtvY2GjRByV8Vx2F+Vm+9Tri2T0=;
-        b=eTC3wh2UlEani3O3fmY2th7EtYjIg3kYAH8OQEX67trVUlrJUJ2T5T3ySOAjRA1/Zj
-         LUvxQiXpk1VGZ119emPtjJyd8PXFEKigmjWyhB7ghIIlxvq4h4GtdnJ1aaOa8uknW8nO
-         Q8jiQfAR0LsusGdni96greez2VSEIhBCG1wVKHF8SBfacmYZMKm1NWcq5Xn4wtdNMHKM
-         Zpv5Y6VeM4+PbsVsb2ii8iEMhlWoEaaX9Wm6VxCqWCzcjv9xivRORIbEbOCUggkhftLv
-         q4fr3783g1KhU82ibQxQRmrnYsDUKq/thJfAnVVwwhWScZw33j/pp6T1uHT6jtSMlK5E
-         PZoQ==
+	s=arc-20240116; t=1719495006; c=relaxed/simple;
+	bh=MF4CtSg754pYELazF/y0CN4JoHX6GuGxeoQzk5MSbUc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=szNRiWVsW/1zwEzSH8NSr+xsqhD7BbnJoG/i3ZRd2VF+um4Bop4azvLyEqyqKFy3UNF4Nn+xRIauZ2oTadMBKpcfDSbbmeBtm3gYhhYeE22w0cDLR/Vxs+PFaBOaaGrK6SNBr2VJ0IdrIT7LSJlPGD9Uya7eH65F5ShOZrHuDvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3762363a522so124987475ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 06:30:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719494992; x=1720099792;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YDJJHxSILDQGfJ/+MtvY2GjRByV8Vx2F+Vm+9Tri2T0=;
-        b=BJ720pPO2Nx+efTSc29L7HCTpfLK3exOftsR/0NLwGtP4kmmQavJqns4OE9BJcGg3b
-         TI80HlU4xPM6TlWmM1Eutwr3+itoVsd5REZVgakSWZAEX66W2RQeVXe8pNc6LuJ3gGOH
-         kJxu+te7BiZGTEzJchkvLJaSK56aNen2IIjHxONIbA75EuvP6cY9S12EVHV/q7ue0Vka
-         EdqRlf13mbaXPqylWZf1wIzGfA/Z6WUky9dEcKk3oSe1DqAKmwojPenMAORU84H7FKI3
-         sFY5+FwRBr0xSDR2jjVEZv2bRRzu7hnCNEu+mOID5gw8S3C1XsdOJXbwoaJLHCBEVgmp
-         Vtcg==
-X-Forwarded-Encrypted: i=1; AJvYcCX+Gn2jDFtrDKC49EH1Q5eYHPtWHLEa6nmgryKSO0RddFL55fWn7p94pPTYtCAzBYNZa6bgc1q7zaigQK59dgGEmfu7y3yO+2yqJE/C
-X-Gm-Message-State: AOJu0Ywpl/C8miVvZH0HpDWhxLpt6WCByYTSNJl4/Gv0e8QPcrJ7k190
-	9TpZOAA/TpXRheZlPRHKkr4MnyEQ+bQAkNCofsM6unFHOiqLWLYq5foJ4QMt2+Q=
-X-Google-Smtp-Source: AGHT+IFkCAcfL8XHgkfyVFv/3eap8yvJyorzrBQgAA9FQ42E4QnAqEDCA42CbEY0ScALNc2xRCbUmA==
-X-Received: by 2002:ac2:5633:0:b0:52c:d753:2829 with SMTP id 2adb3069b0e04-52ce1835212mr8197833e87.19.1719494992104;
-        Thu, 27 Jun 2024 06:29:52 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e712ba8b5sm203609e87.113.2024.06.27.06.29.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 06:29:51 -0700 (PDT)
-Date: Thu, 27 Jun 2024 16:29:49 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
-Subject: Re: [PATCH RFC 3/5] drm/connector: implement generic HDMI codec
- helpers
-Message-ID: <cwxmu5a37qaqerpaolohxw57nzerkvlumx4dsqwmqwx5t7xhxo@kq6j63hfydra>
-References: <20240615-drm-bridge-hdmi-connector-v1-0-d59fc7865ab2@linaro.org>
- <20240615-drm-bridge-hdmi-connector-v1-3-d59fc7865ab2@linaro.org>
- <20240621-glorious-oryx-of-expression-1ad75f@houat>
- <CAA8EJpr=ervT-KD+tYphPeTfrFGDfSaxNaYC5hfzmtVch5v10g@mail.gmail.com>
- <20240626-spiked-heavenly-kakapo-1dafce@houat>
- <pkfbp4xyg5za3vnlpryhbflb6nvp7s3bs3542wk3y5zsonoy7l@y5qcua6kfi4h>
- <20240627-meaty-bullfrog-of-refinement-cc9d85@houat>
+        d=1e100.net; s=20230601; t=1719495004; x=1720099804;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=n3thB0UFoFBK3QhBbGBobLsoks2k97t6O5s8sJBccdc=;
+        b=Kyj5iPiL21vOs14Cg0PSilb7j1dTGIvr8wfnNPR6mvvSAer1ZZqnCyiBKfuX5TKT8U
+         GZBVflu3ILKg5WsnZp0qJ+rWOVCTSxc96uI7x013h5oPHc8a3CkMEljcwkJ1JBOq4ISk
+         7H0bTbPkfLzIr9c5ZEp6FwUxebzBddC/DXKNEx6pxWiufw+piA8y5FM6bU79NdAftXrA
+         +evsAEZoEPsZJns/f81dreNKl2vq75GLgW/2DYGHiXRqnoXIbyDaj1nMKGLL4xvCxEjS
+         4Oaxeb29UmT+O15rRz7lu+eYhUhffD8OtpPhSscGl6vCIk2wZ6dkEYbBacza++4r71+n
+         eD8w==
+X-Forwarded-Encrypted: i=1; AJvYcCU9BlZrpT7UTC+flRGoviFcHrSpqcE3rKX+iV6ahmBPj5nOBdhGjePE6z9e3fpOO/G/QQP1aBE41+bmBi6AFyLo0p1waXNIoGhVjnPb
+X-Gm-Message-State: AOJu0YwzNH4EpGIW2gaHZvOexWgmtAr2/CHAqC/RdJypT6alJQFfUaBU
+	iV/CEgp1xQbETqZmpDiKsu5XB4k/VssM544F3CEIMLorTpuxhrfxjD1lFRA1e6zMNhI29HLJpc5
+	FdMOxARvBVxPt6CjcCnTHt99/n0BhK/kbkqoxZ8nOA9kwXzZsd1zZ2IU=
+X-Google-Smtp-Source: AGHT+IEIeEnQHMwucjAEmqd+aa1p11QnJrfKroy5r0+BNVN8A8UXkr1kEnis4W2dlUfMW/+CSzus2ibTnL0vXZz84GKexQ/LNkJF
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240627-meaty-bullfrog-of-refinement-cc9d85@houat>
+X-Received: by 2002:a92:c268:0:b0:375:8a85:eacd with SMTP id
+ e9e14a558f8ab-3763f6c7aabmr11821585ab.3.1719495003861; Thu, 27 Jun 2024
+ 06:30:03 -0700 (PDT)
+Date: Thu, 27 Jun 2024 06:30:03 -0700
+In-Reply-To: <tencent_B71CE90EEE3ECDAC78E66E9C2FC96C1C950A@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e6034f061bdf2071@google.com>
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in l2tp_session_delete
+From: syzbot <syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jun 27, 2024 at 11:49:37AM GMT, Maxime Ripard wrote:
-> On Wed, Jun 26, 2024 at 07:09:34PM GMT, Dmitry Baryshkov wrote:
-> > On Wed, Jun 26, 2024 at 04:05:01PM GMT, Maxime Ripard wrote:
-> > > On Fri, Jun 21, 2024 at 02:09:04PM GMT, Dmitry Baryshkov wrote:
-> > > > On Fri, 21 Jun 2024 at 12:27, Maxime Ripard <mripard@kernel.org> wrote:
-> > > > >
-> > > > > Hi,
-> > > > >
-> > > > > Sorry for taking some time to review this series.
-> > > > 
-> > > > No problem, that's not long.
-> > > > 
-> > > > >
-> > > > > On Sat, Jun 15, 2024 at 08:53:32PM GMT, Dmitry Baryshkov wrote:
-> > > > > > Several DRM drivers implement HDMI codec support (despite its name it
-> > > > > > applies to both HDMI and DisplayPort drivers). Implement generic
-> > > > > > framework to be used by these drivers. This removes a requirement to
-> > > > > > implement get_eld() callback and provides default implementation for
-> > > > > > codec's plug handling.
-> > > > > >
-> > > > > > The framework is integrated with the DRM HDMI Connector framework, but
-> > > > > > can be used by DisplayPort drivers.
-> > > > > >
-> > > > > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > > > > ---
-> > > > > >  drivers/gpu/drm/Makefile                   |   1 +
-> > > > > >  drivers/gpu/drm/drm_connector.c            |   8 ++
-> > > > > >  drivers/gpu/drm/drm_connector_hdmi_codec.c | 157 +++++++++++++++++++++++++++++
-> > > > > >  include/drm/drm_connector.h                |  33 ++++++
-> > > > > >  4 files changed, 199 insertions(+)
-> > > > > >
-> > > > > > diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
-> > > > > > index 68cc9258ffc4..e113a6eade23 100644
-> > > > > > --- a/drivers/gpu/drm/Makefile
-> > > > > > +++ b/drivers/gpu/drm/Makefile
-> > > > > > @@ -45,6 +45,7 @@ drm-y := \
-> > > > > >       drm_client_modeset.o \
-> > > > > >       drm_color_mgmt.o \
-> > > > > >       drm_connector.o \
-> > > > > > +     drm_connector_hdmi_codec.o \
-> > > > > >       drm_crtc.o \
-> > > > > >       drm_displayid.o \
-> > > > > >       drm_drv.o \
-> > > > > > diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
-> > > > > > index 3d73a981004c..66d6e9487339 100644
-> > > > > > --- a/drivers/gpu/drm/drm_connector.c
-> > > > > > +++ b/drivers/gpu/drm/drm_connector.c
-> > > > > > @@ -279,6 +279,7 @@ static int __drm_connector_init(struct drm_device *dev,
-> > > > > >       mutex_init(&connector->mutex);
-> > > > > >       mutex_init(&connector->edid_override_mutex);
-> > > > > >       mutex_init(&connector->hdmi.infoframes.lock);
-> > > > > > +     mutex_init(&connector->hdmi_codec.lock);
-> > > > > >       connector->edid_blob_ptr = NULL;
-> > > > > >       connector->epoch_counter = 0;
-> > > > > >       connector->tile_blob_ptr = NULL;
-> > > > > > @@ -529,6 +530,12 @@ int drmm_connector_hdmi_init(struct drm_device *dev,
-> > > > > >
-> > > > > >       connector->hdmi.funcs = hdmi_funcs;
-> > > > > >
-> > > > > > +     if (connector->hdmi_codec.i2s || connector->hdmi_codec.spdif) {
-> > > > > > +             ret = drmm_connector_hdmi_codec_alloc(dev, connector, hdmi_funcs->codec_ops);
-> > > > > > +             if (ret)
-> > > > > > +                     return ret;
-> > > > > > +     }
-> > > > > > +
-> > > > > >       return 0;
-> > > > > >  }
-> > > > > >  EXPORT_SYMBOL(drmm_connector_hdmi_init);
-> > > > > > @@ -665,6 +672,7 @@ void drm_connector_cleanup(struct drm_connector *connector)
-> > > > > >               connector->funcs->atomic_destroy_state(connector,
-> > > > > >                                                      connector->state);
-> > > > > >
-> > > > > > +     mutex_destroy(&connector->hdmi_codec.lock);
-> > > > > >       mutex_destroy(&connector->hdmi.infoframes.lock);
-> > > > > >       mutex_destroy(&connector->mutex);
-> > > > > >
-> > > > > > diff --git a/drivers/gpu/drm/drm_connector_hdmi_codec.c b/drivers/gpu/drm/drm_connector_hdmi_codec.c
-> > > > > > new file mode 100644
-> > > > > > index 000000000000..a3a7ad117f6f
-> > > > > > --- /dev/null
-> > > > > > +++ b/drivers/gpu/drm/drm_connector_hdmi_codec.c
-> > > > > > @@ -0,0 +1,157 @@
-> > > > > > +/*
-> > > > > > + * Copyright (c) 2024 Linaro Ltd
-> > > > > > + *
-> > > > > > + * Permission to use, copy, modify, distribute, and sell this software and its
-> > > > > > + * documentation for any purpose is hereby granted without fee, provided that
-> > > > > > + * the above copyright notice appear in all copies and that both that copyright
-> > > > > > + * notice and this permission notice appear in supporting documentation, and
-> > > > > > + * that the name of the copyright holders not be used in advertising or
-> > > > > > + * publicity pertaining to distribution of the software without specific,
-> > > > > > + * written prior permission.  The copyright holders make no representations
-> > > > > > + * about the suitability of this software for any purpose.  It is provided "as
-> > > > > > + * is" without express or implied warranty.
-> > > > > > + *
-> > > > > > + * THE COPYRIGHT HOLDERS DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
-> > > > > > + * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO
-> > > > > > + * EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY SPECIAL, INDIRECT OR
-> > > > > > + * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE,
-> > > > > > + * DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
-> > > > > > + * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
-> > > > > > + * OF THIS SOFTWARE.
-> > > > > > + */
-> > > > > > +
-> > > > > > +#include <linux/mutex.h>
-> > > > > > +#include <linux/platform_device.h>
-> > > > > > +
-> > > > > > +#include <drm/drm_connector.h>
-> > > > > > +#include <drm/drm_managed.h>
-> > > > > > +
-> > > > > > +#include <sound/hdmi-codec.h>
-> > > > > > +
-> > > > > > +static int drm_connector_hdmi_codec_get_eld(struct device *dev, void *data,
-> > > > > > +                                         uint8_t *buf, size_t len)
-> > > > > > +{
-> > > > > > +     struct drm_connector *connector = data;
-> > > > > > +
-> > > > > > +     //  FIXME: locking against drm_edid_to_eld ?
-> > > > > > +     memcpy(buf, connector->eld, min(sizeof(connector->eld), len));
-> > > > > > +
-> > > > > > +     return 0;
-> > > > > > +}
-> > > > > > +
-> > > > > > +static int drm_connector_hdmi_codec_hook_plugged_cb(struct device *dev,
-> > > > > > +                                                 void *data,
-> > > > > > +                                                 hdmi_codec_plugged_cb fn,
-> > > > > > +                                                 struct device *codec_dev)
-> > > > > > +{
-> > > > > > +     struct drm_connector *connector = data;
-> > > > > > +
-> > > > > > +     mutex_lock(&connector->hdmi_codec.lock);
-> > > > > > +
-> > > > > > +     connector->hdmi_codec.plugged_cb = fn;
-> > > > > > +     connector->hdmi_codec.plugged_cb_dev = codec_dev;
-> > > > > > +
-> > > > > > +     fn(codec_dev, connector->hdmi_codec.last_state);
-> > > > > > +
-> > > > > > +     mutex_unlock(&connector->hdmi_codec.lock);
-> > > > > > +
-> > > > > > +     return 0;
-> > > > > > +}
-> > > > > > +
-> > > > > > +void drm_connector_hdmi_codec_plugged_notify(struct drm_connector *connector,
-> > > > > > +                                          bool plugged)
-> > > > > > +{
-> > > > > > +     mutex_lock(&connector->hdmi_codec.lock);
-> > > > > > +
-> > > > > > +     connector->hdmi_codec.last_state = plugged;
-> > > > > > +
-> > > > > > +     if (connector->hdmi_codec.plugged_cb &&
-> > > > > > +         connector->hdmi_codec.plugged_cb_dev)
-> > > > > > +             connector->hdmi_codec.plugged_cb(connector->hdmi_codec.plugged_cb_dev,
-> > > > > > +                                              connector->hdmi_codec.last_state);
-> > > > > > +
-> > > > > > +     mutex_unlock(&connector->hdmi_codec.lock);
-> > > > > > +}
-> > > > > > +EXPORT_SYMBOL(drm_connector_hdmi_codec_plugged_notify);
-> > > > >
-> > > > > I think we should do this the other way around, or rather, like we do
-> > > > > for drm_connector_hdmi_init. We'll need a hotplug handler for multiple
-> > > > > things (CEC, HDMI 2.0, audio), so it would be best to have a single
-> > > > > function to call from drivers, that will perform whatever is needed
-> > > > > depending on the driver's capabilities.
-> > > > 
-> > > > I see, this API is probably misnamed. The hdmi_codec_ops use the
-> > > > 'plugged' term,
-> > > 
-> > > Is it misnamed?
-> > > 
-> > > It's documented as:
-> > > 
-> > >   Hook callback function to handle connector plug event. Optional.
-> > > 
-> > > > but most of the drivers notify the ASoC / codec during atomic_enable /
-> > > > atomic_disable path, because usually the audio path can not work with
-> > > > the video path being disabled.
-> > > 
-> > > That's not clear to me either:
-> > > 
-> > >   - rockchip/cdn-dp, msm/dp/dp-audio, dw-hdmi, seem to call it at
-> > >     enable/disable
-> > > 
-> > >   - anx7625, mtk_hdmi and mtk_dp calls it in detect
-> > > 
-> > >   - adv7511, ite-it66121, lontium-lt9611, lontium-lt9611uxc, sii902x,
-> > >     exynos, tda998x, msm_hdmi, sti, tegra, vc4 don't call it at all.
-> > > 
-> > > So it doesn't look like there's a majority we can align with, and
-> > > neither should we: we need to figure out what we *need* to do and when,
-> > > and do that.
-> > > 
-> > > From the documentation and quickly through the code though, handling it
-> > > in detect looks like the right call.
-> > 
-> > It is tempting to have it in the hotplug call. However:
-> > 
-> > - It is used to send events to the ASoC Jack, marking the output as
-> >   plugged or unplugged. Once the output is plugged, userspace might
-> >   consider using it for the audio output. Please correct me if I'm
-> >   wrong, but I don't think one can output audio to the HDMI plug unless
-> >   there is a video stream.
-> 
-> That's something to check in the HDMI spec and with the ALSA
-> maintainers.
+Hello,
 
-Mark and Liam are on CC list. I've also pinged Mark on the IRC (on
-#alsa, if the channel logs are preserved somewhere)
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KASAN: slab-use-after-free Write in l2tp_session_delete
 
-<lumag> I'm trying to implement a somewhat generic implementation that the drivers can hook in. The main discussion is at [link to this discussion]
-<lumag> So in theory that affects all ASoC platforms having HDMI or DP audio output
-<broonie> In that case I'd be conservative and try to follow the state of the physical connection as closely as possible.
+==================================================================
+BUG: KASAN: slab-use-after-free in instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+BUG: KASAN: slab-use-after-free in test_and_set_bit include/asm-generic/bitops/instrumented-atomic.h:71 [inline]
+BUG: KASAN: slab-use-after-free in l2tp_session_delete+0x28/0x9e0 net/l2tp/l2tp_core.c:1639
+Write of size 8 at addr ffff88806ca77808 by task kworker/u8:3/51
 
-So it is really 'plugged'.
+CPU: 0 PID: 51 Comm: kworker/u8:3 Not tainted 6.10.0-rc4-syzkaller-00869-g185d72112b95-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Workqueue: l2tp l2tp_tunnel_del_work
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+ instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
+ test_and_set_bit include/asm-generic/bitops/instrumented-atomic.h:71 [inline]
+ l2tp_session_delete+0x28/0x9e0 net/l2tp/l2tp_core.c:1639
+ l2tp_tunnel_closeall net/l2tp/l2tp_core.c:1302 [inline]
+ l2tp_tunnel_del_work+0x1cb/0x330 net/l2tp/l2tp_core.c:1334
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
-> 
-> > - Having it in the hotplug notification chain is also troublesome. As
-> >   Dave pointed out in the quoted piece of code, it should come after
-> >   reading the EDID on the connect event. On the disconnect event it
-> >   should probably come before calling the notification chain, to let
-> >   audio code interract correctly with the fully enabled display devices.
-> 
-> EDIDs are fetched when hotplug is detected anyway, and we need it for
-> other things anyway (like CEC).
+Allocated by task 6223:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
+ __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:387
+ kasan_kmalloc include/linux/kasan.h:211 [inline]
+ __do_kmalloc_node mm/slub.c:4122 [inline]
+ __kmalloc_noprof+0x1f9/0x400 mm/slub.c:4135
+ kmalloc_noprof include/linux/slab.h:664 [inline]
+ kzalloc_noprof include/linux/slab.h:778 [inline]
+ l2tp_session_create+0x3b/0xc20 net/l2tp/l2tp_core.c:1675
+ pppol2tp_connect+0xca3/0x17a0 net/l2tp/l2tp_ppp.c:783
+ __sys_connect_file net/socket.c:2049 [inline]
+ __sys_connect+0x2df/0x310 net/socket.c:2066
+ __do_sys_connect net/socket.c:2076 [inline]
+ __se_sys_connect net/socket.c:2073 [inline]
+ __x64_sys_connect+0x7a/0x90 net/socket.c:2073
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-I see that:
+Freed by task 5956:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
+ poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
+ __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
+ kasan_slab_free include/linux/kasan.h:184 [inline]
+ slab_free_hook mm/slub.c:2196 [inline]
+ slab_free mm/slub.c:4437 [inline]
+ kfree+0x149/0x360 mm/slub.c:4558
+ __sk_destruct+0x58/0x5f0 net/core/sock.c:2191
+ rcu_do_batch kernel/rcu/tree.c:2535 [inline]
+ rcu_core+0xafd/0x1830 kernel/rcu/tree.c:2809
+ handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
+ __do_softirq kernel/softirq.c:588 [inline]
+ invoke_softirq kernel/softirq.c:428 [inline]
+ __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
+ irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
+ sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1043
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
 
-- VC4 reads EDID and sets CEC address directly in hotplug notifier and
-  then again in get_modes callback. (why is it necessary in the hotplug
-  notifier, if it's done anyway in get_modes?)
+Last potentially related work creation:
+ kasan_save_stack+0x3f/0x60 mm/kasan/common.c:47
+ __kasan_record_aux_stack+0xac/0xc0 mm/kasan/generic.c:541
+ __call_rcu_common kernel/rcu/tree.c:3072 [inline]
+ call_rcu+0x167/0xa70 kernel/rcu/tree.c:3176
+ pppol2tp_release+0x357/0x450 net/l2tp/l2tp_ppp.c:458
+ __sock_release net/socket.c:659 [inline]
+ sock_close+0xbc/0x240 net/socket.c:1421
+ __fput+0x406/0x8b0 fs/file_table.c:422
+ task_work_run+0x24f/0x310 kernel/task_work.c:180
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x168/0x370 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-- sun4i sets CEC address from get_modes
+The buggy address belongs to the object at ffff88806ca77800
+ which belongs to the cache kmalloc-1k of size 1024
+The buggy address is located 8 bytes inside of
+ freed 1024-byte region [ffff88806ca77800, ffff88806ca77c00)
 
-- ADV7511 does a trick and sets CEC address from edid_read() callback
-  (with the FIXME from Jani that basically tells us to move this to
-  get_modes)
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x6ca70
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: 0xffffefff(slab)
+raw: 00fff00000000040 ffff888015041dc0 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000000100010 00000001ffffefff 0000000000000000
+head: 00fff00000000040 ffff888015041dc0 dead000000000122 0000000000000000
+head: 0000000000000000 0000000000100010 00000001ffffefff 0000000000000000
+head: 00fff00000000003 ffffea0001b29c01 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0x152820(GFP_ATOMIC|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_HARDWALL), pid 11, tgid 11 (kworker/u8:0), ts 101409670398, free_ts 101342435367
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1468
+ prep_new_page mm/page_alloc.c:1476 [inline]
+ get_page_from_freelist+0x2e43/0x2f00 mm/page_alloc.c:3420
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4678
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ alloc_slab_page+0x5f/0x120 mm/slub.c:2265
+ allocate_slab+0x5a/0x2f0 mm/slub.c:2428
+ new_slab mm/slub.c:2481 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3667
+ __slab_alloc+0x58/0xa0 mm/slub.c:3757
+ __slab_alloc_node mm/slub.c:3810 [inline]
+ slab_alloc_node mm/slub.c:3989 [inline]
+ __do_kmalloc_node mm/slub.c:4121 [inline]
+ __kmalloc_noprof+0x257/0x400 mm/slub.c:4135
+ kmalloc_noprof include/linux/slab.h:664 [inline]
+ kzalloc_noprof include/linux/slab.h:778 [inline]
+ neigh_alloc net/core/neighbour.c:494 [inline]
+ ___neigh_create+0x691/0x2470 net/core/neighbour.c:648
+ ip6_finish_output2+0x1631/0x1680 net/ipv6/ip6_output.c:128
+ ip6_finish_output+0x41e/0x810 net/ipv6/ip6_output.c:222
+ NF_HOOK include/linux/netfilter.h:314 [inline]
+ ndisc_send_skb+0xab2/0x1380 net/ipv6/ndisc.c:509
+ ndisc_send_ns+0xcc/0x160 net/ipv6/ndisc.c:667
+ addrconf_dad_work+0xb45/0x16f0 net/ipv6/addrconf.c:4281
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
+page last free pid 9 tgid 9 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1088 [inline]
+ free_unref_page+0xd22/0xea0 mm/page_alloc.c:2583
+ discard_slab mm/slub.c:2527 [inline]
+ __put_partials+0xeb/0x130 mm/slub.c:2995
+ put_cpu_partial+0x17c/0x250 mm/slub.c:3070
+ __slab_free+0x2ea/0x3d0 mm/slub.c:4307
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x9e/0x140 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:322
+ kasan_slab_alloc include/linux/kasan.h:201 [inline]
+ slab_post_alloc_hook mm/slub.c:3941 [inline]
+ slab_alloc_node mm/slub.c:4001 [inline]
+ kmem_cache_alloc_node_noprof+0x16b/0x320 mm/slub.c:4044
+ __alloc_skb+0x1c3/0x440 net/core/skbuff.c:656
+ alloc_skb include/linux/skbuff.h:1320 [inline]
+ alloc_skb_with_frags+0xc3/0x770 net/core/skbuff.c:6509
+ sock_alloc_send_pskb+0x91a/0xa60 net/core/sock.c:2815
+ sock_alloc_send_skb include/net/sock.h:1773 [inline]
+ mld_newpack+0x1c3/0xa90 net/ipv6/mcast.c:1746
+ add_grhead net/ipv6/mcast.c:1849 [inline]
+ add_grec+0x1492/0x19a0 net/ipv6/mcast.c:1987
+ mld_send_initial_cr+0x228/0x4b0 net/ipv6/mcast.c:2233
+ mld_dad_work+0x44/0x500 net/ipv6/mcast.c:2259
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
 
-- omapdrm clears CEC address from hpd_notify, but sets it from the
-  edid_read() callback with the same FIXME.
+Memory state around the buggy address:
+ ffff88806ca77700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88806ca77780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88806ca77800: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                      ^
+ ffff88806ca77880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88806ca77900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
-- i915 sets CEC address from .detect_ctx callback
 
-So there is no uniformity too. Handling it from drm_bridge_connector() /
-get_modes might help, but that requires clearing one of TODO items.
+Tested on:
 
-> 
-> > Having both points in mind, I think it's better to have those calls in
-> > enable/disable paths. This way the EDID (for ELD) is definitely read
-> > without the need to call drm_get_edid manually. The ASoC can start
-> > playing audio immediately, etc.
-> 
-> Again, it doesn't really matter what is the most convenient. What
-> matters is what is the correct thing to do, both from the HDMI spec and
-> ALSA userspace PoV.
-> 
-> And if we can't make that convenient, then maybe we just shouldn't try.
+commit:         185d7211 net: xilinx: axienet: Enable multicast by def..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=135c05a9980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e78fc116033e0ab7
+dashboard link: https://syzkaller.appspot.com/bug?extid=c041b4ce3a6dfd1e63e2
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=13129e12980000
 
-Ok, judging from the broonie's answer, it should be HPD, indeed (or
-maybe get_modes, as not to require an additional EDID read).
-
-> > > > I'll rename this function to something like ..hdmi_codec_enable. or
-> > > > ... hdmi_codec_set_enabled.
-> > > > 
-> > > > >
-> > > > > So something like drm_connector_hdmi_handle_hotplug, which would then do
-> > > > > the above if there's audio support.
-> > > > >
-> > > > > > +static void drm_connector_hdmi_codec_cleanup_action(struct drm_device *dev,
-> > > > > > +                                                 void *ptr)
-> > > > > > +{
-> > > > > > +     struct platform_device *pdev = ptr;
-> > > > > > +
-> > > > > > +     platform_device_unregister(pdev);
-> > > > > > +}
-> > > > > > +
-> > > > > > +/**
-> > > > > > + * drmm_connector_hdmi_alloc - Allocate HDMI Codec device for the DRM connector
-> > > > > > + * @dev: DRM device
-> > > > > > + * @connector: A pointer to the connector to allocate codec for
-> > > > > > + * @ops: callbacks for this connector
-> > > > > > + *
-> > > > > > + * Create a HDMI codec device to be used with the specified connector.
-> > > > > > + *
-> > > > > > + * Cleanup is automatically handled with in a DRM-managed action.
-> > > > > > + *
-> > > > > > + * The connector structure should be allocated with drmm_kzalloc().
-> > > > > > + *
-> > > > > > + * Returns:
-> > > > > > + * Zero on success, error code on failure.
-> > > > > > + */
-> > > > > > +int drmm_connector_hdmi_codec_alloc(struct drm_device *dev,
-> > > > > > +                                 struct drm_connector *connector,
-> > > > > > +                                 const struct hdmi_codec_ops *base_ops)
-> > > > > > +{
-> > > > > > +     struct hdmi_codec_pdata codec_pdata = {};
-> > > > > > +     struct platform_device *pdev;
-> > > > > > +     struct hdmi_codec_ops *ops;
-> > > > > > +     int ret;
-> > > > > > +
-> > > > > > +     ops = drmm_kmalloc(dev, sizeof(*ops), GFP_KERNEL);
-> > > > > > +     if (!ops)
-> > > > > > +             return -ENOMEM;
-> > > > >
-> > > > > Do we actually need to allocate a new structure here?
-> > > > 
-> > > > I didn't want to change the hdmi-codec's logic too much. But maybe
-> > > > it's really better to have generic ops implementation here that calls
-> > > > into the driver-specific callbacks.
-> > > > 
-> > > > > > +     *ops = *base_ops;
-> > > > > > +
-> > > > > > +     ops->get_eld = drm_connector_hdmi_codec_get_eld;
-> > > > > > +     ops->hook_plugged_cb = drm_connector_hdmi_codec_hook_plugged_cb;
-> > > > > > +
-> > > > > > +     codec_pdata.ops = ops;
-> > > > > > +     codec_pdata.i2s = connector->hdmi_codec.i2s,
-> > > > > > +     codec_pdata.spdif = connector->hdmi_codec.spdif,
-> > > > > > +     codec_pdata.max_i2s_channels = connector->hdmi_codec.max_i2s_channels,
-> > > > > > +     codec_pdata.data = connector;
-> > > > > > +
-> > > > > > +     pdev = platform_device_register_data(connector->hdmi_codec.parent_dev,
-> > > > > > +                                          HDMI_CODEC_DRV_NAME,
-> > > > > > +                                          PLATFORM_DEVID_AUTO,
-> > > > > > +                                          &codec_pdata, sizeof(codec_pdata));
-> > > > >
-> > > > > I think parent_dev should be setup by drm_connector_hdmi_init. I guess
-> > > > > what I'm trying to say is that the reason HDMI support has been so
-> > > > > heterogenous is precisely because of the proliferation of functions they
-> > > > > needed to call, and so most drivers were doing the bare minimum until it
-> > > > > worked (or they encountered a bug).
-> > > > >
-> > > > > What I was trying to do with the HDMI connector stuff was to make the
-> > > > > easiest approach the one that works according to the spec, for
-> > > > > everything.
-> > > > >
-> > > > > Audio is optional, so it should be a togglable thing (either by an
-> > > > > additional function or parameter), but the drivers shouldn't have to set
-> > > > > everything more than what the function requires.
-> > > > 
-> > > > I'll see what I can do. I had more or less the same goals, being hit
-> > > > by the lack of the plugged_cb and get_eld support in the bridge's
-> > > > implementation.
-> > > > 
-> > > > > Also, parent_dev is going to be an issue there. IIRC, ASoC will set its
-> > > > > structure as the device data and overwrite whatever we put there.
-> > > > 
-> > > > It registers driver_data for the created device, it doesn't touch parent_dev.
-> > > > 
-> > > > >
-> > > > > We worked around it in vc4 by making sure that snd_soc_card was right at
-> > > > > the start of the driver structure and thus both pointers would be equal,
-> > > > > but we have to deal with it here too.
-> > > > 
-> > > > Hmm, maybe I'm missing something. The snd_soc_card is a different
-> > > > story. The bridges just provide the hdmi_codec_ops, the card itself is
-> > > > handled by the other driver.
-> > > 
-> > > For bridges, sure. For full blown controllers, it might be handled by
-> > > the driver directly if there's no external controllers involved.
-> > 
-> > Hmm, I see. Let me check how vc4 handles it. But anyway, snd_soc_card is
-> > out of scope for this patchset. The driver has to manage it anyway. And
-> > for the hdmi_audio_codec there is no conflict.
-> 
-> Out of scope, sure, but if we need to rework and retest the whole thing
-> when we get there, it's not great either. So we should take it into
-> account still. Not care about or work on it, but leave the door open.
-
-Anyway, for VC4:
-
-static struct hdmi_codec_pdata vc4_hdmi_codec_pdata = {
-        .ops = &vc4_hdmi_codec_ops,
-        .max_i2s_channels = 8,
-        .i2s = 1,
-};
-
-codec_pdev = platform_device_register_data(dev, HDMI_CODEC_DRV_NAME,
-					   PLATFORM_DEVID_AUTO,
-					   &vc4_hdmi_codec_pdata,
-					   sizeof(vc4_hdmi_codec_pdata));
-
-So for the codec it also passes a separate data structure, not realted
-to the snd_soc_card data or to the VC4's pdata.
-
-> 
-> > > > > > +     if (IS_ERR(pdev))
-> > > > > > +             return PTR_ERR(pdev);
-> > > > > > +
-> > > > > > +     ret = drmm_add_action_or_reset(dev, drm_connector_hdmi_codec_cleanup_action, pdev);
-> > > > > > +     if (ret)
-> > > > > > +             return ret;
-> > > > > > +
-> > > > > > +     connector->hdmi_codec.codec_pdev = pdev;
-> > > > > > +
-> > > > > > +     return 0;
-> > > > > > +}
-> > > > > > +EXPORT_SYMBOL(drmm_connector_hdmi_codec_alloc);
-> > > > > > +
-> > > > > > +/**
-> > > > > > + * drmm_connector_hdmi_codec_free - rollback drmm_connector_hdmi_codec_alloc
-> > > > > > + * @dev: DRM device
-> > > > > > + * @hdmi_codec: A pointer to the HDMI codec data
-> > > > > > + *
-> > > > > > + * Rollback the drmm_connector_hdmi_codec_alloc() and free allocated data.
-> > > > > > + * While this function should not be necessary for a typical driver, DRM bridge
-> > > > > > + * drivers have to call it from the remove callback if the bridge uses
-> > > > > > + * Connector's HDMI Codec interface.
-> > > > > > + */
-> > > > > > +void drmm_connector_hdmi_codec_free(struct drm_device *dev,
-> > > > > > +                                 struct drm_connector_hdmi_codec *hdmi_codec)
-> > > > > > +{
-> > > > > > +     drmm_release_action(dev, drm_connector_hdmi_codec_cleanup_action,
-> > > > > > +                         hdmi_codec->codec_pdev);
-> > > > > > +}
-> > > > >
-> > > > > What would it be useful for?
-> > > > 
-> > > > See the last patch,
-> > > > https://lore.kernel.org/dri-devel/20240615-drm-bridge-hdmi-connector-v1-5-d59fc7865ab2@linaro.org/
-> > > > 
-> > > > if the bridge driver gets unbound, we should also unregister the codec
-> > > > device. The codec infrastructure uses drmm to allocate data and a drmm
-> > > > action to unregister the codec device. However the bridge drivers are
-> > > > not bound by the drmm lifecycle. So we have to do that manually.
-> > > 
-> > > Bridge lifetimes in general are a mess, but why do we need to involve
-> > > drmm if it's manual then?
-> > > 
-> > > It's typically something that shouldn't be done by drivers anyway. Most
-> > > of them will get it wrong.
-> > 
-> > Non-bridge drivers are not such mess and using drmm_ makes it simpler
-> > for them.
-> 
-> That's arguable, but it's mostly because the framework allows those
-> drivers to not be messy :)
-> 
-> It doesn't with bridges.
-> 
-> > Also in case of DP MST this will make like slightly easier as the
-> > audio codec will be torn down together with the connector being gone.
-> > 
-> > But really, I'm open to any solution that will work. Maybe it's better
-> > to use devm_add_action_or_reset(codec->parent);
-> 
-> My point is that there's no point in registering a drmm action if
-> drivers are supposed to call it anyway. So we can just use neither drmm
-> or devm, and it'll work just the same.
-> 
-> But I still think we don't need to allocate the structure in the first
-> place and just put it into drm_connector.
-
-This might work indeed. I was thinking about it from a different
-direction.
-
-> > > > > > +EXPORT_SYMBOL(drmm_connector_hdmi_codec_free);
-> > > > > > diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
-> > > > > > index f750765d8fbc..0eb8d8ed9495 100644
-> > > > > > --- a/include/drm/drm_connector.h
-> > > > > > +++ b/include/drm/drm_connector.h
-> > > > > > @@ -46,6 +46,7 @@ struct drm_property_blob;
-> > > > > >  struct drm_printer;
-> > > > > >  struct drm_privacy_screen;
-> > > > > >  struct edid;
-> > > > > > +struct hdmi_codec_ops;
-> > > > > >  struct i2c_adapter;
-> > > > > >
-> > > > > >  enum drm_connector_force {
-> > > > > > @@ -1199,6 +1200,8 @@ struct drm_connector_hdmi_funcs {
-> > > > > >       int (*write_infoframe)(struct drm_connector *connector,
-> > > > > >                              enum hdmi_infoframe_type type,
-> > > > > >                              const u8 *buffer, size_t len);
-> > > > > > +
-> > > > > > +     const struct hdmi_codec_ops *codec_ops;
-> > > > >
-> > > > > I think I'd rather have the HDMI connector framework provide the ASoC
-> > > > > hooks, and make the needed pointer casts / lookups to provide a
-> > > > > consistent API to drivers using it.
-> > > > >
-> > > > > This will probably also solve the issue mentioned above.
-> > > > 
-> > > > Ack.
-> > > > 
-> > > > >
-> > > > > >  };
-> > > > > >
-> > > > > >  /**
-> > > > > > @@ -1706,6 +1709,22 @@ struct drm_connector_hdmi {
-> > > > > >       } infoframes;
-> > > > > >  };
-> > > > > >
-> > > > > > +struct drm_connector_hdmi_codec {
-> > > > > > +     struct device *parent_dev;
-> > > > > > +     struct platform_device *codec_pdev;
-> > > > > > +
-> > > > > > +     const struct drm_connector_hdmi_codec_funcs *funcs;
-> > > > > > +
-> > > > > > +     struct mutex lock; /* protects last_state and plugged_cb */
-> > > > > > +     void (*plugged_cb)(struct device *dev, bool plugged);
-> > > > > > +     struct device *plugged_cb_dev;
-> > > > > > +     bool last_state;
-> > > > > > +
-> > > > > > +     int max_i2s_channels;
-> > > > > > +     uint i2s: 1;
-> > > > > > +     uint spdif: 1;
-> > > > > > +};
-> > > > >
-> > > > > It would be great to have some documentation on what those are,
-> > > > > last_state and the mutex especially raise attention :)
-> > > > 
-> > > > Yep, as I wrote in the cover letter, underdocumented.
-> > > > 
-> > > > >
-> > > > >
-> > > > > >  /**
-> > > > > >   * struct drm_connector - central DRM connector control structure
-> > > > > >   *
-> > > > > > @@ -2119,6 +2138,12 @@ struct drm_connector {
-> > > > > >        * @hdmi: HDMI-related variable and properties.
-> > > > > >        */
-> > > > > >       struct drm_connector_hdmi hdmi;
-> > > > > > +
-> > > > > > +     /**
-> > > > > > +      * @hdmi_codec: HDMI codec properties and variables. Also might be used
-> > > > > > +      * for DisplayPort audio.
-> > > > > > +      */
-> > > > > > +     struct drm_connector_hdmi_codec hdmi_codec;
-> > > > >
-> > > > > I'd rather make this part of drm_connector_hdmi, it cannot work without it.
-> > > > 
-> > > > It can. DisplayPort drivers also use hdmi_codec_ops. They should be
-> > > > able to benefit from this implementation.
-> > > 
-> > > That's totally doable if we create a structure (and functions) that are
-> > > embedded in both drm_connector_hdmi and the future drm_connector_dp
-> > 
-> > There is no drm_connector_dp (yet), but the drivers can already benefit
-> > from using the generic hdmi_codec. Later on, when drm_connector_dp
-> > appears, we can move the codec into both hdmi and DP structures.
-> > 
-> > I can probably convert msm/hdmi and msm/dp to use this framework if that
-> > helps to express the idea.
-> 
-> I think there's something I don't get here: why does DP gets in the way,
-> and why can't we just do the HDMI support now, and then reuse the same
-> struct and internal functions with DP later on?
-> 
-> I think if we want DP support, we would need to create a DP framework
-> like we did for HDMI, and that would be a major undertaking just for
-> audio support.
-
-That's what I wanted to defer for now. But I think I got your point
-here. I'll extend drm_connector_hdmi and DRM_OP_HDMI instead.
-
--- 
-With best wishes
-Dmitry
 
