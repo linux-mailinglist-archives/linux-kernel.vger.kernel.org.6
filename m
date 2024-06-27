@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-231982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A17991A11E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:10:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E754D91A11D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:10:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDB8FB20DE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 08:10:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6455D1F22ACA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 08:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405558121B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD5281727;
 	Thu, 27 Jun 2024 08:09:39 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55826BFB0
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 08:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 975176EB56
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 08:09:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719475778; cv=none; b=g7xfZLAZ4pT/0xl8DCkd8fIeFPciUYSUPMii8BiVzh13r1M6W0WTTgV4gwSXqBn5oxD5j08AHXPIM3CfLZfN8KGwcmBpshwJ2/qVhNRwn0WwPkUrk2lQIuEjKd1xv/+4ZDcExT2i0L5kfAWaYSAJncNP5D13RIwa8gAylSK48PA=
+	t=1719475778; cv=none; b=uWQRY2ZMl82nBN97TT4TXHcQRbK5tbUBRcA1hpYZYdsqsFIgdL5LkzAxYZ5Qlvex6g/HhAdZ7Mxci26CJoRaHsohq77vLxCBfZHic3YZafBFediPSuBSLmbE+FwRMTyaC8qvsM1lQzATPII/HliGLVvNNe3FNXtsJstXY9lTTfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719475778; c=relaxed/simple;
-	bh=CjcxAeIv3EWt4OmF1BS4re4MDHk4tiNE8NQeoR7xGE4=;
+	bh=EgLKeT6641PYmctBh8JLWey9td+G6VxSXBqn082e0Nw=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z+4uZUSpMXfX5tPeTQTxnJLJZz8iC+0l8szKTjFNTMxkpD1FcyGTMsOUbkBJvpbP9zyrjUQmFf7mHN99I7ogT+WLJezQwkaFad66nVpSbupl7RM7X0xHcJo0LMc5jPM//Fm35Zudarg/4QvUhwwf2POg+vYJNs63CSoX3KbZzYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+	 MIME-Version:Content-Type; b=DrYhxWbfMuDQESj+urzXfxPClGkSpoCbXFkzdM+sDWphb2iVannDIZcZaQeZZqGeRlu/py/zVy1i0E97dwqBxOeiicM978+77ZS/0rVTUP9Hz0pONOV66TgTgVO8Zu0n6K+jGfZ2ZK35GOXirGIt9skijRXTwPQjQwTuZbekiEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4W8rhZ2nbkzZgZ2;
-	Thu, 27 Jun 2024 16:05:02 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4W8rhc0WWxz1T4Tr;
+	Thu, 27 Jun 2024 16:05:04 +0800 (CST)
 Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id CB39F180064;
-	Thu, 27 Jun 2024 16:09:27 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 5797918007E;
+	Thu, 27 Jun 2024 16:09:29 +0800 (CST)
 Received: from huawei.com (10.90.53.73) by kwepemi100008.china.huawei.com
  (7.221.188.57) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 27 Jun
- 2024 16:09:27 +0800
+ 2024 16:09:28 +0800
 From: Jinjie Ruan <ruanjinjie@huawei.com>
 To: <catalin.marinas@arm.com>, <will@kernel.org>, <oleg@redhat.com>,
 	<tglx@linutronix.de>, <peterz@infradead.org>, <luto@kernel.org>,
@@ -46,9 +46,9 @@ To: <catalin.marinas@arm.com>, <will@kernel.org>, <oleg@redhat.com>,
 	<broonie@kernel.org>, <mark.rutland@arm.com>, <rick.p.edgecombe@intel.com>,
 	<leobras@redhat.com>, <linux-kernel@vger.kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v2 1/3] entry: Add some arch funcs to support arm64 to use generic entry
-Date: Thu, 27 Jun 2024 16:12:07 +0800
-Message-ID: <20240627081209.3511918-2-ruanjinjie@huawei.com>
+Subject: [PATCH v2 2/3] arm64: Prepare to switch to generic entry
+Date: Thu, 27 Jun 2024 16:12:08 +0800
+Message-ID: <20240627081209.3511918-3-ruanjinjie@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240627081209.3511918-1-ruanjinjie@huawei.com>
 References: <20240627081209.3511918-1-ruanjinjie@huawei.com>
@@ -63,225 +63,120 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
  kwepemi100008.china.huawei.com (7.221.188.57)
 
-Add some arch functions to support arm64 to use generic entry, which do not
-affect existing architectures that use generic entry:
+Prepare to switch to generic entry for arm64:
 
- - arch_prepare/post_report_syscall_entry/exit().
+ - Implement regs_irqs_disabled() using interrupts_enabled() macro.
 
- - arch_enter_from_kernel_mode(), arch_exit_to_kernel_mode_prepare().
+ - Make on_thread_stack() compatible with generic entry.
 
- - arch_irqentry_exit_need_resched() to support architecture-related
-   need_resched() check logic.
-
-Also make report_single_step() and syscall_exit_work() not static, which
-can be used by arm64 later.
+ - Split report_syscall() to report_syscall_enter() and
+   report_syscall_exit() to make it clear to switch to generic entry.
 
 Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 ---
 v2:
-- Fix a bug that not call arch_post_report_syscall_entry() in
-  syscall_trace_enter() if ptrace_report_syscall_entry() return not zero.
+- Refactor report_syscall().
 - Update the commit message.
 ---
- include/linux/entry-common.h | 51 ++++++++++++++++++++++++++++++++++++
- kernel/entry/common.c        | 48 ++++++++++++++++++++++++++++-----
- 2 files changed, 93 insertions(+), 6 deletions(-)
+ arch/arm64/include/asm/ptrace.h     |  5 +++++
+ arch/arm64/include/asm/stacktrace.h |  5 ++++-
+ arch/arm64/kernel/ptrace.c          | 29 ++++++++++++++++++++---------
+ 3 files changed, 29 insertions(+), 10 deletions(-)
 
-diff --git a/include/linux/entry-common.h b/include/linux/entry-common.h
-index b0fb775a600d..1be4c3d91995 100644
---- a/include/linux/entry-common.h
-+++ b/include/linux/entry-common.h
-@@ -84,6 +84,18 @@ static __always_inline void arch_enter_from_user_mode(struct pt_regs *regs);
- static __always_inline void arch_enter_from_user_mode(struct pt_regs *regs) {}
- #endif
- 
-+static __always_inline void arch_enter_from_kernel_mode(struct pt_regs *regs);
-+
-+#ifndef arch_enter_from_kernel_mode
-+static __always_inline void arch_enter_from_kernel_mode(struct pt_regs *regs) {}
-+#endif
-+
-+static __always_inline void arch_exit_to_kernel_mode_prepare(struct pt_regs *regs);
-+
-+#ifndef arch_exit_to_kernel_mode_prepare
-+static __always_inline void arch_exit_to_kernel_mode_prepare(struct pt_regs *regs) {}
-+#endif
-+
- /**
-  * enter_from_user_mode - Establish state when coming from user mode
-  *
-@@ -298,6 +310,42 @@ static __always_inline void arch_exit_to_user_mode(void) { }
-  */
- void arch_do_signal_or_restart(struct pt_regs *regs);
- 
-+/**
-+ * arch_irqentry_exit_need_resched - Architecture specific need resched function
-+ */
-+bool arch_irqentry_exit_need_resched(void);
-+
-+/**
-+ * arch_prepare_report_syscall_entry - Architecture specific report_syscall_entry()
-+ * prepare function
-+ */
-+unsigned long arch_prepare_report_syscall_entry(struct pt_regs *regs);
-+
-+/**
-+ * arch_post_report_syscall_entry - Architecture specific report_syscall_entry()
-+ * post function
-+ */
-+void arch_post_report_syscall_entry(struct pt_regs *regs, unsigned long saved_reg);
-+
-+/**
-+ * arch_prepare_report_syscall_exit - Architecture specific report_syscall_exit()
-+ * prepare function
-+ */
-+unsigned long arch_prepare_report_syscall_exit(struct pt_regs *regs, unsigned long work);
-+
-+/**
-+ * arch_post_report_syscall_exit - Architecture specific report_syscall_exit()
-+ * post function
-+ */
-+void arch_post_report_syscall_exit(struct pt_regs *regs, unsigned long saved_reg,
-+				   unsigned long work);
-+
-+/**
-+ * arch_forget_syscall - Architecture specific function called if
-+ * ptrace_report_syscall_entry() return nonzero
-+ */
-+void arch_forget_syscall(struct pt_regs *regs);
-+
- /**
-  * exit_to_user_mode_loop - do any pending work before leaving to user space
-  */
-@@ -552,4 +600,7 @@ irqentry_state_t noinstr irqentry_nmi_enter(struct pt_regs *regs);
-  */
- void noinstr irqentry_nmi_exit(struct pt_regs *regs, irqentry_state_t irq_state);
- 
-+bool report_single_step(unsigned long work);
-+void syscall_exit_work(struct pt_regs *regs, unsigned long work);
-+
- #endif
-diff --git a/kernel/entry/common.c b/kernel/entry/common.c
-index 90843cc38588..625b63e947cb 100644
---- a/kernel/entry/common.c
-+++ b/kernel/entry/common.c
-@@ -25,9 +25,14 @@ static inline void syscall_enter_audit(struct pt_regs *regs, long syscall)
- 	}
+diff --git a/arch/arm64/include/asm/ptrace.h b/arch/arm64/include/asm/ptrace.h
+index 47ec58031f11..1857748ff017 100644
+--- a/arch/arm64/include/asm/ptrace.h
++++ b/arch/arm64/include/asm/ptrace.h
+@@ -360,6 +360,11 @@ static inline unsigned long regs_get_kernel_argument(struct pt_regs *regs,
+ 	return 0;
  }
  
-+unsigned long __weak arch_prepare_report_syscall_entry(struct pt_regs *regs) { return 0; }
-+void __weak arch_post_report_syscall_entry(struct pt_regs *regs, unsigned long saved_reg) { }
-+void __weak arch_forget_syscall(struct pt_regs *regs) { };
++static inline int regs_irqs_disabled(struct pt_regs *regs)
++{
++	return !interrupts_enabled(regs);
++}
 +
- long syscall_trace_enter(struct pt_regs *regs, long syscall,
- 				unsigned long work)
- {
-+	unsigned long saved_reg;
- 	long ret = 0;
- 
- 	/*
-@@ -42,8 +47,13 @@ long syscall_trace_enter(struct pt_regs *regs, long syscall,
- 
- 	/* Handle ptrace */
- 	if (work & (SYSCALL_WORK_SYSCALL_TRACE | SYSCALL_WORK_SYSCALL_EMU)) {
-+		saved_reg = arch_prepare_report_syscall_entry(regs);
- 		ret = ptrace_report_syscall_entry(regs);
--		if (ret || (work & SYSCALL_WORK_SYSCALL_EMU))
-+		if (ret)
-+			arch_forget_syscall(regs);
-+
-+		arch_post_report_syscall_entry(regs, saved_reg);
-+		if (ret || work & SYSCALL_WORK_SYSCALL_EMU)
- 			return -1L;
- 	}
- 
-@@ -138,7 +148,7 @@ __always_inline unsigned long exit_to_user_mode_loop(struct pt_regs *regs,
-  * SINGLESTEP is set (i.e. PTRACE_SYSEMU_SINGLESTEP).  This syscall
-  * instruction has been already reported in syscall_enter_from_user_mode().
-  */
--static inline bool report_single_step(unsigned long work)
-+inline bool report_single_step(unsigned long work)
- {
- 	if (work & SYSCALL_WORK_SYSCALL_EMU)
- 		return false;
-@@ -146,8 +156,22 @@ static inline bool report_single_step(unsigned long work)
- 	return work & SYSCALL_WORK_SYSCALL_EXIT_TRAP;
+ /* We must avoid circular header include via sched.h */
+ struct task_struct;
+ int valid_user_regs(struct user_pt_regs *regs, struct task_struct *task);
+diff --git a/arch/arm64/include/asm/stacktrace.h b/arch/arm64/include/asm/stacktrace.h
+index 66ec8caa6ac0..36bc1831f906 100644
+--- a/arch/arm64/include/asm/stacktrace.h
++++ b/arch/arm64/include/asm/stacktrace.h
+@@ -57,7 +57,10 @@ static inline bool on_task_stack(const struct task_struct *tsk,
+ 	return stackinfo_on_stack(&info, sp, size);
  }
  
--static void syscall_exit_work(struct pt_regs *regs, unsigned long work)
-+unsigned long __weak arch_prepare_report_syscall_exit(struct pt_regs *regs,
-+						      unsigned long work)
+-#define on_thread_stack()	(on_task_stack(current, current_stack_pointer, 1))
++static __always_inline bool on_thread_stack(void)
 +{
-+	return 0;
++	return on_task_stack(current, current_stack_pointer, 1);
 +}
-+
-+void __weak arch_post_report_syscall_exit(struct pt_regs *regs,
-+					  unsigned long saved_reg,
-+					  unsigned long work)
-+{
-+
-+}
-+
-+void syscall_exit_work(struct pt_regs *regs, unsigned long work)
- {
-+	unsigned long saved_reg;
- 	bool step;
  
- 	/*
-@@ -169,8 +193,11 @@ static void syscall_exit_work(struct pt_regs *regs, unsigned long work)
+ #ifdef CONFIG_VMAP_STACK
+ DECLARE_PER_CPU(unsigned long [OVERFLOW_STACK_SIZE/sizeof(long)], overflow_stack);
+diff --git a/arch/arm64/kernel/ptrace.c b/arch/arm64/kernel/ptrace.c
+index 0d022599eb61..60fd85d5119d 100644
+--- a/arch/arm64/kernel/ptrace.c
++++ b/arch/arm64/kernel/ptrace.c
+@@ -2184,7 +2184,7 @@ enum ptrace_syscall_dir {
+ 	PTRACE_SYSCALL_EXIT,
+ };
+ 
+-static void report_syscall(struct pt_regs *regs, enum ptrace_syscall_dir dir)
++static void report_syscall_enter(struct pt_regs *regs)
+ {
+ 	int regno;
+ 	unsigned long saved_reg;
+@@ -2207,13 +2207,24 @@ static void report_syscall(struct pt_regs *regs, enum ptrace_syscall_dir dir)
+ 	 */
+ 	regno = (is_compat_task() ? 12 : 7);
+ 	saved_reg = regs->regs[regno];
+-	regs->regs[regno] = dir;
++	regs->regs[regno] = PTRACE_SYSCALL_ENTER;
+ 
+-	if (dir == PTRACE_SYSCALL_ENTER) {
+-		if (ptrace_report_syscall_entry(regs))
+-			forget_syscall(regs);
+-		regs->regs[regno] = saved_reg;
+-	} else if (!test_thread_flag(TIF_SINGLESTEP)) {
++	if (ptrace_report_syscall_entry(regs))
++		forget_syscall(regs);
++	regs->regs[regno] = saved_reg;
++}
++
++static void report_syscall_exit(struct pt_regs *regs)
++{
++	int regno;
++	unsigned long saved_reg;
++
++	/* See comment for report_syscall_enter() */
++	regno = (is_compat_task() ? 12 : 7);
++	saved_reg = regs->regs[regno];
++	regs->regs[regno] = PTRACE_SYSCALL_EXIT;
++
++	if (!test_thread_flag(TIF_SINGLESTEP)) {
+ 		ptrace_report_syscall_exit(regs, 0);
+ 		regs->regs[regno] = saved_reg;
+ 	} else {
+@@ -2233,7 +2244,7 @@ int syscall_trace_enter(struct pt_regs *regs)
+ 	unsigned long flags = read_thread_flags();
+ 
+ 	if (flags & (_TIF_SYSCALL_EMU | _TIF_SYSCALL_TRACE)) {
+-		report_syscall(regs, PTRACE_SYSCALL_ENTER);
++		report_syscall_enter(regs);
+ 		if (flags & _TIF_SYSCALL_EMU)
+ 			return NO_SYSCALL;
+ 	}
+@@ -2261,7 +2272,7 @@ void syscall_trace_exit(struct pt_regs *regs)
  		trace_sys_exit(regs, syscall_get_return_value(current, regs));
  
- 	step = report_single_step(work);
--	if (step || work & SYSCALL_WORK_SYSCALL_TRACE)
-+	if (step || work & SYSCALL_WORK_SYSCALL_TRACE) {
-+		saved_reg = arch_prepare_report_syscall_exit(regs, work);
- 		ptrace_report_syscall_exit(regs, step);
-+		arch_post_report_syscall_exit(regs, saved_reg, work);
-+	}
- }
+ 	if (flags & (_TIF_SYSCALL_TRACE | _TIF_SINGLESTEP))
+-		report_syscall(regs, PTRACE_SYSCALL_EXIT);
++		report_syscall_exit(regs);
  
- /*
-@@ -244,6 +271,8 @@ noinstr irqentry_state_t irqentry_enter(struct pt_regs *regs)
- 		return ret;
- 	}
- 
-+	arch_enter_from_kernel_mode(regs);
-+
- 	/*
- 	 * If this entry hit the idle task invoke ct_irq_enter() whether
- 	 * RCU is watching or not.
-@@ -300,6 +329,8 @@ noinstr irqentry_state_t irqentry_enter(struct pt_regs *regs)
- 	return ret;
+ 	rseq_syscall(regs);
  }
- 
-+bool __weak arch_irqentry_exit_need_resched(void) { return true; }
-+
- void raw_irqentry_exit_cond_resched(void)
- {
- 	if (!preempt_count()) {
-@@ -307,7 +338,7 @@ void raw_irqentry_exit_cond_resched(void)
- 		rcu_irq_exit_check_preempt();
- 		if (IS_ENABLED(CONFIG_DEBUG_ENTRY))
- 			WARN_ON_ONCE(!on_thread_stack());
--		if (need_resched())
-+		if (need_resched() && arch_irqentry_exit_need_resched())
- 			preempt_schedule_irq();
- 	}
- }
-@@ -332,7 +363,12 @@ noinstr void irqentry_exit(struct pt_regs *regs, irqentry_state_t state)
- 	/* Check whether this returns to user mode */
- 	if (user_mode(regs)) {
- 		irqentry_exit_to_user_mode(regs);
--	} else if (!regs_irqs_disabled(regs)) {
-+		return;
-+	}
-+
-+	arch_exit_to_kernel_mode_prepare(regs);
-+
-+	if (!regs_irqs_disabled(regs)) {
- 		/*
- 		 * If RCU was not watching on entry this needs to be done
- 		 * carefully and needs the same ordering of lockdep/tracing
 -- 
 2.34.1
 
