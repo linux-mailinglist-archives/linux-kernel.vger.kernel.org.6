@@ -1,387 +1,194 @@
-Return-Path: <linux-kernel+bounces-232122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DC8991A3CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:31:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA41591A3B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:26:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EB001C215BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:31:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8321F283EB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:26:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB51313E048;
-	Thu, 27 Jun 2024 10:31:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3666B13D62E;
+	Thu, 27 Jun 2024 10:26:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="Q2F2u+rd"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="sOQNER4X"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [167.172.40.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0FEA8060D;
-	Thu, 27 Jun 2024 10:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2239222EF2
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 10:26:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.172.40.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719484271; cv=none; b=O/nJ+Ga1PmEGfp9S9/XXXFjYVfuN+rPwezB2xmS18BIWaZfq8zmGyGZ6DSNkJCXORWpCDMRdc3kYO7aFC68GlMfYq+f+0s4UQ00Wy7dubB4LnwC/82kqvxdzwv4Y4EfcJBKZkDzByWY7R+Q3ALItnjtGLDIVehU9ag7F6vjfU5k=
+	t=1719483976; cv=none; b=nf7+9C3s6dfcJYqohmGExoCUOaO1Le09+72/WKe7Ee8pTeKg4Y/YO4ushkDEqWYTP+WGJcC8zn0w3plclUuPbTvEL2AoXWkIzu8E0Lrzi27utOVu4qUgqPWgiEp8VDjppyoaPJztM2QrbJoSpZuRfv1mmrO+yQzlnh49epl5umo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719484271; c=relaxed/simple;
-	bh=M97jdn1momTLP0hRgfBBEGdki11FGXpNE5lBERgEwBo=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KCa+/0736iF0Z9H+0Y0MQgjRePpDC8ht/fjfe2HeJiLCV5mcSu7mdCAgzVtPL0EZCa9ESrcNW9VuF1oRzQp7ji/6fU0yFEnnCZiUCqrUc474DBOJ6rcBY5jYGCY68RRAangZcw/pVscCseg7CW/0rfHYn39i1O1mNKXpjA+sYuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=Q2F2u+rd; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45R73T2G019995;
-	Thu, 27 Jun 2024 06:30:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=jHHX+
-	K93z/GA4btOEFk36FatoWekX80umlEhb3/I1h4=; b=Q2F2u+rdyQXDcassiuxVc
-	LAzczLKX/1eodQCpVMaZ3YJwhlbZ0Zf/T+fyW5UJ+NECM2NKNDa7MTwPsMPdXSfX
-	hV//QpBzkQtfIm64ko7yl3IpgQGstQABhJfBMEO9AYWOtptIGVMb0WbhaV7gEcfb
-	5WGkvKftS3lUA+j7z4mq1ruipR+Dfwne0b3f6eXxcxHEhNhisWHXlHJGUXzxhWTe
-	cKaa9K7y2vluPiI+ZEuetFKw2JFDREJA8Svpy1vm4C7Ov6NjaRaOmyOQY1aBTUwL
-	85RKwUEu4hvVZKT9SXEw9baKLn77czBNPAEZ/MaJ1GJw712Jh9be/ap5h+orgYkN
-	Q==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 3ywrf3un38-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Jun 2024 06:30:54 -0400 (EDT)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 45RAUqoI059624
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 27 Jun 2024 06:30:52 -0400
-Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
- ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Thu, 27 Jun 2024 06:30:51 -0400
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
- ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Thu, 27 Jun 2024 06:30:51 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Thu, 27 Jun 2024 06:30:51 -0400
-Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.159])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 45RATvYS018482;
-	Thu, 27 Jun 2024 06:30:43 -0400
-From: Antoniu Miclaus <antoniu.miclaus@analog.com>
-To: Ramona Gradinariu <ramona.gradinariu@analog.com>,
-        Antoniu Miclaus
-	<antoniu.miclaus@analog.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        "Michael
- Hennerich" <Michael.Hennerich@analog.com>,
-        Jonathan Cameron
-	<jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet
-	<corbet@lwn.net>,
-        Jun Yan <jerrysteve1101@gmail.com>,
-        Matti Vaittinen
-	<mazziesaccount@gmail.com>,
-        Mario Limonciello <mario.limonciello@amd.com>,
-        Mehdi Djait <mehdi.djait.k@gmail.com>, <linux-iio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>
-Subject: [PATCH v3 3/3] docs: iio: add documentation for adxl380 driver
-Date: Thu, 27 Jun 2024 13:25:19 +0300
-Message-ID: <20240627102617.24416-3-antoniu.miclaus@analog.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240627102617.24416-1-antoniu.miclaus@analog.com>
-References: <20240627102617.24416-1-antoniu.miclaus@analog.com>
+	s=arc-20240116; t=1719483976; c=relaxed/simple;
+	bh=gsNzAo9KUosgB4ZSjznR3d4Um2Q5eipfXMK4EM/EyO4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=twgwoQdrIVBmM+B2XtW+bJFepQDuEfa28I2gtODzgVrK/jEQp3TZlr6XmQtfWMuEgwdGbhwfQ7/JneqXRmVnU1+cK+JajN5vxPkzLQaQ4JwPY16Jiq76Slnt8BMlJ9xA2ntAm5h4Vn0b4yqePOiQwzcAx0an8NUCV1j6/n/FlHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=sOQNER4X; arc=none smtp.client-ip=167.172.40.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1719483960;
+ bh=TWiLySO7b3v99TTKx2kmRds/R3UK6iiDnVWH7RwG6BY=;
+ b=sOQNER4X/NOVN8zr2BOJM2/pj3ShiaN1dTBG1B5oazg8inZhTsURxynpvCv4WGsKG6innSDLN
+ JWInwSCw9lHVVnszI9R3q+biNcuVTq9RIz/z1xV35Uw8RW/gcA6gsC29pVh/a5e3BMI+eyZFsue
+ HQhGVJrEWRsufC7nx0B6D1jZ/WhmyHnZh9wF8Xl47j+DEkB3n2PguSV2a1nrSbJrEPYKBW8U8nz
+ ISrXiVmUVDqtO6Ht+K8kbTBIdgJt0drP89tERK7sHWBQN5keHHhHT0z2JmPsOs1UxjH4Yh+fc6o
+ n4K66vezVNmnWF0hLIpOyb/fYYZcmPt0OcDNPBmmFqYA==
+Message-ID: <c67f6ada-3a64-4453-a739-583bbdee4185@kwiboo.se>
+Date: Thu, 27 Jun 2024 12:25:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-ORIG-GUID: 7ubuGhSku9EiVE0_ZVDUPXPUFg-vNIU9
-X-Proofpoint-GUID: 7ubuGhSku9EiVE0_ZVDUPXPUFg-vNIU9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-27_06,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
- malwarescore=0 phishscore=0 bulkscore=0 priorityscore=1501 suspectscore=0
- spamscore=0 clxscore=1015 adultscore=0 impostorscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2406270079
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] arm64: dts: rockchip: Add Radxa ROCK 3B
+To: FUKAUMI Naoki <naoki@radxa.com>, Heiko Stuebner <heiko@sntech.de>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240626201502.1384123-1-jonas@kwiboo.se>
+ <20240626201502.1384123-3-jonas@kwiboo.se>
+ <7F75D4B7290C2A91+8b029861-21dc-4f52-acbc-89087b4c0f0d@radxa.com>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <7F75D4B7290C2A91+8b029861-21dc-4f52-acbc-89087b4c0f0d@radxa.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Report-Abuse-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-ForwardEmail-Version: 0.4.40
+X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 167.172.40.54
+X-ForwardEmail-ID: 667d3e35392543b4ce9a5535
 
-Add documentation for adxl380 driver which describes the driver
-device files and shows how the user may use the ABI for various
-scenarios (configuration, measurement, etc.).
+Hi,
 
-Signed-off-by: Ramona Gradinariu <ramona.gradinariu@analog.com>
-Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
----
-changes in v3:
- - performed docs build via `make htmldocs` and no warnings were
-   detected for adxl380 documentation. 
- Documentation/iio/adxl380.rst | 238 ++++++++++++++++++++++++++++++++++
- Documentation/iio/index.rst   |   1 +
- 2 files changed, 239 insertions(+)
- create mode 100644 Documentation/iio/adxl380.rst
+On 2024-06-27 00:29, FUKAUMI Naoki wrote:
+> Hi,
+> 
+> thank you very much for your effort!
+> 
+> On 6/27/24 05:14, Jonas Karlman wrote:
+>> The Radxa ROCK 3B is a single-board computer based on the Pico-ITX form
+>> factor (100mm x 75mm). Two versions of the ROCK 3B exists, a community
+>> version based on the RK3568 SoC and an industrial version based on the
+>> RK3568J SoC.
+>>
+>> Add initial support for eMMC, SD-card, Ethernet, HDMI, PCIe and USB.
+>>
+>> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+>> ---
+>> v2:
+>> - Use regulator-.* nodename for fixed regulators
+>> - Drop rockchip,mic-in-differential prop
+>> - Shorten Ethernet phy reset-deassert-us to 50 ms
+>> - Fix pcie pinctrl
+>> - Add keep-power-in-suspend to sdmmc2
+>>
+>> Following issue is reported by dtbs_check and is fixed by series at [1]:
+>>
+>>    pmic@20: '#sound-dai-cells', 'assigned-clock-parents', 'assigned-clocks', 'clock-names', 'clocks'
+>>      do not match any of the regexes: 'pinctrl-[0-9]+'
+>>    from schema $id: http://devicetree.org/schemas/mfd/rockchip,rk809.yaml#
+>>
+>> [1] https://lore.kernel.org/all/20240622-rk809-fixes-v2-0-c0db420d3639@collabora.com/
+>> ---
+>>   arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+>>   .../boot/dts/rockchip/rk3568-rock-3b.dts      | 780 ++++++++++++++++++
+>>   2 files changed, 781 insertions(+)
+>>   create mode 100644 arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
+>>
+>> diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
+>> index 90f5172f37e6..ae0ae02f51e9 100644
+>> --- a/arch/arm64/boot/dts/rockchip/Makefile
+>> +++ b/arch/arm64/boot/dts/rockchip/Makefile
+>> @@ -114,6 +114,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-qnap-ts433.dtb
+>>   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-radxa-e25.dtb
+>>   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-roc-pc.dtb
+>>   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-rock-3a.dtb
+>> +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-rock-3b.dtb
+>>   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-wolfvision-pf5.dtb
+>>   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-wolfvision-pf5-display-vz.dtbo
+>>   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-wolfvision-pf5-io-expander.dtbo
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts b/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
+>> new file mode 100644
+>> index 000000000000..46c959f1c6ad
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
+>> @@ -0,0 +1,780 @@
+>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>> +
+>> +/dts-v1/;
+>> +
+>> +#include <dt-bindings/gpio/gpio.h>
+>> +#include <dt-bindings/leds/common.h>
+>> +#include <dt-bindings/pinctrl/rockchip.h>
+>> +#include <dt-bindings/soc/rockchip,vop2.h>
+>> +#include "rk3568.dtsi"
+>> +
+>> +/ {
+>> +	model = "Radxa ROCK 3B";
+>> +	compatible = "radxa,rock-3b", "rockchip,rk3568";
+>> +
+>> +	aliases {
+>> +		ethernet0 = &gmac0;
+>> +		ethernet1 = &gmac1;
+>> +		mmc0 = &sdhci;
+>> +		mmc1 = &sdmmc0;
+>> +		mmc2 = &sdmmc2;
+>> +	};
+>> +
+>> +	chosen {
+>> +		stdout-path = "serial2:1500000n8";
+>> +	};
+>> +
+>> +	hdmi-con {
+>> +		compatible = "hdmi-connector";
+>> +		type = "a";
+>> +
+>> +		port {
+>> +			hdmi_con_in: endpoint {
+>> +				remote-endpoint = <&hdmi_out_con>;
+>> +			};
+>> +		};
+>> +	};
+>> +
+>> +	ir-receiver {
+>> +		compatible = "gpio-ir-receiver";
+>> +		gpios = <&gpio0 RK_PC2 GPIO_ACTIVE_LOW>;
+>> +		pinctrl-names = "default";
+>> +		pinctrl-0 = <&pwm3_ir>;
+>> +	};
+>> +
+>> +	leds {
+>> +		compatible = "gpio-leds";
+>> +
+>> +		led-green {
+> 
+> led-0 or just led (leds-gpio.yaml)
 
-diff --git a/Documentation/iio/adxl380.rst b/Documentation/iio/adxl380.rst
-new file mode 100644
-index 000000000000..a64e330a18ee
---- /dev/null
-+++ b/Documentation/iio/adxl380.rst
-@@ -0,0 +1,238 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+===============
-+ADXL380 driver
-+===============
-+
-+This driver supports Analog Device's ADXL380/382 on SPI/I2C bus.
-+
-+1. Supported devices
-+====================
-+
-+* `ADXL380 <https://www.analog.com/ADXL380>`_
-+* `ADXL382 <https://www.analog.com/ADXL382>`_
-+
-+The ADXL380/ADXL382 is a low noise density, low power, 3-axis accelerometer with
-+selectable measurement ranges. The ADXL380 supports the ±4 g, ±8 g, and ±16 g
-+ranges, and the ADXL382 supports ±15 g, ±30 g, and ±60 g ranges.
-+
-+The ADXL380/ADXL382 offers industry leading noise, enabling precision
-+applications with minimal calibration. The low noise, and low power
-+ADXL380/ADXL382 enables accurate measurement in an environment with high
-+vibration, heart sounds and audio.
-+
-+2. Device attributes
-+====================
-+
-+Accelerometer measurements are always provided.
-+
-+Temperature data are also provided. This data can be used to monitor the
-+internal system temperature or to improve the temperature stability of the
-+device via calibration.
-+
-+Each IIO device, has a device folder under ``/sys/bus/iio/devices/iio:deviceX``,
-+where X is the IIO index of the device. Under these folders reside a set of
-+device files, depending on the characteristics and features of the hardware
-+device in questions. These files are consistently generalized and documented in
-+the IIO ABI documentation.
-+
-+The following tables show the adxl380 related device files, found in the
-+specific device folder path ``/sys/bus/iio/devices/iio:deviceX``.
-+
-++---------------------------------------------------+----------------------------------------------------------+
-+| 3-Axis Accelerometer related device files         | Description                                              |
-++---------------------------------------------------+----------------------------------------------------------+
-+| in_accel_scale                                    | Scale for the accelerometer channels.                    |
-++---------------------------------------------------+----------------------------------------------------------+
-+| in_accel_filter_high_pass_3db_frequency           | Low pass filter bandwidth.                               |
-++---------------------------------------------------+----------------------------------------------------------+
-+| in_accel_filter_high_pass_3db_frequency_available | Available low pass filter bandwidth configurations.      |
-++---------------------------------------------------+----------------------------------------------------------+
-+| in_accel_filter_low_pass_3db_frequency            | High pass filter bandwidth.                              |
-++---------------------------------------------------+----------------------------------------------------------+
-+| in_accel_filter_low_pass_3db_frequency_available  | Available high pass filter bandwidth configurations.     |
-++---------------------------------------------------+----------------------------------------------------------+
-+| in_accel_x_calibbias                              | Calibration offset for the X-axis accelerometer channel. |
-++---------------------------------------------------+----------------------------------------------------------+
-+| in_accel_x_raw                                    | Raw X-axis accelerometer channel value.                  |
-++---------------------------------------------------+----------------------------------------------------------+
-+| in_accel_y_calibbias                              | y-axis acceleration offset correction                    |
-++---------------------------------------------------+----------------------------------------------------------+
-+| in_accel_y_raw                                    | Raw Y-axis accelerometer channel value.                  |
-++---------------------------------------------------+----------------------------------------------------------+
-+| in_accel_z_calibbias                              | Calibration offset for the Z-axis accelerometer channel. |
-++---------------------------------------------------+----------------------------------------------------------+
-+| in_accel_z_raw                                    | Raw Z-axis accelerometer channel value.                  |
-++---------------------------------------------------+----------------------------------------------------------+
-+
-++----------------------------------+--------------------------------------------+
-+| Temperature sensor related files | Description                                |
-++----------------------------------+--------------------------------------------+
-+| in_temp_raw                      | Raw temperature channel value.             |
-++----------------------------------+--------------------------------------------+
-+| in_temp_offset                   | Offset for the temperature sensor channel. |
-++----------------------------------+--------------------------------------------+
-+| in_temp_scale                    | Scale for the temperature sensor channel.  |
-++----------------------------------+--------------------------------------------+
-+
-++------------------------------+----------------------------------------------+
-+| Miscellaneous device files   | Description                                  |
-++------------------------------+----------------------------------------------+
-+| name                         | Name of the IIO device.                      |
-++------------------------------+----------------------------------------------+
-+| sampling_frequency           | Currently selected sample rate.              |
-++------------------------------+----------------------------------------------+
-+| sampling_frequency_available | Available sampling frequency configurations. |
-++------------------------------+----------------------------------------------+
-+
-+Channels processed values
-+-------------------------
-+
-+A channel value can be read from its _raw attribute. The value returned is the
-+raw value as reported by the devices. To get the processed value of the channel,
-+apply the following formula:
-+
-+.. code-block:: bash
-+
-+        processed value = (_raw + _offset) * _scale
-+
-+Where _offset and _scale are device attributes. If no _offset attribute is
-+present, simply assume its value is 0.
-+
-+The adis16475 driver offers data for 2 types of channels, the table below shows
-+the measurement units for the processed value, which are defined by the IIO
-+framework:
-+
-++-------------------------------------+---------------------------+
-+| Channel type                        | Measurement unit          |
-++-------------------------------------+---------------------------+
-+| Acceleration on X, Y, and Z axis    | Meters per Second squared |
-++-------------------------------------+---------------------------+
-+| Temperature                         | Millidegrees Celsius      |
-++-------------------------------------+---------------------------+
-+
-+Usage examples
-+--------------
-+
-+Show device name:
-+
-+.. code-block:: bash
-+
-+	root:/sys/bus/iio/devices/iio:device0> cat name
-+        adxl382
-+
-+Show accelerometer channels value:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_x_raw
-+        -1771
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_y_raw
-+        282
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_z_raw
-+        -1523
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_scale
-+        0.004903325
-+
-+- X-axis acceleration = in_accel_x_raw * in_accel_scale = −8.683788575 m/s^2
-+- Y-axis acceleration = in_accel_y_raw * in_accel_scale = 1.38273765 m/s^2
-+- Z-axis acceleration = in_accel_z_raw * in_accel_scale = -7.467763975 m/s^2
-+
-+Set calibration offset for accelerometer channels:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_x_calibbias
-+        0
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo 50 > in_accel_x_calibbias
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_x_calibbias
-+        50
-+
-+Set sampling frequency:
-+
-+.. code-block:: bash
-+
-+	root:/sys/bus/iio/devices/iio:device0> cat sampling_frequency
-+        16000
-+        root:/sys/bus/iio/devices/iio:device0> cat sampling_frequency_available
-+        16000 32000 64000
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo 32000 > sampling_frequency
-+        root:/sys/bus/iio/devices/iio:device0> cat sampling_frequency
-+        32000
-+
-+Set low pass filter bandwidth for accelerometer channels:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_filter_low_pass_3db_frequency
-+        32000
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_filter_low_pass_3db_frequency_available
-+        32000 8000 4000 2000
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo 2000 > in_accel_filter_low_pass_3db_frequency
-+        root:/sys/bus/iio/devices/iio:device0> cat in_accel_filter_low_pass_3db_frequency
-+        2000
-+
-+3. Device buffers
-+=================
-+
-+This driver supports IIO buffers.
-+
-+All devices support retrieving the raw acceleration and temperature measurements
-+using buffers.
-+
-+Usage examples
-+--------------
-+
-+Select channels for buffer read:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo 1 > scan_elements/in_accel_x_en
-+        root:/sys/bus/iio/devices/iio:device0> echo 1 > scan_elements/in_accel_y_en
-+        root:/sys/bus/iio/devices/iio:device0> echo 1 > scan_elements/in_accel_z_en
-+        root:/sys/bus/iio/devices/iio:device0> echo 1 > scan_elements/in_temp_en
-+
-+Set the number of samples to be stored in the buffer:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo 10 > buffer/length
-+
-+Enable buffer readings:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> echo 1 > buffer/enable
-+
-+Obtain buffered data:
-+
-+.. code-block:: bash
-+
-+        root:/sys/bus/iio/devices/iio:device0> hexdump -C /dev/iio\:device0
-+        ...
-+        002bc300  f7 e7 00 a8 fb c5 24 80  f7 e7 01 04 fb d6 24 80  |......$.......$.|
-+        002bc310  f7 f9 00 ab fb dc 24 80  f7 c3 00 b8 fb e2 24 80  |......$.......$.|
-+        002bc320  f7 fb 00 bb fb d1 24 80  f7 b1 00 5f fb d1 24 80  |......$...._..$.|
-+        002bc330  f7 c4 00 c6 fb a6 24 80  f7 a6 00 68 fb f1 24 80  |......$....h..$.|
-+        002bc340  f7 b8 00 a3 fb e7 24 80  f7 9a 00 b1 fb af 24 80  |......$.......$.|
-+        002bc350  f7 b1 00 67 fb ee 24 80  f7 96 00 be fb 92 24 80  |...g..$.......$.|
-+        002bc360  f7 ab 00 7a fc 1b 24 80  f7 b6 00 ae fb 76 24 80  |...z..$......v$.|
-+        002bc370  f7 ce 00 a3 fc 02 24 80  f7 c0 00 be fb 8b 24 80  |......$.......$.|
-+        002bc380  f7 c3 00 93 fb d0 24 80  f7 ce 00 d8 fb c8 24 80  |......$.......$.|
-+        002bc390  f7 bd 00 c0 fb 82 24 80  f8 00 00 e8 fb db 24 80  |......$.......$.|
-+        002bc3a0  f7 d8 00 d3 fb b4 24 80  f8 0b 00 e5 fb c3 24 80  |......$.......$.|
-+        002bc3b0  f7 eb 00 c8 fb 92 24 80  f7 e7 00 ea fb cb 24 80  |......$.......$.|
-+        002bc3c0  f7 fd 00 cb fb 94 24 80  f7 e3 00 f2 fb b8 24 80  |......$.......$.|
-+        ...
-+
-+See ``Documentation/iio/iio_devbuf.rst`` for more information about how buffered
-+data is structured.
-+
-+4. IIO Interfacing Tools
-+========================
-+
-+See ``Documentation/iio/iio_tools.rst`` for the description of the available IIO
-+interfacing tools.
-diff --git a/Documentation/iio/index.rst b/Documentation/iio/index.rst
-index 4c13bfa2865c..1ce5b24d40aa 100644
---- a/Documentation/iio/index.rst
-+++ b/Documentation/iio/index.rst
-@@ -20,5 +20,6 @@ Industrial I/O Kernel Drivers
-    ad7944
-    adis16475
-    adis16480
-+   adxl380
-    bno055
-    ep93xx_adc
--- 
-2.45.2
+Thanks, I will fix in v3.
 
+Regards,
+Jonas
+
+> 
+> Best regards,
+> 
+> --
+> FUKAUMI Naoki
+> Radxa Computer (Shenzhen) Co., Ltd.
+> 
+
+[snip]
 
