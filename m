@@ -1,64 +1,51 @@
-Return-Path: <linux-kernel+bounces-231784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C3D1919DF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 05:51:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40E07919DFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 05:52:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D5481C2156E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 03:51:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E762B284D1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 03:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DDB17BB7;
-	Thu, 27 Jun 2024 03:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1610719BBA;
+	Thu, 27 Jun 2024 03:52:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AUIXGJKf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="ZoGCcuI5"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD67813AD8
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 03:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9F017BD3;
+	Thu, 27 Jun 2024 03:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719460264; cv=none; b=YOLTA+ILriAaSG82jNPeSwQeKvoaNkhNq4rcPO/9Ls6KK7L1MRkKcP8aPGB2wqNsrWZ0/wIZ0HZ0I9BG8NMAdYmLiVWfxmtUv/NwNgFOuTB0Su8JtYdWCzyXIcG7Pgr9OzxEsgqbTNoUzmY5yuPm4hexhgude0xn0rzJEmxjXQI=
+	t=1719460326; cv=none; b=AYkhnosJH2s8fOAJg6H03wEsBLvumR1q+IqpDIto8N2RXunwEo6aSy5AYwf4kvHs4FXxvy2KoBdr9gj36JR/ZWPiMEHLZ/vaJxrShPN+Xlk9scY8vd7L4xRvDyE1zJ4VG77NcpD3vYV3EIA/vWMInNGyQM2VsRa2oElj4FT470c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719460264; c=relaxed/simple;
-	bh=u13k8/jbA5cbbWjpQrQJs/IyrWHD8LR5T7wEUHaVnIA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=j31xmEjaaYXN9fND2kVCbnxIJC0Tyuwx3umQYu2cDd7QFepxDA73/TEK3afSx4NQ89IvKDiLxKdhu53OLJt2JfpETb61cVmpomVfdljuXcXnafohuf3AtFPii9VKr9+UOy9jEvVW6G2Bsc4APpwimyJjbBRZifxjZCBNraKzpEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AUIXGJKf; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719460262; x=1750996262;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=u13k8/jbA5cbbWjpQrQJs/IyrWHD8LR5T7wEUHaVnIA=;
-  b=AUIXGJKfDC2D3ZuhZCUm4hMOIzLVsaRMfSiIFEOtAoL0G4wUzrI2UcVb
-   Di0t5JTgR5gdk5STngtCKgREK2aCLa/cpWb4+Fm7Cxm9yRYNV3QsU1WlQ
-   H1X44wfln5401NY2fN1DTw8WGmlgtaUSRcFlwFRW8OP8i3Q8dDt8zOuhA
-   xty2+J6kTqGUUbubgctDHqZxIsGsmpdRRmv5jf4aVh9YT4RD/DmRbWS7V
-   0/CdCdcfWboFz80Oi0l+EhIeUuOZU/2/9BE2siXZ2wTzArYlUxtWdOHxt
-   2KfeM6Mk5M10Gef9/gHptw6xu8QPRwmvgm4zavQq1DPT2PPwL7uFFd57Z
-   g==;
-X-CSE-ConnectionGUID: m4z6B6A4QiaDPYlIVUkmfg==
-X-CSE-MsgGUID: Gl4Ch8fQQ5Wl7/O0lkEK2Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="41981583"
-X-IronPort-AV: E=Sophos;i="6.08,269,1712646000"; 
-   d="scan'208";a="41981583"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 20:51:01 -0700
-X-CSE-ConnectionGUID: tuRa64U/SeaCpcNeth7iNA==
-X-CSE-MsgGUID: HtA0KPkASvG/cNRa6e3I6g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,269,1712646000"; 
-   d="scan'208";a="67456925"
-Received: from hongyuni-mobl.ccr.corp.intel.com (HELO [10.238.1.243]) ([10.238.1.243])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 20:50:58 -0700
-Message-ID: <3fe43c05-3505-498e-b36f-04da15f73b6b@linux.intel.com>
-Date: Thu, 27 Jun 2024 11:50:55 +0800
+	s=arc-20240116; t=1719460326; c=relaxed/simple;
+	bh=lpzd7Nx5MF1oK1JcTeI2hyeThlXRya7VczRO6yhiGp0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cyrjrBoW9oKhV9kDZ7oaLK4PHm75tYmMNi2Vk+78ZQb5inhlnHW3s15cGDzbTBcPyECYBM9GGuFnJD3C2k4XGqwjx2jXhCwu3VF9ecODZQJdQ/tnpIT7hvFVF8djRbyQqyGTtWGAJO0g7+KNTakI68fRUvDnZjE+96l5DlDcTzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=ZoGCcuI5; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=B1h+6RnRSUxEQ2JIgw5GxEVm9g06YqeVqlOwm92wP1I=; t=1719460324;
+	x=1719892324; b=ZoGCcuI55OXXClPhvhHFIR/8kMpbYq5XdyW+zCfdXeS6fO8UYQsHWnj+seor5
+	gBG6pnccDLu+FCiSO73Bwn/fgK/dnvypmYbDgAS5PwwxyfM9paj19KdBwHxCPpDYkJidINqkK2dqN
+	0+FaQDwls03rzeo9k6Z5WMyvJbrDaZXjsouNGRGDGo1J1gi+rBO78+92B1kGbZlzeTaJPUGthrx/2
+	cgjkImpia77ThzH1LI9uvOuCGeiWWBrRzxG7RwDhdYbyKs3E/0Let44rSpqoMyompiiRX4VkXAPkr
+	YOZ27yanJaoU8WIvOcnwtxsh8Ez6eG4t7mKU2RYPjhb20sJMDQ==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sMgAl-0002OI-Ss; Thu, 27 Jun 2024 05:51:47 +0200
+Message-ID: <62647fab-b3d4-48ac-af4c-78c655dcff26@leemhuis.info>
+Date: Thu, 27 Jun 2024 05:51:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,193 +53,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] x86/fpu: Remove init_task FPU state dependencies, add
- debugging warning
-From: "Ning, Hongyu" <hongyu.ning@linux.intel.com>
-To: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
-Cc: Andy Lutomirski <luto@amacapital.net>,
- Andrew Morton <akpm@linux-foundation.org>, Dave Hansen <dave@sr71.net>,
- Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
- "H . Peter Anvin" <hpa@zytor.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Oleg Nesterov <oleg@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
- Uros Bizjak <ubizjak@gmail.com>, kirill.shutemov@linux.intel.com
-References: <20240605083557.2051480-1-mingo@kernel.org>
- <20240605083557.2051480-4-mingo@kernel.org>
- <62c71816-64a0-468e-8c90-d7059d040a1f@linux.intel.com>
-Content-Language: en-US
-In-Reply-To: <62c71816-64a0-468e-8c90-d7059d040a1f@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 2/2] Documentation: best practices for using Link
+ trailers
+To: Randy Dunlap <rdunlap@infradead.org>, Jonathan Corbet <corbet@lwn.net>,
+ Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+ Kees Cook <kees@kernel.org>
+Cc: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ workflows@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, ksummit@lists.linux.dev
+References: <20240619-docs-patch-msgid-link-v2-0-72dd272bfe37@linuxfoundation.org>
+ <20240619-docs-patch-msgid-link-v2-2-72dd272bfe37@linuxfoundation.org>
+ <202406211355.4AF91C2@keescook>
+ <20240621-amorphous-topaz-cormorant-cc2ddb@lemur>
+ <87cyo3fgcb.fsf@trenco.lwn.net>
+ <4709c2fa-081f-4307-bc9e-eef928255c08@infradead.org>
+From: Thorsten Leemhuis <linux@leemhuis.info>
+Content-Language: en-US, de-DE
+Autocrypt: addr=linux@leemhuis.info; keydata=
+ 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 n7RI
+In-Reply-To: <4709c2fa-081f-4307-bc9e-eef928255c08@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1719460324;ddd1b200;
+X-HE-SMSGID: 1sMgAl-0002OI-Ss
 
-
-
-On 2024/6/24 14:47, Ning, Hongyu wrote:
-> 
-> 
-> On 2024/6/5 16:35, Ingo Molnar wrote:
->> init_task's FPU state initialization was a bit of a hack:
+On 27.06.24 01:17, Randy Dunlap wrote:
+> On 6/26/24 4:13 PM, Jonathan Corbet wrote:
+>> Konstantin Ryabitsev <konstantin@linuxfoundation.org> writes:
+>>> On Fri, Jun 21, 2024 at 02:07:44PM GMT, Kees Cook wrote:
+>>>> On Wed, Jun 19, 2024 at 02:24:07PM -0400, Konstantin Ryabitsev wrote:
+>>>>> +   This URL should be used when referring to relevant mailing list
+>>>>> +   topics, related patch sets, or other notable discussion threads.
+>>>>> +   A convenient way to associate ``Link:`` trailers with the commit
+>>>>> +   message is to use markdown-like bracketed notation, for example::
+>>>>> ...
+>>>>> +     Link: https://lore.kernel.org/some-msgid@here # [1]
+>>>>> +     Link: https://bugzilla.example.org/bug/12345  # [2]
+>>>>
+>>>> Why are we adding the extra "# " characters? The vast majority of
+>>>> existing Link tags don't do this:
+>>>
+>>> That's just convention. In general, the hash separates the trailer from the
+>>> comment:
+>>>
+>>>     Trailer-name: actual-trailer-body # comment
 >>
->>         __x86_init_fpu_begin = .;
->>         . = __x86_init_fpu_begin + 128*PAGE_SIZE;
->>         __x86_init_fpu_end = .;
->>
->> But the init task isn't supposed to be using the FPU in any case,
->> so remove the hack and add in some debug warnings.
->>
->> Signed-off-by: Ingo Molnar <mingo@kernel.org>
->> Cc: Andy Lutomirski <luto@kernel.org>
->> Cc: Borislav Petkov <bp@alien8.de>
->> Cc: Fenghua Yu <fenghua.yu@intel.com>
->> Cc: H. Peter Anvin <hpa@zytor.com>
->> Cc: Linus Torvalds <torvalds@linux-foundation.org>
->> Cc: Oleg Nesterov <oleg@redhat.com>
->> Cc: Dave Hansen <dave.hansen@linux.intel.com>
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: Uros Bizjak <ubizjak@gmail.com>
->> Link: https://lore.kernel.org/r/ZgaNs1lC2Y+AnRG4@gmail.com
->> ---
->>   arch/x86/include/asm/processor.h |  6 +++++-
->>   arch/x86/kernel/fpu/core.c       | 12 +++++++++---
->>   arch/x86/kernel/fpu/init.c       |  5 ++---
->>   arch/x86/kernel/fpu/xstate.c     |  3 ---
->>   arch/x86/kernel/vmlinux.lds.S    |  4 ----
->>   5 files changed, 16 insertions(+), 14 deletions(-)
->>
->> diff --git a/arch/x86/include/asm/processor.h 
->> b/arch/x86/include/asm/processor.h
->> index 249c5fa20de4..ed8981866f4d 100644
->> --- a/arch/x86/include/asm/processor.h
->> +++ b/arch/x86/include/asm/processor.h
->> @@ -504,7 +504,11 @@ struct thread_struct {
->>   #endif
->>   };
->> -#define x86_task_fpu(task) ((struct fpu *)((void *)task + 
->> sizeof(*task)))
->> +#ifdef CONFIG_X86_DEBUG_FPU
->> +extern struct fpu *x86_task_fpu(struct task_struct *task);
->> +#else
->> +# define x86_task_fpu(task) ((struct fpu *)((void *)task + 
->> sizeof(*task)))
->> +#endif
->>   /*
->>    * X86 doesn't need any embedded-FPU-struct quirks:
->> diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
->> index 0ccabcd3bf62..fdc3b227800d 100644
->> --- a/arch/x86/kernel/fpu/core.c
->> +++ b/arch/x86/kernel/fpu/core.c
->> @@ -51,6 +51,15 @@ static DEFINE_PER_CPU(bool, in_kernel_fpu);
->>    */
->>   DEFINE_PER_CPU(struct fpu *, fpu_fpregs_owner_ctx);
->> +#ifdef CONFIG_X86_DEBUG_FPU
->> +struct fpu *x86_task_fpu(struct task_struct *task)
->> +{
->> +    WARN_ON_ONCE(task == &init_task);
->> +
->> +    return (void *)task + sizeof(*task);
->> +}
->> +#endif
->> +
->>   /*
->>    * Can we use the FPU in kernel mode with the
->>    * whole "kernel_fpu_begin/end()" sequence?
->> @@ -591,10 +600,8 @@ int fpu_clone(struct task_struct *dst, unsigned 
->> long clone_flags, bool minimal,
->>        * This is safe because task_struct size is a multiple of 
->> cacheline size.
->>        */
->>       struct fpu *dst_fpu = (void *)dst + sizeof(*dst);
->> -    struct fpu *src_fpu = x86_task_fpu(current);
->>       BUILD_BUG_ON(sizeof(*dst) % SMP_CACHE_BYTES != 0);
->> -    BUG_ON(!src_fpu);
->>       /* The new task's FPU state cannot be valid in the hardware. */
->>       dst_fpu->last_cpu = -1;
->> @@ -657,7 +664,6 @@ int fpu_clone(struct task_struct *dst, unsigned 
->> long clone_flags, bool minimal,
->>       if (update_fpu_shstk(dst, ssp))
->>           return 1;
->> -    trace_x86_fpu_copy_src(src_fpu);
->>       trace_x86_fpu_copy_dst(dst_fpu);
->>       return 0;
->> diff --git a/arch/x86/kernel/fpu/init.c b/arch/x86/kernel/fpu/init.c
->> index 11aa31410df2..53580e59e5db 100644
->> --- a/arch/x86/kernel/fpu/init.c
->> +++ b/arch/x86/kernel/fpu/init.c
->> @@ -38,7 +38,7 @@ static void fpu__init_cpu_generic(void)
->>       /* Flush out any pending x87 state: */
->>   #ifdef CONFIG_MATH_EMULATION
->>       if (!boot_cpu_has(X86_FEATURE_FPU))
->> -        fpstate_init_soft(&x86_task_fpu(current)->fpstate->regs.soft);
->> +        ;
->>       else
->>   #endif
->>           asm volatile ("fninit");
->> @@ -164,7 +164,7 @@ static void __init fpu__init_task_struct_size(void)
->>        * Subtract off the static size of the register state.
->>        * It potentially has a bunch of padding.
->>        */
->> -    task_size -= sizeof(x86_task_fpu(current)->__fpstate.regs);
->> +    task_size -= sizeof(union fpregs_state);
->>       /*
->>        * Add back the dynamically-calculated register state
->> @@ -209,7 +209,6 @@ static void __init 
->> fpu__init_system_xstate_size_legacy(void)
->>       fpu_kernel_cfg.default_size = size;
->>       fpu_user_cfg.max_size = size;
->>       fpu_user_cfg.default_size = size;
->> -    fpstate_reset(x86_task_fpu(current));
->>   }
->>   /*
->> diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
->> index 90b11671e943..1f37da22ddbe 100644
->> --- a/arch/x86/kernel/fpu/xstate.c
->> +++ b/arch/x86/kernel/fpu/xstate.c
->> @@ -844,9 +844,6 @@ void __init fpu__init_system_xstate(unsigned int 
->> legacy_size)
->>       if (err)
->>           goto out_disable;
->> -    /* Reset the state for the current task */
->> -    fpstate_reset(x86_task_fpu(current));
->> -
->>       /*
->>        * Update info used for ptrace frames; use standard-format size 
->> and no
->>        * supervisor xstates:
->> diff --git a/arch/x86/kernel/vmlinux.lds.S 
->> b/arch/x86/kernel/vmlinux.lds.S
->> index 226244a894da..3509afc6a672 100644
->> --- a/arch/x86/kernel/vmlinux.lds.S
->> +++ b/arch/x86/kernel/vmlinux.lds.S
->> @@ -170,10 +170,6 @@ SECTIONS
->>           /* equivalent to task_pt_regs(&init_task) */
->>           __top_init_kernel_stack = __end_init_stack - 
->> TOP_OF_KERNEL_STACK_PADDING - PTREGS_SIZE;
->> -        __x86_init_fpu_begin = .;
->> -        . = __x86_init_fpu_begin + 128*PAGE_SIZE;
->> -        __x86_init_fpu_end = .;
->> -
->>   #ifdef CONFIG_X86_32
->>           /* 32 bit has nosave before _edata */
->>           NOSAVE_DATA
+>> Did we ever come to a conclusion on this?  This one character seems to
+>> be the main source of disagreement in this series, I'm wondering if I
+>> should just apply it and let the painting continue thereafter...?
 > 
-> Hi,
-> 
-> we've hit x86/fpu related WARNING and NULL pointer issue during KVM/QEMU 
-> VM booting with latest linux-next kernel, bisect results show it's 
-> related to this commit, would you take a look?
-> 
-> detailed description in https://bugzilla.kernel.org/show_bug.cgi?id=218980
-> 
+> We have used '#' for ages for adding comments to by: tags.
+> I'm surprised that it's not documented.
 
-add a quick update:
-1. CONFIG_X86_DEBUG_FPU=y was set by auto regression framework
-2. disable CONFIG_X86_DEBUG_FPU will bypass above WARNING and NULL 
-pointer issue
+I thought it was documented, but either I was wrong or can't find it.
+But I found process/5.Posting.rst, which provides this example:
 
-it may not make sense for general kernel regression check to enable 
-CONFIG_X86_DEBUG_FPU=y, will revise auto regression framework to keep 
-CONFIG_X86_DEBUG_FPU disabled to bypass it.
+        Link: https://example.com/somewhere.html  optional-other-stuff
 
-in the meanwhile, please let me know if this issue is still valuable to 
-look into.
+So no "# " there. So to avoid inconsistencies I guess this should not be
+applied, unless that document is changed as well.
+
+Ciao, Thorsten
 
