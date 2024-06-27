@@ -1,191 +1,258 @@
-Return-Path: <linux-kernel+bounces-231783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9837D919DF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 05:44:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C3D1919DF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 05:51:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 180331F226F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 03:44:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D5481C2156E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 03:51:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B536D17BD3;
-	Thu, 27 Jun 2024 03:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DDB17BB7;
+	Thu, 27 Jun 2024 03:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="iT8uHHnh"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2073.outbound.protection.outlook.com [40.107.100.73])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AUIXGJKf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC6113AD8;
-	Thu, 27 Jun 2024 03:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719459847; cv=fail; b=B+Ry+GiV5Ao3UqWxCLqrUUqkVjL9Ygh/KWQXe0lySSdSi8eO0o5UmxLx8Mgs4LczmcYIgmGO3sHcRwAro9pLHk2Sr3CIw3IchyEbr9zLVeIFag2+ipbVvwQVBaV5vRP8rH+v6P29q705ohZ6GQXIJBsU6+GCeclieHjKJRj25SM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719459847; c=relaxed/simple;
-	bh=bvcgZ90YD7EZSoIT0mECXK6hLTEXtRrE22NcL0f/zwA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=c1+XOTpjkIC1nTzyeST1lALHPv+PCRWOEE5nlFhhYyHvawBFjVyYA4utkRMaX9YN7FlwmCTkrAAWi8xM093elzgJElRfBKvYnp2nFxP/tzP+FI2TvH0thnDVGaj/huIbx3UjFJFZHVB2ICDG5vljaQJ0vlKjiT02eYNpeen865w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=iT8uHHnh; arc=fail smtp.client-ip=40.107.100.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=a8A5NTwsoYtPhr2NQjU98a+/0sRZXKlTRKl9Vx7zgeWRyJrvTm96f3I1r1fwRr9YQGJnBFzTEsL+xWmtPgcMfJiTHEBcHy66lIMzTkUMb4viHa+KBltlemtu1XBY+V+fgBxGNQ/Gke8TcWZwZHqPO2X6X/4MGoiAakfQkWqfvwCjBf0tEznk3c5Azh7iXQ0khU3q+BYQHgyGKab3Zn1+O86qOl0GE4JRLUW8XZZjTuC+QOrODcmo0JNGHdMP6vxRmwbabXxG8tm8zDsSslzC7e4M/+WDIrUFWUkr8mjQffhu7HhowTSlJggG4YKke4T5JBYKvrR0ng5+fsR1ikcVLA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bvcgZ90YD7EZSoIT0mECXK6hLTEXtRrE22NcL0f/zwA=;
- b=CyubnIsbanKJdn1OOKPw2phr3sspKKCP6vlFesETZb7EjNcrUK0T1ue68e6ZAH4zUfgFtNe2azmSg24XKARnLnzYr0TS6VMoz/l/PEpYtuA7gMO6iVz+RSQmMKQJYYifyAaQXPzoXdclfXSU8+ZkpuC0ndISivlN93G7kMDfBNvFboEP3j7FUImwRDMZjE7ZYqoq55lIiCN3zTu0/MBeUbPCAyKbORG2HquxAhx35nVv/Kx4NtdHhkZbNPYXdH3YLIZ1tjI5zbw0uWu1mCaZ2Eisl8Cze/QzsJ/+zX8dQlMLGTYbdL9kzCCK3MACupztomw+7SuOv5kDwArwdiNWtg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bvcgZ90YD7EZSoIT0mECXK6hLTEXtRrE22NcL0f/zwA=;
- b=iT8uHHnh7qSDYxXj6B0crhvpjLNOHzxqbZNy1/Z5TTPsOZHsVjX31kc97IgL3gYXsz72KknG6BcQHSw0Onm3hC9kbMGKf2hfcu1K+MV0cLbKq4EWdqz/HI4PAwNChbvC9C65rCm8ObzNkWg8x/XaFH4ovSoMMQgkuKoGMOKgjM+G76blJaOdI5uibtJrrIkLqwVUeGh5I7ihIjRvFz+n5b3YuErBdgJodusQnL3p4gLLx6D2Y1T/KOJKiRKci2nCHE1Q13wxsyUDi6gcqxAyTOWvFTu6m0TuRoDjWC2HpqEpWqKo0GFo6+UFJHRx8PNg7atMllPBi+eK9ShZkS3Zyg==
-Received: from LV3PR12MB9404.namprd12.prod.outlook.com (2603:10b6:408:219::9)
- by CY5PR12MB6622.namprd12.prod.outlook.com (2603:10b6:930:42::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.29; Thu, 27 Jun
- 2024 03:44:02 +0000
-Received: from LV3PR12MB9404.namprd12.prod.outlook.com
- ([fe80::57ac:82e6:1ec5:f40b]) by LV3PR12MB9404.namprd12.prod.outlook.com
- ([fe80::57ac:82e6:1ec5:f40b%5]) with mapi id 15.20.7698.025; Thu, 27 Jun 2024
- 03:44:02 +0000
-From: Chaitanya Kulkarni <chaitanyak@nvidia.com>
-To: "linan666@huaweicloud.com" <linan666@huaweicloud.com>
-CC: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "hch@lst.de"
-	<hch@lst.de>, "yukuai3@huawei.com" <yukuai3@huawei.com>,
-	"yi.zhang@huawei.com" <yi.zhang@huawei.com>, "houtao1@huawei.com"
-	<houtao1@huawei.com>, "yangerkun@huawei.com" <yangerkun@huawei.com>,
-	"axboe@kernel.dk" <axboe@kernel.dk>
-Subject: Re: [PATCH] block: clean up the check in blkdev_iomap_begin()
-Thread-Topic: [PATCH] block: clean up the check in blkdev_iomap_begin()
-Thread-Index: AQHaxvbBgy7abqndM0m6RkQSqpCgcrHa+pIA
-Date: Thu, 27 Jun 2024 03:44:02 +0000
-Message-ID: <e629ae7f-509e-4cab-b069-54e889bd8cd0@nvidia.com>
-References: <20240625115517.1472120-1-linan666@huaweicloud.com>
-In-Reply-To: <20240625115517.1472120-1-linan666@huaweicloud.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV3PR12MB9404:EE_|CY5PR12MB6622:EE_
-x-ms-office365-filtering-correlation-id: 079666b4-e125-4671-4db9-08dc965b62e4
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?U3Zxb1VnZE9ZaVZxbGIvZ1MyRC9naWtPaHBMa0RNYzYxYkpiSnE4SW55bEhL?=
- =?utf-8?B?UTJ5azQyazMxSkxHTXIwT1pSeXRWajZCT1FLQi9QeWlsODhpTXNwZk5qMng1?=
- =?utf-8?B?YnFBQWRySWZyUC9LODFpYU44K05aOTJnbTNLd0thMHVzeEpXamdlNG0yYjF0?=
- =?utf-8?B?dEQ1M3I0bXcrMzJVWDJPb2VySExxNnR0YkxiYUZJRlIyZWdZVk1KMnVONmFw?=
- =?utf-8?B?U3p1MFhXRG15Tkd4cWUxdVlWQ2lNSG5IM2lGTCsvOUlvbkFuMm1qWElTMzNL?=
- =?utf-8?B?T1dpVUowdk1sejQwTko1VUlIejhkU2h0T3o3bkJmb2dWT3JCeXBLeGFlZXZC?=
- =?utf-8?B?R20ydUhDV3Fpb0crM0FuV2ZCVmx1SUQwQ1ZuQXZXa3phUGxqQUUyVTFkSmIv?=
- =?utf-8?B?SE9sZUZ0cFNRc2dmRGIvci9pOVAyeUFXTFNaREloWGcyMkRDd1dWRkVXTGZ3?=
- =?utf-8?B?UjlNVWVPQ2lJZDBRaGdWWGkxcnduL2RHbzVselZYMmZXVGdPOXZyamhIQ3gw?=
- =?utf-8?B?VkpISEV5REFjYUlCeVA3TFNyTHRWNi9ucCtpeW50RElSdUpXOW5ETklkVXBT?=
- =?utf-8?B?NEs4aUNZMWFZSC8zNTduekFrdVI4Vit3VTdnQlhPNEM2Y0lDNWpnQXVoSlQ5?=
- =?utf-8?B?RVdCWVUzdmxWOERtODNPNjRIYk5RUUlIQjdwYTkvQnRHUmVUTnhDT3lwTjRZ?=
- =?utf-8?B?czRwWHZ4VnJFWDE0MWVZWGora3Z6eWRXdHMxN0xsUjN1UUNBeUhIeko0MGRu?=
- =?utf-8?B?dnlzVTh5V2tUQ1BJZytzV0dqaEtCRzJnWSsrUXhuaWpYejVka2VOdU9uaWIv?=
- =?utf-8?B?WGtuR3AzZmYrbm1QUFNVWjFtTVhKVkZ6ejFuZFg5cnBVWnZlYURneVBDNkF1?=
- =?utf-8?B?b29BR25nWEFlSXB2dXlXdWpuYkx6MWNvZlFqZTd5QUp2dXI5SnMxQXFlQlJY?=
- =?utf-8?B?NUNSaDJBdWZTbk0va1U5VkJSbEM2czdnTUtKQlM1M0szZDRRRlFUUVRyOU1v?=
- =?utf-8?B?dGVrZHIwWmthSWVSUmtsS2pUY3FudVhtOU1wMXhNa3dwYjhhMXBZcE5xVEl3?=
- =?utf-8?B?VDNJM3BJa3Y1cjBWN1RnZXkzRklrb3ZjTXJoTkc5Y2tRa2NQU0RGVlhpYXQv?=
- =?utf-8?B?SFZXSWJaejM1U0lKeGdLTnFmTFliSmQ5ekhLMngwM1duNUlrMWN6a05CdU1x?=
- =?utf-8?B?RW5ucWM2Rmt0bjdFZGJXZXVSYXFYZEFaTzNidTRYYXhNMXRyYW9xN0JFcFdm?=
- =?utf-8?B?eGNNc2g4dG9iaThhTnVZTXlPTzFqbk5jWkVoN0Uyb1NKNDRYdk5TbE4xOXFB?=
- =?utf-8?B?YjUzd040dEhhODdld1RTeFJBZUFrN1NuMEU1bFFhbXQ0Q21wTmhYTGNPSEw1?=
- =?utf-8?B?eFRwZVVOaE1PMko4N3lRbkNUKzhYWFY0b1lWVmVYWmpkWGpTbXQwam1RQUlj?=
- =?utf-8?B?NnBQZmpYSzVCc0p5TTdGb1VKVkJUY3p3bGU2UXlDcmZEWUkxVW9SeTE2U1du?=
- =?utf-8?B?TS9pUi9sZUp3TkN1T0JIK3BwbmpIZFBUeHMrZ2RLMzBZMTU4MHdXZmlvNXJW?=
- =?utf-8?B?NU92MEN5MHRpMUw1ckd1dGJwSVpQb1V5NlJyN1RHdytvcVA0UFJzTFl3MWxh?=
- =?utf-8?B?dGVaa0NnTU5PZ0VwdTJ0UnRSdUExaHFoU2p6SURFZitIQ3UxSVl0TUpnUGFK?=
- =?utf-8?B?ZkQ5ejJHbFBhZWlPckdyL3FIRG45eTdZc0djVFJJcjBmUE9idTJSWU5ZVVkv?=
- =?utf-8?B?Wng3NEJsVVJrVUhIN1JlRU1CVlp3SnlUMk4vRGt2akJFaVFvYmtEdERXUzBn?=
- =?utf-8?B?TStGSlRxNzRabWpNVkN3TW5wTWV6dUpTM2k0bE90Y21ZSCt4OW90S2tWaHZ4?=
- =?utf-8?B?Y0g1N1Fhakh1S3NialQzbzhHN2JCQktKS0NKM1ZURUM2aXc9PQ==?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR12MB9404.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?L1dLUUMyVklYVGdqRlZXVGI2aTFSaWFTTFdCY1lKdVdwMXhkUFdQL3hsSU05?=
- =?utf-8?B?QzR5WGZtN1BwWlU5ZndFOTlWYzlWOXNVaDB6MUh2cTQ4dElHeEV0YVhlc2xp?=
- =?utf-8?B?bHRhZkxNaWNtSGxiaFNiZU5LVGNreTIzMXhiVmRBMzRzelRFQlBmVHRYb1F2?=
- =?utf-8?B?NEhFakpBaDRMc2pHbnZpR3dTQ2xmOGJqQUxoMk9ybkdUUUNRZjBtTVY2emNC?=
- =?utf-8?B?U0xpcXMyOTd5WXBmODBGZmNOKzRDdUpiREl5STdnalJnL2NPMlUzQi9EUzI2?=
- =?utf-8?B?VjJQQ0ZmK1dwa0YyMjRGTXhFZnEvTTZlNzRhT201TklhTGZIMjllc3ByZmpq?=
- =?utf-8?B?bWRqZzlxTHk1WnhESVRFS1hsSTVDMjNLbmhERGlZMVpOaFNWdVYxYmFrblY2?=
- =?utf-8?B?TTZzZnpTZ091bFc2RnhpNC9KTXduZHNaVEZsL2hESExQbWJBU0pCeFczMDJL?=
- =?utf-8?B?Y05acitTaXNXV3BLTjFtRDZHMWxxKzB1V0lwTHVMcnM5aTJreURJWmhkaXB0?=
- =?utf-8?B?OUdzeDlTRXlCQUpPTGVsM0RqeVVlM2p2czBxeElSb3FBV2F3dWhxRWFqNnJ2?=
- =?utf-8?B?SUxNVjYwSkpnQklMcXYxUmdGNzBMRDc2UjA5K202QUYwZTZiQ0JBK3NWRHRP?=
- =?utf-8?B?UXloM3djSmVLYVFnNmxkSEtzNnEzRkFKWnE0TXFnUXN2cW1ELzA4NWs5K0RG?=
- =?utf-8?B?S1BNQWJlZzZnZlJDR3o1NmQ1a09QSDBqbUdIOHIvQ25KUmFNaVFINm9uYi9E?=
- =?utf-8?B?MFZGSUNVeXNWUi8ycnhwZ2poWHlDWUJ0eHJOaGZaMml3Zk04c1VPOFNHZXdp?=
- =?utf-8?B?QllyYWlXcThYNEJOSldXQUd5K1JZZUl3cHhzQzdUTGdnWHlhVE1Oc3BEejEw?=
- =?utf-8?B?NUs5bHl3NVlYbWZHRHFrSy9BcWJVcUkwV0NONlhkbVI5KzhNc3M0Ylg4bmov?=
- =?utf-8?B?ME8vOVY4VDVyWUFjaXFoRklvTE5rRnF2dE9lYWkvOURqdytGY3FQWXRBOS8x?=
- =?utf-8?B?NXZ1dnZ0OHVqeXZLaHZNTDlCYmxWRXFXUEtQWUkydWxiRzZEc3hpTXlmcjU0?=
- =?utf-8?B?dUhnR1BLcHhwTXdwVEU3S3ZQQjNibTlMS1BRVGdCalhQSjdKVnFNeFRqaWtn?=
- =?utf-8?B?MjhPVE1WQ2RwS0JaTjZOUGtMS1Z3NFkwbitwQnVXeU9jTVg0NkxsaERjWmxt?=
- =?utf-8?B?L1FzTmRmcnZLUml2ejFYYzVOTGo0S3ZtdHRoT1R2MzR4NHVqUUpFdTA3YUQ2?=
- =?utf-8?B?QjBzZkc2b0dmOTI0TW93R3lLZWRSd0hLZGJsZUo0Q2tMOGNzaGNvU2RCaGVE?=
- =?utf-8?B?dXZ5ZUVvbU80QkVMSnpUR21FTWpmcGxjUTVQUFg1QkxtU2ZPM2QySzl2Ky9Q?=
- =?utf-8?B?bWQyUnNVQmZzNVVTOEdkZ2lvSURYZWhRWk9qVEkxcm9ETEt2NWU2K3U3N1lm?=
- =?utf-8?B?RFZzRGZIZVpHUXI2MFN4QnQvMVRCWWNYNXhrZVdLTEU2cFZ2L1p3M0t2WVk4?=
- =?utf-8?B?SjFLbDJucjd5Vk9PUXRPQVZZNThXZ0JEeWdURUJsS3VIU3oyZVVURnplZDh3?=
- =?utf-8?B?M09IT09pZ3JFRGNSRGNvS3g0Um0xVWxiTDM3cUtjYkRyUzY3SU5TTEV0SVJB?=
- =?utf-8?B?Y2QxVHI5K0dkQmoxcE1NK00xd0JCNXpRaFkvZGkzdVNlNG9XcWZ4dTlDanlo?=
- =?utf-8?B?VzU1WHl6R0ZxNkVzZEw5Q1hVYU45Uy80UkNTMnNLTkFYRHZJSjA0dm1mRFEw?=
- =?utf-8?B?SnVNS29jWVpoSzBZUjRKMlZrVmxtY3VWOXZ1NmNsMWFFS2FFZW94dFp3NTRS?=
- =?utf-8?B?bisycjRqa045VVM0QjEwc2w5VFRid2tNa2JtczhWQWFOUUdYeWlxZkFCN2N4?=
- =?utf-8?B?UGFEdWVTTTR5eWtkQllVa25SNTcxaUlqZE5SaERyWDE4T1RLeUlDQnFCOWtu?=
- =?utf-8?B?UGFGNUhmS3l5VHRqMWxML2ZBRVNiWlJUYS83VHBXdi83S04ySW82YjZNSCtZ?=
- =?utf-8?B?QU1PbDY0ZUVpNElHTXpWTWpjUFZ5RHAzQnFSdlFHcEs5Z21IYXB0NmtiRnZ6?=
- =?utf-8?B?NUpFNUhOb1ZBMXliTk91RWpUYUFPQjF6dURmY2VnL0JuVEFOOWtLNzBPKzhQ?=
- =?utf-8?Q?2wRie5GtDIIt1UbyIsqeEj+bl?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <2A14C1975E90ED4AB108E5474D5FADE2@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD67813AD8
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 03:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719460264; cv=none; b=YOLTA+ILriAaSG82jNPeSwQeKvoaNkhNq4rcPO/9Ls6KK7L1MRkKcP8aPGB2wqNsrWZ0/wIZ0HZ0I9BG8NMAdYmLiVWfxmtUv/NwNgFOuTB0Su8JtYdWCzyXIcG7Pgr9OzxEsgqbTNoUzmY5yuPm4hexhgude0xn0rzJEmxjXQI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719460264; c=relaxed/simple;
+	bh=u13k8/jbA5cbbWjpQrQJs/IyrWHD8LR5T7wEUHaVnIA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=j31xmEjaaYXN9fND2kVCbnxIJC0Tyuwx3umQYu2cDd7QFepxDA73/TEK3afSx4NQ89IvKDiLxKdhu53OLJt2JfpETb61cVmpomVfdljuXcXnafohuf3AtFPii9VKr9+UOy9jEvVW6G2Bsc4APpwimyJjbBRZifxjZCBNraKzpEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AUIXGJKf; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719460262; x=1750996262;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=u13k8/jbA5cbbWjpQrQJs/IyrWHD8LR5T7wEUHaVnIA=;
+  b=AUIXGJKfDC2D3ZuhZCUm4hMOIzLVsaRMfSiIFEOtAoL0G4wUzrI2UcVb
+   Di0t5JTgR5gdk5STngtCKgREK2aCLa/cpWb4+Fm7Cxm9yRYNV3QsU1WlQ
+   H1X44wfln5401NY2fN1DTw8WGmlgtaUSRcFlwFRW8OP8i3Q8dDt8zOuhA
+   xty2+J6kTqGUUbubgctDHqZxIsGsmpdRRmv5jf4aVh9YT4RD/DmRbWS7V
+   0/CdCdcfWboFz80Oi0l+EhIeUuOZU/2/9BE2siXZ2wTzArYlUxtWdOHxt
+   2KfeM6Mk5M10Gef9/gHptw6xu8QPRwmvgm4zavQq1DPT2PPwL7uFFd57Z
+   g==;
+X-CSE-ConnectionGUID: m4z6B6A4QiaDPYlIVUkmfg==
+X-CSE-MsgGUID: Gl4Ch8fQQ5Wl7/O0lkEK2Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="41981583"
+X-IronPort-AV: E=Sophos;i="6.08,269,1712646000"; 
+   d="scan'208";a="41981583"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 20:51:01 -0700
+X-CSE-ConnectionGUID: tuRa64U/SeaCpcNeth7iNA==
+X-CSE-MsgGUID: HtA0KPkASvG/cNRa6e3I6g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,269,1712646000"; 
+   d="scan'208";a="67456925"
+Received: from hongyuni-mobl.ccr.corp.intel.com (HELO [10.238.1.243]) ([10.238.1.243])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 20:50:58 -0700
+Message-ID: <3fe43c05-3505-498e-b36f-04da15f73b6b@linux.intel.com>
+Date: Thu, 27 Jun 2024 11:50:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR12MB9404.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 079666b4-e125-4671-4db9-08dc965b62e4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jun 2024 03:44:02.4612
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: K9VZHEjVE7mjw/Hasjim9Ox0UweOzHMiQpVb0dpybi4/bkSI1qd1cjZWSlTxQY4d5xjtpZTIrImS0FFEFcs1Ag==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6622
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] x86/fpu: Remove init_task FPU state dependencies, add
+ debugging warning
+From: "Ning, Hongyu" <hongyu.ning@linux.intel.com>
+To: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
+Cc: Andy Lutomirski <luto@amacapital.net>,
+ Andrew Morton <akpm@linux-foundation.org>, Dave Hansen <dave@sr71.net>,
+ Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
+ "H . Peter Anvin" <hpa@zytor.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Oleg Nesterov <oleg@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Uros Bizjak <ubizjak@gmail.com>, kirill.shutemov@linux.intel.com
+References: <20240605083557.2051480-1-mingo@kernel.org>
+ <20240605083557.2051480-4-mingo@kernel.org>
+ <62c71816-64a0-468e-8c90-d7059d040a1f@linux.intel.com>
+Content-Language: en-US
+In-Reply-To: <62c71816-64a0-468e-8c90-d7059d040a1f@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-T24gNi8yNS8yNCAwNDo1NSwgbGluYW42NjZAaHVhd2VpY2xvdWQuY29tIHdyb3RlOg0KPiBGcm9t
-OiBMaSBOYW48bGluYW4xMjJAaHVhd2VpLmNvbT4NCj4NCj4gSXQgaXMgb2RkIHRvIGNoZWNrIHRo
-ZSBvZmZzZXQgYW1pZHN0IGEgc2VyaWVzIG9mIGFzc2lnbm1lbnRzLiBNb3ZpbmcgdGhpcw0KPiBj
-aGVjayB0byB0aGUgYmVnaW5uaW5nIG9mIHRoZSBmdW5jdGlvbiBtYWtlcyB0aGUgY29kZSBsb29r
-IGJldHRlci4NCj4NCj4gU2lnbmVkLW9mZi1ieTogTGkgTmFuPGxpbmFuMTIyQGh1YXdlaS5jb20+
-DQoNCml0IGlzIGFsd2F5cyBiZXR0ZXIgdG8gd2FpdCBmb3IgYXNzaWdubWVudHMgYWZ0ZXIgYWxs
-IHRoZSBlcnJvciBjaGVja3MuDQoNCkkgYmVsaWV2ZSB5b3UgaGF2ZSB2ZXJpZmllZCBhbGwgdGhl
-IGNhbGxlcnMgYW5kIG1ha2Ugc3VyZSBub25lIG9mIHRoZQ0KY2FsbGVycyByZWx5IG9uIHRoZXNl
-IGFzc2lnbm1lbnRzIHdoZW4gdGhpcyBmdW5jdGlvbiByZXR1cm5zIC1FSU8gYW5kDQp0aGlzIGNo
-YW5nZSB3aWxsIG5vdCByZXN1bHQgaW4gY2hhbmdlIG9mIGJlaGF2aW9yLCBpZiB0aGF0IGlzIHRo
-ZQ0KY2FzZSA6LQ0KDQpMb29rcyBnb29kLg0KDQpSZXZpZXdlZC1ieTogQ2hhaXRhbnlhIEt1bGth
-cm5pIDxrY2hAbnZpZGlhLmNvbT4NCg0KLWNrDQoNCg0K
+
+
+On 2024/6/24 14:47, Ning, Hongyu wrote:
+> 
+> 
+> On 2024/6/5 16:35, Ingo Molnar wrote:
+>> init_task's FPU state initialization was a bit of a hack:
+>>
+>>         __x86_init_fpu_begin = .;
+>>         . = __x86_init_fpu_begin + 128*PAGE_SIZE;
+>>         __x86_init_fpu_end = .;
+>>
+>> But the init task isn't supposed to be using the FPU in any case,
+>> so remove the hack and add in some debug warnings.
+>>
+>> Signed-off-by: Ingo Molnar <mingo@kernel.org>
+>> Cc: Andy Lutomirski <luto@kernel.org>
+>> Cc: Borislav Petkov <bp@alien8.de>
+>> Cc: Fenghua Yu <fenghua.yu@intel.com>
+>> Cc: H. Peter Anvin <hpa@zytor.com>
+>> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+>> Cc: Oleg Nesterov <oleg@redhat.com>
+>> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>> Cc: Uros Bizjak <ubizjak@gmail.com>
+>> Link: https://lore.kernel.org/r/ZgaNs1lC2Y+AnRG4@gmail.com
+>> ---
+>>   arch/x86/include/asm/processor.h |  6 +++++-
+>>   arch/x86/kernel/fpu/core.c       | 12 +++++++++---
+>>   arch/x86/kernel/fpu/init.c       |  5 ++---
+>>   arch/x86/kernel/fpu/xstate.c     |  3 ---
+>>   arch/x86/kernel/vmlinux.lds.S    |  4 ----
+>>   5 files changed, 16 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/arch/x86/include/asm/processor.h 
+>> b/arch/x86/include/asm/processor.h
+>> index 249c5fa20de4..ed8981866f4d 100644
+>> --- a/arch/x86/include/asm/processor.h
+>> +++ b/arch/x86/include/asm/processor.h
+>> @@ -504,7 +504,11 @@ struct thread_struct {
+>>   #endif
+>>   };
+>> -#define x86_task_fpu(task) ((struct fpu *)((void *)task + 
+>> sizeof(*task)))
+>> +#ifdef CONFIG_X86_DEBUG_FPU
+>> +extern struct fpu *x86_task_fpu(struct task_struct *task);
+>> +#else
+>> +# define x86_task_fpu(task) ((struct fpu *)((void *)task + 
+>> sizeof(*task)))
+>> +#endif
+>>   /*
+>>    * X86 doesn't need any embedded-FPU-struct quirks:
+>> diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
+>> index 0ccabcd3bf62..fdc3b227800d 100644
+>> --- a/arch/x86/kernel/fpu/core.c
+>> +++ b/arch/x86/kernel/fpu/core.c
+>> @@ -51,6 +51,15 @@ static DEFINE_PER_CPU(bool, in_kernel_fpu);
+>>    */
+>>   DEFINE_PER_CPU(struct fpu *, fpu_fpregs_owner_ctx);
+>> +#ifdef CONFIG_X86_DEBUG_FPU
+>> +struct fpu *x86_task_fpu(struct task_struct *task)
+>> +{
+>> +    WARN_ON_ONCE(task == &init_task);
+>> +
+>> +    return (void *)task + sizeof(*task);
+>> +}
+>> +#endif
+>> +
+>>   /*
+>>    * Can we use the FPU in kernel mode with the
+>>    * whole "kernel_fpu_begin/end()" sequence?
+>> @@ -591,10 +600,8 @@ int fpu_clone(struct task_struct *dst, unsigned 
+>> long clone_flags, bool minimal,
+>>        * This is safe because task_struct size is a multiple of 
+>> cacheline size.
+>>        */
+>>       struct fpu *dst_fpu = (void *)dst + sizeof(*dst);
+>> -    struct fpu *src_fpu = x86_task_fpu(current);
+>>       BUILD_BUG_ON(sizeof(*dst) % SMP_CACHE_BYTES != 0);
+>> -    BUG_ON(!src_fpu);
+>>       /* The new task's FPU state cannot be valid in the hardware. */
+>>       dst_fpu->last_cpu = -1;
+>> @@ -657,7 +664,6 @@ int fpu_clone(struct task_struct *dst, unsigned 
+>> long clone_flags, bool minimal,
+>>       if (update_fpu_shstk(dst, ssp))
+>>           return 1;
+>> -    trace_x86_fpu_copy_src(src_fpu);
+>>       trace_x86_fpu_copy_dst(dst_fpu);
+>>       return 0;
+>> diff --git a/arch/x86/kernel/fpu/init.c b/arch/x86/kernel/fpu/init.c
+>> index 11aa31410df2..53580e59e5db 100644
+>> --- a/arch/x86/kernel/fpu/init.c
+>> +++ b/arch/x86/kernel/fpu/init.c
+>> @@ -38,7 +38,7 @@ static void fpu__init_cpu_generic(void)
+>>       /* Flush out any pending x87 state: */
+>>   #ifdef CONFIG_MATH_EMULATION
+>>       if (!boot_cpu_has(X86_FEATURE_FPU))
+>> -        fpstate_init_soft(&x86_task_fpu(current)->fpstate->regs.soft);
+>> +        ;
+>>       else
+>>   #endif
+>>           asm volatile ("fninit");
+>> @@ -164,7 +164,7 @@ static void __init fpu__init_task_struct_size(void)
+>>        * Subtract off the static size of the register state.
+>>        * It potentially has a bunch of padding.
+>>        */
+>> -    task_size -= sizeof(x86_task_fpu(current)->__fpstate.regs);
+>> +    task_size -= sizeof(union fpregs_state);
+>>       /*
+>>        * Add back the dynamically-calculated register state
+>> @@ -209,7 +209,6 @@ static void __init 
+>> fpu__init_system_xstate_size_legacy(void)
+>>       fpu_kernel_cfg.default_size = size;
+>>       fpu_user_cfg.max_size = size;
+>>       fpu_user_cfg.default_size = size;
+>> -    fpstate_reset(x86_task_fpu(current));
+>>   }
+>>   /*
+>> diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
+>> index 90b11671e943..1f37da22ddbe 100644
+>> --- a/arch/x86/kernel/fpu/xstate.c
+>> +++ b/arch/x86/kernel/fpu/xstate.c
+>> @@ -844,9 +844,6 @@ void __init fpu__init_system_xstate(unsigned int 
+>> legacy_size)
+>>       if (err)
+>>           goto out_disable;
+>> -    /* Reset the state for the current task */
+>> -    fpstate_reset(x86_task_fpu(current));
+>> -
+>>       /*
+>>        * Update info used for ptrace frames; use standard-format size 
+>> and no
+>>        * supervisor xstates:
+>> diff --git a/arch/x86/kernel/vmlinux.lds.S 
+>> b/arch/x86/kernel/vmlinux.lds.S
+>> index 226244a894da..3509afc6a672 100644
+>> --- a/arch/x86/kernel/vmlinux.lds.S
+>> +++ b/arch/x86/kernel/vmlinux.lds.S
+>> @@ -170,10 +170,6 @@ SECTIONS
+>>           /* equivalent to task_pt_regs(&init_task) */
+>>           __top_init_kernel_stack = __end_init_stack - 
+>> TOP_OF_KERNEL_STACK_PADDING - PTREGS_SIZE;
+>> -        __x86_init_fpu_begin = .;
+>> -        . = __x86_init_fpu_begin + 128*PAGE_SIZE;
+>> -        __x86_init_fpu_end = .;
+>> -
+>>   #ifdef CONFIG_X86_32
+>>           /* 32 bit has nosave before _edata */
+>>           NOSAVE_DATA
+> 
+> Hi,
+> 
+> we've hit x86/fpu related WARNING and NULL pointer issue during KVM/QEMU 
+> VM booting with latest linux-next kernel, bisect results show it's 
+> related to this commit, would you take a look?
+> 
+> detailed description in https://bugzilla.kernel.org/show_bug.cgi?id=218980
+> 
+
+add a quick update:
+1. CONFIG_X86_DEBUG_FPU=y was set by auto regression framework
+2. disable CONFIG_X86_DEBUG_FPU will bypass above WARNING and NULL 
+pointer issue
+
+it may not make sense for general kernel regression check to enable 
+CONFIG_X86_DEBUG_FPU=y, will revise auto regression framework to keep 
+CONFIG_X86_DEBUG_FPU disabled to bypass it.
+
+in the meanwhile, please let me know if this issue is still valuable to 
+look into.
 
