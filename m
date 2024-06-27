@@ -1,166 +1,148 @@
-Return-Path: <linux-kernel+bounces-232793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 796E191AE59
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:42:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42DFA91AE5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:42:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C8B01C21D8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:42:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 743F71C220F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:42:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755E219A2AA;
-	Thu, 27 Jun 2024 17:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2528B19A28A;
+	Thu, 27 Jun 2024 17:42:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bRAQV1Dp"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z0QkpHXe"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6461865A
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 17:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A201C6A7
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 17:42:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719510142; cv=none; b=n1TarK/ISkEEMk/wGFMvHpRxIwISBUpGopJcyHHdGMRsJJpUBvoh27LB8wmbJKSzKSVN2RgqP7dxl5Kx71IdYL7+AKPyQX2bGn2DbaJCO9oDDolynSFEZIVeKvBkOziwEM5ZS8DRmKFWNkvuL7POJuzpCVZSkNWXfpPtNb40Shg=
+	t=1719510154; cv=none; b=MclA3+QqHfpyZsfgFOq6LFF8xJku9ND7Bin3v1PCwoSRzHZ89cDBnJ2fDAYWkSxeHWjTEdZZBLxAMfzsMFvm6B2kRXzXxlhppSCBKzEpzpX4j9aGpvXJ1221fPQTlQiAW4fM6Cp7GAsUa+AyGhlTmN7/nQNFuQK9pqaKnQGs4iU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719510142; c=relaxed/simple;
-	bh=QWiCFle1OjlmoDLkJTUXa/Nbue5uZFbpxYfIHw4qoco=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=G9l28OYHB0WxJX4FEgmGhz5NCzaS8YVHuZK3lp758vjv5smk6XeqUXsE3fmcIvQoC2EmVQFekMJATbqTaxIAm/aNpzoyD9fQZCWYqn0qXB+WxcNIstd0hljeHv3C9WgtGo92XxV7g0PMFitvgyscrflL/YeD+OwSbvwFoWVUADw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bRAQV1Dp; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-62f43c95de4so179783307b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 10:42:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719510140; x=1720114940; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1sQpJMlhaOImbaZsmQPczRmnXse/xZ0ADeEMYCxzlHY=;
-        b=bRAQV1Dp5u5Adi3cLjCobR05EDS+7XtfTblwgoAQ6i0LcBITtl2aeHrQrK6R7gsqrU
-         nGoKGSCKkH7iE1905nRzgCDq7fxDRqVM5XfgQffNnxluFhMafO1kBlDPb65eGwCmQGuA
-         GCN0nkdv2HB+2kyW0I1B4SF71atzgayuRyAUVkPeUu1nrPZriuvch9r/gk1wb/Rj/qta
-         xg0apBKlYyGT8iwS4HhkB4ImrXR3+8KDhlg19rxa1HrXSqFnWV/AMXSJDVzwV9PpDKYp
-         YozyGDw5xHRPwaJXJwwaGU1WGxtaKvszww9E+pxr2sNP8QmHZC3S8tWjbBm9SFiPQno/
-         GjTQ==
+	s=arc-20240116; t=1719510154; c=relaxed/simple;
+	bh=YbS9bTV7Wa7Sw8ojDZMeWifV6SyePAyx2+e4doczySo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=QUdnmJ4BoHEPIGK2sLrssZTP3qTX16EdIK05ZyxsZ+xwb9BrRkXwB3LqkMUz5+y1YmAfW+dYRJCaaq8FbRw1cYhN9iMPRLMLx6tbyXfTegY3DnF98Md8EkXSeoaE7u5A/TUMAnYaz2QCRvHrV5Rw5v3Sz5A9QOgBbrSanfO/Pnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z0QkpHXe; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719510151;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XGSfXbPPJUEKh22ZKmG3sSq8FqJ5we+pYCxi+DTxmLA=;
+	b=Z0QkpHXevrEy5lWxCVR388Z4d/UWcTtaqVI09duRdvYBdO34DSapET9IJuPoV09sBCDyAI
+	oUWYaSqVj30UTlrCGKJMr9EQFw+X2Fq9YnDXQC55pvsWccn2Um51f8wc/ZOTD3nhEYaLNS
+	oaqFx8+IPY1GlR3E3JUnQRQrY/TtKZw=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-593-AwJKIBsBPtiwRsV4XLzTkA-1; Thu, 27 Jun 2024 13:42:30 -0400
+X-MC-Unique: AwJKIBsBPtiwRsV4XLzTkA-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3670c9e8b7eso1059938f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 10:42:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719510140; x=1720114940;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1sQpJMlhaOImbaZsmQPczRmnXse/xZ0ADeEMYCxzlHY=;
-        b=HMXVutHG+iR225DlE3KOB/KnZ+01C6vVkADdj06kMA03vdITjFrP4wlMdHIhQuBV3n
-         Vkp1uXC7t6kyiS5jDfotJQd/VbxpicUaaOVm9zYSYOMiMhy+muTwle/hh9kPndO7jkhQ
-         Uql7kBc3EO1m+xXjE3NKBt7sYTzuZ0SstjKe7B+Nayp9oPm6pq/lU54JlVkZwMKyp/ZZ
-         8uZY0YrZW1O42X4ayNReC54hOXujCNARXgjT+5LjAlgxsEVWN0NuYuXdBbaXR4qhB4/s
-         hH/C7FvWlXkanNfIx+g9wG8KfKNk96yXxjwJn+COlBro+o+wMOuWDJ0tWGfPsZVackmm
-         NV6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVQVXrAtCUsIySu7eGRF5Fbh+YGEXezqSPy9X7UyBO9867jBBqEJi4O2+yh2AX4HR1oEiCngEfSSKKJH30rYWb61SeIcUTGJZVllAqz
-X-Gm-Message-State: AOJu0Yzgj/6BB0RF3wX+CVwwAabn3RMFIIceK5xFy3c1k/QUExg+0gfV
-	8UxNrvitrVnOxpjAkylMm8jcUAsiKWOiwTZo0rOKP0RpMzK+1WHjpyovNptUeh5mkKTLVE3dPiA
-	1TQ==
-X-Google-Smtp-Source: AGHT+IE8qFFP1ajg6w4kSm8Qn4ro9HS/brjSiPL5I1EbZHI/6XKc4cVAGbMPmz4OZwpyYhZSw4GJu61Pw7M=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:690c:c16:b0:631:9b3b:525d with SMTP id
- 00721157ae682-642997c4d57mr470617b3.4.1719510140198; Thu, 27 Jun 2024
- 10:42:20 -0700 (PDT)
-Date: Thu, 27 Jun 2024 10:42:18 -0700
-In-Reply-To: <20240621204305.1730677-2-mlevitsk@redhat.com>
+        d=1e100.net; s=20230601; t=1719510149; x=1720114949;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XGSfXbPPJUEKh22ZKmG3sSq8FqJ5we+pYCxi+DTxmLA=;
+        b=DQGBCb9omYWomFgjXrduD1TaesmCWJRljOa/BGNcvvGtCenG35YhXWxG1xt5g4IBBa
+         10n5VX1xSL//C/kQCw01RSZ9q0BlubUnWZX8OSTAe+RneW7QhnaObYYGByXlQgeqA9R6
+         LqRvv/JLi9gJauMYlMqdszqrgK9DxmZd/YbUBiMTgcIlvhI8zpNNc/atfaIDuc4mgxyW
+         13oyG/hqVzDhh1KdgH0F7HenrrjMCy6b1/8zNNMou8UftIVYDMf8CTtSI2Qr3qArGI2z
+         Jp8xZSmrXzKYUu8cs5WiCX8OGzZyjK9huDrsqGzJIoKhchdKFH4qrjbqyBLkNOp6sxTj
+         Kh+Q==
+X-Gm-Message-State: AOJu0YzXzzVWerLNLVyBjfp38stS2KxX3DRo0EswH4mVFsylanzxhqk8
+	R/E98Fh75Lg1fYEPfn7scQutXW6vcPbjkbI/0OKTZ+qdGcvJSMfoETGz4Uwh0u18CN6Vr14T3u9
+	oRJQcS2I5Q3z+ng5TaZ1MUbBYrDo8g5gd+6Tno5LrvoK1K4eQLnxvkwsdhPZ1Fg==
+X-Received: by 2002:a5d:5904:0:b0:361:e909:60c3 with SMTP id ffacd0b85a97d-36741783c38mr2188525f8f.9.1719510149035;
+        Thu, 27 Jun 2024 10:42:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF3Y5AubVJoQM/z0xq/mp72IULX27NmhHEyumxH4auepDgA554eX1h1C0ROcXp0rCBXygvrFg==
+X-Received: by 2002:a5d:5904:0:b0:361:e909:60c3 with SMTP id ffacd0b85a97d-36741783c38mr2188515f8f.9.1719510148615;
+        Thu, 27 Jun 2024 10:42:28 -0700 (PDT)
+Received: from localhost (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3674357ff03sm2565025f8f.45.2024.06.27.10.42.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 10:42:28 -0700 (PDT)
+From: Javier Martinez Canillas <javierm@redhat.com>
+To: Thomas Huth <thuth@redhat.com>, dri-devel@lists.freedesktop.org, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
+ Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Geert
+ Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-kernel@vger.kernel.org, Hamza Mahfooz <hamza.mahfooz@amd.com>
+Subject: Re: [PATCH] drm/fbdev-generic: Fix framebuffer on big endian devices
+In-Reply-To: <20240627173530.460615-1-thuth@redhat.com>
+References: <20240627173530.460615-1-thuth@redhat.com>
+Date: Thu, 27 Jun 2024 19:42:26 +0200
+Message-ID: <87r0cie0zh.fsf@minerva.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240621204305.1730677-1-mlevitsk@redhat.com> <20240621204305.1730677-2-mlevitsk@redhat.com>
-Message-ID: <Zn2ker_KZ7Fk-7W1@google.com>
-Subject: Re: [PATCH 1/1] KVM: selftests: pmu_counters_test: increase
- robustness of LLC cache misses
-From: Sean Christopherson <seanjc@google.com>
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
-	linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain
 
-On Fri, Jun 21, 2024, Maxim Levitsky wrote:
-> Currently this test does a single CLFLUSH on its memory location
-> but due to speculative execution this might not cause LLC misses.
-> 
-> Instead, do a cache flush on each loop iteration to confuse the prediction
-> and make sure that cache misses always occur.
-> 
-> Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
+Thomas Huth <thuth@redhat.com> writes:
+
+Hello Thomas,
+
+> Starting with kernel 6.7, the framebuffer text console is not working
+> anymore with the virtio-gpu device on s390x hosts. Such big endian fb
+> devices are usinga different pixel ordering than little endian devices,
+> e.g. DRM_FORMAT_BGRX8888 instead of DRM_FORMAT_XRGB8888.
+>
+> This used to work fine as long as drm_client_buffer_addfb() was still
+> calling drm_mode_addfb() which called drm_driver_legacy_fb_format()
+> internally to get the right format. But drm_client_buffer_addfb() has
+> recently been reworked to call drm_mode_addfb2() instead with the
+> format value that has been passed to it as a parameter (see commit
+> 6ae2ff23aa43 ("drm/client: Convert drm_client_buffer_addfb() to drm_mode_addfb2()").
+>
+> That format parameter is determined in drm_fbdev_generic_helper_fb_probe()
+> via the drm_mode_legacy_fb_format() function - which only generates
+> formats suitable for little endian devices. So to fix this issue
+> switch to drm_driver_legacy_fb_format() here instead to take the
+> device endianness into consideration.
+>
+> Fixes: 6ae2ff23aa43 ("drm/client: Convert drm_client_buffer_addfb() to drm_mode_addfb2()")
+> Closes: https://issues.redhat.com/browse/RHEL-45158
+> Signed-off-by: Thomas Huth <thuth@redhat.com>
 > ---
->  .../selftests/kvm/x86_64/pmu_counters_test.c  | 20 +++++++++----------
->  1 file changed, 9 insertions(+), 11 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c b/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
-> index 96446134c00b7..ddc0b7e4a888e 100644
-> --- a/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
-> +++ b/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
-> @@ -14,8 +14,8 @@
->   * instructions that are needed to set up the loop and then disabled the
->   * counter.  1 CLFLUSH/CLFLUSHOPT/NOP, 1 MFENCE, 2 MOV, 2 XOR, 1 WRMSR.
->   */
-> -#define NUM_EXTRA_INSNS		7
-> -#define NUM_INSNS_RETIRED	(NUM_BRANCHES + NUM_EXTRA_INSNS)
-> +#define NUM_EXTRA_INSNS		5
-> +#define NUM_INSNS_RETIRED	(NUM_BRANCHES * 2 + NUM_EXTRA_INSNS)
+>  drivers/gpu/drm/drm_fbdev_generic.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/drm_fbdev_generic.c b/drivers/gpu/drm/drm_fbdev_generic.c
+> index 97e579c33d84..1e200d815e1a 100644
+> --- a/drivers/gpu/drm/drm_fbdev_generic.c
+> +++ b/drivers/gpu/drm/drm_fbdev_generic.c
+> @@ -84,7 +84,8 @@ static int drm_fbdev_generic_helper_fb_probe(struct drm_fb_helper *fb_helper,
+>  		    sizes->surface_width, sizes->surface_height,
+>  		    sizes->surface_bpp);
+>  
+> -	format = drm_mode_legacy_fb_format(sizes->surface_bpp, sizes->surface_depth);
+> +	format = drm_driver_legacy_fb_format(dev, sizes->surface_bpp,
+> +					     sizes->surface_depth);
+>  	buffer = drm_client_framebuffer_create(client, sizes->surface_width,
+>  					       sizes->surface_height, format);
+>  	if (IS_ERR(buffer))
 
-The comment above is stale.  I also think it's worth adding a macro to capture
-that the '2' comes from having two instructions in the loop body (three, if we
-keep the MFENCE).
+Indeed. Thanks a lot for the detailed explanation and the patch.
+Your fix makes sense to me.
 
->  static uint8_t kvm_pmu_version;
->  static bool kvm_has_perf_caps;
-> @@ -133,9 +133,8 @@ static void guest_assert_event_count(uint8_t idx,
->   * doesn't need to be clobbered as the input value, @pmc_msr, is restored
->   * before the end of the sequence.
->   *
-> - * If CLFUSH{,OPT} is supported, flush the cacheline containing (at least) the
-> - * start of the loop to force LLC references and misses, i.e. to allow testing
-> - * that those events actually count.
-> + * If CLFUSH{,OPT} is supported, flush the cacheline containing the CLFUSH{,OPT}
-> + * instruction on each loop iteration to ensure that LLC cache misses happen.
->   *
->   * If forced emulation is enabled (and specified), force emulation on a subset
->   * of the measured code to verify that KVM correctly emulates instructions and
-> @@ -145,10 +144,9 @@ static void guest_assert_event_count(uint8_t idx,
->  #define GUEST_MEASURE_EVENT(_msr, _value, clflush, FEP)				\
->  do {										\
->  	__asm__ __volatile__("wrmsr\n\t"					\
-> -			     clflush "\n\t"					\
-> -			     "mfence\n\t"					\
+Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
 
-Based on your testing, it's probably ok to drop the mfence, but I don't see any
-reason to do so.  It's not like that mfence meaningfully affects the runtime, and
-anything easy/free we can do to avoid flaky tests is worth doing.
+-- 
+Best regards,
 
-I'll post and apply a v2, with a prep patch to add a NUM_INSNS_PER_LOOP macro and
-keep the MFENCE (I'll be offline all of next week, and don't want to push anything
-to -next tomorrow, even though the risk of breaking anything is minimal).
+Javier Martinez Canillas
+Core Platforms
+Red Hat
 
-> -			     "1: mov $" __stringify(NUM_BRANCHES) ", %%ecx\n\t"	\
-> -			     FEP "loop .\n\t"					\
-> +			     " mov $" __stringify(NUM_BRANCHES) ", %%ecx\n\t"	\
-> +			     "1: " clflush "\n\t"				\
-> +			     FEP "loop 1b\n\t"					\
->  			     FEP "mov %%edi, %%ecx\n\t"				\
->  			     FEP "xor %%eax, %%eax\n\t"				\
->  			     FEP "xor %%edx, %%edx\n\t"				\
-> @@ -163,9 +161,9 @@ do {										\
->  	wrmsr(pmc_msr, 0);							\
->  										\
->  	if (this_cpu_has(X86_FEATURE_CLFLUSHOPT))				\
-> -		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "clflushopt 1f", FEP);	\
-> +		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "clflushopt .", FEP);	\
->  	else if (this_cpu_has(X86_FEATURE_CLFLUSH))				\
-> -		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "clflush 1f", FEP);	\
-> +		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "clflush .", FEP);	\
->  	else									\
->  		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "nop", FEP);		\
->  										\
-> -- 
-> 2.26.3
-> 
 
