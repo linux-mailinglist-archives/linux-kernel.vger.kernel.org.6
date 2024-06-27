@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-232473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BE1F91A949
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:35:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95CDB91A94C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:35:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D8601C20A93
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:35:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C656D1C210F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:35:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE43197A9B;
-	Thu, 27 Jun 2024 14:34:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D6F19884B;
+	Thu, 27 Jun 2024 14:34:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HGM0bmuN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qYlPuCj0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38912196446;
-	Thu, 27 Jun 2024 14:34:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 598E319882B;
+	Thu, 27 Jun 2024 14:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719498869; cv=none; b=pQy2h/gwsreZ+HyxrJWHRYx0qHCRIAIzyR0DmI0eCBSFgQjnuCjW2f7+71tCmkVR/E9b2FbRpo+eDMVK4/oeIoTF2K1Q6BZgJJUi4vtdqDPWT2k5/m7REn6Sar8z+CCRNSEgeyHf5rOivJeHH/HIbvWEXkSKHppp76nxB6Kjmfw=
+	t=1719498871; cv=none; b=UlczgztPyZ2QCuKkvFFgJMIM6VMdfP2FsffgF/GrLy3NzgAKDBF0ycPhmGr+gSx3Z3V4WzSbNfuMl/L2XE9+FEQ+F+jKeBQbDkKVAw+8xKBVqllk2yQ+7x+XOc9zsBJqhA9MePgShW3ZIBV5JlUfhI3YCG4JCjrj3vxnc+CsFq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719498869; c=relaxed/simple;
-	bh=Fc0ykomioDc7Uypl1Uf66s988C/OLz9FiLzqmcO3ors=;
+	s=arc-20240116; t=1719498871; c=relaxed/simple;
+	bh=gv4MXPYZvm3lNZmH4AUd269FhyNbFCqWRSyx8/WMyNg=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=NrInj2erH/+mfSEZwcaj3ARHLBSivjgldGvTORcq/VS0egdyH/cbjt3yunnHWO+p++gj9SH//xs7SACMdlh+FD3NVEQ6mt38JzkiuYEqTLIUv31p0Gb97TxF4Xk+OkASkJf2AMloVOM4vnZEkI4KvqBZmfvAYJaNByoj1HTMLZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HGM0bmuN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73AC0C2BBFC;
-	Thu, 27 Jun 2024 14:34:28 +0000 (UTC)
+	 Message-Id:Subject; b=ZhMsv3R4w+CkhfI5LNGlKUzmssjN8a5l04RqA1s4H/NMWY7rFBQQb2tFwfQlGblUZQuCQWaKN0cvhp4c/P0oMKqIxm6ReCIyl9ZmW+k7WIKrmlV5GtaBoRoTbAfyp2bus1TW3tmOne1Zk+YuxhOiDgsb9HBewKKlqiuHyboTwFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qYlPuCj0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C50BC2BBFC;
+	Thu, 27 Jun 2024 14:34:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719498868;
-	bh=Fc0ykomioDc7Uypl1Uf66s988C/OLz9FiLzqmcO3ors=;
+	s=k20201202; t=1719498870;
+	bh=gv4MXPYZvm3lNZmH4AUd269FhyNbFCqWRSyx8/WMyNg=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=HGM0bmuNep0skTj+qhLyH1KhOTJQdcegXnLGbU6X8XLL6E1gt9wyZVRamODRthW6u
-	 uetgWhuvW/YCjuL8zAg3wrQsqjgWCItYSM7nGI7mh9oLsio1p5A99rnm1kR7ODmVI9
-	 IAs+UqzS1Ux4R/W+WE1YCLXOWPnQ3x1ZiNLVGO/rApQyJnpETKakhIdGSGr7nCamS/
-	 RUxlWWXagpRCSDMcdIVEo3BKxFMu7s+FTJI8R/y+ysA6QOVoZS5n4bvcawiaSsIvbp
-	 nAU8TvRR3jgXbQNKSsiUHsASHkuE1M83HC/ceyOh9AH7jFufiqyh+TtN1W65NP7u2k
-	 Xks/h0wXtuflg==
-Date: Thu, 27 Jun 2024 08:34:26 -0600
+	b=qYlPuCj0oV8Jm9BP3YMEPpjI1Owzalvm09e89g6f/n5FCgTi97K/Yq+fjJowqXrP8
+	 uIYh/tRKVbX0Bfcgm6354axi/B0ptRgdviyfaTjJ2fWgfp6w+B77vVJfNLa30E8lUF
+	 jOg2tmfXhwOq96bNV073BUAn3PcgnRkGHbuZjR/QonTUBGWpSVYpyK77sjTSbPWeMq
+	 BU41asrOKvaqNREPUT6F0eP9JIWoKw+VFXrTPH6xM2vLRyZK88yroP2EPrcB4mjfko
+	 jQ61toqljbTP5BueUKCpqvp8ZRKZWMu9iigXTb6Ux0jk++xUhwU6B60fobefpO4FzL
+	 9oPQ5b3CBOOHw==
+Date: Thu, 27 Jun 2024 08:34:29 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -51,48 +51,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
 To: Jonas Karlman <jonas@kwiboo.se>
-Cc: FUKAUMI Naoki <naoki@radxa.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
- Heiko Stuebner <heiko@sntech.de>, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, 
- Conor Dooley <conor+dt@kernel.org>
-In-Reply-To: <20240626201502.1384123-1-jonas@kwiboo.se>
-References: <20240626201502.1384123-1-jonas@kwiboo.se>
-Message-Id: <171949859356.3298890.9759631010670097235.robh@kernel.org>
-Subject: Re: [PATCH v2 0/2] arm64: dts: rockchip: Add Radxa ROCK 3B
+Cc: linux-rockchip@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>
+In-Reply-To: <20240626230319.1425316-1-jonas@kwiboo.se>
+References: <20240626230319.1425316-1-jonas@kwiboo.se>
+Message-Id: <171949859482.3298953.17210742633761408276.robh@kernel.org>
+Subject: Re: [PATCH v2 0/2] arm64: dts: rockchip: Add Xunlong Orange Pi 3B
 
 
-On Wed, 26 Jun 2024 20:14:53 +0000, Jonas Karlman wrote:
-> This series adds initial support for the Radxa ROCK 3B board.
+On Wed, 26 Jun 2024 23:03:10 +0000, Jonas Karlman wrote:
+> This series adds initial support for the Xunlong Orange Pi 3B board.
 > 
-> The Radxa ROCK 3B is a single-board computer based on the Pico-ITX form
-> factor (100mm x 75mm). Two versions of the ROCK 3B exists, a community
-> version based on the RK3568 SoC and an industrial version based on the
-> RK3568J SoC.
+> The Xunlong Orange Pi 3B is a single-board computer based on the
+> Rockchip RK3566 SoC.
 > 
-> Schematic for ROCK 3B can be found at:
-> https://dl.radxa.com/rock3/docs/hw/3b/Radxa_ROCK_3B_V1.51_SCH.pdf
+> Schematic for Orange Pi 3B can be downloaded from:
+> http://www.orangepi.org/html/hardWare/computerAndMicrocontrollers/service-and-support/Orange-Pi-3B.html
 > 
 > Changes in v2:
-> - Drop rk809 dt-bindings patches, replaced by series at [1]
+> - Add DT for v2.1 hw revision, rename initial DT to v1.1:
+>   - Ethernet phy io voltage: 3v3 (v1.1) / 1v8 (v2.1)
+>   - Etherent reset gpios: GPIO3_C2 (v1.1) / GPIO4_C4 (v2.1)
+>   - WiFi/BT: CDW-20U5622 (v1.1) / AP6256 (v2.1)
+> - Rename led node and move led pinctrl props
 > - Use regulator-.* nodename for fixed regulators
 > - Drop rockchip,mic-in-differential prop
-> - Shorten Ethernet phy reset-deassert-us to 50 ms
-> - Fix pcie pinctrl
-> - Add keep-power-in-suspend to sdmmc2
-> - Collect a-b tag
-> 
-> [1] https://lore.kernel.org/all/20240622-rk809-fixes-v2-0-c0db420d3639@collabora.com/
+> - Add cap-mmc-highspeed to sdhci node
+> - Add no-mmc and no-sd to sdmmc1 node
 > 
 > Jonas Karlman (2):
->   dt-bindings: arm: rockchip: Add Radxa ROCK 3B
->   arm64: dts: rockchip: Add Radxa ROCK 3B
+>   dt-bindings: arm: rockchip: Add Xunlong Orange Pi 3B
+>   arm64: dts: rockchip: Add Xunlong Orange Pi 3B
 > 
->  .../devicetree/bindings/arm/rockchip.yaml     |   5 +
->  arch/arm64/boot/dts/rockchip/Makefile         |   1 +
->  .../boot/dts/rockchip/rk3568-rock-3b.dts      | 780 ++++++++++++++++++
->  3 files changed, 786 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dts
+>  .../devicetree/bindings/arm/rockchip.yaml     |   8 +
+>  arch/arm64/boot/dts/rockchip/Makefile         |   2 +
+>  .../dts/rockchip/rk3566-orangepi-3b-v1.1.dts  |  29 +
+>  .../dts/rockchip/rk3566-orangepi-3b-v2.1.dts  |  70 ++
+>  .../boot/dts/rockchip/rk3566-orangepi-3b.dtsi | 678 ++++++++++++++++++
+>  5 files changed, 787 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3566-orangepi-3b-v1.1.dts
+>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3566-orangepi-3b-v2.1.dts
+>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3566-orangepi-3b.dtsi
 > 
 > --
 > 2.45.2
@@ -115,9 +116,11 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y rockchip/rk3568-rock-3b.dtb' for 20240626201502.1384123-1-jonas@kwiboo.se:
+New warnings running 'make CHECK_DTBS=y rockchip/rk3566-orangepi-3b-v1.1.dtb rockchip/rk3566-orangepi-3b-v2.1.dtb' for 20240626230319.1425316-1-jonas@kwiboo.se:
 
-arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dtb: pmic@20: '#sound-dai-cells', 'assigned-clock-parents', 'assigned-clocks', 'clock-names', 'clocks' do not match any of the regexes: 'pinctrl-[0-9]+'
+arch/arm64/boot/dts/rockchip/rk3566-orangepi-3b-v2.1.dtb: pmic@20: '#sound-dai-cells', 'assigned-clock-parents', 'assigned-clocks', 'clock-names', 'clocks' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/mfd/rockchip,rk809.yaml#
+arch/arm64/boot/dts/rockchip/rk3566-orangepi-3b-v1.1.dtb: pmic@20: '#sound-dai-cells', 'assigned-clock-parents', 'assigned-clocks', 'clock-names', 'clocks' do not match any of the regexes: 'pinctrl-[0-9]+'
 	from schema $id: http://devicetree.org/schemas/mfd/rockchip,rk809.yaml#
 
 
