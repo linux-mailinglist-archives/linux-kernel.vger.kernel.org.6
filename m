@@ -1,250 +1,159 @@
-Return-Path: <linux-kernel+bounces-232857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A06E591AF25
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:35:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB55F91AF27
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:37:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54500281876
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:35:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0FE31F24941
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DEE719AD7B;
-	Thu, 27 Jun 2024 18:35:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF93319AA4B;
+	Thu, 27 Jun 2024 18:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="I7LAtZsy"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="W1534gzr"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7DD19A288
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 18:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8FB2139D6
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 18:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719513332; cv=none; b=bLvRz6LxP7iBYGOSuQGYyFjmWMo3Og29iKiJGAlvFVfVvKGAiKaTR17nMwp0AOM1KQq+w/abSgT6JZllPVzVlBmt8vC3P8l2MBxQcZAVTaIH3ydkLZK6fIB0AqiQ2mxUfoPYTL+HVpcMW96p4i3B7bHiK+4JdkeTTTzKJ63g/nk=
+	t=1719513434; cv=none; b=cQjnwGty+znafPTiH/l7+oB/FBQ0ya2hgGfbc068AMiqTA77piCowyMR5gXlmuMkGidBJ0VrUGEosTfUrh55N0ZpUKjjVfyT2NOtab7k/lXxeSnd/eD6HwlaWWQQg6qSWWVBq6dTA4/PzMtoxGteBhhdegBSktP77ozCpNnDg7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719513332; c=relaxed/simple;
-	bh=5QFuua2mLfu8+V2J8JyWg6XRlGAtD9KqeZ3AVkNmW1Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M05rlEi5Eg0gd9WaCceAFMEg5SjkSlglWyI6wi0cgGzWk8rFCyArbjZFEZTxeFprM62DHfKZV8r8yGwZgZEGE4iDzwtzbsEPxv7STcI171oRu8kJJNpUyhiGHIYB+8VK7qQvMhEBXRsae90TvkvqC7WoAgbTVRvbyR5DZGn2xlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=I7LAtZsy; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ec002caeb3so105331641fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 11:35:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719513328; x=1720118128; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UnhHJrE2YHiK16VdIIjwnongX46BL5HzJWY5VQ+uBug=;
-        b=I7LAtZsy8pXWXuvFBurOqCdLZqSOWm2tqJWA0uWzahEZO1Ul3jktzHpNsM5FxINJaP
-         bLQiyrWke2qnTCZDemyQ/kHD3Qr3TCRgzpbJSs90tvIv26a2y+TpUKxzEB/RJIM3J0U0
-         stGVmae7G7y3+M3x7+XgSqltwJBNnSxlAUj0jvy78081lCbPWaNNX1EVxWaa2H2Wmd8k
-         cdAlrK+1znR82IEpHGFIaEcxnrfs/hSTbSFHxvBvW7A6lDoN5IsMiDaghAqxY/1zNjGL
-         Wt8qpxFTJ3d4qxMrLr295k1o+qAvGkHtgI4hBa/TN48LoVYG+/XkciW6d2XEr6aWlduV
-         JoZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719513328; x=1720118128;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UnhHJrE2YHiK16VdIIjwnongX46BL5HzJWY5VQ+uBug=;
-        b=Wv8uQ2y+tmo9lMh21i9bwZdfPr1lvj3Z0qLwbnXOvFQgcU4aEPyNmtSI1Hr6wDgNSu
-         1bbyCibbjaCW4wCQmlS8DU44/ceUCHddnoOiqVwmsqVYhD4ou1gtxzLmSEX4gfipaXo+
-         zN5n6l1UVThFblglCndceKrvQT7QYhxp3WN2gtU+Km7crwAd4a37U8OSWro1O1zq2+Iu
-         MvqPrIlD+/kpE82O5gx1m9DmJiQ2jsYDQsNEa0xmpI4woPXQwkb1KO9Dekrq0OELhDbm
-         ue3toLrs/HCihjfasYgApVXolMnZ0mAv+BbhJhqHS17wVCRmOg75hcXTWO7ov/hE+Ecf
-         1mtw==
-X-Forwarded-Encrypted: i=1; AJvYcCUodi9z7TZg8D0lUgDwquZNSAjBqo8LW4d2bY/sy42BDwFZxuTKPtA/eiQzP7NcPZNjKRRdmwrfEcC0j8xN4vvipMMnmaQ7r7tKosHv
-X-Gm-Message-State: AOJu0Yx3d9zkT5sFFksFv4IIMTkSdfX/U7t4CvU+Ji0dga8iVefHFQVn
-	yogWtErg8sPVFoFhFgIw/svmKnJJ7v/VOAOOA0azJRrtQM86TQ6YqQKjlhRzqYMKKbo9U/L0W4Z
-	D+BJULshgFieO3rGNEYREsAJ1gueICyoJxfVFUA==
-X-Google-Smtp-Source: AGHT+IGPI0c3Vead1xPnQd7v9znU2eKBdWrGSeB26I6sczh6Ia+IqON3GZQ7bJuVZDHty0D3Wd8O0rb6YIAxcM2wQHE=
-X-Received: by 2002:a05:651c:889:b0:2ee:4b17:dab9 with SMTP id
- 38308e7fff4ca-2ee4b17dae7mr20882461fa.4.1719513327611; Thu, 27 Jun 2024
- 11:35:27 -0700 (PDT)
+	s=arc-20240116; t=1719513434; c=relaxed/simple;
+	bh=kMf/jTaHv8Pibllz765oLhr56R7Vnv74xKa/hCJTaII=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j9ji6Zl10t9Olr4g5q2nLxeTGF4inqLm0dpyf3mUxsTj6PSUZ/tCV6CJIGjc5qKzOGTZvTbgPLWsBYgafw6tE4fWCIO3Ju8ErwWbLcFYDiHc6oZka1OaIUnYGfsE08yaBHw7kudXExPCc2nqLvgsM7lxcrNGpA2vq88DKODLd8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=W1534gzr; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: jic23@kernel.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1719513429;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LcX+DNUAOkuuXE8/JmszLDMKosfH1JHvU1xDYWp+oWM=;
+	b=W1534gzrjEl4P8g5y/J0X5tfxFPrE1J+gIoykAKtFAUDacat2D3PUXImDN83E0bM/P+BpT
+	K7ISNAsIhoBPqPifciJwK9EXKDrrvbGq+eKB6x1s5dPhSqU39VJu3aKZ/qnhjExFyVhT6C
+	SSZPLqZK48b82/3359XmIQkrvpwND4Y=
+X-Envelope-To: linux@roeck-us.net
+X-Envelope-To: jdelvare@suse.com
+X-Envelope-To: linux-iio@vger.kernel.org
+X-Envelope-To: linux-hwmon@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: lars@metafoo.de
+Message-ID: <f6ee3049-47a0-4c84-ab90-2321bf6970d0@linux.dev>
+Date: Thu, 27 Jun 2024 14:37:01 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240627113948.25358-1-brgl@bgdev.pl> <20240627113948.25358-3-brgl@bgdev.pl>
- <td5jbseo7gtu6d4xai6q2zkfmxw4ijimyiromrf52he5hze3w3@fd3kayixf4lw>
-In-Reply-To: <td5jbseo7gtu6d4xai6q2zkfmxw4ijimyiromrf52he5hze3w3@fd3kayixf4lw>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 27 Jun 2024 20:35:16 +0200
-Message-ID: <CAMRc=MfznDaaNcfvRBg1wpiOkyTE=Ks-_nx=aCY1MR5-50Ka+A@mail.gmail.com>
-Subject: Re: [PATCH v2 net-next 2/2] net: stmmac: qcom-ethqos: add a DMA-reset
- quirk for sa8775p-ride
-To: Andrew Halaney <ahalaney@redhat.com>, Russell King <linux@armlinux.org.uk>
-Cc: Vinod Koul <vkoul@kernel.org>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Jose Abreu <joabreu@synopsys.com>, "David S . Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 2/2] hwmon: iio: Add labels from IIO channels
+To: Jonathan Cameron <jic23@kernel.org>, Guenter Roeck <linux@roeck-us.net>
+Cc: Jean Delvare <jdelvare@suse.com>, linux-iio@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Lars-Peter Clausen <lars@metafoo.de>
+References: <20240624174601.1527244-1-sean.anderson@linux.dev>
+ <20240624174601.1527244-3-sean.anderson@linux.dev>
+ <ff43e01e-5a26-4b75-bfaa-ed3ad4395e7c@roeck-us.net>
+ <20240624202433.29564802@jic23-huawei>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <20240624202433.29564802@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Jun 27, 2024 at 7:07=E2=80=AFPM Andrew Halaney <ahalaney@redhat.com=
-> wrote:
->
-> On Thu, Jun 27, 2024 at 01:39:47PM GMT, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > On sa8775p-ride the RX clocks from the AQR115C PHY are not available at
-> > the time of the DMA reset so we need to loop TX clocks to RX and then
-> > disable loopback after link-up. Use the existing callbacks to do it jus=
-t
-> > for this board.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> Sorry, not being very helpful but trying to understand these changes
-> and the general cleanup of stmmac... so I'll point out that I'm still
-> confused by this based on Russell's last response:
-> https://lore.kernel.org/netdev/ZnQLED%2FC3Opeim5q@shell.armlinux.org.uk/
->
+On 6/24/24 15:24, Jonathan Cameron wrote:
+> On Mon, 24 Jun 2024 11:47:39 -0700
+> Guenter Roeck <linux@roeck-us.net> wrote:
+> 
+>> On 6/24/24 10:46, Sean Anderson wrote:
+>> > Add labels from IIO channels to our channels. This allows userspace to
+>> > display more meaningful names instead of "in0" or "temp5".
+>> > 
+>> > Although lm-sensors gracefully handles errors when reading channel
+>> > labels, the ABI says the label attribute
+>> >   
+>> >> Should only be created if the driver has hints about what this voltage
+>> >> channel is being used for, and user-space doesn't.  
+>> > 
+>> > Therefore, we test to see if the channel has a label before
+>> > creating the attribute.
+>> >   
+>> 
+>> FWIW, complaining about an ABI really does not belong into a commit
+>> message. Maybe you and lm-sensors don't care about error returns when
+>> reading a label, but there are other userspace applications which may
+>> expect drivers to follow the ABI. Last time I checked, the basic rule
+>> was still "Don't break userspace", and that doesn't mean "it's ok to
+>> violate / break an ABI as long as no one notices".
+>> 
+>> > Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+>> > ---
+>> > 
+>> > Changes in v2:
+>> > - Check if the label exists before creating the attribute
+>> > 
+>> >   drivers/hwmon/iio_hwmon.c | 45 ++++++++++++++++++++++++++++++++++-----
+>> >   1 file changed, 40 insertions(+), 5 deletions(-)
+>> > 
+>> > diff --git a/drivers/hwmon/iio_hwmon.c b/drivers/hwmon/iio_hwmon.c
+>> > index 4c8a80847891..5722cb9d81f9 100644
+>> > --- a/drivers/hwmon/iio_hwmon.c
+>> > +++ b/drivers/hwmon/iio_hwmon.c
+>> > @@ -33,6 +33,17 @@ struct iio_hwmon_state {
+>> >   	struct attribute **attrs;
+>> >   };
+>> >   
+>> > +static ssize_t iio_hwmon_read_label(struct device *dev,
+>> > +				  struct device_attribute *attr,
+>> > +				  char *buf)
+>> > +{
+>> > +	struct sensor_device_attribute *sattr = to_sensor_dev_attr(attr);
+>> > +	struct iio_hwmon_state *state = dev_get_drvdata(dev);
+>> > +	struct iio_channel *chan = &state->channels[sattr->index];
+>> > +
+>> > +	return iio_read_channel_label(chan, buf);
+>> > +}
+>> > +  
+>> 
+>> I personally find it a bit kludgy that an in-kernel API would do a
+>> sysfs write like this and expect a page-aligned buffer as parameter,
+>> but since Jonathan is fine with it:
+> 
+> That's a good point that I'd not picked up on and it probably makes sense
+> to address that before it bites us on some other subsystem.
+> 
+> It was more reasonable when the only path was to a light wrapper that went
+> directly around the sysfs callback. Now we are wrapping these up for more
+> general use we should avoid that restriction.
+> 
+> Two approaches to that occur to me.
+> 1) Fix up read_label() everywhere to not use sysfs_emit and take a size
+>    of the buffer to print into. There are only 11 implementations so
+>    far so this should be straight forward.
 
-I realized Russell's email didn't pop up in get_maintainers.pl for
-stmmac. Adding him now.
+This API is the same as the existing iio_read_channel_ext_info. It is
+used for the same purpose: forwarding sysfs reads/writes from one
+device to another (see e.g. iio-mux and iio-rescale). ext_info is used
+by around 85 drivers, so it is not so trivial to change the API. While I
+agree that the current API is unusual, it's not too bad given that we
+get the same guarantees from device_attribute.show.
 
-> Quote:
->
->     If you're using true Cisco SGMII, there are _no_ clocks transferred
->     between the PHY and PCS/MAC. There are two balanced pairs of data
->     lines and that is all - one for transmit and one for receive. So this
->     explanation doesn't make sense to me.
->
->
-> <snip>
->
-> > +}
-> > +
-> >  static void ethqos_set_func_clk_en(struct qcom_ethqos *ethqos)
-> >  {
-> > +     qcom_ethqos_set_sgmii_loopback(ethqos, true);
-> >       rgmii_updatel(ethqos, RGMII_CONFIG_FUNC_CLK_EN,
-> >                     RGMII_CONFIG_FUNC_CLK_EN, RGMII_IO_MACRO_CONFIG);
-> >  }
-> <snip>
-> > @@ -682,6 +702,7 @@ static void ethqos_fix_mac_speed(void *priv, unsign=
-ed int speed, unsigned int mo
-> >  {
-> >       struct qcom_ethqos *ethqos =3D priv;
-> >
-> > +     qcom_ethqos_set_sgmii_loopback(ethqos, false);
->
-> I'm trying to map out when the loopback is currently enabled/disabled
-> due to Russell's prior concerns.
->
-> Quote:
->
->     So you enable loopback at open time, and disable it when the link com=
-es
->     up. This breaks inband signalling (should stmmac ever use that) becau=
-se
->     enabling loopback prevents the PHY sending the SGMII result to the PC=
-S
->     to indicate that the link has come up... thus phylink won't call
->     mac_link_up().
->
->     So no, I really hate this proposed change.
->
->     What I think would be better is if there were hooks at the appropriat=
-e
->     places to handle the lack of clock over _just_ the period that it nee=
-ds
->     to be handled, rather than hacking the driver as this proposal does,
->     abusing platform callbacks because there's nothing better.
->
-> looks like currently you'd:
->     qcom_ethqos_probe()
->         ethqos_clks_config(ethqos, true)
->             ethqos_set_func_clk_en(ethqos)
->                 qcom_ethqos_set_sgmii_loopback(ethqos, true) // loopback =
-enabled
->         ethqos_set_func_clk_en(ethqos)
->             qcom_ethqos_set_sgmii_loopback(ethqos, true) // no change in =
-loopback
->     devm_stmmac_pltfr_probe()
->         stmmac_pltfr_probe()
->             stmmac_drv_probe()
->                 pm_runtime_put()
->     // Eventually runtime PM will then do below
->     stmmac_stmmac_runtime_suspend()
->         stmmac_bus_clks_config(priv, false)
->             ethqos_clks_config(ethqos, false) // pointless branch but pro=
-ving to myself
->                                               // that pm_runtime isn't ge=
-tting in the way here
->     __stmmac_open()
->         stmmac_runtime_resume()
->             ethqos_clks_config(ethqos, true)
->                 ethqos_set_func_clk_en(ethqos)
->                     qcom_ethqos_set_sgmii_loopback(ethqos, true) // no ch=
-ange in loopback
->     stmmac_mac_link_up()
->         ethqos_fix_mac_speed()
->             qcom_ethqos_set_sgmii_loopback(ethqos, false); // loopback di=
-sabled
->
-> Good chance I foobared tracing that... but!
-> That seems to still go against Russell's comment, i.e. its on at probe
-> and remains on until a link is up. This doesn't add anymore stmmac wide
-> platform callbacks at least, but I'm still concerned based on his prior
-> comments.
->
-> Its not clear to me though if the "2500basex" mentioned here supports
-> any in-band signalling from a Qualcomm SoC POV (not just the Aquantia
-> phy its attached to, but in general). So maybe in that case its not a
-> concern?
->
-> Although, this isn't tied to _just_ 2500basex here. If I boot the
-> sa8775p-ride (r2 version, with a marvell 88ea1512 phy attached via
-> sgmii, not indicating 2500basex) wouldn't all this get exercised? Right
-> now the devicetree doesn't indicate inband signalling, but I tried that
-> over here with Russell's clean up a week or two ago and things at least
-> came up ok (which made me think all the INTEGRATED_PCS stuff wasn't neede=
-d,
-> and I'm not totally positive my test proved inband signalling worked,
-> but I thought it did...):
->
+--Sean
 
-Am I getting this right? You added `managed =3D "in-band-status"' to
-Rev2 DTS and it still worked?
+> 2) Add a bounce buffer so we emit into a suitable size for sysfs_emit()
+>   then reprint from there into a buffer provided via this interface with
+>   the appropriate size provided.  This one is clunky and given the relatively
+>   few call sits I think fixing it via option 1 is the better route forwards.
 
->     https://lore.kernel.org/netdev/zzevmhmwxrhs5yfv5srvcjxrue2d7wu7vjqmmo=
-yd5mp6kgur54@jvmuv7bxxhqt/
->
-> based on Russell's comments, I feel if I was to use his series over
-> there, add 'managed =3D "in-band-status"' to the dts, and then apply this
-> series, the link would not come up anymore.
->
-
-Because I can confirm that it doesn't on Rev 3. :(
-
-So to explain myself: I tried to follow Andrew Lunn's suggestion about
-unifying this and the existing ethqos_set_func_clk_en() bits as they
-seem to address a similar issue.
-
-I'm working with limited information here as well regarding this issue
-so I figured this could work but you're right - if we ever need
-in-band signalling, then it won't work. It's late here so let me get
-back to it tomorrow.
-
-> Total side note, but I'm wondering if the sa8775p-ride dts should
-> specify 'managed =3D "in-band-status"'.
->
-
-I'll check this at the source.
-
-Bart
-
-> Thanks,
-> Andrew
->
 
