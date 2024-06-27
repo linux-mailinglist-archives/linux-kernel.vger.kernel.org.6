@@ -1,241 +1,133 @@
-Return-Path: <linux-kernel+bounces-231745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8378919D30
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 04:16:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14210919D35
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 04:18:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 621901F2368F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 02:16:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C42471F23614
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 02:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345A1BE4F;
-	Thu, 27 Jun 2024 02:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XETogSz5"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90F5DD520;
+	Thu, 27 Jun 2024 02:18:36 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939D6D299;
-	Thu, 27 Jun 2024 02:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF3917F3;
+	Thu, 27 Jun 2024 02:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719454584; cv=none; b=gAvD95kBNjt2po3+l2EaoOEsc7RZR7fXxl/1TjnF9Lu/ZkcsjHRsz5fRqGnYhydDZVKn3H6EwOqNZj7n2JzLFsMr1TIYt3SeMCJK/E/j0pS4ogJivuLUi/ifW9h+oHT2oe1aJ2v6ZR03YaQIGsspnKQCITv53GTY2DgmRe0OPks=
+	t=1719454716; cv=none; b=Cr0l6CmBGKGynZ8DWavRGo6sjcONUZD+WBnLJ6Un8Q8QYAOt7R2xrj2TXhXlNdThjNXDOgFZBvi1rGtCJv0GVG1KZBQsucaAYYLU6kmUdtVTOJKxjh+J1DRVdv6K4OS0h//n90/MIyJmWdYN37bOO9weRfTZl/zFLlDN76eQzd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719454584; c=relaxed/simple;
-	bh=SNmXUZaPD8/jIFyllpvzim8/Hv6kDHBMJLdeyAHgdFw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=idexF5OKVfXhWYt6/1FtuYEkJJI9K8VfwUj3Qqa/ICPQtmv6xGK7TR2VX4ohI0DHfvIhuUrZ7DuLzUuwwPmdn3Dvr4jU+axhBFWYzvPfbuJntEAb/h4XLvpNM1giRH6irxk4th0yFhVDOzecMak6Y7Y0Odq+hUAgr3RXmR3b3w0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XETogSz5; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ec002caf3eso111146961fa.1;
-        Wed, 26 Jun 2024 19:16:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719454581; x=1720059381; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4DveGNeDVjuCDjhS9k/j3k6/jkRn9D6b5kOIHQkM86o=;
-        b=XETogSz5skZSUuCoeh1swywZ5nyvePF1ufGcbh38fbCYpDwuCEQQJMNcVnD42+56Ge
-         fQCS66LhZibJQZnItL5fUVHU0eaM/10qgn/fZNCw6BZyFLwsUUOHvMFZl5wGfM8t7YfL
-         MZLcQaiswZL7pR7bywK5YJ+9Ob7FgqziT4Bof0az1PgA1Le/Yd/oW6oyXHvPleq92MF/
-         TrkBa5EBCjdamfOSYedA7ofdRw3GZOI79HJRBboAVyr3ka7WlX3b+SMax4MoUYhRoHCe
-         WqvPmWXaEVhpCDywYO197eP5Lc0dltiCe7u4V/dgBPtVbcXYAlU9Glhkce9VvB9sfsO2
-         1dtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719454581; x=1720059381;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4DveGNeDVjuCDjhS9k/j3k6/jkRn9D6b5kOIHQkM86o=;
-        b=E0TnaD0uIWrjSGV2q4qlZxSOMjsmDG9JBbaM/QB2eISiPuV8+vj7u/0ZLx7x51NKPb
-         4VVql+N8ZDcGSP4dPLEvSN9fpw30pR971gQDKkAb51R6QB1LlHc03KLDCz0gFMX6qZzs
-         iwEI6uTL450xw/uizkC7T3oDS51PSepgH2vYzg9zyqr2SmXSt7wtYKqYHkkzycE7oaFh
-         pV6h5QilW/yKIdSpJS2S+EW655bVyymfpC+OyKBKlO4julmV+StopfMwX0OYSDTHQ/sV
-         zNfB6W8j94rTyFHS8ZpkmeaMuy1vZ34TequHzTOFz8ZM4uVEo/q4hreIAC6d9S2B2a0K
-         RwNw==
-X-Forwarded-Encrypted: i=1; AJvYcCWbyibMpEht8P4omnYWHg/Kuxh5Gi6+qN6jXIz2BoPORxav4bdSD3DS85SHc5w2CRrBepY3StaMb54vEHP8oTVF+sDB3Lm9E4IyiR0PLOVBqxk/mo24fRfeK+w/AXxtGZt+
-X-Gm-Message-State: AOJu0YyJahAJBJS6sVvp9S+vTVdEn2Dnz9YyGer7i+fbgyEuaVxe9PT1
-	1R1keDAG/KsO6cZ+LCYsmxs19IHLwALsLDLkSDTjh7oPKCiWSNG2n72S4EMnt2h8Vx5KOoTLaSA
-	DoJ2L18SOv9WiSJjCbqHjjF4JMXs=
-X-Google-Smtp-Source: AGHT+IHqmQIOc4Rc7jTTUAeQFjvlWvn6OyeOFTr2ZR2eDW+NjrF6pjGZgx0KHmx7keF2Q6ikQOUdmdvNbbVRcfxkJyU=
-X-Received: by 2002:a2e:321a:0:b0:2ec:4d8a:785a with SMTP id
- 38308e7fff4ca-2ec5b2c4e90mr99595001fa.4.1719454580215; Wed, 26 Jun 2024
- 19:16:20 -0700 (PDT)
+	s=arc-20240116; t=1719454716; c=relaxed/simple;
+	bh=Rg5FD+AHiNN7C2ClglnhSg+pHeSKyBFnBijBK9oM7K8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RXZzdOV/XVr4fKjXmyZQXx2ggEMT6t2DZVDnPz/uVu6OJz6r85yEXAHkdlBbxUI8MyK3bp6Pxsiz3YpwhJiIcKfucCrY0g/miERKZa+pOAnB4EhOf57RqjS7tD55SrzGS7S+7eZoLwvHB2WPhMdTfO/qv33H4FdaUHUlDA6P9oY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4W8j0T3nZYz4f3kwB;
+	Thu, 27 Jun 2024 10:18:17 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id B21C01A016E;
+	Thu, 27 Jun 2024 10:18:29 +0800 (CST)
+Received: from [10.174.177.174] (unknown [10.174.177.174])
+	by APP1 (Coremail) with SMTP id cCh0CgAXQn7xy3xmv7DBAQ--.28382S3;
+	Thu, 27 Jun 2024 10:18:29 +0800 (CST)
+Message-ID: <42ef73fd-bfba-4ac8-88b3-5d98e011535f@huaweicloud.com>
+Date: Thu, 27 Jun 2024 10:18:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <81f4e616-8125-4934-a8e2-fd5beae90995@paulmck-laptop>
- <20240604222652.2370998-2-paulmck@kernel.org> <CAFwiDX9ynNpmU_Au=J7geJYjE8NLLM-p2x8QDyjmZ1qNBkLXZQ@mail.gmail.com>
- <ZnwiCsor-cku3ETF@localhost.localdomain> <CAFwiDX8EL8q-ihiXR8GSu5AxmRGs8w4z682nWMMMqDe2phLjuQ@mail.gmail.com>
- <ZnyQJGJGeAbTSEhv@pavilion.home>
-In-Reply-To: <ZnyQJGJGeAbTSEhv@pavilion.home>
-From: Neeraj upadhyay <neeraj.iitr10@gmail.com>
-Date: Thu, 27 Jun 2024 07:46:08 +0530
-Message-ID: <CAFwiDX8TP4EzsnFCfrj-2iKVdXGqsM5_eLexp=qpqnd7qEE-bw@mail.gmail.com>
-Subject: Re: [PATCH rcu 2/6] rcu: Remove superfluous full memory barrier upon
- first EQS snapshot
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>, rcu@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-team@meta.com, rostedt@goodmis.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/5] cachefiles: some bugfixes for clean object/send
+ req/poll
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: netfs@lists.linux.dev, dhowells@redhat.com, jlayton@kernel.org,
+ jefflexu@linux.alibaba.com, zhujia.zj@bytedance.com,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
+ yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>,
+ Baokun Li <libaokun@huaweicloud.com>
+References: <20240515125136.3714580-1-libaokun@huaweicloud.com>
+ <13b4dd18-8105-44e0-b383-8835fd34ac9e@huaweicloud.com>
+ <c809cda4-57be-41b5-af2f-5ebac23e95e0@linux.alibaba.com>
+ <6b844047-f1f5-413d-830b-2e9bc689c2bf@huaweicloud.com>
+ <d97a1e87-9571-453e-909c-4de17d1d67db@linux.alibaba.com>
+Content-Language: en-US
+From: Baokun Li <libaokun@huaweicloud.com>
+In-Reply-To: <d97a1e87-9571-453e-909c-4de17d1d67db@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:cCh0CgAXQn7xy3xmv7DBAQ--.28382S3
+X-Coremail-Antispam: 1UD129KBjvdXoW7XF4rGFWDurW7uw47Ww1Utrb_yoWkCFg_uF
+	ZavFZrCw4UXrsFyanayrW5Zrs2grWrZr1rA34rJr1Uu3s5XFyrWF4kWryxZrs3Aa18JF4I
+	kr9I9ayav343WjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbx8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
+	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
+	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUdHU
+	DUUUUU=
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAQAHBV1jkH+ALAAAs+
 
-On Thu, Jun 27, 2024 at 3:33=E2=80=AFAM Frederic Weisbecker <frederic@kerne=
-l.org> wrote:
+On 2024/6/27 10:08, Gao Xiang wrote:
 >
-> Le Wed, Jun 26, 2024 at 10:49:05PM +0530, Neeraj upadhyay a =C3=A9crit :
-> > On Wed, Jun 26, 2024 at 7:43=E2=80=AFPM Frederic Weisbecker <frederic@k=
-ernel.org> wrote:
-> > >
-> > > Le Wed, Jun 12, 2024 at 01:57:20PM +0530, Neeraj upadhyay a =C3=A9cri=
-t :
-> > > > On Wed, Jun 5, 2024 at 3:58=E2=80=AFAM Paul E. McKenney <paulmck@ke=
-rnel.org> wrote:
-> > > > >
-> > > > > From: Frederic Weisbecker <frederic@kernel.org>
-> > > > >
-> > > > > When the grace period kthread checks the extended quiescent state
-> > > > > counter of a CPU, full ordering is necessary to ensure that eithe=
-r:
-> > > > >
-> > > > > * If the GP kthread observes the remote target in an extended qui=
-escent
-> > > > >   state, then that target must observe all accesses prior to the =
-current
-> > > > >   grace period, including the current grace period sequence numbe=
-r, once
-> > > > >   it exits that extended quiescent state.
-> > > > >
-> > > > > or:
-> > > > >
-> > > > > * If the GP kthread observes the remote target NOT in an extended
-> > > > >   quiescent state, then the target further entering in an extende=
-d
-> > > > >   quiescent state must observe all accesses prior to the current
-> > > > >   grace period, including the current grace period sequence numbe=
-r, once
-> > > > >   it enters that extended quiescent state.
-> > > > >
-> > > > > This ordering is enforced through a full memory barrier placed ri=
-ght
-> > > > > before taking the first EQS snapshot. However this is superfluous
-> > > > > because the snapshot is taken while holding the target's rnp lock=
- which
-> > > > > provides the necessary ordering through its chain of
-> > > > > smp_mb__after_unlock_lock().
-> > > > >
-> > > > > Remove the needless explicit barrier before the snapshot and put =
-a
-> > > > > comment about the implicit barrier newly relied upon here.
-> > > > >
-> > > > > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> > > > > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > > > > ---
-> > > > >  .../Design/Memory-Ordering/Tree-RCU-Memory-Ordering.rst    | 6 +=
-++---
-> > > > >  kernel/rcu/tree.c                                          | 7 +=
-+++++-
-> > > > >  2 files changed, 9 insertions(+), 4 deletions(-)
-> > > > >
-> > > > > diff --git a/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Me=
-mory-Ordering.rst b/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memor=
-y-Ordering.rst
-> > > > > index 5750f125361b0..728b1e690c646 100644
-> > > > > --- a/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Or=
-dering.rst
-> > > > > +++ b/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Or=
-dering.rst
-> > > > > @@ -149,9 +149,9 @@ This case is handled by calls to the strongly=
- ordered
-> > > > >  ``atomic_add_return()`` read-modify-write atomic operation that
-> > > > >  is invoked within ``rcu_dynticks_eqs_enter()`` at idle-entry
-> > > > >  time and within ``rcu_dynticks_eqs_exit()`` at idle-exit time.
-> > > > > -The grace-period kthread invokes ``rcu_dynticks_snap()`` and
-> > > > > -``rcu_dynticks_in_eqs_since()`` (both of which invoke
-> > > > > -an ``atomic_add_return()`` of zero) to detect idle CPUs.
-> > > > > +The grace-period kthread invokes first ``ct_dynticks_cpu_acquire=
-()``
-> > > > > +(preceded by a full memory barrier) and ``rcu_dynticks_in_eqs_si=
-nce()``
-> > > > > +(both of which rely on acquire semantics) to detect idle CPUs.
-> > > > >
-> > > > >  +---------------------------------------------------------------=
---------+
-> > > > >  | **Quick Quiz**:                                               =
-        |
-> > > > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> > > > > index f07b8bff4621b..1a6ef9c5c949e 100644
-> > > > > --- a/kernel/rcu/tree.c
-> > > > > +++ b/kernel/rcu/tree.c
-> > > > > @@ -769,7 +769,12 @@ static void rcu_gpnum_ovf(struct rcu_node *r=
-np, struct rcu_data *rdp)
-> > > > >   */
-> > > > >  static int dyntick_save_progress_counter(struct rcu_data *rdp)
-> > > > >  {
-> > > > > -       rdp->dynticks_snap =3D rcu_dynticks_snap(rdp->cpu);
-> > > > > +       /*
-> > > > > +        * Full ordering against accesses prior current GP and al=
-so against
-> > > > > +        * current GP sequence number is enforced by current rnp =
-locking
-> > > > > +        * with chained smp_mb__after_unlock_lock().
-> > > > > +        */
-> > > >
-> > > > It might be worth mentioning that this chained smp_mb__after_unlock=
-_lock()
-> > > > is provided by rnp leaf node locking in rcu_gp_init() and rcu_gp_fq=
-s_loop() ?
-> > >
-> > > Right!
-> > >
-> > > How about this?
-> > >
-> >
-> > Looks good to me, thanks! Minor comment (ditto for the other patch) bel=
-ow
-> >
-> >
-> > >     /*
-> > >      * Full ordering against accesses prior current GP and also again=
-st
-> >
-> > Nit: "prior to current GP" ?
 >
-> Thanks. On a second thought and just to make sure we don't forget why we =
-did
-> what we did after a few years, I expanded some more, still ok with the fo=
-llowing?
+> On 2024/6/27 09:49, Baokun Li wrote:
+>> On 2024/6/26 11:28, Gao Xiang wrote:
+>>>
+>>>
+>>> On 2024/6/26 11:04, Baokun Li wrote:
+>>>> A gentle ping.
+>>>
+>>> Since it's been long time, I guess you could just resend
+>>> a new patchset with collected new tags instead of just
+>>> ping for the next round review?
+>>>
+>>> Thanks,
+>>> Gao Xiang
+>>
+>> Okay, if there's still no feedback this week, I'll resend this patch 
+>> series.
+>>
+>> Since both patch sets under review are now 5 patches and have similar
+>> titles, it would be more confusing if they both had RESEND. So when I
+>> resend it I will merge the two patch sets into one patch series.
 >
+> Sounds fine, I think you could rearrange the RESEND patchset with
+> the following order
+> cachefiles: some bugfixes for withdraw and xattr
+> cachefiles: some bugfixes for clean object/send req/poll
 
-Yes, looks good!
+Okay, I'll arrange the patches in that order.
 
+Thank you for your suggestion!
 
-Thanks
-Neeraj
-
->         /*
->          * Full ordering between remote CPU's post idle accesses and upda=
-ter's
->          * accesses prior to current GP (and also the started GP sequence=
- number)
->          * is enforced by rcu_seq_start() implicit barrier and even furth=
-er by
->          * smp_mb__after_unlock_lock() barriers chained all the way throu=
-ghout the
->          * rnp locking tree since rcu_gp_init() and up to the current lea=
-f rnp
->          * locking.
->          *
->          * Ordering between remote CPU's pre idle accesses and post grace=
- period's
->          * accesses is enforced by the below acquire semantic.
->          */
 >
-> Thanks.
+> Jingbo currently is working on the internal stuff, I will try to
+> review myself for this work too.
+>
+> Thanks,
+> Gao Xiaang
+
+Thank you so much for helping to review these patches.
+
+-- 
+With Best Regards,
+Baokun Li
+
 
