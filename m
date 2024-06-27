@@ -1,54 +1,59 @@
-Return-Path: <linux-kernel+bounces-233107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B44E991B258
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 00:43:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A514E91B25A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 00:43:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E93631C2275B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:43:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 531B81F22A4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:43:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A8B1A2C16;
-	Thu, 27 Jun 2024 22:43:00 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A7C1A2C1B;
+	Thu, 27 Jun 2024 22:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="h0BcoNEn"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA88A811FE;
-	Thu, 27 Jun 2024 22:42:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899231A2573;
+	Thu, 27 Jun 2024 22:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719528180; cv=none; b=juqqwkpvyuanz4g5ZHyJGjIRXRy2FQSSZ0aKdSl8sy3l/ch5bmsCS1nG9YbNpvw9HGb3CQf+6F91/LaAurtPsjTICfAXxmWAmAC6wMjdcW8ILy705G4zH2rJG0TQUnk1WONKy71OpKNUlTyo9iW7Zay4UBmVx1NmWj56h2dA7CI=
+	t=1719528205; cv=none; b=O2cS3pUXV8+dMM54/ZDkUUD5ByfwzcMM6fdzBkIxD4PIo3Vhwc8RX3id60NWjsFplfeGGrreEiwVpvXG6Jo7YyQ8jnLG7OzfKMUyzIF+637PZEM+cHWofjT/005YzmttF3JTwqdXTIg0w4Ho5aS2z9uVNNChbj3UCQ/5wPzzd1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719528180; c=relaxed/simple;
-	bh=jegK8+qk0NkM0+R20Z2W1+OFc/xAx0R0zsz5OSf1N2U=;
+	s=arc-20240116; t=1719528205; c=relaxed/simple;
+	bh=dSJoKrKoj9w0AJNQKBShni8tquEeO1Iztv2NUPIFACc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Svy+TFSxL25YkHt/1IVyZYuYZjLFT08/rofXyFV1K338oJJwKSLfRLJgBOeNoNOc0sq0SlEX65w5mL2tz1ABy9oW2+kio4VUUQ2carosU2v+c3B7J0cUjZln2m7pDcZZHM3j5/0iXKm1Rp5xv+vJccOiwpwRb2l3eUcYdlf8veU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.97.1)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1sMxpJ-0000000089v-2ETT;
-	Thu, 27 Jun 2024 22:42:49 +0000
-Date: Thu, 27 Jun 2024 23:42:45 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v2 net-next 3/3] net: phy: aquantia: add support for
- aqr115c
-Message-ID: <Zn3q5f5yWznMjAXd@makrotopia.org>
-References: <20240627113018.25083-1-brgl@bgdev.pl>
- <20240627113018.25083-4-brgl@bgdev.pl>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ixhVBxbuTQfE5MNfCjm4yaikAHWkwai4dVxNHSJjRineYKPUUQUH7c6xfuC0b9pXnNHDOMRGz5TUWFl83IFDR5StlabPl3/L3Gxo0TzhD0NbE2/hX7ZJKfHMdl1FV48L5ioE7Vq3eS9RX7EbQX4Pwr032eisB23LfJe2TrktSh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=h0BcoNEn; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A7CC6E0002;
+	Thu, 27 Jun 2024 22:43:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1719528202;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dLEu0TIlpm/jNlDq8RrtIfscO374jrNyb9NXvdvHY4A=;
+	b=h0BcoNEn7E8GXUTHSPQW+fKSsWO+4XTUpakYbbwg+81+j34QbKePN+Ur/MMIsfNdNuNTlq
+	Fsf2oCFlg/cN91C7Va/AFNbW3OG20u8Cko5bD6aq9iozSLAYub3dzu+xLe47+s5yrif0ir
+	rQhDWwfxkJyuz/RxOuTerfxf2HwP/ZC+GQIDqv63is+p8z3HHbgy5Pck2cA1/HH9qXYQXo
+	yL2DEDaVFWuwW07T/kti7WLXsv5qmFwHbNPX2/A/8aDbSLNSGEf4PqEeLy4A4BArlrz/W5
+	hACWG7fiexEYGpqBP8IF8qo3qnFi5XEAo0X1vN/ubd3PVh7wDXdqTcG3jg2DBA==
+Date: Fri, 28 Jun 2024 00:43:21 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Leonard Anderweit <L.Anderweit@phytec.de>
+Cc: "arnd@arndb.de" <arnd@arndb.de>,
+	"linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"upstream@phytec.de" <upstream@phytec.de>
+Subject: Re: Question about [PATCH] [RFC] rtc: y2038: remove broken
+ RTC_HCTOSYS workaround
+Message-ID: <20240627224321db4557b2@mail.local>
+References: <cf6ac9542f58a33b146ad7b0f5577e1dff3becab.camel@phytec.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,130 +62,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240627113018.25083-4-brgl@bgdev.pl>
+In-Reply-To: <cf6ac9542f58a33b146ad7b0f5577e1dff3becab.camel@phytec.de>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-Hi Bartosz,
-
-On Thu, Jun 27, 2024 at 01:30:17PM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On 24/06/2024 11:41:41+0000, Leonard Anderweit wrote:
+> Hi,
 > 
-> Add support for a new model to the Aquantia driver. This PHY supports
-> Overlocked SGMII mode with 2.5G speeds.
-
-I don't think that there is such a thing as "Overclocked SGMII mode with
-2.5G speed".
-
-Lets take a short look at Cisco SGMII, which is defined as a serialzed
-version of the Gigabit Media-Independent Interface. As such, it supports
-10M, 100M and 1000M speed. There is negotiation for speed, duplex,
-flow-control and link status (up/down).
-
-The data signals always operate at 1.25 Gbaud and the clocks operate at
-625 MHz (a DDR interface), and there is a 10:8 FEC coding applied,
-resulting in 1 Gbit/s usable bandwidth.
-
-For lower speeds lower than 1 Gbit/s each symbol is repeated 10x for
-100M and 100x for 10M.
-
-Now, assuming SGMII running at 2.5x the clock speed of actual Cisco
-SGMII would exist, how would that look like for lower speeds like 1000M,
-100M or 10M? Obviously you cannot repeat a symbol 2.5 times, which would
-make it impossible to support 1000M links with the same strategy used
-for lower speeds in regular SGMII.
-
-Hence I assume that what you meant to say here is that the PHY uses
-2500Base-X as interface mode and performs rate-adaptation for speeds
-less than 2500M (or half-duplex) using pause frames.
-
-This is also what e.g. AQR112 is doing, which I would assume is fairly
-similar to the newer AQR115.
-
+> I found this patch [1] which is necessary for a project I'm currently
+> working on. I'm using phyboard-wega [2] with an am335 ARM SoC which I
+> want to make y2038 proof.
+> Is there any reason it was never accepted?
 > 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  drivers/net/phy/aquantia/aquantia_main.c | 39 +++++++++++++++++++++++-
->  1 file changed, 38 insertions(+), 1 deletion(-)
+
+The systemd maintainer think the kernel is well placed to take a
+decision it can't actually take so they won't fix a bug where systemd is
+crashing when userspace is 32bit.
+
+The whole situation is frustrating and honestly, nobody should use the
+hctosys insanity anyway. Obviously systemd mandates its usage and this
+is yet another topic on which they think the kernel is better placed to
+take decisions that are actually userspace policy.
+
+I've been arguing for a while and gave up.
+
+> [1]https://lore.kernel.org/all/20220908115337.1604277-1-arnd@kernel.org/
+> [2]https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/arch/arm/boot/dts/ti/omap/am335x-wega-rdk.dts
 > 
-> diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
-> index 974795bd0860..98ccefd355d5 100644
-> --- a/drivers/net/phy/aquantia/aquantia_main.c
-> +++ b/drivers/net/phy/aquantia/aquantia_main.c
-> @@ -29,6 +29,7 @@
->  #define PHY_ID_AQR113	0x31c31c40
->  #define PHY_ID_AQR113C	0x31c31c12
->  #define PHY_ID_AQR114C	0x31c31c22
-> +#define PHY_ID_AQR115C	0x31c31c33
->  #define PHY_ID_AQR813	0x31c31cb2
->  
->  #define MDIO_PHYXS_VEND_IF_STATUS		0xe812
-> @@ -111,7 +112,6 @@ static u64 aqr107_get_stat(struct phy_device *phydev, int index)
->  	int len_h = stat->size - len_l;
->  	u64 ret;
->  	int val;
-> -
->  	val = phy_read_mmd(phydev, MDIO_MMD_C22EXT, stat->reg);
->  	if (val < 0)
->  		return U64_MAX;
-> @@ -721,6 +721,18 @@ static int aqr113c_config_init(struct phy_device *phydev)
->  	return aqr107_fill_interface_modes(phydev);
->  }
->  
-> +static int aqr115c_config_init(struct phy_device *phydev)
-> +{
-> +	/* Check that the PHY interface type is compatible */
-> +	if (phydev->interface != PHY_INTERFACE_MODE_SGMII &&
-> +	    phydev->interface != PHY_INTERFACE_MODE_2500BASEX)
-> +		return -ENODEV;
-> +
-> +	phy_set_max_speed(phydev, SPEED_2500);
-> +
-> +	return 0;
-> +}
-> +
->  static int aqr107_probe(struct phy_device *phydev)
->  {
->  	int ret;
-> @@ -999,6 +1011,30 @@ static struct phy_driver aqr_driver[] = {
->  	.led_hw_control_get = aqr_phy_led_hw_control_get,
->  	.led_polarity_set = aqr_phy_led_polarity_set,
->  },
-> +{
-> +	PHY_ID_MATCH_MODEL(PHY_ID_AQR115C),
-> +	.name           = "Aquantia AQR115C",
-> +	.probe          = aqr107_probe,
-> +	.get_rate_matching = aqr107_get_rate_matching,
-> +	.config_init    = aqr115c_config_init,
-> +	.config_aneg    = aqr_config_aneg,
-> +	.config_intr    = aqr_config_intr,
-> +	.handle_interrupt = aqr_handle_interrupt,
-> +	.read_status    = aqr107_read_status,
-> +	.get_tunable    = aqr107_get_tunable,
-> +	.set_tunable    = aqr107_set_tunable,
-> +	.suspend        = aqr107_suspend,
-> +	.resume         = aqr107_resume,
-> +	.get_sset_count = aqr107_get_sset_count,
-> +	.get_strings    = aqr107_get_strings,
-> +	.get_stats      = aqr107_get_stats,
-> +	.link_change_notify = aqr107_link_change_notify,
-> +	.led_brightness_set = aqr_phy_led_brightness_set,
-> +	.led_hw_is_supported = aqr_phy_led_hw_is_supported,
-> +	.led_hw_control_set = aqr_phy_led_hw_control_set,
-> +	.led_hw_control_get = aqr_phy_led_hw_control_get,
-> +	.led_polarity_set = aqr_phy_led_polarity_set,
-> +},
->  {
->  	PHY_ID_MATCH_MODEL(PHY_ID_AQR813),
->  	.name		= "Aquantia AQR813",
-> @@ -1042,6 +1078,7 @@ static struct mdio_device_id __maybe_unused aqr_tbl[] = {
->  	{ PHY_ID_MATCH_MODEL(PHY_ID_AQR113) },
->  	{ PHY_ID_MATCH_MODEL(PHY_ID_AQR113C) },
->  	{ PHY_ID_MATCH_MODEL(PHY_ID_AQR114C) },
-> +	{ PHY_ID_MATCH_MODEL(PHY_ID_AQR115C) },
->  	{ PHY_ID_MATCH_MODEL(PHY_ID_AQR813) },
->  	{ }
->  };
-> -- 
-> 2.43.0
-> 
-> 
+> Regards
+> Leonard
+
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
