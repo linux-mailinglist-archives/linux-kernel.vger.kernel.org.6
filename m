@@ -1,165 +1,127 @@
-Return-Path: <linux-kernel+bounces-232261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9DB191A5E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:58:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D317891A5EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:59:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6135C28B686
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:58:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88CD81F26B7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F38915CD7D;
-	Thu, 27 Jun 2024 11:56:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5097515217A;
+	Thu, 27 Jun 2024 11:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ra6Se469"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fKHV+U0H"
 Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4170158D7E
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 11:56:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0DAF14EC61
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 11:56:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719489372; cv=none; b=XKO7zF+23iBvw1ROVwTGNp6um88slMpntQsf1fHDY2ccYaN+tgn2KzsrsdLTYxe1JBaMzPWtxwrZQDlt39jd4fsLthYT8nw4yw0cKYewHfqOCQNLk0v4M8QypPFyH0LHdEhyS9nP0J+8MSmvStupioFGPK/CIvRadcP+qOfIxQI=
+	t=1719489415; cv=none; b=VUUWLedyW06i1khgoxiMvY+Ni0xUHQaaDCkdjd8K/hhsgakCM9LvVakDU6iRS6QM47gTdBXHSHQhbiIH50ht7MQx0SifUfPy+KLhxlRb+A3vJV/OXR5vjGXTcpKmsJdlWLel1kb01mLcyguL+E9Kacz3e06GtFpYE4Z5MxOjnTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719489372; c=relaxed/simple;
-	bh=g0Wl4h61ssXTDQDWpBbnWoZg465Iv6edu55cBmBWFbQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=JMImgwYyhifFmUI4qWzxY3gbSORSxOhoifgyT8WFiOQiyq0z46c/Ec+0iECDtWLADDdfKno1ggM40cBxNXTNaZqqz7/DO6KuGFzDIYC6m9ZaljPk06PdVMUMFseN8l+6ZmEThxJQLywpLJKW8xGBrrnqgP45dq2tpy2ccsFjMQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ra6Se469; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ec4eefbaf1so71040311fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 04:56:10 -0700 (PDT)
+	s=arc-20240116; t=1719489415; c=relaxed/simple;
+	bh=Hjb6Y9xufXv6W4XRLObCOevOAhOQJDuYsB67oNNqo8w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NTsA0MaIHw4h3VN1/bDwHbNqOylg2m6c1wLoxtNtEXJEQVrJy2ch8TwV4ti4qV02+uiwFDAk+Z5WnRq+88lMsvHr8EMCRIKOjS61qfxH8+pzvynuMGFi4DHyqa8HvyAVjGU0zqK/XU9kdbJ5LhLLrfDZIBZx+i52rhp6d5dAeeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fKHV+U0H; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ec0f3b9cfeso93669011fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 04:56:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719489369; x=1720094169; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C8v4bFj4iSA3BftmxjwpQi84YY85RY3VBaxhTtWxmhU=;
-        b=ra6Se469OwI8kcC+Exg2O/gSK7ZnQWlio+EfLbAbooOhARKvM8tM6W9QWiqtUoCcA5
-         rBZXMCiT4pneUzf97TD+Bvxf3x9H10ODcLRWtrNvVMsiB1z0q+0YXx2xHRvhb4tZeNd0
-         mGGhE5FGnQJ16QXiDIdgZCxaRET5X82Pe3juRZUYbFO3EuxjSW19pdir3onaVQmvsbRk
-         wFqiK4G3gONAYaiy6f0LB1d5M26E1PRrp9oqp3oWQ1VRFcrCJ5ItHclYe1k10UcRNLID
-         XdJK0z639jUzkllY88y+SUKokCHMSHGwZoCnu2OT0qa6FtrDqNIf5x2m5+XMlm6E067+
-         mXiQ==
+        d=suse.com; s=google; t=1719489412; x=1720094212; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=RTscV93mnU/sdtKW3g3pscHnzbtMVWx7thKuq6j5iWA=;
+        b=fKHV+U0HHhYM+bS6fvQVZzUX/sOfqyEuyDc+RLcLRMlaM7h+wz3/df9juKVCuBik0j
+         q7a3lLTtC2ocF+VwBEmc/wDNLdyi1wWc2e2whQDZ/5FVp6rxko3TiLClURVmETRunmP7
+         4Dscx6xO2yMC8blc6PTdTIZcisZTIzRqI6zCGq79Qshm90H5iTMYp5WBqMBN1D1g6w7/
+         v0yyJHteW6UffWK9OC+m/nKOMNyqYe/LVzTDzzfE3r6v3IIRWDg/fA1i5hLwppmwaotj
+         QpWlkX5m9UbEvr909uqEj2rw9WmB0RCAUG4grsHgwjZNISjw8UdJyH4nSPf2Upu43F72
+         /0bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719489369; x=1720094169;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=C8v4bFj4iSA3BftmxjwpQi84YY85RY3VBaxhTtWxmhU=;
-        b=g1USxUZyWgX+dlKsoV8fZWDp09v/wzFoXdhytaYcPojxJQMb1U44zNLY/SsYxgpwRL
-         HsyOhL/04nGAAvtJmxq3fTr/xcsgeFUhaAp8CA18OPDxISgZ8qGD9LuXWTgIo3VOgbRA
-         LXq+EgciMH/8MVZLKe4fcmeXMIExUuZMO21KGK0wXPKZeH5CcfPlfwdn8DqqrIhQzn7V
-         8AzSKGkLB5fhb3TWO/hg1QHpfJfN8hScvrXyBKhEsdcAnh4/ZbngUyz3bABL9WwfhKnO
-         S5JfcguTIR+AXc4ObsfUchctN3hpKAXgL5rEDHwEjofo8O81JbJ3CBHBNQe/7aQBUP78
-         R7mg==
-X-Forwarded-Encrypted: i=1; AJvYcCXMSiKGjxpKUtyKDgYK/cxBXqHFTjCSWrKUotnegf3/tyvnoMV7o6JzY4KizfPzUqAP/FFreV274pFymKo/1vIk0ii4A0vSEqaJ+wXR
-X-Gm-Message-State: AOJu0Yy3TqCbfIvVVGnYRv1EcYVpNCNUwC1euimjiaeIynH+mAjxs5ma
-	1qFMqUSsdNM2H8U7LPdMiwyYFKfVv0/CxlI+a9GpwpNiEylRFvRRe3LLHTjUZAQ=
-X-Google-Smtp-Source: AGHT+IFLPN71sNJnEggE9GCOJ4P9kwk9N//Zz17QnhrpPaDxo5LCeYSPuflBgcBS1lV/RkJD+is4Lg==
-X-Received: by 2002:a2e:8297:0:b0:2ec:174b:75bb with SMTP id 38308e7fff4ca-2ec5b38ad36mr76951971fa.28.1719489368486;
-        Thu, 27 Jun 2024 04:56:08 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:feeb:faed:66fa:9e6a? ([2a01:e0a:982:cbb0:feeb:faed:66fa:9e6a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c846a8f0sm63980045e9.42.2024.06.27.04.56.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Jun 2024 04:56:08 -0700 (PDT)
-Message-ID: <cb900231-65d6-404c-8895-e1ee548aef4b@linaro.org>
-Date: Thu, 27 Jun 2024 13:56:06 +0200
+        d=1e100.net; s=20230601; t=1719489412; x=1720094212;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RTscV93mnU/sdtKW3g3pscHnzbtMVWx7thKuq6j5iWA=;
+        b=o7Sq6tAXOVd0F/ZsryQBWBcC1YCGdh+lJtg7GjAOl2ebDbMVOshu2oMvhsashNsbwO
+         qXR0KGHlqxK/1QJZMst+d475NoErgFgopJL4Gg+BHrAp0CVuBNm2czqL5tG9StaFjJR/
+         oBIv+41/1oswYp8ZNoLynBUwfs/ykNaG1JjB9r6ay3p6gVCJoafI9L15waYsdxRCUDJN
+         XO451wiqWaDoYn7jx+tJRLgNKI2KIfaVSDn40k1VWOYAdGGxoE0+Llx/bv2DLwSz4Td6
+         IZ1Xj/LvFn/N8P7axRxs0IMa2GGMzn55qgHr9ptU7pmAFSadE3oATGjK1SUStHrUmPq3
+         QslQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULfndPgSY81fo8wChe02UMQ/0CvGEVmJhLND0n0uVr1LKDCUV9WQM3wGnfFwXt5wA3mTyBd809enX2pPXpDBNFyhvw2lC/xwuzF2tx
+X-Gm-Message-State: AOJu0YzsVsOa+FPJPPNnN1G43SIF/qrmZfW6mwdHU7S9iQntgc1SScUt
+	z6qyYNm47VQyQLkMWoHC5OHnK5ZWjCjT1HFI1++kbJUzSha0n798q9+at0pboeE=
+X-Google-Smtp-Source: AGHT+IFBhzD4ba4RxYT7GBZHeb8AVWfuDT9QQmIqhnkzesUOrfSDBtxMVU19upAdp0geCUqhs/QOCg==
+X-Received: by 2002:a2e:7303:0:b0:2ec:4fec:8bda with SMTP id 38308e7fff4ca-2ec594cfe83mr87404851fa.36.1719489411987;
+        Thu, 27 Jun 2024 04:56:51 -0700 (PDT)
+Received: from localhost (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-584d17b03f3sm779936a12.47.2024.06.27.04.56.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 04:56:51 -0700 (PDT)
+Date: Thu, 27 Jun 2024 13:56:51 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Xiu Jianfeng <xiujianfeng@huawei.com>, hannes@cmpxchg.org,
+	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+	muchun.song@linux.dev, akpm@linux-foundation.org,
+	cgroups@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] mm: memcg: remove redundant
+ seq_buf_has_overflowed()
+Message-ID: <Zn1Tg6_9NyxJE7Tk@tiehlicka>
+References: <20240626094232.2432891-1-xiujianfeng@huawei.com>
+ <Zn0RGTZxrEUnI1KZ@tiehlicka>
+ <CAJD7tkZfkE6EyDAXetjSAKb7Zx2Mw-2naUNHRK=ihegZyZ2mHA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 3/3] arm64: dts: amlogic: a5: add power domain controller
- node
-To: xianwei.zhao@amlogic.com, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Jianxin Pan <jianxin.pan@amlogic.com>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, Hongyu Chen <hongyu.chen1@amlogic.com>
-References: <20240627-a5_secpower-v1-0-1f47dde1270c@amlogic.com>
- <20240627-a5_secpower-v1-3-1f47dde1270c@amlogic.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240627-a5_secpower-v1-3-1f47dde1270c@amlogic.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJD7tkZfkE6EyDAXetjSAKb7Zx2Mw-2naUNHRK=ihegZyZ2mHA@mail.gmail.com>
 
-On 27/06/2024 13:47, Xianwei Zhao via B4 Relay wrote:
-> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+On Thu 27-06-24 04:33:50, Yosry Ahmed wrote:
+> On Thu, Jun 27, 2024 at 12:13 AM Michal Hocko <mhocko@suse.com> wrote:
+> >
+> > On Wed 26-06-24 09:42:32, Xiu Jianfeng wrote:
+> > > Both the end of memory_stat_format() and memcg_stat_format() will call
+> > > WARN_ON_ONCE(seq_buf_has_overflowed()). However, memory_stat_format()
+> > > is the only caller of memcg_stat_format(), when memcg is on the default
+> > > hierarchy, seq_buf_has_overflowed() will be executed twice, so remove
+> > > the reduntant one.
+> >
+> > Shouldn't we rather remove both? Are they giving us anything useful
+> > actually? Would a simpl pr_warn be sufficient? Afterall all we care
+> > about is to learn that we need to grow the buffer size because our stats
+> > do not fit anymore. It is not really important whether that is an OOM or
+> > cgroupfs interface path.
 > 
-> Add power domain controller node for Amlogic A5 SoC.
-> 
-> Signed-off-by: Hongyu Chen <hongyu.chen1@amlogic.com>
-> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> ---
->   arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi | 10 ++++++++++
->   1 file changed, 10 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi
-> index 43f68a7da2f7..17a6316de891 100644
-> --- a/arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi
-> @@ -4,6 +4,7 @@
->    */
->   
->   #include "amlogic-a4-common.dtsi"
-> +#include <dt-bindings/power/amlogic,a5-pwrc.h>
->   / {
->   	cpus {
->   		#address-cells = <2>;
-> @@ -37,4 +38,13 @@ cpu3: cpu@300 {
->   			enable-method = "psci";
->   		};
->   	};
-> +
-> +	sm: secure-monitor {
-> +		compatible = "amlogic,meson-gxbb-sm";
-> +
-> +		pwrc: power-controller {
-> +			compatible = "amlogic,a5-pwrc";
-> +			#power-domain-cells = <1>;
-> +		};
-> +	};
->   };
-> 
+> Is it possible for userspace readers to break if the stats are
+> incomplete?
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+They will certainly get an imprecise picture. Sufficient to break I
+dunno.
+
+> If yes, I think WARN_ON_ONCE() may be prompted to make it
+> easier to catch and fix before deployment.
+
+The only advantage of WARN_ON_ONCE is that the splat is so verbose that
+it gets noticed. And also it panics the system if panic_on_warn is
+enabled. I do not particularly care about the latter but to me it seems
+like the warning is just an over reaction and a simple pr_warn should
+just achieve the similar effect - see my other reply
+-- 
+Michal Hocko
+SUSE Labs
 
