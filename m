@@ -1,97 +1,113 @@
-Return-Path: <linux-kernel+bounces-232863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 975AC91AF3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:44:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 933EB91AF3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:45:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E61E1F24D13
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:44:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D2931F24A42
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:45:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BA4D19AD84;
-	Thu, 27 Jun 2024 18:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7FF194A4E;
+	Thu, 27 Jun 2024 18:45:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Uzowu7IA"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="et2V3hO5"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B7C19A29A;
-	Thu, 27 Jun 2024 18:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E8221CAB7
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 18:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719513861; cv=none; b=QwczktehRetLG88n1GvB86Ff2or5+umDx/pBU9brCustXtp8hvdyVod/XdOOML7ZLKjzsEWi9OUJTHe2IQ/wWb6wxQntTniczdFJsEorMttQsUewxRKuB8CLSjolDcqIVSq7b8jMSqGSZaQ9eAjnGhnA34mP07mc90ykw2SVdC4=
+	t=1719513926; cv=none; b=o6NVHRo46M/yi6KdDRpWVDgrChERTAtFbMZLQpgDYhqO7MS3BxTdKj7D93YC9fB43TfYBVx9JTF0YsEz4P3MasFIuarPInXR1VUJ+wVHmNQLVvXGfpvCycHjeE/vHda2r7BXmYE0sSVFIDT7P/tCfQoz2f8ZcGRLXJgY1nL8kYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719513861; c=relaxed/simple;
-	bh=prKsNYynAn4EuntaQK+Kbr3lWJAwny9CQumzc8DtOCM=;
+	s=arc-20240116; t=1719513926; c=relaxed/simple;
+	bh=Dsa8mn/EgpKUWQxIt8mRJdK3pZ2l0YPsiLsi+ebTsDk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RGLsVnYZfFo87/hgTCC9WnpL9RkpfQUIDkPQJ6sxyjgxPEXtLDclSFIPvL8r9v+9hApn+/r8FFNBUB2w90pdKoeOTtX+RTniGcejtXxzRewMdCZ0KTRi+vKX7qTBgxTQdy1css8X6/BO4lO4RpadiOX6gk/amqnsQ5lYiBFtAkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Uzowu7IA; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=zX2UQ3N1Uf7aQKhs/DniErwInCojUqhpjcn2XavO7UM=; b=Uzowu7IAMepyjlQ9RgsUcoSgEU
-	dScZnGJ0eyy3N/s3glMIVqZBdUi+Zqt38LINZ4AdwnF6TJQva6f15G/RUrz1msaRn9rJE6GP3RyaK
-	2oaordsiGXkHKEHeWmn5iJELK+dWvyQrm/tCo2/RkMJiXPcUztMAsbdsSsP50+pornW8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sMu6E-001CRi-9K; Thu, 27 Jun 2024 20:44:02 +0200
-Date: Thu, 27 Jun 2024 20:44:02 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Michael Walle <mwalle@kernel.org>
-Cc: Ayush Singh <ayush@beagleboard.org>, Mark Brown <broonie@kernel.org>,
-	Vaishnav M A <vaishnav@beagleboard.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>, jkridner@beagleboard.org,
-	robertcnelson@beagleboard.org, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 1/7] dt-bindings: connector: Add mikrobus-connector
-Message-ID: <936ec654-b055-4549-87fb-5a60e2a5ccd2@lunn.ch>
-References: <20240627-mikrobus-scratch-spi-v5-0-9e6c148bf5f0@beagleboard.org>
- <20240627-mikrobus-scratch-spi-v5-1-9e6c148bf5f0@beagleboard.org>
- <D2AYUH4XY0SK.1SYOUCT0PLAKT@kernel.org>
- <e0f9754e-4d84-4ab4-82a4-34cb12800927@beagleboard.org>
- <D2AZMD2YYGAQ.1B3AGXIC7B44@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pMADO+yeUYQU+TgGY5bB0wzhU5NwWZH8ZfiubQMQzWiH9D1g9ojodXPszbqbHPoYyINzqHvPkmWCygFowVhx5lH1fXNfohP5taOdBzPYTGD92cN2i3W23WtqTPvz53gIDHbSu0cI+P3PJ7+h5pv338MolEPBhL9OnhtxFXCXoa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=et2V3hO5; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: yosryahmed@google.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1719513922;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dgmx3yNno1fsFcSCb4lnzQMpdWaPdOGLHAqvKqTAmUQ=;
+	b=et2V3hO5MdtXYQFgY/laYemN0Gwn3cG/qxWzxlDrlShaeVGMQPv7ynMBQdDUx47z+b95mg
+	FocWpUYAd0a1mEp6asE1oU2klKTNDPj7cVfSn99M24bnUSjxMufA6HrgXhRr9qXTe3UAwD
+	ymYIJAb5Qfv/BhbuBhvGkSVRzEqhsyw=
+X-Envelope-To: hawk@kernel.org
+X-Envelope-To: tj@kernel.org
+X-Envelope-To: cgroups@vger.kernel.org
+X-Envelope-To: hannes@cmpxchg.org
+X-Envelope-To: lizefan.x@bytedance.com
+X-Envelope-To: longman@redhat.com
+X-Envelope-To: kernel-team@cloudflare.com
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+Date: Thu, 27 Jun 2024 11:45:17 -0700
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Jesper Dangaard Brouer <hawk@kernel.org>, tj@kernel.org, 
+	cgroups@vger.kernel.org, hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com, 
+	kernel-team@cloudflare.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3 2/2] cgroup/rstat: Avoid thundering herd problem by
+ kswapd across NUMA nodes
+Message-ID: <f4hbugpz5fudmiooxe73dbcbmi4stufm3msu4j37atv2feqhc6@ywai42srcwto>
+References: <171943667611.1638606.4158229160024621051.stgit@firesoul>
+ <171943668946.1638606.1320095353103578332.stgit@firesoul>
+ <CAJD7tkbBpPqFW5fhmhcwDAfrze+aj8xFCF+3S4egBfipA4zKgQ@mail.gmail.com>
+ <CAJD7tkYFKTA7aLcBE=X0jA1vKG_V+6Z-HstJRnnNrvMnjnLzHw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <D2AZMD2YYGAQ.1B3AGXIC7B44@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJD7tkYFKTA7aLcBE=X0jA1vKG_V+6Z-HstJRnnNrvMnjnLzHw@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-> That's then per board, per click board. right?
+On Thu, Jun 27, 2024 at 04:32:03AM GMT, Yosry Ahmed wrote:
+> On Thu, Jun 27, 2024 at 3:33 AM Yosry Ahmed <yosryahmed@google.com> wrote:
+[...]
+> >
+> > The reason why I suggested that the completion live in struct cgroup
+> > is because there is a chance here that the flush completes and another
+> > irrelevant flush starts between reading cgrp_rstat_ongoing_flusher and
+> > calling wait_for_completion_interruptible_timeout().
+
+Yes this can happen if flusher for irrelevant cgroup calls
+reinit_completion() while the initial flusher was just about to call
+wait_for_completion_interruptible_timeout().
+
+> >
+> > This will cause the caller to wait for an irrelevant flush, which may
+> > be fine because today the caller would wait for the lock anyway. Just
+> > mentioning this in case you think this may happen enough to be a
+> > problem.
 > 
-> >
-> > ```
-> >
-> >
-> > The problem with making it children is that each connector will require 
-> > seperate overlays for board configs.
+> Actually, I think this can happen beyond the window I described above.
+> I think it's possible that a thread waits for the flush, then gets
+> woken up when complete_all() is called, but another flusher calls
+> reinit_completion() immediately. The woken up thread will observe
+> completion->done == 0 and go to sleep again.
+
+I don't think it will go to sleep again as there is no retry.
+
 > 
-> Right.
+> I think most of these cases can be avoided if we make the completion
+> per cgroup. It is still possible to wait for more flushes than
+> necessary, but only if they are for the same cgroup.
 
-For somebody who has not used overlays, could you expand on that.
-
-Is it not possible to say "Overlay this DT fragment on point X of the
-tree". So you populate children on a node. It should not matter if you
-have the same children somewhere else, they have different parents?
-
-     Andrew
-
+Yeah, per-cgroup completion would avoid the problem of waiting for
+irrelevant flush.
 
