@@ -1,75 +1,85 @@
-Return-Path: <linux-kernel+bounces-232898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F33791AFA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 21:28:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4CBF91AFA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 21:29:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36492B21650
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:28:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F89B286D0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:29:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F062219DF9A;
-	Thu, 27 Jun 2024 19:27:47 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42AE719ADA4;
+	Thu, 27 Jun 2024 19:29:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="y//1T9J+";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BFt8URDG"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3556F200DE;
-	Thu, 27 Jun 2024 19:27:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA5C19AA70
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 19:29:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719516467; cv=none; b=Ine9x/fNEV5Z88JkBzjUeiko7WyFcxJeq+RqwZgqmxY1ysWv722UneU6hHQ5I10KhmI44HIRraiSjbHemcnATs6EyvGGaPuuN0YPW/T2Eu039kslWwIvfAVyC6ZOxD9hRR3mbBCdCDVL+zpzJQqlguEAFMoZQl6JquKd3IXXqgM=
+	t=1719516550; cv=none; b=pa1cKT87Xgh3o+6IDu516tOtaBwd3vLur5XGz3ObzPSwMe3elcdZe06/Dj96a6cLaGQmIYxetlf5UoCtYm9nsjY254Tw7WQzvTXnnm+Ljoi2pdXw6KjTEtXrzsHwVXtbp7sRNz6sBYkvCFc+58mhAHRrZalG/+xRRNfofbGxwFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719516467; c=relaxed/simple;
-	bh=AIxltvz37z0MwGC04DKhjiq1CH8cPRjkTMiW/gLdTCI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K6E8gr2w+aG6JdqSJUwUfp92BYmvpEp6/wBED0PvaQMJiqzGEzqJtxT1+rCGNjJx7mQvLXq3kwR8vsT+3r3p4Lgnuzukw4oTa3tkp5NyDNmjwaLnBs9x1kN4zAJB/8aoKJoTfL/bX8cKlmnnlOV2DFf8C1G4h+3TZXslUPFRokc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i53875b6a.versanet.de ([83.135.91.106] helo=phil.lan)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sMumM-0000wK-Ex; Thu, 27 Jun 2024 21:27:34 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Johan Jonker <jbx6244@gmail.com>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	linux-clk@vger.kernel.org,
-	sboyd@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	mturquette@baylibre.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v1] clk: rockchip: rk3188: Drop CLK_NR_CLKS usage
-Date: Thu, 27 Jun 2024 21:27:30 +0200
-Message-Id: <171951643517.1057727.8364188588167296321.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <1cd309fa-a4d3-4283-aa47-1330a40448a7@gmail.com>
-References: <1cd309fa-a4d3-4283-aa47-1330a40448a7@gmail.com>
+	s=arc-20240116; t=1719516550; c=relaxed/simple;
+	bh=kbOIt7x5B48k8UMnr9Hqdav/V7eMB28kujGMeoD33vE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qGxjbf294G4+9YiohXmC0EBSlBS+K07t/6gK6vEJ+6Cn0eLvk/Tii2Vu5G2QYDsU7w532aqbmysO/e2SR3k39E6UCTFYPnaX62d83ziL4mzqm9Azdb0VjaA059xpI3gcUbf0XbOhpKpePjLgCcv7h4ekQwNwZuTIbBMzHk4QmhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=y//1T9J+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BFt8URDG; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1719516546;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type;
+	bh=CW4D3YwEZ8qRNj+FsFwIee7/X+H87oVZZiY4cCXMQ6E=;
+	b=y//1T9J+0cLFxEoragJ+8eG5t+zmDDf634PGiw3gaCvF4/I86UcnwxlC9zleMl4GqtonKP
+	eLZq3TMna2/JdRIW8neni/hryBAwB+gnLHDKV4j2g1pnVGwfiocDhIvf+QkpMOfwaUsS6k
+	QEsw5wzoDx/GNnjToHIbPP0S178fz2xnmL6LexoyoyDvIGPnCi92yuRdafuCtqHEai4MGD
+	mEG2hrzbbzXzaf2JqzykQL3JG1q3Vr5rDABzCCpzPtiFu4bTIlfQYIcAX4MS2beAWo51kw
+	dI+ImsUdYHPafipArajNLqjnOr8CAPQzdPuH8h3wAIRdJzlY8Au/E1FiKklB+w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1719516546;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type;
+	bh=CW4D3YwEZ8qRNj+FsFwIee7/X+H87oVZZiY4cCXMQ6E=;
+	b=BFt8URDGaFOD2lw8+6D1yFmMoX7MwSR09NppkJoxjEFL374inQo0mVLEF/5GEJVhQC1CQ5
+	k/c157qoJWld9VAg==
+To: LKML <linux-kernel@vger.kernel.org>
+Subject: Mourning Daniel Bristot de Olivera
+Date: Thu, 27 Jun 2024 21:29:06 +0200
+Message-ID: <87r0ciyykd.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Mon, 24 Jun 2024 13:40:03 +0200, Johan Jonker wrote:
-> In order to get rid of CLK_NR_CLKS and be able to drop it from the
-> bindings, use rockchip_clk_find_max_clk_id helper to find the highest
-> clock id.
-> 
-> 
+Dear community!
 
-Applied, thanks!
+Many of you will have already heard the sad news of Daniel passing away
+on monday. The academic and the kernel scheduler communities have
+published an obituary for Daniel on LWN:
 
-[1/1] clk: rockchip: rk3188: Drop CLK_NR_CLKS usage
-      commit: ec2265dc91307622e43a7d602c3ea425da6f5de1
+        https://lwn.net/Articles/979912/
 
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
+On behalf of the scheduler community, I want to ask everyone for the
+time being to slow down the patches directed to all the people in the
+scheduler and wider community who have lost a close friend, so they have
+time and space to grieve.
+
+Daniel's latest contribution, the deadline server has been put on hold
+too and will be worked on when everyone has come to terms with this
+heart breaking situation.
+
+Urgent things will be dealt with, but might eventually need a nudge.
+
+Thanks in advance for your understanding and respect!
+
+       Thomas
 
