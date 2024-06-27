@@ -1,214 +1,148 @@
-Return-Path: <linux-kernel+bounces-232426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31A7A91A8B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:10:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A979C91A8B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:10:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EE90B2421F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:10:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EACF286D06
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF4A195FEF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94001195FCA;
 	Thu, 27 Jun 2024 14:09:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hPaid9Tl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MlUyZpFP"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F02195B2A;
-	Thu, 27 Jun 2024 14:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A68195B04;
+	Thu, 27 Jun 2024 14:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719497386; cv=none; b=oG2NwYFjaAA8eK6IN2LBUBKrH8YwzUvxki2i4Ws7hJgYL2M4bZjh6bO57f5H0rN2/MDw7IcvXUVB5AeS8NnYewPY+/z4jSE7T7G/llta334gDTgXPiMTDVRvk0jET6n5vUs5jxSh/tBNR1Gkw5kSD+SuMIEWdvriO/tav4MnhX8=
+	t=1719497385; cv=none; b=lTZ/8LEoivk1bxpF5IFWx3piigc9gZTYGqeT5AJo/cQg37l1VFzYBhNpJwC7f+rsUVSMtzNjbErDw4+W8k25PwdPnjSUOmcoM1kGR7Z8oI4tN5HxNHXoG6GXp8s4i36j4TAUpKcOsFThDVTQHtihWmrZsWvlC3hE/pVUtc8X6Vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719497386; c=relaxed/simple;
-	bh=N/OaLsIcQKk+az4MXyzNRYt8fiAoAVDEiwFfGH80yO8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZniWSMEviJqWGvuVAMjypIzC0wgLIz47ZrD+nHsdZdKvWKjAxQN0B5lvabBGtCWDxNiP1lPT07YJZB76rlnzc8+Ot08T9luik3Bv/o59FCq1b7fevORtOJaid1xsKEDmjgssiCSpF/GL5KpgycegAf97p8BeE5KClOYNqJTj9dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hPaid9Tl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EADC7C4AF0E;
-	Thu, 27 Jun 2024 14:09:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719497386;
-	bh=N/OaLsIcQKk+az4MXyzNRYt8fiAoAVDEiwFfGH80yO8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=hPaid9TlGTftYeVmINfp/bFuIp3X+H1tAbGWvyAbjuxLQ65YBIUIo9SYiA9CCp6pL
-	 ZI/nGkTO+roGRGVdjCJCKuyLrCvp/D9UlwXqQjXfb6bQC9HXaceicwxrbWtjPHwqKi
-	 8vj/tR5txBnREaLWhuxnN7H9NqkJ18d4OY/sTU+iJ3ALq0JB4kzR4Z9p+UiJmTJHrh
-	 /EEy9290v/MYcKGxw9Xcoya3EC8L08uk45UAliavLu7KQ7vfIsCwej+HZjhHlbNUXh
-	 qtKTIiEFYXAL2PRX4lP/0aeloyjHtR2+ZgRzf1s9RdAYxzLD6uVw9BvvBVXRZnXiSA
-	 ncpGb2EeAYnxQ==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52e7145c63cso483804e87.0;
-        Thu, 27 Jun 2024 07:09:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWqkYsBQw4tkSQ4DsbV/trcWVLyQx3pCRovV1hRTWntlxu9yMfD5+q6pQCQQfkFUmPPYzhVniEo4kBRs5a1rvHhXawX7AtGd2mVWf/kV1+H8GnMTZ2R0jbVQTvKZ/ZuXa4/UpmTrkeQGdLL2Hizm6guUW0hc0OugTRpa2IpX8yf2I/w4LiQL2M=
-X-Gm-Message-State: AOJu0YxfLsmODJ7DIm0CDwHocRrvq7T2QpO7kgRu/4qBB5zspF6AaX88
-	U9yDDAcCVI31ZA078CLO33aAPIm7GMgioKfu/duH9MR6HNC0ETNc+37KP7fkRzK9Y9514glyGqY
-	tx5uJUIWFlD5xy9uawF9phV5q2g==
-X-Google-Smtp-Source: AGHT+IHfkgyQQA4gvyq2HH9PsGgzZGKPkIdmGjgdjtGkoMqcxNoy8z91RZBHjqrqy85lT8uGRsN+wJtK+ZV44Jy73Vo=
-X-Received: by 2002:a05:6512:3d24:b0:52b:963d:277c with SMTP id
- 2adb3069b0e04-52e703af548mr785682e87.33.1719497384167; Thu, 27 Jun 2024
- 07:09:44 -0700 (PDT)
+	s=arc-20240116; t=1719497385; c=relaxed/simple;
+	bh=bf8xtcKWz2ekG6ZG9mxbefmEIFpXZW0+JgN9tcZmwwM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=paldOtX9qfZOLIWtnRqYF1pxI3azKILlUXN1Qa2RnHhb5pl7OYhVrzL5ZIfJ0w1ALDN6izjvSKolAypA8Bh/YZYI/4SJekBpWDKFZcxgN+1yREMcFd6aNU1Oa699NFG3/XNbS4VGeaCAxy5yR05pDJy0EcF/l2EXeDURn72Eb1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MlUyZpFP; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52cdc4d221eso6645674e87.3;
+        Thu, 27 Jun 2024 07:09:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719497382; x=1720102182; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WxbdUF3igWgZnkX8ezz96rfrkEDeMV7VPqBBzmY6B/M=;
+        b=MlUyZpFPVTOVzHrDuvOjfnbg3cLmBRJ0gEkdM+MxN5zlD571JklivsGrRhBsjkDxIL
+         4UF+ihPs367R2yOTmUuRz+/f22NmfSUSlo8PZWEz7m00TIHUAfwLHw1nj40BCoxbs20N
+         OCotgGIzDMkRicXfo9YzL3SoqvTPaSerYTy3pqgMNDgF4awJWFRl4WLe73F4PbtxlNEZ
+         tMC/ifWbx2iPsyXfwllQovjwHIthorBD8rPkKIKaNztAz/jAA8GyIfvF2sWduXkLzA1w
+         aWS4EOGSMQIuVKJcxlfcKjO/9X3o1M6vT7z9VVpB9nL9DCs3p1xcTmy7zjAfG63c1D/A
+         GB/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719497382; x=1720102182;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WxbdUF3igWgZnkX8ezz96rfrkEDeMV7VPqBBzmY6B/M=;
+        b=SV67PJ08Ew+68I02f05I99qPTKnQM9cBQjbAyoYvcoBDOsTbqq9MbnVful0SzQ+6ll
+         ygspUiDGe8wT179h38Q834q7/jGQJdn4E6lMhEl5AY2KrvvqWyPfDodjH7bs22M2/xn2
+         hBNmyz204oKYk411TTY2Q9W+rq9ikIJ5d729kqJTRzjXWno38w8oX+gUD/iQB6B+hvwb
+         UxKN3x/UF3JIsgU4zxMAJcCPP3ISaGNwDrGD/sMC6FkwCOdPDtcnkPow1rqkM4s4R6VH
+         GhObRg2WKN6Num2M+XW0WW+rlWMHzyNR0dVcnB9/xwFxjQmOoDTOv01KbZpvnEKXsxRb
+         ovVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrzzE/DZ66f0Z5DrI8NBg308AbgzZQ3pyq6KYsidcVtjfIReBtwlN/5RJqFUouGTQhOIkTEczfa1lAEkisF9a/7+XnVCNeNjSizTsYedHwBbc9FCSv5oUb/fWD8JIpwijVwc32Hh0QQkd81cIrHl5GUyvBdLA+O2PaEmYn8uGHkg==
+X-Gm-Message-State: AOJu0YzuXlB7KOkzrMPIkWDsGYmcMKOgUZbr2CaHCgvD93A/Rz17SdmV
+	IkXzMuhiKxEFHz5s2Nb11NWoHtz1Covc4lHsTP0GrBLXfY2jJ6Ra
+X-Google-Smtp-Source: AGHT+IGYnYpUx4D98KzvsoiC9IwR+Ky0CtunlggIok0VAdrIJJsUBpeuWypCrzdBCggYRccbsLhkLg==
+X-Received: by 2002:a05:6512:281:b0:52c:e10b:cb36 with SMTP id 2adb3069b0e04-52ce183add6mr8239966e87.33.1719497379045;
+        Thu, 27 Jun 2024 07:09:39 -0700 (PDT)
+Received: from mobilestation ([213.79.110.82])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e71329529sm215060e87.293.2024.06.27.07.09.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 07:09:38 -0700 (PDT)
+Date: Thu, 27 Jun 2024 17:09:36 +0300
+From: Serge Semin <fancer.lancer@gmail.com>
+To: Vladimir Oltean <olteanv@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Russell King <linux@armlinux.org.uk>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, Jose Abreu <Jose.Abreu@synopsys.com>, 
+	Florian Fainelli <f.fainelli@gmail.com>, Maxime Chevallier <maxime.chevallier@bootlin.com>, 
+	Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Sagar Cheluvegowda <quic_scheluve@quicinc.com>, 
+	Abhishek Chauhan <quic_abchauha@quicinc.com>, Andrew Halaney <ahalaney@redhat.com>, 
+	Jiawen Wu <jiawenwu@trustnetic.com>, Mengyuan Lou <mengyuanlou@net-swift.com>, 
+	Tomer Maimon <tmaimon77@gmail.com>, openbmc@lists.ozlabs.org, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 00/10] net: pcs: xpcs: Add memory-mapped
+ device support
+Message-ID: <nct7rbh5w7nd4jneiqzwqpwv5gy6t7q2xobv74hqgilzpykzx5@v6l2aoh5fcaj>
+References: <20240627004142.8106-1-fancer.lancer@gmail.com>
+ <20240627111034.nusgjux3lzf5s3bk@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240614215855.82093-1-danila@jiaxyga.com> <20240614215855.82093-4-danila@jiaxyga.com>
-In-Reply-To: <20240614215855.82093-4-danila@jiaxyga.com>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 27 Jun 2024 08:09:31 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+vL2fBJBBj13A=qgTQX1rj7tK=ybn+7tXBdpobpRoi6Q@mail.gmail.com>
-Message-ID: <CAL_Jsq+vL2fBJBBj13A=qgTQX1rj7tK=ybn+7tXBdpobpRoi6Q@mail.gmail.com>
-Subject: Re: [PATCH v3 3/4] dt-bindings: display/msm: Add SM7150 MDSS
-To: Danila Tikhonov <danila@jiaxyga.com>
-Cc: robdclark@gmail.com, quic_abhinavk@quicinc.com, 
-	dmitry.baryshkov@linaro.org, sean@poorly.run, marijn.suijten@somainline.org, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, daniel@ffwll.ch, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	quic_rmccann@quicinc.com, konrad.dybcio@linaro.org, neil.armstrong@linaro.org, 
-	jonathan@marek.ca, swboyd@chromium.org, quic_khsieh@quicinc.com, 
-	quic_jesszhan@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240627111034.nusgjux3lzf5s3bk@skbuf>
 
-On Fri, Jun 14, 2024 at 3:59=E2=80=AFPM Danila Tikhonov <danila@jiaxyga.com=
-> wrote:
->
-> Document the MDSS hardware found on the Qualcomm SM7150 platform.
->
-> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../display/msm/qcom,sm7150-mdss.yaml         | 458 ++++++++++++++++++
->  1 file changed, 458 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/msm/qcom,sm=
-7150-mdss.yaml
->
-> diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sm7150-md=
-ss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sm7150-mdss.ya=
-ml
-> new file mode 100644
-> index 0000000000000..13c5d5ffabde9
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/msm/qcom,sm7150-mdss.yaml
-> @@ -0,0 +1,458 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/msm/qcom,sm7150-mdss.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm SM7150 Display MDSS
-> +
-> +maintainers:
-> +  - Danila Tikhonov <danila@jiaxyga.com>
-> +
-> +description:
-> +  SM7150 MSM Mobile Display Subsystem(MDSS), which encapsulates sub-bloc=
-ks like
-> +  DPU display controller, DSI and DP interfaces etc.
-> +
-> +$ref: /schemas/display/msm/mdss-common.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,sm7150-mdss
-> +
-> +  clocks:
-> +    items:
-> +      - description: Display ahb clock from gcc
-> +      - description: Display hf axi clock
-> +      - description: Display sf axi clock
-> +      - description: Display core clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: iface
-> +      - const: bus
-> +      - const: nrt_bus
-> +      - const: core
-> +
-> +  iommus:
-> +    maxItems: 1
-> +
-> +  interconnects:
-> +    items:
-> +      - description: Interconnect path from mdp0 port to the data bus
-> +      - description: Interconnect path from mdp1 port to the data bus
-> +      - description: Interconnect path from CPU to the reg bus
-> +
-> +  interconnect-names:
-> +    items:
-> +      - const: mdp0-mem
-> +      - const: mdp1-mem
-> +      - const: cpu-cfg
-> +
-> +patternProperties:
-> +  "^display-controller@[0-9a-f]+$":
-> +    type: object
-> +    additionalProperties: true
-> +    properties:
-> +      compatible:
-> +        const: qcom,sm7150-dpu
-> +
-> +  "^displayport-controller@[0-9a-f]+$":
-> +    type: object
-> +    additionalProperties: true
-> +    properties:
-> +      compatible:
-> +        const: qcom,sm7150-dp
-> +
-> +  "^dsi@[0-9a-f]+$":
-> +    type: object
-> +    additionalProperties: true
-> +    properties:
-> +      compatible:
-> +        items:
-> +          - const: qcom,sm7150-dsi-ctrl
-> +          - const: qcom,mdss-dsi-ctrl
+Hi Vladimir
 
-You've added this compatible, but haven't updated the corresponding
-schema. With a recent change to dtschema fixing a regression, we get
-warnings about it:
+On Thu, Jun 27, 2024 at 02:10:34PM +0300, Vladimir Oltean wrote:
+> Hi Sergey,
+> 
+> This does not apply to net-next.
+> 
+> Applying: net: pcs: xpcs: Move native device ID macro to linux/pcs/pcs-xpcs.h
+> Applying: net: pcs: xpcs: Split up xpcs_create() body to sub-functions
+> Applying: net: pcs: xpcs: Convert xpcs_id to dw_xpcs_desc
+> Applying: net: pcs: xpcs: Convert xpcs_compat to dw_xpcs_compat
+> Applying: net: pcs: xpcs: Introduce DW XPCS info structure
+> Applying: dt-bindings: net: Add Synopsys DW xPCS bindings
+> Applying: net: pcs: xpcs: Add Synopsys DW xPCS platform device driver
+> Applying: net: pcs: xpcs: Add fwnode-based descriptor creation method
+> Applying: net: stmmac: Create DW XPCS device with particular address
+> Using index info to reconstruct a base tree...
+> M       drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
+> M       include/linux/stmmac.h
+> Checking patch drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c...
+> Checking patch drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c...
+> Checking patch include/linux/stmmac.h...
+> Applied patch drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c cleanly.
+> Applied patch drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c cleanly.
+> Applied patch include/linux/stmmac.h cleanly.
+> Falling back to patching base and 3-way merge...
+> error: Your local changes to the following files would be overwritten by merge:
+>         drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
+>         drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
+>         include/linux/stmmac.h
+> Please commit your changes or stash them before you merge.
+> Aborting
+> error: Failed to merge in the changes.
+> Patch failed at 0009 net: stmmac: Create DW XPCS device with particular address
+> hint: Use 'git am --show-current-patch=diff' to see the failed patch
 
-/builds/robherring/linux-dt/Documentation/devicetree/bindings/display/msm/q=
-com,sm7150-mdss.example.dtb:
-dsi@ae94000: compatible: 'oneOf' conditional failed, one must be
-fixed:
-        ['qcom,sm7150-dsi-ctrl', 'qcom,mdss-dsi-ctrl'] is too long
-        'qcom,sm7150-dsi-ctrl' is not one of ['qcom,apq8064-dsi-ctrl',
-'qcom,msm8226-dsi-ctrl', 'qcom,msm8916-dsi-ctrl',
-'qcom,msm8953-dsi-ctrl', 'qcom,msm8974-dsi-ctrl',
-'qcom,msm8976-dsi-ctrl', 'qcom,msm8996-dsi-ctrl',
-'qcom,msm8998-dsi-ctrl', 'qcom,qcm2290-dsi-ctrl',
-'qcom,sc7180-dsi-ctrl', 'qcom,sc7280-dsi-ctrl',
-'qcom,sdm660-dsi-ctrl', 'qcom,sdm670-dsi-ctrl',
-'qcom,sdm845-dsi-ctrl', 'qcom,sm6115-dsi-ctrl',
-'qcom,sm6125-dsi-ctrl', 'qcom,sm6350-dsi-ctrl',
-'qcom,sm6375-dsi-ctrl', 'qcom,sm8150-dsi-ctrl',
-'qcom,sm8250-dsi-ctrl', 'qcom,sm8350-dsi-ctrl',
-'qcom,sm8450-dsi-ctrl', 'qcom,sm8550-dsi-ctrl',
-'qcom,sm8650-dsi-ctrl']
-        'qcom,sm7150-dsi-ctrl' is not one of
-['qcom,dsi-ctrl-6g-qcm2290', 'qcom,mdss-dsi-ctrl']
-        from schema $id:
-http://devicetree.org/schemas/display/msm/dsi-controller-main.yaml#
-/builds/robherring/linux-dt/Documentation/devicetree/bindings/display/msm/q=
-com,sm7150-mdss.example.dtb:
-dsi@ae94000: Unevaluated properties are not allowed ('compatible' was
-unexpected)
-        from schema $id:
-http://devicetree.org/schemas/display/msm/dsi-controller-main.yaml#
+Argg, right! I forgot to port the Russell' latest series introduced
+the select_pcs() callback. Sorry for the inconvenience.
 
+I'll get it merged in my repo (based on the kernel upstream tree with
+verious plat-specific fixes) and test it out again. Then I'll _make
+sure_ this time that the series is applicable onto the net-next tree
+before resubmitting.
 
-Either you need to drop this node from here (and the example) or
-update the DSI schema.
+Thanks,
+-Serge(y)
 
-Rob
+> 
+> Thanks,
+> Vladimir
 
