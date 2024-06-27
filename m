@@ -1,190 +1,351 @@
-Return-Path: <linux-kernel+bounces-231919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31DFC91A05A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:24:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD12191A061
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:26:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAB4E1F217A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:24:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37834B21607
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:26:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7A54EB37;
-	Thu, 27 Jun 2024 07:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BECA4D8D1;
+	Thu, 27 Jun 2024 07:25:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OQ4J/YP5"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eWpdZTPf"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA712482F6;
-	Thu, 27 Jun 2024 07:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A17524D6
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 07:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719473027; cv=none; b=tVU9ajN7GrtNI/JH8bRMhxqbMSzr+Ni2kv76d37psY8Fozm5cTxnWqIYGpPkVZ6cLIUgsclB/PZvdktgLuiRJiT3KbqK2+QTZx8Hf+rzJmDvTu2OZ291DfACvpGPGM6qS4VmgjPU9t79BeR6XZnsLmkmVsNEbxBNa4pyA7ZH7p0=
+	t=1719473149; cv=none; b=RFSzzmM7vV7aIA72RlDMcZk2Ce9C3hxRjNw34IJ/aJ0n774JLnyE3rklncmsuh+xlbLI/oaKRS/ejVd7NKFrznSxnyc/P7RXziPnuQNEjVfdjdV0Z4tSUUFt5149GO48SeWCXutPn9ClcaR1eIix8zrexC8tE20Gqvx8tLPJQnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719473027; c=relaxed/simple;
-	bh=GOh/cH6/r/eNXGbISTWzC6NNL+2UhJuov5Tbid9lxtA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PsanQB5I+EJZ9nTfuvKSnNojGIbXmMxUKaK4V0ZJpNP2Q1u8CreKy/0GNg8sLoIJsLN2SnGtMwZjj6ZocvXMSKuDx0lpQcFI3JrH0Q4Crm0kaqrBAhgzLqhTDhNQzqj+/CdgVqZgwv9wbPgiJeDLPfrQ+i5bIO5/ifspPdkArEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OQ4J/YP5; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QLccCg016938;
-	Thu, 27 Jun 2024 07:23:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=cXE3pGdxpHYpYuaQiyy6Y5lE
-	6iV5vehOUqJ9RtaCnxY=; b=OQ4J/YP5MSYTl6lIrUPbafh7UZ4iEfznTqHUtCJ2
-	H55OzGvEgqQjS+Zs+PhwJkpNQAXO9BDaecYZvEVt/NTRZQ88hjFkEaeDFo7uQupl
-	KKBGayy73TpQubODmVbJaRGE1c8x8mLpiKc1HlouL6GZ9C2LQ09WOOHwK1cXo8px
-	fb2B+b5xCx3OiBN0wRtiP1TQJ0xwcq8C+X/CDJANam5zuovKVrQNoX+F6pHi0oyt
-	tRgVbhikYrGQDDRfmrn72+/8r3Fj82PfXRBUD74s5sVwmDT/mNY/OTjY47D2/F9E
-	yO/yyhgWaobIBM2d/q/anSFt90KJt1U2CyuXymsj79u2CA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywnjs35ew-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Jun 2024 07:23:30 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45R7NTPI023177
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Jun 2024 07:23:29 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 27 Jun 2024 00:23:22 -0700
-Date: Thu, 27 Jun 2024 12:53:18 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <angelogioacchino.delregno@collabora.com>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <ilia.lin@kernel.org>, <rafael@kernel.org>,
-        <viresh.kumar@linaro.org>, <ulf.hansson@linaro.org>,
-        <quic_sibis@quicinc.com>, <otto.pflueger@abscue.de>,
-        <neil.armstrong@linaro.org>, <luca@z3ntu.xyz>, <abel.vesa@linaro.org>,
-        <danila@jiaxyga.com>, <quic_ipkumar@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v3 8/9] soc: qcom: cpr3: Add IPQ9574 definitions
-Message-ID: <Zn0TZiIDQ9W/ttox@hu-varada-blr.qualcomm.com>
-References: <20240626104002.420535-1-quic_varada@quicinc.com>
- <20240626104002.420535-9-quic_varada@quicinc.com>
- <txid2b47zhnuknz35xaosfctuojrnrskcjehhqmyqubuxdimqj@7q7pzxlavk6k>
+	s=arc-20240116; t=1719473149; c=relaxed/simple;
+	bh=8yxiy/onMSQcihoLqUVM4QBD7j+bFpwIkG6dif+2IoA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZjKAd4f2TOVndByjRfL2NxVhSlaHx6HPDnmCYZHtmJ6thT7WW2DOpwl3pFDG8u7fQpWWcYt5Fzh63n3KqSusOt7Ii/7yJMXpeQl6TIZ2JQOHzgse5VzMkyHxXce6vF+o/E1GeUQiOf/qDNHW46yzb02Tlt0VKA8eAP1X2PqDPyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eWpdZTPf; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: yuzhao@google.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1719473144;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BWojZVzNV+zDBRMlFD0vl4NDHhcBHwAHj5cUBFwCx3o=;
+	b=eWpdZTPfnQZKYMN5SijH159CRiCl+KjK0QW/HCRf4jkukk19vjdTtBovoaN00nNhG5HeUl
+	YzxDn89bu3JpLhRnrBdxTMFhQJe4YA3QLgx+Eb6/BE8J+qR24cBUKAt1pM2qvMxo2yoc6B
+	1EISdHm8u6JWWeialf4kPBSCnZvcH8o=
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: david@redhat.com
+X-Envelope-To: fvdl@google.com
+X-Envelope-To: willy@infradead.org
+X-Envelope-To: peterx@redhat.com
+X-Envelope-To: yang@os.amperecomputing.com
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+Message-ID: <379a225a-3e26-4adc-9add-b4d931c55a9a@linux.dev>
+Date: Thu, 27 Jun 2024 15:25:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <txid2b47zhnuknz35xaosfctuojrnrskcjehhqmyqubuxdimqj@7q7pzxlavk6k>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: um9BVXflAiB9fiHUEXGPDtfhOuhGlzp5
-X-Proofpoint-ORIG-GUID: um9BVXflAiB9fiHUEXGPDtfhOuhGlzp5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-27_03,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- clxscore=1015 mlxscore=0 suspectscore=0 adultscore=0 mlxlogscore=999
- impostorscore=0 bulkscore=0 malwarescore=0 spamscore=0 phishscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406270054
+Subject: Re: [PATCH mm-unstable v1] mm/hugetlb_vmemmap: fix race with
+ speculative PFN walkers
+To: Yu Zhao <yuzhao@google.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>,
+ Frank van der Linden <fvdl@google.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>, Peter Xu
+ <peterx@redhat.com>, Yang Shi <yang@os.amperecomputing.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20240627044335.2698578-1-yuzhao@google.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <20240627044335.2698578-1-yuzhao@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Jun 26, 2024 at 09:27:53PM +0300, Dmitry Baryshkov wrote:
-> On Wed, Jun 26, 2024 at 04:10:01PM GMT, Varadarajan Narayanan wrote:
-> > From: Praveenkumar I <quic_ipkumar@quicinc.com>
-> >
-> > Add thread, scaling factor, CPR descriptor defines to enable CPR
-> > on IPQ9574.
-> >
-> > Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
-> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > ---
-> > v3: Fix patch author
-> >     Included below information in cover letter
-> > v2: Fix Signed-off-by order
-> > Depends:
-> > 	[1] https://lore.kernel.org/lkml/20230217-topic-cpr3h-v14-0-9fd23241493d@linaro.org/T/
-> > 	[2] https://github.com/quic-varada/cpr/commits/konrad/
-> > ---
-> >  drivers/pmdomain/qcom/cpr3.c | 137 +++++++++++++++++++++++++++++++++++
-> >  1 file changed, 137 insertions(+)
-> >
-> > diff --git a/drivers/pmdomain/qcom/cpr3.c b/drivers/pmdomain/qcom/cpr3.c
-> > index c28028be50d8..66c8a4bd9adc 100644
-> > --- a/drivers/pmdomain/qcom/cpr3.c
-> > +++ b/drivers/pmdomain/qcom/cpr3.c
+
+
+On 2024/6/27 12:43, Yu Zhao wrote:
+> While investigating HVO for THPs [1], it turns out that speculative
+> PFN walkers like compaction can race with vmemmap modifications, e.g.,
 >
-> > +
-> > +static const struct cpr_desc ipq9574_cpr_desc = {
-> > +	.cpr_type = CTRL_TYPE_CPR4,
+>    CPU 1 (vmemmap modifier)         CPU 2 (speculative PFN walker)
+>    -------------------------------  ------------------------------
+>    Allocates an LRU folio page1
+>                                     Sees page1
+>    Frees page1
 >
-> So, is it CPR4 or CPRh?
-
-CPR4.
-
-> > +	.num_threads = 1,
-> > +	.apm_threshold = 850000,
-> > +	.apm_crossover = 880000,
-> > +	.apm_hysteresis = 0,
-> > +	.cpr_base_voltage = 700000,
-> > +	.cpr_max_voltage = 1100000,
-> > +	.timer_delay_us = 5000,
-> > +	.timer_cons_up = 0,
-> > +	.timer_cons_down = 0,
-> > +	.up_threshold = 2,
-> > +	.down_threshold = 2,
-> > +	.idle_clocks = 15,
-> > +	.count_mode = CPR3_CPR_CTL_COUNT_MODE_ALL_AT_ONCE_MIN,
-> > +	.count_repeat = 1,
-> > +	.gcnt_us = 1,
-> > +	.vreg_step_fixed = 12500,
-> > +	.vreg_step_up_limit = 1,
-> > +	.vreg_step_down_limit = 1,
-> > +	.vdd_settle_time_us = 34,
-> > +	.corner_settle_time_us = 6,
-> > +	.reduce_to_corner_uV = true,
-> > +	.hw_closed_loop_en = false,
-> > +	.threads = (const struct cpr_thread_desc *[]) {
-> > +		&ipq9574_thread_silver,
+>    Allocates a hugeTLB folio page2
+>    (page1 being a tail of page2)
 >
-> If it's silver, where is gold or bronze?
-
-Will rename this as "ipq9574_thread"
-
-Thanks
-Varada
-
-> > +	},
-> > +};
-> > +
-> > +static const struct cpr_acc_desc ipq9574_cpr_acc_desc = {
-> > +	.cpr_desc = &ipq9574_cpr_desc,
-> > +};
-> > +
-> >  static const int sdm630_gold_scaling_factor[][CPR3_RO_COUNT] = {
-> >  	/* Same RO factors for all fuse corners */
-> >  	{
-> > @@ -2828,6 +2964,7 @@ static void cpr_remove(struct platform_device *pdev)
-> >  }
-> >
-> >  static const struct of_device_id cpr3_match_table[] = {
-> > +	{ .compatible = "qcom,ipq9574-cprh", .data = &ipq9574_cpr_acc_desc },
-> >  	{ .compatible = "qcom,msm8998-cprh", .data = &msm8998_cpr_acc_desc },
-> >  	{ .compatible = "qcom,sdm630-cprh", .data = &sdm630_cpr_acc_desc },
-> >  	{ }
-> > --
-> > 2.34.1
-> >
+>    Updates vmemmap mapping page1
+>                                     get_page_unless_zero(page1)
 >
-> --
-> With best wishes
-> Dmitry
+> Even though page1->_refcount is zero after HVO, get_page_unless_zero()
+> can still try to modify this read-only field, resulting in a crash.
+>
+> An independent report [2] confirmed this race.
+>
+> There are two discussed approaches to fix this race:
+> 1. Make RO vmemmap RW so that get_page_unless_zero() can fail without
+>     triggering a PF.
+> 2. Use RCU to make sure get_page_unless_zero() either sees zero
+>     page->_refcount through the old vmemmap or non-zero page->_refcount
+>     through the new one.
+>
+> The second approach is preferred here because:
+> 1. It can prevent illegal modifications to struct page[] that has been
+>     HVO'ed;
+> 2. It can be generalized, in a way similar to ZERO_PAGE(), to fix
+>     similar races in other places, e.g., arch_remove_memory() on x86
+>     [3], which frees vmemmap mapping offlined struct page[].
+>
+> While adding synchronize_rcu(), the goal is to be surgical, rather
+> than optimized. Specifically, calls to synchronize_rcu() on the error
+> handling paths can be coalesced, but it is not done for the sake of
+> Simplicity: noticeably, this fix removes ~50% more lines than it adds.
+
+I suggest adding some user-visible effect here like for use
+case of nr_overcommit_hugepages, synchronize_rcu() will make
+this use case worse.
+
+>
+> [1] https://lore.kernel.org/20240229183436.4110845-4-yuzhao@google.com/
+> [2] https://lore.kernel.org/917FFC7F-0615-44DD-90EE-9F85F8EA9974@linux.dev/
+> [3] https://lore.kernel.org/be130a96-a27e-4240-ad78-776802f57cad@redhat.com/
+>
+> Signed-off-by: Yu Zhao <yuzhao@google.com>
+
+Acked-by: Muchun Song <muchun.song@linux.dev>
+
+A nit below.
+
+> ---
+>   include/linux/page_ref.h |  8 +++++-
+>   mm/hugetlb.c             | 53 ++++++----------------------------------
+>   mm/hugetlb_vmemmap.c     | 16 ++++++++++++
+>   3 files changed, 30 insertions(+), 47 deletions(-)
+>
+> diff --git a/include/linux/page_ref.h b/include/linux/page_ref.h
+> index 490d0ad6e56d..8c236c651d1d 100644
+> --- a/include/linux/page_ref.h
+> +++ b/include/linux/page_ref.h
+> @@ -230,7 +230,13 @@ static inline int folio_ref_dec_return(struct folio *folio)
+>   
+>   static inline bool page_ref_add_unless(struct page *page, int nr, int u)
+>   {
+> -	bool ret = atomic_add_unless(&page->_refcount, nr, u);
+> +	bool ret = false;
+> +
+> +	rcu_read_lock();
+> +	/* avoid writing to the vmemmap area being remapped */
+> +	if (!page_is_fake_head(page) && page_ref_count(page) != u)
+> +		ret = atomic_add_unless(&page->_refcount, nr, u);
+> +	rcu_read_unlock();
+>   
+>   	if (page_ref_tracepoint_active(page_ref_mod_unless))
+>   		__page_ref_mod_unless(page, nr, ret);
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index 9691624fcb79..1ddaf25737da 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -1629,13 +1629,10 @@ static inline void destroy_compound_gigantic_folio(struct folio *folio,
+>    * folio appears as just a compound page.  Otherwise, wait until after
+>    * allocating vmemmap to clear the flag.
+>    *
+> - * A reference is held on the folio, except in the case of demote.
+> - *
+>    * Must be called with hugetlb lock held.
+>    */
+> -static void __remove_hugetlb_folio(struct hstate *h, struct folio *folio,
+> -							bool adjust_surplus,
+> -							bool demote)
+> +static void remove_hugetlb_folio(struct hstate *h, struct folio *folio,
+> +							bool adjust_surplus)
+>   {
+>   	int nid = folio_nid(folio);
+>   
+> @@ -1657,6 +1654,7 @@ static void __remove_hugetlb_folio(struct hstate *h, struct folio *folio,
+>   		h->surplus_huge_pages_node[nid]--;
+>   	}
+>   
+> +	folio_clear_hugetlb_freed(folio);
+
+I'd suggest putting this into the above "if" statement (if 
+(folio_test_hugetlb_freed(folio))).
+Then, if the flag is already cleared, there is nothing to do.
+
+Thanks.
+
+>   	/*
+>   	 * We can only clear the hugetlb flag after allocating vmemmap
+>   	 * pages.  Otherwise, someone (memory error handling) may try to write
+> @@ -1665,33 +1663,13 @@ static void __remove_hugetlb_folio(struct hstate *h, struct folio *folio,
+>   	if (!folio_test_hugetlb_vmemmap_optimized(folio))
+>   		__folio_clear_hugetlb(folio);
+>   
+> -	 /*
+> -	  * In the case of demote we do not ref count the page as it will soon
+> -	  * be turned into a page of smaller size.
+> -	 */
+> -	if (!demote)
+> -		folio_ref_unfreeze(folio, 1);
+> -
+>   	h->nr_huge_pages--;
+>   	h->nr_huge_pages_node[nid]--;
+>   }
+>   
+> -static void remove_hugetlb_folio(struct hstate *h, struct folio *folio,
+> -							bool adjust_surplus)
+> -{
+> -	__remove_hugetlb_folio(h, folio, adjust_surplus, false);
+> -}
+> -
+> -static void remove_hugetlb_folio_for_demote(struct hstate *h, struct folio *folio,
+> -							bool adjust_surplus)
+> -{
+> -	__remove_hugetlb_folio(h, folio, adjust_surplus, true);
+> -}
+> -
+>   static void add_hugetlb_folio(struct hstate *h, struct folio *folio,
+>   			     bool adjust_surplus)
+>   {
+> -	int zeroed;
+>   	int nid = folio_nid(folio);
+>   
+>   	VM_BUG_ON_FOLIO(!folio_test_hugetlb_vmemmap_optimized(folio), folio);
+> @@ -1715,21 +1693,6 @@ static void add_hugetlb_folio(struct hstate *h, struct folio *folio,
+>   	 */
+>   	folio_set_hugetlb_vmemmap_optimized(folio);
+>   
+> -	/*
+> -	 * This folio is about to be managed by the hugetlb allocator and
+> -	 * should have no users.  Drop our reference, and check for others
+> -	 * just in case.
+> -	 */
+> -	zeroed = folio_put_testzero(folio);
+> -	if (unlikely(!zeroed))
+> -		/*
+> -		 * It is VERY unlikely soneone else has taken a ref
+> -		 * on the folio.  In this case, we simply return as
+> -		 * free_huge_folio() will be called when this other ref
+> -		 * is dropped.
+> -		 */
+> -		return;
+> -
+>   	arch_clear_hugetlb_flags(folio);
+>   	enqueue_hugetlb_folio(h, folio);
+>   }
+> @@ -1783,6 +1746,8 @@ static void __update_and_free_hugetlb_folio(struct hstate *h,
+>   		spin_unlock_irq(&hugetlb_lock);
+>   	}
+>   
+> +	folio_ref_unfreeze(folio, 1);
+> +
+>   	/*
+>   	 * Non-gigantic pages demoted from CMA allocated gigantic pages
+>   	 * need to be given back to CMA in free_gigantic_folio.
+> @@ -3106,11 +3071,8 @@ static int alloc_and_dissolve_hugetlb_folio(struct hstate *h,
+>   
+>   free_new:
+>   	spin_unlock_irq(&hugetlb_lock);
+> -	if (new_folio) {
+> -		/* Folio has a zero ref count, but needs a ref to be freed */
+> -		folio_ref_unfreeze(new_folio, 1);
+> +	if (new_folio)
+>   		update_and_free_hugetlb_folio(h, new_folio, false);
+> -	}
+>   
+>   	return ret;
+>   }
+> @@ -3965,7 +3927,7 @@ static int demote_free_hugetlb_folio(struct hstate *h, struct folio *folio)
+>   
+>   	target_hstate = size_to_hstate(PAGE_SIZE << h->demote_order);
+>   
+> -	remove_hugetlb_folio_for_demote(h, folio, false);
+> +	remove_hugetlb_folio(h, folio, false);
+>   	spin_unlock_irq(&hugetlb_lock);
+>   
+>   	/*
+> @@ -3979,7 +3941,6 @@ static int demote_free_hugetlb_folio(struct hstate *h, struct folio *folio)
+>   		if (rc) {
+>   			/* Allocation of vmemmmap failed, we can not demote folio */
+>   			spin_lock_irq(&hugetlb_lock);
+> -			folio_ref_unfreeze(folio, 1);
+>   			add_hugetlb_folio(h, folio, false);
+>   			return rc;
+>   		}
+> diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
+> index fa00d61b6c5a..829112b0a914 100644
+> --- a/mm/hugetlb_vmemmap.c
+> +++ b/mm/hugetlb_vmemmap.c
+> @@ -455,6 +455,8 @@ static int __hugetlb_vmemmap_restore_folio(const struct hstate *h,
+>   	unsigned long vmemmap_reuse;
+>   
+>   	VM_WARN_ON_ONCE_FOLIO(!folio_test_hugetlb(folio), folio);
+> +	VM_WARN_ON_ONCE_FOLIO(folio_ref_count(folio), folio);
+> +
+>   	if (!folio_test_hugetlb_vmemmap_optimized(folio))
+>   		return 0;
+>   
+> @@ -490,6 +492,9 @@ static int __hugetlb_vmemmap_restore_folio(const struct hstate *h,
+>    */
+>   int hugetlb_vmemmap_restore_folio(const struct hstate *h, struct folio *folio)
+>   {
+> +	/* avoid writes from page_ref_add_unless() while unfolding vmemmap */
+> +	synchronize_rcu();
+> +
+>   	return __hugetlb_vmemmap_restore_folio(h, folio, 0);
+>   }
+>   
+> @@ -514,6 +519,9 @@ long hugetlb_vmemmap_restore_folios(const struct hstate *h,
+>   	long restored = 0;
+>   	long ret = 0;
+>   
+> +	/* avoid writes from page_ref_add_unless() while unfolding vmemmap */
+> +	synchronize_rcu();
+> +
+>   	list_for_each_entry_safe(folio, t_folio, folio_list, lru) {
+>   		if (folio_test_hugetlb_vmemmap_optimized(folio)) {
+>   			ret = __hugetlb_vmemmap_restore_folio(h, folio,
+> @@ -559,6 +567,8 @@ static int __hugetlb_vmemmap_optimize_folio(const struct hstate *h,
+>   	unsigned long vmemmap_reuse;
+>   
+>   	VM_WARN_ON_ONCE_FOLIO(!folio_test_hugetlb(folio), folio);
+> +	VM_WARN_ON_ONCE_FOLIO(folio_ref_count(folio), folio);
+> +
+>   	if (!vmemmap_should_optimize_folio(h, folio))
+>   		return ret;
+>   
+> @@ -610,6 +620,9 @@ void hugetlb_vmemmap_optimize_folio(const struct hstate *h, struct folio *folio)
+>   {
+>   	LIST_HEAD(vmemmap_pages);
+>   
+> +	/* avoid writes from page_ref_add_unless() while folding vmemmap */
+> +	synchronize_rcu();
+> +
+>   	__hugetlb_vmemmap_optimize_folio(h, folio, &vmemmap_pages, 0);
+>   	free_vmemmap_page_list(&vmemmap_pages);
+>   }
+> @@ -653,6 +666,9 @@ void hugetlb_vmemmap_optimize_folios(struct hstate *h, struct list_head *folio_l
+>   
+>   	flush_tlb_all();
+>   
+> +	/* avoid writes from page_ref_add_unless() while folding vmemmap */
+> +	synchronize_rcu();
+> +
+>   	list_for_each_entry(folio, folio_list, lru) {
+>   		int ret;
+>   
+
 
