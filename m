@@ -1,165 +1,277 @@
-Return-Path: <linux-kernel+bounces-232344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5103F91A720
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:59:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B099791A724
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:59:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C42E71F2722A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:59:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 680712848F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:59:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BCE0181337;
-	Thu, 27 Jun 2024 12:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HaT6tEOC"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDCA01849CF;
+	Thu, 27 Jun 2024 12:58:21 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF24E17BB22;
-	Thu, 27 Jun 2024 12:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67F911836C3
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719493074; cv=none; b=ZUlpZAdm5rq7kDQozBeIMdLV42b0DfBj48/ckBtu+3cQg7EkuGynbkSMAMj56D7YT1lbEiUa3uKk7BEaY5o3qK2s9gF4vzLbwwY9kjXMhFGplKy9a2lqqV/2FmNxcclIb5Lhran3ViFEpSx/+e7+CmaYkeIy2mjsrcA5B9RkZAI=
+	t=1719493101; cv=none; b=fFpxUgpPdp2CTxxozf0n/CGajAhhh8P+/C8drpPxoChP8TGqaV3dYHP1zel1No+nU58UQvG16Mm5vDpyQEnSLr5ACAnU3EE42ntW+YdC3QZtYmH/ndsLWJGDaIgan3S0ULS+kYsKEOsdrEzOpXJna+yAhZwvvQ5YDBdj6nB10Nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719493074; c=relaxed/simple;
-	bh=xg3lHUwKPp7F8eqeG58G3q7W55s5Bo41hz0h9ZzPxFs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HmXzGFnBtpFwL6Ix2uE9w/LfTyEYARFQ9x9/pa5qsvcHi4gOPu7Ch7o1tZWQWIgoqH1zDD0oLFM1l1WRKIsBHwXEtXfR78+T22jYj7HNi4c1YSXu8jdRzJ53+nI8BkFwbK2Z/+iN3r1bOstUoSkMvgiLIve04TzoaWgvgweSfOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HaT6tEOC; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 59F27C0005;
-	Thu, 27 Jun 2024 12:57:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1719493070;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MrmQr8hB4InQ3Jl4oyeWJTm4qwkgjrEBNjcKLZTC4CM=;
-	b=HaT6tEOCfC7RAgGp2ovA28C9kcTIIeYHWm6KQQKl1kWTujCU5vpXC0I9LUNE21ViZ145hh
-	XM7dgmLQouzE/a16pDFK1lUW9PcLDCGgEl7OLyXCFvIrJejVRljjCpubOUblgdUiveazmc
-	CsFYQ5n5iboVgsjcImpJ8vRJkUM98UmdtFs6ioelKXqrV48i1l+9i1Sf992TAbJO5FppHn
-	9WrZhUgJ3qXBPTkGyLhn2vyM86SsdNskkXTyOumcZL/emU46P+Q8nrY9Fnn4ZoICkszbyP
-	5laHqenDYuvqox3xhNuyB8stooTsm/ECzmElOWoISgWdb2Tie68D6dcBT3PH3Q==
-Date: Thu, 27 Jun 2024 14:57:47 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor@kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Bartosz
- Golaszewski <brgl@bgdev.pl>, Saravana Kannan <saravanak@google.com>,
- linux-kernel@vger.kernel.org, =?UTF-8?Q?Herv=C3=A9?= Codina
- <herve.codina@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: Fixing property memory leaks on device tree overlay removal
-Message-ID: <20240627145747.7afb5607@booty>
-In-Reply-To: <5215b589-d00d-4be4-9213-aaf547228fb7@linaro.org>
-References: <20240624232122.3cfe03f8@booty>
-	<CAL_Jsq+=mGEJXsjq1UZFMJtHko_z+doiFMXnx9K7exDuznymSA@mail.gmail.com>
-	<5215b589-d00d-4be4-9213-aaf547228fb7@linaro.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719493101; c=relaxed/simple;
+	bh=jpeoYNh/2I4ArZNrhiN2R8d8Pg4wzU7Qn6keDXvwOjk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=lGz7wJgWDeuyprucjISb2HbI16N59A0aL1kxurTk2i2msjXKOEQCdEfuLEWZbDmRx+xGRMvI9cVA3tJ5gcr1Rd0YFkKvIsDfY+cvvd0sSTqWrUhqVLf+DrLDlR5FCjXldAfAv8S+0cTC2eZDrxy2v1SNmqFSlwqvkJHgSPR+mQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-375d8dbfc25so103495315ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 05:58:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719493098; x=1720097898;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=h9JzpylPnYBoMCUezeQZztT3YnyQHUAysOaFuhmh2ws=;
+        b=r8PS42/QHgmKQUsGmdSKJsgd1KZaaRRmXJ4DueRZTC/wF50yzZrlK6J+Yi2xrmt1R4
+         CCbdH6MNWIqz2owGH2hUFyJ1fLldexrxHpzjAWiJJlAO1Ev/An17XQrNKFR4oc+xOUyF
+         /2Q5J6Pt/oSz4ZufhowS4QB2oISKnpmSJzZPN/aMc7bTfoFmXKT+H6wNH1nJfPNvAaYd
+         sCG10DZeUB34MkvAYu1xE7/IfVwk/D5W27LIuS1sIQi326UPujNGJ0ClK622BKOdm1Kz
+         lswBVYkg2EPBmfQCa2nkwk++6+IPh9C7qf3Gsawl9rxcqrhUDJTQ/NfSWMof2JXGd6No
+         g5jg==
+X-Forwarded-Encrypted: i=1; AJvYcCWFDFDk9s9BobKy+isCMfa9qDOMuMNQAJ33/s4TC7TLUnd7lhVYzQ+WGHckmc1IEBGhqPj2McLFIoM2caj8OSWdPVF2X3JGuoni1M0l
+X-Gm-Message-State: AOJu0YzLRKGPK9GoN3mTl78EQ/QD0a+assR8/kCxPVY2tUa/A5dXPKLO
+	XYrg2LkP/FLe2iMxUL0sUpJTFOBUzScrPHEx7O9/P+hoietKAzUqrjTaqDZlMVlvc/+lM/psV4x
+	2Zfj+RO6Um7H61vdYB9SUm9SXAmAZ4B0QLSUzObn0bph+rSyF4JEMvnM=
+X-Google-Smtp-Source: AGHT+IH/KB0/l9s/pTuSk2SC2qHzYJUYzysWI5UwkvIeKdvnTpWBHnSHr6jfAGHkVjaTOAsd1W4i/9SGL1e4AhrpAXJyJM6Ovb66
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: luca.ceresoli@bootlin.com
+X-Received: by 2002:a05:6e02:2187:b0:377:117e:e25e with SMTP id
+ e9e14a558f8ab-377117ee8femr6620895ab.0.1719493098620; Thu, 27 Jun 2024
+ 05:58:18 -0700 (PDT)
+Date: Thu, 27 Jun 2024 05:58:18 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000565ec5061bdeafd5@google.com>
+Subject: [syzbot] [exfat?] possible deadlock in exfat_iterate (2)
+From: syzbot <syzbot+df3558df41609451e4ac@syzkaller.appspotmail.com>
+To: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 26 Jun 2024 09:24:46 +0200
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+Hello,
 
-> On 25/06/2024 19:02, Rob Herring wrote:
-> > On Mon, Jun 24, 2024 at 3:21=E2=80=AFPM Luca Ceresoli <luca.ceresoli@bo=
-otlin.com> wrote: =20
-...
-> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >> Problem description
-> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >>
-> >> In the kernel every 'struct device_node' is refcounted so the OF core
-> >> knows when to free it. There are of course get/put imbalance bugs
-> >> around, but these are "just" bugs that need to be fixed as they are
-> >> found.
-> >>
-> >> On the other hand, there is no refcounting for 'struct property'. Yet
-> >> some of the internal kernel APIs to access properties, e.g.
-> >> of_property_read_string(), return either a 'struct property' pointer or
-> >> a copy of the 'char *value' field. This is not a bug, it is an API
-> >> design flaw: any user (e.g. any OF driver) can take a pointer to
-> >> property data that was allocated and should be deallocated by the OF
-> >> core, but the OF core has no idea of when that pointer will stop being
-> >> used.
-> >>
-> >> Now, when loading a DT overlay there are three possible cases:
-> >>
-> >>  1. both the property and the containing node are in the base tree
-> >>  2. both the property and the containing node are in the same overlay
-> >>  3. the property is in an overlay and the containing node is either
-> >>     in the base tree or in a previously-loaded overlay
-> >>
-> >> Cases 1 and 2 are not problematic. In case 1 the data allocated for the
-> >> properties is never removed. In case 2 the properties are removed when
-> >> removing the parent node, which gets removed when removing the overlay
-> >> thanks to 'struct device_node' refcounting, based on the assumption
-> >> that the property lifetime is a subset of the parent node lifetime. The
-> >> problem exists in case 3. Properties in case 3 are usually a small part
-> >> of all the properties but there can be some (and there are some in the
-> >> product we are working on), and that's what needs to be addressed. =20
-> >=20
-> > I'd like to better understand what are the cases where you need to
-> > change/add properties in a node (other than "status"). I'm not
-> > entirely convinced we should even allow that. =20
->=20
-> Just to clarify that I understand the problem correctly - we talk only
-> about memory leaks, not about accessing released memory (use-after-free)?
+syzbot found the following issue on:
 
-Well, the "unsafe" property accessors do return a pointer to struct
-property or its values, so they would become use-after-free in case 1)
-the struct property is freed (=3Doverlays) and 2) the caller keeps the
-pointer until after the property is freed.
+HEAD commit:    55027e689933 Merge tag 'input-for-v6.10-rc5' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16390ac1980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=53ab35b556129242
+dashboard link: https://syzkaller.appspot.com/bug?extid=df3558df41609451e4ac
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
 
-To avoid use-after-free, all properties falling in case 3 are put into
-a "deadprops" list within the struct device_node and will be released
-only when the node is released, which is never for nodes in the base
-tree. This trades a use-after-free for a memory leak.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-> I think that during EOSS 2024 discussions we reached consensus that in
-> general you will not have use-after-free problem with DT properties at
-> all. If all devices are unbound, their resources get released (including
-> some core structures registered in subsystems) thus nothing will use any
-> of properties. With proper kernel code there will be no use of device
-> node properties after device is unbound.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-55027e68.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a36929b5a065/vmlinux-55027e68.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d72de6f61ddc/bzImage-55027e68.xz
 
-I agree this is the normal situation, but I'm not sure there is
-consensus about that. My reply to Rob in this thread aims at clarifying
-exactly what problem we need to solve. Totally eradicating the "unsafe"
-property accessors would eliminate all possible use-after-free or leak
-of property data. However I agree it would be a large effort to fix a
-small number of issues, which can be avoided by trusting drivers a bit
-more.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+df3558df41609451e4ac@syzkaller.appspotmail.com
 
-> >> Preventing new usages of old accessors will be important. Tools to
-> >> achieve that:
-> >>
-> >>  * Extend checkpatch to report an error on their usage
-> >>  * Add a 'K:' entry to MAINTAINERS so that patches trying to use them
-> >>    will be reported (to me at least) =20
->=20
-> Or just use lore/lei with proper keywords. I track few misuses of kernel
-> code that way.
+======================================================
+WARNING: possible circular locking dependency detected
+6.10.0-rc5-syzkaller-00018-g55027e689933 #0 Not tainted
+------------------------------------------------------
+syz-executor.2/6265 is trying to acquire lock:
+ffffffff8dd3ab20 (fs_reclaim){+.+.}-{0:0}, at: might_alloc include/linux/sched/mm.h:334 [inline]
+ffffffff8dd3ab20 (fs_reclaim){+.+.}-{0:0}, at: slab_pre_alloc_hook mm/slub.c:3891 [inline]
+ffffffff8dd3ab20 (fs_reclaim){+.+.}-{0:0}, at: slab_alloc_node mm/slub.c:3981 [inline]
+ffffffff8dd3ab20 (fs_reclaim){+.+.}-{0:0}, at: __do_kmalloc_node mm/slub.c:4121 [inline]
+ffffffff8dd3ab20 (fs_reclaim){+.+.}-{0:0}, at: __kmalloc_noprof+0xb5/0x420 mm/slub.c:4135
 
-Didn't know about lore+lei, interesting. Thanks, it really looks like a
-tool option for this task.
+but task is already holding lock:
+ffff88804af1a0e0 (&sbi->s_lock#2){+.+.}-{3:3}, at: exfat_iterate+0x33f/0xad0 fs/exfat/dir.c:256
 
-Luca
+which lock already depends on the new lock.
 
---=20
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&sbi->s_lock#2){+.+.}-{3:3}:
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+       exfat_evict_inode+0x25b/0x340 fs/exfat/inode.c:725
+       evict+0x2ed/0x6c0 fs/inode.c:667
+       iput_final fs/inode.c:1741 [inline]
+       iput.part.0+0x5a8/0x7f0 fs/inode.c:1767
+       iput+0x5c/0x80 fs/inode.c:1757
+       dentry_unlink_inode+0x295/0x480 fs/dcache.c:400
+       __dentry_kill+0x1d0/0x600 fs/dcache.c:603
+       shrink_kill fs/dcache.c:1048 [inline]
+       shrink_dentry_list+0x140/0x5d0 fs/dcache.c:1075
+       prune_dcache_sb+0xeb/0x150 fs/dcache.c:1156
+       super_cache_scan+0x32a/0x550 fs/super.c:221
+       do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
+       shrink_slab_memcg mm/shrinker.c:548 [inline]
+       shrink_slab+0xa87/0x1310 mm/shrinker.c:626
+       shrink_one+0x493/0x7c0 mm/vmscan.c:4790
+       shrink_many mm/vmscan.c:4851 [inline]
+       lru_gen_shrink_node+0x89f/0x1750 mm/vmscan.c:4951
+       shrink_node mm/vmscan.c:5910 [inline]
+       kswapd_shrink_node mm/vmscan.c:6720 [inline]
+       balance_pgdat+0x1105/0x1970 mm/vmscan.c:6911
+       kswapd+0x5ea/0xbf0 mm/vmscan.c:7180
+       kthread+0x2c1/0x3a0 kernel/kthread.c:389
+       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+-> #0 (fs_reclaim){+.+.}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3134 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+       validate_chain kernel/locking/lockdep.c:3869 [inline]
+       __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+       lock_acquire kernel/locking/lockdep.c:5754 [inline]
+       lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+       __fs_reclaim_acquire mm/page_alloc.c:3801 [inline]
+       fs_reclaim_acquire+0x102/0x160 mm/page_alloc.c:3815
+       might_alloc include/linux/sched/mm.h:334 [inline]
+       slab_pre_alloc_hook mm/slub.c:3891 [inline]
+       slab_alloc_node mm/slub.c:3981 [inline]
+       __do_kmalloc_node mm/slub.c:4121 [inline]
+       __kmalloc_noprof+0xb5/0x420 mm/slub.c:4135
+       kmalloc_noprof include/linux/slab.h:664 [inline]
+       kmalloc_array_noprof include/linux/slab.h:699 [inline]
+       __exfat_get_dentry_set+0x81e/0xa90 fs/exfat/dir.c:816
+       exfat_get_dentry_set+0x36/0x210 fs/exfat/dir.c:859
+       exfat_get_uniname_from_ext_entry fs/exfat/dir.c:39 [inline]
+       exfat_readdir+0x950/0x1520 fs/exfat/dir.c:155
+       exfat_iterate+0x3c7/0xad0 fs/exfat/dir.c:261
+       wrap_directory_iterator+0xa5/0xe0 fs/readdir.c:67
+       iterate_dir+0x53e/0xb60 fs/readdir.c:110
+       __do_sys_getdents64 fs/readdir.c:409 [inline]
+       __se_sys_getdents64 fs/readdir.c:394 [inline]
+       __ia32_sys_getdents64+0x14f/0x2e0 fs/readdir.c:394
+       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+       __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&sbi->s_lock#2);
+                               lock(fs_reclaim);
+                               lock(&sbi->s_lock#2);
+  lock(fs_reclaim);
+
+ *** DEADLOCK ***
+
+3 locks held by syz-executor.2/6265:
+ #0: ffff88801db114c8 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xeb/0x180 fs/file.c:1191
+ #1: ffff8880483da9e8 (&sb->s_type->i_mutex_key#24){++++}-{3:3}, at: wrap_directory_iterator+0x5a/0xe0 fs/readdir.c:56
+ #2: ffff88804af1a0e0 (&sbi->s_lock#2){+.+.}-{3:3}, at: exfat_iterate+0x33f/0xad0 fs/exfat/dir.c:256
+
+stack backtrace:
+CPU: 0 PID: 6265 Comm: syz-executor.2 Not tainted 6.10.0-rc5-syzkaller-00018-g55027e689933 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
+ check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2187
+ check_prev_add kernel/locking/lockdep.c:3134 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+ validate_chain kernel/locking/lockdep.c:3869 [inline]
+ __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+ lock_acquire kernel/locking/lockdep.c:5754 [inline]
+ lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+ __fs_reclaim_acquire mm/page_alloc.c:3801 [inline]
+ fs_reclaim_acquire+0x102/0x160 mm/page_alloc.c:3815
+ might_alloc include/linux/sched/mm.h:334 [inline]
+ slab_pre_alloc_hook mm/slub.c:3891 [inline]
+ slab_alloc_node mm/slub.c:3981 [inline]
+ __do_kmalloc_node mm/slub.c:4121 [inline]
+ __kmalloc_noprof+0xb5/0x420 mm/slub.c:4135
+ kmalloc_noprof include/linux/slab.h:664 [inline]
+ kmalloc_array_noprof include/linux/slab.h:699 [inline]
+ __exfat_get_dentry_set+0x81e/0xa90 fs/exfat/dir.c:816
+ exfat_get_dentry_set+0x36/0x210 fs/exfat/dir.c:859
+ exfat_get_uniname_from_ext_entry fs/exfat/dir.c:39 [inline]
+ exfat_readdir+0x950/0x1520 fs/exfat/dir.c:155
+ exfat_iterate+0x3c7/0xad0 fs/exfat/dir.c:261
+ wrap_directory_iterator+0xa5/0xe0 fs/readdir.c:67
+ iterate_dir+0x53e/0xb60 fs/readdir.c:110
+ __do_sys_getdents64 fs/readdir.c:409 [inline]
+ __se_sys_getdents64 fs/readdir.c:394 [inline]
+ __ia32_sys_getdents64+0x14f/0x2e0 fs/readdir.c:394
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+ do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+RIP: 0023:0xf72f8579
+Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
+RSP: 002b:00000000f5ec95ac EFLAGS: 00000292 ORIG_RAX: 00000000000000dc
+RAX: ffffffffffffffda RBX: 000000000000000a RCX: 0000000020002ec0
+RDX: 0000000000001000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+----------------
+Code disassembly (best guess), 2 bytes skipped:
+   0:	10 06                	adc    %al,(%rsi)
+   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
+   6:	10 07                	adc    %al,(%rdi)
+   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
+   c:	10 08                	adc    %cl,(%rax)
+   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
+  1e:	00 51 52             	add    %dl,0x52(%rcx)
+  21:	55                   	push   %rbp
+  22:	89 e5                	mov    %esp,%ebp
+  24:	0f 34                	sysenter
+  26:	cd 80                	int    $0x80
+* 28:	5d                   	pop    %rbp <-- trapping instruction
+  29:	5a                   	pop    %rdx
+  2a:	59                   	pop    %rcx
+  2b:	c3                   	ret
+  2c:	90                   	nop
+  2d:	90                   	nop
+  2e:	90                   	nop
+  2f:	90                   	nop
+  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
