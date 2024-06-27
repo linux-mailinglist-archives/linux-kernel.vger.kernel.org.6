@@ -1,91 +1,121 @@
-Return-Path: <linux-kernel+bounces-232557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92C6291AAEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:16:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2B1491AAF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:17:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4126A1F21DD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:16:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 536C8284907
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:17:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61FFD1990A3;
-	Thu, 27 Jun 2024 15:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB685198A31;
+	Thu, 27 Jun 2024 15:16:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="mwVfIhDw"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XpdSuyX2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63658197555;
-	Thu, 27 Jun 2024 15:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CCD9197A90;
+	Thu, 27 Jun 2024 15:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719501367; cv=none; b=ofHyOdxwnV+sro/qkr9XvyGGR8UdNfYQKXoLtzN8LMlK4sDzefA+AJ0OAbul7GZPFt5/futpmUTWiZoXLkwn4sAoqAmxqVMkF6D1Drv/sizkRJ07j3aGuiTUEGye6hRcWvJ/jtlX5TV+cSBRP1MQcP7v7GABlRHctzYmuNLc4VY=
+	t=1719501395; cv=none; b=ji6Hd0dfzW+MNjB85zEHxbffwWSf/YSInrnhvAHuzjihxi2o/K7HDCqIhMYyKQQgmSnX0cKPIHeC2dG1z/Kq0GaRpAtyiXr5lzGYmA50mWjx5/bh1QA0g1wHRXY0Y1BtK6+04FwyFJuxaXSjSyuu+f7aGtTAryu73Pg77GRsPl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719501367; c=relaxed/simple;
-	bh=Edgf2el7vfsPa7gk4PEhJ0JF9QtzPXpxY3Pe1JoTo1g=;
+	s=arc-20240116; t=1719501395; c=relaxed/simple;
+	bh=wjjEufZ41AUoOLd05jyoxLk3rwtu6jIvnI98K2hPGkg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nieM4XEAW0yG5d4gizqHxavt/7/YXUeWRfNh9/at3VufoCiwYi9UDBT7tHfM2VPfG9hDrAvDLm99ERF4JLRl+bhcVYYv46b0eWKlCduFzMctT5kr73IAiL+2KzeHZn/ul2DsZiKRNOCFjxCKGQNfiOiI8habuwm1SUXS0rhziJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=mwVfIhDw; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=QKCRMBwJDf5cHZ/yhnI+yJCQsyATUHSXjQblCJTVe3Q=; b=mwVfIhDwHKSNaCMinHIFYrWYcy
-	Ci9uGmNuK4rVfOiVYAZMTz/6tGc3ues7nW9mgqDHbTB1fyiH9cA2zIlsHK5lvCir/7Iz8Bc4EOWZE
-	aH0ve4E8mbx+pN38lkhktjYZQZD3YVaeZAVu8OpGm+7rT0RiHFRnBfq1EWbmcwLjXFyg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sMqqo-001B7c-Q2; Thu, 27 Jun 2024 17:15:54 +0200
-Date: Thu, 27 Jun 2024 17:15:54 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Arun Ramadoss <arun.ramadoss@microchip.com>,
-	Lucas Stach <l.stach@pengutronix.de>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com
-Subject: Re: [PATCH net-next v1 2/3] net: dsa: microchip: lan937x: force
- RGMII interface into PHY mode
-Message-ID: <f610effb-34af-4150-a320-c8882117b632@lunn.ch>
-References: <20240627123911.227480-1-o.rempel@pengutronix.de>
- <20240627123911.227480-3-o.rempel@pengutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ntUNMfyeS1gJfHpwo8hFM7EFDieZuORGLevYZ7jz/wkAl00r5v/dV1krphtTxfRrjhWO9cjgzGjG43Kve4KDzNTr8BK+G7WB0XflEQWoCFD6Xt4lp/yxJ17ejj5BRI+prvNRtgEDmf/ua+17S/23OGCX7k9i5SfzrKVLliATCPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XpdSuyX2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BA09C2BBFC;
+	Thu, 27 Jun 2024 15:16:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719501394;
+	bh=wjjEufZ41AUoOLd05jyoxLk3rwtu6jIvnI98K2hPGkg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XpdSuyX2YlDJ2Tb7sFhdgY0lyTbfLDtzddZ4PVa5SLyWaJSI+TfFnV3xipBsEuFs8
+	 EuXn4C+338qYjvdEwWadLta0PlgyFd4uN8QoR1eWudm0eIQuGyo4i8A+eqDBPAmT+P
+	 H49er30u1jRBJ5oUYrnOx0AOoLSecdUBN7fjBROj0nqqCmry273f1MC102y28rr7CJ
+	 xl0q+BOgxdAMPUdkouaDHkB/5WtaZIAR0IDAUYVpbx4ZzcbOhbIh24h+OoW0dt37kS
+	 03RcbdqOrcZgzNLO78PSux+ilDex+jYauGMA2Krd5FgPXVdTt5sYh3utiNwiJave5I
+	 nATmbqsTniCTQ==
+Date: Thu, 27 Jun 2024 17:16:29 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Ian Kent <ikent@redhat.com>, Matthew Wilcox <willy@infradead.org>, 
+	Lucas Karpinski <lkarpins@redhat.com>, viro@zeniv.linux.org.uk, raven@themaw.net, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Alexander Larsson <alexl@redhat.com>, Eric Chanudet <echanude@redhat.com>
+Subject: Re: [RFC v3 1/1] fs/namespace: remove RCU sync for MNT_DETACH umount
+Message-ID: <20240627-abkassieren-grinsen-6ce528fe5526@brauner>
+References: <20240626201129.272750-2-lkarpins@redhat.com>
+ <20240626201129.272750-3-lkarpins@redhat.com>
+ <Znx-WGU5Wx6RaJyD@casper.infradead.org>
+ <50512ec3-da6d-4140-9659-58e0514a4970@redhat.com>
+ <20240627115418.lcnpctgailhlaffc@quack3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240627123911.227480-3-o.rempel@pengutronix.de>
+In-Reply-To: <20240627115418.lcnpctgailhlaffc@quack3>
 
-On Thu, Jun 27, 2024 at 02:39:10PM +0200, Oleksij Rempel wrote:
-> From: Lucas Stach <l.stach@pengutronix.de>
+On Thu, Jun 27, 2024 at 01:54:18PM GMT, Jan Kara wrote:
+> On Thu 27-06-24 09:11:14, Ian Kent wrote:
+> > On 27/6/24 04:47, Matthew Wilcox wrote:
+> > > On Wed, Jun 26, 2024 at 04:07:49PM -0400, Lucas Karpinski wrote:
+> > > > +++ b/fs/namespace.c
+> > > > @@ -78,6 +78,7 @@ static struct kmem_cache *mnt_cache __ro_after_init;
+> > > >   static DECLARE_RWSEM(namespace_sem);
+> > > >   static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
+> > > >   static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
+> > > > +static bool lazy_unlock = false; /* protected by namespace_sem */
+> > > That's a pretty ugly way of doing it.  How about this?
+> > 
+> > Ha!
+> > 
+> > That was my original thought but I also didn't much like changing all the
+> > callers.
+> > 
+> > I don't really like the proliferation of these small helper functions either
+> > but if everyone
+> > 
+> > is happy to do this I think it's a great idea.
 > 
-> The register manual and datasheet documentation for the LAN937x series
-> disagree about the polarity of the MII mode strap. As a consequence
-> there are hardware designs that have the RGMII interface strapped into
-> MAC mode, which is a invalid configuration and will prevent the internal
-> clock from being fed into the port TX interface.
+> So I know you've suggested removing synchronize_rcu_expedited() call in
+> your comment to v2. But I wonder why is it safe? I *thought*
+> synchronize_rcu_expedited() is there to synchronize the dropping of the
+> last mnt reference (and maybe something else) - see the comment at the
+> beginning of mntput_no_expire() - and this change would break that?
 
-What i think is missing from this is that you are talking about the
-CPU port. For a normal user point, RGMII MAC mode would make sense, if
-there is an external RGMII PHY attached. And the code only does this
-if the port is a CPU port.
+Yes. During umount mnt->mnt_ns will be set to NULL with namespace_sem
+and the mount seqlock held. mntput() doesn't acquire namespace_sem as
+that would get rather problematic during path lookup. It also elides
+lock_mount_hash() by looking at mnt->mnt_ns because that's set to NULL
+when a mount is actually unmounted.
 
-So maybe:
+So iirc synchronize_rcu_expedited() will ensure that it is actually the
+system call that shuts down all the mounts it put on the umounted list
+and not some other task that also called mntput() as that would cause
+pretty blatant EBUSY issues.
 
-... that have the CPU port RGMII interface ...
+So callers that come before mnt->mnt_ns = NULL simply return of course
+but callers that come after mnt->mnt_ns = NULL will acquire
+lock_mount_hash() _under_ rcu_read_lock(). These callers see an elevated
+reference count and thus simply return while namespace_lock()'s
+synchronize_rcu_expedited() prevents the system call from making
+progress.
 
-	Andrew
+But I also don't see it working without risk even with MNT_DETACH. It
+still has potential to cause issues in userspace. Any program that
+always passes MNT_DETACH simply to ensure that even in the very rare
+case that a mount might still be busy is unmounted might now end up
+seeing increased EBUSY failures for mounts that didn't actually need to
+be unmounted with MNT_DETACH. In other words, this is only inocuous if
+userspace only uses MNT_DETACH for stuff they actually know is busy when
+they're trying to unmount. And I don't think that's the case.
 
