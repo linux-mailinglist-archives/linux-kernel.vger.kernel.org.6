@@ -1,355 +1,127 @@
-Return-Path: <linux-kernel+bounces-232364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A10C91A7A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:16:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5377091A7AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:18:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD9D31C23037
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:16:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 114C1284186
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:17:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15BF192B7C;
-	Thu, 27 Jun 2024 13:16:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90718192B7C;
+	Thu, 27 Jun 2024 13:17:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="kYTubqHW"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641A7190497
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 13:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="N2IHBIPr"
+Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.220])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED24A187541
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 13:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719494165; cv=none; b=u1LhfnhhkUdtfxQ5cDQDZ6yH0WZflN756dwn9ZSuJUbL9xkAN0bkieP9RDtOpmAunOt7KrQjlKw8EEKcbpnJqpsZIzdkLbvaZDr2BvxDqa01AOzw7Et18TGdupQ+QptWkW8bCsKxeeIzvvHR1yNLs+IenhXuZvDwoyEx8trzfsI=
+	t=1719494274; cv=none; b=h4txzHPgf3u0Nph67dcU71iRnChrmIZWsh2xwxgZjAVPk8+D7Z29HGspOl4O+58MYCKqBM6fkeIZjUqNZ/p98bSWxploTum7FlCoevc/4OjZXK4Vk6DXex08tyeE+i572WV+AhYB9flfJTcn0g7mEyMpAI4+LBEv7MB+/xAgJ6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719494165; c=relaxed/simple;
-	bh=SC2FX1DU21prPHrnU9dyWxxjBa5ZitS4xfAhB9tAp9E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ic57eizsWFL9AEMMy/78N+bHxjZNH+p4rbfXtHwwhvCbbRRvP3uqkOkf4y2isrD6v4OqAYPbkd+uSFNVvCYkuQfXuXvr1Ahd5ns71IzcoF5nBdVblEN3inLZVRfA0VgboryoEOVljqE22Pzl06uper9kcOtwTHOadkAGdD0p3ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=kYTubqHW; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57d203d4682so1950520a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 06:16:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1719494161; x=1720098961; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZzKoz6FKnrRcBnniRyELt0aBuYtPO3F5zOf5PdMzffg=;
-        b=kYTubqHWx1LS/0tYZhhenZ97Z7RpO0n+HHqjfDWI84j7PoQQqTWzpxYTp7Z5AWFm8g
-         6HWvSigSCgWlt0qsYwx5tkS4F0evdvKgE2YXMKXstdIO7SRqEDtZFqjEkmXBrg1ukdY6
-         q56BVfyUJZaiC+E8FGvrjKMnABIue+BEcwRh+et7pyn82IBQZtGsXYVZIxdY5J53T0lr
-         gCXO1yXTOhSPH7AvT36baJPk3FQcb/yUsDWeNeVXTEXmwwK3dQ/nWVcGtH9b3c/5bmXx
-         GR7pqXncwCH2+TrnIW71+N1FC5g2L957jOrdbNSN0LtivayjGvNcTL9pFip0EnzXyED+
-         yXWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719494161; x=1720098961;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZzKoz6FKnrRcBnniRyELt0aBuYtPO3F5zOf5PdMzffg=;
-        b=FfLBSKk80a4h6+qbwQwUUKVt4hg1gR6p9oqUZSG8bmxampbtNTx3+AF8wSsPFy20v2
-         19ADsbXLUxOXQO939m+9gE1PGGEP6S0DjkkOfIH1Q52nvcDYCR0ivH5odcKQxCOM0OWA
-         17YYD8txJ9yAjvXSWT6uN+HufVvB8DSCLq+U3ZCISuQICAQC30/X0u1mS+QKjIlvVEt5
-         CZfE7TCZ4pJpGGbEUnOyWAsz8DAmB+ZGqEayAyjLrkWCsMGgqC6a5D8m5t93d6idwM8v
-         nx+wG05OivU304bJDoKj7l6e0Sqk6tWsi/8K9QIeV3sKEHvOph0w9zoa2XA1tXKuwqOu
-         vK4A==
-X-Forwarded-Encrypted: i=1; AJvYcCVAjFxCzbORun2OG3SNGYbIFSqcPlSbyixa/w2KsYmdb6WRQMZwt3SHMh0ApnACDpcmHBdciQ4Oh4tlYlKVtTZIg2Kdwk+poMD+qfWF
-X-Gm-Message-State: AOJu0Yy29wR1KdTHENCGUfI4Th893oRjcwQfL8GM/VkwaQiPB86Eh7LN
-	VdIgERkbwArEIIHciIPKTWGDR4zcX7scasgmPzYQnSELdHA0qOp4kg0uR44RX1c73gCKKdcChcc
-	4
-X-Google-Smtp-Source: AGHT+IEziftjUti0dB6a83oJvbs4LSDunNN7OLQH3Idcx2xB8GHM/2F4I8AwIYzm80iubbLmM4iG4Q==
-X-Received: by 2002:a17:907:a784:b0:a72:7bf3:1602 with SMTP id a640c23a62f3a-a727bf316d5mr606233666b.26.1719494160704;
-        Thu, 27 Jun 2024 06:16:00 -0700 (PDT)
-Received: from [100.64.0.4] (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a729d7b4540sm59495366b.146.2024.06.27.06.15.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 06:16:00 -0700 (PDT)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Thu, 27 Jun 2024 15:15:54 +0200
-Subject: [PATCH] arm64: dts: qcom: sm7225-fairphone-fp4: Name the
- regulators
+	s=arc-20240116; t=1719494274; c=relaxed/simple;
+	bh=370pLVgH43l7QVAvTccXXK1/Sk+pJeLSfVCugZ/Pibo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=OwaRYm3fR+Z37zCh8+HkiaXxsmpqpKr8tT03NEj4XtgF9O3yOlvhEeYRsc3YHjNGFesfiDWiF6jE+jQxOJ0gx4WAj45sU47jNZven7Ff7fLW/z2v4X9ULvlhmnRGsCK/ESe6cUUuF4OR1w1CQzjOu2K9nCrW3l/osMEHqKTLAEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=N2IHBIPr; arc=none smtp.client-ip=45.254.50.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=Fk602
+	xZpwxu8hEFijAI24Vfb9FDwk9rs/d9oKAbmeVY=; b=N2IHBIPrjKfOgTmzvLsRv
+	3ptBqeOjMZh5kRFSqqkdn5oMFelqpFR02q/vREfuFLsz/aHX1UQNV1tzBmZLu57C
+	7lBiK3tg6+Dbc0Kyb0Zsm8zjXXu5ugZ+q94VxU8++QnMuQbnba863wFiB88aMvwc
+	FgdjnVi2cF5fq+D2byvfcc=
+Received: from localhost.localdomain (unknown [193.203.214.57])
+	by gzga-smtp-mta-g0-1 (Coremail) with SMTP id _____wDXjylHZn1mTc7GAg--.20362S4;
+	Thu, 27 Jun 2024 21:16:57 +0800 (CST)
+From: ran xiaokai <ranxiaokai627@163.com>
+To: ziy@nvidia.com
+Cc: baohua@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	lkp@intel.com,
+	llvm@lists.linux.dev,
+	oe-kbuild-all@lists.linux.dev,
+	peterx@redhat.com,
+	ran.xiaokai@zte.com.cn,
+	ranxiaokai627@163.com
+Subject: Re: [PATCH 2/2] kpageflags: fix wrong KPF_THP on non-pmd-mappable compound pages
+Date: Thu, 27 Jun 2024 13:16:55 +0000
+Message-Id: <20240627131655.23524-1-ranxiaokai627@163.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <D2ATJC1R3T10.14DE626BQO28Y@nvidia.com>
+References: <D2ATJC1R3T10.14DE626BQO28Y@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240627-fp4-regulator-name-v1-1-66931111a006@fairphone.com>
-X-B4-Tracking: v=1; b=H4sIAAlmfWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDMyNz3bQCE92i1PTSnMSS/CLdvMTcVN3ERAuzJEsL4zRDMyMloMaCotS
- 0zAqwodGxtbUArYUtC2QAAAA=
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
-X-Mailer: b4 0.14.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDXjylHZn1mTc7GAg--.20362S4
+X-Coremail-Antispam: 1Uf129KBjvJXoWxGFWDCr48Zr4xKryrXr1xGrg_yoW5XFWfpa
+	y8GFs8KF48Wr1rGw4xKF1DZa1jqws8WryagF18Cw47ZFs0vF9Fgr4Ikr15uwnrur1kCrW8
+	Crn3XF9Yqa4UAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JUKtCwUUUUU=
+X-CM-SenderInfo: xudq5x5drntxqwsxqiywtou0bp/1tbiqRILTGVOBIjUegAAs1
 
-Without explicitly specifying names for the regulators they are named
-based on the DeviceTree node name. This results in multiple regulators
-with the same name, making debug prints and regulator_summary impossible
-to reason about.
+>On Thu Jun 27, 2024 at 8:38 AM EDT, ran xiaokai wrote:
+>> > Hi ran,
+>> > 
+>> > kernel test robot noticed the following build errors:
+>> > 
+>> > [auto build test ERROR on akpm-mm/mm-everything]
+>> > [also build test ERROR on linus/master v6.10-rc5 next-20240625]
+>> > [If your patch is applied to the wrong git tree, kindly drop us a note.
+>> > And when submitting patch, we suggest to use '--base' as documented in
+>> > https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>> > 
+>> > url:    https://github.com/intel-lab-lkp/linux/commits/ran-xiaokai/mm-Constify-folio_order-folio_test_pmd_mappable/20240626-113027
+>> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+>> > patch link:    https://lore.kernel.org/r/20240626024924.1155558-3-ranxiaokai627%40163.com
+>> > patch subject: [PATCH 2/2] kpageflags: fix wrong KPF_THP on non-pmd-mappable compound pages
+>> > config: x86_64-allnoconfig (https://download.01.org/0day-ci/archive/20240626/202406262300.iAURISyJ-lkp@intel.com/config)
+>> > compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+>> > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240626/202406262300.iAURISyJ-lkp@intel.com/reproduce)
+>> > 
+>> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
+>> > the same patch/commit), kindly add following tags
+>> > | Reported-by: kernel test robot <lkp@intel.com>
+>> > | Closes: https://lore.kernel.org/oe-kbuild-all/202406262300.iAURISyJ-lkp@intel.com/
+>> > 
+>> > All errors (new ones prefixed by >>):
+>> > 
+>> > >> fs/proc/page.c:151:35: error: passing 'const struct folio *' to parameter of type 'struct folio *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
+>> >      151 |         else if (folio_test_pmd_mappable(folio)) {
+>> >          |                                          ^~~~~
+>> >    include/linux/huge_mm.h:438:58: note: passing argument to parameter 'folio' here
+>> >      438 | static inline bool folio_test_pmd_mappable(struct folio *folio)
+>> >          |                                                          ^
+>> >    1 error generated.
+>>
+>> Hi,
+>>
+>> This patch is the second patch of the serial:
+>> https://lore.kernel.org/lkml/20240626024924.1155558-1-ranxiaokai627@163.com/
+>>
+>> and it relies on the first patch:
+>> https://lore.kernel.org/lkml/20240626024924.1155558-2-ranxiaokai627@163.com/
+>>
+>> and it seems the first patch is not applied.
+>> Or in this case, we should not split these two patches?
+>
+>No, this is the definition when THP is disabled. You only changed the
+>definition when THP is enabled.
 
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
- arch/arm64/boot/dts/qcom/sm7225-fairphone-fp4.dts | 34 +++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+Thanks for reminding. 
+Will fix this.
 
-diff --git a/arch/arm64/boot/dts/qcom/sm7225-fairphone-fp4.dts b/arch/arm64/boot/dts/qcom/sm7225-fairphone-fp4.dts
-index a74f3ac09a5e..4e67bb80a026 100644
---- a/arch/arm64/boot/dts/qcom/sm7225-fairphone-fp4.dts
-+++ b/arch/arm64/boot/dts/qcom/sm7225-fairphone-fp4.dts
-@@ -150,124 +150,145 @@ regulators-0 {
- 		qcom,pmic-id = "a";
- 
- 		vreg_s1a: smps1 {
-+			regulator-name = "vreg_s1a";
- 			regulator-min-microvolt = <1000000>;
- 			regulator-max-microvolt = <1200000>;
- 		};
- 
- 		vreg_s2a: smps2 {
-+			regulator-name = "vreg_s2a";
- 			regulator-min-microvolt = <1503000>;
- 			regulator-max-microvolt = <2048000>;
- 		};
- 
- 		vreg_l2a: ldo2 {
-+			regulator-name = "vreg_l2a";
- 			regulator-min-microvolt = <1503000>;
- 			regulator-max-microvolt = <1980000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l3a: ldo3 {
-+			regulator-name = "vreg_l3a";
- 			regulator-min-microvolt = <2700000>;
- 			regulator-max-microvolt = <3300000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l4a: ldo4 {
-+			regulator-name = "vreg_l4a";
- 			regulator-min-microvolt = <352000>;
- 			regulator-max-microvolt = <801000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l5a: ldo5 {
-+			regulator-name = "vreg_l5a";
- 			regulator-min-microvolt = <1503000>;
- 			regulator-max-microvolt = <1980000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l6a: ldo6 {
-+			regulator-name = "vreg_l6a";
- 			regulator-min-microvolt = <1710000>;
- 			regulator-max-microvolt = <3544000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l7a: ldo7 {
-+			regulator-name = "vreg_l7a";
- 			regulator-min-microvolt = <1620000>;
- 			regulator-max-microvolt = <1980000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l8a: ldo8 {
-+			regulator-name = "vreg_l8a";
- 			regulator-min-microvolt = <2800000>;
- 			regulator-max-microvolt = <2800000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l9a: ldo9 {
-+			regulator-name = "vreg_l9a";
- 			regulator-min-microvolt = <1650000>;
- 			regulator-max-microvolt = <3401000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l11a: ldo11 {
-+			regulator-name = "vreg_l11a";
- 			regulator-min-microvolt = <1800000>;
- 			regulator-max-microvolt = <2000000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l12a: ldo12 {
-+			regulator-name = "vreg_l12a";
- 			regulator-min-microvolt = <1620000>;
- 			regulator-max-microvolt = <1980000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l13a: ldo13 {
-+			regulator-name = "vreg_l13a";
- 			regulator-min-microvolt = <570000>;
- 			regulator-max-microvolt = <650000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l14a: ldo14 {
-+			regulator-name = "vreg_l14a";
- 			regulator-min-microvolt = <1700000>;
- 			regulator-max-microvolt = <1900000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l15a: ldo15 {
-+			regulator-name = "vreg_l15a";
- 			regulator-min-microvolt = <1100000>;
- 			regulator-max-microvolt = <1305000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l16a: ldo16 {
-+			regulator-name = "vreg_l16a";
- 			regulator-min-microvolt = <830000>;
- 			regulator-max-microvolt = <921000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l18a: ldo18 {
-+			regulator-name = "vreg_l18a";
- 			regulator-min-microvolt = <788000>;
- 			regulator-max-microvolt = <1049000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l19a: ldo19 {
-+			regulator-name = "vreg_l19a";
- 			regulator-min-microvolt = <1080000>;
- 			regulator-max-microvolt = <1305000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l20a: ldo20 {
-+			regulator-name = "vreg_l20a";
- 			regulator-min-microvolt = <530000>;
- 			regulator-max-microvolt = <801000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l21a: ldo21 {
-+			regulator-name = "vreg_l21a";
- 			regulator-min-microvolt = <751000>;
- 			regulator-max-microvolt = <825000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l22a: ldo22 {
-+			regulator-name = "vreg_l22a";
- 			regulator-min-microvolt = <1080000>;
- 			regulator-max-microvolt = <1305000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-@@ -279,41 +300,48 @@ regulators-1 {
- 		qcom,pmic-id = "e";
- 
- 		vreg_s8e: smps8 {
-+			regulator-name = "vreg_s8e";
- 			regulator-min-microvolt = <313000>;
- 			regulator-max-microvolt = <1395000>;
- 		};
- 
- 		vreg_l1e: ldo1 {
-+			regulator-name = "vreg_l1e";
- 			regulator-min-microvolt = <1620000>;
- 			regulator-max-microvolt = <1980000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l2e: ldo2 {
-+			regulator-name = "vreg_l2e";
- 			regulator-min-microvolt = <1170000>;
- 			regulator-max-microvolt = <1305000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l3e: ldo3 {
-+			regulator-name = "vreg_l3e";
- 			regulator-min-microvolt = <1100000>;
- 			regulator-max-microvolt = <1299000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l4e: ldo4 {
-+			regulator-name = "vreg_l4e";
- 			regulator-min-microvolt = <1620000>;
- 			regulator-max-microvolt = <3300000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l5e: ldo5 {
-+			regulator-name = "vreg_l5e";
- 			regulator-min-microvolt = <1620000>;
- 			regulator-max-microvolt = <3300000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l6e: ldo6 {
-+			regulator-name = "vreg_l6e";
- 			regulator-min-microvolt = <1700000>;
- 			regulator-max-microvolt = <2950000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-@@ -323,18 +351,21 @@ vreg_l6e: ldo6 {
- 		};
- 
- 		vreg_l7e: ldo7 {
-+			regulator-name = "vreg_l7e";
- 			regulator-min-microvolt = <2700000>;
- 			regulator-max-microvolt = <3544000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l8e: ldo8 {
-+			regulator-name = "vreg_l8e";
- 			regulator-min-microvolt = <1620000>;
- 			regulator-max-microvolt = <2000000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l9e: ldo9 {
-+			regulator-name = "vreg_l9e";
- 			regulator-min-microvolt = <2700000>;
- 			regulator-max-microvolt = <2960000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-@@ -344,18 +375,21 @@ vreg_l9e: ldo9 {
- 		};
- 
- 		vreg_l10e: ldo10 {
-+			regulator-name = "vreg_l10e";
- 			regulator-min-microvolt = <3000000>;
- 			regulator-max-microvolt = <3401000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_l11e: ldo11 {
-+			regulator-name = "vreg_l11e";
- 			regulator-min-microvolt = <3000000>;
- 			regulator-max-microvolt = <3401000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
- 		};
- 
- 		vreg_bob: bob {
-+			regulator-name = "vreg_bob";
- 			regulator-min-microvolt = <1620000>;
- 			regulator-max-microvolt = <5492000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_AUTO>;
-
----
-base-commit: 1ce80da8c5d0c297c4e7db33e36abe0262f86b23
-change-id: 20240627-fp4-regulator-name-aa86b983f162
-
-Best regards,
--- 
-Luca Weiss <luca.weiss@fairphone.com>
+>-- 
+>Best Regards,
+>Yan, Zi
+>
 
 
