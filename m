@@ -1,259 +1,112 @@
-Return-Path: <linux-kernel+bounces-233094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6099591B22C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 00:24:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C5DA91B230
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 00:25:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9DA11F21E16
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:24:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B845B283034
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:25:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A153C1A2550;
-	Thu, 27 Jun 2024 22:24:02 +0000 (UTC)
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAACA1A255E;
+	Thu, 27 Jun 2024 22:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jacMEarE"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A5D1EB40;
-	Thu, 27 Jun 2024 22:24:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C6A1EB40;
+	Thu, 27 Jun 2024 22:25:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719527042; cv=none; b=m70iSLjMzDgU8wKAc9J448SL24Gr85Sn60qHAtGG3UweChbEx2fYfdm9FU0tpLwE9Mac+etUCzNmHnNyNsuFFtu9xJ+cVijKxURNiWMyHMdk5sTx2MdC4Pk8jNG41GNYw78ZJrM+0yEwcfUYlllTjSf5LhFmKRIUTQnNS5csUEU=
+	t=1719527150; cv=none; b=bxfbkXdfzfYyFnlXAUGFDp8F35wHzAF3VTly0ZVKsfgXhTrlH2EgpjBDQFjJTDNdvEUVYDdxbPXhFEOEzNuRy0M7LuyOhENidL4aOuzTX5u8gMyqzwVf86gpz3SPyEEvEbDTLusEL12CWo3km2ecUNmyNBX9uVDUa6XqPApGwWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719527042; c=relaxed/simple;
-	bh=PviT/CztwN5Z05zeLQplg14StfNF1vckdkgRZUipaNk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RbYk7scJpH6ODe/3z555zVcIFvGSmcOYYBgWYu+Pdn5jgYhc2j2xjGieN85/2rBAVvPu30iZV8YaBSixufbumCeC2PeCbL2vi3PGQflKekagj6dkCn3mlcDoLHPhce2sAOFmlszpH7tJzyBWNXQGRPIwAMvWKyzY8bZEuQDaT9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	s=arc-20240116; t=1719527150; c=relaxed/simple;
+	bh=E07NHsQvorUG++7CcSrfPb1y4dV1XhITjTbwgL62ZIg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CBuSgLxmoRXu5wRTdfTmrSnvV+Mskk7HdtpaT6qvlQXWAWW5gR8zZStzrnGbOw1n1y/WT51xC+oNnGlCbdVA5l8SSy0ya/gD36Li9BuBH0dsn4pMIBiUA4alXW9i7t8Z5MYZiWGT1i0GXf7lIdwqgq9ANU1DOYe/rX+5HMoed3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jacMEarE; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70673c32118so11546b3a.3;
-        Thu, 27 Jun 2024 15:24:00 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-424acfff613so29499115e9.0;
+        Thu, 27 Jun 2024 15:25:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719527147; x=1720131947; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=N2/1uS7iUktm7iLmy9v9zZ0wGLOKnCvAf1TsgFbDdOk=;
+        b=jacMEarEXuFzA8WVRr/nqZPCV8XDXS3pqzy/l3O585DiUcLEs9R5aMeDo7enLMgyFP
+         cC21LgdNzyFmFq0a/Wb0XuKmXCJP2zVLicfL1t0LGnBkJSXGH/Cy1NHIJyG7rmocpOv8
+         2zrQFSRF90FVUrrKtl931xM1v2i0v3+w8EAYcaMzard9zilncQPlmxNHPlsjEPPzBss8
+         d1Qt6JjQgKkAKbRz0vBYmTis6oICYVVSYCcp88PkBh2xJ2Y93Ri27AJNTJEEQ/qp0/Bw
+         LzyO185ZrxGKjxtW1wdbs1otHCXTQwtkHuJrI6DpJo+7QxftBY3jfAQxgD1ser9EPuk1
+         1MhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719527040; x=1720131840;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k25KTnBVPDHacGsXCJPZR5rn7BDEOF2zCT8+vYzBgL4=;
-        b=I/7gx1kjmJoRmX2ryY/SjDplgA1TYdumNDbLN2SqS2DxQGPixFwesBhLeFRq//KWVY
-         5TYWKxMxUkxKofETIfR6ZQXrlAYf+HvUCyR0SCQgi4sjGH5szWahz96Yj5Ta4/MCeZDM
-         ae2/KFUtazH6qNFxyaQ7YqsoqPmXHPzryMU/65kcAPaUUTcHOLw/jZXFzUiSF9FuGbW+
-         ht0kdYBYdLlbO8W86JQfIT8+3GKQhAX1Rj11Qr8R/xJ6OLZIxs9toU+1SncqNMjEka1x
-         fJf3+0+CS7QRm6EVo1Y+WjyvEg0a/xeI+K/awargrzsrei0LpB/uNpTNDj9Ymv3PHz69
-         OftQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWAXix3JCND/78qVwdjEsd7XElcZG7HAFxFM34qvF5AcorIIiDNMn+ZSTiv+NMwFEx93bLKL4QjUa2RmU6xM7hGzVZ5MXbpJHglg3OgJxMp1f1SG+C60hki1ONRcWstl+6wbYxICV6zyz9mWu4/oA==
-X-Gm-Message-State: AOJu0Yzu81v0mGuYQmSFtzMVT/YLzXb8YwmiU7/lAKo0Voqxn+JiUyMT
-	tXl1l6mjfr1yIprio7rhf2xvb7qL/anH8S59fBFHnzMZ761HYv0DHJzwRKWKvmO8qOIr39fhsZg
-	XAfsmxJykDlscC4jvnQwR3/uVWZo=
-X-Google-Smtp-Source: AGHT+IEcK3fIyaBjFYDJbkmQ2KXWWaGSIKUvx3sWF0Ub18jQqEeqsIngmx604WF7UpYM/llLE8qzpf6j7HEeY4QHELw=
-X-Received: by 2002:a05:6a20:bca8:b0:1be:c733:ab4d with SMTP id
- adf61e73a8af0-1bec733acfdmr4324950637.26.1719527039636; Thu, 27 Jun 2024
- 15:23:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719527147; x=1720131947;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N2/1uS7iUktm7iLmy9v9zZ0wGLOKnCvAf1TsgFbDdOk=;
+        b=jXG1ycQftBw4znyxcPlpBEwZwASa9bn0FNeFYxrJjPlWJ3eyWr7DmDR2Jy2jivlRKh
+         VENwOxOX1t7k7h7NRMipYehlYMMIJ2jbjIKiJABs7pE51pH0wiRJdMlbpOyuzTR/sSoa
+         q/4GcsQiCDPHZtfvN9QEAPnZ8434cKoBjGziVqr075Z0r04mLj6uu2DT7KNJck2NzTze
+         D4zSH09SbMDCwtimOH5sgckbR/8wR868DKby3OC2Yhh2/FK/BW9B0DCGftUz38DNJCBw
+         Ki/pJKv2+jkvxTz7wI0X2PevAMhEVVC1dKY3rSXGiGhU826K2OPX4ZDKFIh2r0/LIkV2
+         Y8hA==
+X-Forwarded-Encrypted: i=1; AJvYcCVfpuimmU+duskbCxmDp2NnnuixJK5pw5uUrNG0HncO+QikTgCbts6YDBPcyN0IQD3KB2H5cvFUuLBdfXb6kApzqqcMepFpRK40HV+Iw/R/rdBJQFqzTYXDNyy7rEfOrbSZdive
+X-Gm-Message-State: AOJu0YwgT15fGUUOinp1EXFxmv+nKl1TwfabsQ2jsgCaiI9Dx9BG+GxB
+	P5PI5iJw8t0OIPCqW/gwoGtT8eErl3+qEcGauxQWGcXfTxdEKpoE
+X-Google-Smtp-Source: AGHT+IHsD97rvP/UmdGAB6mgE8uVSc928wJ9UPvvPUd8NphGX2jM0NK7vpEcGs79/sUGpg/UZP8mpg==
+X-Received: by 2002:a05:600c:894:b0:425:63b9:ae2c with SMTP id 5b1f17b1804b1-42563b9b0b3mr34893725e9.27.1719527146949;
+        Thu, 27 Jun 2024 15:25:46 -0700 (PDT)
+Received: from skbuf ([79.115.210.53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0fb9absm440326f8f.80.2024.06.27.15.25.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 15:25:46 -0700 (PDT)
+Date: Fri, 28 Jun 2024 01:25:43 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>, Andrew Lunn <andrew@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Arun Ramadoss <arun.ramadoss@microchip.com>,
+	Lucas Stach <l.stach@pengutronix.de>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com
+Subject: Re: [PATCH net-next v1 2/3] net: dsa: microchip: lan937x: force
+ RGMII interface into PHY mode
+Message-ID: <20240627222543.rcx3i5o43toopwcm@skbuf>
+References: <20240627123911.227480-1-o.rempel@pengutronix.de>
+ <20240627123911.227480-3-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240627200353.1230407-1-namhyung@kernel.org> <CAP-5=fWSpM7NL7UjXZBN8WHNAE7hGe1ghQ6_DqFe2VjTCGoA7A@mail.gmail.com>
-In-Reply-To: <CAP-5=fWSpM7NL7UjXZBN8WHNAE7hGe1ghQ6_DqFe2VjTCGoA7A@mail.gmail.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Thu, 27 Jun 2024 15:23:47 -0700
-Message-ID: <CAM9d7cibrW=K=GZB_zsURB1Ff6Eok7qy3rVt83VVM6pVhv+Agg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] perf stat: Use field separator in the metric header
-To: Ian Rogers <irogers@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240627123911.227480-3-o.rempel@pengutronix.de>
 
-Hi Ian,
+On Thu, Jun 27, 2024 at 02:39:10PM +0200, Oleksij Rempel wrote:
+> From: Lucas Stach <l.stach@pengutronix.de>
+> 
+> The register manual and datasheet documentation for the LAN937x series
+> disagree about the polarity of the MII mode strap. As a consequence
+> there are hardware designs that have the RGMII interface strapped into
+> MAC mode, which is a invalid configuration and will prevent the internal
+> clock from being fed into the port TX interface.
+> 
+> Force the MII mode to PHY for RGMII interfaces where this is the only
+> valid mode, to override the inproper strapping.
+> 
+> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
 
-On Thu, Jun 27, 2024 at 1:48=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
-te:
->
-> On Thu, Jun 27, 2024 at 1:03=E2=80=AFPM Namhyung Kim <namhyung@kernel.org=
-> wrote:
-> >
-> > It didn't use the passed field separator (using -x option) when it
-> > prints the metric headers and always put "," between the fields.
-> >
-> > Before:
-> >   $ sudo ./perf stat -a -x : --per-core -M tma_core_bound --metric-only=
- true
-> >   core,cpus,%  tma_core_bound:     <<<--- here: "core,cpus," but ":" ex=
-pected
-> >   S0-D0-C0:2:10.5:
-> >   S0-D0-C1:2:14.8:
-> >   S0-D0-C2:2:9.9:
-> >   S0-D0-C3:2:13.2:
-> >
-> > After:
-> >   $ sudo ./perf stat -a -x : --per-core -M tma_core_bound --metric-only=
- true
-> >   core:cpus:%  tma_core_bound:
-> >   S0-D0-C0:2:10.5:
-> >   S0-D0-C1:2:15.0:
-> >   S0-D0-C2:2:16.5:
-> >   S0-D0-C3:2:12.5:
-> >
-> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> > ---
-> >  tools/perf/util/stat-display.c | 37 ++++++++++++++++++++++++++--------
-> >  1 file changed, 29 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-disp=
-lay.c
-> > index 91d2f7f65df7..e8673c9f6b49 100644
-> > --- a/tools/perf/util/stat-display.c
-> > +++ b/tools/perf/util/stat-display.c
-> > @@ -47,16 +47,27 @@ static int aggr_header_lens[] =3D {
-> >  };
-> >
-> >  static const char *aggr_header_csv[] =3D {
-> > -       [AGGR_CORE]     =3D       "core,cpus,",
-> > -       [AGGR_CACHE]    =3D       "cache,cpus,",
-> > -       [AGGR_DIE]      =3D       "die,cpus,",
-> > -       [AGGR_SOCKET]   =3D       "socket,cpus,",
-> > -       [AGGR_NONE]     =3D       "cpu,",
-> > -       [AGGR_THREAD]   =3D       "comm-pid,",
-> > -       [AGGR_NODE]     =3D       "node,",
-> > +       [AGGR_CORE]     =3D       "core%scpus%s",
-> > +       [AGGR_CACHE]    =3D       "cache%scpus%s",
-> > +       [AGGR_DIE]      =3D       "die%scpus%s",
-> > +       [AGGR_SOCKET]   =3D       "socket%scpus%s",
-> > +       [AGGR_NONE]     =3D       "cpu%s",
-> > +       [AGGR_THREAD]   =3D       "comm-pid%s",
-> > +       [AGGR_NODE]     =3D       "node%s",
-> >         [AGGR_GLOBAL]   =3D       ""
-> >  };
-> >
-> > +static int aggr_header_num[] =3D {
-> > +       [AGGR_CORE]     =3D       2,
-> > +       [AGGR_CACHE]    =3D       2,
-> > +       [AGGR_DIE]      =3D       2,
-> > +       [AGGR_SOCKET]   =3D       2,
-> > +       [AGGR_NONE]     =3D       1,
-> > +       [AGGR_THREAD]   =3D       1,
-> > +       [AGGR_NODE]     =3D       1,
-> > +       [AGGR_GLOBAL]   =3D       0,
-> > +};
-> > +
-> >  static const char *aggr_header_std[] =3D {
-> >         [AGGR_CORE]     =3D       "core",
-> >         [AGGR_CACHE]    =3D       "cache",
-> > @@ -1185,8 +1196,18 @@ static void print_metric_headers_csv(struct perf=
-_stat_config *config,
-> >  {
-> >         if (config->interval)
-> >                 fputs("time,", config->output);
-> > -       if (!config->iostat_run)
-> > +       if (config->iostat_run)
-> > +               return;
-> > +
->
-> Having a static count of commas seems somewhat error prone, perhaps:
-> ```
-> const char *header =3D aggr_header_csv[config->aggr_mode];
-> if (config->csv_sep =3D=3D ',' || !strchr(header, ',')) {
->   fputs(config->output, header);
-> } else {
->   char *tmp =3D strdup(header);
->   char *p =3D tmp;
->    while (p && *p) {
->       if (p =3D=3D ',')
->         *p =3D config->csv_sep;
->      p++;
->    }
->   fputs(config->output, tmp);
->   free(tmp);
-> }
-> ```
-
-Looks good.  But I think we should handle longer separators like -x ":::".
-Will do in v2.
-
-> I'm somewhat surprised that we have no metric tests in the stat output
-> tests like tools/perf/tests/shell/stat+csv_output.sh. Perhaps we can
-> add the following:
-> ```
-> diff --git a/tools/perf/tests/shell/lib/stat_output.sh
-> b/tools/perf/tests/shell/lib/stat_output.sh
-> index 9a176ceae4a3..a920b2d78abb 100644
-> --- a/tools/perf/tests/shell/lib/stat_output.sh
-> +++ b/tools/perf/tests/shell/lib/stat_output.sh
-> @@ -148,6 +148,14 @@ check_per_socket()
->        echo "[Success]"
-> }
->
-> +check_metric_only()
-> +{
-> +        echo -n "Checking $1 output: metric only "
-> +        perf stat --metric-only $2 -e instructions,cycles true
-> +        commachecker --metric-only
-> +        echo "[Success]"
-> +}
-> +
-> # The perf stat options for per-socket, per-core, per-die
-> # and -A ( no_aggr mode ) uses the info fetched from this
-> # directory: "/sys/devices/system/cpu/cpu*/topology". For
-> diff --git a/tools/perf/tests/shell/stat+csv_output.sh
-> b/tools/perf/tests/shell/stat+csv_output.sh
-> index fc2d8cc6e5e0..d6807dbab931 100755
-> --- a/tools/perf/tests/shell/stat+csv_output.sh
-> +++ b/tools/perf/tests/shell/stat+csv_output.sh
-> @@ -44,6 +44,7 @@ function commachecker()
->        ;; "--per-die")         exp=3D8
->        ;; "--per-cluster")     exp=3D8
->        ;; "--per-cache")       exp=3D8
-> +        ;; "--metric-only")     exp=3D2
->        esac
->
->        while read line
-> @@ -83,6 +84,7 @@ then
->        check_per_cluster "CSV" "$perf_cmd"
->        check_per_die "CSV" "$perf_cmd"
->        check_per_socket "CSV" "$perf_cmd"
-> +        check_metric_only "CSV" "$perf_cmd"
-> else
->        echo "[Skip] Skipping tests for system_wide_no_aggr, per_core,
-> per_die and per_socket since
-> socket id exposed via topology is invalid"
-> fi
-> ```
-> It is using the hard coded metrics and it looks like the header
-> printing for that is broken, but this is so often the case for stat
-> output :-(
-
-Right, I also noticed something in the header.  One more work
-item to the list.
-
-Anyway, I'll add it to the test case!
-
-Thanks,
-Namhyung
-
->
-> > +       if (aggr_header_num[config->aggr_mode] =3D=3D 1) {
-> > +               fprintf(config->output, aggr_header_csv[config->aggr_mo=
-de],
-> > +                       config->csv_sep);
-> > +       } else if (aggr_header_num[config->aggr_mode] =3D=3D 2) {
-> > +               fprintf(config->output, aggr_header_csv[config->aggr_mo=
-de],
-> > +                       config->csv_sep, config->csv_sep);
-> > +       } else {
-> >                 fputs(aggr_header_csv[config->aggr_mode], config->outpu=
-t);
-> > +       }
-> >  }
-> >
-> >  static void print_metric_headers_json(struct perf_stat_config *config =
-__maybe_unused,
-> > --
-> > 2.45.2.803.g4e1b14247a-goog
-> >
+What's the difference between MAC mode and PHY mode with RGMII for this switch?
 
