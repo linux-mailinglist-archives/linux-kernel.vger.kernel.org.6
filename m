@@ -1,226 +1,198 @@
-Return-Path: <linux-kernel+bounces-233157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 815B591B300
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:54:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 118E691B2F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:53:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BA9E28365F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:54:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9188F1F23F14
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A871A38E4;
-	Thu, 27 Jun 2024 23:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298161A2FD6;
+	Thu, 27 Jun 2024 23:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DC5sbAlO"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SjVsghK1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB671A38C0
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 23:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38B3113E04F;
+	Thu, 27 Jun 2024 23:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719532440; cv=none; b=Ej5SgSTjf12yd6lJkjwHrPBUAwPkYvLOcfPp7XvkBBo76X48OoAKvpZwU51klAlHUUemtdiFyO1DvLDIbarlnm+H8kNeoCTN0KsaQeUmd4pOOpfReQfAmd6m+d8xRGbIXh29cmk14/qQPxcw2josVxHaS6dZo10An3shFaKiI4w=
+	t=1719532401; cv=none; b=oF+dTE0uBlIZEMvOZwqg/XIzDp73dETjMs4wSErMSN8ZVRAFP4eoRWWIGAIUL8N6OOliKpUF2foMy0F05cCF1FkCjET7+w93NRvmJQlA8pnNkdQYQsIQAE3cGaZ67ZNc8PsalpZIW/2lYGN/s6tbyoJ0Rd7OI3QkNcrCX3WhY0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719532440; c=relaxed/simple;
-	bh=em4fT6gc4FKgIY5Dn0mKLeU5n6+xY+c5SD9nUabtX7w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Qh7BKVZxx+9uK+WtPTTZ5cXEqkgz5nnre23zFKFxTWjelbuSY9r4dQj5V0fQRLTonFunnsCEJqXflE5Tr1m1+e3WM6Scakvt+EMX0+pWTQ8bzD4Vlf+rsl3gyXRhw03cbveap3xHE8g2abLqX9etj3/ma3GJJzHEws9K7eIfQu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=DC5sbAlO; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-70675977d0eso68532b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 16:53:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1719532439; x=1720137239; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wz8mCbvpvyvinIWniLr2yCzgz2midVzsHqb0HV25yDo=;
-        b=DC5sbAlOPmorlSIRzPpqgia0j31GSR745WHQqvdNDqszMBLEH6xTdi0pKhSUM7ROAH
-         FBBUOwY9lxhRQ0V0sd99DXUSfr2JWVRsvVX5/PyAY9ovgkh0b9W0WAVhqH0MD5ot33Zw
-         RewUUldOum8Y01jhp1eoaqY7s9wF2PDa3wZN0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719532439; x=1720137239;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wz8mCbvpvyvinIWniLr2yCzgz2midVzsHqb0HV25yDo=;
-        b=h7Tf85uSI2y4OyTl18bIXTjFSZYocgiPOQXArcfboCao1M1YYcggOTjW5qB0wxnv8k
-         NBMlwetqrW8bAGz4Vg7P65wtMDqlJ49rhUUxm9e+mYzxs/LvuNbpf2uQgvDl+JBcitz7
-         Bl2R/7CRJsM6gI9Yrt7bwuDGH4AyqPYuTAMgWASgJxzNrAcUDU8GN64iMPWnQpCVdAtx
-         IrimA4DVHqkbDQ3M2ZMtvLfMSeuArUyTvwFN3gFA4CbsoJQHjVwNSRBfCGqYKsQDoob5
-         IwYjCyoUsvgiCRpSq7i3wzemyozewQlrb4rKp1t6YoIkgL83a/YEvpjVSgJ0d+kz01lT
-         UgCw==
-X-Forwarded-Encrypted: i=1; AJvYcCUDHrZI6tyM/jEHCNhYYvX6LO0GVVVubNRfie5G8va4AePL2AdlMSdQiUypk1YdUOKLzhY+38mFxtyFT5LpTGOedlftZzzCszqy5tsX
-X-Gm-Message-State: AOJu0YzCkv/ryzFn7zeQi5WZ6uOT92JgSQJlKcJbtbmShI5EmQ+cN6Xz
-	UekpbSdCbAjUfdyJtBMFj88xGOwr2UzFTllUaXm6mYjXtZoWir/KBQLOlkQAeg==
-X-Google-Smtp-Source: AGHT+IGt6uAjd9DFIOlTtILhCIG4SNMhMufSYHw3k2LiUPAd2ggYsmIv8nZuUujU4HrY8cQoqV0l1Q==
-X-Received: by 2002:a05:6a20:4307:b0:1be:c6a5:5e88 with SMTP id adf61e73a8af0-1bec6a563a4mr6295239637.10.1719532438690;
-        Thu, 27 Jun 2024 16:53:58 -0700 (PDT)
-Received: from pc98uv11.mtv.corp.google.com ([2620:15c:9d:2:cf5d:cb26:248e:ee00])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac11d8cd2sm3366595ad.107.2024.06.27.16.53.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 16:53:58 -0700 (PDT)
-From: Daisuke Nojiri <dnojiri@chromium.org>
-To: 
-Cc: Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Reka Norman <rekanorman@chromium.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Gwendal Grignou <gwendal@chromium.org>,
-	Pavan Holla <pholla@chromium.org>,
-	Lukasz Majczak <lma@chromium.org>,
-	Ching-Kang Yen <chingkang@chromium.org>,
-	Daisuke Nojiri <dnojiri@chromium.org>,
-	Stephen Boyd <swboyd@chromium.org>,
-	Prashant Malani <pmalani@chromium.org>,
-	chrome-platform@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v5 2/2] dt-bindings: cros-ec-keyboard: Add keyboard matrix v3.0
-Date: Thu, 27 Jun 2024 16:53:08 -0700
-Message-ID: <9ae4d96cc2ce8c9de8755b9beffb78c641100fe7.1719531519.git.dnojiri@chromium.org>
-X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
-In-Reply-To: <cover.1719531519.git.dnojiri@chromium.org>
-References: <cover.1719531519.git.dnojiri@chromium.org>
+	s=arc-20240116; t=1719532401; c=relaxed/simple;
+	bh=2Jc74u8zqMtpyZa6rfWUbAVGrZ5Inv4IOZxhPgIBgnc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UE+9HHL/ZRkb3yDaHKwp4G9DZ4rxook8vAP0fj0ReUrVWvbtedYtCq9g6JJ0S7kH+M1iYvYpLhjqdX3rN6oRwk0X1/1urGZmuS+JyMklRvKeF6oLelMoFnawJqFBtAXIOzzAGvzDu6HxBJDk5joB7q9v1x4HvM//DnAk+kLSZW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SjVsghK1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F06BCC2BBFC;
+	Thu, 27 Jun 2024 23:53:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719532400;
+	bh=2Jc74u8zqMtpyZa6rfWUbAVGrZ5Inv4IOZxhPgIBgnc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SjVsghK1G8sKmUjRTt8AewGite3J7sFm9+zlIBLfOT0bCRojIzfuclmz21voco4Xw
+	 0DdS43K5tjYwfL2FIYD6b96x+6id8OEgYDqVb1joUzYRVi9b3uw7vW/rLMvhkhD/ZY
+	 JYEMGYzRKFBH/8emZuaWc9P0UaxEN0vh4pHXPIjrzJ9ivfkKtbevcVonKiRSDhXuFt
+	 ndX8hFLtHB8O/Z3fo5cpFqb1+N9j+7ouMcS020up8qBBW51eRx/AlUOtmbpP+YJTEM
+	 gJiphFZfZYxNKVlNMsQj7BGs7OT2FAgYHKqMlsNzCTa5H1/AIyxAt4NUdfcGNs7zDc
+	 JPTN1JUsApXiQ==
+Date: Thu, 27 Jun 2024 16:53:18 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: duchangbin <changbin.du@huawei.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"llvm@lists.linux.dev" <llvm@lists.linux.dev>
+Subject: Re: [PATCH v4 1/5] perf: support specify vdso path in cmdline
+Message-ID: <Zn37bj4LER_A1bX1@google.com>
+References: <20240625033740.223009-1-changbin.du@huawei.com>
+ <20240625033740.223009-2-changbin.du@huawei.com>
+ <5a9e8dae-e9d9-4a97-98f5-d76be9068342@intel.com>
+ <7eef4826a2f3494ea1dc92ed98d543fb@huawei.com>
+ <05f95eb8-9b4c-4327-a97f-a15654278c41@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <05f95eb8-9b4c-4327-a97f-a15654278c41@intel.com>
 
-Add support for keyboard matrix version 3.0, which reduces keyboard
-ghosting.
+Hello guys,
 
-Signed-off-by: Daisuke Nojiri <dnojiri@chromium.org>
----
- include/dt-bindings/input/cros-ec-keyboard.h | 104 +++++++++++++++++++
- 1 file changed, 104 insertions(+)
-
-diff --git a/include/dt-bindings/input/cros-ec-keyboard.h b/include/dt-bindings/input/cros-ec-keyboard.h
-index f0ae03634a96..afc12f6aa642 100644
---- a/include/dt-bindings/input/cros-ec-keyboard.h
-+++ b/include/dt-bindings/input/cros-ec-keyboard.h
-@@ -100,4 +100,108 @@
- 	MATRIX_KEY(0x07, 0x0b, KEY_UP)		\
- 	MATRIX_KEY(0x07, 0x0c, KEY_LEFT)
+On Wed, Jun 26, 2024 at 01:32:42PM +0300, Adrian Hunter wrote:
+> On 26/06/24 05:26, duchangbin wrote:
+> > On Tue, Jun 25, 2024 at 04:20:49PM +0300, Adrian Hunter wrote:
+> >> On 25/06/24 06:37, Changbin Du wrote:
+> >>> The vdso dumped from process memory (in buildid-cache) lacks debugging
+> >>> info. To annotate vdso symbols with source lines we need specify a
+> >>> debugging version.
+> >>>
+> >>> For x86, we can find them from your local build as
+> >>> arch/x86/entry/vdso/vdso{32,64}.so.dbg. Or they may reside in
+> >>> /lib/modules/<version>/vdso/vdso{32,64}.so on Ubuntu. But notice that
+> >>> the buildid has to match.
+> >>>
+> >>> $ sudo perf record -a
+> >>> $ sudo perf report --objdump=llvm-objdump \
+> >>>   --vdso arch/x86/entry/vdso/vdso64.so.dbg,arch/x86/entry/vdso/vdso32.so.dbg
+> >>>
+> >>> Samples: 17K of event 'cycles:P', 4000 Hz, Event count (approx.): 1760
+> >>> __vdso_clock_gettime  /work/linux-host/arch/x86/entry/vdso/vdso64.so.d
+> >>> Percent│       movq    -48(%rbp),%rsi
+> >>>        │       testq   %rax,%rax
+> >>>        │     ;               return vread_hvclock();
+> >>>        │       movq    %rax,%rdx
+> >>>        │     ;               if (unlikely(!vdso_cycles_ok(cycles)))
+> >>>        │     ↑ js      eb
+> >>>        │     ↑ jmp     74
+> >>>        │     ;               ts->tv_sec = vdso_ts->sec;
+> >>>   0.02 │147:   leaq    2(%rbx),%rax
+> >>>        │       shlq    $4, %rax
+> >>>        │       addq    %r10,%rax
+> >>>        │     ;               while ((seq = READ_ONCE(vd->seq)) & 1) {
+> >>>   9.38 │152:   movl    (%r10),%ecx
+> >>>
+> >>> When doing cross platform analysis, we also need specify the vdso path if
+> >>> we are interested in its symbols.
+> >>
+> >> Would it be possible to add vdso and vdso debug to the build-id
+> >> cache and ensure perf can find it there?
+> >>
+> >> Typically, getting dsos from another machine is handled via
+> >> build-id cache e.g. what perf-archive does
+> >>
+> > Hmm. I agree this is better alternative approach for cross-machine analysis.
+> > When collecting vdsos to buildid cache, I think we can use the local searched
+> > objects (with debug symbols) instead if its build-id matches vdsos from process
+> > dumping (the real code ran).
+> > 
+> > Currently I just follow what perf does for vmlinux so to reuse most of existing
+> > code. Maybe vmlinux is too big to add to buildid-cahce?
+> > 
+> > Can we keep our current strategy for now? I'll think about above options when
+> > I have more time.
+> > 
+> 
+> I tried adding vdso via perf buildid-cache.  It doesn't work only
+> because the lookup expects the basename to be "vdso" but it is
+> "elf".
+> 
+> Adding a link from "vdso" to "elf" made it work e.g.
+> 
+> $ cat gettimeofday-test.c
+> #include <stdio.h>
+> #include <sys/time.h>
+> 
+> int main()
+> {
+>         struct timeval tv;
+>         int ret;
+> 
+>         ret = gettimeofday(&tv, NULL);
+>         if (ret == -1) {
+>                 fprintf(stderr, "gettimeofday failed\n");
+>                 return 1;
+>         }
+> 
+>         printf("%lu.%lu\n", (unsigned long)tv.tv_sec, (unsigned long)tv.tv_usec);
+> 
+>         return 0;
+> $ perf record -e intel_pt//u ./gettimeofday-test
+> 1719397042.892837
+> [ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 0.026 MB perf.data ]
+> $ perf script --itrace=e
+> $ perf buildid-cache --remove /lib/modules/6.5.0-41-generic/vdso/vdso64.so
+> $ perf script --itrace=e
+> Warning:
+> 2 instruction trace errors
+>  instruction trace error type 1 time 525345.386424204 cpu 4 pid 198976 tid 198976 ip 0x7ffddb0e8e00 code 5: Failed to get instruction
+>  instruction trace error type 1 time 525345.386424829 cpu 4 pid 198976 tid 198976 ip 0x7ffddb0e884d code 5: Failed to get instruction
+> $ perf buildid-cache --add /lib/modules/6.5.0-41-generic/vdso/vdso64.so
+> $ perf script --itrace=e
+> Warning:
+> 2 instruction trace errors
+>  instruction trace error type 1 time 525345.386424204 cpu 4 pid 198976 tid 198976 ip 0x7ffddb0e8e00 code 5: Failed to get instruction
+>  instruction trace error type 1 time 525345.386424829 cpu 4 pid 198976 tid 198976 ip 0x7ffddb0e884d code 5: Failed to get instruction
+> $ cd ~/.debug/.build-id/c3/530aed66e71bfd10af66039f58cc7c4d2eaba8
+> ~/.debug/.build-id/c3/530aed66e71bfd10af66039f58cc7c4d2eaba8$ ln -s elf vdso
+> ~/.debug/.build-id/c3/530aed66e71bfd10af66039f58cc7c4d2eaba8$ ls -l
+> total 36
+> -rw-r--r-- 1 ahunter ahunter 33272 Jun 26 13:17 elf
+> -rw-r----- 1 ahunter ahunter     0 Jun 26 13:17 probes
+> lrwxrwxrwx 1 ahunter ahunter     3 Jun 26 13:18 vdso -> elf
+> /.debug/.build-id/c3/530aed66e71bfd10af66039f58cc7c4d2eaba8$ cd
+> $ perf script --itrace=e
+> $ 
+> 
+> So maybe a change could be made to build_id_cache__add() to add
+> the extra link if the file name matches vdso
  
-+/* No numpad */
-+#define CROS_TOP_ROW_KEYMAP_V30 \
-+	MATRIX_KEY(0x00, 0x01, KEY_F11)		/* T11 */	\
-+	MATRIX_KEY(0x00, 0x02, KEY_F1)		/* T1 */	\
-+	MATRIX_KEY(0x00, 0x04, KEY_F10)		/* T10 */	\
-+	MATRIX_KEY(0x00, 0x0b, KEY_F14)		/* T14 */	\
-+	MATRIX_KEY(0x00, 0x0c, KEY_F15)		/* T15 */	\
-+	MATRIX_KEY(0x01, 0x02, KEY_F4)		/* T4 */	\
-+	MATRIX_KEY(0x01, 0x04, KEY_F7)		/* T7 */	\
-+	MATRIX_KEY(0x01, 0x05, KEY_F12)		/* T12 */	\
-+	MATRIX_KEY(0x01, 0x09, KEY_F9)		/* T9 */	\
-+	MATRIX_KEY(0x02, 0x02, KEY_F3)		/* T3 */	\
-+	MATRIX_KEY(0x02, 0x04, KEY_F6)		/* T6 */	\
-+	MATRIX_KEY(0x02, 0x0b, KEY_F8)		/* T8 */	\
-+	MATRIX_KEY(0x03, 0x02, KEY_F2)		/* T2 */	\
-+	MATRIX_KEY(0x03, 0x05, KEY_F13)		/* T13 */	\
-+	MATRIX_KEY(0x04, 0x04, KEY_F5)		/* T5 */
-+
-+#define CROS_MAIN_KEYMAP_V30			/* Keycode */	\
-+	MATRIX_KEY(0x00, 0x03, KEY_B)		/* 50 */	\
-+	MATRIX_KEY(0x00, 0x05, KEY_N)		/* 51 */	\
-+	MATRIX_KEY(0x00, 0x06, KEY_RO)		/* 56 (JIS) */	\
-+	MATRIX_KEY(0x00, 0x08, KEY_EQUAL)	/* 13 */	\
-+	MATRIX_KEY(0x00, 0x09, KEY_HOME)	/* 80 (Numpad) */	\
-+	MATRIX_KEY(0x00, 0x0a, KEY_RIGHTALT)	/* 62 */	\
-+	MATRIX_KEY(0x00, 0x10, KEY_FN)		/* 127 */	\
-+								\
-+	MATRIX_KEY(0x01, 0x01, KEY_ESC)		/* 110 */	\
-+	MATRIX_KEY(0x01, 0x03, KEY_G)		/* 35 */	\
-+	MATRIX_KEY(0x01, 0x06, KEY_H)		/* 36 */	\
-+	MATRIX_KEY(0x01, 0x08, KEY_APOSTROPHE)	/* 41 */	\
-+	MATRIX_KEY(0x01, 0x0b, KEY_BACKSPACE)	/* 15 */	\
-+	MATRIX_KEY(0x01, 0x0c, KEY_HENKAN)	/* 65 (JIS) */	\
-+	MATRIX_KEY(0x01, 0x0e, KEY_LEFTCTRL)	/* 58 */	\
-+								\
-+	MATRIX_KEY(0x02, 0x01, KEY_TAB)		/* 16 */	\
-+	MATRIX_KEY(0x02, 0x03, KEY_T)		/* 21 */	\
-+	MATRIX_KEY(0x02, 0x05, KEY_RIGHTBRACE)	/* 28 */	\
-+	MATRIX_KEY(0x02, 0x06, KEY_Y)		/* 22 */	\
-+	MATRIX_KEY(0x02, 0x08, KEY_LEFTBRACE)	/* 27 */	\
-+	MATRIX_KEY(0x02, 0x09, KEY_DELETE)	/* 76 (Numpad) */	\
-+	MATRIX_KEY(0x02, 0x0c, KEY_PAGEUP)	/* 85 (Numpad) */	\
-+	MATRIX_KEY(0x02, 0x011, KEY_YEN)	/* 14 (JIS) */	\
-+								\
-+	MATRIX_KEY(0x03, 0x00, KEY_LEFTMETA)	/* Launcher */	\
-+	MATRIX_KEY(0x03, 0x01, KEY_GRAVE)	/* 1 */	\
-+	MATRIX_KEY(0x03, 0x03, KEY_5)		/* 6 */	\
-+	MATRIX_KEY(0x03, 0x04, KEY_S)		/* 32 */	\
-+	MATRIX_KEY(0x03, 0x06, KEY_MINUS)	/* 12 */	\
-+	MATRIX_KEY(0x03, 0x08, KEY_6)		/* 7 */		\
-+	MATRIX_KEY(0x03, 0x09, KEY_SLEEP)	/* Lock */	\
-+	MATRIX_KEY(0x03, 0x0b, KEY_BACKSLASH)	/* 29 */	\
-+	MATRIX_KEY(0x03, 0x0c, KEY_MUHENKAN)	/* 63 (JIS) */	\
-+	MATRIX_KEY(0x03, 0x0e, KEY_RIGHTCTRL)	/* 64 */	\
-+								\
-+	MATRIX_KEY(0x04, 0x01, KEY_A)		/* 31 */	\
-+	MATRIX_KEY(0x04, 0x02, KEY_D)		/* 33 */	\
-+	MATRIX_KEY(0x04, 0x03, KEY_F)		/* 34 */	\
-+	MATRIX_KEY(0x04, 0x05, KEY_K)		/* 38 */	\
-+	MATRIX_KEY(0x04, 0x06, KEY_J)		/* 37 */	\
-+	MATRIX_KEY(0x04, 0x08, KEY_SEMICOLON)	/* 40 */	\
-+	MATRIX_KEY(0x04, 0x09, KEY_L)		/* 39 */	\
-+	MATRIX_KEY(0x04, 0x0b, KEY_ENTER)	/* 43 */	\
-+	MATRIX_KEY(0x04, 0x0c, KEY_END)		/* 81 (Numpad) */	\
-+								\
-+	MATRIX_KEY(0x05, 0x01, KEY_1)		/* 2 */	\
-+	MATRIX_KEY(0x05, 0x02, KEY_COMMA)	/* 53 */	\
-+	MATRIX_KEY(0x05, 0x03, KEY_DOT)		/* 54 */	\
-+	MATRIX_KEY(0x05, 0x04, KEY_SLASH)	/* 55 */	\
-+	MATRIX_KEY(0x05, 0x05, KEY_C)		/* 48 */	\
-+	MATRIX_KEY(0x05, 0x06, KEY_SPACE)	/* 61 */	\
-+	MATRIX_KEY(0x05, 0x07, KEY_LEFTSHIFT)	/* 44 */	\
-+	MATRIX_KEY(0x05, 0x08, KEY_X)		/* 47 */	\
-+	MATRIX_KEY(0x05, 0x09, KEY_V)		/* 49 */	\
-+	MATRIX_KEY(0x05, 0x0b, KEY_M)		/* 52 */	\
-+	MATRIX_KEY(0x05, 0x0c, KEY_PAGEDOWN)	/* 86 (Numpad) */	\
-+								\
-+	MATRIX_KEY(0x06, 0x01, KEY_Z)		/* 46 */	\
-+	MATRIX_KEY(0x06, 0x02, KEY_3)		/* 4 */		\
-+	MATRIX_KEY(0x06, 0x03, KEY_4)		/* 5 */		\
-+	MATRIX_KEY(0x06, 0x04, KEY_2)		/* 3 */		\
-+	MATRIX_KEY(0x06, 0x05, KEY_8)		/* 9 */		\
-+	MATRIX_KEY(0x06, 0x06, KEY_0)		/* 11 */	\
-+	MATRIX_KEY(0x06, 0x08, KEY_7)		/* 8 */		\
-+	MATRIX_KEY(0x06, 0x09, KEY_9)		/* 10 */	\
-+	MATRIX_KEY(0x06, 0x0b, KEY_DOWN)	/* 84 */	\
-+	MATRIX_KEY(0x06, 0x0c, KEY_RIGHT)	/* 89 */	\
-+	MATRIX_KEY(0x06, 0x0d, KEY_LEFTALT)	/* 60 */	\
-+	MATRIX_KEY(0x06, 0x0f, KEY_ASSISTANT)	/* 128 */	\
-+	MATRIX_KEY(0x06, 0x11, KEY_BACKSLASH)	/* 42 (JIS, ISO) */	\
-+								\
-+	MATRIX_KEY(0x07, 0x01, KEY_U)		/* 23 */	\
-+	MATRIX_KEY(0x07, 0x02, KEY_I)		/* 24 */	\
-+	MATRIX_KEY(0x07, 0x03, KEY_O)		/* 25 */	\
-+	MATRIX_KEY(0x07, 0x04, KEY_P)		/* 26 */	\
-+	MATRIX_KEY(0x07, 0x05, KEY_Q)		/* 17 */	\
-+	MATRIX_KEY(0x07, 0x06, KEY_W)		/* 18 */	\
-+	MATRIX_KEY(0x07, 0x07, KEY_RIGHTSHIFT)	/* 57 */	\
-+	MATRIX_KEY(0x07, 0x08, KEY_E)		/* 19 */	\
-+	MATRIX_KEY(0x07, 0x09, KEY_R)		/* 20 */	\
-+	MATRIX_KEY(0x07, 0x0b, KEY_UP)		/* 83 */	\
-+	MATRIX_KEY(0x07, 0x0c, KEY_LEFT)	/* 79 */	\
-+	MATRIX_KEY(0x07, 0x11, KEY_102ND)	/* 45 (ISO) */
-+
- #endif /* _CROS_EC_KEYBOARD_H */
--- 
-2.45.2.803.g4e1b14247a-goog
+Thanks for doing this!  I noticed buildid_cache__basename() will handle
+the name properly once it realizes the file is a vdso.  Maybe we can
+check the filepath with some patterns, or simply add an command line
+option to say it's a vdso.
+
+Thanks,
+Namhyung
 
 
