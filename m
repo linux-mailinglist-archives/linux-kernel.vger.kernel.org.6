@@ -1,145 +1,172 @@
-Return-Path: <linux-kernel+bounces-232960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBF8491B094
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:38:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0403491B095
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:39:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E3F71F22E6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:38:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADCB2280FC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E78C21A00CE;
-	Thu, 27 Jun 2024 20:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B108F19F469;
+	Thu, 27 Jun 2024 20:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aq2RCfGz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JOtXMdKG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89897406F;
-	Thu, 27 Jun 2024 20:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4F67406F
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 20:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719520693; cv=none; b=oY6O0LnrlI2UXOI5dGXYscIUptKRo0ALZlHdRNgyVQJiQR+VzDizV1AULq2e2kBGj0wcNOs3XugwHNLpTW9wXgmxtBV5Fi2Q3HxGHIJFjiLIXafyb9B670nDpJwMju3VI2U7ku1mzgoN2ZJfaU4jWiqlYfuJLRtGV5UxWqD/YN8=
+	t=1719520748; cv=none; b=RiOuACLtX8DeOMKmIHcNYvjUZjtGiZd89sFqNLGO5WLzKh36WfUN9en5iqS1j4AXEvQI7JxyVLRSfXeKYRaJXXJUx9MbTegEzhd3cYb7w7wZKgpbsDEB9KjIOjD9ApGoe3Z9DguzEoThQ+5YZEM/E92otlHNzWsEqpuO0klvhRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719520693; c=relaxed/simple;
-	bh=BVd54t8V4yKL8SKq4Rb7omF+EHGftWCggGNhkkhUTrU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MbYucVRPU3dOMTLhbDtk1WyWeSTspc90HohGizwGnfM7ODl/oBx3Vvjnwln6As2CAWGNC+J2Gpy+qhJnU1Ae677r6f3s8gSK05oGRxGbNL9aAkhvuVS2LXIMwXjU5O6w5Ds59lWqmh4uFIwjjS2EQbapbOt6ouie+MvC3t3kWBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aq2RCfGz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3370FC2BBFC;
-	Thu, 27 Jun 2024 20:38:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719520692;
-	bh=BVd54t8V4yKL8SKq4Rb7omF+EHGftWCggGNhkkhUTrU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=aq2RCfGz4duksXUC/Ro09d4mdUrL2HO3rip3byDd+QuyDD8cNPr1eCL+3dY1DtY8e
-	 uXjxU3NBu2WfTEiWoGyW+QTBc4FA0EHq1t0SW3573ctREq0SWP0yN7A+oA4EDP5X4x
-	 XxtIIlpuOldYd/c4p2A30+1BW7YH6bCdXhsu4/kKCVxOJohr8TwYW9PDpbN+rY6u0r
-	 g2qx1g8xEuf85sy1eN2YRz93lNEWUNUUFUd1/sbENqAK6gSKw88I//hM9sjDmh1C99
-	 Mba2sR93tzi4TgGidxaGQrPcwZduqxOZDQ9TILxLEsgZNlbOpCM3nQ4D6VedAsGLBC
-	 FRNkwQU0t/iBw==
-Date: Thu, 27 Jun 2024 13:38:09 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Mina Almasry <almasrymina@google.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
- sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Donald Hunter <donald.hunter@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet
- <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, Ivan
- Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley"
- <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>,
- Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer
- <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven
- Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Arnd Bergmann
- <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai
- Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
- <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
- <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav
- Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa
- <jolsa@kernel.org>, Steffen Klassert <steffen.klassert@secunet.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan
- <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>, Christian
- =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>, Bagas Sanjaya
- <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, Nikolay
- Aleksandrov <razor@blackwall.org>, Pavel Begunkov <asml.silence@gmail.com>,
- David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin
- <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, Harshitha
- Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>,
- Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi
- <pkaligineedi@google.com>, Stanislav Fomichev <sdf@google.com>
-Subject: Re: [PATCH net-next v14 13/13] selftests: add ncdevmem, netcat for
- devmem TCP
-Message-ID: <20240627133809.0700722f@kernel.org>
-In-Reply-To: <CAHS8izOd_yYNJ6+xv35XoCvF7MzqachPVrkQJbic8-h=T1Vg_A@mail.gmail.com>
-References: <20240625195407.1922912-1-almasrymina@google.com>
-	<20240625195407.1922912-14-almasrymina@google.com>
-	<20240626150822.742eaf6a@kernel.org>
-	<20240626174634.2adec19d@kernel.org>
-	<CAHS8izOd_yYNJ6+xv35XoCvF7MzqachPVrkQJbic8-h=T1Vg_A@mail.gmail.com>
+	s=arc-20240116; t=1719520748; c=relaxed/simple;
+	bh=Fpi8dKpc/aSIGObd8djhbtVHnDpvRY2Lj3a9IGqpQO4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Y7N6zzc7ihfREhcG4N0HhdlxfdVqvRmZNrXe1yuYAAf9y0OrY/ewIVOKshrIsAALUkFUnKuGew/H0VrjofcuZ+Tc6m4ul1G90MUypwibww4haTQpwPinM9oLXK9+TS7Yq5dQAYDJLnWA9ds0EDnE3Pnc5+ohwNko/7/y7Q0xNr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JOtXMdKG; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719520747; x=1751056747;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Fpi8dKpc/aSIGObd8djhbtVHnDpvRY2Lj3a9IGqpQO4=;
+  b=JOtXMdKGt+iV6fNahoHL+qbBXq+F3dNFSyzUxGhDLKXqkYUrkHa960/R
+   kvlx8I59BVuNg9hnH/XfGsLP+ufczOOROFm8vb8uNqElpDk/SNq5t5a/v
+   gwoTzSFKtNoer902QlFcrlYeRP+jeP5Nn0FmMPCUpinp79JmTHp81Ntbc
+   +0tA8zPD7eQ55Xdibf9hQOU7s505HfK7dOljzZ4X8G02Exb/6g5owI2Is
+   M692E/VQA7CuZwmeFmvLUmCSzrHwleG82kLB8PkRqO5uyJ0zQGQEPsjSd
+   TFCRVB+pp6jKlbyJxi9aeY/eEE80gtWXWZczNLJYBEul4Z31/9BFpbwIi
+   g==;
+X-CSE-ConnectionGUID: 9WreDsP2TKuaQYtWGdCMrA==
+X-CSE-MsgGUID: tVHVSU6hQOuL6uB0PO1C7w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="16809735"
+X-IronPort-AV: E=Sophos;i="6.09,167,1716274800"; 
+   d="scan'208";a="16809735"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 13:39:07 -0700
+X-CSE-ConnectionGUID: UGRXpHaHQk2ReUOOeQKoAw==
+X-CSE-MsgGUID: 6zK+IIfMQbCWeztBH2dGUQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,167,1716274800"; 
+   d="scan'208";a="82052876"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 13:39:06 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>,
+	Babu Moger <babu.moger@amd.com>,
+	Drew Fustini <dfustini@baylibre.com>,
+	Dave Martin <Dave.Martin@arm.com>
+Cc: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	Tony Luck <tony.luck@intel.com>
+Subject: [PATCH v22 00/18] Add support for Sub-NUMA cluster (SNC) systems
+Date: Thu, 27 Jun 2024 13:38:38 -0700
+Message-ID: <20240627203856.66628-1-tony.luck@intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, 27 Jun 2024 12:55:38 -0700 Mina Almasry wrote:
-> `git clean -fdx && make  headers_install && make -C
-> ./tools/testing/selftests/net` works
-> 
-> `git clean -fdx && make  headers_install && make -C
-> ./tools/testing/selftests/net ncdevmem` doesn't work with this error:
+This series based on top of tip x86/cache commit f385f0246394
+("x86/resctrl: Replace open coded cacheinfo searches")
 
-Hm, I haven't tested this exact combination. Makefiles are fun!
+The Sub-NUMA cluster feature on some Intel processors partitions the CPUs
+that share an L3 cache into two or more sets. This plays havoc with the
+Resource Director Technology (RDT) monitoring features.  Prior to this
+patch Intel has advised that SNC and RDT are incompatible.
 
-I think in this case you're just hitting the built-in make rule,
-you're not exercising our Makefile logic much. This should make 
-it work:
+Some of these CPUs support an MSR that can partition the RMID counters
+in the same way. This allows monitoring features to be used. Legacy
+monitoring files provide the sum of counters from each SNC node for
+backwards compatibility. Additional  files per SNC node provide details
+per node.
 
-diff --git a/tools/testing/selftests/lib.mk
-b/tools/testing/selftests/lib.mk index 429535816dbd..a274ae8cd72b 100644
---- a/tools/testing/selftests/lib.mk
-+++ b/tools/testing/selftests/lib.mk
-@@ -45,7 +45,7 @@ endif # LLVM
- 
- ifeq (0,$(MAKELEVEL))
-     ifeq ($(OUTPUT),)
--       OUTPUT := $(shell pwd)
-+       OUTPUT := .
-        DEFAULT_INSTALL_HDR_PATH := 1
-     endif
- endif
+Memory bandwidth allocation features continue to operate at
+the scope of the L3 cache.
 
-But it will probably break the makefile for others?
+L3 cache occupancy and allocation operate on the portion of
+L3 cache available for each SNC node.
 
-All our targets are defined (or magically redefined) as $(OUTPUT)/name
-if you call make directly OUTPUT is not defined, so our rules would
-mathc on /name, which obviously doesn't exist. Adding OUTPUT=. on
-command line would also work (I think):
+Signed-off-by: Tony Luck <tony.luck@intel.com>
 
-make -C ./tools/testing/selftests/net OUTPUT=. ncdevmem
+---
+Changes since v21: https://lore.kernel.org/all/20240621223859.43471-1-tony.luck@intel.com/
 
-Another option would be for OUTPUT to contain the trailing /, always,
-to avoid the /name problem, but:
+1-6	No change
+7-8	Added Reinette reviewed-by tag
+9	s/contains the sum/includes the sum/ in struct rmid_read kerneldoc
+	Add initializer = {0} to all on-stack declarations of struct
+	rmid_read (Reinette comment against patch 14, but applied here
+	when new field added that causes the ambguity about which fields
+	will be consumed). Drop redundant assignmnets of 0/NULL/false
+	to members of the structure.
+10	Trivial refactor casued by addition of "= {0}" in part 9.
+11	No change
+12	Added Reinette reviewed-by tag
+13	Replaced comment referencing SNC mode with more generic text
+	suggested by Reinette.
+	Added Reinette reviewed-by tag.
+14	s/across all SNC domains/across all SNC domains/ in comment
+	in rdtgroup_mondata_show()
+	Dropped "rr.ci = NULL;". Not needed as struct is cleared by compiler.
+15	Fix comment on return value from __mon_event_count()
+16	Added Reinette reviewed-by tag
+17-18	No change
 
-$ git grep '$(OUTPUT)/' -- tools/testing/selftests/ | wc -l 
-414
+Tony Luck (18):
+  x86/resctrl: Prepare for new domain scope
+  x86/resctrl: Prepare to split rdt_domain structure
+  x86/resctrl: Prepare for different scope for control/monitor
+    operations
+  x86/resctrl: Split the rdt_domain and rdt_hw_domain structures
+  x86/resctrl: Add node-scope to the options for feature scope
+  x86/resctrl: Introduce snc_nodes_per_l3_cache
+  x86/resctrl: Block use of mba_MBps mount option on Sub-NUMA Cluster
+    (SNC) systems
+  x86/resctrl: Prepare for new Sub-NUMA Cluster (SNC) monitor files
+  x86/resctrl: Add a new field to struct rmid_read for summation of
+    domains
+  x86/resctrl: Refactor mkdir_mondata_subdir() with a helper function
+  x86/resctrl: Allocate a new field in union mon_data_bits
+  x86/resctrl: Create Sub-NUMA Cluster (SNC) monitor files
+  x86/resctrl: Handle removing directories in Sub-NUMA Cluster (SNC)
+    mode
+  x86/resctrl: Fill out rmid_read structure for smp_call*() to read a
+    counter
+  x86/resctrl: Make __mon_event_count() handle sum domains
+  x86/resctrl: Enable shared RMID mode on Sub-NUMA Cluster (SNC) systems
+  x86/resctrl: Sub-NUMA Cluster (SNC) detection
+  x86/resctrl: Update documentation with Sub-NUMA cluster changes
 
-so good luck changing that :(
+ Documentation/arch/x86/resctrl.rst        |  27 ++
+ include/linux/resctrl.h                   |  88 ++++--
+ arch/x86/include/asm/msr-index.h          |   1 +
+ arch/x86/kernel/cpu/resctrl/internal.h    | 108 +++++---
+ arch/x86/kernel/cpu/resctrl/core.c        | 312 ++++++++++++++++------
+ arch/x86/kernel/cpu/resctrl/ctrlmondata.c |  89 +++---
+ arch/x86/kernel/cpu/resctrl/monitor.c     | 256 +++++++++++++++---
+ arch/x86/kernel/cpu/resctrl/pseudo_lock.c |  27 +-
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c    | 281 ++++++++++++-------
+ 9 files changed, 865 insertions(+), 324 deletions(-)
 
-Long story short what you're trying doesn't really appear to be
-supported by kselftest makefile infra, so don't worry about it.
+
+base-commit: f385f024639431bec3e70c33cdbc9563894b3ee5
+-- 
+2.45.2
+
 
