@@ -1,132 +1,110 @@
-Return-Path: <linux-kernel+bounces-231937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A95491A09A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:41:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4130991A09D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:42:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 767A7B2089C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:41:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED0C9283202
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E426FE21;
-	Thu, 27 Jun 2024 07:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JOmFHwqm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3891D56440;
+	Thu, 27 Jun 2024 07:42:30 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C16374D4
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 07:41:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03E433987;
+	Thu, 27 Jun 2024 07:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719474085; cv=none; b=nk6n2P8d97sfVN3D6ibesg31xobDgydgUljTsOgMSTlHFo8N1KzIruxZZMTfNH4gaO+b0PiU0BREC5tNw04OMk9ulMgO6KfBGhuAK5760Pyqbtfv9V30pxxRGdKZW4IOHVnLVroZHAbQOrmKRy/DN1AxnD0Q7WYX2wtP7aoiiHU=
+	t=1719474149; cv=none; b=XW8X5yCP/gELpi6jy/J03MD82/1L2XhlgrDK91O+oIt95Oup3ytVLapdgKrnOLssqg7w+uEn6y14RK6IftMj1ULWj0B2lp4bXFpUpjwEdKjg1QLMsl0HcA8avcnaWdCbk4KZ84hNSShzhjwkpyWNEfgx2WyrroKFxEDChFmpoE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719474085; c=relaxed/simple;
-	bh=ibOAOBns5oeEsMpjEHj0qObW3A1T5Ei34xDQRATtqRQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=myhRedaZJ4i1ctziXrw9I/pNHRlgeghcDUCZeBO4pTWttwuGAyJgvkVz4WmoPLTsiwuOlJBTFsN/ueo4ur5wvGk9/vKhUOdYd9K2Mvpw+jSMfb2ATfeq4bfO4ARz2tW5Sz5BOtGl5W44xM6qhQpSVpaAWz83VeWJwdCEyFRVaRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JOmFHwqm; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719474083;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KDFpMT/o6TA3HhPIsNw7m21U54PqATB7NjiG2R0C4Rs=;
-	b=JOmFHwqmn67xpUHSQFQZ2SE9lcjhlW7oOyFnCbkuvM0CF6XmPfKFcnNsOxO8UYnkfzRWJK
-	JEpP+OT0kDDe7gn47Zh0OnEkHMOpzlpsDZARXqL/mzjVZMo79CEet+3zYobRPUf53T1ZM9
-	pix36wLoI5l1exPWnQvb9K410wVSjZ8=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-587-n0duOkR5P1yO3OKTseNpTw-1; Thu, 27 Jun 2024 03:41:21 -0400
-X-MC-Unique: n0duOkR5P1yO3OKTseNpTw-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-424a775ee7fso13239305e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 00:41:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719474080; x=1720078880;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KDFpMT/o6TA3HhPIsNw7m21U54PqATB7NjiG2R0C4Rs=;
-        b=ngntgSmZRNY6X+oHvvtum66UubEcbaB+i+dCGNHrTyoGZSCNmewal7bgvM1xmmXAC/
-         YMB4x9EIPHWqMOnCrPhqac7VDuWHaaC4WkLZ9HwQtrM3gOlg0gYmweSj6QRq9W9ZgkpH
-         ip2dN/AruhMIriwZ4RvwwJtvKNo0AcREA5/qVo4M49Y8NRUuoWXdl91GqG0x276KCqHi
-         BLK8BdjCVUq3BBwIhUrjahZgJOqY5mE9RywhJnDv3m2Os1A5icvnLtOwelX7TjwQrnpY
-         cpPyN/kwrwFa6NR7MwiE+5323Kep9a14SOXEgQQZ5wExeoFZNFhd2oIgOufHIxrPWsVy
-         o6dg==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ/T6DtnUUAAo3utTe7AScpSUIaGJg2N57QzOHchCWWwZuX5arU8QawcTCWN1RIujod1AixySzF/9B7MILqibG1ORzD9gy7KgudwHI
-X-Gm-Message-State: AOJu0Yx9udaUVqXaaCvJEl5VnbZ+PsUGpc7xUFViKrwNmtNv/tGZjqxP
-	XbMTtioD92N+k20ht4pFDhfyzWNUVTBx/w+i3Fi/1CoQVt7b/QCaXWFZZeLJcl4jDx044S8scT8
-	yrXOubi10JimTj8FU5C5h4GcZcaJv8719Q7JrGexUYUNojWdQgF/HcxAlu5JYug==
-X-Received: by 2002:a05:600c:491d:b0:424:fb2f:9d4b with SMTP id 5b1f17b1804b1-424fb2f9f55mr25317245e9.21.1719474080107;
-        Thu, 27 Jun 2024 00:41:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGgu93kM3Jj8fkuZn8Yhi8DU/DjUZCFv12pgsTeo8oxcZqTXJeOuwx1mlw8cglG3sJJI8/+Lw==
-X-Received: by 2002:a05:600c:491d:b0:424:fb2f:9d4b with SMTP id 5b1f17b1804b1-424fb2f9f55mr25317035e9.21.1719474079749;
-        Thu, 27 Jun 2024 00:41:19 -0700 (PDT)
-Received: from polis (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367436999e9sm970881f8f.76.2024.06.27.00.41.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 00:41:19 -0700 (PDT)
-Date: Thu, 27 Jun 2024 09:41:17 +0200
-From: Danilo Krummrich <dakr@redhat.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
-	alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
-	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
-	daniel.almeida@collabora.com, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v2 01/10] rust: pass module name to `Module::init`
-Message-ID: <Zn0XnbPKiarhyu3d@polis>
-References: <20240618234025.15036-1-dakr@redhat.com>
- <20240618234025.15036-2-dakr@redhat.com>
- <2024062038-backroom-crunchy-d4c9@gregkh>
- <ZnRUXdMaFJydAn__@cassiopeiae>
- <2024062010-change-clubhouse-b16c@gregkh>
- <ZnSeAZu3IMA4fR8P@cassiopeiae>
- <5d7b22c7-de22-4a8c-a122-624afc3d12f1@redhat.com>
- <2024062732-correct-dwindling-b53c@gregkh>
+	s=arc-20240116; t=1719474149; c=relaxed/simple;
+	bh=M5+v6tFTGIMBSPIpk62aWS77BQ8cbadSwPcmpjtk3aY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XSqmYB1ENiSQ6xx/6Bnx89Kq9Q/GtTn4/nsKRuCmuhnELtrbBX/jWoExEqAsv7vasvyvu27l/VTz30mu7CjU4ykWau6D5bG6QxrhbnJi/JwJfYRVJAfid4QFqJdFJqUGDqX6uGidWldEKE9b8M9y8sbHeCsNQULEFW1EnIWsON0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-03 (Coremail) with SMTP id rQCowABHTkbQF31mFzy1Eg--.4169S2;
+	Thu, 27 Jun 2024 15:42:10 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: kherbst@redhat.com,
+	lyude@redhat.com,
+	dakr@redhat.com,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	bskeggs@redhat.com,
+	airlied@redhat.com
+Cc: dri-devel@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH v3] drm/nouveau: fix null pointer dereference in nouveau_connector_get_modes
+Date: Thu, 27 Jun 2024 15:42:04 +0800
+Message-Id: <20240627074204.3023776-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024062732-correct-dwindling-b53c@gregkh>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowABHTkbQF31mFzy1Eg--.4169S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Jw1xZFy3urW5tFW5Zr17GFg_yoWkuFc_GF
+	18ZasrGr4rK3WvywsrAa18ZFn29w1UZr4vyFnYqFZav39rJw1akrn8t34rXFy7XrykGryq
+	y3Wq9F98CrnFgjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb3kFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6r1F6r1fM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
+	rcIFxwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
+	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUAkucUUUUU=
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-On Thu, Jun 27, 2024 at 09:33:39AM +0200, Greg KH wrote:
-> On Wed, Jun 26, 2024 at 12:29:01PM +0200, Danilo Krummrich wrote:
-> > Hi Greg,
-> > 
-> > On 6/20/24 23:24, Danilo Krummrich wrote:
-> > 
-> > This is a polite reminder about the below discussion.
-> 
-> I know, it's on my TODO list, but I'm currently traveling for a
-> conference and will not have time until next week to even consider
-> looking at this...
+In nouveau_connector_get_modes(), the return value of drm_mode_duplicate()
+is assigned to mode, which will lead to a possible NULL pointer
+dereference on failure of drm_mode_duplicate(). Add a check to avoid npd.
 
-Thanks, Greg, for letting me know. Let's continue this discussion next week
-then.
+Cc: stable@vger.kernel.org
+Fixes: 6ee738610f41 ("drm/nouveau: Add DRM driver for NVIDIA GPUs")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+Changes in v3:
+- added CC stable as suggested, sorry for my negligence.
+Changes in v2:
+- modified the patch according to suggestions;
+- added Fixes line.
+---
+ drivers/gpu/drm/nouveau/nouveau_connector.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-I may send replies on all other mails of this series in order to not leave them
-unreplied for too long, but as mentioned, let's get this thread discussed first
-once you're able to get back to it.
-
-Have a good trip!
-
-- Danilo
-
-> 
-> greg k-h
-> 
+diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.c b/drivers/gpu/drm/nouveau/nouveau_connector.c
+index 856b3ef5edb8..0c71d761d378 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_connector.c
++++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
+@@ -1001,6 +1001,9 @@ nouveau_connector_get_modes(struct drm_connector *connector)
+ 		struct drm_display_mode *mode;
+ 
+ 		mode = drm_mode_duplicate(dev, nv_connector->native_mode);
++		if (!mode)
++			return 0;
++
+ 		drm_mode_probed_add(connector, mode);
+ 		ret = 1;
+ 	}
+-- 
+2.25.1
 
 
