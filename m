@@ -1,148 +1,236 @@
-Return-Path: <linux-kernel+bounces-232425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A979C91A8B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:10:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 742D791A8DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:14:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EACF286D06
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:09:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2FA41F28D4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:14:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94001195FCA;
-	Thu, 27 Jun 2024 14:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85136199231;
+	Thu, 27 Jun 2024 14:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MlUyZpFP"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b="DOwCTDTO"
+Received: from mail.nearlyone.de (mail.nearlyone.de [49.12.199.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A68195B04;
-	Thu, 27 Jun 2024 14:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DCD0195F3A;
+	Thu, 27 Jun 2024 14:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.199.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719497385; cv=none; b=lTZ/8LEoivk1bxpF5IFWx3piigc9gZTYGqeT5AJo/cQg37l1VFzYBhNpJwC7f+rsUVSMtzNjbErDw4+W8k25PwdPnjSUOmcoM1kGR7Z8oI4tN5HxNHXoG6GXp8s4i36j4TAUpKcOsFThDVTQHtihWmrZsWvlC3hE/pVUtc8X6Vg=
+	t=1719497485; cv=none; b=ZxA9VRGmHr1Jcc2ZO5Yya6hwakpHTQ8ftRBg+hW6jIOYUw/EaCozEUXQMvS/kaoYWWBEZ3REDeMLrgtdFnFdw5lyM1lqtJvL3UNCry5uM4JQa6LfP3V7Z5+LREqDF0M1KBGcvCxoElhwNcvDrXwwZt4wmRqGwUo31v+CiWcbdqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719497385; c=relaxed/simple;
-	bh=bf8xtcKWz2ekG6ZG9mxbefmEIFpXZW0+JgN9tcZmwwM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=paldOtX9qfZOLIWtnRqYF1pxI3azKILlUXN1Qa2RnHhb5pl7OYhVrzL5ZIfJ0w1ALDN6izjvSKolAypA8Bh/YZYI/4SJekBpWDKFZcxgN+1yREMcFd6aNU1Oa699NFG3/XNbS4VGeaCAxy5yR05pDJy0EcF/l2EXeDURn72Eb1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MlUyZpFP; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52cdc4d221eso6645674e87.3;
-        Thu, 27 Jun 2024 07:09:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719497382; x=1720102182; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WxbdUF3igWgZnkX8ezz96rfrkEDeMV7VPqBBzmY6B/M=;
-        b=MlUyZpFPVTOVzHrDuvOjfnbg3cLmBRJ0gEkdM+MxN5zlD571JklivsGrRhBsjkDxIL
-         4UF+ihPs367R2yOTmUuRz+/f22NmfSUSlo8PZWEz7m00TIHUAfwLHw1nj40BCoxbs20N
-         OCotgGIzDMkRicXfo9YzL3SoqvTPaSerYTy3pqgMNDgF4awJWFRl4WLe73F4PbtxlNEZ
-         tMC/ifWbx2iPsyXfwllQovjwHIthorBD8rPkKIKaNztAz/jAA8GyIfvF2sWduXkLzA1w
-         aWS4EOGSMQIuVKJcxlfcKjO/9X3o1M6vT7z9VVpB9nL9DCs3p1xcTmy7zjAfG63c1D/A
-         GB/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719497382; x=1720102182;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WxbdUF3igWgZnkX8ezz96rfrkEDeMV7VPqBBzmY6B/M=;
-        b=SV67PJ08Ew+68I02f05I99qPTKnQM9cBQjbAyoYvcoBDOsTbqq9MbnVful0SzQ+6ll
-         ygspUiDGe8wT179h38Q834q7/jGQJdn4E6lMhEl5AY2KrvvqWyPfDodjH7bs22M2/xn2
-         hBNmyz204oKYk411TTY2Q9W+rq9ikIJ5d729kqJTRzjXWno38w8oX+gUD/iQB6B+hvwb
-         UxKN3x/UF3JIsgU4zxMAJcCPP3ISaGNwDrGD/sMC6FkwCOdPDtcnkPow1rqkM4s4R6VH
-         GhObRg2WKN6Num2M+XW0WW+rlWMHzyNR0dVcnB9/xwFxjQmOoDTOv01KbZpvnEKXsxRb
-         ovVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrzzE/DZ66f0Z5DrI8NBg308AbgzZQ3pyq6KYsidcVtjfIReBtwlN/5RJqFUouGTQhOIkTEczfa1lAEkisF9a/7+XnVCNeNjSizTsYedHwBbc9FCSv5oUb/fWD8JIpwijVwc32Hh0QQkd81cIrHl5GUyvBdLA+O2PaEmYn8uGHkg==
-X-Gm-Message-State: AOJu0YzuXlB7KOkzrMPIkWDsGYmcMKOgUZbr2CaHCgvD93A/Rz17SdmV
-	IkXzMuhiKxEFHz5s2Nb11NWoHtz1Covc4lHsTP0GrBLXfY2jJ6Ra
-X-Google-Smtp-Source: AGHT+IGYnYpUx4D98KzvsoiC9IwR+Ky0CtunlggIok0VAdrIJJsUBpeuWypCrzdBCggYRccbsLhkLg==
-X-Received: by 2002:a05:6512:281:b0:52c:e10b:cb36 with SMTP id 2adb3069b0e04-52ce183add6mr8239966e87.33.1719497379045;
-        Thu, 27 Jun 2024 07:09:39 -0700 (PDT)
-Received: from mobilestation ([213.79.110.82])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e71329529sm215060e87.293.2024.06.27.07.09.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 07:09:38 -0700 (PDT)
-Date: Thu, 27 Jun 2024 17:09:36 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Vladimir Oltean <olteanv@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Jose Abreu <joabreu@synopsys.com>, Jose Abreu <Jose.Abreu@synopsys.com>, 
-	Florian Fainelli <f.fainelli@gmail.com>, Maxime Chevallier <maxime.chevallier@bootlin.com>, 
-	Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Sagar Cheluvegowda <quic_scheluve@quicinc.com>, 
-	Abhishek Chauhan <quic_abchauha@quicinc.com>, Andrew Halaney <ahalaney@redhat.com>, 
-	Jiawen Wu <jiawenwu@trustnetic.com>, Mengyuan Lou <mengyuanlou@net-swift.com>, 
-	Tomer Maimon <tmaimon77@gmail.com>, openbmc@lists.ozlabs.org, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 00/10] net: pcs: xpcs: Add memory-mapped
- device support
-Message-ID: <nct7rbh5w7nd4jneiqzwqpwv5gy6t7q2xobv74hqgilzpykzx5@v6l2aoh5fcaj>
-References: <20240627004142.8106-1-fancer.lancer@gmail.com>
- <20240627111034.nusgjux3lzf5s3bk@skbuf>
+	s=arc-20240116; t=1719497485; c=relaxed/simple;
+	bh=hsdBTXSMcKKQIVI9WirOC25efZ+klloSUViotA1/nZU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Ur1HHlhVqkGLqK66vjlLcoAgh9uc2ZUIPHWi/3cA/25FxmVvgxYEshK9583CmRR8KOKCT/WHqeDQOnYcYu5RQyTx96vxZ3xZC8CHG/S7QL73X4kDil73duzKvofk2DKaxl6CmmBFAY9HozFrc7UoZtgkIroL8ULg++86J8b8/uI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=monom.org; dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b=DOwCTDTO; arc=none smtp.client-ip=49.12.199.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=monom.org
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EF6D5DACB1;
+	Thu, 27 Jun 2024 16:11:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monom.org; s=dkim;
+	t=1719497472; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=sCIZwyXmiw3iW4O5hR6iP5BYEsxVZSzA/TqydipafM4=;
+	b=DOwCTDTOjPhkEgqFNUbF6KpaLq8HwUVTzaj+r8N8XvWqpthQmgoWhVHGmFJ1HOs4TmLr+0
+	6NN8wfq8se8lqLvWk5kfkxWKazOVPrAEz8K8qmxQokwIj/uGTeZ3LIHpXAmCfDSThHtykl
+	SxTkiuAj8pWUjhOMn3NoTzrtgD0e4jsWMoSHousl1rnwL6d2nJO7RsVH2kvWaQ+YNF2WHQ
+	B3kqEEI5JoWtLr5XtLtomXRymK3sjBnVsqdRKEZS12xvHM+yb2N9UEkl6FkBwKTEwlSp02
+	Ps6YVsL5RefMX+NJ8kgFSPL8k4p1jJ6WShg1cgr3w7K3+0atBYJ34/WqerZeLA==
+From: Daniel Wagner <dwagner@suse.de>
+Subject: [PATCH v2 0/3] nvme-pci: honor isolcpus configuration
+Date: Thu, 27 Jun 2024 16:10:50 +0200
+Message-Id: <20240627-isolcpus-io-queues-v2-0-26a32e3c4f75@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240627111034.nusgjux3lzf5s3bk@skbuf>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOpyfWYC/22NQQrCMBBFr1Jm7UgSQ42uvId00bQTOyBNzZiil
+ N7dWHDn8j347y8glJgEztUCiWYWjmMBs6ugG9rxRsh9YTDKWFUbhSzx3k1ZkCM+MmUS1K1z5O0
+ xBOehDKdEgV9b9NoUHlieMb23j1l/7S+n/+VmjQqd1/XJB6uVO1wkC+17gmZd1w8oOu8DsgAAA
+ A==
+To: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>, 
+ Sagi Grimberg <sagi@grimberg.me>, Thomas Gleixner <tglx@linutronix.de>, 
+ Christoph Hellwig <hch@lst.de>
+Cc: Frederic Weisbecker <fweisbecker@suse.com>, 
+ Mel Gorman <mgorman@suse.de>, Hannes Reinecke <hare@suse.de>, 
+ Sridhar Balaraman <sbalaraman@parallelwireless.com>, 
+ "brookxu.cn" <brookxu.cn@gmail.com>, Ming Lei <ming.lei@redhat.com>, 
+ linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
+ linux-nvme@lists.infradead.org, Daniel Wagner <dwagner@suse.de>
+X-Mailer: b4 0.14.0
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Vladimir
+I've dropped the io_queue type from housekeeping code, because of
+11ea68f553e2 ("genirq, sched/isolation: Isolate from handling managed
+interrupts"). This convienced me that the original goal of the
+managed_irq argument was to move away any noise from the isolcpus. So
+let's just use it and if there are real users of the current behavior we
+can still add it back the. I hope that Ming will chime in eventually.
 
-On Thu, Jun 27, 2024 at 02:10:34PM +0300, Vladimir Oltean wrote:
-> Hi Sergey,
-> 
-> This does not apply to net-next.
-> 
-> Applying: net: pcs: xpcs: Move native device ID macro to linux/pcs/pcs-xpcs.h
-> Applying: net: pcs: xpcs: Split up xpcs_create() body to sub-functions
-> Applying: net: pcs: xpcs: Convert xpcs_id to dw_xpcs_desc
-> Applying: net: pcs: xpcs: Convert xpcs_compat to dw_xpcs_compat
-> Applying: net: pcs: xpcs: Introduce DW XPCS info structure
-> Applying: dt-bindings: net: Add Synopsys DW xPCS bindings
-> Applying: net: pcs: xpcs: Add Synopsys DW xPCS platform device driver
-> Applying: net: pcs: xpcs: Add fwnode-based descriptor creation method
-> Applying: net: stmmac: Create DW XPCS device with particular address
-> Using index info to reconstruct a base tree...
-> M       drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
-> M       include/linux/stmmac.h
-> Checking patch drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c...
-> Checking patch drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c...
-> Checking patch include/linux/stmmac.h...
-> Applied patch drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c cleanly.
-> Applied patch drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c cleanly.
-> Applied patch include/linux/stmmac.h cleanly.
-> Falling back to patching base and 3-way merge...
-> error: Your local changes to the following files would be overwritten by merge:
->         drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
->         drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
->         include/linux/stmmac.h
-> Please commit your changes or stash them before you merge.
-> Aborting
-> error: Failed to merge in the changes.
-> Patch failed at 0009 net: stmmac: Create DW XPCS device with particular address
-> hint: Use 'git am --show-current-patch=diff' to see the failed patch
+The rest of the changes are pretty small, splitting one patch and adding
+documentation.
 
-Argg, right! I forgot to port the Russell' latest series introduced
-the select_pcs() callback. Sorry for the inconvenience.
+Initial cover letter:
 
-I'll get it merged in my repo (based on the kernel upstream tree with
-verious plat-specific fixes) and test it out again. Then I'll _make
-sure_ this time that the series is applicable onto the net-next tree
-before resubmitting.
+The nvme-pci driver is ignoring the isolcpus configuration. There were
+several attempts to fix this in the past [1][2]. This is another attempt
+but this time trying to address the feedback and solve it in the core
+code.
 
-Thanks,
--Serge(y)
+The first patch introduces a new option for isolcpus 'io_queue', but I'm
+not really sure if this is needed and we could just use the managed_irq
+option instead. I guess depends if there is an use case which depens on
+queues on the isolated CPUs.
 
-> 
-> Thanks,
-> Vladimir
+The second patch introduces a new block layer helper which returns the
+number of possible queues. I suspect it would makes sense also to make
+this helper a bit smarter and also consider the number of queues the
+hardware supports.
+
+And the last patch updates the group_cpus_evenly function so that it uses
+only the housekeeping CPUs when they are defined
+
+Note this series is not addressing the affinity setting of the admin
+queue (queue 0). I'd like to address this after we agreed on how to solve
+this. Currently, the admin queue affinity can be controlled by the
+irq_afffinity command line option, so there is at least a workaround for
+it.
+
+Baseline:
+
+available: 2 nodes (0-1)
+node 0 cpus: 0 1 2 3
+node 0 size: 1536 MB
+node 0 free: 1227 MB
+node 1 cpus: 4 5 6 7
+node 1 size: 1729 MB
+node 1 free: 1422 MB
+node distances:
+node   0   1
+  0:  10  20
+  1:  20  10
+
+options nvme write_queues=4 poll_queues=4
+
+55: 0 41 0 0 0 0 0 0 PCI-MSIX-0000:00:05.0 0-edge nvme0q0 affinity: 0-3
+63: 0 0 0 0 0 0 0 0 PCI-MSIX-0000:00:05.0 1-edge nvme0q1 affinity: 4-5
+64: 0 0 0 0 0 0 0 0 PCI-MSIX-0000:00:05.0 2-edge nvme0q2 affinity: 6-7
+65: 0 0 0 0 0 0 0 0 PCI-MSIX-0000:00:05.0 3-edge nvme0q3 affinity: 0-1
+66: 0 0 0 0 0 0 0 0 PCI-MSIX-0000:00:05.0 4-edge nvme0q4 affinity: 2-3
+67: 0 0 0 0 24 0 0 0 PCI-MSIX-0000:00:05.0 5-edge nvme0q5 affinity: 4
+68: 0 0 0 0 0 1 0 0 PCI-MSIX-0000:00:05.0 6-edge nvme0q6 affinity: 5
+69: 0 0 0 0 0 0 41 0 PCI-MSIX-0000:00:05.0 7-edge nvme0q7 affinity: 6
+70: 0 0 0 0 0 0 0 3 PCI-MSIX-0000:00:05.0 8-edge nvme0q8 affinity: 7
+71: 1 0 0 0 0 0 0 0 PCI-MSIX-0000:00:05.0 9-edge nvme0q9 affinity: 0
+72: 0 18 0 0 0 0 0 0 PCI-MSIX-0000:00:05.0 10-edge nvme0q10 affinity: 1
+73: 0 0 0 0 0 0 0 0 PCI-MSIX-0000:00:05.0 11-edge nvme0q11 affinity: 2
+74: 0 0 0 3 0 0 0 0 PCI-MSIX-0000:00:05.0 12-edge nvme0q12 affinity: 3
+
+queue mapping for /dev/nvme0n1
+        hctx0: default 4 5
+        hctx1: default 6 7
+        hctx2: default 0 1
+        hctx3: default 2 3
+        hctx4: read 4
+        hctx5: read 5
+        hctx6: read 6
+        hctx7: read 7
+        hctx8: read 0
+        hctx9: read 1
+        hctx10: read 2
+        hctx11: read 3
+        hctx12: poll 4 5
+        hctx13: poll 6 7
+        hctx14: poll 0 1
+        hctx15: poll 2 3
+
+PCI name is 00:05.0: nvme0n1
+        irq 55, cpu list 0-3, effective list 1
+        irq 63, cpu list 4-5, effective list 5
+        irq 64, cpu list 6-7, effective list 7
+        irq 65, cpu list 0-1, effective list 1
+        irq 66, cpu list 2-3, effective list 3
+        irq 67, cpu list 4, effective list 4
+        irq 68, cpu list 5, effective list 5
+        irq 69, cpu list 6, effective list 6
+        irq 70, cpu list 7, effective list 7
+        irq 71, cpu list 0, effective list 0
+        irq 72, cpu list 1, effective list 1
+        irq 73, cpu list 2, effective list 2
+        irq 74, cpu list 3, effective list 3
+
+* patched:
+
+48: 0 0 33 0 0 0 0 0 PCI-MSIX-0000:00:05.0 0-edge nvme0q0 affinity: 0-3
+58: 0 0 0 0 0 0 0 0 PCI-MSIX-0000:00:05.0 1-edge nvme0q1 affinity: 4
+59: 0 0 0 0 0 0 0 0 PCI-MSIX-0000:00:05.0 2-edge nvme0q2 affinity: 5
+60: 0 0 0 0 0 0 0 0 PCI-MSIX-0000:00:05.0 3-edge nvme0q3 affinity: 0
+61: 0 0 0 0 0 0 0 0 PCI-MSIX-0000:00:05.0 4-edge nvme0q4 affinity: 1
+62: 0 0 0 0 45 0 0 0 PCI-MSIX-0000:00:05.0 5-edge nvme0q5 affinity: 4
+63: 0 0 0 0 0 12 0 0 PCI-MSIX-0000:00:05.0 6-edge nvme0q6 affinity: 5
+64: 2 0 0 0 0 0 0 0 PCI-MSIX-0000:00:05.0 7-edge nvme0q7 affinity: 0
+65: 0 35 0 0 0 0 0 0 PCI-MSIX-0000:00:05.0 8-edge nvme0q8 affinity: 1
+
+queue mapping for /dev/nvme0n1
+        hctx0: default 2 3 4 6 7
+        hctx1: default 5
+        hctx2: default 0
+        hctx3: default 1
+        hctx4: read 4
+        hctx5: read 5
+        hctx6: read 0
+        hctx7: read 1
+        hctx8: poll 4
+        hctx9: poll 5
+        hctx10: poll 0
+        hctx11: poll 1
+
+PCI name is 00:05.0: nvme0n1
+        irq 48, cpu list 0-3, effective list 2
+        irq 58, cpu list 4, effective list 4
+        irq 59, cpu list 5, effective list 5
+        irq 60, cpu list 0, effective list 0
+        irq 61, cpu list 1, effective list 1
+        irq 62, cpu list 4, effective list 4
+        irq 63, cpu list 5, effective list 5
+        irq 64, cpu list 0, effective list 0
+        irq 65, cpu list 1, effective list 1
+
+[1] https://lore.kernel.org/lkml/20220423054331.GA17823@lst.de/T/#m9939195a465accbf83187caf346167c4242e798d
+[2] https://lore.kernel.org/linux-nvme/87fruci5nj.ffs@tglx/
+
+Signed-off-by: Daniel Wagner <dwagner@suse.de>
+---
+Changes in v2:
+- updated documentation
+- splitted blk/nvme-pci patch
+- dropped HK_TYPE_IO_QUEUE, use HK_TYPE_MANAGED_IRQ
+- Link to v1: https://lore.kernel.org/r/20240621-isolcpus-io-queues-v1-0-8b169bf41083@suse.de
+
+---
+Daniel Wagner (3):
+      blk-mq: add blk_mq_num_possible_queues helper
+      nvme-pci: limit queue count to housekeeping CPUs
+      lib/group_cpus.c: honor housekeeping config when grouping CPUs
+
+ block/blk-mq-cpumap.c   | 20 +++++++++++++
+ drivers/nvme/host/pci.c |  5 ++--
+ include/linux/blk-mq.h  |  1 +
+ lib/group_cpus.c        | 75 +++++++++++++++++++++++++++++++++++++++++++++++--
+ 4 files changed, 97 insertions(+), 4 deletions(-)
+---
+base-commit: 6ba59ff4227927d3a8530fc2973b80e94b54d58f
+change-id: 20240620-isolcpus-io-queues-1a88eb47ff8b
+
+Best regards,
+-- 
+Daniel Wagner <dwagner@suse.de>
+
 
