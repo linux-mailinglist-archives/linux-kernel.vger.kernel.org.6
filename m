@@ -1,78 +1,135 @@
-Return-Path: <linux-kernel+bounces-231957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92A1A91A0D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:51:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5095691A0CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:51:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E9E7B2131C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:51:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C332282B72
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB076D1B9;
-	Thu, 27 Jun 2024 07:51:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93E16F2F7;
+	Thu, 27 Jun 2024 07:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="neT7Oelm"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.17])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FDAA288BD;
-	Thu, 27 Jun 2024 07:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.17
+	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="MPHJENRH"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A134B33987;
+	Thu, 27 Jun 2024 07:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719474703; cv=none; b=get+k3vCvVx4xghfIKSFPz4oil1Vz2dYhO/5R2HII2RlP1ipEz5wuOPOUuWZKAtA85qpJHG9p6AiDl2tvQONf/PsIQgP9a1c/Jup+ursaf4zu+Ak4pqoixSnuqRHX4Qeiio3Vt9vOFIv3D82XAXGr+5xGlZq/wt7GgTzmO/zU2w=
+	t=1719474663; cv=none; b=V0urLu54w/u1Sh48vlCXeLp1letzykme8HsB34mndZ8z8EhdH3StIowPBvl4HZo+83rM1xr6zuVSyCXqmDueZb1cuDyYL7jYelms117mnK2Bn9KMVN/XTaVWVMVxZFaNpjXmpZNm5P9w91NpKmfhp2sjMAEVhn5aQsV98oGCUjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719474703; c=relaxed/simple;
-	bh=RV9E31PmeduVVuCzHwiX/NDQPw9AVEV7Axw8llMtRAg=;
+	s=arc-20240116; t=1719474663; c=relaxed/simple;
+	bh=7zGoCZ6FKEQqdYymcsGGBHM106RVqtWPdVI72vsRi1U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qQKX5jWP2CnJnPlhRDFm1e9lpfuJEkHlk+b9eym+oueOGwhfh2Y7HXdK5UHphq8Or7HZ5v0W8WprZcmt1M7DtU2mKnMpyE+0JChCVpb71xZ5vcKxki2SBRBOt6GDhKScWA05Un6QKadTTzOaDsPR682VjPs0CB0TelJ59M9+/k8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=neT7Oelm; arc=none smtp.client-ip=220.197.32.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=0evzdLmi7y9qBXDsgNLFrAiLidaqqqkYyTE6ToeNOvc=;
-	b=neT7OelmYL2z5GFCm9IBqZ7t1R2jYUuigABaNOYL+gp6MKAN9YcnWLfKApZUfV
-	jLa6nc70E1G9l5lSelguhAmwQtHPiv58WwApdzShGhFBp0MnFjTu2DsiP3slLzVb
-	iAfk/o5a+bUxrW4VbQEI4a+L0AQDilTyY3vv+fvDzHWy0=
-Received: from dragon (unknown [114.218.218.47])
-	by gzsmtp3 (Coremail) with SMTP id M88vCgD3HxDGGX1mX7IZAA--.51889S3;
-	Thu, 27 Jun 2024 15:50:32 +0800 (CST)
-Date: Thu, 27 Jun 2024 15:50:30 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Tim Harvey <tharvey@gateworks.com>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: imx8mm-venice-gw700x: add support for PHY
- LED's
-Message-ID: <Zn0Zxn9YIZ9aufbu@dragon>
-References: <20240618200253.1738876-1-tharvey@gateworks.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=u8Fz1dk4YT0gmsq5ZJ9XDOTWeN6cOTJdrL26hGLuflONwyh65zvPsGTwj80bBDtR7n4KQfCiq1WGLw70hm+cMSYFpyeN2ulpNg9GUZEs6O0Br4nT4TU0xf4pocBrpyOlW86GlxvOJwzbPeS6d3qy/deEedBhFD8B3XRfaCyWVJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=MPHJENRH reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7CA0540E0218;
+	Thu, 27 Jun 2024 07:50:59 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
+	reason="fail (body has been altered)" header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id SGuIrKFlLPNL; Thu, 27 Jun 2024 07:50:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1719474655; bh=aLoddrSRjlxs7+z/3BRtEWZSpcrVkpWAVVnm+H1+Luk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MPHJENRHwn+Bbe7bd6KzV/aVSxqxwb0VZ+l7XGRaFWMDSBXhGr3BJzSMMo0Cz37Bh
+	 g6/caTA0AvoMUgINWH/angxY8/NlVwoUsB82Xhh2+tJymCeTw1v2MPiNxfapaHz8ln
+	 zQLn2rHopluNjDXs/N0Hx+PLIeFuvl0NxUXZotJF0apTxyHXcpS37vQXg4GVX9MFZC
+	 dOXAMwk+daNr9/9KvcEvtHKgHE5h4NhYQPQ0t/dW6/05HRrgnrBj/n7D7tDKBZ2Lcs
+	 O2093KhyrBdezP4l0TVxrTyPaFmBLbc7N0Tt76c4C3kIEP0L29PmYJ8WEdtkJ2bpix
+	 CzXmA+NT3ipYK7F4X6ZwQKmDi9WVpU/DXAYKV60x3B2eZUnqBReyDeHcPtCLRQb02s
+	 azpxodPUNhf78qOoIoG5M6VsEAoiweybboe7mUxLf1NxKL4gI1EBWVCdfO+B5yWfaF
+	 PtDnbB/gSte6aFpbomn7ERr/zn8U16tZ8TaPaEHH2cVk7qtN4Yuvd5PEQ2KysPfNPF
+	 /HckQfjSxGFsvkjUteqX3jDnneKdPbP1UpkDcPYVgAZCgkDmvDDjfJ0bQRNOAUerO1
+	 weTI/jrtpRJ0C4OEsQWqx9KYhYTOkiIpOv3SaT4y1Et4IfCXM7aywQxtuyUbj9Bcud
+	 gItQA9WdzW3WpiVqOzqgb0v8=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1292240E0187;
+	Thu, 27 Jun 2024 07:50:39 +0000 (UTC)
+Date: Thu, 27 Jun 2024 09:50:34 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Daniel Ferguson <danielf@os.amperecomputing.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+	James Morse <james.morse@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Len Brown <lenb@kernel.org>, Shengwei Luo <luoshengwei@huawei.com>,
+	Shiju Jose <shiju.jose@huawei.com>,
+	Shuai Xue <xueshuai@linux.alibaba.com>,
+	Tony Luck <tony.luck@intel.com>, linux-acpi@vger.kernel.org,
+	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] RAS: ACPI: APEI: add conditional compilation to ARM
+ error report functions
+Message-ID: <20240627075034.GBZn0Zyj_3n8XnKOQm@fat_crate.local>
+References: <cover.1719471257.git.mchehab+huawei@kernel.org>
+ <95baa46a5e1c88f08e328dbbfbbd01602e092234.1719471257.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240618200253.1738876-1-tharvey@gateworks.com>
-X-CM-TRANSID:M88vCgD3HxDGGX1mX7IZAA--.51889S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUIku4UUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiAggLZWZv-czU4AAAso
+In-Reply-To: <95baa46a5e1c88f08e328dbbfbbd01602e092234.1719471257.git.mchehab+huawei@kernel.org>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 18, 2024 at 01:02:54PM -0700, Tim Harvey wrote:
-> The GW700x SoM has an onboard DP83867 RGMII GbE PHY that drives two
-> LED's (LED1 and LED2, skipping LED0). Add the appropriate dt bindings to
-> allow these PHY LED's to be controlled via a netdev trigger.
-> 
-> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+On Thu, Jun 27, 2024 at 09:01:08AM +0200, Mauro Carvalho Chehab wrote:
+> @@ -570,7 +571,7 @@ static bool ghes_handle_arm_hw_error(struct acpi_he=
+st_generic_data *gdata,
+>  				    error_type);
+>  		p +=3D err_info->length;
+>  	}
+> -
+> +#endif
+>  	return queued;
 
-Applied, thanks!
+The previous version I saw, had it right. "queued" was outside the ifdeff=
+ery:
 
+drivers/acpi/apei/ghes.c: In function =E2=80=98ghes_handle_arm_hw_error=E2=
+=80=99:
+drivers/acpi/apei/ghes.c:575:16: error: =E2=80=98queued=E2=80=99 undeclar=
+ed (first use in this function)
+  575 |         return queued;
+      |                ^~~~~~
+drivers/acpi/apei/ghes.c:575:16: note: each undeclared identifier is repo=
+rted only once for each function it appears in
+drivers/acpi/apei/ghes.c:576:1: error: control reaches end of non-void fu=
+nction [-Werror=3Dreturn-type]
+  576 | }
+      | ^
+cc1: some warnings being treated as errors
+make[5]: *** [scripts/Makefile.build:244: drivers/acpi/apei/ghes.o] Error=
+ 1
+make[4]: *** [scripts/Makefile.build:485: drivers/acpi/apei] Error 2
+make[4]: *** Waiting for unfinished jobs....
+make[3]: *** [scripts/Makefile.build:485: drivers/acpi] Error 2
+make[3]: *** Waiting for unfinished jobs....
+make[2]: *** [scripts/Makefile.build:485: drivers] Error 2
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/mnt/kernel/kernel/2nd/linux/Makefile:1934: .] Error 2
+make: *** [Makefile:240: __sub-make] Error 2
+
+
+--=20
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
