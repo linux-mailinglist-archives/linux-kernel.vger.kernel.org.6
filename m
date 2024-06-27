@@ -1,185 +1,284 @@
-Return-Path: <linux-kernel+bounces-233158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E08BC91B309
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:55:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5024C91B2F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:51:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9865A283578
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:55:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C2A82830AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957941A38ED;
-	Thu, 27 Jun 2024 23:55:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD8F1A2FC6;
+	Thu, 27 Jun 2024 23:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Ez7rmtiH"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2076.outbound.protection.outlook.com [40.107.100.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bfmHfDfh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD77D1A2549;
-	Thu, 27 Jun 2024 23:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719532514; cv=fail; b=guuEyF6sLLERMW0rOF+2afJ9cUR+qwgGFu2ci+dSdpsczyP8FgLSRYsDukd/ry4Qi2JzT3yr/zYIT+fIQbRHi5rZ1LsQAOBlbgE/iHJ93cApU5P0BGUtoRspC7S6aOrqhOh8oWB5m+0fk7bDhRxM3XmVgkqtkz8zR/aHOnmx9Wg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719532514; c=relaxed/simple;
-	bh=9KMOc1ULTi8NsqW/adTosZFxZXkuj/w4SN6kz3hgzfE=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
-	 Content-Type:MIME-Version; b=gGXf+4X/tXoCrGfT7DWSXLG3lS9ZN+1my3cNHZHCae/VJWfuwXF2iGmJ9mHl6Vy3fV1DXop3wiIvDLmMUtVSKUD0ZmAZPstkSqxepK+Elayz0sXqwe+X29MesTvycv5FMYjXUR068GsQ1Ff6tyWBUYFO//9MN3funM787BhSMWQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Ez7rmtiH; arc=fail smtp.client-ip=40.107.100.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LXe8jbM9mEdRe1vsaeTAv87NZruohK0XVpfXfr3RlcUvZiCODccTEyaYhtbM4F0sFmGgm1JkRYY4vIzGbyTBjYhyOcyalcyiyZEdDrfthkVC5wQ3jE2RaQHiwqo2u2D1wCQid4GixA+VyvRGIMs+mWzTrR/UK6aosw+OMh5yx3CPL5ID+N8SAsomKMFy+91qn1aB4rkF6uBQ72olZbGGI7E8ModhjwQhThJvYrE/KUK++7hPsZwm+mmn5mty/zZT1e7eDZgv3LhUEpvsr9+LqPEAIXALoY0ybIRoPc10ENsjsD1ag1IEm2rG1NkORPDjKKc4S39jreH2KIoK7waeQw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=r5XVoYwQuDg+GQxyx5siP3T4svWGIJrj+ZagRfnWls4=;
- b=QpcqlQe/ZyLb42yFEWFPalk6bsjulH//9xbp9yXdSilKSvcKJwQKdqeyvMvayNNs4Kz58QeckCW2JuHp4w7laVa/3artbEAnY4s3QZD89Q2dtLlIFceYu65iZmXLnF/Ij1ZG9INQey6jvWwVuQ++2Z0/4pIsflzZiP1ZaKP4JJQxyIOBLzXU29LfRDoLpLm+8QLKoER1MgUba73TQVQckTTUX+pAbtM5w5jLmVG1S18t99gstfs7WumMUUJLMvu27Tjwc4DsvfQAnLAurH/6drPGDLucIF/5EWHWEPgNLKFG4gUP4R8+MtHAHmuHETcN2POPQiUazHvEOrwVrLpf4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=r5XVoYwQuDg+GQxyx5siP3T4svWGIJrj+ZagRfnWls4=;
- b=Ez7rmtiH/nOHT5pwpBHDMDRl/SBlQjbvL7+xjJ14w69SECCk1fRM+0r7QZhgnmHsucQGV6jXUeev1XQaH8/04QKKtW1YNIetZzWgyWj4Awzmn+0uN/matD77T+/6Gc/m1HHg7UoQF36xFjaWfe5evG/W1aJEcK7UL+hZlbBiMvqamHVntPpc6lOW+gXXoJoAK6jEXdXDneZNivFoudtI1RmyyjvugnQBKcKk0uHU3zQfO1WC+2Qlahswod9TCkNw6ijg13OsusCzI0GtrCeirlcfiOKdePQfHMlqlu2FB9PpONrDN6/PH5TxcaCW9bBCOOl4lIl4URU4B9WOIrFVuw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
- MW6PR12MB7070.namprd12.prod.outlook.com (2603:10b6:303:238::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7698.35; Thu, 27 Jun 2024 23:55:06 +0000
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe%6]) with mapi id 15.20.7698.025; Thu, 27 Jun 2024
- 23:55:06 +0000
-References: <cover.66009f59a7fe77320d413011386c3ae5c2ee82eb.1719386613.git-series.apopple@nvidia.com>
- <e626eda568267e1f86d5c30c24bc62474b45f6c3.1719386613.git-series.apopple@nvidia.com>
- <20240627053343.GD14837@lst.de>
-User-agent: mu4e 1.10.8; emacs 29.1
-From: Alistair Popple <apopple@nvidia.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: dan.j.williams@intel.com, vishal.l.verma@intel.com,
- dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
- jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com, will@kernel.org,
- mpe@ellerman.id.au, npiggin@gmail.com, dave.hansen@linux.intel.com,
- ira.weiny@intel.com, willy@infradead.org, djwong@kernel.org,
- tytso@mit.edu, linmiaohe@huawei.com, david@redhat.com, peterx@redhat.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
- jhubbard@nvidia.com, david@fromorbit.com
-Subject: Re: [PATCH 04/13] fs/dax: Add dax_page_free callback
-Date: Fri, 28 Jun 2024 09:48:24 +1000
-In-reply-to: <20240627053343.GD14837@lst.de>
-Message-ID: <87h6de54by.fsf@nvdebian.thelocal>
-Content-Type: text/plain
-X-ClientProxiedBy: SY4P282CA0005.AUSP282.PROD.OUTLOOK.COM
- (2603:10c6:10:a0::15) To DS0PR12MB7726.namprd12.prod.outlook.com
- (2603:10b6:8:130::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBDB913E04F
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 23:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719532273; cv=none; b=Ie4WUvnnwTTQCPNJ2NFSPkxvu+2L8aJ8DGEab9LEfUcqEc/wTUmoWxUj4fSuwe3JMPlmQi8xhoNQ95TfdryV0QP98hyUfXBFN7h1x6j+V/LWNNLW4tXnOhmeyrWH2JyD2ALGG51MNnoUUgY4GKxUZj5XfdO+0isgVtY5nyeM3F4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719532273; c=relaxed/simple;
+	bh=eVU6qMjuVBUApmISteIcnKmkrC/Lb84Kp/EaKiZPKV0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jrMsoyRY273COjLmxBesAv5HXFC/sNf5VoYjKYCN1Dd/z8MSVyyyDH0jHRJXfhqeTfFm575hjcYEIgPPfpKzLcNXoICvI+xGZBCSS2Ufmv5znLppYPTDO8/lGAh1fPklJQK+hHHfunvQJDKdFFehE5qhhryMIZk5AM/tpu1FWuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bfmHfDfh; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719532270; x=1751068270;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=eVU6qMjuVBUApmISteIcnKmkrC/Lb84Kp/EaKiZPKV0=;
+  b=bfmHfDfhtOUshnwmdSLMjPXk80PSkN/wSrhuO3jDMu3eCeOHKznfB4Xw
+   0rv6LruJ1dgf1NzD4tm2Z4SPB5HuNykIZac4llcD8QV0qsY+FQfpFtKeX
+   vvciTx8lK8Dw1xj60VMg4UhP7+uRRp+/B16AL+VUGX8imZjEKfRXZqvwT
+   6MzGQo4mj8BFTq2AFDypjb/FyTejixqU68KozO3cwOX3L6oI9SuyDwvt6
+   ndP0UCx0ABRFsZO3LSFhPNF6brNCcV5xaGN1XaAWlFQTLZaXpoQ2ZQ2Rg
+   vbBfM0brTxNLEtczXY2pwrnQx26cmGC3znx1Hbz6g8y063K632KjH7lV4
+   A==;
+X-CSE-ConnectionGUID: zBEdrW28S+ajhPtkmoMFww==
+X-CSE-MsgGUID: E8NXWzjOTCSKkN9srNzrEA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="27385024"
+X-IronPort-AV: E=Sophos;i="6.09,167,1716274800"; 
+   d="scan'208";a="27385024"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 16:51:10 -0700
+X-CSE-ConnectionGUID: k2qjuoGzTpiSz0kzSUjMDA==
+X-CSE-MsgGUID: Yp/QBxqdTneCfgNBL8zqtQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,167,1716274800"; 
+   d="scan'208";a="48888651"
+Received: from gbpfeiff-mobl.amr.corp.intel.com (HELO desk) ([10.255.229.132])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 16:51:10 -0700
+Date: Thu, 27 Jun 2024 16:51:09 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	Robert Gill <rtgill82@gmail.com>,
+	Jari Ruusu <jariruusu@protonmail.com>,
+	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
+	antonio.gomez.iglesias@linux.intel.com,
+	daniel.sneddon@linux.intel.com
+Subject: [PATCH v2] x86/entry_32: Move CLEAR_CPU_BUFFERS before restoring
+ segments
+Message-ID: <20240627-fix-dosemu-vm86-v2-1-d5579f698e77@linux.intel.com>
+X-B4-Tracking: v=1; b=H4sIAG/6fWYC/3WNwQqDMBBEf0X23BU3EQ099T+KBzFrXdCkJBos4
+ r839d7jG2beHBA5CEe4FwcEThLFuwzqVsAw9e7FKDYzqErVVa0aHGVH6yMvG6bFNGgtEfUVtbp
+ lyKt34Fy5jM8u8yRx9eFzHST6pf9diZDQmMGoptejbs1jFrftpbiV53LwC3TneX4Bs+KqOLQAA
+ AA=
+X-Mailer: b4 0.12.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|MW6PR12MB7070:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8b44b16d-8c7a-44b3-f14a-08dc97048f7e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?SPGdZo8TfYwVvMzhdP6QmxPRGi7srD29uFwCixlsojXCdRLKEAteUlXWMpKo?=
- =?us-ascii?Q?ERQ0DQBhJMTLlPpym3G8tAjWf04rEY0+Py5hIVqZDjdEtMG33B8YPB1WUTNe?=
- =?us-ascii?Q?kgOIXn3kTUSLHVZp9z2G0lSZglWNmFC0vsrGemyvxdqImWJlkBWXubM1m3+i?=
- =?us-ascii?Q?Hs69oQnh8ejlyC9fuipM9eUSz/JUqz+onempibaXV/SLe7tqHcsW2tjlK3d+?=
- =?us-ascii?Q?5QQtj3VuxtKlfaNEQkSDIxuUeB8XKsTX7jy4Y5lz+oegqXBGOjB6rssaJe0n?=
- =?us-ascii?Q?Mx213JljFLMvx+5230+BmSWvTgyOWZPzISUnkrMiL9auzQj8WOwmIaFR4h9z?=
- =?us-ascii?Q?SDHgYUgNPBJyXwxVA2do7VfkrU8RCJ8wi0g5Ge6Tc2EAlitqQ1EY2mYatng5?=
- =?us-ascii?Q?vfO/DYklslQ8AaLvmGuLl0AOs8UQdbBIvEs6VhotqEpSc9kc/Hzom444NpTT?=
- =?us-ascii?Q?Uk17E4ymMPIWZ78YPlbNKc2eXOH6JNs01nHRZM4yFpFSJ/w435SeGPFzJ33G?=
- =?us-ascii?Q?BMumsWjPspU+CTZMSkvPVJAoBe16jTwqOKwrKFbrBiD6HInE5sIy2ZNpSDi5?=
- =?us-ascii?Q?DAywerDXxjhK8id7PS4wsSv7ozedmgW+tu+21JlzX1u8WAciCghmJ/ujRsy8?=
- =?us-ascii?Q?vJHYk3Iz0ey7YKRuwHOzE9Vppom8x5I3FSCUhXyOs9YPtybmSK5y1djbOLnL?=
- =?us-ascii?Q?ROYOrDDXdzfJx2JZlR90Y/6dUP57AoOAnTKeutVQpKDauhWvtWetHYZhLtJW?=
- =?us-ascii?Q?VV1nKtbKesyD920rieWJ9SOf9LM3zqMbS9wHmEwUYG0/cy9A1L0RT+MCwmcq?=
- =?us-ascii?Q?mWdlAJlF8vOQiHDcbmFEhzHKUp4Lfu1XcWdHxKIf14a3cNnx2v18U9wDPfuD?=
- =?us-ascii?Q?4OcqAKwGpYt8hUTCmLg3uEOS0PmN+J/d+aYeXE4N0YNQTiEUutqGh6+3NZN9?=
- =?us-ascii?Q?joDbnMIKyqzsiVspWKQtCCBED/QjtnS/7n284P9cXbJB1JdqxjKkAJH6u1OH?=
- =?us-ascii?Q?pKThAT3zSv0BTLS8BaFnSFxQhePLhXakoErQO9s2WrQ+PB6UonT93OQk3XG1?=
- =?us-ascii?Q?L7sRWRWyPCEn77tFg/G+tzRLnihsPrrXhP/rD9h0eXfFJI6Mnhs1UkNxTCkc?=
- =?us-ascii?Q?SgzNfyzj5YUpEKZGvLjxY49gQVt18AT2BPkuREpfhtIj3py4RpM5xMGoNmnp?=
- =?us-ascii?Q?n1TcAz3KpI0baNwrPjJqvelMOM88IvVzKQQ+07sCYZqzIkhkafs1iUspWyIo?=
- =?us-ascii?Q?ZHlkjxc5ij1LlpgCz7N62ILFvZW403T6UEwF60RvVbKyAesn3hshw+kJe1h4?=
- =?us-ascii?Q?2x8XMuEaWQO92iv7ESqFlPwc9Dd+8LgyyFLFU8IPL7NO4w=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?tkitERBnPU1pVbMOLz75E/q0I+6Jb3wBSk3hRXD93QNit8SPL/tDG2xlCdxZ?=
- =?us-ascii?Q?4rXtSpcUSCimDfUKLPTZsjF3t9vVlQ2PwG+p9KV8beM9YiExjV2E4XVPNhV1?=
- =?us-ascii?Q?gRMUkQMeg83tq7XhzxFl7s49v4qzqYrhfkdnt0vsND+i9RCicYuJwyc4JbMY?=
- =?us-ascii?Q?2LUeFF/nqm8Y9QA9rJwDTA1QKuJGl1pw8uKH4Xcs9hY/Kv1oREgBsiUyEwSF?=
- =?us-ascii?Q?SZyh/VAZJqDVJ+QHw0BwmL8xgcLGr06AaLomEoETtqlSN848KzTtZMzammUt?=
- =?us-ascii?Q?hWuCtKrB2H+lCn9L8K5MvL3QFNw613jnszfmqfkwV11o4wmrX0xHSU1Zz4aV?=
- =?us-ascii?Q?rNWxxGI9ds6H2ojYikPqsTo56EEdnNnp7lYK7jRlrQhF9UatUzWnYyP0Ehh8?=
- =?us-ascii?Q?Nbn8/N3DYhZag/ngv/0vu8uLjkO5zTud8PiBHQe8j3ef2JgWUCg0G+vuztkN?=
- =?us-ascii?Q?boh4uiEuIzbjjCvwDKyThOW+5ADPetF8nKZYDk02yJ552qmV4ksijbA59+Lk?=
- =?us-ascii?Q?gLZO/116BmNDMBBBHOgBjI7P7U7cNkBBKvboiF3vr/Ry6iFBk/Sz5n6IAgDE?=
- =?us-ascii?Q?54rHOZTksM7njfweGQhWrEyWGIuejg+T8qTrzYC+RzAQYZ9ud0iHCn0bvzTC?=
- =?us-ascii?Q?ZqaF/1npXaMk0cFzedKtaMFSAhu4mulqKhqv+Wtl1VCZkVokuxNFIEDeNEEU?=
- =?us-ascii?Q?0iz2HEbwY4k0gtzzbMmxwE4N8IQgm7WAKP99J/HsM24zEQKls6t2616+bAD+?=
- =?us-ascii?Q?ZLvymMJrfpQwWleWjfywi/nWsjSLnehAcOUni6V2C4cMuLOww1m7rI1gE47o?=
- =?us-ascii?Q?P311zMtj0Uq+atMV6AoWexuJPWNUGVPr1t+aG4AZPfzS4GRCkhKXOARB185S?=
- =?us-ascii?Q?Uo3W3saymTu2YBhJaqXfMpbQtGU+Wf3igKTTsSPoNfyrVIOMU6+RzqcFusdz?=
- =?us-ascii?Q?6Nq3dqlhBScPUGvARkg1/C5E5i1lk/c/QMQofuX+RVhBZB147zik1HiVP+B/?=
- =?us-ascii?Q?AKci3YR4eZey7PWYZecXQuFqzy6xBgMKi5T6GQx8BHmqQqTlOQeU8UogfMyK?=
- =?us-ascii?Q?i2LXjzJFqkfvafaxi5Bxago8EcHj7eJ+kH6qqaPIm5HB/KrlivDjnAk3LvaH?=
- =?us-ascii?Q?XvD2kFg9WdxGQRTikcVcTl6Ydu/QTTWFZgyB0TTZzw3uDVa7d/SuRfWHl+mA?=
- =?us-ascii?Q?Fiuane5u7W2o08oElwBRRxP9DwMurUphw8Qu4EH5tCnXa/Laxj2ZKXcWselW?=
- =?us-ascii?Q?armMdxPE1NHP8o16lb3XSc2d2ESXpyCKZ/lTcp/vDzSbYNiprGN1ccnCK75n?=
- =?us-ascii?Q?OA0MgM1Ewx2fVsP1KXpjrUUwpv9x5CNn4oLJuu0Gw1ZGIAApIy3px6/qbZga?=
- =?us-ascii?Q?1zJVOhuF27djBBsNePcQGnP95Clgs3H3sjDRS8J8PRvPG6QuiCtDTstIgzTw?=
- =?us-ascii?Q?z20TLx7mt4kv0YKxXkxo0ZSjD3AVeG/n52h087c0pNYWRBk2T92swmD7gbvA?=
- =?us-ascii?Q?ujjyV1ulXqBW2oS7n3Jq/ja1qmPN78fEQWQqWXNksUuzlOshgYMb6Mv4S8w1?=
- =?us-ascii?Q?+iFcM+vKpGWL/pxh0SncWia4iwZfsmneHU/RsUWg?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8b44b16d-8c7a-44b3-f14a-08dc97048f7e
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jun 2024 23:55:02.4467
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oRDrO8BAmSekk8UJnkD7mxe7Gnu0KiIBE7zQZqcDA2rCfQ62abWPR/hEU8Ol3oQlJ8QFPFFhxHfF3WjF/0ahPA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB7070
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Robert Gill reported below #GP when dosemu software was executing vm86()
+system call:
+
+  general protection fault: 0000 [#1] PREEMPT SMP
+  CPU: 4 PID: 4610 Comm: dosemu.bin Not tainted 6.6.21-gentoo-x86 #1
+  Hardware name: Dell Inc. PowerEdge 1950/0H723K, BIOS 2.7.0 10/30/2010
+  EIP: restore_all_switch_stack+0xbe/0xcf
+  EAX: 00000000 EBX: 00000000 ECX: 00000000 EDX: 00000000
+  ESI: 00000000 EDI: 00000000 EBP: 00000000 ESP: ff8affdc
+  DS: 0000 ES: 0000 FS: 0000 GS: 0033 SS: 0068 EFLAGS: 00010046
+  CR0: 80050033 CR2: 00c2101c CR3: 04b6d000 CR4: 000406d0
+  Call Trace:
+   show_regs+0x70/0x78
+   die_addr+0x29/0x70
+   exc_general_protection+0x13c/0x348
+   exc_bounds+0x98/0x98
+   handle_exception+0x14d/0x14d
+   exc_bounds+0x98/0x98
+   restore_all_switch_stack+0xbe/0xcf
+   exc_bounds+0x98/0x98
+   restore_all_switch_stack+0xbe/0xcf
+
+This only happens when VERW based mitigations like MDS, RFDS are enabled.
+This is because segment registers can have funky values with vm86() that
+can result in #GP when executing VERW. Intel SDM vol. 2C documents the
+following behavior for VERW instruction:
+
+  #GP(0) - If a memory operand effective address is outside the CS, DS, ES,
+	   FS, or GS segment limit.
+
+CLEAR_CPU_BUFFERS macro executes VERW instruction before returning to
+user space. Add CLEAR_CPU_BUFFERS to the macro RESTORE_REGS before it
+restores segment registers. In vm86 mode kernel does not support SYSCALL
+and SYSENTER instructions, so the problem is only limited to int80 path
+in 32-bit mode. In the opportunistic SYSEXIT path use
+CLEAR_CPU_BUFFERS_SAFE that ensures a sane %ds value.
+
+Below are the locations where CLEAR_CPU_BUFFERS* is currently being used:
+
+* entry_INT80_32(), entry_SYSENTER_32() and interrupts (via
+  handle_exception_return) do:
+
+restore_all_switch_stack:
+  [...]
+  RESTORE_REGS pop=4 clear_cpu_buf=1
+   pop    %ebx
+   pop    %ecx
+   pop    %edx
+   pop    %esi
+   pop    %edi
+   pop    %ebp
+   pop    %eax
+   verw   0xc0fb0fc0       <-------------
+   pop    %ds
+   pop    %es
+   pop    %fs
+
+* Opportunistic SYSEXIT explicitly does CLEAR_CPU_BUFFERS_SAFE:
+
+   [...]
+   pop    %eax
+   verw   0xc0fb0fc0       <-------------
+   sti
+   sysexit
+
+* NMIs use RESTORE_ALL_NMI -> RESTORE_REGS:
+
+   nmi_return:
+   [...]
+   RESTORE_ALL_NMI cr3_reg=%edi
+   jmp    0xc0fb22e0 <asm_exc_nmi+612>
+   test   $0x1000,%edi
+   je     0xc0fb22e0 <asm_exc_nmi+612>
+   mov    %edi,%cr3
+   pop    %ebx
+   pop    %ecx
+   pop    %edx
+   pop    %esi
+   pop    %edi
+   pop    %ebp
+   pop    %eax
+   verw   0xc0fb0fc0      <-------------
+   pop    %ds
+   pop    %es
+   pop    %fs
+
+Fixes: a0e2dab44d22 ("x86/entry_32: Add VERW just before userspace transition")
+Cc: stable@vger.kernel.org # 5.10+
+Reported-by: Robert Gill <rtgill82@gmail.com>
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218707
+Closes: https://lore.kernel.org/all/8c77ccfd-d561-45a1-8ed5-6b75212c7a58@leemhuis.info/
+Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
+Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+---
+v2:
+- Safe guard against any other system calls like vm86() that might change %ds (Dave).
+
+v1: https://lore.kernel.org/r/20240426-fix-dosemu-vm86-v1-1-88c826a3f378@linux.intel.com
+---
+ arch/x86/entry/entry_32.S | 31 +++++++++++++++++++++++++------
+ 1 file changed, 25 insertions(+), 6 deletions(-)
+
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index d3a814efbff6..44b21f7b6da6 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -253,6 +253,20 @@
+ .Lend_\@:
+ .endm
+ 
++/*
++ * Safer version of CLEAR_CPU_BUFFERS that temporarily sets %ds to KERNEL_DS.
++ * This ensures VERW will not #GP when referencing the memory operand.
++ */
++.macro CLEAR_CPU_BUFFERS_SAFE
++	ALTERNATIVE "jmp .Lskip_verw\@", "", X86_FEATURE_CLEAR_CPU_BUF
++	pushl	%ds
++	pushl	$(__KERNEL_DS)
++	popl	%ds
++	verw	_ASM_RIP(mds_verw_sel)
++	popl	%ds
++.Lskip_verw\@:
++.endm
++
+ .macro RESTORE_INT_REGS
+ 	popl	%ebx
+ 	popl	%ecx
+@@ -263,8 +277,15 @@
+ 	popl	%eax
+ .endm
+ 
+-.macro RESTORE_REGS pop=0
++.macro RESTORE_REGS pop=0 clear_cpu_buf=0
+ 	RESTORE_INT_REGS
++	/*
++	 * CLEAR_CPU_BUFFERS must be done before restoring segment
++	 * registers to avoid #GP when executing VERW in vm86 mode.
++	 */
++	.if \clear_cpu_buf
++	CLEAR_CPU_BUFFERS
++	.endif
+ 1:	popl	%ds
+ 2:	popl	%es
+ 3:	popl	%fs
+@@ -299,7 +320,7 @@
+ 
+ 	BUG_IF_WRONG_CR3
+ 
+-	RESTORE_REGS pop=\pop
++	RESTORE_REGS pop=\pop clear_cpu_buf=1
+ .endm
+ 
+ .macro CHECK_AND_APPLY_ESPFIX
+@@ -871,6 +892,7 @@ SYM_FUNC_START(entry_SYSENTER_32)
+ 
+ 	/* Now ready to switch the cr3 */
+ 	SWITCH_TO_USER_CR3 scratch_reg=%eax
++	CLEAR_CPU_BUFFERS_SAFE
+ 
+ 	/*
+ 	 * Restore all flags except IF. (We restore IF separately because
+@@ -881,7 +903,6 @@ SYM_FUNC_START(entry_SYSENTER_32)
+ 	BUG_IF_WRONG_CR3 no_user_check=1
+ 	popfl
+ 	popl	%eax
+-	CLEAR_CPU_BUFFERS
+ 
+ 	/*
+ 	 * Return back to the vDSO, which will pop ecx and edx.
+@@ -950,8 +971,7 @@ restore_all_switch_stack:
+ 	BUG_IF_WRONG_CR3
+ 
+ 	/* Restore user state */
+-	RESTORE_REGS pop=4			# skip orig_eax/error_code
+-	CLEAR_CPU_BUFFERS
++	RESTORE_REGS pop=4 clear_cpu_buf=1	# skip orig_eax/error_code
+ .Lirq_return:
+ 	/*
+ 	 * ARCH_HAS_MEMBARRIER_SYNC_CORE rely on IRET core serialization
+@@ -1144,7 +1164,6 @@ SYM_CODE_START(asm_exc_nmi)
+ 
+ 	/* Not on SYSENTER stack. */
+ 	call	exc_nmi
+-	CLEAR_CPU_BUFFERS
+ 	jmp	.Lnmi_return
+ 
+ .Lnmi_from_sysenter_stack:
+
+---
+base-commit: f2661062f16b2de5d7b6a5c42a9a5c96326b8454
+change-id: 20240426-fix-dosemu-vm86-dd111a01737e
+
+Best regards,
+-- 
+Thanks,
+Pawan
 
 
-Christoph Hellwig <hch@lst.de> writes:
-
-> On Thu, Jun 27, 2024 at 10:54:19AM +1000, Alistair Popple wrote:
->> When a fs dax page is freed it has to notify filesystems that the page
->> has been unpinned/unmapped and is free. Currently this involves
->> special code in the page free paths to detect a transition of refcount
->> from 2 to 1 and to call some fs dax specific code.
->> 
->> A future change will require this to happen when the page refcount
->> drops to zero. In this case we can use the existing
->> pgmap->ops->page_free() callback so wire that up for all devices that
->> support FS DAX (nvdimm and virtio).
->
-> Given that ->page_ffree is only called from free_zone_device_folio
-> and right next to a switch on the the type, can't we just do the
-> wake_up_var there without the somewhat confusing indirect call that
-> just back in common code without any driver logic?
-
-Longer term I'm hoping we can get rid of that switch on type entirely as
-I don't think the whole get/put_dev_pagemap() thing is very useful. Less
-indirection is good though so will move the wake_up_var there.
 
