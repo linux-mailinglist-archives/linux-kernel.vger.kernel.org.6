@@ -1,81 +1,75 @@
-Return-Path: <linux-kernel+bounces-232305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47B6C91A697
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:33:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C03291A69B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:33:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAF4B2828F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:33:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E99EE1F2719E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:33:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399D815ECE8;
-	Thu, 27 Jun 2024 12:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E5B615EFB6;
+	Thu, 27 Jun 2024 12:33:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Fl6vASMj"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SMu51P7F"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62AC15A85D;
-	Thu, 27 Jun 2024 12:33:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BD415E5DB
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719491583; cv=none; b=fuQX0RLOSLCX3C3MJ11DX8AurEIm9gDQh6XmDNxk8xGFa2nVGXp4y5VtqAmA9Uopc/4MIXtB5pUlFiZY+QodVWfWvxSKfKgw4cDtiv7vQ1g2KGZgVA4hf2e2v6QGb/ceL8rd6CR+qJJLMeYB9QtM0mCcRnKKXBU24uPv38DgaYw=
+	t=1719491584; cv=none; b=uaHMIsRoTfsYau3RdRS6J9jJjqoHrHQjxfxw6ED14gAB3HqGxJYvP2lJUpPznxu7Tc6924wP0wgWOikRKxfWkiXipJLE9rG3mmB/x01R9UnMTx52KTXVyT+McqV77ahzZR5rTpfxq/svfJ+SWJquztE11U6dLpac6DznYAAW+Kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719491583; c=relaxed/simple;
-	bh=x9T2r+7WplUtpSVJLO9FU1G2C91jcztsP3Fv2uwkp7Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g625oRoLE7DmLfLcw/6FUZkDFuB8KD4AJAKp9jbDRbBMl1pOYb9USk4Go5MVIZQWUoWsICzaaVJ6MsDOSPW3Hsd+BqncQc2WHFGyv3RfnjAQvhoOy9Q8pfbYGGjReemSxYgozvoPVdxx6W0zILf5c1z/dJkeYE7jL51bEuI3Wv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Fl6vASMj; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45RBvVC2015969;
-	Thu, 27 Jun 2024 12:33:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=x
-	9T2r+7WplUtpSVJLO9FU1G2C91jcztsP3Fv2uwkp7Y=; b=Fl6vASMjiuaCiidR6
-	aaHso5KU82qQZXXUQfj/Rujf+1L2drEjdTCW8Bt3BuV/RXotLM2LrM3Meu2rfhwE
-	K/tFdB37w3COwWHUe+ynO7roTEqe/YnMQrwfb80ZNEMcZ7KketBZaQt/BNdDsoxc
-	khLLryT8TaynvBlw7arxnY4qa0XHqEBS+AB9To45C/qaqBXGkBeRfbvpW81W9/W1
-	czOsIEpXlVivp94QunOhRWhWqyxgQx3H/uftrfHH+u/8WuVfdeyU6OnOQwJ1Op76
-	/53FpMY0Vg2UC9qgCA9wElGJTiIzEMamhwPeS/d8SVyZDFuAWu6MMcoFt4GHrMfI
-	KDalg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4014ks8jab-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Jun 2024 12:32:59 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45RCWxPC006198;
-	Thu, 27 Jun 2024 12:32:59 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4014ks8ja8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Jun 2024 12:32:59 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45RC9RFB000575;
-	Thu, 27 Jun 2024 12:32:57 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yxaenakyq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Jun 2024 12:32:57 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45RCWp9753215530
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 27 Jun 2024 12:32:54 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D893B2004D;
-	Thu, 27 Jun 2024 12:32:51 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5BB4320040;
-	Thu, 27 Jun 2024 12:32:51 +0000 (GMT)
-Received: from [9.171.15.243] (unknown [9.171.15.243])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 27 Jun 2024 12:32:51 +0000 (GMT)
-Message-ID: <35cb7d12-d93b-4fbb-98fe-10ce2e6358f2@linux.ibm.com>
-Date: Thu, 27 Jun 2024 14:32:51 +0200
+	s=arc-20240116; t=1719491584; c=relaxed/simple;
+	bh=HOQlVvB6ONgJGpF5LO61XvacpwRZojOWxOnMTQxDv5g=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:References:
+	 In-Reply-To:Content-Type; b=gvBc/enjmJ0D2ewgJFHEr4Mw3ln5L5Cd4oXUMJGcVq0ThJ/0tG08AnA90C89vyosPKwXfMSV1gNlAnM7KvhxA1JyRgOgLIKLqNPsWA13uLqBiP+gXzz8RtgGz4SEUBzF3VFdfKHjQSvjoBMS7Z/nKehjpHUwG/zOwn/wy/Olvws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SMu51P7F; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ebe6495aedso84417681fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 05:33:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719491581; x=1720096381; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bgL5RlzT052Xo6m0Ii8rB0nB/3yeo2P8PyN4dZnkXV0=;
+        b=SMu51P7FfHFIFr6xRoEuBplNlXdTaPD9Q7DgodoU1doW/iBuki+NKmyUD8titlgvsK
+         uA4I9yYhA8ZAJ6kZfS9aqhUgvS742GCTiZWntACW00A5hIVMYTgTOZ8fcR3Ek1KrjajF
+         xSCIfpcwOEYFP3AIm4CRLqP1kG8A9fBaMni+XfZo8V/gguZH2S0vcgLufX2Gt5fzKKk6
+         iXrnE7FhT4u9c7caT3F0OLVuBa1KohUM9i2ZECECDXNYruD4uuWGBFHgYLqRIZ3WgwMw
+         qE+BvHvgW+Y1ArzvUTHfX6cMUGYt3o3eNIiYaLpU3729B9trEBM/NjO5M8pbjvOZ3wu0
+         JaZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719491581; x=1720096381;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=bgL5RlzT052Xo6m0Ii8rB0nB/3yeo2P8PyN4dZnkXV0=;
+        b=xNoyBDuRjhfVjbJIAuyzHsQb6kjj4cqm2BS2svj3PvPbe/4jHy2sDZSBNK9957xxQ3
+         Fi0OsVF5LWud2q3PQ+F/KXCSzN/I9947Yl2r6qpQej0BeMh+6MbXkeudqu5CFZiQ/mHT
+         h3shuXUIYTXcZM6gtwOZCNsCW3lVq3I3OOxNykTVQGOmTwshSy9ld/1V4/6XCTMCookO
+         Oy8k3dBaWWMRk07hc+I581e53gLxM4LJQSn6VL8PhxhF9m4dU43UdpA6df/kJ3Zzty/+
+         FoRBU/DheVx/w+qbiz4xXBodApwwByxXSqyNavrAwP4SAXZM0frotyvmA+bQY/ojpAkf
+         jbxg==
+X-Forwarded-Encrypted: i=1; AJvYcCVT1zRh1eY1eGqFomnxzE0nL6FnzRnCdtKhR1O/S2KaPtsmTqHyKFa4FHtCWBnr8t4xMjU3lgDJ/o33zvlU57A1liZabrwnKXafn8h6
+X-Gm-Message-State: AOJu0YwvOb6fWtaNvT0Wp8HJ9WqExGdNMQA3XHsuBhSG2UpRrDzzxOI3
+	yWXIMBdhAGhOtcZLwlmaWD+KyqA3NeXzjF5TxFbSTUoYci5ONZuFjrw7TLeMA1g=
+X-Google-Smtp-Source: AGHT+IF4pp20DjWohnq1wdqVv5cvhH5Eu1hShIg/CqHNa2hXHfSeWtjmXq7F9YQnMjBuDA/BbSnkYQ==
+X-Received: by 2002:a2e:890d:0:b0:2eb:e258:717f with SMTP id 38308e7fff4ca-2ec5b2f0400mr82649941fa.42.1719491580730;
+        Thu, 27 Jun 2024 05:33:00 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:feeb:faed:66fa:9e6a? ([2a01:e0a:982:cbb0:feeb:faed:66fa:9e6a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c82463d4sm64911665e9.10.2024.06.27.05.32.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Jun 2024 05:33:00 -0700 (PDT)
+Message-ID: <acf50dcb-fbb4-4ed1-8fb1-ef0b4c78916b@linaro.org>
+Date: Thu, 27 Jun 2024 14:32:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,92 +77,87 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] s390/kvm: Reject memory region operations for ucontrol
- VMs
-To: Paolo Bonzini <pbonzini@redhat.com>,
-        Christoph Schlameuss <schlameuss@linux.ibm.com>
-Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-        linux-doc@vger.kernel.org
-References: <20240624095902.29375-1-schlameuss@linux.ibm.com>
- <CABgObfYxZZdwe94u7OvHPUx+u4fDEJLnBEQbk1hdYs_Zy0D2hA@mail.gmail.com>
-Content-Language: en-US
-From: Janosch Frank <frankja@linux.ibm.com>
-Autocrypt: addr=frankja@linux.ibm.com; keydata=
- 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
-In-Reply-To: <CABgObfYxZZdwe94u7OvHPUx+u4fDEJLnBEQbk1hdYs_Zy0D2hA@mail.gmail.com>
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: sm8550-qrd: add port mapping to
+ speakers
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240627122015.30945-1-krzysztof.kozlowski@linaro.org>
+ <20240627122015.30945-3-krzysztof.kozlowski@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240627122015.30945-3-krzysztof.kozlowski@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: mTn_dzUG9zRzJmu037-Ihe_DndbX9W86
-X-Proofpoint-ORIG-GUID: BGyRQszkQYBqJAbx0pOSe03aKiALIM1c
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-27_06,2024-06-27_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- suspectscore=0 phishscore=0 priorityscore=1501 mlxlogscore=646
- clxscore=1015 malwarescore=0 lowpriorityscore=0 bulkscore=0 adultscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406270094
+Content-Transfer-Encoding: 7bit
 
-T24gNi8yNy8yNCAxMzo1MywgUGFvbG8gQm9uemluaSB3cm90ZToNCj4gT24gTW9uLCBKdW4g
-MjQsIDIwMjQgYXQgMTE6NTnigK9BTSBDaHJpc3RvcGggU2NobGFtZXVzcw0KPiA8c2NobGFt
-ZXVzc0BsaW51eC5pYm0uY29tPiB3cm90ZToNCj4+DQo+PiBUaGlzIGNoYW5nZSByZWplY3Rz
-IHRoZSBLVk1fU0VUX1VTRVJfTUVNT1JZX1JFR0lPTiBhbmQNCj4+IEtWTV9TRVRfVVNFUl9N
-RU1PUllfUkVHSU9OMiBpb2N0bHMgd2hlbiBjYWxsZWQgb24gYSB1Y29udHJvbCBWTS4NCj4+
-IFRoaXMgaXMgbmVjY2Vzc2FyeSBzaW5jZSB1Y29udHJvbCBWTXMgaGF2ZSBrdm0tPmFyY2gu
-Z21hcCBzZXQgdG8gMCBhbmQNCj4+IHdvdWxkIHRodXMgcmVzdWx0IGluIGEgbnVsbCBwb2lu
-dGVyIGRlcmVmZXJlbmNlIGZ1cnRoZXIgaW4uDQo+PiBNZW1vcnkgbWFuYWdlbWVudCBuZWVk
-cyB0byBiZSBwZXJmb3JtZWQgaW4gdXNlcnNwYWNlIGFuZCB1c2luZyB0aGUNCj4+IGlvY3Rs
-cyBLVk1fUzM5MF9VQ0FTX01BUCBhbmQgS1ZNX1MzOTBfVUNBU19VTk1BUC4NCj4+DQo+PiBB
-bHNvIGltcHJvdmUgczM5MCBzcGVjaWZpYyBkb2N1bWVudGF0aW9uIGZvciBLVk1fU0VUX1VT
-RVJfTUVNT1JZX1JFR0lPTg0KPj4gYW5kIEtWTV9TRVRfVVNFUl9NRU1PUllfUkVHSU9OMi4N
-Cj4gDQo+IFdvdWxkIGJlIG5pY2UgdG8gaGF2ZSBhIHNlbGZ0ZXN0IGZvciB1Y29udHJvbCBW
-TXMsIHRvby4uLiBqdXN0IHNheWluZyA6KQ0KPiANCj4gUGFvbG8NCj4gDQoNCkFscmVhZHkg
-aW4gdGhlIHdvcmtzLCBoZSBqdXN0IGhhc24ndCBwb3N0ZWQgaXQgeWV0IDopDQpXZSBkaWQg
-ZG8gYSBjb3VwbGUgcm91bmRzIG9mIGludGVybmFsIGZlZWRiYWNrIG9uIHRoZSB0ZXN0cyBm
-aXJzdC4NCg==
+On 27/06/2024 14:20, Krzysztof Kozlowski wrote:
+> Add appropriate mappings of Soundwire ports of WSA8845 speaker.  This
+> solves second (south) speaker sound distortions when playing audio.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> ---
+> 
+> Bindings:
+> https://lore.kernel.org/all/20240626-port-map-v1-3-bd8987d2b332@linaro.org/
+> 
+> Can be applied independently, if bindings are fine.
+> ---
+>   arch/arm64/boot/dts/qcom/sm8550-qrd.dts | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8550-qrd.dts b/arch/arm64/boot/dts/qcom/sm8550-qrd.dts
+> index d27820fb5fc0..de40cb623c8c 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8550-qrd.dts
+> +++ b/arch/arm64/boot/dts/qcom/sm8550-qrd.dts
+> @@ -935,6 +935,7 @@ north_spkr: speaker@0,0 {
+>   		sound-name-prefix = "SpkrLeft";
+>   		vdd-1p8-supply = <&vreg_l15b_1p8>;
+>   		vdd-io-supply = <&vreg_l3g_1p2>;
+> +		qcom,port-mapping = <1 2 3 7 10 13>;
+>   	};
+>   
+>   	/* WSA8845, Speaker South */
+> @@ -948,6 +949,7 @@ south_spkr: speaker@0,1 {
+>   		sound-name-prefix = "SpkrRight";
+>   		vdd-1p8-supply = <&vreg_l15b_1p8>;
+>   		vdd-io-supply = <&vreg_l3g_1p2>;
+> +		qcom,port-mapping = <4 5 6 7 11 13>;
+>   	};
+>   };
+>   
+
+At some point I got the exact same change, but I guess I was missing the WSA macro register
+shift so this did nothing...
+
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
