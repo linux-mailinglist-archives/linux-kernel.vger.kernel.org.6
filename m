@@ -1,441 +1,313 @@
-Return-Path: <linux-kernel+bounces-233124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2588491B28A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:13:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 31ED091B28D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:13:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B898284650
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:13:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBB9A285485
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:13:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6CF1A2C2B;
-	Thu, 27 Jun 2024 23:13:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24071A2C35;
+	Thu, 27 Jun 2024 23:13:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gnQNceEr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lUYe/UHr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51911CA9F;
-	Thu, 27 Jun 2024 23:13:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D942F1CA9F;
+	Thu, 27 Jun 2024 23:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719530008; cv=none; b=GF9qgfLwxWxiq625Y2AP3cbolQdOdRW8XVR1D5JhkO7ld6oXCaBbZA1wVIutYA94inqYDJMYtAIU+mBKuuM5t9wfchrVPWMd4+U5zsmB8u0Q8Q7FGp64U4Bw4q8LM3fhv65W/aUkyIvygIuvqLQUWmwqzG/DXhEGvA2U10WiyE8=
+	t=1719530029; cv=none; b=GVYZ1H1VFF5JEVb0GydrC7RPh+GtNhTT1JFvcw0gGoMN6OJyxkLcj577CdPvjG7cFvr0T4RWZ1flYlSEB9y6S+d1xsZMXSUqApUe/nbOZIP544uF8xdORn2OEi7KiX3/NbHh5U3a2vhAb64jR/n03r0NFi+hjF9+z+1LtdCLALA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719530008; c=relaxed/simple;
-	bh=w+KqrY6PCe0bhZpsdCQ09Ljv7uPieywmVvajVT9/XQM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rxhchnjp2UvYhRVi7qWsOhT5gYcxuD3hCSg5rC+n/gVIzPIuKA9YXFRqACB6+6JuImOTntUdAaEPk0bOXis+8q4lZtfmpw2VheYRzUdQekf8y72Q0uP3iCfdW2vNW6jHc03sThswLmlEJDRzWnzWA2EJ1+FeUR3yBwSwpAmuXR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gnQNceEr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 932F1C2BBFC;
-	Thu, 27 Jun 2024 23:13:27 +0000 (UTC)
+	s=arc-20240116; t=1719530029; c=relaxed/simple;
+	bh=sLopButZu93sLjxaty65tbHl58W3iNdcIGCqQeCxmC0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=twUENrrWk5P9pCjkkItK+v6ygH8dp7BlPyGUA9o+9FmNvypZ1Ys8dRXfmhVoCFaubtoWD+2eHxnmkee9mZpG/lBX1ss4vwi7wTLp7Go+iNlfuxeHbm+LchlG+NzW6qGN7a1zhJZk1jpB2YwIAqBsxwBHOj7/4tslCdBwkJctHJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lUYe/UHr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68135C4AF09;
+	Thu, 27 Jun 2024 23:13:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719530008;
-	bh=w+KqrY6PCe0bhZpsdCQ09Ljv7uPieywmVvajVT9/XQM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gnQNceEraUFlcxDqIkkSvGam+M6jCjpG3DVmIcOW0S4pJlZS3jawcwAC7VnI+Vkhe
-	 QUrAu8RnVIoJWqqqDH+It4T0i6k3wO1o7UgBgySnxaoXxqX2A9q9fgLtSZ+ocLN2U9
-	 SHvOAcFus+SBDsgykECI594i08xVNByxKgtFKFZjvGK9fbiVoEmt32nCmj8+io13cK
-	 8QO6YeQPmA9S7t0US4n2pHg3BWkuBLhqHOFA/CRtWaDPNr97gNqtDIL/hXBGd0caxv
-	 knS1e3rgsg5DG44Fmea9/ufSOTPLGGs/Nu/ZSNmUFqA5V5DBlz3XEqDZ0QcVy5DuwC
-	 TdvvC85dr7CXw==
-Date: Thu, 27 Jun 2024 16:13:26 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Chen Yu <yu.c.chen@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>, acme@redhat.com,
-	Fernand Sieber <sieberf@amazon.com>,
-	linux-perf-users <linux-perf-users@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 1/3] perf sched map: Add task-name option to filter
- the output map
-Message-ID: <Zn3yFucQlvxyhzki@google.com>
-References: <20240626091550.46707-1-vineethr@linux.ibm.com>
- <20240626091550.46707-2-vineethr@linux.ibm.com>
+	s=k20201202; t=1719530028;
+	bh=sLopButZu93sLjxaty65tbHl58W3iNdcIGCqQeCxmC0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=lUYe/UHroCVY8HoOt71evyO/cPxo0zcDIcW+m3n/tO6tiMVf+vyoaZkmuSqfqJFwT
+	 aRYB91yVJsp3c7p6bq6E3JlXfgG6sSdS7eZLD+56KAhmN4YBpxns4ckW9pdHTcL6P0
+	 ZJnsm1x/1JPxZIuim0CTHnb2hgBPBABeeMFzMWB4pYt6lJIlnZ23v7R1CGaasHxi5/
+	 QevvU5z2WbrzFoAld7QyFIzeIBkHAYOr1fU45YIezTirkkQKFAZHjnIDwwWLhK7G1P
+	 UKjOW2dqio2+ziVjvRaaOOfHQS7L0xLsvTzXdFMBFlGDHg8S5tl7IbUFgCxjcJZGSI
+	 C89tb7DRYRQbw==
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-25cae7464f5so22717fac.3;
+        Thu, 27 Jun 2024 16:13:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVGgnk4ewRvMX3TXE+RxBadHmu9wzRMvBBgb+Lvang+0/ML3KVrGdX0N18svWgkgZzO42WDPljoUKdef2IDlopk3L5xmZnChu3CRk2K
+X-Gm-Message-State: AOJu0YxXm0rWFPST+tKc+MkpWfn8YiwtDQ35zRFqnCnvQrAYbY9uN/E9
+	ZlRYwCAK0tKslf6SRd4768M7pBPpBDwFSex9uB0wnC8dEQljZVsx16Auqy6vjR9n0rWy12fP8i3
+	h33BnXHahmnk/pllKPUVX/Cp2KD4=
+X-Google-Smtp-Source: AGHT+IH1fdeRZt0S5SHK7IuJvx4zaPmVNuVIyE12BjdkD55OepsptU9Su69g1rU6sLlSo4+SMcG+8UaGqW99rAKJWD8=
+X-Received: by 2002:a05:6870:470c:b0:254:9570:e5aa with SMTP id
+ 586e51a60fabf-25d06ef5925mr14781283fac.57.1719530027622; Thu, 27 Jun 2024
+ 16:13:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240626091550.46707-2-vineethr@linux.ibm.com>
+References: <000000000000565ec5061bdeafd5@google.com>
+In-Reply-To: <000000000000565ec5061bdeafd5@google.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Fri, 28 Jun 2024 08:13:36 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-YWYRkbPis9wh+hkAX1zPkY=ozK8Bsp1+2PRUPs24rTQ@mail.gmail.com>
+Message-ID: <CAKYAXd-YWYRkbPis9wh+hkAX1zPkY=ozK8Bsp1+2PRUPs24rTQ@mail.gmail.com>
+Subject: Re: [syzbot] [exfat?] possible deadlock in exfat_iterate (2)
+To: syzbot <syzbot+df3558df41609451e4ac@syzkaller.appspotmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	sj1557.seo@samsung.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+#syz test git://git.kernel.org/pub/scm/linux/kernel/git/linkinjeon/exfat.gi=
+t dev
 
-On Wed, Jun 26, 2024 at 02:45:48PM +0530, Madadi Vineeth Reddy wrote:
-> By default, perf sched map prints sched-in events for all the tasks
-> which may not be required all the time as it prints lot of symbols
-> and rows to the terminal.
-> 
-> With --task-name option, one could specify the specific task name
-> for which the map has to be shown. This would help in analyzing the
-> CPU usage patterns easier for that specific task. Since multiple
-> PID's might have the same task name, using task-name filter
-> would be more useful for debugging.
-> 
-> For other tasks, instead of printing the symbol, '-' is printed and
-> the same '.' is used to represent idle. '-' is used instead of symbol
-> for other tasks because it helps in clear visualization of task
-> of interest and secondly the symbol itself doesn't mean anything
-> because the sched-in of that symbol will not be printed(first sched-in
-> contains pid and the corresponding symbol).
-> 
-> When using the --task-name option, the sched-out time is represented
-> by a '*-'. Since not all task sched-in events are printed, the sched-out
-> time of the relevant task might be lost. This representation ensures
-> that the sched-out time of the interested task is not overlooked.
-> 
-> 6.10.0-rc1
-> ==========
-> *A0                              131040.639793 secs A0 => migration/0:19
-> *.                               131040.639801 secs .  => swapper:0
->  .  *B0                          131040.639830 secs B0 => migration/1:24
->  .  *.                           131040.639836 secs
->  .   .  *C0                      131040.640108 secs C0 => migration/2:30
->  .   .  *.                       131040.640163 secs
->  .   .   .  *D0                  131040.640386 secs D0 => migration/3:36
->  .   .   .  *.                   131040.640395 secs
-> 
-> 6.10.0-rc1 + patch (--task-name wdavdaemon)
-> =============
->  .  *A0  .   .   .   .   -   .   131040.641346 secs A0 => wdavdaemon:62509
->  .   A0 *B0  .   .   .   -   .   131040.641378 secs B0 => wdavdaemon:62274
->  -  *-   -   -   -   -   -   -   131040.641379 secs
-> *C0  .   B0  .   .   .   .   .   131040.641572 secs C0 => wdavdaemon:62283
->  C0  .   B0  .  *D0  .   .   .   131040.641572 secs D0 => wdavdaemon:62277
->  C0  .   B0  .   D0  .  *E0  .   131040.641578 secs E0 => wdavdaemon:62270
-> *-   -   -   -   -   -   -   -   131040.641581 secs
->  -   -   -   -   -   -  *-   -   131040.641583 secs
-
-It seems the last two lines should be like below..
-
-  *-   -   B0  -   D0  -   E0  -   131040.641581 secs
-   -   -   B0  -   D0  -  *-   -   131040.641583 secs
-
-> 
-> Reviewed-and-tested-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-> Signed-off-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+2024=EB=85=84 6=EC=9B=94 27=EC=9D=BC (=EB=AA=A9) =EC=98=A4=ED=9B=84 9:58, s=
+yzbot
+<syzbot+df3558df41609451e4ac@syzkaller.appspotmail.com>=EB=8B=98=EC=9D=B4 =
+=EC=9E=91=EC=84=B1:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    55027e689933 Merge tag 'input-for-v6.10-rc5' of git://git=
+...
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D16390ac198000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D53ab35b556129=
+242
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3Ddf3558df4160945=
+1e4ac
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for D=
+ebian) 2.40
+> userspace arch: i386
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7=
+bc7510fe41f/non_bootable_disk-55027e68.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/a36929b5a065/vmlinu=
+x-55027e68.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/d72de6f61ddc/b=
+zImage-55027e68.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+df3558df41609451e4ac@syzkaller.appspotmail.com
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+> WARNING: possible circular locking dependency detected
+> 6.10.0-rc5-syzkaller-00018-g55027e689933 #0 Not tainted
+> ------------------------------------------------------
+> syz-executor.2/6265 is trying to acquire lock:
+> ffffffff8dd3ab20 (fs_reclaim){+.+.}-{0:0}, at: might_alloc include/linux/=
+sched/mm.h:334 [inline]
+> ffffffff8dd3ab20 (fs_reclaim){+.+.}-{0:0}, at: slab_pre_alloc_hook mm/slu=
+b.c:3891 [inline]
+> ffffffff8dd3ab20 (fs_reclaim){+.+.}-{0:0}, at: slab_alloc_node mm/slub.c:=
+3981 [inline]
+> ffffffff8dd3ab20 (fs_reclaim){+.+.}-{0:0}, at: __do_kmalloc_node mm/slub.=
+c:4121 [inline]
+> ffffffff8dd3ab20 (fs_reclaim){+.+.}-{0:0}, at: __kmalloc_noprof+0xb5/0x42=
+0 mm/slub.c:4135
+>
+> but task is already holding lock:
+> ffff88804af1a0e0 (&sbi->s_lock#2){+.+.}-{3:3}, at: exfat_iterate+0x33f/0x=
+ad0 fs/exfat/dir.c:256
+>
+> which lock already depends on the new lock.
+>
+>
+> the existing dependency chain (in reverse order) is:
+>
+> -> #1 (&sbi->s_lock#2){+.+.}-{3:3}:
+>        __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+>        __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+>        exfat_evict_inode+0x25b/0x340 fs/exfat/inode.c:725
+>        evict+0x2ed/0x6c0 fs/inode.c:667
+>        iput_final fs/inode.c:1741 [inline]
+>        iput.part.0+0x5a8/0x7f0 fs/inode.c:1767
+>        iput+0x5c/0x80 fs/inode.c:1757
+>        dentry_unlink_inode+0x295/0x480 fs/dcache.c:400
+>        __dentry_kill+0x1d0/0x600 fs/dcache.c:603
+>        shrink_kill fs/dcache.c:1048 [inline]
+>        shrink_dentry_list+0x140/0x5d0 fs/dcache.c:1075
+>        prune_dcache_sb+0xeb/0x150 fs/dcache.c:1156
+>        super_cache_scan+0x32a/0x550 fs/super.c:221
+>        do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
+>        shrink_slab_memcg mm/shrinker.c:548 [inline]
+>        shrink_slab+0xa87/0x1310 mm/shrinker.c:626
+>        shrink_one+0x493/0x7c0 mm/vmscan.c:4790
+>        shrink_many mm/vmscan.c:4851 [inline]
+>        lru_gen_shrink_node+0x89f/0x1750 mm/vmscan.c:4951
+>        shrink_node mm/vmscan.c:5910 [inline]
+>        kswapd_shrink_node mm/vmscan.c:6720 [inline]
+>        balance_pgdat+0x1105/0x1970 mm/vmscan.c:6911
+>        kswapd+0x5ea/0xbf0 mm/vmscan.c:7180
+>        kthread+0x2c1/0x3a0 kernel/kthread.c:389
+>        ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+>        ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>
+> -> #0 (fs_reclaim){+.+.}-{0:0}:
+>        check_prev_add kernel/locking/lockdep.c:3134 [inline]
+>        check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+>        validate_chain kernel/locking/lockdep.c:3869 [inline]
+>        __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+>        lock_acquire kernel/locking/lockdep.c:5754 [inline]
+>        lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+>        __fs_reclaim_acquire mm/page_alloc.c:3801 [inline]
+>        fs_reclaim_acquire+0x102/0x160 mm/page_alloc.c:3815
+>        might_alloc include/linux/sched/mm.h:334 [inline]
+>        slab_pre_alloc_hook mm/slub.c:3891 [inline]
+>        slab_alloc_node mm/slub.c:3981 [inline]
+>        __do_kmalloc_node mm/slub.c:4121 [inline]
+>        __kmalloc_noprof+0xb5/0x420 mm/slub.c:4135
+>        kmalloc_noprof include/linux/slab.h:664 [inline]
+>        kmalloc_array_noprof include/linux/slab.h:699 [inline]
+>        __exfat_get_dentry_set+0x81e/0xa90 fs/exfat/dir.c:816
+>        exfat_get_dentry_set+0x36/0x210 fs/exfat/dir.c:859
+>        exfat_get_uniname_from_ext_entry fs/exfat/dir.c:39 [inline]
+>        exfat_readdir+0x950/0x1520 fs/exfat/dir.c:155
+>        exfat_iterate+0x3c7/0xad0 fs/exfat/dir.c:261
+>        wrap_directory_iterator+0xa5/0xe0 fs/readdir.c:67
+>        iterate_dir+0x53e/0xb60 fs/readdir.c:110
+>        __do_sys_getdents64 fs/readdir.c:409 [inline]
+>        __se_sys_getdents64 fs/readdir.c:394 [inline]
+>        __ia32_sys_getdents64+0x14f/0x2e0 fs/readdir.c:394
+>        do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+>        __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+>        do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+>        entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+>
+> other info that might help us debug this:
+>
+>  Possible unsafe locking scenario:
+>
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(&sbi->s_lock#2);
+>                                lock(fs_reclaim);
+>                                lock(&sbi->s_lock#2);
+>   lock(fs_reclaim);
+>
+>  *** DEADLOCK ***
+>
+> 3 locks held by syz-executor.2/6265:
+>  #0: ffff88801db114c8 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xeb/=
+0x180 fs/file.c:1191
+>  #1: ffff8880483da9e8 (&sb->s_type->i_mutex_key#24){++++}-{3:3}, at: wrap=
+_directory_iterator+0x5a/0xe0 fs/readdir.c:56
+>  #2: ffff88804af1a0e0 (&sbi->s_lock#2){+.+.}-{3:3}, at: exfat_iterate+0x3=
+3f/0xad0 fs/exfat/dir.c:256
+>
+> stack backtrace:
+> CPU: 0 PID: 6265 Comm: syz-executor.2 Not tainted 6.10.0-rc5-syzkaller-00=
+018-g55027e689933 #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.=
+16.2-1 04/01/2014
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:88 [inline]
+>  dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
+>  check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2187
+>  check_prev_add kernel/locking/lockdep.c:3134 [inline]
+>  check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+>  validate_chain kernel/locking/lockdep.c:3869 [inline]
+>  __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
+>  lock_acquire kernel/locking/lockdep.c:5754 [inline]
+>  lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
+>  __fs_reclaim_acquire mm/page_alloc.c:3801 [inline]
+>  fs_reclaim_acquire+0x102/0x160 mm/page_alloc.c:3815
+>  might_alloc include/linux/sched/mm.h:334 [inline]
+>  slab_pre_alloc_hook mm/slub.c:3891 [inline]
+>  slab_alloc_node mm/slub.c:3981 [inline]
+>  __do_kmalloc_node mm/slub.c:4121 [inline]
+>  __kmalloc_noprof+0xb5/0x420 mm/slub.c:4135
+>  kmalloc_noprof include/linux/slab.h:664 [inline]
+>  kmalloc_array_noprof include/linux/slab.h:699 [inline]
+>  __exfat_get_dentry_set+0x81e/0xa90 fs/exfat/dir.c:816
+>  exfat_get_dentry_set+0x36/0x210 fs/exfat/dir.c:859
+>  exfat_get_uniname_from_ext_entry fs/exfat/dir.c:39 [inline]
+>  exfat_readdir+0x950/0x1520 fs/exfat/dir.c:155
+>  exfat_iterate+0x3c7/0xad0 fs/exfat/dir.c:261
+>  wrap_directory_iterator+0xa5/0xe0 fs/readdir.c:67
+>  iterate_dir+0x53e/0xb60 fs/readdir.c:110
+>  __do_sys_getdents64 fs/readdir.c:409 [inline]
+>  __se_sys_getdents64 fs/readdir.c:394 [inline]
+>  __ia32_sys_getdents64+0x14f/0x2e0 fs/readdir.c:394
+>  do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+>  __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+>  do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+>  entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+> RIP: 0023:0xf72f8579
+> Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 0=
+0 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90=
+ 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
+> RSP: 002b:00000000f5ec95ac EFLAGS: 00000292 ORIG_RAX: 00000000000000dc
+> RAX: ffffffffffffffda RBX: 000000000000000a RCX: 0000000020002ec0
+> RDX: 0000000000001000 RSI: 0000000000000000 RDI: 0000000000000000
+> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
+> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+>  </TASK>
+> ----------------
+> Code disassembly (best guess), 2 bytes skipped:
+>    0:   10 06                   adc    %al,(%rsi)
+>    2:   03 74 b4 01             add    0x1(%rsp,%rsi,4),%esi
+>    6:   10 07                   adc    %al,(%rdi)
+>    8:   03 74 b0 01             add    0x1(%rax,%rsi,4),%esi
+>    c:   10 08                   adc    %cl,(%rax)
+>    e:   03 74 d8 01             add    0x1(%rax,%rbx,8),%esi
+>   1e:   00 51 52                add    %dl,0x52(%rcx)
+>   21:   55                      push   %rbp
+>   22:   89 e5                   mov    %esp,%ebp
+>   24:   0f 34                   sysenter
+>   26:   cd 80                   int    $0x80
+> * 28:   5d                      pop    %rbp <-- trapping instruction
+>   29:   5a                      pop    %rdx
+>   2a:   59                      pop    %rcx
+>   2b:   c3                      ret
+>   2c:   90                      nop
+>   2d:   90                      nop
+>   2e:   90                      nop
+>   2f:   90                      nop
+>   30:   8d b4 26 00 00 00 00    lea    0x0(%rsi,%riz,1),%esi
+>   37:   8d b4 26 00 00 00 00    lea    0x0(%rsi,%riz,1),%esi
+>
+>
 > ---
->  tools/perf/Documentation/perf-sched.txt |   6 +
->  tools/perf/builtin-sched.c              | 161 ++++++++++++++++++------
->  2 files changed, 131 insertions(+), 36 deletions(-)
-> 
-> diff --git a/tools/perf/Documentation/perf-sched.txt b/tools/perf/Documentation/perf-sched.txt
-> index 74c812f7a4a4..3255e5b8e74b 100644
-> --- a/tools/perf/Documentation/perf-sched.txt
-> +++ b/tools/perf/Documentation/perf-sched.txt
-> @@ -130,6 +130,12 @@ OPTIONS for 'perf sched map'
->  --color-pids::
->  	Highlight the given pids.
->  
-> +--task-name <task>::
-> +	Map output only for the given task name. The sched-out
-> +	time is printed and is represented by '*-' for the given
-> +	task name
-> +	('-' indicates other tasks while '.' is idle).
-> +
->  OPTIONS for 'perf sched timehist'
->  ---------------------------------
->  -k::
-> diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
-> index aa59f763ca46..57f166662d54 100644
-> --- a/tools/perf/builtin-sched.c
-> +++ b/tools/perf/builtin-sched.c
-> @@ -156,6 +156,7 @@ struct perf_sched_map {
->  	const char		*color_pids_str;
->  	struct perf_cpu_map	*color_cpus;
->  	const char		*color_cpus_str;
-> +	const char		*task_name;
->  	struct perf_cpu_map	*cpus;
->  	const char		*cpus_str;
->  };
-> @@ -177,6 +178,7 @@ struct perf_sched {
->  	struct perf_cpu	 max_cpu;
->  	u32		 *curr_pid;
->  	struct thread	 **curr_thread;
-> +	struct thread	 **curr_out_thread;
->  	char		 next_shortname1;
->  	char		 next_shortname2;
->  	unsigned int	 replay_repeat;
-> @@ -1538,23 +1540,89 @@ map__findnew_thread(struct perf_sched *sched, struct machine *machine, pid_t pid
->  	return thread;
->  }
->  
-> +static bool sched_match_task(const char *comm_str, const char *commands)
-
-It'd be easier if you pass the sched pointer.
-
-static bool sched_match_task(struct perf_sched *sched, const char *comm_str)
-{
-   ...
-
-
-> +{
-> +	char *commands_copy = NULL;
-> +	char *token = NULL;
-> +	bool match_found = false;
-> +
-> +	commands_copy = strdup(commands);
-> +	if (commands_copy == NULL)
-> +		return NULL;
-> +
-> +	token = strtok(commands_copy, ",");
-> +
-> +	while (token != NULL && !match_found) {
-> +		match_found = !strcmp(comm_str, token);
-> +		token = strtok(NULL, ",");
-> +	}
-> +
-> +	free(commands_copy);
-
-Why is this needed?  I think we only support a single command and then
-simply check with strcmp().
-
-Also if you add multiple string support, you need to parse the string
-when you parse the command line arguments, not when you match.
-
-
-> +	return match_found;
-> +}
-> +
-> +static void print_sched_map(struct perf_sched *sched, struct perf_cpu this_cpu, int cpus_nr,
-> +								const char *color, bool sched_out)
-> +{
-> +	for (int i = 0; i < cpus_nr; i++) {
-> +		struct perf_cpu cpu = {
-> +		.cpu = sched->map.comp ? sched->map.comp_cpus[i].cpu : i,
-
-Please fix the indentation.
-
-Thanks,
-Namhyung
-
-
-> +		};
-> +		struct thread *curr_thread = sched->curr_thread[cpu.cpu];
-> +		struct thread *curr_out_thread = sched->curr_out_thread[cpu.cpu];
-> +		struct thread_runtime *curr_tr;
-> +		const char *pid_color = color;
-> +		const char *cpu_color = color;
-> +		char symbol = ' ';
-> +		struct thread *thread_to_check = sched_out ? curr_out_thread : curr_thread;
-> +
-> +		if (thread_to_check && thread__has_color(thread_to_check))
-> +			pid_color = COLOR_PIDS;
-> +
-> +		if (sched->map.color_cpus && perf_cpu_map__has(sched->map.color_cpus, cpu))
-> +			cpu_color = COLOR_CPUS;
-> +
-> +		if (cpu.cpu == this_cpu.cpu)
-> +			symbol = '*';
-> +
-> +		color_fprintf(stdout, cpu.cpu != this_cpu.cpu ? color : cpu_color, "%c", symbol);
-> +
-> +		thread_to_check = sched_out ? sched->curr_out_thread[cpu.cpu] :
-> +								sched->curr_thread[cpu.cpu];
-> +
-> +		if (thread_to_check) {
-> +			curr_tr = thread__get_runtime(thread_to_check);
-> +			if (curr_tr == NULL)
-> +				return;
-> +
-> +			if (sched_out)
-> +				color_fprintf(stdout, color, "-  ");
-> +			else
-> +				color_fprintf(stdout, pid_color, "%2s ", curr_tr->shortname);
-> +		} else
-> +			color_fprintf(stdout, color, "   ");
-> +	}
-> +}
-> +
->  static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
->  			    struct perf_sample *sample, struct machine *machine)
->  {
->  	const u32 next_pid = evsel__intval(evsel, sample, "next_pid");
-> -	struct thread *sched_in;
-> +	const u32 prev_pid = evsel__intval(evsel, sample, "prev_pid");
-> +	struct thread *sched_in, *sched_out;
->  	struct thread_runtime *tr;
->  	int new_shortname;
->  	u64 timestamp0, timestamp = sample->time;
->  	s64 delta;
-> -	int i;
->  	struct perf_cpu this_cpu = {
->  		.cpu = sample->cpu,
->  	};
->  	int cpus_nr;
-> +	int proceed;
->  	bool new_cpu = false;
->  	const char *color = PERF_COLOR_NORMAL;
->  	char stimestamp[32];
-> +	const char *str;
->  
->  	BUG_ON(this_cpu.cpu >= MAX_CPUS || this_cpu.cpu < 0);
->  
-> @@ -1583,7 +1651,8 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
->  	}
->  
->  	sched_in = map__findnew_thread(sched, machine, -1, next_pid);
-> -	if (sched_in == NULL)
-> +	sched_out = map__findnew_thread(sched, machine, -1, prev_pid);
-> +	if (sched_in == NULL || sched_out == NULL)
->  		return -1;
->  
->  	tr = thread__get_runtime(sched_in);
-> @@ -1593,6 +1662,7 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
->  	}
->  
->  	sched->curr_thread[this_cpu.cpu] = thread__get(sched_in);
-> +	sched->curr_out_thread[this_cpu.cpu] = thread__get(sched_out);
->  
->  	new_shortname = 0;
->  	if (!tr->shortname[0]) {
-> @@ -1603,7 +1673,8 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
->  			 */
->  			tr->shortname[0] = '.';
->  			tr->shortname[1] = ' ';
-> -		} else {
-> +		} else if (!sched->map.task_name || sched_match_task(thread__comm_str(sched_in),
-> +								sched->map.task_name)) {
->  			tr->shortname[0] = sched->next_shortname1;
->  			tr->shortname[1] = sched->next_shortname2;
->  
-> @@ -1616,6 +1687,9 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
->  				else
->  					sched->next_shortname2 = '0';
->  			}
-> +		} else {
-> +			tr->shortname[0] = '-';
-> +			tr->shortname[1] = ' ';
->  		}
->  		new_shortname = 1;
->  	}
-> @@ -1623,42 +1697,28 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
->  	if (sched->map.cpus && !perf_cpu_map__has(sched->map.cpus, this_cpu))
->  		goto out;
->  
-> -	printf("  ");
-> -
-> -	for (i = 0; i < cpus_nr; i++) {
-> -		struct perf_cpu cpu = {
-> -			.cpu = sched->map.comp ? sched->map.comp_cpus[i].cpu : i,
-> -		};
-> -		struct thread *curr_thread = sched->curr_thread[cpu.cpu];
-> -		struct thread_runtime *curr_tr;
-> -		const char *pid_color = color;
-> -		const char *cpu_color = color;
-> -
-> -		if (curr_thread && thread__has_color(curr_thread))
-> -			pid_color = COLOR_PIDS;
-> -
-> -		if (sched->map.cpus && !perf_cpu_map__has(sched->map.cpus, cpu))
-> -			continue;
-> -
-> -		if (sched->map.color_cpus && perf_cpu_map__has(sched->map.color_cpus, cpu))
-> -			cpu_color = COLOR_CPUS;
-> -
-> -		if (cpu.cpu != this_cpu.cpu)
-> -			color_fprintf(stdout, color, " ");
-> +	proceed = 0;
-> +	str = thread__comm_str(sched_in);
-> +	/*
-> +	 * Check which of sched_in and sched_out matches the passed --task-name
-> +	 * arguments and call the corresponding print_sched_map.
-> +	 */
-> +	if (sched->map.task_name && !sched_match_task(str, sched->map.task_name)) {
-> +		if (!sched_match_task(thread__comm_str(sched_out), sched->map.task_name))
-> +			goto out;
->  		else
-> -			color_fprintf(stdout, cpu_color, "*");
-> +			goto sched_out;
->  
-> -		if (sched->curr_thread[cpu.cpu]) {
-> -			curr_tr = thread__get_runtime(sched->curr_thread[cpu.cpu]);
-> -			if (curr_tr == NULL) {
-> -				thread__put(sched_in);
-> -				return -1;
-> -			}
-> -			color_fprintf(stdout, pid_color, "%2s ", curr_tr->shortname);
-> -		} else
-> -			color_fprintf(stdout, color, "   ");
-> +	} else {
-> +		str = thread__comm_str(sched_out);
-> +		if (!(sched->map.task_name && !sched_match_task(str, sched->map.task_name)))
-> +			proceed = 1;
->  	}
->  
-> +	printf("  ");
-> +
-> +	print_sched_map(sched, this_cpu, cpus_nr, color, false);
-> +
->  	timestamp__scnprintf_usec(timestamp, stimestamp, sizeof(stimestamp));
->  	color_fprintf(stdout, color, "  %12s secs ", stimestamp);
->  	if (new_shortname || tr->comm_changed || (verbose > 0 && thread__tid(sched_in))) {
-> @@ -1675,9 +1735,32 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
->  	if (sched->map.comp && new_cpu)
->  		color_fprintf(stdout, color, " (CPU %d)", this_cpu);
->  
-> +	if (proceed != 1) {
-> +		color_fprintf(stdout, color, "\n");
-> +		goto out;
-> +	}
-> +
-> +sched_out:
-> +	if (sched->map.task_name) {
-> +		tr = thread__get_runtime(sched->curr_out_thread[this_cpu.cpu]);
-> +		if (strcmp(tr->shortname, "") == 0)
-> +			goto out;
-> +
-> +		if (proceed == 1)
-> +			color_fprintf(stdout, color, "\n");
-> +
-> +		printf("  ");
-> +		print_sched_map(sched, this_cpu, cpus_nr, color, true);
-> +		timestamp__scnprintf_usec(timestamp, stimestamp, sizeof(stimestamp));
-> +		color_fprintf(stdout, color, "  %12s secs ", stimestamp);
-> +	}
-> +
->  	color_fprintf(stdout, color, "\n");
->  
->  out:
-> +	if (sched->map.task_name)
-> +		thread__put(sched_out);
-> +
->  	thread__put(sched_in);
->  
->  	return 0;
-> @@ -3310,6 +3393,10 @@ static int perf_sched__map(struct perf_sched *sched)
->  	if (!sched->curr_thread)
->  		return rc;
->  
-> +	sched->curr_out_thread = calloc(MAX_CPUS, sizeof(*(sched->curr_out_thread)));
-> +	if (!sched->curr_out_thread)
-> +		return rc;
-> +
->  	if (setup_cpus_switch_event(sched))
->  		goto out_free_curr_thread;
->  
-> @@ -3563,6 +3650,8 @@ int cmd_sched(int argc, const char **argv)
->                      "highlight given CPUs in map"),
->  	OPT_STRING(0, "cpus", &sched.map.cpus_str, "cpus",
->                      "display given CPUs in map"),
-> +	OPT_STRING(0, "task-name", &sched.map.task_name, "task",
-> +		"map output only for the given task name"),
->  	OPT_PARENT(sched_options)
->  	};
->  	const struct option timehist_options[] = {
-> -- 
-> 2.43.2
-> 
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
 
