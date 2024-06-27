@@ -1,96 +1,134 @@
-Return-Path: <linux-kernel+bounces-232480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EC6091A96C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:42:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B078C91A970
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:44:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08BDE1F2738F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:42:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CACC1F25762
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C5F6197A6E;
-	Thu, 27 Jun 2024 14:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4AD197531;
+	Thu, 27 Jun 2024 14:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xo04DL3U"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KWi2bS8q"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89FFC197555;
-	Thu, 27 Jun 2024 14:42:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0D3DDA6;
+	Thu, 27 Jun 2024 14:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719499354; cv=none; b=Ybpdd4ueb2mUJO7mI/6m9EURUi2TCfEJkALNfzZYoTyWcQs+RgSHpwv5vIm3u7OzW95zgao4RyJQ/vGbWDATyhlkMg72U6iUA+OsRpExLRd/oYnV/rKpzVp9PsVISnvULkI+3JRJsC7299STRl7eQ4CowfqgZs+El0804z0ffXo=
+	t=1719499441; cv=none; b=SIoI+8O7CgkXLRDQR5zYOZqmod79bvEH47YTUwT/bI/iEIKQLeX/vQJcnfFdJv4GnfVIL24vKkCNh/6y+LyxgnMdjD4rOsD82EGcZFxcKYZhaR9dLsSOvChOxJruTxLYdn4jr4FHbO0xk8Y/ISysdMhjSOUH73mBFzWKrinTNvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719499354; c=relaxed/simple;
-	bh=2epyvIMgz/umKD0zxRhjVW1mRZUXIsUBKKbBDmo4di4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F2f/6c9qZATQG3bvbq17LtEkKLHbTWygybSkdjq79hca233WFyN7586bjgjmTDfZOH2kH6rVgNmmjoXGlcgZSpP2RW8Uzd5zn9LOdjAPg/ktsJQ8iLDrh3lxPrx2ejJzZUfA0pxJGYbuepcxbAVP6N1byBM/6JZZ8Vj7YGZDEAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xo04DL3U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68CF1C4AF13;
-	Thu, 27 Jun 2024 14:42:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719499354;
-	bh=2epyvIMgz/umKD0zxRhjVW1mRZUXIsUBKKbBDmo4di4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Xo04DL3UVemmECpwY64ES8e42gsvrt9q4M3TVRlXctyDXkQRl1pXP67dc/kQUHOBb
-	 Jwr1LgPcXns8f5ArGCbsj28zJRtGafIWgOw88bHuU95a31msvn0jkcL6Gi5h0+7gwL
-	 HTqKinNGs1+Rgk4ORxnyNf6umn9Ay5vuosGPBiAKq3gtQG1CnDLF+UJrjqNy18R0WY
-	 2r7MfMkXWZhxjYEmbSlOWUIt2Cd5erMnGe3UEF9V97V4UQIKV3ZiDh8hVxe1mb+rhZ
-	 0vs5i/Nh219zLYpfJW+W5MFigo3pfrpYf+/OQNtv7eOjjJ+itLEDgolYA7sNzSG+Tj
-	 kbBrgYiXLU6Dw==
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2e72224c395so92478741fa.3;
-        Thu, 27 Jun 2024 07:42:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU0xXKtAEupCoCEM2ydWc+p4Eo2vMPiohfQafS6EtEhZAn6TOnZsvYaK3C9T9qhP8dVmqXL5LGY76Y267e0qajZf1dk1OB9tT9PQzSLlvChlYv5rRfqGOYOyfNPl7yLU4ThrhkEUpZu/D+Gh5sdPn/3lxooDaffeSEm0zzopa9BTFF8OVg=
-X-Gm-Message-State: AOJu0Yys/jqusM24/3stzE7XMCoZEAXTbR/9Hj2/5/nyz0vj65FclpcU
-	mXmzaQ2+Cb40UbmFvV82KhZqBA9j57HBXpDje7cg6qS+pmxwbIJm61VM3kXZ1MRT1mp8TZz7mV7
-	UO2E8NLbvVB1GW3wXGUUSjjc69Q==
-X-Google-Smtp-Source: AGHT+IGdl09ud227mx6eWzKbhuN9jD43lHc173QiIvTh5p9OBHVav1TbmbgaqVowBm1lPdgNDMA0Q9EBVBXaFgPM5nE=
-X-Received: by 2002:ac2:47e8:0:b0:52c:d905:9645 with SMTP id
- 2adb3069b0e04-52ce183293cmr8939536e87.13.1719499352719; Thu, 27 Jun 2024
- 07:42:32 -0700 (PDT)
+	s=arc-20240116; t=1719499441; c=relaxed/simple;
+	bh=2j5ewpA+bl3SsvxcvjWbaW/7z8gPzqWlMwplnkWgOcU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tb3fCAYIdBpxGbE+d5Yu1//Ci1Ubb3JNXTGMKZUveUJMdVZhBVtwRiA53j86QcqrUNdT04IJJi1vmqFX1aWgAHxdLA6aXL6HDy+0jhHGP2FOvq3dk+NFQIQxggLdTUevuEVzKzHTJaYN0YUlZMvHc78FznuOuGINUPQ0P8hw5e4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KWi2bS8q; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a7245453319so335179266b.1;
+        Thu, 27 Jun 2024 07:43:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719499438; x=1720104238; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tiRJLr+671KjFbO/fLfuPGF8D0WkstZAuqRnzfAw4gI=;
+        b=KWi2bS8qGbuvu8d/uyo3O5ZMR8UO7tQsb02ooX2VNBc3KaQGhCg4ZLRSkwQWMiUBSn
+         fVfguVNG/pb3VF+BoCQ7VeGAmrHaz9uJwb6dIKQ6Kn/eY7gtqaHdx8j4EZKREglmDjpU
+         jgGIScylwSwKKDt5XFX0iWEUhRehRwXW3m/CwauAMmtNTdfj15diQZP9KtU21XesWt71
+         35WuwM1xSyC74PVr7hmxHLTwZYqP7UieO/i/17qMX8xJUb1vY3CuaDdtahGofpwOGENt
+         rWc2K3VO3J3nL6RqZ8iP/oqtE6desK6h3wkNYQoUvlaRLjCf7hgxPf9tfcAgtD7hFjVo
+         9pOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719499438; x=1720104238;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tiRJLr+671KjFbO/fLfuPGF8D0WkstZAuqRnzfAw4gI=;
+        b=UtuNGekCIitszsBMef6Fh895SUzmQvCsER382OmV1E6YjUX8FB7OvYCXF2gLHlc2ZF
+         HMQsSZfm+/W1ien2OlcQ6pVpTaLQmwPV5/s0E8Mu+usCH7hsVI4Fe1RZiBf5gj1ZarQa
+         zMdQogeM8yY/CooLJQQI4d1t3pSKN0beIZqwTEEHuls9/hxmpPwmjM/coKOV377cC8ra
+         wCtliisJjq4l85F6AEt3RR2y2LZ/QstQveA21UvBP46Tc0SR4iLERmSOre9NKGfNxMjE
+         uGEWnOaIBGmv29C58bCJGtoUzNmBQDlTSK1gEBaCGcb4pJZOlc3is3hwcdpEcW6Eiins
+         DuSw==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ+Tcrw/Zk/7nqwxMDG3mS9kBdafi7P7hzgzyV9XaoWgQGqVW6RRb03iEn/UTdlK63uK9FhIf1f4Yrsa29xJI4ATe6Q1Rgjv0G7tHk5Tii5NELesfOwA0LMZNzpdkEGgqe8zKhJY9B
+X-Gm-Message-State: AOJu0Yzg4ToVZBAkMejUaMB0G4Osxl6A195nyV9St40sLPDUkz0ag7pS
+	p+PW/lu5rGBnLzLBkGuR+/UsC/dwjkgC0OtqAmQgNn6HQX7YllLyHRhHHg==
+X-Google-Smtp-Source: AGHT+IGSl3iX/ymezvptfxHesPJP48fV6oxK4w1BKJtGZDusmoKNjfMGWxkP2qihcYhe8Qaeffj9ag==
+X-Received: by 2002:a17:906:f812:b0:a6f:e3e4:e0b6 with SMTP id a640c23a62f3a-a729b9029bemr172150066b.27.1719499437449;
+        Thu, 27 Jun 2024 07:43:57 -0700 (PDT)
+Received: from [10.10.12.27] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a729d6fe52dsm67177966b.16.2024.06.27.07.43.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Jun 2024 07:43:57 -0700 (PDT)
+Message-ID: <a9c93cd0-e0e9-44d4-a22c-948f5d01754b@gmail.com>
+Date: Thu, 27 Jun 2024 16:43:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240627043317.3751996-1-chris.packham@alliedtelesis.co.nz>
-In-Reply-To: <20240627043317.3751996-1-chris.packham@alliedtelesis.co.nz>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 27 Jun 2024 08:42:20 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+1M47kRb5xELSqroPLbava4TJkiLjDT8er0=iiBmutfw@mail.gmail.com>
-Message-ID: <CAL_Jsq+1M47kRb5xELSqroPLbava4TJkiLjDT8er0=iiBmutfw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/9] mips: Support for RTL9302C
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: tglx@linutronix.de, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	tsbogend@alpha.franken.de, daniel.lezcano@linaro.org, paulburton@kernel.org, 
-	peterz@infradead.org, mail@birger-koblitz.de, bert@biot.com, john@phrozen.org, 
-	sander@svanheule.net, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-mips@vger.kernel.org, kabel@kernel.org, 
-	ericwouds@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] usb: typec: ucsi: glink: use
+ device_for_each_child_node_scoped()
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240623-ucsi_glink-scoped-v1-1-f0fdcfec69bb@gmail.com>
+ <2024062735-railway-stoning-566a@gregkh>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <2024062735-railway-stoning-566a@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 26, 2024 at 10:33=E2=80=AFPM Chris Packham
-<chris.packham@alliedtelesis.co.nz> wrote:
->
-> This series adds basic support for the RTL9302C reference board. Currentl=
-y the
-> focus is on the CPU block stuff. I hope to get around to the DSA switch d=
-river
-> eventually but this is a small start that lets me boot a mainline kernel =
-on the
-> board I have. I initialiy started with code from openwrt but have paired =
-it
-> down to just the clocksource driver and devicetree.
+On 27/06/2024 16:11, Greg Kroah-Hartman wrote:
+> On Sun, Jun 23, 2024 at 12:35:11PM +0200, Javier Carrasco wrote:
+>> Use the scoped variant of `device_for_each_child_node()` to
+>> automatically handle early exits.
+>>
+>> This prevents memory leaks if new error paths are introduced,
+>> as no explicit refcount decrement via `fwnode_handle_put()` is needed.
+>>
+>> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+>> ---
+>> This patch is a follow-up to the recently introduced commit c68942624e25
+>> ("usb: typec: ucsi: glink: fix child node release in probe function")
+>> to account for a safer approach to iterating over child nodes.
+> 
+> What branch/tree is this against?  It fails to apply to my usb-testing
+> branch at all :(
+> 
+> Can you rebase and resubmit?
+> 
+> thanks,
+> 
+> greg k-h
 
-Your emails are being sent as quoted-printable encoding which is
-generally preferred to be avoided on maillists (as is base64).
-git-send-email should normally use 8-bit encoding, but the man page
-indicates QP may be used if there are carriage returns (there
-shouldn't be).
 
-Rob
+Hi, for this to apply you need the commit c68942624e25 ("usb: typec:
+ucsi: glink: fix child node release in probe function"), which still
+uses a non-scoped macro to account for stable kernels. I mentioned it
+under the --- separator, but maybe that is not the way to go.
+
+This patch is a follow-up to use the scoped variant and avoid more bugs
+when new early exits are added.
+
+I thought the other patch had already been applied, but apparently not
+to usb-testing (I used linux-next as basis, the base-commit can be found
+below the patch).
+
+Could you please apply the other patch first? If for whatever reason
+that is not desired, I could resend both patches as a series to avoid
+that one goes unnoticed, but as I said, the first one is already in
+linux-next.
+
+Best regards,
+Javier Carrasco
 
