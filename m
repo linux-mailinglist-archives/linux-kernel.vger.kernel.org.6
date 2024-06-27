@@ -1,137 +1,249 @@
-Return-Path: <linux-kernel+bounces-233006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B98DA91B0F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:52:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D40291B0FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:52:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 625CF1F26FEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:52:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 809761C24D6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A3421A2C23;
-	Thu, 27 Jun 2024 20:51:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139D619FA74;
+	Thu, 27 Jun 2024 20:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M6+VZ4C+"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YB9+zb4f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B8C41A0B07;
-	Thu, 27 Jun 2024 20:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3154619E827;
+	Thu, 27 Jun 2024 20:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719521482; cv=none; b=Tu/SyYyKRJVgQBMgpfAWQO9DvPiarWn29jhsUmYnYF2UV0QxbZV8be+mVQxotdneXabnqicaLxDFIRZRjIhyf1FEb9hnxpwHaofxVezxusMQcXnw9/KG8yye1UZAB/UJ4CKKsIsKJdpxAw0E4UK0at6YNAn60YADChpfObYWTIQ=
+	t=1719521530; cv=none; b=MnHxM2XCNwAG6BVGfiaDBZVMsN4OkkhETfBeufnjsKYi2cJoQpkiKNZLkm6F+hYdnirAqps2+Foz7QgyqFUKvleyZQOuCHt0rF2KueDGZd2b+KwYSBbZo3spw/exPwHksI4nMn1i28gguTKK1LKySlES7vEhqZdxFFHVOPKJkFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719521482; c=relaxed/simple;
-	bh=/ALIBjOWtxJbVr9Wkw8mNnbXWL9/xNtOF34R9g/tscU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZDn2MpC2QTlFQ8DZKAmdv8yEJvZV3NNA5Plkecm/KyRHSmdH4KWQDPC3C3qVPxFRSWCzqMyoNFnosGfJsUtuabf722zHrGXJPReVCllfEfCRwf8wAvSiPvSjAXcQvO7OZYa5we3S9Wi0Z3W6gQuE01zGx95wbbz3NfkaxhescXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M6+VZ4C+; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-364fee5051fso290588f8f.1;
-        Thu, 27 Jun 2024 13:51:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719521479; x=1720126279; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vbEIoELyueCCfotJl73Oz/mTbEWy5/7CioUiOn+VD/E=;
-        b=M6+VZ4C+lVKUkIjA/UKhb9v0t6EbvwUZtY0aZvesG9eh0Djt8IW0U0AMUZ85Xkom/i
-         XMlx4Wbl6QMkEnp29XVwTpiW3lQJO1QUjfidyfRP6HYsLX8M9kfRe7Wfebx8o2wgTnpr
-         b0Zr/ZCADAG3b25BQMyu6iC9vJTYY9weNX/hZbNyclfXksC7AXsZLoZSsXyghBbG+SKY
-         diqdmZnrBV/hOdMzj26gJAw3/4C9qfVOAEGr9nmC++D8mx6wB1YygR4MfNIdBWuKF4h7
-         7PveDb4PHD16oLe3aa6+N1+Q1kvn2Lc6wrA3oLmoKt1wDvre5EPMpwqnERLrHXXSvWI6
-         Q5Pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719521479; x=1720126279;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vbEIoELyueCCfotJl73Oz/mTbEWy5/7CioUiOn+VD/E=;
-        b=Po809PJZlvmdCw4dH02gfLTzUdxHWBgGIdM0hvqRr1gMZdYTeSAS7RUtw4mvQGbbZR
-         p8sm1hcZOZKQ/gNWrrbsvNW/8lEtj4e/bryeoTMai3OIs14+Az+TcTJbcc1yM3faL4yN
-         aXbwkS1QglfcrOS8toi7S70Ch/0JOHUMzPJqhNlAn3ijqFN7FIt3NGFwc/odb9bzqfIz
-         njp7l2hU2hc7iKPfrQ9vfZ0wUbOrAsxa+82jwJrYcHjWh4cCK5a7PrmpdncTzqStYyql
-         JGKJQfQ4jQdprj4nSj7AMtFLO0oG9HkGIkcNNnxeJv5UoNMmz1TpIxXalZzuWL1Yejux
-         Y84w==
-X-Forwarded-Encrypted: i=1; AJvYcCWaWLctSVrOtnfV9MUDnsnZM+UFVaJwgh2iMoVfX1msIrm6eGq7CbkiRES0ysUQV4hqOWqRV78YRw46AfuveT5TE56iW+yKICl+xfA0rMR+z6D4d/9oq+7nrcKSmBo0Y2HpDccytjHwAGbfWa15
-X-Gm-Message-State: AOJu0YxMtG26zagOWdXofA0ZqQoKbNUNhD8zgs+j2fi7Mumzr4NimR/J
-	40YQPmupFtfLX8AyQzl3BSXMctcr/OK33az8zRd0ydDlp2Viq8FW
-X-Google-Smtp-Source: AGHT+IEtsBEK1OfkxAv6NipqhDZf23Ovj4cFZnsL2HIo5HHdI8+D9tpAI79mV/nIag0B6hUd2YkVLw==
-X-Received: by 2002:a05:600c:3c9d:b0:424:8b08:26aa with SMTP id 5b1f17b1804b1-42491783f09mr93113315e9.3.1719521479436;
-        Thu, 27 Jun 2024 13:51:19 -0700 (PDT)
-Received: from ?IPV6:2a01:4b00:d20e:7300:8731:b664:1f4a:5ab4? ([2a01:4b00:d20e:7300:8731:b664:1f4a:5ab4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b0971d2sm6820465e9.31.2024.06.27.13.51.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Jun 2024 13:51:19 -0700 (PDT)
-Message-ID: <f76aac0d-4f46-41b4-8379-d6397272e5f0@gmail.com>
-Date: Thu, 27 Jun 2024 21:51:18 +0100
+	s=arc-20240116; t=1719521530; c=relaxed/simple;
+	bh=5Vyce4zAfgV6w1pp20rVTEDgRdD2Xvdyh3QIPHWLvM8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ugRYauJai9asLveAJxXvOVu884NfrNZ06s3ULc6B3MFXXRlcLOj3PRqFquyKZFBBDV/GJ7Rej/xPWk4yH77ts9l8YsEfgilBjBY0ESmZQXQqtztq/H49grA83t0DP62a3ujn9nSFlJWUp9OCWSeUjfC85kvDihGeyV9bHl5A0pQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YB9+zb4f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B40C0C2BBFC;
+	Thu, 27 Jun 2024 20:52:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719521529;
+	bh=5Vyce4zAfgV6w1pp20rVTEDgRdD2Xvdyh3QIPHWLvM8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YB9+zb4fy/LqQzIgsBPmOperiqxnf1JPNL3XS8J+X33MBU2A3KTvIceo6iHMpM6R2
+	 S1xhgzD60JQ4+KL8CuXH+nBXMtBcpeMEo9MKFKXQqUN2v5vDgujfsySo8uXLYR5yJ9
+	 uiURiNm/+5u8zb3pnVzJ0kzVnIFNInqQSxwHJ4lsPso0+apkYmHLPnO7v5iDFHJxNY
+	 PAz5dvifK4510KQIJiAMw6Gpq34U2kYIUYbWowg8z4OMxOAusAmaWqen370jtEkFGo
+	 9eAIMPo+VbzAtozXMmee0Q52GoHV8WVb5jtUKwZeP+KuBEBZdSElZ3aSPesZwByGX8
+	 bcWBaqY7Oy8Qg==
+Date: Thu, 27 Jun 2024 14:52:07 -0600
+From: Rob Herring <robh@kernel.org>
+To: Farouk Bouabid <farouk.bouabid@cherry.de>
+Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+	Quentin Schulz <quentin.schulz@cherry.de>,
+	Peter Rosin <peda@axentia.se>, Heiko Stuebner <heiko@sntech.de>,
+	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v4 3/9] dt-bindings: mfd: add support for mule
+Message-ID: <20240627205207.GA492473-robh@kernel.org>
+References: <20240618-dev-mule-i2c-mux-v4-0-5462d28354c8@cherry.de>
+ <20240618-dev-mule-i2c-mux-v4-3-5462d28354c8@cherry.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/5] kunit: string-stream-test: Make it a separate
- module
-To: Rae Moar <rmoar@google.com>
-Cc: brendan.higgins@linux.dev, davidgow@google.com,
- linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
- linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
-References: <20240618170331.264851-1-ivan.orlov0322@gmail.com>
- <20240618170331.264851-4-ivan.orlov0322@gmail.com>
- <CA+GJov6NBkPUmPSW6ir1Z0Gc9gFXP6dP-GhnoQU7nCRW0yXTLQ@mail.gmail.com>
-Content-Language: en-US
-From: Ivan Orlov <ivan.orlov0322@gmail.com>
-In-Reply-To: <CA+GJov6NBkPUmPSW6ir1Z0Gc9gFXP6dP-GhnoQU7nCRW0yXTLQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240618-dev-mule-i2c-mux-v4-3-5462d28354c8@cherry.de>
 
-On 6/21/24 22:07, 'Rae Moar' via KUnit Development wrote:
-> On Tue, Jun 18, 2024 at 1:03 PM Ivan Orlov <ivan.orlov0322@gmail.com> wrote:
->>
->> Currently, the only way to build string-stream-test is by setting
->> CONFIG_KUNIT_TEST=y. However, CONFIG_KUNIT_TEST is a config option for
->> a different test (`kunit-test.c`).
->>
->> Introduce a new Kconfig entry in order to be able to build the
->> string-stream-test test as a separate module. Import the KUnit namespace
->> in the test so we could have string-stream functions accessible.
->>
->> Reviewed-by: David Gow <davidgow@google.com>
->> Signed-off-by: Ivan Orlov <ivan.orlov0322@gmail.com>
-> 
-> Hello!
-> 
-> This is looking good to me other than the module description as noted
-> by Jeff. That could be a separate patch since the rest of the series
-> is looking good.
-> 
-> There is the checkpatch warning on the module description. But as
-> David mentioned, the description looks ok to me. If there is a new
-> version of this patch, it may be worth trying to get rid of the
-> warning by lengthening the description.
-> 
-> But I am happy with this patch as is.
-> 
-> Reviewed-by: Rae Moar <rmoar@google.com>
-> 
-> Thanks!
-> -Rae
+On Tue, Jun 18, 2024 at 06:06:45PM +0200, Farouk Bouabid wrote:
+> Mule is an MCU that emulates a set of I2C devices, among which an amc6821
+> device and an I2C mux that exposes more emulated devices. These two devices
+> share the same I2C address. Only the I2C mux uses register (0xff) as a
+> config register.
 
-Hi Rae,
+Everywhere (or the first place in any section (subject, commit msg, 
+title, description, etc.) you say 'mule' I think should be preceeded 
+with the vendor because 'mule' has no meaning on its own unless we are 
+talking animals.
 
-Thank you for the review. I believe I'm going to send the V3 and add the 
-module description there, to make the whole series as good as possible 
-before it gets merged :)
+> 
+> Add dt-binding support for the Mule I2C multi-function device.
+> 
+> Signed-off-by: Farouk Bouabid <farouk.bouabid@cherry.de>
+> ---
+>  .../devicetree/bindings/i2c/tsd,mule-i2c-mux.yaml  | 48 +++++++++++++
+>  .../devicetree/bindings/mfd/tsd,mule.yaml          | 82 ++++++++++++++++++++++
+>  2 files changed, 130 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/i2c/tsd,mule-i2c-mux.yaml b/Documentation/devicetree/bindings/i2c/tsd,mule-i2c-mux.yaml
+> new file mode 100644
+> index 000000000000..ac9dfc936272
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/i2c/tsd,mule-i2c-mux.yaml
+> @@ -0,0 +1,48 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/i2c/tsd,mule-i2c-mux.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Mule I2C multiplexer
+> +
+> +maintainers:
+> +  - Farouk Bouabid <farouk.bouabid@cherry.de>
+> +  - Quentin Schulz <quentin.schulz@cherry.de>
+> +
+> +description: |
+> +  This module is part of the Mule I2C multi-function device. For more
+> +  details see ../mfd/tsd,mule.yaml.
+> +
+> +  Mule I2C-mux configures the active device that can be accessed on address
+> +  0x6f through the config register.
+> +
+> +      +--------------------------------------------------+
+> +      | Mule                                             |
+> +  0x18|    +---------------+                             |
+> +  -------->|Config register|----+                        |
+> +      |    +---------------+    |                        |
+> +      |                         V_                       |
+> +      |                        |  \          +--------+  |
+> +      |                        |   \-------->| dev #0 |  |
+> +      |                        |   |         +--------+  |
+> +  0x6f|                        | M |-------->| dev #1 |  |
+> +  ---------------------------->| U |         +--------+  |
+> +      |                        | X |-------->| dev #2 |  |
+> +      |                        |   |         +--------+  |
+> +      |                        |   /-------->| dev #3 |  |
+> +      |                        |__/          +--------+  |
+> +      +--------------------------------------------------+
+> +
+> +
+> +allOf:
+> +  - $ref: /schemas/i2c/i2c-mux.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: tsd,mule-i2c-mux
+> +
+> +required:
+> +  - compatible
+> +
+> +unevaluatedProperties: false
+> diff --git a/Documentation/devicetree/bindings/mfd/tsd,mule.yaml b/Documentation/devicetree/bindings/mfd/tsd,mule.yaml
+> new file mode 100644
+> index 000000000000..ab532340a17c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/tsd,mule.yaml
+> @@ -0,0 +1,82 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mfd/tsd,mule.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Mule I2C multi function device
+> +
+> +maintainers:
+> +  - Farouk Bouabid <farouk.bouabid@cherry.de>
+> +  - Quentin Schulz <quentin.schulz@cherry.de>
+> +
+> +description:
+> +  Mule is an MCU that emulates a set of I2C devices, among which an amc6821
+> +  device and an I2C mux that exposes more emulated devices. These two devices
+> +  share the same I2C address. Only the I2C mux uses register (0xff) as a config
+> +  register.
+> +
+> +properties:
+> +  compatible:
+> +    const: tsd,mule
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 0
+> +
+> +patternProperties:
+> +  "^fan(@[0-9a-f]+)?$":
+> +    $ref: /schemas/trivial-devices.yaml
 
-Thank you so much for reviewing the series once again.
+That doesn't really define which device. You should do something like 
+this:
 
--- 
-Kind regards,
-Ivan Orlov
+additionalProperties: true
+properties:
+  compatible:
+    contains:
+      const: ti,amc6821
 
+If the compatible is correct, then the schema for it will be applied 
+separately.
+
+> +
+> +  "^i2c-mux(@[0-9a-f]+)?$":
+> +    $ref: /schemas/i2c/tsd,mule-i2c-mux.yaml
+> +
+> +required:
+> +  - "#address-cells"
+> +  - "#size-cells"
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        mule@18 {
+> +            compatible = "tsd,mule";
+> +            reg = <0x18>;
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +
+> +            fan@18 {
+> +                compatible = "ti,amc6821";
+> +                reg = <0x18>;
+> +            };
+> +
+> +            i2c-mux {
+> +                compatible = "tsd,mule-i2c-mux";
+> +                #address-cells = <1>;
+> +                #size-cells = <0>;
+> +
+> +                i2c@0 {
+> +                    reg = <0x0>;
+> +                    #address-cells = <1>;
+> +                    #size-cells = <0>;
+> +
+> +                    rtc@6f {
+> +                        compatible = "isil,isl1208";
+> +                        reg = <0x6f>;
+> +                    };
+> +                };
+> +            };
+> +        };
+> +    };
+> +...
+> 
+> -- 
+> 2.34.1
+> 
 
