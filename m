@@ -1,86 +1,238 @@
-Return-Path: <linux-kernel+bounces-232318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 826C391A6C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:43:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DAAB91A6C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:44:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36B65286E29
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:43:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D028282D73
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:44:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B986215EFB6;
-	Thu, 27 Jun 2024 12:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="fokESkpj"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670A916DC2D;
+	Thu, 27 Jun 2024 12:43:51 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879EB15ECDB
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5091D16DC07
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:43:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719492209; cv=none; b=qmwsD+VHf1ypiXkBSYoXGR0TjnDImAcLgiTuk1Q7IG8jqV5NPSGufknp2PgZFnK/buDmolrtdcNzH/LYLY54uo1riKEAdwnQbohA8cOGIz0zW3k6p33CxPtb0ltc6p1L0lehJZfF7VGFoIvu0cVdX9cTFrswf8vL5kpuUrGaTUQ=
+	t=1719492230; cv=none; b=lrvsWb7LNiUWC/QP34HZp8IzFMjWdyBRgPkJOfmQPTPU/9czHD2R4nsSLmuFQMMwuDAfxxoX16whq0KZwhIoFxaN++QghoNQc7HZMxXEPMsU6yoZWW9j/DSizS8yZ/p5zQY3iK3aIN97flEDt9n5zasrinyav8UE1Dq9pbXnMJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719492209; c=relaxed/simple;
-	bh=ExYCtX63CEn0F/NNc5KVhjdf/D7j6mzWCPKtIhlu6BY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H9ivOOXPu0F1F/Py5/uBRIGycvJ6TNN3/DW4yuj0kz1Jjqak9EXuQTEABSAtz4yWimKQ78BBo6TicX9RNG/hmo9feEBnmFs39IyPfm3O1B57FwCl7e+Gd25+UzOJPQodVfXCaeoyh8ZmRf8IPO0nPGYIAYy4o0woIjs/CVnngUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=fokESkpj; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:mime-version:content-transfer-encoding; s=k1; bh=D4snzyMAEU6JEF
-	0uM9tuR/L4oH5JoDjLeAevy1y8a4M=; b=fokESkpj6GLroTNQ3xYIayYKXpC58C
-	eCbROShd3XPjSEp8vis8ixX7v8yaJzOWcKPKKGCsuSDosYnYX1h5UMJot2AM4TFb
-	dOFP0rVeqSX3LeZAMaqcEuY/GjKJFailrkDttSie5WPAPtZvaBTNjURhIBpiZRj5
-	j2uS0Atb3xg0Ka26HH4Mk5/j6IADSOyuOcRkRNH+mWF/ynuKWuYw+U3Lx9T3worI
-	hb5lErOMUFMm5go63R0SdtTqY+7Tr7FSR2jt83jUQQLd/ZGtbSuN9n7gdMrokWVm
-	+Xh6FIobT8qGQOolBBynRkcmlv7NmjRd4r+/QXeLKvaJ79Q88V3zISfA==
-Received: (qmail 911777 invoked from network); 27 Jun 2024 14:43:21 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Jun 2024 14:43:21 +0200
-X-UD-Smtp-Session: l3s3148p1@HUvded4bZtkgAQnoAGk/AEN12aawIPYB
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-renesas-soc@vger.kernel.org
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] i2c: add debug message for detected HostNotify alerts
-Date: Thu, 27 Jun 2024 14:43:14 +0200
-Message-ID: <20240627124313.1811-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1719492230; c=relaxed/simple;
+	bh=1dQLQ+ARUlLzvvMV+YhsLgq6x7BFBSZJi2jpscurXuo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EL1qKm0DHQPnXR8RdPuQtiHihBF9mvMKbnK9lcqpfzW8XsdQiTMs22YW5yghUz3VaWdVr2+zp+E2ax1YTMCS2w3zb/ZRTuum4YQUobN+peZLu75XAe3Uy126weVHelriT8uHVjAIOw4Pl8hmKQx5I4lgvoflmvwmGHhazAlJYm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sMoTS-00026e-48; Thu, 27 Jun 2024 14:43:38 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sMoTR-005MyL-MU; Thu, 27 Jun 2024 14:43:37 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sMoTR-000Sq6-1u;
+	Thu, 27 Jun 2024 14:43:37 +0200
+Date: Thu, 27 Jun 2024 14:43:37 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: "David S. Miller" <davem@davemloft.net>, Andrew Lunn <andrew@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Arun Ramadoss <arun.ramadoss@microchip.com>
+Cc: UNGLinuxDriver@microchip.com, linux-kernel@vger.kernel.org,
+	kernel@pengutronix.de, netdev@vger.kernel.org
+Subject: Re: [PATCH net-next v1 1/1] net: dsa: microchip: add regmap_range
+ for KSZ9563 chip
+Message-ID: <Zn1eeYwYgU2ocWHz@pengutronix.de>
+References: <20240627123911.227480-1-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240627123911.227480-1-o.rempel@pengutronix.de>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Setting up HostNotify can be tricky. Support debugging by stating
-whenever we received a HostNotify alert independent of the irq being
-mapped. Especially useful with the in-kernel i2c testunit.
+Please ignore this patch, it was send by accident.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/i2c-core-base.c | 2 ++
- 1 file changed, 2 insertions(+)
+On Thu, Jun 27, 2024 at 02:39:08PM +0200, Oleksij Rempel wrote:
+> Add register validation for KSZ9563.
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+>  drivers/net/dsa/microchip/ksz_common.c | 121 +++++++++++++++++++++++++
+>  1 file changed, 121 insertions(+)
+> 
+> diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
+> index 030b167764b39..2308be3bdc9d8 100644
+> --- a/drivers/net/dsa/microchip/ksz_common.c
+> +++ b/drivers/net/dsa/microchip/ksz_common.c
+> @@ -666,6 +666,125 @@ static const struct regmap_access_table ksz8563_register_set = {
+>  	.n_yes_ranges = ARRAY_SIZE(ksz8563_valid_regs),
+>  };
+>  
+> +static const struct regmap_range ksz9563_valid_regs[] = {
+> +	regmap_reg_range(0x0000, 0x0003),
+> +	regmap_reg_range(0x0006, 0x0006),
+> +	regmap_reg_range(0x000f, 0x000f),
+> +	regmap_reg_range(0x0010, 0x001f),
+> +	regmap_reg_range(0x0100, 0x0100),
+> +	regmap_reg_range(0x0104, 0x0107),
+> +	regmap_reg_range(0x010d, 0x010d),
+> +	regmap_reg_range(0x0110, 0x0113),
+> +	regmap_reg_range(0x0120, 0x012b),
+> +	regmap_reg_range(0x0201, 0x0201),
+> +	regmap_reg_range(0x0210, 0x0213),
+> +	regmap_reg_range(0x0300, 0x0300),
+> +	regmap_reg_range(0x0302, 0x030b),
+> +	regmap_reg_range(0x030e, 0x031b),
+> +	regmap_reg_range(0x0320, 0x032b),
+> +	regmap_reg_range(0x0330, 0x0336),
+> +	regmap_reg_range(0x0338, 0x033b),
+> +	regmap_reg_range(0x033e, 0x033e),
+> +	regmap_reg_range(0x0340, 0x035f),
+> +	regmap_reg_range(0x0370, 0x0370),
+> +	regmap_reg_range(0x0378, 0x0378),
+> +	regmap_reg_range(0x037c, 0x037d),
+> +	regmap_reg_range(0x0390, 0x0393),
+> +	regmap_reg_range(0x0400, 0x040e),
+> +	regmap_reg_range(0x0410, 0x042f),
+> +	regmap_reg_range(0x0500, 0x0519),
+> +	regmap_reg_range(0x0520, 0x054b),
+> +	regmap_reg_range(0x0550, 0x05b3),
+> +
+> +	/* port 1 */
+> +	regmap_reg_range(0x1000, 0x1001),
+> +	regmap_reg_range(0x1004, 0x100b),
+> +	regmap_reg_range(0x1013, 0x1013),
+> +	regmap_reg_range(0x1017, 0x1017),
+> +	regmap_reg_range(0x101b, 0x101b),
+> +	regmap_reg_range(0x101f, 0x1021),
+> +	regmap_reg_range(0x1030, 0x1030),
+> +	regmap_reg_range(0x1100, 0x1115),
+> +	regmap_reg_range(0x111a, 0x111f),
+> +	regmap_reg_range(0x1120, 0x112b),
+> +	regmap_reg_range(0x1134, 0x113b),
+> +	regmap_reg_range(0x113c, 0x113f),
+> +	regmap_reg_range(0x1400, 0x1401),
+> +	regmap_reg_range(0x1403, 0x1403),
+> +	regmap_reg_range(0x1410, 0x1417),
+> +	regmap_reg_range(0x1420, 0x1423),
+> +	regmap_reg_range(0x1500, 0x1507),
+> +	regmap_reg_range(0x1600, 0x1612),
+> +	regmap_reg_range(0x1800, 0x180f),
+> +	regmap_reg_range(0x1900, 0x1907),
+> +	regmap_reg_range(0x1914, 0x191b),
+> +	regmap_reg_range(0x1a00, 0x1a03),
+> +	regmap_reg_range(0x1a04, 0x1a07),
+> +	regmap_reg_range(0x1b00, 0x1b01),
+> +	regmap_reg_range(0x1b04, 0x1b04),
+> +	regmap_reg_range(0x1c00, 0x1c05),
+> +	regmap_reg_range(0x1c08, 0x1c1b),
+> +
+> +	/* port 2 */
+> +	regmap_reg_range(0x2000, 0x2001),
+> +	regmap_reg_range(0x2004, 0x200b),
+> +	regmap_reg_range(0x2013, 0x2013),
+> +	regmap_reg_range(0x2017, 0x2017),
+> +	regmap_reg_range(0x201b, 0x201b),
+> +	regmap_reg_range(0x201f, 0x2021),
+> +	regmap_reg_range(0x2030, 0x2030),
+> +	regmap_reg_range(0x2100, 0x2115),
+> +	regmap_reg_range(0x211a, 0x211f),
+> +	regmap_reg_range(0x2120, 0x212b),
+> +	regmap_reg_range(0x2134, 0x213b),
+> +	regmap_reg_range(0x213c, 0x213f),
+> +	regmap_reg_range(0x2400, 0x2401),
+> +	regmap_reg_range(0x2403, 0x2403),
+> +	regmap_reg_range(0x2410, 0x2417),
+> +	regmap_reg_range(0x2420, 0x2423),
+> +	regmap_reg_range(0x2500, 0x2507),
+> +	regmap_reg_range(0x2600, 0x2612),
+> +	regmap_reg_range(0x2800, 0x280f),
+> +	regmap_reg_range(0x2900, 0x2907),
+> +	regmap_reg_range(0x2914, 0x291b),
+> +	regmap_reg_range(0x2a00, 0x2a03),
+> +	regmap_reg_range(0x2a04, 0x2a07),
+> +	regmap_reg_range(0x2b00, 0x2b01),
+> +	regmap_reg_range(0x2b04, 0x2b04),
+> +	regmap_reg_range(0x2c00, 0x2c05),
+> +	regmap_reg_range(0x2c08, 0x2c1b),
+> +
+> +	/* port 3 */
+> +	regmap_reg_range(0x3000, 0x3001),
+> +	regmap_reg_range(0x3013, 0x3013),
+> +	regmap_reg_range(0x3017, 0x3017),
+> +	regmap_reg_range(0x301b, 0x301b),
+> +	regmap_reg_range(0x301f, 0x3020),
+> +	regmap_reg_range(0x3030, 0x3030),
+> +	regmap_reg_range(0x3300, 0x3301),
+> +	regmap_reg_range(0x3303, 0x3303),
+> +	regmap_reg_range(0x3400, 0x3401),
+> +	regmap_reg_range(0x3403, 0x3403),
+> +	regmap_reg_range(0x3410, 0x3417),
+> +	regmap_reg_range(0x3420, 0x3423),
+> +	regmap_reg_range(0x3500, 0x3507),
+> +	regmap_reg_range(0x3600, 0x3612),
+> +	regmap_reg_range(0x3800, 0x380f),
+> +	regmap_reg_range(0x3900, 0x3907),
+> +	regmap_reg_range(0x3914, 0x391b),
+> +	regmap_reg_range(0x3a00, 0x3a03),
+> +	regmap_reg_range(0x3a04, 0x3a07),
+> +	regmap_reg_range(0x3b00, 0x3b01),
+> +	regmap_reg_range(0x3b04, 0x3b04),
+> +	regmap_reg_range(0x3c00, 0x3c05),
+> +	regmap_reg_range(0x3c08, 0x3c1b),
+> +};
+> +
+> +static const struct regmap_access_table ksz9563_register_set = {
+> +	.yes_ranges = ksz9563_valid_regs,
+> +	.n_yes_ranges = ARRAY_SIZE(ksz9563_valid_regs),
+> +};
+> +
+>  static const struct regmap_range ksz9477_valid_regs[] = {
+>  	regmap_reg_range(0x0000, 0x0003),
+>  	regmap_reg_range(0x0006, 0x0006),
+> @@ -1475,6 +1594,8 @@ const struct ksz_chip_data ksz_switch_chips[] = {
+>  		.supports_rgmii = {false, false, true},
+>  		.internal_phy = {true, true, false},
+>  		.gbit_capable = {true, true, true},
+> +		.wr_table = &ksz9563_register_set,
+> +		.rd_table = &ksz9563_register_set,
+>  	},
+>  
+>  	[KSZ8567] = {
+> -- 
+> 2.39.2
+> 
+> 
+> 
 
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index db0d1ac82910..b94594e90a66 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -1468,6 +1468,8 @@ int i2c_handle_smbus_host_notify(struct i2c_adapter *adap, unsigned short addr)
- 	if (!adap)
- 		return -EINVAL;
- 
-+	dev_dbg(&adap->dev, "Detected HostNotify from address 0x%02x", addr);
-+
- 	irq = irq_find_mapping(adap->host_notify_domain, addr);
- 	if (irq <= 0)
- 		return -ENXIO;
 -- 
-2.43.0
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
