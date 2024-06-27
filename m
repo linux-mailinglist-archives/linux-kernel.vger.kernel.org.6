@@ -1,76 +1,176 @@
-Return-Path: <linux-kernel+bounces-231806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DEBD919E52
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 06:45:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66D0F919E54
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 06:46:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E6A01F25EA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 04:45:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C4841C238D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 04:46:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B8611BDDB;
-	Thu, 27 Jun 2024 04:45:09 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A131B813;
+	Thu, 27 Jun 2024 04:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BxtAL3sR"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767D51B949
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 04:45:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D6C72139B5;
+	Thu, 27 Jun 2024 04:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719463508; cv=none; b=VYQlQ31Y4I1IIjF/wtqdbf/SGik6TExhwgjKJMFBmqRlwXxDovNyEmlGLlJVUt4M2Awew+6KCAfg/096S9nRWGGNeXUudi4XrSMeKRbu4RA/Syr2YmyZnOT9kNvDffoBH/S4my5qYDYjA2Prmh22UDq0tV84ldwlyLNEIIwoHik=
+	t=1719463578; cv=none; b=pR7N+xotCoQzWwbjvahAnnlzcDUkgxN3c8nqK9UMsH+HvB/thmxjrJM6E6tkFjg81K6ebk/zEQhRrWIj2NosKGzuX/T+pTx3S47s9SCb9XVfWaCcFc1s6vvBIz5g/knK9KCYi7uiR75/thRAqUPBC8c55zpfI2aom7T7uA/DfVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719463508; c=relaxed/simple;
-	bh=2P9ciSlu7Ek9y6TGFOI752MUh8bHFPb7DN1jU8pmlJ8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=d3WmfgJFuNAclD+YhRHjLShSJo0pHjfzuIZyjyTIligRBuSLccplBVy+R1SaxlK9GuZPKELgaDFNSciFs2pvnYjEhjtlI3f2NpI9o656ZJO66hsHqZ/iSU8T4ggBBLjmDKodVI1f6Ck8B4NgYSOYA1GCOqema+uvtgZ40RwLdro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7f4e272a9dcso17650739f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 21:45:07 -0700 (PDT)
+	s=arc-20240116; t=1719463578; c=relaxed/simple;
+	bh=sPZMhhDT23wUlyWaNbtHCnHrbc6GXLB01l0IECAtbaI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ASXlnuOVC8yrXh7xr3WK/hb3XEXwwpfa07jOYfuYha0LWRg5LgrgR8z3GIAA3Prem4SUYNhGppsuoAiK8gAVyEADtWX8EbgU5NkrHXWBKt2imUXYgF6K4blPdvnl2UBraAv/8KlKVLK0ucxhQ0pcmyN9BC1nrda/8KVGUJ6KrIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BxtAL3sR; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-6e7b121be30so5564945a12.1;
+        Wed, 26 Jun 2024 21:46:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719463577; x=1720068377; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EJYxRBEnCR0c7heDIYrlzOpEfIjphMvhUvoRah75BKg=;
+        b=BxtAL3sRDE5GbUoVYZngjz1SClJNEpKnaNKxPsPG7QrDHGFIww3ADij6OKYYlTX/4/
+         oywhqod4ha98hsv49hXvcm3FEMrAAnLsBn6qWZ5NJfhlXwqOsMBIA1zlLpqxqR3MzSei
+         qKq8E3UCU575hEsjc78xsGyRhnAHpFX3kH+g8EYSTstOSPsh5Z9xP7L/fhhdh6OnRZ7G
+         BZLI9Vx4MKDLCputH7SmCryEkD2h9qRLmuhghosR3loD2g3/wEqdCSaKtlwIWNwBMJg/
+         R7Pg91Yw/g1iBuwYGRecQosdJSyXRGCuLUFHnS/H+aoJIRF474NM+WS0Br9vqulXf3U+
+         bfcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719463506; x=1720068306;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1719463577; x=1720068377;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2P9ciSlu7Ek9y6TGFOI752MUh8bHFPb7DN1jU8pmlJ8=;
-        b=Ir/zCffwawrm3GZGmsXECLM0fK4J3BiU/GPj3GmeuYYG8Se9okkExEsnLA5hJ7PA5W
-         UNyJyORGFr0t/+t1B42nyhSl8+gQh0haWHX59Y/zFmxXaZm2IrVp/z79uBhvIUuLqILg
-         0a7ccy6Um5bdfeYvNv+bMk8fQLb5yt+uhAXxh+Dd/GHDaG3rOj1hVB1MVy138ZBqrTG1
-         +1zCHBi8W3N0jbnec9uUi80tziFc2GEDJ/aOY3FQu/IwtyUr5GV5z/csQ9EoQbLv7d+/
-         avrnzVk37GPDzZueNSwTJB4/cFmFARHgjYAq8G05FTTekUJ5OM8wwdiSd07egMYfVh+c
-         JBBg==
-X-Gm-Message-State: AOJu0YwGPSNxmRbjfhzkfQ63khPjPk9p9RPhTJVomCgeSj1FuBMuUvEi
-	gCHrHqlrlFILzBYFMnuzLd5pig9C7eoebsQ+wIZ3aBY7V9nHRBWM+ml4b0eV6xBG+WGR/F8X9fd
-	CSz8CUUdifD14vXyG3fUZrZSdqCbSYeFZR5zh3KOmO/mY6UudDZZ4EB4=
-X-Google-Smtp-Source: AGHT+IEXtPKOziJrsWXMppsenRdsE3h+RrjXzT/MovRwYaYYxRF70R/kp0YpKWrjmafVKeq/ZEY6CS1IJFdnIVoAHVJ3rbuBTnDC
+        bh=EJYxRBEnCR0c7heDIYrlzOpEfIjphMvhUvoRah75BKg=;
+        b=GCYClLN9mLQj4PpUb26choUZJYgjLfx0VWWRFMA7yrqdQpu59DGsAdipbCh//ErC3T
+         7F8CcZDkAKeAAmvw0nOgEixWUgP1P0QGU6ANwF4qja8V4wYj/en0kDO64C5bnWxnqQaX
+         byoj0C6mRomUL174BxFpx8baVhyc+uTKqsFxby0pua0bQt4aQ9maqKx/GdfxFh1bKTxY
+         B5aXtJu76DjtWHawH0NBf7MS5eVIjAcj9SyXdfp4m0lE4ymfCidpMWvTjULNOebv3W8V
+         cVKYBIt9G7AOHREJOigc7TnK+G668Hjgih4DfjG2rJuKs7lSksoiFRkMAe19ARHXS/az
+         gC/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWwcJrv2LtYUQkStb5kSTdsFN8eLhCEJpOEd1qZvQSKib91JMNDhBAgoa9xVhdviB2AWKrUPZCerOAP6uQ6/tbpjXZCbeDj5cEXNITU0qh+Z+rJDD91K2/D3m9vLMGXQg0g/d0Eov4xy0I=
+X-Gm-Message-State: AOJu0YxTInEIUZ14hnu7NRwF5FparecCQr+TR9n76lMugTpXii8pvs67
+	sPX1H6QcwbFLfzwZNusxs9hFJ/Te7pmf7uXwwMcY0iJB9QldlUiR
+X-Google-Smtp-Source: AGHT+IFp29qp9vdgmc0J9c1HxM/cGT4fSjmGUFZR4eKfFGh80tpXolcvxJJZBzvoJxjV+1Xfwv7/mA==
+X-Received: by 2002:a05:6a20:748c:b0:1bd:2413:a963 with SMTP id adf61e73a8af0-1becda2b052mr1205055637.41.1719463576445;
+        Wed, 26 Jun 2024 21:46:16 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:c4ea:7ce4:91ae:d360])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1faac9c33e1sm3332565ad.279.2024.06.26.21.46.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 21:46:16 -0700 (PDT)
+Date: Wed, 26 Jun 2024 21:46:13 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Russell King <linux@armlinux.org.uk>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: tegra: paz00: use software nodes to describe GPIOs for
+ WiFi rfkill
+Message-ID: <ZnzulZBukibZUXKM@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a46:b0:376:2246:3b4b with SMTP id
- e9e14a558f8ab-3794d28e58emr1230865ab.1.1719463506601; Wed, 26 Jun 2024
- 21:45:06 -0700 (PDT)
-Date: Wed, 26 Jun 2024 21:45:06 -0700
-In-Reply-To: <00000000000085bb82061984e155@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000083fcb7061bd7cbce@google.com>
-Subject: Re: [syzbot] WARNING in __kvm_gpc_refresh (2)
-From: syzbot <syzbot+fd555292a1da3180fc82@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Complete conversion of the WiFi rfkill device to use device
+properties/software nodes by utilizing PROPERTY_ENTRY_GPIO() instead of
+a lookup table.
 
-***
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
 
-Subject: WARNING in __kvm_gpc_refresh (2)
-Author: peili.dev@gmail.com
+Compiled only, no real hardware to test.
 
-#syz test
+ arch/arm/mach-tegra/board-paz00.c | 50 ++++++++++++++++++++-----------
+ 1 file changed, 32 insertions(+), 18 deletions(-)
+
+diff --git a/arch/arm/mach-tegra/board-paz00.c b/arch/arm/mach-tegra/board-paz00.c
+index 18d37f90cdfe..3ec810b6f1a7 100644
+--- a/arch/arm/mach-tegra/board-paz00.c
++++ b/arch/arm/mach-tegra/board-paz00.c
+@@ -8,35 +8,49 @@
+  * Copyright (C) 2010 Google, Inc.
+  */
+ 
+-#include <linux/property.h>
++#include <linux/err.h>
+ #include <linux/gpio/machine.h>
++#include <linux/gpio/property.h>
+ #include <linux/platform_device.h>
++#include <linux/printk.h>
++#include <linux/property.h>
+ 
+ #include "board.h"
+ 
+-static struct property_entry wifi_rfkill_prop[] __initdata = {
+-	PROPERTY_ENTRY_STRING("name", "wifi_rfkill"),
+-	PROPERTY_ENTRY_STRING("type", "wlan"),
+-	{ },
++static const struct software_node tegra_gpiochip_node = {
++	.name	= "tegra-gpio",
+ };
+ 
+-static struct platform_device wifi_rfkill_device = {
+-	.name	= "rfkill_gpio",
+-	.id	= -1,
++static const struct property_entry wifi_rfkill_prop[] __initconst = {
++	PROPERTY_ENTRY_STRING("name", "wifi_rfkill"),
++	PROPERTY_ENTRY_STRING("type", "wlan"),
++	PROPERTY_ENTRY_GPIO("reset-gpios",
++			    &tegra_gpiochip_node, 25, GPIO_ACTIVE_HIGH),
++	PROPERTY_ENTRY_GPIO("shutdown-gpios",
++			    &tegra_gpiochip_node, 85, GPIO_ACTIVE_HIGH),
++	{ }
+ };
+ 
+-static struct gpiod_lookup_table wifi_gpio_lookup = {
+-	.dev_id = "rfkill_gpio",
+-	.table = {
+-		GPIO_LOOKUP("tegra-gpio", 25, "reset", 0),
+-		GPIO_LOOKUP("tegra-gpio", 85, "shutdown", 0),
+-		{ },
+-	},
++static const struct platform_device_info wifi_rfkill_info __initconst = {
++	.name		= "rfkill_gpio",
++	.id		= PLATFORM_DEVID_NONE,
++	.properties	= wifi_rfkill_prop,
+ };
+ 
+ void __init tegra_paz00_wifikill_init(void)
+ {
+-	device_create_managed_software_node(&wifi_rfkill_device.dev, wifi_rfkill_prop, NULL);
+-	gpiod_add_lookup_table(&wifi_gpio_lookup);
+-	platform_device_register(&wifi_rfkill_device);
++	struct platform_device *pd;
++	int err;
++
++	err = software_node_register(&tegra_gpiochip_node);
++	if (err) {
++		pr_err("failed to register %s node: %d\n",
++		       tegra_gpiochip_node.name, err);
++		return;
++	}
++
++	pd = platform_device_register_full(&wifi_rfkill_info);
++	err = PTR_ERR_OR_ZERO(pd);
++	if (err)
++		pr_err("failed to register WiFi rfkill device: %d\n", err);
+ }
+-- 
+2.45.2.741.gdbec12cfda-goog
+
+
+-- 
+Dmitry
 
