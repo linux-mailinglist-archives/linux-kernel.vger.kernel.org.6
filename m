@@ -1,134 +1,100 @@
-Return-Path: <linux-kernel+bounces-232462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54F1391A927
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:24:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A8D791A921
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:24:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10F9F286588
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:24:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E97CDB279E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1E1196450;
-	Thu, 27 Jun 2024 14:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C83B195FE6;
+	Thu, 27 Jun 2024 14:23:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kNxV92eZ"
-Received: from mail-pf1-f196.google.com (mail-pf1-f196.google.com [209.85.210.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CUNNgeqm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48599195F22;
-	Thu, 27 Jun 2024 14:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC8219306A;
+	Thu, 27 Jun 2024 14:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719498264; cv=none; b=aACOKAfBlFHMaQCVEyVgy0paAX9XlroOAV0cBXjM6QhBFKJ5oSQnotKj3WP1h1Bj91+VgYHgwkhCJlNYdfnJDyREzWE7WWSHqjUUjxbMxIQYO51XjTm556a50Xi7Sc9DTxU0kkmHn2WkbCbIuCx/Cw5q9G+U5uSlSEZ2n/mScXY=
+	t=1719498228; cv=none; b=ijxgXaF2tL2tjY+O3ma4Yy1X1EGUt4cGnDfW7rWcTg7L70+01vO1WgR0y8U3WOyBB/9B2ReHGQj/eMAhS8IJU1GpYgHMJejKNLXnPd/k7XI6D5F0uYGVetd5xqZCvJ6QGEwGyFiaDZ/oXY3uk3zHX6i4fRv9P4K6iIcyeKzGeLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719498264; c=relaxed/simple;
-	bh=Q2jff5QT5dahZ0NplzuKdapGzNO6RH+dDW7S1GCf5v4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KJtxu4C/6721T3B5L33/qiuzaMoxSTsqdrrylFWNiOCNx9Mih9aC2fLgKeukM2yNPUXZksHWuFS9FQ5zQWH02rAdsGfYjqPX6ZR1wCnrqfbLvUSJunEe87KigMg4Fh2FjJLO2XiHjbTs7xH2fh3d9pbe//iUpIyWkZpZiVh6WN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kNxV92eZ; arc=none smtp.client-ip=209.85.210.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f196.google.com with SMTP id d2e1a72fcca58-70671ecd334so4096063b3a.0;
-        Thu, 27 Jun 2024 07:24:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719498262; x=1720103062; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=f/eLI45W/ooqVC/MA9zQHUWk1MIJ0qMRX6RqXTFEWV8=;
-        b=kNxV92eZzHtv8FnLNVXDxkpXstN1yuHC5iRPqRxvzkvHRWN2wW6uCUBhIjXtlevCoc
-         +cunYdZVanA2dy4OK5apl5iP0ONnqRXa8bqPFz8G9EmRuNI73UgFg6oS3pz1he6WyYVx
-         78bZBFzZW4EzvrkAnLhP+0vEgrqWSY6C8oQVpj7iUhdty/etdmlQxp2eqcT3WWs1LxIL
-         95bc1+VzGbMf73nUc0/6kLyqi22Qn2hZ3GWSD3cHCPdUjUPjHXJDdu9NuSlQsGWfB/hu
-         wjAk7jBwzKemibsoW5I9bKGjzeYOEnGv1J0FFPWRXzbxeSAj5b/0+1KSxwDqCQQey73Y
-         b8IQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719498262; x=1720103062;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=f/eLI45W/ooqVC/MA9zQHUWk1MIJ0qMRX6RqXTFEWV8=;
-        b=LgeBeSUDmcvC7EI47txRoj/lnMrh59N8e1lAdQcFQqeb5FojoeRA4/Hz5TtxpNBrpE
-         nkiDsZ0BMTatVZKjBPYkSmpPStlC0bS6TbZTy38cuWRQetICJhv31Qk25IPSPt5ReB2+
-         jsTT0D2EBiv3TcDjI9Dohp0iVzVvAVIoGMspEdmNQMItviMk+IdTijb4AcB+cn34IfzZ
-         9zrwC0df482oJqkP1dxFx5VeJVo7rWFJgr7oSI/tK+4oL2cYs8dtV+gP9+b7Y5HD/AKh
-         QmirmxSD3FqwpTQC9RWYAohF1L2ZLyUa4fnLAwrFjSbj2yrQ/Cjy8RafC883iA7rvNnO
-         NB3g==
-X-Forwarded-Encrypted: i=1; AJvYcCV+CIFUZGyGniMunruQCllFVlZonz6Hgzyya58zputAbz48inZ/GJ2udLVOGUYBX1HwhFPNO8TftPQ+5nXzFTr/ZcUdKPw6
-X-Gm-Message-State: AOJu0YyiigaDret79M3yxzzkXy2rwrykYVMo0GQLQT3XhlICuMrNcpdr
-	JaAAJgot2KIhT9p9oc9Cbrmm/n7QjAKBidKYrilwIy2/JuSp5cjC
-X-Google-Smtp-Source: AGHT+IFaXa2jgWVK9qwyyMjsUe+VJC/FCmmJqXZaBPd98yzohBR8g9ipU8NKxlQpPhyhZJZYUcyh6Q==
-X-Received: by 2002:a62:b609:0:b0:706:4889:960d with SMTP id d2e1a72fcca58-70670ee7812mr13853487b3a.16.1719498262365;
-        Thu, 27 Jun 2024 07:24:22 -0700 (PDT)
-Received: from localhost ([212.107.28.57])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-706b48d0cc0sm1403803b3a.28.2024.06.27.07.24.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 07:24:21 -0700 (PDT)
-From: Celeste Liu <coelacanthushex@gmail.com>
-X-Google-Original-From: Celeste Liu <CoelacanthusHex@gmail.com>
-To: linux-riscv@lists.infradead.org,
-	=?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>
-Cc: linux-kernel@vger.kernel.org,
-	"Dmitry V . Levin" <ldv@strace.io>,
-	Guo Ren <guoren@kernel.org>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Felix Yan <felixonmars@archlinux.org>,
-	Ruizhe Pan <c141028@gmail.com>,
-	Celeste Liu <CoelacanthusHex@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] riscv: entry: always initialize regs->a0 to -ENOSYS
-Date: Thu, 27 Jun 2024 22:23:39 +0800
-Message-ID: <20240627142338.5114-2-CoelacanthusHex@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1719498228; c=relaxed/simple;
+	bh=hNSjLU6Q2DOaKZ/pmqxycisVgItFODKa0ss4BjbT01o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mCTHQzkdaAA9iy0AFSzC4MJx2cBKo4tbrDyJxhMUxv3W+biWeumC9S5E3EbZXPl9oLt/yC9IMuNOHePnc1g2WrpM9lmsw7Vhj6T3mWe94Y1QHALF5ivGq3XWilRgPtvVPrfoAnm+L89qgokcGN6ustg6Do8jhwvNyg5gR+aA13Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CUNNgeqm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29D21C2BBFC;
+	Thu, 27 Jun 2024 14:23:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1719498228;
+	bh=hNSjLU6Q2DOaKZ/pmqxycisVgItFODKa0ss4BjbT01o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CUNNgeqmeuVOreC17XDwpSSbnAZhMQ92J1wR0SRfTHaW2EavuMNdkzZNoEGC0gE+x
+	 xcEnlUC5fd5/rNuGehohsM5P2T2fxaI6sgj+CdVrCA2z6e2bBAdaoNfgY5q0dd+kE1
+	 VBglty5ojzj8HMzbkDwKYdj/vMEOW0/b9z/FK6c4=
+Date: Thu, 27 Jun 2024 16:23:45 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Nikita Travkin <nikita@trvn.ru>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 0/7] usb: typec: ucsi: rework glue driver interface
+Message-ID: <2024062723-unwed-sleeve-47b7@gregkh>
+References: <20240625-ucsi-rework-interface-v3-0-7a6c8e17be3a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1313; i=CoelacanthusHex@gmail.com; h=from:subject; bh=Q2jff5QT5dahZ0NplzuKdapGzNO6RH+dDW7S1GCf5v4=; b=owJ4nJvAy8zAJfY4pvNJRPo6U8bTakkMabWlrwIU5LWUEn9rPF/0ydqKUdQyc8m/pJOixUUZJ 13/7OoyCesoZWEQ42KQFVNkEdv59PWy0kcflvGazICZw8oEMoSBi1MAJlLxmeGvREWem4374e3C c6fzxbfX3P67q/yrnX/Nzpn1sZNtBZb0MvzhrGy8bzLFos5JPNT+mve8nBXcHib3J30+45vrduH V0jYeAI3ZS6k=
-X-Developer-Key: i=CoelacanthusHex@gmail.com; a=openpgp; fpr=892EBC7DC392DFF9C9C03F1D15F4180E73787863
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240625-ucsi-rework-interface-v3-0-7a6c8e17be3a@linaro.org>
 
-Otherwise when the tracer changes syscall number to -1, the kernel fails
-to initialize a0 with -ENOSYS and subsequently fails to return the error
-code of the failed syscall to userspace. For example, it will break
-strace syscall tampering.
+On Tue, Jun 25, 2024 at 05:54:25PM +0300, Dmitry Baryshkov wrote:
+> The interface between UCSI and the glue driver is very low-level. It
+> allows reading the UCSI data from any offset (but in reality the UCSI
+> driver reads only VERSION, CCI an MESSAGE_IN data). All event handling
+> is to be done by the glue driver (which already resulted in several
+> similar-but-slightly different implementations). It leaves no place to
+> optimize the write-read-read sequence for the command execution (which
+> might be beneficial for some of the drivers), etc.
+> 
+> The patchseries attempts to restructure the UCSI glue driver interface
+> in order to provide sensible operations instead of a low-level read /
+> write calls.
+> 
+> If this approach is found to be acceptable, I plan to further rework the
+> command interface, moving reading CCI and MESSAGE_IN to the common
+> control code, which should simplify driver's implementation and remove
+> necessity to split quirks between sync_control and read_message_in e.g.
+> as implemented in the ucsi_ccg.c.
+> 
+> Note, the series was tested only on the ucsi_glink platforms. Further
+> testing is appreciated.
+> 
+> Depends: [1], [2]
+> 
+> [1] https://lore.kernel.org/linux-usb/20240612124656.2305603-1-fabrice.gasnier@foss.st.com/
+> 
+> [2] https://lore.kernel.org/linux-usb/20240621-ucsi-yoga-ec-driver-v8-1-e03f3536b8c6@linaro.org/
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Fixes: 52449c17bdd1 ("riscv: entry: set a0 = -ENOSYS only when syscall != -1")
-Reported-by: "Dmitry V. Levin" <ldv@strace.io>
-Reviewed-by: Björn Töpel <bjorn@rivosinc.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Celeste Liu <CoelacanthusHex@gmail.com>
----
- arch/riscv/kernel/traps.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+This doesn't apply to my tree at all, can you rebase and add Heikki's
+review and resend?
 
-diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
-index 05a16b1f0aee..51ebfd23e007 100644
---- a/arch/riscv/kernel/traps.c
-+++ b/arch/riscv/kernel/traps.c
-@@ -319,6 +319,7 @@ void do_trap_ecall_u(struct pt_regs *regs)
- 
- 		regs->epc += 4;
- 		regs->orig_a0 = regs->a0;
-+		regs->a0 = -ENOSYS;
- 
- 		riscv_v_vstate_discard(regs);
- 
-@@ -328,8 +329,7 @@ void do_trap_ecall_u(struct pt_regs *regs)
- 
- 		if (syscall >= 0 && syscall < NR_syscalls)
- 			syscall_handler(regs, syscall);
--		else if (syscall != -1)
--			regs->a0 = -ENOSYS;
-+
- 		/*
- 		 * Ultimately, this value will get limited by KSTACK_OFFSET_MAX(),
- 		 * so the maximum stack offset is 1k bytes (10 bits).
--- 
-2.45.2
+thanks,
 
+greg k-h
 
