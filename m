@@ -1,110 +1,73 @@
-Return-Path: <linux-kernel+bounces-231938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4130991A09D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:42:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2B1891A0E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:54:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED0C9283202
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:42:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88D061F2212E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:54:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3891D56440;
-	Thu, 27 Jun 2024 07:42:30 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03E433987;
-	Thu, 27 Jun 2024 07:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B836D73440;
+	Thu, 27 Jun 2024 07:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="o1Dmlyfc"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39C636BFC0;
+	Thu, 27 Jun 2024 07:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719474149; cv=none; b=XW8X5yCP/gELpi6jy/J03MD82/1L2XhlgrDK91O+oIt95Oup3ytVLapdgKrnOLssqg7w+uEn6y14RK6IftMj1ULWj0B2lp4bXFpUpjwEdKjg1QLMsl0HcA8avcnaWdCbk4KZ84hNSShzhjwkpyWNEfgx2WyrroKFxEDChFmpoE0=
+	t=1719474843; cv=none; b=PMFH3FWfZkcxIxCmHvzoDZv77rtQq15TvcQARdaAKXreirLTMKIJWUQgpUVCCZR2/4d1y7a840KYxN7gUXPpVuvrrtewmQhTWtUkeQNZHZzsFxBOfeQCBnRMcgmuqDqbSjno+XRMm/RX2W2vaeqJGQergUOj1C4RpbI7TVkmIAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719474149; c=relaxed/simple;
-	bh=M5+v6tFTGIMBSPIpk62aWS77BQ8cbadSwPcmpjtk3aY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XSqmYB1ENiSQ6xx/6Bnx89Kq9Q/GtTn4/nsKRuCmuhnELtrbBX/jWoExEqAsv7vasvyvu27l/VTz30mu7CjU4ykWau6D5bG6QxrhbnJi/JwJfYRVJAfid4QFqJdFJqUGDqX6uGidWldEKE9b8M9y8sbHeCsNQULEFW1EnIWsON0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-03 (Coremail) with SMTP id rQCowABHTkbQF31mFzy1Eg--.4169S2;
-	Thu, 27 Jun 2024 15:42:10 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: kherbst@redhat.com,
-	lyude@redhat.com,
-	dakr@redhat.com,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	bskeggs@redhat.com,
-	airlied@redhat.com
-Cc: dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v3] drm/nouveau: fix null pointer dereference in nouveau_connector_get_modes
-Date: Thu, 27 Jun 2024 15:42:04 +0800
-Message-Id: <20240627074204.3023776-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1719474843; c=relaxed/simple;
+	bh=niWifPxthY5pGSj0MPq+gFtzhUAaPd89u2s14QYBBds=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ALs3mlCc8zqQCQelS7a1CW8RQL6R/+JmGaK+nlxJfm4oQl0m14i+mTRHVWlrohZQTijIgG39YLIxGeJPsMlpTg/HiVywS4bL8IPC7TM4KoL+Lnsk2AvPcbYy2m4JiVVkL0llnxvoQWfuC0tlq41TvzAu3m7vVJ3JOlOysdRmwvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=o1Dmlyfc; arc=none smtp.client-ip=1.95.21.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=K/1iSBKlF5A20UDlARtUeGLpv4GEubEh9JBHFml2Ows=;
+	b=o1DmlyfcjqqUdXfNYnY3nFYhnI/mw80C/oiJGotW+iWgIDKQZwwSjl1avS2h55
+	ModLw6PrC/dH9m2+j1h0MKFTzjO7Jgv9BXO3vne3hFt5sisZE92ohsIIIPv8WmkM
+	KBWECYLMNSLiGeS+UkMiaKcyWqTcazvbvmVM0UTsrZpBg=
+Received: from dragon (unknown [114.218.218.47])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgDXD8rZF31mmaMaAA--.52532S3;
+	Thu, 27 Jun 2024 15:42:19 +0800 (CST)
+Date: Thu, 27 Jun 2024 15:42:17 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, festevam@gmail.com,
+	imx@lists.linux.dev, kernel@pengutronix.de, krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	robh@kernel.org, s.hauer@pengutronix.de, shawnguo@kernel.org
+Subject: Re: [PATCH v2 1/1] arm64: dts: imx8dxl-evk: add imx8dxl_cm4, lsio
+ mu5, related memory region
+Message-ID: <Zn0X2dMZaQ93vwHC@dragon>
+References: <20240617184707.1058995-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowABHTkbQF31mFzy1Eg--.4169S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Jw1xZFy3urW5tFW5Zr17GFg_yoWkuFc_GF
-	18ZasrGr4rK3WvywsrAa18ZFn29w1UZr4vyFnYqFZav39rJw1akrn8t34rXFy7XrykGryq
-	y3Wq9F98CrnFgjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb3kFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6r1F6r1fM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr
-	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
-	rcIFxwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
-	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
-	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
-	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
-	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
-	VFxhVjvjDU0xZFpf9x0JUAkucUUUUU=
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240617184707.1058995-1-Frank.Li@nxp.com>
+X-CM-TRANSID:Ms8vCgDXD8rZF31mmaMaAA--.52532S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU3oGQUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCRsLZWZv-cxqVAAAs6
 
-In nouveau_connector_get_modes(), the return value of drm_mode_duplicate()
-is assigned to mode, which will lead to a possible NULL pointer
-dereference on failure of drm_mode_duplicate(). Add a check to avoid npd.
+On Mon, Jun 17, 2024 at 02:47:07PM -0400, Frank Li wrote:
+> Add imx8dxl_cm4, lsio mu5 and related memory region.
+> 
+> Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-Cc: stable@vger.kernel.org
-Fixes: 6ee738610f41 ("drm/nouveau: Add DRM driver for NVIDIA GPUs")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
-Changes in v3:
-- added CC stable as suggested, sorry for my negligence.
-Changes in v2:
-- modified the patch according to suggestions;
-- added Fixes line.
----
- drivers/gpu/drm/nouveau/nouveau_connector.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.c b/drivers/gpu/drm/nouveau/nouveau_connector.c
-index 856b3ef5edb8..0c71d761d378 100644
---- a/drivers/gpu/drm/nouveau/nouveau_connector.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
-@@ -1001,6 +1001,9 @@ nouveau_connector_get_modes(struct drm_connector *connector)
- 		struct drm_display_mode *mode;
- 
- 		mode = drm_mode_duplicate(dev, nv_connector->native_mode);
-+		if (!mode)
-+			return 0;
-+
- 		drm_mode_probed_add(connector, mode);
- 		ret = 1;
- 	}
--- 
-2.25.1
+Applied, thanks!
 
 
