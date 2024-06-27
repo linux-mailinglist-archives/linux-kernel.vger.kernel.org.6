@@ -1,80 +1,68 @@
-Return-Path: <linux-kernel+bounces-232437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5B4F91A8D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:13:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2833F91A8E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:15:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C55E1F28BC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:13:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D03781F248CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F160B197A87;
-	Thu, 27 Jun 2024 14:11:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Q8WArM9O"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D702C198A2A;
+	Thu, 27 Jun 2024 14:12:10 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35D26195B33;
-	Thu, 27 Jun 2024 14:11:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7124E196C9C
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 14:12:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719497465; cv=none; b=SM7CwWt/8d+3kGSE3CvGt+0DuAAQ24cp5lgHVgp3paPy+q1ZA/JgBZF8o/t7WeNCTRcfz1MbbMMaj6iBoX6neW4ke3XlY2+m1pfASySJpsP4Vm946e2rwDq56CyD1aiNUBmweTxLnzqPeW8CgFNaI4efdLJKEGQxPrHMIqTzkds=
+	t=1719497530; cv=none; b=gz2F/w0iTIVXVueHDPenIgNj/xUFCTljE9rtOEruchxBoo9HB3mxZW73LU4MF5RRgy+zraUoDjo5xFOOin7c4C471Zre1y91BrcuvkwvZtJz8XgEjs7Y8I6PSswwYW54aH5/ogJ4WnnbVnOS68vmZ1483bZ+5nfznZIxEqtPt6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719497465; c=relaxed/simple;
-	bh=4pyKeghgWQAKtrX0/RiOwcJJoKa0Ods4Nme4C33tAR0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iAYn5ip014BN4MIarJJj23KSQTKgUwievrEGOR2GgGpDckjURiwsicZ2jd5C3FnMh1hwEyG22RJSYAGqD1wL/N/+vccWKsWHadIz2EuWBeX7d0Y6OU0Z98hWZDiiw7Bcsu/yMuDJQQ0mHXNhCKTLPStmcSAzqYprOpDkCn+FTLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Q8WArM9O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4421BC32786;
-	Thu, 27 Jun 2024 14:11:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1719497464;
-	bh=4pyKeghgWQAKtrX0/RiOwcJJoKa0Ods4Nme4C33tAR0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q8WArM9O4a6jLSPyHq5pSrM9W2+3PSUywjYNcvCUH0MWl/8jg4hlvlAOwetA75RP8
-	 vWTN2P5qaad7xuT73/etb59KL3O8Z+Z/wM22Ml0qhqLMFs9cGHfqiLBx1slWDb9WU0
-	 /o9O3cw6Bw2Z5DnHIPTy/sKJbcGscg+zTOgXXmWo=
-Date: Thu, 27 Jun 2024 16:11:01 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: typec: ucsi: glink: use
- device_for_each_child_node_scoped()
-Message-ID: <2024062735-railway-stoning-566a@gregkh>
-References: <20240623-ucsi_glink-scoped-v1-1-f0fdcfec69bb@gmail.com>
+	s=arc-20240116; t=1719497530; c=relaxed/simple;
+	bh=fgzXniqzYWp3hUHJWzJDPcENAUnrSBq6KvYjZywNUrY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=K5tyvSh6TSFpFDfxN7xRkbPFx0K8yetQDiYzrPx/zseuc+TqthmQ7OleyxzO2tRTWXRSulNyBdUEqcKb/hH2tPSTGhoM4yGsbA8HNTsJLFaP3FxJ4VRDK8Oi+obj9sPmM2XHAimFa1uSLCHnzr0qWm8O+A+cEwyAvSSw6XAof/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B892C32786;
+	Thu, 27 Jun 2024 14:12:09 +0000 (UTC)
+Date: Thu, 27 Jun 2024 10:12:07 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: richard clark <richard.xnu.clark@gmail.com>, Mark Rutland
+ <mark.rutland@arm.com>, will@kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, "Russell King (Oracle)"
+ <linux@armlinux.org.uk>, Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: Will smp_call_function_single(cpu, ...) broadcast IPI to all
+ other cpus?
+Message-ID: <20240627101207.0bbbead0@rorschach.local.home>
+In-Reply-To: <86pls2isal.wl-maz@kernel.org>
+References: <CAJNi4rMfRmWoYdsyH6ibNKN8DSCL_DO8Wa08mWbe8t7vH21Dpw@mail.gmail.com>
+	<86pls2isal.wl-maz@kernel.org>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240623-ucsi_glink-scoped-v1-1-f0fdcfec69bb@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, Jun 23, 2024 at 12:35:11PM +0200, Javier Carrasco wrote:
-> Use the scoped variant of `device_for_each_child_node()` to
-> automatically handle early exits.
-> 
-> This prevents memory leaks if new error paths are introduced,
-> as no explicit refcount decrement via `fwnode_handle_put()` is needed.
-> 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> ---
-> This patch is a follow-up to the recently introduced commit c68942624e25
-> ("usb: typec: ucsi: glink: fix child node release in probe function")
-> to account for a safer approach to iterating over child nodes.
+On Thu, 27 Jun 2024 11:38:58 +0100
+Marc Zyngier <maz@kernel.org> wrote:
 
-What branch/tree is this against?  It fails to apply to my usb-testing
-branch at all :(
+> You may want to enable stack trace recording and find out for yourself
+> where these ipi_raise() calls are coming from.
 
-Can you rebase and resubmit?
+Try trace-cmd:
 
-thanks,
+  # trace-cmd start -e ipi_raise -R 'stacktrace if reason=="Function call interrupts"'
+  # taskset -c 0 insmod /kmods/ipi_test.ko
+  # trace-cmd stop
+  # trace-cmd show
 
-greg k-h
+-- Steve
 
