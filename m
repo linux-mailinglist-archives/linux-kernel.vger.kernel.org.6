@@ -1,210 +1,103 @@
-Return-Path: <linux-kernel+bounces-232888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EED8391AF84
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 21:14:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49F4591AF87
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 21:14:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11A401C22B22
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:14:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8CCD1F21002
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:14:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2472019CCE5;
-	Thu, 27 Jun 2024 19:14:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C9719B5A2;
+	Thu, 27 Jun 2024 19:14:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WQUZ9WGc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ddBuc9pN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A59519B58A;
-	Thu, 27 Jun 2024 19:14:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A5CF19B3DE;
+	Thu, 27 Jun 2024 19:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719515644; cv=none; b=gjnkcitH2qH98I/k8E5Hzg9OF2bK5CxhTK4FOFlgTOxwIgm6AoX8mhTF5cfKfXfWuLIbCyy41AeRlY87qPT1EHVUm/AhrQL/wR09qqcIqYna9cYUJtq6qj4fewrZ+g5rZQ7TPoDBQebvzmaYudeJlfEB37gbWCPYhifvwpwG9fw=
+	t=1719515661; cv=none; b=XNc35mQgOjg9J5gRFgelaxRrdDl/TyCuvJCWkWg246HcBNaVCQ4JkucdFD4/u+AcrmvRXYLvy28t7Bc2DJFL4SMlfsUnF++WY4X5MNE6M0FmnNsaq4mTCbaDEvwUtk1pFHZ/G708dpncyPIjK/QA9ecye9IdAeflPRgnMD0Vofg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719515644; c=relaxed/simple;
-	bh=s4lQFn/hx5aAWuOqP1fZOaMJxGb1LpwgZ+PpQMmZG6g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tu+d8QZYAhCIldiVt9BiHPQD2FKQtvcbzUuo93N/i3IGwQDcvjQOFhZQVZ1WhW/3BFNGNJun7NEd5kgQeOF6s14qvo9z0GJ6EG6ZpG3smQAKSYHljl4SwUJIKb4Gqg9v2Ae32JAa7tQchlC3VzC6qYaRHC3UtKDHvlohB2pUBI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WQUZ9WGc; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719515641; x=1751051641;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=s4lQFn/hx5aAWuOqP1fZOaMJxGb1LpwgZ+PpQMmZG6g=;
-  b=WQUZ9WGcxbkuYA0k5K9BzufL2VL9OKYQccD2oRScSKnV35MisC6h84pn
-   Hn9mpMAgxpkDz5qrsGnhpjXRe5eD2cK2Ku1YipuO0nuKC/Djr/RfskYft
-   H8a+N9P6MYUoeWBjvHLTUfxZ8PhYwTu9YtQJjJlYhZ9LQit+fdjp0UItm
-   xhUBOAaZAo6kmiEWko7DTTprHCzsI6RDamqRvp8p2m8LKY5xOxTtwvPYa
-   cWBkaEUGH7kxbHfOEAcYoPdoJTTGQ0xUqrJXa2YGN50lHTTLoHdfatFFJ
-   wAAEWq6qSJy+gCNd6wMhERAm3mzN78NDq7iZqNYBMgnWQ1DeXMsjR6JsH
-   g==;
-X-CSE-ConnectionGUID: 4VIXszbBR+yb+nNSKWq5og==
-X-CSE-MsgGUID: MmGBbrrVSfWIFH53yAzisg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="16801800"
-X-IronPort-AV: E=Sophos;i="6.09,166,1716274800"; 
-   d="scan'208";a="16801800"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 12:13:57 -0700
-X-CSE-ConnectionGUID: IjaJybTTTU2P6nlXAazt5g==
-X-CSE-MsgGUID: MUBh1LBJTuysCyupH4Al4Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,166,1716274800"; 
-   d="scan'208";a="44315191"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 27 Jun 2024 12:13:54 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sMuZ6-000GSU-0r;
-	Thu, 27 Jun 2024 19:13:52 +0000
-Date: Fri, 28 Jun 2024 03:13:44 +0800
-From: kernel test robot <lkp@intel.com>
-To: Chris Lu <chris.lu@mediatek.com>, Marcel Holtmann <marcel@holtmann.org>,
-	Johan Hedberg <johan.hedberg@gmail.com>,
-	Luiz Von Dentz <luiz.dentz@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, Sean Wang <sean.wang@mediatek.com>,
-	Aaron Hou <aaron.hou@mediatek.com>,
-	Steve Lee <steve.lee@mediatek.com>,
-	linux-bluetooth <linux-bluetooth@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>,
-	linux-mediatek <linux-mediatek@lists.infradead.org>,
-	Chris Lu <chris.lu@mediatek.com>
-Subject: Re: [PATCH v5 5/8] Bluetooth: btmtk: move btusb_mtk_hci_wmt_sync to
- btmtk.c
-Message-ID: <202406280202.udsJoBs5-lkp@intel.com>
-References: <20240626025329.26424-6-chris.lu@mediatek.com>
+	s=arc-20240116; t=1719515661; c=relaxed/simple;
+	bh=R0xuV5RV93yH+47j5L0V08wT5cLauH8CSTa3esKh4ec=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=A8E6MmzrYa85CmHGtf5eSSDz0p9jbGjTc1jZBocaTl6aam9/TNcVM0CnS+iqw24ybe0zZqrY6ZgM8RtQUPIE/AdYTztHl/Zi3WDXNsEG8s4xWNMlc5JuvjIt0Xnhv8Qlqg+sYX/x2cv/sdDrWtXCxTF+Y010qnREjp0ipWTBg9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ddBuc9pN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BA7DC4AF07;
+	Thu, 27 Jun 2024 19:14:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719515660;
+	bh=R0xuV5RV93yH+47j5L0V08wT5cLauH8CSTa3esKh4ec=;
+	h=From:Date:Subject:To:Cc:From;
+	b=ddBuc9pNoGdYg97CYtrBAU4ZEWVKyiue7C/Szjp9UbXa6R7TWPm7b4yW6RnTugt3w
+	 rPWerCtMRdc5Au/LDEQrL/M5r770MhavbQYZwwOBXrgNo+NEIlWng3ZsMgdfWoi35z
+	 pOmmN3qRHifl8lypEy2jcijRLl1BVi7Y20j9u105W/HdRicwChpmJNUqqpYBewnQsR
+	 qyfXvT4wlJiylhSwfLP75+b86qGIJ3OLDjSs//cVaBaCaSoc7ByusdHFNLBQgawfSS
+	 U9wWLdsApqefM/qE8cgrmuPgJ/TeM+Zw2ZR411al/n1GHDhAU6R2M5uCA7/jheYEUv
+	 M/nl0t4nLo6pw==
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3d561131a3cso301933b6e.3;
+        Thu, 27 Jun 2024 12:14:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXB83hobAwLUB4USCfb1iX7LAGdiMOQTbL/MxroymKHIiDD0CwMAlB6DBDH9GI61nzTN1RPd247OaePl6Sv6qr037lXVf4Yt0ifWcK2JYW1d9VjLl2beLkD6LJUBgCSugXVN5eAhOx+sQ==
+X-Gm-Message-State: AOJu0Yz1mcl8EBx9QzyJuAhLAzk4g3MCMaF2aB/zF/xKJFeNvd+RXRH7
+	8N/2Jr7pzH+gQETh4FT9Ibocg2g00aFnZdnyoVuNdmZ4/rIF+GZ0O+D2bPLKQIkCVr4KfCoi+XM
+	9YoHz5p0N7K4XxUlXSfje8WASAVo=
+X-Google-Smtp-Source: AGHT+IEuHZCSesfxQmP4KLYddVcc/ZQecVBz8Gqvgr2bdImhYy8lWyI0GcfcrytqIlEkOXtBb/Qk0cdfi4qhSBPRhpg=
+X-Received: by 2002:a4a:3c4d:0:b0:5c2:23ee:c85e with SMTP id
+ 006d021491bc7-5c223eed359mr4888990eaf.1.1719515659809; Thu, 27 Jun 2024
+ 12:14:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240626025329.26424-6-chris.lu@mediatek.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 27 Jun 2024 21:14:09 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0h__X99p9mZLT29_pY3_4Z0wz=EDmaGmo1HntF5SO7HfQ@mail.gmail.com>
+Message-ID: <CAJZ5v0h__X99p9mZLT29_pY3_4Z0wz=EDmaGmo1HntF5SO7HfQ@mail.gmail.com>
+Subject: [GIT PULL] Power management fix for v6.10-rc6
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	ACPI Devel Maling List <linux-acpi@vger.kernel.org>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Chris,
+Hi Linus,
 
-kernel test robot noticed the following build errors:
+Please pull from the tag
 
-[auto build test ERROR on bluetooth-next/master]
-[also build test ERROR on next-20240626]
-[cannot apply to bluetooth/master linus/master v6.10-rc5]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ pm-6.10-rc6
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Chris-Lu/Bluetooth-btusb-mediatek-remove-the-unnecessary-goto-tag/20240626-114003
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth-next.git master
-patch link:    https://lore.kernel.org/r/20240626025329.26424-6-chris.lu%40mediatek.com
-patch subject: [PATCH v5 5/8] Bluetooth: btmtk: move btusb_mtk_hci_wmt_sync to btmtk.c
-config: parisc-randconfig-001-20240627 (https://download.01.org/0day-ci/archive/20240628/202406280202.udsJoBs5-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240628/202406280202.udsJoBs5-lkp@intel.com/reproduce)
+with top-most commit a1ff59784b277795a613beaa5d3dd9c5595c69a7
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406280202.udsJoBs5-lkp@intel.com/
+ cpufreq: intel_pstate: Use HWP to initialize ITMT if CPPC is missing
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
+on top of commit f2661062f16b2de5d7b6a5c42a9a5c96326b8454
 
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/test-ww_mutex.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/rcu/rcutorture.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/rcu/refscale.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/scftorture.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp850.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp852.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp855.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp866.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp932.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_euc-jp.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp936.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp949.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_ascii.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-1.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-2.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-4.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_utf8.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-cyrillic.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-roman.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_ucs2_utils.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/binfmt_misc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/jbd2/jbd2.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/hfs/hfs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/efs/efs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/cast_common.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/af_alg.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/algif_hash.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/math/rational.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_ubsan.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/irqchip/irq-ts4800.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl-mcp23s08_i2c.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl-mcp23s08.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-imx1.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-imx27.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-samsung.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pwm/pwm-spear.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/imx/soc-imx8m.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/ixp4xx/ixp4xx-npe.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/amlogic/meson-clk-measure.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/da9121-regulator.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/tps6286x-regulator.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/reset/hisilicon/hi6220_reset.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/serial/esp32_uart.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/serial/esp32_acm.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/serial/owl-uart.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/serial/serial_mctrl_gpio.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/ttyprintk.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iommu/iova.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-ac97.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-i2c.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-slimbus.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/arizona.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/rt4831.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/qcom-pm8008.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dax/dax.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/scsi_common.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/i2c/busses/i2c-pxa.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/rc/rc-core.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/pwrseq_simple.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/pwrseq_sd8787.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/google/coreboot_table.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/google/memconsole.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/google/memconsole-coreboot.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/google/cbmem.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-log.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-vibrator.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-audio-manager.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-gpio.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-i2c.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/staging/greybus/gb-uart.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_userspace.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hwtracing/intel_th/intel_th_msu_sink.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvmem/nvmem-apple-efuses.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvmem/nvmem_brcm_nvram.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/interconnect/imx/imx8mq-interconnect.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/interconnect/imx/imx8mn-interconnect.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hte/hte-tegra194-test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/vdpa/vdpa.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/input/matrix-keymap.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/input/vivaldi-fmap.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iio/adc/ingenic-adc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iio/adc/xilinx-ams.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iio/buffer/kfifo_buf.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/siox/siox-bus-gpio.o
->> ERROR: modpost: "usb_alloc_urb" [drivers/bluetooth/btmtk.ko] undefined!
->> ERROR: modpost: "usb_free_urb" [drivers/bluetooth/btmtk.ko] undefined!
->> ERROR: modpost: "usb_anchor_urb" [drivers/bluetooth/btmtk.ko] undefined!
->> ERROR: modpost: "usb_submit_urb" [drivers/bluetooth/btmtk.ko] undefined!
->> ERROR: modpost: "usb_unanchor_urb" [drivers/bluetooth/btmtk.ko] undefined!
+ Linux 6.10-rc5
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+to receive a power management fix for 6.10-rc6.
+
+This modifies the intel_pstate driver to use HWP to initialize the ITMT
+scheduler extension if ACPI CPPC cannot be used for that, which is the
+case on some hybrid x86 systems.
+
+Thanks!
+
+
+---------------
+
+Rafael J. Wysocki (1):
+      cpufreq: intel_pstate: Use HWP to initialize ITMT if CPPC is missing
+
+---------------
+
+ drivers/cpufreq/intel_pstate.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
