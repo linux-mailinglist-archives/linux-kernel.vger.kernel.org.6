@@ -1,102 +1,137 @@
-Return-Path: <linux-kernel+bounces-233005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4330B91B0F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:52:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B98DA91B0F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:52:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED5ED1F26E89
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:52:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 625CF1F26FEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5AB1A0AF6;
-	Thu, 27 Jun 2024 20:51:17 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A3421A2C23;
+	Thu, 27 Jun 2024 20:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M6+VZ4C+"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C738C192B9E;
-	Thu, 27 Jun 2024 20:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B8C41A0B07;
+	Thu, 27 Jun 2024 20:51:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719521477; cv=none; b=MuW3YKHH7pg6iX4KkOEayko/mpHD2z86ixM1OjveQK7HekYGXKRg7ZcUsIn6+ZjtJvROhDOvzUFFK1/PLKxPLRyMEeFdiyiGY/J6+cPFmL7o4MvyK6X8KLq70TJT7AmDE4Jt2triFAWioD8XepMYMfZK+9TuLsK5oko/LS4rAU4=
+	t=1719521482; cv=none; b=Tu/SyYyKRJVgQBMgpfAWQO9DvPiarWn29jhsUmYnYF2UV0QxbZV8be+mVQxotdneXabnqicaLxDFIRZRjIhyf1FEb9hnxpwHaofxVezxusMQcXnw9/KG8yye1UZAB/UJ4CKKsIsKJdpxAw0E4UK0at6YNAn60YADChpfObYWTIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719521477; c=relaxed/simple;
-	bh=uqAhbQZYET81rCRu7sX1ilbaIKFmqTjiPhVASe0KHaY=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fLQH4oK5aDgYRHg46rtCgSGK/S6oCPIfxqvRtHPVbK0UWT8HoetsITpB0FyCeKkDNq2RPYb0qlZH8RB8pNhZbGcz9g9sFSIpuhJXOXL4uy41UXxQ3Jf8+pUiO+Qb40F/10iucseg9YpmdgXuI96uWkOHrJ0s2PC9gzeJfQBAq2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.97.1)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1sMw5B-000000007nd-0uTX;
-	Thu, 27 Jun 2024 20:51:05 +0000
-Date: Thu, 27 Jun 2024 21:51:01 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>, Jens Axboe <axboe@kernel.dk>,
-	Hauke Mehrtens <hauke@hauke-m.de>, Felix Fietkau <nbd@nbd.name>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Dave Chinner <dchinner@redhat.com>, Jan Kara <jack@suse.cz>,
-	Christian Brauner <brauner@kernel.org>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Li Lingfeng <lilingfeng3@huawei.com>,
-	Christian Heusel <christian@heusel.eu>,
-	Min Li <min15.li@samsung.com>, Avri Altman <avri.altman@wdc.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Hannes Reinecke <hare@suse.de>,
-	Mikko Rapeli <mikko.rapeli@linaro.org>, Yeqi Fu <asuk4.q@gmail.com>,
-	Victor Shih <victor.shih@genesyslogic.com.tw>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Li Zhijian <lizhijian@fujitsu.com>,
-	"Ricardo B. Marliere" <ricardo@marliere.net>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org, linux-block@vger.kernel.org
-Subject: [PATCH v4 4/4] block: add new genhd flag GENHD_FL_NVMEM
-Message-ID: <564a69c6e6e75d66268ae5fcf61972145d4108c7.1719520771.git.daniel@makrotopia.org>
-References: <cover.1719520771.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1719521482; c=relaxed/simple;
+	bh=/ALIBjOWtxJbVr9Wkw8mNnbXWL9/xNtOF34R9g/tscU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZDn2MpC2QTlFQ8DZKAmdv8yEJvZV3NNA5Plkecm/KyRHSmdH4KWQDPC3C3qVPxFRSWCzqMyoNFnosGfJsUtuabf722zHrGXJPReVCllfEfCRwf8wAvSiPvSjAXcQvO7OZYa5we3S9Wi0Z3W6gQuE01zGx95wbbz3NfkaxhescXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M6+VZ4C+; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-364fee5051fso290588f8f.1;
+        Thu, 27 Jun 2024 13:51:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719521479; x=1720126279; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vbEIoELyueCCfotJl73Oz/mTbEWy5/7CioUiOn+VD/E=;
+        b=M6+VZ4C+lVKUkIjA/UKhb9v0t6EbvwUZtY0aZvesG9eh0Djt8IW0U0AMUZ85Xkom/i
+         XMlx4Wbl6QMkEnp29XVwTpiW3lQJO1QUjfidyfRP6HYsLX8M9kfRe7Wfebx8o2wgTnpr
+         b0Zr/ZCADAG3b25BQMyu6iC9vJTYY9weNX/hZbNyclfXksC7AXsZLoZSsXyghBbG+SKY
+         diqdmZnrBV/hOdMzj26gJAw3/4C9qfVOAEGr9nmC++D8mx6wB1YygR4MfNIdBWuKF4h7
+         7PveDb4PHD16oLe3aa6+N1+Q1kvn2Lc6wrA3oLmoKt1wDvre5EPMpwqnERLrHXXSvWI6
+         Q5Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719521479; x=1720126279;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vbEIoELyueCCfotJl73Oz/mTbEWy5/7CioUiOn+VD/E=;
+        b=Po809PJZlvmdCw4dH02gfLTzUdxHWBgGIdM0hvqRr1gMZdYTeSAS7RUtw4mvQGbbZR
+         p8sm1hcZOZKQ/gNWrrbsvNW/8lEtj4e/bryeoTMai3OIs14+Az+TcTJbcc1yM3faL4yN
+         aXbwkS1QglfcrOS8toi7S70Ch/0JOHUMzPJqhNlAn3ijqFN7FIt3NGFwc/odb9bzqfIz
+         njp7l2hU2hc7iKPfrQ9vfZ0wUbOrAsxa+82jwJrYcHjWh4cCK5a7PrmpdncTzqStYyql
+         JGKJQfQ4jQdprj4nSj7AMtFLO0oG9HkGIkcNNnxeJv5UoNMmz1TpIxXalZzuWL1Yejux
+         Y84w==
+X-Forwarded-Encrypted: i=1; AJvYcCWaWLctSVrOtnfV9MUDnsnZM+UFVaJwgh2iMoVfX1msIrm6eGq7CbkiRES0ysUQV4hqOWqRV78YRw46AfuveT5TE56iW+yKICl+xfA0rMR+z6D4d/9oq+7nrcKSmBo0Y2HpDccytjHwAGbfWa15
+X-Gm-Message-State: AOJu0YxMtG26zagOWdXofA0ZqQoKbNUNhD8zgs+j2fi7Mumzr4NimR/J
+	40YQPmupFtfLX8AyQzl3BSXMctcr/OK33az8zRd0ydDlp2Viq8FW
+X-Google-Smtp-Source: AGHT+IEtsBEK1OfkxAv6NipqhDZf23Ovj4cFZnsL2HIo5HHdI8+D9tpAI79mV/nIag0B6hUd2YkVLw==
+X-Received: by 2002:a05:600c:3c9d:b0:424:8b08:26aa with SMTP id 5b1f17b1804b1-42491783f09mr93113315e9.3.1719521479436;
+        Thu, 27 Jun 2024 13:51:19 -0700 (PDT)
+Received: from ?IPV6:2a01:4b00:d20e:7300:8731:b664:1f4a:5ab4? ([2a01:4b00:d20e:7300:8731:b664:1f4a:5ab4])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b0971d2sm6820465e9.31.2024.06.27.13.51.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Jun 2024 13:51:19 -0700 (PDT)
+Message-ID: <f76aac0d-4f46-41b4-8379-d6397272e5f0@gmail.com>
+Date: Thu, 27 Jun 2024 21:51:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1719520771.git.daniel@makrotopia.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/5] kunit: string-stream-test: Make it a separate
+ module
+To: Rae Moar <rmoar@google.com>
+Cc: brendan.higgins@linux.dev, davidgow@google.com,
+ linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+ linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
+References: <20240618170331.264851-1-ivan.orlov0322@gmail.com>
+ <20240618170331.264851-4-ivan.orlov0322@gmail.com>
+ <CA+GJov6NBkPUmPSW6ir1Z0Gc9gFXP6dP-GhnoQU7nCRW0yXTLQ@mail.gmail.com>
+Content-Language: en-US
+From: Ivan Orlov <ivan.orlov0322@gmail.com>
+In-Reply-To: <CA+GJov6NBkPUmPSW6ir1Z0Gc9gFXP6dP-GhnoQU7nCRW0yXTLQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Add new flag to destinguish block devices which may act as an NVMEM
-provider.
+On 6/21/24 22:07, 'Rae Moar' via KUnit Development wrote:
+> On Tue, Jun 18, 2024 at 1:03 PM Ivan Orlov <ivan.orlov0322@gmail.com> wrote:
+>>
+>> Currently, the only way to build string-stream-test is by setting
+>> CONFIG_KUNIT_TEST=y. However, CONFIG_KUNIT_TEST is a config option for
+>> a different test (`kunit-test.c`).
+>>
+>> Introduce a new Kconfig entry in order to be able to build the
+>> string-stream-test test as a separate module. Import the KUnit namespace
+>> in the test so we could have string-stream functions accessible.
+>>
+>> Reviewed-by: David Gow <davidgow@google.com>
+>> Signed-off-by: Ivan Orlov <ivan.orlov0322@gmail.com>
+> 
+> Hello!
+> 
+> This is looking good to me other than the module description as noted
+> by Jeff. That could be a separate patch since the rest of the series
+> is looking good.
+> 
+> There is the checkpatch warning on the module description. But as
+> David mentioned, the description looks ok to me. If there is a new
+> version of this patch, it may be worth trying to get rid of the
+> warning by lengthening the description.
+> 
+> But I am happy with this patch as is.
+> 
+> Reviewed-by: Rae Moar <rmoar@google.com>
+> 
+> Thanks!
+> -Rae
 
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
----
- include/linux/blkdev.h | 2 ++
- 1 file changed, 2 insertions(+)
+Hi Rae,
 
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index c6e9fb16f76e..c6c6153dbede 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -81,11 +81,13 @@ struct partition_meta_info {
-  * ``GENHD_FL_NO_PART``: partition support is disabled.  The kernel will not
-  * scan for partitions from add_disk, and users can't add partitions manually.
-  *
-+ * ``GENHD_FL_NVMEM``: the block device should be considered as NVMEM provider.
-  */
- enum {
- 	GENHD_FL_REMOVABLE			= 1 << 0,
- 	GENHD_FL_HIDDEN				= 1 << 1,
- 	GENHD_FL_NO_PART			= 1 << 2,
-+	GENHD_FL_NVMEM				= 1 << 3,
- };
- 
- enum {
+Thank you for the review. I believe I'm going to send the V3 and add the 
+module description there, to make the whole series as good as possible 
+before it gets merged :)
+
+Thank you so much for reviewing the series once again.
+
 -- 
-2.45.2
+Kind regards,
+Ivan Orlov
+
 
