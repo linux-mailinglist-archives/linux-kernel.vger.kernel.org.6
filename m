@@ -1,171 +1,169 @@
-Return-Path: <linux-kernel+bounces-232333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EB9A91A6F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:51:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D514391A6F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:52:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B68091F26F9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:51:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58BFF1F27198
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:52:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A321178CEA;
-	Thu, 27 Jun 2024 12:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E53179652;
+	Thu, 27 Jun 2024 12:51:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="D3WZqQWX"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L31l/y1Q"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA35C1482F5;
-	Thu, 27 Jun 2024 12:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA9B17839F
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719492690; cv=none; b=qUMSWRy1Gz3PGZbrjhg6WGnJ/Rj1iMBYZHNnO6bCh4k/aLmmq5OyyAsx5RrbukgVfv9Q/SyeqWdSJUHnSAH4IVskonMATclrIAISfWpKFhICIrNmQwlyi+eQ+DLCZNYkKaoqoqTKBdO0ce4qBdQYNW4hAsKy7siVBoDcW9OrinI=
+	t=1719492716; cv=none; b=bEbFKgFqQo2WM2n+Nxmg3XpxyBpA7pLTIHou/y8qVSoLyDJWoEopYdWC20o9ImMSmyMML4N3Ejpt6bBhZHIqundvLi2ySIIGcQcvXO6a1b0OploA32n6FVTQ209dJcr1pSG9q0xx7ON3ZFsYO13b6Ndo+l7XsDMB80+eJ6xCyC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719492690; c=relaxed/simple;
-	bh=G43gEWKZg+rlGXNL/C54KPYv2KQ3OCfmDFUhBLC4xMA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BB9gNjIxFpMpRfvFPcJPsN0CpFP+XBV6kOfurbTIFlBlqYVqrtxpcl1ZoK4JC+C3+SOf8Db0/fXP6aWjwWeeSy6+rkyyfsquMlgwKl87Bc1oq9F22CaYtOk+db1k8eWHgeiw8xr6LP2YQYUzM0tluQsBZtd4YBo1Fgq2Nd/MLwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=D3WZqQWX; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=EfO/Ili60E4aw0klTOm4lymg/x/5oHDvgXlSEsbvz64=; b=D3WZqQWXy6KVl7cJvum6Rcfx52
-	LQ6YIyqk/Lfa7Liw12YS/5LmUZv17oKflmjqzEZ2AOlyhVs3bZpz8E/tahjNfyj0/oXp1UPlfcmia
-	/ycmaZGr2ndqPMKAt+k1+EBs05sytWrmlrSINN/PCK3xfIifdHzBO/e6wqeCN0lDkCI8KWhU1aRe5
-	v2qr9SUJ+xpNVd+iLxGz6I6hrESkP9iXpGCW/s44hIp7sBXhx/Wge/4X0Zgt/eEHev+YqeOG0QKS0
-	SeqsUx/SIJzrQCC0vCJlNwYupr+vB5Y+AKJXlFa6hu9DjmlGK74xuW4YyWlv1orF5lAvuabgliKYp
-	cWNgQMaA==;
-Received: from 179-125-70-190-dinamico.pombonet.net.br ([179.125.70.190] helo=quatroqueijos.cascardo.eti.br)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1sMoau-00843I-KG; Thu, 27 Jun 2024 14:51:21 +0200
-Date: Thu, 27 Jun 2024 09:51:13 -0300
-From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-To: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Gwendal Grignou <gwendal@chromium.org>, dlunev@chromium.org
-Subject: Re: [PATCH v2 2/2] fat: always use dir_emit_dots and ignore . and ..
- entries
-Message-ID: <Zn1gQeWToPNkp9nt@quatroqueijos.cascardo.eti.br>
-References: <20240625175133.922758-1-cascardo@igalia.com>
- <20240625175133.922758-3-cascardo@igalia.com>
- <871q4kae58.fsf@mail.parknet.co.jp>
- <ZnxwEtmYeZcKopJK@quatroqueijos.cascardo.eti.br>
- <87a5j7v517.fsf@mail.parknet.co.jp>
+	s=arc-20240116; t=1719492716; c=relaxed/simple;
+	bh=XtdvjmExmK9D2dS6fGUdUIVDepbUx+JmHx/WT1CKyFQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ngX5NDO7R+vz/qGkqxDeAt9x1/K8qSkPIP3g+uFEzYCZWQ0RZIklSCyYsWBmYzKvd40xqLS4iznw0vyxRw6zr0u0yimnYdy+Us4urw5FCKFCe8mn4FjtgproAGmAkxzqeY0bFjsppqXC+SEzoINV80wMdS1tdJN+KnnXRU54BNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L31l/y1Q; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-367339bd00aso958921f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 05:51:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719492714; x=1720097514; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fnYEn+08jqkRCijrF6N5I7CtgtXywXX5Pko+EhFcF/E=;
+        b=L31l/y1QDiu8q1GXO/OT/ybb//9oV1hJpaOHdLo7fjbsv+0FqcpD2H0GTWlDbwzlKT
+         vR7GdlC8P4iwMt4qMfDx+d4SgwONRnYtnfg1A2Wh/4gug3psmH27YrsQaLLr5DB3m/Ny
+         CLV+Ax2MRYyioVSEfzCIQwF1KYWezhB38JXBk5BJ69UW/z9ic7gD4bVS/xLk5G66WyQv
+         vHgrMGS4PRdUWO6HwwWMDYHP1PhYQpCqQj6QcJmuVqCzvaDbdP7kWmWu4LbMiRGhX0pY
+         FlVuUt4EXjMhLZZHWkcY7MN7GHMDsI9S6CXrbZRmg4JeTGe6caOxryt0sJ6D1KGhD/dK
+         5gyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719492714; x=1720097514;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fnYEn+08jqkRCijrF6N5I7CtgtXywXX5Pko+EhFcF/E=;
+        b=tlE7SkXCpWj/kJmMXS2evOqTNF64kzKPL8h1xputxmjEPpKEJuYL3kC7gYXpDdYWcq
+         Kj6vIOYg8x9U0HxN7M4AMvlBJyvL95UstknSw71BTCnJVdcB7J3iZ5y+/J8EzFSlDW8w
+         QAo0UVUcV/t/p/psd+0oMQnvss5oZtjH3Fg9iNzdJJD6NnIS1M9Ri7FqwJ9dZ+N6leh4
+         U/SSZxOa4f44ZVgyMB1uunO61FQcK2NaZ5NNfuZ2TEU6vaaSSCLgEwRDB+/xhIJ0i/Ax
+         +/upT7Efgy1nLR4AYE4NEy6Wyu+SkXDXLXhohfwnxG25KF6ri0gCSRc65otNuCQZxNun
+         7Ylw==
+X-Forwarded-Encrypted: i=1; AJvYcCXjrZsUN9VOKZst6u4g/jqxyuY8f+M1LxCKPpsCw1dht1Jxiin8QNnRbEyyLiGSMpxlpEmOTj+GL0lfa2eQoGbtGQbByGqlylvPx0Hn
+X-Gm-Message-State: AOJu0Yz7hciTCSQyq4PGoJpKNu0/5m5t42+O82VEKqrwQIosR+MDv+41
+	nZD6QDxomhw3+8lD3qUCKGJhgWgvEepCUZmUyV6txNsLK9vxQf+wKQj956jybkY=
+X-Google-Smtp-Source: AGHT+IEdepWeFKby2pWGXn4ajKkwBMT3yEWL/Z2uvHjUQvfydEqGgmbC1o+puPl/54j5hAOcRfQ47w==
+X-Received: by 2002:adf:ec43:0:b0:366:eaa7:1133 with SMTP id ffacd0b85a97d-366eaa711damr8511782f8f.46.1719492713031;
+        Thu, 27 Jun 2024 05:51:53 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:feeb:faed:66fa:9e6a? ([2a01:e0a:982:cbb0:feeb:faed:66fa:9e6a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3674357ff28sm1774577f8f.47.2024.06.27.05.51.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Jun 2024 05:51:52 -0700 (PDT)
+Message-ID: <c71feb6b-4da5-4181-8b4a-2f5dac195135@linaro.org>
+Date: Thu, 27 Jun 2024 14:51:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87a5j7v517.fsf@mail.parknet.co.jp>
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 0/6] ASoC: codecs: wsa88xx: add support for static port
+ mapping.
+To: srinivas.kandagatla@linaro.org, Banajit Goswami <bgoswami@quicinc.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org,
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Manikantan R <quic_manrav@quicinc.com>
+References: <20240626-port-map-v1-0-bd8987d2b332@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240626-port-map-v1-0-bd8987d2b332@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 27, 2024 at 05:10:44AM +0900, OGAWA Hirofumi wrote:
-> Thadeu Lima de Souza Cascardo <cascardo@igalia.com> writes:
+On 27/06/2024 13:55, srinivas.kandagatla@linaro.org wrote:
+> Existing way of allocating soundwire master ports on Qualcommm platforms is
+> dynamic, and in linear order starting from 1 to MAX_PORTS.
+> This will work as long as soundwire device ports are 1:1 mapped
+> linearly. However on most Qcom SoCs like SM8550, SM8650, x1e80100, these
+> are NOT mapped in that order.
 > 
-> >> Unacceptable to change the correct behavior to broken format. And
-> >> unlikely break the userspace, however this still has the user visible
-> >> change of seek pos.
-> >> 
-> >> Thanks.
-> >> 
-> >
-> > I agree that if this breaks userspace with a good filesystem or regresses
-> > in a way that real applications would break, that this needs to be redone.
-> >
-> > However, I spent a few hours doing some extra testing (I had already run
-> > some xfstests that include directory testing) and I failed to find any
-> > issues with this fix.
-> >
-> > If this would break, it would have broken the root directory. In the case
-> > of a directory including the . and .. entries, the d_off for the .. entry
-> > will be set for the first non-dot-or-dotdot entry. For ., it will be set as
-> > 1, which, if used by telldir (or llseek), will emit the .. entry, as
-> > expected.
-> >
-> > For the case where both . and .. are absent, the first real entry will have
-> > d_off as 2, and it will just work.
-> >
-> > So everything seems to work as expected. Do you see any user visible change
-> > that would break any applications?
+> The result of this is that only one speaker among the pair of speakers
+> is always silent, With recent changes for WSA codec to support codec
+> versions and along with these patches we are able to get all speakers
+> working on these SoCs.
 > 
-> First of all, I'm not thinking this is the fix, I'm thinking this as the
-> workaround of broken formatter (because the windows's fsck also think it
-> as broken). So very low priority to support.
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+> Manikantan R (1):
+>        ASoC: dt-bindings: wsa883x: Document port mapping property
 > 
-> As said, I also think low chance to break the userspace. However it
-> changes real offset to pseudo offset. So if userspace saved it to
-> persistent space, breaks userspace. Unlikely, but I think there is no
-> value to change the behavior for workaround.
+> Srinivas Kandagatla (5):
+>        ASoC: codecs: wsa883x: parse port-mapping information
+>        ASoC: dt-bindings: wsa8840: Document port mapping property
+>        ASoC: codecs: wsa884x: parse port-mapping information
+>        arm64: dts: x1e80100-crd: fix wsa soundwire port mapping
+>        arm64: dts: x1e80100-qcp: fix wsa soundwire port mapping
 > 
-> Thanks.
-> -- 
-> OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+>   Documentation/devicetree/bindings/sound/qcom,wsa883x.yaml | 8 ++++++++
+>   Documentation/devicetree/bindings/sound/qcom,wsa8840.yaml | 8 ++++++++
+>   arch/arm64/boot/dts/qcom/x1e80100-crd.dts                 | 4 ++++
+>   arch/arm64/boot/dts/qcom/x1e80100-qcp.dts                 | 2 ++
+>   sound/soc/codecs/wsa883x.c                                | 8 ++++++++
+>   sound/soc/codecs/wsa884x.c                                | 8 ++++++++
+>   6 files changed, 38 insertions(+)
+> ---
+> base-commit: 9935be184a55dd84fc3275094f2df095491f6ea1
+> change-id: 20240626-port-map-ef50c3304d4a
+> 
+> Best regards,
 
-I looked at that perspective, but still wanted to allow users to use such
-filesystems, even if they needed to fsck it first.
+I now have both speakers working !
 
-But there is the issue that when such filesystems are mounted, they are
-further corrupted, preventing such fsck from correctly fixing and allowing
-access to the data.
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-HDK
 
-So I started doing some investigation and that lead me to the following
-code from fs/fat/inode.c:
-
-static void fat_evict_inode(struct inode *inode)
-{
-	truncate_inode_pages_final(&inode->i_data);
-	if (!inode->i_nlink) {
-		inode->i_size = 0;
-		fat_truncate_blocks(inode, 0);
-	} else
-		fat_free_eofblocks(inode);
-[...]
-
-That is, since the directory has no links, once it is evicted (which
-happens right after reading the number of subdirectories and failing
-verification), it is truncated. That means all clusters are marked as FREE.
-Then, later, if trying to fsck or mount this filesystem again, the
-directory entry is removed or further errors show up (as an EOF is
-expected, not a FREE cluster).
-
-And that is caused by attributing a number of 0 links. I looked it up on
-how other filesystems handle this situation and I found out that exfat adds
-2 to the number of subdirectories, just as I am suggesting. When
-enumerating the directories (at its readdir), it also relies on
-dir_emit_dots for all cases.
-
-As for programs persisting the offset, the manpage for telldir has on its
-NOTES section:
-
-"""
-Application programs should treat this strictly as an opaque value, making
-no assumptions about its contents.
-"""
-
-I know this doesn't refer to persisting or not that opaque value, but any
-other changes to the directory would change the offset of its current
-subdirectories and given those values are opaque, no assumptions should be
-made. And unless we find such programs in the wild, the same argunent could
-be made that there may be programs that expect . and .. to be at offset 0
-and 1, like every filesystem that uses dir_emit_dots does.
-
-I understand the cautiousness to prevent regressions, but I did the work
-here to test and understand the changes that are being proposed. I even
-looked into another way of preventing the further corruption, but that
-convinced me even more that the right fix is to assign a minimum number of
-links to directories and I found precedence to this.
-
-Thanks.
-Cascardo.
-
+Thanks!
+Neil
 
