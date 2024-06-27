@@ -1,184 +1,239 @@
-Return-Path: <linux-kernel+bounces-232145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B06D91A410
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:39:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0364C91A417
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:40:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 900761F25B73
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:39:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 264941C2126F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:40:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2B213F014;
-	Thu, 27 Jun 2024 10:39:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52FE51420B6;
+	Thu, 27 Jun 2024 10:39:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ME56jqv2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m2Zel+BV"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2965113E3F5
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 10:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79FD913D62E;
+	Thu, 27 Jun 2024 10:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719484741; cv=none; b=b/z9JIIqWYd6pp2fI13MOgtLXc/lDiRx0TrjIWb95ts/VL9cTC8k4ENwuYov4m15eKOz8RNbhf1TSi2ahDq5IU6IfFdvp/UQXai7G0EttGFedSIuGkdbzv4XbtvyIyFRIkpJ8LGgpA6zbmJe92ot9laUgqX4yeBnXT2LOiS+5To=
+	t=1719484782; cv=none; b=eAk32hJ8+5ESoHci0xl89WFvQE83tjk6kSPb3/QPIFHuvEd/WX8JZX/Qh6HRonXLDsaTwaTwDe3ejX/2HUsrPhUWYvjtrT7/+a/UGlMFOlP3ZdR06bg14odg4uV39rZoublp8LGaFoj5Db70pFsY67vXLhr6lj6QYEDnH32Qnq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719484741; c=relaxed/simple;
-	bh=WubQr97XkKQxDef1ONFTgfZ93YpzYjUnPEIOIt//c7k=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Sm7NFk8erjpnYjNo3d+kxRzW//iursQ2rFR/uNv4bJ9BNomYa92dqcwCsMPFj0V8u452UHfb4aZmRP8ZcENnwzy/OM67bZ9A2+J5wGDuVKgfOSzlS/e7BBTPqFpycAiVx4QHi9tyccOlFPC5LCrf7K/NWf6kWDrZMnIvDBdWzq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ME56jqv2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEED8C2BBFC;
-	Thu, 27 Jun 2024 10:39:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719484741;
-	bh=WubQr97XkKQxDef1ONFTgfZ93YpzYjUnPEIOIt//c7k=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ME56jqv29QoKGjg5W1KoJJ1bfR/2/VlPpc55dL9F3+lIHqFYxxK3WDv8aSwGs0s+a
-	 krS/Xzcr4dMlmqo51nq4g3TWKTh+GRJDzlk5n/hQo2AbIm56ZQsK3tDtDv2EiFsro9
-	 CDUsmZBk0Q1EnCuMD0/Ry+fAVhCTiTAHoZlWoJMzXyIbXKw0v3dtULUCBcvCRnN4m7
-	 pIlcNeFDzJTWbZETLBw1MwbvBeGabMSgvU2SMk108rdQE6Qh33UryVKQigx7AzEcnF
-	 2HOxIVqrVeh/1ESPYg3FMMCAX4sMsPuCNrumo12sf/TGcXb988XGA0Xk+x36wQw84y
-	 k6GD0iTsAqhsQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sMmWo-007lfM-LL;
-	Thu, 27 Jun 2024 11:38:58 +0100
-Date: Thu, 27 Jun 2024 11:38:58 +0100
-Message-ID: <86pls2isal.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: richard clark <richard.xnu.clark@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	will@kernel.org,
+	s=arc-20240116; t=1719484782; c=relaxed/simple;
+	bh=Rm3oHolbsf2Le2SoW8rnQD+D5XsHfm7yKNt9a6jOm8U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bABJ4tJMwv8XSz2tKbwjjWEAgK5OxzHOnDlwgM7MsJmu56nntojrRHU8tcttxy1Pm/gAqIZPCstvoF+NFcY5mu963oHk0IAA2K8/bW1siKd8T9/t8ycrR36dfLMei7OYbhJqEGjkLD9CfAjYA+jjSTbXJd2y3Z+8p3U0rHdYLfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m2Zel+BV; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4256742f67fso1775965e9.3;
+        Thu, 27 Jun 2024 03:39:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719484779; x=1720089579; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tp8I88N5zTJngyTJGNfyhk0MXYhV5WZ/GtGHnw15UVU=;
+        b=m2Zel+BVGixUZgRV+eA/k1hUSAMMbG97Qrom0/XAcrInhDuTAnfHM7niFL6H5mQALO
+         XH98eWHhT2XBJiBtY81ePRnRbPmJobTKE8j7Kxa7dQ5dUftKsPzmxDHUkQJrlIQg3x65
+         ifAJCVrMyRrj3YMThUjYhSY/JDfbv1cXZVdAT5EJbX+www5qxAkdEFSa5hiIwL4763vv
+         V5Qx5S7FBPnuN9wYSTAgZ7Et+cE1i1+XkjpoVbbkicPz7WxYDGAqYjgoTuD/1KwTqiSL
+         AaKpO04fQ7Cm7jJAwwAZDkSYgfs+8paTb2HelT+o2lzGz5PVTBpXS7Y6Io8l1SGgShgU
+         yH7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719484779; x=1720089579;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tp8I88N5zTJngyTJGNfyhk0MXYhV5WZ/GtGHnw15UVU=;
+        b=b8ppbqKtIkjSXU/rhE6TeMDYM2Dq1SxxACO6IdVHSE58h4KRb6HnlBv5ks7j3ELiZT
+         EtM/RJa1GGBS7zGG5kgJp+dINTZ3A9VN88l4HBXicAdhKPct42z3mgnCzkSUQmT0wAXH
+         aVrwXPE9eH6QCWb4ulILVlBms2GHDuI/rIZf31562VhqFiG7tP5N86uWLZZUg8CofMy5
+         hH6jhWafwWyHjsIpNKNr62rtDG1unoYKRRyDVZhgi9IwrS4iPSeFom5CX/XYrmX1fpRe
+         lRYbkmtEJ4zE2lcANdU/Wi+QFxnDwUMghDheXarJAxAuO00zbsOxhu+G/4aRgU99LbFB
+         EwmA==
+X-Forwarded-Encrypted: i=1; AJvYcCUoKb5UaG2N13QWCpLYLf5CHduhxEYdgCXw4QF1EYY72DfJSInB/VSQEEPOxmBFW9OAhlWqnZv1M0ZfKIsnm92XQpo8tmEgValAeEyW
+X-Gm-Message-State: AOJu0Yw1qMr2eQoIp/C5rvtWZ4xd8xUC/w/NwIE4b2stgeVOS7PAPcG/
+	DfCpPTJjLnyJHHAovtJlk625tBBvbzNG3bHZ1UDeb36b0+OSYSej
+X-Google-Smtp-Source: AGHT+IGvtRZlO7kSgJ/OAiER8k6Ry3nLBU8hTMdGH2uQfnW89yXrq3HjEUQxC9bY1xw4mdxf9w9RYw==
+X-Received: by 2002:a05:600c:68cc:b0:425:5eec:d261 with SMTP id 5b1f17b1804b1-4255eecd2bcmr25764165e9.34.1719484778559;
+        Thu, 27 Jun 2024 03:39:38 -0700 (PDT)
+Received: from lucifer.home ([2a00:23cc:d20f:ba01:bb66:f8b2:a0e8:6447])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42564bb6caasm19957195e9.33.2024.06.27.03.39.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 03:39:37 -0700 (PDT)
+From: Lorenzo Stoakes <lstoakes@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	"Russell King (Oracle)" <linux@armlinux.org.uk>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: Will smp_call_function_single(cpu, ...) broadcast IPI to all other cpus?
-In-Reply-To: <CAJNi4rMfRmWoYdsyH6ibNKN8DSCL_DO8Wa08mWbe8t7vH21Dpw@mail.gmail.com>
-References: <CAJNi4rMfRmWoYdsyH6ibNKN8DSCL_DO8Wa08mWbe8t7vH21Dpw@mail.gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	linux-mm@kvack.org,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Matthew Wilcox <willy@infradead.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Kees Cook <kees@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Lorenzo Stoakes <lstoakes@gmail.com>
+Subject: [RFC PATCH 0/7] Make core VMA operations internal and testable
+Date: Thu, 27 Jun 2024 11:39:25 +0100
+Message-ID: <cover.1719481836.git.lstoakes@gmail.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: richard.xnu.clark@gmail.com, mark.rutland@arm.com, will@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux@armlinux.org.uk, rostedt@goodmis.org, torvalds@linux-foundation.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, 27 Jun 2024 10:26:05 +0100,
-richard clark <richard.xnu.clark@gmail.com> wrote:
-> 
-> Hi,
-> There's a smp_call_function_single(10, ipi_cb_func, &data_info, 1)
-> called by the init function of my kmod, then I ipi traces this
-> smp_call_function_single(...) with below cmdline:
-> 
-> # echo 0 > /sys/kernel/debug/tracing/tracing_on; echo >
-> /sys/kernel/debug/tracing/trace; echo 'reason=="Function call
-> interrupts"' > /sys/kernel/debug/tracing/events/ipi/filter; echo 1 >
-> /sys/kernel/debug/tracing/events/ipi/ipi_raise/enable; echo 1 >
-> /sys/kernel/debug/tracing/events/ipi/ipi_entry/enable; echo 1 >
-> /sys/kernel/debug/tracing/tracing_on; taskset -c 0 insmod
-> /kmods/ipi_test.ko; echo 0 > /sys/kernel/debug/tracing/tracing_on;
-> echo 0 > /sys/kernel/debug/tracing/events/ipi/ipi_raise/enable; echo 0
-> > /sys/kernel/debug/tracing/events/ipi/ipi_entry/enable; echo >
-> /sys/kernel/debug/tracing/events/ipi/filter; cat
-> /sys/kernel/debug/tracing/trace
-> 
-> The trace output as below:
-> 
-> # tracer: nop
-> #
-> # entries-in-buffer/entries-written: 28/28   #P:12
-> #
-> #                                _-------=> irqs-off/BH-disabled
-> #                               / _------=> need-resched
-> #                              | / _-----=> need-resched-lazy
-> #                              || / _----=> hardirq/softirq
-> #                              ||| / _---=> preempt-depth
-> #                              |||| / _--=> preempt-lazy-depth
-> #                              ||||| / _-=> migrate-disable
-> #                              |||||| /     delay
-> #           TASK-PID     CPU#  |||||||  TIMESTAMP  FUNCTION
-> #              | |         |   |||||||      |         |
-> 
->           <idle>-0       [009] dn.h2..   555.400822: ipi_raise:
-> target_mask=00000000,00000002 (Function call interrupts)
->           <idle>-0       [001] d..h1..   555.400832: ipi_entry:
-> (Function call interrupts)
->           insmod-1644    [000] ....1..   555.401628: ipi_raise:
-> target_mask=00000000,00000ffe (Function call interrupts)
->           <idle>-0       [001] d..h1..   555.401630: ipi_entry:
-> (Function call interrupts)
->           <idle>-0       [009] d..h1..   555.401631: ipi_entry:
-> (Function call interrupts)
->           <idle>-0       [011] d..h1..   555.401633: ipi_entry:
-> (Function call interrupts)
->           <idle>-0       [003] d..h1..   555.401633: ipi_entry:
-> (Function call interrupts)
->           <idle>-0       [008] d..h1..   555.401633: ipi_entry:
-> (Function call interrupts)
->           <idle>-0       [002] d..h1..   555.401634: ipi_entry:
-> (Function call interrupts)
->           <idle>-0       [010] d..h1..   555.401634: ipi_entry:
-> (Function call interrupts)
->           <idle>-0       [004] d..h1..   555.401635: ipi_entry:
-> (Function call interrupts)
->           <idle>-0       [005] d..h1..   555.401635: ipi_entry:
-> (Function call interrupts)
->           <idle>-0       [006] d..h1..   555.401635: ipi_entry:
-> (Function call interrupts)
->           <idle>-0       [007] d..h1..   555.401635: ipi_entry:
-> (Function call interrupts)
->           insmod-1644    [000] ....1..   555.401643: ipi_raise:
-> target_mask=00000000,00000ffe (Function call interrupts)
->           <idle>-0       [001] d..h1..   555.401644: ipi_entry:
-> (Function call interrupts)
->           <idle>-0       [002] d..h1..   555.401645: ipi_entry:
-> (Function call interrupts)
->           <idle>-0       [003] d..h1..   555.401645: ipi_entry:
-> (Function call interrupts)
->           <idle>-0       [004] d..h1..   555.401645: ipi_entry:
-> (Function call interrupts)
->           <idle>-0       [006] d..h1..   555.401645: ipi_entry:
-> (Function call interrupts)
->           <idle>-0       [005] d..h1..   555.401645: ipi_entry:
-> (Function call interrupts)
->           <idle>-0       [007] d..h1..   555.401645: ipi_entry:
-> (Function call interrupts)
->           <idle>-0       [008] d..h1..   555.401645: ipi_entry:
-> (Function call interrupts)
->           <idle>-0       [009] d..h1..   555.401645: ipi_entry:
-> (Function call interrupts)
->           <idle>-0       [010] d..h1..   555.401645: ipi_entry:
-> (Function call interrupts)
->           <idle>-0       [011] d..h1..   555.401646: ipi_entry:
-> (Function call interrupts)
->           insmod-1644    [000] ....1..   555.401908: ipi_raise:
-> target_mask=00000000,00000400 (Function call interrupts)
->           <idle>-0       [010] d..h1..   555.401911: ipi_entry:
-> (Function call interrupts)
-> 
-> I am curious why there're two IPI broadcasts to all the other
-> cpus(1-11) before the real smp_call_function_single(10) trace
-> event(the last two lines of the above trace output), any comments
-> about that?
+There are a number of "core" VMA manipulation functions implemented in
+mm/mmap.c, notably those concerning VMA merging, splitting, modifying,
+expanding and shrinking, which logically don't belong there.
 
-You may want to enable stack trace recording and find out for yourself
-where these ipi_raise() calls are coming from.
+More importantly this functionality represents an internal implementation
+detail of memory management and should not be exposed outside of mm/
+itself.
 
-	M.
+This patch series isolates core VMA manipulation functionality into its own
+file, mm/vma.c, and provides an API to the rest of the mm code in mm/vma.h.
 
--- 
-Without deviation from the norm, progress is not possible.
+Importantly, it also carefully implements mm/vma_internal.h, which
+specifies which headers need to be imported by vma.c, leading to the very
+useful property that vma.c depends only on mm/vma.h and mm/vma_internal.h.
+
+This is useful, because we can then re-implement vma_internal.h in
+userland, stubbing out and adding shims for kernel mechanisms as required,
+and then can directly and very easily unit test internal VMA functionality.
+
+This patch series takes advantage of existing shim logic and full userland
+maple tree support contained in tools/testing/radix-tree/ and
+tools/include/linux/, separating out shared components of the radix tree
+implementation to provide this testing.
+
+Kernel functionality is stubbed and shimmed as needed in tools/testing/vma/
+which contains a fully functional userland vma_internal.h file and which
+imports mm/vma.c and mm/vma.h to be directly tested from userland.
+
+A simple, skeleton testing implementation is provided in
+tools/testing/vma/main.c as a proof-of-concept, asserting that simple VMA
+merge, modify (testing split), expand and shrink functionality works
+correctly.
+
+Lorenzo Stoakes (7):
+  userfaultfd: move core VMA manipulation logic to mm/userfaultfd.c
+  mm: move vma_modify() and helpers to internal header
+  mm: unexport vma_expand() / vma_shrink()
+  mm: move internal core VMA manipulation functions to own file
+  MAINTAINERS: Add entry for new VMA files
+  tools: separate out shared radix-tree components
+  tools: add skeleton code for userland testing of VMA logic
+
+ MAINTAINERS                                   |   14 +
+ fs/exec.c                                     |   26 +-
+ fs/userfaultfd.c                              |  160 +-
+ include/linux/mm.h                            |  104 +-
+ include/linux/userfaultfd_k.h                 |   19 +
+ mm/Makefile                                   |    2 +-
+ mm/gup.c                                      |    1 +
+ mm/huge_memory.c                              |    1 +
+ mm/internal.h                                 |  160 +-
+ mm/madvise.c                                  |    1 +
+ mm/memory.c                                   |    1 +
+ mm/mempolicy.c                                |    1 +
+ mm/mlock.c                                    |    1 +
+ mm/mmap.c                                     | 1808 +----------------
+ mm/mmu_notifier.c                             |    2 +
+ mm/mprotect.c                                 |    1 +
+ mm/mremap.c                                   |    1 +
+ mm/mseal.c                                    |    2 +
+ mm/rmap.c                                     |    1 +
+ mm/userfaultfd.c                              |  170 ++
+ mm/vma.c                                      | 1766 ++++++++++++++++
+ mm/vma.h                                      |  356 ++++
+ mm/vma_internal.h                             |  143 ++
+ tools/testing/radix-tree/Makefile             |   68 +-
+ tools/testing/radix-tree/maple.c              |   14 +-
+ tools/testing/radix-tree/xarray.c             |    9 +-
+ tools/testing/shared/autoconf.h               |    2 +
+ tools/testing/{radix-tree => shared}/bitmap.c |    0
+ tools/testing/{radix-tree => shared}/linux.c  |    0
+ .../{radix-tree => shared}/linux/bug.h        |    0
+ .../{radix-tree => shared}/linux/cpu.h        |    0
+ .../{radix-tree => shared}/linux/idr.h        |    0
+ .../{radix-tree => shared}/linux/init.h       |    0
+ .../{radix-tree => shared}/linux/kconfig.h    |    0
+ .../{radix-tree => shared}/linux/kernel.h     |    0
+ .../{radix-tree => shared}/linux/kmemleak.h   |    0
+ .../{radix-tree => shared}/linux/local_lock.h |    0
+ .../{radix-tree => shared}/linux/lockdep.h    |    0
+ .../{radix-tree => shared}/linux/maple_tree.h |    0
+ .../{radix-tree => shared}/linux/percpu.h     |    0
+ .../{radix-tree => shared}/linux/preempt.h    |    0
+ .../{radix-tree => shared}/linux/radix-tree.h |    0
+ .../{radix-tree => shared}/linux/rcupdate.h   |    0
+ .../{radix-tree => shared}/linux/xarray.h     |    0
+ tools/testing/shared/maple-shared.h           |    9 +
+ tools/testing/shared/maple-shim.c             |    7 +
+ tools/testing/shared/shared.h                 |   34 +
+ tools/testing/shared/shared.mk                |   68 +
+ .../testing/shared/trace/events/maple_tree.h  |    5 +
+ tools/testing/shared/xarray-shared.c          |    5 +
+ tools/testing/shared/xarray-shared.h          |    4 +
+ tools/testing/vma/.gitignore                  |    7 +
+ tools/testing/vma/Makefile                    |   18 +
+ tools/testing/vma/errors.txt                  |    0
+ tools/testing/vma/generated/autoconf.h        |    2 +
+ tools/testing/vma/linux/atomic.h              |   19 +
+ tools/testing/vma/linux/mmzone.h              |   37 +
+ tools/testing/vma/main.c                      |  161 ++
+ tools/testing/vma/vma.h                       |    3 +
+ tools/testing/vma/vma_internal.h              |  843 ++++++++
+ tools/testing/vma/vma_stub.c                  |    6 +
+ 61 files changed, 3800 insertions(+), 2262 deletions(-)
+ create mode 100644 mm/vma.c
+ create mode 100644 mm/vma.h
+ create mode 100644 mm/vma_internal.h
+ create mode 100644 tools/testing/shared/autoconf.h
+ rename tools/testing/{radix-tree => shared}/bitmap.c (100%)
+ rename tools/testing/{radix-tree => shared}/linux.c (100%)
+ rename tools/testing/{radix-tree => shared}/linux/bug.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/cpu.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/idr.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/init.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/kconfig.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/kernel.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/kmemleak.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/local_lock.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/lockdep.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/maple_tree.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/percpu.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/preempt.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/radix-tree.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/rcupdate.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/xarray.h (100%)
+ create mode 100644 tools/testing/shared/maple-shared.h
+ create mode 100644 tools/testing/shared/maple-shim.c
+ create mode 100644 tools/testing/shared/shared.h
+ create mode 100644 tools/testing/shared/shared.mk
+ create mode 100644 tools/testing/shared/trace/events/maple_tree.h
+ create mode 100644 tools/testing/shared/xarray-shared.c
+ create mode 100644 tools/testing/shared/xarray-shared.h
+ create mode 100644 tools/testing/vma/.gitignore
+ create mode 100644 tools/testing/vma/Makefile
+ create mode 100644 tools/testing/vma/errors.txt
+ create mode 100644 tools/testing/vma/generated/autoconf.h
+ create mode 100644 tools/testing/vma/linux/atomic.h
+ create mode 100644 tools/testing/vma/linux/mmzone.h
+ create mode 100644 tools/testing/vma/main.c
+ create mode 100644 tools/testing/vma/vma.h
+ create mode 100644 tools/testing/vma/vma_internal.h
+ create mode 100644 tools/testing/vma/vma_stub.c
+
+--
+2.45.1
 
