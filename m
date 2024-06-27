@@ -1,161 +1,168 @@
-Return-Path: <linux-kernel+bounces-232404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE92391A85A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:53:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DA2191A85D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:53:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05C871C226E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:53:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C54C7B22246
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E409F194C62;
-	Thu, 27 Jun 2024 13:53:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A09195801;
+	Thu, 27 Jun 2024 13:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="W6L8CB0K"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="chxmMBze"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6E691946BB;
-	Thu, 27 Jun 2024 13:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15FF11946BB;
+	Thu, 27 Jun 2024 13:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719496390; cv=none; b=DeCIPGt0NLVkUv8li1lQy0Jlbgq8q54hhABVhA4qmx9zu5pYifaB5wcqwMzLtcB8Cvby0yXIr3fYe0yWQ+wXXfYYHui4LdyiKx9ZoDd4x1V1N65yCqzAdPcJkykO3d7V2pazoASZ/lJpfgittxoca5+MIvwvGiPPw8z2Zeyjo1g=
+	t=1719496395; cv=none; b=TH98iKfXGgAOZ708aChznnVyXHilUc089R0nc/ybiOcrcYdtclwWWWvQmGSlvAJI4B8bj9QZRdw12ctKslCKNVRrJmz+peQzcNxImD7GSQAeA331eDcpDaAWPcOCceI/DtjydQtSijlIS41Skdsk7lEKlqUkqbLdOcVATnd//1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719496390; c=relaxed/simple;
-	bh=5/ZC6O6bVKKOP0O0smfBn+JnsMkFDkA4dDnlBHWugl0=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=SWDItDN2UgzckvOSxpuHYoeZVrKZT9yWxNyVPBpFYHPG1JDY+2aoYBQvfxFivZsIju8xhyQcvdArygyRqv24R9nKj4pCcYwOCOxV8qWro7YNHrSRbCExDeKuzC/YT9XFaYkaqkgqoTdXi2KGofVnFXfa78JGCyaITn11+81Z3Yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=W6L8CB0K; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719496350; x=1720101150; i=markus.elfring@web.de;
-	bh=3myu8VtpYXyOU9OGhGPzbiYKZDpmLk6ezod6dMhXyAU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=W6L8CB0KpU9OU2zG8ZjNOSkl2gGRJ/hjd++edjH+BTUHyLwqidWG9F/gkg/sZCz7
-	 SU6y172u/0SjgzjzHeDTL+35dwWoQ3sMmqUEuebWU+qXTKqlhdKSIUjQad2vDPBNe
-	 ZaYcxI+BsxbP1P4C/kih+IsmvL2rdtjBFVPV5/1J7IqjATe9TBMMn6QXCw8k/F606
-	 wYU/sUoiph1OiUro4mwrn9QE1v8HnbAWkhcHt0/4szm9Rr8Cn7uAI//Ov9bw/g6lg
-	 Ja0D+ccm3+ROGYyoNGxuneGMlQB8l2RWFP6qcOG/77YSGTdXo/TjDO58yR3qSLVSN
-	 nuE3aucKCwBF1O4kUQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1McZjb-1ssZvf0df3-00j8bY; Thu, 27
- Jun 2024 15:52:30 +0200
-Message-ID: <cdcc4cf2-543a-4301-a445-5ced6a2d981b@web.de>
-Date: Thu, 27 Jun 2024 15:52:24 +0200
+	s=arc-20240116; t=1719496395; c=relaxed/simple;
+	bh=mKgxZFERBkLeUE2nY35u5owDkA0UeUZU/3BEl4SzNH8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=IwIAdVBAGkx00QDmjg6dUP7HYsPORkfYhka9MdRoJtFZ7C2rKkVrCY7e9btNK3x40CMtbVk6scAAcwhL2XZodFybeqJXhrgfBem++ZEgx5/bczYXPTJWVM1wGKKvn14TdA0shYXaQOu/iP7Suq9BuoKLc7pfH2GQIgadDInGd6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=chxmMBze; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1719496392;
+	bh=mKgxZFERBkLeUE2nY35u5owDkA0UeUZU/3BEl4SzNH8=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=chxmMBze7QEbuDf1i5ujeX+ucPi5EsGeeQUsojAcsx3/WZjSZ3omK2B1fE1oRS9S0
+	 7m35maflibi2jM2C+mZksYjRd6DstbZxkDZhdXCTnYLuMw2zoR/OBq3n3KHqipQlHa
+	 YUhTPGRjcFtypvPeW/FBFL+3rKpwceBcKKOMxYNx+t5nVo6XO5QUd/79+av4ONLZVH
+	 jomqckRPJAwDMYux7uTMY42nPVsPFt66WGXcX9mQjU+ccDhJtMtjY7F2mDfWn1xBDh
+	 k2Y9OICU1wku6HqFtUGOQPQcKceI1SV0D7SNAkI+ItU/ZXIkhWrcEg5xJdCK+ULuye
+	 /eQK+R9B3lY0w==
+Received: from nicolas-tpx395.localdomain (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 2016E3781188;
+	Thu, 27 Jun 2024 13:53:10 +0000 (UTC)
+Message-ID: <0fe5ee653af4e7ecdf8a7a605e9e80c91011a53d.camel@collabora.com>
+Subject: Re: [PATCH v7 6/6] arm64: dts: rockchip: Add VPU121 support for
+ RK3588
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Jianfeng Liu <liujianfeng1994@gmail.com>
+Cc: conor+dt@kernel.org, detlev.casanova@collabora.com, 
+	devicetree@vger.kernel.org, ezequiel@vanguardiasur.com.ar, 
+	frattaroli.nicolas@gmail.com, heiko@sntech.de, kernel@collabora.com, 
+	krzk+dt@kernel.org, linkmauve@linkmauve.fr, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	p.zabel@pengutronix.de, robh@kernel.org, sebastian.reichel@collabora.com, 
+	sigmaris@gmail.com
+Date: Thu, 27 Jun 2024 09:53:01 -0400
+In-Reply-To: <20240627081310.583427-1-liujianfeng1994@gmail.com>
+References: <f04e25bf3c09c55049775e8f012cb653cb4682ba.camel@collabora.com>
+	 <20240627081310.583427-1-liujianfeng1994@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Christian Marangi <ansuelsmth@gmail.com>, netdev@vger.kernel.org,
- Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Florian Fainelli <f.fainelli@gmail.com>,
- Heiner Kallweit <hkallweit1@gmail.com>, Jakub Kicinski <kuba@kernel.org>,
- Jiasheng Jiang <jiasheng@iscas.ac.cn>, Justin Stitt
- <justinstitt@google.com>, =?UTF-8?Q?Marek_Beh=C3=BAn?= <kabel@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
- Vladimir Oltean <olteanv@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>
-References: <20240626230241.6765-1-ansuelsmth@gmail.com>
-Subject: Re: [net-next RFC PATCH 1/2] net: mdio: implement mdio_mutex_nested
- guard() variant
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240626230241.6765-1-ansuelsmth@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:+xcQlQ3ETwDHgNKw1vt0XkxbVrdxdBzGk3jDArhxYKWdPAfuF05
- aSMrGw46GGHkxLEORh4D9Lz6+C12ihaDjJ5paoxeoxGV40wUQdgnkizR8qNVOkJkJjFbkcx
- 2WMs5y80IEjV3hw+MG33MrqvhTwVm8YsFuNRjfGovcb4JrNgU+e2kDkJGjLeHtxwzMWvf8B
- A0u0Vcq3bckVvhTrnOg7g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ajgkg7S3RCY=;9xM/jrv4TwQt/sKnhVKk44Uay+x
- O7S7584EIfrSYG4zUNZ7TFR6HJNjoS/n+fEJSzIUgXanlI0BU+DopWyO+fhYW8t2JWm4r0fwy
- U586LM+mCyUu68lT71+WdX1q8H4rtwMMzdEr1SFnlPCoUZpwotRjEf18R1OQ+FUEk/hV+TwEb
- UEs5Y9aVeafs5OUv12pd5SaSPY+dUPf7KItxPpKKBCplfLL+OwZ1jVJH82WJiFix/2JHYv4pi
- B91CKIK7XNYQfJM0eMSn0WKUjnRg5gSE/DuTSB+7pt0eMM8mhuEasFlO5s/CeLak1t+R1P5d0
- BzRdbAtuspT+cAWyz9PXygUXeVLF9coKyE89vpU3+CK6rJvEJvH1h1Ye+kHNSc5CY7u1YVVy6
- o8RKXkVIpXE+ESRjrvv2iTacE4+ciRw5JmBC2CRJggWMPHbjXOxbN0yOiuQ1NHt6FYtrStxmR
- LT3DG4A2jVelFQxpNYe5YzlBMjKB+1bAyeIHu7vR4tuuQ89mpPNr2/p7bxAWE66LfNwjIIiS0
- cqkZo33JdzKkLj4Bf+wz1L9EJAtaUCGmekA7DkhQG+qtu4JA4YSL755DIHk61YjJ0sGwg98jR
- lw6+H1iiO2bRMpBzp9P+0MI9jvWQbBQ6DMnIDcSkltUnpuMGNZGJiO21nQ2YaTid6P6wejAX5
- flCd+uotrOkRD/jgakswI8/v47F8GW+wcdxeHrpdYGQpJ7bZP9K6dT+MiUOfSdZzBhf28VzNo
- 6ywtxQ66RlhL9QrLbW/5pNgA8P/2mo03kmhf0R8/DRXtZ11X5tLMeYojHT7eu3lf/P3RvLQjg
- Sx9IksWAGtqNnSxqURn4Xia+8bHOsUCHBIhUnaH1y00+Y=
 
-> Implement mdio_mutex_nested guard() variant.
+Le jeudi 27 juin 2024 =C3=A0 16:13 +0800, Jianfeng Liu a =C3=A9crit=C2=A0:
+> Hi Nicolas,
+>=20
+> On Wed, 26 Jun 2024 13:46:03 -0400, Nicolas Dufresne wrote:
+> > Just to clarify, since you are right that it won't work well with GStre=
+amer. It
+> > does work with multiple decoders (it exposes them all), it is simply th=
+at it
+> > will randomly pick one when decoding, and it may not pick the best one.
+>=20
+> I have tested rkvdec2 and vpu121 with gstreamer 1.24.2 on rk356x to decod=
+e
+> a 4K video, and gstreamer always fall with error:
+> "v4l2slh264dec0: Failed to configure H264 decoder".
+> I guess that's because 1080p vpu is at fdea0000 which is always
+> initialized earlier than rkvdec2 at fdf80200, so gstreamer will always
+> choose the 1080p decoder.
 
-I find the idea generally helpful.
-The concrete implementation needs further clarifications.
+I've never done any research, but that is plausible.
 
+- Probe happen in address order, since DT are in address order
+- Media notes are assigned in probe order
+- GStreamer register the element in the same order in its registry
+- In adsence of a rank or capabilities to differentiate, the probe order is
+maintained.
 
-> guard() compes from the cleanup.h API that define handy class to
+>=20
+> > In the long term, I'd like to stop having to do "like downstream" and e=
+xpose
+> > them all. I believe the fix is fairly straightforward in GStreamer. We =
+need to
+> > expose in the generated element the width/height ranges, and for H.264 =
+the
+> > supported profiles and level. With that, we at least won't randomly fai=
+l at
+> > decoding 4K, and it should be good enough.
+>=20
+> Not only gstreamer, chromium also has similar issue. Chromium will only
+> check video resolution globally before starting to use one decoder: if
+> there is a 4K decoder detected before, it will mark 4K resolution as
+> supported. But when decoding videos, it will choose the first decoder
+> supporting profile like H264. So chromium may use a 1080p decoder to
+> decode a 4K video.
+>=20
+> Chromium's code about v4l2 is complicated for me. I may create a bug abou=
+t
+> it. But chrome os doesn't support devices with multi v4l2 decoders like
+> rockchip's socs, I don't know if they have the motion to fix it quickly.
 
-          comes?                             defines?
+That's an interesting bug, which makes its more of less equal to GStreamer
+"unimplemented behaviour". Filing a bug is best indeed, ChromeOS team, who
+maintains this, is probably unaware as they don't have any SoC with multipl=
+e
+decoders. Even on PC side, their Chromebooks only ever have a single GPU, I
+haven't heard about any eGPU support either.
 
+>=20
+> > For RK3588, which is a new SoC, its not a problem to upstream something=
+ that
+> > does not work with existing userspace. It would only be a regression if=
+ we where
+> > to enable VDPU121 on RK3399, as now updating linux would cause bugs wit=
+h
+> > existing userspace.
+>=20
+> There is an old soc just like RK3399: RK3328, which also has a 1080p
+> hantro h264 decoder and a 4K rkvdec h264 decoder. I guess less people car=
+e
+> about its mainline decoding with gstreamer/chromium so it still has 1080p
+> decoder enabled.
 
-> define the lifecycle of a critical section.
+What I meant by new/old, is supported mainline or not. But yes, on timeline=
+,
+there is many older SoC with dual decoders in the Rockchip line.
 
-  handle?
+>=20
+> > For users, it would be best if we get this sorted out in GStreamer by t=
+he time
+> > we have a second decoder. Note that I have some vacation coming up this=
+ month,
+> > so there might be extra delays. Yet, its logical to merge this (the "wo=
+rst"
+> > decoder) first, since then randomly picking a better one won't be a reg=
+ression.
+>=20
+> Happy vacation days! I will also take a look at chromium's code to see if
+> I can fix it.
 
+Great, let's keep everyone on sync, I'm sure we can come up with something
+better then disabling the possibly useful hardware.
 
-> Many driver makes use of the mutex_lock_nested()/mutex_unlock() hence it
-
-  Several drivers use?                                            function=
- call pair.
-
-Would you like to clarify any application statistics another bit?
-https://elixir.bootlin.com/linux/v6.10-rc5/A/ident/mutex_lock_nested
-
-
-> might be sensible to provide a variant of the generic guard(mutex),
-
-  Hence it is?                                                      :
-
-
-> guard(mdio_mutex_nested) to also support drivers that use
-> mutex_lock_nested with MDIO_MUTEX_NESTED.
-
-Another wording suggestion:
-  guard(mdio_mutex_nested) so that drivers can be better supported
-  with the call variant =E2=80=9Cmutex_lock_nested(=E2=80=A6, MDIO_MUTEX_N=
-ESTED)=E2=80=9D.
-
-
-=E2=80=A6
-> +++ b/include/linux/mdio.h
-> @@ -8,6 +8,8 @@
->
->  #include <uapi/linux/mdio.h>
->  #include <linux/bitfield.h>
-> +#include <linux/cleanup.h>
-
-I suggest to omit this preprocessing directive here.
-
-
-> +#include <linux/mutex.h>
->  #include <linux/mod_devicetable.h>
-=E2=80=A6
-
-Further information is included as possibly needed.
-https://elixir.bootlin.com/linux/v6.10-rc5/source/include/linux/mutex.h#L2=
-2
-
-How reasonable is the added header file dependency so far?
-
-
-Under which circumstances can remaining change resistance be adjusted
-for further benefits from applications of scope-based resource management?
-
-Regards,
-Markus
+Nicolas
 
