@@ -1,277 +1,158 @@
-Return-Path: <linux-kernel+bounces-232346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B099791A724
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:59:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08C3F91A728
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:59:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 680712848F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:59:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 895281F27B1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:59:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDCA01849CF;
-	Thu, 27 Jun 2024 12:58:21 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF0917B4F7;
+	Thu, 27 Jun 2024 12:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jWpQSEd6"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67F911836C3
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3EDE16DC31
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:58:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719493101; cv=none; b=fFpxUgpPdp2CTxxozf0n/CGajAhhh8P+/C8drpPxoChP8TGqaV3dYHP1zel1No+nU58UQvG16Mm5vDpyQEnSLr5ACAnU3EE42ntW+YdC3QZtYmH/ndsLWJGDaIgan3S0ULS+kYsKEOsdrEzOpXJna+yAhZwvvQ5YDBdj6nB10Nw=
+	t=1719493131; cv=none; b=nEaisIVsIklVX5D9iIVPUHdKoLdR3F9mBDakWGbT8X7boi0BwHr8DTwv2O2/VRaWrFvZbNUWheyLtwdJvMvdWsKA2Wz60R/9iyxXkankAbtFgkTTuabKoSeZkNn1tuTUn7jkuaAzne483z1IDGaW4Pjyg01RN16D9TC10IWwn1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719493101; c=relaxed/simple;
-	bh=jpeoYNh/2I4ArZNrhiN2R8d8Pg4wzU7Qn6keDXvwOjk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=lGz7wJgWDeuyprucjISb2HbI16N59A0aL1kxurTk2i2msjXKOEQCdEfuLEWZbDmRx+xGRMvI9cVA3tJ5gcr1Rd0YFkKvIsDfY+cvvd0sSTqWrUhqVLf+DrLDlR5FCjXldAfAv8S+0cTC2eZDrxy2v1SNmqFSlwqvkJHgSPR+mQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-375d8dbfc25so103495315ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 05:58:19 -0700 (PDT)
+	s=arc-20240116; t=1719493131; c=relaxed/simple;
+	bh=BFJqvvwzgXTKnp7wUm5ylIIF+ac6I/VvpFUBscUMLaQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ITXwKbz6JCoOyKaahknM7qGE6HhjsvZQgfeTcPV5leRxx3SAC1n5CiFpQvmBkn5tBohVvWNlscQCwva83gMBlVyxpR+rAa0GZIUkFat3/+S/R/bxMaA/Whj6bT8k1tk5HD77l85t1jWBCEqHiiVtfXNtRbB2mwbX5I3ToOCjxhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jWpQSEd6; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52cdcd26d61so6172491e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 05:58:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719493128; x=1720097928; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ggWXmRs7jIjON8UjWfc25bUS0kEkQZXlxcRlo0AHzgg=;
+        b=jWpQSEd6anVyS74GIgt1yVL25x7BRquCykpoZL6yshzf4Nzqy/jIk078YaQS5Hke+z
+         HORPXsw4aJqhunr4juiNEW7gCfkAfTuJWafICbhX59acnSjtB8mMkVhGC5wCW/3xP80t
+         5kgkcz9Qf0Nb6F6NJlri3VlgbQXlq05/5PJaXq30tAk0eSTufcugprwgmVBqjFt02ZYd
+         luEdghRuPER72tjurEFt/MZFK51g5l0LjrHXO/d0O3UnQ7cH3tifWczzIqGVLJp3a42B
+         NV9zsh8b/ctMZAf4xYsO+auf5NeDk/v00JP4VDFCfABMlwfg0exMS8dx3tymW0IMI6JJ
+         UoUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719493098; x=1720097898;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=h9JzpylPnYBoMCUezeQZztT3YnyQHUAysOaFuhmh2ws=;
-        b=r8PS42/QHgmKQUsGmdSKJsgd1KZaaRRmXJ4DueRZTC/wF50yzZrlK6J+Yi2xrmt1R4
-         CCbdH6MNWIqz2owGH2hUFyJ1fLldexrxHpzjAWiJJlAO1Ev/An17XQrNKFR4oc+xOUyF
-         /2Q5J6Pt/oSz4ZufhowS4QB2oISKnpmSJzZPN/aMc7bTfoFmXKT+H6wNH1nJfPNvAaYd
-         sCG10DZeUB34MkvAYu1xE7/IfVwk/D5W27LIuS1sIQi326UPujNGJ0ClK622BKOdm1Kz
-         lswBVYkg2EPBmfQCa2nkwk++6+IPh9C7qf3Gsawl9rxcqrhUDJTQ/NfSWMof2JXGd6No
-         g5jg==
-X-Forwarded-Encrypted: i=1; AJvYcCWFDFDk9s9BobKy+isCMfa9qDOMuMNQAJ33/s4TC7TLUnd7lhVYzQ+WGHckmc1IEBGhqPj2McLFIoM2caj8OSWdPVF2X3JGuoni1M0l
-X-Gm-Message-State: AOJu0YzLRKGPK9GoN3mTl78EQ/QD0a+assR8/kCxPVY2tUa/A5dXPKLO
-	XYrg2LkP/FLe2iMxUL0sUpJTFOBUzScrPHEx7O9/P+hoietKAzUqrjTaqDZlMVlvc/+lM/psV4x
-	2Zfj+RO6Um7H61vdYB9SUm9SXAmAZ4B0QLSUzObn0bph+rSyF4JEMvnM=
-X-Google-Smtp-Source: AGHT+IH/KB0/l9s/pTuSk2SC2qHzYJUYzysWI5UwkvIeKdvnTpWBHnSHr6jfAGHkVjaTOAsd1W4i/9SGL1e4AhrpAXJyJM6Ovb66
+        d=1e100.net; s=20230601; t=1719493128; x=1720097928;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ggWXmRs7jIjON8UjWfc25bUS0kEkQZXlxcRlo0AHzgg=;
+        b=SO9a3ilpNW6NvBhUudoO9/rtgJfb5ac/jx03uUtnde+bcHO5Qti0hT3uWjiaKQOgMq
+         /1+uZDuR2FGJ4mY9tiykFLyyRBIQ/5vjOgU0To27fkMFqD/v75ggiD12CUZVULC9lsbd
+         T8rMboAhRZWagTzse9f5WXDDXL8I/V+6kuJ1yjzXEbiv9U24oHAHWOsLOC0ZXf48oh7o
+         TbfWpyF6eaSDEnbJEnOlG8dRhv6jdLMDlbe+fy6qw/6qhMALrnqqq1ggjV8rJ2Vl1NIb
+         8znr93xnFydWixrwlYJ35lHUTfXtmhaj85DQ3GzZvAygOVQt/F2KBeIHJqFdmW5qXT81
+         IrCg==
+X-Forwarded-Encrypted: i=1; AJvYcCWQuHUb/WqYyhnalBWyEanzfT3OPBvNEAZQ8GI5IwpkXlym0JZL9d15p0bOENRkj1kyl9B8QqaEm/9c0F96juuy/fzX0c4nDyDMENMF
+X-Gm-Message-State: AOJu0YzPfHES5dfiPMmtK0EACGjfmiA3BwU6LihYs2cvisM6oMX9wt7z
+	q0ZsuFkPJbyyNg0mN4aKqq4IZ5mkROqGoXxO4hi92AAHT7F4PFdhzeoNyb+5Olw=
+X-Google-Smtp-Source: AGHT+IEiqcyM7j5d8vMA37q8FTy4bbA4eRCNMZ56T3o6exzKO9FDtm3+D1xRJ3+j2E0oItZOMaGibw==
+X-Received: by 2002:a19:e043:0:b0:52c:e121:c927 with SMTP id 2adb3069b0e04-52ce18647f7mr8070668e87.62.1719493127407;
+        Thu, 27 Jun 2024 05:58:47 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:feeb:faed:66fa:9e6a? ([2a01:e0a:982:cbb0:feeb:faed:66fa:9e6a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42564bc59f5sm26436015e9.42.2024.06.27.05.58.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Jun 2024 05:58:47 -0700 (PDT)
+Message-ID: <bfc333a1-52da-4e4e-9917-09840ac5ebea@linaro.org>
+Date: Thu, 27 Jun 2024 14:58:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2187:b0:377:117e:e25e with SMTP id
- e9e14a558f8ab-377117ee8femr6620895ab.0.1719493098620; Thu, 27 Jun 2024
- 05:58:18 -0700 (PDT)
-Date: Thu, 27 Jun 2024 05:58:18 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000565ec5061bdeafd5@google.com>
-Subject: [syzbot] [exfat?] possible deadlock in exfat_iterate (2)
-From: syzbot <syzbot+df3558df41609451e4ac@syzkaller.appspotmail.com>
-To: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 4/6] ASoC: codecs: wsa884x: parse port-mapping information
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org,
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20240626-port-map-v1-0-bd8987d2b332@linaro.org>
+ <20240626-port-map-v1-4-bd8987d2b332@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240626-port-map-v1-4-bd8987d2b332@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 27/06/2024 13:55, Srinivas Kandagatla wrote:
+> Add support to parse static master port map information from device tree.
+> This is required for correct port mapping between soundwire device and
+> master ports.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>   sound/soc/codecs/wsa884x.c | 8 ++++++++
+>   1 file changed, 8 insertions(+)
+> 
+> diff --git a/sound/soc/codecs/wsa884x.c b/sound/soc/codecs/wsa884x.c
+> index a9767ef0e39d..72ff71bfb827 100644
+> --- a/sound/soc/codecs/wsa884x.c
+> +++ b/sound/soc/codecs/wsa884x.c
+> @@ -1887,6 +1887,14 @@ static int wsa884x_probe(struct sdw_slave *pdev,
+>   	wsa884x->sconfig.direction = SDW_DATA_DIR_RX;
+>   	wsa884x->sconfig.type = SDW_STREAM_PDM;
+>   
+> +	/**
+> +	 * Port map index starts with 0, however the data port for this codec
+> +	 * are from index 1
+> +	 */
+> +	if (of_property_read_u32_array(dev->of_node, "qcom,port-mapping", &pdev->m_port_map[1],
+> +					WSA884X_MAX_SWR_PORTS))
+> +		dev_info(dev, "Static Port mapping not specified\n");
+> +
+>   	pdev->prop.sink_ports = GENMASK(WSA884X_MAX_SWR_PORTS, 0);
+>   	pdev->prop.simple_clk_stop_capable = true;
+>   	pdev->prop.sink_dpn_prop = wsa884x_sink_dpn_prop;
+> 
 
-syzbot found the following issue on:
-
-HEAD commit:    55027e689933 Merge tag 'input-for-v6.10-rc5' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16390ac1980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=53ab35b556129242
-dashboard link: https://syzkaller.appspot.com/bug?extid=df3558df41609451e4ac
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-55027e68.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a36929b5a065/vmlinux-55027e68.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d72de6f61ddc/bzImage-55027e68.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+df3558df41609451e4ac@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.10.0-rc5-syzkaller-00018-g55027e689933 #0 Not tainted
-------------------------------------------------------
-syz-executor.2/6265 is trying to acquire lock:
-ffffffff8dd3ab20 (fs_reclaim){+.+.}-{0:0}, at: might_alloc include/linux/sched/mm.h:334 [inline]
-ffffffff8dd3ab20 (fs_reclaim){+.+.}-{0:0}, at: slab_pre_alloc_hook mm/slub.c:3891 [inline]
-ffffffff8dd3ab20 (fs_reclaim){+.+.}-{0:0}, at: slab_alloc_node mm/slub.c:3981 [inline]
-ffffffff8dd3ab20 (fs_reclaim){+.+.}-{0:0}, at: __do_kmalloc_node mm/slub.c:4121 [inline]
-ffffffff8dd3ab20 (fs_reclaim){+.+.}-{0:0}, at: __kmalloc_noprof+0xb5/0x420 mm/slub.c:4135
-
-but task is already holding lock:
-ffff88804af1a0e0 (&sbi->s_lock#2){+.+.}-{3:3}, at: exfat_iterate+0x33f/0xad0 fs/exfat/dir.c:256
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (&sbi->s_lock#2){+.+.}-{3:3}:
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
-       exfat_evict_inode+0x25b/0x340 fs/exfat/inode.c:725
-       evict+0x2ed/0x6c0 fs/inode.c:667
-       iput_final fs/inode.c:1741 [inline]
-       iput.part.0+0x5a8/0x7f0 fs/inode.c:1767
-       iput+0x5c/0x80 fs/inode.c:1757
-       dentry_unlink_inode+0x295/0x480 fs/dcache.c:400
-       __dentry_kill+0x1d0/0x600 fs/dcache.c:603
-       shrink_kill fs/dcache.c:1048 [inline]
-       shrink_dentry_list+0x140/0x5d0 fs/dcache.c:1075
-       prune_dcache_sb+0xeb/0x150 fs/dcache.c:1156
-       super_cache_scan+0x32a/0x550 fs/super.c:221
-       do_shrink_slab+0x44f/0x11c0 mm/shrinker.c:435
-       shrink_slab_memcg mm/shrinker.c:548 [inline]
-       shrink_slab+0xa87/0x1310 mm/shrinker.c:626
-       shrink_one+0x493/0x7c0 mm/vmscan.c:4790
-       shrink_many mm/vmscan.c:4851 [inline]
-       lru_gen_shrink_node+0x89f/0x1750 mm/vmscan.c:4951
-       shrink_node mm/vmscan.c:5910 [inline]
-       kswapd_shrink_node mm/vmscan.c:6720 [inline]
-       balance_pgdat+0x1105/0x1970 mm/vmscan.c:6911
-       kswapd+0x5ea/0xbf0 mm/vmscan.c:7180
-       kthread+0x2c1/0x3a0 kernel/kthread.c:389
-       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
--> #0 (fs_reclaim){+.+.}-{0:0}:
-       check_prev_add kernel/locking/lockdep.c:3134 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3253 [inline]
-       validate_chain kernel/locking/lockdep.c:3869 [inline]
-       __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
-       lock_acquire kernel/locking/lockdep.c:5754 [inline]
-       lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
-       __fs_reclaim_acquire mm/page_alloc.c:3801 [inline]
-       fs_reclaim_acquire+0x102/0x160 mm/page_alloc.c:3815
-       might_alloc include/linux/sched/mm.h:334 [inline]
-       slab_pre_alloc_hook mm/slub.c:3891 [inline]
-       slab_alloc_node mm/slub.c:3981 [inline]
-       __do_kmalloc_node mm/slub.c:4121 [inline]
-       __kmalloc_noprof+0xb5/0x420 mm/slub.c:4135
-       kmalloc_noprof include/linux/slab.h:664 [inline]
-       kmalloc_array_noprof include/linux/slab.h:699 [inline]
-       __exfat_get_dentry_set+0x81e/0xa90 fs/exfat/dir.c:816
-       exfat_get_dentry_set+0x36/0x210 fs/exfat/dir.c:859
-       exfat_get_uniname_from_ext_entry fs/exfat/dir.c:39 [inline]
-       exfat_readdir+0x950/0x1520 fs/exfat/dir.c:155
-       exfat_iterate+0x3c7/0xad0 fs/exfat/dir.c:261
-       wrap_directory_iterator+0xa5/0xe0 fs/readdir.c:67
-       iterate_dir+0x53e/0xb60 fs/readdir.c:110
-       __do_sys_getdents64 fs/readdir.c:409 [inline]
-       __se_sys_getdents64 fs/readdir.c:394 [inline]
-       __ia32_sys_getdents64+0x14f/0x2e0 fs/readdir.c:394
-       do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
-       __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
-       do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
-       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&sbi->s_lock#2);
-                               lock(fs_reclaim);
-                               lock(&sbi->s_lock#2);
-  lock(fs_reclaim);
-
- *** DEADLOCK ***
-
-3 locks held by syz-executor.2/6265:
- #0: ffff88801db114c8 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xeb/0x180 fs/file.c:1191
- #1: ffff8880483da9e8 (&sb->s_type->i_mutex_key#24){++++}-{3:3}, at: wrap_directory_iterator+0x5a/0xe0 fs/readdir.c:56
- #2: ffff88804af1a0e0 (&sbi->s_lock#2){+.+.}-{3:3}, at: exfat_iterate+0x33f/0xad0 fs/exfat/dir.c:256
-
-stack backtrace:
-CPU: 0 PID: 6265 Comm: syz-executor.2 Not tainted 6.10.0-rc5-syzkaller-00018-g55027e689933 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
- check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2187
- check_prev_add kernel/locking/lockdep.c:3134 [inline]
- check_prevs_add kernel/locking/lockdep.c:3253 [inline]
- validate_chain kernel/locking/lockdep.c:3869 [inline]
- __lock_acquire+0x2478/0x3b30 kernel/locking/lockdep.c:5137
- lock_acquire kernel/locking/lockdep.c:5754 [inline]
- lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5719
- __fs_reclaim_acquire mm/page_alloc.c:3801 [inline]
- fs_reclaim_acquire+0x102/0x160 mm/page_alloc.c:3815
- might_alloc include/linux/sched/mm.h:334 [inline]
- slab_pre_alloc_hook mm/slub.c:3891 [inline]
- slab_alloc_node mm/slub.c:3981 [inline]
- __do_kmalloc_node mm/slub.c:4121 [inline]
- __kmalloc_noprof+0xb5/0x420 mm/slub.c:4135
- kmalloc_noprof include/linux/slab.h:664 [inline]
- kmalloc_array_noprof include/linux/slab.h:699 [inline]
- __exfat_get_dentry_set+0x81e/0xa90 fs/exfat/dir.c:816
- exfat_get_dentry_set+0x36/0x210 fs/exfat/dir.c:859
- exfat_get_uniname_from_ext_entry fs/exfat/dir.c:39 [inline]
- exfat_readdir+0x950/0x1520 fs/exfat/dir.c:155
- exfat_iterate+0x3c7/0xad0 fs/exfat/dir.c:261
- wrap_directory_iterator+0xa5/0xe0 fs/readdir.c:67
- iterate_dir+0x53e/0xb60 fs/readdir.c:110
- __do_sys_getdents64 fs/readdir.c:409 [inline]
- __se_sys_getdents64 fs/readdir.c:394 [inline]
- __ia32_sys_getdents64+0x14f/0x2e0 fs/readdir.c:394
- do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
- __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
- do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-RIP: 0023:0xf72f8579
-Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
-RSP: 002b:00000000f5ec95ac EFLAGS: 00000292 ORIG_RAX: 00000000000000dc
-RAX: ffffffffffffffda RBX: 000000000000000a RCX: 0000000020002ec0
-RDX: 0000000000001000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-----------------
-Code disassembly (best guess), 2 bytes skipped:
-   0:	10 06                	adc    %al,(%rsi)
-   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
-   6:	10 07                	adc    %al,(%rdi)
-   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
-   c:	10 08                	adc    %cl,(%rax)
-   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
-  1e:	00 51 52             	add    %dl,0x52(%rcx)
-  21:	55                   	push   %rbp
-  22:	89 e5                	mov    %esp,%ebp
-  24:	0f 34                	sysenter
-  26:	cd 80                	int    $0x80
-* 28:	5d                   	pop    %rbp <-- trapping instruction
-  29:	5a                   	pop    %rdx
-  2a:	59                   	pop    %rcx
-  2b:	c3                   	ret
-  2c:	90                   	nop
-  2d:	90                   	nop
-  2e:	90                   	nop
-  2f:	90                   	nop
-  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
-  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
