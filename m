@@ -1,238 +1,116 @@
-Return-Path: <linux-kernel+bounces-232320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DAAB91A6C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:44:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 428B391A6CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:44:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D028282D73
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:44:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED2DD28724B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:44:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670A916DC2D;
-	Thu, 27 Jun 2024 12:43:51 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595321662F9;
+	Thu, 27 Jun 2024 12:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="pL4PMpBK"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5091D16DC07
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB5515FD0F
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719492230; cv=none; b=lrvsWb7LNiUWC/QP34HZp8IzFMjWdyBRgPkJOfmQPTPU/9czHD2R4nsSLmuFQMMwuDAfxxoX16whq0KZwhIoFxaN++QghoNQc7HZMxXEPMsU6yoZWW9j/DSizS8yZ/p5zQY3iK3aIN97flEDt9n5zasrinyav8UE1Dq9pbXnMJc=
+	t=1719492265; cv=none; b=PQQYJFmBvaw50ZIKIS1K2xJ1sX6S/9zq8LzUDII0R0mNamVUCsF/HuP2+S+Zz7ZF2H61CA/xdHWpoSBI8y+/QzgRw6i847A5gKaNipWJPSZyw3fqdpmOg83vOl0Ipf6FTPXL+WOyT6eURrNMURF5CIdVN72HfsXjMqmncQPKvXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719492230; c=relaxed/simple;
-	bh=1dQLQ+ARUlLzvvMV+YhsLgq6x7BFBSZJi2jpscurXuo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EL1qKm0DHQPnXR8RdPuQtiHihBF9mvMKbnK9lcqpfzW8XsdQiTMs22YW5yghUz3VaWdVr2+zp+E2ax1YTMCS2w3zb/ZRTuum4YQUobN+peZLu75XAe3Uy126weVHelriT8uHVjAIOw4Pl8hmKQx5I4lgvoflmvwmGHhazAlJYm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sMoTS-00026e-48; Thu, 27 Jun 2024 14:43:38 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sMoTR-005MyL-MU; Thu, 27 Jun 2024 14:43:37 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sMoTR-000Sq6-1u;
-	Thu, 27 Jun 2024 14:43:37 +0200
-Date: Thu, 27 Jun 2024 14:43:37 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: "David S. Miller" <davem@davemloft.net>, Andrew Lunn <andrew@lunn.ch>,
-	Eric Dumazet <edumazet@google.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Arun Ramadoss <arun.ramadoss@microchip.com>
-Cc: UNGLinuxDriver@microchip.com, linux-kernel@vger.kernel.org,
-	kernel@pengutronix.de, netdev@vger.kernel.org
-Subject: Re: [PATCH net-next v1 1/1] net: dsa: microchip: add regmap_range
- for KSZ9563 chip
-Message-ID: <Zn1eeYwYgU2ocWHz@pengutronix.de>
-References: <20240627123911.227480-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1719492265; c=relaxed/simple;
+	bh=pi3DHNQCv9R6UCFWH2MdSRk0b7vmsHj+UgIAfiRMFTM=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OPvJrzO4jb98mHLdUMuxW3LWpXM3SKT0cE+wf/Zy9mT2cy0axtFE4G1LQn9lvm6z7jyFVSxSvc6WiNpHkN6LVn1EuYExmEpTtVWzHsDl4iwstii+L5tNSs58TxRa2ZnMW8f4agEqOetRhI5/09mNpzPbWfpxBld7Etx1Wz81r9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=pL4PMpBK; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a729da840a8so91896866b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 05:44:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719492261; x=1720097061; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AoHL1adqPi6egt2LDvYCmnfXjH4AiRnMDVVthfhiOGY=;
+        b=pL4PMpBKJZpPtQ1dpNQr5IEn535DwQOzfSkI3UeAuS/RCsjqhO3IdbV3U3o7alSA/O
+         i63eKo9wZQqSr48L2qxMrI4aHyzQkDgopsZJA1l0c6PsD/HBzSqX5E0tJ1ads4uLLHjF
+         npzh7/Im2WLNAj+eYCahku6z/sgleU9i1WFb1AKVjYUj+s8tN67YdOP13dlbi1IuDUnu
+         0R1CkeLqIXGeVoaEYBIDIxDvj4WEMRpAKZ8Xqi0RwYju1Gb6XiYkZB0H0XvboCzCvnHT
+         APBMgXzysyNyJf63pvrbIS3Zu8zDXxBMT0QzSVk6ibQeWVsLIiQYqTj5DX3czJ6JVPrX
+         r/rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719492261; x=1720097061;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AoHL1adqPi6egt2LDvYCmnfXjH4AiRnMDVVthfhiOGY=;
+        b=vmSXrsfpZEwKYmbcqhFHN4tO/NfdpXlOS0HhNjoex1OMc7xUA2RBorkMx4ObeksQpc
+         Stg4RgHcud0UKX1Z4oFrJkkBqu8nyknNikxesZjbPA8oEvy3Y3vZ8/xSyy1zmf/210zN
+         kLS5Q7sgaPsm8kl6UFlHbQrs5kg/U94IETSdFdjZrdH4WqN7V+qENYkCk7YOVFe5is4e
+         qU/zyV2+kHO17YbRg/54TTHZMnuImO+4Cd+2JkTiAxqHhTg0hFiTWIo1S5J9waHcr1J+
+         Dl1q6vNFQjgcX2Vs0xAqZZLhUbXRR+UB4R7VLVasYgnJhxfzisfAvn/XrIF2UyHhH6Vj
+         M1rw==
+X-Forwarded-Encrypted: i=1; AJvYcCVujDhz1JcO6eRpzLLGnGlUIiGVxsvn0qsXpr5l0XmDMNjnFPeCAoNEyw+9U0J/gh2dUPWGsvI+s7RppiXf6aZE2k569zLCHktWVHx5
+X-Gm-Message-State: AOJu0YygUmCV0opi0sMFeywGpytAcLLqI9HhWnVMEx4h4N+EKKEPfCSd
+	8tnhhK6NxuOBEo/4oespdHlM3ZcyskpOJiZCHy/9KW0xQq9rXv6b+8LBZRN9mFw=
+X-Google-Smtp-Source: AGHT+IFeaiSpwuIh7g2JkEWpjFnfDJbPJTm3K8sWRedli0PvmQPwA/kwXIvdntky4Hl+GJAwNEAyPQ==
+X-Received: by 2002:a17:906:99d5:b0:a72:58c3:2696 with SMTP id a640c23a62f3a-a7296f5d2admr226130066b.14.1719492261140;
+        Thu, 27 Jun 2024 05:44:21 -0700 (PDT)
+Received: from ryzen9.fritz.box ([2a01:2a8:8103:2c01:45d5:74ac:5265:59da])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a729d6fdf62sm57030266b.8.2024.06.27.05.44.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 05:44:20 -0700 (PDT)
+From: =?UTF-8?q?Bernhard=20Rosenkr=C3=A4nzer?= <bero@baylibre.com>
+To: florian.fainelli@broadcom.com,
+	bcm-kernel-feedback-list@broadcom.com,
+	gregkh@linuxfoundation.org,
+	umang.jain@ideasonboard.com,
+	wahrenst@gmx.net,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: vchiq_debugfs: Fix build if CONFIG_DEBUG_FS is not set
+Date: Thu, 27 Jun 2024 14:44:19 +0200
+Message-ID: <20240627124419.2498642-1-bero@baylibre.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240627123911.227480-1-o.rempel@pengutronix.de>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Please ignore this patch, it was send by accident.
+Commit 42a2f6664e18 ("staging: vc04_services: Move global g_state to
+vchiq_state") adds a parameter to vchiq_debugfs_init, but leaves the
+dummy implementation in the !CONFIG_DEBUG_FS case untouched, causing a
+compile time error.
 
-On Thu, Jun 27, 2024 at 02:39:08PM +0200, Oleksij Rempel wrote:
-> Add register validation for KSZ9563.
-> 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> ---
->  drivers/net/dsa/microchip/ksz_common.c | 121 +++++++++++++++++++++++++
->  1 file changed, 121 insertions(+)
-> 
-> diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
-> index 030b167764b39..2308be3bdc9d8 100644
-> --- a/drivers/net/dsa/microchip/ksz_common.c
-> +++ b/drivers/net/dsa/microchip/ksz_common.c
-> @@ -666,6 +666,125 @@ static const struct regmap_access_table ksz8563_register_set = {
->  	.n_yes_ranges = ARRAY_SIZE(ksz8563_valid_regs),
->  };
->  
-> +static const struct regmap_range ksz9563_valid_regs[] = {
-> +	regmap_reg_range(0x0000, 0x0003),
-> +	regmap_reg_range(0x0006, 0x0006),
-> +	regmap_reg_range(0x000f, 0x000f),
-> +	regmap_reg_range(0x0010, 0x001f),
-> +	regmap_reg_range(0x0100, 0x0100),
-> +	regmap_reg_range(0x0104, 0x0107),
-> +	regmap_reg_range(0x010d, 0x010d),
-> +	regmap_reg_range(0x0110, 0x0113),
-> +	regmap_reg_range(0x0120, 0x012b),
-> +	regmap_reg_range(0x0201, 0x0201),
-> +	regmap_reg_range(0x0210, 0x0213),
-> +	regmap_reg_range(0x0300, 0x0300),
-> +	regmap_reg_range(0x0302, 0x030b),
-> +	regmap_reg_range(0x030e, 0x031b),
-> +	regmap_reg_range(0x0320, 0x032b),
-> +	regmap_reg_range(0x0330, 0x0336),
-> +	regmap_reg_range(0x0338, 0x033b),
-> +	regmap_reg_range(0x033e, 0x033e),
-> +	regmap_reg_range(0x0340, 0x035f),
-> +	regmap_reg_range(0x0370, 0x0370),
-> +	regmap_reg_range(0x0378, 0x0378),
-> +	regmap_reg_range(0x037c, 0x037d),
-> +	regmap_reg_range(0x0390, 0x0393),
-> +	regmap_reg_range(0x0400, 0x040e),
-> +	regmap_reg_range(0x0410, 0x042f),
-> +	regmap_reg_range(0x0500, 0x0519),
-> +	regmap_reg_range(0x0520, 0x054b),
-> +	regmap_reg_range(0x0550, 0x05b3),
-> +
-> +	/* port 1 */
-> +	regmap_reg_range(0x1000, 0x1001),
-> +	regmap_reg_range(0x1004, 0x100b),
-> +	regmap_reg_range(0x1013, 0x1013),
-> +	regmap_reg_range(0x1017, 0x1017),
-> +	regmap_reg_range(0x101b, 0x101b),
-> +	regmap_reg_range(0x101f, 0x1021),
-> +	regmap_reg_range(0x1030, 0x1030),
-> +	regmap_reg_range(0x1100, 0x1115),
-> +	regmap_reg_range(0x111a, 0x111f),
-> +	regmap_reg_range(0x1120, 0x112b),
-> +	regmap_reg_range(0x1134, 0x113b),
-> +	regmap_reg_range(0x113c, 0x113f),
-> +	regmap_reg_range(0x1400, 0x1401),
-> +	regmap_reg_range(0x1403, 0x1403),
-> +	regmap_reg_range(0x1410, 0x1417),
-> +	regmap_reg_range(0x1420, 0x1423),
-> +	regmap_reg_range(0x1500, 0x1507),
-> +	regmap_reg_range(0x1600, 0x1612),
-> +	regmap_reg_range(0x1800, 0x180f),
-> +	regmap_reg_range(0x1900, 0x1907),
-> +	regmap_reg_range(0x1914, 0x191b),
-> +	regmap_reg_range(0x1a00, 0x1a03),
-> +	regmap_reg_range(0x1a04, 0x1a07),
-> +	regmap_reg_range(0x1b00, 0x1b01),
-> +	regmap_reg_range(0x1b04, 0x1b04),
-> +	regmap_reg_range(0x1c00, 0x1c05),
-> +	regmap_reg_range(0x1c08, 0x1c1b),
-> +
-> +	/* port 2 */
-> +	regmap_reg_range(0x2000, 0x2001),
-> +	regmap_reg_range(0x2004, 0x200b),
-> +	regmap_reg_range(0x2013, 0x2013),
-> +	regmap_reg_range(0x2017, 0x2017),
-> +	regmap_reg_range(0x201b, 0x201b),
-> +	regmap_reg_range(0x201f, 0x2021),
-> +	regmap_reg_range(0x2030, 0x2030),
-> +	regmap_reg_range(0x2100, 0x2115),
-> +	regmap_reg_range(0x211a, 0x211f),
-> +	regmap_reg_range(0x2120, 0x212b),
-> +	regmap_reg_range(0x2134, 0x213b),
-> +	regmap_reg_range(0x213c, 0x213f),
-> +	regmap_reg_range(0x2400, 0x2401),
-> +	regmap_reg_range(0x2403, 0x2403),
-> +	regmap_reg_range(0x2410, 0x2417),
-> +	regmap_reg_range(0x2420, 0x2423),
-> +	regmap_reg_range(0x2500, 0x2507),
-> +	regmap_reg_range(0x2600, 0x2612),
-> +	regmap_reg_range(0x2800, 0x280f),
-> +	regmap_reg_range(0x2900, 0x2907),
-> +	regmap_reg_range(0x2914, 0x291b),
-> +	regmap_reg_range(0x2a00, 0x2a03),
-> +	regmap_reg_range(0x2a04, 0x2a07),
-> +	regmap_reg_range(0x2b00, 0x2b01),
-> +	regmap_reg_range(0x2b04, 0x2b04),
-> +	regmap_reg_range(0x2c00, 0x2c05),
-> +	regmap_reg_range(0x2c08, 0x2c1b),
-> +
-> +	/* port 3 */
-> +	regmap_reg_range(0x3000, 0x3001),
-> +	regmap_reg_range(0x3013, 0x3013),
-> +	regmap_reg_range(0x3017, 0x3017),
-> +	regmap_reg_range(0x301b, 0x301b),
-> +	regmap_reg_range(0x301f, 0x3020),
-> +	regmap_reg_range(0x3030, 0x3030),
-> +	regmap_reg_range(0x3300, 0x3301),
-> +	regmap_reg_range(0x3303, 0x3303),
-> +	regmap_reg_range(0x3400, 0x3401),
-> +	regmap_reg_range(0x3403, 0x3403),
-> +	regmap_reg_range(0x3410, 0x3417),
-> +	regmap_reg_range(0x3420, 0x3423),
-> +	regmap_reg_range(0x3500, 0x3507),
-> +	regmap_reg_range(0x3600, 0x3612),
-> +	regmap_reg_range(0x3800, 0x380f),
-> +	regmap_reg_range(0x3900, 0x3907),
-> +	regmap_reg_range(0x3914, 0x391b),
-> +	regmap_reg_range(0x3a00, 0x3a03),
-> +	regmap_reg_range(0x3a04, 0x3a07),
-> +	regmap_reg_range(0x3b00, 0x3b01),
-> +	regmap_reg_range(0x3b04, 0x3b04),
-> +	regmap_reg_range(0x3c00, 0x3c05),
-> +	regmap_reg_range(0x3c08, 0x3c1b),
-> +};
-> +
-> +static const struct regmap_access_table ksz9563_register_set = {
-> +	.yes_ranges = ksz9563_valid_regs,
-> +	.n_yes_ranges = ARRAY_SIZE(ksz9563_valid_regs),
-> +};
-> +
->  static const struct regmap_range ksz9477_valid_regs[] = {
->  	regmap_reg_range(0x0000, 0x0003),
->  	regmap_reg_range(0x0006, 0x0006),
-> @@ -1475,6 +1594,8 @@ const struct ksz_chip_data ksz_switch_chips[] = {
->  		.supports_rgmii = {false, false, true},
->  		.internal_phy = {true, true, false},
->  		.gbit_capable = {true, true, true},
-> +		.wr_table = &ksz9563_register_set,
-> +		.rd_table = &ksz9563_register_set,
->  	},
->  
->  	[KSZ8567] = {
-> -- 
-> 2.39.2
-> 
-> 
-> 
+Fixes: c3552ab19aeb ("staging: vchiq_debugfs: Fix NPD in vchiq_dump_state")
+Signed-off-by: Bernhard Rosenkränzer <bero@baylibre.com>
+---
+ .../staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c   | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c
+index 1f74d0bb33bae..d5f7f61c56269 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c
+@@ -138,7 +138,7 @@ void vchiq_debugfs_deinit(void)
+ 
+ #else /* CONFIG_DEBUG_FS */
+ 
+-void vchiq_debugfs_init(void)
++void vchiq_debugfs_init(struct vchiq_state *state)
+ {
+ }
+ 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.45.2
+
 
