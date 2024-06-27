@@ -1,75 +1,47 @@
-Return-Path: <linux-kernel+bounces-232075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F56591A2C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:35:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFAD891A2C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:39:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D419FB2212E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:35:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5676D284702
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:39:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DCD713AA4C;
-	Thu, 27 Jun 2024 09:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7960D13AA27;
+	Thu, 27 Jun 2024 09:39:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PYNPLjdH"
-Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="W0FT3aMa"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306544D8C3
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 09:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0247D1386C6
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 09:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719480942; cv=none; b=SFDSP9jMGe1RlxDAxz6OY6omTK0zELHpnIT9ojcWidGtf/UZbXvpqhaDykOfAnzQdoM0QOv6OZi3HmfwtjC1ZS10OoiQnNbMtZiiKA773KRJgUF3Ww6wM4QIcZ9rG44lfTrpwNN31dW5H4+jyIA3aqsJBsd217nVJYswse6advw=
+	t=1719481189; cv=none; b=TAGgVfqlOuDTvmA1eftX95Gc+ctgEUOdQjL/aWsNK6CRmHQtxxzsL5MOUlM7t1JHGkf/OkHZp0o5WvE4hDO2SfZ8SUNYaxYXBGuPFJEjVH/cY6HnWih4jfD8yXNO9bX8WRN3yymV28bOZBrnlmR7IIfk66lkOgW41bjuaA3PqE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719480942; c=relaxed/simple;
-	bh=xVF+/NQ6FBxRG3UMGHcJ5dkSaDe1Z1viYBqEY1PeBRk=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=o9pjCwRxEVu6BuN/fNF6lMjX3a5CnCE+EremJoGX+MeLuFm4vMqJXuCxuisaycW3OxnLGTOJIQRplv90oziRvoIv/YNhVma/m8Pq7YDG7mQY+OoOOSODRs1ul/k87vjt+bvbhYgkwgm6SMuyD18Z0eYVNYrjDoFpObvgSNWCutI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PYNPLjdH; arc=none smtp.client-ip=209.85.214.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-1faad409ca7so2557785ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 02:35:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719480940; x=1720085740; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fXlkJ4byuNhY1OxdtQQCWbR2oVqHbP/kpXhyEnlbP48=;
-        b=PYNPLjdHtLJuNQUFYMlfF7rASGTLiJPtMtNJtAw3vnl8FetJstRguwBakkhEZnr6DM
-         SNezQ6RMAvX/XSJW2ywTAOiMKtgbc2uUvkxg9OERusHKTiIJZNsvjtsMf5sSUT+kyWay
-         3eMuvVo1yuhPJcRKO9Q82ixmTkYQV6H6mqG4BTyhLoh1UUaW9+hfNafwbkycl3FOG1+1
-         v1+/ISy5UmbXp5tEF6crs7gvsMXUyK+cC5vBroy492/79OfJlJAuboLgzE3PfaJvTMBp
-         jrRUTwroN8AjBSp8BCU8RHr2GPHoalZoaQDszCbQWGsLvCk1mI2K9G1t/yuxs+Z4tNSQ
-         rV4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719480940; x=1720085740;
-        h=content-transfer-encoding:in-reply-to:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fXlkJ4byuNhY1OxdtQQCWbR2oVqHbP/kpXhyEnlbP48=;
-        b=luCwuPkvWeBozhr9Mc71ruHphcDbPjcBRew+COthMw7Ydh+pOWCvoybKnquYpW46Ai
-         t0tTR8O7nMhjf/Ef6IVEtkZBjKoD0I3EXyHXfO0b4Ya6oz8iTylJiqNkeh/X+sJ5QyS7
-         7PHbZj8nxJtRyCw1WMNxdoTYABtd/eIzRsM/5wADhluXMXgoFRdbQnjrebHuo6kZ8XQ5
-         YhzKPmmEDDyDIT+drDbhxgCaiTH90q4Ce5XxdS3Ozn8S0FnpcQx+BEV8bEG3R/ty7FSP
-         s/V+T65dCiFRj6SLqDvhFpVuOdzSvuAGBINbQPc0WuolYivEnPAPUeZg6k8knkhQq1us
-         hn4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUo6gNsHFm0fwuMxha6UKhPHZ2jcY6mRg0DYDabowoauvbXXa6qsC8dBcFchMuqqEgY37YcMpHYyod126mXziEGZHFYcUn8nfPJ0j9a
-X-Gm-Message-State: AOJu0YyGxNJZfj0qHW6D9us/0Xm4R1YQHic92wqGyuI/3tJVncEWoVpW
-	dWCHkc2jiz+Y4MR/rdus3gV1ILIaZzKvMjs4qHKB3SRdHyhC3wxZDwTPzWZ9mJA=
-X-Google-Smtp-Source: AGHT+IFLVCNKAo3CIqvXHbk62t3KgTprcj8Cnnpwdw3N22YyO1klv1GgNefbpUPx/KlnWsY2bqhTvQ==
-X-Received: by 2002:a17:902:e889:b0:1fa:918e:ec4 with SMTP id d9443c01a7336-1fa918e1130mr51805505ad.59.1719480940219;
-        Thu, 27 Jun 2024 02:35:40 -0700 (PDT)
-Received: from [127.0.0.1] ([212.107.28.57])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1faac979f54sm9033675ad.153.2024.06.27.02.35.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Jun 2024 02:35:39 -0700 (PDT)
-From: Celeste Liu <coelacanthushex@gmail.com>
-X-Google-Original-From: Celeste Liu <CoelacanthusHex@gmail.com>
-Message-ID: <8fb8d780-9e42-438d-88d5-8fe1495cf4d2@gmail.com>
-Date: Thu, 27 Jun 2024 17:35:34 +0800
+	s=arc-20240116; t=1719481189; c=relaxed/simple;
+	bh=lxTZXKZuxfotuscn6ZIT1ZAkADWhWpvVGjic8HteS5E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JXaRFz/K6DYYNiFStl7DKdwPLZKCQqsRWhwQNdNN7E3Ym/7blgO5vSUArhN1aA2H+NzOgkkf+miF5DjFzHX1hqe9lR/PBqOhZQHBh8n5JR9UnmstGvbSTktwDSC/lppU55NLhzVkmB8quXq2h6q4HHb/or2Dmi+04dceS6eEPSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=W0FT3aMa; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1719481174;
+ bh=t84FHH9Qz2oscsWXd253HB7jbbaRf6bF8zfUqJ67FIU=;
+ b=W0FT3aMa2lrw4vE48d5nRgT2oomXuhZveVPMuMb6bPxOLENPJQF1KyFmsMD6tgZD114M1zrg5
+ 5vs+v76Q8Vjbg1JOz2iFOQCVWjQk9nNR8d7uo/oavDQUTTYrt6VygU4pfAkGLiqgAoY+1Wx14EI
+ gpwLaa0IlK/JSdRU7GtHwO96QrRSMmToMP2uPtRBfZJjm29mCK1T++0IWSnHc95Op7zpMpOKcpm
+ xy9fn/U45R5QPrR2eaJHPtGEnXzUtaqCXjfA99iqrJR+e/BDWjze1HGJx8TzKMdrDMGk8JlqqLk
+ I+oIP2rZv8blW3Z/zlDCEQVApbUqawtBERQ9w4N6UMnA==
+Message-ID: <e72fb6fb-4dcd-4fb4-9d44-d8de3c5ffe30@kwiboo.se>
+Date: Thu, 27 Jun 2024 11:39:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,36 +49,89 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] riscv: entry: set a0 = -ENOSYS only when syscall != -1
-Content-Language: en-GB-large
-To: Andreas Schwab <schwab@suse.de>
-Cc: "Dmitry V. Levin" <ldv@strace.io>, Palmer Dabbelt <palmer@rivosinc.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Guo Ren <guoren@kernel.org>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
- <bjorn@rivosinc.com>, Conor Dooley <conor.dooley@microchip.com>,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- David Laight <David.Laight@ACULAB.COM>, Felix Yan
- <felixonmars@archlinux.org>, Ruizhe Pan <c141028@gmail.com>,
- Shiqi Zhang <shiqi@isrc.iscas.ac.cn>,
- Emil Renner Berthing <emil.renner.berthing@canonical.com>,
- "Ivan A. Melnikov" <iv@altlinux.org>
-References: <20230801141607.435192-1-CoelacanthusHex@gmail.com>
- <20240627071422.GA2626@altlinux.org>
- <9c102328-6bb3-46b6-bc2f-d011a284d5b0@gmail.com> <mvmr0cin6vc.fsf@suse.de>
-In-Reply-To: <mvmr0cin6vc.fsf@suse.de>
+Subject: Re: [PATCH v5 08/10] media: rkvdec: Add image format concept
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, Alex Bee
+ <knaerzche@gmail.com>, Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>, Sebastian Fricke
+ <sebastian.fricke@collabora.com>, Christopher Obbard
+ <chris.obbard@collabora.com>, Detlev Casanova
+ <detlev.casanova@collabora.com>, linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20240618194647.742037-1-jonas@kwiboo.se>
+ <20240618194647.742037-9-jonas@kwiboo.se>
+ <f7e4b0be-fe09-4db8-b081-21c46c0d836f@moroto.mountain>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <f7e4b0be-fe09-4db8-b081-21c46c0d836f@moroto.mountain>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Report-Abuse-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-ForwardEmail-Version: 0.4.40
+X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-ForwardEmail-ID: 667d33569aa1b906e1d3e383
 
-On 2024-06-27 16:10, Andreas Schwab wrote:
+Hi Dan,
 
-> On Jun 27 2024, Celeste Liu wrote:
+On 2024-06-19 09:21, Dan Carpenter wrote:
+> On Tue, Jun 18, 2024 at 07:46:32PM +0000, Jonas Karlman wrote:
+>> +static u32 rkvdec_enum_decoded_fmt(struct rkvdec_ctx *ctx, int index,
+>> +				   enum rkvdec_image_fmt image_fmt)
+>>  {
+>>  	const struct rkvdec_coded_fmt_desc *desc = ctx->coded_fmt_desc;
+>> +	unsigned int i, j;
+>>  
+>>  	if (WARN_ON(!desc))
+>>  		return 0;
+>>  
+>> -	if (index >= desc->num_decoded_fmts)
+>> -		return 0;
+>> +	for (i = 0, j = 0; i < desc->num_decoded_fmts; i++) {
+>> +		if (rkvdec_image_fmt_match(desc->decoded_fmts[i].image_fmt,
+>> +					   image_fmt) &&
+>> +		    index == j++)
 > 
->> suggestion and we found cast long to ulong is implementation-defined
->> behavior in C
+> I really don't care for this j++ which is tucked inside a condition.
 > 
-> There is nothing implementaton-defined in a long to ulong conversion.
+>> +			return desc->decoded_fmts[i].fourcc;
+>> +	}
 > 
+> 	int fmt_idx = -1;
+> 	unsigned int i;
+> 
+> 	for (i = 0, i < desc->num_decoded_fmts; i++) {
+> 		if (!rkvdec_image_fmt_match(desc->decoded_fmts[i].image_fmt,
+> 					    image_fmt))
+> 			continue;
+> 		fmt_idx++;
+> 		if (index == fmt_idx)
+> 			return desc->decoded_fmts[i].fourcc;
+> 	}
+> 
+> 	return 0;
+> 
+>>  
+>> -	return desc->decoded_fmts[index];
+>> +	return 0;
+>>  }
+> 
+> Don't resend if this is the only issue, but if you do resend could you
+> get rid of the j++?
 
-Ok, I misremembered. long to ulong is modulo arithmetic but ulong to long
-is implementation-defined behavior. There is no type cast issue.
+Thanks, I will send a v6 later today/tomorrow and will include your
+proposed change.
+
+Regards,
+Jonas
+
+> 
+> regards,
+> dan carpenter
+
 
