@@ -1,113 +1,133 @@
-Return-Path: <linux-kernel+bounces-232386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3547891A802
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:37:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6881191A808
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:38:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99A4DB2542C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:37:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BE271F2612B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:38:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA85194081;
-	Thu, 27 Jun 2024 13:37:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B17DD1940A9;
+	Thu, 27 Jun 2024 13:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tq/osnw4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gcOuoApZ"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A6C91591F0
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 13:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D22D1591F0;
+	Thu, 27 Jun 2024 13:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719495438; cv=none; b=l7zBXMg2mFhUdrdHUcd0wFQHuX9uL90XzEN9/zgqgEkkU+vEVaPThVaonP3AsDXLJ+6OgQJfp9sJUPBBPmsW8OK8WEwNs2YwxuNMW0Z+uGq368lRQ1dbAldKmf7wDsQuolLqCiykd4aUJjnS1OqFkGUe4Os1AK538jy/twW40eI=
+	t=1719495502; cv=none; b=GIgRMbEax916UiwNYRm5j+x4jBlGp4WVYtV2PqoUoWd3KBRmX8FzZpD4qNrnxJOJSmH1gwLAdBQFqy0XopggU8wdt5TEnTdBOes2l64P4UfzMnheplLqaCukNEUa8Q9bJtV8i/wRUUTZCawuFUoUuJ5zjcJsjiIp6Shr0tfahbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719495438; c=relaxed/simple;
-	bh=eFVpLZmrDXn+hk4HD/Ninb4BntVG08s7b1uv9uw7LhI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JdzBgwe9IX2RJpMMFNJ2CeeVOQyjcX0HpbIJ72cmb2qNSIfF036xeVj3ysG+hXBuJ9cXi1zf0pD35GUcCUwUju4xDO1oTfUp3Wwsvt8jUARxtEj5n4Aw9SBv0i5vpi+Tc3LU+Egfyho4OUvUrQ622V3+O/gdrfj2JsEiVaw6PUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tq/osnw4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5C88C32786;
-	Thu, 27 Jun 2024 13:37:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719495437;
-	bh=eFVpLZmrDXn+hk4HD/Ninb4BntVG08s7b1uv9uw7LhI=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=tq/osnw4j3hEAq7ktA8UoF96AEawyNG07mpVUA+nf9a0lVpgvoghhxfV+HUcDoRwV
-	 0PyYFFGMl2gSYgjJ1qaF32qqawW4XMLgRWCj69SA3+VXRtYloP8WOLVxjwlJxUIKVK
-	 7E9AbHlTB0V6Naq4gtBQ7NCkY4r/w3Q3E1snCO7a7g8NSNIYRIbBpP5QKNVxnbZSDy
-	 E32Hzkqa1pBvg12gXiZ4aBS4+5tIhgpdOAHL06P7VeopeEc1tlj9sjKaoO798EJ7XK
-	 URQLN9sxgiSkSMLDPmyigLMmWJkHr3DaXkwrmclvGWSl/nT76znxK6O7QuzIyHe7ii
-	 vXHD94sFVSxaw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 90BDFCE08DF; Thu, 27 Jun 2024 06:37:16 -0700 (PDT)
-Date: Thu, 27 Jun 2024 06:37:16 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alexandre Chartre <alexandre.chartre@oracle.com>,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	KP Singh <kpsingh@kernel.org>, Waiman Long <longman@redhat.com>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH v6 1/3] x86/syscall: Mark exit[_group] syscall handlers
- __noreturn
-Message-ID: <a4b42472-6187-4bee-977c-c43f7b578042@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <cover.1719381528.git.jpoimboe@kernel.org>
- <5d8882bc077d8eadcc7fd1740b56dfb781f12288.1719381528.git.jpoimboe@kernel.org>
- <20240627072634.GAZn0UKqtwqwQhWr4q@fat_crate.local>
+	s=arc-20240116; t=1719495502; c=relaxed/simple;
+	bh=Wwr5SFLweSjVAg7AZ0LyTnhyIf6EXInYU7IwdmAJ9O0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TNUzLAt6xEsNcMekIgW49PGpVq32hq5qB7bW7GBRO+cxJFyPVDbV0zOFdpkCT4jovJAWHXylc+fc52iMMfRUXPprG3lEgxxzU8jbX2RjqVrz9l4ZrYN8EjmBBqi34YRk8y/caNIxFcOmtOzM70bLVxsKIG5KGKZw1SHi8RiBm/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gcOuoApZ; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45RDQu3M028935;
+	Thu, 27 Jun 2024 13:37:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=pp1; bh=EexzgJBj+tt6+l2+7cxvFAJb/k
+	4mJCbDy4YUYm3EaMQ=; b=gcOuoApZuwcjzFaPJjnKzH1qsGVTK+efOHkjlI3Lro
+	AwWI4v/o9+J42IqllmJtZv4n+OWXxjdHgT0z8g3gSgC/jLuAF43FrdqkwGoVVZ3v
+	yEFSh6WDBKBQtBfPaEgcDDPI7NMMcdZNB/Ka//AOsBMaGoLJOufEABKni4yVI24S
+	fKruT1SWXX1YF6o5o8lF4xSl0BxnESsl2hyRId1bnBriR7a1qrt4qqYTmtsvmqux
+	Ce7+nV7hVqsqenWSuku1xs9l5udXyl8tzZoxDOpaRwfpRyrZAwsDZ3I1q/Xqxnmy
+	fSGo6i+jSYYQqmt67OzFWPARub6orJVWOuc1CyyBingQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4018jhr2vj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Jun 2024 13:37:54 +0000 (GMT)
+Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45RDUG8N003475;
+	Thu, 27 Jun 2024 13:37:53 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4018jhr2vd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Jun 2024 13:37:53 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45RBJQn3000564;
+	Thu, 27 Jun 2024 13:37:52 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yxaenaue2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Jun 2024 13:37:52 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45RDbmjT55116164
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 27 Jun 2024 13:37:50 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 69A4D20043;
+	Thu, 27 Jun 2024 13:37:48 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 19E8320040;
+	Thu, 27 Jun 2024 13:37:46 +0000 (GMT)
+Received: from ltcden3-lp14.aus.stglabs.ibm.com (unknown [9.53.174.165])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 27 Jun 2024 13:37:45 +0000 (GMT)
+From: Abhishek Dubey <adubey@linux.ibm.com>
+To: linuxppc-dev@lists.ozlabs.org
+Cc: naveen.n.rao@linux.vnet.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
+        peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
+        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Abhishek Dubey <adubey@linux.ibm.com>
+Subject: [PATCH] Perf: Calling available function for stats printing
+Date: Thu, 27 Jun 2024 09:37:43 -0400
+Message-ID: <20240627133743.407048-1-adubey@linux.ibm.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240627072634.GAZn0UKqtwqwQhWr4q@fat_crate.local>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: T10gs8bLWGzO1eEpJxWH5rJm_0T4n-kz
+X-Proofpoint-ORIG-GUID: UiLTGOdyY01ZP8Y-FWMaq8WXAY4Bg9cg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-27_08,2024-06-27_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ priorityscore=1501 adultscore=0 suspectscore=0 mlxscore=0 malwarescore=0
+ lowpriorityscore=0 phishscore=0 mlxlogscore=999 impostorscore=0
+ bulkscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406270101
 
-On Thu, Jun 27, 2024 at 09:26:34AM +0200, Borislav Petkov wrote:
-> On Tue, Jun 25, 2024 at 11:02:00PM -0700, Josh Poimboeuf wrote:
-> > The direct-call syscall dispatch function doesn't know that the exit()
-> > and exit_group() syscall handlers don't return, so the call sites aren't
-> > optimized accordingly.
-> > 
-> > Fix that by marking the exit syscall declarations __noreturn.
-> > 
-> > Fixes the following warnings:
-> > 
-> >   vmlinux.o: warning: objtool: x64_sys_call+0x2804: __x64_sys_exit() is missing a __noreturn annotation
-> >   vmlinux.o: warning: objtool: ia32_sys_call+0x29b6: __ia32_sys_exit_group() is missing a __noreturn annotation
-> > 
-> > Fixes: 7390db8aea0d ("x86/bhi: Add support for clearing branch history at syscall entry")
-> > Reported-by: "Paul E. McKenney" <paulmck@kernel.org>
-> > Closes: https://lkml.kernel.org/lkml/6dba9b32-db2c-4e6d-9500-7a08852f17a3@paulmck-laptop
-> 
-> This here talks about
-> 
-> 1e3ad78334a6 ("x86/syscall: Don't force use of indirect calls for system calls")
-> 
-> being the culprit.
-> 
-> But Fixes points to something unrelated...?
-> 
-> In any case, I won't send this to Linus now as urgent material unless someone
-> presents a reasonable argument for it...
+For printing dump_trace, just use existing stats_print()
+function.
 
-Its being in -next now and going into the upcoming merge window works
-just fine for me, thank you!
+Signed-off-by: Abhishek Dubey <adubey@linux.ibm.com>
+---
+ tools/perf/builtin-report.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-							Thanx, Paul
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index 69618fb0110b..8678eebc49e6 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -1089,10 +1089,7 @@ static int __cmd_report(struct report *rep)
+ 			perf_session__fprintf_dsos(session, stdout);
+ 
+ 		if (dump_trace) {
+-			perf_session__fprintf_nr_events(session, stdout,
+-							rep->skip_empty);
+-			evlist__fprintf_nr_events(session->evlist, stdout,
+-						  rep->skip_empty);
++			stats_print(rep);
+ 			return 0;
+ 		}
+ 	}
+-- 
+2.44.0
+
 
