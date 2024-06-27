@@ -1,148 +1,138 @@
-Return-Path: <linux-kernel+bounces-231706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67346919C7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 02:59:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BD2A919C7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 03:00:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9806F1C223CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:59:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AC0C286733
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 01:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF7A41C2A8;
-	Thu, 27 Jun 2024 00:56:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1D74C8F;
+	Thu, 27 Jun 2024 00:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UGkpfnYb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="P1niESfD"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B811B285;
-	Thu, 27 Jun 2024 00:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49342211C;
+	Thu, 27 Jun 2024 00:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719449766; cv=none; b=mtWHYxqtA2PeawfhSVWrARmYS7FuaFCuusuNkw8ZHLjMz+833xX1aDXY8qEvgZMWV6vT34I0PKgIfMrYq4efccVwYfjQbDP8og+n2q8QKuffjhYXTpOAesd5zTZT1uJGp2y7sq16AZWeG8ThJLHpRM7tu+k4ju87lhSPdnf7xsg=
+	t=1719449990; cv=none; b=s2m0HPbCm7si/zyICKx6M3/yGyzoU3xvYTfdHoGUKpnXia/W0JQ6PMmDqPtKqkO3Ju3nR94lDYeQSqvpe3j2vp9rN6qBElQlncUlxm93qYXvvqS8wAxTNP3mcFZvLHF6nEpltloFE4xUBg5KKNuOA/oSzO0noYFqMjoi544pCUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719449766; c=relaxed/simple;
-	bh=UICLH5sFImH9tQWSBxG/F2lJcuSf9UKpImB+14UEmmM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hBAfgM+9043NPlcmXyulkqZV0Kpo3onaLnuDRgs33RcohQAtuhdN89l17WPs6oCjbDZkb6OArWWYKHE7aay4ldap8pk9Z2PgSSO6WjoJDr7tRvIt61GqaI04R+1SJkK/muGUGoV5KiEQxKfOh/htYVwjS2LL2x0LKLBRnDwT688=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UGkpfnYb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1953C32789;
-	Thu, 27 Jun 2024 00:56:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719449765;
-	bh=UICLH5sFImH9tQWSBxG/F2lJcuSf9UKpImB+14UEmmM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UGkpfnYb4m8b1F2BuycZ2ME4nffdEqQZ5k2uZ7jefztUKUYLrJ40QDJ2WM8rctQCX
-	 teSmfprKPS/EqpvqB2MYF63GLWb72O/IrpNeFlUx+qygdDybyX/DlwJfgnW/M3BiJl
-	 QpECoDwvpy1V1gVmcWZJ2zGGdMV/i87YDoYugtBsemVPw7hdfTCH/TSTUVt01nu8Tg
-	 jY7w6xssV2ZIzcBMLOA5qip9NOuFrEzcdLDWb4FG2M8ZpzrD04lZKvLARXJMriVoFy
-	 jaHvxh+LoV1Ns194aNkz+VEBKNg9Vrt9lOVduTMJLhDU6EEZV314C7sCP/Al3xCwDi
-	 FFm6Yhn7/YHmQ==
-Message-ID: <a6e86954-4ab7-4bb0-b78d-56f44556318e@kernel.org>
-Date: Thu, 27 Jun 2024 09:56:02 +0900
+	s=arc-20240116; t=1719449990; c=relaxed/simple;
+	bh=9fYE1HBswViCYV0y+jxuGrMG4f2awfEsQnVMXDNZN3U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YAJ+CUdEYccJdC0HzmLObEO/08CMz97ReEECp2pDJGX4EXhG7Shj2j6HhfH3ypX4C78uiIjoxAUFARBfHdrwH4yENcnWr5PZo16oYc/qc0XDkiawNTTHruD/rOTFaA8HYyqIYPC7G2YZZuQpz0nDn4VO3ezZ4r+sAuXn4Siz//Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=P1niESfD; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from tr.lan (ip-86-49-120-218.bb.vodafone.cz [86.49.120.218])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 1880688495;
+	Thu, 27 Jun 2024 02:59:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1719449981;
+	bh=nRRMgVYz5K221YS3EHiDdmRYJ/Cn0uzB+xd7+Lhx9eU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=P1niESfDnRF6termPh465JrMUGDWB2ib+XYW9uOtEH6gHeuqVoaxJOPKes8SSo3Im
+	 dkvRrMqPkA0x2zhXnXMlTKDquDUOCm+0tlbzAVWvhEJtBbVD4mLau2cYBNN+PvqcPa
+	 9tcamKLWu1BC5IgD/yADhvGdh+VYpjShhoRGF39GNHy5IYBnD7ShlTolTFUMxJID4w
+	 5+Tn2/mcnv9vGIl/E9s7N+m9M8O9a1dUZQ6a8gA/lTlMCV7TnCf5mX3pVHY8DnDCSr
+	 LuvoLf9eL240GBcn9wyG8gukuh2Wba7yx1XUf4gxdXUIWyv4gdVcNly4gUp9RJ6rsB
+	 BP8Zk4zbS/KJA==
+From: Marek Vasut <marex@denx.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Marek Vasut <marex@denx.de>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	kernel@dh-electronics.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: imx8mp: Update Fast ethernet PHY MDIO addresses to match DH i.MX8MP DHCOM rev.200
+Date: Thu, 27 Jun 2024 02:58:33 +0200
+Message-ID: <20240627005913.326662-1-marex@denx.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [bug report] scsi: SATA devices missing after FLR is triggered
- during HBA suspended
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Yihang Li <liyihang9@huawei.com>, cassel@kernel.org,
- James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
- john.g.garry@oracle.com, yanaijie@huawei.com, linux-kernel@vger.kernel.org,
- linux-scsi@vger.kernel.org, linuxarm@huawei.com, chenxiang66@hisilicon.com,
- prime.zeng@huawei.com, "linux-pci@vger.kernel.org"
- <linux-pci@vger.kernel.org>, Bjorn Helgaas <bhelgaas@google.com>
-References: <20240626151546.GA1466906@bhelgaas>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20240626151546.GA1466906@bhelgaas>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On 6/27/24 00:15, Bjorn Helgaas wrote:
->>> Yes, I am talking about the PCI "Function Level Reset"
->>>
->>>> FLR and disk/controller suspend execution timing are unrelated. FLR can be
->>>> triggered at any time through sysfs. So please give details here. Why is FLR
->>>> done when the system is being suspended ?
->>>
->>> Yes, it is because FLR can be triggered at any time that we are testing the
->>> reliability of executing FLR commands after disk/controller suspended.
->>
->> "can be triggered" ? FLR is not a random asynchronous event. It is an action
->> that is *issued* by a user with sys admin rights. And such users can do a lot
->> of things that can break a machine...
->>
->> I fail to see the point of doing a function reset while the device is
->> suspended. But granted, I guess the device should comeback up in such case,
->> though I would like to hear what the PCI guys have to say about this.
->>
->> Bjorn,
->>
->> Is reseting a suspended PCI device something that should be/is supported ?
-> 
-> I doubt it.  The PCI core should be preserving all the generic PCI
-> state across suspend/resume.  The driver should only need to
-> save/restore device-specific things the PCI core doesn't know about.
-> 
-> A reset will clear out most state, and the driver doesn't know the
-> reset happened, so it will expect most device state to have been
-> preserved.
+The production DH i.MX8MP DHCOM SoM rev.200 uses updated PHY MDIO addresses
+for the Fast ethernet PHYs. Update the base SoM DT to cater for this change.
 
-That is what I suspected. However, checking the code, reset_store() in
-pci-sysfs.c does:
+Signed-off-by: Marek Vasut <marex@denx.de>
+---
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: imx@lists.linux.dev
+Cc: kernel@dh-electronics.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+ arch/arm64/boot/dts/freescale/imx8mp-dhcom-som.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-	pm_runtime_get_sync(dev);
-	result = pci_reset_function(pdev);
-	pm_runtime_put(dev);
-
-and pm_runtime_get_sync() calls __pm_runtime_resume() which will resume a
-suspended device.
-
-So while I still think it is not a good idea to reset a suspended device, things
-should still work as execpected and not cause any problem with the device state,
-right ?
-
-Yihang,
-
-I think that the issue at hand here is that once the reset finishes, the
-controller goes back to suspended state, and I suspect that is because of the
-"auto" setting for its power/control. That triggers because the FLR is done
-after the controller resumed but *before* the revalidation of the drives
-connected to it completes. So FLR makes the revalidation fail (scsi
-scan/revalidation is asynchronous...).
-
-This seems to me to be the expected behavior for what you are doing and I fail
-to see how that ever worked correctly, even before 0c76106cb975 and 626b13f015e0.
-
-Could you try this: add a call to msleep(30000) at the end of _resume_v3_hw(). I.e.:
-
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index feda9b54b443..54224568d749 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -5104,6 +5104,8 @@ static int _resume_v3_hw(struct device *device)
-
-        dev_warn(dev, "end of resuming controller\n");
-
-+       msleep(30000);
-+
-        return 0;
- }
-
-To see if it makes any difference to actually wait for the connected disks to
-resume correctly before doing the FLR.	
-
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-dhcom-som.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-dhcom-som.dtsi
+index 848df53c48685..4f7721a44daaa 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-dhcom-som.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mp-dhcom-som.dtsi
+@@ -110,14 +110,14 @@ mdio {
+ 		#size-cells = <0>;
+ 
+ 		/* Up to one of these two PHYs may be populated. */
+-		ethphy0f: ethernet-phy@0 { /* SMSC LAN8740Ai */
++		ethphy0f: ethernet-phy@1 { /* SMSC LAN8740Ai */
+ 			compatible = "ethernet-phy-id0007.c110",
+ 				     "ethernet-phy-ieee802.3-c22";
+ 			interrupt-parent = <&gpio3>;
+ 			interrupts = <19 IRQ_TYPE_LEVEL_LOW>;
+ 			pinctrl-0 = <&pinctrl_ethphy0>;
+ 			pinctrl-names = "default";
+-			reg = <0>;
++			reg = <1>;
+ 			reset-assert-us = <1000>;
+ 			reset-deassert-us = <1000>;
+ 			reset-gpios = <&ioexp 4 GPIO_ACTIVE_LOW>;
+@@ -156,14 +156,14 @@ mdio {
+ 		#size-cells = <0>;
+ 
+ 		/* Up to one PHY may be populated. */
+-		ethphy1f: ethernet-phy@1 { /* SMSC LAN8740Ai */
++		ethphy1f: ethernet-phy@2 { /* SMSC LAN8740Ai */
+ 			compatible = "ethernet-phy-id0007.c110",
+ 				     "ethernet-phy-ieee802.3-c22";
+ 			interrupt-parent = <&gpio4>;
+ 			interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
+ 			pinctrl-0 = <&pinctrl_ethphy1>;
+ 			pinctrl-names = "default";
+-			reg = <1>;
++			reg = <2>;
+ 			reset-assert-us = <1000>;
+ 			reset-deassert-us = <1000>;
+ 			reset-gpios = <&gpio4 2 GPIO_ACTIVE_LOW>;
 -- 
-Damien Le Moal
-Western Digital Research
+2.43.0
 
 
