@@ -1,140 +1,146 @@
-Return-Path: <linux-kernel+bounces-232176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0C7991A47A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:03:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4925691A485
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:05:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 404AE281E4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:03:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04B78281D3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:05:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B95145323;
-	Thu, 27 Jun 2024 11:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8B4F145B13;
+	Thu, 27 Jun 2024 11:05:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iuU7sbDB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tZ7xDtsV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2269B13E8B9;
-	Thu, 27 Jun 2024 11:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F57143C7D;
+	Thu, 27 Jun 2024 11:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719486206; cv=none; b=OUiuhOvfBUZ2BS6dfvjO4xpelaKQ+Nb14Nt4PbUqCWrtT1Wo8jgIGonuP64aBegq6HdVciebYoANd+KVit3dqp/VRsdBB1qIQMKe78l9s9+HBrBGaQ7GwHotU1Q1+2pXri0kvxfvX7upn8GYSxX4SwxIO/7Zyu2J5mFDm+uVLz8=
+	t=1719486327; cv=none; b=oQM0hCZ1khoFBeeFH15QnXfNL00fys91qm3IQ0w3xsTuKlXhaMOjmAWVSXFH9dm2K2wC/Q6I7Endu9NBbFcbkqVt+pEKw8+SIUTMu0rW64Rb+/f3M1v17ICNg7h3+kKfb2Ks0ZyzHVBpMGUdRV2qg8lGy96eFPj8AJagErsI/bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719486206; c=relaxed/simple;
-	bh=pOlbY4TR3IBReDqvZhVpsrU0lbvhGXcs7UDZyAM6v4A=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=uVTC+ljhIY3kdk6rJ3VqDkS0v0us+xOBySrM6FBkAZoXSQ4OvXFmpYJvLf/VnzJb84LH5TQDGgWtgFfpSPnNtpcUGwsGNsqYD68RxiR78Fpo/1yMFEZ/z+cKhOxGoeVd3kFb8k8Wd2oQDvULktzzbXvPkvVVM55RJ8syc4djOjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iuU7sbDB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73E3EC2BBFC;
-	Thu, 27 Jun 2024 11:03:23 +0000 (UTC)
+	s=arc-20240116; t=1719486327; c=relaxed/simple;
+	bh=c7jsOFQzV36u+51vLMvJodzB3phULjcBajRLyloChBo=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=V5FhubBeZ4NTDcfovnGSNoUKDwBUXwUgGTtlpuhp8V94/INZnee5evIWoiqyELVrKCRVib/tkHAN7x9wfj7txmq/VTgpZjLs0kZ8GZ9sr1PyatH7YOca80qPSYLFewRXuE8jY4LnkJL0W0IhrIq6/M12hMPNrbn88A8p1ZzNXLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tZ7xDtsV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD3BEC2BBFC;
+	Thu, 27 Jun 2024 11:05:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719486204;
-	bh=pOlbY4TR3IBReDqvZhVpsrU0lbvhGXcs7UDZyAM6v4A=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=iuU7sbDBICFPlufbmDZWKVO5QASkRQzqGE2gBZYFlECJ3Bvksqhhfgo9ggVI6hlvU
-	 /oWbaEbOXMcRDGfp/mqMjNJNHamwuW8xMPJHMcc08fxpL/aw2uzNSDp2vSUr/SGMa8
-	 dPuo/NIUrKb0oGOmcYttdBQ//g3Bu/TLwXqWrzX5mX90VamKUhSXgz38r9gWYUxSGY
-	 65NgrnaYJN+iK9cOx/SgNu0kLHt/oVU3MT/uUHFaTfbL+7VLpeuiq0AP1HNnnte9rO
-	 1QKOr7z9HJ5X+taRKIz243lPTvVnnj83AdAkT2+zNfK9TJO1cF2uxpY7E0ONsyJowl
-	 ghnyWNCkLhauw==
-Message-ID: <282dccdf55267a1de5965ff43fa30df8b815b790.camel@kernel.org>
-Subject: Re: [PATCH v2 0/5] cachefiles: some bugfixes for clean object/send
- req/poll
-From: Jeff Layton <jlayton@kernel.org>
-To: libaokun@huaweicloud.com, netfs@lists.linux.dev, dhowells@redhat.com
-Cc: hsiangkao@linux.alibaba.com, jefflexu@linux.alibaba.com, 
- zhujia.zj@bytedance.com, linux-erofs@lists.ozlabs.org, 
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- yangerkun@huawei.com, houtao1@huawei.com, yukuai3@huawei.com,
- wozizhi@huawei.com,  Baokun Li <libaokun1@huawei.com>
-Date: Thu, 27 Jun 2024 07:03:22 -0400
-In-Reply-To: <20240515125136.3714580-1-libaokun@huaweicloud.com>
-References: <20240515125136.3714580-1-libaokun@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=k20201202; t=1719486326;
+	bh=c7jsOFQzV36u+51vLMvJodzB3phULjcBajRLyloChBo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tZ7xDtsVrNzkC6mNmdFJLLHzTclq8PEkWrF1/7N/s7MForbXDvB+2yeHIbhCij9tf
+	 tJ+oIjOqkY/XCns5uv1YYyA3GiFjCiZiHFQAX7sqgb/WbY5bhOGD0MoN5Z+N5RyzCV
+	 MtMDq0iC3s1UldQXBi4SVqQ0OXyeeOiZ9DHeGl3PST1lSzLqaCnvPaGAfJFHBWS306
+	 g+Xc+8PTn55qHIKi+g6CfEM/ymLGaM1AKygSGy22vUKJ79tTt3hXeKY1A0WjIpW1E9
+	 TiLWXk1ceKrtDUE+ikMJr2y8uJ61GsjJ+NTtJV2KYh8XqUL3Ebf1kyw+i3RM+rns5g
+	 oFiTj7HFwqXuw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sMmwO-007m6d-DN;
+	Thu, 27 Jun 2024 12:05:24 +0100
+Date: Thu, 27 Jun 2024 12:05:23 +0100
+Message-ID: <86ikxuir2k.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Russell King <linux@armlinux.org.uk>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	James Clark <james.clark@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	kvmarm@lists.linux.dev
+Subject: Re: [PATCH v2 06/12] perf: arm_pmu: Remove event index to counter remapping
+In-Reply-To: <20240626-arm-pmu-3-9-icntr-v2-6-c9784b4f4065@kernel.org>
+References: <20240626-arm-pmu-3-9-icntr-v2-0-c9784b4f4065@kernel.org>
+	<20240626-arm-pmu-3-9-icntr-v2-6-c9784b4f4065@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: robh@kernel.org, linux@armlinux.org.uk, peterz@infradead.org, mingo@redhat.com, acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, will@kernel.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, james.clark@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, kvmarm@lists.linux.dev
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Wed, 2024-05-15 at 20:51 +0800, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
->=20
-> Hi all!
->=20
-> This is the second version of this patch series. Thank you, Jia Zhu and
-> Gao Xiang, for the feedback in the previous version.
->=20
-> We've been testing ondemand mode for cachefiles since January, and we're
-> almost done. We hit a lot of issues during the testing period, and this
-> patch set fixes some of the issues related to reopen worker/send req/poll=
-.
-> The patches have passed internal testing without regression.
->=20
-> Patch 1-3: A read request waiting for reopen could be closed maliciously
-> before the reopen worker is executing or waiting to be scheduled. So
-> ondemand_object_worker() may be called after the info and object and even
-> the cache have been freed and trigger use-after-free. So use
-> cancel_work_sync() in cachefiles_ondemand_clean_object() to cancel the
-> reopen worker or wait for it to finish. Since it makes no sense to wait
-> for the daemon to complete the reopen request, to avoid this pointless
-> operation blocking cancel_work_sync(), Patch 1 avoids request generation
-> by the DROPPING state when the request has not been sent, and Patch 2
-> flushes the requests of the current object before cancel_work_sync().
->=20
-> Patch 4: Cyclic allocation of msg_id to avoid msg_id reuse misleading
-> the daemon to cause hung.
->=20
-> Patch 5: Hold xas_lock during polling to avoid dereferencing reqs causing
-> use-after-free. This issue was triggered frequently in our tests, and we
-> found that anolis 5.10 had fixed it, so to avoid failing the test, this
-> patch was pushed upstream as well.
->=20
-> Comments and questions are, as always, welcome.
-> Please let me know what you think.
->=20
-> Thanks,
-> Baokun
->=20
-> Changes since v1:
-> =C2=A0 * Collect RVB from Jia Zhu and Gao Xiang.(Thanks for your review!)
-> =C2=A0 * Pathch 1,2=EF=BC=9AAdd more commit messages.
-> =C2=A0 * Pathch 3=EF=BC=9AAdd Fixes tag as suggested by Jia Zhu.
-> =C2=A0 * Pathch 4=EF=BC=9ANo longer changing "do...while" to "retry" to f=
-ocus changes
-> =C2=A0=C2=A0=C2=A0 and optimise commit messages.
-> =C2=A0 * Pathch 5: Drop the internal RVB tag.
->=20
-> [V1]: https://lore.kernel.org/all/20240424033409.2735257-1-libaokun@huawe=
-icloud.com
->=20
-> Baokun Li (3):
-> =C2=A0 cachefiles: stop sending new request when dropping object
-> =C2=A0 cachefiles: flush all requests for the object that is being droppe=
-d
-> =C2=A0 cachefiles: cyclic allocation of msg_id to avoid reuse
->=20
-> Hou Tao (1):
-> =C2=A0 cachefiles: flush ondemand_object_worker during clean object
->=20
-> Jingbo Xu (1):
-> =C2=A0 cachefiles: add missing lock protection when polling
->=20
-> =C2=A0fs/cachefiles/daemon.c=C2=A0=C2=A0 |=C2=A0 4 ++--
-> =C2=A0fs/cachefiles/internal.h |=C2=A0 3 +++
-> =C2=A0fs/cachefiles/ondemand.c | 52 +++++++++++++++++++++++++++++++++++--=
----
-> =C2=A03 files changed, 51 insertions(+), 8 deletions(-)
->=20
+On Wed, 26 Jun 2024 23:32:30 +0100,
+"Rob Herring (Arm)" <robh@kernel.org> wrote:
+> 
+> Xscale and Armv6 PMUs defined the cycle counter at 0 and event counters
+> starting at 1 and had 1:1 event index to counter numbering. On Armv7 and
+> later, this changed the cycle counter to 31 and event counters start at
+> 0. The drivers for Armv7 and PMUv3 kept the old event index numbering
+> and introduced an event index to counter conversion. The conversion uses
+> masking to convert from event index to a counter number. This operation
+> relies on having at most 32 counters so that the cycle counter index 0
+> can be transformed to counter number 31.
+> 
+> Armv9.4 adds support for an additional fixed function counter
+> (instructions) which increases possible counters to more than 32, and
+> the conversion won't work anymore as a simple subtract and mask. The
+> primary reason for the translation (other than history) seems to be to
+> have a contiguous mask of counters 0-N. Keeping that would result in
+> more complicated index to counter conversions. Instead, store a mask of
+> available counters rather than just number of events. That provides more
+> information in addition to the number of events.
+> 
+> No (intended) functional changes.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-The set itself looks fairly straightforward, but I don't know this code
-well enough to give it a proper review.
+[...]
 
-Acked-by: Jeff Layton <jlayton@kernel.org>
+> diff --git a/include/linux/perf/arm_pmu.h b/include/linux/perf/arm_pmu.h
+> index b3b34f6670cf..e5d6d204beab 100644
+> --- a/include/linux/perf/arm_pmu.h
+> +++ b/include/linux/perf/arm_pmu.h
+> @@ -96,7 +96,7 @@ struct arm_pmu {
+>  	void		(*stop)(struct arm_pmu *);
+>  	void		(*reset)(void *);
+>  	int		(*map_event)(struct perf_event *event);
+> -	int		num_events;
+> +	DECLARE_BITMAP(cntr_mask, ARMPMU_MAX_HWEVENTS);
+
+I'm slightly worried by this, as this size is never used, let alone
+checked by the individual drivers. I can perfectly picture some new
+(non-architectural) PMU driver having more counters than that, and
+blindly setting bits outside of the allowed range.
+
+One way to make it a bit safer would be to add a helper replacing the
+various bitmap_set() calls, and enforcing that we never overflow this
+bitmap.
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
