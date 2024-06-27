@@ -1,153 +1,134 @@
-Return-Path: <linux-kernel+bounces-232459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0845091A91C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:23:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54F1391A927
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:24:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ABFA1C224DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:23:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10F9F286588
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:24:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582A9195FC2;
-	Thu, 27 Jun 2024 14:22:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1E1196450;
+	Thu, 27 Jun 2024 14:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CpqB6xqI"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kNxV92eZ"
+Received: from mail-pf1-f196.google.com (mail-pf1-f196.google.com [209.85.210.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4254719306A;
-	Thu, 27 Jun 2024 14:22:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48599195F22;
+	Thu, 27 Jun 2024 14:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719498175; cv=none; b=F+x+QHPwwX938zFIOgJVBlPTqe2kfIxwwp3aSie7NEc2v1QEUHqt2lDb1YAufbsyGcvuSgfXeXO7bnyNy8ARNH8OJRmHSxDf0oNfF1WqRE2pqFx27w0fS4YuQsm0ErDyODW5nRDtjpQQi0tEFjMb38QrBW4Tytyzv1mvxFPeqSw=
+	t=1719498264; cv=none; b=aACOKAfBlFHMaQCVEyVgy0paAX9XlroOAV0cBXjM6QhBFKJ5oSQnotKj3WP1h1Bj91+VgYHgwkhCJlNYdfnJDyREzWE7WWSHqjUUjxbMxIQYO51XjTm556a50Xi7Sc9DTxU0kkmHn2WkbCbIuCx/Cw5q9G+U5uSlSEZ2n/mScXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719498175; c=relaxed/simple;
-	bh=oHV3OHMIUPZl6GV46fsLps6Cea0pnU28+OVOsPTtCLs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MR/0J+zLohAxw9oMasmlXfEi/4snGwzhvyRgeyCRRmop4H3RtCypbxhjpuGXgjDJqaOyKh0Sm03BKg9d9/J93otpdJiwxQS5zZQNs/tiWHnppOgYvuS7kwFItcXclJIDM23M4DbZUzVA2zXGMWoQSxVgTa3LBa8c6Iu2sxh3y4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CpqB6xqI; arc=none smtp.client-ip=209.85.216.47
+	s=arc-20240116; t=1719498264; c=relaxed/simple;
+	bh=Q2jff5QT5dahZ0NplzuKdapGzNO6RH+dDW7S1GCf5v4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KJtxu4C/6721T3B5L33/qiuzaMoxSTsqdrrylFWNiOCNx9Mih9aC2fLgKeukM2yNPUXZksHWuFS9FQ5zQWH02rAdsGfYjqPX6ZR1wCnrqfbLvUSJunEe87KigMg4Fh2FjJLO2XiHjbTs7xH2fh3d9pbe//iUpIyWkZpZiVh6WN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kNxV92eZ; arc=none smtp.client-ip=209.85.210.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2c80657e4a3so5290597a91.0;
-        Thu, 27 Jun 2024 07:22:54 -0700 (PDT)
+Received: by mail-pf1-f196.google.com with SMTP id d2e1a72fcca58-70671ecd334so4096063b3a.0;
+        Thu, 27 Jun 2024 07:24:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719498173; x=1720102973; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=1LlXmCd6thfbhr1DFHJ5mJ6w10qbVvdbhSaguzvZxl4=;
-        b=CpqB6xqIf95+VGHTpY+YIg6FbYjbuuvX5NTIpNEIBWPzeMOyxb29CBY5iMYe0kmER7
-         2NG+h3gEL3RFiVRsiMa3gvv63J7EZWpIy+WHnfYOKVpnwwEy38jZ4yEGDq8ES3MiYFj1
-         5yJZXr3WqcJrTCKO5ChhrhCYzMxOt5GHytrOdw0Konqws03RLkdD8hX17a82OHA6m3nj
-         XbdruxDm9RIbV/H0LZqzs/T/sU3YB3UZPdjecqdpX6Wvo7bjqj00SkgYv58lGUKGlNfn
-         yCYJB1MFnQPqBLhRrf1ors8Qv+C8n1IY0u+ho9kY4pYF0yOoyDK+iuzFykMyPtgu/hqc
-         cxqQ==
+        d=gmail.com; s=20230601; t=1719498262; x=1720103062; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=f/eLI45W/ooqVC/MA9zQHUWk1MIJ0qMRX6RqXTFEWV8=;
+        b=kNxV92eZzHtv8FnLNVXDxkpXstN1yuHC5iRPqRxvzkvHRWN2wW6uCUBhIjXtlevCoc
+         +cunYdZVanA2dy4OK5apl5iP0ONnqRXa8bqPFz8G9EmRuNI73UgFg6oS3pz1he6WyYVx
+         78bZBFzZW4EzvrkAnLhP+0vEgrqWSY6C8oQVpj7iUhdty/etdmlQxp2eqcT3WWs1LxIL
+         95bc1+VzGbMf73nUc0/6kLyqi22Qn2hZ3GWSD3cHCPdUjUPjHXJDdu9NuSlQsGWfB/hu
+         wjAk7jBwzKemibsoW5I9bKGjzeYOEnGv1J0FFPWRXzbxeSAj5b/0+1KSxwDqCQQey73Y
+         b8IQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719498173; x=1720102973;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1LlXmCd6thfbhr1DFHJ5mJ6w10qbVvdbhSaguzvZxl4=;
-        b=oQJa0faL25VwvYft0iwz9Tas3YByZSHNX7cSrjm84p2Ne9KnQk+PdX4udPNfW2w7lh
-         RyvXkg30yNrUBTcsCYnr7pOQJgf0DfldGTNTDS37T3ZDyi5Rz5KMXss2t9BWanau7NDI
-         HaQ+Zdn8KhX9XLZTQIC+Wjih4NyQvZ79eag3TqwTNPfQdHMjEoz2PlY7xrzWGY1+d/Af
-         wqhKQtUXpqrr5VusuehvQ1RA7tZ/2DJ31iLb+UnHkXKD6O1ADVhjfOxPX53WcqTOr4X0
-         RkIyVOLGJHsBkvkpQM4ifeMcCC1mNFIL4DUoHPynCG/2t0vsuShEzHDB+vbTF5Qtv1CC
-         OuMw==
-X-Forwarded-Encrypted: i=1; AJvYcCUbrqcIhGVreTmtvLDCX0yAYYKWB9aQIYb8qkS/UsRRdey5LuwgdB9/Frvy2LBZnj+13vpkYfTGob15AvnS/M/weKo3uKAzU+c19A==
-X-Gm-Message-State: AOJu0YyOCN/z5HjVbbmZ9qKFEWff+KQW8cvV8dZKVSC4FhUxlsFBJZK5
-	IRH0QTx3ZiF9gJykr6PE0CjlsI+Lcxv+nRh88Bao6fj18c+hZgYi
-X-Google-Smtp-Source: AGHT+IG0U8gCeC6H4Lv27x869DpLFMoP289ZkPNOKtVWCPqnht6f7tfJWKLuY//+9rUGf6pGDyLm7w==
-X-Received: by 2002:a17:90b:1c12:b0:2c6:e8d4:d0e2 with SMTP id 98e67ed59e1d1-2c8614cbbd4mr10959627a91.43.1719498173381;
-        Thu, 27 Jun 2024 07:22:53 -0700 (PDT)
-Received: from rigel ([118.209.204.19])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c8fe8acddcsm1513785a91.2.2024.06.27.07.22.51
+        d=1e100.net; s=20230601; t=1719498262; x=1720103062;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=f/eLI45W/ooqVC/MA9zQHUWk1MIJ0qMRX6RqXTFEWV8=;
+        b=LgeBeSUDmcvC7EI47txRoj/lnMrh59N8e1lAdQcFQqeb5FojoeRA4/Hz5TtxpNBrpE
+         nkiDsZ0BMTatVZKjBPYkSmpPStlC0bS6TbZTy38cuWRQetICJhv31Qk25IPSPt5ReB2+
+         jsTT0D2EBiv3TcDjI9Dohp0iVzVvAVIoGMspEdmNQMItviMk+IdTijb4AcB+cn34IfzZ
+         9zrwC0df482oJqkP1dxFx5VeJVo7rWFJgr7oSI/tK+4oL2cYs8dtV+gP9+b7Y5HD/AKh
+         QmirmxSD3FqwpTQC9RWYAohF1L2ZLyUa4fnLAwrFjSbj2yrQ/Cjy8RafC883iA7rvNnO
+         NB3g==
+X-Forwarded-Encrypted: i=1; AJvYcCV+CIFUZGyGniMunruQCllFVlZonz6Hgzyya58zputAbz48inZ/GJ2udLVOGUYBX1HwhFPNO8TftPQ+5nXzFTr/ZcUdKPw6
+X-Gm-Message-State: AOJu0YyiigaDret79M3yxzzkXy2rwrykYVMo0GQLQT3XhlICuMrNcpdr
+	JaAAJgot2KIhT9p9oc9Cbrmm/n7QjAKBidKYrilwIy2/JuSp5cjC
+X-Google-Smtp-Source: AGHT+IFaXa2jgWVK9qwyyMjsUe+VJC/FCmmJqXZaBPd98yzohBR8g9ipU8NKxlQpPhyhZJZYUcyh6Q==
+X-Received: by 2002:a62:b609:0:b0:706:4889:960d with SMTP id d2e1a72fcca58-70670ee7812mr13853487b3a.16.1719498262365;
+        Thu, 27 Jun 2024 07:24:22 -0700 (PDT)
+Received: from localhost ([212.107.28.57])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-706b48d0cc0sm1403803b3a.28.2024.06.27.07.24.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 07:22:53 -0700 (PDT)
-Date: Thu, 27 Jun 2024 22:22:48 +0800
-From: Kent Gibson <warthog618@gmail.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linus.walleij@linaro.org
-Subject: Re: [PATCH 2/4] gpiolib: cdev: Ignore reconfiguration without
- direction
-Message-ID: <20240627142248.GA414403@rigel>
-References: <20240626052925.174272-1-warthog618@gmail.com>
- <20240626052925.174272-3-warthog618@gmail.com>
- <CAMRc=Me1_4xjbt51j+gFVzR71VUwMSAm+dT=UtgOY-1xYoAF5g@mail.gmail.com>
+        Thu, 27 Jun 2024 07:24:21 -0700 (PDT)
+From: Celeste Liu <coelacanthushex@gmail.com>
+X-Google-Original-From: Celeste Liu <CoelacanthusHex@gmail.com>
+To: linux-riscv@lists.infradead.org,
+	=?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>
+Cc: linux-kernel@vger.kernel.org,
+	"Dmitry V . Levin" <ldv@strace.io>,
+	Guo Ren <guoren@kernel.org>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Felix Yan <felixonmars@archlinux.org>,
+	Ruizhe Pan <c141028@gmail.com>,
+	Celeste Liu <CoelacanthusHex@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] riscv: entry: always initialize regs->a0 to -ENOSYS
+Date: Thu, 27 Jun 2024 22:23:39 +0800
+Message-ID: <20240627142338.5114-2-CoelacanthusHex@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1313; i=CoelacanthusHex@gmail.com; h=from:subject; bh=Q2jff5QT5dahZ0NplzuKdapGzNO6RH+dDW7S1GCf5v4=; b=owJ4nJvAy8zAJfY4pvNJRPo6U8bTakkMabWlrwIU5LWUEn9rPF/0ydqKUdQyc8m/pJOixUUZJ 13/7OoyCesoZWEQ42KQFVNkEdv59PWy0kcflvGazICZw8oEMoSBi1MAJlLxmeGvREWem4374e3C c6fzxbfX3P67q/yrnX/Nzpn1sZNtBZb0MvzhrGy8bzLFos5JPNT+mve8nBXcHib3J30+45vrduH V0jYeAI3ZS6k=
+X-Developer-Key: i=CoelacanthusHex@gmail.com; a=openpgp; fpr=892EBC7DC392DFF9C9C03F1D15F4180E73787863
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=Me1_4xjbt51j+gFVzR71VUwMSAm+dT=UtgOY-1xYoAF5g@mail.gmail.com>
 
-On Thu, Jun 27, 2024 at 04:06:21PM +0200, Bartosz Golaszewski wrote:
-> On Wed, Jun 26, 2024 at 7:29 AM Kent Gibson <warthog618@gmail.com> wrote:
-> >
-> > linereq_set_config() behaves badly when direction is not set.
-> > The configuration validation is borrowed from linereq_create(), where,
-> > to verify the intent of the user, the direction must be set to in order to
-> > effect a change to the electrical configuration of a line. But, when
-> > applied to reconfiguration, that validation does not allow for the unset
-> > direction case, making it possible to clear flags set previously without
-> > specifying the line direction.
-> >
-> > Adding to the inconsistency, those changes are not immediately applied by
-> > linereq_set_config(), but will take effect when the line value is next get
-> > or set.
-> >
-> > For example, by requesting a configuration with no flags set, an output
-> > line with GPIO_V2_LINE_FLAG_ACTIVE_LOW and GPIO_V2_LINE_FLAG_OPEN_DRAIN
-> > set could have those flags cleared, inverting the sense of the line and
-> > changing the line drive to push-pull on the next line value set.
-> >
-> > Skip the reconfiguration of lines for which the direction is not set, and
-> > only reconfigure the lines for which direction is set.
-> >
-> > Fixes: a54756cb24ea ("gpiolib: cdev: support GPIO_V2_LINE_SET_CONFIG_IOCTL")
-> > Signed-off-by: Kent Gibson <warthog618@gmail.com>
-> > ---
-> >  drivers/gpio/gpiolib-cdev.c | 12 +++++++-----
-> >  1 file changed, 7 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-> > index f7a129d67b7d..ef08b23a56e2 100644
-> > --- a/drivers/gpio/gpiolib-cdev.c
-> > +++ b/drivers/gpio/gpiolib-cdev.c
-> > @@ -1534,12 +1534,14 @@ static long linereq_set_config(struct linereq *lr, void __user *ip)
-> >                 line = &lr->lines[i];
-> >                 desc = lr->lines[i].desc;
-> >                 flags = gpio_v2_line_config_flags(&lc, i);
-> > +               /*
-> > +                * Lines not explicitly reconfigured as input or output
-> > +                * are left unchanged.
-> > +                */
-> > +               if (!(flags & GPIO_V2_LINE_DIRECTION_FLAGS))
-> > +                       continue;
->
-> Series looks good, thanks. I'd say that this bit here calls for at
-> least a debug-level message since we don't return an error unlike v1.
-> What do you think?
->
+Otherwise when the tracer changes syscall number to -1, the kernel fails
+to initialize a0 with -ENOSYS and subsequently fails to return the error
+code of the failed syscall to userspace. For example, it will break
+strace syscall tampering.
 
-The change to the libgpiod Python bindings makes use of this to support
-reconfiguration of subsets, so on its own it isn't an abnormal path and
-I'm not sure it warrants even a debug.
+Fixes: 52449c17bdd1 ("riscv: entry: set a0 = -ENOSYS only when syscall != -1")
+Reported-by: "Dmitry V. Levin" <ldv@strace.io>
+Reviewed-by: Björn Töpel <bjorn@rivosinc.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Celeste Liu <CoelacanthusHex@gmail.com>
+---
+ arch/riscv/kernel/traps.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-OTOH, I did consider if there should be a check that at least one line
-in the reconfig has a direction, returning an error if there are none, but
-was on the fence about it and left it out as it added complexity.
+diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
+index 05a16b1f0aee..51ebfd23e007 100644
+--- a/arch/riscv/kernel/traps.c
++++ b/arch/riscv/kernel/traps.c
+@@ -319,6 +319,7 @@ void do_trap_ecall_u(struct pt_regs *regs)
+ 
+ 		regs->epc += 4;
+ 		regs->orig_a0 = regs->a0;
++		regs->a0 = -ENOSYS;
+ 
+ 		riscv_v_vstate_discard(regs);
+ 
+@@ -328,8 +329,7 @@ void do_trap_ecall_u(struct pt_regs *regs)
+ 
+ 		if (syscall >= 0 && syscall < NR_syscalls)
+ 			syscall_handler(regs, syscall);
+-		else if (syscall != -1)
+-			regs->a0 = -ENOSYS;
++
+ 		/*
+ 		 * Ultimately, this value will get limited by KSTACK_OFFSET_MAX(),
+ 		 * so the maximum stack offset is 1k bytes (10 bits).
+-- 
+2.45.2
 
-Would that make more sense?
-Or do you have a problem with reconfiguring subsets?
-
-Cheers,
-Kent.
 
