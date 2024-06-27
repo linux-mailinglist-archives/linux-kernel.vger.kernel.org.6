@@ -1,126 +1,155 @@
-Return-Path: <linux-kernel+bounces-232228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36E0591A56D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:37:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C903891A59A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:45:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DECE7283C69
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:37:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 853FA288CFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:45:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41A114A4E0;
-	Thu, 27 Jun 2024 11:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TRE+NORz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF53914E2F0;
+	Thu, 27 Jun 2024 11:45:18 +0000 (UTC)
+Received: from unicorn.mansr.com (unicorn.mansr.com [81.2.72.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3584C145A1F;
-	Thu, 27 Jun 2024 11:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C300C13AA4C;
+	Thu, 27 Jun 2024 11:45:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.2.72.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719488221; cv=none; b=Bcqsp+0HsXbSYydasTcTN5eOlj5OuPLVYtUKVACBqxXgKTCrNxDJ7KRRdW7cN1abf9taNFZECScVS4yVTDBaiIPmNOf3iP1QfER442GfUEP0jEePmAepFfjqWIqhK2h5d+xLorN5ljuKX5TWWx2JYo9G0X5tEf3nybcrgwYPpNU=
+	t=1719488718; cv=none; b=LWlMjP5rwOnzEUkAe9qPZefcX0cNR7kfStL93sNMLaF5eup10WDMMvbeJgztRRQdb9PTvZAFYqEDkHCK8Krj/TnwmryHHhpBs9gx6q2Ce0Na0vCk1wL4EC2TCdUGENHMobYjt8TM36jNWcmzDs12edUOh6zHmZG9KaOv8moOiTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719488221; c=relaxed/simple;
-	bh=g9+JV0OyTnYbPDCsS7diUampG4fyAenIEqpuHSG0kTs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q1xHCIGj+5SK4Kd3Uu6d651qSr04L1DNO2tSe2XEM38rXpp2PKt4ORSFV1THmv8n02xFSTaRCWIop0qI5KdEkzhIfY6Da31BqV99Xhbi23xbIH874vjQ6RDo6azdXupWDokPMEqd5WfuH2dRKksRO4ye3OzsIVOaSedhRzbIPjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TRE+NORz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72BE1C2BBFC;
-	Thu, 27 Jun 2024 11:37:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719488220;
-	bh=g9+JV0OyTnYbPDCsS7diUampG4fyAenIEqpuHSG0kTs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TRE+NORzJtd55ElcYsgfJk8zc1UWhQ1/PwbW5PnXbK10EpPesOdUb2Ll7Rg4AOlM5
-	 PVcuXYUnUGzv7euon5DqetSfcqtlSHTzmpcDita8L6upWOL6jK+w8J94zzlNUowGNd
-	 e/iHIZdW+OebxCAvrb/l8EArrM8bREJVrMt4YyW0LAB89slDBIOsusqPusOCtaFhf+
-	 GyA5w8a1xtnXsIc3egR7VrFL2x6TmDTVriZfVnrjg3em9IMLmQJ466nAUfLgrNR0cg
-	 jRu9lM3Dv3+/5Y5wQNBlTmBBX46nHxbST9/1q0qAbZzPSGGrkqoBn0J4k76EINQ/LB
-	 oyOaCgdsQkb7A==
-Date: Thu, 27 Jun 2024 13:36:58 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org
-Subject: [PATCH rcu 3/6 v2] rcu/exp: Remove superfluous full memory barrier
- upon first EQS snapshot
-Message-ID: <Zn1O2qKaIVOXniYH@pavilion.home>
-References: <81f4e616-8125-4934-a8e2-fd5beae90995@paulmck-laptop>
- <20240604222652.2370998-3-paulmck@kernel.org>
+	s=arc-20240116; t=1719488718; c=relaxed/simple;
+	bh=evSv+YzWBzT/rL+Ef3bDS+9leq4NZMD9hE/fznsNY7M=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WvlFmcuH7rXMxZUg1fgWOjox0nqSdImpfUyCcFTq+S+b47pRESJxNJP7SrQta1MQe7K6m1ge0avzEEjJGnd/n4U3lIUjx8xHew5I/owMBEyKpyGDWP3pftQsE6EgMSNqqoSuns+6rzPiNEh9bn0RxAFQVIgfSUAIxwRIGSmKBbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mansr.com; spf=pass smtp.mailfrom=mansr.com; arc=none smtp.client-ip=81.2.72.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mansr.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mansr.com
+Received: from raven.mansr.com (raven.mansr.com [IPv6:2001:8b0:ca0d:1::3])
+	by unicorn.mansr.com (Postfix) with ESMTPS id F14E015360;
+	Thu, 27 Jun 2024 12:39:26 +0100 (BST)
+Received: by raven.mansr.com (Postfix, from userid 51770)
+	id DE143210C01; Thu, 27 Jun 2024 12:39:26 +0100 (BST)
+From: =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
+To: Frank Oltmanns <frank@oltmanns.dev>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
+ <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Maxime
+ Ripard <mripard@kernel.org>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, "Robert J. Pafford"
+ <pafford.9@buckeyemail.osu.edu>, stable@vger.kernel.org
+Subject: Re: [PATCH] clk: sunxi-ng: common: Don't call hw_to_ccu_common on
+ hw without common
+In-Reply-To: <20240623-sunxi-ng_fix_common_probe-v1-1-7c97e32824a1@oltmanns.dev>
+	(Frank Oltmanns's message of "Sun, 23 Jun 2024 10:45:58 +0200")
+References: <20240623-sunxi-ng_fix_common_probe-v1-1-7c97e32824a1@oltmanns.dev>
+Date: Thu, 27 Jun 2024 12:39:26 +0100
+Message-ID: <yw1x4j9e62dt.fsf@mansr.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/29.3 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240604222652.2370998-3-paulmck@kernel.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-When the grace period kthread checks the extended quiescent state
-counter of a CPU, full ordering is necessary to ensure that either:
+Frank Oltmanns <frank@oltmanns.dev> writes:
 
-* If the GP kthread observes the remote target in an extended quiescent
-  state, then that target must observe all accesses prior to the current
-  grace period, including the current grace period sequence number, once
-  it exits that extended quiescent state.
+> In order to set the rate range of a hw sunxi_ccu_probe calls
+> hw_to_ccu_common() assuming all entries in desc->ccu_clks are contained
+> in a ccu_common struct. This assumption is incorrect and, in
+> consequence, causes invalid pointer de-references.
+>
+> Remove the faulty call. Instead, add one more loop that iterates over
+> the ccu_clks and sets the rate range, if required.
+>
+> Fixes: b914ec33b391 ("clk: sunxi-ng: common: Support minimum and maximum =
+rate")
+> Reported-by: Robert J. Pafford <pafford.9@buckeyemail.osu.edu>
+> Closes: https://lore.kernel.org/lkml/DM6PR01MB58047C810DDD5D0AE397CADFF7C=
+22@DM6PR01MB5804.prod.exchangelabs.com/
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
+> ---
+> Robert, could you please test if this fixes the issue you reported.
+>
+> I'm CC'ing M=E5ns here, because he observed some strange behavior [1] with
+> the original patch. Is it possible for you to look into if this patch
+> fixes your issue without the need for the following (seemingly
+> unrelated) patches:
+>       cedb7dd193f6 "drm/sun4i: hdmi: Convert encoder to atomic"
+>       9ca6bc246035 "drm/sun4i: hdmi: Move mode_set into enable"
 
-or:
+This does indeed fix it.  6.9 is still broken, though, but that's
+probably for other reasons.
 
-* If the GP kthread observes the remote target NOT in an extended
-  quiescent state, then the target further entering in an extended
-  quiescent state must observe all accesses prior to the current
-  grace period, including the current grace period sequence number, once
-  it enters that extended quiescent state.
+> Thanks,
+>   Frank
+>
+> [1]: https://lore.kernel.org/lkml/yw1xo78z8ez0.fsf@mansr.com/
+> ---
+>  drivers/clk/sunxi-ng/ccu_common.c | 18 ++++++++++++------
+>  1 file changed, 12 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu_common.c b/drivers/clk/sunxi-ng/ccu=
+_common.c
+> index ac0091b4ce24..be375ce0149c 100644
+> --- a/drivers/clk/sunxi-ng/ccu_common.c
+> +++ b/drivers/clk/sunxi-ng/ccu_common.c
+> @@ -132,7 +132,6 @@ static int sunxi_ccu_probe(struct sunxi_ccu *ccu, str=
+uct device *dev,
+>
+>  	for (i =3D 0; i < desc->hw_clks->num ; i++) {
+>  		struct clk_hw *hw =3D desc->hw_clks->hws[i];
+> -		struct ccu_common *common =3D hw_to_ccu_common(hw);
+>  		const char *name;
+>
+>  		if (!hw)
+> @@ -147,14 +146,21 @@ static int sunxi_ccu_probe(struct sunxi_ccu *ccu, s=
+truct device *dev,
+>  			pr_err("Couldn't register clock %d - %s\n", i, name);
+>  			goto err_clk_unreg;
+>  		}
+> +	}
+> +
+> +	for (i =3D 0; i < desc->num_ccu_clks; i++) {
+> +		struct ccu_common *cclk =3D desc->ccu_clks[i];
+> +
+> +		if (!cclk)
+> +			continue;
+>
+> -		if (common->max_rate)
+> -			clk_hw_set_rate_range(hw, common->min_rate,
+> -					      common->max_rate);
+> +		if (cclk->max_rate)
+> +			clk_hw_set_rate_range(&cclk->hw, cclk->min_rate,
+> +					      cclk->max_rate);
+>  		else
+> -			WARN(common->min_rate,
+> +			WARN(cclk->min_rate,
+>  			     "No max_rate, ignoring min_rate of clock %d - %s\n",
+> -			     i, name);
+> +			     i, clk_hw_get_name(&cclk->hw));
+>  	}
+>
+>  	ret =3D of_clk_add_hw_provider(node, of_clk_hw_onecell_get,
+>
+> ---
+> base-commit: 2607133196c35f31892ee199ce7ffa717bea4ad1
+> change-id: 20240622-sunxi-ng_fix_common_probe-5677c3e487fc
+>
+> Best regards,
+> --=20
+>
+> Frank Oltmanns <frank@oltmanns.dev>
+>
 
-This ordering is enforced through a full memory barrier placed right
-before taking the first EQS snapshot. However this is superfluous
-because the snapshot is taken while holding the target's rnp lock which
-provides the necessary ordering through its chain of
-smp_mb__after_unlock_lock().
-
-Remove the needless explicit barrier before the snapshot and put a
-comment about the implicit barrier newly relied upon here.
-
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-Reviewed-by: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
----
- kernel/rcu/tree_exp.h | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-index 8a1d9c8bd9f7..1dbad2442e8d 100644
---- a/kernel/rcu/tree_exp.h
-+++ b/kernel/rcu/tree_exp.h
-@@ -357,7 +357,21 @@ static void __sync_rcu_exp_select_node_cpus(struct rcu_exp_work *rewp)
- 		    !(rnp->qsmaskinitnext & mask)) {
- 			mask_ofl_test |= mask;
- 		} else {
--			snap = rcu_dynticks_snap(cpu);
-+			/*
-+			 * Full ordering between remote CPU's post idle accesses
-+			 * and updater's accesses prior to current GP (and also
-+			 * the started GP sequence number) is enforced by
-+			 * rcu_seq_start() implicit barrier, relayed by kworkers
-+			 * locking and even further by smp_mb__after_unlock_lock()
-+			 * barriers chained all the way throughout the rnp locking
-+			 * tree since sync_exp_reset_tree() and up to the current
-+			 * leaf rnp locking.
-+			 *
-+			 * Ordering between remote CPU's pre idle accesses and
-+			 * post grace period updater's accesses is enforced by the
-+			 * below acquire semantic.
-+			 */
-+			snap = ct_dynticks_cpu_acquire(cpu);
- 			if (rcu_dynticks_in_eqs(snap))
- 				mask_ofl_test |= mask;
- 			else
--- 
-2.45.2
-
+--=20
+M=E5ns Rullg=E5rd
 
