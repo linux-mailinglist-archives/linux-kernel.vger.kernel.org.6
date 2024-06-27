@@ -1,155 +1,258 @@
-Return-Path: <linux-kernel+bounces-231673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90599919BC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 02:37:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B324B919BCA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 02:40:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD85D1C21A10
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:37:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D73F41C21B1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:40:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22FE0291E;
-	Thu, 27 Jun 2024 00:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7934D4C62;
+	Thu, 27 Jun 2024 00:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PGIvK+Ie"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c7iuuylI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F71617F3
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 00:36:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED1C17F3
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 00:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719448619; cv=none; b=BAMcl522usTaKfG7XGYlwhn4wcqBKireb7GxRn5IG4X23crsmEZAAQOS1qKyrRn8Mna07xGNavqZ8qYauE3S0SEPQn798n+0f2ejZ9+Vs+sEM2lF9SugpuUYkWOBDz1wyAnAMSe9FlQlO1iSRCj715nwcalghwnTop0FDt9xHhU=
+	t=1719448831; cv=none; b=E7+3rN6xMV7SJQVGxh+sL1bIqQmpNh24iGhKCRfQFFEFNlpjtXvf8M/sNWKV19zwwgQCtg4sidWzQUCd3nVAGCwohLrQzjp/vgK01rZM8ayIAWue8NsvFNhHfbYquD0n2/bSNN+vnjHRNKeCbexasH3omL3Js74c9WPx/08eZhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719448619; c=relaxed/simple;
-	bh=1xMVh8ScIm4xYf1L3BN/up7SGtbr87e/bpoarMrLQ7k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q2gWtNdkARDOpvKP+Uo1V1VWY1iKGY2jHTm9PM+F/djG0IGpqSsbSTyK9W4CqtN9SGfwAnnmrFktdvtuvgg8V27A57hzKF06pSrQpmlUR/7aFqPGLp2ZMBNYfmGSkZeoNc9wl2Iq8Ia6csYlUZ6EHgJ5ZE4xEck4UQMdfG0UW90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PGIvK+Ie; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52cdbc20faeso6926589e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 17:36:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719448616; x=1720053416; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ud2roWqWNhVTuooTF6iHm/h3cs2B/RK3gWZ0j1/3e2c=;
-        b=PGIvK+IeGbsKhw0N91JDdgx13nWGmWBycvbUx7kHyzPWQU+tjix/i4kxQa8eQir0I9
-         t51lW1+UqTArSeg7ayutqWVHIoAdTcdNFWfcuY9j6N+LIfKgEpqUGPYaNIvR/nez9jwf
-         zaAtZzZRaTsuiH1JpvqPRQbUX8JOGHquxhO+jGex58v0tP97gQgBRqy4yQVdwKyUW8nU
-         yAMPZqd42yvs+cHWZhZmr774t4OW078Ut3IbOvq5V5ITFplqdJDSUe/Hs2LtP0LYw6/t
-         I5d7g7soB1sJcz9oTxoRYiXeExPze05tD2aUk4qybzLnm+CgKIp/yW/iRCBklVUrExUH
-         F9aQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719448616; x=1720053416;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ud2roWqWNhVTuooTF6iHm/h3cs2B/RK3gWZ0j1/3e2c=;
-        b=N98ZUUjCd5QuQa+Fki48zi8plRo3jJlANtGWiSk0483q3QeWAZcJp0VFYe7J8SFX6T
-         3FI6Cn0xjpb2+nYyduynqLWH8WQccCplfF4VUlYldJEcYnpA4YvgdCWqVfj86m4IcKrY
-         OkOgJ1fwp4tgiwWrCauLZr44H0VGnwBZum5XCT+chO9Q4b7elZ2B+iqVgeh6kCjPkc/F
-         oedgoCzlkZvSzJzzZx4WWzDBu0W7wsCKlSwssqMjTwAjxEDSHyzLCvAIak203h4rQSxu
-         1dlYuLpUgSI8p27RlSqUM3zpLM7D96cGfYMuN8wlFOXeMf/oqreYaljqRZIs3Hk1RvdN
-         GEBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXXm44k1gxdB5+GuEJqe8qTMJ9LdP4VQJsNyhHy93YFRXBMi6lVYUn3BZjIQPSIm8wv7I/0WElC+dVNrspRDHFHrCciqHbZPi1+eUZN
-X-Gm-Message-State: AOJu0Yw9SLnUDU24l/wqtGrjaNCO94HTpcRJpCKu1qvx0bKdRu26aX0V
-	kPXbi4A13vxZ9FiJmvr8Tuu83bmYO7jVOKvhnGJzHMwKbdK0CPTfrcUHHt+Yl9g=
-X-Google-Smtp-Source: AGHT+IFg+LmSRu6c8EFUP+Q+42viamWZ+MzdBD69GLdHM/hnjuD+uyfe5eChJ8yeaMCPGetEGsJjLA==
-X-Received: by 2002:a05:6512:3e24:b0:52c:dff5:8087 with SMTP id 2adb3069b0e04-52ce185f998mr8970423e87.51.1719448615612;
-        Wed, 26 Jun 2024 17:36:55 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:c7c:7213:c700:2cd1:b0e8:abb:540])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42564a4daddsm3480625e9.9.2024.06.26.17.36.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 17:36:55 -0700 (PDT)
-From: Alexey Klimov <alexey.klimov@linaro.org>
-To: linus.walleij@linaro.org,
-	srinivas.kandagatla@linaro.org,
-	linux-arm-msm@vger.kernel.org
-Cc: andersson@kernel.org,
-	krzysztof.kozlowski@linaro.org,
-	linux-gpio@vger.kernel.org,
-	dmitry.baryshkov@linaro.org,
-	konradybcio@kernel.org,
+	s=arc-20240116; t=1719448831; c=relaxed/simple;
+	bh=M+89AJP+4BHwPZQEKhZwh/BZTbLPvnvJYLisjEVAUgs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KBbUbz2AXksYk/FXKUWXDUHM4wlZ/XVt8LE/Ok+zYjLX01A0MrAHp7uvlBkfbm0jhlZLIBU+kVYmQbQQbeb2ODTiLT6A61MDCs29FZBFEHIR4016tziboph41y/WPTiskl2y+YfITg3EbNu1Ji3IFHiFc3cWs+bhW+e1ng+Ai/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c7iuuylI; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719448828;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=+QIhWkrUjl8A1WpLxux9DpQH/gPDsJkcYbA07a9kr98=;
+	b=c7iuuylIReTKoKW5p5yx7y1HPSAYQll6zfWnpzlXHSKZ1nE0WndJX2+k2H1B1EV4b817lU
+	np7kUnpCaAncytVID19PFaIg1S8cFW+OsmDS9tSc0XOB5sDi3cCjeokcqF7GQV+CaGcgA/
+	f/9YN26UUEnwG7/DXcFwcl8h8M8qHOg=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-368-uJE4GfzaPu-UIWBx4SHGfQ-1; Wed,
+ 26 Jun 2024 20:40:25 -0400
+X-MC-Unique: uJE4GfzaPu-UIWBx4SHGfQ-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9D55B19560A2;
+	Thu, 27 Jun 2024 00:40:22 +0000 (UTC)
+Received: from gshan-thinkpadx1nanogen2.remote.csb (unknown [10.64.136.58])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 458851956087;
+	Thu, 27 Jun 2024 00:40:14 +0000 (UTC)
+From: Gavin Shan <gshan@redhat.com>
+To: linux-mm@kvack.org
+Cc: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	alexey.klimov@linaro.org
-Subject: [PATCH] pinctrl: qcom: lpass-lpi: increase MAX_NR_GPIO to 32
-Date: Thu, 27 Jun 2024 01:36:54 +0100
-Message-ID: <20240627003654.242870-1-alexey.klimov@linaro.org>
-X-Mailer: git-send-email 2.45.2
+	david@redhat.com,
+	willy@infradead.org,
+	akpm@linux-foundation.org,
+	ryan.roberts@arm.com,
+	hughd@google.com,
+	william.kucharski@oracle.com,
+	djwong@kernel.org,
+	torvalds@linux-foundation.org,
+	ddutile@redhat.com,
+	zhenyzha@redhat.com,
+	shan.gavin@gmail.com
+Subject: [PATCH v2 0/4] mm/filemap: Limit page cache size to that supported by xarray
+Date: Thu, 27 Jun 2024 10:39:48 +1000
+Message-ID: <20240627003953.1262512-1-gshan@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Account for more than only 23 GPIOs in LPASS Low Power Island pinctrl
-generic driver. The previous value 23 was chosen to satisfy existing
-SoC-specific drivers. However SM4250 LPI pinctrl uses more than 23 GPIOs
-and its probe routine fails on:
+Currently, xarray can't support arbitrary page cache size. More details
+can be found from the WARN_ON() statement in xas_split_alloc(). In our
+test whose code is attached below, we hit the WARN_ON() on ARM64 system
+where the base page size is 64KB and huge page size is 512MB. The issue
+was reported long time ago and some discussions on it can be found here
+[1].
 
-        if (WARN_ON(data->npins > MAX_NR_GPIO))
-                return -EINVAL;
+[1] https://www.spinics.net/lists/linux-xfs/msg75404.html
 
-with the following message:
+In order to fix the issue, we need to adjust MAX_PAGECACHE_ORDER to one
+supported by xarray and avoid PMD-sized page cache if needed. The code
+changes are suggested by David Hildenbrand.
 
-[   10.709014] ------------[ cut here ]------------
-[   10.719085] WARNING: CPU: 1 PID: 56 at
-drivers/pinctrl/qcom/pinctrl-lpass-lpi.c:446
-lpi_pinctrl_probe+0x308/0x388 [pinctrl_lpass_lpi]
-[   10.719108] Modules linked in: [...]
-[   10.719238] CPU: 1 PID: 56 Comm: kworker/u33:0 Not tainted
-6.10.0-rc2-00012-ge45ddb1f8d34-dirty #7
-[   10.719245] Hardware name: Qualcomm Technologies, Inc. QRB4210 RB2 (DT)
-[   10.719250] Workqueue: events_unbound deferred_probe_work_func
-[   10.719265] pstate: 20000005 (nzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[   10.719271] pc : lpi_pinctrl_probe+0x308/0x388 [pinctrl_lpass_lpi]
-[   10.719278] lr : lpi_pinctrl_probe+0x44/0x388 [pinctrl_lpass_lpi]
-        ...
-[   10.719357] Call trace:
-[   10.719361]  lpi_pinctrl_probe+0x308/0x388 [pinctrl_lpass_lpi]
-[   10.719369]  platform_probe+0x68/0xc4
-[   10.719378]  really_probe+0xbc/0x29c
-[   10.719384]  __driver_probe_device+0x78/0x12c
-[   10.719390]  driver_probe_device+0xd8/0x15c
-[   10.719395]  __device_attach_driver+0xb8/0x134
-[   10.719401]  bus_for_each_drv+0x88/0xe8
-[   10.719407]  __device_attach+0xa0/0x190
-[   10.719412]  device_initial_probe+0x14/0x20
-[   10.719418]  bus_probe_device+0xac/0xb0
-[   10.719423]  deferred_probe_work_func+0x88/0xc0
-[   10.719429]  process_one_work+0x150/0x294
-[   10.719439]  worker_thread+0x2f8/0x408
-[   10.719445]  kthread+0x110/0x114
-[   10.719452]  ret_from_fork+0x10/0x20
-[   10.719459] ---[ end trace 0000000000000000 ]---
-[   10.719589] qcom-sm4250-lpass-lpi-pinctrl a7c0000.pinctrl: probe
-with driver qcom-sm4250-lpass-lpi-pinctrl failed with error -22
+PATCH[1] adjusts MAX_PAGECACHE_ORDER to that supported by xarray
+PATCH[2-3] avoids PMD-sized page cache in the synchronous readahead path
+PATCH[4] avoids PMD-sized page cache for shmem files if needed
 
-Fixes: c2e5a25e8d88 ("pinctrl: qcom: Introduce SM4250 LPI pinctrl driver")
-Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
----
- drivers/pinctrl/qcom/pinctrl-lpass-lpi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Test program
+============
+# cat test.c
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <sys/syscall.h>
+#include <sys/mman.h>
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c
-index 0d98008e33ee..7366aba5a199 100644
---- a/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c
-+++ b/drivers/pinctrl/qcom/pinctrl-lpass-lpi.c
-@@ -20,7 +20,7 @@
- 
- #include "pinctrl-lpass-lpi.h"
- 
--#define MAX_NR_GPIO		23
-+#define MAX_NR_GPIO		32
- #define GPIO_FUNC		0
- #define MAX_LPI_NUM_CLKS	2
- 
+#define TEST_XFS_FILENAME	"/tmp/data"
+#define TEST_SHMEM_FILENAME	"/dev/shm/data"
+#define TEST_MEM_SIZE		0x20000000
+
+int main(int argc, char **argv)
+{
+	const char *filename;
+	int fd = 0;
+	void *buf = (void *)-1, *p;
+	int pgsize = getpagesize();
+	int ret;
+
+	if (pgsize != 0x10000) {
+		fprintf(stderr, "64KB base page size is required\n");
+		return -EPERM;
+	}
+
+	system("echo force > /sys/kernel/mm/transparent_hugepage/shmem_enabled");
+	system("rm -fr /tmp/data");
+	system("rm -fr /dev/shm/data");
+	system("echo 1 > /proc/sys/vm/drop_caches");
+
+	/* Open xfs or shmem file */
+	filename = TEST_XFS_FILENAME;
+	if (argc > 1 && !strcmp(argv[1], "shmem"))
+		filename = TEST_SHMEM_FILENAME;
+
+	fd = open(filename, O_CREAT | O_RDWR | O_TRUNC);
+	if (fd < 0) {
+		fprintf(stderr, "Unable to open <%s>\n", filename);
+		return -EIO;
+	}
+
+	/* Extend file size */
+	ret = ftruncate(fd, TEST_MEM_SIZE);
+	if (ret) {
+		fprintf(stderr, "Error %d to ftruncate()\n", ret);
+		goto cleanup;
+	}
+
+	/* Create VMA */
+	buf = mmap(NULL, TEST_MEM_SIZE,
+		   PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+	if (buf == (void *)-1) {
+		fprintf(stderr, "Unable to mmap <%s>\n", filename);
+		goto cleanup;
+	}
+
+	fprintf(stdout, "mapped buffer at 0x%p\n", buf);
+	ret = madvise(buf, TEST_MEM_SIZE, MADV_HUGEPAGE);
+        if (ret) {
+		fprintf(stderr, "Unable to madvise(MADV_HUGEPAGE)\n");
+		goto cleanup;
+	}
+
+	/* Populate VMA */
+	ret = madvise(buf, TEST_MEM_SIZE, MADV_POPULATE_WRITE);
+	if (ret) {
+		fprintf(stderr, "Error %d to madvise(MADV_POPULATE_WRITE)\n", ret);
+		goto cleanup;
+	}
+
+	/* Punch the file to enforce xarray split */
+	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE,
+        		TEST_MEM_SIZE - pgsize, pgsize);
+	if (ret)
+		fprintf(stderr, "Error %d to fallocate()\n", ret);
+
+cleanup:
+	if (buf != (void *)-1)
+		munmap(buf, TEST_MEM_SIZE);
+	if (fd > 0)
+		close(fd);
+
+	return 0;
+}
+
+# gcc test.c -o test
+# cat /proc/1/smaps | grep KernelPageSize | head -n 1
+KernelPageSize:       64 kB
+# ./test shmem
+   :
+------------[ cut here ]------------
+WARNING: CPU: 17 PID: 5253 at lib/xarray.c:1025 xas_split_alloc+0xf8/0x128
+Modules linked in: nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 nft_fib  \
+nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_ct    \
+nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4    \
+ip_set nf_tables rfkill nfnetlink vfat fat virtio_balloon          \
+drm fuse xfs libcrc32c crct10dif_ce ghash_ce sha2_ce sha256_arm64  \
+virtio_net sha1_ce net_failover failover virtio_console virtio_blk \
+dimlib virtio_mmio
+CPU: 17 PID: 5253 Comm: test Kdump: loaded Tainted: G W 6.10.0-rc5-gavin+ #12
+Hardware name: QEMU KVM Virtual Machine, BIOS edk2-20240524-1.el9 05/24/2024
+pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+pc : xas_split_alloc+0xf8/0x128
+lr : split_huge_page_to_list_to_order+0x1c4/0x720
+sp : ffff80008a92f5b0
+x29: ffff80008a92f5b0 x28: ffff80008a92f610 x27: ffff80008a92f728
+x26: 0000000000000cc0 x25: 000000000000000d x24: ffff0000cf00c858
+x23: ffff80008a92f610 x22: ffffffdfc0600000 x21: 0000000000000000
+x20: 0000000000000000 x19: ffffffdfc0600000 x18: 0000000000000000
+x17: 0000000000000000 x16: 0000018000000000 x15: 3374004000000000
+x14: 0000e00000000000 x13: 0000000000002000 x12: 0000000000000020
+x11: 3374000000000000 x10: 3374e1c0ffff6000 x9 : ffffb463a84c681c
+x8 : 0000000000000003 x7 : 0000000000000000 x6 : ffff00011c976ce0
+x5 : ffffb463aa47e378 x4 : 0000000000000000 x3 : 0000000000000cc0
+x2 : 000000000000000d x1 : 000000000000000c x0 : 0000000000000000
+Call trace:
+ xas_split_alloc+0xf8/0x128
+ split_huge_page_to_list_to_order+0x1c4/0x720
+ truncate_inode_partial_folio+0xdc/0x160
+ shmem_undo_range+0x2bc/0x6a8
+ shmem_fallocate+0x134/0x430
+ vfs_fallocate+0x124/0x2e8
+ ksys_fallocate+0x4c/0xa0
+ __arm64_sys_fallocate+0x24/0x38
+ invoke_syscall.constprop.0+0x7c/0xd8
+ do_el0_svc+0xb4/0xd0
+ el0_svc+0x44/0x1d8
+ el0t_64_sync_handler+0x134/0x150
+ el0t_64_sync+0x17c/0x180
+
+Changelog
+=========
+v2:
+  * Address David's comments and pick up ack tags from him
+  * Swapped PATCH[v1 2/4] and PATCH[v1 3/4] and corrected fix tags
+    based on comments from Andrew, David and Matthew
+
+Gavin Shan (4):
+  mm/filemap: Make MAX_PAGECACHE_ORDER acceptable to xarray
+  mm/readahead: Limit page cache size in page_cache_ra_order()
+  mm/filemap: Skip to create PMD-sized page cache if needed
+  mm/shmem: Disable PMD-sized page cache if needed
+
+ include/linux/pagemap.h | 11 +++++++++--
+ mm/filemap.c            |  2 +-
+ mm/readahead.c          |  8 ++++----
+ mm/shmem.c              | 15 +++++++++++++--
+ 4 files changed, 27 insertions(+), 9 deletions(-)
+
 -- 
-2.45.2
+2.45.1
 
 
