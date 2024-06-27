@@ -1,89 +1,67 @@
-Return-Path: <linux-kernel+bounces-232029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B890B91A1D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:45:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C19D191A1D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:46:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40C52B23767
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 08:45:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 761D92825AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 08:46:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83D4413A24B;
-	Thu, 27 Jun 2024 08:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF6A812F5B1;
+	Thu, 27 Jun 2024 08:46:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="pP35tXkk";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="GMBHode6"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fsTxdUX8"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87F412F59C;
-	Thu, 27 Jun 2024 08:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78357819;
+	Thu, 27 Jun 2024 08:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719477928; cv=none; b=tLeqhTaioGIB/Kd6jBDKgE1Nq/MI0yY1BDITgLsQJl3gOM960iQlVQhs+Mco/DySIYUbLZG3nZr9K3y9zay4m4C2w1r0p4JNXtwzyJFxb5Vwb88RJPaRsL+y4p9G13r7ZU+MvYIiD6lxlpfww0FZArPv9EGvfrudEmJQiMA4CYM=
+	t=1719478008; cv=none; b=nGrjLu54Aog0goMAdpqMq9SY0Df3oqqbZrDnoQHX09iMA1gtOWd8NO/OOfFqI149rrocr9GYELfYci7IJW7gpJdXr/YR9bsU0tjar2oxLbfb/Z6vzwTN+NbqlBB1nvCk7hYEJggCw1URZQAOIdg/G6JdKUi/1aTKFsBLe4pjvHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719477928; c=relaxed/simple;
-	bh=CBwnZVqWlwB6ZxzB1zmLqHwmLi/Vd/JNt3u+4OXGpb0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CIK2HGTnWLbi7RhonwX9aQ1qI+PcMfH0DlpxZJwk65uprisERL/DqRlIfQZAwbXrQxf0V9Xy/nmEwqV+mIipT8xcFB3i+vGx6Krf3bXWNwSyzHcIPfwgDMn1yQasauT01ebh9JzaVH7T3bFtaTcftXKDpZU68SRl6bqT+fc+hgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=pP35tXkk; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=GMBHode6 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1719477926; x=1751013926;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ZFGqWlGDXLgahl3x+snZ/G6V92Yhfok4ec2lzUw0c3k=;
-  b=pP35tXkk0uhTa6PWpTjI6efQh/XBMC+XTpkTs7iuOkdN7ULYrD05g+O+
-   Q4LUYv7SD4/4tZf6RIJYMCKpAj6nz2uufH9JJCuQCk5eod5zY0zOcsOCn
-   j9ENxqaKsjj6Fy3wF8vsplukJjwtP2xLbf3NDwFBLt7tVbktQKycWpqIB
-   s4QayEjypaWvXLuh0T1ljV/LACUFa2KAqnmkexyPt4+T7Ph2M+0B0uS3H
-   C8UqEisQfRve8SbFWx+GUdZcmBMg9g7Scnnj7fnKandLiMj1++veLj4YT
-   9yfIXAO4VcsZqEOurkGkc+iB2I1sbMczMiwj9/Ejd9Fmc66B5+sVJwXqL
-   g==;
-X-CSE-ConnectionGUID: fPlsaZRKQwGux1jLtUYd3Q==
-X-CSE-MsgGUID: ZHArUhrkQOeLkxzqYXyj5w==
-X-IronPort-AV: E=Sophos;i="6.08,269,1712613600"; 
-   d="scan'208";a="37617956"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 27 Jun 2024 10:45:25 +0200
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B95BC164472;
-	Thu, 27 Jun 2024 10:45:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1719477921; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=ZFGqWlGDXLgahl3x+snZ/G6V92Yhfok4ec2lzUw0c3k=;
-	b=GMBHode6N2s/fDaiAlyQLoxp5ChkEBPkZGgwr4/ekQfTnrpl3ldnaKVcCoS0M0tt2JvLLA
-	Lf02ZfoqdhHqG/VFoE/rFinb42eDYysVR+ncQcYWYF1e90Ded0XU7V8pmUWaJVGcwc7l2E
-	Mas9nz3sDvJfomTnBQTGgOiTmczi7J13sJE6lqoV+lb81iShxLEFURxVY9rN4IMstk5R+x
-	tkAf1lcK5CKRDzyg5VQsPCnFDn0FI5NvCGSHj1mx599zqy5MRHcVXFgXsmHXeLD/Ux668P
-	grmeyP20nqx8bjVVISflefnGI1c1MHyTeuwkrn+hdpD5VpKz6BS4fhZiI2SM4w==
-From: Paul Gerber <paul.gerber@ew.tq-group.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>
-Cc: Paul Gerber <paul.gerber@ew.tq-group.com>,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] drm/panel: simple: Add AUO G104STN01 panel entry
-Date: Thu, 27 Jun 2024 10:44:44 +0200
-Message-ID: <20240627084446.3197196-3-paul.gerber@ew.tq-group.com>
-X-Mailer: git-send-email 2.44.1
-In-Reply-To: <20240627084446.3197196-1-paul.gerber@ew.tq-group.com>
-References: <20240627084446.3197196-1-paul.gerber@ew.tq-group.com>
+	s=arc-20240116; t=1719478008; c=relaxed/simple;
+	bh=krffSPsuJTzyCsE7MlQu3tlfRdY9pz08XpNiEAf9U5M=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eC63wvCXgMyl5Xu5VuyRB0qJK+dZu8bDEgNSRiUAKNRhkR3m3rR12vzvDs95WqJ13XfcBwSz2EM71wCcRHJRLZU4ofaUDZ5xwiZ+gmmmUFte06HAkNVQ0NwQEqPa71/w+awz62ojXZiCHDbAtUZkPCvKlZv1sLdrhKfMrTxPPcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fsTxdUX8; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45R00hng015138;
+	Thu, 27 Jun 2024 08:46:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=1CHdrRgxQ8EbF78wEnmcOg
+	ydX6IQyLwcMzedVIKQeaI=; b=fsTxdUX8o6TAx+nmrQ1phKp+CWCI0EMH0Jolki
+	lXSywBv6YR8WqiJRDrLwvwBP3dUs0EaRC0HJZ7Qou+vShGu0lJO3ygs/1Q48WSRy
+	WcJS+YxvuP6/2MkvGdX/6z/Q2/bUmbCZkCJhFHXZ2oFCMYVzrq/zeawolmFs2oRH
+	Z53YQPQR0VL1UNvTdXim8lw+bMRqV1+lZT8bA++Hz+7YjCZmyv/BNyvg5MCTWBCe
+	HXrJW7Ia/rZg/M0FEbvVeahaNlGhAqjsi5692e8VIgMhLgQ9VJTovvoXrTdwr4xD
+	nVLg4maw0Jmu0Jq560kZO1dywFolios17nr83dp3LBQ3HAsg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywqshuxxs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Jun 2024 08:46:39 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45R8kdlM020177
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Jun 2024 08:46:39 GMT
+Received: from hu-ekangupt-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 27 Jun 2024 01:46:36 -0700
+From: Ekansh Gupta <quic_ekangupt@quicinc.com>
+To: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>
+CC: <gregkh@linuxfoundation.org>, <quic_bkumar@quicinc.com>,
+        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>,
+        <dri-devel@lists.freedesktop.org>, <arnd@arndb.de>
+Subject: [PATCH v2] misc: fastrpc: Move fastrpc driver to misc/fastrpc/
+Date: Thu, 27 Jun 2024 14:16:27 +0530
+Message-ID: <20240627084628.1590453-1-quic_ekangupt@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,64 +69,141 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: uNkPQgQrF1g7Yy2LFR7ddug67yYNkttm
+X-Proofpoint-GUID: uNkPQgQrF1g7Yy2LFR7ddug67yYNkttm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-27_04,2024-06-25_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ bulkscore=0 phishscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0
+ mlxscore=0 impostorscore=0 mlxlogscore=751 priorityscore=1501 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2406270066
 
-Add support for the AUO G104STN01 10.4" (800x600) LCD-TFT panel.
+Move fastrpc.c from misc/ to misc/fastrpc/. New C files are planned
+to be added for PD notifications and other missing features. Adding
+and maintaining new files from within fastrpc directory would be easy.
 
-Signed-off-by: Paul Gerber <paul.gerber@ew.tq-group.com>
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Example of feature that is being planned to be introduced in a new C
+file:
+https://lore.kernel.org/all/20240606165939.12950-6-quic_ekangupt@quicinc.com/
+
+Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
 ---
-Tested on TQ TQMa8MPxL on MBa8MPxL.
+Changes in v2:
+  - Updated Kconfig.
 
- drivers/gpu/drm/panel/panel-simple.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ MAINTAINERS                          |  2 +-
+ drivers/misc/Kconfig                 | 13 +------------
+ drivers/misc/Makefile                |  2 +-
+ drivers/misc/fastrpc/Kconfig         | 16 ++++++++++++++++
+ drivers/misc/fastrpc/Makefile        |  2 ++
+ drivers/misc/{ => fastrpc}/fastrpc.c |  0
+ 6 files changed, 21 insertions(+), 14 deletions(-)
+ create mode 100644 drivers/misc/fastrpc/Kconfig
+ create mode 100644 drivers/misc/fastrpc/Makefile
+ rename drivers/misc/{ => fastrpc}/fastrpc.c (100%)
 
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index dcb6d0b6ced0..5eacd2085a53 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -1081,6 +1081,30 @@ static const struct panel_desc auo_g104sn02 = {
- 	.connector_type = DRM_MODE_CONNECTOR_LVDS,
- };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0b99543d9c6e..55d0fecd1a74 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -18502,7 +18502,7 @@ L:	linux-arm-msm@vger.kernel.org
+ L:	dri-devel@lists.freedesktop.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml
+-F:	drivers/misc/fastrpc.c
++F:	drivers/misc/fastrpc/
+ F:	include/uapi/misc/fastrpc.h
  
-+static const struct drm_display_mode auo_g104stn01_mode = {
-+	.clock = 40000,
-+	.hdisplay = 800,
-+	.hsync_start = 800 + 40,
-+	.hsync_end = 800 + 40 + 88,
-+	.htotal = 800 + 40 + 88 + 128,
-+	.vdisplay = 600,
-+	.vsync_start = 600 + 1,
-+	.vsync_end = 600 + 1 + 23,
-+	.vtotal = 600 + 1 + 23 + 4,
-+};
+ QUALCOMM HEXAGON ARCHITECTURE
+diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+index faf983680040..630e8ccd8669 100644
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@ -276,18 +276,6 @@ config QCOM_COINCELL
+ 	  to maintain PMIC register and RTC state in the absence of
+ 	  external power.
+ 
+-config QCOM_FASTRPC
+-	tristate "Qualcomm FastRPC"
+-	depends on ARCH_QCOM || COMPILE_TEST
+-	depends on RPMSG
+-	select DMA_SHARED_BUFFER
+-	select QCOM_SCM
+-	help
+-	  Provides a communication mechanism that allows for clients to
+-	  make remote method invocations across processor boundary to
+-	  applications DSP processor. Say M if you want to enable this
+-	  module.
+-
+ config SGI_GRU
+ 	tristate "SGI GRU driver"
+ 	depends on X86_UV && SMP
+@@ -602,4 +590,5 @@ source "drivers/misc/cardreader/Kconfig"
+ source "drivers/misc/uacce/Kconfig"
+ source "drivers/misc/pvpanic/Kconfig"
+ source "drivers/misc/mchp_pci1xxxx/Kconfig"
++source "drivers/misc/fastrpc/Kconfig"
+ endmenu
+diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+index 153a3f4837e8..f83d73844ea5 100644
+--- a/drivers/misc/Makefile
++++ b/drivers/misc/Makefile
+@@ -16,7 +16,6 @@ obj-$(CONFIG_TIFM_CORE)       	+= tifm_core.o
+ obj-$(CONFIG_TIFM_7XX1)       	+= tifm_7xx1.o
+ obj-$(CONFIG_PHANTOM)		+= phantom.o
+ obj-$(CONFIG_QCOM_COINCELL)	+= qcom-coincell.o
+-obj-$(CONFIG_QCOM_FASTRPC)	+= fastrpc.o
+ obj-$(CONFIG_SENSORS_BH1770)	+= bh1770glc.o
+ obj-$(CONFIG_SENSORS_APDS990X)	+= apds990x.o
+ obj-$(CONFIG_ENCLOSURE_SERVICES) += enclosure.o
+@@ -69,3 +68,4 @@ obj-$(CONFIG_TMR_INJECT)	+= xilinx_tmr_inject.o
+ obj-$(CONFIG_TPS6594_ESM)	+= tps6594-esm.o
+ obj-$(CONFIG_TPS6594_PFSM)	+= tps6594-pfsm.o
+ obj-$(CONFIG_NSM)		+= nsm.o
++obj-y				+= fastrpc/
+diff --git a/drivers/misc/fastrpc/Kconfig b/drivers/misc/fastrpc/Kconfig
+new file mode 100644
+index 000000000000..7179a44eda84
+--- /dev/null
++++ b/drivers/misc/fastrpc/Kconfig
+@@ -0,0 +1,16 @@
++# SPDX-License-Identifier: GPL-2.0-only
++#
++# Qualcomm FastRPC devices
++#
 +
-+static const struct panel_desc auo_g104stn01 = {
-+	.modes = &auo_g104stn01_mode,
-+	.num_modes = 1,
-+	.bpc = 8,
-+	.size = {
-+		.width = 211,
-+		.height = 158,
-+	},
-+	.bus_format = MEDIA_BUS_FMT_RGB888_1X7X4_SPWG,
-+	.connector_type = DRM_MODE_CONNECTOR_LVDS,
-+};
-+
- static const struct display_timing auo_g121ean01_timing = {
- 	.pixelclock = { 60000000, 74400000, 90000000 },
- 	.hactive = { 1280, 1280, 1280 },
-@@ -4434,6 +4458,9 @@ static const struct of_device_id platform_of_match[] = {
- 	}, {
- 		.compatible = "auo,g104sn02",
- 		.data = &auo_g104sn02,
-+	}, {
-+		.compatible = "auo,g104stn01",
-+		.data = &auo_g104stn01,
- 	}, {
- 		.compatible = "auo,g121ean01",
- 		.data = &auo_g121ean01,
++config QCOM_FASTRPC
++	tristate "Qualcomm FastRPC"
++	depends on ARCH_QCOM || COMPILE_TEST
++	depends on RPMSG
++	select DMA_SHARED_BUFFER
++	select QCOM_SCM
++	help
++	  Provides a communication mechanism that facilitate high-speed
++	  Remote Procedure Call (RPC) mechanisms between the host CPU and
++	  offload processors Qualcomm Digital Signal Processors (DSPs).
++	  Say M if you want to enable this module.
+\ No newline at end of file
+diff --git a/drivers/misc/fastrpc/Makefile b/drivers/misc/fastrpc/Makefile
+new file mode 100644
+index 000000000000..77fd2b763b6b
+--- /dev/null
++++ b/drivers/misc/fastrpc/Makefile
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0
++obj-$(CONFIG_QCOM_FASTRPC)	+= fastrpc.o
+diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc/fastrpc.c
+similarity index 100%
+rename from drivers/misc/fastrpc.c
+rename to drivers/misc/fastrpc/fastrpc.c
 -- 
-2.44.1
+2.34.1
 
 
