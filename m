@@ -1,113 +1,147 @@
-Return-Path: <linux-kernel+bounces-231766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96481919DB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 05:03:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DFC4919DB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 05:03:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E75E1F21BCE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 03:03:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCEB128527D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 03:03:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2CBB18B1A;
-	Thu, 27 Jun 2024 03:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="jrn2lapp"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7916313FF9;
+	Thu, 27 Jun 2024 03:02:59 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4058C8F6;
-	Thu, 27 Jun 2024 03:02:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707341BF24;
+	Thu, 27 Jun 2024 03:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719457373; cv=none; b=VRaWV8NH7RHnZTu3CVux1R/cQVy08N9fX3NqfDWLkdT8R8UeS9Biwz1roEiJDqT9qlUyZWXE/Eab9ydMklArMy/IW/DORLpbsJsMKnD9aiQ/xLswbYdN9h7F4qzlatg00y2fsxFVHoUhpAy33oZbQM//SONJ7Tbt4RPBHPAlLn0=
+	t=1719457379; cv=none; b=oOK4nxSR03GOop2nO/zjmgz9xU3AwDg/+n1XZ/FY151EbijIzvQDMxBzqx3EmCxX20ZdSAXzG4ObzAFQYOry5PvgayzhJMVvraKhq5A/s37rff98WXFUXYUzecC1hdpd8it0ZLDVJF8eqEoamrkCc+Z/AQJNFpsuS6e4YCOXwog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719457373; c=relaxed/simple;
-	bh=EhjeL739fXGfFhIzTvZXdH4uFeIjF4K3Lk5/9pGIf1Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yd4oMbfp6m9kBeqpDcbxQtUAldPpgkKZ1GosCoVGfuvtIF/+YEsFmMeE8q+orUinkEF4+GloI8R6Ouk5i1vkdK6TYGRXo6djtFEQKSF859pqqFeSiVXd5KYNh/LxPFuV+cuMMaWjRyNsrjM9pqZD7c7Ar4lmYC9+HibWzok2qjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=jrn2lapp; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 721B240E01D6;
-	Thu, 27 Jun 2024 03:02:48 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id CSK0S82tyIFv; Thu, 27 Jun 2024 03:02:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1719457364; bh=MmExb+MUVFN1kqaecveoMawY6XC3Ia4gBAbZorGaHw0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jrn2lappB4DcGvaoHfXgxjpa2XgDckhGv7L2/YCK1ajydDKHwAJWfL6NwXFvonWBA
-	 eha9CThBndf5js0lVkJCXUVuI4elW0tfs3zV8f2v6L/MkRVPNbsPBoSRbnsG81q9Xl
-	 6TnUl707jxMg3uwA88u3e8B50VjwVMP6ad/vGkCi6zmwe7mCTcUGuKdbPl4oTkPo/e
-	 DQYHuhiN79jkryCGp0s3dpH5FK1QUd+g82UoXAWqxNxrgPlS6pFWybLfJvDai/Nb0o
-	 UIM0skORDzBucuiMRRXpksRlj6P1HKisCR4ORJvV9tkfwCFMJYfv8A7V5P2fNLMHmZ
-	 oujworeL3MxDbeqjewbZdJ0hM+eCbzWGgSqBWUE0S44ko34t6MCzYcrDCnk2Zbklgi
-	 Kf5Zs70vpHFaz6VPgYUbHcDUoeRw4cUiwC36QHhabhyl51arvhEuS4k42+6ygAVj+f
-	 3GryeHMNnvwGk8ni7QJizsy2YBXG2gQ7bqL38faQ70Jyuet3br0O847ABwT4tyNcak
-	 +xKYDDq/98mPUyV9Jq2aNhTUtA7zAQb2Z30XK7QQMsa2KC8Rmx4wfHaO4hzElAHCwa
-	 k1Gm6Dsl+nLuVcsa4a8TlWjJPuDNy8lLHeL4fSuINjAGNjT3RRBXJgnAEmnX21bAV9
-	 aXx65nf1hvkS1h/NKuvAx3zs=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5499E40E0187;
-	Thu, 27 Jun 2024 03:02:29 +0000 (UTC)
-Date: Thu, 27 Jun 2024 05:02:27 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>, Huang Rui <ray.huang@amd.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
-	"open list:AMD PSTATE DRIVER" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH 2/2] cpufreq: amd-pstate: Use amd_get_highest_perf() to
- lookup perf values
-Message-ID: <20240627030227.GBZnzWQ5H4MZt3wWNz@fat_crate.local>
-References: <20240626042043.2410-1-mario.limonciello@amd.com>
- <20240626042043.2410-3-mario.limonciello@amd.com>
- <20240626171809.GSZnxNUd4tcRT4IB_k@fat_crate.local>
- <f5251cea-32f2-426d-b3c8-73ce4c562fac@amd.com>
+	s=arc-20240116; t=1719457379; c=relaxed/simple;
+	bh=NLGy/YJmWfMJZ82QlfsIICUhA18BtEhywLLJniAwuyU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=bZzy+z83PpxHiJQcP2lofNllyvtwPOb22iDGA9WCoNLevr9daF8HSsL2tNlwsCgiBhRRlh//28WaiczsG8yYXA8K9aEqnFYj03Nj202N60u3Cz5Qj5/ERs7/57gBTb+C+q9TxUldxKtu3ROeuVGwbDjaSzAnw0MZLB2hS4W3uqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from ThinkPad-T480s.. (unknown [180.110.114.157])
+	by APP-05 (Coremail) with SMTP id zQCowAA3IyBW1nxmJwUiAA--.8628S2;
+	Thu, 27 Jun 2024 11:02:46 +0800 (CST)
+From: zhouquan@iscas.ac.cn
+To: linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Cc: oleg@redhat.com,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	andy.chiu@sifive.com,
+	shuah@kernel.org,
+	charlie@rivosinc.com,
+	zhouquan@iscas.ac.cn
+Subject: [PATCH v1 1/2] riscv: Expose orig_a0 in the user_regs_struct structure
+Date: Thu, 27 Jun 2024 11:02:46 +0800
+Message-Id: <a424caf3072d12ef6ba0c56c411789fb3282e844.1719408040.git.zhouquan@iscas.ac.cn>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1719408040.git.zhouquan@iscas.ac.cn>
+References: <cover.1719408040.git.zhouquan@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f5251cea-32f2-426d-b3c8-73ce4c562fac@amd.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAA3IyBW1nxmJwUiAA--.8628S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7ZrWxGry5tFWxXrWfAFyrJFb_yoW8tr15pF
+	ZakwnrKrWrurWkKry7ZayUWr47twnxG347KrWxt343Za4rtF45Zrn7Cw1qyr1fJFWvqFyI
+	ga4ayrn8Aa1DZ3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvE14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26F
+	4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
+	7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r
+	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02
+	628vn2kIc2xKxwAKzVCY07xG64k0F24l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
+	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
+	1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
+	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
+	42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWI
+	evJa73UjIFyTuYvjfUYManUUUUU
+X-CM-SenderInfo: 52kr31xxdqqxpvfd2hldfou0/1tbiDAgBBmZ8ofedqQAAs7
 
-On Wed, Jun 26, 2024 at 01:19:56PM -0500, Mario Limonciello wrote:
-> I was thinking we would take this patch through superm1/linux-next or
-> linux-pm/linux-next as there is other amd-pstate stuff for the next merge
-> window, but if you'd rather go through x86 then we can wait until after the
-> merge window on this series.
+From: Quan Zhou <zhouquan@iscas.ac.cn>
 
-I can also ACK this once it is ready and you can take it through whichever
-tree you prefer.  
+Expose orig_a0 to userspace to ensure that users can modify
+the actual value of `a0` in the traced process through the
+ptrace(PTRACE_SETREGSET, ...) path.
 
-I don't think we'll have merge conflicts there.
+The addition of orig_a0 also requires the following adjustments:
+1) Adjust the position of orig_a0 in pt_regs to ensure correct copying.
+2) MAX_REG_OFFSET should match the new bottom of pt_regs.
 
-Thx.
+Suggested-by: Charlie Jenkins <charlie@rivosinc.com>
+Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
+---
+ arch/riscv/include/asm/ptrace.h      | 7 ++++---
+ arch/riscv/include/uapi/asm/ptrace.h | 2 ++
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
+diff --git a/arch/riscv/include/asm/ptrace.h b/arch/riscv/include/asm/ptrace.h
+index b5b0adcc85c1..380cf54c1f3d 100644
+--- a/arch/riscv/include/asm/ptrace.h
++++ b/arch/riscv/include/asm/ptrace.h
+@@ -12,6 +12,7 @@
+ 
+ #ifndef __ASSEMBLY__
+ 
++/* MAX_REG_OFFSET should match the bottom of pt_regs */
+ struct pt_regs {
+ 	unsigned long epc;
+ 	unsigned long ra;
+@@ -45,12 +46,12 @@ struct pt_regs {
+ 	unsigned long t4;
+ 	unsigned long t5;
+ 	unsigned long t6;
++	/* a0 value before the syscall */
++	unsigned long orig_a0;
+ 	/* Supervisor/Machine CSRs */
+ 	unsigned long status;
+ 	unsigned long badaddr;
+ 	unsigned long cause;
+-	/* a0 value before the syscall */
+-	unsigned long orig_a0;
+ };
+ 
+ #define PTRACE_SYSEMU			0x1f
+@@ -64,7 +65,7 @@ struct pt_regs {
+ 
+ #define user_mode(regs) (((regs)->status & SR_PP) == 0)
+ 
+-#define MAX_REG_OFFSET offsetof(struct pt_regs, orig_a0)
++#define MAX_REG_OFFSET offsetof(struct pt_regs, cause)
+ 
+ /* Helpers for working with the instruction pointer */
+ static inline unsigned long instruction_pointer(struct pt_regs *regs)
+diff --git a/arch/riscv/include/uapi/asm/ptrace.h b/arch/riscv/include/uapi/asm/ptrace.h
+index a38268b19c3d..3e37f80cb3e8 100644
+--- a/arch/riscv/include/uapi/asm/ptrace.h
++++ b/arch/riscv/include/uapi/asm/ptrace.h
+@@ -54,6 +54,8 @@ struct user_regs_struct {
+ 	unsigned long t4;
+ 	unsigned long t5;
+ 	unsigned long t6;
++	/* a0 value before the syscall */
++	unsigned long orig_a0;
+ };
+ 
+ struct __riscv_f_ext_state {
 -- 
-Regards/Gruss,
-    Boris.
+2.34.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
