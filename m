@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-232352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E70DB91A748
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:07:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42C9C91A775
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:11:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A35DF281C1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:07:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 740A21C244B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E8C518732D;
-	Thu, 27 Jun 2024 13:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304E0188CD2;
+	Thu, 27 Jun 2024 13:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="QuP4ockh"
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="MiYLuIVa"
 Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67DDB13F00A;
-	Thu, 27 Jun 2024 13:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A54187541;
+	Thu, 27 Jun 2024 13:10:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719493649; cv=none; b=dFRu+dOmIEF7TF9lzalZqmG9JGj5pYCgzG6gRqGVcjfUEkc8NEaicjZxBlQ5+XU6Yy0OToVUY2r3Hhite4Oh/5xEQ7L4NhzJ6LXw4BqA4Lbmvt6JJdWwJQCwWsjiMMWuL72aeJz+MTxwBAW9w68fL2N/bCMhzZNSYQszyu5EZZg=
+	t=1719493841; cv=none; b=BT+N/HxrhWL4VTTellXn7v1ozcldY6+8nUnKUD/328GSjQ4Q2NMOuIgI++bilLymw8qJ/JFhRp1BPi/wGVV7zvw141g6ouarjErFNBDlNuqCkB1Fq1cYk9Lq/y760EVbV8gWH31BO4jz2XkXi+dwjrnGMA6raaGTFmAiQrzTZFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719493649; c=relaxed/simple;
-	bh=4eqenzlDJJmiVegcLr50fZF1d8Jb+JeLIA2EruftpKU=;
+	s=arc-20240116; t=1719493841; c=relaxed/simple;
+	bh=0yWDqT9cZHuQXEI72ujjcegfN2UGNSzTzu0vBUTEMI4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t2JdyUqJXzMiHQdEu2v1/WepD/dcj/PmF8iNlJdhGgPU7+ifQQYyLe8wOzaI88nx0/i2WA3/Tm2bFJD6cElVWkODSiJGvJk1uKxqo6mS/FeWgjBwvctl5EofVUruYNr/nfG5rlce2ZYT1z21eYDeXicsMXDZZhrmr+hvfpzG6cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=QuP4ockh; arc=none smtp.client-ip=156.67.10.101
+	 Content-Type:Content-Disposition:In-Reply-To; b=REyNTKiJzRvuPLwl1/WRhYmfM/s1M2zJYoPnKapUe6ZHQH7iWtjYqasFRmewrGTrVueIz53Pwuc9zR7eoaI62WQ6dbJcJfuDfiqIVIkVY4Tg/Y0ODW7SgVUvqi4GPjmPV1/zG1zULBkz7d2AcqYQ3+lG7fPwifiKddCWFwlRE0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=MiYLuIVa; arc=none smtp.client-ip=156.67.10.101
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
@@ -35,13 +35,13 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
 	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
 	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=XGLNCYj2BJRifwhxF86lhSp/yOk3DKS/Y+1DL0OAdQg=; b=QuP4ockh5YHBLYEwoZj5NEqkIO
-	QPRhs52wNmvvHeJEHgbxO64j9wBMvrt19XSNBvOz8cfXE+lF/iCh0oIBZhjaEPaE/KRv0u1iH416Y
-	S2oqly8fxynQd0MWSisU9i8Ptt73hMgEM+MFfAbzVi+0URiVktRSWCX+O0mPsKNz71Vk=;
+	bh=yopBcUIB6oeeZ7aRWdWnVXoVTZwVXNOBbL6N5h0D2C0=; b=MiYLuIVaMlVHAAiA6xJgBkahUU
+	WmrTzQQMrXzDWzUcq0UHMzG1AiducsQjg5/vSreM6SPi3eNG+5BDVaMuMCesrlkXlzr5Gv8S8m+BV
+	RC1625Zlhj8vBVeFp16d0CO35KXS3S6/Uw3jOZRZSl1MnZMfchjv5ZEJSL/RmG1fLjbA=;
 Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
 	(envelope-from <andrew@lunn.ch>)
-	id 1sMoq5-0019vg-3G; Thu, 27 Jun 2024 15:07:01 +0200
-Date: Thu, 27 Jun 2024 15:07:01 +0200
+	id 1sMotG-001A7Y-JN; Thu, 27 Jun 2024 15:10:18 +0200
+Date: Thu, 27 Jun 2024 15:10:18 +0200
 From: Andrew Lunn <andrew@lunn.ch>
 To: Serge Semin <fancer.lancer@gmail.com>
 Cc: Heiner Kallweit <hkallweit1@gmail.com>,
@@ -66,11 +66,11 @@ Cc: Heiner Kallweit <hkallweit1@gmail.com>,
 	Tomer Maimon <tmaimon77@gmail.com>, openbmc@lists.ozlabs.org,
 	netdev@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 02/10] net: pcs: xpcs: Split up xpcs_create()
- body to sub-functions
-Message-ID: <adfbc8c2-f39e-4aee-a879-1ae992689882@lunn.ch>
+Subject: Re: [PATCH net-next v3 03/10] net: pcs: xpcs: Convert xpcs_id to
+ dw_xpcs_desc
+Message-ID: <15754e63-be47-4847-8b61-af7f8a818a3c@lunn.ch>
 References: <20240627004142.8106-1-fancer.lancer@gmail.com>
- <20240627004142.8106-3-fancer.lancer@gmail.com>
+ <20240627004142.8106-4-fancer.lancer@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,35 +79,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240627004142.8106-3-fancer.lancer@gmail.com>
+In-Reply-To: <20240627004142.8106-4-fancer.lancer@gmail.com>
 
-On Thu, Jun 27, 2024 at 03:41:22AM +0300, Serge Semin wrote:
-> As an initial preparation before adding the fwnode-based DW XPCS device
-> support let's split the xpcs_create() function code up to a set of the
-> small sub-functions. Thus the xpcs_create() implementation will get to
-> look simpler and turn to be more coherent. Further updates will just touch
-> the new sub-functions a bit: add platform-specific device info, add the
-> reference clock getting and enabling.
-> 
-> The xpcs_create() method will now contain the next static methods calls:
-> 
-> xpcs_create_data() - create the DW XPCS device descriptor, pre-initialize
-> it' fields and increase the mdio device refcount-er;
-> 
-> xpcs_init_id() - find XPCS ID instance and save it in the device
-> descriptor;
-> 
-> xpcs_init_iface() - find MAC/PCS interface descriptor and perform
-> basic initialization specific to it: soft-reset, disable polling.
-> 
-> The update doesn't imply any semantic change but merely makes the code
-> looking simpler and more ready for adding new features support.
-> 
-> Note the xpcs_destroy() has been moved to being defined below the
-> xpcs_create_mdiodev() function as the driver now implies having the
-> protagonist-then-antagonist functions definition order.
-> 
-> Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
+> -	for (i = 0; i < ARRAY_SIZE(xpcs_id_list); i++) {
+> -		const struct xpcs_id *entry = &xpcs_id_list[i];
+> +	for (i = 0; i < ARRAY_SIZE(xpcs_desc_list); i++) {
+> +		const struct dw_xpcs_desc *entry = &xpcs_desc_list[i];
+>  
+>  		if ((xpcs_id & entry->mask) != entry->id)
+>  			continue;
+>  
+> -		xpcs->id = entry;
+> +		xpcs->desc = entry;
+
+Maybe rename entry to desc here?
+
+Otherwise
 
 Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
