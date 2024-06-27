@@ -1,177 +1,170 @@
-Return-Path: <linux-kernel+bounces-232528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 625D991AA63
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:05:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 834D891AA7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:06:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AECF288BE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:05:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3967E289A90
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:06:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1BE198A20;
-	Thu, 27 Jun 2024 15:04:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7531319885B;
+	Thu, 27 Jun 2024 15:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="f9iOte9B"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10olkn2096.outbound.protection.outlook.com [40.92.40.96])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U6/AjJFA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D2B198A06
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 15:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.40.96
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719500681; cv=fail; b=LPrLZKvTDQqt3zBkZkU2QPJkkK1c8Ez2HEtBT61rRzHTcAQsUp0fg7n0IEfxCxaifAz5Yoluv3RbbNrOBR82PX0P+G2N+CvcBWqZhcLoGS5qdnRCUqevW7t+ywzsUDtw/ayELnWUyXQnA1WsZrURKwveRkjY00r/J2EEuhfmAqs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719500681; c=relaxed/simple;
-	bh=nfGoEgJ3FOYm/QXzy9PWVVk31fZFJYfsp5yvnCh5hjU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ozm2Mm462lenXYeyNUVbBPEX0lThFMefVYkubJL/oY5Q18VN7M0EgkQZ+vIymMij+hGhg4iTjFAa3kvHLWnznIBy5kDmQ8xtkYULtvAhXmV98Hwa8RVXmAA/voodoEsvePdOE7Qk9d+dFEApbLyxlzQ0ERlw+cHcUOMw8rMdeQE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=f9iOte9B; arc=fail smtp.client-ip=40.92.40.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=junSST0Oet99976p1kU7/GaJlYJroYc6b7SLrTRZt6eolD60vjysh08sFSuJwWJ69EDreIqbdQDbpLYDSgzl7KBLfEBODNxTpXYwFEH/2PTVZV+l1GP3eg5Zb3Fb1nC3z8RdolCN7cMV3NJ/BVyRUz3F2Ff1zwngcNGqRBAjGL0s1GGLtxJVnLewIL2EmCqTui//l5kEl+vhkFNz5m6XCBTr3fnhZsyJgFWGEA/eDGTPjCNJa6LIOt664I30oHLr/mpyH1gxnnBBAyneC0atWng5VIcrLxoheKlzRVshjh/wVy7jM4757zKndit520aMyoeeQA14G2a7e3rvzNMrrg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=raNG0jVWFpSJwFielu6FwfYrMP8/HWhkBSOCMgEBgYM=;
- b=OXeHoEv6nwKM334GfD571hdH3afo5GikHpgA7fN/cC3x7lUyc7eUqkFA3pOvdfqQPDA2v/ZttIht87/7yLndcvaAFIjJc7HexkEa/+lJX0/p41zVvMxruIWK2B37pkIil7v+9MgM2QTJ/TlVeRGcMeun9qp4DPGvRvbVnonVM94+63bn0CGenq61mtDpQbsZFBQm3K64rqPTQVI+K1pjQx2FQK6clIrzSTBkxJ7yQ0BxX5P7WggXkP5/2l9OpcbTqcKr9RekIzS2owv+3QMhkMsfB2nQ/P+OL7JQhf1btqLXycAMvNi7sNdkktGipb4aSyCBFW9VMmZBqkkK095aBA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=raNG0jVWFpSJwFielu6FwfYrMP8/HWhkBSOCMgEBgYM=;
- b=f9iOte9BsmltkGsn8IdYrqhZX8zwOu4/Y9RLlzjmr6/QavC0p999C6kIvFpy4yL/Unadzh1MYU/56+arIdnHk81gy+GOzsJvuYCZ7Nh0Y0fUhREhc0k3TJX9mhE7gB8Kflwh+J//a1EJsJqVxv0FYt4wlc+3GTCa3AyrsSt2sHpWnVdVxTaE/LikkDmm234qbPMryNwWinmi1kGjCfnZ4GYsBNu9DtGUXuD6aczoOe5XEsb0GFPIbkH+qur75n3iy2Ngb0MgHNtW2gfZ5YPB428ANcqG3QoqIoMitHXuGCy3KTHJqEDl6GKaKTKvKqkH8SmQpIxq4m7rGwj5aC2q6A==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by IA0PR02MB9702.namprd02.prod.outlook.com (2603:10b6:208:487::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.34; Thu, 27 Jun
- 2024 15:04:35 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%2]) with mapi id 15.20.7698.033; Thu, 27 Jun 2024
- 15:04:35 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: =?iso-8859-2?Q?Petr_Tesa=F8=EDk?= <petr@tesarici.cz>,
-	"mhkelley58@gmail.com" <mhkelley58@gmail.com>
-CC: "robin.murphy@arm.com" <robin.murphy@arm.com>, "joro@8bytes.org"
-	<joro@8bytes.org>, "will@kernel.org" <will@kernel.org>, "jgross@suse.com"
-	<jgross@suse.com>, "sstabellini@kernel.org" <sstabellini@kernel.org>,
-	"oleksandr_tyshchenko@epam.com" <oleksandr_tyshchenko@epam.com>, "hch@lst.de"
-	<hch@lst.de>, "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>
-Subject: RE: [RFC 1/1] swiotlb: Reduce calls to swiotlb_find_pool()
-Thread-Topic: [RFC 1/1] swiotlb: Reduce calls to swiotlb_find_pool()
-Thread-Index: AQHauIjoJBWSrCyO6UWzcncSceBiMLHbU/+AgACADXA=
-Date: Thu, 27 Jun 2024 15:04:35 +0000
-Message-ID:
- <SN6PR02MB4157CF368284CA48061E35E9D4D72@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20240607031421.182589-1-mhklinux@outlook.com>
- <20240627092049.1dbec746@meshulam.tesarici.cz>
-In-Reply-To: <20240627092049.1dbec746@meshulam.tesarici.cz>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-tmn: [AKhZ4FTPcx0HfZye0qhnHyABc3sw1wYl]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|IA0PR02MB9702:EE_
-x-ms-office365-filtering-correlation-id: edd5232c-f037-4bde-a2e4-08dc96ba7522
-x-microsoft-antispam:
- BCL:0;ARA:14566002|461199028|3412199025|440099028|102099032;
-x-microsoft-antispam-message-info:
- C4w+6zLY5M7Vk3uroWbqkWyXGC/J79Dm3JF+VD8WwfvRbg6juRPuQm8IhWQNj+zmpc4pKMwvuDJV3V91oAJ7fZSMkw0SkuXgN71A1tuONyrOY2A5qoZ0rU7wV4wEh2Jvq5i9DJE/QWgR8p1hMVT0qx1ix4OhEl+tPPVosUR+HklI9k/Qy90CGkQ3UEdtP1lrvR3YT22WO5/pDotqpu/69fo+7okeDRfIFyxjsHQVQMws1jr2/uPStj1wFuRVRivaKVhZN9HsX6toKK6Vv5sWqXB/A6dpOHOr3hHJZnqLXOAOTnAOy7E1aPkKRqbQQaI8OJ8TFsfX5uDsywyWTvkuekbQaJpejkgjcJSmkHRQnv4yL4y2RIWnxBB0CBIH/5bj4wwvl8+mIYa3nwl/Df4OcUW8qE9aTCVX8ElNlowyw832/Q+bhTdGzBHF0oOmZZSk3H69M91QxJxpMcH2LRUPx5t64Zy6BsIiRxvZoTEfxbG4rtP79E1MmD/WrNMSl/aHIoiJIdGeCp4Qy+3jXcvFNyC+vN/t6uGMfpybgaX4r9Yiu3Hb1g1YmreLYk0g9N4p
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-2?Q?TVNMMdrcwSsBtZ9+85O93RYN9thGCKdgW6DFpEwdGDNHimWfW1bHVKMKlm?=
- =?iso-8859-2?Q?9o3eDUT9g5d/PnTGCTn3B1yopqSeNACJCXTUClJdr3N7iM7pzoLcxNbzct?=
- =?iso-8859-2?Q?4KHjH9PP4JFJreFu6vBfuZsMj+d8AojebRkCfrx5ocKfxWsnYM1sJwawjY?=
- =?iso-8859-2?Q?DOnLbOwwr42c6pfLcjcBUn7+ly8n9bnAZxSm5yk6LPTIKTNdS56rhyUutk?=
- =?iso-8859-2?Q?kFDOJ+uaygp1OvTFoXDUIdcCxyZLArIyUZcrjKLrHBBtyFtG0rP2jdYVF/?=
- =?iso-8859-2?Q?TMpNLq9thmqc2eIVuZqULCNWNqwhawfoo7gOsMIljfSVGTJpVDLSpMQYcJ?=
- =?iso-8859-2?Q?tOhoxaCsGg3buoiS3UmxVxrc1kCBTfAMxaH8LGzEgfmrD2WJrSRzxkldcH?=
- =?iso-8859-2?Q?J+9R9py5O5e0kzAq4WC11CDH5WaId4iWqz8/XSS2SlqvQDMN5oogwB854B?=
- =?iso-8859-2?Q?WTHqVLHE4FLDDhkPg6YbFX+dPn/2FLVYWh7u0CHjxn3JuzFc1jaaJnUr0F?=
- =?iso-8859-2?Q?t/fTiJ9STvPUWY2v11rcf3XPRXa5GWThR6mGa8n+3jFFVfk5o0IYWUMy9i?=
- =?iso-8859-2?Q?MgzgUhrXNIDW2Fg43mziZru2MkUWTbcVBKJ0ZsfYcsZqUXREOwOcPm9k1I?=
- =?iso-8859-2?Q?w7pOfZa/qI3nNU6hx0SczoIN2NLf+p5y5wgEJE9iQNaxr7VGI4LBoEq8A8?=
- =?iso-8859-2?Q?0s+W22Gm/lvgGfDwCv3h+Aij2/iBGIAKGmWzuNNe9AWZ4B0UGv3Dc63LRT?=
- =?iso-8859-2?Q?JFdV1ED27t7sF8yL087Nj3zDwI6coUulRrjuIYsWpF7L+gRZMh1/2nPf4T?=
- =?iso-8859-2?Q?mtVUd2y/KeiEafeTptsOOe2d+2291rr1UURbkF1wgFOFAkBX1z/LhZgb6k?=
- =?iso-8859-2?Q?NXO9dkFRvxYEyJYM8EZx9Ev2RReC4yieq/S78VrQOgjkMKkgU2pStdg2ko?=
- =?iso-8859-2?Q?lNY3/Vtp2VaLsy5Pmh+KtWPKnsm1BuCnhKJzlku1Z68LnNTW7YG7IF8tD4?=
- =?iso-8859-2?Q?9HhLQnOHSQx+gj5GV+VQ3HvAna4Oa9fydnYmeSbmaI//PkSv/sf0zEluNW?=
- =?iso-8859-2?Q?cl2WSpWRDVhmS07tD8zJAwYiwTaQ1vg2ltlL57bat5BFpWdLjZ85q3THtX?=
- =?iso-8859-2?Q?dLyWP43i7RMsnOmpNDlqWxWIbsJmGQpOOUbgOO3BIcgxZFjcbGHe6y/w7Q?=
- =?iso-8859-2?Q?7AuLf4TDMiTQ6kKMkYLFC6ghsZkOmceH1NwRvOu5S+wVJAtPHXb2WJUWPr?=
- =?iso-8859-2?Q?UYM7R50V3Rbg64dHQa1aoZjNWAoek57FvkCcqDCnY=3D?=
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A030213A245;
+	Thu, 27 Jun 2024 15:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719500767; cv=none; b=cSFdC6TdDPqOLVmgRH5AovASaXGhYmZa/pMsrZG3/CaABR+emwhMrwWBXid6uv3LdL/VZhDQskhoaGCq2y+sYePLMN4FtFbdKCe0G6Xg70WKEfQhsal3OHw2UDw1Tl0vxB4NDO/GPHYd3YlkY99/8NhMZe71cR2YJZHXyDGQJ3k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719500767; c=relaxed/simple;
+	bh=Djbrivkq0wc2jEsn+rTxgWDZpcBMsUplG+Wqu9mPo2g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CJVO5BFm1k+EyoVp77BdFn92dF+U/El8vB6AW4UY3ozmWL1BCf2f4MvOAltmqKxU1ja+D2RTvgteEdCzCl+kvWlzypjq95949NG1YNtSv+Y7Dw3QkC4jAUoNdtcaDA94Ycha+dwYvuFV5A7263HIpDYJOg/YpjuWeVd10EmUkVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U6/AjJFA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE4CDC2BBFC;
+	Thu, 27 Jun 2024 15:06:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719500767;
+	bh=Djbrivkq0wc2jEsn+rTxgWDZpcBMsUplG+Wqu9mPo2g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U6/AjJFAW4WolWRAJvjof7CxpmtiX3kDNLeTk9ABltlygOqBrGDrYhzuqbdkx/eCF
+	 xWGhx3JavgSEI3MSGiDZxV0XkpHbqTWKC1TNk3ATeg4148ft/pMMw4BLd1OJ5EaoDh
+	 lJKDsimBob+/B/mPpw01RH35RvpRUDWm1fXOpr7mvLVc0Q4r2C/VkU9Q+8hdu9aCdV
+	 +alapw+vuNIUqNPbGd7B0zfhDQsoGluza435rqEIVEFFZYN9y2O6ZHTGGiZAsbkZZm
+	 NFvfZjnqorZiZJ7Cn6EpjMRAIL+el1Qt6DbEF+cnR51G7vfA7ZutVBH/7+8SwPYAlf
+	 b8aLGpUerp4Aw==
+Date: Thu, 27 Jun 2024 16:06:01 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Ramona Gradinariu <ramona.gradinariu@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Jun Yan <jerrysteve1101@gmail.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Mehdi Djait <mehdi.djait.k@gmail.com>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: iio: accel: add ADXL380
+Message-ID: <20240627-stiffly-annoying-f1f53fc432df@spud>
+References: <20240627102617.24416-1-antoniu.miclaus@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: edd5232c-f037-4bde-a2e4-08dc96ba7522
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jun 2024 15:04:35.2725
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR02MB9702
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="0n+nOH0+6w7iTwZd"
+Content-Disposition: inline
+In-Reply-To: <20240627102617.24416-1-antoniu.miclaus@analog.com>
 
-From: Petr Tesa=F8=EDk <petr@tesarici.cz> Sent: Thursday, June 27, 2024 12:=
-21 AM
 
-[...]
+--0n+nOH0+6w7iTwZd
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > @@ -187,10 +169,13 @@ static inline bool is_swiotlb_buffer(struct devic=
-e *dev, phys_addr_t paddr)
-> >  	 * This barrier pairs with smp_mb() in swiotlb_find_slots().
-> >  	 */
-> >  	smp_rmb();
-> > -	return READ_ONCE(dev->dma_uses_io_tlb) &&
-> > -		swiotlb_find_pool(dev, paddr);
-> > +	if (READ_ONCE(dev->dma_uses_io_tlb))
-> > +		return swiotlb_find_pool(dev, paddr);
-> > +	return NULL;
-> >  #else
-> > -	return paddr >=3D mem->defpool.start && paddr < mem->defpool.end;
-> > +	if (paddr >=3D mem->defpool.start && paddr < mem->defpool.end)
-> > +		return &mem->defpool;
+On Thu, Jun 27, 2024 at 01:25:17PM +0300, Antoniu Miclaus wrote:
+> Add dt-bindings for ADXL380/ADLX382 low noise density, low
+> power, 3-axis accelerometer with selectable measurement ranges.
 >=20
-> Why are we open-coding swiotlb_find_pool() here? It does not make a
-> difference now, but if swiotlb_find_pool() were to change, both places
-> would have to be updated.
+> Signed-off-by: Ramona Gradinariu <ramona.gradinariu@analog.com>
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> ---
+> changes in v3:
+>  - add power support
+>  - add support for both interrupts
+>  .../bindings/iio/accel/adi,adxl380.yaml       | 103 ++++++++++++++++++
+>  MAINTAINERS                                   |   7 ++
+>  2 files changed, 110 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/accel/adi,adxl3=
+80.yaml
 >=20
-> Does it save a reload from dev->dma_io_tlb_mem? IOW is the compiler
-> unable to optimize it away?
->=20
-> What about this (functionally identical) variant:
->=20
-> #ifdef CONFIG_SWIOTLB_DYNAMIC
-> 	smp_rmb();
-> 	if (!READ_ONCE(dev->dma_uses_io_tlb))
-> 		return NULL;
-> #else
-> 	if (paddr < mem->defpool.start || paddr >=3D mem->defpool.end);
-> 		return NULL;
-> #endif
->=20
-> 	return swiotlb_find_pool(dev, paddr);
->=20
+> diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adxl380.yaml=
+ b/Documentation/devicetree/bindings/iio/accel/adi,adxl380.yaml
+> new file mode 100644
+> index 000000000000..55e25a9b31ac
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/accel/adi,adxl380.yaml
+> @@ -0,0 +1,103 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/accel/adi,adxl380.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Analog Devices ADXL380/382 3-Axis Digital Accelerometer
+> +
+> +maintainers:
+> +  - Ramona Gradinariu <ramona.gradinariu@analog.com>
+> +  - Antoniu Miclaus <antoniu.miclaus@analog.com>
+> +
+> +description: |
+> +  The ADXL380/ADXL382 is a low noise density, low power, 3-axis
+> +  accelerometer with selectable measurement ranges. The ADXL380
+> +  supports the =B14 g, =B18 g, and =B116 g ranges, and the ADXL382 suppo=
+rts
+> +  =B115 g, =B130 g, and =B160 g ranges.
+> +  The ADXL380/ADXL382 offers industry leading noise, enabling precision
+> +  applications with minimal calibration. The low noise, and low power
+> +  ADXL380/ADXL382 enables accurate measurement in an environment with
+> +  high vibration, heart sounds and audio.
+> +
+> +  In addition to its low power consumption, the ADXL380/ADXL382 has
+> +  many features to enable true system level performance. These
+> +  include a built-in micropower temperature sensor, single / double /
+> +  triple tap detection and a state machine to prevent a false
+> +  triggering. In addition, the ADXL380/ADXL382 has provisions for
+> +  external control of the sampling time and/or an external clock.
 
-Yeah, I see your point. I'll try this and see what the generated code
-looks like. It might take me a couple of days to get to it.
+Please cull the marketing from the descriptions. "Industry leading" may
+or may not be accurate at the time of going to print, but might be
+completely incorrect in 5 years. Ditto "low power consumption".
 
-Michael
+With the marketing gone,
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index be590c462d91..1425182c85e2 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -618,6 +618,13 @@ F:	drivers/iio/accel/adxl372.c
+>  F:	drivers/iio/accel/adxl372_i2c.c
+>  F:	drivers/iio/accel/adxl372_spi.c
+> =20
+> +ADXL380 THREE-AXIS DIGITAL ACCELEROMETER DRIVER
+> +M:	Ramona Gradinariu <ramona.gradinariu@analog.com>
+> +M:	Antoniu Miclaus <antoniu.miclaus@analog.com>
+> +S:	Supported
+> +W:	https://ez.analog.com/linux-software-drivers
+
+Seems like having a website like
+https://wiki.analog.com/resources/tools-software/linux-drivers/input-misc/a=
+dxl345
+would make more sense than a generic forum for all of your drivers?
+
+--0n+nOH0+6w7iTwZd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZn1/2QAKCRB4tDGHoIJi
+0j95AQDhJeGs/zhD0V7SpekjUWa7OBI/8gYbp6v6f23EddLZRwEAq9TJq+x1gWOb
+QAmC4UOsxBMJ5TcKx9mPYL719tWz0g8=
+=Li+x
+-----END PGP SIGNATURE-----
+
+--0n+nOH0+6w7iTwZd--
 
