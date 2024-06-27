@@ -1,131 +1,153 @@
-Return-Path: <linux-kernel+bounces-232461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A00891A924
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:24:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0845091A91C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:23:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDE76284457
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:24:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ABFA1C224DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F777195FEF;
-	Thu, 27 Jun 2024 14:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582A9195FC2;
+	Thu, 27 Jun 2024 14:22:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="CwKLFt/8"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CpqB6xqI"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA5B195F0D;
-	Thu, 27 Jun 2024 14:24:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4254719306A;
+	Thu, 27 Jun 2024 14:22:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719498242; cv=none; b=F/jWAo+N82Xx7gYsbDGtL6XLgAlNW12FaAEuiyyuofpwp9Da7WbhHCTTNpSpAQMkMwQ7Votcoy/whCLnexZb8QS/5p5TwWu362AieUYesXSR8V3dS59OOrXWuci1669L2Azvcm9R4RTixdZcxUy6gMuK3gUFuzISazyQQEooEps=
+	t=1719498175; cv=none; b=F+x+QHPwwX938zFIOgJVBlPTqe2kfIxwwp3aSie7NEc2v1QEUHqt2lDb1YAufbsyGcvuSgfXeXO7bnyNy8ARNH8OJRmHSxDf0oNfF1WqRE2pqFx27w0fS4YuQsm0ErDyODW5nRDtjpQQi0tEFjMb38QrBW4Tytyzv1mvxFPeqSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719498242; c=relaxed/simple;
-	bh=JOjYQGyh6OKj0Wx4mS4iO0ogcRbdc8vIGsT4DTKNmaU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=WRem4/7knWKgeJ8xLrzIYgYmrqdq/QISyN3vX2GpgtKBh2l/NaPC1fge2QeSFWZ8rnJptqi3xAmoERwvBWSXKb0WAeKQ0jDpswIQINgp7q0bsRHcOo4H/Yxkan5gWAP604PM5kYkoIRDdJBz8ievM0viM7Zlzba3tOfpjedWWyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=CwKLFt/8; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45RB4x1x013769;
-	Thu, 27 Jun 2024 16:23:34 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	sz4kv46cKOBt8+tdc/6ePG1HkA/ODePgbeH/iJ1pvwU=; b=CwKLFt/8tvvqoLkK
-	4xy7rbGBo4o35L2ukA0Ia1tBIG6G7ASNXmlSWql2JFIZ8P8wsummFS3We/RTL7Y1
-	SVc1PhLsvk5qNSueOQlsQNA6gW4Q0GYQS2bfSy5XGIYeF8QUguVs85SAVE39rlLf
-	wnw+zU1HjR27gRCuwhQuvoe+axpnliInuUf8IOxQb5nMZPdAA3llR1FazB6dL8Vu
-	tpLoEZR64PTMGB7/4MGmsX9x5gqdyZDYsmjdLRPn4XrrtvwT4PqFfF0WuUPFv0we
-	INMjsPT/wTytgILYZZrap5WEmqiAqDlqXyDgK/P7UkN/gMRutjOx3vpRb7OMTjyH
-	1PU/ww==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yx9jjkeqp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Jun 2024 16:23:34 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 09FE74002D;
-	Thu, 27 Jun 2024 16:23:29 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B888B220B57;
-	Thu, 27 Jun 2024 16:22:42 +0200 (CEST)
-Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Thu, 27 Jun
- 2024 16:22:42 +0200
-Message-ID: <1139b106-1c05-44ba-9dac-649bcc8d9315@foss.st.com>
-Date: Thu, 27 Jun 2024 16:22:41 +0200
+	s=arc-20240116; t=1719498175; c=relaxed/simple;
+	bh=oHV3OHMIUPZl6GV46fsLps6Cea0pnU28+OVOsPTtCLs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MR/0J+zLohAxw9oMasmlXfEi/4snGwzhvyRgeyCRRmop4H3RtCypbxhjpuGXgjDJqaOyKh0Sm03BKg9d9/J93otpdJiwxQS5zZQNs/tiWHnppOgYvuS7kwFItcXclJIDM23M4DbZUzVA2zXGMWoQSxVgTa3LBa8c6Iu2sxh3y4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CpqB6xqI; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2c80657e4a3so5290597a91.0;
+        Thu, 27 Jun 2024 07:22:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719498173; x=1720102973; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=1LlXmCd6thfbhr1DFHJ5mJ6w10qbVvdbhSaguzvZxl4=;
+        b=CpqB6xqIf95+VGHTpY+YIg6FbYjbuuvX5NTIpNEIBWPzeMOyxb29CBY5iMYe0kmER7
+         2NG+h3gEL3RFiVRsiMa3gvv63J7EZWpIy+WHnfYOKVpnwwEy38jZ4yEGDq8ES3MiYFj1
+         5yJZXr3WqcJrTCKO5ChhrhCYzMxOt5GHytrOdw0Konqws03RLkdD8hX17a82OHA6m3nj
+         XbdruxDm9RIbV/H0LZqzs/T/sU3YB3UZPdjecqdpX6Wvo7bjqj00SkgYv58lGUKGlNfn
+         yCYJB1MFnQPqBLhRrf1ors8Qv+C8n1IY0u+ho9kY4pYF0yOoyDK+iuzFykMyPtgu/hqc
+         cxqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719498173; x=1720102973;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1LlXmCd6thfbhr1DFHJ5mJ6w10qbVvdbhSaguzvZxl4=;
+        b=oQJa0faL25VwvYft0iwz9Tas3YByZSHNX7cSrjm84p2Ne9KnQk+PdX4udPNfW2w7lh
+         RyvXkg30yNrUBTcsCYnr7pOQJgf0DfldGTNTDS37T3ZDyi5Rz5KMXss2t9BWanau7NDI
+         HaQ+Zdn8KhX9XLZTQIC+Wjih4NyQvZ79eag3TqwTNPfQdHMjEoz2PlY7xrzWGY1+d/Af
+         wqhKQtUXpqrr5VusuehvQ1RA7tZ/2DJ31iLb+UnHkXKD6O1ADVhjfOxPX53WcqTOr4X0
+         RkIyVOLGJHsBkvkpQM4ifeMcCC1mNFIL4DUoHPynCG/2t0vsuShEzHDB+vbTF5Qtv1CC
+         OuMw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbrqcIhGVreTmtvLDCX0yAYYKWB9aQIYb8qkS/UsRRdey5LuwgdB9/Frvy2LBZnj+13vpkYfTGob15AvnS/M/weKo3uKAzU+c19A==
+X-Gm-Message-State: AOJu0YyOCN/z5HjVbbmZ9qKFEWff+KQW8cvV8dZKVSC4FhUxlsFBJZK5
+	IRH0QTx3ZiF9gJykr6PE0CjlsI+Lcxv+nRh88Bao6fj18c+hZgYi
+X-Google-Smtp-Source: AGHT+IG0U8gCeC6H4Lv27x869DpLFMoP289ZkPNOKtVWCPqnht6f7tfJWKLuY//+9rUGf6pGDyLm7w==
+X-Received: by 2002:a17:90b:1c12:b0:2c6:e8d4:d0e2 with SMTP id 98e67ed59e1d1-2c8614cbbd4mr10959627a91.43.1719498173381;
+        Thu, 27 Jun 2024 07:22:53 -0700 (PDT)
+Received: from rigel ([118.209.204.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c8fe8acddcsm1513785a91.2.2024.06.27.07.22.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 07:22:53 -0700 (PDT)
+Date: Thu, 27 Jun 2024 22:22:48 +0800
+From: Kent Gibson <warthog618@gmail.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org
+Subject: Re: [PATCH 2/4] gpiolib: cdev: Ignore reconfiguration without
+ direction
+Message-ID: <20240627142248.GA414403@rigel>
+References: <20240626052925.174272-1-warthog618@gmail.com>
+ <20240626052925.174272-3-warthog618@gmail.com>
+ <CAMRc=Me1_4xjbt51j+gFVzR71VUwMSAm+dT=UtgOY-1xYoAF5g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 12/12] arm64: dts: st: add HPDMA nodes on stm32mp251
-To: Amelie Delaunay <amelie.delaunay@foss.st.com>,
-        Vinod Koul
-	<vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>
-CC: <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-hardening@vger.kernel.org>
-References: <20240531150712.2503554-1-amelie.delaunay@foss.st.com>
- <20240531150712.2503554-13-amelie.delaunay@foss.st.com>
-Content-Language: en-US
-From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
-In-Reply-To: <20240531150712.2503554-13-amelie.delaunay@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-27_11,2024-06-27_03,2024-05-17_01
+In-Reply-To: <CAMRc=Me1_4xjbt51j+gFVzR71VUwMSAm+dT=UtgOY-1xYoAF5g@mail.gmail.com>
 
-Hi Amélie
+On Thu, Jun 27, 2024 at 04:06:21PM +0200, Bartosz Golaszewski wrote:
+> On Wed, Jun 26, 2024 at 7:29 AM Kent Gibson <warthog618@gmail.com> wrote:
+> >
+> > linereq_set_config() behaves badly when direction is not set.
+> > The configuration validation is borrowed from linereq_create(), where,
+> > to verify the intent of the user, the direction must be set to in order to
+> > effect a change to the electrical configuration of a line. But, when
+> > applied to reconfiguration, that validation does not allow for the unset
+> > direction case, making it possible to clear flags set previously without
+> > specifying the line direction.
+> >
+> > Adding to the inconsistency, those changes are not immediately applied by
+> > linereq_set_config(), but will take effect when the line value is next get
+> > or set.
+> >
+> > For example, by requesting a configuration with no flags set, an output
+> > line with GPIO_V2_LINE_FLAG_ACTIVE_LOW and GPIO_V2_LINE_FLAG_OPEN_DRAIN
+> > set could have those flags cleared, inverting the sense of the line and
+> > changing the line drive to push-pull on the next line value set.
+> >
+> > Skip the reconfiguration of lines for which the direction is not set, and
+> > only reconfigure the lines for which direction is set.
+> >
+> > Fixes: a54756cb24ea ("gpiolib: cdev: support GPIO_V2_LINE_SET_CONFIG_IOCTL")
+> > Signed-off-by: Kent Gibson <warthog618@gmail.com>
+> > ---
+> >  drivers/gpio/gpiolib-cdev.c | 12 +++++++-----
+> >  1 file changed, 7 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
+> > index f7a129d67b7d..ef08b23a56e2 100644
+> > --- a/drivers/gpio/gpiolib-cdev.c
+> > +++ b/drivers/gpio/gpiolib-cdev.c
+> > @@ -1534,12 +1534,14 @@ static long linereq_set_config(struct linereq *lr, void __user *ip)
+> >                 line = &lr->lines[i];
+> >                 desc = lr->lines[i].desc;
+> >                 flags = gpio_v2_line_config_flags(&lc, i);
+> > +               /*
+> > +                * Lines not explicitly reconfigured as input or output
+> > +                * are left unchanged.
+> > +                */
+> > +               if (!(flags & GPIO_V2_LINE_DIRECTION_FLAGS))
+> > +                       continue;
+>
+> Series looks good, thanks. I'd say that this bit here calls for at
+> least a debug-level message since we don't return an error unlike v1.
+> What do you think?
+>
 
-On 5/31/24 17:07, Amelie Delaunay wrote:
-> The High Performance Direct Memory Access (HPDMA) controller is used to
-> perform programmable data transfers between memory-mapped peripherals
-> and memories (or between memories) via linked-lists.
-> 
-> There are 3 instances of HPDMA on stm32mp251, using stm32-dma3 driver, with
-> 16 channels per instance and with one interrupt per channel.
-> Channels 0 to 7 are implemented with a FIFO of 8 bytes.
-> Channels 8 to 11 are implemented with a FIFO of 32 bytes.
-> Channels 12 to 15 are implemented with a FIFO of 128 bytes.
-> Thanks to stm32-dma3 bindings, the user can ask for a channel with specific
-> FIFO size.
-> 
-> Signed-off-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
-> ---
-> v4: use SCMI clocks now that they are available
-> 
-> v2: use SoC specific compatible st,stm32mp25-dma3
-> ---
->   arch/arm64/boot/dts/st/stm32mp251.dtsi | 69 ++++++++++++++++++++++++++
->   1 file changed, 69 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-> index dcd0656d67a8..d057dcee2534 100644
-> --- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
-> +++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-> @@ -107,6 +107,75 @@ soc@0 {
->   		interrupt-parent = <&intc>;
+The change to the libgpiod Python bindings makes use of this to support
+reconfiguration of subsets, so on its own it isn't an abnormal path and
+I'm not sure it warrants even a debug.
 
-...
+OTOH, I did consider if there should be a check that at least one line
+in the reconfig has a direction, returning an error if there are none, but
+was on the fence about it and left it out as it added complexity.
 
-Applied on stm32-next.
+Would that make more sense?
+Or do you have a problem with reconfiguring subsets?
 
-Thanks!!
-Alex
+Cheers,
+Kent.
 
