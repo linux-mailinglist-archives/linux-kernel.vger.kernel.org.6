@@ -1,185 +1,163 @@
-Return-Path: <linux-kernel+bounces-232219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0183991A553
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:32:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFB7B91A558
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:32:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71EC3B22C28
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:32:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD4DE28543E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278FF15688C;
-	Thu, 27 Jun 2024 11:30:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9717D1411EE;
+	Thu, 27 Jun 2024 11:31:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="NqgSWjlQ"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KHiCYvfG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB3FD148FED
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 11:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECF413A409;
+	Thu, 27 Jun 2024 11:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719487833; cv=none; b=JXyUMS6U+XZgQT280E0cpvUN4QjWfetLEavhQpUC9QjZ13TDYWwdfTtLGJZNpGgZjwd8IOxDC8PdssBBWfupKK5hYOt/EJWwKQpn2QghdnHiKurS7vT5BbsO6FEvFXGSLa4UdzDlPaqaVah8tABYOmcxB6axjskLh99z+GhKpFc=
+	t=1719487892; cv=none; b=HDoyZCU1HIc8m1/LS4SmNC+PJWsA7Nl3a1cQKkoZYRyusQbD7a8r7bcRvBtUJlP2UN6jelz34ENOs6dlZbJektulE6xbPokAgAOzQv07iXxNVfHd79WSL/TdXbJ35ehDrzZNoDLVMF1sA2yq+BTdgaecXIsb5Z3i6rQ4CRTK0lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719487833; c=relaxed/simple;
-	bh=+dkNGrY8iUBtOuIAm905KbG4l4iftKZC0lmNmQHFM9E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gvOcGK4Ec2C6Av8D5seUDW5C1k8br1RNlDSzx+NTnWr89N1oMVBiBs/O5n2w12gFbqnA3gKtX8g/FxlSNqO3PTJnRg/J3B8B8DT8LQZkjqrV8K4X2uB/o5FFF3csv3i93nU52VnvlnYigMgOe9pv8MIeTmw3FFSy9DyE9F0fTpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=NqgSWjlQ; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42565cdf99cso4776575e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 04:30:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719487830; x=1720092630; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4BN1xhZxrLr5nolBCZpgMsAlPUqMYeOtqezwGGeoYo0=;
-        b=NqgSWjlQtiVg9hJhTPcdl01U8RR3YdWqo+T/hSXdheMZuxJG82RXQAQruMXHej1sfg
-         oajji3wldwaTKOG+KK9XSH7TfFm7JOaCV9GCBCDpYnEdvPTppQ8H3NyBTQ6vbWuuWS/o
-         +tMQGvw475pqzfIGF4OZxDghXfesa78M/vlip8GqmuquZ0ZtWsjUlOd3VE9SMDfErsuY
-         dST+Wj/sK3n0gAhe69iftieE/j07H+6TfliPzw3EwU6cLayJ+fpYcM7wiby9gnHEn8Ik
-         yrJTZDZvymxjyTY1+NWibl5TQJ2UKLK03Bpbq/igRv6FRPSastzYekGxnZq8ASbNruBp
-         RjLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719487830; x=1720092630;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4BN1xhZxrLr5nolBCZpgMsAlPUqMYeOtqezwGGeoYo0=;
-        b=UstmbXuV7GRbx9ZC4Qh3m9ahgO7lQdpvp4YRXPoW7gCl5g5MRU9tuwsgCdL/ZVCFF9
-         RdNSvas8sriqA09LKGQJwjREzYhEccsO2+tmQKsQKzaqCPtaWchmY3GbbGB6xD0Wr0Fx
-         yTxU8RvIAuxJDvAKAhw0sVwhUv7wsgMs9kLsHMdH4kCte3AbvTFrrmotp37u4R7a4cQH
-         aJ0+OlZBVPdryKeuiaXlQh5DwC73yuPL3ZSt/Z7p/iSeDx7mikYIsvneEAfGpWtX0PYo
-         FmB7AEIEV/vJyQPzP21yUbv1zNogEgOxZU7B5ZAAuSwWTsAgNhh2jYDa6cz7SBSpHtbn
-         Rhpw==
-X-Forwarded-Encrypted: i=1; AJvYcCW8TInJY1NWmhImRPr0tdPyO0KpRFg/gKARHPTy9bh+Y01BQnzwHtQpYnBa6c5HvlVzkhVn3N9osrrSFYhvv217gnO++ukWtq8N4Plg
-X-Gm-Message-State: AOJu0YzfpN+HfAtFDfcoXsqTtJqjecQ+XJqd7zyt9OzYGNbjjTbk1rSC
-	FcxScPdg3PTo2FelYzMYyKnG9WQvYUHJ54gitE/Zq+z77vADte9ZDHVp6xr65bQ=
-X-Google-Smtp-Source: AGHT+IEspJ5tpQhEcaFkouMsqw9DA/rsVOiSsLgs+WQRpheU7yQxhWLnKxJTMUL6UGdqoDGHD8y8EA==
-X-Received: by 2002:a05:6000:4594:b0:362:c7b3:7649 with SMTP id ffacd0b85a97d-366e95eaeedmr10121351f8f.56.1719487830020;
-        Thu, 27 Jun 2024 04:30:30 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:7fe5:47e9:28c5:7f25])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36743699ae0sm1504111f8f.66.2024.06.27.04.30.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 04:30:29 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org,
+	s=arc-20240116; t=1719487892; c=relaxed/simple;
+	bh=JmabHIiJCTQRE0VWY8FRGcaEwDamGVU8PUlw709Ef0Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pxgZCGsVQ8sd3prCc+VnP7ZuenXJ8L4Vl4dQN/4Q+4uJKM5SPR25sDEd+rti+6ZawpgzC3Ej5U++3yl84M0oIo5P5UhlMSLWNgMUYnyig5nlgAGwDoaT0w9miE8GMifZLLpuOHhtBQKhgRO7wu0MlIC2fkYxkiZ5Xc5IwoZubZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KHiCYvfG; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719487891; x=1751023891;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=JmabHIiJCTQRE0VWY8FRGcaEwDamGVU8PUlw709Ef0Q=;
+  b=KHiCYvfG335rXwoc7guun7LeTLDTfG1xLhyO3NCtq1uKT6KauixqED2t
+   yF0NP3L6alcTQ2YIaakWpLp6huzH5/N01PhZh+9txpO4WmPCYyOImBown
+   8buWt/iEJGGMcMMrlV3FovTgF3Nul0hvHEPj+ipQjCHYQC7K3+jkZbBAq
+   DXSh5ne7/Utawc544TLMvS4I/zr+KOiS3J/ECmK4CdspHi5uO5KkwEhXr
+   CyzoFoaD9lR4kHOuIjekRfd3awZAN5WlAhjSAIhPyM2R8a3Qpx3PmDZB5
+   +sxdL2rpV5nyJjNuC9/H0IDsUssnCfMNaITBway18sl+Bb6TJB9woT/QH
+   g==;
+X-CSE-ConnectionGUID: HeL2QwivR96p9ieb09SedA==
+X-CSE-MsgGUID: vpy8guUtR/CptF+RQryQqw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="16427442"
+X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
+   d="scan'208";a="16427442"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 04:31:30 -0700
+X-CSE-ConnectionGUID: F3/UQkc4R8W1dskgzKKJhw==
+X-CSE-MsgGUID: llqONCmBT5O6W8lPncT3Vw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
+   d="scan'208";a="44164257"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 27 Jun 2024 04:31:27 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sMnLY-000G9u-2t;
+	Thu, 27 Jun 2024 11:31:24 +0000
+Date: Thu, 27 Jun 2024 19:31:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v2 net-next 3/3] net: phy: aquantia: add support for aqr115c
-Date: Thu, 27 Jun 2024 13:30:17 +0200
-Message-ID: <20240627113018.25083-4-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240627113018.25083-1-brgl@bgdev.pl>
-References: <20240627113018.25083-1-brgl@bgdev.pl>
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: x1e80100: add soundwire controller
+ resets
+Message-ID: <202406271923.v945xTG8-lkp@intel.com>
+References: <20240624-x1e-swr-reset-v1-3-da326d0733d4@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240624-x1e-swr-reset-v1-3-da326d0733d4@linaro.org>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hi Srinivas,
 
-Add support for a new model to the Aquantia driver. This PHY supports
-Overlocked SGMII mode with 2.5G speeds.
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/net/phy/aquantia/aquantia_main.c | 39 +++++++++++++++++++++++-
- 1 file changed, 38 insertions(+), 1 deletion(-)
+[auto build test WARNING on 781025f172e19ca5682d7bfc5243e7aa74c4977f]
 
-diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
-index 974795bd0860..98ccefd355d5 100644
---- a/drivers/net/phy/aquantia/aquantia_main.c
-+++ b/drivers/net/phy/aquantia/aquantia_main.c
-@@ -29,6 +29,7 @@
- #define PHY_ID_AQR113	0x31c31c40
- #define PHY_ID_AQR113C	0x31c31c12
- #define PHY_ID_AQR114C	0x31c31c22
-+#define PHY_ID_AQR115C	0x31c31c33
- #define PHY_ID_AQR813	0x31c31cb2
- 
- #define MDIO_PHYXS_VEND_IF_STATUS		0xe812
-@@ -111,7 +112,6 @@ static u64 aqr107_get_stat(struct phy_device *phydev, int index)
- 	int len_h = stat->size - len_l;
- 	u64 ret;
- 	int val;
--
- 	val = phy_read_mmd(phydev, MDIO_MMD_C22EXT, stat->reg);
- 	if (val < 0)
- 		return U64_MAX;
-@@ -721,6 +721,18 @@ static int aqr113c_config_init(struct phy_device *phydev)
- 	return aqr107_fill_interface_modes(phydev);
- }
- 
-+static int aqr115c_config_init(struct phy_device *phydev)
-+{
-+	/* Check that the PHY interface type is compatible */
-+	if (phydev->interface != PHY_INTERFACE_MODE_SGMII &&
-+	    phydev->interface != PHY_INTERFACE_MODE_2500BASEX)
-+		return -ENODEV;
-+
-+	phy_set_max_speed(phydev, SPEED_2500);
-+
-+	return 0;
-+}
-+
- static int aqr107_probe(struct phy_device *phydev)
- {
- 	int ret;
-@@ -999,6 +1011,30 @@ static struct phy_driver aqr_driver[] = {
- 	.led_hw_control_get = aqr_phy_led_hw_control_get,
- 	.led_polarity_set = aqr_phy_led_polarity_set,
- },
-+{
-+	PHY_ID_MATCH_MODEL(PHY_ID_AQR115C),
-+	.name           = "Aquantia AQR115C",
-+	.probe          = aqr107_probe,
-+	.get_rate_matching = aqr107_get_rate_matching,
-+	.config_init    = aqr115c_config_init,
-+	.config_aneg    = aqr_config_aneg,
-+	.config_intr    = aqr_config_intr,
-+	.handle_interrupt = aqr_handle_interrupt,
-+	.read_status    = aqr107_read_status,
-+	.get_tunable    = aqr107_get_tunable,
-+	.set_tunable    = aqr107_set_tunable,
-+	.suspend        = aqr107_suspend,
-+	.resume         = aqr107_resume,
-+	.get_sset_count = aqr107_get_sset_count,
-+	.get_strings    = aqr107_get_strings,
-+	.get_stats      = aqr107_get_stats,
-+	.link_change_notify = aqr107_link_change_notify,
-+	.led_brightness_set = aqr_phy_led_brightness_set,
-+	.led_hw_is_supported = aqr_phy_led_hw_is_supported,
-+	.led_hw_control_set = aqr_phy_led_hw_control_set,
-+	.led_hw_control_get = aqr_phy_led_hw_control_get,
-+	.led_polarity_set = aqr_phy_led_polarity_set,
-+},
- {
- 	PHY_ID_MATCH_MODEL(PHY_ID_AQR813),
- 	.name		= "Aquantia AQR813",
-@@ -1042,6 +1078,7 @@ static struct mdio_device_id __maybe_unused aqr_tbl[] = {
- 	{ PHY_ID_MATCH_MODEL(PHY_ID_AQR113) },
- 	{ PHY_ID_MATCH_MODEL(PHY_ID_AQR113C) },
- 	{ PHY_ID_MATCH_MODEL(PHY_ID_AQR114C) },
-+	{ PHY_ID_MATCH_MODEL(PHY_ID_AQR115C) },
- 	{ PHY_ID_MATCH_MODEL(PHY_ID_AQR813) },
- 	{ }
- };
+url:    https://github.com/intel-lab-lkp/linux/commits/Srinivas-Kandagatla/dt-bindings-clock-Add-x1e80100-LPASS-AUDIOCC-reset-controller/20240625-210534
+base:   781025f172e19ca5682d7bfc5243e7aa74c4977f
+patch link:    https://lore.kernel.org/r/20240624-x1e-swr-reset-v1-3-da326d0733d4%40linaro.org
+patch subject: [PATCH 3/3] arm64: dts: qcom: x1e80100: add soundwire controller resets
+config: arm64-randconfig-051-20240627 (https://download.01.org/0day-ci/archive/20240627/202406271923.v945xTG8-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project 326ba38a991250a8587a399a260b0f7af2c9166a)
+dtschema version: 2024.6.dev1+g833054f
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240627/202406271923.v945xTG8-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406271923.v945xTG8-lkp@intel.com/
+
+dtcheck warnings: (new ones prefixed by >>)
+   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: domain-idle-states: cluster-sleep-0: 'idle-state-name' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/power/domain-idle-state.yaml#
+   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: domain-idle-states: cluster-sleep-1: 'idle-state-name' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/power/domain-idle-state.yaml#
+   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: /soc@0/thermal-sensor@c271000: failed to match any schema with compatible: ['qcom,x1e80100-tsens', 'qcom,tsens-v2']
+   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: /soc@0/thermal-sensor@c272000: failed to match any schema with compatible: ['qcom,x1e80100-tsens', 'qcom,tsens-v2']
+   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: /soc@0/thermal-sensor@c273000: failed to match any schema with compatible: ['qcom,x1e80100-tsens', 'qcom,tsens-v2']
+   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: /soc@0/thermal-sensor@c274000: failed to match any schema with compatible: ['qcom,x1e80100-tsens', 'qcom,tsens-v2']
+   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: pci@1bf8000: Unevaluated properties are not allowed ('vddpe-3v3-supply' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
+>> arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: clock-controller@6b6c000: compatible: ['qcom,x1e80100-lpassaudiocc', 'qcom,sc8280xp-lpassaudiocc'] is too long
+   	from schema $id: http://devicetree.org/schemas/clock/qcom,sc8280xp-lpasscc.yaml#
+>> arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: clock-controller@6ea0000: compatible: ['qcom,x1e80100-lpasscc', 'qcom,sc8280xp-lpasscc'] is too long
+   	from schema $id: http://devicetree.org/schemas/clock/qcom,sc8280xp-lpasscc.yaml#
+   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: usb@a2f8800: interrupt-names: ['pwr_event', 'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
+   	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
+   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: /soc@0/arbiter@c400000/spmi@c42d000/pmic@3: failed to match any schema with compatible: ['qcom,pmc8380', 'qcom,spmi-pmic']
+   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: /soc@0/arbiter@c400000/spmi@c42d000/pmic@3/gpio@8800: failed to match any schema with compatible: ['qcom,pmc8380-gpio', 'qcom,spmi-gpio']
+   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: /soc@0/arbiter@c400000/spmi@c42d000/pmic@4: failed to match any schema with compatible: ['qcom,pmc8380', 'qcom,spmi-pmic']
+   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: /soc@0/arbiter@c400000/spmi@c42d000/pmic@4/gpio@8800: failed to match any schema with compatible: ['qcom,pmc8380-gpio', 'qcom,spmi-gpio']
+   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: /soc@0/arbiter@c400000/spmi@c42d000/pmic@5: failed to match any schema with compatible: ['qcom,pmc8380', 'qcom,spmi-pmic']
+   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: /soc@0/arbiter@c400000/spmi@c42d000/pmic@5/gpio@8800: failed to match any schema with compatible: ['qcom,pmc8380-gpio', 'qcom,spmi-gpio']
+   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: /soc@0/arbiter@c400000/spmi@c42d000/pmic@6: failed to match any schema with compatible: ['qcom,pmc8380', 'qcom,spmi-pmic']
+--
+   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: domain-idle-states: cluster-sleep-0: 'idle-state-name' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/power/domain-idle-state.yaml#
+   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: domain-idle-states: cluster-sleep-1: 'idle-state-name' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/power/domain-idle-state.yaml#
+   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: /soc@0/thermal-sensor@c271000: failed to match any schema with compatible: ['qcom,x1e80100-tsens', 'qcom,tsens-v2']
+   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: /soc@0/thermal-sensor@c272000: failed to match any schema with compatible: ['qcom,x1e80100-tsens', 'qcom,tsens-v2']
+   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: /soc@0/thermal-sensor@c273000: failed to match any schema with compatible: ['qcom,x1e80100-tsens', 'qcom,tsens-v2']
+   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: /soc@0/thermal-sensor@c274000: failed to match any schema with compatible: ['qcom,x1e80100-tsens', 'qcom,tsens-v2']
+   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pci@1bf8000: Unevaluated properties are not allowed ('vddpe-3v3-supply' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
+>> arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: clock-controller@6b6c000: compatible: ['qcom,x1e80100-lpassaudiocc', 'qcom,sc8280xp-lpassaudiocc'] is too long
+   	from schema $id: http://devicetree.org/schemas/clock/qcom,sc8280xp-lpasscc.yaml#
+>> arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: clock-controller@6ea0000: compatible: ['qcom,x1e80100-lpasscc', 'qcom,sc8280xp-lpasscc'] is too long
+   	from schema $id: http://devicetree.org/schemas/clock/qcom,sc8280xp-lpasscc.yaml#
+   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: usb@a2f8800: interrupt-names: ['pwr_event', 'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
+   	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
+   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: /soc@0/arbiter@c400000/spmi@c42d000/pmic@3: failed to match any schema with compatible: ['qcom,pmc8380', 'qcom,spmi-pmic']
+   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: /soc@0/arbiter@c400000/spmi@c42d000/pmic@3/gpio@8800: failed to match any schema with compatible: ['qcom,pmc8380-gpio', 'qcom,spmi-gpio']
+   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: /soc@0/arbiter@c400000/spmi@c42d000/pmic@4: failed to match any schema with compatible: ['qcom,pmc8380', 'qcom,spmi-pmic']
+   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: /soc@0/arbiter@c400000/spmi@c42d000/pmic@4/gpio@8800: failed to match any schema with compatible: ['qcom,pmc8380-gpio', 'qcom,spmi-gpio']
+   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: /soc@0/arbiter@c400000/spmi@c42d000/pmic@5: failed to match any schema with compatible: ['qcom,pmc8380', 'qcom,spmi-pmic']
+   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: /soc@0/arbiter@c400000/spmi@c42d000/pmic@5/gpio@8800: failed to match any schema with compatible: ['qcom,pmc8380-gpio', 'qcom,spmi-gpio']
+   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: /soc@0/arbiter@c400000/spmi@c42d000/pmic@6: failed to match any schema with compatible: ['qcom,pmc8380', 'qcom,spmi-pmic']
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
