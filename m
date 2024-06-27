@@ -1,168 +1,126 @@
-Return-Path: <linux-kernel+bounces-232890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2DB991AF8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 21:18:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F73B91AF8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 21:21:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4971F1F22882
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:18:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F2A11F22AE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:21:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2393419AA79;
-	Thu, 27 Jun 2024 19:18:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB4B19AD55;
+	Thu, 27 Jun 2024 19:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d7D2CZnn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rnxGjJzF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663482EAEA;
-	Thu, 27 Jun 2024 19:18:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E362EAEA;
+	Thu, 27 Jun 2024 19:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719515919; cv=none; b=K0Jj7MhIp9cS5xwhlO+en8DVV1Q50svIqc2ULvi2zjAybsZz/cZrCqPSdbrpJVfNlniiU810XlQIr5hJ0gG62HZYROKuaPhjmj7JFGSN0EcnFrnbme83IGhNROoWwuKez2ZJDt5A1WdPxyNoQGEb2aoWx/0slUWgay8hIp8usRc=
+	t=1719516067; cv=none; b=p6yiCVR24bGVyEwI1cDXhR+hl1hKQFuU2JRlMXkavnf9oTY/aIVL4sBzfXCQtNGhrGK+JX03+oYzoTn3RzJOfJzwApmBoyMXxlcKZwpjBi9odQVrxcGawsYBE4dL3gCc8OaPhGyn4To9nGW0T2fKa/xCl0catpqDCB/lyo9WduY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719515919; c=relaxed/simple;
-	bh=Mfh5H1CxCCBXkdkl0aIpRYEfHebAshsjVdelkLPdtrc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H3uiluQ9B64RxMgTOuFTwliHXAY2B8HKTGtnWcP4pH9ibZhh3gP9oWyqcpt1mlxuQHULlNeukINyWTqVDWTageDeeJc7wwdbVlVZz5cD0NwgzUr/+07v+34QLUi7WE/4TigejTrc4XgY7IPYu75dlivBpSCqswso0hBkVh7wszg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d7D2CZnn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37201C2BBFC;
-	Thu, 27 Jun 2024 19:18:37 +0000 (UTC)
+	s=arc-20240116; t=1719516067; c=relaxed/simple;
+	bh=FOryD7S+p5aFAtNfP8udQczJBOpLw1MnsDwuV4JfYbk=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=dOlrn1sodz5a5Enbul061nWdjNkyUp3avGPw8gUCRofNPGy5NsBaDyArMaCK/gwOvkcbFBqigUz7qcXHlDduWjA3CgUM44zMA8AafxymM9AHCSOcQCy8xR1YGvHNEyfGFJgDtrQNU1iCh2JJFm0OwPpQZMyZkfvwY80XeOfGskk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rnxGjJzF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6F05C2BBFC;
+	Thu, 27 Jun 2024 19:21:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719515919;
-	bh=Mfh5H1CxCCBXkdkl0aIpRYEfHebAshsjVdelkLPdtrc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=d7D2CZnn1vLpvysuU2ME7JBu80T75XHsBcmams9VD7htZCi+hF4Mlb+rWuP6PeuYd
-	 nTEwmGb2/1RjYjY0YRwVKpzCimtihJdMevh3c1KaXTGRJtqXzBRK1DRXHWmphT2zqo
-	 0GfS2REKDcoRTlppPMsv4t3Cwe9Q6cMQUsMyGZZtz8OA4EL2dfJ4+HvaVu8l2h8EsL
-	 5S22obIng9rHhOS/10l92QiJbqB1FrtUWmimFlx5qxIfzpVX5A3fLF0KKc8j4z6a/v
-	 5Fq8vPqrQ4P3NA3XINDnmcl3o4EBbn9goW1BVV8dTNn6QnDR4Q76sA0h9lXc6RjVB3
-	 UW5qou2yLteHw==
-Message-ID: <c3875745-dae6-4b79-8c4f-86b4d7147db9@kernel.org>
-Date: Thu, 27 Jun 2024 21:18:35 +0200
+	s=k20201202; t=1719516067;
+	bh=FOryD7S+p5aFAtNfP8udQczJBOpLw1MnsDwuV4JfYbk=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=rnxGjJzF8XxkpTx+dlI9ryECW9TLz9KVDTjv5lq5zjloUmY9HLXAoMPCNgP9WJt82
+	 wMh/yHKfJiWzVA9IgsSVnYYc6vAOecjn0mxaKehy0ykVpUMcvUodDEX3v5mIxhT6Oo
+	 vd6TEVWnvCJPqDgbJV0JoTMg6EXGQpTpBPIW+5J68Z3DCQ9dLXmmSVKVNO7fQfeqgU
+	 EdfyiaztSl3Ab+H829rfpZigtyX0QvTIWZFYmSez2ZkI5ioEyK65eeHMZ+1FDz1iNI
+	 iwcrWMUKPxXAJTC07wnQAFxAXrc9erFcse920mr56wBaP9HPjKRU37HUGQenlZKxqm
+	 5K3IF9Ei1LUQA==
+Date: Thu, 27 Jun 2024 13:21:05 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 2/2] cgroup/rstat: Avoid thundering herd problem by
- kswapd across NUMA nodes
-To: Shakeel Butt <shakeel.butt@linux.dev>, Yosry Ahmed <yosryahmed@google.com>
-Cc: tj@kernel.org, cgroups@vger.kernel.org, hannes@cmpxchg.org,
- lizefan.x@bytedance.com, longman@redhat.com, kernel-team@cloudflare.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <171943667611.1638606.4158229160024621051.stgit@firesoul>
- <171943668946.1638606.1320095353103578332.stgit@firesoul>
- <CAJD7tkbBpPqFW5fhmhcwDAfrze+aj8xFCF+3S4egBfipA4zKgQ@mail.gmail.com>
- <CAJD7tkYFKTA7aLcBE=X0jA1vKG_V+6Z-HstJRnnNrvMnjnLzHw@mail.gmail.com>
- <f4hbugpz5fudmiooxe73dbcbmi4stufm3msu4j37atv2feqhc6@ywai42srcwto>
-Content-Language: en-US
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-In-Reply-To: <f4hbugpz5fudmiooxe73dbcbmi4stufm3msu4j37atv2feqhc6@ywai42srcwto>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Ayush Singh <ayush@beagleboard.org>
+Cc: Vignesh Raghavendra <vigneshr@ti.com>, Mark Brown <broonie@kernel.org>, 
+ jkridner@beagleboard.org, devicetree@vger.kernel.org, 
+ Arnd Bergmann <arnd@arndb.de>, Derek Kiernan <derek.kiernan@amd.com>, 
+ Tero Kristo <kristo@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+ Nishanth Menon <nm@ti.com>, linux-spi@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
+ robertcnelson@beagleboard.org, Dragan Cvetic <dragan.cvetic@amd.com>, 
+ linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ Vaishnav M A <vaishnav@beagleboard.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Michael Walle <mwalle@kernel.org>
+In-Reply-To: <20240627-mikrobus-scratch-spi-v5-3-9e6c148bf5f0@beagleboard.org>
+References: <20240627-mikrobus-scratch-spi-v5-0-9e6c148bf5f0@beagleboard.org>
+ <20240627-mikrobus-scratch-spi-v5-3-9e6c148bf5f0@beagleboard.org>
+Message-Id: <171951606546.381506.1857123060155544778.robh@kernel.org>
+Subject: Re: [PATCH v5 3/7] dt-bindings: mikrobus: Add mikrobus-spi binding
 
 
-
-On 27/06/2024 20.45, Shakeel Butt wrote:
-> On Thu, Jun 27, 2024 at 04:32:03AM GMT, Yosry Ahmed wrote:
->> On Thu, Jun 27, 2024 at 3:33 AM Yosry Ahmed <yosryahmed@google.com> wrote:
-> [...]
->>>
->>> The reason why I suggested that the completion live in struct cgroup
->>> is because there is a chance here that the flush completes and another
->>> irrelevant flush starts between reading cgrp_rstat_ongoing_flusher and
->>> calling wait_for_completion_interruptible_timeout().
+On Thu, 27 Jun 2024 21:56:13 +0530, Ayush Singh wrote:
+> Add bindings for MikroBUS boards using SPI interface.
+> 
+> Almost all of the properties that are valid for SPI devices can be used
+> except reg. Since the goal is to allow use of the same MikroBUS board
+> across different connectors, config needs to be independent of the actual
+> SPI controller in mikroBUS port(s), it is not possible to define the
+> chipselect by number in advance. Thus, `spi-cs-apply` property is used to
+> specify the chipselect(s) by name.
+> 
+> Another important fact is that while there is a CS pin in the mikroBUS
+> connector, some boards (eg SPI Extend Click) use additional pins as
+> chipselect. Thus we need a way to specify the CS pin(s) in terms of
+> mikcrobus-connector which can then handle bindings the actual CS pin(s).
+> 
+> Link: https://www.mikroe.com/spi-extend-click SPI Extend Click
+> 
+> Signed-off-by: Ayush Singh <ayush@beagleboard.org>
+> ---
+>  .../devicetree/bindings/mikrobus/mikrobus-spi.yaml | 37 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  1 +
+>  2 files changed, 38 insertions(+)
 > 
 
-I didn't add this per cgroup because I fear the race of adding a 
-wait_for_completion on a cgroup that gets stuck there, but looking at 
-the code the completion API should be able to avoid this.
+My bot found errors running 'make dt_binding_check' on your patch:
 
+yamllint warnings/errors:
 
-> Yes this can happen if flusher for irrelevant cgroup calls
-> reinit_completion() while the initial flusher was just about to call
-> wait_for_completion_interruptible_timeout().
-> 
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mikrobus/mikrobus-spi.example.dtb: thermo-click: compatible: ['maxim,max31855k', 'mikrobus,spi'] is too long
+	from schema $id: http://devicetree.org/schemas/iio/temperature/maxim,max31855k.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mikrobus/mikrobus-spi.example.dtb: thermo-click: 'reg' is a required property
+	from schema $id: http://devicetree.org/schemas/iio/temperature/maxim,max31855k.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mikrobus/mikrobus-spi.example.dtb: thermo-click: Unevaluated properties are not allowed ('compatible', 'pinctrl-apply', 'spi-cs-apply' were unexpected)
+	from schema $id: http://devicetree.org/schemas/iio/temperature/maxim,max31855k.yaml#
+Documentation/devicetree/bindings/mikrobus/mikrobus-spi.example.dtb: /example-0/thermo-click: failed to match any schema with compatible: ['maxim,max31855k', 'mikrobus,spi']
 
-Restoring two main functions to assist reviewer seeing the race:
+doc reference errors (make refcheckdocs):
 
-On 26/06/2024 23.18, Jesper Dangaard Brouer wrote:
- > +#define MAX_WAIT	msecs_to_jiffies(100)
- > +/* Trylock helper that also checks for on ongoing flusher */
- > +static bool cgroup_rstat_trylock_flusher(struct cgroup *cgrp)
- > +{
- > +retry:
- > +	bool locked = __cgroup_rstat_trylock(cgrp, -1);
- > +	if (!locked) {
- > +		struct cgroup *cgrp_ongoing;
- > +
- > +		/* Lock is contended, lets check if ongoing flusher is
- > +		 * taking care of this, if we are a descendant.
- > +		 */
- > +		cgrp_ongoing = READ_ONCE(cgrp_rstat_ongoing_flusher);
- > +		if (!cgrp_ongoing)
- > +			goto retry;
- > +
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240627-mikrobus-scratch-spi-v5-3-9e6c148bf5f0@beagleboard.org
 
-Long wait/race here, can cause us to see an out-dated cgrp_ongoing.
-And then another CPU manage to reach reinit_completion() below, before
-execution continues here.
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
- > +		if (cgroup_is_descendant(cgrp, cgrp_ongoing)) {
- > +			wait_for_completion_interruptible_timeout(
- > +				&cgrp_rstat_flusher_done, MAX_WAIT);
- > +
- > +			return false;
- > +		}
- > +		__cgroup_rstat_lock(cgrp, -1, false);
- > +	}
- > +	/* Obtained lock, record this cgrp as the ongoing flusher */
- > +	reinit_completion(&cgrp_rstat_flusher_done);
- > +	WRITE_ONCE(cgrp_rstat_ongoing_flusher, cgrp);
- > +
- > +	return true; /* locked */
- > +}
- > +
- > +static void cgroup_rstat_unlock_flusher(struct cgroup *cgrp)
- > +{
- > +	WRITE_ONCE(cgrp_rstat_ongoing_flusher, NULL);
- > +	complete_all(&cgrp_rstat_flusher_done);
- > +	__cgroup_rstat_unlock(cgrp, -1);
- > +}
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
+pip3 install dtschema --upgrade
 
->>>
->>> This will cause the caller to wait for an irrelevant flush, which may
->>> be fine because today the caller would wait for the lock anyway. Just
->>> mentioning this in case you think this may happen enough to be a
->>> problem.
-
-Yes, it would wait for an irrelevant flush.
-
->>
->> Actually, I think this can happen beyond the window I described above.
->> I think it's possible that a thread waits for the flush, then gets
->> woken up when complete_all() is called, but another flusher calls
->> reinit_completion() immediately. The woken up thread will observe
->> completion->done == 0 and go to sleep again.
-> 
-> I don't think it will go to sleep again as there is no retry.
-> 
->>
->> I think most of these cases can be avoided if we make the completion
->> per cgroup. It is still possible to wait for more flushes than
->> necessary, but only if they are for the same cgroup.
-> 
-> Yeah, per-cgroup completion would avoid the problem of waiting for
-> irrelevant flush.
-
-Great, I will code up a version with per-cgroup completion.
-
---Jesper
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
