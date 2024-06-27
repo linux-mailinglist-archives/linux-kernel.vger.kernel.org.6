@@ -1,299 +1,341 @@
-Return-Path: <linux-kernel+bounces-231802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF7BA919E4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 06:34:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09136919E50
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 06:43:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AE0FB2332A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 04:34:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A0441F2566D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 04:43:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F21A946522;
-	Thu, 27 Jun 2024 04:33:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D529A18E28;
+	Thu, 27 Jun 2024 04:43:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="oJz0BbLm"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4bmCgFYN"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F5122F11
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 04:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356D61799D
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 04:43:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719462812; cv=none; b=VRRgKX+63SLRVI3gBfjjCSDEpPz4NnGVbvafMmgKDQs3THezyjURmwiEr/ZCqtC+0ruDbLfq279yPRHLBusdFUJiMTI+PSNBXcjTqYT+GVXbGJhHFAuYhePRvE1KoIZT+oJbo7AazUjY2L3Posv0M8GT+yx7TOSle6BPMjT6KEE=
+	t=1719463420; cv=none; b=VCVuD6ppwXhrrPTxGwbMJMmliAAopiJBOETde37KhuM5vs+Ibkc7CN5emnBJCcQyR6WBNfPbkse68acM92TqqRlG4E3YxxAY7QRJ1H/kMNwZokqUpxr1zb+Rx3gTzmZ7+CI0yxes0+VIFJGe2OqNFNR475yaW3qoxK4a0P5kstU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719462812; c=relaxed/simple;
-	bh=9OHHBeRNYkf08tWVOx58hAsOaRBNPBBISNQUuPYyddg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mNcSmKqYMdRcC5Y7vQA1ZgwoOmJFEcLUCpbuuQF6ntNl7h4leRjiBbfAPaVfUt2xydaISiwrIcWzSdt++HiTfHDhye+GYgH9Qj/2vrLEa2vz0N01WTtC+Vuncd8gxNm35rf+LzOLGp7YG+QdCuL6LZYKjq6rYGa0/8upe8CYKoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=oJz0BbLm; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id E4C6D2C0C2E;
-	Thu, 27 Jun 2024 16:33:22 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1719462802;
-	bh=OyAj5xTANs1fjuTKws7ah8fvMoeSnsG3zKFlZspY/G4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oJz0BbLmXa7Oo/PtEYHyLCZumN+NOpaPYGEFea+bfEvWiiwyrwjwLdc5ytFNx0ora
-	 HO9IbsBV68cacyRQxZ/mBYswWK/NTfaxn5bdKnssP/lJhlbKaB+SkXEqcKmf6SkWtH
-	 e2p77VHDx5LWH1gDQxE5l/2P4hlqRoVbqJZMvisHJOttsQa+cn1EZPgDc1JE+6zaUR
-	 uBzQPgkWHmO9Dai5VwjF6F84ByJJI4hJKu4D4yFIqpl0Zs+517B9Y2yxNaaGDc60pF
-	 QSqVU7zHkXxOLt4cznTPOj03zoJLHIzykQGA3PglsTE3wOu/pCez2nAMokBtOCbjzm
-	 k4dws3Xop8EBA==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B667ceb920003>; Thu, 27 Jun 2024 16:33:22 +1200
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id 0ECCA13EE9B;
-	Thu, 27 Jun 2024 16:33:22 +1200 (NZST)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-	id 0BE9B28078C; Thu, 27 Jun 2024 16:33:22 +1200 (NZST)
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-To: tglx@linutronix.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	tsbogend@alpha.franken.de,
-	daniel.lezcano@linaro.org,
-	paulburton@kernel.org,
-	peterz@infradead.org,
-	mail@birger-koblitz.de,
-	bert@biot.com,
-	john@phrozen.org,
-	sander@svanheule.net
-Cc: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	kabel@kernel.org,
-	ericwouds@gmail.com,
-	Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH v3 9/9] mips: dts: realtek: Add RTL9302C board
-Date: Thu, 27 Jun 2024 16:33:17 +1200
-Message-ID: <20240627043317.3751996-10-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240627043317.3751996-1-chris.packham@alliedtelesis.co.nz>
-References: <20240627043317.3751996-1-chris.packham@alliedtelesis.co.nz>
+	s=arc-20240116; t=1719463420; c=relaxed/simple;
+	bh=d8yFX4pftbWbyhnQJoGAUL01yHraB+5XMSuiFs6igLc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=JSV6/r6qMJt6or/j7tq0yb93ZIl5611kB/LpAFujEHpVhVgNaCRGzDh4TlequCs8aHXkNaZ5JxeqPRw+WPn5R/VIfiP2JwzqeWcPaDAyJiDT3B3bUQz5CiaxTyRTnb8pPP5FIIfLDdbGG1/C51PS7cJ59ZpS3Cc/NMGZqA2OgqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuzhao.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4bmCgFYN; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yuzhao.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e0322e5d0daso2480745276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 21:43:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719463418; x=1720068218; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=hdRtKbQiOkGUeLR6KDBlvVV6ztPezKPNE7EFhbYdET8=;
+        b=4bmCgFYNrZ2hUxqiqVCzVZVult9GCNYYDW2KnVAaKUBPoF9l6PV1CEq9uoGiKGMZ2W
+         MHWEZSeXvgjqlNuln6eSmhw+O7bAOLk3rg1hFqeBo36clmMQhWMeB9sQLO8mfm/8te9Z
+         z7AY6CJMIZTocHXJYHaUYMec4EY0x/QUupFmXdBKywK34ftUmccsFf0k+lci63i4TBW3
+         gbhUh/4/mXiO8d0xf5LmEhzzsq8JxxprytzmeD4Ue1CfUuiheggN7GKf//F51fmaZ4T+
+         YrlH/CErMSyop/vssP61oPgRwOSuftAGQCWQydCopo2QM3lTqHGJHS/eHo86//HF2mda
+         Vvhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719463418; x=1720068218;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hdRtKbQiOkGUeLR6KDBlvVV6ztPezKPNE7EFhbYdET8=;
+        b=hJGE5pGmxBvj30gQI4DucI8ZNIv0a5G3vqSFB2T4e6iENj8lDnA5qE5zBkuykl0uJE
+         O1xrhv52A/ObuEIK78idQf27vNjXvSTohbwUjo3tCUTVr0Vm8CCr2Lag0ryoMku3BuGO
+         hTfMmaa3tQXxh+c5JxfXgXhnPm/YqO+3igu1uXbe/S8uk01hkYgyEs5xHpUbhzKOFOUx
+         2pQlTCOXd+d4H+RNcqgVklj3XTaSimrNsNpL9HjniBJAxzHd9pJgxiC0IqlE+MXZShgR
+         1uuXoGXaETq2NMPAqnhjPsyw7nBTtiAuTm1Jplo5eWnEzDnJS0Sy/T3MjdCi+D2QnQE7
+         TkVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgQkWWBVNuk6ek0mI2YfIIPH8tsHuSCP+Pob1FH3SXkiGJpZTC7Zo5N6XM7ffc/VsLS4C/9Xypn1uEhJPnkjrgb8wUbUBYgy38jof1
+X-Gm-Message-State: AOJu0Yzn+2RgAm2vDKp5vRgmOKOkmh959pyCQXxPBVH+i065BSwW+k1H
+	HhMz1qtyzW4wMpxC7CqvyI4dqk1nKx/vWMeGjFY3+u9p4y8D/sgjnCuvaL0DWET+yUHVGJ2kcNw
+	qTQ==
+X-Google-Smtp-Source: AGHT+IELOZfdvbJRxtxyvrlCwB2OQtSBvFck+2H0B3d4kUKw92oWpBAzgjoIfxEO7GlE1eBl4BMLNb7GVJA=
+X-Received: from yuzhao2.bld.corp.google.com ([2a00:79e0:2e28:6:edf9:510d:6ad1:f544])
+ (user=yuzhao job=sendgmr) by 2002:a25:ae07:0:b0:e02:f3cf:9454 with SMTP id
+ 3f1490d57ef6-e034508affamr5146276.2.1719463418116; Wed, 26 Jun 2024 21:43:38
+ -0700 (PDT)
+Date: Wed, 26 Jun 2024 22:43:34 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=CvQccW4D c=1 sm=1 tr=0 ts=667ceb92 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=T1WGqf2p2xoA:10 a=FkagyKZCYwirPjr5IuAA:9 a=3ZKOabzyN94A:10
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
+Message-ID: <20240627044335.2698578-1-yuzhao@google.com>
+Subject: [PATCH mm-unstable v1] mm/hugetlb_vmemmap: fix race with speculative
+ PFN walkers
+From: Yu Zhao <yuzhao@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Muchun Song <muchun.song@linux.dev>
+Cc: David Hildenbrand <david@redhat.com>, Frank van der Linden <fvdl@google.com>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Peter Xu <peterx@redhat.com>, 
+	Yang Shi <yang@os.amperecomputing.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Yu Zhao <yuzhao@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Add support for the RTL9302 SoC and the RTL9302C_2xRTL8224_2XGE
-reference board.
+While investigating HVO for THPs [1], it turns out that speculative
+PFN walkers like compaction can race with vmemmap modifications, e.g.,
 
-The RTL930x family of SoCs are Realtek switches with an embedded MIPS
-core (800MHz 34Kc). Most of the peripherals are similar to the RTL838x
-SoC and can make use of many existing drivers.
+  CPU 1 (vmemmap modifier)         CPU 2 (speculative PFN walker)
+  -------------------------------  ------------------------------
+  Allocates an LRU folio page1
+                                   Sees page1
+  Frees page1
 
-Add in full DSA switch support is still a work in progress.
+  Allocates a hugeTLB folio page2
+  (page1 being a tail of page2)
 
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+  Updates vmemmap mapping page1
+                                   get_page_unless_zero(page1)
+
+Even though page1->_refcount is zero after HVO, get_page_unless_zero()
+can still try to modify this read-only field, resulting in a crash.
+
+An independent report [2] confirmed this race.
+
+There are two discussed approaches to fix this race:
+1. Make RO vmemmap RW so that get_page_unless_zero() can fail without
+   triggering a PF.
+2. Use RCU to make sure get_page_unless_zero() either sees zero
+   page->_refcount through the old vmemmap or non-zero page->_refcount
+   through the new one.
+
+The second approach is preferred here because:
+1. It can prevent illegal modifications to struct page[] that has been
+   HVO'ed;
+2. It can be generalized, in a way similar to ZERO_PAGE(), to fix
+   similar races in other places, e.g., arch_remove_memory() on x86
+   [3], which frees vmemmap mapping offlined struct page[].
+
+While adding synchronize_rcu(), the goal is to be surgical, rather
+than optimized. Specifically, calls to synchronize_rcu() on the error
+handling paths can be coalesced, but it is not done for the sake of
+Simplicity: noticeably, this fix removes ~50% more lines than it adds.
+
+[1] https://lore.kernel.org/20240229183436.4110845-4-yuzhao@google.com/
+[2] https://lore.kernel.org/917FFC7F-0615-44DD-90EE-9F85F8EA9974@linux.dev/
+[3] https://lore.kernel.org/be130a96-a27e-4240-ad78-776802f57cad@redhat.com/
+
+Signed-off-by: Yu Zhao <yuzhao@google.com>
 ---
+ include/linux/page_ref.h |  8 +++++-
+ mm/hugetlb.c             | 53 ++++++----------------------------------
+ mm/hugetlb_vmemmap.c     | 16 ++++++++++++
+ 3 files changed, 30 insertions(+), 47 deletions(-)
 
-Notes:
-    Changes in v3:
-    - Use full board name
-    Changes in v2:
-    - Use specific compatibles instead of rtl930x
-    - Remove unnecessary irq flags (interrupt controller is one-cell)
-    - Remove earlycon
-    - Name clocks as recommended in dt schema
-
- arch/mips/boot/dts/realtek/Makefile           |  1 +
- .../cameo-rtl9302c-2x-rtl8224-2xge.dts        | 73 +++++++++++++++++
- arch/mips/boot/dts/realtek/rtl930x.dtsi       | 79 +++++++++++++++++++
- 3 files changed, 153 insertions(+)
- create mode 100644 arch/mips/boot/dts/realtek/cameo-rtl9302c-2x-rtl8224-=
-2xge.dts
- create mode 100644 arch/mips/boot/dts/realtek/rtl930x.dtsi
-
-diff --git a/arch/mips/boot/dts/realtek/Makefile b/arch/mips/boot/dts/rea=
-ltek/Makefile
-index fba4e93187a6..d2709798763f 100644
---- a/arch/mips/boot/dts/realtek/Makefile
-+++ b/arch/mips/boot/dts/realtek/Makefile
-@@ -1,2 +1,3 @@
- # SPDX-License-Identifier: GPL-2.0
- dtb-y	+=3D cisco_sg220-26.dtb
-+dtb-y	+=3D cameo-rtl9302c-2x-rtl8224-2xge.dtb
-diff --git a/arch/mips/boot/dts/realtek/cameo-rtl9302c-2x-rtl8224-2xge.dt=
-s b/arch/mips/boot/dts/realtek/cameo-rtl9302c-2x-rtl8224-2xge.dts
-new file mode 100644
-index 000000000000..b51e10ae4950
---- /dev/null
-+++ b/arch/mips/boot/dts/realtek/cameo-rtl9302c-2x-rtl8224-2xge.dts
-@@ -0,0 +1,73 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/dts-v1/;
+diff --git a/include/linux/page_ref.h b/include/linux/page_ref.h
+index 490d0ad6e56d..8c236c651d1d 100644
+--- a/include/linux/page_ref.h
++++ b/include/linux/page_ref.h
+@@ -230,7 +230,13 @@ static inline int folio_ref_dec_return(struct folio *folio)
+ 
+ static inline bool page_ref_add_unless(struct page *page, int nr, int u)
+ {
+-	bool ret = atomic_add_unless(&page->_refcount, nr, u);
++	bool ret = false;
 +
-+#include "rtl930x.dtsi"
++	rcu_read_lock();
++	/* avoid writing to the vmemmap area being remapped */
++	if (!page_is_fake_head(page) && page_ref_count(page) != u)
++		ret = atomic_add_unless(&page->_refcount, nr, u);
++	rcu_read_unlock();
+ 
+ 	if (page_ref_tracepoint_active(page_ref_mod_unless))
+ 		__page_ref_mod_unless(page, nr, ret);
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 9691624fcb79..1ddaf25737da 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -1629,13 +1629,10 @@ static inline void destroy_compound_gigantic_folio(struct folio *folio,
+  * folio appears as just a compound page.  Otherwise, wait until after
+  * allocating vmemmap to clear the flag.
+  *
+- * A reference is held on the folio, except in the case of demote.
+- *
+  * Must be called with hugetlb lock held.
+  */
+-static void __remove_hugetlb_folio(struct hstate *h, struct folio *folio,
+-							bool adjust_surplus,
+-							bool demote)
++static void remove_hugetlb_folio(struct hstate *h, struct folio *folio,
++							bool adjust_surplus)
+ {
+ 	int nid = folio_nid(folio);
+ 
+@@ -1657,6 +1654,7 @@ static void __remove_hugetlb_folio(struct hstate *h, struct folio *folio,
+ 		h->surplus_huge_pages_node[nid]--;
+ 	}
+ 
++	folio_clear_hugetlb_freed(folio);
+ 	/*
+ 	 * We can only clear the hugetlb flag after allocating vmemmap
+ 	 * pages.  Otherwise, someone (memory error handling) may try to write
+@@ -1665,33 +1663,13 @@ static void __remove_hugetlb_folio(struct hstate *h, struct folio *folio,
+ 	if (!folio_test_hugetlb_vmemmap_optimized(folio))
+ 		__folio_clear_hugetlb(folio);
+ 
+-	 /*
+-	  * In the case of demote we do not ref count the page as it will soon
+-	  * be turned into a page of smaller size.
+-	 */
+-	if (!demote)
+-		folio_ref_unfreeze(folio, 1);
+-
+ 	h->nr_huge_pages--;
+ 	h->nr_huge_pages_node[nid]--;
+ }
+ 
+-static void remove_hugetlb_folio(struct hstate *h, struct folio *folio,
+-							bool adjust_surplus)
+-{
+-	__remove_hugetlb_folio(h, folio, adjust_surplus, false);
+-}
+-
+-static void remove_hugetlb_folio_for_demote(struct hstate *h, struct folio *folio,
+-							bool adjust_surplus)
+-{
+-	__remove_hugetlb_folio(h, folio, adjust_surplus, true);
+-}
+-
+ static void add_hugetlb_folio(struct hstate *h, struct folio *folio,
+ 			     bool adjust_surplus)
+ {
+-	int zeroed;
+ 	int nid = folio_nid(folio);
+ 
+ 	VM_BUG_ON_FOLIO(!folio_test_hugetlb_vmemmap_optimized(folio), folio);
+@@ -1715,21 +1693,6 @@ static void add_hugetlb_folio(struct hstate *h, struct folio *folio,
+ 	 */
+ 	folio_set_hugetlb_vmemmap_optimized(folio);
+ 
+-	/*
+-	 * This folio is about to be managed by the hugetlb allocator and
+-	 * should have no users.  Drop our reference, and check for others
+-	 * just in case.
+-	 */
+-	zeroed = folio_put_testzero(folio);
+-	if (unlikely(!zeroed))
+-		/*
+-		 * It is VERY unlikely soneone else has taken a ref
+-		 * on the folio.  In this case, we simply return as
+-		 * free_huge_folio() will be called when this other ref
+-		 * is dropped.
+-		 */
+-		return;
+-
+ 	arch_clear_hugetlb_flags(folio);
+ 	enqueue_hugetlb_folio(h, folio);
+ }
+@@ -1783,6 +1746,8 @@ static void __update_and_free_hugetlb_folio(struct hstate *h,
+ 		spin_unlock_irq(&hugetlb_lock);
+ 	}
+ 
++	folio_ref_unfreeze(folio, 1);
 +
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/leds/common.h>
-+#include <dt-bindings/thermal/thermal.h>
+ 	/*
+ 	 * Non-gigantic pages demoted from CMA allocated gigantic pages
+ 	 * need to be given back to CMA in free_gigantic_folio.
+@@ -3106,11 +3071,8 @@ static int alloc_and_dissolve_hugetlb_folio(struct hstate *h,
+ 
+ free_new:
+ 	spin_unlock_irq(&hugetlb_lock);
+-	if (new_folio) {
+-		/* Folio has a zero ref count, but needs a ref to be freed */
+-		folio_ref_unfreeze(new_folio, 1);
++	if (new_folio)
+ 		update_and_free_hugetlb_folio(h, new_folio, false);
+-	}
+ 
+ 	return ret;
+ }
+@@ -3965,7 +3927,7 @@ static int demote_free_hugetlb_folio(struct hstate *h, struct folio *folio)
+ 
+ 	target_hstate = size_to_hstate(PAGE_SIZE << h->demote_order);
+ 
+-	remove_hugetlb_folio_for_demote(h, folio, false);
++	remove_hugetlb_folio(h, folio, false);
+ 	spin_unlock_irq(&hugetlb_lock);
+ 
+ 	/*
+@@ -3979,7 +3941,6 @@ static int demote_free_hugetlb_folio(struct hstate *h, struct folio *folio)
+ 		if (rc) {
+ 			/* Allocation of vmemmmap failed, we can not demote folio */
+ 			spin_lock_irq(&hugetlb_lock);
+-			folio_ref_unfreeze(folio, 1);
+ 			add_hugetlb_folio(h, folio, false);
+ 			return rc;
+ 		}
+diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
+index fa00d61b6c5a..829112b0a914 100644
+--- a/mm/hugetlb_vmemmap.c
++++ b/mm/hugetlb_vmemmap.c
+@@ -455,6 +455,8 @@ static int __hugetlb_vmemmap_restore_folio(const struct hstate *h,
+ 	unsigned long vmemmap_reuse;
+ 
+ 	VM_WARN_ON_ONCE_FOLIO(!folio_test_hugetlb(folio), folio);
++	VM_WARN_ON_ONCE_FOLIO(folio_ref_count(folio), folio);
 +
-+/ {
-+	compatible =3D "cameo,rtl9302c-2x-rtl8224-2xge", "realtek,rtl9302-soc";
-+	model =3D "RTL9302C Development Board";
+ 	if (!folio_test_hugetlb_vmemmap_optimized(folio))
+ 		return 0;
+ 
+@@ -490,6 +492,9 @@ static int __hugetlb_vmemmap_restore_folio(const struct hstate *h,
+  */
+ int hugetlb_vmemmap_restore_folio(const struct hstate *h, struct folio *folio)
+ {
++	/* avoid writes from page_ref_add_unless() while unfolding vmemmap */
++	synchronize_rcu();
 +
-+	memory@0 {
-+		device_type =3D "memory";
-+		reg =3D <0x0 0x8000000>;
-+	};
+ 	return __hugetlb_vmemmap_restore_folio(h, folio, 0);
+ }
+ 
+@@ -514,6 +519,9 @@ long hugetlb_vmemmap_restore_folios(const struct hstate *h,
+ 	long restored = 0;
+ 	long ret = 0;
+ 
++	/* avoid writes from page_ref_add_unless() while unfolding vmemmap */
++	synchronize_rcu();
 +
-+	chosen {
-+		stdout-path =3D "serial0:115200n8";
-+	};
-+};
+ 	list_for_each_entry_safe(folio, t_folio, folio_list, lru) {
+ 		if (folio_test_hugetlb_vmemmap_optimized(folio)) {
+ 			ret = __hugetlb_vmemmap_restore_folio(h, folio,
+@@ -559,6 +567,8 @@ static int __hugetlb_vmemmap_optimize_folio(const struct hstate *h,
+ 	unsigned long vmemmap_reuse;
+ 
+ 	VM_WARN_ON_ONCE_FOLIO(!folio_test_hugetlb(folio), folio);
++	VM_WARN_ON_ONCE_FOLIO(folio_ref_count(folio), folio);
 +
-+&uart0 {
-+	status =3D "okay";
-+};
+ 	if (!vmemmap_should_optimize_folio(h, folio))
+ 		return ret;
+ 
+@@ -610,6 +620,9 @@ void hugetlb_vmemmap_optimize_folio(const struct hstate *h, struct folio *folio)
+ {
+ 	LIST_HEAD(vmemmap_pages);
+ 
++	/* avoid writes from page_ref_add_unless() while folding vmemmap */
++	synchronize_rcu();
 +
-+&spi0 {
-+	status =3D "okay";
-+	flash@0 {
-+		compatible =3D "jedec,spi-nor";
-+		reg =3D <0>;
-+		spi-max-frequency =3D <10000000>;
+ 	__hugetlb_vmemmap_optimize_folio(h, folio, &vmemmap_pages, 0);
+ 	free_vmemmap_page_list(&vmemmap_pages);
+ }
+@@ -653,6 +666,9 @@ void hugetlb_vmemmap_optimize_folios(struct hstate *h, struct list_head *folio_l
+ 
+ 	flush_tlb_all();
+ 
++	/* avoid writes from page_ref_add_unless() while folding vmemmap */
++	synchronize_rcu();
 +
-+		partitions {
-+			compatible =3D "fixed-partitions";
-+			#address-cells =3D <1>;
-+			#size-cells =3D <1>;
-+
-+			partition@0 {
-+				label =3D "u-boot";
-+				reg =3D <0x0 0xe0000>;
-+				read-only;
-+			};
-+			partition@e0000 {
-+				label =3D "u-boot-env";
-+				reg =3D <0xe0000 0x10000>;
-+			};
-+			partition@f0000 {
-+				label =3D "u-boot-env2";
-+				reg =3D <0xf0000 0x10000>;
-+				read-only;
-+			};
-+			partition@100000 {
-+				label =3D "jffs";
-+				reg =3D <0x100000 0x100000>;
-+			};
-+			partition@200000 {
-+				label =3D "jffs2";
-+				reg =3D <0x200000 0x100000>;
-+			};
-+			partition@300000 {
-+				label =3D "runtime";
-+				reg =3D <0x300000 0xe80000>;
-+			};
-+			partition@1180000 {
-+				label =3D "runtime2";
-+				reg =3D <0x1180000 0xe80000>;
-+			};
-+		};
-+	};
-+};
-diff --git a/arch/mips/boot/dts/realtek/rtl930x.dtsi b/arch/mips/boot/dts=
-/realtek/rtl930x.dtsi
-new file mode 100644
-index 000000000000..f271940f82be
---- /dev/null
-+++ b/arch/mips/boot/dts/realtek/rtl930x.dtsi
-@@ -0,0 +1,79 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR BSD-2-Clause
-+
-+#include "rtl83xx.dtsi"
-+
-+/ {
-+	compatible =3D "realtek,rtl9302-soc";
-+
-+	cpus {
-+		#address-cells =3D <1>;
-+		#size-cells =3D <0>;
-+
-+		cpu@0 {
-+			device_type =3D "cpu";
-+			compatible =3D "mips,mips34Kc";
-+			reg =3D <0>;
-+			clocks =3D <&baseclk 0>;
-+			clock-names =3D "cpu";
-+		};
-+	};
-+
-+	baseclk: clock-800mhz {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency =3D <800000000>;
-+	};
-+
-+	lx_clk: clock-175mhz {
-+		compatible =3D "fixed-clock";
-+		#clock-cells =3D <0>;
-+		clock-frequency  =3D <175000000>;
-+	};
-+};
-+
-+&soc {
-+	intc: interrupt-controller@3000 {
-+		compatible =3D "realtek,rtl9300-intc", "realtek,rtl-intc";
-+		reg =3D <0x3000 0x18>, <0x3018 0x18>;
-+		interrupt-controller;
-+		#interrupt-cells =3D <1>;
-+
-+		interrupt-parent =3D <&cpuintc>;
-+		interrupts =3D <2>, <3>, <4>, <5>, <6>, <7>;
-+	};
-+
-+	spi0: spi@1200 {
-+		compatible =3D "realtek,rtl8380-spi";
-+		reg =3D <0x1200 0x100>;
-+
-+		#address-cells =3D <1>;
-+		#size-cells =3D <0>;
-+	};
-+
-+	timer0: timer@3200 {
-+		compatible =3D "realtek,rtl9302-timer", "realtek,otto-timer";
-+		reg =3D <0x3200 0x10>, <0x3210 0x10>, <0x3220 0x10>,
-+		    <0x3230 0x10>, <0x3240 0x10>;
-+
-+		interrupt-parent =3D <&intc>;
-+		interrupts =3D <7>, <8>, <9>, <10>, <11>;
-+		clocks =3D <&lx_clk>;
-+	};
-+};
-+
-+&uart0 {
-+	/delete-property/ clock-frequency;
-+	clocks =3D <&lx_clk>;
-+
-+	interrupt-parent =3D <&intc>;
-+	interrupts =3D <30>;
-+};
-+
-+&uart1 {
-+	/delete-property/ clock-frequency;
-+	clocks =3D <&lx_clk>;
-+
-+	interrupt-parent =3D <&intc>;
-+	interrupts =3D <31>;
-+};
-+
---=20
-2.45.2
+ 	list_for_each_entry(folio, folio_list, lru) {
+ 		int ret;
+ 
+-- 
+2.45.2.803.g4e1b14247a-goog
 
 
