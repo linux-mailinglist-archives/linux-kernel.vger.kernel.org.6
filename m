@@ -1,145 +1,142 @@
-Return-Path: <linux-kernel+bounces-232586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD9A391AB3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:29:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E9FB91AB3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:29:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F76A1F29282
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:29:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 435321F29341
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ECBA1991A9;
-	Thu, 27 Jun 2024 15:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DiLrGhdW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A808B198E66;
-	Thu, 27 Jun 2024 15:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E819199228;
+	Thu, 27 Jun 2024 15:28:29 +0000 (UTC)
+Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9008E197A61;
+	Thu, 27 Jun 2024 15:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.160.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719502075; cv=none; b=uJEieeVUuzM3n/zyKcjMCIQRDJRLwed2BKGoSfddXyjiud3j7FTDZuSDEwZQO5BmWjLKdwmwuW3bM/4rLZhTu6+Rogu4dFcOaG0pnw8DA4hyibty6n7kv8v/uTle8NVLNsXFnH21sr4ifA3jVfqP5s4UiwL4oWg1XmBZLI6G2f4=
+	t=1719502108; cv=none; b=fASkRQSpSoOg+8bqam3X+KxU4JScZjZqBSVKSROAg8DKPXJ8gjp4eqqyhjNjHiXVZo9JqmSfCJrwvJtQwcfCSK4WREJBmgnUzxKZI8VBmmAqAANJONubbuDEUkmEJG1KApG9s9dfvysWcf6znvP5e+stO+26hCcWfim11X2gRQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719502075; c=relaxed/simple;
-	bh=9cPgU3lKZ5sHDxRTQaP3BVTiignn+lYlySeU6Ux/fys=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XXp7/9lEzGjYe8Hm28maEsGajQtH1TwSt8jn1vibjtv9z/TvU0jtSX+JInrIbwBA2+Yrl5+kxmlGOzO0BSuWqji/jm0PSlOtwiPowsX3Bsln93NdfCQ2RUHPOsPB9iDO3PoB3Cksb/wrs2hlk/Aq3gbbZxJ3p62fDM7nQZNWLho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DiLrGhdW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71DA8C2BBFC;
-	Thu, 27 Jun 2024 15:27:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719502075;
-	bh=9cPgU3lKZ5sHDxRTQaP3BVTiignn+lYlySeU6Ux/fys=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DiLrGhdWBpmA3W1tjY7IIBB1Gg6aIbnJO0AzMMaDUklbi1yYhpui73U2buHSeePuE
-	 De4azC/U+G0f/w2z6h+SI8wlHf3m9DtRk+3rdOmLk4RW+pStAVkC+qAQKSghXVDCte
-	 VS6rfeGQswgi4zxj8FxOJ7oWojvz5qdQq76aB7WW49tL2lRlHnDE48qRNXasf7gnk8
-	 EhtZ8yPP9XKFiZ79nu2NV8VDAE8G+jdrmvF58O46dzBfjhSr9OkrMZce29/ZczrvUI
-	 6+BN8ml8JSWe9n4HSX9zP5tsJdfPCesQgO6SMkdqivZQWQglcKsIHbQ9SElUU8Pz9/
-	 etKli/S9h+zLg==
-Message-ID: <b1b6ccc8-ab83-4d4e-8902-769e12975580@kernel.org>
-Date: Thu, 27 Jun 2024 17:27:49 +0200
+	s=arc-20240116; t=1719502108; c=relaxed/simple;
+	bh=HbuetP97OhPn2PucQXYuYhb6lAy9dew5SWP2gwy7epk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ItvZU2VGrFqKt9O013UWsveR9UA0FEHSs06+qPN/ALGUjXrfrs5/gW1otHIqUcDv59sYQ8ZvFuRc8k4rxVXjgtubCO1u42H0+0ZnBM6bJSfKSOLLhW/5aSY3svz6lQEnQTku2UvEPbUo3zqlMTYcxIfJIKCkUKm772+UKncGA2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp; spf=pass smtp.mailfrom=parknet.co.jp; arc=none smtp.client-ip=210.171.160.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=parknet.co.jp
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+	by mail.parknet.co.jp (Postfix) with ESMTPSA id C45A62055FA2;
+	Fri, 28 Jun 2024 00:28:16 +0900 (JST)
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+	by ibmpc.myhome.or.jp (8.18.1/8.18.1/Debian-4) with ESMTPS id 45RFSFAl004936
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Fri, 28 Jun 2024 00:28:16 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+	by devron.myhome.or.jp (8.18.1/8.18.1/Debian-4) with ESMTPS id 45RFSFFO018977
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Fri, 28 Jun 2024 00:28:15 +0900
+Received: (from hirofumi@localhost)
+	by devron.myhome.or.jp (8.18.1/8.18.1/Submit) id 45RFSEDH018975;
+	Fri, 28 Jun 2024 00:28:14 +0900
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Gwendal
+ Grignou <gwendal@chromium.org>, dlunev@chromium.org
+Subject: Re: [PATCH v2 2/2] fat: always use dir_emit_dots and ignore . and
+ .. entries
+In-Reply-To: <Zn1gQeWToPNkp9nt@quatroqueijos.cascardo.eti.br> (Thadeu Lima de
+	Souza Cascardo's message of "Thu, 27 Jun 2024 09:51:13 -0300")
+References: <20240625175133.922758-1-cascardo@igalia.com>
+	<20240625175133.922758-3-cascardo@igalia.com>
+	<871q4kae58.fsf@mail.parknet.co.jp>
+	<ZnxwEtmYeZcKopJK@quatroqueijos.cascardo.eti.br>
+	<87a5j7v517.fsf@mail.parknet.co.jp>
+	<Zn1gQeWToPNkp9nt@quatroqueijos.cascardo.eti.br>
+Date: Fri, 28 Jun 2024 00:28:14 +0900
+Message-ID: <87jzial81d.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] pinctrl: samsung: Add support for pull-up and
- pull-down
-To: Vishnu Reddy <vishnu.reddy@samsung.com>,
- 'Krzysztof Kozlowski' <krzysztof.kozlowski@linaro.org>,
- s.nawrocki@samsung.com, alim.akhtar@samsung.com, linus.walleij@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
- pankaj.dubey@samsung.com, ravi.patel@samsung.com, gost.dev@samsung.com
-References: <CGME20240620103950epcas5p10514d4a19bdfd505d7d92ceb1fe10cc7@epcas5p1.samsung.com>
- <20240620103410.35786-1-vishnu.reddy@samsung.com>
- <38fae674-f672-46e0-a44e-1278deaaf36a@kernel.org>
- <07f201dac7be$e81317d0$b8394770$@samsung.com>
- <4efb51f3-4600-4d88-a5df-e7be43294d53@linaro.org>
- <086b01dac896$e988fed0$bc9afc70$@samsung.com>
- <dbe55275-a13e-46a3-8b45-b08c301088d4@kernel.org>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <dbe55275-a13e-46a3-8b45-b08c301088d4@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 27/06/2024 17:22, Krzysztof Kozlowski wrote:
-> On 27/06/2024 15:35, Vishnu Reddy wrote:
->>>
->>> I don't remember the code used here, but usually such choices are
->>> determined by driver match data (and flags or value customized per variant).
->> Hi, Thanks for suggestion.
->> I have gone through this and found that driver match data in this driver is stored in the __initconst section, which is freed up after kernel initialization. So we have two options:
->> 1: Keep this platform specific data in driver match data and then populate driver_data field in probe function. 
->> 2: Use compatible matching and set different values during set_config. 
->>
->> First approach will result in many changes, such as populating  driver match data for all platforms and then storing the same in driver_data in probe.
->>
->> In the second approach, we can handle this using simple if/else based on a compatible match. 
->>
->> IMO, second approach would be simpler and introduce less changes. Any suggestions from your end?
-> 
-> Please wrap your email according to mailing list style.
-> 
-> Both options are not the way because you introduce a new, different
-> style of handling per-variant customization. The driver already parses
-> match data and stores such per-variant-details in different places, like
-> samsung_pin_bank or samsung_pinctrl_drv_data. This seems like a value
-> fixed per entire device, so could go to samsung_pinctrl_drv_data.
+Thadeu Lima de Souza Cascardo <cascardo@igalia.com> writes:
 
-... although maybe this matches your first option? Not sure.
+>> First of all, I'm not thinking this is the fix, I'm thinking this as the
+>> workaround of broken formatter (because the windows's fsck also think it
+>> as broken). So very low priority to support.
+>> 
+>> As said, I also think low chance to break the userspace. However it
+>> changes real offset to pseudo offset. So if userspace saved it to
+>> persistent space, breaks userspace. Unlikely, but I think there is no
+>> value to change the behavior for workaround.
+>
+> So I started doing some investigation and that lead me to the following
+> code from fs/fat/inode.c:
+>
+> static void fat_evict_inode(struct inode *inode)
+> {
+> 	truncate_inode_pages_final(&inode->i_data);
+> 	if (!inode->i_nlink) {
+> 		inode->i_size = 0;
+> 		fat_truncate_blocks(inode, 0);
+> 	} else
+> 		fat_free_eofblocks(inode);
+> [...]
+>
+> That is, since the directory has no links, once it is evicted (which
+> happens right after reading the number of subdirectories and failing
+> verification), it is truncated. That means all clusters are marked as FREE.
+> Then, later, if trying to fsck or mount this filesystem again, the
+> directory entry is removed or further errors show up (as an EOF is
+> expected, not a FREE cluster).
+>
+> And that is caused by attributing a number of 0 links. I looked it up on
+> how other filesystems handle this situation and I found out that exfat adds
+> 2 to the number of subdirectories, just as I am suggesting. When
+> enumerating the directories (at its readdir), it also relies on
+> dir_emit_dots for all cases.
 
-Best regards,
-Krzysztof
+Because exfat doesn't have "."/".." always, IIRC.
 
+> As for programs persisting the offset, the manpage for telldir has on its
+> NOTES section:
+>
+> """
+> Application programs should treat this strictly as an opaque value, making
+> no assumptions about its contents.
+> """
+>
+> I know this doesn't refer to persisting or not that opaque value, but any
+> other changes to the directory would change the offset of its current
+> subdirectories and given those values are opaque, no assumptions should be
+> made. And unless we find such programs in the wild, the same argunent could
+> be made that there may be programs that expect . and .. to be at offset 0
+> and 1, like every filesystem that uses dir_emit_dots does.
+>
+> I understand the cautiousness to prevent regressions, but I did the work
+> here to test and understand the changes that are being proposed. I even
+> looked into another way of preventing the further corruption, but that
+> convinced me even more that the right fix is to assign a minimum number of
+> links to directories and I found precedence to this.
+
+I seriously recommend to change app that make this, or changing the fsck
+to fix this. Because this looks like broken as FAT.
+
+Honestly I'm not accepting willingly though, the way to add the
+workaround for this would be, detect this breakage and warn it, then
+mark the dir inode as broken. And add the workaround codes only for
+broken dir inode, and make it work for all operations (just make
+mountable and readable is not enough, at least write must not corrupt fs
+or panic etc.), without changing the behavior of correct inodes.
+
+Thanks.
+-- 
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
