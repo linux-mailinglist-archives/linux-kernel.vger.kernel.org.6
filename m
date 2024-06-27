@@ -1,126 +1,217 @@
-Return-Path: <linux-kernel+bounces-232210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEB8891A514
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:27:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6ACA91A53E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:30:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47EFCB23576
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:27:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 365311F24830
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:30:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F9514A08E;
-	Thu, 27 Jun 2024 11:27:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E2AB14D2B4;
+	Thu, 27 Jun 2024 11:27:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="LSeEZ27p"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="iS69jOBe"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF6913C3C2;
-	Thu, 27 Jun 2024 11:27:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29ACC145A1F
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 11:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719487630; cv=none; b=jOxo7zSt2cIpcG6lAawVWUkz8nUbEzAbf0O690t0ltNgy2AF94KozC9bvR/JdHCS/CnoIYolNEzUJFgcUlIh2G/NajnRCcpKHjgS0Q/0lV8QwcUWbiaaXrpRBK/DaAVvZhY/ax89ckZbbKZsBN+UjPundBEuOTxh3UZABh8EEE8=
+	t=1719487667; cv=none; b=oHGzqK2vKLGnldRXQxph7FGwcqlZ1i98BWLn7zi5e3bruVhu46ZcDvYOh8MaSNI3G4v1EjgqKk+Ljx2HgRqvZAR+kRlcMzf1c631RfXPhQhRtaIlTzA6b792irZjPsvniNajB9cWdCC4XtzlSQ+eNJaZWY/uusWQHtaLAfTVuH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719487630; c=relaxed/simple;
-	bh=DWXEX0dsaB+15LsahYeUPqUoI2O6h4hgJP6Eyd+7JFg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sa/k8ndWPKa1hpucp4jcw9p4TwypaN+mmTAMua7nIw4tbXQT7bmeNv7IDrOSFwk1dx5IMhzhjTLcxtNmUIMQj6lGtIYjW3R+nO4FSXQv4uFQETjku/QAV+HQl60MRvWEr2VoXK2uhCfw6qB0hXhVrcNzQhCR7yOgqMiwggSCyr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=LSeEZ27p reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 70e98f95df2867ef; Thu, 27 Jun 2024 13:26:58 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id CFF7BA56084;
-	Thu, 27 Jun 2024 13:26:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1719487617;
-	bh=DWXEX0dsaB+15LsahYeUPqUoI2O6h4hgJP6Eyd+7JFg=;
-	h=From:To:Cc:Subject:Date;
-	b=LSeEZ27pgbigSohAIZiRsVwbBWQQ9dHzhUSVrCab916LhGaLMJNWFWUUriDV90QVo
-	 MspulKIXvDMvHxTUktsACLUjgaF9Obkt5FZ2GPCKKOmQc6B24+vIffEbNviETJAjRB
-	 ga9p4hsPUwyeqt9dNmr4wdZgaFTvT/239GSkw/SBtJtWMsmaQ6m7CznY13HVjogYuJ
-	 gjOWhGLpBM1teU09NGtz6J9pxfPOJ/ROGQoFuX/RKZlq7VHiYG3bYtxZi900u2Wyog
-	 x/3cabuz3M+3fBb3KKHs8vTH7ba01JDOigL3b+2KSS0ylONyhaWSah9Z/3p5QAxSSL
-	 QI4gmZ+cxq3Kw==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
- LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Zhang Rui <rui.zhang@intel.com>
-Subject:
- [PATCH v1] thermal: core: Call monitor_thermal_zone() if zone temperature is
- invalid
-Date: Thu, 27 Jun 2024 13:26:48 +0200
-Message-ID: <2745114.mvXUDI8C0e@rjwysocki.net>
+	s=arc-20240116; t=1719487667; c=relaxed/simple;
+	bh=0HoB/1HZCOFaM/FV8xXHyPVn8lWDiQRugRGfyLSyjTA=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=ZPCAhSxvcz1w+/1FzCm2JCQlUpOPw435OUqRIqpOE3uuOkN+oR0/SItA/8a2F4Mi/aG15L5fVvA/eE7wq1xZnckXeIe/t7hSKBd5p9owTf/o5pQ2gZ34z2O7YVO3SE2KcTO3ggBamvq+bqRn3kLmdQkUJtSQzm9y6TWcpFzgo+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=iS69jOBe; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240627112736euoutp028a3edc6542bb8f5f069a421f3dc155ec~c2Om9UZnJ1787417874euoutp02n
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 11:27:36 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240627112736euoutp028a3edc6542bb8f5f069a421f3dc155ec~c2Om9UZnJ1787417874euoutp02n
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1719487656;
+	bh=u88LBBG3mbwMObYO4cXTwVKPjC5PKpg2/vkya7BYuM8=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=iS69jOBeUnEb8oajX/mw5nqOQN+Ji65peR2szephYUHKR1gFqRi+4X9YGLPQ0qV2w
+	 2DoY/iRMUotI1Q+v2XV6eOcwjpbxt6Tgnzgh1tXhRKFTP7/GO6fURkLDrpew1r2JHM
+	 sne+lF/AjCBGhi6RiiOcV7kKZKm+D38XZDARYYso=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240627112735eucas1p243d681d5c93d17caab830202cdc51856~c2OmrKpnF0664406644eucas1p2D;
+	Thu, 27 Jun 2024 11:27:35 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id A2.20.09620.7AC4D766; Thu, 27
+	Jun 2024 12:27:35 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240627112735eucas1p19932d1193a24f7b440a55ca4b1a35753~c2OmNNbzf1568215682eucas1p1h;
+	Thu, 27 Jun 2024 11:27:35 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240627112735eusmtrp10bd67c91fe4114869cbcbc7c41488696~c2OmMm45W2865228652eusmtrp1b;
+	Thu, 27 Jun 2024 11:27:35 +0000 (GMT)
+X-AuditID: cbfec7f5-d1bff70000002594-3a-667d4ca76bd2
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id E3.A6.08810.7AC4D766; Thu, 27
+	Jun 2024 12:27:35 +0100 (BST)
+Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240627112735eusmtip2728d94d795a242af793816b6be546941~c2Ol9hvbN2812428124eusmtip2Q;
+	Thu, 27 Jun 2024 11:27:35 +0000 (GMT)
+Received: from localhost (106.210.248.245) by CAMSVWEXC01.scsc.local
+	(2002:6a01:e347::6a01:e347) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Thu, 27 Jun 2024 12:27:34 +0100
+Date: Thu, 27 Jun 2024 13:27:29 +0200
+From: Joel Granados <j.granados@samsung.com>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+CC: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin
+	Murphy <robin.murphy@arm.com>, Kevin Tian <kevin.tian@intel.com>, Jason
+	Gunthorpe <jgg@ziepe.ca>, Jacek Lawrynowicz
+	<jacek.lawrynowicz@linux.intel.com>, <iommu@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/1] iommu/vt-d: Fix missed device TLB cache tag
+Message-ID: <20240627112729.rcadq6ey6bp6dios@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrtdeggdegtdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeffffffkefgheehffelteeiveeffeevhfelteejvddvieejjeelvdeiheeuveeuffenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeeipdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtohepshhrihhnihhv
- rghsrdhprghnughruhhvrggurgeslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhm
-X-DCC--Metrics: v370.home.net.pl 1024; Body=6 Fuz1=6 Fuz2=6
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240620062940.201786-1-baolu.lu@linux.intel.com>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJKsWRmVeSWpSXmKPExsWy7djP87rLfWrTDF6u1LfYPHErm8WvLxYW
+	U879ZbWYOeMEo0Xn7A3sFkvfbmW3uLxrDpvFwQ9PWC1a7pg6cHo8OTiPyWPNvDWMHov3vGTy
+	2LSqk81j3slAjxebZzJ6fN4k57H1822WAI4oLpuU1JzMstQifbsEroyNn06yFXSIVvycvoy5
+	gfG/QBcjJ4eEgInEzfff2boYuTiEBFYwSqw41swE4XxhlOi/9YoZwvnMKPFgy2XWLkYOsJZL
+	3/wg4ssZJY7cvcUKV/T67X5GCGcro8TW3TMYQZawCKhKrPnaywpiswnoSJx/c4cZZJKIgLrE
+	sy8BIPXMAguZJL69OMAEUiMs4C5xYc59ZhCbV8BBYvvjx+wQtqDEyZlPWEBsZqA5C3Z/YgOZ
+	wywgLbH8HwdImFPAXmLpyiPsEL8pS0z//pMJwq6VWHvsDDvILgmBdk6JhWf+skEkXCR63j5m
+	hLCFJV4d3wLVLCNxenIPC0TDZEaJ/f8+QHWvZpRY1vgVaqy1RMuVJ1AdjhJrVl9kgoQRn8SN
+	t4IQh/JJTNo2nRkizCvR0SYEUa0msfreG5YJjMqzkLw2C8lrsxBeW8DIvIpRPLW0ODc9tdg4
+	L7Vcrzgxt7g0L10vOT93EyMwNZ3+d/zrDsYVrz7qHWJk4mA8xCjBwawkwhtaUpUmxJuSWFmV
+	WpQfX1Sak1p8iFGag0VJnFc1RT5VSCA9sSQ1OzW1ILUIJsvEwSnVwJSUtOLopQsvO3iMdWwy
+	9t7vvNqw0q1veUXPSvWFvO83SHl5O4YpuQnNSHe/uDk8ytV3Tb5r0Ybdh/w+W8syHdjOtujU
+	zm4mrWvvLBa2um44LD+9yFbm4vtEt8Vcc5WdEp/Pf1TSHPJyWcpi/bOndp6dGWH2aMtFM/EN
+	TK3PJgm/PeX0Y5va020v3H/esY+6VlYw1VXZ69kUlmdXP/yb8ZEv9LUQL0fmlX0coVvbHl3r
+	WLxj23vHsJ6jLdPkTXz6XhYxG+cu9J/wfI61y5ZbezN3eItx352ed/5aQIruVz+R8j/vVHNX
+	sRb3WyUn7dm4KP9W2aJEzypXKRve6rifc+a/S3b3TVj6VSztrr25hbASS3FGoqEWc1FxIgAI
+	JRJevAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrMIsWRmVeSWpSXmKPExsVy+t/xe7rLfWrTDCYc4bXYPHErm8WvLxYW
+	U879ZbWYOeMEo0Xn7A3sFkvfbmW3uLxrDpvFwQ9PWC1a7pg6cHo8OTiPyWPNvDWMHov3vGTy
+	2LSqk81j3slAjxebZzJ6fN4k57H1822WAI4oPZui/NKSVIWM/OISW6VoQwsjPUNLCz0jE0s9
+	Q2PzWCsjUyV9O5uU1JzMstQifbsEvYyNn06yFXSIVvycvoy5gfG/QBcjB4eEgInEpW9+XYxc
+	HEICSxkl9t5bwNjFyAkUl5HY+OUqK4QtLPHnWhcbRNFHRom7U1ugnK2MEtt+bWAGqWIRUJVY
+	87UXrINNQEfi/Js7zCAbRATUJZ59CQAJMwssZJJ4P9cWxBYWcJe4MOc+WCuvgIPE9seP2UFs
+	IQE7icnTmlgg4oISJ2c+YYHo1ZFYsPsTG8hIZgFpieX/OEDCnAL2EktXHmGHuFNZYvr3n0wQ
+	dq3Eq/u7GScwCs9CMmkWkkmzECYtYGRexSiSWlqcm55bbKhXnJhbXJqXrpecn7uJERib2479
+	3LyDcd6rj3qHGJk4GA8xSnAwK4nwhpZUpQnxpiRWVqUW5ccXleakFh9iNAUGxERmKdHkfGBy
+	yCuJNzQzMDU0MbM0MLU0M1YS5/Us6EgUEkhPLEnNTk0tSC2C6WPi4JRqYOKXjFiXdTP1XOcf
+	qYO2FpytoTN6zMQiRQQ8mw8HKlwMXmyxqMlrepC/zKLGpvRPGRn/v+mIGWytOPpnfpwna0X9
+	5/DukG8bxFJXlP4Kv8b4i1tk3c6XCgu6XvYcimOS+rn/lFHXladH1MOffJRd1eao0VnE+nb7
+	P6FVi0oC7e/LT3/3PU5Ky3Ixt0gJc1miCmNlhml49dQTuxP9Jtt6h6Vyr8lf1HGNuXb1xTCx
+	2E0dmpzMKjZCfBcW5Ms2OjLMutDkMC3olM6x92pvp1w0+/dxY4TVx9ybmldZlnvc6PqxL/fq
+	9wOzhLR/rbb3LlwkeWrtAqnntq1yE88/ll7/4+JKxfleDhtdb7g+WfV2phJLcUaioRZzUXEi
+	AHF5p8ZWAwAA
+X-CMS-MailID: 20240627112735eucas1p19932d1193a24f7b440a55ca4b1a35753
+X-Msg-Generator: CA
+X-RootMTR: 20240627112735eucas1p19932d1193a24f7b440a55ca4b1a35753
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240627112735eucas1p19932d1193a24f7b440a55ca4b1a35753
+References: <20240620062940.201786-1-baolu.lu@linux.intel.com>
+	<CGME20240627112735eucas1p19932d1193a24f7b440a55ca4b1a35753@eucas1p1.samsung.com>
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Thu, Jun 20, 2024 at 02:29:40PM +0800, Lu Baolu wrote:
+> When a domain is attached to a device, the required cache tags are
+> assigned to the domain so that the related caches can be flushed
+> whenever it is needed. The device TLB cache tag is created based
+> on whether the ats_enabled field of the device's iommu data is set.
+> This creates an ordered dependency between cache tag assignment and
+> ATS enabling.
+> 
+> The device TLB cache tag would not be created if device's ATS is
+> enabled after the cache tag assignment. This causes devices with PCI
+> ATS support to malfunction.
+> 
+> The ATS control is exclusively owned by the iommu driver. Hence, move
+> cache_tag_assign_domain() after PCI ATS enabling to make sure that the
+> device TLB cache tag is created for the domain.
+> 
+> Fixes: 3b1d9e2b2d68 ("iommu/vt-d: Add cache tag assignment interface")
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> ---
+>  drivers/iommu/intel/iommu.c | 20 ++++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
+> 
+> Change log:
+> v2:
+> - Reverting the order instead of adding unnecessary run-time overhead.
+> 
+> v1:
+> - https://lore.kernel.org/linux-iommu/20240619015345.182773-1-baolu.lu@linux.intel.com/
+> 
+> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+> index 2e9811bf2a4e..fd11a080380c 100644
+> --- a/drivers/iommu/intel/iommu.c
+> +++ b/drivers/iommu/intel/iommu.c
+> @@ -2114,12 +2114,6 @@ static int dmar_domain_attach_device(struct dmar_domain *domain,
+>  	if (ret)
+>  		return ret;
+>  
+> -	ret = cache_tag_assign_domain(domain, dev, IOMMU_NO_PASID);
+> -	if (ret) {
+> -		domain_detach_iommu(domain, iommu);
+> -		return ret;
+> -	}
+> -
+>  	info->domain = domain;
+>  	spin_lock_irqsave(&domain->lock, flags);
+>  	list_add(&info->link, &domain->devices);
+> @@ -2137,15 +2131,21 @@ static int dmar_domain_attach_device(struct dmar_domain *domain,
+>  	else
+>  		ret = intel_pasid_setup_second_level(iommu, domain, dev, IOMMU_NO_PASID);
+>  
+> -	if (ret) {
+> -		device_block_translation(dev);
+> -		return ret;
+> -	}
+> +	if (ret)
+> +		goto out_block_translation;
+>  
+>  	if (sm_supported(info->iommu) || !domain_type_is_si(info->domain))
+>  		iommu_enable_pci_caps(info);
+>  
+> +	ret = cache_tag_assign_domain(domain, dev, IOMMU_NO_PASID);
+> +	if (ret)
+> +		goto out_block_translation;
+> +
+>  	return 0;
+> +
+> +out_block_translation:
+> +	device_block_translation(dev);
+> +	return ret;
+>  }
+>  
+>  /**
+> -- 
+> 2.34.1
+> 
 
-Commit 202aa0d4bb53 ("thermal: core: Do not call handle_thermal_trip()
-if zone temperature is invalid") caused __thermal_zone_device_update()
-to return early if the current thermal zone temperature was invalid.
+Even though this has already been applied, its good to know that it
+works :)
 
-This was done to avoid running handle_thermal_trip() and governor
-callbacks in that case which led to confusion.  However, it went too
-far because monitor_thermal_zone() still needs to be called even when
-the zone temperature is invalid to ensure that it will be updated
-eventually in case thermal polling is enabled and the driver has no
-other means to notify the core of zone temperature changes (for example,
-it does not register an interrupt handler or ACPI notifier).
+Tested-by: Joel Granados <j.granados@samsung.com>
 
-Accordingly, make __thermal_zone_device_update() call
-monitor_thermal_zone() when it skips the other actions due to
-invalid zone temperature.
+-- 
 
-Fixes: 202aa0d4bb53 ("thermal: core: Do not call handle_thermal_trip() if zone temperature is invalid")
-Reported-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/thermal/thermal_core.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-Index: linux-pm/drivers/thermal/thermal_core.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.c
-+++ linux-pm/drivers/thermal/thermal_core.c
-@@ -514,7 +514,7 @@ void __thermal_zone_device_update(struct
- 	update_temperature(tz);
- 
- 	if (tz->temperature == THERMAL_TEMP_INVALID)
--		return;
-+		goto monitor;
- 
- 	tz->notify_event = event;
- 
-@@ -536,6 +536,7 @@ void __thermal_zone_device_update(struct
- 
- 	thermal_debug_update_trip_stats(tz);
- 
-+monitor:
- 	monitor_thermal_zone(tz);
- }
- 
-
-
-
+Joel Granados
 
