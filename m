@@ -1,132 +1,213 @@
-Return-Path: <linux-kernel+bounces-233145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90C1191B2D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:33:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 833DA91B2D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:33:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B839281AC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:33:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A68C61C215B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:33:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7684F1A2FC9;
-	Thu, 27 Jun 2024 23:33:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4631A2FC1;
+	Thu, 27 Jun 2024 23:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="aKWngNjD"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gNUrCQXq"
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC9E1A2C35;
-	Thu, 27 Jun 2024 23:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36631A0B1F;
+	Thu, 27 Jun 2024 23:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719531210; cv=none; b=bQLmgtd0QGcvIZd1X10YUiOCMxzLL+mu2f1vFEVO7bRNHiFExmsGTmvQJP4VfhK3hK+sWGWIYb76k3X42MjfkUilxz3dm7qPSALAmb11P2uj81CcL7MkfL9sFZNb25nBGxU7wZ024NOWY8qmZicAwMm16eIEjUJqxDhgbeUJvLU=
+	t=1719531170; cv=none; b=rM+nD+2/hHxSMSley+AUlRNCsqkBTVie1ncepzLMfWuzm8gSLyeSShlzT44fgP5fEPVmUXwCNtXDlnNuG3icwlZrG3NsTsDj0+SBPKR1kHYDsiCrS25PbTV9pVfPKATf7QxJSbKX787f3fDbxzzWToUsgszUdKpFjpq/WKvHBms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719531210; c=relaxed/simple;
-	bh=4P2o6uqwVae37onQEtZOYCycspbHgtu6qxE44Q/uNOs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eFyg3Ox272VztesEVKQDb1aWKV8XUxmTA/+quoMQvd02n8IrLagJXYZVI0j/ZqAw9fs5d79mBL6m6IzsvPj1fwaDhso4W9REAZaKkWxNVozCuHYpDUxWOzIV5fHE1FW+46lF5f2E1rsP4j6TjVYVs3PlpY6ischfsFlkKDlxhcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=aKWngNjD; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45RNXM31017948;
-	Thu, 27 Jun 2024 18:33:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1719531202;
-	bh=I5Xhuq/3kjauIvcDzNivPyfZG98LGq9mjBi5SRToxcQ=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=aKWngNjDKG2q3iD61uDlIgK7xVkiLBTlQPqPG4+J6izkkworP+bAR1hGx968/5e4y
-	 OT2f3MXf/CdsQl1axiCWMauQFB4hDu9/gF8zPMQ5l4JvDt6ZAK+7bqDjSUYRncCG+y
-	 GOdUNJy6DQTPkdxX83seknXJn/zZMo5qneIZwl4U=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45RNXMfe055270
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 27 Jun 2024 18:33:22 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 27
- Jun 2024 18:33:22 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 27 Jun 2024 18:33:22 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45RNXM5Z097268;
-	Thu, 27 Jun 2024 18:33:22 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Suman Anna <s-anna@ti.com>, Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Santosh
- Shilimkar <ssantosh@kernel.org>,
-        MD Danish Anwar <danishanwar@ti.com>
-CC: Nishanth Menon <nm@ti.com>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Roger Quadros
-	<rogerq@kernel.org>
-Subject: Re: (subset) [PATCH v3 0/2] Add documentation for PA_STATS and MAINTAINERS entry for ti,pruss.yaml
-Date: Thu, 27 Jun 2024 18:33:20 -0500
-Message-ID: <171953113800.1077835.1688161229735338522.b4-ty@ti.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240625153319.795665-1-danishanwar@ti.com>
-References: <20240625153319.795665-1-danishanwar@ti.com>
+	s=arc-20240116; t=1719531170; c=relaxed/simple;
+	bh=sXezY+/7uKTXx3q/yWeaJ9K8BDVli7vQfxaBwyaNyoc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ghM0IH68jptbilHHWKJ37QVQUaDYUp+uA7ziDOmzKj3VFN8DYMFKX9sXZl6/EQ+pWOuIGjx0OlJLMqTILGZaVJugWyeP8BF1O42DSbejMqHc4FcZ+Gvio7mJdvBBjAs06ANyOEWQYRE2dwD+a46nxo2wvKHjDsq/P2BKTN8llz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gNUrCQXq; arc=none smtp.client-ip=209.85.167.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3d566d5eda9so32719b6e.0;
+        Thu, 27 Jun 2024 16:32:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719531168; x=1720135968; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=k7Uk06ideyFTn+vYbPSwBqzjxgu55IGQgO2e4zr/Jb8=;
+        b=gNUrCQXqolaZKpt1tRiIcdntXcStX/gNukMpDikkq0d8yHzN3XZUCO4HgIAcRwz3RE
+         NrNUolUY2MEuU3kYOxG3iBWAQG5y+/sWvYvXnKvcV1ThAr+zuVfgkzlqd3hateqqqqCZ
+         MfQZa/JwwIctWDJ+XzaqqeaJooKOQj+Vu8kw7m/wBxDjT2L+H5IasvSW0qjFUsc220sm
+         w2xEw69e6l3MoXOI5EWdHQ2rklir+VT23ODG+KgY+rZiJ0Rw/dwKn+06Qm6KW487k8AE
+         A2eD+R/X1jq9t5YZKhL499TQzkCCoNlbi4ndmz8PF/EPV45uV++lxwNw2HEpWX8N8OAT
+         G66A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719531168; x=1720135968;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k7Uk06ideyFTn+vYbPSwBqzjxgu55IGQgO2e4zr/Jb8=;
+        b=dVI5i8M38k3yUDqDnW/cL2MMbtg81wU2ssC0rWJaz0JN+vOqoLMFIo9kQ/llj4Ujat
+         nMGRUwLpBoX3kjZvD+PiLr/as9maWQCYVVpRxmH+cV+W4GphCivBMfKzpP1Y0c7CYK+J
+         WiURsGQdfsqpwJcNvySZ+hndG1Uj4A+fmymKEzrg58Md2hgmWxNkDfMrcOW+Rd7VeVZn
+         8uKx63vfU1f4jfyPxJL8YkZTl442d3enQFHnMGB+OMVIXOll4CWMyx1aRL/9rG/nztNJ
+         l6tATAs7zNxml/SQM/cI3BEKDdrZwUV00PhDP3EEyI10947zfC0e1ByzE4yS3gQ9186P
+         AiEA==
+X-Forwarded-Encrypted: i=1; AJvYcCXPB0VZDfWpQ7uVE1+6mYu++6v2AbUX94SjJdBeHGftPFjy5b/Ru6iyXnGvQx+8KqAhooyEhqVb4qfxZL7+x6vUznRnP7/C78m/+Xuj4y41XRuGiDmSXAPVQ6x7j81rFscQQknJE+PsgvaqowkCnJxfoIvY5b8HiMk2RRo1dYBpttWpvoBWvwJ+U2J1NXSRqkMTJkPAASLTftRcuP6p0+yI8dSJCqYzJR18ArVE804u0vc977OziNFyew==
+X-Gm-Message-State: AOJu0YwSMMrVyXlcfogz2My0nkdyE7UUIW5cI0+uo301zd7ZwMpGiCRp
+	OkwR7etbYKVTQHuKCvTWc+Ym83CFYH86l5h1y23Ay9mr+Gq3XoMr
+X-Google-Smtp-Source: AGHT+IFh1VpIzVKP4wzEzmD/JP/8adS3wp3F1FA/pDLQW2Tt/VT6PdetdY0HHZkHyIWATDyxW4AhyQ==
+X-Received: by 2002:a05:6808:169e:b0:3d5:2365:4f8c with SMTP id 5614622812f47-3d545978a8cmr17656272b6e.19.1719531167769;
+        Thu, 27 Jun 2024 16:32:47 -0700 (PDT)
+Received: from localhost ([2804:30c:96b:f700:cc1d:c0ae:96c9:c934])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70804989f8csm273324b3a.202.2024.06.27.16.32.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 16:32:47 -0700 (PDT)
+Date: Thu, 27 Jun 2024 20:34:11 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
+	lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org, nuno.sa@analog.com, corbet@lwn.net,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 6/7] iio: adc: Add support for AD4000
+Message-ID: <Zn3281oDlhIvYrwy@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1719351923.git.marcelo.schmitt@analog.com>
+ <eb5f7b73bdf3ac89117e28f26ee3f54ba849163e.1719351923.git.marcelo.schmitt@analog.com>
+ <1db5d054-8cce-4cbf-a02c-6ba52791548f@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1db5d054-8cce-4cbf-a02c-6ba52791548f@baylibre.com>
 
-Hi MD Danish Anwar,
-
-On Tue, 25 Jun 2024 21:03:14 +0530, MD Danish Anwar wrote:
-> This series adds documentation for PA_STATS in dt-bindings file ti,pruss.yaml.
-> This bindings file doesn't have a MAINTAINERS entry. This series add the
-> MAINTAINERS entry for this file as well.
+On 06/26, David Lechner wrote:
+> On 6/25/24 4:55 PM, Marcelo Schmitt wrote:
 > 
-> Changes since v2:
-> *) Added RB tag of Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> to
->    patch 2/2
-> *) Added patch 1/2 to the series as the binding file is orphan.
+> > +
+> > +enum ad4000_sdi {
+> > +	/* datasheet calls this "4-wire mode" (controller CS goes to ADC SDI!) */
 > 
-> [...]
+> It looks like this comment was meant for AD4000_SDI_CS.
+> 
 
-I have applied the following to branch ti-drivers-soc-next on [1].
-Thank you!
+Yes, but I'm thinking maybe this is not the best place to have a comment about
+that at all. I'm removing this comment for v6. Maybe better to have it well
+documented in dt and close to the transfer functions than having partial
+explanation here.
 
-[1/2] MAINTAINERS: Add entry for ti,pruss.yaml to TI KEYSTONE MULTICORE NAVIGATOR DRIVERS
-      commit: 13020adf6be9603ba71a9e269f130046dcea8cc8
+> > +	AD4000_SDI_MOSI,
+> > +	/* datasheet calls this "3-wire mode" (not related to SPI_3WIRE!) */
+removing this comment too
+> > +	AD4000_SDI_VIO,
+> > +	AD4000_SDI_CS,
+> > +};
+> > +
+> > +/* maps adi,sdi-pin property value to enum */
+> > +static const char * const ad4000_sdi_pin[] = {
+> > +	[AD4000_SDI_MOSI] = "",
+> > +	[AD4000_SDI_VIO] = "high",
+> > +	[AD4000_SDI_CS] = "cs",
+> > +};
+> 
+> Should we go ahead and add "low" here too even though it isn't supported
+> yet? We could give a different error message in this case. (not supported
+> mode vs. invalid value).
+> 
+Okay.
+I have added for v6:
+	case AD4000_SDI_GND:
+		return dev_err_probe(dev, -EPROTONOSUPPORT,
+				     "Unsupported connection mode\n");
 
-I have left patch #2 to come with relevant driver changes as appropriate
-rather than have to deal with a refactor of the binding at a later date.
+> > +/*
+> > + * This executes a data sample transfer for when the device connections are
+> > + * in "3-wire" mode, selected when the adi,sdi-pin device tree property is
+> > + * absent or set to "high". In this connection mode, the ADC SDI pin is
+> > + * connected to MOSI or to VIO and ADC CNV pin is connected either to a SPI
+> > + * controller CS or to a GPIO.
+> > + * AD4000 series of devices initiate conversions on the rising edge of CNV pin.
+> > + *
+> > + * If the CNV pin is connected to an SPI controller CS line (which is by default
+> > + * active low), the ADC readings would have a latency (delay) of one read.
+> > + * Moreover, since we also do ADC sampling for filling the buffer on triggered
+> > + * buffer mode, the timestamps of buffer readings would be disarranged.
+> > + * To prevent the read latency and reduce the time discrepancy between the
+> > + * sample read request and the time of actual sampling by the ADC, do a
+> > + * preparatory transfer to pulse the CS/CNV line.
+> 
+> This description doesn't sound quite correct. When st->turbo_mode is true
+> the shorter delay will cause a read during conversion, so we would be 
+> reading the sample from the previous conversion trigger, not the current one.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent up the chain during
-the next merge window (or sooner if it is a relevant bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+If I'm correctly understanding the datasheet diagrams for 3-wire mode,
+we should be reading the conversion triggered by the rising CS edge of the
+preparatory/dummy transfer (that should happen when the dummy transfer finishes). 
+So this is actually doing two samples. One sample gets triggered when the
+dummy transfer ends and the other one is triggered when xfers[1] completes (this
+second data sample is wasted because we are doing the extra dummy transfer to
+avoid having data that might have been sampled long ago and to keep timestamps
+close to the actual sampling time). 
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+> 
+> The description sounds like this function always does a read during
+> aquisition. So if that is the actual intent (and I agree it should be),
+> maybe the best thing to do would be to just remove st->turbo_mode for
+> now? Then we can add it back when we do SPI offload support that actually
+> needs it to achieve max sample rate. Then the function will match the
+> description as-is.
+> 
+> st->turbo_mode is never set to true currently anyway. So removing it
+> for now seems best.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+I always thought we should not add to the kernel code that does nothing, even if
+it might do something in the future. For example, when adding new drivers, I
+think it is preferred only to add defines for registers that are used, in
+contrast to adding defines for all registers a chip has. So, yeah, removed
+turbo_mode for v6 and also some reg defines I noticed were unused too.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+> 
+> > + */
+> > +static int ad4000_prepare_3wire_mode_message(struct ad4000_state *st,
+> > +					     const struct iio_chan_spec *chan)
+> > +{
+> > +	unsigned int cnv_pulse_time = st->turbo_mode ? AD4000_TQUIET1_NS
+> > +						     : AD4000_TCONV_NS;
+> > +	struct spi_transfer *xfers = st->xfers;
+> > +
+> > +	xfers[0].cs_change = 1;
+> > +	xfers[0].cs_change_delay.value = cnv_pulse_time;
+> > +	xfers[0].cs_change_delay.unit = SPI_DELAY_UNIT_NSECS;
+> > +
+> > +	xfers[1].rx_buf = &st->scan.data;
+> > +	xfers[1].len = BITS_TO_BYTES(chan->scan_type.storagebits);
+> > +	xfers[1].delay.value = AD4000_TQUIET2_NS;
+> > +	xfers[1].delay.unit = SPI_DELAY_UNIT_NSECS;
+> > +
+> > +	spi_message_init_with_transfers(&st->msg, st->xfers, 2);
+> > +
+> > +	return devm_spi_optimize_message(st->spi, &st->msg);
+> 
+> In the cover letter or after --- in this patch we should mention the
+> dependency since this is a new API and depends on the tag from Mark.
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+I got
+d4a0055fdc22381fa256e345095e88d134e354c5 "spi: add devm_spi_optimize_message() helper"
+7e74a45c7afdd8a9f82d14fd79ae0383bbaaed1e "spi: add EXPORT_SYMBOL_GPL(devm_spi_optimize_message)"
+6ecdb0aa4dca62d236a659426e11e6cf302e8f18 "spi: axi-spi-engine: Add SPI_CS_HIGH support"
+from https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git/log/?h=for-6.11
+to apply and test the changes for v6.
+Will mention those in the cover letter.
 
+Thanks,
+Marcelo
 
