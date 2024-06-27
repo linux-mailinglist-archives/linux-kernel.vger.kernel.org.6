@@ -1,64 +1,66 @@
-Return-Path: <linux-kernel+bounces-232027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4959B91A1D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:45:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 330A591A1D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:45:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA9581F217E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 08:45:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF019282150
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 08:45:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56EAB12FB3B;
-	Thu, 27 Jun 2024 08:45:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E570137930;
+	Thu, 27 Jun 2024 08:45:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="aNB7pXXR";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="P6He/Ack"
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="ZvqLWKEg";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="sZI7qpkL"
 Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B267A1078B;
-	Thu, 27 Jun 2024 08:45:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B0112F59C;
+	Thu, 27 Jun 2024 08:45:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719477917; cv=none; b=VJN12KknKC4W2Hixbwvxg/nWs433LQZRj+bAPFwcISHi5H+iEswe0Ok3zMX9VUOgu68CpyVDHRT+1Dk3HVXgqxdSgQxkj2O8UUwcKEr7Ni+P2QZZHbxeE4fgd2sKOFllcrxs76ZYoTx5ouC1tiWgjzTW+awtUYUp2ZpBUeWADuQ=
+	t=1719477921; cv=none; b=h6k4x0hm9h2Z/nLJecU1tZiUEeFsOXC+IdIN7H3trdF+PFfieT4YLl5rSOT2egLJ0MeGjscINHT7IDfUyexSDwUxHRixsATRGV9qw2fZDkr83sNMafAcFE3HC0GTHRVktqJ8Bk08LT565ZJms/Ia6J5dfbiCAiZiC+o1efPeKLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719477917; c=relaxed/simple;
-	bh=uPM2uk1Tp+ERIhK6rfJ3coa+sWzrd/Oso7xTfRFp8LQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F1qIkuVLakO43A2eF57c2b8J4DXeOUPAzKE5Wu+MxTT3F2oz332KAxi3RjcKNmhX3eQahKdcJPpuLH1TaGbGHEC4yKKQW7tHGD982QWFxvLPhkJuEqAlAbVvTSHlOFIQvoy/Jf3fg1SaQOcoo2X9sCa3LNAGgaoboF/RQp0XdLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=aNB7pXXR; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=P6He/Ack reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+	s=arc-20240116; t=1719477921; c=relaxed/simple;
+	bh=eIiGiJfQ7ctVREW43dyly0CY0WIYCCs+bF1HNY8MHUw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=FzNeAWX9nLhUx3sF0J2Qk1TKQqqfwn74sX1mjE/BU8CIcLfZibdvz5Oo1bcRbeaRNik9yMFt+08IQH9ao9clf+WfVyGmiGKcBii8Jpujr58YK4w99a3BGCvmoDY85S6Ej7yyyFibH21q68AiEAiQHhKPxPco9ag5pc1lUnPPUOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=ZvqLWKEg; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=sZI7qpkL reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1719477914; x=1751013914;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=qKdL3I466UOarYENCEaVrpgGL8F7/4uronFKf9FxfDY=;
-  b=aNB7pXXR1h+sqccDG4FeOyLWpt+6+/zvkXla8Fi+9zEEWzG+IsRglQiN
-   Cl74zxNvAk6ZlguH3pMHxBuV2rvsWnR0YI4wu1TQCkhOG27r3MKnAexV3
-   YL/zvfvg+xOryYMUn3ptK+MH9bu0zOn7fQ4OtLcsy9KmkaXOUtEkV9RUy
-   KxUE7Ndi1q2QeowQoaTUy+vWv1rMSZ0zRBndEOcIejzvWw5wo6czc5Oci
-   aKTDSFkLjlFrGuLjZRQB93L99x+Jm/XUXFZdtLqvdD5yE7kqfKt/33bU7
-   h8X0jO8UuzZOb8gRdWfMV8OTGhZ2+T3nOe8ifzR1uvxiGJ24h4h6qbXE7
-   A==;
-X-CSE-ConnectionGUID: min0TWq2QR6LXSFkDkLoZQ==
-X-CSE-MsgGUID: pWSdAYrKQwaYjSzI19zzCQ==
+  t=1719477918; x=1751013918;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=ljUA2/gwMkyYm97U6fvrYnZuvtjIfdPE/kHZr8D3krA=;
+  b=ZvqLWKEgvdpGVyQh1g8LT2CUIGF0wPJbOV9+DQjGNTSWKbH3rpnBQeYq
+   vppcRJFQY6y8GrG0J570+H4J6+XXzw81F065lt+s1GiwWokmPjOtVDoCR
+   HEU0L4zTePck8HgdnF0tMMzJbJG342zhRY96rB5XKxEXIV2l1P5wptdDF
+   DUEO+S6IQWzHxpNW4DreGqULNFN7uJIQUToqidr1h5wHeYS8Dit2xq21t
+   B/FTRGJoLz6toeiUVcGOBrk+n8YWAGTb8ZRtTfbPaXYg2EZi95LP7O4nI
+   fKNy0j0bWj4WdXzy1TSqYTO/yaG2vYISwRpHnCjPv6t2miUFPHQ2xRx08
+   g==;
+X-CSE-ConnectionGUID: BadCDbIdSp+kDxdWH3aw+w==
+X-CSE-MsgGUID: Ex8iheCxRImuvdAiDJbXTA==
 X-IronPort-AV: E=Sophos;i="6.08,269,1712613600"; 
-   d="scan'208";a="37617935"
+   d="scan'208";a="37617945"
 Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 27 Jun 2024 10:45:11 +0200
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2C9391643F3;
-	Thu, 27 Jun 2024 10:45:03 +0200 (CEST)
+  by mx1.tq-group.com with ESMTP; 27 Jun 2024 10:45:17 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 04DD9170D1D;
+	Thu, 27 Jun 2024 10:45:12 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1719477906; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=qKdL3I466UOarYENCEaVrpgGL8F7/4uronFKf9FxfDY=;
-	b=P6He/AcktrGJmS21zJh76T5I81o8oByDLbn7NG5niKlwypx72MnUJjp+p17D5cO12N+PB6
-	RxcPxP2SBHh8XL6hsGVoJupCEg6US0tZcOf3KAELOOcW0LnBdk4wBUpUcas/z+6I+0jM/N
-	h7brniKkrc8XdQZSQuRkoV7YknmDEcRH9ta3B75jGP5UWwyC5Iv7P91JntIIO12NrGtp3h
-	P+wBfFuYTVEBZyc2OEAZn6D7msGPfg7CFLzCZnqvgZinUrdGb8zMEaCHLdnVsVXr/KqcJD
-	N9QMTst6s+aoaEOWn7IBmCw5JzCbzltBGeDXVt6TvbRcJpICsQ+VMTGHsRqOGQ==
+	s=dkim; t=1719477913; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=ljUA2/gwMkyYm97U6fvrYnZuvtjIfdPE/kHZr8D3krA=;
+	b=sZI7qpkLF65LHz0SloJPVbCBOnLq71PLIwLJFxHIU4m03tfWsbfXbpX/w80oBWz3HEHcD7
+	h1/u6qZydSXZoj6zQ4343rS9O1c6MTroYqQ9+CS7x+8wWwSkR1j5sQwDi4TdWZOZ26YdiE
+	onJP6FMnMCcNNVG8sMW6C6vv97SN3qWIS68AP0/HKMxiUhk/M+vLTg9s68QAxaeGWIlvUp
+	CQ/T2GCXeo7aihd3VVJvPjpMQIS8R2rOV7XwaipdOXtzGQpKsmRtqylSbUxD+1wLtfJO3r
+	rR+s7vGAOdiisZJ1lC5+1p9RVmKuoxMveBRMB/9qChj+LFihKM0NrYWFxZ1p2A==
 From: Paul Gerber <paul.gerber@ew.tq-group.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>,
 	Jessica Zhang <quic_jesszhan@quicinc.com>,
@@ -75,11 +77,14 @@ To: Neil Armstrong <neil.armstrong@linaro.org>,
 Cc: Paul Gerber <paul.gerber@ew.tq-group.com>,
 	dri-devel@lists.freedesktop.org,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/2] Add AUO G104STN01 panel
-Date: Thu, 27 Jun 2024 10:44:42 +0200
-Message-ID: <20240627084446.3197196-1-paul.gerber@ew.tq-group.com>
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 1/2] dt-bindings: display: simple: Add AUO G104STN01 panel
+Date: Thu, 27 Jun 2024 10:44:43 +0200
+Message-ID: <20240627084446.3197196-2-paul.gerber@ew.tq-group.com>
 X-Mailer: git-send-email 2.44.1
+In-Reply-To: <20240627084446.3197196-1-paul.gerber@ew.tq-group.com>
+References: <20240627084446.3197196-1-paul.gerber@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,20 +94,29 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-Changes in v2:
-- put explanatory comment for display binding before the list entry
-- collected Acked-by and Reviewed-by
+Add AUO G104STN01 10.4" LCD-TFT LVDS panel compatible string.
 
-Link to v1: https://lore.kernel.org/dri-devel/20240626044727.2330191-1-paul.gerber@ew.tq-group.com/
+Signed-off-by: Paul Gerber <paul.gerber@ew.tq-group.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+Tested on TQ TQMa8MPxL on MBa8MPxL.
 
-Paul Gerber (2):
-  dt-bindings: display: simple: Add AUO G104STN01 panel
-  drm/panel: simple: Add AUO G104STN01 panel entry
+ .../devicetree/bindings/display/panel/panel-simple.yaml         | 2 ++
+ 1 file changed, 2 insertions(+)
 
- .../bindings/display/panel/panel-simple.yaml  |  2 ++
- drivers/gpu/drm/panel/panel-simple.c          | 27 +++++++++++++++++++
- 2 files changed, 29 insertions(+)
-
+diff --git a/Documentation/devicetree/bindings/display/panel/panel-simple.yaml b/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
+index 5067f5c0a272..a6eeb17040fc 100644
+--- a/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
++++ b/Documentation/devicetree/bindings/display/panel/panel-simple.yaml
+@@ -63,6 +63,8 @@ properties:
+       - auo,g101evn010
+         # AU Optronics Corporation 10.4" (800x600) color TFT LCD panel
+       - auo,g104sn02
++        # AU Optronics Corporation 10.4" (800x600) color TFT LCD panel
++      - auo,g104stn01
+         # AU Optronics Corporation 12.1" (1280x800) TFT LCD panel
+       - auo,g121ean01
+         # AU Optronics Corporation 15.6" (1366x768) TFT LCD panel
 -- 
 2.44.1
 
