@@ -1,85 +1,138 @@
-Return-Path: <linux-kernel+bounces-231671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD640919BBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 02:29:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D52D919BC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 02:30:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AC071C22861
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:29:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CED70B2274A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E81C4A1A;
-	Thu, 27 Jun 2024 00:29:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20B3128FD;
+	Thu, 27 Jun 2024 00:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="l8qHyN8l"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C8115B7;
-	Thu, 27 Jun 2024 00:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D6317E9;
+	Thu, 27 Jun 2024 00:30:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719448171; cv=none; b=TZCVIVyv5YBi6qXz5/BPlbUjJkESHOX41v8WY7um+cvAttlI0/gGb3CRP7NXlvxoGt0t8+gX+58zzngNDWlXg3WUtxoDQNvoxkR88deGpe18AuWFk8iurFnc50mmmUI1hRdBOv47XExVAJE11o0V5eZwpUqgKRWOGmfIkTNzZ7E=
+	t=1719448219; cv=none; b=hfzM9iWvZFJviz96OI8pHrl7Xmv6W1qhecO/BKkrM5EL59+bEA3Z7PALgBs3Tu3WT6yBTJz9YuRGcdlcKuobOigAbvy/ZwynN0TKK0ufKvu2uFlCOc0DsPxKkN5H0TB00aLH9wXGZnA+suaA4NnrtQSpSHiutfPducHNse9KnZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719448171; c=relaxed/simple;
-	bh=n7RJHgw4rE2gB6R6ed7pCBeKs4Ou/+xitA3UzT+RD+0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J1OIUgLPsa1hJz083lySve2G35zj5Qy6YpMjvWtY7R2DUcKAsx1Fc6pnbuuc7gBBfi+g9rgMOLLyv/R9vIV4//ZQHlehTIHbAuzmGOdrMjmnHwJLyKWwie4Hp63p8ObDJjiIL1O8AwA1SqMcZy+3h9NwFPwCwaLiB0kcvabLbpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7EBEC116B1;
-	Thu, 27 Jun 2024 00:29:27 +0000 (UTC)
-Date: Wed, 26 Jun 2024 20:29:26 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, John Ogness
- <john.ogness@linutronix.de>, Alexei Starovoitov <ast@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>, Yonghong Song
- <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, KP
- Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo
- <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, Petr Mladek
- <pmladek@suse.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, bpf
- <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] bpf: defer printk() inside __bpf_prog_run()
-Message-ID: <20240626202926.4267df74@rorschach.local.home>
-In-Reply-To: <290aac9b-0664-404d-a457-292d69f9b22b@I-love.SAKURA.ne.jp>
-References: <345098dc-8cb4-4808-98cf-fa9ab3af4fc4@I-love.SAKURA.ne.jp>
-	<87ed8lxg1c.fsf@jogness.linutronix.de>
-	<60704acc-61bd-4911-bb96-bd1cdd69803d@I-love.SAKURA.ne.jp>
-	<87ikxxxbwd.fsf@jogness.linutronix.de>
-	<ea56efca-552f-46d7-a7eb-4213c23a263b@I-love.SAKURA.ne.jp>
-	<CAADnVQ+hxHsQpfOkQvq4d5AEQsH41BHL+e_RtuxUzyh-vNyYEQ@mail.gmail.com>
-	<7edb0e39-a62e-4aac-a292-3cf7ae26ccbd@I-love.SAKURA.ne.jp>
-	<CAADnVQKoHk5FTN=jywBjgdTdLwv-c76nCzyH90Js-41WxPK_Tw@mail.gmail.com>
-	<744c9c43-9e4f-4069-9773-067036237bff@I-love.SAKURA.ne.jp>
-	<20240626122748.065a903b@rorschach.local.home>
-	<f6c23073-dc0d-4b3f-b37d-1edb82737b5b@I-love.SAKURA.ne.jp>
-	<20240626183311.05eaf091@rorschach.local.home>
-	<6264da10-b6a0-40b8-ac26-c044b7f7529c@I-love.SAKURA.ne.jp>
-	<20240626200906.37326e17@rorschach.local.home>
-	<290aac9b-0664-404d-a457-292d69f9b22b@I-love.SAKURA.ne.jp>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719448219; c=relaxed/simple;
+	bh=WURpjn1+OWCzi1P9KHg5JWMK7K5TMo+NYUY9ou0Ois0=;
+	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=Ex3Te8qGHrdjDlGi0E9CBIXrpDhvVJXEZ8LeaePau3mmjC6X7M0tO2gfQR5V7dnkppUjGdMtCIdzA2Nn9liPgHIiQLBoN6lP4BCP16LL2IAudl0mJVb4+sf8wQdTtIg9dcCeJAsN82N3ezhGr0acYsQZxqeYBONdrY6GKj09UnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=l8qHyN8l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 790AEC116B1;
+	Thu, 27 Jun 2024 00:30:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1719448218;
+	bh=WURpjn1+OWCzi1P9KHg5JWMK7K5TMo+NYUY9ou0Ois0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=l8qHyN8l2ROlPxDQgCfaMBa5CuJJcc+LB33FCmJiGFOs+XeCsuxOR6ZoC0ebvY7Mj
+	 s0NJ4+OipqyhEMi9+pHBCApJ8HTwJMRGLzHObSFORfmW9J0rF6n/Fn3HrNOLbUyufi
+	 RJMfksqrc0s5HhtUrgQmU9dNtdlyzeupDUs5l50A=
+Date: Wed, 26 Jun 2024 17:30:17 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: [GIT PULL] hotfixes for 6.10-rc6
+Message-Id: <20240626173017.d4d69c597466bdd42da64da3@linux-foundation.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Thu, 27 Jun 2024 09:21:38 +0900
-Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
 
-> What change do you propose?
-> 
-> https://syzkaller.appspot.com/text?tag=Patch&x=121c92fe180000 ?
+Linus, please merge this batch of hotfixes, thanks.
 
-That's one solution, but you need to call printk_deferred_enter()
-*after* taking the lock, otherwise preemption could still be enabled
-and you could schedule and migrate between the printk_deferred_enter()
-and taking of the lock.
 
--- Steve
+The following changes since commit f2661062f16b2de5d7b6a5c42a9a5c96326b8454:
+
+  Linux 6.10-rc5 (2024-06-23 17:08:54 -0400)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2024-06-26-17-28
+
+for you to fetch changes up to ab1ffc86cb5bec1c92387b9811d9036512f8f4eb:
+
+  mm/memory: don't require head page for do_set_pmd() (2024-06-24 20:52:11 -0700)
+
+----------------------------------------------------------------
+13 hotfixes, 7 are cc:stable.
+
+All are MM related apart from a MAINTAINERS update.  There is no
+identifiable theme here - just singleton patches in various places.
+
+----------------------------------------------------------------
+Andrew Bresticker (1):
+      mm/memory: don't require head page for do_set_pmd()
+
+Andrey Konovalov (1):
+      kasan: fix bad call to unpoison_slab_object
+
+Christoph Hellwig (1):
+      nfs: drop the incorrect assertion in nfs_swap_rw()
+
+Jan Kara (1):
+      ocfs2: fix DIO failure due to insufficient transaction credits
+
+Jarkko Sakkinen (1):
+      MAINTAINERS: TPM DEVICE DRIVER: update the W-tag
+
+Jeff Xu (1):
+      /proc/pid/smaps: add mseal info for vma
+
+Stephen Brennan (1):
+      mm: convert page type macros to enum
+
+Suren Baghdasaryan (2):
+      mm/slab: fix 'variable obj_exts set but not used' warning
+      mm: handle profiling for fake memory allocations during compaction
+
+Zhaoyang Huang (1):
+      mm: fix incorrect vbq reference in purge_fragmented_block
+
+Zi Yan (1):
+      mm/migrate: make migrate_pages_batch() stats consistent
+
+aigourensheng (1):
+      selftests/mm:fix test_prctl_fork_exec return failure
+
+yangge (1):
+      mm/page_alloc: Separate THP PCP into movable and non-movable categories
+
+ Documentation/filesystems/proc.rst                |  1 +
+ MAINTAINERS                                       |  2 +-
+ fs/nfs/direct.c                                   |  2 --
+ fs/ocfs2/aops.c                                   |  5 +++
+ fs/ocfs2/journal.c                                | 17 ++++++++++
+ fs/ocfs2/journal.h                                |  2 ++
+ fs/ocfs2/ocfs2_trace.h                            |  2 ++
+ fs/proc/task_mmu.c                                |  3 ++
+ include/linux/mm.h                                |  5 +++
+ include/linux/mmzone.h                            |  9 +++---
+ include/linux/page-flags.h                        | 21 +++++++------
+ mm/compaction.c                                   | 11 +++++--
+ mm/internal.h                                     |  5 ---
+ mm/kasan/common.c                                 |  2 +-
+ mm/memory.c                                       |  3 +-
+ mm/migrate.c                                      |  5 +++
+ mm/page_alloc.c                                   |  9 ++++--
+ mm/slub.c                                         |  7 +++--
+ mm/vmalloc.c                                      | 21 +++++++++----
+ tools/testing/selftests/mm/ksm_functional_tests.c | 38 +++++++++++++----------
+ 20 files changed, 117 insertions(+), 53 deletions(-)
+
 
