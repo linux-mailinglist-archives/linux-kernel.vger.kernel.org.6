@@ -1,111 +1,165 @@
-Return-Path: <linux-kernel+bounces-231985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EA4691A122
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:10:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BF98091A126
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:10:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07F32286393
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 08:10:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78F6928658F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 08:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F987BB14;
-	Thu, 27 Jun 2024 08:09:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3088121B;
+	Thu, 27 Jun 2024 08:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mork.no header.i=@mork.no header.b="UhgkfjoX"
-Received: from dilbert.mork.no (dilbert.mork.no [65.108.154.246])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bxXYBJmZ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99708137930;
-	Thu, 27 Jun 2024 08:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.108.154.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19E97347E;
+	Thu, 27 Jun 2024 08:10:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719475791; cv=none; b=Ts55XxiBX8UBJearhU1UZHOo95OzfWAhQJ650oKI7sxfmZOI9Vnmiqw2Pj/6lfegOSIvUl9Ja3QO/eJkj2VJNJwg0ljvl0sDKqnshbiAvi4XCMrk3NIhNpp+xNGI3CzMLD5Q7t+vmS4RGpONCr0u3SoY9kOcQSaAvobgLp6rUYI=
+	t=1719475812; cv=none; b=ohTbbjyCd131Jx4amzFQpnbmBE/pXiZvH99gKgZaHzs0HFGNs7+Lj6GA1gYrrsT9/QwqEKFGdavOV+nrJch60UNU2Bztmv9NuMgHQAXoA6aGGNMAfHHN5AS2QCNEWIl2nBgo6ee3O/k8xKraIWlscaxd9Z1nBgT/o2rM3MtSGpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719475791; c=relaxed/simple;
-	bh=4wqX6OAAhotGiMku/AG1t7B/YGfc5JqSZyFMKW/QnKU=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=Y93rnyZywGk1APcOrCay5yTTSGOGTAkrHxbbijBdD5gpfxK3UoZiiQ7C1026M84HAUrpflSjBCE9Ve8IriZDijZw8sPtHTwZFd7QzDnPYD/x8dBzNzJl+d/WDBGhkTXfZT/IBAvytknvYNgtIHXg4q954Cyn9F2KhXDPhMxBLhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mork.no; spf=pass smtp.mailfrom=miraculix.mork.no; dkim=pass (1024-bit key) header.d=mork.no header.i=@mork.no header.b=UhgkfjoX; arc=none smtp.client-ip=65.108.154.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mork.no
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=miraculix.mork.no
-Received: from canardo.dyn.mork.no ([IPv6:2a01:799:10da:6900:0:0:0:1])
-	(authenticated bits=0)
-	by dilbert.mork.no (8.17.1.9/8.17.1.9) with ESMTPSA id 45R89VNZ857280
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
-	Thu, 27 Jun 2024 09:09:33 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mork.no; s=b;
-	t=1719475771; bh=4wqX6OAAhotGiMku/AG1t7B/YGfc5JqSZyFMKW/QnKU=;
-	h=From:To:Cc:Subject:References:Date:Message-ID:From;
-	b=UhgkfjoXY97WOWqQYRrVNEqClvjsqERPojeO+w1hx2OGPhBWiEfba9JszUaSTcJVe
-	 mwR0ZqC/Z8D/BfBgeqT3lsEs+MLrjtGvMKxKbNJ8cnvhaB41AZJZOo3yH4jVHdK/gL
-	 cawFB5JhN2seAloN3wpKU9fG0+rI4OeddTjoS7Bk=
-Received: from miraculix.mork.no ([IPv6:2a01:799:964:4b0a:9af7:269:d286:bcf0])
-	(authenticated bits=0)
-	by canardo.dyn.mork.no (8.17.1.9/8.17.1.9) with ESMTPSA id 45R89V4D3809957
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
-	Thu, 27 Jun 2024 10:09:31 +0200
-Received: (nullmailer pid 2347208 invoked by uid 1000);
-	Thu, 27 Jun 2024 08:09:31 -0000
-From: =?utf-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>
-To: Johan Hovold <johan@kernel.org>
-Cc: linux-usb@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] USB: serial: option: add Fibocom FM350-GL
-Organization: m
-References: <20240626133223.2316555-1-bjorn@mork.no>
-	<Zn0WSAHHQQr61-Og@hovoldconsulting.com>
-Date: Thu, 27 Jun 2024 10:09:31 +0200
-In-Reply-To: <Zn0WSAHHQQr61-Og@hovoldconsulting.com> (Johan Hovold's message
-	of "Thu, 27 Jun 2024 09:35:36 +0200")
-Message-ID: <87ed8i958k.fsf@miraculix.mork.no>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1719475812; c=relaxed/simple;
+	bh=xDyTyoeI1VuJlGefld+tIbNLH6VCcawSWoGvoI+SWKE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=g/BgBeyCeHlMKJAoUVzXI5K1NBoE4cdkP+hqnjzLnDf/lS4cG3ptYy15IuMAzLjDIr1O6RCR3uft/d0Psv6X+P3isazjffx4NaHAIKnfv9IIa/w1zyiWj94oreHfaNu1En1NbvK9YdcIVYqqj6ufn3HwHEb7jFAB0Fqm13TbQHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bxXYBJmZ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QLWwWS016787;
+	Thu, 27 Jun 2024 08:10:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	N8A3+UZe/s2/aGmK+AWtOXTtUzhTHTpKaxbx7hqese0=; b=bxXYBJmZIsitTjT2
+	i0l2wThLh2RDW7koAEEMBlKJMjGIhY3hbyTdAxAh2gCHtmiKvYQLDwmoEXeHUNp/
+	TVWxLBDRe9ay1eRvFg/W1ZEqqSH9bmIJrst8VFs+tHpQ09ntFuf0lnHRPCRFnbU5
+	RtNsXUWsM6tcH2a/rWudAyrc0VGiC3WK6nesYs9B8e1TvHFcpDs9ivG+oitgq4xU
+	1wnMqlh7HFh41kTjk9nX6f5rVmegD16PORoAifVOEoIoWTmNQsqfonXIklZd+gPq
+	I4/bJRS8o0hqqh+PAX5DIQTxqNnbh0+cCachaVck+1ZZjYBe8zFfn+2bdfOP51Fk
+	kdtzRg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywp6yuqds-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Jun 2024 08:10:00 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45R89xip008426
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Jun 2024 08:09:59 GMT
+Received: from [10.217.216.18] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 27 Jun
+ 2024 01:09:54 -0700
+Message-ID: <18692eb6-189c-f67b-3647-8b33f3ee7808@quicinc.com>
+Date: Thu, 27 Jun 2024 13:39:51 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Virus-Scanned: clamav-milter 1.0.3 at canardo
-X-Virus-Status: Clean
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH 1/2] scsi: ufs: Suspend clk scaling on no request
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+        "Martin K.
+ Petersen" <martin.petersen@oracle.com>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>, <linux-scsi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <quic_cang@quicinc.com>, <quic_nguyenb@quicinc.com>,
+        <quic_pragalla@quicinc.com>, <quic_nitirawa@quicinc.com>
+References: <20240626103033.2332-1-quic_rampraka@quicinc.com>
+ <20240626103033.2332-2-quic_rampraka@quicinc.com>
+ <62m4bfyhgzidseda2mduetaq4b2onlpjkxzsc3skc3fx7iw3xh@eyt2nwn2cuoi>
+From: Ram Prakash Gupta <quic_rampraka@quicinc.com>
+In-Reply-To: <62m4bfyhgzidseda2mduetaq4b2onlpjkxzsc3skc3fx7iw3xh@eyt2nwn2cuoi>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: w5YFbWmlXosanD3df6k7R__Owj7UWoDE
+X-Proofpoint-ORIG-GUID: w5YFbWmlXosanD3df6k7R__Owj7UWoDE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-27_04,2024-06-25_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 bulkscore=0
+ phishscore=0 adultscore=0 mlxscore=0 suspectscore=0 malwarescore=0
+ clxscore=1011 lowpriorityscore=0 spamscore=0 priorityscore=1501
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406270061
 
-Johan Hovold <johan@kernel.org> writes:
-> On Wed, Jun 26, 2024 at 03:32:23PM +0200, Bj=C3=B8rn Mork wrote:
->> FM350-GL is 5G Sub-6 WWAN module which uses M.2 form factor interface.
->> It is based on Mediatek's MTK T700 CPU. The module supports PCIe Gen3
->> x1 and USB 2.0 and 3.0 interfaces.
->>=20
->> The manufacturer states that USB is "for debug" but it has been
->> confirmed to be fully functional, except for modem-control requests on
->> some of the interfaces.
->>=20
->> USB device composition is controlled by AT+GTUSBMODE=3D<mode> command.
->> Two values are currently supported for the <mode>:
->>=20
->> 40: RNDIS+AT+AP(GNSS)+META+DEBUG+NPT+ADB
->> 41: RNDIS+AT+AP(GNSS)+META+DEBUG+NPT+ADB+AP(LOG)+AP(META)(default value)
->
-> The order here does not seem to match the usb-devices output below (e.g.
-> with ADB as interface 3 and 5, respectively).=20
->
-> Could you just update these two lines so we the interface mapping right?
-
-Thanks, I didn't notice that.
-
-This part was copied from the Fibocom AT+GTUSBMODE documentation and
-seems to list supported functions independently of the resulting USB
-interface order.
-
-I'm afraid I can't verify the actual order since I don't have access to
-this module myself, and there is no way to tell the AT, GNSS, META,
-DEBUG, NPT and LOG functons from eacohother based on USB descriptors.
-
-The best I can do is dropping these two lines. Is that better?
 
 
+On 6/26/2024 11:14 PM, Dmitry Baryshkov wrote:
+> On Wed, Jun 26, 2024 at 04:00:32PM GMT, Ram Prakash Gupta wrote:
+>> Currently ufs clk scaling is getting suspended only when the
+>> clks are scaled down, but next when high load is generated its
+>> adding a huge amount of latency in scaling up the clk and complete
+>> the request post that.
+>>
+>> Now if the scaling is suspended in its existing state, and when high
+>> load is generated it is helping improve the random performance KPI by
+>> 28%. So suspending the scaling when there is no request. And the clk
+>> would be put in low scaled state when the actual request load is low.
+>>
+>> Making this change as optional for other vendor by having the check
+>> enabled using vops as for some vendor suspending without bringing the
+>> clk in low scaled state might have impact on power consumption on the
+>> SoC.
+>>
+>> Signed-off-by: Ram Prakash Gupta <quic_rampraka@quicinc.com>
+>> ---
+>>   drivers/ufs/core/ufshcd.c | 3 ++-
+>>   include/ufs/ufshcd.h      | 1 +
+>>   2 files changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+>> index 1b65e6ae4137..0dc9928ae18d 100644
+>> --- a/drivers/ufs/core/ufshcd.c
+>> +++ b/drivers/ufs/core/ufshcd.c
+>> @@ -1560,7 +1560,8 @@ static int ufshcd_devfreq_target(struct device *dev,
+>>   		ktime_to_us(ktime_sub(ktime_get(), start)), ret);
+>>   
+>>   out:
+>> -	if (sched_clk_scaling_suspend_work && !scale_up)
+>> +	if (sched_clk_scaling_suspend_work && (!scale_up ||
+>> +				hba->clk_scaling.suspend_on_no_request))
+> 
+> Really a nit: moving !scale_up to the next line would make easier to
+> read.
+> 
+thanks will take care in next patchset.
 
-Bj=C3=B8rn
+>>   		queue_work(hba->clk_scaling.workq,
+>>   			   &hba->clk_scaling.suspend_work);
+>>   
+>> diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
+>> index bad88bd91995..c14607f2890b 100644
+>> --- a/include/ufs/ufshcd.h
+>> +++ b/include/ufs/ufshcd.h
+>> @@ -457,6 +457,7 @@ struct ufs_clk_scaling {
+>>   	bool is_initialized;
+>>   	bool is_busy_started;
+>>   	bool is_suspended;
+>> +	bool suspend_on_no_request;
+>>   };
+>>   
+>>   #define UFS_EVENT_HIST_LENGTH 8
+>> -- 
+>> 2.17.1
+>>
+> 
 
