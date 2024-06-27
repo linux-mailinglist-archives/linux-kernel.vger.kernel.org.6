@@ -1,91 +1,160 @@
-Return-Path: <linux-kernel+bounces-232328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7D8591A6DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:49:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3423091A6E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:49:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30D34B26ECD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:49:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6598B1C2150D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:49:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CBDF17839F;
-	Thu, 27 Jun 2024 12:49:06 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ACA517994F;
+	Thu, 27 Jun 2024 12:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bPXB2iCJ"
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC991779A5
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306FA178CF5
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719492546; cv=none; b=do9CibFTceeGvrFy5c8LyKhe2i7nAvIfKrRTvJyvc6EgthBbE12M6086OMCgdeENrFeVqzQ67O6Ax35zd5G92Mj/vSJXzDs56hFFeqgo+dUZqZalNjYm4KPzT7uDLJJBKGE7U7Shfxmc1Q+dLebMAA03vdVb8aeSR4m8rY+k1zg=
+	t=1719492577; cv=none; b=kUwjfSK0N/lPOlecVa0kP86Np8Vrtj1m+ytc6TRe8PW3W7w3fNkbdcOO+POR1X/LTNY5VJprqAfm/wH/ex8m9/IRRFTMEGNSOB7DVVbGM0ctM/eDcOv9jO4zuVxo0SrZ4CzUdNBvmA1FsyDWZO8v7ftB3Qov6xZm2v0av5Nr+yQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719492546; c=relaxed/simple;
-	bh=i4UPPcwMGROM81wPxc1K6PjYB0JATb2oBfQE6iVn28c=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ug6zDwiRpXNq+oT4aq8Hn8J98saVfDbuLeiw4VJblJIwTHi7q0O3NvlIyv+gCWShqHcg8hhmPitPc5K/KENDxp89QJ+5KPaGZ6dUshM1848Lwcv+lA6NS5FeJo2JNX9NfxyPp7WuNXynf+vZLXMAH2O1jrG5vyFRyi61y5Mi/TU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7eb01189491so1088792839f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 05:49:04 -0700 (PDT)
+	s=arc-20240116; t=1719492577; c=relaxed/simple;
+	bh=Cu5bT6sPCCfDQjQRjkhShbiDXjp7BjV1vPvAfCQyeCg=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Ohd4fhaYiH+6rlmU3EQkk5baBT+/cfCvi+fpDSqWEMj8Q+yrDIhrKlTizQ2bXUkpMlKusqCDtN1zbBd1XzcL3Taw+OsAq7doRL/eJi3aqsZxkpMhYTUG36cwzZF+GAK2bTO2erqHnl3gJ2nNlxnqzyqpFNL9oC3lh/1h09R9ACM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bPXB2iCJ; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-4ef7fc70bdeso1534491e0c.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 05:49:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719492575; x=1720097375; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+7Qni7r/WgAD7DkgtwtmtiwAZVFbDMDzC460DmWWyAc=;
+        b=bPXB2iCJJYWOqJqk5/CjKxWEp18LMeco28Q99Kb4U9kTv9M6a1cFYrR8o00VWAfJIi
+         U8hJq1AOHRJtOvFbMwzUH4M5n9ix1/KnRCB6TEWo5L040BM/TjL8HP/uFQjWmGQ0d2HO
+         pHTI3EQ6XDN4QAA/n6oFmPDUVg8/QCVUlc9BKmABzCmuxkgkMKgvk0p0Jxj/1oQrPaI0
+         rFBR1whsr4oiH0VcAyMla7GnMxkTPn6VOdclEGVZb0Fh5GBtzI9kIi3W359OzXGufYAb
+         VQ/TEzTUd0r33Jsrlz2pMa1pKBur36YqRi93lNREDTVYq6kz3HOzdRVnWUyzHPyoHWv5
+         HAmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719492544; x=1720097344;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2+t+2dktM8QICbDT0n8yNuhGnlGjJkxDoRqjoWU76xQ=;
-        b=YuxxSI9qcm5ouP5F20D+DbA4V4OkJsX4DLuYQjnDEPY0F/sUuxGR/vXclaP9qRbR/h
-         BRUvwj9KqXvT0E3rRNHSy3wyzB5kqPOtc6cP5Mckr6och9x38uLojqbpn6mRXDS/u5ZO
-         abK7JioyahESImmySi/zm0TbBSBN4egXsbYdJ0wqev7EqXirtGa2Vfb2x/mnEgheZXIo
-         1/o5zNY6fvjbeJmirHaumuNMYQGfZzo+zxK+KBrWzk+gJV9N6EMURKAwT0qqWf/V1Nuq
-         WkYP/GJmvzqLsx0MxJ5o/Z0X17qvzsPeaqShb1O3bYd/iEmm/4b7O8X3+uNFLfNHVYRO
-         Qr8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWtaWkXFc9LH/MRXgWUakNo4M4ZXgeuI9EJmqLOtk1cEdl/+Y62nISydcE5PgYgr8Mv0/Cz1wxq/2s+tj4hpGsw8pLQlMu0FOP7wrVp
-X-Gm-Message-State: AOJu0YzoBbPXmgYOsw0syspCq2T/5CspwVgecvA6mUBct1tCOqzAwD1p
-	XiQgDhSM4RkhpxTRx5YEnB27FThPdBtj5vNth3L1wV79SYdScbM1YsDzVSPzoU6brXMGqcSHZ1J
-	3TsgE7EebA/Rhx38zEUmDQWlkHEfJag3UvVF7UIMRfDKQJg2Ioq/mUL4=
-X-Google-Smtp-Source: AGHT+IEttkXdDYXLnD7gJKjvnTm5Vt0felOepe5s4wxfxRsxp+HVDJyKzyajFjSZ1Gvtcr1W7JZ6S4S+agnLZnuWczByXNQUYmDN
+        d=1e100.net; s=20230601; t=1719492575; x=1720097375;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+7Qni7r/WgAD7DkgtwtmtiwAZVFbDMDzC460DmWWyAc=;
+        b=IQl5M4+uLIKhTz539XK/vVlJFRI4NIVrJhTC6oMC72z6L21wl6NyjW+LcEEDo8kjjf
+         DWnr3ikiIhTeG3zON6zW0CGMVFF78p6A3CmGa/UgwqdjC1C5r6Bi3yvQYOh+ALAHTUmX
+         SV1XwkONFBH431UeJ6RKL/p+l5sTy/7OMaCXqsOIjpOz1wX9iL8X+qn4zFTt6GW0DhNA
+         QhXv/bfc++8cL2sIrtg+xS8VnBLy+ORkdoQgePIW2boHl9FIVNvzJZ+RchEN58rb8Avq
+         ANrkpFwel02RlMIBHIIfhf7EOcqwMD1fyxWoS+dTOH5DDRJ+f/McAMVEC0TkSArh+b2e
+         MmYQ==
+X-Gm-Message-State: AOJu0YwxbOxj0Twj1M4nj9+8z9H47TvFkmsjEWqO42h2dN/fJAMlPql4
+	KdrwuITuLOYAboZJ71LX6FPgmWcTMn6k0MfeCuiobMum2vwsLh6I7pfQqY0ywpHAN7YxNW8fBdV
+	lJDO98FAhLGHZ3XIny4uyqj5ApJ1bt1XI9O55kMhoBGMCIhmTkeSIFQ==
+X-Google-Smtp-Source: AGHT+IGiITpyURlNbsXp5GME0V7s81ygGcIa99Yj2pi1rna6IbK6cbK7/bfy993EzWRjVk+838aCUMLn0wBd+QXyZjY=
+X-Received: by 2002:a05:6122:921:b0:4ec:f758:e514 with SMTP id
+ 71dfb90a1353d-4ef6d8ad6e8mr11872712e0c.11.1719492574631; Thu, 27 Jun 2024
+ 05:49:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:d702:0:b0:37a:330c:1979 with SMTP id
- e9e14a558f8ab-37a330c1c32mr287555ab.5.1719492543859; Thu, 27 Jun 2024
- 05:49:03 -0700 (PDT)
-Date: Thu, 27 Jun 2024 05:49:03 -0700
-In-Reply-To: <tencent_C7923A5DABDDB2191E4F830DC6A58B8DEB07@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000455cc6061bde8e52@google.com>
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in l2tp_session_delete
-From: syzbot <syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 27 Jun 2024 18:19:23 +0530
+Message-ID: <CA+G9fYtiWKuQzwoBVaBA6zp304uCw5SsHKf3484CY-kuuOgnFA@mail.gmail.com>
+Subject: powerpc: nvram_64.c:75:13: error: 'oops_to_nvram' used but never
+ defined [-Werror]
+To: open list <linux-kernel@vger.kernel.org>, 
+	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-mm <linux-mm@kvack.org>, 
+	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
+Cc: Jocelyn Falempe <jfalempe@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Arnd Bergmann <arnd@arndb.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
+	Nicholas Piggin <npiggin@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+The powerpc builds failed on Linux next-20240626 tag due to following warnings
+and errors with gcc-13, gcc-8 and clang-18.
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-kernel clean failed: failed to run ["make" "-j" "64" "ARCH=x86_64" "distclean"]: exit status 2
-Makefile:83: *** Cannot find a vmlinux for VMLINUX_BTF at any of "  ../../vmlinux /sys/kernel/btf/vmlinux /boot/vmlinux-5.9.0-0.bpo.5-cloud-amd64".  Stop.
-make[2]: *** [Makefile:192: sched_ext_clean] Error 2
-make[1]: *** [/syzkaller/jobs-2/linux/kernel/Makefile:1361: sched_ext] Error 2
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:240: __sub-make] Error 2
+Regressions found on powerpc:
+
+  - clang-nightly-ppc64e_defconfig
+  - clang-18-maple_defconfig
+  - clang-nightly-defconfig
+  - clang-18-defconfig
+  - gcc-13-maple_defconfig
+  - gcc-8-cell_defconfig
+  - gcc-8-maple_defconfig
+  - clang-18-ppc64e_defconfig
+  - clang-nightly-cell_defconfig
+  - clang-nightly-maple_defconfig
+  - gcc-8-ppc64e_defconfig
+  - gcc-13-cell_defconfig
+  - gcc-13-defconfig
+  - gcc-13-ppc64e_defconfig
+  - clang-18-cell_defconfig
+  - gcc-8-defconfig
+
+Build errors:
+----
+arch/powerpc/kernel/nvram_64.c:79:17: error: initialization of 'void
+(*)(struct kmsg_dumper *, enum kmsg_dump_reason,  const char *)' from
+incompatible pointer type 'void (*)(struct kmsg_dumper *, enum
+kmsg_dump_reason)' [-Werror=incompatible-pointer-types]
+   79 |         .dump = oops_to_nvram
+      |                 ^~~~~~~~~~~~~
+arch/powerpc/kernel/nvram_64.c:79:17: note: (near initialization for
+'nvram_kmsg_dumper.dump')
+arch/powerpc/kernel/nvram_64.c:645:13: error: conflicting types for
+'oops_to_nvram'; have 'void(struct kmsg_dumper *, enum
+kmsg_dump_reason,  const char *)'
+  645 | static void oops_to_nvram(struct kmsg_dumper *dumper,
+      |             ^~~~~~~~~~~~~
+arch/powerpc/kernel/nvram_64.c:75:13: note: previous declaration of
+'oops_to_nvram' with type 'void(struct kmsg_dumper *, enum
+kmsg_dump_reason)'
+   75 | static void oops_to_nvram(struct kmsg_dumper *dumper,
+      |             ^~~~~~~~~~~~~
+arch/powerpc/kernel/nvram_64.c:75:13: error: 'oops_to_nvram' used but
+never defined [-Werror]
+arch/powerpc/kernel/nvram_64.c:645:13: error: 'oops_to_nvram' defined
+but not used [-Werror=unused-function]
+  645 | static void oops_to_nvram(struct kmsg_dumper *dumper,
+      |             ^~~~~~~~~~~~~
+cc1: all warnings being treated as errors
+
+metadata:
+--
+  git_describe: next-20240626
+  git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+  git_short_log: df9574a57d02 ("Add linux-next specific files for 20240626")
+  arch: powerpc
+  toolchain: gcc-13, gcc-8 and clang-18
+
+Steps to reproduce:
+---------
+
+# tuxmake --runtime podman --target-arch powerpc --toolchain gcc-13
+--kconfig ppc64e_defconfig
 
 
+Links:
+--
+ - https://storage.tuxsuite.com/public/linaro/lkft/builds/2iQqkMfvFPihkYnvWC7UxrVhb1X/
+ - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240626/testrun/24453163/suite/build/test/gcc-13-ppc64e_defconfig/details/
+- https://storage.tuxsuite.com/public/linaro/lkft/builds/2iQqkMfvFPihkYnvWC7UxrVhb1X/config
 
-Tested on:
-
-commit:         f76698bd Add linux-next specific files for 20240621
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e78fc116033e0ab7
-dashboard link: https://syzkaller.appspot.com/bug?extid=c041b4ce3a6dfd1e63e2
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=175c26c1980000
-
+--
+Linaro LKFT
+https://lkft.linaro.org
 
