@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-232277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1FBE91A623
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:06:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55E3091A629
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:06:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D2E42897F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:06:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49CA0B2037A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABB64500C;
-	Thu, 27 Jun 2024 12:06:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE03215250C;
+	Thu, 27 Jun 2024 12:06:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Aj4S73Hb"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="suSuoEt6"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4533F149E1D
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:05:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEDA614F138
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719489959; cv=none; b=GiZEiyZBlak8nVx8P5M+jnqx2zlq+pl/S45BpztS4LVM4we45RRQNqm634rnfVP1lqxtTedCoiR0pyu2OT9KY9YPLY5tTe93Ys+oO9UHRUQ93n1TuWwngOOle02dEAD3R+RRDxdPkDaL6RqkFh6xtDajQ1SXR4e7trvm+Hn0umk=
+	t=1719489990; cv=none; b=KXjWgi58u1iOl8psYuPMYB9tQjg/gM16lG8/uz0w7fAFA+BXsUAP5VgqMP8kc8wf2BUYX+JUYaFjTL6MVEAtVoOweojk6sT7oj3/ZCUVSvgVW6/RmElMgM7AS2PyRaDvc6xcbOgXD2qdKmJbRWBjVKS1E4wiefqVLU5ZZvmDznQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719489959; c=relaxed/simple;
-	bh=jsDr91SeTERspARsPWr3cQFcVhr7EY/19Fq5qCpuGjM=;
+	s=arc-20240116; t=1719489990; c=relaxed/simple;
+	bh=MHRLBhpjMHJzU5ECjTfhjA2PapndAyedDKkKSUGAmTc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ab5MTBvCa4KxfvZ4/klJYGyOfub8vJU2qwHnurwPvTm3L1RAxUTWLYIaTvG4JFOY/s4PKDRysuW1NJXo6D+kysQ5UVErarlvCHbDaDm4RQiAZCXw+nZXekAub7JxYahI2zILOj7hqgJKltYw3PLBQuwOLDHyDhVIBWuhApFsC8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Aj4S73Hb; arc=none smtp.client-ip=209.85.128.53
+	 In-Reply-To:Content-Type; b=nzEncoNxiQ19TRTYIPaLpfwab1jpcfnJAFUkT+yAVkntkvgRQq3Z32CGtUjff98cuQcQaep8n5aEj8twpc8sK1BDjDcH3LJue2aqAGqjN4OC5I8e3EZPXkECeXz9hzdeD4fdVNCUREcgGfBBeCVY+2oZ85sbbqCtoXy/egSJX7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=suSuoEt6; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-424720e73e1so63109655e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 05:05:57 -0700 (PDT)
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-36743a79dceso350403f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 05:06:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719489956; x=1720094756; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1719489986; x=1720094786; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=WyyJ07ZwatLbWx7iI1No9kIO0//jLLQvlpioCE6/90Q=;
-        b=Aj4S73HbhD0D2tMnaLB475KJxU78E5VKfs3GXGCMHXOHGNwC8uhhWkC/SGx7O3D+RO
-         9mhu7ALWAL+3WFkFSStPj3doTNEJSe1t73N4umBeLOonKaKLgUdd5KTSPjO7u9Cz4SiQ
-         wI7kfbUULxE3kYFNCV6qOXjGXN1sgGJ35pRhdJcTcSS4XCVmZvg8xAzsX7GhEgwadpn6
-         GQRAPLpJgDsYRaHC7EcpHlDoiOijHSemDVoOIc8Q8YjT79+a4vSGgP7dt0KNHUJFQUJ9
-         PsHtr4Yt4KiluBDxR7rvMSxguXCn9BpvnmfuCEdC/y7c3eK6/Hm+/DJgOVjyZtbKDYya
-         auHg==
+        bh=zssnfPzEt70ogQMPzcMoW/DuOVQK2AmXWOEKfa5iVrI=;
+        b=suSuoEt6cKQeI6aFw8jrcm3n9QLK9qjR/vlhuDeJ6txKta5r+jYgakg925UT+k3xpe
+         MVZ0NMYofjOnc7HngVN5J7FXnssa39vIiS7CKC2MFkL8yb8v1SAM3YfiHKQKPYoKanyM
+         iY0M05S+ZWPU5lEPZTCSPMwhEZtBZz5uBIjywKrAd/3JEBfrumLYciLmgzkYFH/tougt
+         RFWIWFQ8Bgicn6Xy6a5oYDLZUxO3oQoXB9l6Upn9SVgRoDoFJvZk2BI7vkEVOuWMy3rs
+         ejQWnl9pSsyW6awRR7773IM0+bW4kLAC9Jha+on2Na7x88lPtYjAtdyXgRhs4VLaEUuJ
+         dQrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719489956; x=1720094756;
+        d=1e100.net; s=20230601; t=1719489986; x=1720094786;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=WyyJ07ZwatLbWx7iI1No9kIO0//jLLQvlpioCE6/90Q=;
-        b=ABhbz6doL4lAYb+1XIwUd++6kMmHOoyWLH33BEstyFXgRwUKX1KQgEPlThVsTwuuCu
-         2UGARa4B0apqSmvMw8fiH9Wz0l4b7Pe/bVyumfAtDuOXC+M5iv6sPLEUHmvPbdaq1eVH
-         s+wQ5PcwTHmDLMfo3oN+1dFKUBk9SDLDafmiZ13JXWB54hd3kfYNgghR3wd3piY8VlLb
-         u4X6IETQlG4MSpZvqaoGBabCO78zGFRZeWTE+ZvYU6yQU0C80JisnTtV1n5YELLH8KNK
-         NuHLDc2LJBSKSNclHuuVwLsTvukwX47qZBmFADrsKd+JtuKfBs6y5P4QiOWlzd4JR/rY
-         fsAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWOr8Lk+nk6OeWivyT/MaK4SC1iEIAymZVINXSd47vcYbY6s/WvMiIdqefNp1Q8BcuK0U4FYRX/vUWcP4wgib0HP+KWM2hMMKGiqtGz
-X-Gm-Message-State: AOJu0YzkWPr6zaLGdKMjF/AOzksjpr0u5R0Gwhws3rdkVNjNGG7q5xHZ
-	wG2hVPkQ6IIZ/KJNaGJvfE0O37SgWBrjFmiCX+1yB+6Eg2eClE5aJVs6R3FAORY=
-X-Google-Smtp-Source: AGHT+IGvmb5DJWB98fNszSuBa/eEWmgaQv5Zyzy+HHFQ0yTneYX1zx2rSkiLBrIRZbKlbdy2CZxo9A==
-X-Received: by 2002:a05:600c:2e54:b0:424:aa31:ad0 with SMTP id 5b1f17b1804b1-424aa310aeamr36858545e9.2.1719489956655;
-        Thu, 27 Jun 2024 05:05:56 -0700 (PDT)
+        bh=zssnfPzEt70ogQMPzcMoW/DuOVQK2AmXWOEKfa5iVrI=;
+        b=IE3+ZHMx5o2qOXcU0xmqNd0Bi5BuBK7Uyq8K/DkGC6dgJ71VnCkvPlRfrjPen9thNM
+         1K1QwJksZCUupINaayCQEGC7XjYWhHggh901VY1NoCdpZlnPSsm5VvP7Y5t8iK9FrF5B
+         lu+4CJFmBgtIHeLFfoyKYiPSqg1C0c41tK5gyACjGN7BK3tc9lezowjWgaXQv9McL620
+         xv2VZsy5QjOSdt1bJnhD+chn900fXrfMGYF75+3AD95uccQhbYT/IrXi7T9M8/M0cz01
+         HgL5/DREoTMrm4bgBbgwde/DicAj373HMfRnR2PdPhn6V4Ou3vQsTUDR/CEZla6ZcQew
+         s2oQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXbZZ33yl52YqqyNU2JJ/+Lw2Sv98KDgPabcto1bLc50l6qh5Gfs1pMLFc0rNZxEG74RcPV2ROX9FSHTb4Bp6Hnuyc8E+VdnD16gsHn
+X-Gm-Message-State: AOJu0Yxd/ETO23MQjiEKnTrvCmxndHEiQxcqfmitYoR0g/nogCNDAh4M
+	dRIG9D7BvyXj73p6c1sJrEVZ1p2VKPUNneMD+i/ulHcUhYdexMpZ5sQ3AQHkeKk=
+X-Google-Smtp-Source: AGHT+IHAhoQFdBMXU3boN/Grq5lq7dRCPULOTlr2s9XCegi3Om3Wfrl8nI6OYoTF0+x9n3BJZLzo7Q==
+X-Received: by 2002:a5d:46cf:0:b0:363:b3ea:7290 with SMTP id ffacd0b85a97d-367418bfb65mr1659246f8f.20.1719489986119;
+        Thu, 27 Jun 2024 05:06:26 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42564a4ef51sm23648655e9.6.2024.06.27.05.05.54
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3674369eb69sm1613116f8f.96.2024.06.27.05.06.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Jun 2024 05:05:56 -0700 (PDT)
-Message-ID: <b0441953-8b70-4c39-b90c-30bee609ef85@linaro.org>
-Date: Thu, 27 Jun 2024 14:05:54 +0200
+        Thu, 27 Jun 2024 05:06:25 -0700 (PDT)
+Message-ID: <f00f4037-8120-4d7b-a1ba-cb2a8f12cad5@linaro.org>
+Date: Thu, 27 Jun 2024 14:06:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,20 +76,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] ASoC: dt-bindings: wsa883x: Document port mapping
- property
-To: srinivas.kandagatla@linaro.org, Banajit Goswami <bgoswami@quicinc.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+Subject: Re: [PATCH 2/6] ASoC: codecs: wsa883x: parse port-mapping information
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
  Takashi Iwai <tiwai@suse.com>, Bjorn Andersson <andersson@kernel.org>,
  Konrad Dybcio <konrad.dybcio@linaro.org>
 Cc: linux-arm-msm@vger.kernel.org, Neil Armstrong
  <neil.armstrong@linaro.org>, alsa-devel@alsa-project.org,
  linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Manikantan R <quic_manrav@quicinc.com>
+ linux-kernel@vger.kernel.org
 References: <20240626-port-map-v1-0-bd8987d2b332@linaro.org>
- <20240626-port-map-v1-1-bd8987d2b332@linaro.org>
+ <20240626-port-map-v1-2-bd8987d2b332@linaro.org>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -136,24 +136,21 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240626-port-map-v1-1-bd8987d2b332@linaro.org>
+In-Reply-To: <20240626-port-map-v1-2-bd8987d2b332@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 27/06/2024 13:55, srinivas.kandagatla@linaro.org wrote:
-> From: Manikantan R <quic_manrav@quicinc.com>
+On 27/06/2024 13:55, Srinivas Kandagatla wrote:
+> Add support to parse static master port map information from device tree.
 > 
-> Document port mapping property for wsa883x. Port mapping is required
-> to be able map correct master ports for VI feedback.
-> 
-> All the device ports are not mapped in same order as master ports, so
-> there is a need for having static port mapping for WSA codecs.
-> 
-> Signed-off-by: Manikantan R <quic_manrav@quicinc.com>
 > Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 > ---
+>  sound/soc/codecs/wsa883x.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Tested-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
