@@ -1,99 +1,171 @@
-Return-Path: <linux-kernel+bounces-232874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEFAE91AF58
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:54:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11B3D91AF60
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:55:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A248D1F23739
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:54:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57C4DB239D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4006319AD54;
-	Thu, 27 Jun 2024 18:54:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0AFD19AA7C;
+	Thu, 27 Jun 2024 18:55:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="pRmI6T64"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BKL+8m5L"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04ED91BF40;
-	Thu, 27 Jun 2024 18:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895AC199E9B
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 18:55:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719514449; cv=none; b=AwVHmMmaoMlNP81Z3f4CW+IokU+9DdxPvhabpEeEdjaSQTkxNg1odWWJAlt7Jf2DLzKm9Ey/RB+G1ByuHLyaURJyAMZa/de4a1S6U/RNnxqIBmzUfDDnCfTe9+zs3+F+35xyseAztyuOHgEF5CwsoA7ZoHSXd7fouJQPybumlYo=
+	t=1719514536; cv=none; b=e8q29hyffnP00jRgh2sk72hF+ZfJAyOL+tGxzU3j+oM2l8xm5RhKI4KF8Xxm3whjgme7lp18b9LdoYMSu15G5X7JwX1KN4JPtEABgBRu0QWNxd/q66dq7yHYWkSFICcANRY4TfxOYXCCexGVpKO5qJBHOYEiXxtDEwvplU9x+Wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719514449; c=relaxed/simple;
-	bh=qqJuWDqgU1d2pzn5L3V2x4FZCNkPm8iX43xFx3zpmkE=;
+	s=arc-20240116; t=1719514536; c=relaxed/simple;
+	bh=29lOxz3XaEydxXz0C/cKCWYNDuPwhbuYGH1B8qzt/94=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sova/1YK3kAHcZWNaHgBYCFch++a8lCjoutGZqDrcYNjAvKIA53nRpZkrVXOYogyliwFmwjIEq/y2EGsVPgW8JPS8N2hE4b6nVDm+61Mi/wTZVgrSchZfPZegPmaIh5nECuwN37d9XvmdHPeqZwxSCEK9gllx8csHcTEpgM6TC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=pRmI6T64; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=pKvqSGLfcwX/x9spD289lXQYDSmIZJJ94YFu8au6w54=; b=pRmI6T64rhmuSiqJu5QmZBCp2Z
-	enKLABPtVqOOri45SLyrekDLX6eJdbd8C/pd2dgY1JhTxaw/yc+BP6HwEqVvM7cvUdBucK3Q8Cqqt
-	I+mQg59XkPLlfVe+cZ9a9Q52QvBZ6PSwIKHF9A1efwhpIntlkF/Jw8+rQ4XIgUAClBz0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sMuFq-001CUa-Tk; Thu, 27 Jun 2024 20:53:58 +0200
-Date: Thu, 27 Jun 2024 20:53:58 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Ayush Singh <ayush@beagleboard.org>
-Cc: Andrew Davis <afd@ti.com>, Mark Brown <broonie@kernel.org>,
-	Vaishnav M A <vaishnav@beagleboard.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>, Michael Walle <mwalle@kernel.org>,
-	jkridner@beagleboard.org, robertcnelson@beagleboard.org,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 7/7] dts: ti: k3-am625-beagleplay: Add mikroBUS
-Message-ID: <9c5263b4-fcda-4678-95ce-c2611af82bc2@lunn.ch>
-References: <20240627-mikrobus-scratch-spi-v5-0-9e6c148bf5f0@beagleboard.org>
- <20240627-mikrobus-scratch-spi-v5-7-9e6c148bf5f0@beagleboard.org>
- <4e23ec81-b278-4f2b-815d-64ed9390ca55@ti.com>
- <cef08d49-a462-4167-8b9d-bf09e8aac92f@beagleboard.org>
- <70f28343-6738-47f2-97b5-6afa96f1fbcc@ti.com>
- <93cdd5c5-d54c-46c2-9055-5cd9cc79e2da@beagleboard.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HYBUiXd82xN2Nu+ucYVZofK3D3dVN5SLk9aabOWHmNorJUB3GJsO0uTRAwPMuC4uTX9fG018O6P2tjffpY2u+raI26w7qFVr3L3rRkC4qKcKJ6lzwVtRIKHfDqDo4hT/l0ZioZdstkAPD3DvvsgScLc170moWYjIyiKSLxnjCdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BKL+8m5L; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719514533;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tRo2z4A0curEj7fGmncj+Ilw/r1TDvkXres+ZonF1MQ=;
+	b=BKL+8m5LEgfMwX0Dl8xQwl7B5YYVooVXZ+NeKPKfBAST1Is4lI/UiKxJORaHaF1NArWRTZ
+	/IGcDCUG+iUez3jGWFdFQJiYfcTDIPwZ9Jn+5+fKb2+ucSIbm6y0RED03CzfoHlI0dNtfr
+	tr3T1gTjARG50eOQlN0PZJpVrFb6KR4=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-331-7vgaK1HWMymZTIjlNz3VUA-1; Thu, 27 Jun 2024 14:55:31 -0400
+X-MC-Unique: 7vgaK1HWMymZTIjlNz3VUA-1
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6b50433ada9so24571436d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 11:55:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719514531; x=1720119331;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tRo2z4A0curEj7fGmncj+Ilw/r1TDvkXres+ZonF1MQ=;
+        b=h42e8zTbY7Go1mCDGfdOJnTT4BLBgXGIWn3DIZ4dckJrq8RZNcA/K/f/Gp6daxlyRM
+         HUfhD43IBRNYpq5mUND7U5cvYqD9ha1Q+1/0zOy7OpCmMuFD+ThvgdLHd9kA0EO6Rerk
+         VZVjiAhQ9vRWOFn/KCSPar9BIBiZhEfPIaKCe/uEGGYqeHLzGLhtfeu0Jd1YoBc6dxrD
+         hmsTpiuFIkBWrCJOuykD3QtIMi+w4wHsbt6MkROv0D75jqXB3qtofYVJMqUDubnoXpZ1
+         JS8E0YkncwD6m6tM18YnUMQV/BoByUN536I+kRMCYrfMnGi1EXjngZYsaNaDiSYwbdJA
+         NYcA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVaXpvd0cRYGzDtOD4YPvSm+wGpob9ApXD+RXnIAPBfeY7VF8DcHmPgA7W8Fsl+pQV6l/x3jwQDyfjAuYbmGA8SfAbnPXcWZRRVWVb
+X-Gm-Message-State: AOJu0YzPZSSTrYOKSMP+3ChrHfeQlY5Bds0tokiIaf4GRdtixQqGuYqw
+	XqwSuNxw/RfBlLzvy0h/YrXdOVLOkeUU1vwt0dZ5aK5Vl/ek2+hsemIurYE72dSOjWXfu0U303/
+	TLh2LC4VRPcvDUXQN4x8SJxKIvj5st7wxBkYDAjy1ijg53hA7VWYjas1Y2mZBBA==
+X-Received: by 2002:a05:620a:171e:b0:798:d5b6:ccc4 with SMTP id af79cd13be357-79bdd895786mr1670636485a.6.1719514530917;
+        Thu, 27 Jun 2024 11:55:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHjq38zT/pvHIS6aZ5W1jf59a1bV8R30a02zd2hf1puy3/wwJsfC/keJrwwDT4rPC0cF1/wfw==
+X-Received: by 2002:a05:620a:171e:b0:798:d5b6:ccc4 with SMTP id af79cd13be357-79bdd895786mr1670633985a.6.1719514530206;
+        Thu, 27 Jun 2024 11:55:30 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79d692f0b82sm4706585a.74.2024.06.27.11.55.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 11:55:29 -0700 (PDT)
+Date: Thu, 27 Jun 2024 14:55:27 -0400
+From: Peter Xu <peterx@redhat.com>
+To: yangge1116@126.com
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	21cnbao@gmail.com, baolin.wang@linux.alibaba.com,
+	liuzixing@hygon.cn, David Hildenbrand <david@redhat.com>,
+	Yang Shi <shy828301@gmail.com>
+Subject: Re: [PATCH] mm/gup: Use try_grab_page() instead of try_grab_folio()
+ in gup slow path
+Message-ID: <Zn21n5vg1Vz6whvs@x1n>
+References: <1719478388-31917-1-git-send-email-yangge1116@126.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <93cdd5c5-d54c-46c2-9055-5cd9cc79e2da@beagleboard.org>
+In-Reply-To: <1719478388-31917-1-git-send-email-yangge1116@126.com>
 
-> Can you suggest how something similar will be possible if the board node is
-> a child of the connector node? Maybe it is possible to take a generic dt
-> overlay and change the name of parent node on it or something?
+On Thu, Jun 27, 2024 at 04:53:08PM +0800, yangge1116@126.com wrote:
+> From: yangge <yangge1116@126.com>
+> 
+> If a large number of CMA memory are configured in system (for
+> example, the CMA memory accounts for 50% of the system memory),
+> starting a SEV virtual machine will fail. During starting the SEV
+> virtual machine, it will call pin_user_pages_fast(..., FOLL_LONGTERM,
+> ...) to pin memory. Normally if a page is present and in CMA area,
+> pin_user_pages_fast() will first call __get_user_pages_locked() to
+> pin the page in CMA area, and then call
+> check_and_migrate_movable_pages() to migrate the page from CMA area
+> to non-CMA area. But the current code calling __get_user_pages_locked()
+> will fail, because it call try_grab_folio() to pin page in gup slow
+> path.
+> 
+> The commit 57edfcfd3419 ("mm/gup: accelerate thp gup even for "pages
+> != NULL"") uses try_grab_folio() in gup slow path, which seems to be
+> problematic because try_grap_folio() will check if the page can be
+> longterm pinned. This check may fail and cause __get_user_pages_lock()
+> to fail. However, these checks are not required in gup slow path,
+> seems we can use try_grab_page() instead of try_grab_folio(). In
+> addition, in the current code, try_grab_page() can only add 1 to the
+> page's refcount. We extend this function so that the page's refcount
+> can be increased according to the parameters passed in.
+> 
+> The following log reveals it:
+> 
+> [  464.325306] WARNING: CPU: 13 PID: 6734 at mm/gup.c:1313 __get_user_pages+0x423/0x520
+> [  464.325464] CPU: 13 PID: 6734 Comm: qemu-kvm Kdump: loaded Not tainted 6.6.33+ #6
+> [  464.325477] RIP: 0010:__get_user_pages+0x423/0x520
+> [  464.325515] Call Trace:
+> [  464.325520]  <TASK>
+> [  464.325523]  ? __get_user_pages+0x423/0x520
+> [  464.325528]  ? __warn+0x81/0x130
+> [  464.325536]  ? __get_user_pages+0x423/0x520
+> [  464.325541]  ? report_bug+0x171/0x1a0
+> [  464.325549]  ? handle_bug+0x3c/0x70
+> [  464.325554]  ? exc_invalid_op+0x17/0x70
+> [  464.325558]  ? asm_exc_invalid_op+0x1a/0x20
+> [  464.325567]  ? __get_user_pages+0x423/0x520
+> [  464.325575]  __gup_longterm_locked+0x212/0x7a0
+> [  464.325583]  internal_get_user_pages_fast+0xfb/0x190
+> [  464.325590]  pin_user_pages_fast+0x47/0x60
+> [  464.325598]  sev_pin_memory+0xca/0x170 [kvm_amd]
+> [  464.325616]  sev_mem_enc_register_region+0x81/0x130 [kvm_amd]
+> 
+> Fixes: 57edfcfd3419 ("mm/gup: accelerate thp gup even for "pages != NULL"")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: yangge <yangge1116@126.com>
 
-Maybe that answers my question on an earlier patch.
+Thanks for the report and the fix proposed.  This is unfortunate..
 
-So the parent node of the overlay is embedded inside the overlay?
+It's just that I worry this may not be enough, as thp slow gup isn't the
+only one using try_grab_folio().  There're also hugepd and memfd pinning
+(which just got queued, again).
 
-Making a guess without looking at the code... The code loading an
-overlay must first parse the overlay and find that node name. It then
-must somehow traverses the graph, and find that node. It then must
-apply the overlay at that point.
+I suspect both of them can also hit a cma chunk here, and fail whenever
+they shouldn't have.
 
-Could you not take this code apart, so you can pass it the name of the
-node you want to apply the overlay to, rather than read it from the
-overlay itself? The connector should known its own node in the
-graph. So it can find the overlay, load it, and then ask for it to be
-applied over itself.
+The slight complexity resides in the hugepd path where it right now shares
+with fast-gup.  So we may potentially need something similiar to what Yang
+used to introduce in this patch:
 
-	Andrew
+https://lore.kernel.org/r/20240604234858.948986-2-yang@os.amperecomputing.com
+
+So as to identify whether the hugepd gup is slow or fast, and we should
+only let the fast gup fail on those.
+
+Let me also loop them in on the other relevant discussion.
+
+Thanks,
+
+-- 
+Peter Xu
+
 
