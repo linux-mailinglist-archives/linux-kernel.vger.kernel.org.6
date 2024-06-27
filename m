@@ -1,361 +1,115 @@
-Return-Path: <linux-kernel+bounces-232310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A8EB91A6A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:37:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEC1A91A6B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:40:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 173351F21E06
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:37:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27F361C22533
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C68D15ECEA;
-	Thu, 27 Jun 2024 12:37:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9430715ECEF;
+	Thu, 27 Jun 2024 12:39:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="M+9QvEUz"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86AAE13DBA8;
-	Thu, 27 Jun 2024 12:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ahrCbyoU"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6372F15E5DB
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:39:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719491845; cv=none; b=JafW/yx+aUJc+6Yoy5azHMmnYaMmbz+Bo9oxfyZn3DognLR9+2iZtlwuBLLP24Tvwzms0VeMm3q4CjKF6/SYgFztKXAC4B6v5+2G/cZT170bnQ9TUf7tn5JTKg4rtD0vqcGzxxHyecAtPDHOburZ8HbWW1l0UdiOpJvByFz0E5U=
+	t=1719491995; cv=none; b=omvQjTXDahNn2aeoNF7rJoVBH5y2zEHVbbiOG6DUwRH8HUKs5DI7an0PIVqXw+pl/gJ3ETuV0M+fTYIBlF0ZbEwzkkwFx+fBRpoU8CfLW1+uFQQ32PDRIxoBPL5fqeCTcJDfkwK8kVKGSL48NMfxHQ7tqjjr4IrJ2HEgGgB78LY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719491845; c=relaxed/simple;
-	bh=eLk8XlJiOIs4iz0E86fFMw9/CBQ5HhjgLZ3eZ42Zjsg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cis5aW4iM8wdRVhhx4nHoNoJybK/soa3ASWQFVaEEL/f2UG+jfZzi0crJWjbNlP1DW/qY46BpzoA+pOZPpX4RDLEFRs/34+S7BTsMmyRLRWfTEe4B6BgpJj21UJlL8X2QkjFfEK9GaIokC/OiedfuDe0qr2z1axWVOh8Il4u0jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=M+9QvEUz; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1719491841;
-	bh=eLk8XlJiOIs4iz0E86fFMw9/CBQ5HhjgLZ3eZ42Zjsg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=M+9QvEUzLncpybrAFcnNov9UZdsUEsb+28TFPRJrfaEJWgqJlr0luG0uIRRB3/I7a
-	 krX+ixKhyoXwap2tMnXpMC/3lLLgYk6U3OwUfAIx6YoCtLUgdWIIDtp/20sQdCVXRz
-	 0T8X1mey/rzToarSxUJeg5v8nrP805icvNYZkKpCpCYGws+Wx77SqJFx39Vyf9tFNJ
-	 6x+ZqJ7c32gdquQOS/zLWz5OQo0waPl3zghVHlzJdWej6fuNBmPljqSuQnNX7/XI1H
-	 0mQTRTBptoAqKzesnkiaipLf+XI5OrETbQriVjTahHY+2zsHaJFjIoUjvuys5Z1T4I
-	 LpNQUwmA+56ig==
-Received: from [100.74.67.65] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: jmassot)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 331DD37804D4;
-	Thu, 27 Jun 2024 12:37:21 +0000 (UTC)
-Message-ID: <2d1327fb-7301-4e8d-9ea2-07fd6c6420c3@collabora.com>
-Date: Thu, 27 Jun 2024 14:37:20 +0200
+	s=arc-20240116; t=1719491995; c=relaxed/simple;
+	bh=XIiN2SU02Qa6IoY68GGkhAS66T4UHBbwG6fx2lujuAg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=oIg1/eMOQ9BVFBY4ffF5zV5G/zJCmNaVz84EUebcG4WQ/on2SMXmhq+jSWIHeSOtitY2rXu+5gF7rV2KTDcXPXLOmydT5ahapAv+QX1PI0bNfd4i1RF4r95NgimEs385uxS2gQVTzwxiRk/DGBTefvq/U2qdrvP+Ks9+/U8ogi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ahrCbyoU; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=vkEX8
+	CnABxw6g+6C0/kCh5ySrZHNhjny2P+4xtrVQvM=; b=ahrCbyoULxWhJIuJgH8Iv
+	VP5YQszl65e68JeQy8ymXXc1VGhMW9wIF7+FtuJGzQsNyjVcJ1xhw/meuLrZAB8t
+	pd4v8ynYeEIFRv6FpZVdsvnHU0vhXim9J3AMY66WQrn3ejw8NvRYkJ90vJw9dVEd
+	FqXpcpPrvY4lmzBcdhbEpI=
+Received: from localhost.localdomain (unknown [193.203.214.57])
+	by gzga-smtp-mta-g1-0 (Coremail) with SMTP id _____wD3_4FeXX1m+wa7Ag--.41205S4;
+	Thu, 27 Jun 2024 20:38:55 +0800 (CST)
+From: ran xiaokai <ranxiaokai627@163.com>
+To: lkp@intel.com
+Cc: baohua@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	llvm@lists.linux.dev,
+	oe-kbuild-all@lists.linux.dev,
+	peterx@redhat.com,
+	ran.xiaokai@zte.com.cn,
+	ranxiaokai627@163.com,
+	ziy@nvidia.com
+Subject: Re: [PATCH 2/2] kpageflags: fix wrong KPF_THP on non-pmd-mappable compound pages
+Date: Thu, 27 Jun 2024 12:38:54 +0000
+Message-Id: <20240627123854.23205-1-ranxiaokai627@163.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <202406262300.iAURISyJ-lkp@intel.com>
+References: <202406262300.iAURISyJ-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] media: i2c: max96717: add test pattern ctrl
-To: Tommaso Merciai <tomm.merciai@gmail.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- linuxfancy@googlegroups.com, sakari.ailus@linux.intel.com,
- laurent.pinchart@ideasonboard.com, Mauro Carvalho Chehab
- <mchehab@kernel.org>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240617145958.1819069-1-tomm.merciai@gmail.com>
- <20240617145958.1819069-2-tomm.merciai@gmail.com>
- <94d58f00-ef6a-4454-b028-bc3b7dcd927d@collabora.com>
- <Znr+2WZv8rUKNiZ+@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
- <ZnvTQ2BwTHVJvh6o@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
-Content-Language: en-US
-From: Julien Massot <julien.massot@collabora.com>
-In-Reply-To: <ZnvTQ2BwTHVJvh6o@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3_4FeXX1m+wa7Ag--.41205S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Cw1kCw17JF15ur47CFWfKrg_yoW5Jr1xpa
+	18GFs8Kr48Gw1rGws7GFWUZa1jqws8Wr1agF18Gw47ZF4YvFyq9r4Ikr13uwnFgrykKrWf
+	Crn7XF9Yqa4UAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JUKAp8UUUUU=
+X-CM-SenderInfo: xudq5x5drntxqwsxqiywtou0bp/1tbiqQALTGVOBIg1VwAAsr
 
-Hi Tommaso,
-
-On 6/26/24 10:37 AM, Tommaso Merciai wrote:
-> On Tue, Jun 25, 2024 at 07:31:05PM +0200, Tommaso Merciai wrote:
->> On Tue, Jun 25, 2024 at 09:54:18AM +0200, Julien Massot wrote:
->>
->> Hi Julien,
->>
->>> Hi Tommaso,
->>>
->>> Thanks for your patch.
->>>
->>> I tested it on my setup and can capture frames. Here's a link to an example:
->>> https://pasteboard.co/j8yHuE4YdYDV.jpg.
->>
->> Nice! Thanks for sharing and testing.
->>
->>>
->>> I had some trouble with link validation because my sensor doesn't support
->>> the RGB format. Once we have internal pad support, we won't need to worry
->>> about the serializer creating an incompatible video stream for the sensor.
->>>
->>> In the future, it would be great if we could support the serializer without
->>> needing a connected sensor. This way, we can use it as a pattern generator
->>> with this patch. However, not all GMSL2 serializers work this way. For
->>> example, the MAX9295A can't generate an internal PCLK and relies on the
->>> sensor to provide the video stream.
->>
->> Fully agree.
->>
->>>
->>> Overall, this patch is very useful as it lets us receive a pattern from the
->>> serializer, which helps validate the GMSL2 connection.
->>>
->>> It also handles issues related to generator timing, bits per pixel (bpp),
->>> and tunnel mode that users might encounter.
->>
->> Fully agree, in my case enabling this test pattern help me a lot on
->> validating the gmsl2 pipe.
->>
->>>
->>> On 6/17/24 4:59 PM, Tommaso Merciai wrote:
->>>> Add v4l2 test pattern control.
->>>>
->>>> Signed-off-by: Tommaso Merciai <tomm.merciai@gmail.com>
->>>> ---
->>>>    drivers/media/i2c/max96717.c | 210 ++++++++++++++++++++++++++++++++---
->>>>    1 file changed, 194 insertions(+), 16 deletions(-)
->>>>
->>>> diff --git a/drivers/media/i2c/max96717.c b/drivers/media/i2c/max96717.c
->>>> index 949306485873..c263bbca7318 100644
->>>> --- a/drivers/media/i2c/max96717.c
->>>> +++ b/drivers/media/i2c/max96717.c
->>>> @@ -16,6 +16,7 @@
->>>>    #include <linux/regmap.h>
->>>>    #include <media/v4l2-cci.h>
->>>> +#include <media/v4l2-ctrls.h>
->>>>    #include <media/v4l2-fwnode.h>
->>>>    #include <media/v4l2-subdev.h>
->>>> @@ -36,11 +37,37 @@
->>>>    #define MAX96717_DEV_ID  CCI_REG8(0xd)
->>>>    #define MAX96717_DEV_REV CCI_REG8(0xe)
->>>>    #define MAX96717_DEV_REV_MASK GENMASK(3, 0)
->>>> +#define MAX96717_IO_CHK0 CCI_REG8(0x24f)
->>> In MAX96717 datasheet this register is named VTX1.
->>> Can you also move these definitions to the VTX section?
->>>> +#define MAX96717_PATTERN_CLK_FREQ GENMASK(3, 1)
->>>>    /* VID_TX Z */
->>>> +#define MAX96717_VIDEO_TX0 CCI_REG8(0x110)
->>>> +#define MAX96717_VIDEO_AUTO_BPP BIT(3)
->>>>    #define MAX96717_VIDEO_TX2 CCI_REG8(0x112)
->>>>    #define MAX96717_VIDEO_PCLKDET BIT(7)
->>>> +/* VRX_PATGEN_0 */
->>> For serializer these registers are named VTX_Z instead of VRX.
->>>
->>>> +#define MAX96717_PATGEN_0              CCI_REG8(0x24e)
->>> #define MAX96717_VTX_0              CCI_REG8(0x24e)
->>>> +#define MAX96717_PATGEN_1              CCI_REG8(0x26b)
->>> Can you keep this define ordered by address?
->>>> +#define MAX96717_PATGEN_MODE           GENMASK(1, 0)
->>>> +#define MAX96717_PATGEN_VS_DLY         CCI_REG24(0x250)
->>> #define MAX96717_VTX_VS_DLY
->>>> +#define MAX96717_PATGEN_VS_HIGH        CCI_REG24(0x253)
->>>> +#define MAX96717_PATGEN_VS_LOW         CCI_REG24(0x256)
->>>> +#define MAX96717_PATGEN_V2H            CCI_REG24(0x259)
->>>> +#define MAX96717_PATGEN_HS_HIGH        CCI_REG16(0x25c)
->>>> +#define MAX96717_PATGEN_HS_LOW         CCI_REG16(0x25e)
->>>> +#define MAX96717_PATGEN_HS_CNT         CCI_REG16(0x260)
->>>> +#define MAX96717_PATGEN_V2D            CCI_REG24(0x262)
->>>> +#define MAX96717_PATGEN_DE_HIGH        CCI_REG16(0x265)
->>>> +#define MAX96717_PATGEN_DE_LOW         CCI_REG16(0x267)
->>>> +#define MAX96717_PATGEN_DE_CNT         CCI_REG16(0x269)
->>>> +#define MAX96717_PATGEN_GRAD_INC       CCI_REG8(0x26c)
->>>> +#define MAX96717_PATGEN_CHKB_COLOR_A   CCI_REG24(0x26d)
->>>> +#define MAX96717_PATGEN_CHKB_COLOR_B   CCI_REG24(0x270)
->>>> +#define MAX96717_PATGEN_CHKB_RPT_CNT_A CCI_REG8(0x273)
->>>> +#define MAX96717_PATGEN_CHKB_RPT_CNT_B CCI_REG8(0x274)
->>>> +#define MAX96717_PATGEN_CHKB_ALT       CCI_REG8(0x275)
->>>> +
->>
->> So your plan is to move all this stuff here:
->>
->>
->> /* VTX_Z */
->> #define MAX96717_VTX0                  CCI_REG8(0x24e)
->> #define MAX96717_VTX1                  CCI_REG8(0x24f)
->> #define MAX96717_PATTERN_CLK_FREQ      GENMASK(3, 1)
->> #define MAX96717_VTX_VS_DLY            CCI_REG24(0x250)
->> #define MAX96717_VTX_VS_HIGH           CCI_REG24(0x253)
->> #define MAX96717_VTX_VS_LOW            CCI_REG24(0x256)
->> #define MAX96717_VTX_V2H               CCI_REG24(0x259)
->> #define MAX96717_VTX_HS_HIGH           CCI_REG16(0x25c)
->> #define MAX96717_VTX_HS_LOW            CCI_REG16(0x25e)
->> #define MAX96717_VTX_HS_CNT            CCI_REG16(0x260)
->> #define MAX96717_VTX_V2D               CCI_REG24(0x262)
->> #define MAX96717_VTX_DE_HIGH           CCI_REG16(0x265)
->> #define MAX96717_VTX_DE_LOW            CCI_REG16(0x267)
->> #define MAX96717_VTX_DE_CNT            CCI_REG16(0x269)
->> #define MAX96717_VTX29                 CCI_REG8(0x26b)
->> #define MAX96717_VTX_MODE              GENMASK(1, 0)
->> #define MAX96717_VTX_GRAD_INC          CCI_REG8(0x26c)
->> #define MAX96717_VTX_CHKB_COLOR_A      CCI_REG24(0x26d)
->> #define MAX96717_VTX_CHKB_COLOR_B      CCI_REG24(0x270)
->> #define MAX96717_VTX_CHKB_RPT_CNT_A    CCI_REG8(0x273)
->> #define MAX96717_VTX_CHKB_RPT_CNT_B    CCI_REG8(0x274)
->> #define MAX96717_VTX_CHKB_ALT          CCI_REG8(0x275)
->>
->> In a fixed order right? :-)
-Yes sounds good to me
->>
->>
->>
->>>>    /* GPIO */
->>>>    #define MAX96717_NUM_GPIO         11
->>>>    #define MAX96717_GPIO_REG_A(gpio) CCI_REG8(0x2be + (gpio) * 3)
->>>> @@ -82,6 +109,12 @@
->>>>    /* MISC */
->>>>    #define PIO_SLEW_1 CCI_REG8(0x570)
->>>> +enum max96717_vpg_mode {
->>>> +	MAX96717_VPG_DISABLED = 0,
->>>> +	MAX96717_VPG_CHECKERBOARD = 1,
->>>> +	MAX96717_VPG_GRADIENT = 2,
->>>> +};
->>>> +
->>>>    struct max96717_priv {
->>>>    	struct i2c_client		  *client;
->>>>    	struct regmap			  *regmap;
->>>> @@ -89,6 +122,7 @@ struct max96717_priv {
->>>>    	struct v4l2_mbus_config_mipi_csi2 mipi_csi2;
->>>>    	struct v4l2_subdev                sd;
->>>>    	struct media_pad                  pads[MAX96717_PORTS];
->>>> +	struct v4l2_ctrl_handler          ctrl_handler;
->>>>    	struct v4l2_async_notifier        notifier;
->>>>    	struct v4l2_subdev                *source_sd;
->>>>    	u16                               source_sd_pad;
->>>> @@ -96,6 +130,7 @@ struct max96717_priv {
->>>>    	u8                                pll_predef_index;
->>>>    	struct clk_hw                     clk_hw;
->>>>    	struct gpio_chip                  gpio_chip;
->>>> +	enum max96717_vpg_mode            pattern;
->>>>    };
->>>>    static inline struct max96717_priv *sd_to_max96717(struct v4l2_subdev *sd)
->>>> @@ -131,6 +166,115 @@ static inline int max96717_start_csi(struct max96717_priv *priv, bool start)
->>>>    			       start ? MAX96717_START_PORT_B : 0, NULL);
->>>>    }
->>>> +static int max96717_apply_patgen_timing(struct max96717_priv *priv,
->>>> +					struct v4l2_subdev_state *state)
->>>> +{
->>>> +	struct v4l2_mbus_framefmt *fmt =
->>>> +		v4l2_subdev_state_get_format(state, MAX96717_PAD_SOURCE);
->>>> +	const u32 h_active = fmt->width;
->>>> +	const u32 h_fp = 88;
->>>> +	const u32 h_sw = 44;
->>>> +	const u32 h_bp = 148;
->>>> +	u32 h_tot;
->>>> +	const u32 v_active = fmt->height;
->>>> +	const u32 v_fp = 4;
->>>> +	const u32 v_sw = 5;
->>>> +	const u32 v_bp = 36;
->>>> +	u32 v_tot;
->>>> +	int ret = 0;
->>>> +
->>>> +	h_tot = h_active + h_fp + h_sw + h_bp;
->>>> +	v_tot = v_active + v_fp + v_sw + v_bp;
->>>> +
->>>> +	/* 75 Mhz pixel clock */
->>>> +	cci_update_bits(priv->regmap, MAX96717_IO_CHK0,
->>>> +			MAX96717_PATTERN_CLK_FREQ, 0xa, &ret);
->>>> +
->>>> +	dev_info(&priv->client->dev, "height: %d width: %d\n", fmt->height,
->>>> +		 fmt->width);
->>>> +
->>>> +	cci_write(priv->regmap, MAX96717_PATGEN_VS_DLY, 0, &ret);
->>>> +	cci_write(priv->regmap, MAX96717_PATGEN_VS_HIGH, v_sw * h_tot, &ret);
->>>> +	cci_write(priv->regmap, MAX96717_PATGEN_VS_LOW,
->>>> +		  (v_active + v_fp + v_bp) * h_tot, &ret);
->>>> +	cci_write(priv->regmap, MAX96717_PATGEN_HS_HIGH, h_sw, &ret);
->>>> +	cci_write(priv->regmap, MAX96717_PATGEN_HS_LOW, h_active + h_fp + h_bp,
->>>> +		  &ret);
->>>> +	cci_write(priv->regmap, MAX96717_PATGEN_V2D,
->>>> +		  h_tot * (v_sw + v_bp) + (h_sw + h_bp), &ret);
->>>> +	cci_write(priv->regmap, MAX96717_PATGEN_HS_CNT, v_tot, &ret);
->>>> +	cci_write(priv->regmap, MAX96717_PATGEN_DE_HIGH, h_active, &ret);
->>>> +	cci_write(priv->regmap, MAX96717_PATGEN_DE_LOW, h_fp + h_sw + h_bp,
->>>> +		  &ret);
->>>> +	cci_write(priv->regmap, MAX96717_PATGEN_DE_CNT, v_active, &ret);
->>>> +	/* B G R */
->>>> +	cci_write(priv->regmap, MAX96717_PATGEN_CHKB_COLOR_A, 0xfecc00, &ret);
->>>> +	/* B G R */
->>>> +	cci_write(priv->regmap, MAX96717_PATGEN_CHKB_COLOR_B, 0x006aa7, &ret);
->>>> +	cci_write(priv->regmap, MAX96717_PATGEN_CHKB_RPT_CNT_A, 0x3c, &ret);
->>>> +	cci_write(priv->regmap, MAX96717_PATGEN_CHKB_RPT_CNT_B, 0x3c, &ret);
->>>> +	cci_write(priv->regmap, MAX96717_PATGEN_CHKB_ALT, 0x3c, &ret);
->>>> +	cci_write(priv->regmap, MAX96717_PATGEN_GRAD_INC, 0x10, &ret);
->>>> +
->>>> +	return ret;
->>>> +}
->>>> +
->>>> +static int max96717_apply_patgen(struct max96717_priv *priv,
->>>> +				 struct v4l2_subdev_state *state)
->>>> +{
->>>> +	unsigned int val;
->>>> +	int ret = 0;
->>>> +
->>>> +	if (priv->pattern)
->>>> +		ret = max96717_apply_patgen_timing(priv, state);
->>>> +
->>>> +	cci_write(priv->regmap, MAX96717_PATGEN_0, priv->pattern ? 0xfb : 0,
->>>> +		  &ret);
->>>> +
->>>> +	val = FIELD_PREP(MAX96717_PATGEN_MODE, priv->pattern);
->>>> +	cci_update_bits(priv->regmap, MAX96717_PATGEN_1, MAX96717_PATGEN_MODE,
->>>> +			val, &ret);
->>>> +	return ret;
->>>> +}
->>>> +
->>>> +static int max96717_s_ctrl(struct v4l2_ctrl *ctrl)
->>>> +{
->>>> +	struct max96717_priv *priv =
->>>> +		container_of(ctrl->handler, struct max96717_priv, ctrl_handler);
->>>> +	int ret;
->>>> +
->>>> +	switch (ctrl->id) {
->>>> +	case V4L2_CID_TEST_PATTERN:
->>>> +		if (priv->enabled_source_streams)
->>>> +			return -EBUSY;
->>>> +		priv->pattern = ctrl->val;
->>>> +		break;
->>>> +	default:
->>>> +		return -EINVAL;
->>>> +	}
->>>> +
->>>> +	/* Use bpp from bpp register */
->>>> +	ret = cci_update_bits(priv->regmap, MAX96717_VIDEO_TX0,
->>>> +			      MAX96717_VIDEO_AUTO_BPP,
->>>> +			      priv->pattern ? 0 : MAX96717_VIDEO_AUTO_BPP,
->>>> +			      NULL);
->>>> +
->>>> +	/* Pattern generator doesn't work with tunnel mode */
->>> Can you add a comment saying that the deserializer should manage the link in
->>> pixel mode as well.
->>
->> Something like:
->> 	/* Pattern generator doesn't work with tunnel mode.
->> 	   Is mandatory to put also the deserializer into pixel mode.
->>          */
+> Hi ran,
 > 
-> Actually I plan to add to add the following comment:
+> kernel test robot noticed the following build errors:
 > 
-> 	/*
-> 	 * Pattern generator doesn't work with tunnel mode.
-> 	 * Needs RGB color format and deserializer tunnel mode must be disabled.
-> 	 */
-> 	return cci_update_bits(priv->regmap, MAX96717_MIPI_RX_EXT11,
-> 			       MAX96717_TUN_MODE,
-> 			       priv->pattern ? 0 : MAX96717_TUN_MODE, &ret);
+> [auto build test ERROR on akpm-mm/mm-everything]
+> [also build test ERROR on linus/master v6.10-rc5 next-20240625]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
 > 
-> Let me know if this can be ok for you.
-Yes perfect
+> url:    https://github.com/intel-lab-lkp/linux/commits/ran-xiaokai/mm-Constify-folio_order-folio_test_pmd_mappable/20240626-113027
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+> patch link:    https://lore.kernel.org/r/20240626024924.1155558-3-ranxiaokai627%40163.com
+> patch subject: [PATCH 2/2] kpageflags: fix wrong KPF_THP on non-pmd-mappable compound pages
+> config: x86_64-allnoconfig (https://download.01.org/0day-ci/archive/20240626/202406262300.iAURISyJ-lkp@intel.com/config)
+> compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240626/202406262300.iAURISyJ-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202406262300.iAURISyJ-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+> >> fs/proc/page.c:151:35: error: passing 'const struct folio *' to parameter of type 'struct folio *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
+>      151 |         else if (folio_test_pmd_mappable(folio)) {
+>          |                                          ^~~~~
+>    include/linux/huge_mm.h:438:58: note: passing argument to parameter 'folio' here
+>      438 | static inline bool folio_test_pmd_mappable(struct folio *folio)
+>          |                                                          ^
+>    1 error generated.
 
-Regards,
+Hi,
 
--- 
-Julien
+This patch is the second patch of the serial:
+https://lore.kernel.org/lkml/20240626024924.1155558-1-ranxiaokai627@163.com/
+
+and it relies on the first patch:
+https://lore.kernel.org/lkml/20240626024924.1155558-2-ranxiaokai627@163.com/
+
+and it seems the first patch is not applied.
+Or in this case, we should not split these two patches?
+
 
