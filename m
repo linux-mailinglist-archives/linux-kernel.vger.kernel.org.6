@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-232812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08A5E91AE8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:51:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A621A91AE8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:52:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4EC71F260D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:51:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEA321C21344
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB0119CCE0;
-	Thu, 27 Jun 2024 17:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4A219F477;
+	Thu, 27 Jun 2024 17:51:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QHV9svyz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EGnPyufg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAAE919AA52;
-	Thu, 27 Jun 2024 17:50:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A4419B3DC;
+	Thu, 27 Jun 2024 17:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719510656; cv=none; b=KJduMup4fsBmBZmS1ljvvcMSPr8URfJKZNpFW+NPyq+0Z7Ovf9d58gJleSTCflZWNKYhK47tQ6isJdnhmv8C0HJmrLkVsIW3e/j7eBiidM71qLUmDv40vkX23zg1HOMDe1XXBDq8iWpvkSBeR0xN4WvT937Z8BLJ07WJPDOBQ/8=
+	t=1719510657; cv=none; b=V+k62c9Os+iPOfVePgEb93PLfRJEet8MkvrM9BbQD2OA8eTCSiVOsjEDyw0iDf0Ze5NivfRPlUFrTSSwTEp69Lbc/W/5JAxB2xMP6s10NEQN2jK158B1nNDwLeU5B0+T80ISjclkahKtth8lAJzoc/7DaeYRKVxlwwggeLsTzaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719510656; c=relaxed/simple;
-	bh=1xNe1u/aXvULtcQUTH3SvYXu4kNm78KffnqOzZDJdnw=;
+	s=arc-20240116; t=1719510657; c=relaxed/simple;
+	bh=aEmY+usoEI0JCLbYcZGViK6r8rPMlyAeGBCWtdOs+Ig=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=SE/cIlJH5q63hAn9i7tcTmszZYrZZf8gAqN41y3WHRra7XeA4BLR2JvwykkzbI3sbhHa+OkB6JvVNpegg7KnB95l7IpFlsXOc8sqJ7SWSuK1Zcjb/mvkWgj6Tw7lweg3+R9k4KfEWUwNTgGwgECfvvR3v//zPgcbmBgdwvVVUrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QHV9svyz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 771DEC4AF09;
+	 In-Reply-To:To:Cc; b=gvn0PIZno6auBrqdybHIGpt/sIjTmEI+wUd8yeTeRmuW9s+BKSSPt5BtfiONuqbbxln6+XT0sI1v2yGdJtEFNFkczgoeqSB+O7GxbAED4yJAMiSRI5BLP3vGZFbf5lw4Wu8f+C/XNleut00OyVrx/+ioZUjsHVDaQdEy7fqhOrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EGnPyufg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DD36EC4AF14;
 	Thu, 27 Jun 2024 17:50:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1719510656;
-	bh=1xNe1u/aXvULtcQUTH3SvYXu4kNm78KffnqOzZDJdnw=;
+	bh=aEmY+usoEI0JCLbYcZGViK6r8rPMlyAeGBCWtdOs+Ig=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=QHV9svyzahf3yrCqi8QXPqwP7zRiUAZbQFiqWK8HM/+ZV9P16PfYVUDWyJ7BUNJ7b
-	 IbAR+uVQMHlr1anDnrYhx1vGkb0K9rZRcHJLmboDNT6J17AW9gvgcWSkbSkZ+Wc0vu
-	 VTuKgfjLl5SRafkJYXPGUuRzRGJ43fxoKmwxAcv0GGSFITi6Gxrbc94V+qEOunslE5
-	 oxPXyrYrtXAbxGSeD2r1RKaHo647/dnOgSIVyIbt/MzYtXbToM6G8yPuM4j9n4TRyx
-	 me3AjXcPr6MZOpX0BzgGjHQOAjVpmah+oiu0JL55XjAYJw/H3d9xHxngGU9L8Z+BGn
-	 V/EQlZlQfCwIA==
+	b=EGnPyufgOJ4Y9Rs8F7kwwOdwhS+bQgguOfKrrJIZBbTa5uxnvZqznlBjrRpBCGBnV
+	 k5XP/3S35nI0Wu8/9U7JxPdgtTuf1vlM5OVvb5X/1u5ieZcOkP2Bz3LCE7q8wIDgdu
+	 YIZ5YJobggGuX84AsT/quvLa85blZ6oTzHmrltROmVr5jgyAJgamuJ5/2uT2dhfDFj
+	 Wb7KI9XgzhzRK0XLS9BngyYu3ww6sJM5iZFMqs8goXWI7Q92l2djZDm7UepQUnsJAq
+	 QmYWEBGfnUkv6ywkj7Ym5Nj7k4Gjb7Mzez0LwhNI3t0x/P60l9ybF4C7n0OAdpB/OM
+	 wdzAryF8DZTUA==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 52547C43443;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B415AC43443;
 	Thu, 27 Jun 2024 17:50:56 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,50 +51,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 0/7] riscv: Various text patching improvements
+Subject: Re: [RESEND v4 0/2] dt-bindings: interrupt-controller: riscv,cpu-intc
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <171951065633.6762.12967635589292912560.git-patchwork-notify@kernel.org>
+ <171951065673.6762.2519132722674117186.git-patchwork-notify@kernel.org>
 Date: Thu, 27 Jun 2024 17:50:56 +0000
-References: <20240327160520.791322-1-samuel.holland@sifive.com>
-In-Reply-To: <20240327160520.791322-1-samuel.holland@sifive.com>
-To: Samuel Holland <samuel.holland@sifive.com>
-Cc: linux-riscv@lists.infradead.org, palmer@dabbelt.com, bjorn@rivosinc.com,
- linux-kernel@vger.kernel.org, ardb@kernel.org, daniel@iogearbox.net,
- jbaron@akamai.com, jpoimboe@kernel.org, peterz@infradead.org,
- rostedt@goodmis.org, bpf@vger.kernel.org
+References: <20240615021507.122035-1-kanakshilledar@gmail.com>
+In-Reply-To: <20240615021507.122035-1-kanakshilledar@gmail.com>
+To: Kanak Shilledar <kanakshilledar@gmail.com>
+Cc: linux-riscv@lists.infradead.org, kanakshilledar111@protonmail.com,
+ tglx@linutronix.de, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ conor+dt@kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, samuel.holland@sifive.com,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ conor.dooley@microchip.com
 
 Hello:
 
 This series was applied to riscv/linux.git (for-next)
 by Palmer Dabbelt <palmer@rivosinc.com>:
 
-On Wed, 27 Mar 2024 09:04:39 -0700 you wrote:
-> Here are a few changes to minimize calls to stop_machine() and
-> flush_icache_*() in the various text patching functions, as well as
-> to simplify the code.
+On Sat, 15 Jun 2024 07:45:02 +0530 you wrote:
+> This series of patches converts the RISC-V CPU interrupt controller to
+> the newer dt-schema binding.
 > 
-> This series is based on "[PATCH v3 0/2] riscv: fix patching with IPI"[1].
-> 
-> [1]: https://lore.kernel.org/linux-riscv/20240229121056.203419-1-alexghiti@rivosinc.com/
+> Patch 1:
+> This patch is currently at v4 as it has been previously rolled out.
+> Contains the bindings for the interrupt controller.
 > 
 > [...]
 
 Here is the summary with links:
-  - [v2,1/7] riscv: jump_label: Batch icache maintenance
-    https://git.kernel.org/riscv/c/652b56b18439
-  - [v2,2/7] riscv: jump_label: Simplify assembly syntax
-    https://git.kernel.org/riscv/c/2aa30d19cfbb
-  - [v2,3/7] riscv: kprobes: Use patch_text_nosync() for insn slots
-    https://git.kernel.org/riscv/c/b1756750a397
-  - [v2,4/7] riscv: Simplify text patching loops
-    https://git.kernel.org/riscv/c/5080ca0fe9b5
-  - [v2,5/7] riscv: Pass patch_text() the length in bytes
-    https://git.kernel.org/riscv/c/51781ce8f448
-  - [v2,6/7] riscv: Use offset_in_page() in text patching functions
-    https://git.kernel.org/riscv/c/eaee54875630
-  - [v2,7/7] riscv: Remove extra variable in patch_text_nosync()
-    https://git.kernel.org/riscv/c/47742484ee16
+  - [RESEND,v4,1/2] dt-bindings: interrupt-controller: riscv,cpu-intc: convert to dtschema
+    https://git.kernel.org/riscv/c/9ff141042a62
+  - [RESEND,v4,2/2] dt-bindings: riscv: cpus: add ref to interrupt-controller
+    https://git.kernel.org/riscv/c/1f6e218859f1
 
 You are awesome, thank you!
 -- 
