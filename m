@@ -1,272 +1,141 @@
-Return-Path: <linux-kernel+bounces-232183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06CA791A4A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:10:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 377AB91A4A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:10:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ACED1F231B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:10:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0D9E1F2357E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56FC81459F6;
-	Thu, 27 Jun 2024 11:10:23 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0507D14884D;
+	Thu, 27 Jun 2024 11:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h3UiQX+h"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF5D13E40C
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 11:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7FD21459EB;
+	Thu, 27 Jun 2024 11:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719486622; cv=none; b=WTFeKe2nHE6bx0GFPWbxOUCXk8LJXdA5C/akf2Vywc4T5ui2gT0gI4uZfnKb9NEemvU9w27D46iKxe7EIQIXtiu0RRtPArjoOKkNBun+V/1puXOVjo+63+CiQItcfj5zl+k3hj/EMdITajftEjlJ+NP4/4KGDwGEdMyy6/DpXPo=
+	t=1719486642; cv=none; b=SNYEpC7w6RJhRt3CRokD+nRkxQdq2KCDMAvy8L3wLMpuBNO6IyatETi4DWjOr3QJ1AdpFIsUbfis+U8rqIhOVHCw3OE67mEo6U3HY4yPLbZclqlCS5pNm+yba5Yq0dzbEQKlY3THh6X8WoPGklr0uU2HZlQCHEo8taM+D6Tcv3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719486622; c=relaxed/simple;
-	bh=NZWGPxDuY9NL791CEDFXKT6wV1pr8L3NhF6nzfSF4ag=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J9d4pBoTjtjVF5dnwaKr7xbP0jyHFaMjoLtjH4Uz4cHh+T4a7LBy7u4GkDvdU5zwaTTStJLZ528QMeexOuoxxAlR/Ldh5bcieSw5qSzN5bfHzLLMOXYichji1sDT9icNIP9TQPID6tvmdZP2ghQeKdgwjuM1nUS40txzyoK47tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav312.sakura.ne.jp (fsav312.sakura.ne.jp [153.120.85.143])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 45RBAGdq081328;
-	Thu, 27 Jun 2024 20:10:16 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav312.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav312.sakura.ne.jp);
- Thu, 27 Jun 2024 20:10:16 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav312.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 45RBAGP8081324
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 27 Jun 2024 20:10:16 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <b55e5f24-01ad-4a3d-94dc-e8a6bc15ac42@I-love.SAKURA.ne.jp>
-Date: Thu, 27 Jun 2024 20:10:16 +0900
+	s=arc-20240116; t=1719486642; c=relaxed/simple;
+	bh=EQ9a4SVPlVS31eDUYhL49b4QXgWqMZA9TEv9GI5s6bg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ASzgBLmVUNCduzktXmrSc4lSzPWd03MQMZbupeVS5g3mxbGLuBIlxHTypInrj7MHyRzA/Co9DS9MFl0peZF6cs7d8qKA783CDhglP/1Q6AKEqgwZhlbvNfDPCVjU6Q2XyTL/p9o5CBZrVTBDXq4EYIqUHNkKpjPdLwu9JGu6/i8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h3UiQX+h; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-424ad991cbbso15561655e9.0;
+        Thu, 27 Jun 2024 04:10:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719486639; x=1720091439; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dJ41cKVFUDoayT4CnMdbSFrorOT6+T+2QyObCadagbA=;
+        b=h3UiQX+hqKv76QAKwONp8AhKnC4NRRy9c6h8VbYm76uPYZVAFhITFS7ZHB8xtOKUcU
+         muHbCzHTQ8gylJcLTb/7TLqYAawkZavvZodz398fF5Gj8vyE/QQ9Hcz4aALHMaz+xU8e
+         002dmaUbgmV/N2zkNqSvXiuTblFMGLcQhES+sPNnDHWsoSVsRD7cNgQxVyXICfp6ZFhe
+         20AG7/1Xj2gKqzjoFj7fNs4mX1NS2TEIIIpRehgtB+hR/rt73VFkDBO9kn8KrPFh7/5D
+         uBxfmZkynPvO8ehfoXAobO4dStfPlCxNFZHcKMz/ZsZxJYl6GTJiTYPGEWLjtARJQWmS
+         y1rQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719486639; x=1720091439;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dJ41cKVFUDoayT4CnMdbSFrorOT6+T+2QyObCadagbA=;
+        b=kwotSi8RLnqtzDF8CAmEUOrAX9KenULW9smIfy1jdHv4Cl6876B2RGIUVVMitKxbai
+         g8LWcI1gcHgGIJOJfULYNHKB2plM7IRqGbBtnmQoTTrFycJPZzpP0kiXISoOgRytlD3F
+         x7NrlutYWFfajPcFzWrGfKGWmtCAXQ7g2DjHRwd3tpGvptl1XpUSrvTChnxOapBqtYAh
+         mo93Swpjb4T85rqdney5ApGvz0Bi23EKJk/5fHjWmhFBG8Ng/eCpUPqc5+6RHvFROgZd
+         oWtr9W7OhmbNsl6lHmbYGENA7t7y9QvRyEvBV9lfx51klRxFJ5IIU8Py2uT9nwjvxBoh
+         lEHg==
+X-Forwarded-Encrypted: i=1; AJvYcCVsjgghNbVsAURJqx8Pyx9mzRIpEVwrOHmlF+TVYbBJqDT0eCZ48XlLkMXn+D5INWIJY/p/HB7CP2wTVgPq/WtameSC1/hgzy4DisKtys0XReYHJoXIG94hSuoRkqfZgSjd9lzvtfQFvlBI0YTGU1CUao1NfLdobJ19zBA1AY1niw==
+X-Gm-Message-State: AOJu0YwSMPFiZhByISP/iQpP9CNBMjv5aRmJdgC3oT9n1Mrr622lcR9g
+	dGQGrqOtpyHghXxjeG6uf6XFoheLwaJDdnLafPVHArqd2Nx3nTmw
+X-Google-Smtp-Source: AGHT+IGjITfTRof17ZOH07aYl96wyP8RcQUw3qHVP4Fjlv+Ra5754pHItvboK3VjmikCndiKEWX44g==
+X-Received: by 2002:a05:600c:3399:b0:424:a5e3:8022 with SMTP id 5b1f17b1804b1-424a5e38107mr42905705e9.34.1719486638478;
+        Thu, 27 Jun 2024 04:10:38 -0700 (PDT)
+Received: from skbuf ([79.115.210.53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3674369982bsm1484333f8f.74.2024.06.27.04.10.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 04:10:37 -0700 (PDT)
+Date: Thu, 27 Jun 2024 14:10:34 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Serge Semin <fancer.lancer@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Sagar Cheluvegowda <quic_scheluve@quicinc.com>,
+	Abhishek Chauhan <quic_abchauha@quicinc.com>,
+	Andrew Halaney <ahalaney@redhat.com>,
+	Jiawen Wu <jiawenwu@trustnetic.com>,
+	Mengyuan Lou <mengyuanlou@net-swift.com>,
+	Tomer Maimon <tmaimon77@gmail.com>, openbmc@lists.ozlabs.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 00/10] net: pcs: xpcs: Add memory-mapped
+ device support
+Message-ID: <20240627111034.nusgjux3lzf5s3bk@skbuf>
+References: <20240627004142.8106-1-fancer.lancer@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH] sched/core: defer printk() while rq lock is held
-To: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>,
-        Daniel Bristot de Oliveira
- <bristot@redhat.com>,
-        Valentin Schneider <vschneid@redhat.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        John Ogness <john.ogness@linutronix.de>,
-        Alexei Starovoitov
- <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau
- <martin.lau@linux.dev>,
-        Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-        Yonghong Song <yonghong.song@linux.dev>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-References: <345098dc-8cb4-4808-98cf-fa9ab3af4fc4@I-love.SAKURA.ne.jp>
- <87ed8lxg1c.fsf@jogness.linutronix.de>
- <60704acc-61bd-4911-bb96-bd1cdd69803d@I-love.SAKURA.ne.jp>
- <87ikxxxbwd.fsf@jogness.linutronix.de>
- <ea56efca-552f-46d7-a7eb-4213c23a263b@I-love.SAKURA.ne.jp>
- <CAADnVQ+hxHsQpfOkQvq4d5AEQsH41BHL+e_RtuxUzyh-vNyYEQ@mail.gmail.com>
- <7edb0e39-a62e-4aac-a292-3cf7ae26ccbd@I-love.SAKURA.ne.jp>
- <CAADnVQKoHk5FTN=jywBjgdTdLwv-c76nCzyH90Js-41WxPK_Tw@mail.gmail.com>
- <744c9c43-9e4f-4069-9773-067036237bff@I-love.SAKURA.ne.jp>
- <20240626122748.065a903b@rorschach.local.home>
- <f6c23073-dc0d-4b3f-b37d-1edb82737b5b@I-love.SAKURA.ne.jp>
- <20240626183311.05eaf091@rorschach.local.home>
- <6264da10-b6a0-40b8-ac26-c044b7f7529c@I-love.SAKURA.ne.jp>
- <20240626200906.37326e17@rorschach.local.home>
- <290aac9b-0664-404d-a457-292d69f9b22b@I-love.SAKURA.ne.jp>
- <20240626202926.4267df74@rorschach.local.home>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <20240626202926.4267df74@rorschach.local.home>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240627004142.8106-1-fancer.lancer@gmail.com>
 
-syzbot is reporting circular locking dependency inside __bpf_prog_run()
-when trace_sched_switch() hook is called from __schedule(), for fault
-injection calls printk() despite rq lock is already held.
+Hi Sergey,
 
-Since any debugging functionality might call printk(), guard the whole
-section between raw_spin_rq_{lock,lock_nested,trylock}() and
-raw_spin_rq_unlock() using printk_deferred_{enter,exit}().
+This does not apply to net-next.
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.10.0-rc4-syzkaller-00874-g84562f9953ec #0 Not tainted
-------------------------------------------------------
-syz-executor.1/25480 is trying to acquire lock:
-ffffffff8e328140 (console_owner){..-.}-{0:0}, at: rcu_try_lock_acquire include/linux/rcupdate.h:334 [inline]
-ffffffff8e328140 (console_owner){..-.}-{0:0}, at: srcu_read_lock_nmisafe include/linux/srcu.h:232 [inline]
-ffffffff8e328140 (console_owner){..-.}-{0:0}, at: console_srcu_read_lock kernel/printk/printk.c:286 [inline]
-ffffffff8e328140 (console_owner){..-.}-{0:0}, at: console_flush_all+0x152/0xfd0 kernel/printk/printk.c:2986
+Applying: net: pcs: xpcs: Move native device ID macro to linux/pcs/pcs-xpcs.h
+Applying: net: pcs: xpcs: Split up xpcs_create() body to sub-functions
+Applying: net: pcs: xpcs: Convert xpcs_id to dw_xpcs_desc
+Applying: net: pcs: xpcs: Convert xpcs_compat to dw_xpcs_compat
+Applying: net: pcs: xpcs: Introduce DW XPCS info structure
+Applying: dt-bindings: net: Add Synopsys DW xPCS bindings
+Applying: net: pcs: xpcs: Add Synopsys DW xPCS platform device driver
+Applying: net: pcs: xpcs: Add fwnode-based descriptor creation method
+Applying: net: stmmac: Create DW XPCS device with particular address
+Using index info to reconstruct a base tree...
+M       drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
+M       include/linux/stmmac.h
+Checking patch drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c...
+Checking patch drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c...
+Checking patch include/linux/stmmac.h...
+Applied patch drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c cleanly.
+Applied patch drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c cleanly.
+Applied patch include/linux/stmmac.h cleanly.
+Falling back to patching base and 3-way merge...
+error: Your local changes to the following files would be overwritten by merge:
+        drivers/net/ethernet/stmicro/stmmac/dwmac-intel.c
+        drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
+        include/linux/stmmac.h
+Please commit your changes or stash them before you merge.
+Aborting
+error: Failed to merge in the changes.
+Patch failed at 0009 net: stmmac: Create DW XPCS device with particular address
+hint: Use 'git am --show-current-patch=diff' to see the failed patch
 
-but task is already holding lock:
-ffff8880b943e798 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:559
-
-which lock already depends on the new lock.
-
-(...snipped...)
-
-Chain exists of:
-  console_owner --> &p->pi_lock --> &rq->__lock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&rq->__lock);
-                               lock(&p->pi_lock);
-                               lock(&rq->__lock);
-  lock(console_owner);
-
- *** DEADLOCK ***
-
-6 locks held by syz-executor.1/25480:
- #0: ffffffff8f5e6f48 (rtnl_mutex){+.+.}-{3:3}, at: dev_ioctl+0x706/0x1340 net/core/dev_ioctl.c:785
- #1: ffffffff8f67dd68 (flowtable_lock){+.+.}-{3:3}, at: nf_flow_table_cleanup+0x23/0xb0 net/netfilter/nf_flow_table_core.c:593
- #2: ffff8880b943e798 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:559
- #3: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
- #3: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
- #3: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: __bpf_trace_run kernel/trace/bpf_trace.c:2402 [inline]
- #3: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: bpf_trace_run4+0x244/0x590 kernel/trace/bpf_trace.c:2446
- #4: ffffffff8e20fa60 (console_lock){+.+.}-{0:0}, at: _printk+0xd5/0x120 kernel/printk/printk.c:2370
- #5: ffffffff8e20f690 (console_srcu){....}-{0:0}, at: rcu_try_lock_acquire include/linux/rcupdate.h:334 [inline]
- #5: ffffffff8e20f690 (console_srcu){....}-{0:0}, at: srcu_read_lock_nmisafe include/linux/srcu.h:232 [inline]
- #5: ffffffff8e20f690 (console_srcu){....}-{0:0}, at: console_srcu_read_lock kernel/printk/printk.c:286 [inline]
- #5: ffffffff8e20f690 (console_srcu){....}-{0:0}, at: console_flush_all+0x152/0xfd0 kernel/printk/printk.c:2986
-
-stack backtrace:
-CPU: 0 PID: 25480 Comm: syz-executor.1 Not tainted 6.10.0-rc4-syzkaller-00874-g84562f9953ec #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2187
- check_prev_add kernel/locking/lockdep.c:3134 [inline]
- check_prevs_add kernel/locking/lockdep.c:3253 [inline]
- validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
- __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
- console_lock_spinning_enable kernel/printk/printk.c:1870 [inline]
- console_emit_next_record kernel/printk/printk.c:2922 [inline]
- console_flush_all+0x810/0xfd0 kernel/printk/printk.c:2994
- console_unlock+0x13b/0x4d0 kernel/printk/printk.c:3063
- vprintk_emit+0x5a6/0x770 kernel/printk/printk.c:2345
- _printk+0xd5/0x120 kernel/printk/printk.c:2370
- fail_dump lib/fault-inject.c:45 [inline]
- should_fail_ex+0x391/0x4e0 lib/fault-inject.c:153
- __copy_to_user_inatomic include/linux/uaccess.h:123 [inline]
- copy_to_user_nofault+0x86/0x140 mm/maccess.c:149
- bpf_prog_b0a3dac844962ed2+0x47/0x4d
- bpf_dispatcher_nop_func include/linux/bpf.h:1243 [inline]
- __bpf_prog_run include/linux/filter.h:691 [inline]
- bpf_prog_run include/linux/filter.h:698 [inline]
- __bpf_trace_run kernel/trace/bpf_trace.c:2403 [inline]
- bpf_trace_run4+0x334/0x590 kernel/trace/bpf_trace.c:2446
- __traceiter_sched_switch+0x98/0xd0 include/trace/events/sched.h:222
- trace_sched_switch include/trace/events/sched.h:222 [inline]
- __schedule+0x2587/0x4a20 kernel/sched/core.c:6742
- preempt_schedule_notrace+0x100/0x140 kernel/sched/core.c:7017
- preempt_schedule_notrace_thunk+0x1a/0x30 arch/x86/entry/thunk.S:13
- rcu_is_watching+0x7e/0xb0 kernel/rcu/tree.c:725
- trace_lock_acquire include/trace/events/lock.h:24 [inline]
- lock_acquire+0xe3/0x550 kernel/locking/lockdep.c:5725
- rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
- rcu_read_lock include/linux/rcupdate.h:781 [inline]
- start_flush_work kernel/workqueue.c:4122 [inline]
- __flush_work+0x107/0xd00 kernel/workqueue.c:4181
- flush_work kernel/workqueue.c:4232 [inline]
- flush_delayed_work+0x169/0x1c0 kernel/workqueue.c:4254
- nf_flow_table_gc_cleanup net/netfilter/nf_flow_table_core.c:585 [inline]
- nf_flow_table_cleanup+0x62/0xb0 net/netfilter/nf_flow_table_core.c:595
- flow_offload_netdev_event+0x51/0x70 net/netfilter/nft_flow_offload.c:492
- notifier_call_chain+0x19f/0x3e0 kernel/notifier.c:93
- __dev_notify_flags+0x207/0x400
- dev_change_flags+0xf0/0x1a0 net/core/dev.c:8858
- dev_ifsioc+0x7c8/0xe70 net/core/dev_ioctl.c:529
- dev_ioctl+0x719/0x1340 net/core/dev_ioctl.c:786
- sock_do_ioctl+0x240/0x460 net/socket.c:1236
- sock_ioctl+0x629/0x8e0 net/socket.c:1341
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Reported-by: syzbot <syzbot+f78380e4eae53c64125c@syzkaller.appspotmail.com>
-Closes: https://syzkaller.appspot.com/bug?extid=f78380e4eae53c64125c
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
- kernel/sched/core.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index bcf2c4cc0522..134f5196b9c4 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -559,6 +559,7 @@ void raw_spin_rq_lock_nested(struct rq *rq, int subclass)
- 		raw_spin_lock_nested(&rq->__lock, subclass);
- 		/* preempt_count *MUST* be > 1 */
- 		preempt_enable_no_resched();
-+		printk_deferred_enter();
- 		return;
- 	}
- 
-@@ -568,6 +569,7 @@ void raw_spin_rq_lock_nested(struct rq *rq, int subclass)
- 		if (likely(lock == __rq_lockp(rq))) {
- 			/* preempt_count *MUST* be > 1 */
- 			preempt_enable_no_resched();
-+			printk_deferred_enter();
- 			return;
- 		}
- 		raw_spin_unlock(lock);
-@@ -584,6 +586,8 @@ bool raw_spin_rq_trylock(struct rq *rq)
- 	if (sched_core_disabled()) {
- 		ret = raw_spin_trylock(&rq->__lock);
- 		preempt_enable();
-+		if (ret)
-+			printk_deferred_enter();
- 		return ret;
- 	}
- 
-@@ -592,6 +596,8 @@ bool raw_spin_rq_trylock(struct rq *rq)
- 		ret = raw_spin_trylock(lock);
- 		if (!ret || (likely(lock == __rq_lockp(rq)))) {
- 			preempt_enable();
-+			if (ret)
-+				printk_deferred_enter();
- 			return ret;
- 		}
- 		raw_spin_unlock(lock);
-@@ -600,6 +606,7 @@ bool raw_spin_rq_trylock(struct rq *rq)
- 
- void raw_spin_rq_unlock(struct rq *rq)
- {
-+	printk_deferred_exit();
- 	raw_spin_unlock(rq_lockp(rq));
- }
- 
--- 
-2.43.0
-
+Thanks,
+Vladimir
 
