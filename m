@@ -1,120 +1,236 @@
-Return-Path: <linux-kernel+bounces-232542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 352D491AAB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:11:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 906E591AAC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:12:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4B29283BCC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:11:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 200D01F26B0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC93197A96;
-	Thu, 27 Jun 2024 15:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E33F198A0A;
+	Thu, 27 Jun 2024 15:12:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tLiwRSPW"
-Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IAdT5Dx5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F4B19883C
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 15:10:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF1F198838;
+	Thu, 27 Jun 2024 15:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719501057; cv=none; b=P8/Ni3FwayzWJfxWcWg2vVL8vomT4Ge56KKOLysu6qBYhB0Sh4wUsCRIsS0hjCAW+eU44v6IclDi0lrqJkNGtOZGVcFkEOk8uIZGLdIJK30Mno47MVJLmfrHVxNElQDVXzfBsHHB8Es0rbUmqGg8Y5EBRxzGJStaZXTdQV84Xgw=
+	t=1719501149; cv=none; b=G2HYRCwG2rqffIT9qqCjIg8PT2IBsHrsIwmyXaGeNmpIrnq76sy+xgCjrzHNRahyogsXQNPb0S473TgvVyLRyq+PS6d4ZUjN6AX/i79VYZV6pJA/fbJRkmPOFT1aad1CUig2X4X3ORWI05UeuPLPbWBwHpQ6re6+1qymuZnvZ4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719501057; c=relaxed/simple;
-	bh=27xZMW4OLaqCo5WWzj5gYLre9StpGphZ4TqAVIGKaN8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QQ7dlfWsKIa6zmltuJnEYaUqaT+/08XjN42Us1Z2GLf6LS5l04q+a9zNc6jc4nDNn1ool5Tm6EtzxpIFUCAakTqTenlUYZlJQtI+FjQjHWy8vDbVSWLIsS8BGjjGxJ3pM1RR/yrGsvWVc28YPxM16NEOb3jkPaJaXAu1/r/VCkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tLiwRSPW; arc=none smtp.client-ip=91.218.175.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: tytso@mit.edu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1719501051;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XNm3WawALojtYQ9z1+eU4F6+/xmdHrF/f+BTxtDjPwU=;
-	b=tLiwRSPWfbepm7CVg0u1b/ItZvNyqzaHi22n2chnAxIlSib17q7agRmFxw/2Z85sdwOPbv
-	WY9DEv2SqD+WPvqqyLmiBNvR9EqK6extEJMcSYOz7FtfHkUU0LEzBrt5uwmPWg981a4MEB
-	uDXZa49DuW7P3SaUJqK/azkbkzvWssE=
-X-Envelope-To: luis.henriques@linux.dev
-X-Envelope-To: adilger@dilger.ca
-X-Envelope-To: jack@suse.cz
-X-Envelope-To: harshadshirwadkar@gmail.com
-X-Envelope-To: linux-ext4@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Luis Henriques <luis.henriques@linux.dev>
-To: "Theodore Ts'o" <tytso@mit.edu>
-Cc: Luis Henriques <luis.henriques@linux.dev>,  Andreas Dilger
- <adilger@dilger.ca>,  Jan Kara <jack@suse.cz>,  Harshad Shirwadkar
- <harshadshirwadkar@gmail.com>,  linux-ext4@vger.kernel.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] ext4: fix fast commit inode enqueueing during a
- full journal commit
-In-Reply-To: <20240627145836.GA439391@mit.edu> (Theodore Ts'o's message of
-	"Thu, 27 Jun 2024 10:58:36 -0400")
-References: <20240529092030.9557-1-luis.henriques@linux.dev>
-	<875xtu7aow.fsf@brahms.olymp> <20240627145836.GA439391@mit.edu>
-Date: Thu, 27 Jun 2024 16:10:41 +0100
-Message-ID: <871q4i7766.fsf@brahms.olymp>
+	s=arc-20240116; t=1719501149; c=relaxed/simple;
+	bh=/AMk+Ap8ZKPd5uSIT+df99jZzUx7aWaLbXJg9sTRxGM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KaN1ihwyxHr7vP9rZiMOdTU20LiwTJzieoQrz8eg3KsXFDm7zUHWYhNy9kR83iw2cgZIht90ZnBnvTjVjq2ZUH8JVnqfNamQehfp/66kGLOrM5Gugqni/mMSX9v9H2VljqjNIuv93P7rBqzXJ6Yt5KLkgWObDCeDTSnUu/d8Sj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IAdT5Dx5; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719501148; x=1751037148;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=/AMk+Ap8ZKPd5uSIT+df99jZzUx7aWaLbXJg9sTRxGM=;
+  b=IAdT5Dx5tbEbc2s7XqJD3OHvRzwfWNWV6wxYl2k2EYMqOttBi/0R6MBW
+   HDc+Bb7CI+CfMtgDp/HqfIdL9ZFcF2i7qLAglHY9M4qNPDNmrbK3uNq31
+   3umC3reQur9Xrhi/K9zmwBgHAX3XEiAGk2BhTv7WJgmB4xW8M/PhYt5lq
+   sBsez3E/HHtsK6iYzy5G/NU+5Jv3BezapetreaUxO9Mf4g9db6fwF6s8s
+   JPLYkUCXNbgeqn6FxcSe+LVQ/d+pxUw86pdMgLCtOljrQyx3mk4OtEsmf
+   VhJNuQgxgcoCQmYnX75IeaZGzqz992nP28jjIWIWLa8EjyLKPJxqT/HUl
+   w==;
+X-CSE-ConnectionGUID: ENNspAITQTe1yHU+sLacfg==
+X-CSE-MsgGUID: 9xd0r0Y9RoK2BPA+Gav8Pw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="34089034"
+X-IronPort-AV: E=Sophos;i="6.09,166,1716274800"; 
+   d="scan'208";a="34089034"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 08:11:09 -0700
+X-CSE-ConnectionGUID: eSm3PHprTGuMQf8EhWXu1g==
+X-CSE-MsgGUID: X+U+nvMnR9i9hkLvhapWvA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,166,1716274800"; 
+   d="scan'208";a="49020978"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 08:11:08 -0700
+Received: from [10.212.74.51] (kliang2-mobl1.ccr.corp.intel.com [10.212.74.51])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 43D0020B5703;
+	Thu, 27 Jun 2024 08:11:06 -0700 (PDT)
+Message-ID: <df56c6e1-5d99-4cbe-abd4-772e7ff948af@linux.intel.com>
+Date: Thu, 27 Jun 2024 11:11:05 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf topdown: Correct leader selection with sample_read
+ enabled
+To: Dapeng Mi <dapeng1.mi@linux.intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Dapeng Mi <dapeng1.mi@intel.com>
+References: <20240614213908.352840-1-dapeng1.mi@linux.intel.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20240614213908.352840-1-dapeng1.mi@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 27 2024, Theodore Ts'o wrote:
+Hi Dapeng,
 
-> On Thu, Jun 27, 2024 at 02:54:39PM +0100, Luis Henriques wrote:
->> On Wed, May 29 2024, Luis Henriques (SUSE) wrote:
->>=20
->> > Hi!
->> >
->> > Here's v3 of this fix to the fast commit enqueuing bug triggered by fs=
-test
->> > generic/047.  This version simplifies the previous patch version by re=
--using
->> > the i_sync_tid field in struct ext4_inode_info instead of adding a new=
- one.
->> >
->> > The extra patch includes a few extra fixes to the tid_t type handling.=
-  Jan
->> > brought to my attention the fact that this sequence number may wrap, a=
-nd I
->> > quickly found a few places in the code where the tid_geq() and tid_gt()
->> > helpers had to be used.
->> >
->> > Again, please note that this fix requires [1] to be applied too.
->> >
->> > [1] https://lore.kernel.org/all/20240515082857.32730-1-luis.henriques@=
-linux.dev
->> >
->> > Luis Henriques (SUSE) (2):
->> >   ext4: fix fast commit inode enqueueing during a full journal commit
->> >   ext4: fix possible tid_t sequence overflows
->>=20
->> Gentle ping...  Has this fell through the cracks?
->
-> Sorry, I'm still catching up after being on vacation.  There is a
-> batch of commits which I've reviewed (up to May 17th) which is
-> currently undergoing testing.  So that doesn't include this patch yet,
-> but it's on the list of patches to be reviewed at
-> patchworks.ozlabs.org/project/linux-ext4 so it won't fall through the
-> cracks.
+On 2024-06-14 5:39 p.m., Dapeng Mi wrote:
+> Addresses an issue where, in the absence of a topdown metrics event
+> within a sampling group, the slots event was incorrectly bypassed as
+> the sampling leader when sample_read was enabled.
+> 
+> perf record -e '{slots,branches}:S' -c 10000 -vv sleep 1
+> 
+> In this case, the slots event should be sampled as leader but the
+> branches event is sampled in fact like the verbose output shows.
+> 
+> perf_event_attr:
+>   type                             4 (cpu)
+>   size                             168
+>   config                           0x400 (slots)
+>   sample_type                      IP|TID|TIME|READ|CPU|IDENTIFIER
+>   read_format                      ID|GROUP|LOST
+>   disabled                         1
+>   sample_id_all                    1
+>   exclude_guest                    1
+> ------------------------------------------------------------
+> sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 = 5
+> ------------------------------------------------------------
+> perf_event_attr:
+>   type                             0 (PERF_TYPE_HARDWARE)
+>   size                             168
+>   config                           0x4 (PERF_COUNT_HW_BRANCH_INSTRUCTIONS)
+>   { sample_period, sample_freq }   10000
+>   sample_type                      IP|TID|TIME|READ|CPU|IDENTIFIER
+>   read_format                      ID|GROUP|LOST
+>   sample_id_all                    1
+>   exclude_guest                    1
+> 
+> The sample period of slots event instead of branches event is reset to
+> 0.
+> 
+> This fix ensures the slots event remains the leader under these
+> conditions.
 
-Awesome, thanks for the update.  And sorry for being impatient.
-/me goes back under his rock.
+This should be just one of the issues with the slots/topdown related
+sampling read.
 
-Cheers,
---=20
-Lu=C3=ADs
+If adding one more topdown event, the sampling read may still be broken.
+ perf record -e "{slots,instructions,topdown-retiring}:S"  -C0 sleep 1
+ WARNING: events were regrouped to match PMUs
+ Error:
+ The sys_perf_event_open() syscall returned with 22 (Invalid argument)
+for event (topdown-retiring).
+
+That may require Yanfei's patch.
+https://lore.kernel.org/lkml/20240411144852.2507143-1-yanfei.xu@intel.com/
+
+Please give it try and summarize all the required patches for the
+topdown sampling read feature.
+
+Besides, we need a test for the sampling read as well.
+Ian has provided a very good base. Please add a topdown sampling read
+case on top of it as well.
+https://lore.kernel.org/lkml/CAP-5=fUkg-cAXTb+3wbFOQCfdXgpQeZw40XHjfrNFbnBD=NMXg@mail.gmail.com/
+
+
+Thanks,
+Kan
+
+> 
+> Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
+> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+> ---
+>  tools/perf/arch/x86/util/topdown.c | 42 ++++++++++++++++++++++++++++--
+>  1 file changed, 40 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/arch/x86/util/topdown.c b/tools/perf/arch/x86/util/topdown.c
+> index 3f9a267d4501..aea6896bbb57 100644
+> --- a/tools/perf/arch/x86/util/topdown.c
+> +++ b/tools/perf/arch/x86/util/topdown.c
+> @@ -1,6 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  #include "api/fs/fs.h"
+>  #include "util/evsel.h"
+> +#include "util/evlist.h"
+>  #include "util/pmu.h"
+>  #include "util/pmus.h"
+>  #include "util/topdown.h"
+> @@ -31,6 +32,32 @@ bool topdown_sys_has_perf_metrics(void)
+>  	return has_perf_metrics;
+>  }
+>  
+> +static int perf_pmus__topdown_event(void *vstate, struct pmu_event_info *info)
+> +{
+> +	if (!strcmp(info->name, (char *)vstate))
+> +		return 1;
+> +
+> +	return 0;
+> +}
+> +
+> +static bool is_topdown_metric_event(struct evsel *event)
+> +{
+> +	struct perf_pmu *pmu;
+> +
+> +	if (!topdown_sys_has_perf_metrics())
+> +		return false;
+> +
+> +	if (event->core.attr.type != PERF_TYPE_RAW)
+> +		return false;
+> +
+> +	pmu = perf_pmus__find_by_type(PERF_TYPE_RAW);
+> +	if (pmu && perf_pmu__for_each_event(pmu, false, event->name,
+> +					    perf_pmus__topdown_event))
+> +		return true;
+> +
+> +	return false;
+> +}
+> +
+>  #define TOPDOWN_SLOTS		0x0400
+>  
+>  /*
+> @@ -41,11 +68,22 @@ bool topdown_sys_has_perf_metrics(void)
+>   */
+>  bool arch_topdown_sample_read(struct evsel *leader)
+>  {
+> +	struct evsel *event;
+> +
+>  	if (!evsel__sys_has_perf_metrics(leader))
+>  		return false;
+>  
+> -	if (leader->core.attr.config == TOPDOWN_SLOTS)
+> -		return true;
+> +	if (leader->core.attr.config != TOPDOWN_SLOTS)
+> +		return false;
+> +
+> +	/*
+> +	 * If slots event as leader event but no topdown metric events in group,
+> +	 * slots event should still sample as leader.
+> +	 */
+> +	evlist__for_each_entry(leader->evlist, event) {
+> +		if (event != leader && is_topdown_metric_event(event))
+> +			return true;
+> +	}
+>  
+>  	return false;
+>  }
+> 
+> base-commit: 92e5605a199efbaee59fb19e15d6cc2103a04ec2
 
