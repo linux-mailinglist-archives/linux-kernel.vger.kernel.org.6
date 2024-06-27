@@ -1,210 +1,314 @@
-Return-Path: <linux-kernel+bounces-232831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D32F91AECD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:12:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F331291AED3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:13:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90D581F23040
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:12:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BEFCB26FA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F16BF19AA4E;
-	Thu, 27 Jun 2024 18:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035CA37165;
+	Thu, 27 Jun 2024 18:12:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="FcAXaklG"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2072.outbound.protection.outlook.com [40.107.244.72])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hM+LJySv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899E019AA47
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 18:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719511933; cv=fail; b=HUzAVGWnxx6FicEG3dNACQumeRtQgrG6AzGyZjS352rDRNKkgPFEhh62GA2rOBwfMYLNnsofvHpoG7tfto7flI+eVJ6CfRKKbs4sp3Q6H7yY6Rd7+IqjWJ1J9TNEQzj041fgwNXarCAnYDB7QM+2/IKUxpn72H44tUoMtje3En8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719511933; c=relaxed/simple;
-	bh=YyDRk+DlOkIfZqW72gcgAWIc1OvTiYwLnDgJokIwsmg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=LjVexTcK0iviVg8S4gTxIZiDdWLZ/qfef3eUQKNool1+9vOh+bkSb3j9S8CFbrWQD6fkNh25EOO5XLNps86LA9rDqgGxEKnl77ydjOCDKvTth9t3giWe197GYr8OV4b5dBY8WNdeGycmYE98qt+WP5IVtWA+kE1MCx0Uvfc8b0M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=FcAXaklG; arc=fail smtp.client-ip=40.107.244.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Pff5uj+X9uVgvG5m+qnyePemeH0quXbCsclI4/MIcNbtD+FniBMC0w36qHuurOTLp+iy1DHKCeGqb35cDuySkF8amD+ES/nk89krm9anO0s8E6qRN7Y9+3ahRhkfxvAUB8Kr5lyh6NqdnqSiKHtmK6ljSNNNIFpfhad6DdPsd9wn7V1734cvOP8FFCK1OPd88GImwfy3hXYkFmvbPjvVqB9KZpnd75CVt0bBSMMQKsxlvAFcZqRxkTAHmGHe7vfVWBHntqn4dZNYDoEqcCofzhCnRW2hUljy70mJ6B6qGkadSgma7m1tmyh76eODXYbd62crfNdrF7oQ9198LG/Ubg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=T2BPNNUadCRPbQLrIK/kCMJkKLYAmIoSxte0NY3tqGI=;
- b=UOYEF7r/72nHAdmTCAA11mWPLAXTse5mDtMlZdZ4sZn8Fb+cjLyQGiiaiAP8fyFtddjJ7wB2fj6uTbVWYp0LjDDAOywhd34C3caQgKoiAlqnH+vUYE7JGSFBGq8E5bwVmsE9HD4t/FZYcYd+Mw8HK5lSUxNo+5vJ+ZpwS0FTs3aN10WL5Lc0TFBCPrjwHcxvGUHgIgMcRpJGP4Vf7rVJ881p8YRZFurELp6x7Gg2RLEQhGbjujq6aTNfgEjwNhc7RhAvvCzRyo3c7aM25y6Fth9KilCyHcEnSQHk8Uxo5fBYfk+xeirPzU2kt+FUhTAasmV7glMhU5kh48iCuRDz4w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=T2BPNNUadCRPbQLrIK/kCMJkKLYAmIoSxte0NY3tqGI=;
- b=FcAXaklGbmZraLZWBR1J/anhDqFgEENBe78+7JdeO9bFe+4BZowC1eR6qOdpFm7bYl/wzi1yVpum3ct1KQBX5J4JkttpXeGLb+kPDvQMmiUhf37wMPUF5ZIYGLbKSlDvvv6fAC8QCjyrPHaNI1G8TigUG2sxUZ3lzsHUOEFF/nU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by SA1PR12MB8886.namprd12.prod.outlook.com (2603:10b6:806:375::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.26; Thu, 27 Jun
- 2024 18:12:08 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%6]) with mapi id 15.20.7719.022; Thu, 27 Jun 2024
- 18:12:06 +0000
-Message-ID: <6d8209e3-eb68-474f-bb98-ef321acf97e5@amd.com>
-Date: Thu, 27 Jun 2024 13:12:04 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] drm: panel-orientation-quirks: Add labels for both
- Valve Steam Deck revisions
-To: Matthew Schwartz <mattschwartz@gwmail.gwu.edu>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
-Cc: John Schoenick <johns@valvesoftware.com>,
- Kyle Gospodnetich <me@kylegospodneti.ch>, Hans de Goede
- <hdegoede@redhat.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Matthew Schwartz <mattschwartz@gwu.edu>
-References: <20240627175947.65513-1-mattschwartz@gwu.edu>
- <20240627175947.65513-3-mattschwartz@gwu.edu>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <20240627175947.65513-3-mattschwartz@gwu.edu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN6PR16CA0059.namprd16.prod.outlook.com
- (2603:10b6:805:ca::36) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8DE2139D6;
+	Thu, 27 Jun 2024 18:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719511965; cv=none; b=HiRI5KRIIC+xmq4hGvJCjMGnyGEJkPHJW/WIaJCes+1qJHNQkBIr32anUs74nKQpBkIc84e9dCLdHmQBIZgXKGk4IIQz+r9wGYYvysw6jxeB/ad650nZfkFu/RdeKU+tuGCGHXDePsOPuig7Ll2gelXAOT3r3g8mK2vS1WidDWY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719511965; c=relaxed/simple;
+	bh=vhPFJcTqc1hjlj/vXR4493e6RjWxoxAvbzr8XGRzU4g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o9kOKvi8bYh+1zt+udGM6H0CiK70FD74wP0B2ew6OCBe85LqdJztNalIsmC4FWN0Oo5+NVMi2J16csQZhcsTDUaQU/OFa5LEFxzg17kWb0/8U63iX4JcFyaH8y2Gq2pxEoJw0GtqPIyfv57PxKJaObIULo2fNakJoueWysaOhoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hM+LJySv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74762C2BBFC;
+	Thu, 27 Jun 2024 18:12:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719511964;
+	bh=vhPFJcTqc1hjlj/vXR4493e6RjWxoxAvbzr8XGRzU4g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hM+LJySv/sJtCY4jMrldKW9T05O3gboe8oLtzkh4tOKSUMBMeYrQoiN9dLLSEnnkS
+	 h0X68OzCUvAcrxbLkZQkVfLs+PcFWAhrQ4zzsxPEb6mUUPXWLtx72CPQ8Ov8jYhWY/
+	 ugteZ1Dnn9b5GDpRnu4ak8iNBXn6D0E0cOHb22nzTIUgtNgvdESetwMJ+ondLw+d8t
+	 kpxXfXRw6ifI5y+9ICI2MoJumx4YQVfnJmOKzOUkuIQtYkp6DMiQIEYLNrpYbmGSGD
+	 u6S4nJ1SMLBLY433B3BqAmmzDaAIvKbauzHi089DsnTow78OOgCF7kJwTwxfhj3yaD
+	 Zz8QGbnn0HRWg==
+Date: Thu, 27 Jun 2024 11:12:43 -0700
+From: Kees Cook <kees@kernel.org>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	Christian Brauner <brauner@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>
+Cc: Paul Moore <paul@paul-moore.com>, Jann Horn <jannh@google.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	syzbot <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com>,
+	jmorris@namei.org, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, serge@hallyn.com,
+	syzkaller-bugs@googlegroups.com, linux-fsdevel@vger.kernel.org
+Subject: Re: [syzbot] [lsm?] general protection fault in
+ hook_inode_free_security
+Message-ID: <202406271019.BF8123A5@keescook>
+References: <00000000000076ba3b0617f65cc8@google.com>
+ <CAHC9VhSmbAY8gX=Mh2OT-dkQt+W3xaa9q9LVWkP9q8pnMh+E_w@mail.gmail.com>
+ <20240515.Yoo5chaiNai9@digikod.net>
+ <20240516.doyox6Iengou@digikod.net>
+ <20240627.Voox5yoogeum@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|SA1PR12MB8886:EE_
-X-MS-Office365-Filtering-Correlation-Id: cd8d8102-c8a8-4ad1-9466-08dc96d4a740
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OXV1Q1JFRjdBS2N6NVFZc2NnYS9WN29nc044R0o1dzRCam1uTm5OZWhBRVBs?=
- =?utf-8?B?RFVuakNjYjJGdU15L0o2c1h4L3ZscFF1aS9TclNkemtkQzdIL1VqS0Evc3Jy?=
- =?utf-8?B?bHZlWDdVZmxpbTlJK1NDdUFQYS9KRGI1T1dBTnpGMm9wYW01bmNuZ3dEUnI1?=
- =?utf-8?B?QlBjZzRyNFZqNk5pcEhESFM2aHNnUWFKUUUzUzRJVDY0TG0wWHY1Ry9rd1dW?=
- =?utf-8?B?Q1Y2QTlLNmFYZE1GT1RVTG94R0NsSGc1WDhLTlRIcmwvajBMVm1tS3cwSVcz?=
- =?utf-8?B?Y3VwQWQxZ2hjYVBpUHpBQW9lQ3dxYW5UYmw0Sktobm5xM1hzL1RLTGFqVEhJ?=
- =?utf-8?B?eWVoU0kzZnplZ0UzM3psTXZSQU5sUzdkMzFBU0o3SmcxRzZVMFYycmhQSDJa?=
- =?utf-8?B?eHIrOEcyU29jdkVRcEh1OXE5TlpGNVRqV2UwNnVwSHgrOGhPbm94d25mbktU?=
- =?utf-8?B?RncwQWdYbHgzSzlFNjlHZnJtSXhCbVhoY0t2VGk3Y3VReTdWV1c2OGVxaytN?=
- =?utf-8?B?bzZ0UVpuU1Z6cXdTQ2FZelh3ZXZZbVBYb2hJeGtDQ3B1RjRsN0htc0Q4R2lr?=
- =?utf-8?B?WXhTdmxTQXF6RDJBVU9lVi9OU1JpdFp0YTV3T3Nyc1dhME9PTGZwUkVkNnhU?=
- =?utf-8?B?VzRpK3dJdmxoaDBRZHJ4cVdLbU5rSEVSc3JLT0VkOUlmaHFSV1pLR1p1M2Fj?=
- =?utf-8?B?L3V2MHZYdnBqbURINmM2dk1xNW5BUnlVREpKUTRsZXVaelhUdlRQeDJDWHZl?=
- =?utf-8?B?NEV1ZldXYW9PaTl6eitWTC9MQmt3UkN6M2xjWEhkZk5PdVZRT3NLcm0wSGlZ?=
- =?utf-8?B?elFTaWd1elludnRhcUNDYXFlYnNSOE05eDFvMTg4ZHRrU2hQOThlS2dSQ3pF?=
- =?utf-8?B?RzVNczRXckpHaUNsdU9kR3ZvSEtzNkMxczNDK3BDYys2L0tSWUFld3dDUWZP?=
- =?utf-8?B?TEYyUmZHZjRXU001Mm52bE9McmdwMjhxcUV4MjZKN3B4ZWxVM1FqN29vZEh5?=
- =?utf-8?B?ck1zQlBtejFkM3p5bm9NOEppeHFtK2h3VWd5Z2d2MWFsalpjdXhDSGo5bElY?=
- =?utf-8?B?V3lzRUdwWEN5cnBaSVFkUUQyRmx6MTZZNTdCZk1uLzI3NnpNSTNpOFIrWGhj?=
- =?utf-8?B?YUxlcm1LUjZaNkk4YWRhdHZpd3J1eGlLZjBxQzlaUFM3clhxbEhyd3J2akpF?=
- =?utf-8?B?eGdHQ0s3aEVKd1NrcG1LaVdOL2hQajVpRFJTQnRhM2EvUlJLRDlBOWhSMEJG?=
- =?utf-8?B?bVVrbHRHRHhONVdISHo4OEx1ODFReHY0eWw3alBtUm9DZG5SNk12Z2cyWFVs?=
- =?utf-8?B?ZXVjZ2ZFYUozelpWbWRYczBSamxqc3JKOTRxc2IzY2U2RGZYSkFESFUrQTNU?=
- =?utf-8?B?M1dyVXp0SkdyNFY0K29VMUJobGxwNkF0NEZrNnBKcGh4aUowbElhSWtucFNj?=
- =?utf-8?B?dWZ4OHdLeXBhUENxdFZvV1FlOVp0NU0vMUN4RlhIRlhNcitQdkJFclF6dkJz?=
- =?utf-8?B?L1JpL3hFSUJpNCsxdGlPcGxkbXl2dER4QjhUV2YzcktxdUFSejhEbDhHRWlX?=
- =?utf-8?B?WXUzcG1waFBlV1lJbXNRSmxWcmdIK2QxWWcwSSsvL3NuYzdIb3lPZTJRMzZE?=
- =?utf-8?B?QmxpcmJjb3FZRG9iRW81aVV1MEw2KzFvYXZjRDJuSXFSTXNlQzZZMUZVNkdO?=
- =?utf-8?B?azZXTmVDbXgrSDBkVVk1clhidlNSNEVqZEdKV3BPa1ZLbGhMV29SVlZmQjNi?=
- =?utf-8?B?TzZGTGlKbzNwancrU04vYStMZjJPRng5ZHcrSDRCOGpwSFpPVk00R3lUc25j?=
- =?utf-8?B?RjRKU1d1QnJxV3l3UHhFdz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZzRxQWJKcVJVcUNKM0xxNjR5Vy9jeDlWbHpDSm14bUo1M050K2hsSzloTzND?=
- =?utf-8?B?K3grTklmWkUvQlZEa01KVFY3RHpRY3krVEZ1V29LTThSbzFSM0RwWDBMR1oy?=
- =?utf-8?B?WXdXY1FqZ2RnZmZWekxYcEJ1SldZSXBRUC9haitzYTVkUHZsbldTWE9JUFBP?=
- =?utf-8?B?UEpqK21PYlBnTXpaYUR3eUlVMDcrdDB0NDVSczM4eVpEbXpJNGt3OEdGWjVJ?=
- =?utf-8?B?dnF0eUhiUHM0ZzkyOEdHYmVoem9PUEtMQlFwTXVROGhwcEVkWnVCQTluSFlP?=
- =?utf-8?B?dFhsczM5MDlXNWVVMXRqblZLV3RPdXlFMzVML1g0MUd6bWZoaFRabHFMM1cr?=
- =?utf-8?B?RDVLTUNxT0pWOUIzU2VKU1ZpM0NPK0NpTEpZQlpoM3NjTHQvQkNHbVl5eTJ6?=
- =?utf-8?B?OWI1M0l4Mkc2elFFdTN6VG05UlhUUTdXQzJaVUdzbTlSOE1RUnZGcEVkNmFs?=
- =?utf-8?B?dVVyVTJCWDZBWnZJdEVIU3ErTG9TNnJGT2ZNZVhtbll2VXJ0ZFdFRjQvM3B3?=
- =?utf-8?B?VERmZm5kQVB3bUJXR1hxbGJ6eS9KMlBqTnRKQXlHU3hUZEJodmxZd0VvaXBS?=
- =?utf-8?B?VTNXYStKa1VhdTdqYXFBbWlXYVhlK1RJVDVGb0NHUUE4K0tMVkUwOWlvb0l0?=
- =?utf-8?B?cS90dW5DSDh0QjhrOU5vbjdzVDcwMmlzYlRPNk5EOE1seXN2dkpOcjRqUW1S?=
- =?utf-8?B?c0NJQ3NmQWVNU05zbXd2dVJPZGZONXVhRE85ejQ5T2RLanljV3pBWUpDNGFi?=
- =?utf-8?B?Ums5clVHZ05FdmtvSnJmdlkxU0puV2tGMGQ4R1lpOG5DU3VPNThTb2dzMmZI?=
- =?utf-8?B?MW1nL3kvS3hGQUJ3bVo1L2RKZ1pMUmhkVG5HYTZ1NzVUV1RyMmtkeTdGT3RQ?=
- =?utf-8?B?ZU1ucUR4cUlFVWVRYTFXbnhFNHFlMHBwd3piM2M5L3VUQ2k0cEwrazNvNlJw?=
- =?utf-8?B?Y08wN1QyRmFkQ0VkMk9obGhJL3BOcmtBTHMvd05vbTE2dG1ZVDRxRzc2Tjdt?=
- =?utf-8?B?YWdvaFZJNEEvWDY5djh1SkVpWER0SXhCNjFnZGtBWHN0bitjVWFBcFlPYUJV?=
- =?utf-8?B?TTZnU2FPc1pITFNTMWdmd25rQ2NDYXgrOUU4c2tnSG5KNEh3RkUzcWgxUnBE?=
- =?utf-8?B?aUs3Zk1qWG1HS3oyb0xHNUNuWkFNV2ZNc2RQUW83TCs3K0RENXZwNStVMUNL?=
- =?utf-8?B?QW5rOENZTEVnWWhJZHV4aDJuV1duUXRGUjJaTUROQjZDN0hzeitjeWM2MGcy?=
- =?utf-8?B?MFJ6dlNlMnN2Yng1eW9ob1F3Nlh5NUR3aDVHZmFqZForMXpDVTZNTUdyUy9u?=
- =?utf-8?B?b2xIV3crcml2TTRSYXIwaUovNHJLWUlOeTVDZWF4Z0krbHk3VUs1aEVienl5?=
- =?utf-8?B?djd0WURmRitSb2IxbVRFdms5MWVkUEtEZ2tMRkc4N29BbWRVMHkvV241WVov?=
- =?utf-8?B?M2hrMytDNHFxcnVtOUVlZWJiNmxZc250a3orTmNuNmt5dVZyazFIOVRTNE01?=
- =?utf-8?B?MEFqRSt2bmxjZWd5RGRCNWdBTVVsMlViTVlyL1BFdzFrRlF5bEJHb3cxVGdh?=
- =?utf-8?B?cFZaRGZnblhPY1F1cTJwMEtpWTRXNDdBQUYzcWV4eWNpME9WMStjL29nQVlE?=
- =?utf-8?B?WHJyM1hsdFp6OWZQaVllS2xLa3hET2g1K0x2Z290dmJTMlVrZHYrQytpSGFh?=
- =?utf-8?B?MHlOZk9YRGNTVzVqVVo1aU9lbjJ3bUMrTFVaQzNiSUZjV3M3SkY2Y1lxNjEx?=
- =?utf-8?B?VDZUeEM0ZmxlZ1JDbE9YM040VCtRaXpqOUJNWXpMNGl4MUVHQ0N1OEJWME4r?=
- =?utf-8?B?Y2l2Q2tRcmw0bENHb2NEUndtWEYzY3F2bFlyQWFWd2lXY08xMWc1aUhYOFZC?=
- =?utf-8?B?RE1FRVZQaWNSaFFqQVpDUkMxQUxSYkZ4Y2JtVXNOQ1NCRWRJbE5FcEdaK2R0?=
- =?utf-8?B?cUxzNmRiUU1hR3hOdFYyUDJyUkhpcVZXMVpRL0dhTkN6NUFlSWNpTmo0NWxU?=
- =?utf-8?B?emFuQTJkbWRNM2pmSHRhMG1UM0QvU3pDV1AzZmw0THd4VjJicUFWTm4vUFJL?=
- =?utf-8?B?WmdyV0VuU1hmelZnWkxYcGFIblpYSnYveHFzQ2JRTkQycncvMFBRWW5XaEZ6?=
- =?utf-8?Q?LLGWjZabtyV81UmQSxiPcqmH+?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cd8d8102-c8a8-4ad1-9466-08dc96d4a740
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jun 2024 18:12:06.4360
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oLqJuXemofOhB9dGaRGKkOU8ob3myfxTUhRksezkSzmNUHw6/shuXUfAX9UuxgaiU4YHqjE897oa9KT5bGeOmg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8886
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240627.Voox5yoogeum@digikod.net>
 
-On 6/27/2024 12:59, Matthew Schwartz wrote:
-> This accounts for the existence of two Steam Deck revisions
-> instead of a single revision
+On Thu, Jun 27, 2024 at 03:34:41PM +0200, Mickaël Salaün wrote:
+> I didn't find specific issues with Landlock's code except the extra
+> check in hook_inode_free_security().  It looks like inode->i_security is
+> a dangling pointer, leading to UAF.
 > 
-> Signed-off-by: Matthew Schwartz <mattschwartz@gwu.edu>
-
-Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
-
-> ---
->   drivers/gpu/drm/drm_panel_orientation_quirks.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+> Reading security_inode_free() comments, two things looks weird to me:
+> > /**
+> >  * security_inode_free() - Free an inode's LSM blob
+> >  * @inode: the inode
+> >  *
+> >  * Deallocate the inode security structure and set @inode->i_security to NULL.
 > 
-> diff --git a/drivers/gpu/drm/drm_panel_orientation_quirks.c b/drivers/gpu/drm/drm_panel_orientation_quirks.c
-> index ac8319d38e37..3f84d7527793 100644
-> --- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
-> +++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
-> @@ -420,14 +420,14 @@ static const struct dmi_system_id orientation_data[] = {
->   		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Galaxy Book 10.6"),
->   		},
->   		.driver_data = (void *)&lcd1280x1920_rightside_up,
-> -	}, {	/* Valve Steam Deck */
-> +	}, {	/* Valve Steam Deck (Jupiter) */
->   		.matches = {
->   		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Valve"),
->   		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Jupiter"),
->   		  DMI_EXACT_MATCH(DMI_PRODUCT_VERSION, "1"),
->   		},
->   		.driver_data = (void *)&lcd800x1280_rightside_up,
-> -	}, {	/* Valve Steam Deck */
-> +	}, {	/* Valve Steam Deck (Galileo) */
->   		.matches = {
->   		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Valve"),
->   		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Galileo"),
+> I don't see where i_security is set to NULL.
 
+Yeah, I don't either...
+
+> >  */
+> > void security_inode_free(struct inode *inode)
+> > {
+> 
+> Shouldn't we add this check here?
+> if (!inode->i_security)
+> 	return;
+
+Probably, yes. The LSMs that check for NULL i_security in the free hook
+all do so right at the beginning...
+
+> 
+> > 	call_void_hook(inode_free_security, inode);
+> > 	/*
+> > 	 * The inode may still be referenced in a path walk and
+> > 	 * a call to security_inode_permission() can be made
+> > 	 * after inode_free_security() is called. Ideally, the VFS
+> > 	 * wouldn't do this, but fixing that is a much harder
+> > 	 * job. For now, simply free the i_security via RCU, and
+> > 	 * leave the current inode->i_security pointer intact.
+> > 	 * The inode will be freed after the RCU grace period too.
+> 
+> It's not clear to me why this should be safe if an LSM try to use the
+> partially-freed blob after the hook calls and before the actual blob
+> free.
+
+Yeah, it's not clear to me what the expected lifetime is here. How is
+inode_permission() being called if all inode reference counts are 0? It
+does seem intentional, though.
+
+The RCU logic was introduced in commit 3dc91d4338d6 ("SELinux: Fix possible
+NULL pointer dereference in selinux_inode_permission()"), with much
+discussion:
+https://lore.kernel.org/lkml/20140109101932.0508dec7@gandalf.local.home/
+(This commit seems to remove setting "i_security = NULL", though, which
+the comment implies is intended, but then it also seems to depend on
+finding a NULL?)
+
+LSMs using i_security are:
+
+security/bpf/hooks.c:   .lbs_inode = sizeof(struct bpf_storage_blob),
+security/integrity/evm/evm_main.c:      .lbs_inode = sizeof(struct evm_iint_cache),
+security/integrity/ima/ima_main.c:      .lbs_inode = sizeof(struct ima_iint_cache *),
+security/landlock/setup.c:      .lbs_inode = sizeof(struct landlock_inode_security),
+security/selinux/hooks.c:       .lbs_inode = sizeof(struct inode_security_struct),
+security/smack/smack_lsm.c:     .lbs_inode = sizeof(struct inode_smack),
+
+SELinux is still checking for NULL. See selinux_inode() and
+selinux_inode_free_security(), as do bpf_inode() and
+bpf_inode_storage_free(). evm and ima also check for NULL.
+
+landlock_inode() does not, though.
+
+Smack doesn't hook the free, but it should still check for NULL, and it's not.
+
+So I think this needs fixing in Landlock and Smack.
+
+I kind of think that the LSM infrastructure needs to provide a common
+helper for the "access the blob" action, as we've got it repeated in
+each LSM, and we have 2 implementations that are missing NULL checks...
+
+> 
+> > 	 */
+> > 	if (inode->i_security)
+> > 		call_rcu((struct rcu_head *)inode->i_security,
+> > 			 inode_free_by_rcu);
+> 
+> And then:
+> inode->i_security = NULL;
+> 
+> But why call_rcu()?  i_security is not protected by RCU barriers.
+
+I assume it's because security_inode_free() via __destroy_inode() via
+destroy_inode() via evict() via iput_final() via iput() may be running
+in interrupt context?
+
+But I still don't see where i_security gets set to NULL. This won't fix
+the permissions hook races for Landlock and Smack, but should make
+lifetime a bit more clear?
+
+
+diff --git a/security/security.c b/security/security.c
+index 9c3fb2f60e2a..a8658ebcaf0c 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1613,7 +1613,8 @@ static void inode_free_by_rcu(struct rcu_head *head)
+  */
+ void security_inode_free(struct inode *inode)
+ {
+-	call_void_hook(inode_free_security, inode);
++	struct rcu_head *inode_blob = inode->i_security;
++
+ 	/*
+ 	 * The inode may still be referenced in a path walk and
+ 	 * a call to security_inode_permission() can be made
+@@ -1623,9 +1624,11 @@ void security_inode_free(struct inode *inode)
+ 	 * leave the current inode->i_security pointer intact.
+ 	 * The inode will be freed after the RCU grace period too.
+ 	 */
+-	if (inode->i_security)
+-		call_rcu((struct rcu_head *)inode->i_security,
+-			 inode_free_by_rcu);
++	if (inode_blob) {
++		call_void_hook(inode_free_security, inode);
++		inode->i_security = NULL;
++		call_rcu(inode_blob, inode_free_by_rcu);
++	}
+ }
+ 
+ /**
+
+
+-Kees
+
+> 
+> > }
+> 
+> 
+> On Thu, May 16, 2024 at 09:31:21AM GMT, Mickaël Salaün wrote:
+> > Adding membarrier experts.
+> > 
+> > On Wed, May 15, 2024 at 05:12:58PM +0200, Mickaël Salaün wrote:
+> > > On Thu, May 09, 2024 at 08:01:49PM -0400, Paul Moore wrote:
+> > > > On Wed, May 8, 2024 at 3:32 PM syzbot
+> > > > <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com> wrote:
+> > > > >
+> > > > > Hello,
+> > > > >
+> > > > > syzbot found the following issue on:
+> > > > >
+> > > > > HEAD commit:    dccb07f2914c Merge tag 'for-6.9-rc7-tag' of git://git.kern..
+> > > > > git tree:       upstream
+> > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=14a46760980000
+> > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=6d14c12b661fb43
+> > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=5446fbf332b0602ede0b
+> > > > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> > > > >
+> > > > > Unfortunately, I don't have any reproducer for this issue yet.
+> > > > >
+> > > > > Downloadable assets:
+> > > > > disk image: https://storage.googleapis.com/syzbot-assets/39d66018d8ad/disk-dccb07f2.raw.xz
+> > > > > vmlinux: https://storage.googleapis.com/syzbot-assets/c160b651d1bc/vmlinux-dccb07f2.xz
+> > > > > kernel image: https://storage.googleapis.com/syzbot-assets/3662a33ac713/bzImage-dccb07f2.xz
+> > > > >
+> > > > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > > > > Reported-by: syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com
+> > > > >
+> > > > > general protection fault, probably for non-canonical address 0xdffffc018f62f515: 0000 [#1] PREEMPT SMP KASAN NOPTI
+> > > > > KASAN: probably user-memory-access in range [0x0000000c7b17a8a8-0x0000000c7b17a8af]
+> > > > > CPU: 1 PID: 5102 Comm: syz-executor.1 Not tainted 6.9.0-rc7-syzkaller-00012-gdccb07f2914c #0
+> > > > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+> > > > > RIP: 0010:hook_inode_free_security+0x5b/0xb0 security/landlock/fs.c:1047
+> > > > 
+> > > > Possibly a Landlock issue, Mickaël?
+> > > 
+> > > It looks like security_inode_free() is called two times on the same
+> > > inode.  This could happen if an inode labeled by Landlock is put
+> > > concurrently with release_inode() for a closed ruleset or with
+> > > hook_sb_delete().  I didn't find any race condition that could lead to
+> > > two calls to iput() though.  Could WRITE_ONCE(object->underobj, NULL)
+> > > change anything even if object->lock is locked?
+> 
+> I don't think so anymore, the issue is with i_security, not the blob
+> content.
+> 
+> > > 
+> > > A bit unrelated but looking at the SELinux code, I see that selinux_inode()
+> > > checks `!inode->i_security`.  In which case could this happen?
+> 
+> I think this shouldn't happen, and that might actually be an issue for
+> SELinux.  See my above comment about security_free_inode().
+> 
+> > > 
+> > > > 
+> > > > > Code: 8a fd 48 8b 1b 48 c7 c0 c4 4e d5 8d 48 c1 e8 03 42 0f b6 04 30 84 c0 75 3e 48 63 05 33 59 65 09 48 01 c3 48 89 d8 48 c1 e8 03 <42> 80 3c 30 00 74 08 48 89 df e8 66 be 8a fd 48 83 3b 00 75 0d e8
+> > > > > RSP: 0018:ffffc9000307f9a8 EFLAGS: 00010212
+> > > > > RAX: 000000018f62f515 RBX: 0000000c7b17a8a8 RCX: ffff888027668000
+> > > > > RDX: 0000000000000000 RSI: 0000000000000040 RDI: ffff88805c0bb270
+> > > > > RBP: ffffffff8c01fb00 R08: ffffffff82132a15 R09: 1ffff1100b81765f
+> > > > > R10: dffffc0000000000 R11: ffffffff846ff540 R12: dffffc0000000000
+> > > > > R13: 1ffff1100b817683 R14: dffffc0000000000 R15: dffffc0000000000
+> > > > > FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+> > > > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > > > CR2: 00007f43c42de000 CR3: 00000000635f8000 CR4: 0000000000350ef0
+> > > > > Call Trace:
+> > > > >  <TASK>
+> > > > >  security_inode_free+0x4a/0xd0 security/security.c:1613
+> > > > >  __destroy_inode+0x2d9/0x650 fs/inode.c:286
+> > > > >  destroy_inode fs/inode.c:309 [inline]
+> > > > >  evict+0x521/0x630 fs/inode.c:682
+> > > > >  dispose_list fs/inode.c:700 [inline]
+> > > > >  evict_inodes+0x5f9/0x690 fs/inode.c:750
+> > > > >  generic_shutdown_super+0x9d/0x2d0 fs/super.c:626
+> > > > >  kill_block_super+0x44/0x90 fs/super.c:1675
+> > > > >  deactivate_locked_super+0xc6/0x130 fs/super.c:472
+> > > > >  cleanup_mnt+0x426/0x4c0 fs/namespace.c:1267
+> > > > >  task_work_run+0x251/0x310 kernel/task_work.c:180
+> > > > >  exit_task_work include/linux/task_work.h:38 [inline]
+> > > > >  do_exit+0xa1b/0x27e0 kernel/exit.c:878
+> > > > >  do_group_exit+0x207/0x2c0 kernel/exit.c:1027
+> > > > >  __do_sys_exit_group kernel/exit.c:1038 [inline]
+> > > > >  __se_sys_exit_group kernel/exit.c:1036 [inline]
+> > > > >  __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1036
+> > > > >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> > > > >  do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+> > > > >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > > > > RIP: 0033:0x7f731567dd69
+> > > > > Code: Unable to access opcode bytes at 0x7f731567dd3f.
+> > > > > RSP: 002b:00007fff4f0804d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+> > > > > RAX: ffffffffffffffda RBX: 00007f73156c93a3 RCX: 00007f731567dd69
+> > > > > RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> > > > > RBP: 0000000000000002 R08: 00007fff4f07e277 R09: 00007fff4f081790
+> > > > > R10: 0000000000000000 R11: 0000000000000246 R12: 00007fff4f081790
+> > > > > R13: 00007f73156c937e R14: 00000000000154d0 R15: 000000000000001e
+> > > > >  </TASK>
+> > > > > Modules linked in:
+> > > > > ---[ end trace 0000000000000000 ]---
+> > > > 
+> > > > -- 
+> > > > paul-moore.com
+> > > > 
+
+-- 
+Kees Cook
 
