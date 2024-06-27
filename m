@@ -1,95 +1,141 @@
-Return-Path: <linux-kernel+bounces-231840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63897919EFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 08:01:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1EC7919EFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 08:01:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90AE41C227CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 06:01:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E82628593A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 06:01:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D412263A;
-	Thu, 27 Jun 2024 06:01:18 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0BC317550;
-	Thu, 27 Jun 2024 06:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7956E1CD3F;
+	Thu, 27 Jun 2024 06:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tGBQI9v6"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB2E1CAAF;
+	Thu, 27 Jun 2024 06:01:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719468078; cv=none; b=PWZAcw9wpx9En8zwNq9TFQ1ZHNSiKXmCxkU4CPlGegEW012JxtckhmNP67dtM4+OODpChrWfSPyY8Bzjly0M6REDeNXCa1PNE+uRI8yxw7gat4eVoOlFjU4ncI6BUA2sW7y8GyjVBnN+52Jrd0EfcULuBf9+4CrPSrGKetjnfOI=
+	t=1719468097; cv=none; b=SdKB2OKEWztC4ThvdyP0Iu93OA6uJ4/4jtjrjBf/vpU0fxTswZtdnjXosDtUKNjYKwDJXd6v5xFyEA701NJL+mpYq6FJj8L3smvGJjsvhL895YJ+kWlu7TtQ7GuWxzx3/zN8ajEGc03QnCuOXFw+f5CaO2Uce7rd2Jv5kwOLRFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719468078; c=relaxed/simple;
-	bh=U+ddQlhWR49fZqXuUZD7m2O148KFGP46ZGttjUuxy7k=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=YbeWb6tCS4zVg5ZC8yKrrfEzJeX+dFSVbQF9Z1F+Z0LEWhgZr5MnlzOs1KXQbhZe2OmI80DjpkTIqvNO1fb5DX3NfBumzuDYHu/hElcFVeXl8pV/0GsNwqqimTtFXgLbNrtc7F90irdBExM0Owf22GQhUi4ZcSu1qm8D2oV7n9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app05-12005 (RichMail) with SMTP id 2ee5667d00250fb-889bd;
-	Thu, 27 Jun 2024 14:01:09 +0800 (CST)
-X-RM-TRANSID:2ee5667d00250fb-889bd
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from ubuntu.localdomain (unknown[10.54.5.255])
-	by rmsmtp-syy-appsvr06-12006 (RichMail) with SMTP id 2ee6667d0020ce6-c3da5;
-	Thu, 27 Jun 2024 14:01:09 +0800 (CST)
-X-RM-TRANSID:2ee6667d0020ce6-c3da5
-From: Zhu Jun <zhujun2@cmss.chinamobile.com>
-To: shuah@kernel.org
-Cc: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	mykolal@fb.com,
-	bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Zhu Jun <zhujun2@cmss.chinamobile.com>
-Subject: [PATCH] selftests/bpf:fix a resource leak
-Date: Wed, 26 Jun 2024 23:01:07 -0700
-Message-Id: <20240627060107.8682-1-zhujun2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1719468097; c=relaxed/simple;
+	bh=RhPz/nGQMnBBjqqWJlVCbcXTmZI5o9oEkrzVuT/z9ME=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Su1Qg53+klJClVAO+VrRavfpUiwM5TEjw6px/RqmO0hOA+74Bh9/PQOVXbQkFby5NJG43W2o1thAsVws+25SkgETg7Ragemm2PcyTafFC+arMpR8q8nB+qWqtWsj9wTrOvvXG2eMTPM7TlF47fvNlq6Q/3szNdJeLelPYyNxNAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=tGBQI9v6; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45R61VBA129858;
+	Thu, 27 Jun 2024 01:01:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1719468091;
+	bh=A0iKcaVRUVxaZBhJFTeVilsxreWWM2Ey9iU4761I1PQ=;
+	h=From:To:CC:Subject:Date;
+	b=tGBQI9v6+G1Gem83fpvvhsf8F9cAaiwuaZ1c1Uu3Tw8GAcao5Ziir7CyKKd+yOysx
+	 axX/dsk++Ovk1wlYs9YuwlrdNGJ90+VaPJjMWACy70zDHFO2yTOGDdgmwQenyUKl71
+	 Iy8w4jqx7Mu2ijEsr5zMLICtQfc8tvxw+O/DGOCQ=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45R61VG2119680
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 27 Jun 2024 01:01:31 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 27
+ Jun 2024 01:01:30 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 27 Jun 2024 01:01:30 -0500
+Received: from dhruva.dhcp.ti.com (dhruva.dhcp.ti.com [172.24.227.68])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45R61SQq061495;
+	Thu, 27 Jun 2024 01:01:29 -0500
+From: Dhruva Gole <d-gole@ti.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>,
+        "Rafael J . Wysocki"
+	<rafael.j.wysocki@intel.com>
+CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Mario
+ Limonciello <mario.limonciello@amd.com>,
+        Dhruva Gole <d-gole@ti.com>
+Subject: [PATCH V2] cpufreq: make cpufreq_boost_enabled return bool
+Date: Thu, 27 Jun 2024 11:31:17 +0530
+Message-ID: <20240627060117.1809477-1-d-gole@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-The requested resources should be closed before return
-in main(), otherwise resource leak will occur
+Since this function is supposed to return boost_enabled which is anyway
+a bool type make sure that it's return value is also marked as bool.
+This helps maintain better consistency in data types being used.
 
-Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+Signed-off-by: Dhruva Gole <d-gole@ti.com>
 ---
- tools/testing/selftests/bpf/test_sockmap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/bpf/test_sockmap.c b/tools/testing/selftests/bpf/test_sockmap.c
-index a34e95040994..03d5dd617c4a 100644
---- a/tools/testing/selftests/bpf/test_sockmap.c
-+++ b/tools/testing/selftests/bpf/test_sockmap.c
-@@ -2092,7 +2092,7 @@ int main(int argc, char **argv)
- 	if (err) {
- 		fprintf(stderr, "populate program: (%s) %s\n",
- 			bpf_file, strerror(errno));
--		return 1;
-+		goto out;
- 	}
- 	running = 1;
+Changelog:
+"return false" instead of 0 as per Mario's suggestion.
+
+Link to previous patch:
+https://lore.kernel.org/linux-pm/20240626084354.1762483-1-d-gole@ti.com/
+
+---
+
+ drivers/cpufreq/cpufreq.c | 2 +-
+ include/linux/cpufreq.h   | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index 82c500389a40..709e7b1f9826 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -2873,7 +2873,7 @@ int cpufreq_enable_boost_support(void)
+ }
+ EXPORT_SYMBOL_GPL(cpufreq_enable_boost_support);
  
+-int cpufreq_boost_enabled(void)
++bool cpufreq_boost_enabled(void)
+ {
+ 	return cpufreq_driver->boost_enabled;
+ }
+diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
+index 20f7e98ee8af..6f57de7de433 100644
+--- a/include/linux/cpufreq.h
++++ b/include/linux/cpufreq.h
+@@ -785,7 +785,7 @@ ssize_t cpufreq_show_cpus(const struct cpumask *mask, char *buf);
+ 
+ #ifdef CONFIG_CPU_FREQ
+ int cpufreq_boost_trigger_state(int state);
+-int cpufreq_boost_enabled(void);
++bool cpufreq_boost_enabled(void);
+ int cpufreq_enable_boost_support(void);
+ bool policy_has_boost_freq(struct cpufreq_policy *policy);
+ 
+@@ -1164,9 +1164,9 @@ static inline int cpufreq_boost_trigger_state(int state)
+ {
+ 	return 0;
+ }
+-static inline int cpufreq_boost_enabled(void)
++static inline bool cpufreq_boost_enabled(void)
+ {
+-	return 0;
++	return false;
+ }
+ 
+ static inline int cpufreq_enable_boost_support(void)
+
+base-commit: df9574a57d02b265322e77fb8628d4d33641dda9
 -- 
-2.17.1
-
-
+2.34.1
 
 
