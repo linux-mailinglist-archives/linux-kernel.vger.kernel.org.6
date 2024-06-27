@@ -1,115 +1,121 @@
-Return-Path: <linux-kernel+bounces-233103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55E0291B250
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 00:37:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9D2E91B251
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 00:38:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B2651F227AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:37:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12B40B24AC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0371A257E;
-	Thu, 27 Jun 2024 22:37:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE851A2C02;
+	Thu, 27 Jun 2024 22:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="e0hTsFcL"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e2N+9Z2m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C8D13B780;
-	Thu, 27 Jun 2024 22:37:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB7113B780;
+	Thu, 27 Jun 2024 22:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719527827; cv=none; b=hLHhliPC/Hcyoduo7srdsuXLKHI2l18dtgdrc1x1uWWFFODlVRPRd8s6vNDslvbv35a7Nzh+q0iWMlkV0J0Ut2O/jC+7IWw6C5WwQKhp05bLMEM2JTW0asjtGdgFg0ycAN8lvwbOCU4syk18bmxQ40GqSNHW0NKC4w4Ur4E1kaE=
+	t=1719527878; cv=none; b=SNWv88I3rZcr1/vNEXQ+S082QSyPiz8SWf5UPyTKCObqhCCATEGeNukL1prtQ9A/wSY2D++3HNrY/L3BvHGa2WBlRt5qiNmEKbttkz3gfO/7Dtd/axRxJY94SbwkeveoqoOt1N/b4jOy5oo5blyN2vOXNXbkykN7yqjXatJMDyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719527827; c=relaxed/simple;
-	bh=Cdi+EEllHeyNyedSY82aIZSvPEIACrCGSg5DA2acbq8=;
+	s=arc-20240116; t=1719527878; c=relaxed/simple;
+	bh=itBV6HI5oi4kurURWybWSk7VegMTlxHOqv+b0J6M/Co=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tylNxfYZQwoWhAE9If+5DiZmZPSqmVd2m9Gt2d+n4Qkzewt+/mrQbRYchUGhCAcJKwfSSRMgsnGrAgUz0lyXItpZoI+l6XHB84Z3MmyoZoHFbj88M28wXJVZqZ4pWhhYEMfUFbdw8cnM6SM8SoIpFwxIkgg9MYgnCS21HR0NN0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=e0hTsFcL; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5C037FF804;
-	Thu, 27 Jun 2024 22:37:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1719527823;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zfP2hKhvXiExN0t9i/91sAyGkmacqicPLe0gSPZt9jY=;
-	b=e0hTsFcLzzx9cmXTCwBIWx8+KYKK4B+mQocX/MryhvOkIcn8YlWbSlJrdX1IYujFr5TWPK
-	Sk2Qe77k1JyGRm9Z2otTHAOywtlx9BSamuon48s8b2xIpFGyvMaFeYk6KqcJ5Nd4MfQBtY
-	tbN/7TlrU+vJkhbzBM68OwZH0VUtWNvP1d0H7tRkYmErCbi0gkcAhrwCsPEXI5Vp6vlc7x
-	rQSe6aKb+xeOqxbqRFqjteKElO+N/0psle+VP3qM3g7irhiTzKY06LaBBXxlL8LDr5jJeS
-	8jUHOzo5nOEKJ/gyO8QzAWDkVYpPZ4tajd7lz8AnFxsBe7jjR1imaWNFD8WHgQ==
-Date: Fri, 28 Jun 2024 00:37:03 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: =?iso-8859-1?B?Q3Pza+FzLA==?= Bence <csokas.bence@prolan.hu>
-Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	=?iso-8859-1?Q?Szentendrei=2C_Tam=E1s?= <szentendrei.tamas@prolan.hu>
-Subject: Re: [PATCH resubmit] rtc: ds1307: Detect oscillator fail on mcp794xx
-Message-ID: <202406272237033260538e@mail.local>
-References: <20240621080512.2916664-1-csokas.bence@prolan.hu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TmZz46CsengHy8j2quFNT7N8WYKjGAtj4oWNWm7bYNJcDtDqJU9ew/+pH53KLjNS6twjw40cZmk7fnLGeaWhuFf6yVuQoe9aMFsTHAn316UzaiYa0VckrOVehIqyL+wG8w750P4eRrtUxK1vmZG2zYpu5MzvunmNnnAaRWwIkzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e2N+9Z2m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 556ABC2BBFC;
+	Thu, 27 Jun 2024 22:37:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719527878;
+	bh=itBV6HI5oi4kurURWybWSk7VegMTlxHOqv+b0J6M/Co=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e2N+9Z2mMTu6u6ZowAUe+YVmWa8ZzO/uJsoJ6k1PjJ6bHU5dJQWEpyCx70+S+QDWG
+	 Uyl942O2b8rjHZSv2E7l03/KxA6j1X40sc0t4gounub0K+diJ9UrtbV3odyIdO+WJv
+	 S+IW/OiPGLx9rO646HKu0AsOfNmqT/hgA2S0M0SxLrwiqnjsAFnrIU3H4fendf6WxW
+	 s2FH87RBurgdJ2uDPaeSO6VlgnIDb3G3w5t7uBeg+y71jWbUEySU+ulRvyCnjO5ISr
+	 NJUp59c1o3k9pVIY8fQgv7kznCD2UA2FfFNy6fL3Ned5hVdeugE9QJvCFHXSyiXhWm
+	 GnxXFNIKwlH7Q==
+Date: Thu, 27 Jun 2024 15:37:55 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Leo Yan <leo.yan@arm.com>
+Cc: Ian Rogers <irogers@google.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	James Clark <james.clark@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Kajol Jain <kjain@linux.ibm.com>, coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] perf arm-spe: Support multiple Arm SPE PMUs
+Message-ID: <Zn3pw2oeV-8xmqGt@google.com>
+References: <20240623133437.222736-1-leo.yan@arm.com>
+ <20240623133437.222736-2-leo.yan@arm.com>
+ <CAP-5=fWgGR-L6V5RNNpTHdHyT0wTOqKd3CQ8xQSQDAJ1D2edYA@mail.gmail.com>
+ <86fd1484-7b9a-4da3-8e1d-91e5881df832@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240621080512.2916664-1-csokas.bence@prolan.hu>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+In-Reply-To: <86fd1484-7b9a-4da3-8e1d-91e5881df832@arm.com>
 
-Hello,
+Hello Leo,
 
-It is not clear to me why your resent this one but not the other one,
-can you elaborate?
+On Tue, Jun 25, 2024 at 05:49:16PM +0100, Leo Yan wrote:
+> Hi Ian,
+> 
+> On 6/24/24 17:16, Ian Rogers wrote:
+> > On Sun, Jun 23, 2024 at 6:34â€¯AM Leo Yan <leo.yan@arm.com> wrote:
+> > > 
+> > > A platform can have more than one Arm SPE PMU. For example, a system
+> > > with multiple clusters may have each cluster enabled with its own Arm
+> > > SPE instance. In such case, the PMU devices will be named 'arm_spe_0',
+> > > 'arm_spe_1', and so on.
+> > > 
+> > > Currently, the tool only supports 'arm_spe_0'. This commit extends
+> > > support to multiple Arm SPE PMUs by detecting the substring 'arm_spe'.
+> > > 
+> > > Signed-off-by: Leo Yan <leo.yan@arm.com>
+> > > ---
+> > >   tools/perf/arch/arm/util/pmu.c | 2 +-
+> > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/tools/perf/arch/arm/util/pmu.c b/tools/perf/arch/arm/util/pmu.c
+> > > index 8b7cb68ba1a8..29cfa1e427ed 100644
+> > > --- a/tools/perf/arch/arm/util/pmu.c
+> > > +++ b/tools/perf/arch/arm/util/pmu.c
+> > > @@ -27,7 +27,7 @@ void perf_pmu__arch_init(struct perf_pmu *pmu __maybe_unused)
+> > >                  pmu->selectable = true;
+> > >                  pmu->is_uncore = false;
+> > >                  pmu->perf_event_attr_init_default = arm_spe_pmu_default_config;
+> > > -               if (!strcmp(pmu->name, "arm_spe_0"))
+> > > +               if (strstr(pmu->name, "arm_spe"))
+> > 
+> > Why not use strstarts?
+> 
+> Indeed, strstarts() is better, will spin for this.
+> 
+> Thank for suggestion.
 
-On 21/06/2024 10:05:13+0200, Csókás, Bence wrote:
-> This patch enables the detection of the oscillator failure
-> on mcp794xx chips.
-> 
-> Co-developed-by: Szentendrei, Tamás <szentendrei.tamas@prolan.hu>
-> Signed-off-by: Szentendrei, Tamás <szentendrei.tamas@prolan.hu>
-> Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
-> ---
->  drivers/rtc/rtc-ds1307.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
-> index 506b7d1c2397..bdb7b201a160 100644
-> --- a/drivers/rtc/rtc-ds1307.c
-> +++ b/drivers/rtc/rtc-ds1307.c
-> @@ -65,6 +65,7 @@ enum ds_type {
->  #	define DS1340_BIT_CENTURY_EN	0x80	/* in REG_HOUR */
->  #	define DS1340_BIT_CENTURY	0x40	/* in REG_HOUR */
->  #define DS1307_REG_WDAY		0x03	/* 01-07 */
-> +#	define MCP794XX_BIT_OSCRUN	BIT(5)
->  #	define MCP794XX_BIT_VBATEN	0x08
->  #define DS1307_REG_MDAY		0x04	/* 01-31 */
->  #define DS1307_REG_MONTH	0x05	/* 01-12 */
-> @@ -242,6 +243,10 @@ static int ds1307_get_time(struct device *dev, struct rtc_time *t)
->  	    regs[DS1307_REG_MIN] & M41T0_BIT_OF) {
->  		dev_warn_once(dev, "oscillator failed, set time!\n");
->  		return -EINVAL;
-> +	} else if (ds1307->type == mcp794xx &&
-> +	    !(regs[DS1307_REG_WDAY] & MCP794XX_BIT_OSCRUN)) {
-> +		dev_warn_once(dev, "oscillator failed, set time!\n");
-> +		return -EINVAL;
->  	}
->  
->  	tmp = regs[DS1307_REG_SECS];
-> -- 
-> 2.34.1
-> 
-> 
+Probably we need to check the last underscore too to prevent potential
+name clashes..
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Thanks,
+Namhyung
+
 
