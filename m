@@ -1,193 +1,143 @@
-Return-Path: <linux-kernel+bounces-232398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8702091A838
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:46:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22ECC91A83F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:46:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4340C283ED4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:46:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE6CC1F24511
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B426194C62;
-	Thu, 27 Jun 2024 13:46:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78386194C87;
+	Thu, 27 Jun 2024 13:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="je3EDbWl"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JIZYK+j9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C467D15FD1A
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 13:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F632194ADD
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 13:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719495971; cv=none; b=k/7QZ4rWrSZsR++Kta8PEzo63qndxCeJzx/VawJSKwp6B9NOgs3nD9joU7AuVecJF1T1pAGgxrTp55T79waifmo9BJeGutsgmtJKxfV7dLN21UXNaunO0GHzEDiby/39k56KS1+pi+t/CAKttW4Sfq5T0r5tjWRrc7V1rPIGiOw=
+	t=1719495981; cv=none; b=EiQIHRlCebFnxHUTCo9HMxZ3sGJNXAbCCtA/XKPyaUmyn3K5D3Z6WE5aKMzbaRLb80EZ7KMbzIvcK5Yn8hLTH4XzjvTZzOy1qtTuJzdyJeXI60OrMRd5CoZ5a3n5Hyl6p/2bVz7RmfX/LNRdznvYDH8IWWB98Tq7xuduSgLY5/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719495971; c=relaxed/simple;
-	bh=2Kdx66VoPWMlHJgEoW4o5IGRITYWvH/e/du9/hA5j2o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BzJoDWR1Z9HVI63ym7sCaqxwr/Ubl8pt3q3Ve1OUPfcXlDTs0vruNBufDoy/S/812pzZI5lwPUidYyaSG0zHVcrnif1Ej5utEDdEI6FiRKxtKcTDxic8/lFP8wtudbqFZubuYJHbKro9iK/sTv5Hr+Yf4SEBNLuJ706zgd0hdbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=je3EDbWl; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52cdb0d8107so7969830e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 06:46:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719495968; x=1720100768; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=M5RCMjEX5v8mikaMEJSdT6otjYc5ebzDVWRoxGoSvA0=;
-        b=je3EDbWlZ7sAaheiVi/6IUiubpZYyvc/0q5yoEgwO385Sg9Lr5GMCK7xuPqQrorOrL
-         E9p4g91r5nx3EK7P0YS/+0WtxP+dYcsZ5K9jDEZqSoIJDfQMSRBVEFVggJHSxGBUW21i
-         kmEvEsBCz6MHl1/nWLyjW6rAlSfqA0ONF+iFSru/nNKssBJNtftCDDiDcTQWcexk5+K1
-         gKvZrW8wT1Gy1Pfb0ksYKOR1Slu+GOdf66GPlRcXtd6tcrLdTAuMhM01Qt75FaeIuoJR
-         Vd/9itAmwd3X2YzjW/gGmuXQJLexivIGOFaeLAUNZogjhTyc/vBiZXK1bcSUk2x8jW/5
-         zBSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719495968; x=1720100768;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M5RCMjEX5v8mikaMEJSdT6otjYc5ebzDVWRoxGoSvA0=;
-        b=i/RWHxbEx2GiTpmO3X90gSk2Z3rYRAeUtADbQTV+CLCJKRKR4EW3ZEomBRA++Ymc/n
-         +QJqH15uVOLIsyWUatNV9KRcL8aOW2W0HCEE35/IJpXHyaezevqFz+eqBv15i9PIDLI6
-         elxeQoROQYrd6nQAngQ9CRvqNGmv90LD5Gbe7zCCm8+EfhaVeZ+hJwKoo7ThISsWKimP
-         N3Dk9z1l9vmuNKnPM9ZR59McgCMcIRVrab/XUqilMp/fkWfAC8a5fBnN8vtsuJacXppG
-         E9ShgUhRGOa8rFQwh4VczMjDAuvNW/V+M/eKsznPKVrStWnjqO1aSnlhkTz7EdanLGVJ
-         Ee1g==
-X-Forwarded-Encrypted: i=1; AJvYcCXqTBhiabUpGqnH1wwDY+WzZBCVF47IM3v0a2RAZZgbLD1cmQ0zzAnf5n4CfaWVEqNvmTSdrY8WF/UKIMqdYk7vrIy+FcM0+PBsucrr
-X-Gm-Message-State: AOJu0YyTwwHUyTyWzAMS7KeyFoKu2DQEic2Dd4LkZdDfKDpfr3EF3yTQ
-	p7Wa40U2Rs7yNVbk+U4yMdiGVwnv204FMhsxUJ0Pq3gu/VL56owWN855OCRz1nw=
-X-Google-Smtp-Source: AGHT+IGe5oxp0Dx9Nj4cwZ6f8A59igVAt7K+/Kc8kmItxvM53k2mxQ7qIZc0knVvGwoBtmH8Nd0srg==
-X-Received: by 2002:a05:6512:acf:b0:52c:e28f:4da2 with SMTP id 2adb3069b0e04-52ce28f4e39mr10878543e87.43.1719495967838;
-        Thu, 27 Jun 2024 06:46:07 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e71305be8sm202951e87.180.2024.06.27.06.46.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 06:46:07 -0700 (PDT)
-Date: Thu, 27 Jun 2024 16:46:05 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	angelogioacchino.delregno@collabora.com, andersson@kernel.org, konrad.dybcio@linaro.org, 
-	mturquette@baylibre.com, sboyd@kernel.org, ilia.lin@kernel.org, rafael@kernel.org, 
-	viresh.kumar@linaro.org, ulf.hansson@linaro.org, quic_sibis@quicinc.com, 
-	otto.pflueger@abscue.de, neil.armstrong@linaro.org, luca@z3ntu.xyz, abel.vesa@linaro.org, 
-	danila@jiaxyga.com, quic_ipkumar@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 8/9] soc: qcom: cpr3: Add IPQ9574 definitions
-Message-ID: <3mzerxpsa2gj227pryu2pg5rgaoqya7y3fplvpdsq5cnffuzj3@puwzk4j2t2t5>
-References: <20240626104002.420535-1-quic_varada@quicinc.com>
- <20240626104002.420535-9-quic_varada@quicinc.com>
- <txid2b47zhnuknz35xaosfctuojrnrskcjehhqmyqubuxdimqj@7q7pzxlavk6k>
- <Zn0TZiIDQ9W/ttox@hu-varada-blr.qualcomm.com>
+	s=arc-20240116; t=1719495981; c=relaxed/simple;
+	bh=CxN0i2o6jLJzZ1S+WrM3/09xy0WQOsRB0G06hcALGys=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=O9YsK7wWvkeXoA5AdZ8thpZDp8DSfCAkWgG/YE/FEaNVKgPiy38d4P2+cWnTp0wHStZTdcWMYbZ0wvTbdO7ZmOtb5Ch5OuAjC71BQOA9j7S1qOJacMoi5JJq63917oS6Kp/eLlUhC8rEJDfcCbWX0hw5yWJCEGAOcFkKRCtE9ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JIZYK+j9; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719495979;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2H2eOsk+IBvdW6vn90H4Ieju5WkyuY2eQ65TuxwaxSM=;
+	b=JIZYK+j93avH/LfD4Fa1r1u/aAlAgRdQob/mzP2/1s3nHUy+EqqmiKkq/I0O3TpU5tnp2E
+	/wbrfVW3ZtPzVPz9b/ivLjW3o6iFzKyM+f+U/omV3tMZxBz8H70CQz3JRJGQ7PohZZJEnz
+	MLmh7ddWa+YiH3+e9m3od39/XZNsmcw=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-342-Az17NnIyPkaoaB2ucf5FMg-1; Thu,
+ 27 Jun 2024 09:46:16 -0400
+X-MC-Unique: Az17NnIyPkaoaB2ucf5FMg-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 152BD1956080;
+	Thu, 27 Jun 2024 13:46:14 +0000 (UTC)
+Received: from RHTRH0061144 (unknown [10.22.8.184])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 595BC300021A;
+	Thu, 27 Jun 2024 13:46:11 +0000 (UTC)
+From: Aaron Conole <aconole@redhat.com>
+To: Simon Horman <horms@kernel.org>
+Cc: netdev@vger.kernel.org,  dev@openvswitch.org,
+  linux-kselftest@vger.kernel.org,  linux-kernel@vger.kernel.org,  Pravin B
+ Shelar <pshelar@ovn.org>,  "David S. Miller" <davem@davemloft.net>,  Eric
+ Dumazet <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>,  Paolo
+ Abeni <pabeni@redhat.com>,  Shuah Khan <shuah@kernel.org>,  Stefano Brivio
+ <sbrivio@redhat.com>,  =?utf-8?Q?Adri=C3=A1n?= Moreno <amorenoz@redhat.com>
+Subject: Re: [PATCH net-next v3 6/7] selftests: net: Use the provided dpctl
+ rather than the vswitchd for tests.
+In-Reply-To: <20240626165455.GA3104@kernel.org> (Simon Horman's message of
+	"Wed, 26 Jun 2024 17:54:55 +0100")
+References: <20240625172245.233874-1-aconole@redhat.com>
+	<20240625172245.233874-7-aconole@redhat.com>
+	<20240626165455.GA3104@kernel.org>
+Date: Thu, 27 Jun 2024 09:46:09 -0400
+Message-ID: <f7t1q4izefy.fsf@redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zn0TZiIDQ9W/ttox@hu-varada-blr.qualcomm.com>
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Thu, Jun 27, 2024 at 12:53:18PM GMT, Varadarajan Narayanan wrote:
-> On Wed, Jun 26, 2024 at 09:27:53PM +0300, Dmitry Baryshkov wrote:
-> > On Wed, Jun 26, 2024 at 04:10:01PM GMT, Varadarajan Narayanan wrote:
-> > > From: Praveenkumar I <quic_ipkumar@quicinc.com>
-> > >
-> > > Add thread, scaling factor, CPR descriptor defines to enable CPR
-> > > on IPQ9574.
-> > >
-> > > Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
-> > > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > > ---
-> > > v3: Fix patch author
-> > >     Included below information in cover letter
-> > > v2: Fix Signed-off-by order
-> > > Depends:
-> > > 	[1] https://lore.kernel.org/lkml/20230217-topic-cpr3h-v14-0-9fd23241493d@linaro.org/T/
-> > > 	[2] https://github.com/quic-varada/cpr/commits/konrad/
-> > > ---
-> > >  drivers/pmdomain/qcom/cpr3.c | 137 +++++++++++++++++++++++++++++++++++
-> > >  1 file changed, 137 insertions(+)
-> > >
-> > > diff --git a/drivers/pmdomain/qcom/cpr3.c b/drivers/pmdomain/qcom/cpr3.c
-> > > index c28028be50d8..66c8a4bd9adc 100644
-> > > --- a/drivers/pmdomain/qcom/cpr3.c
-> > > +++ b/drivers/pmdomain/qcom/cpr3.c
-> >
-> > > +
-> > > +static const struct cpr_desc ipq9574_cpr_desc = {
-> > > +	.cpr_type = CTRL_TYPE_CPR4,
-> >
-> > So, is it CPR4 or CPRh?
-> 
-> CPR4.
+Simon Horman <horms@kernel.org> writes:
 
-Then why do you have cprh in the compatible?
+> On Tue, Jun 25, 2024 at 01:22:44PM -0400, Aaron Conole wrote:
+>> The current pmtu test infrastucture requires an installed copy of the
+>> ovs-vswitchd userspace.  This means that any automated or constrained
+>> environments may not have the requisite tools to run the tests.  However,
+>> the pmtu tests don't require any special classifier processing.  Indeed
+>> they are only using the vswitchd in the most basic mode - as a NORMAL
+>> switch.
+>> 
+>> However, the ovs-dpctl kernel utility can now program all the needed basic
+>> flows to allow traffic to traverse the tunnels and provide support for at
+>> least testing some basic pmtu scenarios.  More complicated flow pipelines
+>> can be added to the internal ovs test infrastructure, but that is work for
+>> the future.  For now, enable the most common cases - wide mega flows with
+>> no other prerequisites.
+>> 
+>> Enhance the pmtu testing to try testing using the internal utility, first.
+>> As a fallback, if the internal utility isn't running, then try with the
+>> ovs-vswitchd userspace tools.
+>> 
+>> Additionally, make sure that when the pyroute2 package is not available
+>> the ovs-dpctl utility will error out to properly signal an error has
+>> occurred and skip using the internal utility.
+>
+> Hi Aaron,
+>
+> I don't feel strongly about this, but it does feel like the
+> change to ovs-dpctl.py could live in a separate patch.
 
-> 
-> > > +	.num_threads = 1,
-> > > +	.apm_threshold = 850000,
-> > > +	.apm_crossover = 880000,
-> > > +	.apm_hysteresis = 0,
-> > > +	.cpr_base_voltage = 700000,
-> > > +	.cpr_max_voltage = 1100000,
-> > > +	.timer_delay_us = 5000,
-> > > +	.timer_cons_up = 0,
-> > > +	.timer_cons_down = 0,
-> > > +	.up_threshold = 2,
-> > > +	.down_threshold = 2,
-> > > +	.idle_clocks = 15,
-> > > +	.count_mode = CPR3_CPR_CTL_COUNT_MODE_ALL_AT_ONCE_MIN,
-> > > +	.count_repeat = 1,
-> > > +	.gcnt_us = 1,
-> > > +	.vreg_step_fixed = 12500,
-> > > +	.vreg_step_up_limit = 1,
-> > > +	.vreg_step_down_limit = 1,
-> > > +	.vdd_settle_time_us = 34,
-> > > +	.corner_settle_time_us = 6,
-> > > +	.reduce_to_corner_uV = true,
-> > > +	.hw_closed_loop_en = false,
-> > > +	.threads = (const struct cpr_thread_desc *[]) {
-> > > +		&ipq9574_thread_silver,
-> >
-> > If it's silver, where is gold or bronze?
-> 
-> Will rename this as "ipq9574_thread"
-> 
-> Thanks
-> Varada
-> 
-> > > +	},
-> > > +};
-> > > +
-> > > +static const struct cpr_acc_desc ipq9574_cpr_acc_desc = {
-> > > +	.cpr_desc = &ipq9574_cpr_desc,
-> > > +};
-> > > +
-> > >  static const int sdm630_gold_scaling_factor[][CPR3_RO_COUNT] = {
-> > >  	/* Same RO factors for all fuse corners */
-> > >  	{
-> > > @@ -2828,6 +2964,7 @@ static void cpr_remove(struct platform_device *pdev)
-> > >  }
-> > >
-> > >  static const struct of_device_id cpr3_match_table[] = {
-> > > +	{ .compatible = "qcom,ipq9574-cprh", .data = &ipq9574_cpr_acc_desc },
-> > >  	{ .compatible = "qcom,msm8998-cprh", .data = &msm8998_cpr_acc_desc },
-> > >  	{ .compatible = "qcom,sdm630-cprh", .data = &sdm630_cpr_acc_desc },
-> > >  	{ }
-> > > --
-> > > 2.34.1
-> > >
-> >
-> > --
-> > With best wishes
-> > Dmitry
+I can do it if others feel like it should be a separate change.  I
+debated it as a separate patch, but I felt that it wasn't really a bug
+fix, more like a behavior change that would be associated with this pmtu
+script.  I didn't (at the time, and still don't) see a reason to
+separately backport them, but it could also be considered as a separate
+orthogonal change, and I'm okay with it being a different patch.  Like
+you, I don't feel strongly either way.
 
--- 
-With best wishes
-Dmitry
+If I do separate it, I will also add your Reviewed and Tested tags to
+that patch.
+
+>> Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
+>> Signed-off-by: Aaron Conole <aconole@redhat.com>
+>
+> The above not withstanding,
+>
+>
+> Reviewed-by: Simon Horman <horms@kernel.org>
+>
+> I have tested pmtu.sh with this change on Fedora 40 both
+> with python3-pyroute2 installed, which uses ovs-dpctl,
+> and without, which uses ovs-vswitchd userspace tools.
+>
+> Tested-by: Simon Horman <horms@kernel.org>
+
+Thanks!
+
+> ...
+
 
