@@ -1,118 +1,120 @@
-Return-Path: <linux-kernel+bounces-232716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F62B91AD78
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:08:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98C6F91AD7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:09:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCE80B26F65
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:08:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA0AB1C221FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8A919A292;
-	Thu, 27 Jun 2024 17:08:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59DF719A287;
+	Thu, 27 Jun 2024 17:08:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b="tm27XbhM"
-Received: from raptorengineering.com (mail.raptorengineering.com [23.155.224.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l+kNx+ND"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8746E199E89;
-	Thu, 27 Jun 2024 17:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.155.224.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2434B433B3;
+	Thu, 27 Jun 2024 17:08:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719508114; cv=none; b=a0DJgDTmYOYPDnyQms0zu7hhW3CaIA+h7Pi9AMHDj/Ltb8AoRhMQudoUaK1BYBYwl3JCBS8QPyGb1v3X0IS2twk5dGVXt9Dho3y0ZW/y0CCE+KhxKUkfjipbx1qtyMTLALl9l4M700pXTex03uVRRqVi8iWirTx6+Wsv57dAXVM=
+	t=1719508132; cv=none; b=NV/VN7sHFlGPGsmKTGOme2owEoEMt8NNplM9xnYEA3gUIfcst2L7D3aJBEYmYEI0PwjkRFDysZnLXnKqX6thBx4ym73ni3ZwXjrBA/KRjRHJmHx/o1xHE190TIO9NSKRAWaa0TzEhjTvoNumiyLLCg47Ww811EiEYThEP7W3sbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719508114; c=relaxed/simple;
-	bh=gQjYhOI02FdcEBRinNKiAlBL2XjmR+KPxp9hT9vWYG4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ijKjd7gEu65yIcJ3R9e/Hv+jxS2D6iYbbd5XmkXgBT0XXKeyFt2cz1gn4gYfXRCuJIuGO0ZrvwY2UJlE7TzqUTvDx0wJZiRYbf5aeaDT7BcHhbKRl/JNFJWXrN+B7AV6c0ERbVGQ6qlv1BOuuTNunvrVXcVrtccVWM3IJNjpjXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com; spf=pass smtp.mailfrom=raptorengineering.com; dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b=tm27XbhM; arc=none smtp.client-ip=23.155.224.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raptorengineering.com
-Received: from localhost (localhost [127.0.0.1])
-	by mail.rptsys.com (Postfix) with ESMTP id 3DAFB8284676;
-	Thu, 27 Jun 2024 12:08:30 -0500 (CDT)
-Received: from mail.rptsys.com ([127.0.0.1])
-	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id XdB8CVZdFTUe; Thu, 27 Jun 2024 12:08:28 -0500 (CDT)
-Received: from localhost (localhost [127.0.0.1])
-	by mail.rptsys.com (Postfix) with ESMTP id BEE9D8286EE7;
-	Thu, 27 Jun 2024 12:08:28 -0500 (CDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rptsys.com BEE9D8286EE7
+	s=arc-20240116; t=1719508132; c=relaxed/simple;
+	bh=6a+QzgfITt8frxG2BinwNLUcugEG8Lp4mDKzxGhzYm4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=d6Oot6BmsHFOSI8YADIhJRo+oZnkgwTTi/kjGp7QRUhC5IUAA1zBIrpAmY8WrYoJMFV7bLpVJWC+uCKUbGyuz1AK6oN3zUkKdZbqHxVFdY9QytRSDB9qNxVD1tV6joIzlRE2IBguJo+jYzEBKwWrIk1hdCvIOQoKrze5Ed4aEcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l+kNx+ND; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42561c16ffeso13857075e9.3;
+        Thu, 27 Jun 2024 10:08:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=raptorengineering.com; s=B8E824E6-0BE2-11E6-931D-288C65937AAD;
-	t=1719508108; bh=7vozx5pnO3XeEM4yE1MwWuRfVdToNevzVg4mxSfCvKs=;
-	h=Message-ID:Date:MIME-Version:To:From;
-	b=tm27XbhMcN3WAhiovueooUXESqDRJygPFvjey0yPzTGBNLnBlvOAaQQZNRgtfqHhj
-	 vybHcwIWpDcvpBSdZAXa92+dyH8B10GyrcT3FSBaytfWcap2Z69m67d8Wbj7Ig9Z61
-	 PvObo0h12TozzbGaSm+u0ledIX8Ng7XYHgt5wOZs=
-X-Virus-Scanned: amavisd-new at rptsys.com
-Received: from mail.rptsys.com ([127.0.0.1])
-	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id jX-fwQJ2VSlB; Thu, 27 Jun 2024 12:08:28 -0500 (CDT)
-Received: from [10.11.0.2] (5.edge.rptsys.com [23.155.224.38])
-	by mail.rptsys.com (Postfix) with ESMTPSA id EF00F8284676;
-	Thu, 27 Jun 2024 12:08:27 -0500 (CDT)
-Message-ID: <888d3984-d00e-4148-a1ca-f7887c0af413@raptorengineering.com>
-Date: Thu, 27 Jun 2024 12:08:27 -0500
+        d=gmail.com; s=20230601; t=1719508129; x=1720112929; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cd52TDCo23vBUICUzAHPR5YFmSE3EhQH6c918u4ugTM=;
+        b=l+kNx+NDwiJN6QHmYwbT4SGurL9WxLn07hFdAH4sd/lEfWKy6Noq7f+ijhr67RwKZB
+         onULGKKtnqUOdckxbqL+OIFdpUyeaJN6TmKBuzAMu4N9CD3Q03myC8KJxToUx8zHH+4u
+         UX9TkxglsiIwhnV00lj3kCjDB6rHgsWWNRLIUtNf1j1zl56ciR5b7wA6rxdLRbwep6Gu
+         uopXkX66+IaBD6+ROZDX+eBfqqkPnqs6pbT9YBu9H2/qWHL8eQcSWI2cdKvdgjb9pLk4
+         gBEQXq8vrIpXXD1VaYZGB8sSbSlunmaW6bS7Eb/jsXlO21s4c+unLCQl8ZTgxf+GcLJ0
+         Blmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719508129; x=1720112929;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cd52TDCo23vBUICUzAHPR5YFmSE3EhQH6c918u4ugTM=;
+        b=T6XD5c50Og8elC3ksQM7arGF0ZpN4yP5HXAm7uNtCPafy6AZ10pnrfzS5MQZaycWza
+         vMpe9my3x+IID4+N/mT1wl4ogLe3dQmMz7WIUXRf78Xt9TLfAO1Snpcbq3puLQmt68Ly
+         MX/Ko6IysghGsZBO3pZJ15fePizmZUh4SDFIfUm0fUatSMFMAEq4/cs0MfU7H3W3nOw5
+         YVN63MPHEoc3tT9gTTcqSnmbtguUV2k/VD7Hc2p4gQl1kEe23FAe9V1M7RsaAoiXxEMn
+         2X3euc/7flJRPOn+iOo9uFgAkoR7Q3IVi/KiKRRsVwanIR49at46kYTe6psmb3HBEuza
+         S3uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWtY1I/ugo29QsI4upeDo+IKg4jYn/YpB9vq0cNoixyxaypcsTq+a5Zm9XYpNyycfrfnQRk+d016NrZPrL4WhjCgmLTN/ZneoSnUazGXPm/WK5bsk36c9yMenuMdZuoCbcR/8gA9W/UQrrPGQcNf6T+
+X-Gm-Message-State: AOJu0YyS5jnyy6diMrYxY/zrBg/PzwM6ihUMJSL3zIpMfaeG2/ZfoqDE
+	7PEmO7/DHJd9MeciZto0NQwX7VgcD7hUk7EtwFSOvdm0NaTmtfJ4NHUAwA==
+X-Google-Smtp-Source: AGHT+IE5bMkYh7fWJfWBM1m0gURnI3pYwYNUdfjazbH575zk32WvUb2At7eMuejqYxfL6YI71DOP4Q==
+X-Received: by 2002:a05:6000:1010:b0:367:f2b:aeff with SMTP id ffacd0b85a97d-3670f2bb07emr4426806f8f.0.1719508129193;
+        Thu, 27 Jun 2024 10:08:49 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3674357c12esm2493077f8f.15.2024.06.27.10.08.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 10:08:48 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH][next] firewire: core: Fix spelling mistakes in tracepoint messages
+Date: Thu, 27 Jun 2024 18:08:47 +0100
+Message-Id: <20240627170847.125531-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] pci/hotplug/pnv_php: Fix hotplug driver crash on
- Powernv
-To: Krishna Kumar <krishnak@linux.ibm.com>, mpe@ellerman.id.au,
- npiggin@gmail.com
-Cc: nathanl@linux.ibm.com, aneesh.kumar@kernel.org,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- christophe.leroy@csgroup.eu, gbatra@linux.ibm.com, bhelgaas@google.com,
- tpearson@raptorengineering.com, oohall@gmail.com, brking@linux.vnet.ibm.com,
- mahesh.salgaonkar@in.ibm.com, linuxppc-dev@lists.ozlabs.org
-References: <20240624121052.233232-1-krishnak@linux.ibm.com>
- <20240624121052.233232-2-krishnak@linux.ibm.com>
-Content-Language: en-US
-From: Shawn Anastasio <sanastasio@raptorengineering.com>
-In-Reply-To: <20240624121052.233232-2-krishnak@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Krishna,
+There are two spelling mistakes in the tracepoint message text. Fix them.
 
-On 6/24/24 7:09 AM, Krishna Kumar wrote:
-> Description of the problem: The hotplug driver for powerpc
-> (pci/hotplug/pnv_php.c) gives kernel crash when we try to
-> hot-unplug/disable the PCIe switch/bridge from the PHB.
-> 
-> Root Cause of Crash: The crash is due to the reason that, though the msi
-> data structure has been released during disable/hot-unplug path and it
-> has been assigned with NULL, still during unregistartion the code was
-> again trying to explicitly disable the msi which causes the Null pointer
-> dereference and kernel crash.
-> 
-> Proposed Fix : The fix is to correct the check during unregistration path
-> so that the code should not  try to invoke pci_disable_msi/msix() if its
-> data structure is already freed.
-> 
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-> Cc: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Gaurav Batra <gbatra@linux.ibm.com>
-> Cc: Nathan Lynch <nathanl@linux.ibm.com>
-> Cc: Brian King <brking@linux.vnet.ibm.com>
-> 
-> Signed-off-by: Krishna Kumar <krishnak@linux.ibm.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ include/trace/events/firewire.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-As with v1, I can confirm that this patch solves the panic encountered
-when hotplugging PCIe bridges on POWER9.
+diff --git a/include/trace/events/firewire.h b/include/trace/events/firewire.h
+index d9158a134beb..86330ba58336 100644
+--- a/include/trace/events/firewire.h
++++ b/include/trace/events/firewire.h
+@@ -853,7 +853,7 @@ DECLARE_EVENT_CLASS(isoc_single_completions_template,
+ 		memcpy(__get_dynamic_array(header), header, __get_dynamic_array_len(header));
+ 	),
+ 	TP_printk(
+-		"context=0x%llx card_index=%u timestap=0x%04x cause=%s header=%s",
++		"context=0x%llx card_index=%u timestamp=0x%04x cause=%s header=%s",
+ 		__entry->context,
+ 		__entry->card_index,
+ 		__entry->timestamp,
+@@ -891,7 +891,7 @@ TRACE_EVENT(isoc_inbound_multiple_completions,
+ 		__entry->cause = cause;
+ 	),
+ 	TP_printk(
+-		"context=0x%llx card_index=%u comleted=%u cause=%s",
++		"context=0x%llx card_index=%u completed=%u cause=%s",
+ 		__entry->context,
+ 		__entry->card_index,
+ 		__entry->completed,
+-- 
+2.39.2
 
-Tested-by: Shawn Anastasio <sanastasio@raptorengineering.com>
-
-Thanks,
-Shawn
 
