@@ -1,193 +1,108 @@
-Return-Path: <linux-kernel+bounces-232664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE6AF91AC82
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:22:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64BFE91AC84
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:23:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9576B2825E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:22:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 171081F231A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:23:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2921993B4;
-	Thu, 27 Jun 2024 16:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024601993B5;
+	Thu, 27 Jun 2024 16:23:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BkTVsFGh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="AfIin8oj"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA86E197A65;
-	Thu, 27 Jun 2024 16:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4CE815278F;
+	Thu, 27 Jun 2024 16:23:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719505352; cv=none; b=n8gtziQ0tENm+FMpkz7hvhB0gz3BE7ZSQQGC6ImzLLudzVDoyOyT4pb19tesETBNoi6CD6arzavNvOEy2NA5sP4hOniRe+a83u+SQ4hOvGBKUmCdkT/3Hf4A1/Pd+L5CMgqcxyo7vQ27Lc+60uEr1Hm7ZCIllBALbAB3bScBFsk=
+	t=1719505387; cv=none; b=SQCDNNHNawurxaeNWKK/fgor57cjO7OL8HklIvcTV9JcuqZBwRJz2d1u8SdZP9iStVaimKTlR+wFjog793giO5XiwP3wmPN4fwf69MYtyPELm5ceMhgWDV3fsb3JNwIiNYHCrMKlXlFJAvf1e7ZMi0C4cYe+aeSIGtnesy+rbFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719505352; c=relaxed/simple;
-	bh=TMnrFsjqTQSFOQs7nIdl6/67gGRZGNEZGkvjDhvZqvo=;
+	s=arc-20240116; t=1719505387; c=relaxed/simple;
+	bh=ce0Lf6cLG/oWobGf6UUFLUur95J/usihAos6azlJk00=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ajKQR3+2EHorOBc119GRQ0ktl2lf/1Wc1eTg/HqCUKkxLqiUaqw7sRRG96EMRRA6SUiSjkc8APpPzs7QM97imP1MHTROZOWC2LyF4cWgyOvD9QDRy7uQujc8n6oWWx2oNTphDg6TigCicjKKnImb1BQsYD80sckea82V3zsiBxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BkTVsFGh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AA85C2BBFC;
-	Thu, 27 Jun 2024 16:22:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719505351;
-	bh=TMnrFsjqTQSFOQs7nIdl6/67gGRZGNEZGkvjDhvZqvo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BkTVsFGhqUuZ2Es9Q5UvBx5RFlrHO58V1O6B3TRwelvxkIyL4ySfxxS40sUY3F3R0
-	 FentU0+s3sWywiz8PAGk0HYmc6bJoktx8/hxRU2eFp6nIibWgWVJfXDMKR+TPE1bx/
-	 u6LiVVijXAVewGUbomz0Sxf5soBihgvSQtL/OmTPsE1bkr2iuQE0zYTuONKcmlWtd6
-	 EXsD7irBelwyIPfVS73FSPYlbGU3trPHNruS0MZGKj1KgZwZL2zHgVZ9SNnbwgYhdm
-	 5TaSnC8ioToQ0zwCa9D+oEW5JBpcvmEuLYT11jrmRZe/UsiUQiaK8jeK6XF6tnj/Z2
-	 hw9th42gY863g==
-Date: Thu, 27 Jun 2024 17:22:27 +0100
-From: Conor Dooley <conor@kernel.org>
-To: matthew.gerlach@linux.intel.com
-Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-	bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org,
-	joyce.ooi@intel.com, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7] dt-bindings: PCI: altera: Convert to YAML
-Message-ID: <20240627-finer-expel-2c7ab9f05733@spud>
-References: <20240614163520.494047-1-matthew.gerlach@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FZxjvHMGR9BgIXnCiL1nUiQcckbs3NIEd1LCr3x3WsXjgDy9ousANfjUgcn2PQb2XcO2Yo70nUU9Hf/KjOCFwoeN73a9fw1TzT2gRm06os87u9IY65i86yvoo6kgGTp64mbPzurZrg8V0uU8jZ/9MIc46DX84bhk0mIyZEOLd0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=AfIin8oj; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=9yIt2RqXi4xlDWsgfmXanE1cqNWmdPxgfzW0xNM2P0I=; b=AfIin8ojKyz8W63YRMVVq81VJa
+	rXGjcHVSDalj6qFaRDfxsmN4NbfICzLNCCs9p/+4U/FJg6vWylFx3OUxc6GyxaLK4Xs37Bz4TS1n3
+	kKIQuL5KhAyZ1mZHXkkqNmewmDchMhyZFdMc1kyfCaRO2D2RaAqDl4C4YW8z7tqu2/Qs=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sMrti-001Bbh-AT; Thu, 27 Jun 2024 18:22:58 +0200
+Date: Thu, 27 Jun 2024 18:22:58 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v2 net-next 3/3] net: phy: aquantia: add support for
+ aqr115c
+Message-ID: <ea452581-c903-4106-b912-d307f74f773d@lunn.ch>
+References: <20240627113018.25083-1-brgl@bgdev.pl>
+ <20240627113018.25083-4-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="9ilwJNtWwmRhDcGd"
-Content-Disposition: inline
-In-Reply-To: <20240614163520.494047-1-matthew.gerlach@linux.intel.com>
-
-
---9ilwJNtWwmRhDcGd
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240627113018.25083-4-brgl@bgdev.pl>
 
-Been stalling replying here, was wondering if Rob would look given he
-reviewed the previous versions.
-
-On Fri, Jun 14, 2024 at 11:35:20AM -0500, matthew.gerlach@linux.intel.com w=
-rote:
-> From: Matthew Gerlach <matthew.gerlach@linux.intel.com>
->=20
-> Convert the device tree bindings for the Altera Root Port PCIe controller
-> from text to YAML. Update the entries in the interrupt-map field to have
-> the correct number of address cells for the interrupt parent.
->=20
-> Signed-off-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
-> diff --git a/Documentation/devicetree/bindings/pci/altera-pcie.txt b/Docu=
-mentation/devicetree/bindings/pci/altera-pcie.txt
-> deleted file mode 100644
-> index 816b244a221e..000000000000
-> --- a/Documentation/devicetree/bindings/pci/altera-pcie.txt
-> +++ /dev/null
-> @@ -1,50 +0,0 @@
-> -* Altera PCIe controller
+On Thu, Jun 27, 2024 at 01:30:17PM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> Add support for a new model to the Aquantia driver. This PHY supports
+> Overlocked SGMII mode with 2.5G speeds.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  drivers/net/phy/aquantia/aquantia_main.c | 39 +++++++++++++++++++++++-
+>  1 file changed, 38 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
+> index 974795bd0860..98ccefd355d5 100644
+> --- a/drivers/net/phy/aquantia/aquantia_main.c
+> +++ b/drivers/net/phy/aquantia/aquantia_main.c
+> @@ -29,6 +29,7 @@
+>  #define PHY_ID_AQR113	0x31c31c40
+>  #define PHY_ID_AQR113C	0x31c31c12
+>  #define PHY_ID_AQR114C	0x31c31c22
+> +#define PHY_ID_AQR115C	0x31c31c33
+>  #define PHY_ID_AQR813	0x31c31cb2
+>  
+>  #define MDIO_PHYXS_VEND_IF_STATUS		0xe812
+> @@ -111,7 +112,6 @@ static u64 aqr107_get_stat(struct phy_device *phydev, int index)
+>  	int len_h = stat->size - len_l;
+>  	u64 ret;
+>  	int val;
 > -
-> -Required properties:
-> -- compatible :	should contain "altr,pcie-root-port-1.0" or "altr,pcie-ro=
-ot-port-2.0"
-> -- reg:		a list of physical base address and length for TXS and CRA.
-> -		For "altr,pcie-root-port-2.0", additional HIP base address and length.
-> -- reg-names:	must include the following entries:
-> -		"Txs": TX slave port region
-> -		"Cra": Control register access region
+>  	val = phy_read_mmd(phydev, MDIO_MMD_C22EXT, stat->reg);
+>  	if (val < 0)
+>  		return U64_MAX;
 
-> -		"Hip": Hard IP region (if "altr,pcie-root-port-2.0")
+White space change. And that blank line is actually wanted to separate
+the variables from the code.
 
-I think this should be constrained in the new yaml binding by setting
-maxItems: for reg/reg-names to 2 for 1.0 and, if I am not
-misunderstanding what "must include" means, minItems: to 3 for 2.0.
+    Andrew
 
-Thanks,
-Conor.
-
-> diff --git a/Documentation/devicetree/bindings/pci/altr,pcie-root-port.ya=
-ml b/Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml
-> new file mode 100644
-> index 000000000000..0aaf5dbcc9cc
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml
-> @@ -0,0 +1,93 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +# Copyright (C) 2015, 2019, 2024, Intel Corporation
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/altr,pcie-root-port.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Altera PCIe Root Port
-> +
-> +maintainers:
-> +  - Matthew Gerlach <matthew.gerlach@linux.intel.com>
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - altr,pcie-root-port-1.0
-> +      - altr,pcie-root-port-2.0
-> +
-> +  reg:
-> +    items:
-> +      - description: TX slave port region
-> +      - description: Control register access region
-> +      - description: Hard IP region
-> +    minItems: 2
-> +
-> +  reg-names:
-> +    items:
-> +      - const: Txs
-> +      - const: Cra
-> +      - const: Hip
-> +    minItems: 2
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  interrupt-controller: true
-> +
-> +  interrupt-map-mask:
-> +    items:
-> +      - const: 0
-> +      - const: 0
-> +      - const: 0
-> +      - const: 7
-> +
-> +  interrupt-map:
-> +    maxItems: 4
-> +
-> +  "#interrupt-cells":
-> +    const: 1
-> +
-> +  msi-parent: true
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - reg-names
-> +  - interrupts
-> +  - "#interrupt-cells"
-> +  - interrupt-controller
-> +  - interrupt-map
-> +  - interrupt-map-mask
-> +
-> +allOf:
-> +  - $ref: /schemas/pci/pci-host-bridge.yaml#
-
---9ilwJNtWwmRhDcGd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZn2RwwAKCRB4tDGHoIJi
-0qYAAP4wDJobiNVvDe2lGN5IVp5yaFQBWs3S96o3aWzteZHlxwD/Rdn4PgaiT4i+
-MzHMBW+Uslp5+U4KxXeTXIBrp8WeSwA=
-=b0h0
------END PGP SIGNATURE-----
-
---9ilwJNtWwmRhDcGd--
+---
+pw-bot: cr
 
