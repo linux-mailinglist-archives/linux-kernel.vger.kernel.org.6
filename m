@@ -1,39 +1,64 @@
-Return-Path: <linux-kernel+bounces-232025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42F8691A1C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:40:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C438391A1CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:44:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3314281568
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 08:40:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B93E1F21B08
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 08:44:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6771386C6;
-	Thu, 27 Jun 2024 08:40:01 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB071292CE;
-	Thu, 27 Jun 2024 08:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7580C12DDA2;
+	Thu, 27 Jun 2024 08:44:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="uBm3J+/H"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B63D770F9;
+	Thu, 27 Jun 2024 08:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719477600; cv=none; b=SP9RJjBuxDjJnr1W+8AU7qvIcjHCXab5N0A47bOa4ucfLIZTITYf9QkN/3rFqDd0+608iSBZA/lcnsxcp98yeFb12SkSwRbZK+yQOdb3a93wtizWUFlnCgSOlga0Wmzx2oM6BPghmZSCqGEz+Iv0fw1TuobCMoi5NXsXBK0E/pc=
+	t=1719477859; cv=none; b=Pbze438fJAbzoc4CIwhsriparBuy9QTW0ZjhRYnENAZNJvhist0jUKEjl6eKqONt9ozddSTffctOGuCI9JiDB/GEAii1OKUAE+MK6p6b5jRTdBncn0H+VvOefLnEDsLXPAULM0AC+7bU1hb6SJlgcW+i52EF+NnepmVA5LHVStI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719477600; c=relaxed/simple;
-	bh=wbbsfnyEXiw1I4uQYeXCIgF8aY+i4tJ6NIwIHja17Y0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TWG6sLTeNVrq9DLrH1Z/7nL4GIdHd7MfEesIxVST0FYkhDNAoBVZbiQPlmo4msLaqY882BWRxp4he3EgQjbpoQNznrd8k6umK10f1qvjDyPZie7Vygt5uupC+pUxk9RGbOBjuIeRMz6D+CXDs3+TiN9Cd9eCgbaZ3sY/BTyHRow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8AF71367;
-	Thu, 27 Jun 2024 01:40:21 -0700 (PDT)
-Received: from [10.1.32.171] (XHFQ2J9959.cambridge.arm.com [10.1.32.171])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 626863F6A8;
-	Thu, 27 Jun 2024 01:39:54 -0700 (PDT)
-Message-ID: <fceebb14-49de-4bfb-8a3a-3ce9c7dee0e6@arm.com>
-Date: Thu, 27 Jun 2024 09:39:52 +0100
+	s=arc-20240116; t=1719477859; c=relaxed/simple;
+	bh=dumyCkcsofHuL88k0WRJagi7o1SjCH55NxqoXi7s4bU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Sm5x0NY247adztfpj0YDy+kGefJzlcoomruA6Fya7VNH2QyeKLg16sk9zR9PR3WruHysPit39EOdhngSqKErZmG/drwO9+NaNV5XwdtfaIlThLt/mEf020fHwRaP8wohQMEQ/N3gmLNDyg+tq8fSmgsZSN2mZm6wUPEsvxbyP8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=uBm3J+/H; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45R7QdQP008977;
+	Thu, 27 Jun 2024 10:42:54 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	kWxMJjKQM9I6Gk9ILBK+IGxxgn6IDXY2t3G/9batKYk=; b=uBm3J+/HsagIqUij
+	mYXqPezyGW/pwVbf8EHD+x3+tUioHMlmxLg/Am4sFCNvYFlELjaL6tGxx4T9hI+o
+	A2o73J5bs059opaORlp9Nep1YjOZyPL2VHykCSVlZ4zaBqQlZblz6hmA+QfFNgoE
+	WUYTJMzIml1GIVBW15rH+rnvR4gV3khZk0cEO7Jbpw7lbqUc0AfU91c/S55kN20I
+	lajWLScaOJFd+wcL2F+YfJfYEzkjfSjZ8sqd/vWiLdiOlpMdpeVCOb5E1EBHLDzd
+	UXktShujpWu3dqpRvpNygata02vwY268mc3jfDoDb0OKTEtS+FQck7/LYpT1/eGt
+	Rlbm6g==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yx860tab6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Jun 2024 10:42:54 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id E014440047;
+	Thu, 27 Jun 2024 10:42:50 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 94E772128B2;
+	Thu, 27 Jun 2024 10:42:50 +0200 (CEST)
+Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Thu, 27 Jun
+ 2024 10:42:50 +0200
+Message-ID: <1ebf1150-e2de-40f9-866f-b08d13a231e9@foss.st.com>
+Date: Thu, 27 Jun 2024 10:42:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,96 +66,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] kpageflags: fix wrong KPF_THP on non-pmd-mappable
- compound pages
-Content-Language: en-GB
-To: Barry Song <21cnbao@gmail.com>, Zi Yan <ziy@nvidia.com>
-Cc: ran xiaokai <ranxiaokai627@163.com>, akpm@linux-foundation.org,
- willy@infradead.org, vbabka@suse.cz, svetly.todorov@memverge.com,
- ran.xiaokai@zte.com.cn, peterx@redhat.com, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- David Hildenbrand <david@redhat.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Kefeng Wang <wangkefeng.wang@huawei.com>, Lance Yang <ioworker0@gmail.com>
-References: <20240626024924.1155558-1-ranxiaokai627@163.com>
- <20240626024924.1155558-3-ranxiaokai627@163.com>
- <D29M7U8SPSYJ.39VMTRSKXW140@nvidia.com>
- <1907a8c0-9860-4ca0-be59-bec0e772332b@arm.com>
- <D2A0ZD1AOJDA.3OLNZCHJAXRK8@nvidia.com>
- <CAGsJ_4wCymN=YQt7cDBZ-xB8Kr4C7hSnDaWNevnhiNC76pXd-A@mail.gmail.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <CAGsJ_4wCymN=YQt7cDBZ-xB8Kr4C7hSnDaWNevnhiNC76pXd-A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] ARM: stm32: dts: Missing clocks for stm32f429's syscfg.
+To: Yanjun Yang <yangyj.ee@gmail.com>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>
+References: <20240614010012.25443-1-yangyj.ee@gmail.com>
+Content-Language: en-US
+From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
+In-Reply-To: <20240614010012.25443-1-yangyj.ee@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-27_04,2024-06-25_01,2024-05-17_01
 
-On 27/06/2024 05:10, Barry Song wrote:
-> On Thu, Jun 27, 2024 at 2:40 AM Zi Yan <ziy@nvidia.com> wrote:
->>
->> On Wed Jun 26, 2024 at 7:07 AM EDT, Ryan Roberts wrote:
->>> On 26/06/2024 04:06, Zi Yan wrote:
->>>> On Tue Jun 25, 2024 at 10:49 PM EDT, ran xiaokai wrote:
->>>>> From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
->>>>>
->>>>> KPF_COMPOUND_HEAD and KPF_COMPOUND_TAIL are set on "common" compound
->>>>> pages, which means of any order, but KPF_THP should only be set
->>>>> when the folio is a 2M pmd mappable THP.
->>>
->>> Why should KPF_THP only be set on 2M THP? What problem does it cause as it is
->>> currently configured?
->>>
->>> I would argue that mTHP is still THP so should still have the flag. And since
->>> these smaller mTHP sizes are disabled by default, only mTHP-aware user space
->>> will be enabling them, so I'll naively state that it should not cause compat
->>> issues as is.
->>>
->>> Also, the script at tools/mm/thpmaps relies on KPF_THP being set for all mTHP
->>> sizes to function correctly. So that would need to be reworked if making this
->>> change.
->>
->> + more folks working on mTHP
->>
->> I agree that mTHP is still THP, but we might want different
->> stats/counters for it, since people might want to keep the old THP counters
->> consistent. See recent commits on adding mTHP counters:
->> ec33687c6749 ("mm: add per-order mTHP anon_fault_alloc and anon_fault_fallback
->> counters"), 1f97fd042f38 ("mm: shmem: add mTHP counters for anonymous shmem")
->>
->> and changes to make THP counter to only count PMD THP:
->> 835c3a25aa37 ("mm: huge_memory: add the missing folio_test_pmd_mappable() for
->> THP split statistics")
->>
->> In this case, I wonder if we want a new KPF_MTHP bit for mTHP and some
->> adjustment on tools/mm/thpmaps.
+hi
+
+On 6/14/24 03:00, Yanjun Yang wrote:
+> Without clock definition, SYSCFG will not work, EXTI interrupt for
+> port other than GPIOA will fail to operate.
 > 
-> It seems we have to do this though I think keeping KPF_THP and adding a
-> separate bit like KPF_PMD_MAPPED makes more sense. but those tools
-> relying on KPF_THP need to realize this and check the new bit , which is
-> not done now.
-> whether the mTHP's name is mTHP or THP will make no difference for
-> this case:-)
-
-I don't quite follow your logic for that last part; If there are 2 separate
-bits; KPF_THP and KPF_MTHP, and KPF_THP is only set for PMD-sized THP, that
-would be a safe/compatible approach, right? Where as your suggestion requires
-changes to existing tools to work.
-
-Thinking about this a bit more, I wonder if PKF_MTHP is the right name for a new
-flag; We don't currently expose the term "mTHP" to user space. I can't think of
-a better name though.
-
-I'd still like to understand what is actually broken that this change is fixing.
-Is the concern that a user could see KPF_THP and advance forward by
-"/sys/kernel/mm/transparent_hugepage/hpage_pmd_size / getpagesize()" entries?
-
+> Signed-off-by: Yanjun Yang <yangyj.ee@gmail.com>
+> ---
+>   arch/arm/boot/dts/st/stm32f429.dtsi | 1 +
+>   1 file changed, 1 insertion(+)
 > 
->>
->>
->> --
->> Best Regards,
->> Yan, Zi
->>
-> 
-> Thanks
-> Barry
+> diff --git a/arch/arm/boot/dts/st/stm32f429.dtsi b/arch/arm/boot/dts/st/stm32f429.dtsi
+> index 8efcda9ef8ae..ad91b74ddd0d 100644
+> --- a/arch/arm/boot/dts/st/stm32f429.dtsi
+> +++ b/arch/arm/boot/dts/st/stm32f429.dtsi
+> @@ -579,6 +579,7 @@ spi4: spi@40013400 {
+>   		syscfg: syscon@40013800 {
+>   			compatible = "st,stm32-syscfg", "syscon";
+>   			reg = <0x40013800 0x400>;
+> +			clocks = <&rcc 0 STM32F4_APB2_CLOCK(SYSCFG)>;
+>   		};
+>   
+>   		exti: interrupt-controller@40013c00 {
 
+Applied on stm32-next.
+
+Thanks
+Alex
 
