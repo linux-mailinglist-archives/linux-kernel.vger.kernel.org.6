@@ -1,157 +1,164 @@
-Return-Path: <linux-kernel+bounces-232983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E154891B0B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:44:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE33C91B0B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:45:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92CCB1F209B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:44:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 797431F22E09
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:45:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7FF1A08C7;
-	Thu, 27 Jun 2024 20:44:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2AE1A0B15;
+	Thu, 27 Jun 2024 20:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="jGhcRKaU"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dIPp/VNU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA051A00C4;
-	Thu, 27 Jun 2024 20:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300A01A08DC;
+	Thu, 27 Jun 2024 20:44:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719521039; cv=none; b=VQkb7BY8gwOmloHH8yC5YfkQnu5LAO05lAKkv6+N0CAXJtP2QuZWbvcTN5ETJ8Zox89iz9d+kHaIuieYtnzDqJ6m+K52IAUYmqiH9Djd/JsbcgI1D0bxOSVZWHFzRYJrz23NvySB1GZrrzY/Hs8CLW54hsEFjALPUtA0nxiRg3M=
+	t=1719521044; cv=none; b=GKNijbW/p2F3718BDxEBsfqXs3dLJvoBhbslq45ukUMXWtbb5sPGiEReD5uoks5/Q6rPQNcDBYHb6YiHpKOtQxTRVFysIXB7tQDDVnoEnfTPUF/z4F8fdD6iVcSVCFD2f1KsyB1Z848jlRuSVXefZ2fMQblsvdxxX0TJu62WN/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719521039; c=relaxed/simple;
-	bh=/0ycm2l9j34jtAIWJSiu1VNq/2gkvHWjQune4ds9FHI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m+ZXIyYtMg/jromidqEyY+JTPHnsajZUzdRwFopfKK0HO/GaZM7biJHq21BFL0SsyCZbGAOoZelXVJ1ZrTvXq+PJzxWm4/3yobjryhGhJrw7N1vmYvJimjEA1YbDriX5hf+Sigzn7SoCl18vhwTNGJdhxfU+kYYqTF7SsZi2t78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=jGhcRKaU; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 299B740E0192;
-	Thu, 27 Jun 2024 20:43:46 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id GVxICnAt8jnR; Thu, 27 Jun 2024 20:43:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1719521023; bh=gj/diKGPWDCvq6ujznbYp0uO62jv3WgqjfqjkC72k/U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jGhcRKaU9MLOnRKN6pLSgD+4DxjsPDyzqzLQ2qtB5OIlBiCoYdNnpF0UFTo4eCh8v
-	 wGPReesggVgLq2ugqBg5cQ9+slKUOO3WoKrW4Av9yNYLsN+mYRcvDAQhNn8B3z0YoB
-	 2AWOCRfSdnG0nE/fUo84OonJmd8PohrEZYtcGTmDRjyAwVY3H/WapXehoo5XE2dc9o
-	 Tz4kwMJa+ylqns7JdC6lWLE1U4zVxUuKxjH9hMOMczgUhKbjQ0bUBRCM1ewJxmcuQC
-	 w++/R8mLa2BkfVuAaXHOSQQam+aViqnV92aANO4BptHgWEjqaRE5VEw+ouMZW/qpb9
-	 0l2ZajP/LvUp6qerGGUM/2X1YzOC/w4ILNFDGKdAsJMPN7XBn/s582SdV2iAGz1HTA
-	 bINeMdl89gJ5BM3O1RoIifIcXgCjsR9OjZ15YQJBW42F0FeeFzu0Q9yJV5rLzDd1uo
-	 KbdYaOgEnLyxTFSoqZRaf23mhzg+oRYg5atMAJK0xAnN02wdCUP9ssXSKYQBhm9LN7
-	 hkx78qm1I7KMzVKw7K8WneBMltA/6tvDHydqoAqesEkcb2tWAKQdeABh9peQ5urOjL
-	 4Nxc+90Piji8tIog9rNBQc8qWMaT02Isah+wBPU9m59n8zLjnuZ2dBen/b+JZBSdqL
-	 BXAXzIfhRqO6n8+P+y8OZOTQ=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BF8CA40E0194;
-	Thu, 27 Jun 2024 20:43:27 +0000 (UTC)
-Date: Thu, 27 Jun 2024 22:43:19 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Serge Semin <fancer.lancer@gmail.com>
-Cc: Dinh Nguyen <dinguyen@kernel.org>, Michal Simek <michal.simek@amd.com>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>,
-	Manish Narani <manish.narani@xilinx.com>,
-	Punnaiah Choudary Kalluri <punnaiah.choudary.kalluri@xilinx.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 02/20] EDAC/synopsys: Fix generic device type
- detection procedure
-Message-ID: <20240627204319.GEZn3O50ZppcI418Zx@fat_crate.local>
-References: <20240222181324.28242-1-fancer.lancer@gmail.com>
- <20240222181324.28242-3-fancer.lancer@gmail.com>
- <20240604183803.GJZl9fC9R5M2NSQ01O@fat_crate.local>
- <5h32gfwdk6uztiv7kbsjbvbghu4yuox6h7b6pqughftztyk2yf@cmzsanqvwcmq>
- <20240610080037.GFZmaypaCbTsXdGeKw@fat_crate.local>
- <xgckna5pkrh6rgw4sz7hct6akndpewjmqzsep4lz23j6qdme33@f2y7gdqp2ihw>
+	s=arc-20240116; t=1719521044; c=relaxed/simple;
+	bh=L7S2iIHXOFLzfLMAPa1fWF74VBRK6JJh9ZoKxTmb66M=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=pBhBN0/jLKGn2FOGC9DGvpaglE1eS1K0/IiSDOMVto85EVWuO/M3Jlaiz5f9kOq/5Mp1ggdsojJFV2rhmW5qj4/nTl2KULBHIvwpJ7/sGJZJPqKpldyZiKkjxsTrlS7Tz2htVlJh5dfAy0z2BJEnlrPtt+wnvzlcG4eA93FcIns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dIPp/VNU; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719521042; x=1751057042;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=L7S2iIHXOFLzfLMAPa1fWF74VBRK6JJh9ZoKxTmb66M=;
+  b=dIPp/VNUO42nffuqds6NR/wjyDfxCmpy1uvgW+NhjfuHDMzZB1Mc3bXO
+   vhLdgKyR2biaHDVb0m+BYyH8zaFqQhQFYrwnxyqlvU1Z3JROA+O6L77dt
+   HZwXP7/E8aR5VDLjeKvMDqmyckYS8SFA+zM3L6Pm1zpnqQ/UM+on5kWBL
+   fa9XOmvHKY7rRFUMaEG5KVot1G67oB9csHiO+mL6hMMZF8/uOKQUei3ct
+   TGz7lUpKr4yXHgD9cNZNumBqkfe99zMHQ8Mq82LrwTU/pDyQ7qyP1gYiY
+   Ely7GnEyKzrWM9OEBjVqyomqIDiH8jfZ78t9kK1j0QR0eeph+i17HPsIj
+   g==;
+X-CSE-ConnectionGUID: lFT7hkiwQbW15+7zP048tQ==
+X-CSE-MsgGUID: riEuzdE2TkmLTXqspItc4Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="27816173"
+X-IronPort-AV: E=Sophos;i="6.09,167,1716274800"; 
+   d="scan'208";a="27816173"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 13:44:01 -0700
+X-CSE-ConnectionGUID: xfNG5JCFREGJRSwwBFel5g==
+X-CSE-MsgGUID: BPwqrB/xTWWCmXoJQ69LOA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,167,1716274800"; 
+   d="scan'208";a="44913214"
+Received: from gbpfeiff-mobl.amr.corp.intel.com (HELO desk) ([10.255.229.132])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 13:44:02 -0700
+Date: Thu, 27 Jun 2024 13:44:00 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
+Cc: daniel.sneddon@linux.intel.com, tony.luck@intel.com,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Brice Goglin <brice.goglin@gmail.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Perry Yuan <Perry.Yuan@amd.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: [PATCH v2 0/9] Add CPU-type to topology
+Message-ID: <20240627-add-cpu-type-v2-0-f927bde83ad0@linux.intel.com>
+X-B4-Tracking: v=1; b=H4sIAL/OfWYC/22NsQ6CMBRFf4W82UdaghScMC6ODm6GAduHvAQLa
+ YFACP9uw+x47s09dwNPjsnDJdrA0cyeexsgOUWg29p+CNkEhkQkqcikwtoY1MOE4zoQpuZMqaJ
+ GS6kgTAZHDS+H7gWP6/N2hyrELfuxd+txMsuj/O+bJQp853lR5FpIUlnZsZ2WmO1IXaz7L1T7v
+ v8AislRhrUAAAA=
+X-Mailer: b4 0.12.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <xgckna5pkrh6rgw4sz7hct6akndpewjmqzsep4lz23j6qdme33@f2y7gdqp2ihw>
 
-On Tue, Jun 11, 2024 at 07:57:26PM +0300, Serge Semin wrote:
-> Well, I see it otherwise. If you posses the databook then by using the
-> references you can find the info there straight away with no need in
-> struggling through the _1.5K_ pages file. If you don't have one, then
-> you can just skip that part of the log.
-> 
-> So I'd rather leave the refs be in the log.
+v2:
+- Move CPU-type to the end of the CPU topology structure (Andrew).
+- Use c->cpuid_level instead of cpuid_eax(0) (Andrew).
+- Move CPU-type enum out of ifdef CONFIG_NUMA (kernel test robot).
+- Rename cpu_type to hw_cpu_type (Borislav).
+- Explain replacing get_this_hybrid_cpu_type() with topology_hw_cpu_type()
+  in the commit message (Dave).
+- Fix the alignment in cpu_vuln_whitelist (Andrew).
+- Add the obj compare note in the commit message (Dave/Tony).
+- s/X86_CPU_TYPE_INTEL_ATOM/ATOM/ in cpu_vuln_whitelist (Dave).
 
-Sorry, we don't do elitist logs: only for the people who have access to some
-specs behind a paywall or whatnot.
+v1: https://lore.kernel.org/r/20240617-add-cpu-type-v1-0-b88998c01e76@linux.intel.com
 
-If those are not available freely, then you should paraphrase the relevant
-information into the commit message so that it explains the problem fully and
-people don't need to have access to those databooks and then state that the
-docs you reference to not publicly available. And you're doing former so I can
-fixup latter.
+Hi,
 
-> > Nope, that's up to the maintainer to decide.
-> 
-> ... and the review committee,
+This series adds support for CPU-type (CPUID.1A.EAX[31-24] on Intel) to
+differentiate between hybrid variants P+E, P-only, E-only that share the
+same Family/Model/Stepping. One of the use case for CPU-type is the
+affected CPU table for CPU vulnerabilities, which can now use the CPU-type
+to filter the unaffected variants.
 
-There's a review committee? 
+* Patch 1 adds hardware cpu-type to CPU topology structure and introduces
+  topology_hw_cpu_type().
 
-I must've missed the PSA. :-P
+* Patch 2-4 replaces usages of get_this_hybrid_cpu_type() with
+  topology_hw_cpu_type().
 
-> and the linux-kernel list members may participate in the discussion too. But
-> that's not the point here, right?
+* Patch 5-7 Updates CPU-matching infrastructure to use CPU-type.
 
-No, that's exactly the point - the maintainer and the submitter decide that
-- not stable people or your "committee".
+* Patch 8 cleans up the affected CPU list.
 
-If someone gives a good reason why a patch should go to stable, sure, but also
-the maintainer's decision in the end.
+* Patch 9 uses the CPU-type to exclude P-only parts from the RFDS affected
+  list.
 
-You know why? Because in reality the maintainer gets to mop it up after
-everybody and fix shit.
+Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+---
+Pawan Gupta (9):
+      x86/cpu/topology: Add CPU type to struct cpuinfo_topology
+      cpufreq: intel_pstate: Use topology_cpu_type()
+      perf/x86/intel: Use topology_hw_cpu_type()
+      x86/cpu: Remove get_this_hybrid_cpu_type()
+      x86/cpu: Name CPU matching macro more generically (and shorten)
+      x86/cpu: Add cpu_type to struct x86_cpu_id
+      x86/cpu: Update x86_match_cpu() to also use cpu-type
+      x86/bugs: Declutter vulnerable CPU list
+      x86/rfds: Exclude P-only parts from the RFDS affected list
 
-> It's up to the maintainers to decide.
+ .../admin-guide/hw-vuln/reg-file-data-sampling.rst |   8 --
+ arch/x86/events/intel/core.c                       |   2 +-
+ arch/x86/include/asm/cpu.h                         |   6 -
+ arch/x86/include/asm/cpu_device_id.h               | 117 +++++++----------
+ arch/x86/include/asm/processor.h                   |   3 +
+ arch/x86/include/asm/topology.h                    |   9 ++
+ arch/x86/kernel/cpu/common.c                       | 138 +++++++++++----------
+ arch/x86/kernel/cpu/debugfs.c                      |   1 +
+ arch/x86/kernel/cpu/intel.c                        |  16 ---
+ arch/x86/kernel/cpu/match.c                        |  22 ++++
+ arch/x86/kernel/cpu/topology_common.c              |   9 ++
+ drivers/cpufreq/intel_pstate.c                     |  14 +--
+ include/linux/mod_devicetable.h                    |   2 +
+ 13 files changed, 168 insertions(+), 179 deletions(-)
+---
+base-commit: f2661062f16b2de5d7b6a5c42a9a5c96326b8454
+change-id: 20240617-add-cpu-type-4d5e47efc117
 
-Yes, what I said.
-
-As to the reason whether a patch qualifies for stable, read this here:
-
-Documentation/process/stable-kernel-rules.rst
-
-> As you can see, I do and of two IP-core major versions (and plenty of
-> the DW uMCTL2 IP-core databooks). So should you need some help with
-> testing the bits coming for the Synopsys DW uMCTL2 EDAC driver, just
-> send a ping to me. I'll test them out.a
-
-You can also add yourself as a reviewer for that driver and get CCed on code
-submissions and test them.
-
-I can surely use the help.
-
-Thx.
-
+Best regards,
 -- 
-Regards/Gruss,
-    Boris.
+Thanks,
+Pawan
 
-https://people.kernel.org/tglx/notes-about-netiquette
+
 
