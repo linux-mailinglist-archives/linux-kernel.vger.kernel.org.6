@@ -1,76 +1,153 @@
-Return-Path: <linux-kernel+bounces-233121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5EAC91B275
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:04:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2D4C91B27D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:05:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 705ED282DCE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:04:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1175A1C220B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E251A2C23;
-	Thu, 27 Jun 2024 23:04:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25AC1A2FA2;
+	Thu, 27 Jun 2024 23:05:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qooV9Slk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YxNCqxjM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA4F13A3E8;
-	Thu, 27 Jun 2024 23:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BABF50297;
+	Thu, 27 Jun 2024 23:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719529453; cv=none; b=PLTxJsKexN2Q76DPrgqmLlLfWdPVX7dkkTyJn/C9HFNvnrXMJqcMSFqRVXvrBC32fGhEzobT+WLf8D1o5n0tLF4j3gRP9Dr31Bhor6CuzCLYlqcPqsyIlwwHVJfxemhuuL5yPte+G1JiXWQFZPOAzu25szk31C+o4evfktyw44Y=
+	t=1719529531; cv=none; b=Ep3xYoUSzKuDaRQoJTUVztyxbE3LMhkbNMsNPmzQo2JB8X1EAwegib/u2p1PZfWMCd/ffuojAXG7qdv5G9n4Z1CM9MrGdhMs1TFdJlntB2AFSYMo/h6b+ILrkvgf52plt5JgXDMUgEQHWjHjcEmW4f+Wx3b0H5c8Ro3UWNDNKDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719529453; c=relaxed/simple;
-	bh=kDgdG01n/KgfB08cdFfx+JcATSEd5pCxiHkkQqnciD4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CMjKHyx7c2peleDAtP1SU3X9xJrcseh18JA94t67aDL7FgxbNX8Dgv62b9DhUn0X3Y1ROyqkjMVNKMiv/3mIZYR290oTN3xriuMeNVpBR77MFelWupIx+l8Eb3J3AqwTRGC3Ce1t9tKVlY7lHvNxZGP9+R8XV3SzXpxY6E1yywM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qooV9Slk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1E6CC2BBFC;
-	Thu, 27 Jun 2024 23:04:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719529453;
-	bh=kDgdG01n/KgfB08cdFfx+JcATSEd5pCxiHkkQqnciD4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qooV9SlkuCvBmNmYAJMYYZ2KQaLVDWalOi651PbCI1tSU6Nb6/OoG0pgUumr5RrT/
-	 fwjao0bl5eCYa2rwm0PY6bLfrNKe2vbcg2Hg0t5gly7LK8NEDhurZVNMGOpRTJ2nR7
-	 12s3/I/NbcNICGFWeMPdpTB8w8Zi2qAqyeFiM11KuWHCMiWYYWpQEC8R0YD75r9LDf
-	 uiEpXRfp7Th8czvLKqW/6ubxm4aUmRAOE1Mn2/ONbcwYnZqhg2xy3J+/U89gz7DE81
-	 UEcRKqY0WiYkMq9eZMPalurrhYVR2p3i+KK+VmQGrPhhlZvO+fqgFeYB9+Vz715EwA
-	 KBqjAHWQ/nqvg==
-Date: Thu, 27 Jun 2024 16:04:11 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Geetha sowjanya <gakula@marvell.com>
-Cc: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <davem@davemloft.net>, <pabeni@redhat.com>, <edumazet@google.com>,
- <sgoutham@marvell.com>, <sbhatta@marvell.com>, <hkelam@marvell.com>
-Subject: Re: [net-next PATCH v6 00/10] Introduce RVU representors
-Message-ID: <20240627160411.3d7cdbe6@kernel.org>
-In-Reply-To: <20240625142503.3293-1-gakula@marvell.com>
-References: <20240625142503.3293-1-gakula@marvell.com>
+	s=arc-20240116; t=1719529531; c=relaxed/simple;
+	bh=+naB5/Q042PFFIXI5mElAZ8RiZyXqp0O9pcDtXADfas=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DfxDymuN7P8wRZY8ytb9LO4N55W+FQrQmM94GsqDmIe8vpVuZTbAJ1iTYOBUL+Pzg+oqV2EhDFa8x0bfKSDwZVrGtU8ix9rH7R4BcdxXWVncegYCNZbuONGA3uZ8NSI+lJ+W06Y5flxfvQ3j9FZuL49UdnGIY0XGkkR3RjEsPuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YxNCqxjM; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719529528; x=1751065528;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+naB5/Q042PFFIXI5mElAZ8RiZyXqp0O9pcDtXADfas=;
+  b=YxNCqxjMvp1TVv7e3RYGxMe58CoF8hDaViA99vtgjL3Ayb2qrcuBRkBf
+   jm9l2uCveUeuOtzn8GV5AYj7ppHnAMr6+CJNLF9otqYy4KM+AcIpW1jdz
+   Uepw/2PsytLcUf5xlF7yHjIvxJ2Bk0pz3dDficHb+HfsmYuUq+InOoK32
+   acUmlERiksdhNd8aZVzJBGyTS9mmD+dHtsAWI9ir9f0b8YKxosAGHUZbb
+   a2W4aK1Tw0CsgxKI4qCV82rO4IOAoXEMbElRoXicHa9BVblb004NC7APT
+   e0UBSZoOEjKvspZBKoUXGeJ2iaezWf31jHsct5W38yHhnH237HEOib99x
+   Q==;
+X-CSE-ConnectionGUID: ruzR2WtBQnaWSwcH2/CGiw==
+X-CSE-MsgGUID: LABWpI5EQliDTtgJutK6lw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="20456938"
+X-IronPort-AV: E=Sophos;i="6.09,167,1716274800"; 
+   d="scan'208";a="20456938"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 16:05:27 -0700
+X-CSE-ConnectionGUID: TA8xWjJQSumhP3m4MOnxKA==
+X-CSE-MsgGUID: DnUjlU0JRaaOI2HUnzZ+pw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,167,1716274800"; 
+   d="scan'208";a="44384637"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 27 Jun 2024 16:05:20 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sMyB4-000Gbt-16;
+	Thu, 27 Jun 2024 23:05:18 +0000
+Date: Fri, 28 Jun 2024 07:04:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alistair Popple <apopple@nvidia.com>, dan.j.williams@intel.com,
+	vishal.l.verma@intel.com, dave.jiang@intel.com, logang@deltatee.com,
+	bhelgaas@google.com, jack@suse.cz, jgg@ziepe.ca
+Cc: oe-kbuild-all@lists.linux.dev, catalin.marinas@arm.com, will@kernel.org,
+	mpe@ellerman.id.au, npiggin@gmail.com, dave.hansen@linux.intel.com,
+	ira.weiny@intel.com, willy@infradead.org, djwong@kernel.org,
+	tytso@mit.edu, linmiaohe@huawei.com, david@redhat.com,
+	peterx@redhat.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, nvdimm@lists.linux.dev,
+	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-ext4@vger.kernel.org,
+	linux-xfs@vger.kernel.org, jhubbard@nvidia.com
+Subject: Re: [PATCH 13/13] mm: Remove devmap related functions and page table
+ bits
+Message-ID: <202406280658.1pp5cW2f-lkp@intel.com>
+References: <47c26640cd85f3db2e0a2796047199bb984d1b3f.1719386613.git-series.apopple@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <47c26640cd85f3db2e0a2796047199bb984d1b3f.1719386613.git-series.apopple@nvidia.com>
 
-On Tue, 25 Jun 2024 19:54:53 +0530 Geetha sowjanya wrote:
-> This series adds representor support for each rvu devices.
-> When switchdev mode is enabled, representor netdev is registered
-> for each rvu device. In implementation of representor model, 
-> one NIX HW LF with multiple SQ and RQ is reserved, where each
-> RQ and SQ of the LF are mapped to a representor. A loopback channel
-> is reserved to support packet path between representors and VFs.
-> CN10K silicon supports 2 types of MACs, RPM and SDP. This
-> patch set adds representor support for both RPM and SDP MAC
-> interfaces.
+Hi Alistair,
 
-Does not apply please rebase.
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on f2661062f16b2de5d7b6a5c42a9a5c96326b8454]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Alistair-Popple/mm-gup-c-Remove-redundant-check-for-PCI-P2PDMA-page/20240627-191709
+base:   f2661062f16b2de5d7b6a5c42a9a5c96326b8454
+patch link:    https://lore.kernel.org/r/47c26640cd85f3db2e0a2796047199bb984d1b3f.1719386613.git-series.apopple%40nvidia.com
+patch subject: [PATCH 13/13] mm: Remove devmap related functions and page table bits
+config: powerpc-allmodconfig (https://download.01.org/0day-ci/archive/20240628/202406280658.1pp5cW2f-lkp@intel.com/config)
+compiler: powerpc64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240628/202406280658.1pp5cW2f-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406280658.1pp5cW2f-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from arch/powerpc/include/asm/book3s/64/mmu-hash.h:20,
+                    from arch/powerpc/include/asm/book3s/64/mmu.h:32,
+                    from arch/powerpc/include/asm/mmu.h:385,
+                    from arch/powerpc/include/asm/paca.h:18,
+                    from arch/powerpc/include/asm/current.h:13,
+                    from include/linux/thread_info.h:23,
+                    from include/asm-generic/preempt.h:5,
+                    from ./arch/powerpc/include/generated/asm/preempt.h:1,
+                    from include/linux/preempt.h:79,
+                    from include/linux/alloc_tag.h:11,
+                    from include/linux/rhashtable-types.h:12,
+                    from include/linux/ipc.h:7,
+                    from include/uapi/linux/sem.h:5,
+                    from include/linux/sem.h:5,
+                    from include/linux/compat.h:14,
+                    from arch/powerpc/kernel/asm-offsets.c:12:
+>> arch/powerpc/include/asm/book3s/64/pgtable.h:1371:1: error: expected identifier or '(' before '}' token
+    1371 | }
+         | ^
+   make[3]: *** [scripts/Makefile.build:117: arch/powerpc/kernel/asm-offsets.s] Error 1
+   make[3]: Target 'prepare' not remade because of errors.
+   make[2]: *** [Makefile:1208: prepare0] Error 2
+   make[2]: Target 'prepare' not remade because of errors.
+   make[1]: *** [Makefile:240: __sub-make] Error 2
+   make[1]: Target 'prepare' not remade because of errors.
+   make: *** [Makefile:240: __sub-make] Error 2
+   make: Target 'prepare' not remade because of errors.
+
+
+vim +1371 arch/powerpc/include/asm/book3s/64/pgtable.h
+
+953c66c2b22a30 Aneesh Kumar K.V  2016-12-12  1370  
+ebd31197931d75 Oliver O'Halloran 2017-06-28 @1371  }
+6a1ea36260f69f Aneesh Kumar K.V  2016-04-29  1372  #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+ebd31197931d75 Oliver O'Halloran 2017-06-28  1373  
+
 -- 
-pw-bot: cr
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
