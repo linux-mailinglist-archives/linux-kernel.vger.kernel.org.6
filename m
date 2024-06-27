@@ -1,107 +1,184 @@
-Return-Path: <linux-kernel+bounces-232368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2784991A7C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:22:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0324391A7CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:25:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 595651C21B69
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:22:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC8DF288C4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3EC193079;
-	Thu, 27 Jun 2024 13:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB9FF193092;
+	Thu, 27 Jun 2024 13:25:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QgGZ45cO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kltSUcUO"
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9F61922F0;
-	Thu, 27 Jun 2024 13:22:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6339217836E;
+	Thu, 27 Jun 2024 13:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719494560; cv=none; b=agl5Ihk/dmPJw+VSxCnJiV03Z/W+lgTwiN9+rBPPFINAqZ3NZMtS7QJNWP1owPJeF2GSUy71uAaC5kSvgJWdL/uHjTd5PH2cAOylm8WTKTwu7ob7VvyOppt8+LhtXoc5TkufapAfmign+WE6LlgiKcUIuFhkyjvKtm1UQXJeP+A=
+	t=1719494748; cv=none; b=H2/V9v16IPzIM1v5o2S2ugUusTkKBhEvSsTVg+FmbpGNS8fQiGvvuyv6io1/JhpzETFcuvxtf6Td09coMpxwZoWo2u0hPI15BN7CZhJ4sXJKBPBHOktWBX35sj3PMuMWLEdArwh6q6kQQ00/mt50zwXCSZd5f8mLT2rj2D/mRHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719494560; c=relaxed/simple;
-	bh=sYZzBfVpbkVWGXURUrII3QmUq5Xw6Km4gz1FrEScJGg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QIEV/wm9iqURicuip98vhHt9zNwwG6nmmAz6sziB3T6NIzFIT7hfAjqIIkN5WFNqxEw3OHD/JUjS12LiuB5p/nnEyl949NKqgf8Tw1KA5boLiCMeMbdsuoMXx4WGp6CQT8fWDKNY0dbHZAM3FbrF1BZZxNqQZ80jRvh86mRk4wQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QgGZ45cO; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719494559; x=1751030559;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sYZzBfVpbkVWGXURUrII3QmUq5Xw6Km4gz1FrEScJGg=;
-  b=QgGZ45cOJ/Nq+P4SF2TpSaOzaDLRmVAYe+LvI+3s8sLuYuuO/EhOw5NP
-   nV+p3N/I8glE/XyMD0rTEgc7f4F0vUV8WxnQ8Emk+owZLgRZe8iVraNV5
-   KyDnyVPZE3NFnGGoE7xxG7wWI8Gl42hzJLdGlDhnfKjU+D9nAbpXY+Duc
-   mtEcfeAjsrUZy5YV58GgcutUum3mXPItVI4V8T9LdQn8KFq1d0XFkUZSm
-   1ZzbY55xIFxo/cPnWA7sGuq7xsvSD3CxfridCKb67sNl0qvc2+IhS5gJ7
-   Tg+1EtNMWvXlnuIs5CHrTUS64HWk7ax/HsVtXGWjef37roYee1fvJhGt3
-   Q==;
-X-CSE-ConnectionGUID: slCPcKKnQKSXuOdqQMaieQ==
-X-CSE-MsgGUID: FE/lNSCUQ4ikNrZit5TCJg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="28018776"
-X-IronPort-AV: E=Sophos;i="6.09,166,1716274800"; 
-   d="scan'208";a="28018776"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 06:22:39 -0700
-X-CSE-ConnectionGUID: qdCob1gQQJWd/B+mutPrkA==
-X-CSE-MsgGUID: jdMa1DTATRO5fJ2LEKU7bA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,166,1716274800"; 
-   d="scan'208";a="44440231"
-Received: from cdipalma-mobl.amr.corp.intel.com (HELO desk) ([10.209.104.34])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 06:22:37 -0700
-Date: Thu, 27 Jun 2024 06:22:30 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>,
-	Brice Goglin <brice.goglin@gmail.com>,
-	srinivas pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	daniel.sneddon@linux.intel.com, tony.luck@intel.com,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>
-Subject: Re: [PATCH 0/9] Add CPU-type to topology
-Message-ID: <20240627132230.hondzls5bt3jspay@desk>
-References: <20240617-add-cpu-type-v1-0-b88998c01e76@linux.intel.com>
- <8d757ea3-87a3-4663-ac76-66b04e33e6b3@gmail.com>
- <20240619015315.3ei5f6rovzdnxovo@desk>
- <bc75ff55161671e4470849ed51baa547f619889d.camel@linux.intel.com>
- <0021f5f2-67c5-4b20-939d-48c9c1c60cdb@gmail.com>
- <1b99017a-6964-46de-ba3a-09552e7cf072@intel.com>
- <20240627125154.GA4743@ranerica-svr.sc.intel.com>
+	s=arc-20240116; t=1719494748; c=relaxed/simple;
+	bh=ajLmLy0AR7TZ6hoXCAWFf0Et4Iq9zEEDSFWkXypmzQQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mEOeLeTUGdPs3mONGNvCsomi9SLzErvkK+yr86IuS6pSlnSwSBjoDlAckjEIFmybqun5uVczjV2Rn8KxRgbVv4nrDeyqGn8ucZle5ryQwrJSW4LUSMh44e4buOZvkLZYabLuHJjrz9g8d9zdsL0YBPqM8jU9MkqUFobISUiisWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kltSUcUO; arc=none smtp.client-ip=209.85.222.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-80f6525a0c2so2288811241.1;
+        Thu, 27 Jun 2024 06:25:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719494746; x=1720099546; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ah0RENfL/kgATlzLzK8KrOO8AtQ3Ih+2vnb5Lb2t2HU=;
+        b=kltSUcUOE1OynJcePSYIqnGS/9iYvcNsCC+pNV72nVIQq7iTRHtI8GrsZP5h2qtznq
+         nmeutQetB90dwjZ3IroEeFqADFXrd2QFP2xyCev9Olxka99XN5PWn9Wyw6oRrMz585Ju
+         Kw7SG3A2SmA5A9s7fBipMPiMwLWSnJ6pwZoqRDhCmvmIH4dSS1mQ2fnbFUJLyxWYt912
+         avVSwP8aQnFiyr4QUtAo/I37B8a1c+DEKixeSQ+GLJAMBeH2cLkP3goYAaeB39aXV08o
+         ggafu0TGWycsopXPlsGnryX/fadzYMdHJLEDxHOAE/Q82NVnt37g1dhH7xVX6Dkd7rmf
+         pfdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719494746; x=1720099546;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ah0RENfL/kgATlzLzK8KrOO8AtQ3Ih+2vnb5Lb2t2HU=;
+        b=fGmPiM1kWwf0RFIhYBoU/VffNZxKMsW/4tQ7o29wC657NM5yeGPjN0Q9xjmJ91o3C7
+         v1vjlTdzx63iY66/wmR3n88HapmPHFaPmaBcdk5AJG1sawgb4PwFP3v4zAzUHPM4QKP1
+         ybmKI1OPaMwIGflZRTdXUZ1nekB5qLs3LQ6ZA2NEZRnlSZe9xmMcdvyL3H+p6nou+BBp
+         mHOu4OiB0NYmjkb/q+BhwjpDaZUo7JmG/UC0GNJDEjAzVWjANe4q8KYoniBWnAEqPUww
+         2jVdE/EaURv6FSsyRQHyk5FtMa01Xt3a+CGyYsycKX3GyNQh3WJjk+mw49hwlXmNuu4C
+         azog==
+X-Forwarded-Encrypted: i=1; AJvYcCXm3CCPbeN/r6cvK+XxgkGm6vP7ZcFaH9WAeRPxLlTuJw/zQFNSpWb2KjewA64NSBMUVykvVInEaOFBku3lcRO/tAJg8MLrZ6QPNasgSmRxlfBmV9uwMg5EOhk7UzmffSbjWTvgamvrSaUhjnnHuzj+hZ67GRPnstT2lXK05KNHFvA4OyesfkTIuzVYDhOjBhcQbRHr7hR1fwAC6VPlExSi4BCWhKi4
+X-Gm-Message-State: AOJu0YyEtWLCoQEsi8ogY4ChrkIRAQE+2cL74rF6iZyDfF5g5kryQcT3
+	rBmvpouDTAu/CNBaFbSuWFX9tuouGQBvDKcjMnzdYCerUp8nmJpc8oFvngoIS7zvgNHzMukmes8
+	W/n6f3z7GcRNALh8AV15EHeLRfqs=
+X-Google-Smtp-Source: AGHT+IE6QnqSreWpuJIt25wmG7cNZ2AxsuZT6ndXv/IR0UUG2FAXCqnKtoJc2+WtS65x+aTCg8f9mXmFuqbHDlPKmro=
+X-Received: by 2002:a05:6122:3117:b0:4ec:f8f0:7175 with SMTP id
+ 71dfb90a1353d-4ef6a73183bmr12936975e0c.11.1719494746134; Thu, 27 Jun 2024
+ 06:25:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240627125154.GA4743@ranerica-svr.sc.intel.com>
+References: <20240610233221.242749-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240610233221.242749-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdVOvdU4ajB_f9OtQ8ao0Aodg+Rb9eGTmbNGC8o+aW-hzg@mail.gmail.com>
+ <CA+V-a8sqJBo2Q7+-_AYtFkmzYrxAjvJ7mLXgpLcmZNuGWi0BDA@mail.gmail.com> <CAMuHMdUryuN9xfYEX_eVGp1hV9zzhw5=bjvJBQb1FwcBcrNs4g@mail.gmail.com>
+In-Reply-To: <CAMuHMdUryuN9xfYEX_eVGp1hV9zzhw5=bjvJBQb1FwcBcrNs4g@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Thu, 27 Jun 2024 14:24:45 +0100
+Message-ID: <CA+V-a8vFjZdprmxFyHn1v4Uc7X7ZGhhxTMxXXgrZQTikO50=6w@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 3/4] clk: renesas: Add family-specific clock driver
+ for RZ/V2H(P)
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 27, 2024 at 05:51:54AM -0700, Ricardo Neri wrote:
-> ARM gives userspace specific details. This makes more sense to me. Instead
-> of reading these details, user space would have to infer these details if
-> a CPU type was given in sysfs.
-> 
-> Having said that, Intel does have a CPUID leaf that gives the CPU type. Such
-> leaf also has a "Native Model ID". Exposing only the CPU type may not be
-> sufficient.
+Hi Geert,
 
-Do we know if there are applications that would benefit from this information?
+On Thu, Jun 27, 2024 at 8:01=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Wed, Jun 26, 2024 at 7:36=E2=80=AFPM Lad, Prabhakar
+> <prabhakar.csengg@gmail.com> wrote:
+> > On Wed, Jun 26, 2024 at 11:07=E2=80=AFAM Geert Uytterhoeven
+> > <geert@linux-m68k.org> wrote:
+> > > On Tue, Jun 11, 2024 at 1:32=E2=80=AFAM Prabhakar <prabhakar.csengg@g=
+mail.com> wrote:
+> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > >
+> > > > Add family-specific clock driver for RZ/V2H(P) SoCs.
+> > > >
+> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.c=
+om>
+>
+> > > > +/**
+> > > > + * struct mod_clock - Module clock
+> > > > + *
+> > > > + * @hw: handle between common and hardware-specific interfaces
+> > > > + * @off: register offset
+> > > > + * @bit: ON/MON bit
+> > > > + * @monoff: monitor register offset
+> > > > + * @monbit: montor bit
+> > > > + * @priv: CPG private data
+> > > > + */
+> > > > +struct mod_clock {
+> > > > +       struct clk_hw hw;
+> > > > +       u8 on_index;
+> > > > +       u8 on_bit;
+> > > > +       u16 mon_index;
+>
+> BTW, why is this u16? The corresponding member in rzv2h_mod_clk is u8.
+>
+Oops, I will fix this.
 
-We agreed to leave sysfs for another series. I will be sending v2 soon.
+> > > > +       u8 mon_bit;
+>
+> > > > +static int rzv2h_mod_clock_endisable(struct clk_hw *hw, bool enabl=
+e)
+> > > > +{
+> > > > +       struct mod_clock *clock =3D to_mod_clock(hw);
+> > > > +       unsigned int reg =3D GET_CLK_ON_OFFSET(clock->on_index);
+> > > > +       struct rzv2h_cpg_priv *priv =3D clock->priv;
+> > > > +       u32 bitmask =3D BIT(clock->on_bit);
+> > > > +       struct device *dev =3D priv->dev;
+> > > > +       u32 value;
+> > > > +       int error;
+> > > > +
+> > > > +       dev_dbg(dev, "CLK_ON 0x%x/%pC %s\n", reg, hw->clk,
+> > > > +               enable ? "ON" : "OFF");
+> > > > +
+> > > > +       value =3D bitmask << 16;
+> > > > +       if (enable)
+> > > > +               value |=3D bitmask;
+> > > > +
+> > > > +       writel(value, priv->base + reg);
+> > > > +
+> > > > +       if (!enable)
+> > > > +               return 0;
+> > > > +
+> > > > +       reg =3D GET_CLK_MON_OFFSET(clock->mon_index);
+> > >
+> > > What if a clock does not have a clock monitor bit?
+> > > Clock bits in registers CPG_CLKON_22 and later do not have correspond=
+ing
+> > > clock monitor bits.
+> > >
+> > Oops I had missed this case.
+> >
+> > I'll introduce a macro (NO_MON_REG_INDEX) for clocks which do not have
+> > monitor support and add a check above to skip clk monitor operation if
+> > clock->mon_index =3D=3D NO_MON_REG_INDEX.
+> >
+> > /* monitor index for clocks which do not have CLKMON support */
+> > #define NO_MON_REG_INDEX    0xff
+> >
+> > Does this sound OK?
+>
+> Either that, or make mon_index signed (which would reduce its
+> effective range by one bit).
+>
+Ok I'll make it to s8 instead and add a negative check monitor index.
+
+Cheers,
+Prabhakar
 
