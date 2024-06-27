@@ -1,112 +1,160 @@
-Return-Path: <linux-kernel+bounces-231962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13B0591A0DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:53:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFC9E91A0DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:52:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D283B2321F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:52:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84EDB1F21EA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:52:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6CBD73471;
-	Thu, 27 Jun 2024 07:52:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 267AF7172F;
+	Thu, 27 Jun 2024 07:52:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fn+HxYO0"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="USSkShYw"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE2F084E1C;
-	Thu, 27 Jun 2024 07:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F076EB56
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 07:52:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719474753; cv=none; b=HEuZtV0dghueLm2KrPtZkXWGeD4gumYP7q2Ay85VEMOdWrwfWVFbzeS06IUmverXVkvfs2HrlqLYGmKAfERA8HE3mi10Jnw2bp7MSeX8vvktPpxBv8ADoQtfnE0y7JUDj95+ur7e3dxlj3R5Omb4ONo0ztY1LnCcsgMo8OVv3ew=
+	t=1719474738; cv=none; b=Vay6vQn7OaB1vNq6Z3zbGHOdB1bu2HHthuR746diEQT0PEvDzgvPEZgokXaNaO38w7gu+gEp8hAtmLg78af8zLqcfYLcVI5CizDXMrllnzeWfftgpbcilpNKkmzYds2tk8/EgKOWs8qH+Azsbvpglwe5TkCPVvURcaxr0TngPWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719474753; c=relaxed/simple;
-	bh=8d72iLVJ7jdyVKwK547+0G2nvs+gDYhuywuSycIwGNg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=W3xCdjQCD+xYHV2Q3K6ZAmh2WoYpRPZFEnIP0n/qdfecr/uGk+gO8sk7UJGPw3md5KofTKIStAOEFkliMcmSLQG/FBL5HXwEN0NLuzZQnDHOShlgtG8lXCAOtyBtuwHOTuXY72xcWAkdG6HUVjrUk4WdxEeX92s8ukBuRRiW2VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fn+HxYO0; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-6e7b121be30so5654330a12.1;
-        Thu, 27 Jun 2024 00:52:31 -0700 (PDT)
+	s=arc-20240116; t=1719474738; c=relaxed/simple;
+	bh=CPYR1hPVE1flFMf8KEd5p3bzirmrED+VzmsLSEVpaMg=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ZNY4K2e2CgYa0nWjGglsCpyljsOLZ402S4w2T8aJo8HGV9OV4pEI8lmvF/k75Xlqf7yEby3mIEFbvo5toUlnLuB771sALVrUjd6makl6Sb/PGUCGZ0PoMo/7AaVtX/CVJQMxb0y3JkRRufgmSKcwnEZqcyN6Khx61Y2khmIiarM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=USSkShYw; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42565cdf99cso2659985e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 00:52:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719474751; x=1720079551; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XRXjuN3M2mo5M+owBGit9sxq1HhXNAki9YSn4IQ1qeQ=;
-        b=fn+HxYO0VDduTOMkUQNbcTc9jVZe2FUTIxUeLC+sUFcjvZQgiK1YhcUXBonYMuka5I
-         9BIERiBj4svzO5B7kAA15yYFfyRc+7J2EoQfvdRXDRdpH7rBK6JVC8c38zR/4pDJ+EtD
-         RlmHCMdPNrToEaBCjBgBTo6tap1RQzvAyxhSbvDvGY5ZnvjmQ9S7TqNWpK/IaY4FEQJp
-         tdkVa/iJeIKqC1JtuAXqZB5sAZPzvXKit4UMoWxZtjLQAmk7FnGhzifPGc+1wjatAChZ
-         M0Hdbm1tf/Jg7pZN0y8aUm8uGsRD/ASkWY3KgXC4+KNcbJIv6QgRbxLSr1yEcNouIAZc
-         +K1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719474751; x=1720079551;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1719474735; x=1720079535; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=XRXjuN3M2mo5M+owBGit9sxq1HhXNAki9YSn4IQ1qeQ=;
-        b=bpqISXnNJ26Wjmq+c7AovfJIJOzpnlc/cOKk6tERyIv4ZynZNpVLgZmLsEcsI/0uD9
-         sPbXpJPNzijnmX9kT2rN5WcbVPVuQX/i9CrPkoXEQtom21S7sExuC5M+9xk/w4qfqb63
-         2qoWipP6X1uxKzo0xjwJrZo5FC5fMZ8ng/RF5/s79wM4mxOgu7EpPbW4S9VNidm9Pyl4
-         inZOKbZqGg28LNm0lxp10i2a2xCalumnmHdLiPPVfW6hfoH9Wsw4CdhRL1ez7VZsE6Kd
-         8zKTtJclS7ATB0R2w6lBCsJEIcIrarm0R+AZdTfGEixqSmnx2M2TzA+iQDtVinAoTiQZ
-         YZbA==
-X-Forwarded-Encrypted: i=1; AJvYcCVhcixrdWXIMpznT4UmUDvoAFoQHmiPRJAlb1UA+dFuGCVn0XnjbTaCx+o3jn9yMpUCCpsQgkG+qLlJiKQ49W5QWXCzWqem1HP7TULn
-X-Gm-Message-State: AOJu0YxiulsggkOvRDNeu6QCn1mlepe3KYVUeo4habnyn33u8N7CT/C9
-	uh+T8s6syyrtGwpUdMQkzo8fpGbvBhdHHTwNhsFIh4sDUsxuemU3KjlZZayZHik=
-X-Google-Smtp-Source: AGHT+IFGQnKTPs01LiaFPRPy7gc3QvJhUEAVddRVqe1s3wJ1t6qVHeZ2sySbOgXszUXtoowP78T/Tw==
-X-Received: by 2002:a05:6a20:8c24:b0:1bd:2acd:d175 with SMTP id adf61e73a8af0-1bd2acdd201mr4102002637.32.1719474750840;
-        Thu, 27 Jun 2024 00:52:30 -0700 (PDT)
-Received: from localhost.localdomain ([103.52.189.2])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1faac979135sm7091505ad.155.2024.06.27.00.52.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 00:52:30 -0700 (PDT)
-From: Shuaidong Chen <lovejimcarreyforever@gmail.com>
-To: jikos@kernel.org,
-	bentiss@kernel.org
-Cc: linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Shuaidong Chen <lovejimcarreyforever@gmail.com>
-Subject: [PATCH] HID: core: Remove extra spaces
-Date: Thu, 27 Jun 2024 15:52:10 +0800
-Message-Id: <20240627075210.3619255-1-lovejimcarreyforever@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        bh=XBCMffxn4LAJXAIWptmBWF5BGGjLSTVC76JfyXsytmc=;
+        b=USSkShYwiuTuFhaE2eHRdkyItogmBk6sPyMx6ejYzbQKh8pFsfJAVFbHZe4i5XwRgB
+         +9JaSySgCkvkWVZzhJiDF93VeKK/dYzJ7dI2oh+/9G/mc4+f2BjnWOj28d3bnIfURx+v
+         nENDdldtKbM73d6pKrJ0SGn64dwqR8hHNwc/KtnleHzZzOYCzo5ynE9XWB97BdDe0qWp
+         rTkOlknopHqppa6yZjwE6SdlknHY7jWWnWcuS0NwdCXOjRG4yCRtZ9OGVEj16bIEn1Jw
+         s1Wx9yCWC15imDgTHM/iLwDsHETJ7QZ/CKZDktTkEN6GXysdZy8WhWp60lPjAJHzVLY/
+         6qUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719474735; x=1720079535;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XBCMffxn4LAJXAIWptmBWF5BGGjLSTVC76JfyXsytmc=;
+        b=XkNi8Na8zn8pCaU798UpnWrdF21FENyK3JHO9dcfUK4weFWSZCSG1yB9u6IvyJzRy5
+         c2BmI60yfivDiSJOGYfHAE3u93ypn2fh8iAo1F/6B6buyoe6XIAwMGb1ZXvnfMnt0WQu
+         0UfFmmSX7mpchwOmq9oxmdUOzPYbBCflgTWJvliOJbeiQpEUEYElyuvSQWfoBOLWQ8Ho
+         MYklBEg4vJCWVQcfzL3w5BFyNEvOLzoMZDYnzOLaQ3u5lKViSGr3pkHn7P4r+K+tNRUr
+         je46fdKarl8q/aB+Squ6Xg2Nem4znrsDMbUpmrghndM/Qj6pHz4Hk/N8zfnnwC+zUmov
+         W6wA==
+X-Forwarded-Encrypted: i=1; AJvYcCWBidX7F8tmELE9qGMgJjyq91b5OaOjnby9t2kOtUuHB+AWSFg/QeU8bubDEhy6IA9f4XEmCB+c16zVftLezEcXimCjENjtS2f7u197
+X-Gm-Message-State: AOJu0YwQgt9rxAkH9deg8P9C3/XqmjjgK1zRv+Vg7/glV95f/AlCH0jP
+	dctqmPI037b4LC48xdlFbhUAkkn2fc2kzabCDyl7Fqz5rDXlraGL8+O+IpoUuNY=
+X-Google-Smtp-Source: AGHT+IEjUL+j70G/hi3yuY2Bt9Gi9CL/4CNNycH9kWTRZ1nc6f9jw44NE1DzWx8PIaKqbU2R2xAN0Q==
+X-Received: by 2002:a05:600c:681:b0:424:a578:fcc with SMTP id 5b1f17b1804b1-424a5781102mr48497425e9.7.1719474734436;
+        Thu, 27 Jun 2024 00:52:14 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:feeb:faed:66fa:9e6a? ([2a01:e0a:982:cbb0:feeb:faed:66fa:9e6a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c8266a37sm52129085e9.19.2024.06.27.00.52.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Jun 2024 00:52:13 -0700 (PDT)
+Message-ID: <02a58f83-2340-4004-9412-692967639908@linaro.org>
+Date: Thu, 27 Jun 2024 09:52:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v8 2/2] arm64: dts: amlogic: Add Amlogic S4 PWM
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>
+Cc: kelvin.zhang@amlogic.com,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-pwm@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Junyi Zhao <junyi.zhao@amlogic.com>, George Stark <gnstark@salutedevices.com>
+References: <20240613-s4-pwm-v8-0-b5bd0a768282@amlogic.com>
+ <20240613-s4-pwm-v8-2-b5bd0a768282@amlogic.com>
+ <a5ucz5r4eb2z5uzi4zaunpqhym5b6l37qszozhv4igcuduatnp@lzzk4tvil3yd>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <a5ucz5r4eb2z5uzi4zaunpqhym5b6l37qszozhv4igcuduatnp@lzzk4tvil3yd>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Remove extra spaces to eliminate inconsistent indentation
+Hi Uwe,
 
-Signed-off-by: Shuaidong Chen <lovejimcarreyforever@gmail.com>
----
- drivers/hid/hid-core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On 27/06/2024 07:50, Uwe Kleine-König wrote:
+> Hello,
+> 
+> On Thu, Jun 13, 2024 at 07:46:36PM +0800, Kelvin Zhang via B4 Relay wrote:
+>> From: Junyi Zhao <junyi.zhao@amlogic.com>
+>>
+>> Add device nodes for PWM_AB, PWM_CD, PWM_EF, PWM_GH and PWM_IJ
+>> along with GPIO PIN configs of each channel.
+>>
+>> Signed-off-by: Junyi Zhao <junyi.zhao@amlogic.com>
+>> Reviewed-by: George Stark <gnstark@salutedevices.com>
+>> Signed-off-by: Kelvin Zhang <kelvin.zhang@amlogic.com>
+>> ---
+>>   arch/arm64/boot/dts/amlogic/meson-s4.dtsi | 199 ++++++++++++++++++++++++++++++
+>>   1 file changed, 199 insertions(+)
+> 
+> What is the merge plan for this patch? Technically it's independent from
+> driver support (i.e. patch #1 in this series). The obvious options are:
+> 
+>   - I pick it up together with patch #1 via pwm
+>   - You pick it up via arm-soc
+> 
+> Can I please get an Ack iff you prefer the first option?
 
-diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-index 6e09a918c849..e0e7c7b18f0d 100644
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -2777,10 +2777,10 @@ int hid_add_device(struct hid_device *hdev)
- 	/*
- 	 * Check for the mandatory transport channel.
- 	 */
--	 if (!hdev->ll_driver->raw_request) {
-+	if (!hdev->ll_driver->raw_request) {
- 		hid_err(hdev, "transport driver missing .raw_request()\n");
- 		return -EINVAL;
--	 }
-+	}
- 
- 	/*
- 	 * Read the device report descriptor once and use as template
--- 
-2.25.1
+I can take but I was waiting for the driver part to be merged.
+
+Anyway, I'll take, something less on the list!
+
+Neil
+> 
+> Best regards
+> Uwe
 
 
