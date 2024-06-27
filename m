@@ -1,90 +1,55 @@
-Return-Path: <linux-kernel+bounces-232563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BDAC91AAFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:19:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0166891AB0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:21:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB43F1F268BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:19:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3323E1C22F81
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:21:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23670198A2B;
-	Thu, 27 Jun 2024 15:19:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA4D198A2B;
+	Thu, 27 Jun 2024 15:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JBJB2U3D"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LgtqDjns"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F287F179647;
-	Thu, 27 Jun 2024 15:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E14781591F0;
+	Thu, 27 Jun 2024 15:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719501571; cv=none; b=s/r3rDcNdZ8EfhRXq87jiijT9m1Cls1IyKT70SfuqRWS+CEtjOH/xnW8f0SyLQYOjwUCi2AG/NGi/Ms+SiKDfQkESXu9MMcxS5+bWrib1Z6EahHrVxtlE1JkT7YXeNes1gdu0Mu2PxrYOPtl0qsm6AP7CX4Zb/X9cmnT8r7j/y0=
+	t=1719501706; cv=none; b=h2tWqG5Juo9VQYfT1jCtX39M9zpvDp9BGLOm6i1Bo3kK6D8vJ6tZGxO5rqD+6xUywRgd2I66a+I2ftx0C+3jOnswGkIAlFT3+s+USIXGfkminGOwJ/X+Ktfdcb05jcbFkgkJlzfP/6V3aSFICmMIvp4tvt+hYOrxgkh7SpEz6ZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719501571; c=relaxed/simple;
-	bh=G+cBBek3drSnZL96hhiqkV5Q1WRRlmeLdd9tUoZQnXY=;
+	s=arc-20240116; t=1719501706; c=relaxed/simple;
+	bh=2jTe8TkDCFNj+tlAFvYShwxEC623St7oJq/uib3g8p4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZEUUAft/L2mIqCuvKyBvWccyaZvvwMqQjAZ394ImVsLXe7sVBaTJjdM6iQkfdv1JEjt7XeIC4l9b0rDHztc1+tAHkPPGL8aSQiKH2kOuiqA9pxA19ltIcdPE969rUKd0jyrnb/KJLxTloj+RyEb855pLkhDG4uGB4PWrBCaFQPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JBJB2U3D; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7241b2fe79so693462666b.1;
-        Thu, 27 Jun 2024 08:19:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719501568; x=1720106368; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=01JArmtEkWVzaNdRWksyS14M/NQjqvFDPF5Dykw99yM=;
-        b=JBJB2U3Dj8xYSSgOLiqrgpR099s+1xzgt3tCe6r/SJPMEHCwypvbF7xVqgXEUNp86o
-         hmC4Y5Iw5XS4u1wgK442NbcoOIoDwMAxjPWDLZhRKASSJ1LGGqojRSB3sEPuCdNt2X+n
-         EZudZBz/G9oq1ImJvH/YkvwmhdZiMUETlDc0brCIrKZK/yBikCy2M/WzaxRY1ZlKqUJP
-         kHOD2qF39qhlxrAv028Y/2nMki5VCZValaKIUwPwxkzaiLYMpv96WfB9NLk1rwIeAlhB
-         h+n8lLDbETtxgRNA0oZ0S3LwYO83KDCe0K3EWSowJ05uJmX2hF6DQiVSkN8IKtzHYLFJ
-         RN/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719501568; x=1720106368;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=01JArmtEkWVzaNdRWksyS14M/NQjqvFDPF5Dykw99yM=;
-        b=i0+0GUjOVjdjpCtzI/E3x9Ds4FZ8kbWgBGzYGr0tYPQk06acADUAsFR1gHgkXNcwu6
-         UdBTqOWEXWiNcxcKcktd9Ras/4mu/91Q9J5QST4PonPPRF1LSqVkv2V+aw7rITeqrMyQ
-         EZqaoZVoYxhbBC3nLJfh5HKRhpidNke5MDI9hCZXIJgiEuRo8e9DJHCFYCu7SwH+oqHx
-         kTPVDsEV2Ji7/jwP0/N+4haHuA0hkW87XdWucYxaXUPtCDVOc+FSg74/ZFlMKJQ1rZSG
-         GTO1drgLq2f9NagGi/S4mCp5MDe7KEpfHqMc7lXTfuxYkL4FkgMUhKCpSGqOgJYNz6NI
-         PNoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXiXUjm1/MTeUEX6Fl/+Aod9ZX0VoeQ6ah7nkGwjZ1x6qIIBiCJFRKJMF/cjcoJydh+aLLCabJMyrTZSEaXfm64vSxnZ5VjD1hfJf/HX93+AKvzbLgmDjSMqHVNaFntaQNQgvVssenRsa1tAYVqG5iDUhz+wf+WGZ7Na4omfet2Y7yoDA==
-X-Gm-Message-State: AOJu0YwLrQli72+WH+wglLjYiDGdFT3dvLBYnMC9O+/jcpsEFJsKI5+y
-	Ok+EmWug0bou3JFzqL9ZAfsKlc5D9RLchdwx4paivB3n6/qXckN5
-X-Google-Smtp-Source: AGHT+IEAOJUUs4P5drce/yyI9yJaU8OuENn0jnZdouzCEJ6K8miFIV+B/HogjWpoIlxwTsUQCgDECA==
-X-Received: by 2002:a17:907:d043:b0:a72:7bf4:694c with SMTP id a640c23a62f3a-a727bf469d6mr670678066b.16.1719501567509;
-        Thu, 27 Jun 2024 08:19:27 -0700 (PDT)
-Received: from andrea ([217.201.220.159])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a729d7c88cdsm68292766b.195.2024.06.27.08.19.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 08:19:27 -0700 (PDT)
-Date: Thu, 27 Jun 2024 17:19:20 +0200
-From: Andrea Parri <parri.andrea@gmail.com>
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
-	Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-arch@vger.kernel.org
-Subject: Re: [PATCH v2 10/10] riscv: Add qspinlock support based on Zabha
- extension
-Message-ID: <Zn2C+NXNZ/sj0wI6@andrea>
-References: <20240626130347.520750-1-alexghiti@rivosinc.com>
- <20240626130347.520750-11-alexghiti@rivosinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pEwQA9FzfAk6r4Cb+zrKOWDfY/bOhsmkpUgKxv/KfGJW6mBFMJ/g1VzvwtXDpDiZevnYoYPGWN9SeR/gcPz/Hdjj3zv5ELJxkeTW3cTM9RblUmTc+yjHNRBuOi0G4UijnxPMqGsp6aplkwp00dswsVRofyDs2PISsa3WnL7LNnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LgtqDjns; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52877C2BBFC;
+	Thu, 27 Jun 2024 15:21:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719501705;
+	bh=2jTe8TkDCFNj+tlAFvYShwxEC623St7oJq/uib3g8p4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LgtqDjns20o4C/BYAwvgOdfxFhivKA174u5OHSIQWWrKXJ/xYBGgMKd1OQzIS3KG6
+	 Lpeu+p6MB2GRoDjWcsyGcW+zXRhpU7DUHGddbOtKJr54ANBpnPUWv3l+NlecP0N1UN
+	 OUikhwYU/RmHNzuhiqvX7sTB6WLnVGjI1y5GGYcczVU1RynT02PU0QIlu3ES7Xkf0K
+	 bRRleB0GqXQhlLr+44Izp0AGkaMVxmpBfMStYdPwV6/bpzkl+JPct1xJSLECsoPIl4
+	 54vy8oRjoHISUiS6/CWHv6ETuMPL/edqLytl17HNLwp0YNhRp4GJ+2pP0Y8UtRvBfy
+	 ttt9HcB/VQ44g==
+Date: Thu, 27 Jun 2024 17:21:42 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] i2c: testunit: discard write requests while old
+ command is running
+Message-ID: <m2sxpply3xx54v7zfu4py7jsq43tcd73gy5ivxliaits4ozo5s@hqd5lmki7mnu>
+References: <20240627111445.29751-4-wsa+renesas@sang-engineering.com>
+ <20240627111445.29751-6-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,21 +58,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240626130347.520750-11-alexghiti@rivosinc.com>
+In-Reply-To: <20240627111445.29751-6-wsa+renesas@sang-engineering.com>
 
-> This is largely based on Guo's work and Leonardo reviews at [1].
+Hi Wolfram,
 
-Guo, could/should this have your Co-developed-by:/Signed-off-by:?
+On Thu, Jun 27, 2024 at 01:14:48PM GMT, Wolfram Sang wrote:
+> When clearing registers on new write requests was added, the protection
+> for currently running commands was missed leading to concurrent access
+> to the testunit registers. Check the flag beforehand.
+> 
+> Fixes: b39ab96aa894 ("i2c: testunit: add support for block process calls")
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-(disclaimer: I haven't looked at the last three patches of this submission
-with due calm and probably won't before ~mid-July...)
+Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
 
-
-> Link: https://lore.kernel.org/linux-riscv/20231225125847.2778638-1-guoren@kernel.org/ [1]
-
-There seems to be a distinct lack of experimental results, compared to the
-previous/cited submission (and numbers are good to have!!  ;-)). Maybe Guo
-/others can provide some? to confirm this is going in the right direction.
-
-  Andrea
+Thanks,
+Andi
 
