@@ -1,98 +1,179 @@
-Return-Path: <linux-kernel+bounces-233018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96B5791B123
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:02:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABB0591B0EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:51:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F4112811A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 21:02:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29C9AB2606D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1751A08A0;
-	Thu, 27 Jun 2024 21:02:05 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B84C19FA7B;
+	Thu, 27 Jun 2024 20:50:58 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B329119F469
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 21:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0774EB37;
+	Thu, 27 Jun 2024 20:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719522124; cv=none; b=s4NVapf/lq1T0G/Q2NNKau5FA40v9ogxFJehiFKljlGluyrG4IwJyKQkdXqR/OURtBP0HSErZZwdaXmuVv0rT8SwrpBqOPpSGkwK6Ae/8hs7YRXUE5nMyAoZs/uB6JblAvZqffUHaG3ZRWiQLIyg4QJTawF1ojXw/BJXva3W1Q8=
+	t=1719521457; cv=none; b=PvixhZ68tK5NarHbnByLDGWj0EFOCkYzASWYQomcMBaqs5uFeobyE5Taw7rimPAA/gHoHjC9GFQHzZMEnQFGdS9Jt6iy73bvj6Qw8VCyPOZgIUxDYz4MRqJyjn6qEYZySB9MFPU5xCmWYxXJT7gUAM8m3E2JA69U/wLWaVPjRcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719522124; c=relaxed/simple;
-	bh=5A1xrcYEqkBgQFzZBOgLxlRJaM6yasYiRU8R1ppF8p8=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=MFhg8Io6UFReVzW8t0/210YaPgnQyW2ZqSL7ab3IDWqmxqAcgd9EnJIJIELWAcaoAVrp2GTxUFh5QiI1OIr9Ffo0if30VQCO7HRtEDpZ4PQdEhgflszvVK8QVC4+cr/UIx7DoXn4mI+lNs8CG7o1mTwSqxPnqDqujvH8gbq2UHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AE9EC4AF09;
-	Thu, 27 Jun 2024 21:02:04 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.97)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1sMwGf-000000031l7-0Doo;
-	Thu, 27 Jun 2024 17:02:57 -0400
-Message-ID: <20240627210256.912091413@goodmis.org>
-User-Agent: quilt/0.68
-Date: Thu, 27 Jun 2024 16:50:25 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org
-Cc: Daniel Wagner <dwagner@suse.de>,
- "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>,
- Clark Williams <williams@redhat.com>,
- Daniel Bristot de Oliveira <bristot@kernel.org>
-Subject: [for-next][PATCH 3/3] tools: build: use correct lib name for libtracefs feature detection
-References: <20240627205022.857212058@goodmis.org>
+	s=arc-20240116; t=1719521457; c=relaxed/simple;
+	bh=XSkZ8Rhleru2ig5e7eYcbAjIsYDSQDyob39l0dJdjYg=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eOye3So3DRo5MdAk7TjpyuIlcUM8pGuVajVCTg3m5x15fZpLv9JO8fR4/Vcsq8R8EWmPOdO2Ekh/TYiUR0JLBHZL3M4SZld9JDk3nsvM203bB/baRCMH7oxQnruC22oqA6t3aTKS5jbRcxXQqU2gvGBVcMq5LFw+PIqdQP1K5ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.97.1)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1sMw4q-000000007lU-0S0c;
+	Thu, 27 Jun 2024 20:50:44 +0000
+Date: Thu, 27 Jun 2024 21:50:39 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>, Jens Axboe <axboe@kernel.dk>,
+	Hauke Mehrtens <hauke@hauke-m.de>, Felix Fietkau <nbd@nbd.name>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Dave Chinner <dchinner@redhat.com>, Jan Kara <jack@suse.cz>,
+	Christian Brauner <brauner@kernel.org>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Li Lingfeng <lilingfeng3@huawei.com>,
+	Christian Heusel <christian@heusel.eu>,
+	Min Li <min15.li@samsung.com>, Avri Altman <avri.altman@wdc.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Hannes Reinecke <hare@suse.de>,
+	Mikko Rapeli <mikko.rapeli@linaro.org>, Yeqi Fu <asuk4.q@gmail.com>,
+	Victor Shih <victor.shih@genesyslogic.com.tw>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Li Zhijian <lizhijian@fujitsu.com>,
+	"Ricardo B. Marliere" <ricardo@marliere.net>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org, linux-block@vger.kernel.org
+Subject: [PATCH v4 2/4] block: partitions: populate fwnode
+Message-ID: <6acc459a392d562abc58f7e55c6f04dba8073257.1719520771.git.daniel@makrotopia.org>
+References: <cover.1719520771.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1719520771.git.daniel@makrotopia.org>
 
-From: Daniel Wagner <dwagner@suse.de>
+Let block partitions to be represented by a firmware node and hence
+allow them to being referenced e.g. for use with blk-nvmem.
 
-Use libtracefs as package name to lookup the CFLAGS for libtracefs. This
-makes it possible to use the distro specific path as include path for
-the header file.
-
-Link: https://lkml.kernel.org/r/20240617-rtla-build-v1-1-6882c34678e8@suse.de
-
-Cc: Daniel Bristot de Oliveira <bristot@kernel.org>
-Signed-off-by: Daniel Wagner <dwagner@suse.de>
-Signed-off-by: Daniel Bristot de Oliveira <bristot@kernel.org>
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 ---
- tools/build/feature/Makefile          | 2 +-
- tools/build/feature/test-libtracefs.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ block/partitions/core.c | 70 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
 
-diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
-index ed54cef450f5..489cbed7e82a 100644
---- a/tools/build/feature/Makefile
-+++ b/tools/build/feature/Makefile
-@@ -213,7 +213,7 @@ $(OUTPUT)test-libtraceevent.bin:
- 	$(BUILD) -ltraceevent
+diff --git a/block/partitions/core.c b/block/partitions/core.c
+index ab76e64f0f6c..edf582de741f 100644
+--- a/block/partitions/core.c
++++ b/block/partitions/core.c
+@@ -10,6 +10,8 @@
+ #include <linux/ctype.h>
+ #include <linux/vmalloc.h>
+ #include <linux/raid/detect.h>
++#include <linux/property.h>
++
+ #include "check.h"
  
- $(OUTPUT)test-libtracefs.bin:
--	 $(BUILD) $(shell $(PKG_CONFIG) --cflags libtraceevent 2>/dev/null) -ltracefs
-+	 $(BUILD) $(shell $(PKG_CONFIG) --cflags libtracefs 2>/dev/null) -ltracefs
+ static int (*const check_part[])(struct parsed_partitions *) = {
+@@ -281,6 +283,72 @@ static ssize_t whole_disk_show(struct device *dev,
+ }
+ static const DEVICE_ATTR(whole_disk, 0444, whole_disk_show, NULL);
  
- $(OUTPUT)test-libcrypto.bin:
- 	$(BUILD) -lcrypto
-diff --git a/tools/build/feature/test-libtracefs.c b/tools/build/feature/test-libtracefs.c
-index 8eff16c0c10b..29a757a7d848 100644
---- a/tools/build/feature/test-libtracefs.c
-+++ b/tools/build/feature/test-libtracefs.c
-@@ -1,5 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0
--#include <tracefs/tracefs.h>
-+#include <tracefs.h>
++static bool part_meta_match(const char *attr, const char *member, size_t length)
++{
++	/* check if length of attr exceeds specified maximum length */
++	if (strnlen(attr, length) == length)
++		return false;
++
++	/* return true if strings match */
++	return !strncmp(attr, member, length);
++}
++
++static struct fwnode_handle *find_partition_fwnode(struct block_device *bdev)
++{
++	struct fwnode_handle *fw_parts, *fw_part;
++	struct device *ddev = disk_to_dev(bdev->bd_disk);
++	const char *partname, *uuid;
++	u32 partno;
++	bool got_uuid, got_partname, got_partno;
++
++	fw_parts = device_get_named_child_node(ddev, "partitions");
++	if (!fw_parts)
++		return NULL;
++
++	fwnode_for_each_child_node(fw_parts, fw_part) {
++		got_uuid = false;
++		got_partname = false;
++		got_partno = false;
++		/*
++		 * In case 'uuid' is defined in the partitions firmware node require
++		 * partition meta info being present and the specified uuid to match.
++		 */
++		got_uuid = !fwnode_property_read_string(fw_part, "uuid", &uuid);
++		if (got_uuid && (!bdev->bd_meta_info ||
++				 !part_meta_match(uuid, bdev->bd_meta_info->uuid,
++						  PARTITION_META_INFO_UUIDLTH)))
++			continue;
++
++		/*
++		 * In case 'partname' is defined in the partitions firmware node require
++		 * partition meta info being present and the specified volname to match.
++		 */
++		got_partname = !fwnode_property_read_string(fw_part, "partname",
++							    &partname);
++		if (got_partname && (!bdev->bd_meta_info ||
++				     !part_meta_match(partname,
++						      bdev->bd_meta_info->volname,
++						      PARTITION_META_INFO_VOLNAMELTH)))
++			continue;
++
++		/*
++		 * In case 'partno' is defined in the partitions firmware node the
++		 * specified partno needs to match.
++		 */
++		got_partno = !fwnode_property_read_u32(fw_part, "partno", &partno);
++		if (got_partno && bdev_partno(bdev) != partno)
++			continue;
++
++		/* Skip if no matching criteria is present in firmware node */
++		if (!got_uuid && !got_partname && !got_partno)
++			continue;
++
++		return fw_part;
++	}
++
++	return NULL;
++}
++
+ /*
+  * Must be called either with open_mutex held, before a disk can be opened or
+  * after all disk users are gone.
+@@ -355,6 +423,8 @@ static struct block_device *add_partition(struct gendisk *disk, int partno,
+ 			goto out_put;
+ 	}
  
- int main(void)
- {
++	device_set_node(pdev, find_partition_fwnode(bdev));
++
+ 	/* delay uevent until 'holders' subdir is created */
+ 	dev_set_uevent_suppress(pdev, 1);
+ 	err = device_add(pdev);
 -- 
-2.43.0
-
-
+2.45.2
 
