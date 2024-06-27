@@ -1,146 +1,91 @@
-Return-Path: <linux-kernel+bounces-232867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A46891AF46
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:47:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 88EF291AF49
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:48:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F287F2826DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:47:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 435D1281ADA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:48:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC22199388;
-	Thu, 27 Jun 2024 18:47:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0977194A4E;
+	Thu, 27 Jun 2024 18:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Ut63iVYr"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CRRBpB3g"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DB7EA3D;
-	Thu, 27 Jun 2024 18:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AFD67484
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 18:48:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719514049; cv=none; b=prPHdTsVuSALnMKIIDRg4CpM7Q+hTUJy8StO3mKPEfELJo4TwO6jui5iypBoJju+B4z4YpCb0O2MQ2jvb97VZOuEK0MIFhPlBeUikAxnmjB/N6yJof0875ynHZIQ2NX2vCkmFW5pzudOriPSrldUcJsgHgXTx5SQl9BH4Kh1Vro=
+	t=1719514089; cv=none; b=LCaboR2E2f3FR4uBUGSfUEe6gbRYmi9JFNQTM0O4dmrsD+gK5NfywhWy6Cn01ZIXPNosTWk+bqlAot46R+aK22PnquQNRhzsf2BJENiuM3ha1NF/h5tZSwh4gY7nyov7TG7gBiiwjUa7onCAjunVHlVo5rzOjFUVObVGi3U4baE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719514049; c=relaxed/simple;
-	bh=GaCqT394L+OfOjnXqqaONMuWIgXdgFyw3HHLwRraFLI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VsQOdGRw28Shfn4AUhk69erxCyD0MtyG6fv2qjC6sECgatHhdaXo2yWJdlJvZfMvXBzycg1OYTZY5VEyTDKssFt19kQY/FJxULtmQUeI/ueU7jNMDESgGpFlQmRb7CaGpVmHSORz77cdGh6NnoaqtntF4eamMSvOIrX390M2nXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Ut63iVYr; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45RIT6Rv006551;
-	Thu, 27 Jun 2024 18:47:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:in-reply-to:references
-	:mime-version:content-type:content-transfer-encoding; s=pp1; bh=
-	kVqQoMWdc00828fjx8VCUxmo5WMeccVdx43pwpIg4rA=; b=Ut63iVYrQbzgkk+3
-	UFU0lfgZwtqU0JDrqtZ0pRKXB0iCYSBkE33BtwdeJs8CD8ThUe+RHG1cWBrnCyYA
-	Zl03VgOp0P9CZSBA4U/t5J+abllTAs4mVTZLAj9I97o99GJAyFcS5lTIXtYWG9mC
-	vsQI+kkDu1ZdUhYGYlS0/qY3zF/cSYEL5N8oMMJz5YdZyo1YowJx6KrYA2XjBfeJ
-	VUCmndulxCB7b/QAt/eEJAHkCICIbEsxX0jATCpTULZ8cADmtgNU6pNVhse1y+wR
-	eVsiqiTTOlAdSP7efADgOWPo4vkXL99lhfyaWYslVs3tmhY9BHeDp4+NZqB1EZki
-	HpC9Fw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 401dcy8157-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Jun 2024 18:47:23 +0000 (GMT)
-Received: from m0353727.ppops.net (m0353727.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45RIlNWV002541;
-	Thu, 27 Jun 2024 18:47:23 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 401dcy8152-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Jun 2024 18:47:23 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45RFUGlJ000574;
-	Thu, 27 Jun 2024 18:47:22 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yxaenc5w9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Jun 2024 18:47:21 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45RIlGcH54591790
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 27 Jun 2024 18:47:18 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2042220043;
-	Thu, 27 Jun 2024 18:47:16 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 62B9620040;
-	Thu, 27 Jun 2024 18:47:15 +0000 (GMT)
-Received: from darkmoore (unknown [9.179.5.203])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with SMTP;
-	Thu, 27 Jun 2024 18:47:15 +0000 (GMT)
-Date: Thu, 27 Jun 2024 20:47:13 +0200
-From: Christoph Schlameuss <schlameuss@linux.ibm.com>
-To: Janosch Frank <frankja@linux.ibm.com>,
-        Paolo Bonzini
- <pbonzini@redhat.com>
-Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Christian Borntraeger
- <borntraeger@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH] s390/kvm: Reject memory region operations for ucontrol
- VMs
-Message-ID: <20240627204713.099e1a5d.schlameuss@linux.ibm.com>
-In-Reply-To: <35cb7d12-d93b-4fbb-98fe-10ce2e6358f2@linux.ibm.com>
-References: <20240624095902.29375-1-schlameuss@linux.ibm.com>
-	<CABgObfYxZZdwe94u7OvHPUx+u4fDEJLnBEQbk1hdYs_Zy0D2hA@mail.gmail.com>
-	<35cb7d12-d93b-4fbb-98fe-10ce2e6358f2@linux.ibm.com>
-Organization: IBM
+	s=arc-20240116; t=1719514089; c=relaxed/simple;
+	bh=rDtHCeGVR3/oKtE6l4osywuLpwQFbDTZkaJdSWW5wO4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dH9Td/TO3t2usWkmPdcFuP/ne7XHvTs3c0fcz104FrKLhQbCsv+VVJB1NEj24LwkmgQUv2+hob/EYlv3HJ8t+gyNikX8HPRxK+bQJqR/8bUgpCcBLz2E2uz/VoG1mbGMo4CGJWab6epK2C506nz6eRyqXexGm1nSGb4kSEOy5aA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CRRBpB3g; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: maarten.lankhorst@linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1719514085;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Av9FqovsUOP0h53igKSF4jPKQsdgFn0YopTV64fIgIY=;
+	b=CRRBpB3ggXRq1QDcE297/5Kp/kIrT/zzm8p3YYiuwvOqmGDASLFeXhdjLiAN5/Hh3pHQOC
+	xtKS4G7SWzx40mmGVlXQxxrzPDwEvOt41vPEcMHd3qqjtp8vidle4isCt1pYW7KNmYE0ap
+	dyzwQIqS6gKYG4IDHQ6NlMnjLZKnIPs=
+X-Envelope-To: intel-xe@lists.freedesktop.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: dri-devel@lists.freedesktop.org
+X-Envelope-To: tj@kernel.org
+X-Envelope-To: lizefan.x@bytedance.com
+X-Envelope-To: hannes@cmpxchg.org
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: mhocko@kernel.org
+X-Envelope-To: roman.gushchin@linux.dev
+X-Envelope-To: muchun.song@linux.dev
+X-Envelope-To: friedrich.vock@gmx.de
+X-Envelope-To: cgroups@vger.kernel.org
+X-Envelope-To: linux-mm@kvack.org
+Date: Thu, 27 Jun 2024 11:48:00 -0700
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: intel-xe@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, Friedrich Vock <friedrich.vock@gmx.de>, cgroups@vger.kernel.org, 
+	linux-mm@kvack.org
+Subject: Re: [RFC PATCH 1/6] mm/page_counter: Move calculating protection
+ values to page_counter
+Message-ID: <xedzkn5fs2adz4ea3njugasxlt46637mgz6dbzho7ywzykfbxn@l3dc7c2nbzrq>
+References: <20240627154754.74828-1-maarten.lankhorst@linux.intel.com>
+ <20240627154754.74828-2-maarten.lankhorst@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: uoKwXKGyxipDEj4_r9fvlrjD-pB-GlEc
-X-Proofpoint-GUID: 1LVx65-JroayqNhx6hpopgKFC3PTJqRz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-27_14,2024-06-27_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1015
- adultscore=0 bulkscore=0 impostorscore=0 spamscore=0 priorityscore=1501
- mlxscore=0 phishscore=0 lowpriorityscore=0 suspectscore=0 mlxlogscore=651
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2406270138
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240627154754.74828-2-maarten.lankhorst@linux.intel.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 27 Jun 2024 14:32:51 +0200
-Janosch Frank <frankja@linux.ibm.com> wrote:
+On Thu, Jun 27, 2024 at 05:47:20PM GMT, Maarten Lankhorst wrote:
+> It's a lot of math, and there is nothing memcontrol specific about it.
+> This makes it easier to use inside of the drm cgroup controller.
+> 
+> Signed-off-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
 
-> On 6/27/24 13:53, Paolo Bonzini wrote:
-> > On Mon, Jun 24, 2024 at 11:59=E2=80=AFAM Christoph Schlameuss
-> > <schlameuss@linux.ibm.com> wrote: =20
-> >>
-> >> This change rejects the KVM_SET_USER_MEMORY_REGION and
-> >> KVM_SET_USER_MEMORY_REGION2 ioctls when called on a ucontrol VM.
-> >> This is neccessary since ucontrol VMs have kvm->arch.gmap set to 0 and
-> >> would thus result in a null pointer dereference further in.
-> >> Memory management needs to be performed in userspace and using the
-> >> ioctls KVM_S390_UCAS_MAP and KVM_S390_UCAS_UNMAP.
-> >>
-> >> Also improve s390 specific documentation for KVM_SET_USER_MEMORY_REGION
-> >> and KVM_SET_USER_MEMORY_REGION2. =20
-> >=20
-> > Would be nice to have a selftest for ucontrol VMs, too... just saying :)
-> >=20
-> > Paolo
-> >  =20
->=20
-> Already in the works, he just hasn't posted it yet :)
-> We did do a couple rounds of internal feedback on the tests first.
+You can send this patch independent to the series.
 
-I do also have a test case for this specifically, but it depends on the
-base fixture. So I would send it together with that soon.
-
-Christoph
+Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
 
