@@ -1,363 +1,361 @@
-Return-Path: <linux-kernel+bounces-233014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52D5191B11A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:57:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1368891B117
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:57:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 960D9B228ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:57:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 868BB1F24EFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8B919FA81;
-	Thu, 27 Jun 2024 20:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D7019EEBE;
+	Thu, 27 Jun 2024 20:57:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="t8zkxINh"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UX1RQA1q"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A23519E827;
-	Thu, 27 Jun 2024 20:57:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719521838; cv=none; b=sHnHtJsZ4xbubn658svVk7ZzXThAsPHKqNrce9xHI2paDj82fS8+IiUyw0bP58wCV6o7JM0kegY/p3B4HZKYCmyycWYiZZjAcKIwBIyHbG+MPf/uKYciHNFRfol7kJ0jTSxc7qeM1DY95pP8Pj7T3+B8ylpdZyMRN2hlTw03v6g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719521838; c=relaxed/simple;
-	bh=94U5cGjSgJ1hmDnRlX7E28/EM3+Vb46f9mlumivB4cA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=a9vfisPsakpvwRFj3MKd8bCs3gP8MMoCQqHQZO4eLlUsZ7acfpY/nB5bNlliwkXDEMjcX7N/zzSKd5a2h0Fw7pUj7ujjIJU2/mBv2JAQdlyt6PlCfwV1FjMva8ibTfulyIBLaw/duSTx5ieqvoWoxsSq+X/xoYle76Rj4RXKTBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=t8zkxINh; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1719521835;
-	bh=94U5cGjSgJ1hmDnRlX7E28/EM3+Vb46f9mlumivB4cA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=t8zkxINhHkDzCSd9X9ePrVARE6/Y2F+GuQelkWVqy4xKnmOK4Kr8qx4WUT3M/Pk2/
-	 JE3Ah1GvnM8JKWYOhYEdvodc8afdh4KiZgeR+E9mzm4Bb0M8XjKxgAhYmawYvLewfi
-	 ElXtVCOavSOy51PJsjMaqyCfaFpqaekNgIyA4EMgFNvFwRjGRNsnDoBmTfQ3U65YVE
-	 iH3qfeerjb/nI8PPoZKTi0a0MePNnEiVDnhCTkWwZdoXpVF3THr8pq+t27iXB0AgS5
-	 J2hmfZAmLtHK4emxthcFcP46Id4N7K3hBBCAArQcOtzgT1xqHIh1teiga/hwqfYskT
-	 IRur3TRj/84gA==
-Received: from arisu.localnet (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: detlev)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B802037821E5;
-	Thu, 27 Jun 2024 20:57:11 +0000 (UTC)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: Alex Bee <knaerzche@gmail.com>, Jonas Karlman <jonas@kwiboo.se>
-Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Heiko Stuebner <heiko@sntech.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Dragan Simic <dsimic@manjaro.org>, Diederik de Haas <didi.debian@cknow.org>,
- Andy Yan <andy.yan@rock-chips.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Hans Verkuil <hverkuil-cisco@xs4all.nl>,
- Daniel Almeida <daniel.almeida@collabora.com>,
- Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH v2 4/4] arm64: dts: rockchip: Add rkvdec2 Video Decoder on
- rk3588(s)
-Date: Thu, 27 Jun 2024 16:56:43 -0400
-Message-ID: <4356151.ejJDZkT8p0@arisu>
-Organization: Collabora
-In-Reply-To: <156b5aaf-8b9a-46b9-82c2-d7e32f4899f5@kwiboo.se>
-References:
- <20240619150029.59730-1-detlev.casanova@collabora.com>
- <5790441.DvuYhMxLoT@arisu> <156b5aaf-8b9a-46b9-82c2-d7e32f4899f5@kwiboo.se>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47C1014D6EB;
+	Thu, 27 Jun 2024 20:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719521824; cv=fail; b=iPjrqmrc9Mc9nuQ6/zh7BdgTVc+un5nraEE7fxJiZFXYJcddLgSkOE47Z+bwBnlwvGXwJqNcjbEzNubOjDt+O90WoSkWkw6Qy2v10nf4md0TH1ShgxRphxcV1FXjwjNmwzcpBixIh8xHluRecWXEP9T9TTE7NEGmB+hnySOintk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719521824; c=relaxed/simple;
+	bh=1zPLw6nhtKQ4BSb7Pmzh25f42TDyIlg36H3i0cJBsFs=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=bitBqGKNncCwBHINipMrT5+SK/b5Bs00xdx3N2XHICgojyhxOCoY+0CIib+d8RFz7kV7pAFBX5q7ufZsP5xUlbyxWzBZXocUcIKXWi9KNwR9lFHWpVYy26zhxTZaZyJ2pcBzvuI2ceoq+xvAHitNfXa72Ht8sVrv+ySB5+LoOsk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UX1RQA1q; arc=fail smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719521823; x=1751057823;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=1zPLw6nhtKQ4BSb7Pmzh25f42TDyIlg36H3i0cJBsFs=;
+  b=UX1RQA1qaKzu70g1awxi7h8aVsVTbBbZXt91bcsyP4ANbSlBksmDQpu+
+   JSCt2w0VlWz4Xywdnyvjfxgz6zUhpwq1qyScO4gft40DzcZr2O6C2AI7o
+   ANe/v1DlW8iLfRngJ0bvg6D/rQFVHD9uf4xbDEzRCFyAXTaJWv+aefnVM
+   fRzPQDMvxsLlHrO7t5CwPVanEDwmULqelEt0tN/PsVAhbBCpTYU9vYEnL
+   Q3j68vLdEQj+HMHVfzQnKMjQXF0kTjrir2EFOBveCfJe1A/5ZWsCNxaok
+   l+Qyr2F4JEA/bdz6xOqt+N1XHmcyyfiAQTzWADrp7hgcy52xCHLFRqUVh
+   g==;
+X-CSE-ConnectionGUID: P05ZADafTRm4FCsol0dvTQ==
+X-CSE-MsgGUID: /2yKmrYhRsSewktRAGRxEg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="20444584"
+X-IronPort-AV: E=Sophos;i="6.09,167,1716274800"; 
+   d="scan'208";a="20444584"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 13:57:02 -0700
+X-CSE-ConnectionGUID: Vnq58zNiQKGc2FwqE9uUnw==
+X-CSE-MsgGUID: m3J6FkPKRDej+stHgtSpfA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,167,1716274800"; 
+   d="scan'208";a="45154371"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by orviesa007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 27 Jun 2024 13:57:01 -0700
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 27 Jun 2024 13:57:00 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 27 Jun 2024 13:56:59 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 27 Jun 2024 13:56:59 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.42) by
+ edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 27 Jun 2024 13:56:59 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HC52XTOqk0E3tDdEFjqOle9qs8Z+1PiUeO8ryDf8T+YzUZU0H1vPNe6DjJPfH5TWwKSL0bwdRD2o7M3Mh4GC/zDh7SqGcbp2tXVyZwOfhIc73IPe95k1qCr5PlUbA/PJcmj68gPAX7Let5KhjSrBwDn/BVyqveg39XzjIryfwHz+bCmz88FVnS/noGaHF+UVEoeNbK92ZXby+DCoW6dhJFJQjrUpiHYyIzyJ1WQzdV29Qd9wCymIFUBBOEo1lvQvheA9QhMe+hj1zqkdVfJVrqKz54uCHu+31i9WAL0tIxRh+n/ucCCjTXrRLBd7VCgem/7dlD7o6RuMmjeKTSuzHQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8AksTTqyIAWCwIsGdK81yRfMgMguBv2slb2EUHn5vgs=;
+ b=Z4VQSnrl7E0N8Pou1LZOn2I8EtiGG7UpQsSjBcu9IUpfUmWisrrQ7tHPWFl5+zAmr2b1mscM8K2HiTBx09mFza53IPhbmbdUomx1SfxMBTE1xJURjlsoPFg6T9SyzL1bdm1DqXo66qCVVxvsMnjdKyOmmtmcfw6f3u0fkjma9oEdk+fB5FE98Aaw12u+RItNbhsRud5l05lLS2dfQfgNcxqWXjCnY7CfhyzUeJFsPoBh64b8Qr/8kUrNcGPP5sudjSMXcHYT+nHRQ6vbyLYwaSt/6ewPEukoXvBlTBuykzm4LZL3ELDPVrYLb8iSbciUC7/YOQTVJQ+8dapls+3pZQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by PH7PR11MB5796.namprd11.prod.outlook.com (2603:10b6:510:13b::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.35; Thu, 27 Jun
+ 2024 20:56:55 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.7698.033; Thu, 27 Jun 2024
+ 20:56:55 +0000
+Message-ID: <81f3bdb1-ebb8-4a90-9cf0-6a2d09ff13e9@intel.com>
+Date: Thu, 27 Jun 2024 13:56:51 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 11/19] x86/resctrl: Introduce mbm_total_cfg and
+ mbm_local_cfg
+To: <babu.moger@amd.com>, <corbet@lwn.net>, <fenghua.yu@intel.com>,
+	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>
+CC: <x86@kernel.org>, <hpa@zytor.com>, <paulmck@kernel.org>,
+	<rdunlap@infradead.org>, <tj@kernel.org>, <peterz@infradead.org>,
+	<yanjiewtw@gmail.com>, <kim.phillips@amd.com>, <lukas.bulwahn@gmail.com>,
+	<seanjc@google.com>, <jmattson@google.com>, <leitao@debian.org>,
+	<jpoimboe@kernel.org>, <rick.p.edgecombe@intel.com>,
+	<kirill.shutemov@linux.intel.com>, <jithu.joseph@intel.com>,
+	<kai.huang@intel.com>, <kan.liang@linux.intel.com>,
+	<daniel.sneddon@linux.intel.com>, <pbonzini@redhat.com>,
+	<sandipan.das@amd.com>, <ilpo.jarvinen@linux.intel.com>,
+	<peternewman@google.com>, <maciej.wieczor-retman@intel.com>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<eranian@google.com>, <james.morse@arm.com>
+References: <cover.1716552602.git.babu.moger@amd.com>
+ <a02dd2b9fa06f360eabe923c5c6d17fa4036aa9a.1716552602.git.babu.moger@amd.com>
+ <48e0d78c-5ed8-4b93-8f12-3ce3fd74116c@intel.com>
+ <68e861f9-245d-4496-a72e-46fc57d19c62@amd.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <68e861f9-245d-4496-a72e-46fc57d19c62@amd.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MW4P220CA0005.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:303:115::10) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2196199.Mh6RI2rZIc";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|PH7PR11MB5796:EE_
+X-MS-Office365-Filtering-Correlation-Id: d1ff9c50-27ee-4e3c-0bb5-08dc96ebad97
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?Sm1MZW03aE1JWU9MQ2xKSzR1UmlsanpBVzB6NFdkbWk0MitZeHBCSFJndUZ1?=
+ =?utf-8?B?Zjd6Mk9XTE1MY3RiZjRJL0FncmZDbmNydmpPdWdkSlcvMC85blZ3dU5vRHJZ?=
+ =?utf-8?B?K1E2M3hWVFVOQmhMMHRmUkxFQ3hxbDhhSzJXNVdubXFPS2NGbXVTckVaeDhB?=
+ =?utf-8?B?QTFnWDNHelNRVVNQeTVYeWZYRDVoRForcG0yMTRCQmpiNmtGaUQ0MjBKdm9a?=
+ =?utf-8?B?Vkgyd1BBSnNjTWtPbW54eGg4ZzJQWmhqb0wxdmtWcFNUOGcvTllJU1lpUnNh?=
+ =?utf-8?B?Q1FKeXdEYkhueFhxeWd1L2NzUTJLanNRcGM0SUp4MFBkTW4vY3BLM0tVNEhY?=
+ =?utf-8?B?R01VbkZoY3lsSnBJQTBpN3JWazRRbTdHa1dDa3piUCsvRjc5SkRyVEcyNVYz?=
+ =?utf-8?B?cmdLYjIzNzFMWmtmdTdka0plY0tMU0tMTFFOaS9oLzNpeStoT1lzdkdISEpL?=
+ =?utf-8?B?TFdQTzhOK0dibDZESk1YM1A2NFkvYy9FT0h4UmZyellqWmNZdUlzS28yN2tp?=
+ =?utf-8?B?UDZsS2xRM2k1U3RraDd3WnNtNEErNmtLY2Y4ZUo0Qk4zY0NhWGhnL0o0ZHBr?=
+ =?utf-8?B?YVZQdCtmOUYvNS9QOWZNQnVGdVh6dGg1Y3doc2Jzc2ZYdWg0TDNNbkFTVkdQ?=
+ =?utf-8?B?aWs0Q1dYTldjZHpRQUVPUmhXRzJPZ0ppZHhGdTRHU2VwWmszMGZWdHQzdlBH?=
+ =?utf-8?B?dDU1VmN5VTRVeUtzNTlxU3BoeVBSU0tPbDlDUUJwRDVhNEZmc1Q1MW8vc3Jt?=
+ =?utf-8?B?WHBrOE5ucEYvOE9GK3J2dzZWR0RkV0YxUjhweHVBZm9JZGtRZTlWMlVBQVE5?=
+ =?utf-8?B?OUM2TlZXZ21ibnl5ejdrQ0VaVWpZYzJ6blR6TGgybEl3RHlwNVdqdlo3SzBt?=
+ =?utf-8?B?QnR4TDdBSVlKYXNINVhVc0Njd1J0ZzU1elAvazZWTFNsaml1Q0hYQWYvQklr?=
+ =?utf-8?B?MVAvQ1ZzbmVlWmZIRVUwN2N0eW9tMW1hclpwbXk4cWlBQlJ0RkxCVTV3MkJu?=
+ =?utf-8?B?enEzM0R2N2NQdHpEbHVnd2V5Q3h0WkZZSThyTnVnMXVDU3ZxcnJMMTUvNHJi?=
+ =?utf-8?B?QjhQeVhWWi9xYTBjQ1BWcmRuSzZQMHlXVDNkSm00Sys1VjBPN3RMZUhNbUJN?=
+ =?utf-8?B?Z1Y4MURJTFNMenRxbzdCdUFkRTMxSkRkMjRpY1ZTSVBQaWdUalFuVFVrVW14?=
+ =?utf-8?B?Ny8vYlRRNFN0bloyZHZNSnZvLzFTUlcwdktVNDY3dVpHMnlDeGRKUVY0WVRW?=
+ =?utf-8?B?aWpCcTU5OXJPNE5PZjZNRHcrYUcwOFJQRGNHRFlNSWNGU1lNTlFtUERHajBy?=
+ =?utf-8?B?VDJNRUQxcWdjTmRjT09MRzJqcVdUZDdlUU4wNUE2ZUVjT3h4OWJkTURQWkR0?=
+ =?utf-8?B?NXZhQXNoRllUZU00VW93OHcxNzRBZWxLVW1IK3ZOdi9yUU15Z2VmZHRib3Ji?=
+ =?utf-8?B?VEcwNjZsZGFuSnNwaStoS29SQ3FyNkcrb0UvNU1PU1ByajJ2cXFKejhWK3N0?=
+ =?utf-8?B?aFh5ekJqRFQ5UzRrRnh0dmJUdGJScU0xZkFMRmlXRlNNRjJGR2txUlhOMGd2?=
+ =?utf-8?B?aUpRVUt6RklFZUpIWmIxd2F6ZTVFYW5LczJobUtRV0tHUDJaNG1vand5b1pZ?=
+ =?utf-8?B?OWJRNWFYMWdvY1BFQmxhYmZVa09SVEVLWnE2Z0I4dmg2dFNUREgrWGhjVGlU?=
+ =?utf-8?B?U1dvVVNXMEFqSjhPakdlSTdkTHNFMUdYSVFINGlEZnk4NXpwcnk0aHhUNDdU?=
+ =?utf-8?Q?n25y8U3ldAiomUZw34=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NmR0Q0xPWlpZWkw1Mk9XeE5ISXJzNDRMbDdCc0w1dnR6akxOdk1MVTEzWm5X?=
+ =?utf-8?B?KzlUeHNrNHd2enU2Q3ZaN3lNN0Rsc2NpMjE5SFRva2M5WkViKzlxU2NqaGl5?=
+ =?utf-8?B?TW9OMUVhY2NkZllqMGV3QWdJMDlWMERxU0I0cTJFNFJOcWNLblNpK0ovbW4v?=
+ =?utf-8?B?N2tmdWpJNlA1UDFFYUQ0WlRRNE42MjY4VlF5RHRLRlU5ZStRaE4yQTBaVFhK?=
+ =?utf-8?B?S3BRRDhUTk5XTTZ3dFVxTENEeHFlMnFOVk51aFlxMnJodGlmdmZhbkJqUGp3?=
+ =?utf-8?B?NDFXam5vMGhLZXhZdWlGaVZyT0hNOFVycXpjTWpUMjd0UHEyb0RCUUFsaEpM?=
+ =?utf-8?B?eVpOck9PNktWRTFEbkEyd2NndVM3cE1EaXZYa1g3b2laQlZKbk03M0hVbEp5?=
+ =?utf-8?B?andrelg0YU5HblY4eXZFOVk2OVNkUktYNXhkQ1BoWHp0SUl6VXhlelhuazA5?=
+ =?utf-8?B?L3dBUEE1Zy9QcDZ2UnZqZVh6VURrWk1ZTm93YlMweFJ1MjQvVjZ3VkdrWHEr?=
+ =?utf-8?B?WEFnVnp3Ny9wNldGNzJlUktuaGdLZXBXUlU5Q1JrcUpDVlNFcm5uZC96QVhF?=
+ =?utf-8?B?ak5NaFRxdGVSdUZrSzdNYW4yRnVkQzI4NENyd1pZZ1VLakU1YWxaUE5NUDBD?=
+ =?utf-8?B?YlBETk5WMEVZbWx6bjd6M0lkMGpzWEMzY0FrWUswTytKTXcrV25hY3NlbkZH?=
+ =?utf-8?B?UFc2TS9DTStMQndKSDZpbEk0cXFJemRmcnVNMFNhbWRUVUdUMkExenJaN1F5?=
+ =?utf-8?B?QU5kb1pwMEp6QVFNc2VsVDFzUUhEcHV6ZzlIc1ordyt6OVJCZTQ4clowOUhl?=
+ =?utf-8?B?QndBNm9PZ0haRHVKNUYza2I2S2tHVzI3SFdDLzhqVjhOQzhNWmZxN2Zpa1Nx?=
+ =?utf-8?B?ZEhLakR3VHRuY1F6b1pQSUZjSHZMbUs0T1ZhL2hxNmltT2hmZUpDV2xSbThY?=
+ =?utf-8?B?TWxVbG9OUmhXdU1UOUdvMTE1V2ExdTJib0pHSUlGcklOMU94ZjNOTmd4SHly?=
+ =?utf-8?B?UytwWTNCMHFkYkk2UVBMYjUyVUhCKzg5a1RYK0MrYW1KdGV0QWQrWGNCYXFw?=
+ =?utf-8?B?LzVWSDNIUjZqenRUTERhTGNpb00yWDVEOFpnM0hkMDlkQ3V5SlZlQWd4eSsw?=
+ =?utf-8?B?VC9yZk5veWZTVW9ZbDIrTUQyVEVoWDNGUVN5VlMzNTVzamdrdWtrVXdRTUl4?=
+ =?utf-8?B?d1lMQ2NkZFRNeGRyc2cxT25MUVgrdEtSd3d0MEZsN0x5d255WHcxbDl0aUNK?=
+ =?utf-8?B?cWRRajB3dHdxTlZNMDBoUDU1eHdWbXFhN0M2bTd1Wld2YXNpeVVMMExjaXN5?=
+ =?utf-8?B?clovc0oyK1Jaa1ZCdC9VclBTeHJxUUN1QTV3Vjh5WGk1Sk1jelBzdnlTT3Vi?=
+ =?utf-8?B?S3I2V2pkSVE4YmdIb1FaRG5kTlJPd3RJb3hyblpNY01ldEIwSFIxenY4c1pv?=
+ =?utf-8?B?Y1Uyd1hZVWxqQ2lucUkvaVJoeEdQQzBPQkhlMjgwc3FLVklxVnRPK3cyNDdR?=
+ =?utf-8?B?VHFkUUVvdm80Zm94ZVBDWml2aXVTT2trcEcyenJiV09WVURCejU1UXlDTm8r?=
+ =?utf-8?B?SXFYVVZHS0ZmL29FV2dWaGhuYlhybVVEZWdDTkRsWDdJdUdGTStQVXdlNk85?=
+ =?utf-8?B?Tk8rQ0JaT2J2a0VxWTd1T3JzdjREbjRxbkl2VFdsRWl4TndaMWJ6NklqenNh?=
+ =?utf-8?B?b3owbFRteEFTTlM0LzJYYW9BYVJUS2Q0bVMzYk5jQ2NkYTJuQXZod0RRWlc4?=
+ =?utf-8?B?NmdVM0lFV3UwcHZwS09Sd2NKQ0N3Q1BVTkYzMjAvcFl4NjhLc1ZtVWtGWE55?=
+ =?utf-8?B?YjN6SDVLZUtoVy9lRW00UVdUVitSUmlCY282dlZEakViRmNQOWFuOGhvY0JC?=
+ =?utf-8?B?N3VuWWhkSDJTQkVjeUlTdjlDTVl0Qmc1ekNXUy9NekVuRXVMNGV1aElqbGFP?=
+ =?utf-8?B?ZjlwWGtsVmhOZTZCK1ZzWUhGUno1ZjM5enNIejRlQ0VkMTN4Qy9UcVlva2RQ?=
+ =?utf-8?B?ckZOcDJGbzNMRHU3WnRFUVpUdzZERVVCRUY1blo1aFN6YklqS0ltaW5oQUsy?=
+ =?utf-8?B?UlY4TVNucTdXNTVVajRHRHpWVElYSzVvMWVHcmRLbEZKdjhTNHZwUy96SGVU?=
+ =?utf-8?B?NHRWQURDRUMyd0lrQk9rMVgwSmtZQXdPTVdjZXhWYjJNdksrcTlra2lhWTdX?=
+ =?utf-8?B?YXc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: d1ff9c50-27ee-4e3c-0bb5-08dc96ebad97
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jun 2024 20:56:55.5227
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fw0t14Rh8RbQMI4K9LbgRrICdQ3Y3T7FDnf4/v/17VpwKIDikaZ0AWkROjWkl4Ouec5AhdvT4SawlPS1J6/o0VnybSx3e1CulMPeFRnCJxU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB5796
+X-OriginatorOrg: intel.com
 
---nextPart2196199.Mh6RI2rZIc
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: Alex Bee <knaerzche@gmail.com>, Jonas Karlman <jonas@kwiboo.se>
-Date: Thu, 27 Jun 2024 16:56:43 -0400
-Message-ID: <4356151.ejJDZkT8p0@arisu>
-Organization: Collabora
-In-Reply-To: <156b5aaf-8b9a-46b9-82c2-d7e32f4899f5@kwiboo.se>
-MIME-Version: 1.0
+Hi Babu,
 
-Hi Jonas,
-
-On Monday, June 24, 2024 5:16:33 A.M. EDT Jonas Karlman wrote:
-> Hi Detlev and Alex,
+On 6/27/24 11:51 AM, Moger, Babu wrote:
+> Hi Reinette,
 > 
-> On 2024-06-20 15:31, Detlev Casanova wrote:
-> > Hi Jonas, Alex,
-> > 
-> > On Wednesday, June 19, 2024 2:06:40 P.M. EDT Jonas Karlman wrote:
-> >> Hi Alex,
-> >> 
-> >> On 2024-06-19 19:19, Alex Bee wrote:
-> >>> Am 19.06.24 um 17:28 schrieb Jonas Karlman:
-> >>>> Hi Detlev,
-> >>>> 
-> >>>> On 2024-06-19 16:57, Detlev Casanova wrote:
-> >>>>> Add the rkvdec2 Video Decoder to the RK3588s devicetree.
-> >>>>> 
-> >>>>> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> >>>>> ---
-> >>>>> 
-> >>>>>   arch/arm64/boot/dts/rockchip/rk3588s.dtsi | 50
-> >>>>>   +++++++++++++++++++++++
-> >>>>>   1 file changed, 50 insertions(+)
-> >>>>> 
-> >>>>> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-> >>>>> b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi index
-> >>>>> 6ac5ac8b48ab..7690632f57f1 100644
-> >>>>> --- a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-> >>>>> +++ b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-> >>>>> @@ -2596,6 +2596,16 @@ system_sram2: sram@ff001000 {
-> >>>>> 
-> >>>>>   		ranges = <0x0 0x0 0xff001000 0xef000>;
-> >>>>>   		#address-cells = <1>;
-> >>>>>   		#size-cells = <1>;
-> >>>>> 
-> >>>>> +
-> >>>>> +		vdec0_sram: rkvdec-sram@0 {
-> >>>>> +			reg = <0x0 0x78000>;
-> >>>>> +			pool;
-> >>>>> +		};
-> >>>>> +
-> >>>>> +		vdec1_sram: rkvdec-sram@1 {
-> >>>>> +			reg = <0x78000 0x77000>;
-> >>>>> +			pool;
-> >>>>> +		};
-> >>>>> 
-> >>>>>   	};
-> >>>>>   	
-> >>>>>   	pinctrl: pinctrl {
-> >>>>> 
-> >>>>> @@ -2665,6 +2675,46 @@ gpio4: gpio@fec50000 {
-> >>>>> 
-> >>>>>   			#interrupt-cells = <2>;
-> >>>>>   		
-> >>>>>   		};
-> >>>>>   	
-> >>>>>   	};
-> >>>>> 
-> >>>>> +
-> >>>>> +	vdec0: video-decoder@fdc38100 {
-> >>>>> +		compatible = "rockchip,rk3588-vdec";
-> >>>>> +		reg = <0x0 0xfdc38100 0x0 0x500>;
-> >>>>> +		interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH 0>;
-> >>>>> +		clocks = <&cru ACLK_RKVDEC0>, <&cru HCLK_RKVDEC0>,
-> > 
-> > <&cru
-> > 
-> >>>>> CLK_RKVDEC0_CA>, +			 <&cru
-> > 
-> > CLK_RKVDEC0_CORE>, <&cru
-> > 
-> >>>>> CLK_RKVDEC0_HEVC_CA>;
-> >>>>> +		clock-names = "axi", "ahb", "cabac", "core",
-> > 
-> > "hevc_cabac";
-> > 
-> >>>>> +		assigned-clocks = <&cru ACLK_RKVDEC0>, <&cru
-> > 
-> > CLK_RKVDEC0_CORE>,
-> > 
-> >>>>> +				  <&cru CLK_RKVDEC0_CA>, <&cru
-> > 
-> > CLK_RKVDEC0_HEVC_CA>;
-> > 
-> >>>>> +		assigned-clock-rates = <800000000>, <600000000>,
-> >>>>> +				       <600000000>, <1000000000>;
-> >>>>> +		resets = <&cru SRST_A_RKVDEC0>, <&cru SRST_H_RKVDEC0>,
-> > 
-> > <&cru
-> > 
-> >>>>> SRST_RKVDEC0_CA>, +			 <&cru
-> > 
-> > SRST_RKVDEC0_CORE>, <&cru
-> > 
-> >>>>> SRST_RKVDEC0_HEVC_CA>;
-> >>>>> +		reset-names = "rst_axi", "rst_ahb", "rst_cabac",
-> >>>>> +			      "rst_core", "rst_hevc_cabac";
-> >>>>> +		power-domains = <&power RK3588_PD_RKVDEC0>;
-> >>>>> +		sram = <&vdec0_sram>;
-> >>>>> +		status = "okay";
-> >>>>> +	};
-> >>>>> +
-> >>>>> +	vdec1: video-decoder@fdc40100 {
-> >>>>> +		compatible = "rockchip,rk3588-vdec";
-> >>>>> +		reg = <0x0 0xfdc40100 0x0 0x500>;
-> >>>>> +		interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH 0>;
-> >>>>> +		clocks = <&cru ACLK_RKVDEC1>, <&cru HCLK_RKVDEC1>,
-> > 
-> > <&cru
-> > 
-> >>>>> CLK_RKVDEC1_CA>, +			 <&cru
-> > 
-> > CLK_RKVDEC1_CORE>, <&cru
-> > 
-> >>>>> CLK_RKVDEC1_HEVC_CA>;
-> >>>>> +		clock-names = "axi", "ahb", "cabac", "core",
-> > 
-> > "hevc_cabac";
-> > 
-> >>>>> +		assigned-clocks = <&cru ACLK_RKVDEC1>, <&cru
-> > 
-> > CLK_RKVDEC1_CORE>,
-> > 
-> >>>>> +				  <&cru CLK_RKVDEC1_CA>, <&cru
-> > 
-> > CLK_RKVDEC1_HEVC_CA>;
-> > 
-> >>>>> +		assigned-clock-rates = <800000000>, <600000000>,
-> >>>>> +				       <600000000>, <1000000000>;
-> >>>>> +		resets = <&cru SRST_A_RKVDEC1>, <&cru SRST_H_RKVDEC1>,
-> > 
-> > <&cru
-> > 
-> >>>>> SRST_RKVDEC1_CA>, +			 <&cru
-> > 
-> > SRST_RKVDEC1_CORE>, <&cru
-> > 
-> >>>>> SRST_RKVDEC1_HEVC_CA>;
-> >>>>> +		reset-names = "rst_axi", "rst_ahb", "rst_cabac",
-> >>>>> +			      "rst_core", "rst_hevc_cabac";
-> >>>>> +		power-domains = <&power RK3588_PD_RKVDEC1>;
-> >>>>> +		sram = <&vdec1_sram>;
-> >>>>> +		status = "okay";
-> >>>>> +	};
-> >>>> 
-> >>>> This is still missing the iommus, please add the iommus, they should be
-> >>>> 
-> >>>> supported/same as the one used for e.g. VOP2:
-> >>>>    compatible = "rockchip,rk3588-iommu", "rockchip,rk3568-iommu";
-> >>>> 
-> >>>> The VOP2 MMUs does have one extra mmu_cfg_mode flag in AUTO_GATING,
-> >>>> compared to the VDPU381 MMUs, however only the AV1D MMU should be
-> >>>> special on RK3588.
-> >>>> 
-> >>>> Please add the iommus :-)
-> >>> 
-> >>> When looking add the vendor DT/iommu driver I'm seeing serval quirks
-> >>> applied for vdec's iommus. Since it's rightly frowned upon adding such
-> >>> boolean-quirk-properties to upstream devicetrees, we'd at least need
-> >>> additional (fallback-) compatibles, even if it works with the iommu
-> >>> driver
-> >>> as is (what I doubt, but haven't tested). We need to be able to apply
-> >>> those
-> >>> quirks later without changing the devicetree (as usual) and I'm sure RK
-> >>> devs haven't added these quirks for the personal amusement.
-> >> 
-> >> Based on what I investigated the hw should work similar, and the quirks
-> >> mostly seem related to optimizations and sw quirks, like do not zap each
-> >> line, keep it alive even when pm runtime say it is not in use and other
-> >> quirks that seem to be more of sw nature on how to best utilize the hw.
-> > 
-> > I did some testing with the IOMMU but unfortunately, I'm only getting page
-> > fault errors. This may be something I'm doing wrong, but it clearly needs
-> > more investigation.
+> On 6/13/24 20:43, Reinette Chatre wrote:
+>> Hi Babu,
+>>
+>> On 5/24/24 5:23 AM, Babu Moger wrote:
+>>> If the BMEC (Bandwidth Monitoring Event Configuration) feature is
+>>> supported, the bandwidth events can be configured to track specific
+>>> events. The event configuration is domain specific. ABMC (Assignable
+>>> Bandwidth Monitoring Counters) feature needs event configuration
+>>> information to assign hardware counter to an RMID. Event configurations
+>>> are not stored in resctrl but instead always read from or written to
+>>> hardware directly when prompted by user space.
+>>>
+>>> Read the event configuration from the hardware during the domain
+>>> initialization. Save the configuration information in the rdt_hw_domain,
+>>> so it can be used for counter assignment.
+>>>
+>>> Signed-off-by: Babu Moger <babu.moger@amd.com>
+>>> ---
+>>> v4: Read the configuration information from the hardware to initialize.
+>>>       Added few commit messages.
+>>>       Fixed the tab spaces.
+>>>
+>>> v3: Minor changes related to rebase in mbm_config_write_domain.
+>>>
+>>> v2: No changes.
+>>> ---
+>>>    arch/x86/kernel/cpu/resctrl/core.c     |  2 ++
+>>>    arch/x86/kernel/cpu/resctrl/internal.h |  5 +++++
+>>>    arch/x86/kernel/cpu/resctrl/monitor.c  | 21 +++++++++++++++++++++
+>>>    3 files changed, 28 insertions(+)
+>>>
+>>> diff --git a/arch/x86/kernel/cpu/resctrl/core.c
+>>> b/arch/x86/kernel/cpu/resctrl/core.c
+>>> index ec93f6a50308..856c46d12177 100644
+>>> --- a/arch/x86/kernel/cpu/resctrl/core.c
+>>> +++ b/arch/x86/kernel/cpu/resctrl/core.c
+>>> @@ -542,6 +542,8 @@ static void domain_add_cpu(int cpu, struct
+>>> rdt_resource *r)
+>>>            return;
+>>>        }
+>>>    +    arch_domain_mbm_evt_config(hw_dom);
+>>> +
+>>>        list_add_tail_rcu(&d->list, add_pos);
+>>>          err = resctrl_online_domain(r, d);
+>>> diff --git a/arch/x86/kernel/cpu/resctrl/internal.h
+>>> b/arch/x86/kernel/cpu/resctrl/internal.h
+>>> index 5e7e76cd512f..60a1ca0a11a7 100644
+>>> --- a/arch/x86/kernel/cpu/resctrl/internal.h
+>>> +++ b/arch/x86/kernel/cpu/resctrl/internal.h
+>>> @@ -373,6 +373,8 @@ struct arch_mbm_state {
+>>>     * @ctrl_val:    array of cache or mem ctrl values (indexed by CLOSID)
+>>>     * @arch_mbm_total:    arch private state for MBM total bandwidth
+>>>     * @arch_mbm_local:    arch private state for MBM local bandwidth
+>>> + * @mbm_total_cfg:    MBM total bandwidth configuration
+>>> + * @mbm_local_cfg:    MBM local bandwidth configuration
+>>>     *
+>>>     * Members of this structure are accessed via helpers that provide
+>>> abstraction.
+>>>     */
+>>> @@ -381,6 +383,8 @@ struct rdt_hw_domain {
+>>>        u32                *ctrl_val;
+>>>        struct arch_mbm_state        *arch_mbm_total;
+>>>        struct arch_mbm_state        *arch_mbm_local;
+>>> +    u32                mbm_total_cfg;
+>>> +    u32                mbm_local_cfg;
+>>>    };
+>>
+>> Similar to the abmc_enabled member of rdt_hw_resource, these new
+>> members of rdt_hw_domain are architecture specific and should never be
+>> touched directly by resctrl fs code, for example, from mbm_config_show().
 > 
-> I re-tested and the addition of sram seem to now cause page faults, the
-> sram also need to be mapped in the iommu.
+> Need some clarification here.
 > 
-> However, doing more testing revealed that use of iommu present the same
-> issue as seen with hevc on rk3399, after a fail fluster tests continue
-> to fail until a reset.
+> I am thinking you want to introduce architecture specific routines to get
+> and set mbm_total_config/mbm_local_config for the domain.
+> Something like this.
 > 
-> Seeing how this issue was very similar I re-tested on rk3399 without
-> iommu and cma=1G and could observe that there was no longer any need to
-> reset after a failed test. Interestingly the score also went up from
-> 135 to 137/147.
-> 
-> Digging some more revealed that the iommu also is reset during the
-> internal rkvdec soft reset on error, leaving the iommu with dte_addr=0
-> and paging in disabled state.
-> 
-> Ensuring that the iommu was reconfigured after a failure fixed the issue
-> observed on rk3399 and I now also get 137/147 hevc fluster score using
-> the iommu.
-> 
-> Will send out a rkvdec hevc v2 series after some more testing.
-> 
-> Guessing there is a similar need to reconfigure iommu on rk3588, and my
-> initial tests also showed promising result, however more tests are
-> needed.
+> +int arch_get_mbm_evt_cfg(struct rdt_domain *d, enum resctrl_event_id eventid)
 
-I did some testing with the IOMMU. The good news is that it now works with the 
-SRAM.
-I am also able to hack the iommu driver to force a reset in case of an error 
-in the decoder. I'm not sure how to implement that with the IOMMU kernel API 
-though.
+The prefix for arch specific calls converged to "resctrl_arch_".
 
-Another issue is that resetting the iommu will drop all buffer addresses of 
-other decoding contexts that may be running in parallel.
+> +{
+> +       struct rdt_hw_domain *hw_dom = resctrl_to_arch_dom(d);
+> +
+> +       switch (eventid) {
+> +       case QOS_L3_OCCUP_EVENT_ID:
+> +               break;
+> +       case QOS_L3_MBM_TOTAL_EVENT_ID:
+> +               return hw_dom->mbm_total_cfg;
+> +       case QOS_L3_MBM_LOCAL_EVENT_ID:
+> +               return hw_dom->mbm_local_cfg;
+> +       }
+> +
+> +       /* Never expect to get here */
+> +       WARN_ON_ONCE(1);
+> +
+> +       return -1;
+> +}
+> +
+> +void arch_set_mbm_evt_cfg(struct rdt_domain *d,
+> +                         enum resctrl_event_id eventid, u32 val)
+> +{
+> +       struct rdt_hw_domain *hw_dom = resctrl_to_arch_dom(d);
+> +
+> +       switch (eventid) {
+> +       case QOS_L3_OCCUP_EVENT_ID:
+> +               break;
+> +       case QOS_L3_MBM_TOTAL_EVENT_ID:
+> +               hw_dom->mbm_total_cfg = val;
+> +               break;
+> +       case QOS_L3_MBM_LOCAL_EVENT_ID:
+> +               hw_dom->mbm_local_cfg = val;
+> +       }
+> +
+> +       return;
+> +}
+> +
 
-I *think* that the downstream mpp remaps the buffers in the iommu for each 
-frame, but I'm not sure about that either.
+I expected that a call to set the event configuration on an architecture to
+also interact with the hardware. Essentially what mon_event_config_write()
+does today, but in addition also sets the cached mbm_total_cfg/mbm_local_cfg.
 
-So running fluster with `-j 1` gives me the expected 129/135 passed tests, but 
-`-j 8` will start failing all tests after the first fail (well, first fail 
-because of decoder error).
+Part of this is done by the new MPAM portion [1]. With that the post-ABMC
+implementation of resctrl_arch_mon_event_config_read() may be what you
+have as arch_get_mbm_evt_cfg() above and resctrl_arch_mon_event_config_write()
+does the same as in [1] but with addition of updating the cached
+mbm_local_cfg/mbm_total_cfg within struct rdt_hw_domain. Would this work
+for ABMC?
+  
+Reinette
 
-> Regards,
-> Jonas
-> 
-> >>> If Detlev says
-> >>> iommu is out of scope for this series (which is valid), I'd say it's
-> >>> fine
-> >>> to leave them out for now (as no binding exists) and the HW works
-> >>> (obviously) fine without them.
-> >> 
-> >> Sure, use of MMU can be added later.
-> > 
-> > I'd rather go for that for now. I'll add that IMMU support is missing in
-> > the TODO file.
-> > 
-> >> Regards,
-> >> Jonas
-> >> 
-> >>>> Regards,
-> >>>> Jonas
-> >>>> 
-> >>>>>   };
-> >>>>>   
-> >>>>>   #include "rk3588s-pinctrl.dtsi"
-
-
---nextPart2196199.Mh6RI2rZIc
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEonF9IvGrXNkDg+CX5EFKUk4x7bYFAmZ90gsACgkQ5EFKUk4x
-7bYa6gf+MiaSK8Y5oLb5OSnCyDTkgoikfs0H7IRjhc9JfuVseIw/XGzQ5T8i83SE
-stQe2/brIQeUu5zchivSMvfmJg+ru2YMamAbT/mnMcpB3yeDrAqNBEvkssw4NHgg
-bu2QBJgjJHOyNshda9CX5tCs1qkZG2O90QF/UPl01LaLxQ9ELSlEAcbDhsl7bwHJ
-2jaPH9Jjx/aKF85ejNCG1/uprnRp0Lt6rSaPl7tmxBbod/kzU92WZmAoDOvoroRr
-d8VKGBINQ5pJKfBo4+tavqd7UR1OAH0cVR4E4b2kGjG57qOU32qizZoF3qr/nQBl
-A3ePYf8XuUKjf33eZ2SkF1kqF2fWOw==
-=JJQJ
------END PGP SIGNATURE-----
-
---nextPart2196199.Mh6RI2rZIc--
-
-
+[1] https://lore.kernel.org/lkml/20240614150033.10454-21-james.morse@arm.com/
 
 
