@@ -1,109 +1,165 @@
-Return-Path: <linux-kernel+bounces-232870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBC5991AF4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:49:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6868891AF50
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:50:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7012281812
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:49:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B2D61C22A29
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8BE6194A4E;
-	Thu, 27 Jun 2024 18:49:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67953A1DD;
+	Thu, 27 Jun 2024 18:50:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FdWy26Es"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V4YqFdCL"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE121CAB7
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 18:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635762139D6
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 18:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719514168; cv=none; b=CMsmyg3TcfDolw7T/hZGQhvyUx1wWqEZn6/sYbILVDmRyYXDhS96DJ+6+mxEnnBVDG7uSn1dbZyEO77ta1SYBb/reK61Sl3zlfeIj1s5gQJVazq2kV7021wNHDZgKgo1fcb+kx1OAHL5znXQOoeGyoRIy1z93i0+EC0O6qyLW60=
+	t=1719514206; cv=none; b=BcgqyTd/TbOkfkzMUTGNKxL6Rg5MvVHohv42cEENHhGvbTn5KrKIZYNvjCdt5b5v0MEmAIc2iB5hIGnKpnO/kZCGvCdSZv+Lazqz8jkIGkjEkA60ShPbZDTdlFNdEapEG2eCBz9vjB4T/jItIbYSRQz6q/e4/vmc5mtDAoSZzcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719514168; c=relaxed/simple;
-	bh=+loIEVQbiIvCdpK080P2B2BC20Dlavm8jb2rv/XemnI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c/hdsukevZLgGUva289ZfaGtb9taTJ5fpnqzY9vKh77TMg5Tu9xN8bsCDb119UY9c1P2YpEYHQpYrdespiNRDjXfd8KMEV4bo8dYz3k/5DOmI6lGcGZeEqQ7FViMAa1Ps4fukiITVuiEHDF1fzoNcfzJeJssVQD0BT5B2zAFT4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FdWy26Es; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52ce674da85so5386222e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 11:49:26 -0700 (PDT)
+	s=arc-20240116; t=1719514206; c=relaxed/simple;
+	bh=GRu5M8rp//ayqaCz2ar3NwTTXa4YboEGx6o4Bc33hEA=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type; b=NdL8MqoQErFpqky4eydpXLCDctwYKQFwoG+Y7+osBaG+LxZC+5kTTE3FFvtqSE/ZNtdQWIBnyLtRDUdahZ53mtK2K+39fTBpux3G0XR/SKvPkkUa0ByONglqigayKMPAoDCyuQcQ/apMQKfYk3mrtxisILxQ60ZaqAtOckBR0r4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V4YqFdCL; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a72604c8c5bso571629566b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 11:50:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719514164; x=1720118964; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dVlORxLyi+No4z6mzakpdO+uVb1Q8CeU42Yrc8ZopLA=;
-        b=FdWy26EsYMg1O8PZFwF05yLh8qmyWIh/bJIZBfTXIukjW4SD8S5so7RUAejlmOfJJ5
-         F8dC/MAIBBnDOPqFo8P66rB+OqDbAZbcRRxmTQkNo5lQUZPGwzuzn6asIVZ8sX2vzp3H
-         C4zbJKzGlGY6dxTGKim0wOaCvWKwtkAGxPnjDtgvanFS5+gLuYlH6ITjqQDYV3JxiOGh
-         JQP/yZGtNtV6CocGq8efMJJFUfgo8z1BYZ2kOFvCqde0izI9T9AwjK+8+UM9UZwzRBuC
-         sIKIe12ebCEfgxn9Ep8s5KqEW1+FYW4bcBnMAbVDKFWgyJqmsb975PtOymgxy05VIGz4
-         4Vmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719514164; x=1720118964;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1719514202; x=1720119002; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:from:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dVlORxLyi+No4z6mzakpdO+uVb1Q8CeU42Yrc8ZopLA=;
-        b=lzedmeKKM5+v7a25RAM4ezb9XLF+a/jG+nyhSDGIRMXKWkSmWJ44H/ZOafQfjoa03q
-         gaEnbY8sBj7QfOwlRRgWsFfZKnNM2ZcBviN9s83g0u4r9mfqutyP6X/qG7eHAg1hqDHI
-         w8kd53XCSnJ8X/cgXbG1qf3hSLACclcfjubUGgqD4uiAdIlSnNXM9jpvERXM9Q/l0uf6
-         lEa4tNKpVG0YAVKEuK/azF0FMfD4CdT9Lm3hkcfyH3CU1/TXrKeYHER05Dvzub/YMbXK
-         KGe3ewut9sW4VMqzEVe+FMjx+lGXMgaRavgYzagNpfVgMciO3HwKmIYfdqhctR1sskej
-         cPyA==
-X-Forwarded-Encrypted: i=1; AJvYcCXF5nFML2sdz4VDqp14l7563VWvFuvvQqGPPSjNtlU+AgtcTXjuI8D4Td4mptzK4bSK/+W0ABaGuBZUrY9Rah+QrfwpwfvNcJrYzCEv
-X-Gm-Message-State: AOJu0YyTDj23d2cRNq59cqqKD1q76FC+tNBqD+7gKmlg9NBNCexBliHM
-	5w5kb11GIbbq6FxoFbXSM2WXEd7KcZnXnKA65WfvALHP6i4rNW9Ij8cEDFnDmzY=
-X-Google-Smtp-Source: AGHT+IHjokj2V4brw5oo7jZhZncGgRxq7Wc7ZcWz0FJNgfC3Iqf86Brk3YH4RGDnAqwGbGyYRtJGkA==
-X-Received: by 2002:ac2:464d:0:b0:52c:a88b:9997 with SMTP id 2adb3069b0e04-52ce185d20dmr11430836e87.49.1719514164382;
-        Thu, 27 Jun 2024 11:49:24 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab101c5sm20119e87.79.2024.06.27.11.49.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 11:49:23 -0700 (PDT)
-Date: Thu, 27 Jun 2024 21:49:21 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
-	Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] ASoC: codecs: lpass-rx-macro: Simplify with devm
- allocations
-Message-ID: <dalyp774uk4ugomvdtrjkjpenfogx6dkx4vtiq6serc4unzasw@xa4adquvcijn>
-References: <20240627-b4-qcom-audio-lpass-codec-cleanups-v1-0-ede31891d238@linaro.org>
- <20240627-b4-qcom-audio-lpass-codec-cleanups-v1-1-ede31891d238@linaro.org>
+        bh=tKnIJ4iyD5W8ajGZ6svI0H9mupI9Vpd8vKt8PPwTVAM=;
+        b=V4YqFdCL/5LcfihxBOy8SZFXioG5wLV7ziGcsPKExe1t51MTI7d8WKiTJKRJlg64JZ
+         aRy6CxQxuMH+t+Jj19zsQA1+7J3OvRiGg29pfgwTuaM6qwOBdKr9XyZyWTESbpRehE/i
+         1vBOP/FGhdTAqUlyYZl9s0dBSrIVqWMNJ2u8vOaPyPfHweMWUKcYW9IMW+gXAba3pr6Q
+         N/rMRtMj9mLgXqqcDekqVyGYoGA8dmgkzw0+fAe2LJzbQJmPTr/7awux1szuDOCk06Io
+         9icFuTBa/frdPg9OJeBbGOCNdrpUKNzo8XdpRC4oYejPL+J5IgIoQA25pmxsl1cOez/y
+         f1aQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719514202; x=1720119002;
+        h=content-transfer-encoding:to:subject:from:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=tKnIJ4iyD5W8ajGZ6svI0H9mupI9Vpd8vKt8PPwTVAM=;
+        b=tcuLbq4IMaB6vI/3NvRqx8S/rGcTERhEIzewmaPB1fiVSo3eMTEntx/fQXUa38fI/c
+         byAqVUEGvpZEuW/Y04MiG96apgKp++qXOJf2pMilM675FHKt4CazCGLUaWBRuXBG4Axs
+         5AqXzZ3t70OBvk8GRxZ7LjuT1BzzuE4zgyCQoH3s2f1QKQqu6ztB0AZCK1akSbRWkrqS
+         A/m9iLit6SMJ2/3O/eCcH5BSXazK/OiHvhwTsNzponNs18txjZMchB7ZqYFZyeGObnnV
+         0jkpozLAOoZMEQlWJ6Jk2Om5z2cOjS4I5lJx9tzN5kEgi8PqCh+ciZjnP5W62CNxXvR2
+         gk1A==
+X-Gm-Message-State: AOJu0YxelKxoKMrXh/jL4iPfkjuxYrIgTP/5VskLjvsI/1osZYiiSt4W
+	5QPahn3FwrDeD0MqGDjVVRumGywXylf/j5ZtP/eWJgE1FgRK/6nmE6XQzA==
+X-Google-Smtp-Source: AGHT+IH+YtWaIe9j0Uys8o5uEUeSpdjGYqhGAPquiuELoKtsS9HhB4e/ujgdMqergocspgjF+jsEYg==
+X-Received: by 2002:a17:906:1d42:b0:a6f:b6c3:fb48 with SMTP id a640c23a62f3a-a7245b56e16mr948905266b.29.1719514202036;
+        Thu, 27 Jun 2024 11:50:02 -0700 (PDT)
+Received: from [192.168.178.20] (dh207-41-166.xnet.hr. [88.207.41.166])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab065646sm1798466b.111.2024.06.27.11.50.01
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Jun 2024 11:50:01 -0700 (PDT)
+Message-ID: <a40298f8-fedd-46bd-97c9-9c2775bda17a@gmail.com>
+Date: Thu, 27 Jun 2024 20:50:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240627-b4-qcom-audio-lpass-codec-cleanups-v1-1-ede31891d238@linaro.org>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+From: Mirsad Todorovac <mtodorovac69@gmail.com>
+Subject: =?UTF-8?Q?=5BPROBLEM_linux-next=5D_make_randconfig=3A_kernel/kallsy?=
+ =?UTF-8?B?bXMuYzo0OTI6MTc6IGVycm9yOiDigJhzdHJjcHnigJkgc291cmNlIGFyZ3VtZW50?=
+ =?UTF-8?Q?_is_the_same_as_destination_=5B-Werror=3Drestrict=5D?=
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 27, 2024 at 05:23:43PM GMT, Krzysztof Kozlowski wrote:
-> Allocate the default register values array with devm interface to reduce
-> number of error paths.  The array is not used after initializing regmap,
-> so move the freeing to place right after devm_regmap_init_mmio() to make
-> it obvious.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  sound/soc/codecs/lpass-rx-macro.c | 16 +++++++++-------
->  1 file changed, 9 insertions(+), 7 deletions(-)
-> 
+Hi all,
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+On vanilla linux-next 20240627 tree, there appears to be something od with this KCONFIG_SEED=0x6C165C4C.
+
+This construct should prevent the kernel/kallsyms.c:492:17: error: ‘strcpy’ source argument is the same as destination
+error, so I am perplexed?
+
+491         if (name != buffer)
+492                 strcpy(buffer, name);
 
 
--- 
-With best wishes
-Dmitry
+
+$ time nice make -j 36 bindeb-pkg |& tee ../err-6.10-rc5-next-20240627-02.log; date
+  GEN     debian
+dpkg-buildpackage --build=binary --no-pre-clean --unsigned-changes -R'make -f debian/rules' -j1 -a$(cat debian/arch)
+dpkg-buildpackage: info: source package linux-upstream
+dpkg-buildpackage: info: source version 6.10.0-rc5-3
+dpkg-buildpackage: info: source distribution jammy
+dpkg-buildpackage: info: source changed by marvin <marvin@defiant>
+ dpkg-source --before-build .
+dpkg-buildpackage: info: host architecture amd64
+ make -f debian/rules binary
+#
+# No change to .config
+#
+mkdir -p /home/marvin/linux/kernel/linux-next/tools/objtool && make O=/home/marvin/linux/kernel/linux-next subdir=tools/objtool --no-print-directory -C objtool 
+  INSTALL libsubcmd_headers
+  CALL    scripts/checksyscalls.sh
+  UPD     init/utsversion-tmp.h
+  CC      init/version.o
+  AR      init/built-in.a
+  CC      kernel/kallsyms.o
+  CC      kernel/kallsyms_selftest.o
+  CC      kernel/vmcore_info.o
+  CC      kernel/elfcorehdr.o
+  CC      kernel/crash_reserve.o
+  CC      kernel/kexec_core.o
+  CC      kernel/crash_core.o
+  CC      kernel/kexec_file.o
+  UPD     kernel/config_data
+  CC      kernel/kprobes.o
+  CC      kernel/hung_task.o
+  CC      kernel/seccomp.o
+  CC      kernel/tracepoint.o
+  CC      kernel/irq_work.o
+  CC      kernel/static_call.o
+  CC      kernel/static_call_inline.o
+  CC      kernel/context_tracking.o
+  CC      kernel/torture.o
+  CC      kernel/iomem.o
+  CC      kernel/rseq.o
+  CC      kernel/watch_queue.o
+  GZIP    kernel/config_data.gz
+  CC      kernel/configs.o
+kernel/kallsyms.c: In function ‘__sprint_symbol.constprop’:
+kernel/kallsyms.c:492:17: error: ‘strcpy’ source argument is the same as destination [-Werror=restrict]
+  492 |                 strcpy(buffer, name);
+      |                 ^~~~~~~~~~~~~~~~~~~~
+cc1: all warnings being treated as errors
+make[6]: *** [scripts/Makefile.build:244: kernel/kallsyms.o] Error 1
+make[6]: *** Waiting for unfinished jobs....
+make[5]: *** [scripts/Makefile.build:485: kernel] Error 2
+make[4]: *** [Makefile:1934: .] Error 2
+make[3]: *** [debian/rules:74: build-arch] Error 2
+dpkg-buildpackage: error: make -f debian/rules binary subprocess returned exit status 2
+make[2]: *** [scripts/Makefile.package:121: bindeb-pkg] Error 2
+make[1]: *** [/home/marvin/linux/kernel/linux-next/Makefile:1555: bindeb-pkg] Error 2
+make: *** [Makefile:240: __sub-make] Error 2
+
+real	0m2.962s
+user	0m12.970s
+sys	0m5.293s
+Thu Jun 27 20:42:38 CEST 2024
+$ 
+
+Hope this helps.
+
+Best regards,
+Mirsad Todorovac
 
