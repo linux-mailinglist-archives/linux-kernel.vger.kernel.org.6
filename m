@@ -1,117 +1,156 @@
-Return-Path: <linux-kernel+bounces-231720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FE4C919CD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 03:05:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5803F919C87
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 03:00:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C0C1286903
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 01:05:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0273C1F236B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 01:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC51613D;
-	Thu, 27 Jun 2024 01:05:32 +0000 (UTC)
-Received: from out198-27.us.a.mail.aliyun.com (out198-27.us.a.mail.aliyun.com [47.90.198.27])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21EA779CD;
+	Thu, 27 Jun 2024 01:00:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X9ba/YQc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DAFD17E9;
-	Thu, 27 Jun 2024 01:05:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.198.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374E24C62;
+	Thu, 27 Jun 2024 01:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719450332; cv=none; b=oWvsRQJH0TfREYJitTfODqAOFQVKfTtaKXQ6nnFvAdAXN5ktkxF37ApVNeZ5uz9wEZAUcOtsdsq4GdECciVAjI3udddqhQwIOfkJyIVMm5zac2EmGuzjDnCvlQxdQ9unGEEZP9MagSROMrfbIzV2c8d9y6pKHQZnG0Jc7wUj8IQ=
+	t=1719450034; cv=none; b=He0RPVxCXXEtnYX0+BUOySTuxvgF5nMxG1Z7mDwuf+k+8ogogIXpQprqOl48w5qG47nkLWXNKLmbe6Czr9aPu5ZDDhnUgowZiP66o1zjZa/4kVQRozDMv/z1wtSFneuWuOjeHWxnySWKhEqrFTDjDeOZmjjJS8IiYXrQkWLNd04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719450332; c=relaxed/simple;
-	bh=0J0jxoRZ8knfoOrv0tm9C46jVzfdlWNe5MDqy3Cayeo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bUPvOeLLN3FxUsNSz3Vm3wPvIWO9qj7E3ssAuFkvornpcvSEBBMuzk7hb7ZtgyGHlwmYtKcb4Iz4Ui+HjuXOtepAPD58wcKLD/WlIboARfB9Okk63QMLaWiJ8RXmMvBSRHQp1AsUTRwmRsG9IsBUisXVUY4PXQadvePHS4i4LIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ttyinfo.com; spf=pass smtp.mailfrom=ttyinfo.com; arc=none smtp.client-ip=47.90.198.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ttyinfo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ttyinfo.com
-X-Alimail-AntiSpam:AC=CONTINUE;BC=0.08894578|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.00934811-0.000993108-0.989659;FP=0|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033037088118;MF=zhoushengqing@ttyinfo.com;NM=1;PH=DS;RN=7;RT=7;SR=0;TI=SMTPD_---.YB2AYbC_1719449990;
-Received: from tzl..(mailfrom:zhoushengqing@ttyinfo.com fp:SMTPD_---.YB2AYbC_1719449990)
-          by smtp.aliyun-inc.com;
-          Thu, 27 Jun 2024 08:59:51 +0800
-From: Zhou Shengqing <zhoushengqing@ttyinfo.com>
-To: helgaas@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	lkp@intel.com,
-	llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev,
-	zhoushengqing@ttyinfo.com
-Subject: [PATCH v3] PCI: Enable io space 1k granularity for intel cpu root port
-Date: Thu, 27 Jun 2024 00:58:56 +0000
-Message-Id: <20240627005856.11449-1-zhoushengqing@ttyinfo.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240626152623.GA1467429@bhelgaas>
-References: <20240626152623.GA1467429@bhelgaas>
+	s=arc-20240116; t=1719450034; c=relaxed/simple;
+	bh=LUacYIlT79rW04FeLla3/n41llR1qlk2oIplHlsSCo8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=C+V4ZHKdhToK6fhXbpM1oPUEjO4AJ4DwN7v5FvcWb4fl/4ajfSeMNgsn/JjeFivqnuHpPxEne/b9/AQ/hq3gVCGOKP4fZUks/rQPTl6gPgm2mRLcC+QEBlxgSr9tnepo3Jp7i5+6TPMACZx7WSfQ/t0QkWuybE4hqlQGd/L/K78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X9ba/YQc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01C54C116B1;
+	Thu, 27 Jun 2024 01:00:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719450034;
+	bh=LUacYIlT79rW04FeLla3/n41llR1qlk2oIplHlsSCo8=;
+	h=From:Subject:Date:To:Cc:From;
+	b=X9ba/YQcgXhwCm8/TJ8Uh4mp258noDC2rr0AaFBl0BEPkB9XQSpA9M/tEdKbW40tB
+	 X+Z6OGP+Si5nRlkpsVLibkf4AiJAhojO5s5V4kpdXBIJSvoviXwiDj2FaKW9uWMIAF
+	 4MJe8FP26sA3j5dAvuApRF0se7CFUhvx/9I/7Ypf06bwRsiLc+H3ZydlyzSjxhuOQy
+	 R4nTwxqZPHonjDzgUF/boDRbHPm/GCueYfwTcNMQfuNdRA6mEcLGkfR/cpyvCK45yD
+	 JEtcOJ0ldQB1gqsLGla+o6eQDD+OE0qG0jN1ui8Y+8pFdGfOAeReIE+TaGQIdyro9B
+	 lzDTU8RbwnwwQ==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH 00/10] fs: multigrain timestamp redux
+Date: Wed, 26 Jun 2024 21:00:20 -0400
+Message-Id: <20240626-mgtime-v1-0-a189352d0f8f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKS5fGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDMyMz3dz0kszcVF3T5BQLgyRDixQLQwMloOKCotS0zAqwQdGxtbUA/AJ
+ kIFgAAAA=
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Steven Rostedt <rostedt@goodmis.org>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, 
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+ Chandan Babu R <chandan.babu@oracle.com>, 
+ "Darrick J. Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, 
+ Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, 
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
+ Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: kernel-team@fb.com, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+ linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
+ linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
+ Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3126; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=LUacYIlT79rW04FeLla3/n41llR1qlk2oIplHlsSCo8=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmfLmuyaAFpK8/qwLflf3v4ChVsLVE+AkNZRWYo
+ JubBGmnD9+JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZny5rgAKCRAADmhBGVaC
+ FcVxEACn53hnX+vD8wOy1qsZk+3QM/qqzDCO7uy8RgExJI106gkJfuFX8+lcL+HRdrW2QfOGSw+
+ hO7Mt3G37n3x1PsLI2i2L3wKymPJkPtkN0gCUDRhqkHhXfjGWMiAYKcupUoOQgd3/5sUw/wVOCn
+ gxb4joKDPQjyDOuFdQP/iiNryS6CSID8IXYPqpgksIsTrI82/iB6MW5X0/XiO53z+TGnMEIyLHy
+ P62o2CEnPUm77LjIIamrxVwCpX1qLDDUt4zXOf5PU+KQq+Cmo+3hFTZEYW1qFsWUOPaKoGLW2vc
+ cCHBezSmioQNmG4EyshecGnFRdqkKvZM69d9AXpw0PjJOpF1X90HsqY9e46vLExXidPMU3sOo01
+ dFvdrSLUHmDnX7cmaEakCVuKv+EQRzodyHNKI12T9IsuPl0cXsJVgWTlunlLF2nnHPp4uGiC0K6
+ Dx0bk6gvhtz/eH66y2wnXWr0Q3xAMJ/SxYdqWfIArsqDw7LBA40+erE6CKTDPAf9VRsfTcO0ura
+ SaHhLn470dWvbxOVa/L15AfDgNL+Y24+RWVrD3UYAOmDIKDyj3Ki+s8359EemA9FRV8FGJhjUhL
+ ij+SmnVh0io7cDczz/QZh+y5Cy/DLAd3/lDWZuSoTZVLrvn5tepmBjcI0URpN1uvHG6ODJ3s/3M
+ vO1R8IE1b5/DaDA==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-This patch add 1k granularity for intel root port bridge.Intel latest
-server CPU support 1K granularity,And there is an BIOS setup item named
-"EN1K",but linux doesn't support it. if an IIO has 5 IOU (SPR has 5 IOUs)
-all are bifurcated 2x8.In a 2P server system,There are 20 P2P bridges
-present.if keep 4K granularity allocation,it need 20*4=80k io space,
-exceeding 64k.I test it in a 16*nvidia 4090s system under intel eaglestrem
-platform.There are six 4090s that cannot be allocated I/O resources.
-So I applied this patch.And I found a similar implementation in quirks.c,
-but it only targets the Intel P64H2 platform.
+At LSF/MM this year, we had a discussion about the inode change
+attribute. At the time I mentioned that I thought I could salvage the
+multigrain timestamp work that had to be reverted last year [1].  That
+version had to be reverted because it was possible for a file to get a
+coarse grained timestamp that appeared to be earlier than another file
+that had recently gotten a fine-grained stamp.
 
-Signed-off-by: Zhou Shengqing <zhoushengqing@ttyinfo.com>
+This version corrects the problem by establishing a global ctime_floor
+value that should prevent this from occurring. In the above situation
+that was problematic before, the two files might end up with the same
+timestamp value, but they won't appear to have been modified in the
+wrong order.
+
+That problem was discovered by the test-stat-time gnulib test. Note that
+that test still fails on multigrain timestamps, but that's because its
+method of determining the minimum delay that will show a timestamp
+change will no longer work with multigrain timestamps. I have a patch to
+change the testcase to use a different method that I will post soon.
+
+The big question with this set is whether the performance will be
+suitable. The testing I've done seems to show performance parity with
+multigrain timestamps enabled, but it's hard to rule this out regressing
+some workload.
+
+This set is based on top of Christian's vfs.misc branch (which has the
+earlier change to track inode timestamps as discrete integers). If there
+are no major objections, I'd like to let this soak in linux-next for a
+bit to see if any problems shake out.
+
+[1]: https://lore.kernel.org/linux-fsdevel/20230807-mgctime-v7-0-d1dec143a704@kernel.org/
+
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- drivers/pci/probe.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+Jeff Layton (10):
+      fs: turn inode ctime fields into a single ktime_t
+      fs: uninline inode_get_ctime and inode_set_ctime_to_ts
+      fs: tracepoints for inode_needs_update_time and inode_set_ctime_to_ts
+      fs: add infrastructure for multigrain timestamps
+      fs: add percpu counters to count fine vs. coarse timestamps
+      fs: have setattr_copy handle multigrain timestamps appropriately
+      xfs: switch to multigrain timestamps
+      ext4: switch to multigrain timestamps
+      btrfs: convert to multigrain timestamps
+      tmpfs: add support for multigrain timestamps
 
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index 5fbabb4e3425..909962795311 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -461,6 +461,9 @@ static void pci_read_bridge_windows(struct pci_dev *bridge)
- 	u32 buses;
- 	u16 io;
- 	u32 pmem, tmp;
-+	u16 ven_id, dev_id;
-+	u16 en1k = 0;
-+	struct pci_dev *dev = NULL;
- 	struct resource res;
- 
- 	pci_read_config_dword(bridge, PCI_PRIMARY_BUS, &buses);
-@@ -478,6 +481,26 @@ static void pci_read_bridge_windows(struct pci_dev *bridge)
- 	}
- 	if (io) {
- 		bridge->io_window = 1;
-+		if (pci_is_root_bus(bridge->bus)) {
-+			list_for_each_entry(dev, &bridge->bus->devices, bus_list) {
-+				pci_read_config_word(dev, PCI_VENDOR_ID, &ven_id);
-+				pci_read_config_word(dev, PCI_DEVICE_ID, &dev_id);
-+				if (ven_id == PCI_VENDOR_ID_INTEL && dev_id == 0x09a2) {
-+					/*IIO MISC Control offset 0x1c0*/
-+					pci_read_config_word(dev, 0x1c0, &en1k);
-+				}
-+			}
-+		/*
-+		 *Intel ICX SPR EMR GNR
-+		 *IIO MISC Control (IIOMISCCTRL_1_5_0_CFG) — Offset 1C0h
-+		 *bit 2:Enable 1K (EN1K)
-+		 *This bit when set, enables 1K granularity for I/O space decode
-+		 *in each of the virtual P2P bridges
-+		 *corresponding to root ports, and DMI ports.
-+		 */
-+		if (en1k & 0x4)
-+			bridge->io_window_1k = 1;
-+		}
- 		pci_read_bridge_io(bridge, &res, true);
- 	}
- 
+ fs/attr.c                        |  52 +++++++--
+ fs/btrfs/file.c                  |  25 +----
+ fs/btrfs/super.c                 |   3 +-
+ fs/ext4/super.c                  |   2 +-
+ fs/inode.c                       | 222 +++++++++++++++++++++++++++++++++++----
+ fs/stat.c                        |  39 ++++++-
+ fs/xfs/libxfs/xfs_trans_inode.c  |   6 +-
+ fs/xfs/xfs_iops.c                |   6 +-
+ fs/xfs/xfs_super.c               |   2 +-
+ include/linux/fs.h               |  61 +++++++----
+ include/trace/events/timestamp.h | 173 ++++++++++++++++++++++++++++++
+ mm/shmem.c                       |   2 +-
+ 12 files changed, 514 insertions(+), 79 deletions(-)
+---
+base-commit: 33b321ac3a51e590225585f41c7412b86e987a0d
+change-id: 20240626-mgtime-5cd80b18d810
+
+Best regards,
 -- 
-2.39.2
+Jeff Layton <jlayton@kernel.org>
 
 
