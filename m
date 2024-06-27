@@ -1,279 +1,298 @@
-Return-Path: <linux-kernel+bounces-233146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37FF091B2D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:34:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC82291B2DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EE71B22EB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:34:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78E5D1F21ABD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:36:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D91D1A2FCC;
-	Thu, 27 Jun 2024 23:34:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 853E71A2FCE;
+	Thu, 27 Jun 2024 23:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Wg5kRHy/"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rk1T/b3O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993FC199E93
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 23:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9554E199E93;
+	Thu, 27 Jun 2024 23:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719531272; cv=none; b=Vquv+ehmdL8aeIpr/zH3eAz6hX/Rv8ua/BRB/C2ebIC1Juzz9dv/JbNgrawlXVJSSKpGCmj1VTxu1JuR9WhUysetjFczNGAZ2MF20BdEBosOUJfXedOqDsWvMgquqz4Zg6PL57n1fA8wnmJfPIcU5SJZBt4CivuuZZrj/0YdBMQ=
+	t=1719531384; cv=none; b=gv0GlpTBst4vqOc0pawe/LfOx1eobzmetGabu4VJXY9AqxQkObyANk/hdh6TU1gKh8LtVQgjcgHhIeoFfGylIyFEaUAV/qQPoc6Ig0O5tgdXe7W1ki+Yr/E230f+/3lzG8hbpnhv3G/buMVDjKAqIpXDMkv9ksHnEbQmvP47fOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719531272; c=relaxed/simple;
-	bh=vlu87FoUUsGQMD4iscqLZ1GYaFUjC5nG7aYPk6GJeAE=;
+	s=arc-20240116; t=1719531384; c=relaxed/simple;
+	bh=YlHR2LPPMByutX599IR6915akRVbXvoukaiuOwUQaYY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ScBou5vwtT0Sx0bfQu+Mvat/yT9BTum9e9gzEiBAZVjPJFZTLeivYctsvFz04Qyaxou/8utbTdWd7fGk/EvpKvQra5F5WfEebbGenjbVHD7mV9OGJI2JzSY6STEBTxR62rcIyIfL5f9opEz7BiauBDBx0jFRZaKCV3EDIfCGsd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Wg5kRHy/; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: hawk@kernel.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1719531267;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rlKYYvcrAhje7I3jr3QA/EGpapoyOIv7xLn5q2CRVCc=;
-	b=Wg5kRHy/H+aJGY3Lu99Av7zHqOzqYCUgh19hcBVLpA3b3SHO/iMH6mjIjflbx5X4vgfVcR
-	fWpc+deoyN3nVhVfx9h+JqEVK+8u+drcKEcIKAOXOamuSRvfUcGU9WuBMS/dcQKia9AlTq
-	kN2bW+XxAWfAcXF+IbgEkt8LKtLWwjM=
-X-Envelope-To: tj@kernel.org
-X-Envelope-To: cgroups@vger.kernel.org
-X-Envelope-To: yosryahmed@google.com
-X-Envelope-To: hannes@cmpxchg.org
-X-Envelope-To: lizefan.x@bytedance.com
-X-Envelope-To: longman@redhat.com
-X-Envelope-To: kernel-team@cloudflare.com
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Date: Thu, 27 Jun 2024 16:34:21 -0700
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Jesper Dangaard Brouer <hawk@kernel.org>
-Cc: tj@kernel.org, cgroups@vger.kernel.org, yosryahmed@google.com, 
-	hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com, 
-	kernel-team@cloudflare.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V4 2/2] cgroup/rstat: Avoid thundering herd problem by
- kswapd across NUMA nodes
-Message-ID: <4n3qu75efpznkomxytm7irwfiq44hhi4hb5igjbd55ooxgmvwa@tbgmwvcqsy75>
-References: <171952310959.1810550.17003659816794335660.stgit@firesoul>
- <171952312320.1810550.13209360603489797077.stgit@firesoul>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VW6vnB7saRpCW76KFMb9k9aFuZlM9odmFICT02SY6Kbw6vGeeMLXhCsd9kbAwA9mEv2cIiEIlab3S2jI2nuzb2bioGhhSOwB53ocKKcta4r7SEezoD8BNE12tdb+RXIY66zb1Tn18COwT5SLy7ZCqeqvfxSC9NnuHcuEyF9XfEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rk1T/b3O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6B99C2BBFC;
+	Thu, 27 Jun 2024 23:36:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719531384;
+	bh=YlHR2LPPMByutX599IR6915akRVbXvoukaiuOwUQaYY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Rk1T/b3O35FrCfDoNan/hmqA8EFzFFclfO87fFxyDw8bHgqk3uf+zevzfwbno7/SL
+	 tcH7qSL766kN3IZmLK464Izx3a9uEdA5D0DHiYrT4CTfLk6ULtNLgcWnohg9qIpRnL
+	 fz7gfk3ef9CAX9p7DjEtauQoOPIfi3yziJnYs5oy5Un8jTM4kLoEOCr+kMeGOqjyUd
+	 /ANIEjhqZlVuYqDe46t3EVK5mlXHbXjRf40KjiV6WwrQFj5j1Rl1vbhnSH0+uu2IQp
+	 XFI+kPzD+Pjh9QSUW9BHsRR1WeYZ5VPB4vz0b+dcoZuP/SCefNuTyU7g8L8uxqB84m
+	 AobsiTx6Jgy6Q==
+Date: Thu, 27 Jun 2024 16:36:22 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Chen Yu <yu.c.chen@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>, acme@redhat.com,
+	Fernand Sieber <sieberf@amazon.com>,
+	linux-perf-users <linux-perf-users@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 2/3] perf sched map: Add support for multiple task
+ names using CSV
+Message-ID: <Zn33dkUPuDdVD8KV@google.com>
+References: <20240626091550.46707-1-vineethr@linux.ibm.com>
+ <20240626091550.46707-3-vineethr@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <171952312320.1810550.13209360603489797077.stgit@firesoul>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20240626091550.46707-3-vineethr@linux.ibm.com>
 
-On Thu, Jun 27, 2024 at 11:18:56PM GMT, Jesper Dangaard Brouer wrote:
-> Avoid lock contention on the global cgroup rstat lock caused by kswapd
-> starting on all NUMA nodes simultaneously. At Cloudflare, we observed
-> massive issues due to kswapd and the specific mem_cgroup_flush_stats()
-> call inlined in shrink_node, which takes the rstat lock.
+On Wed, Jun 26, 2024 at 02:45:49PM +0530, Madadi Vineeth Reddy wrote:
+> To track the scheduling patterns of multiple tasks simultaneously,
+> multiple task names can be specified using a comma separator
+> without any whitespace.
 > 
-> On our 12 NUMA node machines, each with a kswapd kthread per NUMA node,
-> we noted severe lock contention on the rstat lock. This contention
-> causes 12 CPUs to waste cycles spinning every time kswapd runs.
-> Fleet-wide stats (/proc/N/schedstat) for kthreads revealed that we are
-> burning an average of 20,000 CPU cores fleet-wide on kswapd, primarily
-> due to spinning on the rstat lock.
+> Sample output for --task-name perf,wdavdaemon
+> =============
+>  .  *A0  .   .   .   .   -   .   131040.641346 secs A0 => wdavdaemon:62509
+>  .   A0 *B0  .   .   .   -   .   131040.641378 secs B0 => wdavdaemon:62274
+>  -  *-   -   -   -   -   -   -   131040.641379 secs
+> *C0  .   B0  .   .   .   .   .   131040.641572 secs C0 => wdavdaemon:62283
 > 
-> To help reviewer follow code: When the Per-CPU-Pages (PCP) freelist is
-> empty,
-
-Remove the "When the Per-CPU-Pages (PCP) freelist is empty" as there are
-a lot more conditions needed for the waking up kswapds which are not
-needed to be explained here. Just "__alloc_pages_slowpath waking up
-kswapds given the allocation context" or similar text should suffice.
-
-> __alloc_pages_slowpath calls wake_all_kswapds(), causing all
-> kswapdN threads to wake up simultaneously. The kswapd thread invokes
-> shrink_node (via balance_pgdat) triggering the cgroup rstat flush
-> operation as part of its work. This results in kernel self-induced rstat
-> lock contention by waking up all kswapd threads simultaneously.
-> Leveraging this detail: balance_pgdat() have NULL value in
-> target_mem_cgroup, this cause mem_cgroup_flush_stats() to do flush with
-> root_mem_cgroup.
+> ...
 > 
-> To avoid this kind of thundering herd problem, kernel previously had a
-> "stats_flush_ongoing" concept, but this was removed as part of commit
-> 7d7ef0a4686a ("mm: memcg: restore subtree stats flushing"). This patch
-> reintroduce and generalized the concept to apply to all users of cgroup
-> rstat, not just memcg.
+>  -  *-   -   -   -   -   -   -   131041.395649 secs
+>  .   .   .   .   .   .   .  *X2  131041.403969 secs X2 => perf:70211
+>  -   -   -   -   -   -   -  *-   131041.404006 secs
 > 
-> If there is an ongoing rstat flush, and current cgroup is a descendant,
-> then it is unnecessary to do the flush. For callers to still see updated
-> stats, wait for ongoing flusher to complete before returning, but add
-> timeout as stats are already inaccurate given updaters keeps running.
-> 
-> Fixes: 7d7ef0a4686a ("mm: memcg: restore subtree stats flushing").
-> Signed-off-by: Jesper Dangaard Brouer <hawk@kernel.org>
+> Suggested-by: Namhyung Kim <namhyung@kernel.org>
+> Reviewed-and-tested-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+> Signed-off-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
 > ---
-> V3: https://lore.kernel.org/all/171943668946.1638606.1320095353103578332.stgit@firesoul/
-> V2: https://lore.kernel.org/all/171923011608.1500238.3591002573732683639.stgit@firesoul/
-> V1: https://lore.kernel.org/all/171898037079.1222367.13467317484793748519.stgit@firesoul/
-> RFC: https://lore.kernel.org/all/171895533185.1084853.3033751561302228252.stgit@firesoul/
+>  tools/perf/Documentation/perf-sched.txt |  5 +-
+>  tools/perf/builtin-sched.c              | 77 +++++++++++++++++++++----
+>  2 files changed, 69 insertions(+), 13 deletions(-)
 > 
->  include/linux/cgroup-defs.h |    2 +
->  kernel/cgroup/rstat.c       |   64 ++++++++++++++++++++++++++++++++++++-------
->  2 files changed, 55 insertions(+), 11 deletions(-)
-> 
-> diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
-> index b36690ca0d3f..a33b37514c29 100644
-> --- a/include/linux/cgroup-defs.h
-> +++ b/include/linux/cgroup-defs.h
-> @@ -548,6 +548,8 @@ struct cgroup {
->  #ifdef CONFIG_BPF_SYSCALL
->  	struct bpf_local_storage __rcu  *bpf_cgrp_storage;
->  #endif
-> +	/* completion queue for cgrp_rstat_ongoing_flusher */
-> +	struct completion flush_done;
+> diff --git a/tools/perf/Documentation/perf-sched.txt b/tools/perf/Documentation/perf-sched.txt
+> index 3255e5b8e74b..3095e280eb92 100644
+> --- a/tools/perf/Documentation/perf-sched.txt
+> +++ b/tools/perf/Documentation/perf-sched.txt
+> @@ -131,9 +131,10 @@ OPTIONS for 'perf sched map'
+>  	Highlight the given pids.
 >  
->  	/* All ancestors including self */
->  	struct cgroup *ancestors[];
-> diff --git a/kernel/cgroup/rstat.c b/kernel/cgroup/rstat.c
-> index 2a42be3a9bb3..a98af43bdce7 100644
-> --- a/kernel/cgroup/rstat.c
-> +++ b/kernel/cgroup/rstat.c
-> @@ -2,6 +2,7 @@
->  #include "cgroup-internal.h"
+>  --task-name <task>::
+> -	Map output only for the given task name. The sched-out
+> +	Map output only for the given task name(s). Separate the
+> +	task names with a comma (without whitespace). The sched-out
+>  	time is printed and is represented by '*-' for the given
+> -	task name
+> +	task name(s).
+>  	('-' indicates other tasks while '.' is idle).
 >  
->  #include <linux/sched/cputime.h>
-> +#include <linux/completion.h>
->  
->  #include <linux/bpf.h>
->  #include <linux/btf.h>
-> @@ -11,6 +12,8 @@
->  
->  static DEFINE_SPINLOCK(cgroup_rstat_lock);
->  static DEFINE_PER_CPU(raw_spinlock_t, cgroup_rstat_cpu_lock);
-> +static struct cgroup *cgrp_rstat_ongoing_flusher = NULL;
-> +static DECLARE_COMPLETION(cgrp_rstat_flusher_done);
-
-cgrp_rstat_flusher_done is not needed anymore.
-
->  
->  static void cgroup_base_stat_flush(struct cgroup *cgrp, int cpu);
->  
-> @@ -312,6 +315,45 @@ static inline void __cgroup_rstat_unlock(struct cgroup *cgrp, int cpu_in_loop)
->  	spin_unlock_irq(&cgroup_rstat_lock);
+>  OPTIONS for 'perf sched timehist'
+> diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
+> index 57f166662d54..ecb43deb9d74 100644
+> --- a/tools/perf/builtin-sched.c
+> +++ b/tools/perf/builtin-sched.c
+> @@ -1540,24 +1540,72 @@ map__findnew_thread(struct perf_sched *sched, struct machine *machine, pid_t pid
+>  	return thread;
 >  }
 >  
-> +#define MAX_WAIT	msecs_to_jiffies(100)
-> +/* Trylock helper that also checks for on ongoing flusher */
-> +static bool cgroup_rstat_trylock_flusher(struct cgroup *cgrp)
+> -static bool sched_match_task(const char *comm_str, const char *commands)
+> +struct CommandList {
+
+Please don't use camel case.
+
+> +	char **command_list;
+> +	int command_count;
+
+If you name the list as commands (or cmds) you can remove the prefix and
+use it like commands->list or cmds->count.
+
+Actually I was thinking about strlist API and it'd do most of the work
+you did here.  You may want to add the fuzzy (or substring) matching
+there.
+
+> +};
+> +
+> +static void free_command_list(struct CommandList *cmd_list)
 > +{
-> +	bool locked = __cgroup_rstat_trylock(cgrp, -1);
-> +	if (!locked) {
-> +		struct cgroup *cgrp_ongoing;
-> +
-> +		/* Lock is contended, lets check if ongoing flusher is already
-> +		 * taking care of this, if we are a descendant.
-> +		 */
-> +		cgrp_ongoing = READ_ONCE(cgrp_rstat_ongoing_flusher);
-> +		if (cgrp_ongoing && cgroup_is_descendant(cgrp, cgrp_ongoing)) {
+> +	if (cmd_list) {
+> +		for (int i = 0; i < cmd_list->command_count; i++)
+> +			free(cmd_list->command_list[i]);
+> +		free(cmd_list->command_list);
+> +		free(cmd_list);
+> +	}
 
-I wonder if READ_ONCE() and cgroup_is_descendant() needs to happen
-within in rcu section. On a preemptable kernel, let's say we got
-preempted in between them, the flusher was unrelated and got freed
-before we get the CPU. In that case we are accessing freed memory.
+Then it could be just strlist__delete().
 
-> +			wait_for_completion_interruptible_timeout(
-> +				&cgrp_ongoing->flush_done, MAX_WAIT);
+
+> +}
 > +
-> +			return false;
+> +static struct CommandList *parse_commands(const char *commands)
+>  {
+>  	char *commands_copy = NULL;
+> +	struct CommandList *cmd_list = NULL;
+>  	char *token = NULL;
+> -	bool match_found = false;
+>  
+>  	commands_copy = strdup(commands);
+>  	if (commands_copy == NULL)
+>  		return NULL;
+>  
+> +	cmd_list = malloc(sizeof(struct CommandList));
+> +	if (cmd_list == NULL) {
+> +		free(commands_copy);
+> +		return NULL;
+> +	}
+> +
+> +	cmd_list->command_count = 0;
+> +	cmd_list->command_list = NULL;
+
+You can use zalloc() and remove the zero initialization.
+
+
+> +
+>  	token = strtok(commands_copy, ",");
+> +	while (token != NULL) {
+> +		cmd_list->command_list = realloc(cmd_list->command_list, sizeof(char *)
+> +							*(cmd_list->command_count + 1));
+> +		if (cmd_list->command_list == NULL) {
+> +			free_command_list(cmd_list);
+> +			free(commands_copy);
+> +			return NULL;
 > +		}
-> +		__cgroup_rstat_lock(cgrp, -1, false);
-> +	}
-> +	/* Obtained lock, record this cgrp as the ongoing flusher */
-> +	if (!READ_ONCE(cgrp_rstat_ongoing_flusher)) {
-
-Can the above condition will ever be false?
-
-> +		reinit_completion(&cgrp->flush_done);
-> +		WRITE_ONCE(cgrp_rstat_ongoing_flusher, cgrp);
-> +	}
+>  
+> -	while (token != NULL && !match_found) {
+> -		match_found = !strcmp(comm_str, token);
+> +		cmd_list->command_list[cmd_list->command_count] = strdup(token);
+> +		if (cmd_list->command_list[cmd_list->command_count] == NULL) {
+> +			free_command_list(cmd_list);
+> +			free(commands_copy);
+> +			return NULL;
+> +		}
 > +
-> +	return true; /* locked */
-> +}
-> +
-> +static void cgroup_rstat_unlock_flusher(struct cgroup *cgrp)
-> +{
-> +	/* Detect if we are the ongoing flusher */
-> +	if (cgrp == READ_ONCE(cgrp_rstat_ongoing_flusher)) {
-
-Same.
-
-> +		WRITE_ONCE(cgrp_rstat_ongoing_flusher, NULL);
-> +		complete_all(&cgrp->flush_done);
-> +	}
-> +	__cgroup_rstat_unlock(cgrp, -1);
-> +}
-> +
->  /* see cgroup_rstat_flush() */
->  static void cgroup_rstat_flush_locked(struct cgroup *cgrp)
->  	__releases(&cgroup_rstat_lock) __acquires(&cgroup_rstat_lock)
-> @@ -361,18 +403,13 @@ static void cgroup_rstat_flush_locked(struct cgroup *cgrp)
->   */
->  __bpf_kfunc void cgroup_rstat_flush(struct cgroup *cgrp)
->  {
-> -	bool locked;
-> -
->  	might_sleep();
->  
-> -	locked = __cgroup_rstat_trylock(cgrp, -1);
-> -	if (!locked) {
-> -		/* Opportunity to ongoing flush detection */
-> -		__cgroup_rstat_lock(cgrp, -1, false);
-> -	}
-> +	if (!cgroup_rstat_trylock_flusher(cgrp))
-> +		return;
->  
->  	cgroup_rstat_flush_locked(cgrp);
-> -	__cgroup_rstat_unlock(cgrp, -1);
-> +	cgroup_rstat_unlock_flusher(cgrp);
->  }
->  
->  /**
-> @@ -388,8 +425,11 @@ void cgroup_rstat_flush_hold(struct cgroup *cgrp)
->  	__acquires(&cgroup_rstat_lock)
->  {
->  	might_sleep();
-> -	__cgroup_rstat_lock(cgrp, -1, true);
-> -	cgroup_rstat_flush_locked(cgrp);
-> +
-> +	if (cgroup_rstat_trylock_flusher(cgrp))
-> +		cgroup_rstat_flush_locked(cgrp);
-> +	else
-> +		__cgroup_rstat_lock(cgrp, -1, true);
->  }
->  
->  /**
-> @@ -399,7 +439,7 @@ void cgroup_rstat_flush_hold(struct cgroup *cgrp)
->  void cgroup_rstat_flush_release(struct cgroup *cgrp)
->  	__releases(&cgroup_rstat_lock)
->  {
-> -	__cgroup_rstat_unlock(cgrp, -1);
-> +	cgroup_rstat_unlock_flusher(cgrp);
->  }
->  
->  int cgroup_rstat_init(struct cgroup *cgrp)
-> @@ -421,6 +461,8 @@ int cgroup_rstat_init(struct cgroup *cgrp)
->  		u64_stats_init(&rstatc->bsync);
+> +		cmd_list->command_count++;
+>  		token = strtok(NULL, ",");
 >  	}
 >  
-> +	init_completion(&cgrp->flush_done);
+>  	free(commands_copy);
+> +	return cmd_list;
+
+And this could be just `strlist__new(commands, NULL)`.
+
+Thanks,
+Namhyung
+
+
+> +}
 > +
->  	return 0;
+> +static bool sched_match_task(const char *comm_str, struct CommandList *cmd_list)
+> +{
+> +	bool match_found = false;
+> +
+> +	for (int i = 0; i < cmd_list->command_count && !match_found; i++)
+> +		match_found = !strcmp(comm_str, cmd_list->command_list[i]);
+> +
+>  	return match_found;
 >  }
 >  
-> 
+> @@ -1624,6 +1672,8 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
+>  	char stimestamp[32];
+>  	const char *str;
+>  
+> +	struct CommandList *cmd_list = NULL;
+> +
+>  	BUG_ON(this_cpu.cpu >= MAX_CPUS || this_cpu.cpu < 0);
+>  
+>  	if (this_cpu.cpu > sched->max_cpu.cpu)
+> @@ -1664,7 +1714,11 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
+>  	sched->curr_thread[this_cpu.cpu] = thread__get(sched_in);
+>  	sched->curr_out_thread[this_cpu.cpu] = thread__get(sched_out);
+>  
+> +	if (sched->map.task_name)
+> +		cmd_list = parse_commands(sched->map.task_name);
+> +
+>  	new_shortname = 0;
+> +	str = thread__comm_str(sched_in);
+>  	if (!tr->shortname[0]) {
+>  		if (!strcmp(thread__comm_str(sched_in), "swapper")) {
+>  			/*
+> @@ -1673,8 +1727,7 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
+>  			 */
+>  			tr->shortname[0] = '.';
+>  			tr->shortname[1] = ' ';
+> -		} else if (!sched->map.task_name || sched_match_task(thread__comm_str(sched_in),
+> -								sched->map.task_name)) {
+> +		} else if (!sched->map.task_name || sched_match_task(str, cmd_list)) {
+>  			tr->shortname[0] = sched->next_shortname1;
+>  			tr->shortname[1] = sched->next_shortname2;
+>  
+> @@ -1703,15 +1756,15 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
+>  	 * Check which of sched_in and sched_out matches the passed --task-name
+>  	 * arguments and call the corresponding print_sched_map.
+>  	 */
+> -	if (sched->map.task_name && !sched_match_task(str, sched->map.task_name)) {
+> -		if (!sched_match_task(thread__comm_str(sched_out), sched->map.task_name))
+> +	if (sched->map.task_name && !sched_match_task(str, cmd_list)) {
+> +		if (!sched_match_task(thread__comm_str(sched_out), cmd_list))
+>  			goto out;
+>  		else
+>  			goto sched_out;
+>  
+>  	} else {
+>  		str = thread__comm_str(sched_out);
+> -		if (!(sched->map.task_name && !sched_match_task(str, sched->map.task_name)))
+> +		if (!(sched->map.task_name && !sched_match_task(str, cmd_list)))
+>  			proceed = 1;
+>  	}
+>  
+> @@ -1758,8 +1811,10 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
+>  	color_fprintf(stdout, color, "\n");
+>  
+>  out:
+> -	if (sched->map.task_name)
+> +	if (sched->map.task_name) {
+> +		free_command_list(cmd_list);
+>  		thread__put(sched_out);
+> +	}
+>  
+>  	thread__put(sched_in);
+>  
+> @@ -3651,7 +3706,7 @@ int cmd_sched(int argc, const char **argv)
+>  	OPT_STRING(0, "cpus", &sched.map.cpus_str, "cpus",
+>                      "display given CPUs in map"),
+>  	OPT_STRING(0, "task-name", &sched.map.task_name, "task",
+> -		"map output only for the given task name"),
+> +		"map output only for the given task name(s)."),
+>  	OPT_PARENT(sched_options)
+>  	};
+>  	const struct option timehist_options[] = {
+> -- 
+> 2.43.2
 > 
 
