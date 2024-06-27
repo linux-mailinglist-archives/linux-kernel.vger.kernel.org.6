@@ -1,139 +1,185 @@
-Return-Path: <linux-kernel+bounces-231991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10EC291A141
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:17:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C982191A147
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:19:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41A811C21A4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 08:17:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E36D2831F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 08:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8710770F9;
-	Thu, 27 Jun 2024 08:17:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3709678C9A;
+	Thu, 27 Jun 2024 08:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="q+HYppaU"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hyj8fE5Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E97754279
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 08:16:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0581CAB3;
+	Thu, 27 Jun 2024 08:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719476222; cv=none; b=gbqRdutUUX+stXVHkQdmKE6hw0+hKFlmneb0cKb1HlJnd6Avd2e4+ghU/GSXuhUMACLCVPI3F3wkPmFQImn4QBd9GQ5RUzC3wh/rZ2gVmJIPW1j5FU7EkfmhnBq+AVLPe+K5b7HpEU4ItQJOEChW2pbfsY82IF4i66soLzZ5Cvc=
+	t=1719476342; cv=none; b=lEPLQnWRWvwzOhCmBP8CeojQOUm4Rsx8X4WzUMwcw+4KMEtDeoQaud+52F7jiC9Df303/cICv3rA0K56D1XvlCgconUPVPn1NwsB9XgZnQ13fbq5XClCKTm3x7dvslv1fkLzvqBdSYUlBnEv1dtTZv6Xkn1NO9fqnjJ7IQlu+OM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719476222; c=relaxed/simple;
-	bh=KEm0f3yMC1lTsMQP2mEqK6dYKNV66vYfR0qO4oI6gVE=;
+	s=arc-20240116; t=1719476342; c=relaxed/simple;
+	bh=iVl5R4+HXbf/5A+fy4DPGQQgVODrP+GEinz+6PySv8k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ox/GyzaK0dGGC18VipdhYOqWbcW2MO12phHo1vbE+lwN4HTCO1AwyNZy0sCkCqzPbBu+H9H2l7Tob5q5zCAWsvaI3JfJMGcyPEW/F6276P+S8w+W8+770cSs1QkP/yX5te3CQyhZPwmH7BrzdjhrN/FiJQNd+DEb+ipCHV8LaZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=q+HYppaU; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ec5fad1984so62876841fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 01:16:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719476217; x=1720081017; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KEm0f3yMC1lTsMQP2mEqK6dYKNV66vYfR0qO4oI6gVE=;
-        b=q+HYppaUKsH1WN7Za/nSVU7nH68GK1bwopSsO08cM3caaJllp/EAZErpIYevAYtH8F
-         AoEUctTlEucWxIaBLUa7bWIlLcw3KPXJXq/02xkh3cSbPHy7v5ctGVz0uHIv3J0zq2/c
-         B2hHibpcaB93quLFzlwBkxDNmzCSrd8VhxHW+JownhVpiumKq+XugW/fEd3xeO8NEo+4
-         7AhWIygGvEEgfYCrnn2RsqzuFe/Q/WzFzMarxWzuYI+noSDVvtFrMXwdFOFsMstwrZuK
-         ecSceisTl6oHUArgA+lCfDTKTPEwxJZnG1FojZGT+Ltsjn01oeQisDUOVcZ8vnESHiAP
-         zDCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719476217; x=1720081017;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KEm0f3yMC1lTsMQP2mEqK6dYKNV66vYfR0qO4oI6gVE=;
-        b=O0Gc92unSjd8o6Tffp0lnJfuOg9+PpJHF9p0S9R+T3VoS8qfOpbqFbBMMHNElyw1Yb
-         IF9CzBwXXSK2EXrtBB3RhOb/IYF0zVBeXLvLsQmXWQOcvOxxlPNsYY047GXZV/UJwGMU
-         4dkuxnCXJgv5eGpIzzZastF1MGTR155G4XHAp1JdklYiwnvmbT4iagYru8pt8pQrl7Vo
-         XStQ6DZj3IFZOs/+iiYtEgKK7tu3RA77TyfCRBGLxtmHx7HEwz/9mx+m3R4iIJyCc29o
-         4eL5b9sDg/AFjJq1rY7U33t7AyxSFaBZc5+24ge2GpS2tsKt2VQErau5G8fGULhOT0AG
-         JbVw==
-X-Forwarded-Encrypted: i=1; AJvYcCUUIbAywXuRik53y3U39xoigb/vVpWCQYRgdrrZ1kP9bll8fN7lgcQNlS3vDGyU09CpXDXBmXs22OlcTxERPZODyNrwhwCAuCXG3Ga/
-X-Gm-Message-State: AOJu0YwNiKjzwD5KQiTPogBMCRvhcrei4g+mNeX5fa8QmlaKDyEGNx1L
-	bt+M7PPx9uY16fvOn/eRkJoEXQTJpjmVUIOfTS2Ys0gyAtnKIu0yLhEgi0+S2/E=
-X-Google-Smtp-Source: AGHT+IG/lOE4K/dxtmNROMYE5tpBQ4PfaZZjQoprWIxtfxc9uup5H2fD6gZ79Ng0DJruLnzyAi0a+w==
-X-Received: by 2002:a2e:9d88:0:b0:2e9:768a:12b0 with SMTP id 38308e7fff4ca-2ec5b36c1bamr95025771fa.50.1719476213391;
-        Thu, 27 Jun 2024 01:16:53 -0700 (PDT)
-Received: from localhost (p50915e7b.dip0.t-ipconnect.de. [80.145.94.123])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42564bc5176sm14283215e9.45.2024.06.27.01.16.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 01:16:52 -0700 (PDT)
-Date: Thu, 27 Jun 2024 10:16:51 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: kelvin.zhang@amlogic.com
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-pwm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Junyi Zhao <junyi.zhao@amlogic.com>
-Subject: Re: [PATCH v8 1/2] pwm: meson: Add support for Amlogic S4 PWM
-Message-ID: <ayemo4ysl5qotj4pfmclxdtshoqgybl4xqmrmkmpbd3vsugf47@pgsezohr4vel>
-References: <20240613-s4-pwm-v8-0-b5bd0a768282@amlogic.com>
- <20240613-s4-pwm-v8-1-b5bd0a768282@amlogic.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZT5QaFgvyMA/DyVjwJIb6KohxMasycE9z/BjoKzwVml14UVCWLRPCITVuRxbougsa4PR+GTIjpk/wgGZ0jutI5SFA1O4w3ZCqC67b8+K3FtNcuqFYigADyHH49IWBgouNjyMmg0KpQJSMnYCN2nLPiaYzioA2KxEWS765NE2zbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hyj8fE5Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B81ACC2BBFC;
+	Thu, 27 Jun 2024 08:18:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719476341;
+	bh=iVl5R4+HXbf/5A+fy4DPGQQgVODrP+GEinz+6PySv8k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Hyj8fE5QZpbW9ucDN27Qui9TvgPDrMEcdEC0Ax958ZvsoFqDYu6yUwBvGdBfdNtOT
+	 uZfMGMTqS/xKoEveEaocX2IfvAGwL62tEoRA1uV4e3ilcBKui2tGU1+hrwK95b0sL9
+	 xg6LTHPZjhS9AyRYRz4h16Hf5RCoYncgGhbsMufJU0yN0Hklajo/TeRa/TK7h7jQC2
+	 FDOrt0GSx65j2k2Kx/zbOqOM0ox/XMQOSWs8l/0Fnb5G17x0pBO3Fqcwigt3rAg8e3
+	 dNBCHB/iDYsYYY0BLsc1OKY54R+jwAE5IsyKcW5BHL48cU9lxLvSNESSHHDluPwM5H
+	 D/l0CGwT9LfHQ==
+Date: Thu, 27 Jun 2024 09:18:53 +0100
+From: Lee Jones <lee@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Shan-Chun Hung <schung@nuvoton.com>,
+	Khuong Dinh <khuong@os.amperecomputing.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chuanhua Lei <lchuanhua@maxlinear.com>,
+	Rahul Tanwar <rtanwar@maxlinear.com>,
+	Lars Povlsen <lars.povlsen@microchip.com>,
+	Steen Hegelund <Steen.Hegelund@microchip.com>,
+	Daniel Machon <daniel.machon@microchip.com>,
+	UNGLinuxDriver@microchip.com, Nishanth Menon <nm@ti.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Rahul Tanwar <rahul.tanwar@linux.intel.com>,
+	Amireddy Mallikarjuna reddy <mallikarjunax.reddy@intel.com>,
+	"Zhu, Yi Xin" <Yixin.zhu@intel.com>,
+	Maxime Ripard <mripard@kernel.org>
+Subject: Re: [PATCH v3 0/7] dt-bindings: mfd: syscon: Document more
+ compatibles and require simpe-mfd description
+Message-ID: <20240627081853.GF2532839@google.com>
+References: <20240626-dt-bindings-mfd-syscon-split-v3-0-3409903bb99b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rsedrqskqx5olerr"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240613-s4-pwm-v8-1-b5bd0a768282@amlogic.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240626-dt-bindings-mfd-syscon-split-v3-0-3409903bb99b@linaro.org>
 
+On Wed, 26 Jun 2024, Krzysztof Kozlowski wrote:
 
---rsedrqskqx5olerr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Hi,
+> 
+> Dependency
+> ==========
+> Rebased on Lee's MFD tree, because dependency is there already:
+> https://lore.kernel.org/all/171828959006.2643902.8308227314531523435.b4-ty@kernel.org/
+> 
+> Merging
+> =======
+> Preferrably everything via MFD tree (file/context dependencies).
+> 
+> Changes in v3
+> =============
+> - Add tags
+> - intel,lgm-syscon: change maintainers (email bounce)
+> - syscon/Split: drop unneeded |, use const instead of enum in select:
+> - Link to v2: https://lore.kernel.org/r/20240616-dt-bindings-mfd-syscon-split-v2-0-571b5850174a@linaro.org
+> 
+> Changes in v2
+> =============
+> - Add acks
+> - lgm-syscon: add ranges to binding and example
+> - syscon.yaml: add big select with all compatibles for older dtschema
+> - Link to v1: https://lore.kernel.org/r/20240519-dt-bindings-mfd-syscon-split-v1-0-aaf996e2313a@linaro.org
+> 
+> Description/problem
+> ===================
+> Simple syscon nodes can be documented in common syscon.yaml, however
+> devices with simple-mfd compatible, thus some children, should have
+> their own schema listing these children.  Such listing makes the binding
+> specific, allows better validation (so the incorrect child would not
+> appear in the simple-mfd node) and actually enforces repeated rule for
+> simple-mfd devices:
+> 
+>   "simple-mfd" is only for simple devices, where the children do not
+>   depend on the parent.
+> 
+> Currently the syscon+simple-mfd binding is quite broad and allows
+> any child or property, thus above rule cannot be enforced.
+> 
+> Solution
+> ========
+> 1. Split the syscon.yaml binding into common syscon properties, used
+>    potentially by many bindings, and only simple syscon devices (NO
+>    simple-mfd!).
+> 2. Move some known simple-mfd bindings from syscon.yaml to dedicated
+>    files.
+> 
+> This patchset might introduce new dtbs_check warnings for devices having
+> simple-mfd and being part of syscon.yaml previously. I fixed some of
+> them, but probably not all.
+> 
+> Best regards,
+> Krzysztof
+> 
+> To: Lee Jones <lee@kernel.org>
+> To: Rob Herring <robh@kernel.org>
+> To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> To: Conor Dooley <conor+dt@kernel.org>
+> To: Lars Povlsen <lars.povlsen@microchip.com>
+> To: Steen Hegelund <Steen.Hegelund@microchip.com>
+> To: Daniel Machon <daniel.machon@microchip.com>
+> To: UNGLinuxDriver@microchip.com
+> To: Nishanth Menon <nm@ti.com>
+> To: Matthias Brugger <matthias.bgg@gmail.com>
+> To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-mediatek@lists.infradead.org
+> 
+> ---
+> Krzysztof Kozlowski (7):
+>       dt-bindings: mfd: syscon: Drop hwlocks
+>       dt-bindings: soc: sprd: sc9863a-glbregs: Document SC9863A syscon
+>       dt-bindings: soc: intel: lgm-syscon: Move to dedicated schema
+>       dt-bindings: soc: microchip: sparx5-cpu-syscon: Move to dedicated schema
+>       dt-bindings: soc: ti: am654-serdes-ctrl: Move to dedicated schema
+>       dt-bindings: mfd: syscon: Split and enforce documenting MFD children
+>       dt-bindings: mfd: syscon: Add APM poweroff mailbox
+> 
+>  .../devicetree/bindings/mfd/syscon-common.yaml     |  71 +++++
+>  Documentation/devicetree/bindings/mfd/syscon.yaml  | 306 ++++++++++++---------
+>  .../bindings/soc/intel/intel,lgm-syscon.yaml       |  57 ++++
+>  .../soc/microchip/microchip,sparx5-cpu-syscon.yaml |  49 ++++
+>  .../bindings/soc/sprd/sprd,sc9863a-glbregs.yaml    |  55 ++++
+>  .../bindings/soc/ti/ti,am654-serdes-ctrl.yaml      |  42 +++
+>  6 files changed, 457 insertions(+), 123 deletions(-)
+> ---
+> base-commit: 8dc7c29f608649f3d9eca826e9d4fe4b8a32c472
+> change-id: 20240517-dt-bindings-mfd-syscon-split-37e23996523d
 
-Hello,
+Okay, I tried to apply these whilst fixing up all the conflicts, but
+lost the will to live.  Please rebase and [RESEND].
 
-On Thu, Jun 13, 2024 at 07:46:35PM +0800, Kelvin Zhang via B4 Relay wrote:
-> From: Junyi Zhao <junyi.zhao@amlogic.com>
->=20
-> Add support for Amlogic S4 PWM.
->=20
-> Signed-off-by: Junyi Zhao <junyi.zhao@amlogic.com>
-> Signed-off-by: Kelvin Zhang <kelvin.zhang@amlogic.com>
-
-Applied this patch with George Stark's Reviewed-by: to
-https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-=
-next
-=2E
-
-You signed your patch using gpg, that's fine. However I failed to find
-your key to verify that signature. I suggest you to upload your key to
-https://keys.openpgp.org/ (note you have to register your email
-addresses there to make this useful) and read through
-https://korg.docs.kernel.org/pgpkeys.html#submitting-keys-to-the-keyring
-=2E
-
-Best regards
-Uwe
-
---rsedrqskqx5olerr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZ9H/AACgkQj4D7WH0S
-/k4TGwf/Zq7fInk7zIeHl44mqXSTwaWdnCftKpYsQYNhI57+Pr2qmGnMZfWo9Z0g
-qTQZtc9veyYI7od541wZ6cSYR878sstNK+GZzJe4lYeZpbIhYHaTjk2DzjCh5tjy
-NqgBMCvSSK++TZpBTRPbsYgJwemdFsWlB1UdIAEHXe3wkKhy9Kt6nmw78TqnqwDo
-EELQDqhCzF7qZSYXi5SlpvHQyTuKzPRDosvgoM5HDcyUcnTDQ7qsryPnVBV3OJKc
-P9TwMOPaBCckz4MnXpHAw8SfRKYQ/INNLRd9Cng5l2npcVy7FBZ7ZHvfN40xZtlf
-wXZAead9xYAyIMZ5LyDLhS0MjgXbxA==
-=wNYU
------END PGP SIGNATURE-----
-
---rsedrqskqx5olerr--
+-- 
+Lee Jones [李琼斯]
 
