@@ -1,173 +1,224 @@
-Return-Path: <linux-kernel+bounces-232245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F09E891A5B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:52:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 630FE91A5B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:53:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FF6E1C23F97
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:52:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA9C9B254DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C491214EC75;
-	Thu, 27 Jun 2024 11:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pOQfmROA"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D1EA14EC75;
+	Thu, 27 Jun 2024 11:53:05 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44DBB13AA4C;
-	Thu, 27 Jun 2024 11:52:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D284714EC40
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 11:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719489136; cv=none; b=mutkrVB4aiEf6CLfmiRWg8asaLAvTG0ooPHICbwtgFKk3HvhpbSaIj7ubEHgx5R/sIlBaIr9jmUzawFvuUORHckTQzw7IJoxJVVal6fUvPuXPyRvd6qCBZ0Rvbdp33H3O9CvAS8ZAnYNgzFh1MXy07vFBGTe7B7o8C5I9n0i7/c=
+	t=1719489184; cv=none; b=nHo42cE4OiYqJFa7ygveLhxtCUqBxUJeXMByME/mu2PyAYCDhxnyVujDofFENeevhB08BGqYwj+B0zQ2/ytoTByqmx6L8SX9UTZpWJSYAiDcUt4tNu1rgg3nVFQdbG3CTDSXs0mAYw+R+eGFzwnduDtWOIk4wB1eYkLHd6tA2nE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719489136; c=relaxed/simple;
-	bh=+JbMayFB9amAv8WU+LPGh6UMf73H0yjbC805sviiuCM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RKY0EGZZVy0GwAIyOlMrocZFbF4RMOKP2ZUfteAp6FD7tKne3rDzMNPJm5cLVVPtgiBN5KyZmhg9oPihtfccqw1xMY0gQNiSe27W90ouE43UF738MyIQ5JWj/w2rZIlqcFV4v0JQxhtnru5DWhc9rMNkvpXeM0h4L5LB/4qx4cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pOQfmROA; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45RASZ2x010476;
-	Thu, 27 Jun 2024 11:52:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=p
-	mNRuEsQV/lCs/c9/8SeYmYF62cs0xvKuqPvTnFQo5A=; b=pOQfmROAAecpqJE1H
-	2t3zITouLYHZTQnRq6iVhjQHO2dcTCVosAQs+papxc+0Wkc/Es1w88IZIWUrdl6K
-	JMeCmdpWFY5XQ5HXezkMtjAKjEHvZc+xOSQcV0LRAUKAbN0TM8idLhnP1elQyKmZ
-	w86KR7pbvSKX/E6q93X0rElFPwq1t+g752letKlKQFv9tgZnNTdD3UAbrzBteJif
-	cFaMl6X5P15/zso3wdHay/37PJ+NZnFFbMjzMruDS0kknUBLO8b6TgnxtTg6VPXx
-	OYNtyl5wIaBy85JU4mZinTHBAjjMmE7xZmeBej6RTKgbFfvVoc0dhFDXOD0F1/hl
-	We+sw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4014ks8f1s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Jun 2024 11:52:12 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45RBqCWI010509;
-	Thu, 27 Jun 2024 11:52:12 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4014ks8f1n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Jun 2024 11:52:12 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45RB92Ix019591;
-	Thu, 27 Jun 2024 11:52:10 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yx9xqaj30-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Jun 2024 11:52:10 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45RBq51i32506216
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 27 Jun 2024 11:52:07 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 19A492004D;
-	Thu, 27 Jun 2024 11:52:05 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A59A920043;
-	Thu, 27 Jun 2024 11:52:04 +0000 (GMT)
-Received: from [9.171.15.243] (unknown [9.171.15.243])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 27 Jun 2024 11:52:04 +0000 (GMT)
-Message-ID: <9d4ee8a4-d743-4bc6-a743-0812b9e06f85@linux.ibm.com>
-Date: Thu, 27 Jun 2024 13:52:04 +0200
+	s=arc-20240116; t=1719489184; c=relaxed/simple;
+	bh=27y6mu7bcleaZ3gMCj/TBbw5e8RxWIMmu/oX/tQFU8s=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Pbl9Tv9VAJtrO7ma5Sa/uJPTgz61SEFbQ3L3Twd7Gul+ryNMFutUTsXJA/DJg1irJ5zf7jOKnnW/kMipPo0BjY6wHGfIbjpGr7GncSJeraDYyOJdX84hZo+DSI9lUk4yFrvVaSmOy+9Xdc0Hfskr+EtJBVJXu4tMr3uO+z/rbtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7ebd2481a89so1137210539f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 04:53:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719489182; x=1720093982;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kr5tW2ea+Z0+UnfkIW4kr9PMPDuhfmZ+iYSExnNW4vk=;
+        b=Ao06eZdJmOanEpEES7hCxotTx5Gzw98vJkvMyFnbRfC3u68DNeRdt3dI/WY+eHT2mm
+         KzgO4qHiwcqzu/2MttGBnfJybLzjbhIzpYNziGtJFPkhxP1cHxIQ8uO8CPaZP38q0y/m
+         PoVVPzbfttnOejtA0FrWg//TosP835TLkdeLMr+kwzn3j3rw98JZ579+E14PIm6Bb7RN
+         M8qfJeeQ1tgJdhPvS4zOoQQNBqG3qpnfIDs8qIeIbjoREylpmY+gakLTB8TdoNza13z2
+         UwTMCJjJ1vKcmMTsemN6UR0vnGM7KJrS+R08iVjFXcXvd4tT3NWdUkkkJip4tmQdRDyp
+         z77g==
+X-Forwarded-Encrypted: i=1; AJvYcCVXV5f679yX/EV+DK07U9ZX2DY6sDIKNkSFulD4GpJyqL+EqpNRDnC87PIS0P7INIPek+pyKH8IjisLayFg8vgYIEnkrYBsfbDU2uJo
+X-Gm-Message-State: AOJu0YyudLLWqogFdr1znnldE73X5YP2oqQL0qF8R6CXWcSiSZO9EnYH
+	SiY/SJgWoRzK4XgHIYn0I/wM4iYl3y2DslITWXYtKOsnDU5M9Q6JX9NhepvrdmY9M6hLCHfXeV5
+	/hRI2Y1YzVUhLLpjJn9e9+5yltDxWgdyDqpyLVzLacScmRvsSuAEXt9E=
+X-Google-Smtp-Source: AGHT+IErEUZ0ERJ2rTuj/p+dbzwRwLUBukJ5xs9jWChbLbuv2y8fhHpy+iJNO1WNicXVAQdFVw8QNetkeheGw+u0c6ozxjf+rrgy
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] s390/kvm: Reject memory region operations for ucontrol
- VMs
-To: Christoph Schlameuss <schlameuss@linux.ibm.com>,
-        linux-s390@vger.kernel.org
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-        linux-doc@vger.kernel.org
-References: <20240624095902.29375-1-schlameuss@linux.ibm.com>
-Content-Language: en-US
-From: Janosch Frank <frankja@linux.ibm.com>
-Autocrypt: addr=frankja@linux.ibm.com; keydata=
- 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
-In-Reply-To: <20240624095902.29375-1-schlameuss@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: rxGvdYRGuqQscZanuxvi1e2sZ7kHfqLf
-X-Proofpoint-ORIG-GUID: vsgiaOPue_Y2xFLYw71govuFTOtaSffb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-27_06,2024-06-27_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- suspectscore=0 phishscore=0 priorityscore=1501 mlxlogscore=646
- clxscore=1011 malwarescore=0 lowpriorityscore=0 bulkscore=0 adultscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406270086
+X-Received: by 2002:a05:6638:14d5:b0:4b9:5d51:ff99 with SMTP id
+ 8926c6da1cb9f-4b9efd8fb74mr359206173.5.1719489181921; Thu, 27 Jun 2024
+ 04:53:01 -0700 (PDT)
+Date: Thu, 27 Jun 2024 04:53:01 -0700
+In-Reply-To: <20240627113120.2142-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e246b9061bddc55d@google.com>
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Write in l2tp_session_delete
+From: syzbot <syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 6/24/24 11:59, Christoph Schlameuss wrote:
-> This change rejects the KVM_SET_USER_MEMORY_REGION and
-> KVM_SET_USER_MEMORY_REGION2 ioctls when called on a ucontrol VM.
-> This is neccessary since ucontrol VMs have kvm->arch.gmap set to 0 and
-> would thus result in a null pointer dereference further in.
-> Memory management needs to be performed in userspace and using the
-> ioctls KVM_S390_UCAS_MAP and KVM_S390_UCAS_UNMAP.
-> 
-> Also improve s390 specific documentation for KVM_SET_USER_MEMORY_REGION
-> and KVM_SET_USER_MEMORY_REGION2.
-> 
+Hello,
 
-I'll add this tag when picking since it's a fix:
-Fixes: 27e0393f15fc ("KVM: s390: ucontrol: per vcpu address spaces")
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KASAN: slab-use-after-free Read in l2tp_tunnel_del_work
 
-It's a bit hard to track down the commit that should have contained your 
-code to begin with and I think this is the closest we'll get.
+wlan1: Created IBSS using preconfigured BSSID 50:50:50:50:50:50
+wlan1: Creating new IBSS network, BSSID 50:50:50:50:50:50
+==================================================================
+BUG: KASAN: slab-use-after-free in l2tp_tunnel_del_work+0xea/0x3a0 net/l2tp/l2tp_core.c:1336
+Read of size 8 at addr ffff8880684730b8 by task kworker/u8:0/11
+
+CPU: 0 PID: 11 Comm: kworker/u8:0 Not tainted 6.10.0-rc4-syzkaller-00869-g185d72112b95-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Workqueue: l2tp l2tp_tunnel_del_work
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ l2tp_tunnel_del_work+0xea/0x3a0 net/l2tp/l2tp_core.c:1336
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+Allocated by task 6207:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
+ __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:387
+ kasan_kmalloc include/linux/kasan.h:211 [inline]
+ __do_kmalloc_node mm/slub.c:4122 [inline]
+ __kmalloc_noprof+0x1f9/0x400 mm/slub.c:4135
+ kmalloc_noprof include/linux/slab.h:664 [inline]
+ kzalloc_noprof include/linux/slab.h:778 [inline]
+ l2tp_session_create+0x3b/0xc20 net/l2tp/l2tp_core.c:1677
+ pppol2tp_connect+0xca3/0x17a0 net/l2tp/l2tp_ppp.c:761
+ __sys_connect_file net/socket.c:2049 [inline]
+ __sys_connect+0x2df/0x310 net/socket.c:2066
+ __do_sys_connect net/socket.c:2076 [inline]
+ __se_sys_connect net/socket.c:2073 [inline]
+ __x64_sys_connect+0x7a/0x90 net/socket.c:2073
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 11:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
+ poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
+ __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
+ kasan_slab_free include/linux/kasan.h:184 [inline]
+ slab_free_hook mm/slub.c:2196 [inline]
+ slab_free mm/slub.c:4437 [inline]
+ kfree+0x149/0x360 mm/slub.c:4558
+ l2tp_tunnel_closeall net/l2tp/l2tp_core.c:1304 [inline]
+ l2tp_tunnel_del_work+0x21d/0x3a0 net/l2tp/l2tp_core.c:1336
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+The buggy address belongs to the object at ffff888068473000
+ which belongs to the cache kmalloc-1k of size 1024
+The buggy address is located 184 bytes inside of
+ freed 1024-byte region [ffff888068473000, ffff888068473400)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x68470
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: 0xffffefff(slab)
+raw: 00fff00000000040 ffff888015041dc0 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000000100010 00000001ffffefff 0000000000000000
+head: 00fff00000000040 ffff888015041dc0 dead000000000122 0000000000000000
+head: 0000000000000000 0000000000100010 00000001ffffefff 0000000000000000
+head: 00fff00000000003 ffffea0001a11c01 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0x152820(GFP_ATOMIC|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_HARDWALL), pid 11, tgid 11 (kworker/u8:0), ts 100058781643, free_ts 99100548000
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1468
+ prep_new_page mm/page_alloc.c:1476 [inline]
+ get_page_from_freelist+0x2e43/0x2f00 mm/page_alloc.c:3420
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4678
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ alloc_slab_page+0x5f/0x120 mm/slub.c:2265
+ allocate_slab+0x5a/0x2f0 mm/slub.c:2428
+ new_slab mm/slub.c:2481 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3667
+ __slab_alloc+0x58/0xa0 mm/slub.c:3757
+ __slab_alloc_node mm/slub.c:3810 [inline]
+ slab_alloc_node mm/slub.c:3989 [inline]
+ __do_kmalloc_node mm/slub.c:4121 [inline]
+ __kmalloc_noprof+0x257/0x400 mm/slub.c:4135
+ kmalloc_noprof include/linux/slab.h:664 [inline]
+ kzalloc_noprof include/linux/slab.h:778 [inline]
+ ieee802_11_parse_elems_full+0xdb/0x2880 net/mac80211/parse.c:958
+ ieee802_11_parse_elems_crc net/mac80211/ieee80211_i.h:2344 [inline]
+ ieee802_11_parse_elems net/mac80211/ieee80211_i.h:2351 [inline]
+ ieee80211_inform_bss+0x15f/0x1080 net/mac80211/scan.c:79
+ rdev_inform_bss net/wireless/rdev-ops.h:418 [inline]
+ cfg80211_inform_single_bss_data+0x1121/0x2360 net/wireless/scan.c:2293
+ cfg80211_inform_bss_data+0x3dd/0x5a70 net/wireless/scan.c:3117
+ cfg80211_inform_bss_frame_data+0x3bc/0x720 net/wireless/scan.c:3207
+ ieee80211_bss_info_update+0x8a7/0xbc0 net/mac80211/scan.c:226
+ ieee80211_scan_rx+0x526/0x9c0 net/mac80211/scan.c:340
+ __ieee80211_rx_handle_packet net/mac80211/rx.c:5222 [inline]
+ ieee80211_rx_list+0x2b02/0x3780 net/mac80211/rx.c:5459
+page last free pid 4760 tgid 4760 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1088 [inline]
+ __free_pages_ok+0xb4e/0xcc0 mm/page_alloc.c:1208
+ __folio_put+0x3b9/0x620 mm/swap.c:129
+ folio_put include/linux/mm.h:1508 [inline]
+ free_large_kmalloc+0x105/0x1c0 mm/slub.c:4529
+ kfree+0x1c4/0x360 mm/slub.c:4552
+ proc_sys_call_handler+0x593/0x8b0 fs/proc/proc_sysctl.c:604
+ new_sync_read fs/read_write.c:395 [inline]
+ vfs_read+0x9c4/0xbd0 fs/read_write.c:476
+ ksys_read+0x1a0/0x2c0 fs/read_write.c:619
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffff888068472f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff888068473000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff888068473080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                        ^
+ ffff888068473100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888068473180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+Tested on:
+
+commit:         185d7211 net: xilinx: axienet: Enable multicast by def..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=1360bf01980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e78fc116033e0ab7
+dashboard link: https://syzkaller.appspot.com/bug?extid=c041b4ce3a6dfd1e63e2
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17d4ba99980000
+
 
