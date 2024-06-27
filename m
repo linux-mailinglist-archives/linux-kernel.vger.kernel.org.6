@@ -1,62 +1,75 @@
-Return-Path: <linux-kernel+bounces-232467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E7E691A935
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:30:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9837F91A93A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:31:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D75881F24FB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:30:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 113731F220F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:31:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55F95195803;
-	Thu, 27 Jun 2024 14:29:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCAB0196450;
+	Thu, 27 Jun 2024 14:30:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cq2P8lm5"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z/7KwSK6"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069F12139A8
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 14:29:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891001E51D;
+	Thu, 27 Jun 2024 14:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719498592; cv=none; b=KKQdtmixCazt4qeyBijamjBMM5ACmW51OXVypxJsLifH846frt71kTqyYo0nDyTCe39GOm1rfIaofuuw662sc4BQqJ4OJezpx4rWO+95F/J29VjbdL6rNDZyP+AMONedgdRiaXeYxy6sEe6MxfZwUNfjch8HA2kvckm72D6Dtco=
+	t=1719498655; cv=none; b=AEbXFApiXTQ9SgT+i2GleALz31NgmiDnkp5gTLvC0AE9j+tGSXYlM5+hT0Hxr9CTNbY6hHoV11ZTQmV55ZgfcmQ67GFhyjXF8CydF34ZkZ9nD7N8pBgKBuaFwb31Es3sMBfU2DK+ki+pA25KG2/iBHYJmTNwMRC66lBUdr1DlpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719498592; c=relaxed/simple;
-	bh=GjbNCX4hUDbB4PVuq5yD/mukdZ7hDTBj3OOb9DJoeo0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gFFiK1xW42uXAdUtxBwWOaJG+cOtm6nNv4ynrXMecEonxwjFXJDG27xuOEvHoZTgPfwWRobdRcUOvjYnAWOvqsCvLM04dPz4/E0SkiknJFurquWKX09pSGe8ZYzwwZBYgZfNlJiH08O3Kq0CvHGfsnlzF1pZXaz6N4YVpU1nZhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cq2P8lm5; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45RA52il015330;
-	Thu, 27 Jun 2024 14:29:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	hm1svVagmePIW3YaP3+uICqYE4oqtwcdlzx6F6VnUDs=; b=cq2P8lm5yJfdf0al
-	u53n0tYRA1EmLOHeW/AJcjxINW8SFdYueOJGmQsj4eaX95aZ1V/NErG5aW3hem8t
-	v2aJLgVcpaaMOL8Q9Rtn4D3PUHFko4GSUJcYy7DMvteLVK7/Nx2OZT4JM8ZblB71
-	eq0TySKgearso4tNQN1pZjfaFH+IvJVPtgNmVAc+VHTc+ULflgJJteZ8Sd8V7j8O
-	IC3ud5mdfH1RSU6N6UncfRJvnqN7PZfjPXieqiU5pQhjkHWeaMbA1wIaS0R+0Uje
-	oIQuK38cgGfXQRnvH7j3LQyzdFG+xFmgDd3eoWIMgNNTAvtutxFLr7pU2QoGxbxh
-	oPy90w==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 400gcmbp3e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Jun 2024 14:29:47 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45RETkOK013559
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Jun 2024 14:29:46 GMT
-Received: from [10.253.8.118] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 27 Jun
- 2024 07:29:45 -0700
-Message-ID: <179b5505-f64b-4c29-b2df-2eec9e276904@quicinc.com>
-Date: Thu, 27 Jun 2024 22:29:43 +0800
+	s=arc-20240116; t=1719498655; c=relaxed/simple;
+	bh=KIobNT3FVqIbEuBkRXfA/d4XzamYSNXUXEShI192cu4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pLNRqqX1grUsnWxWzmDIcOFoQtiB1pTmrUySIgWilZThPo+p8RI5hPfO36AvkXV4LBnAauKRHmAYUA5/+RBngtPVaUlZgJPbm4NyWbCbBd3bkbVV3LkNAGSURUlOZfmoQLHvDb2hacubc1rXIq3Nai/3efbOwfXx2SPymAfGTe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z/7KwSK6; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f9c6e59d34so65055665ad.2;
+        Thu, 27 Jun 2024 07:30:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719498653; x=1720103453; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=prOX6eOKEHEmVNHglh0d/kTFjpassowhtDmDJYgcELU=;
+        b=Z/7KwSK6O4iyxuNxmTHU2wW0gGPl1P5LE/GnZask6P2i756KLNJWV5MQomG4d6tb3F
+         BEyFw+wgFl05KpMBS9dg0iI3E2jIOkV5ZrksDq3/7WDIK2iaFtarWlTf6v5k520uLGpb
+         Q+++Gm28YWWw9pJsCPc8qxGz1e8EzkqZjvmbxg2DITDyuwrszo8ApMOnIhLaFWrjq1Is
+         TKte98HYWpue4jLBhZIIVk6nPt9Uqb9gPJB4b2X/03MrHXI+jR2L5DRLyraGhbw6yIhA
+         aEKENC/nB+DM6p9cRiEEQf/tEjsNALMp6LtB3BzNeSAtDLKk40KG9BW4XnJZpKPdY9K5
+         sAcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719498653; x=1720103453;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=prOX6eOKEHEmVNHglh0d/kTFjpassowhtDmDJYgcELU=;
+        b=UrdMdZAxGWg1O2ksmshepJRfKz1ZNV6NFPvcenU2p2Mz29SZs+wb1PFcU+zDeY2+ld
+         8uUk62ols1LL5wduOEdkuKJWm/YyY3RC6cUDNYbA9pgElG6yNb/ECvOfzN+6HVbUB8xn
+         8mnYFK6ndDp9MI8QgK6VINXN/9axx8j9l0pMlGUJbaIupOe4NXSR3FQ3PFze99vi89ld
+         eq3EZCnCg2j8QrCBEHaG1ymiBQaThTfMQDRj9o/KgWI4tsVqO67dGqR5GunN/PvzlKRa
+         3o59MRyzgEnhMxUzSFc4XVR0aQidee9oTFEoLNYrbyBjbRBiGrfoOUsVA9UdE61xLB6p
+         PHqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWe4Y5Dqa8mlxTiY4n9qpNaS7b611E6ZJJ+DyuOPZzD+lByX3nxRdBJj7MpM9uUX4LonuNyRkaUemMFJI48gpdAgg+mbhk685z4i2GiLHCEYIDQ+2HWc4qw4E8D4z357TM0dO3lbJbe4/V4RwIFWEz4zOQBsy8/KxdCQBoXFcvvNJAYeK2fpAHIDI464Mn/nDyQvQTCz0Vv2uvF7CyFUlo=
+X-Gm-Message-State: AOJu0Yy3gfKqzadEL6G5mOByQblazDzunmJJdyjBxLY+LPiaOk58R+SZ
+	7ooaZdTi4oz9N31DEmDJMKxBrpLeQ5VbL3RSZzgXJAck23K9HHSt
+X-Google-Smtp-Source: AGHT+IGb6LRH5tSL0zxSz7eX5YcdjjvCFbgea762hMw2TlPtap0H5lu0zMnM2ToKTYoB42SKt9dD+Q==
+X-Received: by 2002:a17:903:22c6:b0:1f6:f814:d542 with SMTP id d9443c01a7336-1fa1d6acf16mr156972075ad.68.1719498652545;
+        Thu, 27 Jun 2024 07:30:52 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1faac995113sm13885535ad.188.2024.06.27.07.30.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Jun 2024 07:30:51 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <d788697e-dad5-46b9-b61a-1016c55c4e83@roeck-us.net>
+Date: Thu, 27 Jun 2024 07:30:48 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,95 +77,89 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] devres: Simple code optimization
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: <rafael@kernel.org>, <linux-kernel@vger.kernel.org>
-References: <d029d754-aeb7-493a-8e48-6acaa53fee1e@quicinc.com>
- <1719496036-24642-1-git-send-email-quic_zijuhu@quicinc.com>
- <2024062750-hubcap-parish-7bda@gregkh>
+Subject: Re: [PATCH v2 0/2] Add MPS MP5920 Host-Swap controller
+To: Alex Vdovydchenko <keromvp@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Sean Anderson <sean.anderson@linux.dev>,
+ Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+ Delphine CC Chiu <Delphine_CC_Chiu@Wiwynn.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-i2c@vger.kernel.org, Alex Vdovydchenko <xzeol@yahoo.com>
+References: <20240627090113.391730-1-xzeol@yahoo.com>
 Content-Language: en-US
-From: quic_zijuhu <quic_zijuhu@quicinc.com>
-In-Reply-To: <2024062750-hubcap-parish-7bda@gregkh>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: apDcWUgaT_1jEV0pNrYaaEu6Qn4o2r-s
-X-Proofpoint-ORIG-GUID: apDcWUgaT_1jEV0pNrYaaEu6Qn4o2r-s
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-27_11,2024-06-27_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- mlxlogscore=999 clxscore=1015 mlxscore=0 phishscore=0 impostorscore=0
- adultscore=0 malwarescore=0 lowpriorityscore=0 priorityscore=1501
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406270109
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
+ RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
+ nyFiKxUehbNF3r9qlJgPqONwX5vJy4/GvDHdddSCxV41P/ejsZ8PykxyJs98UWhF54tGRWFl
+ 7i1xvaDB9lN5WTLRKSO7wICuLiSz5WZHXMkyF4d+/O5ll7yz/o/JxK5vO/sduYDIlFTvBZDh
+ gzaEtNf5tQjsjG4io8E0Yq0ViobLkS2RTNZT8ICq/Jmvl0SpbHRvYwa2DhNsK0YjHFQBB0FX
+ IdhdUEzNefcNcYvqigJpdICoP2e4yJSyflHFO4dr0OrdnGLe1Zi/8Xo/2+M1dSSEt196rXaC
+ kwu2KgIgmkRBb3cp2vIBBIIowU8W3qC1+w+RdMUrZxKGWJ3juwcgveJlzMpMZNyM1jobSXZ0
+ VHGMNJ3MwXlrEFPXaYJgibcg6brM6wGfX/LBvc/haWw4yO24lT5eitm4UBdIy9pKkKmHHh7s
+ jfZJkB5fWKVdoCv/omy6UyH6ykLOPFugl+hVL2Prf8xrXuZe1CMS7ID9Lc8FaL1ROIN/W8Vk
+ BIsJMaWOhks//7d92Uf3EArDlDShwR2+D+AMon8NULuLBHiEUQARAQABzTJHdWVudGVyIFJv
+ ZWNrIChMaW51eCBhY2NvdW50KSA8bGludXhAcm9lY2stdXMubmV0PsLBgQQTAQIAKwIbAwYL
+ CQgHAwIGFQgCCQoLBBYCAwECHgECF4ACGQEFAlVcphcFCRmg06EACgkQyx8mb86fmYFg0RAA
+ nzXJzuPkLJaOmSIzPAqqnutACchT/meCOgMEpS5oLf6xn5ySZkl23OxuhpMZTVX+49c9pvBx
+ hpvl5bCWFu5qC1jC2eWRYU+aZZE4sxMaAGeWenQJsiG9lP8wkfCJP3ockNu0ZXXAXwIbY1O1
+ c+l11zQkZw89zNgWgKobKzrDMBFOYtAh0pAInZ9TSn7oA4Ctejouo5wUugmk8MrDtUVXmEA9
+ 7f9fgKYSwl/H7dfKKsS1bDOpyJlqhEAH94BHJdK/b1tzwJCFAXFhMlmlbYEk8kWjcxQgDWMu
+ GAthQzSuAyhqyZwFcOlMCNbAcTSQawSo3B9yM9mHJne5RrAbVz4TWLnEaX8gA5xK3uCNCeyI
+ sqYuzA4OzcMwnnTASvzsGZoYHTFP3DQwf2nzxD6yBGCfwNGIYfS0i8YN8XcBgEcDFMWpOQhT
+ Pu3HeztMnF3HXrc0t7e5rDW9zCh3k2PA6D2NV4fews9KDFhLlTfCVzf0PS1dRVVWM+4jVl6l
+ HRIAgWp+2/f8dx5vPc4Ycp4IsZN0l1h9uT7qm1KTwz+sSl1zOqKD/BpfGNZfLRRxrXthvvY8
+ BltcuZ4+PGFTcRkMytUbMDFMF9Cjd2W9dXD35PEtvj8wnEyzIos8bbgtLrGTv/SYhmPpahJA
+ l8hPhYvmAvpOmusUUyB30StsHIU2LLccUPPOwU0ETofVZwEQALlLbQeBDTDbwQYrj0gbx3bq
+ 7kpKABxN2MqeuqGr02DpS9883d/t7ontxasXoEz2GTioevvRmllJlPQERVxM8gQoNg22twF7
+ pB/zsrIjxkE9heE4wYfN1AyzT+AxgYN6f8hVQ7Nrc9XgZZe+8IkuW/Nf64KzNJXnSH4u6nJM
+ J2+Dt274YoFcXR1nG76Q259mKwzbCukKbd6piL+VsT/qBrLhZe9Ivbjq5WMdkQKnP7gYKCAi
+ pNVJC4enWfivZsYupMd9qn7Uv/oCZDYoBTdMSBUblaLMwlcjnPpOYK5rfHvC4opxl+P/Vzyz
+ 6WC2TLkPtKvYvXmdsI6rnEI4Uucg0Au/Ulg7aqqKhzGPIbVaL+U0Wk82nz6hz+WP2ggTrY1w
+ ZlPlRt8WM9w6WfLf2j+PuGklj37m+KvaOEfLsF1v464dSpy1tQVHhhp8LFTxh/6RWkRIR2uF
+ I4v3Xu/k5D0LhaZHpQ4C+xKsQxpTGuYh2tnRaRL14YMW1dlI3HfeB2gj7Yc8XdHh9vkpPyuT
+ nY/ZsFbnvBtiw7GchKKri2gDhRb2QNNDyBnQn5mRFw7CyuFclAksOdV/sdpQnYlYcRQWOUGY
+ HhQ5eqTRZjm9z+qQe/T0HQpmiPTqQcIaG/edgKVTUjITfA7AJMKLQHgp04Vylb+G6jocnQQX
+ JqvvP09whbqrABEBAAHCwWUEGAECAA8CGwwFAlVcpi8FCRmg08MACgkQyx8mb86fmYHNRQ/+
+ J0OZsBYP4leJvQF8lx9zif+v4ZY/6C9tTcUv/KNAE5leyrD4IKbnV4PnbrVhjq861it/zRQW
+ cFpWQszZyWRwNPWUUz7ejmm9lAwPbr8xWT4qMSA43VKQ7ZCeTQJ4TC8kjqtcbw41SjkjrcTG
+ wF52zFO4bOWyovVAPncvV9eGA/vtnd3xEZXQiSt91kBSqK28yjxAqK/c3G6i7IX2rg6pzgqh
+ hiH3/1qM2M/LSuqAv0Rwrt/k+pZXE+B4Ud42hwmMr0TfhNxG+X7YKvjKC+SjPjqp0CaztQ0H
+ nsDLSLElVROxCd9m8CAUuHplgmR3seYCOrT4jriMFBtKNPtj2EE4DNV4s7k0Zy+6iRQ8G8ng
+ QjsSqYJx8iAR8JRB7Gm2rQOMv8lSRdjva++GT0VLXtHULdlzg8VjDnFZ3lfz5PWEOeIMk7Rj
+ trjv82EZtrhLuLjHRCaG50OOm0hwPSk1J64R8O3HjSLdertmw7eyAYOo4RuWJguYMg5DRnBk
+ WkRwrSuCn7UG+qVWZeKEsFKFOkynOs3pVbcbq1pxbhk3TRWCGRU5JolI4ohy/7JV1TVbjiDI
+ HP/aVnm6NC8of26P40Pg8EdAhajZnHHjA7FrJXsy3cyIGqvg9os4rNkUWmrCfLLsZDHD8FnU
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20240627090113.391730-1-xzeol@yahoo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 6/27/2024 9:54 PM, Greg KH wrote:
-> On Thu, Jun 27, 2024 at 09:47:16PM +0800, Zijun Hu wrote:
->> Initialize an uninitialized struct member for devres_open_group()
->> and simplify devm_percpu_match() implementation.
+On 6/27/24 02:01, Alex Vdovydchenko wrote:
+> This series of patches adds the MP5920 Host-swap controller, which is used
+> as a protection and control IC for devices that are being inserted into a live
+> backplane. MP5920 acts as a voltage regulator (MP5911 etc) supervisor. IC
+> utilizes pmbus and provides monitoring, statistics and limits to electrical and
+> thermal characteristics such as:
+> - input and output voltage
+> - output current
+> - output power
+> - IC temperature
 > 
-> Huge hint, when you say "and" or "also" in a patch, it's a good idea to
-> split it up into different commits, right?
+> One must take into account the nonlinear character of readings, so there will be
+> a statistical error in the range 5–10 percents, depending on current passing
+> through. In order to use the IC, make sure to specify a valid I2C address
+> (consult to datasheet and dts-bindings)
+> MP5920 datasheet: https://www.monolithicpower.com/en/mp5920.html
 > 
-you are right.
-i would like to split this change into two changes within a patchset
-even if this change is *very* simple.
->>
->> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
->> ---
->> This change is intend to replace below one:
->> https://lore.kernel.org/lkml/1718629765-32720-1-git-send-email-quic_zijuhu@quicinc.com/#t
-> 
-> Why?  SHouldn't this be v2 instead?
-> 
-this change has different title and maybe be identified as different
-patch, so i send it as v1.
->>  drivers/base/devres.c | 5 +++--
->>  1 file changed, 3 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/base/devres.c b/drivers/base/devres.c
->> index 3df0025d12aa..5b1d498e83ab 100644
->> --- a/drivers/base/devres.c
->> +++ b/drivers/base/devres.c
->> @@ -567,6 +567,7 @@ void * devres_open_group(struct device *dev, void *id, gfp_t gfp)
->>  	grp->id = grp;
->>  	if (id)
->>  		grp->id = id;
->> +	grp->color = 0;
->>  
->>  	spin_lock_irqsave(&dev->devres_lock, flags);
->>  	add_dr(dev, &grp->node[0]);
->> @@ -1172,9 +1173,9 @@ static void devm_percpu_release(struct device *dev, void *pdata)
->>  
->>  static int devm_percpu_match(struct device *dev, void *data, void *p)
->>  {
->> -	struct devres *devr = container_of(data, struct devres, data);
->> +	void __percpu *ptr = *(void __percpu **)data;
->>  
->> -	return *(void **)devr->data == p;
->> +	return ptr == (void __percpu *)p;
-> 
-> What exactly is being "optimized" here?
-> 
-1) remove redundant container_of() and devr->data operations
-   pointer parameter @data already is address of devr->data.
-2) compare with right data type
-    original type of @p is void __percpu * returned by
-__devm_alloc_percpu().
+> Changes in v2:
+>    -  fixed typos
 
-@data is storing a pointer type void __percpu * as shown by below
-statement within __devm_alloc_percpu().
-*(void __percpu **)p = pcpu;
+... and ignored all other feedback without explaining the reasons.
 
-> And where did the container_of go?  You just lost all type-safeness.
-> 
-see above comments 1) and 2).
-> thanks,
-> 
-> greg k-h
+I am not even going to review this version.
+
+Guenter
 
 
