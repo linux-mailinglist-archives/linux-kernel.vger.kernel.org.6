@@ -1,156 +1,132 @@
-Return-Path: <linux-kernel+bounces-231889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0D49919FED
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:04:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 197FC919FFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:06:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B2B61F29DD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:04:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7E4B280D72
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:06:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EF6E4D8CC;
-	Thu, 27 Jun 2024 07:01:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD1947A73;
+	Thu, 27 Jun 2024 07:05:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MVS7MnVZ"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uDnl84jt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 922441CFB9
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 07:01:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7789C1CFB9;
+	Thu, 27 Jun 2024 07:05:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719471672; cv=none; b=qRpbclyLqE9D1JN18l6IY05ZRoXVQwvFBRdWrHDDSQaB0GQt34aGdvuY+IVZST84cRAEedetVCmzMJ523dnFn+KbTYgh54pJIJJF42v6Sgc9jSibAmvzttSqTYgqpys1rtXa1KYCAumW/SIQ0BCunsh0bn3gcUo5Ty54ImMLMZU=
+	t=1719471958; cv=none; b=UFjAuvRbKjPd/K0TGOuLOz1qDxDo6O1svnFpadAdPNL7dw/us5hPto8+8sZEQI5muLCyA5Fg5MKSPTPkJAi+EXKekuNRUBCVixp/KXgaCKcl+zTOj3wl/465oLgmewc91jCVPjyAPtq2cyrXDkBZxuAcUbOUgO0x4LHaDtcnRZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719471672; c=relaxed/simple;
-	bh=oDqZyR+8bfJ3aEt0lEDS/JoaZ2NulptY81c2SiHzGrQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=mkhpvrn56oeDjlGsxeYgxwB0XWAx07XhUJngaIZU9Edyijzivh+KHECjEMTuTKc4JsjZGpecA+yi4V0JGGrvG2Q4jUZdTn9L9Ycz1FpBgTTJtpXGOAt2Ewf/kIcqhTVkTcB/iIZoXA3Sy+zTeiYcFVrXzijJxKnwYIPiFrg0ZSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MVS7MnVZ; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-364c9ec17d1so4686650f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 00:01:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719471669; x=1720076469; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lCgSGAV6EvGTTLCyg0h0NGRt6XTYg1PY0og0tI+4xAY=;
-        b=MVS7MnVZIFqZMBH5z/fEJW3qvNxfGpNLDZFDjntCzTLig3oydd2AIbvtnvV0UUmtlJ
-         HnhtCFoSkIPl9QcHAOE/cmKd7EGPOuWNOnrsHK7HSqwFYuLjskSLzg14H3rVO/PoaSJL
-         J+NFwxaTjptdDhvbp+UQAJUWc4uNFlIjZaD7MH33jucfhq8lfcwDKWIaC+hMK0RlvrxU
-         Dd1yQqZv6oKrL0Gu/+B+TDKgyrfUBI46urSqfOMpY4useo8fgAA8mIkRLj9sxFu1c0zh
-         c6bzgZd3cAB/yfTUeD4pwu+bhhdX3S1tfWTVHdFmaj2058vNHl4+++FTVmK6xkLZmxz4
-         HH4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719471669; x=1720076469;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lCgSGAV6EvGTTLCyg0h0NGRt6XTYg1PY0og0tI+4xAY=;
-        b=to3SUWXX+bYjBnyTkS7G4ZoXbEedo38KhRI6UO5ZGOFvukG3vP8Z1T+0zyuLpIuRUH
-         T781zk1Hzo7xLYeoi5Jvk/Do6AMnofIgePTvCcvzWQo8Dgsq48kR8zKeJkf53FxR+Kwz
-         Z3V61Oig/ukkpk5m5NGvCEuHTz1S8f1RnR/7fgi2Byi+jhw6YQVWk31FeppwZbbtDG6V
-         RTRw2skx/5uCb+fEnDJkpNig5GWEO2fk8AcmaxcUmRiU06XGNw+Y9lCGRUypHc8n3F0I
-         6d4bNJl5DPOMCqBtBh7qlWJIMt49e2RmJ7jGQSuy8n7KVU8/rLgIhs7x1FIivbRtX+U1
-         XeVA==
-X-Forwarded-Encrypted: i=1; AJvYcCUng6K8d70k6U2f+5rBgnfAJsB/pA5SfF888ffDB4SqPAqqffw2GxcRgM3+X89sP1yuLEsrIP08VKL3IBVLATFZWu8KhMNL0BP4D9pk
-X-Gm-Message-State: AOJu0YwEjb40YFHuGMA22xSF8Wh0KXFlVjdCWhKLec4ggALmDqXJu9ba
-	96tk2SowAJYoOyQbhOuV+9nWOteYw2yTK3CWSH1CsCjCRnZVqBtHCUcnEauNd5s=
-X-Google-Smtp-Source: AGHT+IGH2Dv0dIF+pOWIwNb6TZTGpgJIIEF1h8aEfoHfiYa9OlH1jelIcwVFmpCVUa2tUwQiXCh0Xg==
-X-Received: by 2002:a5d:4c86:0:b0:360:727b:8b47 with SMTP id ffacd0b85a97d-366e9629df0mr8830268f8f.63.1719471668889;
-        Thu, 27 Jun 2024 00:01:08 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3674358556fsm884793f8f.60.2024.06.27.00.01.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Jun 2024 00:01:08 -0700 (PDT)
-Message-ID: <31ca93a7-865d-4a92-af21-69f15bc688d4@linaro.org>
-Date: Thu, 27 Jun 2024 09:01:06 +0200
+	s=arc-20240116; t=1719471958; c=relaxed/simple;
+	bh=unxppICjsOj38X3hg+dykNAKfgScPhTx9LRl/jrcpGE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oYAh62n+xqIX+x3NkKjkHcFu5/iGXJmJgXNPMJrmL9X3gM0Kk4x2t5VH2hrkIK7wQRMzARlhRdnZleInmRcdG3V4sTo2xkUnAz5mosVI90z2WdrHOmjPtQmDo72bakaUuaai1aXra/MvkWiiD86moO5ppq35ladtUl9JLX0/fik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uDnl84jt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45295C2BBFC;
+	Thu, 27 Jun 2024 07:05:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719471958;
+	bh=unxppICjsOj38X3hg+dykNAKfgScPhTx9LRl/jrcpGE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=uDnl84jttNaIBNsvNoQoZ4ae/ks34b6ZzHnKSnVKdu0yjhrqaLAHtizZ/Oxf5KiO0
+	 jtcplnq9VV8hdaADJCO+p3nkgai0P1GaGr8QuGRMs1vOPD6qb0yihGjg9mLKphltc/
+	 /1LU2RY02iRb9cnf3s0ZmNZ+TBehZUoTRoFbl8xK8vDgyV1BoqbVJnIbHKEUqUzHF9
+	 zDP7cSYgxOuOLt8kaw2FWNSTKstiHbdKJzo3E+Gy7aSEZwpW5AkQjsGDRGb5rNKLjS
+	 QE0EJL4APm9MHspaHplUHphZEEGFoIunYBJFXixYxxyVeUUVF16vMY952hrEFZdXVF
+	 JcRrDWsDecLOg==
+Received: from mchehab by mail.kernel.org with local (Exim 4.97.1)
+	(envelope-from <mchehab@kernel.org>)
+	id 1sMjCe-0000000B02K-0O3E;
+	Thu, 27 Jun 2024 09:05:56 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Len Brown <lenb@kernel.org>,
+	Tony Luck <tony.luck@intel.com>,
+	linux-acpi@vger.kernel.org,
+	linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Shiju Jose <shiju.jose@huawei.com>
+Subject: [PATCH 0/2] Add other fields to ARM trace event
+Date: Thu, 27 Jun 2024 09:01:07 +0200
+Message-ID: <cover.1719471257.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mux: MAINTAINERS: drop ADGS1408 driver entry
-To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
- Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org
-References: <20240626140343.145440-1-krzysztof.kozlowski@linaro.org>
- <8a3ac03fcdc5c2c6401d0a990af5d6e9f6c6670d.camel@gmail.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <8a3ac03fcdc5c2c6401d0a990af5d6e9f6c6670d.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 
-On 27/06/2024 07:43, Nuno Sá wrote:
-> On Wed, 2024-06-26 at 16:03 +0200, Krzysztof Kozlowski wrote:
->> Emails to Mircea Caprioru bounce:
->>
->>   Remote Server returned '550 5.1.10 RESOLVER.ADR.RecipientNotFound; Recipient not
->> found by SMTP address lookup'
->>
->> so clearly this driver is not supported anymore.
->>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> ---
-> 
-> Hi Krzysztof,
-> 
-> Mircea is no longer with us and often we just forget to update these entries until
-> someone yells. But we still want to support this. Can you send a v2 putting me as
-> maintainer or should I send a patch myself?
+This series was previously sent at:
+https://lore.kernel.org/all/20240321-b4-arm-ras-error-vendor-info-v5-rc3-v5-0-850f9bfb97a8@os.amperecomputing.com/
 
-I'll send a v2, thanks.
+Those patches that fix UEFI 2.6+ implementation of the ARM trace event,
+as the original implementation was incomplete.
 
-Best regards,
-Krzysztof
+In summary:
+changeset e9279e83ad1f ("trace, ras: add ARM processor error trace event")
+was incomplete: it added a trace event that was reporting only some fields
+of the CPER record generated for ARM processor from UEFI 2.6 spec.
+
+Those are not enough there to actually parse such events on userspace,
+for it to properly report/record the error nor to take appropriate measures
+to prevent future problems, like poisoning problematic CPU cores and taking
+them offline.
+
+The patch was validated with the help of an ARM EINJ code for QEMU:
+
+	https://github.com/mchehab/rasdaemon/wiki/error-injection
+
+I tested the ghes and cper reports both with and without this change,
+using different versions of rasdaemon, with and without support for
+the extended trace event. Those are a summary of the test results:
+
+- adding more fields to the trace events didn't break userspace API:
+  both versions of rasdaemon handled it;
+
+- the rasdaemon patches to handle the new trace report was missing
+  a backward-compatibility logic. I fixed already. With that, rasdaemon
+  can handle both old and new trace events.
+
+Btw, rasdaemon has gained support for the extended trace since its
+version 0.5.8 (released in 2021). I didn't saw any issues there
+complain about troubles on it, so either distros used on ARM servers
+are using an old version of rasdaemon, or they're carrying on the trace
+event changes as well.
+
+---
+
+- Changes over the original changeset:
+  - First patch was simplified to avoid too many #ifdefs;
+  - reordered local vars using reverse xmas tree;
+  - removed uneeded typecasts;
+  - some coding style fixes.
+
+Daniel Ferguson (1):
+  RAS: ACPI: APEI: add conditional compilation to ARM error report
+    functions
+
+Shengwei Luo (1):
+  RAS: Report all ARM processor CPER information to userspace
+
+ drivers/acpi/apei/ghes.c | 14 +++++-------
+ drivers/ras/ras.c        | 47 +++++++++++++++++++++++++++++++++++++--
+ include/linux/ras.h      | 16 ++++++++++----
+ include/ras/ras_event.h  | 48 +++++++++++++++++++++++++++++++++++-----
+ 4 files changed, 106 insertions(+), 19 deletions(-)
+
+-- 
+2.45.2
+
 
 
