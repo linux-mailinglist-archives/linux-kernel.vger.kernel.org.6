@@ -1,148 +1,116 @@
-Return-Path: <linux-kernel+bounces-232215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E75D291A54C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:31:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0533D91A54E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:31:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71E0FB249A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:31:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36C1D1C2299A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A4914D29A;
-	Thu, 27 Jun 2024 11:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7592715443D;
+	Thu, 27 Jun 2024 11:30:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jN7z5zWm"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="lr1Eq6lI"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A660913E41F;
-	Thu, 27 Jun 2024 11:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F1014EC4E
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 11:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719487825; cv=none; b=VVPdeQjzhOMTOLOQQczV4JiyhstficB5sxgUBxLa46YftgplDXLDDbPFpz/sLLJcQy//U3gTXgWt0XClO9d5M0Hj23ZGbs2GS4F/gwyBo2K5EZ3Rbz9QtJSbV8IvFxu1prSLwaeCe59yqs7hmKwk74qxIfOjM4885y6/u8CJISw=
+	t=1719487830; cv=none; b=da8wgMo4L+tp38KbGYBeiU6Qj2J/MgTCsPOdrDfVu7oKNgZWMtPPxajNRi1ksGj9UqiQhoMle6aJ6dtWJoa7bj53D0ZcAtC3Ai+oJ8geTvgzRAK0GKB+ywlr9EGuUeajRy4nOXzV7NfqQtrxEBVE0RD+let8DNp3Q2T91piEMxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719487825; c=relaxed/simple;
-	bh=FMOhaUV2i8MrCHhGIzcTXcbZCBRkMiRMf4upve02Zg8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NNkqJL3NIWoyGWOc8MqmB0CydzSGH5hL8J8m/H4hi8FvhjgpDL18Rmv4C/5TnBk1LFH9/1vvTGZxA9ZhC8F9QkBnhRVw94OSq6FFgdNZWDaemOg/rGyQN7KULFKOglB1Dk0wyR/MOmSdFb5KBHVcvOKkLFGbAjdEJUnuKn8Q/PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jN7z5zWm; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45RAe8RE016143;
-	Thu, 27 Jun 2024 11:29:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	yvTNhHO8YwMDefQ88K6TNlh3o4bpkTA7GzgWDR19jog=; b=jN7z5zWmwMVhwmOB
-	P3A5vmzLUQkc5ttSyG+C4XfdueBJdSuR1zgf7kvO8LbiRJwgzBbT2V/YAVdZnp0t
-	AmFRFHKmnl+aDlq8LLWhm0LOYyQUqm5S/XGmud51uMgQlUA+NPc1wsm54322K1mT
-	P2fQ8vMsRq4SXnndL6Le9oyjuODheVmqXc5hI+ykyO+E7jOsSu3BQMiqYNvhq8fY
-	yf7IE8phvsyAyfbKjqEWCEF4PER9GF4NZObEYC/gHV3dhAS3DC1RDvYr5VTY4tkT
-	D4pZB+VG5MtFQQzC4f9vLDnOl1HlZkGDjrVu+rb1d5Ry5HGwU5wfqCOMAA0HleDJ
-	gFRbdg==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 400gcmb8th-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Jun 2024 11:29:47 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45RBTkwS012401
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Jun 2024 11:29:46 GMT
-Received: from [10.152.201.37] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 27 Jun
- 2024 04:29:41 -0700
-Message-ID: <2ba4b368-d706-4723-a0aa-f1579600db23@quicinc.com>
-Date: Thu, 27 Jun 2024 16:59:38 +0530
+	s=arc-20240116; t=1719487830; c=relaxed/simple;
+	bh=V7r2h21rFTkzap9aygRNENNVZJFQU3oVk0zUaTf6w7Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l90MT70b0F4/PjTc9ODjyJ/FMNlx427PBQ9B1KS47j8wpn1nnU/toB/eyoI7GUwAFdFAL7QodnH5oKKwAwkQPWXB/EJwDStLWWyv5dViJffZNHfe7wMV7aaGKHxDUIACxUTctlq8HHLv549W3Ui0LuJLpdhvGbJuXiLieFvnRhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=lr1Eq6lI; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-364a39824baso5400669f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 04:30:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719487827; x=1720092627; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=19tyJfMUE4DVOIgXmup8kim9fX5UU6ImAnNUuH8s+bE=;
+        b=lr1Eq6lIphuTmEDaWXHvfdxxkCzm4V50A0T5G1cyI3niLKSvTvcyKkw+PfdvOZIgy5
+         bULn7We22ZVC7gewAtkESbmUrlj6g1nxDvBrR3Hb8yar4SisT6dKoSQ6suIVhzM4CRCi
+         LF5qoUC9yyXX2JAXA5X7PUIBytohD9B/wQf6B/y7X8zNIULmIfQoMu9WvExofQvigr3H
+         kHfZlhM2RyivtQmKDsOI4XUWo511LEzC1dvhrOuQJNqYu2Qmb+5PuYRdtuWVnFyzVwag
+         ZptaSUlIgYqVcuc9Ykrd8+sI848VXc0NYBN8gO93HcW5JR/AICvaKmcjs3WAnp1XNgXH
+         7hTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719487827; x=1720092627;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=19tyJfMUE4DVOIgXmup8kim9fX5UU6ImAnNUuH8s+bE=;
+        b=Ly6Cy4R46nbucXYIW1oxtFupiD6mINXAJWS2tGzQ8wItNSDtzcsFxkcHbfrC99uXD9
+         x8WmngMTfpeZVi1P3k5J+Ve4gs0Xl3ovJmOrg95NFR6IqKqjDhnhjaIS24wpSt+gYiTR
+         XVm6qOu3U/Vs6RI+gkRa6UeDUXW4cAjQ2osnYxN+sg//Vp+HVK+273AqELDcvNHqPypy
+         MHqxD9dsDgTQQf7AQ4KYqcVh0NhZTeBuUsMk61X1Dx0ChCLkpCA+lNfWrRJKqnkKpGbz
+         TUkM73c30xwYQ9iPqUvXtjWgqI/DXkdju5YmKok2d+8kvP8cNu3qaA7Z8paHYcFQ3wwU
+         xg3g==
+X-Forwarded-Encrypted: i=1; AJvYcCWeIRyp46+H5QCpOz8EsI92WCqEFxYu+KEKblP3OhFyhImo96mZLqY9TuzIaDVJvrCK1EahKXfU4wnz4PQDw5OuyQ3x2sgbMxsJI8wG
+X-Gm-Message-State: AOJu0YyqsVnnQBiHFJDdl+d/aqkhBjaE021SsC6Wv3s+RhRbFtnUQM4n
+	b9GM00yuBRnR+lPe9I80tNgpuYEYo5t4RHoxosfpd2XpawPWkDLLprGykfgDzHU=
+X-Google-Smtp-Source: AGHT+IHSUpz5bBPpRgQwtkfsRytpc7pZaY3huimeERHs0j+GwTVHATRTX1rTfcNxT4paSJOr0EG8Gw==
+X-Received: by 2002:a05:6000:231:b0:35e:6472:4390 with SMTP id ffacd0b85a97d-366e79fe9eamr7560475f8f.27.1719487827268;
+        Thu, 27 Jun 2024 04:30:27 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:7fe5:47e9:28c5:7f25])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36743699ae0sm1504111f8f.66.2024.06.27.04.30.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 04:30:27 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH v2 net-next 0/3] net: phy: aquantia: enable support for aqr115c
+Date: Thu, 27 Jun 2024 13:30:14 +0200
+Message-ID: <20240627113018.25083-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 1/8] remoteproc: qcom: Add PRNG proxy clock
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <sboyd@kernel.org>, <andersson@kernel.org>, <bjorn.andersson@linaro.org>,
-        <david.brown@linaro.org>, <devicetree@vger.kernel.org>,
-        <jassisinghbrar@gmail.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <mark.rutland@arm.com>,
-        <mturquette@baylibre.com>, <ohad@wizery.com>, <robh@kernel.org>,
-        <sricharan@codeaurora.org>, <gokulsri@codeaurora.org>
-References: <20240621114659.2958170-1-quic_gokulsri@quicinc.com>
- <20240621114659.2958170-2-quic_gokulsri@quicinc.com>
- <chi3pzh5ss3mivnhs3qeoen5hsecfcgzaj6qnrgxantvinrri2@bxsbmpufuqpe>
- <73cb638e-4982-49a2-ba79-0e78402b59ad@quicinc.com>
- <ga5kczcyn3dqoky4525c74rr7dct5uizun2smvyx3p3u6z6vtm@5vshoozpttod>
- <2617940e-72ad-4214-be26-7a5b15374609@quicinc.com>
- <dyh3vxosjjfztgwgpb5jtoqhzfyf5jyfndaujqoslepzvbet4o@kx6xaotzazcs>
-Content-Language: en-US
-From: Gokul Sriram P <quic_gokulsri@quicinc.com>
-In-Reply-To: <dyh3vxosjjfztgwgpb5jtoqhzfyf5jyfndaujqoslepzvbet4o@kx6xaotzazcs>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 5XAp9QFoO9ErigkzPYvY_k_GoJj92gRz
-X-Proofpoint-ORIG-GUID: 5XAp9QFoO9ErigkzPYvY_k_GoJj92gRz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-27_06,2024-06-27_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- mlxlogscore=999 clxscore=1015 mlxscore=0 phishscore=0 impostorscore=0
- adultscore=0 malwarescore=0 lowpriorityscore=0 priorityscore=1501
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406270086
 
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-On 6/27/2024 4:38 PM, Dmitry Baryshkov wrote:
-> On Thu, Jun 27, 2024 at 03:31:01PM GMT, Gokul Sriram P wrote:
->> On 6/27/2024 12:47 AM, Dmitry Baryshkov wrote:
->>> On Tue, Jun 25, 2024 at 11:03:30AM GMT, Gokul Sriram P wrote:
->>>> On 6/22/2024 2:38 AM, Dmitry Baryshkov wrote:
->>>>> On Fri, Jun 21, 2024 at 05:16:52PM GMT, Gokul Sriram Palanisamy wrote:
->>>>>> PRNG clock is needed by the secure PIL, support for the same
->>>>>> is added in subsequent patches.
->>>>> Which 'same'?
->>>>> What is 'secure PIL'?
->>>>     will elaborate in the updated version.
->>>>     To answer your question, secure PIL is signed PIL image which only
->>>> TrustZone can authenticate and load.
->>> Fine. So, the current driver can not load WCSS firmware on IPQ8074, is
->>> that correct? Or was there some kind of firmware interface change? The
->>> driver was added in 2018, so I can only hope that at that point it
->>> worked. Could you please explain, what happened?
->> The existing wcss driver can load unsigned PIL images without the
->> involvement of TrustZone. That works even now.
->> With the current change, we are trying to add signed PIL as an option based
->> on "wcss->need_mem_protection" if set. For signed PIL alone, we send a PAS
->> request to TrustZone to authenticate and load.
-> I see that you are enabling it unconditionally for IPQ8074. How is it
-> going to work?
+This is a smaller chunk of the bigger series that enables support for
+aqr115c and fixes a firmware boot issue preventing it from working on
+sa8775p-ride.
 
-Correct Dmitry. In this change, it is forcing secure PIL. With a 
-separate driver for secure PIL, this will be sorted right?
+Changes since v1:
+- split out the PHY patches into their own series
+- don't introduce new mode (OCSGMII) but use existing 2500BASEX instead
+- split the wait-for-FW patch into two: one renaming and exporting the
+  relevant function and the second using it before checking the FW ID
+Link to v1: https://lore.kernel.org/linux-arm-kernel/20240619184550.34524-1-brgl@bgdev.pl/T/
 
-Regards,
+Bartosz Golaszewski (3):
+  net: phy: aquantia: rename and export aqr107_wait_reset_complete()
+  net: phy: aquantia: wait for FW reset before checking the vendor ID
+  net: phy: aquantia: add support for aqr115c
 
-Gokul
+ drivers/net/phy/aquantia/aquantia.h          |  1 +
+ drivers/net/phy/aquantia/aquantia_firmware.c |  4 ++
+ drivers/net/phy/aquantia/aquantia_main.c     | 45 ++++++++++++++++++--
+ 3 files changed, 46 insertions(+), 4 deletions(-)
 
->> I also just noticed that Bjorn had suggested to submit a new driver for the
->> PAS based IPQ WCSS instead of overloading this driver. Will also address
->> that and post a new driver in updated revision.
->>
->> Regards,
->> Gokul
->>>>>> Signed-off-by: Nikhil Prakash V <quic_nprakash@quicinc.com>
->>>>>> Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
->>>>>> Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
->>>>>> ---
->>>>>>     drivers/remoteproc/qcom_q6v5_wcss.c | 65 +++++++++++++++++++++--------
->>>>>>     1 file changed, 47 insertions(+), 18 deletions(-)
+-- 
+2.43.0
+
 
