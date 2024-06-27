@@ -1,102 +1,105 @@
-Return-Path: <linux-kernel+bounces-231763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D05BC919D95
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 04:53:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8281919DA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 05:01:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F0C61C21371
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 02:53:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 633F7284C9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 03:01:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A791125D5;
-	Thu, 27 Jun 2024 02:53:04 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA2813FF9;
+	Thu, 27 Jun 2024 03:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="RxHB2CqF"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5E3101EC
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 02:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBCE26FC6;
+	Thu, 27 Jun 2024 03:00:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719456783; cv=none; b=nRQQETdPZ5z0KULUr05jZJNqSavkeHBbdZz41Nz/eVhqNP6QZNHIRQqN/Op4hG+jC1IGJOeGcB1NPG5g7fIh2beWsOZhjo7AimhdG75nb4cUsyMWI0ojYPktjK4FApWz/fo3DNdjCk1LyemAq1yitvq8AelXL44znr8IDHjKWLc=
+	t=1719457257; cv=none; b=Jm5I7ICMG7qfaOzyR/l7+ZA5fPO11tuRkLPFLBfzArhhUq6/OVmoAueaAK1uy7U54ud52nP3ooEVzLnhGLoWBWspo7I+ybKc2KH/Zth1j4Cek47cwLLnF4C1PLbxbpW0sVmo1G7JedOqwQcCZR17nXQSZAQ9PnI3JbeRLxTFZ/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719456783; c=relaxed/simple;
-	bh=o98+BimdjZ90Sr0eiLzEh5iHbiYXMs72o9xIeWp13bo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=cGqs/0C+fwnNUUSMvO2RO0fDZNILEINz6LKfmsfISqk7u3exc0jHkn63RvIsogsicIeDQorejxeZodbYvhAXQWlt24LMqk4KPzmLjFyA/cXhUYqe10x5A8ziahNvBjTuw10u+Pgb3RVwH83ELZS7QWmFtM59UL8uyOkXItgUK+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7eb73f0683cso1066119439f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 19:53:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719456781; x=1720061581;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=21JnBvhbP0T3+7EHQJxi11Y+NMnulkZVK+fNWbrUCNk=;
-        b=Gttd96gEphOK1WVRf147hnIHqNszDUHUNEILD7YIaz6Zuee0fV3p1UwhEWaTwikKdN
-         Rob/IUqN2duSZon7XfRvUhkqaDm/A2oqjG3m4ck9hcyha25W+ETw6p8KC37E3wb4L0lB
-         kYvIbHNtL/jSpS4oddjrV82ZCSIXeKrrbIQ2gntwyESreBcfzA0eMXYRFALBQwlpI+k3
-         5qSG2QnnLSwd/5EfYXIolfEYh9SCJyMAgQ81QkdoBTSyedHEV5GoJNVE8txCDH7VSZwg
-         xZ4cnKW+U177W1O+2wvMpMfFfSjUaSNlgt9zTEMib+hV1A4O/1v2BBnaIZOnG7vdjJCn
-         m4+Q==
-X-Gm-Message-State: AOJu0YwqLuBVkKfEhcDb7WKx7ZMpEcfJVGXwFSI1kLBRdqVpshvO4vvZ
-	cr2eVvUuVTGSETF+depBgfNNFBWiaUVig8ahqGZ90hqR9AnGBIQ71cFhLQ6QVCTk7aEDQKRv7+d
-	8JeRUe/dwuMLz8o2i9iiH5seCanTnpnyy+NkCQ2+VNNrdiUJ8IUYLyNk=
-X-Google-Smtp-Source: AGHT+IE5x6BlmjLKR0GcVI6Zuf/1wE3UgDz6LlG3/qJhgnQ10JD9RSnU7btL1ezhSJP+DGXjGxLZDrU0wOVpGNUSbEvMhCBazOfW
+	s=arc-20240116; t=1719457257; c=relaxed/simple;
+	bh=WqZGsjNQqac+8MnivgotfefTlGfUXJbcBN+NkTQKZQc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bk+9834dCqYsdSOKiCjkbjlblhecniVYraNKbJ5pX/a9eJhgtYYijFOA62+smv7RzkDWSmBj18mSd3wkLdVFXW4aru8742Qq9eCnaZjEykrKv4i6PU0VUf48pGxtRy80XODvrVLB2PKvAKgPI/EQwfDRegjF/O27/dtLETOnThg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=RxHB2CqF; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 04D7540E0218;
+	Thu, 27 Jun 2024 03:00:52 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id DrsUvQUOunVS; Thu, 27 Jun 2024 03:00:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1719457248; bh=AY4aMCo9kTgD3MRGQfEJ79FC77YpLM84z9ED/n/mc04=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RxHB2CqF3t+CTlineP1Zx0d2XuVqSbkH0Yuxdm0FoLanZCGoA0vF2q3MAylyCpX3S
+	 vs7GZfC8E/GmEGDA8g51CLOIpA3w9oPQT341E2uQPh9fLRxFPF2N8QUvhyq/McaJGm
+	 iVeOXAxo1IddgqnBlndSK+FYVV7rBCetl+CI6AKUzDiQvlv0p9nsPZ+NO49nY3hvXd
+	 Yh0ONb4Xxxpqt/uFxlQzEaGPccuzMXRBBfR4AIaLw0Xl0vH4uvgiP/lCUjBtUykTq2
+	 mvEVvWkQ+s+4r6H1CuWsHv9FtFPIuCEwU7ABBFDntzZWSU5yK7ieg+PPK+59kv+nVh
+	 d0cnS4VzfY2+ZhLBeZ0fLGNM2yffbmAf+CkSl2+pP/F0+r/tlYaoggzUm+AgzCmGsb
+	 DJJXa8kGK8NQ8xq8Z1EwR+uk9txvvkLpwZDr3zkeauqjMYKth5VHT8Un7pBQxdnmF5
+	 66P+oLZx1o35PDIwos6Cx47bKgy9ZklM+54auT5ukCv3kJJfqAcKaM1FOtz590SkOY
+	 WRtzXJ5uEYncEmc6sqia6/hpt2l5jBfhyfpaEKoMazrlQb/ooCUhT9GsmDxQZB8j6n
+	 m105RooDj41u3bw4QXkJehaV/z4NQF5cHA4iXuVUtxhUltP6wkDJGWoclilmqKWsq3
+	 xPh9Iccur9sMubLu/d5V706Q=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3760340E01D6;
+	Thu, 27 Jun 2024 03:00:33 +0000 (UTC)
+Date: Thu, 27 Jun 2024 05:00:26 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+	Perry Yuan <perry.yuan@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>, Huang Rui <ray.huang@amd.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
+	"open list:AMD PSTATE DRIVER" <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH 1/2] x86/cpu/amd: Clarify amd_get_highest_perf()
+Message-ID: <20240627030026.GAZnzVyitzWW6nE_s8@fat_crate.local>
+References: <20240626042043.2410-1-mario.limonciello@amd.com>
+ <20240626042043.2410-2-mario.limonciello@amd.com>
+ <20240626171421.GRZnxMbcI83xe1SLtB@fat_crate.local>
+ <681732d3-76ba-47ba-9cce-362c6fe094cb@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c54c:0:b0:376:417e:c2a6 with SMTP id
- e9e14a558f8ab-376417ec6d3mr9581325ab.4.1719456781237; Wed, 26 Jun 2024
- 19:53:01 -0700 (PDT)
-Date: Wed, 26 Jun 2024 19:53:01 -0700
-In-Reply-To: <0000000000001f253b061bb8a953@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a70fc1061bd63a5a@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [jfs?] INFO: task hung in txBegin
-From: syzbot <syzbot+eda89a33c5856f66f823@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <681732d3-76ba-47ba-9cce-362c6fe094cb@amd.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Wed, Jun 26, 2024 at 01:18:17PM -0500, Mario Limonciello wrote:
+> And then patch 2 or patch 3 change the "default" return to 166 and if there
+> is functional issues then they need to be special cased.
 
-***
+Sounds ok to me. Keep the whole logic in one place. Sure.
 
-Subject: Re: [syzbot] [jfs?] INFO: task hung in txBegin
-Author: lizhi.xu@windriver.com
+-- 
+Regards/Gruss,
+    Boris.
 
-#syz test: upstream 50736169ecc8
-
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 92a5b8283528..04ccc85c80b4 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -2076,8 +2076,11 @@ static long wb_writeback(struct bdi_writeback *wb,
- 	long progress;
- 	struct blk_plug plug;
- 	bool queued = false;
-+	struct super_block *sb = work->sb;
- 
- 	blk_start_plug(&plug);
-+	if (sb)
-+		down_write(&sb->s_umount);
- 	for (;;) {
- 		/*
- 		 * Stop writeback when nr_pages has been consumed
-@@ -2162,6 +2165,8 @@ static long wb_writeback(struct bdi_writeback *wb,
- 		/* This function drops i_lock... */
- 		inode_sleep_on_writeback(inode);
- 	}
-+	if (sb)
-+		up_write(&sb->s_umount);
- 	blk_finish_plug(&plug);
- 
- 	return nr_pages - work->nr_pages;
+https://people.kernel.org/tglx/notes-about-netiquette
 
