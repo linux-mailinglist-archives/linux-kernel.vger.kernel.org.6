@@ -1,130 +1,85 @@
-Return-Path: <linux-kernel+bounces-231923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D09A91A065
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:27:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 37EDD91A066
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:28:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D0BDB212D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:27:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EE1BB21896
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:28:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2CE4D9FB;
-	Thu, 27 Jun 2024 07:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="DLzFQX2I"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB8E4D8CF;
+	Thu, 27 Jun 2024 07:28:07 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED31A4D8C3
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 07:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A313D3BD
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 07:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719473231; cv=none; b=ayOpXOsoBjokkbgFWD3YF4EcJQk90sT/La91BZ3u8373cy/aaLO2aVI0Hp/4EX7RWDSVd+7Lm+nTBQi4TOvVIKGNgN/rwvOWmwGO88v8e5XJFcRF0f/mJDzJbUG21qv4PgbKAYY4U1uF/kr16LNU+Tfv4CCsNLuzGXPOiKhyL8Q=
+	t=1719473287; cv=none; b=fx5SSmb6W2ue7jWSXh9R73LbRDCAIrbMALfe89LO77nqLChZvSZw1OfLuvm0Q2QvlOJwD0UcRBxrTqPtS+sJeKNp53Ie9iBd458CnAo5kYex1rlfYDDY8ANfwQixV0e3Bxp8qtFoznWFUhCdMy86bu6+0JQ6Oqh4//qcbGxX4z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719473231; c=relaxed/simple;
-	bh=QE1kYNeLouscu8HFqw3OTgK2pBsH1z0Kk5zkasfLXvM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cTbnfN07i/FZCb/nVLc8ra1/G/980hgfXAAqjcKs356dMppn1eSmqbzodm06SabefU9jcayMiXDhwF8T3HZOq6bcroEDDtRrxhSFhB3qNg5X6+5j5UdaYOVMZohpkTnHtFsrFtkU35Og28GdAfu0M9wCgH/q4sUebMLWxysf8Ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DLzFQX2I; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4B4FE40E0187;
-	Thu, 27 Jun 2024 07:27:03 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id sCsF5u5zh7N2; Thu, 27 Jun 2024 07:27:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1719473219; bh=J2BIhifwOifAop8D3YwWmk6Kw+mQtPUl556teaLsoyk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DLzFQX2IdX3FUf+ClNlL9lZSUgu7EEdUdr7pmMYW60KCnU49/q2Zw5RojhNXXDhBY
-	 85tM7+9gJrdbXRoToTsN4xrUGzTh2oYzL2MmYoYi1onp5zkkujVmvvp/xRfxReI5l/
-	 ubrR0G+WJc65vghO3KA30s15M8kdA0dMlnCuP930ru3xTf8yWh2tWICO/q9aqSy9V6
-	 u8RVhc2Sd8hNAEz6IIgPTuOw1dAg0HuqHmzO9RzcCmwXtzkiruObkNIFxMDXHQO8xW
-	 NaNBFEDoviOMQUpK0fn5TCNmE3aYUPYisg8ltVyTmbsOwZDYIDxuwHJDM2ZtGh5sWn
-	 D9A2dj2rrEl2rwcfIGPz+yFrqV10PTN4h6TPnBy/X8udYD8JWdhaU0SiPKDjp75fyT
-	 nkz3i2sLbGcJsg4e3JN9sBJJHg9EnYzCK9rWhXskpU8E9hCtHBHP9XR/0maMMxCewU
-	 1QbzQa76ukG2ezbB/Rh41nzea3+5pWMODG70VsWH0xToqlBSZzw2MCEOD37kc3z6lj
-	 TYo+Chh1SyQAujZOsertn1Enq6RSCIuXKTu1G+yrwk/bODB9ofVvq/ac8NsNazIrAF
-	 xMfAYeGWZOZ+Bz6ORdEfBuAImxsX0nb7FvaKV3WlNQWwUJPGIF83Ezs5rTGOZx48Y2
-	 F4yvgAYNf0tg8QMJgGcbGxVw=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 46F1B40E0185;
-	Thu, 27 Jun 2024 07:26:40 +0000 (UTC)
-Date: Thu, 27 Jun 2024 09:26:34 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alexandre Chartre <alexandre.chartre@oracle.com>,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	KP Singh <kpsingh@kernel.org>, Waiman Long <longman@redhat.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: Re: [PATCH v6 1/3] x86/syscall: Mark exit[_group] syscall handlers
- __noreturn
-Message-ID: <20240627072634.GAZn0UKqtwqwQhWr4q@fat_crate.local>
-References: <cover.1719381528.git.jpoimboe@kernel.org>
- <5d8882bc077d8eadcc7fd1740b56dfb781f12288.1719381528.git.jpoimboe@kernel.org>
+	s=arc-20240116; t=1719473287; c=relaxed/simple;
+	bh=svKxf7FJgdzdlh6fn7ki7H4RpvUux9HDC1zEo0LNoOI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=IjI11TDGKgZiL/Wpkg6NDuKIs3cd3i8UuHyZ41DeUpDqSQNdojVh0O6a1BB9QNm13G5CbwCEJrLCaJifYqa0PqHImbnlInl0vCx5M4OwANiV56q+Ux8FY/SiFGnBL3tKY/+9Sd+MTk4qCkrJcg90vUIl7qSaHtE3vlWOtfzV370=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-37714b7f378so32784395ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 00:28:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719473285; x=1720078085;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ba6truMrOKahOpdSNSzFVFXsBzSHTgUl1tcx+NYcVHk=;
+        b=Q11JCiY2PhBdUV2brqUPM/C72oup/xcqSG3ZHN+Up0k3lVBVzGtW/GO/3ukrrkuWwl
+         HHryMn1Vw1yLZnGRavqw/4E2Sl5ClB53kpFGh3xHn3+WF/zagrIekNgAXsla9A7VM3x8
+         Kbp3Pznz5+AOTZFEKR9HqiWOMMV6jAGaYY4p4AqBAyQawlGDHlUZexUPqMyL92wZ69IE
+         drKk7z81PLS+xfiQwa6A7Sp22dgBZOP+KQA5QEait8hc6qISROuoE0VfJV3vth7CGu1R
+         msDjGuhjYX7p9ncfymWMtdSH1inttMXJlG2byzD4BXTuEA5iD8nXPckKDz4zDEIFu2e9
+         vxRQ==
+X-Gm-Message-State: AOJu0Yyq8uhjZSausIeE7yXKRIRLwNhSoNLvkiV0QP8HVhSes4y1ajXl
+	5rN4MekadETG7Ud+V6DrZgnLX2/SuXXyEmhpkNo0/GQfIHAi25tzzsrfL2yiRgTWTN8XzGZfGbz
+	l1I2gUqrCh+HqPAa6VAgsbJ//0zuF/8lKu+r0qYPjLec4S4RUhmNLSAQ=
+X-Google-Smtp-Source: AGHT+IHRSmruvXfxnQubDL/UBxiK1YpkLXaat1QZwNCDZ3XOvqEWx2MT5PQhvQ1Xxunsyqsk5Axf8+cGd7NxURXjISoWIs1ngvk8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <5d8882bc077d8eadcc7fd1740b56dfb781f12288.1719381528.git.jpoimboe@kernel.org>
+X-Received: by 2002:a05:6e02:1ca2:b0:376:1fae:4604 with SMTP id
+ e9e14a558f8ab-3763f70a5ccmr13228895ab.4.1719473284878; Thu, 27 Jun 2024
+ 00:28:04 -0700 (PDT)
+Date: Thu, 27 Jun 2024 00:28:04 -0700
+In-Reply-To: <CAMc0M-8hvnC=kNF8FtXqxCTrzjkG3q-BhmAckaME48iNJVHQvQ@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000058ae72061bda12fd@google.com>
+Subject: Re: [syzbot] [kvm?] WARNING in __kvm_gpc_refresh (2)
+From: syzbot <syzbot+fd555292a1da3180fc82@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, peili.dev@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jun 25, 2024 at 11:02:00PM -0700, Josh Poimboeuf wrote:
-> The direct-call syscall dispatch function doesn't know that the exit()
-> and exit_group() syscall handlers don't return, so the call sites aren't
-> optimized accordingly.
-> 
-> Fix that by marking the exit syscall declarations __noreturn.
-> 
-> Fixes the following warnings:
-> 
->   vmlinux.o: warning: objtool: x64_sys_call+0x2804: __x64_sys_exit() is missing a __noreturn annotation
->   vmlinux.o: warning: objtool: ia32_sys_call+0x29b6: __ia32_sys_exit_group() is missing a __noreturn annotation
-> 
-> Fixes: 7390db8aea0d ("x86/bhi: Add support for clearing branch history at syscall entry")
-> Reported-by: "Paul E. McKenney" <paulmck@kernel.org>
-> Closes: https://lkml.kernel.org/lkml/6dba9b32-db2c-4e6d-9500-7a08852f17a3@paulmck-laptop
+Hello,
 
-This here talks about
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-1e3ad78334a6 ("x86/syscall: Don't force use of indirect calls for system calls")
+Reported-and-tested-by: syzbot+fd555292a1da3180fc82@syzkaller.appspotmail.com
 
-being the culprit.
+Tested on:
 
-But Fixes points to something unrelated...?
+commit:         afcd4813 Merge tag 'mm-hotfixes-stable-2024-06-26-17-2..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1427e301980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e40800950091403a
+dashboard link: https://syzkaller.appspot.com/bug?extid=fd555292a1da3180fc82
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=13838f3e980000
 
-In any case, I won't send this to Linus now as urgent material unless someone
-presents a reasonable argument for it...
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Note: testing is done by a robot and is best-effort only.
 
