@@ -1,234 +1,162 @@
-Return-Path: <linux-kernel+bounces-232419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CBA791A89B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:04:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA3C391A8A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:06:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8C1E1F23153
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:04:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B1C3B212F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:06:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8462C19598F;
-	Thu, 27 Jun 2024 14:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CAE019596B;
+	Thu, 27 Jun 2024 14:06:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZqurxRux";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DmxQDbCa";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="opzsBa/D";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tSRL2AD3"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Xk0gH3zQ"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73DFD19580D;
-	Thu, 27 Jun 2024 14:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2126719580A
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 14:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719497036; cv=none; b=eKsxi2DXCgb5P0JOflgpTjrzSDcr/nCepXGdxl6+V6pghkKlsDESLtpngNO+Z0s7pT4/rkA550LWaCm6d2iIEi7jRAWSc1Iji3lrCJFd7Xr7VXK7WtQprpsDXOnx1wjt82PNybLOgKOwF1lqb4AtyvDUh8zVEJlONvTlrAz6IAE=
+	t=1719497197; cv=none; b=vFDDWk7fi14DqcempgG10amPF+eMOypJ1y9lagO4FARw0fwCCiVvLyWwcQOmiOYgFgzKh677khCXTcOeUxCL4gpRPGF+xxuQ5twZ+8aFgf3mPz2p5Mnv33+BH94/KULnq8MpDA/QjN9r6wacAlaYekWgxoccKYEMy/QMau5TRWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719497036; c=relaxed/simple;
-	bh=ev1QAvan/iAGexvqPDni4mBuoPrSQZfWccKavoN6tEY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FJeG+9EKyDVSvsQMBgeHJQJyaLUVTJ+/HwIUIN3zBCw5z91LINLrKG7u17NSSlJaPBFeo0Z77St7PRNJFZEHAkzy66dXBA2OWMiQDY1RaRELEJ5nihLelADaW84lykmRAlP7uhqzUeqh5Cij3ud7TdQmXPfRtpATwcuQgbRx6pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZqurxRux; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DmxQDbCa; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=opzsBa/D; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tSRL2AD3; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E72A721894;
-	Thu, 27 Jun 2024 14:03:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719497029; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KvbA4PAazLUAg1OnkD1/0xSOzLB917EBmUzxxIZljXU=;
-	b=ZqurxRuxfCKveqBgazMpUmWiJ4uHEo12fPDan0C+/ykFsGXr+N7PtBV0FjoaQBdKI7medJ
-	kRUp8HXViPVolNW5HIi412C2qPf0qYQ0ZY0ssLr+HO+tMsSY/d0MlyAG1Spuk3Z1eAl+KP
-	Y4BJtBhHip2iNTM7iB6i1TVKK5oUI20=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719497029;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KvbA4PAazLUAg1OnkD1/0xSOzLB917EBmUzxxIZljXU=;
-	b=DmxQDbCajnj4nn2O7fCdeGTao8pud1sSQhvfhwZ7oZltR5a5i3utWRI2r5E9fIzou+RGJU
-	F3KWvm6kh8iXdODA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719497028; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KvbA4PAazLUAg1OnkD1/0xSOzLB917EBmUzxxIZljXU=;
-	b=opzsBa/DBUBtPf/CH/W/TCAgeZm6x745ReCmSh7I8IBf091NrcC2R8WeRclkOr0pP6Uk2F
-	GIrv2P0DB83bVzLrWclbhAffPDidyU1fBoxWDp+h06qJmo/3DlaMdruAHykpDgF/cIGPpo
-	NJA17DG47+d+nidVeblu2628hQSaaoU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719497028;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KvbA4PAazLUAg1OnkD1/0xSOzLB917EBmUzxxIZljXU=;
-	b=tSRL2AD39SoHSFoEcYhQQVLGCs5flg+fpM63mf+H9aqx/6Om8J4IswmSBWJ0Hk0LpISMgH
-	hcPkTebqkQwhJzDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CE9F5137DF;
-	Thu, 27 Jun 2024 14:03:48 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id x+ZsMkRxfWYgbQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 27 Jun 2024 14:03:48 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 64CEEA08A2; Thu, 27 Jun 2024 16:03:48 +0200 (CEST)
-Date: Thu, 27 Jun 2024 16:03:48 +0200
-From: Jan Kara <jack@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, "Ma, Yu" <yu.ma@intel.com>,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, edumazet@google.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com,
-	tim.c.chen@linux.intel.com
-Subject: Re: [PATCH v2 1/3] fs/file.c: add fast path in alloc_fd()
-Message-ID: <20240627140348.ju2kynqenxporsns@quack3>
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240622154904.3774273-1-yu.ma@intel.com>
- <20240622154904.3774273-2-yu.ma@intel.com>
- <20240625115257.piu47hzjyw5qnsa6@quack3>
- <20240625125309.y2gs4j5jr35kc4z5@quack3>
- <87a1279c-c5df-4f3b-936d-c9b8ed58f46e@intel.com>
- <20240626115427.d3x7g3bf6hdemlnq@quack3>
- <CAGudoHEkw=cRG1xFHU02YjkM2+MMS2vkY_moZ2QUjAToEzbR3g@mail.gmail.com>
+	s=arc-20240116; t=1719497197; c=relaxed/simple;
+	bh=RlvuKtnodVotE/sgidgtvjxL3hFEI9HhR35x08Y1yAI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BrQ5ErftksP5hN9OUCnKGos6j+IoT8B1LOItHqTqUQrso2Du6jUhRQu9FuGGiepTQtAMa7i2glM14RqXnjwWuyys+lI6+wGMGM701Pcl3z6MK9IeN64VbAOku5Rc6kUnj0cPYZcCT/VDRfqwAJ+QwrIXqiw9+s2GtdXu3icI1aQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Xk0gH3zQ; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ec50a5e230so62266261fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 07:06:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719497193; x=1720101993; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M6HXA8iUxr5F2Q4zRp9RuzrUdSAsgWSQKf5LAkYREKA=;
+        b=Xk0gH3zQKqW4/Dom48Byh3ABX9Y6oiS8TyjMi0GlHgK8KJKYiIvhAEHteoKKOM+A23
+         zHdcJSLgtJRFnvYM2vDMTpD0kpkcwA8KNRkvNqEB4nRBmEYx1HoQARALjqLbiJ/3qq0d
+         R6BHLS/gH1mjVp+J1e9RFA38XWVCeUEdNGRg57SfMhwKipMTXBwsRYd9bd1C8yOryoGX
+         yGEm8KeZFL0gYsVvD41u3Zqi7N0TmhBpscuA+BxzKChjsfOzJ71BHW5c2+F8vga+BajP
+         IJWdApDXM/97yNdrzTebAWnsJSRQifxyK7FyWWEDXFSZ3qWeUmbhaTHcfP3X9VUjpLES
+         RgvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719497193; x=1720101993;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=M6HXA8iUxr5F2Q4zRp9RuzrUdSAsgWSQKf5LAkYREKA=;
+        b=GiLLDm0UFRNyyIahC8fmpMU82TFKBtpTHCHNzTqqL1mxjxkGRBRJqbl/gSwohOe0f3
+         gL3IYbK4jaskaSaYiadKmw/nwO/Jl4g4DE+cZZQZONS9TuUs13jhFD75k8YMUyP5Eg5p
+         OodSntKrtgC/JQm7XfzVTPgIV1xPyUkMGls57ZV6dVwstQ7IztO1g96vFJDDTdqxh4sw
+         vuoqXAGR2+0nssD+YB+Oivo+9hXaLdPBFeLbb78QfLryY6q5InYlN2d14GlTGor6SZ8Q
+         TC0acnaXzp8J3SfbUFD529ut0SDlFln8l6TyN3gPBO6jmS+ffCxa+gYPhkgFSgJzlgGz
+         VN+Q==
+X-Gm-Message-State: AOJu0Ywrg4EdxJtUClafFhpW1q4RXvRRI6DCokMlX2BwARLGzkZW2dnG
+	Vzhrmb2oFdStrfSOoeAc1XmxyLVgX6tt+sTq5QI3qKDkckCSjaZFsBDbbFy36jAV3wvN7kPx0eN
+	E5qAIjgQGAi5vFKq3jMzcyzZwfb4ya7Bboey68A==
+X-Google-Smtp-Source: AGHT+IGM9f32zYnAOO2F38ElwCLaWs4cdHw9g9lDgJqhPORq0oyjMSyzQumz17o1DpqpZ9rFr3Z9pmpcX/Rs/UYuOd4=
+X-Received: by 2002:a2e:6808:0:b0:2ec:588d:7ecc with SMTP id
+ 38308e7fff4ca-2ec5b27a875mr87405521fa.12.1719497193094; Thu, 27 Jun 2024
+ 07:06:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHEkw=cRG1xFHU02YjkM2+MMS2vkY_moZ2QUjAToEzbR3g@mail.gmail.com>
-X-Spam-Score: -3.80
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email]
+References: <20240626052925.174272-1-warthog618@gmail.com> <20240626052925.174272-3-warthog618@gmail.com>
+In-Reply-To: <20240626052925.174272-3-warthog618@gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 27 Jun 2024 16:06:21 +0200
+Message-ID: <CAMRc=Me1_4xjbt51j+gFVzR71VUwMSAm+dT=UtgOY-1xYoAF5g@mail.gmail.com>
+Subject: Re: [PATCH 2/4] gpiolib: cdev: Ignore reconfiguration without direction
+To: Kent Gibson <warthog618@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linus.walleij@linaro.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed 26-06-24 21:13:07, Mateusz Guzik wrote:
-> On Wed, Jun 26, 2024 at 1:54 PM Jan Kara <jack@suse.cz> wrote:
-> > So maybe I'm wrong but I think the biggest benefit of your code compared to
-> > plain find_next_fd() is exactly in that we don't have to load full_fds_bits
-> > into cache. So I'm afraid that using full_fds_bits in the condition would
-> > destroy your performance gains. Thinking about this with a fresh head how
-> > about putting implementing your optimization like:
-> >
-> > --- a/fs/file.c
-> > +++ b/fs/file.c
-> > @@ -490,6 +490,20 @@ static unsigned int find_next_fd(struct fdtable *fdt, unsigned int start)
-> >         unsigned int maxbit = maxfd / BITS_PER_LONG;
-> >         unsigned int bitbit = start / BITS_PER_LONG;
-> >
-> > +       /*
-> > +        * Optimistically search the first long of the open_fds bitmap. It
-> > +        * saves us from loading full_fds_bits into cache in the common case
-> > +        * and because BITS_PER_LONG > start >= files->next_fd, we have quite
-> > +        * a good chance there's a bit free in there.
-> > +        */
-> > +       if (start < BITS_PER_LONG) {
-> > +               unsigned int bit;
-> > +
-> > +               bit = find_next_zero_bit(fdt->open_fds, BITS_PER_LONG, start);
-> > +               if (bit < BITS_PER_LONG)
-> > +                       return bit;
-> > +       }
-> > +
-> >         bitbit = find_next_zero_bit(fdt->full_fds_bits, maxbit, bitbit) * BITS_PER_LONG;
-> >         if (bitbit >= maxfd)
-> >                 return maxfd;
-> >
-> > Plus your optimizations with likely / unlikely. This way the code flow in
-> > alloc_fd() stays more readable, we avoid loading the first open_fds long
-> > into cache if it is full, and we should get all the performance benefits?
-> >
-> 
-> Huh.
-> 
-> So when I read the patch previously I assumed this is testing the bit
-> word for the map containing next_fd (whatever it is), avoiding looking
-> at the higher level bitmap and inlining the op (instead of calling the
-> fully fledged func for bit scans).
-> 
-> I did not mentally register this is in fact only checking for the
-> beginning of the range of the entire thing. So apologies from my end
-> as based on my feedback some work was done and I'm going to ask to
-> further redo it.
+On Wed, Jun 26, 2024 at 7:29=E2=80=AFAM Kent Gibson <warthog618@gmail.com> =
+wrote:
+>
+> linereq_set_config() behaves badly when direction is not set.
+> The configuration validation is borrowed from linereq_create(), where,
+> to verify the intent of the user, the direction must be set to in order t=
+o
+> effect a change to the electrical configuration of a line. But, when
+> applied to reconfiguration, that validation does not allow for the unset
+> direction case, making it possible to clear flags set previously without
+> specifying the line direction.
+>
+> Adding to the inconsistency, those changes are not immediately applied by
+> linereq_set_config(), but will take effect when the line value is next ge=
+t
+> or set.
+>
+> For example, by requesting a configuration with no flags set, an output
+> line with GPIO_V2_LINE_FLAG_ACTIVE_LOW and GPIO_V2_LINE_FLAG_OPEN_DRAIN
+> set could have those flags cleared, inverting the sense of the line and
+> changing the line drive to push-pull on the next line value set.
+>
+> Skip the reconfiguration of lines for which the direction is not set, and
+> only reconfigure the lines for which direction is set.
+>
+> Fixes: a54756cb24ea ("gpiolib: cdev: support GPIO_V2_LINE_SET_CONFIG_IOCT=
+L")
+> Signed-off-by: Kent Gibson <warthog618@gmail.com>
+> ---
+>  drivers/gpio/gpiolib-cdev.c | 12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
+> index f7a129d67b7d..ef08b23a56e2 100644
+> --- a/drivers/gpio/gpiolib-cdev.c
+> +++ b/drivers/gpio/gpiolib-cdev.c
+> @@ -1534,12 +1534,14 @@ static long linereq_set_config(struct linereq *lr=
+, void __user *ip)
+>                 line =3D &lr->lines[i];
+>                 desc =3D lr->lines[i].desc;
+>                 flags =3D gpio_v2_line_config_flags(&lc, i);
+> +               /*
+> +                * Lines not explicitly reconfigured as input or output
+> +                * are left unchanged.
+> +                */
+> +               if (!(flags & GPIO_V2_LINE_DIRECTION_FLAGS))
+> +                       continue;
 
-Well, just confirming the fact that the way the code was written was
-somewhat confusing ;)
+Series looks good, thanks. I'd say that this bit here calls for at
+least a debug-level message since we don't return an error unlike v1.
+What do you think?
 
-> blogbench spawns 100 or so workers, say total fd count hovers just
-> above 100. say this lines up with about half of more cases in practice
-> for that benchmark.
-> 
-> Even so, that's a benchmark-specific optimization. A busy web server
-> can have literally tens of thousands of fds open (and this is a pretty
-> mundane case), making the 0-63 range not particularly interesting.
+Bart
 
-I agree this optimization helps only processes with low number of open fds.
-On the other hand that is usually the  majority of the processes on the
-system so the optimization makes sense to me. That being said your idea of
-searching the word with next_fd makes sense as well...
-
-> That aside I think the patchset is in the wrong order -- first patch
-> tries to not look at the higher level bitmap, while second reduces
-> stores made there. This makes it quite unclear how much is it worth to
-> reduce looking there if atomics are conditional.
-> 
-> So here is what I propose in terms of the patches:
-> 1. NULL check removal, sprinkling of likely/unlikely and expand_files
-> call avoidance; no measurements done vs stock kernel for some effort
-> saving, just denote in the commit message there is less work under the
-> lock and treat it as baseline
-> 2. conditional higher level bitmap clear as submitted; benchmarked against 1
-> 3. open_fds check within the range containing fd, avoiding higher
-> level bitmap if a free slot is found. this should not result in any
-> func calls if successful; benchmarked against the above
-
-Yeah, I guess this ordering is the most obvious -> the least obvious so it
-makes sense to me.
-
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>                 gpio_v2_line_config_flags_to_desc_flags(flags, &desc->fla=
+gs);
+>                 edflags =3D flags & GPIO_V2_LINE_EDGE_DETECTOR_FLAGS;
+> -               /*
+> -                * Lines have to be requested explicitly for input
+> -                * or output, else the line will be treated "as is".
+> -                */
+>                 if (flags & GPIO_V2_LINE_FLAG_OUTPUT) {
+>                         int val =3D gpio_v2_line_config_output_value(&lc,=
+ i);
+>
+> @@ -1547,7 +1549,7 @@ static long linereq_set_config(struct linereq *lr, =
+void __user *ip)
+>                         ret =3D gpiod_direction_output(desc, val);
+>                         if (ret)
+>                                 return ret;
+> -               } else if (flags & GPIO_V2_LINE_FLAG_INPUT) {
+> +               } else {
+>                         ret =3D gpiod_direction_input(desc);
+>                         if (ret)
+>                                 return ret;
+> --
+> 2.39.2
+>
 
