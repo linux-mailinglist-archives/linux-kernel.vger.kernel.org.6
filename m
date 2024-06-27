@@ -1,64 +1,62 @@
-Return-Path: <linux-kernel+bounces-232321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C61191A6C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:44:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 035DF91A6B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:42:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 009301F23217
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:44:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 346711C21B31
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6691116131A;
-	Thu, 27 Jun 2024 12:43:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2A015ECE8;
+	Thu, 27 Jun 2024 12:42:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="GtnRWrDW"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C77bqH/2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC41161314;
-	Thu, 27 Jun 2024 12:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E27A15ECD3
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:42:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719492237; cv=none; b=P7UlGjks6jwblu4kCMyTEJIhpRP4MCCA/WqwIgtjZunV3WxO02Ztpxzz8z50F7eEBD3aXEjbXl4ixd7tRhBvofaOLQNZFPk/n6J4HoCjreuSuh9qvMOQot3VqT7A61rdrEHLH+I+e7BJGXg//0E0b2LtyVHn799W4hsMIOLfbek=
+	t=1719492153; cv=none; b=eAc+4rhXhEKSwM0lyAWbIym2AE2OanN0yY/aeQi+vPWKJ5hUSccYrgTtCc64kTsLq4Md7PAadNqDkO7I/3kP4vd7Rkxe+08G0Ldy/ulAJFEHLcLvJFTo0rEIUJBnzkJ2LSqGgGnkBm+2qnH0X1cjfjtz77dLoJhH6j1nS9qByw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719492237; c=relaxed/simple;
-	bh=ozMDR0fkbEQta+UOJZ1FFXQo1ZGGSn1y5K98kho/9pc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=trQ8JFkZzGWdIFCz08fQuZD3hr9BfmyZPjGomfVXgKf5UD7OPUi1hgsugZOBIkqB+mNYVsEqXuSwi79UxWp3r8WP3HALpl2A9VUlT6LpXNjk/o/8P63nYV1bWDZUbdn73wytdEMaP3QB05SomzUukd7PlenHWVG6IubuUFO5KZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=GtnRWrDW; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45R9ZMS3011277;
-	Thu, 27 Jun 2024 14:43:29 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	bvWJeEz7wgq1kb1F+RfxA0OnfFRUKW1rLsdX1vbv/18=; b=GtnRWrDW7l/RHIL3
-	DNyn7KxrcBxc+AE0eh8g9Tir7OKU7onm/JuFafJfnVWMSLZEEXPpi5viIs99qWxB
-	oLwrYWA8Xf1BrgOz9XgTjPoWC+VAkuEYjDv5RMt9Li5YsD6Oykr/vISr2F0gQlSD
-	Z4rdTmi+pMBlys61FRXBVeq63HcQRxNO5QrPONw4aLWLD6QnLQuempMZiplRSPUJ
-	rXKiMGO3wt5Q+9sf/HD3vFmkh5XBAuxSFvWwu3XjYz3owu4Nj3DCf1CnbrjrfHUJ
-	fAcK7mXSxCmyC0yGFiLFFRSerA9/9Ja3gjMkkVmQ3i8oYKrYwrjPAtKsn6zp9vI9
-	PSV+oA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yx860uenb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Jun 2024 14:43:29 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 5AD794002D;
-	Thu, 27 Jun 2024 14:43:24 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A32C721A900;
-	Thu, 27 Jun 2024 14:42:12 +0200 (CEST)
-Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Thu, 27 Jun
- 2024 14:42:11 +0200
-Message-ID: <1a13b19b-cf16-4a49-8d80-21579dc1da94@foss.st.com>
-Date: Thu, 27 Jun 2024 14:42:11 +0200
+	s=arc-20240116; t=1719492153; c=relaxed/simple;
+	bh=F1b/lfr3BFh8K//qil04PYLCkTTM+EbSKh8SHWWOKBM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Rheercw1Uro6fa7S3NuKfJe7Wk5S4TEALITq23xjosB0Sz89IqlNvxuqaWrlgKJGw42E7SZFU8xEV0mnHsuVxRSbQomLKZyMXXm56FcXYWalGHuRMHwCUVrrnbz1pUS4lRfmgxRk0Hty0JXNPy8v74mPyRrEKap/Gg+BcvSUXo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C77bqH/2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719492149;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+YpYtOnZ3MZes63oloaokXEkL8DoVtv8afe3xmyYww0=;
+	b=C77bqH/2lk1eYV+D/GvVsxUVT9N8hntisUo6DP0GoOVM+Trb0KuwV6B/zq5p+CSrplu29P
+	O8N20ruSIPRv6GF9HWvQB4VNz3ZQXt8fsvrmYcXdTL5AxG2krP1HovYKYvl1cIcWflnVje
+	QIQ95X9EHvu2hSJcnNt6KB9G92Q6ErY=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-589-A5TBaXrkNUmbZmastdxPZA-1; Thu,
+ 27 Jun 2024 08:42:26 -0400
+X-MC-Unique: A5TBaXrkNUmbZmastdxPZA-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 648AB1944D3B;
+	Thu, 27 Jun 2024 12:42:24 +0000 (UTC)
+Received: from [10.22.32.240] (unknown [10.22.32.240])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3BA151956054;
+	Thu, 27 Jun 2024 12:42:22 +0000 (UTC)
+Message-ID: <0fdc06b6-747d-4f54-8a2a-1af9912e382d@redhat.com>
+Date: Thu, 27 Jun 2024 08:42:22 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,58 +64,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/1] Add MCP23S08 pinctrl support
-To: Christophe Roullier <christophe.roullier@foss.st.com>,
-        "David S . Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Rob Herring
-	<robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Richard Cochran
-	<richardcochran@gmail.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Liam Girdwood
-	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Marek Vasut
-	<marex@denx.de>
-CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20240611084206.734367-1-christophe.roullier@foss.st.com>
+Subject: Re: [PATCH 2/4] workqueue: Improve scalability of workqueue watchdog
+ touch
+To: Hillf Danton <hdanton@sina.com>, Nicholas Piggin <npiggin@gmail.com>
+Cc: "Paul E . McKenney" <paulmck@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
+References: <20240627121628.2278-1-hdanton@sina.com>
 Content-Language: en-US
-From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
-In-Reply-To: <20240611084206.734367-1-christophe.roullier@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <20240627121628.2278-1-hdanton@sina.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-27_08,2024-06-27_03,2024-05-17_01
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
 
+On 6/27/24 08:16, Hillf Danton wrote:
+> On Tue, Jun 25, 2024 at 09:42:45PM +1000, Nicholas Piggin wrote:
+>> On a ~2000 CPU powerpc system, hard lockups have been observed in the
+>> workqueue code when stop_machine runs (in this case due to CPU hotplug).
+>> This is due to lots of CPUs spinning in multi_cpu_stop, calling
+>> touch_nmi_watchdog() which ends up calling wq_watchdog_touch().
+>> wq_watchdog_touch() writes to the global variable wq_watchdog_touched,
+>> and that can find itself in the same cacheline as other important
+>> workqueue data, which slows down operations to the point of lockups.
+>>
+>> In the case of the following abridged trace, worker_pool_idr was in
+>> the hot line, causing the lockups to always appear at idr_find.
+>>
+> Wonder if the MCS lock does not help in this case.
 
-On 6/11/24 10:42, Christophe Roullier wrote:
-> Enable MCP23S08 pinctrl support
-> 
-> V2: - Remark from Krzysztof (Change built-in to module)
-> 
-> Christophe Roullier (1):
->    ARM: multi_v7_defconfig: Add MCP23S08 pinctrl support
-> 
->   arch/arm/configs/multi_v7_defconfig | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> 
-> base-commit: bb678f01804ccaa861b012b2b9426d69673d8a84
+This patch just tries to avoid polluting the shared cacheline leading to 
+excessive cacheline bouncing. No locking is involved. I am not sure what 
+you are thinking about using MCS lock for.
 
-Applied on stm32-next.
+Regards,
+Longman
 
-Thanks
-Alex
+>>    watchdog: CPU 1125 self-detected hard LOCKUP @ idr_find
+>>    Call Trace:
+>>    get_work_pool
+>>    __queue_work
+>>    call_timer_fn
+>>    run_timer_softirq
+>>    __do_softirq
+>>    do_softirq_own_stack
+>>    irq_exit
+>>    timer_interrupt
+>>    decrementer_common_virt
+>>    * interrupt: 900 (timer) at multi_cpu_stop
+>>    multi_cpu_stop
+>>    cpu_stopper_thread
+>>    smpboot_thread_fn
+>>    kthread
+>>
+
 
