@@ -1,126 +1,167 @@
-Return-Path: <linux-kernel+bounces-233042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C496191B174
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:21:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C77D91B182
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:22:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 011FF1C216D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 21:21:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4CD6B25CC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 21:22:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEE6725740;
-	Thu, 27 Jun 2024 21:21:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B79F31A08CF;
+	Thu, 27 Jun 2024 21:22:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="zcTCIwb5"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QGzIUFz+"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7402419A2A3;
-	Thu, 27 Jun 2024 21:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5491A0729
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 21:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719523275; cv=none; b=OPauDF6AqPesJQTvJVvpBojWKJuaSvOVnOlg6lWf+JmMfthtPjhfLTe7rKPiQUy1yCep4uCQK0OrvtKWmXlB6YEAOixEk8OzvTjazfwZJAWkURHlWz3DGQKUcI5BleuE6gsQuH4mScbi5R8668xGOJ6u2lkQ0YBJtEmNrAplOpw=
+	t=1719523342; cv=none; b=qplLEQf1/O04g7QdwjaiHq1nvrBbaS7P2HwXB5p5kxGwyJbhR4oMLlshF18SjydhXvRo1tk/fbVlNnZTKV+8V6BS5Kmguma3tusVE9e2Hoi/SenGb5E4qz3B7Is4NGXOAjCt8VNEZrHn9zTOdy4bdX68mykG+nsHqTpObdOt7cI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719523275; c=relaxed/simple;
-	bh=oPhkDYQXCx//X/Z4DKIUsznCbtVc9AiR1dwOMJXLIUE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=TpZmdg2/918SG99ZwJwpgLFh+mHYo1Ct4W1FihAx2wi36gy93ie488OVlWpZa6iF22rUIdPuHbdn6sTU2sWbjKAglSDnMu1lFqJSzr3R9Y8IVLxC23IPugtiW47kbY9OBjpwEz4/4pu3dG3r1V2ioPHqmDKuhIeLq3G1eThvsWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=zcTCIwb5; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1719523271;
-	bh=oPhkDYQXCx//X/Z4DKIUsznCbtVc9AiR1dwOMJXLIUE=;
-	h=From:Date:Subject:To:Cc:From;
-	b=zcTCIwb5xnJif2Hm6LD7kEzYYkn0J5CieE/Pfo0jc81/Ef419D1ddUMhnM6UcXRzA
-	 7sspie/Zf78zFjhkxsXDwKPyqj8SYN6ck00NGQla5G7KC8vxIVi6ERshgXSF6834OL
-	 o2HFwuJ08LM0CEaHiG5z5kl0eqKgv9jR8tXyctBrhNcy4kHiOVQmQ5NS4tJAInLy2P
-	 xbHY9FP30mPUO3Ji3LCtqaTNXc7O4RwwsPjYPRIUip8z5eeEjBlS/QajlMyZt56Amx
-	 1Td40Q5uhO5sI0keHes5Avt5h4YQFSaiS2JM8e5QTt89Mm17uE2fZAVTPkycHq0VYD
-	 PY19N2ux/EAeQ==
-Received: from [192.168.1.166] (zone.collabora.co.uk [167.235.23.81])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 82B5C37821D3;
-	Thu, 27 Jun 2024 21:21:09 +0000 (UTC)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Thu, 27 Jun 2024 17:20:55 -0400
-Subject: [PATCH] remoteproc: mediatek: Don't attempt to remap l1tcm memory
- if missing
+	s=arc-20240116; t=1719523342; c=relaxed/simple;
+	bh=whfQVJTqJ7KJ0VxOyRfPiNhfqsaunBsnGeFsXvTkJBs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rgMvhmVqRuoKXLB/Wkfm1kgl/usxBVrASdgTVMupRE5ghbqG0XmqP4JvXS5JBAbGVmbTOYBvwBZJ4eVtmhnU0QhY9CH32SMVw1h4kRlpRdDNzKk683yvDDhq7AMY9MK305dlGzr9livD+KvNtZ9XUIlVvxI7xpSkYLkX3OzS8tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QGzIUFz+; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f9e2affc8cso55545135ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 14:22:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719523338; x=1720128138; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5jKJZjz46n85iPjR+qb7a7teMFGLnU0s6sJD+tdHoMs=;
+        b=QGzIUFz+r8AnxI0mihiLNaLu5gxeNPtN6rIR7imxH/JI7sbgRTiFNY0QZ3l2Zv3IbT
+         pJcC5s5qFCyMaFWMXbCNfCPd9k+Lne905Xc9KUMHwPUZ/739JNAjuNHR8FrbewgOHKHZ
+         HKGlF9b+4MTilInYAPx35/3aPXCcRcCoIGmNzarA6fNtunUOTvpOcNrkmX4WSAnoZaa5
+         BaV7jInhKLOFzDfjLK9ONnbrsczuAV7JlPy4kcm7iuNOokqib+FmbIznxDEWqtjoz8fR
+         DP2t6o6gzUSa5YMkx2WnlIHhj0FtXxUEYnPIpSflsCRZNjo5ZvU9TMNycnqxjCNXIjrp
+         AkfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719523338; x=1720128138;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5jKJZjz46n85iPjR+qb7a7teMFGLnU0s6sJD+tdHoMs=;
+        b=QGNrCgU3610fbgFDqHspo7gNFL+ETiq/8LUBeIonPOf8Z6nueIsnCx5z6Sxnp19KjA
+         reeFHgDXlKbKKRqqIqok1XaPsWAThIOXfvpeWmfx8P6iI3xMgVReqkm0prAOYcocEP6H
+         PEq75BYrzaLCoONAxJRpZiaww/jkWAAuQFOtpQ2KnbU0eJZZdgHQJeWZh9pB/5bRHw+f
+         EwYfGSIjSDkaJ3I4RO850c+fqi25wL/1hEEpmQMXuNzDzTDzqNMl+vm4vyjJlsQu30CY
+         iZ7Q4jZNtUvzlAZpGgefUqIyKP5rZyOB8nvbzlRpZB5KO5o8/TLhn6VJOaQ7oT1KYjxM
+         NmLg==
+X-Forwarded-Encrypted: i=1; AJvYcCVnE/z2QO5LoOrNx4VoKBmaXJ8Yn4BnBiPYaA7iPHM4G2l0XYNrTVZAaLOHOIuRNCtyEX7TLkIIA6V8IPjOIB9YVWsu8HlhZc2vKHoJ
+X-Gm-Message-State: AOJu0Yzlj/xYJHgZalfCH7bq939sKwb/E4l9xJT+Ht2ekiT2D+CIn4FN
+	bwX6Ri2ijuTCaXrwCuRWApUcH08SlCTp340VniNxopv2Lj6wZyWJLbkd4/mPOg==
+X-Google-Smtp-Source: AGHT+IHdFTZQRvPcLE1anzbbYiFhhHX5sG6m2LXtCjq4LlIivm5yWh/1UvEWWWYm08Rds2iX75LE4w==
+X-Received: by 2002:a17:902:d2c8:b0:1fa:428e:3179 with SMTP id d9443c01a7336-1fa428e332emr144335795ad.45.1719523338255;
+        Thu, 27 Jun 2024 14:22:18 -0700 (PDT)
+Received: from google.com (148.98.83.34.bc.googleusercontent.com. [34.83.98.148])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac155c32esm2140625ad.185.2024.06.27.14.21.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 14:21:56 -0700 (PDT)
+Date: Thu, 27 Jun 2024 21:21:11 +0000
+From: Igor Pylypiv <ipylypiv@google.com>
+To: Niklas Cassel <cassel@kernel.org>
+Cc: Damien Le Moal <dlemoal@kernel.org>, Tejun Heo <tj@kernel.org>,
+	Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Akshat Jain <akshatzen@google.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v3 1/6] ata: libata-scsi: Fix offsets for the fixed
+ format sense data
+Message-ID: <Zn3Xx11UIbbJkbxq@google.com>
+References: <20240626230411.3471543-1-ipylypiv@google.com>
+ <20240626230411.3471543-2-ipylypiv@google.com>
+ <Zn1WUhmLglM4iais@ryzen.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240627-scp-invalid-resource-l1tcm-v1-1-7d221e6c495a@collabora.com>
-X-B4-Tracking: v=1; b=H4sIALbXfWYC/x3MwQqDMAwA0F+RnA20xVm2XxkeJKYzoFWSKYL03
- 1d2fJd3g7EKG7yaG5RPMdlyhW8boHnMH0aZqiG40Lk+RDTaUfI5LjKhsm2HEuPiv7TiM0VK3YN
- 85B5qsCsnuf75eyjlB3u5aeFsAAAA
-To: Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Tzung-Bi Shih <tzungbi@kernel.org>
-Cc: kernel@collabora.com, linux-remoteproc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-X-Mailer: b4 0.13.0
+In-Reply-To: <Zn1WUhmLglM4iais@ryzen.lan>
 
-The current code doesn't check whether platform_get_resource_byname()
-succeeded to get the l1tcm memory, which is optional, before attempting
-to map it. This results in the following error message when it is
-missing:
+On Thu, Jun 27, 2024 at 02:08:50PM +0200, Niklas Cassel wrote:
+> Hello Igor, Hannes,
+> 
+> The changes in this patch looks good, however, there is still one thing that
+> bothers me:
+> https://github.com/torvalds/linux/blob/v6.10-rc5/drivers/ata/libata-scsi.c#L873-L877
+> 
+> Specifically the code in the else statement below:
+> 
+> 	if (qc->err_mask ||
+> 	    tf->status & (ATA_BUSY | ATA_DF | ATA_ERR | ATA_DRQ)) {
+> 		ata_to_sense_error(qc->ap->print_id, tf->status, tf->error,
+> 				   &sense_key, &asc, &ascq);
+> 		ata_scsi_set_sense(qc->dev, cmd, sense_key, asc, ascq);
+> 	} else {
+> 		/*
+> 		 * ATA PASS-THROUGH INFORMATION AVAILABLE
+> 		 * Always in descriptor format sense.
+> 		 */
+> 		scsi_build_sense(cmd, 1, RECOVERED_ERROR, 0, 0x1D);
+> 	}
+> 
+> Looking at sat6r01, I see that this is table:
+> Table 217 — ATA command results
+> 
+> And this text:
+> No error, successful completion or command in progress. The SATL
+> shall terminate the command with CHECK CONDITION status with
+> the sense key set to RECOVERED ERROR with the additional
+> sense code set to ATA PASS-THROUGH INFORMATION
+> AVAILABLE (see SPC-5). Descriptor format sense data shall include
+> the ATA Status Return sense data descriptor (see 12.2.2.7).
+> 
+> However, I don't see anything in this text that says that the
+> sense key should always be in descriptor format sense.
+> 
+> In fact, what will happen if the user has not set the D_SENSE bit
+> (libata will default not set it), is that:
+> 
+> The else statement above will be executed, filling in sense key in
+> descriptor format, after this if/else, we will continue checking
+> if the sense buffer is in descriptor format, or fixed format.
+> 
+> Since the scsi_build_sense(cmd, 1, RECOVERED_ERROR, 0, 0x1D);
+> is called with (..., 1, ..., ..., ...) it will always generate
+> the sense data in descriptor format, regardless of
+> dev->flags ATA_DFLAG_D_SENSE being set or not.
+> 
+> Should perhaps the code in the else statement be:
+> 
+> } else {
+> 	ata_scsi_set_sense(qc->dev, cmd, RECOVERED_ERROR, 0, 0x1D);
+> }
+> 
+> So that we actually respect the D_SENSE bit?
+> 
+> (We currently respect if when filling the sense data buffer with
+> sense data from REQUEST SENSE EXT, so I'm not sure why we shouldn't
+> respect it for successful ATA PASS-THROUGH commands.)
+> 
 
-  mtk-scp 10500000.scp: error -EINVAL: invalid resource (null)
+Thanks for pointing this out, Niklas! I agree, it seems like there is no
+reason to ignore the D_SENSE bit.
 
-Add a check so that the remapping is only attempted if the memory region
-exists. This also allows to simplify the logic handling failure to
-remap, since a failure then is always a failure.
+Interestingly, the code was using ata_scsi_set_sense() before.
+Commit 11093cb1ef56 ("libata-scsi: generate correct ATA pass-through sense)"
+changed it to always be in the descriptor format.
 
-Fixes: ca23ecfdbd44 ("remoteproc/mediatek: support L1TCM")
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
----
- drivers/remoteproc/mtk_scp.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+> 
+> Kind regards,
+> Niklas
 
-diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-index b885a9a041e4..b17757900cd7 100644
---- a/drivers/remoteproc/mtk_scp.c
-+++ b/drivers/remoteproc/mtk_scp.c
-@@ -1344,14 +1344,12 @@ static int scp_probe(struct platform_device *pdev)
- 
- 	/* l1tcm is an optional memory region */
- 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "l1tcm");
--	scp_cluster->l1tcm_base = devm_ioremap_resource(dev, res);
--	if (IS_ERR(scp_cluster->l1tcm_base)) {
--		ret = PTR_ERR(scp_cluster->l1tcm_base);
--		if (ret != -EINVAL)
--			return dev_err_probe(dev, ret, "Failed to map l1tcm memory\n");
-+	if (res) {
-+		scp_cluster->l1tcm_base = devm_ioremap_resource(dev, res);
-+		if (IS_ERR(scp_cluster->l1tcm_base))
-+			return dev_err_probe(dev, PTR_ERR(scp_cluster->l1tcm_base),
-+					     "Failed to map l1tcm memory\n");
- 
--		scp_cluster->l1tcm_base = NULL;
--	} else {
- 		scp_cluster->l1tcm_size = resource_size(res);
- 		scp_cluster->l1tcm_phys = res->start;
- 	}
-
----
-base-commit: 0fc4bfab2cd45f9acb86c4f04b5191e114e901ed
-change-id: 20240627-scp-invalid-resource-l1tcm-9f7cf45c17e6
-
-Best regards,
--- 
-Nícolas F. R. A. Prado <nfraprado@collabora.com>
-
+Thanks,
+Igor
 
