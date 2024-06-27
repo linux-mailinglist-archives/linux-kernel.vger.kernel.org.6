@@ -1,113 +1,96 @@
-Return-Path: <linux-kernel+bounces-233142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A816B91B2C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:32:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF2D691B2CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:32:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53F601F21B18
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:32:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BC1E28274A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F538199E93;
-	Thu, 27 Jun 2024 23:32:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD5781A2FBC;
+	Thu, 27 Jun 2024 23:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dZLHf3Nd"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UgfuzvJA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3690413B58F
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 23:32:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E57761A0B1F;
+	Thu, 27 Jun 2024 23:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719531139; cv=none; b=EZ83PHGGZQXsH0qOavfRtHoWb1zQ0d3ajqRQdDGLl653K4MEQ3iFCszsvUAP5DEnos2t0wb0BYxisWVP90f5AotC70wVrwQcCW2heGDPE8lfM3w+2gtFKT+7eh7ikHsdAoQAZ0u8jVVhFFn2K82kBnkNquzqPf4o0UTuH/GmCjc=
+	t=1719531164; cv=none; b=IMseFS0UfEYFiGLnwMOja75H3PuDMVU+saAKrvBMq4hM+DYvPQROYIarHjKqWqTuBgyfxSPD/28jCd18zJeNrdLSoNKj0Ol6dpFJtk2/Z1nX4Sa2W7OqZMkO+5I9I9rV41mbMDD5qxGXKQMSAhAoI+shY3Dzy1vUiSJ21J/FszY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719531139; c=relaxed/simple;
-	bh=ldkHZ6ChnFKceUzn99yfKBBafsgXiRRykIWe3fdaBZQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YGUti3nMIfq0Ggu2KWLez/gjvuVdSpRrYnaCmgj/TFV9U5JQLj5F6Jm9LTT1Q+7H7zhhwF6yYjpqI2Kb60jBvKbuNYtZ8dKdqWbAK5L0OhPc2eKIAksLvTuNZiMLeZhCXLkGOh43OUgkAJCgmfqstC+h2aBzY2pe6VtUPHx8nP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=dZLHf3Nd; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45RNWBAA129492;
-	Thu, 27 Jun 2024 18:32:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1719531131;
-	bh=HdnuzqQ9aQ6x17DxpUNOrFiA9c/0Lls6I14xLvBxONQ=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=dZLHf3NdhIcXxvwV6THLBx8/FZvf59TWN5ZZnG3hkexLkPjlzeE2Hk3uQnjO7np6G
-	 YZrZWtWppfsPFErFoPywEgKPqnj3v+P2WmHOltMPNXBHLb6C1reXAnbYPJS+nUAjPm
-	 eHerecaHuV8jK732LAhGgEgxudbEA0rahGKJ7ymY=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45RNWB4g054662
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 27 Jun 2024 18:32:11 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 27
- Jun 2024 18:32:11 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 27 Jun 2024 18:32:11 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45RNWB4A064293;
-	Thu, 27 Jun 2024 18:32:11 -0500
-From: Nishanth Menon <nm@ti.com>
-To: <ssantosh@kernel.org>, Neha Malcom Francis <n-francis@ti.com>
-CC: Nishanth Menon <nm@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <u-kumar1@ti.com>
-Subject: Re: [PATCH] soc: ti: k3-socinfo: Add J721E SR2.0
-Date: Thu, 27 Jun 2024 18:32:06 -0500
-Message-ID: <171953110789.1077768.5161640689319910021.b4-ty@ti.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240624065205.718449-1-n-francis@ti.com>
-References: <20240624065205.718449-1-n-francis@ti.com>
+	s=arc-20240116; t=1719531164; c=relaxed/simple;
+	bh=9dB+rvGb2K0CHL70NwGvy0XkmnZPJsRSLm8vafDWJ6o=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=MjvbcuRN2dLfo3PEtIveHWQQcZpEk8mMmeNSQ7skSSeISm+Xs4Ek7kbs/vnxTO4+h3vgkXvQ8TzK4Ff7JKS6BnFqV2Qet0BNZbICnpiywhWpc0mDeBXfp8lKjWZeWheD/q2uOWOLmL567ZuKwYGfS6ltwFo87ixz2O66iVM0Oh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=UgfuzvJA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 288CDC2BBFC;
+	Thu, 27 Jun 2024 23:32:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1719531163;
+	bh=9dB+rvGb2K0CHL70NwGvy0XkmnZPJsRSLm8vafDWJ6o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UgfuzvJATgMXu9jg/0qc26PjyHiJisgzgmjJPG1ueIoegr8R6ylVc+dRzgCChHDaS
+	 ryFJFpTy5dZjVSmbEo2qN1YrW85+TCE2kYy8eVb2zz633m7Pt15GdTegVnEuC0KWq1
+	 O4AjOtDEIFUxnaCORLbKBJAp+G9RNz6xsMp4UB9E=
+Date: Thu, 27 Jun 2024 16:32:42 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Peter Xu <peterx@redhat.com>
+Cc: Yang Shi <yang@os.amperecomputing.com>, yangge1116@126.com,
+ david@redhat.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+Subject: Re: [v2 PATCH] mm: gup: do not call try_grab_folio() in slow path
+Message-Id: <20240627163242.39b0a716bd950a895c032136@linux-foundation.org>
+In-Reply-To: <Zn3zjKnKIZjCXGrU@x1n>
+References: <20240627221413.671680-1-yang@os.amperecomputing.com>
+	<Zn3zjKnKIZjCXGrU@x1n>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Neha Malcom Francis,
+On Thu, 27 Jun 2024 19:19:40 -0400 Peter Xu <peterx@redhat.com> wrote:
 
-On Mon, 24 Jun 2024 12:22:05 +0530, Neha Malcom Francis wrote:
-> Add support to detect J721E SR2.0
+> Yang,
 > 
+> On Thu, Jun 27, 2024 at 03:14:13PM -0700, Yang Shi wrote:
+> > The try_grab_folio() is supposed to be used in fast path and it elevates
+> > folio refcount by using add ref unless zero.  We are guaranteed to have
+> > at least one stable reference in slow path, so the simple atomic add
+> > could be used.  The performance difference should be trivial, but the
+> > misuse may be confusing and misleading.
 > 
+> This first paragraph is IMHO misleading itself..
+> 
+> I think we should mention upfront the important bit, on the user impact.
+> 
+> Here IMO the user impact should be: Linux may fail longterm pin in some
+> releavnt paths when applied over CMA reserved blocks.  And if to extend a
+> bit, that include not only slow-gup but also the new memfd pinning, because
+> both of them used try_grab_folio() which used to be only for fast-gup.
 
-I have applied the following to branch ti-drivers-soc-next on [1].
-Thank you!
+It's still unclear how users will be affected.  What do the *users*
+see?  If it's a slight slowdown, do we need to backport this at all?
 
-[1/1] soc: ti: k3-socinfo: Add J721E SR2.0
-      commit: e44097c6d535163f28c6106605452a2fdb1d8cba
+> 
+> The patch itself looks mostly ok to me.
+> 
+> There's still some "cleanup" part mangled together, e.g., the real meat
+> should be avoiding the folio_is_longterm_pinnable() check in relevant
+> paths.  The rest (e.g. switch slow-gup / memfd pin to use folio_ref_add()
+> not try_get_folio(), and renames) could be good cleanups.
+> 
+> So a smaller fix might be doable, but again I don't have a strong opinion
+> here.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent up the chain during
-the next merge window (or sooner if it is a relevant bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
-
+The smaller the better for backporting, of course.
 
