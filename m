@@ -1,181 +1,169 @@
-Return-Path: <linux-kernel+bounces-232717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 647B791AD79
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:08:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD7B491AD97
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:11:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEA751F27675
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:08:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09470B246FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:11:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F285F19A29A;
-	Thu, 27 Jun 2024 17:08:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F0519AA41;
+	Thu, 27 Jun 2024 17:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BTKt+KpR"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="USA08AJD"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD29B433B3;
-	Thu, 27 Jun 2024 17:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68749433B3;
+	Thu, 27 Jun 2024 17:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719508115; cv=none; b=t9dH1t8YEY1/hjWwSeQ81pnb00J6c6QuEqYCiae0CVTLbj/oNzH3iiTpMinN31LmAqqhKQUWkIX8M+bWlrQps9WdyV7p1dEvMrWy2j9iCdKdosxlzr35+NWMmhQzVMDb9BxFJwbqpCiYTq9IXVMnXMbRX+YnPyjl6gwJNtaFWM8=
+	t=1719508255; cv=none; b=Dx6paAWj9L8PjgN1E1ygezmuw01ukxnihbNOeF63clNCaRT19i3JMbsnLVSvBGOfP3f3eIjKhninfOS980RghXvYgZvVKm81rY/Fs1foJOZla4rngdPbkVXwaFXo9BJ863awZNz2Or7gAatGM03piv5sOqLsu/zXfZN71sKz/XI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719508115; c=relaxed/simple;
-	bh=njE5CtSj/rNk0kn/54bHXhFvciLXp+Rn2NIuSOZj/Zc=;
+	s=arc-20240116; t=1719508255; c=relaxed/simple;
+	bh=s4l27g42udRCB8rJG6YI5oyKnL4uIh9SB56X2gZxZnc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tbQb6De6DU7k9LveW8I2DQ35taJJxVLiugVhhF9oVNkEml0UGxDL7max6UoUzcxkqZk+cwAmMPRPJBnjneXnbDyUMK2k/lnbMunDKZo1cC8dnsjMc+zAifcStSURKQjT1OmQYCHLSqYOgAZOi5Wy62+hMpvG326zvUlg3QleOE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BTKt+KpR; arc=none smtp.client-ip=209.85.215.174
+	 Content-Type:Content-Disposition:In-Reply-To; b=JBu8ZKi7KVzXIXjrl+QhCfRFFMyG/SVmoYo1Bjd/mKXVCCKj4j5uUeYmHk0y/GctUpO8zy8veWVscC8szsi7EUX4ivSgLHFvSfhiM2/hTptZKcYpBpxqt0ZKt1JsoGfLg4neVECWDevTHwCW5zIw3eOLoj4DpXWuYjgvPp/1FTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=USA08AJD; arc=none smtp.client-ip=209.85.208.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7178727da84so4487621a12.0;
-        Thu, 27 Jun 2024 10:08:33 -0700 (PDT)
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ee4ab5958dso7974611fa.1;
+        Thu, 27 Jun 2024 10:10:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719508113; x=1720112913; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/IpdaNLmIgjligGg+u33YkSiigwxfjiieqRMpTLJxTc=;
-        b=BTKt+KpRaPLzMChei3KoIi2hBBJkFQ33W2ZNQCKYaaCQbcF4/XNlIPDvxp7ZD1HcJU
-         qLPZfA+XG41oR+VyXLKrMBFzZqYYWvTLpJRJy+pxjFvQJWpCNf5xabcm4JKepXQ3PtQr
-         GAoW8/HIYtlguhO6BMsUFlnBeB6vDqu+jodS9rU/rg/QCxzBVZ7VeU0626YysALUyOxj
-         eYUvPJOhPogF3zlm0ZvnPrMnM2ZZc3J+HbMEQqpKkRCKcHJwo3Rx/cTAKrz8L0xOBUPp
-         OAQsec4rgeEb6v/bzFXSyyqtKQZEpGKYfR/C+S1q7dGJGtCUGZaxwSA0ozWjkJiV1OAB
-         Pc6g==
+        d=gmail.com; s=20230601; t=1719508251; x=1720113051; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hQlcJ+6aWC6ZSM3mk9e3WLtJ8bng42FgNFtFpOoN34I=;
+        b=USA08AJDqAa7uEy4vLsPzLySgDwD/V5LHVIg3udGCn+O9G/3L7ZeQZYfau2jzfVFwC
+         FYVzo4KL/7Ak9u1T/PjZeA4zE8sjmAjJaBNy2GuqhXvGbtCyVnOOxnS5nfV6DTZ443aa
+         skI1E6jkegDavw8gxn5JpOL6/44S0/aXnyqH8o/e/Mdk8aWk4SvrIUw7yNCOxJnCZGda
+         b3FBCs6qy5CnthWnTCufXKErdwQSKVNhNhdr/nedwk6ZhN/FynNWfEcC9CaOZL12b/i1
+         CrP3OpCZ23BdyUo2P3aROC9nawZu+VebR/pgM/CjDrf+XOLjgMT96UpgD/YXSvGGbYOb
+         cRIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719508113; x=1720112913;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/IpdaNLmIgjligGg+u33YkSiigwxfjiieqRMpTLJxTc=;
-        b=eg04E5aKMWZ6ZSuObiHJG+RBhfc3QKS3fWso13R49v5DMO81MXvhynDaB+cxwMHRKC
-         LQ0l09/HZYJ1SscKDEp7YztOkIU3b2J7m2DWYuKDFPG+k621gP4m4L7kWbXc3qUdkxdq
-         dxtCGGDmCw8cKHinw6XvHlEIOl3as2NoZx45nf2nfbRE+h0PyVxmR7PYkRANXQw35B04
-         74EIyyeVb+9tW2iNx4rArtE8PIzRoqjsj7/Im8bHRrE4eQPRhW44ujFWEp2Z5Kez/Z3p
-         iNSlTtU1rcLZSE4c6UAcSLXvINTsmEoMlT1VbXON5rK6WjTZZrpUOOxSP0PuGTZVuQH4
-         R6GA==
-X-Forwarded-Encrypted: i=1; AJvYcCWz66THI3yy2BxPypQA8vz3Si2SjSan9RQO6kuml8VIBhxAX+0sKZ3qVp0USKaXAkGdmNCDSSFAp1bJfXDYd+5bl0PoGA1q/iUQ/l0ddx/jrHLO5+uEuAk7T7mWD3CQ2pQrmkcIWs8PU3VcTAYpXXk96uBqFWP2r8KE90irXy27Z0kLvtd3Q2ujFap2ie3bl7CEsBoz161OxRL+Wf9jQQeWoIPMxHF0htJO8RuACk444o1umPo/ARES3A==
-X-Gm-Message-State: AOJu0YzgV9mZBsms6aEjr57PppsRay6/dtnhmoFCykfW56bj72MkPS/B
-	osB+cf12RNI8iiQaUSHvINrNELAePsCHDV+ay/mIWV31n4LbrZ1C
-X-Google-Smtp-Source: AGHT+IHqvQQBxkARL9ViZknQisxeNyRfWIBLwm40l924BqQRCfbzfJ1gVbYaxrsEdKf9SpdvNc+ZCg==
-X-Received: by 2002:a05:6a20:728c:b0:1be:cdce:9fb7 with SMTP id adf61e73a8af0-1becdcea170mr3525520637.19.1719508112716;
-        Thu, 27 Jun 2024 10:08:32 -0700 (PDT)
-Received: from localhost ([2804:30c:96b:f700:cc1d:c0ae:96c9:c934])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-706b4a5bbf5sm1597190b3a.215.2024.06.27.10.08.30
+        d=1e100.net; s=20230601; t=1719508251; x=1720113051;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hQlcJ+6aWC6ZSM3mk9e3WLtJ8bng42FgNFtFpOoN34I=;
+        b=SKW5hF08JSXC+1yoPJ/cxNOoH3Nu05i20Csux4OYq3GZKo31X6fWlZ72FR6dP2ohVA
+         ryXClszEsvYF3qz6/Q2MCNRaIYfnkc7hl10N44/rAreRQuWOzICTIluZYoR55wcwLH7h
+         rhk4kByHX8hEwp8t3vs3K5mAvAyzuhUXNeJEC0XB7jd1jU2k9S7r6L9qHqSX3AOrWqtm
+         gkvTIaPoYcSDSdX6bR82AoYU4SYmmAEd0+xcwzN00wPqY2VF8wX1ADn12+0p4PHVzek5
+         Fg3dAxmy4DHTudIaINdAln0r2Eed9UnJuYMzbgzx01/8WrP6/D7aJly9tPc70E+qxLMw
+         VtfA==
+X-Forwarded-Encrypted: i=1; AJvYcCVvtU3YYXxziWh/kOgv1/zppKEKOGuK9ZO5YqJrADp7qTHsQvgzeCHTK54jP0aH66fvQrdgUp66vZA0NFRIKaFunXa9bssXTWqDAGgUVEUxz7mxop1hbwLMsGpplHQWgQgEbweFdIfToYp6oLLGwmP2qtdhpgK9l3a8ZYaf+c+m+w==
+X-Gm-Message-State: AOJu0YwIhNBTLZYHXjwc1j9JgaQJRv9Tev9I327HriqaRscy15nL0Bj9
+	Hw0VLVOY0Uwctn/HEmeMOpguy/smjYmzPSOzLE3zdxIZR8nzta51
+X-Google-Smtp-Source: AGHT+IH2++0VlmY/PoUFoK6twB3OYGqFKj6eVnvwbmE3JDf/EUiLDbwoFbuBSVIfzxdfjfkEmAnCPQ==
+X-Received: by 2002:a2e:b0e2:0:b0:2ec:361b:c079 with SMTP id 38308e7fff4ca-2ee49863be6mr6958261fa.25.1719508251179;
+        Thu, 27 Jun 2024 10:10:51 -0700 (PDT)
+Received: from mobilestation ([213.79.110.82])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ee4a34411esm3151361fa.19.2024.06.27.10.10.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 10:08:31 -0700 (PDT)
-Date: Thu, 27 Jun 2024 14:09:59 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
-	lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org, nuno.sa@analog.com, dlechner@baylibre.com,
-	corbet@lwn.net, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 6/7] iio: adc: Add support for AD4000
-Message-ID: <Zn2c531lfpBErYKb@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1719351923.git.marcelo.schmitt@analog.com>
- <eb5f7b73bdf3ac89117e28f26ee3f54ba849163e.1719351923.git.marcelo.schmitt@analog.com>
- <f6dc458f759c47154eee16354c807c020028512e.camel@gmail.com>
- <ZnwU3MovTWfrovrE@debian-BULLSEYE-live-builder-AMD64>
- <53ae33f72d2326a58db3bcf629fc522db3acf550.camel@gmail.com>
+        Thu, 27 Jun 2024 10:10:50 -0700 (PDT)
+Date: Thu, 27 Jun 2024 20:10:48 +0300
+From: Serge Semin <fancer.lancer@gmail.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Russell King <linux@armlinux.org.uk>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, Jose Abreu <Jose.Abreu@synopsys.com>, 
+	Vladimir Oltean <olteanv@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, 
+	Maxime Chevallier <maxime.chevallier@bootlin.com>, Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Sagar Cheluvegowda <quic_scheluve@quicinc.com>, 
+	Abhishek Chauhan <quic_abchauha@quicinc.com>, Andrew Halaney <ahalaney@redhat.com>, 
+	Jiawen Wu <jiawenwu@trustnetic.com>, Mengyuan Lou <mengyuanlou@net-swift.com>, 
+	Tomer Maimon <tmaimon77@gmail.com>, openbmc@lists.ozlabs.org, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 06/10] dt-bindings: net: Add Synopsys DW xPCS
+ bindings
+Message-ID: <e5mqaztxz62b7jktr47mojjrz7ht5m4ou4mqsxtozpp3xba7e4@uh7v5zn2pbn2>
+References: <20240627004142.8106-1-fancer.lancer@gmail.com>
+ <20240627004142.8106-7-fancer.lancer@gmail.com>
+ <20240627-hurry-gills-19a2496797f3@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <53ae33f72d2326a58db3bcf629fc522db3acf550.camel@gmail.com>
+In-Reply-To: <20240627-hurry-gills-19a2496797f3@spud>
 
-On 06/26, Nuno Sá wrote:
-> On Wed, 2024-06-26 at 10:17 -0300, Marcelo Schmitt wrote:
-> > On 06/26, Nuno Sá wrote:
-> > > On Tue, 2024-06-25 at 18:55 -0300, Marcelo Schmitt wrote:
-> > > > Add support for AD4000 series of low noise, low power, high speed,
-> > > > successive approximation register (SAR) ADCs.
-> > > > 
-> > > > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> > > > ---
-...
-> > > > +	ret = devm_regulator_get_enable(dev, "vdd");
-> > > > +	if (ret)
-> > > > +		return dev_err_probe(dev, ret, "Failed to enable VDD
-> > > > supply\n");
-> > > > +
-> > > > +	ret = devm_regulator_get_enable(dev, "vio");
-> > > > +	if (ret)
-> > > > +		return dev_err_probe(dev, ret, "Failed to enable VIO
-> > > > supply\n");
-> > > 
-> > > devm_regulator_bulk_get_enable()? Do we have any ordering constrains?
-> > 
-> > No ordering constraints, but vdd and vio are optional while ref is required
-> > and
-> > we need to get the voltage of ref.
-> > devm_regulator_bulk_get_enable_read_voltage()? and discard vdd and vio
-> > voltages?
-> 
-> Hmmm, vdd and vio do not look like optional to me :). Anyways I meant
-> devm_regulator_bulk_get_enable() only for vdd and vio and still treat ref
-> separately.
+On Thu, Jun 27, 2024 at 04:51:22PM +0100, Conor Dooley wrote:
+> On Thu, Jun 27, 2024 at 03:41:26AM +0300, Serge Semin wrote:
+> > +  clocks:
+> > +    description:
+> > +      Both MCI and APB3 interfaces are supposed to be equipped with a clock
+> > +      source connected via the clk_csr_i line.
+> > +
+> > +      PCS/PMA layer can be clocked by an internal reference clock source
+> > +      (phyN_core_refclk) or by an externally connected (phyN_pad_refclk) clock
+> > +      generator. Both clocks can be supplied at a time.
+> > +    minItems: 1
+> > +    maxItems: 3
+> > +
+> > +  clock-names:
+> > +    oneOf:
+> > +      - minItems: 1
+> > +        items:
+> > +          - enum: [core, pad]
+> > +          - const: pad
+> > +      - minItems: 1
+> > +        items:
+> > +          - const: pclk
+> > +          - enum: [core, pad]
+> > +          - const: pad
 > 
 
-I've mistaken these supplies with supplies for a different device.
-Yes, vdd and vio are required and devm_regulator_bulk_get_enable() is useful
-to init them.
+> While reading this, I'm kinda struggling to map "clk_csr_i" to a clock
+> name. Is that pclk? And why pclk if it is connected to "clk_csr_i"?
 
-> > 
-> > > 
-> > > > +
-...
-> > > > +		/*
-> > > > +		 * In "3-wire mode", the ADC SDI line must be kept high
-> > > > when
-> > > > +		 * data is not being clocked out of the controller.
-> > > > +		 * Request the SPI controller to make MOSI idle high.
-> > > > +		 */
-> > > > +		spi->mode |= SPI_MOSI_IDLE_HIGH;
-> > > > +		ret = spi_setup(spi);
-> > > > +		if (ret < 0)
-> > > > +			return ret;
-> > > > +
-> > > > +		ret = ad4000_prepare_3wire_mode_message(st, indio_dev-
-> > > > > channels);
-> > > > +		if (ret)
-> > > > +			return ret;
-> > > > +
-> > > > +		ret = ad4000_config(st);
-> > > > +		if (ret < 0)
-> > > > +			dev_warn(dev, "Failed to config device\n");
-> > > > +
-> > > 
-> > > Should this be a warning? Very suspicious :)
-> > 
-> > This devices have some many possible wiring configurations.
-> > I didn't want to fail just because reg access fail.
-> > Maybe ADC SDI was wired to VIO but dt don't have adi,sdi-pin = "high".
-> > Reg access will fail but sample read should work.
-> 
-> Well, to me that really is a configuration failure and we should treat it as
-> such. If we are in the so called "reg_access_info" which I read as "we can
-> access registers", failing to do so should be treated as an error. 
-> 
-> So, setting scale would also fail and we then have a broken interface :)
+Right. It's "pclk". The reason of using the "pclk" name is that it has
+turned to be a de-facto standard name in the DT-bindings for the
+peripheral bus clock sources utilized for the CSR-space IO buses.
+Moreover the STMMAC driver responsible for the parental DW *MAC
+devices handling also has the "pclk" name utilized for the clk_csr_i
+signal. So using the "pclk" name in the tightly coupled devices (MAC
+and PCS) for the same signal seemed a good idea.
 
-Drat, that's right. 
-Okay, will make probe fail if config fails.
+> If two interfaces are meant to be "equipped" with that clock, how come
+> it is optional? I'm probably missing something...
 
-Thanks,
-Marcelo
+MCI and APB3 interfaces are basically the same from the bindings
+pointer of view. Both of them can be utilized for the DW XPCS
+installed on the SoC system bus, so the device could be accessed using
+the simple MMIO ops.
+
+The first "clock-names" schema is meant to be applied on the DW XPCS
+accessible over an _MDIO_ bus, which obviously doesn't have any
+special CSR IO bus. In that case the DW XPCS device is supposed to be
+defined as a subnode of the MDIO-bus DT-node.
+
+The second "clock-names" constraint is supposed to be applied to the
+DW XPCS synthesized with the MCI/APB3 CSRs IO interface. The device in
+that case should be defined in the DT source file as a normal memory
+mapped device.
 
 > 
-> - Nuno Sá
-> > 
+> Otherwise this binding looks fine to me.
+
+Shall I add a note to the clock description that the "clk_csr_i"
+signal is named as "pclk"? I'll need to resubmit the series anyway.
+
+Thanks
+-Serge(y)
+
+> 
+> Wee bit confused,
+> Conor.
+
+
 
