@@ -1,136 +1,118 @@
-Return-Path: <linux-kernel+bounces-232202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B216391A4FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:21:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4FE991A4FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:21:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5CEA1C210B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:21:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6A841C21D02
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B607149001;
-	Thu, 27 Jun 2024 11:20:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2FED14AD10;
+	Thu, 27 Jun 2024 11:21:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="b6+UfSJt"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="cCspq3CW"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE837145B34;
-	Thu, 27 Jun 2024 11:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA6014AD0E
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 11:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719487255; cv=none; b=NLRgUCA/NvwgXl5JYrAvT+WO1GMUdIpT/EZOKWe//CYJkVk6ie6pX8Z4MYCMgi/GvZ/W7dqfBMb1HjSOnysDnRKZLqyMiIk4GGjwzGBkQFe7GvNEdSfr8W+V1Fe/FsOXeaLBf3TFE11JVcD8LkVT0GFBUtvPbGG62zMWJ1A5kVc=
+	t=1719487262; cv=none; b=gl+AJSlo+eYsZfUgxA8x3h7pJXac4Z6Pe0X8a77D52zeY8IOlSCYMNEDXaxQvL2UdiKkbEHJXkOy97xmGwZ+Kgqs6++WM2QahZeUUJTfIFQYL9E3dBjyz8lQpiJoCHVjxQOypTo/E44iXNURDEnqc0taiStnkzWtGgzcO63NqHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719487255; c=relaxed/simple;
-	bh=VMv77DIEOfU4zmR3Xg7R04YcosJV3phhbj458HcSmFk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=r8qhx6oihc/BrgwtAhNGG5SGwEmy38Ylm1ESFDAq7HTj5x4uUwdXHg1WYvLLWw9IdaCGST4IGZQA/I4fhtW0DpQQk45vd2JgNO71PHk5ClVxKIsehVvJ/gRwQnG/u8frdnhV6mFv+O9UYI90Ph/b2NUEPjSmuoDv6vxlaH3Jwgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=b6+UfSJt; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45R2kkJ6018190;
-	Thu, 27 Jun 2024 11:20:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	OUE7BDXt8xyZYKC7KXK5T2sUjQ7gfHYZIAdwzaUj9cA=; b=b6+UfSJtuTY8IfH3
-	DrIeVJlDcbf57ULf2F1gXW9dE/Kj50zSdzGPIX+XY/3/OcPlQBXrq4clvgTJ0+Xv
-	MsdMoBOexorm1/qQjey6/NxBLV7ZhuaAEet5zqJ+yyVZg8tjfbopFMlKBFnEfuU7
-	4Cql6ZbIa0Z8obZCV2WJpBM6XVvupO9KNt7JZjWKzCtaVAEIP3Z6nlKSCgTFfvVW
-	8R2UFZQY7lpA5A3SKwaheVhvRD7mRRdWuy6I4vIyQx8baOvplWVZtJnyDT9zY474
-	YSfmSTjh3ppitefEDKXYPCxKXaX8HWnc/vMjEzUh91e2bvOQafo7OAxt1oMlkF27
-	3ooOlQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywppvbt9p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Jun 2024 11:20:46 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45RBKjoQ023843
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Jun 2024 11:20:45 GMT
-Received: from [10.204.65.49] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 27 Jun
- 2024 04:20:42 -0700
-Message-ID: <bf5661dd-9d3b-4e7e-868b-600efdf3d65f@quicinc.com>
-Date: Thu, 27 Jun 2024 16:50:38 +0530
+	s=arc-20240116; t=1719487262; c=relaxed/simple;
+	bh=75KvCCJVhW4t+FL3UEW31LoWq9X+BIngFsA7NzpWWV8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HWiZbdZNzedm0eJ483Oc7pFpUmZIQtylxySokskmEs/lbFooNAwUlfmsC+geWaijYOlqD6gU2YGFhDE+zt/iBqwEynk81YrTH92ZJGgSwG1PeXyAjOHzBCXU8zEwkQnDYlucq3xA+2KRoWBEUx9LU7PjlXyweUnJhUHNJPrY0iQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=cCspq3CW; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57d044aa5beso1553112a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 04:20:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1719487258; x=1720092058; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SPFu/nQvcfxtAExpnDqrbxrbwmGjdRGTJyAiHI3QLj4=;
+        b=cCspq3CW+xM59jZv/AEPX2R3LUobyMVdC4VwZUSDwlDceLlLs43vrfDQ1LYcC7s83R
+         Ycj3IMI/50WGL1J4EvgO2Eqhw3HgW0bKgl2AuxWaxKy3S2YVNqLgkOHAgHD8cLT8Qa12
+         spzjIpRPmGGAJ/LKx+48cRcu6EJ9UD/EFnbBYiyTYFGdPtyRj44xt3YV+PgpLOm0huLu
+         ZVhXz3VvFdU64fNHUckxHEIYfXz+bYHVKHsbVpM1aBlwEWRj4pBw59jHTGzWp4DHlyzW
+         E7yAomgQQYr2RZ227k3glirljHbID5A1UlTI68uuhRdPr+PG4EmvU+XXSmsPpPTWkLjG
+         M0wQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719487258; x=1720092058;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SPFu/nQvcfxtAExpnDqrbxrbwmGjdRGTJyAiHI3QLj4=;
+        b=iRmePBBVfRC7Nwp817pkLTMqJn1emj53ZUFHGL+FVFGbKM3Dldslit7NC4R5gO/tbM
+         hXMXY9ySgbEJvKiULnhuNYFs1KG0MeU4DFAP4jnUxV0/gIUzbRZoJTXY9i6PsejqBJwr
+         n6znhWHABTaP0O4esL1qJ4ukqOZNaIPGnxYAgQa/RP4VMiiVSKLXoslHo2E0RltBXNgY
+         1CCA8eq+ign6XYYDkQNDJt4Ua3iDbSDZsx2VgRvgaa4a962HNRbfQGI0QpOU/t5jhV7h
+         VMfBZQF5Dy75CyfkOOQeKGR+Kn6cuq0ZNTGVloMq+Sgf7hFGLz5ovvfbVKFhYCT37BtN
+         8XzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXizscxC3y76ilJBYBkL2fhKYYBHjgXo5YFstfdvt1vMNpZfnB84M7mrOwKBrQSjJHFkUJwM/MiVPUJ+MS7M9M5VqD5EJDdyeD5+q8o
+X-Gm-Message-State: AOJu0YwyOb1m1pm8+9XueCBbzb0gA/zM46E10z7B7Dsi45hY7GOadM64
+	+Xtmo+oaNbnSJFgkCloRfW3+WqDiYBq3lr3/DOlsE9L2vY8m2b5FZmd0Ojo6+YI=
+X-Google-Smtp-Source: AGHT+IG6/eL9ZaLc1MJU2YJ1qBWnKdGrFcYuxrXX3ZJesGDBdFzKnt8liBGSx+h6rwkEX4SDaLtShg==
+X-Received: by 2002:a05:6402:2712:b0:584:a6f8:c0c5 with SMTP id 4fb4d7f45d1cf-584a6f8c1d0mr1504152a12.0.1719487255943;
+        Thu, 27 Jun 2024 04:20:55 -0700 (PDT)
+Received: from localhost (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-584d16bbc23sm740841a12.52.2024.06.27.04.20.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 04:20:55 -0700 (PDT)
+Date: Thu, 27 Jun 2024 13:20:55 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: xiujianfeng <xiujianfeng@huawei.com>
+Cc: hannes@cmpxchg.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+	muchun.song@linux.dev, akpm@linux-foundation.org,
+	cgroups@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] mm: memcg: remove redundant
+ seq_buf_has_overflowed()
+Message-ID: <Zn1LFyO_cww9W758@tiehlicka>
+References: <20240626094232.2432891-1-xiujianfeng@huawei.com>
+ <Zn0RGTZxrEUnI1KZ@tiehlicka>
+ <a351c609-4968-398a-9316-2ad19d934e9c@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] misc: fastrpc: Move fastrpc driver to misc/fastrpc/
-Content-Language: en-US
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_bkumar@quicinc.com>, <linux-kernel@vger.kernel.org>,
-        <quic_chennak@quicinc.com>, <dri-devel@lists.freedesktop.org>,
-        <arnd@arndb.de>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-References: <20240627104245.1651214-1-quic_ekangupt@quicinc.com>
- <2024062715-ultra-muppet-c899@gregkh>
-From: Ekansh Gupta <quic_ekangupt@quicinc.com>
-In-Reply-To: <2024062715-ultra-muppet-c899@gregkh>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: uPx-b0PPAW9Wk8l-6xF0vTW-rjI7nYNz
-X-Proofpoint-ORIG-GUID: uPx-b0PPAW9Wk8l-6xF0vTW-rjI7nYNz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-27_06,2024-06-27_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- clxscore=1015 priorityscore=1501 mlxlogscore=999 mlxscore=0 adultscore=0
- lowpriorityscore=0 phishscore=0 suspectscore=0 impostorscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2406270086
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a351c609-4968-398a-9316-2ad19d934e9c@huawei.com>
 
+On Thu 27-06-24 16:33:00, xiujianfeng wrote:
+> 
+> 
+> On 2024/6/27 15:13, Michal Hocko wrote:
+> > On Wed 26-06-24 09:42:32, Xiu Jianfeng wrote:
+> >> Both the end of memory_stat_format() and memcg_stat_format() will call
+> >> WARN_ON_ONCE(seq_buf_has_overflowed()). However, memory_stat_format()
+> >> is the only caller of memcg_stat_format(), when memcg is on the default
+> >> hierarchy, seq_buf_has_overflowed() will be executed twice, so remove
+> >> the reduntant one.
+> > 
+> > Shouldn't we rather remove both? Are they giving us anything useful
+> > actually? Would a simpl pr_warn be sufficient? Afterall all we care
+> > about is to learn that we need to grow the buffer size because our stats
+> > do not fit anymore. It is not really important whether that is an OOM or
+> > cgroupfs interface path.
+> 
+> I did a test, when I removed both of them and added a lot of prints in
+> memcg_stat_format() to make the seq_buf overflow, and then cat
+> memory.stat in user mode, no OOM occurred, and there were no warning
+> logs in the kernel.
 
+The default buffer size is PAGE_SIZE.
 
-On 6/27/2024 4:48 PM, Greg KH wrote:
-> On Thu, Jun 27, 2024 at 04:12:44PM +0530, Ekansh Gupta wrote:
->> Move fastrpc.c from misc/ to misc/fastrpc/. New C files are planned
->> to be added for PD notifications and other missing features. Adding
->> and maintaining new files from within fastrpc directory would be easy.
->>
->> Example of feature that is being planned to be introduced in a new C
->> file:
->> https://lore.kernel.org/all/20240606165939.12950-6-quic_ekangupt@quicinc.com/
->>
->> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
->> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> ---
->> Changes in v2:
->>   - Updated Kconfig.
->> Changes in v3:
->>   - Added newline in kconfig.
->>
->>  MAINTAINERS                          |  2 +-
->>  drivers/misc/Kconfig                 | 13 +------------
->>  drivers/misc/Makefile                |  2 +-
->>  drivers/misc/fastrpc/Kconfig         | 16 ++++++++++++++++
->>  drivers/misc/fastrpc/Makefile        |  2 ++
->>  drivers/misc/{ => fastrpc}/fastrpc.c |  0
->>  6 files changed, 21 insertions(+), 14 deletions(-)
->>  create mode 100644 drivers/misc/fastrpc/Kconfig
->>  create mode 100644 drivers/misc/fastrpc/Makefile
->>  rename drivers/misc/{ => fastrpc}/fastrpc.c (100%)
-> For now, no, sorry, not a new directory for just one .c file.
->
-> If you want to add more stuff, wonderful, then do this as the first
-> commit of the series when that actually happens.
->
-> sorry, but I'm not going to take this now.
-Sure, understood. I will bring in the new file/s along with this new directory change.
-
---Ekansh
-> greg k-h
-
+-- 
+Michal Hocko
+SUSE Labs
 
