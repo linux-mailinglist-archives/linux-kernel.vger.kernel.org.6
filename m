@@ -1,121 +1,105 @@
-Return-Path: <linux-kernel+bounces-232225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0247591A567
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:34:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 395CD91A569
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:34:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85A49B25411
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:34:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8B94B25537
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBBFE14A4E0;
-	Thu, 27 Jun 2024 11:34:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53BE014AD0E;
+	Thu, 27 Jun 2024 11:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="bWfhjKvQ"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vT5853zB"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC541411EE;
-	Thu, 27 Jun 2024 11:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCA41411EE
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 11:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719488047; cv=none; b=U6zLd0+px8T5+x7kASM3GucnoSrMO5eXmr+G96kmxm+E+4MgEA1EkVHWXuOGUAOiORMVFTx7IGtokkXtskOEkRD6BvprfgRdwfGDVA8Q61k5SrDozM+n3lJjoN7m5O37jvxwlasd9hlBBo5QgNq1bue/If4lWMbdAXoKDeXz3oM=
+	t=1719488069; cv=none; b=WJVLm6XnnIbw75Lu+EU45MrZUc7WYLRIB+RBLLa9DsF+t8JFAiDpHY0DYLx+7YLj/RVXOopeH0FHlJ9yAY5Fd31iLrINZnoWFULZzRT/U8CQGgpaVv0iCGimyQSNgFGLA8Xs7lunMa7JCPirjtbEw4KXrUmVbw8cDNe2fQnyBj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719488047; c=relaxed/simple;
-	bh=uhXbGazcXeqkxXjBouKM0MQuQ3CTfNGpf2RScCZD55M=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=apuzxgPN68Fef9V9vx1JtOSm4jWrj2KE8VfS6cJ4F82GJz7Z9Ug/xebsEcOdBgPvUcGkL9DwVbw/Rhb3FSGWxR6LU+k0mWkq7oRl/pnGUz/hXt2DUGbDejaZLNY7q5zhJ8orCPHCT6l0/WJqLJB+Y/19PVQg+KIPcZCCILxSlkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=bWfhjKvQ; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719488022; x=1720092822; i=markus.elfring@web.de;
-	bh=A7rM3y/OMnB34PKR/RnqFiGJ+fS+Qyq19jgyL7mRwdI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=bWfhjKvQNMn2j1KF83zywHnz+eoZxC6KaKuZxFmkweB+9RqypJ1Ah6Ia+fGBWyUc
-	 wv2ZVxfjRKCUldkP+B4V7a8eytwO9I49N5dDLv8Z0DbspzNOW7v6nR13IJMbB1RnS
-	 kiZm9647+hc4Nd4WkG7ak+v1XNEyo8FrHIudpjqbgZBPkt6q4UbrcJ3c4tJzTjGu2
-	 q9URQkqRnqAMqhx8OIKYUJult7ZEjOz0jyTMFdRttKZEmzyXs7Pde6/UtgIHcktLp
-	 PdtQyzTL0WNthjIl6kPn+Jphf5Kgo71LXqm65TO2Rf6XKf3X+NcpFME7YyUPYxACi
-	 FTgaA0+vys9tcV/XGg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MnG2Q-1smGJO2SPs-00cmj0; Thu, 27
- Jun 2024 13:33:42 +0200
-Message-ID: <eb14ae3b-7a4f-4802-b9a7-9ffec3b951f9@web.de>
-Date: Thu, 27 Jun 2024 13:33:40 +0200
+	s=arc-20240116; t=1719488069; c=relaxed/simple;
+	bh=s8a9qgL/3vgvPX/ppRhRnHkCxACMcsTSLyLHX8PPUEE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RZRadTtp4U/Nvuvm2kB81/VtKryI085USXP97wgzrhwsNPiUjFxMgtAjllMz6/UQk2OJnW2tn/APaBIqArg1OEkYx+FQTUHySYLVsoTyxrcNVkCuJ0xyPm2+YkoWFLwvhRiDGFFQHUy4eGeF/8Nb+glGGsYl8rPs7rwEftjbkhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vT5853zB; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57cf8880f95so1638730a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 04:34:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719488066; x=1720092866; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s8a9qgL/3vgvPX/ppRhRnHkCxACMcsTSLyLHX8PPUEE=;
+        b=vT5853zBjNlpzirf1SaHUidFyVTMqdNtTw5GSCMLHfJkf3HMkj3PYKR0oLoFokegN9
+         PUKWAspsD0kK/hP6d711dPfauRepyVFUoxfKVfVNG9cdzK29pxOHU0JsY0BCBXNlwzha
+         r9/xSPRd5IK6SMuFcsNTHTEhrt5oqcQIvaG4vmO5UlxTfEB9LhS7ytPsn3q4YAx/2v+5
+         T8BfpYit9mLfWkgN8iWkTE7Pnc5q3YS8kCB/w1/TOMQD55XpQy7J3fAIcFLZJ8FWNpyL
+         wImrhBORQLJKPX3ggvbT8pGcdZ3wGYeZIUyO+iKX1jCf/3seFQFpRUvBMKIQaGJzU7wR
+         Qk5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719488066; x=1720092866;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=s8a9qgL/3vgvPX/ppRhRnHkCxACMcsTSLyLHX8PPUEE=;
+        b=JmiHr7K3wBWEKq5E/t4jCGiLffmy4epQWAIxzCazh1nxO/tmerPjuj3eBG8mPZwrXt
+         Z5CZPclEGpGfOzY/tTX5LP5FW45VAWTjtcqzOZFplQ5eYl3Yt5TwGk6cDiEYjUhoF251
+         KQbOpJ3BE968Hd//OfhKvbupsgyCcbGLspWjTBoa2cgHazhFKBDlVFlxd7V7V8r+ASiT
+         9qO2+8xksKzpUzzRdWVlHO+ygo5++GssnWtcyA4inXP/16QRM6reFrn9VsfE/3M6jnOz
+         5WK792mu+2wJM1GzIPZMtWPMAFKvHkjWhLkG1uI19DjBuN3qt23rUiiLw0QMHL9t8lzU
+         2dgA==
+X-Forwarded-Encrypted: i=1; AJvYcCWeevfaZmR9v6JDbL2a3flVisuZJi5gzuv3zJlmbm8hIEnee5bxFa0JXvsyd8vtTnOlVeogHVSUTexX9/KFpQrosxDubWgHZyPR0olv
+X-Gm-Message-State: AOJu0Yxe4Ce6bWb8UqoM55PrABSdqYUqYerk3SVKLT2wZS2GfanH+sCl
+	SaGDggbw4aeiZQiyDM+g9gdgvA7q9Juh1YMH6Qsqq7FnFnwle8KRpuV7yu7QcIp0EKsRW29MPiZ
+	0pU3393emQPbE2yhdMrbiaXI0JbcjIHf/Fm8r
+X-Google-Smtp-Source: AGHT+IHLyPYvXfGlogID2l+7RlQpARx4A0v7by2uAHcT47lAr9k/vY5ZKFTIohicwN5WPwQIYzSAZXmKPR4lkQUUe/s=
+X-Received: by 2002:a17:907:7782:b0:a6f:56d2:8f0d with SMTP id
+ a640c23a62f3a-a7245ba3ba8mr1149592966b.17.1719488065900; Thu, 27 Jun 2024
+ 04:34:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Ma Ke <make24@iscas.ac.cn>, dri-devel@lists.freedesktop.org,
- Daniel Vetter <daniel@ffwll.ch>, Dave Airlie <airlied@redhat.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
- Thomas Zimmermann <tzimmermann@suse.de>
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- David Airlie <airlied@gmail.com>
-References: <20240627063220.3013568-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH v2] drm/gma500: fix null pointer dereference in
- cdv_intel_lvds_get_modes
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240627063220.3013568-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
+References: <20240626094232.2432891-1-xiujianfeng@huawei.com> <Zn0RGTZxrEUnI1KZ@tiehlicka>
+In-Reply-To: <Zn0RGTZxrEUnI1KZ@tiehlicka>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Thu, 27 Jun 2024 04:33:50 -0700
+Message-ID: <CAJD7tkZfkE6EyDAXetjSAKb7Zx2Mw-2naUNHRK=ihegZyZ2mHA@mail.gmail.com>
+Subject: Re: [PATCH -next] mm: memcg: remove redundant seq_buf_has_overflowed()
+To: Michal Hocko <mhocko@suse.com>
+Cc: Xiu Jianfeng <xiujianfeng@huawei.com>, hannes@cmpxchg.org, roman.gushchin@linux.dev, 
+	shakeel.butt@linux.dev, muchun.song@linux.dev, akpm@linux-foundation.org, 
+	cgroups@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:AOehDKKFPtxRHQPkx+LUzANkyLhTBUvzpw4KeRmCd3rgH5fsgxR
- 4hB57cBBQdjqt/ClaW4nBIog+T3Iadd5g5BlQPDYfJxlRtY3+TphaqUqIwXuOaBgcZa14VW
- vwMQmNT62qmSdaQH/4h5xTD/ZEE1kdLUYZy0U4cXKdxNpOEvVoz29cuP12WOzg9ha7023tX
- fSddlKToMHvRrbkMH+QbQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:JG+JqApF6Yc=;luGoJh8GDXk11DTuBXjZEvPBHkd
- ixtgHsNKOZX0DvF+p189t6tpAq8fTCFLkM8GQaKiPdUFZWMFof0C3W1dx4dARME4ukLKR1pe2
- wbmQuRGMbppG3tKXuLIdgjWsi+hrNY2jWcCaIPOZgP++KRFWMc9Eub/Mku0q6s615bAEr2110
- 1UwtrJ8Gjf+Qc3Lqn6iLIb3XHp4JFPJgbsgXKiqsPtJQqsjTfJ1+aEimYnmfOdZeZLOHp3qtK
- FQr0o7xtcGnw3aVWWqi6GCbsdiCkVs0anW3WwRMkPuTWhWel0AkyAqvmyp9kq4i9of74nQNxM
- sDaHBQ4DwM4kgYJmVFh7RRiG2pnLL4c8ZPtbJkPzb+o8jCJkrEgz04YqGduIeUcbYobBwzL9v
- OjTm6hJ9QfnFQPi/De7zjiAaoAVnCwIMErYQOhdC4Kd8wt0wKl8bPybf5XDasS+r1l71oY2a/
- Q07IBWEnaFWVp21tTOSVTbNMPdtNLkr/muzQ6dX20xAaRikGiz9zyheNOCyJBvLpx0icKW25m
- pGJLMGX9FzAVTlwVSVs8wwuCxHnQz+jsCOn32KEayKGbl5nHDDx5vxmX1KofAR6ECRrRIZNl9
- IcOWdBnZsXkmCbpUPrQ2ICXhKFaMmx+IG+I+iZRyP8HFmlfxp4igmSX+fgVxXO4sjV1rgYl1H
- 2uj1VWk88o6zIzmXXo/cDNzmGNRWAKBVHv4Typ+M2Q87VMLqEmg07gQGDOpRd/sSXGDndx2/Z
- YLNCn2mvqiYNNvxZoiokcMSsOiltY5kEA/RnrJ7BwIEtRUj5b2KDPLP7WjWe1BL2U2SLLk+tr
- kI9ozjveIVyvrDXhppRPlI22vu5gyFjXudWSg+0FCqvjk=
 
-> In cdv_intel_lvds_get_modes(), the return value of drm_mode_duplicate()
-> is assigned to mode, which will lead to a NULL pointer dereference on
-> failure of drm_mode_duplicate(). Add a check to avoid npd.
+On Thu, Jun 27, 2024 at 12:13=E2=80=AFAM Michal Hocko <mhocko@suse.com> wro=
+te:
+>
+> On Wed 26-06-24 09:42:32, Xiu Jianfeng wrote:
+> > Both the end of memory_stat_format() and memcg_stat_format() will call
+> > WARN_ON_ONCE(seq_buf_has_overflowed()). However, memory_stat_format()
+> > is the only caller of memcg_stat_format(), when memcg is on the default
+> > hierarchy, seq_buf_has_overflowed() will be executed twice, so remove
+> > the reduntant one.
+>
+> Shouldn't we rather remove both? Are they giving us anything useful
+> actually? Would a simpl pr_warn be sufficient? Afterall all we care
+> about is to learn that we need to grow the buffer size because our stats
+> do not fit anymore. It is not really important whether that is an OOM or
+> cgroupfs interface path.
 
-A) Can a wording approach (like the following) be a better change descript=
-ion?
-
-   A null pointer is stored in the local variable =E2=80=9Cmode=E2=80=9D a=
-fter a call
-   of the function =E2=80=9Cdrm_mode_duplicate=E2=80=9D failed. This point=
-er was passed to
-   a subsequent call of the function =E2=80=9Cdrm_mode_probed_add=E2=80=9D=
- where an undesirable
-   dereference will be performed then.
-   Thus add a corresponding return value check.
-
-
-B) Would you like to append parentheses to the function name
-   in the summary phrase?
-
-
-C) How do you think about to put similar results from static source code
-   analyses into corresponding patch series?
-
-
-Regards,
-Markus
+Is it possible for userspace readers to break if the stats are
+incomplete? If yes, I think WARN_ON_ONCE() may be prompted to make it
+easier to catch and fix before deployment.
 
