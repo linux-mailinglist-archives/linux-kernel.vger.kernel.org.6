@@ -1,155 +1,119 @@
-Return-Path: <linux-kernel+bounces-232238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C903891A59A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:45:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E74491A579
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:40:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 853FA288CFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:45:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E15541F24704
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF53914E2F0;
-	Thu, 27 Jun 2024 11:45:18 +0000 (UTC)
-Received: from unicorn.mansr.com (unicorn.mansr.com [81.2.72.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFA114F100;
+	Thu, 27 Jun 2024 11:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Thtjle8C"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C300C13AA4C;
-	Thu, 27 Jun 2024 11:45:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.2.72.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BEF5149009
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 11:39:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719488718; cv=none; b=LWlMjP5rwOnzEUkAe9qPZefcX0cNR7kfStL93sNMLaF5eup10WDMMvbeJgztRRQdb9PTvZAFYqEDkHCK8Krj/TnwmryHHhpBs9gx6q2Ce0Na0vCk1wL4EC2TCdUGENHMobYjt8TM36jNWcmzDs12edUOh6zHmZG9KaOv8moOiTU=
+	t=1719488400; cv=none; b=Q6Pj+cs32u70uPLMORvphtfykHX2WLhvY+GG3oVWg8/ludumSPMwTe7JTvuXDAMUXHQkWHhVMU6hPVza+CjkzXs051E/fPbXyWlCr9Ez3/wwQatDxepZxKK6ZdWkUytQYYGA/0KuBFGAxz0b+GvceAM5TVQuLNQctPXJgfcV1B8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719488718; c=relaxed/simple;
-	bh=evSv+YzWBzT/rL+Ef3bDS+9leq4NZMD9hE/fznsNY7M=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=WvlFmcuH7rXMxZUg1fgWOjox0nqSdImpfUyCcFTq+S+b47pRESJxNJP7SrQta1MQe7K6m1ge0avzEEjJGnd/n4U3lIUjx8xHew5I/owMBEyKpyGDWP3pftQsE6EgMSNqqoSuns+6rzPiNEh9bn0RxAFQVIgfSUAIxwRIGSmKBbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mansr.com; spf=pass smtp.mailfrom=mansr.com; arc=none smtp.client-ip=81.2.72.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mansr.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mansr.com
-Received: from raven.mansr.com (raven.mansr.com [IPv6:2001:8b0:ca0d:1::3])
-	by unicorn.mansr.com (Postfix) with ESMTPS id F14E015360;
-	Thu, 27 Jun 2024 12:39:26 +0100 (BST)
-Received: by raven.mansr.com (Postfix, from userid 51770)
-	id DE143210C01; Thu, 27 Jun 2024 12:39:26 +0100 (BST)
-From: =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
-To: Frank Oltmanns <frank@oltmanns.dev>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
- <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Maxime
- Ripard <mripard@kernel.org>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org, "Robert J. Pafford"
- <pafford.9@buckeyemail.osu.edu>, stable@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi-ng: common: Don't call hw_to_ccu_common on
- hw without common
-In-Reply-To: <20240623-sunxi-ng_fix_common_probe-v1-1-7c97e32824a1@oltmanns.dev>
-	(Frank Oltmanns's message of "Sun, 23 Jun 2024 10:45:58 +0200")
-References: <20240623-sunxi-ng_fix_common_probe-v1-1-7c97e32824a1@oltmanns.dev>
-Date: Thu, 27 Jun 2024 12:39:26 +0100
-Message-ID: <yw1x4j9e62dt.fsf@mansr.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/29.3 (gnu/linux)
+	s=arc-20240116; t=1719488400; c=relaxed/simple;
+	bh=H2oINYv1RisztMZ/1SAqTZYHs/1i3Urmq4+NkMvMiMc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M39AW3N6KyZExMPm3EobdT/WJwRcIEnZcVxcdyDSuAU9B7Yj5ON7tjlTsY6qKt5saWwY/cRLqomgxiEVqp3FG8fMtbPolbjbg3NdiU4F6M6rAwWikvGPiehNSf/COCBaAefZKyCqD2u/jqLHf1MEryz+9KTkOcHiybcYiHbaJXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Thtjle8C; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ec595d0acbso59881881fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 04:39:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719488396; x=1720093196; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZbI7/sd74idfi/XMipln9/gNNA6hsJvdqtzVYepkGFg=;
+        b=Thtjle8CV8sAZ48bIIqpc7edKv32ptt4YMAdb8nLauRmRbVzyrF4rAd0bP9wXsv3QP
+         r0l9sY6A4LmbmYizqFVH3nvsSW8Q+K1GRV4RUhpwqP0WtaS1o15S3TfAceDGKJtFaKVR
+         i8vz41XhVaP+YR/484dkjsjVkHTg3jFijCNol1rQ8pRRLYquDEdYaiKPQyeOrxvzWk3Z
+         LX9G56MHG4E9AMq39rugx17tjoZsBurACY5DdWVSwvPO98apD72uvm+05eFk2wrSaJfn
+         SKn4LM/bm7P3alUpJF42+JTs3nEh++eX4yDgZna4IrdL4BN+6RsN+QA+Jjb3STxxoB74
+         lNzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719488396; x=1720093196;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZbI7/sd74idfi/XMipln9/gNNA6hsJvdqtzVYepkGFg=;
+        b=S+JSEty5m5LQ7Ox7S+1LdUf7dwppOmSoECvh3zdpz520Cvc5KgiBo6Kt4ieMg3qhJR
+         hZH6WZHijw87Sb0MdsT+GIvRGD0EOXLMHLWatKG6Vt+k0r6d6L82y5/2SdTTaIyHBcA7
+         OYBwqbcsbJQ/ekNWW3//B5cBialEVifdHOK37s2UNOrBNfNdt6P8Kic5a5HJZNSxPqzg
+         KFiWHlIg9MQe6NL0u3ArkOuWREjDhi7w/rkdDcIeph+VjJ/1ZN64DhjYt6KPnAYgqZBO
+         064v5xJ8+HleYmN/X6zgvXfy/Jf4E2LGfgaGuFeW7BHF0oNGZjoqEuiP96nM9jxCqHK/
+         qZZw==
+X-Forwarded-Encrypted: i=1; AJvYcCVduZnWN5sR7Th9EXLBjXuVvav/kOM8llpVGtNNmWjIExQ2cOasy1fTc7Gwg9LrG0kH6CIUQXUy+9BEkHkLgWTeMqtQXDLCBNR7NxVL
+X-Gm-Message-State: AOJu0Yz7rJBQ6n/oH0NEBYO17YCkkA2rT/mkBnZHuhMk8MAWgRPrRGHh
+	8wiD9B4GZhxJedKUPh9sIV9667mZVjY6JrS9y/YCaLw5aSiz7yg6E20MzBHKZVY=
+X-Google-Smtp-Source: AGHT+IHFDzARAto2HLAI3TxjHyub50L0O0Jnjrz9yXwhDePCwserMcflGKVLOY5zTOX5jsXXhqzpcQ==
+X-Received: by 2002:a2e:a442:0:b0:2ec:5019:8fa4 with SMTP id 38308e7fff4ca-2ec7278a341mr44969421fa.49.1719488396147;
+        Thu, 27 Jun 2024 04:39:56 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:7fe5:47e9:28c5:7f25])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c8468613sm62081815e9.39.2024.06.27.04.39.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 04:39:55 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Vinod Koul <vkoul@kernel.org>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: netdev@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH v2 net-next 0/2] net: stmmac: qcom-ethqos: enable 2.5G ethernet on sa8775p-ride
+Date: Thu, 27 Jun 2024 13:39:45 +0200
+Message-ID: <20240627113948.25358-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Frank Oltmanns <frank@oltmanns.dev> writes:
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-> In order to set the rate range of a hw sunxi_ccu_probe calls
-> hw_to_ccu_common() assuming all entries in desc->ccu_clks are contained
-> in a ccu_common struct. This assumption is incorrect and, in
-> consequence, causes invalid pointer de-references.
->
-> Remove the faulty call. Instead, add one more loop that iterates over
-> the ccu_clks and sets the rate range, if required.
->
-> Fixes: b914ec33b391 ("clk: sunxi-ng: common: Support minimum and maximum =
-rate")
-> Reported-by: Robert J. Pafford <pafford.9@buckeyemail.osu.edu>
-> Closes: https://lore.kernel.org/lkml/DM6PR01MB58047C810DDD5D0AE397CADFF7C=
-22@DM6PR01MB5804.prod.exchangelabs.com/
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
-> ---
-> Robert, could you please test if this fixes the issue you reported.
->
-> I'm CC'ing M=E5ns here, because he observed some strange behavior [1] with
-> the original patch. Is it possible for you to look into if this patch
-> fixes your issue without the need for the following (seemingly
-> unrelated) patches:
->       cedb7dd193f6 "drm/sun4i: hdmi: Convert encoder to atomic"
->       9ca6bc246035 "drm/sun4i: hdmi: Move mode_set into enable"
+Here are the changes required to enable 2.5G ethernet on sa8775p-ride.
+As advised by Andrew Lunn and Russell King, I am reusing the existing
+stmmac infrastructure to enable the SGMII loopback and so I dropped the
+patches adding new callbacks to the driver core. This no longer has any
+build-time dependencies on the PHY changes so sending it out separately.
 
-This does indeed fix it.  6.9 is still broken, though, but that's
-probably for other reasons.
+Changes since v1:
+- split out the stmmac patches into their own series
+- don't add new callbacks to the stmmac core, reuse existing
+  infrastructure instead
+- don't try to add a new PHY mode (OCSGMII) but reuse 2500BASEX instead
+Link to v1: https://lore.kernel.org/linux-arm-kernel/20240619184550.34524-1-brgl@bgdev.pl/T/
 
-> Thanks,
->   Frank
->
-> [1]: https://lore.kernel.org/lkml/yw1xo78z8ez0.fsf@mansr.com/
-> ---
->  drivers/clk/sunxi-ng/ccu_common.c | 18 ++++++++++++------
->  1 file changed, 12 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/clk/sunxi-ng/ccu_common.c b/drivers/clk/sunxi-ng/ccu=
-_common.c
-> index ac0091b4ce24..be375ce0149c 100644
-> --- a/drivers/clk/sunxi-ng/ccu_common.c
-> +++ b/drivers/clk/sunxi-ng/ccu_common.c
-> @@ -132,7 +132,6 @@ static int sunxi_ccu_probe(struct sunxi_ccu *ccu, str=
-uct device *dev,
->
->  	for (i =3D 0; i < desc->hw_clks->num ; i++) {
->  		struct clk_hw *hw =3D desc->hw_clks->hws[i];
-> -		struct ccu_common *common =3D hw_to_ccu_common(hw);
->  		const char *name;
->
->  		if (!hw)
-> @@ -147,14 +146,21 @@ static int sunxi_ccu_probe(struct sunxi_ccu *ccu, s=
-truct device *dev,
->  			pr_err("Couldn't register clock %d - %s\n", i, name);
->  			goto err_clk_unreg;
->  		}
-> +	}
-> +
-> +	for (i =3D 0; i < desc->num_ccu_clks; i++) {
-> +		struct ccu_common *cclk =3D desc->ccu_clks[i];
-> +
-> +		if (!cclk)
-> +			continue;
->
-> -		if (common->max_rate)
-> -			clk_hw_set_rate_range(hw, common->min_rate,
-> -					      common->max_rate);
-> +		if (cclk->max_rate)
-> +			clk_hw_set_rate_range(&cclk->hw, cclk->min_rate,
-> +					      cclk->max_rate);
->  		else
-> -			WARN(common->min_rate,
-> +			WARN(cclk->min_rate,
->  			     "No max_rate, ignoring min_rate of clock %d - %s\n",
-> -			     i, name);
-> +			     i, clk_hw_get_name(&cclk->hw));
->  	}
->
->  	ret =3D of_clk_add_hw_provider(node, of_clk_hw_onecell_get,
->
-> ---
-> base-commit: 2607133196c35f31892ee199ce7ffa717bea4ad1
-> change-id: 20240622-sunxi-ng_fix_common_probe-5677c3e487fc
->
-> Best regards,
-> --=20
->
-> Frank Oltmanns <frank@oltmanns.dev>
->
+Bartosz Golaszewski (2):
+  net: stmmac: qcom-ethqos: add support for 2.5G BASEX mode
+  net: stmmac: qcom-ethqos: add a DMA-reset quirk for sa8775p-ride
 
---=20
-M=E5ns Rullg=E5rd
+ .../stmicro/stmmac/dwmac-qcom-ethqos.c        | 33 +++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+
+-- 
+2.43.0
+
 
