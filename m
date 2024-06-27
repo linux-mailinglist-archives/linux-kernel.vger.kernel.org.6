@@ -1,256 +1,121 @@
-Return-Path: <linux-kernel+bounces-232224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2C2A91A564
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:34:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0247591A567
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:34:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 082F3B251FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:34:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85A49B25411
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:34:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DD5B13E025;
-	Thu, 27 Jun 2024 11:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBBFE14A4E0;
+	Thu, 27 Jun 2024 11:34:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="luN+Tp9s";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FU/ogiTf";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="luN+Tp9s";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FU/ogiTf"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="bWfhjKvQ"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930BC148820;
-	Thu, 27 Jun 2024 11:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC541411EE;
+	Thu, 27 Jun 2024 11:34:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719488020; cv=none; b=VgUkakwS7gy1tzHjiFNtiXx1uLV24tUtcx4EE4xMl7Ji+u7v3U1OKHboR9jJJmOlH6K+r8yPi9RdzWd0ajdMw+gKmVtRPG1/mu7Z71ywq/jCwSH+6yia0G4murUHcbTt1V7eIvyIvIWhFlPqMfbdOcabkfwQrAzUDKVrGq+k0pE=
+	t=1719488047; cv=none; b=U6zLd0+px8T5+x7kASM3GucnoSrMO5eXmr+G96kmxm+E+4MgEA1EkVHWXuOGUAOiORMVFTx7IGtokkXtskOEkRD6BvprfgRdwfGDVA8Q61k5SrDozM+n3lJjoN7m5O37jvxwlasd9hlBBo5QgNq1bue/If4lWMbdAXoKDeXz3oM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719488020; c=relaxed/simple;
-	bh=u+k5a/2uqKJqfAihXtIvotddpIjx40GhhPHNZ53sBA4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pIgJbEsaeh1uUE6rfZzSA/kj4h4fmadO6EmcBNPkbesjL7OnZJ3Ja6c+0cn6hn56ijnSjGTD2IbSPYQ64o6tdX79KoY8ea8NAfPL7X0YbodP5XoCli4BAnkraHoz4lR0mjEQZetd0KPg46KFhqfD9uv/EKOICvO3Y/ZLE6nRLhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=luN+Tp9s; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FU/ogiTf; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=luN+Tp9s; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FU/ogiTf; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 63CBB210E4;
-	Thu, 27 Jun 2024 11:33:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719488010; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t01R90XdldGO7anUbxHaqX31mDL54qz2uJ5POgVrV3w=;
-	b=luN+Tp9sneSe5aIFXVa7+ZSq0Oicz+3+MOwfHde/chD8438+KoisRUxzvb8D1z4WP3bOQz
-	VxJXxQobcBj2OgTk3kz6J+e5QHxwgaxsWTIxJyPUOxJrU9S0zo664JUIdm1g2C1oMaT2Eo
-	5OG+LDM1yT8dr4qZJCGZuc9F2nevJak=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719488010;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t01R90XdldGO7anUbxHaqX31mDL54qz2uJ5POgVrV3w=;
-	b=FU/ogiTfDgFmO7Vi9yS/KUQgM4cVEziltRx8Qob1nx8hoAQ2muOpZewJqlBhXE0NAdErzT
-	HKrH1hm28QpHz1Bg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=luN+Tp9s;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="FU/ogiTf"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719488010; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t01R90XdldGO7anUbxHaqX31mDL54qz2uJ5POgVrV3w=;
-	b=luN+Tp9sneSe5aIFXVa7+ZSq0Oicz+3+MOwfHde/chD8438+KoisRUxzvb8D1z4WP3bOQz
-	VxJXxQobcBj2OgTk3kz6J+e5QHxwgaxsWTIxJyPUOxJrU9S0zo664JUIdm1g2C1oMaT2Eo
-	5OG+LDM1yT8dr4qZJCGZuc9F2nevJak=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719488010;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t01R90XdldGO7anUbxHaqX31mDL54qz2uJ5POgVrV3w=;
-	b=FU/ogiTfDgFmO7Vi9yS/KUQgM4cVEziltRx8Qob1nx8hoAQ2muOpZewJqlBhXE0NAdErzT
-	HKrH1hm28QpHz1Bg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4A5F81384C;
-	Thu, 27 Jun 2024 11:33:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id AmAgEgpOfWYhPwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 27 Jun 2024 11:33:30 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 988C8A08A2; Thu, 27 Jun 2024 13:33:28 +0200 (CEST)
-Date: Thu, 27 Jun 2024 13:33:28 +0200
-From: Jan Kara <jack@suse.cz>
-To: Alistair Popple <apopple@nvidia.com>
-Cc: dan.j.williams@intel.com, vishal.l.verma@intel.com,
-	dave.jiang@intel.com, logang@deltatee.com, bhelgaas@google.com,
-	jack@suse.cz, jgg@ziepe.ca, catalin.marinas@arm.com,
-	will@kernel.org, mpe@ellerman.id.au, npiggin@gmail.com,
-	dave.hansen@linux.intel.com, ira.weiny@intel.com,
-	willy@infradead.org, djwong@kernel.org, tytso@mit.edu,
-	linmiaohe@huawei.com, david@redhat.com, peterx@redhat.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-	jhubbard@nvidia.com, hch@lst.de, david@fromorbit.com
-Subject: Re: [PATCH 06/13] mm/memory: Add dax_insert_pfn
-Message-ID: <20240627113328.ozqkzhloufrpsdcr@quack3>
-References: <cover.66009f59a7fe77320d413011386c3ae5c2ee82eb.1719386613.git-series.apopple@nvidia.com>
- <50013c1ee52b5bb1213571bff66780568455f54c.1719386613.git-series.apopple@nvidia.com>
+	s=arc-20240116; t=1719488047; c=relaxed/simple;
+	bh=uhXbGazcXeqkxXjBouKM0MQuQ3CTfNGpf2RScCZD55M=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=apuzxgPN68Fef9V9vx1JtOSm4jWrj2KE8VfS6cJ4F82GJz7Z9Ug/xebsEcOdBgPvUcGkL9DwVbw/Rhb3FSGWxR6LU+k0mWkq7oRl/pnGUz/hXt2DUGbDejaZLNY7q5zhJ8orCPHCT6l0/WJqLJB+Y/19PVQg+KIPcZCCILxSlkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=bWfhjKvQ; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719488022; x=1720092822; i=markus.elfring@web.de;
+	bh=A7rM3y/OMnB34PKR/RnqFiGJ+fS+Qyq19jgyL7mRwdI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=bWfhjKvQNMn2j1KF83zywHnz+eoZxC6KaKuZxFmkweB+9RqypJ1Ah6Ia+fGBWyUc
+	 wv2ZVxfjRKCUldkP+B4V7a8eytwO9I49N5dDLv8Z0DbspzNOW7v6nR13IJMbB1RnS
+	 kiZm9647+hc4Nd4WkG7ak+v1XNEyo8FrHIudpjqbgZBPkt6q4UbrcJ3c4tJzTjGu2
+	 q9URQkqRnqAMqhx8OIKYUJult7ZEjOz0jyTMFdRttKZEmzyXs7Pde6/UtgIHcktLp
+	 PdtQyzTL0WNthjIl6kPn+Jphf5Kgo71LXqm65TO2Rf6XKf3X+NcpFME7YyUPYxACi
+	 FTgaA0+vys9tcV/XGg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MnG2Q-1smGJO2SPs-00cmj0; Thu, 27
+ Jun 2024 13:33:42 +0200
+Message-ID: <eb14ae3b-7a4f-4802-b9a7-9ffec3b951f9@web.de>
+Date: Thu, 27 Jun 2024 13:33:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <50013c1ee52b5bb1213571bff66780568455f54c.1719386613.git-series.apopple@nvidia.com>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[33];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RL7pfqg7h1m44jupjp7nguhfec)];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_CC(0.00)[intel.com,deltatee.com,google.com,suse.cz,ziepe.ca,arm.com,kernel.org,ellerman.id.au,gmail.com,linux.intel.com,infradead.org,mit.edu,huawei.com,redhat.com,vger.kernel.org,lists.infradead.org,lists.ozlabs.org,lists.linux.dev,kvack.org,nvidia.com,lst.de,fromorbit.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 63CBB210E4
+User-Agent: Mozilla Thunderbird
+To: Ma Ke <make24@iscas.ac.cn>, dri-devel@lists.freedesktop.org,
+ Daniel Vetter <daniel@ffwll.ch>, Dave Airlie <airlied@redhat.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ David Airlie <airlied@gmail.com>
+References: <20240627063220.3013568-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH v2] drm/gma500: fix null pointer dereference in
+ cdv_intel_lvds_get_modes
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240627063220.3013568-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:AOehDKKFPtxRHQPkx+LUzANkyLhTBUvzpw4KeRmCd3rgH5fsgxR
+ 4hB57cBBQdjqt/ClaW4nBIog+T3Iadd5g5BlQPDYfJxlRtY3+TphaqUqIwXuOaBgcZa14VW
+ vwMQmNT62qmSdaQH/4h5xTD/ZEE1kdLUYZy0U4cXKdxNpOEvVoz29cuP12WOzg9ha7023tX
+ fSddlKToMHvRrbkMH+QbQ==
 X-Spam-Flag: NO
-X-Spam-Score: -4.01
-X-Spam-Level: 
+UI-OutboundReport: notjunk:1;M01:P0:JG+JqApF6Yc=;luGoJh8GDXk11DTuBXjZEvPBHkd
+ ixtgHsNKOZX0DvF+p189t6tpAq8fTCFLkM8GQaKiPdUFZWMFof0C3W1dx4dARME4ukLKR1pe2
+ wbmQuRGMbppG3tKXuLIdgjWsi+hrNY2jWcCaIPOZgP++KRFWMc9Eub/Mku0q6s615bAEr2110
+ 1UwtrJ8Gjf+Qc3Lqn6iLIb3XHp4JFPJgbsgXKiqsPtJQqsjTfJ1+aEimYnmfOdZeZLOHp3qtK
+ FQr0o7xtcGnw3aVWWqi6GCbsdiCkVs0anW3WwRMkPuTWhWel0AkyAqvmyp9kq4i9of74nQNxM
+ sDaHBQ4DwM4kgYJmVFh7RRiG2pnLL4c8ZPtbJkPzb+o8jCJkrEgz04YqGduIeUcbYobBwzL9v
+ OjTm6hJ9QfnFQPi/De7zjiAaoAVnCwIMErYQOhdC4Kd8wt0wKl8bPybf5XDasS+r1l71oY2a/
+ Q07IBWEnaFWVp21tTOSVTbNMPdtNLkr/muzQ6dX20xAaRikGiz9zyheNOCyJBvLpx0icKW25m
+ pGJLMGX9FzAVTlwVSVs8wwuCxHnQz+jsCOn32KEayKGbl5nHDDx5vxmX1KofAR6ECRrRIZNl9
+ IcOWdBnZsXkmCbpUPrQ2ICXhKFaMmx+IG+I+iZRyP8HFmlfxp4igmSX+fgVxXO4sjV1rgYl1H
+ 2uj1VWk88o6zIzmXXo/cDNzmGNRWAKBVHv4Typ+M2Q87VMLqEmg07gQGDOpRd/sSXGDndx2/Z
+ YLNCn2mvqiYNNvxZoiokcMSsOiltY5kEA/RnrJ7BwIEtRUj5b2KDPLP7WjWe1BL2U2SLLk+tr
+ kI9ozjveIVyvrDXhppRPlI22vu5gyFjXudWSg+0FCqvjk=
 
-On Thu 27-06-24 10:54:21, Alistair Popple wrote:
-> Currently to map a DAX page the DAX driver calls vmf_insert_pfn. This
-> creates a special devmap PTE entry for the pfn but does not take a
-> reference on the underlying struct page for the mapping. This is
-> because DAX page refcounts are treated specially, as indicated by the
-> presence of a devmap entry.
-> 
-> To allow DAX page refcounts to be managed the same as normal page
-> refcounts introduce dax_insert_pfn. This will take a reference on the
-> underlying page much the same as vmf_insert_page, except it also
-> permits upgrading an existing mapping to be writable if
-> requested/possible.
-> 
-> Signed-off-by: Alistair Popple <apopple@nvidia.com>
+> In cdv_intel_lvds_get_modes(), the return value of drm_mode_duplicate()
+> is assigned to mode, which will lead to a NULL pointer dereference on
+> failure of drm_mode_duplicate(). Add a check to avoid npd.
 
-Overall this looks good to me. Some comments below.
+A) Can a wording approach (like the following) be a better change descript=
+ion?
 
-> ---
->  include/linux/mm.h |  4 ++-
->  mm/memory.c        | 79 ++++++++++++++++++++++++++++++++++++++++++-----
->  2 files changed, 76 insertions(+), 7 deletions(-)
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 9a5652c..b84368b 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1080,6 +1080,8 @@ int vma_is_stack_for_current(struct vm_area_struct *vma);
->  struct mmu_gather;
->  struct inode;
->  
-> +extern void prep_compound_page(struct page *page, unsigned int order);
-> +
+   A null pointer is stored in the local variable =E2=80=9Cmode=E2=80=9D a=
+fter a call
+   of the function =E2=80=9Cdrm_mode_duplicate=E2=80=9D failed. This point=
+er was passed to
+   a subsequent call of the function =E2=80=9Cdrm_mode_probed_add=E2=80=9D=
+ where an undesirable
+   dereference will be performed then.
+   Thus add a corresponding return value check.
 
-You don't seem to use this function in this patch?
 
-> diff --git a/mm/memory.c b/mm/memory.c
-> index ce48a05..4f26a1f 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -1989,14 +1989,42 @@ static int validate_page_before_insert(struct page *page)
->  }
->  
->  static int insert_page_into_pte_locked(struct vm_area_struct *vma, pte_t *pte,
-> -			unsigned long addr, struct page *page, pgprot_t prot)
-> +			unsigned long addr, struct page *page, pgprot_t prot, bool mkwrite)
->  {
->  	struct folio *folio = page_folio(page);
-> +	pte_t entry = ptep_get(pte);
->  
-> -	if (!pte_none(ptep_get(pte)))
-> +	if (!pte_none(entry)) {
-> +		if (mkwrite) {
-> +			/*
-> +			 * For read faults on private mappings the PFN passed
-> +			 * in may not match the PFN we have mapped if the
-> +			 * mapped PFN is a writeable COW page.  In the mkwrite
-> +			 * case we are creating a writable PTE for a shared
-> +			 * mapping and we expect the PFNs to match. If they
-> +			 * don't match, we are likely racing with block
-> +			 * allocation and mapping invalidation so just skip the
-> +			 * update.
-> +			 */
-> +			if (pte_pfn(entry) != page_to_pfn(page)) {
-> +				WARN_ON_ONCE(!is_zero_pfn(pte_pfn(entry)));
-> +				return -EFAULT;
-> +			}
-> +			entry = maybe_mkwrite(entry, vma);
-> +			entry = pte_mkyoung(entry);
-> +			if (ptep_set_access_flags(vma, addr, pte, entry, 1))
-> +				update_mmu_cache(vma, addr, pte);
-> +			return 0;
-> +		}
->  		return -EBUSY;
+B) Would you like to append parentheses to the function name
+   in the summary phrase?
 
-If you do this like:
 
-		if (!mkwrite)
-			return -EBUSY;
+C) How do you think about to put similar results from static source code
+   analyses into corresponding patch series?
 
-You can reduce indentation of the big block and also making the flow more
-obvious...
 
-> +	}
-> +
->  	/* Ok, finally just insert the thing.. */
->  	folio_get(folio);
-> +	if (mkwrite)
-> +		entry = maybe_mkwrite(mk_pte(page, prot), vma);
-> +	else
-> +		entry = mk_pte(page, prot);
-
-I'd prefer:
-
-	entry = mk_pte(page, prot);
-	if (mkwrite)
-		entry = maybe_mkwrite(entry, vma);
-
-but I don't insist. Also insert_pfn() additionally has pte_mkyoung() and
-pte_mkdirty(). Why was it left out here?
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Regards,
+Markus
 
