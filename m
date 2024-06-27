@@ -1,105 +1,129 @@
-Return-Path: <linux-kernel+bounces-231764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8281919DA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 05:01:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9326D919DAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 05:02:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 633F7284C9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 03:01:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20876285341
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 03:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA2813FF9;
-	Thu, 27 Jun 2024 03:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="RxHB2CqF"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE13913FF9;
+	Thu, 27 Jun 2024 03:02:51 +0000 (UTC)
+Received: from cstnet.cn (unknown [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBCE26FC6;
-	Thu, 27 Jun 2024 03:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0EF8814;
+	Thu, 27 Jun 2024 03:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719457257; cv=none; b=Jm5I7ICMG7qfaOzyR/l7+ZA5fPO11tuRkLPFLBfzArhhUq6/OVmoAueaAK1uy7U54ud52nP3ooEVzLnhGLoWBWspo7I+ybKc2KH/Zth1j4Cek47cwLLnF4C1PLbxbpW0sVmo1G7JedOqwQcCZR17nXQSZAQ9PnI3JbeRLxTFZ/8=
+	t=1719457371; cv=none; b=fgF8zupecrlDaW7N+z3Q+hAvD0a/oEgLGAalza8U+GwwGNZX4FqvXCYm5N+Y77dXKt455TAqMNq1E37NqzdU6AWjj7TMlUUi+17iPxR9i5x0mnR5o/r1GdV9XTk9noTcEGhFwgKhl/fwF5T3h2WPs8bqnAmnr0i9i0kIFTtq3I0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719457257; c=relaxed/simple;
-	bh=WqZGsjNQqac+8MnivgotfefTlGfUXJbcBN+NkTQKZQc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bk+9834dCqYsdSOKiCjkbjlblhecniVYraNKbJ5pX/a9eJhgtYYijFOA62+smv7RzkDWSmBj18mSd3wkLdVFXW4aru8742Qq9eCnaZjEykrKv4i6PU0VUf48pGxtRy80XODvrVLB2PKvAKgPI/EQwfDRegjF/O27/dtLETOnThg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=RxHB2CqF; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 04D7540E0218;
-	Thu, 27 Jun 2024 03:00:52 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id DrsUvQUOunVS; Thu, 27 Jun 2024 03:00:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1719457248; bh=AY4aMCo9kTgD3MRGQfEJ79FC77YpLM84z9ED/n/mc04=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RxHB2CqF3t+CTlineP1Zx0d2XuVqSbkH0Yuxdm0FoLanZCGoA0vF2q3MAylyCpX3S
-	 vs7GZfC8E/GmEGDA8g51CLOIpA3w9oPQT341E2uQPh9fLRxFPF2N8QUvhyq/McaJGm
-	 iVeOXAxo1IddgqnBlndSK+FYVV7rBCetl+CI6AKUzDiQvlv0p9nsPZ+NO49nY3hvXd
-	 Yh0ONb4Xxxpqt/uFxlQzEaGPccuzMXRBBfR4AIaLw0Xl0vH4uvgiP/lCUjBtUykTq2
-	 mvEVvWkQ+s+4r6H1CuWsHv9FtFPIuCEwU7ABBFDntzZWSU5yK7ieg+PPK+59kv+nVh
-	 d0cnS4VzfY2+ZhLBeZ0fLGNM2yffbmAf+CkSl2+pP/F0+r/tlYaoggzUm+AgzCmGsb
-	 DJJXa8kGK8NQ8xq8Z1EwR+uk9txvvkLpwZDr3zkeauqjMYKth5VHT8Un7pBQxdnmF5
-	 66P+oLZx1o35PDIwos6Cx47bKgy9ZklM+54auT5ukCv3kJJfqAcKaM1FOtz590SkOY
-	 WRtzXJ5uEYncEmc6sqia6/hpt2l5jBfhyfpaEKoMazrlQb/ooCUhT9GsmDxQZB8j6n
-	 m105RooDj41u3bw4QXkJehaV/z4NQF5cHA4iXuVUtxhUltP6wkDJGWoclilmqKWsq3
-	 xPh9Iccur9sMubLu/d5V706Q=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3760340E01D6;
-	Thu, 27 Jun 2024 03:00:33 +0000 (UTC)
-Date: Thu, 27 Jun 2024 05:00:26 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>, Huang Rui <ray.huang@amd.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
-	"open list:AMD PSTATE DRIVER" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH 1/2] x86/cpu/amd: Clarify amd_get_highest_perf()
-Message-ID: <20240627030026.GAZnzVyitzWW6nE_s8@fat_crate.local>
-References: <20240626042043.2410-1-mario.limonciello@amd.com>
- <20240626042043.2410-2-mario.limonciello@amd.com>
- <20240626171421.GRZnxMbcI83xe1SLtB@fat_crate.local>
- <681732d3-76ba-47ba-9cce-362c6fe094cb@amd.com>
+	s=arc-20240116; t=1719457371; c=relaxed/simple;
+	bh=mzRu4FOP+Ip89fI4yXRMEnYoS1DyeLQ1AjfU2+P03B4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LYAlxAsGsQ0fhUvBoxJm8d0ad1ZKcPtyPlc8whyrm4USoLLawsdPmDnQMSNvJXcx4ZCNesLzIL/qCCoBGOvt7F+WrDr/qZYycGhEFvlUzBREcqVKk6mIcI6E2KEYdonYw7gZSphrVSnUlW4rmIj3/f/3kO2sp2pjWKr1i+6uPi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from ThinkPad-T480s.. (unknown [180.110.114.157])
+	by APP-05 (Coremail) with SMTP id zQCowACXneU91nxmmgIiAA--.7124S2;
+	Thu, 27 Jun 2024 11:02:23 +0800 (CST)
+From: zhouquan@iscas.ac.cn
+To: linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Cc: oleg@redhat.com,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	andy.chiu@sifive.com,
+	shuah@kernel.org,
+	charlie@rivosinc.com,
+	zhouquan@iscas.ac.cn
+Subject: [PATCH v1 0/2] riscv: Expose orig_a0 to userspace for ptrace to set the actual a0
+Date: Thu, 27 Jun 2024 11:02:21 +0800
+Message-Id: <cover.1719408040.git.zhouquan@iscas.ac.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <681732d3-76ba-47ba-9cce-362c6fe094cb@amd.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowACXneU91nxmmgIiAA--.7124S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7tF43Ar1fXryUtFW7GFWDCFg_yoW8tFy3pa
+	95Kwn8Kr1kJFy7t3WxXw4UZrWrAa4kGrW3G3WxZw13Z3y0yryvqr4xKa15t3sxA3y8XryS
+	vF12k3W5C3W7Aa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
+	1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+	6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
+	8cxan2IY04v7M4kE6xkIj40Ew7xC0wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
+	VjvjDU0xZFpf9x0JUSiihUUUUU=
+X-CM-SenderInfo: 52kr31xxdqqxpvfd2hldfou0/1tbiCQ4BBmZ8nayl6gAAsk
 
-On Wed, Jun 26, 2024 at 01:18:17PM -0500, Mario Limonciello wrote:
-> And then patch 2 or patch 3 change the "default" return to 166 and if there
-> is functional issues then they need to be special cased.
+From: Quan Zhou <zhouquan@iscas.ac.cn>
 
-Sounds ok to me. Keep the whole logic in one place. Sure.
+Due to the path that modifies a0 in syscall_enter_from_user_mode before the
+actual execution of syscall_handler [1], the kernel currently saves a0 to
+orig_a0 at the entry point of do_trap_ecall_u as an original copy of a0.
+Once the syscall is interrupted and later resumed, the restarted syscall
+will use orig_a0 to continue execution.
 
+The above rules generally apply except for ptrace(PTRACE_SETREGSET,),
+where the kernel will ignore the tracer's setting of tracee/a0 and
+will restart with the tracee/orig_a0. For the current kernel implementation
+of ptrace, projects like CRIU/Proot will encounter issues where the a0
+setting becomes ineffective when performing ptrace(PTRACE_SETREGSET,).
+
+Here is a suggested solution, expose orig_a0 to userspace so that ptrace
+can choose whether to set orig_a0 based on the actual scenario. In fact,
+x86/orig_eax and loongArch/orig_a0 have adopted similar solutions.
+
+[1] link:
+https://lore.kernel.org/lkml/20230403-crisping-animosity-04ed8a45c625@spud/T/
+
+---
+Changes from RFC->v1:
+- Rebased on Linux 6.10-rc5.
+- Updated the patch description.
+- Adjust MAX_REG_OFFSET to match the new bottom of pt_regs (Charlie).
+- Simplify selftest to verify if a0 can be set (Charlie).
+- Fix .gitignore error (Charlie).
+
+---
+RFC link:
+https://lore.kernel.org/all/cover.1718693532.git.zhouquan@iscas.ac.cn/
+
+Quan Zhou (2):
+  riscv: Expose orig_a0 in the user_regs_struct structure
+  riscv: selftests: Add a ptrace test to verify syscall parameter
+    modification
+
+ arch/riscv/include/asm/ptrace.h              |   7 +-
+ arch/riscv/include/uapi/asm/ptrace.h         |   2 +
+ tools/testing/selftests/riscv/Makefile       |   2 +-
+ tools/testing/selftests/riscv/abi/.gitignore |   1 +
+ tools/testing/selftests/riscv/abi/Makefile   |  12 ++
+ tools/testing/selftests/riscv/abi/ptrace.c   | 124 +++++++++++++++++++
+ 6 files changed, 144 insertions(+), 4 deletions(-)
+ create mode 100644 tools/testing/selftests/riscv/abi/.gitignore
+ create mode 100644 tools/testing/selftests/riscv/abi/Makefile
+ create mode 100644 tools/testing/selftests/riscv/abi/ptrace.c
+
+
+base-commit: f2661062f16b2de5d7b6a5c42a9a5c96326b8454
 -- 
-Regards/Gruss,
-    Boris.
+2.34.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
