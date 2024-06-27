@@ -1,80 +1,91 @@
-Return-Path: <linux-kernel+bounces-232648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0135991AC4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:12:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C957A91AC55
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:14:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22E471C22CC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:12:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F3DA2863AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E09199392;
-	Thu, 27 Jun 2024 16:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E16199398;
+	Thu, 27 Jun 2024 16:14:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aLI1+IL9"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BHjZrp+V"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89FE2196D9E;
-	Thu, 27 Jun 2024 16:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947E3196D9E;
+	Thu, 27 Jun 2024 16:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719504725; cv=none; b=KHzKOG2JJ6JgRfBglE/BVXW5COK5Q17i/R9+zxbA+GwIPakQUSz51IS6NRjz3aWu/xKpk/FuueHZkMhgA7m2P7l/4kqfabosTrDX1UEjz7qylfD7y/W5PZI6LjFarSaZwhRNEl0izo0MKKOy2CDsp35R13T9ixM4UVD05pVlM6A=
+	t=1719504850; cv=none; b=cX3++wYsh+Nx6BcCC9sUKQv95h0Ty84Z/r6qLZttImdJAWMZj0CML2ZaWsGujJsgM6SZ5aq2JwsFR+4c+upQI9HE3xKi/oQ8VBX7byO24fs3I6rldOpXc5kdHSTidmpAS4/UTfNOy4UVQCoK5K3L8/HL9Ecd4Ht+0AHouITzNLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719504725; c=relaxed/simple;
-	bh=6t1hPXDwq6nhiw9cHdmXBhSJAnLSGk6/1kXJ+BFAyf4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UB4BbgMgFnS61JvE0Zj2Se7nXsJy3seq/ekmyvhjOmH+HQjTHyZWjtE4bhzawcmPBPGtIlW925PPTptePGFxTRQ57JWmvD4M6sNNaCWFTCCBSOlCmBo/zalT5oaTlruGoiH0iUSBouFkoM07h8KLCp4uJG4LtYddMK1MCrinudg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aLI1+IL9; arc=none smtp.client-ip=209.85.208.50
+	s=arc-20240116; t=1719504850; c=relaxed/simple;
+	bh=ZF0e3blb4nkfxDT/Lk1jsmEIQpYEBc8vtkml4fKLlHc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=btjrJCRt1lRE4TyT8xIm2KFR+UN/w5CMZviIcYVqQmgGj/yIwfHVN+LwFC/vfcWTRraXcCQFy3JL6oOCMie9qVjfktxdZ18HAnYtUd5ZL3bUaGGRvE3xPs6YrUVvHF+SlXLSntIWsQofCTYtm5wnyWHCkXP8Ja4anTDzQo5c1cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BHjZrp+V; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57d26a4ee65so1755901a12.2;
-        Thu, 27 Jun 2024 09:12:03 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-425624255f3so9519595e9.0;
+        Thu, 27 Jun 2024 09:14:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719504722; x=1720109522; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1719504847; x=1720109647; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BQhvv3Potox166bw4fqLYlWp68a4ZD1pI5VWDFn1bbo=;
-        b=aLI1+IL9YjoXmeYrTvGMebe+cKp43RflzJYcoVpnk7Z++oBL17S8AHwSqtJHNOd2o2
-         nQV+UhXST1LLaNFi8KxdPltwZOoTdNeIMcXx297rufkefVpvOJzDjapQSoUqpzkbF/g7
-         8qV8DhXyvvArYfEk53RJAcbi9Qsl2kg8FnMXculnZtwS6eaSkiAN6wqKr92QsGFqq+VB
-         twKfPcZ78JhuQFkCU+l9ASLAxyeSTG5JpBmdssKwurW98UdBrZ9xiAXNem7SDF2HDLzK
-         SGcDO27oPW0LsgewAa4Ww/K4TmX7ibLhKkgSbQ2sxHBowIgObTbpXYyLVT8aUhUxwpMV
-         KnJw==
+        bh=jTj+hsohZCwvn5JvJWMvp1AvmENpEz8VBLpfD7Al/MU=;
+        b=BHjZrp+V3bYq7HMPe968dYhO38YS04xv7U1dxxvZdbDqNdZJrLIhpxEU0usxIbgjUe
+         M/QpeB0yk5uw64TL5pjiF7RcpsOi1ZlxFgfnAib6KiU2cSHu8492hzdRm831xpVhcrvG
+         JnuzfC8w+nLHUCZD1p8braG6G3ieyMuduDg5bw6Eybs/Ti/1W+cscvr8kBw15Wtx3gOs
+         yQG++OHfh52Shk0MhYQVss6me8fuwYnry52zhYP4wGmMPQ5me5ZyNvrdSrmf79GjiFhd
+         lVx5ZAq1xY6fVXzPY4v9e7X2tUmpW99tZtG0jjvF11oy6XfCOmIj/6mQHb/Wow2r8gny
+         wnyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719504722; x=1720109522;
+        d=1e100.net; s=20230601; t=1719504847; x=1720109647;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=BQhvv3Potox166bw4fqLYlWp68a4ZD1pI5VWDFn1bbo=;
-        b=lInXRwvXxYYJ8VOPsBbncaoCqVTUBbLf4XjeZwoYh4JMpxAHbpe/CkMSFh+qEb9Cy7
-         hz5Rw94R7RX17VjyjuLZ23ljpyVLdgGrNCLeBVeKdjl2tXEztuDNRaNyP6UBndVFbF3h
-         JiBXGYVa9sYQCZYxGn7jhvSY7qnzhoSnd1OMr0hOsIHqK2IhmteloMORMbRiLTBB0TRd
-         JTa4Vp+W9sRZ6U6SEUojZUtUwZv+BgFv8jqvZPSobhl9uJD3jjt9ufB/SuSEy4P57XKm
-         xCVW7+33Fm0TpxE9drT08xxEUDNalBBIibFAIC31nkSwEc0s3L/K0RxrHc2tGgnXmDbE
-         8lBw==
-X-Forwarded-Encrypted: i=1; AJvYcCXfi1kMNwdEq7w/TnAv6Ox5nKw8XR+vGAMsV/E9CvkdoOz9Olzno/w4rHohg43HxZuLq2K5839AlfjmvMkPhy218PZ55380D/zg9uvPN1Kdbr/xFEOm37F6X7ICYu+QrjcM5yyeJdE21GmsCA==
-X-Gm-Message-State: AOJu0YwVMmZeM7JIx2tzH96X83fkQ3C0nfq1IG9qVeFxhPLnCy3OgMwk
-	b9s5cAfCPbVS+YpJJE1UHv+urBt5/AUJpG9ZNh8Sm2aXNuQJWjcs
-X-Google-Smtp-Source: AGHT+IEM5NV77NJF9VUVPKs+69oU2yk4tmCMJHjCJU9I3YD8DvkkLHBBbNqQMXfzviyQaF9UD63drw==
-X-Received: by 2002:a05:6402:35c7:b0:585:f46d:f573 with SMTP id 4fb4d7f45d1cf-585f46df576mr12714a12.0.1719504721630;
-        Thu, 27 Jun 2024 09:12:01 -0700 (PDT)
-Received: from f.. (cst-prg-81-171.cust.vodafone.cz. [46.135.81.171])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-584d17b0334sm1053123a12.46.2024.06.27.09.11.58
+        bh=jTj+hsohZCwvn5JvJWMvp1AvmENpEz8VBLpfD7Al/MU=;
+        b=JA3uSFn1v1saPuYg9Zqu33WpLDLUBqwzFQZ/ftDwJ7fwXVthyq1ZRM4N9Inwdyb162
+         Sf/saxprpZ5F2But4Pzr4nzr6XdU9N+riq977a+ifSAR8JE9KLOa5INwUj95rkJfoGus
+         xSO3vXkjxcmI6c5OxifHkpEoaYrfaV9nBJSwEOEqRIpft3jnOUT0DQ38EMjIGYoBpX8u
+         nGs95MMqVSWOE9FRzI0mikWNeNNu+dd1u6T9NpCp9/l/hIkeiohtKa+ijFJjMU8Gng0P
+         hfo7f5GFqgwgx81h6dkA4rydJUmG5PsqUI/uI3r3FHPZBe66gWV+4O5gTrksjba4AIw0
+         zTPA==
+X-Forwarded-Encrypted: i=1; AJvYcCXPiL/N2VDOzoTIX26zcRDHuEF/oDsXy/ILT8YPSgGTIfb1qo4hDUisgORnsyaS/eqwKTnopo87vHOThM7NjnesX8ouAZvjXLU7YxStKLLN8bFJ3mHnlwIGz6PbYpHYHfalQ/N9ZDkcFwZbLQiyUsnFogIy1fiASEcUFFH/luP8pH9IgCGsCNManLg=
+X-Gm-Message-State: AOJu0YwmHVhdSMk/+wAsnM7K4bCU6xPL89WTd126juIu5q007kG186py
+	43u8uGmUQjZjmqQk39jhGo8w03WExKlO/5fv1Ql/EnbZLxB9C9Ml
+X-Google-Smtp-Source: AGHT+IFQo+q6DuCegO0ZL8Hsi0VNhDaCgjuC070ft5yVFF2mi4EF1NNrs96nPeASsVw4i65RjRSwbg==
+X-Received: by 2002:a05:600c:3547:b0:424:84fb:9fd2 with SMTP id 5b1f17b1804b1-4256437a756mr25771595e9.19.1719504846565;
+        Thu, 27 Jun 2024 09:14:06 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2500:a01:9638:4c3:829:6df3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c8424677sm72372435e9.35.2024.06.27.09.14.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 09:12:00 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
+        Thu, 27 Jun 2024 09:14:06 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] vfs: rename parent_ino to d_parent_ino and make it use RCU
-Date: Thu, 27 Jun 2024 18:11:52 +0200
-Message-ID: <20240627161152.802567-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v3 0/3] Add CPG support for RZ/V2H(P) SoC
+Date: Thu, 27 Jun 2024 17:13:12 +0100
+Message-Id: <20240627161315.98143-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,158 +94,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The routine is used by procfs through dir_emit_dots.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-The combined RCU and lock fallback implementation is too big for an
-inline. Given that the routine takes a dentry argument fs/dcache.c seems
-like the place to put it in.
+Hi All,
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
+This patch series aims to add the CPG support for the Renesas
+RZ/V2H(P) SoC.
 
-this shows up with stress-ng --getdent (as one of many things)
+v2 -> v3
+- Dropped '|' for CPG description
+- Dropped description for '#power-domain-cells' property
+- Added 3 clock inputs for CPG
+- Dropped label in example node
+- Used 4 spaces for example node
+- Renamed r9a09g057-cpg.h -> renesas,r9a09g057-cpg.h
+- Merged adding renesas,r9a09g057-cpg.h in DT binding patch
+- Updated commit message for patch 1/3
+- Dropped num_hw_resets from struct rzv2h_cpg_priv
+- Dropped range_check for module clocks
+- Made mon_index to s8 instead of u8 in struct rzv2h_mod_clk
+- Added support for critical module clocks with DEF_MOD_CRITICAL
+- Added check for mon_index in rzv2h_mod_clock_endisable and
+  rzv2h_mod_clock_is_enabled()
+- Added CLK_PLLDTY
+- Added core clocks sys_0_pclk and iotop_0_shclk
+- Dropped r9a09g057_crit_mod_clks
 
-build-tested with first adding d_parent_ino, then building allmodconfig
-and fixing failures as they pop up. by the end of it grep shows no
-remaining occurences, so i don't believe there will be any build regressions.
+v1->v2
+- Updated commit message
+- Updated description for binding as suggested by Geert
+- Updated descriptions for clocks and resets property
+- Renamed extal->qextal
+- Updated '#power-domain-cells' value
+- Dropped the module clocks and just added the core clocks
+- Introduced family specific config option
+- Now using register indexes for CLKON/CLKMON/RST/RSTMON
+- Introduced PLL_CONF macro
+- Dropped function pointer to get PLL_CLK1/2 offsets
+- Added range check for core clks
+- Dropped NULLified clocks check
+- Dropped pll_clk1/clk2_offset
+- Made r9a09g057_mod_clks/r9a09g057_resets as static const
 
-scheme borrowed from dget_parent
+v1: https://patchwork.kernel.org/project/linux-renesas-soc/cover/20240524082800.333991-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
 
-I cared enough to whip out the patch, but I'm not going to particularly
-strongly defend it. arguably the getdent bench is not that great and I'm
-not confident anything real runs into this as a problem.
+Cheers,
+Prabhakar
 
- fs/dcache.c            | 30 ++++++++++++++++++++++++++++++
- fs/f2fs/file.c         |  2 +-
- fs/hfsplus/ioctl.c     |  4 ++--
- include/linux/dcache.h |  2 ++
- include/linux/fs.h     | 16 +---------------
- 5 files changed, 36 insertions(+), 18 deletions(-)
+Lad Prabhakar (3):
+  dt-bindings: clock: renesas: Document RZ/V2H(P) SoC CPG
+  clk: renesas: Add family-specific clock driver for RZ/V2H(P)
+  clk: renesas: Add RZ/V2H(P) CPG driver
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index a0a944fd3a1c..38d42f333b35 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -3100,6 +3100,36 @@ void d_tmpfile(struct file *file, struct inode *inode)
- }
- EXPORT_SYMBOL(d_tmpfile);
- 
-+/*
-+ * Obtain inode number of the parent dentry.
-+ */
-+ino_t d_parent_ino(struct dentry *dentry)
-+{
-+	struct dentry *parent;
-+	struct inode *iparent;
-+	unsigned seq;
-+	ino_t ret;
-+
-+	rcu_read_lock();
-+	seq = raw_seqcount_begin(&dentry->d_seq);
-+	parent = READ_ONCE(dentry->d_parent);
-+	iparent = d_inode_rcu(parent);
-+	if (likely(iparent)) {
-+		ret = iparent->i_ino;
-+		if (!read_seqcount_retry(&dentry->d_seq, seq)) {
-+			rcu_read_unlock();
-+			return ret;
-+		}
-+	}
-+	rcu_read_unlock();
-+
-+	spin_lock(&dentry->d_lock);
-+	ret = dentry->d_parent->d_inode->i_ino;
-+	spin_unlock(&dentry->d_lock);
-+	return ret;
-+}
-+EXPORT_SYMBOL(d_parent_ino);
-+
- static __initdata unsigned long dhash_entries;
- static int __init set_dhash_entries(char *str)
- {
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index a390b82dd26e..66ab9a859655 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -185,7 +185,7 @@ static int get_parent_ino(struct inode *inode, nid_t *pino)
- 	if (!dentry)
- 		return 0;
- 
--	*pino = parent_ino(dentry);
-+	*pino = d_parent_ino(dentry);
- 	dput(dentry);
- 	return 1;
- }
-diff --git a/fs/hfsplus/ioctl.c b/fs/hfsplus/ioctl.c
-index 5661a2e24d03..40d04dba13ac 100644
---- a/fs/hfsplus/ioctl.c
-+++ b/fs/hfsplus/ioctl.c
-@@ -40,7 +40,7 @@ static int hfsplus_ioctl_bless(struct file *file, int __user *user_flags)
- 
- 	/* Directory containing the bootable system */
- 	vh->finder_info[0] = bvh->finder_info[0] =
--		cpu_to_be32(parent_ino(dentry));
-+		cpu_to_be32(d_parent_ino(dentry));
- 
- 	/*
- 	 * Bootloader. Just using the inode here breaks in the case of
-@@ -51,7 +51,7 @@ static int hfsplus_ioctl_bless(struct file *file, int __user *user_flags)
- 
- 	/* Per spec, the OS X system folder - same as finder_info[0] here */
- 	vh->finder_info[5] = bvh->finder_info[5] =
--		cpu_to_be32(parent_ino(dentry));
-+		cpu_to_be32(d_parent_ino(dentry));
- 
- 	mutex_unlock(&sbi->vh_mutex);
- 	return 0;
-diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-index 58916b3f53ad..bff956f7b2b9 100644
---- a/include/linux/dcache.h
-+++ b/include/linux/dcache.h
-@@ -283,6 +283,8 @@ static inline unsigned d_count(const struct dentry *dentry)
- 	return dentry->d_lockref.count;
- }
- 
-+ino_t d_parent_ino(struct dentry *dentry);
-+
- /*
-  * helper function for dentry_operations.d_dname() members
-  */
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 32cbcb3443e5..04ee7d7c9621 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3463,20 +3463,6 @@ static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags)
- 	return 0;
- }
- 
--static inline ino_t parent_ino(struct dentry *dentry)
--{
--	ino_t res;
--
--	/*
--	 * Don't strictly need d_lock here? If the parent ino could change
--	 * then surely we'd have a deeper race in the caller?
--	 */
--	spin_lock(&dentry->d_lock);
--	res = dentry->d_parent->d_inode->i_ino;
--	spin_unlock(&dentry->d_lock);
--	return res;
--}
--
- /* Transaction based IO helpers */
- 
- /*
-@@ -3601,7 +3587,7 @@ static inline bool dir_emit_dot(struct file *file, struct dir_context *ctx)
- static inline bool dir_emit_dotdot(struct file *file, struct dir_context *ctx)
- {
- 	return ctx->actor(ctx, "..", 2, ctx->pos,
--			  parent_ino(file->f_path.dentry), DT_DIR);
-+			  d_parent_ino(file->f_path.dentry), DT_DIR);
- }
- static inline bool dir_emit_dots(struct file *file, struct dir_context *ctx)
- {
+ .../bindings/clock/renesas,rzv2h-cpg.yaml     |  80 +++
+ drivers/clk/renesas/Kconfig                   |   9 +
+ drivers/clk/renesas/Makefile                  |   2 +
+ drivers/clk/renesas/r9a09g057-cpg.c           |  79 +++
+ drivers/clk/renesas/rzv2h-cpg.c               | 667 ++++++++++++++++++
+ drivers/clk/renesas/rzv2h-cpg.h               | 161 +++++
+ .../dt-bindings/clock/renesas,r9a09g057-cpg.h |  21 +
+ 7 files changed, 1019 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,rzv2h-cpg.yaml
+ create mode 100644 drivers/clk/renesas/r9a09g057-cpg.c
+ create mode 100644 drivers/clk/renesas/rzv2h-cpg.c
+ create mode 100644 drivers/clk/renesas/rzv2h-cpg.h
+ create mode 100644 include/dt-bindings/clock/renesas,r9a09g057-cpg.h
+
 -- 
-2.43.0
+2.34.1
 
 
