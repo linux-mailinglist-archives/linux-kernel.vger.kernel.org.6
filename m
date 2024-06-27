@@ -1,141 +1,416 @@
-Return-Path: <linux-kernel+bounces-233084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9A6691B214
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 00:15:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A91B91B216
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 00:16:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05C271C20C94
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:15:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CC8A1C2109F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:16:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ACD41A2542;
-	Thu, 27 Jun 2024 22:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA681A0B06;
+	Thu, 27 Jun 2024 22:16:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="diOMoWRu"
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kreUrFEn"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B7E2837F
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 22:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9D51EB40;
+	Thu, 27 Jun 2024 22:16:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719526530; cv=none; b=BhiJ4CC8wcBnKmv4erOMiDXh2NJs0ZVmzwvWylVawun5gNlY/fjWbBVce/Lg+4Ah5Xat6Ow6xSDa2x5J7a4CRbQ/Ve/j1Aa1v120SHLTzqs9Fl8vBat+hPNFefW7T2Z3vFJWbTyD5lR7Z4rrA/giZpOwKc0M7pSX6hOAxw7DfDw=
+	t=1719526585; cv=none; b=oMu2WZB0ibNKK6pw/6fkdJItXXJnVfwMf4/cHBemSYRQN2phiG5pG3jDaI5BA0x1D3RKlDy/2VBUjWFPIQ1ejQ8PHAGmRUAcT9oJbj/OHH4o1220BMI/qKUK0hHpvGjWkFHqHkdSnXd17z8EMP6iIS3awOW9wWibY7kozb9dKbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719526530; c=relaxed/simple;
-	bh=4H4YR0/K52vVw0BEDoTImD+JL5bNhzc9m0ae+WYCdSo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=uqAxktjwbIlBKa17GhsORy0V2clfNTLb4r33MSeGYzL3bBQZ50CGOw+NB5qx/YxMd1OTVhyszVXg15C/mDNMeZwVGPdRh4+WJGfqGkJoq9GQq49+dCLsslmkATynbZ4zGSGMTNgukv6T0bmaNyRNjFUk1bEV2jGmJNolI4KRxl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=diOMoWRu; arc=none smtp.client-ip=209.85.166.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-7f61ce48f8fso373439f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 15:15:29 -0700 (PDT)
+	s=arc-20240116; t=1719526585; c=relaxed/simple;
+	bh=m8bVllx/nLVMVsBGj69yMYzJkceFkXa+iQDUWGuoX5U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ePW9mBH0YmCwffxWXeAmzfcz5/F2AqgbylY+YkGANY8ij12GLdbeytoCZmCz3bpgEkoLx1+7kn81EOmuAm9xLlW7WKQHnfJA9SEcmgElXI90ktsZTmORnglSRh4n3kkVubQzy2Lq6/5KarIUuRqw6+iOu4PVuPtL4ikfAk111QQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kreUrFEn; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-72b070c377aso5864a12.1;
+        Thu, 27 Jun 2024 15:16:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1719526528; x=1720131328; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=X+U5P6sQtlqvHqVMqUmWBld5jM5RmHwrjJ1USH3XW9c=;
-        b=diOMoWRux+Z5jH1wwm0MXZNVX/tmVkhOl7guHntKH7lzqUXRoNbmp33hz58EBXqMbs
-         BuHixE2ObB+tc1UTBuO5VPVJ828uXPiC0xFEMKMvTETYAusX9d6Tk8eWdFPC53ecqegs
-         DRvdCi2AL9QLL54d9lYhLlBZtuBfTfhsJXJzNjTYDyP0wR7/WGdn5dL2FfwuhCB+2ZBh
-         J+3zm8JGsE1GXIHfBa1rznBytn/QlhZooK/d5nQb1DMP2C7B+/bg3rje7mBgoVmdb9fe
-         AjoQDq6YXbRvYYV8497A9K4CcK1qx1+SHFD32qP/bOMfGBxTeY6HvG91ZNR5e86e/yNR
-         c6Ng==
+        d=gmail.com; s=20230601; t=1719526583; x=1720131383; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=irwpOc2Hf1wvjl7oHm37Us7J1GWyzttF2I5IYFfC3Ys=;
+        b=kreUrFEnxMVPblo70eSQ2VBvfYKJvDiXF6Rg+mD/A5BrKZ/8oCMNNi0JTtl+W48vf+
+         r2lobhGfPmx2lkPZ1lWspD6QWSxqHy2SLAW2V+FeQlO0IV6H8G2+cv6UnV7WtF5jP6qs
+         eoyqfwt/OKo9aGcEPiCntkSmD1Q37T4xWZwJpZ7cJ62OOrOGOBPKyblaz7QgUMM+BF8m
+         1MywljUsVueKpqfmu2I06O83/dSeB+mVP/r8n2hyJMWnfRSrG072hHRWTHcE/o9Wz207
+         cBCxCgcJkMPb7r4tEs8hYyyVub/PSGIN3nL4ZADeEaeZwrwd7Ig5bEPTsgLvlzO59na3
+         k0uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719526528; x=1720131328;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X+U5P6sQtlqvHqVMqUmWBld5jM5RmHwrjJ1USH3XW9c=;
-        b=eGVT37A8rNnmIZNAvHVIx19z7h1Ry9Wf1/rMmZlVLx5P7rPKeFlfBHaW+DT/KxwwLd
-         yfG8pgsDhcPb6Zfw1wTiuuOhJKuck4IYBhn22A3xhk/7YtE6Sk7WN7NEmROcXv6iuil5
-         Y2ieDr/NWd7WDB6QcmvASQMzv/glm0HVa2TFlJ1nOKVCbPAwQIm3PtjbDu+MbTCofaxM
-         K2tRGIsXitklI35bPhBNB7pu+VrjQbR5eoO1H6AIqtVLGTg6/IXHKbHr6GysW4A/AdrG
-         5h2SvqfnEPbsW43hqzdOwnfzXr5xpdENV6+DTDAUtZclPdwB3eZjS5rRRiqGno+3ANgm
-         Znuw==
-X-Forwarded-Encrypted: i=1; AJvYcCWgNHu89q5j5vzXKMKQgi7/NZmrEGwL8liehGN+wzifVSziDg4SAbdsJWZ4AJc7EcRESy58AdZhmFEXImAppBhOhTyHRx+tPK+CmJZp
-X-Gm-Message-State: AOJu0YzS2c2tYEJpMZx1QEPOcnL92tvVLIe8UTE3JZRbS71tP4sihlr1
-	B3zs/nMDSlyXVeGzpXd5RJqNDSKrCGryVaw5A4iY67R4b9reNxL21TvWPqvDYrc=
-X-Google-Smtp-Source: AGHT+IE+c3oTCSG4DXvfFxRH7ZmI2eqlsqlemsaW1irAg97d62AxsEpde/+Ps9QA1t3PJ2h5vj0L4Q==
-X-Received: by 2002:a6b:4f0b:0:b0:7f3:cd61:32f5 with SMTP id ca18e2360f4ac-7f3cd613354mr658652339f.2.1719526528386;
-        Thu, 27 Jun 2024 15:15:28 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70801e54936sm222787b3a.35.2024.06.27.15.15.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Jun 2024 15:15:27 -0700 (PDT)
-Message-ID: <5ac45dc2-f434-4ec3-9f9a-dab6bb029deb@kernel.dk>
-Date: Thu, 27 Jun 2024 16:15:25 -0600
+        d=1e100.net; s=20230601; t=1719526583; x=1720131383;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=irwpOc2Hf1wvjl7oHm37Us7J1GWyzttF2I5IYFfC3Ys=;
+        b=wjqK41+fkJr6qLOG1PsV5md4YzztEIBvqpLh+RNlFIDsQY+O/cWGB70SenZYgBoc6U
+         fpkUGpb8f7qMlAqeNYy1nh90CIR1841jNPI5Du0ICn+zhJm6vClFHcygpe88cdU/lWLO
+         iLe/4tVe9Cy4DXfVHSXyOw9t8hPn+ZTFVAUe45xo68FcgxJ4mh0dxHRtAVlIbSbK3ouP
+         5Eo2S/Rt5GF4xjGz1BXkXE62GAwoqJy6TO0wcNuCX1cUVk+X0zpHpvEDV4prekltp6XO
+         DBeATsyxAFMENTBv7leBa6aIL9f2z7TLgSgUuIV0qStoxNuYEMTTYOy7dk1uyzRK7epu
+         7vRg==
+X-Forwarded-Encrypted: i=1; AJvYcCUcdG/PY2F2YKrXucTTlJkBk1GYvzghnEOjo6JRGUgLxA4pRwDlK8R+GCTt/UAR5sJjJ2XQKS/vTPiqwhO3PNWfvYLeZ5WtdvGXTr3P
+X-Gm-Message-State: AOJu0YxV3hN+JihyjS2gf60rQg74j7S56yY1VHVflrMRWaOWlntxD45G
+	m8Qivpy+iWHnl3VHmkeu1IfkZomrmjLKXlDrSzEBBl+SQVIf7hrm
+X-Google-Smtp-Source: AGHT+IE6iKcxcL2UWgUzJoVoh9tDerL+8j5mIX3PUPZmbly2QI5PJjQqRuYbZCWcgScmSQuiQ/eYRw==
+X-Received: by 2002:a17:90a:5792:b0:2c8:4f4e:d438 with SMTP id 98e67ed59e1d1-2c8fcf71313mr4248137a91.4.1719526582823;
+        Thu, 27 Jun 2024 15:16:22 -0700 (PDT)
+Received: from localhost ([2a00:79e1:2e00:1301:e1c5:6354:b45d:8ffc])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91ce76935sm297528a91.34.2024.06.27.15.16.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 15:16:22 -0700 (PDT)
+From: Rob Clark <robdclark@gmail.com>
+To: iommu@lists.linux.dev
+Cc: linux-arm-msm@vger.kernel.org,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Pranjal Shrivastava <praan@google.com>,
+	Rob Clark <robdclark@chromium.org>,
+	Rob Clark <robdclark@gmail.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Jerry Snitselaar <jsnitsel@redhat.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Georgi Djakov <quic_c_gdjako@quicinc.com>,
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM SMMU DRIVERS),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3] iommu/arm-smmu: Pretty-print context fault related regs
+Date: Thu, 27 Jun 2024 15:16:08 -0700
+Message-ID: <20240627221613.393060-1-robdclark@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/4] block: preparations for NVMEM provider
-To: Daniel Golle <daniel@makrotopia.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Hauke Mehrtens <hauke@hauke-m.de>, Felix Fietkau <nbd@nbd.name>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Dave Chinner <dchinner@redhat.com>, Jan Kara <jack@suse.cz>,
- Christian Brauner <brauner@kernel.org>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- Al Viro <viro@zeniv.linux.org.uk>, Li Lingfeng <lilingfeng3@huawei.com>,
- Christian Heusel <christian@heusel.eu>, Min Li <min15.li@samsung.com>,
- Avri Altman <avri.altman@wdc.com>, Adrian Hunter <adrian.hunter@intel.com>,
- Hannes Reinecke <hare@suse.de>, Mikko Rapeli <mikko.rapeli@linaro.org>,
- Yeqi Fu <asuk4.q@gmail.com>, Victor Shih <victor.shih@genesyslogic.com.tw>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Li Zhijian <lizhijian@fujitsu.com>,
- "Ricardo B. Marliere" <ricardo@marliere.net>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
- linux-block@vger.kernel.org
-References: <cover.1719520771.git.daniel@makrotopia.org>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <cover.1719520771.git.daniel@makrotopia.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6/27/24 2:49 PM, Daniel Golle wrote:
-> On embedded devices using an eMMC it is common that one or more (hw/sw)
-> partitions on the eMMC are used to store MAC addresses and Wi-Fi
-> calibration EEPROM data.
-> 
-> Typically the NVMEM framework is used to have kernel drivers read and
-> use binary data from EEPROMs, efuses, flash memory (MTD), ...
-> 
-> Using references to NVMEM bits in Device Tree allows the kernel to
-> access and apply e.g. the Ethernet MAC address, which can be a requirement
-> for userland to come up (e.g. for nfsroot).
-> 
-> The goal of this series is to prepare the block subsystem to allow for
-> the implementation of an NVMEM provider similar to other types of
-> non-volatile storage, so the same approach already used for EEPROMs, MTD
-> (raw flashes) and UBI-managed NAND can also be used for devices storing
-> those bits on an eMMC.
-> 
-> Define a device tree schema for block devices and partitions on them,
-> which (similar to how it now works also for UBI volumes) can be matched
-> by one or more properties.
-> 
-> Also add a simple notification API for other subsystems to be notified
-> about additions and removals of block devices, which is going to be used
-> by the block-backed NVMEM provider.
-> 
-> Overall, this enables uniform handling across practially all flash
-> storage types used for this purpose (MTD, UBI, and soon also MMC or and
-> in future maybe also other block devices).
+From: Rob Clark <robdclark@chromium.org>
 
-2-4 look fine to me now, but I don't know anything about the device
-bindings so someone qualified should review that before it gets queued
-up.
+Parse out the bitfields for easier-to-read fault messages.
+
+Signed-off-by: Rob Clark <robdclark@chromium.org>
+---
+ .../iommu/arm/arm-smmu/arm-smmu-qcom-debug.c  | 62 ++++++----------
+ drivers/iommu/arm/arm-smmu/arm-smmu.c         | 70 +++++++++++++++----
+ drivers/iommu/arm/arm-smmu/arm-smmu.h         | 67 ++++++++++++------
+ 3 files changed, 119 insertions(+), 80 deletions(-)
+
+diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c
+index 552199cbd9e2..da2e605014a5 100644
+--- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c
++++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c
+@@ -141,7 +141,7 @@ static int qcom_tbu_halt(struct qcom_tbu *tbu, struct arm_smmu_domain *smmu_doma
+ 	writel_relaxed(val, tbu->base + DEBUG_SID_HALT_REG);
  
+ 	fsr = arm_smmu_cb_read(smmu, idx, ARM_SMMU_CB_FSR);
+-	if ((fsr & ARM_SMMU_FSR_FAULT) && (fsr & ARM_SMMU_FSR_SS)) {
++	if ((fsr & ARM_SMMU_FSR_FAULT) && (fsr & ARM_SMMU_CB_FSR_SS)) {
+ 		u32 sctlr_orig, sctlr;
+ 
+ 		/*
+@@ -306,7 +306,7 @@ static phys_addr_t qcom_iova_to_phys(struct arm_smmu_domain *smmu_domain,
+ 		 * TBU halt takes care of resuming any stalled transcation.
+ 		 * Kept it here for completeness sake.
+ 		 */
+-		if (fsr & ARM_SMMU_FSR_SS)
++		if (fsr & ARM_SMMU_CB_FSR_SS)
+ 			arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_RESUME,
+ 					  ARM_SMMU_RESUME_TERMINATE);
+ 	}
+@@ -324,7 +324,7 @@ static phys_addr_t qcom_iova_to_phys(struct arm_smmu_domain *smmu_domain,
+ 				/* Clear pending interrupts */
+ 				arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_FSR, fsr);
+ 
+-				if (fsr & ARM_SMMU_FSR_SS)
++				if (fsr & ARM_SMMU_CB_FSR_SS)
+ 					arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_RESUME,
+ 							  ARM_SMMU_RESUME_TERMINATE);
+ 			}
+@@ -383,68 +383,46 @@ irqreturn_t qcom_smmu_context_fault(int irq, void *dev)
+ 	struct arm_smmu_domain *smmu_domain = dev;
+ 	struct io_pgtable_ops *ops = smmu_domain->pgtbl_ops;
+ 	struct arm_smmu_device *smmu = smmu_domain->smmu;
+-	u32 fsr, fsynr, cbfrsynra, resume = 0;
++	struct arm_smmu_context_fault_info cfi;
++	u32 resume = 0;
+ 	int idx = smmu_domain->cfg.cbndx;
+ 	phys_addr_t phys_soft;
+-	unsigned long iova;
+ 	int ret, tmp;
+ 
+ 	static DEFINE_RATELIMIT_STATE(_rs,
+ 				      DEFAULT_RATELIMIT_INTERVAL,
+ 				      DEFAULT_RATELIMIT_BURST);
+ 
+-	fsr = arm_smmu_cb_read(smmu, idx, ARM_SMMU_CB_FSR);
+-	if (!(fsr & ARM_SMMU_FSR_FAULT))
+-		return IRQ_NONE;
++	arm_smmu_read_context_fault_info(smmu, idx, &cfi);
+ 
+-	fsynr = arm_smmu_cb_read(smmu, idx, ARM_SMMU_CB_FSYNR0);
+-	iova = arm_smmu_cb_readq(smmu, idx, ARM_SMMU_CB_FAR);
+-	cbfrsynra = arm_smmu_gr1_read(smmu, ARM_SMMU_GR1_CBFRSYNRA(idx));
++	if (!(cfi.fsr & ARM_SMMU_FSR_FAULT))
++		return IRQ_NONE;
+ 
+ 	if (list_empty(&tbu_list)) {
+-		ret = report_iommu_fault(&smmu_domain->domain, NULL, iova,
+-					 fsynr & ARM_SMMU_FSYNR0_WNR ? IOMMU_FAULT_WRITE : IOMMU_FAULT_READ);
++		ret = report_iommu_fault(&smmu_domain->domain, NULL, cfi.iova,
++					 cfi.fsynr & ARM_SMMU_CB_FSYNR0_WNR ? IOMMU_FAULT_WRITE : IOMMU_FAULT_READ);
+ 
+ 		if (ret == -ENOSYS)
+-			dev_err_ratelimited(smmu->dev,
+-					    "Unhandled context fault: fsr=0x%x, iova=0x%08lx, fsynr=0x%x, cbfrsynra=0x%x, cb=%d\n",
+-					    fsr, iova, fsynr, cbfrsynra, idx);
++			arm_smmu_print_context_fault_info(smmu, idx, &cfi);
+ 
+-		arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_FSR, fsr);
++		arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_FSR, cfi.fsr);
+ 		return IRQ_HANDLED;
+ 	}
+ 
+-	phys_soft = ops->iova_to_phys(ops, iova);
++	phys_soft = ops->iova_to_phys(ops, cfi.iova);
+ 
+-	tmp = report_iommu_fault(&smmu_domain->domain, NULL, iova,
+-				 fsynr & ARM_SMMU_FSYNR0_WNR ? IOMMU_FAULT_WRITE : IOMMU_FAULT_READ);
++	tmp = report_iommu_fault(&smmu_domain->domain, NULL, cfi.iova,
++				 cfi.fsynr & ARM_SMMU_CB_FSYNR0_WNR ? IOMMU_FAULT_WRITE : IOMMU_FAULT_READ);
+ 	if (!tmp || tmp == -EBUSY) {
+-		dev_dbg(smmu->dev,
+-			"Context fault handled by client: iova=0x%08lx, fsr=0x%x, fsynr=0x%x, cb=%d\n",
+-			iova, fsr, fsynr, idx);
++		arm_smmu_print_context_fault_info(smmu, idx, &cfi);
+ 		dev_dbg(smmu->dev, "soft iova-to-phys=%pa\n", &phys_soft);
+ 		ret = IRQ_HANDLED;
+ 		resume = ARM_SMMU_RESUME_TERMINATE;
+ 	} else {
+-		phys_addr_t phys_atos = qcom_smmu_verify_fault(smmu_domain, iova, fsr);
++		phys_addr_t phys_atos = qcom_smmu_verify_fault(smmu_domain, cfi.iova, cfi.fsr);
+ 
+ 		if (__ratelimit(&_rs)) {
+-			dev_err(smmu->dev,
+-				"Unhandled context fault: fsr=0x%x, iova=0x%08lx, fsynr=0x%x, cbfrsynra=0x%x, cb=%d\n",
+-				fsr, iova, fsynr, cbfrsynra, idx);
+-			dev_err(smmu->dev,
+-				"FSR    = %08x [%s%s%s%s%s%s%s%s%s], SID=0x%x\n",
+-				fsr,
+-				(fsr & 0x02) ? "TF " : "",
+-				(fsr & 0x04) ? "AFF " : "",
+-				(fsr & 0x08) ? "PF " : "",
+-				(fsr & 0x10) ? "EF " : "",
+-				(fsr & 0x20) ? "TLBMCF " : "",
+-				(fsr & 0x40) ? "TLBLKF " : "",
+-				(fsr & 0x80) ? "MHF " : "",
+-				(fsr & 0x40000000) ? "SS " : "",
+-				(fsr & 0x80000000) ? "MULTI " : "",
+-				cbfrsynra);
++			arm_smmu_print_context_fault_info(smmu, idx, &cfi);
+ 
+ 			dev_err(smmu->dev,
+ 				"soft iova-to-phys=%pa\n", &phys_soft);
+@@ -478,10 +456,10 @@ irqreturn_t qcom_smmu_context_fault(int irq, void *dev)
+ 	 */
+ 	if (tmp != -EBUSY) {
+ 		/* Clear the faulting FSR */
+-		arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_FSR, fsr);
++		arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_FSR, cfi.fsr);
+ 
+ 		/* Retry or terminate any stalled transactions */
+-		if (fsr & ARM_SMMU_FSR_SS)
++		if (cfi.fsr & ARM_SMMU_CB_FSR_SS)
+ 			arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_RESUME, resume);
+ 	}
+ 
+diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+index 87c81f75cf84..246a39081879 100644
+--- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
++++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+@@ -405,32 +405,72 @@ static const struct iommu_flush_ops arm_smmu_s2_tlb_ops_v1 = {
+ 	.tlb_add_page	= arm_smmu_tlb_add_page_s2_v1,
+ };
+ 
++
++void arm_smmu_read_context_fault_info(struct arm_smmu_device *smmu, int idx,
++				      struct arm_smmu_context_fault_info *cfi)
++{
++	cfi->iova = arm_smmu_cb_readq(smmu, idx, ARM_SMMU_CB_FAR);
++	cfi->fsr = arm_smmu_cb_read(smmu, idx, ARM_SMMU_CB_FSR);
++	cfi->fsynr = arm_smmu_cb_read(smmu, idx, ARM_SMMU_CB_FSYNR0);
++	cfi->cbfrsynra = arm_smmu_gr1_read(smmu, ARM_SMMU_GR1_CBFRSYNRA(idx));
++}
++
++void arm_smmu_print_context_fault_info(struct arm_smmu_device *smmu, int idx,
++				       const struct arm_smmu_context_fault_info *cfi)
++{
++	dev_dbg(smmu->dev,
++		"Context fault handled by client: iova=0x%08lx, fsr=0x%x, fsynr=0x%x, cb=%d\n",
++		cfi->iova, cfi->fsr, cfi->fsynr, idx);
++
++	dev_err(smmu->dev, "FSR    = %08x [%s%sFormat=%u%s%s%s%s%s%s%s%s], SID=0x%x\n",
++		cfi->fsr,
++		(cfi->fsr & ARM_SMMU_CB_FSR_MULTI)  ? "MULTI " : "",
++		(cfi->fsr & ARM_SMMU_CB_FSR_SS)     ? "SS " : "",
++		(u32)FIELD_GET(ARM_SMMU_CB_FSR_FORMAT, cfi->fsr),
++		(cfi->fsr & ARM_SMMU_CB_FSR_UUT)    ? " UUT" : "",
++		(cfi->fsr & ARM_SMMU_CB_FSR_ASF)    ? " ASF" : "",
++		(cfi->fsr & ARM_SMMU_CB_FSR_TLBLKF) ? " TLBLKF" : "",
++		(cfi->fsr & ARM_SMMU_CB_FSR_TLBMCF) ? " TLBMCF" : "",
++		(cfi->fsr & ARM_SMMU_CB_FSR_EF)     ? " EF" : "",
++		(cfi->fsr & ARM_SMMU_CB_FSR_PF)     ? " PF" : "",
++		(cfi->fsr & ARM_SMMU_CB_FSR_AFF)    ? " AFF" : "",
++		(cfi->fsr & ARM_SMMU_CB_FSR_TF)     ? " TF" : "",
++		cfi->cbfrsynra);
++
++	dev_err(smmu->dev, "FSYNR0 = %08x [S1CBNDX=%u%s%s%s%s%s%s PLVL=%u]\n",
++		cfi->fsynr,
++		(u32)FIELD_GET(ARM_SMMU_CB_FSYNR0_S1CBNDX, cfi->fsynr),
++		(cfi->fsynr & ARM_SMMU_CB_FSYNR0_AFR) ? " AFR" : "",
++		(cfi->fsynr & ARM_SMMU_CB_FSYNR0_PTWF) ? " PTWF" : "",
++		(cfi->fsynr & ARM_SMMU_CB_FSYNR0_NSATTR) ? " NSATTR" : "",
++		(cfi->fsynr & ARM_SMMU_CB_FSYNR0_IND) ? " IND" : "",
++		(cfi->fsynr & ARM_SMMU_CB_FSYNR0_PNU) ? " PNU" : "",
++		(cfi->fsynr & ARM_SMMU_CB_FSYNR0_WNR) ? " WNR" : "",
++		(u32)FIELD_GET(ARM_SMMU_CB_FSYNR0_PLVL, cfi->fsynr));
++}
++
+ static irqreturn_t arm_smmu_context_fault(int irq, void *dev)
+ {
+-	u32 fsr, fsynr, cbfrsynra;
+-	unsigned long iova;
++	struct arm_smmu_context_fault_info cfi;
+ 	struct arm_smmu_domain *smmu_domain = dev;
+ 	struct arm_smmu_device *smmu = smmu_domain->smmu;
++	static DEFINE_RATELIMIT_STATE(rs, DEFAULT_RATELIMIT_INTERVAL,
++				      DEFAULT_RATELIMIT_BURST);
+ 	int idx = smmu_domain->cfg.cbndx;
+ 	int ret;
+ 
+-	fsr = arm_smmu_cb_read(smmu, idx, ARM_SMMU_CB_FSR);
+-	if (!(fsr & ARM_SMMU_FSR_FAULT))
+-		return IRQ_NONE;
++	arm_smmu_read_context_fault_info(smmu, idx, &cfi);
+ 
+-	fsynr = arm_smmu_cb_read(smmu, idx, ARM_SMMU_CB_FSYNR0);
+-	iova = arm_smmu_cb_readq(smmu, idx, ARM_SMMU_CB_FAR);
+-	cbfrsynra = arm_smmu_gr1_read(smmu, ARM_SMMU_GR1_CBFRSYNRA(idx));
++	if (!(cfi.fsr & ARM_SMMU_FSR_FAULT))
++		return IRQ_NONE;
+ 
+-	ret = report_iommu_fault(&smmu_domain->domain, NULL, iova,
+-		fsynr & ARM_SMMU_FSYNR0_WNR ? IOMMU_FAULT_WRITE : IOMMU_FAULT_READ);
++	ret = report_iommu_fault(&smmu_domain->domain, NULL, cfi.iova,
++		cfi.fsynr & ARM_SMMU_CB_FSYNR0_WNR ? IOMMU_FAULT_WRITE : IOMMU_FAULT_READ);
+ 
+-	if (ret == -ENOSYS)
+-		dev_err_ratelimited(smmu->dev,
+-		"Unhandled context fault: fsr=0x%x, iova=0x%08lx, fsynr=0x%x, cbfrsynra=0x%x, cb=%d\n",
+-			    fsr, iova, fsynr, cbfrsynra, idx);
++	if (ret == -ENOSYS && __ratelimit(&rs))
++		arm_smmu_print_context_fault_info(smmu, idx, &cfi);
+ 
+-	arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_FSR, fsr);
++	arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_FSR, cfi.fsr);
+ 	return IRQ_HANDLED;
+ }
+ 
+diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.h b/drivers/iommu/arm/arm-smmu/arm-smmu.h
+index 4765c6945c34..faf475366d4d 100644
+--- a/drivers/iommu/arm/arm-smmu/arm-smmu.h
++++ b/drivers/iommu/arm/arm-smmu/arm-smmu.h
+@@ -196,34 +196,42 @@ enum arm_smmu_cbar_type {
+ #define ARM_SMMU_CB_PAR_F		BIT(0)
+ 
+ #define ARM_SMMU_CB_FSR			0x58
+-#define ARM_SMMU_FSR_MULTI		BIT(31)
+-#define ARM_SMMU_FSR_SS			BIT(30)
+-#define ARM_SMMU_FSR_UUT		BIT(8)
+-#define ARM_SMMU_FSR_ASF		BIT(7)
+-#define ARM_SMMU_FSR_TLBLKF		BIT(6)
+-#define ARM_SMMU_FSR_TLBMCF		BIT(5)
+-#define ARM_SMMU_FSR_EF			BIT(4)
+-#define ARM_SMMU_FSR_PF			BIT(3)
+-#define ARM_SMMU_FSR_AFF		BIT(2)
+-#define ARM_SMMU_FSR_TF			BIT(1)
+-
+-#define ARM_SMMU_FSR_IGN		(ARM_SMMU_FSR_AFF |		\
+-					 ARM_SMMU_FSR_ASF |		\
+-					 ARM_SMMU_FSR_TLBMCF |		\
+-					 ARM_SMMU_FSR_TLBLKF)
+-
+-#define ARM_SMMU_FSR_FAULT		(ARM_SMMU_FSR_MULTI |		\
+-					 ARM_SMMU_FSR_SS |		\
+-					 ARM_SMMU_FSR_UUT |		\
+-					 ARM_SMMU_FSR_EF |		\
+-					 ARM_SMMU_FSR_PF |		\
+-					 ARM_SMMU_FSR_TF |		\
++#define ARM_SMMU_CB_FSR_MULTI		BIT(31)
++#define ARM_SMMU_CB_FSR_SS		BIT(30)
++#define ARM_SMMU_CB_FSR_FORMAT		GENMASK(10, 9)
++#define ARM_SMMU_CB_FSR_UUT		BIT(8)
++#define ARM_SMMU_CB_FSR_ASF		BIT(7)
++#define ARM_SMMU_CB_FSR_TLBLKF		BIT(6)
++#define ARM_SMMU_CB_FSR_TLBMCF		BIT(5)
++#define ARM_SMMU_CB_FSR_EF		BIT(4)
++#define ARM_SMMU_CB_FSR_PF		BIT(3)
++#define ARM_SMMU_CB_FSR_AFF		BIT(2)
++#define ARM_SMMU_CB_FSR_TF		BIT(1)
++
++#define ARM_SMMU_FSR_IGN		(ARM_SMMU_CB_FSR_AFF |		\
++					 ARM_SMMU_CB_FSR_ASF |		\
++					 ARM_SMMU_CB_FSR_TLBMCF |	\
++					 ARM_SMMU_CB_FSR_TLBLKF)
++
++#define ARM_SMMU_FSR_FAULT		(ARM_SMMU_CB_FSR_MULTI |	\
++					 ARM_SMMU_CB_FSR_SS |		\
++					 ARM_SMMU_CB_FSR_UUT |		\
++					 ARM_SMMU_CB_FSR_EF |		\
++					 ARM_SMMU_CB_FSR_PF |		\
++					 ARM_SMMU_CB_FSR_TF |		\
+ 					 ARM_SMMU_FSR_IGN)
+ 
+ #define ARM_SMMU_CB_FAR			0x60
+ 
+ #define ARM_SMMU_CB_FSYNR0		0x68
+-#define ARM_SMMU_FSYNR0_WNR		BIT(4)
++#define ARM_SMMU_CB_FSYNR0_PLVL		GENMASK(1, 0)
++#define ARM_SMMU_CB_FSYNR0_WNR		BIT(4)
++#define ARM_SMMU_CB_FSYNR0_PNU		BIT(5)
++#define ARM_SMMU_CB_FSYNR0_IND		BIT(6)
++#define ARM_SMMU_CB_FSYNR0_NSATTR	BIT(8)
++#define ARM_SMMU_CB_FSYNR0_PTWF		BIT(10)
++#define ARM_SMMU_CB_FSYNR0_AFR		BIT(11)
++#define ARM_SMMU_CB_FSYNR0_S1CBNDX	GENMASK(23, 16)
+ 
+ #define ARM_SMMU_CB_FSYNR1		0x6c
+ 
+@@ -533,4 +541,17 @@ struct arm_smmu_device *qcom_smmu_impl_init(struct arm_smmu_device *smmu);
+ void arm_smmu_write_context_bank(struct arm_smmu_device *smmu, int idx);
+ int arm_mmu500_reset(struct arm_smmu_device *smmu);
+ 
++struct arm_smmu_context_fault_info {
++	unsigned long iova;
++	u32 fsr;
++	u32 fsynr;
++	u32 cbfrsynra;
++};
++
++void arm_smmu_read_context_fault_info(struct arm_smmu_device *smmu, int idx,
++				      struct arm_smmu_context_fault_info *cfi);
++
++void arm_smmu_print_context_fault_info(struct arm_smmu_device *smmu, int idx,
++				       const struct arm_smmu_context_fault_info *cfi);
++
+ #endif /* _ARM_SMMU_H */
 -- 
-Jens Axboe
+2.45.2
 
 
