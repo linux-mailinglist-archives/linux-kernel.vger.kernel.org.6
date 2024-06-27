@@ -1,136 +1,131 @@
-Return-Path: <linux-kernel+bounces-232366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1A4091A7BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:20:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1B6E91A7C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:21:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BF00B27185
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:20:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DEEB2817E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2561193079;
-	Thu, 27 Jun 2024 13:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B8A192B9E;
+	Thu, 27 Jun 2024 13:21:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cWVTLFjY"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="Y20+yAcK";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ugd8S80Y"
+Received: from wfout4-smtp.messagingengine.com (wfout4-smtp.messagingengine.com [64.147.123.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B741922F4;
-	Thu, 27 Jun 2024 13:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108EA1922F4
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 13:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719494426; cv=none; b=s2cIGg/QAJ1Z1xSxV6fFkSh6mY5+rpwJTJz6bm7UzDUqE+phpM1x5cq7rJHt3lygDyVHLR4oW3h1ZASfIm0ouYLJTpBBTOdk4/pRO1Z2nigGxVt4N8Jsr7AP28mS/ll5ROJ4IKXnT2EO+B5shs9vpbtC+PEdTOa2zPf9ppKZPq4=
+	t=1719494500; cv=none; b=qbrxMD8uff5p5E6NAcIdNqzdcBXWEKj7gXsx3w/B8Gwwsb+6ptFr93cwFtqwmiQUTp1Zf1OpGbOou9GB6FwM9nZpCCOBqD3iRNTsJbK3cWEXHmHMSlDAK7xAnenzpK7EYZ74SfX/5oRh3CYF4GNeY6znqzMMToBz3CCeOSdddrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719494426; c=relaxed/simple;
-	bh=ecpLC43kFB3CYyVlJl5+YEUB1QqT90ETR7ab91rVC+M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=n4hFsqsEkfYv/k8iWB++HWKTqfZ/kJye7mX0+eVU+9vNLGNindTmZy5T7A9GbIWd6insTm0dkPdCHV5wL4G3TI84S5Fq7qpVRuKSFLjVO5CHDmpFAKuogE1r0e23P/vWFIxGR1CKSLJSTY72KqWdPhe7Vt9Zm9hHed/x1CLSTFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=cWVTLFjY; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45RDK103112486;
-	Thu, 27 Jun 2024 08:20:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1719494401;
-	bh=MweCfJaxnH2SO8CuzOOrmYpHxuetL+U+V3vgylpajt4=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=cWVTLFjYcrl0sHqLwoBFJWvirTY0ulDHlLDF6AfnPB1MCJ04oe8XQPS4PCTpTzrxT
-	 aO+ykNxKvTI4CN/oFCijNA+UU1sIt/MDYRHf0FNxdZDFnXSz2W+5HAcIj0iZ5/s5sN
-	 SLyJYHXHqnxpTCb0oYw69o+k4voefeCwXHJoAwGA=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45RDK1gj114996
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 27 Jun 2024 08:20:01 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 27
- Jun 2024 08:20:01 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 27 Jun 2024 08:20:01 -0500
-Received: from [10.249.135.225] ([10.249.135.225])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45RDJsoX052505;
-	Thu, 27 Jun 2024 08:19:54 -0500
-Message-ID: <2e6a4d73-7438-4f00-8b6e-74aa327ae3c5@ti.com>
-Date: Thu, 27 Jun 2024 18:49:53 +0530
+	s=arc-20240116; t=1719494500; c=relaxed/simple;
+	bh=uVauWxK+ufu5v1ialmUbw78BysmisQjMfPXCzOqYT6c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lcdxQQxmIbL+FTFgZPizsVntXDP2f1fLDqSTHIqUdhwJozLxVdK852r1GmMBD230usxGhBJU1fuSc0ycfsRwTbjmF1Ft6VwgC9wRTkcS5U9Q/i+mwN9KJP0fcocb9Q71lPDuklZBhBsCdWwvLwBzAYQi16peqTcprfW1d1EdJic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=Y20+yAcK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ugd8S80Y; arc=none smtp.client-ip=64.147.123.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfout.west.internal (Postfix) with ESMTP id BF0F01C00090;
+	Thu, 27 Jun 2024 09:21:36 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Thu, 27 Jun 2024 09:21:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1719494496; x=
+	1719580896; bh=4KbB6tEIppaeu+O5uCFPldgsfTP1h3ugpnHp8fkzIwc=; b=Y
+	20+yAcKaBXLBlj0eE0kAETf2Gx+3EfHlrZ+GWobssGPTLGooU11UjPscF7crPeGA
+	iDvXJOFu2GsG0fRsVmA0lIa0pKMg0U9M3fAo307VYQhuLQXkKK0f3ZGQ72HUoxBJ
+	l8A7367NbvIBi05jXsRqc2y2dgpKhqb20+Ujo7TvtNZIC1q698P8FmPDtiDNXu30
+	Nwtoxao7BlIqyo9xRCjMkNyhl50gJryrTtYhjqpozShC1Agmz0gjmcR04z94iTa6
+	yzHNIUPwikupOAsVn8Eq4sOdgCDuT2xnvUyFHDSuQDQHkR/G7ZbkaSqpoyk3ITUj
+	dY64v0CQI/rmnZ1DjrCFw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1719494496; x=1719580896; bh=4KbB6tEIppaeu+O5uCFPldgsfTP1
+	h3ugpnHp8fkzIwc=; b=ugd8S80YQxcdvijyqknDpj8t90iv3EEebfk3tDKkjDsN
+	MhncbMwn1eoxhnb149xGQkKDvk9EUNMWCrM1iFodxwRdGZBqcwlKkotcQ5FdCQSv
+	Ip6T5f8AMVIqh7EzlDfAKy+t+h2JGJdcvrCUox0PhTVi31MR0CLaaUjk7HaKicG8
+	MbRf57y1LiKhGoDjHOG56UCXuDQwzFDfdLJsMNNOZeJxlHqgxPGDuzqKPPcaoJrV
+	GDwH8f9+1G3O36B/1P0xkdDOqxeSj9PM3/2I1Fl8xvMZ0Muqiei2otbmPqS+CIl6
+	LbPwD63QKjkENq/DPiQy976yuk2LH/0eahq5vaHNKg==
+X-ME-Sender: <xms:YGd9ZsXl0t075tdWRiM8wlRicdEzoT02fQARt0xl02YCkDNa-7X5ZA>
+    <xme:YGd9ZgnvzNyrFuOr9xu6C6UF2eSASw03D3ffnNyQAo260ptqK1MOPnRRR08OOF9et
+    qavIvgej4sDSMct8OA>
+X-ME-Received: <xmr:YGd9ZgY1sEMK1oKw4b-O0Fi-tP_UhuV5fAsPzrfXCPIcjsu3uczC07F0WpDUZ3AuCSNOCQ1iFbLGtoTdOoU0zcGXdwJPeAIFXms>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrtdeggdeigecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecunecujfgurhepfffhvfevuffkfhggtggujgesthdtre
+    dttddtvdenucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgr
+    shhhihesshgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhephefhhfette
+    fgkedvieeuffevveeufedtlefhjeeiieetvdelfedtgfefuedukeeunecuvehluhhsthgv
+    rhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihessh
+    grkhgrmhhotggthhhirdhjph
+X-ME-Proxy: <xmx:YGd9ZrVjFXywwH0ldYYHxdeCXzf-Hn7nZMlB0ovgrhfAmT1W4Tj7cg>
+    <xmx:YGd9ZmnWzykEK6WnCDvt6wEiie7rigcov-yaX88V4G5cwO-bWRm3OQ>
+    <xmx:YGd9Zgc90799wuNrmJ3GKuJq_PJm0kIpMthksfHJ2fAezsheO4Wctg>
+    <xmx:YGd9ZoHX1jyzlACOebZUlM0KjMqpQ0qsCCt9dpgk6H7w7XnOe5Kvqg>
+    <xmx:YGd9Zrzn7Wrk4v7Zs_NVMMBCa2LBl4k5SfCDYsFDiYPBlbM9lkit9yXg>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 27 Jun 2024 09:21:35 -0400 (EDT)
+Date: Thu, 27 Jun 2024 22:21:35 +0900
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: linux1394-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] firewire: ohci: add support for tracepoints events
+Message-ID: <20240627132135.GA965648@workstation.local>
+Mail-Followup-To: linux1394-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org
+References: <20240625031806.956650-1-o-takashi@sakamocchi.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v4 5/5] arm64: dts: ti: iot2050: Add IEP
- interrupts for SR1.0 devices
-To: Diogo Ivo <diogo.ivo@siemens.com>, MD Danish Anwar <danishanwar@ti.com>,
-        Roger Quadros <rogerq@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo
- Abeni <pabeni@redhat.com>,
-        Richard Cochran <richardcochran@gmail.com>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Jan
- Kiszka <jan.kiszka@siemens.com>,
-        Jacob Keller <jacob.e.keller@intel.com>,
-        Simon Horman <horms@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20240617-iep-v4-0-fa20ff4141a3@siemens.com>
- <20240617-iep-v4-5-fa20ff4141a3@siemens.com>
-Content-Language: en-US
-From: "Anwar, Md Danish" <a0501179@ti.com>
-In-Reply-To: <20240617-iep-v4-5-fa20ff4141a3@siemens.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240625031806.956650-1-o-takashi@sakamocchi.jp>
 
-
-
-On 6/17/2024 8:51 PM, Diogo Ivo wrote:
-> Add the interrupts needed for PTP Hardware Clock support via IEP
-> in SR1.0 devices.
+On Tue, Jun 25, 2024 at 12:18:04PM +0900, Takashi Sakamoto wrote:
+> Hi,
 > 
-> Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
-> Signed-off-by: Diogo Ivo <diogo.ivo@siemens.com>
-> ---
->  arch/arm64/boot/dts/ti/k3-am65-iot2050-common-pg1.dtsi | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+> 1394 OHCI hardware triggers PCI interrupts to notify any events to
+> software. Current driver for the hardware is programmed by the typical
+> way to utilize top- and bottom- halves, thus it has a timing gap to handle
+> the notification in softIRQ (tasklet). The Linux Kernel Tracepoints
+> framework is enough useful to trace the interaction between 1394 OHCI
+> hardware and its driver.
 > 
-> diff --git a/arch/arm64/boot/dts/ti/k3-am65-iot2050-common-pg1.dtsi b/arch/arm64/boot/dts/ti/k3-am65-iot2050-common-pg1.dtsi
-> index ef7897763ef8..0a29ed172215 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am65-iot2050-common-pg1.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am65-iot2050-common-pg1.dtsi
-> @@ -73,3 +73,15 @@ &icssg0_eth {
->  		    "rx0", "rx1",
->  		    "rxmgm0", "rxmgm1";
->  };
-> +
-> +&icssg0_iep0 {
-> +	interrupt-parent = <&icssg0_intc>;
-> +	interrupts = <7 7 7>;
-> +	interrupt-names = "iep_cap_cmp";
-> +};
-> +
-> +&icssg0_iep1 {
-> +	interrupt-parent = <&icssg0_intc>;
-> +	interrupts = <56 8 8>;
-> +	interrupt-names = "iep_cap_cmp";
-> +};
+> This series of changes adds support for tracepoints events to the
+> driver, and adds an event, 'irqs', so that comparison of the event and
+> any event in firewire subsystem is helpful to diagnose the timing gap.
 > 
+> Takashi Sakamoto (2):
+>   firewire: ohci: add support for Linux kernel tracepoints
+>   firewire: ohci: add tracepoints event for hardIRQ event
+> 
+>  drivers/firewire/ohci.c              |  4 +++
+>  include/trace/events/firewire.h      |  1 +
+>  include/trace/events/firewire_ohci.h | 47 ++++++++++++++++++++++++++++
+>  3 files changed, 52 insertions(+)
+>  create mode 100644 include/trace/events/firewire_ohci.h
 
-Reviewed-by: MD Danish Anwar <danishanwar@ti.com>
+Applied to for-next branch.
 
--- 
-Thanks and Regards,
-Md Danish Anwar
+
+Regards
+
+Takashi Sakamoto
 
