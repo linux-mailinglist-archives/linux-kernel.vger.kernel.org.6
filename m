@@ -1,219 +1,175 @@
-Return-Path: <linux-kernel+bounces-232830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DBF791AECB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:11:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A89D091AECF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:12:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C56F728ACE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:11:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87A1EB2699F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0037A19A2BD;
-	Thu, 27 Jun 2024 18:11:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFFCF19AD6D;
+	Thu, 27 Jun 2024 18:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vOcG71iL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B9/5fsQT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED27197A87;
-	Thu, 27 Jun 2024 18:11:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0080C14D6EB;
+	Thu, 27 Jun 2024 18:12:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719511906; cv=none; b=iZzXMy9FXmx2HulZXd2GIe1fGTutvAq28PQa68X8WPRLyX2V008HlJIH6rc3OdmwxD5jkytHEWWDaQGOJ0SiyCRob5gC++WOOgoHbh04o3eGToB074MtjggAJqnDLgsS6SQAEgdmafuWnuEHYZ54v9nsF5859MVHyIrL71+nGyk=
+	t=1719511940; cv=none; b=N9CE103C5wlKIhOycnBH7iUHrDxxHGWtAercF4o6dj4M0g883S6Q1T198TdKRIVHLNTvae5cYXX2nUa7IZaIjCiXMc6Dbe3CENqPaOyRd7T1jhIpbc6vfpP7B/37W81Txa6iypVw/bNZOPExE/ZkiH55DnDk2SPpLWT5MqGqPfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719511906; c=relaxed/simple;
-	bh=tGr5k+UOROok+owllKktrHzabgkRJenLZBubo0DTG0s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iDbThCbackWPHxF2o37vwFXvdeA6SGKVMmEJiF4whJl6zKzWdmkHszSX3WddNnjJXZyygQFVjQwOU9l9Oq/Q3BwAhkT31wbo+nnFuMIVAckT9MmvrVpdTk3sfVyAFQ4hWP0VtH3OOjYFAwGtvWLAqxdAweREmJY7/WHfea4ohZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vOcG71iL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E493DC2BBFC;
-	Thu, 27 Jun 2024 18:11:40 +0000 (UTC)
+	s=arc-20240116; t=1719511940; c=relaxed/simple;
+	bh=OYVUmimzC+TvNSegkksz4Keghwa/Gc7iuy9ka0pwQKY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ekac0giEJkL+Lyx/Ug+BlfxOqGXlvG1R6pWIKxP3bgo5wl3bKRm8lnQKDFgIAsrXtqLbZW1D0Ncz7ECYa/WbW35RunE5WxP+HcvJ24SoqWHxAmALZoKmMGgIYp1Tt2sQzkTOJ13kFL/mwKwUj4VTnHQwrGHbyfRoh7CXkS56LyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B9/5fsQT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F888C2BD10;
+	Thu, 27 Jun 2024 18:12:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719511905;
-	bh=tGr5k+UOROok+owllKktrHzabgkRJenLZBubo0DTG0s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vOcG71iLpKz+8wzdjAeKoZo7nbkQl95XMMfEZxdbS4o7jPa+lB+lWeK4f9WmX2PhI
-	 ruGfWLpb2elb+eUFkecEt1ZgWHPDQjOlNM7Ep1cA2HoZhykr2jVnbsTvCkbtdc4SFX
-	 q3Pf8Eca+NRGe8O1VQmMmccnPrAxQKPyrLQg0uB0yewqr8MGqP7nHyFSU0eshQVb36
-	 qGHsTgY8zReYc1tNSIwFIi+n10kKIfbH4lwPvJ7ydhpSrWCJ0gYEWcujBwD5FVRFdX
-	 28AuCIeN4JVkB0xg7D6c4hfIWbBAMt6ISKkRGnILp5jActD5QhtV5my0aUutf7g0gS
-	 TYHXz/hg/69IQ==
-Date: Thu, 27 Jun 2024 19:11:38 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Jesse Taube <jesse@rivosinc.com>
-Cc: Conor Dooley <conor.dooley@microchip.com>,
-	linux-riscv@lists.infradead.org, Ard Biesheuvel <ardb@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Wende Tan <twd2.me@gmail.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>, Chen Jiahao <chenjiahao16@huawei.com>,
-	"Mike Rapoport (IBM)" <rppt@kernel.org>,
-	"Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v2 3/3] RISC-V: Use Zkr to seed KASLR base address
-Message-ID: <20240627-wispy-reconfirm-75fd034e62ce@spud>
-References: <20240626171652.366415-1-jesse@rivosinc.com>
- <20240626171652.366415-3-jesse@rivosinc.com>
- <20240627-proven-irritably-33594282739f@wendy>
- <762bb09d-af48-47e0-9d65-f530ff37cbc9@rivosinc.com>
+	s=k20201202; t=1719511939;
+	bh=OYVUmimzC+TvNSegkksz4Keghwa/Gc7iuy9ka0pwQKY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=B9/5fsQTTQ3CtM7MDAV1yo8iftTV+exZwWdomIBAZG2/bfKliJv2VKIJs1vw6ut5g
+	 Yy9E+e+DF8o4r96AR6dVT2BQyHeM5eaM6PuuweS4q4CkSEWJURQ6zWEHAbo0dS6FDK
+	 hnWYMvcGh6oc1WHhE6IsZrOHpA9bUMp6oVYfPm3ILewPzkaleOyXISqjE0PDBcU9RG
+	 jgEpRz0EN+/b73bhCvwmABr8VZRJm3vLMbpVzHi87hLdiruK9YDeHu6kZKZjLMJnAT
+	 lIwFv5I6y0q7gpoJ+yzTTsdkXmIGAORACRQCSchRo9wjYqkcUnLTTdBwO8YRGHywRz
+	 MWsAezBfCwVsw==
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a6fe617966fso576190666b.1;
+        Thu, 27 Jun 2024 11:12:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX6QZkB13To1XQ2Pjup1yUXBhT2C6unMAypPYtHNdR1PF0+6RaAAZDcXWBW2VKK3LK4d03Nc+1sU/v63ZIUbg3OLocOZ/jHP+HH1+7Kpn4hg5UM5F/MMQ8LeqanFPINMokmuvh2JnjXaF8=
+X-Gm-Message-State: AOJu0Yx7pdqP4ld2xg1R1t4I4C5LZDqNUFoI/1/a4OSJbSpq/2zG6NdX
+	I+6h6k0LHnr76fbRu9tc3dqrZrnvxLyXI8cXKpt0Aue5ZXaVD+YVSeVVU4N6+qswZ+8Kjves04M
+	5kacYmvjmRp/gDrVrdfc+kw1hSJ0=
+X-Google-Smtp-Source: AGHT+IFHVtQbez85EoPPqQzNHxI1X+g/RnpQVeqJhcVKIcxQ63lpzuzQlEvErvaKluSrBv0VPFDDpfgaNHHzTFo7jwE=
+X-Received: by 2002:a17:906:d99:b0:a6f:5318:b8f0 with SMTP id
+ a640c23a62f3a-a7245b80ea1mr868287866b.37.1719511938093; Thu, 27 Jun 2024
+ 11:12:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="CKxq9ZugmAw+mCd4"
-Content-Disposition: inline
-In-Reply-To: <762bb09d-af48-47e0-9d65-f530ff37cbc9@rivosinc.com>
-
-
---CKxq9ZugmAw+mCd4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <76d879d2-200d-4b15-8fab-fcd382a4c3e2@gmail.com>
+In-Reply-To: <76d879d2-200d-4b15-8fab-fcd382a4c3e2@gmail.com>
+From: Filipe Manana <fdmanana@kernel.org>
+Date: Thu, 27 Jun 2024 19:11:41 +0100
+X-Gmail-Original-Message-ID: <CAL3q7H7p6EYDG9k66bxDZZrfTQPaiEiZOnFFbov2C3EuRMVLZg@mail.gmail.com>
+Message-ID: <CAL3q7H7p6EYDG9k66bxDZZrfTQPaiEiZOnFFbov2C3EuRMVLZg@mail.gmail.com>
+Subject: =?UTF-8?Q?Re=3A_=5BPROBLEM=5D_make_randconfig=3A_fs=2Fbtrfs=2Fref=2Dverify=2Ec?=
+	=?UTF-8?Q?=3A500=3A16=3A_error=3A_=E2=80=98ret=E2=80=99_may_be_used_uninitialized_in_this_?=
+	=?UTF-8?Q?function_=5B=2DWerror=3Dmaybe=2Duninitialized=5D?=
+To: Mirsad Todorovac <mtodorovac69@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Kernel Build System <linux-kbuild@vger.kernel.org>, Chris Mason <clm@fb.com>, 
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 27, 2024 at 01:55:19PM -0400, Jesse Taube wrote:
-> On 6/27/24 07:45, Conor Dooley wrote:
-> > On Wed, Jun 26, 2024 at 01:16:52PM -0400, Jesse Taube wrote:
+On Thu, Jun 27, 2024 at 7:07=E2=80=AFPM Mirsad Todorovac <mtodorovac69@gmai=
+l.com> wrote:
+>
+> Hi all,
+>
+> After following Boris' advice in https://lore.kernel.org/lkml/20240404134=
+142.GCZg6uFh_ZSzUFLChd@fat_crate.local/
+> on using the randconfig test, this is the second catch:
+>
+> KCONFIG_SEED=3D0xEE80059C
+>
+> marvin@defiant:~/linux/kernel/linux_torvalds$ time nice make -j 36 bindeb=
+-pkg |& tee ../err-6.10-rc5-05a.log; date
+>   GEN     debian
+> dpkg-buildpackage --build=3Dbinary --no-pre-clean --unsigned-changes -R'm=
+ake -f debian/rules' -j1 -a$(cat debian/arch)
+> dpkg-buildpackage: info: source package linux-upstream
+> dpkg-buildpackage: info: source version 6.10.0-rc5-gafcd48134c58-27
+> dpkg-buildpackage: info: source distribution jammy
+> dpkg-buildpackage: info: source changed by marvin <marvin@defiant>
+> dpkg-architecture: warning: specified GNU system type i686-linux-gnu does=
+ not match CC system type x86_64-linux-gnu, try setting a correct CC enviro=
+nment variable
+>  dpkg-source --before-build .
+> dpkg-buildpackage: info: host architecture i386
+>  make -f debian/rules binary
+> #
+> # No change to .config
+> #
+>   CALL    scripts/checksyscalls.sh
+>   UPD     init/utsversion-tmp.h
+>   CC      init/version.o
+>   AR      init/built-in.a
+>   CHK     kernel/kheaders_data.tar.xz
+>   CC [M]  fs/btrfs/ref-verify.o
+>   AR      fs/built-in.a
+> fs/btrfs/ref-verify.c: In function =E2=80=98process_extent_item.isra=E2=
+=80=99:
+> fs/btrfs/ref-verify.c:500:16: error: =E2=80=98ret=E2=80=99 may be used un=
+initialized in this function [-Werror=3Dmaybe-uninitialized]
+>   500 |         return ret;
+>       |                ^~~
+> cc1: all warnings being treated as errors
+> make[7]: *** [scripts/Makefile.build:244: fs/btrfs/ref-verify.o] Error 1
+> make[6]: *** [scripts/Makefile.build:485: fs/btrfs] Error 2
+> make[5]: *** [scripts/Makefile.build:485: fs] Error 2
+> make[4]: *** [Makefile:1934: .] Error 2
+> make[3]: *** [debian/rules:74: build-arch] Error 2
+> dpkg-buildpackage: error: make -f debian/rules binary subprocess returned=
+ exit status 2
+> make[2]: *** [scripts/Makefile.package:121: bindeb-pkg] Error 2
+> make[1]: *** [/home/marvin/linux/kernel/linux_torvalds/Makefile:1555: bin=
+deb-pkg] Error 2
+> make: *** [Makefile:240: __sub-make] Error 2
+>
+> real    0m2.583s
+> user    0m9.943s
+> sys     0m5.607s
+> Thu Jun 27 19:14:55 CEST 2024
+> marvin@defiant:~/linux/kernel/linux_torvalds$
+>
+> This fix does nothing to the algorithm, but it silences compiler -Werror=
+=3Dmaybe-uninitialised
 
-> > > +/* Based off of fdt_stringlist_contains */
-> > > +static int isa_string_contains(const char *strlist, int listlen, con=
-st char *str)
-> > > +{
-> > > +	int len =3D strlen(str);
-> > > +	const char *p;
-> > > +
-> > > +	while (listlen >=3D len) {
-> > > +		if (strncasecmp(str, strlist, len) =3D=3D 0)
-> > > +			return 1;
-> >=20
-> > How does this handle searching a devicetree containing "rv64ima_zksed_z=
-kr"
-> > for the extension zks? Hint: https://godbolt.org/z/YfhTqe54e
-> > I think this works for fdt_stringlist_contains() because it also
-> > compares the null chars - which you're not doing so I think this also
-> > brakes for something like riscv,isa-extensions =3D "rv64ima\0zksed\0zkr"
-> > while searching for zks.
-> >=20
-> > > +		p =3D memchr(strlist, '_', listlen);
-> >=20
-> > Or how does this handle searching "rv64imafdczkr" for zkr? It's gonna
-> > run right off the end of the string without finding anything, right?
->=20
-> Yes...
->=20
-> Is that a valid isa,string?
+You've reported this before, and there's a fix [1] for it in the
+btrfs' github repo, for-next branch. It's not yet in Linus' tree.
 
-It is. I wish I had just not allowed it, but I was more naive then and
-figured we should allow whatever the spec did. Technically versioning of
-the extension isn't allowed, but in the wild people do put it in, so I
-believe that a parser shouldn't break when it encounters versioning,
-even if the regex for the property doesn't permit them:
-^rv(?:64|32)imaf?d?q?c?b?k?j?p?v?h?(?:[hsxz](?:[0-9a-z])+)?(?:_[hsxz](?:[0-=
-9a-z])+)*$
+[1] https://lore.kernel.org/linux-btrfs/612bf950d478214e8b76bdd7c22dd6a9913=
+37b15.1719143259.git.fdmanana@suse.com/
 
-> I will try to copy how cpufeature.c as close as
-> posible.
+>
+> ---
+> diff --git a/fs/btrfs/ref-verify.c b/fs/btrfs/ref-verify.c
+> index cf531255ab76..0b5ff30e2d81 100644
+> --- a/fs/btrfs/ref-verify.c
+> +++ b/fs/btrfs/ref-verify.c
+> @@ -459,6 +459,8 @@ static int process_extent_item(struct btrfs_fs_info *=
+fs_info,
+>                 iref =3D (struct btrfs_extent_inline_ref *)(ei + 1);
+>         }
+>
+> +       ret =3D -EINVAL;
+> +
 
-The comments there should be fairly understandable, but that parser has
-a different goal to the one here, so you should be able to make things
-simpler. I hope at least.
+This is not correct.
+This would result in failure if we have an extent item without any
+inline references (only keyed references following the extent item).
 
-> > Handling "riscv,isa" is not trivial, but at least the search for extens=
-ion
-> > approach here skips dealing with some of what has to be done in the "re=
-al"
-> > parser with the version numbers...
-> >=20
-> > Maybe we just say screw "riscv,isa", as it's deprecated anyway, and onl=
-y.
-> I think it's important to have.
->=20
-> > add this new feature for "riscv,isa-extensions" which is far simpler to
-> > parse and can be done using off-the-shelf fdt functions?
-> >=20
-> > If not, then I think we should use fdt_stringlist_contains verbatim for
-> > "riscv,isa-extensions".
->=20
-> Ok I had a notion that riscv,isa-extensions could be upercase they
-> cant/wont. I will use fdt_stringlist_contains.
->=20
-> > and introduce a custom function for "riscv,isa"
-> > only.
->=20
-> That was my original thought I will do that.
->=20
-> >=20
-> > > +		if (!p)
-> > > +			p =3D memchr(strlist, '\0', listlen);
-> > > +		if (!p)
-> > > +			return 0; /* malformed strlist.. */
-> > > +		listlen -=3D (p - strlist) + 1;
-> > > +		strlist =3D p + 1;
-> > > +	}
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +/* Based off of fdt_nodename_eq_ */
-> >=20
-> > Why can't we just use fdt_nodename_eq?
->=20
-> Because fdt_nodename_eq_ is static.
-> I will change the comment to "copy of fdt_nodename_eq_".
-> Oddly there is `of_node_name_eq` but not `fdt_nodename_eq`
+Thanks.
 
-of_node_name_eq comes from the kernel, fdt_nodename_eq comes from
-libfdt. I figure the former cannot be used this early since we've not
-extracted the dtb and parsed it yet...
-
-> > > +/*
-> > > + * Returns true if the extension is in the isa string on all cpus
-> >=20
-> > Shouldn't we only be checking CPUs that are not disabled or reserved,
-> > rather than all CPUs?
->=20
-> Its way easier to just check all the cpus rather then make sure we are
-> runing on one thats has the extention. I will add a continue for
-> dissabled/reserved cpus.
->=20
-> > To use Zkr for KASLR this is kinda irrelevant
-> > since really we only care about whether or not the boot CPU has Zkr,
-> > but in general we only want to consider CPUs that we can actually use.
-> > For example, if you did this for FPU support with mpfs.dtsi, you'd get
-> > told that the F/D extensions were not present cos hart 0
->=20
-> Can we assume that the boot hart is always 0?
-
-Nah, You cannot assume that the boot hart is hart 0, in the example I gave
-here hart 0 is not available to Linux.
-
-> > doesn't have
-> > them, even though it's disabled and will not be used by Linux.
-
---CKxq9ZugmAw+mCd4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZn2rWgAKCRB4tDGHoIJi
-0pWXAQDJV/bVVnD9ChN+ne/BYsY76hcJyFnXGcsb19WWlTuwLQD6AsVXQpESVWJR
-BTr7LWT8JXfZoRCczrvBZCSqNsVMvwE=
-=MvYD
------END PGP SIGNATURE-----
-
---CKxq9ZugmAw+mCd4--
+>         ptr =3D (unsigned long)iref;
+>         end =3D (unsigned long)ei + item_size;
+>         while (ptr < end) {
+> ---
+>
+> Hope this helps.
+>
+> Best regards,
+> Mirsad Todorovac
+>
 
