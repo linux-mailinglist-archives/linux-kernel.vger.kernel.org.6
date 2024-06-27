@@ -1,123 +1,120 @@
-Return-Path: <linux-kernel+bounces-232538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44DAC91AA8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:09:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 352D491AAB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:11:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F94AB2896D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:09:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4B29283BCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:11:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD84D198852;
-	Thu, 27 Jun 2024 15:08:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC93197A96;
+	Thu, 27 Jun 2024 15:10:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AFNSSQXQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tLiwRSPW"
+Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3EB2197A76;
-	Thu, 27 Jun 2024 15:08:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F4B19883C
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 15:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719500939; cv=none; b=MhaoV2YKxSB3qRhBDn98uQhZcepUawXStHQmIuZdZpsxsEZqXQ8MDYnshM+kxJpREfGLT5HT2mcABq9j3gpcGMyIZjUQYlVGyMzumsvqD3X4P2d0/zEI4K6PwumdiHimRhwnHiwwK8SNe4C9GR49Dt4EVIZRIp+FyYftEyAXCMI=
+	t=1719501057; cv=none; b=P8/Ni3FwayzWJfxWcWg2vVL8vomT4Ge56KKOLysu6qBYhB0Sh4wUsCRIsS0hjCAW+eU44v6IclDi0lrqJkNGtOZGVcFkEOk8uIZGLdIJK30Mno47MVJLmfrHVxNElQDVXzfBsHHB8Es0rbUmqGg8Y5EBRxzGJStaZXTdQV84Xgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719500939; c=relaxed/simple;
-	bh=LVxAoDPFGgZta/AMaaDggih53NHmLZ1I0pcsnqXUfSI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Ic3GMgfAqn2G9JdQudurdY3OFp16E9HTyeW+Q1+kbqIQOGmRXDxOuBj2qXwG+T4smOCZcN6936D6DqEQYrbD9Ri87ZHhyeJ4OECcJt8D/ft0s1qIoD+Lpn7BY+Q10NBBjy3hnhIfJniT5DCGwjjpEf7zdv7A5psn24WzQQJ7znA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AFNSSQXQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01736C2BBFC;
-	Thu, 27 Jun 2024 15:08:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719500938;
-	bh=LVxAoDPFGgZta/AMaaDggih53NHmLZ1I0pcsnqXUfSI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=AFNSSQXQU826EGPSnt8hDGS3yM7ebJ5j6lmsLr+XfXCKcBq29So9Be86QF9u/C6lr
-	 2xl/GOdZ/yvleIuyz9nmJ1KRJpQ6X4wpaPBxQAlDn3Os7Y/PMu+KbTyFmp1d/K8m7G
-	 e15tA01aP9bBg4kR2sf6o333KycCuUtu4XbmCK2dTp45ZtYhDBN0qC7pTu37A/28VH
-	 dvSiuvfEy1hhRAM5xZBNQqY1vYYVCKpdgiMaeHGgDHtKa7p+YxmdCudE6Ih+hBqUam
-	 p9pXUS5dRBmijM8Z/O+bxAWvEq7bc1kZ/Dp49BTeHUYBlqNsJ1rqG4XtSNYXu4wVJH
-	 UXQV/FNn9NPeQ==
-Date: Thu, 27 Jun 2024 16:08:54 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
-	Lijo Lazar <lijo.lazar@amd.com>, Li Ma <li.ma@amd.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the drm tree with the drm-fixes tree
-Message-ID: <Zn2Ahpv6za3ef3LT@sirena.org.uk>
+	s=arc-20240116; t=1719501057; c=relaxed/simple;
+	bh=27xZMW4OLaqCo5WWzj5gYLre9StpGphZ4TqAVIGKaN8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=QQ7dlfWsKIa6zmltuJnEYaUqaT+/08XjN42Us1Z2GLf6LS5l04q+a9zNc6jc4nDNn1ool5Tm6EtzxpIFUCAakTqTenlUYZlJQtI+FjQjHWy8vDbVSWLIsS8BGjjGxJ3pM1RR/yrGsvWVc28YPxM16NEOb3jkPaJaXAu1/r/VCkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tLiwRSPW; arc=none smtp.client-ip=91.218.175.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: tytso@mit.edu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1719501051;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XNm3WawALojtYQ9z1+eU4F6+/xmdHrF/f+BTxtDjPwU=;
+	b=tLiwRSPWfbepm7CVg0u1b/ItZvNyqzaHi22n2chnAxIlSib17q7agRmFxw/2Z85sdwOPbv
+	WY9DEv2SqD+WPvqqyLmiBNvR9EqK6extEJMcSYOz7FtfHkUU0LEzBrt5uwmPWg981a4MEB
+	uDXZa49DuW7P3SaUJqK/azkbkzvWssE=
+X-Envelope-To: luis.henriques@linux.dev
+X-Envelope-To: adilger@dilger.ca
+X-Envelope-To: jack@suse.cz
+X-Envelope-To: harshadshirwadkar@gmail.com
+X-Envelope-To: linux-ext4@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Luis Henriques <luis.henriques@linux.dev>
+To: "Theodore Ts'o" <tytso@mit.edu>
+Cc: Luis Henriques <luis.henriques@linux.dev>,  Andreas Dilger
+ <adilger@dilger.ca>,  Jan Kara <jack@suse.cz>,  Harshad Shirwadkar
+ <harshadshirwadkar@gmail.com>,  linux-ext4@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] ext4: fix fast commit inode enqueueing during a
+ full journal commit
+In-Reply-To: <20240627145836.GA439391@mit.edu> (Theodore Ts'o's message of
+	"Thu, 27 Jun 2024 10:58:36 -0400")
+References: <20240529092030.9557-1-luis.henriques@linux.dev>
+	<875xtu7aow.fsf@brahms.olymp> <20240627145836.GA439391@mit.edu>
+Date: Thu, 27 Jun 2024 16:10:41 +0100
+Message-ID: <871q4i7766.fsf@brahms.olymp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="BZArcoZlnFggJHEH"
-Content-Disposition: inline
-
-
---BZArcoZlnFggJHEH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-Migadu-Flow: FLOW_OUT
 
-Hi all,
+On Thu, Jun 27 2024, Theodore Ts'o wrote:
 
-Today's linux-next merge of the drm tree got a conflict in:
+> On Thu, Jun 27, 2024 at 02:54:39PM +0100, Luis Henriques wrote:
+>> On Wed, May 29 2024, Luis Henriques (SUSE) wrote:
+>>=20
+>> > Hi!
+>> >
+>> > Here's v3 of this fix to the fast commit enqueuing bug triggered by fs=
+test
+>> > generic/047.  This version simplifies the previous patch version by re=
+-using
+>> > the i_sync_tid field in struct ext4_inode_info instead of adding a new=
+ one.
+>> >
+>> > The extra patch includes a few extra fixes to the tid_t type handling.=
+  Jan
+>> > brought to my attention the fact that this sequence number may wrap, a=
+nd I
+>> > quickly found a few places in the code where the tid_geq() and tid_gt()
+>> > helpers had to be used.
+>> >
+>> > Again, please note that this fix requires [1] to be applied too.
+>> >
+>> > [1] https://lore.kernel.org/all/20240515082857.32730-1-luis.henriques@=
+linux.dev
+>> >
+>> > Luis Henriques (SUSE) (2):
+>> >   ext4: fix fast commit inode enqueueing during a full journal commit
+>> >   ext4: fix possible tid_t sequence overflows
+>>=20
+>> Gentle ping...  Has this fell through the cracks?
+>
+> Sorry, I'm still catching up after being on vacation.  There is a
+> batch of commits which I've reviewed (up to May 17th) which is
+> currently undergoing testing.  So that doesn't include this patch yet,
+> but it's on the list of patches to be reviewed at
+> patchworks.ozlabs.org/project/linux-ext4 so it won't fall through the
+> cracks.
 
-  drivers/gpu/drm/amd/pm/swsmu/inc/smu_types.h
+Awesome, thanks for the update.  And sorry for being impatient.
+/me goes back under his rock.
 
-between commit:
-
-  c223376b3019a ("drm/amd/swsmu: add MALL init support workaround for smu_v=
-14_0_1")
-
-=66rom the drm-fixes tree and commit:
-
-  ec41bdd82e9b0 ("drm/amd/pm: Update PMFW messages for SMUv13.0.6")
-
-=66rom the drm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc drivers/gpu/drm/amd/pm/swsmu/inc/smu_types.h
-index 2e32b085824ae,12a7b0634ed56..0000000000000
---- a/drivers/gpu/drm/amd/pm/swsmu/inc/smu_types.h
-+++ b/drivers/gpu/drm/amd/pm/swsmu/inc/smu_types.h
-@@@ -272,7 -272,8 +272,8 @@@
-  	__SMU_DUMMY_MAP(SetSoftMinVpe), \
-  	__SMU_DUMMY_MAP(GetMetricsVersion), \
-  	__SMU_DUMMY_MAP(EnableUCLKShadow), \
- -	__SMU_DUMMY_MAP(RmaDueToBadPageThreshold),\
- +	__SMU_DUMMY_MAP(RmaDueToBadPageThreshold), \
-+ 	__SMU_DUMMY_MAP(SelectPstatePolicy), \
-  	__SMU_DUMMY_MAP(MALLPowerController), \
-  	__SMU_DUMMY_MAP(MALLPowerState),
- =20
-
---BZArcoZlnFggJHEH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ9gIUACgkQJNaLcl1U
-h9B9+Af9HWLP9pwG99gRcjfbXtQXiTDTWOqY06cYsdplVD4imfZ8+fVA5i3eFuPW
-nwKu3JTVbVFgB8PRq9mc6HKEAQCfatz+YMMlL911tbENXkeRor5VO65PrKP257G0
-2yD1xGUyLRjacEJrC0CsvmqgZO6xhGbW/j5e+b5bJgZZHxfEOEkHzQj5/O0aoMQ6
-Rd+69PBpIO8DkEoOZH0RfwpAKJp+rVfpHayqzIS3GXQNVrzQ3fQrcAXLEVzrp98e
-EclOk5R/SiQ6z3kpyTgC1YwhSh53JSxsoxdhJnmYrksMBGBKFN6WRT5PJad2s+yS
-zRj4RptDV6O/2+Mpe1mhEqbMvifNxw==
-=1q1J
------END PGP SIGNATURE-----
-
---BZArcoZlnFggJHEH--
+Cheers,
+--=20
+Lu=C3=ADs
 
