@@ -1,80 +1,123 @@
-Return-Path: <linux-kernel+bounces-232172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54BF691A46D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:00:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3819A91A470
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:00:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4ED628230C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:00:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69ACB1C21AEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C35143C7A;
-	Thu, 27 Jun 2024 11:00:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96CF013FD8C;
+	Thu, 27 Jun 2024 11:00:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YG/chIS6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="g8Z+sIiT"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C1913E40C;
-	Thu, 27 Jun 2024 11:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99FF31F94A;
+	Thu, 27 Jun 2024 11:00:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719486008; cv=none; b=Kc8TAd+x7ZBPVOPb600wj+cCvtan671zfuQGb0e3KSUx19jlGAp8pkoCQi/DXx9dXkRg9xgNvU2fuIMbGQzsVXlKKHfIWOJvLahO0Hvn52vCflUWIVupwSJyLehxm15FniZqlOnJ4wIxk/xQEOAIx/FCxA1imBtzAIvjwxaNwGI=
+	t=1719486048; cv=none; b=Zam6wNfOa84VTWdMBdr7X/n5E+6DG4Wv1Y/JdkUxQ8YNk6Pt1nTfRtvTWjzK3leCQDTz7Uu4mGzoX7yTxn1zXZwrgmBJseQPctXu4LdL0gvjJQ+JCxCluk5xDjS4MLI120KCCwb6kxlqAKLIOyKVzixWIuIpBNjpPUg8T+WFRmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719486008; c=relaxed/simple;
-	bh=eNIKGCo6TvOxdKg2GgKTH+S39gKZ6k+FdpCo4+14MbM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oHqoPkF01TC8E6PPYda/MiJLpc6BeG+4tChlKWQ/w0NAQF4sMpXOlgud6IIO51NyIAGQQHwnr84L9gUoKe5wU6CbMToYA2bSdcLByIqsyA9e3sGLdKwENYOSeEXEnjJMRc0/e3DuBLpg81YHRhgxD8ojIkAI9jVUJyzmyNLa5qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YG/chIS6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B093C2BBFC;
-	Thu, 27 Jun 2024 10:59:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719486008;
-	bh=eNIKGCo6TvOxdKg2GgKTH+S39gKZ6k+FdpCo4+14MbM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=YG/chIS6cxoZ0LmJUKfo4XpwRCvW7WkkhxXGdTwIaDMb9X0SrOauWxAxUFGau5BGW
-	 eGt9CohT1OY2L/S7HhrcCpOFdTUk1HZorcq1T7vSVj4toCGmLZFH0iyK+8G4R2qua6
-	 wcZeci8WqKxktS/7QjM6ZpH4rkFLll1Q7PtZqhfJPX3WQ3CAO8IjzC8XUYt/J+dgxp
-	 iBcqLLggtOJA448ozjAES8vDTZfDWKmu5vehVYNoa2E9IyV+cT9iNssnRL5dQFjs0x
-	 CWbm5C8VDWVCYuHhigulSQivQynytLszpk6roLd0R86qsS23NrsXD4ss8oNseppuUT
-	 h7VNcNzHZEZNw==
-Date: Thu, 27 Jun 2024 12:59:49 +0200
-From: Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: tglx@linutronix.de, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, tsbogend@alpha.franken.de, daniel.lezcano@linaro.org,
- paulburton@kernel.org, peterz@infradead.org, mail@birger-koblitz.de,
- bert@biot.com, john@phrozen.org, sander@svanheule.net,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-mips@vger.kernel.org, ericwouds@gmail.com
-Subject: Re: [PATCH v3 1/9] mips: dts: realtek: use "serial" instead of
- "uart" in node name
-Message-ID: <20240627125949.7c15a65d@dellmb>
-In-Reply-To: <20240627043317.3751996-2-chris.packham@alliedtelesis.co.nz>
-References: <20240627043317.3751996-1-chris.packham@alliedtelesis.co.nz>
-	<20240627043317.3751996-2-chris.packham@alliedtelesis.co.nz>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719486048; c=relaxed/simple;
+	bh=GYpm+XnvHUDUSFk/UktBATcn31E8QlQ+11CQ6flQKsw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Vg7ySK+qrs2ArTGpqiJ/9SwhAbc3RK9mqOExEelYujNxU+Pv20aU8yZWNWwP0EU+6u//aTfL0XgK5uZbEYhKUyaUBdxQohYsMq+8tavpNL+zpHKnB9cwniVQq6tgmN4NCTaoO1g1IkGBAlIBGMordXkKxriP0g8QWp7PZS635oQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=g8Z+sIiT; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719486010; x=1720090810; i=markus.elfring@web.de;
+	bh=EhLckhKVfKE7w0R51LNF24lj0PYCDE9gcP8repqcmMY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=g8Z+sIiToVtcL+u4dUeHcXr4JkUU+qZNfOGDu1N74BmW5VxZKH+KPwC/jiNVoJOa
+	 CG3UJE1jpez6q73HN3ZzGMt7zq07MXfzugygex1hTq5DBk0cgTNhhKJf5EekIlPt2
+	 zMwKaTShgPhrwbyCys3e0fpzYNtq7fzALOX6U8aZ54iXuxqpo9Fm2xJlnM8LayXpH
+	 6DBnaHDZ/vMq9kgU+/M/ApBmDSO6VjzrBb36heQMN1RqxKkxoEKbXiquzfit7jbyR
+	 VoJVHdCN8P9JzHoVaL8w32WLHQ29OlZ1EJnWDLOFYv82Asb7BVq/WoKaIJxux25Hq
+	 ixDkjwqqDdJYTImUZA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M3m9J-1sN3qD29Wl-00GO5I; Thu, 27
+ Jun 2024 13:00:10 +0200
+Message-ID: <7b5c3831-6c6f-4518-b677-6e82f0ce7ad7@web.de>
+Date: Thu, 27 Jun 2024 13:00:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: Ma Ke <make24@iscas.ac.cn>, dri-devel@lists.freedesktop.org,
+ Alan Cox <alan@linux.intel.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Dave Airlie <airlied@redhat.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ David Airlie <airlied@gmail.com>
+References: <20240627025033.2981966-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH v2] drm/gma500: fix null pointer dereference in
+ psb_intel_lvds_get_modes
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240627025033.2981966-1-make24@iscas.ac.cn>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:3Vb+Jx2vooG5cOktMPc+G7oJTsGDmB4KURcwNspnXl6og+nSjX/
+ jdhxJ1IxabSWJh1A4O7biEVTEAmc4MD9ankPs5NCn8vPXfTgBIytuKoDkULFyUMQRjhikx1
+ D5UryBAY27XObBXXomIbrNKMezVVy1e3ZBcjy1Ze30zxHrZFkCb8b3t3cz/TB47ZXQ7cRKG
+ UPT4hyHs5cp10hNaByDew==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:WIWbjhk1C4A=;of0i6ck5xDlWRW/KZQCVN8MISca
+ SsYH2GHpMQBKYsmZ0o661yQb/R67UoQup+VX6BOhpCjM4f9pEYyeAz7eHmv21e3wx39SnTzh2
+ Z54gShKbJQMLDLrOFg0sCA2GiCYMZr68T2GYigSRQs6TKwdqSRJMZAmxtxqnXnCBsaH9v9nPg
+ BnjZRaouBDi9Jw+/PjsZ/F099UUqodBCY3cM+9YXw/+5f9Cs3aoUNX/YXzerF74aDSjvUjhuZ
+ g8++/SuM2r/5QVt63bduHpA6Odfgfh7xhw4hbguFkfL1yqaZlDtxBlIL/JnDWAJ2IVYtKdkXi
+ AHi3RcnSDqUc1ldWzhj45UT+6gJPZ4IZhj2z72Ne8Wa8xsNkAiuZwk29i6GNugI4RpX2BWpAG
+ faJhJrAYMLOAEen0RgjlzibinhcLhZng0XVrmD7Ht6rGZt1dbqoaUb0wM0TxsVGehRNfAYCLh
+ yR8AB9MvemUJ5iBE9jxVI2kropgj1zl8YUt2Ne2ovaqpAZFVuQiGA5w363W+u6jfkn8CBpQMC
+ nUVO0wH0TrXSF2dVaEIggAsJe82z5QUKAjUGp4muLMC/Ik2lYJzi8fXb+GBlwH/dvYTssmKUd
+ rhFWr4nhoKrSwX6H32ACuAA4mptV/cIu2NHrpBwxDvOcfDkliIZ+Sjg/XjsCSJMf6qhF1s1vH
+ cZku4TOeqMlNlS6ItO0tW581uUj9rfXB3ym/Qu9KfsJgMMzMlTLvmHQtu6vLv8l4knw2JgMxZ
+ e0Bfc21cHyGv96VsYNx8JlZnIekmICy0ZZAlYKpILUMXp3M4v07tZODUA0InUVpT2UFMrRw3t
+ vfp9wTHYasTMKyQLoe4otgP4GeooAua4CsI5Harw3He+4=
 
-On Thu, 27 Jun 2024 16:33:09 +1200
-Chris Packham <chris.packham@alliedtelesis.co.nz> wrote:
+> In psb_intel_lvds_get_modes(), the return value of drm_mode_duplicate() =
+is
+> assigned to mode, which will lead to a possible NULL pointer dereference
+> on failure of drm_mode_duplicate(). Add a check to avoid npd.
 
-> Update the node name for the UARTs to resolve the following dtbs_check
-> complaints:
->=20
->   uart@2000: $nodename:0: 'uart@2000' does not match '^serial(@.*)?$'
->   uart@2100: $nodename:0: 'uart@2100' does not match '^serial(@.*)?$'
->=20
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+A) Can a wording approach (like the following) be a better change descript=
+ion?
 
-Reviewed-by: Marek Beh=C3=BAn <kabel@kernel.org>
+   A null pointer is stored in the local variable =E2=80=9Cmode=E2=80=9D a=
+fter a call
+   of the function =E2=80=9Cdrm_mode_duplicate=E2=80=9D failed. This point=
+er was passed to
+   a subsequent call of the function =E2=80=9Cdrm_mode_probed_add=E2=80=9D=
+ where an undesirable
+   dereference will be performed then.
+   Thus add a corresponding return value check.
+
+
+B) How do you think about to append parentheses to the function name
+   in the summary phrase?
+
+
+C) How do you think about to put similar results from static source code
+   analyses into corresponding patch series?
+
+
+Regards,
+Markus
 
