@@ -1,84 +1,134 @@
-Return-Path: <linux-kernel+bounces-232195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C9F291A4DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:16:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2F4891A4DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:17:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 470541F22D72
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:16:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A1751F234E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24849149C4A;
-	Thu, 27 Jun 2024 11:16:29 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0931C148833;
+	Thu, 27 Jun 2024 11:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q/FT9R3k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466A82D7B8;
-	Thu, 27 Jun 2024 11:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40DCF79FD;
+	Thu, 27 Jun 2024 11:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719486988; cv=none; b=WlxTiv75JrzaER87SrgKYFjVI8u8Dv+q5O8WGWXZ2pfSUUB8DsfUEOdXk7NAJIsXZFtqeVgADTC0l4ToXLEoLBicVfaF9wx2Pevz77Cn1VBMueHtyx+lsQWeo/FAXybiJxqdEqm+mA0mMPxarlVFYrZ5xGKychSD5E2Kf2gH42o=
+	t=1719487035; cv=none; b=TxFZRr89XfB3wQPNTVj2NhM4IVB2iq9/veYvhttG2eN4x1eHBUQcqWgcSNXtECDQnWM1zObECPvnSoR7PwpA99BkhPMeYD/mMhDD/k5VqbAmmaLHyHjjJeMUvbH4hMHc+bDoNVzS+Tgcm5NsouaKUqWvDk25EZpfVyNpwzx1ibM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719486988; c=relaxed/simple;
-	bh=pMHGxf/PL51qw2MfQE3siIsDZW3Ft6ZMS5bJo/0MHmw=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Ia6O2SybR7tByOMXKrcq4sIup/rhm0fN6FoaPjsBF2rCGtKm6RSTHZK2wfMVUPhMfFUspKYCr4oKNmD7cGHTSBjsbDzGVhLm3Na74Psls2LtxgvQPSvlVM8KwVpH+HPdB0i+BQWy+IAHBN2M46hjqxzKW3L7fU3epx79VkHPC1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4W8wrF4rhxzZgZ7;
-	Thu, 27 Jun 2024 19:11:57 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4F53218006E;
-	Thu, 27 Jun 2024 19:16:23 +0800 (CST)
-Received: from [10.69.30.204] (10.69.30.204) by dggpemf200006.china.huawei.com
- (7.185.36.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 27 Jun
- 2024 19:16:23 +0800
-Subject: Re: [PATCH net-next v9 00/13] First try to replace page_frag with
- page_frag_cache
-To: Andrew Lunn <andrew@lunn.ch>
-CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Alexander Duyck
-	<alexander.duyck@gmail.com>, Alexei Starovoitov <ast@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, <bpf@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
-References: <20240625135216.47007-1-linyunsheng@huawei.com>
- <d2601a34-7519-41b6-89c6-b4aad483602b@lunn.ch>
-From: Yunsheng Lin <linyunsheng@huawei.com>
-Message-ID: <a051a277-a901-2cdb-72d0-716002593019@huawei.com>
-Date: Thu, 27 Jun 2024 19:16:22 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+	s=arc-20240116; t=1719487035; c=relaxed/simple;
+	bh=YwOu/W4GzrmoTRHNUY+hAdb3vZbiH7HY9bUPgadHHms=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Yu3lyXE8LQq5dzFCv0b4MXytv9vGh21bnms80w1Xrwb1pYC8nqfejLadqrB3RnQ8BnkUt8UVf9yutWLpcQBzjxGvwnUuQQ86ycYQBWgr2ZVUOkwCd5d9a180z9Jvkn7rtP76jDQ0ITuzpB+MwrGGHHahURceocgXxPqr7TiWKkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q/FT9R3k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E743BC2BBFC;
+	Thu, 27 Jun 2024 11:17:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719487034;
+	bh=YwOu/W4GzrmoTRHNUY+hAdb3vZbiH7HY9bUPgadHHms=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Q/FT9R3kPP4BJoxIm4dqhZprcVjgwO9PhLDgRW5O2oP4R3U9+5SfbAETOYJbA/4lx
+	 oEoBTr8fjDMf1s9xiYR2J6NFpAXRRFrjIuhl24IVGLan7DxlpBJzparF2cIuvnS4m5
+	 Guph6YKUtlkLRTvIa1G6LjK31lTIsGZn15Lw0SXEQaufksvJBLIuD7z9lclxjvR6yN
+	 JFa076beXKMNrOto3yGdbcCQRewl2Z/jP0UKCm+vOU8bEyHQWy/P59jmldWkyWIXt0
+	 PVjM+wPHmPUeZUX2/ssTj5+JGpS9IB9mCtPlP+jP4CjKvVHr8aDKskFu4ZyYK9cOyg
+	 iRV8MDQqdcGCw==
+Date: Thu, 27 Jun 2024 13:17:07 +0200
+From: Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: tglx@linutronix.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, tsbogend@alpha.franken.de, daniel.lezcano@linaro.org,
+ paulburton@kernel.org, peterz@infradead.org, mail@birger-koblitz.de,
+ bert@biot.com, john@phrozen.org, sander@svanheule.net,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-mips@vger.kernel.org, ericwouds@gmail.com, Markus Stockhausen
+ <markus.stockhausen@gmx.de>
+Subject: Re: [PATCH v3 7/9] clocksource: realtek: Add timer driver for
+ rtl-otto platforms
+Message-ID: <20240627131707.3410b4d3@dellmb>
+In-Reply-To: <20240627043317.3751996-8-chris.packham@alliedtelesis.co.nz>
+References: <20240627043317.3751996-1-chris.packham@alliedtelesis.co.nz>
+	<20240627043317.3751996-8-chris.packham@alliedtelesis.co.nz>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <d2601a34-7519-41b6-89c6-b4aad483602b@lunn.ch>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemf200006.china.huawei.com (7.185.36.61)
 
-On 2024/6/27 1:12, Andrew Lunn wrote:
-> Silly nitpick, but maybe for the next version you change the Subject:
-> to Tenth try to replace page_frag with page_frag.... :-)
+On Thu, 27 Jun 2024 16:33:15 +1200
+Chris Packham <chris.packham@alliedtelesis.co.nz> wrote:
 
-Yes, it is somewhat confusing for the 'First try' part.
-I guess I can change it to highlight the effort and commitment behind
-the trying:-)
+> +/* Simple internal register functions */
+> +static inline void rttm_set_counter(void __iomem *base, unsigned int counter)
+> +{
+> +	iowrite32(counter, base + RTTM_CNT);
 
-> 
->    Andrew
-> .
-> 
+These require #include <asm/io.h>
+
+> +/* Aggregated control functions for kernel clock framework */
+> +#define RTTM_DEBUG(base)			\
+> +	pr_debug("------------- %d %p\n",	\
+> +		 smp_processor_id(), base)
+
+#include <linux/printk.h>
+
+> +static irqreturn_t rttm_timer_interrupt(int irq, void *dev_id)
+> +{
+> +	struct clock_event_device *clkevt = dev_id;
+> +	struct timer_of *to = to_timer_of(clkevt);
+> +
+> +	rttm_ack_irq(to->of_base.base);
+> +	RTTM_DEBUG(to->of_base.base);
+> +	clkevt->event_handler(clkevt);
+
+Although you include "timer-of.h", which includes clockchips.h, please
+do also explicit #include <linux/clockchips.h>
+
+> +	rttm_set_period(to->of_base.base, RTTM_TICKS_PER_SEC / HZ);
+
+HZ -> linux/jiffies.h, or maybe asm/param.h
+
+> +static u64 rttm_read_clocksource(struct clocksource *cs)
+> +{
+> +	struct rttm_cs *rcs = container_of(cs, struct rttm_cs, cs);
+> +
+> +	return (u64)rttm_get_counter(rcs->to.of_base.base);
+
+Redundant cast to u64.
+
+> +	rttm_enable_timer(rcs->to.of_base.base, RTTM_CTRL_TIMER,
+> +			  rcs->to.of_clk.rate / RTTM_TICKS_PER_SEC);
+
+Is this correct? Sometimes it makes sense to use DIV_ROUND_CLOSEST, but
+maybe not here.
+
+> +static u64 notrace rttm_read_clock(void)
+> +{
+> +	return (u64)rttm_get_counter(rttm_cs.to.of_base.base);
+
+Redundant cast to u64.
+
+> +static int __init rttm_probe(struct device_node *np)
+> +{
+> +	int cpu, cpu_rollback;
+
+unsigned int?
+
+> +	struct timer_of *to;
+> +	int clkidx = num_possible_cpus();
+
+linux/cpumask.h, unsigned int
+
+Marek
 
