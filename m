@@ -1,227 +1,126 @@
-Return-Path: <linux-kernel+bounces-232111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59AF691A390
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:11:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B75B591A394
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:12:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C4901C21B86
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:11:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60C521F23BA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:12:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83AC913C814;
-	Thu, 27 Jun 2024 10:11:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCAC013D25E;
+	Thu, 27 Jun 2024 10:12:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lY7ROG+w"
-Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f4pqRJxD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2889E13C67E
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 10:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812C913C80B
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 10:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719483088; cv=none; b=HtFn+9Ds8pdBFBRongmh0fy1CpNty8ssThXNe4ZrBCRWBe3keSFRGMb7VNvi1p6uTy+gAlqRMlQNvAvBJCAp0Or3g1kf7LQlWutHxA4njFfdSFUxH/AsvIOcp7pETVgqUT3h9CWhbvm0QOVcWG5u2PvBjOQ27kerAHxujNpBpLQ=
+	t=1719483127; cv=none; b=bmPJSApv3KInXBphYUh44x+6GVMINRCr3zifAM2FA+ngbiHef5HGuinFC8QEVSJJ6WwxTA6q+Ab9xKMYVf0tRjtWNNYOM+Zxqyb6wTOxZLCH5StplkP/ib4OAEEkOhbpCoxoq8A+aj8FSMb59Tq54WHVvXU2F7jbMgdszuRbHD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719483088; c=relaxed/simple;
-	bh=RGQHQzMvAJJ18phcQUWNK57PO0eaJhXWjGhWhoMgHaA=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Owrslgy0H2leq5Lw7yVWdF5OoCxIfEW8gLx6XcD84O4BgW90FZd0MR7MlGQRMOzI4sgw7xO9EOREDHkjo2lAwE/03kwEnkDb+sZqSJ1JdCjKVV+hH65PHMOKaekSHyUolsVAi6x0vQIafwha4V1VqcP5BTf6q92VZd85oqV53oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lY7ROG+w; arc=none smtp.client-ip=209.85.214.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-1f6a837e9a3so47667215ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 03:11:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719483086; x=1720087886; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nhaug2EPx+qEgt62m3ojcCaUyh05yCww5PDEVq+nvig=;
-        b=lY7ROG+w/9tNuLqYEyq25EG9KAM3PVXiCvYea8WoL91cqi9pU0XPfKpjh4jwAJe0SH
-         BYETufNFBjQT5sV5PI67WBcV9JW4Pq9zRdNV9aDZPyxVENQPw9b+wnM60C/SSXT+VihW
-         6bAV5086OcJqqyJQMpSzUToa/+zW1KhtpCGV+JKetnKzIlNLXUvGLrtmyNOCl18eg8HT
-         XYfLhWO47hDDuN4xkI0QHbxBptj3/bqeaFPcrdjxOKawMfTeDcm+gHy4phaltzuhhSKD
-         Gu7eGmr/Hcf/pxQAmiNTATPOrQodoNJjcaXRgkU7rtiAkaduX7BodtH7GcQIz9+hKEZ7
-         onKw==
+	s=arc-20240116; t=1719483127; c=relaxed/simple;
+	bh=h9nUgCyLzDTYUT9m0gkppNDJckAo4CsmWLB7Km0y9vI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KTe6l0kraGaDIPpQ+pWEay0YxwgHjSu+/VBUDedT23xgYRS48RdbUpGNk8gBIv8iqtLxxfj/Uk0fkMil4JB17uivhMG94ECrRLgq4b66ldBkeoDisltsK3My5/SuKgT1gtENYIeHxJq/oqGreUChFfMB0XZoGVcUA4pqCDMFjVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f4pqRJxD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719483124;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=+jkUzQWCr91w/D1JMMa42/2bvxwW/Ne0IySbwHeSQXk=;
+	b=f4pqRJxDlY1ETiIhEYfqk12kTrjOQP0p4xQvHcI75ueN+Aw4bcvsdyrE891OD2NXhB5JT9
+	iANDwu9dwxfdQsoNOTHPo2CpHrhj3/k3yCjwjYyh2vslt11Bx44vAX5I0vybnJAfNBSSik
+	8grV8Qgf/z9Zvx/WkMw3v6FtKxwPCgo=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-466-F1VL5u_WNoi78QZD1BSXVQ-1; Thu, 27 Jun 2024 06:12:03 -0400
+X-MC-Unique: F1VL5u_WNoi78QZD1BSXVQ-1
+Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-2ec50fa1edaso3086231fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 03:12:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719483086; x=1720087886;
-        h=content-transfer-encoding:in-reply-to:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nhaug2EPx+qEgt62m3ojcCaUyh05yCww5PDEVq+nvig=;
-        b=h7dfVG5d0gfA3OG4n1/yEj7hDNudJLXy0bNAv/XBz9JCwK0BpE7rFeHFDMdVqgMRAf
-         8jYGfdJ3paOnbc2y07odL2RO9HUd35FPIINEXQBFscCzg9H8UqBNbGVmhApIk2cv1Qzy
-         s1VXdMYlAbmDmSAM3FgM1F19+XpcasLx9RqV3GhlHKmqTNLALvcECJofAAbjtEVKPuKZ
-         7ghzTtMfqwfLvoNkFNLpb5Uyv6O0TrTr9ryUFj9gblLI/mzCcWVQW0dOa13ch/MB8cYw
-         Lhqes2cUb7nf0L/U4KwWjyKnm+bU/keGAmPJbWz/TIz2U7gPEU4mUCWdWSimkLeUmL5Q
-         zTwA==
-X-Forwarded-Encrypted: i=1; AJvYcCUdpWfS+hHF64aqL51rv+PWr+4+rfn18Vh8TQ+gHwsivlWWuIgrKvy9rcUtH1vvAICH7DOgCR+q4no+/7EDJzuhl8KiIvomrAVBjmuk
-X-Gm-Message-State: AOJu0YxdplyulrpVfOfjJewiZxgOpgNiDdbgLi+aCswZqciyHQ0Fq9tl
-	hrpecWeNVFfV7wrzIbyoL04RxcABksPDv28huxT5gQDj3uKECUX1
-X-Google-Smtp-Source: AGHT+IFL/5dOdrZlFA7z1Hme4OgjQs+yGKzHZKmAuRfJKku11yeI6TkI4Fbw35ApU3NgfKrtdnA0IQ==
-X-Received: by 2002:a17:902:6bc3:b0:1f8:68b8:3736 with SMTP id d9443c01a7336-1fa23f89653mr94251095ad.35.1719483086201;
-        Thu, 27 Jun 2024 03:11:26 -0700 (PDT)
-Received: from [127.0.0.1] ([212.107.28.57])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1faac8e194asm9744445ad.11.2024.06.27.03.11.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Jun 2024 03:11:25 -0700 (PDT)
-From: Celeste Liu <coelacanthushex@gmail.com>
-X-Google-Original-From: Celeste Liu <CoelacanthusHex@gmail.com>
-Message-ID: <ccf089fd-613d-475c-aeb1-8abc92873a90@gmail.com>
-Date: Thu, 27 Jun 2024 18:11:20 +0800
+        d=1e100.net; s=20230601; t=1719483121; x=1720087921;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+jkUzQWCr91w/D1JMMa42/2bvxwW/Ne0IySbwHeSQXk=;
+        b=ZFPhB+fUutpAVAFPDJtxMSZTRldQQQ7tTQXqeXCf6QpJVYzcbM/VNSGPhse6+15ru9
+         7xWtdzGZmA8K/JZbTQ9m8BMp9oynM8q4Me7TfmsZaTwb+qw+IkeZo2G3UDufWKpSs/OP
+         wxN5DAnLCIomhdqvfx0PaKgF4vVduJ6bggOzZV85Wu3JH66Ew3vi/IJme2QdDjDXi80I
+         z+e0w3rEoxFmhjS/FH3+Q21TZLMGVuisLk7xN2BvXXJI8Ot1eugBRoD3Htm7RaEW9Su6
+         4jDSTnuC2CRoTemPRmsiGfXCwrUEUZBt03vL3KseGCRXFMXPgLikwO9Y01fWFzeY/hxR
+         46uw==
+X-Forwarded-Encrypted: i=1; AJvYcCVgCXlBaUFRXsnwi9p4McPR0MhfDhUauXG4RldoBIAdzheSQ92xPWNWQioOoTgR/rvjs5FwjF2UJruNbsQZ5IeQvib9YpXGhpR8hrDP
+X-Gm-Message-State: AOJu0Yx1N/poHeUBgLSBYpMnrrkeWUkagDmDITDxsS1YkOIM9w9ef5HO
+	9BpX7LRd7F9VgmiffFgePiapBdo32LqqaBPaRIUtdv9WSMeaDYoTTqQWKgRuL1gYae2b8taF7AW
+	aE9xLKeB2hJTSWnfvmLCF4mFFnvtm5WTjbJEHNiDTU0QwKqcsPI3dMXmW5xdZ7A==
+X-Received: by 2002:a2e:a401:0:b0:2ec:44f9:56ab with SMTP id 38308e7fff4ca-2ec55fecb95mr85414861fa.0.1719483121521;
+        Thu, 27 Jun 2024 03:12:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEo5S3Jhjza/wrXHJ0Uatja128khuxI8XwWUTiv9omWH1H0vmmW0D4yREGdZHj4cTZR/1xMsA==
+X-Received: by 2002:a2e:a401:0:b0:2ec:44f9:56ab with SMTP id 38308e7fff4ca-2ec55fecb95mr85414631fa.0.1719483121117;
+        Thu, 27 Jun 2024 03:12:01 -0700 (PDT)
+Received: from gerbillo.redhat.com ([2a0d:3344:2716:2d10:663:1c83:b66f:72fc])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367435850e0sm1330800f8f.50.2024.06.27.03.11.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 03:12:00 -0700 (PDT)
+Message-ID: <d4c8577a996320bc161c045970d56eeaca5c7159.camel@redhat.com>
+Subject: Re: [PATCH v2] net: ethernet: mtk_ppe: Change PPE entries number to
+ 16K
+From: Paolo Abeni <pabeni@redhat.com>
+To: Shengyu Qu <wiagn233@outlook.com>, nbd@nbd.name, sean.wang@mediatek.com,
+  Mark-MC.Lee@mediatek.com, lorenzo@kernel.org, davem@davemloft.net, 
+ edumazet@google.com, kuba@kernel.org, matthias.bgg@gmail.com, 
+ angelogioacchino.delregno@collabora.com, pablo@netfilter.org, 
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Cc: stable@vger.kernel.org, Elad Yifee <eladwf@gmail.com>
+Date: Thu, 27 Jun 2024 12:11:58 +0200
+In-Reply-To: <TY3P286MB2611AD036755E0BC411847FC98D52@TY3P286MB2611.JPNP286.PROD.OUTLOOK.COM>
+References: 
+	<TY3P286MB2611AD036755E0BC411847FC98D52@TY3P286MB2611.JPNP286.PROD.OUTLOOK.COM>
+Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] riscv: entry: set a0 = -ENOSYS only when syscall != -1
-Content-Language: en-GB-large
-To: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>
-Cc: "Dmitry V. Levin" <ldv@strace.io>, Palmer Dabbelt <palmer@rivosinc.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Guo Ren <guoren@kernel.org>, Conor Dooley <conor.dooley@microchip.com>,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- Andreas Schwab <schwab@suse.de>, David Laight <David.Laight@aculab.com>,
- Felix Yan <felixonmars@archlinux.org>, Ruizhe Pan <c141028@gmail.com>,
- Shiqi Zhang <shiqi@isrc.iscas.ac.cn>,
- Emil Renner Berthing <emil.renner.berthing@canonical.com>,
- "Ivan A. Melnikov" <iv@altlinux.org>
-References: <20230801141607.435192-1-CoelacanthusHex@gmail.com>
- <20240627071422.GA2626@altlinux.org>
- <9c102328-6bb3-46b6-bc2f-d011a284d5b0@gmail.com>
- <CA+FstbVf7TJx==WsY5fBoFrdeY8php5ETn8kMq5s6YScy-2O=A@mail.gmail.com>
-In-Reply-To: <CA+FstbVf7TJx==WsY5fBoFrdeY8php5ETn8kMq5s6YScy-2O=A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
+On Tue, 2024-06-25 at 19:16 +0800, Shengyu Qu wrote:
+> MT7981,7986 and 7988 all supports 32768 PPE entries, and MT7621/MT7620
+> supports 16384 PPE entries, but only set to 8192 entries in driver. So
+> incrase max entries to 16384 instead.
+>=20
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Elad Yifee <eladwf@gmail.com>
+> Signed-off-by: Shengyu Qu <wiagn233@outlook.com>
+> Fixes: ba37b7caf1ed ("net: ethernet: mtk_eth_soc: add support for initial=
+izing the PPE")
+> ---
+> Changes since V1:
+>  - Reduced max entries from 32768 to 16384 to keep compatible with MT7620=
+/21 devices.
+>  - Add fixes tag
 
-On 2024-06-27 17:43, Björn Töpel wrote:
-> On Thu, Jun 27, 2024 at 9:47 AM Celeste Liu <coelacanthushex@gmail.com> wrote:
->>
->> On 2024-06-27 15:14, Dmitry V. Levin wrote:
->>
->>> Hi,
->>>
->>> On Tue, Aug 01, 2023 at 10:15:16PM +0800, Celeste Liu wrote:
->>>> When we test seccomp with 6.4 kernel, we found errno has wrong value.
->>>> If we deny NETLINK_AUDIT with EAFNOSUPPORT, after f0bddf50586d, we will
->>>> get ENOSYS instead. We got same result with commit 9c2598d43510 ("riscv:
->>>> entry: Save a0 prior syscall_enter_from_user_mode()").
->>>>
->>>> After analysing code, we think that regs->a0 = -ENOSYS should only be
->>>> executed when syscall != -1. In __seccomp_filter, when seccomp rejected
->>>> this syscall with specified errno, they will set a0 to return number as
->>>> syscall ABI, and then return -1. This return number is finally pass as
->>>> return number of syscall_enter_from_user_mode, and then is compared with
->>>> NR_syscalls after converted to ulong (so it will be ULONG_MAX). The
->>>> condition syscall < NR_syscalls will always be false, so regs->a0 = -ENOSYS
->>>> is always executed. It covered a0 set by seccomp, so we always get
->>>> ENOSYS when match seccomp RET_ERRNO rule.
->>>>
->>>> Fixes: f0bddf50586d ("riscv: entry: Convert to generic entry")
->>>> Reported-by: Felix Yan <felixonmars@archlinux.org>
->>>> Co-developed-by: Ruizhe Pan <c141028@gmail.com>
->>>> Signed-off-by: Ruizhe Pan <c141028@gmail.com>
->>>> Co-developed-by: Shiqi Zhang <shiqi@isrc.iscas.ac.cn>
->>>> Signed-off-by: Shiqi Zhang <shiqi@isrc.iscas.ac.cn>
->>>> Signed-off-by: Celeste Liu <CoelacanthusHex@gmail.com>
->>>> Tested-by: Felix Yan <felixonmars@archlinux.org>
->>>> Tested-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
->>>> Reviewed-by: Björn Töpel <bjorn@rivosinc.com>
->>>> Reviewed-by: Guo Ren <guoren@kernel.org>
->>>> ---
->>>>
->>>> v4 -> v5: add Tested-by Emil Renner Berthing <emil.renner.berthing@canonical.com>
->>>> v3 -> v4: use long instead of ulong to reduce type cast and avoid
->>>>           implementation-defined behavior, and make the judgment of syscall
->>>>           invalid more explicit
->>>> v2 -> v3: use if-statement instead of set default value,
->>>>           clarify the type of syscall
->>>> v1 -> v2: added explanation on why always got ENOSYS
->>>>
->>>>  arch/riscv/kernel/traps.c | 6 +++---
->>>>  1 file changed, 3 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
->>>> index f910dfccbf5d2..729f79c97e2bf 100644
->>>> --- a/arch/riscv/kernel/traps.c
->>>> +++ b/arch/riscv/kernel/traps.c
->>>> @@ -297,7 +297,7 @@ asmlinkage __visible __trap_section void do_trap_break(struct pt_regs *regs)
->>>>  asmlinkage __visible __trap_section void do_trap_ecall_u(struct pt_regs *regs)
->>>>  {
->>>>      if (user_mode(regs)) {
->>>> -            ulong syscall = regs->a7;
->>>> +            long syscall = regs->a7;
->>>>
->>>>              regs->epc += 4;
->>>>              regs->orig_a0 = regs->a0;
->>>> @@ -306,9 +306,9 @@ asmlinkage __visible __trap_section void do_trap_ecall_u(struct pt_regs *regs)
->>>>
->>>>              syscall = syscall_enter_from_user_mode(regs, syscall);
->>>>
->>>> -            if (syscall < NR_syscalls)
->>>> +            if (syscall >= 0 && syscall < NR_syscalls)
->>>>                      syscall_handler(regs, syscall);
->>>> -            else
->>>> +            else if (syscall != -1)
->>>>                      regs->a0 = -ENOSYS;
->>>>
->>>>              syscall_exit_to_user_mode(regs);
->>>
->>> Unfortunately, this change introduced a regression: it broke strace
->>> syscall tampering on riscv.  When the tracer changes syscall number to -1,
->>> the kernel fails to initialize a0 with -ENOSYS and subsequently fails to
->>> return the error code of the failed syscall to userspace.
->>
->> In the patch v2, we actually do the right thing. But as Björn Töpel's
->> suggestion and we found cast long to ulong is implementation-defined
->> behavior in C, so we change it to current form. So revert this patch and
->> apply patch v2 should fix this issue. Patch v2 uses ths same way with
->> other architectures.
->>
->> [1]: https://lore.kernel.org/all/20230718162940.226118-1-CoelacanthusHex@gmail.com/
-> 
-> Not reverting, but a fix to make sure that a0 is initialized to -ENOSYS, e.g.:
+@Sean, @Mark, @Lorenzo or @Felix, can any of you actually test this?
 
-Oh. I just want to describe what change we need, not to say actual 'git revert'.
+Thanks!
 
-> 
-> --8<--
-> diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
-> index 05a16b1f0aee..51ebfd23e007 100644
-> --- a/arch/riscv/kernel/traps.c
-> +++ b/arch/riscv/kernel/traps.c
-> @@ -319,6 +319,7 @@ void do_trap_ecall_u(struct pt_regs *regs)
-> 
->   regs->epc += 4;
->   regs->orig_a0 = regs->a0;
-> + regs->a0 = -ENOSYS;
-> 
->   riscv_v_vstate_discard(regs);
-> 
-> @@ -328,8 +329,7 @@ void do_trap_ecall_u(struct pt_regs *regs)
-> 
->   if (syscall >= 0 && syscall < NR_syscalls)
->   syscall_handler(regs, syscall);
-> - else if (syscall != -1)
-> - regs->a0 = -ENOSYS;
-> +
->   /*
->   * Ultimately, this value will get limited by KSTACK_OFFSET_MAX(),
->   * so the maximum stack offset is 1k bytes (10 bits).
-> --8<--
-
-This is also what I think.
-
-> Celeste, do you want to cook that fix properly?
-
-Yeah. I will sent patch to mail list soon.
-
-> 
-> 
-> Björn
+Paolo
 
 
