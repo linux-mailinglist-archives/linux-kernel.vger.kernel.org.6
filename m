@@ -1,108 +1,93 @@
-Return-Path: <linux-kernel+bounces-232290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 290F991A656
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:12:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FCAE91A664
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:16:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D472A1F215DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:12:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 443F0281E73
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:16:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08B9152DF2;
-	Thu, 27 Jun 2024 12:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CIEhVqdt";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GJg7dpZ8"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8AF15383C;
+	Thu, 27 Jun 2024 12:16:49 +0000 (UTC)
+Received: from smtp134-25.sina.com.cn (smtp134-25.sina.com.cn [180.149.134.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B378414882B;
-	Thu, 27 Jun 2024 12:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6501304A3
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719490354; cv=none; b=ePF0nvsbW9COZj2QwuiXvnQr4JkYJkWBoCFi10vRN7IhYZEkfEaF0t9EcMJU0w57vRo1pex+UuLkabivml3i3TiJ0hLjXHLE0wvjRBhMjbrVHAoTlof2dXofX75WApt0Pkr/zwdZ3QWwmasVSxEJM+lvA4ulPq2E6EpE/awKui8=
+	t=1719490609; cv=none; b=PJLsMMPd0Mwx4AkM2j7oSI3Eabxblh4AW5XF9xbZDVvDe4lunTfJ4Hn3WRfRFxrlTr7+HMLzytiMDD0Lag3crmTKevZr0jqhJ/WnZHCIbSeyqwKzbadxkW1OX0t5PsmcdCPhn8YJ2qcqB4WooJnThneDcgtiotsuVAk0QkjEovs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719490354; c=relaxed/simple;
-	bh=b1eJkVWH5I+FUx6yRzUDP3FwJvWxBdtCyQ2yKGc6SEk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=UKe9Ut1lyVt+uE5Wy/whmU+2Za9Bod+fIMMSqVREfUrW2PHY7BSjDa62NGtKGevTqYfut6IkKRZrhEDefCFjyvyH/UnT0TkGokfrQhLIGMEU5CZ9xjAF6fNHimELVdqYzKuF/N4NKcTPF3QpiWAF/uomFfjLMKaBqOB0Dq5T5aI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CIEhVqdt; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GJg7dpZ8; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1719490349;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GO3gpCVWm/z2htSk74hw4M+cH+jE0XOChRhSMs+cTOk=;
-	b=CIEhVqdtaeFXTLOkp3GBiPQ4tnnzjNSy+VrM1XMQ4BMDbi/XzVrXbhz/qRcdX1dZXeyv6E
-	75qwrl/imoXvlF1UuE3aUXUxCHwAQKMSDXTztmuCz4iWWAvc7hzuOu1rftoBbgRa/1S9h0
-	4Z3fME4WyEFpF87YW9n2lcQUnQWPLghdQ1uukwUAzWqSBk7yje5kzxxmHCDfB9gHXTKn+W
-	Gow1p9Bis0gCJ6qkKj9aZLr5XV2aYArCJJKHbWzghmKNk5WMYhVARgukWxcIuYIlm8olR8
-	yVQJ8ftLzGhwHQD3uMPqs6pgNTx82Nfd+G2TFPIbnuKKDP1I2cs0fRt0kQ+Ztg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1719490349;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GO3gpCVWm/z2htSk74hw4M+cH+jE0XOChRhSMs+cTOk=;
-	b=GJg7dpZ8ZikQL7a9qM1OPRXoFHHXj6nz/OrOedS5bDqOJr9YH6Amm/gmmZLByJu0d1lbTt
-	/CO5DvgCaEhDxSBA==
-To: Stanimir Varbanov <svarbanov@suse.de>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org, Broadcom
- internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Florian Fainelli
- <florian.fainelli@broadcom.com>, Jim Quinlan <jim2101024@gmail.com>,
- Nicolas Saenz Julienne <nsaenz@kernel.org>, Bjorn Helgaas
- <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- kw@linux.com, Philipp Zabel <p.zabel@pengutronix.de>, Andrea della Porta
- <andrea.porta@suse.com>, Phil Elwell <phil@raspberrypi.com>, Jonathan Bell
- <jonathan@raspberrypi.com>, Stanimir Varbanov <svarbanov@suse.de>
-Subject: Re: [PATCH 3/7] irqchip: Add Broadcom bcm2712 MSI-X interrupt
- controller
-In-Reply-To: <20240626104544.14233-4-svarbanov@suse.de>
-References: <20240626104544.14233-1-svarbanov@suse.de>
- <20240626104544.14233-4-svarbanov@suse.de>
-Date: Thu, 27 Jun 2024 14:12:29 +0200
-Message-ID: <87ikxu1t5e.ffs@tglx>
+	s=arc-20240116; t=1719490609; c=relaxed/simple;
+	bh=ZcZ/fMAZaiW/5sor0Jr7UwJx4S5vpxSj6WBY4ifdW4Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=WaMNZCBT0ShWtqgC1YV4ewJIf+XSp9nXqcFVxci1ZDttqw1lSePvSYwMk9xr0huhtDslWKMuqDE/x9HrfONDIdkIa16VudpZnQY0rP798AA8xsb7s3oqlNXSEd/A5eczSkMapRN/gfYKx+eRxrhTmTa1G6QHwEto1NeDrpWHBu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([116.24.11.136])
+	by sina.com (10.185.250.21) with ESMTP
+	id 667D582300001048; Thu, 27 Jun 2024 20:16:37 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 5955733408299
+X-SMAIL-UIID: 01DA74F255DE4C7FB9D6ED568ACF3AE6-20240627-201637-1
+From: Hillf Danton <hdanton@sina.com>
+To: Nicholas Piggin <npiggin@gmail.com>
+Cc: "Paul E . McKenney" <paulmck@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Waiman Long <longman@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] workqueue: Improve scalability of workqueue watchdog touch
+Date: Thu, 27 Jun 2024 20:16:28 +0800
+Message-Id: <20240627121628.2278-1-hdanton@sina.com>
+In-Reply-To: <20240625114249.289014-3-npiggin@gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Stanimir!
+On Tue, Jun 25, 2024 at 09:42:45PM +1000, Nicholas Piggin wrote:
+> On a ~2000 CPU powerpc system, hard lockups have been observed in the
+> workqueue code when stop_machine runs (in this case due to CPU hotplug).
+> This is due to lots of CPUs spinning in multi_cpu_stop, calling
+> touch_nmi_watchdog() which ends up calling wq_watchdog_touch().
+> wq_watchdog_touch() writes to the global variable wq_watchdog_touched,
+> and that can find itself in the same cacheline as other important
+> workqueue data, which slows down operations to the point of lockups.
+> 
+> In the case of the following abridged trace, worker_pool_idr was in
+> the hot line, causing the lockups to always appear at idr_find.
+> 
+Wonder if the MCS lock does not help in this case.
 
-On Wed, Jun 26 2024 at 13:45, Stanimir Varbanov wrote:
-> Add an interrupt controller driver for MSI-X Interrupt Peripheral (MIP)
-> hardware block found in bcm2712. The interrupt controller is used to
-> handle MSI-X interrupts from peripherials behind PCIe endpoints like
-> RP1 south bridge found in RPi5.
->
-> There are two MIPs on bcm2712, the first has 64 consecutive SPIs
-> assigned to 64 output vectors, and the second has 17 SPIs, but only
-> 8 of them are consecutive starting at the 8th output vector.
-
-This is going to conflict with:
-
-  https://lore.kernel.org/all/20240623142137.448898081@linutronix.de/
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git devmsi-arm-v4-1
-
-Can you please have a look and rework it to the new per device MSI
-domain concept?
-
-The series shows you how to convert it over. If you need help, please
-let me know.
-
-Thanks,
-
-        tglx
+>   watchdog: CPU 1125 self-detected hard LOCKUP @ idr_find
+>   Call Trace:
+>   get_work_pool
+>   __queue_work
+>   call_timer_fn
+>   run_timer_softirq
+>   __do_softirq
+>   do_softirq_own_stack
+>   irq_exit
+>   timer_interrupt
+>   decrementer_common_virt
+>   * interrupt: 900 (timer) at multi_cpu_stop
+>   multi_cpu_stop
+>   cpu_stopper_thread
+>   smpboot_thread_fn
+>   kthread
+> 
 
