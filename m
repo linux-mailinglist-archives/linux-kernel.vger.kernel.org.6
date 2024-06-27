@@ -1,57 +1,64 @@
-Return-Path: <linux-kernel+bounces-232556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C612F91AAEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:16:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92C6291AAEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:16:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DD001F22D4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:16:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4126A1F21DD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB71419922C;
-	Thu, 27 Jun 2024 15:15:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61FFD1990A3;
+	Thu, 27 Jun 2024 15:16:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bg1sfPer"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="mwVfIhDw"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31FBD198A34;
-	Thu, 27 Jun 2024 15:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63658197555;
+	Thu, 27 Jun 2024 15:16:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719501336; cv=none; b=tjdwDbuJEVY6zx6r23iOIr6I/QxAjUxy7e5XFEI2xdSygykBXrmZjOUclbVGMxVruTOmFFUocjV0HFIpbNFkT3rcbygpBW45K2UdKxkBdT4Izzhuf8+tE5nhn++vXo7KQZ+WNFkuR2DRYtfWG/Hpgl8XGTeIz1DN4u9ADGE4gWo=
+	t=1719501367; cv=none; b=ofHyOdxwnV+sro/qkr9XvyGGR8UdNfYQKXoLtzN8LMlK4sDzefA+AJ0OAbul7GZPFt5/futpmUTWiZoXLkwn4sAoqAmxqVMkF6D1Drv/sizkRJ07j3aGuiTUEGye6hRcWvJ/jtlX5TV+cSBRP1MQcP7v7GABlRHctzYmuNLc4VY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719501336; c=relaxed/simple;
-	bh=q0A8hCYy5uZVhZ/NmrOR19SojhuSXvXU+Cvj3LoyMI4=;
+	s=arc-20240116; t=1719501367; c=relaxed/simple;
+	bh=Edgf2el7vfsPa7gk4PEhJ0JF9QtzPXpxY3Pe1JoTo1g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PtrToyfrfzPcPWhmQDsT9UBBuIamC7tkWQe4d/uxIKYeyWpjehCeMc5nE1bt2502geOT1NVrS/iQK0k9aAzuTLVqZOqcuhD8yM4BX9gLDHmW9yKRX2HovzoKsiG8ZCW6nGpa9uMEP5fW2IP+cwtKjjiTSda3dyU3VYIVEde1Ewc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bg1sfPer; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D0DAC32786;
-	Thu, 27 Jun 2024 15:15:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719501335;
-	bh=q0A8hCYy5uZVhZ/NmrOR19SojhuSXvXU+Cvj3LoyMI4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Bg1sfPerj2O75O7uXP6rq1G5VguVbZ8WxMjSRnAftOVV+MeIkSZq+VBh20TnGQ0aK
-	 hWxDQkJjRjVrXSjbyVEXGcHTRWDd7Bzk7DktVL587k8IPuupbtofcid+AHy3oK08js
-	 EREJt1uEyCuxU7IBr7hnl3x+pIUttcHJTRS50y9ajs/k9sKNwysEibKGhQ9TN80/2u
-	 cZ9IsKP3S/QO/nDF1pb/vnLbKMrLGFG/vQXL3bMXGq1gVX+Lz9zd6X3iRb+i0TyX8j
-	 zh+GOUG1YF7jyODghtEvW4yfVk00WC/1k0/T8RvJ6WR70Y7LK3CI1JQRRWX6jeJX6b
-	 ZwPfQ13KLuYjQ==
-Date: Thu, 27 Jun 2024 17:15:31 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Igor Pylypiv <ipylypiv@google.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v3 2/6] ata: libata-scsi: Do not overwrite valid sense
- data when CK_COND=1
-Message-ID: <Zn2CE-aFGj2x8qi2@ryzen.lan>
-References: <20240626230411.3471543-1-ipylypiv@google.com>
- <20240626230411.3471543-3-ipylypiv@google.com>
- <Zn1zsaTLE3hYbSsK@ryzen.lan>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nieM4XEAW0yG5d4gizqHxavt/7/YXUeWRfNh9/at3VufoCiwYi9UDBT7tHfM2VPfG9hDrAvDLm99ERF4JLRl+bhcVYYv46b0eWKlCduFzMctT5kr73IAiL+2KzeHZn/ul2DsZiKRNOCFjxCKGQNfiOiI8habuwm1SUXS0rhziJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=mwVfIhDw; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=QKCRMBwJDf5cHZ/yhnI+yJCQsyATUHSXjQblCJTVe3Q=; b=mwVfIhDwHKSNaCMinHIFYrWYcy
+	Ci9uGmNuK4rVfOiVYAZMTz/6tGc3ues7nW9mgqDHbTB1fyiH9cA2zIlsHK5lvCir/7Iz8Bc4EOWZE
+	aH0ve4E8mbx+pN38lkhktjYZQZD3YVaeZAVu8OpGm+7rT0RiHFRnBfq1EWbmcwLjXFyg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sMqqo-001B7c-Q2; Thu, 27 Jun 2024 17:15:54 +0200
+Date: Thu, 27 Jun 2024 17:15:54 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Arun Ramadoss <arun.ramadoss@microchip.com>,
+	Lucas Stach <l.stach@pengutronix.de>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com
+Subject: Re: [PATCH net-next v1 2/3] net: dsa: microchip: lan937x: force
+ RGMII interface into PHY mode
+Message-ID: <f610effb-34af-4150-a320-c8882117b632@lunn.ch>
+References: <20240627123911.227480-1-o.rempel@pengutronix.de>
+ <20240627123911.227480-3-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,20 +67,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zn1zsaTLE3hYbSsK@ryzen.lan>
+In-Reply-To: <20240627123911.227480-3-o.rempel@pengutronix.de>
 
-On Thu, Jun 27, 2024 at 04:14:09PM +0200, Niklas Cassel wrote:
+On Thu, Jun 27, 2024 at 02:39:10PM +0200, Oleksij Rempel wrote:
+> From: Lucas Stach <l.stach@pengutronix.de>
 > 
-> The only tricky case is if we should set CHECK_CONDITION in case c) or not.
-> All other cases seems quite clear by looking at the SAT spec.
+> The register manual and datasheet documentation for the LAN937x series
+> disagree about the polarity of the MII mode strap. As a consequence
+> there are hardware designs that have the RGMII interface strapped into
+> MAC mode, which is a invalid configuration and will prevent the internal
+> clock from being fed into the port TX interface.
 
-I think we should set CHECK_CONDITION in case c),
-even if SK+ASCQ+ASC is not "ATA PASS-THROUGH INFORMATION AVAILABLE".
+What i think is missing from this is that you are talking about the
+CPU port. For a normal user point, RGMII MAC mode would make sense, if
+there is an external RGMII PHY attached. And the code only does this
+if the port is a CPU port.
 
-That way we at least align CK_COND with CHECK_CONDITION, which is
-most likely what the user (and spec writers) expect.
+So maybe:
 
+... that have the CPU port RGMII interface ...
 
-Kind regards,
-Niklas
+	Andrew
 
