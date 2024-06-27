@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-231933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2634E91A08C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:40:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7DDA91A08F
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:40:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 588A31C21248
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:40:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B50F1F21C36
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A60355896;
-	Thu, 27 Jun 2024 07:39:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89A655896;
+	Thu, 27 Jun 2024 07:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CeLr20m/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ritmkaMf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6F221C6B5;
-	Thu, 27 Jun 2024 07:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C36F1C6B5;
+	Thu, 27 Jun 2024 07:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719473992; cv=none; b=PRjfkdVx7hOG2aWAcSz4J1nh7bSaElngtZtAiqI33Kpe9BKWuuz6TmD0XdjBDTNPj0qttayXRaD6DSW+MDwCOtRnu9BJWP0bJGm9m9NEMi4NVFZJiOR60IwhoDluq8PfQ7BqtpVwVjYbZHVHPKJN9wQ9CMxsno1DKvC57n6xx9M=
+	t=1719474001; cv=none; b=My1DfXvZ9NsZtr9i5N9dVfwis3krTZF4p8Q/k7kpLVCWCI3TskrWrAI49LUUxTaTTuXg4Tejnt1IGkFACGgpLF8CZbmuszD7tMdKYkseDtNtJpeTn8Jx99DyoLizSDzpRfxhIvUGE0oFf5OG0Yut7Rh/kcprEbI9fisOOpabavk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719473992; c=relaxed/simple;
-	bh=aSNO9ARzJP954tAFUbze+mAtbiPuPF2fx20FCP7CKUQ=;
+	s=arc-20240116; t=1719474001; c=relaxed/simple;
+	bh=1UVm16gUJieWlsjpsUyoJNKiT1SEDeeEqw7KTBTTLN4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=avgthu74E5Nq1tkIX/PKw5DTn+bBhvw3SDVk6zkISfefUx/RrY+7dSEO+Lnr5YaTX4GCGPqLjU30jKnWVV2vhJfIcDm9dZMolltcAlDcV3l8MlfnzYl5bJnc3JgjLYdUHpA0tNLZeXSoxdLUf8xpJS0HvBsMq0LTf19chD1UQqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CeLr20m/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B8ECC2BBFC;
-	Thu, 27 Jun 2024 07:39:46 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=H4YhiPaHwBaTBAIuc3Fo0XbyJOzQcQtJ46FC94fTpyetZFWHGFVMLGgZRPVJEIELmB9W5cXL/GhFQrFGcOXlY+RnAk3KX/sgDLdfL+vuCCx4fnwCTE6x/RRM5s+6wOw1cC4JOORUpV9xSHo3GFUNmP7L9a7siqpE6RNXKtjpKFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ritmkaMf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9874C2BBFC;
+	Thu, 27 Jun 2024 07:39:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719473992;
-	bh=aSNO9ARzJP954tAFUbze+mAtbiPuPF2fx20FCP7CKUQ=;
+	s=k20201202; t=1719474000;
+	bh=1UVm16gUJieWlsjpsUyoJNKiT1SEDeeEqw7KTBTTLN4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CeLr20m/CY2MpXXKIYPVZGupmxzGOWuPli0OYIFycq3sGl04PVB7rFMlm8EgxkgK2
-	 wu88f1VrRISPc5CvVJWJZxR117h6Um8akUQngB9zON/X8gQf4R7L2pq+0jsLGQAUyz
-	 9nWMoRrgQUxN96blie6rljMAL+R5iZBAb3ya9NdoeEJPDQp8sr2w3OqF2qZkNzSPRC
-	 dXeCFNU4mpLfjUqItmQ3XxKV0+YIQ6Zog/6JGYv/F24AugXUhkGbsJNaCwAmEFumCm
-	 DplPnNLUMZcaPjw9wDPxoZLdUAc3p/DEKPvlLDDwhIc8/Xc8wW65i6SBH/URut2HWw
-	 1LVTPotTUnU7g==
-Message-ID: <0878267a-9f86-4c59-a397-9195fe0d5b33@kernel.org>
-Date: Thu, 27 Jun 2024 09:39:44 +0200
+	b=ritmkaMfi2szzHwKW96zQOMLvkW3WEOr8Xo8DXzm6wj84CDg1pNX+Pab44vCFQ9q+
+	 UQgv9ZZOHfnlDFQ7vOPGoebKFRRbMkrhOxCTY0fSmHa760cj3eI0R4PQWW+AAz25+0
+	 MqfNYPjZIKzC2vdBdvZqvEHs6HDfrOeYczdnT36TiLBg4a686kDC6v8aNCU/7G71Qs
+	 NPVmBeehsbJdT29/6JjANTOBc7XIEnVUNYjIlq0djP7hVDAYKWQtwmxSFmLtqKJoeM
+	 1LITV4U6JOT0Of2Suag/4F5V0fHkwVhd5et5cfyOKpfEcN8yafidpMX+o3gbqCN+Kl
+	 4qmNap3ZR0RBA==
+Message-ID: <68c77021-b381-4577-bc39-6854ccd9590f@kernel.org>
+Date: Thu, 27 Jun 2024 09:39:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/9] dt-bindings: vendor-prefixes: Add Cameo
- Communications
+Subject: Re: [PATCH v3 4/9] dt-bindings: mips: realtek: Add rtl930x-soc
+ compatible
 To: Chris Packham <chris.packham@alliedtelesis.co.nz>, tglx@linutronix.de,
  robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
  tsbogend@alpha.franken.de, daniel.lezcano@linaro.org, paulburton@kernel.org,
@@ -59,7 +59,7 @@ To: Chris Packham <chris.packham@alliedtelesis.co.nz>, tglx@linutronix.de,
 Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
  linux-mips@vger.kernel.org, kabel@kernel.org, ericwouds@gmail.com
 References: <20240627043317.3751996-1-chris.packham@alliedtelesis.co.nz>
- <20240627043317.3751996-4-chris.packham@alliedtelesis.co.nz>
+ <20240627043317.3751996-5-chris.packham@alliedtelesis.co.nz>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,18 +105,19 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240627043317.3751996-4-chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <20240627043317.3751996-5-chris.packham@alliedtelesis.co.nz>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 27/06/2024 06:33, Chris Packham wrote:
-> Add entry for Cameo Communications (https://www.cameo.com.tw/)
+> Add the rtl9302 SoC and the Cameo RTL9302C_2xRTL8224_2XGE reference
+> board to the list of Realtek compatible strings.
 > 
 > Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 > ---
 > 
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
