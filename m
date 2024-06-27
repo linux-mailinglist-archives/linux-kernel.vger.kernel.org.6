@@ -1,131 +1,207 @@
-Return-Path: <linux-kernel+bounces-231913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ADEB91A044
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:18:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A872C91A047
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:19:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 972E4B22780
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:18:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB2041C21257
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 07:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 665D94D8A7;
-	Thu, 27 Jun 2024 07:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 801D24CE05;
+	Thu, 27 Jun 2024 07:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="db7rACDG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Dp8y2dzf"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C351BF3A;
-	Thu, 27 Jun 2024 07:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 444FD48CC7
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 07:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719472726; cv=none; b=q9sQR0DGA8jq4ncMaC3YWntH4+wnEavNobd9rmNZPsxcAwFdhPd/QBoyIkff8FGOcKm5gWU6bTZGxlUFmXcgJ+cCR98lcFrxwyzdKujPKYPBr9UhN/OLe04JkaJZlueZgMKWvvQl7BRAm4xwJOTwmZya/22hZXvu0NSWPE83vKM=
+	t=1719472751; cv=none; b=BsR2RZi50UuLuLJ03d9VSDGKiC4iJVSE1oVYo/QjRbTLJ6ZD5fHGEVuB10zbazpO/CsjnYQ9aaFp+ulvMkUBnk6YUI6mbPI2LMcQjyPbHLeQqVIWpfbO/xOkJ6tEa6gDz44E/kiCghXGg2dbYHybytXcqpzG8bviqQ4fCfj0Mt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719472726; c=relaxed/simple;
-	bh=N77V0dE/apH22+7RK8IW/xhIj81SUdpfM54CWaNtWbI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vBJkQhzMjM95ToIBpsY9fV3oO/xfaJQHUgHEpOrtk2Hp0dTymAgGWxOqNlT5qCw5MHSZI/tHxtxCZPD7OoLRCKwHJ0oeZtKxfxMnqxbPxtzCwFOr7hDO+pflPW6f+OGDXqUiHF3WRrKq7wgytrKUHoGiPY4KhFlTvpzZn1yVNiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=db7rACDG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41D4EC2BBFC;
-	Thu, 27 Jun 2024 07:18:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719472726;
-	bh=N77V0dE/apH22+7RK8IW/xhIj81SUdpfM54CWaNtWbI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=db7rACDG7c+uVpFm8X+Q2C8rjsq2oVLPGxfrfmVEKxyIdamcn7Lr6N1e/jXeEZuiB
-	 u+0EoEZ7zbMfbBW/BVN6OZ37nN+cJ7F9cpmyCypsoceLUsikDh0k1+X913R5sYjfsY
-	 hPWy/wpdVQ+Q34Gwpkx4xUUsBN36c/6PTXzXaZpGgY+YXQBxlzVGDdVUpUqWtzohxH
-	 5v+u0BLxjL2W7/8Fgejx9uFlKhe08XJPY9V5FnfBSjvsD+SFdmyE+l/YSQwdKjN2sd
-	 S6fGjmM9IkKea0DgNqJ7vFsW+HE50oqDudWh9cbyq1p+DLFmnuy1ceO9vZJMzXBf4k
-	 0zQydjO+6flAQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sMjPH-000000000Zg-1AXV;
-	Thu, 27 Jun 2024 09:18:59 +0200
-Date: Thu, 27 Jun 2024 09:18:59 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Vanillan Wang <vanillanwang@163.com>
-Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] USB: serial: option: add Rolling RW350-GL variants
-Message-ID: <Zn0SY4nQzESrQ4xw@hovoldconsulting.com>
-References: <20240531024012.29805-1-vanillanwang@163.com>
+	s=arc-20240116; t=1719472751; c=relaxed/simple;
+	bh=cnAIdvlXwQ/j9YRKWonoChw7ab4J4a6MgAZ2Iwg+Jwc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hA80bQeB4lPs7c0b4CYFkN7i4SBVgNH1buRr2vSfUj/LscSrL1eiDbe+fxTNqNbvG0X/QMQG8vRz3bpwHMv4BdQN+cxYw06H478zHR9Ptc4yLqEN15y2c+yytQa8HPDCOqKM4vdS98bE+0O3WlmrT0WY/AOpQHIeQ8RuujG7Zm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Dp8y2dzf; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-70671ecd334so3798272b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 00:19:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1719472749; x=1720077549; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KOw0F8v0grJ8IuAnZTAplm9tXQhwzs0nBcu+ZgyxR4o=;
+        b=Dp8y2dzfCdwCH7dvn7QHUlGGueafQiBNaMIX8OrEBMR0M8h+Rv4YclW5D+L5xtI/hZ
+         U8GDxlThzF/X1G5O1FxxWLGwHvECslU3g2AglM76Fn//G8t+M6mSDHj5gQLxOjx/momi
+         SXUFhMO3OuaWGTWT1tFmKVlF9Lz66Z7tcaL60=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719472749; x=1720077549;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KOw0F8v0grJ8IuAnZTAplm9tXQhwzs0nBcu+ZgyxR4o=;
+        b=tM6BF3b6C9J6djwNIUuPFsaWdAIEgJKRAiiZiwuUo8uik6ysocOS/8Ar+a1BgJBaac
+         ZpzTVbgg/A9Y156BLOIfD3IuyPvtGLEzksz0kStLa6kRJOFl75SnajqOSYsTDrHr5QpH
+         EJLJAOFqaTkYEkazd1aVaiWzG3x1dvLh9AOMFv5+2G6JrIQwca2OwJIkKNfMjZ0WgCnv
+         bs7aa4Sn5u/GwivLQgUIu/Ssa+OlvGDw3BnK5wMDZER9qjFl5ZiO97RkgXNx+3olo/TW
+         jODfzPSvqABM546R6WpaC069LVFzzy5tiPOZVs7kqo563Noe+qgONkU5ar5UROTssFJy
+         Z69A==
+X-Forwarded-Encrypted: i=1; AJvYcCVk8yT62BuFE43Gp5didj4XvmqjCB8VlW05zD/7gPXoA8M4h6ZTaNHpNqS+3S/icHK4a35PTqODvalQUSCPUAoExh7+BtrDWePGYjFH
+X-Gm-Message-State: AOJu0YyBLaSu/qP68PC3cUzzfAqG44v8m71OOeraFM0oD2y/dHFXVYXP
+	P1MLf4lAb/mGIjJuNsg7leCxX3EJQwF41XNHw2EbwjehHS4HBdLOzp5YoFyAR33Vr7D+SF8GPdB
+	k4YUZ
+X-Google-Smtp-Source: AGHT+IHlncdv9HVyQDeNK4Vd2L7zyyqyfpKGaNI4AodY8XUtdLlWupV4oLXPzaYsiCtGoG1CGijcxA==
+X-Received: by 2002:a05:6a20:3d86:b0:1b5:d477:fcd5 with SMTP id adf61e73a8af0-1bcf44a7d6emr16341274637.25.1719472749434;
+        Thu, 27 Jun 2024 00:19:09 -0700 (PDT)
+Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:c8c3:6aca:70ce:49d9])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c8fe9ecdc8sm718653a91.29.2024.06.27.00.19.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 00:19:09 -0700 (PDT)
+From: Chen-Yu Tsai <wenst@chromium.org>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>
+Cc: Chen-Yu Tsai <wenst@chromium.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: [PATCH v2] drm/mipi-dsi: Add OF notifier handler
+Date: Thu, 27 Jun 2024 15:19:03 +0800
+Message-ID: <20240627071904.4017160-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240531024012.29805-1-vanillanwang@163.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 31, 2024 at 10:40:12AM +0800, Vanillan Wang wrote:
-> Update the USB serial option driver support for the Rolling
-> RW350-GL
-> - VID:PID 33f8:0802, RW350-GL are laptop M.2 cards (with
-> MBIM interfaces for /Linux/Chrome OS)
-> 
-> Here are the outputs of usb-devices:
-> 
-> usbmode=63: mbim, pipe
-> 
-> T:  Bus=02 Lev=01 Prnt=01 Port=02 Cnt=01 Dev#=  2 Spd=5000 MxCh= 0
-> D:  Ver= 3.00 Cls=ef(misc ) Sub=02 Prot=01 MxPS= 9 #Cfgs=  1
-> P:  Vendor=33f8 ProdID=0802 Rev=00.01
-> S:  Manufacturer=Rolling Wireless S.a.r.l.
-> S:  Product=USB DATA CARD
-> C:  #Ifs= 3 Cfg#= 1 Atr=a0 MxPwr=896mA
-> I:  If#= 0 Alt= 0 #EPs= 1 Cls=02(commc) Sub=0e Prot=00 Driver=cdc_mbim
-> E:  Ad=82(I) Atr=03(Int.) MxPS=  64 Ivl=32ms
-> I:  If#= 1 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
-> E:  Ad=01(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> E:  Ad=81(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> I:  If#= 2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-> E:  Ad=02(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> E:  Ad=83(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> 
-> usbmode=64: mbim, others at (If#= 5 adb)
+Add OF notifier handler needed for creating/destroying MIPI DSI devices
+according to dynamic runtime changes in the DT live tree. This code is
+enabled when CONFIG_OF_DYNAMIC is selected.
 
-Can you be more specific about the other interface?
+This is based on existing code for I2C and SPI subsystems.
 
-> T:  Bus=02 Lev=01 Prnt=01 Port=02 Cnt=01 Dev#=  5 Spd=5000 MxCh= 0
-> D:  Ver= 3.00 Cls=ef(misc ) Sub=02 Prot=01 MxPS= 9 #Cfgs=  1
-> P:  Vendor=33f8 ProdID=0802 Rev=00.01
-> S:  Manufacturer=Rolling Wireless S.a.r.l.
-> S:  Product=USB DATA CARD
-> C:  #Ifs=10 Cfg#= 1 Atr=a0 MxPwr=896mA
-> I:  If#= 0 Alt= 0 #EPs= 1 Cls=02(commc) Sub=0e Prot=00 Driver=cdc_mbim
-> E:  Ad=82(I) Atr=03(Int.) MxPS=  64 Ivl=32ms
-> I:  If#= 1 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
-> E:  Ad=01(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> E:  Ad=81(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> I:  If#= 2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-> E:  Ad=02(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> E:  Ad=83(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> I:  If#= 3 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-> E:  Ad=03(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> E:  Ad=84(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> I:  If#= 4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-> E:  Ad=04(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> E:  Ad=85(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> I:  If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=usbfs
-> E:  Ad=05(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> E:  Ad=86(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> I:  If#= 6 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-> E:  Ad=06(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> E:  Ad=87(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> I:  If#= 7 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-> E:  Ad=07(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> E:  Ad=88(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> I:  If#= 8 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-> E:  Ad=08(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> E:  Ad=89(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> I:  If#= 9 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-> E:  Ad=09(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> E:  Ad=8a(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+---
+Changes since v1:
+- Added stub mipi_dsi_of_notifier in CONFIG_OF=n section for compilation
 
-Johan
+ drivers/gpu/drm/drm_mipi_dsi.c | 68 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 67 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mipi_dsi.c
+index a471c46f5ca6..35d6ed1fb587 100644
+--- a/drivers/gpu/drm/drm_mipi_dsi.c
++++ b/drivers/gpu/drm/drm_mipi_dsi.c
+@@ -118,6 +118,7 @@ static void mipi_dsi_dev_release(struct device *dev)
+ {
+ 	struct mipi_dsi_device *dsi = to_mipi_dsi_device(dev);
+ 
++	of_node_clear_flag(dev->of_node, OF_POPULATED);
+ 	of_node_put(dev->of_node);
+ 	kfree(dsi);
+ }
+@@ -158,6 +159,7 @@ static struct mipi_dsi_device *
+ of_mipi_dsi_device_add(struct mipi_dsi_host *host, struct device_node *node)
+ {
+ 	struct mipi_dsi_device_info info = { };
++	struct mipi_dsi_device *device;
+ 	int ret;
+ 	u32 reg;
+ 
+@@ -175,10 +177,72 @@ of_mipi_dsi_device_add(struct mipi_dsi_host *host, struct device_node *node)
+ 
+ 	info.channel = reg;
+ 	info.node = of_node_get(node);
++	of_node_set_flag(node, OF_POPULATED);
+ 
+-	return mipi_dsi_device_register_full(host, &info);
++	device = mipi_dsi_device_register_full(host, &info);
++	if (IS_ERR(device))
++		of_node_clear_flag(node, OF_POPULATED);
++
++	return device;
+ }
++
++#if IS_ENABLED(CONFIG_OF_DYNAMIC)
++static int of_mipi_dsi_notify(struct notifier_block *nb, unsigned long action, void *arg)
++{
++	struct of_reconfig_data *rd = arg;
++	struct mipi_dsi_host *host;
++	struct mipi_dsi_device *device;
++
++	switch (of_reconfig_get_state_change(action, rd)) {
++	case OF_RECONFIG_CHANGE_ADD:
++		host = of_find_mipi_dsi_host_by_node(rd->dn->parent);
++		if (!host)
++			return NOTIFY_OK;	/* not for us */
++
++		if (of_node_test_and_set_flag(rd->dn, OF_POPULATED))
++			return NOTIFY_OK;
++
++		/*
++		 * Clear the flag before adding the device so that fw_devlink
++		 * doesn't skip adding consumers to this device.
++		 */
++		rd->dn->fwnode.flags &= ~FWNODE_FLAG_NOT_DEVICE;
++		device = of_mipi_dsi_device_add(host, rd->dn);
++		if (IS_ERR(device)) {
++			dev_err(host->dev, "failed to create device for '%pOF'\n", rd->dn);
++			of_node_clear_flag(rd->dn, OF_POPULATED);
++			return notifier_from_errno(PTR_ERR(device));
++		}
++		break;
++	case OF_RECONFIG_CHANGE_REMOVE:
++		/* already depopulated? */
++		if (!of_node_check_flag(rd->dn, OF_POPULATED))
++			return NOTIFY_OK;
++
++		/* find our device by node */
++		device = of_find_mipi_dsi_device_by_node(rd->dn);
++		if (!device)
++			return NOTIFY_OK;	/* no? not meant for us */
++
++		/* unregister takes one ref away */
++		mipi_dsi_device_unregister(device);
++
++		/* and put the reference of the find */
++		put_device(&device->dev);
++		break;
++	}
++
++	return NOTIFY_OK;
++}
++
++static struct notifier_block mipi_dsi_of_notifier = {
++	.notifier_call = of_mipi_dsi_notify,
++};
++#else
++static struct notifier_block mipi_dsi_of_notifier __always_unused;
++#endif
+ #else
++static struct notifier_block mipi_dsi_of_notifier __always_unused;
+ static struct mipi_dsi_device *
+ of_mipi_dsi_device_add(struct mipi_dsi_host *host, struct device_node *node)
+ {
+@@ -1703,6 +1767,8 @@ EXPORT_SYMBOL(mipi_dsi_driver_unregister);
+ 
+ static int __init mipi_dsi_bus_init(void)
+ {
++	if (IS_ENABLED(CONFIG_OF_DYNAMIC))
++		WARN_ON(of_reconfig_notifier_register(&mipi_dsi_of_notifier));
+ 	return bus_register(&mipi_dsi_bus_type);
+ }
+ postcore_initcall(mipi_dsi_bus_init);
+-- 
+2.45.2.741.gdbec12cfda-goog
+
 
