@@ -1,49 +1,62 @@
-Return-Path: <linux-kernel+bounces-232214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EBE591A547
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:30:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E75D291A54C
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:31:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A00461C2271E
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:30:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71E0FB249A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E731149C7E;
-	Thu, 27 Jun 2024 11:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A4914D29A;
+	Thu, 27 Jun 2024 11:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ans.pl header.i=@ans.pl header.b="X1knxlpK"
-Received: from smtp.emenem.pl (cmyk.emenem.pl [217.79.154.63])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jN7z5zWm"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B5B14A09E;
-	Thu, 27 Jun 2024 11:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.79.154.63
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A660913E41F;
+	Thu, 27 Jun 2024 11:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719487787; cv=none; b=TT23p0FV4fSOUF3gvxg3UfxGO34SOhh9HkDJ7188U1Hia9Z90/5Lj9Kn6YrkRFcSX4AQIVCM9R225IIKmlOWEthCW7aMS2t46plgOlsBpUy8WNOtylD8hZ2He0/r2yIkWV427jSWi5nAukuk+RkXqfX5olrDXIciWDzbIdfJBSA=
+	t=1719487825; cv=none; b=VVPdeQjzhOMTOLOQQczV4JiyhstficB5sxgUBxLa46YftgplDXLDDbPFpz/sLLJcQy//U3gTXgWt0XClO9d5M0Hj23ZGbs2GS4F/gwyBo2K5EZ3Rbz9QtJSbV8IvFxu1prSLwaeCe59yqs7hmKwk74qxIfOjM4885y6/u8CJISw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719487787; c=relaxed/simple;
-	bh=tiOzdOJNp6ZKRMHsXI8GpXUZGI0r7SB4Baz6mN7VoIg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oeqICeZr0h8KQVYGMOLRpNNF1qTqEZU12ocqRdxSFIdm+1H9+37+iQ3KTK6QwwbU/xXuVQ+RzrRAMdW9N5+WEEIja67IsxnoblPzm6vhLnpYz3Ddpkr0usdKt3zj5AnM2tLJpLMof4v0sSi82UJJACl909Z4l1wmFC09iZIYO6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ans.pl; spf=none smtp.mailfrom=ans.pl; dkim=pass (1024-bit key) header.d=ans.pl header.i=@ans.pl header.b=X1knxlpK; arc=none smtp.client-ip=217.79.154.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ans.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ans.pl
-X-Virus-Scanned: amavisd-new at emenem.pl
-Received: from [192.168.1.10] (c-98-45-176-131.hsd1.ca.comcast.net [98.45.176.131])
-	(authenticated bits=0)
-	by cmyk.emenem.pl (8.17.1.9/8.17.1.9) with ESMTPSA id 45RBTH4j006413
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Thu, 27 Jun 2024 13:29:18 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ans.pl; s=20190507;
-	t=1719487761; bh=OAR1dkJB/scQxeekWuNbHAxMyX4sPBdqtNAKZRpb41A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=X1knxlpKKSV0bU+QboHBTRRoor8IPwrMgCKT6D3ii9KNL5fWCKfEfkxllte/9TA64
-	 rU+iATDr08dckCJjASNozc60h0C2AIIXFYkFmRoHl4JvOGn8x+ySQAPPk9sPPVjP/r
-	 9cGwjFXMXxV4IU8kimSqla84JrLSdBhGzmHgY4zA=
-Message-ID: <9541ab9f-0f13-4856-85f0-14615b77142f@ans.pl>
-Date: Thu, 27 Jun 2024 04:29:16 -0700
+	s=arc-20240116; t=1719487825; c=relaxed/simple;
+	bh=FMOhaUV2i8MrCHhGIzcTXcbZCBRkMiRMf4upve02Zg8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=NNkqJL3NIWoyGWOc8MqmB0CydzSGH5hL8J8m/H4hi8FvhjgpDL18Rmv4C/5TnBk1LFH9/1vvTGZxA9ZhC8F9QkBnhRVw94OSq6FFgdNZWDaemOg/rGyQN7KULFKOglB1Dk0wyR/MOmSdFb5KBHVcvOKkLFGbAjdEJUnuKn8Q/PY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jN7z5zWm; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45RAe8RE016143;
+	Thu, 27 Jun 2024 11:29:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	yvTNhHO8YwMDefQ88K6TNlh3o4bpkTA7GzgWDR19jog=; b=jN7z5zWmwMVhwmOB
+	P3A5vmzLUQkc5ttSyG+C4XfdueBJdSuR1zgf7kvO8LbiRJwgzBbT2V/YAVdZnp0t
+	AmFRFHKmnl+aDlq8LLWhm0LOYyQUqm5S/XGmud51uMgQlUA+NPc1wsm54322K1mT
+	P2fQ8vMsRq4SXnndL6Le9oyjuODheVmqXc5hI+ykyO+E7jOsSu3BQMiqYNvhq8fY
+	yf7IE8phvsyAyfbKjqEWCEF4PER9GF4NZObEYC/gHV3dhAS3DC1RDvYr5VTY4tkT
+	D4pZB+VG5MtFQQzC4f9vLDnOl1HlZkGDjrVu+rb1d5Ry5HGwU5wfqCOMAA0HleDJ
+	gFRbdg==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 400gcmb8th-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Jun 2024 11:29:47 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45RBTkwS012401
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Jun 2024 11:29:46 GMT
+Received: from [10.152.201.37] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 27 Jun
+ 2024 04:29:41 -0700
+Message-ID: <2ba4b368-d706-4723-a0aa-f1579600db23@quicinc.com>
+Date: Thu, 27 Jun 2024 16:59:38 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,78 +64,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Regression caused by "eeprom: at24: Probe for DDR3 thermal sensor
- in the SPD case" - "sysfs: cannot create duplicate filename"
-To: Guenter Roeck <linux@roeck-us.net>,
-        Heiner Kallweit
- <hkallweit1@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa@the-dreams.de>
-Cc: stable@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-hwmon@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <a57e9a39-13ce-4e4d-a7a1-c591f6b4ac65@ans.pl>
- <0dfa2919-98eb-4433-acb4-aa1830787c9b@roeck-us.net>
- <77c1b740-9e6d-40f7-83f0-9a949366f1c9@ans.pl>
- <97c497ae-44f7-4cec-b7d9-f639e4597571@roeck-us.net>
- <797c8371-dff3-4112-9733-4d3119670dbf@gmail.com>
- <5a4e1cd6-5770-423b-9a25-a0fbfd93014a@roeck-us.net>
-From: =?UTF-8?Q?Krzysztof_Ol=C4=99dzki?= <ole@ans.pl>
+Subject: Re: [PATCH v9 1/8] remoteproc: qcom: Add PRNG proxy clock
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <sboyd@kernel.org>, <andersson@kernel.org>, <bjorn.andersson@linaro.org>,
+        <david.brown@linaro.org>, <devicetree@vger.kernel.org>,
+        <jassisinghbrar@gmail.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <mark.rutland@arm.com>,
+        <mturquette@baylibre.com>, <ohad@wizery.com>, <robh@kernel.org>,
+        <sricharan@codeaurora.org>, <gokulsri@codeaurora.org>
+References: <20240621114659.2958170-1-quic_gokulsri@quicinc.com>
+ <20240621114659.2958170-2-quic_gokulsri@quicinc.com>
+ <chi3pzh5ss3mivnhs3qeoen5hsecfcgzaj6qnrgxantvinrri2@bxsbmpufuqpe>
+ <73cb638e-4982-49a2-ba79-0e78402b59ad@quicinc.com>
+ <ga5kczcyn3dqoky4525c74rr7dct5uizun2smvyx3p3u6z6vtm@5vshoozpttod>
+ <2617940e-72ad-4214-be26-7a5b15374609@quicinc.com>
+ <dyh3vxosjjfztgwgpb5jtoqhzfyf5jyfndaujqoslepzvbet4o@kx6xaotzazcs>
 Content-Language: en-US
-In-Reply-To: <5a4e1cd6-5770-423b-9a25-a0fbfd93014a@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8
+From: Gokul Sriram P <quic_gokulsri@quicinc.com>
+In-Reply-To: <dyh3vxosjjfztgwgpb5jtoqhzfyf5jyfndaujqoslepzvbet4o@kx6xaotzazcs>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 5XAp9QFoO9ErigkzPYvY_k_GoJj92gRz
+X-Proofpoint-ORIG-GUID: 5XAp9QFoO9ErigkzPYvY_k_GoJj92gRz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-27_06,2024-06-27_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ mlxlogscore=999 clxscore=1015 mlxscore=0 phishscore=0 impostorscore=0
+ adultscore=0 malwarescore=0 lowpriorityscore=0 priorityscore=1501
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406270086
 
-On 24.06.2024 at 20:45, Guenter Roeck wrote:
-> On 6/24/24 13:58, Heiner Kallweit wrote:
-> [ ... ]
+
+On 6/27/2024 4:38 PM, Dmitry Baryshkov wrote:
+> On Thu, Jun 27, 2024 at 03:31:01PM GMT, Gokul Sriram P wrote:
+>> On 6/27/2024 12:47 AM, Dmitry Baryshkov wrote:
+>>> On Tue, Jun 25, 2024 at 11:03:30AM GMT, Gokul Sriram P wrote:
+>>>> On 6/22/2024 2:38 AM, Dmitry Baryshkov wrote:
+>>>>> On Fri, Jun 21, 2024 at 05:16:52PM GMT, Gokul Sriram Palanisamy wrote:
+>>>>>> PRNG clock is needed by the secure PIL, support for the same
+>>>>>> is added in subsequent patches.
+>>>>> Which 'same'?
+>>>>> What is 'secure PIL'?
+>>>>     will elaborate in the updated version.
+>>>>     To answer your question, secure PIL is signed PIL image which only
+>>>> TrustZone can authenticate and load.
+>>> Fine. So, the current driver can not load WCSS firmware on IPQ8074, is
+>>> that correct? Or was there some kind of firmware interface change? The
+>>> driver was added in 2018, so I can only hope that at that point it
+>>> worked. Could you please explain, what happened?
+>> The existing wcss driver can load unsigned PIL images without the
+>> involvement of TrustZone. That works even now.
+>> With the current change, we are trying to add signed PIL as an option based
+>> on "wcss->need_mem_protection" if set. For signed PIL alone, we send a PAS
+>> request to TrustZone to authenticate and load.
+> I see that you are enabling it unconditionally for IPQ8074. How is it
+> going to work?
+
+Correct Dmitry. In this change, it is forcing secure PIL. With a 
+separate driver for secure PIL, this will be sorted right?
+
+Regards,
+
+Gokul
+
+>> I also just noticed that Bjorn had suggested to submit a new driver for the
+>> PAS based IPQ WCSS instead of overloading this driver. Will also address
+>> that and post a new driver in updated revision.
 >>
->> Too me the issue also looks like a race. According to the OP's logs:
->> - jc42 at 0x18 is instantiated successfully
->> - jc42 at 0x19 returns -EBUSY. This is what is expected if the device
->>    has been instantiated otherwise already.
->> - jc42 at 0x1a returns -EEXIST. Here two instantiations of the the same
->>    device seem to collide.
->> - jc42 at 0x1b returns -EBUSY, like at 0x19.
->>
->> So it looks like referenced change isn't wrong, but reveals an
->> underlying issue with device instantiation races.
-> 
-> It isn't just a race, though. Try to unload the at24 (or ee1004 driver
-> for DDR4) and load it again, and you'll see the -EBUSY errors. Problem
-> is that instantiating those drivers _always_ triggers the call to
-> i2c_new_client_device() even if the jc42 device is already instantiated.
-> Unloading the spd/eeprom driver doesn't unload the jc42 driver,
-> so -EBUSY will be seen if the spd/eeprom driver is loaded again.
-> 
-> I have not been able to reproduce the backtrace with my systems, but those
-> are all with AMD CPUs using the piix4 driver, so timing is likely different.
-> Another difference is that my systems (with DDR4) use the ee1004 driver.
-> That driver instantiates the jc42 devices under a driver lock, so it is
-> guaranteed that a single instantiation doesn't interfere with other
-> instantiations running in parallel.
-
-Right, sorry for not mentioning this in the original report:
-
-[    0.269013] pci 0000:00:1f.3: [8086:1c22] type 00 class 0x0c0500
-[    0.269098] pci 0000:00:1f.3: reg 0x10: [mem 0xc3a02000-0xc3a020ff 64bit]
-[    0.269186] pci 0000:00:1f.3: reg 0x20: [io  0x3000-0x301f]
-[    0.334962] pci 0000:00:1f.3: Adding to iommu group 7
-[    7.874736] i801_smbus 0000:00:1f.3: SMBus using PCI interrupt
-
-$ lspci -s 0000:00:1f.3 -vvnn
-00:1f.3 SMBus [0c05]: Intel Corporation 6 Series/C200 Series Chipset Family SMBus Controller [8086:1c22] (rev 04)
-        Subsystem: Dell Device [1028:04de]
-        Control: I/O+ Mem+ BusMaster- SpecCycle- MemWINV- VGASnoop- ParErr- Stepping- SERR- FastB2B- DisINTx-
-        Status: Cap- 66MHz- UDF- FastB2B+ ParErr- DEVSEL=medium >TAbort- <TAbort- <MAbort- >SERR- <PERR- INTx-
-        Interrupt: pin C routed to IRQ 19
-        IOMMU group: 7
-        Region 0: Memory at c3a02000 (64-bit, non-prefetchable) [size=256]
-        Region 4: I/O ports at 3000 [size=32]
-        Kernel driver in use: i801_smbus
-
-Krzysztof
-
+>> Regards,
+>> Gokul
+>>>>>> Signed-off-by: Nikhil Prakash V <quic_nprakash@quicinc.com>
+>>>>>> Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
+>>>>>> Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+>>>>>> ---
+>>>>>>     drivers/remoteproc/qcom_q6v5_wcss.c | 65 +++++++++++++++++++++--------
+>>>>>>     1 file changed, 47 insertions(+), 18 deletions(-)
 
