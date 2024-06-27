@@ -1,224 +1,182 @@
-Return-Path: <linux-kernel+bounces-232298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE3A391A67C
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:21:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B39891A682
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:25:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFF9F1C21B45
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:21:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 520932852F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DEBC156C74;
-	Thu, 27 Jun 2024 12:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27BD158DD8;
+	Thu, 27 Jun 2024 12:25:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FMPDxksu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="C8CAa5qO"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1FB3152E17
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:20:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E052713A276;
+	Thu, 27 Jun 2024 12:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719490840; cv=none; b=bDBGzs/vAvpku2x3c6wy48B5xJ0sDGBJHor30JEhx1DkCush8gtwJgzqCHShPETiOVBXww9Z9XGEQ99/BVMWqSmbPE0oqzaqDen8WnXHRxak+Zu5eV/7LtssIRThuDJbnwBPu52duaOQSP3k0xtaZLuqd6cjB58oNgoZinNa7IM=
+	t=1719491121; cv=none; b=K03EifKYEF7PJ+4f2P8UJQWmPRCvvXYi0G9m1I4wjKtXCxFhgsLjdsIpqZFaYx0Z0XDXWrP57UY4adENxysX200ClbV27VM/Aa+qSZgtC71ROW4ctkQ+sDq47h+gZNJHQUImf5R9ohcRGMzVAHSD5Ar11xBaagJSlTxYL+/twEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719490840; c=relaxed/simple;
-	bh=qN8SMFWQgV9JwErL7cy0n0B3ePu5fSwTpAqf8ftkIo8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=b+1U1dAb1Xm3ClkBhcAVT6Xa5yhtlWKIOf9IKQvfzWjY+X8To9T3YZ0ED0UbAhSpuC1GpRmz6QArCe3JqutSfHfxbqYlxGV+7ZaPeDXyTKXI8F5FmRWCAu+WTnrGR3B7qWKvB8LIGYT+RGIJEh3z41fyf6X9jiKCBrfhpljmszI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FMPDxksu; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719490836;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gPWsol0l+mMURaI6G3cU4DtjhvRK9elf6OO4MFC4Ifs=;
-	b=FMPDxksukRlIvESDSLYrQ9/+bH9qFwlRRpqtaJWUahPEZ5TfIrRKDydH+9pE45CNdidFMH
-	mUP26zZ5pt7NWONRIsYSOK+U+cWWbaRiYsZqe46yfkY7DIz+HPIVJ3PsH110anBUm//8ee
-	vRZ8AjERSWXQj8se/xnyedeUj7UmylM=
-Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com
- [209.85.219.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-314-_NGtKt7aMqqwPtndVbwWzQ-1; Thu, 27 Jun 2024 08:20:34 -0400
-X-MC-Unique: _NGtKt7aMqqwPtndVbwWzQ-1
-Received: by mail-yb1-f197.google.com with SMTP id 3f1490d57ef6-e02bb41247dso13969250276.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 05:20:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719490834; x=1720095634;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gPWsol0l+mMURaI6G3cU4DtjhvRK9elf6OO4MFC4Ifs=;
-        b=BIVpchkSvyVxDh0i5o0ttIGMjTbXbJi/Rrw4a9fmH0ayCfwCropzkAqqXW2ZzSBKmS
-         wn1fRll91jLcdAGuUoOK3ew7H24uO21/362sgakaKD6oOOePTRp409umph+MLGq7ZSq+
-         WcRAuSFvEGAjGMBJk+55OhY1Z/FX0ANXwqb/MUpKYIH1NmJRfZQTcv8GefW7leBFHzL5
-         oDBWaDR46ivrjylRMPvdt6SycdaFmxRfzMkjUSqcN/VgperotkUzQNzZY+epzksZ9Nu+
-         f4rPpUA8XTz9odAgweV1X3RkHr0vOwnr0e2+Mamembdv6cBtNQHm3JzlSTXUqLBIIKyl
-         sKyA==
-X-Forwarded-Encrypted: i=1; AJvYcCWkJT9PpTFkPptUaljdIP79WINsMzUfa+GD1PgQfonqSEAbM1KeovcmUHnlnhZBVrvSf/GplZhEp15KQU2IumHgt2ddnUybCi/Q7/X7
-X-Gm-Message-State: AOJu0YxxenyZNKNFNxYMrwgRVP7kPdOIL4Z1c1edEAEW3stz9vSn534r
-	2Rc6k7UaRDPK08FXXf8nUpio42iOtDIeGVTiCZSwLQbK8iBygzlJvjQh5UPfjAcZY+cNZQDu2Y3
-	1sKHREau233TXr4CNDQpEbQwGc2FkFzb0lLhB23sHFfbIklIHM62eObjG9pwWvw==
-X-Received: by 2002:a25:adce:0:b0:e02:c6fe:aea2 with SMTP id 3f1490d57ef6-e0300f5057emr13058041276.7.1719490834238;
-        Thu, 27 Jun 2024 05:20:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFE+keJ4XK5rFmacMpWdGhD/DYdsXTsAoYw7KTLDSw4TQq7OwCqY6mKoi2ZjRknhOwj1gNt4Q==
-X-Received: by 2002:a25:adce:0:b0:e02:c6fe:aea2 with SMTP id 3f1490d57ef6-e0300f5057emr13058023276.7.1719490833871;
-        Thu, 27 Jun 2024 05:20:33 -0700 (PDT)
-Received: from [10.0.0.200] (modemcable096.103-83-70.mc.videotron.ca. [70.83.103.96])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44641e0b648sm5424881cf.8.2024.06.27.05.20.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Jun 2024 05:20:33 -0700 (PDT)
-Message-ID: <d44c633d-d1ef-4f9c-bcac-554ae6a4c661@redhat.com>
-Date: Thu, 27 Jun 2024 08:20:32 -0400
+	s=arc-20240116; t=1719491121; c=relaxed/simple;
+	bh=tqaCiTPc0BDgAKsEhog6Xbqnk6zFGNOhzTcLMOww80Y=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fuM+2XbU1zoG1XGe3qDqSsD1JxGHPViIed4ejIihY3yyrjmtoW4s5d0nDkQ4sIkGs2z4ER7lg6lIfBYqvI/UMO1QR+v8DJtoaqb0/TCNoo2z/mbR6pZizbIqOleO+R4QhX27fk7XzL8f5NK76qxma355cGtmVMzIzEYarVQD45A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=C8CAa5qO; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45RCOkIm100180;
+	Thu, 27 Jun 2024 07:24:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1719491086;
+	bh=0pV/0H7VpYGnFqZVo1KrwYbiFTjYWzvPhrmi4sO4twM=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=C8CAa5qOQ2GHiqE1q0OR2dUqbC+jTveAQi3mV3AF1j7XdPXlllM4rmSf3Zi0e5i84
+	 4aBd3dxMpMG0g/o6jN9PKeLwuA894RllztkXXK8hjhQ14aA830i75Z1xYv64kN8gay
+	 aMCe5lceYjAZfDNOomZuKt9KSKe0cpgbTm9+FZ0Y=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45RCOkl9069355
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 27 Jun 2024 07:24:46 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 27
+ Jun 2024 07:24:46 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 27 Jun 2024 07:24:46 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [172.24.227.9])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45RCOjrY087518;
+	Thu, 27 Jun 2024 07:24:45 -0500
+Date: Thu, 27 Jun 2024 17:54:44 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Jan Kiszka <jan.kiszka@siemens.com>,
+        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
+	<kw@linux.com>
+CC: Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Kishon Vijay Abraham I
+	<kishon@kernel.org>,
+        Siddharth Vadapalli <s-vadapalli@ti.com>,
+        Vignesh
+ Raghavendra <vigneshr@ti.com>, Nishanth Menon <nm@ti.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        Linux Kernel Mailing
+ List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] PCI: keystone: Add workaround for Errata #i2037 (AM65x
+ SR 1.0)
+Message-ID: <f27ee4af-eda9-49b1-aab1-2477e5a79642@ti.com>
+References: <819861d0-1b3a-4722-969c-d2f48b624622@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG] ice driver crash on arm64
-From: Luiz Capitulino <luizcap@redhat.com>
-To: Maciej Fijalkowski <maciej.fijalkowski@intel.com>, xmu@redhat.com
-Cc: jesse.brandeburg@intel.com, anthony.l.nguyen@intel.com, poros@redhat.com,
- netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- magnus.karlsson@intel.com
-References: <8f9e2a5c-fd30-4206-9311-946a06d031bb@redhat.com>
- <ZnQsdxzumig7CD7c@boxer> <34ffbdcb-b1f9-4cee-9f55-7019a228d3f8@redhat.com>
- <ZnvdGQ0fUTAIorhS@boxer> <a4549e76-5852-4b9f-82f9-0f2d665ab122@redhat.com>
-Content-Language: en-US, en-CA
-In-Reply-To: <a4549e76-5852-4b9f-82f9-0f2d665ab122@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <819861d0-1b3a-4722-969c-d2f48b624622@siemens.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 2024-06-26 08:53, Luiz Capitulino wrote:
-> On 2024-06-26 05:19, Maciej Fijalkowski wrote:
->> On Thu, Jun 20, 2024 at 09:23:42AM -0400, Luiz Capitulino wrote:
->>> On 2024-06-20 09:19, Maciej Fijalkowski wrote:
->>>> On Tue, Jun 18, 2024 at 11:23:28AM -0400, Luiz Capitulino wrote:
->>>>> Hi,
->>>>>
->>>>> We have an Ampere Mount Snow system (which is arm64) with an Intel E810-C
->>>>> NIC plugged in. The kernel is configured with 64k pages. We're observing
->>>>> the crash below when we run iperf3 as a server in this system and load traffic
->>>>> from another system with the same configuration. The crash is reproducible
->>>>> with latest Linus tree 14d7c92f:
->>>>>
->>>>> [  225.715759] Unable to handle kernel paging request at virtual address 0075e625f68aa42c
->>>>> [  225.723669] Mem abort info:
->>>>> [  225.726487]   ESR = 0x0000000096000004
->>>>> [  225.730223]   EC = 0x25: DABT (current EL), IL = 32 bits
->>>>> [  225.735526]   SET = 0, FnV = 0
->>>>> [  225.738568]   EA = 0, S1PTW = 0
->>>>> [  225.741695]   FSC = 0x04: level 0 translation fault
->>>>> [  225.746564] Data abort info:
->>>>> [  225.749431]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
->>>>> [  225.754906]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
->>>>> [  225.759944]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
->>>>> [  225.765250] [0075e625f68aa42c] address between user and kernel address ranges
->>>>> [  225.772373] Internal error: Oops: 0000000096000004 [#1] SMP
->>>>> [  225.777932] Modules linked in: xfs(E) crct10dif_ce(E) ghash_ce(E) sha2_ce(E) sha256_arm64(E) sha1_ce(E) sbsa_gwdt(E) ice(E) nvme(E) libie(E) dimlib(E) nvme_core(E) gnss(E) nvme_auth(E) ixgbe(E) igb(E) mdio(E) i2c_algo_bit(E) i2c_designware_platform(E) xgene_hwmon(E) i2c_designware_core(E) dm_mirror(E) dm_region_hash(E) dm_log(E) dm_mod(E)
->>>>> [  225.807902] CPU: 61 PID: 7794 Comm: iperf3 Kdump: loaded Tainted: G            E      6.10.0-rc4+ #1
->>>>> [  225.817021] Hardware name: LTHPC GR2134/MP32-AR2-LT, BIOS F31j (SCP: 2.10.20220531) 08/01/2022
->>>>> [  225.825618] pstate: 00400009 (nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->>>>> [  225.832566] pc : __arch_copy_to_user+0x4c/0x240
->>>>> [  225.837088] lr : _copy_to_iter+0x104/0x518
->>>>> [  225.841173] sp : ffff80010978f6e0
->>>>> [  225.844474] x29: ffff80010978f730 x28: 0000000000007388 x27: 4775e625f68aa42c
->>>>> [  225.851597] x26: 0000000000000001 x25: 00000000000005a8 x24: 00000000000005a8
->>>>> [  225.858720] x23: 0000000000007388 x22: ffff80010978fa60 x21: ffff80010978fa60
->>>>> [  225.865842] x20: 4775e625f68aa42c x19: 0000000000007388 x18: 0000000000000000
->>>>> [  225.872964] x17: 0000000000000000 x16: 0000000000000000 x15: 4775e625f68aa42c
->>>>> [  225.880087] x14: aaa03e61c262c44f x13: 5fb01a5ebded22da x12: 415feff815830f22
->>>>> [  225.887209] x11: 7411a8ffaab6d3d7 x10: 95af4645d12e6d70 x9 : ffffba83c2faddac
->>>>> [  225.894332] x8 : c1cbcc6e9552ed64 x7 : dfcefe933cdc57ae x6 : 0000fffde5aa9e80
->>>>> [  225.901454] x5 : 0000fffde5ab1208 x4 : 0000000000000004 x3 : 0000000000016180
->>>>> [  225.908576] x2 : 0000000000007384 x1 : 4775e625f68aa42c x0 : 0000fffde5aa9e80
->>>>> [  225.915699] Call trace:
->>>>> [  225.918132]  __arch_copy_to_user+0x4c/0x240
->>>>> [  225.922304]  simple_copy_to_iter+0x4c/0x78
->>>>> [  225.926389]  __skb_datagram_iter+0x18c/0x270
->>>>> [  225.930647]  skb_copy_datagram_iter+0x4c/0xe0
->>>>> [  225.934991]  tcp_recvmsg_locked+0x59c/0x9a0
->>>>> [  225.939162]  tcp_recvmsg+0x78/0x1d0
->>>>> [  225.942638]  inet6_recvmsg+0x54/0x128
->>>>> [  225.946289]  sock_recvmsg+0x78/0xd0
->>>>> [  225.949766]  sock_read_iter+0x98/0x108
->>>>> [  225.953502]  vfs_read+0x2a4/0x318
->>>>> [  225.956806]  ksys_read+0xec/0x110
->>>>> [  225.960108]  __arm64_sys_read+0x24/0x38
->>>>> [  225.963932]  invoke_syscall.constprop.0+0x80/0xe0
->>>>> [  225.968624]  do_el0_svc+0xc0/0xe0
->>>>> [  225.971926]  el0_svc+0x48/0x1b0
->>>>> [  225.975056]  el0t_64_sync_handler+0x13c/0x158
->>>>> [  225.979400]  el0t_64_sync+0x1a4/0x1a8
->>>>> [  225.983051] Code: 78402423 780008c3 910008c6 36100084 (b8404423)
->>>>> [  225.989132] SMP: stopping secondary CPUs
->>>>> [  225.995919] Starting crashdump kernel...
->>>>> [  225.999829] Bye!
->>>>>
->>>>> I was able to find out this is actually a regression introduced in 6.3-rc1
->>>>> and was able to bisect it down to commit:
->>>>>
->>>>> commit 1dc1a7e7f4108bad4af4c7c838f963d342ac0544
->>>>> Author: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
->>>>> Date:   Tue Jan 31 21:44:59 2023 +0100
->>>>>
->>>>>       ice: Centrallize Rx buffer recycling
->>>>>
->>>>>       Currently calls to ice_put_rx_buf() are sprinkled through
->>>>>       ice_clean_rx_irq() - first place is for explicit flow director's
->>>>>       descriptor handling, second is after running XDP prog and the last one
->>>>>       is after taking care of skb.
->>>>>
->>>>>       1st callsite was actually only for ntc bump purpose, as Rx buffer to be
->>>>>       recycled is not even passed to a function.
->>>>>
->>>>>       It is possible to walk through Rx buffers processed in particular NAPI
->>>>>       cycle by caching ntc from beginning of the ice_clean_rx_irq().
->>>>>
->>>>>       To do so, let us store XDP verdict inside ice_rx_buf, so action we need
->>>>>       to take on will be known. For XDP prog absence, just store ICE_XDP_PASS
->>>>>       as a verdict.
->>>>>
->>>>>       Signed-off-by: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
->>>>>       Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
->>>>>       Reviewed-by: Alexander Lobakin <alexandr.lobakin@intel.com>
->>>>>       Link: https://lore.kernel.org/bpf/20230131204506.219292-7-maciej.fijalkowski@intel.com
->>>>>
->>>>> Some interesting/important information:
->>>>>
->>>>>    * Issue doesn't reproduce when:
->>>>>       - The kernel is configured w/ 4k pages
->>>>>       - UDP is used (ie. iperf3 -c <server> -u -b 0)
->>>>>       - legacy-rx is set
->>>>>    * The NIC firmware is version 4.30 (we haven't figured out how to update it from arm)
->>>>>
->>>>> By taking a quick look at the code, ICE_LAST_OFFSET in ice_can_reuse_rx_page() seems
->>>>> wrong since Rx buffers are 3k w/ bigger page sizes but just changing it to
->>>>> ICE_RXBUF_3072 doesn't fix the issue.
->>>>>
->>>>> Could you please help taking a look?
->>>>
->>>> Thanks for the report. I am on sick leave currently, will try to take
->>>> alook once I'm back.
->>>
->>> I'm sorry to hear that Maciej, I hope you get well soon.
->>
->> Thanks I'm back now. Can you tell us also what MTU is used for these
->> tests? Our validation is working on repro now.
+On Wed, Jun 26, 2024 at 12:10:41AM +0200, Jan Kiszka wrote:
+> From: Kishon Vijay Abraham I <kishon@ti.com>
 > 
-> Xiumei,
+> Errata #i2037 in AM65x/DRA80xM Processors Silicon Revision 1.0
+> (SPRZ452D_July 2018_Revised December 2019 [1]) mentions when an
+> inbound PCIe TLP spans more than two internal AXI 128-byte bursts,
+> the bus may corrupt the packet payload and the corrupt data may
+> cause associated applications or the processor to hang.
 > 
-> Can you take a look now that you got the machine back?
+> The workaround for Errata #i2037 is to limit the maximum read
+> request size and maximum payload size to 128 Bytes. Add workaround
+> for Errata #i2037 here. The errata and workaround is applicable
+> only to AM65x SR 1.0 and later versions of the silicon will have
+> this fixed.
+> 
+> [1] -> http://www.ti.com/lit/er/sprz452d/sprz452d.pdf
+> 
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> Signed-off-by: Achal Verma <a-verma1@ti.com>
+> Link: https://lore.kernel.org/linux-pci/20210325090026.8843-7-kishon@ti.com/
 
-Strangely, I don't see Xiumei's answer on lore (although I did receive the
-email). Just in case, the MTU is 1500.
+Please drop the above. It needs to be mentioned as the v1 below the
+tear-line.
 
-- Luiz
+> Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> ---
+> 
+> Needed for the IOT2050 PG1 variants. Pending downstream way too long.
+> 
+>  drivers/pci/controller/dwc/pci-keystone.c | 42 +++++++++++++++++++++++
+>  1 file changed, 42 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
+> index d3a7d14ee685..a04f1087ce91 100644
+> --- a/drivers/pci/controller/dwc/pci-keystone.c
+> +++ b/drivers/pci/controller/dwc/pci-keystone.c
+> @@ -34,6 +34,11 @@
+>  #define PCIE_DEVICEID_SHIFT	16
 
+[...]
+
+>  
+> +	static const struct pci_device_id am6_pci_devids[] = {
+> +		{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_AM654X),
+> +		 .class = PCI_CLASS_BRIDGE_PCI << 8, .class_mask = ~0, },
+> +		{ 0, },
+> +	};
+>  
+>  	if (pci_is_root_bus(bus))
+>  		bridge = dev;
+> @@ -562,6 +578,32 @@ static void ks_pcie_quirk(struct pci_dev *dev)
+>  			pcie_set_readrq(dev, 256);
+>  		}
+>  	}
+> +
+> +	/*
+> +	 * Memory transactions fail with PCI controller in AM654 PG1.0
+> +	 * when MRRS is set to more than 128 Bytes. Force the MRRS to
+> +	 * 128 Bytes in all downstream devices.
+> +	 */
+
+Comments on the v1 patch at:
+https://lore.kernel.org/linux-pci/YF2K6+R1P3SNUoo5@rocinante/
+haven't been addressed in this patch. Kindly update the patch based on
+Krzysztof's feedback on the v1 patch.
+
+> +	if (pci_match_id(am6_pci_devids, bridge)) {
+> +		bridge_dev = pci_get_host_bridge_device(dev);
+> +		if (!bridge_dev && !bridge_dev->parent)
+> +			return;
+> +
+> +		ks_pcie = dev_get_drvdata(bridge_dev->parent);
+> +		if (!ks_pcie)
+> +			return;
+> +
+> +		val = ks_pcie_app_readl(ks_pcie, PID);
+> +		val &= RTL;
+> +		val >>= RTL_SHIFT;
+> +		if (val != AM6_PCI_PG1_RTL_VER)
+> +			return;
+> +
+> +		if (pcie_get_readrq(dev) > 128) {
+> +			dev_info(&dev->dev, "limiting MRRS to 128\n");
+> +			pcie_set_readrq(dev, 128);
+> +		}
+> +	}
+>  }
+>  DECLARE_PCI_FIXUP_ENABLE(PCI_ANY_ID, PCI_ANY_ID, ks_pcie_quirk);
+
+Regards,
+Siddharth.
 
