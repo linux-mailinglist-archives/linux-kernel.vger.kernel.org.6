@@ -1,249 +1,137 @@
-Return-Path: <linux-kernel+bounces-232576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEFAA91AB26
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:24:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D78D591AB30
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:26:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CD2928865F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:24:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14FEC1C20AA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB65199EA4;
-	Thu, 27 Jun 2024 15:23:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780171991A9;
+	Thu, 27 Jun 2024 15:23:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="ZrFUC3wY"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GT6Rx21a"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76A561991BE;
-	Thu, 27 Jun 2024 15:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FDF1198E89
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 15:23:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719501795; cv=none; b=rj9RQEkbNOA8dOqCfKv2JgQqV36tMG9ZPo4WdwniyR/ssVl3kmj81m07967MGycb7pnyvB1dmuruUAAzSumiz3zRpyfn8Sv/5uKD8Vu6YgqJ0ZOqt26zJ9dsYlTuHfWn8LLUGRtr9QNNp9fu9R5wjG5bf411OJZovlDlaPqf6/0=
+	t=1719501832; cv=none; b=qdFM1z4VLbrtwFZ1/iDiA8M6gVh+LQ0NapZ/7yqjvqrn0xl2kIizMxIkD/9DTWfPtfCpYHNscWUvtKlYEoTIKHZse9VSPh2S2vCZrN5Wdrpg+oBmRGPO7XMow/idcT9QceSpyx2o6A0tutrwkoUT+DGrxPZ3k8oMnCbotIpjP/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719501795; c=relaxed/simple;
-	bh=xzEpoi/822I96WwOObd/AuRtvCVbCJ5NC2CjyIj3490=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=K+B5hvF1x43b8pwhNc6/Zk2p58gie9Hy4GcPbeT7lHsV5Rpa4vvM05vIgE782TCwvkXEFnefyHbT+ID6+sNYF6DqJi6Ho+NT7KefMAZP8R565NL90b59WCBEyxq5STuRO6DoDKJD6C46LjZYoHMWBrEsOP7PAh4HqChiKL6I6J0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=ZrFUC3wY; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1719501791;
-	bh=xzEpoi/822I96WwOObd/AuRtvCVbCJ5NC2CjyIj3490=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZrFUC3wYccQqgud2Y9p29g8IH+WTFREkfmcV6tD4SLwV8Sf2HhhKcmlQ3cwndtbqQ
-	 9ofSt6RsovSy1+0clZdLDngAVDMnanVrR942pZPOU5ke44IUOZxS9VrYSwhGxOS++P
-	 MlwYTgNHv+AsFz6nEc/GEp0CKu4qU+qQYkujotWQUEIajWXY2tIUmphMSFE7jUNXJ1
-	 BrmR3qsiqM1s8JElzqShDiHz4hpqie2tTzAvBEKfIbGXfoxChJwZqgoh4aLrCOjv1H
-	 IM51DO0Tyvjy6XczZviKD6qMAcAl6cERS51mUfLuWflQdCHWZ24A8B3OB+RX2FUJv+
-	 EG+wxV7fiCCYQ==
-Received: from thinkos.internal.efficios.com (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4W92Q72ftJz17lr;
-	Thu, 27 Jun 2024 11:23:11 -0400 (EDT)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Cc: linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Yonghong Song <yhs@fb.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	bpf@vger.kernel.org,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Michael Jeanson <mjeanson@efficios.com>
-Subject: [PATCH v5 8/8] tracing: Convert sys_enter/exit to faultable tracepoints
-Date: Thu, 27 Jun 2024 11:23:40 -0400
-Message-Id: <20240627152340.82413-9-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240627152340.82413-1-mathieu.desnoyers@efficios.com>
-References: <20240627152340.82413-1-mathieu.desnoyers@efficios.com>
+	s=arc-20240116; t=1719501832; c=relaxed/simple;
+	bh=q5e0BwtxSUJcwFevbMIiLhtV0bDtLk1JVUBFWPJRci4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=FrbFJKpJN09MOpJ0OYtXhokGNPgWrRv7Hig8bukaQYypePsj4VvaVOvaXNKG9Iy5hzWvXYXJ8GDAN9Nzr0qexH2ORquJJFSUcdHAcQrjckmc8UKTCx0lgNabEreTWKkeLVOduX/woVniEAB/G1tT8mDGQSHxIUkNdyDd1Mg4rEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GT6Rx21a; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-424ad991c1cso24153085e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 08:23:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719501829; x=1720106629; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PBnWRzOVrE39LA/BtdLJYz0EF2Ov+NcNWuXEh5DU/2E=;
+        b=GT6Rx21akVrMn+CyxVpR7TheVWjZrHKDdRZgRrXcDC9Ck3UqmiYPs7HNPQGDdgcw+P
+         55/m9QaEtrJX3qFXDTz1UAHVih/xceztSchH90ideebaJIDp4J8zn0pOjpbGn3j4+OdE
+         IDG2SlQqkiPGaGmatXBDO0MmwjqFwjj4jgFj/Ldpcv7/7zzaEbkERgs2QbTnSu2Nn5Up
+         83lVjYmDOUe9O0UbRWuqAqmWFZHlOeOUEVUAVB4HXCf+c3iRD7ZwrH5ECUeZH6xjhXuF
+         zs3fWEQbDJE8NDU8IxfStM9E6Jn6caR0H+8u7GQiBICglMpOKAWzyrv0FN4hW6wYVrog
+         7Pkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719501829; x=1720106629;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PBnWRzOVrE39LA/BtdLJYz0EF2Ov+NcNWuXEh5DU/2E=;
+        b=qglkB7rtCZ7lnFoCvVy9LVv2zQopljOmC38KIpLj+c03nw5BL6DElqP8BhhZEyTzCC
+         lEoH4OMnCvWwAAXwlZxoHGOW/OAjhE5ntx5n0AKPc5nxT8jXnPVxCGqu5x9pgbcTsKGm
+         vPTEPyoq+KUCwTEm53yCRCErG0CjfvoQ5PZ0hKXo/N7VpQgngbvGVNPXMzEN04AdQS6c
+         Fz3Bm4GYAVnvavtv615e7OLLNg8B4MSUKfhcUYmOFUqhLzHgpAp1ZmHIkiZngy9wouVG
+         LPauxr02QijXtyefWMVxYe3RQPd3FM7cAOiX8a3AMBwBMsUCiuBpRjNm7GjPDZEWpmW/
+         IaJA==
+X-Forwarded-Encrypted: i=1; AJvYcCVjZgAAKPlSZxnk/492F+Xgo9O3Vk0my2FpEKQahKxUrkrlXhWO9oAXuoek8Mvr5hcLqN83eUi+hEQJCgHbqPp1xFoCjLuOV0hnT9pz
+X-Gm-Message-State: AOJu0YxUbcp1w7V2JBcu8dvfNFHoy5OPrZSJYWklzjZPhnkXnvaJhCyj
+	CKf5nHKI4f1WiNzDYAJDTqHC1XdZtCtHSU6DC1Umf2wfs6rj0QpWVyxOmsgVC2Y=
+X-Google-Smtp-Source: AGHT+IGz4RFVCbxrSnzyiZWinUPxSefZKCrCIlIhIcYbR4ADu79IBzwSrxjnJD9KzdgtU4iOvyRIFQ==
+X-Received: by 2002:a05:600c:9a6:b0:424:a31d:a046 with SMTP id 5b1f17b1804b1-424a31da1eamr71772985e9.15.1719501829317;
+        Thu, 27 Jun 2024 08:23:49 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42564bb59b7sm32783185e9.34.2024.06.27.08.23.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 08:23:48 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 0/4] ASoC: codecs: lpass-rx-macro: Few code cleanups
+Date: Thu, 27 Jun 2024 17:23:42 +0200
+Message-Id: <20240627-b4-qcom-audio-lpass-codec-cleanups-v1-0-ede31891d238@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAP6DfWYC/x3NQQrDIBBA0auEWXdAJYm0Vyld2HFsB1K1DgmFk
+ LtHunyb/3dQbsIKt2GHxpuolNxhLwPQO+QXo8RucMaNZnYenyN+qXwwrFEKLjWoIpXIhLRwyGt
+ VdN76Kdlo5muCHqqNk/z+k/vjOE7dO1p1dAAAAA==
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>
+Cc: alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org, 
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=949;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=q5e0BwtxSUJcwFevbMIiLhtV0bDtLk1JVUBFWPJRci4=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmfYP/EtpuKpXFrpXU8aGEeX8e7rsZWx79JF/PG
+ f1oa4SAEn2JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZn2D/wAKCRDBN2bmhouD
+ 17pYD/sESwJpcYRXVf8DHMWNHdhNf9Y3i6N6wtGjkdSXczWRJlm629OhFVRWJ0NDXhzP+QD0IwJ
+ I2TDiCFdbyeKZZd1C26Ux9JgZgDb/NB1qqIP4SqmFcbb+zPE1BysZ/e7Oa2urPN9edCN2cO0j0b
+ STisS6u18f/gWPuBkRW/DF80vhY4sJenFRm/HI+0Ud190zMlSBJws30Ewf+VUQDvzmZOlu4d+al
+ +Bu0/m5JylJOc3JMFlIYuTif3T7WXeSJcs1fTH1+JAnEJ2S/a83JHURmBIqrO8/YZxyXsgoFU/s
+ UgF46V3P83fK1gOVEFUUXX0Mdo5ffvvgPlyW7KBp+HD/2QxT9wEH6yWgBJTpVvIa69xzSAqXU+b
+ 6tW94bkmWwjis99DQZSdcT1zYqvkDAM6MZZAQ95B58SkOZghfaw+Q1GfnidByDJtkqnybgQ9/AS
+ Bs0wSkJI8Q7F69IHR72sEIOfUEKmPw6YBLETNNAPBTT5AW7a1K2RziXcVEuxj1k/umLEPgRa3UW
+ a7v3Y36UUjOZtSwI0kcPpNWMKT3FOMNhZ3v+XCv14D/i8x/MOS9Nr40HAibmbbcAJQ5HENbSrih
+ u5t+v+N1XX7tQi8IX1e2M6YlPgrUvSesPTFFDgPKcEvaW3OrHkRhTK59FlLz9M7pGVbaW0zkyuC
+ h5PFDnKVPwBwbdw==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Convert the definition of the system call enter/exit tracepoints to
-faultable tracepoints now that all upstream tracers handle it.
+Hi,
 
-This allows tracers to fault-in userspace system call arguments such as
-path strings within their probe callbacks.
+Improve a bit the Qualcomm LPASS RX macro driver and align similar parts
+of code with LPASS WSA macro driver for consistency.
 
-Link: https://lore.kernel.org/lkml/20231002202531.3160-1-mathieu.desnoyers@efficios.com/
-Co-developed-by: Michael Jeanson <mjeanson@efficios.com>
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Signed-off-by: Michael Jeanson <mjeanson@efficios.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Yonghong Song <yhs@fb.com>
-Cc: Paul E. McKenney <paulmck@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: bpf@vger.kernel.org
-Cc: Joel Fernandes <joel@joelfernandes.org>
+No external dependencies.
+
+Best regards,
+Krzysztof
+
 ---
-Since v4:
-- Use 'guard(preempt_notrace)'.
-- Add brackets to multiline 'if' statements.
----
- include/trace/events/syscalls.h |  4 +--
- kernel/trace/trace_syscalls.c   | 52 ++++++++++++++++++++++++++++-----
- 2 files changed, 46 insertions(+), 10 deletions(-)
+Krzysztof Kozlowski (4):
+      ASoC: codecs: lpass-rx-macro: Simplify with devm allocations
+      ASoC: codecs: lpass-rx-macro: Keep static regmap_config as const
+      ASoC: dapm: Use unsigned for number of widgets in snd_soc_dapm_new_controls()
+      ASoC: codecs: lpass-rx-macro: Use unsigned for number of widgets
 
-diff --git a/include/trace/events/syscalls.h b/include/trace/events/syscalls.h
-index b6e0cbc2c71f..dc30e3004818 100644
---- a/include/trace/events/syscalls.h
-+++ b/include/trace/events/syscalls.h
-@@ -15,7 +15,7 @@
- 
- #ifdef CONFIG_HAVE_SYSCALL_TRACEPOINTS
- 
--TRACE_EVENT_FN(sys_enter,
-+TRACE_EVENT_FN_MAY_FAULT(sys_enter,
- 
- 	TP_PROTO(struct pt_regs *regs, long id),
- 
-@@ -41,7 +41,7 @@ TRACE_EVENT_FN(sys_enter,
- 
- TRACE_EVENT_FLAGS(sys_enter, TRACE_EVENT_FL_CAP_ANY)
- 
--TRACE_EVENT_FN(sys_exit,
-+TRACE_EVENT_FN_MAY_FAULT(sys_exit,
- 
- 	TP_PROTO(struct pt_regs *regs, long ret),
- 
-diff --git a/kernel/trace/trace_syscalls.c b/kernel/trace/trace_syscalls.c
-index 9c581d6da843..314666d663b6 100644
---- a/kernel/trace/trace_syscalls.c
-+++ b/kernel/trace/trace_syscalls.c
-@@ -299,6 +299,12 @@ static void ftrace_syscall_enter(void *data, struct pt_regs *regs, long id)
- 	int syscall_nr;
- 	int size;
- 
-+	/*
-+	 * Probe called with preemption enabled (may_fault), but ring buffer and
-+	 * per-cpu data require preemption to be disabled.
-+	 */
-+	guard(preempt_notrace)();
-+
- 	syscall_nr = trace_get_syscall_nr(current, regs);
- 	if (syscall_nr < 0 || syscall_nr >= NR_syscalls)
- 		return;
-@@ -338,6 +344,12 @@ static void ftrace_syscall_exit(void *data, struct pt_regs *regs, long ret)
- 	struct trace_event_buffer fbuffer;
- 	int syscall_nr;
- 
-+	/*
-+	 * Probe called with preemption enabled (may_fault), but ring buffer and
-+	 * per-cpu data require preemption to be disabled.
-+	 */
-+	guard(preempt_notrace)();
-+
- 	syscall_nr = trace_get_syscall_nr(current, regs);
- 	if (syscall_nr < 0 || syscall_nr >= NR_syscalls)
- 		return;
-@@ -376,8 +388,11 @@ static int reg_event_syscall_enter(struct trace_event_file *file,
- 	if (WARN_ON_ONCE(num < 0 || num >= NR_syscalls))
- 		return -ENOSYS;
- 	mutex_lock(&syscall_trace_lock);
--	if (!tr->sys_refcount_enter)
--		ret = register_trace_sys_enter(ftrace_syscall_enter, tr);
-+	if (!tr->sys_refcount_enter) {
-+		ret = register_trace_prio_flags_sys_enter(ftrace_syscall_enter, tr,
-+							  TRACEPOINT_DEFAULT_PRIO,
-+							  TRACEPOINT_MAY_FAULT);
-+	}
- 	if (!ret) {
- 		rcu_assign_pointer(tr->enter_syscall_files[num], file);
- 		tr->sys_refcount_enter++;
-@@ -414,8 +429,11 @@ static int reg_event_syscall_exit(struct trace_event_file *file,
- 	if (WARN_ON_ONCE(num < 0 || num >= NR_syscalls))
- 		return -ENOSYS;
- 	mutex_lock(&syscall_trace_lock);
--	if (!tr->sys_refcount_exit)
--		ret = register_trace_sys_exit(ftrace_syscall_exit, tr);
-+	if (!tr->sys_refcount_exit) {
-+		ret = register_trace_prio_flags_sys_exit(ftrace_syscall_exit, tr,
-+							 TRACEPOINT_DEFAULT_PRIO,
-+							 TRACEPOINT_MAY_FAULT);
-+	}
- 	if (!ret) {
- 		rcu_assign_pointer(tr->exit_syscall_files[num], file);
- 		tr->sys_refcount_exit++;
-@@ -582,6 +600,12 @@ static void perf_syscall_enter(void *ignore, struct pt_regs *regs, long id)
- 	int rctx;
- 	int size;
- 
-+	/*
-+	 * Probe called with preemption enabled (may_fault), but ring buffer and
-+	 * per-cpu data require preemption to be disabled.
-+	 */
-+	guard(preempt_notrace)();
-+
- 	syscall_nr = trace_get_syscall_nr(current, regs);
- 	if (syscall_nr < 0 || syscall_nr >= NR_syscalls)
- 		return;
-@@ -630,8 +654,11 @@ static int perf_sysenter_enable(struct trace_event_call *call)
- 	num = ((struct syscall_metadata *)call->data)->syscall_nr;
- 
- 	mutex_lock(&syscall_trace_lock);
--	if (!sys_perf_refcount_enter)
--		ret = register_trace_sys_enter(perf_syscall_enter, NULL);
-+	if (!sys_perf_refcount_enter) {
-+		ret = register_trace_prio_flags_sys_enter(perf_syscall_enter, NULL,
-+							  TRACEPOINT_DEFAULT_PRIO,
-+							  TRACEPOINT_MAY_FAULT);
-+	}
- 	if (ret) {
- 		pr_info("event trace: Could not activate syscall entry trace point");
- 	} else {
-@@ -682,6 +709,12 @@ static void perf_syscall_exit(void *ignore, struct pt_regs *regs, long ret)
- 	int rctx;
- 	int size;
- 
-+	/*
-+	 * Probe called with preemption enabled (may_fault), but ring buffer and
-+	 * per-cpu data require preemption to be disabled.
-+	 */
-+	guard(preempt_notrace)();
-+
- 	syscall_nr = trace_get_syscall_nr(current, regs);
- 	if (syscall_nr < 0 || syscall_nr >= NR_syscalls)
- 		return;
-@@ -727,8 +760,11 @@ static int perf_sysexit_enable(struct trace_event_call *call)
- 	num = ((struct syscall_metadata *)call->data)->syscall_nr;
- 
- 	mutex_lock(&syscall_trace_lock);
--	if (!sys_perf_refcount_exit)
--		ret = register_trace_sys_exit(perf_syscall_exit, NULL);
-+	if (!sys_perf_refcount_exit) {
-+		ret = register_trace_prio_flags_sys_exit(perf_syscall_exit, NULL,
-+							 TRACEPOINT_DEFAULT_PRIO,
-+							 TRACEPOINT_MAY_FAULT);
-+	}
- 	if (ret) {
- 		pr_info("event trace: Could not activate syscall exit trace point");
- 	} else {
+ include/sound/soc-dapm.h          |  2 +-
+ sound/soc/codecs/lpass-rx-macro.c | 37 ++++++++++++++++++++++++-------------
+ sound/soc/soc-dapm.c              |  2 +-
+ 3 files changed, 26 insertions(+), 15 deletions(-)
+---
+base-commit: 47ec7f026f5db6a0fe26c6215554d043d04368eb
+change-id: 20240627-b4-qcom-audio-lpass-codec-cleanups-27175f1d069f
+
+Best regards,
 -- 
-2.39.2
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
