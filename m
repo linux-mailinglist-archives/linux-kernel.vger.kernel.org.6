@@ -1,186 +1,362 @@
-Return-Path: <linux-kernel+bounces-232942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D9A791B046
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:22:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EA9191B04E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:23:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90FA01F21321
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:22:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EA001F210A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 592BA19DF60;
-	Thu, 27 Jun 2024 20:22:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED8C319CD15;
+	Thu, 27 Jun 2024 20:23:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="E/RDcrEo"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2077.outbound.protection.outlook.com [40.107.21.77])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ImEhWoUk"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7187619D098;
-	Thu, 27 Jun 2024 20:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719519734; cv=fail; b=Ng4Uod0r12Dfqr+YdKjlnVKf24u/2MhDkNEGidGG/jHhh4bwTP/jeZmPiRdq/c/0SYTWKlQIu50GxxFrg6IZIjLtmfKmR7/RntbWqmFvMpEXukh3jGrC5cP23+JZZvlvP+ICjMRZAx0jMjXleQw7XCCYwf9tsZhL0qVB+ZBqV3A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719519734; c=relaxed/simple;
-	bh=57ODplZgXwK1ub+nXMsbsM1eOlex1U8NeJHLMoFm//Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=VUbnOhRJI2SNI3akiQLSgzmyTSi7h/Yvm/vy5Xozb9pC7i0EYnWyrC+tKhbq9p+PfiQPsEi/aVJzfx1SKXmhdXmdFp2to4FUsPWzhcWLGq0dDi26V3hOX6HrZJA8xiiIyKr3ZqTSiVXxWz3MHx0ARVrUX0aElOQE1W20IRrds70=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=E/RDcrEo; arc=fail smtp.client-ip=40.107.21.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=knSX65UMmEf+KRrxAJ1GOaKRX5HcOWJel3StWptDDGlf6p4rtLCmfpB74ZdGK2BFbESJPWPT7uYWAhxUOO63wEyVDR4yt+1eSARxluXWgKmAjA8cJlmZZfU0nP6e6aEJzvyW0QtHVL0c7IppzsFkhYL964QomaaFAXdfNXOlW3ma9kHp+BvQYsz2AqGSrrj2xu3xyI/7A+XeY2q2+8jVun49ei4UOE7Kj+YGROWjknOBF19qKMw+euCGbecP8k+YtQtpnFISeWga5SJZCy5iOWiVI36nnCgzzALWRFlTcaSniEG5M/2MXwRYKcD+T3yhjEKBfq9HxOPLAck4y0j7Dw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ICKQg+IySjDYG9GxaSSijFXE2DRET/5j+1XjskO95Cw=;
- b=SjtpCVOB74Zc7VosQeTffZ7zMvcOpReHQgN9lioaayF6dXtQNLYxKi9+nhpa9/1lEMFVPmyB3HWOEqT6UYbB3tJeXuKKJ0d/wjd4sUNvqwaCM9NeY35hGha+GufJhd1IpQfqG78HakI2oFCWydMDZFaHlDJwlYfqN5FCX39rkb0TvOD74aKD0f0FCEt5c1mbkS5uXeLnlMIQDWLcEcqSO0WOR+VpN2tg2g0/PPgV6tCb7Lfsn6ZVdA+p1mKneP+F0yT+JRR799+COM3/OwY7i0sWBhTTwKQWXJlbDcLRNUQZm6yYlKaLlqnnqlXiUp7/rqwmGR3N8IIjIZhAFq3Ukg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ICKQg+IySjDYG9GxaSSijFXE2DRET/5j+1XjskO95Cw=;
- b=E/RDcrEoCEwgel9Mri+8Wn9pRDKh78tKafaGJpR6fDPCc+Q4XzH3zZQTtKWUh7VttTdsTizVSSVzqjJVrVH2STCI8/LKOlLmdd1I20Qtjuh5BM5X+Smg/GJlGmE5m1z99AKd4OpGlBcLm5KGeWgRNvZ/WpCaP51xORjzbg8VcdQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by DU2PR04MB8824.eurprd04.prod.outlook.com (2603:10a6:10:2e3::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.35; Thu, 27 Jun
- 2024 20:22:09 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7698.025; Thu, 27 Jun 2024
- 20:22:09 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B9119DFB9;
+	Thu, 27 Jun 2024 20:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719519782; cv=none; b=g6/Lmk1tvBya3Sm8MR0hDi7qYBSfZdYhMy+XCrJ5fWNf7tg5MyY191I7y3COg8drRWp11+EgdUo8ggs54tF72gj55kvX4vnP8L4Xh+Zx3vQDXyljYHicEDPKxkm+a4ei1Q2YI9wNreTA+Y+Yet2trxw2sKCxJ9XomTHBG9kljMQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719519782; c=relaxed/simple;
+	bh=bfrOOfR0L5/JOxfbwX76vustBMKdrfJFN7KfrJEG3UA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q2jkE6JyeBu3tOsEomDx+2sWVrEa5y+wir6ZDgA+aQ0vPBbnA6ZRLjr2sKCRAzjJVkNRv4JGFWmqrLgIdtMRHDuJaYUcUUlQ0WyCRZmALBF9PrjjxrXap/cJCs/rDnV3hevs+tzStgAa6APq6A0eGZhQjqgrJQfKMoQBtbMzOGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ImEhWoUk; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719519780; x=1751055780;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=bfrOOfR0L5/JOxfbwX76vustBMKdrfJFN7KfrJEG3UA=;
+  b=ImEhWoUkZBHlXyQTWNCeADs6tD+/X8MHjZjNQY4zvioKxC7d/YjCTOX6
+   BkqVu1pUY1Dkbx28GkNgJ6gCQiXK2t1S9jfKkZsW+SNo2f2/5W5Z5L5K7
+   PW1guLjUEpoD1LJKBMf6ePk6I+5TdU+v0wf323sufDEDcKHAm1uVwC1MH
+   VIZLhm+69dmlywTKnXQSVcBj+EguiFaLcNyvfdGn8HsDRmQByxlBix1Fy
+   TsGdma8lOL8lRW83TkEvOERAZg3t7KWOG4rBBSxDeUTztHQG3VAui//ME
+   cLi/2ILUJO2C7Taqol6WDusqi2LC/1N5ueP5HWL1lJRGHGClcjsFOEUs2
+   g==;
+X-CSE-ConnectionGUID: qWAcczhOTi6WHlDsDCJ07w==
+X-CSE-MsgGUID: s7RtbYuaT7ipfAqQruow1A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="16904429"
+X-IronPort-AV: E=Sophos;i="6.09,167,1716274800"; 
+   d="scan'208";a="16904429"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 13:22:59 -0700
+X-CSE-ConnectionGUID: M0Wm6+uXRfaqZmcL5kjOcw==
+X-CSE-MsgGUID: zTcQy0BCR8yqYsL+mWC4xg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,167,1716274800"; 
+   d="scan'208";a="44396878"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 27 Jun 2024 13:22:56 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sMvdt-000GVS-2v;
+	Thu, 27 Jun 2024 20:22:53 +0000
+Date: Fri, 28 Jun 2024 04:22:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>,
+	freedreno <freedreno@lists.freedesktop.org>,
+	dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+	Rob Clark <robdclark@gmail.com>,
+	Bjorn Andersson <andersson@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Akhil P Oommen <quic_akhilpo@quicinc.com>,
 	Conor Dooley <conor+dt@kernel.org>,
-	linux-gpio@vger.kernel.org (open list:GPIO SUBSYSTEM),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list)
-Cc: imx@lists.linux.dev
-Subject: [PATCH 1/1] dt-bindings: gpio: fsl,qoriq-gpio: add common property gpio-line-names
-Date: Thu, 27 Jun 2024 16:21:51 -0400
-Message-Id: <20240627202151.456812-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR13CA0043.namprd13.prod.outlook.com
- (2603:10b6:a03:2c2::18) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 3/3] arm64: dts: qcom: x1e80100: Add gpu support
+Message-ID: <202406280339.nvI0OrO3-lkp@intel.com>
+References: <20240623110753.141400-4-quic_akhilpo@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DU2PR04MB8824:EE_
-X-MS-Office365-Filtering-Correlation-Id: d916b432-153d-488d-3bc8-08dc96e6d1f5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?l0K2wpByLZ1qmOIIiWtMLEZltPA8t+5Qpqd2gZY86kWDyFY8gwxiv5o4ZEWi?=
- =?us-ascii?Q?pmhyfwQMZOGX3BEpv/1qOqMR0zZNa92wJ74w/0r6XBkwL97merplH+YAaDX4?=
- =?us-ascii?Q?16QR2HWsrzEjOeVX5LzI91HZNFXXGHMuVwJ46j5yhKu+4vmyqDoOnJLrxUpD?=
- =?us-ascii?Q?HgeOmk9e0s0p0U5/vHO5PM5wYIXCauGKpJqLaLBztyQtrVLrQdlWFiCPyvH2?=
- =?us-ascii?Q?Pa/xVSPOixrhF4XTanZ47nR1cYumsxqD7m0SHQQAEV/wCwSIEVvQJSzIMyW1?=
- =?us-ascii?Q?oiVooXja6FBVB52RcDIs0nWsLDtv8PAlsM7OUvU/zExrHewsdCwNA6nCrPLN?=
- =?us-ascii?Q?UqWfFk7q3K8SLFjqDMRHCtLE/vUVGBwWE1lvg6OyCD9dH4KU+C16+bfOmHJT?=
- =?us-ascii?Q?lekjjqzXCgFtszPselXDazOzStzTY7Ri9l3my/+uUBiEmvgmnSDF3ZX8h4ve?=
- =?us-ascii?Q?iRVkolS59evOY5VCkYO1+i0LEbyR2GhegajA6ySp//9ZVijpOsp29uYP2Y6F?=
- =?us-ascii?Q?6HXbymNZcucu9QGcRe6XXVpHFzCTnAa14I0tv8beI5gUTGRDikwLdK/+V4RU?=
- =?us-ascii?Q?4+XPWCXr5EYFZLGrki1dk0Y21Tlv8gnmqsFe2/dDyhqzF3HQBkslTgt2iVD/?=
- =?us-ascii?Q?01ViS5JGwQH98ZyFACA28EWv7BBwWfATF8+z258uXln+eYy7mbc0AW5hKug3?=
- =?us-ascii?Q?K1fi2VAkEqW+5WYp86t4MLkRAmC6Hdcue5oSMIBGg86OD0W+qcp8UqVWP2PC?=
- =?us-ascii?Q?VL2VHtpziMbXZuME8/tUTur6O1et+2jqKtYgVUi20M+BGhDiG8nZTx71CJ2E?=
- =?us-ascii?Q?R0vi9Jq4PqfSNiaTK4Zz4MI0adTW/9VX+QwCYgJimFHqoUl6lckmJjWBQhHV?=
- =?us-ascii?Q?D0yIHo6jSqMkok2+kz9CJZuS4J+WANf480B2H4QepF99+pbOmjLV65/fpuYo?=
- =?us-ascii?Q?qfxTaPYB68JfGyolWduEEEqLsKlnJhX38VW03zKXj/R9+/LwzE6wAsFmHN6x?=
- =?us-ascii?Q?cBdNrFxDtCu+ZUAFkM3rm/9G6mizGcficG/yX4bOziXSpeWbh6B5MB9Vsfj8?=
- =?us-ascii?Q?O7N1RVkgJhS//ADu9g87lQlH+ede0BuDliwdQ++LuxZaomjsLsB3MfUhwKBE?=
- =?us-ascii?Q?kTZ1Ts/nJ4RRd3oX3r+FNYR8VAqRl8mBlT199V0U/YGxZyc9zS7p6m1o6izy?=
- =?us-ascii?Q?QZ+Fkp+0jTlH6+urQX+bMEoXjHDckDDsODBwbTkI8fYAb3+EfKe94Pl4Xexg?=
- =?us-ascii?Q?81ixJZpluIqNKp1B+1KKDwHmlhk90y2jdVBNfZ37KgHnBBhxEaw07muQPE7G?=
- =?us-ascii?Q?pf2bZTKEYa+V0FN7a8xgFG8PsVxnDhsxl6evLNwA0pS8s2hMsUIX3zTOr7Q2?=
- =?us-ascii?Q?mrAI0So=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?A70bR9ZrOIab5CtW7wFE9h51rdhhyRR7zj3qzfy2xdmsarkr3WM/HWkHaiGR?=
- =?us-ascii?Q?Tb6/S3epWJ74IcScTG+DMly9GqXvjholHmhXotLam3CS7ORihMzuIA7TTgII?=
- =?us-ascii?Q?JaPYdjbsZBsgEkZPWeDsNjHfjs0qIM6oG0mx72FEEnR/uVZT7dAxvwq43Fgj?=
- =?us-ascii?Q?7p3PHPNH+d+fNURHWaIT7sDjao4vnbz/3j6O5UCXFexa2WbtAcfxcGGh23ao?=
- =?us-ascii?Q?d7cf9KPfKZ6reDVV/Rcl6hJk2x4ZOeZwJLqgvUKy9+TiM4qurvRDKcaSKRJm?=
- =?us-ascii?Q?fRCYQ4lg5yzVIIaMknWOdu63LLLemxm/IrP4zs01OoLhVYCc1h/VTuLRoU0b?=
- =?us-ascii?Q?kRAdx7JVrQ/DgXr4tA22PT5/3lObbcLnZ5VGysfnV/19eAiZ41cWgyCeGmhZ?=
- =?us-ascii?Q?iJV7jlFQbmlwGWATBUVl79NUad0+4PeyGIJLf7gBcq7em7WY7S20ipK2h9ej?=
- =?us-ascii?Q?qjX4ZSjfKy5sHTZ1jzxyoPV5R/CI7er6YoFZFjMWB17Sr+IjKCRkbuIehCgV?=
- =?us-ascii?Q?Cedk4s/HtoCTWOp1oo8fKMGLBPrcmZ+qODPATP2jMwyvMOz1SKk3OPVRs3t+?=
- =?us-ascii?Q?ow/nEmbyI/M5AcypocKTxPA/xqnsi7089sq7jnRlmGlnDMZqfJVQf23Ue/gK?=
- =?us-ascii?Q?MDrs1axespk0X4xXEtBEUchNT5Z72lQHMSFHRXvsYvYSsvd56vtYcQqW8PzZ?=
- =?us-ascii?Q?Rbop66M0eGJ/3Z3PQcpGfVSRB9OpdE47Vp+EsxofabAzcK52DV/fMfVPJk6+?=
- =?us-ascii?Q?y82JKzJn7KcSgD5I720BSvoqX8soZhd26AWC91pE9FihFOf4paRZmdGoydWv?=
- =?us-ascii?Q?jryhTqMPsVrDn1TUSLtoi4g5ZqvnO3SKT1BlvbgN9Wrp+AcdqeINxeuw7UIV?=
- =?us-ascii?Q?Xvje4q99Om6xpKP5xp8s6hyzXQDb7p5E9QngccuJmrqjXTV04xOclcEXpIKU?=
- =?us-ascii?Q?CmUKwgecMnCYej57G/assh6Tk4t0ucakXEUADHy2iq26J9PioH8a6PKZsIda?=
- =?us-ascii?Q?H8Kls7+t5WNLuyAkqQ/0I3eSsT0LFLFSR4DdfitZ7MHPxiBHUYIhyz9ep+Ln?=
- =?us-ascii?Q?bBx5zak7+l/GGL+KdPk8RWjJhu6TZAANVzda83p+jhe4FyW1fWyOhgpEf5gO?=
- =?us-ascii?Q?EPs/VVfnIgu7yhOIm3cn5Nd1Y0IIkvxE141EKanlohUw5ge8+lntyZyNxvUU?=
- =?us-ascii?Q?cOKAHBivoXMjuN/GzH5Jp60b5yNW6i56m63bqoqyXb3+dc66/vJ3TOXVneVQ?=
- =?us-ascii?Q?qf5Eeh27QlfXcTDBlibgKKDMUCz5HcyrNLi38NJzZ6nHfePY02P0hGWuVw53?=
- =?us-ascii?Q?ZivflzII+tdB96qoNF/v91IHtFofbpLqsU6wfCvTnp9qSnOYxOZ/wVMeCOtr?=
- =?us-ascii?Q?Yc/3quX5N8vRrLWqqTNruJrHVwbLNH+ddZvF/NCNF53b5922bLuS58fEXgxv?=
- =?us-ascii?Q?o9pTxj3BuzXwdAh99kKWhJ3JKyqCoqrWqbK6OQ1cFRMfmY/A2ivwim/60GIA?=
- =?us-ascii?Q?tp+GdpAOeqqrIOJQ7PHEpae8Zj/4DuTz8Yx8eUarETDzHvcENuSmVAHg4+E/?=
- =?us-ascii?Q?OHDcsMu5Wa1iCuTmcHc=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d916b432-153d-488d-3bc8-08dc96e6d1f5
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jun 2024 20:22:09.1682
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +pv2aIA8djz5XhiCC3BBO/HPFCT9NZ8QQ+d0ih7PyaxEocyMdl9k+00+fTTwecrY7vynwJRb/swsZO2VNTKYvw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8824
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240623110753.141400-4-quic_akhilpo@quicinc.com>
 
-Add common gpio-line-names property for fsl,qoriq-gpio to fix below
-warning.
+Hi Akhil,
 
-arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-kbox-a-230-ls.dtb: gpio@2300000: 'gpio-line-names' does not match any of the regexes: 'pinctrl-[0-9]+'
-        from schema $id: http://devicetree.org/schemas/gpio/fsl,qoriq-gpio.yaml
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
- Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on drm-intel/for-linux-next drm-intel/for-linux-ne=
+xt-fixes drm-tip/drm-tip linus/master v6.10-rc5]
+[cannot apply to next-20240626]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml b/Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml
-index d5f056b35d805..84fd82291ee40 100644
---- a/Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml
-+++ b/Documentation/devicetree/bindings/gpio/fsl,qoriq-gpio.yaml
-@@ -45,6 +45,10 @@ properties:
-   "#interrupt-cells":
-     const: 2
- 
-+  gpio-line-names:
-+    minItems: 1
-+    maxItems: 32
-+
-   little-endian:
-     $ref: /schemas/types.yaml#/definitions/flag
-     description:
--- 
-2.34.1
+url:    https://github.com/intel-lab-lkp/linux/commits/Akhil-P-Oommen/dt-bi=
+ndings-display-msm-gmu-Add-Adreno-X185-GMU/20240626-061111
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-=
+next
+patch link:    https://lore.kernel.org/r/20240623110753.141400-4-quic_akhil=
+po%40quicinc.com
+patch subject: [PATCH v1 3/3] arm64: dts: qcom: x1e80100: Add gpu support
+config: arm64-randconfig-051-20240627 (https://download.01.org/0day-ci/arch=
+ive/20240628/202406280339.nvI0OrO3-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project ad7=
+9a14c9e5ec4a369eed4adf567c22cc029863f)
+dtschema version: 2024.6.dev2+g3b69bad
+reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archive=
+/20240628/202406280339.nvI0OrO3-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new versio=
+n of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406280339.nvI0OrO3-lkp@i=
+ntel.com/
+
+dtcheck warnings: (new ones prefixed by >>)
+   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: phy@fda000: 'vdda-pll-supply'=
+ is a required property
+   	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-us=
+b43dp-phy.yaml#
+   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: phy@fdf000: 'vdda-phy-supply'=
+ is a required property
+   	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-us=
+b43dp-phy.yaml#
+   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: phy@fdf000: 'vdda-pll-supply'=
+ is a required property
+   	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-us=
+b43dp-phy.yaml#
+   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: gmu@3d6a000: reg-names:0: 'gm=
+u' was expected
+   	from schema $id: http://devicetree.org/schemas/display/msm/gmu.yaml#
+   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: gmu@3d6a000: reg-names:1: 'rs=
+cc' was expected
+   	from schema $id: http://devicetree.org/schemas/display/msm/gmu.yaml#
+>> arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: iommu@3da0000: compatible: 'o=
+neOf' conditional failed, one must be fixed:
+   	['qcom,x1e80100-smmu-500', 'qcom,adreno-smmu', 'qcom,smmu-500', 'arm,mm=
+u-500'] is too long
+   	'qcom,x1e80100-smmu-500' is not one of ['qcom,msm8996-smmu-v2', 'qcom,m=
+sm8998-smmu-v2', 'qcom,sdm630-smmu-v2', 'qcom,sm6375-smmu-v2']
+   	'qcom,x1e80100-smmu-500' is not one of ['qcom,qcm2290-smmu-500', 'qcom,=
+sc7180-smmu-500', 'qcom,sc7280-smmu-500', 'qcom,sc8180x-smmu-500', 'qcom,sc=
+8280xp-smmu-500', 'qcom,sdm845-smmu-500', 'qcom,sm6115-smmu-500', 'qcom,sm6=
+350-smmu-500', 'qcom,sm6375-smmu-500', 'qcom,sm8150-smmu-500', 'qcom,sm8250=
+-smmu-500', 'qcom,sm8350-smmu-500', 'qcom,sm8450-smmu-500']
+   	'qcom,x1e80100-smmu-500' is not one of ['qcom,qcm2290-smmu-500', 'qcom,=
+sa8775p-smmu-500', 'qcom,sc7280-smmu-500', 'qcom,sc8280xp-smmu-500', 'qcom,=
+sm6115-smmu-500', 'qcom,sm6125-smmu-500', 'qcom,sm8150-smmu-500', 'qcom,sm8=
+250-smmu-500', 'qcom,sm8350-smmu-500', 'qcom,sm8450-smmu-500', 'qcom,sm8550=
+-smmu-500', 'qcom,sm8650-smmu-500']
+   	'qcom,x1e80100-smmu-500' is not one of ['qcom,sc7280-smmu-500', 'qcom,s=
+m8150-smmu-500', 'qcom,sm8250-smmu-500']
+   	'qcom,x1e80100-smmu-500' is not one of ['qcom,msm8996-smmu-v2', 'qcom,s=
+c7180-smmu-v2', 'qcom,sdm630-smmu-v2', 'qcom,sdm845-smmu-v2', 'qcom,sm6350-=
+smmu-v2', 'qcom,sm7150-smmu-v2']
+   	'qcom,sdm845-smmu-v2' was expected
+   	'marvell,ap806-smmu-500' was expected
+   	'qcom,x1e80100-smmu-500' is not one of ['nvidia,tegra186-smmu', 'nvidia=
+,tegra194-smmu', 'nvidia,tegra234-smmu']
+   	'arm,mmu-500' was expected
+   	'qcom,x1e80100-smmu-500' is not one of ['arm,mmu-400', 'arm,mmu-401']
+   	'qcom,x1e80100-smmu-500' is not one of ['arm,smmu-v1', 'arm,smmu-v2', '=
+arm,mmu-400', 'arm,mmu-401', 'arm,mmu-500', 'cavium,smmu-v2']
+   	'qcom,smmu-v2' was expected
+   	'qcom,smmu-500' was expected
+   	'nvidia,smmu-500' was expected
+   	'arm,smmu-v2' was expected
+   	'arm,smmu-v1' was expected
+   	from schema $id: http://devicetree.org/schemas/iommu/arm,smmu.yaml#
+>> arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: iommu@3da0000: clock-names: F=
+alse schema does not allow ['hlos', 'bus', 'iface', 'ahb']
+   	from schema $id: http://devicetree.org/schemas/iommu/arm,smmu.yaml#
+>> arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: iommu@3da0000: clocks: False =
+schema does not allow [[150, 14], [51, 55], [51, 56], [150, 0]]
+   	from schema $id: http://devicetree.org/schemas/iommu/arm,smmu.yaml#
+   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: usb@a2f8800: interrupt-names:=
+ ['pwr_event', 'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
+   	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
+   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: pmic@7: compatible:0: 'qcom,s=
+mb2360' is not one of ['qcom,pm2250', 'qcom,pm6125', 'qcom,pm6150', 'qcom,p=
+m6150l', 'qcom,pm6350', 'qcom,pm660', 'qcom,pm660l', 'qcom,pm7250b', 'qcom,=
+pm7550ba', 'qcom,pm7325', 'qcom,pm8004', 'qcom,pm8005', 'qcom,pm8009', 'qco=
+m,pm8010', 'qcom,pm8019', 'qcom,pm8028', 'qcom,pm8110', 'qcom,pm8150', 'qco=
+m,pm8150b', 'qcom,pm8150c', 'qcom,pm8150l', 'qcom,pm8226', 'qcom,pm8350', '=
+qcom,pm8350b', 'qcom,pm8350c', 'qcom,pm8450', 'qcom,pm8550', 'qcom,pm8550b'=
+, 'qcom,pm8550ve', 'qcom,pm8550vs', 'qcom,pm8841', 'qcom,pm8909', 'qcom,pm8=
+916', 'qcom,pm8937', 'qcom,pm8941', 'qcom,pm8950', 'qcom,pm8953', 'qcom,pm8=
+994', 'qcom,pm8998', 'qcom,pma8084', 'qcom,pmc8180', 'qcom,pmc8180c', 'qcom=
+,pmd9635', 'qcom,pmi632', 'qcom,pmi8950', 'qcom,pmi8962', 'qcom,pmi8994', '=
+qcom,pmi8998', 'qcom,pmk8002', 'qcom,pmk8350', 'qcom,pmk8550', 'qcom,pmm815=
+5au', 'qcom,pmm8654au', 'qcom,pmp8074', 'qcom,pmr735a', 'qcom,pmr735b', 'qc=
+om,pmr735d', 'qcom,pms405', 'qcom,pmx55', 'qcom,pmx65', 'qcom,pmx75', 'qcom=
+,smb2351']
+   	from schema $id: http://devicetree.org/schemas/mfd/qcom,spmi-pmic.yaml#
+   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: /soc@0/arbiter@c400000/spmi@c=
+432000/pmic@7: failed to match any schema with compatible: ['qcom,smb2360',=
+ 'qcom,spmi-pmic']
+   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: pmic@a: compatible:0: 'qcom,s=
+mb2360' is not one of ['qcom,pm2250', 'qcom,pm6125', 'qcom,pm6150', 'qcom,p=
+m6150l', 'qcom,pm6350', 'qcom,pm660', 'qcom,pm660l', 'qcom,pm7250b', 'qcom,=
+pm7550ba', 'qcom,pm7325', 'qcom,pm8004', 'qcom,pm8005', 'qcom,pm8009', 'qco=
+m,pm8010', 'qcom,pm8019', 'qcom,pm8028', 'qcom,pm8110', 'qcom,pm8150', 'qco=
+m,pm8150b', 'qcom,pm8150c', 'qcom,pm8150l', 'qcom,pm8226', 'qcom,pm8350', '=
+qcom,pm8350b', 'qcom,pm8350c', 'qcom,pm8450', 'qcom,pm8550', 'qcom,pm8550b'=
+, 'qcom,pm8550ve', 'qcom,pm8550vs', 'qcom,pm8841', 'qcom,pm8909', 'qcom,pm8=
+916', 'qcom,pm8937', 'qcom,pm8941', 'qcom,pm8950', 'qcom,pm8953', 'qcom,pm8=
+994', 'qcom,pm8998', 'qcom,pma8084', 'qcom,pmc8180', 'qcom,pmc8180c', 'qcom=
+,pmd9635', 'qcom,pmi632', 'qcom,pmi8950', 'qcom,pmi8962', 'qcom,pmi8994', '=
+qcom,pmi8998', 'qcom,pmk8002', 'qcom,pmk8350', 'qcom,pmk8550', 'qcom,pmm815=
+5au', 'qcom,pmm8654au', 'qcom,pmp8074', 'qcom,pmr735a', 'qcom,pmr735b', 'qc=
+om,pmr735d', 'qcom,pms405', 'qcom,pmx55', 'qcom,pmx65', 'qcom,pmx75', 'qcom=
+,smb2351']
+   	from schema $id: http://devicetree.org/schemas/mfd/qcom,spmi-pmic.yaml#
+   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: /soc@0/arbiter@c400000/spmi@c=
+432000/pmic@a: failed to match any schema with compatible: ['qcom,smb2360',=
+ 'qcom,spmi-pmic']
+   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: pmic@b: compatible:0: 'qcom,s=
+mb2360' is not one of ['qcom,pm2250', 'qcom,pm6125', 'qcom,pm6150', 'qcom,p=
+m6150l', 'qcom,pm6350', 'qcom,pm660', 'qcom,pm660l', 'qcom,pm7250b', 'qcom,=
+pm7550ba', 'qcom,pm7325', 'qcom,pm8004', 'qcom,pm8005', 'qcom,pm8009', 'qco=
+m,pm8010', 'qcom,pm8019', 'qcom,pm8028', 'qcom,pm8110', 'qcom,pm8150', 'qco=
+m,pm8150b', 'qcom,pm8150c', 'qcom,pm8150l', 'qcom,pm8226', 'qcom,pm8350', '=
+qcom,pm8350b', 'qcom,pm8350c', 'qcom,pm8450', 'qcom,pm8550', 'qcom,pm8550b'=
+, 'qcom,pm8550ve', 'qcom,pm8550vs', 'qcom,pm8841', 'qcom,pm8909', 'qcom,pm8=
+916', 'qcom,pm8937', 'qcom,pm8941', 'qcom,pm8950', 'qcom,pm8953', 'qcom,pm8=
+994', 'qcom,pm8998', 'qcom,pma8084', 'qcom,pmc8180', 'qcom,pmc8180c', 'qcom=
+,pmd9635', 'qcom,pmi632', 'qcom,pmi8950', 'qcom,pmi8962', 'qcom,pmi8994', '=
+qcom,pmi8998', 'qcom,pmk8002', 'qcom,pmk8350', 'qcom,pmk8550', 'qcom,pmm815=
+5au', 'qcom,pmm8654au', 'qcom,pmp8074', 'qcom,pmr735a', 'qcom,pmr735b', 'qc=
+om,pmr735d', 'qcom,pms405', 'qcom,pmx55', 'qcom,pmx65', 'qcom,pmx75', 'qcom=
+,smb2351']
+--
+   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: phy@fda000: 'vdda-pll-supply'=
+ is a required property
+   	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-us=
+b43dp-phy.yaml#
+   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: phy@fdf000: 'vdda-phy-supply'=
+ is a required property
+   	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-us=
+b43dp-phy.yaml#
+   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: phy@fdf000: 'vdda-pll-supply'=
+ is a required property
+   	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-us=
+b43dp-phy.yaml#
+   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: gmu@3d6a000: reg-names:0: 'gm=
+u' was expected
+   	from schema $id: http://devicetree.org/schemas/display/msm/gmu.yaml#
+   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: gmu@3d6a000: reg-names:1: 'rs=
+cc' was expected
+   	from schema $id: http://devicetree.org/schemas/display/msm/gmu.yaml#
+>> arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: iommu@3da0000: compatible: 'o=
+neOf' conditional failed, one must be fixed:
+   	['qcom,x1e80100-smmu-500', 'qcom,adreno-smmu', 'qcom,smmu-500', 'arm,mm=
+u-500'] is too long
+   	'qcom,x1e80100-smmu-500' is not one of ['qcom,msm8996-smmu-v2', 'qcom,m=
+sm8998-smmu-v2', 'qcom,sdm630-smmu-v2', 'qcom,sm6375-smmu-v2']
+   	'qcom,x1e80100-smmu-500' is not one of ['qcom,qcm2290-smmu-500', 'qcom,=
+sc7180-smmu-500', 'qcom,sc7280-smmu-500', 'qcom,sc8180x-smmu-500', 'qcom,sc=
+8280xp-smmu-500', 'qcom,sdm845-smmu-500', 'qcom,sm6115-smmu-500', 'qcom,sm6=
+350-smmu-500', 'qcom,sm6375-smmu-500', 'qcom,sm8150-smmu-500', 'qcom,sm8250=
+-smmu-500', 'qcom,sm8350-smmu-500', 'qcom,sm8450-smmu-500']
+   	'qcom,x1e80100-smmu-500' is not one of ['qcom,qcm2290-smmu-500', 'qcom,=
+sa8775p-smmu-500', 'qcom,sc7280-smmu-500', 'qcom,sc8280xp-smmu-500', 'qcom,=
+sm6115-smmu-500', 'qcom,sm6125-smmu-500', 'qcom,sm8150-smmu-500', 'qcom,sm8=
+250-smmu-500', 'qcom,sm8350-smmu-500', 'qcom,sm8450-smmu-500', 'qcom,sm8550=
+-smmu-500', 'qcom,sm8650-smmu-500']
+   	'qcom,x1e80100-smmu-500' is not one of ['qcom,sc7280-smmu-500', 'qcom,s=
+m8150-smmu-500', 'qcom,sm8250-smmu-500']
+   	'qcom,x1e80100-smmu-500' is not one of ['qcom,msm8996-smmu-v2', 'qcom,s=
+c7180-smmu-v2', 'qcom,sdm630-smmu-v2', 'qcom,sdm845-smmu-v2', 'qcom,sm6350-=
+smmu-v2', 'qcom,sm7150-smmu-v2']
+   	'qcom,sdm845-smmu-v2' was expected
+   	'marvell,ap806-smmu-500' was expected
+   	'qcom,x1e80100-smmu-500' is not one of ['nvidia,tegra186-smmu', 'nvidia=
+,tegra194-smmu', 'nvidia,tegra234-smmu']
+   	'arm,mmu-500' was expected
+   	'qcom,x1e80100-smmu-500' is not one of ['arm,mmu-400', 'arm,mmu-401']
+   	'qcom,x1e80100-smmu-500' is not one of ['arm,smmu-v1', 'arm,smmu-v2', '=
+arm,mmu-400', 'arm,mmu-401', 'arm,mmu-500', 'cavium,smmu-v2']
+   	'qcom,smmu-v2' was expected
+   	'qcom,smmu-500' was expected
+   	'nvidia,smmu-500' was expected
+   	'arm,smmu-v2' was expected
+   	'arm,smmu-v1' was expected
+   	from schema $id: http://devicetree.org/schemas/iommu/arm,smmu.yaml#
+>> arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: iommu@3da0000: clock-names: F=
+alse schema does not allow ['hlos', 'bus', 'iface', 'ahb']
+   	from schema $id: http://devicetree.org/schemas/iommu/arm,smmu.yaml#
+>> arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: iommu@3da0000: clocks: False =
+schema does not allow [[146, 14], [51, 55], [51, 56], [146, 0]]
+   	from schema $id: http://devicetree.org/schemas/iommu/arm,smmu.yaml#
+   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: usb@a2f8800: interrupt-names:=
+ ['pwr_event', 'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
+   	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
+   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pmic@7: compatible:0: 'qcom,s=
+mb2360' is not one of ['qcom,pm2250', 'qcom,pm6125', 'qcom,pm6150', 'qcom,p=
+m6150l', 'qcom,pm6350', 'qcom,pm660', 'qcom,pm660l', 'qcom,pm7250b', 'qcom,=
+pm7550ba', 'qcom,pm7325', 'qcom,pm8004', 'qcom,pm8005', 'qcom,pm8009', 'qco=
+m,pm8010', 'qcom,pm8019', 'qcom,pm8028', 'qcom,pm8110', 'qcom,pm8150', 'qco=
+m,pm8150b', 'qcom,pm8150c', 'qcom,pm8150l', 'qcom,pm8226', 'qcom,pm8350', '=
+qcom,pm8350b', 'qcom,pm8350c', 'qcom,pm8450', 'qcom,pm8550', 'qcom,pm8550b'=
+, 'qcom,pm8550ve', 'qcom,pm8550vs', 'qcom,pm8841', 'qcom,pm8909', 'qcom,pm8=
+916', 'qcom,pm8937', 'qcom,pm8941', 'qcom,pm8950', 'qcom,pm8953', 'qcom,pm8=
+994', 'qcom,pm8998', 'qcom,pma8084', 'qcom,pmc8180', 'qcom,pmc8180c', 'qcom=
+,pmd9635', 'qcom,pmi632', 'qcom,pmi8950', 'qcom,pmi8962', 'qcom,pmi8994', '=
+qcom,pmi8998', 'qcom,pmk8002', 'qcom,pmk8350', 'qcom,pmk8550', 'qcom,pmm815=
+5au', 'qcom,pmm8654au', 'qcom,pmp8074', 'qcom,pmr735a', 'qcom,pmr735b', 'qc=
+om,pmr735d', 'qcom,pms405', 'qcom,pmx55', 'qcom,pmx65', 'qcom,pmx75', 'qcom=
+,smb2351']
+   	from schema $id: http://devicetree.org/schemas/mfd/qcom,spmi-pmic.yaml#
+   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: /soc@0/arbiter@c400000/spmi@c=
+432000/pmic@7: failed to match any schema with compatible: ['qcom,smb2360',=
+ 'qcom,spmi-pmic']
+   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pmic@a: compatible:0: 'qcom,s=
+mb2360' is not one of ['qcom,pm2250', 'qcom,pm6125', 'qcom,pm6150', 'qcom,p=
+m6150l', 'qcom,pm6350', 'qcom,pm660', 'qcom,pm660l', 'qcom,pm7250b', 'qcom,=
+pm7550ba', 'qcom,pm7325', 'qcom,pm8004', 'qcom,pm8005', 'qcom,pm8009', 'qco=
+m,pm8010', 'qcom,pm8019', 'qcom,pm8028', 'qcom,pm8110', 'qcom,pm8150', 'qco=
+m,pm8150b', 'qcom,pm8150c', 'qcom,pm8150l', 'qcom,pm8226', 'qcom,pm8350', '=
+qcom,pm8350b', 'qcom,pm8350c', 'qcom,pm8450', 'qcom,pm8550', 'qcom,pm8550b'=
+, 'qcom,pm8550ve', 'qcom,pm8550vs', 'qcom,pm8841', 'qcom,pm8909', 'qcom,pm8=
+916', 'qcom,pm8937', 'qcom,pm8941', 'qcom,pm8950', 'qcom,pm8953', 'qcom,pm8=
+994', 'qcom,pm8998', 'qcom,pma8084', 'qcom,pmc8180', 'qcom,pmc8180c', 'qcom=
+,pmd9635', 'qcom,pmi632', 'qcom,pmi8950', 'qcom,pmi8962', 'qcom,pmi8994', '=
+qcom,pmi8998', 'qcom,pmk8002', 'qcom,pmk8350', 'qcom,pmk8550', 'qcom,pmm815=
+5au', 'qcom,pmm8654au', 'qcom,pmp8074', 'qcom,pmr735a', 'qcom,pmr735b', 'qc=
+om,pmr735d', 'qcom,pms405', 'qcom,pmx55', 'qcom,pmx65', 'qcom,pmx75', 'qcom=
+,smb2351']
+   	from schema $id: http://devicetree.org/schemas/mfd/qcom,spmi-pmic.yaml#
+   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: /soc@0/arbiter@c400000/spmi@c=
+432000/pmic@a: failed to match any schema with compatible: ['qcom,smb2360',=
+ 'qcom,spmi-pmic']
+   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pmic@b: compatible:0: 'qcom,s=
+mb2360' is not one of ['qcom,pm2250', 'qcom,pm6125', 'qcom,pm6150', 'qcom,p=
+m6150l', 'qcom,pm6350', 'qcom,pm660', 'qcom,pm660l', 'qcom,pm7250b', 'qcom,=
+pm7550ba', 'qcom,pm7325', 'qcom,pm8004', 'qcom,pm8005', 'qcom,pm8009', 'qco=
+m,pm8010', 'qcom,pm8019', 'qcom,pm8028', 'qcom,pm8110', 'qcom,pm8150', 'qco=
+m,pm8150b', 'qcom,pm8150c', 'qcom,pm8150l', 'qcom,pm8226', 'qcom,pm8350', '=
+qcom,pm8350b', 'qcom,pm8350c', 'qcom,pm8450', 'qcom,pm8550', 'qcom,pm8550b'=
+, 'qcom,pm8550ve', 'qcom,pm8550vs', 'qcom,pm8841', 'qcom,pm8909', 'qcom,pm8=
+916', 'qcom,pm8937', 'qcom,pm8941', 'qcom,pm8950', 'qcom,pm8953', 'qcom,pm8=
+994', 'qcom,pm8998', 'qcom,pma8084', 'qcom,pmc8180', 'qcom,pmc8180c', 'qcom=
+,pmd9635', 'qcom,pmi632', 'qcom,pmi8950', 'qcom,pmi8962', 'qcom,pmi8994', '=
+qcom,pmi8998', 'qcom,pmk8002', 'qcom,pmk8350', 'qcom,pmk8550', 'qcom,pmm815=
+5au', 'qcom,pmm8654au', 'qcom,pmp8074', 'qcom,pmr735a', 'qcom,pmr735b', 'qc=
+om,pmr735d', 'qcom,pms405', 'qcom,pmx55', 'qcom,pmx65', 'qcom,pmx75', 'qcom=
+,smb2351']
+
+--=20
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
