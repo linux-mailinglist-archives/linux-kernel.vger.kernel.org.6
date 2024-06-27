@@ -1,85 +1,136 @@
-Return-Path: <linux-kernel+bounces-232948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E758691B060
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:29:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57AA191B065
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CB13B2183A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:29:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11F4328432D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD5119DF9F;
-	Thu, 27 Jun 2024 20:29:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00EAE19E7E6;
+	Thu, 27 Jun 2024 20:30:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HW62N1IA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q64wE+LT"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 348F419DF54;
-	Thu, 27 Jun 2024 20:29:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B658D13C3F6;
+	Thu, 27 Jun 2024 20:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719520151; cv=none; b=isx+mzlkC9O+AoWZyIO6GXSoPbYftxIT/ILL3bkjyxyiT0mrYKPWMTK7rROYIEQvgmwaAIIfEzOW5L4x4269bE3Q3zZruAsCU4O4lXY5IdAeFzR2SyUDwgjnmp2H5avJQch39V/qsStUDGyLJdqPIkoWQIat6buTDyliy8nqSyI=
+	t=1719520230; cv=none; b=l76hlbpFNtxyAAuSvPYHJnI7/SX66J0IHEm/WEKkNE1N7Yl6dvEvQd1dB2nZqHOLYpCJz9DbUqFtL09E21l0qemT4cdnTvuq44zjyuOGn2+xjjli71HSixhjyz5qWSKdclwWLVd2y4/tBnoCFSu3LeMDxjbgRg6eZCll2of9lcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719520151; c=relaxed/simple;
-	bh=b/0aNRPKXl+pJqUGj/VmecpemqeGNH4lJFUTEQRPRiA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T1fvSRtUAc51Bk8oX59NjXsoZEAYW+vb1+1bb70500QWlH+No+XFj7p7JMAp78a5huuPU1iqJ66ndvcc+CV5lXTHYWXVgc8cCVHIbVlx27uGxZEMIH9RMFTz6RpLXy9Nc8yTAa0DTVAUuQn4W/HzR7iA3oqaoOCZv5z8hsdzTxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HW62N1IA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D203C2BBFC;
-	Thu, 27 Jun 2024 20:29:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719520149;
-	bh=b/0aNRPKXl+pJqUGj/VmecpemqeGNH4lJFUTEQRPRiA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HW62N1IA8g8PIp+7o+yoQhE0hOXTHkRgKocLCbgHI0RLPk+UFoPuCaGY2ZZGjri4b
-	 fc8VwD+KoLHMAljmElaUY793rAo3nXm7W6885i4xvIIDYbgd//GXTGjZNGa5fzTDYY
-	 bQHJuN2Rp390mMzefwCVUAmXZgYSzTee40UsNb9F0f4wtzm9WeMyST27nj+PUeoDbF
-	 CZTc2whCBRq9aLn3irP6dW1/OZVjr+Lj5AOe/+T/dwWBsFNEHhUdSt+7ih4cgYmJn9
-	 vmdxZ2n5L4WAwVCDrT0NIu/zae3YK+41Ft3dyPCAoUGxk7XbGtQYcbzx2drU9jRq5S
-	 EZjuAOv1T8s1w==
-Date: Thu, 27 Jun 2024 14:29:08 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Olivier Moysan <olivier.moysan@foss.st.com>
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>, alsa-devel@alsa-project.org
-Subject: Re: [PATCH] dt-bindings: iio: stm32: dfsdm: fix dtbs warnings on
- dfsdm audio port
-Message-ID: <171952014620.474983.15354726969773132715.robh@kernel.org>
-References: <20240618115912.706912-1-olivier.moysan@foss.st.com>
+	s=arc-20240116; t=1719520230; c=relaxed/simple;
+	bh=g3zse+u1WIgDINFtNe0bYsu3qg6O32NLoN6Aqff/TMQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WT0Le0QytLp2YRBL486OkVysr3AlOQRD03NduQwVmmsRafLYUmEOWHUvdcRT8d4wAiuGaHijO6T2oF9pTcs1HNMdJujDzlM1p4iCEVL/7nuUNKChul2a7R8G66XwFikXgQJvZAVs0DrNVOewFFru02MpTWQXnpad69dZUaJVjRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q64wE+LT; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57d4ee2aaabso2468833a12.2;
+        Thu, 27 Jun 2024 13:30:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719520227; x=1720125027; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=C4INq2hPfpwDS3r1ZsYysbJ0MSl4awpvMRP7743NdmU=;
+        b=Q64wE+LTnY3L9vwnwJYITDAwM4mDWyobHd6sO3U5xd/2cf6Qs0HOwgctRhihJL5SyA
+         U9rSUnIFEphe3XbiRjwzzN4YuLrYA7UsYWtCpoVZQojI4+mVXQPsxHpzk8j0LgG6uDNT
+         QKZ1mCxGpND5LFj79Qod6OTNrN6G5mam5DbwWuaOb0+V8Uwk4AHKGuyIHjIw+zMJLzws
+         LucvjDpKab91W6/YjDmdBWPpLYayBL5dIykEe2vHft9it/49L4L1GN7eJXRMxK9PMrhy
+         O9bPZVxEJVOMNXAbrdYTqcRoHHbmFn3CBlMGrz9oF8Ky3v4DGWCCa1JN/ENTHrVeN9Hf
+         0gaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719520227; x=1720125027;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=C4INq2hPfpwDS3r1ZsYysbJ0MSl4awpvMRP7743NdmU=;
+        b=eOinx9ZhIYNgFxANKnCfvgdsfrCqpAI601y1ZyPgf8a9swQ13z/mu4KDpCQSxV2wtD
+         u+c+uoY5LPaDyZJcVy3gfnZV8Z7a8See5fCxeRdsXheO1Qwy5ZP44dWiq6knrBZMM4zd
+         LBohxWm5waEYI36RXBkGeP4Q3D+qQc9AN1niRROpWh3iw6NlSQ7EwkCXnlKI2TMQWB/c
+         plZAk/fhBAM6Xrswd75rWvxrJDrXjNIAwzOEPy7tkaP1ISA3FrHa8YJdXcta1YvYh05i
+         ts6fBguSXhTWFSBQ/Ou6TCrhZxBSk8SG+AMDdv1kRll9XrK4VL/WXixMX2w+lKIFWEl2
+         csVg==
+X-Forwarded-Encrypted: i=1; AJvYcCVWgzFaD9lPZI8pekQGl9YK5IAJQK/ii0Y5CtC2YJ6jA7IXMlVcfGVNmKwKBVPUPzURLDGVrjrAp/0nIgTxdAwNuARoWDI24uFkQnG6ako4RqPEK5d5hLCTNnJ4ZhPIEe1TPtB8jzh9qwzMH1exKkxDl8vg+eITGufu4/GBeZFgHLviK3cE
+X-Gm-Message-State: AOJu0YxeLacnUMft2r9VZKVlubeihIvzqm1Zub2Funs2pd0gWBMPTCaq
+	kwBmSRv4UWPLCJBnlMgySTHRVc7NL8SbjsOISY7/QB4CSLqupu93
+X-Google-Smtp-Source: AGHT+IEIMaJHGWNG+WIa+jl1kTf7Dsctp55viVzQA4nttCLNPUA3KWsB7JC+p4iKuy1vGu+akfSiZg==
+X-Received: by 2002:a17:907:c5ce:b0:a72:4c32:7d89 with SMTP id a640c23a62f3a-a724c327e82mr1198204066b.54.1719520225755;
+        Thu, 27 Jun 2024 13:30:25 -0700 (PDT)
+Received: from [192.168.178.20] (dh207-41-166.xnet.hr. [88.207.41.166])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab08cb97sm8939166b.143.2024.06.27.13.30.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Jun 2024 13:30:25 -0700 (PDT)
+Message-ID: <d3f8254f-0f53-47ee-a363-b14e9991a6e9@gmail.com>
+Date: Thu, 27 Jun 2024 22:30:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240618115912.706912-1-olivier.moysan@foss.st.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PROBLEM] make randconfig: net/netfilter/core.c:830: undefined
+ reference to `netfilter_lwtunnel_fini'
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: Linux Kernel Build System <linux-kbuild@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Jozsef Kadlecsik <kadlec@netfilter.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+ netdev@vger.kernel.org
+References: <7a472130-d9c4-4fda-840b-093308f73d3d@gmail.com>
+ <Znc4931wlIgvqrfP@calendula> <6cdb1346-75ca-472e-8d96-d58a1eaab172@gmail.com>
+ <b50bb0bf-4d35-4334-a721-2a092210aecc@gmail.com> <Znw78PpYwAgFZiaB@calendula>
+ <3d7b5916-c462-49cb-af32-e43f6d6ebfec@gmail.com>
+Content-Language: en-US
+From: Mirsad Todorovac <mtodorovac69@gmail.com>
+In-Reply-To: <3d7b5916-c462-49cb-af32-e43f6d6ebfec@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-On Tue, 18 Jun 2024 13:59:12 +0200, Olivier Moysan wrote:
-> Fix warnings on DFSDM dtbs check
-> Unevaluated properties are not allowed ('dfsdm-dai' was unexpected)
-> 'port' does not match any of the regexes: 'pinctrl-[0-9]+'
+On 6/26/24 20:34, Mirsad Todorovac wrote:
 > 
-> Fixes: 11183ac07a74 ("dt-bindings: stm32: convert dfsdm to json-schema")
-> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
-> ---
->  .../devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml       | 4 ++++
->  1 file changed, 4 insertions(+)
 > 
+> On 6/26/24 18:04, Pablo Neira Ayuso wrote:
+>> On Sun, Jun 23, 2024 at 12:51:49AM +0200, Mirsad Todorovac wrote:
+>>> On 6/23/24 00:48, Mirsad Todorovac wrote:
+>>>> On 6/22/24 22:49, Pablo Neira Ayuso wrote:
+>>>>> Hi,
+>>>>>
+>>>>> There is a fix on the table address this, I will submit is in the next
+>>>>> pull request.
+>>>>
+>>>> Thank you very much.
+>>>>
+>>>> Please consider adding Reported-by: Mirsad Todorovac <mtodorovac69@gmail.com>
+>>>>  
+>>>>> Thanks for reporting
+>>>>
+>>>> No big deal. Anytime :-)
+>>>
+>>> P.S.
+>>>
+>>> Please notify when I could test the same .config with your fix.
+>>
+>> Patch is here:
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/netfilter/nf.git/commit/?id=aef5daa2c49d510436b733827d4f0bab79fcc4a0
+> 
+> Build error has gone, tested in the same environment. Please find the build output attached.
+> 
+> Tested-by: Mirsad Todorovac <mtodorov@69@gmail.com>
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Apology, please, the right email is this:
 
+Tested-by: Mirsad Todorovac <mtodorovac69@gmail.com>
+
+Best regards,
+Mirsad Todorovac
 
