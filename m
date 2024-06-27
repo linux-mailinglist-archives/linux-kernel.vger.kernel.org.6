@@ -1,116 +1,112 @@
-Return-Path: <linux-kernel+bounces-232710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18D1F91AD5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:02:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 297DD91ADA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:13:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F38D1C24D57
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:02:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E4011C23453
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:13:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4077199E89;
-	Thu, 27 Jun 2024 17:02:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8744219A28A;
+	Thu, 27 Jun 2024 17:12:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DoBUZh3S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b="UyJF5CEt"
+Received: from raptorengineering.com (mail.raptorengineering.com [23.155.224.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CFFA18040;
-	Thu, 27 Jun 2024 17:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD6A197549;
+	Thu, 27 Jun 2024 17:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.155.224.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719507742; cv=none; b=Ja+TTpAyPCt2ZNpkurqcPdC1YG72Wd4ZXCquo+OV1P4MSi0vQf1T46cu1uewUBPJCk35BsvlBdxj2X8udTorWT2h6ESJYmvNSZrwBnb9WwnaEF5q+zjM2uU5D5m4bOdjha6A2CD78w7cc22X0MCQ0eTUlInMZkyfs8+CqHDR2zw=
+	t=1719508378; cv=none; b=bipoJO2JYMufXLZLR3oNmHzECnyOyaS7gPf8Dh+qjRjaz+T/eH0n9YodiZcLglMM7LaqIOJp/mwS1W9pfcAu0et1d9h2T4uhTSupnIGrK/HARJHjVo7PCLkUg+LHk7gSP9fMQLTWh1HJH2mRe64fkzS44NNZI2ZuX7u7665AaOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719507742; c=relaxed/simple;
-	bh=SjeeyRQwE/Gd/xv/dHmc+00VP8GHf3kSuSkKYxNX2cY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DDqRmBtuaVBt8U4CWOiddfKwNkiABUGtnROwp1r4ffD+/2tT/HMU4wYgTRzApILw6LTkJW0hVQV6Pez/wENcFSM32B8G2ck6UMoP8KyV5qapR/lUr0btsRyrTa7qzMC5riTIz+W7EXwWwHHwENYIqfJiMyauDBn3ytNvT0Remw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DoBUZh3S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B29EDC2BBFC;
-	Thu, 27 Jun 2024 17:02:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719507741;
-	bh=SjeeyRQwE/Gd/xv/dHmc+00VP8GHf3kSuSkKYxNX2cY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DoBUZh3SmyCAVqjkIKH98iruRgLZjNlsFfGG5ghtoGgun3ornA28W7v3tOecwcE/X
-	 ZthwgQP7wsf3WMvm2jY5bL+S7ssUDTQzsGRE1kafdVNIPSZmhuiGOlUr5EDEOXsfK+
-	 hGj6x8lJFoHOnq7kyp2cgPOVyj1RnfZ6Euus/sxeaLrzHayNx8JFlKq8Z1VTyjVrT3
-	 5KTWSsvlrKiC9R/qU+JDLDv+wYo6LfQZALUCEbKgZDSqmVllclAZCUoTDr+PgYTYkt
-	 FPMhvXCi8Dl57paU3l9+YfGpAJBlkis2ki25kPd0qruY8oy/fK8XJnt3F9HpwbXzb4
-	 RhSZcRt7HcpMQ==
-Date: Thu, 27 Jun 2024 10:02:21 -0700
-From: Kees Cook <kees@kernel.org>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux@armlinux.org.uk,
-	ardb@kernel.org, arnd@arndb.de, afd@ti.com,
-	akpm@linux-foundation.org, rmk+kernel@armlinux.org.uk,
-	eric.devolder@oracle.com, robh@kernel.org, masahiroy@kernel.org,
-	palmer@rivosinc.com, samitolvanen@google.com, xiao.w.wang@intel.com,
-	alexghiti@rivosinc.com, nathan@kernel.org, jan.kiszka@siemens.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-efi@vger.kernel.org
-Subject: Re: [PATCH v2] ARM: Add support for STACKLEAK gcc plugin
-Message-ID: <202406271001.67295EE@keescook>
-References: <20240624023612.2134144-1-ruanjinjie@huawei.com>
- <CACRpkda-FZmyEyMJrKTdic4t8Zq_VSW8AVrvw6t=B25fiUZNKw@mail.gmail.com>
- <ee44c444-ab5e-b9c2-087b-5db627a72749@huawei.com>
+	s=arc-20240116; t=1719508378; c=relaxed/simple;
+	bh=x0paNmrzPbz/jmBMj25p+GgQaoamDJejk56BVcITTBQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sGtt2M1TrjDHRCDIVbhxsvxETaxwY3c5iyzIr072f5wpYoPWSki72Se8I/ImTdcClkcxhQ+stg9lRmXDCY0Zw54/RsXRbM2uYbWK//5L/qZiS8CzyPyXLu5xyzny+sKkyobrt11ARwYjlv1wiuMBpXdpWIzk/I688J1Sb8Jif0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com; spf=pass smtp.mailfrom=raptorengineering.com; dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b=UyJF5CEt; arc=none smtp.client-ip=23.155.224.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raptorengineering.com
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id 3899C82871B7;
+	Thu, 27 Jun 2024 12:04:05 -0500 (CDT)
+Received: from mail.rptsys.com ([127.0.0.1])
+	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id Z0AZFKoChWpd; Thu, 27 Jun 2024 12:04:04 -0500 (CDT)
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id 759F482871F3;
+	Thu, 27 Jun 2024 12:04:04 -0500 (CDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rptsys.com 759F482871F3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=raptorengineering.com; s=B8E824E6-0BE2-11E6-931D-288C65937AAD;
+	t=1719507844; bh=lxG8sC0/ltpBtPDS3WyH/p3fZxyBFAQa4wHnHvd9qOQ=;
+	h=Message-ID:Date:MIME-Version:To:From;
+	b=UyJF5CEtwodZS0AOmdl/Xe0uxiSxyqQJHRJ5WHGh794xkqqwdOw0GKBPwrDxZ+8eX
+	 3yO3V2HpVP1xLj4cvvlxmVk0QV3aTYmnq//UqGpCtjyKTkNfTIf2fiJFfd+rdW80Yq
+	 bI9E/iHQvuaAvotGXRWxmvkZBEDw24oMyhr/h8VU=
+X-Virus-Scanned: amavisd-new at rptsys.com
+Received: from mail.rptsys.com ([127.0.0.1])
+	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id nqNGWJcLLn22; Thu, 27 Jun 2024 12:04:04 -0500 (CDT)
+Received: from [10.11.0.2] (5.edge.rptsys.com [23.155.224.38])
+	by mail.rptsys.com (Postfix) with ESMTPSA id C6C9682871B7;
+	Thu, 27 Jun 2024 12:04:03 -0500 (CDT)
+Message-ID: <4826c905-720d-43bf-98a8-c4be076a3ebe@raptorengineering.com>
+Date: Thu, 27 Jun 2024 12:04:03 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ee44c444-ab5e-b9c2-087b-5db627a72749@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] pci/hotplug/pnv_php: Fix hotplug driver crash on
+ Powernv
+To: Krishna Kumar <krishnak@linux.ibm.com>, mpe@ellerman.id.au,
+ npiggin@gmail.com
+Cc: nathanl@linux.ibm.com, aneesh.kumar@kernel.org,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ gbatra@linux.ibm.com, bhelgaas@google.com, tpearson@raptorengineering.com,
+ oohall@gmail.com, brking@linux.vnet.ibm.com, mahesh.salgaonkar@in.ibm.com,
+ linuxppc-dev@lists.ozlabs.org
+References: <20240509120644.653577-1-krishnak@linux.ibm.com>
+ <20240509120644.653577-2-krishnak@linux.ibm.com>
+Content-Language: en-US
+From: Shawn Anastasio <sanastasio@raptorengineering.com>
+In-Reply-To: <20240509120644.653577-2-krishnak@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 27, 2024 at 03:53:14PM +0800, Jinjie Ruan wrote:
+Hi Krishna,
+
+On 5/9/24 7:05 AM, Krishna Kumar wrote:
+> Description of the problem: The hotplug driver for powerpc
+> (pci/hotplug/pnv_php.c) gives kernel crash when we try to
+> hot-unplug/disable the PCIe switch/bridge from the PHB.
 > 
 > 
-> On 2024/6/24 15:30, Linus Walleij wrote:
-> > On Mon, Jun 24, 2024 at 4:33 AM Jinjie Ruan <ruanjinjie@huawei.com> wrote:
-> > 
-> >> Add the STACKLEAK gcc plugin to arm32 by adding the helper used by
-> >> stackleak common code: on_thread_stack(). It initialize the stack with the
-> >> poison value before returning from system calls which improves the kernel
-> >> security. Additionally, this disables the plugin in EFI stub code and
-> >> decompress code, which are out of scope for the protection.
-> >>
-> >> Before the test on Qemu versatilepb board:
-> >>         # echo STACKLEAK_ERASING  > /sys/kernel/debug/provoke-crash/DIRECT
-> >>         lkdtm: Performing direct entry STACKLEAK_ERASING
-> >>         lkdtm: XFAIL: stackleak is not supported on this arch (HAVE_ARCH_STACKLEAK=n)
-> >>
-> >> After:
-> >>         # echo STACKLEAK_ERASING  > /sys/kernel/debug/provoke-crash/DIRECT
-> >>         lkdtm: Performing direct entry STACKLEAK_ERASING
-> >>         lkdtm: stackleak stack usage:
-> >>           high offset: 80 bytes
-> >>           current:     280 bytes
-> >>           lowest:      696 bytes
-> >>           tracked:     696 bytes
-> >>           untracked:   192 bytes
-> >>           poisoned:    7220 bytes
-> >>           low offset:  4 bytes
-> >>         lkdtm: OK: the rest of the thread stack is properly erased
-> >>
-> >> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> >> Acked-by: Ard Biesheuvel <ardb@kernel.org>
-> > 
-> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> > 
-> > I was digging around to see if this would interfere with BPF
-> > trampolines, but the
-> > BPF code seems so generic that I assume it already takes stackleak into account.
-> > 
-> Thank you very much, as Kees said, can this patch go via
-> rmk's patch tracker now?
+> Root Cause of Crash: The crash is due to the reason that, though the msi
+> data structure has been released during disable/hot-unplug path and it
+> has been assigned with NULL, still during unregistartion the code was
+> again trying to explicitly disable the msi which causes the Null pointer
+> dereference and kernel crash.
+> 
+> 
+> Proposed Fix : The fix is to correct the check during unregistration path
+> so that the code should not  try to invoke pci_disable_msi/msix() if its
+> data structure is already freed.
+> 
+> 
+> Signed-off-by: Krishna Kumar <krishnak@linux.ibm.com>
 
-Probably yes (we have some reviews now). Please go ahead and add it there.
+I've tested this on a POWER9 box and can confirm that it fixes the panics
+when hotplugging PCIe bridges.
 
--- 
-Kees Cook
+Tested-by: Shawn Anastasio <sanastasio@raptorengineering.com>
+
+Thanks,
+Shawn
 
