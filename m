@@ -1,297 +1,226 @@
-Return-Path: <linux-kernel+bounces-232079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3240591A2D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:42:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6CE491A2D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:43:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BF84B22857
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:42:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BFA52852BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:43:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C726B13AD04;
-	Thu, 27 Jun 2024 09:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93F8613AD04;
+	Thu, 27 Jun 2024 09:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="JfCH5f3t"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [167.172.40.54])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="fH3Ff0H1"
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260DD13A3FC
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 09:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.172.40.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C154D5BD
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 09:43:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719481349; cv=none; b=nsu+QOSlsjSSB/BqFN1dNVs2xMV0UQXOSRVa0ohBcTSaTQvimkD+rax9HfJ3d9qzI822zrWb6ANyGSHbx45N+BiEDRdkIW2zTH+LP7l7LGKWNZC9sJvteTdCBIyeYaczjU8Tq7XczetsCq3WfeNcOciaS4JpkmfcyhBn+toc4n4=
+	t=1719481398; cv=none; b=gK9Lgeajtp5U4LfTLxoGzOF2C63TV3fAy9o6pAOWy6Vn17ARb3Nvlm8xEktZYbDYaRX54McvPymOUp8Z7p5gFKd45R+IS5qdmqV3q7zJo7nTaIDe85kHvUStBVJl1AULaZ+TU701QEhPaFgFoCZgi5ruDaK3aeYlbMdsV62SEwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719481349; c=relaxed/simple;
-	bh=ZuoDE2MG53dsUuVknhx3SUDT8t21/nbJxSmQX8kdLxo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VtIxkvkpPHqihVIuopLxpsvaUKOdu+HzoN7Bz0tSU2QG1e5h7eKLj3nyYIOkD/8BbpYL91U1GHDvAXGrBEabtFq5xa+YCWMGVYYNc/FqpiisgQ9C1r3dhByodKHIZgNbpZa7sLqbt8ab+kMW4ggOZj1HuVTcBl6jYIsPUFStYss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=JfCH5f3t; arc=none smtp.client-ip=167.172.40.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1719481325;
- bh=pPYFVje1r+HYsCjYPcRBSOHBi4Zt6cCnJxZ7IHyg1b4=;
- b=JfCH5f3tadgbG2TogQu7CO0yMeDqiYbljtQlgzE8XC0n8fXQa04G2uhMuIpVHzw8DZxc+FgTz
- OAXIKVkxvLsPvG+t2rt/jyH/FLlso+Mw5i146PtaBzwXNs7v/poFXNu/lx4y7SuWpK3VFFCWUzW
- G3AIQRUrJ6VeWcr4AY3LL+Xy7VzEchh2TA7WvkzWZWpjywDU3vV3jGOnaixgF+JVZuLZganuhsQ
- aak+P+dkiReRkLbBmG0V79MW0Af0//TpuIbQrHy8crwk3MGiTqtRQYeUEdiUg9glhr/t8h7hgix
- C2yMl9E3DxEDHnFvtOoiUmodYu0Mt82byBuNIesYM7GA==
-Message-ID: <66e56996-4b56-4262-973f-672121071391@kwiboo.se>
-Date: Thu, 27 Jun 2024 11:41:55 +0200
+	s=arc-20240116; t=1719481398; c=relaxed/simple;
+	bh=WzPYmct1ZG1yRejRLp1lcKsz6ysxvbbDlhXp+x24VOo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JzRVX09HhKL/34+c7C8Anc3n4sNepAOydiatkMrXkgsa5F+dnUKtWz8lGuXEzk1HfovLtNsjWB2G5xfK8rO3rH9IUQzyLYWIXGgebMO7DBxkcoOZ2pBvnmjPlR2gxIk42nyOxRtCoqh+rtmyGzJrAx63fDg/QARZZoLQl7PyWzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=fH3Ff0H1; arc=none smtp.client-ip=209.85.222.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-80fbf874128so684149241.2
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 02:43:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1719481395; x=1720086195; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7ds3uXyhOspb83UzynorfT4bxuHOUyg4DsTQJ3YvqP8=;
+        b=fH3Ff0H1TwjbpyjUrrWjU1lua1JYAksY10889QT3w/FbqeaXdaQJAqIRvMnVOqM7oq
+         O4pnGKvKxr9ENlMuGaQXIS36Vp/X9Grm9ML32cGxShW4FO+C8NOXc0blEST1Z2xgKatI
+         JSZDgh3X0Wlwwe4ev9FFdGQx0ZGoBa853mezBwnzyY665Oc162L9NOSPZEjEDjR0UCvI
+         zynQZG8wisOFe7P0T4uPcnGz062xj1QRD5xUKoxgRHEfQBAwJ+aDcySoePPovazYQwGv
+         V/AZ5AkiuD+a8xkMRrpZp0rbl4PvBI6ivaQyJAEvKxSDvbDvqpSou9BFPQh4BAZbalZA
+         8iiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719481395; x=1720086195;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7ds3uXyhOspb83UzynorfT4bxuHOUyg4DsTQJ3YvqP8=;
+        b=xRwMnyoI+FBWHk39LeOWj1IgfiR5qZoSsqs92zHRtu2WaYbjc0t3gGESAo1CAige3x
+         rbam8SQTkVv0H+A2bgenWwh7R3fxVr36QqBWa8OoFNFgFEnr8trtmH99PPdM75EpWylL
+         bjhGuYB4XvroTo5VAUi89A9EwKp3MsSojPR1IbaEISbft/dkIxIPJE2YKySY4C1C2prK
+         Mbvr/2nHWMoAgLXe3yCBRjFbh5X0p3BXqVxt4qd2Mll7bMZznn5Vd74xBN+NIl99CQzx
+         1ebBJUtkLsv7Dj7+4Hts+emh5sZIbEXJQ8kQ1VtVCrP9MMEcjh7YbZXdV6daIR6B5T+n
+         oJUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUf9+tJrhmKw9xmJ7wUeWKA2SJ1KwcAVLYZ1zqhn4Yo1Ko9AqP0Rux8Nl0l84uiWme6sSNviPqrTLb0fdvMkT5lNHifKjovtEOJgYS
+X-Gm-Message-State: AOJu0YxbB4PBzL49rzyTIJwKwnqXX02eNFqB0nSNAd5x9rfnN2N6+3Bj
+	UU2FyvwDAM3CTI/UBY63eD1vJGXMTpSABRQoYTjjS85jeR+bPUYUtB43spqdBvq5lBkd72Fpt+q
+	YAYtDt7GWobdB1zXpoMpQopefKDYHdoL3FNcx
+X-Google-Smtp-Source: AGHT+IGBv4Bbs/pbeMHJtmkvCt7f3IJTYs0gdhLR2HxVvY14nRCrzCgTvdwfbnoRZj4htMw/nyBIq9PpMl3hVx/x6jo=
+X-Received: by 2002:a05:6102:361:b0:48f:508b:d3ec with SMTP id
+ ada2fe7eead31-48f52946e34mr10434786137.4.1719481394805; Thu, 27 Jun 2024
+ 02:43:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/4] media: rockchip: Introduce the rkvdec2 driver
-To: Alex Bee <knaerzche@gmail.com>, Detlev Casanova
- <detlev.casanova@collabora.com>
-Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner
- <heiko@sntech.de>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>, Dragan Simic
- <dsimic@manjaro.org>, Diederik de Haas <didi.debian@cknow.org>, Andy Yan
- <andy.yan@rock-chips.com>, Boris Brezillon
- <boris.brezillon@collabora.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
- Daniel Almeida <daniel.almeida@collabora.com>, Paul Kocialkowski
- <paul.kocialkowski@bootlin.com>, Nicolas Dufresne
- <nicolas.dufresne@collabora.com>, Benjamin Gaignard
- <benjamin.gaignard@collabora.com>, linux-media@vger.kernel.org,
- linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20240620142532.406564-1-detlev.casanova@collabora.com>
- <20240620142532.406564-3-detlev.casanova@collabora.com>
- <c7882f94-e2cb-4023-a53e-87ebc8fa3460@gmail.com> <3815203.kQq0lBPeGt@arisu>
- <5a15b138-4e03-4487-8a53-b7ff3527701f@gmail.com>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <5a15b138-4e03-4487-8a53-b7ff3527701f@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Report-Abuse-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-ForwardEmail-Version: 0.4.40
-X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 167.172.40.54
-X-ForwardEmail-ID: 667d33ea9aa1b906e1d3e3f3
+References: <20230801141607.435192-1-CoelacanthusHex@gmail.com>
+ <20240627071422.GA2626@altlinux.org> <9c102328-6bb3-46b6-bc2f-d011a284d5b0@gmail.com>
+In-Reply-To: <9c102328-6bb3-46b6-bc2f-d011a284d5b0@gmail.com>
+From: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>
+Date: Thu, 27 Jun 2024 11:43:03 +0200
+Message-ID: <CA+FstbVf7TJx==WsY5fBoFrdeY8php5ETn8kMq5s6YScy-2O=A@mail.gmail.com>
+Subject: Re: [PATCH v5] riscv: entry: set a0 = -ENOSYS only when syscall != -1
+To: Celeste Liu <coelacanthushex@gmail.com>
+Cc: "Dmitry V. Levin" <ldv@strace.io>, Palmer Dabbelt <palmer@rivosinc.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Guo Ren <guoren@kernel.org>, Conor Dooley <conor.dooley@microchip.com>, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Andreas Schwab <schwab@suse.de>, David Laight <David.Laight@aculab.com>, 
+	Felix Yan <felixonmars@archlinux.org>, Ruizhe Pan <c141028@gmail.com>, 
+	Shiqi Zhang <shiqi@isrc.iscas.ac.cn>, 
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>, "Ivan A. Melnikov" <iv@altlinux.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Alex,
+On Thu, Jun 27, 2024 at 9:47=E2=80=AFAM Celeste Liu <coelacanthushex@gmail.=
+com> wrote:
+>
+> On 2024-06-27 15:14, Dmitry V. Levin wrote:
+>
+> > Hi,
+> >
+> > On Tue, Aug 01, 2023 at 10:15:16PM +0800, Celeste Liu wrote:
+> >> When we test seccomp with 6.4 kernel, we found errno has wrong value.
+> >> If we deny NETLINK_AUDIT with EAFNOSUPPORT, after f0bddf50586d, we wil=
+l
+> >> get ENOSYS instead. We got same result with commit 9c2598d43510 ("risc=
+v:
+> >> entry: Save a0 prior syscall_enter_from_user_mode()").
+> >>
+> >> After analysing code, we think that regs->a0 =3D -ENOSYS should only b=
+e
+> >> executed when syscall !=3D -1. In __seccomp_filter, when seccomp rejec=
+ted
+> >> this syscall with specified errno, they will set a0 to return number a=
+s
+> >> syscall ABI, and then return -1. This return number is finally pass as
+> >> return number of syscall_enter_from_user_mode, and then is compared wi=
+th
+> >> NR_syscalls after converted to ulong (so it will be ULONG_MAX). The
+> >> condition syscall < NR_syscalls will always be false, so regs->a0 =3D =
+-ENOSYS
+> >> is always executed. It covered a0 set by seccomp, so we always get
+> >> ENOSYS when match seccomp RET_ERRNO rule.
+> >>
+> >> Fixes: f0bddf50586d ("riscv: entry: Convert to generic entry")
+> >> Reported-by: Felix Yan <felixonmars@archlinux.org>
+> >> Co-developed-by: Ruizhe Pan <c141028@gmail.com>
+> >> Signed-off-by: Ruizhe Pan <c141028@gmail.com>
+> >> Co-developed-by: Shiqi Zhang <shiqi@isrc.iscas.ac.cn>
+> >> Signed-off-by: Shiqi Zhang <shiqi@isrc.iscas.ac.cn>
+> >> Signed-off-by: Celeste Liu <CoelacanthusHex@gmail.com>
+> >> Tested-by: Felix Yan <felixonmars@archlinux.org>
+> >> Tested-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+> >> Reviewed-by: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
+> >> Reviewed-by: Guo Ren <guoren@kernel.org>
+> >> ---
+> >>
+> >> v4 -> v5: add Tested-by Emil Renner Berthing <emil.renner.berthing@can=
+onical.com>
+> >> v3 -> v4: use long instead of ulong to reduce type cast and avoid
+> >>           implementation-defined behavior, and make the judgment of sy=
+scall
+> >>           invalid more explicit
+> >> v2 -> v3: use if-statement instead of set default value,
+> >>           clarify the type of syscall
+> >> v1 -> v2: added explanation on why always got ENOSYS
+> >>
+> >>  arch/riscv/kernel/traps.c | 6 +++---
+> >>  1 file changed, 3 insertions(+), 3 deletions(-)
+> >>
+> >> diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
+> >> index f910dfccbf5d2..729f79c97e2bf 100644
+> >> --- a/arch/riscv/kernel/traps.c
+> >> +++ b/arch/riscv/kernel/traps.c
+> >> @@ -297,7 +297,7 @@ asmlinkage __visible __trap_section void do_trap_b=
+reak(struct pt_regs *regs)
+> >>  asmlinkage __visible __trap_section void do_trap_ecall_u(struct pt_re=
+gs *regs)
+> >>  {
+> >>      if (user_mode(regs)) {
+> >> -            ulong syscall =3D regs->a7;
+> >> +            long syscall =3D regs->a7;
+> >>
+> >>              regs->epc +=3D 4;
+> >>              regs->orig_a0 =3D regs->a0;
+> >> @@ -306,9 +306,9 @@ asmlinkage __visible __trap_section void do_trap_e=
+call_u(struct pt_regs *regs)
+> >>
+> >>              syscall =3D syscall_enter_from_user_mode(regs, syscall);
+> >>
+> >> -            if (syscall < NR_syscalls)
+> >> +            if (syscall >=3D 0 && syscall < NR_syscalls)
+> >>                      syscall_handler(regs, syscall);
+> >> -            else
+> >> +            else if (syscall !=3D -1)
+> >>                      regs->a0 =3D -ENOSYS;
+> >>
+> >>              syscall_exit_to_user_mode(regs);
+> >
+> > Unfortunately, this change introduced a regression: it broke strace
+> > syscall tampering on riscv.  When the tracer changes syscall number to =
+-1,
+> > the kernel fails to initialize a0 with -ENOSYS and subsequently fails t=
+o
+> > return the error code of the failed syscall to userspace.
+>
+> In the patch v2, we actually do the right thing. But as Bj=C3=B6rn T=C3=
+=B6pel's
+> suggestion and we found cast long to ulong is implementation-defined
+> behavior in C, so we change it to current form. So revert this patch and
+> apply patch v2 should fix this issue. Patch v2 uses ths same way with
+> other architectures.
+>
+> [1]: https://lore.kernel.org/all/20230718162940.226118-1-CoelacanthusHex@=
+gmail.com/
 
-On 2024-06-26 11:12, Alex Bee wrote:
-> Hi Detlev,
-> 
-> Am 25.06.24 um 18:56 schrieb Detlev Casanova:
->> Hi Alex,
->>
->> On Sunday, June 23, 2024 5:33:28 A.M. EDT you wrote:
->>> Hi Detlev,
->>>
->>> Am 20.06.24 um 16:19 schrieb Detlev Casanova:
->>>> This driver supports the second generation of the Rockchip Video
->>>> decoder, also known as vdpu34x.
->>>> It is currently only used on the RK3588(s) SoC.
->>>>
->>>> There are 2 decoders on the RK3588 SoC that can work in pair to decode
->>>> 8K video at 30 FPS but currently, only using one core at a time is
->>>> supported.
->>>>
->>>> Scheduling requests between the two cores will be implemented later.
->>>>
->>>> The core supports H264, HEVC, VP9 and AVS2 decoding but this driver
->>>> currently only supports H264.
->>>>
->>>> The driver is based on rkvdec and they may share some code in the
->>>> future.
->>>> The decision to make a different driver is mainly because rkvdec2 has
->>>> more features and can work with multiple cores.
->>>>
->>>> The registers are mapped in a struct in RAM using bitfields. It is IO
->>>> copied to the HW when all values are configured.
->>>> The decision to use such a struct instead of writing buffers one by one
->>>>
->>>> is based on the following reasons:
->>>>    - Rockchip cores are known to misbehave when registers are not written
->>>>    
->>>>      in address order,
->>>>    
->>>>    - Those cores also need the software to write all registers, even if
->>>>    
->>>>      they are written their default values or are not related to the task
->>>>      (this core will not start decoding some H264 frames if some VP9
->>>>      registers are not written to 0)
->>>>    
->>>>    - In the future, to support multiple cores, the scheduler could be
->>>>    
->>>>      optimized by storing the precomputed registers values and copy them
->>>>      to the HW as soos as a core becomes available.
->>>>
->>>> This makes the code more readable and may bring performance improvements
->>>> in future features.
->>>>
->>>> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
->>>> ---
->>>>
->>>>    drivers/staging/media/Kconfig                |    1 +
->>>>    drivers/staging/media/Makefile               |    1 +
->>>>    drivers/staging/media/rkvdec2/Kconfig        |   15 +
->>>>    drivers/staging/media/rkvdec2/Makefile       |    3 +
->>>>    drivers/staging/media/rkvdec2/TODO           |    9 +
->>>>    drivers/staging/media/rkvdec2/rkvdec2-h264.c |  739 +++++++++++
->>>>    drivers/staging/media/rkvdec2/rkvdec2-regs.h |  345 +++++
->>>>    drivers/staging/media/rkvdec2/rkvdec2.c      | 1253 ++++++++++++++++++
->>>>    drivers/staging/media/rkvdec2/rkvdec2.h      |  130 ++
->>>>    9 files changed, 2496 insertions(+)
->>>>    create mode 100644 drivers/staging/media/rkvdec2/Kconfig
->>>>    create mode 100644 drivers/staging/media/rkvdec2/Makefile
->>>>    create mode 100644 drivers/staging/media/rkvdec2/TODO
->>>>    create mode 100644 drivers/staging/media/rkvdec2/rkvdec2-h264.c
->>>>    create mode 100644 drivers/staging/media/rkvdec2/rkvdec2-regs.h
->>>>    create mode 100644 drivers/staging/media/rkvdec2/rkvdec2.c
->>>>    create mode 100644 drivers/staging/media/rkvdec2/rkvdec2.h
->>> ...
->>>
->>>> +static inline void rkvdec2_memcpy_toio(void __iomem *dst, void *src,
->>>> size_t len) +{
->>>> +#ifdef CONFIG_ARM64
->>>> +	__iowrite32_copy(dst, src, len);
->>>> +#elif defined(CONFIG_ARM)
->>> I guess that can get an "#else" since memcpy_toio exists for all archs.
->>>
->>>> +	memcpy_toio(dst, src, len);
->>>> +#endif
->>>> +}
->>>> +
->>> ...
->>>
->>>> +	/* Set timeout threshold */
->>>> +	if (pixels < RKVDEC2_1080P_PIXELS)
->>>> +		regs->common.timeout_threshold = RKVDEC2_TIMEOUT_1080p;
->>>> +	else if (pixels < RKVDEC2_4K_PIXELS)
->>>> +		regs->common.timeout_threshold = RKVDEC2_TIMEOUT_4K;
->>>> +	else if (pixels < RKVDEC2_8K_PIXELS)
->>>> +		regs->common.timeout_threshold = RKVDEC2_TIMEOUT_8K;
->>>> +
->>> Did you test if it works with anything > 8K? If so, you propably want to
->>> make the check above
->>>
->>> +	else
->>> +		regs->common.timeout_threshold = RKVDEC2_TIMEOUT_8K;
->>>
->>> Otherwise the timeout may not be set/contain invalid values from any former
->>> stream.
->> That's right, but it would be set to 0 because of the memset.
->> RKVDEC2_TIMEOUT_8K might not be enough for bigger frame sizes, so I'll set it
->> to the maximum value (0xffffffff) when frames are bigger than 8K and also adapt
->> the watchdog time: RKVDEC2_TIMEOUT_8K is around 100 ms, but 0xffffffff is arnoud
->> 5.3 seconds (reg032/axi_clock_freq)
->>
->> I'll do more tests with this as well.
->>
->>> ...
->>>
->>>> +
->>>> +static const struct rkvdec2_coded_fmt_desc rkvdec2_coded_fmts[] = {
->>>> +	{
->>>> +		.fourcc = V4L2_PIX_FMT_H264_SLICE,
->>>> +		.frmsize = {
->>>> +			.min_width = 16,
->>>> +			.max_width =  65520,
->>>> +			.step_width = 16,
->>>> +			.min_height = 16,
->>>> +			.max_height =  65520,
->>>> +			.step_height = 16,
->>>> +		},
->>>> +		.ctrls = &rkvdec2_h264_ctrls,
->>>> +		.ops = &rkvdec2_h264_fmt_ops,
->>>> +		.num_decoded_fmts =
->> ARRAY_SIZE(rkvdec2_h264_decoded_fmts),
->>>> +		.decoded_fmts = rkvdec2_h264_decoded_fmts,
->>>> +		.subsystem_flags =
->> VB2_V4L2_FL_SUPPORTS_M2M_HOLD_CAPTURE_BUF,
->>>> +	},
->>>> +};
->>>> +
->>> Note, that this is also given to userspace (VIDIOC_ENUM_FRAMESIZES) and
->>> this is already incorrect in the old rkvdec driver (and hantro): From
->>> userspace perspective we do not have a restriction in
->>> step_width/step_width, as we are aligning any given width/height to HW
->>> requirements in the driver - what we should give to userspace is
->>> fsize->type = V4L2_FRMSIZE_TYPE_CONTINUOUS; fsize->stepwise.min_height =
->>> 1; fsize->stepwise.min_width = 1; fsize->stepwise.max_height = 65520;
->>> fsize->stepwise.max_width = 65520;
->> Is fsize->stepwise.min_height = 1; and fsize->stepwise.min_width = 1 correct ?
->> Or do you mean fsize->stepwise.step_height = 1; and fsize->stepwise.setp_width
->> = 1 ?
->>
->> It would give this instead:
->>
->> .frmsize = {
->> 	.min_width = 16,
->> 	.max_width =  65520,
->> 	.step_width = 1,
->> 	.min_height = 16,
->> 	.max_height =  65520,
->> 	.step_height = 1,
->> },
->>
->> and .vidioc_enum_framesizes sets fsize->type = V4L2_FRMSIZE_TYPE_CONTINUOUS;
-> You can't adapt this here, because this .frmsize is also given to the
-> v4l2_apply_frmsize_constraints helper, which does the actual alignment to
-> HW requirements and requires the HW step_with and step_height.
-> IIRC, we also align framesizes which are below minimum HW requirement, at
-> least in rkvdec1 driver and it looks a lot like this is done here the same:
-> so this should be .min_height = 1 and .min_width = 1. (I remember because
-> there are VP9 conformance tests with very small framesizes). And yes, it
-> looks like you've had to set .step_width and .step_height to 1 for
-> V4L2_FRMSIZE_TYPE_CONTINUOUS, not sure why that is required.
-> 
-> So, imho, the final rkvdec2_enum_framesizes should look like
-> 
-> +static int rkvdec2_enum_framesizes(struct file *file, void *priv,
-> +                   struct v4l2_frmsizeenum *fsize)
-> ....
-> +    fmt = rkvdec2_find_coded_fmt_desc(fsize->pixel_format);
-> +    if (!fmt)
-> +        return -EINVAL;
-> +
-> +    fsize->type = V4L2_FRMSIZE_TYPE_CONTINUOUS;
-> +    fsize->stepwise.min_height = 1;
-> +    fsize->stepwise.max_height = fmt->frmsize.max_height;
-> +    fsize->stepwise.min_width = 1;
-> +    fsize->stepwise.max_width = fmt->frmsize.max_width;
-> +    fsize->stepwise.min_width = 1;
-> +    fsize->stepwise.step_height = 1;
-> +    fsize->stepwise.step_width = 1;
-> +    return 0;
-> +}
-> 
-> Note: Not even build tested :)
-> Jonas: maybe you can add a fixup patch to your rkvdec patches as well.
+Not reverting, but a fix to make sure that a0 is initialized to -ENOSYS, e.=
+g.:
 
-Thanks, will take a closer look and include something for rkvdec high10
-v6 later today/tomorrow.
+--8<--
+diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
+index 05a16b1f0aee..51ebfd23e007 100644
+--- a/arch/riscv/kernel/traps.c
++++ b/arch/riscv/kernel/traps.c
+@@ -319,6 +319,7 @@ void do_trap_ecall_u(struct pt_regs *regs)
 
-Regards,
-Jonas
+  regs->epc +=3D 4;
+  regs->orig_a0 =3D regs->a0;
++ regs->a0 =3D -ENOSYS;
 
-> 
-> Regards,
-> 
-> Alex
-> 
->>> I guess this new driver should be an
->>> opportunity to fix that and distinguish between internal and external
->>> frame size requirements and the .vidioc_enum_framesizes callback should
->>> adapted accordingly. Regards, Alex
->> Detlev.
+  riscv_v_vstate_discard(regs);
 
+@@ -328,8 +329,7 @@ void do_trap_ecall_u(struct pt_regs *regs)
+
+  if (syscall >=3D 0 && syscall < NR_syscalls)
+  syscall_handler(regs, syscall);
+- else if (syscall !=3D -1)
+- regs->a0 =3D -ENOSYS;
++
+  /*
+  * Ultimately, this value will get limited by KSTACK_OFFSET_MAX(),
+  * so the maximum stack offset is 1k bytes (10 bits).
+--8<--
+
+Celeste, do you want to cook that fix properly?
+
+
+Bj=C3=B6rn
 
