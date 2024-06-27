@@ -1,84 +1,185 @@
-Return-Path: <linux-kernel+bounces-232958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 668D891B07A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:34:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3B8491B087
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:37:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C98B1F22AE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:34:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 129E21C20F0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:37:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3FE19E827;
-	Thu, 27 Jun 2024 20:34:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31511A00D1;
+	Thu, 27 Jun 2024 20:37:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=the-vast-x.net header.i=@the-vast-x.net header.b="pSc1o4pq"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JH490QjO"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18C319B591
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 20:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CD4B19EEA6
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 20:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719520439; cv=none; b=MG/WT+wd5yIx0KAsXI5mTJpm7VHe/AvpXgEebNIshuzpzyiQajesbwiJpJWxSaoO6VFfxoKNBlh0I6vLTthmT1RlACyqNGhs/ZkvP9ELcbFsJWH0k/Kb/r+bjdOnHpG/nrFqAPJwghJrBiSQkbnddLpHEJIlO7suxBWWt3JynnA=
+	t=1719520637; cv=none; b=d8a7ss7Vd7th9i7Pck6JF6YLCXcmdw2u1o6szpn7qUsqbE0AZKHdaQsKEkdH+uuHkML8wNWgbzIkTqUJk/bcf1V3wALompXU8pu4pcKokUueLeQgVlXWFXr8PbI/VNKnEuRZhwh5eksbzKXVqXKF7Xy+LTQPYh/lcMonJCZKhd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719520439; c=relaxed/simple;
-	bh=5mKk8FZwF6BBTbx0rOs2LKDnTeK8W6Jy4xnfGc2uXYc=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=YQwa6bVyGcrWe9zKe486cOmZnoVX6fFMAggbrDsNn2mOLyEuimmGW7Xr2ZJcWPpoTInvknFERYRzQXZ/1dBFYz77v/VfuQ+mKhmtXzLxqjzsgK69vxikrNy0cpEK7zdWlawycYltprJu5+Exw7qI63sAuEOks5oFFlMEfH/mM14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=the-vast-x.net; spf=pass smtp.mailfrom=the-vast-x.net; dkim=pass (2048-bit key) header.d=the-vast-x.net header.i=@the-vast-x.net header.b=pSc1o4pq; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=the-vast-x.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=the-vast-x.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=the-vast-x.net; s=ds202405; h=Content-Transfer-Encoding:Content-Type:
-	Subject:From:To:MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=4APdmSHP7GddI8txPjGLnS5J77i/Y+XETblcBDp1mzk=; b=pSc1o4pqIcMbSG6Kmi7FUZUIVf
-	On6xRB2k751idFPyrmlRdJVpa91tnFLazaYg+VsjdJSmEUC7n+whYofA7+bLCdu1gsgB6bDVOvcOM
-	qNydZuPHAr3JfxAa1QiE1Vkx67Bhs+Zyu5pZi2eSdrpXjJWqUYNuSuJooUz+BbjtaLlfmvCH/emEx
-	JiFz85wSW09VI0hk/YCFPGsb3ivvaaycjPbq2VbAUPGTY/bqVb0Hvp16YwT80oyTvzCihUIuaG8lN
-	r2eq9Qe560EPJ6FiHSy6TL4mm6ProzwECvPKmf5LsHsRpLkjyeVR4FTen3SFiw1y6HShTeRPcOd4M
-	sfgLrU0w==;
-Received: from [2a02:fe1:716d:5f00:ad1e:3449:fb:6118] (port=51721)
-	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <ywe_caerlyn@the-vast-x.net>)
-	id 1sMvoU-0059Xj-3g
-	for linux-kernel@vger.kernel.org;
-	Thu, 27 Jun 2024 22:33:50 +0200
-Message-ID: <d47bd774-b628-47e5-aa59-e4e5c6259e9b@the-vast-x.net>
-Date: Thu, 27 Jun 2024 22:33:48 +0200
+	s=arc-20240116; t=1719520637; c=relaxed/simple;
+	bh=l10tJwz6XFZeNVP6zM+7j5f7jFyPN3goI9ctALUvyQY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tvtJZKJmqlLrXRp/yDdDM3vQAKu98ZNmP4iftR8VphQdJFD5+geSQC8nAOww1ISVm2KhP3zfjHytwSn8zIVaCGV4lo3kd/5EMasSmQiyuw+BSkdpodYQCvLP6OcB96NsszSMyFRJ/rMAUZs8LECu3Q3qgC2xLnrM3vYb5OxYgPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JH490QjO; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57d2fc03740so2384487a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 13:37:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719520631; x=1720125431; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RQogwTjNx9bNj44zcbbVune0WA12P5prs4FgoFEzpbE=;
+        b=JH490QjOzzKkUifvue0qj9hvV1PpFSz94aTH7xFspk0JwnFfHxBJe5HSWeCyq6hBUE
+         vQdJu5FLvDVc9psecXewQIqybmVCxlRJMy0ZB30MqTqYmjSnvlemvqrNd2r4jH5xTZKv
+         O5AMB/9mHOZNwy/OkllmtEL2SzUSVm5RCV+i91fSYC4FOSYiGfoxF58K5KY5x7+pxTTY
+         Q//gQmqUPVYyttWCzNiV8Lr9VFOiEB6XU1EgepKhQMpHmaw+5Lfg+5VP05eKA8qNHRrg
+         NBIvo87rMNlLbBchA+dtps5tpRrq68Xt3kDnjEnZCT+JE/VIUHD9n+VL6iF6PZInpsGt
+         /Cpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719520631; x=1720125431;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RQogwTjNx9bNj44zcbbVune0WA12P5prs4FgoFEzpbE=;
+        b=RKLmQBUYdO8UN+hWtAde+p+zFw5lQutqFmOlk7hTSaGOFlXp1t6cL/bPstTjp87z3D
+         hp2EQCA1F+B0SP8OxE43jrp2odkLk5SwmwEfzjxR8W4y86uF8zjix23y+dmfHTmeGme3
+         0W19BySkGODHCLB0EG84rPJpMc+cFgwRc4HnTfyAhmejNbMhxLhtDox9JR+0lqT6JPlg
+         rgv11QI8u/fc/yBQzJVoSl8umkfoi8vesyNgWidf/YZfaS63MC8YPc5kk8HE18jRP289
+         L3bWZPEliqnZTKLUy9eUfplz+q2BKnjU/9f2AU1sIXw4JcyAhnkhHy+gRfLgQ/XBVkWW
+         LgMg==
+X-Forwarded-Encrypted: i=1; AJvYcCWrg7t+iVEEkEVitZv3FU4ia7RAKMseE8bgH/91Q5ozQCSnf7+MO+kRad19o3OSVTN5l+MVVZruxIoRo5IbW2AP1OOvRr2mWY73IhWD
+X-Gm-Message-State: AOJu0Yx2LxzkMV/AfSoORa4sCUzHj20ydPmmTOmDqlcspEyq3jVN62gB
+	PH/s0WXkGIEb2KWGFy0w1u5gx2m0SUxcTljKMSBCKNMaqCIzkNvjUNXLerlCi9cFlH+CUgyxu/P
+	0dZ40rzcHuSPUOOixMB2vjoo1EuG0DZQ6xBl+
+X-Google-Smtp-Source: AGHT+IG01bZgMAGjP5tBPFfqopXM4TOonnMGd8+pitaPiRdrQl4LD+zRRX7r67IiLYfZMFYiFwI3es5iQtpASdeKF2c=
+X-Received: by 2002:a17:906:6b10:b0:a72:5226:331d with SMTP id
+ a640c23a62f3a-a7252263f95mr778859566b.70.1719520631048; Thu, 27 Jun 2024
+ 13:37:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-kernel@vger.kernel.org
-From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywe_caerlyn@the-vast-x.net>
-Subject: A suggestion for Standard Config
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240625195407.1922912-1-almasrymina@google.com>
+ <20240625195407.1922912-14-almasrymina@google.com> <20240626150822.742eaf6a@kernel.org>
+ <20240626174634.2adec19d@kernel.org> <CAHS8izOd_yYNJ6+xv35XoCvF7MzqachPVrkQJbic8-h=T1Vg_A@mail.gmail.com>
+In-Reply-To: <CAHS8izOd_yYNJ6+xv35XoCvF7MzqachPVrkQJbic8-h=T1Vg_A@mail.gmail.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Thu, 27 Jun 2024 13:36:57 -0700
+Message-ID: <CAHS8izNBB3+axWFR6cQChAawu194UqzVZ+oZp=c+H5TD4Nd8Zw@mail.gmail.com>
+Subject: Re: [PATCH net-next v14 13/13] selftests: add ncdevmem, netcat for
+ devmem TCP
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, Donald Hunter <donald.hunter@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
+	Matt Turner <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Steffen Klassert <steffen.klassert@secunet.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
+	Nikolay Aleksandrov <razor@blackwall.org>, Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, 
+	Shailend Chand <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst <jeroendb@google.com>, 
+	Praveen Kaligineedi <pkaligineedi@google.com>, Stanislav Fomichev <sdf@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The Standard Config seems a bit odd.
+On Thu, Jun 27, 2024 at 12:55=E2=80=AFPM Mina Almasry <almasrymina@google.c=
+om> wrote:
+>
+> On Wed, Jun 26, 2024 at 5:46=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> =
+wrote:
+> >
+> > On Wed, 26 Jun 2024 15:08:22 -0700 Jakub Kicinski wrote:
+> > > On Tue, 25 Jun 2024 19:54:01 +0000 Mina Almasry wrote:
+> > > > +CFLAGS +=3D -I../../../net/ynl/generated/
+> > > > +CFLAGS +=3D -I../../../net/ynl/lib/
+> > > > +
+> > > > +LDLIBS +=3D ../../../net/ynl/lib/ynl.a ../../../net/ynl/generated/=
+protos.a
+> > >
+> > > Not as easy as this.. Please add this commit to your series:
+> > > https://github.com/kuba-moo/linux/commit/c130e8cc7208be544ec4f6f3627f=
+1d36875d8c47
+> > >
+> > > And here's an example of how you then use ynl.mk to code gen and buil=
+d
+> > > for desired families (note the ordering of variables vs includes,
+> > > I remember that part was quite inflexible..):
+> > > https://github.com/kuba-moo/linux/commit/5d357f97ccd0248ca6136c5e11ca=
+3eadf5091bb3
+> >
+> > Investigating this further my patches will not work for O=3Dxyz builds
+> > either. Please squash this into the relevant changes:
+> >
+>
+> Thanks! I cherry-picked commit 15dbefa97fb98 ("tools: net: package
+> libynl for use in selftests"), and then applied the diff below to the
+> series [1].
+>
+> Now:
+>
+> `git clean -fdx && make  headers_install && make -C
+> ./tools/testing/selftests/net` works
+>
+> `git clean -fdx && make  headers_install && make -C
+> ./tools/testing/selftests/net ncdevmem` doesn't work with this error:
+>
+> make: Entering directory
+> '/usr/local/google/home/almasrymina/cos-kernel/tools/testing/selftests/ne=
+t'
+> gcc -Wall -Wl,--no-as-needed -O2 -g -I../../../../usr/include/
+> -isystem /usr/local/google/home/almasrymina/cos-kernel/tools/testing/self=
+tests/../../../usr/include
+> -I../     ncdevmem.c  -lmnl -o ncdevmem
+> ncdevmem.c:34:10: fatal error: netdev-user.h: No such file or directory
+>    34 | #include "netdev-user.h"
+>       |          ^~~~~~~~~~~~~~~
+> compilation terminated.
+> make: *** [<builtin>: ncdevmem] Error 1
+>
+> It seems specifying the target doesn't trigger the libynl.a to be
+> built. Isn't this a bug, or is that expected?
 
-I would suggest a low-jitter config (preempt), not quite realtime (that 
-is for special cases).
+Nevermind, from a closer look at the docs, it looks like the proper
+way to build one test is:
 
-General Low-Jitter Config, 90 Hz Timer, XFS Filesystem (good a long time 
-ago, would be wrong to deny that).
+`make -C ./tools/testing/selftests/net TARGETS=3Dncdevmem`, which works.
 
-Good for Games, good for Server. ~200uS peak jitter not uncommon.
+`make -C ./tools/testing/selftests/net ncdevmem` was just a weird way
+I was building the tests that worked for me, but it doesn't actually
+show up in the docs. I'm guessing I can ignore the failure.
 
-Ready for Renicing X/other for full desktop features, without 
-performance issues. And realtime audio threads.
-
-Ywe.
-
-
-
+--=20
+Thanks,
+Mina
 
