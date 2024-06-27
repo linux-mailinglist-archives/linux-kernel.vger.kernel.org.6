@@ -1,70 +1,126 @@
-Return-Path: <linux-kernel+bounces-232178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D76291A488
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:05:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9DE791A467
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:59:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDE9F281EE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:05:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 269061C20F18
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:59:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670811494B3;
-	Thu, 27 Jun 2024 11:05:33 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F36148310;
-	Thu, 27 Jun 2024 11:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBDCD14532B;
+	Thu, 27 Jun 2024 10:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="1gUPtnZU"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001A113C667
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 10:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719486333; cv=none; b=Uog4+0HVEuC2fpyxEfedS0wJ/nc4QtQsvGM/rzRBxeDXxEvpUD3wm/Mb/O9p5Gj0Hbc75MPRAE4/9rd/XpeLCSxPfCal6zllGoxH3iJkjL70lT67vmSgNAQ1Ff2Au8poMTO4TtSn6PA8oV8WZzyXpRj04zs9Py8lftyG3zPW9pg=
+	t=1719485945; cv=none; b=kyLQ+qZGX81CONZ6ku0Kg9bg15Oo4J+fpi5nU9C2awGz1Mx/CXXHn0KHq6LvEmh2PiUJs9vqOEAFor2UICyrXxoWMiUY4Y5XaZI9SdFp+a6+qbBrTTkUJx1AZsC60lSIDU6nWSGNsozm5zGKBCUoAz/aQjXDoJ/Nm1XRrtCJTqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719486333; c=relaxed/simple;
-	bh=B8HlRHtRvGCLPcANh6rc9BTx0hDMXgw8LgJnHLFEqu8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M6CdC0uiLAp5x3E0+BhP+gc1RrXwcbYAAH5x/WNbxBYnQYBNQ7ddBf5M6xD+C/U5ieP+kyIe+QkKHluaFjUVDY8qC9nuavzboVaPSDhwWRfOtg8HvTYk1GS5yXeEW2w2HmPWDzblg0F95nVv3zsa+mA5FrLvsiySs1AqBJieZGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1sMmwE-0003Wq-00; Thu, 27 Jun 2024 13:05:14 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id EC248C0120; Thu, 27 Jun 2024 12:58:03 +0200 (CEST)
-Date: Thu, 27 Jun 2024 12:58:03 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-	Philippe =?iso-8859-1?Q?Mathieu-Daud=E9?= <philmd@linaro.org>
-Subject: Re: [PATCH v3] MIPS: Implement ieee754 NAN2008 emulation mode
-Message-ID: <Zn1FuxNw2CUttzdg@alpha.franken.de>
-References: <20240612-mips_ieee754_emul-v3-1-2c21b450abdb@flygoat.com>
+	s=arc-20240116; t=1719485945; c=relaxed/simple;
+	bh=z57g3uCdvjXuRj49fNkurZjircHT6W0I1kG0XtfOLUw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fhYklLdFA/AroVMwXctXyuxvXXvJ9XhsNv9yI44ZO+HA97n6+vVPoV2OuWenKYX6vUTIbBDRisQPop7LYlXpdQPJSo6qyO+qiDw1yJFJWzWfxCD9dGZ3bZ73cT4t1N7y3TPWiR26YIv08pc1l/Q+iFfsLP81T3TVLcbj2nU4JNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=1gUPtnZU; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ebe785b234so85702251fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 03:59:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719485940; x=1720090740; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xZV0c9kgiqV8gG3kEpoX0nM65939kr+amcfqyF8vm9s=;
+        b=1gUPtnZUKXMT3HWJJWbDGlxdx/+iiCwHRMwC4O7pWuSI8GvD2VmXp2LvXVAydQvTw/
+         LB96yhNu76oyLDEL+FyHBMehzj2TN6nWihoLKLR0gixc99H1VtLmBgn4Et/apdRSnI1I
+         4/j2CdOg1ASrtdi+chjVbhgaTPn3TOX0z3589Qi5x1GSirkDT54Qdb2imvldPiOLrluy
+         wYtpChWuCrsvkcBUwXBSAgrGTnaFIy1v5AWYQqQa4L9BAAx+8up5LRVMv0GdrgotWzj0
+         OL5qzjj5s+3oNznB92S6nmHgYC6PN1bVg2S+FUqJQLCShsgudD5bGOFBhP1GPvQwCeqk
+         c8PA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719485940; x=1720090740;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xZV0c9kgiqV8gG3kEpoX0nM65939kr+amcfqyF8vm9s=;
+        b=s+JNAywVdG0NP95GFMBkVU9MsLnyJfTmX+yeQdUBVKWNekyaHjENjHEqhp8Z16alL1
+         CanogYJI4//gJsPytaj9YANOcuGyXKmhpdWzpw/Flf503r1dFsliaBE3H/ly/h2LMi/M
+         FROjoJve2QHgQKno8EzJedREl52/ZcoHhKLCXX7JcZ8b4ELy0TovocLHzTZWqJc0gzY1
+         jeGHNN11bur/gBqq8O3vcs/5UZHIVobvLtyeF69gNrs8VVTyGTrm7euE9CfewyfUzlih
+         X0cbjaJqoMs4RHv+P7tARShy5yALQUiCLZV+zN87dMCRBbMyZs8ntA1lH0uK4c1KkfFr
+         2g5A==
+X-Forwarded-Encrypted: i=1; AJvYcCXhryGxDBLnn+aaTwTjvaARbHUKzKY3FHVA8rUKcBfqMpUFzSBFMcqA8CG0vqS/txl58zWjhYXqeAdUD6RtcxjNlpveOlIYV1c24Szh
+X-Gm-Message-State: AOJu0YzjJNeYfZJTItQBmmtkSCfYnQ+cCAVj0AJH9i1/zXcTyot9+ify
+	Z7vbmJaxAGHx8qTJMwVnF3h85oHZs6z5mmRp5ZSaca7o/ThUYcMjbkeA15S4J4E=
+X-Google-Smtp-Source: AGHT+IHKnaB1GKK958LRMoxlWlJjZVfp/KDChOu1D0p1jZTWC7mugwsykvQ9bMn2+NsTJbJLR8HYXQ==
+X-Received: by 2002:a2e:9001:0:b0:2ec:56ce:d51f with SMTP id 38308e7fff4ca-2ec5931d31emr96371381fa.20.1719485939978;
+        Thu, 27 Jun 2024 03:58:59 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:7fe5:47e9:28c5:7f25])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c8246828sm61612895e9.5.2024.06.27.03.58.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 03:58:59 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [RESEND PATCH net] net: phy: aquantia: add missing include guards
+Date: Thu, 27 Jun 2024 12:58:45 +0200
+Message-ID: <20240627105846.22951-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240612-mips_ieee754_emul-v3-1-2c21b450abdb@flygoat.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 12, 2024 at 09:38:19AM +0100, Jiaxun Yang wrote:
-> +++ b/arch/mips/kernel/elf.c
-> @@ -318,6 +318,10 @@ void mips_set_personality_nan(struct arch_elf_state *state)
->  	t->thread.fpu.fcr31 = c->fpu_csr31;
->  	switch (state->nan_2008) {
->  	case 0:
-> +		if (!(c->fpu_msk31 & FPU_CSR_NAN2008))
-> +			t->thread.fpu.fcr31 &= ~FPU_CSR_NAN2008;
-> +		if (!(c->fpu_msk31 & FPU_CSR_ABS2008))
-> +			t->thread.fpu.fcr31 &= ~FPU_CSR_ABS2008;
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-why is this needed ?
+The header is missing the include guards so add them.
 
-Thomas.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Fixes: fb470f70fea7 ("net: phy: aquantia: add hwmon support")
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Added the Fixes: tag and resending separately as a backportable fix.
 
+ drivers/net/phy/aquantia/aquantia.h | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/net/phy/aquantia/aquantia.h b/drivers/net/phy/aquantia/aquantia.h
+index c0e1fd9d7152..b8502793962e 100644
+--- a/drivers/net/phy/aquantia/aquantia.h
++++ b/drivers/net/phy/aquantia/aquantia.h
+@@ -6,6 +6,9 @@
+  * Author: Heiner Kallweit <hkallweit1@gmail.com>
+  */
+ 
++#ifndef AQUANTIA_H
++#define AQUANTIA_H
++
+ #include <linux/device.h>
+ #include <linux/phy.h>
+ 
+@@ -198,3 +201,5 @@ int aqr_phy_led_hw_control_set(struct phy_device *phydev, u8 index,
+ int aqr_phy_led_active_low_set(struct phy_device *phydev, int index, bool enable);
+ int aqr_phy_led_polarity_set(struct phy_device *phydev, int index,
+ 			     unsigned long modes);
++
++#endif /* AQUANTIA_H */
 -- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+2.43.0
+
 
