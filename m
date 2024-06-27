@@ -1,93 +1,130 @@
-Return-Path: <linux-kernel+bounces-232292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FCAE91A664
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:16:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F32E91A66A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:18:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 443F0281E73
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:16:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC3CF1F2301B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8AF15383C;
-	Thu, 27 Jun 2024 12:16:49 +0000 (UTC)
-Received: from smtp134-25.sina.com.cn (smtp134-25.sina.com.cn [180.149.134.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B764154452;
+	Thu, 27 Jun 2024 12:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="tagTi9za"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6501304A3
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:16:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E0E152190
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719490609; cv=none; b=PJLsMMPd0Mwx4AkM2j7oSI3Eabxblh4AW5XF9xbZDVvDe4lunTfJ4Hn3WRfRFxrlTr7+HMLzytiMDD0Lag3crmTKevZr0jqhJ/WnZHCIbSeyqwKzbadxkW1OX0t5PsmcdCPhn8YJ2qcqB4WooJnThneDcgtiotsuVAk0QkjEovs=
+	t=1719490701; cv=none; b=UHu8PoT81qjCY0HRLJQW98e5M3MICYP64rmqRZ6oOooXinB/i/jCZXKiFfNpUpmXTiQD/74ZnpD+MAwznMXmN1R8gLHOte1ABMa7WwFAjUshewBNtqRyOiuAPZ1Ir9sRc36ozdxh1Tn+lEBcPbbtnXqg/mf/vx3aeVGnt0rJ0cU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719490609; c=relaxed/simple;
-	bh=ZcZ/fMAZaiW/5sor0Jr7UwJx4S5vpxSj6WBY4ifdW4Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WaMNZCBT0ShWtqgC1YV4ewJIf+XSp9nXqcFVxci1ZDttqw1lSePvSYwMk9xr0huhtDslWKMuqDE/x9HrfONDIdkIa16VudpZnQY0rP798AA8xsb7s3oqlNXSEd/A5eczSkMapRN/gfYKx+eRxrhTmTa1G6QHwEto1NeDrpWHBu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([116.24.11.136])
-	by sina.com (10.185.250.21) with ESMTP
-	id 667D582300001048; Thu, 27 Jun 2024 20:16:37 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 5955733408299
-X-SMAIL-UIID: 01DA74F255DE4C7FB9D6ED568ACF3AE6-20240627-201637-1
-From: Hillf Danton <hdanton@sina.com>
-To: Nicholas Piggin <npiggin@gmail.com>
-Cc: "Paul E . McKenney" <paulmck@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Waiman Long <longman@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] workqueue: Improve scalability of workqueue watchdog touch
-Date: Thu, 27 Jun 2024 20:16:28 +0800
-Message-Id: <20240627121628.2278-1-hdanton@sina.com>
-In-Reply-To: <20240625114249.289014-3-npiggin@gmail.com>
-References: 
+	s=arc-20240116; t=1719490701; c=relaxed/simple;
+	bh=Fm8Lc5p1A5H70/b2jqUsL4oBjkyBytvMJYfYPNEtcv4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OWSWDDoZUyuV2ejzDfiIgg7lxsJPtIEfnSj3tic/+LtFKRZubDTP4WqGGNeTKnOZSOdgU0U05TG3USALKM9EnRLgJyZrWZhthQW2j0zHgDija2KSlvEJykhrp8O87z0ZlCkLurUqAHnyp6Ykiv96s1AisvKvkmtBiPiWbN0d6XE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=tagTi9za; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2eaa89464a3so88740281fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 05:18:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719490698; x=1720095498; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wx0CgMn6jluyyz8Lb+06cQAt1KaCnUk56+5xBtg2eeo=;
+        b=tagTi9za7JNHZkzf+w7VHt5HNGxF6kDkdmePl08/AKsc17tV+aLWI+k1xB7tSivh9Q
+         MbOR70IZrurqSsBg76suzrAlbntdJSUvTqYquWZNngpakEh2tkJFWzpvAG0mA2+wpq/N
+         cEKW38jjpK79DWyrrSZkRjL1458P3YT78B4ch0DKxEgHI1qyGhDaga4UaluSME1rG/FJ
+         D4p5+hyu/lRFHp3LazSY/p8DKwjH0IkxX1Ttb5UAhTkDnHA0hPCTQjLs/WvRfLzxg7CK
+         FP6IKArFwmvf8Yg5tpAuEP0yaKKaOh8Jsiu1i+JtupHwYAERbQH26QIOA1R/prldE3TV
+         9U4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719490698; x=1720095498;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Wx0CgMn6jluyyz8Lb+06cQAt1KaCnUk56+5xBtg2eeo=;
+        b=DjJLO2g8ESuaOyZ47p4buTCJhg9k8f3NmVtoh/pZVyyvTQgInumHz4YTYHuSpfU9OI
+         fdGeheh2JuiHWaWITFjTBgnf3poN2wxJf03bKJEQR0uE1CK1rvo2QJjGZ++ET/e6L/Wv
+         Oahl0s4OoDP93QYOBYXqEN7kdDWSeNUguO9kPaqISioFAJwZ3WvzTuteYC+Tb8nreOK2
+         e6un6iAT43c+yVvGNaC+KbZfQSm8dEjU8UzMxVk3slxV6l7PH4e3OjHv3MCw9zTxZEDc
+         +gKBQyNcjG2bEHrwZJXyaTvA9CALf1nl/me+IEyTiQQ2fKws33lrtOhqEIS5QMqJg6r9
+         5i+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUauISEHxipQLnM+HwOC9kFY74L9vaKTT4a63dQMgAj6OfwbYtRu6Pq1mmpbi3GjVUwD68KGgDcGM0BdkGt4xdfTJmG1FGar71eprhf
+X-Gm-Message-State: AOJu0Yz/+17Mta4Dc1urMDfSfuMSr2HZF8dNV8eq2lUfFz72dHXQG2mH
+	nDmqik5uQInBHxKlBm08/ZLMzSUmSlnkzJVsdyByWSHOcp1eLMikntyWwze7V7z7IRZRf+BdZhv
+	JCiBjrnAuXKgKp2Wj1CWia+XmdDr8CttPtu7tlA==
+X-Google-Smtp-Source: AGHT+IFoXRdB/Inu8lFN9nuGotr9Qb3Ng9uwIeH8T3OCKFP0OTUnuvV1f/leNMSuHwCZB1jD8YWlv09Pw3eh4/iuVdY=
+X-Received: by 2002:a2e:7207:0:b0:2eb:f7a4:7289 with SMTP id
+ 38308e7fff4ca-2ec579ffb0fmr79246121fa.51.1719490698327; Thu, 27 Jun 2024
+ 05:18:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240627113018.25083-1-brgl@bgdev.pl> <20240627113018.25083-4-brgl@bgdev.pl>
+ <Zn1WgpC58nbYfLVF@shell.armlinux.org.uk>
+In-Reply-To: <Zn1WgpC58nbYfLVF@shell.armlinux.org.uk>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 27 Jun 2024 14:18:06 +0200
+Message-ID: <CAMRc=Mdn6gXhgoWwpztXDKzix_+Ad1_rNUWP7O6HDyLXAJev6Q@mail.gmail.com>
+Subject: Re: [PATCH v2 net-next 3/3] net: phy: aquantia: add support for aqr115c
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 25, 2024 at 09:42:45PM +1000, Nicholas Piggin wrote:
-> On a ~2000 CPU powerpc system, hard lockups have been observed in the
-> workqueue code when stop_machine runs (in this case due to CPU hotplug).
-> This is due to lots of CPUs spinning in multi_cpu_stop, calling
-> touch_nmi_watchdog() which ends up calling wq_watchdog_touch().
-> wq_watchdog_touch() writes to the global variable wq_watchdog_touched,
-> and that can find itself in the same cacheline as other important
-> workqueue data, which slows down operations to the point of lockups.
-> 
-> In the case of the following abridged trace, worker_pool_idr was in
-> the hot line, causing the lockups to always appear at idr_find.
-> 
-Wonder if the MCS lock does not help in this case.
+On Thu, Jun 27, 2024 at 2:09=E2=80=AFPM Russell King (Oracle)
+<linux@armlinux.org.uk> wrote:
+>
+> On Thu, Jun 27, 2024 at 01:30:17PM +0200, Bartosz Golaszewski wrote:
+> > +static int aqr115c_config_init(struct phy_device *phydev)
+> > +{
+> > +     /* Check that the PHY interface type is compatible */
+> > +     if (phydev->interface !=3D PHY_INTERFACE_MODE_SGMII &&
+> > +         phydev->interface !=3D PHY_INTERFACE_MODE_2500BASEX)
+> > +             return -ENODEV;
+> > +
+> > +     phy_set_max_speed(phydev, SPEED_2500);
+>
+> Please can you explain why this is necessary? Does the PHY report that
+> it incorrectly supports faster speeds than 2500base-X ?
+>
+> If phylib is incorrectly detecting the PHYs features, then this should
+> be corrected via the .get_features method, not in the .config_init
+> method.
+>
+> (The same should be true of the other Aquantia PHYs.)
+>
+> Note that phy_set_max_speed() is documented as:
+>
+>  * The PHY might be more capable than the MAC. For example a Fast Etherne=
+t
+>  * is connected to a 1G PHY. This function allows the MAC to indicate its
+>  * maximum speed, and so limit what the PHY will advertise.
+>
 
->   watchdog: CPU 1125 self-detected hard LOCKUP @ idr_find
->   Call Trace:
->   get_work_pool
->   __queue_work
->   call_timer_fn
->   run_timer_softirq
->   __do_softirq
->   do_softirq_own_stack
->   irq_exit
->   timer_interrupt
->   decrementer_common_virt
->   * interrupt: 900 (timer) at multi_cpu_stop
->   multi_cpu_stop
->   cpu_stopper_thread
->   smpboot_thread_fn
->   kthread
-> 
+Well I should have RTFM. You're right, I'll drop it.
+
+Bart
+
+> Aquantia seems to be the only PHY driver that calls this function.
+>
+> Thanks.
+>
+> --
+> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+> FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
