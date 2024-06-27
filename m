@@ -1,271 +1,188 @@
-Return-Path: <linux-kernel+bounces-232377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1048391A7E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:31:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB3CA91A82B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:42:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 271841C20A05
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:31:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89D34284D2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7AC1193099;
-	Thu, 27 Jun 2024 13:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0976F1946DC;
+	Thu, 27 Jun 2024 13:42:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R40Pv9H/"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="AfkddwTD"
+Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [84.16.66.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5194E13E41F;
-	Thu, 27 Jun 2024 13:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84AD31946C3
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 13:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719495091; cv=none; b=SMTRlS19D4tvRXVe26vWUurzcTpdIr0uE1IKEb4qrMYyxtDTgxFLWiPYJyVtaGJA8ItYpwFP1fq53jONSOJhRa3DRmc0hB8UvEwnSlBlvRNPpssXC4SgARP5UFofyhMOqJdK/nySRneik4cq98BikNmIF8E1S2DG+8wlfJoUBwk=
+	t=1719495760; cv=none; b=qJlmIwsYHQERuD6d0mYFQfttMtTrE//xW754+AejIjTuK2Uxgu7CCa1KtkWkzUE8FNhve398G7aCq5sctNXznDcmbkEbRJ7rRPBYZcueBWzcvKkYPo8zKFvu17wfNdot8XZa59b9vgumqx8fyioqgP0Hgahf7DkhD3oUo0aZDSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719495091; c=relaxed/simple;
-	bh=d//UJmlqu8RbuMZrmt9fgYLBdY30MUVizK7nEF1hXRA=;
+	s=arc-20240116; t=1719495760; c=relaxed/simple;
+	bh=/KGcaMMLpW+cPCLswh+ZTPNFikc4ZR2cfrB0fKOggys=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rHj5v+s82MBABxD6n/pq3p+ZOCUG6mxLWqVf4XlOyko6L25bO0Uzz5SOU+j7n3N/NLxrMZd3m8fFB5CRMdm1q+wiFRvp8gQaV8I17uqFxPUcWZvjleJe/N9TfISnEhvuVJ4kzkyaTqQGBj3qppeMjisTIIvRkoB5D3l+56SrBxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R40Pv9H/; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57d1679ee83so1830463a12.2;
-        Thu, 27 Jun 2024 06:31:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719495088; x=1720099888; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lP+sVvrhd6DReJOWrP3HQzV+W33wFRZLKWVuhhNnzJs=;
-        b=R40Pv9H/8H4QWadaC1fXS585aYbY3FX3Sgrok0p9vjTl9Ymt6kDoRnqTBo08FZWmII
-         2RHS1MH0QJ4Bjpljgy1ca4+//a2AEpRrPVH4B30IanwMEK84LXe2hhRBFsxbsKFNdgLV
-         zoDb7V8gO37m9m+/Cw2Ue8KlQXj6VGBzjP4wp7uBppOGIQxhOQSbvOAwzenClEIve1tI
-         OFMwk/nRkb293OcTWCyC6+BbN+sjmo30Tku3P7j8HDFOhNfQRq25UU/cD3ISRhsavSiR
-         3ldwGD08HedDYq7ZMjjgbH68c0LtseOuRfm0puDvqlwCl/iMgHTf94G7SS7nzQxuMUb6
-         1+xA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719495088; x=1720099888;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lP+sVvrhd6DReJOWrP3HQzV+W33wFRZLKWVuhhNnzJs=;
-        b=Ye2vofbC/OBWZa4GkWs75pB3Cqweysm8xhsleSdp+Iutn5y+l0gejrBanrScOSSure
-         IKna+OPjYtKQuI1bvWcNUSkiuWQbM3oFEhWc1DTt4awPiQeES1ETygv5mqRWDcqKip3/
-         o0eGhGJsNqWPW5NmWyE36wQGBP+gBVAz+ysikqBIulFumc6KQmbUeyC1MksNXHmlJfvR
-         FLgogAMl+nxb7fKimFLUP/vkCk/5FXYXx1w3TqLTxICqV8J5F+8+fzozv3IGYRt0wHSF
-         K/c0Cm4P3xOdRTFQIJ/hC2cTuovr8bVOsN6kk6+xXpfDUx80QtUGISBQp9M1hbPL2lLJ
-         UHTg==
-X-Forwarded-Encrypted: i=1; AJvYcCVRPnuYymBJgVu+Xl3Td0rDT4ORb6nDFMga+Dp3+CUGAJF2xsJFx+fe/9VjaEnIoyv+B4zDnuzMe9J7Dk148h8bV/wpQ1/LiaUT6x4DQuQojrVE2Ku4J2QTDG6fgHCXZUzgAF8AUvdGQ7ZO0WWYjJk+WvjYdTreGWHMfF4ca096iFfNQA==
-X-Gm-Message-State: AOJu0YwaAzsSa+KMkq4dtj6Eylu/nam52vu+4s2yc32Dv0Xj3bMk+5z4
-	Eb4DDLDhWNAV+mR8S577as5b31kU+nhPZvlY1upqL86L4cpBIh8X
-X-Google-Smtp-Source: AGHT+IEevBVKU5K21V3Vq/SktLrOLQKyBerQQj9QaS7MnXQfPuSD08AVh5Mvwuw5cmNmKbShIjuhSg==
-X-Received: by 2002:a17:906:8a50:b0:a6f:1e88:37c1 with SMTP id a640c23a62f3a-a715f9798bemr854472266b.45.1719495086226;
-        Thu, 27 Jun 2024 06:31:26 -0700 (PDT)
-Received: from andrea ([217.201.220.159])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a729d778baesm60437266b.100.2024.06.27.06.31.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 06:31:25 -0700 (PDT)
-Date: Thu, 27 Jun 2024 15:31:20 +0200
-From: Andrea Parri <parri.andrea@gmail.com>
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
-	Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-arch@vger.kernel.org, Andrea Parri <andrea@rivosinc.com>
-Subject: Re: [PATCH v2 04/10] riscv: Improve amocas.X use in cmpxchg()
-Message-ID: <Zn1pqD7Aruo4XwN8@andrea>
-References: <20240626130347.520750-1-alexghiti@rivosinc.com>
- <20240626130347.520750-5-alexghiti@rivosinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=I2Bl7LheaQ6Zymd/u1LoGU4BaOO+1WKtOXQfyCkSkB0BvXqICUajBO1IdZMUyDG5TF0JVchn5cW18iYHG59w8vExVTZShpDo47tALKe1+uqYnqicWiAw9SgCR9nGEvu86I5GywUhD4VRYBLlirZr2K6jBVXoRyxt10ZNIp2apHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=AfkddwTD; arc=none smtp.client-ip=84.16.66.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4W8zzx4v0ZzQNB;
+	Thu, 27 Jun 2024 15:33:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1719495229;
+	bh=j7p8L183zHrWXMe1/dPD2xjc7OmYlClg1l8s6YGVw5k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AfkddwTDO9HHRCyCS9+Mt1eVARW6hGWfDqGAmwMS5K3tVc9ml7+jdw8C5Z5BZuaQ+
+	 O42GodJXDQbuHP394Tfkzo+wdNqAepgeZmeq0b/6/Ibc+zQjvUjbHA4nPuxgT8Vq+c
+	 6bs9UrL/uRV9MwxnFMHKye3TgRqBPgS2REFI1zjs=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4W8zzv4SgWzbgH;
+	Thu, 27 Jun 2024 15:33:47 +0200 (CEST)
+Date: Thu, 27 Jun 2024 15:33:41 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Paul Moore <paul@paul-moore.com>, Jann Horn <jannh@google.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, syzbot <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com>, 
+	jmorris@namei.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
+	linux-fsdevel@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>, 
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [syzbot] [lsm?] general protection fault in
+ hook_inode_free_security
+Message-ID: <20240627.lee3Sookaim0@digikod.net>
+References: <00000000000076ba3b0617f65cc8@google.com>
+ <CAHC9VhSmbAY8gX=Mh2OT-dkQt+W3xaa9q9LVWkP9q8pnMh+E_w@mail.gmail.com>
+ <20240515.Yoo5chaiNai9@digikod.net>
+ <20240516.doyox6Iengou@digikod.net>
+ <7fde537a-b807-4ffd-895d-4b63e0ebd4df@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240626130347.520750-5-alexghiti@rivosinc.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7fde537a-b807-4ffd-895d-4b63e0ebd4df@efficios.com>
+X-Infomaniak-Routing: alpha
 
-On Wed, Jun 26, 2024 at 03:03:41PM +0200, Alexandre Ghiti wrote:
-> cmpxchg() uses amocas.X instructions from Zacas and Zabha but still uses
-> the LR/SC acquire/release semantics which require barriers.
+On Thu, May 16, 2024 at 09:07:29AM GMT, Mathieu Desnoyers wrote:
+> On 2024-05-16 03:31, Mickaël Salaün wrote:
+> > Adding membarrier experts.
 > 
-> Let's improve that by using proper amocas acquire/release semantics in
-> order to avoid any of those barriers.
+> I do not see how this relates to the membarrier(2) system call.
 
-I can't really parse this changelog...
+I meant SMP barrier and RCU, so mostly Paul E. McKenney.
+I'll remove you from the thread.
 
-
-> Suggested-by: Andrea Parri <andrea@rivosinc.com>
-> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> ---
->  arch/riscv/include/asm/cmpxchg.h | 60 ++++++++++++++++++--------------
->  1 file changed, 33 insertions(+), 27 deletions(-)
 > 
-> diff --git a/arch/riscv/include/asm/cmpxchg.h b/arch/riscv/include/asm/cmpxchg.h
-> index b9a3fdcec919..3c65b00a0d36 100644
-> --- a/arch/riscv/include/asm/cmpxchg.h
-> +++ b/arch/riscv/include/asm/cmpxchg.h
-> @@ -105,7 +105,9 @@
->   * indicated by comparing RETURN with OLD.
->   */
->  
-> -#define __arch_cmpxchg_masked(sc_sfx, cas_sfx, prepend, append, r, p, o, n)	\
-> +#define __arch_cmpxchg_masked(sc_sfx, cas_sfx,				\
-> +			      sc_prepend, sc_append,			\
-> +			      r, p, o, n)				\
->  ({									\
->  	__label__ no_zacas, zabha, end;					\
->  									\
-> @@ -129,7 +131,7 @@ no_zacas:;								\
->  	ulong __rc;							\
->  									\
->  	__asm__ __volatile__ (						\
-> -		prepend							\
-> +		sc_prepend							\
->  		"0:	lr.w %0, %2\n"					\
->  		"	and  %1, %0, %z5\n"				\
->  		"	bne  %1, %z3, 1f\n"				\
-> @@ -137,7 +139,7 @@ no_zacas:;								\
->  		"	or   %1, %1, %z4\n"				\
->  		"	sc.w" sc_sfx " %1, %1, %2\n"			\
->  		"	bnez %1, 0b\n"					\
-> -		append							\
-> +		sc_append							\
->  		"1:\n"							\
->  		: "=&r" (__retx), "=&r" (__rc), "+A" (*(__ptr32b))	\
->  		: "rJ" ((long)__oldx), "rJ" (__newx),			\
-> @@ -150,9 +152,7 @@ no_zacas:;								\
->  zabha:									\
->  	if (IS_ENABLED(CONFIG_RISCV_ISA_ZABHA)) {			\
->  		__asm__ __volatile__ (					\
-> -			prepend						\
->  			"	amocas" cas_sfx " %0, %z2, %1\n"	\
-> -			append						\
->  			: "+&r" (r), "+A" (*(p))			\
->  			: "rJ" (n)					\
->  			: "memory");					\
-> @@ -160,7 +160,9 @@ zabha:									\
->  end:;									\
->  })
->  
-> -#define __arch_cmpxchg(lr_sfx, sc_cas_sfx, prepend, append, r, p, co, o, n)	\
-> +#define __arch_cmpxchg(lr_sfx, sc_sfx, cas_sfx,				\
-> +		       sc_prepend, sc_append,				\
-> +		       r, p, co, o, n)					\
->  ({									\
->  	__label__ zacas, end;						\
->  	register unsigned int __rc;					\
-> @@ -172,12 +174,12 @@ end:;									\
->  	}								\
->  									\
->  	__asm__ __volatile__ (						\
-> -		prepend							\
-> +		sc_prepend							\
->  		"0:	lr" lr_sfx " %0, %2\n"				\
->  		"	bne  %0, %z3, 1f\n"				\
-> -		"	sc" sc_cas_sfx " %1, %z4, %2\n"			\
-> +		"	sc" sc_sfx " %1, %z4, %2\n"			\
->  		"	bnez %1, 0b\n"					\
-> -		append							\
-> +		sc_append							\
->  		"1:\n"							\
->  		: "=&r" (r), "=&r" (__rc), "+A" (*(p))			\
->  		: "rJ" (co o), "rJ" (n)					\
-> @@ -187,9 +189,7 @@ end:;									\
->  zacas:									\
->  	if (IS_ENABLED(CONFIG_RISCV_ISA_ZACAS)) {			\
->  		__asm__ __volatile__ (					\
-> -			prepend						\
-> -			"	amocas" sc_cas_sfx " %0, %z2, %1\n"	\
-> -			append						\
-> +			"	amocas" cas_sfx " %0, %z2, %1\n"	\
->  			: "+&r" (r), "+A" (*(p))			\
->  			: "rJ" (n)					\
->  			: "memory");					\
-> @@ -197,7 +197,8 @@ zacas:									\
->  end:;									\
->  })
->  
-> -#define _arch_cmpxchg(ptr, old, new, sc_sfx, prepend, append)		\
-> +#define _arch_cmpxchg(ptr, old, new, sc_sfx, cas_sfx,			\
-> +		      sc_prepend, sc_append)				\
->  ({									\
->  	__typeof__(ptr) __ptr = (ptr);					\
->  	__typeof__(*(__ptr)) __old = (old);				\
-> @@ -206,22 +207,24 @@ end:;									\
->  									\
->  	switch (sizeof(*__ptr)) {					\
->  	case 1:								\
-> -		__arch_cmpxchg_masked(sc_sfx, ".b" sc_sfx,		\
-> -					prepend, append,		\
-> -					__ret, __ptr, __old, __new);    \
-> +		__arch_cmpxchg_masked(sc_sfx, ".b" cas_sfx,		\
-> +				      sc_prepend, sc_append,		\
-> +				      __ret, __ptr, __old, __new);	\
->  		break;							\
->  	case 2:								\
-> -		__arch_cmpxchg_masked(sc_sfx, ".h" sc_sfx,		\
-> -					prepend, append,		\
-> -					__ret, __ptr, __old, __new);	\
-> +		__arch_cmpxchg_masked(sc_sfx, ".h" cas_sfx,		\
-> +				      sc_prepend, sc_append,		\
-> +				      __ret, __ptr, __old, __new);	\
->  		break;							\
->  	case 4:								\
-> -		__arch_cmpxchg(".w", ".w" sc_sfx, prepend, append,	\
-> -				__ret, __ptr, (long), __old, __new);	\
-> +		__arch_cmpxchg(".w", ".w" sc_sfx, ".w" cas_sfx,		\
-> +			       sc_prepend, sc_append,			\
-> +			       __ret, __ptr, (long), __old, __new);	\
->  		break;							\
->  	case 8:								\
-> -		__arch_cmpxchg(".d", ".d" sc_sfx, prepend, append,	\
-> -				__ret, __ptr, /**/, __old, __new);	\
-> +		__arch_cmpxchg(".d", ".d" sc_sfx, ".d" cas_sfx,		\
-> +			       sc_prepend, sc_append,			\
-> +			       __ret, __ptr, /**/, __old, __new);	\
->  		break;							\
->  	default:							\
->  		BUILD_BUG();						\
-> @@ -230,16 +233,19 @@ end:;									\
->  })
->  
->  #define arch_cmpxchg_relaxed(ptr, o, n)					\
-> -	_arch_cmpxchg((ptr), (o), (n), "", "", "")
-> +	_arch_cmpxchg((ptr), (o), (n), "", "", "", "")
->  
->  #define arch_cmpxchg_acquire(ptr, o, n)					\
-> -	_arch_cmpxchg((ptr), (o), (n), "", "", RISCV_ACQUIRE_BARRIER)
-> +	_arch_cmpxchg((ptr), (o), (n), "", ".aq",			\
-> +		      "", RISCV_ACQUIRE_BARRIER)
->  
->  #define arch_cmpxchg_release(ptr, o, n)					\
-> -	_arch_cmpxchg((ptr), (o), (n), "", RISCV_RELEASE_BARRIER, "")
-> +	_arch_cmpxchg((ptr), (o), (n), "", ".rl",			\
-> +		      RISCV_RELEASE_BARRIER, "")
->  
->  #define arch_cmpxchg(ptr, o, n)						\
-> -	_arch_cmpxchg((ptr), (o), (n), ".rl", "", "	fence rw, rw\n")
-> +	_arch_cmpxchg((ptr), (o), (n), ".rl", ".aqrl",			\
-> +		      "", RISCV_FULL_BARRIER)
-
-... but this is not what I suggested: my suggestion [1] was about (limited
-to) the fully-ordered macro arch_cmpxchg().  In fact, I've recently raised
-some concern about similar changes to the acquire/release macros, cf. [2].
-
-Any particular reasons for doing this?
-
-  Andrea
-
-[1] https://lore.kernel.org/lkml/ZlYff9x12FICHoP0@andrea/
-[2] https://lore.kernel.org/lkml/20240505123340.38495-1-puranjay@kernel.org/
+> Thanks,
+> 
+> Mathieu
+> 
+> > 
+> > On Wed, May 15, 2024 at 05:12:58PM +0200, Mickaël Salaün wrote:
+> > > On Thu, May 09, 2024 at 08:01:49PM -0400, Paul Moore wrote:
+> > > > On Wed, May 8, 2024 at 3:32 PM syzbot
+> > > > <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com> wrote:
+> > > > > 
+> > > > > Hello,
+> > > > > 
+> > > > > syzbot found the following issue on:
+> > > > > 
+> > > > > HEAD commit:    dccb07f2914c Merge tag 'for-6.9-rc7-tag' of git://git.kern..
+> > > > > git tree:       upstream
+> > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=14a46760980000
+> > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=6d14c12b661fb43
+> > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=5446fbf332b0602ede0b
+> > > > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> > > > > 
+> > > > > Unfortunately, I don't have any reproducer for this issue yet.
+> > > > > 
+> > > > > Downloadable assets:
+> > > > > disk image: https://storage.googleapis.com/syzbot-assets/39d66018d8ad/disk-dccb07f2.raw.xz
+> > > > > vmlinux: https://storage.googleapis.com/syzbot-assets/c160b651d1bc/vmlinux-dccb07f2.xz
+> > > > > kernel image: https://storage.googleapis.com/syzbot-assets/3662a33ac713/bzImage-dccb07f2.xz
+> > > > > 
+> > > > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > > > > Reported-by: syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com
+> > > > > 
+> > > > > general protection fault, probably for non-canonical address 0xdffffc018f62f515: 0000 [#1] PREEMPT SMP KASAN NOPTI
+> > > > > KASAN: probably user-memory-access in range [0x0000000c7b17a8a8-0x0000000c7b17a8af]
+> > > > > CPU: 1 PID: 5102 Comm: syz-executor.1 Not tainted 6.9.0-rc7-syzkaller-00012-gdccb07f2914c #0
+> > > > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+> > > > > RIP: 0010:hook_inode_free_security+0x5b/0xb0 security/landlock/fs.c:1047
+> > > > 
+> > > > Possibly a Landlock issue, Mickaël?
+> > > 
+> > > It looks like security_inode_free() is called two times on the same
+> > > inode.  This could happen if an inode labeled by Landlock is put
+> > > concurrently with release_inode() for a closed ruleset or with
+> > > hook_sb_delete().  I didn't find any race condition that could lead to
+> > > two calls to iput() though.  Could WRITE_ONCE(object->underobj, NULL)
+> > > change anything even if object->lock is locked?
+> > > 
+> > > A bit unrelated but looking at the SELinux code, I see that selinux_inode()
+> > > checks `!inode->i_security`.  In which case could this happen?
+> > > 
+> > > > 
+> > > > > Code: 8a fd 48 8b 1b 48 c7 c0 c4 4e d5 8d 48 c1 e8 03 42 0f b6 04 30 84 c0 75 3e 48 63 05 33 59 65 09 48 01 c3 48 89 d8 48 c1 e8 03 <42> 80 3c 30 00 74 08 48 89 df e8 66 be 8a fd 48 83 3b 00 75 0d e8
+> > > > > RSP: 0018:ffffc9000307f9a8 EFLAGS: 00010212
+> > > > > RAX: 000000018f62f515 RBX: 0000000c7b17a8a8 RCX: ffff888027668000
+> > > > > RDX: 0000000000000000 RSI: 0000000000000040 RDI: ffff88805c0bb270
+> > > > > RBP: ffffffff8c01fb00 R08: ffffffff82132a15 R09: 1ffff1100b81765f
+> > > > > R10: dffffc0000000000 R11: ffffffff846ff540 R12: dffffc0000000000
+> > > > > R13: 1ffff1100b817683 R14: dffffc0000000000 R15: dffffc0000000000
+> > > > > FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+> > > > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > > > CR2: 00007f43c42de000 CR3: 00000000635f8000 CR4: 0000000000350ef0
+> > > > > Call Trace:
+> > > > >   <TASK>
+> > > > >   security_inode_free+0x4a/0xd0 security/security.c:1613
+> > > > >   __destroy_inode+0x2d9/0x650 fs/inode.c:286
+> > > > >   destroy_inode fs/inode.c:309 [inline]
+> > > > >   evict+0x521/0x630 fs/inode.c:682
+> > > > >   dispose_list fs/inode.c:700 [inline]
+> > > > >   evict_inodes+0x5f9/0x690 fs/inode.c:750
+> > > > >   generic_shutdown_super+0x9d/0x2d0 fs/super.c:626
+> > > > >   kill_block_super+0x44/0x90 fs/super.c:1675
+> > > > >   deactivate_locked_super+0xc6/0x130 fs/super.c:472
+> > > > >   cleanup_mnt+0x426/0x4c0 fs/namespace.c:1267
+> > > > >   task_work_run+0x251/0x310 kernel/task_work.c:180
+> > > > >   exit_task_work include/linux/task_work.h:38 [inline]
+> > > > >   do_exit+0xa1b/0x27e0 kernel/exit.c:878
+> > > > >   do_group_exit+0x207/0x2c0 kernel/exit.c:1027
+> > > > >   __do_sys_exit_group kernel/exit.c:1038 [inline]
+> > > > >   __se_sys_exit_group kernel/exit.c:1036 [inline]
+> > > > >   __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1036
+> > > > >   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+> > > > >   do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+> > > > >   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > > > > RIP: 0033:0x7f731567dd69
+> > > > > Code: Unable to access opcode bytes at 0x7f731567dd3f.
+> > > > > RSP: 002b:00007fff4f0804d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+> > > > > RAX: ffffffffffffffda RBX: 00007f73156c93a3 RCX: 00007f731567dd69
+> > > > > RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> > > > > RBP: 0000000000000002 R08: 00007fff4f07e277 R09: 00007fff4f081790
+> > > > > R10: 0000000000000000 R11: 0000000000000246 R12: 00007fff4f081790
+> > > > > R13: 00007f73156c937e R14: 00000000000154d0 R15: 000000000000001e
+> > > > >   </TASK>
+> > > > > Modules linked in:
+> > > > > ---[ end trace 0000000000000000 ]---
+> > > > 
+> > > > -- 
+> > > > paul-moore.com
+> > > > 
+> 
+> -- 
+> Mathieu Desnoyers
+> EfficiOS Inc.
+> https://www.efficios.com
+> 
+> 
 
