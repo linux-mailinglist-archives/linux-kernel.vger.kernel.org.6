@@ -1,109 +1,254 @@
-Return-Path: <linux-kernel+bounces-232994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C73291B0CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:47:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C81191B0C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 22:47:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 248E21C24512
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:47:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B54E1F25DC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:47:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE931AAE07;
-	Thu, 27 Jun 2024 20:44:53 +0000 (UTC)
-Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86ACE19DF67;
+	Thu, 27 Jun 2024 20:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ksY4Wkfy"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16B3C1A3BC6;
-	Thu, 27 Jun 2024 20:44:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26BFD1A38F9;
+	Thu, 27 Jun 2024 20:44:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719521093; cv=none; b=RBpR9T8b/+1OirJxnHAZXJO/REE3KYYrAipdUUZJE9Ded9rfGnW4oQiXRUyaHql6p9WCiYn34cPdnltyZAkMfrbSROUvGB6SnhRgM+1plpvSWTRGRi1lBFKX+PniCUA5RwhV+ejD0xQxZYepLT13Nh8gCrv2KCjrHT0dSSTaj4w=
+	t=1719521079; cv=none; b=PU22tReIw9X2yUrHtkt75OslIkDKF9bM2ZrPxPsDp6WCe8V3wKsG7Lbn7hPuymFp8fRbRwDm6Gc7PBhR1jHQW97BGJL3hTLeDXB8lVUweuMj//WtJWmpYijgFpoe+nyGsRWYJczc1ZO0rgvtX6Bn+jGV/CzQsRv9//1GwmuD+0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719521093; c=relaxed/simple;
-	bh=LLl79xyUmSxvDDQb0rFblZjzQKy3uOIjEbcE7GTPJ6c=;
+	s=arc-20240116; t=1719521079; c=relaxed/simple;
+	bh=czVhlTW+B8D0/yDhk+UoDmaIZ12/fDo49V3e2kVcrbI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RdXbpfZFHMftJcCMmyKLPCCtQhoz1g6hpQtthNgsCTkHidGVaTYbLoUDcvy79qtoUC/1XKMQPqAMBOOSI0hp9xvMkk9SM6+FnS5GQ8NStp8j0U5cNKvfTCEsWCLkyR+MdV7ReUzX2a5D3dusxC3z0vogmVA2XeBzk+1l1P9f33w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
-Received: from [78.30.37.63] (port=54896 helo=gnumonks.org)
-	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <pablo@gnumonks.org>)
-	id 1sMvyv-00ABVs-Ph; Thu, 27 Jun 2024 22:44:40 +0200
-Date: Thu, 27 Jun 2024 22:44:36 +0200
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Mirsad Todorovac <mtodorovac69@gmail.com>
-Cc: Linux Kernel Build System <linux-kbuild@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	netdev@vger.kernel.org
-Subject: Re: [PROBLEM] make randconfig: net/netfilter/core.c:830: undefined
- reference to `netfilter_lwtunnel_fini'
-Message-ID: <Zn3PNGFkg6jqU9wc@calendula>
-References: <7a472130-d9c4-4fda-840b-093308f73d3d@gmail.com>
- <Znc4931wlIgvqrfP@calendula>
- <6cdb1346-75ca-472e-8d96-d58a1eaab172@gmail.com>
- <b50bb0bf-4d35-4334-a721-2a092210aecc@gmail.com>
- <Znw78PpYwAgFZiaB@calendula>
- <3d7b5916-c462-49cb-af32-e43f6d6ebfec@gmail.com>
- <d3f8254f-0f53-47ee-a363-b14e9991a6e9@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q4Rf6Ab8c9fNqA5dI96h3u5vv/e+My7jnhsJ3GwDbu99NRUNa73pwCTUBisthLy1B7+82bkUW4s5JWA5fN1PTMwTQsqSgBu8FSVJsMHDED6pHI1AdWIgRRFCjs664HYqXMQ13ydYoIHHnuJ2/Ux50R1NneVMgKYJBtp210aHceo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ksY4Wkfy; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719521078; x=1751057078;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=czVhlTW+B8D0/yDhk+UoDmaIZ12/fDo49V3e2kVcrbI=;
+  b=ksY4WkfyYgCBtD2oPKCgJX9UvIg6hIqIca5EhffY0WVlRVs8hlY+AX5j
+   xdjXfoCJzjwcKH8AJSkCOHsYDjNH1nmg0MNz6LaHNX5RMsw5g8eCuEHDv
+   HJbC7y8qcnI4FZ/Il349hwH8b8H7sCmcqAk5s7lzCPXcUyBU+NOqrp8nm
+   /uuePurTitg5O5OtnYxMNq7MJPH2R9xqtqpPC0pSItoNvKhujW0Aq9paU
+   SGhcvK8PNzAYBAACjNbhdZl+EYx0PF8sn6O2wxP+Lyd5GY0EKGH5HyJB/
+   8CbynLM1maFdFbSfr8DfFMksFKqPCXsf3qvsNEwXQOzIf+x8eyALn31tx
+   w==;
+X-CSE-ConnectionGUID: jDeut94jRaivWGI7YGMBow==
+X-CSE-MsgGUID: NWSCknKuRX6OoC13RL1CnA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="16563597"
+X-IronPort-AV: E=Sophos;i="6.09,167,1716274800"; 
+   d="scan'208";a="16563597"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 13:44:38 -0700
+X-CSE-ConnectionGUID: oR6k/JzvSi+IqihXDBAk/g==
+X-CSE-MsgGUID: orlN6MJoRFCGnNoKoIOhhg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,167,1716274800"; 
+   d="scan'208";a="67703788"
+Received: from gbpfeiff-mobl.amr.corp.intel.com (HELO desk) ([10.255.229.132])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 13:44:37 -0700
+Date: Thu, 27 Jun 2024 13:44:36 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
+Cc: daniel.sneddon@linux.intel.com, tony.luck@intel.com,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Brice Goglin <brice.goglin@gmail.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Perry Yuan <Perry.Yuan@amd.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: [PATCH PATCH v2 6/9] x86/cpu: Add cpu_type to struct x86_cpu_id
+Message-ID: <20240627-add-cpu-type-v2-6-f927bde83ad0@linux.intel.com>
+X-Mailer: b4 0.12.3
+References: <20240627-add-cpu-type-v2-0-f927bde83ad0@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d3f8254f-0f53-47ee-a363-b14e9991a6e9@gmail.com>
-X-Spam-Score: -1.9 (-)
+In-Reply-To: <20240627-add-cpu-type-v2-0-f927bde83ad0@linux.intel.com>
 
-On Thu, Jun 27, 2024 at 10:30:24PM +0200, Mirsad Todorovac wrote:
-> On 6/26/24 20:34, Mirsad Todorovac wrote:
-> > 
-> > 
-> > On 6/26/24 18:04, Pablo Neira Ayuso wrote:
-> >> On Sun, Jun 23, 2024 at 12:51:49AM +0200, Mirsad Todorovac wrote:
-> >>> On 6/23/24 00:48, Mirsad Todorovac wrote:
-> >>>> On 6/22/24 22:49, Pablo Neira Ayuso wrote:
-> >>>>> Hi,
-> >>>>>
-> >>>>> There is a fix on the table address this, I will submit is in the next
-> >>>>> pull request.
-> >>>>
-> >>>> Thank you very much.
-> >>>>
-> >>>> Please consider adding Reported-by: Mirsad Todorovac <mtodorovac69@gmail.com>
-> >>>>  
-> >>>>> Thanks for reporting
-> >>>>
-> >>>> No big deal. Anytime :-)
-> >>>
-> >>> P.S.
-> >>>
-> >>> Please notify when I could test the same .config with your fix.
-> >>
-> >> Patch is here:
-> >>
-> >> https://git.kernel.org/pub/scm/linux/kernel/git/netfilter/nf.git/commit/?id=aef5daa2c49d510436b733827d4f0bab79fcc4a0
-> > 
-> > Build error has gone, tested in the same environment. Please find the build output attached.
-> > 
-> > Tested-by: Mirsad Todorovac <mtodorov@69@gmail.com>
-> 
-> Apology, please, the right email is this:
-> 
-> Tested-by: Mirsad Todorovac <mtodorovac69@gmail.com>
+In addition to matching vendor/family/model/feature, for hybrid variants it
+is required to also match cpu-type also. For example some CPU
+vulnerabilities only affect a specific cpu-type. RFDS only affects Intel
+Atom parts.
 
-Thanks a lot for testing.
+To be able to also match CPUs based on type add a new field cpu_type to
+struct x86_cpu_id which is used by the CPU-matching tables. Introduce
+X86_CPU_TYPE_ANY for the cases that don't care about the cpu-type.
 
-Patch is already flying upstream, I missed adding this tag. But I
-could include your Reported-by: tag.
+Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+---
+ arch/x86/include/asm/cpu_device_id.h | 35 ++++++++++++++++++++++++-----------
+ include/linux/mod_devicetable.h      |  2 ++
+ 2 files changed, 26 insertions(+), 11 deletions(-)
+
+diff --git a/arch/x86/include/asm/cpu_device_id.h b/arch/x86/include/asm/cpu_device_id.h
+index 6c8f4cf03cae..08c2efa6dfdf 100644
+--- a/arch/x86/include/asm/cpu_device_id.h
++++ b/arch/x86/include/asm/cpu_device_id.h
+@@ -75,13 +75,14 @@
+  * into another macro at the usage site for good reasons, then please
+  * start this local macro with X86_MATCH to allow easy grepping.
+  */
+-#define X86_MATCH_CPU(_vendor, _family, _model, _steppings, _feature, _data) { \
++#define X86_MATCH_CPU(_vendor, _family, _model, _steppings, _feature, _cpu_type, _data) { \
+ 	.vendor		= _vendor,					\
+ 	.family		= _family,					\
+ 	.model		= _model,					\
+ 	.steppings	= _steppings,					\
+ 	.feature	= _feature,					\
+ 	.flags		= X86_CPU_ID_FLAG_ENTRY_VALID,			\
++	.cpu_type	= _cpu_type,					\
+ 	.driver_data	= (unsigned long) _data				\
+ }
+ 
+@@ -98,7 +99,7 @@
+  */
+ #define X86_MATCH_VENDOR_FAM_MODEL_FEATURE(vendor, family, model, feature, data)	\
+ 	X86_MATCH_CPU(X86_VENDOR_##vendor, family, model, X86_STEPPING_ANY,		\
+-		      feature, data)
++		      feature, X86_CPU_TYPE_ANY, data)
+ 
+ /**
+  * X86_MATCH_VENDOR_FAM_FEATURE - Macro for matching vendor, family and CPU feature
+@@ -112,7 +113,7 @@
+  */
+ #define X86_MATCH_VENDOR_FAM_FEATURE(vendor, family, feature, data)		\
+ 	X86_MATCH_CPU(X86_VENDOR_##vendor, family, X86_MODEL_ANY,		\
+-		      X86_STEPPING_ANY, feature, data)
++		      X86_STEPPING_ANY, feature, X86_CPU_TYPE_ANY, data)
+ 
+ /**
+  * X86_MATCH_VENDOR_FEATURE - Macro for matching vendor and CPU feature
+@@ -125,7 +126,7 @@
+  */
+ #define X86_MATCH_VENDOR_FEATURE(vendor, feature, data)				\
+ 	X86_MATCH_CPU(X86_VENDOR_##vendor, X86_FAMILY_ANY, X86_MODEL_ANY,	\
+-		      X86_STEPPING_ANY, feature, data)
++		      X86_STEPPING_ANY, feature, X86_CPU_TYPE_ANY, data)
+ 
+ /**
+  * X86_MATCH_FEATURE - Macro for matching a CPU feature
+@@ -136,7 +137,7 @@
+  */
+ #define X86_MATCH_FEATURE(feature, data)					\
+ 	X86_MATCH_CPU(X86_VENDOR_ANY, X86_FAMILY_ANY, X86_MODEL_ANY,		\
+-		      X86_STEPPING_ANY, feature, data)
++		      X86_STEPPING_ANY, feature, X86_CPU_TYPE_ANY, data)
+ 
+ /**
+  * X86_MATCH_VENDOR_FAM_MODEL - Match vendor, family and model
+@@ -150,7 +151,7 @@
+  */
+ #define X86_MATCH_VENDOR_FAM_MODEL(vendor, family, model, data)			\
+ 	X86_MATCH_CPU(X86_VENDOR_##vendor, family, model, X86_STEPPING_ANY,	\
+-		      X86_FEATURE_ANY, data)
++		      X86_FEATURE_ANY, X86_CPU_TYPE_ANY, data)
+ 
+ /**
+  * X86_MATCH_VENDOR_FAM - Match vendor and family
+@@ -163,7 +164,7 @@
+  */
+ #define X86_MATCH_VENDOR_FAM(vendor, family, data)				\
+ 	X86_MATCH_CPU(X86_VENDOR_##vendor, family, X86_MODEL_ANY,		\
+-		      X86_STEPPING_ANY, X86_FEATURE_ANY, data)
++		      X86_STEPPING_ANY, X86_FEATURE_ANY, X86_CPU_TYPE_ANY, data)
+ 
+ /**
+  * X86_MATCH_INTEL_FAM6_MODEL - Match vendor INTEL, family 6 and model
+@@ -183,7 +184,7 @@
+ 
+ #define X86_MATCH_INTEL_FAM6_MODEL_STEPPINGS(model, steppings, data)	\
+ 	X86_MATCH_CPU(X86_VENDOR_INTEL, 6, INTEL_FAM6_##model,		\
+-		      steppings, X86_FEATURE_ANY, data)
++		      steppings, X86_FEATURE_ANY, X86_CPU_TYPE_ANY, data)
+ 
+ /**
+  * X86_MATCH_VFM - Match encoded vendor/family/model
+@@ -194,7 +195,7 @@
+  */
+ #define X86_MATCH_VFM(vfm, data)						\
+ 	X86_MATCH_CPU(VFM_VENDOR(vfm), VFM_FAMILY(vfm),	VFM_MODEL(vfm),		\
+-		      X86_STEPPING_ANY, X86_FEATURE_ANY, data)
++		      X86_STEPPING_ANY, X86_FEATURE_ANY, X86_CPU_TYPE_ANY, data)
+ 
+ /**
+  * X86_MATCH_VFM_STEPPINGS - Match encoded vendor/family/model/stepping
+@@ -206,7 +207,7 @@
+  */
+ #define X86_MATCH_VFM_STEPPINGS(vfm, steppings, data)				\
+ 	X86_MATCH_CPU(VFM_VENDOR(vfm), VFM_FAMILY(vfm), VFM_MODEL(vfm),		\
+-		      steppings, X86_FEATURE_ANY, data)
++		      steppings, X86_FEATURE_ANY, X86_CPU_TYPE_ANY, data)
+ 
+ /**
+  * X86_MATCH_VFM_FEATURE - Match encoded vendor/family/model/feature
+@@ -218,7 +219,19 @@
+  */
+ #define X86_MATCH_VFM_FEATURE(vfm, feature, data)				\
+ 	X86_MATCH_CPU(VFM_VENDOR(vfm), VFM_FAMILY(vfm), VFM_MODEL(vfm),		\
+-		      X86_STEPPING_ANY, feature, data)
++		      X86_STEPPING_ANY, feature, X86_CPU_TYPE_ANY, data)
++
++/**
++ * X86_MATCH_VFM_CPU_TYPE - Match encoded vendor/family/model/cpu-type
++ * @vfm:	Encoded 8-bits each for vendor, family, model
++ * @cpu_type:	CPU type e.g. P-core, E-core on Intel
++ * @data:	Driver specific data or NULL. The internal storage
++ *		format is unsigned long. The supplied value, pointer
++ *		etc. is cast to unsigned long internally.
++ */
++#define X86_MATCH_VFM_CPU_TYPE(vfm, cpu_type, data)			\
++	X86_MATCH_CPU(VFM_VENDOR(vfm), VFM_FAMILY(vfm), VFM_MODEL(vfm),	\
++		      X86_STEPPING_ANY, X86_FEATURE_ANY, cpu_type, data)
+ 
+ /*
+  * Match specific microcode revisions.
+diff --git a/include/linux/mod_devicetable.h b/include/linux/mod_devicetable.h
+index 4338b1b4ac44..b8a2e88f966f 100644
+--- a/include/linux/mod_devicetable.h
++++ b/include/linux/mod_devicetable.h
+@@ -692,6 +692,7 @@ struct x86_cpu_id {
+ 	__u16 feature;	/* bit index */
+ 	/* Solely for kernel-internal use: DO NOT EXPORT to userspace! */
+ 	__u16 flags;
++	__u8  cpu_type;
+ 	kernel_ulong_t driver_data;
+ };
+ 
+@@ -701,6 +702,7 @@ struct x86_cpu_id {
+ #define X86_MODEL_ANY  0
+ #define X86_STEPPING_ANY 0
+ #define X86_FEATURE_ANY 0	/* Same as FPU, you can't test for that */
++#define X86_CPU_TYPE_ANY 0
+ 
+ /*
+  * Generic table type for matching CPU features.
+
+-- 
+2.34.1
+
+
 
