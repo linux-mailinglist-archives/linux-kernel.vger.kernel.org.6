@@ -1,150 +1,197 @@
-Return-Path: <linux-kernel+bounces-232082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6197191A2EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:46:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7AC091A2ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:46:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D978AB225A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:46:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D624282CFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 09:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6641013B587;
-	Thu, 27 Jun 2024 09:45:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A62213B285;
+	Thu, 27 Jun 2024 09:46:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hhtVPYPC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="XfRHWX7c";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="XfRHWX7c"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 982961B949;
-	Thu, 27 Jun 2024 09:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4AEA4D5BD;
+	Thu, 27 Jun 2024 09:46:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719481557; cv=none; b=puyS09n4wm7OvsM/1jA7djnvhEaCWlyLDd9WYYmzaHp0ZEZIFcCVNQYFvrZL9uUaZf5aWzyYUtJQbianU+m28EwLgzl4oFi0iPx8NQQq8yriIkc2VEB1UO3QEgd+502MpFEgN1q+TOl5KktkHabf/7ArbKC3KUumOOIOD8/0eow=
+	t=1719481575; cv=none; b=OaJPpOrYroFRQHHht6MfzDEhqbXlTKOk8tW0YcxlhNQYs4lCyTKkYeolli/GlRoFgzVFBJx/dEaKecWqBMGPt+erZ5+5SQ7ODkTzbB7RKJEX3052KC3MY+bWTQQMcETlZ75sBDtceUHp6AFDZ9/PCGOBen+jX+J26gweSK33AbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719481557; c=relaxed/simple;
-	bh=NpwvjC4ANVgCf+aio1aXDIJ5ySMQ1KmL1srx2aEJLZ4=;
+	s=arc-20240116; t=1719481575; c=relaxed/simple;
+	bh=Vc1FxFKKZ4kIsqe09jMpdFUU4Nj/L8/uAl6xy6PikB8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tTjGcx6NRb/VFmSmUu5KclfkKM4IsfimVNrsjAkqX2dXAOrPafMK6aYmqSITxo3U8MM7AYSHqh1DAr9CEkj+ePca4rlGCLz0slV0QTcv3lAy4i9/P8n+zx+tNXIbJxgS9uDBXLGsmkaV/vLU6TjsDf9EUaaNqI9MDQUPrry6NF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hhtVPYPC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01BA5C2BBFC;
-	Thu, 27 Jun 2024 09:45:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719481557;
-	bh=NpwvjC4ANVgCf+aio1aXDIJ5ySMQ1KmL1srx2aEJLZ4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hhtVPYPCNEXrnrCh4Yq69IhewZgEW3R3aaoPIfz63RmIW/FmlDfldLjOLfo0l2TzN
-	 yHstj7QGuFbDdZK4vkO/ZWz6U0G8Vh98s6SBbx51QGchDz9sdH6rz9K9Yw7YATB4La
-	 aSIQ3+j/YSeev0/TkpJqlBzkZ0oA4rlRrCF7pLIREDQhlwYiaV7kcAZ6YuD/MWMrgW
-	 cM08BWJZnusT0n6yGfVJPs/0Hxkufmuwx+F7fdrkNQ1MXzxwsgGB1/HZv2z/0BdsTr
-	 4JL/j/QyHvr/r18PgRcf9DsProb+LeHJCvyckrp54m69AmorBChKkeRZCIL/6xVxHB
-	 xN6tFSNIZ5Aiw==
-Date: Thu, 27 Jun 2024 11:45:52 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Jiri Kosina <jikos@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	"open list:HID CORE LAYER" <linux-input@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH HID v2 04/13] HID: bpf: add HID-BPF hooks for
- hid_hw_raw_requests
-Message-ID: <tbn4vj2myjcic3mgms5nzci2tl3okpswlkddummubs2llqiruu@u3ctih7cfhhv>
-References: <20240626-hid_hw_req_bpf-v2-0-cfd60fb6c79f@kernel.org>
- <20240626-hid_hw_req_bpf-v2-4-cfd60fb6c79f@kernel.org>
- <CAADnVQLZRE_QxuEaqbTpKNQt+0VUB=DK37FqScaxtqwbn9UorA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=O/bX9/hfKr6xLO/KIoRTyaH4lUCCC+82i5MwZPcMI1x5XFEGeuJCBCuAZ1yjfFOyR9Sxrv4P1FcPZiLUKH72nwVwI18HmHlxao06iglOxjqV/z1+efA4nbDhaUhv+odIthCKSx7uNqULTLWrKZCvP35B85skh9qqISob7M2H/bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=XfRHWX7c; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=XfRHWX7c; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 924C221B7E;
+	Thu, 27 Jun 2024 09:46:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1719481571; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Jj9AAp3ne/E3keslQqD3JpnbJj5OzPPBYKAv+9+i9rI=;
+	b=XfRHWX7cglF3W8E5nX9gSJv7E5pesHihnyJUsMKYEJeKevKm0ZL/gG4dxG9FXnptwZsTLi
+	6WF7OGpdDftTUgrrNRmdqEuPfdQ3pwr+uZ6FegT1R/8s1kTZuvf6Tb9U0ZBqL5YFbVzQte
+	W5YSmOo9gicDgDfV5cZJ3b/3ey4IvlM=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=XfRHWX7c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1719481571; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Jj9AAp3ne/E3keslQqD3JpnbJj5OzPPBYKAv+9+i9rI=;
+	b=XfRHWX7cglF3W8E5nX9gSJv7E5pesHihnyJUsMKYEJeKevKm0ZL/gG4dxG9FXnptwZsTLi
+	6WF7OGpdDftTUgrrNRmdqEuPfdQ3pwr+uZ6FegT1R/8s1kTZuvf6Tb9U0ZBqL5YFbVzQte
+	W5YSmOo9gicDgDfV5cZJ3b/3ey4IvlM=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 824E7137DF;
+	Thu, 27 Jun 2024 09:46:11 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id EEtfH+M0fWbFIAAAD6G6ig
+	(envelope-from <mkoutny@suse.com>); Thu, 27 Jun 2024 09:46:11 +0000
+Date: Thu, 27 Jun 2024 11:46:10 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Chen Ridong <chenridong@huawei.com>
+Cc: tj@kernel.org, lizefan.x@bytedance.com, hannes@cmpxchg.org, 
+	longman@redhat.com, adityakali@google.com, sergeh@kernel.org, 
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3] cgroup/cpuset: Prevent UAF in proc_cpuset_show()
+Message-ID: <6mjie6enbm5ltei4fsanz64ofukbr4gvss7ywi5sjfjxjxing7@efuhtnqvfawd>
+References: <20240626094101.472912-1-chenridong@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kwcaihwcr7zw77fe"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADnVQLZRE_QxuEaqbTpKNQt+0VUB=DK37FqScaxtqwbn9UorA@mail.gmail.com>
+In-Reply-To: <20240626094101.472912-1-chenridong@huawei.com>
+X-Spamd-Result: default: False [-8.11 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SIGNED_PGP(-2.00)[];
+	DWL_DNSWL_MED(-2.00)[suse.com:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	MIME_GOOD(-0.20)[multipart/signed,text/plain];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+,1:+,2:~];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.com:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:dkim]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 924C221B7E
+X-Spam-Flag: NO
+X-Spam-Score: -8.11
+X-Spam-Level: 
 
-On Jun 26 2024, Alexei Starovoitov wrote:
-> On Wed, Jun 26, 2024 at 6:46 AM Benjamin Tissoires <bentiss@kernel.org> wrote:
-> >
-> > This allows to intercept and prevent or change the behavior of
-> > hid_hw_raw_request() from a bpf program.
-> >
-> > The intent is to solve a couple of use case:
-> > - firewalling a HID device: a firewall can monitor who opens the hidraw
-> >   nodes and then prevent or allow access to write operations on that
-> >   hidraw node.
-> > - change the behavior of a device and emulate a new HID feature request
-> >
-> > The hook is allowed to be run as sleepable so it can itself call
-> > hid_bpf_hw_request(), which allows to "convert" one feature request into
-> > another or even call the feature request on a different HID device on the
-> > same physical device.
-> >
-> > Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
-> >
-> > ---
-> >
-> > changes in v2:
-> > - make use of SRCU
-> > ---
-> >  drivers/hid/bpf/hid_bpf_dispatch.c   | 37 ++++++++++++++++++++++++++++++++++++
-> >  drivers/hid/bpf/hid_bpf_struct_ops.c |  1 +
-> >  drivers/hid/hid-core.c               |  6 ++++++
-> >  include/linux/hid_bpf.h              | 35 ++++++++++++++++++++++++++++++++++
-> >  4 files changed, 79 insertions(+)
-> >
-> > diff --git a/drivers/hid/bpf/hid_bpf_dispatch.c b/drivers/hid/bpf/hid_bpf_dispatch.c
-> > index c026248e3d73..ac98bab4c96d 100644
-> > --- a/drivers/hid/bpf/hid_bpf_dispatch.c
-> > +++ b/drivers/hid/bpf/hid_bpf_dispatch.c
-> > @@ -74,6 +74,43 @@ dispatch_hid_bpf_device_event(struct hid_device *hdev, enum hid_report_type type
-> >  }
-> >  EXPORT_SYMBOL_GPL(dispatch_hid_bpf_device_event);
-> >
-> > +int dispatch_hid_bpf_raw_requests(struct hid_device *hdev,
-> > +                                 unsigned char reportnum, u8 *buf,
-> > +                                 u32 size, enum hid_report_type rtype,
-> > +                                 enum hid_class_request reqtype,
-> > +                                 u64 source)
-> > +{
-> > +       struct hid_bpf_ctx_kern ctx_kern = {
-> > +               .ctx = {
-> > +                       .hid = hdev,
-> > +                       .allocated_size = size,
-> > +                       .size = size,
-> > +               },
-> > +               .data = buf,
-> > +       };
-> > +       struct hid_bpf_ops *e;
-> > +       int ret, idx;
-> > +
-> > +       if (rtype >= HID_REPORT_TYPES)
-> > +               return -EINVAL;
-> > +
-> > +       idx = srcu_read_lock(&hdev->bpf.srcu);
-> > +       list_for_each_entry_srcu(e, &hdev->bpf.prog_list, list,
-> > +                                srcu_read_lock_held(&hdev->bpf.srcu)) {
-> > +               if (e->hid_hw_request) {
-> > +                       ret = e->hid_hw_request(&ctx_kern.ctx, reportnum, rtype, reqtype, source);
-> > +                       if (ret)
-> > +                               goto out;
-> > +               }
-> > +       }
-> 
-> here and in patch 7 I would reduce indent by doing:
-> if (!e->hid_hw_request)
->    continue;
-> ret = e->hid_hw_request(...);
-> 
-> otherwise lgtm
 
-Thanks for the quick review.
+--kwcaihwcr7zw77fe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I've changed the patches as you requested before applying them and also
-added the Ack from Jiri he gave me over IRC.
+On Wed, Jun 26, 2024 at 09:41:01AM GMT, Chen Ridong <chenridong@huawei.com>=
+ wrote:
+> An UAF can happen when /proc/cpuset is read as reported in [1].
+>=20
+> This can be reproduced by the following methods:
+> 1.add an mdelay(1000) before acquiring the cgroup_lock In the
+>  cgroup_path_ns function.
+> 2.$cat /proc/<pid>/cpuset   repeatly.
+> 3.$mount -t cgroup -o cpuset cpuset /sys/fs/cgroup/cpuset/
+> $umount /sys/fs/cgroup/cpuset/   repeatly.
+>=20
+> The race that cause this bug can be shown as below:
+>=20
+> (umount)		|	(cat /proc/<pid>/cpuset)
+> css_release		|	proc_cpuset_show
+> css_release_work_fn	|	css =3D task_get_css(tsk, cpuset_cgrp_id);
+> css_free_rwork_fn	|	cgroup_path_ns(css->cgroup, ...);
+> cgroup_destroy_root	|	mutex_lock(&cgroup_mutex);
+> rebind_subsystems	|
+> cgroup_free_root 	|
+> 			|	// cgrp was freed, UAF
+> 			|	cgroup_path_ns_locked(cgrp,..);
 
-Cheers,
-Benjamin
+Thanks for this breakdown.
 
+> ...
+> Fix this problem by using rcu_read_lock in proc_cpuset_show().
+> As cgroup root_list is already RCU-safe, css->cgroup is safe.
+> This is similar to commit 9067d90006df ("cgroup: Eliminate the
+> need for cgroup_mutex in proc_cgroup_show()")
+
+Apologies for misleading you in my previous message about root_list.
+As I look better at proc_cpuset_show vs proc_cgroup_show, there's a
+difference and task_get_css() doesn't rely on root_list synchronization.
+
+I think it could go like this (with my extra comments)
+
+	rcu_read_lock();
+	spin_lock_irq(&css_set_lock);
+	css =3D task_css(tsk, cpuset_cgrp_id); // css is stable wrt task's migrati=
+on thanks to css_set_lock
+	cgrp =3D css->cgroup; // whatever we see here, won't be free'd thanks to R=
+CU lock and cgroup_free_root/kfree_rcu
+	retval =3D cgroup_path_ns_locked(cgrp, buf, PATH_MAX,
+				       current->nsproxy->cgroup_ns);
+	...
+
+Your patch should work thanks to the rcu_read_lock and
+cgroup_free_root/kfree_rcu and the `if (css->cgroup)` guard is
+unnecessary.
+
+So the patch is a functional fix, the reasoning in commit message is
+little off. Not sure if Tejun rebases his for-6.10-fixes (with a
+possible v4), full fixup commit for this may not be worthy.
+
+Michal
+
+
+--kwcaihwcr7zw77fe
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZn003wAKCRAt3Wney77B
+SanmAQC+BClDX+SIYfecEqNibSmzoe/yog4Ca+xRk1HMt39vcAEA+ZVJ66ekm3kZ
+ZS9DDuzmjib9QKbmvBM7unrDKpsEvgQ=
+=J1g9
+-----END PGP SIGNATURE-----
+
+--kwcaihwcr7zw77fe--
 
