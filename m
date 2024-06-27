@@ -1,295 +1,133 @@
-Return-Path: <linux-kernel+bounces-232681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FC7691ACD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:30:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C78691ACAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:26:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D96B1289AD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:30:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E78121F2345B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD2B199EB8;
-	Thu, 27 Jun 2024 16:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F72199E83;
+	Thu, 27 Jun 2024 16:26:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="F88cmHmN"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xd/yMpP1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA7619AA7A
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 16:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42459199395;
+	Thu, 27 Jun 2024 16:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719505774; cv=none; b=CbuzHCMqNlETpEY/lnSAarBlfu0K4GULLwFttPY/ANvh9Njf/u2WrbOkqYeGs+c+i9yJHKlP5xKJhYXz19xsqQRu7FEaGB8/AVccAzM0ET9aU8clNujUtiSHB7Dlb3xMniV/SpxhA5j0outeF6zTDkEqmU7UF3uEX6bBkKjsA4c=
+	t=1719505593; cv=none; b=MAui0UY4cS7eGqlfdLe1Z963GrrbvoY0ZIE8GPC8kCVYX5Wq9qqFMN7qoZePDLYnkf/ej68sutwEkkADJ1gMafFHeFKcqtJ4Qwp6J00w2OBZ3G6a0p7O6QkxYuoUiWQDiw30oh28ajlaMZPdP3uiX80nX5X7l+QiUiZiYA1eiKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719505774; c=relaxed/simple;
-	bh=0t/wFPVC4l/yw5eF3OeLLEEWm+E+fxx+yaa8gVfDqK0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JinvnpF11OYiQEZ2jtqddTTfTWmv/u31j0XpeiluGg+XCRQhfK6JK5+IgEjDAQBlKHRM4n2LfiCESoch4g+FRr09DkxrvE6Ml9cK0vaeZ5LzDJVnr/ZWvg3bUJuQbaau6uY4+kUSOpvh33Fx+VjMrjIjTzw2XD+Ze3CrpjYHsEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=F88cmHmN; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=beagleboard.org
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7065f3de571so259976b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 09:29:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1719505772; x=1720110572; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Vf+oty1NdLS1qae2Gc3SWM3tL3BZVhVoAyzz4KnihM4=;
-        b=F88cmHmNPEDt+7BI9WdweNgB/T/fM1jY6LdoKBtLoZXT3eONnGGIlb5UqWVKFDkfHs
-         aKhUQYVh164stCYYIQ2OFi0OCVbtdkVKY4qqo9uUNGhakq4qGKaB7OTsaLvK5nJ+D8+2
-         gAwborMm9Rlr34dq62K2mCo73iGrx223I2fRm8cKjUyt4ItC5/BhwjDGzKVD5tZxLv/x
-         KOYB8WnINziqQ8nuKhiWY2sY59m6P914uIJMZEGwG851Zp+nlCS42I/Wgu49bJumH39n
-         Ts8ks3v+kaXxcI4muQ3bqDL7lau2T7nd8hFp6vBE+74KyFni4b7YjKiITbVHF+ikyLDj
-         KY3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719505772; x=1720110572;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Vf+oty1NdLS1qae2Gc3SWM3tL3BZVhVoAyzz4KnihM4=;
-        b=nuAAVx9UrwiCzKURnI0REFEekfezd4EPg5d5k92qX5cq5LYyAQfds3jtgJmFsIqABf
-         uuMwVwKM9J7dDWWvqZAzNbg5RdC48ZMfYbZzsgvPU1MaLDpQYDZWIX+dgJInT55ymZEQ
-         2/PgP9dDvt5CtJ75JsG9URehnc5XuVzGPenGrlgk9dW11uVGft0amWBZCN5jyUjYh5yZ
-         CaFNUM82t1pDrktErZRyyE5N33lswM50323FYbckVCuj7qrB8FxLqUg3MPRkAwgk/+Yy
-         PwNWxiIoLIUIP+cwtL4EAHbGKkYxyufP4LbKR17FmTJgdQZIRpF8xSo4oHpS2tWq37Ut
-         SvFA==
-X-Forwarded-Encrypted: i=1; AJvYcCX9R68cSBJ8Ceq8lMR4nlVfxWKbER5HuEew/m/BWMOudq27spej2YC8Zrh8FSptUU5jy+MH7gXBKJdLuE3SiTcCGPOdwxgkF6u+aSKO
-X-Gm-Message-State: AOJu0Yxm9h95xrZ5AQ7Je7BhVaLo4jifGAD2SY+nNp4POYJOFMbKUccT
-	Mj3QIHd9yTiwUTp20dZFOdzKw9xq0xPtKEO8q8qaEHv7CnSn7fRDe/OPDk/orQ==
-X-Google-Smtp-Source: AGHT+IEM53rJZfG+wXWNukg7BNDZblkSojZV/fyTaxHEkXKgKetvOptN3XWLNYHdMUoSnCpCZfNjsw==
-X-Received: by 2002:a05:6a00:3e24:b0:706:7d86:487f with SMTP id d2e1a72fcca58-7067d864f28mr12998499b3a.1.1719505772201;
-        Thu, 27 Jun 2024 09:29:32 -0700 (PDT)
-Received: from [127.0.0.1] ([2401:4900:1f3e:18b0:e4e6:ed1:4c03:dcec])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-706b4a58dbdsm1560739b3a.198.2024.06.27.09.29.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 09:29:31 -0700 (PDT)
-From: Ayush Singh <ayush@beagleboard.org>
-Date: Thu, 27 Jun 2024 21:56:17 +0530
-Subject: [PATCH v5 7/7] dts: ti: k3-am625-beagleplay: Add mikroBUS
+	s=arc-20240116; t=1719505593; c=relaxed/simple;
+	bh=sU1Cb0L0FCKuWzazLB1vKSGcm3JPWOspMJs1Q1aG5cs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KwVmaJ406YBLmjSBw7GQPiYoBSLmuHAdyK4uiNkJdG/m0XbuP9dThYkOvWK0CQO3i1ru5Vhls0Wxa/td69Di+MKcRG70hRaCJcHMJRcGJcWqZg4wMujET3roLuRhB+OzQAZSUrixyPFtPM4DVFJmZ2lvtX/SoLXbq+yxj4vvaN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xd/yMpP1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90D5CC2BBFC;
+	Thu, 27 Jun 2024 16:26:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719505592;
+	bh=sU1Cb0L0FCKuWzazLB1vKSGcm3JPWOspMJs1Q1aG5cs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Xd/yMpP1kRcpk/Z9V7wO9L6s8r7idpNbBIpV0lSl8Enmh+krhFIT28ZNo4+fy3eC/
+	 TuMwruJsP4gZVeSqmx2cFhzTJqiSFtimZovb3QNwY+Re50eQCKk/Av+W0urr+9eoWb
+	 a7A5pNqWWtQrk/XicjJcVwpzfbQBiij1uSr13yBRWdMJKviy7mHojy/pGmAhhW+i3a
+	 liBgQrLOvQcx89mRYsXJkUbcVsg3wMv1xGOiLBoONpfy9A4QFR1hCGrb4ZiFrz8KVl
+	 6FuowdM3D+gjFEArEEOiAq+ZuglIXguLfz9U0a9g+31L3tT/KfPztbngMWwuVJXAsv
+	 76+vW12R1q3AA==
+Date: Thu, 27 Jun 2024 17:26:28 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Lee Jones <lee@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Tzung-Bi Shih <tzungbi@kernel.org>
+Subject: linux-next: manual merge of the leds-lj tree with the
+ chrome-platform tree
+Message-ID: <Zn2StETOCb26F3I5@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240627-mikrobus-scratch-spi-v5-7-9e6c148bf5f0@beagleboard.org>
-References: <20240627-mikrobus-scratch-spi-v5-0-9e6c148bf5f0@beagleboard.org>
-In-Reply-To: <20240627-mikrobus-scratch-spi-v5-0-9e6c148bf5f0@beagleboard.org>
-To: Mark Brown <broonie@kernel.org>, 
- Vaishnav M A <vaishnav@beagleboard.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Derek Kiernan <derek.kiernan@amd.com>, 
- Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nishanth Menon <nm@ti.com>, 
- Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, 
- Michael Walle <mwalle@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
- jkridner@beagleboard.org, robertcnelson@beagleboard.org
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- Ayush Singh <ayush@beagleboard.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5723; i=ayush@beagleboard.org;
- h=from:subject:message-id; bh=0t/wFPVC4l/yw5eF3OeLLEEWm+E+fxx+yaa8gVfDqK0=;
- b=owEBbQKS/ZANAwAIAQXO9ceJ5Vp0AcsmYgBmfZM459JpVph8a7o9EFioAHe3jzmpm5BUTLvDx
- XeluaGM06CJAjMEAAEIAB0WIQTfzBMe8k8tZW+lBNYFzvXHieVadAUCZn2TOAAKCRAFzvXHieVa
- dHpEEADUBssv55R+SULKv6RULv+gOVxAXjyNVscI7LK8hDDfBEOV5xQlG5hFW92XtL9Bfrb5lgl
- ZQaS2VYyLcEzhTxJDPL6b0oKD3/xdOJ/y8vYBptr3YzlyS+Cg8S9h1HFL3W1wQSG4LT5HhegLHT
- 710faT8vf3t9XYdJqWNJyoCtBOgeMHMRRl+3ttbE9nfGpSIMvRurgAB0No8tO9pkgEZwAv72f9g
- /4LZO8Dor8YNa/U0HTaTrgrBAppF+TQg7jRTRE41/Og4KalwNzJKU1IuoFqlSYQzI+97d7P+R75
- JRRt6H9U08UAvbJJ7JENif3m0nvLjPAGmUMsFVnEdult61dDpBoXzY3ZOUdYf1X+/BmXPFc6sUP
- bU4CRyOYFXPIlr5eRK5cybJv1neaVxdUlrqjh460vj3KS8f64760NPhd0lOCy4xQ/UBcw7ie6Gd
- /ZA8IWz091iwfRve1IneXpEjtnMM4/nQq+dZs32pQb/IgtTShP3jZXr+ldxFA5azE40lLVjH6yg
- mBopgaiLW0aFD3Cw20n0TnihXe9fsOkddjiJAXMFLESb7i3O41GnNAjh9hLS4E+hWTmK4Z569Ap
- q/YPzQtimt+rqtnByhlWUYaf6yJpLPYuL3vSjjlAngvbQgCI3Ir+L1uWyerY7T8CqDQVCPzObJ2
- PqOaFYgnkKeIUoA==
-X-Developer-Key: i=ayush@beagleboard.org; a=openpgp;
- fpr=DFCC131EF24F2D656FA504D605CEF5C789E55A74
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Hh9JSyXiINCq6YZM"
+Content-Disposition: inline
 
-DONOTMERGE
 
-Add mikroBUS connector and some mikroBUS boards support for Beagleplay.
-The mikroBUS boards node should probably be moved to a more appropriate
-location but I am not quite sure where it should go since it is not
-dependent on specific arch.
+--Hh9JSyXiINCq6YZM
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Ayush Singh <ayush@beagleboard.org>
----
- arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts | 94 +++++++++++++++++++++++---
- 1 file changed, 86 insertions(+), 8 deletions(-)
+Hi all,
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts b/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts
-index 70de288d728e..3f3cd70345c4 100644
---- a/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts
-@@ -38,6 +38,7 @@ aliases {
- 		serial2 = &main_uart0;
- 		usb0 = &usb0;
- 		usb1 = &usb1;
-+		mikrobus0 = &mikrobus0;
- 	};
- 
- 	chosen {
-@@ -227,6 +228,56 @@ simple-audio-card,codec {
- 		};
- 	};
- 
-+	mikrobus0: mikrobus-connector {
-+		compatible = "mikrobus-connector";
-+		pinctrl-names = "default", "pwm_default", "pwm_gpio",
-+				"uart_default", "uart_gpio", "i2c_default",
-+				"i2c_gpio", "spi_default", "spi_gpio";
-+		pinctrl-0 = <&mikrobus_gpio_pins_default>;
-+		pinctrl-1 = <&mikrobus_pwm_pins_default>;
-+		pinctrl-2 = <&mikrobus_pwm_pins_gpio>;
-+		pinctrl-3 = <&mikrobus_uart_pins_default>;
-+		pinctrl-4 = <&mikrobus_uart_pins_gpio>;
-+		pinctrl-5 = <&mikrobus_i2c_pins_default>;
-+		pinctrl-6 = <&mikrobus_i2c_pins_gpio>;
-+		pinctrl-7 = <&mikrobus_spi_pins_default>;
-+		pinctrl-8 = <&mikrobus_spi_pins_gpio>;
-+
-+		mikrobus-gpio-names = "pwm", "int", "rx", "tx", "scl", "sda",
-+				      "mosi", "miso", "sck", "cs", "rst", "an";
-+		mikrobus-gpios = <&main_gpio1 11 GPIO_ACTIVE_HIGH>,
-+				 <&main_gpio1 9 GPIO_ACTIVE_HIGH>,
-+				 <&main_gpio1 24 GPIO_ACTIVE_HIGH>,
-+				 <&main_gpio1 25 GPIO_ACTIVE_HIGH>,
-+				 <&main_gpio1 22 GPIO_ACTIVE_HIGH>,
-+				 <&main_gpio1 23 GPIO_ACTIVE_HIGH>,
-+				 <&main_gpio1 7 GPIO_ACTIVE_HIGH>,
-+				 <&main_gpio1 8 GPIO_ACTIVE_HIGH>,
-+				 <&main_gpio1 14 GPIO_ACTIVE_HIGH>,
-+				 <&main_gpio1 13 GPIO_ACTIVE_HIGH>,
-+				 <&main_gpio1 12 GPIO_ACTIVE_HIGH>,
-+				 <&main_gpio1 10 GPIO_ACTIVE_HIGH>;
-+
-+		spi-controller = <&main_spi2>;
-+		spi-cs = <0>;
-+		spi-cs-names = "default";
-+
-+		board = <&lsm6dsl_click>;
-+	};
-+
-+	mikrobus_boards {
-+		thermo_click: thermo-click {
-+			compatible = "maxim,max31855k", "mikrobus-spi";
-+			spi-max-frequency = <1000000>;
-+			pinctrl-apply = "spi_default";
-+		};
-+
-+		lsm6dsl_click: lsm6dsl-click {
-+			compatible = "st,lsm6ds3", "mikrobus-spi";
-+			spi-max-frequency = <1000000>;
-+			pinctrl-apply = "spi_default";
-+		};
-+	};
- };
- 
- &main_pmx0 {
-@@ -387,6 +438,18 @@ AM62X_IOPAD(0x01f0, PIN_OUTPUT, 5) /* (A18) EXT_REFCLK1.CLKOUT0 */
- 		>;
- 	};
- 
-+	mikrobus_pwm_pins_default: mikrobus-pwm-default-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x01a4, PIN_INPUT, 2) /* (B20) MCASP0_ACLKX.ECAP2_IN_APWM_OUT */
-+		>;
-+	};
-+
-+	mikrobus_pwm_pins_gpio: mikrobus-pwm-gpio-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x01a4, PIN_INPUT, 7) /* (B20) MCASP0_ACLKX.GPIO1_11 */
-+		>;
-+	};
-+
- 	mikrobus_i2c_pins_default: mikrobus-i2c-default-pins {
- 		pinctrl-single,pins = <
- 			AM62X_IOPAD(0x01d0, PIN_INPUT_PULLUP, 2) /* (A15) UART0_CTSn.I2C3_SCL */
-@@ -394,6 +457,13 @@ AM62X_IOPAD(0x01d4, PIN_INPUT_PULLUP, 2) /* (B15) UART0_RTSn.I2C3_SDA */
- 		>;
- 	};
- 
-+	mikrobus_i2c_pins_gpio: mikrobus-i2c-gpio-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x01d0, PIN_INPUT, 7) /* (A15) UART0_CTSn.GPIO1_22 */
-+			AM62X_IOPAD(0x01d4, PIN_INPUT, 7) /* (B15) UART0_RTSn.GPIO1_23 */
-+		>;
-+	};
-+
- 	mikrobus_uart_pins_default: mikrobus-uart-default-pins {
- 		pinctrl-single,pins = <
- 			AM62X_IOPAD(0x01d8, PIN_INPUT, 1) /* (C15) MCAN0_TX.UART5_RXD */
-@@ -401,6 +471,13 @@ AM62X_IOPAD(0x01dc, PIN_OUTPUT, 1) /* (E15) MCAN0_RX.UART5_TXD */
- 		>;
- 	};
- 
-+	mikrobus_uart_pins_gpio: mikrobus-uart-gpio-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x01d8, PIN_INPUT, 7) /* (C15) MCAN0_TX.GPIO1_24 */
-+			AM62X_IOPAD(0x01dc, PIN_INPUT, 7) /* (E15) MCAN0_RX.GPIO1_25 */
-+		>;
-+	};
-+
- 	mikrobus_spi_pins_default: mikrobus-spi-default-pins {
- 		pinctrl-single,pins = <
- 			AM62X_IOPAD(0x01b0, PIN_INPUT, 1) /* (A20) MCASP0_ACLKR.SPI2_CLK */
-@@ -410,6 +487,15 @@ AM62X_IOPAD(0x0198, PIN_INPUT, 1) /* (A19) MCASP0_AXR2.SPI2_D1 */
- 		>;
- 	};
- 
-+	mikrobus_spi_pins_gpio: mikrobus-spi-gpio-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x0194, PIN_INPUT, 7) /* (B19) MCASP0_AXR3.GPIO1_7 */
-+			AM62X_IOPAD(0x0198, PIN_INPUT, 7) /* (A19) MCASP0_AXR2.GPIO1_8 */
-+			AM62X_IOPAD(0x01ac, PIN_INPUT, 7) /* (E19) MCASP0_AFSR.GPIO1_13 */
-+			AM62X_IOPAD(0x01b0, PIN_INPUT, 7) /* (A20) MCASP0_ACLKR.GPIO1_14 */
-+		>;
-+	};
-+
- 	mikrobus_gpio_pins_default: mikrobus-gpio-default-pins {
- 		bootph-all;
- 		pinctrl-single,pins = <
-@@ -630,8 +716,6 @@ &main_gpio0 {
- 
- &main_gpio1 {
- 	bootph-all;
--	pinctrl-names = "default";
--	pinctrl-0 = <&mikrobus_gpio_pins_default>;
- 	gpio-line-names = "", "", "", "", "",			/* 0-4 */
- 		"SPE_RSTN", "SPE_INTN", "MIKROBUS_GPIO1_7",	/* 5-7 */
- 		"MIKROBUS_GPIO1_8", "MIKROBUS_GPIO1_9",		/* 8-9 */
-@@ -804,15 +888,11 @@ it66121_out: endpoint {
- };
- 
- &main_i2c3 {
--	pinctrl-names = "default";
--	pinctrl-0 = <&mikrobus_i2c_pins_default>;
- 	clock-frequency = <400000>;
- 	status = "okay";
- };
- 
- &main_spi2 {
--	pinctrl-names = "default";
--	pinctrl-0 = <&mikrobus_spi_pins_default>;
- 	status = "okay";
- };
- 
-@@ -876,8 +956,6 @@ &main_uart1 {
- };
- 
- &main_uart5 {
--	pinctrl-names = "default";
--	pinctrl-0 = <&mikrobus_uart_pins_default>;
- 	status = "okay";
- };
- 
+Today's linux-next merge of the leds-lj tree got a conflict in:
 
--- 
-2.45.2
+  MAINTAINERS
 
+between commit:
+
+  bc3e45258096f ("hwmon: add ChromeOS EC driver")
+
+=66rom the chrome-platform tree and commit:
+
+  8d6ce6f3ec9d5 ("leds: Add ChromeOS EC driver")
+
+=66rom the leds-lj tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc MAINTAINERS
+index de839b7c4ac2a,a7deb8fa20cac..0000000000000
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@@ -5197,14 -5135,11 +5197,19 @@@ S:	Maintaine
+  F:	Documentation/devicetree/bindings/sound/google,cros-ec-codec.yaml
+  F:	sound/soc/codecs/cros_ec_codec.*
+ =20
+ +CHROMEOS EC HARDWARE MONITORING
+ +M:	Thomas Wei=DFschuh <thomas@weissschuh.net>
+ +L:	chrome-platform@lists.linux.dev
+ +L:	linux-hwmon@vger.kernel.org
+ +S:	Maintained
+ +F:	Documentation/hwmon/cros_ec_hwmon.rst
+ +F:	drivers/hwmon/cros_ec_hwmon.c
+ +
++ CHROMEOS EC LED DRIVER
++ M:	Thomas Wei=DFschuh <thomas@weissschuh.net>
++ S:	Maintained
++ F:	drivers/leds/leds-cros_ec.c
++=20
+  CHROMEOS EC SUBDRIVERS
+  M:	Benson Leung <bleung@chromium.org>
+  R:	Guenter Roeck <groeck@chromium.org>
+
+--Hh9JSyXiINCq6YZM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ9krMACgkQJNaLcl1U
+h9DAPwf+PdxHGqQdzW8qZldQ7mjUbiEmigrLHXulGhaZVJsySdDJS53MLqGOFKOr
+qs3TTZw6mdMLsAjCV0xcKFS8/R0TcVmK8n5nmIJxx8qXAtI1DGrVbCeCBQDjAsn6
+d4HBDgtowSniQYNchdpF599hh6Jz2b+6b2swNZduEOyOiWBKMQLMICd62T6/jl5a
+xlG1ZkMQwxF74vsErHIBz3UeTXNsnO496v9Z2GePJAWz6g2MrHuH7zQaV88T8cIb
+2v+RV1chI3YBXorXd1xw8O5KSEQVb803M8PohSZOnRpBSruKYQOITCmj/jYN3G+v
+pddfvj+LPArZyFqu0ruHUWWFlM8peQ==
+=JHu7
+-----END PGP SIGNATURE-----
+
+--Hh9JSyXiINCq6YZM--
 
