@@ -1,59 +1,65 @@
-Return-Path: <linux-kernel+bounces-232315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEC1A91A6B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:40:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9448291A6B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:40:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27F361C22533
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:40:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C5791F26857
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:40:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9430715ECEF;
-	Thu, 27 Jun 2024 12:39:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ahrCbyoU"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6372F15E5DB
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9024A15FA68;
+	Thu, 27 Jun 2024 12:39:34 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C1A15ECDB
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:39:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719491995; cv=none; b=omvQjTXDahNn2aeoNF7rJoVBH5y2zEHVbbiOG6DUwRH8HUKs5DI7an0PIVqXw+pl/gJ3ETuV0M+fTYIBlF0ZbEwzkkwFx+fBRpoU8CfLW1+uFQQ32PDRIxoBPL5fqeCTcJDfkwK8kVKGSL48NMfxHQ7tqjjr4IrJ2HEgGgB78LY=
+	t=1719491974; cv=none; b=lnF/LVY8QRjHn/45j6fRtbRjsg87ZrUj9hFbk1iFApPixtw7xITBylOPOIeKLaqiQHAVKuoFz9xB94c0CTjXyLSs19SoOigniTRs449bJUEDsDr9jUTiqYv52uE+VorYGJRd/RvDz7HS9GTwwCPus5KHeNP8+mFedeV1L3DS47Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719491995; c=relaxed/simple;
-	bh=XIiN2SU02Qa6IoY68GGkhAS66T4UHBbwG6fx2lujuAg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oIg1/eMOQ9BVFBY4ffF5zV5G/zJCmNaVz84EUebcG4WQ/on2SMXmhq+jSWIHeSOtitY2rXu+5gF7rV2KTDcXPXLOmydT5ahapAv+QX1PI0bNfd4i1RF4r95NgimEs385uxS2gQVTzwxiRk/DGBTefvq/U2qdrvP+Ks9+/U8ogi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ahrCbyoU; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=vkEX8
-	CnABxw6g+6C0/kCh5ySrZHNhjny2P+4xtrVQvM=; b=ahrCbyoULxWhJIuJgH8Iv
-	VP5YQszl65e68JeQy8ymXXc1VGhMW9wIF7+FtuJGzQsNyjVcJ1xhw/meuLrZAB8t
-	pd4v8ynYeEIFRv6FpZVdsvnHU0vhXim9J3AMY66WQrn3ejw8NvRYkJ90vJw9dVEd
-	FqXpcpPrvY4lmzBcdhbEpI=
-Received: from localhost.localdomain (unknown [193.203.214.57])
-	by gzga-smtp-mta-g1-0 (Coremail) with SMTP id _____wD3_4FeXX1m+wa7Ag--.41205S4;
-	Thu, 27 Jun 2024 20:38:55 +0800 (CST)
-From: ran xiaokai <ranxiaokai627@163.com>
-To: lkp@intel.com
-Cc: baohua@kernel.org,
+	s=arc-20240116; t=1719491974; c=relaxed/simple;
+	bh=GIWMlaYR05jwrmjmwXUaBfAlmloZULLT6JrTrW07M4E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SDlj9W76ybTK7LTbO0bOHDcK7OblAGMz8aj9YGQYOk/Mb17inBn28W1o4v9Mj4VTXYCULNolYH4Mg8yP7RjWMOvgDCbW8s8NjCoh2XZyJ4UptaNQARzku6nC2+GbE2liv6Mqx0ei8jw9l3Iv5NnjPA97VzMe8RRMNjC6RaN9ypo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sMoPC-00015A-7f; Thu, 27 Jun 2024 14:39:14 +0200
+Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sMoPA-005Mwr-O8; Thu, 27 Jun 2024 14:39:12 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sMoPA-000xBV-2B;
+	Thu, 27 Jun 2024 14:39:12 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: "David S. Miller" <davem@davemloft.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Arun Ramadoss <arun.ramadoss@microchip.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev,
-	peterx@redhat.com,
-	ran.xiaokai@zte.com.cn,
-	ranxiaokai627@163.com,
-	ziy@nvidia.com
-Subject: Re: [PATCH 2/2] kpageflags: fix wrong KPF_THP on non-pmd-mappable compound pages
-Date: Thu, 27 Jun 2024 12:38:54 +0000
-Message-Id: <20240627123854.23205-1-ranxiaokai627@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <202406262300.iAURISyJ-lkp@intel.com>
-References: <202406262300.iAURISyJ-lkp@intel.com>
+	netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com
+Subject: [PATCH net-next v1 1/1] net: dsa: microchip: add regmap_range for KSZ9563 chip
+Date: Thu, 27 Jun 2024 14:39:08 +0200
+Message-Id: <20240627123911.227480-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,55 +67,158 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3_4FeXX1m+wa7Ag--.41205S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Cw1kCw17JF15ur47CFWfKrg_yoW5Jr1xpa
-	18GFs8Kr48Gw1rGws7GFWUZa1jqws8Wr1agF18Gw47ZF4YvFyq9r4Ikr13uwnFgrykKrWf
-	Crn7XF9Yqa4UAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JUKAp8UUUUU=
-X-CM-SenderInfo: xudq5x5drntxqwsxqiywtou0bp/1tbiqQALTGVOBIg1VwAAsr
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-> Hi ran,
-> 
-> kernel test robot noticed the following build errors:
-> 
-> [auto build test ERROR on akpm-mm/mm-everything]
-> [also build test ERROR on linus/master v6.10-rc5 next-20240625]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/ran-xiaokai/mm-Constify-folio_order-folio_test_pmd_mappable/20240626-113027
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-> patch link:    https://lore.kernel.org/r/20240626024924.1155558-3-ranxiaokai627%40163.com
-> patch subject: [PATCH 2/2] kpageflags: fix wrong KPF_THP on non-pmd-mappable compound pages
-> config: x86_64-allnoconfig (https://download.01.org/0day-ci/archive/20240626/202406262300.iAURISyJ-lkp@intel.com/config)
-> compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240626/202406262300.iAURISyJ-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202406262300.iAURISyJ-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>):
-> 
-> >> fs/proc/page.c:151:35: error: passing 'const struct folio *' to parameter of type 'struct folio *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
->      151 |         else if (folio_test_pmd_mappable(folio)) {
->          |                                          ^~~~~
->    include/linux/huge_mm.h:438:58: note: passing argument to parameter 'folio' here
->      438 | static inline bool folio_test_pmd_mappable(struct folio *folio)
->          |                                                          ^
->    1 error generated.
+Add register validation for KSZ9563.
 
-Hi,
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ drivers/net/dsa/microchip/ksz_common.c | 121 +++++++++++++++++++++++++
+ 1 file changed, 121 insertions(+)
 
-This patch is the second patch of the serial:
-https://lore.kernel.org/lkml/20240626024924.1155558-1-ranxiaokai627@163.com/
-
-and it relies on the first patch:
-https://lore.kernel.org/lkml/20240626024924.1155558-2-ranxiaokai627@163.com/
-
-and it seems the first patch is not applied.
-Or in this case, we should not split these two patches?
+diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
+index 030b167764b39..2308be3bdc9d8 100644
+--- a/drivers/net/dsa/microchip/ksz_common.c
++++ b/drivers/net/dsa/microchip/ksz_common.c
+@@ -666,6 +666,125 @@ static const struct regmap_access_table ksz8563_register_set = {
+ 	.n_yes_ranges = ARRAY_SIZE(ksz8563_valid_regs),
+ };
+ 
++static const struct regmap_range ksz9563_valid_regs[] = {
++	regmap_reg_range(0x0000, 0x0003),
++	regmap_reg_range(0x0006, 0x0006),
++	regmap_reg_range(0x000f, 0x000f),
++	regmap_reg_range(0x0010, 0x001f),
++	regmap_reg_range(0x0100, 0x0100),
++	regmap_reg_range(0x0104, 0x0107),
++	regmap_reg_range(0x010d, 0x010d),
++	regmap_reg_range(0x0110, 0x0113),
++	regmap_reg_range(0x0120, 0x012b),
++	regmap_reg_range(0x0201, 0x0201),
++	regmap_reg_range(0x0210, 0x0213),
++	regmap_reg_range(0x0300, 0x0300),
++	regmap_reg_range(0x0302, 0x030b),
++	regmap_reg_range(0x030e, 0x031b),
++	regmap_reg_range(0x0320, 0x032b),
++	regmap_reg_range(0x0330, 0x0336),
++	regmap_reg_range(0x0338, 0x033b),
++	regmap_reg_range(0x033e, 0x033e),
++	regmap_reg_range(0x0340, 0x035f),
++	regmap_reg_range(0x0370, 0x0370),
++	regmap_reg_range(0x0378, 0x0378),
++	regmap_reg_range(0x037c, 0x037d),
++	regmap_reg_range(0x0390, 0x0393),
++	regmap_reg_range(0x0400, 0x040e),
++	regmap_reg_range(0x0410, 0x042f),
++	regmap_reg_range(0x0500, 0x0519),
++	regmap_reg_range(0x0520, 0x054b),
++	regmap_reg_range(0x0550, 0x05b3),
++
++	/* port 1 */
++	regmap_reg_range(0x1000, 0x1001),
++	regmap_reg_range(0x1004, 0x100b),
++	regmap_reg_range(0x1013, 0x1013),
++	regmap_reg_range(0x1017, 0x1017),
++	regmap_reg_range(0x101b, 0x101b),
++	regmap_reg_range(0x101f, 0x1021),
++	regmap_reg_range(0x1030, 0x1030),
++	regmap_reg_range(0x1100, 0x1115),
++	regmap_reg_range(0x111a, 0x111f),
++	regmap_reg_range(0x1120, 0x112b),
++	regmap_reg_range(0x1134, 0x113b),
++	regmap_reg_range(0x113c, 0x113f),
++	regmap_reg_range(0x1400, 0x1401),
++	regmap_reg_range(0x1403, 0x1403),
++	regmap_reg_range(0x1410, 0x1417),
++	regmap_reg_range(0x1420, 0x1423),
++	regmap_reg_range(0x1500, 0x1507),
++	regmap_reg_range(0x1600, 0x1612),
++	regmap_reg_range(0x1800, 0x180f),
++	regmap_reg_range(0x1900, 0x1907),
++	regmap_reg_range(0x1914, 0x191b),
++	regmap_reg_range(0x1a00, 0x1a03),
++	regmap_reg_range(0x1a04, 0x1a07),
++	regmap_reg_range(0x1b00, 0x1b01),
++	regmap_reg_range(0x1b04, 0x1b04),
++	regmap_reg_range(0x1c00, 0x1c05),
++	regmap_reg_range(0x1c08, 0x1c1b),
++
++	/* port 2 */
++	regmap_reg_range(0x2000, 0x2001),
++	regmap_reg_range(0x2004, 0x200b),
++	regmap_reg_range(0x2013, 0x2013),
++	regmap_reg_range(0x2017, 0x2017),
++	regmap_reg_range(0x201b, 0x201b),
++	regmap_reg_range(0x201f, 0x2021),
++	regmap_reg_range(0x2030, 0x2030),
++	regmap_reg_range(0x2100, 0x2115),
++	regmap_reg_range(0x211a, 0x211f),
++	regmap_reg_range(0x2120, 0x212b),
++	regmap_reg_range(0x2134, 0x213b),
++	regmap_reg_range(0x213c, 0x213f),
++	regmap_reg_range(0x2400, 0x2401),
++	regmap_reg_range(0x2403, 0x2403),
++	regmap_reg_range(0x2410, 0x2417),
++	regmap_reg_range(0x2420, 0x2423),
++	regmap_reg_range(0x2500, 0x2507),
++	regmap_reg_range(0x2600, 0x2612),
++	regmap_reg_range(0x2800, 0x280f),
++	regmap_reg_range(0x2900, 0x2907),
++	regmap_reg_range(0x2914, 0x291b),
++	regmap_reg_range(0x2a00, 0x2a03),
++	regmap_reg_range(0x2a04, 0x2a07),
++	regmap_reg_range(0x2b00, 0x2b01),
++	regmap_reg_range(0x2b04, 0x2b04),
++	regmap_reg_range(0x2c00, 0x2c05),
++	regmap_reg_range(0x2c08, 0x2c1b),
++
++	/* port 3 */
++	regmap_reg_range(0x3000, 0x3001),
++	regmap_reg_range(0x3013, 0x3013),
++	regmap_reg_range(0x3017, 0x3017),
++	regmap_reg_range(0x301b, 0x301b),
++	regmap_reg_range(0x301f, 0x3020),
++	regmap_reg_range(0x3030, 0x3030),
++	regmap_reg_range(0x3300, 0x3301),
++	regmap_reg_range(0x3303, 0x3303),
++	regmap_reg_range(0x3400, 0x3401),
++	regmap_reg_range(0x3403, 0x3403),
++	regmap_reg_range(0x3410, 0x3417),
++	regmap_reg_range(0x3420, 0x3423),
++	regmap_reg_range(0x3500, 0x3507),
++	regmap_reg_range(0x3600, 0x3612),
++	regmap_reg_range(0x3800, 0x380f),
++	regmap_reg_range(0x3900, 0x3907),
++	regmap_reg_range(0x3914, 0x391b),
++	regmap_reg_range(0x3a00, 0x3a03),
++	regmap_reg_range(0x3a04, 0x3a07),
++	regmap_reg_range(0x3b00, 0x3b01),
++	regmap_reg_range(0x3b04, 0x3b04),
++	regmap_reg_range(0x3c00, 0x3c05),
++	regmap_reg_range(0x3c08, 0x3c1b),
++};
++
++static const struct regmap_access_table ksz9563_register_set = {
++	.yes_ranges = ksz9563_valid_regs,
++	.n_yes_ranges = ARRAY_SIZE(ksz9563_valid_regs),
++};
++
+ static const struct regmap_range ksz9477_valid_regs[] = {
+ 	regmap_reg_range(0x0000, 0x0003),
+ 	regmap_reg_range(0x0006, 0x0006),
+@@ -1475,6 +1594,8 @@ const struct ksz_chip_data ksz_switch_chips[] = {
+ 		.supports_rgmii = {false, false, true},
+ 		.internal_phy = {true, true, false},
+ 		.gbit_capable = {true, true, true},
++		.wr_table = &ksz9563_register_set,
++		.rd_table = &ksz9563_register_set,
+ 	},
+ 
+ 	[KSZ8567] = {
+-- 
+2.39.2
 
 
