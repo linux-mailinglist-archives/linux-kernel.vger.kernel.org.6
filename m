@@ -1,177 +1,156 @@
-Return-Path: <linux-kernel+bounces-232590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18F0A91AB4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:31:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FCE891AB9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:39:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CA921C2117B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:31:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98A87B2C35D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B681990C8;
-	Thu, 27 Jun 2024 15:31:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D30B199E9F;
+	Thu, 27 Jun 2024 15:33:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JU13wlmS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AgHDvq+1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F06198E71;
-	Thu, 27 Jun 2024 15:31:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D0F199233;
+	Thu, 27 Jun 2024 15:33:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719502287; cv=none; b=YyILKoaAEPtCp4a3V6ZFXtZi+LD7pbzIGl4gAuHuLRTtUF7RXBrvFxTLLItevk394gQKpt1gePqkRn8s6z6/v7ZjIhRw568jY/P44SEfrDthYsYBsvDN34IbXvIRVfbVeEGIxi6PbiHwZ4qNLl2VKJvy99lY+vOZbUG0ch+EpWA=
+	t=1719502394; cv=none; b=FQ4HEDUyrdg7lPvLcCfpWs1up/Ai0oq5UFERa5y9DzVWaMGuktlDw1NLX5pEVf86cH0m5pf/Y1c0fM4ocxe9Hd4nsA0dNmQNGdB/0HevW2GuanlypILIzfOUjYnibpuXE/crgRMLryqAviUva6AoTsctg46F7Oj1VSeDE4UtXDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719502287; c=relaxed/simple;
-	bh=wxLzTDpEy7fEUqTDhRZsA8Ui7D8BuLYyJagL/PF5qUo=;
+	s=arc-20240116; t=1719502394; c=relaxed/simple;
+	bh=VuDA6GVm6ZnqWfwRL6Xl9pYd73Bj8ZY3AonKSNGQsAY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j1YlaZvhylbORHR12W/3FO85Lm9b/PwGPc77J1pcUx2D5mMmhQ6cQvNK34lSD1GgITTt+id0Li1knAi8luTvmpMC0KXxzeRfB2oQ4LX/4RsIXkFC4ZwkFDwLo/fjWX3ardVF/6Z4UALWLh6EiUH8IKpgvIYmco7/P/32h276TZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JU13wlmS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE721C2BBFC;
-	Thu, 27 Jun 2024 15:31:26 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=cVIeuCf04ruwy7Yvgqv/l0l1oP8KsQCH/KpkFU0D+ya9Nuo/4sUeHy+QQip4KzFg/COxGe5Fma1ghBGeL6RfcvOhzV6HjlIbJ4r3cGwIF2R3u5EkuLm4utCG0gf0xODCC1mpDeyq2FtMgHmApLC3mKzD92pznc9TxXC/wHF/bS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AgHDvq+1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C4B4C2BBFC;
+	Thu, 27 Jun 2024 15:33:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719502287;
-	bh=wxLzTDpEy7fEUqTDhRZsA8Ui7D8BuLYyJagL/PF5qUo=;
+	s=k20201202; t=1719502393;
+	bh=VuDA6GVm6ZnqWfwRL6Xl9pYd73Bj8ZY3AonKSNGQsAY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JU13wlmSWUBHxHsfZ97TRsc/9fMuDshO44IMPpp5wIVEhfFOk/NTH1Qv/qetpmluT
-	 1kx1VpMufyQFVyxfq1WQuVE9lZW25YRoetH8leXKF5od+/O+UgJv8Tnw0CVI5eQhZf
-	 nqnpTt4O/bMpKPv6lfKtapMytVnhDUEqGxLG/EyVZ6wF/J/5ljxC+Hv96l9BM1lVX8
-	 7wXTLZJKwecarQF0i6EbEXHpIyC3GLT8tyS3AMfsqbs1XUMYwrcdlbRSsD8nUpWJWD
-	 rcPf8bYAV9FZXEBBA/3EZxi6rkyLp29xghivlitweBUQJObhUj1gn+iK82E3j6SIxh
-	 YTrEH/BDjxzFQ==
-Date: Thu, 27 Jun 2024 09:31:25 -0600
-From: Rob Herring <robh@kernel.org>
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Jingoo Han <jingoohan1@gmail.com>, quic_vbadigan@quicinc.com,
-	quic_skananth@quicinc.com, quic_nitegupt@quicinc.com,
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 1/7] dt: bindings: add qcom,qps615.yaml
-Message-ID: <20240627153125.GA3469266-robh@kernel.org>
-References: <20240626-qps615-v1-0-2ade7bd91e02@quicinc.com>
- <20240626-qps615-v1-1-2ade7bd91e02@quicinc.com>
+	b=AgHDvq+1NSlAHfMDDmXVM/hKZIRWxLeKMv1gQFnZVYyOpAT/dqtNzIVMZ7zKdK4I6
+	 Pk1hsuFMoAx5aMDci/JLTvkwP0fcLNu7/ShigKZUOr/oB4kpX5Lvn8QWjt4oC9Zks3
+	 HYA/RIxJ05wESANO1p6vtl1W3TAbNTGrVHYSwTA/R/biQGn7AfdksZTWcybUmjh1nu
+	 Rte0kakjfnqw5OOboYB4VJb+GCVQ8o3fRNQYvGrJMJ9/E9jrQjhDaU67gce+WQsWDo
+	 V+CZ4U3EjGxSYWOByIo9JE22N4QnmUaSNEdyEUYc/dVviIx25FTRNZ6UiljeTEPc4+
+	 icGJ+UiDrYmEA==
+Date: Thu, 27 Jun 2024 17:33:08 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, "Ma, Yu" <yu.ma@intel.com>, 
+	viro@zeniv.linux.org.uk, edumazet@google.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com, 
+	tim.c.chen@linux.intel.com
+Subject: Re: [PATCH v2 1/3] fs/file.c: add fast path in alloc_fd()
+Message-ID: <20240627-laufschuhe-hergibt-8158b7b6b206@brauner>
+References: <20240614163416.728752-1-yu.ma@intel.com>
+ <20240622154904.3774273-1-yu.ma@intel.com>
+ <20240622154904.3774273-2-yu.ma@intel.com>
+ <20240625115257.piu47hzjyw5qnsa6@quack3>
+ <20240625125309.y2gs4j5jr35kc4z5@quack3>
+ <87a1279c-c5df-4f3b-936d-c9b8ed58f46e@intel.com>
+ <20240626115427.d3x7g3bf6hdemlnq@quack3>
+ <CAGudoHEkw=cRG1xFHU02YjkM2+MMS2vkY_moZ2QUjAToEzbR3g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240626-qps615-v1-1-2ade7bd91e02@quicinc.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHEkw=cRG1xFHU02YjkM2+MMS2vkY_moZ2QUjAToEzbR3g@mail.gmail.com>
 
-On Wed, Jun 26, 2024 at 06:07:49PM +0530, Krishna chaitanya chundru wrote:
-> qps615 is a driver for Qualcomm PCIe switch driver which controls
-> power & configuration of the hardware.
-> Add a bindings document for the driver.
+On Wed, Jun 26, 2024 at 09:13:07PM GMT, Mateusz Guzik wrote:
+> On Wed, Jun 26, 2024 at 1:54 PM Jan Kara <jack@suse.cz> wrote:
+> > So maybe I'm wrong but I think the biggest benefit of your code compared to
+> > plain find_next_fd() is exactly in that we don't have to load full_fds_bits
+> > into cache. So I'm afraid that using full_fds_bits in the condition would
+> > destroy your performance gains. Thinking about this with a fresh head how
+> > about putting implementing your optimization like:
+> >
+> > --- a/fs/file.c
+> > +++ b/fs/file.c
+> > @@ -490,6 +490,20 @@ static unsigned int find_next_fd(struct fdtable *fdt, unsigned int start)
+> >         unsigned int maxbit = maxfd / BITS_PER_LONG;
+> >         unsigned int bitbit = start / BITS_PER_LONG;
+> >
+> > +       /*
+> > +        * Optimistically search the first long of the open_fds bitmap. It
+> > +        * saves us from loading full_fds_bits into cache in the common case
+> > +        * and because BITS_PER_LONG > start >= files->next_fd, we have quite
+> > +        * a good chance there's a bit free in there.
+> > +        */
+> > +       if (start < BITS_PER_LONG) {
+> > +               unsigned int bit;
+> > +
+> > +               bit = find_next_zero_bit(fdt->open_fds, BITS_PER_LONG, start);
+> > +               if (bit < BITS_PER_LONG)
+> > +                       return bit;
+> > +       }
+> > +
+> >         bitbit = find_next_zero_bit(fdt->full_fds_bits, maxbit, bitbit) * BITS_PER_LONG;
+> >         if (bitbit >= maxfd)
+> >                 return maxfd;
+> >
+> > Plus your optimizations with likely / unlikely. This way the code flow in
+> > alloc_fd() stays more readable, we avoid loading the first open_fds long
+> > into cache if it is full, and we should get all the performance benefits?
+> >
 > 
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> ---
->  .../devicetree/bindings/pci/qcom,qps615.yaml       | 73 ++++++++++++++++++++++
->  1 file changed, 73 insertions(+)
+> Huh.
 > 
-> diff --git a/Documentation/devicetree/bindings/pci/qcom,qps615.yaml b/Documentation/devicetree/bindings/pci/qcom,qps615.yaml
-> new file mode 100644
-> index 000000000000..f090683f9e2f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/qcom,qps615.yaml
-> @@ -0,0 +1,73 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pci/qcom,pcie-qps615.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm QPS615 PCIe switch
-> +
-> +maintainers:
-> +  - Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> +
-> +description: |
-> +  Qualcomm QPS615 PCIe switch has one upstream and three downstream
-> +  ports. One of the downstream ports is used as endpoint device of
-> +  Ethernet MAC. Other two downstream ports are supposed to connect
-> +  to external device.
-> +
-> +  The power controlled by the GPIO's, if we enable the GPIO's the
-> +  power to the switch will be on.
-> +
-> +  The QPS615 PCIe switch is configured through I2C interface before
-> +  PCIe link is established.
-> +
-
-As a PCI device and implementing a PCI bus, you need to reference 
-pci-pci-bridge.yaml. And you'll need to fix your example when you add 
-that.
-
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - pci1179,0623
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  vdd-supply:
-> +    description: |
-> +      Phandle to the vdd input voltage which are fixed regulators which
-> +      in are mapped to the GPIO's.
-> +
-> +  switch-i2c-cntrl:
-> +    description: |
-> +      phandle to i2c controller which is used to configure the PCIe
-> +      switch.
-
-There's a somewhat standard property for this purpose: i2c-bus
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - vdd-supply
-> +  - switch-i2c-cntrl
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    pcie {
-> +        #address-cells = <3>;
-> +        #size-cells = <2>;
-> +
-> +        pcie@0 {
-> +            device_type = "pci";
-> +            reg = <0x0 0x0 0x0 0x0 0x0>;
-> +            #address-cells = <3>;
-> +            #size-cells = <2>;
-> +            ranges;
-> +
-> +            bus-range = <0x01 0xff>;
-
-Unless there's a h/w limitation, you don't need this.
-
-> +
-> +            qps615@0 {
-> +                compatible = "pci1179,0623";
-> +                reg = <0x10000 0x0 0x0 0x0 0x0>;
-> +
-> +                vdd-supply = <&vdd>;
-> +		switch-i2c-cntrl = <&foo>;
-> +            };
-> +        };
-> +    };
+> So when I read the patch previously I assumed this is testing the bit
+> word for the map containing next_fd (whatever it is), avoiding looking
+> at the higher level bitmap and inlining the op (instead of calling the
+> fully fledged func for bit scans).
 > 
-> -- 
-> 2.42.0
+> I did not mentally register this is in fact only checking for the
+> beginning of the range of the entire thing. So apologies from my end
+> as based on my feedback some work was done and I'm going to ask to
+> further redo it.
 > 
+> blogbench spawns 100 or so workers, say total fd count hovers just
+> above 100. say this lines up with about half of more cases in practice
+> for that benchmark.
+> 
+> Even so, that's a benchmark-specific optimization. A busy web server
+> can have literally tens of thousands of fds open (and this is a pretty
+> mundane case), making the 0-63 range not particularly interesting.
+> 
+> That aside I think the patchset is in the wrong order -- first patch
+> tries to not look at the higher level bitmap, while second reduces
+> stores made there. This makes it quite unclear how much is it worth to
+> reduce looking there if atomics are conditional.
+> 
+> So here is what I propose in terms of the patches:
+> 1. NULL check removal, sprinkling of likely/unlikely and expand_files
+> call avoidance; no measurements done vs stock kernel for some effort
+> saving, just denote in the commit message there is less work under the
+> lock and treat it as baseline
+> 2. conditional higher level bitmap clear as submitted; benchmarked against 1
+> 3. open_fds check within the range containing fd, avoiding higher
+> level bitmap if a free slot is found. this should not result in any
+> func calls if successful; benchmarked against the above
+> 
+> Optionally the bitmap routines can grow variants which always inline
+> and are used here. If so that would probably land between 1 and 2 on
+> the list.
+> 
+> You noted you know about blogbench bugs and have them fixed. Would be
+> good to post a link to a pull request or some other spot for a
+> reference.
+> 
+> I'll be best if the vfs folk comment on what they want here.
+
+Optimizing only the < BIT_PER_LONG seems less desirable then making it
+work for arbitrary next_fd. Imho, it'll also be easier to follow if
+everything follows the same logic.
 
