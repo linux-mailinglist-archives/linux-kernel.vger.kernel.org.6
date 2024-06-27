@@ -1,362 +1,150 @@
-Return-Path: <linux-kernel+bounces-232138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E0EB91A3FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:36:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 063A991A40B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:38:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12D43281297
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:36:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37CB51C21470
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A3B13FD72;
-	Thu, 27 Jun 2024 10:36:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1491F13F00A;
+	Thu, 27 Jun 2024 10:38:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DR1mA6pe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="WtUu1cdh"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A571813DBBC;
-	Thu, 27 Jun 2024 10:36:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99B5C13C831;
+	Thu, 27 Jun 2024 10:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719484575; cv=none; b=o5YNoL+BrFCM09sD9Is4EZZblPc2NagH/yb+0wWeCewQ6OW/IeWQUx/heW6o0pD8MhrgPhhGLn8aBuSwqgWD8kbZtoadYtTtgRVRn5myUAHnMHL+9Gam+oOh1rSKl7oDjZKXxT7lGjn5pX1plLl1KJQ24oDBUZ8zkxeYhrl+1Q8=
+	t=1719484699; cv=none; b=dRvhC0UWQSkSzkOmxwCZVV6ttu9KlVMTR+HuWxP9c1eMFPq/mAxxmkXkbMOuwTYqTGAUx/QgSvQRTsVLptlsAKY6ydpBA2WIBbr7lL4bPoHCPlXo7tRgT2DD+8NsGAKZnkX2D0Ynb7yd38T3sMZLT/XoU3KBT1jwBi4OXzs3SpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719484575; c=relaxed/simple;
-	bh=9dr2O71goYL0Y2jeVans7wbNZNCDIE61bIUBtDFtk0E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KLBYU0uocIIMlww2Q65GwZbLw55B1dfIlSIZI+pFqVBJ5mXqTlsDouKLJTI3XyintaV3ceJE5Svw0Yv5dgyMzl4IezwnhEe6KplA7bmOmNMajMVIW0GrrX0vx/qzNxS+uHxmZJ9UqDDrbSbOcc8MC0G0rvQeSL8kMKAVg5S2Z9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DR1mA6pe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31D4EC4AF07;
-	Thu, 27 Jun 2024 10:36:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719484575;
-	bh=9dr2O71goYL0Y2jeVans7wbNZNCDIE61bIUBtDFtk0E=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DR1mA6peRt/InxmCu95SVVyBu7qPu4rrq4itjGAR3pw14XUtQ3OPv9L07qO7dbO6S
-	 MZibo7r7TUr16dwJ9R525s1DhvQk665Iu2NoWRwLG65uMkkBYuwG4l90KIzKKq+7wB
-	 DjlbzOYtnisTI0k3NJ0PfhUz6Ahb4JPJWz/jCDvE6k+bVJXV6ZEwXVVzThxg+HLxEJ
-	 WMdwcAPmL4VmOLGT53QZuVyv9R+4YYyPc7LxY5xINPHcV+E3FMSbeOg8EPHLHnSDqI
-	 YZlTmgya/1YSDqaUaNQjdoD0VTlXI/bCFniyUycST81Zk/dL4+k/6GLdUNIgkLXWib
-	 llXXeGVGYLzpw==
-Received: from mchehab by mail.kernel.org with local (Exim 4.97.1)
-	(envelope-from <mchehab@kernel.org>)
-	id 1sMmU9-0000000BC91-0phD;
-	Thu, 27 Jun 2024 12:36:13 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Shengwei Luo <luoshengwei@huawei.com>,
-	"Jonathan Cameron" <Jonathan.Cameron@huawei.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	"Shiju Jose" <shiju.jose@huawei.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Daniel Ferguson <danielf@os.amperecomputing.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	James Morse <james.morse@arm.com>,
-	Len Brown <lenb@kernel.org>,
-	Shuai Xue <xueshuai@linux.alibaba.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Tony Luck <tony.luck@intel.com>,
-	Tyler Baicar <tbaicar@codeaurora.org>,
-	Will Deacon <will@kernel.org>,
-	Xie XiuQi <xiexiuqi@huawei.com>,
-	linux-acpi@vger.kernel.org,
-	linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jason Tian <jason@os.amperecomputing.com>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Subject: [PATCH v2 2/2] RAS: Report all ARM processor CPER information to userspace
-Date: Thu, 27 Jun 2024 12:36:08 +0200
-Message-ID: <75b5c9a47c9caf9490c5eedd85e201b7bdb8bf57.1719484498.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <cover.1719484498.git.mchehab+huawei@kernel.org>
-References: <cover.1719484498.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1719484699; c=relaxed/simple;
+	bh=blg5AQRINgzDYB2M+iU5BJ2iQ6WA8Das//y1GF975sg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IXF0UXR4YyUFcME7nY1+BTDNwRNX5RfvDhCi8Q4zLQUm1mlM29IuCEtAJp1BITE4Edi2HYxqgmN/6/qQn5KFtFVOYdarlmt/HrfDw8ygDJwMIcU97gB5FO0nuE7HZEJseMtszQ/htE+PsNss0AfvXAMy62XLQ7dr/65Ky16v1eA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=WtUu1cdh; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45R7m8Ph031056;
+	Thu, 27 Jun 2024 12:37:37 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	pN++2ujzdbFJwZfUqOV3yOY6BX5oEhjCHKWQP0tE4Zs=; b=WtUu1cdhoWfx5rCv
+	fwouGVfCGu1j/kwIPGWRoNGxyqsLcwIkih/FjN69IAtjw1uZzh3VGWmhoeFxdELo
+	lXIlfKKKnvcHNG8KH0yXfOhU/egSxEkPxs4yHZlSdCZok4t6vvuu6MR5AXpG3Nn7
+	d7rwsNct5LaIgqmYAZriFCPxtD5vFBSiZ6So4W3EyAWcX6Jxg4AmgVNbsiEYXyX7
+	Y+VMZ1ABt51cizO8cQhmCxW8kKqP2nigS1TleAOyOuiPTvVr3mvPMFgk0tkPQUxQ
+	6WxRjTawDKt+lsWlyCwxOw9Z7MyfmueX8I1W9uwGhrvOcAL9+m5xE/M3Q1bPV3jH
+	sf3KAw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ywkr5mqgv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Jun 2024 12:37:36 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id C46B04002D;
+	Thu, 27 Jun 2024 12:37:22 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 34FF821685E;
+	Thu, 27 Jun 2024 12:36:24 +0200 (CEST)
+Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Thu, 27 Jun
+ 2024 12:36:23 +0200
+Message-ID: <0edad233-3884-4de3-9bfe-a2c0a10b6353@foss.st.com>
+Date: Thu, 27 Jun 2024 12:36:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] ARM: dts: stm32: Add IWDG2 EXTI interrupt mapping and
+ mark as wakeup source
+To: Marek Vasut <marex@denx.de>, <linux-arm-kernel@lists.infradead.org>
+CC: Antonio Borneo <antonio.borneo@foss.st.com>,
+        Guenter Roeck
+	<linux@roeck-us.net>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>,
+        Richard Cochran
+	<richardcochran@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Gleixner
+	<tglx@linutronix.de>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-watchdog@vger.kernel.org>
+References: <20240623195136.81522-1-marex@denx.de>
+Content-Language: en-US
+From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
+In-Reply-To: <20240623195136.81522-1-marex@denx.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-27_06,2024-06-27_02,2024-05-17_01
 
-From: Shengwei Luo <luoshengwei@huawei.com>
+Hi Marek
 
-The ARM processor CPER record was added at UEFI 2.6, and hasn't
-any changes up to UEFI 2.10 on its struct.
+On 6/23/24 21:51, Marek Vasut wrote:
+> The IWDG2 is capable of generating pre-timeout interrupt, which can be used
+> to wake the system up from suspend to mem. Add the EXTI interrupt mapping
+> and mark the IWDG2 as wake up source.
+> 
+> Signed-off-by: Marek Vasut <marex@denx.de>
+> ---
+> Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
+> Cc: Antonio Borneo <antonio.borneo@foss.st.com>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+> Cc: Richard Cochran <richardcochran@gmail.com>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Wim Van Sebroeck <wim@linux-watchdog.org>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-stm32@st-md-mailman.stormreply.com
+> Cc: linux-watchdog@vger.kernel.org
+> ---
+> V2: No change
+> V3: No change
+> ---
+>   arch/arm/boot/dts/st/stm32mp151.dtsi | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/st/stm32mp151.dtsi b/arch/arm/boot/dts/st/stm32mp151.dtsi
+> index 1804e202eb425..68846699b26fd 100644
+> --- a/arch/arm/boot/dts/st/stm32mp151.dtsi
+> +++ b/arch/arm/boot/dts/st/stm32mp151.dtsi
+> @@ -355,6 +355,8 @@ iwdg2: watchdog@5a002000 {
+>   			reg = <0x5a002000 0x400>;
+>   			clocks = <&rcc IWDG2>, <&rcc CK_LSI>;
+>   			clock-names = "pclk", "lsi";
+> +			interrupts-extended = <&exti 46 IRQ_TYPE_LEVEL_HIGH>;
+> +			wakeup-source;
+>   			status = "disabled";
+>   		};
+>   
 
-Yet, the original arm_event trace code added on changeset
-e9279e83ad1f ("trace, ras: add ARM processor error trace event") is
-incomplete, as it only traces some fields of UAPI 2.6 table N.16,
-not exporting at all any information from tables N.17 to N.29 of
-the record.
+Nice feature. Applied on stm32-next.
 
-This is not enough for user to take appropriate action or to log
-what exactly happened.
-
-According to UEFI_2_9 specification chapter N2.4.4, the ARM processor
-error section includes:
-
-- several (ERR_INFO_NUM) ARM processor error information structures
-  (Tables N.17 to N.20);
-- several (CONTEXT_INFO_NUM) ARM processor context information
-  structures (Tables N.21 to N.29);
-- several vendor specific error information structures. The
-  size is given by Section Length minus the size of the other
-  fields.
-
-In addition to those data, it also exports two fields that are
-parsed by the GHES driver when firmware reports it, e. g.:
-
-- error severity
-- cpu logical index
-
-Report all of these information to userspace via trace uAPI, So that
-userspace can properly record the error and take decisions related
-to cpu core isolation according to error severity and other info.
-
-After this patch, all the data from ARM Processor record from table
-N.16 are directly or indirectly visible on userspace:
-
-======================================	=============================
-UEFI field on table N.16		ARM Processor trace fields
-======================================	=============================
-Validation				handled when filling data for
-					affinity MPIDR and running
-					state.
-ERR_INFO_NUM				pei_len
-CONTEXT_INFO_NUM			ctx_len
-Section Length				indirectly reported by
-					pei_len, ctx_len and oem_len
-Error affinity level			affinity
-MPIDR_EL1				mpidr
-MIDR_EL1				midr
-Running State				running_state
-PSCI State				psci_state
-Processor Error Information Structure	pei_err - count at pei_len
-Processor Context			ctx_err- count at ctx_len
-Vendor Specific Error Info		oem - count at oem_len
-======================================	=============================
-
-It should be noticed that decoding of tables N.17 to N.29, if needed,
-will be handled on userspace. That gives more flexibility, as there
-won't be any need to flood the Kernel with micro-architecture specific
-error decoding).
-Also, decoding the other fields require a complex logic, and should
-be done for each of the several values inside the record field.
-So, let userspace daemons like rasdaemon decode them, parsing such
-tables and having vendor-specific micro-architecture-specific decoders.
-
-[mchehab: modified patch description and fix coding style]
-Fixes: e9279e83ad1f ("trace, ras: add ARM processor error trace event")
-Signed-off-by: Shengwei Luo <luoshengwei@huawei.com>
-Signed-off-by: Jason Tian <jason@os.amperecomputing.com>
-Signed-off-by: Daniel Ferguson <danielf@os.amperecomputing.com>
-Tested-by: Shiju Jose <shiju.jose@huawei.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Link: https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#arm-processor-error-section
----
- drivers/acpi/apei/ghes.c |  3 +--
- drivers/ras/ras.c        | 45 +++++++++++++++++++++++++++++++++++--
- include/linux/ras.h      | 16 ++++++++++----
- include/ras/ras_event.h  | 48 +++++++++++++++++++++++++++++++++++-----
- 4 files changed, 99 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-index 2589a3536d91..90efca025d27 100644
---- a/drivers/acpi/apei/ghes.c
-+++ b/drivers/acpi/apei/ghes.c
-@@ -538,9 +538,8 @@ static bool ghes_handle_arm_hw_error(struct acpi_hest_generic_data *gdata,
- 	int sec_sev, i;
- 	char *p;
- 
--	log_arm_hw_error(err);
--
- 	sec_sev = ghes_severity(gdata->error_severity);
-+	log_arm_hw_error(err, sec_sev);
- 	if (sev != GHES_SEV_RECOVERABLE || sec_sev != GHES_SEV_RECOVERABLE)
- 		return false;
- 
-diff --git a/drivers/ras/ras.c b/drivers/ras/ras.c
-index 5d94ab79c8c3..b515659cc8cc 100644
---- a/drivers/ras/ras.c
-+++ b/drivers/ras/ras.c
-@@ -52,10 +52,51 @@ void log_non_standard_event(const guid_t *sec_type, const guid_t *fru_id,
- 	trace_non_standard_event(sec_type, fru_id, fru_text, sev, err, len);
- }
- 
--void log_arm_hw_error(struct cper_sec_proc_arm *err)
-+void log_arm_hw_error(struct cper_sec_proc_arm *err, const u8 sev)
- {
- #if defined(CONFIG_ARM) || defined(CONFIG_ARM64)
--	trace_arm_event(err);
-+	struct cper_arm_err_info *err_info;
-+	struct cper_arm_ctx_info *ctx_info;
-+	u8 *ven_err_data;
-+	u32 ctx_len = 0;
-+	int n, sz, cpu;
-+	s32 vsei_len;
-+	u32 pei_len;
-+	u8 *pei_err;
-+	u8 *ctx_err;
-+
-+	pei_len = sizeof(struct cper_arm_err_info) * err->err_info_num;
-+	pei_err = (u8 *)err + sizeof(struct cper_sec_proc_arm);
-+
-+	err_info = (struct cper_arm_err_info *)(err + 1);
-+	ctx_info = (struct cper_arm_ctx_info *)(err_info + err->err_info_num);
-+	ctx_err = ctx_info;
-+	for (n = 0; n < err->context_info_num; n++) {
-+		sz = sizeof(struct cper_arm_ctx_info) + ctx_info->size;
-+		ctx_info = (struct cper_arm_ctx_info *)((long)ctx_info + sz);
-+		ctx_len += sz;
-+	}
-+
-+	vsei_len = err->section_length - (sizeof(struct cper_sec_proc_arm) +
-+					  pei_len + ctx_len);
-+	if (vsei_len < 0) {
-+		pr_warn(FW_BUG
-+			"section length: %d\n", err->section_length);
-+		pr_warn(FW_BUG
-+			"section length is too small\n");
-+		pr_warn(FW_BUG
-+			"firmware-generated error record is incorrect\n");
-+		vsei_len = 0;
-+	}
-+	ven_err_data = (u8 *)ctx_info;
-+
-+	cpu = GET_LOGICAL_INDEX(err->mpidr);
-+	/* when return value is invalid, set cpu index to -1 */
-+	if (cpu < 0)
-+		cpu = -1;
-+
-+	trace_arm_event(err, pei_err, pei_len, ctx_err, ctx_len,
-+			ven_err_data, (u32)vsei_len, sev, cpu);
- #endif
- }
- 
-diff --git a/include/linux/ras.h b/include/linux/ras.h
-index a64182bc72ad..6025afe5736a 100644
---- a/include/linux/ras.h
-+++ b/include/linux/ras.h
-@@ -24,8 +24,7 @@ int __init parse_cec_param(char *str);
- void log_non_standard_event(const guid_t *sec_type,
- 			    const guid_t *fru_id, const char *fru_text,
- 			    const u8 sev, const u8 *err, const u32 len);
--void log_arm_hw_error(struct cper_sec_proc_arm *err);
--
-+void log_arm_hw_error(struct cper_sec_proc_arm *err, const u8 sev);
- #else
- static inline void
- log_non_standard_event(const guid_t *sec_type,
-@@ -33,7 +32,7 @@ log_non_standard_event(const guid_t *sec_type,
- 		       const u8 sev, const u8 *err, const u32 len)
- { return; }
- static inline void
--log_arm_hw_error(struct cper_sec_proc_arm *err) { return; }
-+log_arm_hw_error(struct cper_sec_proc_arm *err, const u8 sev) { return; }
- #endif
- 
- struct atl_err {
-@@ -52,5 +51,14 @@ static inline void amd_retire_dram_row(struct atl_err *err) { }
- static inline unsigned long
- amd_convert_umc_mca_addr_to_sys_addr(struct atl_err *err) { return -EINVAL; }
- #endif /* CONFIG_AMD_ATL */
--
-+#if defined(CONFIG_ARM) || defined(CONFIG_ARM64)
-+#include <asm/smp_plat.h>
-+/*
-+ * Include ARM specific SMP header which provides a function mapping mpidr to
-+ * cpu logical index.
-+ */
-+#define GET_LOGICAL_INDEX(mpidr) get_logical_index(mpidr & MPIDR_HWID_BITMASK)
-+#else
-+#define GET_LOGICAL_INDEX(mpidr) -EINVAL
-+#endif /* CONFIG_ARM || CONFIG_ARM64 */
- #endif /* __RAS_H__ */
-diff --git a/include/ras/ras_event.h b/include/ras/ras_event.h
-index 7c47151d5c72..ce5214f008eb 100644
---- a/include/ras/ras_event.h
-+++ b/include/ras/ras_event.h
-@@ -168,11 +168,24 @@ TRACE_EVENT(mc_event,
-  * This event is generated when hardware detects an ARM processor error
-  * has occurred. UEFI 2.6 spec section N.2.4.4.
-  */
-+#define APEIL "ARM Processor Err Info data len"
-+#define APEID "ARM Processor Err Info raw data"
-+#define APECIL "ARM Processor Err Context Info data len"
-+#define APECID "ARM Processor Err Context Info raw data"
-+#define VSEIL "Vendor Specific Err Info data len"
-+#define VSEID "Vendor Specific Err Info raw data"
- TRACE_EVENT(arm_event,
- 
--	TP_PROTO(const struct cper_sec_proc_arm *proc),
-+	TP_PROTO(const struct cper_sec_proc_arm *proc, const u8 *pei_err,
-+			const u32 pei_len,
-+			const u8 *ctx_err,
-+			const u32 ctx_len,
-+			const u8 *oem,
-+			const u32 oem_len,
-+			u8 sev,
-+			int cpu),
- 
--	TP_ARGS(proc),
-+	TP_ARGS(proc, pei_err, pei_len, ctx_err, ctx_len, oem, oem_len, sev, cpu),
- 
- 	TP_STRUCT__entry(
- 		__field(u64, mpidr)
-@@ -180,6 +193,14 @@ TRACE_EVENT(arm_event,
- 		__field(u32, running_state)
- 		__field(u32, psci_state)
- 		__field(u8, affinity)
-+		__field(u32, pei_len)
-+		__dynamic_array(u8, buf, pei_len)
-+		__field(u32, ctx_len)
-+		__dynamic_array(u8, buf1, ctx_len)
-+		__field(u32, oem_len)
-+		__dynamic_array(u8, buf2, oem_len)
-+		__field(u8, sev)
-+		__field(int, cpu)
- 	),
- 
- 	TP_fast_assign(
-@@ -199,12 +220,29 @@ TRACE_EVENT(arm_event,
- 			__entry->running_state = ~0;
- 			__entry->psci_state = ~0;
- 		}
-+		__entry->pei_len = pei_len;
-+		memcpy(__get_dynamic_array(buf), pei_err, pei_len);
-+		__entry->ctx_len = ctx_len;
-+		memcpy(__get_dynamic_array(buf1), ctx_err, ctx_len);
-+		__entry->oem_len = oem_len;
-+		memcpy(__get_dynamic_array(buf2), oem, oem_len);
-+		__entry->sev = sev;
-+		__entry->cpu = cpu;
- 	),
- 
--	TP_printk("affinity level: %d; MPIDR: %016llx; MIDR: %016llx; "
--		  "running state: %d; PSCI state: %d",
-+	TP_printk("cpu: %d; error: %d; affinity level: %d; MPIDR: %016llx; MIDR: %016llx; "
-+		  "running state: %d; PSCI state: %d; "
-+		  "%s: %d; %s: %s; %s: %d; %s: %s; %s: %d; %s: %s",
-+		  __entry->cpu,
-+		  __entry->sev,
- 		  __entry->affinity, __entry->mpidr, __entry->midr,
--		  __entry->running_state, __entry->psci_state)
-+		  __entry->running_state, __entry->psci_state,
-+		  APEIL, __entry->pei_len, APEID,
-+		  __print_hex(__get_dynamic_array(buf), __entry->pei_len),
-+		  APECIL, __entry->ctx_len, APECID,
-+		  __print_hex(__get_dynamic_array(buf1), __entry->ctx_len),
-+		  VSEIL, __entry->oem_len, VSEID,
-+		  __print_hex(__get_dynamic_array(buf2), __entry->oem_len))
- );
- 
- /*
--- 
-2.45.2
-
+Cheers
+Alex
 
