@@ -1,75 +1,73 @@
-Return-Path: <linux-kernel+bounces-233138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BAC491B2C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:31:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5518E91B2C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:31:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B53DD1F21C91
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:31:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11BD9284744
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C7D1A38D1;
-	Thu, 27 Jun 2024 23:31:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346951A2FC9;
+	Thu, 27 Jun 2024 23:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="u5lbMZul"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BWT1nzSk"
 Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B09E1A38C9;
-	Thu, 27 Jun 2024 23:31:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D0913B58F;
+	Thu, 27 Jun 2024 23:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719531067; cv=none; b=IfU4eRJSZizTbcODWi1lyaUVQGTG0Il9wTqHOU2UOWCZKddbIN+3s/wChuKMm+AiGQMUCAauWcQyJgiordttB8FSDMzoNDkI3kmN+Hrt6TihSluFYtRKz/5qMV8YNnXkFRdpe2jkpQnytPU9QvEotFUk4J66oMV6yjfGTZk2JrM=
+	t=1719531108; cv=none; b=NMzwBvbkJSAT/tyIxU48jx4NDI18D/3saUdHanAcNu6kbLJPbFVq3cWYtQRQ3lwwQ5H8h1YFVIRMW8BIpAcr/uePnOipiJayAd7cEaLj++SSxq+WGEd4EvE3/hQS+TdWhoss4IDnuUQjIwViTMzg2010YyGupk/qRPKH98HGE5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719531067; c=relaxed/simple;
-	bh=lP+GmlpaVR7qbZiOWsfepDjofJVd8UeMHyw2NPv8uZY=;
+	s=arc-20240116; t=1719531108; c=relaxed/simple;
+	bh=Y2C58iMS1rC7jBjERQJ70o8iJaPYnqApBKqtWa1Ubl4=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=T5c+Tk7lwBh/8OOdF5NofQlFRmUqWhRgtelcXJmxACUqHljN4tl5h4AXo3mk8PLHRSnNVSnUnRIMxdfVN3ZmimXaQ02g7Yg98A3u5uufdn2UH8dbueRiI/oh49RXxRQwaEkf29GxC0f7jthvknh5wEURR0Rr40jOkgTzfNRKRnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=u5lbMZul; arc=none smtp.client-ip=198.47.23.249
+	 MIME-Version:Content-Type; b=ETCIBuhZBJuDmY33gYUC4dWayclGqxJtc5Z2XmoNYkLQU49bTbCYlg8GIzKOWIm/2znQ5Bmh56mcxSrBglbgy8e9DlBsc/07EQlGxBoPeYCtt8EhB0drwWBkwGvCDLMBshpos87pcFyGZCwgd05yOOltuXQmdDE1a6ZUj8GuPIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BWT1nzSk; arc=none smtp.client-ip=198.47.23.249
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45RNUsH5064759;
-	Thu, 27 Jun 2024 18:30:54 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45RNVfeh064861;
+	Thu, 27 Jun 2024 18:31:41 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1719531054;
-	bh=DGXQzLrHQCAkjLyf8biACo5NorkjCpVPhJuLvMjrJD4=;
+	s=ti-com-17Q1; t=1719531101;
+	bh=viBH8xEHWs7bGKbHzAD1OeDH+PahwuZmOpzT/pNStZA=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=u5lbMZul43FkCmhBN+5jnnjcF4a6ier9yc/k64aWKQmDHDaAKHJiyNUTgAPUrhgnA
-	 qCR4I5T5CnJ7ibcC1QY3UbSBkH96cCgK9yagokhnGkvHa8pCTtDqlvcqnrZo+B+NE5
-	 DOSB9G8iGYWikIxbUtGI2/MRyg3ArtgYDdocvXjg=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45RNUs96039799
+	b=BWT1nzSk+QG7aXWdGOhMOHsDYtksU3qxbpkNv06fe3U7ewV/bbkRP9z52kZDp3R9b
+	 oMIwK1TVQaWlqOTP0NYMQVsO4Xu90pbNHMAiSsG/zKliwkZKrG08nxgV9siWxCw49e
+	 bfRWS3iUKuX2PNyhLdZ9Q2ZFlYDZ76S6fO17WODA=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45RNVfAh006999
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 27 Jun 2024 18:30:54 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+	Thu, 27 Jun 2024 18:31:41 -0500
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 27
- Jun 2024 18:30:53 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ Jun 2024 18:31:41 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 27 Jun 2024 18:30:53 -0500
+ Frontend Transport; Thu, 27 Jun 2024 18:31:41 -0500
 Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45RNUrEa093765;
-	Thu, 27 Jun 2024 18:30:53 -0500
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45RNVfCH094607;
+	Thu, 27 Jun 2024 18:31:41 -0500
 From: Nishanth Menon <nm@ti.com>
-To: Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
-        Richard Genoud <richard.genoud@bootlin.com>
-CC: Nishanth Menon <nm@ti.com>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>,
-        Alexandre Belloni
-	<alexandre.belloni@bootlin.com>
-Subject: Re: [PATCH 0/2] fix TISCI protocol URL link
-Date: Thu, 27 Jun 2024 18:30:51 -0500
-Message-ID: <171953091074.1077352.7915036920327002451.b4-ty@ti.com>
+To: Santosh Shilimkar <ssantosh@kernel.org>,
+        Christophe JAILLET
+	<christophe.jaillet@wanadoo.fr>
+CC: Nishanth Menon <nm@ti.com>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] soc: ti: knav_qmss: Constify struct knav_range_ops
+Date: Thu, 27 Jun 2024 18:31:36 -0500
+Message-ID: <171953106048.1077699.4550001367312717108.b4-ty@ti.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240618150933.1824185-1-richard.genoud@bootlin.com>
-References: <20240618150933.1824185-1-richard.genoud@bootlin.com>
+In-Reply-To: <a8b4b428f97fc584f38bf45100aa9da241aeb935.1719159074.git.christophe.jaillet@wanadoo.fr>
+References: <a8b4b428f97fc584f38bf45100aa9da241aeb935.1719159074.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,28 +78,29 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Richard Genoud,
+Hi Christophe JAILLET,
 
-On Tue, 18 Jun 2024 17:09:31 +0200, Richard Genoud wrote:
-> As the http://processors.wiki.ti.com EOL in january 2021, this serie
-> fixes the URL with a new working one.
+On Sun, 23 Jun 2024 18:11:31 +0200, Christophe JAILLET wrote:
+> 'struct knav_range_ops' is not modified in these drivers.
 > 
-> Richard Genoud (2):
->   dt-bindings: ti: fix TISCI protocol URL link
->   firmware: ti_sci: fix TISCI protocol URL link
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security.
+> 
+> On a x86_64, with allmodconfig:
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>    7498	   1193	      0	   8691	   21f3	drivers/soc/ti/knav_qmss_acc.o
 > 
 > [...]
 
 I have applied the following to branch ti-drivers-soc-next on [1].
 Thank you!
 
-[1/2] dt-bindings: ti: fix TISCI protocol URL link
-      commit: 9040d64f58d275c9f2fc563887ec245f249b0e8f
-[2/2] firmware: ti_sci: fix TISCI protocol URL link
-      commit: f1de10ae7bbfbb2c443bf18f15e4b1b497868b45
+[1/1] soc: ti: knav_qmss: Constify struct knav_range_ops
+      commit: ca16cb2b9073e2f2a968a04c794275aa21ee1aa3
 
-With the ack, I assume this flows in through the TI SoC tree, so picking both
-of the patches up. Please let me know if there are any concerns.
+Seems to work fine in the limited testing I did.
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent up the chain during
