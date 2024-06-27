@@ -1,183 +1,177 @@
-Return-Path: <linux-kernel+bounces-232525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA96B91AA51
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:04:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 625D991AA63
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:05:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93864289254
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:04:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AECF288BE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC420198E89;
-	Thu, 27 Jun 2024 15:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1BE198A20;
+	Thu, 27 Jun 2024 15:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EGOGnNq7"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="f9iOte9B"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10olkn2096.outbound.protection.outlook.com [40.92.40.96])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15A419883C;
-	Thu, 27 Jun 2024 15:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719500642; cv=none; b=AYuVD5yED7C+x0YvO+loDWKYn55iSMY+8pvuBPVl/N53v2Piql8M+vGicjnG6WSATsv/s9QtY2dC7IxmrRikov8R0TIsLUPL2GpbGrTcnHmI8FyPXCMbaFHAJ+ec4FYdOFMxdQjxF4g48Zyv1//DWfvHdxJpU829cNRilJ7p2GM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719500642; c=relaxed/simple;
-	bh=l73llJCUIKUxRecupdaIxSy64eMLHxkbYexteymENJA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=t8KwU/hoBvS7HfSlq2FGsVFqzv99FM+8bZKUSIpzp9yrLq3RpiWJG2R5jIEwnl0GSFuUxIan3+kBue5DMkKntlmU9fm2j+Nq87Jq4H17ueTYNZz4uwd11NUDXCebXdmxqFJBk2KpUifGR/+cupvg6X3FRHPP8xKmisHXIbvkErs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EGOGnNq7; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-648b9d03552so16761547b3.2;
-        Thu, 27 Jun 2024 08:04:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719500640; x=1720105440; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8RPqAWJX29gQXV8+Zzq9GyOhgk6BXLzXmKNl8pcyJtY=;
-        b=EGOGnNq73dzcxKg0jp7j98jqlPKBeW6zs9GGC07y7ql2vqhzWdL537oLkm7HshHBIX
-         tS4tu+yelnRJyiw1U29BYZWC3qSv0P5gk6ftG3Cl013Ct2ChI0Q8kMtBiAmQj8DLGfi+
-         UdwTaD30cz5WkixebR9CJdUsgQMAmrMER10mXT6K5Gk6O6dkEkKwKrprdcL139XhoAO3
-         gq7Qy9LMvtt326qnr/amCTJAKh39EWYVDmcYLoc/3GSRMnK8aHBBOpPUNmFUGf+s917Q
-         MS6tHbnF3SsOqTIB3QVNTRoONAUGUsVjqhX9ji0fzYRo/ZqNAJLPyT4vW6UJUiI6KXTO
-         nR8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719500640; x=1720105440;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8RPqAWJX29gQXV8+Zzq9GyOhgk6BXLzXmKNl8pcyJtY=;
-        b=f/IjtuqFqDbuzCf+ZYPX68MBHFUUgaVZivatoBLk4y/kI8efMECGNv1EF7dw8gbIRd
-         szZ2smj9H8/dDQsbPlzjE+vIKgSAwwU9chZF9QMT5XikpQz/Wn7ToLoOUBL89gZTIC6O
-         dCS1cwrf7ggQr6udc+oqkHXUw/TymDUIm53pTxihQDxJob36li4IqSXsHXNCHLA5xE/j
-         m1aDCOJLAb6iA3xy0o+rFLF1ZjzBSvBXyzrrQ0NQy0Q/YKVXM3TzfIqIG0MrtkpVt30R
-         RmchYDIQUfWtyMOxJdi9Yh7gv+ZVI5YoKPpM2rG6CUT/6ZRe3Kg8EG9OC/egP6SjLQs4
-         fdlg==
-X-Forwarded-Encrypted: i=1; AJvYcCXJ21/IsH9qSUQXvWmtxVYkTfT32NsZW0FZAfehHSDQAhCqkhtZvDLjumWi71Ba00XzIiGmpVFEgGbMw0/uoOYz9/gIwB3HN8S8+It7
-X-Gm-Message-State: AOJu0YxSqm9uRAm9lMsoYMHtjTZ5KigUn+jrFJOF7aWbOy5/9j8WloK5
-	V9QufY3eyAPIWPNAlaF9S4QekXfPOZ+o6+bh5lm4GIzAAK8au8lqU58mHy8z
-X-Google-Smtp-Source: AGHT+IHKPiZpyKzGZOIL3xcH+XD1DwotbRWUXOrtZQP4/3YIqhVff++wSdOu73KnfBIM4SnpEwRkxw==
-X-Received: by 2002:a05:690c:6c0d:b0:618:ce10:2fcd with SMTP id 00721157ae682-643aa5a426dmr160071517b3.26.1719500639499;
-        Thu, 27 Jun 2024 08:03:59 -0700 (PDT)
-Received: from [127.0.1.1] (107-197-105-120.lightspeed.sntcca.sbcglobal.net. [107.197.105.120])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6497a755ad2sm2770537b3.76.2024.06.27.08.03.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 08:03:59 -0700 (PDT)
-From: Pei Li <peili.dev@gmail.com>
-Date: Thu, 27 Jun 2024 08:03:56 -0700
-Subject: [PATCH v2] kvm: Fix warning in__kvm_gpc_refresh
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D2B198A06
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 15:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.40.96
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719500681; cv=fail; b=LPrLZKvTDQqt3zBkZkU2QPJkkK1c8Ez2HEtBT61rRzHTcAQsUp0fg7n0IEfxCxaifAz5Yoluv3RbbNrOBR82PX0P+G2N+CvcBWqZhcLoGS5qdnRCUqevW7t+ywzsUDtw/ayELnWUyXQnA1WsZrURKwveRkjY00r/J2EEuhfmAqs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719500681; c=relaxed/simple;
+	bh=nfGoEgJ3FOYm/QXzy9PWVVk31fZFJYfsp5yvnCh5hjU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ozm2Mm462lenXYeyNUVbBPEX0lThFMefVYkubJL/oY5Q18VN7M0EgkQZ+vIymMij+hGhg4iTjFAa3kvHLWnznIBy5kDmQ8xtkYULtvAhXmV98Hwa8RVXmAA/voodoEsvePdOE7Qk9d+dFEApbLyxlzQ0ERlw+cHcUOMw8rMdeQE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=f9iOte9B; arc=fail smtp.client-ip=40.92.40.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=junSST0Oet99976p1kU7/GaJlYJroYc6b7SLrTRZt6eolD60vjysh08sFSuJwWJ69EDreIqbdQDbpLYDSgzl7KBLfEBODNxTpXYwFEH/2PTVZV+l1GP3eg5Zb3Fb1nC3z8RdolCN7cMV3NJ/BVyRUz3F2Ff1zwngcNGqRBAjGL0s1GGLtxJVnLewIL2EmCqTui//l5kEl+vhkFNz5m6XCBTr3fnhZsyJgFWGEA/eDGTPjCNJa6LIOt664I30oHLr/mpyH1gxnnBBAyneC0atWng5VIcrLxoheKlzRVshjh/wVy7jM4757zKndit520aMyoeeQA14G2a7e3rvzNMrrg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=raNG0jVWFpSJwFielu6FwfYrMP8/HWhkBSOCMgEBgYM=;
+ b=OXeHoEv6nwKM334GfD571hdH3afo5GikHpgA7fN/cC3x7lUyc7eUqkFA3pOvdfqQPDA2v/ZttIht87/7yLndcvaAFIjJc7HexkEa/+lJX0/p41zVvMxruIWK2B37pkIil7v+9MgM2QTJ/TlVeRGcMeun9qp4DPGvRvbVnonVM94+63bn0CGenq61mtDpQbsZFBQm3K64rqPTQVI+K1pjQx2FQK6clIrzSTBkxJ7yQ0BxX5P7WggXkP5/2l9OpcbTqcKr9RekIzS2owv+3QMhkMsfB2nQ/P+OL7JQhf1btqLXycAMvNi7sNdkktGipb4aSyCBFW9VMmZBqkkK095aBA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=raNG0jVWFpSJwFielu6FwfYrMP8/HWhkBSOCMgEBgYM=;
+ b=f9iOte9BsmltkGsn8IdYrqhZX8zwOu4/Y9RLlzjmr6/QavC0p999C6kIvFpy4yL/Unadzh1MYU/56+arIdnHk81gy+GOzsJvuYCZ7Nh0Y0fUhREhc0k3TJX9mhE7gB8Kflwh+J//a1EJsJqVxv0FYt4wlc+3GTCa3AyrsSt2sHpWnVdVxTaE/LikkDmm234qbPMryNwWinmi1kGjCfnZ4GYsBNu9DtGUXuD6aczoOe5XEsb0GFPIbkH+qur75n3iy2Ngb0MgHNtW2gfZ5YPB428ANcqG3QoqIoMitHXuGCy3KTHJqEDl6GKaKTKvKqkH8SmQpIxq4m7rGwj5aC2q6A==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by IA0PR02MB9702.namprd02.prod.outlook.com (2603:10b6:208:487::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.34; Thu, 27 Jun
+ 2024 15:04:35 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%2]) with mapi id 15.20.7698.033; Thu, 27 Jun 2024
+ 15:04:35 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: =?iso-8859-2?Q?Petr_Tesa=F8=EDk?= <petr@tesarici.cz>,
+	"mhkelley58@gmail.com" <mhkelley58@gmail.com>
+CC: "robin.murphy@arm.com" <robin.murphy@arm.com>, "joro@8bytes.org"
+	<joro@8bytes.org>, "will@kernel.org" <will@kernel.org>, "jgross@suse.com"
+	<jgross@suse.com>, "sstabellini@kernel.org" <sstabellini@kernel.org>,
+	"oleksandr_tyshchenko@epam.com" <oleksandr_tyshchenko@epam.com>, "hch@lst.de"
+	<hch@lst.de>, "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>
+Subject: RE: [RFC 1/1] swiotlb: Reduce calls to swiotlb_find_pool()
+Thread-Topic: [RFC 1/1] swiotlb: Reduce calls to swiotlb_find_pool()
+Thread-Index: AQHauIjoJBWSrCyO6UWzcncSceBiMLHbU/+AgACADXA=
+Date: Thu, 27 Jun 2024 15:04:35 +0000
+Message-ID:
+ <SN6PR02MB4157CF368284CA48061E35E9D4D72@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20240607031421.182589-1-mhklinux@outlook.com>
+ <20240627092049.1dbec746@meshulam.tesarici.cz>
+In-Reply-To: <20240627092049.1dbec746@meshulam.tesarici.cz>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-tmn: [AKhZ4FTPcx0HfZye0qhnHyABc3sw1wYl]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|IA0PR02MB9702:EE_
+x-ms-office365-filtering-correlation-id: edd5232c-f037-4bde-a2e4-08dc96ba7522
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199028|3412199025|440099028|102099032;
+x-microsoft-antispam-message-info:
+ C4w+6zLY5M7Vk3uroWbqkWyXGC/J79Dm3JF+VD8WwfvRbg6juRPuQm8IhWQNj+zmpc4pKMwvuDJV3V91oAJ7fZSMkw0SkuXgN71A1tuONyrOY2A5qoZ0rU7wV4wEh2Jvq5i9DJE/QWgR8p1hMVT0qx1ix4OhEl+tPPVosUR+HklI9k/Qy90CGkQ3UEdtP1lrvR3YT22WO5/pDotqpu/69fo+7okeDRfIFyxjsHQVQMws1jr2/uPStj1wFuRVRivaKVhZN9HsX6toKK6Vv5sWqXB/A6dpOHOr3hHJZnqLXOAOTnAOy7E1aPkKRqbQQaI8OJ8TFsfX5uDsywyWTvkuekbQaJpejkgjcJSmkHRQnv4yL4y2RIWnxBB0CBIH/5bj4wwvl8+mIYa3nwl/Df4OcUW8qE9aTCVX8ElNlowyw832/Q+bhTdGzBHF0oOmZZSk3H69M91QxJxpMcH2LRUPx5t64Zy6BsIiRxvZoTEfxbG4rtP79E1MmD/WrNMSl/aHIoiJIdGeCp4Qy+3jXcvFNyC+vN/t6uGMfpybgaX4r9Yiu3Hb1g1YmreLYk0g9N4p
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-2?Q?TVNMMdrcwSsBtZ9+85O93RYN9thGCKdgW6DFpEwdGDNHimWfW1bHVKMKlm?=
+ =?iso-8859-2?Q?9o3eDUT9g5d/PnTGCTn3B1yopqSeNACJCXTUClJdr3N7iM7pzoLcxNbzct?=
+ =?iso-8859-2?Q?4KHjH9PP4JFJreFu6vBfuZsMj+d8AojebRkCfrx5ocKfxWsnYM1sJwawjY?=
+ =?iso-8859-2?Q?DOnLbOwwr42c6pfLcjcBUn7+ly8n9bnAZxSm5yk6LPTIKTNdS56rhyUutk?=
+ =?iso-8859-2?Q?kFDOJ+uaygp1OvTFoXDUIdcCxyZLArIyUZcrjKLrHBBtyFtG0rP2jdYVF/?=
+ =?iso-8859-2?Q?TMpNLq9thmqc2eIVuZqULCNWNqwhawfoo7gOsMIljfSVGTJpVDLSpMQYcJ?=
+ =?iso-8859-2?Q?tOhoxaCsGg3buoiS3UmxVxrc1kCBTfAMxaH8LGzEgfmrD2WJrSRzxkldcH?=
+ =?iso-8859-2?Q?J+9R9py5O5e0kzAq4WC11CDH5WaId4iWqz8/XSS2SlqvQDMN5oogwB854B?=
+ =?iso-8859-2?Q?WTHqVLHE4FLDDhkPg6YbFX+dPn/2FLVYWh7u0CHjxn3JuzFc1jaaJnUr0F?=
+ =?iso-8859-2?Q?t/fTiJ9STvPUWY2v11rcf3XPRXa5GWThR6mGa8n+3jFFVfk5o0IYWUMy9i?=
+ =?iso-8859-2?Q?MgzgUhrXNIDW2Fg43mziZru2MkUWTbcVBKJ0ZsfYcsZqUXREOwOcPm9k1I?=
+ =?iso-8859-2?Q?w7pOfZa/qI3nNU6hx0SczoIN2NLf+p5y5wgEJE9iQNaxr7VGI4LBoEq8A8?=
+ =?iso-8859-2?Q?0s+W22Gm/lvgGfDwCv3h+Aij2/iBGIAKGmWzuNNe9AWZ4B0UGv3Dc63LRT?=
+ =?iso-8859-2?Q?JFdV1ED27t7sF8yL087Nj3zDwI6coUulRrjuIYsWpF7L+gRZMh1/2nPf4T?=
+ =?iso-8859-2?Q?mtVUd2y/KeiEafeTptsOOe2d+2291rr1UURbkF1wgFOFAkBX1z/LhZgb6k?=
+ =?iso-8859-2?Q?NXO9dkFRvxYEyJYM8EZx9Ev2RReC4yieq/S78VrQOgjkMKkgU2pStdg2ko?=
+ =?iso-8859-2?Q?lNY3/Vtp2VaLsy5Pmh+KtWPKnsm1BuCnhKJzlku1Z68LnNTW7YG7IF8tD4?=
+ =?iso-8859-2?Q?9HhLQnOHSQx+gj5GV+VQ3HvAna4Oa9fydnYmeSbmaI//PkSv/sf0zEluNW?=
+ =?iso-8859-2?Q?cl2WSpWRDVhmS07tD8zJAwYiwTaQ1vg2ltlL57bat5BFpWdLjZ85q3THtX?=
+ =?iso-8859-2?Q?dLyWP43i7RMsnOmpNDlqWxWIbsJmGQpOOUbgOO3BIcgxZFjcbGHe6y/w7Q?=
+ =?iso-8859-2?Q?7AuLf4TDMiTQ6kKMkYLFC6ghsZkOmceH1NwRvOu5S+wVJAtPHXb2WJUWPr?=
+ =?iso-8859-2?Q?UYM7R50V3Rbg64dHQa1aoZjNWAoek57FvkCcqDCnY=3D?=
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240627-bug5-v2-1-2c63f7ee6739@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAFt/fWYC/13MywrCMBCF4VcpszaSTJ0qrnwP6aJNpumAvZBoU
- Ere3dily/9w+DaIHIQjXKsNAieJsswl8FCBHbvZsxJXGlDjSTdIqn95UuTqGntiMo2Bcl0DD/L
- emXtbepT4XMJnV5P5rX9AMsoo1mdkR4PlC9381MnjaJcJ2pzzF1jDf06YAAAA
-To: David Woodhouse <dwmw2@infradead.org>, Paul Durrant <paul@xen.org>, 
- Sean Christopherson <seanjc@google.com>, 
- Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
- "H. Peter Anvin" <hpa@zytor.com>, Nathan Chancellor <nathan@kernel.org>, 
- Nick Desaulniers <ndesaulniers@google.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- skhan@linuxfoundation.org, linux-kernel-mentees@lists.linuxfoundation.org, 
- syzkaller-bugs@googlegroups.com, llvm@lists.linux.dev, 
- syzbot+fd555292a1da3180fc82@syzkaller.appspotmail.com, 
- Pei Li <peili.dev@gmail.com>
-X-Mailer: b4 0.15-dev-13183
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1719500637; l=3041;
- i=peili.dev@gmail.com; s=20240625; h=from:subject:message-id;
- bh=l73llJCUIKUxRecupdaIxSy64eMLHxkbYexteymENJA=;
- b=Q6AcEfxFpP9UNEK+Is8AMNrTHFxa+L3BtOlJnguHVBEfUlnNBuNoRPOKwzHwnZlGMGU8jDnuP
- O7DDJoKQC6WBBXgb7f9M59UF437eNqYW1ygW3LzJjccTFadkoS8MP6h
-X-Developer-Key: i=peili.dev@gmail.com; a=ed25519;
- pk=I6GWb2uGzELGH5iqJTSK9VwaErhEZ2z2abryRD6a+4Q=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: edd5232c-f037-4bde-a2e4-08dc96ba7522
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jun 2024 15:04:35.2725
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR02MB9702
 
-Check for invalid hva address stored in data and return -EINVAL before
-calling into __kvm_gpc_activate().
+From: Petr Tesa=F8=EDk <petr@tesarici.cz> Sent: Thursday, June 27, 2024 12:=
+21 AM
 
-Reported-by: syzbot+fd555292a1da3180fc82@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=fd555292a1da3180fc82
-Tested-by: syzbot+fd555292a1da3180fc82@syzkaller.appspotmail.com
-Signed-off-by: Pei Li <peili.dev@gmail.com>
----
-Syzbot reports a warning message in __kvm_gpc_refresh(). This warning
-requires at least one of gpa and uhva to be valid.
-WARNING: CPU: 0 PID: 5090 at arch/x86/kvm/../../../virt/kvm/pfncache.c:259 __kvm_gpc_refresh+0xf17/0x1090 arch/x86/kvm/../../../virt/kvm/pfncache.c:259
+[...]
 
-We are calling it from kvm_gpc_activate_hva(). This function always calls
-__kvm_gpc_activate() with INVALID_GPA. Thus, uhva must be valid to
-disable this warning.
+> > @@ -187,10 +169,13 @@ static inline bool is_swiotlb_buffer(struct devic=
+e *dev, phys_addr_t paddr)
+> >  	 * This barrier pairs with smp_mb() in swiotlb_find_slots().
+> >  	 */
+> >  	smp_rmb();
+> > -	return READ_ONCE(dev->dma_uses_io_tlb) &&
+> > -		swiotlb_find_pool(dev, paddr);
+> > +	if (READ_ONCE(dev->dma_uses_io_tlb))
+> > +		return swiotlb_find_pool(dev, paddr);
+> > +	return NULL;
+> >  #else
+> > -	return paddr >=3D mem->defpool.start && paddr < mem->defpool.end;
+> > +	if (paddr >=3D mem->defpool.start && paddr < mem->defpool.end)
+> > +		return &mem->defpool;
+>=20
+> Why are we open-coding swiotlb_find_pool() here? It does not make a
+> difference now, but if swiotlb_find_pool() were to change, both places
+> would have to be updated.
+>=20
+> Does it save a reload from dev->dma_io_tlb_mem? IOW is the compiler
+> unable to optimize it away?
+>=20
+> What about this (functionally identical) variant:
+>=20
+> #ifdef CONFIG_SWIOTLB_DYNAMIC
+> 	smp_rmb();
+> 	if (!READ_ONCE(dev->dma_uses_io_tlb))
+> 		return NULL;
+> #else
+> 	if (paddr < mem->defpool.start || paddr >=3D mem->defpool.end);
+> 		return NULL;
+> #endif
+>=20
+> 	return swiotlb_find_pool(dev, paddr);
+>=20
 
-This patch checks for invalid hva address and return -EINVAL before
-calling __kvm_gpc_activate().
+Yeah, I see your point. I'll try this and see what the generated code
+looks like. It might take me a couple of days to get to it.
 
-syzbot has tested the proposed patch and the reproducer did not trigger
-any issue.
-
-Tested on:
-
-commit:         afcd4813 Merge tag 'mm-hotfixes-stable-2024-06-26-17-2..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1427e301980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e40800950091403a
-dashboard link: https://syzkaller.appspot.com/bug?extid=fd555292a1da3180fc82
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=13838f3e980000
-
-Note: testing is done by a robot and is best-effort only.
----
-Changes in v2:
-- Adapted Sean's suggestion to check for valid address before calling
-  into __kvm_gpc_activate().
-- Link to v1: https://lore.kernel.org/r/20240625-bug5-v1-1-e072ed5fce85@gmail.com
----
- arch/x86/kvm/xen.c  | 2 +-
- virt/kvm/pfncache.c | 3 +++
- 2 files changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kvm/xen.c b/arch/x86/kvm/xen.c
-index f65b35a05d91..67bb4e89c399 100644
---- a/arch/x86/kvm/xen.c
-+++ b/arch/x86/kvm/xen.c
-@@ -741,7 +741,7 @@ int kvm_xen_hvm_set_attr(struct kvm *kvm, struct kvm_xen_hvm_attr *data)
- 		} else {
- 			void __user * hva = u64_to_user_ptr(data->u.shared_info.hva);
- 
--			if (!PAGE_ALIGNED(hva) || !access_ok(hva, PAGE_SIZE)) {
-+			if (!PAGE_ALIGNED(hva)) {
- 				r = -EINVAL;
- 			} else if (!hva) {
- 				kvm_gpc_deactivate(&kvm->arch.xen.shinfo_cache);
-diff --git a/virt/kvm/pfncache.c b/virt/kvm/pfncache.c
-index e3453e869e92..f0039efb9e1e 100644
---- a/virt/kvm/pfncache.c
-+++ b/virt/kvm/pfncache.c
-@@ -430,6 +430,9 @@ int kvm_gpc_activate(struct gfn_to_pfn_cache *gpc, gpa_t gpa, unsigned long len)
- 
- int kvm_gpc_activate_hva(struct gfn_to_pfn_cache *gpc, unsigned long uhva, unsigned long len)
- {
-+	if (!access_ok((void __user *)uhva, len))
-+		return -EINVAL;
-+
- 	return __kvm_gpc_activate(gpc, INVALID_GPA, uhva, len);
- }
- 
-
----
-base-commit: 2bfcfd584ff5ccc8bb7acde19b42570414bf880b
-change-id: 20240625-bug5-5d332b5e5161
-
-Best regards,
--- 
-Pei Li <peili.dev@gmail.com>
-
+Michael
 
