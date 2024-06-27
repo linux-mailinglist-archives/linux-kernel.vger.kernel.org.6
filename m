@@ -1,231 +1,220 @@
-Return-Path: <linux-kernel+bounces-231738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99BC9919D1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 04:02:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DFB6919D1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 04:05:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B911282EC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 02:02:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B75541C2181B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 02:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8B96AC0;
-	Thu, 27 Jun 2024 02:02:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0362279F0;
+	Thu, 27 Jun 2024 02:05:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P553W24E"
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="rfC10Slm"
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2066.outbound.protection.outlook.com [40.107.241.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B76E556
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 02:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719453758; cv=none; b=PP2VTNqpmATPg381yGI+epgE3u95UzCTZWPayrVYOMoZZREtD7t7LYEk3tvPKVl7Hn3Fl4FskKYGllrwCjSO4Qi5Qtz4OQkyBFvEvxCDIK/a7/VcwC33VLDqxtKLgcGcw/aEApget5kjyNCDggRiZmBrbP8Xs6MRnviGyFHGdxk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719453758; c=relaxed/simple;
-	bh=BJv6Ouu2XrOzSJzDpWNks1X6KhjxYC/Uyi215ZOvf6c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T32PVS5EOB1DkAix1j2g+opgF+defCz2vWqeZCUHeo/IfjvPRZ14F1LQTHdiJ64wnjXKOICXHTyLzWLz3Sh7RbiaxIzdcHZLvI0mz0aXv0+k7lLteRsKaLIJOloTSFowwwdGua5H3asqSrSgVcPQBuj59rXYgsyWaCbL9L6lXkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P553W24E; arc=none smtp.client-ip=209.85.160.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-24c0dbd2866so3781598fac.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 19:02:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719453755; x=1720058555; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m7HkyVgEil1i4DZF+gFUxMu5A4EDhjycWrMLLVNk3KA=;
-        b=P553W24E7ERIAFQb0usncgzq/vWHzJLcUnm12cPdkvWwxb+4bZXJbdDaltkrJsRzIm
-         6PA1ZI1Nub0agQb1QSRgd3XNdrawH8FimGfu5nMCOj0yQrLezIOKaU9LyneKjLoTInBX
-         e7vEcOaCLnyPXGwPZd4cyy3hJQ4yLBzVDTSHwtvyKvtoQfOR9KNZEYU/N5mU1ZPkLpxH
-         5PmLbwbGqYbCdK7FbJIYdP4ul7jGq9dBiv/17ACwZ4QKzfXECstVQILnuobUiAi8+cBK
-         CnpJzQVIGmHZJJ3udGrnXAfaW9y5lyXpWtpqhbn/3s4cJ0BXkaMbEkrNqAO/JMGhZqFI
-         bO3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719453755; x=1720058555;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m7HkyVgEil1i4DZF+gFUxMu5A4EDhjycWrMLLVNk3KA=;
-        b=q9XOitznuDYZB03UwMgCulEInt1Yqki5hOrFP9cH3+WjaYrLpkCgATkf/s53r9tbI7
-         a2aerP2kjM+J6+NyEP8+zkkKTiq8tc8yN2keu5Oj2HL28qQSEIsKzECGzj7dUsjivoDZ
-         xMmEAH8z1VhHMsJNb9qlHWrl1RDQ/UPLvrJgAY/+XYFiCcVX+uMoaxzxURZQnvMgPlIk
-         c8tCkeXXjcJplU7AD5d0AKvvq6N69nKRFmyPLUrKCVmq/NzA2vrz8/hoH5SSOxEC6jRT
-         vngrUfKg5/FRWGSFEGZr2iB+30qzWvnwEEW7B9TROkqv7Sjg8ZeXElEZXS01CTb8XwLK
-         uEEw==
-X-Forwarded-Encrypted: i=1; AJvYcCXqeceIVfumr5L03pTnjav2uWr3Tdefl25vA5t5SHyajMTZCy6NCn6zaA6XIcftxbGcuA00xc7cVg1WikNbC40LcnXBBP2R8B2Sd0ci
-X-Gm-Message-State: AOJu0Yy+Ghe3Yd6Vxn//GEPvdteV7Fjf31AozcyGUYD0Bb6srO/z9PWc
-	GTqi7xF08CwhRzaH+Tqgerft/W0hvgiSpfm65G31E13oJ8HPbrX+E69asHCn19MvkQPpC9YCnh6
-	XgRd4QnBwvD2T6d+peB2kDT/6KN4=
-X-Google-Smtp-Source: AGHT+IHjIDTJvYZUeiR73WCVoKARTWyv2BpU3BARIjaKuBmztK+Gfix+2S+/nNj0sGjcIOg1eHdJCWGw2knmXYKlrXo=
-X-Received: by 2002:a05:6870:148f:b0:254:8f8b:719b with SMTP id
- 586e51a60fabf-25cfcf3900fmr13003484fac.37.1719453755287; Wed, 26 Jun 2024
- 19:02:35 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27BB35223;
+	Thu, 27 Jun 2024 02:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719453930; cv=fail; b=giL4BDsJN1Fp5gESUBHXGGalCqWB1eC55PFC9tNQpcJO2nZ3kiw+nDgaqYpXNtFG6Mp+Z9042qBf//EzSfEN5rvqS0OxzT7Xt7t/+U2uxIKH+fggBPgGnSKCoMYNXiS9dx4bIQWt6WxHO5rDugUnH8rQ8TXc58TZTTk5Nhh0+IY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719453930; c=relaxed/simple;
+	bh=6l09U0epJfH+OvKUjRlb3+XnpZmXC0De99hgv6dFGUc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=K1PSi8chuN+Wu7xaNjcEOLD+ODA2q9fvb9/rNZNrQIWkhD6H4BOfKg1sGhPIKiIp03VMgB+b684s0xxnur8LXAfCyqgsBXIdZSNvW/1YGuZImZqc9rAZu2kxxEYllyUS24+qh8pmxMO3dTqtQQnpZpKamvjr4XA4xPo64If1f3A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=rfC10Slm; arc=fail smtp.client-ip=40.107.241.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=PmgpMDKIZNFAcjdVx46ZRRBdrshAzUiS1XDQBFkblnzlCNp3K0NR7dD6ON9BsF5OzueDYrAmhsaa7QmHW5dMV1lsTnHdrDDxQ/qbOWa8uIUH2OOMXOlt+EVys/Kgzj/DsmhO4XByCp2rYNUbSz17ixp3g/LQAoCKWMt+xBV1ssysYKVCvmMse2+YmyEeP565duWLQQ+2JM2vEpsCjoTaoFfVPmO53CTANv8a3pm1ImnEEbp41ow9vGZV/cgmuKpIm5tZ6FffJbG3+ft27/6NFBI5B+S2fAHMwuX5fzd1I2SqiD3yS0XP7hU8CKWzUN4FGT0hXqD3hSFWdSgRFtWQUQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6l09U0epJfH+OvKUjRlb3+XnpZmXC0De99hgv6dFGUc=;
+ b=ahzEFfNhpBWKPVhR+CsPsQc9Xxz2YsV0MjPvbaohy33DssHy0UAGfWl2F50vliKlKviNbPRdL/UV7oPAR/nPv3qX397PI5ahVaGTcRN+vME+RtzIIpEGltu1oZOVwf6VoC2okHyRNhSTfk18z7vcuKOCF8GOF/QwSme05kmsmf1xGItXHaku2NEbB7fna0Cd7qksNitlvtaJ9S/oxZFAXJuI55truOws9w6jONZTUFOsSSyZ77MSm6k6oPvMNxaqNNw8ha0Ma9SaDP8GJ03xNyODVTOypXZOzU/XYVN5H+oFahYdslKtqBkF4HS8qv4BbQ+xLr5IpRRSK4MDG8I3nw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6l09U0epJfH+OvKUjRlb3+XnpZmXC0De99hgv6dFGUc=;
+ b=rfC10SlmWItBKPV4/naaRgC/yREL5Hh5BJlBmWllxbkyjCgGmFPY0y7vKvvWaF3CvRkqy5TCm4IVX8+vfeZTF19rZtcZyV91Do1XKbOK21k3ghaUDdOjMiASOHhDqFnVr8PY5Z+AMFvZC0agWFSGHA5DD7vcDgC4+eDN9E+FKb4=
+Received: from AM6PR04MB5941.eurprd04.prod.outlook.com (2603:10a6:20b:9e::16)
+ by PR3PR04MB7420.eurprd04.prod.outlook.com (2603:10a6:102:93::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.32; Thu, 27 Jun
+ 2024 02:05:25 +0000
+Received: from AM6PR04MB5941.eurprd04.prod.outlook.com
+ ([fe80::9f4e:b695:f5f0:5256]) by AM6PR04MB5941.eurprd04.prod.outlook.com
+ ([fe80::9f4e:b695:f5f0:5256%4]) with mapi id 15.20.7698.025; Thu, 27 Jun 2024
+ 02:05:24 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Cristian Marussi <cristian.marussi@arm.com>, "Peng Fan (OSS)"
+	<peng.fan@oss.nxp.com>
+CC: Sudeep Holla <sudeep.holla@arm.com>, "arm-scmi@vger.kernel.org"
+	<arm-scmi@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 0/2] firmware: arm_scmi: create scmi devices for protocols
+ that not have of_node
+Thread-Topic: [PATCH 0/2] firmware: arm_scmi: create scmi devices for
+ protocols that not have of_node
+Thread-Index: AQHax5UBcF+q3A99YkaqiEgHA2XENrHZ4faAgAD7fNA=
+Date: Thu, 27 Jun 2024 02:05:24 +0000
+Message-ID:
+ <AM6PR04MB594123EFC17B31CE469503B688D72@AM6PR04MB5941.eurprd04.prod.outlook.com>
+References: <20240626-scmi-driver-v1-0-f16d777e004a@nxp.com>
+ <Znv1p3FDiPSUNmBM@pluto>
+In-Reply-To: <Znv1p3FDiPSUNmBM@pluto>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM6PR04MB5941:EE_|PR3PR04MB7420:EE_
+x-ms-office365-filtering-correlation-id: 93f8261a-8587-48a5-bd96-08dc964d9ba5
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?NI0VU5VMIhY1ytt25XrFhFpo44Re8MvWtZrHpReFgMZc7DuqT9bhh+APcM5E?=
+ =?us-ascii?Q?uYScHv1Zxg6J3yjrHH/nIp/wEU8tfSEZpOC64bOGEumCp0O11QHhqbYZa2XB?=
+ =?us-ascii?Q?qmKATNwxTDwd9L4y61LCBkF5LdyOvePmCx6DEwWqnr842Fc+cm28YaV2O/Un?=
+ =?us-ascii?Q?N052imOHkAESbC8XRfnKxmuznW8WLKd5US9gaVpyWs4bfJIoxpiUhrXSVU7E?=
+ =?us-ascii?Q?O8UjEQ5tXszjEWCSibFmItPND90uUyqoenAXktVS9WaohSe2SdUO8soyJ0ub?=
+ =?us-ascii?Q?9S5T7hQzTwK1BETW3LbM9i8NatNCkNI/cjjmW9WnSu5dYJBXHbgvoiIdlxu/?=
+ =?us-ascii?Q?Y89+XTyTQWRCJ0gVjDraw0tvJNBBu2fSqAJSB9pajlW/5pYR+vVvIsw0ENCD?=
+ =?us-ascii?Q?drUuVwcsYzcECLFA1MqP20Smz1HLTbTJ8RAto4eY6o4tSPTpGU0z2tXRJFCd?=
+ =?us-ascii?Q?giSkkRnv9ZkAW9GeL5L3equWv1LUay/tSsdHkJr0MupW+wxtWxiVvCj970BJ?=
+ =?us-ascii?Q?9Zn/dpSyeDMmaHgjCjBel2wMAQs19q0sGe8fIzF6ejxGB0Xd/HFt94jXT5Qw?=
+ =?us-ascii?Q?kAmMmcbhG10jAQaQsZlmvx18CuJ8Q7dXcYqf5iMLjQAr7BLiTHI+66xyWKY/?=
+ =?us-ascii?Q?cnUy/8N5fT67iysfwmdrjq8QXe5ceE3RvxcXxR3yc7+ec9FlKywzo4ygiz5O?=
+ =?us-ascii?Q?ojR+zLO4ArLju1loeAozd7mClsAGV21SDXP5f2g63ad3u1NE22gPj/QGcdID?=
+ =?us-ascii?Q?3qQzi58dBqs0CEk3OBq1u7KR/8AU0eqiYR/qHuzMw+mLDFxw4/qBCOEk6Iw2?=
+ =?us-ascii?Q?aX1Lgo8tKIlry8zOtmdKCbSnsEhJuJ7QmBQYEHkjpPqtoEFOxrUzkgoeyOJR?=
+ =?us-ascii?Q?5TPsue2IKPzX3Q/0ZW5k6ddFazdLca01bpHkTOIjJSPLAwnPNz7izc8YB7kM?=
+ =?us-ascii?Q?UBuyySd1hf61FH9dNVSn9hqPYy1Y/OVMjyD/oHHgPVm9iUr394kXQ7uJ4JXh?=
+ =?us-ascii?Q?r7T8+USHBC+3wI7DRAanRwyJkraZ5ZJp8aBcCMkDb5JCGOoSal5R5sFRkgGV?=
+ =?us-ascii?Q?BwQCRrJ/gumsXLBKIAXlw/Ng6JCxIpVnX4YdlsilfBuLgJ6o/y2c9g4foe/S?=
+ =?us-ascii?Q?Y9tOvHOvuDiLhLAoobo4hE6xNqLmy1t+0QyAztGxQRPqMhFVV1UQNDv5SKgI?=
+ =?us-ascii?Q?iwd93mdWcYcrqEzU92h16LDAJ0fYYTO7a13XzwOxwuQU/cFhunVwA7YUa0O+?=
+ =?us-ascii?Q?dWSljIOiX23Oxbha5lyW+hpuuqH+1IiSQp9tVMSNHhhCywRQfW/yc6cO9D1J?=
+ =?us-ascii?Q?vs9fnVo/q8mBK/k78f9/37f1iev2u5U+hxO6XTtqnPRm4bVsmsHXnLgPyofu?=
+ =?us-ascii?Q?aTTkh9zSjzQ4jmQE9bmhBozPQf7mgv/cMDxza8DKIhsppisHLw=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB5941.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?qCbRqboID3ezfpoDp9ET3Ub0IUg61A5tbdWKje6aOIubWoAHnrQ2YXVqDkOI?=
+ =?us-ascii?Q?FBqOF7zHkHAft0lF2RlUSLojY463bRbuj/DBX4DTRweFxG8+GK06SquhKi+9?=
+ =?us-ascii?Q?mRxz7BYJ9bbX4GR/Ah2PZD55rHy7EWQxO9JKOFR+jLTbkmEpkoQhAwAALa/G?=
+ =?us-ascii?Q?S+BDa7bqNDfQS+qCJaRLqPrwNohgPA9xp6P8g14ZK+e2y28T9exzotGZgcCv?=
+ =?us-ascii?Q?wenNdTqnuiZQx66h/gmHzIVbcZU18LP0PitdLwy9ZDTzb8LuKUGvlUGz5kCw?=
+ =?us-ascii?Q?fYbacCeLPt9QqNBh9cOh7MaVue5i1RDgVRNMPfmE9HOXV3wcja7rbbKd+MJC?=
+ =?us-ascii?Q?7Dd21DCF8cVTp7vmuTHPQxn7ilt4qKM23U86ZRtU36/QnWbZcW1AGHQmY22a?=
+ =?us-ascii?Q?kaF52VVwnHa9sMHQIwsn3ZXmIxGaAh6HvzVbSRTcHJaOPya0qVcV0zJ4LP6o?=
+ =?us-ascii?Q?vuWQRSXII655EEKh80SMOMoK9b7wpxUWaSm0WReL7fNqvrZB+iDg0lEF/asb?=
+ =?us-ascii?Q?SWv8pWiU/QabkrUlj1FD9ZWWCynN1afbcAz6nH6Ud9ii//da84DngIxDufcc?=
+ =?us-ascii?Q?TQ0J/eWtyylON1pO6Va4N4USGJl3WWu4qHT0a9klfrhDpHSwffbxHzqFkszK?=
+ =?us-ascii?Q?riPSZ3QJ0BL0oFe+UZ36buwreaaTehmIwTk0GINB9QVBrI1+dr6NSTejI79d?=
+ =?us-ascii?Q?qDWVFpO5jx+FpupVVvDrQtVjK4b/XJ7X2cn0hEQpXvyQxF1bNHcGG08cDkNp?=
+ =?us-ascii?Q?2EJwgNzRK+iFMszATUGD9Fvf610zX3tI3eyjx3m22CxWb5sdEDxNkVJVRyM1?=
+ =?us-ascii?Q?fKuxMjqt8flMXXsjG7N1H6CzYd22njpKHYn7D8AVZ2ZXZlCgtWjaf2W3AnUX?=
+ =?us-ascii?Q?ebVtSQ/I1ozUmmK+dj4PLEPctsKskyg9BaaKEbOzPLhzkQ8Xhk/jXiUBvdJ8?=
+ =?us-ascii?Q?l0VmKQd4Zl5DZ8drt2r5Knf9GjHZrmy5i1bGjkACO8OpMdjsxOOFmu7lP0x6?=
+ =?us-ascii?Q?G7fUwtQDkjUC0A4VewoBx1kB79qaugtT9/T4bPo0U0zQLJxqc3FYwItC+Mpw?=
+ =?us-ascii?Q?vyTNwVCjTKFxJ26OtmXw0+7rCepBZMwNbmBUqMYB4W6E11M1ocwFpNWL7XjT?=
+ =?us-ascii?Q?w+SlPW1nCUuvgkfdosjAPN+QMZh4eldsMf/+T9BbLHUaz5LnjeKokWc0lMag?=
+ =?us-ascii?Q?EuW3sf+3UPI7md+Hn+vP0kBKsLLh8v6JPVQX1nA5mp0mJo8gkNTKQOkNPWCd?=
+ =?us-ascii?Q?TZSQPy9Q2V6V+N02Slr4yphe155g7HTLT/YCRam32vYcN2gBFFtD/XHVZWwv?=
+ =?us-ascii?Q?VFqNZY6hjQUBTHhw0SlALzUDiBSeD3mbsaj1hfwzNOtnoxX4dcDh3sGUBgoh?=
+ =?us-ascii?Q?I5UX9sdfBGgQamtEi8W17UtsEu0nuAAFOG+4cf8dQZnjktSLs+3Jg4XtCGIW?=
+ =?us-ascii?Q?QDs109My3gXPKG/8aDdiB1z2Nrel8IgN9kLquPbmv+W+axJKzVki1i7s+ZCp?=
+ =?us-ascii?Q?n3Yd0X9u5z5KSq2wsKXBUvEmtUx6qqnekU8eqlG3lFOaqE4JaS5BATmyWvoH?=
+ =?us-ascii?Q?Gn1mRdvwLIBshsbKNIQ=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240624082011.4990-1-xuewen.yan@unisoc.com> <20240624082011.4990-2-xuewen.yan@unisoc.com>
- <CAKfTPtB=Yk8Bp4sSanr4fCdyWA9PVROM+uiWsQSh+QjFpKb+Aw@mail.gmail.com>
-In-Reply-To: <CAKfTPtB=Yk8Bp4sSanr4fCdyWA9PVROM+uiWsQSh+QjFpKb+Aw@mail.gmail.com>
-From: Xuewen Yan <xuewen.yan94@gmail.com>
-Date: Thu, 27 Jun 2024 10:02:24 +0800
-Message-ID: <CAB8ipk-yAoX5EJ975ZVKfgZP7rP-vzuc3bLVr6yiLtMv26Lxjw@mail.gmail.com>
-Subject: Re: [PATCH V2 1/2] sched/fair: Prevent cpu_busy_time from exceeding actual_cpu_capacity
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Xuewen Yan <xuewen.yan@unisoc.com>, dietmar.eggemann@arm.com, mingo@redhat.com, 
-	peterz@infradead.org, juri.lelli@redhat.com, qyousef@layalina.io, 
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, bristot@redhat.com, 
-	vschneid@redhat.com, christian.loehle@arm.com, vincent.donnefort@arm.com, 
-	ke.wang@unisoc.com, di.shen@unisoc.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM6PR04MB5941.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 93f8261a-8587-48a5-bd96-08dc964d9ba5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jun 2024 02:05:24.7143
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: A776CjTrd2c6vbkxnoVs6uTlHMDlnUQb7CAShZG5hMvFVWs20PFDq4yhsTRACL6Fe/vWmm7rGOmw9tg+28OWkg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7420
 
-On Tue, Jun 25, 2024 at 9:05=E2=80=AFPM Vincent Guittot
-<vincent.guittot@linaro.org> wrote:
->
-> On Mon, 24 Jun 2024 at 10:22, Xuewen Yan <xuewen.yan@unisoc.com> wrote:
+> Subject: Re: [PATCH 0/2] firmware: arm_scmi: create scmi devices for
+> protocols that not have of_node
+>=20
+> On Wed, Jun 26, 2024 at 02:58:38PM +0800, Peng Fan (OSS) wrote:
+> > Per
+>=20
+> Hi,
+>=20
+
+...
+> > rved=3D0 If a node has its own channel, the of_node is still needed.
 > >
-> > Commit 3e8c6c9aac42 ("sched/fair: Remove task_util from effective utili=
-zation in feec()")
-> > changed the PD's util from per-CPU to per-PD capping. But because
-> > the effective_cpu_util() would return a util which maybe bigger
-> > than the actual_cpu_capacity, this could cause the pd_busy_time
-> > calculation errors.
->
-> I'm still not convinced that this is an error. Your example used for v1 i=
-s :
->
-> The pd cpus are 4-7, and the arch_scale_capacity is 1024, and because
-> of cpufreq-limit, the cpu_actual_cap =3D 512.
->
-> Then the eenv->cpu_cap =3D 512, the eenv->pd_cap =3D 2048;
-> effective_cpu_util(4) =3D 1024;
-> effective_cpu_util(5) =3D 1024;
-> effective_cpu_util(6) =3D 256;
-> effective_cpu_util(7) =3D 0;
->
-> so env->pd_busy_time =3D 2304
->
-> Even if effective_cpu_util(4) =3D 1024; is above the current max compute
-> capacity of 512, this also means that activity of cpu4 will run twice
-> longer . If you cap effective_cpu_util(4) to 512 you miss the
-> information that it will run twice longer at the selected OPP. The
-> extreme case being:
-> effective_cpu_util(4) =3D 1024;
-> effective_cpu_util(5) =3D 1024;
-> effective_cpu_util(6) =3D 1024;
-> effective_cpu_util(7) =3D 1024;
->
-> in this case env->pd_busy_time =3D 4096
->
-> If we cap, we can't make any difference between the 2 cases
->
-> Do you have more details about the problem you are facing ?
-
-Because of the cpufreq-limit, the opp was also limited, and when compute_en=
-ergy:
-
-energy =3D  ps->cost * sum_util =3D  ps->cost * eenv->pd_busy_time;
-
-Because of the cpufreq-limit, the ps->cost is the limited-freq's opp's
-cost instead of the max freq's cost.
-So the energy is determined by pd_busy_time.
-
-Still the example above:
-
-The pd cpus are 4-7, and the arch_scale_capacity is 1024, and because
-of cpufreq-limit, the cpu_actual_cap =3D 512.
-
-Then the eenv->cpu_cap =3D 512, the eenv->pd_cap =3D 2048;
-effective_cpu_util(4) =3D 1024;
-effective_cpu_util(5) =3D 1024;
-effective_cpu_util(6) =3D 256;
-effective_cpu_util(7) =3D 0;
-
-Before the patch:
-env->pd_busy_time =3D min(1024+1024+256, eenv->pd_cap) =3D 2048.
-However, because the effective_cpu_util(7) =3D 0, indeed, the 2048 is bigge=
-r than
-the actual_cpu_cap.
-
-After the patch:
-cpu_util(4) =3D min(1024, eenv->cpu_cap) =3D 512;
-cpu_util(5) =3D min(1024, eenv->cpu_cap) =3D 512;
-cpu_util(6) =3D min(256, eenv->cpu_cap) =3D 256;
-cpu_util(7) =3D 0;
-env->pd_busy_time =3D min(512+512+256, eenv->pd_cap) =3D 1280.
-
-As a result, without this patch, the energy is bigger than actual_energy.
-
-And even if cpu4 would run twice longer, the energy may not be equal.
-Because:
- *             ps->power * cpu_max_freq
-*   cpu_nrg =3D ------------------------ * cpu_util           (3)
-*               ps->freq * scale_cpu
-
-the ps->power =3D cfv2, and then:
-
-*                  cv2 * cpu_max_freq
-*   cpu_nrg =3D ------------------------ * cpu_util           (3)
-*                    scale_cpu
-
-because the limited-freq's voltage is not equal to the max-freq's voltage.
-
->
->
->
-> > So clamp the cpu_busy_time with the eenv->cpu_cap, which is
-> > the actual_cpu_capacity.
+> > i.MX95 SCMI firmware not have dedicated channel for 0x12, and no
+> need
+> > of_node. This patchset is to support protocol 0x12 without the
+> > procotol node in device tree.
 > >
-> > Fixes: 3e8c6c9aac42 ("sched/fair: Remove task_util from effective utili=
-zation in feec()")
-> > Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
-> > Tested-by: Christian Loehle <christian.loehle@arm.com>
-> > ---
-> > V2:
-> > - change commit message.
-> > - remove the eenv->pd_cap capping in eenv_pd_busy_time(). (Dietmar)
-> > - add Tested-by.
-> > ---
-> >  kernel/sched/fair.c | 9 +++++----
-> >  1 file changed, 5 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index 8a5b1ae0aa55..5ca6396ef0b7 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -7864,16 +7864,17 @@ static inline void eenv_pd_busy_time(struct ene=
-rgy_env *eenv,
-> >                                      struct cpumask *pd_cpus,
-> >                                      struct task_struct *p)
-> >  {
-> > -       unsigned long busy_time =3D 0;
-> >         int cpu;
-> >
-> > +       eenv->pd_busy_time =3D 0;
-> > +
-> >         for_each_cpu(cpu, pd_cpus) {
-> >                 unsigned long util =3D cpu_util(cpu, p, -1, 0);
-> >
-> > -               busy_time +=3D effective_cpu_util(cpu, util, NULL, NULL=
-);
-> > +               util =3D effective_cpu_util(cpu, util, NULL, NULL);
-> > +               util =3D min(eenv->cpu_cap, util);
-> > +               eenv->pd_busy_time +=3D util;
-> >         }
-> > -
-> > -       eenv->pd_busy_time =3D min(eenv->pd_cap, busy_time);
-> >  }
-> >
-> >  /*
-> > --
-> > 2.25.1
-> >
-> >
+>=20
+> With this patch you change a bit of the core logic to allow for protocols
+> not explicitly described in the DT to be instantiated, and you use a
+> static builtin array to list such protocols...so any future change or any
+> downstream vendor protocols that want to use this, we will have to
+> patch and extend such protocols[] array.
+
+Just recheck this again, we might address with iterate
+rdev->id_table->protocol_id, just as scmi_device_create.
+
+Regards,
+Peng.
+
+>=20
+> Moreover, if anyone DO want to use a per-protocol channel in the
+> future on some of these protocols, it will work fine with your solution
+> on the code side, BUT you will still have anyway a DT binding check
+> error when you try to add that 0x12 node to contain a channel
+> description, right ?
+> ... because in that case you will have re-added a (supposedly) empty
+> protocol node in order to containn the channels definitions and that
+> wont be yaml-compliant, am I right ?
+>=20
+> IOW this solves your issue in the immediate, while adding complexity
+> to the core code and changing the core behaviour around protocols,
+> but it wont stand any future addition or different usage.
+>=20
+> For these reasons, I still think that the cleanest solution is to just le=
+t
+> protocol nodes to exist even if not referenced anywhere from the DT
+> (your original patch to add protocol0x12 I think) simply because we
+> allow per-protocol channel definitions and so any empty unreferenced
+> protocol node could be needed in the future for this reason.
+>=20
+> In this way we'll also keep treating protocols in an uniform way.
+>=20
+> Just my opinion, though, I'll settle with what is finally decided anyway.
+>=20
+> Thank
+> Cristian
+
 
