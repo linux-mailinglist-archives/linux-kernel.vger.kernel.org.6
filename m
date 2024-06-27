@@ -1,94 +1,126 @@
-Return-Path: <linux-kernel+bounces-232343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F196791A71B
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:58:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ACF591A6D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 14:47:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E9121C241B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:58:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 361F3285976
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:47:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E4D17A93F;
-	Thu, 27 Jun 2024 12:57:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3EE4178CE7;
+	Thu, 27 Jun 2024 12:47:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="D5Ow2pba"
-Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QnVLnTZS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1261179943
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 12:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B1E1779A5;
+	Thu, 27 Jun 2024 12:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719493070; cv=none; b=SI2zigQDBAIR5CNeNNt990H/p5d0/u/MHhacNFWcMMqPero9ufcaI647yYdMEzLN6hr5X01+jIazYexWtNNdxsFTuG2TvzCrdJYL9MT50OeNuV3Sv8r0zuZwO2y9GPKurruMmdi7y8GGkrsaMkiv/7Y1Q7/jeGdCPgy4ZZbM+zg=
+	t=1719492457; cv=none; b=hQRjLdPXX+AOqdZPw6UBgqcJ5adqY7Zlm+Ce1VJEGCzmoU7FP17AXELaLz9YkKjtzs/n9af1qIbm2VW3UgmCz16YwMMZM56tz55FZFFsvW2Wh+KmTglW2dWW18sSdZzUWrzz5CHqJrZwlYwLFXW9BVCc93WVyOj8VtRz9GRh39k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719493070; c=relaxed/simple;
-	bh=fvR4A9pNXpEIRIY1bBkJd18Tq+Rd3KBrPaSIVfvQWzQ=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=r9mlv8zkKJhUWd471naH5ez1tEI8JpC9EF/k+ugHC4RSQMX50uURrvZseTduGZ9CZ39sUb+wShQgruDYPZUKBNqPZGoi++ejIoC9RID7yfY+zEMHkKl4wuO1wec5Mot4ncAVPTWpqDmM3PWr8D2pqV6FmBPeMN9zoVGOfub5T1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=D5Ow2pba; arc=none smtp.client-ip=162.62.58.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1719492757; bh=WSI88o6L/LDt7bMEHCv1PQvxM0hL4VvO3tmEvcA7Of0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=D5Ow2pbadKEijBWjVkelcM8NhQWQPQqN64cDMGWYcQ3zG1TjC3FClm6/Ivoln25hO
-	 /okDnhA1WWihtZ2TZUBTGSNdXA7OxVGPlauvIW5iSs7iJlInnIHpeMxsCTzRppjDwF
-	 rKe0VaAe41sbNHTOrdvabZU0brcJA8aFE3EJY1ic=
-Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
-	by newxmesmtplogicsvrszb9-0.qq.com (NewEsmtp) with SMTP
-	id D23AD02D; Thu, 27 Jun 2024 20:52:35 +0800
-X-QQ-mid: xmsmtpt1719492755tb5sccimd
-Message-ID: <tencent_B71CE90EEE3ECDAC78E66E9C2FC96C1C950A@qq.com>
-X-QQ-XMAILINFO: MW5hkHoBpWXyDGItSESgsV56kq+BspcqhHXVPmEepa/vsF0IHcBEJPvDQ9++G+
-	 pOQsGqspxFtn56nAc/a978QM7m6VMSJiOEIwVy2IMLBu7uiRXwTUwMzsLUkW0KTegbg7CXO1ptOy
-	 uuqXD2EYkqCxO2ICRllgv7PKkzWykp5+Yc+FIsg6+I32Vtf8/wMgAzm9cjcFc4DNfWNJpk5hxDMB
-	 bMl5sHsJ0HwM3ItI3Rc+C0DTlws2Dd3gfgc+h7Mh4S6n9XPVlZYkt+oz795unVIeFr1T+gxlq8nq
-	 ddHjw/xVpAbxAgEYMOmUYBLfuscc/EppiVHe8OljKzrWOEbAdz5syt2L3zgmg4lIhB+UGYVJGYHt
-	 rGMNgO6y10vP7W0GxhkxXblrB9iBPQ30/+L3VzMYr+yvD74TmNEBr09ds5iBZLdKnAJW9IXp90ld
-	 bq2OQWu6zsexR/cGfCoMR2VXMSthCIKPh+5COEeFCSyedzItNy6OiotpNbDbQM2oHmtbRxjXoW9f
-	 xi05zp0TuOOTzA/wx/j5gM2VgvsDJZXweVvC119WXvdwPcqQugAMtyafjlI8JmPdOTR1+VYmczRL
-	 oMOUScsEVEgtKqah1MUKjGsohPrdFBt5bUtlqddp6LUX8Jmuxbs+GMfClxX81e8ovXvx9ktOnmcQ
-	 Z6yfW4UDg1Nfsz9Pb/PjlklPDeOmkmUKiDbuwZzmCzR6SA2XktUKp+xT6F6DVseG3YB+b65thrpl
-	 67iBWALIcrF6hqDKOOPExVjIb+his8KsAjTksmo9nz6WmQ7bFK929b4qTeSer4i4AOV7yV0NCOB7
-	 01PiHEPDgzosl5CEyeS93YTp/GJi9rbD3R8EpEeu1qMcG1htBYrL2s7SCJ+xuz5Y8vWqnk/jB8jz
-	 px8Q4ew4ie3jZIxVa4OIShwnSHk5/NZMDTexwN6pt0aBUw+VooTr/5PFF+ajgRGkpOPaP7Wy2ApN
-	 0KmXQHA3H0BqDGmYXwOY8UyT8Kdzk6B/UR+v24GSc=
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+c041b4ce3a6dfd1e63e2@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [syzbot] [net?] KASAN: slab-use-after-free Write in l2tp_session_delete
-Date: Thu, 27 Jun 2024 20:52:31 +0800
-X-OQ-MSGID: <20240627125230.731478-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <0000000000008405e0061bb6d4d5@google.com>
-References: <0000000000008405e0061bb6d4d5@google.com>
+	s=arc-20240116; t=1719492457; c=relaxed/simple;
+	bh=RiAYip+1ZCrRFfOtFF2919/xDLkxaKuQsUwtdQsoJxI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BuAaAGrevSz/Hc9u4BU6l/1lTMSZr6LRfqkVjm5sxtTKe0a2APOLJxiruRa+MiPyW7ruRooPFczLHqD+n9zlS7wRYM0xa2HI588UjmzQjilNwHImPmiyVS1toQmPUMF2iboK0wgkdQ8pLHxWTFfUB6VJrzCQo6dgjGaGhbPF2SI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QnVLnTZS; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719492456; x=1751028456;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=RiAYip+1ZCrRFfOtFF2919/xDLkxaKuQsUwtdQsoJxI=;
+  b=QnVLnTZSQ08vy7/6bLZUUSx4CQOfj2t3lXQPn2+QjrteCC4byMWI9C9B
+   skJixhoiwvdvO3ZIwCopgITM+xuFgwPTk0PrDKc5wI5i9D8YObm6re/Xl
+   uMsV5xFaxlmZLomWA3M4ZKysP0rGS0oaIZZFSuTPi9U1/Og8N/YkD6nrn
+   qroyigLB1NgB71UgaFE79EbwvwYJH+YZrAvuao9XBf9F5VfYdgxa2uvzv
+   dUiQYmhLjeX0pEnS6+pV9q0VO5JDXqm5xCIyRgbceEpMo/t7rHQW4mrWj
+   IuJg4BS93eGX6EBQETuJ3TjcnD3VvnQOaUUkV69Xtiv41QX2BUtOpN6c4
+   Q==;
+X-CSE-ConnectionGUID: A6t8/237QoGp6Ch288LHZg==
+X-CSE-MsgGUID: m/czTZEXSeOU0g7ed7h+Ug==
+X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="16838972"
+X-IronPort-AV: E=Sophos;i="6.09,166,1716274800"; 
+   d="scan'208";a="16838972"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 05:47:35 -0700
+X-CSE-ConnectionGUID: ue3SHnc7SCCTLiXpM4Tu1Q==
+X-CSE-MsgGUID: 6osAN1ZfTne6Ys3Mlzf8nA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,166,1716274800"; 
+   d="scan'208";a="44480814"
+Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 05:47:35 -0700
+Date: Thu, 27 Jun 2024 05:53:40 -0700
+From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Brice Goglin <brice.goglin@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	daniel.sneddon@linux.intel.com, tony.luck@intel.com,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>
+Subject: Re: [PATCH 0/9] Add CPU-type to topology
+Message-ID: <20240627125340.GB4743@ranerica-svr.sc.intel.com>
+References: <20240617-add-cpu-type-v1-0-b88998c01e76@linux.intel.com>
+ <8d757ea3-87a3-4663-ac76-66b04e33e6b3@gmail.com>
+ <20240619015315.3ei5f6rovzdnxovo@desk>
+ <bc75ff55161671e4470849ed51baa547f619889d.camel@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <bc75ff55161671e4470849ed51baa547f619889d.camel@linux.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 
-delete tunnl session list
+On Wed, Jun 19, 2024 at 03:34:46AM -0700, srinivas pandruvada wrote:
 
-#syz test: linux-next 185d72112b95
+[...]
 
-diff --git a/net/l2tp/l2tp_ppp.c b/net/l2tp/l2tp_ppp.c
-index 3596290047b2..1fd27c902d80 100644
---- a/net/l2tp/l2tp_ppp.c
-+++ b/net/l2tp/l2tp_ppp.c
-@@ -446,6 +446,7 @@ static int pppol2tp_release(struct socket *sock)
- 	if (session) {
- 		struct pppol2tp_session *ps;
- 
-+		list_del_init(&session->list);
- 		l2tp_session_delete(session);
- 
- 		ps = l2tp_session_priv(session);
+> > 
+> > There can be many ways to expose this information in sysfs. Like this
+> > ...
+> > 
+> > > [1] https://lkml.org/lkml/2020/10/2/1208
+> > 
+> > ... exposes /sys/devices/system/cpu/types which, in hybrid parts,
+> > creates a
+> > subdirectory for each type of CPU. Each subdirectory contains a CPU
+> > list
+> > and a CPU map that user space can query.
+> > 
+> > The other way is to expose the CPU-type in a file:
+> > 
+> >         /sys/devices/system/cpu/cpuN/type
+> > 
+> > that could return the CPU-type of the CPU N. Is there a preference?
+> 
+> But you still have to look at frequency or caches as there are Low
+> power E-cores which will have same type but different capabilities.
 
+By the way, /sys/devices/system/cpuN/cache is broken on these systems with
+low power Ecores. I proposed a patch to fix it here [B]. May I ask for a few
+extra reviews and testing? Perhaps this will raise the confidence of the
+x86 maintainers? :)
+
+The patchset continues to apply cleanly on v6.10-rc5.
+
+[B]. https://lore.kernel.org/all/20231212222519.12834-5-ricardo.neri-calderon@linux.intel.com/
 
