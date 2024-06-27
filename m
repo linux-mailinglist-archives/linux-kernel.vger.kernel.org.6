@@ -1,105 +1,109 @@
-Return-Path: <linux-kernel+bounces-232226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 395CD91A569
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:34:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5874691A56A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:35:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8B94B25537
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:34:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1F56B249CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:34:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53BE014AD0E;
-	Thu, 27 Jun 2024 11:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D82714AD10;
+	Thu, 27 Jun 2024 11:34:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vT5853zB"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="NUzAUhvT"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCA41411EE
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 11:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C84F14830A;
+	Thu, 27 Jun 2024 11:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719488069; cv=none; b=WJVLm6XnnIbw75Lu+EU45MrZUc7WYLRIB+RBLLa9DsF+t8JFAiDpHY0DYLx+7YLj/RVXOopeH0FHlJ9yAY5Fd31iLrINZnoWFULZzRT/U8CQGgpaVv0iCGimyQSNgFGLA8Xs7lunMa7JCPirjtbEw4KXrUmVbw8cDNe2fQnyBj4=
+	t=1719488091; cv=none; b=Bh1GNxBJ3w4rHcysXWfg9nZ/qRojm4Onn/hWoiYTi+Cv0g77xoaA9Cc64+OOGqVyPTLM7adhqdTrCXPDfMw7srQLGd9uWQ38tNV40cldvHuSKOCz7ASmPyHldj7vZ7dj3VfIJHyhQLHbyhdcq1wAB7PPoTd4JoSvsUSvSPVO6Bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719488069; c=relaxed/simple;
-	bh=s8a9qgL/3vgvPX/ppRhRnHkCxACMcsTSLyLHX8PPUEE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RZRadTtp4U/Nvuvm2kB81/VtKryI085USXP97wgzrhwsNPiUjFxMgtAjllMz6/UQk2OJnW2tn/APaBIqArg1OEkYx+FQTUHySYLVsoTyxrcNVkCuJ0xyPm2+YkoWFLwvhRiDGFFQHUy4eGeF/8Nb+glGGsYl8rPs7rwEftjbkhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vT5853zB; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57cf8880f95so1638730a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 04:34:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719488066; x=1720092866; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s8a9qgL/3vgvPX/ppRhRnHkCxACMcsTSLyLHX8PPUEE=;
-        b=vT5853zBjNlpzirf1SaHUidFyVTMqdNtTw5GSCMLHfJkf3HMkj3PYKR0oLoFokegN9
-         PUKWAspsD0kK/hP6d711dPfauRepyVFUoxfKVfVNG9cdzK29pxOHU0JsY0BCBXNlwzha
-         r9/xSPRd5IK6SMuFcsNTHTEhrt5oqcQIvaG4vmO5UlxTfEB9LhS7ytPsn3q4YAx/2v+5
-         T8BfpYit9mLfWkgN8iWkTE7Pnc5q3YS8kCB/w1/TOMQD55XpQy7J3fAIcFLZJ8FWNpyL
-         wImrhBORQLJKPX3ggvbT8pGcdZ3wGYeZIUyO+iKX1jCf/3seFQFpRUvBMKIQaGJzU7wR
-         Qk5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719488066; x=1720092866;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s8a9qgL/3vgvPX/ppRhRnHkCxACMcsTSLyLHX8PPUEE=;
-        b=JmiHr7K3wBWEKq5E/t4jCGiLffmy4epQWAIxzCazh1nxO/tmerPjuj3eBG8mPZwrXt
-         Z5CZPclEGpGfOzY/tTX5LP5FW45VAWTjtcqzOZFplQ5eYl3Yt5TwGk6cDiEYjUhoF251
-         KQbOpJ3BE968Hd//OfhKvbupsgyCcbGLspWjTBoa2cgHazhFKBDlVFlxd7V7V8r+ASiT
-         9qO2+8xksKzpUzzRdWVlHO+ygo5++GssnWtcyA4inXP/16QRM6reFrn9VsfE/3M6jnOz
-         5WK792mu+2wJM1GzIPZMtWPMAFKvHkjWhLkG1uI19DjBuN3qt23rUiiLw0QMHL9t8lzU
-         2dgA==
-X-Forwarded-Encrypted: i=1; AJvYcCWeevfaZmR9v6JDbL2a3flVisuZJi5gzuv3zJlmbm8hIEnee5bxFa0JXvsyd8vtTnOlVeogHVSUTexX9/KFpQrosxDubWgHZyPR0olv
-X-Gm-Message-State: AOJu0Yxe4Ce6bWb8UqoM55PrABSdqYUqYerk3SVKLT2wZS2GfanH+sCl
-	SaGDggbw4aeiZQiyDM+g9gdgvA7q9Juh1YMH6Qsqq7FnFnwle8KRpuV7yu7QcIp0EKsRW29MPiZ
-	0pU3393emQPbE2yhdMrbiaXI0JbcjIHf/Fm8r
-X-Google-Smtp-Source: AGHT+IHLyPYvXfGlogID2l+7RlQpARx4A0v7by2uAHcT47lAr9k/vY5ZKFTIohicwN5WPwQIYzSAZXmKPR4lkQUUe/s=
-X-Received: by 2002:a17:907:7782:b0:a6f:56d2:8f0d with SMTP id
- a640c23a62f3a-a7245ba3ba8mr1149592966b.17.1719488065900; Thu, 27 Jun 2024
- 04:34:25 -0700 (PDT)
+	s=arc-20240116; t=1719488091; c=relaxed/simple;
+	bh=CmAR5kMvFVRlfa5jgzt3p56Rd7SIxqA+LoMBBp1wo6Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Va7M5KWZDyQCkeSjKdsdQjsH5PzXnlVDmZp14sA6kFeSc/pmyuj7M1gPqY46hmDBJlCPxmUVKsDiddRJ4SWTwO7nGDjHYjaTmRyLf+QWwhpsP8PTNHFDag4+R4rip6g32OfHta0xOOF0PMdel2VHZXcUM0wicJWYpf43aXoh2wQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=NUzAUhvT; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=7Pgf0B+XRFZIZWldbVmqB/GuVsACieZa/pwPEpHKnY0=; b=NUzAUhvT81f+lHLE
+	QcuAV7cSSwtAEresR8akmeOztcH4DqHDTjT4+hUxhUDCN3CuW/RrA1WcfitzVPpms1pLT1pXGs5zz
+	KgNSgf7/37X0/jg8uhwcSbH50FCsbBkE/35h+MvnJ2l1cTD8LITKdZfvCkAWOW5/gqDHG3ndhEooa
+	Y102Zcqd77lWvWuYAeM5tFZklTN9DOCz5sixYiHYfXpmQuaYFaYMt1WEoOYH3h/NkEPDXfcB2yeIs
+	I55dWkHuEyV4JHolmuEaxjdqc1GC4nP7oCsoKbsXj3ooOSN0Q6rOLk5F+XvCn5Q0W9j5n4BwDc+L2
+	8gpAME9bIvzT30vv8A==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1sMnOf-008ere-1J;
+	Thu, 27 Jun 2024 11:34:37 +0000
+Date: Thu, 27 Jun 2024 11:34:37 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: arnd@arndb.de, linux-kernel@vger.kernel.org,
+	linux-parport@lists.infradead.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 0/3] parport: Cleanup some pre-devmodel code
+Message-ID: <Zn1OTXZLer610kvs@gallifrey>
+References: <20240502154823.67235-1-linux@treblig.org>
+ <ZkXj9Ip3DoUAe1wt@gallifrey>
+ <Zl3_5MzTNqIiXM_C@gallifrey>
+ <Znw2oRnqaZ39aXzQ@gallifrey>
+ <CADVatmPWjOEkt+_KQXcyPFQy7651_ZNnxZO2tX2Hd=1u20eEEg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240626094232.2432891-1-xiujianfeng@huawei.com> <Zn0RGTZxrEUnI1KZ@tiehlicka>
-In-Reply-To: <Zn0RGTZxrEUnI1KZ@tiehlicka>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Thu, 27 Jun 2024 04:33:50 -0700
-Message-ID: <CAJD7tkZfkE6EyDAXetjSAKb7Zx2Mw-2naUNHRK=ihegZyZ2mHA@mail.gmail.com>
-Subject: Re: [PATCH -next] mm: memcg: remove redundant seq_buf_has_overflowed()
-To: Michal Hocko <mhocko@suse.com>
-Cc: Xiu Jianfeng <xiujianfeng@huawei.com>, hannes@cmpxchg.org, roman.gushchin@linux.dev, 
-	shakeel.butt@linux.dev, muchun.song@linux.dev, akpm@linux-foundation.org, 
-	cgroups@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <CADVatmPWjOEkt+_KQXcyPFQy7651_ZNnxZO2tX2Hd=1u20eEEg@mail.gmail.com>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 11:34:14 up 49 days, 22:48,  1 user,  load average: 0.09, 0.04, 0.01
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On Thu, Jun 27, 2024 at 12:13=E2=80=AFAM Michal Hocko <mhocko@suse.com> wro=
-te:
->
-> On Wed 26-06-24 09:42:32, Xiu Jianfeng wrote:
-> > Both the end of memory_stat_format() and memcg_stat_format() will call
-> > WARN_ON_ONCE(seq_buf_has_overflowed()). However, memory_stat_format()
-> > is the only caller of memcg_stat_format(), when memcg is on the default
-> > hierarchy, seq_buf_has_overflowed() will be executed twice, so remove
-> > the reduntant one.
->
-> Shouldn't we rather remove both? Are they giving us anything useful
-> actually? Would a simpl pr_warn be sufficient? Afterall all we care
-> about is to learn that we need to grow the buffer size because our stats
-> do not fit anymore. It is not really important whether that is an OOM or
-> cgroupfs interface path.
+* Sudip Mukherjee (sudipm.mukherjee@gmail.com) wrote:
+> On Wed, 26 Jun 2024 at 16:41, Dr. David Alan Gilbert <linux@treblig.org> wrote:
+> >
+> > * Dr. David Alan Gilbert (linux@treblig.org) wrote:
+> > > * Dr. David Alan Gilbert (dave@treblig.org) wrote:
+> > > > * linux@treblig.org (linux@treblig.org) wrote:
+> > > > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> > > > >
+> > > > > There are some remenants of the pre-devmodel code
+> > > > > still in the parport drivers; try and clean some of them out.
+> > > >
+> > > > Ping!
+> > >
+> > > Ping^2.
+> >
+> > Ping^3
+> >
+> > (Added Sudip's other email address, and also cc'd linux-hardening)
+> >
+> >
+> 
+> Apologies for the delay. Somehow it missed my filters.
+> I will check it by this weekend.
 
-Is it possible for userspace readers to break if the stats are
-incomplete? If yes, I think WARN_ON_ONCE() may be prompted to make it
-easier to catch and fix before deployment.
+Thanks, that would be great.
+
+Dave
+
+> 
+> -- 
+> Regards
+> Sudip
+> 
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
