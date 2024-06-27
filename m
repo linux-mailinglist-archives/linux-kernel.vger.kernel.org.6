@@ -1,146 +1,207 @@
-Return-Path: <linux-kernel+bounces-232118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A54391A3BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:28:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D18A791A3BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 12:29:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7450E283EE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:28:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12826B216C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 10:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A80313D8A2;
-	Thu, 27 Jun 2024 10:28:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF0513D8AE;
+	Thu, 27 Jun 2024 10:29:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ag5L9Z+I"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="n9G7MSQ4"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3081C17F3
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 10:28:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C678C17F3;
+	Thu, 27 Jun 2024 10:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719484120; cv=none; b=bUfoLrFWoNKG1x92Cvnl5lbRbfKuv6KcGA+IZ+Tl2RKrb/P/w0li1DanojAdsAaxB4ccjcxVKWEy9OiAFQLSLLNgashB684Kt8CzfcTz/SJXw0s0TlF4s0cT0yVYWB2ybA4LZbR+sZg6LpvEvtkVTfY5xREoFZ7VzaoyM0DHItg=
+	t=1719484156; cv=none; b=KvHEOkj47nTlkatb2c1Hg8iZ6znCWVmerJQ2m+B8ES/Omdk4rEKG44eSwcKbRJEdOXoBw6Qh/zFRlTX/1YkKPsPWgP57OmNAl9zyG4PNx0aBzN6RCx4A/jjojXOlmqVsGEfwP1dYyldoKiU7A7DD24AhSRH6N6sKbZNm0cZ4xfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719484120; c=relaxed/simple;
-	bh=BRoEnDNLMGfgwmz/D3lIxdbFxaFE0Rva7NuUJrNHIUU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fOBsCwl8PZmYMhr2B3cEzDuGa9c4keFEE/2sCKG1grT3Ek7tSKniIgisAUP15RezmyQNYpStp+QZOIiAB9yVseoDENwpXGHsBAU96ZGRu04CsH10TVsdUJj+tjJ2i5DCQv+m7OZu340zAv8ZIXQjl6fLYCYMBJUpPKandjDugCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ag5L9Z+I; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52cdb9526e2so1517294e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 03:28:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719484117; x=1720088917; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CSObqPp2o1ZiYQ9QL2aHPTL2pT8TeTrCT9cgEet+VS0=;
-        b=Ag5L9Z+I592aqHXctVkLrZJ9h/DUblkid9UEZiBEVmJQ+7sj5l3j87WUN0V9Bm1AyJ
-         vYiYKaDUGHKBQmTusJ5o7C7/teErxYAIm5R43Z0fcwJHo5gtBTLnLCN7t0dHEMg0Xd1Z
-         cdOWFBXhCwpnS4lR64bJ8MnIYnL5RdSw3F7Bfb7yLOCuNbMqhHk+jGsIi+X/g3kiCM2X
-         wqSEZ4tStZQa4g8pCfOIJW74wkcJHtgvsIpd/2kFqxjz6GwDciKLzlHccMr2c8TAN7fj
-         Sr6/VNfBZAzmP/fbxhGRKDZIto1yYRGQCYBNT5//fXTNqvrXmygrrnWM+4E6d1nbJuBF
-         6SuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719484117; x=1720088917;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CSObqPp2o1ZiYQ9QL2aHPTL2pT8TeTrCT9cgEet+VS0=;
-        b=JSKDAeGt+GGJAx54uZaUcP+7bpL4lJ2ZZnzWgRLXNK1WgLRqMzy+HbqHE5k82/rYHQ
-         PQqLr93YJF8sgq4Kg3pikAaMbRhCWeNcs/876zAhGGEwKWo24n2InoGUiHrS1PReWj9Z
-         tdhfCgsm0muZgzccJ9BjVCPmDDLFonPwgDecw3+RvKLGI4Eq8yqInyNw/2wYlIW+boVI
-         jtWHOtjxWrFG5PKg0nauBHq7PYshutHbMJ+qVY6tTJW9Bmkauf25gnDDYdb27+nRlkaV
-         HIjsd8D0OFQnmhFVO2xfFVAzgpWEQQiTr5/zbMKWRJD3OVtJ/f+PXqggeiw1UFVNz3Yy
-         /EIw==
-X-Forwarded-Encrypted: i=1; AJvYcCWeQf5X36vTzauIQeIWZ6yXlfgL09MRR1BmsVN6ahxE6gszEsubQzPAe+ksVE3U/MVF5Kb7KYmPN6IiCkeuEXIniBGqSyEUszIAWOqx
-X-Gm-Message-State: AOJu0YzPRD/Arm1RMO+OrTlDfPlV4BF6p+sRTRWrn+/91H8I9pb8SuQ8
-	91kACCM+W36xJ+wFpFv5tuwYWii/cdLgccwtZmS1JyuRqyc2dkGswSgyiQRqfVE=
-X-Google-Smtp-Source: AGHT+IFKQsbMqpoVnTPZEnzGX8hY6FDAKEvfJirsH2ST3SdWpnd2QjBxD18elzS2fRWAkQeb/uWTSQ==
-X-Received: by 2002:a05:6512:158b:b0:52c:dbdd:92e with SMTP id 2adb3069b0e04-52e703a40cbmr471883e87.26.1719484115347;
-        Thu, 27 Jun 2024 03:28:35 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e71305ebbsm154630e87.126.2024.06.27.03.28.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 03:28:34 -0700 (PDT)
-Date: Thu, 27 Jun 2024 13:28:33 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Ekansh Gupta <quic_ekangupt@quicinc.com>
-Cc: srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org, 
-	gregkh@linuxfoundation.org, quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org, 
-	quic_chennak@quicinc.com, dri-devel@lists.freedesktop.org, arnd@arndb.de
-Subject: Re: [PATCH v2] misc: fastrpc: Move fastrpc driver to misc/fastrpc/
-Message-ID: <jxfdfponl5eo42imhsut7rckqafolnqooifpn77fgsn26elkwi@rsvxfjzvkjxp>
-References: <20240627084628.1590453-1-quic_ekangupt@quicinc.com>
+	s=arc-20240116; t=1719484156; c=relaxed/simple;
+	bh=GELWn5JWIe4WVSe1h4iG5+t5T7ZIxD7YH6MbfCELx/c=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=T5Vl0JBmzsTLczSDEds8LVWa4F2YnihTJHTmYAsfverX5gB+ncxN5c1i5AOPSGVMB9TEWCBMnePuIyK6CuoFrX5syBuSeuCzt03ryHIhwJFupNrq0NtqEfT+CQUtoNGZPE7oeNPD0J4NaX3oySrmHBtmlw3NwM/z7Ahpb3HJcoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=n9G7MSQ4; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
+	s=s31663417; t=1719484137; x=1720088937; i=frank-w@public-files.de;
+	bh=D5NGZ7FBqBdRj1CxmbyFuu09/ZpTa0X+w9fUYiQA4SQ=;
+	h=X-UI-Sender-Class:Date:From:To:CC:Subject:Reply-to:In-Reply-To:
+	 References:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=n9G7MSQ4uPHWwI+yEE9Pz5PFTD2oI/SBdgyhok0S9hkRLC4Le0GJnGrLmlPHyg1H
+	 sThQYQb0HCBHZxETLN8z4vwIJzQbWmtKRCuqVzpo2vnY6w/YvPlgTtLFENLaFve0O
+	 7/AXviXqldaRqZSsF6S7hgucpefFWIcxb12la8V01XhA2MkGiNvZqRm+f6NlELsn/
+	 +lu7EvZ5K30+nuMjKV1f7hPv+aumVxItPk22W0IvP1CXOauFFNfHasqPd+UFZaP7n
+	 xtybmIPqyhkvW8hGwjsBL2loNWruC+slMPXfwuR9Y7Rv9MXqGriC2A+KwRTNF8cxf
+	 dshYBf+IKP4hfa3zHQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [IPv6:::1] ([80.187.71.1]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MaJ7v-1rqcUn3xm1-00Vo5B; Thu, 27
+ Jun 2024 12:28:57 +0200
+Date: Thu, 27 Jun 2024 12:28:54 +0200
+From: Frank Wunderlich <frank-w@public-files.de>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>
+CC: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+ Daniel Golle <daniel@makrotopia.org>, Rob Herring <robh+dt@kernel.org>,
+ Frank Wunderlich <linux@fw-web.de>
+Subject: =?US-ASCII?Q?Re=3A_Aw=3A_=5BPATCH_v3_1/2=5D_arm64=3A_dts=3A_mt7986=3A?=
+ =?US-ASCII?Q?_add_dtbs_with_applied_overlays_for_bpi-r3?=
+User-Agent: K-9 Mail for Android
+Reply-to: frank-w@public-files.de
+In-Reply-To: <726f2ed3-675f-45e8-94f0-d392181e7f92@collabora.com>
+References: <20240608080530.9436-1-linux@fw-web.de> <20240608080530.9436-2-linux@fw-web.de> <trinity-82c94d49-2a78-4470-83cd-3c6747e01849-1719434738199@3c-app-gmx-bs52> <726f2ed3-675f-45e8-94f0-d392181e7f92@collabora.com>
+Message-ID: <951E802C-1B53-45C4-B3E6-4A3400F47214@public-files.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240627084628.1590453-1-quic_ekangupt@quicinc.com>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:GQ81Q1zMBThpI//1P+HkTAUBlpTlOxo+qxvTc9TAMiOK9giLFEo
+ h3YILAMhlW6igT41eOkAQu5PFe/3tORpWonl/JeUV46oIc4ucqt7Gt3e4lREBAA3+fg+Ef/
+ 3Kp8dlsKQwlO/ccpitJ7zNC37XnxutY0VPXEMSPkJSL5X1cUeyLpxBVnORhSF8R46/sM+DF
+ z3drwJueoPBukzSRyDleA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Zt1rFlEjGSc=;DqDpGYepkvNHUBa8OktHl8cu696
+ hNNHFYR4v9cr/X9qvsueO0bEhAelCWcntlu9hUUZlaAwFTuIwlaQQwG5qSk7TSte0l+LLaFxe
+ aMvED9wnNU02QiWakFEVKtCAuoSRv6Zey8Xgqzn6KJPhqdbAV/gqI6bJ4IDQeoEZw+qaRmLNR
+ KUtn5+rr+dmY1ZvZY14l7n54t17hSI0sXzfDeU7w5wwGzqoBmHaMi+1NRtIjJWhRBLdOnj144
+ pTO74Hh7pbGRPYhWqsu68/d5DMGvSRcgIvqsHXYoWJMAX5Xs0eny8heGOEa7n80BZi069wNKz
+ rkv8HTrk27LX5vqRn5mNPhO27o6qMo48wqc27sjtSi38vP0Bjr6lVF79I8aNJwqG/VyvFoa5/
+ UGDONGw9u2xS9Q+liZh+dqmshGGzVCwDOCwoZrJIg5UM2VJy5E5XK23AMGGnRTe3WTkGXXF4v
+ O3B9KJXuJMmmJrVBn0BqXChr+wIqGsj0i6GF7QTEYz/R7SkFqheD0jfX03JIdzg8GnTRVVFr3
+ VG7FzMJpiNAPOwUP9DWXXYRCyMicXHmKCFz1wotVQjsna5a5/Zh8ctb17O/1VZXK5Yfal/jB4
+ oNO/LIGhg7VdM044uaA81TfFxeoG+w8If74ISzMN700u6yh+FJjlat7WYsEsO6kzUKjI6/jR/
+ 7Zpg+nzgelZoe+j3dgChRZBqUWwXmL2U+g/jimhnDcQLPh/1zNpc3IqGxZS1mZv5y3QHnp+Rp
+ miYqSClYnyLF7B3GJxJbdDmGwREJXPied0/Ql6qXi5HsAk03UrJswtw+aizT93Dqzb+6DEXQE
+ /+g5erp4o0fxOaSnuvKLl4GbW07evTXILBh7kGG6C4430=
 
-On Thu, Jun 27, 2024 at 02:16:27PM GMT, Ekansh Gupta wrote:
-> Move fastrpc.c from misc/ to misc/fastrpc/. New C files are planned
-> to be added for PD notifications and other missing features. Adding
-> and maintaining new files from within fastrpc directory would be easy.
-> 
-> Example of feature that is being planned to be introduced in a new C
-> file:
-> https://lore.kernel.org/all/20240606165939.12950-6-quic_ekangupt@quicinc.com/
-> 
-> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
-> ---
-> Changes in v2:
->   - Updated Kconfig.
-> 
->  MAINTAINERS                          |  2 +-
->  drivers/misc/Kconfig                 | 13 +------------
->  drivers/misc/Makefile                |  2 +-
->  drivers/misc/fastrpc/Kconfig         | 16 ++++++++++++++++
->  drivers/misc/fastrpc/Makefile        |  2 ++
->  drivers/misc/{ => fastrpc}/fastrpc.c |  0
->  6 files changed, 21 insertions(+), 14 deletions(-)
->  create mode 100644 drivers/misc/fastrpc/Kconfig
->  create mode 100644 drivers/misc/fastrpc/Makefile
->  rename drivers/misc/{ => fastrpc}/fastrpc.c (100%)
+Am 27=2E Juni 2024 12:10:17 MESZ schrieb AngeloGioacchino Del Regno <angelo=
+gioacchino=2Edelregno@collabora=2Ecom>:
+>Il 26/06/24 22:45, Frank Wunderlich ha scritto:
+>> any suggestions? hoping it does no laying around so long as v2
+>>=20
+>
+>So you're trying to just test that the overlay is valid and can actually =
+be
+>overlaid to the base dts?
+>
+>I'm not sure that this is the right/best way=2E=2E=2E and I honestly have=
+ no time
+>to check that *exactly right now*, even though that should be=2E
+>
+>I have to be convinced of what I'm doing before applying patches, and I k=
+now
+>that this was sent a bit of time ago, but I really didn't have any time t=
+o
+>dig into that=2E=2E=2E let's see if for some miracle I can do that for th=
+is cycle
+>otherwise it's going to be the next one=2E
+>
+>I mean no disrespect to Rob who suggested this change, but I still want t=
+o
+>check that on my own before picking it=2E
+>
 
-> diff --git a/drivers/misc/fastrpc/Kconfig b/drivers/misc/fastrpc/Kconfig
-> new file mode 100644
-> index 000000000000..7179a44eda84
-> --- /dev/null
-> +++ b/drivers/misc/fastrpc/Kconfig
-> @@ -0,0 +1,16 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +#
-> +# Qualcomm FastRPC devices
-> +#
-> +
-> +config QCOM_FASTRPC
-> +	tristate "Qualcomm FastRPC"
-> +	depends on ARCH_QCOM || COMPILE_TEST
-> +	depends on RPMSG
-> +	select DMA_SHARED_BUFFER
-> +	select QCOM_SCM
-> +	help
-> +	  Provides a communication mechanism that facilitate high-speed
-> +	  Remote Procedure Call (RPC) mechanisms between the host CPU and
-> +	  offload processors Qualcomm Digital Signal Processors (DSPs).
-> +	  Say M if you want to enable this module.
-> \ No newline at end of file
+>>=20
+>>=20
+>>> Gesendet: Samstag, 08=2E Juni 2024 um 10:05 Uhr
+>>> Von: "Frank Wunderlich" <linux@fw-web=2Ede>
 
-Nit: ^^
+>>> Betreff: [PATCH v3 1/2] arm64: dts: mt7986: add dtbs with applied over=
+lays for bpi-r3
+>>>=20
+>>> From: Frank Wunderlich <frank-w@public-files=2Ede>
+>>>=20
+>>> Build devicetree binaries for testing overlays and providing users
+>>> full dtb without using overlays=2E
+>>>=20
+>>> Suggested-by: Rob Herring <robh+dt@kernel=2Eorg>
+ https://lore=2Ekernel=2Eorg/all/CAL_JsqK_3xxD0DFwipXO85P=3Dq=3DEYjUdjE1_8=
+g1MKtvw3vVzx5A@mail=2Egmail=2Ecom/
+>>> https://lore=2Ekernel=2Eorg/all/CAL_JsqJSi=3DkJSix=3Df3787ULZnaCy_Y26P=
+hdhy5y9fat_vkDuUw@mail=2Egmail=2Ecom/
+>>>=20
+>>> v2:
+>>> make full dtbs multiline for better readability
+>>> ---
+>>>   arch/arm64/boot/dts/mediatek/Makefile | 21 +++++++++++++++++++++
+>>>   1 file changed, 21 insertions(+)
+>>>=20
+>>> diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/d=
+ts/mediatek/Makefile
+>>> index 37b4ca3a87c9=2E=2E0ec5b904d35d 100644
+>>> --- a/arch/arm64/boot/dts/mediatek/Makefile
+>>> +++ b/arch/arm64/boot/dts/mediatek/Makefile
+>>> @@ -15,6 +15,27 @@ dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt7986a-bananapi-b=
+pi-r3-emmc=2Edtbo
+>>>   dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt7986a-bananapi-bpi-r3-nand=2Edtbo
+>>>   dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt7986a-bananapi-bpi-r3-nor=2Edtbo
+>>>   dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt7986a-bananapi-bpi-r3-sd=2Edtbo
+>>> +mt7986a-bananapi-bpi-r3-emmc-nand-dtbs :=3D \
+>>> +	mt7986a-bananapi-bpi-r3=2Edtb \
+>>> +	mt7986a-bananapi-bpi-r3-emmc=2Edtbo \
+>>> +	mt7986a-bananapi-bpi-r3-nand=2Edtbo
+>>> +dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt7986a-bananapi-bpi-r3-emmc-nand=2E=
+dtb
+>>> +mt7986a-bananapi-bpi-r3-emmc-nor-dtbs :=3D \
+>>> +	mt7986a-bananapi-bpi-r3=2Edtb \
+>>> +	mt7986a-bananapi-bpi-r3-emmc=2Edtbo \
+>>> +	mt7986a-bananapi-bpi-r3-nor=2Edtbo
+>>> +dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt7986a-bananapi-bpi-r3-emmc-nor=2Ed=
+tb
+>>> +mt7986a-bananapi-bpi-r3-sd-nand-dtbs :=3D \
+>>> +	mt7986a-bananapi-bpi-r3=2Edtb \
+>>> +	mt7986a-bananapi-bpi-r3-sd=2Edtbo \
+>>> +	mt7986a-bananapi-bpi-r3-nand=2Edtbo
+>>> +dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt7986a-bananapi-bpi-r3-sd-nand=2Edt=
+b
+>>> +mt7986a-bananapi-bpi-r3-sd-nor-dtbs :=3D \
+>>> +	mt7986a-bananapi-bpi-r3=2Edtb \
+>>> +	mt7986a-bananapi-bpi-r3-sd=2Edtbo \
+>>> +	mt7986a-bananapi-bpi-r3-nor=2Edtbo
+>>> +dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt7986a-bananapi-bpi-r3-sd-nor=2Edtb
+>>> +
+>>>   dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt7986a-rfb=2Edtb
+>>>   dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt7986b-rfb=2Edtb
+>>>   dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt7988a-bananapi-bpi-r4=2Edtb
+>>> --
+>>> 2=2E34=2E1
+>>>=20
+>>>=20
+>
 
-Nevertheless:
+Yes, 1st reason is to check if overlay can be applied to base dts (the par=
+t rob was requested)=2E The second thing that was solved is that some users=
+ wanting a "full" dtb without the need to handle overlays in bootloader=2E =
+Due to hardware design of the board there are 4 "full" dtb's=2E
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+So i adressed both in one Patch=2E I myself (and openwrt) still use the ov=
+erlays and apply them after probing hardware in uboot=2E=2E=2Eso for me it =
+is not needed but requested from others=2E Current state was defined as bro=
+ken by rob and for future additions (like mt7988/bpi-r4) we want to have a =
+blueprint=2E
+
+I hope you find time to look into it to have it solved soon and avoid disc=
+ussions like the 2 links from commit message in future=2E=2E=2Ethen we have=
+ a reference for similar situations=2E
 
 
--- 
-With best wishes
-Dmitry
+regards Frank
 
