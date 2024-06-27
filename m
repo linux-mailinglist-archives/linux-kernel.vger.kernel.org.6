@@ -1,214 +1,219 @@
-Return-Path: <linux-kernel+bounces-232829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8331191AECA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:11:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DBF791AECB
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 20:11:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7657B23EC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:11:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C56F728ACE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E786719AA4B;
-	Thu, 27 Jun 2024 18:11:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0037A19A2BD;
+	Thu, 27 Jun 2024 18:11:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="f/5w2mTI"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2056.outbound.protection.outlook.com [40.107.237.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vOcG71iL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32C4B14D6EB
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 18:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719511880; cv=fail; b=SS3YrhZ9NXLjbQiQbpsYrpTo/jOCzrA451citdmuzqzJRIk+RBuRx1OZWXaZXoucYCO2Cl0RLLt1Y6e15rsySrFlfaK8c3XIBg9xOYwmuEZVUGMD+0t5uBhjTyqI8wWTg4vezLwRzwZXh6F2wKqI4pM4rWGltcGlDRfwmwodC/M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719511880; c=relaxed/simple;
-	bh=Zr1HJm5XvE8OAS9fzcKxBVBwXAfp5SkG4HWu1HFPK4Y=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=PLpHLuzwoxQM1SGa/oCYlyuGHm5MGc1F7aKsgw019OdpEVtxQAnG2/2Xd58atgwuFOmCt3mW3+idUCcJOlEcjnKFMtwTGUfFvP0vBt+fpWpZgh0Q3XC+iHKnIjNbD7n/1+wY/fy9ra6lG/5hZRPJO7GOABkbqG6f4AbyCAc6AEg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=f/5w2mTI; arc=fail smtp.client-ip=40.107.237.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Wr84jJFF/EVtFDqPTGk3ii+jiNQRhmv1K4vmXrA8wGWQJp84nbo1CpK3LTCbTN8UNAYcpycLmdoOlZRIx9dSdhg+2PHzi/bsPxZel1NaGUC9vuYmsirHR7czngSdNst2ctrrJAXzgOtT5DlxSqHxgiH7+UjcTldRFn2KOH51V1KZEwJRTDXmf9K/sR60Sss8jkmIalA7QWneSzy9PoMrlG7BRuOpqjy6N/eWGBVymurE8Ic9Gye3h8BJGsS4hfFWLbpQWW4ERa8tnnTxrccDefNSsbqx9At/lz/6qFZ+P654+feP5UVSeSlEgFS8oJPgFLUkSgoip8f39p2MI2lhXA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1ziAs8fCn6+O5lONWFNNM2p7glSAr2xCdcUUZ/gugp8=;
- b=Kb5Iqkzb9WonERLUE17i46UsW/bU3Hch+d5+vuvbaMDMcVslX2CpCFRm+yJbU3129nM8QvPCBsPdLkET49o4ELVM5NaLDVhzSQveo0GYyABbSixaVE0u0OsDPJKhtQEf7Mxf4FjNImHneq67ACvzyBO9gt1+t7qIUKBLauTN3x0aUHFd+KCwqPjgu7m5hvf4xIUQ/9IrvAovTJD16uCA781ikh1xSI4suM9AgPHLpHd2A3vSOVfVdPAfBQvecGWtxiQLqy7Nd6Cr7lMD4fbVm0U2QEXd8jnLrY21hzNoEcjfPEfg4DZv1NVAtWywjo/RMRa7R25+YamSxnABqj7BTA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1ziAs8fCn6+O5lONWFNNM2p7glSAr2xCdcUUZ/gugp8=;
- b=f/5w2mTIsBpXvjAd+Sxnix11juDhEnbvMvJ0lnAnC963OBuVUrwUuYWAMpwY9fkxTOi6jxG8LbKDlZ/G52uovSqnQjErYhgEo6PnTTM+mOwd+mRLsElT7dSCZ2aDmIp5bO5K7IuE0nbPqKcQ5aoaAqYN0FX950N0A56ucOuv/eE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by SA1PR12MB8886.namprd12.prod.outlook.com (2603:10b6:806:375::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.26; Thu, 27 Jun
- 2024 18:11:16 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%6]) with mapi id 15.20.7719.022; Thu, 27 Jun 2024
- 18:11:15 +0000
-Message-ID: <a160a3b4-1193-490c-aa25-8761142f4e08@amd.com>
-Date: Thu, 27 Jun 2024 13:11:13 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] drm: panel-orientation-quirks: Add quirk for Valve
- Galileo
-To: Matthew Schwartz <mattschwartz@gwmail.gwu.edu>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
-Cc: John Schoenick <johns@valvesoftware.com>,
- Kyle Gospodnetich <me@kylegospodneti.ch>, Hans de Goede
- <hdegoede@redhat.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Matthew Schwartz <mattschwartz@gwu.edu>
-References: <20240627175947.65513-1-mattschwartz@gwu.edu>
- <20240627175947.65513-2-mattschwartz@gwu.edu>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <20240627175947.65513-2-mattschwartz@gwu.edu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA9PR13CA0126.namprd13.prod.outlook.com
- (2603:10b6:806:27::11) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED27197A87;
+	Thu, 27 Jun 2024 18:11:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719511906; cv=none; b=iZzXMy9FXmx2HulZXd2GIe1fGTutvAq28PQa68X8WPRLyX2V008HlJIH6rc3OdmwxD5jkytHEWWDaQGOJ0SiyCRob5gC++WOOgoHbh04o3eGToB074MtjggAJqnDLgsS6SQAEgdmafuWnuEHYZ54v9nsF5859MVHyIrL71+nGyk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719511906; c=relaxed/simple;
+	bh=tGr5k+UOROok+owllKktrHzabgkRJenLZBubo0DTG0s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iDbThCbackWPHxF2o37vwFXvdeA6SGKVMmEJiF4whJl6zKzWdmkHszSX3WddNnjJXZyygQFVjQwOU9l9Oq/Q3BwAhkT31wbo+nnFuMIVAckT9MmvrVpdTk3sfVyAFQ4hWP0VtH3OOjYFAwGtvWLAqxdAweREmJY7/WHfea4ohZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vOcG71iL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E493DC2BBFC;
+	Thu, 27 Jun 2024 18:11:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719511905;
+	bh=tGr5k+UOROok+owllKktrHzabgkRJenLZBubo0DTG0s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vOcG71iLpKz+8wzdjAeKoZo7nbkQl95XMMfEZxdbS4o7jPa+lB+lWeK4f9WmX2PhI
+	 ruGfWLpb2elb+eUFkecEt1ZgWHPDQjOlNM7Ep1cA2HoZhykr2jVnbsTvCkbtdc4SFX
+	 q3Pf8Eca+NRGe8O1VQmMmccnPrAxQKPyrLQg0uB0yewqr8MGqP7nHyFSU0eshQVb36
+	 qGHsTgY8zReYc1tNSIwFIi+n10kKIfbH4lwPvJ7ydhpSrWCJ0gYEWcujBwD5FVRFdX
+	 28AuCIeN4JVkB0xg7D6c4hfIWbBAMt6ISKkRGnILp5jActD5QhtV5my0aUutf7g0gS
+	 TYHXz/hg/69IQ==
+Date: Thu, 27 Jun 2024 19:11:38 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Jesse Taube <jesse@rivosinc.com>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	linux-riscv@lists.infradead.org, Ard Biesheuvel <ardb@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Wende Tan <twd2.me@gmail.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>, Chen Jiahao <chenjiahao16@huawei.com>,
+	"Mike Rapoport (IBM)" <rppt@kernel.org>,
+	"Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v2 3/3] RISC-V: Use Zkr to seed KASLR base address
+Message-ID: <20240627-wispy-reconfirm-75fd034e62ce@spud>
+References: <20240626171652.366415-1-jesse@rivosinc.com>
+ <20240626171652.366415-3-jesse@rivosinc.com>
+ <20240627-proven-irritably-33594282739f@wendy>
+ <762bb09d-af48-47e0-9d65-f530ff37cbc9@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|SA1PR12MB8886:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8521ea01-5617-4be6-a41e-08dc96d48925
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?c3EwUjY0a3EwelJBSWJxc2M3VjBVbE1WcGNUSnFXZWEzQ0xXNDZKTjBXb2tZ?=
- =?utf-8?B?RllBSzcvSE5DdFpVcXVyU2NQSHFVbjRtTFBmWEk5SFllOFFheFVtZGhnWE1s?=
- =?utf-8?B?OGJhbzMxWmo2Rll0dXNMM3liV1g5aFkyQU85U1ptRDNYWTdhY0t2TzUxNk9V?=
- =?utf-8?B?a1lES3FrcE5tVDEreklDYjFuS2JhYWpWam1XRTBoUUIrT3RmRENwRXRMY09T?=
- =?utf-8?B?NG4xRndvS1NjUXFybFZWZUptNnAxeGoyNkhXR0REanVEbjM0NEhlOW5BWmE0?=
- =?utf-8?B?dE1KZzNyUHlaTTI0bUhYV0NkV0U2Q1lIVVlYQklrcUxsaTE2NkFkMjZkYXhz?=
- =?utf-8?B?azhLVVBKOXV2SmFKRjZnaXIzcXdpYlFRTFFtbkE4bWxva1pHcjB5emlqMTUy?=
- =?utf-8?B?bFlDMUdXVTlGaFBZVXh0bWVlUnlESmZwZ0NFU21xaVpDdzloSlo0WHBqT1hu?=
- =?utf-8?B?OUxpcHZDUlloRHlrTDdqY1ZXbkhTMTRFaUlZbkVobWxvaU02WGhwMmpVQlJ4?=
- =?utf-8?B?aERld3BLSFlNWlUzY2FpMTZqUFZUbEU3V2xKZVF2cHNZcVdGYXMzMkpwenRP?=
- =?utf-8?B?dmdyRmlzWlJEK2RnVUZFd0lCMWlrK0NTbDR2N0lJWG1PSzF2Q2RuOGtxRnNS?=
- =?utf-8?B?ZDNRMVpsMThhRmtDTXFIOVkzdVRpa3oyVmNCWExOK3JKU2NFQ3dBZUtnK05H?=
- =?utf-8?B?R1ZPWDJYZWZseW1IWGMwYnQzNkN3Vzh1ZFN3b09OWVZYSlN1SnNRemppbDB6?=
- =?utf-8?B?allUU0hZVXZXUEMveGlGL3dkYSszOWVkZXpDUkh1WnVaWFZxdThnN0ZVOHla?=
- =?utf-8?B?MEJVODFPaGJaOG1lT3FrWnJ5L0Y2cERxa1V0OTdMcTlhVXNrdHhuSE5QeC85?=
- =?utf-8?B?dFpwaGlmN3BKMS9kTkFRZWR6cWhGdk4wK0FPRTZaQk8vU3pFd1RMNllYcFkx?=
- =?utf-8?B?SEN6aW5CUmhiMElDUnBnQlVzcnEwdC80KzBEOW9OZGtMMGpIRW16VTdLNVRa?=
- =?utf-8?B?aUcvSDNLbFBGMzNTY2RmcGVtRHJjN3Z5OEVDZTdOL3BrYWdoYTBSa1k5WkVW?=
- =?utf-8?B?OUhGdmVQR3pmTkYrY095S25SZVNscGw0b0tYT2krNW84UklmakJwbm1ndFZZ?=
- =?utf-8?B?U3NMa2dmeGM3VmNYREhRQ1J3bzdkZHN4VE4zYmxkOEUvbFJKYm9SbWpBbHI1?=
- =?utf-8?B?OVE4VXZxSVpZUTZaMkNsdm1YS2pJdkU4Ky9HaEZ6VHNBN21OVVgwR3JNcmEw?=
- =?utf-8?B?Y2tMdFIxVDlyYjZsTmJTa2tZeGc4aEppMHFranUvaDRWU1FNb3pySFZhQ1Iz?=
- =?utf-8?B?K0ozTWlneWxqbWNMMXhtekdadUFHQis2MTdNR0tzMXFKcnNtSjF5T0hXKzdH?=
- =?utf-8?B?eGpEOTNuM2RCcVVkekNrbEUvWG0wMnJac085T3BwYW45cUoxZnkyaHA1cHEy?=
- =?utf-8?B?R1FGMzBTUHc3ZEhEUzA0SnZvbklnL1Y4QmRuZGRNQUlNbkxSZmRYRHU4L2p0?=
- =?utf-8?B?OGdKNnVSckhQK1A1ZUQyaUpjbXJjdERhNlNRay8wa0VnUjg3WCsxRU9kemt6?=
- =?utf-8?B?eFU5M1htOHYrYmtTTlo2VEdOU1gxZWRHL0NTbi96T292eWZ2NGNGbW04dVRx?=
- =?utf-8?B?L0lTdlBMM291a3pOMkh3QlM3UDVqd1V3Q1pXSzAvYlZaamg3Rm4rZEpkNHZa?=
- =?utf-8?B?YlJqdWJXb2JUUXUyWU4vZUIyYUFrMnIwZjFmUU8yZjZGODV3b1NHenJuazl1?=
- =?utf-8?B?NEtIcFV0c0wyTDdGSEN1c09BM25mWmNnbWFkYUlieHREdTlpSmhYREdXbVNm?=
- =?utf-8?Q?QIV6trDUiQnBvu775aXxFx37Fd1BaGWd+09ow=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dnV1QklPNTcrbmpqeUhVZmtjcEdLUG53OExEZ2FuMkVHU0UyU3hzbFQrRktN?=
- =?utf-8?B?bUMrRUxsMDNvVmp6TlE3SGFqb3JQNTVyVGFZQzlsWFh1Y0xycFNaM3FmMnAy?=
- =?utf-8?B?MFRwV3lZN3dmRlcyQTZMZm8zWGVpcVJKeEtldm5PVE5BVVBlcHM4UnRxeXRt?=
- =?utf-8?B?dlQ3TjdwcjltSHcvb2c3QmI5Y29ZSjhiMkE1MkxxNHVOa1VZYkh2SGlDZGlB?=
- =?utf-8?B?VmcrdDZsam54cTVCMHdDSzIzeW5qa1JsY3VJUUI2ODVzUW5tMEVvblZwdUUw?=
- =?utf-8?B?WHBjSllMLy9oTGxUcUFqRGFoNG56MWxVR1hqTVQ1eEg4c1BXTmFOY3ZKZ3dP?=
- =?utf-8?B?Tmdsb1plbERPTkJCYlIzSzVlRDI0UnZXcjk1ODZjOGdtV2xsVUdzTHRqbXl4?=
- =?utf-8?B?MlNsczZPZ3dHZi9uS0FUQnJBRktMa1dsT2hyQ0ROMlZGY2VkV21mUkhFZDRl?=
- =?utf-8?B?SnlJWlhIaXdyME1raVNuN0xlZHRmRElTMk9RbGxsY0pnb0lNbFUvYlFsdk4r?=
- =?utf-8?B?V3k1ZGcrS242VkRxTjhKajdTVDMxQmd1dmdLN2kyUlV5bzNrd2pDaVBzVzZT?=
- =?utf-8?B?S1llMVJHb0hJSVB5WnptanFraFdpdG1OZ1ZxOFNhQmdqL2ZSMFNLU2E1QkdW?=
- =?utf-8?B?WEJUYmVNQ1ZLZE1qWFhQV3FGYS9XZWtoaW51RFJXWlBnN3pCRUExRERCakRO?=
- =?utf-8?B?NnpvY3lpNGZrbWhoNVliVDNJWDU5MmtCZkh2bmJwdWhKUFZ4c3hBN0lNekhh?=
- =?utf-8?B?cVJQaWIyU2xiY3BsZmtZbGFXa0JzZ0g0Wi9JamttclBNUXg3VW5LaS9FRS8r?=
- =?utf-8?B?Um1CWEdpeTVjOU5EdWlXbFM3WWdhUXgrN0t5MUN6ZlNYdTcrWFRwSFVIdHNu?=
- =?utf-8?B?SjYxeEFtRlQ2WGNMam9kYjcxTmN1MitnSzVla09OeUNKNi9WUG4yTUlPdDJ1?=
- =?utf-8?B?RmticG9YclV1djVpV3pmQklyVURiSFV1cFVhdXV1UmIyTHpYUFlKeUNNZGwy?=
- =?utf-8?B?T3gvdUlEZ3VmUENaRkNNTGl2M1RHTVAyTCtreklySXRmWlhRbXJuTXh5dm1N?=
- =?utf-8?B?LzZTSnJBRmJBQ3VhYjBYQkpVcFhmNHl1b1AxYlJMNWRrdkZVWDZRZTloS0VG?=
- =?utf-8?B?enBUNk5WdWJ1dVJaMkc1QTRmc0FBd2JJWTU3S3ZGWXViU3hPWkdlM0swc0RX?=
- =?utf-8?B?TXdHcnV6VXZtRlBDRDluc3Y0ZUNFYk9yM0Jtbk56WlVyRnB4aDdrRXZOazVj?=
- =?utf-8?B?dHYzY0c4am1VcGhmYzdIOXFOWVhYcFd1dmhBWFlsdEc2WXBpN0d3Q1h0Rjg0?=
- =?utf-8?B?MTkzbit1WWt4SHFJcm13ZmlGbVRRMGk3ZmxmZWJBckc0WUZzSEMzaFhVanN0?=
- =?utf-8?B?SzYxL0lmQTMrOUV4MXBKczQ1U3ArN3dJaG5pYkM4MUpYeG5tbjhHN2ZxZmVY?=
- =?utf-8?B?WEtXREoreXZmUUR0ZnhGNDAxbVYyZUtUYlFzOXJyV2dmWEszZEFlRmFlTlp0?=
- =?utf-8?B?UFlJOXBrQ01OeDE4S1p0ZUNIdlJyYXhIZXRLN245M0F6WTN0aSt1SFJMV2lR?=
- =?utf-8?B?aVlCK1YvZmc2a0pHVUM5Sys5b3NtUFVPYWtXQUt5UlpKWjNncWlqQ2VGaHl0?=
- =?utf-8?B?ZXRnU21xbW5IUExnTzk2dk9yZmhGYk52cFhpMHJzNTZKOWR2UmdpY25aemdk?=
- =?utf-8?B?OGFvNGRBMlpyM3JKTURJdkFMQzRpcXE5T0VZT2JtYUs2UDFRTkVhZXBpbVZ0?=
- =?utf-8?B?SjdOa2lETURBdUUyblhRRnBiOStnMkc0b0hKZ1U5QnRCeTZyR29YTmZjRkhI?=
- =?utf-8?B?OGNIZ1p1TW0xK2Y0TDZ5VHF5eWVlZmhPRmtvamlmNmp3L3FmV1ZiUFU3alZH?=
- =?utf-8?B?SU43ellOT2VGUEdkcENxbGRBVE40MTE3SlBQSWhpbjN0RW5PTHdLaXRabHRp?=
- =?utf-8?B?OHdCRWhsU3hoQzkrUjdSR1hvTnMyNlpwdnZMeGYxTUdPdURKazdER3VLT29F?=
- =?utf-8?B?ODFvT1hkS1hzclVvU1hXQTY5aXBBK01yZXM0N242WlhzR0R1R1BTNFhKZXV4?=
- =?utf-8?B?T3FIZisrdytsUnhFMExmelBYajhQaHFCeHVSZFEydXRxU2dBMktLR2k0M2V0?=
- =?utf-8?Q?ivtVTTbta9XPvPaa5zaOGTTak?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8521ea01-5617-4be6-a41e-08dc96d48925
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jun 2024 18:11:15.9272
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tKRfGal303xOltkKiEOpnQ/VLggARvEsgLCFIR7SgrtXmlrNeCbJRkT8Ik4tkfwIPjBBlQhTUCXAjCIrFPe6hg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8886
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="CKxq9ZugmAw+mCd4"
+Content-Disposition: inline
+In-Reply-To: <762bb09d-af48-47e0-9d65-f530ff37cbc9@rivosinc.com>
 
-On 6/27/2024 12:59, Matthew Schwartz wrote:
-> From: John Schoenick <johns@valvesoftware.com>
-> 
-> Valve's Steam Deck Galileo revision has a 800x1280 OLED panel
-> 
-> Signed-off-by: Matthew Schwartz <mattschwartz@gwu.edu>
 
-Your S-o-b should be the last thing in the patch commit log.
+--CKxq9ZugmAw+mCd4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Suggested-by: Matthew Schwartz <mattschwartz@gwu.edu>
+On Thu, Jun 27, 2024 at 01:55:19PM -0400, Jesse Taube wrote:
+> On 6/27/24 07:45, Conor Dooley wrote:
+> > On Wed, Jun 26, 2024 at 01:16:52PM -0400, Jesse Taube wrote:
 
-I think in this case the specific Suggested-by should be for:
+> > > +/* Based off of fdt_stringlist_contains */
+> > > +static int isa_string_contains(const char *strlist, int listlen, con=
+st char *str)
+> > > +{
+> > > +	int len =3D strlen(str);
+> > > +	const char *p;
+> > > +
+> > > +	while (listlen >=3D len) {
+> > > +		if (strncasecmp(str, strlist, len) =3D=3D 0)
+> > > +			return 1;
+> >=20
+> > How does this handle searching a devicetree containing "rv64ima_zksed_z=
+kr"
+> > for the extension zks? Hint: https://godbolt.org/z/YfhTqe54e
+> > I think this works for fdt_stringlist_contains() because it also
+> > compares the null chars - which you're not doing so I think this also
+> > brakes for something like riscv,isa-extensions =3D "rv64ima\0zksed\0zkr"
+> > while searching for zks.
+> >=20
+> > > +		p =3D memchr(strlist, '_', listlen);
+> >=20
+> > Or how does this handle searching "rv64imafdczkr" for zkr? It's gonna
+> > run right off the end of the string without finding anything, right?
+>=20
+> Yes...
+>=20
+> Is that a valid isa,string?
 
-Suggested-by: John Schoenick <johns@valvesoftware.com>
+It is. I wish I had just not allowed it, but I was more naive then and
+figured we should allow whatever the spec did. Technically versioning of
+the extension isn't allowed, but in the wild people do put it in, so I
+believe that a parser shouldn't break when it encounters versioning,
+even if the regex for the property doesn't permit them:
+^rv(?:64|32)imaf?d?q?c?b?k?j?p?v?h?(?:[hsxz](?:[0-9a-z])+)?(?:_[hsxz](?:[0-=
+9a-z])+)*$
 
-> Link: https://gitlab.com/evlaV/linux-integration/-/commit/d2522d8bf88b35a8cf6978afbbd55c80d2d53f4f > ---
->   drivers/gpu/drm/drm_panel_orientation_quirks.c | 7 +++++++
->   1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/drm_panel_orientation_quirks.c b/drivers/gpu/drm/drm_panel_orientation_quirks.c
-> index 3d127127e7cb..ac8319d38e37 100644
-> --- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
-> +++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
-> @@ -427,6 +427,13 @@ static const struct dmi_system_id orientation_data[] = {
->   		  DMI_EXACT_MATCH(DMI_PRODUCT_VERSION, "1"),
->   		},
->   		.driver_data = (void *)&lcd800x1280_rightside_up,
-> +	}, {	/* Valve Steam Deck */
-> +		.matches = {
-> +		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Valve"),
-> +		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Galileo"),
-> +		  DMI_EXACT_MATCH(DMI_PRODUCT_VERSION, "1"),
-> +		},
-> +		.driver_data = (void *)&lcd800x1280_rightside_up,
->   	}, {	/* VIOS LTH17 */
->   		.matches = {
->   		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "VIOS"),
+> I will try to copy how cpufeature.c as close as
+> posible.
 
+The comments there should be fairly understandable, but that parser has
+a different goal to the one here, so you should be able to make things
+simpler. I hope at least.
+
+> > Handling "riscv,isa" is not trivial, but at least the search for extens=
+ion
+> > approach here skips dealing with some of what has to be done in the "re=
+al"
+> > parser with the version numbers...
+> >=20
+> > Maybe we just say screw "riscv,isa", as it's deprecated anyway, and onl=
+y.
+> I think it's important to have.
+>=20
+> > add this new feature for "riscv,isa-extensions" which is far simpler to
+> > parse and can be done using off-the-shelf fdt functions?
+> >=20
+> > If not, then I think we should use fdt_stringlist_contains verbatim for
+> > "riscv,isa-extensions".
+>=20
+> Ok I had a notion that riscv,isa-extensions could be upercase they
+> cant/wont. I will use fdt_stringlist_contains.
+>=20
+> > and introduce a custom function for "riscv,isa"
+> > only.
+>=20
+> That was my original thought I will do that.
+>=20
+> >=20
+> > > +		if (!p)
+> > > +			p =3D memchr(strlist, '\0', listlen);
+> > > +		if (!p)
+> > > +			return 0; /* malformed strlist.. */
+> > > +		listlen -=3D (p - strlist) + 1;
+> > > +		strlist =3D p + 1;
+> > > +	}
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +/* Based off of fdt_nodename_eq_ */
+> >=20
+> > Why can't we just use fdt_nodename_eq?
+>=20
+> Because fdt_nodename_eq_ is static.
+> I will change the comment to "copy of fdt_nodename_eq_".
+> Oddly there is `of_node_name_eq` but not `fdt_nodename_eq`
+
+of_node_name_eq comes from the kernel, fdt_nodename_eq comes from
+libfdt. I figure the former cannot be used this early since we've not
+extracted the dtb and parsed it yet...
+
+> > > +/*
+> > > + * Returns true if the extension is in the isa string on all cpus
+> >=20
+> > Shouldn't we only be checking CPUs that are not disabled or reserved,
+> > rather than all CPUs?
+>=20
+> Its way easier to just check all the cpus rather then make sure we are
+> runing on one thats has the extention. I will add a continue for
+> dissabled/reserved cpus.
+>=20
+> > To use Zkr for KASLR this is kinda irrelevant
+> > since really we only care about whether or not the boot CPU has Zkr,
+> > but in general we only want to consider CPUs that we can actually use.
+> > For example, if you did this for FPU support with mpfs.dtsi, you'd get
+> > told that the F/D extensions were not present cos hart 0
+>=20
+> Can we assume that the boot hart is always 0?
+
+Nah, You cannot assume that the boot hart is hart 0, in the example I gave
+here hart 0 is not available to Linux.
+
+> > doesn't have
+> > them, even though it's disabled and will not be used by Linux.
+
+--CKxq9ZugmAw+mCd4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZn2rWgAKCRB4tDGHoIJi
+0pWXAQDJV/bVVnD9ChN+ne/BYsY76hcJyFnXGcsb19WWlTuwLQD6AsVXQpESVWJR
+BTr7LWT8JXfZoRCczrvBZCSqNsVMvwE=
+=MvYD
+-----END PGP SIGNATURE-----
+
+--CKxq9ZugmAw+mCd4--
 
