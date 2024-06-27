@@ -1,106 +1,185 @@
-Return-Path: <linux-kernel+bounces-233118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B38AD91B26D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:00:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 358B791B26F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:01:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F8ED284C3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:00:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF2451F243FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 23:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952A61A2C1C;
-	Thu, 27 Jun 2024 23:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3CC11A2FBC;
+	Thu, 27 Jun 2024 23:00:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iB/M+Vby"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bImEv+/c"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1FC1CA9F;
-	Thu, 27 Jun 2024 23:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450981CA9F;
+	Thu, 27 Jun 2024 23:00:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719529235; cv=none; b=WRqgJxzhyRHD+oiOpKA7zl6b8OXjXVgEN5EjSCou8cvEFPX9ZBZYbKxqt5hMIqBbYamQoJYTc/5DXt+fhztLx8VI4HwIxRxeHdUAwxC+9ykBVONz7WF4t46sdh5asFxHnP2ohYI42etvSiUCWo8h5U/gPrrRBwfb9MVzrO+VIFc=
+	t=1719529244; cv=none; b=UwcEw4QSrzy5MJBfieGR4pmKVqiLB2g/LOoLcf5hKtc1LqYW5OeOTD2nYZUOSNwWCyEfyTRsb4hEIUl+8Ye11Uky64D4PQrfAZsqvDr279Us11TyJoLZxxTa8HpkKENONqqfcg8cjd6/4+v+H8tWcxSvhTRtaulFUVMHm38j+xY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719529235; c=relaxed/simple;
-	bh=CIO3N+TLnePbA2/TejlgJ3gpGMe8zDGVeHZgQHrVq7o=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ChjBZjMvWhz9mpL6vy3JmC0rwCYoBbscXyhkecUC5dAlaeE6E7Q/VwO/YhsjC8X5pEXW/t+W1je6D9re8clNcCA5gT434NXnj3XYZdPnUNWG8bXBXXyI2ya197Z2t6qIbcT2EixYZ9anIf+iLmfMnW8J5lxEHSCg/4MEnqe3YIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iB/M+Vby; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 41567C32786;
-	Thu, 27 Jun 2024 23:00:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719529235;
-	bh=CIO3N+TLnePbA2/TejlgJ3gpGMe8zDGVeHZgQHrVq7o=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=iB/M+Vby4NoZa6eTHGVCNajOD5zqg8dxjfdG6v5M/i+KhcA77g3kDSoQWHc3Kq8Kx
-	 IOx9Ed0iijSjR97z7w2bqYSvx4iJXcZ4EXd+EVx0OlJS6e54YiOYHa3lpajtdCvDuN
-	 I1EG/+D/Yvkgb1lx8JlrDzieiz5W8WPp8/G3okvRqiMS6VXliO/SFjaIbq7IlMiJaR
-	 BHfu9stTZT8cctdHTn5YDugC7iWkAhjOJZ41hgHheEoE7bXCHIGQQMEYDyq5qdTiF2
-	 HSLZBWSSbOS59F3yu/3UsNtBQ0ck7AUUcqH+bJ7XOK5ZP5q2ea61htpEksyS0spTsI
-	 aSS9I10vSiTqw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 2614FC43335;
-	Thu, 27 Jun 2024 23:00:35 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1719529244; c=relaxed/simple;
+	bh=bgGQ/d7DqnsysiddreU9LWxiDKypE1sKJ6+96W8e904=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=lFEnn7MW5q+Erzwm4gkGa77cCSJ86bzcFYgGcE2ragSiCOwdWi/soSf8A1B6Wz+xKyrcoJQ8oCFej9a2w+L+VdlRSNBv+UIm5ztozrRbzHa82gExps60pw9H4B2j/z/RZVdbeK91INXWjCI4F2/Oxywi5m7yi6vFNFuoLlF2fjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bImEv+/c; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719529243; x=1751065243;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=bgGQ/d7DqnsysiddreU9LWxiDKypE1sKJ6+96W8e904=;
+  b=bImEv+/cHOLnVjJ3TndB5cXOHA6K1QTNmSOi0rPdOBzPqsID2CrUKzuh
+   6dV/hXK0ztWVexWg7Sp4WCPR3AITmTcmgzr7NcdvLw48G6DTxmBPVCxA4
+   TkkYvBKoiLvyBrzfapPwiL18uJM5HVVKpVL5fny0SL3mDMtN6+m+DDQ99
+   oaHk/iFya+TJmzx2PpDY697unXzIiIjQlv/AkAO9JJnNH96ZLTuBShxtP
+   i7H+UH8IVOslBIf2QPtsvT6X6jy5fNV92ZxEamt2wD7UtTSKOCZIhY3Bo
+   FkRQBz3TnCRm1/Zay7fYnewPWeoOTGORAz8GjkWy+JU0TqIsYcfpTaE96
+   w==;
+X-CSE-ConnectionGUID: nhNrh44ERW+UCxia+dN5Pw==
+X-CSE-MsgGUID: /w0jho9RSpefd9OnDVuoQA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="16652791"
+X-IronPort-AV: E=Sophos;i="6.09,167,1716274800"; 
+   d="scan'208";a="16652791"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 16:00:42 -0700
+X-CSE-ConnectionGUID: a32kIUurQHCzq+VY0Rxsqw==
+X-CSE-MsgGUID: IL3M8t2ZTxuiKTxjvYN2zQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,167,1716274800"; 
+   d="scan'208";a="45290914"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.54.38.190])
+  by orviesa008.jf.intel.com with ESMTP; 27 Jun 2024 16:00:43 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+	id 7A82C302A3B; Thu, 27 Jun 2024 16:00:41 -0700 (PDT)
+From: Andi Kleen <ak@linux.intel.com>
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org,  brauner@kernel.org,
+  viro@zeniv.linux.org.uk,  akpm@linux-foundation.org,
+  linux-kernel@vger.kernel.org,  bpf@vger.kernel.org,
+  gregkh@linuxfoundation.org,  linux-mm@kvack.org,
+  liam.howlett@oracle.com,  surenb@google.com,  rppt@kernel.org,
+  adobriyan@gmail.com
+Subject: Re: [PATCH v6 3/6] fs/procfs: add build ID fetching to
+ PROCMAP_QUERY API
+In-Reply-To: <20240627170900.1672542-4-andrii@kernel.org> (Andrii Nakryiko's
+	message of "Thu, 27 Jun 2024 10:08:55 -0700")
+References: <20240627170900.1672542-1-andrii@kernel.org>
+	<20240627170900.1672542-4-andrii@kernel.org>
+Date: Thu, 27 Jun 2024 16:00:41 -0700
+Message-ID: <878qyqyorq.fsf@linux.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v3 0/7] selftests: net: Switch pmtu.sh to use the
- internal ovs script.
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171952923514.28606.15428721836548855074.git-patchwork-notify@kernel.org>
-Date: Thu, 27 Jun 2024 23:00:35 +0000
-References: <20240625172245.233874-1-aconole@redhat.com>
-In-Reply-To: <20240625172245.233874-1-aconole@redhat.com>
-To: Aaron Conole <aconole@redhat.com>
-Cc: netdev@vger.kernel.org, dev@openvswitch.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- pshelar@ovn.org, davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, shuah@kernel.org, sbrivio@redhat.com, amorenoz@redhat.com,
- horms@kernel.org
+Content-Type: text/plain
 
-Hello:
+Andrii Nakryiko <andrii@kernel.org> writes:
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+> The need to get ELF build ID reliably is an important aspect when
+> dealing with profiling and stack trace symbolization, and
+> /proc/<pid>/maps textual representation doesn't help with this.
+>
+> To get backing file's ELF build ID, application has to first resolve
+> VMA, then use it's start/end address range to follow a special
+> /proc/<pid>/map_files/<start>-<end> symlink to open the ELF file (this
+> is necessary because backing file might have been removed from the disk
+> or was already replaced with another binary in the same file path.
+>
+> Such approach, beyond just adding complexity of having to do a bunch of
+> extra work, has extra security implications. Because application opens
+> underlying ELF file and needs read access to its entire contents (as far
+> as kernel is concerned), kernel puts additional capable() checks on
+> following /proc/<pid>/map_files/<start>-<end> symlink. And that makes
+> sense in general.
 
-On Tue, 25 Jun 2024 13:22:38 -0400 you wrote:
-> Currently, if a user wants to run pmtu.sh and cover all the provided test
-> cases, they need to install the Open vSwitch userspace utilities.  This
-> dependency is difficult for users as well as CI environments, because the
-> userspace build and setup may require lots of support and devel packages
-> to be installed, system setup to be correct, and things like permissions
-> and selinux policies to be properly configured.
-> 
-> [...]
+I was curious about this statement. It has still certainly potential
+for side channels e.g. for files that are execute only, or with
+some other special protection.
 
-Here is the summary with links:
-  - [net-next,v3,1/7] selftests: openvswitch: Support explicit tunnel port creation.
-    https://git.kernel.org/netdev/net-next/c/f94ecbc92092
-  - [net-next,v3,2/7] selftests: openvswitch: Refactor actions parsing.
-    https://git.kernel.org/netdev/net-next/c/37de65a764ed
-  - [net-next,v3,3/7] selftests: openvswitch: Add set() and set_masked() support.
-    https://git.kernel.org/netdev/net-next/c/a4126f90a35f
-  - [net-next,v3,4/7] selftests: openvswitch: Add support for tunnel() key.
-    https://git.kernel.org/netdev/net-next/c/fefe3b7d6bec
-  - [net-next,v3,5/7] selftests: openvswitch: Support implicit ipv6 arguments.
-    https://git.kernel.org/netdev/net-next/c/51458e1084d0
-  - [net-next,v3,6/7] selftests: net: Use the provided dpctl rather than the vswitchd for tests.
-    https://git.kernel.org/netdev/net-next/c/b7ce46fc614d
-  - [net-next,v3,7/7] selftests: net: add config for openvswitch
-    (no matching commit)
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+But actually just looking at the parsing code it seems to fail basic
+TOCTTOU rules, and since you don't check if the VMA mapping is executable
+(I think), so there's no EBUSY checking for writes, it likely is exploitable.
 
 
+        /* only supports phdr that fits in one page */
+                if (ehdr->e_phnum >
+                   (PAGE_SIZE - sizeof(Elf64_Ehdr)) / sizeof(Elf64_Phdr))
+                <---------- check in memory
+                                return -EINVAL;
+
+        phdr = (Elf64_Phdr *)(page_addr + sizeof(Elf64_Ehdr));
+
+<---- but page is shared in the page cache. So if anybody manages to map
+it for write 
+
+
+        for (i = 0; i < ehdr->e_phnum; ++i) {   <----- this loop can go
+                        off into the next page.
+                        if (phdr[i].p_type == PT_NOTE &&
+                                            !parse_build_id(page_addr, build_id, size,
+                                                            page_addr + phdr[i].p_offset,
+                                                            phdr[i].p_filesz))
+                                                                                    return 0;
+
+Here's an untested patch
+
+
+diff --git a/lib/buildid.c b/lib/buildid.c
+index 7954dd92e36c..6c022fcd03ec 100644
+--- a/lib/buildid.c
++++ b/lib/buildid.c
+@@ -72,19 +72,20 @@ static int get_build_id_32(const void *page_addr, unsigned char *build_id,
+ 	Elf32_Ehdr *ehdr = (Elf32_Ehdr *)page_addr;
+ 	Elf32_Phdr *phdr;
+ 	int i;
++	unsigned phnum = READ_ONCE(ehdr->e_phnum);
+ 
+ 	/* only supports phdr that fits in one page */
+-	if (ehdr->e_phnum >
++	if (phnum >
+ 	    (PAGE_SIZE - sizeof(Elf32_Ehdr)) / sizeof(Elf32_Phdr))
+ 		return -EINVAL;
+ 
+ 	phdr = (Elf32_Phdr *)(page_addr + sizeof(Elf32_Ehdr));
+ 
+-	for (i = 0; i < ehdr->e_phnum; ++i) {
++	for (i = 0; i < phnum; ++i) {
+ 		if (phdr[i].p_type == PT_NOTE &&
+ 		    !parse_build_id(page_addr, build_id, size,
+ 				    page_addr + phdr[i].p_offset,
+-				    phdr[i].p_filesz))
++				    READ_ONCE(phdr[i].p_filesz)))
+ 			return 0;
+ 	}
+ 	return -EINVAL;
+@@ -97,15 +98,16 @@ static int get_build_id_64(const void *page_addr, unsigned char *build_id,
+ 	Elf64_Ehdr *ehdr = (Elf64_Ehdr *)page_addr;
+ 	Elf64_Phdr *phdr;
+ 	int i;
++	unsigned phnum = READ_ONCE(ehdr->e_phnum);
+ 
+ 	/* only supports phdr that fits in one page */
+-	if (ehdr->e_phnum >
++	if (phnum >
+ 	    (PAGE_SIZE - sizeof(Elf64_Ehdr)) / sizeof(Elf64_Phdr))
+ 		return -EINVAL;
+ 
+ 	phdr = (Elf64_Phdr *)(page_addr + sizeof(Elf64_Ehdr));
+ 
+-	for (i = 0; i < ehdr->e_phnum; ++i) {
++	for (i = 0; i < phnum; ++i) {
+ 		if (phdr[i].p_type == PT_NOTE &&
+ 		    !parse_build_id(page_addr, build_id, size,
+ 				    page_addr + phdr[i].p_offset,
 
