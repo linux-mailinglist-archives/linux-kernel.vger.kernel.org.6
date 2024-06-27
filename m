@@ -1,155 +1,337 @@
-Return-Path: <linux-kernel+bounces-232637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0EE491AC27
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:03:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 087D091AC2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 18:03:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67EE8283369
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:03:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B0AA1C21A24
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 16:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A99BD19924A;
-	Thu, 27 Jun 2024 16:03:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D863819938D;
+	Thu, 27 Jun 2024 16:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="AwuNnj6t"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02olkn2041.outbound.protection.outlook.com [40.92.44.41])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uFrl/cBo"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2B319923D
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 16:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.44.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719504183; cv=fail; b=CCoulXvx4588FJvEbfLXHtk7Rz9FFoRgwefK7luWpxLV0Wo6nrM/4Vgz6laOk8zEvhpVNNegmb9ExNSUiNODVWi3gY24gV3qggpBnQv0vV/hMmHUwdBpIeLgLkRtEpjwPUZgUOikjZXH8umm9Q7Ucnjkkl+Ru9AZZaz2Mm3vyX4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719504183; c=relaxed/simple;
-	bh=EeydmEFCSzA5KgZuixRSUdrx2eau9iPNhz5xxPpUn6k=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=lBj6YeZy/j2wJusDY6P0b4jhAxlCnkSG+WFVxluqe2t3SGm+mtTzDQRG0FsipxsdcGd7120rkkDvk1TQ3DrYpLVghG8CRlq4w73oVj+2OqcAdDZ0pehe3rsdkyatQY7WrizJAoZQ/7KV9ie2I4rTnxlJaBpe6Cn6lKlSjiuy6Js=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=AwuNnj6t; arc=fail smtp.client-ip=40.92.44.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=T94H8z0IUYVwJMXeKNGb9essLtbITesxCo6piHdGz5dRbQTW75rPIndxmcZ2tNn2jwlut+U5msIUZDgo1zGb+Ac13CjSEbE6MbLl7HrGSK39ZBgqvUofrB9LVjJGI8QE/Ne2gGEQ9rkgd9xs1r3Ys0Jzv18/lGLTgv+UZ0P+ISFvF6O2Ga53jeoqJXUjvVDVXnS2xX8AyClipuDLJ5vsUcnYVscOKw4za/GztQbFjXoWPdWkcDeDN3Q26k6OmV2TtDCQn+b/LIyFzp2qrxIfU5Ho5LdY7l35KFkYRRWY7g8WUjX+wSL/nJ6c0KuEPc6N3FJWotHFGMHqY0js5cqD1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=d6p2xWeJyrMmJRxbPJMuMDfG+p7zrMeNT592PFL1mEc=;
- b=iockCQcBDQkzrPjn/PgSzD2jev0AKXkXFlj3L1SDyadhdGKqfSBjmDkTl7H4OVqzhZdnlnzwdkk4vRMbC0ME7bXR4KwkQbHUGJz6ulCWGRrlPWV3wvEK2rcmpj7fZY+cI/sifAU2pU7yGt0l5RCevMp+BPAOUOtD+jyzIFwmrMbI42lx+QFmWZ6OynSfpvPkCCUyJcIHpqFcOp8pHBumNbaO/KEe2XCNH/7BAz+B9O6t/byZcUtr+vPCb0HOhNRtIVo28yPXJeS03VVDY2T043XgAa8GWKD4k5aUBJ1FI/OCH6GOSwNMtJw++mEU+eCX11GqVqaEYFEMTLanv+XpGw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=d6p2xWeJyrMmJRxbPJMuMDfG+p7zrMeNT592PFL1mEc=;
- b=AwuNnj6tL6anyc9tcU39q3G0XF7YYuJa+bRNwnt1OJjLzK3O8C0osb5QIP7mcdzjydgp5OW3DrtCLkDxUnqqy5A7eLr0BLsBIcsqfYo/SLcT5vVX2An1PODRdwy7wr8TNFlMKLAmOGGvnqxGpeQMu7E/gl2x3EBRCTut3UtIG4uKJB5JC8GGMtNtdNQjOitkW77+2xLrlW4iR5zJJCVfEhJWHDD3fDiKbja0all285lsAyGcnKj5pi1WlWgMPyKmV9gNoP+FgOPUTEutLHj1fsucQmMaiX/wMXYnlQsFf4887xKrhxtqQW3i8dtTrNQXcOUlt5GPB5mqfZ7dj6CgBA==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by SA0PR02MB7177.namprd02.prod.outlook.com (2603:10b6:806:ec::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.35; Thu, 27 Jun
- 2024 16:02:59 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%2]) with mapi id 15.20.7698.033; Thu, 27 Jun 2024
- 16:02:59 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: "hch@lst.de" <hch@lst.de>
-CC: =?iso-8859-2?Q?Petr_Tesa=F8=EDk?= <petr@tesarici.cz>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>, "joro@8bytes.org"
-	<joro@8bytes.org>, "will@kernel.org" <will@kernel.org>, "jgross@suse.com"
-	<jgross@suse.com>, "sstabellini@kernel.org" <sstabellini@kernel.org>,
-	"oleksandr_tyshchenko@epam.com" <oleksandr_tyshchenko@epam.com>,
-	"m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>
-Subject: RE: [RFC 1/1] swiotlb: Reduce calls to swiotlb_find_pool()
-Thread-Topic: [RFC 1/1] swiotlb: Reduce calls to swiotlb_find_pool()
-Thread-Index:
- AQHauIjoJBWSrCyO6UWzcncSceBiMLHa1Z9wgABomICAAA3OAIAAhiSggAAJLYCAAAn5IA==
-Date: Thu, 27 Jun 2024 16:02:59 +0000
-Message-ID:
- <SN6PR02MB4157D9B1A64FF78461D6A7EDD4D72@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20240607031421.182589-1-mhklinux@outlook.com>
- <SN6PR02MB41577686D72E206DB0084E90D4D62@SN6PR02MB4157.namprd02.prod.outlook.com>
- <20240627060251.GA15590@lst.de>
- <20240627085216.556744c1@meshulam.tesarici.cz>
- <SN6PR02MB4157E61B49C8435E38AC968DD4D72@SN6PR02MB4157.namprd02.prod.outlook.com>
- <20240627152513.GA23497@lst.de>
-In-Reply-To: <20240627152513.GA23497@lst.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-tmn: [qE0gvg5VJgMwG45s6rvsjfZIwXoxxqGi]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|SA0PR02MB7177:EE_
-x-ms-office365-filtering-correlation-id: febd5df1-5729-4a6d-15ad-08dc96c29dad
-x-microsoft-antispam:
- BCL:0;ARA:14566002|461199028|56899033|440099028|3412199025|102099032;
-x-microsoft-antispam-message-info:
- FwnbVCEnrekiFNnnwxcitXyxv5FnTvbouCjwiOobuBbeB7dToY40Glf+UC0zs2Euubqd8R8c1+s7yN4yw3LHTaTQUuawj5sl7SeV+ws1q4sCsDxPul5QQMiPoD4qsQ6vpQWAEnjJS+8MwPWQWIHQ+LdpK7fwCmT3i543RoUfYEDTlomWVfpjLfI0NjrwVsV6Uu0v0ecnFqhWh47w2CBl9du4cimmleexNAC/YVl5nzlu2bWP4LDzKyRNrRh8QdB1bV20QCAWs0nKWdo6RHZS+BLa/qPvs/KkeirUWMbLUdsLm3/6PYf+bvBO87H5emXlq8XqrOx0SZcxx28qA59R3IZzkEVawRVnf+quFO+HUzQRJIoT5CzHfiZD1jHkDpFL3mZkvIBKEy694c1eFYUrNK1z1mKfCRR6OA86+yhsD7F8m+gwSaEa8XSQpOozXJ7+9JQGiIwPHSxWPUqhtj3/7AxBdj+vG7zIgNwGiHp7an6JWmyesyAS/qP72DfPSR0K2/jSVLWocROILs2CdlE/9pQwof7aa7dkMrMvkDhSlCxpgozjqnQt4Q3GH0HDnd1H
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-2?Q?RCzYSfD7qjg5JShhCWZhCaU7C3hBM9N9rlKPqM6pmpScQ7B0eOcvO5RsQE?=
- =?iso-8859-2?Q?wZbZrPNyJIL8W+EaSFrr0Wb9ivA//9HexTKVz8J+r6V7zt45t/tV7DDr7n?=
- =?iso-8859-2?Q?N7s0JFvxtGTW+7Y0fEVAocuFL5uUsm+3ENrvI3mAUMA90+xoVRR2txCR+N?=
- =?iso-8859-2?Q?ZLatxr+JLpBmRymYa2TQUJIZuUNF3znUKIcB/ZKzbr2nkzenGFJ7RApt1J?=
- =?iso-8859-2?Q?0xvdWFk9E8Y3uU+heEMZqssEiwSSY7/Zt5L1cg4bE7o6aMFTekJF1ClnMs?=
- =?iso-8859-2?Q?Uy/i4osJS+bv+W1pVeknBKtF/xT5wvMAsV5e6RAmDEcIdki/puEZtTov1i?=
- =?iso-8859-2?Q?2Kyjyik3OqCweG0Pa4B8Mv1eg4KuhMijjyFrbqL1617OF4zGpHxSP/8rPB?=
- =?iso-8859-2?Q?ZDCtv1st8vNfAhXs9H0H3Q9mkXQQTpYennhU8CwRGb61TC/mHp1qxBfb//?=
- =?iso-8859-2?Q?qBbskg3mz4gqUjSku16tZ/iaELlMf9h2x0qrXWXQyi8JIo782g3zHloy53?=
- =?iso-8859-2?Q?0W9q71diRf+14XF4yijtfwe9xDMTqhtzZdOzVtbUcJgRxbq1jLgPQSNrUb?=
- =?iso-8859-2?Q?k1YOXWWZLFPZP59JKoUkAERJcRda7QQV56pJd9jv2NNVe3SzR2XVBPwHIC?=
- =?iso-8859-2?Q?u02RK3ZiAZGIWq8QBWllIl6jd2rhQZyl0KK5RncGWRs5gddMEmMzG5dKOC?=
- =?iso-8859-2?Q?xbQ/u1JLg6Y9WzBmrWIosHJJLUOEUu7uogETYvlKEYuagpntnz+kEwG5Pm?=
- =?iso-8859-2?Q?njouI6BwZK/JC+fljyPXeuBDKqfyE3QAkX+aGP0xRQK/0k+vapBHzKVLxo?=
- =?iso-8859-2?Q?j38pvydR0LCEVf7dCrcFtzaFAOIYudfjVw3YZmAPIaU4FfcVPQ3LyY/Owf?=
- =?iso-8859-2?Q?UgECTnSpRfi2MB2aQkpnaVipT1ciB2hdaH9lAfdWb+8Ijlbve1wtN/Ct4b?=
- =?iso-8859-2?Q?hLo53jRKGSZ07lfYXbilA177ObYM3kqIlFWZoMU0cvOgHCxfOecJ70gd1v?=
- =?iso-8859-2?Q?zfxiTTlY4anq1Av0xAp7H2fO9T8O+mFUJSM+6hI22Kxng1SDUsip4qIJVj?=
- =?iso-8859-2?Q?FraCqBj00mNJkYsH4yeTcsrWhKr1u6H7hzeep/CC5w7i5dpNYWIJ060ITK?=
- =?iso-8859-2?Q?O6c2Ry6xQ5YdmzoLlNq84t5y3iW2xBZxotZJzYZjsWCYefAR2WcwiG4vdb?=
- =?iso-8859-2?Q?ZVO69chADr+XQLd8VVOgxtfJUVblnHKiq0dJ5E7mb7n5NA/bsDhglTwGi7?=
- =?iso-8859-2?Q?vass+11CLRai9T8WvfmEOCJGiVvzuuUd5FnHRjaBM=3D?=
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53BCC1CF8B;
+	Thu, 27 Jun 2024 16:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719504200; cv=none; b=iT5glhQt9UepsZuB+1Oce2kOhkcdJsX+Xp4CZAWffxXTtQJQBYp7rSB/+YMspZR/E82hNpIrp669/lxHMvZHKs6kJn4NQrtsOrH9Q6HaeG6bdr/HqMpJTgRGshHxblMX1qd79TxoGfrLy99zJ/KrZoVhebjpSQAgcHkGeC1T0QY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719504200; c=relaxed/simple;
+	bh=W5mfWMjqnh8Ae5P1q/55r8Vr8LRrNp3uvYiKrlWOGHQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=VFKnQmFn4UDP6oNX/XGPlg3yydSuGju1mwdM2mUN7T8bI9usRozu5ZtaiwIO91mWimEriSspqxWjs0UbY83L+fX2SMIOD8KWCNPZuwijpRv/pDhrZtMJ4l/MfV82jT/7IdK0wpwKNze4PfbklCRjLVgoyYZSYZkmDmWXM2C7dV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=uFrl/cBo; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=cLLCVpzF79P3pGVyz6fLX39GWKm54pt/xt7qPBpIVNo=; b=uFrl/cBoZiIUb4t1i/M/u1UHsE
+	HAUeOnsX1erhA85cmv36hwFaLJZ9T3wpsQ00uYn/pTDQFoEArNNui031IHT/BzFDpAFsZ61VbinGo
+	2ONMzQFphtHo8LBFMk+ca7qPOtspBbDwf9Aj56RunpYnfMRehIty1Oe7snal1ZMrYoe8wVYSgm3x+
+	D9zjVlYlQ/NLb0rPxkG/uAAgSvj5Xek4hUaRbKWUEU4HFp8HsPrw8knTH361cezc+5A+VAJQBggzA
+	S7+/3ViOvNPc2zQIg+mWlS92QWQrtc9pm5albZqmR4RcmD5SAJ/mprDE9Aol+9RQMnFy4L6dk2Rn7
+	zan2/zbA==;
+Received: from [2001:8b0:10b:5:3c45:b7d:c34d:ab5f] (helo=u3832b3a9db3152.ant.amazon.com)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sMraT-0000000Dht9-1Ktr;
+	Thu, 27 Jun 2024 16:03:05 +0000
+Message-ID: <51dcda5b675fb68c54b74fd19c408a3a086fc412.camel@infradead.org>
+Subject: Re: [RFC PATCH v2] ptp: Add vDSO-style vmclock support
+From: David Woodhouse <dwmw2@infradead.org>
+To: Peter Hilber <peter.hilber@opensynergy.com>,
+ linux-kernel@vger.kernel.org,  virtualization@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org,  linux-rtc@vger.kernel.org, "Ridoux,
+ Julien" <ridouxj@amazon.com>,  virtio-dev@lists.linux.dev, "Luu, Ryan"
+ <rluu@amazon.com>
+Cc: "Christopher S. Hall" <christopher.s.hall@intel.com>, Jason Wang
+ <jasowang@redhat.com>, John Stultz <jstultz@google.com>, "Michael S.
+ Tsirkin" <mst@redhat.com>, netdev@vger.kernel.org, Richard Cochran
+ <richardcochran@gmail.com>, Stephen Boyd <sboyd@kernel.org>, Thomas
+ Gleixner <tglx@linutronix.de>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Marc
+ Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Daniel
+ Lezcano <daniel.lezcano@linaro.org>, Alessandro Zummo
+ <a.zummo@towertech.it>,  Alexandre Belloni <alexandre.belloni@bootlin.com>
+Date: Thu, 27 Jun 2024 17:03:04 +0100
+In-Reply-To: <8d9d7ce2-4dd1-4f54-a468-79ef5970a708@opensynergy.com>
+References: <20231218073849.35294-1-peter.hilber@opensynergy.com>
+	 <684eac07834699889fdb67be4cee09319c994a42.camel@infradead.org>
+	 <671a784b-234f-4be6-80bf-5135e257ed40@opensynergy.com>
+	 <db594efd5a5774748a9ef07cc86741f5a677bdbf.camel@infradead.org>
+	 <c0ae63fc88365c93d5401972683a41112c094704.camel@infradead.org>
+	 <4a0a240dffc21dde4d69179288547b945142259f.camel@infradead.org>
+	 <8d9d7ce2-4dd1-4f54-a468-79ef5970a708@opensynergy.com>
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
+	boundary="=-GfgCrcNeH7jP/LJeq2X0"
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: febd5df1-5729-4a6d-15ad-08dc96c29dad
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jun 2024 16:02:59.2878
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR02MB7177
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 
-From: hch@lst.de <hch@lst.de> Sent: Thursday, June 27, 2024 8:25 AM
->=20
-> On Thu, Jun 27, 2024 at 02:59:03PM +0000, Michael Kelley wrote:
-> > Conceptually, it's still being used as a boolean function based on
-> > whether the return value is NULL.  Renaming it to swiotlb_get_pool()
-> > more accurately describes the return value, but obscures the
-> > intent of determining if it is a swiotlb buffer.  I'll think about it.
-> > Suggestions are welcome.
->=20
-> Just keep is_swiotlb_buffer as a trivial inline helper that returns
-> bool.
 
-I don't understand what you are suggesting.  Could you elaborate a bit?
-is_swiotlb_buffer() can't be trivial when CONFIG_SWIOTLB_DYNAMIC
-is set.
+--=-GfgCrcNeH7jP/LJeq2X0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Michael
 
+I've updated the tree at
+https://git.infradead.org/users/dwmw2/linux.git/shortlog/refs/heads/vmclock
+(but not yet the qemu one).
+
+I think I've taken into account all your comments apart from the one
+about non-64-bit counters wrapping. I reduced the seq_count to 32 bit
+to make room for a 32-bit flags field, added the time type
+(UTC/TAI/MONOTONIC) and a smearing hint, with some straw man
+definitions for smearing algorithms for which I could actually find
+definitions.
+
+The structure now looks like this:
+
+
+struct vmclock_abi {
+	uint32_t magic;
+#define VMCLOCK_MAGIC	0x4b4c4356 /* "VCLK" */
+	uint16_t size;		/* Size of page containing this structure */
+	uint16_t version;	/* 1 */
+
+	/* Sequence lock. Low bit means an update is in progress. */
+	uint32_t seq_count;
+
+	uint32_t flags;
+	/* Indicates that the tai_offset_sec field is valid */
+#define VMCLOCK_FLAG_TAI_OFFSET_VALID		(1 << 0)
+	/*
+	 * Optionally used to notify guests of pending maintenance events.
+	 * A guest may wish to remove itself from service if an event is
+	 * coming up. Two flags indicate the rough imminence of the event.
+	 */
+#define VMCLOCK_FLAG_DISRUPTION_SOON		(1 << 1) /* About a day */
+#define VMCLOCK_FLAG_DISRUPTION_IMMINENT	(1 << 2) /* About an hour */
+	/* Indicates that the utc_time_maxerror_picosec field is valid */
+#define VMCLOCK_FLAG_UTC_MAXERROR_VALID		(1 << 3)
+	/* Indicates counter_period_error_rate_frac_sec is valid */
+#define VMCLOCK_FLAG_PERIOD_ERROR_VALID		(1 << 4)
+
+	/*
+	 * This field changes to another non-repeating value when the CPU
+	 * counter is disrupted, for example on live migration. This lets
+	 * the guest know that it should discard any calibration it has
+	 * performed of the counter against external sources (NTP/PTP/etc.).
+	 */
+	uint64_t disruption_marker;
+
+	uint8_t clock_status;
+#define VMCLOCK_STATUS_UNKNOWN		0
+#define VMCLOCK_STATUS_INITIALIZING	1
+#define VMCLOCK_STATUS_SYNCHRONIZED	2
+#define VMCLOCK_STATUS_FREERUNNING	3
+#define VMCLOCK_STATUS_UNRELIABLE	4
+
+	uint8_t counter_id;
+#define VMCLOCK_COUNTER_INVALID		0
+#define VMCLOCK_COUNTER_X86_TSC		1
+#define VMCLOCK_COUNTER_ARM_VCNT	2
+#define VMCLOCK_COUNTER_X86_ART		3
+
+	/*
+	 * By providing the offset from UTC to TAI, the guest can know both
+	 * UTC and TAI reliably, whichever is indicated in the time_type
+	 * field. Valid if VMCLOCK_FLAG_TAI_OFFSET_VALID is set in flags.
+	 */
+	int16_t tai_offset_sec;
+
+	/*
+	 * The time exposed through this device is never smeaared; if it
+	 * claims to be VMCLOCK_TIME_UTC then it MUST be UTC. This field
+	 * provides a hint to the guest operating system, such that *if*
+	 * the guest OS wants to provide its users with an alternative
+	 * clock which does not follow the POSIX CLOCK_REALTIME standard,
+	 * it may do so in a fashion consistent with the other systems
+	 * in the nearby environment.
+	 */
+	uint8_t leap_second_smearing_hint;
+	/* Provide true UTC to users, unsmeared. */;
+#define VMCLOCK_SMEARING_NONE			0
+	/*
+	 * https://aws.amazon.com/blogs/aws/look-before-you-leap-the-coming-leap-s=
+econd-and-aws/
+	 * From noon on the day before to noon on the day after, smear the
+	 * clock by a linear 1/86400s per second.
+	*/
+#define VMCLOCK_SMEARING_LINEAR_86400		1
+	/*
+	 * draft-kuhn-leapsecond-00
+	 * For the 1000s leading up to the leap second, smear the clock by
+	 * clock by a linear 1ms per second.
+	 */
+#define VMCLOCK_SMEARING_UTC_SLS		2
+
+	/*
+	 * What time is exposed in the time_sec/time_frac_sec fields?
+	 */
+	uint8_t time_type;
+#define VMCLOCK_TIME_UNKNOWN		0	/* Invalid / no time exposed */
+#define VMCLOCK_TIME_UTC		1	/* Since 1970-01-01 00:00:00z */
+#define VMCLOCK_TIME_TAI		2	/* Since 1970-01-01 00:00:00z */
+#define VMCLOCK_TIME_MONOTONIC		3	/* Since undefined epoch */
+
+	/* Bit shift for counter_period_frac_sec and its error rate */
+	uint8_t counter_period_shift;
+
+	/*
+	 * Unlike in NTP, this can indicate a leap second in the past. This
+	 * is needed to allow guests to derive an imprecise clock with
+	 * smeared leap seconds for themselves, as some modes of smearing
+	 * need the adjustments to continue even after the moment at which
+	 * the leap second should have occurred.
+	 */
+	int8_t leapsecond_direction;
+	uint64_t leapsecond_tai_sec; /* Since 1970-01-01 00:00:00z */
+
+	/*
+	 * Paired values of counter and UTC at a given point in time.
+	 */
+	uint64_t counter_value;
+	uint64_t time_sec; /* Since 1970-01-01 00:00:00z */
+	uint64_t time_frac_sec;
+
+	/*
+	 * Counter frequency, and error margin. The unit of these fields is
+	 * seconds >> (64 + counter_period_shift)
+	 */
+	uint64_t counter_period_frac_sec;
+	uint64_t counter_period_error_rate_frac_sec;
+
+	/* Error margin of UTC reading above (=C2=B1 picoseconds) */
+	uint64_t utc_time_maxerror_picosec;
+};
+
+#endif /*  __VMCLOCK_H__ */
+
+
+--=-GfgCrcNeH7jP/LJeq2X0
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEkQw
+ggYQMIID+KADAgECAhBNlCwQ1DvglAnFgS06KwZPMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQG
+EwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoT
+FVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0
+aW9uIEF1dGhvcml0eTAeFw0xODExMDIwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMIGWMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYD
+VQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50
+aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
+AQEAyjztlApB/975Rrno1jvm2pK/KxBOqhq8gr2+JhwpKirSzZxQgT9tlC7zl6hn1fXjSo5MqXUf
+ItMltrMaXqcESJuK8dtK56NCSrq4iDKaKq9NxOXFmqXX2zN8HHGjQ2b2Xv0v1L5Nk1MQPKA19xeW
+QcpGEGFUUd0kN+oHox+L9aV1rjfNiCj3bJk6kJaOPabPi2503nn/ITX5e8WfPnGw4VuZ79Khj1YB
+rf24k5Ee1sLTHsLtpiK9OjG4iQRBdq6Z/TlVx/hGAez5h36bBJMxqdHLpdwIUkTqT8se3ed0PewD
+ch/8kHPo5fZl5u1B0ecpq/sDN/5sCG52Ds+QU5O5EwIDAQABo4IBZDCCAWAwHwYDVR0jBBgwFoAU
+U3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFAnA8vwL2pTbX/4r36iZQs/J4K0AMA4GA1Ud
+DwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
+BQcDBDARBgNVHSAECjAIMAYGBFUdIAAwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
+dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUF
+BwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
+QUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0G
+CSqGSIb3DQEBDAUAA4ICAQBBRHUAqznCFfXejpVtMnFojADdF9d6HBA4kMjjsb0XMZHztuOCtKF+
+xswhh2GqkW5JQrM8zVlU+A2VP72Ky2nlRA1GwmIPgou74TZ/XTarHG8zdMSgaDrkVYzz1g3nIVO9
+IHk96VwsacIvBF8JfqIs+8aWH2PfSUrNxP6Ys7U0sZYx4rXD6+cqFq/ZW5BUfClN/rhk2ddQXyn7
+kkmka2RQb9d90nmNHdgKrwfQ49mQ2hWQNDkJJIXwKjYA6VUR/fZUFeCUisdDe/0ABLTI+jheXUV1
+eoYV7lNwNBKpeHdNuO6Aacb533JlfeUHxvBz9OfYWUiXu09sMAviM11Q0DuMZ5760CdO2VnpsXP4
+KxaYIhvqPqUMWqRdWyn7crItNkZeroXaecG03i3mM7dkiPaCkgocBg0EBYsbZDZ8bsG3a08LwEsL
+1Ygz3SBsyECa0waq4hOf/Z85F2w2ZpXfP+w8q4ifwO90SGZZV+HR/Jh6rEaVPDRF/CEGVqR1hiuQ
+OZ1YL5ezMTX0ZSLwrymUE0pwi/KDaiYB15uswgeIAcA6JzPFf9pLkAFFWs1QNyN++niFhsM47qod
+x/PL+5jR87myx5uYdBEQkkDc+lKB1Wct6ucXqm2EmsaQ0M95QjTmy+rDWjkDYdw3Ms6mSWE3Bn7i
+5ZgtwCLXgAIe5W8mybM2JzCCBhQwggT8oAMCAQICEQDGvhmWZ0DEAx0oURL6O6l+MA0GCSqGSIb3
+DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28g
+UlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMB4XDTIyMDEwNzAw
+MDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9y
+ZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3GpC2bomUqk+91wLYBzDMcCj5C9m6
+oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZHh7htyAkWYVoFsFPrwHounto8xTsy
+SSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT9YgcBqKCo65pTFmOnR/VVbjJk4K2
+xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNjP+qDrh0db7PAjO1D4d5ftfrsf+kd
+RR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy2U+eITZ5LLE5s45mX2oPFknWqxBo
+bQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3BgBEmfsYWlBXO8rVXfvPgLs32VdV
+NZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/7auNVRmPB3v5SWEsH8xi4Bez2V9U
+KxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmdlFYhAflWKQ03Ufiu8t3iBE3VJbc2
+5oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9aelIl6vtbhMA+l0nfrsORMa4kobqQ5
+C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMBAAGjggHMMIIByDAfBgNVHSMEGDAW
+gBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeDMcimo0oz8o1R1Nver3ZVpSkwDgYD
+VR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMC
+MEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGln
+by5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGln
+b1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYoGCCsGAQUFBwEB
+BH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUlNBQ2xpZW50
+QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAjBggrBgEFBQcwAYYXaHR0cDovL29j
+c3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkqhkiG9w0B
+AQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQvQ/fzPXmtR9t54rpmI2TfyvcKgOXp
+qa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvIlSPrzIB4Z2wyIGQpaPLlYflrrVFK
+v9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9ChWFfgSXvrWDZspnU3Gjw/rMHrGnql
+Htlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0whpBtXdyDjzBtQTaZJ7zTT/vlehc/
+tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9IzCCBhQwggT8oAMCAQICEQDGvhmW
+Z0DEAx0oURL6O6l+MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3Jl
+YXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0
+ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJl
+IEVtYWlsIENBMB4XDTIyMDEwNzAwMDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJ
+ARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3
+GpC2bomUqk+91wLYBzDMcCj5C9m6oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZH
+h7htyAkWYVoFsFPrwHounto8xTsySSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT
+9YgcBqKCo65pTFmOnR/VVbjJk4K2xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNj
+P+qDrh0db7PAjO1D4d5ftfrsf+kdRR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy
+2U+eITZ5LLE5s45mX2oPFknWqxBobQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3
+BgBEmfsYWlBXO8rVXfvPgLs32VdVNZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/
+7auNVRmPB3v5SWEsH8xi4Bez2V9UKxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmd
+lFYhAflWKQ03Ufiu8t3iBE3VJbc25oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9ae
+lIl6vtbhMA+l0nfrsORMa4kobqQ5C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMB
+AAGjggHMMIIByDAfBgNVHSMEGDAWgBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeD
+Mcimo0oz8o1R1Nver3ZVpSkwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYw
+FAYIKwYBBQUHAwQGCCsGAQUFBwMCMEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYB
+BQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9j
+cmwuc2VjdGlnby5jb20vU2VjdGlnb1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1h
+aWxDQS5jcmwwgYoGCCsGAQUFBwEBBH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdv
+LmNvbS9TZWN0aWdvUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAj
+BggrBgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5m
+cmFkZWFkLm9yZzANBgkqhkiG9w0BAQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQv
+Q/fzPXmtR9t54rpmI2TfyvcKgOXpqa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvI
+lSPrzIB4Z2wyIGQpaPLlYflrrVFKv9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9Ch
+WFfgSXvrWDZspnU3Gjw/rMHrGnqlHtlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0w
+hpBtXdyDjzBtQTaZJ7zTT/vlehc/tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9
+IzGCBMcwggTDAgEBMIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVz
+dGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMT
+NVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEA
+xr4ZlmdAxAMdKFES+jupfjANBglghkgBZQMEAgEFAKCCAeswGAYJKoZIhvcNAQkDMQsGCSqGSIb3
+DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQwNjI3MTYwMzA0WjAvBgkqhkiG9w0BCQQxIgQgZ4Pkq5lt
+IZkUSgBJFbM8Iwt+zcA5Zuu2sFzLrX5OvFEwgb0GCSsGAQQBgjcQBDGBrzCBrDCBljELMAkGA1UE
+BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYG
+A1UEChMPU2VjdGlnbyBMaW1pdGVkMT4wPAYDVQQDEzVTZWN0aWdvIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIRAMa+GZZnQMQDHShREvo7qX4wgb8GCyqGSIb3
+DQEJEAILMYGvoIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVy
+MRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNl
+Y3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAxr4Z
+lmdAxAMdKFES+jupfjANBgkqhkiG9w0BAQEFAASCAgClNEfFH3zJOWF2IWeZ5KL4HBsKhBT96NXZ
+tljARmiKhkTB6cnAygTx0+8yTdydR5G0KNPmHhb0pQFF+ovL+YpotMfKoKrT78D41Zp1zLi2sSJO
+lJAzl/122VS7YehUU9duU8C5X6PIWOxslswETlAMND3g1NG5yLZNGzmfPQyY+atJiAPUFCMjowRN
+hZmamrxu7ec/YFn6lkSiZQS9a03IFwYTbGj4l6RrlENkD2yM2swUktcAhenlBZGF3wcwJn3M1AjO
+c44SNUsUuUF5BUjMNu40ZKNgTSPW5qszw2CWUDGqPTsjX0aHcGvATsYxjc0WhMkiySxoMi/RaNAU
+4TBNyJR0Z/9uJ2ZIkwt891aWODMlIYltFgArl2DTOmXlwa31CAkw5aUnMDgeSd9vzZDs8CaMh0Ux
+fUo4ShbnODmr+3a2atImA40doQN/FQBt9w2muC+sLIMxhe5oHhC4I7AZMVoMs4WNOy734uN51fLt
+02t1LeIqSXfYQ5UqRV2rOo6OeCMPTQLuEYmI+l2jkzuU6Qg3lgoSKTD6O4GLWbdZaQIE8GroeGYG
+MXFIu08jpdaA4S0Nh59Zn4CZPQVfaqyk663uVXWQqqFJuSOEzp5ly84uJ5fX8ygJZY0e+RqyvpJY
+9zmfWKzs3feDvL/H+bsJF7J860OoSc0kV18DtR+rwwAAAAAAAA==
+
+
+--=-GfgCrcNeH7jP/LJeq2X0--
 
