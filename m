@@ -1,106 +1,85 @@
-Return-Path: <linux-kernel+bounces-232249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F54491A5BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:54:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DB7191A5BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 13:54:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3DEB1C213A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:54:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C507BB26564
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 11:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4F4814EC71;
-	Thu, 27 Jun 2024 11:54:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A13914D451;
+	Thu, 27 Jun 2024 11:54:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="V4/UyM1L";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QFFUE996";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="V4/UyM1L";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QFFUE996"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Nw8St+ES"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EFBA4500C;
-	Thu, 27 Jun 2024 11:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E0F14F9CF
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 11:54:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719489262; cv=none; b=N1L2zcrtFv3f/oDbYQ8nnPEXYANK4Ul4/W34YNthxIbUJPBvWx0JUkxtaRBSW2nqL5cR9lB6EQVsLA1zNCEKtvTV5CbM9lX0/S6nH9PfeodoQH42IXIxqzJLO1i5AZSWKJW1/OjjU64rNL3BogPiQ79WAK/DR0QUwYCLsdnCUPI=
+	t=1719489268; cv=none; b=GCnoN2i7b8wMv9UIbX1OS1bP/xttOJWg4gUobbDEwnt4BnypPyq6Vn5wOoa7eKtYbQcOgYG6SVm1u7QdFy7oYoarp9Bx2UYiDw66xnE76xVz3xRAbZ4N/wbqwr5nYr10s4GXdO7iizgNZ/hbHldYpYmps8BVTsW0a4kC6Ch3rpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719489262; c=relaxed/simple;
-	bh=v/u26e2TcJU2CzkREnNHemDFe6Ij2WyQarWvOjfphcI=;
+	s=arc-20240116; t=1719489268; c=relaxed/simple;
+	bh=9km+Ve+6DVw+PszI/DZGSdNiyY9QOK+aSdMcxpf0T8I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d28D7AtxfdUdOzjSJ13ANUD4PCMuPce7XoQYl+6YHY1ci5G0GViyUrEp0t+31KNyfeW8EWGctag2v0EX40IrHsbiJiXYx5EVXR6+bRRPPUR/dI327vnTDu3ogIwr4YxJdzmQZgD84Ma/qp1KWAJ4rxZrkcMSokaO6tdB8Ibg4Zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=V4/UyM1L; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QFFUE996; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=V4/UyM1L; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QFFUE996; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 402EA21B53;
-	Thu, 27 Jun 2024 11:54:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719489259; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZdXQk2vFvUmtcq++xw1NaePH3+00GFxwQqDOyma05bU=;
-	b=V4/UyM1LRtpGxl1Oxq0pHO5+5QARmI5gPyO2e+zPkZQkMiSgaeqFegKjff2aMMTxyOcQYz
-	88BpRrw8ySasaTK0SLUm+l9Q64EvMMVvpudJJ5Ic3tzi2OqpTm+1yru1WvoAEaOlidmoWz
-	X+OhxWXF9nkjwzZsBu1MttIdJT0dx0o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719489259;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZdXQk2vFvUmtcq++xw1NaePH3+00GFxwQqDOyma05bU=;
-	b=QFFUE996kaeVoTyDxlHYN1O8TqwEl3fFfYEvcapWdpKrT3v7Ctl6tdoVf1IgtIycACDQfS
-	v1jTdCDDAKc3ysAA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="V4/UyM1L";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=QFFUE996
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719489259; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZdXQk2vFvUmtcq++xw1NaePH3+00GFxwQqDOyma05bU=;
-	b=V4/UyM1LRtpGxl1Oxq0pHO5+5QARmI5gPyO2e+zPkZQkMiSgaeqFegKjff2aMMTxyOcQYz
-	88BpRrw8ySasaTK0SLUm+l9Q64EvMMVvpudJJ5Ic3tzi2OqpTm+1yru1WvoAEaOlidmoWz
-	X+OhxWXF9nkjwzZsBu1MttIdJT0dx0o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719489259;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZdXQk2vFvUmtcq++xw1NaePH3+00GFxwQqDOyma05bU=;
-	b=QFFUE996kaeVoTyDxlHYN1O8TqwEl3fFfYEvcapWdpKrT3v7Ctl6tdoVf1IgtIycACDQfS
-	v1jTdCDDAKc3ysAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 32584137DF;
-	Thu, 27 Jun 2024 11:54:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ZSn9C+tSfWZSRQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 27 Jun 2024 11:54:19 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id C7375A08A2; Thu, 27 Jun 2024 13:54:18 +0200 (CEST)
-Date: Thu, 27 Jun 2024 13:54:18 +0200
-From: Jan Kara <jack@suse.cz>
-To: Ian Kent <ikent@redhat.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	Lucas Karpinski <lkarpins@redhat.com>, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz, raven@themaw.net,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Alexander Larsson <alexl@redhat.com>,
-	Eric Chanudet <echanude@redhat.com>
-Subject: Re: [RFC v3 1/1] fs/namespace: remove RCU sync for MNT_DETACH umount
-Message-ID: <20240627115418.lcnpctgailhlaffc@quack3>
-References: <20240626201129.272750-2-lkarpins@redhat.com>
- <20240626201129.272750-3-lkarpins@redhat.com>
- <Znx-WGU5Wx6RaJyD@casper.infradead.org>
- <50512ec3-da6d-4140-9659-58e0514a4970@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ba2KEopIdo0tyS08XGQ3xhloXbhJOo1ZzHx/i4nvSfkjNBFh4nbOsvOqlzs5NVSh1rpYOKwoNGD+xaDh8W8Oaj2LjtOqfA7UNyShM4cpsVP9Jl382AyYOdaV/AfPV7icOJdjHSPARJn8yKHhJl3FTZZDfGJKcWOIDfv/RavjA1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Nw8St+ES; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52cdf2c7454so9940583e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 04:54:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1719489264; x=1720094064; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LmlCKFAQTumozZSb2qpyhtZvbivJ59JtxtsMbo9O2jU=;
+        b=Nw8St+ESNWxTM/MT3d/5T4T69QAkzFe0wU/EGAlN9vICkDYKlca9k1u6K+d69MdzCu
+         WAG3ZZQAUi3e8h2pWkb1uwM0l4OfKQMA3Ccg+8indgik8+8RjxiGQZIOAhqSvYdTIeUp
+         TuDwrSBj11sCXfANcC6I8ZTrlrZKXspN7x3Ba3HxXUYgAyQvryX7HS3nQ7AaGVP14bEp
+         rbvbC7PWilHlR/SYTppNBweWFgmwBU46mmwR0RGE2+1NeMOMqsC/4mZbGNxvJwSeQJaV
+         6FYti2nD7Mvig7pxt+xNjCmrvMa8R88xGw2Jce1mr8SSituXQXErP2ja4hHnL5EdTtug
+         hnCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719489264; x=1720094064;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LmlCKFAQTumozZSb2qpyhtZvbivJ59JtxtsMbo9O2jU=;
+        b=GGGxvfwbW3lgMd5YvdDkUx1mLGilF10nU8ZL5qg1yOZjQlwmzY/K6hkwvzy8CT86p6
+         bgGHJnp8x/N3YktzJU8RmSzRXtFVRpG5VxQJ5wZhT7uAqT/GjUfNdIbAkhWdRziswPdM
+         a4O91XDnPHpzu6AcTRBSU3eK8LO6TWw8woyyfU6D5fLlLt8ivQPAtgjo78jlc20doL/K
+         knffNnwU+PoIZWiAgYh53m0W4bdxj+xfw5CxFvJSJCGlRBkdpj5eJhTmBOIAqYk7r3A5
+         6ETsd6LtZqgLPSToHBH0s3RYdBM2+E6Qo1wQXnO+DjiWGooae7+wh1N1wZSxBdcq+4mm
+         lPkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXDLEFXwvkgaNsmmTTedTz7OS9OO40X0FYviL5Iz2ewjdIh+UAao2Mi56o7sbRuO1vN5yqX4HVXuOEApMlMzPU+ZkDsDNOOKkO5kSQ6
+X-Gm-Message-State: AOJu0YzDdpmkwpl4eBU/locqOtljCZstPiGXy9rqsjetG/UqaLVeW7ER
+	FhTPg+Nsz+DHuRvE5o17GoGrfFg+GM+WojWX058RC5+IhaRwx4ZloQGwNj7aX9g=
+X-Google-Smtp-Source: AGHT+IF/7J1Nf5P8IK2DBJMJhVj+ERVjEaTHp3eq1jikjna1dLR4odCLnSjwp6wO7JK6t38d8jeHJQ==
+X-Received: by 2002:a05:6512:3d1d:b0:52d:3ada:4b6b with SMTP id 2adb3069b0e04-52d3ada4c32mr6180399e87.1.1719489264372;
+        Thu, 27 Jun 2024 04:54:24 -0700 (PDT)
+Received: from localhost (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a729d7c957esm52172666b.197.2024.06.27.04.54.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 04:54:24 -0700 (PDT)
+Date: Thu, 27 Jun 2024 13:54:23 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: xiujianfeng <xiujianfeng@huawei.com>
+Cc: hannes@cmpxchg.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+	muchun.song@linux.dev, akpm@linux-foundation.org,
+	cgroups@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] mm: memcg: remove redundant
+ seq_buf_has_overflowed()
+Message-ID: <Zn1S70yo4VQ24UNT@tiehlicka>
+References: <20240626094232.2432891-1-xiujianfeng@huawei.com>
+ <Zn0RGTZxrEUnI1KZ@tiehlicka>
+ <a351c609-4968-398a-9316-2ad19d934e9c@huawei.com>
+ <Zn1LFyO_cww9W758@tiehlicka>
+ <10b948cd-5fbf-78e7-c3e8-6867661fa50b@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -109,67 +88,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <50512ec3-da6d-4140-9659-58e0514a4970@redhat.com>
-X-Rspamd-Queue-Id: 402EA21B53
-X-Spam-Score: -4.01
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.com:email];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+In-Reply-To: <10b948cd-5fbf-78e7-c3e8-6867661fa50b@huawei.com>
 
-On Thu 27-06-24 09:11:14, Ian Kent wrote:
-> On 27/6/24 04:47, Matthew Wilcox wrote:
-> > On Wed, Jun 26, 2024 at 04:07:49PM -0400, Lucas Karpinski wrote:
-> > > +++ b/fs/namespace.c
-> > > @@ -78,6 +78,7 @@ static struct kmem_cache *mnt_cache __ro_after_init;
-> > >   static DECLARE_RWSEM(namespace_sem);
-> > >   static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
-> > >   static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
-> > > +static bool lazy_unlock = false; /* protected by namespace_sem */
-> > That's a pretty ugly way of doing it.  How about this?
+On Thu 27-06-24 19:43:06, xiujianfeng wrote:
 > 
-> Ha!
 > 
-> That was my original thought but I also didn't much like changing all the
-> callers.
+> On 2024/6/27 19:20, Michal Hocko wrote:
+> > On Thu 27-06-24 16:33:00, xiujianfeng wrote:
+> >>
+> >>
+> >> On 2024/6/27 15:13, Michal Hocko wrote:
+> >>> On Wed 26-06-24 09:42:32, Xiu Jianfeng wrote:
+> >>>> Both the end of memory_stat_format() and memcg_stat_format() will call
+> >>>> WARN_ON_ONCE(seq_buf_has_overflowed()). However, memory_stat_format()
+> >>>> is the only caller of memcg_stat_format(), when memcg is on the default
+> >>>> hierarchy, seq_buf_has_overflowed() will be executed twice, so remove
+> >>>> the reduntant one.
+> >>>
+> >>> Shouldn't we rather remove both? Are they giving us anything useful
+> >>> actually? Would a simpl pr_warn be sufficient? Afterall all we care
+> >>> about is to learn that we need to grow the buffer size because our stats
+> >>> do not fit anymore. It is not really important whether that is an OOM or
+> >>> cgroupfs interface path.
+> >>
+> >> I did a test, when I removed both of them and added a lot of prints in
+> >> memcg_stat_format() to make the seq_buf overflow, and then cat
+> >> memory.stat in user mode, no OOM occurred, and there were no warning
+> >> logs in the kernel.
+> > 
+> > The default buffer size is PAGE_SIZE.
 > 
-> I don't really like the proliferation of these small helper functions either
-> but if everyone
+> Hi Michal,
 > 
-> is happy to do this I think it's a great idea.
+> I'm sorry, I didn't understand what you meant by this sentence. What I
+> mean is that we can't remove both, otherwise, neither the kernel nor
+> user space would be aware of a buffer overflow. From my test, there was
+> no OOM or other exceptions when the overflow occurred; it just resulted
+> in the displayed information being truncated. Therefore, we need to keep
+> one.
 
-So I know you've suggested removing synchronize_rcu_expedited() call in
-your comment to v2. But I wonder why is it safe? I *thought*
-synchronize_rcu_expedited() is there to synchronize the dropping of the
-last mnt reference (and maybe something else) - see the comment at the
-beginning of mntput_no_expire() - and this change would break that?
+I've had this in mind
 
-								Honza
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 71fe2a95b8bd..3e17b9c3a27a 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -1845,9 +1845,6 @@ static void memcg_stat_format(struct mem_cgroup *memcg, struct seq_buf *s)
+ 			       vm_event_name(memcg_vm_event_stat[i]),
+ 			       memcg_events(memcg, memcg_vm_event_stat[i]));
+ 	}
+-
+-	/* The above should easily fit into one page */
+-	WARN_ON_ONCE(seq_buf_has_overflowed(s));
+ }
+ 
+ static void memcg1_stat_format(struct mem_cgroup *memcg, struct seq_buf *s);
+@@ -1858,7 +1855,8 @@ static void memory_stat_format(struct mem_cgroup *memcg, struct seq_buf *s)
+ 		memcg_stat_format(memcg, s);
+ 	else
+ 		memcg1_stat_format(memcg, s);
+-	WARN_ON_ONCE(seq_buf_has_overflowed(s));
++	if (seq_buf_has_overflowed(s))
++		pr_warn("%s: Stat buffer insufficient please report\n", __FUNCTION__);
+ }
+ 
+ /**
 
+Because WARN_ON_ONCE doesn't buy us anything actually. It will dump
+stack trace and it seems really mouthfull (and it will panic when
+panic_on_warn is enabled which is likely not a great thing).
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Michal Hocko
+SUSE Labs
 
