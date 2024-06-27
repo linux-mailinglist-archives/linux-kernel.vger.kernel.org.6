@@ -1,156 +1,146 @@
-Return-Path: <linux-kernel+bounces-232598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FCE891AB9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:39:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8DE891AB85
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:37:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98A87B2C35D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:34:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 626E01F21746
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 15:37:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D30B199E9F;
-	Thu, 27 Jun 2024 15:33:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688ED1990DA;
+	Thu, 27 Jun 2024 15:35:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AgHDvq+1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NrVxTj/C"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D0F199233;
-	Thu, 27 Jun 2024 15:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DFA5199EBE
+	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 15:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719502394; cv=none; b=FQ4HEDUyrdg7lPvLcCfpWs1up/Ai0oq5UFERa5y9DzVWaMGuktlDw1NLX5pEVf86cH0m5pf/Y1c0fM4ocxe9Hd4nsA0dNmQNGdB/0HevW2GuanlypILIzfOUjYnibpuXE/crgRMLryqAviUva6AoTsctg46F7Oj1VSeDE4UtXDI=
+	t=1719502504; cv=none; b=U2lsm04RkO/zba3Mtbco4RIbP44fReLatfS6oTAVP+ZafqALDZ0wWHu/fSzxjoGV9y0pWNxaCUDb6u98jvQia774DNv92IrgTrvG2oQBVbeWdMALJ/lfIKHry3uqOxAfnJYy1/FgdiiagnT+cax8I3NtTPU2HWlLGKPdIHuOUIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719502394; c=relaxed/simple;
-	bh=VuDA6GVm6ZnqWfwRL6Xl9pYd73Bj8ZY3AonKSNGQsAY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cVIeuCf04ruwy7Yvgqv/l0l1oP8KsQCH/KpkFU0D+ya9Nuo/4sUeHy+QQip4KzFg/COxGe5Fma1ghBGeL6RfcvOhzV6HjlIbJ4r3cGwIF2R3u5EkuLm4utCG0gf0xODCC1mpDeyq2FtMgHmApLC3mKzD92pznc9TxXC/wHF/bS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AgHDvq+1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C4B4C2BBFC;
-	Thu, 27 Jun 2024 15:33:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719502393;
-	bh=VuDA6GVm6ZnqWfwRL6Xl9pYd73Bj8ZY3AonKSNGQsAY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AgHDvq+1NSlAHfMDDmXVM/hKZIRWxLeKMv1gQFnZVYyOpAT/dqtNzIVMZ7zKdK4I6
-	 Pk1hsuFMoAx5aMDci/JLTvkwP0fcLNu7/ShigKZUOr/oB4kpX5Lvn8QWjt4oC9Zks3
-	 HYA/RIxJ05wESANO1p6vtl1W3TAbNTGrVHYSwTA/R/biQGn7AfdksZTWcybUmjh1nu
-	 Rte0kakjfnqw5OOboYB4VJb+GCVQ8o3fRNQYvGrJMJ9/E9jrQjhDaU67gce+WQsWDo
-	 V+CZ4U3EjGxSYWOByIo9JE22N4QnmUaSNEdyEUYc/dVviIx25FTRNZ6UiljeTEPc4+
-	 icGJ+UiDrYmEA==
-Date: Thu, 27 Jun 2024 17:33:08 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, "Ma, Yu" <yu.ma@intel.com>, 
-	viro@zeniv.linux.org.uk, edumazet@google.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com, 
-	tim.c.chen@linux.intel.com
-Subject: Re: [PATCH v2 1/3] fs/file.c: add fast path in alloc_fd()
-Message-ID: <20240627-laufschuhe-hergibt-8158b7b6b206@brauner>
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240622154904.3774273-1-yu.ma@intel.com>
- <20240622154904.3774273-2-yu.ma@intel.com>
- <20240625115257.piu47hzjyw5qnsa6@quack3>
- <20240625125309.y2gs4j5jr35kc4z5@quack3>
- <87a1279c-c5df-4f3b-936d-c9b8ed58f46e@intel.com>
- <20240626115427.d3x7g3bf6hdemlnq@quack3>
- <CAGudoHEkw=cRG1xFHU02YjkM2+MMS2vkY_moZ2QUjAToEzbR3g@mail.gmail.com>
+	s=arc-20240116; t=1719502504; c=relaxed/simple;
+	bh=B4B+7Qegfc8xqRAIl73gUCcFR/R5LPG8JWLBvTTX94w=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=eXYft0SRNQHte4WyLCa3cm/Qx0GLAae2dvcEGpf10KfyNF8125PfN8VPNbT5GUgo2CJuuFIS5EK+uVKcXOnw1DcjnxacmgpWSUaRDUv348XM/EacsoBvPIYnK/v5iq+xysR6jYZfLYVIGxpolFToejti/fBe3VRVa/taBafG+40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NrVxTj/C; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-62f8a1b2969so179556687b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 08:35:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719502502; x=1720107302; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jwfQmZ9NIpbsBfaBGly2IYRr+v7gRdeIIwzA8stq+iM=;
+        b=NrVxTj/CixlZIZjkRuWYlFSJ0OjE8IU0QnuLch/D4wEe0T+X/btVuXMnX+xghyxLlu
+         q8F8RlZng1sttVbHGf+3JmBGZ7ff09pzGS7lIDP1+WoqSVnIgssvp2V53jIhAWYFW1m3
+         aYWcrVLnxhh4d6eeVHZbGozAgVZ2wxnms4IJinL75u2I1v4VnByCTNFeA/r3FyWdYOat
+         hDsJ86j55TaNuXJAZP6U7Uf5JFygWt4Dm6uHzmYGk0HSDxq4N6U+Hm/Kg0oxHH6V34lb
+         tTPTMWChkqNExFjMjVjJ/502o/TpFliar6hh4ZCkBb3Jg0D5gBswNrrKpk6ibs25dfxe
+         5udg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719502502; x=1720107302;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jwfQmZ9NIpbsBfaBGly2IYRr+v7gRdeIIwzA8stq+iM=;
+        b=F2A0t4K/2HiclDOBqLF9XhgmgW/lHcxE7npQ+mzP0YxnSR5tJa6BicsVkyL5RR4WPp
+         j2WFidSd3IciUuQ85rgVGm6sVqevlfaOI8kbZGcwOGmx0itt4hyGKiLXc3vRiqYBICGN
+         pKTXnLnoqQWgcrlPiFAsYp5wo+R5PZv1RqknlD70PAGBL5V2/WkRQEYjEu7Jb+qf9GvH
+         XaP/gNa/BzgbjyGCCGA5yGWk0sAnP3FvfQ76VCOjpR+AUottfwC2njht4enwA6TPZg2m
+         topR1De+45YsqaLqGAyG+4/p0BTuKelXGMgP3Dj2RbuTjC1uyRUuT8kfbdwwaCIFiJOZ
+         Sxcw==
+X-Forwarded-Encrypted: i=1; AJvYcCWpUaDXa10wxqrzDbLJQZmN/IteHwif/rKlJwqE6WGncEXk042RJuot91j9WCtVGbRPl6QivoAdB12fjrF42FfWtTzYO2vpk+ZSZvMz
+X-Gm-Message-State: AOJu0YxPrRPBjKP/IzYX2FVHBng51bQy7WU3MJHrgJNUPVSmjAmhhA32
+	7ODlH2/IOgZhaGVx0/tRWb/kXpGwc3TyOtMTk30cRtX1T9+Vsi7nXlzYN9LBv7XvXtRWi7w0VRS
+	0nA==
+X-Google-Smtp-Source: AGHT+IHEi2Jyn7G4AkqbarTu97kFAUKrcEOi465mYHsg50AqIgEPtVFdPWfoFGoEoYmptmXIFg5d8pn8ivU=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:2b84:b0:e02:c739:367 with SMTP id
+ 3f1490d57ef6-e0303fe4816mr697575276.13.1719502502278; Thu, 27 Jun 2024
+ 08:35:02 -0700 (PDT)
+Date: Thu, 27 Jun 2024 08:35:00 -0700
+In-Reply-To: <87320ee5-8a66-6437-8c91-c6de1b7d80c1@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHEkw=cRG1xFHU02YjkM2+MMS2vkY_moZ2QUjAToEzbR3g@mail.gmail.com>
+Mime-Version: 1.0
+References: <20240621134041.3170480-1-michael.roth@amd.com>
+ <20240621134041.3170480-2-michael.roth@amd.com> <ZnwecZ5SZ8MrTRRT@google.com>
+ <6sczq2nmoefcociyffssdtoav2zjtuenzmhybgdtqyyvk5zps6@nnkw2u74j7pu>
+ <ZnxMSEVR_2NRKMRy@google.com> <fbzi5bals5rmva3efgdpnljsfzdbehg4akwli7b5io7kqs3ikw@qfpdpxfec7ks>
+ <ZnxyAWmKIu680R_5@google.com> <87320ee5-8a66-6437-8c91-c6de1b7d80c1@amd.com>
+Message-ID: <Zn2GpHFZkXciuJOw@google.com>
+Subject: Re: [PATCH v1 1/5] KVM: SEV: Provide support for SNP_GUEST_REQUEST
+ NAE event
+From: Sean Christopherson <seanjc@google.com>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Michael Roth <michael.roth@amd.com>, kvm@vger.kernel.org, linux-coco@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, x86@kernel.org, pbonzini@redhat.com, 
+	jroedel@suse.de, pgonda@google.com, ashish.kalra@amd.com, bp@alien8.de, 
+	pankaj.gupta@amd.com, liam.merwick@oracle.com, 
+	Brijesh Singh <brijesh.singh@amd.com>, Alexey Kardashevskiy <aik@amd.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, Jun 26, 2024 at 09:13:07PM GMT, Mateusz Guzik wrote:
-> On Wed, Jun 26, 2024 at 1:54 PM Jan Kara <jack@suse.cz> wrote:
-> > So maybe I'm wrong but I think the biggest benefit of your code compared to
-> > plain find_next_fd() is exactly in that we don't have to load full_fds_bits
-> > into cache. So I'm afraid that using full_fds_bits in the condition would
-> > destroy your performance gains. Thinking about this with a fresh head how
-> > about putting implementing your optimization like:
-> >
-> > --- a/fs/file.c
-> > +++ b/fs/file.c
-> > @@ -490,6 +490,20 @@ static unsigned int find_next_fd(struct fdtable *fdt, unsigned int start)
-> >         unsigned int maxbit = maxfd / BITS_PER_LONG;
-> >         unsigned int bitbit = start / BITS_PER_LONG;
-> >
-> > +       /*
-> > +        * Optimistically search the first long of the open_fds bitmap. It
-> > +        * saves us from loading full_fds_bits into cache in the common case
-> > +        * and because BITS_PER_LONG > start >= files->next_fd, we have quite
-> > +        * a good chance there's a bit free in there.
-> > +        */
-> > +       if (start < BITS_PER_LONG) {
-> > +               unsigned int bit;
-> > +
-> > +               bit = find_next_zero_bit(fdt->open_fds, BITS_PER_LONG, start);
-> > +               if (bit < BITS_PER_LONG)
-> > +                       return bit;
-> > +       }
-> > +
-> >         bitbit = find_next_zero_bit(fdt->full_fds_bits, maxbit, bitbit) * BITS_PER_LONG;
-> >         if (bitbit >= maxfd)
-> >                 return maxfd;
-> >
-> > Plus your optimizations with likely / unlikely. This way the code flow in
-> > alloc_fd() stays more readable, we avoid loading the first open_fds long
-> > into cache if it is full, and we should get all the performance benefits?
-> >
+On Thu, Jun 27, 2024, Tom Lendacky wrote:
+> On 6/26/24 14:54, Sean Christopherson wrote:
+> > On Wed, Jun 26, 2024, Michael Roth wrote:
+> >>> What about the host kernel though?  I don't see anything here that ensures resp_pfn
+> >>> isn't "regular" memory, i.e. that ensure the page isn't being concurrently accessed
+> >>> by the host kernel (or some other userspace process).
+> >>>
+> >>> Or is the "private" memory still accessible by the host?
+> >>
+> >> It's accessible, but it is immutable according to RMP table, so so it would
+> >> require KVM to be elsewhere doing a write to the page,
+> > 
+> > I take it "immutable" means "read-only"?  If so, it would be super helpful to
+> > document that in the APM.  I assumed "immutable" only meant that the RMP entry
+> > itself is immutable, and that Assigned=AMD-SP is what prevented host accesses.
 > 
-> Huh.
+> Not quite. It depends on the page state associated with the page. For
+> example, Hypervisor-Fixed pages have the immutable bit set, but can be
+> read and written.
 > 
-> So when I read the patch previously I assumed this is testing the bit
-> word for the map containing next_fd (whatever it is), avoiding looking
-> at the higher level bitmap and inlining the op (instead of calling the
-> fully fledged func for bit scans).
-> 
-> I did not mentally register this is in fact only checking for the
-> beginning of the range of the entire thing. So apologies from my end
-> as based on my feedback some work was done and I'm going to ask to
-> further redo it.
-> 
-> blogbench spawns 100 or so workers, say total fd count hovers just
-> above 100. say this lines up with about half of more cases in practice
-> for that benchmark.
-> 
-> Even so, that's a benchmark-specific optimization. A busy web server
-> can have literally tens of thousands of fds open (and this is a pretty
-> mundane case), making the 0-63 range not particularly interesting.
-> 
-> That aside I think the patchset is in the wrong order -- first patch
-> tries to not look at the higher level bitmap, while second reduces
-> stores made there. This makes it quite unclear how much is it worth to
-> reduce looking there if atomics are conditional.
-> 
-> So here is what I propose in terms of the patches:
-> 1. NULL check removal, sprinkling of likely/unlikely and expand_files
-> call avoidance; no measurements done vs stock kernel for some effort
-> saving, just denote in the commit message there is less work under the
-> lock and treat it as baseline
-> 2. conditional higher level bitmap clear as submitted; benchmarked against 1
-> 3. open_fds check within the range containing fd, avoiding higher
-> level bitmap if a free slot is found. this should not result in any
-> func calls if successful; benchmarked against the above
-> 
-> Optionally the bitmap routines can grow variants which always inline
-> and are used here. If so that would probably land between 1 and 2 on
-> the list.
-> 
-> You noted you know about blogbench bugs and have them fixed. Would be
-> good to post a link to a pull request or some other spot for a
-> reference.
-> 
-> I'll be best if the vfs folk comment on what they want here.
+> The page states are documented in the SNP API (Chapter 5, Page
+> Management):
 
-Optimizing only the < BIT_PER_LONG seems less desirable then making it
-work for arbitrary next_fd. Imho, it'll also be easier to follow if
-everything follows the same logic.
+Heh, but then that section says:
+
+  Pages in the Firmware state are owned by the firmware. Because the RMP.Immutable
+                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  bit is set, the hypervisor cannot write to Firmware pages nor alter the RMP entry
+  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  with the RMPUPDATE instruction.
+
+which to me very clearly suggests that the RMP.Immutable bit is what makes the
+page read-only.
+
+Can you ask^Wbribe someone to add a "Table 11. Page State Properties" or something?
+E.g. to explicitly list out the read vs. write protections and the state of the
+page's data (encrypted, integrity-protected, zeroed?, etc).  I've read through
+all of "5.2 Page States" and genuinely have no clue as to what protections most
+of the states have.
+
+Ah, never mind, I found "Table 15-39. RMP Memory Access Checks" in the APM.  FWIW,
+that somewhat contradicts this blurb from the SNP ABI spec:
+
+  The content of a Context page is encrypted and integrity protected so that the
+  hypervisor cannot read or write to it.
+
+I also find that statement confusing.  IIUC, the fact that the Context page is
+encrypted and integrity protected doesn't actually have anything to do with the
+host's ability to access the data.  The host _can_ read the data, but it will get
+ciphertext.  But the host can't write the data because the page isn't HV-owned.
+
+Actually, isn't the intregrity protected part wrong?  I thought one of the benefits
+of SNP vs. ES is that the RMP means the VMSA doesn't have to be integrity protected,
+and so VMRUN and #VMEXIT transitions are faster because the CPU doesn't need to do
+as much work.
 
