@@ -1,123 +1,131 @@
-Return-Path: <linux-kernel+bounces-232801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E711791AE6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:48:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 165E691AE77
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:49:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3B86285AFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:48:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C668C28A0DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:49:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF01119AA69;
-	Thu, 27 Jun 2024 17:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF03B19DFBF;
+	Thu, 27 Jun 2024 17:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Redjctvd"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nYWlA3na"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC2813A276;
-	Thu, 27 Jun 2024 17:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D8E19DF8B;
+	Thu, 27 Jun 2024 17:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719510500; cv=none; b=qzjwB5IhSpRWOiAxIG1QIX000ttFC6PGRf75R6tasjBn5yA7zsNhD4oFxfxljdGnoxuK0nHGmqM/jiUVn9Xv8E9+toW+hohRIQ0Al+XiNK64l7YabxXBh1XIWkDm0Gb3lo/3RyhRa19sXkxxdYXJ0Zanecfb+Ort4uTNEMewEFY=
+	t=1719510536; cv=none; b=aYAYyNdclL6QmyjIVS5aKAng17+1VcPJwXhaaSIP07vdf8nXFSfOXJ/LG2iYpZ/vLWp+uwSJm/2U6Hehn8ZPGW4ie/EIX9HExLxFXydsiMEZMpROoHvJ6wlhExKxFe4pIJhi7V/KLFEil6LLD09uRZugylh8YIi0Q7nHjRsAu1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719510500; c=relaxed/simple;
-	bh=F5zM9c3sLk5y1V8R5kNiRFk6k52sqvTRsb9rfOdCx78=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fdnMg8HjT19XlzvOGEsGxYFXJ67ZaKAfQscTgsv7MZwL2hxjhqyPT+a33HoXrV1BQIzl7lhWkhH7LO6Zgpg/pwH5hOD9cVMGRXfCvLNFJHrtLB+12p+UeGw7DOwLV+gXr82bhdscAT8c3wwXZdvEI/BU5ZxuVDyW+HRCAXXN3aA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Redjctvd; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1719510495;
-	bh=F5zM9c3sLk5y1V8R5kNiRFk6k52sqvTRsb9rfOdCx78=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=RedjctvdnqXxkPWIyQJV+iwAyUlBi/eKAfDSyzntxSNp+iW5+QUKd8V4qT/097GuR
-	 M4qlPyKa71fSwsQCw6R4abpFjBXqpCwceGXaSn3kWyfNXFXNmepAkGbqjCPMVwDa/j
-	 J7qfUncEJJPrelMSTAwm81++xwRcscN2/vDK0N8g=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Thu, 27 Jun 2024 19:48:14 +0200
-Subject: [PATCH v2 4/4] i2c: piix4: Register SPDs
+	s=arc-20240116; t=1719510536; c=relaxed/simple;
+	bh=8gVzBekE2oyh3Wr+wM9bjtLGi+3aTY8+Iej1gUuNYTI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=bJihqm8q4y0R+ljUM0W/FvtFAi/SxpIp5Op49/EM4wmBo/a38qA9myDKaj9tKOH6tZz2g+eYAjSFPdDyO3r19TUaSOPADuZft70z/KkVduQYczGwc9P2yXCj8ULLDTGY61FtjNACK57Vl9FuEDA7cVTXCZVSd3TvTFoxWOLIJM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nYWlA3na; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3E5EC2BBFC;
+	Thu, 27 Jun 2024 17:48:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719510535;
+	bh=8gVzBekE2oyh3Wr+wM9bjtLGi+3aTY8+Iej1gUuNYTI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=nYWlA3naWyEy4jbCxEIqtUCy1CZvU1CtcEXb/UwnZq+wykJnE6+uWFy47eTcUj7Qz
+	 sEufNB853c6mCPWbF8HengG6rpMwBY7xeloX0G3OUVvF2ITWurEDbm4N1+GFCvJL7c
+	 +vK6EcryevJutRoMFQn3PcImhz0ZeniaiKjBdebvJje9kfuYLzpOclpIARkFgVdFwv
+	 034IQNEzxx5hGYL0DjXSJWmtqFWelWAUKqegpxiAb60WxPISSYj7Q9ltZcmRMCjXYh
+	 bJHd1i4LsVlSP05phimYeZljCMk0Zok9Q6lSEPQRk3gYFByQuLhyhYs4qy7X6wbBBO
+	 drbNaviiiTw0g==
+Date: Thu, 27 Jun 2024 18:48:52 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Jun 27
+Message-ID: <Zn2mBPrQHe4k1TXC@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240627-piix4-spd-v2-4-617ce47b8ff4@weissschuh.net>
-References: <20240627-piix4-spd-v2-0-617ce47b8ff4@weissschuh.net>
-In-Reply-To: <20240627-piix4-spd-v2-0-617ce47b8ff4@weissschuh.net>
-To: Andi Shyti <andi.shyti@kernel.org>, Jean Delvare <jdelvare@suse.com>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Guenter Roeck <linux@roeck-us.net>, 
- Wolfram Sang <wsa+renesas@sang-engineering.com>, 
- Heiner Kallweit <hkallweit1@gmail.com>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1719510495; l=1719;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=F5zM9c3sLk5y1V8R5kNiRFk6k52sqvTRsb9rfOdCx78=;
- b=f+RWLTJXANNZ4wAUVKUqW8wbUWbONFLTNeUJwavC6tGwV75o0QrJx59dliWVEm3qQHebj0P8A
- WNvNx6Wjx0NA96nNt6tvco8dvYQK7boZ3wD9dxiyhlN2Vy0vR8owNKJ
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6R/g9yWYluo+aSeQ"
+Content-Disposition: inline
 
-The piix4 I2C bus can carry SPDs, register them if present.
-Only look on bus 0, as this is where the SPDs seem to be located.
 
-Only the first 8 slots are supported. If the system has more,
-then these will not be visible.
+--6R/g9yWYluo+aSeQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The AUX bus can not be probed as on some platforms it reports all
-devices present and all reads return "0".
-This would allow the ee1004 to be probed incorrectly.
+Hi all,
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- drivers/i2c/busses/Kconfig     | 1 +
- drivers/i2c/busses/i2c-piix4.c | 4 ++++
- 2 files changed, 5 insertions(+)
+Changes since 20240626:
 
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index fe6e8a1bb607..ff66e883b348 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -195,6 +195,7 @@ config I2C_ISMT
- config I2C_PIIX4
- 	tristate "Intel PIIX4 and compatible (ATI/AMD/Serverworks/Broadcom/SMSC)"
- 	depends on PCI && HAS_IOPORT
-+	select I2C_SMBUS
- 	help
- 	  If you say yes to this option, support will be included for the Intel
- 	  PIIX4 family of mainboard I2C interfaces.  Specifically, the following
-diff --git a/drivers/i2c/busses/i2c-piix4.c b/drivers/i2c/busses/i2c-piix4.c
-index 6a0392172b2f..14752d946f58 100644
---- a/drivers/i2c/busses/i2c-piix4.c
-+++ b/drivers/i2c/busses/i2c-piix4.c
-@@ -29,6 +29,7 @@
- #include <linux/stddef.h>
- #include <linux/ioport.h>
- #include <linux/i2c.h>
-+#include <linux/i2c-smbus.h>
- #include <linux/slab.h>
- #include <linux/dmi.h>
- #include <linux/acpi.h>
-@@ -982,6 +983,9 @@ static int piix4_add_adapter(struct pci_dev *dev, unsigned short smba,
- 		return retval;
- 	}
- 
-+	if (port == 0)
-+		i2c_register_spd(adap);
-+
- 	*padap = adap;
- 	return 0;
- }
+The rpmsg tree gained a build failure, I used the version from 20240626
+instead.
 
--- 
-2.45.2
+The vfs-brauner tree gained a build failure, I used the version from
+20240626 instead.
 
+The drm tree gained multiple conflicts with the drm-fixes tree.
+
+The drm tree gained a conflict with Linus' tree.
+
+The leds-lj tree gained a conflict with the chrome-platform tree.
+
+Non-merge commits (relative to Linus' tree): 8127
+ 8860 files changed, 765288 insertions(+), 152271 deletions(-)
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm
+and a native build of tools/perf.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 378 trees (counting Linus' and 106 trees of bug
+fix patches pending for the current merge release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
+Gortmaker for triage and bug fixes.
+
+--6R/g9yWYluo+aSeQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ9pgMACgkQJNaLcl1U
+h9BnAwf+LfsBtV8Fi/SWpoMLJltuLYyK4Cq5O1h3prZYUvjM1DX4pRDdNLkr57NU
+E8A9KIHdf8ptE3Dc1wt7df/uJdmfGtu18t1sQyQqmlpXzpgyKnAUJsBf3l52CI2s
+v1kOku3GrxktF1UyoaAm1Vku8nVWNuT4wy/bGWS/s9QBO27ZhB76bKFoRrmUKdqD
+g8K3xvksjKYIiQbpBQ4DrQRVCtaSOviaoXY8dyJukGb2PON+ede6QSaLvdqM/q0w
+f9OHByQsnFkmQUBNPCkDX9q/M+6IqUoM2jT01Qiuokuv5csU4BFwqYVNKTo1uLh0
+a3y8grm9uArLzO13A564zD8y0x9jig==
+=m0PV
+-----END PGP SIGNATURE-----
+
+--6R/g9yWYluo+aSeQ--
 
