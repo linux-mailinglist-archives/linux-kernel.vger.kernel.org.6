@@ -1,324 +1,114 @@
-Return-Path: <linux-kernel+bounces-231868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78428919FAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 08:58:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82363919FB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 08:58:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBEBE1F2652F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 06:58:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B316B1C21EA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 06:58:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F1D4501F;
-	Thu, 27 Jun 2024 06:57:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC3545016;
+	Thu, 27 Jun 2024 06:58:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="lRK3sZe1"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2087.outbound.protection.outlook.com [40.107.92.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0370517E9;
-	Thu, 27 Jun 2024 06:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719471476; cv=fail; b=nOMEEX4HbBKzWokly4up+doDXbBX2QmdXods4dOHmx/I5CT1DDByoaeyKo9XCD4RLOBxQYeDD/lKONWnDz9sq3jI86TSrXcUoE9M37dCxA7yoRuxUn69wJrtr8nj+NAXEttNxsGBJEpqMrD4DsTrvJUy9fbWuZl4l/IbySD14YA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719471476; c=relaxed/simple;
-	bh=ntIRH07eC7NhK3ZbMabh4N44fsdUlHErG535/nrjfMo=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=CD7UuBnXXIQwfaoA2mN6Y+6vAQiNxQLg1gAETfED9VE8xjEOtmcw3j1vgmbnly00vmy88nnhGB3/mAwpFYhJvliPHZQEbynNj6+Ud6sJY3DzJk4qqN6DpvJwhDBnjHDlqYnxh9nNBVlJbLKZ2Px6gLYdnZ5jczzv/IIRnBHL4l8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=lRK3sZe1; arc=fail smtp.client-ip=40.107.92.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lL4lYBfdq11US0uFE8u3uFyD1DmALQ6Y8Z8sBQHranNx6Qwtvn16HxOlniOFe2zI7kgrt2q9rBC8IkxbqqMhKyb8McjL9cRpmCHvRYn2YUNK2Zyok9VKp4GayxTeMqYMuXCkgR5NVDSasUpsiJfZ+olIZWKQGgKBjb2IyYn+mQ3eme9BX6+iKTudQDvURK2rL1A79hV7towknhLAn7VdHkWlIsS1xh2/683ZQt3NdgOnkBvgsUwttCWTcNGI3MzmlOma8tg0iOYKgv5fQUlFm7rEnr6xyNKAdemByNJk8zbkiNM6DcEBuFPt4Us7+FJAe2udFQmRz23VXW06GKbBOg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ak3qtKiezV5RzRokj7/sfSKkVFJIvGj7jIBqMrXtu80=;
- b=Ub8io2TqnvMyXAG1tS1nfWgNSBfKV9oIO2tGxmUay5dSdNGw6a+zQzGojBvc5LTvOoqp5ljyNK7PJvq5gRY7+ho48lGlqx4ggaGT6BtdHkldllNCyerrtKOxRQcPebC6JcQsdchwcAZWMGsFjwCOmnCcNHquByavtwjfcj1Gs72sFPXvTrMU+2wpWR+Q0qP4S6OODXudETIYo5Hiiy6F0pQXG8RAbD1crCbKf2/7v9Ruv3Xzx9xFpuieUK5kyP9In2iJfEV10a9/mVhFTivVxqfZEMf9bUjiV2XDUgfVgNpYDTAkYVd8WibLivdX94lu38z/jeWuIkJOvUter+f4cA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ak3qtKiezV5RzRokj7/sfSKkVFJIvGj7jIBqMrXtu80=;
- b=lRK3sZe1n6TU6G1ijwD8aJ/PKJvmp5FVK35NVCAfjnR9w6xeKatq6wjpkOKEZfp3CPj+Vri+vPV/zutQz4e39GKjqPG5yf/KZ4LCZ3MGJgRZB4eTZDhsclb5k2WpR8+babO7GnkouxYu55FI6tfv628fdIFhDwb2192nGnWZrQ0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by SN7PR12MB7129.namprd12.prod.outlook.com (2603:10b6:806:2a1::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.33; Thu, 27 Jun
- 2024 06:57:51 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.7698.025; Thu, 27 Jun 2024
- 06:57:51 +0000
-Message-ID: <5739abdb-0234-412a-9f25-49219411bbc6@amd.com>
-Date: Thu, 27 Jun 2024 08:57:40 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/9] scatterlist: Add a flag for the restricted memory
-To: =?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>,
- "daniel@ffwll.ch" <daniel@ffwll.ch>
-Cc: "quic_vjitta@quicinc.com" <quic_vjitta@quicinc.com>,
- "angelogioacchino.delregno@collabora.com"
- <angelogioacchino.delregno@collabora.com>,
- "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "jkardatzke@google.com" <jkardatzke@google.com>,
- "krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
- "joakim.bech@linaro.org" <joakim.bech@linaro.org>,
- =?UTF-8?B?WW91bGluIFBlaSAo6KO05Y+L5p6XKQ==?= <youlin.pei@mediatek.com>,
- "logang@deltatee.com" <logang@deltatee.com>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- =?UTF-8?B?S3VvaG9uZyBXYW5nICjnjovlnIvptLsp?= <kuohong.wang@mediatek.com>,
- =?UTF-8?B?SmlhbmppYW8gWmVuZyAo5pu+5YGl5aejKQ==?=
- <Jianjiao.Zeng@mediatek.com>, "contact@emersion.fr" <contact@emersion.fr>,
- "benjamin.gaignard@collabora.com" <benjamin.gaignard@collabora.com>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
- "willy@infradead.org" <willy@infradead.org>, "pavel@ucw.cz" <pavel@ucw.cz>,
- "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- "Brian.Starkey@arm.com" <Brian.Starkey@arm.com>,
- "robh+dt@kernel.org" <robh+dt@kernel.org>,
- "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "tjmercier@google.com" <tjmercier@google.com>,
- "jstultz@google.com" <jstultz@google.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "mripard@kernel.org" <mripard@kernel.org>,
- "robin.murphy@arm.com" <robin.murphy@arm.com>,
- =?UTF-8?B?WW9uZyBXdSAo5ZC05YuHKQ==?= <Yong.Wu@mediatek.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "ppaalanen@gmail.com" <ppaalanen@gmail.com>
-References: <20240515112308.10171-1-yong.wu@mediatek.com>
- <20240515112308.10171-3-yong.wu@mediatek.com>
- <98721904-003d-4d0d-8cfe-1cecdd59ce01@amd.com>
- <779ce30a657754ff945ebd32b66e1c644635e84d.camel@mediatek.com>
- <cef8f87d-edab-41d8-8b95-f3fc39ad7f74@amd.com>
- <1050c44512374031d1349b5dced228d0efc3fbde.camel@mediatek.com>
- <3104b765-5666-44e4-8788-f1b1b296fe17@amd.com>
- <98c11bad7f40bcc79ed7a2039ddb3a46f99908f5.camel@mediatek.com>
- <75dc1136-7751-4772-9fa7-dd9124684cd2@amd.com>
- <ZnxWWtdShekGSUif@phenom.ffwll.local>
- <ae73a0203d6acf2878c9e3ae2d7554816b9c66ad.camel@mediatek.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <ae73a0203d6acf2878c9e3ae2d7554816b9c66ad.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR2P281CA0104.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:9c::11) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="PIRaZpEY"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55DEC43AA1;
+	Thu, 27 Jun 2024 06:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719471525; cv=none; b=ftI6UDrWEhMwEzUIReEpeVb5A6cbF0edlBYsRok23w0+pqZquooX6dAbNTqDr3aziYvLLKXk5wWTZoBUhDco+rf7j9bXZiuRbuy7RuUjYaKEiLeoOBO64Ur9GvF/gLimoIAFbpwjBsFYG0RU0l9nu3cFldAQKmfDhEiIkUMv61c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719471525; c=relaxed/simple;
+	bh=CAiHWTasWQsvNes4gquJBgUiczd3fYgut0h3LyWdH10=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LJN/VZbeAXqLGTCYfPX5jwHkrXDmRpBV90EEFCjIttFdRiAVRw7cY+8K25BxjZWti9PrD/kZOZ+ZrDONHvZR8W3FJKk2VnfZ4UqPXcrRf92080ENdphbbAHgNYbJ0xEG4BEiTzPCoXZ6KfrKRN7Ny8QdFzk5HsK8lKvnPFtgUIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=PIRaZpEY; arc=none smtp.client-ip=220.197.32.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=LsbeIB50EDgsPrzDnKsKFJzpQszBkOYrVjadj/myF5I=;
+	b=PIRaZpEY1NCT+/kZFp4m1lILrLLOfrExLn06eRaO3hABYjq8151HKppNRBLPVt
+	ulsfL9045x2oscTS+0V8/SoaEQXz167ylV/O1KLVnDQ891muiaGbkSoPFOOIHBcE
+	n7mycWSqtGTekBzHRT6vvDR8DDeku14OgOuaTWJYk/Vhs=
+Received: from dragon (unknown [114.218.218.47])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgD3v8ltDX1mxG8aAA--.52621S3;
+	Thu, 27 Jun 2024 14:57:51 +0800 (CST)
+Date: Thu, 27 Jun 2024 14:57:48 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Vitor Soares <ivitro@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Vitor Soares <vitor.soares@toradex.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] arm64: dts: imx8mm-verdin: add TPM device
+Message-ID: <Zn0NbIvFdfpMPHAx@dragon>
+References: <20240613134150.318755-1-ivitro@gmail.com>
+ <Zm+gjpsGhzjbEgP8@dragon>
+ <20240617071842.GA4832@francesco-nb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|SN7PR12MB7129:EE_
-X-MS-Office365-Filtering-Correlation-Id: d852d205-bfa1-44e1-af8b-08dc967675f6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VnYzWkVCYTB6NldoN1dzNFJVdWRscU5vR3NkZW50clg2ZUtwMjkrdG1rZjFl?=
- =?utf-8?B?cmNDL0FtaXlGUHNPb3lnRVdXR0xvdjdQcUdsUjFVT282WHZSS1U1U21oeGxj?=
- =?utf-8?B?YXJ4czBVekI0WW9kU25YQ3lNWXhjSzdiZVZQZWQ4MGxBTmhlZkVGK2FVMVFK?=
- =?utf-8?B?NlhrbkUxWTBMajZ0bGZHQ2hNVERUSFZsM1ZPUWVqTnR5dkROcGVMV0srNmdN?=
- =?utf-8?B?SXNjNEJVbWlDYmozMDY2aHNGNkd2WUs3T3VwdFVCQ1R3U1YvaDVDUkp1SFAz?=
- =?utf-8?B?K0VzNXo0QzdVZzN6TWlZV25GQ0tBcG1xMUZ5N0VITExxdkxjZ1hlcW5XMFUr?=
- =?utf-8?B?Y2FyMWpnZHVxOEpDSm1rRElEcHlMcDgrUTMvMFBDYlE0bGpXeTY2UXpXbWRW?=
- =?utf-8?B?MlpWVGdKTEY3YzA5ZDI2eVhnU3pudTZGb3NhR3ZQMDBXRVkwUmFhRzFHa1Nr?=
- =?utf-8?B?ZXZ3aGZQVGp1RlNOdUR5cXdHRklOR3pwK2NjMDhMV29GeW0rUWZ5dHJCRVB6?=
- =?utf-8?B?RDBBSUQ0QW55Q3p4M3luWlFsYmZHMnJmUnd1MWJpUnlHK0RIeWIxZkpqMjlX?=
- =?utf-8?B?UEJKTEVmZXVkV29wVFJtaW1XQjh4N0w5NFpnb01GUlhoT2ZGQWFha3RSRjl1?=
- =?utf-8?B?RERLY1FadHpPbWhlamRMR3c2SkVyZDlwVW9sZjFFK3ZIRUxNdERRbDg4SzEz?=
- =?utf-8?B?M3lRQnF1cStJSHY1ZnlWa2lod1daR20zUkFHak16UG1kcEhrd3J2NVVPZnAr?=
- =?utf-8?B?RmxDVE5Xa1gvWHE1RHc2MU9EaUM2RnhNdXo5K1VSRWRvb3Zsb1Yra2dYSFNF?=
- =?utf-8?B?QUh2OGRGcmhBT2Mzc0gvN0lXRlVhVXlwQXg3UTNoWXRSMUs3RUNpdGJQc2lF?=
- =?utf-8?B?OGdHZTdKSDUxOHFkTFdqVFpOanIvcTNoMXFscjdvTy9adWhSM1JuTnpjUVJk?=
- =?utf-8?B?MG10ZWl2S0JUSS9GZnNRZmd3SURhOUpwN0lXb2o5YlJtRWg1VUpvMHlYMk1F?=
- =?utf-8?B?MXIrTEJPTGFhVmhkNUk0dHNxdUtYSzlCSVRpSW9tRUl4MEh5WFBKYVcrVjBv?=
- =?utf-8?B?Q2Uwb25IbHdjeDQ4OExISjJIU2FNNDJHVXNtNWlEN2dXckkwbXlidUtOc29l?=
- =?utf-8?B?NURXSjZTa3NyMFExdDkwUzVRclF0czFnMTIrTkx6VThnaEFCclEwRDZzQ0N3?=
- =?utf-8?B?cDIwajFDL21PdUprNXlLbW5rUGw3UFRiR2l3UnMyaFJ2SndhQ1Jjd0UxT1Jy?=
- =?utf-8?B?T0MyY1VxVjBWWWl2cEswUkZNOEpkbjFXMXRONnVEZXpmRlVKM3lPczA1TGM4?=
- =?utf-8?B?TmtFNEpPc0wvWjdhd1hPdWY5NitIMnVnck1lTHE3UVhVUmNiREVpMFJNYzBp?=
- =?utf-8?B?SDZFbGs1QmJqUEJjSkJYTEtCZllZTFgwUzA3WXQ3R3RzWUtXdHR1Sy9iYU9V?=
- =?utf-8?B?RTU0WWoyL3FIL2lZY1RsZG5MZ1J6U0tUOHN5anhGalFLTkFiSE5OQVFMR0tz?=
- =?utf-8?B?bU9CNG5IK3N5VkFQWElKNGdwaEh2L3o4SnlPVFE4Ny9FbjYrbkxSRWpoRDVG?=
- =?utf-8?B?Nm5SbTN1amY5SElrRlRWQmFCNjY2d21nb2RPaTdPOWU1U3hIa09LVHo4elJM?=
- =?utf-8?B?bTljNktCNkp0eHE3ZUZDZnhBSUxkN1hPd2xSWWtnQVhyUk5DejU3MGdQMk9y?=
- =?utf-8?B?UlJqeUhXZUhaTjJ6djdTelIveDZ0SFJjYzJoMDl6ZE16MFFyZEgrcU1rc0l3?=
- =?utf-8?Q?g9/dQ27YrpRtA2IOYE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OS9kMk8xdlVjS1YvR1QwNGVFMjY3ejd3MVRYclZnYk1ETW9qOEpxenBxOTJL?=
- =?utf-8?B?Y2d0V2RCNmp5SGF5eFZHbzZBdFRzWWdZa0NrQnJxQ2dwKzZDcnBLNEJncWZD?=
- =?utf-8?B?cEFDekZ1QWw5OFJGazRKQWZ2b1ZxRnZSWkl2eXZUUm1aNmNyOFBHNkRYa0lY?=
- =?utf-8?B?YllGNzl6dXNuWDFKWTRxTlJTRmwrOGlPZ0x1NGo4QldNcTllWCtQeXlEN3NK?=
- =?utf-8?B?N0EyQW4yRGdub3pRV214MlpieVZJaWpDcVdLM1E4RnpaaCt2b09vZU02NFhZ?=
- =?utf-8?B?SkNwakJUOEhxaGRER1dndVZHTEV6L3J1YnFDbWZyUkdWUklrSFN3QzZZVWVx?=
- =?utf-8?B?TTZiRnNreWlHSG8yMi9pZ1JGaEVXbDNVSXc0dG1uNlZpTnhWUW0yTXp6N0hB?=
- =?utf-8?B?dzEwcS9RN1pCK2J0OEFkMm85K0hXZnNRV0ZHSlp6ZWhickxRUTdDTzViSExq?=
- =?utf-8?B?TDRKNVRBNjh2WnQrUEZSNHE3ZHlFMEVPM1drWnZuWjBNbVp2a0lsbXNZTGEx?=
- =?utf-8?B?aFdZL0lGZWVyUHJhZld2MUxlUUwwQy9lQ1dXQ1NiT2VvTkVzN0VBKzlQTSta?=
- =?utf-8?B?a2RUMVdvMWVVOGYxeE44WFh4em81ajBpOHpwOGlIY0FkbzNDSnMwa0RNekdm?=
- =?utf-8?B?ZU84RWVueWZxTnYrdTJBTnU0WVZRNUo4SHUzbGFDQWhUaTI2QlM1clN3SCsw?=
- =?utf-8?B?ZFJGNmxqNnBZVFVQb0hXaVBORHJHMlBrRkRVbVJxK3ltL2dVTHFTajFaNi91?=
- =?utf-8?B?NWtOc09jZlhSQ0I5MXdGeUtRT01FL0tNamd0L2RoQnJRR2grZWNNWjg4QXEv?=
- =?utf-8?B?YVlySEpRQTd0b1RSUy9nYTIrV1B2RUhxcmZJMWRJaDZpbitLU2pjMGg0MlY3?=
- =?utf-8?B?U3h6UjRZY2MvZ0VHY1BJQjVCUmtpSXpxZVcwOXNtVWpheFg0M2M4UEhTczN1?=
- =?utf-8?B?MzduREtzdjJRVjIvNUNXUE9CN1c0NFZtYWVvWXJzdllQQXY1b0cxQVpqSzcz?=
- =?utf-8?B?Z1poaUJva0pVMU4vVVNqeWNOaTB0ODFraWo1dXZ4V1d1Y08wUnlBVWxXN1Jz?=
- =?utf-8?B?R2J6cnNCaEFGMDZmR0VVSHFad3JVemRNcXF6bzl2KzFSU0NoWXNvWksrajBQ?=
- =?utf-8?B?VE1ORzVCSDUwNkNuMytmQ2dWYXE4b0pSTU04REdLRTRzYWVhV0VKVjFJMUZ1?=
- =?utf-8?B?T3Zjb1Z1TjBBQTVTenpNUjYxQzNHeWcwZldQQlNpdDJVTkRDWmhhdXptdjBY?=
- =?utf-8?B?WUpOS1BaWVAxNnVWai9WU0RmRzU0NVQrZ2dLeSttVWNUY2M2OWkwc3JlVTUw?=
- =?utf-8?B?NzlSMVl3dDBJVTVoaUtHeXg5ZWUrN2xqeGFzUTJzWmdXdTc3UWFXZlRmTTU1?=
- =?utf-8?B?TVk5U2V0c1U5amVGMVNTckVXcnZHSU5QYmtiRGgrb1hoNk5Ecm13alJoQTRV?=
- =?utf-8?B?WjdKSzRkdWhDNlRjU0p0RGZpa0VUNXlHUk56S2pyZ2tZNndjUi8wLzRsVFQ0?=
- =?utf-8?B?ZEI4S1NXU3ZmbFJFeFVyb2w1SURkT3VwRTVXbE5JVkRRck1kLzA2VTluUzZG?=
- =?utf-8?B?QStkZGNiZkFMTEhPU2k5V01XWlYvQTRqNk1BdnlnQ2RVeGtkUVFXMlRpZk81?=
- =?utf-8?B?cnovb0NnbVQ4YitPRSsraDI1QVBnUThKRXMwWDhKZGZMSThkR2JsWnBYRUhR?=
- =?utf-8?B?YlFUcmZ4cHgvME5pRlc1QVo3RU0zVWJxNSsreWlnM3VhSC9FOTVMc0hyTGM4?=
- =?utf-8?B?OWNIcU5tZCtnamZxUHhYU1UxVjVxV1RBeHh5WllEaXlwS2hZTmpqUGhDOHNI?=
- =?utf-8?B?bVVVQU9tNEVveXZFVTBNUjdiQzE2alREeVBFSnAralZNMUpCNlZPL3BvK3lo?=
- =?utf-8?B?cHFNeEw4dStGbi9TdUYvZTBrVit1dnJwaE9oVTg2R3Z0Q1VIempzRFM4U1JS?=
- =?utf-8?B?TG1mMjFMY1JJMzVrRHl1TC9IRU00NTJPQnN4OUlzWDVsRTljb1pqQU1nSTV2?=
- =?utf-8?B?TVZxUlFDWWorcU9sMWNaRG1nOHk3c0RxOVVrNGowTk1Dd2IzOEVnVU1BQVo0?=
- =?utf-8?B?Tkc5UFF4SjJoNkJXYktobytJNVAwWk81MVFDNHRDOVBKbkJvZ1lYaWVxeGx2?=
- =?utf-8?Q?NMw3HdG7Fa60OAVOVrmONffKU?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d852d205-bfa1-44e1-af8b-08dc967675f6
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jun 2024 06:57:51.0697
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5um54OoMyTl8IJBagi8C2YlNgtV09gGKcs1C66dAMOmjAZ8A/hoHAfY6FU5J8d77
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7129
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240617071842.GA4832@francesco-nb>
+X-CM-TRANSID:Ms8vCgD3v8ltDX1mxG8aAA--.52621S3
+X-Coremail-Antispam: 1Uf129KBjvJXoW7WF17XF15Kw15uFyxtF1fJFb_yoW8Wr4Dpr
+	WSkFs5J397Xr43Cr9Iqwn7ur9xKa1fAr4Duwn8KryUtrnIvF98GF1xGr1xur1q9r4fA3yF
+	kF15ZryS9w1rAw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jO8nOUUUUU=
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiEQ8LZWZv-cwmYgAAsM
 
-Am 27.06.24 um 05:21 schrieb Jason-JH Lin (林睿祥):
->
-> On Wed, 2024-06-26 at 19:56 +0200, Daniel Vetter wrote:
-> >   
-> > External email : Please do not click links or open attachments until
-> > you have verified the sender or the content.
-> >  On Wed, Jun 26, 2024 at 12:49:02PM +0200, Christian König wrote:
-> > > Am 26.06.24 um 10:05 schrieb Jason-JH Lin (林睿祥):
-> > > > > > I think I have the same problem as the ECC_FLAG mention in:
-> > > > > > > > 
-> > https://lore.kernel.org/linux-media/20240515-dma-buf-ecc-heap-v1-0-54cbbd049511@kernel.org/
-> > > > > > > > I think it would be better to have the user configurable
-> > private
-> > > > > > information in dma-buf, so all the drivers who have the same
-> > > > > > requirement can get their private information from dma-buf
-> > directly
-> > > > > > and
-> > > > > > no need to change or add the interface.
-> > > > > > > > What's your opinion in this point?
-> > > > >  > Well of hand I don't see the need for that.
-> > > > > > What happens if you get a non-secure buffer imported in your
-> > secure
-> > > > > device?
-> > > > 
-> > > > We use the same mediatek-drm driver for secure and non-secure
-> > buffer.
-> > > > If non-secure buffer imported to mediatek-drm driver, it's go to
-> > the
-> > > > normal flow with normal hardware settings.
-> > > > 
-> > > > We use different configurations to make hardware have different
-> > > > permission to access the buffer it should access.
-> > > > 
-> > > > So if we can't get the information of "the buffer is allocated
-> > from
-> > > > restricted_mtk_cma" when importing the buffer into the driver, we
-> > won't
-> > > > be able to configure the hardware correctly.
+On Mon, Jun 17, 2024 at 09:18:42AM +0200, Francesco Dolcini wrote:
+> Hello Shawn,
+> 
+> On Mon, Jun 17, 2024 at 10:33:50AM +0800, Shawn Guo wrote:
+> > On Thu, Jun 13, 2024 at 02:41:50PM +0100, Vitor Soares wrote:
+> > > From: Vitor Soares <vitor.soares@toradex.com>
 > > > 
-> > > Why can't you get this information from userspace?
+> > > Add TPM device found on Verdin iMX8M Mini PID4 0090 variant.
+> > > 
+> > > Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
+> > > ---
+> > >  arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi | 16 +++++++++++-----
+> > >  1 file changed, 11 insertions(+), 5 deletions(-)
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi b/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
+> > > index 4768b05fd765..c9ae5f0bb526 100644
+> > > --- a/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
+> > > +++ b/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
+> > > @@ -227,15 +227,16 @@ &ecspi2 {
+> > >  	pinctrl-0 = <&pinctrl_ecspi2>;
+> > >  };
+> > >  
+> > > -/* Verdin CAN_1 (On-module) */
+> > > +/* On-module SPI */
+> > >  &ecspi3 {
+> > >  	#address-cells = <1>;
+> > >  	#size-cells = <0>;
+> > > -	cs-gpios = <&gpio5 25 GPIO_ACTIVE_LOW>;
+> > > +	cs-gpios = <&gpio5 25 GPIO_ACTIVE_LOW>, <&gpio4 19 GPIO_ACTIVE_LOW>;
+> > >  	pinctrl-names = "default";
+> > > -	pinctrl-0 = <&pinctrl_ecspi3>;
+> > > +	pinctrl-0 = <&pinctrl_ecspi3>, <&pinctrl_pmic_tpm_ena>;
 > > 
-> > Same reason amd and i915/xe also pass this around internally in the
-> > kernel, it's just that for those gpus the render and kms node are the
-> > same
-> > driver so this is easy.
-> >
+> > Would it make more sense to have tpm pinctrl in node tpm@1 below?
+> It's the pinctrl of the SPI Chip Select pin, not something about the
+> TPM, I think it's correct to have it into the ecspi node.
 
-The reason I ask is that encryption here looks just like another 
-parameter for the buffer, e.g. like format, stride, tilling etc..
+The name pinctrl_pmic_tpm_ena seems confusing then.
 
-So instead of this during buffer import:
-
-mtk_gem->secure = (!strncmp(attach->dmabuf->exp_name, "restricted", 10));
-mtk_gem->dma_addr = sg_dma_address(sg->sgl);
-mtk_gem->size = attach->dmabuf->size;
-mtk_gem->sg = sg;
-
-You can trivially say during use hey this buffer is encrypted.
-
-At least that's my 10 mile high view, maybe I'm missing some extensive 
-key exchange or something like that.
-
-
->   
-> > But on arm you have split designs everywhere and dma-buf
-> > import/export, so
-> > something else is needed. And neither current kms uapi nor
-> > protocols/extensions have provisions for this (afaik) because it
-> > works on
-> > the big gpus, and on android it's just hacked up with backchannels.
-> > 
-> > So yeah essentially I think we probably need something like this, as
-> > much
-> > as it sucks. I see it somewhat similar to handling pcip2pdma
-> > limitations
-> > in the kernel too.
-> > 
-> > Not sure where/how it should be handled though, and maybe I've missed
-> > something around protocols, in which case I guess we should add some
-> > secure buffer flags to the ADDFB2 ioctl.
->
-> Thanks for your hint, I'll try to add the secure flag to the ADDFB2
-> ioctl. If it works, I'll send the patch.
-
-Yeah, exactly what I would suggest as well.
-
-I'm not an expert for that part, but as far as I know we already have 
-bunch of device specific tilling flags in there.
-
-Adding an MTK_ENCRYPTED flag should be trivial.
-
-Regards,
-Christian.
-
->
-> Regards,
-> Jason-JH.Lin
->
-> > -Sima
->
-> ************* MEDIATEK Confidentiality Notice ********************
-> The information contained in this e-mail message (including any
-> attachments) may be confidential, proprietary, privileged, or otherwise
-> exempt from disclosure under applicable laws. It is intended to be
-> conveyed only to the designated recipient(s). Any use, dissemination,
-> distribution, printing, retaining or copying of this e-mail (including its
-> attachments) by unintended recipient(s) is strictly prohibited and may
-> be unlawful. If you are not an intended recipient of this e-mail, or believe
-> that you have received this e-mail in error, please notify the sender
-> immediately (by replying to this e-mail), delete any and all copies of
-> this e-mail (including any attachments) from your system, and do not
-> disclose the content of this e-mail to any other person. Thank you!
+Shawn
 
 
