@@ -1,121 +1,160 @@
-Return-Path: <linux-kernel+bounces-232789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-232790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F10791AE4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:40:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BFB091AE4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 19:40:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 409311C225C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:39:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 118D928DBB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 17:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C759119A2BB;
-	Thu, 27 Jun 2024 17:35:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63B1119AA5C;
+	Thu, 27 Jun 2024 17:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fpXf3VPl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NzaGOgRJ"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D4119A2AD
-	for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 17:35:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F099454918;
+	Thu, 27 Jun 2024 17:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719509746; cv=none; b=ZpzFuKPOaC+/FWGJJE5bi39M+I9QWHZBfzr+MBVJ4MTZOBabfmDCq64LgK/B183+LPvInjxHzy9NVXMQdCKN0bEBT7a0so0Xg24KzgqNZNieJXZ3+KRrVgXarUL6sl5s3Nwr69gJYE8vwfzvJQ8WEsICaHK55yeEpCqSvqXmzH0=
+	t=1719509791; cv=none; b=r3HsJ3L91OSyeWcXncd6d+ZzI9aX3JARoVIXTlEsKxcCbEpazMok6I874dp8x5BSl8fBWPL2jz57Qjal2u56rbhjP6Eqnl4wijdDp2zZAPkyvNbqF7BpkDM7dW8+4JDhm54h4yiu6d8nCUw02fxJR3CcV1c3sGvq0ZrNSzw0u9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719509746; c=relaxed/simple;
-	bh=gc+axrfPkqFuDVU/ebPk/NSkLyQijtDPeUZCQZA4Auo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jvkLfjEOJgZEyBoLXBnuc0BkDUAOyMbPr2kc37bwMQ/2w9VFKfz/fMJAEYOEpWRhvu2Cz1B/EGGP4nQZW32M3D0CYJ1J82DVq3mjchD8fZpfJk2k04Mhe3E6k0a85ybUXFg7AJ7ZbsaBZXRVoP+eSM2iU/XwI/TYfoFoX80Rywo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fpXf3VPl; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719509743;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=356Lg5UUSnmEm4pXEbf26iOKxmVufXs5pH3pFisEAVQ=;
-	b=fpXf3VPldT9AjsZUvdOtjiAjD3eYve80SLzrt+MqbZT38JOcZjEH2OK4J+Dxfoe42ZOhbW
-	a2N4kdXUPKIeC15ynXiUDdWfnwnSRHSOYTSpy/BN9kzinYjxSY4LXnl9hMrh/xmvJua0xe
-	sK+ctwmRAeMU0443a3OvzrqLg+FIi5w=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-639-ekehw8qOMUmLpp6EyUneIw-1; Thu,
- 27 Jun 2024 13:35:39 -0400
-X-MC-Unique: ekehw8qOMUmLpp6EyUneIw-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 850161956096;
-	Thu, 27 Jun 2024 17:35:37 +0000 (UTC)
-Received: from thuth-p1g4.redhat.com (unknown [10.39.192.31])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6788A3000603;
-	Thu, 27 Jun 2024 17:35:32 +0000 (UTC)
-From: Thomas Huth <thuth@redhat.com>
-To: dri-devel@lists.freedesktop.org,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-kernel@vger.kernel.org,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Hamza Mahfooz <hamza.mahfooz@amd.com>
-Subject: [PATCH] drm/fbdev-generic: Fix framebuffer on big endian devices
-Date: Thu, 27 Jun 2024 19:35:30 +0200
-Message-ID: <20240627173530.460615-1-thuth@redhat.com>
+	s=arc-20240116; t=1719509791; c=relaxed/simple;
+	bh=coYaJMIjArGvpQf7g0A/4peXT7vpXorezIIu1Z6s0aI=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=XS6tnIFybSHkkaavXwmU3Z9rDuu9htpeqvpgMXMdBZKb/vGundJPUTRVGTenyzcOQ0NB0Shu/PrXQ82e82fM4Cg626UtQ+8Wmefh1J8dyEHmMnn33XcmuuBqps/HpYWEldERjWyzQ2TNyC9/hAxz+p+0UHpkpVsNFtLsoeMf6co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NzaGOgRJ; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52cdb0d8107so8349983e87.1;
+        Thu, 27 Jun 2024 10:36:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719509788; x=1720114588; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3yk4H1RLJJRoCdj5bfi9m2iP6KRHwo3a2/6FIyuZ1rs=;
+        b=NzaGOgRJVp3aMksNUZO8HiGFfQvZDXCYmnH5BJnVkbyXvQmHwEaIcF0ub88hYbLJbM
+         Yx7etLm+EZWotlHV2Ts2HNVnYk1ELr+FlL8AgD6tINpKF2t0bZ6E3XlMS75gT8YEl53F
+         HO4AVtOpDAfDZWmPJdnvCiVqk7sBDG3PWI3kQ9l9hqJdUtLCigxoCF6g6gROvKsIbaeQ
+         k/JoZChOd8fHb34cpm6i+LoGVcpbHPxrALJIpTPvax35i7zgFT37CeHn9YD3zY4xseQk
+         SizVA585SVfC2IK7aZmsbEDnWws7l3FlDgHhQHiNTKbeNipMtXiSKQTDhl62CRdWdxvC
+         Jkjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719509788; x=1720114588;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3yk4H1RLJJRoCdj5bfi9m2iP6KRHwo3a2/6FIyuZ1rs=;
+        b=rjv/IwZuyb0HDAjb5sG3N+JH7JRFJ237+qVMCbvvFCJITx8xr3pkCCw+DnBWExQ3Uo
+         O7ssGiQCnCLiLegToqtKfSFw1kFuhx79sURhFoqDoCPp9s8LZ+u41W2L4d4bHUJQ9Kvr
+         RIzpiWUIDVhZtTKHZaJ5a4tkZl8aEW8aJ6SPBsHWX1b2KXlmohk5s5EZCZ8KyZfufJH9
+         a7DysbaPomB72bbGJnY7Sd6L+VVP9tmPr+bzYqV+mzzShpt/DuPxT8kZOt50jQZnDuMB
+         LL75/6kuiPKa+FUHD7T5Z3He7Wox2cN56vQqrWfc12/toGTRh0es06PpP6rqg5UdAu62
+         HL2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVj0WrN8X9fChIZtU6p3GrIdWOYaIKHdz17B/FL/hXTIcY8YbYFa99bkTnFgGyROGMSMEJIrJX/Vh1zsODLlTRnD6OiHXUiMYmUcF4=
+X-Gm-Message-State: AOJu0YztWFF4vmri5CmvlOl3CTROdrhLQ3pJXJTwv5RonYkAtOPYlBch
+	IP5iFCMfNHZhSQi6d4xX9jxAdaiiGH9bc/mIbEkBSGCPYM/7NLmIzgagWQ==
+X-Google-Smtp-Source: AGHT+IFD6a/P2HZh8/mK6o8zcolkgZvVGoo6nIFU70BTOQq/I5nXvKizgLOvUa/6DxvCFFFkIGrfdw==
+X-Received: by 2002:a19:384b:0:b0:52b:c1cc:51f1 with SMTP id 2adb3069b0e04-52cdf7f10ddmr10035006e87.23.1719509785473;
+        Thu, 27 Jun 2024 10:36:25 -0700 (PDT)
+Received: from [192.168.178.20] (dh207-41-166.xnet.hr. [88.207.41.166])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a729d6fdfc5sm80206166b.10.2024.06.27.10.36.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Jun 2024 10:36:25 -0700 (PDT)
+Message-ID: <76d879d2-200d-4b15-8fab-fcd382a4c3e2@gmail.com>
+Date: Thu, 27 Jun 2024 19:36:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Linux Kernel Build System <linux-kbuild@vger.kernel.org>,
+ Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+ David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org
+From: Mirsad Todorovac <mtodorovac69@gmail.com>
+Subject: =?UTF-8?Q?=5BPROBLEM=5D_make_randconfig=3A_fs/btrfs/ref-verify=2Ec?=
+ =?UTF-8?B?OjUwMDoxNjogZXJyb3I6IOKAmHJldOKAmSBtYXkgYmUgdXNlZCB1bmluaXRpYWxp?=
+ =?UTF-8?Q?zed_in_this_function_=5B-Werror=3Dmaybe-uninitialized=5D?=
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Starting with kernel 6.7, the framebuffer text console is not working
-anymore with the virtio-gpu device on s390x hosts. Such big endian fb
-devices are usinga different pixel ordering than little endian devices,
-e.g. DRM_FORMAT_BGRX8888 instead of DRM_FORMAT_XRGB8888.
+Hi all,
 
-This used to work fine as long as drm_client_buffer_addfb() was still
-calling drm_mode_addfb() which called drm_driver_legacy_fb_format()
-internally to get the right format. But drm_client_buffer_addfb() has
-recently been reworked to call drm_mode_addfb2() instead with the
-format value that has been passed to it as a parameter (see commit
-6ae2ff23aa43 ("drm/client: Convert drm_client_buffer_addfb() to drm_mode_addfb2()").
+After following Boris' advice in https://lore.kernel.org/lkml/20240404134142.GCZg6uFh_ZSzUFLChd@fat_crate.local/
+on using the randconfig test, this is the second catch:
 
-That format parameter is determined in drm_fbdev_generic_helper_fb_probe()
-via the drm_mode_legacy_fb_format() function - which only generates
-formats suitable for little endian devices. So to fix this issue
-switch to drm_driver_legacy_fb_format() here instead to take the
-device endianness into consideration.
+KCONFIG_SEED=0xEE80059C
 
-Fixes: 6ae2ff23aa43 ("drm/client: Convert drm_client_buffer_addfb() to drm_mode_addfb2()")
-Closes: https://issues.redhat.com/browse/RHEL-45158
-Signed-off-by: Thomas Huth <thuth@redhat.com>
+marvin@defiant:~/linux/kernel/linux_torvalds$ time nice make -j 36 bindeb-pkg |& tee ../err-6.10-rc5-05a.log; date
+  GEN     debian
+dpkg-buildpackage --build=binary --no-pre-clean --unsigned-changes -R'make -f debian/rules' -j1 -a$(cat debian/arch)
+dpkg-buildpackage: info: source package linux-upstream
+dpkg-buildpackage: info: source version 6.10.0-rc5-gafcd48134c58-27
+dpkg-buildpackage: info: source distribution jammy
+dpkg-buildpackage: info: source changed by marvin <marvin@defiant>
+dpkg-architecture: warning: specified GNU system type i686-linux-gnu does not match CC system type x86_64-linux-gnu, try setting a correct CC environment variable
+ dpkg-source --before-build .
+dpkg-buildpackage: info: host architecture i386
+ make -f debian/rules binary
+#
+# No change to .config
+#
+  CALL    scripts/checksyscalls.sh
+  UPD     init/utsversion-tmp.h
+  CC      init/version.o
+  AR      init/built-in.a
+  CHK     kernel/kheaders_data.tar.xz
+  CC [M]  fs/btrfs/ref-verify.o
+  AR      fs/built-in.a
+fs/btrfs/ref-verify.c: In function ‘process_extent_item.isra’:
+fs/btrfs/ref-verify.c:500:16: error: ‘ret’ may be used uninitialized in this function [-Werror=maybe-uninitialized]
+  500 |         return ret;
+      |                ^~~
+cc1: all warnings being treated as errors
+make[7]: *** [scripts/Makefile.build:244: fs/btrfs/ref-verify.o] Error 1
+make[6]: *** [scripts/Makefile.build:485: fs/btrfs] Error 2
+make[5]: *** [scripts/Makefile.build:485: fs] Error 2
+make[4]: *** [Makefile:1934: .] Error 2
+make[3]: *** [debian/rules:74: build-arch] Error 2
+dpkg-buildpackage: error: make -f debian/rules binary subprocess returned exit status 2
+make[2]: *** [scripts/Makefile.package:121: bindeb-pkg] Error 2
+make[1]: *** [/home/marvin/linux/kernel/linux_torvalds/Makefile:1555: bindeb-pkg] Error 2
+make: *** [Makefile:240: __sub-make] Error 2
+
+real	0m2.583s
+user	0m9.943s
+sys	0m5.607s
+Thu Jun 27 19:14:55 CEST 2024
+marvin@defiant:~/linux/kernel/linux_torvalds$ 
+
+This fix does nothing to the algorithm, but it silences compiler -Werror=maybe-uninitialised
+
 ---
- drivers/gpu/drm/drm_fbdev_generic.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/drm_fbdev_generic.c b/drivers/gpu/drm/drm_fbdev_generic.c
-index 97e579c33d84..1e200d815e1a 100644
---- a/drivers/gpu/drm/drm_fbdev_generic.c
-+++ b/drivers/gpu/drm/drm_fbdev_generic.c
-@@ -84,7 +84,8 @@ static int drm_fbdev_generic_helper_fb_probe(struct drm_fb_helper *fb_helper,
- 		    sizes->surface_width, sizes->surface_height,
- 		    sizes->surface_bpp);
+diff --git a/fs/btrfs/ref-verify.c b/fs/btrfs/ref-verify.c
+index cf531255ab76..0b5ff30e2d81 100644
+--- a/fs/btrfs/ref-verify.c
++++ b/fs/btrfs/ref-verify.c
+@@ -459,6 +459,8 @@ static int process_extent_item(struct btrfs_fs_info *fs_info,
+                iref = (struct btrfs_extent_inline_ref *)(ei + 1);
+        }
  
--	format = drm_mode_legacy_fb_format(sizes->surface_bpp, sizes->surface_depth);
-+	format = drm_driver_legacy_fb_format(dev, sizes->surface_bpp,
-+					     sizes->surface_depth);
- 	buffer = drm_client_framebuffer_create(client, sizes->surface_width,
- 					       sizes->surface_height, format);
- 	if (IS_ERR(buffer))
--- 
-2.45.2
++       ret = -EINVAL;
++
+        ptr = (unsigned long)iref;
+        end = (unsigned long)ei + item_size;
+        while (ptr < end) {
+---
 
+Hope this helps.
+
+Best regards,
+Mirsad Todorovac
 
