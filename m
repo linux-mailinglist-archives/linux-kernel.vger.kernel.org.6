@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-233420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6093091B6D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:15:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61AB491B6D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:15:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15CC9282260
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 06:15:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75C041C226BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 06:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19A64645B;
-	Fri, 28 Jun 2024 06:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DCD24CB4B;
+	Fri, 28 Jun 2024 06:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n46L7K65"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uSZyBwxA"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E2425624
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 06:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32DB94645B
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 06:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719555325; cv=none; b=Y0ufbG2kYvbK1OUX/Kzusj8KQPooYZrB84Di9/PAbyQ9aI2c+zRQQ9fbSY5uqKLy/9B7r1So5oNEQtojGaoDIl0Pqxs8UfxIfWGW1OsaZfhURF3hzZim1okxdpCNsi6XQeZl73HtlWro0nxbAhMeoCH50T3mFURTUiPAOF+1EeM=
+	t=1719555341; cv=none; b=aOqwVOichueyCJ2rwtl9mMGXYaBg62AlUt4d/RDWkI5dFNR/iG8pgm81GknpIP4bOCSHgblgLV9nUMF22OKZttG7zvzEmuzrK0aaBB3LmpS7NadxBlMn0MhqWzOmZOVELZDMGDEV2ylEBCOWhBtAK+w28tlHFlmnm9HBFyHEa/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719555325; c=relaxed/simple;
-	bh=l7gsLp5MjVP+M2ZyjhkH26uqU/8io5Y0iOIiXhbVAnM=;
+	s=arc-20240116; t=1719555341; c=relaxed/simple;
+	bh=PEalRnfcCsK+BCdbuOYwSZVLCuXgs1Weqbfofdu+mHE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nLkQ8KAdFA0sCG3LFJC3B7T4GdX59qZHNmRn6eO8xKkbq6vXlgT6d4jXcnci21DIZpAFww6mnWfXFdOwIpakk8Q3161PdO9fJ7RsKeNqLWumTOxDAdkKGnJGNEiXLIZJna5rWga7I74NDkSIWCjA7IQO8O0+YjXof19oUGRc/QY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n46L7K65; arc=none smtp.client-ip=209.85.221.42
+	 In-Reply-To:Content-Type; b=i/+u+FC++jhfkXmhh6LUtbJvUAJRnXEAc1OdpPOvccQS3XbDMVt6cZVdipsoV7L8a5FGvq9TR2rd5SNqNRHG3qxamT1whKDnYZIMzIN4vNyyNpUTOg5b4x/kyYTFls2tzUpgNgZs+lHD+tm0z1b/sozpZZ4loTit2DNbAX0y+98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uSZyBwxA; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-367339bd00aso198722f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 23:15:23 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-424acfff613so2921515e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 23:15:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719555322; x=1720160122; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1719555338; x=1720160138; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=AtUb5OQN/rCaRa+K3+Qo1zvtzQ8MrCKt+xQVUJDy3Ew=;
-        b=n46L7K65+hAvZX1rI90rYjrWVl0D+fEcKPhme+6afIqL4DNj4lf6jdIc1vkJFdCeem
-         yLT8VS9gc4Igur+Q6GxYf3mCVy555uyZqYAD5csA3cnlmMyOcBEeaScMmvUWvaRZ7ToS
-         cItcXShnSK4LJIQUtjDbJBWhW8EFC+7sjIFieLVC+We59tRYi2+doDJuedjcf8T1l+Wa
-         3xBTH1PZ9F45wImPNM03gCrI/zc0wPa8RprUUKNeZ8zXvCxXe7dboKSy3KwQptXObUDX
-         pFEr9+Kh6Qn3gm2/h+kem0Hm01M825CG7ee4bvirCwLpBq5anySzzGFKBumZGdRaYjIb
-         9TsA==
+        bh=UMhenW90EF71o+8hBAp17KpC8WSjwEeiaMJdyASuAnM=;
+        b=uSZyBwxAf8/dqY1/vmu3be4PHfUN9gGscpKCTN75t5+JJgWitA50nYvdXf5Ryg4tnI
+         MBIf9kVrKyK6fo2Sr2tfO98e4rzQXMT1aYLnaKhPEcgmZh4mzLDegeyTFgIg92Rl3g9l
+         OvmcrixK1JfCw/XQEKGvho6VxMb4r7MIkARBLIM2FXApz3WgdDxp8Wvi+rNPwXuHBv0Z
+         cCiBBleQYU+P4jxJabYGEi5Oq3sES3n72j0agP50glWgQZsuR63vMLTMX7auQgtC99SS
+         C91twQOMeYZdRcKi1AXJGhhWh+/MlD/UV2KjxSvF4EwA97dm8TvHuGAtjtHwILm6OgSF
+         4wYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719555322; x=1720160122;
+        d=1e100.net; s=20230601; t=1719555338; x=1720160138;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=AtUb5OQN/rCaRa+K3+Qo1zvtzQ8MrCKt+xQVUJDy3Ew=;
-        b=lBJssOfcu+NZbHFKzsDk2LHjalKRUrIU7vsFY8cAHuWVHQ5FghLwaZRD5jRwU4+S5K
-         ZrLyX52kS7eLmEXl4Tsh5iVgd7XZ28pvI/GRTJ5Pqhjr4Eip3LTrmVZ1EFuUiIx48W6p
-         pU22EN6Rhtp17ernzMJsP4/MYkxFk39k9skL2egHLaMgkUBWh5yBJooWP7g0kb15evv4
-         grmMNVPajW3pA+PskZqDsvqKEGcpT8oCRUo2Y9YRZdH94MrsD8veIKHY5v7vzHD1xgE8
-         XnUwH39Y1uaThf5hKyIdKPzQelTZswqvhQwk4J4T4VuduWrk/qnF2Q1znxgcUINvovbh
-         jmvw==
-X-Forwarded-Encrypted: i=1; AJvYcCWCha/guSOH02VJA8yfWb8XMh+ZJbIOm3EtcB9R0fD1CUy16l++NSbaFzKVpe6d4Es6MsfDH7/X7AtEzQ21Ml3CPtAmxZKsnkPRn3kS
-X-Gm-Message-State: AOJu0Yz45Os83Y91fuWLgO2dEl3Rc/ITmGMG01NX3mdnzNglC59yWwj4
-	4RAEZI5Qw3OMrLiF9kryqoOdqddnqAZbtOdMs8kL9cW0+tn33QXXxoh8V4tQEZA=
-X-Google-Smtp-Source: AGHT+IE2QoQjlin+H5o8GTIG1qWNDbgtelmMLz2cdWhmBexcriO9gnaQbsPO7pk+8IYqza/O8cphCQ==
-X-Received: by 2002:adf:f006:0:b0:35f:e0f:69a6 with SMTP id ffacd0b85a97d-366e9495cd7mr10154059f8f.27.1719555322104;
-        Thu, 27 Jun 2024 23:15:22 -0700 (PDT)
+        bh=UMhenW90EF71o+8hBAp17KpC8WSjwEeiaMJdyASuAnM=;
+        b=TO6YwRAbhKVY8X7yuG7ohMIJqocFmt8C/pvC2F7Iglq6ABRPO+G2ostgw6cwz+18mx
+         IsekVOKnA3TIc3gTOboA9P6gOJzFWBwDgt/dYpg3NHfQnacbWzvBqtcetXZjpWatOdHJ
+         33vvJ+gesJyA5AyWjmhbuokOgrqwlGreKV4O0Hvz6i0m2XbOCGf0RVjweDDU00C8Bf3y
+         vhfT2j2ZXY4d8JYDymOnCdUbKjCDyyCk7JK0cqTqiJe5clt+HqU+RDGImP+AYPOzCrEw
+         Hec2PfcnzWuQd2QdOvIZDYohdBfy3lFcI4oihJvg0izYy5DR4a3gaAh20qz2+4bZbTgD
+         6MqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCURxQr78rudp2+vCWlrrYMABPazD/wngjLa3HOudkABIlgN0DfqZWqwpMeuM4alVhDjLps+I855TCnftZ/4kM41+YbMOThv3Z6fbKHL
+X-Gm-Message-State: AOJu0YzNGLdqo9lxhcdKBQz76LfbdpDs9rrFMicJe46HdzjdxrW+UpLW
+	9G74EU0IZrvw7AGiVgGfc/til87HraXqCswkYAxWczzVnTjLL7DMeLk+P6dFUZE=
+X-Google-Smtp-Source: AGHT+IHVWnmnTCLXCZSsl9aEiH/IkZgD+5365TI2wjSU0SNxh4EP9wER+/9x0cY1IUvFxwcXJTq6tg==
+X-Received: by 2002:a05:600c:68cc:b0:425:5eec:bb84 with SMTP id 5b1f17b1804b1-4255eecc517mr64518325e9.36.1719555338639;
+        Thu, 27 Jun 2024 23:15:38 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0cd72asm1227673f8f.10.2024.06.27.23.15.20
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b0c17f1sm19526455e9.44.2024.06.27.23.15.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Jun 2024 23:15:21 -0700 (PDT)
-Message-ID: <9b723a41-26ec-41f4-92b2-801db79c6023@linaro.org>
-Date: Fri, 28 Jun 2024 08:15:19 +0200
+        Thu, 27 Jun 2024 23:15:38 -0700 (PDT)
+Message-ID: <df002f90-a9da-4359-bc1f-0dfc36828daa@linaro.org>
+Date: Fri, 28 Jun 2024 08:15:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,8 +76,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/7] ASoC: dt-bindings: qcom,sm8250: add
- qrb4210-rb2-sndcard
+Subject: Re: [PATCH 2/7] ASoC: qcom: sm8250: add qrb4210-rb2-sndcard
+ compatible string
 To: Alexey Klimov <alexey.klimov@linaro.org>, linux-sound@vger.kernel.org,
  srinivas.kandagatla@linaro.org, bgoswami@quicinc.com, lgirdwood@gmail.com,
  broonie@kernel.org
@@ -87,7 +87,7 @@ Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
  devicetree@vger.kernel.org, elder@linaro.org, dmitry.baryshkov@linaro.org,
  caleb.connolly@linaro.org, linux-kernel@vger.kernel.org
 References: <20240628010715.438471-1-alexey.klimov@linaro.org>
- <20240628010715.438471-2-alexey.klimov@linaro.org>
+ <20240628010715.438471-3-alexey.klimov@linaro.org>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -134,30 +134,30 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240628010715.438471-2-alexey.klimov@linaro.org>
+In-Reply-To: <20240628010715.438471-3-alexey.klimov@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 28/06/2024 03:07, Alexey Klimov wrote:
-> Add adsp-backed soundcard compatible for QRB4210 RB2 platform,
-> which as of now looks fully compatible with SM8250.
+> Add "qcom,qrb4210-rb2-sndcard" to the list of recognizable
+> devices.
 > 
 > Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
 > ---
->  Documentation/devicetree/bindings/sound/qcom,sm8250.yaml | 1 +
+>  sound/soc/qcom/sm8250.c | 1 +
 >  1 file changed, 1 insertion(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
-> index b2e15ebbd1bc..a92ac8501138 100644
-> --- a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
-> +++ b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
-> @@ -31,6 +31,7 @@ properties:
->            - qcom,msm8916-qdsp6-sndcard
->            - qcom,qcm6490-idp-sndcard
->            - qcom,qcs6490-rb3gen2-sndcard
-> +          - qcom,qrb4210-rb2-sndcard
+> diff --git a/sound/soc/qcom/sm8250.c b/sound/soc/qcom/sm8250.c
+> index a15dafb99b33..50e175fd521c 100644
+> --- a/sound/soc/qcom/sm8250.c
+> +++ b/sound/soc/qcom/sm8250.c
+> @@ -166,6 +166,7 @@ static int sm8250_platform_probe(struct platform_device *pdev)
+>  
+>  static const struct of_device_id snd_sm8250_dt_match[] = {
+>  	{.compatible = "qcom,sm8250-sndcard"},
+> +	{.compatible = "qcom,qrb4210-rb2-sndcard"},
 
-Looks like fully compatible with sm8250, no?
+Drop, not really needed.
 
 Best regards,
 Krzysztof
