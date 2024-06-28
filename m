@@ -1,259 +1,148 @@
-Return-Path: <linux-kernel+bounces-234047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00F0491C162
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:44:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18E6191C163
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:44:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE0DA2832D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:44:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC4B128400A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:44:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9292B1C0DE4;
-	Fri, 28 Jun 2024 14:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BBD21C0079;
+	Fri, 28 Jun 2024 14:44:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="WW1ivEvz"
-Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QRowEG1K"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8881C0044;
-	Fri, 28 Jun 2024 14:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719585831; cv=pass; b=IhTc8X4iEIKZ6OV4QeUXHsqqjpnT3vfFBlpA8Nv3iN+p9oHQFoB3juDD3tzedwbPFB4UOWOxYm6U9C1t+aQWTRcgd5bO6b4v5UGHyCXnLC8q17ikjwBHJJ/HpwwcU38XAkruevvbjGk/fr3Vn42lWUF+XsDbeRDPkY+dWW3bXIw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719585831; c=relaxed/simple;
-	bh=ItPXtvr1DUh76hqWh46Sg04DrHvwcZIwypzQpT3G7LQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=m2pIDdUUFPeqZBcSRh9//9uobGKinrqwp/EszvZRKaNm2lCUmNgar4rfJyJ44MYpAUNav0BXkI2Vm4BgdfeTHEUGl1Dj/D95UsnZjddpP+okkiiO4obZ+N7dX6GUdBia/cNCXYSf01jqM81Pwn4TzMIVKjjjSGqfMfGdw3DG9HY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=WW1ivEvz; arc=pass smtp.client-ip=185.185.170.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from [192.168.1.215] (83-245-197-232.elisa-laajakaista.fi [83.245.197.232])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
-	(No client certificate requested)
-	(Authenticated sender: sakkinen)
-	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4W9dV566v9z49Ptk;
-	Fri, 28 Jun 2024 17:43:41 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
-	t=1719585825;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q0ixtXGjbpoir4FzU+po61uZcfAdJMqG4qMUx4PVDCU=;
-	b=WW1ivEvz2Ct7klUhNk5mq4piFlxPS3Ilzk7jrDq+mw0t/MGqGFMqbZUXuuwcmtoWAYvQvT
-	aUzbL3OE0baND/n+dGnlqi9OoSraZsxxuSk8Xt2MATThllzfBeZyjU4XZowzjnD5exLC1X
-	mBy3l5Z53jhYypa+ny+xwAqZugthgrmb+oV30ut6YEDSadY5Cf5mw0+fapqu9j8QSGcxp8
-	2pmsp2G7rgPPeS9IyjBR1R9+YBosNBTiWe6SaYM5/gmsRqMHnk1pxO7o4P4K1dYg7+VFZa
-	hdS/+0x83COE6l+tfGKSJ0/6VfExpyK2EylUF9YZUyK89NkHV9Yk3nXcSCzHMA==
-ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1719585825; a=rsa-sha256;
-	cv=none;
-	b=uLDDE0y9E96glz6vqgtKk/CdBtRTrLHdFjk7VRCl/3JH5y9s5c3xKwKz4lK/W5y8m3HEpZ
-	MgJx/9sRc54Ye+UbydGz6MPnbG9STVlApxxi+KPqa4469JU3Epc+XpzZ8MdBXXPFf3Kx16
-	p66tb1X2EDHsXfiB1DrBvWlb1oNWInHi9Cd+U1r0cMcrzgctGE6MmqzEUZJ7h33HU2oNbq
-	dR0NyLJ4PBoPpvcEqJI1RyDzLMQSYrF2/XCmBakVIQ/yptSLjgS2KVN9m7CErOU50h5Hrr
-	bBY58xp0zpPnI+B4mafTeZjrLg2C6vfjR+fpTFsWk01Hk6W54xVcc4BnDALndQ==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=sakkinen smtp.mailfrom=jarkko.sakkinen@iki.fi
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=lahtoruutu; t=1719585825;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q0ixtXGjbpoir4FzU+po61uZcfAdJMqG4qMUx4PVDCU=;
-	b=wUAEvyR0DIzseWWSC19geRsDWGmFgWCslDVRCXt036lBHd8OkXPVqH/6l88DnTg2Z1FHia
-	YFxnXyuqcRqvRxLiRfhClRtUCh0Ro71NAT5Mk7pNmyKrh6opOXbKQFhqg8lsimMbnlvfUb
-	5AM+mZxGNYl2OlYgXbi9WDSdQajL6p7z8J9lR0Ewe8h3aArvaxp+qM+5UP6IIgex9QVRTx
-	JD8rNdTf27eSrqIVOuCXQyYsS2/LzeUGI6u5DaSYCXaCZiu6CGzrOxXySHssUGcy4LoM3R
-	w7A/aLP9n2F5v3H/IYWJUnIDvqw3fegiiE6KEbj50/a1XEZBZt+vC7P+r4ILpg==
-Message-ID: <f4de777099b0dff819ee6277b3b7cd7e18d96c78.camel@iki.fi>
-Subject: Re: [PATCH v2 2/4] capabilities: Add securebit to restrict userns
- caps
-From: Jarkko Sakkinen <jarkko.sakkinen@iki.fi>
-To: Jonathan Calmels <jcalmels@3xx0.net>, brauner@kernel.org, 
- ebiederm@xmission.com, Jonathan Corbet <corbet@lwn.net>, Paul Moore
- <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn"
- <serge@hallyn.com>, KP Singh <kpsingh@kernel.org>, Matt Bobrowski
- <mattbobrowski@google.com>, Alexei Starovoitov <ast@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>, Yonghong Song
- <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>,
- Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa
- <jolsa@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Kees Cook
- <kees@kernel.org>, Joel Granados <j.granados@samsung.com>, John Johansen
- <john.johansen@canonical.com>, David Howells <dhowells@redhat.com>, Jarkko
- Sakkinen <jarkko@kernel.org>, Stephen Smalley
- <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
- Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>
-Cc: containers@lists.linux.dev, linux-kernel@vger.kernel.org, 
- linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
- linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
- apparmor@lists.ubuntu.com, keyrings@vger.kernel.org,
- selinux@vger.kernel.org,  linux-kselftest@vger.kernel.org
-Date: Fri, 28 Jun 2024 17:43:38 +0300
-In-Reply-To: <20240609104355.442002-3-jcalmels@3xx0.net>
-References: <20240609104355.442002-1-jcalmels@3xx0.net>
-	 <20240609104355.442002-3-jcalmels@3xx0.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D3F1C0071;
+	Fri, 28 Jun 2024 14:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719585862; cv=none; b=O5baoACA34+QYlr8g99+SEAW++RrnpAmTZ9TKiwV4/TI3RPTXHodhxBJyYoP+dMjMxRS9b6DPpugaCkfHa7Fm8MPAIM9ZU9T3Lms2ymzXOB5hfDliOhm05xk2G+euppe77z26KCDMRFGHRPAlX2jzZhhBRnfrOZTd7sW0Gx/MwA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719585862; c=relaxed/simple;
+	bh=DPnX3IbiB9EeaV89mCNU0omiYHuBP2uAG+cJEVzg6VM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nk+grIT8Jv1jXikZk9Oxz7oI4IwIxfqBMi5rrCAF++Sc5HY2UUMsoxQQoyQbELq1zbN0b9NJ4RyZqgxDhXi8mkepApencLlh90HIgmevuPxbXqI9gGe/IOcKKrT2gB0MizaXbrpvRLV8wdacZYGCbfmHfI7tmUtfol5zH1V1ucQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QRowEG1K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C153C116B1;
+	Fri, 28 Jun 2024 14:44:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719585862;
+	bh=DPnX3IbiB9EeaV89mCNU0omiYHuBP2uAG+cJEVzg6VM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QRowEG1KQOia1GaCQEbrEHvcP3Hs79sunvyvAvBUy0+BXWqZhtFpSErYxK4Keo27F
+	 9vC17BhgXtbiutnc800E9GVy79m4PeXSZVUIMHbjKASNFVM3GdAAvqYBHbzUEWVC7h
+	 M+WUXdakBp6S8GjWc7rgA3bbbcJyfiM6gd6FCvt5yo5Esj+5qJgxDm8zmKFker9W53
+	 fWAOpPded/mKpIy2RFR1cFgLRPnj5sdLdadcHpwq/lWpaqEfJeYB2bMmE9Nv5z9Vzm
+	 aKD1dguthhFiPxwvUbrancHaGiZH7P+VxnVWEnZCjM3Fq1JSAz8p+SrLcMZTtkCr0C
+	 NM6mJXiwmakdA==
+Date: Fri, 28 Jun 2024 11:44:17 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: adrian.hunter@intel.com, irogers@google.com, jolsa@kernel.org,
+	kan.liang@linux.intel.com, namhyung@kernel.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: Re: [PATCH v3 5/8] perf test: Add landlock workload
+Message-ID: <Zn7MQUmGaZNLkrqy@x1>
+References: <20240624181345.124764-1-howardchu95@gmail.com>
+ <20240624181345.124764-6-howardchu95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240624181345.124764-6-howardchu95@gmail.com>
 
-On Sun, 2024-06-09 at 03:43 -0700, Jonathan Calmels wrote:
-> This patch adds a new capability security bit designed to constrain a
+On Tue, Jun 25, 2024 at 02:13:42AM +0800, Howard Chu wrote:
+> We'll use it to add a regression test for the BTF augmentation of enum
+> arguments for tracepoints in 'perf trace':
+> 
+>   root@x1:~# perf trace -e landlock_add_rule perf test -w landlock
+>        0.000 ( 0.009 ms): perf/747160 landlock_add_rule(ruleset_fd: 11, rule_type: LANDLOCK_RULE_PATH_BENEATH, rule_attr: 0x7ffd8e258594, flags: 45) = -1 EINVAL (Invalid argument)
+>        0.011 ( 0.002 ms): perf/747160 landlock_add_rule(ruleset_fd: 11, rule_type: LANDLOCK_RULE_NET_PORT, rule_attr: 0x7ffd8e2585a0, flags: 45) = -1 EINVAL (Invalid argument)
+>   root@x1:~#
+> 
+> Committer notes:
+> 
+> It was agreed on the discussion (see Link below) to shorten then name of
+> the workload from 'landlock_add_rule' to 'landlock', and I moved it to a
+> separate patch.
 
+I'm not being able to apply this specific patch:
 
-nit: if you think of it "This patch adds" could be just "add", right? :-)
+⬢[acme@toolbox perf-tools-next]$ b4 am -ctsl --cc-trailers 20240624181345.124764-1-howardchu95@gmail.com
+Grabbing thread from lore.kernel.org/all/20240624181345.124764-1-howardchu95@gmail.com/t.mbox.gz
+Checking for newer revisions
+Grabbing search results from lore.kernel.org
+Nothing matching that query.
+Analyzing 10 messages in the thread
+Checking attestation on all messages, may take a moment...
+---
+  ✓ [PATCH v3 1/8] perf trace: Fix iteration of syscall ids in syscalltbl->entries
+    + Link: https://lore.kernel.org/r/20240624181345.124764-2-howardchu95@gmail.com
+    + Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+  ✓ [PATCH v3 2/8] perf trace: BTF-based enum pretty printing for syscall args
+    + Link: https://lore.kernel.org/r/20240624181345.124764-3-howardchu95@gmail.com
+  ✓ [PATCH v3 3/8] perf trace: Augment non-syscall tracepoints with enum arguments with BTF
+    + Link: https://lore.kernel.org/r/20240624181345.124764-4-howardchu95@gmail.com
+  ✓ [PATCH v3 4/8] perf trace: Filter enum arguments with enum names
+    + Link: https://lore.kernel.org/r/20240624181345.124764-5-howardchu95@gmail.com
+  ✓ [PATCH v3 5/8] perf test: Add landlock workload
+    + Link: https://lore.kernel.org/r/20240624181345.124764-6-howardchu95@gmail.com
+  ✓ [PATCH v3 6/8] perf test trace_btf_enum: Add regression test for the BTF augmentation of enums in 'perf trace'
+    + Link: https://lore.kernel.org/r/20240624181345.124764-7-howardchu95@gmail.com
+  ✓ [PATCH v3 7/8] perf trace: Introduce trace__btf_scnprintf()
+    + Link: https://lore.kernel.org/r/20240624181345.124764-8-howardchu95@gmail.com
+  ✓ [PATCH v3 8/8] perf trace: Remove arg_fmt->is_enum, we can get that from the BTF type
+    + Link: https://lore.kernel.org/r/20240624181345.124764-9-howardchu95@gmail.com
+  ---
+  ✓ Signed: DKIM/gmail.com
+---
+Total patches: 8
+---
+Cover: ./v3_20240625_howardchu95_perf_trace_augment_enum_arguments_with_btf.cover
+ Link: https://lore.kernel.org/r/20240624181345.124764-1-howardchu95@gmail.com
+ Base: not specified
+       git am ./v3_20240625_howardchu95_perf_trace_augment_enum_arguments_with_btf.mbx
+⬢[acme@toolbox perf-tools-next]$        git am ./v3_20240625_howardchu95_perf_trace_augment_enum_arguments_with_btf.mbx
+Applying: perf trace: Fix iteration of syscall ids in syscalltbl->entries
+Applying: perf trace: BTF-based enum pretty printing for syscall args
+Applying: perf trace: Augment non-syscall tracepoints with enum arguments with BTF
+Applying: perf trace: Filter enum arguments with enum names
+Applying: perf test: Add landlock workload
+error: patch failed: tools/perf/tests/workloads/Build:6
+error: tools/perf/tests/workloads/Build: patch does not apply
+Patch failed at 0005 perf test: Add landlock workload
+hint: Use 'git am --show-current-patch=diff' to see the failed patch
+hint: When you have resolved this problem, run "git am --continue".
+hint: If you prefer to skip this patch, run "git am --skip" instead.
+hint: To restore the original branch and stop patching, run "git am --abort".
+hint: Disable this message with "git config advice.mergeConflict false"
+⬢[acme@toolbox perf-tools-next]$
 
-Also name the exact thing/symbol/whatever here. This is not a HBO series.
+I'm checking what is this, perhaps I'm using a more recent
+perf-tools-next/perf-tools-next with changes to that
+tools/perf/tests/workloads/Build file...
 
-> task=E2=80=99s userns capability set to its bounding set. The reason for =
-this
-> is
-> twofold:
->=20
-> - This serves as a quick and easy way to lock down a set of
-> capabilities
-> =C2=A0 for a task, thus ensuring that any namespace it creates will never
-> be
-> =C2=A0 more privileged than itself is.
-> - This helps userspace transition to more secure defaults by not
-> requiring
-> =C2=A0 specific logic for the userns capability set, or libcap support.
->=20
-> Example:
->=20
-> =C2=A0=C2=A0=C2=A0 # capsh --secbits=3D$((1 << 8)) --drop=3Dcap_sys_rawio=
- -- \
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -c 'un=
-share -r grep Cap /proc/self/status'
-> =C2=A0=C2=A0=C2=A0 CapInh: 0000000000000000
-> =C2=A0=C2=A0=C2=A0 CapPrm: 000001fffffdffff
-> =C2=A0=C2=A0=C2=A0 CapEff: 000001fffffdffff
-> =C2=A0=C2=A0=C2=A0 CapBnd: 000001fffffdffff
-> =C2=A0=C2=A0=C2=A0 CapAmb: 0000000000000000
-> =C2=A0=C2=A0=C2=A0 CapUNs: 000001fffffdffff
->=20
-> Signed-off-by: Jonathan Calmels <jcalmels@3xx0.net>
-> ---
-> =C2=A0include/linux/securebits.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 1 =
-+
-> =C2=A0include/uapi/linux/securebits.h | 11 ++++++++++-
-> =C2=A0kernel/user_namespace.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 |=C2=A0 5 +++++
-> =C2=A03 files changed, 16 insertions(+), 1 deletion(-)
->=20
-> diff --git a/include/linux/securebits.h b/include/linux/securebits.h
-> index 656528673983..5f9d85cd69c3 100644
-> --- a/include/linux/securebits.h
-> +++ b/include/linux/securebits.h
-> @@ -5,4 +5,5 @@
-> =C2=A0#include <uapi/linux/securebits.h>
-> =C2=A0
-> =C2=A0#define issecure(X)		(issecure_mask(X) &
-> current_cred_xxx(securebits))
-> +#define iscredsecure(cred, X)	(issecure_mask(X) & cred-
-> >securebits)
-> =C2=A0#endif /* !_LINUX_SECUREBITS_H */
-> diff --git a/include/uapi/linux/securebits.h
-> b/include/uapi/linux/securebits.h
-> index d6d98877ff1a..2da3f4be4531 100644
-> --- a/include/uapi/linux/securebits.h
-> +++ b/include/uapi/linux/securebits.h
-> @@ -52,10 +52,19 @@
-> =C2=A0#define SECBIT_NO_CAP_AMBIENT_RAISE_LOCKED \
-> =C2=A0			(issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE_L
-> OCKED))
-> =C2=A0
-> +/* When set, user namespace capabilities are restricted to their
-> parent's bounding set. */
-> +#define SECURE_USERNS_STRICT_CAPS			8
-> +#define SECURE_USERNS_STRICT_CAPS_LOCKED		9=C2=A0 /* make
+⬢[acme@toolbox perf-tools-next]$ git log --oneline -5 tools/perf/tests/workloads/Build
+1dad99af1a8211e2 perf test: Make tests its own library
+3dfc01fe9d12a1e8 perf test: Add 'datasym' test workload
+a104f0ea99d846df perf test: Add 'brstack' test workload
+39281709a6e2301a perf test: Add 'sqrtloop' test workload
+41522f7442905814 perf test: Add 'leafloop' test workload
+⬢[acme@toolbox perf-tools-next]$ 
 
+Yeah, we need to rebase on top of what we have in
+perf-tools-next/perf-tools-next, probably something minor.
 
-
-> bit-8 immutable */
-> +
-> +#define SECBIT_USERNS_STRICT_CAPS
-> (issecure_mask(SECURE_USERNS_STRICT_CAPS))
-> +#define SECBIT_USERNS_STRICT_CAPS_LOCKED \
-> +			(issecure_mask(SECURE_USERNS_STRICT_CAPS_LOC
-> KED))
-> +
-> =C2=A0#define
-> SECURE_ALL_BITS		(issecure_mask(SECURE_NOROOT) | \
-> =C2=A0			=09
-> issecure_mask(SECURE_NO_SETUID_FIXUP) | \
-> =C2=A0				 issecure_mask(SECURE_KEEP_CAPS) | \
-> -			=09
-> issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE))
-> +			=09
-> issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE) | \
-> +			=09
-
-spurious new lines in the diff
-
-please as first priority aim for absolute minimal diff or at least
-do grow diff proactively like this.
-
-If we really think after that, that we need some "extras" to the
-patch set, then we decide that. These only take energy away from
-reviewers.
-
-
-> issecure_mask(SECURE_USERNS_STRICT_CAPS))
-> =C2=A0#define SECURE_ALL_LOCKS	(SECURE_ALL_BITS << 1)
-> =C2=A0
-> =C2=A0#endif /* _UAPI_LINUX_SECUREBITS_H */
-> diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
-> index 7e624607330b..53848e2b68cd 100644
-> --- a/kernel/user_namespace.c
-> +++ b/kernel/user_namespace.c
-> @@ -10,6 +10,7 @@
-> =C2=A0#include <linux/cred.h>
-> =C2=A0#include <linux/securebits.h>
-> =C2=A0#include <linux/security.h>
-> +#include <linux/capability.h>
-> =C2=A0#include <linux/keyctl.h>
-> =C2=A0#include <linux/key-type.h>
-> =C2=A0#include <keys/user-type.h>
-> @@ -42,6 +43,10 @@ static void dec_user_namespaces(struct ucounts
-> *ucounts)
-> =C2=A0
-> =C2=A0static void set_cred_user_ns(struct cred *cred, struct
-> user_namespace *user_ns)
-> =C2=A0{
-> +	/* Limit userns capabilities to our parent's bounding set.
-> */
-> +	if (iscredsecure(cred, SECURE_USERNS_STRICT_CAPS))
-> +		cred->cap_userns =3D cap_intersect(cred->cap_userns,
-> cred->cap_bset);
-> +
-> =C2=A0	/* Start with the capabilities defined in the userns set. */
-> =C2=A0	cred->cap_bset =3D cred->cap_userns;
-> =C2=A0	cred->cap_permitted =3D cred->cap_userns;
-
-Going for 4 week holiday starting for next week so focus in on nits
-but since this is something to do access control:
-
-1. Please go surgical with the diff's because this type of patches
-also require a surgical review. Now reviewing this like riding on=20
-a bumpy road with a car of which suspension mechanics is broken
-;-)
-
-Hope you grab my argument here. I only want to look at the problem
-and solution for that not random stuff..
-
-BR, Jarkko
+- Arnaldo
 
