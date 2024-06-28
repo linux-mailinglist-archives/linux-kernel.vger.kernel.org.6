@@ -1,472 +1,181 @@
-Return-Path: <linux-kernel+bounces-233673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB21491BB60
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:23:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30CB891BB62
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:25:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09F881C22AAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:23:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EA34B20FC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:25:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E5A1509A0;
-	Fri, 28 Jun 2024 09:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15AF1514E0;
+	Fri, 28 Jun 2024 09:25:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dDwcqVPE"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="XJ+al+3X"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4011465A1;
-	Fri, 28 Jun 2024 09:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21181465A1;
+	Fri, 28 Jun 2024 09:25:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719566625; cv=none; b=Y19GQWUDCYfkP7JR15FhkovVSApBQs13refui5buwRXhmiQcwn1Ek+uvZgZl2ptNxNRFJWVVpkdY0+uoisqmPUH6ZssXy22Pi6hpVNnXDILUm6bWNjy/3Pfx6HxH4Rk4toLrjIFTKBwxH2f3JTrF/0keMGno0H1etaavU82vnew=
+	t=1719566710; cv=none; b=bi/5CG5rAK3n0XmPH8ETtKFUjusyUQoAPVLWmLxPtNJkyfuMK1fgcXw+tqYnd4TwhuCN/zpamhEAMdTtt486O7/VXNCm/AkMxC3KUEdfieVX//Lw3i1ZEc06Xyrx+uyQLZAo6hofVDwoFR77K0UXojjrnHJAXIpiCmsXSmbfTEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719566625; c=relaxed/simple;
-	bh=SSys5MIYknqoTKv0F0mO251fQHgQ4iwR5eIb018WPZ0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=TMQzBvGi8qmQVsrgygxgt6seHNL1R2odCw5py9jbr+CrHnbixclTP3olimFnV2D5UUwCRv5t9aCD+v35GL3hDn6cSkKh6R6R8aKQCwkTIqTqbYKF9ejw8G9ZUH6Ty1MHHnfUCqGTEWkzSN6zbPwrjmEIcEQRj9q19HS12TQf6KY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dDwcqVPE; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57d10354955so466733a12.1;
-        Fri, 28 Jun 2024 02:23:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719566622; x=1720171422; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=baYtxBYZ7pjEtPz9CdjikSrYOvBcpn6u3FQ2N+5TP40=;
-        b=dDwcqVPEsx6t/vQoPF1+LXyBhdzJlzxzAD03AiqMe77TificERKNkR4aHVzKjCJNdO
-         Hz/mMS4rhIx0Z+z/b3y8xGsmVL1aayKtmQ/iut+5ciPMROGc2k3N982ZhjMltkkLTdEp
-         vUDGgD69F2S3tg9CQaG4BCT2JOBK6e4+JJqAPGyHUSr589q6EntlyY1NeTozVSVHuXky
-         ZFJdJ6biVGh1rn1U0MkR6iyi4uRw1+KgbxmeviZCjyq/8WBUn2ncG2JEctkLxaOHXOiP
-         eGuuMAQ6fdFj0UMCohDbmtNZvL3jkYolDfL0srQxHNwmkY+y72cQ19g+EBZZdML6kT4t
-         VdBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719566622; x=1720171422;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=baYtxBYZ7pjEtPz9CdjikSrYOvBcpn6u3FQ2N+5TP40=;
-        b=MA2U7L8djAhVSSVvqJQi+9NWZZVVV2RUOj2bflkjRC46xEQoPlK3s0zL/AZIPWhZNj
-         peVISUNLym1xI+NO53oh3I0uBuotalXT7WGnwxWq7C7hShktzpndXN0Qck7FpE+tnMAw
-         FVopy4J4NFO7LSgqPs/uKgfjrCa4M8vqfsEJvtRrmB9i5yMwHpwME7Zki/dEFEJkXvPB
-         Rf2RkFXd8ggx4P//f0r9ePgY9OmdY2KSgasRUIfvx/M08SLdbrkqWWtLuVMwweVwoYzq
-         WN2FsIcyrav/aqyiHSdgXFLT83C/qZ4gdz9BYFLJq3WEeV+fFurGQlwN3Vnjfd9mpumi
-         dp8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVuEug2flzmQ8W6MKvMQlG8khqp5FGcTC0pVEqwgiHu1Iqfs4hhV2iD2z5ZyljUXhSG8nNgwVU94gNWnr9KFJkZ/dkcIXQAxnI6BtlOIiZURyXFxxOPPYS2CUNvUZxj/e6rIiSLLp48Dpw=
-X-Gm-Message-State: AOJu0Yw2CDJLKtrk+/UDqAVI0+ygSHxiuY37nMcRsI2+Ipt/RV+NbHuL
-	WF+XaxP/DYxdIl3SYUTzPyJgguDeWvuAwe4SatdaNmkhU1NB0lBV
-X-Google-Smtp-Source: AGHT+IE/3Afs9vHxmzvsl3H9DsS1V7bwU/VSy6NAflbuOWuaWkgoVTgn8QbmHhY5fbqaugsJqQRbZA==
-X-Received: by 2002:a50:d7cf:0:b0:57c:84fe:1acf with SMTP id 4fb4d7f45d1cf-57d49cb4600mr10197228a12.17.1719566621565;
-        Fri, 28 Jun 2024 02:23:41 -0700 (PDT)
-Received: from ?IPV6:2a02:a449:4071:1:32d0:42ff:fe10:6983? (2a02-a449-4071-1-32d0-42ff-fe10-6983.fixed6.kpn.net. [2a02:a449:4071:1:32d0:42ff:fe10:6983])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58612c835f7sm747284a12.8.2024.06.28.02.23.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Jun 2024 02:23:40 -0700 (PDT)
-Message-ID: <5c651b3f-fe30-4874-98ed-044f7c62dd97@gmail.com>
-Date: Fri, 28 Jun 2024 11:23:39 +0200
+	s=arc-20240116; t=1719566710; c=relaxed/simple;
+	bh=18TYaRN/VD3M+NTbtvZRXFNKYo91KOmQHfGyYOcXug8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Me6eM4lKjlrtQfaxytUbx8vbQZYVDJHT+YSRrSFRFQbpKueOjcHyv081dxezkCVE3XrQkngJdmMvas6Uvb3Eh0Jaz8nNeSawHjAJgSuj5qIHxVLCib779b2obnp9hepHG7AW2trDYkHF0yrrMBMJvtc+JWWBht9O4RbwNh79cf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=XJ+al+3X; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=RDssPQKk0DP2H8FGxxbB4dIquMeh6O1Th4YqfuxP+0A=; b=XJ+al+3XFwWBfIWgZTF2PDhXDc
+	bgv+0ZPIRzl1UnHlQ8aQd8VaCQqAIW1LxcTU4qBw2/47Qj5AtTu7oWmOcgm3IkfaQO0Yglg634sDv
+	V+hkuZ13Sb8wfF0jejchiM/Q2ewqyAnwHcdYKIVdqqCU9Zq7k+jWgNCnu5aprqeWhJ3CEnRm6DTLm
+	JbhOuGwbDYRMBnE+Uz7DoCJLukT73IKEuXDyY+95QZguOTDCq665ZBrj1DdWbb6ari8FnUxMylo2y
+	MekWai7Bd0UOjMwM3j4U4L2XPmOhsFDPvoYhz0wA3yfg1FOQaKVoSAg+06YXNjLQUYGOS9I2GKa6q
+	3NfvYYLw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:52960)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sN7qh-0006FT-06;
+	Fri, 28 Jun 2024 10:24:55 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sN7qi-0006PK-0M; Fri, 28 Jun 2024 10:24:56 +0100
+Date: Fri, 28 Jun 2024 10:24:55 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Youwan Wang <youwan@nfschina.com>, andrew@lunn.ch, hkallweit1@gmail.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: phy: phy_device: fix PHY WOL enabled, PM failed to
+ suspend
+Message-ID: <Zn6BZ4b4h8YJ3Z0u@shell.armlinux.org.uk>
+References: <20240628060318.458925-1-youwan@nfschina.com>
+ <Zn5xmMpTLK/fRoYh@shell.armlinux.org.uk>
+ <249879ad-aa97-452c-a173-65255818d2d4@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Johan Jonker <jbx6244@gmail.com>
-Subject: [PATCH v7] drm/rockchip: rk3066_hdmi: add sound support
-To: heiko@sntech.de
-Cc: hjc@rock-chips.com, andy.yan@rock-chips.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, daniel@ffwll.ch, lgirdwood@gmail.com, broonie@kernel.org,
- linux-sound@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <249879ad-aa97-452c-a173-65255818d2d4@gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Add sound support to the RK3066 HDMI driver.
-The HDMI TX audio source is connected to I2S_8CH.
+On Fri, Jun 28, 2024 at 09:25:54AM +0100, Florian Fainelli wrote:
+> Would not the situation described here be solved by having the Motorcomm PHY
+> driver set PHY_ALWAYS_CALL_SUSPEND since it deals with checking whether WoL
+> is enabled or not and will just return then.
 
-Signed-off-by: Zheng Yang <zhengyang@rock-chips.com>
-Signed-off-by: Johan Jonker <jbx6244@gmail.com>
----
+Let's also look at PHY_ALWAYS_CALL_SUSPEND. There are currently two
+drivers that make use of it - realtek and broadcom.
 
-Changed V7:
-  rebase
----
- drivers/gpu/drm/rockchip/Kconfig       |   2 +
- drivers/gpu/drm/rockchip/rk3066_hdmi.c | 274 ++++++++++++++++++++++++-
- 2 files changed, 275 insertions(+), 1 deletion(-)
+Looking at realtek, it is used with driver instances that call
+	rtl821x_suspend
+	rtl821x_resume
 
-diff --git a/drivers/gpu/drm/rockchip/Kconfig b/drivers/gpu/drm/rockchip/Kconfig
-index 1bf3e2829cd0..a32ee558408c 100644
---- a/drivers/gpu/drm/rockchip/Kconfig
-+++ b/drivers/gpu/drm/rockchip/Kconfig
-@@ -102,6 +102,8 @@ config ROCKCHIP_RGB
- config ROCKCHIP_RK3066_HDMI
- 	bool "Rockchip specific extensions for RK3066 HDMI"
- 	depends on DRM_ROCKCHIP
-+	select SND_SOC_HDMI_CODEC if SND_SOC
-+	select SND_SOC_ROCKCHIP_I2S if SND_SOC
- 	help
- 	  This selects support for Rockchip SoC specific extensions
- 	  for the RK3066 HDMI driver. If you want to enable
-diff --git a/drivers/gpu/drm/rockchip/rk3066_hdmi.c b/drivers/gpu/drm/rockchip/rk3066_hdmi.c
-index 784de990da1b..d3128b787629 100644
---- a/drivers/gpu/drm/rockchip/rk3066_hdmi.c
-+++ b/drivers/gpu/drm/rockchip/rk3066_hdmi.c
-@@ -15,12 +15,20 @@
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
+rtl821x_suspend() does nothing if phydev->wol_enabled is true.
+rtl821x_resume() only re-enabled the clock if phydev->wol_enabled
+was false (in other words, rtl821x has disabled the clock.) However,
+it always calls genphy_resume() - presumably this is the reason for
+the flag.
 
-+#include <sound/hdmi-codec.h>
-+
- #include "rk3066_hdmi.h"
+The realtek driver instances do not populate .set_wol nor .get_wol,
+so the PHY itself does not support WoL configuration. This means
+that the phy_ethtool_get_wol() call in phy_suspend() will also fail,
+and since wol.wolopts is initialised to zero, phydev->wol_enabled
+will only be true if netdev->wol_enabled is true.
 
- #include "rockchip_drm_drv.h"
+Thus, for phydev->wol_enabled to be true, netdev->wol_enabled must
+be true, and we won't get here via mdio_bus_phy_suspend() as 
+mdio_bus_phy_may_suspend() will return false in this case.
 
- #define DEFAULT_PLLA_RATE 30000000
 
-+struct audio_info {
-+	int channels;
-+	int sample_rate;
-+	int sample_width;
-+};
-+
- struct hdmi_data_info {
- 	int vic; /* The CEA Video ID (VIC) of the current drm display mode. */
- 	unsigned int enc_out_format;
-@@ -54,9 +62,16 @@ struct rk3066_hdmi {
+Looking at broadcom, it's used with only one driver instance for
+BCM54210E which calls:
+	bcm54xx_suspend
+	bcm54xx_resume
 
- 	unsigned int tmdsclk;
+Other driver instances also call these two functions but do not
+set this flag - BCM54612E, BCM54810, BCM54811, BCM50610, and
+BCM50610M. Moreover, none of these implement the .get_wol and
+.set_wol methods which means the behaviour is as I describe for
+Realtek above that also doesn't implement these methods.
 
-+	struct platform_device *audio_pdev;
-+	struct audio_info audio;
-+	bool audio_enable;
-+
- 	struct hdmi_data_info hdmi_data;
- };
+The only case where this is different is BCM54210E which does
+populate these methods.
 
-+static int
-+rk3066_hdmi_config_audio(struct rk3066_hdmi *hdmi, struct audio_info *audio);
-+
- static struct rk3066_hdmi *encoder_to_rk3066_hdmi(struct drm_encoder *encoder)
- {
- 	struct rockchip_encoder *rkencoder = to_rockchip_encoder(encoder);
-@@ -214,6 +229,23 @@ static int rk3066_hdmi_config_avi(struct rk3066_hdmi *hdmi,
- 					HDMI_INFOFRAME_AVI, 0, 0, 0);
- }
+bcm54xx_suspend() stops ptp, and if WoL is enabled, configures the
+wakeup IRQ. bcm54xx_resume() deconfigures the wakeup IRQ.
 
-+static int rk3066_hdmi_config_aai(struct rk3066_hdmi *hdmi,
-+				  struct audio_info *audio)
-+{
-+	union hdmi_infoframe frame;
-+	int rc;
-+
-+	rc = hdmi_audio_infoframe_init(&frame.audio);
-+
-+	frame.audio.coding_type = HDMI_AUDIO_CODING_TYPE_STREAM;
-+	frame.audio.sample_frequency = HDMI_AUDIO_SAMPLE_FREQUENCY_STREAM;
-+	frame.audio.sample_size = HDMI_AUDIO_SAMPLE_SIZE_STREAM;
-+	frame.audio.channels = hdmi->audio.channels;
-+
-+	return rk3066_hdmi_upload_frame(hdmi, rc, &frame,
-+					HDMI_INFOFRAME_AAI, 0, 0, 0);
-+}
-+
- static int rk3066_hdmi_config_video_timing(struct rk3066_hdmi *hdmi,
- 					   struct drm_display_mode *mode)
- {
-@@ -364,6 +396,7 @@ static int rk3066_hdmi_setup(struct rk3066_hdmi *hdmi,
- 		hdmi_modb(hdmi, HDMI_HDCP_CTRL, HDMI_VIDEO_MODE_MASK,
- 			  HDMI_VIDEO_MODE_HDMI);
- 		rk3066_hdmi_config_avi(hdmi, mode);
-+		rk3066_hdmi_config_audio(hdmi, &hdmi->audio);
- 	} else {
- 		hdmi_modb(hdmi, HDMI_HDCP_CTRL, HDMI_VIDEO_MODE_MASK, 0);
- 	}
-@@ -380,9 +413,20 @@ static int rk3066_hdmi_setup(struct rk3066_hdmi *hdmi,
- 	 */
- 	rk3066_hdmi_i2c_init(hdmi);
+This could lead us into a case where the PHY has WoL enabled, the
+phy_ethtool_get_wol() call returns that, causing phydev->wol_enabled
+to be set, and netdev->wol_enabled is not set.
 
--	/* Unmute video output. */
-+	/* Unmute video and audio output. */
- 	hdmi_modb(hdmi, HDMI_VIDEO_CTRL2,
- 		  HDMI_VIDEO_AUDIO_DISABLE_MASK, HDMI_AUDIO_DISABLE);
-+	if (hdmi->audio_enable) {
-+		hdmi_modb(hdmi, HDMI_VIDEO_CTRL2, HDMI_AUDIO_DISABLE, 0);
-+		/* Reset audio capture logic. */
-+		hdmi_modb(hdmi, HDMI_VIDEO_CTRL2,
-+			  HDMI_AUDIO_CP_LOGIC_RESET_MASK,
-+			  HDMI_AUDIO_CP_LOGIC_RESET);
-+		usleep_range(900, 1000);
-+		hdmi_modb(hdmi, HDMI_VIDEO_CTRL2,
-+			  HDMI_AUDIO_CP_LOGIC_RESET_MASK, 0);
-+	}
-+
- 	return 0;
- }
+However, in this case, it would not be a problem because the driver
+has set PHY_ALWAYS_CALL_SUSPEND, so we won't return -EBUSY.
 
-@@ -534,6 +578,230 @@ struct drm_connector_helper_funcs rk3066_hdmi_connector_helper_funcs = {
- 	.best_encoder = rk3066_hdmi_connector_best_encoder,
- };
 
-+static int
-+rk3066_hdmi_config_audio(struct rk3066_hdmi *hdmi, struct audio_info *audio)
-+{
-+	u32 rate, channel, word_length, N, CTS;
-+	u64 tmp;
-+
-+	if (audio->channels < 3)
-+		channel = HDMI_AUDIO_I2S_CHANNEL_1_2;
-+	else if (audio->channels < 5)
-+		channel = HDMI_AUDIO_I2S_CHANNEL_3_4;
-+	else if (audio->channels < 7)
-+		channel = HDMI_AUDIO_I2S_CHANNEL_5_6;
-+	else
-+		channel = HDMI_AUDIO_I2S_CHANNEL_7_8;
-+
-+	switch (audio->sample_rate) {
-+	case 32000:
-+		rate = HDMI_AUDIO_SAMPLE_FRE_32000;
-+		N = N_32K;
-+		break;
-+	case 44100:
-+		rate = HDMI_AUDIO_SAMPLE_FRE_44100;
-+		N = N_441K;
-+		break;
-+	case 48000:
-+		rate = HDMI_AUDIO_SAMPLE_FRE_48000;
-+		N = N_48K;
-+		break;
-+	case 88200:
-+		rate = HDMI_AUDIO_SAMPLE_FRE_88200;
-+		N = N_882K;
-+		break;
-+	case 96000:
-+		rate = HDMI_AUDIO_SAMPLE_FRE_96000;
-+		N = N_96K;
-+		break;
-+	case 176400:
-+		rate = HDMI_AUDIO_SAMPLE_FRE_176400;
-+		N = N_1764K;
-+		break;
-+	case 192000:
-+		rate = HDMI_AUDIO_SAMPLE_FRE_192000;
-+		N = N_192K;
-+		break;
-+	default:
-+		DRM_DEV_ERROR(hdmi->dev, "no support for sample rate %d\n",
-+			      audio->sample_rate);
-+		return -ENOENT;
-+	}
-+
-+	switch (audio->sample_width) {
-+	case 16:
-+		word_length = 0x02;
-+		break;
-+	case 20:
-+		word_length = 0x0a;
-+		break;
-+	case 24:
-+		word_length = 0x0b;
-+		break;
-+	default:
-+		DRM_DEV_ERROR(hdmi->dev, "no support for word length %d\n",
-+			      audio->sample_width);
-+		return -ENOENT;
-+	}
-+
-+	tmp = (u64)hdmi->tmdsclk * N;
-+	do_div(tmp, 128 * audio->sample_rate);
-+	CTS = tmp;
-+
-+	/* Set_audio source I2S. */
-+	hdmi_writeb(hdmi, HDMI_AUDIO_CTRL1, 0x00);
-+	hdmi_writeb(hdmi, HDMI_AUDIO_CTRL2, 0x40);
-+	hdmi_writeb(hdmi, HDMI_I2S_AUDIO_CTRL,
-+		    HDMI_AUDIO_I2S_FORMAT_STANDARD | channel);
-+	hdmi_writeb(hdmi, HDMI_I2S_SWAP, 0x00);
-+	hdmi_modb(hdmi, HDMI_AV_CTRL1, HDMI_AUDIO_SAMPLE_FRE_MASK, rate);
-+	hdmi_writeb(hdmi, HDMI_AUDIO_SRC_NUM_AND_LENGTH, word_length);
-+
-+	/* Set N value. */
-+	hdmi_modb(hdmi, HDMI_LR_SWAP_N3,
-+		  HDMI_AUDIO_N_19_16_MASK, (N >> 16) & 0x0F);
-+	hdmi_writeb(hdmi, HDMI_N2, (N >> 8) & 0xFF);
-+	hdmi_writeb(hdmi, HDMI_N1, N & 0xFF);
-+
-+	/* Set CTS value. */
-+	hdmi_writeb(hdmi, HDMI_CTS_EXT1, CTS & 0xff);
-+	hdmi_writeb(hdmi, HDMI_CTS_EXT2, (CTS >> 8) & 0xff);
-+	hdmi_writeb(hdmi, HDMI_CTS_EXT3, (CTS >> 16) & 0xff);
-+
-+	if (audio->channels > 2)
-+		hdmi_modb(hdmi, HDMI_LR_SWAP_N3,
-+			  HDMI_AUDIO_LR_SWAP_MASK,
-+			  HDMI_AUDIO_LR_SWAP_SUBPACKET1);
-+	rate = (~(rate >> 4)) & 0x0f;
-+	hdmi_writeb(hdmi, HDMI_AUDIO_STA_BIT_CTRL1, rate);
-+	hdmi_writeb(hdmi, HDMI_AUDIO_STA_BIT_CTRL2, 0);
-+
-+	return rk3066_hdmi_config_aai(hdmi, audio);
-+}
-+
-+static int rk3066_hdmi_audio_hw_params(struct device *dev, void *d,
-+				       struct hdmi_codec_daifmt *daifmt,
-+				       struct hdmi_codec_params *params)
-+{
-+	struct rk3066_hdmi *hdmi = dev_get_drvdata(dev);
-+	struct drm_display_info *display = &hdmi->connector.display_info;
-+
-+	if (!display->has_audio) {
-+		DRM_DEV_ERROR(hdmi->dev, "no audio support\n");
-+		return -ENODEV;
-+	}
-+
-+	if (!hdmi->encoder.encoder.crtc)
-+		return -ENODEV;
-+
-+	switch (daifmt->fmt) {
-+	case HDMI_I2S:
-+		break;
-+	default:
-+		DRM_DEV_ERROR(dev, "invalid format %d\n", daifmt->fmt);
-+		return -EINVAL;
-+	}
-+
-+	hdmi->audio.channels = params->channels;
-+	hdmi->audio.sample_rate = params->sample_rate;
-+	hdmi->audio.sample_width = params->sample_width;
-+
-+	return rk3066_hdmi_config_audio(hdmi, &hdmi->audio);
-+}
-+
-+static void rk3066_hdmi_audio_shutdown(struct device *dev, void *d)
-+{
-+	/* do nothing */
-+}
-+
-+static int
-+rk3066_hdmi_audio_mute_stream(struct device *dev, void *d,
-+			      bool mute, int direction)
-+{
-+	struct rk3066_hdmi *hdmi = dev_get_drvdata(dev);
-+	struct drm_display_info *display = &hdmi->connector.display_info;
-+
-+	if (!display->has_audio) {
-+		DRM_DEV_ERROR(hdmi->dev, "no audio support\n");
-+		return -ENODEV;
-+	}
-+
-+	hdmi->audio_enable = !mute;
-+
-+	if (mute)
-+		hdmi_modb(hdmi, HDMI_VIDEO_CTRL2,
-+			  HDMI_AUDIO_DISABLE, HDMI_AUDIO_DISABLE);
-+	else
-+		hdmi_modb(hdmi, HDMI_VIDEO_CTRL2, HDMI_AUDIO_DISABLE, 0);
-+
-+	/*
-+	 * Under power mode E we need to reset the audio capture logic to
-+	 * make the audio setting update.
-+	 */
-+	if (rk3066_hdmi_get_power_mode(hdmi) == HDMI_SYS_POWER_MODE_E) {
-+		hdmi_modb(hdmi, HDMI_VIDEO_CTRL2,
-+			  HDMI_AUDIO_CP_LOGIC_RESET_MASK,
-+			  HDMI_AUDIO_CP_LOGIC_RESET);
-+		usleep_range(900, 1000);
-+		hdmi_modb(hdmi, HDMI_VIDEO_CTRL2,
-+			  HDMI_AUDIO_CP_LOGIC_RESET_MASK, 0);
-+	}
-+
-+	return 0;
-+}
-+
-+static int rk3066_hdmi_audio_get_eld(struct device *dev, void *d,
-+				     u8 *buf, size_t len)
-+{
-+	struct rk3066_hdmi *hdmi = dev_get_drvdata(dev);
-+	struct drm_mode_config *config = &hdmi->encoder.encoder.dev->mode_config;
-+	struct drm_connector *connector;
-+	int ret = -ENODEV;
-+
-+	mutex_lock(&config->mutex);
-+	list_for_each_entry(connector, &config->connector_list, head) {
-+		if (&hdmi->encoder.encoder == connector->encoder) {
-+			memcpy(buf, connector->eld,
-+			       min(sizeof(connector->eld), len));
-+			ret = 0;
-+		}
-+	}
-+	mutex_unlock(&config->mutex);
-+
-+	return ret;
-+}
-+
-+static const struct hdmi_codec_ops audio_codec_ops = {
-+	.hw_params = rk3066_hdmi_audio_hw_params,
-+	.audio_shutdown = rk3066_hdmi_audio_shutdown,
-+	.mute_stream = rk3066_hdmi_audio_mute_stream,
-+	.get_eld = rk3066_hdmi_audio_get_eld,
-+	.no_capture_mute = 1,
-+};
-+
-+static int rk3066_hdmi_audio_codec_init(struct rk3066_hdmi *hdmi,
-+					struct device *dev)
-+{
-+	struct hdmi_codec_pdata codec_data = {
-+		.i2s = 1,
-+		.ops = &audio_codec_ops,
-+		.max_i2s_channels = 8,
-+	};
-+
-+	hdmi->audio.channels = 2;
-+	hdmi->audio.sample_rate = 48000;
-+	hdmi->audio.sample_width = 16;
-+	hdmi->audio_enable = false;
-+	hdmi->audio_pdev =
-+		platform_device_register_data(dev,
-+					      HDMI_CODEC_DRV_NAME,
-+					      PLATFORM_DEVID_NONE,
-+					      &codec_data,
-+					      sizeof(codec_data));
-+
-+	return PTR_ERR_OR_ZERO(hdmi->audio_pdev);
-+}
-+
- static int
- rk3066_hdmi_register(struct drm_device *drm, struct rk3066_hdmi *hdmi)
- {
-@@ -566,6 +834,8 @@ rk3066_hdmi_register(struct drm_device *drm, struct rk3066_hdmi *hdmi)
+Now, looking again at motorcomm, yt8521_resume() disables auto-sleep
+before checking whether WoL is enabled. So, the driver is probably
+missing PHY_ALWAYS_CALL_SUSPEND if auto-sleep needs to be disabled
+each and every resume whether WoL is enabled or not.
 
- 	drm_connector_attach_encoder(&hdmi->connector, encoder);
+However, if we look at yt8521_config_init(), this will also disable
+auto sleep. This will be called from phy_init_hw(), and in the
+mdio_bus_phy_resume() path, immediately before phy_resume(). Likewise
+when we attach the PHY.
 
-+	rk3066_hdmi_audio_codec_init(hdmi, dev);
-+
- 	return 0;
- }
+Then we have some net drivers that call phy_resume() directly...
 
-@@ -813,6 +1083,7 @@ static int rk3066_hdmi_bind(struct device *dev, struct device *master,
- 	return 0;
+drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
+	(we already have a workaround merged for
+	PHY-not-providing-clock)
 
- err_cleanup_hdmi:
-+	platform_device_unregister(hdmi->audio_pdev);
- 	hdmi->connector.funcs->destroy(&hdmi->connector);
- 	hdmi->encoder.encoder.funcs->destroy(&hdmi->encoder.encoder);
- err_disable_i2c:
-@@ -828,6 +1099,7 @@ static void rk3066_hdmi_unbind(struct device *dev, struct device *master,
- {
- 	struct rk3066_hdmi *hdmi = dev_get_drvdata(dev);
+drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+	A suspend/resume cycle of the PHY is done when entering loopback mode.
 
-+	platform_device_unregister(hdmi->audio_pdev);
- 	hdmi->connector.funcs->destroy(&hdmi->connector);
- 	hdmi->encoder.encoder.funcs->destroy(&hdmi->encoder.encoder);
+drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
+	No idea on this one - it resumes the PHY before enabling
+	loopback mode, and enters suspend when disabling loopback
+	mode!
 
---
-2.39.2
+drivers/net/ethernet/broadcom/genet/bcmgenet.c
+	bcmgenet_resume() calls phy_init_hw() before phy_resume().
 
+drivers/net/ethernet/broadcom/bcmsysport.c
+	bcm_sysport_resume() *doesn't* appear to call phy_init_hw()
+	before phy_resume(), so I wonder whether the config is
+	properly restored on resume?
+
+drivers/net/ethernet/realtek/r8169_main.c
+	rtl8169_up() calls phy_init_hw() before phy_resume().
+
+drivers/net/usb/ax88172a.c
+	This doesn't actually call phy_resume(), but calls
+	genphy_resume() directly from ax88172a_reset() immediately
+	after phy_connect(). However, connecting to a PHY will
+	call phy_resume()... confused here.
+
+So I'm left wondering whether yt8521_resume() should be fiddling with
+this auto-sleep mode, especially as yt8521_config_init() will do that
+if the appropriate DT property is set... and whether this should be
+done unconditionally.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
