@@ -1,237 +1,145 @@
-Return-Path: <linux-kernel+bounces-233587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24F3891B9E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:31:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1542991B9EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:31:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C38B1F24299
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:31:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9A351F24134
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:31:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A99A13E037;
-	Fri, 28 Jun 2024 08:30:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB02F14B97E;
+	Fri, 28 Jun 2024 08:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="gobbGhOZ"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZcXtPW/2"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E101C2A8
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 08:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4685D14B97B
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 08:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719563456; cv=none; b=Si1TTMOMlJHUo/UirZOgnFGJgaKhfF2svW9gpsrWH1AkRsTCr15p4tMVjjOCW9Lbk8EqHLBUEsIQKHd84KE5SX0y9Le8FCfBsEtBjO3W030nSIqIt1LtIQ3lEq8pmI/s60uy3kIIthjjP+Ei6LMDqOw3hxsGAFB89QByER1ahMY=
+	t=1719563480; cv=none; b=Qky0KGHemtE4XSln6US4a17Y2Z0I1phqXB3e2WavOTctBQhSYGFrNdWFaf3O+MaBkcEgDM3Hq6wrlsTodYvTokmxGVvB/MvvDwtBPZ2vhd2PcPRJKPzeZo/Oci6FOBCMxiVX8vh2JYq2TLpHbiLInGtAp3TdIDPlNn8bsG6sjQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719563456; c=relaxed/simple;
-	bh=EtCc0Ulsm6d96qthMRZWYhCWk2z6+bTuRaI6iwHhKFQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k2X3CyYV4tY7TxllV9826ZVYeaVIQqZimi8UO9V7bnZm10QY6KHScL5ZVg8fNd7TJgj8ijBA1QDdZDd694zwd0tTJdHVtxlBN6CmDnyBHd1SQLc1y+ecPcFXauytYqN2d513moncF1E6gzb74XCHpyFbSR6HcXnd7S6VbfO9PAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=gobbGhOZ; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ebe3fb5d4dso3590851fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 01:30:54 -0700 (PDT)
+	s=arc-20240116; t=1719563480; c=relaxed/simple;
+	bh=qrPmbzPc6thrcoALKqu5/RTyzon2Cv6tVnvT/bPg2MQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=VXmbhZkrOqQFHNDgxSx5JBsM+afkpiyWC/5BNoqaryKWo+F7KSnDDNBKWEHk9ftUlHTjkGnd9mWq8nciLAwRKFgTNjWrPKYWQ/9XX7uRwMa66Df2M0YS/rpd21vFHBzghL4yS/t67F9K2Sz6D9Ayeaj+xdE+BqL4aE/Mq+YK1As=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZcXtPW/2; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ebed33cb65so3284061fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 01:31:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719563453; x=1720168253; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SDHbCx3I4IqNsab1QxiDVhaxw/hy3+YvdSsikSHLnDU=;
-        b=gobbGhOZb6RJr73TGRZ4dyk3FWaCb3TgQd2XkNqBlrafrQhJpcOgl5XtNouQ/TXfl4
-         fGwbIwcxsB+pZpWhv8eNUhV0ydQdEFykmLTtx8oDHWmHInmlzLc9zd1WcXC8pb+X26AP
-         fUmEpSDjdXRJKHySR6qxEuXiA1v0jJPyr6PjlYTAiEFXDOlpztzmvfZT1qTLMHQ5ut3Y
-         1eG+CljaP0DYdFuKfIBBv7b+5bfhBzrBwSGdkDNsLlJ0nbt+KLXXaV1M2smgzcxznJZc
-         oUFN6IH9C9OUl/cZKLS5GB/2hMklgFuToXcV6dtOIFsJSyQWU+QY8ZVHqF6KnN+uSgkq
-         +Tfw==
+        d=linaro.org; s=google; t=1719563476; x=1720168276; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yw0eZbsyLTkgcERd78HaWAv1qQu+UDNZrR+zNE4CJuE=;
+        b=ZcXtPW/2puBMhEOGseqV+++Smg14GCSaHw451Ko18kvmZ6l+uEpFiBftrBr18RRhLB
+         +/4z842/IxL6ivd18/5VpZQY/sBCEkDWmkE9aYlU+j+cXdE9bvpHvI9jsBCqnIgU+XVu
+         il7cSV52Gx36Xx1kD0GQLXUZJ1MG3OnsVwDl9RzWRCU6F+ByBwBTQTCyrqLKcVveCzYm
+         301r3M6KjXxoN4W/RR2GEeI0+/ZttQlDbKzy88OFhzM4PPoogDG4uJYK1mNtGQUgJ/I6
+         kPbV5qCX5GTrQ8ngy+P1/AwSjU94FBkdq5rx4IgkA/24pSNoZbpDuqEAjWDpoBOctIhj
+         LHBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719563453; x=1720168253;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SDHbCx3I4IqNsab1QxiDVhaxw/hy3+YvdSsikSHLnDU=;
-        b=MrY4ZXUZiw0jNwfA8KfSvRKpHNqWjwsRrQVw00aKuBwK20MDHXK01ADVaWDMjKMyAj
-         LC8jVyWbWEz4NtymGyNrn54tGZ+bi7M2M7osk84youbKIHjdnyAqrsvswlTDyKdp8O4J
-         79yvLD/bXHidAl1yYMh2UY+prRqulZQ5V4MnpyVH6GFJjhXaOvPF/iJZItWT5dwI9Z5J
-         RVYtZoRP/dYhrdNXkDkDdGpz2j/mYtwMcIGsw+h6BfJT7P9Nkhw9hFYNmmtp9Hxmejy6
-         1AStb7q+9kxXOjqsYSYB+jQVFX4atCHDEfyzvD7OMf4MIXbYSAprirz8R6u3fXVEe2f7
-         zI4g==
-X-Forwarded-Encrypted: i=1; AJvYcCW8bMRWA6NeE0G1GHoAYniHWoeuSZ1Pr42pXGq+9vEssjLtXzQYWQ4tbcGrRyy/7tsj7OLKUEdMc7L0mYCziMtlhVhk1Syu7IMOwmmG
-X-Gm-Message-State: AOJu0YykSCIBtmbASpRjOpqpCwySxQhRWdAM69CLFhs9r9ovJjN1yTib
-	wHkItDfposzs8W2ttxrqMlJs3j3Xu+ozdbHbc1hWwtS/zMUI2jPsd+5IGaYRztz4dCdwp+WwTwB
-	edsBdXuw3a8DKB0zJzBdCJODvbAd3piuwSUk8xw==
-X-Google-Smtp-Source: AGHT+IHb15w1FOtsGlWaJj9fWqGVe0N7kzwCaQNEYTDO29ju0a0N9wPtmITOGOKtvPQV4WaTFtEpXrJjavnwY3sDN2o=
-X-Received: by 2002:a2e:9947:0:b0:2ec:4e05:8d99 with SMTP id
- 38308e7fff4ca-2ee53ca7c10mr2641601fa.20.1719563452671; Fri, 28 Jun 2024
- 01:30:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719563476; x=1720168276;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yw0eZbsyLTkgcERd78HaWAv1qQu+UDNZrR+zNE4CJuE=;
+        b=f9K8JonL+Ma4OkcIcOZz5u9WhU6eeNT7CDH4HN+pcAYevpaxlCMoo/Lz620rTBF39y
+         oa244Q/j9opKsm/0hyrpZ2xkCvwpx7XbLI+VNvBiLQUkvT/enRLOcOSgcqyjwHj8Q6jo
+         iPaSmR4NYzCj/ozFoTTRgI3dZt4ImCwMGRHANG6FJehQzL6lmHGeyIk1kHZGSeRQmTa5
+         6A4er8rDMAFguw1eIiF9vlcb/yahAMnSo8CFhnZCP6CnhmL0aDFapUkfy6yG7yaHQyPN
+         jZC4fFE+vgEOs186lZh1UzU9GRclLmXUHjpwZzkczH+t2EJxfcjtxbG3nZbhXK1yDhec
+         /Zag==
+X-Forwarded-Encrypted: i=1; AJvYcCVFu96km/wQ3h3IiqaQUu2H0BAIOg3jw8HnqE5ykw0mCv2edDEbZLWQLDuRxN/Rk22UFRU3rBJ97w+w0pYiLo8wjzyN8aUa7ZljA6SX
+X-Gm-Message-State: AOJu0YzmFzW6if8y/eLU8oiocIyIulCLTVYY3T6uNBOVliDmBwpwS+6X
+	8rU3SzfsEFoZi1MPgT0C5b+AKxDYrMwSFqAE6GppXyKf3kuMTorA+6Y2/zexYLI=
+X-Google-Smtp-Source: AGHT+IEOpDmTUMd9T1aD3y3deOsD8U1CZqZy1tIh8+xDSlP0/UjZ7yj/m4ywU7C5CPZ6setS3NylKg==
+X-Received: by 2002:a2e:9d8f:0:b0:2ec:3dd4:75f9 with SMTP id 38308e7fff4ca-2ec5936fa45mr103261411fa.35.1719563476230;
+        Fri, 28 Jun 2024 01:31:16 -0700 (PDT)
+Received: from [127.0.1.1] ([82.79.124.209])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0d90casm1521604f8f.32.2024.06.28.01.31.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 01:31:15 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+Date: Fri, 28 Jun 2024 11:31:01 +0300
+Subject: [PATCH v2] dt-bindings: thermal: qcom-tsens: Document the X1E80100
+ Temperature Sensor
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240628080146.49545-1-andrei.simion@microchip.com> <20240628080146.49545-2-andrei.simion@microchip.com>
-In-Reply-To: <20240628080146.49545-2-andrei.simion@microchip.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 28 Jun 2024 10:30:41 +0200
-Message-ID: <CAMRc=MeJyByMvcFT2aJDK87bz4=+UXEuMtQ4G4MZUAUt39SS1Q@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] eeprom: at24: avoid adjusting offset for
- 24AA025E{48, 64}
-To: Andrei Simion <andrei.simion@microchip.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, 
-	claudiu.beznea@tuxon.dev, arnd@arndb.de, gregkh@linuxfoundation.org, 
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Claudiu Beznea <claudiu.beznea@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240628-x1e80100-bindings-thermal-qcom-tsens-v2-1-4843d4c2ba24@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAMR0fmYC/43NwQ6CMAzG8VchO1uzVQjoyfcwHMYo0AQ27QjBE
+ N7dSeLdpJd/D99vU5GEKapbtimhhSMHnwJPmXKD9T0Bt6kVasx1gQiroUobraFh37LvI8wDyWR
+ HeLkwwRzJR7AW2+aqXW7LXKWpp1DH68E86tQDxznI+1AX8/3+gPI/YDFgQHdFugqLC5n7yN5KO
+ AfpVb3v+wfLGRXW2QAAAA==
+To: Amit Kucheria <amitk@kernel.org>, 
+ Thara Gopinath <thara.gopinath@gmail.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk@kernel.org>, Abel Vesa <abel.vesa@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1217; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=qrPmbzPc6thrcoALKqu5/RTyzon2Cv6tVnvT/bPg2MQ=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBmfnTLGn/UF7opNHc1QGJsaA76e4ji5+Om1hc6i
+ yiBvMZAh3WJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZn50ywAKCRAbX0TJAJUV
+ VutPD/9wLkhRMLmeqpjZHtFMN6UO+4KERYfHvYjy6/KbvCAy0fTdD3D5WPHAh7sFceYaFzFy8Cp
+ ne9Zc9V3gNokItuKP9NHCa/Gh4XhQiHdgdLdyt5+eC382dptCDj1rlEh2V3dUkUpE8x+80FWWyY
+ 1R/068+oWA/RZm4MttN/LDzXz2Gm6fy4ato0/ghzTtNMVmj5to8J6asWxbCrEFEZOc4gAHfqrE8
+ F+HRD1r3ipAqfnzF2WdGeT8t7VEy9a5CAtFm4FrBnKWofpHga882ME3mQLvpysQUHipZVtzFOAQ
+ smx9Qkx/jm85g6GGsRXIQb6t6/O/f9tuSk6F69Dr0c2mp+SJ3FqSKpmjdA7M2XnB4pkm6YH5h+m
+ 4Yy2C7McHKoaUH2UJ0JUlXKHlxwnMfDsD5oAqavFYwtyiHxGCp4V/pAwdCWS7hN+Q7n4iPUVa4z
+ NilM095wgMURXJ21QXvidPhU2H+DyNPVVVMf1XnMZg1z2YSYoJSSLPUslztMVJN+4dbKFVOo+qk
+ saX0MgKD7TOyxeCVlE684JHHBIWFJ/ZxUFf0rm5AUvn3cWjhyPMUCLs298lNONCU8IIfxX8Lyjj
+ 9wu9Jb297Af2s0L6Nu+O1u2XBf9fz18pnjqUDBs7eC2yHL7oGbHTF0nt6tMAZAaJGyAuTceYjWW
+ 4Xl0tQKqoWV86cg==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-On Fri, Jun 28, 2024 at 10:02=E2=80=AFAM Andrei Simion
-<andrei.simion@microchip.com> wrote:
->
-> From: Claudiu Beznea <claudiu.beznea@microchip.com>
->
-> The EEPROMs could be used only for MAC storage. In this case the
-> EEPROM areas where MACs resides could be modeled as NVMEM cells
-> (directly via DT bindings) such that the already available networking
-> infrastructure to read properly the MAC addresses (via
-> of_get_mac_address()). The previously available compatibles needs the
-> offset adjustment probably for compatibility w/ old DT bindings.
-> Add "microchip,24aa025e48", "microchip,24aa025e64" compatible for the
-> usage w/ 24AA025E{48, 64} type of EEPROMs where "24aa025e48" stands
-> for EUI-48 address and "24aa025e64" stands for EUI-64 address.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-> [andrei.simion@microchip.com: Add extended macros to initialize the struc=
-ture
-> with explicit value to adjusting offset. Add extra description for the co=
-mmit
-> message.]
-> Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
-> ---
-> v2 -> v3:
-> - add specific compatible names according with
-> https://ww1.microchip.com/downloads/en/DeviceDoc/24AA02E48-24AA025E48-24A=
-A02E64-24AA025E64-Data-Sheet-20002124H.pdf
-> - add extended macros to initialize the structure with explicit value for=
- adjoff
-> - drop co-developed-by to maintain the commit history
->  (chronological order of modifications)
->
-> v1 -> v2:
-> - no change
-> ---
->  drivers/misc/eeprom/at24.c | 28 +++++++++++++++++++++++-----
->  1 file changed, 23 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/misc/eeprom/at24.c b/drivers/misc/eeprom/at24.c
-> index 4bd4f32bcdab..e2ac08f656cf 100644
-> --- a/drivers/misc/eeprom/at24.c
-> +++ b/drivers/misc/eeprom/at24.c
-> @@ -121,20 +121,29 @@ struct at24_chip_data {
->         u32 byte_len;
->         u8 flags;
->         u8 bank_addr_shift;
-> +       u8 adjoff;
->         void (*read_post)(unsigned int off, char *buf, size_t count);
->  };
->
-> -#define AT24_CHIP_DATA(_name, _len, _flags)                            \
-> +#define AT24_CHIP_DATA_AO(_name, _len, _flags, _ao)                    \
+Document the Temperature Sensor (TSENS) on the X1E80100 Platform.
 
-Please, don't try to save space on a few letters, call it
-AT24_CHIP_DATA_ADJOFF() for better readability.
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+---
+Changes in v2:
+- Just picked up Krzysztof's R-b tag
+- Link to v1: https://lore.kernel.org/r/20240527-x1e80100-bindings-thermal-qcom-tsens-v1-1-0f50f58253e1@linaro.org
+---
+ Documentation/devicetree/bindings/thermal/qcom-tsens.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
->         static const struct at24_chip_data _name =3D {                   =
- \
->                 .byte_len =3D _len, .flags =3D _flags,                   =
-   \
-> +               .adjoff =3D _ao                                          =
- \
->         }
->
-> -#define AT24_CHIP_DATA_CB(_name, _len, _flags, _read_post)             \
-> +#define AT24_CHIP_DATA(_name, _len, _flags)                            \
-> +       AT24_CHIP_DATA_AO(_name, _len, _flags, 0)
-> +
-> +#define AT24_CHIP_DATA_CB_AO(_name, _len, _flags, _ao, _read_post)     \
->         static const struct at24_chip_data _name =3D {                   =
- \
->                 .byte_len =3D _len, .flags =3D _flags,                   =
-   \
-> +               .adjoff =3D _ao,                                         =
- \
->                 .read_post =3D _read_post,                               =
- \
->         }
->
-> +#define AT24_CHIP_DATA_CB(_name, _len, _flags, _read_post)             \
-> +       AT24_CHIP_DATA_CB_AO(_name, _len, _flags, 0, _read_post)
-> +
->  #define AT24_CHIP_DATA_BS(_name, _len, _flags, _bank_addr_shift)       \
->         static const struct at24_chip_data _name =3D {                   =
- \
->                 .byte_len =3D _len, .flags =3D _flags,                   =
-   \
-> @@ -170,9 +179,13 @@ AT24_CHIP_DATA(at24_data_24cs01, 16,
->  AT24_CHIP_DATA(at24_data_24c02, 2048 / 8, 0);
->  AT24_CHIP_DATA(at24_data_24cs02, 16,
->         AT24_FLAG_SERIAL | AT24_FLAG_READONLY);
-> -AT24_CHIP_DATA(at24_data_24mac402, 48 / 8,
-> +AT24_CHIP_DATA_AO(at24_data_24mac402, 48 / 8,
-> +       AT24_FLAG_MAC | AT24_FLAG_READONLY, 1);
+diff --git a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
+index 99d9c526c0b6..ac54ed604b74 100644
+--- a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
++++ b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
+@@ -67,6 +67,7 @@ properties:
+               - qcom,sm8450-tsens
+               - qcom,sm8550-tsens
+               - qcom,sm8650-tsens
++              - qcom,x1e80100-tsens
+           - const: qcom,tsens-v2
+ 
+       - description: v2 of TSENS with combined interrupt
 
-And this will not break existing users? I guess you refer to these
-changes in your commit message but it's not very clear what you're
-doing and why.
+---
+base-commit: 0fc4bfab2cd45f9acb86c4f04b5191e114e901ed
+change-id: 20240522-x1e80100-bindings-thermal-qcom-tsens-aa2db90c4a74
 
-> +AT24_CHIP_DATA_AO(at24_data_24mac602, 64 / 8,
-> +       AT24_FLAG_MAC | AT24_FLAG_READONLY, 1);
-> +AT24_CHIP_DATA(at24_data_24aa025e48, 48 / 8,
->         AT24_FLAG_MAC | AT24_FLAG_READONLY);
-> -AT24_CHIP_DATA(at24_data_24mac602, 64 / 8,
-> +AT24_CHIP_DATA(at24_data_24aa025e64, 64 / 8,
->         AT24_FLAG_MAC | AT24_FLAG_READONLY);
->  /* spd is a 24c02 in memory DIMMs */
->  AT24_CHIP_DATA(at24_data_spd, 2048 / 8,
-> @@ -218,6 +231,8 @@ static const struct i2c_device_id at24_ids[] =3D {
->         { "24cs02",     (kernel_ulong_t)&at24_data_24cs02 },
->         { "24mac402",   (kernel_ulong_t)&at24_data_24mac402 },
->         { "24mac602",   (kernel_ulong_t)&at24_data_24mac602 },
-> +       { "24aa025e48", (kernel_ulong_t)&at24_data_24aa025e48 },
-> +       { "24aa025e64", (kernel_ulong_t)&at24_data_24aa025e64 },
->         { "spd",        (kernel_ulong_t)&at24_data_spd },
->         { "24c02-vaio", (kernel_ulong_t)&at24_data_24c02_vaio },
->         { "24c04",      (kernel_ulong_t)&at24_data_24c04 },
-> @@ -270,6 +285,8 @@ static const struct of_device_id __maybe_unused at24_=
-of_match[] =3D {
->         { .compatible =3D "atmel,24c1024",        .data =3D &at24_data_24=
-c1024 },
->         { .compatible =3D "atmel,24c1025",        .data =3D &at24_data_24=
-c1025 },
->         { .compatible =3D "atmel,24c2048",        .data =3D &at24_data_24=
-c2048 },
-> +       { .compatible =3D "microchip,24aa025e48", .data =3D &at24_data_24=
-aa025e48 },
-> +       { .compatible =3D "microchip,24aa025e64", .data =3D &at24_data_24=
-aa025e64 },
->         { /* END OF LIST */ },
->  };
->  MODULE_DEVICE_TABLE(of, at24_of_match);
-> @@ -690,7 +707,8 @@ static int at24_probe(struct i2c_client *client)
->         at24->read_post =3D cdata->read_post;
->         at24->bank_addr_shift =3D cdata->bank_addr_shift;
->         at24->num_addresses =3D num_addresses;
-> -       at24->offset_adj =3D at24_get_offset_adj(flags, byte_len);
-> +       at24->offset_adj =3D cdata->adjoff ?
-> +                               at24_get_offset_adj(flags, byte_len) : 0;
->         at24->client_regmaps[0] =3D regmap;
->
->         at24->vcc_reg =3D devm_regulator_get(dev, "vcc");
-> --
-> 2.34.1
->
+Best regards,
+-- 
+Abel Vesa <abel.vesa@linaro.org>
 
-Bart
 
