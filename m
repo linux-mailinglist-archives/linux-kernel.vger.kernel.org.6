@@ -1,135 +1,164 @@
-Return-Path: <linux-kernel+bounces-234259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76EA091C451
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:02:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B5B991C455
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:02:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E270285497
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:02:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC09C285599
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39571C2339;
-	Fri, 28 Jun 2024 17:01:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D9E1CCCB1;
+	Fri, 28 Jun 2024 17:02:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cViiUIpm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pKlde5qG"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007E11CE09B;
-	Fri, 28 Jun 2024 17:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C8E1C6896;
+	Fri, 28 Jun 2024 17:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719594079; cv=none; b=PioCb2NzX5lWU0qSbewqncXUXesMUe6FefHzzaMSTULEIY6aQMDgsfrQAhVx6z+ChE6+9fAhSpjMr2VjmMBzCfJcpa4Lmd7m40xr5WR3G+Jflrq3jhVJSVnU2zf2Wi1JaCSO3N9FwSW5LS9hQcZycSBlEr/TBEbQS072rM7/QCI=
+	t=1719594134; cv=none; b=JbblJ9modYEph3dZ5WxKW36J6Kd7BLbweEq79blceTfpePx941SjcLUIfxA9TNoNUHVjz6/AG13aOjMyTOYjjHTLw58+Kx0I9whJTicXT329DYxde1wJ+dUPTjbKyxIPesuqK6VzX7/mjPZ2mLN1DewVHW3dLa2oZ9Str95CKfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719594079; c=relaxed/simple;
-	bh=p7XecSFWemJziWOM6nnkfXSrciddlpO1NrCyTpT36gk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mO6RIgQFJ9ldouXwbYcLan+I9WNbsq6R2hthNG89/LhU8ul4dB3zZtk0DDXFUwpnSnLDWcgoe9TXf1OfEE1vtSuDAIQrrvV243xxyq7guCEhCJxp2EqbC2jNWsFv3Q+YUlogtI+l4dL7YyqpqT4AqYrBWJug/sqw+/VzeHjIUJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cViiUIpm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3EDFC2BD10;
-	Fri, 28 Jun 2024 17:01:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719594078;
-	bh=p7XecSFWemJziWOM6nnkfXSrciddlpO1NrCyTpT36gk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cViiUIpm7GccXdL91WYZwBA6vfIz3FXP1EP+Z5hH2nFw0YIyF/aqMO7xHbPJGTpGs
-	 Mvp8C6rIrzM/ip4FiZGH2egfAkMnibx/3yqfPf+QwvAkBqQ5KRGGTk5OCEq6TB0PYq
-	 lfRlGspaupX89aewme8yAhS3qz64pAlp6mAEdHusddcsLXT0OBupGilhevgOn3JAId
-	 7z/0oX9D06jXIjS11cpdtc7Zjb1LEpriCSz3lD05v2cAEvA7J9lv89rTmE5HYMYrN8
-	 /JqB9Fxz6kBnCRr5YJOpWhsqQ6VNeFP1iyd5AQB/3KKK/qo6iE8/VVdBwM10Pp51h0
-	 34rZPJiQMvi5g==
-Date: Fri, 28 Jun 2024 10:01:18 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Eric Sandeen <sandeen@sandeen.net>
-Cc: Jiwei Sun <sunjw10@outlook.com>, chandan.babu@oracle.com,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	sunjw10@lenovo.com, ahuang12@lenovo.com, yi.zhang@redhat.com
-Subject: Re: [PATCH] xfs: add __GFP_NOLOCKDEP when allocating memory in
- xfs_attr_shortform_list()
-Message-ID: <20240628170118.GD612460@frogsfrogsfrogs>
-References: <SEZPR01MB45270BCD2BC28813FCB39AEDA8D72@SEZPR01MB4527.apcprd01.prod.exchangelabs.com>
- <9b8357bf-a1bf-43d0-b617-030882540b34@sandeen.net>
+	s=arc-20240116; t=1719594134; c=relaxed/simple;
+	bh=vwFwTQV48aYpE6GXaofwnwQW04OlGBZebmf2i8Cjc6k=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=axa7TN/y5BrX8lP2YT1HrEPlMJC7cEYDVkOMK3G+gnV/XW+hei0lUnCE+j6/MCwnMziu9z1JUdOClT0Voq3cOJDPKT6G7ATldbXt3d7xXKnRC0BI6uYWa6G16g05M4sCCdDKcIAvpgglkV/GbicHER2hmU9U0/KL9hIRS63D0z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pKlde5qG; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45SBijb8030331;
+	Fri, 28 Jun 2024 17:02:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=T2iHfQgqBKB49Z7Ubgr9yl+9
+	aU6gW0Oqr3pHdQRM57s=; b=pKlde5qGKFeSzkYl7XLDPqtEstCZ4Ar+h2eBkgcv
+	iIQ6ldd1VD8pqHwBT8AYi3MF2Te45ZRbEsy4r5KJqn1OapkMKVnw6QPIXyuEpKFI
+	AdAUho7TfseRBZ66HIabIcADzWuZnpharJxmwVixSptg9QCtD5iylOSJ8f5mteyE
+	vwkJAb2bEwzRC+QKyrjnGQ1uiMa+S6ZTKiWGGYZzpsLTKACkkqKMFOQFoct8uz0d
+	ISl69g+4vHWuuamJAem5D5/bid/PD5HFpn4BK3S1DGYvbbqj93S1gl+nxQmYfVkH
+	310vW84BzWPqeWLFWPiQBS06G/c+qLH7Q9y0jKxMLY/ZdQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 401pm32ag9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Jun 2024 17:02:07 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45SH26ba022884
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Jun 2024 17:02:06 GMT
+Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 28 Jun 2024 10:02:06 -0700
+Date: Fri, 28 Jun 2024 10:02:06 -0700
+From: Elliot Berman <quic_eberman@quicinc.com>
+To: <wuxilin123@gmail.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Abel Vesa <abel.vesa@linaro.org>,
+        Johan
+ Hovold <johan+linaro@kernel.org>
+Subject: Re: [PATCH RESEND 0/2] Introduce ASUS Vivobook S 15
+Message-ID: <20240628095747249-0700.eberman@hu-eberman-lv.qualcomm.com>
+References: <20240628-asus-vivobook-s15-v1-0-92cb39f3f166@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <9b8357bf-a1bf-43d0-b617-030882540b34@sandeen.net>
+In-Reply-To: <20240628-asus-vivobook-s15-v1-0-92cb39f3f166@gmail.com>
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: MB07XhkiPxCkAR7hCDhOhs8qJyp5HE3Q
+X-Proofpoint-GUID: MB07XhkiPxCkAR7hCDhOhs8qJyp5HE3Q
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-28_12,2024-06-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ impostorscore=0 adultscore=0 phishscore=0 lowpriorityscore=0
+ malwarescore=0 priorityscore=1501 suspectscore=0 mlxscore=0 bulkscore=0
+ clxscore=1011 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406280126
 
-On Fri, Jun 28, 2024 at 11:25:10AM -0500, Eric Sandeen wrote:
-> On 6/27/24 8:12 AM, Jiwei Sun wrote:
-> > From: Jiwei Sun <sunjw10@lenovo.com>
-> > 
-> > If the following configuration is set
-> > CONFIG_LOCKDEP=y
-> > 
-> > The following warning log appears,
+On Fri, Jun 28, 2024 at 07:49:33PM +0800, Xilin Wu via B4 Relay wrote:
+> ASUS Vivobook S 15 is a laptop based on the Qualcomm Snapdragon X Elite
+> SoC (X1E78100). This series adds initial support for the device.
 > 
-> Was just about to send this. :)
+> Currently working features:
 > 
-> I had talked to dchinner about this and he also suggested that this was 
-> missed in the series that removed GFP_NOFS, i.e.
+> - CPU frequency scaling up to 3.4GHz
+> - NVMe storage on PCIe 6a (capable of Gen4x4, currently limited to Gen4x2)
+> - Keyboard and touchpad
+> - WCN7850 Wi-Fi
+> - Two Type-C ports on the left side
+> - internal eDP display
+> - ADSP and CDSP remoteprocs
 > 
-> [PATCH 00/12] xfs: remove remaining kmem interfaces and GFP_NOFS usage
-> at https://lore.kernel.org/linux-mm/20240622094411.GA830005@ceph-admin/T/
+> Some features which can get working with out of tree patches:
 > 
-> So, I think this could also use one or both of:
+> - GPU [1]
+> - Bluetooth [2]
 > 
-> Fixes: 204fae32d5f7 ("xfs: clean up remaining GFP_NOFS users")
-> Fixes: 94a69db2367e ("xfs: use __GFP_NOLOCKDEP instead of GFP_NOFS")
+> Notably not working features:
 > 
-> ...
+> - Battery monitoring via battmgr
+> - Orientation switching and altmode on the Type-C ports (USB4 retimer driver needed?)
+> - Two USB Type-A ports on the right side (dwc3 multiport controller)
+> - Front camera
+> - SD card slot
+> - HDMI connector (using a Parade PS186 DP 1.4 to HDMI 2.0 converter) 
+> - USB4 and the retimer (Parade PS8830?)
+> - Anything using the EC
 > 
-> > This is a false positive. If a node is getting reclaimed, it cannot be
-> > the target of a flistxattr operation. Commit 6dcde60efd94 ("xfs: more
-> > lockdep whackamole with kmem_alloc*") has the similar root cause.
-> > 
-> > Fix the issue by adding __GFP_NOLOCKDEP in order to shut up lockdep.
-> > 
-> > Signed-off-by: Jiwei Sun <sunjw10@lenovo.com>
-> > Suggested-by: Adrian Huang <ahuang12@lenovo.com>
-> > ---
-> >  fs/xfs/xfs_attr_list.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/xfs/xfs_attr_list.c b/fs/xfs/xfs_attr_list.c
-> > index 5c947e5ce8b8..506ade0befa4 100644
-> > --- a/fs/xfs/xfs_attr_list.c
-> > +++ b/fs/xfs/xfs_attr_list.c
-> > @@ -114,7 +114,8 @@ xfs_attr_shortform_list(
-> >  	 * It didn't all fit, so we have to sort everything on hashval.
-> >  	 */
-> >  	sbsize = sf->count * sizeof(*sbuf);
-> > -	sbp = sbuf = kmalloc(sbsize, GFP_KERNEL | __GFP_NOFAIL);
-> > +	sbp = sbuf = kmalloc(sbsize, GFP_KERNEL | __GFP_NOFAIL |
-> > +			     __GFP_NOLOCKDEP);
+> Dump of the ACPI tables could be found here: [3]
 > 
-> Minor nitpick, style-wise we seem to do:
+> [1] https://lore.kernel.org/all/20240623110753.141400-1-quic_akhilpo@quicinc.com/
+> [2] https://git.codelinaro.org/abel.vesa/linux/-/commits/topic/b4/x1e80100-bt
+> [3] https://github.com/aarch64-laptops/build/pull/103
 > 
->         sbp = sbuf = kmalloc(sbsize,
->                         GFP_KERNEL | __GFP_NOLOCKDEP | __GFP_NOFAIL);
-> 
-> in most other places, and not split the flags onto 2 lines, since you need
-> to add a line anyway.
-> 
-> Otherwise,
-> 
-> Acked-by: Eric Sandeen <sandeen@redhat.com>
+> Signed-off-by: Xilin Wu <wuxilin123@gmail.com>
+> ---
+> Changes in v2:
+> - EDITME: describe what is new in this series revision.
+> - EDITME: use bulletpoints and terse descriptions.
 
-Hey, could you all please read the list before sending duplicate
-patches?
+Please update with comment about fixing the makefile, it is v2 and not
+RESEND. (don't send v3 now, but please fix in future version)
 
-https://lore.kernel.org/linux-xfs/20240622082631.2661148-1-leo.lilong@huawei.com/
-
---D
-
-> >  	/*
-> >  	 * Scan the attribute list for the rest of the entries, storing
+> - Link to v1: https://lore.kernel.org/r/20240628-asus-vivobook-s15-v1-0-2a1e4571b8ab@gmail.com
+> 
+> ---
+> Xilin Wu (2):
+>       dt-bindings: arm: qcom: Add ASUS Vivobook S 15
+>       arm64: dts: qcom: Add device tree for ASUS Vivobook S 15
+> 
+>  Documentation/devicetree/bindings/arm/qcom.yaml    |   1 +
+>  arch/arm64/boot/dts/qcom/Makefile                  |   1 +
+>  .../boot/dts/qcom/x1e80100-asus-vivobook-s15.dts   | 613 +++++++++++++++++++++
+>  3 files changed, 615 insertions(+)
+> ---
+> base-commit: 642a16ca7994a50d7de85715996a8ce171a5bdfb
+> change-id: 20240628-asus-vivobook-s15-72a497863168
+> 
+> Best regards,
+> -- 
+> Xilin Wu <wuxilin123@gmail.com>
+> 
 > 
 > 
 
