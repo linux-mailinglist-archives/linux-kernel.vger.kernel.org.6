@@ -1,134 +1,107 @@
-Return-Path: <linux-kernel+bounces-234380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECCDC91C5F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:40:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C82D91C5F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:40:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29CDD1C20E1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:40:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47F842846FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:40:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D8F1CE0AB;
-	Fri, 28 Jun 2024 18:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE5CE1CD5D6;
+	Fri, 28 Jun 2024 18:40:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CjpwMZmg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="eGB+npoi"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48BEB1C8FAB;
-	Fri, 28 Jun 2024 18:40:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F7925634
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 18:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719600004; cv=none; b=aoIaxmhKRL7C8OQkRd/oo/C8toRedM1tw3ZaOjKnjuuDsCqaZh5q7YfDg2BwOkDdA0KalaVCODoni1Pgw/WV9Df475kdvyVrJpHUipzTffv7gIfJnznsJv/6+z4G/TctdWovpsQ5R8DQog/5CV/n8nUYXSr9orqJk4EshpBc7E4=
+	t=1719600043; cv=none; b=f6X94XRnHe0SQY9xyu43A1nORchbmYBUjgHy5sndtrm72Eq3dCPngmxen965X0ssc8zfaau8XfflVA2ATVM6ccIle7PGmHsV3ZUFVdxCoApk6M8txt9HAansUvzzF18iWtcP31NLwlMWL0b/Vq4mp2SA4KRMdj31uUoTOvOV8f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719600004; c=relaxed/simple;
-	bh=lhiXVKbviQVZDcIxC0i6nBahft0To6SW9QRHyVQkt6E=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YgbiekM2fV/xq2tyGg+M8qNWoZQsBpZszal5HKAdpx0DVB8mghpLEEP8u6AOtRPYw1s0ZMMLrmtaFta9HLXVU0TfsYgcxXK03eQfi6gH2KpY1hSRpeETHIxsj1z6WfubnZtQIUX+Xxbpsf3E5CXOjetp4FfHkZX6G5f15haqSVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CjpwMZmg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B42F0C2BD10;
-	Fri, 28 Jun 2024 18:39:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719600004;
-	bh=lhiXVKbviQVZDcIxC0i6nBahft0To6SW9QRHyVQkt6E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=CjpwMZmgklwfr1/22p3YPqxaOdvRtEMKw5x7Ogw0I3JWU0gpPq04VqQ52t9veAExu
-	 ijmdCcNhb3mWg4uXu6E14qGBx53X074OfBvBKWqu02b9P62wyYjPViOW5g/jK73ZpL
-	 o52LoMKKlBrNijB3o5hDdJY8WbYWZTuHRiXIgwqqWP1YfrvQOLZcZ8/IO+NROCb772
-	 uJWtz25dSWUxBs+t4qoWcSwH8+TNgnZLQTxNyOSo0zmCXtG26/R+/6DryiuV2M/Z1q
-	 h+uQAbjNzWyQCwPdQnQZwcsMWClFKdzQb2HvYrQWrIqhGGktOx3jNb4/Rv+1ucHdRd
-	 y1NgB91bttdAA==
-Date: Fri, 28 Jun 2024 19:39:54 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: "Tinaco, Mariel" <Mariel.Tinaco@analog.com>
-Cc: David Lechner <dlechner@baylibre.com>, "linux-iio@vger.kernel.org"
- <linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org"
- <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark
- Brown <broonie@kernel.org>, "Hennerich, Michael"
- <Michael.Hennerich@analog.com>, Marcelo Schmitt
- <marcelo.schmitt1@gmail.com>, Dimitri Fedrau <dima.fedrau@gmail.com>,
- Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH 0/2] add AD8460 DAC driver
-Message-ID: <20240628193954.2f3dfc55@jic23-huawei>
-In-Reply-To: <SJ0PR03MB62242BD5117C5B2026CCC5D191D42@SJ0PR03MB6224.namprd03.prod.outlook.com>
-References: <20240510064053.278257-1-Mariel.Tinaco@analog.com>
-	<CAMknhBHd2XCJH4rgYDq=vbCL5E_tM3FxFPWbNy9PvxLCJL4tcA@mail.gmail.com>
-	<20240511172155.08bc0987@jic23-huawei>
-	<SJ0PR03MB62242BD5117C5B2026CCC5D191D42@SJ0PR03MB6224.namprd03.prod.outlook.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719600043; c=relaxed/simple;
+	bh=bJ5Xgsw3brVjuOFra0daPm8yVAjvD4M4fnEbLTyXt50=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dUL0hbhE7h7Xhx0xSl5U8CgVV4ihr0kL2/wygn4BiaTbxDYHc8NKcR35OFQk7zikN/X0G1FepYjSiCmGaOdZ0TUyTQs/jEHr3aks0bVYpSwtE+EAl4aPJpPVJfWk4DI2A5DYPu4nHY91Zs1UIqE11sOXuSHO4Ze944DVLirhwaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=eGB+npoi; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=bJ5X
+	gsw3brVjuOFra0daPm8yVAjvD4M4fnEbLTyXt50=; b=eGB+npoinurDXFo4hrX3
+	NtuEXutWy8P9XH2/JL62SfBEGImIOx81jZy0ucerroRBvOQ1zFqnG+C+VgUns3qO
+	dz+9hwNiUsJs+Av9Oejebc3AAvFryA0SbwAxGVrmcOS83XANmmUcF9RhGXzNmoeP
+	J+gRdYcmti81AtTFWRiFDyKLjyoJtqOAgfhj2oRIp0vnI8gVxAdDDVo99Z02kpGe
+	SVu7Ol1nUuDEt9ghQFxJU40CyW+Zt1ifQ1gBHK+BLdR5LzIqwPiqmYXBBfmC2tQY
+	1I6PzbTCQdfHfDsBvuNakpOsSlVA9hinRKGrYxGGV965eZJPBZ/2QuBSd0WA96V5
+	eg==
+Received: (qmail 1339684 invoked from network); 28 Jun 2024 20:40:38 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 28 Jun 2024 20:40:38 +0200
+X-UD-Smtp-Session: l3s3148p1@DglolfcbsMtehhrE
+Date: Fri, 28 Jun 2024 20:40:37 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] i2c: testunit: don't erase registers after STOP
+Message-ID: <Zn8DpYNh20oWr-RV@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+References: <20240627111445.29751-4-wsa+renesas@sang-engineering.com>
+ <20240627111445.29751-5-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="+T6FgdQXRsgftlwO"
+Content-Disposition: inline
+In-Reply-To: <20240627111445.29751-5-wsa+renesas@sang-engineering.com>
+
+
+--+T6FgdQXRsgftlwO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-
-> >  =20
-> > > >   * Programmable quiescent current (optional) =20
-> > Could probably figure out a suitable control for this, but I'm not enti=
-rely sure
-> > what it is :) =20
+On Thu, Jun 27, 2024 at 01:14:47PM +0200, Wolfram Sang wrote:
+> STOP fallsthrough to WRITE_REQUESTED but this became problematic when
+> clearing the testunit registers was added to the latter. Actually, there
+> is no reason to clear the testunit state after STOP. Doing it when a new
+> WRITE_REQUESTED arrives is enough. So, no need to fallthrough, at all.
 >=20
-> Thinking about it, wouldn't the raw attribute be a suitable control for t=
-his? This=20
-> Value is relative to nominal supply current and acts as a "monotonic but =
-nonlinear"
-> multiplier.=20
-> A register value maps to a current level from 0 to 2 times the nominal
-> current supplied. I also thought that it could be hardware gain but the g=
-ain
-> computation wasn't explicitly indicated in the datasheet and there is not=
- yet
-> "current_hardwaregain" attribute available in the ABI. So I settled with =
-raw.=20
+> Fixes: b39ab96aa894 ("i2c: testunit: add support for block process calls")
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-I don't entirely understand what is actually for, but a raw current output
-might be appropriate.
+Applied to for-current, thanks!
 
->I
-> Think there would only be an issue of we expose the "processed" attribute
-> Because it has a particular computation. But I'm not planning to expose t=
-he=20
-> Processed attribute
 
-Is there any reason someone might in future though?
+--+T6FgdQXRsgftlwO
+Content-Type: application/pgp-signature; name="signature.asc"
 
->=20
-> > > >   * Thermal monitoring is done by measuring voltage on TMP pin
-> > > > (unlikely to be included) =20
-> >
-> > If you did want to, the usual trick for these is to include an optional=
- use as a
-> > consumer of an IIO provider which would be a separate ADC. =20
->=20
-> I included this in my current revision, thanks for the idea. Although the=
- optional use
-> Isn=E2=80=99t yet available in the consumer API. My question is, in case =
-the ADC channel to read
-> The TMP pin is not available, should I still make the temp raw value avai=
-lable and
-> Set to 0? Or should the temp raw attribute be unavailable or unlisted com=
-pletely from
-> IIO Info.
-If no ADC channel then remove it from the chan_spec.  That probably means y=
-ou
-need separate arrays of struct iio_chan_spec for the two case.
+-----BEGIN PGP SIGNATURE-----
 
-Jonathan
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZ/A6UACgkQFA3kzBSg
+KbbzIg/+M/iP86cZLA2se9qOUB1hLhpdUi7NAqrJ3j7r+kJUiwFqMqAUp2zfzWch
+s3gs7kH0nimOOjp5M6ZkIIem4lm/WQfrKGY4WJYrXA8HqoazHHW35H0LqCpo/Gtb
+9I5wVMT/IScKX5QGEk/VzvLuXpIryKxKkKl5uATrvk0F8Sx7//L2KI7PuDu9MB0Q
+aCfUE8FSXCqWEWm3zWrr8tj7m4OzlRZ0FuXHtMdnO00/dEQabXcBXCR/MIRJSX15
+US8FmpFgRmWmvnfyqzyDxLR7jFxtZ5s+45RPUtZz8u342qaTQB+vgNvnt435CY18
+gNiIPtILQBriau4m+Ak7UwlvlaZJ24lTLpJBsLaFlHFCR43EVeV+7PvkbdNImOnO
+BbtnfjaqiQFRnAN3hMmQCHbsiPnyLg848QtxFkMR/uqveiFor0evt6YzerewID7h
+oigAIVUhmydeZpugyd3tPJguyAClq1rP+oGSv3MLPhkMR3CDOroD5mAVgUX944Jj
+/JMVOj0/2CaI0DUzIfpWLBdxqWlBof/mc6uTETPdWyEBUpwZXMSaX6bz7l06KYUF
+z7Zeh22zb8+lilmq3y1PJpJ6d/D8Tzu0GRtYR/lz3WKtFiCFAPUXnWMIgBNFiU1y
+1z+fNxJOLR/dADFZTiP6yYxoRfkq/NxfBMeytv0eqkw/DFoSzUk=
+=Ys3m
+-----END PGP SIGNATURE-----
 
-> > > > =20
-> > >
-> > > Adding myself to the cc: here since I'm interested to see what
-> > > Jonathan (or anyone else) has to say about the fault monitoring. =20
-> >=20
-> > Jonathan =20
-
+--+T6FgdQXRsgftlwO--
 
