@@ -1,138 +1,251 @@
-Return-Path: <linux-kernel+bounces-234399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77F0691C61D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:53:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1D7391C658
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:07:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17EA92856B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:53:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12D9C1C2245D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D37535DC;
-	Fri, 28 Jun 2024 18:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A18757ED;
+	Fri, 28 Jun 2024 19:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jookia.org header.i=@jookia.org header.b="gPiB1B86"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="kxKeZecW"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2074.outbound.protection.outlook.com [40.107.95.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA734D8C5
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 18:53:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719600798; cv=none; b=bz3eS/jLWKHJEh8URP/aI+aXg4OXizJJlq8A3bf3r/569rEpjJe8VmOOL4sNcaVjrCb2lZpl0aALMYxvTvMZh+JUYgTxa+F0IpmfYbayQqoTyjOOHQJb0R5NqDh2ZR/gMVB+Y2mMfVT4RCMOvKdcjGCTCH+LiwgO90UovGoUTC0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719600798; c=relaxed/simple;
-	bh=3p90Zo34Va7EB+3tQPrwwyuFwkq4klv/EZHxixPeugg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=MrEbJvwsHZZRBy/f4oBclfwzywP1nN6xVe7rMIh2q+6lh1JqhCFYLzrBBqCowmsDljxruER2eKttERkMoeH+KWMD0bbo8VW5tUBMVhECNSP/Ds5W/6ZUGRjztpqP0g4wIDbxPdSNvP3kgROKdh/DeEhhSPvKn0rj08grAHawCKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jookia.org; spf=pass smtp.mailfrom=jookia.org; dkim=pass (2048-bit key) header.d=jookia.org header.i=@jookia.org header.b=gPiB1B86; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jookia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jookia.org
-X-Envelope-To: linux-sunxi@lists.linux.dev
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jookia.org; s=key1;
-	t=1719600790;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=ol5vZWmzYCAtuPZvkV2jmiAnvzmCMXUkEioC5JggsN8=;
-	b=gPiB1B86mnE70dlWle33ELiZCWlxK3uL2NGuS12wTJoFk7DW0qoHRufvn35raPdcC/ENqk
-	LmdRP691WwONfx8wP5voen+IpJ2/Shes1KRp4fgZ7KPwi54GhJWvtcr+5C/KxQqPbVg6/3
-	Bz5NwyO2tK7cNeZy+c4hHcTxkHniTncvX+LPMtS2/SaaLGxIB1/SaWmL4NVJgJnJ1Bf6uR
-	5V1DTFASS2eJ5KmXvAedPdJNuY+QGx2W/Wo9sqsuGRVqboK2rNeHdZUQEBes/KoIP01t8T
-	L0dP3ZUHcUEcjQsoqfrIWcpPkS2smu5X4g9GigCbZ7V7KUSMai8RH3DWAvc8qg==
-X-Envelope-To: andre.przywara@arm.com
-X-Envelope-To: jakobl.gm.g@gmail.com
-X-Envelope-To: kirby.nankivell@gmail.com
-X-Envelope-To: contact@paulk.fr
-X-Envelope-To: mripard@kernel.org
-X-Envelope-To: wens@csie.org
-X-Envelope-To: jernej.skrabec@gmail.com
-X-Envelope-To: maarten.lankhorst@linux.intel.com
-X-Envelope-To: tzimmermann@suse.de
-X-Envelope-To: airlied@gmail.com
-X-Envelope-To: daniel@ffwll.ch
-X-Envelope-To: samuel@sholland.org
-X-Envelope-To: dri-devel@lists.freedesktop.org
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Date: Sat, 29 Jun 2024 04:52:06 +1000
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: John Watts <contact@jookia.org>
-To: linux-sunxi@lists.linux.dev
-Cc: andre.przywara@arm.com, Jakob L <jakobl.gm.g@gmail.com>,
-	"K. James" <kirby.nankivell@gmail.com>,
-	Paul Kocialkowski <contact@paulk.fr>,
-	Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Samuel Holland <samuel@sholland.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: T113 TCON Top tinting troubleshooting
-Message-ID: <Zn8GVkpwXwhaUFno@titan>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F62D27E;
+	Fri, 28 Jun 2024 19:06:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719601600; cv=fail; b=U3MecA/U85QpZDvFhpHj70ZQpCNA/b8xgBa40ej6RMBtPbm11eh3bP8uZSVWaWEcIJBJhjvka9awLvTsQkPN6dDoJPkrIjz97UVna2QwuBHZSiqqJGsYEShJXRLA9QABSi8qUhClASmMktTGOzeiB77+aEdwGE0rVA6ASmZhcm0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719601600; c=relaxed/simple;
+	bh=O4mP0hKRRp+U67TUPuIbeh2qaztYAX8CSkVLw9va644=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IA/NsmGqoodV383A3eNbuE9bD8cMCxd4amIuMut79Me0Cc+wZm17N3F1TKYDDoYZoBL9tNu82bbf9sXoiRMHfLztmI2Q/Kfo/gJTlWCTCb9wTHSiOaUW2Wu7ImBOyY2s6mISGm9vsT989PeQqpSElFr/Ne8X357FaimyxIUWLwM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=kxKeZecW; arc=fail smtp.client-ip=40.107.95.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Mt88+3AfhV/EqDkxPrSJaJJyobq1J1P53zqooTySc+gWXzHMw0G5g9Uqe3Zo3wQRAoTaHsFhwBEaYn67loe4wO5dzjtMUSmp2+yeD3CgOMGOm8imQY9wE791yrzM5z2eSZkRYhnWR4VxrRjVrpY94LPn/z9+kLVJz3Fmznnx+lABTc9J9TT2RC3dYqnXCsYIaQgKO9X76fPldAhe+yN9gDxIN03ZIgTetbREukzACv8Ml+Slonw9VfvRaaf0xIhaJNamCQmag9syZwPKnAeGzGQtFCw21O08J0ZFRNa9pbw4Yl+d5FFEQw1V7qVhxmYJGQd26gIeOESAk+kWuAhP6g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/NOsa4Mm095MLyQ7NCM3Rm9AZJBkIk93daCFJU/eYQM=;
+ b=Nx5GQb6OjyK00yKDdy78qmYeAIqM8tJf5cVgzL/3DmPEBnsb0AqxujiPaH8bBfqPUQRT9W9I3VjVx7PqphMEOqGcYx+jKgv8IrtLFfElMcsYp4v1uTR1wNREEJh8GefVJ/K5JQlnFUwuu9KEKpi6WvYhvcM3KETxXngsdVcmAUTSbZW8y2+2qDAXS5XTLpiLJbpcriA6VNf1CviLgTDj5cyfeAgQT43oeJlN5JE/+/7A1ZdFsIfs8K1FyktjFNk1E0qcMdfon4fGEK1yxqZ9PAg5qqflbxBUnelVWpVp4Cr4j+jeQWEKas+vKfb/4O3AYRpoJ3JgiicByiELskg6Jw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/NOsa4Mm095MLyQ7NCM3Rm9AZJBkIk93daCFJU/eYQM=;
+ b=kxKeZecWae+G7UaT5Y9iMlOjmEmbquOZzboosKTTuKlYEw1ibh4y2IF/WplxPXMmqQLWJZXREI2+5nEPp22bpW39Rk8jfugQQXhXi5eZSaEiJsQ6xUE8vXZglravMDIB3y3ZV+5UA/jzTBs5z95UqcZDvXITKD8hXENETdCkDGw=
+Received: from DM6PR13CA0061.namprd13.prod.outlook.com (2603:10b6:5:134::38)
+ by CH3PR12MB9314.namprd12.prod.outlook.com (2603:10b6:610:1c5::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.35; Fri, 28 Jun
+ 2024 19:06:27 +0000
+Received: from CH1PEPF0000AD76.namprd04.prod.outlook.com
+ (2603:10b6:5:134:cafe::45) by DM6PR13CA0061.outlook.office365.com
+ (2603:10b6:5:134::38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.16 via Frontend
+ Transport; Fri, 28 Jun 2024 19:06:27 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CH1PEPF0000AD76.mail.protection.outlook.com (10.167.244.53) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7677.15 via Frontend Transport; Fri, 28 Jun 2024 19:06:27 +0000
+Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 28 Jun
+ 2024 14:06:26 -0500
+From: Michael Roth <michael.roth@amd.com>
+To: <kvm@vger.kernel.org>
+CC: <linux-coco@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<x86@kernel.org>, <pbonzini@redhat.com>, <seanjc@google.com>,
+	<jroedel@suse.de>, <thomas.lendacky@amd.com>, <pgonda@google.com>,
+	<ashish.kalra@amd.com>, <bp@alien8.de>, <pankaj.gupta@amd.com>,
+	<liam.merwick@oracle.com>
+Subject: [PATCH v2 0/3] SEV-SNP: Add KVM support for attestation
+Date: Fri, 28 Jun 2024 13:52:41 -0500
+Message-ID: <20240628185244.3615928-1-michael.roth@amd.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD76:EE_|CH3PR12MB9314:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3e544698-c818-4b66-4304-08dc97a5697c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|36860700013|1800799024|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?s+oPk8fkh7Ek76KwwMkK98Zxgw8otCIMsXGc7HB8zDOGUtwVxdiq1ZSZk65T?=
+ =?us-ascii?Q?EdtQlpdKZ4ungg4/53fJC4B87AeJuxj/VhexFqvbAe8yan6FgGkQRDnL0MID?=
+ =?us-ascii?Q?/7zPdqcodaShmF2Jiw73jnqcy+lwL5K/LZ+cIkgG1ItnGpIdAtHsV3ZktCOw?=
+ =?us-ascii?Q?MH+KNZDfNtRWys0H7cDFN7cNJiQidg9aJMpqyVRlYDT88Oxhcp3FXDSIo/xE?=
+ =?us-ascii?Q?J9PR3+x+8WHkasR+hm99tN6vzMIIWPrs3e0sGmGbWk1/QW74brVe3ancyrXl?=
+ =?us-ascii?Q?/QxOGq6fWPduWxWJHBs9w73z1HL55COWWE4nQtGyfyWL7Z0qIH0X9tr84crr?=
+ =?us-ascii?Q?f1YkkJlRLmStfIxZIiaiNzEe4gxPeTMZNTH62G1OPmMz5EV8MNsqaDUeRguv?=
+ =?us-ascii?Q?Uzs0oAc7D+8dWBE7tLYFn3/CzbfV8k6J4ANebMdnrk+LEOdosXI2aAFA4cJ2?=
+ =?us-ascii?Q?fnIU+d+h2IG5BcVgQWJWr0YATmTDFxoeoZPU3QO48xcZhidM488S9ivCfUS4?=
+ =?us-ascii?Q?SbKAcXUiAgLdxYPSOxbyNduOp2QBo5Yoc1yFW3c+Fp6Hg83RFpaeTdC64zoW?=
+ =?us-ascii?Q?DLafAVxfm5D30cCobgDpEjgNo9lP1zHVq8H2CBcSul/50Njj4gU2QXsYzijt?=
+ =?us-ascii?Q?SvHLENgfNifhwUGLa2vr0INBGgtQN9bU35joHfD14j/ScuRiqtu4JdnEyqLo?=
+ =?us-ascii?Q?WvlQ6sepaBODU+Kl6vDBMBDGQa3FpBgYu3NsOCIhKanWV6vS/YQjQejRg/bY?=
+ =?us-ascii?Q?wt62b9FqVaHbce1NZb2uRzVw51SrNSj1CSpXWgU5mT/aN+9lr+HNkuT70uaH?=
+ =?us-ascii?Q?72Ds4slFdtgfvUVrntoMFOApWhWeNb7tyqG3OiojtcxqB/Aimzy2NeRhwnPf?=
+ =?us-ascii?Q?/GqXgCwrAPdl7QQbNWsPQwRlZByLMBoPGXWQI7CJ9si/Ti79W6wPNKzjTz0y?=
+ =?us-ascii?Q?5XC4nebYhyT1ioq5fIfWxAgc+Sx+xMpBVNj2xnmkrWgkvr6PBwRx8Tk2zLMx?=
+ =?us-ascii?Q?VEyvA4QzCZ9KW4u3Fye5o50JIjg62FKyqQlqTN2T1rWSaCuRDhfMpeCBB5OS?=
+ =?us-ascii?Q?lpvZtkOGTETSE/1ir52WXXRWV158EIb3fxV/td2y2ytAO8KjQmzFLRzxvfGY?=
+ =?us-ascii?Q?mhvUI/D70ktkDXJxIpZwIhMUhtmV3xi380WuzATBm6SBrlJ40MPv2JGBNe+N?=
+ =?us-ascii?Q?Zjjqf6Fs3quu20wO+W8A1gZJ9ewXQ/GgWBB8Dki91RZP4QoMwGYPPRekhCqw?=
+ =?us-ascii?Q?fL77Z7BXo2SEXjaRn6Le5bKRbrWdf7e0shPV9gnDAdT5Bb/BYdfrHEErWGMu?=
+ =?us-ascii?Q?ybeWcaU48jps0LilkkGPZjxFd3MnSGITTit0qxvP99ZEKymwtbpn7O4rbD6l?=
+ =?us-ascii?Q?SgG3oiFxg+umU5kMCt8d4vqYOf3EMwQbmqR4U0NSaUW0Y0H/LQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jun 2024 19:06:27.3979
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3e544698-c818-4b66-4304-08dc97a5697c
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000AD76.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9314
 
-Hello,
 
-On the T113 (and most likely the D1) sometimes the RGB LCD output has strange
-artifacts such as:
+This patchset is also available at:
 
-- A blue tint
-- A mostly opaque green tint
-- A red tint
-- A pink tint
+  https://github.com/amdese/linux/commits/snp-guest-req-v2
 
-The actual tint seems to differ between boards or chips, and has some
-probability of showing up that can range from 50% to 90%.
+and is based on top of kvm-coco-queue (ace0c64d8975):
 
-After a week or so of troubleshooting I've managed to figure out what's
-happening here, and I'm not too sure how to fix it.
+  https://git.kernel.org/pub/scm/virt/kvm/kvm.git/log/?h=kvm-coco-queue
 
-It appears that the TCON Top on this chip can't mux both mixers to a shared
-output. The R40 (and H6?) allows this and prioritizes the DE0 when muxing, but
-on the T113 it seems to cause graphical artifacts. Disabling DE1 in the
-device tree can help but doesn't solve the problem entirely.
+As discussed on the PUCK call a few weeks backs, I'm re-submitting as a
+separate patchset the SNP guest request support that was originally part of
+the SNP KVM base support patchset that's now in kvm/next and will be in
+kernel 6.11. This support is needed to ensure fully compliance with GHCB
+2.0 specification and to support attestation in general, so I'm hoping it
+can also make it into 6.11.
 
-Here's a change that tests this behaviour, it sets DE1 to output to TVE0. DE0
-then outputs to LCD0 as usual. I would appreciate if anyone with this issue can
-test the above workaround on their boards.
-There was a previous discussion here:
-https://groups.google.com/g/linux-sunxi/c/HxDBpY5HbbQ/m/mX2O2OYlCwAJ
+I've dropped patches 4-5 from v1 of this series that implemented
+KVM_EXIT_COCO and handling for userspace-provided certificate data so that
+there's more time to get the API ironed out.
 
----8<--- CUT HERE ---8<---
 
---- a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-@@ -179,7 +179,7 @@ static int sun8i_tcon_top_bind(struct device *dev, struct device *master,
- 	 * At least on H6, some registers have some bits set by default
- 	 * which may cause issues. Clear them here.
- 	 */
--	writel(0, regs + TCON_TOP_PORT_SEL_REG);
-+	writel(0x20, regs + TCON_TOP_PORT_SEL_REG);
- 	writel(0, regs + TCON_TOP_GATE_SRC_REG);
- 
- 	/*
+Overview
+--------
 
----8<--- CUT HERE ---8<---
+The GHCB 2.0 specification defines 2 GHCB request types to allow SNP guests
+to send encrypted messages/requests to firmware: SNP Guest Requests and SNP
+Extended Guest Requests. These encrypted messages are used for things like
+servicing attestation requests issued by the guest. Implementing support for
+these is required to be fully GHCB-compliant.
 
-The sunxi display code works around this issue by ensuring DE0 and DE1 never
-map to the same output: If you have DE0 set to TVE0 and DE1 set to LCD0,
-then tell it to set DE0 to LCD0, it will silently swap TVE0 on to DE1. 
+For the most part, KVM only needs to handle forwarding these requests to
+firmware (to be issued via the SNP_GUEST_REQUEST firmware command defined
+in the SEV-SNP Firmware ABI), and then forwarding the encrypted response to
+the guest.
 
-I'm probably going to send a patch that copies this behaviour as it
-should just work, but I'd be interested to see if there's anything I'm
-missing.
+However, in the case of SNP Extended Guest Requests, the host is also
+able to provide the certificate data corresponding to the endorsement key
+used by firmware to sign attestation report requests. This certificate data
+is provided by userspace because:
 
-John.
+  1) It allows for different keys/key types to be used for each particular
+     guest with requiring any sort of KVM API to configure the certificate
+     table in advance on a per-guest basis.
+
+  2) It provides additional flexibility with how attestation requests might
+     be handled during live migration where the certificate data for
+     source/dest might be different.
+
+  3) It allows all synchronization between certificates and firmware/signing
+     key updates to be handled purely by userspace rather than requiring
+     some in-kernel mechanism to facilitate it. [1]
+
+To support fetching certificate data from userspace, a new KVM exit type will
+be needed to handle fetching the certificate from userspace. An attempt to
+define a new KVM_EXIT_COCO/KVM_EXIT_COCO_REQ_CERTS exit type to handle this
+was introduced in v1 of this patchset, but is still being discussed by
+community, so for now this patchset only implements a stub version of SNP
+Extended Guest Requests that does not provide certificate data, but is still
+enough to provide compliance with the GHCB 2.0 spec.
+
+[1] https://lore.kernel.org/kvm/ZS614OSoritrE1d2@google.com/
+
+Any feedback/review is appreciated.
+
+Thanks!
+
+-Mike
+
+Changes since v1:
+
+ * Fix cleanup path when handling firmware error (Liam, Sean)
+ * Use bounce-pages for interacting with firmware rather than passing in the
+   guest-provided pages directly. (Sean)
+ * Drop SNP_GUEST_VMM_ERR_GENERIC and rely solely on firmware-provided error
+   code to report any firmware error to the guest. (Sean)
+ * Use kvm_clear_guest() to handle writing empty certificate table instead 
+   of kvm_write_guest() (Sean)
+ * Add additional comments in commit messages and throughout code to better
+   explain the interactions with firmware/guest. (Sean)
+ * Drop 4K-alignment restrictions on the guest-provided req/resp buffers,
+   since the GHCB-spec only specifically requires they fit within 4K,
+   not necessarily that they be 4K-aligned. Additionally, the bounce
+   pages passed to firmware will be 4K-aligned regardless.
+
+Changes since splitting this off from v15 SNP KVM patchset:
+
+ * Address clang-reported warnings regarding uninitialized variables 
+ * Address a memory leak of the request/response buffer pages, and refactor
+   the code based on Sean's suggestions:
+   https://lore.kernel.org/kvm/ZktbBRLXeOp9X6aH@google.com/
+ * Fix SNP Extended Guest Request handling to only attempt to fetch
+   certificates if handling MSG_REQ_REPORT (attestation) message types
+ * Drop KVM_EXIT_VMGEXIT and introduce KVM_EXIT_COCO events instead
+ * Refactor patch layout for easier handling/review
+
+----------------------------------------------------------------
+Brijesh Singh (1):
+      KVM: SEV: Provide support for SNP_GUEST_REQUEST NAE event
+
+Michael Roth (2):
+      x86/sev: Move sev_guest.h into common SEV header
+      KVM: SEV: Provide support for SNP_EXTENDED_GUEST_REQUEST NAE event
+
+ arch/x86/include/asm/sev.h              |  48 ++++++++
+ arch/x86/kvm/svm/sev.c                  | 187 ++++++++++++++++++++++++++++++++
+ arch/x86/kvm/svm/svm.h                  |   3 +
+ drivers/virt/coco/sev-guest/sev-guest.c |   2 -
+ drivers/virt/coco/sev-guest/sev-guest.h |  63 -----------
+ include/uapi/linux/sev-guest.h          |   3 +
+ 6 files changed, 241 insertions(+), 65 deletions(-)
+ delete mode 100644 drivers/virt/coco/sev-guest/sev-guest.h
+
 
