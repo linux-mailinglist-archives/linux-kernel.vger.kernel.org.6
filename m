@@ -1,119 +1,156 @@
-Return-Path: <linux-kernel+bounces-233984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D5BD91C067
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:07:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9371391C06C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:08:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D034F2828D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:07:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E392AB25316
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:08:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED261BF323;
-	Fri, 28 Jun 2024 14:06:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE3B51C2339;
+	Fri, 28 Jun 2024 14:06:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hMhR/BSG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="OkW3r4Bu"
+Received: from mail.mainlining.org (mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C9F1BF31C;
-	Fri, 28 Jun 2024 14:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A56C1BF312;
+	Fri, 28 Jun 2024 14:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719583588; cv=none; b=P0+tSyppIYBcKjiXave/RZU+gKYD9jzQLDoxQLWxe70VK2MmbebtmGudgB/uY5ctjk5PvT4+pP7Fg5qLF8esSSG2lhazcN3DMNX8K15/7kHEMK2ncHE8IMyzwm0CMuCStsPqUnvQats8okDyCiJns2n4irkLVuCww/SkCmS+ipY=
+	t=1719583589; cv=none; b=mTf9V4N05zwUK6rrpoE+RHsX+hBdD4MFvFM2RMnF5pBlmL/ZIAokMWTJEni4nrLr9DKKa/PprZ4rmY3w5QFwnauBqv/EJIST9hz7AbLg2yxSr12NP5nYJr2NL/6MsxPDbfX1VKiSeiFZrySii/RMNaOMGbOvSbR1HxnJkcNSgQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719583588; c=relaxed/simple;
-	bh=wOnST97FxgzdmpjvSNkj0KjQdFL4Sf4iYe7yyizGLtc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t5iKn3KnCA0dAtrXSYeGK1bJHVUYEDZpTgZuWco4aATG2sNfpO12NJEMROEXbudmBJPE3wP4aPXowSzLZs3OLk3i6sNDMlJf75ZyHVwfiG+gMMztvG7zf5BxsFdmCoQ+3x+Co7oruRua2M8TXbU51nDFf/HPaDGEleAMcDaH5l0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hMhR/BSG; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719583586; x=1751119586;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wOnST97FxgzdmpjvSNkj0KjQdFL4Sf4iYe7yyizGLtc=;
-  b=hMhR/BSG7pIsxWVKuuvXmAhiBxlTxUeaEm6HPKmW7mR9H23KNb0kMzUG
-   hZkVQTWn6zdKPT2/XV/Rnob7MCxOy7oRMCo6aHNsVb4pwBeju5xA3r6IO
-   JRJeRxl7QFEnCVleUn8JrGhbS5OChAtmQZ/wEUFJ+nHiq3mXFLGpW1kPw
-   UIIQUMq81dmbu2Y8tyocKUfMPJ68LQ63FSdHS5nbFRFisqWbs0ZpQdaqW
-   b+vsrAjSDcx+73S1+DucHg7jHf0yqcctIDiMfIVnXBT5n8eHEEZ734gxF
-   meD0RIzgYlL381SbPmO+SK9l5aWIoTNr82JOK9RaC5e4X30ZSam4cVZr0
-   Q==;
-X-CSE-ConnectionGUID: 2xnVoSnTSiqlh/5Eas1TcA==
-X-CSE-MsgGUID: ulZ6ZFYDS5ebM/6UncVnVw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11117"; a="16898751"
-X-IronPort-AV: E=Sophos;i="6.09,169,1716274800"; 
-   d="scan'208";a="16898751"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 07:06:21 -0700
-X-CSE-ConnectionGUID: U9vuz4AVTXuk0xm15Y3jZA==
-X-CSE-MsgGUID: D+QA0ovYTwGTVNFI8IE75w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,169,1716274800"; 
-   d="scan'208";a="44587532"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 28 Jun 2024 07:06:18 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sNCEy-000HBt-21;
-	Fri, 28 Jun 2024 14:06:16 +0000
-Date: Fri, 28 Jun 2024 22:05:12 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jonas Karlman <jonas@kwiboo.se>, Heiko Stuebner <heiko@sntech.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, FUKAUMI Naoki <naoki@radxa.com>,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Jonas Karlman <jonas@kwiboo.se>
-Subject: Re: [PATCH v2 2/2] arm64: dts: rockchip: Add Radxa ROCK 3B
-Message-ID: <202406282157.SmRgaZOQ-lkp@intel.com>
-References: <20240626201502.1384123-3-jonas@kwiboo.se>
+	s=arc-20240116; t=1719583589; c=relaxed/simple;
+	bh=2nqaANr9KI1GOoZd9vxK91mXGFhY0QeIyy1to+366+k=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=uRGYWB+1/Yj9d/Jj6o+XbBrVKx0rG+CRL1whVnNvsRkTifAFavs2gxrX9LEWAIkTbA0rpmSRcb3q1mu9m0uR/xEwimX2ej/aWzt2tN0cu+jFApJ4eMskAIKP2GH641S/b3MB5FilTc8uRkx3hXY6aBFlqwY6DQeu4POLD0S29yE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=OkW3r4Bu; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+Received: from localhost (docker-mailserver-web-1.docker-mailserver_default [172.22.0.5])
+	by mail.mainlining.org (Postfix) with ESMTPSA id 8BB0EE44E7;
+	Fri, 28 Jun 2024 14:06:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1719583585;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bkTzu+1zggtZIYhz4XF8rolkuWFvay19lMZEfprUXmc=;
+	b=OkW3r4Bun912nw6xuThAIOaEVhomorlmrGlJesxH59FtcFX6yB7nTeTixun7k2whTdresO
+	Ndo+NKdMq42HRo4ln7/XszJEUsS2owR3iRAaRMWbVXXjGJrQHfNnRLlI2r+VX7tTs6mIGM
+	C3Jjoqh1MnI1C1YMueYfmhL2haIfEsT3YeZmBZZ6JRhH4iLywrg5oVpIW1eRKy4yGBa+cJ
+	yR9tI8yhkCGpFdZCc2MxjqpdwjTdTcSlT85NLtCuUFESCsnKM362eg/5xFwtIvpRON5MNr
+	uZbJXMSs3XXOukSO4GpIc7nfF8h9BlUPwDnTzCs5/Mti2x/psxlcOwnayuwRDQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240626201502.1384123-3-jonas@kwiboo.se>
+Date: Fri, 28 Jun 2024 16:06:25 +0200
+From: barnabas.czeman@mainlining.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, Vladimir Lypak <vladimir.lypak@gmail.com>
+Subject: Re: [PATCH v2 2/2] interconnect: qcom: Add MSM8953 driver
+In-Reply-To: <b6b8df30-cd81-489b-801a-afd8fceaf41d@kernel.org>
+References: <20240627-msm8953-interconnect-v2-0-b4940a8eab69@mainlining.org>
+ <20240627-msm8953-interconnect-v2-2-b4940a8eab69@mainlining.org>
+ <88588f06-66e1-47a9-b5ab-7849b1c53fb0@kernel.org>
+ <b6b8df30-cd81-489b-801a-afd8fceaf41d@kernel.org>
+Message-ID: <ee1060ab3472c2106863c27ffcc4cbd8@mainlining.org>
+X-Sender: barnabas.czeman@mainlining.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Jonas,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on rockchip/for-next]
-[also build test WARNING on krzk/for-next krzk-dt/for-next krzk-mem-ctrl/for-next linus/master v6.10-rc5 next-20240627]
-[cannot apply to robh/for-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Jonas-Karlman/dt-bindings-arm-rockchip-Add-Radxa-ROCK-3B/20240627-160354
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git for-next
-patch link:    https://lore.kernel.org/r/20240626201502.1384123-3-jonas%40kwiboo.se
-patch subject: [PATCH v2 2/2] arm64: dts: rockchip: Add Radxa ROCK 3B
-config: arm64-randconfig-051-20240628 (https://download.01.org/0day-ci/archive/20240628/202406282157.SmRgaZOQ-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 13.2.0
-dtschema version: 2024.6.dev3+g650bf2d
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240628/202406282157.SmRgaZOQ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406282157.SmRgaZOQ-lkp@intel.com/
-
-dtcheck warnings: (new ones prefixed by >>)
->> arch/arm64/boot/dts/rockchip/rk3568-rock-3b.dtb: pmic@20: '#sound-dai-cells', 'assigned-clock-parents', 'assigned-clocks', 'clock-names', 'clocks' do not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/mfd/rockchip,rk809.yaml#
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+On 2024-06-28 11:41, Krzysztof Kozlowski wrote:
+> On 28/06/2024 11:32, Georgi Djakov wrote:
+>> On 27.06.24 18:08, Barnabás Czémán wrote:
+>>> From: Vladimir Lypak <vladimir.lypak@gmail.com>
+>>> 
+>>> Add driver for interconnect busses found in MSM8953 based platforms.
+>>> The topology consists of four NoCs that are partially controlled by a
+>>> RPM processor.
+>>> 
+>>> Note that one of NoCs (System NoC) has a counterpart (System NoC MM)
+>>> that is modelled as child device to avoid resource conflicts, since 
+>>> it
+>>> uses same MMIO space for configuration.
+>>> 
+>>> Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
+>>> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+>>> ---
+>>>   drivers/interconnect/qcom/Kconfig   |    9 +
+>>>   drivers/interconnect/qcom/Makefile  |    2 +
+>>>   drivers/interconnect/qcom/msm8953.c | 1325 
+>>> +++++++++++++++++++++++++++++++++++
+>>>   3 files changed, 1336 insertions(+)
+>>> 
+>> [..]
+>>> +
+>>> +static struct qcom_icc_node * const msm8953_pcnoc_nodes[] = {
+>>> +	[MAS_SPDM] = &mas_spdm,
+>>> +	[MAS_BLSP_1] = &mas_blsp_1,
+>>> +	[MAS_BLSP_2] = &mas_blsp_2,
+>>> +	[MAS_USB3] = &mas_usb3,
+>>> +	[MAS_CRYPTO] = &mas_crypto,
+>>> +	[MAS_SDCC_1] = &mas_sdcc_1,
+>>> +	[MAS_SDCC_2] = &mas_sdcc_2,
+>>> +	[MAS_SNOC_PCNOC] = &mas_snoc_pcnoc,
+>>> +	[PCNOC_M_0] = &pcnoc_m_0,
+>>> +	[PCNOC_M_1] = &pcnoc_m_1,
+>>> +	[PCNOC_INT_1] = &pcnoc_int_1,
+>>> +	[PCNOC_INT_2] = &pcnoc_int_2,
+>>> +	[PCNOC_S_0] = &pcnoc_s_0,
+>>> +	[PCNOC_S_1] = &pcnoc_s_1,
+>>> +	[PCNOC_S_2] = &pcnoc_s_2,
+>>> +	[PCNOC_S_3] = &pcnoc_s_3,
+>>> +	[PCNOC_S_4] = &pcnoc_s_4,
+>>> +	[PCNOC_S_6] = &pcnoc_s_6,
+>>> +	[PCNOC_S_7] = &pcnoc_s_7,
+>>> +	[PCNOC_S_8] = &pcnoc_s_8,
+>>> +	[PCNOC_S_9] = &pcnoc_s_9,
+>>> +	[SLV_SPDM] = &slv_spdm,
+>>> +	[SLV_PDM] = &slv_pdm,
+>>> +	[SLV_TCSR] = &slv_tcsr,
+>>> +	[SLV_SNOC_CFG] = &slv_snoc_cfg,
+>>> +	[SLV_TLMM] = &slv_tlmm,
+>>> +	[SLV_MESSAGE_RAM] = &slv_message_ram,
+>>> +	[SLV_BLSP_1] = &slv_blsp_1,
+>>> +	[SLV_BLSP_2] = &slv_blsp_2,
+>>> +	[SLV_PRNG] = &slv_prng,
+>>> +	[SLV_CAMERA_SS_CFG] = &slv_camera_ss_cfg,
+>>> +	[SLV_DISP_SS_CFG] = &slv_disp_ss_cfg,
+>>> +	[SLV_VENUS_CFG] = &slv_venus_cfg,
+>>> +	[SLV_GPU_CFG] = &slv_gpu_cfg,
+>>> +	[SLV_SDCC_1] = &slv_sdcc_1,
+>>> +	[SLV_SDCC_2] = &slv_sdcc_2,
+>>> +	[SLV_CRYPTO_0_CFG] = &slv_crypto_0_cfg,
+>>> +	[SLV_PMIC_ARB] = &slv_pmic_arb,
+>>> +	[SLV_USB3] = &slv_usb3,
+>>> +	[SLV_IPA_CFG] = &slv_ipa_cfg,
+>>> +	[SLV_TCU] = &slv_tcu,
+>>> +	[SLV_PCNOC_SNOC] = &slv_pcnoc_snoc,
+>>> +};
+>>> +
+>>> +static const char * const msm8953_pcnoc_bus_clocks[] = {
+>>> +	"bus", "bus_a"
+>>> +};
+>> 
+>> This seems to be unused?
+> 
+> Heh, was it ever compiled with W=1? I double checked and easily see a
+> warning...
+Sorry it was my mistake, i have fixed it. I will more careful next time.
+> 
+> Best regards,
+> Krzysztof
 
