@@ -1,191 +1,93 @@
-Return-Path: <linux-kernel+bounces-234317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB6FB91C523
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:47:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5E9991C521
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:46:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 098121C227C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:47:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C6E31F24422
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:46:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F85A1CD5B9;
-	Fri, 28 Jun 2024 17:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Hk28GlI6"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0831C0DF0;
+	Fri, 28 Jun 2024 17:46:01 +0000 (UTC)
+Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F82225CE;
-	Fri, 28 Jun 2024 17:46:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CADF153561;
+	Fri, 28 Jun 2024 17:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719596808; cv=none; b=YUwOcxzwZuBOCRwXAPWcRyZoT/1ElEovxATlOfBqCGDHoag2xvMujOZojbY92gzk5bl07IabUfG8FmRVKMDWjzj8unILyhR31fKot42sIWfnkSa9kcIspQKQSBATanpAKcNIjgmrQP0URfsZMG6zZMBwzrGF9MUzG+Nsha+tWzM=
+	t=1719596761; cv=none; b=FBpWIx4eS26MMeLl3mMWsYUGz6nL23kuvn0rV4wtVYQFu1fcjkKL5JynB0iRy4Ymt1AoerRak28i7t314OrcY7c/Q/hYtc1ZGUs1UKf453vHRplSxLB9FCk9jmZHvNFJZuq3CC70ylauEO0M+s9FCqWP8NDWrKL/B2IOKWrymsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719596808; c=relaxed/simple;
-	bh=djm3NHbXgNowMsF1Bkzk+DiQcAh93Ap7XEOK/EQhdAw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uZ6M4xs3awlvQocuiCVODbDfQSH8ZT0YnQXg8eAs4dXRdOW53QNzmHzsS1TH2R1uD0A3uI6iUWgUhQH/rFvEys6C+ixD6RT8aHmVYzzZy+Vk9G5xYQlgcU7ZD9qDdkGLE0uiGlO0mh4YtOwOgS2hj1iWhQRTpO3Hxz+1OFgoKrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Hk28GlI6; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 45SHjjqQ3118844
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Fri, 28 Jun 2024 10:45:54 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 45SHjjqQ3118844
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024061501; t=1719596755;
-	bh=uYWlHhYlgzbYNifjUPaSvKyaDoVyMPfvRZA+qBe3X7Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Hk28GlI6zGczzKdruqY8bsSOFKFvhkNyUDXN6S48t2r3KnHXJdgzKKJeUsGf4M1nc
-	 9eHk/C9/m/GIIEmxMg4q7P90Lg9vddXN8ZsE1ovQ1p2voKLPFmA6qjks8sZlfNE5lP
-	 j0QyAYbz09Ecwj9GmMBTq4EAz19WT0EnJqpxGHYLTlUkJBzYDeMBxUN9bd99BiivtJ
-	 L4QomZsAiyVskhBCBLpkIZqqbn7PcE211EasSvESCtr04jeDnUt3qT9lCrjHMt0eCS
-	 hm820rjAEx7Y2yzhFB5y6H35PhcIA6lbM4nT7lm0NzdB1W2Dp14iT0kVPU6klaOxka
-	 9QDQWMpYdNaTg==
-From: "Xin Li (Intel)" <xin@zytor.com>
-To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        will@kernel.org, peterz@infradead.org, akpm@linux-foundation.org,
-        acme@kernel.org, namhyung@kernel.org, brgerst@gmail.com,
-        andrew.cooper3@citrix.com, nik.borisov@suse.com
-Subject: [PATCH v4 4/4] x86/cpufeatures: Use AWK to generate {REQUIRED|DISABLED}_MASK_BIT_SET
-Date: Fri, 28 Jun 2024 10:45:44 -0700
-Message-ID: <20240628174544.3118826-5-xin@zytor.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240628174544.3118826-1-xin@zytor.com>
-References: <20240628174544.3118826-1-xin@zytor.com>
+	s=arc-20240116; t=1719596761; c=relaxed/simple;
+	bh=dS4es04tRYOZvf4zDFdFl25ye6JoEREx0hlNLrRlOP4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:From:To:Subject:
+	 References:In-Reply-To; b=a3/kKdXOeMSHteHgb6mkVFbg4qcsnVBDLKNawk66BgZyJOx6W2MOykcCB7uwzNyvzPFMxzVtx0SEpWEnAHww66BHDYUU3czaMxy8O9jZGZyvpcnCFlYrpKMNabd9XpCcRF88CN4QVsMY30NHVKvPoltTb8KotU46iqrbyAVHO/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=walle.cc; arc=none smtp.client-ip=159.69.201.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
+Received: from localhost (unknown [IPv6:2a02:810b:4340:4ee9:4685:ff:fe12:5967])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.3ffe.de (Postfix) with ESMTPSA id 7147F5444;
+	Fri, 28 Jun 2024 19:45:50 +0200 (CEST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 28 Jun 2024 19:45:50 +0200
+Message-Id: <D2BU69BDUOL0.63A7T034CORP@kernel.org>
+Cc: "Conor Dooley" <conor@kernel.org>, "Erez Geva" <erezgeva@nwtime.org>,
+ <linux-mtd@lists.infradead.org>, "Tudor Ambarus"
+ <tudor.ambarus@linaro.org>, "Pratyush Yadav" <pratyush@kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Miquel Raynal"
+ <miquel.raynal@bootlin.com>, "Richard Weinberger" <richard@nod.at>,
+ "Vignesh Raghavendra" <vigneshr@ti.com>, <devicetree@vger.kernel.org>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>
+From: "Michael Walle" <mwalle@kernel.org>
+To: "Erez" <erezgeva2@gmail.com>
+Subject: Re: [PATCH 3/4] dt-bindings: mtd: macronix,mx25l12833f: add SPI-NOR
+ chip
+X-Mailer: aerc 0.16.0
+References: <20240628140328.279792-1-erezgeva@nwtime.org>
+ <20240628140328.279792-4-erezgeva@nwtime.org>
+ <20240628-refuse-actress-b76985aa020c@spud>
+ <D2BS0YMA48BG.1PEPFC3KMFV8N@kernel.org>
+ <CANeKEMMrXK=mw=n=9DuTnprkTs3ct446oaC2QTJyst8Nd+D6rw@mail.gmail.com>
+ <D2BT0DT9UQ66.2L497FSY7GMAL@kernel.org>
+ <CANeKEMO9hBhBs91nZkZRht9J29iRC2Tgf6ucWq=nbO7XAqzzng@mail.gmail.com>
+In-Reply-To: <CANeKEMO9hBhBs91nZkZRht9J29iRC2Tgf6ucWq=nbO7XAqzzng@mail.gmail.com>
 
-Generate macros {REQUIRED|DISABLED}_MASK_BIT_SET in the newly added AWK
-script that generates the required and disabled feature mask header.
+> What is the kernel policy regarding obsolete flash chips?
+> Macronix annonce on end of life of mx25l12805d in 2010.
 
-Suggested-by: Brian Gerst <brgerst@gmail.com>
-Signed-off-by: Xin Li (Intel) <xin@zytor.com>
-Reviewed-by: Brian Gerst <brgerst@gmail.com>
----
+Which doesn't mean there are no boards using it. But EOL in 2010
+might be a strong argument to remove it. But I don't see the need
+for it, yet.
 
-Changes since v3:
-* Use '1U' instead of '1' in feature mask shifting (Andrew Cooper).
-* Checking NCAPINTS isn't necessary anymore.  It was needed when these
-  macros had to be manually updated, but now if cpufeatures.h changes
-  this header will be regenerated (Brian Gerst).
----
- arch/x86/include/asm/cpufeature.h | 69 -------------------------------
- arch/x86/tools/featuremasks.awk   |  9 +++-
- 2 files changed, 8 insertions(+), 70 deletions(-)
+> > Also please have a look at
+> > https://docs.kernel.org/driver-api/mtd/spi-nor.html
+>
+> The new mx25l12833f supports SFDP, the obsolete mx25l12805d does not.
+> I did manage to read the SFDP, though I do not have a copy of it (I do
+> not have the hardware any more).
 
-diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
-index 8332f596ba3c..8161dfb3255c 100644
---- a/arch/x86/include/asm/cpufeature.h
-+++ b/arch/x86/include/asm/cpufeature.h
-@@ -55,75 +55,6 @@ extern const char * const x86_bug_flags[NBUGINTS*32];
- #define test_cpu_cap(c, bit)						\
- 	 arch_test_bit(bit, (unsigned long *)((c)->x86_capability))
- 
--/*
-- * There are 32 bits/features in each mask word.  The high bits
-- * (selected with (bit>>5) give us the word number and the low 5
-- * bits give us the bit/feature number inside the word.
-- * (1UL<<((bit)&31) gives us a mask for the feature_bit so we can
-- * see if it is set in the mask word.
-- */
--#define CHECK_BIT_IN_MASK_WORD(maskname, word, bit)	\
--	(((bit)>>5)==(word) && (1UL<<((bit)&31) & maskname##word ))
--
--/*
-- * {REQUIRED,DISABLED}_MASK_CHECK below may seem duplicated with the
-- * following BUILD_BUG_ON_ZERO() check but when NCAPINTS gets changed, all
-- * header macros which use NCAPINTS need to be changed. The duplicated macro
-- * use causes the compiler to issue errors for all headers so that all usage
-- * sites can be corrected.
-- */
--#define REQUIRED_MASK_BIT_SET(feature_bit)		\
--	 ( CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  0, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  1, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  2, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  3, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  4, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  5, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  6, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  7, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  8, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  9, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 10, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 11, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 12, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 13, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 14, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 15, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 16, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 17, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 18, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 19, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 20, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 21, feature_bit) ||	\
--	   REQUIRED_MASK_CHECK					  ||	\
--	   BUILD_BUG_ON_ZERO(NCAPINTS != 22))
--
--#define DISABLED_MASK_BIT_SET(feature_bit)				\
--	 ( CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  0, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  1, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  2, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  3, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  4, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  5, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  6, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  7, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  8, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  9, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 10, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 11, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 12, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 13, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 14, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 15, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 16, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 17, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 18, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 19, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 20, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 21, feature_bit) ||	\
--	   DISABLED_MASK_CHECK					  ||	\
--	   BUILD_BUG_ON_ZERO(NCAPINTS != 22))
--
- #define cpu_has(c, bit)							\
- 	(__builtin_constant_p(bit) && REQUIRED_MASK_BIT_SET(bit) ? 1 :	\
- 	 test_cpu_cap(c, bit))
-diff --git a/arch/x86/tools/featuremasks.awk b/arch/x86/tools/featuremasks.awk
-index 351d5a4c7d64..baded084dab2 100755
---- a/arch/x86/tools/featuremasks.awk
-+++ b/arch/x86/tools/featuremasks.awk
-@@ -78,7 +78,14 @@ END {
- 		for (i = 0; i < ncapints; i++)
- 			printf "#define %s_MASK%d\t0x%08xU\n", s, i, masks[i];
- 
--		printf "#define %s_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != %d)\n\n", s, ncapints;
-+		printf "\n#define %s_MASK_BIT_SET(x)\t\t\t\\\n", s;
-+		printf "\t((\t\t\t\t\t";
-+		for (i = 0; i < ncapints; i++) {
-+			if (masks[i])
-+				printf "\t\\\n\t\t((x) >> 5) == %2d ? %s_MASK%d :", i, s, i;
-+		}
-+		printf " 0\t\\\n";
-+		printf "\t) & (1U << ((x) & 31)))\n\n";
- 	}
- 
- 	printf "#endif /* _ASM_X86_FEATUREMASKS_H */\n";
--- 
-2.45.2
+So how would you test newer versions of this series?
 
+> To my best knowledge SFDP table do not contain information on OTP,
+
+That's true, but we need it to detect flashes during runtime in the
+future. Imagine sometime later, there's a third flash with this
+exact ID, then we need to have the SFDP to figure out if there are
+any differences between yours and the new one.
+
+-michael
 
