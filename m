@@ -1,193 +1,293 @@
-Return-Path: <linux-kernel+bounces-233236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 644C091B49F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:28:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74F9F91B4AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:34:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DAE3B219AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:28:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F8A01C217F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A28BF9F5;
-	Fri, 28 Jun 2024 01:28:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A63912B72;
+	Fri, 28 Jun 2024 01:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="bj4gppgC"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cIrcrPjQ"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604F6D2E5
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 01:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630922139A7;
+	Fri, 28 Jun 2024 01:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719538118; cv=none; b=IPMN8rzSpQlvzJBxBhj6RTXndyM/+9AHKJOOtrzdOmXpbl67Hbv/UD/EEOG7mkEAp88GcJhYGZPdZ7sN1LYsCvPNuuyLqQCPkTvAtIr1xUkDE+Gnmne+zkhmU9P2M6NBH0sWok+a8B9bmbqmKZUP75HHOqbDiYJdok+/KFT+Ah4=
+	t=1719538469; cv=none; b=anoz0F2In0Ld5rpVMs/VC9XAMZqPcyFxYS9HtNsUqJ8gsL2WXS1YfIeDbDEOk11nlqOmjReVSeak7/h6RENisJ1W6dtJHuyqZ3OLqtdGMAB9kvBkHdO9Bb0f7WHxoalKt9OViOjOnT1zTtALovflY/7b7GY4oNy7x+7945GIOus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719538118; c=relaxed/simple;
-	bh=ibhzEgbbpa2M9jYV2mUm9cljoEPjam1yMoxE/3NQ4ds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QSyRYtLdA6zG2MZJug/FAy/Rv0ZLWEIGqn+6OQwfTqRox67f1SDp16lxFQNklHSP4gWXyqJkac8d972o19SdGCL8ambWaampbHf3Qcwwi3/Ohb5LCtmhgx95gTqWnqJcU/PYLmbZ8scDqXBUu150KvnGBsFPbhobNAvU0XGCf3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=bj4gppgC; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-425680b1d3aso377065e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 18:28:35 -0700 (PDT)
+	s=arc-20240116; t=1719538469; c=relaxed/simple;
+	bh=t0INylUNf2k0kJwVKbtRu+K6PLesJ41tzUOSeafL+Uo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UP8T5NF10BKW0Youl34CCwu5TIqE0oN0JOCGZl91AmXzBABwqJEQ77KNkAKfqxAfrFADd6iERV6Tum3vgXvhdqJgRtdd1SsK9EiWGoLSqV5SEpCbGU5FH5JWI+mOTt69iabKFmj4hXf7aBkWupdUv4cu4Ww+wQ1TqbI/jqCN8js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cIrcrPjQ; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3627ef1fc07so42619f8f.3;
+        Thu, 27 Jun 2024 18:34:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1719538114; x=1720142914; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RCQMjKKd/2ElvWUzZNqUT6vlKR7XsOfNqItFFkB2Rtc=;
-        b=bj4gppgC1J+ZehczDu3dGTjbhhWih2ex5dpb22eEmBr2Xs08lQUxEB6TVQ89NJ2CPf
-         zm5QMrIw2MQueW54cLj2r9IRvO+0ZQU+kl7RtdEdcMN0TfJwNwefmuQwV6TAH4IW4hov
-         EDWGe68k0cWIZLlUsIgDRtZW5Aqo8khE5hzOAsICxhoHo4P6uHp68YnD6ZuabondNr7Y
-         bvQaR9guuTJBVGT4kWfTb8BQf9pdDtYwp0eKtHdMNcXqMEyUtuYAFZSS1BetaLzH0ipI
-         M6iT3NWYrgn3TwUgPpHtfgJqkvuu4VLXOBtNsod45twvIkE6BNzpVXQw0+uR36B8Sd/U
-         gM9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719538114; x=1720142914;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1719538466; x=1720143266; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RCQMjKKd/2ElvWUzZNqUT6vlKR7XsOfNqItFFkB2Rtc=;
-        b=uB5b5cks1/JLnQ0s0TDQq6Adz84G47XQg9tIxCxK9vDHz6QsYiTKjKwnDLP/YlgJDM
-         cYBDSaPF8uhaDeZmybvh36BYp6IqADEx92P3vhn0YuhODg0FL5lHhS86qFm1DhpU7Qpb
-         tKLmfJJQqVYoUxvAMojFZfqxsUqfH+XIxqXlFZVAgY8JIz0KxuiGXUv6hkSGKjkvlsyu
-         TPyjsm+Kh49FUXAPTMcUeiY+1FKJaViqfVM6giMNGdeY2RVHT2h3BTVVuhcYj/0N47Ag
-         ri6M2lm2gwIcVfe7TJoHNSxniXvqyxm8NN6od3HDnQukXnJjPCrS/Zbc1QArGJbYRX6O
-         hSaw==
-X-Forwarded-Encrypted: i=1; AJvYcCWEXKp64Ofh1lcCTh+2Mp01/Nr94QdMb2G18EzEdyAUo8QU0UHr88rtYR64NbJHyO0HgXAiuMSmxU5mzTRkuOLYKK1V8OXWd/emCmks
-X-Gm-Message-State: AOJu0YxX8QN+uFzpmyc/d1O44LlnfjK8im7NL4s5BJUjqerZEcJIq0xM
-	eeiJJq8gXjrKEhWgDPrBoBQWuRAUv7Ym4/P+PC1KYGkILIen/8o12MsCZPGgm5s=
-X-Google-Smtp-Source: AGHT+IEPP2YvRqBWt2XUEvFMMBXjWtxlqBDmr5+SzrEiXI9KRGYGFW+eJxuKmHg5RwG7PzDlxjwg6g==
-X-Received: by 2002:a05:600c:470d:b0:422:7eca:db41 with SMTP id 5b1f17b1804b1-4248cc18101mr118949255e9.2.1719538113479;
-        Thu, 27 Jun 2024 18:28:33 -0700 (PDT)
-Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b0c1611sm13316695e9.42.2024.06.27.18.28.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 18:28:33 -0700 (PDT)
-Date: Fri, 28 Jun 2024 02:28:32 +0100
-From: Qais Yousef <qyousef@layalina.io>
-To: Xuewen Yan <xuewen.yan@unisoc.com>
-Cc: vincent.guittot@linaro.org, dietmar.eggemann@arm.com, mingo@redhat.com,
-	peterz@infradead.org, juri.lelli@redhat.com, rostedt@goodmis.org,
-	bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
-	vschneid@redhat.com, christian.loehle@arm.com,
-	vincent.donnefort@arm.com, ke.wang@unisoc.com, di.shen@unisoc.com,
-	xuewen.yan94@gmail.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 2/2] sched/fair: Use actual_cpu_capacity everywhere in
- util_fits_cpu()
-Message-ID: <20240628012832.37swdtxr4ds2kkp7@airbuntu>
-References: <20240624082011.4990-1-xuewen.yan@unisoc.com>
- <20240624082011.4990-3-xuewen.yan@unisoc.com>
+        bh=rnvbgBjmT2j00SWL77w/wmw1cd/5GofeGMuapdrdl3U=;
+        b=cIrcrPjQfm2cwR8huJ9O+N45w9iBdY53TIwQ298IM+e5A4JBgckpx4LuLI85ynNLc3
+         +TRqEoPF/kvoEJzye8tzYd4hiuTek1AjbOj7nDU6CGFp7P/Fgf5N5ywMDmz8bwfCYs56
+         z4oyWDIQ/qg60jqjEWCSBSwZRNrqhJus/WgbFcz5OH7JJC1dOyn95AhAWZkxtgipKWQP
+         ewlz829bUR/jMBAERsPI2Yb6Lhz8J0x4Rkz+WuuNQtubLESzmok3KhJV/NWR55HJcYXo
+         wtMS3o4tO0Bti/fTrVCsbIEByxywKL/M2ziCWfsfhOqlnAAht9fMb5zhDHd43xUK/sJr
+         hcEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719538466; x=1720143266;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rnvbgBjmT2j00SWL77w/wmw1cd/5GofeGMuapdrdl3U=;
+        b=cXSdK12NDbX5dMnG+OhY6ZbzylIONUd+kxwn5gJPnz5ezcO/SMzCUKBKCT1cZejyo1
+         qW8iqCNPoX08C4G7ad4eltF2EA29q8OCufFeKTVFsipnuvT6fUN9PToSpO2QS/32wg6K
+         EH3X442+xegi1FnqENrXXGyYoSso9Y9RZvkk6I4HUczhXffBEhgemZdMCah+/aKvz46T
+         6RpbMzbJRX9nz0WV+h/vD84g3lkSiEU7o3XHlhiqLNpq+/HVqWCHgkKrXYjbOV+Qsesc
+         y33IFfgyRZjvVJVawfqQRtQGdeUSnxALjfBr5NYs5cgJ5cNwg7dlloCL8M4ongKx2WCS
+         G4Wg==
+X-Forwarded-Encrypted: i=1; AJvYcCUynNu4IwsNlKVLQqjaZvGVtH6pHVm4j8tY8xqVbci35Sv2OimJq057epPRFWz3C2oYWGS3U+IoDed6Fpc9uDJNbcSGa6gC515WwWDkZ/QG7rZgTQzdrCZ0mj4rI5XF+fJc
+X-Gm-Message-State: AOJu0Yxs/rt+khY8uiy4Uk9vIXkoh3t70bTHn7gcKtGxhlc0RWasZPMh
+	JeGYkxL0guNGp1gNbqf/rshPLwOHvHVH3i+F79FPI5nWuFdJlb3iFYOcd1t+etQhmerdeD0toK5
+	viR9ZHaN2GQd+5Pp2jXbevklClHJgdcO7
+X-Google-Smtp-Source: AGHT+IGW6vS18JQdvcuaosTgfTX2kjePBtN2gY5E87HIqzc7Nd3vlLCPrXvCcCx3k5gUpKoFtlMzJgl6D/aonoEMyaI=
+X-Received: by 2002:a05:6000:459a:b0:363:7bbf:efcc with SMTP id
+ ffacd0b85a97d-366e96bef86mr8625498f8f.62.1719538465465; Thu, 27 Jun 2024
+ 18:34:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240624082011.4990-3-xuewen.yan@unisoc.com>
+References: <Zn4BupVa65CVayqQ@slm.duckdns.org> <Zn4Cw4FDTmvXnhaf@slm.duckdns.org>
+In-Reply-To: <Zn4Cw4FDTmvXnhaf@slm.duckdns.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Thu, 27 Jun 2024 18:34:14 -0700
+Message-ID: <CAADnVQJym9sDF1xo1hw3NCn9XVPJzC1RfqtS4m2yY+YMOZEJYA@mail.gmail.com>
+Subject: Re: [PATCH sched_ext/for-6.11 2/2] sched_ext: Implement scx_bpf_consume_task()
+To: Tejun Heo <tj@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	bpf <bpf@vger.kernel.org>, David Vernet <void@manifault.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 06/24/24 16:20, Xuewen Yan wrote:
-> Commit f1f8d0a22422 ("sched/cpufreq: Take cpufreq feedback into account")
-> introduced get_actual_cpu_capacity(), and it had aggregated the
-> different pressures applied on the capacity of CPUs.
-> And in util_fits_cpu(), it would return true when uclamp_max
-> is smaller than SCHED_CAPACITY_SCALE, althought the uclamp_max
-> is bigger than actual_cpu_capacity.
-> 
-> So use actual_cpu_capacity everywhere in util_fits_cpu() to
-> cover all cases.
-> 
-> Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+On Thu, Jun 27, 2024 at 5:24=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
+>
+> Implement scx_bpf_consume_task() which allows consuming arbitrary tasks o=
+n
+> the DSQ in any order while iterating in the dispatch path.
+>
+> scx_qmap is updated to implement periodic dumping of the shared DSQ and a
+> rather silly prioritization mechanism to demonstrate the use of DSQ
+> iteration and selective consumption.
+>
+> Note that it does a bit of nastry dance to pass in the pointer to the
+> iterator to __scx_bpf_consume_task(). This is to work around the current
+> limitation in the BPF verifier where it doesn't allow the memory area use=
+d
+> for an iterator to be passed into kfuncs. This may be too nasty and might
+> require a different approach.
+>
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Reviewed-by: David Vernet <dvernet@meta.com>
+> Cc: Alexei Starovoitov <ast@kernel.org>
+> Cc: bpf@vger.kernel.org
 > ---
->  kernel/sched/fair.c | 19 +++++++++----------
->  1 file changed, 9 insertions(+), 10 deletions(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 5ca6396ef0b7..9c16ae192217 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -4980,7 +4980,7 @@ static inline int util_fits_cpu(unsigned long util,
->  				int cpu)
->  {
->  	unsigned long capacity = capacity_of(cpu);
-> -	unsigned long capacity_orig;
-> +	unsigned long capacity_actual;
->  	bool fits, uclamp_max_fits;
->  
->  	/*
-> @@ -4992,15 +4992,15 @@ static inline int util_fits_cpu(unsigned long util,
->  		return fits;
->  
->  	/*
-> -	 * We must use arch_scale_cpu_capacity() for comparing against uclamp_min and
-> +	 * We must use actual_cpu_capacity() for comparing against uclamp_min and
->  	 * uclamp_max. We only care about capacity pressure (by using
->  	 * capacity_of()) for comparing against the real util.
->  	 *
->  	 * If a task is boosted to 1024 for example, we don't want a tiny
->  	 * pressure to skew the check whether it fits a CPU or not.
->  	 *
-> -	 * Similarly if a task is capped to arch_scale_cpu_capacity(little_cpu), it
-> -	 * should fit a little cpu even if there's some pressure.
-> +	 * Similarly if a task is capped to actual_cpu_capacity, it should fit
-> +	 * the cpu even if there's some pressure.
+> Hello, again.
+>
+> (continuing from the previous patch) so, the problem is that I need to
+> distinguish the tasks which have left a queue and then get requeued while=
+ an
+> iteration is in progress. The iterator itself already does this - it
+> remembers a sequence number when iteration starts and ignores tasks which
+> are queued afterwards.
+>
+> As a task can get removed and requeued anytime, I need
+> scx_bpf_consume_task() to do the same testing, so I want to pass in the
+> iterator pointer into scx_bpf_consume_task() so that it can read the
+> sequence number stored in the iterator. However, BPF doesn't allow this, =
+so
+> I'm doing the weird self pointer probe read thing, to obtain it, which is
+> quite nasty.
+>
+> What do you think?
+>
+> Thanks.
+>
+>  kernel/sched/ext.c                       |   89 ++++++++++++++++++++++++=
++++++--
+>  tools/sched_ext/include/scx/common.bpf.h |   16 +++++
+>  tools/sched_ext/scx_qmap.bpf.c           |   34 ++++++++++-
+>  tools/sched_ext/scx_qmap.c               |   14 +++-
+>  4 files changed, 142 insertions(+), 11 deletions(-)
+>
+> --- a/kernel/sched/ext.c
+> +++ b/kernel/sched/ext.c
+> @@ -1122,6 +1122,12 @@ enum scx_dsq_iter_flags {
+>  };
+>
+>  struct bpf_iter_scx_dsq_kern {
+> +       /*
+> +        * Must be the first field. Used to work around BPF restriction a=
+nd pass
+> +        * in the iterator pointer to scx_bpf_consume_task().
+> +        */
+> +       struct bpf_iter_scx_dsq_kern    *self;
+> +
+>         struct scx_dsq_node             cursor;
+>         struct scx_dispatch_q           *dsq;
+>         u32                             dsq_seq;
+> @@ -1518,7 +1524,7 @@ static void dispatch_enqueue(struct scx_
+>         p->scx.dsq_seq =3D dsq->seq;
+>
+>         dsq_mod_nr(dsq, 1);
+> -       p->scx.dsq =3D dsq;
+> +       WRITE_ONCE(p->scx.dsq, dsq);
+>
+>         /*
+>          * scx.ddsp_dsq_id and scx.ddsp_enq_flags are only relevant on th=
+e
+> @@ -1611,7 +1617,7 @@ static void dispatch_dequeue(struct rq *
+>                 WARN_ON_ONCE(task_linked_on_dsq(p));
+>                 p->scx.holding_cpu =3D -1;
+>         }
+> -       p->scx.dsq =3D NULL;
+> +       WRITE_ONCE(p->scx.dsq, NULL);
+>
+>         if (!is_local)
+>                 raw_spin_unlock(&dsq->lock);
+> @@ -2107,7 +2113,7 @@ static void consume_local_task(struct rq
+>         list_add_tail(&p->scx.dsq_node.list, &rq->scx.local_dsq.list);
+>         dsq_mod_nr(dsq, -1);
+>         dsq_mod_nr(&rq->scx.local_dsq, 1);
+> -       p->scx.dsq =3D &rq->scx.local_dsq;
+> +       WRITE_ONCE(p->scx.dsq, &rq->scx.local_dsq);
+>         raw_spin_unlock(&dsq->lock);
+>  }
+>
+> @@ -5585,12 +5591,88 @@ __bpf_kfunc bool scx_bpf_consume(u64 dsq
+>         }
+>  }
+>
+> +/**
+> + * __scx_bpf_consume_task - Transfer a task from DSQ iteration to the lo=
+cal DSQ
+> + * @it: DSQ iterator in progress
+> + * @p: task to consume
+> + *
+> + * Transfer @p which is on the DSQ currently iterated by @it to the curr=
+ent
+> + * CPU's local DSQ. For the transfer to be successful, @p must still be =
+on the
+> + * DSQ and have been queued before the DSQ iteration started. This funct=
+ion
+> + * doesn't care whether @p was obtained from the DSQ iteration. @p just =
+has to
+> + * be on the DSQ and have been queued before the iteration started.
+> + *
+> + * Returns %true if @p has been consumed, %false if @p had already been =
+consumed
+> + * or dequeued.
+> + */
+> +__bpf_kfunc bool __scx_bpf_consume_task(unsigned long it, struct task_st=
+ruct *p)
+> +{
+> +       struct bpf_iter_scx_dsq_kern *kit =3D (void *)it;
+> +       struct scx_dispatch_q *dsq, *kit_dsq;
+> +       struct scx_dsp_ctx *dspc =3D this_cpu_ptr(scx_dsp_ctx);
+> +       struct rq *task_rq;
+> +       u64 kit_dsq_seq;
+> +
+> +       /* can't trust @kit, carefully fetch the values we need */
+> +       if (get_kernel_nofault(kit_dsq, &kit->dsq) ||
+> +           get_kernel_nofault(kit_dsq_seq, &kit->dsq_seq)) {
+> +               scx_ops_error("invalid @it 0x%lx", it);
+> +               return false;
+> +       }
 
-This statement is not clear now. We need to be specific since
-actual_cpu_capacity() includes thermal pressure and cpufreq limits.
+With scx_bpf_consume_task() it's only a compile time protection from bugs.
+Since kfunc doesn't dereference any field in kit_dsq it won't crash
+immediately, but let's figure out how to make it work properly.
 
-/even if there's some pressure/even if there is non OPP based pressure ie: RT,
-DL or irq/?
+Since kit_dsq and kit_dsq_seq are pretty much anything in this implementati=
+on
+can they be passed as two scalars instead ?
+I guess not, since tricking dsq !=3D kit_dsq and
+time_after64(..,kit_dsq_seq) can lead to real issues ?
 
->  	 *
->  	 * Only exception is for HW or cpufreq pressure since it has a direct impact
->  	 * on available OPP of the system.
-> @@ -5011,7 +5011,7 @@ static inline int util_fits_cpu(unsigned long util,
->  	 * For uclamp_max, we can tolerate a drop in performance level as the
->  	 * goal is to cap the task. So it's okay if it's getting less.
->  	 */
-> -	capacity_orig = arch_scale_cpu_capacity(cpu);
-> +	capacity_actual = get_actual_cpu_capacity(cpu);
->  
->  	/*
->  	 * We want to force a task to fit a cpu as implied by uclamp_max.
-> @@ -5039,7 +5039,7 @@ static inline int util_fits_cpu(unsigned long util,
->  	 *     uclamp_max request.
->  	 *
->  	 *   which is what we're enforcing here. A task always fits if
-> -	 *   uclamp_max <= capacity_orig. But when uclamp_max > capacity_orig,
-> +	 *   uclamp_max <= capacity_actual. But when uclamp_max > capacity_actual,
->  	 *   the normal upmigration rules should withhold still.
->  	 *
->  	 *   Only exception is when we are on max capacity, then we need to be
-> @@ -5050,8 +5050,8 @@ static inline int util_fits_cpu(unsigned long util,
->  	 *     2. The system is being saturated when we're operating near
->  	 *        max capacity, it doesn't make sense to block overutilized.
->  	 */
-> -	uclamp_max_fits = (capacity_orig == SCHED_CAPACITY_SCALE) && (uclamp_max == SCHED_CAPACITY_SCALE);
-> -	uclamp_max_fits = !uclamp_max_fits && (uclamp_max <= capacity_orig);
-> +	uclamp_max_fits = (capacity_actual == SCHED_CAPACITY_SCALE) && (uclamp_max == SCHED_CAPACITY_SCALE);
+Can some of it be mitigated by passing dsq into kfunc that
+was used to init the iter ?
+Then kfunc will read dsq->seq from it instead of kit->dsq_seq ?
 
-We should use capacity_orig here. We are checking if the CPU is the max
-capacity CPU.
+> +
+> +       /*
+> +        * @kit can't be trusted and we can only get the DSQ from @p. As =
+we
+> +        * don't know @p's rq is locked, use READ_ONCE() to access the fi=
+eld.
+> +        * Derefing is safe as DSQs are RCU protected.
+> +        */
+> +       dsq =3D READ_ONCE(p->scx.dsq);
+> +
+> +       if (unlikely(!dsq || dsq !=3D kit_dsq))
+> +               return false;
+> +
+> +       if (unlikely(dsq->id =3D=3D SCX_DSQ_LOCAL)) {
+> +               scx_ops_error("local DSQ not allowed");
+> +               return false;
+> +       }
+> +
+> +       if (!scx_kf_allowed(SCX_KF_DISPATCH))
+> +               return false;
+> +
+> +       flush_dispatch_buf(dspc->rq, dspc->rf);
+> +
+> +       raw_spin_lock(&dsq->lock);
+> +
+> +       /*
+> +        * Did someone else get to it? @p could have already left $dsq, g=
+ot
+> +        * re-enqueud, or be in the process of being consumed by someone =
+else.
+> +        */
+> +       if (unlikely(p->scx.dsq !=3D dsq ||
+> +                    time_after64(p->scx.dsq_seq, kit_dsq_seq) ||
 
-> +	uclamp_max_fits = !uclamp_max_fits && (uclamp_max <= capacity_actual);
->  	fits = fits || uclamp_max_fits;
->  
->  	/*
-> @@ -5086,8 +5086,7 @@ static inline int util_fits_cpu(unsigned long util,
->  	 * handle the case uclamp_min > uclamp_max.
->  	 */
->  	uclamp_min = min(uclamp_min, uclamp_max);
-> -	if (fits && (util < uclamp_min) &&
-> -	    (uclamp_min > get_actual_cpu_capacity(cpu)))
-> +	if (fits && (util < uclamp_min) && (uclamp_min > capacity_actual))
->  		return -1;
->  
->  	return fits;
-> -- 
-> 2.25.1
-> 
+In the previous patch you do:
+(s32)(p->scx.dsq_seq - kit->dsq_seq) > 0
+and here
+time_after64().
+Close enough, but 32 vs 64 and equality difference?
+
+> +                    p->scx.holding_cpu >=3D 0))
+> +               goto out_unlock;
+> +
+> +       task_rq =3D task_rq(p);
+> +
+> +       if (dspc->rq =3D=3D task_rq) {
+> +               consume_local_task(dspc->rq, dsq, p);
+> +               return true;
+> +       }
+> +
+> +       if (task_can_run_on_remote_rq(p, dspc->rq))
+> +               return consume_remote_task(dspc->rq, dspc->rf, dsq, p, ta=
+sk_rq);
+> +
+> +out_unlock:
+> +       raw_spin_unlock(&dsq->lock);
+> +       return false;
+> +}
+> +
+>  __bpf_kfunc_end_defs();
 
