@@ -1,110 +1,170 @@
-Return-Path: <linux-kernel+bounces-234069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33FD291C1C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:54:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F145191C1CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:54:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E508B285D99
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:54:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BE1B1F216A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:54:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33CFD1C2307;
-	Fri, 28 Jun 2024 14:54:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A2F1C2322;
+	Fri, 28 Jun 2024 14:54:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WnISho3p"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="MGYf7Kdn"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C8041C0DE0;
-	Fri, 28 Jun 2024 14:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A5511BE25F;
+	Fri, 28 Jun 2024 14:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719586443; cv=none; b=sW+KUh7THvqDQdXQb9u3bv/liFJJDYnMrdG5YLXhOmfl/SeFKJL9CxckW2h8bIRABN1qiIOA4WE+XwBsYvRVlNyAKfvEcBxRGIlyGoJZEbMCHyd1G1j1U2taVEwdBpPzU3IAcnb8eEH1ziFDuzIHa3Tjz4qP8CVO3NtKa93JTBM=
+	t=1719586476; cv=none; b=M4QmqiHzsqUUaxvloCKFTeK5eB1e9P9Q9xg23uI/fSpEPW5YzuYkv0HywSRYdxQXiCi0M0nbyNS9yspjV8cfkLV7YfuBuuVFK3azQ6jPyf1gGsARZ6nMTVMaG65GDEDx1WHpT+hmOh/Qog4mUnxXfr9rXBavwTtEDYVL0VmhJYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719586443; c=relaxed/simple;
-	bh=7SLCOSdyoFmg7UU8Si2neqCswMU2V4UbTPgOBBYjaj8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Hq0soxOkrYsmV3pd7B9JxcHTfQDFj+VYtzww+ylCTzdrUIgOZtiZyW8C4JtyqQOAI5HiUsCL6UjFh8kWTBXVlInFgxUfRpH9FmKWUWiF2tr/hgkKXqQbiCSovsrQgjdk7eI0H7fwHYEt4ENIZZIkQM3JKxJbzHRlPlRuklqvEVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WnISho3p; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-366edce6493so429845f8f.3;
-        Fri, 28 Jun 2024 07:54:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719586440; x=1720191240; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mJB4CLWH5EGH9lfwnNo1e6DHhdoYYus7j5hPs38e1/c=;
-        b=WnISho3pba3AMjbu4/NqwlHrQbR0d7frSupmjGoea8U2irdUkV63LW3mnsbZM5nguU
-         Pkc40AxcZdyxuGlnZTZMhogu7Mw4dkY18kWnMLTueKkn/QyuNlPuOi5CHlQt62RwLvZ1
-         aCj0+vabc4DzpRFjWApz27u9ANg+Q9i2UVMiq5Ul/HLSyQ65qxjFCgZFQo/WVlvIhnIf
-         iUvyRaB33mCHDfNFd3yYE8rutdLvxSEjhpIuRPZvuXfwDlTvVu9BpuM3eA8vHV9U1Yg8
-         tYlBDSq/z1/XynghYvZUNasmX3zLPddNkL/Wk6fMuzT3z9/WfRwhUnKOEoYJyNoXK3uN
-         4Blg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719586440; x=1720191240;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mJB4CLWH5EGH9lfwnNo1e6DHhdoYYus7j5hPs38e1/c=;
-        b=U+YY3qgjE1KDtkvZcirQ84+L52OV4gnIsFZveMzuC02hZkCyXb6h4hX/aQ8Egfxnr3
-         pTurAigRTMZwz7VtyzW9ptzOwdMT193xusAVyBhzDfp8fRTZhtPMZggFgW8q9JeGbZRm
-         FgKR0vZH5uvB2WuYO1f9O+FGVQcopFZOF6dt3W7NtLDE1NNbHHTt3+dhqSOiNXDAK9td
-         SJKdnGX1km1D91AkJVGewkcr3zTg1gko27+jYkgPyw2GDWVC10MNKJ1MARM1Y0OQ5Q0D
-         1eP5S75q53WUJpS9LNKQiHbygvzY8ejD06Rs+QSI8pd8GKdm+YPC4/bBxvRCwGx9BiwX
-         Ub2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUaqgAXT8t+I+lLtM0NNk6RKcACqUXzpShlatV95s0x4t+lVpBNmnUx3NOOAV8Do0kmDP9rskMPCZD9kp3z/Rr33Ik30dU6eDRGKuJzXQLPzTGSN4KtxTWC7BEX3cnOXqGTFWSHIOIOifg=
-X-Gm-Message-State: AOJu0Yx7wMvEU6u3eEWwbDB991f7pjaYia5T3qK6Wu/P9JSdvjJXNR49
-	gmTac9Z1k9j5MiDpM4elGcysM1pgCE5hdfZPCqZ0aK3NzryFmFoz
-X-Google-Smtp-Source: AGHT+IFXu6WFAyzE6T6EueeCszyjWkacZiRj/Z0pNn5w7L6AygL9Y+yafoFUv18VXYAUoFnNLkVehQ==
-X-Received: by 2002:a5d:65ce:0:b0:362:dbc2:9486 with SMTP id ffacd0b85a97d-366e963036cmr9357222f8f.68.1719586440001;
-        Fri, 28 Jun 2024 07:54:00 -0700 (PDT)
-Received: from localhost (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0d9b12sm2533031f8f.44.2024.06.28.07.53.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 07:53:59 -0700 (PDT)
-From: Thierry Reding <thierry.reding@gmail.com>
-To: catalin.marinas@arm.com,
-	will@kernel.org,
-	Besar Wicaksono <bwicaksono@nvidia.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	jonathanh@nvidia.com,
-	vsethi@nvidia.com,
-	suzuki.poulose@arm.com
-Subject: Re: [PATCH] arm64: defconfig: enable NVIDIA CoreSight PMU driver
-Date: Fri, 28 Jun 2024 16:53:53 +0200
-Message-ID: <171958642412.2431132.4521875314508984778.b4-ty@nvidia.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240509215808.126217-1-bwicaksono@nvidia.com>
-References: <20240509215808.126217-1-bwicaksono@nvidia.com>
+	s=arc-20240116; t=1719586476; c=relaxed/simple;
+	bh=Ou4xM+KfwaWQtRXzFZntff3Dpxcze4HWoGlzHDofmiw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gm8vBPE45VtVrOv9tiNHKTM3BuXjcZeL6ygs8Jp+mmizOJMzo7MGpSYnM7rYt4LnEuoMGSMnM029CSXqG5Hv0dBnvassCHQIxGMVNCShqIZtPuOWA5iZIHHyv2HEpqfdpEuBcq6Aw0GERWuPvAX9KuYMv70kk+rzxDP+5SzcAmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=MGYf7Kdn; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=81FpBswvqTN/+g4RZ2JQLI94RMcUtnvBgT5CRymvy00=; b=MGYf7KdnGuXY1WWsPiwRchgkQh
+	ckcHUlfg+yk3eL6vt4Rsvd5uI2k0bL8Gqkt4+p+vMHVp00sZytVvFCe/KhlzOuFFz+S3gA8u4PI0V
+	Eis+uEXgk0ESe02/721q9JveAWDX8ObVdhiaYOybrkobYbcLZ5wOdPYMILvu86VguhJexRV9y7cgE
+	JcraytzqsYeMIg3qNTsJrXZh/myRdCnjN7oomiwToTd7E9OvA89qlR18GbJJFKEn5S7S67riVx8h/
+	Im3BJ63YZhjxDDDNe6niBS5eMb5L4LPud3nqarCn6r18jtYaZ4eKaM4pZ5vk0zNF9xewkVqaxwo11
+	uESa2Vuw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:35642)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sNCzM-0006mN-02;
+	Fri, 28 Jun 2024 15:54:12 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sNCzN-0006ah-A6; Fri, 28 Jun 2024 15:54:13 +0100
+Date: Fri, 28 Jun 2024 15:54:13 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Serge Semin <fancer.lancer@gmail.com>
+Cc: Andrew Halaney <ahalaney@redhat.com>, Vinod Koul <vkoul@kernel.org>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com, bpf@vger.kernel.org,
+	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC net-next v2 10/17] net: stmmac: Introduce internal
+ PCS offset-based CSR access
+Message-ID: <Zn7OlQ4aoO2vZTrj@shell.armlinux.org.uk>
+References: <Zlmzu7/ANyZxOOQL@shell.armlinux.org.uk>
+ <20240624132802.14238-2-fancer.lancer@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240624132802.14238-2-fancer.lancer@gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-From: Thierry Reding <treding@nvidia.com>
+On Mon, Jun 24, 2024 at 04:26:27PM +0300, Serge Semin wrote:
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+> index 80eb72bc6311..d0bcebe87ee8 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
+> @@ -633,7 +633,7 @@ static int ethqos_configure_sgmii(struct qcom_ethqos *ethqos)
+>  			      RGMII_CONFIG2_RGMII_CLK_SEL_CFG,
+>  			      RGMII_IO_MACRO_CONFIG2);
+>  		ethqos_set_serdes_speed(ethqos, SPEED_2500);
+> -		stmmac_pcs_ctrl_ane(priv, priv->ioaddr, 0, 0, 0);
+> +		stmmac_pcs_ctrl_ane(priv, priv->pcsaddr, 0, 0, 0);
+>  		break;
+>  	case SPEED_1000:
+>  		val &= ~ETHQOS_MAC_CTRL_PORT_SEL;
+> @@ -641,12 +641,12 @@ static int ethqos_configure_sgmii(struct qcom_ethqos *ethqos)
+>  			      RGMII_CONFIG2_RGMII_CLK_SEL_CFG,
+>  			      RGMII_IO_MACRO_CONFIG2);
+>  		ethqos_set_serdes_speed(ethqos, SPEED_1000);
+> -		stmmac_pcs_ctrl_ane(priv, priv->ioaddr, 1, 0, 0);
+> +		stmmac_pcs_ctrl_ane(priv, priv->pcsaddr, 1, 0, 0);
+>  		break;
+>  	case SPEED_100:
+>  		val |= ETHQOS_MAC_CTRL_PORT_SEL | ETHQOS_MAC_CTRL_SPEED_MODE;
+>  		ethqos_set_serdes_speed(ethqos, SPEED_1000);
+> -		stmmac_pcs_ctrl_ane(priv, priv->ioaddr, 1, 0, 0);
+> +		stmmac_pcs_ctrl_ane(priv, priv->pcsaddr, 1, 0, 0);
+>  		break;
+>  	case SPEED_10:
+>  		val |= ETHQOS_MAC_CTRL_PORT_SEL;
+> @@ -656,7 +656,7 @@ static int ethqos_configure_sgmii(struct qcom_ethqos *ethqos)
+>  					 SGMII_10M_RX_CLK_DVDR),
+>  			      RGMII_IO_MACRO_CONFIG);
+>  		ethqos_set_serdes_speed(ethqos, SPEED_1000);
+> -		stmmac_pcs_ctrl_ane(priv, priv->ioaddr, 1, 0, 0);
+> +		stmmac_pcs_ctrl_ane(priv, priv->pcsaddr, 1, 0, 0);
+>  		break;
+>  	}
+>  
 
+I think a better preparatory patch (given what you do in future patches)
+would be to change all of these to:
 
-On Thu, 09 May 2024 21:58:08 +0000, Besar Wicaksono wrote:
-> Enable NVIDIA driver for Coresight PMU arch device.
-> 
-> 
+	ethqos_pcs_set_inband(priv, {false | true});
 
-Applied, thanks!
+which would be:
 
-[1/1] arm64: defconfig: enable NVIDIA CoreSight PMU driver
-      commit: 70870ff9015c61d4433482649138c98174f45582
+static void ethqos_pcs_set_inband(struct stmmac_priv *priv, bool enable)
+{
+	stmmac_pcs_ctrl_ane(priv, priv->ioaddr, enable, 0, 0);
+}
 
-Best regards,
+which then means this patch becomes a single line, and your subsequent
+patch just has to replace stmmac_pcs_ctrl_ane() with its open-coded
+equivalent.
+
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/hwif.c b/drivers/net/ethernet/stmicro/stmmac/hwif.c
+> index 84fd57b76fad..3666893acb69 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/hwif.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/hwif.c
+> @@ -6,6 +6,7 @@
+>  
+>  #include "common.h"
+>  #include "stmmac.h"
+> +#include "stmmac_pcs.h"
+>  #include "stmmac_ptp.h"
+>  #include "stmmac_est.h"
+>  
+> @@ -116,6 +117,7 @@ static const struct stmmac_hwif_entry {
+>  	const void *tc;
+>  	const void *mmc;
+>  	const void *est;
+> +	const void *pcs;
+
+I'm not a fan of void pointers. common.h includes linux/phylink.h, which
+will define struct phylink_pcs_ops, so there is no reason not to declare
+this as:
+
+	const struct phylink_pcs_ops *pcs;
+
 -- 
-Thierry Reding <treding@nvidia.com>
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
