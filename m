@@ -1,121 +1,203 @@
-Return-Path: <linux-kernel+bounces-234687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5293291C973
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 01:06:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DDEF91C975
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 01:08:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 843B11C22CA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 23:06:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF89E1F23ED2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 23:08:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D830823D1;
-	Fri, 28 Jun 2024 23:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF9EA81ABA;
+	Fri, 28 Jun 2024 23:08:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SHh2hKNE"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i+b+CIvq"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95646F30A;
-	Fri, 28 Jun 2024 23:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C1278C8B
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 23:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719615994; cv=none; b=mueXzFvlcvpIIqWHUrHBrPdcZg2CMgD3NqjBpeLCyX21QzF/+hgAdTGOz8QO2uoKbt/7zFwSZTUnc1iDXgejqLMRPvP4iFbKcjd30Kd/8wdfjESJwRXPeZp4mOwjbbKl17Jr82Avo0XMFSSjWGTMpWig+d5xq4eT3gg1hM+TXT8=
+	t=1719616100; cv=none; b=azHKYxI3KcE+inO4cXxhF5Pjan1HDMZFEG/bWymuz7GjifrkrZ5XvHiPA/OTLoP6ViqyT/DV8QOJhSuyZZP39tleN/GuYh+tmsk07xrOGeT+HSY3Ka9nLfqdtrvScVuRps7jA7qs3Mo9nPlFw13lh/oEx9nKom/L97EnnF6iAF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719615994; c=relaxed/simple;
-	bh=CJFC1i/rFNcMAu2c0rgyW0EJOBSzUMuWmmIGpUhihYo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=WVW+tbsXyAKxvEz2+AbFQFWh6RFjVfEuytjuOIl1kqfKZuC/4Igu46hbq7XBYCy/r0wN9eKSXAMdkAz896NgZ+DiaMnjxXaosZxzInaaUUSoTvwO0TDjrnnv5IQSRf8uktvt5zhLpHYwNhL0Vn7v1ZHbfwqAA6NflZpNohD6XjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=SHh2hKNE; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45SN6I0Y096817;
-	Fri, 28 Jun 2024 18:06:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1719615978;
-	bh=qvdjnBB+g2iBGUqRGrha8gu64eIVrsfmJ+nP8zaZi+g=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=SHh2hKNE/mQPe/0oOZy/auoSKa+tZFsRcS0lp4BczDZIQ80llbIMmD1jbIOygC4Yu
-	 1qwcwZpRDTzifsfrRiAlA/CnhxbfNMft67oeH6sSszwtCzDvSf9AoMqjbEk+0+GqzZ
-	 WmrLrR1+pJwhQN9uiOrbl1bKcOlyHaT9KHr9dUzQ=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45SN6IaG066063
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 28 Jun 2024 18:06:18 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 28
- Jun 2024 18:06:18 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 28 Jun 2024 18:06:18 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45SN6HPl098510;
-	Fri, 28 Jun 2024 18:06:18 -0500
-Message-ID: <0a58eda0-7c11-4d4d-ab85-2b3831a1c758@ti.com>
-Date: Fri, 28 Jun 2024 18:06:16 -0500
+	s=arc-20240116; t=1719616100; c=relaxed/simple;
+	bh=NtbVjSdP8d+VGj0ri6OFhKzJIsrRyEWIHSNNTsCFn1o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e+CgQu/Bx38QMM8cDNMycAhLymMIvAjxmeHn6tIdUri/o6aRy9Y0voDWAFK8LmguBqSEv1F5ixCobfAhtfXXecTvOjvI1no62UN85yVPYGziy4cPoeVeD21U4RUWA90lur/R8ZMpNgOP2wZUE7yJVSfh1QVxWcsMkg2XHD+EPGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i+b+CIvq; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fa75f53f42so6609605ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 16:08:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719616098; x=1720220898; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jD9fY0cEwd49BrRewlF88rHZA1K4FTXJg9jWSvOMwnw=;
+        b=i+b+CIvqmpETAvpiaICO428rfOlHGT2jHzcs2LWOoTIbCGBcAtpN1wHCuJiavPjRIM
+         lpcp4si0ftOHqg5OKhrKieo9KZyw9wqRLh7Mvy0JIcY7GGsKzMNjVm3rIDkzSYr9CLsR
+         a0SSgYcqUQJpYDE8jLJXzo66MhNEVwuTySnMYj9lg1eXjS390sp8eDghZr/byrqZ1o15
+         TP67qL1ZrEvPJi5OyiIoj6fLGNI7pZthb9Q8iqCVWWw3PuN6XXOhqo1xnZrJ11tXd2Yv
+         LRiAcouUAEYRj+5w+H2J8jNirrfCo+q63q4yb4kFcHM/Em388UFavB9lnXBC3N4FJtre
+         f6WA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719616098; x=1720220898;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jD9fY0cEwd49BrRewlF88rHZA1K4FTXJg9jWSvOMwnw=;
+        b=GcgaTYrkFSD3c+MxW34dpc9FiHlXH9CRBW7KhvHAr92Pqn4dfWc2McqAa9vvDuhzCj
+         IPju9GNiHg6o7BzgfSN1GbxzpwGC8NciE7qzTOnymY9FlXYFIiUGCvgduOLDIeC1tjDi
+         r+/NhYTuumDxPmWbky9/aUVk+sRc2R+Z6lGYdmo7WZPF2VU3+kOCk4FtHCUql/KPX2ro
+         8i8OL1ktKjH45TX68ZBAosLrhbcXmkll8P/88CY5vnTv7/vQPWSEf9jKve0GhlfPsO4x
+         CYY7+lANH10XcRR3z69oYGaoJCExSL4qR9R4hmzq5j6Cgnq7N63bm46K14vLsFDxyGGG
+         BlOw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQA3Z1ymnSML4+KaSbZuVBcQ7QwUKtHTniTFSXvi1A8JLJqe4ZObCQ9/6Cdy8nh+5Ds0xwsiW8aVw35v17BA+S2s+trn3pGV5SyptX
+X-Gm-Message-State: AOJu0YzqWlVRTsqAhhxhBx4zUWeoeVNgmxHwycmxyHIrBnZmVuNKGblI
+	rWbPHaZ4Qz5OUkl5f9eAPT9Ny81gFaBkZj8qtTc0ylcgXF88cwRFBkBfbe5Dfg==
+X-Google-Smtp-Source: AGHT+IHjekMXh02l0Ycz2rjYtlbdVH4UamFXyViW/QcLiWsUWCu1Vrnw+AQiFre0Cv3NqpjXzsWYhw==
+X-Received: by 2002:a17:903:18d:b0:1fa:1f31:e78a with SMTP id d9443c01a7336-1fa23f07182mr185772005ad.6.1719616097509;
+        Fri, 28 Jun 2024 16:08:17 -0700 (PDT)
+Received: from google.com (148.98.83.34.bc.googleusercontent.com. [34.83.98.148])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac10c8f81sm20752945ad.28.2024.06.28.16.08.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 16:08:16 -0700 (PDT)
+Date: Fri, 28 Jun 2024 23:08:13 +0000
+From: Igor Pylypiv <ipylypiv@google.com>
+To: Niklas Cassel <cassel@kernel.org>
+Cc: Damien Le Moal <dlemoal@kernel.org>, Tejun Heo <tj@kernel.org>,
+	Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/6] ata: libata: Set ATA_QCFLAG_RTF_FILLED in
+ fill_result_tf()
+Message-ID: <Zn9CXRMWFczmG_P3@google.com>
+References: <20240626230411.3471543-1-ipylypiv@google.com>
+ <20240626230411.3471543-6-ipylypiv@google.com>
+ <Zn8ZIxQRimgVZ2S3@ryzen.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: soc: ti: am654-serdes-ctrl: Add
- simple-mfd to compatible items
-To: Rob Herring <robh@kernel.org>
-CC: Jan Kiszka <jan.kiszka@siemens.com>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, Tony
- Lindgren <tony@atomide.com>,
-        Nishanth Menon <nm@ti.com>, Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240625164528.183107-1-afd@ti.com>
- <6ebc89dc-fbb3-4073-8b1b-cd413907ebf8@ti.com>
- <7fbb62b3-cc71-4fa8-a0c4-fca558292c75@siemens.com>
- <c3f4a289-03b1-48a5-a3dd-7cb7ca594055@ti.com>
- <20240628213833.GA250523-robh@kernel.org>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20240628213833.GA250523-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zn8ZIxQRimgVZ2S3@ryzen.lan>
 
-On 6/28/24 4:38 PM, Rob Herring wrote:
-> On Tue, Jun 25, 2024 at 05:23:22PM -0500, Andrew Davis wrote:
->> On 6/25/24 2:46 PM, Jan Kiszka wrote:
->>> On 25.06.24 18:49, Andrew Davis wrote:
->>>> On 6/25/24 11:45 AM, Andrew Davis wrote:
->>>>> This node contains a child which is only probed if simple-mfd is in the
->>>>> compatible list. Add this here.
->>>>>
->>>>> Signed-off-by: Andrew Davis <afd@ti.com>
->>>>> ---
->>>>
->>>> This patch depends on https://www.spinics.net/lists/kernel/msg5253666.html
->>>>
->>>
->>> But is that patch already scheduled for 6.10 as well?
->>
->> I don't think so.. But only [patch 2/2] from this series needs applied
->> back to 6.10 to fix the issue. This one [Patch 1/2] just removes a dts warning.
+On Fri, Jun 28, 2024 at 10:12:19PM +0200, Niklas Cassel wrote:
+> On Wed, Jun 26, 2024 at 11:04:10PM +0000, Igor Pylypiv wrote:
+> > ATA_QCFLAG_RTF_FILLED is not specific to ahci and can be used generally
+> > to check if qc->result_tf contains valid data.
+> > 
+> > Reviewed-by: Hannes Reinecke <hare@suse.de>
+> > Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+> > Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
+> > ---
+> >  drivers/ata/libahci.c     | 10 ----------
+> >  drivers/ata/libata-core.c |  8 ++++++++
+> >  2 files changed, 8 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/drivers/ata/libahci.c b/drivers/ata/libahci.c
+> > index 83431aae74d8..0728d445e531 100644
+> > --- a/drivers/ata/libahci.c
+> > +++ b/drivers/ata/libahci.c
+> > @@ -2075,13 +2075,6 @@ static void ahci_qc_fill_rtf(struct ata_queued_cmd *qc)
+> >  	struct ahci_port_priv *pp = qc->ap->private_data;
+> >  	u8 *rx_fis = pp->rx_fis;
+> >  
+> > -	/*
+> > -	 * rtf may already be filled (e.g. for successful NCQ commands).
+> > -	 * If that is the case, we have nothing to do.
+> > -	 */
+> > -	if (qc->flags & ATA_QCFLAG_RTF_FILLED)
+> > -		return;
+> > -
+> >  	if (pp->fbs_enabled)
+> >  		rx_fis += qc->dev->link->pmp * AHCI_RX_FIS_SZ;
+> >  
+> > @@ -2095,7 +2088,6 @@ static void ahci_qc_fill_rtf(struct ata_queued_cmd *qc)
+> >  	    !(qc->flags & ATA_QCFLAG_EH)) {
+> >  		ata_tf_from_fis(rx_fis + RX_FIS_PIO_SETUP, &qc->result_tf);
+> >  		qc->result_tf.status = (rx_fis + RX_FIS_PIO_SETUP)[15];
+> > -		qc->flags |= ATA_QCFLAG_RTF_FILLED;
+> >  		return;
+> >  	}
+> >  
+> > @@ -2118,12 +2110,10 @@ static void ahci_qc_fill_rtf(struct ata_queued_cmd *qc)
+> >  		 */
+> >  		qc->result_tf.status = fis[2];
+> >  		qc->result_tf.error = fis[3];
+> > -		qc->flags |= ATA_QCFLAG_RTF_FILLED;
+> >  		return;
+> >  	}
+> >  
+> >  	ata_tf_from_fis(rx_fis + RX_FIS_D2H_REG, &qc->result_tf);
+> > -	qc->flags |= ATA_QCFLAG_RTF_FILLED;
+> >  }
+> >  
+> >  static void ahci_qc_ncq_fill_rtf(struct ata_port *ap, u64 done_mask)
+> > diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+> > index e1bf8a19b3c8..a9fc3ec9300f 100644
+> > --- a/drivers/ata/libata-core.c
+> > +++ b/drivers/ata/libata-core.c
+> > @@ -4801,8 +4801,16 @@ static void fill_result_tf(struct ata_queued_cmd *qc)
+> >  {
+> >  	struct ata_port *ap = qc->ap;
+> >  
+> > +	/*
+> > +	 * rtf may already be filled (e.g. for successful NCQ commands).
+> > +	 * If that is the case, we have nothing to do.
+> > +	 */
+> > +	if (qc->flags & ATA_QCFLAG_RTF_FILLED)
+> > +		return;
+> > +
+> >  	qc->result_tf.flags = qc->tf.flags;
 > 
-> Both or none should be applied...
+> One functional change that I can see from this is that after this commit,
+> we will no longer do: qc->result_tf.flags = qc->tf.flags;
+> if ATA_QCFLAG_RTF_FILLED was set.
+
+Nice catch, Niklas! I'll fix it in v4. Thank you!
+
 > 
-
-Both should be applied to master.
-
-Only [2/2] is a fix that should then be backported to v6.10.x to fix an issue in v6.10.
-
-[1/2] has a dependency on a patch that will not be in v6.10 so it cannot be backported,
-but luckily [1/2] is just a fix for a DTB check warning. [2/2] doesn't depend on [1/2].
-So no issue there, [2/2] should backport cleanly all by itself.
-
-Andrew
+> e.g. ata_scsi_set_passthru_sense_fields() and ata_gen_ata_sense()
+> makes use of result_tf->flags, so we probably still want to do this.
+> 
+> 
+> Perhaps keep this function as you have it and simply do:
+> 
+> diff --git a/drivers/ata/libahci.c b/drivers/ata/libahci.c
+> index 0728d445e531..fdfa7b266218 100644
+> --- a/drivers/ata/libahci.c
+> +++ b/drivers/ata/libahci.c
+> @@ -2148,6 +2148,7 @@ static void ahci_qc_ncq_fill_rtf(struct ata_port *ap, u64 done_mask)
+>                         if (qc && ata_is_ncq(qc->tf.protocol)) {
+>                                 qc->result_tf.status = status;
+>                                 qc->result_tf.error = error;
+> +                               qc->result_tf.flags = qc->tf.flags;
+>                                 qc->flags |= ATA_QCFLAG_RTF_FILLED;
+>                         }
+>                         done_mask &= ~(1ULL << tag);
+> @@ -2172,6 +2173,7 @@ static void ahci_qc_ncq_fill_rtf(struct ata_port *ap, u64 done_mask)
+>                         fis += RX_FIS_SDB;
+>                         qc->result_tf.status = fis[2];
+>                         qc->result_tf.error = fis[3];
+> +                       qc->result_tf.flags = qc->tf.flags;
+>                         qc->flags |= ATA_QCFLAG_RTF_FILLED;
+>                 }
+>                 done_mask &= ~(1ULL << tag);
+> 
+> 
+> 
+> >  	ap->ops->qc_fill_rtf(qc);
+> > +	qc->flags |= ATA_QCFLAG_RTF_FILLED;
+> >  }
+> >  
+> >  static void ata_verify_xfer(struct ata_queued_cmd *qc)
+> > -- 
+> > 2.45.2.803.g4e1b14247a-goog
+> > 
 
