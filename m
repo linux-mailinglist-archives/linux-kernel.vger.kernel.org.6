@@ -1,125 +1,113 @@
-Return-Path: <linux-kernel+bounces-234378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74AF291C5EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:39:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34D2B91C5EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:40:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13E36B237A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:39:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6830E1C20F27
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEECB1CD5D2;
-	Fri, 28 Jun 2024 18:39:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6D71CE08D;
+	Fri, 28 Jun 2024 18:39:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="emSrVEK9"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S05dfqxr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71CDA25634
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 18:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2AA1C8FAB;
+	Fri, 28 Jun 2024 18:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719599970; cv=none; b=tT0AZXZWJm5l9fNODELhHeMNfkf3DzH3/p4BeNSHYdgElB0yjJA6xbCVJALl21yIdGNUeQNnGtGlyJZqu2Gi7hC/H3tUqXwLkxmiRNj24xE4HYe6OXuahP6tizoXlbvWEhS8s2Mf2Wjv2/yUvtw0IpDWoJ7r6+xNjWRJURIODfs=
+	t=1719599996; cv=none; b=jCPFvdpls3hI1Njjr2cMwPWr6A4xyN2DMR5YChUJAKbRYT32C/BUtecybvgXURCBIUnT/1jyUdjPK0Rel6N/P4a2YoFTz1u4hxclmukrIW3UAoF7TvtlYr4Q/gRRNDHtE/1zoIurH91QA+TFF9Z9gbjX0IjQf+v6dtlAfvFi5KI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719599970; c=relaxed/simple;
-	bh=SX/+b7YgcsEO5XeFuYdJ1v5hGsB6krkNYB2TZewMbz0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ftZHeQv9DHeKSpYh3DcvELIpkRmLiFXQ+L2St+1jZnVn5F6CbK32wvev1C5Vy6BcC108Gn812rLh8tlO6UZQnplZh38vU7UeTl3yOnW5HsqDgUbsOBjKZaxlsEuwEpJ9p0aks7hui48562WqIcBVysXBTi3TbO8kf5kI3CyujRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=emSrVEK9; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=m/Dg
-	1r18WaypntHngZkQccF93S8V/HKSlKlbtqiO0CI=; b=emSrVEK9KNei6vjQzB1H
-	xl/9IHCNDLzuCiMtAWC7M6RxPOdZ1FUUtnq761vCMTvQSreXzTxyzJfhlLSBVIU/
-	VOlTB/iJdd1+XrjpfFReLnTdgtZbB/YPiKHxRbtJwwbeYimx0QjySko9230gcWAo
-	UBUSf6Z6hH9O9BurO+RhvKJ2+vf9pxzTx4BZEKnwf+2ojL2eCH+g+nRs1a7j53Hg
-	qIQCiLpPg4j9Re+Wowl6dz3msb38ro1avkXwTqK2fpE+GpMDAg/2PKfrLeV8PaM9
-	ojt3ncX04PZv91qfQhF3H1eHA+g3XFnVH3NdZNOo62DpFFHUHzSv3IjPtjfh6nh/
-	Pw==
-Received: (qmail 1339430 invoked from network); 28 Jun 2024 20:39:16 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 28 Jun 2024 20:39:16 +0200
-X-UD-Smtp-Session: l3s3148p1@Bs2LkPcbPLJehhrE
-Date: Fri, 28 Jun 2024 20:39:15 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Wolfram Sang <wsa@kernel.org>, linux-i2c <linux-i2c@vger.kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>,
-	Arnd Bergmann <arnd@kernel.org>
-Subject: Re: i2c-host-fixes for v6.10-rc6
-Message-ID: <Zn8DU54kExuwKi7e@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andi Shyti <andi.shyti@kernel.org>, Wolfram Sang <wsa@kernel.org>,
-	linux-i2c <linux-i2c@vger.kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>,
-	Arnd Bergmann <arnd@kernel.org>
-References: <a6byafqkslh6wjsgfotnv3ibkax7gpuvlalf5bgtzc46imy6uu@6b2fsl4d4hh2>
+	s=arc-20240116; t=1719599996; c=relaxed/simple;
+	bh=XoSwQPaw4xVSbnAE6h9xsyMVlZcN3NV1inNXV2TNqpI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g2yEGqdU5gNc57FUa9YkuSrRi8VXnpj6MdWofX1DmCutrGffKYOexVQl4ryT5ZgQx/j9wnLDY00WJYop8NWOQ5EUyKUaMh3Ej7Jxj+T+DGpM5YDk7sJkWgalt0cbq5oz52+sKi3KMVf18D9b3POmqzjhtmyugxK1YzPcLLlLCAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S05dfqxr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB8A5C116B1;
+	Fri, 28 Jun 2024 18:39:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719599995;
+	bh=XoSwQPaw4xVSbnAE6h9xsyMVlZcN3NV1inNXV2TNqpI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=S05dfqxrMD31tfJs1vAXWacCilgnvjqVWdB1Xp39HiiTM0CrR3S+Tb089H6w4CVBt
+	 8jY6m0l2TZKR5W8WgBIfdhJ9V+BIHKIF7ZEHnbzEQoZNeKZ9LFOkhI+5bC2i0f8veI
+	 P/cmNZH3WX5lQuzFugKlbga0w5mkS0Cdu/njXy2ud3Cwozg1GqhLIRVhwxLeY41U6i
+	 papDbkXage/4s79R1YO+gGpk/0E2O5c7+xkz215PS3/ydxCpUASihT+mleSKII5Xrq
+	 bM+F/uMhLOYzK0Ja6cFGMWQPteYWGYQ/rJKnbTaONXXO0obod4x3jFC1upElwYHPxL
+	 6q65VHUIhsqHw==
+Message-ID: <f0f09455-5bfd-4dbc-b393-dbef75441e8a@kernel.org>
+Date: Fri, 28 Jun 2024 21:39:50 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="QKN4YVgobVdvcxMb"
-Content-Disposition: inline
-In-Reply-To: <a6byafqkslh6wjsgfotnv3ibkax7gpuvlalf5bgtzc46imy6uu@6b2fsl4d4hh2>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] interconnect: qcom: Add MSM8953 driver
+To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ Vladimir Lypak <vladimir.lypak@gmail.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20240628-msm8953-interconnect-v3-0-a70d582182dc@mainlining.org>
+ <20240628-msm8953-interconnect-v3-2-a70d582182dc@mainlining.org>
+Content-Language: en-US
+From: Georgi Djakov <djakov@kernel.org>
+In-Reply-To: <20240628-msm8953-interconnect-v3-2-a70d582182dc@mainlining.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+Hi Barnabás,
 
---QKN4YVgobVdvcxMb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thank you for the patches!
 
-On Fri, Jun 28, 2024 at 11:59:11AM +0200, Andi Shyti wrote:
-> Hi Wolfram,
->=20
-> thanks for pinging me on Arnd's patch. You'll find it in this
-> pull request.
->=20
-> Thanks,
-> Andi
->=20
-> The following changes since commit f2661062f16b2de5d7b6a5c42a9a5c96326b84=
-54:
->=20
->   Linux 6.10-rc5 (2024-06-23 17:08:54 -0400)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags=
-/i2c-host-fixes-6.10-rc6
->=20
-> for you to fetch changes up to 103458874baca0bbc8ae0b66d50201d5faa8c17b:
->=20
->   i2c: viai2c: turn common code into a proper module (2024-06-26 16:07:21=
- +0200)
+On 28.06.24 17:01, Barnabás Czémán wrote:
+> From: Vladimir Lypak <vladimir.lypak@gmail.com>
+> 
+> Add driver for interconnect busses found in MSM8953 based platforms.
+> The topology consists of four NoCs that are partially controlled by a
+> RPM processor.
+> 
+> Note that one of NoCs (System NoC) has a counterpart (System NoC MM)
+> that is modelled as child device to avoid resource conflicts, since it
+> uses same MMIO space for configuration.
+> 
+> Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+> ---
+>   drivers/interconnect/qcom/Kconfig   |    9 +
+>   drivers/interconnect/qcom/Makefile  |    2 +
+>   drivers/interconnect/qcom/msm8953.c | 1321 +++++++++++++++++++++++++++++++++++
+>   3 files changed, 1332 insertions(+)
+[..]
+> +++ b/drivers/interconnect/qcom/msm8953.c
+[..]
+> +static const struct of_device_id msm8953_noc_of_match[] = {
+> +	{ .compatible = "qcom,msm8953-bimc", .data = &msm8953_bimc },
+> +	{ .compatible = "qcom,msm8953-pcnoc", .data = &msm8953_pcnoc },
+> +	{ .compatible = "qcom,msm8953-snoc", .data = &msm8953_snoc },
+> +	{ .compatible = "qcom,msm8953-snoc-mm", .data = &msm8953_snoc_mm },
+> +	{ }
+> +};
+> +
+> +static struct platform_driver msm8953_noc_driver = {
+> +	.probe = qnoc_probe,
+> +	.remove_new = qnoc_remove,
+> +	.driver = {
+> +		.name = "qnoc-msm8953",
+> +		.of_match_table = msm8953_noc_of_match,
 
-Pulled, thanks!
+Why no .sync_state?
 
-
---QKN4YVgobVdvcxMb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZ/A1AACgkQFA3kzBSg
-KbZW1RAAiJsGopyUzTFJsx3bqSDyo0FNgcscbiJmfp9nfh6E7PPu8Qka2Vml37m+
-d6nvmTrpkyFsX5gD5tkKtfX55PMNBQ+llQoropazkqo+d2zy1Xq6smi/Sc2Ev0hk
-xVA8roq25skDRaq7HDIaEqnor6Rommj/dnIEwEpozg5fmDwlSZrfipIKrPT0t/HB
-UIkteT3h5Qw/c/lKTHpgEfPUkIzDiuB8nfUEKot1igP4R9e130Hazo4vDplqO1eg
-OlW7FuWB5QwbMtb+tl7QE7tGS0TMMdlDtsTeritnUHo/hNYBqomo804dPttjVe/K
-0q+1hwstljLCkscEi1zRGyiOi/RS6qrjOHIHY7q453Hy4PU+MJsaaiDxeBXkoRzj
-J99lQx/QuVoJHi1mVb2NEJb5Egn9VNYMK3DcQxg1SrvlYOvpBm0ix+zdnx5VeOWn
-OHnGQrxs7p8SZmMYkx6tX9NpN3N62bjiAxtwsBT6PQ45gsfTYpUL+rqKNplqTryc
-Ofg6PNPemT1HY0chSKIwdej8tjkc6dOceVuvy0D5BpYh3uGdB1oqizVWEPcVDlN3
-FPnvK5kzFAZh2N5TTCQHA5icljkiq5idrVJW8GPlO07paO8RYqoztiuxePH0i2Z3
-bILBSo4rfauiydqGKR+q4s+qgdcCBGoytkE+jRZ4bcb1E42Fw4M=
-=EqMw
------END PGP SIGNATURE-----
-
---QKN4YVgobVdvcxMb--
+BR,
+Georgi
 
