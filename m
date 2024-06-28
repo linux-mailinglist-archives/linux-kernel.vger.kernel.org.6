@@ -1,612 +1,214 @@
-Return-Path: <linux-kernel+bounces-233337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC7F291B5AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 06:20:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1679191B5AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 06:22:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66F2A283DBD
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 04:20:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A42D1C217A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 04:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2902E21105;
-	Fri, 28 Jun 2024 04:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wMgqSfJJ"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81312C1B4;
+	Fri, 28 Jun 2024 04:22:00 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB55C1CAA2
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 04:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FE61EA8D;
+	Fri, 28 Jun 2024 04:21:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719548432; cv=none; b=hxItWIM5Wpu7AbP/t8EtMNSWvkzoCqihOsZkVaY7k9cQBdgzoAx7eWIEuCi0IW95O9SWB5OyoGKzEIBdw4UGVlySMqQ25vlt9m4eUXOFhhvInnjG9Gea9WeBME8Viu4LL5XqdsH8A2WVTmcU7xOgQfYAHOn4wO+yw5UKibr+TYg=
+	t=1719548520; cv=none; b=lqTiSNfH959AsvEfLNGwjVxqx8yJjBupEOerjfKXJEzAwQeQPwjdc+RD1Ba2ULOV+NNX64tTK2NHjcV1fyf4V9lFu34PwiVnzeViFoIzgRaX7DrizgWe0OEqpyBXlV//n8k2S/Uuyk+9+6mg+bHsOLnc3lThe1xisv8JsPefzxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719548432; c=relaxed/simple;
-	bh=rLi4Ae4LAdb6FwLFBCoU3WLwlSQ0orL9rDZjzF1uDG4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PmqveCdKu7JuYkEjv6PU2Zno1OauzsR2Vl5B9z7pQjp6dip5XFjfQ/ZDMPHt6UHKH2OiNdH8GQIc9ZqjMaSKg9cdELtqoZkGnxxWOPPw5LN8WECkBj9Jy7HCPtRXfUtUweY19op2LCGjqrOBONYlrbbguVwc+2edJy2Kmn0/MTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=wMgqSfJJ; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45S4IwmK000785;
-	Thu, 27 Jun 2024 23:18:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1719548338;
-	bh=xeiV/FSKjQkomCqQUaxNFXfkAU/rev6oaqKIycHgbik=;
-	h=From:To:CC:Subject:Date;
-	b=wMgqSfJJwTapqvtcDo+Bfdn9yaw9ncP8rlgy5dboNKzku0x53yx77vCQPPRVgp3bp
-	 Za99ooDRbNyasBzTwTTptu6kIvrgvR6wAC3JyQHXslkFqI7uu9o8v6vNEMOSX+BjFK
-	 hpS9pwi2h4adfbk4pRxfh2t3W/SkeQ5+Dsb+Etb4=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45S4Iwpk088387
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 27 Jun 2024 23:18:58 -0500
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 27
- Jun 2024 23:18:58 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 27 Jun 2024 23:18:58 -0500
-Received: from LT5CG31242FY.dhcp.ti.com ([10.250.160.158])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45S4Im47090090;
-	Thu, 27 Jun 2024 23:18:49 -0500
-From: Shenghao Ding <shenghao-ding@ti.com>
-To: <broonie@kernel.org>
-CC: <andriy.shevchenko@linux.intel.com>, <lgirdwood@gmail.com>,
-        <perex@perex.cz>, <pierre-louis.bossart@linux.intel.com>,
-        <13916275206@139.com>, <zhourui@huaqin.com>,
-        <alsa-devel@alsa-project.org>, <i-salazar@ti.com>,
-        <linux-kernel@vger.kernel.org>, <j-chadha@ti.com>,
-        <liam.r.girdwood@intel.com>, <jaden-yue@ti.com>,
-        <yung-chuan.liao@linux.intel.com>, <dipa@ti.com>, <yuhsuan@google.com>,
-        <henry.lo@ti.com>, <tiwai@suse.de>, <baojun.xu@ti.com>, <soyer@irl.hu>,
-        <Baojun.Xu@fpt.com>, <judyhsiao@google.com>, <navada@ti.com>,
-        <cujomalainey@google.com>, <aanya@ti.com>, <nayeem.mahmud@ti.com>,
-        <savyasanchi.shukla@netradyne.com>, <flaviopr@microsoft.com>,
-        <jesse-ji@ti.com>, <darren.ye@mediatek.com>,
-        Shenghao Ding
-	<shenghao-ding@ti.com>
-Subject: [PATCH v1] ASoc: tas2781: Add new Kontrol to set tas2563 digital gain
-Date: Fri, 28 Jun 2024 12:18:43 +0800
-Message-ID: <20240628041844.1776-1-shenghao-ding@ti.com>
-X-Mailer: git-send-email 2.33.0.windows.2
+	s=arc-20240116; t=1719548520; c=relaxed/simple;
+	bh=6qXnrfXrvtxyW5eiEhaejX3LyIh9+RmbEmmPXpXFD9s=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=NTSnBOZb5+/pO0vzxExYkw1+qQe5vOBpllILaycsxDAmvgmLmLs0K/XxkpZrh4XijZsQ+aG7ad+6UPPUwOv+kUT53GGb3hcL3cI5B3FSSbkt7pCPS43CcxPx8FBNDP02ipaUWLg5Hz9gCigX24KeNPQR7xCCK8aYYZR0AzYH6sQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4W9MbX274yz1T4J2;
+	Fri, 28 Jun 2024 12:17:28 +0800 (CST)
+Received: from kwepemd200011.china.huawei.com (unknown [7.221.188.251])
+	by mail.maildlp.com (Postfix) with ESMTPS id A77881400C9;
+	Fri, 28 Jun 2024 12:21:54 +0800 (CST)
+Received: from kwepemd100011.china.huawei.com (7.221.188.204) by
+ kwepemd200011.china.huawei.com (7.221.188.251) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Fri, 28 Jun 2024 12:21:54 +0800
+Received: from kwepemd100011.china.huawei.com ([7.221.188.204]) by
+ kwepemd100011.china.huawei.com ([7.221.188.204]) with mapi id 15.02.1258.034;
+ Fri, 28 Jun 2024 12:21:54 +0800
+From: duchangbin <changbin.du@huawei.com>
+To: Namhyung Kim <namhyung@kernel.org>, Adrian Hunter
+	<adrian.hunter@intel.com>
+CC: Adrian Hunter <adrian.hunter@intel.com>, duchangbin
+	<changbin.du@huawei.com>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar
+	<mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, "Nathan
+ Chancellor" <nathan@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
+	<jolsa@kernel.org>, Ian Rogers <irogers@google.com>, "Liang, Kan"
+	<kan.liang@linux.intel.com>, Nick Desaulniers <ndesaulniers@google.com>,
+	"Bill Wendling" <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"llvm@lists.linux.dev" <llvm@lists.linux.dev>
+Subject: Re: [PATCH v4 1/5] perf: support specify vdso path in cmdline
+Thread-Topic: [PATCH v4 1/5] perf: support specify vdso path in cmdline
+Thread-Index: AQHaxrEVrjKiye8CdEijfxK9i0rUjrHX8X6AgAFhooCAAAG7AIACcgQAgADRDIA=
+Date: Fri, 28 Jun 2024 04:21:54 +0000
+Message-ID: <1599b5defa46422eb66885e7430cc70f@huawei.com>
+References: <20240625033740.223009-1-changbin.du@huawei.com>
+ <20240625033740.223009-2-changbin.du@huawei.com>
+ <5a9e8dae-e9d9-4a97-98f5-d76be9068342@intel.com>
+ <7eef4826a2f3494ea1dc92ed98d543fb@huawei.com>
+ <05f95eb8-9b4c-4327-a97f-a15654278c41@intel.com>
+ <Zn37bj4LER_A1bX1@google.com>
+In-Reply-To: <Zn37bj4LER_A1bX1@google.com>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-imapappendstamp: kwepemd100011.china.huawei.com (15.02.1258.034)
+x-ms-exchange-messagesentrepresentingtype: 1
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <EAA555245FA06E49B60F59A00075FFE7@huawei.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Requriment from customer to add new kcontrol to set tas2563 digital gain
-and set "Speaker Force Firmware Load" as the common kcontrol for both
-tas27871 and tas2563.
-
-Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
-
----
-v1:
- - Changed the copyright year to 2024 in tas2781-tlv.h.
- - Changed the copyright year to 2024 in tas2781.h.
- - Set "Speaker Force Firmware Load" as the common kcontrol for for both
-   tas27871 and tas2563, that is tasdevice_snd_controls.
- - Only tas2781_snd_controls only for gain setting.
- - Add tas2563_dvc_tlv kcontrol for tas2563 digital gain setting.
- - In codec probe, for tas2563, loading tas2563 gain control; for tas2781,
-   loading tas2781 gain control.
----
- include/sound/tas2781-tlv.h    | 262 ++++++++++++++++++++++++++++++++-
- include/sound/tas2781.h        |   3 +-
- sound/soc/codecs/tas2781-i2c.c | 135 ++++++++++++++++-
- 3 files changed, 392 insertions(+), 8 deletions(-)
-
-diff --git a/include/sound/tas2781-tlv.h b/include/sound/tas2781-tlv.h
-index 1dc59005d241..99c41bfc7827 100644
---- a/include/sound/tas2781-tlv.h
-+++ b/include/sound/tas2781-tlv.h
-@@ -2,7 +2,7 @@
- //
- // ALSA SoC Texas Instruments TAS2781 Audio Smart Amplifier
- //
--// Copyright (C) 2022 - 2023 Texas Instruments Incorporated
-+// Copyright (C) 2022 - 2024 Texas Instruments Incorporated
- // https://www.ti.com
- //
- // The TAS2781 driver implements a flexible and configurable
-@@ -17,5 +17,265 @@
- 
- static const __maybe_unused DECLARE_TLV_DB_SCALE(dvc_tlv, -10000, 100, 0);
- static const DECLARE_TLV_DB_SCALE(amp_vol_tlv, 1100, 50, 0);
-+static const DECLARE_TLV_DB_SCALE(tas2563_dvc_tlv, -12150, 50, 1);
- 
-+/* pow(10, db/20) * pow(2,30) */
-+static const unsigned char tas2563_dvc_table[][4] = {
-+	{ 0X00, 0X00, 0X00, 0X00 }, /* -121.5db */
-+	{ 0X00, 0X00, 0X03, 0XBC }, /* -121.0db */
-+	{ 0X00, 0X00, 0X03, 0XF5 }, /* -120.5db */
-+	{ 0X00, 0X00, 0X04, 0X31 }, /* -120.0db */
-+	{ 0X00, 0X00, 0X04, 0X71 }, /* -119.5db */
-+	{ 0X00, 0X00, 0X04, 0XB4 }, /* -119.0db */
-+	{ 0X00, 0X00, 0X04, 0XFC }, /* -118.5db */
-+	{ 0X00, 0X00, 0X05, 0X47 }, /* -118.0db */
-+	{ 0X00, 0X00, 0X05, 0X97 }, /* -117.5db */
-+	{ 0X00, 0X00, 0X05, 0XEC }, /* -117.0db */
-+	{ 0X00, 0X00, 0X06, 0X46 }, /* -116.5db */
-+	{ 0X00, 0X00, 0X06, 0XA5 }, /* -116.0db */
-+	{ 0X00, 0X00, 0X07, 0X0A }, /* -115.5db */
-+	{ 0X00, 0X00, 0X07, 0X75 }, /* -115.0db */
-+	{ 0X00, 0X00, 0X07, 0XE6 }, /* -114.5db */
-+	{ 0X00, 0X00, 0X08, 0X5E }, /* -114.0db */
-+	{ 0X00, 0X00, 0X08, 0XDD }, /* -113.5db */
-+	{ 0X00, 0X00, 0X09, 0X63 }, /* -113.0db */
-+	{ 0X00, 0X00, 0X09, 0XF2 }, /* -112.5db */
-+	{ 0X00, 0X00, 0X0A, 0X89 }, /* -112.0db */
-+	{ 0X00, 0X00, 0X0B, 0X28 }, /* -111.5db */
-+	{ 0X00, 0X00, 0X0B, 0XD2 }, /* -111.0db */
-+	{ 0X00, 0X00, 0X0C, 0X85 }, /* -110.5db */
-+	{ 0X00, 0X00, 0X0D, 0X43 }, /* -110.0db */
-+	{ 0X00, 0X00, 0X0E, 0X0C }, /* -109.5db */
-+	{ 0X00, 0X00, 0X0E, 0XE1 }, /* -109.0db */
-+	{ 0X00, 0X00, 0X0F, 0XC3 }, /* -108.5db */
-+	{ 0X00, 0X00, 0X10, 0XB2 }, /* -108.0db */
-+	{ 0X00, 0X00, 0X11, 0XAF }, /* -107.5db */
-+	{ 0X00, 0X00, 0X12, 0XBC }, /* -107.0db */
-+	{ 0X00, 0X00, 0X13, 0XD8 }, /* -106.5db */
-+	{ 0X00, 0X00, 0X15, 0X05 }, /* -106.0db */
-+	{ 0X00, 0X00, 0X16, 0X44 }, /* -105.5db */
-+	{ 0X00, 0X00, 0X17, 0X96 }, /* -105.0db */
-+	{ 0X00, 0X00, 0X18, 0XFB }, /* -104.5db */
-+	{ 0X00, 0X00, 0X1A, 0X76 }, /* -104.0db */
-+	{ 0X00, 0X00, 0X1C, 0X08 }, /* -103.5db */
-+	{ 0X00, 0X00, 0X1D, 0XB1 }, /* -103.0db */
-+	{ 0X00, 0X00, 0X1F, 0X73 }, /* -102.5db */
-+	{ 0X00, 0X00, 0X21, 0X51 }, /* -102.0db */
-+	{ 0X00, 0X00, 0X23, 0X4A }, /* -101.5db */
-+	{ 0X00, 0X00, 0X25, 0X61 }, /* -101.0db */
-+	{ 0X00, 0X00, 0X27, 0X98 }, /* -100.5db */
-+	{ 0X00, 0X00, 0X29, 0XF1 }, /* -100.0db */
-+	{ 0X00, 0X00, 0X2C, 0X6D }, /* -99.5db */
-+	{ 0X00, 0X00, 0X2F, 0X0F }, /* -99.0db */
-+	{ 0X00, 0X00, 0X31, 0XD9 }, /* -98.5db */
-+	{ 0X00, 0X00, 0X34, 0XCD }, /* -98.0db */
-+	{ 0X00, 0X00, 0X37, 0XEE }, /* -97.5db */
-+	{ 0X00, 0X00, 0X3B, 0X3F }, /* -97.0db */
-+	{ 0X00, 0X00, 0X3E, 0XC1 }, /* -96.5db */
-+	{ 0X00, 0X00, 0X42, 0X79 }, /* -96.0db */
-+	{ 0X00, 0X00, 0X46, 0X6A }, /* -95.5db */
-+	{ 0X00, 0X00, 0X4A, 0X96 }, /* -95.0db */
-+	{ 0X00, 0X00, 0X4F, 0X01 }, /* -94.5db */
-+	{ 0X00, 0X00, 0X53, 0XAF }, /* -94.0db */
-+	{ 0X00, 0X00, 0X58, 0XA5 }, /* -93.5db */
-+	{ 0X00, 0X00, 0X5D, 0XE6 }, /* -93.0db */
-+	{ 0X00, 0X00, 0X63, 0X76 }, /* -92.5db */
-+	{ 0X00, 0X00, 0X69, 0X5B }, /* -92.0db */
-+	{ 0X00, 0X00, 0X6F, 0X99 }, /* -91.5db */
-+	{ 0X00, 0X00, 0X76, 0X36 }, /* -91.0db */
-+	{ 0X00, 0X00, 0X7D, 0X37 }, /* -90.5db */
-+	{ 0X00, 0X00, 0X84, 0XA2 }, /* -90.0db */
-+	{ 0X00, 0X00, 0X8C, 0X7E }, /* -89.5db */
-+	{ 0X00, 0X00, 0X94, 0XD1 }, /* -89.0db */
-+	{ 0X00, 0X00, 0X9D, 0XA3 }, /* -88.5db */
-+	{ 0X00, 0X00, 0XA6, 0XFA }, /* -88.0db */
-+	{ 0X00, 0X00, 0XB0, 0XDF }, /* -87.5db */
-+	{ 0X00, 0X00, 0XBB, 0X5A }, /* -87.0db */
-+	{ 0X00, 0X00, 0XC6, 0X74 }, /* -86.5db */
-+	{ 0X00, 0X00, 0XD2, 0X36 }, /* -86.0db */
-+	{ 0X00, 0X00, 0XDE, 0XAB }, /* -85.5db */
-+	{ 0X00, 0X00, 0XEB, 0XDC }, /* -85.0db */
-+	{ 0X00, 0X00, 0XF9, 0XD6 }, /* -84.5db */
-+	{ 0X00, 0X01, 0X08, 0XA4 }, /* -84.0db */
-+	{ 0X00, 0X01, 0X18, 0X52 }, /* -83.5db */
-+	{ 0X00, 0X01, 0X28, 0XEF }, /* -83.0db */
-+	{ 0X00, 0X01, 0X3A, 0X87 }, /* -82.5db */
-+	{ 0X00, 0X01, 0X4D, 0X2A }, /* -82.0db */
-+	{ 0X00, 0X01, 0X60, 0XE8 }, /* -81.5db */
-+	{ 0X00, 0X01, 0X75, 0XD1 }, /* -81.0db */
-+	{ 0X00, 0X01, 0X8B, 0XF7 }, /* -80.5db */
-+	{ 0X00, 0X01, 0XA3, 0X6E }, /* -80.0db */
-+	{ 0X00, 0X01, 0XBC, 0X48 }, /* -79.5db */
-+	{ 0X00, 0X01, 0XD6, 0X9B }, /* -79.0db */
-+	{ 0X00, 0X01, 0XF2, 0X7E }, /* -78.5db */
-+	{ 0X00, 0X02, 0X10, 0X08 }, /* -78.0db */
-+	{ 0X00, 0X02, 0X2F, 0X51 }, /* -77.5db */
-+	{ 0X00, 0X02, 0X50, 0X76 }, /* -77.0db */
-+	{ 0X00, 0X02, 0X73, 0X91 }, /* -76.5db */
-+	{ 0X00, 0X02, 0X98, 0XC0 }, /* -76.0db */
-+	{ 0X00, 0X02, 0XC0, 0X24 }, /* -75.5db */
-+	{ 0X00, 0X02, 0XE9, 0XDD }, /* -75.0db */
-+	{ 0X00, 0X03, 0X16, 0X0F }, /* -74.5db */
-+	{ 0X00, 0X03, 0X44, 0XDF }, /* -74.0db */
-+	{ 0X00, 0X03, 0X76, 0X76 }, /* -73.5db */
-+	{ 0X00, 0X03, 0XAA, 0XFC }, /* -73.0db */
-+	{ 0X00, 0X03, 0XE2, 0XA0 }, /* -72.5db */
-+	{ 0X00, 0X04, 0X1D, 0X8F }, /* -72.0db */
-+	{ 0X00, 0X04, 0X5B, 0XFD }, /* -71.5db */
-+	{ 0X00, 0X04, 0X9E, 0X1D }, /* -71.0db */
-+	{ 0X00, 0X04, 0XE4, 0X29 }, /* -70.5db */
-+	{ 0X00, 0X05, 0X2E, 0X5A }, /* -70.0db */
-+	{ 0X00, 0X05, 0X7C, 0XF2 }, /* -69.5db */
-+	{ 0X00, 0X05, 0XD0, 0X31 }, /* -69.0db */
-+	{ 0X00, 0X06, 0X28, 0X60 }, /* -68.5db */
-+	{ 0X00, 0X06, 0X85, 0XC8 }, /* -68.0db */
-+	{ 0X00, 0X06, 0XE8, 0XB9 }, /* -67.5db */
-+	{ 0X00, 0X07, 0X51, 0X86 }, /* -67.0db */
-+	{ 0X00, 0X07, 0XC0, 0X8A }, /* -66.5db */
-+	{ 0X00, 0X08, 0X36, 0X21 }, /* -66.0db */
-+	{ 0X00, 0X08, 0XB2, 0XB0 }, /* -65.5db */
-+	{ 0X00, 0X09, 0X36, 0XA1 }, /* -65.0db */
-+	{ 0X00, 0X09, 0XC2, 0X63 }, /* -64.5db */
-+	{ 0X00, 0X0A, 0X56, 0X6D }, /* -64.0db */
-+	{ 0X00, 0X0A, 0XF3, 0X3C }, /* -63.5db */
-+	{ 0X00, 0X0B, 0X99, 0X56 }, /* -63.0db */
-+	{ 0X00, 0X0C, 0X49, 0X48 }, /* -62.5db */
-+	{ 0X00, 0X0D, 0X03, 0XA7 }, /* -62.0db */
-+	{ 0X00, 0X0D, 0XC9, 0X11 }, /* -61.5db */
-+	{ 0X00, 0X0E, 0X9A, 0X2D }, /* -61.0db */
-+	{ 0X00, 0X0F, 0X77, 0XAD }, /* -60.5db */
-+	{ 0X00, 0X10, 0X62, 0X4D }, /* -60.0db */
-+	{ 0X00, 0X11, 0X5A, 0XD5 }, /* -59.5db */
-+	{ 0X00, 0X12, 0X62, 0X16 }, /* -59.0db */
-+	{ 0X00, 0X13, 0X78, 0XF0 }, /* -58.5db */
-+	{ 0X00, 0X14, 0XA0, 0X50 }, /* -58.0db */
-+	{ 0X00, 0X15, 0XD9, 0X31 }, /* -57.5db */
-+	{ 0X00, 0X17, 0X24, 0X9C }, /* -57.0db */
-+	{ 0X00, 0X18, 0X83, 0XAA }, /* -56.5db */
-+	{ 0X00, 0X19, 0XF7, 0X86 }, /* -56.0db */
-+	{ 0X00, 0X1B, 0X81, 0X6A }, /* -55.5db */
-+	{ 0X00, 0X1D, 0X22, 0XA4 }, /* -55.0db */
-+	{ 0X00, 0X1E, 0XDC, 0X98 }, /* -54.5db */
-+	{ 0X00, 0X20, 0XB0, 0XBC }, /* -54.0db */
-+	{ 0X00, 0X22, 0XA0, 0X9D }, /* -53.5db */
-+	{ 0X00, 0X24, 0XAD, 0XE0 }, /* -53.0db */
-+	{ 0X00, 0X26, 0XDA, 0X43 }, /* -52.5db */
-+	{ 0X00, 0X29, 0X27, 0X9D }, /* -52.0db */
-+	{ 0X00, 0X2B, 0X97, 0XE3 }, /* -51.5db */
-+	{ 0X00, 0X2E, 0X2D, 0X27 }, /* -51.0db */
-+	{ 0X00, 0X30, 0XE9, 0X9A }, /* -50.5db */
-+	{ 0X00, 0X33, 0XCF, 0X8D }, /* -50.0db */
-+	{ 0X00, 0X36, 0XE1, 0X78 }, /* -49.5db */
-+	{ 0X00, 0X3A, 0X21, 0XF3 }, /* -49.0db */
-+	{ 0X00, 0X3D, 0X93, 0XC3 }, /* -48.5db */
-+	{ 0X00, 0X41, 0X39, 0XD3 }, /* -48.0db */
-+	{ 0X00, 0X45, 0X17, 0X3B }, /* -47.5db */
-+	{ 0X00, 0X49, 0X2F, 0X44 }, /* -47.0db */
-+	{ 0X00, 0X4D, 0X85, 0X66 }, /* -46.5db */
-+	{ 0X00, 0X52, 0X1D, 0X50 }, /* -46.0db */
-+	{ 0X00, 0X56, 0XFA, 0XE8 }, /* -45.5db */
-+	{ 0X00, 0X5C, 0X22, 0X4E }, /* -45.0db */
-+	{ 0X00, 0X61, 0X97, 0XE1 }, /* -44.5db */
-+	{ 0X00, 0X67, 0X60, 0X44 }, /* -44.0db */
-+	{ 0X00, 0X6D, 0X80, 0X60 }, /* -43.5db */
-+	{ 0X00, 0X73, 0XFD, 0X65 }, /* -43.0db */
-+	{ 0X00, 0X7A, 0XDC, 0XD7 }, /* -42.5db */
-+	{ 0X00, 0X82, 0X24, 0X8A }, /* -42.0db */
-+	{ 0X00, 0X89, 0XDA, 0XAB }, /* -41.5db */
-+	{ 0X00, 0X92, 0X05, 0XC6 }, /* -41.0db */
-+	{ 0X00, 0X9A, 0XAC, 0XC8 }, /* -40.5db */
-+	{ 0X00, 0XA3, 0XD7, 0X0A }, /* -40.0db */
-+	{ 0X00, 0XAD, 0X8C, 0X52 }, /* -39.5db */
-+	{ 0X00, 0XB7, 0XD4, 0XDD }, /* -39.0db */
-+	{ 0X00, 0XC2, 0XB9, 0X65 }, /* -38.5db */
-+	{ 0X00, 0XCE, 0X43, 0X28 }, /* -38.0db */
-+	{ 0X00, 0XDA, 0X7B, 0XF1 }, /* -37.5db */
-+	{ 0X00, 0XE7, 0X6E, 0X1E }, /* -37.0db */
-+	{ 0X00, 0XF5, 0X24, 0XAC }, /* -36.5db */
-+	{ 0X01, 0X03, 0XAB, 0X3D }, /* -36.0db */
-+	{ 0X01, 0X13, 0X0E, 0X24 }, /* -35.5db */
-+	{ 0X01, 0X23, 0X5A, 0X71 }, /* -35.0db */
-+	{ 0X01, 0X34, 0X9D, 0XF8 }, /* -34.5db */
-+	{ 0X01, 0X46, 0XE7, 0X5D }, /* -34.0db */
-+	{ 0X01, 0X5A, 0X46, 0X27 }, /* -33.5db */
-+	{ 0X01, 0X6E, 0XCA, 0XC5 }, /* -33.0db */
-+	{ 0X01, 0X84, 0X86, 0X9F }, /* -32.5db */
-+	{ 0X01, 0X9B, 0X8C, 0X27 }, /* -32.0db */
-+	{ 0X01, 0XB3, 0XEE, 0XE5 }, /* -31.5db */
-+	{ 0X01, 0XCD, 0XC3, 0X8C }, /* -31.0db */
-+	{ 0X01, 0XE9, 0X20, 0X05 }, /* -30.5db */
-+	{ 0X02, 0X06, 0X1B, 0X89 }, /* -30.0db */
-+	{ 0X02, 0X24, 0XCE, 0XB0 }, /* -29.5db */
-+	{ 0X02, 0X45, 0X53, 0X85 }, /* -29.0db */
-+	{ 0X02, 0X67, 0XC5, 0XA2 }, /* -28.5db */
-+	{ 0X02, 0X8C, 0X42, 0X3F }, /* -28.0db */
-+	{ 0X02, 0XB2, 0XE8, 0X55 }, /* -27.5db */
-+	{ 0X02, 0XDB, 0XD8, 0XAD }, /* -27.0db */
-+	{ 0X03, 0X07, 0X36, 0X05 }, /* -26.5db */
-+	{ 0X03, 0X35, 0X25, 0X29 }, /* -26.0db */
-+	{ 0X03, 0X65, 0XCD, 0X13 }, /* -25.5db */
-+	{ 0X03, 0X99, 0X57, 0X0C }, /* -25.0db */
-+	{ 0X03, 0XCF, 0XEE, 0XCF }, /* -24.5db */
-+	{ 0X04, 0X09, 0XC2, 0XB0 }, /* -24.0db */
-+	{ 0X04, 0X47, 0X03, 0XC1 }, /* -23.5db */
-+	{ 0X04, 0X87, 0XE5, 0XFB }, /* -23.0db */
-+	{ 0X04, 0XCC, 0XA0, 0X6D }, /* -22.5db */
-+	{ 0X05, 0X15, 0X6D, 0X68 }, /* -22.0db */
-+	{ 0X05, 0X62, 0X8A, 0XB3 }, /* -21.5db */
-+	{ 0X05, 0XB4, 0X39, 0XBC }, /* -21.0db */
-+	{ 0X06, 0X0A, 0XBF, 0XD4 }, /* -20.5db */
-+	{ 0X06, 0X66, 0X66, 0X66 }, /* -20.0db */
-+	{ 0X06, 0XC7, 0X7B, 0X36 }, /* -19.5db */
-+	{ 0X07, 0X2E, 0X50, 0XA6 }, /* -19.0db */
-+	{ 0X07, 0X9B, 0X3D, 0XF6 }, /* -18.5db */
-+	{ 0X08, 0X0E, 0X9F, 0X96 }, /* -18.0db */
-+	{ 0X08, 0X88, 0XD7, 0X6D }, /* -17.5db */
-+	{ 0X09, 0X0A, 0X4D, 0X2F }, /* -17.0db */
-+	{ 0X09, 0X93, 0X6E, 0XB8 }, /* -16.5db */
-+	{ 0X0A, 0X24, 0XB0, 0X62 }, /* -16.0db */
-+	{ 0X0A, 0XBE, 0X8D, 0X70 }, /* -15.5db */
-+	{ 0X0B, 0X61, 0X88, 0X71 }, /* -15.0db */
-+	{ 0X0C, 0X0E, 0X2B, 0XB0 }, /* -14.5db */
-+	{ 0X0C, 0XC5, 0X09, 0XAB }, /* -14.0db */
-+	{ 0X0D, 0X86, 0XBD, 0X8D }, /* -13.5db */
-+	{ 0X0E, 0X53, 0XEB, 0XB3 }, /* -13.0db */
-+	{ 0X0F, 0X2D, 0X42, 0X38 }, /* -12.5db */
-+	{ 0X10, 0X13, 0X79, 0X87 }, /* -12.0db */
-+	{ 0X11, 0X07, 0X54, 0XF9 }, /* -11.5db */
-+	{ 0X12, 0X09, 0XA3, 0X7A }, /* -11.0db */
-+	{ 0X13, 0X1B, 0X40, 0X39 }, /* -10.5db */
-+	{ 0X14, 0X3D, 0X13, 0X62 }, /* -10.0db */
-+	{ 0X15, 0X70, 0X12, 0XE1 }, /* -9.5db */
-+	{ 0X16, 0XB5, 0X43, 0X37 }, /* -9.0db */
-+	{ 0X18, 0X0D, 0XB8, 0X54 }, /* -8.5db */
-+	{ 0X19, 0X7A, 0X96, 0X7F }, /* -8.0db */
-+	{ 0X1A, 0XFD, 0X13, 0X54 }, /* -7.5db */
-+	{ 0X1C, 0X96, 0X76, 0XC6 }, /* -7.0db */
-+	{ 0X1E, 0X48, 0X1C, 0X37 }, /* -6.5db */
-+	{ 0X20, 0X13, 0X73, 0X9E }, /* -6.0db */
-+	{ 0X21, 0XFA, 0X02, 0XBF }, /* -5.5db */
-+	{ 0X23, 0XFD, 0X66, 0X78 }, /* -5.0db */
-+	{ 0X26, 0X1F, 0X54, 0X1C }, /* -4.5db */
-+	{ 0X28, 0X61, 0X9A, 0XE9 }, /* -4.0db */
-+	{ 0X2A, 0XC6, 0X25, 0X91 }, /* -3.5db */
-+	{ 0X2D, 0X4E, 0XFB, 0XD5 }, /* -3.0db */
-+	{ 0X2F, 0XFE, 0X44, 0X48 }, /* -2.5db */
-+	{ 0X32, 0XD6, 0X46, 0X17 }, /* -2.0db */
-+	{ 0X35, 0XD9, 0X6B, 0X02 }, /* -1.5db */
-+	{ 0X39, 0X0A, 0X41, 0X5F }, /* -1.0db */
-+	{ 0X3C, 0X6B, 0X7E, 0X4F }, /* -0.5db */
-+	{ 0X40, 0X00, 0X00, 0X00 }, /* 0.0db */
-+	{ 0X43, 0XCA, 0XD0, 0X22 }, /* 0.5db */
-+	{ 0X47, 0XCF, 0X26, 0X7D }, /* 1.0db */
-+	{ 0X4C, 0X10, 0X6B, 0XA5 }, /* 1.5db */
-+	{ 0X50, 0X92, 0X3B, 0XE3 }, /* 2.0db */
-+	{ 0X55, 0X58, 0X6A, 0X46 }, /* 2.5db */
-+	{ 0X5A, 0X67, 0X03, 0XDF }, /* 3.0db */
-+	{ 0X5F, 0XC2, 0X53, 0X32 }, /* 3.5db */
-+	{ 0X65, 0X6E, 0XE3, 0XDB }, /* 4.0db */
-+	{ 0X6B, 0X71, 0X86, 0X68 }, /* 4.5db */
-+	{ 0X71, 0XCF, 0X54, 0X71 }, /* 5.0db */
-+	{ 0X78, 0X8D, 0XB4, 0XE9 }, /* 5.5db */
-+	{ 0XFF, 0XFF, 0XFF, 0XFF }, /* 6.0db */
-+};
- #endif
-diff --git a/include/sound/tas2781.h b/include/sound/tas2781.h
-index cd8ce522b78e..3275575f5bfb 100644
---- a/include/sound/tas2781.h
-+++ b/include/sound/tas2781.h
-@@ -2,7 +2,7 @@
- //
- // ALSA SoC Texas Instruments TAS2563/TAS2781 Audio Smart Amplifier
- //
--// Copyright (C) 2022 - 2023 Texas Instruments Incorporated
-+// Copyright (C) 2022 - 2024 Texas Instruments Incorporated
- // https://www.ti.com
- //
- // The TAS2563/TAS2781 driver implements a flexible and configurable
-@@ -50,6 +50,7 @@
- #define TASDEVICE_I2CChecksum		TASDEVICE_REG(0x0, 0x0, 0x7E)
- 
- /* Volume control */
-+#define TAS2563_DVC_LVL			TASDEVICE_REG(0x00, 0x02, 0x0C)
- #define TAS2781_DVC_LVL			TASDEVICE_REG(0x0, 0x0, 0x1A)
- #define TAS2781_AMP_LEVEL		TASDEVICE_REG(0x0, 0x0, 0x03)
- #define TAS2781_AMP_LEVEL_MASK		GENMASK(5, 1)
-diff --git a/sound/soc/codecs/tas2781-i2c.c b/sound/soc/codecs/tas2781-i2c.c
-index 4d1a0d836e77..4960ab6577f7 100644
---- a/sound/soc/codecs/tas2781-i2c.c
-+++ b/sound/soc/codecs/tas2781-i2c.c
-@@ -30,6 +30,7 @@
- #include <sound/tas2781.h>
- #include <sound/tlv.h>
- #include <sound/tas2781-tlv.h>
-+#include <asm/unaligned.h>
- 
- static const struct i2c_device_id tasdevice_id[] = {
- 	{ "tas2563", TAS2563 },
-@@ -103,7 +104,7 @@ static int tas2781_amp_putvol(struct snd_kcontrol *kcontrol,
- 	return tasdevice_amp_putvol(tas_priv, ucontrol, mc);
- }
- 
--static int tas2781_force_fwload_get(struct snd_kcontrol *kcontrol,
-+static int tasdev_force_fwload_get(struct snd_kcontrol *kcontrol,
- 	struct snd_ctl_elem_value *ucontrol)
- {
- 	struct snd_soc_component *component =
-@@ -118,7 +119,7 @@ static int tas2781_force_fwload_get(struct snd_kcontrol *kcontrol,
- 	return 0;
- }
- 
--static int tas2781_force_fwload_put(struct snd_kcontrol *kcontrol,
-+static int tasdev_force_fwload_put(struct snd_kcontrol *kcontrol,
- 	struct snd_ctl_elem_value *ucontrol)
- {
- 	struct snd_soc_component *component =
-@@ -127,18 +128,114 @@ static int tas2781_force_fwload_put(struct snd_kcontrol *kcontrol,
- 		snd_soc_component_get_drvdata(component);
- 	bool change, val = (bool)ucontrol->value.integer.value[0];
- 
-+	mutex_lock(&tas_priv->codec_lock);
- 	if (tas_priv->force_fwload_status == val)
- 		change = false;
- 	else {
- 		change = true;
- 		tas_priv->force_fwload_status = val;
- 	}
-+	mutex_unlock(&tas_priv->codec_lock);
- 	dev_dbg(tas_priv->dev, "%s : Force FWload %s\n", __func__,
- 		tas_priv->force_fwload_status ? "ON" : "OFF");
- 
- 	return change;
- }
- 
-+static int tas2563_digital_gain_get(
-+	struct snd_kcontrol *kcontrol,
-+	struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct soc_mixer_control *mc =
-+		(struct soc_mixer_control *)kcontrol->private_value;
-+	struct snd_soc_component *codec = snd_soc_kcontrol_component(kcontrol);
-+	struct tasdevice_priv *tas_dev = snd_soc_component_get_drvdata(codec);
-+	unsigned int l = 0, r = mc->max;
-+	unsigned int target, ar_mid, mid, ar_l, ar_r;
-+	unsigned int reg = mc->reg;
-+	unsigned char data[4];
-+	int ret;
-+
-+	mutex_lock(&tas_dev->codec_lock);
-+	/* Read the primary device */
-+	ret =  tasdevice_dev_bulk_read(tas_dev, 0, reg, data, 4);
-+	if (ret) {
-+		dev_err(tas_dev->dev, "%s, get AMP vol error\n", __func__);
-+		goto out;
-+	}
-+
-+	target = get_unaligned_be32(&data[0]);
-+
-+	while (r > 1 + l) {
-+		mid = (l + r) / 2;
-+		ar_mid = get_unaligned_be32(tas2563_dvc_table[mid]);
-+		if (target < ar_mid)
-+			r = mid;
-+		else
-+			l = mid;
-+	}
-+
-+	ar_l = get_unaligned_be32(tas2563_dvc_table[l]);
-+	ar_r = get_unaligned_be32(tas2563_dvc_table[r]);
-+
-+	/* find out the member same as or closer to the current volume */
-+	ucontrol->value.integer.value[0] =
-+		abs(target - ar_l) <= abs(target - ar_r) ? l : r;
-+out:
-+	mutex_unlock(&tas_dev->codec_lock);
-+	return 0;
-+}
-+
-+static int tas2563_digital_gain_put(
-+	struct snd_kcontrol *kcontrol,
-+	struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct soc_mixer_control *mc =
-+		(struct soc_mixer_control *)kcontrol->private_value;
-+	struct snd_soc_component *codec = snd_soc_kcontrol_component(kcontrol);
-+	struct tasdevice_priv *tas_dev = snd_soc_component_get_drvdata(codec);
-+	unsigned int reg = mc->reg;
-+	unsigned int volrd, volwr;
-+	int vol = ucontrol->value.integer.value[0];
-+	int max = mc->max, i, ret = 1;
-+	unsigned char data[4];
-+
-+	vol = clamp(vol, 0, max);
-+	mutex_lock(&tas_dev->codec_lock);
-+	/* Read the primary device */
-+	ret =  tasdevice_dev_bulk_read(tas_dev, 0, reg, data, 4);
-+	if (ret) {
-+		dev_err(tas_dev->dev, "%s, get AMP vol error\n", __func__);
-+		goto out;
-+	}
-+
-+	volrd = get_unaligned_be32(&data[0]);
-+	volwr = get_unaligned_be32(tas2563_dvc_table[vol]);
-+
-+	if (volrd == volwr) {
-+		ret = 0;
-+		goto out;
-+	}
-+
-+	for (i = 0; i < tas_dev->ndev; i++) {
-+		ret = tasdevice_dev_bulk_write(tas_dev, i, reg,
-+			(unsigned char *)tas2563_dvc_table[vol], 4);
-+		if (ret)
-+			dev_err(tas_dev->dev,
-+				"%s, set digital vol error in device %d\n",
-+				__func__, i);
-+	}
-+
-+out:
-+	mutex_unlock(&tas_dev->codec_lock);
-+	return ret;
-+}
-+
-+static const struct snd_kcontrol_new tasdevice_snd_controls[] = {
-+	SOC_SINGLE_BOOL_EXT("Speaker Force Firmware Load", 0,
-+		tasdev_force_fwload_get, tasdev_force_fwload_put),
-+};
-+
- static const struct snd_kcontrol_new tas2781_snd_controls[] = {
- 	SOC_SINGLE_RANGE_EXT_TLV("Speaker Analog Gain", TAS2781_AMP_LEVEL,
- 		1, 0, 20, 0, tas2781_amp_getvol,
-@@ -146,8 +243,13 @@ static const struct snd_kcontrol_new tas2781_snd_controls[] = {
- 	SOC_SINGLE_RANGE_EXT_TLV("Speaker Digital Gain", TAS2781_DVC_LVL,
- 		0, 0, 200, 1, tas2781_digital_getvol,
- 		tas2781_digital_putvol, dvc_tlv),
--	SOC_SINGLE_BOOL_EXT("Speaker Force Firmware Load", 0,
--		tas2781_force_fwload_get, tas2781_force_fwload_put),
-+};
-+
-+static const struct snd_kcontrol_new tas2563_snd_controls[] = {
-+	SOC_SINGLE_RANGE_EXT_TLV("Speaker Digital Gain", TAS2563_DVC_LVL, 0,
-+		0, ARRAY_SIZE(tas2563_dvc_table) - 1, 0,
-+		tas2563_digital_gain_get, tas2563_digital_gain_put,
-+		tas2563_dvc_tlv),
- };
- 
- static int tasdevice_set_profile_id(struct snd_kcontrol *kcontrol,
-@@ -578,6 +680,27 @@ static struct snd_soc_dai_driver tasdevice_dai_driver[] = {
- static int tasdevice_codec_probe(struct snd_soc_component *codec)
- {
- 	struct tasdevice_priv *tas_priv = snd_soc_component_get_drvdata(codec);
-+	int rc;
-+
-+	if (tas_priv->chip_id == TAS2781) {
-+		rc = snd_soc_add_component_controls(codec,
-+			tas2781_snd_controls,
-+			ARRAY_SIZE(tas2781_snd_controls));
-+		if (rc < 0) {
-+			dev_err(tas_priv->dev, "%s: Add control err rc = %d",
-+				__func__, rc);
-+			return rc;
-+		}
-+	} else {
-+		rc = snd_soc_add_component_controls(codec,
-+			tas2563_snd_controls,
-+			ARRAY_SIZE(tas2563_snd_controls));
-+		if (rc < 0) {
-+			dev_err(tas_priv->dev, "%s: Add control err rc = %d",
-+				__func__, rc);
-+			return rc;
-+		}
-+	}
- 
- 	tas_priv->name_prefix = codec->name_prefix;
- 	return tascodec_init(tas_priv, codec, THIS_MODULE, tasdevice_fw_ready);
-@@ -605,8 +728,8 @@ static const struct snd_soc_component_driver
- 	soc_codec_driver_tasdevice = {
- 	.probe			= tasdevice_codec_probe,
- 	.remove			= tasdevice_codec_remove,
--	.controls		= tas2781_snd_controls,
--	.num_controls		= ARRAY_SIZE(tas2781_snd_controls),
-+	.controls		= tasdevice_snd_controls,
-+	.num_controls		= ARRAY_SIZE(tasdevice_snd_controls),
- 	.dapm_widgets		= tasdevice_dapm_widgets,
- 	.num_dapm_widgets	= ARRAY_SIZE(tasdevice_dapm_widgets),
- 	.dapm_routes		= tasdevice_audio_map,
--- 
-2.34.1
-
+T24gVGh1LCBKdW4gMjcsIDIwMjQgYXQgMDQ6NTM6MThQTSAtMDcwMCwgTmFtaHl1bmcgS2ltIHdy
+b3RlOg0KPiBIZWxsbyBndXlzLA0KPiANCj4gT24gV2VkLCBKdW4gMjYsIDIwMjQgYXQgMDE6MzI6
+NDJQTSArMDMwMCwgQWRyaWFuIEh1bnRlciB3cm90ZToNCj4gPiBPbiAyNi8wNi8yNCAwNToyNiwg
+ZHVjaGFuZ2JpbiB3cm90ZToNCj4gPiA+IE9uIFR1ZSwgSnVuIDI1LCAyMDI0IGF0IDA0OjIwOjQ5
+UE0gKzAzMDAsIEFkcmlhbiBIdW50ZXIgd3JvdGU6DQo+ID4gPj4gT24gMjUvMDYvMjQgMDY6Mzcs
+IENoYW5nYmluIER1IHdyb3RlOg0KPiA+ID4+PiBUaGUgdmRzbyBkdW1wZWQgZnJvbSBwcm9jZXNz
+IG1lbW9yeSAoaW4gYnVpbGRpZC1jYWNoZSkgbGFja3MgZGVidWdnaW5nDQo+ID4gPj4+IGluZm8u
+IFRvIGFubm90YXRlIHZkc28gc3ltYm9scyB3aXRoIHNvdXJjZSBsaW5lcyB3ZSBuZWVkIHNwZWNp
+ZnkgYQ0KPiA+ID4+PiBkZWJ1Z2dpbmcgdmVyc2lvbi4NCj4gPiA+Pj4NCj4gPiA+Pj4gRm9yIHg4
+Niwgd2UgY2FuIGZpbmQgdGhlbSBmcm9tIHlvdXIgbG9jYWwgYnVpbGQgYXMNCj4gPiA+Pj4gYXJj
+aC94ODYvZW50cnkvdmRzby92ZHNvezMyLDY0fS5zby5kYmcuIE9yIHRoZXkgbWF5IHJlc2lkZSBp
+bg0KPiA+ID4+PiAvbGliL21vZHVsZXMvPHZlcnNpb24+L3Zkc28vdmRzb3szMiw2NH0uc28gb24g
+VWJ1bnR1LiBCdXQgbm90aWNlIHRoYXQNCj4gPiA+Pj4gdGhlIGJ1aWxkaWQgaGFzIHRvIG1hdGNo
+Lg0KPiA+ID4+Pg0KPiA+ID4+PiAkIHN1ZG8gcGVyZiByZWNvcmQgLWENCj4gPiA+Pj4gJCBzdWRv
+IHBlcmYgcmVwb3J0IC0tb2JqZHVtcD1sbHZtLW9iamR1bXAgXA0KPiA+ID4+PiAgIC0tdmRzbyBh
+cmNoL3g4Ni9lbnRyeS92ZHNvL3Zkc282NC5zby5kYmcsYXJjaC94ODYvZW50cnkvdmRzby92ZHNv
+MzIuc28uZGJnDQo+ID4gPj4+DQo+ID4gPj4+IFNhbXBsZXM6IDE3SyBvZiBldmVudCAnY3ljbGVz
+OlAnLCA0MDAwIEh6LCBFdmVudCBjb3VudCAoYXBwcm94Lik6IDE3NjANCj4gPiA+Pj4gX192ZHNv
+X2Nsb2NrX2dldHRpbWUgIC93b3JrL2xpbnV4LWhvc3QvYXJjaC94ODYvZW50cnkvdmRzby92ZHNv
+NjQuc28uZA0KPiA+ID4+PiBQZXJjZW504pSCICAgICAgIG1vdnEgICAgLTQ4KCVyYnApLCVyc2kN
+Cj4gPiA+Pj4gICAgICAgIOKUgiAgICAgICB0ZXN0cSAgICVyYXgsJXJheA0KPiA+ID4+PiAgICAg
+ICAg4pSCICAgICA7ICAgICAgICAgICAgICAgcmV0dXJuIHZyZWFkX2h2Y2xvY2soKTsNCj4gPiA+
+Pj4gICAgICAgIOKUgiAgICAgICBtb3ZxICAgICVyYXgsJXJkeA0KPiA+ID4+PiAgICAgICAg4pSC
+ICAgICA7ICAgICAgICAgICAgICAgaWYgKHVubGlrZWx5KCF2ZHNvX2N5Y2xlc19vayhjeWNsZXMp
+KSkNCj4gPiA+Pj4gICAgICAgIOKUgiAgICAg4oaRIGpzICAgICAgZWINCj4gPiA+Pj4gICAgICAg
+IOKUgiAgICAg4oaRIGptcCAgICAgNzQNCj4gPiA+Pj4gICAgICAgIOKUgiAgICAgOyAgICAgICAg
+ICAgICAgIHRzLT50dl9zZWMgPSB2ZHNvX3RzLT5zZWM7DQo+ID4gPj4+ICAgMC4wMiDilIIxNDc6
+ICAgbGVhcSAgICAyKCVyYngpLCVyYXgNCj4gPiA+Pj4gICAgICAgIOKUgiAgICAgICBzaGxxICAg
+ICQ0LCAlcmF4DQo+ID4gPj4+ICAgICAgICDilIIgICAgICAgYWRkcSAgICAlcjEwLCVyYXgNCj4g
+PiA+Pj4gICAgICAgIOKUgiAgICAgOyAgICAgICAgICAgICAgIHdoaWxlICgoc2VxID0gUkVBRF9P
+TkNFKHZkLT5zZXEpKSAmIDEpIHsNCj4gPiA+Pj4gICA5LjM4IOKUgjE1MjogICBtb3ZsICAgICgl
+cjEwKSwlZWN4DQo+ID4gPj4+DQo+ID4gPj4+IFdoZW4gZG9pbmcgY3Jvc3MgcGxhdGZvcm0gYW5h
+bHlzaXMsIHdlIGFsc28gbmVlZCBzcGVjaWZ5IHRoZSB2ZHNvIHBhdGggaWYNCj4gPiA+Pj4gd2Ug
+YXJlIGludGVyZXN0ZWQgaW4gaXRzIHN5bWJvbHMuDQo+ID4gPj4NCj4gPiA+PiBXb3VsZCBpdCBi
+ZSBwb3NzaWJsZSB0byBhZGQgdmRzbyBhbmQgdmRzbyBkZWJ1ZyB0byB0aGUgYnVpbGQtaWQNCj4g
+PiA+PiBjYWNoZSBhbmQgZW5zdXJlIHBlcmYgY2FuIGZpbmQgaXQgdGhlcmU/DQo+ID4gPj4NCj4g
+PiA+PiBUeXBpY2FsbHksIGdldHRpbmcgZHNvcyBmcm9tIGFub3RoZXIgbWFjaGluZSBpcyBoYW5k
+bGVkIHZpYQ0KPiA+ID4+IGJ1aWxkLWlkIGNhY2hlIGUuZy4gd2hhdCBwZXJmLWFyY2hpdmUgZG9l
+cw0KPiA+ID4+DQo+ID4gPiBIbW0uIEkgYWdyZWUgdGhpcyBpcyBiZXR0ZXIgYWx0ZXJuYXRpdmUg
+YXBwcm9hY2ggZm9yIGNyb3NzLW1hY2hpbmUgYW5hbHlzaXMuDQo+ID4gPiBXaGVuIGNvbGxlY3Rp
+bmcgdmRzb3MgdG8gYnVpbGRpZCBjYWNoZSwgSSB0aGluayB3ZSBjYW4gdXNlIHRoZSBsb2NhbCBz
+ZWFyY2hlZA0KPiA+ID4gb2JqZWN0cyAod2l0aCBkZWJ1ZyBzeW1ib2xzKSBpbnN0ZWFkIGlmIGl0
+cyBidWlsZC1pZCBtYXRjaGVzIHZkc29zIGZyb20gcHJvY2Vzcw0KPiA+ID4gZHVtcGluZyAodGhl
+IHJlYWwgY29kZSByYW4pLg0KPiA+ID4gDQo+ID4gPiBDdXJyZW50bHkgSSBqdXN0IGZvbGxvdyB3
+aGF0IHBlcmYgZG9lcyBmb3Igdm1saW51eCBzbyB0byByZXVzZSBtb3N0IG9mIGV4aXN0aW5nDQo+
+ID4gPiBjb2RlLiBNYXliZSB2bWxpbnV4IGlzIHRvbyBiaWcgdG8gYWRkIHRvIGJ1aWxkaWQtY2Fo
+Y2U/DQo+ID4gPiANCj4gPiA+IENhbiB3ZSBrZWVwIG91ciBjdXJyZW50IHN0cmF0ZWd5IGZvciBu
+b3c/IEknbGwgdGhpbmsgYWJvdXQgYWJvdmUgb3B0aW9ucyB3aGVuDQo+ID4gPiBJIGhhdmUgbW9y
+ZSB0aW1lLg0KPiA+ID4gDQo+ID4gDQo+ID4gSSB0cmllZCBhZGRpbmcgdmRzbyB2aWEgcGVyZiBi
+dWlsZGlkLWNhY2hlLiAgSXQgZG9lc24ndCB3b3JrIG9ubHkNCj4gPiBiZWNhdXNlIHRoZSBsb29r
+dXAgZXhwZWN0cyB0aGUgYmFzZW5hbWUgdG8gYmUgInZkc28iIGJ1dCBpdCBpcw0KPiA+ICJlbGYi
+Lg0KPiA+IA0KPiA+IEFkZGluZyBhIGxpbmsgZnJvbSAidmRzbyIgdG8gImVsZiIgbWFkZSBpdCB3
+b3JrIGUuZy4NCj4gPiANCj4gPiAkIGNhdCBnZXR0aW1lb2ZkYXktdGVzdC5jDQo+ID4gI2luY2x1
+ZGUgPHN0ZGlvLmg+DQo+ID4gI2luY2x1ZGUgPHN5cy90aW1lLmg+DQo+ID4gDQo+ID4gaW50IG1h
+aW4oKQ0KPiA+IHsNCj4gPiAgICAgICAgIHN0cnVjdCB0aW1ldmFsIHR2Ow0KPiA+ICAgICAgICAg
+aW50IHJldDsNCj4gPiANCj4gPiAgICAgICAgIHJldCA9IGdldHRpbWVvZmRheSgmdHYsIE5VTEwp
+Ow0KPiA+ICAgICAgICAgaWYgKHJldCA9PSAtMSkgew0KPiA+ICAgICAgICAgICAgICAgICBmcHJp
+bnRmKHN0ZGVyciwgImdldHRpbWVvZmRheSBmYWlsZWRcbiIpOw0KPiA+ICAgICAgICAgICAgICAg
+ICByZXR1cm4gMTsNCj4gPiAgICAgICAgIH0NCj4gPiANCj4gPiAgICAgICAgIHByaW50ZigiJWx1
+LiVsdVxuIiwgKHVuc2lnbmVkIGxvbmcpdHYudHZfc2VjLCAodW5zaWduZWQgbG9uZyl0di50dl91
+c2VjKTsNCj4gPiANCj4gPiAgICAgICAgIHJldHVybiAwOw0KPiA+ICQgcGVyZiByZWNvcmQgLWUg
+aW50ZWxfcHQvL3UgLi9nZXR0aW1lb2ZkYXktdGVzdA0KPiA+IDE3MTkzOTcwNDIuODkyODM3DQo+
+ID4gWyBwZXJmIHJlY29yZDogV29rZW4gdXAgMSB0aW1lcyB0byB3cml0ZSBkYXRhIF0NCj4gPiBb
+IHBlcmYgcmVjb3JkOiBDYXB0dXJlZCBhbmQgd3JvdGUgMC4wMjYgTUIgcGVyZi5kYXRhIF0NCj4g
+PiAkIHBlcmYgc2NyaXB0IC0taXRyYWNlPWUNCj4gPiAkIHBlcmYgYnVpbGRpZC1jYWNoZSAtLXJl
+bW92ZSAvbGliL21vZHVsZXMvNi41LjAtNDEtZ2VuZXJpYy92ZHNvL3Zkc282NC5zbw0KPiA+ICQg
+cGVyZiBzY3JpcHQgLS1pdHJhY2U9ZQ0KPiA+IFdhcm5pbmc6DQo+ID4gMiBpbnN0cnVjdGlvbiB0
+cmFjZSBlcnJvcnMNCj4gPiAgaW5zdHJ1Y3Rpb24gdHJhY2UgZXJyb3IgdHlwZSAxIHRpbWUgNTI1
+MzQ1LjM4NjQyNDIwNCBjcHUgNCBwaWQgMTk4OTc2IHRpZCAxOTg5NzYgaXAgMHg3ZmZkZGIwZThl
+MDAgY29kZSA1OiBGYWlsZWQgdG8gZ2V0IGluc3RydWN0aW9uDQo+ID4gIGluc3RydWN0aW9uIHRy
+YWNlIGVycm9yIHR5cGUgMSB0aW1lIDUyNTM0NS4zODY0MjQ4MjkgY3B1IDQgcGlkIDE5ODk3NiB0
+aWQgMTk4OTc2IGlwIDB4N2ZmZGRiMGU4ODRkIGNvZGUgNTogRmFpbGVkIHRvIGdldCBpbnN0cnVj
+dGlvbg0KPiA+ICQgcGVyZiBidWlsZGlkLWNhY2hlIC0tYWRkIC9saWIvbW9kdWxlcy82LjUuMC00
+MS1nZW5lcmljL3Zkc28vdmRzbzY0LnNvDQo+ID4gJCBwZXJmIHNjcmlwdCAtLWl0cmFjZT1lDQo+
+ID4gV2FybmluZzoNCj4gPiAyIGluc3RydWN0aW9uIHRyYWNlIGVycm9ycw0KPiA+ICBpbnN0cnVj
+dGlvbiB0cmFjZSBlcnJvciB0eXBlIDEgdGltZSA1MjUzNDUuMzg2NDI0MjA0IGNwdSA0IHBpZCAx
+OTg5NzYgdGlkIDE5ODk3NiBpcCAweDdmZmRkYjBlOGUwMCBjb2RlIDU6IEZhaWxlZCB0byBnZXQg
+aW5zdHJ1Y3Rpb24NCj4gPiAgaW5zdHJ1Y3Rpb24gdHJhY2UgZXJyb3IgdHlwZSAxIHRpbWUgNTI1
+MzQ1LjM4NjQyNDgyOSBjcHUgNCBwaWQgMTk4OTc2IHRpZCAxOTg5NzYgaXAgMHg3ZmZkZGIwZTg4
+NGQgY29kZSA1OiBGYWlsZWQgdG8gZ2V0IGluc3RydWN0aW9uDQo+ID4gJCBjZCB+Ly5kZWJ1Zy8u
+YnVpbGQtaWQvYzMvNTMwYWVkNjZlNzFiZmQxMGFmNjYwMzlmNThjYzdjNGQyZWFiYTgNCj4gPiB+
+Ly5kZWJ1Zy8uYnVpbGQtaWQvYzMvNTMwYWVkNjZlNzFiZmQxMGFmNjYwMzlmNThjYzdjNGQyZWFi
+YTgkIGxuIC1zIGVsZiB2ZHNvDQo+ID4gfi8uZGVidWcvLmJ1aWxkLWlkL2MzLzUzMGFlZDY2ZTcx
+YmZkMTBhZjY2MDM5ZjU4Y2M3YzRkMmVhYmE4JCBscyAtbA0KPiA+IHRvdGFsIDM2DQo+ID4gLXJ3
+LXItLXItLSAxIGFodW50ZXIgYWh1bnRlciAzMzI3MiBKdW4gMjYgMTM6MTcgZWxmDQo+ID4gLXJ3
+LXItLS0tLSAxIGFodW50ZXIgYWh1bnRlciAgICAgMCBKdW4gMjYgMTM6MTcgcHJvYmVzDQo+ID4g
+bHJ3eHJ3eHJ3eCAxIGFodW50ZXIgYWh1bnRlciAgICAgMyBKdW4gMjYgMTM6MTggdmRzbyAtPiBl
+bGYNCj4gPiAvLmRlYnVnLy5idWlsZC1pZC9jMy81MzBhZWQ2NmU3MWJmZDEwYWY2NjAzOWY1OGNj
+N2M0ZDJlYWJhOCQgY2QNCj4gPiAkIHBlcmYgc2NyaXB0IC0taXRyYWNlPWUNCj4gPiAkIA0KPiA+
+IA0KPiA+IFNvIG1heWJlIGEgY2hhbmdlIGNvdWxkIGJlIG1hZGUgdG8gYnVpbGRfaWRfY2FjaGVf
+X2FkZCgpIHRvIGFkZA0KPiA+IHRoZSBleHRyYSBsaW5rIGlmIHRoZSBmaWxlIG5hbWUgbWF0Y2hl
+cyB2ZHNvDQo+ICANCj4gVGhhbmtzIGZvciBkb2luZyB0aGlzISAgSSBub3RpY2VkIGJ1aWxkaWRf
+Y2FjaGVfX2Jhc2VuYW1lKCkgd2lsbCBoYW5kbGUNCj4gdGhlIG5hbWUgcHJvcGVybHkgb25jZSBp
+dCByZWFsaXplcyB0aGUgZmlsZSBpcyBhIHZkc28uICBNYXliZSB3ZSBjYW4NCj4gY2hlY2sgdGhl
+IGZpbGVwYXRoIHdpdGggc29tZSBwYXR0ZXJucywgb3Igc2ltcGx5IGFkZCBhbiBjb21tYW5kIGxp
+bmUNCj4gb3B0aW9uIHRvIHNheSBpdCdzIGEgdmRzby4NCj4gDQo+IFRoYW5rcywNCj4gTmFtaHl1
+bmcNCj4NCkkgYWRkZWQgc29tZSB0cmlja3MgZm9yIHZkc28gaW4gYnVpbGRfaWRfY2FjaGVfX2Fk
+ZCgpLiBJdCByZXBsYWNlIHZkc28gb2JqZWN0DQp3aXRoIGRlYnVnZ2luZyBvbmUgaWYgZm91bmQu
+IElzIHRoaXMgb2theT8NCg0KK3N0YXRpYyBjaGFyICpidWlsZF9pZF9jYWNoZV9fZmluZF9kZWJ1
+Z192ZHNvKGNvbnN0IGNoYXIgKnNidWlsZF9pZCkNCit7DQorICAgICAgIGNoYXIgc2J1aWxkX2lk
+X3RtcFtTQlVJTERfSURfU0laRV07DQorICAgICAgIHN0cnVjdCBidWlsZF9pZCBiaWQ7DQorICAg
+ICAgIGludCBpLCByZXQgPSAwOw0KKw0KKyAgICAgICBwcmludGYoIkxvb2tpbmcgYXQgdGhlIHZk
+c29fcGF0aCAoJWQgZW50cmllcyBsb25nKVxuIiwNCisgICAgICAgICAgICAgICAgdmRzb19wYXRo
+cy5ucl9lbnRyaWVzICsgMSk7DQorDQorICAgICAgIGZvciAoaSA9IDA7IGkgPCB2ZHNvX3BhdGhz
+Lm5yX2VudHJpZXM7ICsraSkgew0KKyAgICAgICAgICAgICAgIHJldCA9IGZpbGVuYW1lX19yZWFk
+X2J1aWxkX2lkKHZkc29fcGF0aHMucGF0aHNbaV0sICZiaWQpOw0KKyAgICAgICAgICAgICAgIGlm
+IChyZXQgPCAwKQ0KKyAgICAgICAgICAgICAgICAgICAgICAgY29udGludWU7DQorDQorICAgICAg
+ICAgICAgICAgYnVpbGRfaWRfX3NwcmludGYoJmJpZCwgc2J1aWxkX2lkX3RtcCk7DQorICAgICAg
+ICAgICAgICAgaWYgKCFzdHJjbXAoc2J1aWxkX2lkLCBzYnVpbGRfaWRfdG1wKSkgew0KKyAgICAg
+ICAgICAgICAgICAgICAgICAgcHJpbnRmKCJGb3VuZCBkZWJ1Z2dpbmcgdmRzbyAlc1xuIiwgdmRz
+b19wYXRocy5wYXRoc1tpXSk7DQorICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gc3RyZHVw
+KHZkc29fcGF0aHMucGF0aHNbaV0pOw0KKyAgICAgICAgICAgICAgIH0NCisgICAgICAgfQ0KKw0K
+KyAgICAgICByZXR1cm4gTlVMTDsNCit9DQorDQogaW50DQogYnVpbGRfaWRfY2FjaGVfX2FkZChj
+b25zdCBjaGFyICpzYnVpbGRfaWQsIGNvbnN0IGNoYXIgKm5hbWUsIGNvbnN0IGNoYXIgKnJlYWxu
+YW1lLA0KICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgbnNpbmZvICpuc2ksIGJvb2wgaXNfa2Fs
+bHN5bXMsIGJvb2wgaXNfdmRzbywNCiAgICAgICAgICAgICAgICAgICAgY29uc3QgY2hhciAqcHJv
+cGVyX25hbWUsIGNvbnN0IGNoYXIgKnJvb3RfZGlyKQ0KIHsNCiAgICAgICAgY29uc3Qgc2l6ZV90
+IHNpemUgPSBQQVRIX01BWDsNCi0gICAgICAgY2hhciAqZmlsZW5hbWUgPSBOVUxMLCAqZGlyX25h
+bWUgPSBOVUxMLCAqbGlua25hbWUgPSB6YWxsb2Moc2l6ZSksICp0bXA7DQorICAgICAgIGNoYXIg
+KmZpbGVuYW1lID0gTlVMTCwgKmRpcl9uYW1lID0gTlVMTCwgKnZkc29fbmFtZSA9IE5VTEwsICps
+aW5rbmFtZSA9IHphbGxvYyhzaXplKSwgKnRtcDsNCiAgICAgICAgY2hhciAqZGVidWdmaWxlID0g
+TlVMTDsNCiAgICAgICAgaW50IGVyciA9IC0xOw0KDQorICAgICAgIC8qIHJlcGxhY2UgdmRzbyBv
+YmplY3Qgd2l0aCBkZWJ1Z2dpbmcgb25lIGlmIGZvdW5kICovDQorICAgICAgIGlmIChpc192ZHNv
+KSB7DQorICAgICAgICAgICAgICAgdmRzb19uYW1lID0gYnVpbGRfaWRfY2FjaGVfX2ZpbmRfZGVi
+dWdfdmRzbyhzYnVpbGRfaWQpOw0KKyAgICAgICAgICAgICAgIGlmICh2ZHNvX25hbWUpDQorICAg
+ICAgICAgICAgICAgICAgICAgICBuYW1lID0gcmVhbG5hbWUgPSB2ZHNvX25hbWU7DQorICAgICAg
+IH0NCisNCiAgICAgICAgaWYgKCFwcm9wZXJfbmFtZSkNCiAgICAgICAgICAgICAgICBwcm9wZXJf
+bmFtZSA9IG5hbWU7DQoNCj4gDQoNCi0tIA0KQ2hlZXJzLA0KQ2hhbmdiaW4gRHUNCg==
 
