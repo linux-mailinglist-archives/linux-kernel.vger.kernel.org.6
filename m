@@ -1,279 +1,160 @@
-Return-Path: <linux-kernel+bounces-233931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 414EF91BF8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:31:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44B2691BF93
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:33:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F483B21152
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 13:31:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB4EAB20C7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 13:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0983156231;
-	Fri, 28 Jun 2024 13:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D2B1E4A1;
+	Fri, 28 Jun 2024 13:33:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="yIp4QFM6"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="TJ0F5hAf"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00834567F;
-	Fri, 28 Jun 2024 13:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 367251E481
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 13:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719581497; cv=none; b=cR4kVV0Oz9wmz2dFBdndsrnDuKID9++L4iq1gKyLJcJCP7zYGxmsIT0zCg8xNoe/M1+1t7NZGFRnKgOjr0UiIFmKQQBULGnv8OUhHNYI83QvfxW8Ye2x/H7Bidn2yf8fwO6a1DNRod6VtyCDqbmVS3v9eHfX2t6RSJDaWnoDBn4=
+	t=1719581585; cv=none; b=Y9ZQuQcmDYX5P5kXtBLACX3ZQQd2cE1DfFinYKoa2LTDktEMwQ86Ec4UpLw78T+40v7ht8zifpp+JdoMbgLkjinQhZLm6dSW1jSCDFItkNLiF5wv/lPsBgNhkIXd0d1h1WajmRAiuKBld8Zs8zQ++lfSIyCI4LIBuF4Z3FUuajI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719581497; c=relaxed/simple;
-	bh=EBwHlR6nVxqKGWbd3LN/16tCHeMoecUhepxTPyqgOzo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hfPE6m3WXWxfhs6Qf0obBtnHphhDW9N7cr/gJhugxecwlmP/LfIiqpWMvmimlx16TwvSZZQAHcGtxK6mXoM11I+VSlCoTnpm5oA0hbR6FylZ0cRrc/V2KxrGADpf6TXKJK0uzinqoJpyD3jAGys5ECdvoYOp91nYs8l6mrUatQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=yIp4QFM6; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1719581494;
-	bh=EBwHlR6nVxqKGWbd3LN/16tCHeMoecUhepxTPyqgOzo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=yIp4QFM6wnFn/Xisf+g71XDABvCWuS9qaS3UIELrMqNKjYuGQBqfbw1Sg3mZRIHIy
-	 QOUaK9k7zc7UBbpdrUTkrUuZGYEb+auz9a5TgtjtA369P/REA+d/UHiy+SdHlHQcAu
-	 4bz2DEllc+tVy8W6gZ0+ThbCBKtVaePvB5g4Nybz9Nv3eetMxYZMFmT7ZffyFRNQum
-	 oTFmc2oXGF3+SAmx5JthCBJTX6XEdB5D48mgDBn+RhXsNZxGLZ8HvGn4fnGCDcF+kg
-	 K/CapPyd6J7b/zrsrZSqfvlrfAMI+XTUClMlnJWJrBJ4n7areyr8mjxRU7RJ2PbK/z
-	 Ht3Gh3dQ0gLOQ==
-Received: from arisu.localnet (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: detlev)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 9D514378219E;
-	Fri, 28 Jun 2024 13:31:30 +0000 (UTC)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: Alex Bee <knaerzche@gmail.com>, Jonas Karlman <jonas@kwiboo.se>
-Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Heiko Stuebner <heiko@sntech.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Dragan Simic <dsimic@manjaro.org>, Diederik de Haas <didi.debian@cknow.org>,
- Andy Yan <andy.yan@rock-chips.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Hans Verkuil <hverkuil-cisco@xs4all.nl>,
- Daniel Almeida <daniel.almeida@collabora.com>,
- Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH v2 4/4] arm64: dts: rockchip: Add rkvdec2 Video Decoder on
- rk3588(s)
-Date: Fri, 28 Jun 2024 09:31:02 -0400
-Message-ID: <114641696.nniJfEyVGO@arisu>
-Organization: Collabora
-In-Reply-To: <689aec72-f777-4122-a332-02009fbf0b3b@kwiboo.se>
-References:
- <20240619150029.59730-1-detlev.casanova@collabora.com>
- <4356151.ejJDZkT8p0@arisu> <689aec72-f777-4122-a332-02009fbf0b3b@kwiboo.se>
+	s=arc-20240116; t=1719581585; c=relaxed/simple;
+	bh=n9kWTMTK7JCDbkID1J92euC/9dyjlUgau6is7eksbls=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jzBH76RSo+Txixf1Rr9vpXSrLeW9Y5uvAPh+jmWKht6JkCAnFQoNC/zONhzO5MQtd+uXZYyJRT3/8lkIgx3FQVY8UJR2SuuKpo3J2HfK4CB7Oso3DjnhcFkvD1XOSnMFY+Lsa7s9B+ags+bbPkrMw7qRzkty84IfGA1dvA7PPro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=TJ0F5hAf; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ebe40673e8so6759351fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 06:33:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1719581581; x=1720186381; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=o6rPZUMuSi4ADyF686OqBZEn8J7FK8w8TCFqb/kA/fQ=;
+        b=TJ0F5hAf/CWMsuBu+pHK5rymbzj+5NK8nhN+GlqL5+M4LGbvsHv8xy3jEpXKYRwefH
+         wfMQM76sxHpEYzdLnQ8Qvy53crYa2wzbGgzDfYbIBjQgoBcyV0aRbEceleBj025HxMsm
+         ds2pnzdH7rNZOpA30rAKjM0oXJyG4GaaJL8jTlW6JTNCmZVF86kIKgTlKXWD8aPkcccB
+         F1I5u6RwYTanD1yM7pYiJqy5eg9LEiRhHyxypZwqWe6GXdJsjQWuzX5mR40PEHGVmkj1
+         KPsBihNcOeR+TA4h7vzlJcEbQ54EUL9YqyuL4B/QgcP0ACCFSV7xCIeylw5hnQ44R6Jd
+         xhbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719581581; x=1720186381;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o6rPZUMuSi4ADyF686OqBZEn8J7FK8w8TCFqb/kA/fQ=;
+        b=jhmEgpZn1SJsAp254SGdjCU8KDcqNB88zadrTYF9Qjnn9v8NlHIBj26AqxnWSZhLx2
+         4C+yV2Jvf9syRkzQllaznAbgrbYhrEk3wepfcg4Qf4j+sXkPh+OLMYHB8Ig4c+t/xtzT
+         gzhRgdZ/aVUZFJTovshJJQehlrAJBjhtfzbTcbUzJrZYctwuQaj4qh9jGIElAz+fxdIu
+         mhB6pC/dbUvrOFDtO2WAbma9EBQAnZQNQQxHIreUgy6c/B8c2jW3lt9aSGB7xwJ4wGjj
+         hLqpweEAM9RNfUa7+y+aQqS9T/G+KajRzvFiUIm6EpAHd4ek0JkbMs1AsS85/AUULcto
+         wDcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOW2u+/tVzgoiZXhOJlKZM7RyJVuXXdrgQHSeF8BgCUTSvhX79D2yiinIFStR/Jo/Aj63Oeq7jWdArHNpK1TO6ndoDGoet9rKgbLQR
+X-Gm-Message-State: AOJu0Yy+B1zjAUoa3tbFKX7DwKJV2TT0ezSrPPGbZig7aPvqSDjK6zuB
+	QgHi1DOaujbrNTHXBRc/4Hx/sAaquvfjUBUjxWcmrJ2hru1vyI3Et/Pt0Plel58=
+X-Google-Smtp-Source: AGHT+IHj8ml0/+ZNwtzeTk8oDPn2OvJgKXPj6vFkFsJMm4VtCqspX8b0C/ll/qiA7gnoj03Bp937nA==
+X-Received: by 2002:a2e:9d88:0:b0:2ec:51fc:2f5a with SMTP id 38308e7fff4ca-2ec5b36b1eamr103308001fa.4.1719581581261;
+        Fri, 28 Jun 2024 06:33:01 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7080256af5asm1568816b3a.56.2024.06.28.06.32.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 06:33:00 -0700 (PDT)
+Date: Fri, 28 Jun 2024 15:32:52 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH printk v2 12/18] printk: Add kthread for all legacy
+ consoles
+Message-ID: <Zn67hDCEHdgtYPv3@pathway.suse.cz>
+References: <20240603232453.33992-1-john.ogness@linutronix.de>
+ <20240603232453.33992-13-john.ogness@linutronix.de>
+ <Zn6iq3n2ggL138Gs@pathway.suse.cz>
+ <87cyo1xnmw.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2466515.jE0xQCEvom";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87cyo1xnmw.fsf@jogness.linutronix.de>
 
---nextPart2466515.jE0xQCEvom
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: Alex Bee <knaerzche@gmail.com>, Jonas Karlman <jonas@kwiboo.se>
-Date: Fri, 28 Jun 2024 09:31:02 -0400
-Message-ID: <114641696.nniJfEyVGO@arisu>
-Organization: Collabora
-In-Reply-To: <689aec72-f777-4122-a332-02009fbf0b3b@kwiboo.se>
-MIME-Version: 1.0
-
-Hi Jonas,
-
-On Thursday, June 27, 2024 6:39:36 P.M. EDT Jonas Karlman wrote:
-[snip]
-> >>>>>>> SRST_RKVDEC1_HEVC_CA>;
-> >>>>>>> +		reset-names = "rst_axi", "rst_ahb", "rst_cabac",
-> >>>>>>> +			      "rst_core", "rst_hevc_cabac";
-> >>>>>>> +		power-domains = <&power RK3588_PD_RKVDEC1>;
-> >>>>>>> +		sram = <&vdec1_sram>;
-> >>>>>>> +		status = "okay";
-> >>>>>>> +	};
-> >>>>>> 
-> >>>>>> This is still missing the iommus, please add the iommus, they should
-> >>>>>> be
-> >>>>>> 
-> >>>>>> supported/same as the one used for e.g. VOP2:
-> >>>>>>    compatible = "rockchip,rk3588-iommu", "rockchip,rk3568-iommu";
-> >>>>>> 
-> >>>>>> The VOP2 MMUs does have one extra mmu_cfg_mode flag in AUTO_GATING,
-> >>>>>> compared to the VDPU381 MMUs, however only the AV1D MMU should be
-> >>>>>> special on RK3588.
-> >>>>>> 
-> >>>>>> Please add the iommus :-)
-> >>>>> 
-> >>>>> When looking add the vendor DT/iommu driver I'm seeing serval quirks
-> >>>>> applied for vdec's iommus. Since it's rightly frowned upon adding such
-> >>>>> boolean-quirk-properties to upstream devicetrees, we'd at least need
-> >>>>> additional (fallback-) compatibles, even if it works with the iommu
-> >>>>> driver
-> >>>>> as is (what I doubt, but haven't tested). We need to be able to apply
-> >>>>> those
-> >>>>> quirks later without changing the devicetree (as usual) and I'm sure
-> >>>>> RK
-> >>>>> devs haven't added these quirks for the personal amusement.
-> >>>> 
-> >>>> Based on what I investigated the hw should work similar, and the quirks
-> >>>> mostly seem related to optimizations and sw quirks, like do not zap
-> >>>> each
-> >>>> line, keep it alive even when pm runtime say it is not in use and other
-> >>>> quirks that seem to be more of sw nature on how to best utilize the hw.
-> >>> 
-> >>> I did some testing with the IOMMU but unfortunately, I'm only getting
-> >>> page
-> >>> fault errors. This may be something I'm doing wrong, but it clearly
-> >>> needs
-> >>> more investigation.
-> >> 
-> >> I re-tested and the addition of sram seem to now cause page faults, the
-> >> sram also need to be mapped in the iommu.
-> >> 
-> >> However, doing more testing revealed that use of iommu present the same
-> >> issue as seen with hevc on rk3399, after a fail fluster tests continue
-> >> to fail until a reset.
-> >> 
-> >> Seeing how this issue was very similar I re-tested on rk3399 without
-> >> iommu and cma=1G and could observe that there was no longer any need to
-> >> reset after a failed test. Interestingly the score also went up from
-> >> 135 to 137/147.
-> >> 
-> >> Digging some more revealed that the iommu also is reset during the
-> >> internal rkvdec soft reset on error, leaving the iommu with dte_addr=0
-> >> and paging in disabled state.
-> >> 
-> >> Ensuring that the iommu was reconfigured after a failure fixed the issue
-> >> observed on rk3399 and I now also get 137/147 hevc fluster score using
-> >> the iommu.
-> >> 
-> >> Will send out a rkvdec hevc v2 series after some more testing.
-> >> 
-> >> Guessing there is a similar need to reconfigure iommu on rk3588, and my
-> >> initial tests also showed promising result, however more tests are
-> >> needed.
-> > 
-> > I did some testing with the IOMMU. The good news is that it now works with
-> > the SRAM.
+On Fri 2024-06-28 14:28:47, John Ogness wrote:
+> On 2024-06-28, Petr Mladek <pmladek@suse.com> wrote:
+> >> @@ -1494,7 +1508,9 @@ void nbcon_cpu_emergency_exit(void)
+> >>  		 * to handle it.
+> >>  		 */
+> >>  		do_trigger_flush = true;
+> >> -		if (printing_via_unlock && !is_printk_deferred()) {
+> >> +		if (!force_printkthreads() &&
+> >
+> > Is this correct? We still need to flush the messages directly
+> > when the legacy kthread is not ready yet.
 > 
-> Great, I did not look into SRAM at all, just replaced sram prop with iommus
-> for my tests, so great that you found a way to make it work with the iommu
-> :-)
-> > I am also able to hack the iommu driver to force a reset in case of an
-> > error in the decoder. I'm not sure how to implement that with the IOMMU
-> > kernel API though.
+> No! If force_printkthreads() is set, messages will never flush directly
+> except for console_flush_on_panic().
+
+But this is an _emergency_ context! This would be inconsistent with
+the nbcon consoles where the messages are flushed directly.
+
+Is RT sheduling quaranteed when the system reached emergency state?
+
+In fact, we probably should not check force_printkthreads() here at
+all. It would be only for NBCON_PRIO_NORMAL context.
+
+Or the option should force the kthreads even for nbcon consoles.
+
+
+> I see that I implemented get_init_console_seq() to flush since it is
+> known to be in task state. But that is wrong. Also there it should not
+> flush directly. It is not about whether or not printing is safe. It is
+> about deferring to the thread 100% of the time except for panic.
 > 
-> I am planning on sending something along the way of this as an RFC:
+> >> +void nbcon_legacy_kthread_create(void)
+> >> +{
+> >> +	struct task_struct *kt;
+> >> +
+> >> +	lockdep_assert_held(&console_mutex);
+> >> +
+> >> +	if (!force_printkthreads())
+> >> +		return;
+> >> +
+> >> +	if (!printk_threads_enabled || nbcon_legacy_kthread)
+> >> +		return;
+> >> +
+> >> +	kt = kthread_run(nbcon_legacy_kthread_func, NULL, "pr/legacy");
+> >> +	if (IS_ERR(kt)) {
+> >> +		pr_err("unable to start legacy printing thread\n");
+> >> +		return;
+> >
+> > Is this acceptable for RT, please?
 > 
-> https://github.com/Kwiboo/linux-rockchip/compare/6da640232631...bf332524d880
-> 
-> If we re-configure and re-enable the iommu just before next decoding run
-> after a decoding has failed seem to resolve any issue I have seen, have
-> mainly been tested with rkvdec and HEVC on RK3399/RK3328. On RK3588 this
-> also seemed to work, at least when I tested earlier this week.
->
-> > Another issue is that resetting the iommu will drop all buffer addresses
-> > of
-> > other decoding contexts that may be running in parallel.
-> 
-> I do not think we need/should reset the iommu, we just need to deal with
-> the fact that the rkvdec will reset and disable use of the mmu when it
-> reset itself.
+> It is not acceptable for mainline. For the next version, any failed
+> thread creation leads to unregistering the console. In the case of the
+> legacy thread, it will mean unregistering all legacy consoles on
+> failure.
 
-Oh I see, it just resets the iommu config in the core's registers, but the 
-hardware retains the mapped addresses. That makes things simpler indeed, just 
-reconfigure before the next frame in case of status error in the interrupt.
+It means that the system would become silent. Is this a good idea?
 
-> > I *think* that the downstream mpp remaps the buffers in the iommu for each
-> > frame, but I'm not sure about that either.
-> 
-> As long as a frame can be decoded correctly, the mmu config seem to continue
-> to be valid and next frame can be decoded.
-> 
-> > So running fluster with `-j 1` gives me the expected 129/135 passed tests,
-> > but `-j 8` will start failing all tests after the first fail (well, first
-> > fail because of decoder error).
-> 
-> This was the main issue blocking rkvdec hevc, just re-confgure the mmu
-> after a frame fails to decode seem to resolve this issue.
-> 
-> Biggest issue at the moment is how to properly signal iommu subsystem that
-> it should re-configure, I may have abused the flush_iotlb_all ops, since
-> that seemed closest existing hook.
+IMHO, we have a fundamental problem here.
+Are RT guarantees more important than printk() or vice versa?
 
-Oh I see, I was wondering what the flush_iotlb_all ops was doing exactly. So 
-does it flush a "cached" copy of the table from the driver back to the hardware 
-? As well as reconfigure the registers I guess.
+What is happening when the RT guarantees are violated?
+For example, when the scheduler detects a problem?
+Does it panic() or tries to continue?
 
-> Will send an RFC to linux-iommu to collect input on how to best signal
-> iommu subsystem that the mmu has been reset by an external event and now
-> need to be re-configured.
+From my POV, silent system is the worst solution. The user
+might think: "no messages, no problem".
 
-Thank you ! Can you add me in cc so that I can keep track of this ?
-
-> Regards,
-> Jonas
-> 
-> >> Regards,
-> >> Jonas
-> >> 
-> >>>>> If Detlev says
-> >>>>> iommu is out of scope for this series (which is valid), I'd say it's
-> >>>>> fine
-> >>>>> to leave them out for now (as no binding exists) and the HW works
-> >>>>> (obviously) fine without them.
-> >>>> 
-> >>>> Sure, use of MMU can be added later.
-> >>> 
-> >>> I'd rather go for that for now. I'll add that IMMU support is missing in
-> >>> the TODO file.
-> >>> 
-> >>>> Regards,
-> >>>> Jonas
-> >>>> 
-> >>>>>> Regards,
-> >>>>>> Jonas
-> >>>>>> 
-> >>>>>>>   };
-> >>>>>>>   
-> >>>>>>>   #include "rk3588s-pinctrl.dtsi"
-
-
---nextPart2466515.jE0xQCEvom
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEonF9IvGrXNkDg+CX5EFKUk4x7bYFAmZ+uxYACgkQ5EFKUk4x
-7bYn+Af+I+2016/BEafa9Q8etcNHgO6QmsuzgSlknxe1OjZpDgpzilC/08fIkhZA
-7EsnQtt8NakzCuNjdpgVzEMSz7S8UzRvZTuBTlPlQftq0z4wXO6pGn6dZ95pOgIz
-27qU8qqvmWYpKNebo+tubXaYYPp28gLxZaw6COXejb6VwNgoIkPEn3Hq0zaPLG10
-CyEGqvDmrKAfXgnoE+YskuRXqBfv1VdcuRI17U0pQNE/26h3neV15LUVDOIp8+PI
-tPtbyl28HKtGf/+uBD+sP2YjkuJnZdoCNkbbFtYW9wNqlf37IlsO3cJ0mCY2efBq
-wMQ7rBLPNzYffMU8BQydtcGegmEthw==
-=dwA8
------END PGP SIGNATURE-----
-
---nextPart2466515.jE0xQCEvom--
-
-
-
+Best Regards,
+Petr
 
