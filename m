@@ -1,119 +1,115 @@
-Return-Path: <linux-kernel+bounces-233888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30B9891BEC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:40:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 737C191BECC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:42:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEB191F219EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:40:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E48D28556B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:42:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 665C315885D;
-	Fri, 28 Jun 2024 12:40:46 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68956158A12;
+	Fri, 28 Jun 2024 12:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VrmM3xJo"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E670E156967
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 12:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A6D13E029;
+	Fri, 28 Jun 2024 12:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719578445; cv=none; b=H1q4o6vTgczpArMF/Xqv43Frl/qFB8OjPh8h70asXPHN+aO5EX6+jKTcLj00H23NyM6kEBMaEebqlh/bXx9fMM71kmUgvHCikfB+mlym7majzyLQgqZnxyCwkt77hf3hP463E8EEPpzcI5mmLpskd1nW5jGI8mhE2PzqLGCcwLc=
+	t=1719578532; cv=none; b=uRN61714HHt0I7dmuB6M493y8Xha0bl2UaiMZSu623xg6rZxjX3/GZOP9qeGERUYOmlLK6wPRZlPA+2ibUUb7Y4NfkdofxCxHZygI0XDz7zy9+n+0EjyJy/lhTwWSodtMbyAtUZi+hXp1nuE2rWjwih6+pulLw9ey1jVYFI4HJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719578445; c=relaxed/simple;
-	bh=k+tHhvsXLqC0pkWc1z2zD5HL9oEtyeNTJH18mQOk0Bc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ejYrpfa+jjt4jAw7WczUwo7Wo+mCAAJ8fLyaDi2nZc34/mRL+GGbl8XDmrorhfaUqrk0FUmhxLf3AVXurixmSMEamhseJJ/Gadg4PcZmAaWOk08lHN+Bi8gqHa2GRFQcnEjNdWvAldPfJuZ8pv3Oyn44zVTUYgKlKgEIr6K9eew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89E85C116B1;
-	Fri, 28 Jun 2024 12:40:44 +0000 (UTC)
-Date: Fri, 28 Jun 2024 08:41:37 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: richard clark <richard.xnu.clark@gmail.com>
-Cc: Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- will@kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, "Russell King (Oracle)"
- <linux@armlinux.org.uk>, Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: Will smp_call_function_single(cpu, ...) broadcast IPI to all
- other cpus?
-Message-ID: <20240628084137.3338ab75@gandalf.local.home>
-In-Reply-To: <CAJNi4rMeDgDJbN0jjPguU_v5uoscJJN=5bZaShXpu7Q8X60hcg@mail.gmail.com>
-References: <CAJNi4rMfRmWoYdsyH6ibNKN8DSCL_DO8Wa08mWbe8t7vH21Dpw@mail.gmail.com>
-	<86pls2isal.wl-maz@kernel.org>
-	<20240627101207.0bbbead0@rorschach.local.home>
-	<CAJNi4rMeDgDJbN0jjPguU_v5uoscJJN=5bZaShXpu7Q8X60hcg@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719578532; c=relaxed/simple;
+	bh=C5ObWTNXLfzCZasTtKx8inESnd8H/PFX95IOQz3bASI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D18/qMoFraA5BvebzRl9W4oYnTjid+QNDBN4I7wPPHsVylEJ8zqttAcq4BX5KOxk78pmIBTc2xvf7/R5mJffMDagpQFKd0wKDy8qdXMoYQ/qz0LxvYpRgMWCqPsReY49wo3MTvSykORBBAtAgRdYDtVcTbtjyyIomIrFxIWnrg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VrmM3xJo; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=4oAc/X7cngP3Cawle+vTIhf1va3SXMhGGdRju0o8W1k=; b=VrmM3xJo5IOH3EcYcRTQBgkmvc
+	uA7pP0AMsTqyT3ni2ImBU38XpclLVulClJ25GKrYNJlEaTuZvSvuZfXv22c7D0I+wFz0nSGK419Ya
+	2XEJ4M+Lt6fzLv1vxMCXtULXcDdQjX7bRW4Kbr/4pqq0uxh3J+9PqlJnzvygyXYQHga1SOf4FY2t6
+	YbKIdvXZcQnZVzEbIchBYkLSWM7sYc8RbdA0U9i4bG9IkMSuH0GVbVQtby9Hy1/8HUw+gm2ZUMjHS
+	W+BQiGmWxShocMCqlXnpOg1wPPAKvUeU6ceHaWrT9sm/bd/dZCQZ4a94BDQs+l2eJJT6ZbAHR+uhv
+	05fDjz2w==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sNAvG-0000000Dijs-16qK;
+	Fri, 28 Jun 2024 12:41:50 +0000
+Date: Fri, 28 Jun 2024 05:41:50 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Christoph Hellwig <hch@infradead.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>, Jens Axboe <axboe@kernel.dk>,
+	Hauke Mehrtens <hauke@hauke-m.de>, Felix Fietkau <nbd@nbd.name>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Dave Chinner <dchinner@redhat.com>, Jan Kara <jack@suse.cz>,
+	Christian Brauner <brauner@kernel.org>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Li Lingfeng <lilingfeng3@huawei.com>,
+	Christian Heusel <christian@heusel.eu>,
+	Min Li <min15.li@samsung.com>, Avri Altman <avri.altman@wdc.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Hannes Reinecke <hare@suse.de>,
+	Mikko Rapeli <mikko.rapeli@linaro.org>, Yeqi Fu <asuk4.q@gmail.com>,
+	Victor Shih <victor.shih@genesyslogic.com.tw>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Li Zhijian <lizhijian@fujitsu.com>,
+	"Ricardo B. Marliere" <ricardo@marliere.net>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: [PATCH v4 2/4] block: partitions: populate fwnode
+Message-ID: <Zn6vjmNf4QjBkqh6@infradead.org>
+References: <cover.1719520771.git.daniel@makrotopia.org>
+ <6acc459a392d562abc58f7e55c6f04dba8073257.1719520771.git.daniel@makrotopia.org>
+ <Zn4_rMJVm6cpIEZV@infradead.org>
+ <Zn6pje4DcAYEk6Kw@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zn6pje4DcAYEk6Kw@makrotopia.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Fri, 28 Jun 2024 18:21:25 +0800
-richard clark <richard.xnu.clark@gmail.com> wrote:
+On Fri, Jun 28, 2024 at 01:16:13PM +0100, Daniel Golle wrote:
+> > Overly long lines, which is really annyoing for block comments.
+> 
+> Should I use 80 chars as limit everywhere?
 
-> Hi Steven,
->=20
-> On Thu, Jun 27, 2024 at 10:12=E2=80=AFPM Steven Rostedt <rostedt@goodmis.=
-org> wrote:
-> >
-> > On Thu, 27 Jun 2024 11:38:58 +0100
-> > Marc Zyngier <maz@kernel.org> wrote:
-> > =20
-> > > You may want to enable stack trace recording and find out for yourself
-> > > where these ipi_raise() calls are coming from. =20
-> >
-> > Try trace-cmd:
-> >
-> >   # trace-cmd start -e ipi_raise -R 'stacktrace if reason=3D=3D"Functio=
-n call interrupts"'
-> >   # taskset -c 0 insmod /kmods/ipi_test.ko
-> >   # trace-cmd stop
-> >   # trace-cmd show
-> > =20
-> I found that the 'stacktrace' seems like a stick bit. Run the above
-> '# trace-cmd start -e ipi_raise -R 'stacktrace if reason=3D=3D"Function
-> call interrupts"' ... command sequence, then
-> # trace-cmd start -e ipi -f 'reason=3D=3D"Function call interrupts"' -v -e
-> ipi_exit; taskset -c 0 insmod /kmods/ipi_lat.ko; trace-cmd stop;
-> trace-cmd show; trace-cmd clear;
-> The output is:
->=20
->           insmod-1746    [000] dn.h1..   928.400039: ipi_raise:
-> target_mask=3D00000000,000000ffe (Function call interrupts)
->           insmod-1746    [000] dn.h2..   928.400042: <stack trace>
->  =3D> trace_event_raw_event_ipi_raise
->  =3D> smp_cross_call
->  =3D> arch_send_call_function_single_ipi
->  =3D> send_call_function_single_ipi =20
-> ...
-> Actually, the behavior hoped like this(no stacktrace):
->=20
->           insmod-1677    [000] ....1..   473.474846: ipi_raise:
-> target_mask=3D00000000,00000ffe (Function call interrupts)
->           <idle>-0       [002] d..h1..   473.474848: ipi_entry:
-> (Function call interrupts)
->           <idle>-0       [003] d..h1..   473.474849: ipi_entry:
-> (Function call interrupts)
->           ...
->           insmod-1677    [000] ....1..   473.474859: ipi_raise:
-> target_mask=3D00000000,00000ffe (Function call interrupts)
->           <idle>-0       [001] d..h1..   473.474861: ipi_entry:
-> (Function call interrupts) magic=3D0x55aa55aa
->           ...
->=20
-> I tried to add '# trace-cmd stack --stop/reset' before the above
-> command, but it did not work. Any help to disable the 'stacktrace' in
-> this scenario?
+In my opinion that makes things easier.  The coding style allows to
+exceed it for individual lines where it improves readability, which
+is a bit of an odd case.
 
- trace-cmd reset
+> > Can we please not use the crazy part_meta stuff for anything new?
+> > We should never have merge it, and right now it is at least isolated
+> > to the boot time root dev_t partsing, and I'd really prefer to keep it
+> > in that corner.
+> > 
+> 
+> At least up to my understanding there isn't any other to know a
+> partitions UUID or volume name.
+> 
+> If there is another way to access this information I'd happily make
+> use of it, but I couldn't find any.
 
-will put everything back. But yeah, I need to fix it so that it's easier to
-reset triggers.
-
--- Steve
+That is true, but except for the early dev_t parsing we actually never
+use these partition uuids in the kernel at all.  Also in all the
+normal file system references either use the file system uuid,
+or the device provided one for devices that support them.  Most of
+that is handled entirely in userspace, though - the kernel largely
+operates just on the dev_t.
 
