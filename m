@@ -1,173 +1,151 @@
-Return-Path: <linux-kernel+bounces-233392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA42591B66F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:45:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C52FF91B671
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:46:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 152A8B2439A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 05:45:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46E431F24BB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 05:46:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29526A8BE;
-	Fri, 28 Jun 2024 05:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765DE3FBB2;
+	Fri, 28 Jun 2024 05:44:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IyLNm8Di"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="IpyKhb+m"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F3F3E47E;
-	Fri, 28 Jun 2024 05:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1146E46441;
+	Fri, 28 Jun 2024 05:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719553450; cv=none; b=uiAqw6sCi9B4GafD0n1PQJOZ5lptFN6nNE5tmmQOgvna4FuA7SmX/EZctsYs/XLA68l1e4IesGSZJEa/hUUinsFYc5v72hXgSkc1kbFChDAOgJB0zh2xaGzSMX++9SoQVBXbF48qVp4vcKy1wZmb5+5E2FUI2VSJJoVSWZgnTIs=
+	t=1719553474; cv=none; b=Q1ZeA473YcGJDq0rrPbzIRl34mKKasLAJ+gXjt5ygRhrmyhyl9APKmvwAh5V4leFf6D10FKPFL9hB7IUyt3kdMwCiNNHxF8VQoGA+CM4guY/tbzAZGT9bUiXw+V4siJ7NAvRZD0wRTXtPv3B4J98BWORTDLiA8FAutZLxuvuT3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719553450; c=relaxed/simple;
-	bh=ENKQFD/jj6Q2coW/V7qs3ZYwWiWh19Yz9PG2uPFUMKQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fzc4WlesunekARDxZQ1XDg7gxqML+SsFXK0XmWXMIW9j+5YDD/MI4ZzL2Ekyk3Bd1Tf7rRHcx5esCiW30dYAI95ViO14gBsi5WWFwiTHop3MOxlTru+vHgKFOGjYPukVWaruXTHPZk1TUToiAx4IrWI3eNuyLq0OSAkFW9tfeNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IyLNm8Di; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45RL6DNF015295;
-	Fri, 28 Jun 2024 05:44:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	7vFZZqH20Du4+0rEJZkm4d1bS5cXe7cGcBbOZAvl9GI=; b=IyLNm8Di4p+qBqLV
-	BZtlfw2Jmz1oYuUOJqlhMeZJHJ75k61TYHeaYNOOMAvtP4NhA3cbyFKXcBiCgr6A
-	QeVg7cvx5ABQ9cmYbTJffuQt2B82q32BO8djjbI2+7le8yyo36ep1flehvEg4798
-	8SC/hgpEd8+15HzWd0I75Bi0Ma8ICFE6y5YOx1p8hanIED0+0mVfwGzBlup8qlYF
-	j/gQFQTks2onL54ph4MboGcLtrLdGP0QqG2dFtq1k/STA3BoJtxR1zWZwj7MeQ74
-	QCCN8LTwPhwjDQI0y0hfGyElOXnaTUeH9ok6nFplYDq17TOUzUUeNJSgA+8qnnWT
-	cNuiig==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 400gcmdj60-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Jun 2024 05:43:59 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45S5hx8V004491
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Jun 2024 05:43:59 GMT
-Received: from [10.110.116.31] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 27 Jun
- 2024 22:43:58 -0700
-Message-ID: <19c49c3b-057c-ce83-1ec6-4929676ff0e7@quicinc.com>
-Date: Thu, 27 Jun 2024 22:43:57 -0700
+	s=arc-20240116; t=1719553474; c=relaxed/simple;
+	bh=3tBrrtwcKSRzMlQKzS9mBrZTJWuydwJFmJR41cuHZUY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VmF8oX4SMIv+2dTOFB+TZyOpSxFwEIcXmxDCEDHRsr6Rwi4QsY7U16l7q9qwXfpP7ftN0WFYRUS+YD9DipcD9SzSYOAyjl25RiSTkKeZDrP+fc/BCEOxKv1rSSx2Q7JTtPgP1zcf1eILlRx57gBxzyatFh/P2LWOvFcHOs+yt0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=IpyKhb+m; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45S5i6Pl100950;
+	Fri, 28 Jun 2024 00:44:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1719553446;
+	bh=QvdREwoZPVYdRX4jP9BxkEHK2SVRZXLO4DEzL6qK8lI=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=IpyKhb+mgz2h6JhW52JABuc1Y3216E54zWtF6LAYwqrlYdOwaTKSa0HdcTmpUjVAh
+	 7jid0Q7XxRKzmZDigzCQh5BTtYAUjgp34HGN7/uD1ju+5OIBzGvjVEqSF9qpJJ+L1d
+	 asmzgldTrlkHzLW1QX4bhFuBtPxgV/b/v8zseo88=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45S5i61k014962
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 28 Jun 2024 00:44:06 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 28
+ Jun 2024 00:44:06 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 28 Jun 2024 00:44:06 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [172.24.227.9])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45S5i5A4007205;
+	Fri, 28 Jun 2024 00:44:06 -0500
+Date: Fri, 28 Jun 2024 11:14:05 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Jan Kiszka <jan.kiszka@siemens.com>
+CC: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Krzysztof
+ =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        Kishon Vijay Abraham I
+	<kishon@kernel.org>,
+        Siddharth Vadapalli <s-vadapalli@ti.com>,
+        Vignesh
+ Raghavendra <vigneshr@ti.com>, Nishanth Menon <nm@ti.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        Linux Kernel Mailing
+ List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3] PCI: keystone: Add workaround for Errata #i2037
+ (AM65x SR 1.0)
+Message-ID: <059a7f46-68ea-4d77-b87a-4d2de1968c66@ti.com>
+References: <7c5b8986-c69f-4ff5-9ed2-b2055ae848c4@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [RFC PATCH] drm/msm/dpu: check ubwc support before adding
- compressed formats
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Rob Clark <robdclark@gmail.com>, <freedreno@lists.freedesktop.org>,
-        "Sean
- Paul" <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        "David Airlie" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>, <quic_jesszhan@quicinc.com>,
-        <konrad.dybcio@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240627205328.2912859-1-quic_abhinavk@quicinc.com>
- <CAF6AEGuGYG5mO-4KdNFbQFMA4dKj2PWT22xeh-3AFgedAG0uHw@mail.gmail.com>
- <3749ac14-54d0-fb62-345b-cef62399b6d4@quicinc.com>
- <CAA8EJppM1429sGzW6hq4QzLEjVX5Cf+8Jt5y94+VocFmPyxz+Q@mail.gmail.com>
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <CAA8EJppM1429sGzW6hq4QzLEjVX5Cf+8Jt5y94+VocFmPyxz+Q@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: KJ2HU5jse8lKYgW_K4mAAIrqAu1xOz_W
-X-Proofpoint-ORIG-GUID: KJ2HU5jse8lKYgW_K4mAAIrqAu1xOz_W
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-28_02,2024-06-27_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- mlxlogscore=999 clxscore=1015 mlxscore=0 phishscore=0 impostorscore=0
- adultscore=0 malwarescore=0 lowpriorityscore=0 priorityscore=1501
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406280039
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <7c5b8986-c69f-4ff5-9ed2-b2055ae848c4@siemens.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-
-
-On 6/27/2024 4:22 PM, Dmitry Baryshkov wrote:
-> On Fri, 28 Jun 2024 at 00:21, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
->>
->>
->>
->> On 6/27/2024 2:13 PM, Rob Clark wrote:
->>> On Thu, Jun 27, 2024 at 1:53 PM Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
->>>>
->>>> On QCM2290 chipset DPU does not support UBWC.
->>>>
->>>> Add a dpu cap to indicate this and do not expose compressed formats
->>>> in this case.
->>>>
->>>> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
->>>> ---
->>>>    drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_5_qcm2290.h | 1 +
->>>>    drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h          | 2 ++
->>>>    drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c               | 5 ++++-
->>>>    3 files changed, 7 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_5_qcm2290.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_5_qcm2290.h
->>>> index 3cbb2fe8aba2..6671f798bacc 100644
->>>> --- a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_5_qcm2290.h
->>>> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_5_qcm2290.h
->>>> @@ -12,6 +12,7 @@ static const struct dpu_caps qcm2290_dpu_caps = {
->>>>           .max_mixer_blendstages = 0x4,
->>>>           .has_dim_layer = true,
->>>>           .has_idle_pc = true,
->>>> +       .has_no_ubwc = true,
->>>>           .max_linewidth = 2160,
->>>>           .pixel_ram_size = DEFAULT_PIXEL_RAM_SIZE,
->>>>    };
->>>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
->>>> index af2ead1c4886..676d0a283922 100644
->>>> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
->>>> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
->>>> @@ -342,6 +342,7 @@ struct dpu_rotation_cfg {
->>>>     * @has_dim_layer      dim layer feature status
->>>>     * @has_idle_pc        indicate if idle power collapse feature is supported
->>>>     * @has_3d_merge       indicate if 3D merge is supported
->>>> + * @has_no_ubwc        indicate if UBWC is supported
->>>>     * @max_linewidth      max linewidth for sspp
->>>>     * @pixel_ram_size     size of latency hiding and de-tiling buffer in bytes
->>>>     * @max_hdeci_exp      max horizontal decimation supported (max is 2^value)
->>>> @@ -354,6 +355,7 @@ struct dpu_caps {
->>>>           bool has_dim_layer;
->>>>           bool has_idle_pc;
->>>>           bool has_3d_merge;
->>>> +       bool has_no_ubwc;
->>>
->>> has_no_ubwc sounds kinda awkward compared to has_ubwc.  But I guess
->>> you wanted to avoid all that churn..
->>>
->>
->> Yes I wanted to avoid modifying all the catalogs.
->>
->>> How about instead, if msm_mdss_data::ubwc_{enc,dec}_version are zero,
->>> then we know there is no ubwc support in the display.
->>>
->>
->> hmm ... should work .... I can post a v2 with this and avoid touching
->> the catalog altogether.
+On Thu, Jun 27, 2024 at 03:35:28PM +0200, Jan Kiszka wrote:
+> From: Kishon Vijay Abraham I <kishon@ti.com>
 > 
-> Yes, this sounds much better.
+> Errata #i2037 in AM65x/DRA80xM Processors Silicon Revision 1.0
+> (SPRZ452D_July 2018_Revised December 2019 [1]) mentions when an
+> inbound PCIe TLP spans more than two internal AXI 128-byte bursts,
+> the bus may corrupt the packet payload and the corrupt data may
+> cause associated applications or the processor to hang.
 > 
+> The workaround for Errata #i2037 is to limit the maximum read
+> request size and maximum payload size to 128 Bytes. Add workaround
 
-Ok, does this qualify for a Fixes tag too? Because exposing ubwc formats 
-on non-ubwc supported chipsets seems like a bug.
+s/128 Bytes/128 bytes
+as indicated by Krzysztof on the v1 patch at:
+https://lore.kernel.org/linux-pci/YF2K6+R1P3SNUoo5@rocinante/
+
+> for Errata #i2037 here. The errata and workaround is applicable
+> only to AM65x SR 1.0 and later versions of the silicon will have
+> this fixed.
+
+[...]
+
+> 
+> +	/*
+> +	 * Memory transactions fail with PCI controller in AM654 PG1.0
+> +	 * when MRRS is set to more than 128 Bytes. Force the MRRS to
+> +	 * 128 Bytes in all downstream devices.
+
+s/128 Bytes/128 bytes
+as indicated by Krzysztof on the v1 patch at:
+https://lore.kernel.org/linux-pci/YF2K6+R1P3SNUoo5@rocinante/
+
+> +	 */
+> +	if (pci_match_id(am6_pci_devids, bridge)) {
+> +		bridge_dev = pci_get_host_bridge_device(dev);
+> +		if (!bridge_dev && !bridge_dev->parent)
+> +			return;
+> +
+> +		ks_pcie = dev_get_drvdata(bridge_dev->parent);
+> +		if (!ks_pcie)
+> +			return;
+> +
+> +		val = ks_pcie_app_readl(ks_pcie, PID);
+> +		val &= RTL;
+> +		val >>= RTL_SHIFT;
+> +		if (val != AM6_PCI_PG1_RTL_VER)
+> +			return;
+> +
+> +		if (pcie_get_readrq(dev) > 128) {
+> +			dev_info(&dev->dev, "limiting MRRS to 128 bytes\n");
+
+Thank you for adding "bytes" in the above line.
+
+> +			pcie_set_readrq(dev, 128);
+> +		}
+> +	}
+>  }
+>  DECLARE_PCI_FIXUP_ENABLE(PCI_ANY_ID, PCI_ANY_ID, ks_pcie_quirk);
+
+Regards,
+Siddharth.
 
