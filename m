@@ -1,175 +1,117 @@
-Return-Path: <linux-kernel+bounces-233682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1358D91BB78
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:29:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC38591BB7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6453AB22885
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:29:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58DA6B212C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B93152160;
-	Fri, 28 Jun 2024 09:29:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3995715278C;
+	Fri, 28 Jun 2024 09:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GWWjv671"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aXKyTlJv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB79813E41F;
-	Fri, 28 Jun 2024 09:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE171CD32;
+	Fri, 28 Jun 2024 09:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719566953; cv=none; b=bus1JMuG5ARRNXt+9//ppEJAMj7CKMiEiUcAmzEKJX+1m2rd7i01z4vKkYAEBgRcWqxZiz2x5wi10er+wb8oklDDiJVLGcMhFEiZsOitihr+9tOvg5n/QPnuxXBr1CLBap0A2NK+w8izTndgBIvyZPU3/4G/XUomJt8MnnT6u10=
+	t=1719567033; cv=none; b=q8ZlJpFq1pisvqbnA5Dpc2XXbT7qiB7ZwphazetUHxAtqgd9cDxbcOnrQgm9SY30qBzSvvA91d0olP0KTdNsxg09EAxfqBPz90YfC4A03pJo0OyL9LwJ7VENrDMiV/wlekqlvse4Vr0yAVu+QS96WGZz6WnvJmnQXWSqWifY5OA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719566953; c=relaxed/simple;
-	bh=irwuLjcl11TTrmhJdTsbL+8hBZnUDoiZRTqW8w8y6GE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=HJRbQ5iIGI8p2ZyDTFRPPQhCxTV3XMCgV4I1DRn8yjkypOCj4rQVvlpFP82Pa1GTHfXyYlTHzygQuFOOy5PxhwySS/e1haJTvXRccqvPujgkpO/9Pe5twHgD3LOIdAJs9TfjtDC2aoE2llSwF4q5iCU80TcyVdMOUlPtNfGyA/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GWWjv671; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719566950; x=1751102950;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=irwuLjcl11TTrmhJdTsbL+8hBZnUDoiZRTqW8w8y6GE=;
-  b=GWWjv671muojDD61ofpKcsym/obDRMaRxBw4Kr7vdGB0TuYEsAm6bzd+
-   FKdvrtUJgWklWHgelMDkGM06CHZ5mi3dEGqVLecVEq7n247kR7zUtj71i
-   Mn6q1xpFNtmtUzkYIz7aPhvCzmlzzEEVtGOLUOc7bdeyrBm4ju5/N7QHR
-   t51onh2KTJr5le9xEvpJGMKuN3axWIy5Kx/iCWFnXfn3dNrNZVud+5hn2
-   omGWoOdiCvRE+MslIo8bv1mp3JtPp2GNatbeu2SnkWO0lbSoJxNbommVA
-   HMD5d4Pghatjs2PQYw9Ezspm897KGVy2nx2an37Ful9AJI+FE0Cz7XTwA
-   g==;
-X-CSE-ConnectionGUID: k+Gl6i2EQhCqjeWiR8RmgA==
-X-CSE-MsgGUID: JBmbQM10Tb6SwfzVXmPAJg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="16699021"
-X-IronPort-AV: E=Sophos;i="6.09,168,1716274800"; 
-   d="scan'208";a="16699021"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 02:29:10 -0700
-X-CSE-ConnectionGUID: gKH/6+VzShqievIk8WOGZw==
-X-CSE-MsgGUID: a2fev86RSlCE3mFciaK4BQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,168,1716274800"; 
-   d="scan'208";a="49640468"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.246.249])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 02:29:06 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Dave Airlie <airlied@gmail.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Vetter
- <daniel.vetter@ffwll.ch>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Mitul Golani
- <mitulkumar.ajitkumar.golani@intel.com>, Suraj Kandpal
- <suraj.kandpal@intel.com>, Intel Graphics
- <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the drm-intel tree
-In-Reply-To: <CAPM=9tyNGA2wEgnsKdSyjHRGVikywZLdueZj=syTMFYEUNzxhw@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240612141239.141ce8cc@canb.auug.org.au>
- <ZnCMUEd9dQ6bLNet@intel.com>
- <CAPM=9tyNGA2wEgnsKdSyjHRGVikywZLdueZj=syTMFYEUNzxhw@mail.gmail.com>
-Date: Fri, 28 Jun 2024 12:29:01 +0300
-Message-ID: <87ed8hbele.fsf@intel.com>
+	s=arc-20240116; t=1719567033; c=relaxed/simple;
+	bh=VmYjwKp6mlAJ1kzDY8yon8mWRyRJ52jWM6niGqaHDo8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k8HnPj+V0cl37OK0JnpRyyDI/YM3ERjlwmUUnck+G+6HrQmmCsDlIbZZ+9yYDox/jM936F8j4wzGXzIRAuuvKk4KsTA45fCGt9RcSPWjDSHyTnTRIlnDrpvqwzcpQ2CL8xx/i1A9fmXHm8Z6fgtkJHjcvVPSNx1gTBmNDAwxeoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aXKyTlJv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A45BC2BD10;
+	Fri, 28 Jun 2024 09:30:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719567032;
+	bh=VmYjwKp6mlAJ1kzDY8yon8mWRyRJ52jWM6niGqaHDo8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aXKyTlJvGFF4l0YoEAgw1mg6eLOctUu4JfxelD5BGvoLP4KW1ofc+zd9L+DopGwYT
+	 2vYCSXxt1UOqrggvJ5hVYtje9EoUIcHFCrOnXQ4I3St7MyeeWSyGpmDTyvsmS2Q8kf
+	 zIzEMELR+jo0Ab2N5U4McKq+O0jkamZ9i/FbS/jQ/9S4uT/w5+tAA9Sr0UFx8Jq81Z
+	 c7T7JOdphvQiPlparHZOn7FEBI4l+Gb7e9pGnSf9lHI926SwTLJZGVltvjEMyzcf61
+	 2lQalOEORVTJi8qVuebUSf2KNJhlS1qsKqSIsJvmRu4qq0U4QBQWBoZNT31QrpQlIn
+	 oWwgCQ1sFA1VQ==
+Date: Fri, 28 Jun 2024 11:30:28 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
+	Drew Fustini <dfustini@tenstorrent.com>, Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
+	Conor Dooley <conor@kernel.org>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	=?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v3 0/3] Add I2C support on TH1520
+Message-ID: <xkdmrmtiizoqo6mpc7i6iyhilxlw57nawn6ogv6dryaveyqddc@ach3rwy4abpe>
+References: <20240618-i2c-th1520-v3-0-3042590a16b1@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240618-i2c-th1520-v3-0-3042590a16b1@bootlin.com>
 
-On Fri, 28 Jun 2024, Dave Airlie <airlied@gmail.com> wrote:
-> On Tue, 18 Jun 2024 at 05:26, Rodrigo Vivi <rodrigo.vivi@intel.com> wrote:
->>
->> On Wed, Jun 12, 2024 at 02:12:39PM +1000, Stephen Rothwell wrote:
->> > Hi all,
->> >
->> > After merging the drm-intel tree, today's linux-next build (i386
->> > defconfig) failed like this:
->> >
->> > x86_64-linux-gnu-ld: drivers/gpu/drm/i915/display/intel_vrr.o: in func=
-tion `intel_vrr_compute_config':
->> > intel_vrr.c:(.text+0x4e4): undefined reference to `__udivdi3'
->> >
->> > Caused by commit
->> >
->> >   1676ecd303ac ("drm/i915: Compute CMRR and calculate vtotal")
->> >
->> > I have reverted that commit for today.
->>
->> the fixes for that is available in drm-intel-next now. you should probab=
-ly
->> remove the revert.
->>
->> Thanks for the heads up on that.
->
-> In file included from
-> /home/airlied/devel/kernel/dim/src/arch/arm/include/asm/div64.h:107,
->                  from /home/airlied/devel/kernel/dim/src/include/linux/ma=
-th.h:6,
->                  from
-> /home/airlied/devel/kernel/dim/src/include/linux/kernel.h:27,
->                  from
-> /home/airlied/devel/kernel/dim/src/include/linux/cpumask.h:11,
->                  from /home/airlied/devel/kernel/dim/src/include/linux/sm=
-p.h:13,
->                  from
-> /home/airlied/devel/kernel/dim/src/include/linux/lockdep.h:14,
->                  from
-> /home/airlied/devel/kernel/dim/src/include/linux/spinlock.h:63,
->                  from
-> /home/airlied/devel/kernel/dim/src/include/linux/kref.h:16,
->                  from
-> /home/airlied/devel/kernel/dim/src/include/drm/drm_device.h:5,
->                  from
-> /home/airlied/devel/kernel/dim/src/include/drm/drm_drv.h:35,
->                  from
-> /home/airlied/devel/kernel/dim/src/drivers/gpu/drm/xe/compat-i915-headers=
-/i915_drv.h:13,
->                  from
-> /home/airlied/devel/kernel/dim/src/drivers/gpu/drm/i915/display/intel_vrr=
-.c:7:
-> /home/airlied/devel/kernel/dim/src/drivers/gpu/drm/i915/display/intel_vrr=
-.c:
-> In function =E2=80=98cmrr_get_vtotal=E2=80=99:
-> /home/airlied/devel/kernel/dim/src/include/asm-generic/div64.h:222:35:
-> warning: comparison of distinct pointer types lacks a cast
->   222 |         (void)(((typeof((n)) *)0) =3D=3D ((uint64_t *)0));  \
->       |                                   ^~
-> /home/airlied/devel/kernel/dim/src/drivers/gpu/drm/i915/display/intel_vrr=
-.c:155:35:
-> note: in expansion of macro =E2=80=98do_div=E2=80=99
->   155 |         crtc_state->cmrr.cmrr_m =3D do_div(adjusted_pixel_rate,
-> crtc_state->cmrr.cmrr_n);
->       |                                   ^~~~~~
->
-> The fixes might need some more fixing, 32-bit arm build.
+Hi,
 
-Hmm. Works for me with commit 213cc30331e9 ("drm/i915/display: Consider
-adjusted_pixel_rate to be u64"). Are you hitting this with drm/next
-which doesn't have that yet?
+On Tue, Jun 18, 2024 at 09:42:37AM GMT, Thomas Bonnefille wrote:
+> This adds I2C support in the device tree of the T-Head TH1520 RISCV-SoC
+> and a default configuration for the BeagleV-Ahead. It appears that the
+> TH1520 I2C is already supported in the upstream kernel through the
+> Synopsis Designware I2C adapter driver.
+> 
+> This patch depends on the clock patch from Drew Fustini
+> Link: https://lore.kernel.org/linux-riscv/20240615-th1520-clk-v1-0-3ba4978c4d6b@tenstorrent.com
+> and the pinctrl patch from Emil Renner Berthing
+> Link: https://lore.kernel.org/linux-riscv/20240103132852.298964-1-emil.renner.berthing@canonical.com
 
-BR,
-Jani.
+I think after these two go in...
 
+> Changed from v1:
+> 1. Remove redundant example for Synopsis DesignWare-I2C bindings
+> 2. Remove Node Ordering commit as it has already been taken
+> 3. Remove EEPROM label
+> 4. Rebase on pinctrl and clock driver patches
+> 5. Add pinctrl configuration
+> 6. Replaced the fixed-clock with a correct configuration
+> 
+> Changed from v2:
+> 1. Reorder nodes to conserve ascending register node ordering
+> 2. Add support for I2C2 as it probably use the same controller
+> 3. Format comments to match kernel coding style
+> 4. Reorder nodes to conserve alphabetical node ordering
+> 6. Declare I2C2
+> 6. Set pinctrl pull-up resistor to the highest value
+> 
+> Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+> ---
+> Thomas Bonnefille (3):
+>       dt-bindings: i2c: dw: Document compatible thead,th1520-i2c
 
->
-> Dave.
->
->>
->> >
->> > --
->> > Cheers,
->> > Stephen Rothwell
->>
->>
+... this goes throught i2c...
 
---=20
-Jani Nikula, Intel
+>       riscv: dts: thead: Add TH1520 I2C nodes
+>       riscv: dts: thead: Enable I2C on the BeagleV-Ahead
+
+... and these two go thrhough Conor's branches.
+
+Do you mind sending a ping when Drew's patches are included in
+the merge window? I can put the first patch on a special branch
+to keep it under my watch.
+
+Andi
 
