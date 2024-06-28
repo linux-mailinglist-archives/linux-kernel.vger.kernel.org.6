@@ -1,97 +1,148 @@
-Return-Path: <linux-kernel+bounces-234641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C246A91C8ED
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 00:07:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1506991C8EE
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 00:08:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 446EE2812F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:07:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C50782837F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26C479B8E;
-	Fri, 28 Jun 2024 22:07:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KZUHYL2c"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB86811E2;
+	Fri, 28 Jun 2024 22:08:12 +0000 (UTC)
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D2E56444;
-	Fri, 28 Jun 2024 22:07:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C105D8005B;
+	Fri, 28 Jun 2024 22:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719612429; cv=none; b=GBwRvhTXWMRd9OYGYvWfClSYkPKitCk5hYFWsbBKZdFp/oxHmo0SeINWbXSweplU48gsvzzpUk1U07cJagxoVSSOocUDE1KPeZ7qMpQozyuGAjahPdQReBkKUDpEAB2zMTzxr5uttEvCdmaM4e3QQvUO8QBnvnGYHla76Bv92oc=
+	t=1719612492; cv=none; b=qXX8M2yaUWZb5n4dtyK535apABWuXsj8UAj5G9iCoWxJpbdV3UWWw4jLZnRh5TgMZeARB0QT6RDV1LV1KR2f7yGlZKhYOKLhK3wKLAdf/UgRjRQslFnQIhWPW1TZg8/edN6Wx2lVoxPGuuzFCCLa6jImSfv+LFF9X0jilKkOAN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719612429; c=relaxed/simple;
-	bh=GET8hi8INSTSnIgy3IYdHk0cgLUUvIuAVA6DIm9jUGY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rBvgE+O1z3avePfPElC9LXgaaaRZkwIS/cCT/lgZQo95SPGq8qButmijg3BiOWZk4atg7qorQh7+/gW0MTF3jBuvaJ7tQXSl/JIDDxvUQJziJlWd0b9OFf8DzbDaTS1/7fYIAOOCVl1P2ZUox0k3KaHgfEWPNZF8q0r8HJfzQbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KZUHYL2c; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1719612492; c=relaxed/simple;
+	bh=SlYDa3nHU9cti55kEvXj2xLvOYUAo+BxcVz6vOdWyjA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bFKAHwoMMyPaek6S/ag0ZmpAsvLVOFkgVaimBNl3nAqQkHJ2i+50VebB/Clw65f3az2smvRW9qYqFoJUbXeazj+OMF5+uXWN9OtXx8iCc0uKbyFXLQRj3G0NCUpBN/dclcMLzJ4kVAkJqCp6g1fRYUR5FA/zTpzK9OGXP5W1OsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7067a2e9607so934556b3a.3;
-        Fri, 28 Jun 2024 15:07:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719612427; x=1720217227; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vPIh8SA0JDwMavV+AJXobT17jvbZvr8sqABjnH+0eqk=;
-        b=KZUHYL2cJHv7Hw2ZIzx2Q5j+JNqI206roxDuZ+5k7ubU48cK5ZFFQA3/DaT5VokCw0
-         q6H0z2NqpAr1iXgUJzlTXPdDAsQtcAw2pT0oWrLxXCsalnde1CfKrjvBajjJulPGSUgy
-         U00JWBcp3dpOHW+gYcpxoyD0SutWUJsgGuOVOxQTPrPhp20aTwA7HqmB62sJLkmGy9sb
-         lwoPdBwyL7mFJ6Bd9UBho0oj0RpA853wb5tgDKzRgrq6eVg0P0fk0HkqOw6FZgPlVvyg
-         iY6IRRb2+7Pz/cNArHi1XSyayDwciOV8uU2ikRnVA4Fz3oOoW+eyJWSVpCXnmAj/epiT
-         Vg/g==
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-707040e3018so763785a12.1;
+        Fri, 28 Jun 2024 15:08:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719612427; x=1720217227;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vPIh8SA0JDwMavV+AJXobT17jvbZvr8sqABjnH+0eqk=;
-        b=rpPIAVN/TWTfvfaQjqVw2kTw1PnXLn5Us1XviQh/39vi74NmJCdjDTSBN/2bA4VqO/
-         YtQwIFILRHaabrYHd+GJL7LKSvtIDs+b9v1C5Y0Jjh6/2FssGvJ1od5RK/YT1ds5qniM
-         AxYfwtw0x+x0b4+AfjFr/TVris9eyb8h6+BeIkkWGR5cJs8xvq2l/gaQDM+tv0u4On+D
-         U6Yx5bk4MH2iIiWeCTLhqj2ORjQlaNDv2zHkdXK1gDycUuoI0tZ4aQYEuYD0NMIPPjlf
-         tpVhwFZCz6oiNNbu5Oj3kv1fJghcLPbkOdfbKCR37dROsciSfwU7c3amC8D+96J8UJ7H
-         yBPQ==
-X-Gm-Message-State: AOJu0YwWWMxOuNFUFb/AWfUnUHPr8AHv83M2rkfIzOOKZXxiAcZNdh/3
-	8tFoeeeHkhHmycaIYqL0Rl//ggYc5gilpNhS1AE055wEIvbSjJghcQHbmw==
-X-Google-Smtp-Source: AGHT+IFsjhznDCLubkZ/tSZy9BwuqqKHvwCWhVWI8DgC1XBdFThJs+Xm6891AnxZFerUsdnun+Wtsg==
-X-Received: by 2002:a05:6a20:9185:b0:1be:e265:81fa with SMTP id adf61e73a8af0-1bee2658442mr5168116637.35.1719612426248;
-        Fri, 28 Jun 2024 15:07:06 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:9c98:1988:ce15:c0ac])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70803ecf652sm2186451b3a.99.2024.06.28.15.07.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 15:07:05 -0700 (PDT)
-Date: Fri, 28 Jun 2024 15:07:03 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: linux-input@vger.kernel.org, Jason Gerecke <jason.gerecke@wacom.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: wacom_w8001 - use "guard" notation when acquiring
- mutex
-Message-ID: <Zn80Bz1EB7yNwWL4@google.com>
-References: <Zmkyvkr9AFyywy1V@google.com>
+        d=1e100.net; s=20230601; t=1719612490; x=1720217290;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=owuI9bhRt4SW/JGERO2LK5tci8DsNjEap5zwXWZimQw=;
+        b=t9sRUrU7F3LTP9PCAvoPMzy0CmD5kD00UKR2hfw1LdeCtfghp9WIidsaFz5hBfLU9+
+         6snO8fH0Yrvhe6Mf24jSkydY+w7xHPC40YEERUXSaSNRGErVSpZqqhaUud02V/FRFuax
+         1/WHK2NtK3yjIOb/WBcs7G+MP8/JhyVPgtHlOrLHtO/kS6+d7MIBWAatWpCnAbsDbdPH
+         wYmaRIAmarrg6qpA8cuW01IH/+OqY5B0YHhfeq6UOwZ5tf2QCPA3SSrBHx8yB2X/2ae6
+         WBqLUiA/RAzHbDwcPHeDLuMzGDmhLqod7BAaCR9Yx6lwGnGB1dglB/RH9mIAGbxeRUv2
+         y3pA==
+X-Forwarded-Encrypted: i=1; AJvYcCVHe9YvpAl4M41UbnGyQeN79RZF+uFnc2aRdePHtxSoP4Opu9tSf77C3W+RMZjP0xea3Hc4zQrNQbxPAv6LfCYFYxGg6r1s7YkhDUpU2AFsTIzFRyPFRfpomeROi/Q7WQsSfildJUIgoChhIWFt1w==
+X-Gm-Message-State: AOJu0Ywa+Ju3m7QpB2sQdFz+OxIL2t1XxXbX9aonzNnW94e0ppn4zZu3
+	1FQGHguXE0MZsa4NyWtGxVEhvOr1ZfunBL+0AclDjWFtd2seb+eB4rA0tjlQZI4e5Znz+hXCmvV
+	3BLrPKI3eyzpSxKzCTzz3VVZ5IXM=
+X-Google-Smtp-Source: AGHT+IHSMx0Hds7q5w8G8pTdswpQ2/f9z7Hnq4U19v0U2ZxtS2QIqmkZVcn6xijglajyEmuKjacvsuKvmZrlbO9lY+I=
+X-Received: by 2002:a05:6a20:841c:b0:1b2:3ab8:5194 with SMTP id
+ adf61e73a8af0-1bcf7e7ee71mr25762059637.23.1719612489958; Fri, 28 Jun 2024
+ 15:08:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zmkyvkr9AFyywy1V@google.com>
+References: <20240626203630.1194748-1-irogers@google.com> <Zn7x6u7cedoFIHSi@google.com>
+ <CAP-5=fXQ3nFZQRMTd+7wp2jEecRt2ykJ57oBO2=qqbnEeyQRvA@mail.gmail.com>
+In-Reply-To: <CAP-5=fXQ3nFZQRMTd+7wp2jEecRt2ykJ57oBO2=qqbnEeyQRvA@mail.gmail.com>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Fri, 28 Jun 2024 15:07:58 -0700
+Message-ID: <CAM9d7citDe_Es-j4AY0bowQkiiF016zZEZUPsWyakY7Rv_+V5Q@mail.gmail.com>
+Subject: Re: [PATCH v2 00/27] Constify tool pointers
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
+	James Clark <james.clark@arm.com>, Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Yicong Yang <yangyicong@hisilicon.com>, 
+	Jonathan Cameron <jonathan.cameron@huawei.com>, Nick Terrell <terrelln@fb.com>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Anshuman Khandual <anshuman.khandual@arm.com>, Song Liu <song@kernel.org>, 
+	Ilkka Koskinen <ilkka@os.amperecomputing.com>, Huacai Chen <chenhuacai@kernel.org>, 
+	Yanteng Si <siyanteng@loongson.cn>, Sun Haiyong <sunhaiyong@loongson.cn>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 11, 2024 at 10:31:42PM -0700, Dmitry Torokhov wrote:
-> Switch the driver to use guard notation when acquiring mutex to
-> have it released automatically.
-> 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+On Fri, Jun 28, 2024 at 10:52=E2=80=AFAM Ian Rogers <irogers@google.com> wr=
+ote:
+>
+> On Fri, Jun 28, 2024 at 10:25=E2=80=AFAM Namhyung Kim <namhyung@kernel.or=
+g> wrote:
+> >
+> > On Wed, Jun 26, 2024 at 01:36:02PM -0700, Ian Rogers wrote:
+> > > struct perf_tool provides a set of function pointers that are called
+> > > through when processing perf data. To make filling the pointers less
+> > > cumbersome, if they are NULL perf_tools__fill_defaults will add
+> > > default do nothing implementations.
+> > >
+> > > This change refactors struct perf_tool to have an init function that
+> > > provides the default implementation. The special use of NULL and
+> > > perf_tools__fill_defaults are removed. As a consequence the tool
+> > > pointers can then all be made const, which better reflects the
+> > > behavior a particular perf command would expect of the tool and to
+> > > some extent can reduce the cognitive load on someone working on a
+> > > command.
+> >
+> > I thought you actually wanted to make the tool const (rodata) but it
+> > seems you leave it as is but treat it as const.
+>
+> So I think that is a next step on top of these changes but it would
+> need something a bit special as we want to default initialize some
+> fields but then initialize others. Something like (which wouldn't
+> work):
+>
+> .tool =3D DEFAULT_TOOL_STUBS({
+>                .sample         =3D process_sample_event,
+>                .fork           =3D perf_event__process_fork,
+>                .exit           =3D perf_event__process_exit,
+>                .comm           =3D perf_event__process_comm,
+>                .namespaces     =3D perf_event__process_namespaces,
+>                .mmap           =3D build_id__process_mmap,
+>                .mmap2          =3D build_id__process_mmap2,
+>                .itrace_start   =3D process_timestamp_boundary,
+>                .aux            =3D process_timestamp_boundary})
+>
+> Being const is just saying hey all these event callbacks aren't going
+> to mutate the tool, something I wanted to rule out as part of a change
+> I'm working on.
+>
+> > I'm curious if we can change the event delivery code something like:
+> >
+> >   if (tool->func)
+> >       tool->func(...);
+> >   else
+> >       stub_func(...);
+> >
+> > Then probably we don't need to touch the tool and make it const.
+> > Thoughts?
+>
+> It works but the approach needs to change all tool func callers. I
+> think it is also more obvious as an API to have a default value and
+> override it, rather than giving special properties to NULL that
+> callers should adhere to - we're doing a kind of poor man's virtual
+> method dispatch and you wouldn't typically expect a NULL check as part
+> of that.
 
-Applied since there are no objections.
+I guess we only have a few callers in util/session.c.
 
-Thanks.
-
--- 
-Dmitry
+Thanks,
+Namhyung
 
