@@ -1,72 +1,58 @@
-Return-Path: <linux-kernel+bounces-234652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9147991C910
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 00:24:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F63D91C913
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 00:25:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D687286771
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:24:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 240F5B2364F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755F88248C;
-	Fri, 28 Jun 2024 22:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="yWvSbaoC"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF24081751;
+	Fri, 28 Jun 2024 22:25:05 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D904B7580C;
-	Fri, 28 Jun 2024 22:24:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A094DA08;
+	Fri, 28 Jun 2024 22:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719613452; cv=none; b=es+h/iA8h8Ucg5LkWFS3wRx86/SCMO1OZdCO8Idatduy4pWdG5mj3Kmq0CbPG7ewlBYiAtoKr0PG77MOSUOcUAUPEzUQIZz3tKRPfss983cRdbq6hgYnvz8kyGK7f6uEPXXgcjv3t6ukixIS3tdlEK7dSZKXQFuuf7WqK5vh8/w=
+	t=1719613505; cv=none; b=aWdZN7kUkM0kWCKexapLA0+RK2E22nR1xxo9C4AQudd5KoH7QPctVumhK/IdKAXui1ZPBOj5wMTj/4swZdOAFoBLCUOUBUDEl6ipAP/NAh8wQytK1d320G8kE8w9VSNFY2oGvuuPALOTggi3o29hz828H5QowIYMpcR7ypPKCz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719613452; c=relaxed/simple;
-	bh=LxprLtuNhdIezmq2Q7VPV5xKJ5SjRmjqMpn1NcBKzE4=;
+	s=arc-20240116; t=1719613505; c=relaxed/simple;
+	bh=Az2RZTuoSKJP3L1ZoMdhA+h5aArUlT4AoE1Omk8ihXQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KqF6kuYmNyrAiHz4sFwQyvooTOBXvG9CzLWSux0mqLlhLS07Bi3j6FEh5WETj9nqWixb0ZVj8felsCN0KbkWEEh9aO62Itt/AbDMTN0D6FoC4Nmjz1CWOKpXxx9YkxuYONL0P0dq2Dcn6xNdGPEZ7THQGofKADjR+ewC0aUm8Us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=yWvSbaoC; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=ddG/6CRq4Slp1JOPczsDbpO5bsFIh7ehTxG5v9raX4M=; b=yWvSbaoChQ+wZvT+xaChOW+T1S
-	W0oVqwmNHigXM3cZB5kYaBeDQEDtCcSsbzjgf5rUFcdS9r8XAuV0QYKbFUaj0KHFWQIKj8j6rgx8Z
-	fPJlqgEtAUWDIavtbQaohFBwsiSeTH0iBgB0fJNbFPTTDKJ/FCoGdDM1qQcmlCX1G6iA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sNK0R-001KXz-8J; Sat, 29 Jun 2024 00:23:47 +0200
-Date: Sat, 29 Jun 2024 00:23:47 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Russell King <linux@armlinux.org.uk>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bhupesh Sharma <bhupesh.sharma@linaro.org>, kernel@quicinc.com,
-	Andrew Halaney <ahalaney@redhat.com>, linux-arm-msm@vger.kernel.org,
-	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] net: stmmac: Add interconnect support
-Message-ID: <b6f1c7c1-9fd6-43fe-b7b0-5d4a5fc532d6@lunn.ch>
-References: <20240625-icc_bw_voting_from_ethqos-v2-0-eaa7cf9060f0@quicinc.com>
- <20240625-icc_bw_voting_from_ethqos-v2-2-eaa7cf9060f0@quicinc.com>
- <4123b96c-ae1e-4fdd-aab2-70478031c59a@lunn.ch>
- <81e97c36-e244-4e94-b752-b06334a06db0@quicinc.com>
- <974114ca-98ed-44a7-a038-eb3f71bd03ef@lunn.ch>
- <22edcb67-9c25-4d16-ab5c-7522c710b1e2@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mQ8sJ0oj1OEXvLgZlX/VcI1TnhBCrqv2oHV0Jp8jUtS//OQxL0RdHj2JcEs9ffVSzeRD3EMy+Tl+IjCxsvX9fAZuC2RI/uaTA0bqji/+9W8rjy/HgE+SS4yw7T8MyLHWmjm5erWHWKbNbiLgk6ZsrqDV9e4BSV4e5eTQAkNmgNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72701C116B1;
+	Fri, 28 Jun 2024 22:24:58 +0000 (UTC)
+Date: Fri, 28 Jun 2024 23:24:56 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	maz@kernel.org, anna-maria@linutronix.de, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, festevam@gmail.com, bhelgaas@google.com,
+	rdunlap@infradead.org, vidyas@nvidia.com,
+	ilpo.jarvinen@linux.intel.com, apatel@ventanamicro.com,
+	kevin.tian@intel.com, nipun.gupta@amd.com, den@valinux.co.jp,
+	andrew@lunn.ch, gregory.clement@bootlin.com,
+	sebastian.hesselbarth@gmail.com, gregkh@linuxfoundation.org,
+	rafael@kernel.org, alex.williamson@redhat.com, will@kernel.org,
+	lorenzo.pieralisi@arm.com, jgg@mellanox.com,
+	ammarfaizi2@gnuweeb.org, robin.murphy@arm.com,
+	lpieralisi@kernel.org, nm@ti.com, kristo@kernel.org,
+	vkoul@kernel.org, okaya@kernel.org, agross@kernel.org,
+	andersson@kernel.org, mark.rutland@arm.com,
+	shameerali.kolothum.thodi@huawei.com, yuzenghui@huawei.com,
+	shivamurthy.shastri@linutronix.de
+Subject: Re: [patch V4 05/21] irqchip/gic-v3-its: Provide MSI parent for
+ PCI/MSI[-X]
+Message-ID: <Zn84OIS0zLWASKr2@arm.com>
+References: <20240623142137.448898081@linutronix.de>
+ <20240623142235.024567623@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,31 +61,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <22edcb67-9c25-4d16-ab5c-7522c710b1e2@quicinc.com>
+In-Reply-To: <20240623142235.024567623@linutronix.de>
 
-> > Sorry, PTR_ERR().
-> > 
-> > In general, a cast to a void * is a red flag and will get looked
-> > at. It is generally wrong. So you might want to fixup where ever you
-> > copied this from.
-> > 
-> > 	Andrew
+Hi Thomas,
 
-> the return type of stmmac_probe_config_dt is a pointer of type plat_stmmacenet_data,
-> as PTR_ERR would give long integer value i don't think it would be ideal to
-> return an integer value here, if casting plat->axi_icc_path to a void * doesn't look
-> good, let me if the below solution is better or not?
+On Sun, Jun 23, 2024 at 05:18:39PM +0200, Thomas Gleixner wrote:
+> From: Thomas Gleixner <tglx@linutronix.de>
+> 
+> The its_pci_msi_prepare() function from the ITS-PCI/MSI code provides the
+> 'global' PCI/MSI domains. Move this function to the ITS-MSI parent code and
+> amend the function to use the domain hardware size, which is the MSI[X]
+> vector count, for allocating the ITS slots for the PCI device.
+> 
+> Enable PCI matching in msi_parent_ops and provide the necessary update to
+> the ITS specific child domain initialization function so that the prepare
+> callback gets invoked on allocations.
+> 
+> The latter might be optimized to do the allocation right at the point where
+> the child domain is initialized, but keep it simple for now.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+> Signed-off-by: Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
->  	plat->axi_icc_path = devm_of_icc_get(&pdev->dev, "axi");
-> 	if (IS_ERR(plat->axi_icc_path)) {
-> 		rc = PTR_ERR(plat->axi_icc_path);
-> 		ret = ERR_PTR(rc);
+I just noticed guests (under KVM) failing to boot on my TX2 with your
+latest branch. I bisected to this patch as the first bad commit.
 
-Don't you think this looks ugly?
+I'm away this weekend, so won't have time to dive deeper. It looks like
+the CPU is stuck in do_idle() (no timer interrupts?). Also sysrq did not
+seem able to get the stack trace on the other CPUs. It fails both with a
+single or multiple CPUs in the same way place (shortly before mounting
+the rootfs and starting user space).
 
-If it looks ugly, it is probably wrong. You cannot be the first person
-to find the return type of an error is wrong. So a quick bit of
-searching found ERR_CAST().
+Not sure whether it's related by Red Hat's CI is also reporting boot
+failures:
 
-	Andrew
+https://lore.kernel.org/r/66859.124062817530400571@us-mta-477.us.mimecast.lan
+
+I'll drop your branch from the arm64 for-kernelci for now and have a
+look again on Monday.
+
+-- 
+Catalin
 
