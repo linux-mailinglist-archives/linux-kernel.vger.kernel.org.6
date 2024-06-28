@@ -1,222 +1,215 @@
-Return-Path: <linux-kernel+bounces-233242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D24691B4B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:40:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB85791B4C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:52:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B6A11C2132C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:40:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 589671F22A8E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2381D12B72;
-	Fri, 28 Jun 2024 01:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EE6F14A84;
+	Fri, 28 Jun 2024 01:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="w+LthBNe"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="affTk2i3"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE21F9F5
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 01:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C8918C31
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 01:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719538803; cv=none; b=s6X1FYHvLBn2kA5B+BGWNPnUynDCmtMcQEmhX3KaitB4N39eYlSVqtjCwdtTk/uFIicWtA+z5EoEnsof6eR2ktQJYCoYayhg5u5bT+2fV8nYGYtHhn6uCSo5oHrXqRzs7cwbdbfBNfLevDNbQzmKPIncMXqrCoD7DsI/GICF00c=
+	t=1719539531; cv=none; b=XR/i/WoVRSEzZyQxTra2OE+RTHqKtKKZIDCivfZps8v6JDBOzzL8djyBYvaFXBhIApPEQaOaDwZqCdIaajx2GaDNHw9089fdrrySZYuTHKSyqvjtCEj8lOUZ9brvaadxI1gM1H+XAn0BazrkJugL9XLogscrunwGX7kYG8hJ5vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719538803; c=relaxed/simple;
-	bh=nuzBnK6u0gOR1Y/5fr+lqnZyDYNnlgKv1Usen658WFA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S2idYpeProScYG4Is535Iuc0aNXT1M34vCSYMJowwyn03uijajNkxN9jXc7cavGqYPNvcNFvecpiLnV2OLSpIm+Yz7rFzuwaDB9BipT3DPFNzIMnZQ7yHR5NZvAOOPqH66ONbhZ1U048NHHCPV5sRjDg5bulwwonskqRBzwrCJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=w+LthBNe; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3626c29d3f0so25536f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 18:40:00 -0700 (PDT)
+	s=arc-20240116; t=1719539531; c=relaxed/simple;
+	bh=C7mvTYLKP5rULxzvk+Q/UI/35lIUUm/C/Ad04ubtNZ0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YNYjWaDq+FmcCY3aKqKpbah0+7yOErSNeHWNkQyer/zkbWdMpLbdOB6NyQVjXbaimlzcy901laoeJgPkUtv+LdLfcbKVymmJ1mWMyRPmBnuKQlRdYtQwsikNp8JONO8JxENwWy5GnHijaqc3sqQUvQcag2ZjvfAxMhYfgj6J4a4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=affTk2i3; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-707f9c3bd02so131712b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 18:52:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1719538799; x=1720143599; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=DloQEiwrEccgpDXWzKbcfvlYoNF25kWonkWu7VDpFI4=;
-        b=w+LthBNeDCeoPsU74pxrI6jTsLcEXx8LA6DRRosyPvzfgy1DzeoBJYD8JGLy4+6s98
-         J3HEp+TBzXd1TRBo+UYxijdKOpaKQr/EAlIcoue2ZI3DeZvjlm4Vkrjpsf0dJUPW72DG
-         S4gfTcn4ZQ3y51XaiQUqop8l2pDL75nWJZw3ubJpQADjMRSHNFON3utC3/rlku/IFHsA
-         wVeG+zLgmS0OdSpxxtjX3sFHGH7YDFX3GLCH9PH9tqZusufKdFCSp2GKJus+rrCYTE9m
-         RdQmZ/cmxAHmQssXihh//rZzqBDxmghMqOwTe9eNreED04kbiOz/jEA/6IpcUT28CQ0c
-         jN4Q==
+        d=chromium.org; s=google; t=1719539529; x=1720144329; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/Y2Wdd7VeB8iNHqPvhHv3M3aV5Mu8Y1ATzVFTOMbY10=;
+        b=affTk2i3soc82yt0NKXX8CK97clvM4aMjiNPEHtUlvH/3Ckppo9/QIXP/fHQu87Lih
+         nvY5PuCye7NufAk5mp7NcHWdBEczxHyhW5h3IuCX0+/vBqT7rYHi20RQLB2yhCRwNstr
+         TljBkeBcAY7qvtdTTIz9HCj+hcoF+qKtEA/4A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719538799; x=1720143599;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DloQEiwrEccgpDXWzKbcfvlYoNF25kWonkWu7VDpFI4=;
-        b=S64tahn3yoH+HMA/e9hs2UGVPxpymmrj9ltVR8o+3z3v5+rqCKrjvqZT9BwyX+UCcW
-         TVqVG4gMqWIrLeNz1TH1qt6lIu8+9q6m7NZruYxzJkCwhareHKjv6ocMUUXnGDBoAB63
-         0QnyU1zxSedlp6mIn6xadSmEQyggQVPhALRUnirVGPBYX1CBqRM6Pbol5TcT/RpYPn8M
-         oRHZyAzJGDGZCu95RNAl72+7bTFIHcvVV+wB03+BdX9u4Pc/WJeIqu6Zgd4C43uImY4n
-         KmDYOZ8C0Bma5IHGbdJKtKayT+OCDgWD5W1z6aLbDjez1oh3mNLzpq6Q3UHeo8EDX5uH
-         uZyw==
-X-Forwarded-Encrypted: i=1; AJvYcCWNvi7XHUV4HKopjlTTd9EWEm4B8PEMarsoiYD4CSF9MUsCr7D52ZDuSwIdsHPoiI0e06WKWwhjJzvu1lFh4h5bpI9BxppZiv7bWRay
-X-Gm-Message-State: AOJu0Yxij8LgpEiDGe/pFMDpJyUe8CkGboYUAG1YvTcftwMtTmzokX8K
-	yO5iKIx4ZSOtdPECqjvMJER+rxxEST101tWJr3IpSpEITAPmnuUF86djhc9QD/M=
-X-Google-Smtp-Source: AGHT+IEppKX2WnxqOz/LEoFTGfLFKwT3XHefFCeOSZCWAWsVtgMkl7c0dwxPJn6T8/j4Pmjevh4OWA==
-X-Received: by 2002:a05:6000:1212:b0:362:3730:8762 with SMTP id ffacd0b85a97d-366e948fa69mr10567742f8f.24.1719538799267;
-        Thu, 27 Jun 2024 18:39:59 -0700 (PDT)
-Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0e1345sm746157f8f.54.2024.06.27.18.39.58
+        d=1e100.net; s=20230601; t=1719539529; x=1720144329;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/Y2Wdd7VeB8iNHqPvhHv3M3aV5Mu8Y1ATzVFTOMbY10=;
+        b=bzKY0BWnQrvhgLg11Dbve8BvJKhYqIxZJVfHqiyUCY7HfxCODkCUsq0kGM6n9H8RfE
+         hfGZfhJ0oez2fJXp1elaSXvt13xkUCfgbD14Bci2c3J+FeMPVFGJaVB/hIsZ/YU0cPV1
+         heTTlDRKUH/F7w7xV8SzDz+idzmqcinGp2qlC10oR8Dmjn6MD0cSR6pmGV9v8cNbWL8X
+         k6vBg1L0SJyOhKzLrcBMK9Fv/b9zu0RdDNLI/JuZcbg890fyW0i5Ig77q4ngZFD3EOyI
+         hxA9ib0lCWpmBaVi/pomJDRQYLB3NHNR6i1XFLWjX5V0K2c0wXJTHKKE3YtVl5aynHPA
+         ei4w==
+X-Forwarded-Encrypted: i=1; AJvYcCUq2kvtQHEvI5AjOHFLR0BeWiNVn/VTKr3j70yV+N0pnclT+y0ni3kiO+aY7Aq66eukFqGNyhox3eTu989SreSiSDY6XeobExFpNyDG
+X-Gm-Message-State: AOJu0YyNZ7PG9RYM2Cmc1EmiviGnEOnotsnDyAQWkcKmYr5wjejCvuT4
+	aSZ1FNOebdqRfp5QfLCqr1dcqSFCjT42Qn1F5C/iS097CmdyUHxCp9dTUkW4EA==
+X-Google-Smtp-Source: AGHT+IFkQ+P3o8JhNlfXXJ3DTmdGuu1dXdBmx+jdWfrWXF8acBg2QGOM6vQP9wmCgvxhVl5eDn+lBw==
+X-Received: by 2002:a05:6a00:99e:b0:705:9b04:71b with SMTP id d2e1a72fcca58-7067471bf13mr19564882b3a.31.1719539528941;
+        Thu, 27 Jun 2024 18:52:08 -0700 (PDT)
+Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:c19a:b9a8:4bd1:72c0])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-708045aac85sm393354b3a.174.2024.06.27.18.52.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 18:39:58 -0700 (PDT)
-Date: Fri, 28 Jun 2024 02:39:57 +0100
-From: Qais Yousef <qyousef@layalina.io>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Xuewen Yan <xuewen.yan94@gmail.com>, Xuewen Yan <xuewen.yan@unisoc.com>,
-	dietmar.eggemann@arm.com, mingo@redhat.com, peterz@infradead.org,
-	juri.lelli@redhat.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
-	christian.loehle@arm.com, vincent.donnefort@arm.com,
-	ke.wang@unisoc.com, di.shen@unisoc.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 1/2] sched/fair: Prevent cpu_busy_time from exceeding
- actual_cpu_capacity
-Message-ID: <20240628013957.ocqatra72fxlon4u@airbuntu>
-References: <20240624082011.4990-1-xuewen.yan@unisoc.com>
- <20240624082011.4990-2-xuewen.yan@unisoc.com>
- <CAKfTPtB=Yk8Bp4sSanr4fCdyWA9PVROM+uiWsQSh+QjFpKb+Aw@mail.gmail.com>
- <CAB8ipk-yAoX5EJ975ZVKfgZP7rP-vzuc3bLVr6yiLtMv26Lxjw@mail.gmail.com>
- <CAKfTPtDuuF8XX3gbsjF_Vgys2UtbzwtaX9QFgA-3kZ7+eqk02w@mail.gmail.com>
+        Thu, 27 Jun 2024 18:52:08 -0700 (PDT)
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Minchan Kim <minchan@kernel.org>
+Cc: Chengming Zhou <chengming.zhou@linux.dev>,
+	linux-kernel@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: [PATCH] zsmalloc: rename class stat mutators
+Date: Fri, 28 Jun 2024 10:42:52 +0900
+Message-ID: <20240628015154.3230389-1-senozhatsky@chromium.org>
+X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKfTPtDuuF8XX3gbsjF_Vgys2UtbzwtaX9QFgA-3kZ7+eqk02w@mail.gmail.com>
 
-On 06/27/24 18:15, Vincent Guittot wrote:
-> On Thu, 27 Jun 2024 at 04:02, Xuewen Yan <xuewen.yan94@gmail.com> wrote:
-> >
-> > On Tue, Jun 25, 2024 at 9:05 PM Vincent Guittot
-> > <vincent.guittot@linaro.org> wrote:
-> > >
-> > > On Mon, 24 Jun 2024 at 10:22, Xuewen Yan <xuewen.yan@unisoc.com> wrote:
-> > > >
-> > > > Commit 3e8c6c9aac42 ("sched/fair: Remove task_util from effective utilization in feec()")
-> > > > changed the PD's util from per-CPU to per-PD capping. But because
-> > > > the effective_cpu_util() would return a util which maybe bigger
-> > > > than the actual_cpu_capacity, this could cause the pd_busy_time
-> > > > calculation errors.
-> > >
-> > > I'm still not convinced that this is an error. Your example used for v1 is :
-> > >
-> > > The pd cpus are 4-7, and the arch_scale_capacity is 1024, and because
-> > > of cpufreq-limit, the cpu_actual_cap = 512.
-> > >
-> > > Then the eenv->cpu_cap = 512, the eenv->pd_cap = 2048;
-> > > effective_cpu_util(4) = 1024;
-> > > effective_cpu_util(5) = 1024;
-> > > effective_cpu_util(6) = 256;
-> > > effective_cpu_util(7) = 0;
-> > >
-> > > so env->pd_busy_time = 2304
-> > >
-> > > Even if effective_cpu_util(4) = 1024; is above the current max compute
-> > > capacity of 512, this also means that activity of cpu4 will run twice
-> > > longer . If you cap effective_cpu_util(4) to 512 you miss the
-> > > information that it will run twice longer at the selected OPP. The
-> > > extreme case being:
-> > > effective_cpu_util(4) = 1024;
-> > > effective_cpu_util(5) = 1024;
-> > > effective_cpu_util(6) = 1024;
-> > > effective_cpu_util(7) = 1024;
-> > >
-> > > in this case env->pd_busy_time = 4096
-> > >
-> > > If we cap, we can't make any difference between the 2 cases
-> > >
-> > > Do you have more details about the problem you are facing ?
-> >
-> > Because of the cpufreq-limit, the opp was also limited, and when compute_energy:
-> >
-> > energy =  ps->cost * sum_util =  ps->cost * eenv->pd_busy_time;
-> >
-> > Because of the cpufreq-limit, the ps->cost is the limited-freq's opp's
-> > cost instead of the max freq's cost.
-> > So the energy is determined by pd_busy_time.
-> >
-> > Still the example above:
-> >
-> > The pd cpus are 4-7, and the arch_scale_capacity is 1024, and because
-> > of cpufreq-limit, the cpu_actual_cap = 512.
-> >
-> > Then the eenv->cpu_cap = 512, the eenv->pd_cap = 2048;
-> > effective_cpu_util(4) = 1024;
-> > effective_cpu_util(5) = 1024;
-> > effective_cpu_util(6) = 256;
-> > effective_cpu_util(7) = 0;
-> >
-> > Before the patch:
-> > env->pd_busy_time = min(1024+1024+256, eenv->pd_cap) = 2048.
-> > However, because the effective_cpu_util(7) = 0, indeed, the 2048 is bigger than
-> > the actual_cpu_cap.
-> >
-> > After the patch:
-> > cpu_util(4) = min(1024, eenv->cpu_cap) = 512;
-> > cpu_util(5) = min(1024, eenv->cpu_cap) = 512;
-> > cpu_util(6) = min(256, eenv->cpu_cap) = 256;
-> > cpu_util(7) = 0;
-> > env->pd_busy_time = min(512+512+256, eenv->pd_cap) = 1280.
-> >
-> > As a result, without this patch, the energy is bigger than actual_energy.
-> >
-> > And even if cpu4 would run twice longer, the energy may not be equal.
-> > Because:
-> >  *             ps->power * cpu_max_freq
-> > *   cpu_nrg = ------------------------ * cpu_util           (3)
-> > *               ps->freq * scale_cpu
-> >
-> > the ps->power = cfv2, and then:
-> >
-> > *                  cv2 * cpu_max_freq
-> > *   cpu_nrg = ------------------------ * cpu_util           (3)
-> > *                    scale_cpu
-> >
-> > because the limited-freq's voltage is not equal to the max-freq's voltage.
-> 
-> I'm still struggling to understand why it's wrong. If the frequency is
-> capped, we will never go above this limited frequency and its
-> associated voltage so there is no reason to consider max-freq's
-> voltage. If there is more things to do than the actual capacity can do
-> per unit of time then we will run more than 1 unit of time.
-> 
-> nrg of PD = /Sum(cpu) ps->power * cpu-running-time
-> 
-> ps->power is fixed because of the limited frequency constraint
-> 
-> we estimate cpu-running-time = utilization / ps->performance
-> with
-> - utilization = util_avg
-> - performance = ps->freq / cpu_max_freq * arch_scale_cpu_capacity() =
-> ps->performance
-> 
-> Up to now we were assuming that utilization was always lower than
-> performance otherwise the system was overutilized andwe fallback in
-> performance mode. But when the frequency of a cpu is limited by
-> userspace or thermal mitigation, the utilization can become higher
-> than the limited capacity which can be translated by cpu will run
-> longer.
+A cosmetic change.
 
-I might have contributed a bit to this confusion. So my apologies.
+o Rename class_stat_inc() and class_stat_dec() to class_stat_add()
+  and class_stat_sub() correspondingly. inc/dec are usually associated
+  with +1/-1 modifications, while zsmlloc can modify stats by up
+  to ->objs_per_zspage. Use add/sub (follow atomics naming).
 
-We certainly want to remove this limit and I thought to be consistent with
-current code behavior it might be good to have this patch. But as Vincent
-pointed out it actually moves us backward.
+o Rename zs_stat_get() to class_stat_read()
+  get() is usually associated with ref-counting and is paired with put().
+  zs_stat_get() simply reads class stat so rename to reflect it.
+  (This also follows atomics naming).
 
-So I think this is no longer needed too. We want to actually make the pd
-capping removed too - but I haven't looked at the detail if this can be done
-without side effects. We need to be more accurate in estimating the runtime and
-capping in general hides information about how long the cpu/pd will be busy
-for.
+Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+---
+ mm/zsmalloc.c | 36 ++++++++++++++++++------------------
+ 1 file changed, 18 insertions(+), 18 deletions(-)
+
+diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+index fec1a39e5bbe..17a8304504cc 100644
+--- a/mm/zsmalloc.c
++++ b/mm/zsmalloc.c
+@@ -512,19 +512,19 @@ static int get_size_class_index(int size)
+ 	return min_t(int, ZS_SIZE_CLASSES - 1, idx);
+ }
+ 
+-static inline void class_stat_inc(struct size_class *class,
+-				int type, unsigned long cnt)
++static inline void class_stat_add(struct size_class *class, int type,
++				  unsigned long cnt)
+ {
+ 	class->stats.objs[type] += cnt;
+ }
+ 
+-static inline void class_stat_dec(struct size_class *class,
+-				int type, unsigned long cnt)
++static inline void class_stat_sub(struct size_class *class, int type,
++				  unsigned long cnt)
+ {
+ 	class->stats.objs[type] -= cnt;
+ }
+ 
+-static inline unsigned long zs_stat_get(struct size_class *class, int type)
++static inline unsigned long class_stat_read(struct size_class *class, int type)
+ {
+ 	return class->stats.objs[type];
+ }
+@@ -576,12 +576,12 @@ static int zs_stats_size_show(struct seq_file *s, void *v)
+ 
+ 		seq_printf(s, " %5u %5u ", i, class->size);
+ 		for (fg = ZS_INUSE_RATIO_10; fg < NR_FULLNESS_GROUPS; fg++) {
+-			inuse_totals[fg] += zs_stat_get(class, fg);
+-			seq_printf(s, "%9lu ", zs_stat_get(class, fg));
++			inuse_totals[fg] += class_stat_read(class, fg);
++			seq_printf(s, "%9lu ", class_stat_read(class, fg));
+ 		}
+ 
+-		obj_allocated = zs_stat_get(class, ZS_OBJS_ALLOCATED);
+-		obj_used = zs_stat_get(class, ZS_OBJS_INUSE);
++		obj_allocated = class_stat_read(class, ZS_OBJS_ALLOCATED);
++		obj_used = class_stat_read(class, ZS_OBJS_INUSE);
+ 		freeable = zs_can_compact(class);
+ 		spin_unlock(&class->lock);
+ 
+@@ -686,7 +686,7 @@ static void insert_zspage(struct size_class *class,
+ 				struct zspage *zspage,
+ 				int fullness)
+ {
+-	class_stat_inc(class, fullness, 1);
++	class_stat_add(class, fullness, 1);
+ 	list_add(&zspage->list, &class->fullness_list[fullness]);
+ 	zspage->fullness = fullness;
+ }
+@@ -702,7 +702,7 @@ static void remove_zspage(struct size_class *class, struct zspage *zspage)
+ 	VM_BUG_ON(list_empty(&class->fullness_list[fullness]));
+ 
+ 	list_del_init(&zspage->list);
+-	class_stat_dec(class, fullness, 1);
++	class_stat_sub(class, fullness, 1);
+ }
+ 
+ /*
+@@ -858,7 +858,7 @@ static void __free_zspage(struct zs_pool *pool, struct size_class *class,
+ 
+ 	cache_free_zspage(pool, zspage);
+ 
+-	class_stat_dec(class, ZS_OBJS_ALLOCATED, class->objs_per_zspage);
++	class_stat_sub(class, ZS_OBJS_ALLOCATED, class->objs_per_zspage);
+ 	atomic_long_sub(class->pages_per_zspage, &pool->pages_allocated);
+ }
+ 
+@@ -1375,7 +1375,7 @@ unsigned long zs_malloc(struct zs_pool *pool, size_t size, gfp_t gfp)
+ 		/* Now move the zspage to another fullness group, if required */
+ 		fix_fullness_group(class, zspage);
+ 		record_obj(handle, obj);
+-		class_stat_inc(class, ZS_OBJS_INUSE, 1);
++		class_stat_add(class, ZS_OBJS_INUSE, 1);
+ 
+ 		goto out;
+ 	}
+@@ -1394,8 +1394,8 @@ unsigned long zs_malloc(struct zs_pool *pool, size_t size, gfp_t gfp)
+ 	insert_zspage(class, zspage, newfg);
+ 	record_obj(handle, obj);
+ 	atomic_long_add(class->pages_per_zspage, &pool->pages_allocated);
+-	class_stat_inc(class, ZS_OBJS_ALLOCATED, class->objs_per_zspage);
+-	class_stat_inc(class, ZS_OBJS_INUSE, 1);
++	class_stat_add(class, ZS_OBJS_ALLOCATED, class->objs_per_zspage);
++	class_stat_add(class, ZS_OBJS_INUSE, 1);
+ 
+ 	/* We completely set up zspage so mark them as movable */
+ 	SetZsPageMovable(pool, zspage);
+@@ -1456,7 +1456,7 @@ void zs_free(struct zs_pool *pool, unsigned long handle)
+ 	spin_lock(&class->lock);
+ 	read_unlock(&pool->migrate_lock);
+ 
+-	class_stat_dec(class, ZS_OBJS_INUSE, 1);
++	class_stat_sub(class, ZS_OBJS_INUSE, 1);
+ 	obj_free(class->size, obj);
+ 
+ 	fullness = fix_fullness_group(class, zspage);
+@@ -1925,8 +1925,8 @@ static inline void zs_flush_migration(struct zs_pool *pool) { }
+ static unsigned long zs_can_compact(struct size_class *class)
+ {
+ 	unsigned long obj_wasted;
+-	unsigned long obj_allocated = zs_stat_get(class, ZS_OBJS_ALLOCATED);
+-	unsigned long obj_used = zs_stat_get(class, ZS_OBJS_INUSE);
++	unsigned long obj_allocated = class_stat_read(class, ZS_OBJS_ALLOCATED);
++	unsigned long obj_used = class_stat_read(class, ZS_OBJS_INUSE);
+ 
+ 	if (obj_allocated <= obj_used)
+ 		return 0;
+-- 
+2.45.2.803.g4e1b14247a-goog
+
 
