@@ -1,94 +1,99 @@
-Return-Path: <linux-kernel+bounces-234440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1B7C91C6AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:34:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14DC791C6B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:35:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33BF5B25893
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:34:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E62E1C23C94
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:35:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E7A770FE;
-	Fri, 28 Jun 2024 19:34:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8E8A7641D;
+	Fri, 28 Jun 2024 19:35:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lIufw0gN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="d3ntJzVJ"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E936F2EA;
-	Fri, 28 Jun 2024 19:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E52757FD;
+	Fri, 28 Jun 2024 19:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719603272; cv=none; b=J0oGAvOGWd+cjSx0bG02v2DbC7t74lVul8jGFfG8x7ja8ahQ+q9ePAASA8E2MXAl0yEdFAuqxqMlXeroCEKS5Tnhec6l8f3sbUgM29Oez2exPUwOSGvI0kNqOT5jL56tz96C5kA4x8g0jc20c89I4nqQF7lAOUWWBNtBo0AcmkA=
+	t=1719603305; cv=none; b=qtOABXOGbyIT71e89HI7GeLBHSHH5kT/+nP7oHy30SYOeMO/6PDYAvzSOqBi3ktW0auOOr/El0OFN9jrhl0cmTthQ6pW2JJlujB5x/jgY/3D5KE/+kCwuH3Kd61CBxCysucV0v2/31VY3C4LaMvhYKqwAPyRpMEuUgrpD8xBGIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719603272; c=relaxed/simple;
-	bh=C7EWKeZ/Itf/nMkSN+WrPJfljzpdLEJL6x6j14lwBmQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qlGIChWUO6WT0JSNMafPtHioW6j6Oc59eSHsRuyknTNx7wXEAzD2GJKCwp0ea2cszZ98xZrKsLYuK5jALLsCggJR1LoC8q8elHWvPTdQl9xxrKa2QDNd/q0C4l5K0BxL9GzAry6m7fnSqEV3PAlkJFYD9Z/AFWz1nZxW2A3Vu4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lIufw0gN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33053C116B1;
-	Fri, 28 Jun 2024 19:34:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719603271;
-	bh=C7EWKeZ/Itf/nMkSN+WrPJfljzpdLEJL6x6j14lwBmQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lIufw0gNnTCeWAgM9QbJEGKuwG4gx/hPPI3q5+nTY0lzC1KW7jXK0D58SOO3LiqSY
-	 M4Fgy0glUlArpTSRuEu41x5i4SHVXIjR6TwzTs/sYi4cGQu7Ybklxod8BxrLQEP3xx
-	 cLiMxA/np1RbuJPa4CK9EyEm6JKITQ/DbgIwORtHJIhoRzAsSxEcjTIFtGQBm93Ut0
-	 TF/PWX3UfkgaHkhdhjdT2Bi30aACis316tco7JGu8yr8ZMkdkO2FwjYXy9rMggPqVG
-	 BzBKWnai0x3+yWKXT1HDnMctjFvW+hongVAXqdTzzz1N2k1MztxHGVn7nygmUfOCVP
-	 S2lu/baDT+rtw==
-Date: Fri, 28 Jun 2024 13:34:29 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: krzk+dt@kernel.org, devicetree@vger.kernel.org, imx@lists.linux.dev,
-	krzk@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
-	conor+dt@kernel.org
-Subject: Re: [PATCH v2 1/1] dt-bindings: interrupt-controller: convert
- fsl,ls-scfg-msi to yaml
-Message-ID: <171960326528.87484.2982631771011170699.robh@kernel.org>
-References: <20240627144207.4003708-1-Frank.Li@nxp.com>
+	s=arc-20240116; t=1719603305; c=relaxed/simple;
+	bh=9ulH12oh7FjjTpOQeU3qE+dupFcYQqE/c3YvYkKKbt0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=btMgXqkJ7ArFggu7LL6YbkApuAbnLuWpYFoDXn2ZfZDk+W821BZFj8q8u6nANRNE2PCifJp8iT7mdeMxvCwXDoQZA3qx1kV/r9baI4I8uKKCufpinKsULvJ6elhkXGKgesWXJGAk2sWiw9EY7UkJxq9vSIrBgvQyhnmp41ZJ9jE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=d3ntJzVJ; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=q3FcIZm77VSDuAoHFtwOeQQ0ovJfkuSbdgulNSGhm1E=; b=d3ntJzVJ7Rd4KgC4LUQXF13MyG
+	k0cT/gQ/9PDM9u7udcY7WE6d6ehlkuAIiT291VU2WPsVTit+H8zVLfr+Iqj513Lf7wXPh+lyYcQYV
+	MNHkxxtpjiusnUbMpycTFvCH5K2LN+5NYXsbfp7pceok7Mqu+MCuS8ek4vqAJACnouADJn7PbdxrJ
+	HuOA7RuTtXvFTXyWUQCMX9yb26UTs/mvw25WGHnZ5QGAI0TwmaDV2TMiUhCZSH3ldr1E6qjkalHGx
+	OCCWmNFEWuM3h4ngVVdZRnUKv6RqK9Y1R8jilbRfuRP4dLiUaS2Yrg7KrQ5t+y/eANdZs+SBnkf+7
+	CQkpzpgw==;
+Received: from [50.53.4.147] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sNHN5-0000000ElPm-1YOE;
+	Fri, 28 Jun 2024 19:34:59 +0000
+Message-ID: <d0d03b08-e21f-4e8a-9a2c-98b9176c9576@infradead.org>
+Date: Fri, 28 Jun 2024 12:34:58 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240627144207.4003708-1-Frank.Li@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 2/2] docs: media: Debugging guide for the media
+ subsystem
+To: Adrian Larumbe <adrian.larumbe@collabora.com>,
+ Sebastian Fricke <sebastian.fricke@collabora.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ laurent.pinchart@ideasonboard.com, hverkuil-cisco@xs4all.nl,
+ mauro.chehab@linux.intel.com, kernel@collabora.com
+References: <20240529-b4-media_docs_improve-v1-0-9ddb111c4433@collabora.com>
+ <20240529-b4-media_docs_improve-v1-2-9ddb111c4433@collabora.com>
+ <l5kou3gto442yl4uchmmahbpw53yfmluqyub4oxtlwinxsw3pn@njqimzbp2zmq>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <l5kou3gto442yl4uchmmahbpw53yfmluqyub4oxtlwinxsw3pn@njqimzbp2zmq>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Hi,
 
-On Thu, 27 Jun 2024 10:42:07 -0400, Frank Li wrote:
-> Convert device tree binding fsl,ls-scfg-msi to yaml format.
+On 6/28/24 12:08 PM, Adrian Larumbe wrote:
+> On 29.05.2024 18:22, Sebastian Fricke wrote:
+>> Create a guides section for all documentation material, that isn't
+>> strictly related to a specific piece of code.
+>>
+>> Provide a guide for developers on how to debug code with a focus on the
+>> media subsystem. This document aims to provide a rough overview over the
+>> possibilities and a rational to help choosing the right tool for the
+>> given circumstances.
+> Just like you, I'm not an English native speaker myself, so sometimes I make
+> style mistakes that only seem obvious to someone whose native tongue is English.
 > 
-> Additional changes:
-> - Include gic.h and use predefined macro in example.
-> - Remove label in example.
-> - Change node name to interrupt-controller in example.
-> - Fix error in example.
-> - ls1046a allow 4 irqs, other platform only 1 irq.
-> - Add $ref: msi-controller.yaml
-> - Add #msi-cells.
+> What I do in the case of documentation patches is running the whole thing
+> through languagetool (https://www.languagetool.org). It's LGPL and I suppose
+> some vim versions might have a plugin that lets you interface with it from
+> within the buffer you're editing. On my side, when running it on the previous
+> paragraph, it showed the following warning:
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> Change from v1 to v2
-> - sort compatible string
-> - add ref to msi-controller.yaml
-> - add msi-cells
-> - add interrupts description
-> - remove msi-controller, which already in msi-controller.yaml
-> ---
->  .../interrupt-controller/fsl,ls-msi.yaml      | 79 +++++++++++++++++++
->  .../interrupt-controller/fsl,ls-scfg-msi.txt  | 30 -------
->  2 files changed, 79 insertions(+), 30 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/fsl,ls-msi.yaml
->  delete mode 100644 Documentation/devicetree/bindings/interrupt-controller/fsl,ls-scfg-msi.txt
-> 
+> [ADVISE_VBG[3] premium: false] The verb ‘help’ is used with an infinitive. -> (to choose, choose)
 
-Applied, thanks!
+Ack that one. Also in that same sentence, s/rational/rationale/.
 
+-- 
+~Randy
 
