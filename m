@@ -1,70 +1,56 @@
-Return-Path: <linux-kernel+bounces-234469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B96D91C71C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:12:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C038C91C718
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:12:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C452E285C5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:12:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09169B2348B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:12:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1F078274;
-	Fri, 28 Jun 2024 20:12:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F03F277106;
+	Fri, 28 Jun 2024 20:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="NqeVhFAJ"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NQGimdnJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 523007641D;
-	Fri, 28 Jun 2024 20:12:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C79E6EB56;
+	Fri, 28 Jun 2024 20:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719605559; cv=none; b=q6apRJHL9/ch4kkTgAoSNe/HXQUbL703huIRLTJuL42/01ZeLuOWytnl8QBi/iLTekpHFPKl28TQzuP78MJk8u8NRPTXBTSdnp5viMQg2TazHMQssnIEmGSBK9ipLIpvNl6KYigpK40rCfragpRNIhJ7mdVQmcAQiiPeB4dHf9A=
+	t=1719605544; cv=none; b=JVurznPPS5NIm3IDz8tck1lYILvfkBfgzALUBRfycHD4he17J892eIaqelRuj5zFIloqci3HZKX7KZdTVr5ep/F4CbXwjoC5bdC8Z9my0K1b41/fAgX4inxrlq2nzjsHxnR4m5qPzu0cCQpREqqxs7x1PZJ0ZReHzd8g2uirRn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719605559; c=relaxed/simple;
-	bh=Rp+/D3qNuwmKtttpXrBrTXYC4brC5rHdW95hqddf/FI=;
+	s=arc-20240116; t=1719605544; c=relaxed/simple;
+	bh=IyDvPqV592W5OU5kiIiJbG2I1gXc7ekIbCoB3mTkCXk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ih4ASq/K9EwKhA2xMoe15Q1OKP2MxZP5LJLhm8kseJk8AzRUhjeHXnM7tAqbbrrJLoQHsZu5Rth2OgRX6X6OhLAqxD1UDFd/lV51RfFn9blIYq+eSUtLQ+/SM3JRgD+LWMRfnDP9fsr92M/IDGdhjh9ykB7lMVUKFnWgD56wLSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=NqeVhFAJ; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=8dDLlhV3WAfC2faU1YAAVK/Qyn/a7E+Xsj6NmTYqY6w=; b=NqeVhFAJXwxyKuHxd2HxVoKJP0
-	7au9ZWJ6FrxM/nsqeodnE4py9hZ7NmCXc3ttmqWN1EK337AV1jhY1nI24+1gvSoeE2IcWAm8Vo7d0
-	jcBhoQHsIW8sRqgRE1fjqQERNq4rXNZ6giT80diXg2Lr6hPrbTccNEMB9RBk2IsOGCog=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sNHwy-001JqU-EI; Fri, 28 Jun 2024 22:12:04 +0200
-Date: Fri, 28 Jun 2024 22:12:04 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Russell King <linux@armlinux.org.uk>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bhupesh Sharma <bhupesh.sharma@linaro.org>, kernel@quicinc.com,
-	Andrew Halaney <ahalaney@redhat.com>, linux-arm-msm@vger.kernel.org,
-	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] net: stmmac: Add interconnect support
-Message-ID: <483b77c7-e90f-42e1-a8b8-372845d8de62@lunn.ch>
-References: <20240625-icc_bw_voting_from_ethqos-v2-0-eaa7cf9060f0@quicinc.com>
- <20240625-icc_bw_voting_from_ethqos-v2-2-eaa7cf9060f0@quicinc.com>
- <da62cf15-0329-40e5-83f3-16c4b60f7b46@kernel.org>
- <0666cba0-a5bb-44bf-845a-6a1c689cb485@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LVCgKvwb6RIOXTelz6FuXs/gZciJRvdUaqWjxmBIlDrOoALemNYT3A0yYuOb8flUTSM1SXTj3D07+1o2rtt60cYspKchu+ZHWT20heZd3MleRsZWVMpov7Aq4cPcscYggpxlVSKkd6f5NR1XYX9F/qwnBO2Zgi9zeYTLyR3cbdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NQGimdnJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E24DC116B1;
+	Fri, 28 Jun 2024 20:12:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719605543;
+	bh=IyDvPqV592W5OU5kiIiJbG2I1gXc7ekIbCoB3mTkCXk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NQGimdnJ/UdCYk7cImHHgbw9A+JW8PS+oxpnpdBXOOc0k1azUTV1yTfZOq74H8BEB
+	 FhEM8WQonPQydbtaKCtFgYDzXs+gQ9VBFisW0A/Q+PU5Wbno01YHw1Q+qxLIkdv7O6
+	 oNnu1uEhx7KQKrgsQaJXBhYHbTP8Vv0kAS+QSuJbgFev+wD+ThtDv+csEtCqhsU25d
+	 1PSe2pfizulYFUkiAc4A4EeSQ8ct36V+1MLxlXuLKgiDJOvRhyP6ZM/0XrUrPIl4JB
+	 WhyazJXV+8+ojubnPIrBGdfIOQiuMRAtSzYi5A8evoCioITyo1RORihsyu9Z8Y26H1
+	 7+njBIRZpcUCQ==
+Date: Fri, 28 Jun 2024 22:12:19 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Igor Pylypiv <ipylypiv@google.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>, Tejun Heo <tj@kernel.org>,
+	Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/6] ata: libata: Set ATA_QCFLAG_RTF_FILLED in
+ fill_result_tf()
+Message-ID: <Zn8ZIxQRimgVZ2S3@ryzen.lan>
+References: <20240626230411.3471543-1-ipylypiv@google.com>
+ <20240626230411.3471543-6-ipylypiv@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,45 +59,115 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0666cba0-a5bb-44bf-845a-6a1c689cb485@quicinc.com>
+In-Reply-To: <20240626230411.3471543-6-ipylypiv@google.com>
 
-> >> @@ -642,6 +642,18 @@ stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac)
-> >>  		dev_dbg(&pdev->dev, "PTP rate %d\n", plat->clk_ptp_rate);
-> >>  	}
-> >>  
-> >> +	plat->axi_icc_path = devm_of_icc_get(&pdev->dev, "axi");
-> >> +	if (IS_ERR(plat->axi_icc_path)) {
-> >> +		ret = (void *)plat->axi_icc_path;
-> >> +		goto error_hw_init;
-> > 
-> > This sounds like an ABI break. Considering the interconnects are not
-> > required by the binding, are you sure this behaves correctly without
-> > interconnects in DTS?
-> >
-> > Best regards,
-> > Krzysztof
-> > 
-> Yes, i did check without the interconnect entries in the dtsi and
-> things are working fine, devm_of_icc_get is properly clearing out
-> all the references in the case when "interconnects" are not present
-> in the dtsi.
+On Wed, Jun 26, 2024 at 11:04:10PM +0000, Igor Pylypiv wrote:
+> ATA_QCFLAG_RTF_FILLED is not specific to ahci and can be used generally
+> to check if qc->result_tf contains valid data.
+> 
+> Reviewed-by: Hannes Reinecke <hare@suse.de>
+> Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+> Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
+> ---
+>  drivers/ata/libahci.c     | 10 ----------
+>  drivers/ata/libata-core.c |  8 ++++++++
+>  2 files changed, 8 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/ata/libahci.c b/drivers/ata/libahci.c
+> index 83431aae74d8..0728d445e531 100644
+> --- a/drivers/ata/libahci.c
+> +++ b/drivers/ata/libahci.c
+> @@ -2075,13 +2075,6 @@ static void ahci_qc_fill_rtf(struct ata_queued_cmd *qc)
+>  	struct ahci_port_priv *pp = qc->ap->private_data;
+>  	u8 *rx_fis = pp->rx_fis;
+>  
+> -	/*
+> -	 * rtf may already be filled (e.g. for successful NCQ commands).
+> -	 * If that is the case, we have nothing to do.
+> -	 */
+> -	if (qc->flags & ATA_QCFLAG_RTF_FILLED)
+> -		return;
+> -
+>  	if (pp->fbs_enabled)
+>  		rx_fis += qc->dev->link->pmp * AHCI_RX_FIS_SZ;
+>  
+> @@ -2095,7 +2088,6 @@ static void ahci_qc_fill_rtf(struct ata_queued_cmd *qc)
+>  	    !(qc->flags & ATA_QCFLAG_EH)) {
+>  		ata_tf_from_fis(rx_fis + RX_FIS_PIO_SETUP, &qc->result_tf);
+>  		qc->result_tf.status = (rx_fis + RX_FIS_PIO_SETUP)[15];
+> -		qc->flags |= ATA_QCFLAG_RTF_FILLED;
+>  		return;
+>  	}
+>  
+> @@ -2118,12 +2110,10 @@ static void ahci_qc_fill_rtf(struct ata_queued_cmd *qc)
+>  		 */
+>  		qc->result_tf.status = fis[2];
+>  		qc->result_tf.error = fis[3];
+> -		qc->flags |= ATA_QCFLAG_RTF_FILLED;
+>  		return;
+>  	}
+>  
+>  	ata_tf_from_fis(rx_fis + RX_FIS_D2H_REG, &qc->result_tf);
+> -	qc->flags |= ATA_QCFLAG_RTF_FILLED;
+>  }
+>  
+>  static void ahci_qc_ncq_fill_rtf(struct ata_port *ap, u64 done_mask)
+> diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+> index e1bf8a19b3c8..a9fc3ec9300f 100644
+> --- a/drivers/ata/libata-core.c
+> +++ b/drivers/ata/libata-core.c
+> @@ -4801,8 +4801,16 @@ static void fill_result_tf(struct ata_queued_cmd *qc)
+>  {
+>  	struct ata_port *ap = qc->ap;
+>  
+> +	/*
+> +	 * rtf may already be filled (e.g. for successful NCQ commands).
+> +	 * If that is the case, we have nothing to do.
+> +	 */
+> +	if (qc->flags & ATA_QCFLAG_RTF_FILLED)
+> +		return;
+> +
+>  	qc->result_tf.flags = qc->tf.flags;
 
-So the relevant code is:
+One functional change that I can see from this is that after this commit,
+we will no longer do: qc->result_tf.flags = qc->tf.flags;
+if ATA_QCFLAG_RTF_FILLED was set.
 
-https://elixir.bootlin.com/linux/latest/source/drivers/interconnect/core.c#L566
+e.g. ata_scsi_set_passthru_sense_fields() and ata_gen_ata_sense()
+makes use of result_tf->flags, so we probably still want to do this.
 
-	/*
-	 * When the consumer DT node do not have "interconnects" property
-	 * return a NULL path to skip setting constraints.
-	 */
-	if (!of_property_present(np, "interconnects"))
-		return NULL;
 
-The naming of of_icc_get() and devm_of_icc_get() is not
-great. Typically this behaviour of not giving an error if it is
-missing would mean the functions would be of_icc_get_optional() and
-devm_of_icc_get_optional(), e.g. we have clk_get_optional(),
-gpiod_get_optional(), regulator_get_optional(), etc.
+Perhaps keep this function as you have it and simply do:
 
-	Andrew
+diff --git a/drivers/ata/libahci.c b/drivers/ata/libahci.c
+index 0728d445e531..fdfa7b266218 100644
+--- a/drivers/ata/libahci.c
++++ b/drivers/ata/libahci.c
+@@ -2148,6 +2148,7 @@ static void ahci_qc_ncq_fill_rtf(struct ata_port *ap, u64 done_mask)
+                        if (qc && ata_is_ncq(qc->tf.protocol)) {
+                                qc->result_tf.status = status;
+                                qc->result_tf.error = error;
++                               qc->result_tf.flags = qc->tf.flags;
+                                qc->flags |= ATA_QCFLAG_RTF_FILLED;
+                        }
+                        done_mask &= ~(1ULL << tag);
+@@ -2172,6 +2173,7 @@ static void ahci_qc_ncq_fill_rtf(struct ata_port *ap, u64 done_mask)
+                        fis += RX_FIS_SDB;
+                        qc->result_tf.status = fis[2];
+                        qc->result_tf.error = fis[3];
++                       qc->result_tf.flags = qc->tf.flags;
+                        qc->flags |= ATA_QCFLAG_RTF_FILLED;
+                }
+                done_mask &= ~(1ULL << tag);
+
+
+
+>  	ap->ops->qc_fill_rtf(qc);
+> +	qc->flags |= ATA_QCFLAG_RTF_FILLED;
+>  }
+>  
+>  static void ata_verify_xfer(struct ata_queued_cmd *qc)
+> -- 
+> 2.45.2.803.g4e1b14247a-goog
+> 
 
