@@ -1,181 +1,219 @@
-Return-Path: <linux-kernel+bounces-233674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30CB891BB62
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:25:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9B9B91BB64
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:25:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EA34B20FC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:25:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 909592819CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15AF1514E0;
-	Fri, 28 Jun 2024 09:25:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A352B1514EF;
+	Fri, 28 Jun 2024 09:25:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="XJ+al+3X"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="f5yVTrbR"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21181465A1;
-	Fri, 28 Jun 2024 09:25:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4934A14E2F9;
+	Fri, 28 Jun 2024 09:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719566710; cv=none; b=bi/5CG5rAK3n0XmPH8ETtKFUjusyUQoAPVLWmLxPtNJkyfuMK1fgcXw+tqYnd4TwhuCN/zpamhEAMdTtt486O7/VXNCm/AkMxC3KUEdfieVX//Lw3i1ZEc06Xyrx+uyQLZAo6hofVDwoFR77K0UXojjrnHJAXIpiCmsXSmbfTEE=
+	t=1719566745; cv=none; b=q6zzdQU3+OuERjivGgUYB18ZTJ5oWvrdnyA3d/Znzf7nsAzbeWTBwELjNzD4gNZzajIvS1Ma13ysAiywlX0C9fgj/DsZ65O6wvCYLD3akdxqdnoNrHragUSgOvnc14kHHjSUxjxjymZhNDW1U6Khlpr0yIUfBW5mBqtIYe8gSeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719566710; c=relaxed/simple;
-	bh=18TYaRN/VD3M+NTbtvZRXFNKYo91KOmQHfGyYOcXug8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Me6eM4lKjlrtQfaxytUbx8vbQZYVDJHT+YSRrSFRFQbpKueOjcHyv081dxezkCVE3XrQkngJdmMvas6Uvb3Eh0Jaz8nNeSawHjAJgSuj5qIHxVLCib779b2obnp9hepHG7AW2trDYkHF0yrrMBMJvtc+JWWBht9O4RbwNh79cf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=XJ+al+3X; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=RDssPQKk0DP2H8FGxxbB4dIquMeh6O1Th4YqfuxP+0A=; b=XJ+al+3XFwWBfIWgZTF2PDhXDc
-	bgv+0ZPIRzl1UnHlQ8aQd8VaCQqAIW1LxcTU4qBw2/47Qj5AtTu7oWmOcgm3IkfaQO0Yglg634sDv
-	V+hkuZ13Sb8wfF0jejchiM/Q2ewqyAnwHcdYKIVdqqCU9Zq7k+jWgNCnu5aprqeWhJ3CEnRm6DTLm
-	JbhOuGwbDYRMBnE+Uz7DoCJLukT73IKEuXDyY+95QZguOTDCq665ZBrj1DdWbb6ari8FnUxMylo2y
-	MekWai7Bd0UOjMwM3j4U4L2XPmOhsFDPvoYhz0wA3yfg1FOQaKVoSAg+06YXNjLQUYGOS9I2GKa6q
-	3NfvYYLw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:52960)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sN7qh-0006FT-06;
-	Fri, 28 Jun 2024 10:24:55 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sN7qi-0006PK-0M; Fri, 28 Jun 2024 10:24:56 +0100
-Date: Fri, 28 Jun 2024 10:24:55 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Youwan Wang <youwan@nfschina.com>, andrew@lunn.ch, hkallweit1@gmail.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, netdev@vger.kernel.org,
+	s=arc-20240116; t=1719566745; c=relaxed/simple;
+	bh=i6a7e+6oMEh5oVQk0M7eXRa11SAzrIujkHbXYKmD/Rc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DxR1Opfx6gJKBPoZBJ2AayDdD2tHnsxsWjNj/xNCY5L6tcmwazledjEEjb7idlvUQMCiQTgWmtPF2w8qZ3fx5F3w66z/keP0/baFvTNFElLYhPd3rK2VnolJJQI3MzwKpJ7mOq3qKQdLNdf2rXZ2W0e1VI/KB7LSvv9gf98/5ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=f5yVTrbR; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+X-Virus-Scanned: SPAM Filter at disroot.org
+From: Daniel Hejduk <danielhejduk@disroot.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1719566732; bh=i6a7e+6oMEh5oVQk0M7eXRa11SAzrIujkHbXYKmD/Rc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=f5yVTrbRmX7QKafpL3yN3KNEkAGJ/cXb0U77I1tASEYH4gLC2FK1+IiNTYXQxnTy5
+	 S+NJYJ/igjDfLZzcI5DZiHsKn9HlGCDcwj5/tXNeintX4HPnV/m4EnFZSOCbMcq0mE
+	 rUUhjaFA1qomrxtd7UaUQK5irvOuZ+wYT/Q3IPkUarAwsue5ETcWreemlyXPgpyuXu
+	 qXaWbClxjVBPYHfe1XUtJqf1E+5HPPtazvBUi3HPGLJ+ze/16aXEN9KNGJfTI88SPs
+	 Kn/q00soke6EZxHCW5XvxbUYCSWbVXxv5QwpYxqIaEP+4RqEWPPMBPYDqhhGZt4OBA
+	 /HzhWUZbEIUyw==
+To: shuah@kernel.org,
+	trenn@suse.com,
+	linux-pm@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: phy: phy_device: fix PHY WOL enabled, PM failed to
- suspend
-Message-ID: <Zn6BZ4b4h8YJ3Z0u@shell.armlinux.org.uk>
-References: <20240628060318.458925-1-youwan@nfschina.com>
- <Zn5xmMpTLK/fRoYh@shell.armlinux.org.uk>
- <249879ad-aa97-452c-a173-65255818d2d4@gmail.com>
+Cc: Daniel Hejduk <danielhejduk@disroot.org>
+Subject: [PATCH 1/4] Signed-off-by: Daniel Hejduk <danielhejduk@disroot.org>
+Date: Fri, 28 Jun 2024 11:25:01 +0200
+Message-ID: <20240628092508.3664-2-danielhejduk@disroot.org>
+In-Reply-To: <20240627135437.2301-1-danielhejduk@disroot.org>
+References: <20240627135437.2301-1-danielhejduk@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <249879ad-aa97-452c-a173-65255818d2d4@gmail.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 28, 2024 at 09:25:54AM +0100, Florian Fainelli wrote:
-> Would not the situation described here be solved by having the Motorcomm PHY
-> driver set PHY_ALWAYS_CALL_SUSPEND since it deals with checking whether WoL
-> is enabled or not and will just return then.
+Updating maintainer of the translation.
 
-Let's also look at PHY_ALWAYS_CALL_SUSPEND. There are currently two
-drivers that make use of it - realtek and broadcom.
+Last update to the po file is 5 years old. I will try to complete and
+maintain the translation.
+---
+ tools/power/cpupower/po/cs.mo | Bin 0 -> 12805 bytes
+ tools/power/cpupower/po/cs.po |   6 +++---
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+ create mode 100644 tools/power/cpupower/po/cs.mo
 
-Looking at realtek, it is used with driver instances that call
-	rtl821x_suspend
-	rtl821x_resume
+diff --git a/tools/power/cpupower/po/cs.mo b/tools/power/cpupower/po/cs.mo
+new file mode 100644
+index 0000000000000000000000000000000000000000..e82a23760d4f26a628d9402f84c20bfda1df4263
+GIT binary patch
+literal 12805
+zcmcJVTWlQHdB?}s*c<0!r%lt`dhA*@DRWmOtx7g!-Aq}R*pg`7>RPpp*_}h~aA#-M
+zb6ILP2I?RI5};5T2M7|!iBX~`Py->1^sxYqqAT_x4@J@T&4?dV1PIVR1V(DKPwnqJ
+zXJ&RuE+soiS6KdcX6Kyqo$vd9m-DUOyYKezIlM0N{vz*dw>r+tU~mV2cujxIaXt&q
+zfOFu<{QB$Q39f$#ehRz}{x0}FcprGzU5@ir@C)E+@cZCA_zUn5IC;0@{5jYJSHNF`
+z(_m0>oFm|m!CCM<um;}yamRTUJOZ8rzY87%e*u0M+<lMZyauj=N5He6u+M!5JjnIG
+z=Xn1otvoM*-{$@rDDytSCPcn(gEQd2fPVnq{%Obg68Io^FZd+*1@Hn`1v?;9J8y!Y
+z0e=Gi5%~9@jQ;=>ReqMi&)kBJLD7%TpBKSbK+*5J;BN4JQ0Dm(fA)hj;O~Jx_#MW7
+z4P4^-K9v0}un)@mw=v1H;JqNKbQ++@+s^UNa(oRGx&8{2c?aO{fbZt`s~qp(OS%8~
+z9QS|^aeWMAOHK=v^<Dulg8u~mA^70u9A^SN3Ci`$pzQN|;N#%0LAL1Be&1dn1?yaY
+z6_kCw2MQ05f8KGRqSF9nKa1c?U<bS({Achs@O`k4UOoUtzLy#NB=`eR=6RPtr@{XQ
+zMIXm8CL%b`fvC=T8SI1K1fK(M{j%d6055~H;P=5FgFgdfu!-{ag71Qd!A~p8+l3sz
+z2A+2u=WoFmz&jE41n7Zpf<FO&1U~%$oCALeJ_GJTS@K*A3a|eT6nXv^{0s282OZ~+
+z!C!*M!6Un@oZkddnKJ+}f%9_^6FUC|BC>N2N_iA~1ccJgOQ6^_0*`{<0D08;NANcA
+zKfwdHIL@y?ROU=!%oo8^pp5$)P<X!%3h({{d<^^_a1xy5&tEhCPr)wNw?5)HKLvZB
+zJpag)-N)k~uIIc43ZMQm$Dii-4<M>>{uLDYJ^*E(Uu1E?eK{`VxSZoRK(W)Cpy=V=
+z8nFPJ0PEltQ2gv&a1VGVf8=@}*aTfr?DsQJc>3jO8~0{F;b#B_;J<+)-_aS%QxCk0
+z>m^XW?|_)j`8g<hy#+F%7Q@9)f+Cyft$0aH5&ab}hB>ErLrY^n(Y^5H6TF4D(9ihO
+zJs?{(+!o%VCWnw|WD!0grjg?iD14RI5#CSohDzr3RF1-jGraH4uLYjw{cL_Md=lM@
+zzhB7j2^`En&*!)ReuX!bFfY+B>NIv1PT{I1MxF!3w)gXfZpPmLV=vLIyykd|{yxWB
+z>>{uI7R=vU`FoPLa36}5uaEKR8Q$Vc^17WjCO0-!puFzj{TcIV_-7v<AI>k2gCFO;
+zm-n5#KgHX*TUDELsuTNRs?w&PsHP4&6}j!tsnl<4#Wy<cx`9d~)z)s3#ab;!G51xX
+z8&T*bYQoctZWg3!X3`Ap&Z)Xq?T9D4I<7~Ft~jcEwf)d<XKgjVa8WJB`sGZAjh<3f
+zrP}V59llwLm?(^5JI~QZ>UZ^=+LhSrC!;7y)%ny-b;4cG-aVgnI#HZzuXwQPPN{0u
+zU0l=+?p7O}EK%y1W_yUF6SdOx8%+@_QK8nJY`E!mHG0v0JQTH3?qu_aMij-KA0mXO
+z>OGZ2i|LAs3U-S)RZks1_tdi@0E?N=c66v$)Od}stSa`6YM4<6NN#77iM$vs#HA1;
+zJCUJTf*kBoRIFNPPX{U=VI|UL4qeZd$|=->5Ft@fmMYJD<A>O~?WTSds>`{VUoavp
+zmK!oF$nMNMNk=#QMZYmrm?#oHBs#6BbJ*LDQ8wbmNylyIozy9lmD{&7xLwx|+<Ksu
+z8+s~;Tu&QYR~Ka~MvUQBPUv)01T-RqYh-b(!!+orI13Zyrc=soG>qYvc9Mj}MWKZ*
+zdAcy_k~(qrlB`_{$~7X0QH#fmuZ+@`MjwWK@*1(*aD!V%CpnFpGJ*K09b5h#F`RMZ
+zq!DW!nl;A_xxwRsSz#sc+dfRNuTn&#h=Q(Sgz+xx20^p}{VdViX2z`ThNZZwDVNn)
+zyPmNpgzLaLi7TRNW6%|bVIdZ&_Eg7>-L|-@arvs5GHEn%<95T$in$Xr)>8f9M74=X
+zzB1M_Pi6tm(uo4U(W@E7L?Txwj_d?hwh_gQQa|upnkX4{eJCg1EmH20v3uM`$2XsJ
+zl0@;I-FrH0J>H2+CYmlndx@V>;31L~*zW7MBT`PD4<*BFZEwveS-UY_F<aYL+ayuP
+zD9LE8v|g#}p*L-cHde{G^<$YJ)`7&uJm!v4ekADPkvODLZGy20zOiQ_=rBuILM1X~
+z;s-c#Dbv{y>62!(qLy^1WAfE}HIa;fqRS9w%x*{XRl#oNIM2YObXghaC#l~^l)tD-
+zr!=FpGVDS9t#N#8{t~JbL11ef7min(E1N>shYnoOP#nk)cZ^)Vgutjh)Z|1YYASam
+zkvWc{bTYS9Ps9;RnT%|8Tl&6rufpMrr^pMN6M3WQhD!u^V=9wOt%+}xQt{HUxpPiA
+z$|htx$ITgHMhy42EsSpYe#opO)g6il)+@#c3-UWQX>8dj#gaUoe`h&AH<EH7V-^rB
+zv|90r$)P-L6L3+GlmxfI)~p^ziXfPUtuR^%OIh;7&62LEeH3apaUKOj%Lz9jo#ur{
+zgXn8(7wbNgj`442wx%wa*jh5!(9R_8GQ6sW8-`ITQa7S@ow~>~;xk20MNpX#T7+VW
+zFZxPDcdXA=8=@d#5E?YP8b0}G%`7UVo)0%zL{{jC*q%hfll>{xI@vEP$;l~oTJD{Y
+zKj`Da$-b-x<2#gki~bczZvq8{X=W8{E>~QtRS)&S{E!$jWrUY<M&vK+jS1Pbtvgv<
+z7C!hQGN|2Zx;8yMBUdcX<;?W-v|J%ae#MPR(#O%z4SIc%LfF5{o8wlh0_x)w+sM}P
+zd}V5>Xpxk*$CfB4$m1hPluwy_a<5Q?gkGh(#MLlTWK2~miRsJY$M>j!Ol(W$xJ|HI
+z(&~6wNl*A;BgiBysJax!lcHd@;~=RSI!eNM;b{19inTLy1kftX+I7r~%nYEo-z7D5
+zf<>@ahS*DLrs6ym$C!m(CUQdz9uP5$`;>aA+?P7YSSYEf`KaB7wOR%ybCs$(7O7s8
+z*%F&f+F?!CliDIlV_R^>{!%kd4y%bI<J+o~jE5%~dCG>OQdKgI**;F}jYKz7phO;%
+z*R^+;ffwSQh(**xLUfL15YPAWvS7?3aAs>cJEiLIsjOdzu^sOe*D0gVlu%Ym8hyoW
+zcd%JqH(bVvYD?F*fo<q@A{g?yV-}X_n5~#a^2%5##GJM`K3s8*GeVwp<E5-k!lW*8
+z<5uC-yYVjSJYy_*3LoZq>%qkc<tG)X+R>CGT&p}Y0w?3Duj8oVoLXe_<tj3ZNi}xT
+zA}9>K0$nX}dcg<mIU_Fs-8vsCMFi%djvPotT5~qz20LEN0;Ow9HKW^D%OOv!%0VW<
+zGoP{P3(f{v#W@qnnXocbQ)fTKKGlu(`2cbCfr@jsBZnd8bQUQ8Owk9oITFl2y6w)s
+zZFlx>y@PKG4@;Nc`n@npz8$&0;5J&~^7Av}ZqAOoIVxH?d{nyf=6>g#(P-|d5}1r;
+z#nQVdo#3&XX!LwO_i>Dct~rNY7-3lv+8JchR2oHrM17dKEwe}#5c|1XcxPuUo&14a
+z$pfZ*@^DCxm~R+?d%_NuffwQ*TV8qQH8R9fmmv7X1m(?1%rcd_$=FgOs>_izE$7>D
+z&zO8s75}`!gJP<!ll=+d$?n|-lb&sjq!dafS6Fu&`UWcBL#xB|Ps)d^gH+3KRCs5_
+zx!LqPk94;uG17p|2lhLAXx>For4*(o5a~p0m}uP=rAvC^Fi%*hIHf*`@_rh{bLw)n
+z`GUF(q%WvffWSgqJ;5V0ho&wI&K`O}$-m20pJ;4bO)t?{Vg$j68iaGAr)sqtRvEWM
+zSBCzU*D10BL98gmhUyL@C(pfiR~!@Gip)Ne^oQ|$a}~8c^%E(#B>s{J90^zAD5Pgl
+zNMQtmHjvDd>`Z*`=|miUna)u4lvlmP37PN&y_1S{<m%~U$@i*H5*@1-qB&JrI9olZ
+zyS_YDJw~vcQ?t{vd#ls?s<Znkc;@y#{>b#~^mOGJYMJT<ye6U67kfTUH!Dz=q97cs
+zt0!7+Hwum<x=)=|YxEECe7Kb1TGb2MZO^IszNVY@gy$!%tgnwqd63kCndxxT!$#24
+zr%pdLlzgT(U73%dLdf#H4)Ue?O1h^LxPEv*alDA}!Gjks9Irk$d``q%q(*ouY(!G}
+z%&Eufep*=wGLC{(l3<%EChVBY<lv(Rh-322!HMwT!I?>QSWT-rH4z><IIA9dNQF-v
+z+$%R{xH)^E@?7<VIa3-fEJWJF6&~f>yq9igwQR4<sY|`iU~OZSj$wv#goD*i)V=nG
+zM;fyI)N5DWB<c>{Dv3@x8`D+2_QuBRIvlL2E}qrOLT|8&>L$8_^+q%5bAP0-I#^Ft
+zcd*t_L@&^DF@_vW^Oxz(3|2AGngq5MDVAP?)TmY4tJ&c@>ZheF7_72IJKNC~JyvEZ
+z&MHcoE~^nA{&#ye=*zMTlvokHk-=&Rzid->Y_IkCWk@hsqtwUGQ3IPNfkrU_F-s7*
+zJy;{Qbfaazl-(Z_)Xi3-F4D4lVr$W9ZRe-hom#DDL_})R<<Q@FXJd6#Lslf_YHz%~
+z@s1wRhU)g}l%wYC?@1k#AH{Ngt9(z&&Gn@ajHcGLtCC>M0c+=OYsnWz_zmRATNN}#
+z9a_dabyz9&tzC0PuA;bARTpN2_$)2!(5*qnjdxrxTjmVpa&D^kf}K<;Tj{E0)Cmol
+zq8Ve!Q59T&^@nAldHvNNkV8c}QHI%|jJK~5Wn^23=1(zmVR+$V9oD}ySldacP9!DK
+zW*u&8w<gkmRZ0xIJ}PiN%*Z*e<yy$;aXiX8AygdFzqe)4(!YyMf~DcMIXa5@$OFc8
+zTnh<D{n_2*!MW^kw(xV``1#H~*Gq$S*=~`h;*GcSMyr%wbQYw~+Ev$IeUlSW+gI1F
+z`l%+6yw$$`>W`$>hGi+Sj4f_&zZUX#VwWCi;M%}uI<P`4i4OQXE*qLSf!$@EaqZ4h
+zx1}=_tXWRjY*bHNJe1RX_cv<5#!<gXvcTE+Wd~=8B@hs8IYtv{`C!C#KZ<xvRA^^P
+zExRqa*oiVBH%BIEu;nZ6M0MLoE~wtk+pm&6H(qx=>B;WJIFdYssdQ+KaN`=Yg%t=!
+zh5w}zm|7H|o1)Q}rffcTOmH@O$9XwjFN*|2zU|zORTo=>Rf(i%qOVndu-YQXiQ0!|
+zjckjy%TCRX#x-W2kBGjK0;T36dyH%aUF&M#Q<PdKUNw{K)SoSbf48@>`k{k=pBjfU
+zLby7vRXaxCrE)%Eyz38J0u#lK-eQNLf=QgcaYg^8z1l(^)1=J<ux-@(5`Ftr8sW7!
+z%DiiwvJg1`P0Jo?$;l-VMsoAAUY4Ioiy^)wyKPz6v@y3&vz0}82V|2B{N{|Rhua^C
+z%3HoEM4&okL`e>};JLjWW!7s}OOb6Yw5-jj;n&tnT+_bIYbJ6g>LQYv#M;(<U&a*K
+zy{L0Wcfm7O94YFge1+g7y3mw%Wqm+gSj7?6Ri6T}4Hi=tq6^z5`pf>tYKpn!H)zwx
+zMN#W*1s{o_gSEDFb(QpV7f9NaouQN*lnkM+M@3=|bzaVxEtr@@<%%y7j`ha3RH6!D
+z+G^QHCg$%gw@CyIiB<VjM2?E|Z;Pr!neOQ%hgcfiRy%!{lGTLdvXNUBuOqEoJ7eC<
+z?QFd6cR07mW~5f`cQfej(eG$ct>`}g*?`UxMi9+kyE<4)0^MfM`7==_A{tT11e;p8
+zQ>KNhZrsByTDW;SDt#ie&D_(bAT@fkn^SbZl1_xy5CE@4{6g)O8}@c{HIDXnE6%a9
+z@E8)AW8B8uP%cIpBYd6cUc0JOaa+^P%_iBdbaM;ZSSFs)frMEpurYBbk}-yT!}hI6
+zOrhQqk7Wh=kTX<r^UYq}WlCw~Zq<eOW-~IKUGlztQp}c@nZ@Ih(mAQ9W+c|5(^l{H
+zSjE)$b+Fx&cJFDb2kDEaOmOY0?6K_jnqx;o!oUiH)vim&SALZ;z22`#3Xw`S>dH}P
+zq);p4#5&^V)hi?0dBfL?J|9vnaH^31eUM9ydP2=%GL@r4o*kv}JO0rumNICx$fBI4
+zFttuyM5=YTIE+=4P@C#y$polvuqG)`h?cUUVv3^NF1H|EW8-=JhYd_h*iNH1p(GCj
+zBiq<68~uPY;!u(njiGX%Cx43d^Dsf(7jbHbA}AEQ?N&L(^Uebe;6~0``6*|rB4al*
+zXIaAwYj2m|Oh%T?rz!$VS!~(~ZN@H^Go`_ZV62;WiplL1dzEgllbFD=?SM2zYiQ%0
+z;<#q~RPto1g<5ZIR=6;>3F|qTO99e=@kng@!~|^9Ctg4!gyR-erB{5Z7gCg%K)YEN
+zqiWPd0>w$JXpCd2;`qfXdAE3BsCHepjA`R+?iiOhik577qv#hGH&~KrM}aQB*_OoD
+z&GLqC@rb47&QFQAs=6Bt)?h$u*hMx+_)Xswt>o?B6#eAw-wb!Kb)Eetf=Jzt3oP;T
+zSSBAh_w)O7z`50MeHTAC(MRGxX|#I$&L%O(j6jXzJ>!OKX+)_Bwv~`W4pjNyXlKlU
+zIHRM$TBg}BC%x+DIigE6DH(tBR5`*^^3Wy^sn9box+lu^sq;1hrN0D4elOx&Fd9XQ
+z6GAFkY}>1=Nd1i_UQhOuQwe;%DD;+o3@*8~aXl)Vbg#!gI?}(s>GQ)j_LfKUJcIgd
+z8%n|$ewgP(`=jTU_)&39IFqK;_@^a~Wy^ex+rUk!<|Uxm+GT@GWq*QekpYTD(Ppvc
+z(80vSxeLNQsgfvXI)0JXDvs@G3mK#?Ge6qeAZx!c^V@HxWTX@|1m7vDBoSQZLmOn1
+zh#%6%ccXukMl|!%@Rqh;&o;fyA}zQ7|Izin*<yKW#5M99R8*;jr&OF!I}&z!bM(JQ
+z*g^4`|H94C8`hl_e%2dWO`K`l58`(9O+Sds!i6xoZ1jjs<I%V>h9mva5On?zMh2ut
 
-rtl821x_suspend() does nothing if phydev->wol_enabled is true.
-rtl821x_resume() only re-enabled the clock if phydev->wol_enabled
-was false (in other words, rtl821x has disabled the clock.) However,
-it always calls genphy_resume() - presumably this is the reason for
-the flag.
+literal 0
+HcmV?d00001
 
-The realtek driver instances do not populate .set_wol nor .get_wol,
-so the PHY itself does not support WoL configuration. This means
-that the phy_ethtool_get_wol() call in phy_suspend() will also fail,
-and since wol.wolopts is initialised to zero, phydev->wol_enabled
-will only be true if netdev->wol_enabled is true.
-
-Thus, for phydev->wol_enabled to be true, netdev->wol_enabled must
-be true, and we won't get here via mdio_bus_phy_suspend() as 
-mdio_bus_phy_may_suspend() will return false in this case.
-
-
-Looking at broadcom, it's used with only one driver instance for
-BCM54210E which calls:
-	bcm54xx_suspend
-	bcm54xx_resume
-
-Other driver instances also call these two functions but do not
-set this flag - BCM54612E, BCM54810, BCM54811, BCM50610, and
-BCM50610M. Moreover, none of these implement the .get_wol and
-.set_wol methods which means the behaviour is as I describe for
-Realtek above that also doesn't implement these methods.
-
-The only case where this is different is BCM54210E which does
-populate these methods.
-
-bcm54xx_suspend() stops ptp, and if WoL is enabled, configures the
-wakeup IRQ. bcm54xx_resume() deconfigures the wakeup IRQ.
-
-This could lead us into a case where the PHY has WoL enabled, the
-phy_ethtool_get_wol() call returns that, causing phydev->wol_enabled
-to be set, and netdev->wol_enabled is not set.
-
-However, in this case, it would not be a problem because the driver
-has set PHY_ALWAYS_CALL_SUSPEND, so we won't return -EBUSY.
-
-
-Now, looking again at motorcomm, yt8521_resume() disables auto-sleep
-before checking whether WoL is enabled. So, the driver is probably
-missing PHY_ALWAYS_CALL_SUSPEND if auto-sleep needs to be disabled
-each and every resume whether WoL is enabled or not.
-
-However, if we look at yt8521_config_init(), this will also disable
-auto sleep. This will be called from phy_init_hw(), and in the
-mdio_bus_phy_resume() path, immediately before phy_resume(). Likewise
-when we attach the PHY.
-
-Then we have some net drivers that call phy_resume() directly...
-
-drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-	(we already have a workaround merged for
-	PHY-not-providing-clock)
-
-drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-	A suspend/resume cycle of the PHY is done when entering loopback mode.
-
-drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
-	No idea on this one - it resumes the PHY before enabling
-	loopback mode, and enters suspend when disabling loopback
-	mode!
-
-drivers/net/ethernet/broadcom/genet/bcmgenet.c
-	bcmgenet_resume() calls phy_init_hw() before phy_resume().
-
-drivers/net/ethernet/broadcom/bcmsysport.c
-	bcm_sysport_resume() *doesn't* appear to call phy_init_hw()
-	before phy_resume(), so I wonder whether the config is
-	properly restored on resume?
-
-drivers/net/ethernet/realtek/r8169_main.c
-	rtl8169_up() calls phy_init_hw() before phy_resume().
-
-drivers/net/usb/ax88172a.c
-	This doesn't actually call phy_resume(), but calls
-	genphy_resume() directly from ax88172a_reset() immediately
-	after phy_connect(). However, connecting to a PHY will
-	call phy_resume()... confused here.
-
-So I'm left wondering whether yt8521_resume() should be fiddling with
-this auto-sleep mode, especially as yt8521_config_init() will do that
-if the appropriate DT property is set... and whether this should be
-done unconditionally.
-
+diff --git a/tools/power/cpupower/po/cs.po b/tools/power/cpupower/po/cs.po
+index bfc7e1702..64fe78861 100644
+--- a/tools/power/cpupower/po/cs.po
++++ b/tools/power/cpupower/po/cs.po
+@@ -4,14 +4,14 @@
+ # Copyright (C) 2007 kavol
+ # This file is distributed under the same license as the cpufrequtils package.
+ #
+-# Karel Volný <kavol@seznam.cz>, 2007, 2008.
++# Daniel Hejduk <danielhejduk@disroot.org> 2024.
+ msgid ""
+ msgstr ""
+ "Project-Id-Version: cs\n"
+ "Report-Msgid-Bugs-To: \n"
+ "POT-Creation-Date: 2011-03-08 17:03+0100\n"
+ "PO-Revision-Date: 2008-06-11 16:26+0200\n"
+-"Last-Translator: Karel Volný <kavol@seznam.cz>\n"
++"Last-Translator: Daniel Hejduk <danielhejduk@disroot.org>\n"
+ "Language-Team: Czech <diskuze@lists.l10n.cz>\n"
+ "Language: cs\n"
+ "MIME-Version: 1.0\n"
+@@ -217,7 +217,7 @@ msgstr ""
+ msgid "Report errors and bugs to %s, please.\n"
+ msgstr ""
+ "Chyby v programu prosím hlaste na %s (anglicky).\n"
+-"Chyby v překladu prosím hlaste na kavol@seznam.cz (česky ;-)\n"
++"Chyby v překladu prosím hlaste na danielhejduk@disroot.org (česky ;-)\n"
+ 
+ #: utils/cpupower.c:114
+ #, c-format
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+2.45.2
+
 
