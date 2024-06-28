@@ -1,60 +1,70 @@
-Return-Path: <linux-kernel+bounces-234194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5227391C384
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:14:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58A1F91C38B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:15:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 096A9284347
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:14:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C278BB2370D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:15:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E021C9EA1;
-	Fri, 28 Jun 2024 16:14:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="pSQNcblq"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD42158DDC;
-	Fri, 28 Jun 2024 16:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9477E1C9ED4;
+	Fri, 28 Jun 2024 16:15:06 +0000 (UTC)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D426153561;
+	Fri, 28 Jun 2024 16:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719591251; cv=none; b=bYOfqV8GFJc/WuoTqd1FcO/IZ6XR6vXG4xi2hWpE/7NjGye5Tl7+uPS1Lqt2OnMqnJ2Uojvf3F7MPwHt+sKVFkZHewh1gG/pbQg474nJH/oGBhH4D5Y8FHdCdJSedq7nmmQZLAQB8O+XS5jyhWLh9BR91X6v/ozTnckMKvjvUi4=
+	t=1719591306; cv=none; b=XoA0Inj0e8sIHh/lORc+v3GGzbI9xDJSK4pNTXaSRdzAK7F4W7S1N0OrdI+5Zrod10VxKchVLwjJ8JQfwhQmBFaTnLR/azqxNHF+lVwRpf0fGkYv89XVZ+dRE+ezudtk2Z9KNR9/ksr4wBg5k7cB1TCMOdiI8i0OOkNNipeXhCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719591251; c=relaxed/simple;
-	bh=/ZLjV4AtG6PE9RE64qHOYEVdhdNaKhQgUm25uI4izAI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=q4snwVZLlMRNwz4vPt0Jy5hlYOu6vm4sjZ1UVXGZYQZr1SxjW/jOgvNCNUqXeajAG+WF52Bbvi3dqb5Pwvrwmo96VwdC47igZs3tV9zlp1q4f3PDZBltnA2+kOX3DwRZT79tknx1Yn9HlcjLchwLfaAMMfFYrY242dNJ0odHuG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=pSQNcblq; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=e26+2
-	q+3hBU2DBzF5851MuqgEXt4Q/cdEKTEV/s7sag=; b=pSQNcblqjulPYUuVA1ewP
-	bWx080z7JFM3P2O9bxeinUlDmYzbrJrm5dLbggXVXuQeQ1wDWcw9ycoWKjAg1S/h
-	ChMqJ2UsMDooZJce0bHBm8jKxN9oFrlmXbOnsEoYelo5eVrJQgbaxHJcHdBKREbj
-	0J42/kHedGtk1ZAFIlCfR8=
-Received: from localhost (unknown [101.132.132.191])
-	by gzga-smtp-mta-g3-5 (Coremail) with SMTP id _____wDX_yoR4X5m0+qRAw--.37690S2;
-	Sat, 29 Jun 2024 00:13:05 +0800 (CST)
-From: Xavier <xavier_qy@163.com>
-To: tj@kernel.org
-Cc: longman@redhat.com,
-	mkoutny@suse.com,
-	lizefan.x@bytedance.com,
-	hannes@cmpxchg.org,
-	cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	Xavier <xavier_qy@163.com>
-Subject: [PATCH-cpuset v8 2/2] cpuset: use Union-Find to optimize the merging of cpumasks
-Date: Sat, 29 Jun 2024 00:13:02 +0800
-Message-Id: <20240628161302.240043-3-xavier_qy@163.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240628161302.240043-1-xavier_qy@163.com>
-References: <Zn3UaMouBYYIMQr_@slm.duckdns.org>
- <20240628161302.240043-1-xavier_qy@163.com>
+	s=arc-20240116; t=1719591306; c=relaxed/simple;
+	bh=a1x9W1spyksKdWXtlAZQSfWEw/MHcs4YPBx796W16tA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R+l3D3l2lS9P51C8BCDW/LGlfpWspI24dT05UFUz5OJZ/Y28l2MkOWccSr0fzZQ2PKOuOf4kB2I3qLhoypw30zm4+rf/mNMbI+DCp9BeNnDd1XkmwK6ces0Aatrhb604krIvdx/2Z431xiNXu8QyVWYPCrF68Pq97tfYmjGt5VA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57cf8880f95so1083586a12.3;
+        Fri, 28 Jun 2024 09:15:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719591303; x=1720196103;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tZc3nLBFY+UI37vMSq6JBYuPNwzayvpRvMkZC4pHqGg=;
+        b=D8x2M5kj8iNCa5Dot5BCjCkE9SqziYne1G0u8A9mQcSMNGvvJncNXAguxj1wTAVjed
+         ULbNE0aECNRdjndp9zE4dI14yXpZxYUT7VMrHKsBbVCaKEJ9xsBop6GC1IbCtq/0JUYh
+         qkXp2SwYB4a28W7WjEeTvmZzfFrOPieus4Pze5pZlBxEza4lfqnFyMbVHysRpNvVhGaA
+         x0VLBfngI/scjSqsLlb/pqHFmZeKr6zh7+4CG8yHcK+9lqH212DkBmE5brozNvYCq0wH
+         DRpe/RD+A4N4a9tsqxXa3peWG40oTX770MQTHWX+GzlivBRCQJVxR/dr6OYu3+J1DDkE
+         pEsA==
+X-Forwarded-Encrypted: i=1; AJvYcCUo4SeSPS5+XCKL1ItgwAmBM/XvxjPbASfCQluw9fUtAYUJ2eIJpN33t2qKMFZvpSIHJy6PeRAdKDLSNc6LRmxddMvo9RPR+3b+H/MR/T/j2iu7OpAIwGFlm0X0S6R25fWnOLXgrQ5RF1HYLcgEiCcZH4l2GokRE5zwsFqf9LBBa4QY
+X-Gm-Message-State: AOJu0Yxr8Udmt8JjRqsu3oJF4Mm94/4ivI+GQUSQGq9UzHT/bKej4P1j
+	1EGJOEb//Q4aJJyYhFQb48owVjSwtXqlBtDjXX6XrHYgmS9RZDpu
+X-Google-Smtp-Source: AGHT+IHTcB3dvO6kE88T15CIWzxuuAJCSpiYNG6q/oWmBqFy8vZUyEbVC1cIFTLS08U/yDcoRYuETw==
+X-Received: by 2002:a05:6402:13d1:b0:586:1518:799d with SMTP id 4fb4d7f45d1cf-586151879c7mr2465853a12.17.1719591302698;
+        Fri, 28 Jun 2024 09:15:02 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-008.fbsv.net. [2a03:2880:30ff:8::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58614d50e1asm1212136a12.78.2024.06.28.09.15.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 09:15:02 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: kuba@kernel.org,
+	horia.geanta@nxp.com,
+	pankaj.gupta@nxp.com,
+	gaurav.jain@nxp.com,
+	linux-crypto@vger.kernel.org
+Cc: horms@kernel.org,
+	netdev@vger.kernel.org,
+	herbert@gondor.apana.org.au,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v2 0/3] crypto: caam: Unembed net_dev
+Date: Fri, 28 Jun 2024 09:14:45 -0700
+Message-ID: <20240628161450.2541367-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,184 +72,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDX_yoR4X5m0+qRAw--.37690S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxAFWfur4kKFyUZFWUJrW3Awb_yoWruF1fpF
-	sakay2qrWrJryUGwsakay8Zw1ak3ykJayUtwnxGw1rtr17A3Z29a40qFs3KFWUZrWq9F1U
-	uF9Igr47Wr18KFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Ubo7tUUUUU=
-X-CM-SenderInfo: 50dyxvpubt5qqrwthudrp/xtbBchAMEGWXv5R4dgABso
 
-The process of constructing scheduling domains
- involves multiple loops and repeated evaluations, leading to numerous
- redundant and ineffective assessments that impact code efficiency.
+This will un-embed the net_device struct from inside other struct, so we
+can add flexible array into net_device.
 
-Here, we use Union-Find to optimize the merging of cpumasks. By employing
-path compression and union by rank, we effectively reduce the number of
-lookups and merge comparisons.
+This also enable COMPILE test for FSL_CAAM, as any config option that
+depends on ARCH_LAYERSCAPE.
 
-Signed-off-by: Xavier <xavier_qy@163.com>
----
- kernel/cgroup/cpuset.c | 96 ++++++++++++++++--------------------------
- 1 file changed, 37 insertions(+), 59 deletions(-)
+Changelog:
+v2:
+	* added a cover letter (Jakub)
+	* dropped the patch that makes FSL_DPAA dependent of
+	  COMPILE_TEST, since it exposes other problems.
+v1:
+	* https://lore.kernel.org/all/20240624162128.1665620-1-leitao@debian.org/
 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index fe76045aa5..c435814ba8 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -45,6 +45,8 @@
- #include <linux/cgroup.h>
- #include <linux/wait.h>
- #include <linux/workqueue.h>
-+#include <linux/union_find.h>
-+#include <linux/vmalloc.h>
- 
- DEFINE_STATIC_KEY_FALSE(cpusets_pre_enable_key);
- DEFINE_STATIC_KEY_FALSE(cpusets_enabled_key);
-@@ -172,9 +174,6 @@ struct cpuset {
- 	 */
- 	int attach_in_progress;
- 
--	/* partition number for rebuild_sched_domains() */
--	int pn;
--
- 	/* for custom sched domain */
- 	int relax_domain_level;
- 
-@@ -208,6 +207,9 @@ struct cpuset {
- 
- 	/* Remote partition silbling list anchored at remote_children */
- 	struct list_head remote_sibling;
-+
-+	/* Used to merge intersecting subsets for generate_sched_domains*/
-+	struct uf_node node;
- };
- 
- /*
-@@ -1007,7 +1009,7 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 	struct cpuset *cp;	/* top-down scan of cpusets */
- 	struct cpuset **csa;	/* array of all cpuset ptrs */
- 	int csn;		/* how many cpuset ptrs in csa so far */
--	int i, j, k;		/* indices for partition finding loops */
-+	int i, j;		/* indices for partition finding loops */
- 	cpumask_var_t *doms;	/* resulting partition; i.e. sched domains */
- 	struct sched_domain_attr *dattr;  /* attributes for custom domains */
- 	int ndoms = 0;		/* number of sched domains in result */
-@@ -1015,6 +1017,7 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 	struct cgroup_subsys_state *pos_css;
- 	bool root_load_balance = is_sched_load_balance(&top_cpuset);
- 	bool cgrpv2 = cgroup_subsys_on_dfl(cpuset_cgrp_subsys);
-+	int nslot_update;
- 
- 	doms = NULL;
- 	dattr = NULL;
-@@ -1102,31 +1105,25 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 	if (root_load_balance && (csn == 1))
- 		goto single_root_domain;
- 
--	for (i = 0; i < csn; i++)
--		csa[i]->pn = i;
--	ndoms = csn;
--
--restart:
--	/* Find the best partition (set of sched domains) */
--	for (i = 0; i < csn; i++) {
--		struct cpuset *a = csa[i];
--		int apn = a->pn;
-+	if (!cgrpv2) {
-+		for (i = 0; i < csn; i++)
-+			uf_nodes_init(&csa[i]->node);
- 
--		for (j = 0; j < csn; j++) {
--			struct cpuset *b = csa[j];
--			int bpn = b->pn;
--
--			if (apn != bpn && cpusets_overlap(a, b)) {
--				for (k = 0; k < csn; k++) {
--					struct cpuset *c = csa[k];
--
--					if (c->pn == bpn)
--						c->pn = apn;
--				}
--				ndoms--;	/* one less element */
--				goto restart;
-+		/* Merge overlapping cpusets */
-+		for (i = 0; i < csn; i++) {
-+			for (j = i + 1; j < csn; j++) {
-+				if (cpusets_overlap(csa[i], csa[j]))
-+					uf_union(&csa[i]->node, &csa[j]->node);
- 			}
- 		}
-+
-+		/* Count the total number of domains */
-+		for (i = 0; i < csn; i++) {
-+			if (csa[i]->node.parent == &csa[i]->node)
-+				ndoms++;
-+		}
-+	} else {
-+		ndoms = csn;
- 	}
- 
- 	/*
-@@ -1159,44 +1156,25 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 	}
- 
- 	for (nslot = 0, i = 0; i < csn; i++) {
--		struct cpuset *a = csa[i];
--		struct cpumask *dp;
--		int apn = a->pn;
--
--		if (apn < 0) {
--			/* Skip completed partitions */
--			continue;
--		}
--
--		dp = doms[nslot];
--
--		if (nslot == ndoms) {
--			static int warnings = 10;
--			if (warnings) {
--				pr_warn("rebuild_sched_domains confused: nslot %d, ndoms %d, csn %d, i %d, apn %d\n",
--					nslot, ndoms, csn, i, apn);
--				warnings--;
--			}
--			continue;
--		}
--
--		cpumask_clear(dp);
--		if (dattr)
--			*(dattr + nslot) = SD_ATTR_INIT;
-+		nslot_update = 0;
- 		for (j = i; j < csn; j++) {
--			struct cpuset *b = csa[j];
--
--			if (apn == b->pn) {
--				cpumask_or(dp, dp, b->effective_cpus);
-+			if (uf_find(&csa[j]->node) == &csa[i]->node) {
-+				struct cpumask *dp = doms[nslot];
-+
-+				if (i == j) {
-+					nslot_update = 1;
-+					cpumask_clear(dp);
-+					if (dattr)
-+						*(dattr + nslot) = SD_ATTR_INIT;
-+				}
-+				cpumask_or(dp, dp, csa[j]->effective_cpus);
- 				cpumask_and(dp, dp, housekeeping_cpumask(HK_TYPE_DOMAIN));
- 				if (dattr)
--					update_domain_attr_tree(dattr + nslot, b);
--
--				/* Done with this partition */
--				b->pn = -1;
-+					update_domain_attr_tree(dattr + nslot, csa[j]);
- 			}
- 		}
--		nslot++;
-+		if (nslot_update)
-+			nslot++;
- 	}
- 	BUG_ON(nslot != ndoms);
- 
+
+Breno Leitao (3):
+  crypto: caam: Make CRYPTO_DEV_FSL_CAAM dependent of COMPILE_TEST
+  crypto: caam: Unembed net_dev structure from qi
+  crypto: caam: Unembed net_dev structure in dpaa2
+
+ drivers/crypto/caam/Kconfig       |  2 +-
+ drivers/crypto/caam/caamalg_qi2.c | 28 +++++++++++++++++---
+ drivers/crypto/caam/caamalg_qi2.h |  2 +-
+ drivers/crypto/caam/qi.c          | 43 +++++++++++++++++++++++++------
+ 4 files changed, 62 insertions(+), 13 deletions(-)
+
 -- 
-2.45.2
+2.43.0
 
 
