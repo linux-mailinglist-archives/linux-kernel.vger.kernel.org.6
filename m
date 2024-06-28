@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-233785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1894491BD3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 13:18:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB3A291BD40
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 13:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4E841F230ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:18:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE3011C2131F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A4D9156237;
-	Fri, 28 Jun 2024 11:18:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8283D156967;
+	Fri, 28 Jun 2024 11:18:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IdPk/6ij"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BYoK0saa"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5DD51865A;
-	Fri, 28 Jun 2024 11:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4389444374;
+	Fri, 28 Jun 2024 11:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719573496; cv=none; b=oAOeFWs2t6DsSKL+K9q9qvVa6CthPJPhZ1oh30EROgHG1h1SMxaRHx/hXTPrWTqu6Udvn3ZTCj5cn9JLOJ9nXlakwxcohR3gjvxNgR61G2qxA4K2onO5YCjsRrQqjTJuqACfEbCaz1RP6/hFJspleCEHzc7Q+aJiVqtH2gHXmPU=
+	t=1719573497; cv=none; b=JZ2A0rnPdekn0PFnN8coPea8hwK2IDUSwGfjI2xHutzcmPRTzsKauaCuOfmcv/SzGTUe+YfkGuiRMawY8LNCQ25J55wVRwr3WjLi3m+3/QxuqS8A/MomIc7jHT7P22tQxnIudAXU+QDNp+tgMDhR4NYWrA62qAGeDDN0o06peb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719573496; c=relaxed/simple;
-	bh=lj3alnjoF6IS2vUlkaWQ49CLsjb6nBsT1IQIE4C6OPo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s/GkTXUGDRu35rsBpRPCeRcivN4HvLa8sjmh+7sEi2x+icvS2yVBcUtA1+5FbyafkkYQLl/62cayvKKWiCG2YIlLVUqegaRJ3qcYaxrwx67bZWgvBDBY+5Yc+UY5t/OZkWbMkh+N7AGGg/XZWBbYecb9zzqK8MtW9COYiepQBmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IdPk/6ij; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1719573497; c=relaxed/simple;
+	bh=jjoqqDqblGrGqFau/qCZ/+dyhF/oGX1o7bJOsP/hCcI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=EdVoaYtuSmi1Ul2k7VdxdRx5SzzVy0jO53TcLWJPNWoYFN+SqFLRPgb49cF7wN4s/XQgeSR52wsMqzh2djIUM6YdkPK48Y55KXV2sN3jkPhezRyvr+e1K3EC70CgGBmaOQK/pJRVpluswpW6TptvfbV+qptXNiMCBclCYXXgksU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BYoK0saa; arc=none smtp.client-ip=209.85.221.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42138eadf64so4327465e9.3;
-        Fri, 28 Jun 2024 04:18:14 -0700 (PDT)
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-367339bd00aso412358f8f.3;
+        Fri, 28 Jun 2024 04:18:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719573493; x=1720178293; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xfb8qh56GtYXoD9jZvOPRH85DxPa0JeSyiOdHUBDC38=;
-        b=IdPk/6ij5a9AcZuZJvAhoetFu2wX0EWUdvTOO8jGsQYfD+p+MyOu/9LPf5uGWZM1d0
-         uh8rUymlALqy05rVx6usyWfOYlB6LGi8x8hcg2OC70EvD2UlVUEwRM0imAcqotMs9Xi5
-         BGcUmCW17TSnryZVu0s3vOJSbQOOa3iSseHhQNPwFUkCLhNS+f/TZXBez0TtrsFyMaGv
-         BmCktTgyjXSxCdFDdvqwM4dGFTzJ1jdfmTEqizs8qbyM+0+WTnvZtDdkwvNDsXfkiZCo
-         HIjsG68IMTT8vHYYDvu76nj/D4qocJcu3BJtDJ9iIr9vd6EyUSaB9LIEhEOJXiDcErJZ
-         0SwA==
+        d=gmail.com; s=20230601; t=1719573494; x=1720178294; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jGjvAzjDwlAq0rCpEO+mGer2SS+9hXiF0BPt0Wfq6d0=;
+        b=BYoK0saakmAwJf6/GJhrxpqg7vlHdCromvqMhm0jGTQsD1Dxhaut9rC93kKZ1x5qcI
+         3S8KJythO6h2wdZLZ60I3I49h0qE1/J1GWxyULP1M3usN/MbdznDuw5B/lAa5KwqVnj9
+         FE4+MXT6SQ29cvhTfxTQgY3oQJHgbQ70pqSWnNuEnbl88nioE348bvIzVrWVPHwsuA8T
+         8XUVyKrmMnH6Pewk12S7DeEuKlxrTJG+tF5sWdJxJB7Xv+7JpvJUoxmrh95bgSU950Iu
+         LX+nRw21hO5z8xNKQJKb4QRVDmexq/LKu+Lg2cYC86Wqn7YfKbUSIpCbClPOKgk5mF7p
+         ieJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719573493; x=1720178293;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Xfb8qh56GtYXoD9jZvOPRH85DxPa0JeSyiOdHUBDC38=;
-        b=JoCpPTo4eEnQpavJP7x2GsRCxAgoDIc4kvHF7m04Yn48/pWV8qIGp06kTbfuOKXuEx
-         1Evb4VTpXGVnrceJU9l+EAuLqFL4H+1X6snfWCV3RmNLcUgOspxub7wutDaIozT2W0md
-         cOdMAfwAY8Q3oaLZtgFhJVuuCUm7D6Lw29EFyW9iReWZSpWLL087WPLYSVms4q7q07Bp
-         HqqDq9WQimsRok39wAO6CZeyuAhHmaaDZUtN+Ftc5IW5oYJy+BlaoI8PQAmjwD0U64Rn
-         DzBtPFfM3aisSSbUP525vIl3TvWAKZ++fdyYRWRK22VS5AM/Htn7Zu4g5MKOhRNAzc2y
-         1HTg==
-X-Forwarded-Encrypted: i=1; AJvYcCWuAdQbyOeNzcyyPgKZc1Daj62+fo4cgTf5qh7jzywW04RWDrHOvzNKoAbI6fgFbYWnJz9w+Zjn5E1swCWzqtIc8+Y00gPNCm285gwNl93J8PdqLbDIizK1xq3wwr1hlZZQMzYYF6FLLvu/jLe+4dUsBY0gD1bCCTTNf8R7Yg3moXxAJw1yRIZMp6oaeTF9x9xVoQpTHCapQk6PaQ==
-X-Gm-Message-State: AOJu0YyQUjJN2k27HVbj1werxpo3g09KiZNLNAxmoppAfGou6Br1RQ9N
-	k61GPJLT8tpNjx3SU0wCFsmh/KlJr3wbdmNjILIFWdBm+1WqwETu
-X-Google-Smtp-Source: AGHT+IEgaXUd+94Izm1S8dyRGK9F05m7nglJMAYA5JVpVKSGCoyzmAAlgx33pqSiP1IHukiCb84uNQ==
-X-Received: by 2002:a05:600c:2d84:b0:425:622e:32f4 with SMTP id 5b1f17b1804b1-425622e3408mr45368885e9.26.1719573492849;
-        Fri, 28 Jun 2024 04:18:12 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719573494; x=1720178294;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jGjvAzjDwlAq0rCpEO+mGer2SS+9hXiF0BPt0Wfq6d0=;
+        b=X+oVe0OuTLL0vwTV80jVtvN1dUPMN8yxjBB6iBHjbqUqmTqNhY4ONmw1XMdfedCM0G
+         UORPbFArvxO3zcvqpVkIAN3dUwzObm65YLdFvk4mmp7hBpgXbp0bdrY183ZiRXCwkNZI
+         Fj4tKcqb40HfOq2F4Us7aqbkQB0qRhaYCacnPOblMBA9osHYmRaPzBEnnNKwh2c5iGQl
+         t5hgohQn6ERKyHqyjYJyE35C27QN8/fCxUY9BeL2ctsWzOP4pzqx4IBkWUiix47YzJbe
+         9eZ3aMem3b+sesBxjQXz9SJZ5RIn4fkcifUjh0fzBom7mGIfdW3eIAvU/5YlojkX7Z3i
+         AoBA==
+X-Forwarded-Encrypted: i=1; AJvYcCUzeHNi/AqjynFKqNTjqdrFtRn0JMcp/j3sV6Z+urRcb2rfwv6S7It9mGO6ohwjHAFglwiZEmiVKI7gfFv0ccHWld3lcTVGX+cLZc/bpm3GNxfKTDCUTi9/w61z3CeZn2SJzYSOP0NUVnmJVUZVusg3NvNIl2Bkh2kQ213/hCNUQ9KbhQ==
+X-Gm-Message-State: AOJu0YxxqXmdkIr8n6o7FKUgh/iquGE7adcyHZmhS16AyZ+4JiNJZBqy
+	/x3LSxpTdfYkdVNw/DFUEnzF9tCbNDWUuN+KSxBg636/4hn9L5UO2U5Viw==
+X-Google-Smtp-Source: AGHT+IGpmgVVWhDU6L0Eg9bKaM5Un6mfYJKGEM6lzS/aXInSUCuH83Z2b5aWXKfw/hIZ/mcUBgHX5w==
+X-Received: by 2002:adf:e507:0:b0:367:4165:ad4 with SMTP id ffacd0b85a97d-36741650be0mr3754348f8f.16.1719573494282;
+        Fri, 28 Jun 2024 04:18:14 -0700 (PDT)
 Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3675a1055b9sm1979495f8f.95.2024.06.28.04.18.11
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3675a1055b9sm1979495f8f.95.2024.06.28.04.18.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 04:18:12 -0700 (PDT)
+        Fri, 28 Jun 2024 04:18:13 -0700 (PDT)
 From: Christian Marangi <ansuelsmth@gmail.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -78,13 +80,13 @@ To: Michael Turquette <mturquette@baylibre.com>,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org
-Cc: Christian Marangi <ansuelsmth@gmail.com>,
-	Frank Wunderlich <frank-w@public-files.de>,
-	stable@vger.kernel.org
-Subject: [PATCH v2 1/2] arm64: dts: mediatek: mt7622: readd syscon to pciesys node
-Date: Fri, 28 Jun 2024 12:55:40 +0200
-Message-ID: <20240628105542.5456-1-ansuelsmth@gmail.com>
+Cc: Christian Marangi <ansuelsmth@gmail.com>
+Subject: [PATCH v2 2/2] dt-bindings: clock: mediatek: add syscon compatible for mt7622 pciesys
+Date: Fri, 28 Jun 2024 12:55:41 +0200
+Message-ID: <20240628105542.5456-2-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.45.1
+In-Reply-To: <20240628105542.5456-1-ansuelsmth@gmail.com>
+References: <20240628105542.5456-1-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,35 +95,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Sata node reference the pciesys with the property mediatek,phy-node
-and that is used as a syscon to access the pciesys regs.
+Add required syscon compatible for mt7622 pciesys. This is required for
+SATA interface as the regs are shared.
 
-Readd the syscon compatible to pciesys node to restore correct
-functionality of the SATA interface.
-
-Fixes: 3ba5a6159434 ("arm64: dts: mediatek: mt7622: fix clock controllers")
-Reported-by: Frank Wunderlich <frank-w@public-files.de>
-Co-developed-by: Frank Wunderlich <frank-w@public-files.de>
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
 Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-Cc: stable@vger.kernel.org
 ---
- arch/arm64/boot/dts/mediatek/mt7622.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes v2:
+- Fix broken schema example
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt7622.dtsi b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
-index 917fa39a74f8..bb0ec1edbe5b 100644
---- a/arch/arm64/boot/dts/mediatek/mt7622.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
-@@ -790,7 +790,7 @@ u2port1: usb-phy@1a0c5000 {
- 	};
+ .../bindings/clock/mediatek,mt7622-pciesys.yaml        | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt7622-pciesys.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt7622-pciesys.yaml
+index c77111d10f90..9c3913f9092c 100644
+--- a/Documentation/devicetree/bindings/clock/mediatek,mt7622-pciesys.yaml
++++ b/Documentation/devicetree/bindings/clock/mediatek,mt7622-pciesys.yaml
+@@ -14,9 +14,11 @@ maintainers:
  
- 	pciesys: clock-controller@1a100800 {
--		compatible = "mediatek,mt7622-pciesys";
-+		compatible = "mediatek,mt7622-pciesys", "syscon";
- 		reg = <0 0x1a100800 0 0x1000>;
- 		#clock-cells = <1>;
- 		#reset-cells = <1>;
+ properties:
+   compatible:
+-    enum:
+-      - mediatek,mt7622-pciesys
+-      - mediatek,mt7629-pciesys
++    oneOf:
++      - items:
++          - const: mediatek,mt7622-pciesys
++          - const: syscon
++      - const: mediatek,mt7629-pciesys
+ 
+   reg:
+     maxItems: 1
+@@ -38,7 +40,7 @@ additionalProperties: false
+ examples:
+   - |
+     clock-controller@1a100800 {
+-        compatible = "mediatek,mt7622-pciesys";
++        compatible = "mediatek,mt7622-pciesys", "syscon";
+         reg = <0x1a100800 0x1000>;
+         #clock-cells = <1>;
+         #reset-cells = <1>;
 -- 
 2.45.1
 
