@@ -1,144 +1,472 @@
-Return-Path: <linux-kernel+bounces-233671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F373191BB5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:22:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB21491BB60
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:23:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FF16284D5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:22:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09F881C22AAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:23:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67BF51527A3;
-	Fri, 28 Jun 2024 09:22:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86E5A1509A0;
+	Fri, 28 Jun 2024 09:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Oi2XBDoD"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dDwcqVPE"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB82D1465A1;
-	Fri, 28 Jun 2024 09:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4011465A1;
+	Fri, 28 Jun 2024 09:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719566544; cv=none; b=uSi8jlDumBtOCDLb/7fAzmD67ChEbDa8dxJ3SFjHz0B9htcK1OvEgHvnxGlyYa1Ign/oUhlIKFhso/+KUbkbrkKmioUAzKMKtsDlD4QgBtI9cn1eIUD4onzxpIv8hhSnVt1gfvt261kk0dtdBhAnY90S56Dr/ampBo0imtrR6BM=
+	t=1719566625; cv=none; b=Y19GQWUDCYfkP7JR15FhkovVSApBQs13refui5buwRXhmiQcwn1Ek+uvZgZl2ptNxNRFJWVVpkdY0+uoisqmPUH6ZssXy22Pi6hpVNnXDILUm6bWNjy/3Pfx6HxH4Rk4toLrjIFTKBwxH2f3JTrF/0keMGno0H1etaavU82vnew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719566544; c=relaxed/simple;
-	bh=No5kI0JbClGdXNXP6BWBYQzHDNI+RX4pElyDv6jIUJA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HWtZBHtxX++TjmS+oHby0Nbn4Ez/NIhcgqCrpX5p4TD1rwxswt64oZAVJcREeHGGGJCL/c0RG3/6d6sGZUnyo1P2zE/0YOAXmaEpzUv8Phi1rEjiHPJLneMa3NbVFj4xN2tZmNv2PT6Y5fqKzo3hHYseJsbGG3RdhS/osBtPo6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Oi2XBDoD; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1719566534;
-	bh=No5kI0JbClGdXNXP6BWBYQzHDNI+RX4pElyDv6jIUJA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Oi2XBDoDzH2H+YQXkPHfnOkemXC9QZbvBVlFnBLw6Q97qvHa6qQXc7udTWCgYKmgZ
-	 jF55LXYylWhWXofaB0DsqvVer3PwsOo6fcuBUh4jIK2pGC9iL0FT0pjN8wxXbsfj6B
-	 xmaUNxGKAMPONbxrBy7kLtkilkge8Saa0mbUC7lhHSY064t77UnA+NhpYixH4xnE3Q
-	 M7SBnp8i2w/zD2t7DoZI0udFlfXU1n1vmAQbODPk8VMSJJfpQC8VFwBrE+6kYGhwIv
-	 Xg0sV1vHJGljnueAtB2wggcx5i7iKsWySqLqohIQ3ZoVBVL9aCoC7H2rgTmK5lFwif
-	 PpNr40bE2KAaA==
-Received: from localhost.localdomain (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laura.nao)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 0B6B837821A8;
-	Fri, 28 Jun 2024 09:22:13 +0000 (UTC)
-From: Laura Nao <laura.nao@collabora.com>
-To: kernelci@lists.linux.dev
-Cc: linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Testing Quality Call notes - 2024-06-27
-Date: Fri, 28 Jun 2024 11:22:49 +0200
-Message-Id: <20240628092249.26582-1-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1719566625; c=relaxed/simple;
+	bh=SSys5MIYknqoTKv0F0mO251fQHgQ4iwR5eIb018WPZ0=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=TMQzBvGi8qmQVsrgygxgt6seHNL1R2odCw5py9jbr+CrHnbixclTP3olimFnV2D5UUwCRv5t9aCD+v35GL3hDn6cSkKh6R6R8aKQCwkTIqTqbYKF9ejw8G9ZUH6Ty1MHHnfUCqGTEWkzSN6zbPwrjmEIcEQRj9q19HS12TQf6KY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dDwcqVPE; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57d10354955so466733a12.1;
+        Fri, 28 Jun 2024 02:23:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719566622; x=1720171422; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=baYtxBYZ7pjEtPz9CdjikSrYOvBcpn6u3FQ2N+5TP40=;
+        b=dDwcqVPEsx6t/vQoPF1+LXyBhdzJlzxzAD03AiqMe77TificERKNkR4aHVzKjCJNdO
+         Hz/mMS4rhIx0Z+z/b3y8xGsmVL1aayKtmQ/iut+5ciPMROGc2k3N982ZhjMltkkLTdEp
+         vUDGgD69F2S3tg9CQaG4BCT2JOBK6e4+JJqAPGyHUSr589q6EntlyY1NeTozVSVHuXky
+         ZFJdJ6biVGh1rn1U0MkR6iyi4uRw1+KgbxmeviZCjyq/8WBUn2ncG2JEctkLxaOHXOiP
+         eGuuMAQ6fdFj0UMCohDbmtNZvL3jkYolDfL0srQxHNwmkY+y72cQ19g+EBZZdML6kT4t
+         VdBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719566622; x=1720171422;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=baYtxBYZ7pjEtPz9CdjikSrYOvBcpn6u3FQ2N+5TP40=;
+        b=MA2U7L8djAhVSSVvqJQi+9NWZZVVV2RUOj2bflkjRC46xEQoPlK3s0zL/AZIPWhZNj
+         peVISUNLym1xI+NO53oh3I0uBuotalXT7WGnwxWq7C7hShktzpndXN0Qck7FpE+tnMAw
+         FVopy4J4NFO7LSgqPs/uKgfjrCa4M8vqfsEJvtRrmB9i5yMwHpwME7Zki/dEFEJkXvPB
+         Rf2RkFXd8ggx4P//f0r9ePgY9OmdY2KSgasRUIfvx/M08SLdbrkqWWtLuVMwweVwoYzq
+         WN2FsIcyrav/aqyiHSdgXFLT83C/qZ4gdz9BYFLJq3WEeV+fFurGQlwN3Vnjfd9mpumi
+         dp8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVuEug2flzmQ8W6MKvMQlG8khqp5FGcTC0pVEqwgiHu1Iqfs4hhV2iD2z5ZyljUXhSG8nNgwVU94gNWnr9KFJkZ/dkcIXQAxnI6BtlOIiZURyXFxxOPPYS2CUNvUZxj/e6rIiSLLp48Dpw=
+X-Gm-Message-State: AOJu0Yw2CDJLKtrk+/UDqAVI0+ygSHxiuY37nMcRsI2+Ipt/RV+NbHuL
+	WF+XaxP/DYxdIl3SYUTzPyJgguDeWvuAwe4SatdaNmkhU1NB0lBV
+X-Google-Smtp-Source: AGHT+IE/3Afs9vHxmzvsl3H9DsS1V7bwU/VSy6NAflbuOWuaWkgoVTgn8QbmHhY5fbqaugsJqQRbZA==
+X-Received: by 2002:a50:d7cf:0:b0:57c:84fe:1acf with SMTP id 4fb4d7f45d1cf-57d49cb4600mr10197228a12.17.1719566621565;
+        Fri, 28 Jun 2024 02:23:41 -0700 (PDT)
+Received: from ?IPV6:2a02:a449:4071:1:32d0:42ff:fe10:6983? (2a02-a449-4071-1-32d0-42ff-fe10-6983.fixed6.kpn.net. [2a02:a449:4071:1:32d0:42ff:fe10:6983])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58612c835f7sm747284a12.8.2024.06.28.02.23.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Jun 2024 02:23:40 -0700 (PDT)
+Message-ID: <5c651b3f-fe30-4874-98ed-044f7c62dd97@gmail.com>
+Date: Fri, 28 Jun 2024 11:23:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: Johan Jonker <jbx6244@gmail.com>
+Subject: [PATCH v7] drm/rockchip: rk3066_hdmi: add sound support
+To: heiko@sntech.de
+Cc: hjc@rock-chips.com, andy.yan@rock-chips.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, daniel@ffwll.ch, lgirdwood@gmail.com, broonie@kernel.org,
+ linux-sound@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Add sound support to the RK3066 HDMI driver.
+The HDMI TX audio source is connected to I2S_8CH.
 
-KernelCI is hosting a bi-weekly call on Thursday to discuss improvements 
-to existing upstream tests, the development of new tests to increase 
-kernel testing coverage, and the enablement of these tests in KernelCI. 
-In recent months, we at Collabora have focused on various kernel areas,
-assessing the tests already available upstream and contributing patches 
-to make them easily runnable in CIs.
+Signed-off-by: Zheng Yang <zhengyang@rock-chips.com>
+Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+---
 
-Below is a list of the tests we've been working on and their latest 
-status updates, as discussed in the last meeting held on 2024-06-27:
+Changed V7:
+  rebase
+---
+ drivers/gpu/drm/rockchip/Kconfig       |   2 +
+ drivers/gpu/drm/rockchip/rk3066_hdmi.c | 274 ++++++++++++++++++++++++-
+ 2 files changed, 275 insertions(+), 1 deletion(-)
 
-*USB/PCI devices kselftest*
+diff --git a/drivers/gpu/drm/rockchip/Kconfig b/drivers/gpu/drm/rockchip/Kconfig
+index 1bf3e2829cd0..a32ee558408c 100644
+--- a/drivers/gpu/drm/rockchip/Kconfig
++++ b/drivers/gpu/drm/rockchip/Kconfig
+@@ -102,6 +102,8 @@ config ROCKCHIP_RGB
+ config ROCKCHIP_RK3066_HDMI
+ 	bool "Rockchip specific extensions for RK3066 HDMI"
+ 	depends on DRM_ROCKCHIP
++	select SND_SOC_HDMI_CODEC if SND_SOC
++	select SND_SOC_ROCKCHIP_I2S if SND_SOC
+ 	help
+ 	  This selects support for Rockchip SoC specific extensions
+ 	  for the RK3066 HDMI driver. If you want to enable
+diff --git a/drivers/gpu/drm/rockchip/rk3066_hdmi.c b/drivers/gpu/drm/rockchip/rk3066_hdmi.c
+index 784de990da1b..d3128b787629 100644
+--- a/drivers/gpu/drm/rockchip/rk3066_hdmi.c
++++ b/drivers/gpu/drm/rockchip/rk3066_hdmi.c
+@@ -15,12 +15,20 @@
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
 
-- Upstream test to detect unprobed devices on discoverable buses:
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=dacf1d7a78bf8a131346c47bfba7fe1f3ff44beb 
-- Kernel patches to allow running the test on more platforms on KernelCI 
-  were merged:
-  https://lore.kernel.org/all/20240613-kselftest-discoverable-probe-mt8195-kci-v1-0-7b396a9b032d@collabora.com
-- Waiting for KernelCI PRs to be merged:
-  https://github.com/kernelci/kernelci-core/pull/2577 and https://github.com/kernelci/kernelci-pipeline/pull/642
++#include <sound/hdmi-codec.h>
++
+ #include "rk3066_hdmi.h"
 
-*Error log test*
+ #include "rockchip_drm_drv.h"
 
-- Proposing new kselftest to report device log errors: 
-  https://lore.kernel.org/all/20240423-dev-err-log-selftest-v1-0-690c1741d68b@collabora.com/
-- Currently fixing test failures in KernelCI
+ #define DEFAULT_PLLA_RATE 30000000
 
-*Suspend/resume in cpufreq kselftest*
++struct audio_info {
++	int channels;
++	int sample_rate;
++	int sample_width;
++};
++
+ struct hdmi_data_info {
+ 	int vic; /* The CEA Video ID (VIC) of the current drm display mode. */
+ 	unsigned int enc_out_format;
+@@ -54,9 +62,16 @@ struct rk3066_hdmi {
 
-- Enabling suspend/resume test within the cpufreq kselftest in KernelCI
-- Parameter support for running subtests in a kselftest was merged: 
-  https://github.com/Linaro/test-definitions/pull/511
-- Added rtcwake support in the test to enable automated resume, currently 
-  testing/debugging solution
+ 	unsigned int tmdsclk;
 
-*Boot time test*
++	struct platform_device *audio_pdev;
++	struct audio_info audio;
++	bool audio_enable;
++
+ 	struct hdmi_data_info hdmi_data;
+ };
 
-- Investigating possibility of adding new test upstream to measure the 
-  kernel boot time and detect regressions
-- Currently looking into boot tracing with ftrace events and kprobes 
-  (see: https://www.kernel.org/doc/html/latest/trace/boottime-trace.html)
-- Idea for potential kselftest: insert explicit tracepoints in strategic 
-  places, let the user configure which times to measure. The test could 
-  provide a bootconfig file and a fragment to enable the required configs.
-  This could be an alternative to using external tools (e.g. grabserial 
-  w/ early serial port init).
-- Need a list of functions to track in order to measure key metrics 
-  (e.g. device tree overhead, probe overhead, module load overhead)
-- Identify key drivers that need to be loaded early, for potentially 
-  supporting a two-phase boot: (1) time-critical, and (2) rest of the 
-  system
++static int
++rk3066_hdmi_config_audio(struct rk3066_hdmi *hdmi, struct audio_info *audio);
++
+ static struct rk3066_hdmi *encoder_to_rk3066_hdmi(struct drm_encoder *encoder)
+ {
+ 	struct rockchip_encoder *rkencoder = to_rockchip_encoder(encoder);
+@@ -214,6 +229,23 @@ static int rk3066_hdmi_config_avi(struct rk3066_hdmi *hdmi,
+ 					HDMI_INFOFRAME_AVI, 0, 0, 0);
+ }
 
-*Other interesting updates*
++static int rk3066_hdmi_config_aai(struct rk3066_hdmi *hdmi,
++				  struct audio_info *audio)
++{
++	union hdmi_infoframe frame;
++	int rc;
++
++	rc = hdmi_audio_infoframe_init(&frame.audio);
++
++	frame.audio.coding_type = HDMI_AUDIO_CODING_TYPE_STREAM;
++	frame.audio.sample_frequency = HDMI_AUDIO_SAMPLE_FREQUENCY_STREAM;
++	frame.audio.sample_size = HDMI_AUDIO_SAMPLE_SIZE_STREAM;
++	frame.audio.channels = hdmi->audio.channels;
++
++	return rk3066_hdmi_upload_frame(hdmi, rc, &frame,
++					HDMI_INFOFRAME_AAI, 0, 0, 0);
++}
++
+ static int rk3066_hdmi_config_video_timing(struct rk3066_hdmi *hdmi,
+ 					   struct drm_display_mode *mode)
+ {
+@@ -364,6 +396,7 @@ static int rk3066_hdmi_setup(struct rk3066_hdmi *hdmi,
+ 		hdmi_modb(hdmi, HDMI_HDCP_CTRL, HDMI_VIDEO_MODE_MASK,
+ 			  HDMI_VIDEO_MODE_HDMI);
+ 		rk3066_hdmi_config_avi(hdmi, mode);
++		rk3066_hdmi_config_audio(hdmi, &hdmi->audio);
+ 	} else {
+ 		hdmi_modb(hdmi, HDMI_HDCP_CTRL, HDMI_VIDEO_MODE_MASK, 0);
+ 	}
+@@ -380,9 +413,20 @@ static int rk3066_hdmi_setup(struct rk3066_hdmi *hdmi,
+ 	 */
+ 	rk3066_hdmi_i2c_init(hdmi);
 
-- Flaky serial on sc7180 was recently fixed: 
-  https://github.com/kernelci/kernelci-project/issues/380 and https://lore.kernel.org/all/20240610222515.3023730-1-dianders@chromium.org/#t
+-	/* Unmute video output. */
++	/* Unmute video and audio output. */
+ 	hdmi_modb(hdmi, HDMI_VIDEO_CTRL2,
+ 		  HDMI_VIDEO_AUDIO_DISABLE_MASK, HDMI_AUDIO_DISABLE);
++	if (hdmi->audio_enable) {
++		hdmi_modb(hdmi, HDMI_VIDEO_CTRL2, HDMI_AUDIO_DISABLE, 0);
++		/* Reset audio capture logic. */
++		hdmi_modb(hdmi, HDMI_VIDEO_CTRL2,
++			  HDMI_AUDIO_CP_LOGIC_RESET_MASK,
++			  HDMI_AUDIO_CP_LOGIC_RESET);
++		usleep_range(900, 1000);
++		hdmi_modb(hdmi, HDMI_VIDEO_CTRL2,
++			  HDMI_AUDIO_CP_LOGIC_RESET_MASK, 0);
++	}
++
+ 	return 0;
+ }
 
-*Strategy for test enablement in KernelCI*
+@@ -534,6 +578,230 @@ struct drm_connector_helper_funcs rk3066_hdmi_connector_helper_funcs = {
+ 	.best_encoder = rk3066_hdmi_connector_best_encoder,
+ };
 
-- Guidance on test quality: KernelCI should set the standard for test 
-  quality, providing guidance on which tests to enable from various 
-  projects (e.g., kselftest, LTP). By doing so, KernelCI can serve as a 
-  model for other CI systems.
-- Develop mechanisms to automatically detect which tests should run on a
-  specific platform
-- Embed metadata in the test themselves to facilitate the test selection
-  process
-- Leverage device tree info to determine the appropriate tests for each 
-  platform
++static int
++rk3066_hdmi_config_audio(struct rk3066_hdmi *hdmi, struct audio_info *audio)
++{
++	u32 rate, channel, word_length, N, CTS;
++	u64 tmp;
++
++	if (audio->channels < 3)
++		channel = HDMI_AUDIO_I2S_CHANNEL_1_2;
++	else if (audio->channels < 5)
++		channel = HDMI_AUDIO_I2S_CHANNEL_3_4;
++	else if (audio->channels < 7)
++		channel = HDMI_AUDIO_I2S_CHANNEL_5_6;
++	else
++		channel = HDMI_AUDIO_I2S_CHANNEL_7_8;
++
++	switch (audio->sample_rate) {
++	case 32000:
++		rate = HDMI_AUDIO_SAMPLE_FRE_32000;
++		N = N_32K;
++		break;
++	case 44100:
++		rate = HDMI_AUDIO_SAMPLE_FRE_44100;
++		N = N_441K;
++		break;
++	case 48000:
++		rate = HDMI_AUDIO_SAMPLE_FRE_48000;
++		N = N_48K;
++		break;
++	case 88200:
++		rate = HDMI_AUDIO_SAMPLE_FRE_88200;
++		N = N_882K;
++		break;
++	case 96000:
++		rate = HDMI_AUDIO_SAMPLE_FRE_96000;
++		N = N_96K;
++		break;
++	case 176400:
++		rate = HDMI_AUDIO_SAMPLE_FRE_176400;
++		N = N_1764K;
++		break;
++	case 192000:
++		rate = HDMI_AUDIO_SAMPLE_FRE_192000;
++		N = N_192K;
++		break;
++	default:
++		DRM_DEV_ERROR(hdmi->dev, "no support for sample rate %d\n",
++			      audio->sample_rate);
++		return -ENOENT;
++	}
++
++	switch (audio->sample_width) {
++	case 16:
++		word_length = 0x02;
++		break;
++	case 20:
++		word_length = 0x0a;
++		break;
++	case 24:
++		word_length = 0x0b;
++		break;
++	default:
++		DRM_DEV_ERROR(hdmi->dev, "no support for word length %d\n",
++			      audio->sample_width);
++		return -ENOENT;
++	}
++
++	tmp = (u64)hdmi->tmdsclk * N;
++	do_div(tmp, 128 * audio->sample_rate);
++	CTS = tmp;
++
++	/* Set_audio source I2S. */
++	hdmi_writeb(hdmi, HDMI_AUDIO_CTRL1, 0x00);
++	hdmi_writeb(hdmi, HDMI_AUDIO_CTRL2, 0x40);
++	hdmi_writeb(hdmi, HDMI_I2S_AUDIO_CTRL,
++		    HDMI_AUDIO_I2S_FORMAT_STANDARD | channel);
++	hdmi_writeb(hdmi, HDMI_I2S_SWAP, 0x00);
++	hdmi_modb(hdmi, HDMI_AV_CTRL1, HDMI_AUDIO_SAMPLE_FRE_MASK, rate);
++	hdmi_writeb(hdmi, HDMI_AUDIO_SRC_NUM_AND_LENGTH, word_length);
++
++	/* Set N value. */
++	hdmi_modb(hdmi, HDMI_LR_SWAP_N3,
++		  HDMI_AUDIO_N_19_16_MASK, (N >> 16) & 0x0F);
++	hdmi_writeb(hdmi, HDMI_N2, (N >> 8) & 0xFF);
++	hdmi_writeb(hdmi, HDMI_N1, N & 0xFF);
++
++	/* Set CTS value. */
++	hdmi_writeb(hdmi, HDMI_CTS_EXT1, CTS & 0xff);
++	hdmi_writeb(hdmi, HDMI_CTS_EXT2, (CTS >> 8) & 0xff);
++	hdmi_writeb(hdmi, HDMI_CTS_EXT3, (CTS >> 16) & 0xff);
++
++	if (audio->channels > 2)
++		hdmi_modb(hdmi, HDMI_LR_SWAP_N3,
++			  HDMI_AUDIO_LR_SWAP_MASK,
++			  HDMI_AUDIO_LR_SWAP_SUBPACKET1);
++	rate = (~(rate >> 4)) & 0x0f;
++	hdmi_writeb(hdmi, HDMI_AUDIO_STA_BIT_CTRL1, rate);
++	hdmi_writeb(hdmi, HDMI_AUDIO_STA_BIT_CTRL2, 0);
++
++	return rk3066_hdmi_config_aai(hdmi, audio);
++}
++
++static int rk3066_hdmi_audio_hw_params(struct device *dev, void *d,
++				       struct hdmi_codec_daifmt *daifmt,
++				       struct hdmi_codec_params *params)
++{
++	struct rk3066_hdmi *hdmi = dev_get_drvdata(dev);
++	struct drm_display_info *display = &hdmi->connector.display_info;
++
++	if (!display->has_audio) {
++		DRM_DEV_ERROR(hdmi->dev, "no audio support\n");
++		return -ENODEV;
++	}
++
++	if (!hdmi->encoder.encoder.crtc)
++		return -ENODEV;
++
++	switch (daifmt->fmt) {
++	case HDMI_I2S:
++		break;
++	default:
++		DRM_DEV_ERROR(dev, "invalid format %d\n", daifmt->fmt);
++		return -EINVAL;
++	}
++
++	hdmi->audio.channels = params->channels;
++	hdmi->audio.sample_rate = params->sample_rate;
++	hdmi->audio.sample_width = params->sample_width;
++
++	return rk3066_hdmi_config_audio(hdmi, &hdmi->audio);
++}
++
++static void rk3066_hdmi_audio_shutdown(struct device *dev, void *d)
++{
++	/* do nothing */
++}
++
++static int
++rk3066_hdmi_audio_mute_stream(struct device *dev, void *d,
++			      bool mute, int direction)
++{
++	struct rk3066_hdmi *hdmi = dev_get_drvdata(dev);
++	struct drm_display_info *display = &hdmi->connector.display_info;
++
++	if (!display->has_audio) {
++		DRM_DEV_ERROR(hdmi->dev, "no audio support\n");
++		return -ENODEV;
++	}
++
++	hdmi->audio_enable = !mute;
++
++	if (mute)
++		hdmi_modb(hdmi, HDMI_VIDEO_CTRL2,
++			  HDMI_AUDIO_DISABLE, HDMI_AUDIO_DISABLE);
++	else
++		hdmi_modb(hdmi, HDMI_VIDEO_CTRL2, HDMI_AUDIO_DISABLE, 0);
++
++	/*
++	 * Under power mode E we need to reset the audio capture logic to
++	 * make the audio setting update.
++	 */
++	if (rk3066_hdmi_get_power_mode(hdmi) == HDMI_SYS_POWER_MODE_E) {
++		hdmi_modb(hdmi, HDMI_VIDEO_CTRL2,
++			  HDMI_AUDIO_CP_LOGIC_RESET_MASK,
++			  HDMI_AUDIO_CP_LOGIC_RESET);
++		usleep_range(900, 1000);
++		hdmi_modb(hdmi, HDMI_VIDEO_CTRL2,
++			  HDMI_AUDIO_CP_LOGIC_RESET_MASK, 0);
++	}
++
++	return 0;
++}
++
++static int rk3066_hdmi_audio_get_eld(struct device *dev, void *d,
++				     u8 *buf, size_t len)
++{
++	struct rk3066_hdmi *hdmi = dev_get_drvdata(dev);
++	struct drm_mode_config *config = &hdmi->encoder.encoder.dev->mode_config;
++	struct drm_connector *connector;
++	int ret = -ENODEV;
++
++	mutex_lock(&config->mutex);
++	list_for_each_entry(connector, &config->connector_list, head) {
++		if (&hdmi->encoder.encoder == connector->encoder) {
++			memcpy(buf, connector->eld,
++			       min(sizeof(connector->eld), len));
++			ret = 0;
++		}
++	}
++	mutex_unlock(&config->mutex);
++
++	return ret;
++}
++
++static const struct hdmi_codec_ops audio_codec_ops = {
++	.hw_params = rk3066_hdmi_audio_hw_params,
++	.audio_shutdown = rk3066_hdmi_audio_shutdown,
++	.mute_stream = rk3066_hdmi_audio_mute_stream,
++	.get_eld = rk3066_hdmi_audio_get_eld,
++	.no_capture_mute = 1,
++};
++
++static int rk3066_hdmi_audio_codec_init(struct rk3066_hdmi *hdmi,
++					struct device *dev)
++{
++	struct hdmi_codec_pdata codec_data = {
++		.i2s = 1,
++		.ops = &audio_codec_ops,
++		.max_i2s_channels = 8,
++	};
++
++	hdmi->audio.channels = 2;
++	hdmi->audio.sample_rate = 48000;
++	hdmi->audio.sample_width = 16;
++	hdmi->audio_enable = false;
++	hdmi->audio_pdev =
++		platform_device_register_data(dev,
++					      HDMI_CODEC_DRV_NAME,
++					      PLATFORM_DEVID_NONE,
++					      &codec_data,
++					      sizeof(codec_data));
++
++	return PTR_ERR_OR_ZERO(hdmi->audio_pdev);
++}
++
+ static int
+ rk3066_hdmi_register(struct drm_device *drm, struct rk3066_hdmi *hdmi)
+ {
+@@ -566,6 +834,8 @@ rk3066_hdmi_register(struct drm_device *drm, struct rk3066_hdmi *hdmi)
 
-Please reply to this thread if you'd like to join the call or discuss 
-any of the topics further. We look forward to collaborating with the 
-community to improve upstream tests and expand coverage to more areas 
-of interest within the kernel.
+ 	drm_connector_attach_encoder(&hdmi->connector, encoder);
 
-Best regards,
++	rk3066_hdmi_audio_codec_init(hdmi, dev);
++
+ 	return 0;
+ }
 
-Laura Nao
+@@ -813,6 +1083,7 @@ static int rk3066_hdmi_bind(struct device *dev, struct device *master,
+ 	return 0;
+
+ err_cleanup_hdmi:
++	platform_device_unregister(hdmi->audio_pdev);
+ 	hdmi->connector.funcs->destroy(&hdmi->connector);
+ 	hdmi->encoder.encoder.funcs->destroy(&hdmi->encoder.encoder);
+ err_disable_i2c:
+@@ -828,6 +1099,7 @@ static void rk3066_hdmi_unbind(struct device *dev, struct device *master,
+ {
+ 	struct rk3066_hdmi *hdmi = dev_get_drvdata(dev);
+
++	platform_device_unregister(hdmi->audio_pdev);
+ 	hdmi->connector.funcs->destroy(&hdmi->connector);
+ 	hdmi->encoder.encoder.funcs->destroy(&hdmi->encoder.encoder);
+
+--
+2.39.2
+
 
