@@ -1,613 +1,325 @@
-Return-Path: <linux-kernel+bounces-234373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8515691C5DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:35:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AADD91C5DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:35:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A82821C2086F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:35:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D5491C20294
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:35:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178961CD5BF;
-	Fri, 28 Jun 2024 18:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C8F1CD5D4;
+	Fri, 28 Jun 2024 18:35:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GcpQ5x6d"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vtBWGWKx"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8231CCCB6;
-	Fri, 28 Jun 2024 18:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C827D1CCCD3
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 18:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719599618; cv=none; b=ape8CruabhayZ9cIRvOBkDnuK90eR+x0WPTB+UE5BbDT+2VDshfQOlvd2gc4H4tJdit5IgW2UWMBftfVoaXwmFG8wKanFwR5tBHn1gRXZnM0M1MSIy2EEGjWA0NESSBXYo1PjCbio6VXFm9RGh9wM3dq+LfnoM/3mDCME9JHu5s=
+	t=1719599705; cv=none; b=b9XdV5xeOa9O7N7fTvOIHBxGPMoiIZW3GAbYTDWYND3XpIjOgil9ptJbs0ZAs4kSwASrdqM9Jiig8DD8j/XCNut1+u0qy1dPkuqHVuDEdz19Pp1dfsWVEC4dtCP8dYMidQrww8d2OuMTACr73khgdLvsllRlQCYCfShIyqelx/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719599618; c=relaxed/simple;
-	bh=LD3BA0ga2QPjnAHSBILCHhcBem+GeSRBL3vDSLYHwpY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=UKfu0TqC1JpMNGp2vuC34uiJ9eCkWZ2tJQG6CQDK11HXDjAV/+/WJ16yJzFrfDfD7Wnmxvvqilmznys5QfxdHewC94QCHumUsieyiK1n0LuqfxgyMeqavpZR7vEu+YNr/cJmYIMLkuLaIc3EdqaqfCqKN+ihP4dX+uWhwIezB+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GcpQ5x6d; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45SD3EOT031405;
-	Fri, 28 Jun 2024 18:33:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ph8vl62nAfQEwBcvW1j4A54CEUtJidXfNfLmIsXydZU=; b=GcpQ5x6dXZP0cKeR
-	UmVSjNrox5c7F20IpD8v+V78I6GniMI+hAVu9CTxTY1AtHc+14QkTpuavIoje/lc
-	rJD4Wa2/21uWq1cv6DyCe8cU3gJpvJ25RsBDVnbfCU/H9bSJQSaTwENQDlbD4Bz0
-	ywzgwVHxZkyf+lMuuI/OjW3kGuSamB+0mSNqeVey+prpQrKCwd3Ee1dGhvXElutH
-	zywv3hboeDncjDylIoFy5KmaS2Hw9CzgMojHSGyPLM3pXGNj4WYjOTivzlS1BkKA
-	0xt7t4zO6tRrNCyE8Ygxrmo9u/3BXhLpiC0OEqynp9AXniswWdl+nt3Yt68Q0ZrQ
-	Jlb+JQ==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 401pm5ajqx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Jun 2024 18:33:31 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45SIXUPL019524
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Jun 2024 18:33:30 GMT
-Received: from hu-vikramsa-hyd.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 28 Jun 2024 11:33:24 -0700
-From: Vikram Sharma <quic_vikramsa@quicinc.com>
-Date: Sat, 29 Jun 2024 00:02:40 +0530
-Subject: [PATCH 6/6] media: qcom: camss: support for camss driver for
- sc7280
+	s=arc-20240116; t=1719599705; c=relaxed/simple;
+	bh=CWKbXU0lGz+a/Ni71N8hM4X8U1qu9QQEnCLECfVKaT0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YVJcdLHBXM4Su9zRQRmZlSiZ3rdTeF3e1BJBkAGDDM5+6LVlPnVej4OZxPBrfc2UcT8dP49AfTyFHcK12xQlu9DPjof8AhJCHEW4qT7siZ6CHsryoRf+GMcnpIChznIDvZyU2zBpVh26BZInEbA7qRGw3JKlvdNKJtvHuu+HnUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vtBWGWKx; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fad076cd9cso21375ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 11:35:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719599703; x=1720204503; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2ok6cRHQFo/sSbN8VpEhgxlnh0lJa3fRDL/F3J0mwY0=;
+        b=vtBWGWKxVlGwyIlcatxfw/onHgfIibuX5xra0nJa7JQXycBMbFJ6kV5FGDN21llDTr
+         lUk0/gUw944seuJow+dthB4uEjr0Um06M4RxSMVo6iNyP3/+PJ3dBTy3zOHxbtKMkh5j
+         twblNttJHS4mrmHTgKY4DwbLDFFCSQNjcY6u9QGmWBJmf8sM2embcBTM4Id79i8e631y
+         Ia83RTh0X6Hhz9tXJYQKyaPHTJevN+7/RAIAjWDFYUoRBM1yMlO2TQ5WSBp3OKeSiAuV
+         WGeDSclzbLp2i5/Zoeiu1XHSBEFGqHCeX/JMY0hCzhfOPNrDgz7nJ/SXybblXwKB5jiN
+         tALg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719599703; x=1720204503;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2ok6cRHQFo/sSbN8VpEhgxlnh0lJa3fRDL/F3J0mwY0=;
+        b=YR9+caX7iOSjtjEWDQVtzAsrtwuptMwN/5PswGXk1LAoZNufXF4pqAB9HLelrBSuy7
+         EvuZL/EMA/e6mt8rtW/ff7mAEqtdJwjRIWk6CNUHR1dqLASABvTVa6GaKhttP8109MOX
+         cSa2Mfc2gNRpvLqp5mabwiVpgv15qw+uFl+sHip+hTR8V9vAMo4KYEfntweSpM0X+sBy
+         U8gQMckz4xznLmV37jullSgUCQPt3xcsQZYXdchoQvHmKSHdfCTcQ/xOyWDoXoe77B7r
+         J8DhSThCGPZ/apUC0yvnGZEQRo1GffgaTuPtoZpoltRH6Q88EJ8ghgR4bRi8VmrN/JgB
+         gr9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWTsrDZkKyA7r6OR6Pv/ybaSH/3WfyNUX2e8APxyReQQZ06RWVFWmgrr7EIEy2IUi0QYX9a+5ZBqesZO1GJkUCFswlQXpTO+Pej1tdT
+X-Gm-Message-State: AOJu0YxQD8D4VhyykKCABcm/1rz0OsgEuBhGdy3beRWVtsHdTMZORg5+
+	zOjHBqQuP44asvwsQ8q5ZfvLMIEgY2JtzSg6ovmDyfqDBH2hoJSeh90uR9oHuGIsGsmm0t/uJCu
+	2CXcentfyBS46CsqG3BopOQA2skp4zuWKLXw+
+X-Google-Smtp-Source: AGHT+IF+YaAb75KFyh2laL4Zn4owsbIgw3VejBchQEsNH6l87JSPVR6VZhNui6Vm3I/JoPqKrzwlL6E5KHgH3YdCYYA=
+X-Received: by 2002:a17:902:6e01:b0:1f6:567f:3c1f with SMTP id
+ d9443c01a7336-1fad831dd43mr158655ad.3.1719599702614; Fri, 28 Jun 2024
+ 11:35:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240629-camss_first_post_linux_next-v1-6-bc798edabc3a@quicinc.com>
-References: <20240629-camss_first_post_linux_next-v1-0-bc798edabc3a@quicinc.com>
-In-Reply-To: <20240629-camss_first_post_linux_next-v1-0-bc798edabc3a@quicinc.com>
-To: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
-        "Bryan
- O'Donoghue" <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Kapatrala Syed
-	<akapatra@quicinc.com>,
-        Hariram Purushothaman <hariramp@quicinc.com>,
-        <cros-qcom-dts-watchers@chromium.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        "Loic
- Poulain" <loic.poulain@linaro.org>,
-        Andi Shyti <andi.shyti@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>, Vikram Sharma <quic_vikramsa@quicinc.com>,
-        Suresh Vankadara <quic_svankada@quicinc.com>,
-        Trishansh Bhardwaj
-	<quic_tbhardwa@quicinc.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1719599567; l=15463;
- i=quic_vikramsa@quicinc.com; s=20240628; h=from:subject:message-id;
- bh=WWSzn7kQwaw4Vq/+yyLH32fQovF5f8e9Is6rdSr3CgU=;
- b=zvo8mk6vzs6OgLZYQhUx+iGANtphi9FdybQHH28Tgsq1Np2dKYb7ETYVmDzxtArBTGrM/RFoM
- tF7IdZ7lLnIBTgqJipn1ut2l1BcEB95EX2qtmOPXa8UYlQXnNiGEiiq
-X-Developer-Key: i=quic_vikramsa@quicinc.com; a=ed25519;
- pk=vQBkwZr1Hv+VXogAyTAu7AEx8/6bvkOmgrzYFbNGCDI=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: LHi2qpRUA4erHEKF8yEJ-3MeFulWwD1y
-X-Proofpoint-ORIG-GUID: LHi2qpRUA4erHEKF8yEJ-3MeFulWwD1y
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-28_14,2024-06-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
- priorityscore=1501 phishscore=0 adultscore=0 suspectscore=0 spamscore=0
- malwarescore=0 lowpriorityscore=0 bulkscore=0 impostorscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406280138
+References: <20240626203630.1194748-1-irogers@google.com> <20240626203630.1194748-2-irogers@google.com>
+ <d36acf6a-1505-459d-b392-be0fc952ad08@intel.com>
+In-Reply-To: <d36acf6a-1505-459d-b392-be0fc952ad08@intel.com>
+From: Ian Rogers <irogers@google.com>
+Date: Fri, 28 Jun 2024 11:34:51 -0700
+Message-ID: <CAP-5=fU6eUUJeoKTsO0nv=yFvG=Wu_z_1VVpyyWNx42h+BpSKQ@mail.gmail.com>
+Subject: Re: [PATCH v2 01/27] perf auxevent: Zero size dummy tool
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Kan Liang <kan.liang@linux.intel.com>, John Garry <john.g.garry@oracle.com>, 
+	Will Deacon <will@kernel.org>, James Clark <james.clark@arm.com>, 
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Yicong Yang <yangyicong@hisilicon.com>, 
+	Jonathan Cameron <jonathan.cameron@huawei.com>, Nick Terrell <terrelln@fb.com>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Anshuman Khandual <anshuman.khandual@arm.com>, Song Liu <song@kernel.org>, 
+	Ilkka Koskinen <ilkka@os.amperecomputing.com>, Huacai Chen <chenhuacai@kernel.org>, 
+	Yanteng Si <siyanteng@loongson.cn>, Sun Haiyong <sunhaiyong@loongson.cn>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Suresh Vankadara <quic_svankada@quicinc.com>
+On Fri, Jun 28, 2024 at 10:45=E2=80=AFAM Adrian Hunter <adrian.hunter@intel=
+.com> wrote:
+>
+> In subject: "auxevent" -> "auxtrace"
 
-This change adds support for camss driver for sc7280 soc.
+Ack.
 
-Signed-off-by: Suresh Vankadara <quic_svankada@quicinc.com>
-Signed-off-by: Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
-Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
----
- drivers/media/platform/qcom/camss/camss-csid.c     |  16 +-
- .../platform/qcom/camss/camss-csiphy-3ph-1-0.c     |   2 +
- drivers/media/platform/qcom/camss/camss-vfe.c      |   2 +
- drivers/media/platform/qcom/camss/camss.c          | 340 +++++++++++++++++++++
- drivers/media/platform/qcom/camss/camss.h          |   2 +
- 5 files changed, 359 insertions(+), 3 deletions(-)
+> On 26/06/24 23:36, Ian Rogers wrote:
+> > The dummy tool is passed as a placeholder to allow a container_of to
+> > get additional parameters. As the tool isn't used, make it a zero
+> > sized array saving 320 bytes on an x86_64 build.
+> >
+> > s390-cpumsf's dummy tool struct was unused, so remove.
+> >
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > ---
+> >  tools/perf/util/arm-spe.c     | 6 +++---
+> >  tools/perf/util/cs-etm.c      | 6 +++---
+> >  tools/perf/util/intel-bts.c   | 6 +++---
+> >  tools/perf/util/intel-pt.c    | 7 +++----
+> >  tools/perf/util/s390-cpumsf.c | 5 -----
+> >  5 files changed, 12 insertions(+), 18 deletions(-)
+> >
+> > diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
+> > index afbd5869f6bf..ee0d5064ddd4 100644
+> > --- a/tools/perf/util/arm-spe.c
+> > +++ b/tools/perf/util/arm-spe.c
+> > @@ -1074,8 +1074,8 @@ static void arm_spe_print_info(__u64 *arr)
+> >  }
+> >
+> >  struct arm_spe_synth {
+> > -     struct perf_tool dummy_tool;
+> >       struct perf_session *session;
+> > +     struct perf_tool dummy_tool[0];
+>
+> [] is preferred to [0]
+>
+> >  };
+> >
+> >  static int arm_spe_event_synth(struct perf_tool *tool,
+> > @@ -1084,7 +1084,7 @@ static int arm_spe_event_synth(struct perf_tool *=
+tool,
+> >                              struct machine *machine __maybe_unused)
+> >  {
+> >       struct arm_spe_synth *arm_spe_synth =3D
+> > -                   container_of(tool, struct arm_spe_synth, dummy_tool=
+);
+> > +                   container_of(tool, struct arm_spe_synth, dummy_tool=
+[0]);
+> >
+> >       return perf_session__deliver_synth_event(arm_spe_synth->session,
+> >                                                event, NULL);
+> > @@ -1098,7 +1098,7 @@ static int arm_spe_synth_event(struct perf_sessio=
+n *session,
+> >       memset(&arm_spe_synth, 0, sizeof(struct arm_spe_synth));
+> >       arm_spe_synth.session =3D session;
+> >
+> > -     return perf_event__synthesize_attr(&arm_spe_synth.dummy_tool, att=
+r, 1,
+> > +     return perf_event__synthesize_attr(arm_spe_synth.dummy_tool, attr=
+, 1,
+>
+> Passing a pointer to an object that doesn't exist there is NAK IMO
 
-diff --git a/drivers/media/platform/qcom/camss/camss-csid.c b/drivers/media/platform/qcom/camss/camss-csid.c
-index 858db5d4ca75..2c622233da6f 100644
---- a/drivers/media/platform/qcom/camss/camss-csid.c
-+++ b/drivers/media/platform/qcom/camss/camss-csid.c
-@@ -28,6 +28,7 @@
- /* offset of CSID registers in VFE region for VFE 480 */
- #define VFE_480_CSID_OFFSET 0x1200
- #define VFE_480_LITE_CSID_OFFSET 0x200
-+#define VFE_165_CSID_OFFSET 0x4000
- 
- #define MSM_CSID_NAME "msm_csid"
- 
-@@ -1028,8 +1029,8 @@ int msm_csid_subdev_init(struct camss *camss, struct csid_device *csid,
- 	csid->res->hw_ops->subdev_init(csid);
- 
- 	/* Memory */
--
--	if (camss->res->version == CAMSS_8250) {
-+	switch (camss->res->version) {
-+	case CAMSS_8250:
- 		/* for titan 480, CSID registers are inside the VFE region,
- 		 * between the VFE "top" and "bus" registers. this requires
- 		 * VFE to be initialized before CSID
-@@ -1040,10 +1041,19 @@ int msm_csid_subdev_init(struct camss *camss, struct csid_device *csid,
- 		else
- 			csid->base = csid->res->parent_dev_ops->get_base_address(camss, id)
- 				 + VFE_480_CSID_OFFSET;
--	} else {
-+		break;
-+	case CAMSS_7280:
-+		/* for titan 165, CSID registers are inside the VFE region,
-+		 * between the VFE "top" and "bus" registers. this requires
-+		 * VFE to be initialized before CSID
-+		 */
-+		csid->base = camss->vfe[id].base + VFE_165_CSID_OFFSET;
-+		break;
-+	default:
- 		csid->base = devm_platform_ioremap_resource_byname(pdev, res->reg[0]);
- 		if (IS_ERR(csid->base))
- 			return PTR_ERR(csid->base);
-+		break;
- 	}
- 
- 	/* Interrupt */
-diff --git a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
-index df7e93a5a4f6..c7e507420732 100644
---- a/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
-+++ b/drivers/media/platform/qcom/camss/camss-csiphy-3ph-1-0.c
-@@ -510,6 +510,7 @@ static void csiphy_gen2_config_lanes(struct csiphy_device *csiphy,
- 		array_size = ARRAY_SIZE(lane_regs_sdm845[0]);
- 		break;
- 	case CAMSS_8250:
-+	case CAMSS_7280:
- 		r = &lane_regs_sm8250[0][0];
- 		array_size = ARRAY_SIZE(lane_regs_sm8250[0]);
- 		break;
-@@ -560,6 +561,7 @@ static bool csiphy_is_gen2(u32 version)
- 	case CAMSS_845:
- 	case CAMSS_8250:
- 	case CAMSS_8280XP:
-+	case CAMSS_7280:
- 		ret = true;
- 		break;
- 	}
-diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
-index 83c5a36d071f..757e872b8eb8 100644
---- a/drivers/media/platform/qcom/camss/camss-vfe.c
-+++ b/drivers/media/platform/qcom/camss/camss-vfe.c
-@@ -338,6 +338,7 @@ static u32 vfe_src_pad_code(struct vfe_line *line, u32 sink_code,
- 	case CAMSS_845:
- 	case CAMSS_8250:
- 	case CAMSS_8280XP:
-+	case CAMSS_7280:
- 		switch (sink_code) {
- 		case MEDIA_BUS_FMT_YUYV8_1X16:
- 		{
-@@ -1695,6 +1696,7 @@ static int vfe_bpl_align(struct vfe_device *vfe)
- 	case CAMSS_845:
- 	case CAMSS_8250:
- 	case CAMSS_8280XP:
-+	case CAMSS_7280:
- 		ret = 16;
- 		break;
- 	default:
-diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
-index 1f1f44f6fbb2..2b840e2aeb51 100644
---- a/drivers/media/platform/qcom/camss/camss.c
-+++ b/drivers/media/platform/qcom/camss/camss.c
-@@ -1480,6 +1480,281 @@ static const struct resources_icc icc_res_sc8280xp[] = {
- 	},
- };
- 
-+static const struct camss_subdev_resources csiphy_res_7280[] = {
-+	/* CSIPHY0 */
-+	{
-+		.regulators = {},
-+		.clock = { "csiphy0", "csiphy0_timer", "csiphy0_timer_src"},
-+		.clock_rate = { { 300000000 },
-+				{ 300000000 },
-+				{ 300000000 }},
-+		.reg = { "csiphy0" },
-+		.interrupt = { "csiphy0" },
-+		.csiphy = {
-+			.hw_ops = &csiphy_ops_3ph_1_0
-+		}
-+	},
-+	/* CSIPHY1 */
-+	{
-+		.regulators = {},
-+		.clock = { "csiphy1", "csiphy1_timer", "csiphy1_timer_src"},
-+		.clock_rate = { { 300000000 },
-+				{ 300000000 },
-+				{ 300000000 }},
-+		.reg = { "csiphy1" },
-+		.interrupt = { "csiphy1" },
-+		.csiphy = {
-+			.hw_ops = &csiphy_ops_3ph_1_0
-+		}
-+	},
-+	/* CSIPHY2 */
-+	{
-+		.regulators = {},
-+		.clock = { "csiphy2", "csiphy2_timer", "csiphy2_timer_src"},
-+		.clock_rate = { { 300000000 },
-+				{ 300000000 },
-+				{ 300000000 }},
-+		.reg = { "csiphy2" },
-+		.interrupt = { "csiphy2" },
-+		.csiphy = {
-+			.hw_ops = &csiphy_ops_3ph_1_0
-+		}
-+	},
-+	/* CSIPHY3 */
-+	{
-+		.regulators = {},
-+		.clock = { "csiphy3", "csiphy3_timer", "csiphy3_timer_src"},
-+		.clock_rate = { { 300000000 },
-+				{ 300000000 },
-+				{ 300000000 }},
-+		.reg = { "csiphy3" },
-+		.interrupt = { "csiphy3" },
-+		.csiphy = {
-+			.hw_ops = &csiphy_ops_3ph_1_0
-+		}
-+	},
-+	/* CSIPHY4 */
-+	{
-+		.regulators = {},
-+		.clock = { "csiphy4", "csiphy4_timer", "csiphy4_timer_src"},
-+		.clock_rate = { { 300000000 },
-+				{ 300000000 },
-+				{ 300000000 }},
-+		.reg = { "csiphy4" },
-+		.interrupt = { "csiphy4" },
-+		.csiphy = {
-+			.hw_ops = &csiphy_ops_3ph_1_0
-+		}
-+	},
-+};
-+
-+static const struct camss_subdev_resources csid_res_7280[] = {
-+	/* CSID0 */
-+	{
-+		.regulators = { "vdda-phy", "vdda-pll" },
-+		.clock = { "vfe0_csid", "vfe0_cphy_rx", "vfe0", "vfe0_axi", "csiphy_rx_src"},
-+		.clock_rate = { { 300000000, 0, 380000000, 150000000, 380000000},
-+				{ 400000000, 0, 510000000, 140000000, 510000000},
-+				{ 400000000, 0, 637000000, 320000000, 637000000},
-+				{ 400000000, 0, 760000000, 400000000, 760000000} },
-+		.reg = { "csid0" },
-+		.interrupt = { "csid0" },
-+		.csid = {
-+			.is_lite = false,
-+			.hw_ops = &csid_ops_gen2,
-+			.formats = &csid_formats_gen2
-+		}
-+	},
-+	/* CSID1 */
-+	{
-+		.regulators = { "vdda-phy", "vdda-pll" },
-+		.clock = { "vfe1_csid", "vfe1_cphy_rx", "vfe1", "vfe1_axi", "csiphy_rx_src"},
-+		.clock_rate = { { 300000000, 0, 380000000, 300000000, 380000000},
-+				{ 400000000, 0, 510000000, 400000000, 510000000},
-+				{ 400000000, 0, 637000000, 400000000, 637000000},
-+				{ 400000000, 0, 760000000, 400000000, 760000000} },
-+		.reg = { "csid1" },
-+		.interrupt = { "csid1" },
-+		.csid = {
-+			.is_lite = false,
-+			.hw_ops = &csid_ops_gen2,
-+			.formats = &csid_formats_gen2
-+		}
-+	},
-+	/* CSID2 */
-+	{
-+		.regulators = { "vdda-phy", "vdda-pll" },
-+		.clock = { "vfe2_csid", "vfe2_cphy_rx", "vfe2", "vfe2_axi", "csiphy_rx_src"},
-+		.clock_rate = { { 300000000, 0, 380000000, 300000000, 380000000},
-+				{ 400000000, 0, 510000000, 400000000, 510000000},
-+				{ 400000000, 0, 637000000, 400000000, 637000000},
-+				{ 400000000, 0, 760000000, 400000000, 760000000} },
-+		.reg = { "csid2" },
-+		.interrupt = { "csid2" },
-+		.csid = {
-+			.is_lite = false,
-+			.hw_ops = &csid_ops_gen2,
-+			.formats = &csid_formats_gen2
-+		}
-+	},
-+	/* CSID3 */
-+	{
-+		.regulators = { "vdda-phy", "vdda-pll" },
-+		.clock = { "vfe0_lite_csid", "vfe0_lite_cphy_rx", "vfe0_lite", "csiphy_rx_src"},
-+		.clock_rate = { { 300000000, 0, 320000000, 300000000},
-+				{ 400000000, 0, 400000000, 400000000},
-+				{ 400000000, 0, 480000000, 400000000},
-+				{ 400000000, 0, 600000000, 400000000} },
-+		.reg = { "csid_lite0" },
-+		.interrupt = { "csid_lite0" },
-+		.csid = {
-+			.is_lite = true,
-+			.hw_ops = &csid_ops_gen2,
-+			.formats = &csid_formats_gen2
-+		}
-+	},
-+	/* CSID4 */
-+	{
-+		.regulators = { "vdda-phy", "vdda-pll" },
-+		.clock = { "vfe1_lite_csid", "vfe1_lite_cphy_rx", "vfe1_lite", "csiphy_rx_src"},
-+		.clock_rate = { { 300000000, 0, 320000000, 300000000},
-+				{ 400000000, 0, 400000000, 400000000},
-+				{ 400000000, 0, 480000000, 400000000},
-+				{ 400000000, 0, 600000000, 400000000} },
-+		.reg = { "csid_lite1" },
-+		.interrupt = { "csid_lite1" },
-+		.csid = {
-+			.is_lite = true,
-+			.hw_ops = &csid_ops_gen2,
-+			.formats = &csid_formats_gen2
-+		}
-+	},
-+};
-+
-+static const struct camss_subdev_resources vfe_res_7280[] = {
-+	/* VFE0 */
-+	{
-+		.regulators = {},
-+		.clock = { "vfe0", "vfe0_axi", "cam_hf_axi",
-+			"slow_ahb_src", "cpas_ahb", "camnoc_axi"},
-+		.clock_rate = {
-+				{ 380000000, 0, 0, 80000000, 0, 150000000},
-+				{ 380000000, 0, 0, 80000000, 0, 150000000},
-+				{ 510000000, 0, 0, 80000000, 0, 240000000},
-+				{ 637000000, 0, 0, 80000000, 0, 320000000},
-+				{ 760000000, 0, 0, 80000000, 0, 400000000},
-+				{ 760000000, 0, 0, 80000000, 0, 480000000} },
-+		.reg = { "vfe0" },
-+		.interrupt = { "vfe0" },
-+		.vfe = {
-+			.line_num = 3,
-+			.is_lite = false,
-+			.hw_ops = &vfe_ops_170,
-+			.formats_rdi = &vfe_formats_rdi_845,
-+			.formats_pix = &vfe_formats_pix_845
-+		}
-+	},
-+	/* VFE1 */
-+	{
-+		.regulators = {},
-+		.clock = { "vfe1", "vfe1_axi", "cam_hf_axi",
-+			"slow_ahb_src", "cpas_ahb", "camnoc_axi"},
-+		.clock_rate = {
-+				{ 380000000, 0, 0, 80000000, 0, 150000000},
-+				{ 380000000, 0, 0, 80000000, 0, 150000000 },
-+				{ 510000000, 0, 0, 80000000, 0, 240000000 },
-+				{ 637000000, 0, 0, 80000000, 0, 320000000 },
-+				{ 760000000, 0, 0, 80000000, 0, 400000000 },
-+				{ 760000000, 0, 0, 80000000, 0, 480000000 } },
-+		.reg = { "vfe1" },
-+		.interrupt = { "vfe1" },
-+		.vfe = {
-+			.line_num = 3,
-+			.is_lite = false,
-+			.hw_ops = &vfe_ops_170,
-+			.formats_rdi = &vfe_formats_rdi_845,
-+			.formats_pix = &vfe_formats_pix_845
-+		}
-+	},
-+	/* VFE2 */
-+	{
-+		.regulators = {},
-+		.clock = { "vfe2", "vfe2_axi", "cam_hf_axi",
-+			"slow_ahb_src", "cpas_ahb", "camnoc_axi"},
-+		.clock_rate = {
-+				{ 380000000, 0, 0, 80000000, 0, 150000000},
-+				{ 380000000, 0, 0, 80000000, 0, 150000000, },
-+				{ 510000000, 0, 0, 80000000, 0, 240000000, },
-+				{ 637000000, 0, 0, 80000000, 0, 320000000, },
-+				{ 760000000, 0, 0, 80000000, 0, 400000000, },
-+				{ 760000000, 0, 0, 80000000, 0, 480000000, } },
-+		.reg = { "vfe2" },
-+		.interrupt = { "vfe2" },
-+		.vfe = {
-+			.line_num = 3,
-+			.is_lite = false,
-+			.hw_ops = &vfe_ops_170,
-+			.formats_rdi = &vfe_formats_rdi_845,
-+			.formats_pix = &vfe_formats_pix_845
-+		}
-+	},
-+	/* VFE3 (lite) */
-+	{
-+		.clock = { "vfe_lite0", "cam_hf_axi", "slow_ahb_src", "cpas_ahb", "camnoc_axi"},
-+		.clock_rate = {
-+				{ 320000000, 0, 80000000, 0, 150000000 },
-+				{ 320000000, 0, 80000000, 0, 150000000 },
-+				{ 400000000, 0, 80000000, 0, 240000000 },
-+				{ 480000000, 0, 80000000, 0, 320000000 },
-+				{ 600000000, 0, 80000000, 0, 400000000 },
-+				{ 600000000, 0, 80000000, 0, 480000000 } },
-+		.regulators = {},
-+		.reg = { "vfe_lite0" },
-+		.interrupt = { "vfe_lite0" },
-+		.vfe = {
-+			.line_num = 4,
-+			.is_lite = true,
-+			.hw_ops = &vfe_ops_170,
-+			.formats_rdi = &vfe_formats_rdi_845,
-+			.formats_pix = &vfe_formats_pix_845
-+		}
-+	},
-+	/* VFE4 (lite) */
-+	{
-+		.clock = { "vfe_lite1", "cam_hf_axi", "slow_ahb_src", "cpas_ahb", "camnoc_axi"},
-+		.clock_rate = {
-+				{ 320000000, 0, 80000000, 0, 150000000 },
-+				{ 320000000, 0, 80000000, 0, 150000000 },
-+				{ 400000000, 0, 80000000, 0, 240000000 },
-+				{ 480000000, 0, 80000000, 0, 320000000 },
-+				{ 600000000, 0, 80000000, 0, 400000000 },
-+				{ 600000000, 0, 80000000, 0, 480000000 } },
-+		.regulators = {},
-+		.reg = { "vfe_lite1" },
-+		.interrupt = { "vfe_lite1" },
-+		.vfe = {
-+			.line_num = 4,
-+			.is_lite = true,
-+			.hw_ops = &vfe_ops_170,
-+			.formats_rdi = &vfe_formats_rdi_845,
-+			.formats_pix = &vfe_formats_pix_845
-+		}
-+	},
-+};
-+
-+static const struct resources_icc icc_res_sc7280[] = {
-+	{
-+		.name = "cam_ahb",
-+		.icc_bw_tbl.avg = 38400,
-+		.icc_bw_tbl.peak = 76800,
-+	},
-+	{
-+		.name = "cam_hf_0",
-+		.icc_bw_tbl.avg = 2097152,
-+		.icc_bw_tbl.peak = 2097152,
-+	},
-+};
-+
- /*
-  * camss_add_clock_margin - Add margin to clock frequency rate
-  * @rate: Clock frequency rate
-@@ -1824,6 +2099,57 @@ static int camss_init_subdevices(struct camss *camss)
- 	return 0;
- }
- 
-+/*
-+ * camss_link_entities_v2 - Register subdev nodes and create links
-+ * @camss: CAMSS device
-+ *
-+ * Return 0 on success or a negative error code on failure
-+ */
-+static int camss_link_entities_v2(struct camss *camss)
-+{
-+	int i, j;
-+	int ret;
-+
-+	for (i = 0; i < camss->res->csiphy_num; i++) {
-+		for (j = 0; j < camss->res->csid_num; j++) {
-+			ret = media_create_pad_link(&camss->csiphy[i].subdev.entity,
-+						    MSM_CSIPHY_PAD_SRC,
-+						    &camss->csid[j].subdev.entity,
-+						    MSM_CSID_PAD_SINK,
-+						    0);
-+			if (ret < 0) {
-+				dev_err(camss->dev,
-+					"Failed to link %s->%s entities: %d\n",
-+					camss->csiphy[i].subdev.entity.name,
-+					camss->csid[j].subdev.entity.name,
-+					ret);
-+				return ret;
-+			}
-+		}
-+	}
-+
-+	for (i = 0; i < camss->res->csid_num; i++)
-+		for (j = 0; j < camss->vfe[i].res->line_num; j++) {
-+			struct v4l2_subdev *csid = &camss->csid[i].subdev;
-+			struct v4l2_subdev *vfe = &camss->vfe[i].line[j].subdev;
-+
-+			ret = media_create_pad_link(&csid->entity,
-+						    MSM_CSID_PAD_FIRST_SRC + j,
-+						    &vfe->entity,
-+						    MSM_VFE_PAD_SINK,
-+						    0);
-+			if (ret < 0) {
-+				dev_err(camss->dev,
-+					"Failed to link %s->%s entities: %d\n",
-+					csid->entity.name,
-+					vfe->entity.name,
-+					ret);
-+				return ret;
-+			}
-+		}
-+	return 0;
-+}
-+
- /*
-  * camss_link_entities - Register subdev nodes and create links
-  * @camss: CAMSS device
-@@ -2440,12 +2766,26 @@ static const struct camss_resources sc8280xp_resources = {
- 	.link_entities = camss_link_entities
- };
- 
-+static const struct camss_resources sc7280_resources = {
-+	.version = CAMSS_7280,
-+	.csiphy_res = csiphy_res_7280,
-+	.csid_res = csid_res_7280,
-+	.vfe_res = vfe_res_7280,
-+	.icc_res = icc_res_sc7280,
-+	.icc_path_num = ARRAY_SIZE(icc_res_sc7280),
-+	.csiphy_num = ARRAY_SIZE(csiphy_res_7280),
-+	.csid_num = ARRAY_SIZE(csid_res_7280),
-+	.vfe_num = 3,
-+	.link_entities = camss_link_entities_v2
-+};
-+
- static const struct of_device_id camss_dt_match[] = {
- 	{ .compatible = "qcom,msm8916-camss", .data = &msm8916_resources },
- 	{ .compatible = "qcom,msm8996-camss", .data = &msm8996_resources },
- 	{ .compatible = "qcom,sdm660-camss", .data = &sdm660_resources },
- 	{ .compatible = "qcom,sdm845-camss", .data = &sdm845_resources },
- 	{ .compatible = "qcom,sm8250-camss", .data = &sm8250_resources },
-+	{ .compatible = "qcom,sc7280-camss", .data = &sc7280_resources },
- 	{ .compatible = "qcom,sc8280xp-camss", .data = &sc8280xp_resources },
- 	{ }
- };
-diff --git a/drivers/media/platform/qcom/camss/camss.h b/drivers/media/platform/qcom/camss/camss.h
-index 73c47c07fc30..29dbf93ce9c5 100644
---- a/drivers/media/platform/qcom/camss/camss.h
-+++ b/drivers/media/platform/qcom/camss/camss.h
-@@ -79,11 +79,13 @@ enum camss_version {
- 	CAMSS_845,
- 	CAMSS_8250,
- 	CAMSS_8280XP,
-+	CAMSS_7280,
- };
- 
- enum icc_count {
- 	ICC_DEFAULT_COUNT = 0,
- 	ICC_SM8250_COUNT = 4,
-+	ICC_SM7280_COUNT = 4,
- };
- 
- struct camss_resources {
+Not disagreeing but I think it is at least more intention revealing
+and efficient than passing a struct that isn't initialized because we
+know the tool won't be used.
 
--- 
-2.25.1
+> It would be better to just write another version of
+> perf_event__synthesize_attr().
 
+I think we've gotten ourselves into this mess because we're doing poor
+man's OO and we're trying to pass values via a tools/container_of
+rather than just pass a value. I'm not keen on making this change
+larger but I'll see if this can be done and we just explicitly pass
+some "void* data" like value.
+
+Thanks,
+Ian
+
+> >                                          &id, arm_spe_event_synth);
+> >  }
+> >
+> > diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+> > index 32818bd7cd17..9fd2967d4e3f 100644
+> > --- a/tools/perf/util/cs-etm.c
+> > +++ b/tools/perf/util/cs-etm.c
+> > @@ -1596,8 +1596,8 @@ static int cs_etm__synth_branch_sample(struct cs_=
+etm_queue *etmq,
+> >  }
+> >
+> >  struct cs_etm_synth {
+> > -     struct perf_tool dummy_tool;
+> >       struct perf_session *session;
+> > +     struct perf_tool dummy_tool[0];
+> >  };
+> >
+> >  static int cs_etm__event_synth(struct perf_tool *tool,
+> > @@ -1606,7 +1606,7 @@ static int cs_etm__event_synth(struct perf_tool *=
+tool,
+> >                              struct machine *machine __maybe_unused)
+> >  {
+> >       struct cs_etm_synth *cs_etm_synth =3D
+> > -                   container_of(tool, struct cs_etm_synth, dummy_tool)=
+;
+> > +                   container_of(tool, struct cs_etm_synth, dummy_tool[=
+0]);
+> >
+> >       return perf_session__deliver_synth_event(cs_etm_synth->session,
+> >                                                event, NULL);
+> > @@ -1620,7 +1620,7 @@ static int cs_etm__synth_event(struct perf_sessio=
+n *session,
+> >       memset(&cs_etm_synth, 0, sizeof(struct cs_etm_synth));
+> >       cs_etm_synth.session =3D session;
+> >
+> > -     return perf_event__synthesize_attr(&cs_etm_synth.dummy_tool, attr=
+, 1,
+> > +     return perf_event__synthesize_attr(cs_etm_synth.dummy_tool, attr,=
+ 1,
+> >                                          &id, cs_etm__event_synth);
+> >  }
+> >
+> > diff --git a/tools/perf/util/intel-bts.c b/tools/perf/util/intel-bts.c
+> > index ec1b3bd9f530..fb8fec3a3c36 100644
+> > --- a/tools/perf/util/intel-bts.c
+> > +++ b/tools/perf/util/intel-bts.c
+> > @@ -738,8 +738,8 @@ static bool intel_bts_evsel_is_auxtrace(struct perf=
+_session *session,
+> >  }
+> >
+> >  struct intel_bts_synth {
+> > -     struct perf_tool dummy_tool;
+> >       struct perf_session *session;
+> > +     struct perf_tool dummy_tool[0];
+> >  };
+> >
+> >  static int intel_bts_event_synth(struct perf_tool *tool,
+> > @@ -748,7 +748,7 @@ static int intel_bts_event_synth(struct perf_tool *=
+tool,
+> >                                struct machine *machine __maybe_unused)
+> >  {
+> >       struct intel_bts_synth *intel_bts_synth =3D
+> > -                     container_of(tool, struct intel_bts_synth, dummy_=
+tool);
+> > +                     container_of(tool, struct intel_bts_synth, dummy_=
+tool[0]);
+> >
+> >       return perf_session__deliver_synth_event(intel_bts_synth->session=
+,
+> >                                                event, NULL);
+> > @@ -762,7 +762,7 @@ static int intel_bts_synth_event(struct perf_sessio=
+n *session,
+> >       memset(&intel_bts_synth, 0, sizeof(struct intel_bts_synth));
+> >       intel_bts_synth.session =3D session;
+> >
+> > -     return perf_event__synthesize_attr(&intel_bts_synth.dummy_tool, a=
+ttr, 1,
+> > +     return perf_event__synthesize_attr(intel_bts_synth.dummy_tool, at=
+tr, 1,
+> >                                          &id, intel_bts_event_synth);
+> >  }
+> >
+> > diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
+> > index d6d7b7512505..b8b90773baa2 100644
+> > --- a/tools/perf/util/intel-pt.c
+> > +++ b/tools/perf/util/intel-pt.c
+> > @@ -3660,8 +3660,8 @@ static int intel_pt_queue_data(struct perf_sessio=
+n *session,
+> >  }
+> >
+> >  struct intel_pt_synth {
+> > -     struct perf_tool dummy_tool;
+> >       struct perf_session *session;
+> > +     struct perf_tool dummy_tool[0];
+> >  };
+> >
+> >  static int intel_pt_event_synth(struct perf_tool *tool,
+> > @@ -3670,7 +3670,7 @@ static int intel_pt_event_synth(struct perf_tool =
+*tool,
+> >                               struct machine *machine __maybe_unused)
+> >  {
+> >       struct intel_pt_synth *intel_pt_synth =3D
+> > -                     container_of(tool, struct intel_pt_synth, dummy_t=
+ool);
+> > +                     container_of(tool, struct intel_pt_synth, dummy_t=
+ool[0]);
+> >
+> >       return perf_session__deliver_synth_event(intel_pt_synth->session,=
+ event,
+> >                                                NULL);
+> > @@ -3687,8 +3687,7 @@ static int intel_pt_synth_event(struct perf_sessi=
+on *session, const char *name,
+> >
+> >       memset(&intel_pt_synth, 0, sizeof(struct intel_pt_synth));
+> >       intel_pt_synth.session =3D session;
+> > -
+> > -     err =3D perf_event__synthesize_attr(&intel_pt_synth.dummy_tool, a=
+ttr, 1,
+> > +     err =3D perf_event__synthesize_attr(intel_pt_synth.dummy_tool, at=
+tr, 1,
+> >                                         &id, intel_pt_event_synth);
+> >       if (err)
+> >               pr_err("%s: failed to synthesize '%s' event type\n",
+> > diff --git a/tools/perf/util/s390-cpumsf.c b/tools/perf/util/s390-cpums=
+f.c
+> > index 6fe478b0b61b..4ec583e511af 100644
+> > --- a/tools/perf/util/s390-cpumsf.c
+> > +++ b/tools/perf/util/s390-cpumsf.c
+> > @@ -952,11 +952,6 @@ s390_cpumsf_process_event(struct perf_session *ses=
+sion,
+> >       return err;
+> >  }
+> >
+> > -struct s390_cpumsf_synth {
+> > -     struct perf_tool cpumsf_tool;
+> > -     struct perf_session *session;
+> > -};
+>
+> Should really be a separate patch
+>
+> > -
+> >  static int
+> >  s390_cpumsf_process_auxtrace_event(struct perf_session *session,
+> >                                  union perf_event *event __maybe_unused=
+,
+>
 
