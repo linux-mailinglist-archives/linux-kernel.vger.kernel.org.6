@@ -1,96 +1,148 @@
-Return-Path: <linux-kernel+bounces-233324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F05291B57A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 05:30:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ABDB91B57D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 05:32:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AC7E282E63
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:30:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6F831F22662
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B1C1CA8A;
-	Fri, 28 Jun 2024 03:30:01 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0BB2033A;
+	Fri, 28 Jun 2024 03:32:09 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEEC01C6A4;
-	Fri, 28 Jun 2024 03:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880A1ED8;
+	Fri, 28 Jun 2024 03:32:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719545400; cv=none; b=QCyaCD5NVLlLjfxDVRBAaSvk3sPqmTselQqHjhT0eWQAr7DKpDI8DViIAx0cXLNSH1g4z0zVCjCQN4wTYfyGSU6JztEd/5EHe5D2LlC3rxqYODGE3KxB0R+xGujM+Tn2Tzpl2g5w+yXCQ+6zhpAhHKc/GAlrhf43FRn6It0A8FY=
+	t=1719545529; cv=none; b=Dk4rt1R7+F/EDM3XBjSB8ksQ3MYfvPEbXGRh5FjoJAtwHX8VOYmzmKIkiM/zU1F+YGRwvXkRDYEqbotBoCLoqKqSxivLOYRh593+alp3xqT+86SueOXqRieSqAFD8wTJk2YyHTi8yyDUtfShlgqq9TDJN2NO2B0O5+QnWrJv6fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719545400; c=relaxed/simple;
-	bh=X8j+d7Ppn01ukU2yrL8s3zRacqDFRpKXE/Iqg1qpifw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hevr+Ifm4axU0xtoOmWpTnI5jkglJ9W4ly0nNTYsfw2SSBsmYc50IQ2p1g/tN5s5COAjNb30hEwc8cdNDm0tRDxz+4XcI3XACaTJFgu88BWG87rISt33GV6oiZjQn+gS6I4MQ5zFLJ310u+7KE9xQ4nr9a+eC/lCZpCzhLvUBsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-03 (Coremail) with SMTP id rQCowADn7tYoLn5mB1vZEg--.9834S2;
-	Fri, 28 Jun 2024 11:29:44 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: deller@gmx.de,
-	laurent.pinchart@ideasonboard.com,
-	kuninori.morimoto.gx@renesas.com
-Cc: linux-omap@vger.kernel.org,
-	linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] fbdev: omap2: Return clk_prepare_enable to transfer the error
-Date: Fri, 28 Jun 2024 11:28:12 +0800
-Message-Id: <20240628032812.280895-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1719545529; c=relaxed/simple;
+	bh=SN5WVXE1VNw6N18wV4A63jungztaD4wzJVYG2Ldjwk0=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=kom4i1cShHwy5vRfkahDabCKkuj09s4lnwiWu8d/HbP+e4Cq1ncza9AIJgmBToPi08sVnrOSfQMzGZduMSFGAN3qTGFn6kQw8aejqDCRjYfqaSnRu6OQcBnnLO+MpxX9FbhlvIHl40ifwCfERgdZm1jGi9v2gaRXfVBh5CM2Ye4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4W9LZv050hz4f3kw4;
+	Fri, 28 Jun 2024 11:31:51 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 3DA0A1A058E;
+	Fri, 28 Jun 2024 11:32:03 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP2 (Coremail) with SMTP id Syh0CgBXwIWxLn5mMIo0Ag--.47596S3;
+	Fri, 28 Jun 2024 11:32:03 +0800 (CST)
+Subject: Re: [PATCH v2] block: flush all throttled bios when deleting the
+ cgroup
+To: Li Lingfeng <lilingfeng@huaweicloud.com>, Tejun Heo <tj@kernel.org>
+Cc: josef@toxicpanda.com, hch@lst.de, axboe@kernel.dk, mkoutny@suse.com,
+ cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yangerkun@huawei.com, yukuai1@huaweicloud.com,
+ houtao1@huawei.com, yi.zhang@huawei.com, lilingfeng3@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20240627142606.3709394-1-lilingfeng@huaweicloud.com>
+ <Zn3O47DUoLliwbWm@slm.duckdns.org>
+ <c9802312-d9c9-f262-e1d3-9d3343255b6b@huaweicloud.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <da861d63-58c6-3ca0-2535-9089993e9e28@huaweicloud.com>
+Date: Fri, 28 Jun 2024 11:32:01 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <c9802312-d9c9-f262-e1d3-9d3343255b6b@huaweicloud.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowADn7tYoLn5mB1vZEg--.9834S2
-X-Coremail-Antispam: 1UD129KBjvdXoWruF1DuFyDCw4kZw1kuF4rZrb_yoW3Arc_Ca
-	nrurZxGF9xtrWvk3Wrtws8CrZ2y3WIqFyfur92g3yfKry7Cr1fXryDZr13A3yDXr40yFyD
-	ur17X340yr1fujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbckFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26F
-	4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
-	7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r
-	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY02Avz4vE14v_
-	Gr4l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxV
-	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI
-	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
-	1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI
-	42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUShFxUUUUU=
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+X-CM-TRANSID:Syh0CgBXwIWxLn5mMIo0Ag--.47596S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7urWUtw4UuF1xGr4ktw1fWFg_yoW8Zr1fpF
+	WrZa4UKF1DJr9I9F4Syrs3ZrWFvrWkJrs8AryrG34UJrWYqr1xtFWfKrW09FyYqF93Cw1Y
+	vr1Fyr9xuF4jkFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWr
+	Zr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
+	BIdaVFxhVjvjDU0xZFpf9x0JUZa9-UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Return clk_prepare_enable() in order to transfer the error if it fails.
+Hi,
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- drivers/video/fbdev/omap2/omapfb/dss/venc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+在 2024/06/28 10:04, Li Lingfeng 写道:
+> 
+> 在 2024/6/28 4:43, Tejun Heo 写道:
+>> Hello, Li.
+>>
+>> On Thu, Jun 27, 2024 at 10:26:06PM +0800, Li Lingfeng wrote:
+>>> From: Li Lingfeng <lilingfeng3@huawei.com>
+>>>
+>>> When a process migrates to another cgroup and the original cgroup is 
+>>> deleted,
+>>> the restrictions of throttled bios cannot be removed. If the 
+>>> restrictions
+>>> are set too low, it will take a long time to complete these bios.
+>>>
+>>> Refer to the process of deleting a disk to remove the restrictions and
+>>> issue bios when deleting the cgroup.
+>>>
+>>> This makes difference on the behavior of throttled bios:
+>>> Before: the limit of the throttled bios can't be changed and the bios 
+>>> will
+>>> complete under this limit;
+>>> Now: the limit will be canceled and the throttled bios will be flushed
+>>> immediately.
+>> I'm not necessarily against this but the description doesn't explain why
+>> this is better either. Can you please detail why this behavior is better?
+> I think it may be more appropriate to remove the limit of bios after the
+> cgroup is deleted, rather than let the bios continue to be throttled by a
+> non-existent cgroup.
 
-diff --git a/drivers/video/fbdev/omap2/omapfb/dss/venc.c b/drivers/video/fbdev/omap2/omapfb/dss/venc.c
-index 0bd80d3b8f1b..d13ad00d353b 100644
---- a/drivers/video/fbdev/omap2/omapfb/dss/venc.c
-+++ b/drivers/video/fbdev/omap2/omapfb/dss/venc.c
-@@ -903,9 +903,7 @@ static int venc_runtime_resume(struct device *dev)
- 	if (r < 0)
- 		return r;
- 
--	clk_prepare_enable(venc.tv_dac_clk);
--
--	return 0;
-+	return clk_prepare_enable(venc.tv_dac_clk);
- }
- 
- static const struct dev_pm_ops venc_pm_ops = {
--- 
-2.25.1
+The backgroud is that our test found this, by:
+
+1) setting a low limit in one cgroup;
+2) bind a task in the cgroup and issue lots of IO;
+3) migrate the task to root cgroup;
+4) delete the cgroup;
+
+And oops, unless the disk is deleted, IO will hang for a long time and
+there is no way to recover.
+
+The good thing is that after flushing throttled bio while deleting the
+cgroup, this "IO hang" can be avoided. However, I'm not sure for this
+change, because user may still want the BIO to be throttled. Anyway,
+I don't think this will be a problem in reallife.
+
+Thanks,
+Kuai
+
+> 
+> If the limit is set too low, and the original cgourp has been deleted, we
+> now have no way to make the bios complete immediately, but to wait for the
+> bios to slowly complete under the limit.
+> 
+> Thanks.
+> 
+>>
+>> Thanks.
+>>
+> 
+> 
+> .
+> 
 
 
