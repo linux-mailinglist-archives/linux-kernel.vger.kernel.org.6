@@ -1,75 +1,74 @@
-Return-Path: <linux-kernel+bounces-234059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DCFD91C199
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:50:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E55A191C198
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:50:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E628F286C6C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:50:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9922E286B0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27DB41C9ECC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF4D1C9ECA;
 	Fri, 28 Jun 2024 14:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="QqHyZxc8"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="rxFGujD1"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B5B1C2306
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61D11C230A
 	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 14:48:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719586125; cv=none; b=DfgfH4as0Nc/lmVEulS8tYVuq9vwtRTUnkUptqEMMIkSTpSYVCgufkfOnGkQ9jkrqTaVxCS4NewqUsyxFkco87ZymvLeaCYQhJ8tXrAVWQh+V/L4zcE0Sk3bktSPuzPWy9ZC5TOe1/epSQvRy8LK9xfxWBzuy04grJEdfnZPVbY=
+	t=1719586124; cv=none; b=bDJCnylzaetTfzkePs7ujgwE50VsF80OhYw+4dfEEHQM24pcp+f5BdB6y0tRgCtkzpv3A4SLvhVgYYBB1uDhivKMyIQbuuswp/BC01RXkM0syHv6eJsQzA2EA3wpn7padOcN4y0O4kWOQ25pQhulO16gPvqVAiykMPc848CAd3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719586125; c=relaxed/simple;
-	bh=Me4ZAZeXpUEgoNz5XwlIttAMsS1eKUVKhBdpA0oqJm0=;
+	s=arc-20240116; t=1719586124; c=relaxed/simple;
+	bh=KG+zFgPhZKlTNWnyTH8PVKe53m37TBYEzUhO1FprBcg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OM12D8jcnQn42f89v4KOIpc+scQLyM9wQCb+oj5UqxFKs3OnN2b/u1B6xU00NAip2tuZ3C5IbvPOMqN/RPWC6BaCQIFuKP2R80ZwJoQDNAhtD9/EBknwYi0ORR8WwSTJL1LVXaY0S24WDh1ihqgcrnTKesQruDoziMIwvNx4kzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=QqHyZxc8; arc=none smtp.client-ip=209.85.167.54
+	 In-Reply-To:To:Cc; b=kMtIpWePCacATRvGrJP5EUV/VCl2QNrk9MSUeggeHJew5HbpNrkGNWMAW0meK7xoYpzg5DH4Yb+yrCrsbEE0+TavFkNz0xJ9W9YQtPKO8LUqfLsOvtOiJvoPDyqbrzXsqXc6xQAGcF0WmNsCiUNtqiEvwP589G7IhyLezYkvCuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=rxFGujD1; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52e743307a2so891613e87.0
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42565670e20so11362405e9.0
         for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 07:48:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719586121; x=1720190921; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=bXjkAZmosXV+EptKqWsfwFwF90aKrgxPO7Zqi4uv4Ng=;
-        b=QqHyZxc8wpMmzLDhsjgX+4llEEm2rKzls2vcfl9Xlv6DxVA5XZqXB3s4PVUTYLbfGL
-         xPWz5NYwEFSgijSnJBnEDEIwRsOfc79621g8T+034Y7pZskERdqxKuJknIuBrnFfzZR4
-         qpxxTmIevj8CJW348DgwUD2POJ8Se46WgOmyD8R+km3+faxmM8dm2uaSSTEMlxAV3K41
-         NyOzHKj0+Iy43yEO1BVcv9mV8t7mBCK9ar3QIqxpEwEALPgOUfla/XS9PTFc0Q55JsDS
-         FtLVg/aKlNVK1c+1mMI/ASJLLRwUSXzFsgBBv/hfjNF1AAO2FwE4KzBNA5q8Mg5FzbUz
-         msqw==
+        bh=MXCtOPPk0mXR2hghTWte0gDiaQ2iQV0q2v+Lpx73cVI=;
+        b=rxFGujD15SqFodEFf7DGkR11ptD6VzTmG28EzJm4fxXmLwU/zM4kxOADRkka3ms0Wz
+         j31PbaZ8Qpq08F/njmc40JoF1tGOBCwntP02BlaNR42nO2FY4aGLIl8yRT6MMbKQTsbl
+         1ThIQGZn+/MDrAFbvZijM+9tIw58puuySbTk/YJdn3KhgXQzIa74+fwN5ieqmSPNRG/o
+         YYCYPYwmHnJ2ihQgrZqNOYs+qOOgMXmtSOkOcAuW1v2nc5blGGioOsM51jjV9IgyeW6D
+         ZI5kb6InPQeBlLKAuhKiLtu4JYSYhVkpJO2V9+bcAlccsklyMrsYdiUMtl8vic7Xm5br
+         3t9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1719586121; x=1720190921;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bXjkAZmosXV+EptKqWsfwFwF90aKrgxPO7Zqi4uv4Ng=;
-        b=GbHF1yP/XUF4Pnt7cf1284RYNP06kVC++ejm7M+8xyb7XEwWLtRrXZfXTdZXztN4qb
-         JbSzVR/tmeN1QuwqcH0o5HjUj4Ql6yuo1ruBq/Pe0dlDk7rNE0hVwLFV58QO71m4KCwg
-         2DcHhC891/BNWUQ+CjcXga7RxP0tne9qBJfmCS6CEng5oHsvzO517ZwtltH2qUoJ0XQQ
-         m3GaWMCAW8Dvj8bMnjZ/7o7mFtKOp/7fbWz6QyOAwqw/MHnE969uqYaCUsqG4JXISxDe
-         rlyDOrTcpEO4n8JvK9g+9R2EGQX/Wy0ANM3ikgtfu3Nl80ShglNZ/KrDzl1XOKDRFG/p
-         o4fQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWDeEMbmG0A7lA1/ymgSQ/PA5lkuiH/90P788oFbGTVQORd7henlGsKKhwoky2tF0CIOfsBn+6c9lmiXZsZUTlr/zp1n1V9HnuRlzTN
-X-Gm-Message-State: AOJu0YxGUwNqucPx0bb58lH1eRsRp2hBs3fmHaDHspnnUXDQwlvqI5y3
-	02gvZfLInvmcHhzjbUJULUHxeZKIAL9RAj2K2gizvDgi4Rt/WWxSDZt16/zDzR4=
-X-Google-Smtp-Source: AGHT+IErmCGJZr2n4zpPLQZf3axGy/KUUX5Ydi0z351aU/tY57diUN1hIBUy4+GUORXAl8m4HkV7Ow==
-X-Received: by 2002:a19:5f56:0:b0:52c:dd2f:2f2b with SMTP id 2adb3069b0e04-52ce1862743mr12666981e87.66.1719586120617;
-        Fri, 28 Jun 2024 07:48:40 -0700 (PDT)
+        bh=MXCtOPPk0mXR2hghTWte0gDiaQ2iQV0q2v+Lpx73cVI=;
+        b=Sdo8E970CP6zzrhPOKYm8rqvNVa0L/6zC60eD/bP6X7G1JdsiFe6A+5bcci9CAl/LE
+         3PYsLdSBXn+o7UHWOQLxOURDqlsakOteJNaiHuWlCnCiF7M9oA9dSFKMkZ+uvdWJe30N
+         q4Fghh2yCuiluEGIJtLyT7FuY+NILeaowgO0h9/FQdNjPqZyEZp9qC980BZoGpH+nFTy
+         0663NhwgW3QfPlDXXSaBcSTgpprhAFIlCNwe5WTyWGFdOgF45GZCvfVOJf5AnH0NTmb0
+         NnavGX2bOBvZ1z88rQUHrZkiOVr0pB/gQ+1yhKV5pN+FhL4Zj1GWBIbLFW7kpvppGtFD
+         2ddQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXmLfuZYwQuEMgnFh1chDAg27/0mbouf9BAQmU3M4oUeagVb8V4jOZwlD7Eqds059z1udBvyNC1jhwVr9oag3tIL+DmkVZ/pqGlCXIg
+X-Gm-Message-State: AOJu0YxReE/bShOdV8rlzeZSTeEVyi5dEJrTacFEy7YQY5S+Enz2lyiB
+	77IT5VgUnVmF0WScnL+kpRrylvmVwad6j/PvEh6B6DoM11aFRuZnyXJO0N+Bwgw=
+X-Google-Smtp-Source: AGHT+IFUYH7Uc5K7rfzXLLQxOm6u8Fd/5RQ2WkQVjaTjQbpyYS7AwTX5otCgN3NSe8nB8PBMHiSj7Q==
+X-Received: by 2002:a05:600c:2489:b0:424:aa73:83e3 with SMTP id 5b1f17b1804b1-4256d53df10mr18738915e9.18.1719586121172;
+        Fri, 28 Jun 2024 07:48:41 -0700 (PDT)
 Received: from [127.0.1.1] (frhb82016ds.ikexpress.com. [185.246.87.17])
         by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256af55c0asm37972575e9.15.2024.06.28.07.48.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 28 Jun 2024 07:48:40 -0700 (PDT)
 From: Guillaume Stols <gstols@baylibre.com>
-Date: Fri, 28 Jun 2024 14:48:23 +0000
-Subject: [PATCH v2 05/10] dt-bindings: iio: adc: adi,ad7606: add supply
- properties
+Date: Fri, 28 Jun 2024 14:48:24 +0000
+Subject: [PATCH v2 06/10] dt-bindings: iio: adc: adi,ad7606: fix example
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +77,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240628-cleanup-ad7606-v2-5-96e02f90256d@baylibre.com>
+Message-Id: <20240628-cleanup-ad7606-v2-6-96e02f90256d@baylibre.com>
 References: <20240628-cleanup-ad7606-v2-0-96e02f90256d@baylibre.com>
 In-Reply-To: <20240628-cleanup-ad7606-v2-0-96e02f90256d@baylibre.com>
 To: Lars-Peter Clausen <lars@metafoo.de>, 
@@ -95,53 +94,26 @@ Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
  dlechner@baylibre.com
 X-Mailer: b4 0.14.0
 
-Add voltage supplies
+Example uses adi,ad7606-8 as compatible, but adi,sw-mode is not
+available for it. So remove this property from example.
 
 Signed-off-by: Guillaume Stols <gstols@baylibre.com>
 ---
- Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-index 509970922cda..a1c38a5812f7 100644
+index a1c38a5812f7..626782ea00b3 100644
 --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
 +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-@@ -35,6 +35,15 @@ properties:
- 
-   avcc-supply: true
- 
-+  vdrive-supply:
-+    description:
-+      Determines the voltage level at which the interface logic pins will
-+      operate.
-+
-+  refin-supply:
-+    description:
-+      The voltage supply for optional external reference voltage.
-+
-   interrupts:
-     description:
-       The BUSY pin falling edge indicates that the conversion is over, and thus
-@@ -106,9 +115,11 @@ required:
-   - reg
-   - spi-cpha
-   - avcc-supply
-+  - vdrive-supply
-   - interrupts
-   - adi,conversion-start-gpios
- 
-+
- allOf:
-   - $ref: /schemas/spi/spi-peripheral-props.yaml#
- 
-@@ -130,6 +141,7 @@ examples:
-             spi-cpha;
- 
-             avcc-supply = <&adc_vref>;
-+            vdrive-supply = <&vdd_supply>;
- 
-             interrupts = <25 IRQ_TYPE_EDGE_FALLING>;
-             interrupt-parent = <&gpio>;
+@@ -153,7 +153,6 @@ examples:
+                                            <&gpio 23 GPIO_ACTIVE_HIGH>,
+                                            <&gpio 26 GPIO_ACTIVE_HIGH>;
+             standby-gpios = <&gpio 24 GPIO_ACTIVE_LOW>;
+-            adi,sw-mode;
+         };
+     };
+ ...
 
 -- 
 2.34.1
