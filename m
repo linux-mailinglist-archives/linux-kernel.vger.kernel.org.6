@@ -1,362 +1,176 @@
-Return-Path: <linux-kernel+bounces-233478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B5F991B796
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:06:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B103391B7D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:09:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1AA41F21E4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:06:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1A031C2324A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4960B13DDC9;
-	Fri, 28 Jun 2024 07:05:56 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE3713E8AF;
+	Fri, 28 Jun 2024 07:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gqWRMLf/"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0FE7125AC
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 07:05:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61B013DDD9
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 07:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719558355; cv=none; b=PlH6ZmapGDUABmB1Nug8jJ7IlYXcglOEdT/usKhlG0gdOWL8KUjDB1ZKLFS6aCcZ0meY9pwBMJLyEt3zOdh2WuH4AEbrnAf1SgYe4pAwRDvL8niWq6mqRo30UxDXKwUSzrN49B+1N4MqgrP8PSEBlWu7M7p3PsCqe3T4OAVUmmA=
+	t=1719558561; cv=none; b=Bq8JB5bhlPGSDS/L5g1KVeFtSxUI/YmaimZpCBRhuvMEQPjxR4bJjCYo3GGjPCfZ0VjlVYZ02vmiOgcc13JfQgaGBJhSHVlrhb6Vdc/GVbgNIbe21wccmIiGelJ+YRVa2gPYileE94/p8QiSE9ehaDIMlZYIfP0ibDP+t7DDKZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719558355; c=relaxed/simple;
-	bh=RVH5S1DL+M8mlqJgSWz+EHL/iEGiu4IiQkT0FokguwU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=I7+fzlHOvwGRNeK+Mlt3+eEKow04kcRUU/F01Qa0Q0RvA+IiZMF/XgZj1R7WRyojwO59EwrgWpamKdTuJzHntfKAsoidmBD97N/JxP8gX1SmliT589Z+Dipk4WhY+Bu6G4Q4SjCtqe5gnqaFHfCrDrxK4roV72q6WsfVQmlNq68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4W9RDd2thNzZgfq;
-	Fri, 28 Jun 2024 15:01:21 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1D3A8180087;
-	Fri, 28 Jun 2024 15:05:48 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 28 Jun 2024 15:05:46 +0800
-Message-ID: <3fed5533-47e7-d927-14e6-2f42eead47d8@huawei.com>
-Date: Fri, 28 Jun 2024 15:05:45 +0800
+	s=arc-20240116; t=1719558561; c=relaxed/simple;
+	bh=jmkqfXaHVKyVHT3TgRBCSqe08GGcFE1IfnnRPRkO9G4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nzqhr8oVHbbQTR35p99y0rbw4Y6HuXCQ9SRW9SrZsq2ahIwQFTGqj7fQujhFgW3x/m/Cm11RrwUY406uTSzSpjHQlMY16CTNxUriug/QYlNkQ7yUODKH2Z+aA+RIrRdBluQ7YvHqdpgCylu+K5N337NPNP4YgPudA7IOxhPFIBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gqWRMLf/; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a689ad8d1f6so31821766b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 00:09:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1719558557; x=1720163357; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=If0iq5oLy+eiIvzlGQNRLUuZgZ1JLzU6wSKruP4/9Eg=;
+        b=gqWRMLf/NX3cGZidAZx8SJUoLNhx0y0kBDeWvBt8VDQAW1FpnA2O0I7Tswihyg8EkP
+         ZiEXF++PZFofLLSDMeLl/NpN7NIIOTnGziD6PrMP3RqPOlYx0yPF/OwY0RZB+0uxvyZZ
+         mRGZEwOJzugdOX2fLHxmSJ35yxEGrys7SPJce7JmTJhiHlSd9C7KAiafc6zfRHaMAbaC
+         Ki84cIOPjiO89LrNy2y9DT1ap+SDI7m47FOsNyQ+OMw9fCot9EI7tbWQDQLuBkTTxdTG
+         yFWB8emT3atrbrVtWBMaWRR9Mx4KnmM6eR6psvCJdgaSLV9rtUjitSOhfvAn+Ch54GZT
+         W8+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719558557; x=1720163357;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=If0iq5oLy+eiIvzlGQNRLUuZgZ1JLzU6wSKruP4/9Eg=;
+        b=GxAvdjwXypwbWCzvi6rKlDbjsyjhYr6DDGXRtHfkFHOLydrdzN6pw/ZYMzkFkeQDTK
+         Ywj4u7y7gSqgbuHdrJ63lNey9kfnTpKbi4xsgh/hRPdlgnAJh2yJ3Wi3rzE6bhPvyQ3q
+         ZNHdU1mo60dML6TrfLYrmjvbPE1ttmchbPxj1CMXMc7rc//iefXUXOhKPOk7sE0zLqqq
+         o0g0LkWV168azgbBVIlxapvPbYHTQhpsXmIMkjJbWtTxdfpFnVlkHwfyh33PaSWcBqiT
+         FP7TwU2c4uZA1AmSymUNy5NCUOXkBrCHcYKXWXq5kCHJwkhpIWscJxBqK7Fysjcp/W71
+         y/kw==
+X-Forwarded-Encrypted: i=1; AJvYcCWBhgi3weblyq4zJxnkYeYcGawhHxrH3xbN5/vxd32PsiaXjgr+zR87R/m8BEOmB15nrmLBVTIUw/qK6bdtEnrQ7fAtauXg3nipQJSl
+X-Gm-Message-State: AOJu0YyHhAA53SOnngNtnqAGDj9aj35Tw5lalipE5IjWOxjWz7oGsN+i
+	6w8rpik4W6h0oCNjPFWuvm5agfD1AbwDsotk8r6GDRhlnnIC4rXdQtXWJVSjbBs=
+X-Google-Smtp-Source: AGHT+IHI8uJ1o7wEPXjrRlqBMAxE/hZW7hfP6KthuUiDb9dgFhsbRFiAQwu4+lO0LtbeeWla+b5xVw==
+X-Received: by 2002:a17:906:3383:b0:a72:438b:2dfe with SMTP id a640c23a62f3a-a7245cf26e7mr845900966b.40.1719558556886;
+        Fri, 28 Jun 2024 00:09:16 -0700 (PDT)
+Received: from localhost (109-81-86-16.rct.o2.cz. [109.81.86.16])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab0651dfsm47940966b.142.2024.06.28.00.09.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 00:09:16 -0700 (PDT)
+Date: Fri, 28 Jun 2024 09:09:15 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: xiujianfeng <xiujianfeng@huawei.com>
+Cc: hannes@cmpxchg.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+	muchun.song@linux.dev, akpm@linux-foundation.org,
+	cgroups@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] mm: memcg: remove redundant
+ seq_buf_has_overflowed()
+Message-ID: <Zn5hm4HHYIUVZ3O3@tiehlicka>
+References: <20240626094232.2432891-1-xiujianfeng@huawei.com>
+ <Zn0RGTZxrEUnI1KZ@tiehlicka>
+ <a351c609-4968-398a-9316-2ad19d934e9c@huawei.com>
+ <Zn1LFyO_cww9W758@tiehlicka>
+ <10b948cd-5fbf-78e7-c3e8-6867661fa50b@huawei.com>
+ <Zn1S70yo4VQ24UNT@tiehlicka>
+ <ad7cfc60-d6d5-ca16-c93a-d200febccc9b@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v2 3/3] arm64: entry: Convert to generic entry
-Content-Language: en-US
-To: Kees Cook <kees@kernel.org>
-CC: <catalin.marinas@arm.com>, <will@kernel.org>, <oleg@redhat.com>,
-	<tglx@linutronix.de>, <peterz@infradead.org>, <luto@kernel.org>,
-	<wad@chromium.org>, <rostedt@goodmis.org>, <arnd@arndb.de>,
-	<ardb@kernel.org>, <broonie@kernel.org>, <mark.rutland@arm.com>,
-	<rick.p.edgecombe@intel.com>, <leobras@redhat.com>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20240627081209.3511918-1-ruanjinjie@huawei.com>
- <20240627081209.3511918-4-ruanjinjie@huawei.com>
- <202406270958.D73912B@keescook>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <202406270958.D73912B@keescook>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemi100008.china.huawei.com (7.221.188.57)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ad7cfc60-d6d5-ca16-c93a-d200febccc9b@huawei.com>
 
-
-
-On 2024/6/28 1:01, Kees Cook wrote:
-> On Thu, Jun 27, 2024 at 04:12:09PM +0800, Jinjie Ruan wrote:
->> Tested ok with following test cases on Qemu cortex-a53 and HiSilicon
->> Kunpeng-920:
->>  - Run `perf top` command
->>  - Switch between different `dynamic preempt` mode
->>  - Use `pseudo nmi`
->>  - stress-ng CPU stress test.
+On Fri 28-06-24 10:20:23, xiujianfeng wrote:
 > 
-> I think two other things to test would be the MTE functionality
-> (especially async mode), and kasan in general.
 > 
-> I've really struggled to get MTE working with qemu, so likely real
-> hardware would be needed for that... I'm hoping the ARM folks have
-> access to something that would work well for this. :)
-
-Hi, Kees
-
-I run the following testcases which are mostly in
-tools/testing/selftests/arm64/mte, the results is ok as below:
-
-1、The simple mte test case in
-Documentation/arch/arm64/memory-tagging-extension.rst, it pass:
-
-# ./mte_test
-a[0] = 1 a[1] = 2
-0x200ffff9dfa3000
-a[0] = 3 a[1] = 2
-Expecting SIGSEGV...
-Segmentation fault
-
-2、
-
-# cd tools/testing/selftests/arm64/mte/
-# ./check_prctl pass:
-
-TAP version 13
-1..5
-ok 1 check_basic_read
-ok 2 NONE
-ok 3 SYNC
-ok 4 ASYNC
-ok 5 SYNC+ASYNC
-# Totals: pass:5 fail:0 xfail:0 xpass:0 skip:0 error:0
-
-3、./check_tags_inclusion pass:
-1..4
-ok 1 Check an included tag value with sync mode
-ok 2 Check different included tags value with sync mode
-ok 3 Check none included tags value with sync mode
-ok 4 Check all included tags value with sync mode
-# Totals: pass:4 fail:0 xfail:0 xpass:0 skip:0 error:0
-
-4、./check_user_mem pass:
-1..64
-ok 1 test type: read, MTE_SYNC_ERR, MAP_SHARED, tag len: 0, tag offset: 0
-ok 2 test type: read, MTE_SYNC_ERR, MAP_SHARED, tag len: 0, tag offset: 16
-ok 3 test type: read, MTE_SYNC_ERR, MAP_SHARED, tag len: 16, tag offset: 0
-ok 4 test type: read, MTE_SYNC_ERR, MAP_SHARED, tag len: 16, tag offset: 16
-ok 5 test type: read, MTE_SYNC_ERR, MAP_PRIVATE, tag len: 0, tag offset: 0
-ok 6 test type: read, MTE_SYNC_ERR, MAP_PRIVATE, tag len: 0, tag offset: 16
-ok 7 test type: read, MTE_SYNC_ERR, MAP_PRIVATE, tag len: 16, tag offset: 0
-ok 8 test type: read, MTE_SYNC_ERR, MAP_PRIVATE, tag len: 16, tag offset: 16
-ok 9 test type: read, MTE_ASYNC_ERR, MAP_SHARED, tag len: 0, tag offset: 0
-ok 10 test type: read, MTE_ASYNC_ERR, MAP_SHARED, tag len: 0, tag offset: 16
-ok 11 test type: read, MTE_ASYNC_ERR, MAP_SHARED, tag len: 16, tag offset: 0
-ok 12 test type: read, MTE_ASYNC_ERR, MAP_SHARED, tag len: 16, tag
-offset: 16
-ok 13 test type: read, MTE_ASYNC_ERR, MAP_PRIVATE, tag len: 0, tag offset: 0
-ok 14 test type: read, MTE_ASYNC_ERR, MAP_PRIVATE, tag len: 0, tag
-offset: 16
-ok 15 test type: read, MTE_ASYNC_ERR, MAP_PRIVATE, tag len: 16, tag
-offset: 0
-ok 16 test type: read, MTE_ASYNC_ERR, MAP_PRIVATE, tag len: 16, tag
-offset: 16
-ok 17 test type: write, MTE_SYNC_ERR, MAP_SHARED, tag len: 0, tag offset: 0
-ok 18 test type: write, MTE_SYNC_ERR, MAP_SHARED, tag len: 0, tag offset: 16
-ok 19 test type: write, MTE_SYNC_ERR, MAP_SHARED, tag len: 16, tag offset: 0
-ok 20 test type: write, MTE_SYNC_ERR, MAP_SHARED, tag len: 16, tag
-offset: 16
-ok 21 test type: write, MTE_SYNC_ERR, MAP_PRIVATE, tag len: 0, tag offset: 0
-ok 22 test type: write, MTE_SYNC_ERR, MAP_PRIVATE, tag len: 0, tag
-offset: 16
-ok 23 test type: write, MTE_SYNC_ERR, MAP_PRIVATE, tag len: 16, tag
-offset: 0
-ok 24 test type: write, MTE_SYNC_ERR, MAP_PRIVATE, tag len: 16, tag
-offset: 16
-ok 25 test type: write, MTE_ASYNC_ERR, MAP_SHARED, tag len: 0, tag offset: 0
-ok 26 test type: write, MTE_ASYNC_ERR, MAP_SHARED, tag len: 0, tag
-offset: 16
-ok 27 test type: write, MTE_ASYNC_ERR, MAP_SHARED, tag len: 16, tag
-offset: 0
-ok 28 test type: write, MTE_ASYNC_ERR, MAP_SHARED, tag len: 16, tag
-offset: 16
-ok 29 test type: write, MTE_ASYNC_ERR, MAP_PRIVATE, tag len: 0, tag
-offset: 0
-ok 30 test type: write, MTE_ASYNC_ERR, MAP_PRIVATE, tag len: 0, tag
-offset: 16
-ok 31 test type: write, MTE_ASYNC_ERR, MAP_PRIVATE, tag len: 16, tag
-offset: 0
-ok 32 test type: write, MTE_ASYNC_ERR, MAP_PRIVATE, tag len: 16, tag
-offset: 16
-ok 33 test type: readv, MTE_SYNC_ERR, MAP_SHARED, tag len: 0, tag offset: 0
-ok 34 test type: readv, MTE_SYNC_ERR, MAP_SHARED, tag len: 0, tag offset: 16
-ok 35 test type: readv, MTE_SYNC_ERR, MAP_SHARED, tag len: 16, tag offset: 0
-ok 36 test type: readv, MTE_SYNC_ERR, MAP_SHARED, tag len: 16, tag
-offset: 16
-ok 37 test type: readv, MTE_SYNC_ERR, MAP_PRIVATE, tag len: 0, tag offset: 0
-ok 38 test type: readv, MTE_SYNC_ERR, MAP_PRIVATE, tag len: 0, tag
-offset: 16
-ok 39 test type: readv, MTE_SYNC_ERR, MAP_PRIVATE, tag len: 16, tag
-offset: 0
-ok 40 test type: readv, MTE_SYNC_ERR, MAP_PRIVATE, tag len: 16, tag
-offset: 16
-ok 41 test type: readv, MTE_ASYNC_ERR, MAP_SHARED, tag len: 0, tag offset: 0
-ok 42 test type: readv, MTE_ASYNC_ERR, MAP_SHARED, tag len: 0, tag
-offset: 16
-ok 43 test type: readv, MTE_ASYNC_ERR, MAP_SHARED, tag len: 16, tag
-offset: 0
-ok 44 test type: readv, MTE_ASYNC_ERR, MAP_SHARED, tag len: 16, tag
-offset: 16
-ok 45 test type: readv, MTE_ASYNC_ERR, MAP_PRIVATE, tag len: 0, tag
-offset: 0
-ok 46 test type: readv, MTE_ASYNC_ERR, MAP_PRIVATE, tag len: 0, tag
-offset: 16
-ok 47 test type: readv, MTE_ASYNC_ERR, MAP_PRIVATE, tag len: 16, tag
-offset: 0
-ok 48 test type: readv, MTE_ASYNC_ERR, MAP_PRIVATE, tag len: 16, tag
-offset: 16
-ok 49 test type: writev, MTE_SYNC_ERR, MAP_SHARED, tag len: 0, tag offset: 0
-ok 50 test type: writev, MTE_SYNC_ERR, MAP_SHARED, tag len: 0, tag
-offset: 16
-ok 51 test type: writev, MTE_SYNC_ERR, MAP_SHARED, tag len: 16, tag
-offset: 0
-ok 52 test type: writev, MTE_SYNC_ERR, MAP_SHARED, tag len: 16, tag
-offset: 16
-ok 53 test type: writev, MTE_SYNC_ERR, MAP_PRIVATE, tag len: 0, tag
-offset: 0
-ok 54 test type: writev, MTE_SYNC_ERR, MAP_PRIVATE, tag len: 0, tag
-offset: 16
-ok 55 test type: writev, MTE_SYNC_ERR, MAP_PRIVATE, tag len: 16, tag
-offset: 0
-ok 56 test type: writev, MTE_SYNC_ERR, MAP_PRIVATE, tag len: 16, tag
-offset: 16
-ok 57 test type: writev, MTE_ASYNC_ERR, MAP_SHARED, tag len: 0, tag
-offset: 0
-ok 58 test type: writev, MTE_ASYNC_ERR, MAP_SHARED, tag len: 0, tag
-offset: 16
-ok 59 test type: writev, MTE_ASYNC_ERR, MAP_SHARED, tag len: 16, tag
-offset: 0
-ok 60 test type: writev, MTE_ASYNC_ERR, MAP_SHARED, tag len: 16, tag
-offset: 16
-ok 61 test type: writev, MTE_ASYNC_ERR, MAP_PRIVATE, tag len: 0, tag
-offset: 0
-ok 62 test type: writev, MTE_ASYNC_ERR, MAP_PRIVATE, tag len: 0, tag
-offset: 16
-ok 63 test type: writev, MTE_ASYNC_ERR, MAP_PRIVATE, tag len: 16, tag
-offset: 0
-ok 64 test type: writev, MTE_ASYNC_ERR, MAP_PRIVATE, tag len: 16, tag
-offset: 16
-# Totals: pass:64 fail:0 xfail:0 xpass:0 skip:0 error:0
-
-5、./check_mmap_options pass
-1..22
-ok 1 Check anonymous memory with private mapping, sync error mode, mmap
-memory and tag check off
-ok 2 Check file memory with private mapping, sync error mode,
-mmap/mprotect memory and tag check off
-ok 3 Check anonymous memory with private mapping, no error mode, mmap
-memory and tag check off
-ok 4 Check file memory with private mapping, no error mode,
-mmap/mprotect memory and tag check off
-ok 5 Check anonymous memory with private mapping, sync error mode, mmap
-memory and tag check on
-ok 6 Check anonymous memory with private mapping, sync error mode,
-mmap/mprotect memory and tag check on
-ok 7 Check anonymous memory with shared mapping, sync error mode, mmap
-memory and tag check on
-ok 8 Check anonymous memory with shared mapping, sync error mode,
-mmap/mprotect memory and tag check on
-ok 9 Check anonymous memory with private mapping, async error mode, mmap
-memory and tag check on
-ok 10 Check anonymous memory with private mapping, async error mode,
-mmap/mprotect memory and tag check on
-ok 11 Check anonymous memory with shared mapping, async error mode, mmap
-memory and tag check on
-ok 12 Check anonymous memory with shared mapping, async error mode,
-mmap/mprotect memory and tag check on
-ok 13 Check file memory with private mapping, sync error mode, mmap
-memory and tag check on
-ok 14 Check file memory with private mapping, sync error mode,
-mmap/mprotect memory and tag check on
-ok 15 Check file memory with shared mapping, sync error mode, mmap
-memory and tag check on
-ok 16 Check file memory with shared mapping, sync error mode,
-mmap/mprotect memory and tag check on
-ok 17 Check file memory with private mapping, async error mode, mmap
-memory and tag check on
-ok 18 Check file memory with private mapping, async error mode,
-mmap/mprotect memory and tag check on
-ok 19 Check file memory with shared mapping, async error mode, mmap
-memory and tag check on
-ok 20 Check file memory with shared mapping, async error mode,
-mmap/mprotect memory and tag check on
-ok 21 Check clear PROT_MTE flags with private mapping, sync error mode
-and mmap memory
-ok 22 Check clear PROT_MTE flags with private mapping and sync error
-mode and mmap/mprotect memory
-# Totals: pass:22 fail:0 xfail:0 xpass:0 skip:0 error:0
-
-6、./check_ksm_options pass
-1..4
-ok 1 Check KSM mte page merge for private mapping, sync mode and mmap memory
-ok 2 Check KSM mte page merge for private mapping, async mode and mmap
-memory
-ok 3 Check KSM mte page merge for shared mapping, sync mode and mmap memory
-ok 4 Check KSM mte page merge for shared mapping, async mode and mmap memory
-# Totals: pass:4 fail:0 xfail:0 xpass:0 skip:0 error:0
-
-7、./check_gcr_el1_cswitch pass
-1..1
-ok 1 Verify that GCR_EL1 is set correctly on context switch
-# Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
-
-8、# ./check_buffer_fill pass
-1..20
-ok 1 Check buffer correctness by byte with sync err mode and mmap memory
-ok 2 Check buffer correctness by byte with async err mode and mmap memory
-ok 3 Check buffer correctness by byte with sync err mode and
-mmap/mprotect memory
-ok 4 Check buffer correctness by byte with async err mode and
-mmap/mprotect memory
-ok 5 Check buffer write underflow by byte with sync mode and mmap memory
-ok 6 Check buffer write underflow by byte with async mode and mmap memory
-ok 7 Check buffer write underflow by byte with tag check fault ignore
-and mmap memory
-ok 8 Check buffer write underflow by byte with sync mode and mmap memory
-ok 9 Check buffer write underflow by byte with async mode and mmap memory
-ok 10 Check buffer write underflow by byte with tag check fault ignore
-and mmap memory
-ok 11 Check buffer write overflow by byte with sync mode and mmap memory
-ok 12 Check buffer write overflow by byte with async mode and mmap memory
-ok 13 Check buffer write overflow by byte with tag fault ignore mode and
-mmap memory
-ok 14 Check buffer write correctness by block with sync mode and mmap memory
-ok 15 Check buffer write correctness by block with async mode and mmap
-memory
-ok 16 Check buffer write correctness by block with tag fault ignore and
-mmap memory
-ok 17 Check initial tags with private mapping, sync error mode and mmap
-memory
-ok 18 Check initial tags with private mapping, sync error mode and
-mmap/mprotect memory
-ok 19 Check initial tags with shared mapping, sync error mode and mmap
-memory
-ok 20 Check initial tags with shared mapping, sync error mode and
-mmap/mprotect memory
-# Totals: pass:20 fail:0 xfail:0 xpass:0 skip:0 error:0
-
-9、 ./check_child_memory pass
-1..12
-ok 1 Check child anonymous memory with private mapping, precise mode and
-mmap memory
-ok 2 Check child anonymous memory with shared mapping, precise mode and
-mmap memory
-ok 3 Check child anonymous memory with private mapping, imprecise mode
-and mmap memory
-ok 4 Check child anonymous memory with shared mapping, imprecise mode
-and mmap memory
-ok 5 Check child anonymous memory with private mapping, precise mode and
-mmap/mprotect memory
-ok 6 Check child anonymous memory with shared mapping, precise mode and
-mmap/mprotect memory
-ok 7 Check child file memory with private mapping, precise mode and mmap
-memory
-ok 8 Check child file memory with shared mapping, precise mode and mmap
-memory
-ok 9 Check child file memory with private mapping, imprecise mode and
-mmap memory
-ok 10 Check child file memory with shared mapping, imprecise mode and
-mmap memory
-ok 11 Check child file memory with private mapping, precise mode and
-mmap/mprotect memory
-ok 12 Check child file memory with shared mapping, precise mode and
-mmap/mprotect memory
-# Totals: pass:12 fail:0 xfail:0 xpass:0 skip:0 error:0
-
+> On 2024/6/27 19:54, Michal Hocko wrote:
+> > On Thu 27-06-24 19:43:06, xiujianfeng wrote:
+> >>
+> >>
+> >> On 2024/6/27 19:20, Michal Hocko wrote:
+> >>> On Thu 27-06-24 16:33:00, xiujianfeng wrote:
+> >>>>
+> >>>>
+> >>>> On 2024/6/27 15:13, Michal Hocko wrote:
+> >>>>> On Wed 26-06-24 09:42:32, Xiu Jianfeng wrote:
+> >>>>>> Both the end of memory_stat_format() and memcg_stat_format() will call
+> >>>>>> WARN_ON_ONCE(seq_buf_has_overflowed()). However, memory_stat_format()
+> >>>>>> is the only caller of memcg_stat_format(), when memcg is on the default
+> >>>>>> hierarchy, seq_buf_has_overflowed() will be executed twice, so remove
+> >>>>>> the reduntant one.
+> >>>>>
+> >>>>> Shouldn't we rather remove both? Are they giving us anything useful
+> >>>>> actually? Would a simpl pr_warn be sufficient? Afterall all we care
+> >>>>> about is to learn that we need to grow the buffer size because our stats
+> >>>>> do not fit anymore. It is not really important whether that is an OOM or
+> >>>>> cgroupfs interface path.
+> >>>>
+> >>>> I did a test, when I removed both of them and added a lot of prints in
+> >>>> memcg_stat_format() to make the seq_buf overflow, and then cat
+> >>>> memory.stat in user mode, no OOM occurred, and there were no warning
+> >>>> logs in the kernel.
+> >>>
+> >>> The default buffer size is PAGE_SIZE.
+> >>
+> >> Hi Michal,
+> >>
+> >> I'm sorry, I didn't understand what you meant by this sentence. What I
+> >> mean is that we can't remove both, otherwise, neither the kernel nor
+> >> user space would be aware of a buffer overflow. From my test, there was
+> >> no OOM or other exceptions when the overflow occurred; it just resulted
+> >> in the displayed information being truncated. Therefore, we need to keep
+> >> one.
+> > 
+> > I've had this in mind
+> > 
+> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> > index 71fe2a95b8bd..3e17b9c3a27a 100644
+> > --- a/mm/memcontrol.c
+> > +++ b/mm/memcontrol.c
+> > @@ -1845,9 +1845,6 @@ static void memcg_stat_format(struct mem_cgroup *memcg, struct seq_buf *s)
+> >  			       vm_event_name(memcg_vm_event_stat[i]),
+> >  			       memcg_events(memcg, memcg_vm_event_stat[i]));
+> >  	}
+> > -
+> > -	/* The above should easily fit into one page */
+> > -	WARN_ON_ONCE(seq_buf_has_overflowed(s));
+> >  }
+> >  
+> >  static void memcg1_stat_format(struct mem_cgroup *memcg, struct seq_buf *s);
+> > @@ -1858,7 +1855,8 @@ static void memory_stat_format(struct mem_cgroup *memcg, struct seq_buf *s)
+> >  		memcg_stat_format(memcg, s);
+> >  	else
+> >  		memcg1_stat_format(memcg, s);
+> > -	WARN_ON_ONCE(seq_buf_has_overflowed(s));
+> > +	if (seq_buf_has_overflowed(s))
+> > +		pr_warn("%s: Stat buffer insufficient please report\n", __FUNCTION__);
 > 
-> -Kees
+> I found that after the change, the effect is as follows:
 > 
+> # dmesg
+> [   51.028327] memory_stat_format: Stat buffer insufficient please report
+> 
+> with no keywords such as "Failed", "Warning" to draw attention to this
+> printout. Should we change it to the following?
+> 
+> if (seq_buf_has_overflowed(s))
+>       pr_warn("%s: Warning, Stat buffer overflow, please report\n",
+> __FUNCTION__);
+
+LGTM.
+-- 
+Michal Hocko
+SUSE Labs
 
