@@ -1,132 +1,99 @@
-Return-Path: <linux-kernel+bounces-233722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83BF891BC1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:03:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C97891BC0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:00:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FFE11F228BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:03:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 543DE1F2352B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A73FA155C80;
-	Fri, 28 Jun 2024 10:02:21 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEBA4155A56;
-	Fri, 28 Jun 2024 10:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C3F15443B;
+	Fri, 28 Jun 2024 10:00:09 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A6A153561;
+	Fri, 28 Jun 2024 10:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719568941; cv=none; b=q4WW5lulrjVZbPmNmUHghcsvIZ3wxZ4gpbsjytHKmTPCmvH98oB/QugWg7Tc4RmEQoSUTEvkU5Lb3rukbBTp6Bgo9LtUbJK18mYmhfQUvv4aDo6s7fYbaOpyMnOAZlI2Y1da/6pQYcnlhdpIslURnzsPN773bxkgAiXto8Xhbog=
+	t=1719568809; cv=none; b=P4QX7F41FKncHmlP7oYzphv/6ibyrQNzZQm0oFU7S8/vaV5aFKGtTDVQjckddhsZRr0WgEnuyuswgQtczewgnsJIZMUep/0zxEy0Pf/6pn3hqRRt8FFjL/UXrTsxGiKhiqekf7A/ETL9s8jH+ZBR32P1PKJseVkk9qjfAxe1mgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719568941; c=relaxed/simple;
-	bh=29kCV+CJLP8fntZRWSEc1dp7bszj8uq+wEEOZDlnIhs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YOFxUiYcgGoGyMnfBTlElVObqHVd8ldBfRvwlLZnbALGoS2lLvrbTtpSTJWcHS8ZrmhbZ0+PmwhA/HfsJ0Xv5gzyR4ZHM7bYPQK0g+IjvKBAu7kcrfqJGmhx53vPhGexXTY/9b4SAz+ZDuxocV4j/2HdvqpQ/bTXn/2OLFw0nhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1D4A0106F;
-	Fri, 28 Jun 2024 03:02:44 -0700 (PDT)
-Received: from e127648.cambridge.arm.com (e127648.arm.com [10.1.30.21])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0BE753F6A8;
-	Fri, 28 Jun 2024 03:02:15 -0700 (PDT)
-From: Christian Loehle <christian.loehle@arm.com>
-To: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rafael@kernel.org
-Cc: vincent.guittot@linaro.org,
-	qyousef@layalina.io,
-	peterz@infradead.org,
-	daniel.lezcano@linaro.org,
-	ulf.hansson@linaro.org,
-	anna-maria@linutronix.de,
-	dsmythies@telus.net,
-	kajetan.puchalski@arm.com,
-	lukasz.luba@arm.com,
-	dietmar.eggemann@arm.com,
-	Christian Loehle <christian.loehle@arm.com>
-Subject: [PATCH 3/3] cpuidle: teo: Don't count non-existent intercepts
-Date: Fri, 28 Jun 2024 10:59:55 +0100
-Message-Id: <20240628095955.34096-4-christian.loehle@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240628095955.34096-1-christian.loehle@arm.com>
-References: <20240628095955.34096-1-christian.loehle@arm.com>
+	s=arc-20240116; t=1719568809; c=relaxed/simple;
+	bh=CgF0fdtMrFKBEO9+/Ow/VYFg8b9/1qosPCQhoWQ3G9c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I9iCfv4/4jYGxEVcRYcQHWO6vPC94FdG0RJ2dwPMrMSTm0nmzPs6zbRL3rWws/zQe65VdZQsjOej2n9q2xeEYlafe5G7ss9bi2vuKm5JU1JTQzJX6J265ebGyJ1ZuV2UB+CHjrGmleP2gnC/sCgX/CgRm36XEO3AoIOVLC5EmAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 956EFC116B1;
+	Fri, 28 Jun 2024 10:00:06 +0000 (UTC)
+Message-ID: <32e23a79-ad3a-465f-97e3-d32cbc75019e@xs4all.nl>
+Date: Fri, 28 Jun 2024 12:00:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: qcom: camss: Remove unused phy_sel variable in
+ csid gen2
+To: Gjorgji Rosikopulos <quic_grosikop@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, bryan.odonoghue@linaro.org, andersson@kernel.org,
+ konrad.dybcio@linaro.org, mchehab@kernel.org
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, laurent.pinchart@ideasonboard.com,
+ quic_hariramp@quicinc.com
+References: <20240626074730.85-1-quic_grosikop@quicinc.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+In-Reply-To: <20240626074730.85-1-quic_grosikop@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-When bailing out early, teo will not query the sleep length anymore
-since commit 6da8f9ba5a87 ("cpuidle: teo:
-Skip tick_nohz_get_sleep_length() call in some cases") with an
-expected sleep_length_ns value of KTIME_MAX.
-This lead to state0 accumulating lots of 'intercepts' because
-the actually measured sleep length was < KTIME_MAX, so query the sleep
-length instead for teo to recognize if it still is in an
-intercept-likely scenario without alternating between the two modes.
+On 26/06/2024 09:47, Gjorgji Rosikopulos wrote:
+> The issue is introduced with:
+> 
+> [PATCH v4 0/8] Move camss version related defs in to resources
 
-Fundamentally we can only do one of the two:
-1. Skip sleep_length_ns query when we think intercept is likely
-2. Have accurate data if sleep_length_ns is actually intercepted when
-we believe it is currently intercepted.
+In the pull request I posted today I folded this patch into that 6/8 of the
+patch series, rather than having this patch on top.
 
-Previously teo did the former while this patch chooses the latter as
-the additional time it takes to query the sleep length was found to be
-negligible and the variants of option 1 (count all unknowns as misses
-or count all unknown as hits) had significant regressions (as misses
-had lots of too shallow idle state selections and as hits had terrible
-performance in intercept-heavy workloads).
+I forgot to mention that in my PR.
 
-Fixes: 6da8f9ba5a87 ("cpuidle: teo: Skip tick_nohz_get_sleep_length() call in some cases")
-Signed-off-by: Christian Loehle <christian.loehle@arm.com>
----
-v3:
-Drop counting KTIME_MAX as hit and reword commit accordingly
+Regards,
 
- drivers/cpuidle/governors/teo.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+	Hans
 
-diff --git a/drivers/cpuidle/governors/teo.c b/drivers/cpuidle/governors/teo.c
-index 200a3598cbcf..c2d73507d23b 100644
---- a/drivers/cpuidle/governors/teo.c
-+++ b/drivers/cpuidle/governors/teo.c
-@@ -287,6 +287,7 @@ static int teo_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
- 	unsigned int hit_sum = 0;
- 	int constraint_idx = 0;
- 	int idx0 = 0, idx = -1;
-+	int prev_intercept_idx;
- 	s64 duration_ns;
- 	int i;
-
-@@ -364,6 +365,7 @@ static int teo_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
- 	 * all of the deeper states a shallower idle state is likely to be a
- 	 * better choice.
- 	 */
-+	prev_intercept_idx = idx;
- 	if (2 * idx_intercept_sum > cpu_data->total - idx_hit_sum) {
- 		int first_suitable_idx = idx;
-
-@@ -415,6 +417,14 @@ static int teo_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
- 			first_suitable_idx = i;
- 		}
- 	}
-+	if (!idx && prev_intercept_idx) {
-+		/*
-+		 * We have to query the sleep length here otherwise we don't
-+		 * know after wakeup if our guess was correct.
-+		 */
-+		duration_ns = tick_nohz_get_sleep_length(&delta_tick);
-+		cpu_data->sleep_length_ns = duration_ns;
-+	}
-
- 	/*
- 	 * If there is a latency constraint, it may be necessary to select an
---
-2.34.1
+> 
+> Signed-off-by: Gjorgji Rosikopulos <quic_grosikop@quicinc.com>
+> ---
+>  drivers/media/platform/qcom/camss/camss-csid-gen2.c | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/camss/camss-csid-gen2.c b/drivers/media/platform/qcom/camss/camss-csid-gen2.c
+> index 2d8398a91fc2..e1c757933e27 100644
+> --- a/drivers/media/platform/qcom/camss/camss-csid-gen2.c
+> +++ b/drivers/media/platform/qcom/camss/camss-csid-gen2.c
+> @@ -260,17 +260,12 @@ static void __csid_configure_testgen(struct csid_device *csid, u8 enable, u8 vc)
+>  
+>  static void __csid_configure_rdi_stream(struct csid_device *csid, u8 enable, u8 vc)
+>  {
+> -	struct csid_testgen_config *tg = &csid->testgen;
+> -	u32 val;
+> -	u32 phy_sel = 0;
+>  	/* Source pads matching RDI channels on hardware. Pad 1 -> RDI0, Pad 2 -> RDI1, etc. */
+>  	struct v4l2_mbus_framefmt *input_format = &csid->fmt[MSM_CSID_PAD_FIRST_SRC + vc];
+>  	const struct csid_format_info *format = csid_get_fmt_entry(csid->res->formats->formats,
+>  								   csid->res->formats->nformats,
+>  								   input_format->code);
+> -
+> -	if (!tg->enabled)
+> -		phy_sel = csid->phy.csiphy_id;
+> +	u32 val;
+>  
+>  	/*
+>  	 * DT_ID is a two bit bitfield that is concatenated with
 
 
