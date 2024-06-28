@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-234628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27E8191C8B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 23:59:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00C0791C8C1
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 00:00:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88B45B25899
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:59:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BDD1282CEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B9D1CCCDC;
-	Fri, 28 Jun 2024 21:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08BC21CD5CB;
+	Fri, 28 Jun 2024 21:56:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fpE0RqEB"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e5dgGk4B"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E8A1353FE
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 21:56:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A6D1514DC
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 21:56:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719611801; cv=none; b=WBDIPAR0SSnoyG/KWy3zq0DsXubqKCcZfMEHOsCCsIeixQgEJyq6Bkk+GHW+owqUWQd5UcxizQtpHB8EiKEzlxtvgyZzYeyyVSehwqNup1/GM2rSA05i+B+rIuOEylvGFPRPwFvXFhMYK6T3M52L72kVmVH9rG+Ng9gfaPJwaJ8=
+	t=1719611802; cv=none; b=YnZIPrGz/Bwmq/lUw1EffJqpjePP1LqqHxWxjkxE8zX0bW4w1QTwufS9AfE4BkCReLsu2Gu6RZ9oukEPD13ukbbg5FrHcwIpCiKO/gfMe+qBKNrcq8KU3b6AZD1Vr30YtkW5kYJb0tPALIQMUvrAHWMB5G/rMLAcgF8kGqJYZbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719611801; c=relaxed/simple;
-	bh=CfUd13hXUBp211uAieRQ2S7KiADlmpT8AQ2V+AKCddE=;
+	s=arc-20240116; t=1719611802; c=relaxed/simple;
+	bh=vM+3tzSSnqnmtLQ7I5Kq1E3nWSgcu98rwL7vm2afEB0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cTm4D8tWsPvuxjBHBA4KQg7wPdapsAXkclZoHM8iCWOtVN11H70jvWPhuUpaGCOveLr7VYmC6uJ/rPx03HPEQQjcP2dVNCeP30ZlaAHFg655Esg4hCF1l/RZiPkp+z6Vq+UjS9WhPPmF+pFyj+Z8WbxHAENfv81jvm/Grgo8RNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fpE0RqEB; arc=none smtp.client-ip=198.175.65.21
+	 MIME-Version; b=QVplD2acZrtYBJGI6xkQu2RSJ1UVl/InsjqJdWs8onQTNw907no7RerAmB9GcAxxlSBCT0Ez3fNXNvoXP6mvW+TYhkXAUaK5svhKzXa+EhmjyU1YmnG30EAuWfqy32D2U7wc4W27R0rWNaH5nkCaKluvH5TdURc/AME9DLlDciw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e5dgGk4B; arc=none smtp.client-ip=198.175.65.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719611799; x=1751147799;
+  t=1719611800; x=1751147800;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=CfUd13hXUBp211uAieRQ2S7KiADlmpT8AQ2V+AKCddE=;
-  b=fpE0RqEBZe7jVBGswmKN/wv+ikKlqt/bCFvNJw6qmMhGw9yoty0SYOgd
-   zhNntXPtEMFFyYBIYImZH8BwW4Jkt1SWtUVHv3oEoWoCohQfyJ6AEG08u
-   F46S2nrub9YNr8eJgvKmtFlN9oqzDp6uds51OH9D8mI8FRniBnSC9VkE6
-   dEh9KlnYyMHYrhBAk+uwqL0u/FDf7S+6AqC7rTNWjdOi0+Hr3ZAqpsQ3r
-   oiVmZ0Ymv5HKWfmElaGnyLYCBgue1wiWw7TJLLvx15sgSQvEkBb8zHLIr
-   owQCkhBtfi/7pNl4r97jY5yKYpgyEulC1bpWlOTc0o8nIf5OlfRMF2Mdm
-   Q==;
-X-CSE-ConnectionGUID: /QUFApHETHi/2W/ojzJpxg==
-X-CSE-MsgGUID: MY/VE3v+QPOd5EJjO0WeIQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11117"; a="16762643"
+  bh=vM+3tzSSnqnmtLQ7I5Kq1E3nWSgcu98rwL7vm2afEB0=;
+  b=e5dgGk4BzA0SrBhJ057Ux4dCJ5a5Hfyk8IPw4dcj8XlZkRfN/gv1XTXa
+   pDy1nMkMFURvgoGImc1bEP1A+jZqickZGNPoj436i2XSZcJ4V5XirzjKO
+   +uJiUkR2PaQ/a+Rdoo3MTzEfKz2rqmeXN1IpUVdkeRZRkGFKcPVaFxuh1
+   4IaSi1f8EM/YcNcRDBR4zhDm2JZUEJA+nMyK6+lNOmqnVqVHn7+JkyEkW
+   N4RtrfUWTuvHABOoTpYhTXw+lj7HDuGtpu0KOyVeqPrfOSxJw6pT2C/h9
+   YIvEPzJSCq2f862UqQxlP9hyjFVIm06Hgrd4prWMKAGYk0jz34zOAbzPk
+   A==;
+X-CSE-ConnectionGUID: UxGuW56rTAqKeVAT4jzEQw==
+X-CSE-MsgGUID: n05hFUT7Riy+Pc4arOq7KQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11117"; a="16762651"
 X-IronPort-AV: E=Sophos;i="6.09,170,1716274800"; 
-   d="scan'208";a="16762643"
+   d="scan'208";a="16762651"
 Received: from fmviesa002.fm.intel.com ([10.60.135.142])
   by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 14:56:28 -0700
-X-CSE-ConnectionGUID: DzybmUFFS0iZFhGZKzxiiQ==
-X-CSE-MsgGUID: PCitQnJYQcuVyGPREQP4rA==
+X-CSE-ConnectionGUID: sF9rm35ZSFKs+kWpC2pfSg==
+X-CSE-MsgGUID: KNyP2hV6QsKe/rV0XLBPZA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,170,1716274800"; 
-   d="scan'208";a="68065684"
+   d="scan'208";a="68065687"
 Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
   by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 14:56:28 -0700
 From: Tony Luck <tony.luck@intel.com>
@@ -70,9 +70,9 @@ Cc: x86@kernel.org,
 	linux-kernel@vger.kernel.org,
 	patches@lists.linux.dev,
 	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v23 17/19] x86/resctrl: Enable shared RMID mode on Sub-NUMA Cluster (SNC) systems
-Date: Fri, 28 Jun 2024 14:56:17 -0700
-Message-ID: <20240628215619.76401-18-tony.luck@intel.com>
+Subject: [PATCH v23 18/19] x86/resctrl: Sub-NUMA Cluster (SNC) detection
+Date: Fri, 28 Jun 2024 14:56:18 -0700
+Message-ID: <20240628215619.76401-19-tony.luck@intel.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240628215619.76401-1-tony.luck@intel.com>
 References: <20240628215619.76401-1-tony.luck@intel.com>
@@ -84,111 +84,115 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hardware has two RMID configuration options for SNC systems. The default
-mode divides RMID counters between SNC nodes. E.g. with 200 RMIDs and
-two SNC nodes per L3 cache RMIDs 0..99 are used on node 0, and 100..199
-on node 1. This isn't compatible with Linux resctrl usage. On this
-example system a process using RMID 5 would only update monitor counters
-while running on SNC node 0.
+There isn't a simple hardware bit that indicates whether a CPU is
+running in Sub-NUMA Cluster (SNC) mode. Infer the state by comparing
+the number of CPUs sharing the L3 cache with CPU0 to the number of CPUs in
+the same NUMA node as CPU0.
 
-The other mode is "RMID Sharing Mode". This is enabled by clearing bit
-0 of the RMID_SNC_CONFIG (0xCA0) model specific register. In this mode
-the number of logical RMIDs is the number of physical RMIDs (from CPUID
-leaf 0xF) divided by the number of SNC nodes per L3 cache instance. A
-process can use the same RMID across different SNC nodes.
+If SNC mode is detected, print a single informational message to the
+console.
 
-See the "Intel Resource Director Technology Architecture Specification"
-for additional details.
-
-When SNC is enabled, update the MSR when a monitor domain is marked
-online. Technically this is overkill. It only needs to be done once
-per L3 cache instance rather than per SNC domain. But there is no harm
-in doing it more than once, and this is not in a critical path.
+Add the missing definition of pr_fmt() to monitor.c. This wasn't
+noticed before as there are only "can't happen" console messages
+from this file.
 
 Signed-off-by: Tony Luck <tony.luck@intel.com>
 Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- arch/x86/include/asm/msr-index.h       |  1 +
- arch/x86/kernel/cpu/resctrl/internal.h |  2 ++
- arch/x86/kernel/cpu/resctrl/core.c     |  2 ++
- arch/x86/kernel/cpu/resctrl/monitor.c  | 26 ++++++++++++++++++++++++++
- 4 files changed, 31 insertions(+)
+ arch/x86/kernel/cpu/resctrl/monitor.c | 66 +++++++++++++++++++++++++++
+ 1 file changed, 66 insertions(+)
 
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index e022e6eb766c..3cb8dd6311c3 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -1164,6 +1164,7 @@
- #define MSR_IA32_QM_CTR			0xc8e
- #define MSR_IA32_PQR_ASSOC		0xc8f
- #define MSR_IA32_L3_CBM_BASE		0xc90
-+#define MSR_RMID_SNC_CONFIG		0xca0
- #define MSR_IA32_L2_CBM_BASE		0xd10
- #define MSR_IA32_MBA_THRTL_BASE		0xd50
- 
-diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-index 16982d1baf99..955999aecfca 100644
---- a/arch/x86/kernel/cpu/resctrl/internal.h
-+++ b/arch/x86/kernel/cpu/resctrl/internal.h
-@@ -534,6 +534,8 @@ static inline bool resctrl_arch_get_cdp_enabled(enum resctrl_res_level l)
- 
- int resctrl_arch_set_cdp_enabled(enum resctrl_res_level l, bool enable);
- 
-+void arch_mon_domain_online(struct rdt_resource *r, struct rdt_mon_domain *d);
-+
- /*
-  * To return the common struct rdt_resource, which is contained in struct
-  * rdt_hw_resource, walk the resctrl member of struct rdt_hw_resource.
-diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index 95ef8fe3cb50..1930fce9dfe9 100644
---- a/arch/x86/kernel/cpu/resctrl/core.c
-+++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -615,6 +615,8 @@ static void domain_add_cpu_mon(int cpu, struct rdt_resource *r)
- 	}
- 	cpumask_set_cpu(cpu, &d->hdr.cpu_mask);
- 
-+	arch_mon_domain_online(r, d);
-+
- 	if (arch_domain_mbm_alloc(r->num_rmid, hw_dom)) {
- 		mon_domain_free(hw_dom);
- 		return;
 diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
-index ca486d00541e..2d9b0bad678d 100644
+index 2d9b0bad678d..00e5c0e5424f 100644
 --- a/arch/x86/kernel/cpu/resctrl/monitor.c
 +++ b/arch/x86/kernel/cpu/resctrl/monitor.c
-@@ -1090,6 +1090,32 @@ static void l3_mon_evt_init(struct rdt_resource *r)
- 		list_add_tail(&mbm_local_event.list, &r->evt_list);
+@@ -15,6 +15,8 @@
+  * Software Developer Manual June 2016, volume 3, section 17.17.
+  */
+ 
++#define pr_fmt(fmt)	"resctrl: " fmt
++
+ #include <linux/cpu.h>
+ #include <linux/module.h>
+ #include <linux/sizes.h>
+@@ -1116,6 +1118,68 @@ void arch_mon_domain_online(struct rdt_resource *r, struct rdt_mon_domain *d)
+ 	wrmsrl(MSR_RMID_SNC_CONFIG, val);
  }
  
++/* CPU models that support MSR_RMID_SNC_CONFIG */
++static const struct x86_cpu_id snc_cpu_ids[] __initconst = {
++	X86_MATCH_VFM(INTEL_ICELAKE_X, 0),
++	X86_MATCH_VFM(INTEL_SAPPHIRERAPIDS_X, 0),
++	X86_MATCH_VFM(INTEL_EMERALDRAPIDS_X, 0),
++	X86_MATCH_VFM(INTEL_GRANITERAPIDS_X, 0),
++	X86_MATCH_VFM(INTEL_ATOM_CRESTMONT_X, 0),
++	{}
++};
++
 +/*
-+ * The power-on reset value of MSR_RMID_SNC_CONFIG is 0x1
-+ * which indicates that RMIDs are configured in legacy mode.
-+ * This mode is incompatible with Linux resctrl semantics
-+ * as RMIDs are partitioned between SNC nodes, which requires
-+ * a user to know which RMID is allocated to a task.
-+ * Clearing bit 0 reconfigures the RMID counters for use
-+ * in RMID sharing mode. This mode is better for Linux.
-+ * The RMID space is divided between all SNC nodes with the
-+ * RMIDs renumbered to start from zero in each node when
-+ * counting operations from tasks. Code to read the counters
-+ * must adjust RMID counter numbers based on SNC node. See
-+ * logical_rmid_to_physical_rmid() for code that does this.
++ * There isn't a simple hardware bit that indicates whether a CPU is running
++ * in Sub-NUMA Cluster (SNC) mode. Infer the state by comparing the
++ * number of CPUs sharing the L3 cache with CPU0 to the number of CPUs in
++ * the same NUMA node as CPU0.
++ * It is not possible to accurately determine SNC state if the system is
++ * booted with a maxcpus=N parameter. That distorts the ratio of SNC nodes
++ * to L3 caches. It will be OK if system is booted with hyperthreading
++ * disabled (since this doesn't affect the ratio).
 + */
-+void arch_mon_domain_online(struct rdt_resource *r, struct rdt_mon_domain *d)
++static __init int snc_get_config(void)
 +{
-+	u64 val;
++	struct cacheinfo *ci = get_cpu_cacheinfo_level(0, RESCTRL_L3_CACHE);
++	const cpumask_t *node0_cpumask;
++	int cpus_per_node, cpus_per_l3;
++	int ret;
 +
-+	if (snc_nodes_per_l3_cache == 1)
-+		return;
++	if (!x86_match_cpu(snc_cpu_ids) || !ci)
++		return 1;
 +
-+	rdmsrl(MSR_RMID_SNC_CONFIG, val);
-+	val &= ~BIT_ULL(0);
-+	wrmsrl(MSR_RMID_SNC_CONFIG, val);
++	cpus_read_lock();
++	if (num_online_cpus() != num_present_cpus())
++		pr_warn("Some CPUs offline, SNC detection may be incorrect\n");
++	cpus_read_unlock();
++
++	node0_cpumask = cpumask_of_node(cpu_to_node(0));
++
++	cpus_per_node = cpumask_weight(node0_cpumask);
++	cpus_per_l3 = cpumask_weight(&ci->shared_cpu_map);
++
++	if (!cpus_per_node || !cpus_per_l3)
++		return 1;
++
++	ret = cpus_per_l3 / cpus_per_node;
++
++	/* sanity check: Only valid results are 1, 2, 3, 4 */
++	switch (ret) {
++	case 1:
++		break;
++	case 2 ... 4:
++		pr_info("Sub-NUMA Cluster mode detected with %d nodes per L3 cache\n", ret);
++		rdt_resources_all[RDT_RESOURCE_L3].r_resctrl.mon_scope = RESCTRL_L3_NODE;
++		break;
++	default:
++		pr_warn("Ignore improbable SNC node count %d\n", ret);
++		ret = 1;
++		break;
++	}
++
++	return ret;
 +}
 +
  int __init rdt_get_mon_l3_config(struct rdt_resource *r)
  {
  	unsigned int mbm_offset = boot_cpu_data.x86_cache_mbm_width_offset;
+@@ -1123,6 +1187,8 @@ int __init rdt_get_mon_l3_config(struct rdt_resource *r)
+ 	unsigned int threshold;
+ 	int ret;
+ 
++	snc_nodes_per_l3_cache = snc_get_config();
++
+ 	resctrl_rmid_realloc_limit = boot_cpu_data.x86_cache_size * 1024;
+ 	hw_res->mon_scale = boot_cpu_data.x86_cache_occ_scale / snc_nodes_per_l3_cache;
+ 	r->num_rmid = (boot_cpu_data.x86_cache_max_rmid + 1) / snc_nodes_per_l3_cache;
 -- 
 2.45.2
 
