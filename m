@@ -1,129 +1,116 @@
-Return-Path: <linux-kernel+bounces-234594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31F2791C863
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 23:46:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F90E91C864
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 23:46:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 619361C2245B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:46:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B916C1F27246
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55B97FBA0;
-	Fri, 28 Jun 2024 21:46:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1FE7F48A;
+	Fri, 28 Jun 2024 21:46:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="glwPWTWn"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="IZ1gFDXi"
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AF9C6BFA3
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 21:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3338248788
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 21:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719611165; cv=none; b=r/tPwlI6fgic0likLIt0A7zlCU6jKXwuLuxBJQwgaRlW24RjvNtStOT6mCzmToYX9aotnmygvCQ/slWHBvFJiofS2ycTABRyq4NryUKzQFgMF8FEHMTZ4Lwvu6/MGa+hMZnqzsCxhLnacmKS+P/FguxjBD+M/1gB//BVDPmBRiY=
+	t=1719611199; cv=none; b=UGmjNTH5q/plVSQnIrC0ovrBGZuh7AYH6iA7W6tuTjHpdq/fd1EccFqbk6wraf5GsyzRf/t2nia9qSwnjUg15Oy3es42rI38N7QmqO8gI7o2KmVK0MVevTgMaLPNlouvKAyjWfyTL10HFPHvjFEm1R6lC6uLhce7dv20XandNm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719611165; c=relaxed/simple;
-	bh=OB3Wr2ru3wShEzudQkoJjiRFTKGld9qFcmtWs0Umma0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m6Rr5LKK9+7Lm4epJl4aOFZFFxTWoCWAMoou8uz8UO8A369gMWvplHKYhVa7MBhFGPW1atHRRthY6pmh+4gbqypQUojO9oyh0PI4jwvPyA9+cTVjZYjTwwi2vFv9/RgRKfn3b96qjvx1KyRq+rxd3L8B/zAMbytX3BbXUlfu4Bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=glwPWTWn; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-7f3d4a92857so2061839f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 14:46:02 -0700 (PDT)
+	s=arc-20240116; t=1719611199; c=relaxed/simple;
+	bh=3jLwCquKW3GyED/lXgPUxbIyzXjUBfuctfTYO7pqGQg=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=mYA9MgGsnK4yqZlBprcn/ShQ/TwxI17U41Qyd3xt0BRJ13pDMjGypwH2S+Cayb4ai0KpI0g+UqWT1te4yjDVfJKKacpFN0iUIbb0zOimIM1m99Q0/+DaaVteHukns/Aopg3s+DTNpxu5O8MG0bFxl7cH5sQCNtqo4K4zivog9AQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=IZ1gFDXi; arc=none smtp.client-ip=209.85.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-6f95be3d4c4so565910a34.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 14:46:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1719611162; x=1720215962; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jXD+Wgu9HPieHOq5j7Skd1mCiZ8SACBN4o7XWJsIIks=;
-        b=glwPWTWnzCuNlI4ROfXK1HLhdRanR8revQQbmun8/DAFpswzACpc9kf6y6bxKaiJ6F
-         rcM4gsHXCeBkwP1PmgIPHh6TI3RrVTCz1mmZTtFc/XgVnjm7J6Bis6Mr7QeSw16ZRTGs
-         Er87v27nVnbceEBzb0Ff2b5cEHxPPHhU5KtIE=
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719611195; x=1720215995; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NPp+ePUGc90IaDta8y4cNAG9IL/0pbWsNrf29+a3X2M=;
+        b=IZ1gFDXipk2dWCkM89VBOTyIeZhEIKtgMkzRoTn++f7Dh/TLD3dWJSk5XdUCp5u6Lm
+         WvMyCmcW82OGvymRo8AjF6+faHYVaPrQLIabgu+9fJLODDmzTPefJTNIgm7eMkpwc46z
+         mjxG1k2/wkiGmuU5zuvoFyymlcEOGTrGx6RAQ5qUIWTb+LIW0zEsPkHPOHEhiLvAPQui
+         geKR/jRKEpAb+rVlYSRijihN6lCgoBoYnvStnqYnIGbd1wYtVMKsKt1Xa5XSWkrinHDQ
+         mwfPzrLRvAxwCuZmK89RtD692r4/rSwB8TnCAAwCYUN8Qa35b1c1hGOCxcQ+vCtslKO4
+         gdQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719611162; x=1720215962;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jXD+Wgu9HPieHOq5j7Skd1mCiZ8SACBN4o7XWJsIIks=;
-        b=LHFKS8/21KfJcRjECh6P3VO8A08QwURoMH7dlhbTGQsa+ILlycQV1unPMzVUkf4n9Z
-         Zgu710NWrj/hQy7LHg45AKEtEDVImJHJWNsiAE1CM02FcNHvV1tS22Of7h1k4/CWU8Te
-         gh2FBiM9p3FRNM2KXo4trPH8DKvoIUap9A5Df+fwFPxnDLcyAp1C96bSP3ckI2+qT1wh
-         xyD2+cZEdHqNWCeeWTzcvWKw+Rfip1E+UPZAA2QEmf27NvgdkzvbxT37GiqjBlVAUPT/
-         BILYvXeP9OhlIRA6IDuaFl+D+iUbQHHxhlWQUQf1zwY5iNOigneh6yccfrwj7HTefrjw
-         Z+lQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUaX+yWd6DxGrK8pMlKY9rzx8ESalia5Y3kaTEGE4OCeQYcCCYfLSLHXUnsb01hOayP7YVhvlDK+1p5OWZsO1sT9t9RXNcwLu9ISK2e
-X-Gm-Message-State: AOJu0YyEZtWXI5COM4ZcM+5l9OR+zxMIpVNPWST/wqXB3czycI/dakJ5
-	ExKmc82w9cGSlBE4aTszF8IQH7vc0b5sfj9gcqTE0r1bOaqzkm7YI1RpUktbxAou3lABl1ixTpg
-	H
-X-Google-Smtp-Source: AGHT+IGo3fWI1OD0BMxUMA1ZPYK2vbnSnMktP0APM8qy7zFHw3P3IMjKDStnU4CheqoJvYjeSTASHw==
-X-Received: by 2002:a05:6602:3fca:b0:7eb:2c45:4688 with SMTP id ca18e2360f4ac-7f39dd12493mr2282879139f.2.1719611161714;
-        Fri, 28 Jun 2024 14:46:01 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-7f61d0fecc4sm67160539f.35.2024.06.28.14.46.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Jun 2024 14:46:01 -0700 (PDT)
-Message-ID: <813c866d-c5f1-4f29-8854-4a789fd035cd@linuxfoundation.org>
-Date: Fri, 28 Jun 2024 15:46:00 -0600
+        d=1e100.net; s=20230601; t=1719611195; x=1720215995;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NPp+ePUGc90IaDta8y4cNAG9IL/0pbWsNrf29+a3X2M=;
+        b=VY5nDdFdCqgYcWxLP6/sV4RzbtkOWu+kRs7ZFOG4KpJA1Uvqzs/tUAPPZKc/pAirpr
+         1zh6cNYC2WXf0gq1jmpVy8duVV2AI088i6t1jfwym+WMEJMCsbEIpnFgIojRgTTUM3WH
+         BC1oQeru8bLOkYMXttKd6om24NVQ4sDnOTjmBI15oNVZ2qVZLlPBifcIVSjaTZFcYdZp
+         fHVns+NsZr5usHstzJspVxLaiDLruVTS1hTLG8tipDXFUybJ8roQSpEZSzbjaVzHcfB+
+         tUsuMusulh1REgzDfPVtfeu8/m7C5KuBwq5aJUTee04EPJQZ5LWwoPav/VMfu1l++XSs
+         JxdA==
+X-Forwarded-Encrypted: i=1; AJvYcCWtgxs0bUYHVC/f7+K7gy9WB9Osrn0zKxzcLL/p0QtY94DqaX4Sq65Gd5ONeAm9gYF7z/KUTvsh/iBS2nlHPKfM4I/BxfUkRxkXesYZ
+X-Gm-Message-State: AOJu0YxaSU7qsKv2MVXG6pJSyukMugcrv0/3kVtVd6LU9rVbSpfVrdjZ
+	lBQNe+i104soTGmlQ6X96EdrlvGdx+XoGk9aKbDLorX3O/l1a4lrcuDsN2KiO1TQSu44WUus3+d
+	o
+X-Google-Smtp-Source: AGHT+IFRuK+Ww/Un/6K1W85JiGOMRpvwKjobJ8PISyNIoNRbGI9W4wLzOAAbtxy/TuxmHO0HRW5uXg==
+X-Received: by 2002:a05:6830:1399:b0:6f9:82ca:15b5 with SMTP id 46e09a7af769-700b11e1961mr19903951a34.18.1719611195234;
+        Fri, 28 Jun 2024 14:46:35 -0700 (PDT)
+Received: from xanadu (modemcable018.15-162-184.mc.videotron.ca. [184.162.15.18])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79d69309105sm108474085a.125.2024.06.28.14.46.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 14:46:34 -0700 (PDT)
+Date: Fri, 28 Jun 2024 17:46:33 -0400 (EDT)
+From: Nicolas Pitre <npitre@baylibre.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+cc: =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mul_u64_u64_div_u64: make it precise always
+In-Reply-To: <20240628142025.50ac4c92bfd2034668a0cc22@linux-foundation.org>
+Message-ID: <9nr61164-o95o-s47s-33sq-ss86499p6sso@onlyvoer.pbz>
+References: <39o9pnn4-p22s-rp4p-067n-83s18o5prnpn@onlyvoer.pbz> <20240628142025.50ac4c92bfd2034668a0cc22@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] tools/nolibc: implement strerror()
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- Shuah Khan <shuah@kernel.org>
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- Willy Tarreau <w@1wt.eu>, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240426-nolibc-strerror-v1-0-76a4c9c5271d@weissschuh.net>
- <d6021c7c-271a-4aaa-82af-5a8ac7aac60b@t-8ch.de>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <d6021c7c-271a-4aaa-82af-5a8ac7aac60b@t-8ch.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-On 5/2/24 10:10, Thomas Weißschuh wrote:
-> Hi Shuah,
-> 
-> On 2024-04-26 13:08:55+0000, Thomas Weißschuh wrote:
->> Adds a simple implementation of strerror() and makes use of it in
->> kselftests.
->>
->> Shuah, could you Ack patch 3?
-> 
-> Friendly ping for an Ack of patch 3 of this series.
-> 
-> After that I'd like to submit an updated nolibc pull request to you for 6.10.
-> 
->> Willy, this should work *without* your Ack.
->>
->> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
->> ---
->> Thomas Weißschuh (3):
->>        selftests/nolibc: introduce condition to run tests only on nolibc
->>        tools/nolibc: implement strerror()
->>        selftests: kselftest: also use strerror() on nolibc
->>
->>   tools/include/nolibc/stdio.h                 | 10 ++++++++
->>   tools/testing/selftests/kselftest.h          |  8 -------
->>   tools/testing/selftests/nolibc/nolibc-test.c | 36 ++++++++++++++++++----------
->>   3 files changed, 33 insertions(+), 21 deletions(-)
->> ---
->> base-commit: a3063ba97f31e0364379a3ffc567203e3f79e877
->> change-id: 20240425-nolibc-strerror-67f4bfa03035
->>
->> Best regards,
->> -- 
->> Thomas Weißschuh <linux@weissschuh.net>
+On Fri, 28 Jun 2024, Andrew Morton wrote:
 
-Sorry for the delay o this.
+> On Fri, 28 Jun 2024 15:06:20 -0400 (EDT) Nicolas Pitre <npitre@baylibre.com> wrote:
+> 
+> > Library facilities must always return exact results. If the caller may
+> > be contented with approximations then it should do the approximation on
+> > its own.
+> > 
+> > In this particular case the comment in the code says "the algorithm
+> > ... might lose some precision". Well, if you try it with e.g.:
+> > 
+> > 	a = 18446462598732840960
+> > 	b = 18446462598732840960
+> > 	c = 18446462598732840961
+> > 
+> > then the produced answer is 0 whereas the exact answer should be
+> > 18446462598732840959. This is _some_ precision loss indeed!
+> > 
+> > Let's reimplement this function so it always produces the exact result
+> > regardless of its inputs while preserving existing fast paths
+> > when possible.
+> 
+> I assume this was tested with some userspace harness?  It would be
+> interesting to see that so that reviewers can see that suitable cases
+> have been covered.
 
-Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+I do have a user space test tool but it isn't pretty looking.
+How should this be acceptably presented for public consumption?
 
-thanks,
--- Shuah
+
+Nicolas
 
