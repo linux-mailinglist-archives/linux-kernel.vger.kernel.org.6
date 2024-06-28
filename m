@@ -1,145 +1,88 @@
-Return-Path: <linux-kernel+bounces-233588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1542991B9EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:31:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CB8F91B9F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:32:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9A351F24134
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:31:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C34EDB22C70
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:32:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB02F14B97E;
-	Fri, 28 Jun 2024 08:31:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5ED614A60A;
+	Fri, 28 Jun 2024 08:32:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZcXtPW/2"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4685D14B97B
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 08:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="j8MBJLZI"
+Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.220])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3330B14386F;
+	Fri, 28 Jun 2024 08:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719563480; cv=none; b=Qky0KGHemtE4XSln6US4a17Y2Z0I1phqXB3e2WavOTctBQhSYGFrNdWFaf3O+MaBkcEgDM3Hq6wrlsTodYvTokmxGVvB/MvvDwtBPZ2vhd2PcPRJKPzeZo/Oci6FOBCMxiVX8vh2JYq2TLpHbiLInGtAp3TdIDPlNn8bsG6sjQM=
+	t=1719563521; cv=none; b=H+G5luw5b1z+KGWVI1Vt0d0GZ3bevJ0ys/LWqbRObJcPR4bUZnPeN8ScFAtadYIl8dbOt3KbdvqSF0CV2v8uzii8VLCTELhJaJGNejRdrGYmXaOIBvFpfoftF5762DVenPoy7WlX6J8DvwE2A4tp6YdsTTjWKjW47pTZfe4Ul60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719563480; c=relaxed/simple;
-	bh=qrPmbzPc6thrcoALKqu5/RTyzon2Cv6tVnvT/bPg2MQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=VXmbhZkrOqQFHNDgxSx5JBsM+afkpiyWC/5BNoqaryKWo+F7KSnDDNBKWEHk9ftUlHTjkGnd9mWq8nciLAwRKFgTNjWrPKYWQ/9XX7uRwMa66Df2M0YS/rpd21vFHBzghL4yS/t67F9K2Sz6D9Ayeaj+xdE+BqL4aE/Mq+YK1As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZcXtPW/2; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ebed33cb65so3284061fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 01:31:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719563476; x=1720168276; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yw0eZbsyLTkgcERd78HaWAv1qQu+UDNZrR+zNE4CJuE=;
-        b=ZcXtPW/2puBMhEOGseqV+++Smg14GCSaHw451Ko18kvmZ6l+uEpFiBftrBr18RRhLB
-         +/4z842/IxL6ivd18/5VpZQY/sBCEkDWmkE9aYlU+j+cXdE9bvpHvI9jsBCqnIgU+XVu
-         il7cSV52Gx36Xx1kD0GQLXUZJ1MG3OnsVwDl9RzWRCU6F+ByBwBTQTCyrqLKcVveCzYm
-         301r3M6KjXxoN4W/RR2GEeI0+/ZttQlDbKzy88OFhzM4PPoogDG4uJYK1mNtGQUgJ/I6
-         kPbV5qCX5GTrQ8ngy+P1/AwSjU94FBkdq5rx4IgkA/24pSNoZbpDuqEAjWDpoBOctIhj
-         LHBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719563476; x=1720168276;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yw0eZbsyLTkgcERd78HaWAv1qQu+UDNZrR+zNE4CJuE=;
-        b=f9K8JonL+Ma4OkcIcOZz5u9WhU6eeNT7CDH4HN+pcAYevpaxlCMoo/Lz620rTBF39y
-         oa244Q/j9opKsm/0hyrpZ2xkCvwpx7XbLI+VNvBiLQUkvT/enRLOcOSgcqyjwHj8Q6jo
-         iPaSmR4NYzCj/ozFoTTRgI3dZt4ImCwMGRHANG6FJehQzL6lmHGeyIk1kHZGSeRQmTa5
-         6A4er8rDMAFguw1eIiF9vlcb/yahAMnSo8CFhnZCP6CnhmL0aDFapUkfy6yG7yaHQyPN
-         jZC4fFE+vgEOs186lZh1UzU9GRclLmXUHjpwZzkczH+t2EJxfcjtxbG3nZbhXK1yDhec
-         /Zag==
-X-Forwarded-Encrypted: i=1; AJvYcCVFu96km/wQ3h3IiqaQUu2H0BAIOg3jw8HnqE5ykw0mCv2edDEbZLWQLDuRxN/Rk22UFRU3rBJ97w+w0pYiLo8wjzyN8aUa7ZljA6SX
-X-Gm-Message-State: AOJu0YzmFzW6if8y/eLU8oiocIyIulCLTVYY3T6uNBOVliDmBwpwS+6X
-	8rU3SzfsEFoZi1MPgT0C5b+AKxDYrMwSFqAE6GppXyKf3kuMTorA+6Y2/zexYLI=
-X-Google-Smtp-Source: AGHT+IEOpDmTUMd9T1aD3y3deOsD8U1CZqZy1tIh8+xDSlP0/UjZ7yj/m4ywU7C5CPZ6setS3NylKg==
-X-Received: by 2002:a2e:9d8f:0:b0:2ec:3dd4:75f9 with SMTP id 38308e7fff4ca-2ec5936fa45mr103261411fa.35.1719563476230;
-        Fri, 28 Jun 2024 01:31:16 -0700 (PDT)
-Received: from [127.0.1.1] ([82.79.124.209])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0d90casm1521604f8f.32.2024.06.28.01.31.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 01:31:15 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Fri, 28 Jun 2024 11:31:01 +0300
-Subject: [PATCH v2] dt-bindings: thermal: qcom-tsens: Document the X1E80100
- Temperature Sensor
+	s=arc-20240116; t=1719563521; c=relaxed/simple;
+	bh=qRY2BttLFavGC0/FEKgRQmh0bDCXs9H3mYiv5W7T9/Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=F047Eh/3pmIIdUpw6NF0Vv68bGqphFR3JLKLMRZxlVgKiv5xhQKo70UavDZOGSJNl3tLZta/LdGgEOOcjVrit0vY7vx4ORnEQ5DojqEXmiIcoH+6c3eEmXAXfkCdVgItkLA5s7eOt8n65QeEeHtr7f+tl+WS24TU53CLtDUQzqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=j8MBJLZI reason="signature verification failed"; arc=none smtp.client-ip=45.254.50.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=8dm2yPnUBy+Zwic0JqYYPGSYk9HXlXSy6pvyaLYdubE=; b=j
+	8MBJLZI1RSp3f9pNMxxk9Mv4PjPyFCdx4UyqdjX5TU9bo1qsKgsoZvmx2DYc7dAd
+	PrWw41rsG+hLJdDsawkB8k8FjnEpf1HTFLAyEUtDbXwamoebx0H3aN3XOOX62yGt
+	iv5dujTTvdCqT5q0WlhH0GKBGh0de4dlwGiM3h98pM=
+Received: from slark_xiao$163.com ( [112.97.61.84] ) by
+ ajax-webmail-wmsvr-40-137 (Coremail) ; Fri, 28 Jun 2024 16:31:40 +0800
+ (CST)
+Date: Fri, 28 Jun 2024 16:31:40 +0800 (CST)
+From: "Slark Xiao" <slark_xiao@163.com>
+To: "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>
+Cc: manivannan.sadhasivam@linaro.org, loic.poulain@linaro.org, 
+	ryazanov.s.a@gmail.com, johannes@sipsolutions.net, 
+	quic_jhugo@quicinc.com, netdev@vger.kernel.org, mhi@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re:Re: [PATCH v3 1/3] bus: mhi: host: Add Foxconn SDX72 related
+ support
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <2xbnsvtzh23al43njugtqpihocyo5gtyuzu4wbd5gmizhs2utf@d2x2gxust3w5>
+References: <20240628073605.1447218-1-slark_xiao@163.com>
+ <2xbnsvtzh23al43njugtqpihocyo5gtyuzu4wbd5gmizhs2utf@d2x2gxust3w5>
+X-NTES-SC: AL_Qu2aC/mdvE0r5iSdZ+kfmk8Sg+84W8K3v/0v1YVQOpF8jBLo0w4rRVxgI2Hp/cKNLi6tlzu0ViZu0OhWXqpzZ7ooSYwDKdnixOFe4YYADrnHLg==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240628-x1e80100-bindings-thermal-qcom-tsens-v2-1-4843d4c2ba24@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAMR0fmYC/43NwQ6CMAzG8VchO1uzVQjoyfcwHMYo0AQ27QjBE
- N7dSeLdpJd/D99vU5GEKapbtimhhSMHnwJPmXKD9T0Bt6kVasx1gQiroUobraFh37LvI8wDyWR
- HeLkwwRzJR7AW2+aqXW7LXKWpp1DH68E86tQDxznI+1AX8/3+gPI/YDFgQHdFugqLC5n7yN5KO
- AfpVb3v+wfLGRXW2QAAAA==
-To: Amit Kucheria <amitk@kernel.org>, 
- Thara Gopinath <thara.gopinath@gmail.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzk@kernel.org>, Abel Vesa <abel.vesa@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1217; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=qrPmbzPc6thrcoALKqu5/RTyzon2Cv6tVnvT/bPg2MQ=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBmfnTLGn/UF7opNHc1QGJsaA76e4ji5+Om1hc6i
- yiBvMZAh3WJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZn50ywAKCRAbX0TJAJUV
- VutPD/9wLkhRMLmeqpjZHtFMN6UO+4KERYfHvYjy6/KbvCAy0fTdD3D5WPHAh7sFceYaFzFy8Cp
- ne9Zc9V3gNokItuKP9NHCa/Gh4XhQiHdgdLdyt5+eC382dptCDj1rlEh2V3dUkUpE8x+80FWWyY
- 1R/068+oWA/RZm4MttN/LDzXz2Gm6fy4ato0/ghzTtNMVmj5to8J6asWxbCrEFEZOc4gAHfqrE8
- F+HRD1r3ipAqfnzF2WdGeT8t7VEy9a5CAtFm4FrBnKWofpHga882ME3mQLvpysQUHipZVtzFOAQ
- smx9Qkx/jm85g6GGsRXIQb6t6/O/f9tuSk6F69Dr0c2mp+SJ3FqSKpmjdA7M2XnB4pkm6YH5h+m
- 4Yy2C7McHKoaUH2UJ0JUlXKHlxwnMfDsD5oAqavFYwtyiHxGCp4V/pAwdCWS7hN+Q7n4iPUVa4z
- NilM095wgMURXJ21QXvidPhU2H+DyNPVVVMf1XnMZg1z2YSYoJSSLPUslztMVJN+4dbKFVOo+qk
- saX0MgKD7TOyxeCVlE684JHHBIWFJ/ZxUFf0rm5AUvn3cWjhyPMUCLs298lNONCU8IIfxX8Lyjj
- 9wu9Jb297Af2s0L6Nu+O1u2XBf9fz18pnjqUDBs7eC2yHL7oGbHTF0nt6tMAZAaJGyAuTceYjWW
- 4Xl0tQKqoWV86cg==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
+Message-ID: <455cd5ee.86ad.1905df8bbab.Coremail.slark_xiao@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:_____wD333DsdH5mXmkTAA--.29661W
+X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbioxsMZGVOEH3Z8wACs+
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-Document the Temperature Sensor (TSENS) on the X1E80100 Platform.
-
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
-Changes in v2:
-- Just picked up Krzysztof's R-b tag
-- Link to v1: https://lore.kernel.org/r/20240527-x1e80100-bindings-thermal-qcom-tsens-v1-1-0f50f58253e1@linaro.org
----
- Documentation/devicetree/bindings/thermal/qcom-tsens.yaml | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
-index 99d9c526c0b6..ac54ed604b74 100644
---- a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
-+++ b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
-@@ -67,6 +67,7 @@ properties:
-               - qcom,sm8450-tsens
-               - qcom,sm8550-tsens
-               - qcom,sm8650-tsens
-+              - qcom,x1e80100-tsens
-           - const: qcom,tsens-v2
- 
-       - description: v2 of TSENS with combined interrupt
-
----
-base-commit: 0fc4bfab2cd45f9acb86c4f04b5191e114e901ed
-change-id: 20240522-x1e80100-bindings-thermal-qcom-tsens-aa2db90c4a74
-
-Best regards,
--- 
-Abel Vesa <abel.vesa@linaro.org>
-
+CkF0IDIwMjQtMDYtMjggMTU6NTE6NTQsICJEbWl0cnkgQmFyeXNoa292IiA8ZG1pdHJ5LmJhcnlz
+aGtvdkBsaW5hcm8ub3JnPiB3cm90ZToKPk9uIEZyaSwgSnVuIDI4LCAyMDI0IGF0IDAzOjM2OjA1
+UE0gR01ULCBTbGFyayBYaWFvIHdyb3RlOgo+PiBBbGlnbiB3aXRoIFFjb20gU0RYNzIsIGFkZCBy
+ZWFkeSB0aW1lb3V0IGl0ZW0gZm9yIEZveGNvbm4gU0RYNzIuCj4+IEFuZCBhbHNvLCBhZGQgZmly
+ZWhvc2Ugc3VwcG9ydCBzaW5jZSBTRFg3Mi4KPj4gCj4+IFNpZ25lZC1vZmYtYnk6IFNsYXJrIFhp
+YW8gPHNsYXJrX3hpYW9AMTYzLmNvbT4KPj4gLS0tCj4+IHYyOiAoMSkuIFVwZGF0ZSB0aGUgZWRs
+IGZpbGUgcGF0aCBhbmQgbmFtZSAoMikuIFNldCBTRFg3MiBzdXBwb3J0Cj4+IHRyaWdnZXIgZWRs
+IG1vZGUgYnkgZGVmYXVsdAo+PiB2MzogRGl2aWRlIGludG8gMiBwYXJ0cyBmb3IgRm94Y29ubiBz
+ZHg3MiBwbGF0Zm9ybQo+Cj5HZW5lcmljIGNvbW1lbnQ6IHBsZWFzZSBzZW5kIGFsbCB0aGUgcGF0
+Y2hlcyB1c2luZyBhIHNpbmdsZQo+Z2l0LXNlbmQtZW1haWwgY29tbWFuZC4gVGhpcyB3YXkgaXQg
+d2lsbCB0aHJlYWQgdGhlbSBwcm9wZXJseSwgc28gdGhhdAo+dGhleSBmb3JtIGEgc2luZ2xlIHBh
+dGNoc2VyaWVzIGluIGRldmVsb3BlcnMncyBtYWlsIGNsaWVudHMuIE9yIHlvdSBjYW4KPmp1c3Qg
+dXNlICdiNCcgdG9vbCB0byBtYW5hZ2UgYW5kIHNlbmQgdGhlIHBhdGNoc2V0Lgo+CgpTZW5kIGFn
+YWluIHdpdGggY29tbWFuZCAiZ2l0IHNlbmQtZW1haWwgdjMtKi5wYXRjaCAuLi4iLiBQbGVhc2Ug
+dGFrZSBhIHZpZXcgb24gdGhhdC4KVGhhbmtzLgoKPj4gLS0tCj4+ICBkcml2ZXJzL2J1cy9taGkv
+aG9zdC9wY2lfZ2VuZXJpYy5jIHwgNDMgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCj4+
+ICAxIGZpbGUgY2hhbmdlZCwgNDMgaW5zZXJ0aW9ucygrKQo+PiAKPgo+Cj4tLSAKPldpdGggYmVz
+dCB3aXNoZXMKPkRtaXRyeQo=
 
