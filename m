@@ -1,139 +1,91 @@
-Return-Path: <linux-kernel+bounces-234170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 165B891C31D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:04:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4E7291C31F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:05:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B43121F22297
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:04:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2217E1C22BF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55B8D1C8FBC;
-	Fri, 28 Jun 2024 16:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TXGHVV84"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9471C8FBD;
+	Fri, 28 Jun 2024 16:04:59 +0000 (UTC)
+Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B24D1C0DCC;
-	Fri, 28 Jun 2024 16:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29CCB1C688C;
+	Fri, 28 Jun 2024 16:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719590679; cv=none; b=nWr8IFhe/t4+jrlB4EYG4Vi8Pof6dW9wWy7lKk/jIBeIihbdNG0PsVanVjQPNHRn+xWJZVRq34S0hohh6PyBA2zOTO7NLxVyeEsOUVzYJUE8w6WAFMcAjQJxFls+XMhbDVHvmLSGOKyV+a85YpiT1NOA1l3pknm/69GBq/q7PQI=
+	t=1719590699; cv=none; b=NtvVcQThn3RgyvBnotNNpB/KMCuyUnCCR5UpFNPCM+Dfi5fvi2IDKTJi9X+osMMQtz/zlrs9E035kuULM43vNBsbPQ5dfDM32INzhPHjXO95nAl6KcL3lAYENr2QGiOkCGQNeJGitRiUZ1M2S4L7QTwmlbyn7nFWEBrAaG89rlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719590679; c=relaxed/simple;
-	bh=oTXfR2N6eN/rBWJlM/QQkHwnHvpBAkB6fBJKmFWgmyk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dJGVgwVrTieOhnnU+cZZZCd1jM4bhNPOneJ5keOSae65XwzHd4nvaWG4XFGQlgJjZCxa859GivQmIz3yxImwJrzq02z1cpt6rDgVeJmMVwlR2U3cl7D9DhgLJPtGo2f5GLDIuVIA+12+NU+ug4JBE/EkkpjkhuWxJjmeZn7diWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TXGHVV84; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96D7CC116B1;
-	Fri, 28 Jun 2024 16:04:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719590679;
-	bh=oTXfR2N6eN/rBWJlM/QQkHwnHvpBAkB6fBJKmFWgmyk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TXGHVV84R2UNCEu9g298LoeAx0ZyOEsBfQK44L0ec56H4f3VQwhojE+81Rnwy+TcM
-	 I5AjHgSndtYSBRNJQ6eVyUB8t3tCOT+iVlvVxoszKdjMcfTVVoCQQFdT/0CmcFaJBC
-	 CsQcOvngcssNeMhHRU4M7ho7VYtt115QGJR6zUEyNKoc3I0CQBRMNcV/NU1rfbIYPd
-	 11LIlC34+YcAO7Lork3rWefTA4utV4aLhP7kgdVDzv6iIqONVJf994omfi67deCeSB
-	 RytUpxaEetfcST35QVs9DQNLFl8scGjVrE/JtYVNVspVUrhNn998yVet/oDyZUtPh8
-	 Ur9qQgERo7pQA==
-Date: Fri, 28 Jun 2024 10:04:36 -0600
-From: Rob Herring <robh@kernel.org>
-To: Ayush Singh <ayush@beagleboard.org>
-Cc: Mark Brown <broonie@kernel.org>,
-	Vaishnav M A <vaishnav@beagleboard.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>, Michael Walle <mwalle@kernel.org>,
-	Andrew Lunn <andrew@lunn.ch>, jkridner@beagleboard.org,
-	robertcnelson@beagleboard.org, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 2/7] dt-bindings: mikrobus: Add mikrobus board base
-Message-ID: <20240628160436.GA3143032-robh@kernel.org>
-References: <20240627-mikrobus-scratch-spi-v5-0-9e6c148bf5f0@beagleboard.org>
- <20240627-mikrobus-scratch-spi-v5-2-9e6c148bf5f0@beagleboard.org>
+	s=arc-20240116; t=1719590699; c=relaxed/simple;
+	bh=QLstFpjHxHGYOSl572DYPanLUWr4F8cpkP6emzx8uRM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:From:To:Subject:
+	 References:In-Reply-To; b=CM+MdLequIAFgTpYnJxRWChQWKKzaEJZ1lf5WOolCgI24m5Sey+wzzrBJ97AAnlIZ67ctlps34IH6KyAX1totgHZZ4aGlGN6YBVnfXVo6pnPHXFyNf0rbL6kYJxSZH76BiCuQTablEiG5oU02Ar3EsCcoJ5kWzFJlD9DrXU0L2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=walle.cc; arc=none smtp.client-ip=159.69.201.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
+Received: from localhost (unknown [IPv6:2a02:810b:4340:4ee9:4685:ff:fe12:5967])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.3ffe.de (Postfix) with ESMTPSA id B85AE542F;
+	Fri, 28 Jun 2024 18:04:53 +0200 (CEST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240627-mikrobus-scratch-spi-v5-2-9e6c148bf5f0@beagleboard.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 28 Jun 2024 18:04:52 +0200
+Message-Id: <D2BS0YMA48BG.1PEPFC3KMFV8N@kernel.org>
+Cc: <linux-mtd@lists.infradead.org>, "Tudor Ambarus"
+ <tudor.ambarus@linaro.org>, "Pratyush Yadav" <pratyush@kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Miquel Raynal"
+ <miquel.raynal@bootlin.com>, "Richard Weinberger" <richard@nod.at>,
+ "Vignesh Raghavendra" <vigneshr@ti.com>, <devicetree@vger.kernel.org>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Erez Geva" <ErezGeva2@gmail.com>
+From: "Michael Walle" <mwalle@kernel.org>
+To: "Conor Dooley" <conor@kernel.org>, "Erez Geva" <erezgeva@nwtime.org>
+Subject: Re: [PATCH 3/4] dt-bindings: mtd: macronix,mx25l12833f: add SPI-NOR
+ chip
+X-Mailer: aerc 0.16.0
+References: <20240628140328.279792-1-erezgeva@nwtime.org>
+ <20240628140328.279792-4-erezgeva@nwtime.org>
+ <20240628-refuse-actress-b76985aa020c@spud>
+In-Reply-To: <20240628-refuse-actress-b76985aa020c@spud>
 
-On Thu, Jun 27, 2024 at 09:56:12PM +0530, Ayush Singh wrote:
-> Base dt bindings for mikrobus addon boards. Contains properties that are
-> part of all types of boards (SPI, I2C, etc).
-> 
-> Each pin in mikroBUS connector can either be used for it's original
-> purpose (UART, I2C, SPI, etc) or as a normal GPIO. Introducing
-> `pinctrl-apply` allows selecting the pin configuration by name.
+Hi,
 
-This seems pointless. If a board uses UART, then uart_default has to be 
-supported. Why does the board need to list it?
+On Fri Jun 28, 2024 at 5:57 PM CEST, Conor Dooley wrote:
+> On Fri, Jun 28, 2024 at 04:03:27PM +0200, Erez Geva wrote:
+> > From: Erez Geva <ErezGeva2@gmail.com>
+> >=20
+> > Add Macronix SPI-NOR mx25l12833f.
+> >=20
+> > Signed-off-by: Erez Geva <ErezGeva2@gmail.com>
+>
+> Should the email in here and in the From: field be your nwtime one?
+> Otherwise
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-> 
-> Note: Some mikrobus-connectors might not support all valid pinctrl.
-> 
-> Signed-off-by: Ayush Singh <ayush@beagleboard.org>
-> ---
->  .../devicetree/bindings/mikrobus/mikrobus-board.yaml | 20 ++++++++++++++++++++
->  MAINTAINERS                                          |  1 +
->  2 files changed, 21 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mikrobus/mikrobus-board.yaml b/Documentation/devicetree/bindings/mikrobus/mikrobus-board.yaml
-> new file mode 100644
-> index 000000000000..42e2219c596f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mikrobus/mikrobus-board.yaml
-> @@ -0,0 +1,20 @@
-> +# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mikrobus/mikrobus-board.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: mikroBUS add-on board properties
-> +
-> +maintainers:
-> +  - Ayush Singh <ayush@beagleboard.org>
-> +
-> +properties:
-> +  pinctrl-apply:
+Actually, you're not supposed to add any compatibles to this list.
 
-Missing a description.
+From the binding:
+    description:
+      SPI NOR flashes compatible with the JEDEC SFDP standard or which may =
+be
+      identified with the READ ID opcode (0x9F) do not deserve a specific
+      compatible. They should instead only be matched against the generic
+      "jedec,spi-nor" compatible.
 
-> +    minItems: 1
-> +    maxItems: 9
-> +    items:
-> +      enum: [default, pwm_default, pwm_gpio, uart_default, uart_gpio, i2c_default, i2c_gpio, spi_default,
-> +             spi_gpio]
-> +
-> +additionalProperties: false
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8e4115e93aeb..14eba18832d5 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -15113,6 +15113,7 @@ M:	Ayush Singh <ayush@beagleboard.org>
->  M:	Vaishnav M A <vaishnav@beagleboard.org>
->  S:	Maintained
->  F:	Documentation/devicetree/bindings/connector/mikrobus-connector.yaml
-> +F:	Documentation/devicetree/bindings/mikrobus/mikrobus-board.yaml
->  
->  MIKROTIK CRS3XX 98DX3236 BOARD SUPPORT
->  M:	Luka Kovacic <luka.kovacic@sartura.hr>
-> 
-> -- 
-> 2.45.2
-> 
+I presume the Macronix flash does support the read id opcode.
+
+-michael
 
