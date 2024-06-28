@@ -1,117 +1,152 @@
-Return-Path: <linux-kernel+bounces-233909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4B1A91BF21
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:04:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE4FB91BF30
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:06:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71AD9283D0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 13:04:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59262B20E64
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 13:06:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 935F91A0729;
-	Fri, 28 Jun 2024 13:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="E/lymA+W"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E8021AC228;
+	Fri, 28 Jun 2024 13:06:40 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483E9155C88
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 13:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 441C3153810;
+	Fri, 28 Jun 2024 13:06:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719579831; cv=none; b=U+CLLbSvCSlUbyPprFqnMbqnu3VBSPUUqU4cz8RFME74yRaW+AKJj03xNrcXrxZyNWOFaYAh9QU+sUc/nemYDuAlglM22Ca0RiqQhmVdsE4ygaLgo8KcsluEF3tusFukFK8TFobKIKL+WuzybkAJ5Aua8FnyjrNc6jQ7/zHa7nc=
+	t=1719579999; cv=none; b=tg8/lIwgEFrp8J6nOd7bvjRTNqlcewNe9XQWYFSrrBFprNuM4KfEeI2h5eU9KzfflnzqgvawW/RdxrrtAL+UBk62iiv2y/MNdng2leqhNus0ogo5CN444H/oYx/ePi/zui7aPNIOH317HoTJvBXz109e2AxVSSIOVnsqiM/WnPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719579831; c=relaxed/simple;
-	bh=381UpprK3Cw6DXQPEEV4snzq2B29zfrL9hV4ZFRciPI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ULyjLsR2UGJNFNJy329l06hbBVUStbOH7zTXfZKTwHKZJXXcMivgf52LL+aI7SmTmb5QIhj3KSJ5dibUyFawYPkDZqGwOuEpPy//UrR0Hi1mINvTCcqM+2HMKrceIaLTOjvCEtegRXTKk13kOfIiHhMPGqb0ARg9POVoXWhNkTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=E/lymA+W; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45SCbYxa016452;
-	Fri, 28 Jun 2024 13:03:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:message-id:mime-version:subject:to; s=
-	qcppdkim1; bh=4sAp7CQtI0iKWkcWAcm/fuMALu2i1rb//EdBPUlH00E=; b=E/
-	lymA+WVQv4NXM/rXQhp9v3Gd3jw4Ti9Gd1iyod3wE4yY5xwRsaxr5Gf+yv0qxesP
-	6bkUz3TmAyqIknHZjufA1XpohiqqZw0VhBfKCF0LLtXIVYbPWcRQaSRl+nah7NRo
-	AygE9Pi0/OCVX1NEIRfrrHzjev0rfrgEUsZaE7mNU47u+/Vpgc4DnzkVWoUD12Ol
-	tlBqEMcjkDCMf+nnMujwmaXQh6yA1bLw852J+7Ap9iYuN3TTG5GMjFCCIOHlm7x+
-	WhgRI1GiYVg7nxuVJ+uwqaYjgM5ScBZeSaqLX3oK5NEPJxqFnT9KK9wGgN0pYSwx
-	xj+uvxEnxvcYAB/yN7bA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 401pm5sb68-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Jun 2024 13:03:46 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45SD3jQA003874
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Jun 2024 13:03:45 GMT
-Received: from zijuhu-gv.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 28 Jun 2024 06:03:44 -0700
-From: Zijun Hu <quic_zijuhu@quicinc.com>
-To: <gregkh@linuxfoundation.org>, <rafael@kernel.org>
-CC: <linux-kernel@vger.kernel.org>
-Subject: [PATCH] devres: Simplify devm_percpu_match() implementation
-Date: Fri, 28 Jun 2024 21:03:41 +0800
-Message-ID: <1719579821-11178-1-git-send-email-quic_zijuhu@quicinc.com>
-X-Mailer: git-send-email 2.7.4
+	s=arc-20240116; t=1719579999; c=relaxed/simple;
+	bh=wQCInJ35AszCmCScjJW40EMhXqw/XPAuyr6O08xil0Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D34iFjBnVpgpUHTMyr1PH/MlmNrKMD6Il9Kwd1CmPMu/R16ZNFZ/fBKwibsD452MDXdEx98525rQmIh44MnxFBpLPU+HHvSm7x4jfD2o/q05iFTuiS+PthM13Stkyi7ewNBluuiUQ03sdCvOxLm31wT2cBTXoZa2OuImGQDMscA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Date: Fri, 28 Jun 2024 15:06:32 +0200
+From: Guilherme Amadio <amadio@gentoo.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH 1/2] perf build: conditionally add feature check flags
+ for libtrace{event,fs}
+Message-ID: <Zn61WOXCq0MRQovH@gentoo.org>
+References: <20240627150606.2224888-1-amadio@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: lsDENO2OsYsUwB0miPp4pCIQ6WFeD69Y
-X-Proofpoint-GUID: lsDENO2OsYsUwB0miPp4pCIQ6WFeD69Y
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-28_08,2024-06-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
- lowpriorityscore=0 phishscore=0 suspectscore=0 adultscore=0 mlxscore=0
- bulkscore=0 priorityscore=1501 spamscore=0 malwarescore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2406280097
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240627150606.2224888-1-amadio@gentoo.org>
 
-From: Zijun Hu <zijuhu@qti.qualcomm.com>
+Hi Arnaldo,
 
-Simplify devm_percpu_match() implementation by removing redundant
-conversions.
+On Thu, Jun 27, 2024 at 05:06:05PM +0200, Guilherme Amadio wrote:
+> This avoids reported warnings when the packages are not installed.
+> 
+> Fixes: 0f0e1f44569061e3dc590cd0b8cb74d8fd53706b
+> Signed-off-by: Guilherme Amadio <amadio@gentoo.org>
+> ---
+>  tools/perf/Makefile.config | 19 +++++++++++--------
+>  1 file changed, 11 insertions(+), 8 deletions(-)
+> 
+> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+> index 81f73f68d256..987b48f242d3 100644
+> --- a/tools/perf/Makefile.config
+> +++ b/tools/perf/Makefile.config
+> @@ -182,14 +182,6 @@ endif
+>  FEATURE_CHECK_CFLAGS-libzstd := $(LIBZSTD_CFLAGS)
+>  FEATURE_CHECK_LDFLAGS-libzstd := $(LIBZSTD_LDFLAGS)
+>  
+> -# for linking with debug library, run like:
+> -# make DEBUG=1 PKG_CONFIG_PATH=/opt/libtraceevent/(lib|lib64)/pkgconfig
+> -FEATURE_CHECK_CFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --cflags libtraceevent)
+> -FEATURE_CHECK_LDFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --libs libtraceevent)
+> -
+> -FEATURE_CHECK_CFLAGS-libtracefs := $(shell $(PKG_CONFIG) --cflags libtracefs)
+> -FEATURE_CHECK_LDFLAGS-libtracefs := $(shell $(PKG_CONFIG) --libs libtracefs)
+> -
+>  FEATURE_CHECK_CFLAGS-bpf = -I. -I$(srctree)/tools/include -I$(srctree)/tools/arch/$(SRCARCH)/include/uapi -I$(srctree)/tools/include/uapi
+>  # include ARCH specific config
+>  -include $(src-perf)/arch/$(SRCARCH)/Makefile
+> @@ -211,6 +203,17 @@ endif
+>  ifneq ($(NO_LIBTRACEEVENT),1)
+>    ifeq ($(call get-executable,$(PKG_CONFIG)),)
+>    dummy := $(error Error: $(PKG_CONFIG) needed by libtraceevent is missing on this system, please install it)
+> +  else
+> +    ifeq ($(shell $(PKG_CONFIG) --exists libtraceevent),0)
 
-Signed-off-by: Zijun Hu <zijuhu@qti.qualcomm.com>
----
-Previous discussion link:
-https://lore.kernel.org/lkml/1719496036-24642-1-git-send-email-quic_zijuhu@quicinc.com/
+There is a problem here which I noticed while working on the fix for
+the problem reported by Thorsten (in tools/verification/rv). We need
 
- drivers/base/devres.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+-    ifeq ($(shell $(PKG_CONFIG) --exists libtraceevent),0)
++    ifeq ($(shell $(PKG_CONFIG) --exists libtraceevent 2>&1 1>/dev/null; echo $$?),0)
 
-diff --git a/drivers/base/devres.c b/drivers/base/devres.c
-index 3beedeaa0ffc..050d7fcd0634 100644
---- a/drivers/base/devres.c
-+++ b/drivers/base/devres.c
-@@ -1173,9 +1173,8 @@ static void devm_percpu_release(struct device *dev, void *pdata)
- 
- static int devm_percpu_match(struct device *dev, void *data, void *p)
- {
--	struct devres *devr = container_of(data, struct devres, data);
--
--	return *(void **)devr->data == p;
-+	/* @data is already and must be (void *)devr->data */
-+	return *(void **)data == p;
- }
- 
- /**
--- 
-2.7.4
+to produce a 0 in the output, otherwise it doesn't work. I will send a v2 fixing this.
 
+For the feature checks that depend on using FEATURE_CHECK_* like the ones below,
+it looks like the best would be to find a good common place to do it instead of
+redeclaring these required flags on various subdirectories. I thought about
+doing that in tools/build/Makefile.feature, but since these flags depend on
+using $(PKG_CONFIG), and that is also set in various places, I thought I'd ask
+first before going ahead. The idea I have is to gather somewhere the packages
+that are used via their .pc files, and set the appropriate FEATURE_CHECK_* flags
+such that all subdirectories could get them automatically. That may require setting 
+PKG_CONFIG in a common place as well, and then dropping it from places such as
+tools/perf/Makefile.perf. Maybe something like this is Makefile.feature:
+
+PKG_CONFIG = $(CROSS_COMPILE)pkg-config
+
+ifneq ($(call get-executable,$(PKG_CONFIG)),)
+    # libtraceevent
+    ifeq ($(shell $(PKG_CONFIG) --exists libtraceevent 2>&1 1>/dev/null; echo $$?),0)
+      FEATURE_CHECK_CFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --cflags libtraceevent 2>/dev/null)
+      FEATURE_CHECK_LDFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --libs libtraceevent 2>/dev/null)
+    endif
+
+    # libtracefs
+    ifeq ($(shell $(PKG_CONFIG) --exists libtracefs 2>&1 1>/dev/null; echo $$?),0)
+      FEATURE_CHECK_CFLAGS-libtracefs := $(shell $(PKG_CONFIG) --cflags libtracefs)
+      FEATURE_CHECK_LDFLAGS-libtracefs := $(shell $(PKG_CONFIG) --libs libtracefs)
+    endif
+
+    # ... other packages
+endif
+
+and this shows that we could also define a function for this, and call it for
+each package, which would simplify things a bit more. These are the Makefiles
+that need to be adjusted:
+
+tools/perf/Makefile.config
+tools/tracing/latency/Makefile.config
+tools/tracing/rtla/Makefile.config
+tools/verification/rv/Makefile.config
+
+Best regards,
+-Guilherme
+
+> +      # for linking with debug library, run like:
+> +      # make DEBUG=1 PKG_CONFIG_PATH=/opt/libtraceevent/(lib|lib64)/pkgconfig
+> +      FEATURE_CHECK_CFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --cflags libtraceevent)
+> +      FEATURE_CHECK_LDFLAGS-libtraceevent := $(shell $(PKG_CONFIG) --libs libtraceevent)
+> +    endif
+> +    ifeq ($(shell $(PKG_CONFIG) --exists libtracefs),0)
+> +      FEATURE_CHECK_CFLAGS-libtracefs := $(shell $(PKG_CONFIG) --cflags libtracefs)
+> +      FEATURE_CHECK_LDFLAGS-libtracefs := $(shell $(PKG_CONFIG) --libs libtracefs)
+> +    endif
+>    endif
+>  endif
+>  
+> -- 
+> 2.45.2
+> 
 
