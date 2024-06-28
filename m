@@ -1,180 +1,126 @@
-Return-Path: <linux-kernel+bounces-233388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94B7191B660
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:44:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A844E91B5AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 06:18:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F0981F24B7F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 05:44:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 332B5B21C23
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 04:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D05A779945;
-	Fri, 28 Jun 2024 05:41:16 +0000 (UTC)
-Received: from smtp.priv.miraclelinux.com (202x210x215x66.ap202.ftth.ucom.ne.jp [202.210.215.66])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED0A1219EA;
+	Fri, 28 Jun 2024 04:18:37 +0000 (UTC)
+Received: from mail.valinux.co.jp (mail.valinux.co.jp [210.128.90.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2FC5381A;
-	Fri, 28 Jun 2024 05:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.210.215.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E533F1CAA2;
+	Fri, 28 Jun 2024 04:18:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.128.90.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719553276; cv=none; b=FzcJpfPUtS3FM5DBZZqwBpvxe/himiQj41/pw6pcvyOT/E50RmfHyZxo16SWawc9KyyqsF+u2r4xlX9VaBkzvLCtZBWeRhj0o0r8aGRr2DbWYvbCJQSwvo/Yk3fYT7FsNPAN2z1poUeif5+ykmvrKqc0KvK9t5a0EVhf5kNySBc=
+	t=1719548317; cv=none; b=ld9g1Gtuo2ziCTzowYrwQ8tDstyV8g3VB0H+rhliRuJIdsn+tPT6ClTRQYG0/e08V2KXMdv2YmOfbV9Dxwl5DSescas59rc2537+SnYE/V4RuWlW21gFK2SPQnOu138rqcjYRjDBGmcexknfCKb3U/YSWo6arCKXn3ftdCedhSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719553276; c=relaxed/simple;
-	bh=nE/ahYicu+soLj105oY080IJ/4x7ZIh8LDeXBhJqLrE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=mDyXJtHWvh0GVX/R/DPS9R3uyvcgaHHAGW4FvjQN6Y1GUq/rSZrW2jF5N9FZZmPdZz+nVjA/dxQ53+KEvesfIELXPstE+4gnOpk6cyw8K5ZZXvT/Bjc3LyDGShJvtFiEyA2m7gsJ0r7xOPazwsQcw6zE50vFcuSTULe6jwGHODw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=miraclelinux.com; spf=pass smtp.mailfrom=miraclelinux.com; arc=none smtp.client-ip=202.210.215.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=miraclelinux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=miraclelinux.com
-Received: from cip-lava-a.miraclelinux.com (cip-lava-a.miraclelinux.com [10.2.1.116])
-	by smtp.priv.miraclelinux.com (Postfix) with ESMTP id 42DA61400F0;
-	Fri, 28 Jun 2024 14:41:13 +0900 (JST)
-From: Kazunori Kobayashi <kazunori.kobayashi@miraclelinux.com>
-To: netdev@vger.kernel.org
-Cc: stable@vger.kernel.org,
+	s=arc-20240116; t=1719548317; c=relaxed/simple;
+	bh=50jqPzDkQUKz1c/SNwg9W6ZkdpOJ1yleTDACudrtGuU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VHak9V9qNZ8S2VOZjvx0bjNctWdvjhiQdHX4WDPgNlqij9metzBXZ83BJ0ymB+XECIioQDNBXTlDL+RiTSZkRO6IsIVEYmtK2nAWr1jsvZqakVIqDBsgvflkBkoAk6qrQPuB4H/93JXefAuiwfCOC+zZ4JjrshmA6H6HpKfJjRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp; spf=pass smtp.mailfrom=valinux.co.jp; arc=none smtp.client-ip=210.128.90.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
+Received: from localhost (localhost [127.0.0.1])
+	by mail.valinux.co.jp (Postfix) with ESMTP id DEB54A9CFE;
+	Fri, 28 Jun 2024 13:18:29 +0900 (JST)
+X-Virus-Scanned: Debian amavisd-new at valinux.co.jp
+Received: from mail.valinux.co.jp ([127.0.0.1])
+	by localhost (mail.valinux.co.jp [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id WCCd8UzDQ9nd; Fri, 28 Jun 2024 13:18:29 +0900 (JST)
+Received: from DESKTOP-NBGHJ1C.local.valinux.co.jp (vagw.valinux.co.jp [210.128.90.14])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mail.valinux.co.jp (Postfix) with ESMTPSA id A7B3FA9CF4;
+	Fri, 28 Jun 2024 13:18:29 +0900 (JST)
+From: takakura@valinux.co.jp
+To: paulmck@kernel.org,
+	frederic@kernel.org,
+	neeraj.upadhyay@kernel.org,
+	joel@joelfernandes.org,
+	josh@joshtriplett.org,
+	boqun.feng@gmail.com,
+	rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com,
+	jiangshanlai@gmail.com,
+	qiang.zhang1211@gmail.com,
+	mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	bsegall@google.com,
+	mgorman@suse.de,
+	bristot@redhat.com,
+	vschneid@redhat.com
+Cc: rcu@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	hiraku.toyooka@miraclelinux.com,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Kazunori Kobayashi <kazunori.kobayashi@miraclelinux.com>
-Subject: [PATCH 4.19 3/3] tcp: Fix data races around icsk->icsk_af_ops.
-Date: Mon, 17 Apr 2023 16:54:28 +0000
-Message-Id: <20230417165428.26284-4-kazunori.kobayashi@miraclelinux.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20230417165428.26284-1-kazunori.kobayashi@miraclelinux.com>
-References: <20230417165428.26284-1-kazunori.kobayashi@miraclelinux.com>
+	Ryo Takakura <takakura@valinux.co.jp>
+Subject: [PATCH] rcu: Let rcu_dump_task() be used without preemption disabled
+Date: Fri, 28 Jun 2024 13:18:26 +0900
+Message-Id: <20240628041826.68587-1-takakura@valinux.co.jp>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
+From: Ryo Takakura <takakura@valinux.co.jp>
 
-commit f49cd2f4d6170d27a2c61f1fecb03d8a70c91f57 upstream.
+The commit 2d7f00b2f0130 ("rcu: Suppress smp_processor_id() complaint
+in synchronize_rcu_expedited_wait()") disabled preemption around
+dump_cpu_task() to suppress warning on its usage within preemtible context.
 
-setsockopt(IPV6_ADDRFORM) and tcp_v6_connect() change icsk->icsk_af_ops
-under lock_sock(), but tcp_(get|set)sockopt() read it locklessly.  To
-avoid load/store tearing, we need to add READ_ONCE() and WRITE_ONCE()
-for the reads and writes.
+Calling dump_cpu_task() doesn't required to be in non-preemptible context
+except for suppressing the smp_processor_id() warning.
+As the smp_processor_id() is evaluated along with in_hardirq()
+to check if it's in interrupt context, this patch removes the need
+for its preemtion disablement by reordering the condition so that
+smp_processor_id() only gets evaluated when it's in interrupt context.
 
-Thanks to Eric Dumazet for providing the syzbot report:
-
-BUG: KCSAN: data-race in tcp_setsockopt / tcp_v6_connect
-
-write to 0xffff88813c624518 of 8 bytes by task 23936 on cpu 0:
-tcp_v6_connect+0x5b3/0xce0 net/ipv6/tcp_ipv6.c:240
-__inet_stream_connect+0x159/0x6d0 net/ipv4/af_inet.c:660
-inet_stream_connect+0x44/0x70 net/ipv4/af_inet.c:724
-__sys_connect_file net/socket.c:1976 [inline]
-__sys_connect+0x197/0x1b0 net/socket.c:1993
-__do_sys_connect net/socket.c:2003 [inline]
-__se_sys_connect net/socket.c:2000 [inline]
-__x64_sys_connect+0x3d/0x50 net/socket.c:2000
-do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-do_syscall_64+0x2b/0x70 arch/x86/entry/common.c:80
-entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-read to 0xffff88813c624518 of 8 bytes by task 23937 on cpu 1:
-tcp_setsockopt+0x147/0x1c80 net/ipv4/tcp.c:3789
-sock_common_setsockopt+0x5d/0x70 net/core/sock.c:3585
-__sys_setsockopt+0x212/0x2b0 net/socket.c:2252
-__do_sys_setsockopt net/socket.c:2263 [inline]
-__se_sys_setsockopt net/socket.c:2260 [inline]
-__x64_sys_setsockopt+0x62/0x70 net/socket.c:2260
-do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-do_syscall_64+0x2b/0x70 arch/x86/entry/common.c:80
-entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-value changed: 0xffffffff8539af68 -> 0xffffffff8539aff8
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 1 PID: 23937 Comm: syz-executor.5 Not tainted
-6.0.0-rc4-syzkaller-00331-g4ed9c1e971b1-dirty #0
-
-Hardware name: Google Google Compute Engine/Google Compute Engine,
-BIOS Google 08/26/2022
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Reported-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Kuniyuki Iwashima <kuniyu@amazon.com>
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Kazunori Kobayashi <kazunori.kobayashi@miraclelinux.com>
+Signed-off-by: Ryo Takakura <takakura@valinux.co.jp>
 ---
- net/ipv4/tcp.c           | 10 ++++++----
- net/ipv6/ipv6_sockglue.c |  3 ++-
- net/ipv6/tcp_ipv6.c      |  6 ++++--
- 3 files changed, 12 insertions(+), 7 deletions(-)
+ kernel/rcu/tree_exp.h | 2 --
+ kernel/sched/core.c   | 2 +-
+ 2 files changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-index e3475f833f8fe..c863be23ac4db 100644
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -3126,8 +3126,9 @@ int tcp_setsockopt(struct sock *sk, int level, int optname, char __user *optval,
- 	const struct inet_connection_sock *icsk = inet_csk(sk);
+diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+index 8a1d9c8bd9f7..80c461b26144 100644
+--- a/kernel/rcu/tree_exp.h
++++ b/kernel/rcu/tree_exp.h
+@@ -617,9 +617,7 @@ static void synchronize_rcu_expedited_wait(void)
+ 				mask = leaf_node_cpu_bit(rnp, cpu);
+ 				if (!(READ_ONCE(rnp->expmask) & mask))
+ 					continue;
+-				preempt_disable(); // For smp_processor_id() in dump_cpu_task().
+ 				dump_cpu_task(cpu);
+-				preempt_enable();
+ 			}
+ 			rcu_exp_print_detail_task_stall_rnp(rnp);
+ 		}
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index bcf2c4cc0522..38efbdafe3d4 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -11485,7 +11485,7 @@ struct cgroup_subsys cpu_cgrp_subsys = {
  
- 	if (level != SOL_TCP)
--		return icsk->icsk_af_ops->setsockopt(sk, level, optname,
--						     optval, optlen);
-+		/* Paired with WRITE_ONCE() in do_ipv6_setsockopt() and tcp_v6_connect() */
-+		return READ_ONCE(icsk->icsk_af_ops)->setsockopt(sk, level, optname,
-+								optval, optlen);
- 	return do_tcp_setsockopt(sk, level, optname, optval, optlen);
- }
- EXPORT_SYMBOL(tcp_setsockopt);
-@@ -3649,8 +3650,9 @@ int tcp_getsockopt(struct sock *sk, int level, int optname, char __user *optval,
- 	struct inet_connection_sock *icsk = inet_csk(sk);
+ void dump_cpu_task(int cpu)
+ {
+-	if (cpu == smp_processor_id() && in_hardirq()) {
++	if (in_hardirq() && cpu == smp_processor_id()) {
+ 		struct pt_regs *regs;
  
- 	if (level != SOL_TCP)
--		return icsk->icsk_af_ops->getsockopt(sk, level, optname,
--						     optval, optlen);
-+		/* Paired with WRITE_ONCE() in do_ipv6_setsockopt() and tcp_v6_connect() */
-+		return READ_ONCE(icsk->icsk_af_ops)->getsockopt(sk, level, optname,
-+								optval, optlen);
- 	return do_tcp_getsockopt(sk, level, optname, optval, optlen);
- }
- EXPORT_SYMBOL(tcp_getsockopt);
-diff --git a/net/ipv6/ipv6_sockglue.c b/net/ipv6/ipv6_sockglue.c
-index 625cece87c122..caa7b59c819ee 100644
---- a/net/ipv6/ipv6_sockglue.c
-+++ b/net/ipv6/ipv6_sockglue.c
-@@ -226,7 +226,8 @@ static int do_ipv6_setsockopt(struct sock *sk, int level, int optname,
- 				local_bh_enable();
- 				/* Paired with READ_ONCE(sk->sk_prot) in inet6_stream_ops */
- 				WRITE_ONCE(sk->sk_prot, &tcp_prot);
--				icsk->icsk_af_ops = &ipv4_specific;
-+				/* Paired with READ_ONCE() in tcp_(get|set)sockopt() */
-+				WRITE_ONCE(icsk->icsk_af_ops, &ipv4_specific);
- 				sk->sk_socket->ops = &inet_stream_ops;
- 				sk->sk_family = PF_INET;
- 				tcp_sync_mss(sk, icsk->icsk_pmtu_cookie);
-diff --git a/net/ipv6/tcp_ipv6.c b/net/ipv6/tcp_ipv6.c
-index 033cf81f34837..78eaaf59c15e2 100644
---- a/net/ipv6/tcp_ipv6.c
-+++ b/net/ipv6/tcp_ipv6.c
-@@ -229,7 +229,8 @@ static int tcp_v6_connect(struct sock *sk, struct sockaddr *uaddr,
- 		sin.sin_port = usin->sin6_port;
- 		sin.sin_addr.s_addr = usin->sin6_addr.s6_addr32[3];
- 
--		icsk->icsk_af_ops = &ipv6_mapped;
-+		/* Paired with READ_ONCE() in tcp_(get|set)sockopt() */
-+		WRITE_ONCE(icsk->icsk_af_ops, &ipv6_mapped);
- 		sk->sk_backlog_rcv = tcp_v4_do_rcv;
- #ifdef CONFIG_TCP_MD5SIG
- 		tp->af_specific = &tcp_sock_ipv6_mapped_specific;
-@@ -239,7 +240,8 @@ static int tcp_v6_connect(struct sock *sk, struct sockaddr *uaddr,
- 
- 		if (err) {
- 			icsk->icsk_ext_hdr_len = exthdrlen;
--			icsk->icsk_af_ops = &ipv6_specific;
-+			/* Paired with READ_ONCE() in tcp_(get|set)sockopt() */
-+			WRITE_ONCE(icsk->icsk_af_ops, &ipv6_specific);
- 			sk->sk_backlog_rcv = tcp_v6_do_rcv;
- #ifdef CONFIG_TCP_MD5SIG
- 			tp->af_specific = &tcp_sock_ipv6_specific;
+ 		regs = get_irq_regs();
 -- 
-2.39.2
+2.34.1
 
 
