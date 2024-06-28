@@ -1,152 +1,155 @@
-Return-Path: <linux-kernel+bounces-234333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6799C91C55E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:04:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DB0C91C560
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:05:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D5821F25079
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:04:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59F86B24012
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17D8E1CCCA8;
-	Fri, 28 Jun 2024 18:04:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A211CCCA8;
+	Fri, 28 Jun 2024 18:05:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UxtV2BLH"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="F5de3Ybp"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A681C68B3
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 18:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CD71B94F;
+	Fri, 28 Jun 2024 18:05:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719597875; cv=none; b=fYV765ioLhkexwj6l9M4x+xmCezedq1aM88T6lRUwz92+yN/mDUKX+fbK9GRvnVEPV8jVVuM/VN8qbE2m/BpOQey6jLg4yvWJjAvt1SKErqgj8bFgaoIAMXwpIpdEeHSxPDQQnderzH6Egf7HA7WVekIwfH36QIpm4vyQIn0ZMA=
+	t=1719597917; cv=none; b=Whnwlk3ZJwvvehtUOFMyqPBCXG51lweyk5UUiTC+zrqjGlEhXQxZSoftTPEOedStwRg5bzC1IwMUjZJQ0ECOOFFYhkEnJn7JbHnnNGO15DK+l5QaAt6tjjW9EFf96tkIE4yMgPlm3Wvye7G/Y6euqSqmxxe/rP7+8b3WFZQtkNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719597875; c=relaxed/simple;
-	bh=lyCr9Ts8yOItO/JjBC31u0Jzvm/bIEehcd6kdgpqGmc=;
+	s=arc-20240116; t=1719597917; c=relaxed/simple;
+	bh=mx/8AeXGv5la/SJKW47Hnq1sxQpaD4PV9moJu0IkY9w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R4lwo4aTkVdvZU094jRPve9Dr6KoXE/DdXaM7j+B2Cz9yRbIuU/YlcPnkLybVrje5pWOZFS4x3hW6h4eSJ+Vh70h83raPvPAnT6V97zJUSpKaCYXO9aXZDmOppQWj8JzAfw9Y2k2eBPw+AD4VfvWu7AGwS+wEhU0RDKrk2FyRss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UxtV2BLH; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fa2ea1c443so6888595ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 11:04:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719597872; x=1720202672; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=H+ruGPETppbEAZdscNhJIuUHT64dVUBzmWwyvnp1b7w=;
-        b=UxtV2BLHFb/9O6h1o9CA/8Vv/NfuTKXWDh+9SQmahY1MQRibbV/n8o7tyuekSdB8Yz
-         +CQdjON5kqe5Mkm8VTGxyVZD8S5UxHY7sUhTyIOdIqdFnTTudhdtdnUg+rVrtCFrgD7y
-         k5aebTuSyjLxXlvkJG9WXvzV3y9JvaAuWLbbiDSLYZAHpkscKn1dBZEUKmEvtpkRDMes
-         zu9lNwLVWQwDnc/JPqffCG+gcjBBVZn65whi871j6a3ERZKwJ4nD0Jl6e5shWXKoLW7+
-         M3ePNQ81SAILM/gZl+QczNAaPX+cg951HID+30E3uQwxJWY0Yl1Xv7sM6Qgxingt5d00
-         U+nQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719597872; x=1720202672;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H+ruGPETppbEAZdscNhJIuUHT64dVUBzmWwyvnp1b7w=;
-        b=bCwFvZxEDv90E9u+dSsF1wAQNvEcQoIr1vsFb99IS0thY2ZvS8y4QnIMOOyh1rk+A5
-         vN+QMyrSS1wxw7YDwLyEin9Vgm7Y2LrhAtQ9TrrR8Q7uKXM6jlzD/RVGJz3lSsrvQa+Z
-         tWfCzdqE3Ru54xf61EikPGoQhXGmxK1e2GYOfsO1mPzOeCqGHYO+WHVYfJHQs35qjb/u
-         IvXZl4DE8OERcGaeYE4j/QaSKObhkvTikP7GQqTUJFD7mvxyRu3hhKWfj4f88p/rRtfA
-         PLH8R6RDxzweCBahHcHOgYcVYfsc5NqktoLfpjAwgS57kREJKW19qgmNAecZRyFFZV/l
-         2eBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUwrGrBaFqlBjuDWJrb1ACBdg6PlloDOzbzyha+FKS4E+BCx63xXcuTcLALRtWfhwuZWTUj5pYZJaph1dvBNdJAD/8i2r+ePluzuQ4X
-X-Gm-Message-State: AOJu0YykyMG2o2jWYJtiq7/lDZyhyozQxCqmUZIdedVgChO6Cj5XzLSQ
-	D1h0qxOZZ5zI6b5xXRZcC+XWT4tHrsB2etTicjxxTiG7UkavlY6T4C83FEVdfKL0WaRZGENEk0O
-	C
-X-Google-Smtp-Source: AGHT+IGCvLrXWzySAlrNqbCAvh3eBYrqwRFPdz21iCBkv/nqIVi2SUvaRkJ9vc+Fe8iroSuxGmGXCw==
-X-Received: by 2002:a17:902:ce81:b0:1f7:2bed:226 with SMTP id d9443c01a7336-1fa23ecee77mr197498935ad.36.1719597871540;
-        Fri, 28 Jun 2024 11:04:31 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:e53e:a53d:f473:181e])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac11d8695sm18341165ad.109.2024.06.28.11.04.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 11:04:30 -0700 (PDT)
-Date: Fri, 28 Jun 2024 12:04:27 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: =?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, kernel@collabora.com,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] remoteproc: mediatek: Don't attempt to remap l1tcm
- memory if missing
-Message-ID: <Zn77K/nny10G4sXN@p14s>
-References: <20240627-scp-invalid-resource-l1tcm-v1-1-7d221e6c495a@collabora.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bOF+QuKIWHYUk8QVd8LZeLMtBBdvZfqwXLyMD70SOhgxOPzmzYg2PT2ER2tLWmoipc8Bg/Kts3n94ojGYNIgv0vXXhyiMuP0QojYSSxB/a2ZL2TCOliwhoR6AemxJvajt0anptq7YSC8W1DZZbh/YbS4im8zPnVfLpyNfE1ZYBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=F5de3Ybp; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=dSrkPPHv57iagKOJvURV1RqHc0rOI3RdmSfKvjD0uAk=; b=F5de3YbpRIjcEh2iBGH8wgpDfZ
+	9mJQ+NFg4OmtDICFKWKVp9789hpyMVAulmI7ZeXi5WjABsnCTs1kdIh/wyUtgaFv2uO/uLYPyWqL6
+	+qgFJU8q9ahyVE3H46jvDykISEduUuCXRXhSBl0ZofhENpyKTTcbN3VRX+SgXAPdNnobWp1+J5Ja9
+	Dnv6I2Fzg2J7qGubn2gERdzsSilfhWwe41YyXrbEMYjNrXuQQLcVyv1e3pUHkVvq5ANoN/Y5lZyl9
+	8ea/RsWZXZKIF95au3hDMh5hADW+vGUSFO1oCpCnzfsTtwUBN0odqN3Lkkruc9+7A/yzlJWzJwgb0
+	20s6/0uQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sNFxj-000000094Vb-431B;
+	Fri, 28 Jun 2024 18:04:44 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 28A44300400; Fri, 28 Jun 2024 20:04:41 +0200 (CEST)
+Date: Fri, 28 Jun 2024 20:04:41 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Gatlin Newhouse <gatlin.newhouse@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Marco Elver <elver@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Mike Rapoport (IBM)" <rppt@kernel.org>,
+	Baoquan He <bhe@redhat.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Changbin Du <changbin.du@huawei.com>,
+	Pengfei Xu <pengfei.xu@intel.com>, Xin Li <xin3.li@intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Uros Bizjak <ubizjak@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
+	linux-hardening@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v3] x86/traps: Enable UBSAN traps on x86
+Message-ID: <20240628180441.GJ31592@noisy.programming.kicks-ass.net>
+References: <20240625032509.4155839-1-gatlin.newhouse@gmail.com>
+ <20240625093719.GW31592@noisy.programming.kicks-ass.net>
+ <202406261205.E2435C68@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240627-scp-invalid-resource-l1tcm-v1-1-7d221e6c495a@collabora.com>
+In-Reply-To: <202406261205.E2435C68@keescook>
 
-On Thu, Jun 27, 2024 at 05:20:55PM -0400, Nícolas F. R. A. Prado wrote:
-> The current code doesn't check whether platform_get_resource_byname()
-> succeeded to get the l1tcm memory, which is optional, before attempting
-> to map it. This results in the following error message when it is
-> missing:
-> 
->   mtk-scp 10500000.scp: error -EINVAL: invalid resource (null)
-> 
-> Add a check so that the remapping is only attempted if the memory region
-> exists. This also allows to simplify the logic handling failure to
-> remap, since a failure then is always a failure.
-> 
-> Fixes: ca23ecfdbd44 ("remoteproc/mediatek: support L1TCM")
-> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> ---
->  drivers/remoteproc/mtk_scp.c | 12 +++++-------
->  1 file changed, 5 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
-> index b885a9a041e4..b17757900cd7 100644
-> --- a/drivers/remoteproc/mtk_scp.c
-> +++ b/drivers/remoteproc/mtk_scp.c
-> @@ -1344,14 +1344,12 @@ static int scp_probe(struct platform_device *pdev)
->  
->  	/* l1tcm is an optional memory region */
->  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "l1tcm");
-> -	scp_cluster->l1tcm_base = devm_ioremap_resource(dev, res);
-> -	if (IS_ERR(scp_cluster->l1tcm_base)) {
-> -		ret = PTR_ERR(scp_cluster->l1tcm_base);
-> -		if (ret != -EINVAL)
-> -			return dev_err_probe(dev, ret, "Failed to map l1tcm memory\n");
-> +	if (res) {
-> +		scp_cluster->l1tcm_base = devm_ioremap_resource(dev, res);
-> +		if (IS_ERR(scp_cluster->l1tcm_base))
-> +			return dev_err_probe(dev, PTR_ERR(scp_cluster->l1tcm_base),
-> +					     "Failed to map l1tcm memory\n");
->  
-> -		scp_cluster->l1tcm_base = NULL;
-> -	} else {
+On Wed, Jun 26, 2024 at 12:07:52PM -0700, Kees Cook wrote:
+> On Tue, Jun 25, 2024 at 11:37:19AM +0200, Peter Zijlstra wrote:
+> > Also, wouldn't it be saner to write this something like:
+> > 
+> > __always_inline int decode_bug(unsigned long addr, u32 *imm)
+> > {
+> > 	u8 v;
+> > 
+> > 	if (addr < TASK_SIZE)
+> > 		return BUG_NONE;
+> > 
+> > 	v = *(u8 *)(addr++);
+> > 	if (v == 0x67)
+> > 		v = *(u8 *)(addr++);
+> > 	if (v != 0x0f)
+> > 		return BUG_NONE;
+> > 	v = *(u8 *)(addr++);
+> > 	if (v == 0x0b)
+> > 		return BUG_UD2;
+> > 	if (v != 0xb9)
+> > 		return BUG_NONE;
+> > 
 
-Much better - I have applied this patch.
+Looks like I lost:
 
-Regards,
-Mathieu
+	v = *(u8 *)(addr++);
+> > 	if (X86_MODRM_RM(v) == 4)
+> > 		addr++; /* consume SiB */
+> > 
+> > 	*imm = 0;
+> > 	if (X86_MODRM_MOD(v) == 1)
+> > 		*imm = *(u8 *)addr;
+> > 	if (X86_MORRM_MOD(v) == 2)
+> > 		*imm = *(u32 *)addr;
+> > 
+> > 	// WARN on MOD(v)==3 ??
+> > 
+> > 	return BUG_UD1;
+> > }
+> 
+> Thanks for the example! (I think it should use macros instead of
+> open-coded "0x67", "0x0f", etc, but yeah.)
 
->  		scp_cluster->l1tcm_size = resource_size(res);
->  		scp_cluster->l1tcm_phys = res->start;
->  	}
+Yeah, I didn't feel like hunting down pre-existing defines for all of
+them, but yeah.
+
+> > Why does the thing emit the asop prefix at all through? afaict it
+> > doesn't affect the immediate you want to get at. And if it does this
+> > prefix, should we worry about other prefixes? Ideally we'd not accept
+> > any prefixes.
 > 
-> ---
-> base-commit: 0fc4bfab2cd45f9acb86c4f04b5191e114e901ed
-> change-id: 20240627-scp-invalid-resource-l1tcm-9f7cf45c17e6
-> 
-> Best regards,
-> -- 
-> Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> 
+> AFAICT it's because it's a small immediate? For an x86_64 build, this is
+> how Clang is generating the UD1.
+
+So the disp8 immediate comes from MOD==1, MOD==2 has a disp32. What the
+prefix does is change the size of the memory being referenced from 32bit
+to 16bit iirc, but since UD does not actually perform the load, this is
+entirely superfluous afaict.
+
+It might be good to figure out *why* clang thinks it needs this.
+
+A REX prefix is far more likely to be useful (upper 8 destination
+register for instance).
+
+Anyway, it seems to basically boil down to needing a fairly complete
+instruction decoder without being able the use the normal one :/
 
