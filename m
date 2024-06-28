@@ -1,170 +1,106 @@
-Return-Path: <linux-kernel+bounces-233757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C4D991BCA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:31:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70C0F91BCAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:31:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D0651F24514
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:31:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A16B81C22D71
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:31:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D225415358F;
-	Fri, 28 Jun 2024 10:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7118C154BEA;
+	Fri, 28 Jun 2024 10:31:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZUxtLCh+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="abAHHkQW"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C22D249F9;
-	Fri, 28 Jun 2024 10:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3986249F9
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 10:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719570646; cv=none; b=rXJaM73rbvt4tgDylVVvJ7VafZU91oiai9C4vMOiCIXM0lT6t2KBX+zwXRHHEqYgVgIXWAroO2HXYCVVatXsGqM9fUEODU4OZvoPWUAzvzjhSyfEQ6LwS4b4wzOZJRS05tabJdOGVfw20SfFen6xRK+sFNBsMbp5ZA3oBT5Vcm4=
+	t=1719570707; cv=none; b=HodjUd/ogaCsvx5kbXvfzAVorYox3ghCcMACMqeolA6FyjBiMOohx4YVxF3p3AmLTvwjA6zxnSmFEDONaCcw15OoJmALexzhhSZ1Xo/zhEU0lYX02hZk3KddwiKIAba/DOzKlv58EwgYSe46duO4yK8y3D6rldoMRQwtctqCgds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719570646; c=relaxed/simple;
-	bh=7s5ogNzyt8BizN/SoVLnkRF+hEWXvPTRujMkUyZErLY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DkQPGnAipKufoiA6Thd5B03pNMQWbW4U9sWhSkOQEC8QaQcOcK7ewnKxeMxcrVm3B6Dh7LR8nXwar09MAdXvLd/SGDfBaRa9R/cR/y6VTpXmKNiMBa0VclKW1RRHlX3LOP2cnqSSt35glg8d9pg4ElFzBQ59zFX/eKSYU+x5SLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZUxtLCh+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6BD0C116B1;
-	Fri, 28 Jun 2024 10:30:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719570645;
-	bh=7s5ogNzyt8BizN/SoVLnkRF+hEWXvPTRujMkUyZErLY=;
-	h=From:Date:Subject:To:Cc:From;
-	b=ZUxtLCh+gISZAFfU51+R9ukNxdOpfXfdMATsOR0bnFGwYxMe6UJbh/5XxEJu8IL3J
-	 J0q7xUcOQjz4sfcb/y2vLYPFx0rHXfUO4mL3p9xYmaP1OU7AIuJCs+IE4Um8Swbluc
-	 Dq36N+cfPOsMZHAGv3QU/sUFXfkqbySgggleXJYCgNn3Be85HUPWOLcE3Sv7h6tRYT
-	 /HNG3vq4Q0jUZlMzdB7ydkYb5QcNhCDk3PX1yeophQ9lFmSrZK4ydbA2etTvMdlmDt
-	 RL7ONioUrUbMivKrSqiBs8FdZY/1FnFRDKKY4SY3mEor/yT4bl1lTdn3vzA7yWkJlW
-	 r55wM+GDKgFUQ==
-From: Roger Quadros <rogerq@kernel.org>
-Date: Fri, 28 Jun 2024 13:30:38 +0300
-Subject: [PATCH v2] arm: dts: k3-am642-evm-nand: Add bootph-all to NAND
- related nodes
+	s=arc-20240116; t=1719570707; c=relaxed/simple;
+	bh=a10DvpjokSQmV/13YO4/Ifj2hINzXNJEhs00p0QdhRE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FRZhLbvVGUKEYlw8dikGDSxnmxjyxdi3ZPlD9uFtSIPXyikwzDfgLsr9bzMnDGtQYGXtwigEXzBbCSqYWpw38ngyKXVozZ2H5FHW53ZX/oD7KHN2LTtHOVh+800fsz+e22VsEDwMmnMv35y8BfBch3Pokb7iQT0ub/H8r1zzcvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=abAHHkQW; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C4D191C000F;
+	Fri, 28 Jun 2024 10:31:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1719570703;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H4UhXaKGGiqWbE/y6PE/bVJrZS6D8ezkcI0nguMWpPo=;
+	b=abAHHkQWCf3kaqf1WX05tIQ773iVUboRCxc9OugxgtCCF1ogI4wYrLO3SG3iC3C8tiS3NP
+	4vLha43TsmdSL6b0zlan0elffXrzncmoXX3QBBf/fHEy5doIc8GE9RGN+KKWCTGNm9Khvz
+	h1J2ypQWAooRnpigF+/+aY2uAzy4sUtQ7ah8S2CtbNohDG2mFqwCu3E99kw4SGad9kCTgQ
+	HV4HEggYTeioJPsvD7X/fRHouGQsVEV1xcjYwvQVsTjPdjXwpGw0qmvslMFF3k1nC1a9H0
+	G4WfXFy5oXFzvIDRrCWw0r1F0EtLF8wVE6eoCJrhGt/OSZ+X+Ge8SNSnCC4PjQ==
+Date: Fri, 28 Jun 2024 12:31:40 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Rob Herring
+ <robh@kernel.org>
+Subject: Re: [PATCH v2] drm/mipi-dsi: Add OF notifier handler
+Message-ID: <20240628123140.5872fc6f@booty>
+In-Reply-To: <20240627071904.4017160-1-wenst@chromium.org>
+References: <20240627071904.4017160-1-wenst@chromium.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240628-am642-evm-nand-bootph-v2-1-387bfa1533a6@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAM2QfmYC/4WNQQ6CMBBFr0Jm7ZgyJSiuvIdhUdqBNkpLWtJoC
- He3cgGX7yX//Q0SR8cJbtUGkbNLLvgCdKpAW+UnRmcKAwlqREsS1dw2hJxn9MobHEJYF4tCDu1
- 1aHRnOoayXSKP7n10H31h69Ia4ue4yfXP/ivmGms0WqpRXpSURPcnR8+vc4gT9Pu+fwHvnuWfu
- wAAAA==
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
- Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: srk@ti.com, praneeth@ti.com, linux-arm-kernel@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Roger Quadros <rogerq@kernel.org>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2270; i=rogerq@kernel.org;
- h=from:subject:message-id; bh=7s5ogNzyt8BizN/SoVLnkRF+hEWXvPTRujMkUyZErLY=;
- b=owEBbQKS/ZANAwAIAdJaa9O+djCTAcsmYgBmfpDSZOU8hSI99GVUPgn9G3ICVU+3t9tzQvw0H
- V5QhXeLqE+JAjMEAAEIAB0WIQRBIWXUTJ9SeA+rEFjSWmvTvnYwkwUCZn6Q0gAKCRDSWmvTvnYw
- k8H+EACSdGr548OGGWaZq4OAozn6mmUvihviAE7ad0oY0H/4C59IXrIUkdsZ3UJl7WTae9CyjEg
- Jot18sY0gg08MreYNdVIgVlX299CLkiYpp2dwwEhNQY2NHVbXDkrkePJSkMFSgi/5Iw3u508oue
- 2hwHXWjui2fWftiDiftjU2JH0JMn/vMn5KCDcxRHJVWlO0iGb7bhwfGkQABfEA1oJlXwjUZZBCe
- xPl8ALxcd8snGHT9DacvFHCCFyMb/htv4c4/BVhIuaYsF3EMQeH/yVdPIhz/R8MbDO8JGOFZrD2
- tw0qNOmM9fJTroFxQSg4sOmEfDU4JpqX7c5FEx2gCIcA+2xAyXIF4Imx+UfDX+qJTP2IjQdWWOp
- lhi2J1vbJ4rm0GSo29EZMbrrGMKfQATe0YhqaaN8fiOxiwDOEA4FRKS3jT0JdGTBETG3ysM+5UG
- HOdQLR4PMxlPulb7+9/kA7QxDOctI1YMzkppzWSbz/+ypP0J/DQZNFUnIjzh+S+LkFvsjnDju4n
- nE2Mwsi6t+AtOBQb2exd+Il5eGON3giMpCaN0Ce66ZY5OM8nCIZaHFN48gUaS+TNCPwaSXcQhhd
- xIR2l/ODpTm1a7iw9U9E8ZqfFgyy2j+z5FEFHaM0ZW01hy7Ucjjb+K8OKpgw5nE5qp7oV0ka//8
- 3tzizn/FjFu0AjA==
-X-Developer-Key: i=rogerq@kernel.org; a=openpgp;
- fpr=412165D44C9F52780FAB1058D25A6BD3BE763093
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-NAND boot would require these nodes to be present at early stage.
-Ensure that by adding "bootph-all" to relevant nodes.
+Hello Chen-Yu,
 
-Signed-off-by: Roger Quadros <rogerq@kernel.org>
----
-Changes in v2:
-- Add 'bootph-all' only to leaf nodes
----
- arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtso | 10 ++++++++++
- 1 file changed, 10 insertions(+)
++Rob
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtso b/arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtso
-index dc70b6fbc3d7..f08c0e272b53 100644
---- a/arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtso
-+++ b/arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtso
-@@ -13,6 +13,7 @@
- 
- &main_pmx0 {
- 	gpmc0_pins_default: gpmc0-pins-default {
-+		bootph-all;
- 		pinctrl-single,pins = <
- 			AM64X_IOPAD(0x0094, PIN_INPUT, 7) /* (T19) GPMC0_BE1n.GPIO0_36 */
- 			AM64X_IOPAD(0x003c, PIN_INPUT, 0) /* (T20) GPMC0_AD0 */
-@@ -50,6 +51,7 @@ AM64X_IOPAD(0x00a4, PIN_OUTPUT, 0) /* (N17) GPMC0_DIR */
- 
- &main_gpio0 {
- 	gpio0-36 {
-+		bootph-all;
- 		gpio-hog;
- 		gpios = <36 0>;
- 		input;
-@@ -58,6 +60,7 @@ gpio0-36 {
- };
- 
- &elm0 {
-+	bootph-all;
- 	status = "okay";
- };
- 
-@@ -106,30 +109,37 @@ partitions {
- 			#size-cells = <1>;
- 
- 			partition@0 {
-+				bootph-all;
- 				label = "NAND.tiboot3";
- 				reg = <0x00000000 0x00200000>;	/* 2M */
- 			};
- 			partition@200000 {
-+				bootph-all;
- 				label = "NAND.tispl";
- 				reg = <0x00200000 0x00200000>;	/* 2M */
- 			};
- 			partition@400000 {
-+				bootph-all;
- 				label = "NAND.tiboot3.backup";	/* 2M */
- 				reg = <0x00400000 0x00200000>;	/* BootROM looks at 4M */
- 			};
- 			partition@600000 {
-+				bootph-all;
- 				label = "NAND.u-boot";
- 				reg = <0x00600000 0x00400000>;	/* 4M */
- 			};
- 			partition@a00000 {
-+				bootph-all;
- 				label = "NAND.u-boot-env";
- 				reg = <0x00a00000 0x00040000>;	/* 256K */
- 			};
- 			partition@a40000 {
-+				bootph-all;
- 				label = "NAND.u-boot-env.backup";
- 				reg = <0x00a40000 0x00040000>;	/* 256K */
- 			};
- 			partition@a80000 {
-+				bootph-all;
- 				label = "NAND.file-system";
- 				reg = <0x00a80000 0x3f580000>;
- 			};
+On Thu, 27 Jun 2024 15:19:03 +0800
+Chen-Yu Tsai <wenst@chromium.org> wrote:
 
----
-base-commit: 4031a2866a9f0f5c585cfee65b3fb5ab17c95276
-change-id: 20240623-am642-evm-nand-bootph-03b68b4c9d9e
+> Add OF notifier handler needed for creating/destroying MIPI DSI devices
+> according to dynamic runtime changes in the DT live tree. This code is
+> enabled when CONFIG_OF_DYNAMIC is selected.
+> 
+> This is based on existing code for I2C and SPI subsystems.
+> 
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 
-Best regards,
+Thanks for copying me on this patch. Could be useful for my
+hotplug-bridge work, however I'm aiming at writing code that works also
+for non-DSI so we'll see. The code looks pretty fine however.
+
+My concern however is about the usage of an OF reconfig notifier. A few
+days ago Rob Herring wrote:
+
+> a notifier is never a great design so
+> maybe we can come up with something better
+
+(https://lore.kernel.org/all/CAL_Jsq+=mGEJXsjq1UZFMJtHko_z+doiFMXnx9K7exDuznymSA@mail.gmail.com)
+
+So maybe this is something you can clarify with him.
+
+Luca
+
 -- 
-Roger Quadros <rogerq@kernel.org>
-
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
