@@ -1,115 +1,91 @@
-Return-Path: <linux-kernel+bounces-233890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 737C191BECC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:42:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A5EC91BECF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:42:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E48D28556B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:42:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55CC028188B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68956158A12;
-	Fri, 28 Jun 2024 12:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VrmM3xJo"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A6D13E029;
-	Fri, 28 Jun 2024 12:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4929158D6F;
+	Fri, 28 Jun 2024 12:42:14 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FB515572B;
+	Fri, 28 Jun 2024 12:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719578532; cv=none; b=uRN61714HHt0I7dmuB6M493y8Xha0bl2UaiMZSu623xg6rZxjX3/GZOP9qeGERUYOmlLK6wPRZlPA+2ibUUb7Y4NfkdofxCxHZygI0XDz7zy9+n+0EjyJy/lhTwWSodtMbyAtUZi+hXp1nuE2rWjwih6+pulLw9ey1jVYFI4HJA=
+	t=1719578534; cv=none; b=bKwM2aBLENIYS/0gvw/KR/0vU1BEl/2ddVXu+Qd0MXjV2w3CQY+CoaPfcRALlzYAq8GROsV/RnzG+q0jIFpQu5e/vD/2QQPz3nHOGFD660h189SVVcBybxjxlC8mRhHdlzCxq6DCw+Xl/DIj2vryUxsGiVWuMaiSeKegtdNg6/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719578532; c=relaxed/simple;
-	bh=C5ObWTNXLfzCZasTtKx8inESnd8H/PFX95IOQz3bASI=;
+	s=arc-20240116; t=1719578534; c=relaxed/simple;
+	bh=XC0hcIAUM/jpVJyP+KwrsMF68vxYpQhsEFJXuiyM+5c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D18/qMoFraA5BvebzRl9W4oYnTjid+QNDBN4I7wPPHsVylEJ8zqttAcq4BX5KOxk78pmIBTc2xvf7/R5mJffMDagpQFKd0wKDy8qdXMoYQ/qz0LxvYpRgMWCqPsReY49wo3MTvSykORBBAtAgRdYDtVcTbtjyyIomIrFxIWnrg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VrmM3xJo; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=4oAc/X7cngP3Cawle+vTIhf1va3SXMhGGdRju0o8W1k=; b=VrmM3xJo5IOH3EcYcRTQBgkmvc
-	uA7pP0AMsTqyT3ni2ImBU38XpclLVulClJ25GKrYNJlEaTuZvSvuZfXv22c7D0I+wFz0nSGK419Ya
-	2XEJ4M+Lt6fzLv1vxMCXtULXcDdQjX7bRW4Kbr/4pqq0uxh3J+9PqlJnzvygyXYQHga1SOf4FY2t6
-	YbKIdvXZcQnZVzEbIchBYkLSWM7sYc8RbdA0U9i4bG9IkMSuH0GVbVQtby9Hy1/8HUw+gm2ZUMjHS
-	W+BQiGmWxShocMCqlXnpOg1wPPAKvUeU6ceHaWrT9sm/bd/dZCQZ4a94BDQs+l2eJJT6ZbAHR+uhv
-	05fDjz2w==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sNAvG-0000000Dijs-16qK;
-	Fri, 28 Jun 2024 12:41:50 +0000
-Date: Fri, 28 Jun 2024 05:41:50 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Christoph Hellwig <hch@infradead.org>, Rob Herring <robh@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=MLqr7Q0PElYgi2++XCxWF5L+3iANopSefljdD96eYAuCUev2Th8sWE3Q+VnYVr5vezX+xXNVVKBjkG+xPqmnvzg1TiEIwu779kZ998G4P1S9d14Gnhcdg1CL/MafdVYfhdWX94/TFL8lqfsB94wMh+T8ejIM5aTIqiQucbmsLGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DB213106F;
+	Fri, 28 Jun 2024 05:42:36 -0700 (PDT)
+Received: from bogus (unknown [10.57.81.131])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 624DF3F6A8;
+	Fri, 28 Jun 2024 05:42:07 -0700 (PDT)
+Date: Fri, 28 Jun 2024 13:42:07 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: David Dai <davidai@google.com>, Viresh Kumar <viresh.kumar@linaro.org>,
+	Sudeep Holla <sudeep.holla@arm.com>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>, Jens Axboe <axboe@kernel.dk>,
-	Hauke Mehrtens <hauke@hauke-m.de>, Felix Fietkau <nbd@nbd.name>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Dave Chinner <dchinner@redhat.com>, Jan Kara <jack@suse.cz>,
-	Christian Brauner <brauner@kernel.org>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Li Lingfeng <lilingfeng3@huawei.com>,
-	Christian Heusel <christian@heusel.eu>,
-	Min Li <min15.li@samsung.com>, Avri Altman <avri.altman@wdc.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Hannes Reinecke <hare@suse.de>,
-	Mikko Rapeli <mikko.rapeli@linaro.org>, Yeqi Fu <asuk4.q@gmail.com>,
-	Victor Shih <victor.shih@genesyslogic.com.tw>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Li Zhijian <lizhijian@fujitsu.com>,
-	"Ricardo B. Marliere" <ricardo@marliere.net>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH v4 2/4] block: partitions: populate fwnode
-Message-ID: <Zn6vjmNf4QjBkqh6@infradead.org>
-References: <cover.1719520771.git.daniel@makrotopia.org>
- <6acc459a392d562abc58f7e55c6f04dba8073257.1719520771.git.daniel@makrotopia.org>
- <Zn4_rMJVm6cpIEZV@infradead.org>
- <Zn6pje4DcAYEk6Kw@makrotopia.org>
+	Saravana Kannan <saravanak@google.com>,
+	Quentin Perret <qperret@google.com>,
+	Masami Hiramatsu <mhiramat@google.com>,
+	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Pavan Kondeti <quic_pkondeti@quicinc.com>,
+	Gupta Pankaj <pankaj.gupta@amd.com>, Mel Gorman <mgorman@suse.de>,
+	kernel-team@android.com, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/2] cpufreq: add virtual-cpufreq driver
+Message-ID: <20240628124207.qnu5jypprsibpx72@bogus>
+References: <20240521043102.2786284-1-davidai@google.com>
+ <20240521043102.2786284-3-davidai@google.com>
+ <CABN1KCKirjdVxF7Mc38tToB9OKH3n2kdN6k1tJbC-cyUtsVAFA@mail.gmail.com>
+ <CAJZ5v0jcZW92zm916VAD2a9_CMusuG-K968hWBS+tS1BL-Lspw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Zn6pje4DcAYEk6Kw@makrotopia.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ5v0jcZW92zm916VAD2a9_CMusuG-K968hWBS+tS1BL-Lspw@mail.gmail.com>
 
-On Fri, Jun 28, 2024 at 01:16:13PM +0100, Daniel Golle wrote:
-> > Overly long lines, which is really annyoing for block comments.
+On Fri, Jun 28, 2024 at 02:01:16PM +0200, Rafael J. Wysocki wrote:
+> Hi,
 > 
-> Should I use 80 chars as limit everywhere?
-
-In my opinion that makes things easier.  The coding style allows to
-exceed it for individual lines where it improves readability, which
-is a bit of an odd case.
-
-> > Can we please not use the crazy part_meta stuff for anything new?
-> > We should never have merge it, and right now it is at least isolated
-> > to the boot time root dev_t partsing, and I'd really prefer to keep it
-> > in that corner.
-> > 
+> On Thu, Jun 27, 2024 at 11:22 PM David Dai <davidai@google.com> wrote:
+> >
+> > Hi folks,
+> >
+> > Gentle nudge on this patch to see if there's any remaining concerns?
 > 
-> At least up to my understanding there isn't any other to know a
-> partitions UUID or volume name.
+> Yes, there are.
 > 
-> If there is another way to access this information I'd happily make
-> use of it, but I couldn't find any.
+> The dependency of OF is pretty much a no-go from my perspective.
+> 
 
-That is true, but except for the early dev_t parsing we actually never
-use these partition uuids in the kernel at all.  Also in all the
-normal file system references either use the file system uuid,
-or the device provided one for devices that support them.  Most of
-that is handled entirely in userspace, though - the kernel largely
-operates just on the dev_t.
+I agree and I don't think it is needed as well, can be removed easily IMO.
+
+--
+Regards,
+Sudeep
 
