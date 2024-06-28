@@ -1,155 +1,120 @@
-Return-Path: <linux-kernel+bounces-234129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FE8291C289
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:23:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C606291C28C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:24:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39A5F28569D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:23:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E6151F21DC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B421C688A;
-	Fri, 28 Jun 2024 15:23:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D3581C6887;
+	Fri, 28 Jun 2024 15:24:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mapxl0Rq"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WncmefXZ"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05BD0B645;
-	Fri, 28 Jun 2024 15:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC30F15539F;
+	Fri, 28 Jun 2024 15:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719588202; cv=none; b=pDA7V7zhFXK5YB2G+WECkjP09tHHqSRLPtbE3n+JeVZp0HFyFOdFEhst6+LCWe8LVT6ucTQD2sgFVTSrHGqQ9SCyZmBSKW65JmXMubZA4JDhEp+pOj8EwYkKMVLL9SicykKdkZLLLIlhpxfYjEuKkt/+K8wo//5hLnDnmWHMv00=
+	t=1719588254; cv=none; b=BCIPGnzdcPbIY8732YmtPyCam3gN/z/0wgoIHl0IlSxIsMFbF5Jr7cIhdzwcc0eZQJhG+MaZW/Kg0vcGBXhYw8g+1+Npnpc61epb9OZZyXLg03MInO0l8cRvM71WRZWXuMAsrSD5XaDdf2qz2MTRR6cVZgJUa7LEqJjcrCJ4p+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719588202; c=relaxed/simple;
-	bh=BR2tHTmy+fHEV9yIh4M/cf4SZ2OcHQDH7CpErqksoLo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gESsWUGJpjQLi4BAJrj0HeFNJ0hqDlbEzz6TjyQTLThqIdGKN33I65CLM5BTVTXxNavgErFhI3vNaeaMMZm739lo4Kn/GkD+xysi93Q9RPKmFjB/1fpE5GfYePqVxxiq6W8RzROBCKaGyVtqU58+K27AHaaBovT9En/2oNtDM80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mapxl0Rq; arc=none smtp.client-ip=209.85.167.44
+	s=arc-20240116; t=1719588254; c=relaxed/simple;
+	bh=fl9+lunxQQp9fU8I3ZADvTgh3GVml1gkscmNBnGckxw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=iFrPHvWkMXLA5YxTnenw2vZg2HOSSD8odqevnPLPlU0bMyYFJfEltJoA04FbAm/NXKOHfR4qI/MVo3128jyXAM40wzgkBbgKmqVfJwr1ujUyqXEQE/USJdWlpQvnnyTuA7ck7Rcw7NRGSON7whhHSXel8NeoijZ1q/G82LjcQMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WncmefXZ; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52ce9ba0cedso1292758e87.2;
-        Fri, 28 Jun 2024 08:23:20 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a72459d8d6aso81027866b.0;
+        Fri, 28 Jun 2024 08:24:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719588199; x=1720192999; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jL/M2DhfYKttVaFn04K/Ozv5calB4SUJe5t8RdpTJN8=;
-        b=Mapxl0Rq4bfoTU4Pr2hWWAGtrf7fvf088X33TA3OZKvpBwV+WL3RnIqmtFF94DO3AB
-         EYIoGPNGiStDKH8NjpfHi1yo7g1QrwM5rEtVl53NJiI8SrIYG1qWG/dKhwq8hMz7xgfb
-         oXLRu5Twt8yppnOmMKr407CwtORjh/ShbPmJlvm30TYRbA+a+tJOobMlWtpwlFecwYLU
-         +Tcs8XF50VJmYZX9CSpcZcFlULXhv2GYpN3TZ3lvJWtG8B8akEZTW6UWOSEJSUW0ktHp
-         0030hpVPujVUSc3xijG7g2racrNRs1rdlvvwIqLp33PNzH5XB5qEKdUutokDyHUM54qN
-         ZRsQ==
+        d=gmail.com; s=20230601; t=1719588251; x=1720193051; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fl9+lunxQQp9fU8I3ZADvTgh3GVml1gkscmNBnGckxw=;
+        b=WncmefXZRSo8uwCYj3/b8udpf6MDsTN39Mv2T7W99Z80ddaEJiULZZpdp24wXYm22q
+         FcO4bXk7xSEaLMsrm4ip7dPZj3yuiFrni3IDZCKMYoaXsBNN9/UBCV8Q8WFqGMpiZcE/
+         xTCTrfkD3G0B6Y8h659vKpRmYaVYMABvKC+lfWE0lhgEV1I26kM59SlPUbfgAeOLypAl
+         jjRLJPGw5r2SU65eoiqWNlCWLgZXY96zAmhdzrhZsLInBA5N+XXXvUHL93+VHRKeRdFh
+         nV7tAyZq+DCx/vhkboBtOXxnFte5omII2rqrjgCQ5W6v+2iNQu0ftE3rYSb6+bwelgNn
+         Qx7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719588199; x=1720192999;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jL/M2DhfYKttVaFn04K/Ozv5calB4SUJe5t8RdpTJN8=;
-        b=O0a0fx3r4G3yu0D6VQ+atEi5KWs9BIyJaY/mYWngZ3jGuH9Lf2YPID+5GsbUCjrx+F
-         dpvLIIS8WnUvFCGijufoVJ7RltCpj2queTQoehCBW4jtA5+DY1Nof/mjCb5EfG1Zn+WP
-         bLK1xtGSVF6AToV9vg26oOc2KdLXuNYLN/uncfES+qN2HXwNZQpKJZoQ+GRq7i5wULR5
-         o4K1R8ccRkeukLfV725G8nTRezJUfeu+fzWGd1AQI5s9/gPouT75Ir9vwRv1Q9ehxMLy
-         6TQR94BJ7V7XQ6hQ0VANvgGUc8jURZ8CtI6znt3XASr/Y4AyJHQYJx4BFkBUrd4npeNF
-         3XVw==
-X-Forwarded-Encrypted: i=1; AJvYcCWFNAxzBcZmUjNl1elqsqugwipjJIbFXENoqSsf5xEKzN1CvPDespD5dhN3S1LE1T6O3TJ9uAa8v4dvkbIZCF8CX2FZmGML5k/NhgT07Lgpm/I1D1+5ckb45UVigdnrov9ir/IfTEOFa/uj808HVRnpL7sjA4aVXVLx+NAeJF7dVqkdb++E
-X-Gm-Message-State: AOJu0YxRDdjTp474C5laeDKm4tT2u5PLcxP5qiFvdqLl33I5jaNpH2II
-	KdmubJUhyinc1NDS2LTAvUmMqIVsWGpkw67KQZM+iJTBeqeP0nnt
-X-Google-Smtp-Source: AGHT+IGg5kcqMly3Comvqhc88Qjsv4Vew155hATIGzgcomShCMIVMWAiMMp6EA68DvlRzN+VxwZ1BQ==
-X-Received: by 2002:a05:6512:78e:b0:52c:a20e:4da4 with SMTP id 2adb3069b0e04-52ce185ca1amr12557484e87.57.1719588198875;
-        Fri, 28 Jun 2024 08:23:18 -0700 (PDT)
-Received: from [192.168.178.20] (dh207-41-166.xnet.hr. [88.207.41.166])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72aaf633bdsm87877066b.74.2024.06.28.08.23.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Jun 2024 08:23:18 -0700 (PDT)
-Message-ID: <8cb43e8d-cb88-47c4-9fed-9de3b1be1e9e@gmail.com>
-Date: Fri, 28 Jun 2024 17:23:16 +0200
+        d=1e100.net; s=20230601; t=1719588251; x=1720193051;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fl9+lunxQQp9fU8I3ZADvTgh3GVml1gkscmNBnGckxw=;
+        b=UIIjCAb2NIVEIIj9BNBrqZm+I0mgymMzqhXvFp0ELy39je7E02BMd2aFu79dbHwIU3
+         xKYL0yO8pWYCiQN3XyNNvnB2OiXRyzXeuud4qD9nzECIuXP7BGRyOx5RUSzE7iBZXNHu
+         ZOfmsC7cjdC0tL4j67x0Xc8+/c9vXFCUPEiXGbK+IdqnNj/UfllBC4jLpmm9uQsehIow
+         L6R2c0y5r8a8zhlBtHrjr31o6gAoyXK9h6VsOG25vknQX7Id/K8xAe7k434wL5XFwNMJ
+         aESDog1OzU5cSN3Tx7P1IFz+u+fv/IijwBWFa3a6vr34AqGCSj7hZTsILBKJpMQQVyY+
+         l3mw==
+X-Forwarded-Encrypted: i=1; AJvYcCWHL3GL2u+Reqtc+Eue6v6WQMJcLCW3Tq56+lFXjJjHQYX+bR9pvNyaKEGeU5QHmPjjVHeBGIDJ0uxRQnLd1BHgdITbMwjVqplbkimaDwqY+ARnheYu0fQKxNY2CH3IdUe/Zv26uxfyUftXmt17iP9cJa5DxuBCArjDilP73oLNgd+5VLg=
+X-Gm-Message-State: AOJu0YycFB7iVWtbkMehaJdaRgLbUkLA7TXHrPMsFGrXzJOZoSPJX0tb
+	zKhl61BL+smUS9GWO7tGRtFQqtrpsWO35s+AOaJzKeFnhcGYJfS4
+X-Google-Smtp-Source: AGHT+IEa9tcci5OQVDcMt3OZj5FDteTzOaDpLYyNgeBXbw6LHq9wGnw9WLex2JUqrcHt+Cn+HVxWGA==
+X-Received: by 2002:a17:906:4456:b0:a6f:8a1b:9964 with SMTP id a640c23a62f3a-a7245c2ce94mr1066164066b.57.1719588251052;
+        Fri, 28 Jun 2024 08:24:11 -0700 (PDT)
+Received: from iris-Ian.fritz.box (p200300eb5f2e9b00e0c268ab7636554b.dip0.t-ipconnect.de. [2003:eb:5f2e:9b00:e0c2:68ab:7636:554b])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72af0c9d06sm69644166b.18.2024.06.28.08.24.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 08:24:10 -0700 (PDT)
+From: iansdannapel@gmail.com
+To: Moritz Fischer <mdf@kernel.org>,
+	Wu Hao <hao.wu@intel.com>,
+	Xu Yilun <yilun.xu@intel.com>,
+	Tom Rix <trix@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko.stuebner@cherry.de>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Michael Riesch <michael.riesch@wolfvision.net>,
+	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+	Andre Przywara <andre.przywara@arm.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-fpga@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ian Dannapel <iansdannapel@gmail.com>
+Subject: [PATCH v2 0/3] Summary of changes
+Date: Fri, 28 Jun 2024 17:23:45 +0200
+Message-Id: <20240628152348.61133-1-iansdannapel@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240620144217.124733-1-iansdannapel@gmail.com>
+References: <20240620144217.124733-1-iansdannapel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PROBLEM] make randconfig: net/netfilter/core.c:830: undefined
- reference to `netfilter_lwtunnel_fini'
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: Linux Kernel Build System <linux-kbuild@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Jozsef Kadlecsik <kadlec@netfilter.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
- netdev@vger.kernel.org
-References: <7a472130-d9c4-4fda-840b-093308f73d3d@gmail.com>
- <Znc4931wlIgvqrfP@calendula> <6cdb1346-75ca-472e-8d96-d58a1eaab172@gmail.com>
- <b50bb0bf-4d35-4334-a721-2a092210aecc@gmail.com> <Znw78PpYwAgFZiaB@calendula>
- <3d7b5916-c462-49cb-af32-e43f6d6ebfec@gmail.com>
- <d3f8254f-0f53-47ee-a363-b14e9991a6e9@gmail.com> <Zn3PNGFkg6jqU9wc@calendula>
-Content-Language: en-US
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-In-Reply-To: <Zn3PNGFkg6jqU9wc@calendula>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Patch 1:
+- Add trion/titanium specific compatibles
+- done gpio renamed to cdone, as referred in the datasheet
+- reset gpio renamed to creset, as referred in the datasheet
+- removed fpga_mgr_states from the context struct of the low-level module
+[attached: v2-0001-fpga-Add-Efinix-Trion-Titanium-serial-SPI-program.patch]
 
+Patch 2:
+- corrected examples compatible/reg/others order
+- fixed 'make dt_binding_check'
+[attached: v2-0002-dt-bindings-fpga-Add-Efinix-serial-SPI-programmin.patch]
 
-On 6/27/24 22:44, Pablo Neira Ayuso wrote:
-> On Thu, Jun 27, 2024 at 10:30:24PM +0200, Mirsad Todorovac wrote:
->> On 6/26/24 20:34, Mirsad Todorovac wrote:
->>>
->>>
->>> On 6/26/24 18:04, Pablo Neira Ayuso wrote:
->>>> On Sun, Jun 23, 2024 at 12:51:49AM +0200, Mirsad Todorovac wrote:
->>>>> On 6/23/24 00:48, Mirsad Todorovac wrote:
->>>>>> On 6/22/24 22:49, Pablo Neira Ayuso wrote:
->>>>>>> Hi,
->>>>>>>
->>>>>>> There is a fix on the table address this, I will submit is in the next
->>>>>>> pull request.
->>>>>>
->>>>>> Thank you very much.
->>>>>>
->>>>>> Please consider adding Reported-by: Mirsad Todorovac <mtodorovac69@gmail.com>
->>>>>>  
->>>>>>> Thanks for reporting
->>>>>>
->>>>>> No big deal. Anytime :-)
->>>>>
->>>>> P.S.
->>>>>
->>>>> Please notify when I could test the same .config with your fix.
->>>>
->>>> Patch is here:
->>>>
->>>> https://git.kernel.org/pub/scm/linux/kernel/git/netfilter/nf.git/commit/?id=aef5daa2c49d510436b733827d4f0bab79fcc4a0
->>>
->>> Build error has gone, tested in the same environment. Please find the build output attached.
->>>
->>> Tested-by: Mirsad Todorovac <mtodorov@69@gmail.com>
->>
->> Apology, please, the right email is this:
->>
->> Tested-by: Mirsad Todorovac <mtodorovac69@gmail.com>
-> 
-> Thanks a lot for testing.
+Patch 3:
+- renamed prefix to "efinix"
+[attached: v2-0003-dt-bindings-vendor-prefix-Add-prefix-for-Efinix-I.patch]
 
-Not at all - I think that testing whether the patch fixed the problem in the
-initial environment adds to QA.
-
-> Patch is already flying upstream, I missed adding this tag. But I
-> could include your Reported-by: tag.
-
-In the Internet space-time contiuum, you actually did not miss a thing,
-because my testing is a logical consequence of your patch, and could not have
-preceded it, so that the Tested-by would be in the original patch ;-)
-
-As Lord Merovingi said, "cause and effect" ;-)
-
-Best regards,
-Mirsad Todorovac
+Signed-off-by: Ian Dannapel <iansdannapel@gmail.com>
 
