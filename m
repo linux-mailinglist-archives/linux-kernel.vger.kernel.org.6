@@ -1,279 +1,144 @@
-Return-Path: <linux-kernel+bounces-233672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11CEF91BB5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:22:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F373191BB5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:22:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 352501C22AC3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:22:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FF16284D5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:22:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA1214F133;
-	Fri, 28 Jun 2024 09:22:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67BF51527A3;
+	Fri, 28 Jun 2024 09:22:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="I8fGdIb8"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Oi2XBDoD"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D20214F9FF;
-	Fri, 28 Jun 2024 09:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB82D1465A1;
+	Fri, 28 Jun 2024 09:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719566573; cv=none; b=UXowbGbhKbkB23Q3g7iVvsd2ocsvng7ingj+QJQDbZ3HvMUW5JwLJsHdVNniVE+np0q5VobsOzX3pOTH0SxsGalER3VB5EMFjaCNFw9eB9ItBpbshEd0CCCJM8QUfLfMgKB2Rp6qaVkyKcfNsrQhUv9xdEfwGtIoKNCkU9z4OgM=
+	t=1719566544; cv=none; b=uSi8jlDumBtOCDLb/7fAzmD67ChEbDa8dxJ3SFjHz0B9htcK1OvEgHvnxGlyYa1Ign/oUhlIKFhso/+KUbkbrkKmioUAzKMKtsDlD4QgBtI9cn1eIUD4onzxpIv8hhSnVt1gfvt261kk0dtdBhAnY90S56Dr/ampBo0imtrR6BM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719566573; c=relaxed/simple;
-	bh=ji3kYAAiZDeNMyOTvUchwFM6v2WJ4stp4je4nHMyTuc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=p90lINS8PhTvc0Dkng9UcepzlEAk/CU7WzlT4fwR0vAdQnBCYXSKgeUSoiqIEiBlHRVG1PKmX6Lc4khYwMEgJ2xl0XLIVkF0uhlQM14qIcmw7fk6gGEFln+FnFxgg8AtZGqV5F0DmO5Btt4lhbYpWFy4Wd5HGg+59MWD8vtVS24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=I8fGdIb8; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45S7x9BC029750;
-	Fri, 28 Jun 2024 09:22:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0w1okXQKkQ+Gyg0vlX2pD+pzMSgGZ5fM5jZ85tnSM2M=; b=I8fGdIb8gWvI/L3u
-	BGtP/5bK3tYQwIPQnv47/xNyAZz5tprBARD5CX1iwx44LZ717xNmB5qvUfmFpt3J
-	TRzKcpz4M09H1oUsjE8UQFhSyIkA3UFqwJe2ITFyh+CeK0+npOeQe3U1a2BWkvaw
-	wHBcDMozhKXqItk7pYXttHsSK81E6oVPEwDX2R71IwCRTC8TBrwWHegoi7vUM9bf
-	3WXD+TF5n9h52sD4nHihALytel2D33e381+8OF/tXQmQaDNIun5b7E98wEqY+CUA
-	ito/N3Q/FSXN+MsiYRpFuFsRI1w6aUI+WDsyC884kG+BNUtJ2dW6b2mij/qqfMCv
-	O0zqJg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 400c46f0t0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Jun 2024 09:22:47 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45S9Mj5Y019309
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Jun 2024 09:22:45 GMT
-Received: from [10.217.239.82] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 28 Jun
- 2024 02:22:42 -0700
-Message-ID: <ef5d4b87-76c7-4ff3-84ed-7f4743ec052c@quicinc.com>
-Date: Fri, 28 Jun 2024 14:52:39 +0530
+	s=arc-20240116; t=1719566544; c=relaxed/simple;
+	bh=No5kI0JbClGdXNXP6BWBYQzHDNI+RX4pElyDv6jIUJA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HWtZBHtxX++TjmS+oHby0Nbn4Ez/NIhcgqCrpX5p4TD1rwxswt64oZAVJcREeHGGGJCL/c0RG3/6d6sGZUnyo1P2zE/0YOAXmaEpzUv8Phi1rEjiHPJLneMa3NbVFj4xN2tZmNv2PT6Y5fqKzo3hHYseJsbGG3RdhS/osBtPo6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Oi2XBDoD; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1719566534;
+	bh=No5kI0JbClGdXNXP6BWBYQzHDNI+RX4pElyDv6jIUJA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Oi2XBDoDzH2H+YQXkPHfnOkemXC9QZbvBVlFnBLw6Q97qvHa6qQXc7udTWCgYKmgZ
+	 jF55LXYylWhWXofaB0DsqvVer3PwsOo6fcuBUh4jIK2pGC9iL0FT0pjN8wxXbsfj6B
+	 xmaUNxGKAMPONbxrBy7kLtkilkge8Saa0mbUC7lhHSY064t77UnA+NhpYixH4xnE3Q
+	 M7SBnp8i2w/zD2t7DoZI0udFlfXU1n1vmAQbODPk8VMSJJfpQC8VFwBrE+6kYGhwIv
+	 Xg0sV1vHJGljnueAtB2wggcx5i7iKsWySqLqohIQ3ZoVBVL9aCoC7H2rgTmK5lFwif
+	 PpNr40bE2KAaA==
+Received: from localhost.localdomain (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: laura.nao)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 0B6B837821A8;
+	Fri, 28 Jun 2024 09:22:13 +0000 (UTC)
+From: Laura Nao <laura.nao@collabora.com>
+To: kernelci@lists.linux.dev
+Cc: linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Testing Quality Call notes - 2024-06-27
+Date: Fri, 28 Jun 2024 11:22:49 +0200
+Message-Id: <20240628092249.26582-1-laura.nao@collabora.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 2/2] soc: qcom: smp2p: Introduce tracepoint support
-To: Sudeepgoud Patil <quic_sudeepgo@quicinc.com>, <quic_bjorande@quicinc.com>,
-        <andersson@kernel.org>, <quic_clew@quicinc.com>,
-        <mathieu.poirier@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-References: <20240627104831.4176799-1-quic_sudeepgo@quicinc.com>
- <20240627104831.4176799-3-quic_sudeepgo@quicinc.com>
-Content-Language: en-US
-From: Deepak Kumar Singh <quic_deesin@quicinc.com>
-In-Reply-To: <20240627104831.4176799-3-quic_sudeepgo@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: XbCY66zaB6fOR7SKbK055UrE5LPEag8o
-X-Proofpoint-GUID: XbCY66zaB6fOR7SKbK055UrE5LPEag8o
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-28_05,2024-06-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- mlxscore=0 lowpriorityscore=0 phishscore=0 mlxlogscore=999 adultscore=0
- priorityscore=1501 malwarescore=0 clxscore=1011 suspectscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2406280068
+Content-Transfer-Encoding: 8bit
 
+Hello,
 
+KernelCI is hosting a bi-weekly call on Thursday to discuss improvements 
+to existing upstream tests, the development of new tests to increase 
+kernel testing coverage, and the enablement of these tests in KernelCI. 
+In recent months, we at Collabora have focused on various kernel areas,
+assessing the tests already available upstream and contributing patches 
+to make them easily runnable in CIs.
 
-On 6/27/2024 4:18 PM, Sudeepgoud Patil wrote:
-> This commit introduces tracepoint support for smp2p, enabling
-> logging of communication between local and remote processors.
-> These tracepoints include information about the remote subsystem
-> name, negotiation details, supported features, bit change
-> notifications, and ssr activity. These logs are useful for
-> debugging issues between subsystems.
-> 
-> Signed-off-by: Sudeepgoud Patil <quic_sudeepgo@quicinc.com>
-Reviewed-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
-> ---
->   drivers/soc/qcom/Makefile      |  1 +
->   drivers/soc/qcom/smp2p.c       |  9 ++++
->   drivers/soc/qcom/trace-smp2p.h | 98 ++++++++++++++++++++++++++++++++++
->   3 files changed, 108 insertions(+)
->   create mode 100644 drivers/soc/qcom/trace-smp2p.h
-> 
-> diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-> index ca0bece0dfff..30c1bf645501 100644
-> --- a/drivers/soc/qcom/Makefile
-> +++ b/drivers/soc/qcom/Makefile
-> @@ -23,6 +23,7 @@ qcom_rpmh-y			+= rpmh.o
->   obj-$(CONFIG_QCOM_SMD_RPM)	+= rpm-proc.o smd-rpm.o
->   obj-$(CONFIG_QCOM_SMEM) +=	smem.o
->   obj-$(CONFIG_QCOM_SMEM_STATE) += smem_state.o
-> +CFLAGS_smp2p.o := -I$(src)
->   obj-$(CONFIG_QCOM_SMP2P)	+= smp2p.o
->   obj-$(CONFIG_QCOM_SMSM)	+= smsm.o
->   obj-$(CONFIG_QCOM_SOCINFO)	+= socinfo.o
-> diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
-> index 696c2a8387d0..4aa61b0f11ad 100644
-> --- a/drivers/soc/qcom/smp2p.c
-> +++ b/drivers/soc/qcom/smp2p.c
-> @@ -161,6 +161,9 @@ struct qcom_smp2p {
->   	struct list_head outbound;
->   };
->   
-> +#define CREATE_TRACE_POINTS
-> +#include "trace-smp2p.h"
-> +
->   static void qcom_smp2p_kick(struct qcom_smp2p *smp2p)
->   {
->   	/* Make sure any updated data is written before the kick */
-> @@ -192,6 +195,7 @@ static void qcom_smp2p_do_ssr_ack(struct qcom_smp2p *smp2p)
->   	struct smp2p_smem_item *out = smp2p->out;
->   	u32 val;
->   
-> +	trace_smp2p_ssr_ack(smp2p->dev);
->   	smp2p->ssr_ack = !smp2p->ssr_ack;
->   
->   	val = out->flags & ~BIT(SMP2P_FLAGS_RESTART_ACK_BIT);
-> @@ -214,6 +218,7 @@ static void qcom_smp2p_negotiate(struct qcom_smp2p *smp2p)
->   			smp2p->ssr_ack_enabled = true;
->   
->   		smp2p->negotiation_done = true;
-> +		trace_smp2p_negotiate(smp2p->dev, out->features);
->   	}
->   }
->   
-> @@ -252,6 +257,8 @@ static void qcom_smp2p_notify_in(struct qcom_smp2p *smp2p)
->   		status = val ^ entry->last_value;
->   		entry->last_value = val;
->   
-> +		trace_smp2p_notify_in(entry, status, val);
-> +
->   		/* No changes of this entry? */
->   		if (!status)
->   			continue;
-> @@ -415,6 +422,8 @@ static int smp2p_update_bits(void *data, u32 mask, u32 value)
->   	writel(val, entry->value);
->   	spin_unlock_irqrestore(&entry->lock, flags);
->   
-> +	trace_smp2p_update_bits(entry, orig, val);
-> +
->   	if (val != orig)
->   		qcom_smp2p_kick(entry->smp2p);
->   
-> diff --git a/drivers/soc/qcom/trace-smp2p.h b/drivers/soc/qcom/trace-smp2p.h
-> new file mode 100644
-> index 000000000000..fa985a0d7615
-> --- /dev/null
-> +++ b/drivers/soc/qcom/trace-smp2p.h
-> @@ -0,0 +1,98 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +#undef TRACE_SYSTEM
-> +#define TRACE_SYSTEM qcom_smp2p
-> +
-> +#if !defined(__QCOM_SMP2P_TRACE_H__) || defined(TRACE_HEADER_MULTI_READ)
-> +#define __QCOM_SMP2P_TRACE_H__
-> +
-> +#include <linux/device.h>
-> +#include <linux/tracepoint.h>
-> +
-> +TRACE_EVENT(smp2p_ssr_ack,
-> +	TP_PROTO(const struct device *dev),
-> +	TP_ARGS(dev),
-> +	TP_STRUCT__entry(
-> +		__string(dev_name, dev_name(dev))
-> +	),
-> +	TP_fast_assign(
-> +		__assign_str(dev_name, dev_name(dev));
-> +	),
-> +	TP_printk("%s: SSR detected", __get_str(dev_name))
-> +);
-> +
-> +TRACE_EVENT(smp2p_negotiate,
-> +	TP_PROTO(const struct device *dev, unsigned int features),
-> +	TP_ARGS(dev, features),
-> +	TP_STRUCT__entry(
-> +		__string(dev_name, dev_name(dev))
-> +		__field(u32, out_features)
-> +	),
-> +	TP_fast_assign(
-> +		__assign_str(dev_name, dev_name(dev));
-> +		__entry->out_features = features;
-> +	),
-> +	TP_printk("%s: state=open out_features=%s", __get_str(dev_name),
-> +		__print_flags(__entry->out_features, "|",
-> +			{SMP2P_FEATURE_SSR_ACK, "SMP2P_FEATURE_SSR_ACK"})
-> +	)
-> +);
-> +
-> +TRACE_EVENT(smp2p_notify_in,
-> +	TP_PROTO(struct smp2p_entry *smp2p_entry, unsigned long status, u32 val),
-> +	TP_ARGS(smp2p_entry, status, val),
-> +	TP_STRUCT__entry(
-> +		__string(dev_name, dev_name(smp2p_entry->smp2p->dev))
-> +		__string(client_name, smp2p_entry->name)
-> +		__field(unsigned long, status)
-> +		__field(u32, val)
-> +	),
-> +	TP_fast_assign(
-> +		__assign_str(dev_name, dev_name(smp2p_entry->smp2p->dev));
-> +		__assign_str(client_name, smp2p_entry->name);
-> +		__entry->status = status;
-> +		__entry->val = val;
-> +	),
-> +	TP_printk("%s: %s: status:0x%0lx val:0x%0x",
-> +		__get_str(dev_name),
-> +		__get_str(client_name),
-> +		__entry->status,
-> +		__entry->val
-> +	)
-> +);
-> +
-> +TRACE_EVENT(smp2p_update_bits,
-> +	TP_PROTO(struct smp2p_entry *smp2p_entry, u32 orig, u32 val),
-> +	TP_ARGS(smp2p_entry, orig, val),
-> +	TP_STRUCT__entry(
-> +		__string(dev_name, dev_name(smp2p_entry->smp2p->dev))
-> +		__string(client_name, smp2p_entry->name)
-> +		__field(u32, orig)
-> +		__field(u32, val)
-> +	),
-> +	TP_fast_assign(
-> +		__assign_str(dev_name, dev_name(smp2p_entry->smp2p->dev));
-> +		__assign_str(client_name, smp2p_entry->name);
-> +		__entry->orig = orig;
-> +		__entry->val = val;
-> +	),
-> +	TP_printk("%s: %s: orig:0x%0x new:0x%0x",
-> +		__get_str(dev_name),
-> +		__get_str(client_name),
-> +		__entry->orig,
-> +		__entry->val
-> +	)
-> +);
-> +
-> +#endif /* __QCOM_SMP2P_TRACE_H__ */
-> +
-> +#undef TRACE_INCLUDE_PATH
-> +#define TRACE_INCLUDE_PATH .
-> +
-> +#undef TRACE_INCLUDE_FILE
-> +#define TRACE_INCLUDE_FILE trace-smp2p
-> +
-> +#include <trace/define_trace.h>
+Below is a list of the tests we've been working on and their latest 
+status updates, as discussed in the last meeting held on 2024-06-27:
+
+*USB/PCI devices kselftest*
+
+- Upstream test to detect unprobed devices on discoverable buses:
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=dacf1d7a78bf8a131346c47bfba7fe1f3ff44beb 
+- Kernel patches to allow running the test on more platforms on KernelCI 
+  were merged:
+  https://lore.kernel.org/all/20240613-kselftest-discoverable-probe-mt8195-kci-v1-0-7b396a9b032d@collabora.com
+- Waiting for KernelCI PRs to be merged:
+  https://github.com/kernelci/kernelci-core/pull/2577 and https://github.com/kernelci/kernelci-pipeline/pull/642
+
+*Error log test*
+
+- Proposing new kselftest to report device log errors: 
+  https://lore.kernel.org/all/20240423-dev-err-log-selftest-v1-0-690c1741d68b@collabora.com/
+- Currently fixing test failures in KernelCI
+
+*Suspend/resume in cpufreq kselftest*
+
+- Enabling suspend/resume test within the cpufreq kselftest in KernelCI
+- Parameter support for running subtests in a kselftest was merged: 
+  https://github.com/Linaro/test-definitions/pull/511
+- Added rtcwake support in the test to enable automated resume, currently 
+  testing/debugging solution
+
+*Boot time test*
+
+- Investigating possibility of adding new test upstream to measure the 
+  kernel boot time and detect regressions
+- Currently looking into boot tracing with ftrace events and kprobes 
+  (see: https://www.kernel.org/doc/html/latest/trace/boottime-trace.html)
+- Idea for potential kselftest: insert explicit tracepoints in strategic 
+  places, let the user configure which times to measure. The test could 
+  provide a bootconfig file and a fragment to enable the required configs.
+  This could be an alternative to using external tools (e.g. grabserial 
+  w/ early serial port init).
+- Need a list of functions to track in order to measure key metrics 
+  (e.g. device tree overhead, probe overhead, module load overhead)
+- Identify key drivers that need to be loaded early, for potentially 
+  supporting a two-phase boot: (1) time-critical, and (2) rest of the 
+  system
+
+*Other interesting updates*
+
+- Flaky serial on sc7180 was recently fixed: 
+  https://github.com/kernelci/kernelci-project/issues/380 and https://lore.kernel.org/all/20240610222515.3023730-1-dianders@chromium.org/#t
+
+*Strategy for test enablement in KernelCI*
+
+- Guidance on test quality: KernelCI should set the standard for test 
+  quality, providing guidance on which tests to enable from various 
+  projects (e.g., kselftest, LTP). By doing so, KernelCI can serve as a 
+  model for other CI systems.
+- Develop mechanisms to automatically detect which tests should run on a
+  specific platform
+- Embed metadata in the test themselves to facilitate the test selection
+  process
+- Leverage device tree info to determine the appropriate tests for each 
+  platform
+
+Please reply to this thread if you'd like to join the call or discuss 
+any of the topics further. We look forward to collaborating with the 
+community to improve upstream tests and expand coverage to more areas 
+of interest within the kernel.
+
+Best regards,
+
+Laura Nao
 
