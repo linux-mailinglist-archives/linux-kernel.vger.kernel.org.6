@@ -1,79 +1,63 @@
-Return-Path: <linux-kernel+bounces-233903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4CF791BF06
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:50:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B6F991BF0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:51:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A375C1C2299C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:50:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D62F1C23431
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901D61BE843;
-	Fri, 28 Jun 2024 12:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jjxBv5RZ"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 622B54C3BE;
-	Fri, 28 Jun 2024 12:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C781BE844;
+	Fri, 28 Jun 2024 12:51:15 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3543C1BE24C;
+	Fri, 28 Jun 2024 12:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719579039; cv=none; b=m8+5plmRd3AbJMfpCSL5Ky/VvwFW0OiVRVJXaxsAXeKc3GaPJLVLsmjnuJdFk1aEu1ijk8pmogHA86XAT0K85XbyV6Zw4AZvFe1KakorPRzsDyvcWy87A5ljfMmwjb7yQ6rm5wUqkv5bdMlAh7Azh/f/SMlf77YlI1OOOr2VMdo=
+	t=1719579074; cv=none; b=Cf6vqCTX7Hadj5W/owajm8gxFFaOA5UbbitZaX9cRWfZHGPUkXg1fZTDaZcVFCfHvsmqRFrw0z/fzFyl+iIjDzDTqh16UxynmNGviVpKq9C5r3zfY2nTJmwt7ktEI70iPQ/UllhsdJaRaX9wls4TItDrtaCgz812s5+g/XOnCpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719579039; c=relaxed/simple;
-	bh=RzFen9JQSi644qnKFr/+16SgU8rM196DVKOyw4xfV+c=;
+	s=arc-20240116; t=1719579074; c=relaxed/simple;
+	bh=H5gIxHrgOR9xxPPd9H0f4XSK1Nm06i4f3r2x9UoDmuI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PpIyoFcW4Qjm9UulggrvEmUEdbaRC/BxZjqbGuIBmfkBGaG13IjoNDWgwM9HjbHhV58VQWnvmo+lf71TlAyCxNqgX17cCQxCbUgT5FfaDqQ4pBJq8vfoOKC9KNwLQWhwjDlj4ne+078AFPMIGR04khGX9KQrnfOJQC0f2m9IFOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jjxBv5RZ; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=mnbrvixIDdkfJ/Y+2RZM5FtacFOILjP6fmsLKyS1/AQ=; b=jjxBv5RZOWAbmnUOGV+3KEzNKg
-	eoW8zWsbdt2AbU8EWwKhlVBEiG0IMFFRD5HD8f+140PbY357uVg/aGT3eQttdQJ9nSIk7hcSuDZnI
-	M8auMVuPmV1XDjyztJlO9zXRimFRuJerrdsxOQDFP5ORLAdf2+l6u8E/w7PzSxQunN104j/aKtn8I
-	xBB7Vk7pQ1fERCywhGQl6x0ShbRjGU2a8dMpRaVclCbXC8Hox3w0iDsyogf1EYYDE3z2MmTaEOWSG
-	6Jif0ko7zO/DGYg5zSi3cr1Dsu41LltGETThaQpfjzwqzOYtk2UCg2LAfkIjv5YRTTC0LG49Cd3on
-	mE4Mow5Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sNB3U-0000000Dk7f-3qsS;
-	Fri, 28 Jun 2024 12:50:20 +0000
-Date: Fri, 28 Jun 2024 05:50:20 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Christoph Hellwig <hch@infradead.org>, Rob Herring <robh@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=qZQrXGiQ/6YJhuZr3Rhnie1RiXUoR3anZYoQ90XR1HijseXejTyQF0fomXWYsUz0CG1LuAIfOyCa4JCGt96mVQGfbQVVUJE3j1qvMsg7NjIixWCtP+TT4LIbtCokrdhLTYWHJRIIm3sYQZvc6yrVyGQmW+p2Hwf0BgzlD7SiKQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5C5D5106F;
+	Fri, 28 Jun 2024 05:51:36 -0700 (PDT)
+Received: from bogus (unknown [10.57.81.131])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EA06D3F73B;
+	Fri, 28 Jun 2024 05:51:06 -0700 (PDT)
+Date: Fri, 28 Jun 2024 13:51:06 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: David Dai <davidai@google.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>, Jens Axboe <axboe@kernel.dk>,
-	Hauke Mehrtens <hauke@hauke-m.de>, Felix Fietkau <nbd@nbd.name>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Dave Chinner <dchinner@redhat.com>, Jan Kara <jack@suse.cz>,
-	Christian Brauner <brauner@kernel.org>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Li Lingfeng <lilingfeng3@huawei.com>,
-	Christian Heusel <christian@heusel.eu>,
-	Min Li <min15.li@samsung.com>, Avri Altman <avri.altman@wdc.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Hannes Reinecke <hare@suse.de>,
-	Mikko Rapeli <mikko.rapeli@linaro.org>, Yeqi Fu <asuk4.q@gmail.com>,
-	Victor Shih <victor.shih@genesyslogic.com.tw>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Li Zhijian <lizhijian@fujitsu.com>,
-	"Ricardo B. Marliere" <ricardo@marliere.net>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH v4 3/4] block: add support for notifications
-Message-ID: <Zn6xjP8eH470wWXC@infradead.org>
-References: <cover.1719520771.git.daniel@makrotopia.org>
- <4ebef78f07ff1ea4d553c481ffa9e130d65db772.1719520771.git.daniel@makrotopia.org>
- <Zn4_-alKtxuZ6zNt@infradead.org>
- <Zn6rU-mCYQcyCkGT@makrotopia.org>
+	Saravana Kannan <saravanak@google.com>,
+	Quentin Perret <qperret@google.com>,
+	Masami Hiramatsu <mhiramat@google.com>,
+	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Pavan Kondeti <quic_pkondeti@quicinc.com>,
+	Gupta Pankaj <pankaj.gupta@amd.com>, Mel Gorman <mgorman@suse.de>,
+	kernel-team@android.com, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/2] cpufreq: add virtual-cpufreq driver
+Message-ID: <20240628125106.i4hhyzdgt3uoskat@bogus>
+References: <20240521043102.2786284-1-davidai@google.com>
+ <20240521043102.2786284-3-davidai@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,37 +66,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zn6rU-mCYQcyCkGT@makrotopia.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20240521043102.2786284-3-davidai@google.com>
 
-On Fri, Jun 28, 2024 at 01:23:47PM +0100, Daniel Golle wrote:
-> So that's what I did consequently. Using the notification interface
-> the NVMEM driver can live in drivers/nvmem/ and doesn't need to be
-> using block internals.
-> 
-> > And not actually having a user for it is a complete no-go.
-> > 
-> 
-> The user will be the nvmem provider, you can see the code in earlier
-> versions of the patchset where I had included it:
-> 
-> https://patchwork.kernel.org/project/linux-block/patch/96554d6b4d9fa72f936c2c476eb0b023cdd60a64.1717031992.git.daniel@makrotopia.org/
-> 
-> Being another subsystem I thought it'd be better to deal with the
-> block related things first, and once that has been sorted out I will
-> move on to add the NVMEM driver and make the necessary changes for
-> using it on eMMC.
+On Mon, May 20, 2024 at 09:30:52PM -0700, David Dai wrote:
+> Introduce a virtualized cpufreq driver for guest kernels to improve
+> performance and power of workloads within VMs.
+>
+> This driver does two main things:
+>
+> 1. Sends the frequency of vCPUs as a hint to the host. The host uses the
+> hint to schedule the vCPU threads and decide physical CPU frequency.
+>
+> 2. If a VM does not support a virtualized FIE(like AMUs), it queries the
+> host CPU frequency by reading a MMIO region of a virtual cpufreq device
+> to update the guest's frequency scaling factor periodically. This enables
+> accurate Per-Entity Load Tracking for tasks running in the guest.
+>
+> +
+> +/*
+> + * CPU0..CPUn
+> + * +-------------+-------------------------------+--------+-------+
+> + * | Register    | Description                   | Offset |   Len |
+> + * +-------------+-------------------------------+--------+-------+
+> + * | cur_perf    | read this register to get     |    0x0 |   0x4 |
+> + * |             | the current perf (integer val |        |       |
+> + * |             | representing perf relative to |        |       |
+> + * |             | max performance)              |        |       |
+> + * |             | that vCPU is running at       |        |       |
+> + * +-------------+-------------------------------+--------+-------+
+> + * | set_perf    | write to this register to set |    0x4 |   0x4 |
+> + * |             | perf value of the vCPU        |        |       |
+> + * +-------------+-------------------------------+--------+-------+
+> + * | perftbl_len | number of entries in perf     |    0x8 |   0x4 |
+> + * |             | table. A single entry in the  |        |       |
+> + * |             | perf table denotes no table   |        |       |
+> + * |             | and the entry contains        |        |       |
+> + * |             | the maximum perf value        |        |       |
+> + * |             | that this vCPU supports.      |        |       |
+> + * |             | The guest can request any     |        |       |
+> + * |             | value between 1 and max perf  |        |       |
+> + * |             | when perftbls are not used.   |        |       |
+> + * +---------------------------------------------+--------+-------+
+> + * | perftbl_sel | write to this register to     |    0xc |   0x4 |
+> + * |             | select perf table entry to    |        |       |
+> + * |             | read from                     |        |       |
+> + * +---------------------------------------------+--------+-------+
+> + * | perftbl_rd  | read this register to get     |   0x10 |   0x4 |
+> + * |             | perf value of the selected    |        |       |
+> + * |             | entry based on perftbl_sel    |        |       |
+> + * +---------------------------------------------+--------+-------+
+> + * | perf_domain | performance domain number     |   0x14 |   0x4 |
+> + * |             | that this vCPU belongs to.    |        |       |
+> + * |             | vCPUs sharing the same perf   |        |       |
+> + * |             | domain number are part of the |        |       |
+> + * |             | same performance domain.      |        |       |
+> + * +-------------+-------------------------------+--------+-------+
+> + */
 
-It is rather hard to review an interface without the users.
+I think it is good idea to version this table, so that it gives flexibility
+to update the entries. It is a must if we are getting away with DT. I didn't
+give complete information in my previous response where I agreed with Rafael.
 
-I still dislike the idea of notifications from bdev discovery /
-partition scanning into the users of them.  We have one such users
-in the MD legacy autodetect code, but that has largely been considered
-at bad idea and distros tend to use mdadm based assembly from initramfs
-instead.  Which IMHO feels like the right thing for nvmem as well,
-just have an nvmem provider that opens a file for a user provided
-path and use kernel_read on it.  This can covered block devices,
-character devices and even regular files.  It will require initramfs
-support, but that is pretty much used everywhere for storage discovery
-and setup anyway.
+I am not sure how much feasible it is, but can it be queried via KVM IOCTLs
+to VMM. Just a thought, I am exploring how to make this work even on ACPI
+systems. It is simpler if we neednot rely on DT or ACPI.
+
+--
+Regards,
+Sudeep
 
