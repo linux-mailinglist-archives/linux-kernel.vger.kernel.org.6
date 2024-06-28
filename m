@@ -1,196 +1,242 @@
-Return-Path: <linux-kernel+bounces-233861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55CE091BE70
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:24:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDE4691BE81
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:27:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FCADB22F63
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:24:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2A3B28475B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:27:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F481411EE;
-	Fri, 28 Jun 2024 12:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00A9D15885D;
+	Fri, 28 Jun 2024 12:26:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="D9thjItH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="L+f3H4is";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kAe6vkW5";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="U4ON3LjP"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EiPZLjGY"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744901E898;
-	Fri, 28 Jun 2024 12:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68EA227733;
+	Fri, 28 Jun 2024 12:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719577440; cv=none; b=SYcAcfsYzLbkJd3rjOpNqToip0sCzYXf3Sopn9voFeefSVJgrW943pB/IPB7eYafnjM+JYBYTj3dGqGYdwaQjpvg9YpIfxixq38l0Og4QwR9rDef5k215PNidggu9guT7yICfIlJV0vC2FgGvnmAzhGEt9S90XKyXgDEF09S6Ec=
+	t=1719577611; cv=none; b=tGQxgBOm1BwbzAuTtzH0J3dOLXE1pJ/1EVnuFqfA3jn2imE1NNr03lNtMpitXd11rYzoTa4rVgJ0Nc58Us/z31ziGTUmkKj1n5XRq9YcI5rijcYRKKEmaYM6E+3wUKp6OithM45XohNhVwgXic3eguJfNmtPbSGmk5K+SLMA1g0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719577440; c=relaxed/simple;
-	bh=4YDHKZi8aLhgvz4O249udEW1Pdt31jb38URmtBj4/hU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Q53uBssp96xCXqnULh7VjEZJH4VRp5PoWfBxSpfC32CqX00H1NObGm6rVrPBe5tZlvZ3nfowHO04YHaRH4ZBZssGAgo87fb87WT2fvB1wHB94yxaMP4tk5g4M935lV5WYPUFd3McAcCpNs2kw+CiD/nUe2jrB74buR4H+H5JVQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=D9thjItH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=L+f3H4is; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kAe6vkW5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=U4ON3LjP; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from pobox.suse.cz (unknown [10.100.2.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 480AF21B62;
-	Fri, 28 Jun 2024 12:23:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719577430; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rOJAHhP09iSkMHBXfW1Ap1pPYlwd3RjPz7/D0Av41b0=;
-	b=D9thjItHOc26RIGU6t609H+UZwIYjgYEPaIHo+JJcfVod3RVmfbVVRVXJ60zxzX8j5TQwo
-	Z2AG3z2/PxynwseqrhQ2GCdZwi8iFak5lIpnKWXQgeMz8Ok1EiRDo2KsGeHGhnw+myNuWb
-	sTA1WvZLgiIr1bJIyL2DeNMjGwUrU1U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719577430;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rOJAHhP09iSkMHBXfW1Ap1pPYlwd3RjPz7/D0Av41b0=;
-	b=L+f3H4isfRncloyOciABmCpnz4ibN6YyrwoBMyeXdkhObWfJBADiSMAMO+EGrYVbS8K2Ev
-	cES1NSpkQeFgmaBQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719577429; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rOJAHhP09iSkMHBXfW1Ap1pPYlwd3RjPz7/D0Av41b0=;
-	b=kAe6vkW57UeQyQxWbdkBKvnDyILBTnJwjIZHlerYnDaJw6KZnEV6dLRZeo3VMbMKzJ3LZB
-	ftGVvQnimC2IAqUZAx2YQVTOZTps7eCttNpu8pwd6pYcpaeAFPkvNWDI/C6sxPhm0BWMG7
-	dL6ugQwSOSHkrTB5oOtO6X3SCAqOJvg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719577429;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rOJAHhP09iSkMHBXfW1Ap1pPYlwd3RjPz7/D0Av41b0=;
-	b=U4ON3LjP9BbJTHwuyHhLxnvO+zZh7ngMkheye0nZu6GP6oS2rgy2vo7o+yjtheB9E026a3
-	GuGycC9VCdQm28Bw==
-Date: Fri, 28 Jun 2024 14:23:49 +0200 (CEST)
-From: Miroslav Benes <mbenes@suse.cz>
-To: Song Liu <song@kernel.org>
-cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    jpoimboe@kernel.org, jikos@kernel.org, pmladek@suse.com, 
-    joe.lawrence@redhat.com, nathan@kernel.org, morbo@google.com, 
-    justinstitt@google.com, mcgrof@kernel.org, thunder.leizhen@huawei.com, 
-    kees@kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH] kallsyms, livepatch: Fix livepatch with
- CONFIG_LTO_CLANG
-In-Reply-To: <CAPhsuW5th55V3PfskJvpG=4bwacKP8c8DpVYUyVUzt70KC7=gw@mail.gmail.com>
-Message-ID: <alpine.LSU.2.21.2406281420590.15826@pobox.suse.cz>
-References: <20240605032120.3179157-1-song@kernel.org> <alpine.LSU.2.21.2406071458531.29080@pobox.suse.cz> <CAPhsuW5th55V3PfskJvpG=4bwacKP8c8DpVYUyVUzt70KC7=gw@mail.gmail.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1719577611; c=relaxed/simple;
+	bh=YPKCuva5yc7nfP31SvW35rb0gFaqHrsQTKPB7tuh//E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rOkahW/QZ5sdXkQrJ0k9CbL8RcZF/khInuMCM994syXZsXLvhMppjfnG8Cl1PT9RZHkhaeR3+47Lh0fjXVvnxT2w7wlogF5o6XjZuKIMn8UEUgn/R4VXfFG9mJSc4Wco1t1uM2xDI6mEG2JntjVRSMX31rKd4YFesx1SW4crv68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EiPZLjGY; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-364a39824baso360513f8f.1;
+        Fri, 28 Jun 2024 05:26:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719577608; x=1720182408; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=X/VQJz2hM3Y4F448nQxVS0VxqvpF+TwhJySiPDWqGzs=;
+        b=EiPZLjGYhWetQI2V8GaYtXjYa3QVInAAkJIJxuRunhbWD/Xua2qgg21gTArC8p4vmt
+         VpceqtxLwiiM/JzFfPtJmrdI/2V+JKdqNOlXwZu2Bwfn+pcmA1KEICJAvgqqW797QMJn
+         3DAfJEUbaoQwRJPp5xWblUd3MmRffsggQMGX7CWwbhUpr2BVakYDI8l+f7E00o/rrDeD
+         PWyyfXQz5EZzE8foy9IislijFvp3fQ0cWL1wPwo46CwctcfpWgmGDbx+JOQs57A3Yar7
+         P8lhuYP29VmgPm7N2yGPdINH0zQV2OWh5pWWg8NcietBHpP/hHwGKMrcsuJWqjldchPn
+         kg7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719577608; x=1720182408;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X/VQJz2hM3Y4F448nQxVS0VxqvpF+TwhJySiPDWqGzs=;
+        b=OyxnhqptaizwRl3dH7BLQczG13jROuBdYsIpEeWloSZENjIM+t1k0qUkJkKcNYke/I
+         Pkz2Hdt0cSY4i81MMQhjxqKzz4gVpF01wm47NeasJYh1yCqSuZ1YVh3hnLsZPzPqJSQI
+         ILXiuxFrotu0H0CRiaiepM1ZVKnUTlK+yo3lm7s63t/2MocNej35KE9rcyDqiLAX9de/
+         QwykPECTzdmZDABGbUzy2loy2eoBDDNYIQkNvERzM4Jc5WK7cFk2PFhl4Fs/XUZNe2yV
+         7Zax3iYHeOnMsGjZcvgsqJrSp1XQoPBZmnskF3+Gka48Mjp1lyLThFjLKJfR35jVG4rd
+         vsfw==
+X-Forwarded-Encrypted: i=1; AJvYcCXrG6gCJafn3mEbVKzgYsnIeBQs9aPfET7q2ConB5GFLHPUpGgzZn1ruC4p2AWNdF/md6DVLmNva3oc2OkUQST3XYwfm9d0rCv19QXrIfXnhXQCz38zyooGu9F1QNOEjHlk9UXF27RjDKZwd6yFOEMf1/jzxno0p+8raJt+m4aeGJPUOJUr
+X-Gm-Message-State: AOJu0YwGuOHpA4ZY34OqDuj+RW6i52cXwFqe5whaiT+MXSuxZb2J1TjJ
+	3BZteUWZjbATadVxBTuIbbwnjwR2Kh7ClcVpyFwAZ+T2wrb+Sh5l
+X-Google-Smtp-Source: AGHT+IEBnJj0jcIPr2SKFxa+XB8hdZdf8p61oiEXssLzKDdbv2pquDD9+yIevx/3N4QZrH7J7OMy0Q==
+X-Received: by 2002:a5d:4c43:0:b0:367:403d:a1ef with SMTP id ffacd0b85a97d-36742bd156cmr2987417f8f.62.1719577607204;
+        Fri, 28 Jun 2024 05:26:47 -0700 (PDT)
+Received: from orome (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0cd784sm2204336f8f.7.2024.06.28.05.26.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 05:26:46 -0700 (PDT)
+Date: Fri, 28 Jun 2024 14:26:44 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Yong Wu <yong.wu@mediatek.com>
+Cc: Rob Herring <robh+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, christian.koenig@amd.com, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, tjmercier@google.com, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	Robin Murphy <robin.murphy@arm.com>, Vijayanand Jitta <quic_vjitta@quicinc.com>, 
+	Joakim Bech <joakim.bech@linaro.org>, Jeffrey Kardatzke <jkardatzke@google.com>, 
+	Pavel Machek <pavel@ucw.cz>, Simon Ser <contact@emersion.fr>, 
+	Pekka Paalanen <ppaalanen@gmail.com>, willy@infradead.org, Logan Gunthorpe <logang@deltatee.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, jianjiao.zeng@mediatek.com, kuohong.wang@mediatek.com, 
+	youlin.pei@mediatek.com
+Subject: Re: [PATCH v5 5/9] dma-buf: heaps: restricted_heap: Add private heap
+ ops
+Message-ID: <gbj6vakab74yuhbkazlxvrz3x3bia3nb7loo7c74fadlh4wc2q@qjf44kr3mrqe>
+References: <20240515112308.10171-1-yong.wu@mediatek.com>
+ <20240515112308.10171-6-yong.wu@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="1678380546-210972171-1719577429=:15826"
-X-Spam-Score: -3.30
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	CTYPE_MIXED_BOGUS(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[multipart/mixed,text/plain];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+,1:+];
-	ARC_NA(0.00)[];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_ZERO(0.00)[0];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[pobox.suse.cz:helo,suse.cz:email]
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="vbf3vgeqgslvvuj2"
+Content-Disposition: inline
+In-Reply-To: <20240515112308.10171-6-yong.wu@mediatek.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
 
---1678380546-210972171-1719577429=:15826
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+--vbf3vgeqgslvvuj2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 7 Jun 2024, Song Liu wrote:
+On Wed, May 15, 2024 at 07:23:04PM GMT, Yong Wu wrote:
+> Add "struct restricted_heap_ops". For the restricted memory, totally there
+> are two steps:
+> a) alloc: Allocate the buffer in kernel;
+> b) restrict_buf: Restrict/Protect/Secure that buffer.
+> The "alloc" is mandatory while "restrict_buf" is optional since it may
+> be part of "alloc".
+>=20
+> Signed-off-by: Yong Wu <yong.wu@mediatek.com>
+> ---
+>  drivers/dma-buf/heaps/restricted_heap.c | 41 ++++++++++++++++++++++++-
+>  drivers/dma-buf/heaps/restricted_heap.h | 12 ++++++++
+>  2 files changed, 52 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/dma-buf/heaps/restricted_heap.c b/drivers/dma-buf/he=
+aps/restricted_heap.c
+> index c2ae19ba7d7e..8bb3c1876a69 100644
+> --- a/drivers/dma-buf/heaps/restricted_heap.c
+> +++ b/drivers/dma-buf/heaps/restricted_heap.c
+> @@ -12,10 +12,44 @@
+> =20
+>  #include "restricted_heap.h"
+> =20
+> +static int
+> +restricted_heap_memory_allocate(struct restricted_heap *rheap, struct re=
+stricted_buffer *buf)
+> +{
+> +	const struct restricted_heap_ops *ops =3D rheap->ops;
+> +	int ret;
+> +
+> +	ret =3D ops->alloc(rheap, buf);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (ops->restrict_buf) {
+> +		ret =3D ops->restrict_buf(rheap, buf);
+> +		if (ret)
+> +			goto buf_free;
+> +	}
+> +	return 0;
+> +
+> +buf_free:
+> +	ops->free(rheap, buf);
+> +	return ret;
+> +}
+> +
+> +static void
+> +restricted_heap_memory_free(struct restricted_heap *rheap, struct restri=
+cted_buffer *buf)
+> +{
+> +	const struct restricted_heap_ops *ops =3D rheap->ops;
+> +
+> +	if (ops->unrestrict_buf)
+> +		ops->unrestrict_buf(rheap, buf);
+> +
+> +	ops->free(rheap, buf);
+> +}
+> +
+>  static struct dma_buf *
+>  restricted_heap_allocate(struct dma_heap *heap, unsigned long size,
+>  			 unsigned long fd_flags, unsigned long heap_flags)
+>  {
+> +	struct restricted_heap *rheap =3D dma_heap_get_drvdata(heap);
+>  	struct restricted_buffer *restricted_buf;
+>  	DEFINE_DMA_BUF_EXPORT_INFO(exp_info);
+>  	struct dma_buf *dmabuf;
+> @@ -28,6 +62,9 @@ restricted_heap_allocate(struct dma_heap *heap, unsigne=
+d long size,
+>  	restricted_buf->size =3D ALIGN(size, PAGE_SIZE);
+>  	restricted_buf->heap =3D heap;
+> =20
+> +	ret =3D restricted_heap_memory_allocate(rheap, restricted_buf);
+> +	if (ret)
+> +		goto err_free_buf;
+>  	exp_info.exp_name =3D dma_heap_get_name(heap);
+>  	exp_info.size =3D restricted_buf->size;
+>  	exp_info.flags =3D fd_flags;
+> @@ -36,11 +73,13 @@ restricted_heap_allocate(struct dma_heap *heap, unsig=
+ned long size,
+>  	dmabuf =3D dma_buf_export(&exp_info);
+>  	if (IS_ERR(dmabuf)) {
+>  		ret =3D PTR_ERR(dmabuf);
+> -		goto err_free_buf;
+> +		goto err_free_rstrd_mem;
+>  	}
+> =20
+>  	return dmabuf;
+> =20
+> +err_free_rstrd_mem:
+> +	restricted_heap_memory_free(rheap, restricted_buf);
+>  err_free_buf:
+>  	kfree(restricted_buf);
+>  	return ERR_PTR(ret);
+> diff --git a/drivers/dma-buf/heaps/restricted_heap.h b/drivers/dma-buf/he=
+aps/restricted_heap.h
+> index b448f77616ac..5783275d5714 100644
+> --- a/drivers/dma-buf/heaps/restricted_heap.h
+> +++ b/drivers/dma-buf/heaps/restricted_heap.h
+> @@ -15,6 +15,18 @@ struct restricted_buffer {
+> =20
+>  struct restricted_heap {
+>  	const char		*name;
+> +
+> +	const struct restricted_heap_ops *ops;
+> +};
+> +
+> +struct restricted_heap_ops {
+> +	int	(*heap_init)(struct restricted_heap *rheap);
 
-> Hi Miroslav,
-> 
-> Thanks for reviewing the patch!
-> 
-> On Fri, Jun 7, 2024 at 6:06 AM Miroslav Benes <mbenes@suse.cz> wrote:
-> >
-> > Hi,
-> >
-> > On Tue, 4 Jun 2024, Song Liu wrote:
-> >
-> > > With CONFIG_LTO_CLANG, the compiler may postfix symbols with .llvm.<hash>
-> > > to avoid symbol duplication. scripts/kallsyms.c sorted the symbols
-> > > without these postfixes. The default symbol lookup also removes these
-> > > postfixes before comparing symbols.
-> > >
-> > > On the other hand, livepatch need to look up symbols with the full names.
-> > > However, calling kallsyms_on_each_match_symbol with full name (with the
-> > > postfix) cannot find the symbol(s). As a result, we cannot livepatch
-> > > kernel functions with .llvm.<hash> postfix or kernel functions that use
-> > > relocation information to symbols with .llvm.<hash> postfixes.
-> > >
-> > > Fix this by calling kallsyms_on_each_match_symbol without the postfix;
-> > > and then match the full name (with postfix) in klp_match_callback.
-> > >
-> > > Signed-off-by: Song Liu <song@kernel.org>
-> > > ---
-> > >  include/linux/kallsyms.h | 13 +++++++++++++
-> > >  kernel/kallsyms.c        | 21 ++++++++++++++++-----
-> > >  kernel/livepatch/core.c  | 32 +++++++++++++++++++++++++++++++-
-> > >  3 files changed, 60 insertions(+), 6 deletions(-)
-> >
-> > I do not like much that something which seems to be kallsyms-internal is
-> > leaked out. You need to export cleanup_symbol_name() and there is now a
-> > lot of code outside. I would feel much more comfortable if it is all
-> > hidden from kallsyms users and kept there. Would it be possible?
-> 
-> I think it is possible. Currently, kallsyms_on_each_match_symbol matches
-> symbols without the postfix. We can add a variation or a parameter, so
-> that it matches the full name with post fix.
+It might be worth moving this to a later patch when it's actually
+getting used.
 
-I think it might be better.
+Thierry
 
-Luis, what is your take on this?
- 
-> > Moreover, isn't there a similar problem for ftrace, kprobes, ebpf,...?
-> 
-> Yes, there is a similar problem with tracing use cases. But the requirements
-> are not the same:
-> 
-> For livepatch, we have to point to the exact symbol we want to patch or
-> relocation to. We have sympos API defined to differentiate different symbols
-> with the same name.
+--vbf3vgeqgslvvuj2
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Yes. In fact, sympos may be used to solve even this problem. The user 
-would disregard .llvm.<hash> suffix and they are suddenly in the same 
-situation which sympos aims to solve. I will not argue with you if say it 
-is cumbersome.
+-----BEGIN PGP SIGNATURE-----
 
-> For tracing, some discrepancy is acceptable. AFAICT, there isn't an API
-> similar to sympos yet. Also, we can play some tricks with tracing. For
-> example, we can use "uniq symbol + offset" to point a kprobe to one of
-> the duplicated symbols.
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmZ+rAQACgkQ3SOs138+
+s6EcbxAAiZuHIyjN3NZQtDif4ifUoMPGxGZ4nEdFZbnDVkpJtKmk85RLLw6vq+8j
+DggReAg+weGgbc+4qVdxZP8GKJvRcXUi9RIwQIj7/9U+R+VG+YCBwkoY81PnkYFF
+DDCTn9dfvf/r6SaJPj8mWase4q61go1K7R79XU7SwJ5SbCz7BC0RI89lSiUShJQ4
+PGDa1AQgNlKaYlMR6qjs9RFD6IHFt2Shge4S2/lbKcMgHxy3nbAZOULriFyPtkkg
+PYKZlsje5AAUR4pnABwU6qhZMp7svIiuUJX1+zldt+LCsyqMScvBnUfe1QijtiBn
+gg4sL1TTb1PVuUHPg15eyS5K9GHQilys2UXzCf+V8WT0Crr0gFz9+ClLYSSZh9NV
+phSCQY9YRUhAC0c7xwc8Ov1IxgJ0nqL6Ig8BoeZnhQkVf3wPzPk9B8hVvJMVZ13s
+blUxWO8qPdIzT6NsFK+A4RhN30gfqC8uy4DzyvhQR7+OWywHEaCZm3EdUZg0VHJp
+U51n4uVREXlO8/a4GwgvwWmc6Y7oiHjH9n9iYM2ua6EYc0HW+YvmJp4FbWBa3VRL
+e/ta+yMQWQYH1jfTqeQE1DJhBYEsKsgDjL7wv3USp+yMCkURiKWkos4b7ZXzCNVG
+Z6xBSJbmND7bujopIY7A81K15p0SM787q9XHn1MaAMJrk2Xd0lY=
+=OWnB
+-----END PGP SIGNATURE-----
 
-If I am not mistaken, there was a patch set to address this. Luis might 
-remember more.
-
-Regards,
-Miroslav
---1678380546-210972171-1719577429=:15826--
+--vbf3vgeqgslvvuj2--
 
