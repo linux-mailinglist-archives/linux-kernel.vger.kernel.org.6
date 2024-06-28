@@ -1,100 +1,111 @@
-Return-Path: <linux-kernel+bounces-233886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3370791BEBD
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:38:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0077C91BEBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:40:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2441B22611
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:38:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 318C91C210BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:40:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11ED1586FE;
-	Fri, 28 Jun 2024 12:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iV9LUABN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E421586D3;
-	Fri, 28 Jun 2024 12:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A90B158855;
+	Fri, 28 Jun 2024 12:40:00 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E7D15572B
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 12:39:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719578331; cv=none; b=LhXvvwvtPFG4mAZDXyHZIFqM+YDMsasheHQ3VLqSu0IEqZphf7KLsIdevXspyr3WFPrlqgm+B+GGIOEH1a1YlH+ngThA36ag0qm+eOzOtClbDU7uO6/HxgbPgo1HeXq09KfgapDVWPe4z35OecvCa9CL0IA/6j6EK8YvXcdL5hk=
+	t=1719578400; cv=none; b=naGwCmzJujLFjIr092IDcpSiCsbNE0k7/gidXNYyoNyvAIXos8Lnk2CoL1LcFG3+TYdnCPBv5UxUAWYd3iqE2t98qszt1M7kDbHtW20Jcto8fpxTTa15wlhASWnfgAU+MYi9jeFTtqTSilVB6YDYoWOIjSm1GIViAxqmrs4t6Rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719578331; c=relaxed/simple;
-	bh=v6Tmwm2SOnpAxDFJbKcNvIWNVRmLAY0tK6sWL8pyKhI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZLlILYj+KfW5K9bQwVPhVPBjC7vcv+NSUOEAr9K6D+y9oRI3XETFIw/xqaxPLbBphlY1GMqURsjKOVukMXX/8JOETaGRZNUQYH0LqpfbpGamR4R1UHbVNHOh9v+V8MVokjJcak7mJ5ro4HrT5Pb3IxQVVHSTaikrB/gfirwdBFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iV9LUABN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74767C116B1;
-	Fri, 28 Jun 2024 12:38:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719578330;
-	bh=v6Tmwm2SOnpAxDFJbKcNvIWNVRmLAY0tK6sWL8pyKhI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iV9LUABNUwxUeCSVH2+KO0en83O3mEy1tn0QNmBWn27DVjzBkNXW1DpPFGdKmYzqf
-	 aYM4W4FAWV39OgEks8UlCC1cbkoYDQ4JdRafnQKLnfDKTPwe9IUi6fPc+T5xonWG9e
-	 ViPTle9+gqvwtdoLkiYdLUZh1ydWPErX0Crq+XD/1uI6ALC9D/p1MPPJOfXurMLGC7
-	 C5nUxoPxer+/h2WvMF7glkcUymgm24tFW4JYDKPnjz0rGlqwX4v5VPcHi52Z7w+1Xc
-	 ke2w/mWeQAXME9068ycq8Z3BFRHe1PW5RGtGkjgOkKYVgPzc0a6cKJ0nXaqvbMcfsu
-	 iFRy0Gc1gy94A==
-Date: Fri, 28 Jun 2024 13:38:45 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Vladimir Oltean <olteanv@gmail.com>
-Cc: Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"open list:FREESCALE DSPI DRIVER" <linux-spi@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] spi: dt-bindings: fsl-dspi: add dmas and dma-names
- properties
-Message-ID: <195094ea-a80e-41f1-acaf-5fc54189f80b@sirena.org.uk>
-References: <20240627203308.476437-1-Frank.Li@nxp.com>
- <20240627215338.qrry6zpkusw5nazw@skbuf>
+	s=arc-20240116; t=1719578400; c=relaxed/simple;
+	bh=UyRqRzbJ9Nie3cIoqfa8TIBdZp5bApSAkz6k3dwlxm4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QB4unSt78tm8ZEPJEAhCqRL47PTp8YgoEyk++cVbakwYn0AD+lwMAeQ1M8x39x5PNuhWnqdsi8cUFUwd6RhCFSsHEID1KUL8GW5LwEoH7416q667fjr6Hh7Cht4p2FvYbBLDkEBvyho67QMRam3RDgIuKYVkhJ4tnQCGH3rictQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D7215106F;
+	Fri, 28 Jun 2024 05:40:21 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 79DD13F6A8;
+	Fri, 28 Jun 2024 05:39:54 -0700 (PDT)
+Message-ID: <f2fee806-09bc-4b0a-a77e-3bf12c329ecb@arm.com>
+Date: Fri, 28 Jun 2024 13:39:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kaMkPeSm3pq+liID"
-Content-Disposition: inline
-In-Reply-To: <20240627215338.qrry6zpkusw5nazw@skbuf>
-X-Cookie: divorce, n:
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] MAINTAINERS: Update IOMMU tree location
+To: Joerg Roedel <joro@8bytes.org>, iommu@lists.linux.dev
+Cc: Will Deacon <will@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Kevin Tian <kevin.tian@intel.com>, Lu Baolu <baolu.lu@linux.intel.com>,
+ linux-kernel@vger.kernel.org, Joerg Roedel <jroedel@suse.de>
+References: <20240628123132.8690-1-joro@8bytes.org>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20240628123132.8690-1-joro@8bytes.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 28/06/2024 1:31 pm, Joerg Roedel wrote:
+> From: Joerg Roedel <jroedel@suse.de>
+> 
+> Update the maintainers entries to the new location of the
+> IOMMU tree.
 
---kaMkPeSm3pq+liID
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+FWIW that's working for me;
 
-On Fri, Jun 28, 2024 at 12:53:38AM +0300, Vladimir Oltean wrote:
+Acked-by: Robin Murphy <robin.murphy@arm.com>
 
-> and FWIW, I noticed this as well, but didn't want to put yet another
-> roadblock in the conversion of a binding which was way overdue.
-> I was planning to send a patch as well, once the binding was merged.
-
-If I've seen a report that a new binding introduces errors then I'm very
-unlikely to apply it, I'd guess that's true for other maintainers too -
-it's probably best to fix reported errors promptly by default.
-
---kaMkPeSm3pq+liID
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ+rtUACgkQJNaLcl1U
-h9AJTQf+PEHTn93k4qLukGylGhh845NbqrD670qzR5ZpFpnl8m+8qo+eWuybYaP0
-UqbUOuZWz4AMYpNzqyXSRZjV4m3FHB5cC4o2jG4foJcdbGhuvEG0JIw1JYPEDUei
-73a+GhuspCYVFFBMhpMxUk5nispBSapETUPcZb/1xmiseM1TV6l4VEnaSFQ9Twdu
-k6dhWgyg2yIYovFaXjxYpn5eLfR102i3Ua2o1Wp02qgV23jYZ3pGHEUn2CkAdGsP
-RC/FI0AzSyPphTxvVCRr6yDpK7nZ96cxeLIoj9333nYt7fFP5FSzaqpVQ87qr1LF
-7EMM5uHx9jM00aHrVEmX5oEDw2TBRw==
-=Uh4I
------END PGP SIGNATURE-----
-
---kaMkPeSm3pq+liID--
+> Signed-off-by: Joerg Roedel <jroedel@suse.de>
+> ---
+>   MAINTAINERS | 8 ++++----
+>   1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index aacccb376c28..c48c9e772517 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1044,7 +1044,7 @@ M:	Joerg Roedel <joro@8bytes.org>
+>   R:	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+>   L:	iommu@lists.linux.dev
+>   S:	Maintained
+> -T:	git git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git
+> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git
+>   F:	drivers/iommu/amd/
+>   F:	include/linux/amd-iommu.h
+>   
+> @@ -11156,7 +11156,7 @@ M:	David Woodhouse <dwmw2@infradead.org>
+>   M:	Lu Baolu <baolu.lu@linux.intel.com>
+>   L:	iommu@lists.linux.dev
+>   S:	Supported
+> -T:	git git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git
+> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git
+>   F:	drivers/iommu/intel/
+>   
+>   INTEL IPU3 CSI-2 CIO2 DRIVER
+> @@ -11529,7 +11529,7 @@ IOMMU DMA-API LAYER
+>   M:	Robin Murphy <robin.murphy@arm.com>
+>   L:	iommu@lists.linux.dev
+>   S:	Maintained
+> -T:	git git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git
+> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git
+>   F:	drivers/iommu/dma-iommu.c
+>   F:	drivers/iommu/dma-iommu.h
+>   F:	drivers/iommu/iova.c
+> @@ -11541,7 +11541,7 @@ M:	Will Deacon <will@kernel.org>
+>   R:	Robin Murphy <robin.murphy@arm.com>
+>   L:	iommu@lists.linux.dev
+>   S:	Maintained
+> -T:	git git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git
+> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git
+>   F:	Documentation/devicetree/bindings/iommu/
+>   F:	Documentation/userspace-api/iommu.rst
+>   F:	drivers/iommu/
 
