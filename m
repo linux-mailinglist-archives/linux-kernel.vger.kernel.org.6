@@ -1,132 +1,205 @@
-Return-Path: <linux-kernel+bounces-233280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9754A91B528
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 04:47:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3AD991B52A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 04:50:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FC22283B46
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 02:47:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 127B4283CCD
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 02:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D8E1CAA2;
-	Fri, 28 Jun 2024 02:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nW1FkHOn"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 829071C6A4;
+	Fri, 28 Jun 2024 02:50:41 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B038D1C6A4;
-	Fri, 28 Jun 2024 02:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F881103;
+	Fri, 28 Jun 2024 02:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719542865; cv=none; b=kpC0jrp2MzhOCz/2sbCKQ3rGgr63IA8a8RS9/FtOBqJoyKNA+e9buzO8F7l9JnDTHKlL1BoNLAkcFwSJv8HD7E3o8PAlj84ELTmf0YTGjZAGv6LhUpkKO2Q0MYmq8o9sgEkJnshNdB0c/CjKAZcDC116g+z4t8KDitJqLyd/G30=
+	t=1719543041; cv=none; b=UxcsFmFLEonZgVXPyxSo6TnmM6zXuEIIn15HZOBXk3kN8b1W/42PlKpBHrIrGgZkUIDIwRqCfJQApLstyxj+9ZMq0Ph8i4TdGapkLuO1yD77CrlFlOueBMn/DCCI6llcKEBCB9FLIXMOlWK5/4DEEW6WnUaSwvI6apYnIDLTx0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719542865; c=relaxed/simple;
-	bh=RugJsmSoFQ0Opqso7x3i6LNEuu1OqPbWR4QAu9YtPQI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MNd6EEkojHfe7RqcNnt6FiMWN1ZSS7lBelRmJkPaBjkdrdhnSyI7B7Zv5kn+qwxYvxt0B0mohtsk/7bgC1OvJKXTZcapYkNReDU87vOqIWh3rQAWD8CMJ+ku/d2lkrJZ5vIHEZK0SwawcvFZ0qBoulO563KwiKDIwLlJTqWfCSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nW1FkHOn; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719542864; x=1751078864;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RugJsmSoFQ0Opqso7x3i6LNEuu1OqPbWR4QAu9YtPQI=;
-  b=nW1FkHOnP1gqYRdE4mrG8BYvthA7CXPkNmSTaDM2gn+0QvM4OSYl7+vL
-   Hu1maylCNZmgqxTXJdUn2W5+h2s3WFcvbZEwg5csnsECBNrwlNDoNWJjX
-   ZkULuCWQo27coMCjdHQO+6/1qY8ULnNH4nwny1rv3UG7L/9ZsXGO58OjH
-   KUwQgPlXtLpFodr99GZ9i5yGCtHcvi+STmY7u3G8HFLuJ9CcrilfT2yPh
-   g0DkKUKDP8uumtRIWo4OqS6wf0d05ax2liDBQ5P3+sPjT5+olbkpuqjzn
-   F+4ptPaGQ19x/dNvqQIysRi3DJ1kNvTn9PjH8bELJyzjtOY8lswkd2Bj7
-   w==;
-X-CSE-ConnectionGUID: Y5NZR/XLSWuKhNTxuDTtrA==
-X-CSE-MsgGUID: 7GeDU7PMR2iTKj7rfJie9w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="16841296"
-X-IronPort-AV: E=Sophos;i="6.09,167,1716274800"; 
-   d="scan'208";a="16841296"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 19:47:43 -0700
-X-CSE-ConnectionGUID: 0C3QM5UYRGaMVHm8ynMGug==
-X-CSE-MsgGUID: 6Ri0fHKYTxyAa0KtLme04A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,167,1716274800"; 
-   d="scan'208";a="49554408"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 27 Jun 2024 19:47:39 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sN1eC-000Gjq-2k;
-	Fri, 28 Jun 2024 02:47:36 +0000
-Date: Fri, 28 Jun 2024 10:47:15 +0800
-From: kernel test robot <lkp@intel.com>
-To: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>, sboyd@kernel.org,
-	andersson@kernel.org, bjorn.andersson@linaro.org,
-	david.brown@linaro.org, devicetree@vger.kernel.org,
-	jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org, mark.rutland@arm.com,
-	mturquette@baylibre.com, ohad@wizery.com, robh@kernel.org,
-	sricharan@codeaurora.org
-Cc: oe-kbuild-all@lists.linux.dev, gokulsri@codeaurora.org
-Subject: Re: [PATCH v9 8/8] arm64: dts: qcom: Enable Q6v5 WCSS for ipq8074 SoC
-Message-ID: <202406281044.3vIaThJc-lkp@intel.com>
-References: <20240621114659.2958170-9-quic_gokulsri@quicinc.com>
+	s=arc-20240116; t=1719543041; c=relaxed/simple;
+	bh=6rbcUmU/PgctxwroinZbJlRScZ/CbW1fxFJyj7nO+U0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iOVZsK8IQoXhi3n+tjhewT60hlB2UI6pOT+F3f8GzuXWXT+IYKaScSFpCCpcvx7YC1c2Yt2PgNBNc2+F25pxzacG8vxoXKKFi8tHnWAs/iWgF4mq0GsTP6p8yK9orgXJke53UFDv5pwj+lzYzjBbSY7p/RtoiFmcicoRNGw20Ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 2adf0c7034f911ef9305a59a3cc225df-20240628
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:6f197053-ee73-4480-a69b-e344bb122367,IP:10,
+	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTI
+	ON:release,TS:-5
+X-CID-INFO: VERSION:1.1.38,REQID:6f197053-ee73-4480-a69b-e344bb122367,IP:10,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-5
+X-CID-META: VersionHash:82c5f88,CLOUDID:77810acd882e3d678744e74c1f179035,BulkI
+	D:240628105025NQPQ4CTZ,BulkQuantity:0,Recheck:0,SF:24|17|19|44|64|66|38|10
+	2,TC:nil,Content:0,EDM:-3,IP:-2,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:
+	nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,
+	TF_CID_SPAM_ULS
+X-UUID: 2adf0c7034f911ef9305a59a3cc225df-20240628
+Received: from node2.com.cn [(39.156.73.10)] by mailgw.kylinos.cn
+	(envelope-from <luyun@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 776176237; Fri, 28 Jun 2024 10:50:24 +0800
+Received: from node2.com.cn (localhost [127.0.0.1])
+	by node2.com.cn (NSMail) with SMTP id 06D45B80758A;
+	Fri, 28 Jun 2024 10:50:24 +0800 (CST)
+X-ns-mid: postfix-667E24EF-14207137
+Received: from [10.42.20.151] (unknown [10.42.20.151])
+	by node2.com.cn (NSMail) with ESMTPA id 41473B80758A;
+	Fri, 28 Jun 2024 02:50:20 +0000 (UTC)
+Message-ID: <3ff7f761-dd46-40f9-ab34-4eb05d4f2ecd@kylinos.cn>
+Date: Fri, 28 Jun 2024 10:48:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240621114659.2958170-9-quic_gokulsri@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: CPU stuck due to the taprio hrtimer
+To: Vinicius Costa Gomes <vinicius.gomes@intel.com>, jhs@mojatatu.com,
+ xiyou.wangcong@gmail.com, jiri@resnulli.us
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240627055338.2186255-1-luyun@kylinos.cn>
+ <87sewy55gp.fsf@intel.com>
+Content-Language: en-US
+From: luyun <luyun@kylinos.cn>
+In-Reply-To: <87sewy55gp.fsf@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-Hi Gokul,
 
-kernel test robot noticed the following build warnings:
+=E5=9C=A8 2024/6/28 07:30, Vinicius Costa Gomes =E5=86=99=E9=81=93:
+> Yun Lu <luyun@kylinos.cn> writes:
+>
+>> Hello,
+>>
+>> When I run a taprio test program on the latest kernel(v6.10-rc4), CPU =
+stuck
+>> is detected immediately, and the stack shows that CPU is stuck on tapr=
+io
+>> hrtimer.
+>>
+>> The reproducer program link:
+>> https://github.com/xyyluyun/taprio_test/blob/main/taprio_test.c
+>> gcc taprio_test.c -static -o taprio_test
+>>
+>> In this program, start the taprio hrtimer which clockid is set to REAL=
+TIME, and
+>> then adjust the system time by a significant value backwards. Thus, CP=
+U will enter
+>> an infinite loop in the__hrtimer_run_queues function, getting stuck an=
+d unable to
+>> exit or respond to any interrupts.
+>>
+>> I have tried to avoid this problem by apllying the following patch, an=
+d it does work.
+>> But I am not sure if this can be the final solution?
+>>
+>> Thanks.
+>>
+>> Signed-off-by: Yun Lu <luyun@kylinos.cn>
+>> ---
+>>   net/sched/sch_taprio.c | 24 ++++++++++++++++++++++++
+>>   1 file changed, 24 insertions(+)
+>>
+>> diff --git a/net/sched/sch_taprio.c b/net/sched/sch_taprio.c
+>> index a0d54b422186..2ff8d34bdbac 100644
+>> --- a/net/sched/sch_taprio.c
+>> +++ b/net/sched/sch_taprio.c
+>> @@ -104,6 +104,7 @@ struct taprio_sched {
+>>   	u32 max_sdu[TC_MAX_QUEUE]; /* save info from the user */
+>>   	u32 fp[TC_QOPT_MAX_QUEUE]; /* only for dump and offloading */
+>>   	u32 txtime_delay;
+>> +	ktime_t offset;
+>>   };
+>>  =20
+>>   struct __tc_taprio_qopt_offload {
+>> @@ -170,6 +171,19 @@ static ktime_t sched_base_time(const struct sched=
+_gate_list *sched)
+>>   	return ns_to_ktime(sched->base_time);
+>>   }
+>>  =20
+>> +static ktime_t taprio_get_offset(const struct taprio_sched *q)
+>> +{
+>> +	enum tk_offsets tk_offset =3D READ_ONCE(q->tk_offset);
+>> +	ktime_t time =3D ktime_get();
+>> +
+>> +	switch (tk_offset) {
+>> +	case TK_OFFS_MAX:
+>> +		return 0;
+>> +	default:
+>> +		return ktime_sub_ns(ktime_mono_to_any(time, tk_offset), time);
+>> +	}
+>> +}
+>> +
+>>   static ktime_t taprio_mono_to_any(const struct taprio_sched *q, ktim=
+e_t mono)
+>>   {
+>>   	/* This pairs with WRITE_ONCE() in taprio_parse_clockid() */
+>> @@ -918,6 +932,7 @@ static enum hrtimer_restart advance_sched(struct h=
+rtimer *timer)
+>>   	int num_tc =3D netdev_get_num_tc(dev);
+>>   	struct sched_entry *entry, *next;
+>>   	struct Qdisc *sch =3D q->root;
+>> +	ktime_t now_offset =3D taprio_get_offset(q);
+>>   	ktime_t end_time;
+>>   	int tc;
+>>  =20
+>> @@ -957,6 +972,14 @@ static enum hrtimer_restart advance_sched(struct =
+hrtimer *timer)
+>>   	end_time =3D ktime_add_ns(entry->end_time, next->interval);
+>>   	end_time =3D min_t(ktime_t, end_time, oper->cycle_end_time);
+>>  =20
+>> +	if (q->offset !=3D now_offset) {
+>> +		ktime_t diff =3D ktime_sub_ns(now_offset, q->offset);
+>> +
+>> +		end_time =3D ktime_add_ns(end_time, diff);
+>> +		oper->cycle_end_time =3D ktime_add_ns(oper->cycle_end_time, diff);
+>> +		q->offset =3D now_offset;
+>> +	}
+>> +
+> I think what we should do here is a bit different. Let me try to explai=
+n
+> what I have in mind with some context.
+>
+> A bit of context: The idea of taprio is to enforce "TSN" traffic
+> schedules, these schedules require time synchronization, for example vi=
+a
+> PTP, and in those cases, time jumps are not expected or a sign that
+> something is wrong.
+>
+> In my mind, a time jump, specially a big one, kind of invalidates the
+> schedule, as the schedule is based on an absolute time value (the
+> base_time), and when time jumps that reference in time is lost.
+>
+> BUT making the user's system unresponsive is a bug, a big one, as if
+> this happens in the real world, the user will be unable to investigate
+> what made the system have so big a time correction.
+>
+> So my idea is to warn the user that the time jumped, say that the user
+> needs to reconfigure the schedule, as it is now invalid, and disable th=
+e
+> schedule.
+>
+> Does this make sense?
+>
+> Ah, and thanks for the report.
+>
+Yeah, I understand what you mean,=C2=A0 and your idea is more reasonable.
 
-[auto build test WARNING on remoteproc/rproc-next]
-[also build test WARNING on clk/clk-next robh/for-next linus/master v6.10-rc5 next-20240627]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Thank you for confirming this bug, my patch is only for temporary=20
+testing to avoid it.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Gokul-Sriram-Palanisamy/remoteproc-qcom-Add-PRNG-proxy-clock/20240625-162317
-base:   git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
-patch link:    https://lore.kernel.org/r/20240621114659.2958170-9-quic_gokulsri%40quicinc.com
-patch subject: [PATCH v9 8/8] arm64: dts: qcom: Enable Q6v5 WCSS for ipq8074 SoC
-config: arm64-randconfig-051-20240627 (https://download.01.org/0day-ci/archive/20240628/202406281044.3vIaThJc-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project ad79a14c9e5ec4a369eed4adf567c22cc029863f)
-dtschema version: 2024.6.dev2+g3b69bad
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240628/202406281044.3vIaThJc-lkp@intel.com/reproduce)
+BRs.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406281044.3vIaThJc-lkp@intel.com/
-
-dtcheck warnings: (new ones prefixed by >>)
-   arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb: phy@59000: 'vdda-pll-supply' is a required property
-   	from schema $id: http://devicetree.org/schemas/phy/qcom,qusb2-phy.yaml#
-   arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb: phy@59000: 'vdda-phy-dpdm-supply' is a required property
-   	from schema $id: http://devicetree.org/schemas/phy/qcom,qusb2-phy.yaml#
-   arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb: phy@79000: 'vdd-supply' is a required property
-   	from schema $id: http://devicetree.org/schemas/phy/qcom,qusb2-phy.yaml#
-   arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb: phy@79000: 'vdda-pll-supply' is a required property
-   	from schema $id: http://devicetree.org/schemas/phy/qcom,qusb2-phy.yaml#
-   arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb: phy@79000: 'vdda-phy-dpdm-supply' is a required property
-   	from schema $id: http://devicetree.org/schemas/phy/qcom,qusb2-phy.yaml#
->> arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb: /soc@0/remoteproc@cd00000: failed to match any schema with compatible: ['qcom,ipq8074-wcss-pil']
---
->> arch/arm64/boot/dts/qcom/ipq8074-hk10-c1.dtb: /soc@0/remoteproc@cd00000: failed to match any schema with compatible: ['qcom,ipq8074-wcss-pil']
---
->> arch/arm64/boot/dts/qcom/ipq8074-hk10-c2.dtb: /soc@0/remoteproc@cd00000: failed to match any schema with compatible: ['qcom,ipq8074-wcss-pil']
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
