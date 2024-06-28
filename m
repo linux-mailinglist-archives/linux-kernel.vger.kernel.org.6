@@ -1,280 +1,117 @@
-Return-Path: <linux-kernel+bounces-233953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55ABD91BFFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:53:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D371C91C001
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:54:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4CA21F22821
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 13:53:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 923BA283FD2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 13:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE7D1BE847;
-	Fri, 28 Jun 2024 13:52:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE7E1BE871;
+	Fri, 28 Jun 2024 13:54:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="g0dOOupc"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="cPu8Yqjz"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C2E15D5A1;
-	Fri, 28 Jun 2024 13:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094321E89A;
+	Fri, 28 Jun 2024 13:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719582773; cv=none; b=egafKc/11zY4uPxC1SB2M5aM6PdRJWuKFfNyybaZ/t+FMC8cQpIJulOsejfSe6mk4ja5hN++XVPLSgcPh3dxXCRN3IZ8BVLjlchZksbh8OK4eY8HULP6814o7I1xMChTFy08fUqE7cRD6rTt97R+I/CD7hmjq/dpYKvE2yKH1tE=
+	t=1719582842; cv=none; b=SiSSM2AW41AVebeWh2YvMWwidBIZsZxc6BVuj8nsKQ5Q6PlOgVUCK+cdxVWJttNgzAqbFQBDMs+mBYJV34WAMfBmxAntzR/uM1+cyxBP9cxTHQ/lXwu138tHXUz5G44YARv5HCxjwjG1JSBvrkUyRv54uNqHXuySx+ps+/erFbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719582773; c=relaxed/simple;
-	bh=U1TAumktn6Sm4R3ZOj65CqP7axdosB/bF8DF4p0HZNg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MeBzv8zTeB7pP0nAO1tzR0jTqUooIl/0NyDcvpEZgASiAwijJpdEq2KM7K3Q+rdeuPbvUPgeLthZje7GoBRkY47k9hQK8mFG19vn7w2c7D5Eih7nokjvkjxD6TjiWeaJAQSuBwjH76cyPoatGDCVG7iYYTJgJGqfxEYDxcTAZAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=g0dOOupc; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=WHiUc3wKGhPy/FKSmZsZ6rm8aSzCPZ4IGMmq7c4bAes=; b=g0
-	dOOupcZ55sAyN6G38x64E/X2Z8qIMZ2bH6OYpgM/Ya94338pkjUOwkXxKbFURbqfs6PFAQlPOg8Oq
-	92YM3qqT72yS0tgUk77y6MykBOJn7W2poFEF+ZLBdPjxPamqZ62X92/Lgo9vNr1lsBx5VKSc5T/nH
-	YM4eN+MVhTvqgNo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sNC1o-001HoU-Vt; Fri, 28 Jun 2024 15:52:40 +0200
-Date: Fri, 28 Jun 2024 15:52:40 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Ayush Singh <ayush@beagleboard.org>
-Cc: Mark Brown <broonie@kernel.org>,
-	Vaishnav M A <vaishnav@beagleboard.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>, Michael Walle <mwalle@kernel.org>,
-	jkridner@beagleboard.org, robertcnelson@beagleboard.org,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Ayush Singh <ayushdevel1325@gmail.com>
-Subject: Re: [PATCH v5 0/7] misc: Add mikroBUS driver
-Message-ID: <54c18009-40c6-4c92-852e-6b7117e706a2@lunn.ch>
-References: <20240627-mikrobus-scratch-spi-v5-0-9e6c148bf5f0@beagleboard.org>
- <1edcfd98-e73c-477e-a4ce-98cb41e66ab6@beagleboard.org>
+	s=arc-20240116; t=1719582842; c=relaxed/simple;
+	bh=hlCxSbXY/zYRj0hehwmqLqtkVoKWHqJrAMGLXDfKaQI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ld9Z4s0GO+SUYwz5I0aGpEPSmYd2XyykrutfzKp/czI4zBSHphzMWvfhNIRxaihJE9x5paVs1FpmsTsqA7wb3+3DnVZWVeH4mW7tK7Zc7ovxsFQ3teufqyQktuAnrlOarlk4v07d4938Is8B5LwevFyouF1wcbpewPI0l+Es7TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=cPu8Yqjz; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4W9cNf08FXz6Cnv3Q;
+	Fri, 28 Jun 2024 13:53:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1719582824; x=1722174825; bh=VbKwt14gFQqPYlFlJyY3C86g
+	+aG7f2ya06N7n4GnsqM=; b=cPu8YqjzwECf6/Cvud2z6XgE7OuVVZpV4zNBFDKq
+	Qnz6dXkmXMG2hdXwgF0J3DCK5KFzyBzii2dwcGWleHWJ0WrScYadFKPOir+f0Aft
+	/nFDLgOsb+aUTixwvE92CC+CZi0xZcge2zzA/ZdpZorE/6XyzkqpmdRbSOiEXzIc
+	AIoi+BoRmjAPh7VWDnm7wd1TEmcZFp4uUjTW7gHOGaZ6dZHjoce+WokXQ0w2ipzx
+	If5KRynp2k6se3CDq+a3umpwSLVrJOttaF4yociv9RlGG09v7sScsKMkWi+zxTb6
+	eStAs+EBoGJELvA9i2svY+GIP9bm/QSbqgSdu3JoyhFI3Q==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id d1VM3CVtcbxI; Fri, 28 Jun 2024 13:53:44 +0000 (UTC)
+Received: from [192.168.50.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4W9cNJ4zk2z6Cnk9Y;
+	Fri, 28 Jun 2024 13:53:36 +0000 (UTC)
+Message-ID: <4c7f30af-9fbc-4f19-8f48-ad741aa557c4@acm.org>
+Date: Fri, 28 Jun 2024 06:53:32 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1edcfd98-e73c-477e-a4ce-98cb41e66ab6@beagleboard.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v20 02/12] Add infrastructure for copy offload in block
+ and request layer.
+To: Christoph Hellwig <hch@lst.de>, Damien Le Moal <dlemoal@kernel.org>
+Cc: Nitesh Shetty <nj.shetty@samsung.com>, Jens Axboe <axboe@kernel.dk>,
+ Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
+ Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>,
+ Keith Busch <kbusch@kernel.org>, Sagi Grimberg <sagi@grimberg.me>,
+ Chaitanya Kulkarni <kch@nvidia.com>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>, martin.petersen@oracle.com, david@fromorbit.com,
+ hare@suse.de, damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com,
+ joshi.k@samsung.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, dm-devel@lists.linux.dev,
+ linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
+References: <d7ae00c8-c038-4bed-937e-222251bc627a@acm.org>
+ <20240604044042.GA29094@lst.de>
+ <4ffad358-a3e6-4a88-9a40-b7e5d05aa53c@acm.org>
+ <20240605082028.GC18688@lst.de>
+ <CGME20240624105121epcas5p3a5a8c73bd5ef19c02e922e5829a4dff0@epcas5p3.samsung.com>
+ <6679526f.170a0220.9ffd.aefaSMTPIN_ADDED_BROKEN@mx.google.com>
+ <4ea90738-afd1-486c-a9a9-f7e2775298ff@acm.org>
+ <de54c406-9270-4145-ab96-5fc3dd51765e@kernel.org>
+ <b5d93f2c-29fc-4ee4-9936-0f134abc8063@acm.org>
+ <05c7c08d-f512-4727-ae3c-aba6e8f2973f@kernel.org>
+ <20240626052238.GC21996@lst.de>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240626052238.GC21996@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> 3. Allowing creation of sysfs entries `new_device` and `delete_device`
-> similar to what already exists for I2C, etc.
+On 6/25/24 10:22 PM, Christoph Hellwig wrote:
+> It's not just dm.  You also need it in the partition remapping code
+> (mandatory), md (nice to have), etc.
+> 
+> And then we have the whole mess of what is in the payload for the I/O
+> stack vs what is in the payload for the on the wire protocol, which
+> will have different formatting and potentially also different sizes.
 
-On the I2C bus, these operate at the device level, you instantiate a
-new I2C device.  I assume here you are actually talking about board
-level operations? So they would be 'new_board', and 'delete_board'
-files in sysfs?
+Drivers like dm-linear rely on bio splitting. If the COPY_SRC and
+COPY_DST operations travel independently down a stacked block driver
+hierarchy, a separate data structure is needed to keep track of which
+operations have been split and to combine the split operations into
+requests. Isn't this an argument in favor of storing the source and
+destination parameters in a single bio?
 
-> 
-> 4. Allow using 1-wire-eeprom in a fashion that allows automatic board
-> discovery.
-> 
-> 
-> Let me now introduce the 2 architectures we will be discussing:
-> 
-> 1. mikrobus-connector has phandle to mikrobus-board:
-> 
-> ```
-> 
-> \ {
-> 
->     connector1 {
-> 
->         board = <&board1>;
-> 
->     };
-> 
-> 
->     mikrobus_boards {
-> 
->         board1 {
-> 
->             ...
-> 
->         };
-> 
->     };
-> 
-> };
-> 
-> ```
-> 
-> 
-> 2. mikrobus board is a child node of mikrobus-connector:
-> 
-> ```
-> 
-> \ {
-> 
->     connector1 {
-> 
->         ...
-> 
->         spi {
+Thanks,
 
-So there would actually be multiple child nodes, one per bus, and then
-maybe a simple-bus for nodes which do not correspond to a bus,
-e.g. gpio-key, gpio-leds, etc.,
-
-> 
->             board1 {
-> 
->                 ...
-> 
->             };
-> 
->         };
-> 
->     };
-> 
-> };
-> 
-> ```
-> 
-> 
-> I will now go over how each of these goals might look like in both of the
-> architecture.
-> 
-> 1. Keeping the device tree properties upstream in a system independent way:
-> 
-> a. mikrobus-connector has phandle to mikrobus-board
-> 
-> It is possible to create an overlay as follows which will work with any
-> system that defines the `mikrobus_boards` node. This node is completely
-> independent of mikroBUS connector and thus does not need to be rewritten (or
-> generated) for each board. There are no problems for system with more than 1
-> mikrobus connector.
-> 
-> ```
-> 
-> &mikrobus_boards {
-> 
->     board2 {
-> 
->         ...
-> 
->     };
-> 
-> 
->     board3 {
-> 
->         ...
-> 
->     };
-> 
-> };
-
-So by default, you have an empty mikrobus_boards node? You then use DT
-overlay to load the needed board into this node, and then update the
-phandle in the connection node to point to the newly loaded node?
-
-> b. mikrobus board is a child node of mikrobus-connector:
-> 
-> Not sure how to do something similar here. The overlay needs to be rewritten
-> (or generated) for each board.
-
-It would be good to explain why...
-
-> Systems with multiple mikrobus connectors
-> will need multiple overlays adding the boards as child node of each
-> connector (with status = "disabled").
-
-Why? Just load the one overlay actually required.
-
-> &connector1 {
-> 
->     spi = {
-> 
->         board 2 {
-> 
->             ...
-> 
->         };
-> 
->         board 3 {
-> 
->             ...
-> 
->         };
-> 
->     };
-> 
-> };
-
-I don't actually understand this description. I was expecting more
-like:
-
-connector1: {
-
-	spi =  {
-	    /* Optional TI TSC2046 touchscreen controller */
-            opt_touch: touchscreen@0 {
-                    compatible = "ti,tsc2046";
-                    spi-max-frequency = <2500000>;
-                    reg = <0>;
-                    pinctrl-0 = <&pmx_gpio_13>;
-                    pinctrl-names = "default";
-                    interrupts-extended = <&gpio0 13 IRQ_TYPE_EDGE_FALLING>;
-            };
-	};
-
-	i2c = {
-	        opt_audio: audio@1a {
-                compatible = "ti,tlv320aic23";
-                reg = <0x1a>;
-        };
-
-	the_rest = {
-        	gpio_keys {
-                    compatible = "gpio-keys";
-                    #address-cells = <1>;
-                    #size-cells = <0>;
-                    pinctrl-0 = <&pmx_reset_button &pmx_USB_copy_button>;
-                    pinctrl-names = "default";
-    
-                    copy {
-                            label = "USB Copy";
-                            linux,code = <KEY_COPY>;
-                            gpios = <&gpio0 15 GPIO_ACTIVE_LOW>;
-                    };
-                    reset {
-                            label = "Reset";
-                            linux,code = <KEY_RESTART>;
-                            gpios = <&gpio0 16 GPIO_ACTIVE_LOW>;
-                    };
-            };
-
-This is completely made up. You probably should use an example of a
-real complex board using multiple busses.
-
-So for each actual bus on Mikrobus, you have a bus node, and then a
-node for everything which is not bus orientated, like gpio-keys.
-
-So the overlay would simply populate these child nodes.
-
-> Maybe it is possible to have special behavior for mikrobus-connector nodes
-> in dt overlay but that will break compatibility with exisiting
-> infrastructure which isn't great.
-
-You have not explain what special behaviour is actually needed.
-
-	Andrew
+Bart.
 
