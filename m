@@ -1,140 +1,279 @@
-Return-Path: <linux-kernel+bounces-233670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FC2791BB58
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:22:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11CEF91BB5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:22:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C1FD281730
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:22:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 352501C22AC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E59A1514E1;
-	Fri, 28 Jun 2024 09:22:23 +0000 (UTC)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA1214F133;
+	Fri, 28 Jun 2024 09:22:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="I8fGdIb8"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15CBB21105;
-	Fri, 28 Jun 2024 09:22:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D20214F9FF;
+	Fri, 28 Jun 2024 09:22:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719566542; cv=none; b=KSCNkEpeiq82p0uRNJvB+mJHVTGXP2MzvIZ5uKBphKNpQSGS9C+7yrdGPvj2gO+D0AHvnbYBkS5PpOQO8mlD6QvC3yE4ZOQ52fJmKRlaMXFG+IueyFQU2WAwRf/CQBIHEJzLJr4dTXRAtWOw3StRo2h419ICM47BVN3MtDivR7g=
+	t=1719566573; cv=none; b=UXowbGbhKbkB23Q3g7iVvsd2ocsvng7ingj+QJQDbZ3HvMUW5JwLJsHdVNniVE+np0q5VobsOzX3pOTH0SxsGalER3VB5EMFjaCNFw9eB9ItBpbshEd0CCCJM8QUfLfMgKB2Rp6qaVkyKcfNsrQhUv9xdEfwGtIoKNCkU9z4OgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719566542; c=relaxed/simple;
-	bh=s2v0SCtuLdBGXTNA/pzfiqK5TXKCGtl+5CoWL2zIOrM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eN+xzs3lu1kIkacXjhQIxPQbLol6vpYITnYTLFNZFgP8wl2EZ2LDjlWIGXY+2EnE6ynUUtJxEu+NMFC9YOhE9IvAjbHFN08IoKfZd0ldlCap5UdzDVpsAUfaHACDslwKZuzVWnBNXcZG4WGcMz5jYrcidyasD2Bl9Wwmu9HiVbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6327e303739so3517797b3.2;
-        Fri, 28 Jun 2024 02:22:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719566537; x=1720171337;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lPkiiuvvTvf4U3Ro8IqPKqYL9PdIgEp2Zf9jQK+VOus=;
-        b=oMPO7I0L4R2LYjIdQ4c6u7uRtIxsaDSbtyiwhlqlOXaTukyIi4HXkXlLTEEX8NtN64
-         BqOv5l1aep5FsWmB9kejIAFb4eJdLxjAY9AaCENEjoRJ5MoZCcmJXZ5EzJ9O+pof8Zoz
-         SqWcKIFZh47e+CFHSOTcoNLJgZIWnpohM6Q89sVX0XQGExJUbD8OxbWmA6DBtQdn9q4g
-         OGgxvQS3dAbEiQerXF26W5A9Hov1ikGspGG2j87X95n6OR44MmOOE4Vo2BVtWr2EatBs
-         TZuKq10xs3BPACE2Up2G4UZaqVeV6vA+e2WfRFbrUnY9DfwcRnF9h3/sU7/hdXX0Nh3m
-         ldQA==
-X-Forwarded-Encrypted: i=1; AJvYcCWI5l5WrCna+LLwqqcEEDE5omLEa/QAz8ip/niAqT9BElXA13rVeh+SNoyn9H0Z8dW5dRDTXVguvzPoeBpN7USxN9IZhwsFz1g6hMNn0sLLF7+JspYAcnkdnnxzwDyePhgzyi1J7uMmnVylhxba2NDz3Et82Z5FEOK9M0cOR25tgwhozMVrLFmgOCZUVr8mo184JxqUJAXOkC1xUzhoxlypUWeDvZiQPD7I7T/Qlua955Pf2zSHBVBmql3k3G7m99gk
-X-Gm-Message-State: AOJu0Yy7wVItFMjFayVGbBX7KXO8V4d3WseyuavraBCmGQsFwBGY3MvY
-	eZA7PSYGvsASepsyC9CZnNc7tjsKLY2J0lHBxjrHIpgLRMXDc+QhH0sijoNn
-X-Google-Smtp-Source: AGHT+IF2U2yL59gFoBHuaQ1ZeXCm8HFBJrGLAq524F2DrTFgDuSmurln8J3OH7v2V5dlY6M32jQHNg==
-X-Received: by 2002:a05:690c:360e:b0:64b:69f0:f900 with SMTP id 00721157ae682-64b69f10411mr2105477b3.23.1719566537524;
-        Fri, 28 Jun 2024 02:22:17 -0700 (PDT)
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-64a9a803a15sm2695677b3.68.2024.06.28.02.22.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Jun 2024 02:22:16 -0700 (PDT)
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-64b0d45a7aaso3209207b3.0;
-        Fri, 28 Jun 2024 02:22:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUL63FHWF6lOdRcp1BfDlfvNIi9cp+9pS8PiPfA0oh3J48DMFWP+gmmw/2+Yll302Lmr6niy/6qJBgGip53budHEU60ekm+uXj7cq8HY0wcUFmCWcCh6YHTVwKh9igcertpXBYRhj9RR4kVAleBDeQkk0SxVLDBf14oz7B4lka8bGnC6Fby/URj6UmseXjkpyG467OFDKoTXQktBKEFnYiH+DtMXkeVtEF/qhHOoScO72jO09eY96cfcd00HO0RsP7t
-X-Received: by 2002:a81:a20a:0:b0:61b:33c8:7bce with SMTP id
- 00721157ae682-643aab82cc5mr155916427b3.31.1719566536472; Fri, 28 Jun 2024
- 02:22:16 -0700 (PDT)
+	s=arc-20240116; t=1719566573; c=relaxed/simple;
+	bh=ji3kYAAiZDeNMyOTvUchwFM6v2WJ4stp4je4nHMyTuc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=p90lINS8PhTvc0Dkng9UcepzlEAk/CU7WzlT4fwR0vAdQnBCYXSKgeUSoiqIEiBlHRVG1PKmX6Lc4khYwMEgJ2xl0XLIVkF0uhlQM14qIcmw7fk6gGEFln+FnFxgg8AtZGqV5F0DmO5Btt4lhbYpWFy4Wd5HGg+59MWD8vtVS24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=I8fGdIb8; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45S7x9BC029750;
+	Fri, 28 Jun 2024 09:22:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	0w1okXQKkQ+Gyg0vlX2pD+pzMSgGZ5fM5jZ85tnSM2M=; b=I8fGdIb8gWvI/L3u
+	BGtP/5bK3tYQwIPQnv47/xNyAZz5tprBARD5CX1iwx44LZ717xNmB5qvUfmFpt3J
+	TRzKcpz4M09H1oUsjE8UQFhSyIkA3UFqwJe2ITFyh+CeK0+npOeQe3U1a2BWkvaw
+	wHBcDMozhKXqItk7pYXttHsSK81E6oVPEwDX2R71IwCRTC8TBrwWHegoi7vUM9bf
+	3WXD+TF5n9h52sD4nHihALytel2D33e381+8OF/tXQmQaDNIun5b7E98wEqY+CUA
+	ito/N3Q/FSXN+MsiYRpFuFsRI1w6aUI+WDsyC884kG+BNUtJ2dW6b2mij/qqfMCv
+	O0zqJg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 400c46f0t0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Jun 2024 09:22:47 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45S9Mj5Y019309
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Jun 2024 09:22:45 GMT
+Received: from [10.217.239.82] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 28 Jun
+ 2024 02:22:42 -0700
+Message-ID: <ef5d4b87-76c7-4ff3-84ed-7f4743ec052c@quicinc.com>
+Date: Fri, 28 Jun 2024 14:52:39 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com> <20240625121358.590547-10-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20240625121358.590547-10-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 28 Jun 2024 11:22:05 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX4hWou9OtdE8XgU7-U0ghJ6vk2kVqgT90U0ZjsxzR5DA@mail.gmail.com>
-Message-ID: <CAMuHMdX4hWou9OtdE8XgU7-U0ghJ6vk2kVqgT90U0ZjsxzR5DA@mail.gmail.com>
-Subject: Re: [PATCH v2 09/12] i2c: riic: Add support for fast mode plus
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: chris.brandt@renesas.com, andi.shyti@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
-	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, 
-	wsa+renesas@sang-engineering.com, linux-renesas-soc@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hi Claudiu,
-
-On Tue, Jun 25, 2024 at 2:14=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
-wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Fast mode plus is available on most of the IP variants that RIIC driver
-> is working with. The exception is (according to HW manuals of the SoCs
-> where this IP is available) the Renesas RZ/A1H. For this, patch
-> introduces the struct riic_of_data::fast_mode_plus.
->
-> Fast mode plus was tested on RZ/G3S, RZ/G2{L,UL,LC}, RZ/Five by
-> instantiating the RIIC frequency to 1MHz and issuing i2c reads on the
-> fast mode plus capable devices (and the i2c clock frequency was checked o=
-n
-> RZ/G3S).
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-
-Thanks for your patch!
-
-> --- a/drivers/i2c/busses/i2c-riic.c
-> +++ b/drivers/i2c/busses/i2c-riic.c
-> @@ -407,6 +413,9 @@ static int riic_init_hw(struct riic_dev *riic)
->         riic_writeb(riic, 0, RIIC_ICSER);
->         riic_writeb(riic, ICMR3_ACKWP | ICMR3_RDRFS, RIIC_ICMR3);
->
-> +       if (info->fast_mode_plus && t->bus_freq_hz =3D=3D I2C_MAX_FAST_MO=
-DE_PLUS_FREQ)
-> +               riic_clear_set_bit(riic, 0, ICFER_FMPE, RIIC_ICFER);
-
-Unless FM+ is specified, RIIC_ICFER is never written to.
-Probably the register should always be initialized, also to make sure
-the FMPE bit is cleared when it was set by the boot loader, but FM+
-is not to be used.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 2/2] soc: qcom: smp2p: Introduce tracepoint support
+To: Sudeepgoud Patil <quic_sudeepgo@quicinc.com>, <quic_bjorande@quicinc.com>,
+        <andersson@kernel.org>, <quic_clew@quicinc.com>,
+        <mathieu.poirier@linaro.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+References: <20240627104831.4176799-1-quic_sudeepgo@quicinc.com>
+ <20240627104831.4176799-3-quic_sudeepgo@quicinc.com>
+Content-Language: en-US
+From: Deepak Kumar Singh <quic_deesin@quicinc.com>
+In-Reply-To: <20240627104831.4176799-3-quic_sudeepgo@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: XbCY66zaB6fOR7SKbK055UrE5LPEag8o
+X-Proofpoint-GUID: XbCY66zaB6fOR7SKbK055UrE5LPEag8o
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-28_05,2024-06-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
+ mlxscore=0 lowpriorityscore=0 phishscore=0 mlxlogscore=999 adultscore=0
+ priorityscore=1501 malwarescore=0 clxscore=1011 suspectscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2406280068
 
 
+
+On 6/27/2024 4:18 PM, Sudeepgoud Patil wrote:
+> This commit introduces tracepoint support for smp2p, enabling
+> logging of communication between local and remote processors.
+> These tracepoints include information about the remote subsystem
+> name, negotiation details, supported features, bit change
+> notifications, and ssr activity. These logs are useful for
+> debugging issues between subsystems.
+> 
+> Signed-off-by: Sudeepgoud Patil <quic_sudeepgo@quicinc.com>
+Reviewed-by: Deepak Kumar Singh <quic_deesin@quicinc.com>
+> ---
+>   drivers/soc/qcom/Makefile      |  1 +
+>   drivers/soc/qcom/smp2p.c       |  9 ++++
+>   drivers/soc/qcom/trace-smp2p.h | 98 ++++++++++++++++++++++++++++++++++
+>   3 files changed, 108 insertions(+)
+>   create mode 100644 drivers/soc/qcom/trace-smp2p.h
+> 
+> diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
+> index ca0bece0dfff..30c1bf645501 100644
+> --- a/drivers/soc/qcom/Makefile
+> +++ b/drivers/soc/qcom/Makefile
+> @@ -23,6 +23,7 @@ qcom_rpmh-y			+= rpmh.o
+>   obj-$(CONFIG_QCOM_SMD_RPM)	+= rpm-proc.o smd-rpm.o
+>   obj-$(CONFIG_QCOM_SMEM) +=	smem.o
+>   obj-$(CONFIG_QCOM_SMEM_STATE) += smem_state.o
+> +CFLAGS_smp2p.o := -I$(src)
+>   obj-$(CONFIG_QCOM_SMP2P)	+= smp2p.o
+>   obj-$(CONFIG_QCOM_SMSM)	+= smsm.o
+>   obj-$(CONFIG_QCOM_SOCINFO)	+= socinfo.o
+> diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
+> index 696c2a8387d0..4aa61b0f11ad 100644
+> --- a/drivers/soc/qcom/smp2p.c
+> +++ b/drivers/soc/qcom/smp2p.c
+> @@ -161,6 +161,9 @@ struct qcom_smp2p {
+>   	struct list_head outbound;
+>   };
+>   
+> +#define CREATE_TRACE_POINTS
+> +#include "trace-smp2p.h"
 > +
->         riic_clear_set_bit(riic, ICCR1_IICRST, 0, RIIC_ICCR1);
->
->         pm_runtime_mark_last_busy(dev);
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+>   static void qcom_smp2p_kick(struct qcom_smp2p *smp2p)
+>   {
+>   	/* Make sure any updated data is written before the kick */
+> @@ -192,6 +195,7 @@ static void qcom_smp2p_do_ssr_ack(struct qcom_smp2p *smp2p)
+>   	struct smp2p_smem_item *out = smp2p->out;
+>   	u32 val;
+>   
+> +	trace_smp2p_ssr_ack(smp2p->dev);
+>   	smp2p->ssr_ack = !smp2p->ssr_ack;
+>   
+>   	val = out->flags & ~BIT(SMP2P_FLAGS_RESTART_ACK_BIT);
+> @@ -214,6 +218,7 @@ static void qcom_smp2p_negotiate(struct qcom_smp2p *smp2p)
+>   			smp2p->ssr_ack_enabled = true;
+>   
+>   		smp2p->negotiation_done = true;
+> +		trace_smp2p_negotiate(smp2p->dev, out->features);
+>   	}
+>   }
+>   
+> @@ -252,6 +257,8 @@ static void qcom_smp2p_notify_in(struct qcom_smp2p *smp2p)
+>   		status = val ^ entry->last_value;
+>   		entry->last_value = val;
+>   
+> +		trace_smp2p_notify_in(entry, status, val);
+> +
+>   		/* No changes of this entry? */
+>   		if (!status)
+>   			continue;
+> @@ -415,6 +422,8 @@ static int smp2p_update_bits(void *data, u32 mask, u32 value)
+>   	writel(val, entry->value);
+>   	spin_unlock_irqrestore(&entry->lock, flags);
+>   
+> +	trace_smp2p_update_bits(entry, orig, val);
+> +
+>   	if (val != orig)
+>   		qcom_smp2p_kick(entry->smp2p);
+>   
+> diff --git a/drivers/soc/qcom/trace-smp2p.h b/drivers/soc/qcom/trace-smp2p.h
+> new file mode 100644
+> index 000000000000..fa985a0d7615
+> --- /dev/null
+> +++ b/drivers/soc/qcom/trace-smp2p.h
+> @@ -0,0 +1,98 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +#undef TRACE_SYSTEM
+> +#define TRACE_SYSTEM qcom_smp2p
+> +
+> +#if !defined(__QCOM_SMP2P_TRACE_H__) || defined(TRACE_HEADER_MULTI_READ)
+> +#define __QCOM_SMP2P_TRACE_H__
+> +
+> +#include <linux/device.h>
+> +#include <linux/tracepoint.h>
+> +
+> +TRACE_EVENT(smp2p_ssr_ack,
+> +	TP_PROTO(const struct device *dev),
+> +	TP_ARGS(dev),
+> +	TP_STRUCT__entry(
+> +		__string(dev_name, dev_name(dev))
+> +	),
+> +	TP_fast_assign(
+> +		__assign_str(dev_name, dev_name(dev));
+> +	),
+> +	TP_printk("%s: SSR detected", __get_str(dev_name))
+> +);
+> +
+> +TRACE_EVENT(smp2p_negotiate,
+> +	TP_PROTO(const struct device *dev, unsigned int features),
+> +	TP_ARGS(dev, features),
+> +	TP_STRUCT__entry(
+> +		__string(dev_name, dev_name(dev))
+> +		__field(u32, out_features)
+> +	),
+> +	TP_fast_assign(
+> +		__assign_str(dev_name, dev_name(dev));
+> +		__entry->out_features = features;
+> +	),
+> +	TP_printk("%s: state=open out_features=%s", __get_str(dev_name),
+> +		__print_flags(__entry->out_features, "|",
+> +			{SMP2P_FEATURE_SSR_ACK, "SMP2P_FEATURE_SSR_ACK"})
+> +	)
+> +);
+> +
+> +TRACE_EVENT(smp2p_notify_in,
+> +	TP_PROTO(struct smp2p_entry *smp2p_entry, unsigned long status, u32 val),
+> +	TP_ARGS(smp2p_entry, status, val),
+> +	TP_STRUCT__entry(
+> +		__string(dev_name, dev_name(smp2p_entry->smp2p->dev))
+> +		__string(client_name, smp2p_entry->name)
+> +		__field(unsigned long, status)
+> +		__field(u32, val)
+> +	),
+> +	TP_fast_assign(
+> +		__assign_str(dev_name, dev_name(smp2p_entry->smp2p->dev));
+> +		__assign_str(client_name, smp2p_entry->name);
+> +		__entry->status = status;
+> +		__entry->val = val;
+> +	),
+> +	TP_printk("%s: %s: status:0x%0lx val:0x%0x",
+> +		__get_str(dev_name),
+> +		__get_str(client_name),
+> +		__entry->status,
+> +		__entry->val
+> +	)
+> +);
+> +
+> +TRACE_EVENT(smp2p_update_bits,
+> +	TP_PROTO(struct smp2p_entry *smp2p_entry, u32 orig, u32 val),
+> +	TP_ARGS(smp2p_entry, orig, val),
+> +	TP_STRUCT__entry(
+> +		__string(dev_name, dev_name(smp2p_entry->smp2p->dev))
+> +		__string(client_name, smp2p_entry->name)
+> +		__field(u32, orig)
+> +		__field(u32, val)
+> +	),
+> +	TP_fast_assign(
+> +		__assign_str(dev_name, dev_name(smp2p_entry->smp2p->dev));
+> +		__assign_str(client_name, smp2p_entry->name);
+> +		__entry->orig = orig;
+> +		__entry->val = val;
+> +	),
+> +	TP_printk("%s: %s: orig:0x%0x new:0x%0x",
+> +		__get_str(dev_name),
+> +		__get_str(client_name),
+> +		__entry->orig,
+> +		__entry->val
+> +	)
+> +);
+> +
+> +#endif /* __QCOM_SMP2P_TRACE_H__ */
+> +
+> +#undef TRACE_INCLUDE_PATH
+> +#define TRACE_INCLUDE_PATH .
+> +
+> +#undef TRACE_INCLUDE_FILE
+> +#define TRACE_INCLUDE_FILE trace-smp2p
+> +
+> +#include <trace/define_trace.h>
 
