@@ -1,131 +1,196 @@
-Return-Path: <linux-kernel+bounces-233862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F6C491BE74
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:24:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55CE091BE70
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:24:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E31B1B23171
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:24:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FCADB22F63
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:24:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B523E158A09;
-	Fri, 28 Jun 2024 12:24:08 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F481411EE;
+	Fri, 28 Jun 2024 12:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="D9thjItH";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="L+f3H4is";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kAe6vkW5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="U4ON3LjP"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D4E1514DD;
-	Fri, 28 Jun 2024 12:24:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744901E898;
+	Fri, 28 Jun 2024 12:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719577448; cv=none; b=ls8i2lZe3GKoHACu4TcIUPoyFlxeF3u4Him+h6/7bl2xQb0WIqLpWSKOkkYRAh6q7UXwZhpPmkAGWOCL4yWl9z/d7P0ufxOZCGUdFUEJld1qhrilASseV/RU3l7d477b+rDz1U6wc2UK7a0nkxA4VSL0DLk1UGEn9rXH+nVYK6E=
+	t=1719577440; cv=none; b=SYcAcfsYzLbkJd3rjOpNqToip0sCzYXf3Sopn9voFeefSVJgrW943pB/IPB7eYafnjM+JYBYTj3dGqGYdwaQjpvg9YpIfxixq38l0Og4QwR9rDef5k215PNidggu9guT7yICfIlJV0vC2FgGvnmAzhGEt9S90XKyXgDEF09S6Ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719577448; c=relaxed/simple;
-	bh=d+r8oOYodumHjWb4/1A1r6mqSgsc+MjymPkD+3M1T4A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A7adUUuBrfkdhWMqwEBPEKxNNP7p0oOVi8QkRRYKAagzghvqLwe3bcVtHMuX3zA+X0FGks9tOAy+28KSm2k9WTPv78oa3i3QRo1N+UDDAaxbc+ORki200J6fPg0MtT0YJJPnCANpAXTjgBTmBVnZpDj71VpPbfpG4nsoWlipv7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.97.1)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1sNAdr-000000002r5-3X5l;
-	Fri, 28 Jun 2024 12:23:51 +0000
-Date: Fri, 28 Jun 2024 13:23:47 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>, Jens Axboe <axboe@kernel.dk>,
-	Hauke Mehrtens <hauke@hauke-m.de>, Felix Fietkau <nbd@nbd.name>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Dave Chinner <dchinner@redhat.com>, Jan Kara <jack@suse.cz>,
-	Christian Brauner <brauner@kernel.org>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Li Lingfeng <lilingfeng3@huawei.com>,
-	Christian Heusel <christian@heusel.eu>,
-	Min Li <min15.li@samsung.com>, Avri Altman <avri.altman@wdc.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Hannes Reinecke <hare@suse.de>,
-	Mikko Rapeli <mikko.rapeli@linaro.org>, Yeqi Fu <asuk4.q@gmail.com>,
-	Victor Shih <victor.shih@genesyslogic.com.tw>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Li Zhijian <lizhijian@fujitsu.com>,
-	"Ricardo B. Marliere" <ricardo@marliere.net>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH v4 3/4] block: add support for notifications
-Message-ID: <Zn6rU-mCYQcyCkGT@makrotopia.org>
-References: <cover.1719520771.git.daniel@makrotopia.org>
- <4ebef78f07ff1ea4d553c481ffa9e130d65db772.1719520771.git.daniel@makrotopia.org>
- <Zn4_-alKtxuZ6zNt@infradead.org>
+	s=arc-20240116; t=1719577440; c=relaxed/simple;
+	bh=4YDHKZi8aLhgvz4O249udEW1Pdt31jb38URmtBj4/hU=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Q53uBssp96xCXqnULh7VjEZJH4VRp5PoWfBxSpfC32CqX00H1NObGm6rVrPBe5tZlvZ3nfowHO04YHaRH4ZBZssGAgo87fb87WT2fvB1wHB94yxaMP4tk5g4M935lV5WYPUFd3McAcCpNs2kw+CiD/nUe2jrB74buR4H+H5JVQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=D9thjItH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=L+f3H4is; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kAe6vkW5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=U4ON3LjP; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from pobox.suse.cz (unknown [10.100.2.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 480AF21B62;
+	Fri, 28 Jun 2024 12:23:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1719577430; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rOJAHhP09iSkMHBXfW1Ap1pPYlwd3RjPz7/D0Av41b0=;
+	b=D9thjItHOc26RIGU6t609H+UZwIYjgYEPaIHo+JJcfVod3RVmfbVVRVXJ60zxzX8j5TQwo
+	Z2AG3z2/PxynwseqrhQ2GCdZwi8iFak5lIpnKWXQgeMz8Ok1EiRDo2KsGeHGhnw+myNuWb
+	sTA1WvZLgiIr1bJIyL2DeNMjGwUrU1U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1719577430;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rOJAHhP09iSkMHBXfW1Ap1pPYlwd3RjPz7/D0Av41b0=;
+	b=L+f3H4isfRncloyOciABmCpnz4ibN6YyrwoBMyeXdkhObWfJBADiSMAMO+EGrYVbS8K2Ev
+	cES1NSpkQeFgmaBQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1719577429; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rOJAHhP09iSkMHBXfW1Ap1pPYlwd3RjPz7/D0Av41b0=;
+	b=kAe6vkW57UeQyQxWbdkBKvnDyILBTnJwjIZHlerYnDaJw6KZnEV6dLRZeo3VMbMKzJ3LZB
+	ftGVvQnimC2IAqUZAx2YQVTOZTps7eCttNpu8pwd6pYcpaeAFPkvNWDI/C6sxPhm0BWMG7
+	dL6ugQwSOSHkrTB5oOtO6X3SCAqOJvg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1719577429;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rOJAHhP09iSkMHBXfW1Ap1pPYlwd3RjPz7/D0Av41b0=;
+	b=U4ON3LjP9BbJTHwuyHhLxnvO+zZh7ngMkheye0nZu6GP6oS2rgy2vo7o+yjtheB9E026a3
+	GuGycC9VCdQm28Bw==
+Date: Fri, 28 Jun 2024 14:23:49 +0200 (CEST)
+From: Miroslav Benes <mbenes@suse.cz>
+To: Song Liu <song@kernel.org>
+cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    jpoimboe@kernel.org, jikos@kernel.org, pmladek@suse.com, 
+    joe.lawrence@redhat.com, nathan@kernel.org, morbo@google.com, 
+    justinstitt@google.com, mcgrof@kernel.org, thunder.leizhen@huawei.com, 
+    kees@kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH] kallsyms, livepatch: Fix livepatch with
+ CONFIG_LTO_CLANG
+In-Reply-To: <CAPhsuW5th55V3PfskJvpG=4bwacKP8c8DpVYUyVUzt70KC7=gw@mail.gmail.com>
+Message-ID: <alpine.LSU.2.21.2406281420590.15826@pobox.suse.cz>
+References: <20240605032120.3179157-1-song@kernel.org> <alpine.LSU.2.21.2406071458531.29080@pobox.suse.cz> <CAPhsuW5th55V3PfskJvpG=4bwacKP8c8DpVYUyVUzt70KC7=gw@mail.gmail.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zn4_-alKtxuZ6zNt@infradead.org>
+Content-Type: multipart/mixed; boundary="1678380546-210972171-1719577429=:15826"
+X-Spam-Score: -3.30
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	CTYPE_MIXED_BOGUS(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[multipart/mixed,text/plain];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+,1:+];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_ZERO(0.00)[0];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[pobox.suse.cz:helo,suse.cz:email]
 
-On Thu, Jun 27, 2024 at 09:45:45PM -0700, Christoph Hellwig wrote:
-> On Thu, Jun 27, 2024 at 09:50:50PM +0100, Daniel Golle wrote:
-> > Add notifier block to notify other subsystems about the addition or
-> > removal of block devices.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--1678380546-210972171-1719577429=:15826
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+
+On Fri, 7 Jun 2024, Song Liu wrote:
+
+> Hi Miroslav,
 > 
-> Notification for what?  I really hate the concept of random modular
-> code being able to hook into device discovery / partition scanning.
-
-Adding a dedicated notification interface (instead of using block
-internals in the nvmem driver) has been requested in a previous review
-by Bart Van Assche:
-
-https://patchwork.kernel.org/comment/25771998/
-
-Quote from that previous review comment:
->>> Why to add this functionality to the block layer instead of somewhere
->>> in the drivers/ directory?
->> 
->> Simply because we need notifications about appearing and disappearing
->> block devices, or a way to iterate over all block devices in a system.
->> For both there isn't currently any other interface than using a
->> class_interface for that, and that requires access to &block_class
->> which is considered a block subsystem internal.
->
-> That's an argument for adding an interface to the block layer that
-> implements this functionality but not for adding this code in the block
-> layer.
----
-
-So that's what I did consequently. Using the notification interface
-the NVMEM driver can live in drivers/nvmem/ and doesn't need to be
-using block internals.
-
-> And not actually having a user for it is a complete no-go.
+> Thanks for reviewing the patch!
 > 
+> On Fri, Jun 7, 2024 at 6:06 AM Miroslav Benes <mbenes@suse.cz> wrote:
+> >
+> > Hi,
+> >
+> > On Tue, 4 Jun 2024, Song Liu wrote:
+> >
+> > > With CONFIG_LTO_CLANG, the compiler may postfix symbols with .llvm.<hash>
+> > > to avoid symbol duplication. scripts/kallsyms.c sorted the symbols
+> > > without these postfixes. The default symbol lookup also removes these
+> > > postfixes before comparing symbols.
+> > >
+> > > On the other hand, livepatch need to look up symbols with the full names.
+> > > However, calling kallsyms_on_each_match_symbol with full name (with the
+> > > postfix) cannot find the symbol(s). As a result, we cannot livepatch
+> > > kernel functions with .llvm.<hash> postfix or kernel functions that use
+> > > relocation information to symbols with .llvm.<hash> postfixes.
+> > >
+> > > Fix this by calling kallsyms_on_each_match_symbol without the postfix;
+> > > and then match the full name (with postfix) in klp_match_callback.
+> > >
+> > > Signed-off-by: Song Liu <song@kernel.org>
+> > > ---
+> > >  include/linux/kallsyms.h | 13 +++++++++++++
+> > >  kernel/kallsyms.c        | 21 ++++++++++++++++-----
+> > >  kernel/livepatch/core.c  | 32 +++++++++++++++++++++++++++++++-
+> > >  3 files changed, 60 insertions(+), 6 deletions(-)
+> >
+> > I do not like much that something which seems to be kallsyms-internal is
+> > leaked out. You need to export cleanup_symbol_name() and there is now a
+> > lot of code outside. I would feel much more comfortable if it is all
+> > hidden from kallsyms users and kept there. Would it be possible?
+> 
+> I think it is possible. Currently, kallsyms_on_each_match_symbol matches
+> symbols without the postfix. We can add a variation or a parameter, so
+> that it matches the full name with post fix.
 
-The user will be the nvmem provider, you can see the code in earlier
-versions of the patchset where I had included it:
+I think it might be better.
 
-https://patchwork.kernel.org/project/linux-block/patch/96554d6b4d9fa72f936c2c476eb0b023cdd60a64.1717031992.git.daniel@makrotopia.org/
+Luis, what is your take on this?
+ 
+> > Moreover, isn't there a similar problem for ftrace, kprobes, ebpf,...?
+> 
+> Yes, there is a similar problem with tracing use cases. But the requirements
+> are not the same:
+> 
+> For livepatch, we have to point to the exact symbol we want to patch or
+> relocation to. We have sympos API defined to differentiate different symbols
+> with the same name.
 
-Being another subsystem I thought it'd be better to deal with the
-block related things first, and once that has been sorted out I will
-move on to add the NVMEM driver and make the necessary changes for
-using it on eMMC.
+Yes. In fact, sympos may be used to solve even this problem. The user 
+would disregard .llvm.<hash> suffix and they are suddenly in the same 
+situation which sympos aims to solve. I will not argue with you if say it 
+is cumbersome.
 
+> For tracing, some discrepancy is acceptable. AFAICT, there isn't an API
+> similar to sympos yet. Also, we can play some tricks with tracing. For
+> example, we can use "uniq symbol + offset" to point a kprobe to one of
+> the duplicated symbols.
 
-Thank you for taking a look at this. Let me know if anything else
-is not clear or needs to be changed.
+If I am not mistaken, there was a patch set to address this. Luis might 
+remember more.
 
-
-Cheers
-
-
-Daniel
+Regards,
+Miroslav
+--1678380546-210972171-1719577429=:15826--
 
