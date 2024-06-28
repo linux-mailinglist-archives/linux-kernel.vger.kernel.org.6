@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-234021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5172291C0FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:30:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 006EC91C0FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:31:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DBD8282C6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:30:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8F141F21F41
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF9C11C004D;
-	Fri, 28 Jun 2024 14:30:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846591C0DC5;
+	Fri, 28 Jun 2024 14:30:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DEm0dkE+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZXHgSbuy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D610B645;
-	Fri, 28 Jun 2024 14:30:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C59F91C006F;
+	Fri, 28 Jun 2024 14:30:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719585043; cv=none; b=kjRFR72Two3L3TXKCVgHQ3WjsAfCw9fjwGihkDk1XNrf2K3pmn4txrHdHfQ0ioPsxRd6/AdIgnOe7w7xwy+MfFluLQCL30X3ARKaU1P/5DRpx8cdssNtO2DtF2ssCeY5d8dshcbeHUAB6I6eLva3+sZNOJOSoGyYFqe5jmR4Ezc=
+	t=1719585048; cv=none; b=sIoKENFUdkzZaBJ7eWbPW2LEllOB/kkSAqChsvTnpJ076P+pU5B8BAFnVTFy4dRbZbnwq3OxLeRWyu5i/yrfitflwuq/1cu75GceIsZ6Gic9VUOgSndFiyRB9fLkhW8sIl2xIP4+8Lpy2IAu7r6oG9nHZnN/1qnJJOsXLsKpUYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719585043; c=relaxed/simple;
-	bh=/WL5WbmLDaPp407+RLqwWYRH8m1SF1h+OQOP9m79KB4=;
+	s=arc-20240116; t=1719585048; c=relaxed/simple;
+	bh=G/YKMmh5ynJkRfR1KCNhOSc5Vr29OJN/VYhFGy2/5yQ=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=rsjR8542Ti6SHrzjiNfBnFmvvFLQttGq4s2b9oz7uZtMmooRD0SWBiJlL+1PxjoddMxjU/54XLy7WFIBuVtxkkzLnQLL7fh6ciCBxbRf9ZJ8WAhJCZilCLonBMyN9krqKmimMIs/+kZ3HN3GUdYI+crSyCP6qd0TsnitMXGsPhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DEm0dkE+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FA49C116B1;
-	Fri, 28 Jun 2024 14:30:37 +0000 (UTC)
+	 MIME-Version:Content-Type; b=hVgsCL0uCzd/XwavBXlLbI+6PauV3nqxJVZf/r44b6L3PVyIaqL017DRr3YgAM9N6VA+bVMU65nMSY8w8d987FAenKRbKhf/uY6o2ERdPnKaxXtNdKwIVHDcnc65Mr6ePLwCjJxflmurGPnZK11h7u8mFYqFdjs2ObsGy9oTG4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZXHgSbuy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CD37C32786;
+	Fri, 28 Jun 2024 14:30:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719585042;
-	bh=/WL5WbmLDaPp407+RLqwWYRH8m1SF1h+OQOP9m79KB4=;
+	s=k20201202; t=1719585048;
+	bh=G/YKMmh5ynJkRfR1KCNhOSc5Vr29OJN/VYhFGy2/5yQ=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=DEm0dkE+IVL8XZqwhVZKkgj452jQQ2dECaYEWhMBWPpi2OZr35sYM4PD36/NzuSmp
-	 0yGXa01DVFPklSoZpVWclyBcLG6f/AZlUwZFY5qfisr1/E6MSOQiv2Iu+n6OBT/g58
-	 qboa/caSMXgXO3LNJsk+pHriJU0TPRPYHoJOVI6HVPGaL7gl5XwK+Zws+CH35SkZ6S
-	 mHg6kSmwLJeNBcp7JxhUIcgcbE1ZdkmabBE7t8qdvonQ0VbJTZC37h0nc9XbOn45nb
-	 vkD5jXc7ytZOgV9soLlR9WP2mWltpH00uCkrovYi+zsl3D+3M7gMGIqR2w30b/e8n9
-	 UPDLPJ1bN3G6g==
+	b=ZXHgSbuyQK14CZx0u1ouwH0oc+IQtz6DNsl1/PFhPv5aVfinNltzKc1+6dOLsgmJo
+	 viXW1oEz7FVtkDrlC+YgYMnSogTcWsQSwW0V6yURaqbpBbvesMmEmvj90wZ5xVPJII
+	 ibMwE6iHckikog8reA3RROgXnzDl62uRz6B0TDeMgXPY1IsNJy6jDwzNTRw+85tR63
+	 LHXLasCoTIaDIi/mgv4xkt/AG05wPnXwZdvnGbs8CyWk+iU9v7C4c6eZf5dNptyJx0
+	 vTkNrTnwYrHisxE3o5C4J4CR1SptGx51+oibmkXlvb5FTC9prrCBvmch7ytWlTF7Ww
+	 bbp/iOCDFmXFw==
 From: Lee Jones <lee@kernel.org>
 To: Orson Zhai <orsonzhai@gmail.com>, 
  Baolin Wang <baolin.wang@linux.alibaba.com>, 
@@ -62,12 +62,12 @@ Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, devicetree@vger.kernel.org,
  Rahul Tanwar <rahul.tanwar@linux.intel.com>, 
  Amireddy Mallikarjuna reddy <mallikarjunax.reddy@intel.com>, 
  "Zhu, Yi Xin" <Yixin.zhu@intel.com>, Maxime Ripard <mripard@kernel.org>
-In-Reply-To: <20240626-dt-bindings-mfd-syscon-split-v3-0-3409903bb99b@linaro.org>
-References: <20240626-dt-bindings-mfd-syscon-split-v3-0-3409903bb99b@linaro.org>
-Subject: Re: [PATCH v3 0/7] dt-bindings: mfd: syscon: Document more
+In-Reply-To: <20240627-dt-bindings-mfd-syscon-split-v4-0-dc6699a9f3e4@linaro.org>
+References: <20240627-dt-bindings-mfd-syscon-split-v4-0-dc6699a9f3e4@linaro.org>
+Subject: Re: [PATCH v4 0/7] dt-bindings: mfd: syscon: Document more
  compatibles and require simpe-mfd description
-Message-Id: <171958503719.3306667.9209937406996217499.b4-ty@kernel.org>
-Date: Fri, 28 Jun 2024 15:30:37 +0100
+Message-Id: <171958504286.3306667.1828808107260619095.b4-ty@kernel.org>
+Date: Fri, 28 Jun 2024 15:30:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +78,7 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.13.0
 
-On Wed, 26 Jun 2024 12:09:09 +0200, Krzysztof Kozlowski wrote:
+On Thu, 27 Jun 2024 12:32:16 +0200, Krzysztof Kozlowski wrote:
 > Dependency
 > ==========
 > Rebased on Lee's MFD tree, because dependency is there already:
