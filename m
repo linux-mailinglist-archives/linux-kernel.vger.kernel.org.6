@@ -1,115 +1,205 @@
-Return-Path: <linux-kernel+bounces-234322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AC1E91C52C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:48:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0C1091C53D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:55:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F382B24B41
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:48:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6751928630C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:55:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA89158219;
-	Fri, 28 Jun 2024 17:47:56 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E6D1CCCB1;
+	Fri, 28 Jun 2024 17:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NuPWh2x2"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02B31C0DF0
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 17:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24AFA15253B;
+	Fri, 28 Jun 2024 17:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719596875; cv=none; b=nEpDo/FrlL50OHaBZBfeh6RZ3yF8fbPAtE1z+swejOTWzXoiiwcnVq3FpgPHAsVY5/PhOnaYtElJq/BPhXgilEdac7KlVgqGx7Rax9D57JI/HbbAd6yVlSMPbQa8p+OI4ydcvqYVDZzqt6xh0ryfgOn4M5BRzdq2Wi0b327n3S4=
+	t=1719597347; cv=none; b=BNDGGt3rEcT/eStqsauqm1mF7CNa7DBL800pOD1CVOw/N/d/F+Sd8smH0Dcn1MiTSmqkjWsq844rg6iFjs+Myk+Z6w2usFglp0EcuvweeSBMwiz7YC/3EYUbqlykKqTO7ohiVY7grvlyW55HHpgoFnbm1whsormGPmDP4ILuw0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719596875; c=relaxed/simple;
-	bh=b91UJhEXazJSHUnlwptiBIvyT5W7DM49fVDCYOX24wQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PmPWcSTKsNKvrI7hLRORydW5ZOUGtwQbtk1Lotuh0plnJjloojIJ/j98AUrau2EEFm94IgXuCpKGQvUp69INwQsedhn2iunCESzm4i5lgMSd2sMhjzOgioDecxwRZp8C8lQQS+KxSgsyWo7+q+TH0citg0AQZSu7Jjwpq2HQ8PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sNFgs-000855-Am; Fri, 28 Jun 2024 19:47:18 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sNFgn-005eiE-2P; Fri, 28 Jun 2024 19:47:13 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sNFgm-002WFp-39;
-	Fri, 28 Jun 2024 19:47:12 +0200
-Date: Fri, 28 Jun 2024 19:47:12 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>, Mark Brown <broonie@kernel.org>,
-	Martin Sperl <kernel@martin.sperl.org>,
-	David Jander <david@protonic.nl>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-iio@vger.kernel.org,
-	Julien Stephan <jstephan@baylibre.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	kernel@pengutronix.de, T.Scherer@eckelmann.de
-Subject: Re: [PATCH v2 0/5] spi: add support for pre-cooking messages
-Message-ID: <Zn73IB2blUtGptpq@pengutronix.de>
-References: <20240219-mainline-spi-precook-message-v2-0-4a762c6701b9@baylibre.com>
- <Zn6HMrYG2b7epUxT@pengutronix.de>
- <20240628-awesome-discerning-bear-1621f9-mkl@pengutronix.de>
- <9e6b5cff-8692-484e-9e1c-b89a1f49d6c7@baylibre.com>
+	s=arc-20240116; t=1719597347; c=relaxed/simple;
+	bh=RbeZW0Wlzc0mLCx/jtbjh/TrjzaKWO+6tkhNz/h4y+8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gwhIxugs5u9FpiyNWjk4DYrPoJ2rYG1RrOzMhayi9d3lu5lL0hTU0Rf8w4iIXv6qSQxFfDjzj0vLn3kjrIN0H3TsB9zg5ws/eouUFrevj/q3KWXsH0r9czJ2frzz3OpH0z9Ltax43LxUBNOpmDUNyQ8gdlubQG7hI9FS+hzS+Pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NuPWh2x2; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719597345; x=1751133345;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=RbeZW0Wlzc0mLCx/jtbjh/TrjzaKWO+6tkhNz/h4y+8=;
+  b=NuPWh2x2SYPj0f11ipmINegpjQtVxo8V+BDCCkbJ1dhTloe7VDqtnuRK
+   h0O7/yIYH1D4Ri5FQ4ujXPhNIn5o6n6bRE/2py27pSBqKphjK53IkwjP0
+   M8xICpgEhs6w19Sv7jpICPUVcmVfRjc1RkFMwr+1uDkj8GlumjoP6gLiR
+   F0HZX4+aVpgQcI1aI+756G03vyJRVYNglcPuGYl/eNO9LoLOjBAyMtRjF
+   l5VjuZdqYAFEcmy/DcHGte2dJYb3FKvPpoXgkwzqYOwqtbAmhmspuqboV
+   ejNh3iUD5JN+aE6y48mmleNKGJSsSxHbcNg5PS9ZfGaR42jj1Xc9nBMiz
+   g==;
+X-CSE-ConnectionGUID: I9Pq51a7S5ODjdonZlbTGQ==
+X-CSE-MsgGUID: I0x0uvSxTcOWNI8OsRMVog==
+X-IronPort-AV: E=McAfee;i="6700,10204,11117"; a="16627256"
+X-IronPort-AV: E=Sophos;i="6.09,169,1716274800"; 
+   d="scan'208";a="16627256"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 10:55:45 -0700
+X-CSE-ConnectionGUID: 3rCB9qDUSVq2D8cyHLbvxQ==
+X-CSE-MsgGUID: y0B9bD+/RC2agQ9iyCQe/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,169,1716274800"; 
+   d="scan'208";a="45473920"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.intel.com) ([10.245.246.5])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 10:55:41 -0700
+From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+To: Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	linux-kernel@vger.kernel.org,
+	linux-cxl@vger.kernel.org
+Cc: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+Subject: [PATCH v2] cxl/acpi: Warn on mixed CXL VH and RCH/RCD Hierarchy
+Date: Fri, 28 Jun 2024 19:48:07 +0200
+Message-ID: <20240628175535.272472-1-fabio.m.de.francesco@linux.intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <9e6b5cff-8692-484e-9e1c-b89a1f49d6c7@baylibre.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
-Hi David,
+Each Host Bridge instance has a corresponding CXL Host Bridge Structure
+(CHBS) ACPI table that identifies its capabilities. CHBS tables can be
+two types (CXL 3.1 Table 9-21): The PCIe Root Complex Register Block
+(RCRB) and CXL Host Bridge Component Registers (CHBCR).
 
-On Fri, Jun 28, 2024 at 10:27:28AM -0500, David Lechner wrote:
-> Hi Oleksij and Marc,
-> 
-> I'm supposed to be on vacation so I didn't look into this deeply yet
-> but I can see what is happening here.
-> 
-> spi_mux_transfer_one_message() is calling spi_async() which is calling
-> __spi_optimize_message() on an already optimized message.
-> 
-> Then it also calls __spi_unoptimize_message() which tries to release
-> resources. But this fails because the spi-mux driver has swapped
-> out the pointer to the device in the SPI message. This causes the
-> wrong ctlr to be passed to spi_res_release(), causing the crash.
-> 
-> I don't know if a proper fix could be quite so simple, but here is
-> something you could try (untested):
+If a Host Bridge is attached to a device that is operating in Restricted
+CXL Device Mode (RCD), BIOS publishes an RCRB with the base address of
+registers that describe its capabilities (CXL 3.1 sec. 9.11).
+
+Instead, the new (CXL 2.0+) Component registers can only be accessed
+by means of a base address published with a CHBCR (CXL 3.1 sec. 9.12).
+
+If an eRCD (a device that forces the host-bridge into CXL 1.1 Restricted
+CXL Host mode) is attached to a CXL 2.0+ Host-Bridge, the current CXL
+specification does not define a mechanism for finding CXL-2.0-only
+root-port component registers like HDM decoders and Extended Security
+capability.
+
+An algorithm to locate a CHBCR associated with an RCRB, would be too
+invasive to land without some concrete motivation.
+
+Therefore, just print a message to inform of unsupported config.
+
+Count how many different CHBS "Version" types are detected by
+cxl_get_chbs_iter(). Then make cxl_get_chbs() print a warning if that sum
+is greater than 1.
+
+Tested-by: Alison Schofield <alison.schofield@intel.com>
+Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
+---
+
+--- Changes for v2 ---
+
+	- Rewrite the Subject line (Alison)
+	- Address a bug found by Alison while testing (thanks!)
+	- Add reference to CXL 3.1 Spec. (Alison)
+	- Extend the commit messages by borrowing comments to v1 (Dan)
+	- Rename field "count" to "nr_versions" (Alison)
+	- Add brackets to oneline 'if' statement in precence of comments
+	  (Dan)
+
+--- Link to v1 ---
+
+https://lore.kernel.org/linux-cxl/20240619125949.167936-1-fabio.m.de.francesco@linux.intel.com/
+
+ drivers/cxl/acpi.c | 34 +++++++++++++++++++++++++++-------
+ 1 file changed, 27 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
+index 571069863c62..f9035dbabb1c 100644
+--- a/drivers/cxl/acpi.c
++++ b/drivers/cxl/acpi.c
+@@ -482,6 +482,8 @@ struct cxl_chbs_context {
+ 	unsigned long long uid;
+ 	resource_size_t base;
+ 	u32 cxl_version;
++	int nr_versions;
++	u32 saved_version;
+ };
  
-Thx! I'll test it at Monday.
-
-Regards,
-Oleksij
+ static int cxl_get_chbs_iter(union acpi_subtable_headers *header, void *arg,
+@@ -490,22 +492,31 @@ static int cxl_get_chbs_iter(union acpi_subtable_headers *header, void *arg,
+ 	struct cxl_chbs_context *ctx = arg;
+ 	struct acpi_cedt_chbs *chbs;
+ 
+-	if (ctx->base != CXL_RESOURCE_NONE)
+-		return 0;
+-
+ 	chbs = (struct acpi_cedt_chbs *) header;
+ 
+-	if (ctx->uid != chbs->uid)
++	if (chbs->cxl_version == ACPI_CEDT_CHBS_VERSION_CXL11 &&
++	    chbs->length != CXL_RCRB_SIZE)
+ 		return 0;
+ 
+-	ctx->cxl_version = chbs->cxl_version;
+ 	if (!chbs->base)
+ 		return 0;
+ 
+-	if (chbs->cxl_version == ACPI_CEDT_CHBS_VERSION_CXL11 &&
+-	    chbs->length != CXL_RCRB_SIZE)
++	if (ctx->saved_version != chbs->cxl_version) {
++		/*
++		 * cxl_version cannot be overwritten before the next two
++		 * checks, then use saved_version
++		 */
++		ctx->saved_version = chbs->cxl_version;
++		ctx->nr_versions++;
++	}
++
++	if (ctx->base != CXL_RESOURCE_NONE)
++		return 0;
++
++	if (ctx->uid != chbs->uid)
+ 		return 0;
+ 
++	ctx->cxl_version = chbs->cxl_version;
+ 	ctx->base = chbs->base;
+ 
+ 	return 0;
+@@ -529,10 +540,19 @@ static int cxl_get_chbs(struct device *dev, struct acpi_device *hb,
+ 		.uid = uid,
+ 		.base = CXL_RESOURCE_NONE,
+ 		.cxl_version = UINT_MAX,
++		.saved_version = UINT_MAX,
+ 	};
+ 
+ 	acpi_table_parse_cedt(ACPI_CEDT_TYPE_CHBS, cxl_get_chbs_iter, ctx);
+ 
++	if (ctx->nr_versions > 1) {
++		/*
++		 * Disclaim eRCD support given some component register may
++		 * only be found via CHBCR
++		 */
++		dev_info(dev, "Unsupported platform config, mixed Virtual Host and Restricted CXL Host hierarchy.");
++	}
++
+ 	return 0;
+ }
+ 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.45.2
+
 
