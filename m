@@ -1,162 +1,106 @@
-Return-Path: <linux-kernel+bounces-233472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04CAA91B76A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:55:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12B7291B770
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:58:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 885AE1F21057
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 06:55:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAE9928377B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 06:57:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBED713E032;
-	Fri, 28 Jun 2024 06:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171E813D625;
+	Fri, 28 Jun 2024 06:57:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="QLV6Dsbf";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="c2g88xZA"
-Received: from fhigh6-smtp.messagingengine.com (fhigh6-smtp.messagingengine.com [103.168.172.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zp6CluUR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B3247796;
-	Fri, 28 Jun 2024 06:54:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400564D5BF;
+	Fri, 28 Jun 2024 06:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719557658; cv=none; b=qEUFhnXqiGgYkZcro8rsqXMzZNZ0F48aQElAeFDyKWOt1Fp+Bo8LrdOpOjqLdxFA/V82HYtyDQhR0+1bRgmUlgURAvv9HxrkvFhrtLSeCZm5cOlg/JcXg1AZ9FeXmzyG5zGOSSrXGcQpEmDntYv/oRkGN4Yk/ODIAkXY4pweYvU=
+	t=1719557870; cv=none; b=BacHx7tTUkJqV+R8B8hFBcWy/2Eis2hQ0t59KwySUfhuZp+X39hYt1l5VtGvH3wXcZWTHdSepla8dw2txCt4S53+3yCRdgCh1BNCmtfXId6Jh/MHw5F8iuVuUAWDwKwD5K3lF6R9dbFqZZo1pjUEaH9ur8ZhgN4jwmS/tqyLPGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719557658; c=relaxed/simple;
-	bh=zfSz0is5O+7z7nHbjgK/76i8gGG86XfaLJlF2LxWdf8=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=RIdrIWAo9CnnZrAPSZeYXxkPggCgpSmifGbGWglwEiDhX35OkVE8dZWWFd+HVNnJIhnwwr/95v26zsJe8ge2ffDS1FPnNO3MHs9WY8iKTD/CtQMMTKpZ7U0eTxwAXGSKtUdHPseeWdKMnb6Epg8vJok0k1lf5sc9US9hciqxTj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=QLV6Dsbf; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=c2g88xZA; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 17AF11140339;
-	Fri, 28 Jun 2024 02:54:15 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Fri, 28 Jun 2024 02:54:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1719557655;
-	 x=1719644055; bh=nZ3XT1IJ0SGMSHVRm52lVFtFhYOgmeNJRzfxLuObfqg=; b=
-	QLV6Dsbfhn/Dt6mSG3jwW4hAqGAAKL8ocRRYh3EIBW1Wwjq+zf4/XqpD4PntaWrq
-	2BOFHCZaxdoxEIF3oJTg05PB3asKGDCkrrzQkmy0w54VBtoAJO3c0J98BU3A0qb7
-	RHjsiaBzKcN4qJxYMG8NUUSkMTRssq5vYzuu97BtOJUx1hKPpPAUJf8BNNhR76J2
-	/b9ahtRxBDCn9jI6yysi+2D1eZLXRsmNwP5+017SbNDBuIrpa6OFG7lk1M56FAFQ
-	jIMj6PILgFkF8FZlo7I0GEiYkX7VkPCRqbur1Ha896HkRzzRGATR5IUzhA6m9Cr/
-	JOykbioNevwrXu5wEqi3LQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1719557655; x=
-	1719644055; bh=nZ3XT1IJ0SGMSHVRm52lVFtFhYOgmeNJRzfxLuObfqg=; b=c
-	2g88xZAkUAFAOOoQ0dh2YPpcnFmRw/OYJtk3WOAsLox8E2SilRn3KC7GBe3nhhZV
-	ihnIUc/JeFAH4slSinhvW6ZYMuywIMXG5+CjZYbmEceUELaO3TJD+K/PMYpNaM5h
-	X6coPxyH7DdrsM70gK0kRcEda7iEwLgMP5gsgVqPGClh0xu6uAnfZdjZ4WaMvTzx
-	E2EtBKRjzCufNPftajk+D1Cz/LDyPqU7g8SQN9ciXdgfFDc+MB4NK2Iq9P7q0nIh
-	KI7W5Otw+BG65E2DCb3V6MzPb9cYa6Fa3YqY6v5sxYB7h7eboKSVKDgyYD2fppyg
-	ytWIiFMzkcqkurpdDRxXQ==
-X-ME-Sender: <xms:Fl5-Zq8Rq6ssd0hSLkSFljZ6nGKLh8ZYEgIhK4Vst3Y2ozcDo7NZjA>
-    <xme:Fl5-ZqvdAyHIxUy93X4xgrPBPvgrT2j98OJuBv7_ncTmk-za2sG2EPqiBb9UcKmA4
-    KG03aZ76VqTuWS_Aoc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrtdehgdduudeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeegfeejhedvledvffeijeeijeeivddvhfeliedvleevheejleetgedukedt
-    gfejveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:Fl5-ZgBc0SJBH5-_y-2QsXWaLhsD5NjedIolCZHsNILLvjFys9nyPw>
-    <xmx:Fl5-ZieYrwAXxNwsRb0R28vgDkw-erLHNLXtxURddGTjs9prMJ_OFA>
-    <xmx:Fl5-ZvOWrl_WWAVL38xGlOy-H3TmlQr_TRcewpgzgy427vV9yTDk2g>
-    <xmx:Fl5-Zskz3_sbwxJBv4Mi-KUO0OAS0Jb7cvwZpeiFzsJ5LNUc0VoPDQ>
-    <xmx:F15-Zq1AW5dzcXMmbvIC8HIC3DpxbKGx6Z8znh4C3Api3CnhCoXedEFp>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id C7583B6008D; Fri, 28 Jun 2024 02:54:14 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-538-g1508afaa2-fm-20240616.001-g1508afaa
+	s=arc-20240116; t=1719557870; c=relaxed/simple;
+	bh=58lZCQAq4UI2kPsnIOyCJhEWm6AHR55RqFIhoOvy+cA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aD42gtf+G17tbnurUPzJqchkg+J7t3wMj5EhVSdXubLZOT6u0nZG4t5+vh/cX2XufWUuRT/+rXYMJisWzjvCZPQD2PfErXCf8oJu4PAnifxlxmmEArp2EaFEoyCASwFELJWUDidoYQrCMEOqKCIa9pbHPlHNIwTChXdhb4W08/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zp6CluUR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF8CAC116B1;
+	Fri, 28 Jun 2024 06:57:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719557869;
+	bh=58lZCQAq4UI2kPsnIOyCJhEWm6AHR55RqFIhoOvy+cA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Zp6CluURowv+K0o/6F/MgxegIwLdBw2CY+SGJlzU3KpAFthCGzF5BdRqDhOX9fqA4
+	 6t4b9L4J09XsfQ9CJ+lFuJpKnCdsOjuvXVwRyHnP01vP9BLlw5o6QxJBiFMolGBdOV
+	 slZCTHTdDEmylt+etBWz6a3fIBVZBAWbN6PHcQjAC2NlCpNeIJISJn8bx3tparFCKS
+	 1hQ/eZI6WuJS5OlEtQb/0au/AZDl+wqO3YNyssROZqexkI3jDED6pT5dn6x3M/6I0A
+	 zuf07R+KZNWcUj3g8IyIPslcD3Fc30WwNBShmdFFG43vXx8MdIH+vY4RpRt8ZS5+jK
+	 dciT+YC/UsdFw==
+Date: Fri, 28 Jun 2024 12:27:45 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+	Lee Jones <lee@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rahul Tanwar <rtanwar@maxlinear.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	dmaengine@vger.kernel.org, linux-leds@vger.kernel.org,
+	linux-mtd@lists.infradead.org, linux-phy@lists.infradead.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: intel,lgm: drop inactive maintainers from
+ intel
+Message-ID: <Zn5e6fPR5UkbPhdQ@matsya>
+References: <20240626101809.25227-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <67ae5c7b-18bb-47c4-b0ee-ceaf397ffe8d@app.fastmail.com>
-In-Reply-To: <d8dea6f3123face56bf36d7df3a8eb1975ac214c.camel@phytec.de>
-References: <cf6ac9542f58a33b146ad7b0f5577e1dff3becab.camel@phytec.de>
- <20240627224321db4557b2@mail.local>
- <1d82ecbb-c9fa-49e0-8432-7fd152e01440@app.fastmail.com>
- <d8dea6f3123face56bf36d7df3a8eb1975ac214c.camel@phytec.de>
-Date: Fri, 28 Jun 2024 08:53:53 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: =?UTF-8?Q?Stefan_M=C3=BCller-Klieser?= <S.Mueller-Klieser@phytec.de>,
- "Leonard Anderweit" <L.Anderweit@phytec.de>,
- "Alexandre Belloni" <alexandre.belloni@bootlin.com>
-Cc: "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "upstream@phytec.de" <upstream@phytec.de>
-Subject: Re: Question about [PATCH] [RFC] rtc: y2038: remove broken RTC_HCTOSYS
- workaround
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240626101809.25227-1-krzysztof.kozlowski@linaro.org>
 
-On Fri, Jun 28, 2024, at 08:33, Stefan M=C3=BCller-Klieser wrote:
-> Am Freitag, dem 28.06.2024 um 08:01 +0200 schrieb Arnd Bergmann:
->> On Fri, Jun 28, 2024, at 00:43, Alexandre Belloni wrote:
->> > On 24/06/2024 11:41:41+0000, Leonard Anderweit wrote:
->> > > Hi,
->> > >=20
->> > > I found this patch [1] which is necessary for a project I'm curre=
-ntly
->> > > working on. I'm using phyboard-wega [2] with an am335 ARM SoC whi=
-ch I
->> > > want to make y2038 proof.
->> > > Is there any reason it was never accepted?
->>=20
->> Sorry for not having replied earlier. I'm definitely interested
->> in helping to make this work better, having spent a lot of time
->> on the kernel side of the y2038 work.
->>=20
->> Which combination of distro, libc and init system are you using
->> in your work?
->
-> We have a Yocto scarthgap with glibc 2.39 and systemd 255.4.
+On 26-06-24, 12:18, Krzysztof Kozlowski wrote:
+> Emails to chuanhua.lei@intel.com, mallikarjunax.reddy@intel.com,
+> yixin.zhu@intel.com and vadivel.muruganx.ramuthevar@linux.intel.com
+> bounce with the same message:
+> 
+>   Your message wasn't delivered to Yixin.zhu@intel.com because the
+>   address couldn't be found or is unable to receive email.
+> 
+> The Intel LGM SoC was apparently part of Home Gateway division which was
+> acquired by Maxlinear, so switch maintenance of affected bindings to the
+> only known non-bouncing Maxlinear address: Rahul Tanwar.
+> 
+> I do not know if Rahul Tanwar or Maxlinear want to maintain the
+> bindings, so regardless of this change we should consider bindings
+> abandoned and probably drop soon.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml    | 2 +-
+>  Documentation/devicetree/bindings/dma/intel,ldma.yaml         | 3 +--
 
-Ok
+Acked-by: Vinod Koul <vkoul@kernel.org>
 
->> Are you running with COMPAT_32BIT_TIME disabled? This is something
->> you probably want in order to better test for corner cases that
->> still use time32 kernel ABIs somewhere, but it still requires
->> adding a few more workarounds in libc and other userspace
->> sources.
->
-> We wanted to, but this still keeps systemd from booting. We are
-> debugging this currently.
+>  Documentation/devicetree/bindings/mtd/intel,lgm-ebunand.yaml  | 2 +-
+>  Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml | 2 +-
+>  Documentation/devicetree/bindings/phy/intel,lgm-usb-phy.yaml  | 2 +-
 
-My guess is that this is still an issue with glibc still relying
-on time32 system calls to be present. I have not looked at it
-in a while, but the most common time32 syscall that everyone
-relies on is futex(). With COMPAT_32BIT_TIME disabled, you
-need to call futex_time64() instead even if there is a NULL
-timeout. There may also be other time32 syscalls in use here.
+Acked-by: Vinod Koul <vkoul@kernel.org>
 
-The way I would debug this is to run a 32-bit scarthgap
-userspace in a chroot on a 64-bit kernel with COMPAT_32BIT_TIME=3Dn,
-to see what kernel interfaces are missing while still being
-able to run normal 64-bit debugging tools.
-You can do this either on an arm64 or x86_64 host, whichever is
-easier for you to get set up.
-
-I don't see anything in systemd itself that relies on time32
-syscalls, it does not appear to directly call futex or any
-of the other ones, and the seccomp filters in there look like
-they take time64 syscalls into account correctly.
-
-       Arnd
+-- 
+~Vinod
 
