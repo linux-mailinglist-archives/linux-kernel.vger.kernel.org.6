@@ -1,130 +1,280 @@
-Return-Path: <linux-kernel+bounces-233517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9229991B89E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:39:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 780ED91B8A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:40:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01965B214DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:39:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED98D1F22789
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:40:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F61140363;
-	Fri, 28 Jun 2024 07:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5627A140369;
+	Fri, 28 Jun 2024 07:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Jjde3unv"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Bs+1B7XV"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A56140E29;
-	Fri, 28 Jun 2024 07:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4C813F45F
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 07:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719560371; cv=none; b=ZQcoX/bCZ85Uy+zcoCMJbcw6mcoXtJTjeoQQqDhS9yirCaEcDQ1nvKI2KIsmv6tXJt5ueQqIscNBRGOy4HaekhGevQAnIFH6T7hoVMXKI/77UZZ959CeqJWEt2D5ognb/9N8Ng3j+TIULyMokdSRP51x2S87cSli1boIZwO1+4c=
+	t=1719560429; cv=none; b=SULWQ3O/uJx7809LWZxdP4QG+MEtRnfJIGvbxXK+jmd0+C00OsINFLL1ppG6oID3MF8ydSp0b3dFY3XGiWK4+4ar+d/Kc0yNos6++sDdLbocvfG+e7c/UnS3leGhxcJZWMZcER2q8CucGIcEEaL5pYoSKENhRQOwGfU4BpoHZEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719560371; c=relaxed/simple;
-	bh=tHW0KMxF0Le+fZFdbDVVw/G/3C67/mNlFJa2G6YHrE8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=snVRK/qmiNQ68VJXiqb7z/tieXb9vbVwoZ2ihgPqN7QMqUJXb67Y44E3zuqVIKHbvFd/VSCbQuQM+yArDheLyic8pRCQpIAKxMeqwamEp5OEXS2cYf5snvR8AEwX24O27bH7xFUf1y9qF7+IuOOdyqjq0ghpBveLXzl1s6LOot4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Jjde3unv; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1719560366; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=BL+alWHXQ+GW6lLZJwH43dW4UHUN5EClmD0/pcFXBWQ=;
-	b=Jjde3unvFIDMqkQDjk/kGfHG7aclt1j/yzhl9QaEv5cL1RTDk2txEqCRBAMnY/gP4C0dsWjZDuNcbChyfBFnxWZrt8BpoMe+/DRKi8sviPZpSwHYA4OZs/pu7xeeKJZUQL8i8T2pniDxWNOTCfxItws00OOfv9FGbBOpihFLeFc=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0W9Pclg9_1719560365;
-Received: from 30.97.48.160(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W9Pclg9_1719560365)
-          by smtp.aliyun-inc.com;
-          Fri, 28 Jun 2024 15:39:25 +0800
-Message-ID: <ce6a7e15-5bea-413a-951e-b252319e1dfd@linux.alibaba.com>
-Date: Fri, 28 Jun 2024 15:39:24 +0800
+	s=arc-20240116; t=1719560429; c=relaxed/simple;
+	bh=b97aaavAT71gQuYxXVf5gNgk7XjtI4OnJYwefCGe79Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CCiP83IP9KsDJ33AOzkDH0F2kRBJ85kMJZ3RCw/opwevOCO7prEfqZe5oGnIbQ/Holg4R5f2ArcJIpB0y4gk8hmwYH2H2PPkIrvBQ96MvXIPKDYNeLppvsPfSlunBSG/LsjZrCaEc8BhkUAjojo1Ly5OPxHZ27A8hCKThTWzfqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Bs+1B7XV; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52e7145c63cso1076033e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 00:40:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719560425; x=1720165225; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vqCKQJd1sf9No+GXy8/Bf8J5+zntEVmwkuLi0BwTjgI=;
+        b=Bs+1B7XVEComYxGgoxtF+crITOayPMauiFzKgyA2CfdikHu+7AbSO8iMS8SeGd8IsD
+         xovHN1/Xw/xIxjJspOvpnFgFmIJl9ZWiQdVVyO8tdQoqFwXmiPLuJC12uqjw01jfQ91i
+         lpY0RwsBod5G8Xr8W077KFHjB1YFjULjPjiA7bCrH+cPeyaoNk1drJm1q3AmXBM+Eu/6
+         Vqo7UazrxxYXiv8XRDDIqbeOZt/cKisDnaHrdqpUDFw/cZkEruYr3XJxRHM5zGeDD8Kh
+         yimsjFS3upDCA3TZdvyvDHc4gvOkgpZVQefJu8W/r1lZKgf0fzh9GRzhL55uF45zGdzo
+         jsEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719560425; x=1720165225;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vqCKQJd1sf9No+GXy8/Bf8J5+zntEVmwkuLi0BwTjgI=;
+        b=C2JFL4ZBdI9+QriWL0SDn3MOZ9+x/KgSiWVU7v1ipDWN1eD3a24RAJ5Oqx9gTwWN6y
+         RAIPLwMNqoCbQv/P2N+tMBdCvDELKNmXrXAP0GRNaeoJx0mhEKLyPDHzvQbHX+MKwkzU
+         5J7ikLoJq3vXb2wpRB1+7DkO5gI4ji0Q5i/QJl+8BGTAZ7fwdPlNn3cZXqSbfLIQ05PN
+         +ETahW77PnTYYuD9o0OvxYZj+qui/OArR9OW9SewfOA1l4q4UBhan2oXgTJOuaG1V49h
+         Ij4Zo3pSmKTpaUag3lMion9vJ3DjdgAirEVtY2Kclsf4oVqhWrJaR0p5wjqk0VDhQH6+
+         hEYg==
+X-Forwarded-Encrypted: i=1; AJvYcCWnCtVDaUEC5BCrHoqTsZSPudXOzNJ5OqETgepPHiHzPg9ifSELkdlJddlICVKqeGzqkLtzFO+TEHjNEVTT7IJjYXinvbKFEvOhxeND
+X-Gm-Message-State: AOJu0Yxjq8u7WwW2i4RuIdEFQUwu+tlQM10zwn5fKhBoG+NdxcTOOpnh
+	bXegYpdRsFnspoAs8B8LPuH475U09dKDnNWPQQiwIv0DvWvDCUpPXUq4eAtBbb8=
+X-Google-Smtp-Source: AGHT+IEYmcphSATZ2KnJCM6m7XxAIKEYZnMxajXKg1H7FmUiYvq5YVN4+QRc3naCioEhM8pQKheogw==
+X-Received: by 2002:ac2:58d0:0:b0:52e:74dc:95c6 with SMTP id 2adb3069b0e04-52e7b901f61mr214124e87.32.1719560425205;
+        Fri, 28 Jun 2024 00:40:25 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab41c30sm192344e87.306.2024.06.28.00.40.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 00:40:24 -0700 (PDT)
+Date: Fri, 28 Jun 2024 10:40:23 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	angelogioacchino.delregno@collabora.com, andersson@kernel.org, konrad.dybcio@linaro.org, 
+	mturquette@baylibre.com, sboyd@kernel.org, ilia.lin@kernel.org, rafael@kernel.org, 
+	viresh.kumar@linaro.org, ulf.hansson@linaro.org, quic_sibis@quicinc.com, 
+	otto.pflueger@abscue.de, neil.armstrong@linaro.org, luca@z3ntu.xyz, abel.vesa@linaro.org, 
+	danila@jiaxyga.com, quic_ipkumar@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH v3 2/9] cpufreq: qcom-nvmem: Add genpd names to
+ match_data_kryo
+Message-ID: <kcgqm3ywdzdttllk357szirjdvdddsrcznfuwux6y237ncjnwb@3ots4rqreznu>
+References: <20240626104002.420535-1-quic_varada@quicinc.com>
+ <20240626104002.420535-3-quic_varada@quicinc.com>
+ <za7t6ltttq2o5qwahfrzftsb7xfzbzdtg4zx3bvnf3fewhfeqf@vjrq7na5ioqm>
+ <Zn5ZEI1m4jImz/Wp@hu-varada-blr.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/9] cachefiles: random bugfixes
-To: libaokun@huaweicloud.com, netfs@lists.linux.dev, dhowells@redhat.com,
- jlayton@kernel.org, Christian Brauner <brauner@kernel.org>
-Cc: jefflexu@linux.alibaba.com, zhujia.zj@bytedance.com,
- linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
- yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>
-References: <20240628062930.2467993-1-libaokun@huaweicloud.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20240628062930.2467993-1-libaokun@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zn5ZEI1m4jImz/Wp@hu-varada-blr.qualcomm.com>
 
-Hi Baokun,
+On Fri, Jun 28, 2024 at 12:02:48PM GMT, Varadarajan Narayanan wrote:
+> On Wed, Jun 26, 2024 at 09:23:17PM +0300, Dmitry Baryshkov wrote:
+> > On Wed, Jun 26, 2024 at 04:09:55PM GMT, Varadarajan Narayanan wrote:
+> > > This is used for tying up the cpu@N nodes with the power domains.
+> > > Without this, 'cat /sys/kernel/debug/qcom_cpr3/thread0'
+> > > crashes with NULL pointer access.
+> >
+> > Add the interesting part of the backtrace, please.
+> 
+>         if (thread->drv->desc->cpr_type < CTRL_TYPE_CPRH) {
+>                 seq_printf(s, "current_volt = %d uV\n", thread->drv->last_uV);
+>                 seq_printf(s, "requested voltage: %d uV\n", thread->corner->last_uV);
+>         }
+> 
+> thread->corner is NULL in the second printf above.
+> 
+> 	# cat /sys/kernel/debug/qcom_cpr3/thread0
+> 	[   16.965241] Unable to handle kernel NULL pointer dereference at virtual address 000000000000000c
+> 	[   16.965270] Mem abort info:
+> 	[   16.973181]   ESR = 0x0000000096000004
+> 	[   16.975607]   EC = 0x25: DABT (current EL), IL = 32 bits
+> 	[   16.979425]   SET = 0, FnV = 0
+> 	[   16.984889]   EA = 0, S1PTW = 0
+> 	[   16.987756]   FSC = 0x04: level 0 translation fault
+> 	[   16.990792] Data abort info:
+> 	[   16.995652]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+> 	[   16.998779]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+> 	[   17.004074]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+> 	[   17.009196] user pgtable: 4k pages, 48-bit VAs, pgdp=00000000481b1000
+> 	[   17.014579] [000000000000000c] pgd=0000000000000000, p4d=0000000000000000
+> 	[   17.020919] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+> 	[   17.020921] Modules linked in:
+> 	[   17.020926] CPU: 0 UID: 0 PID: 118 Comm: cat Not tainted 6.10.0-rc4-next-20240620-00020-g125eb3184fc1-dirty #9
+> 	[   17.020931] Hardware name: Qualcomm Technologies, Inc. IPQ9574/AP-AL02-C7 (DT)
+> 	[   17.020933] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> 	[   17.020936] pc : cpr3_debug_info_show+0x3a0/0x3ac
+> 	[   17.020945] lr : cpr3_debug_info_show+0x390/0x3ac
+> 	[   17.020948] sp : ffff800086293b90
+> 	[   17.020949] x29: ffff800086293b90 x28: ffff0000034ae038 x27: 0000000000400cc0
+> 	[   17.020953] x26: 000000007ffff000 x25: ffff0000034ae028 x24: 0000000000000000
+> 	[   17.020957] x23: ffff800086293c80 x22: ffff000002399880 x21: ffff000002a8fa80
+> 	[   17.020960] x20: ffff0000034ae000 x19: 0000000000000000 x18: ffffffffffffffff
+> 	[   17.020964] x17: 0000000000000000 x16: 0000000000000000 x15: ffff800086293a40
+> 	[   17.020967] x14: ffff000002913000 x13: ffff00000291200f x12: 0000000000000000
+> 	[   17.020970] x11: 0000000000000000 x10: 0000000000000000 x9 : ffff0000034a9000
+> 	[   17.020973] x8 : 000000000a567520 x7 : 0000000000000001 x6 : 000000000a567520
+> 	[   17.020976] x5 : ffff000002912014 x4 : ffff800080e1f3a5 x3 : 0000000000000014
+> 	[   17.020979] x2 : 0000000000000000 x1 : ffff800080e1f848 x0 : ffff0000034ae000
+> 	[   17.020983] Call trace:
+> 	[   17.020984]  cpr3_debug_info_show+0x3a0/0x3ac
+> 	[   17.020987]  seq_read_iter+0xe0/0x45c
+> 	[   17.020993]  seq_read+0xec/0x130
+> 	[   17.020996]  full_proxy_read+0x60/0xb4
+> 	[   17.020999]  vfs_read+0xc0/0x31c
+> 	[   17.021003]  ksys_read+0x70/0x104
+> 	[   17.021006]  __arm64_sys_read+0x1c/0x28
+> 	[   17.021008]  invoke_syscall+0x48/0x114
+> 	[   17.021014]  el0_svc_common+0x3c/0xe8
+> 	[   17.021017]  do_el0_svc+0x20/0x2c
+> 	[   17.021020]  el0_svc+0x34/0xd8
+> 	[   17.021024]  el0t_64_sync_handler+0x120/0x12c
+> 	[   17.021027]  el0t_64_sync+0x190/0x194
+> 	[   17.021031] Code: f94012c2 aa1403e0 b0004701 91212021 (b9400c42)
+> 	[   17.021033] ---[ end trace 0000000000000000 ]---
+> 	Segmentation fault
 
-On 2024/6/28 14:29, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> Hi all!
-> 
-> This is the third version of this patch series, in which another patch set
-> is subsumed into this one to avoid confusing the two patch sets.
-> (https://patchwork.kernel.org/project/linux-fsdevel/list/?series=854914)
-> 
-> Thank you, Jia Zhu, Gao Xiang, Jeff Layton, for the feedback in the
-> previous version.
-> 
-> We've been testing ondemand mode for cachefiles since January, and we're
-> almost done. We hit a lot of issues during the testing period, and this
-> patch series fixes some of the issues. The patches have passed internal
-> testing without regression.
-> 
-> The following is a brief overview of the patches, see the patches for
-> more details.
-> 
-> Patch 1-2: Add fscache_try_get_volume() helper function to avoid
-> fscache_volume use-after-free on cache withdrawal.
-> 
-> Patch 3: Fix cachefiles_lookup_cookie() and cachefiles_withdraw_cache()
-> concurrency causing cachefiles_volume use-after-free.
-> 
-> Patch 4: Propagate error codes returned by vfs_getxattr() to avoid
-> endless loops.
-> 
-> Patch 5-7: A read request waiting for reopen could be closed maliciously
-> before the reopen worker is executing or waiting to be scheduled. So
-> ondemand_object_worker() may be called after the info and object and even
-> the cache have been freed and trigger use-after-free. So use
-> cancel_work_sync() in cachefiles_ondemand_clean_object() to cancel the
-> reopen worker or wait for it to finish. Since it makes no sense to wait
-> for the daemon to complete the reopen request, to avoid this pointless
-> operation blocking cancel_work_sync(), Patch 1 avoids request generation
-> by the DROPPING state when the request has not been sent, and Patch 2
-> flushes the requests of the current object before cancel_work_sync().
-> 
-> Patch 8: Cyclic allocation of msg_id to avoid msg_id reuse misleading
-> the daemon to cause hung.
-> 
-> Patch 9: Hold xas_lock during polling to avoid dereferencing reqs causing
-> use-after-free. This issue was triggered frequently in our tests, and we
-> found that anolis 5.10 had fixed it. So to avoid failing the test, this
-> patch is pushed upstream as well.
-> 
-> Comments and questions are, as always, welcome.
-> Please let me know what you think.
+Well, I asked to add it, so please drop the timestamps and registers and
+include it into the commit message. While you are at it, please review
+Documentation/process/submitting-patches.rst and change the commit
+message to follow the guidelines.
 
-Patch 4-9 looks good to me, and they are independent to patch 1-3
-so personally I guess they could go upstream in advance.
-
-I hope the way to fix cachefiles in patch 1-4 could be also
-confirmed by David and Jeff since they relates the generic
-cachefiles logic anyway.
-
-Thanks,
-Gao Xiang
+While doing so (and while responding to a comment below) you will notice
+that this change should not be applied to the generic match_data_kryo
+instance. Instead you should add a device-specific entry into match
+table and use struct qcom_cpufreq_match_data instance that has
+.genpd_names set.
 
 > 
-> Thanks,
-> Baokun
+> > > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> > > ---
+> > >  drivers/cpufreq/qcom-cpufreq-nvmem.c | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > >
+> > > diff --git a/drivers/cpufreq/qcom-cpufreq-nvmem.c b/drivers/cpufreq/qcom-cpufreq-nvmem.c
+> > > index 939702dfa73f..5e6525c7788c 100644
+> > > --- a/drivers/cpufreq/qcom-cpufreq-nvmem.c
+> > > +++ b/drivers/cpufreq/qcom-cpufreq-nvmem.c
+> > > @@ -399,6 +399,7 @@ static const char *generic_genpd_names[] = { "perf", NULL };
+> > >
+> > >  static const struct qcom_cpufreq_match_data match_data_kryo = {
+> > >  	.get_version = qcom_cpufreq_kryo_name_version,
+> > > +	.genpd_names = generic_genpd_names,
+> >
+> > This forces that every Kryo SoC has "perf" genpd, which obviously isn't
+> > corret (at least from the upstream support point of view).
+> 
+> While trying to get the above backtrace, randomly during boot
+> I see the following BUG too.
+
+This isn't a response to my comment.
+
+> 
+> 	[    1.562847] ------------[ cut here ]------------
+> 	[    1.574342] kernel BUG at drivers/cpufreq/cpufreq.c:1542!
+> 	[    1.579203] Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
+> 	[    1.579209] Modules linked in:
+> 	[    1.579217] CPU: 2 UID: 0 PID: 11 Comm: kworker/u16:0 Not tainted 6.10.0-rc4-next-20240620-00020-g125eb3184fc1-dirty #10
+> 	[    1.579227] Hardware name: Qualcomm Technologies, Inc. IPQ9574/AP-AL02-C7 (DT)
+> 	[    1.579232] Workqueue: events_unbound deferred_probe_work_func
+> 	[    1.579249] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> 	[    1.579257] pc : cpufreq_online+0x938/0x954
+> 	[    1.579271] lr : cpufreq_online+0x788/0x954
+> 	[    1.579281] sp : ffff8000817c3520
+> 	[    1.579283] x29: ffff8000817c3520 x28: ffff0000029efa50 x27: 0000000000000001
+> 	[    1.579294] x26: 0000000000000001 x25: ffff8000814d8da0 x24: 0000000000000000
+> 	[    1.579303] x23: ffff0000029ef9d0 x22: ffff800081735000 x21: 0000000000000000
+> 	[    1.579312] x20: 00000000000c15c0 x19: ffff0000029ef800 x18: ffff00000183481c
+> 	[    1.579321] x17: ffff8000818a3638 x16: 0000000000000000 x15: ffff8000818a3670
+> 	[    1.579330] x14: 0000000000000003 x13: ffff00000192b140 x12: ffff8000814d8c58
+> 	[    1.579338] x11: ffff00000192b140 x10: 00000000000009b0 x9 : ffff8000817c3240
+> 	[    1.579347] x8 : ffff00000192bad0 x7 : 0000000000000001 x6 : ffff8000814d8da0
+> 	[    1.579355] x5 : ffff8000812c32d0 x4 : 0000000000000000 x3 : 0000000000000000
+> 	[    1.579363] x2 : 0000000000000000 x1 : 0000000000000000 x0 : 00000000fffffff0
+> 	[    1.579372] Call trace:
+> 	[    1.579375]  cpufreq_online+0x938/0x954
+> 	[    1.579386]  cpufreq_add_dev+0x80/0x98
+> 	[    1.579395]  subsys_interface_register+0x100/0x130
+> 	[    1.579404]  cpufreq_register_driver+0x150/0x244
+> 	[    1.579413]  dt_cpufreq_probe+0x8c/0x440
+> 	[    1.579420]  platform_probe+0x68/0xc8
+> 	[    1.579430]  really_probe+0xbc/0x29c
+> 	[    1.579438]  __driver_probe_device+0x78/0x12c
+> 	[    1.579446]  driver_probe_device+0xd8/0x15c
+> 	[    1.579454]  __device_attach_driver+0xb8/0x134
+> 	[    1.579463]  bus_for_each_drv+0x84/0xe0
+> 	[    1.579470]  __device_attach+0x9c/0x188
+> 	[    1.579478]  device_initial_probe+0x14/0x20
+> 	[    1.579487]  bus_probe_device+0xac/0xb0
+> 	[    1.579494]  device_add+0x55c/0x720
+> 	[    1.579500]  platform_device_add+0x1b8/0x244
+> 	[    1.579510]  platform_device_register_full+0xfc/0x184
+> 	[    1.579516]  platform_device_register_resndata.constprop.0+0x5c/0x8c
+> 	[    1.579524]  qcom_cpufreq_probe+0x1e4/0x498
+> 	[    1.579531]  platform_probe+0x68/0xc8
+> 	[    1.579540]  really_probe+0xbc/0x29c
+> 	[    1.579548]  __driver_probe_device+0x78/0x12c
+> 	[    1.579556]  driver_probe_device+0xd8/0x15c
+> 	[    1.579564]  __device_attach_driver+0xb8/0x134
+> 	[    1.579573]  bus_for_each_drv+0x84/0xe0
+> 	[    1.579580]  __device_attach+0x9c/0x188
+> 	[    1.579588]  device_initial_probe+0x14/0x20
+> 	[    1.579596]  bus_probe_device+0xac/0xb0
+> 	[    1.579603]  deferred_probe_work_func+0x88/0xc0
+> 	[    1.579611]  process_one_work+0x148/0x28c
+> 	[    1.579623]  worker_thread+0x2e8/0x3f8
+> 	[    1.579633]  kthread+0x110/0x114
+> 	[    1.579641]  ret_from_fork+0x10/0x20
+> 	[    1.579653] Code: aa1703e0 52800021 97e38ed5 17ffffea (d4210000)
+> 	[    1.579657] ---[ end trace 0000000000000000 ]---
+> 	[    1.851078] note: kworker/u16:0[11] exited with irqs disabled
+> 	[    1.855791] note: kworker/u16:0[11] exited with preempt_count 1
+> 	[    1.861586] ------------[ cut here ]------------
+> 
+> Randomly, the following call seems to return -EBUSY causing
+> the above BUG().
+> 
+> 	ret = __cpufreq_driver_target(policy, old_freq - 1,
+> 				      CPUFREQ_RELATION_L);
+> 
+> 	/*
+> 	 * Reaching here after boot in a few seconds may not
+> 	 * mean that system will remain stable at "unknown"
+> 	 * frequency for longer duration. Hence, a BUG_ON().
+> 	 */
+> 	BUG_ON(ret);
+> 
+> Not sure why this does not happen in every boot, and how it
+> is tied to genpd_names. Will debug and update.
+
+Thanks!
+
+-- 
+With best wishes
+Dmitry
 
