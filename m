@@ -1,128 +1,110 @@
-Return-Path: <linux-kernel+bounces-233504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A62B91B868
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:31:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3DA491B86E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:32:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C218CB214EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:31:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB1891F22E70
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:32:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1348140369;
-	Fri, 28 Jun 2024 07:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pp7W09Jb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94FAE3B29D;
+	Fri, 28 Jun 2024 07:32:23 +0000 (UTC)
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CCA254BD4;
-	Fri, 28 Jun 2024 07:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7FA54BD4;
+	Fri, 28 Jun 2024 07:32:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719559902; cv=none; b=XdsbN4JtpvhtjsH1FWALmqBNh1+0n0eGLK5nTOm9U2DN6dms6A1/plMcfyQLEzcZQ47WsJ7iH+HImPggJN16UIw/KNPJySw4eNbkqhaxd086ZaczD6xEFazQZgod0WEhjSis4eEho+BKuYd2oNHsUcjrdt/AFyaz0XP77StwOAM=
+	t=1719559943; cv=none; b=KIR/WF0JdaRwSgd3xPCZKtqkgxGTi6L4wTzEloAZ1WWSp8KzNRGdHicVNLeazEf264lqwAQDFfL35DrhXElXj3nkIpFTq6F7WsC8INuMN5h2+nvPq9BWsHhnsq1X3yOf1E11DOY3ynE+VL+iHYGOJTUk/1684fcc91jgI4Nx9co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719559902; c=relaxed/simple;
-	bh=KWadJWEycDJn9mnW33hPUERovexnNMMEh2BaERDMNlg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fhb1xSnOh2ZStyOVsiY+Z6y7FtyUzGnHgmSxtYh24TgKvfheLUOg1XHFozw7wYRz6rVmw/AH070axCsUh19fqlf2YUjBa430GOztvXt9ooNyU5Ep1CWNQw/pYdHu9r3pnXOsJQiF3sW7h46hdFficWxlnssfP/ix8Iu5YRNImJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pp7W09Jb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E465C116B1;
-	Fri, 28 Jun 2024 07:31:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719559901;
-	bh=KWadJWEycDJn9mnW33hPUERovexnNMMEh2BaERDMNlg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pp7W09JbAdaZP67OFGIThO5eVticdeiin8hft557ABXV9bysa2nvWOSNqnpjAe1Jg
-	 gju2po4CemZTbJiJZFGzHtXMR3160Vf+EV04e4LwuK8EAMhQwu6cT05sLMDtjpiKbT
-	 fELnygZXm8+Zb1FLP1xeDt96RoJ7+EZxOptnsU2KS9S8WX9UiUZ1BNXdc+zkOpH4+9
-	 cu8z4PBJ1uqMC6+Qbc9UZE6fAOrNtYsOYaCdvvz2zRsJRZNk/1eFipAPrdq3ITcq4M
-	 Z2a3Kus1K6HkqqvujizOCmPloTSTAX3EDaLVuka5I/bVtlC52aIsr9237yf72R9G31
-	 DCCtxq1cfVoEQ==
-Date: Fri, 28 Jun 2024 13:01:37 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Joy Zou <joy.zou@nxp.com>
-Cc: Frank.Li@nxp.com, imx@lists.linux.dev, dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] dmaengine: fsl-edma: add edma src ID check at
- request channel
-Message-ID: <Zn5m2Wadskni-4az@matsya>
-References: <20240621104932.4116137-1-joy.zou@nxp.com>
- <20240621104932.4116137-3-joy.zou@nxp.com>
+	s=arc-20240116; t=1719559943; c=relaxed/simple;
+	bh=9N1/mMfhqW8BsLENyLyD7c7i6dJuKlyiYhTst7s+czw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b4tWyhknmaRn5p1BFbI74UeLhjQGF57J0/texR6bl6pVeGgqSbr6PJ5H7ybhbE61FfB/lLqhy7EHLX3rQs2Gniynw8HaR7YIhGOz5kegeTVTgVnZA/fJGS6hCOygNXYe93TVGjeiWyg4ZtljH4kVxlPMql7Qd+t7bfHNa0ocWkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-64b0d45a7aaso2168257b3.0;
+        Fri, 28 Jun 2024 00:32:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719559940; x=1720164740;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0VL+b3JwtyGCROTdqN/X9hyaMABG/pi++AqRbfpAIVA=;
+        b=MJ4DlzyXLvkBh+WFvkM0ONe6xZLJIXpRRIIb1q4gvUWbddUFzZmqpyh8TvnOstvjiZ
+         i3LdKh19P4kii1pBBPXpJop6lcjtankEqu1WERO8DuTOHeDLtSsnJFGIpx6rJLRHqSHN
+         ZZa02SqN7SfZHLwMN75nbT9Q+mvWoEAQVk5wXmUr5J2NSfzc6i5ZEIgcl9itR7PQLXSY
+         mUo9gCMXSPQwDb4RX+w4ERcQGc8N23f/YCDTuSsou+M+w3pncvWNvvRr0LlADDah/X9S
+         sUQ56Qwjt999VJlZAtNiC0lIo7Vd74tHe3FvQVtpYQ7EQU10GtW/OKw8ZfcUqaG6io21
+         3FkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVs1m3BvBGtigESARaHlRiFlVCz0YKpGxMZcdcReOOvMKhLakGH44OZ+brse+OVZPKwOkJUwvsjbMraGXWnKJXCQgRiz1G4/8Q2t3CgIQrNfKgBJUDf4uPgGYgXgyTvJL9R8nFYwPAGJdTEt2FEA4A=
+X-Gm-Message-State: AOJu0YwZ6tr9Unu0jPsa+iMPFUWkYDXXlOuKf9bHa7nYulCC1NQeFu8t
+	dTVBGZkjsw4tiP1pxbYRCMOCVnhcLOGJTSJqkDo6DTVWtMlKgcZr7++wHQum
+X-Google-Smtp-Source: AGHT+IGJOcCsYEhYIc4LmSevQtP72dxECeLth/LhDLGWRUe4feAG+E5MU/YALBjDOOSrhANvfVkySQ==
+X-Received: by 2002:a81:8408:0:b0:62c:c660:72af with SMTP id 00721157ae682-643aa69a068mr142953687b3.24.1719559939905;
+        Fri, 28 Jun 2024 00:32:19 -0700 (PDT)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-64a9ba5a2e7sm2483997b3.80.2024.06.28.00.32.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Jun 2024 00:32:19 -0700 (PDT)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6327e303739so2662137b3.2;
+        Fri, 28 Jun 2024 00:32:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUV0qwn1RLJX38gasgI/GADLKJ7VcYyPLXSgVcrWQcKNe+j7cxsK3G7H5+xwrlO5YoWQPt2iJw7puCKgh4dfKVzf9lcOzMrL2caW69t8bs5OGFyzZdNwhDErXfGmGW9rnjGUF+hf3WZnsUVsIaVqlI=
+X-Received: by 2002:a0d:ea0d:0:b0:64a:ce78:4f7b with SMTP id
+ 00721157ae682-64ace785075mr12441037b3.12.1719559939460; Fri, 28 Jun 2024
+ 00:32:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240621104932.4116137-3-joy.zou@nxp.com>
+References: <20240628052010.31856-1-yang.lee@linux.alibaba.com> <CAMuHMdXyqSHAo4LTy6t7=KSmi8Po0Cmp-U35py32RmCA-_spJg@mail.gmail.com>
+In-Reply-To: <CAMuHMdXyqSHAo4LTy6t7=KSmi8Po0Cmp-U35py32RmCA-_spJg@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 28 Jun 2024 09:32:07 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWbZaq0h=ObJnC-atvMo6H3J=ZNM1zZBTTcjV-SjZJHLw@mail.gmail.com>
+Message-ID: <CAMuHMdWbZaq0h=ObJnC-atvMo6H3J=ZNM1zZBTTcjV-SjZJHLw@mail.gmail.com>
+Subject: Re: [PATCH -next] soc: renesas: Remove unneeded semicolon
+To: Yang Li <yang.lee@linux.alibaba.com>
+Cc: magnus.damm@gmail.com, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 21-06-24, 18:49, Joy Zou wrote:
-> Check src ID to detect misuse of same src ID for multiple DMA channels.
-> 
-> Signed-off-by: Joy Zou <joy.zou@nxp.com>
-> ---
->  drivers/dma/fsl-edma-main.c | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
-> diff --git a/drivers/dma/fsl-edma-main.c b/drivers/dma/fsl-edma-main.c
-> index d4f29ece69f5..47939d010e59 100644
-> --- a/drivers/dma/fsl-edma-main.c
-> +++ b/drivers/dma/fsl-edma-main.c
-> @@ -100,6 +100,22 @@ static irqreturn_t fsl_edma_irq_handler(int irq, void *dev_id)
->  	return fsl_edma_err_handler(irq, dev_id);
->  }
->  
-> +static bool fsl_edma_srcid_in_use(struct fsl_edma_engine *fsl_edma, u32 srcid)
-> +{
-> +	struct fsl_edma_chan *fsl_chan;
-> +	int i;
-> +
-> +	for (i = 0; i < fsl_edma->n_chans; i++) {
-> +		fsl_chan = &fsl_edma->chans[i];
-> +
-> +		if (fsl_chan->srcid && srcid == fsl_chan->srcid) {
-> +			dev_err(&fsl_chan->pdev->dev, "The srcid is using! Can't use repeatly.");
+On Fri, Jun 28, 2024 at 9:28=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+> On Fri, Jun 28, 2024 at 7:20=E2=80=AFAM Yang Li <yang.lee@linux.alibaba.c=
+om> wrote:
+> > ./drivers/soc/renesas/rcar-fuse.c:124:2-3: Unneeded semicolon
+> >
+> > Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> > Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=3D9441
+> > Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> As I haven't sent a PR for this yet, I will fix up the offending commit.
 
-Better message would be: "The srcid is in use, cant use!"
+Oops, I forgot the offending commit is part of an immutable branch,
+so I will just queue the fix in renesas-devel for v6.11.
 
-wdyt?
+Gr{oetje,eeting}s,
 
-> +			return true;
-> +		}
-> +	}
-> +	return false;
-> +}
-> +
->  static struct dma_chan *fsl_edma_xlate(struct of_phandle_args *dma_spec,
->  		struct of_dma *ofdma)
->  {
-> @@ -117,6 +133,10 @@ static struct dma_chan *fsl_edma_xlate(struct of_phandle_args *dma_spec,
->  	list_for_each_entry_safe(chan, _chan, &fsl_edma->dma_dev.channels, device_node) {
->  		if (chan->client_count)
->  			continue;
-> +
-> +		if (fsl_edma_srcid_in_use(fsl_edma, dma_spec->args[1]))
-> +			return NULL;
-> +
->  		if ((chan->chan_id / chans_per_mux) == dma_spec->args[0]) {
->  			chan = dma_get_slave_channel(chan);
->  			if (chan) {
-> @@ -161,6 +181,8 @@ static struct dma_chan *fsl_edma3_xlate(struct of_phandle_args *dma_spec,
->  			continue;
->  
->  		fsl_chan = to_fsl_edma_chan(chan);
-> +		if (fsl_edma_srcid_in_use(fsl_edma, dma_spec->args[0]))
-> +			return NULL;
->  		i = fsl_chan - fsl_edma->chans;
->  
->  		fsl_chan->priority = dma_spec->args[1];
-> -- 
-> 2.37.1
+                        Geert
 
--- 
-~Vinod
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
