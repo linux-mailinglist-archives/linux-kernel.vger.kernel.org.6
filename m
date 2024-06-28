@@ -1,122 +1,244 @@
-Return-Path: <linux-kernel+bounces-234024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FB8991C110
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:34:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B94F91C112
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:35:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92D661C20FA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:34:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1967A1F22233
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E881C0069;
-	Fri, 28 Jun 2024 14:34:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0392A1C006E;
+	Fri, 28 Jun 2024 14:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZzIWXVmc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UMi6VGBQ"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B581E522;
-	Fri, 28 Jun 2024 14:34:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538D41E522;
+	Fri, 28 Jun 2024 14:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719585265; cv=none; b=p6vItlEfm3RskuyZMOnXyIFpBZ+GqXFZsMZy85jgmBt8xa7CiQyooij3wgAz16A3TgAHjnyCXlilk9g5uzxPnvgIna9GTkGLdp0NvLrRYlV5BxGCREoP8ykPaggP3GAGm/18N7iWZBoWP8SpsglIF/FIMIAFVO3StyHLAiDmRu8=
+	t=1719585339; cv=none; b=Jrn7Y0Z37HiJJVvvHrY1Agei5fbx57QeiZn9PFXv6QcXbLTMgqFVGlkPFDDbzrQSRi1MljyHm65cnBfesqs+oY7awEjrbspKhvI6+ltPy2XfOySW8IB+RnsAirekdGk+bbqTUFjnXLN2vDPX0CqJKAEfNymlZNVhAAKOp1T5ONo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719585265; c=relaxed/simple;
-	bh=M93Nvl53wprdqB1rCgjlA3JH/jyBzpgsj3DjF0i+/Uc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oZenfuvy6Jptjzi3gqTSuDOqqqxrz+ylIl80HiEH0erLaJ1GGKUJ/zPN0zsPQSpBFlCPdLWpP1+ziaIfy/I9g+M4oxtLYy3BtYAfL3N0Y2BCNAZMu3ZrPQPPEi6k44o77G2ngfxyVl0IQ7UOOtb3m48pef6TXL+Z836n5C/ihUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZzIWXVmc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A0E8C116B1;
-	Fri, 28 Jun 2024 14:34:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719585265;
-	bh=M93Nvl53wprdqB1rCgjlA3JH/jyBzpgsj3DjF0i+/Uc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZzIWXVmc2KqAbYAU7z50dq5r2g665ts4K1cpp2jdj1J6YPrDCEB6HMK/GOJNdjRb6
-	 9C0DYeiuqZdZMZbuE3RYCXBMjHOLstLaQ3PLpZ8iIFp3iw9EaZDMH2NmH5LaHf+OMQ
-	 bTBeSzPmEPVO3z5ecU+9iVdlNzqsVaY1fomUGHeI+VLb3V1HjASRJ2rE+gBacxxmzz
-	 goG2+AaLa6/JT8bHF6r8FP0Nw422XgA2LnvkkXua6cACceBw8GLLzGBQCTLrOzUApF
-	 rlCy9LaLzIPpX0iIWjk1Ex0uuB4cmttnD/NrS0rxDeOsm4mt6u1du9g+E0v8lCn51o
-	 o+slq1Moa5gUQ==
-Date: Fri, 28 Jun 2024 15:34:19 +0100
-From: Lee Jones <lee@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: [GIT PULL] Immutable branch between MFD, Regulator and Watchdog due
- for the v6.11 merge window
-Message-ID: <20240628143419.GO2532839@google.com>
-References: <cover.1719473802.git.mazziesaccount@gmail.com>
+	s=arc-20240116; t=1719585339; c=relaxed/simple;
+	bh=M+mmVeOL6m8FmyDokJNplwZhot9fKY++AbP2+IWbHMY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dios3HIzqA97wmYm/45LpMgC5YISg/qtpHah/kFhqvK16KAZGEehsyUB+lZn2Ufo5F6FbvW8OhCHq6EM1OSPqLKXs0ZjfSxo4sW7dkTM+JkAfAPaJUf0FXOssccupySZCN4o3R7mVYhIvlk3ctlYtZfDj2kYyXzfbrSmlOI6bBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UMi6VGBQ; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4217c7eb6b4so5799865e9.2;
+        Fri, 28 Jun 2024 07:35:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719585335; x=1720190135; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/0NwxkLlbP9jgFl/TCIElmahbD3Db/e8/WdXfIoQlZs=;
+        b=UMi6VGBQcI/UNQIdjh2NLS+O1ZmcOvGX/dWVKWtO/GY5t60y6nTaVS1zi16RGW+scF
+         UPAS7TtziZvusUj7xIIUtzFUy4gKARfbkVm5U9J2UP4jIn0GEPgt/QYZTLiPKO4ohQLr
+         wPXlGcB4Qud6o+DDdndr0bb3tv3AzF7iwbvyJq5x5VMCM05DReufFsnzappf9C3Q5teL
+         LrTvOK5cyQSGAErvX3hWHmYpClGhPh9lD/yrVyIbYp72KiwwEV5rvnuOQ7zYpbjjLUpV
+         5hiLEMtLqpt94mXqkiFoiPZs/ARq3fP2+5giPb7QM3IZ+mRNVL9eh2L6m0TRxzPcu6RW
+         CqwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719585335; x=1720190135;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/0NwxkLlbP9jgFl/TCIElmahbD3Db/e8/WdXfIoQlZs=;
+        b=gIozTOJl20ijst3Zd0bPb5t1OxzTSU3whRFvQTjkwRZewFAmW2+x8NVr96f5dxtuHQ
+         m9rk4E8DDyxxllfVLkCV23pSinVP3b4+lLWSuSpe1IOCjcmIiFGJ44IWzI4YYt7AS1pO
+         HWms7wzIMhMWT74IVj1pRVk/aELhqKpM6Ggg+JOaLU2XqeHt5qRjOZ8MSWwy2O7onJvn
+         B8bq/OaqyWBHZFgyeD4q+9oH5kuBAq13IDHsfHw5TmyX+AD5UFmZoXYskSKJIKXzC38x
+         JUfJRMU1v74PwnpoSrfxKmqtHyUjQFxybPpRlkSBnJybhr6oWkQxfQf8oqXz7/DfygtL
+         Nm3g==
+X-Forwarded-Encrypted: i=1; AJvYcCUJog5bypIxDRiAtsfHYu6OubCa2iJGSZYQIeOCl4OsZxnjMmfkBGOrxevgkhmGpPUY5MKm4Hueyg3eCvtIEBbiEYqs94ndTwFf2e4E
+X-Gm-Message-State: AOJu0Ywldg4b1eq7IhINIAnredP4iqbvwcTZk2gBwjIMiY9TCj8SnpT5
+	9ms1NX12g9C+M8gk4cXE4Srjq08gOPkz/c1Js5q0msG8Cf8kchQG
+X-Google-Smtp-Source: AGHT+IFnUVHgnwtaOakrbDqmh5eSI+bbvM1Nnux4SzQbNuyj7GLBzZnPk6NITvp02lKAV3Zib0BtvA==
+X-Received: by 2002:a05:600c:2212:b0:424:a2d9:67c5 with SMTP id 5b1f17b1804b1-424a2d96a8emr74770535e9.16.1719585335320;
+        Fri, 28 Jun 2024 07:35:35 -0700 (PDT)
+Received: from lucifer.home ([2a00:23cc:d20f:ba01:bb66:f8b2:a0e8:6447])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4256af37828sm38985485e9.9.2024.06.28.07.35.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 07:35:34 -0700 (PDT)
+From: Lorenzo Stoakes <lstoakes@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Matthew Wilcox <willy@infradead.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Kees Cook <kees@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Lorenzo Stoakes <lstoakes@gmail.com>
+Subject: [RFC PATCH v2 0/7] Make core VMA operations internal and testable
+Date: Fri, 28 Jun 2024 15:35:21 +0100
+Message-ID: <cover.1719584707.git.lstoakes@gmail.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <cover.1719473802.git.mazziesaccount@gmail.com>
 
-Enjoy!
+There are a number of "core" VMA manipulation functions implemented in
+mm/mmap.c, notably those concerning VMA merging, splitting, modifying,
+expanding and shrinking, which logically don't belong there.
 
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
+More importantly this functionality represents an internal implementation
+detail of memory management and should not be exposed outside of mm/
+itself.
 
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+This patch series isolates core VMA manipulation functionality into its own
+file, mm/vma.c, and provides an API to the rest of the mm code in mm/vma.h.
 
-are available in the Git repository at:
+Importantly, it also carefully implements mm/vma_internal.h, which
+specifies which headers need to be imported by vma.c, leading to the very
+useful property that vma.c depends only on mm/vma.h and mm/vma_internal.h.
 
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/ib-mfd-regulator-watchdog-v6.11
+This is useful, because we can then re-implement vma_internal.h in
+userland, stubbing out and adding shims for kernel mechanisms as required,
+and then can directly and very easily unit test internal VMA functionality.
 
-for you to fetch changes up to fcf1f960a6aa45a22efd4d49114c672ed305b85f:
+This patch series takes advantage of existing shim logic and full userland
+maple tree support contained in tools/testing/radix-tree/ and
+tools/include/linux/, separating out shared components of the radix tree
+implementation to provide this testing.
 
-  MAINTAINERS: Add ROHM BD96801 'scalable PMIC' entries (2024-06-27 09:24:45 +0100)
+Kernel functionality is stubbed and shimmed as needed in tools/testing/vma/
+which contains a fully functional userland vma_internal.h file and which
+imports mm/vma.c and mm/vma.h to be directly tested from userland.
 
-----------------------------------------------------------------
-Immutable branch between MFD, Regulator and Watchdog due for the v6.11 merge window
+A simple, skeleton testing implementation is provided in
+tools/testing/vma/vma.c as a proof-of-concept, asserting that simple VMA
+merge, modify (testing split), expand and shrink functionality work
+correctly.
 
-----------------------------------------------------------------
-Matti Vaittinen (6):
-      dt-bindings: ROHM BD96801 PMIC regulators
-      dt-bindings: mfd: bd96801 PMIC core
-      mfd: support ROHM BD96801 PMIC core
-      regulator: bd96801: ROHM BD96801 PMIC regulators
-      watchdog: ROHM BD96801 PMIC WDG driver
-      MAINTAINERS: Add ROHM BD96801 'scalable PMIC' entries
+v2:
+* Reword commit messages.
+* Replace vma_expand() / vma_shrink() wrappers with relocate_vma().
+* Make move_page_tables() internal too.
+* Have internal.h import vma.h.
+* Use header guards to more cleanly implement userland testing code.
+* Rename main.c to vma.c.
+* Update mm/vma_internal.h to have fewer superfluous comments.
+* Rework testing logic so we count test failures, and output test results.
+* Correct some SPDX license prefixes.
+* Make VM_xxx_ON() debug asserts forward to xxx_ON() macros.
+* Update VMA tests to correctly free memory, and re-enable ASAN leak
+  detection.
 
- .../devicetree/bindings/mfd/rohm,bd96801-pmic.yaml | 173 ++++
- .../bindings/regulator/rohm,bd96801-regulator.yaml |  63 ++
- MAINTAINERS                                        |   4 +
- drivers/mfd/Kconfig                                |  13 +
- drivers/mfd/Makefile                               |   1 +
- drivers/mfd/rohm-bd96801.c                         | 273 +++++++
- drivers/regulator/Kconfig                          |  12 +
- drivers/regulator/Makefile                         |   1 +
- drivers/regulator/bd96801-regulator.c              | 908 +++++++++++++++++++++
- drivers/watchdog/Kconfig                           |  13 +
- drivers/watchdog/Makefile                          |   1 +
- drivers/watchdog/bd96801_wdt.c                     | 416 ++++++++++
- include/linux/mfd/rohm-bd96801.h                   | 215 +++++
- include/linux/mfd/rohm-generic.h                   |   1 +
- 14 files changed, 2094 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd96801-pmic.yaml
- create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd96801-regulator.yaml
- create mode 100644 drivers/mfd/rohm-bd96801.c
- create mode 100644 drivers/regulator/bd96801-regulator.c
- create mode 100644 drivers/watchdog/bd96801_wdt.c
- create mode 100644 include/linux/mfd/rohm-bd96801.h
+v1:
+https://lore.kernel.org/all/cover.1719481836.git.lstoakes@gmail.com/
 
--- 
-Lee Jones [李琼斯]
+Lorenzo Stoakes (7):
+  userfaultfd: move core VMA manipulation logic to mm/userfaultfd.c
+  mm: move vma_modify() and helpers to internal header
+  mm: move vma_shrink(), vma_expand() to internal header
+  mm: move internal core VMA manipulation functions to own file
+  MAINTAINERS: Add entry for new VMA files
+  tools: separate out shared radix-tree components
+  tools: add skeleton code for userland testing of VMA logic
+
+ MAINTAINERS                                   |   14 +
+ fs/exec.c                                     |   68 +-
+ fs/userfaultfd.c                              |  160 +-
+ include/linux/atomic.h                        |    2 +-
+ include/linux/mm.h                            |  112 +-
+ include/linux/mmzone.h                        |    3 +-
+ include/linux/userfaultfd_k.h                 |   19 +
+ mm/Makefile                                   |    2 +-
+ mm/internal.h                                 |  167 +-
+ mm/mmap.c                                     | 2070 ++---------------
+ mm/mmu_notifier.c                             |    2 +
+ mm/userfaultfd.c                              |  168 ++
+ mm/vma.c                                      | 1766 ++++++++++++++
+ mm/vma.h                                      |  362 +++
+ mm/vma_internal.h                             |   52 +
+ tools/testing/radix-tree/Makefile             |   68 +-
+ tools/testing/radix-tree/maple.c              |   14 +-
+ tools/testing/radix-tree/xarray.c             |    9 +-
+ tools/testing/shared/autoconf.h               |    2 +
+ tools/testing/{radix-tree => shared}/bitmap.c |    0
+ tools/testing/{radix-tree => shared}/linux.c  |    0
+ .../{radix-tree => shared}/linux/bug.h        |    0
+ .../{radix-tree => shared}/linux/cpu.h        |    0
+ .../{radix-tree => shared}/linux/idr.h        |    0
+ .../{radix-tree => shared}/linux/init.h       |    0
+ .../{radix-tree => shared}/linux/kconfig.h    |    0
+ .../{radix-tree => shared}/linux/kernel.h     |    0
+ .../{radix-tree => shared}/linux/kmemleak.h   |    0
+ .../{radix-tree => shared}/linux/local_lock.h |    0
+ .../{radix-tree => shared}/linux/lockdep.h    |    0
+ .../{radix-tree => shared}/linux/maple_tree.h |    0
+ .../{radix-tree => shared}/linux/percpu.h     |    0
+ .../{radix-tree => shared}/linux/preempt.h    |    0
+ .../{radix-tree => shared}/linux/radix-tree.h |    0
+ .../{radix-tree => shared}/linux/rcupdate.h   |    0
+ .../{radix-tree => shared}/linux/xarray.h     |    0
+ tools/testing/shared/maple-shared.h           |    9 +
+ tools/testing/shared/maple-shim.c             |    7 +
+ tools/testing/shared/shared.h                 |   34 +
+ tools/testing/shared/shared.mk                |   68 +
+ .../testing/shared/trace/events/maple_tree.h  |    5 +
+ tools/testing/shared/xarray-shared.c          |    5 +
+ tools/testing/shared/xarray-shared.h          |    4 +
+ tools/testing/vma/.gitignore                  |    6 +
+ tools/testing/vma/Makefile                    |   15 +
+ tools/testing/vma/errors.txt                  |    0
+ tools/testing/vma/generated/autoconf.h        |    2 +
+ tools/testing/vma/linux/atomic.h              |   12 +
+ tools/testing/vma/linux/mmzone.h              |   38 +
+ tools/testing/vma/vma.c                       |  207 ++
+ tools/testing/vma/vma_internal.h              |  882 +++++++
+ 51 files changed, 3910 insertions(+), 2444 deletions(-)
+ create mode 100644 mm/vma.c
+ create mode 100644 mm/vma.h
+ create mode 100644 mm/vma_internal.h
+ create mode 100644 tools/testing/shared/autoconf.h
+ rename tools/testing/{radix-tree => shared}/bitmap.c (100%)
+ rename tools/testing/{radix-tree => shared}/linux.c (100%)
+ rename tools/testing/{radix-tree => shared}/linux/bug.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/cpu.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/idr.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/init.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/kconfig.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/kernel.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/kmemleak.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/local_lock.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/lockdep.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/maple_tree.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/percpu.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/preempt.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/radix-tree.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/rcupdate.h (100%)
+ rename tools/testing/{radix-tree => shared}/linux/xarray.h (100%)
+ create mode 100644 tools/testing/shared/maple-shared.h
+ create mode 100644 tools/testing/shared/maple-shim.c
+ create mode 100644 tools/testing/shared/shared.h
+ create mode 100644 tools/testing/shared/shared.mk
+ create mode 100644 tools/testing/shared/trace/events/maple_tree.h
+ create mode 100644 tools/testing/shared/xarray-shared.c
+ create mode 100644 tools/testing/shared/xarray-shared.h
+ create mode 100644 tools/testing/vma/.gitignore
+ create mode 100644 tools/testing/vma/Makefile
+ create mode 100644 tools/testing/vma/errors.txt
+ create mode 100644 tools/testing/vma/generated/autoconf.h
+ create mode 100644 tools/testing/vma/linux/atomic.h
+ create mode 100644 tools/testing/vma/linux/mmzone.h
+ create mode 100644 tools/testing/vma/vma.c
+ create mode 100644 tools/testing/vma/vma_internal.h
+
+--
+2.45.1
 
