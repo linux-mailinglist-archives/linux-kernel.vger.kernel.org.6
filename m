@@ -1,338 +1,653 @@
-Return-Path: <linux-kernel+bounces-233808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E57D791BDB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 13:45:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BE2791BDBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 13:47:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F9ECB22B24
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:45:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7061B2336E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B85E1581EB;
-	Fri, 28 Jun 2024 11:45:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E7415821D;
+	Fri, 28 Jun 2024 11:47:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b="aYbO6/4C"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2084.outbound.protection.outlook.com [40.107.22.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Jcx9a2VG"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E126F307;
-	Fri, 28 Jun 2024 11:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719575140; cv=fail; b=R/fHV0Dzy1V3PeJym0XL/2tGQR03DXc1m1R/l9ay1Ds9TRH9WgbpRWvNFE/oet1dO0H9gyunhDHW76qgEBqGGF0tuM4Qmx8v7K+2btFYfCJ6nuYLZAir+rTQwQOTd3KrLBiBQdN5Pj7GxvDc9m9rj7eJv9jJDbb3BzX2j3jhbSY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719575140; c=relaxed/simple;
-	bh=6/bsnCY3nXYKuVIWq5PrGd/WZRrWILkyVJVTqlaqJWw=;
-	h=Message-ID:Date:From:Subject:To:Cc:Content-Type:MIME-Version; b=YA8t6BnbQCPa+8Yd7hIH3r0uESFmEOxHLdeJRkTrRXJ2/1Lkh8V6hBmb4y+o6Z4UOhvnzRj0DQW2cgo0IHnzN2q1OaIMS1XVAMX/ZuERS8KzsmYpZPhQiyPZ/Z0tRdHh26uwRc5IJQipcX+EbUXW+NYGMrZ8saOwUAa7TkFJtuk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=@siemens.com header.b=aYbO6/4C; arc=fail smtp.client-ip=40.107.22.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siemens.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CQQhNm59MESczFbX0Gs2Qrq3lNXW5Qxydj6Eh0C+2DZVVxP3SUyKfEu7ueGnlCeTDFB93/jPyo2Q1JOfwbcacIMgPegMBaCxLQY/JmjP4AxxKd2E+lyUfQBz3Ptf5owi6KH6+i+WqvqjLkCXrYbIjwz0X9iNRD0ptjSVRjO/1gtIZgDO1Sq1ds4KnN7/KS5OzNzXvnsCat1JRuIDrKQYjsCMFyqwQeaG/zEUDtmtr4QKuaeGN8YsBuVwMb86W4X9NnsixzIC26skIj8ltWJoLSOVuK7g8hRVax98QnMa9GigC326GO5iIxHLHFNQwMyEex51fs8v0UusuUMiPEvzeA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sNLOt8SKLbCnXLra5TV1pXRGlAofI4V5vJbsGXmmd4Q=;
- b=JepSJaT53XmWXx6fcV4RFtmrpJNSNqh+7W90EiPWC418M5QkXnKmHZIKXw+NYtABqTuFXMDhUmouR3LU7JezHffbdWh2jPhdtgmTEBQ1DfOj8V9+2iwHes14behZmDsh4FXq621cnBGjxoUoYWwrVwEpnskskqyWMlTrvVdiflUF0N4MVum93x+KrE00jpjpk9kmq86OizJA4z9oUkw7UYryssOy1aeto/7O1cQPf4eLBfvcL+/haIYBTQ8zZY6iw4iRYfjMOeBOtFDaCFGMMTXDr737hu8fn701uPe7X1RaVMWgwossiMHFUgrlJbeqLiYCbmSWuVkQA6HWt5kqQQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siemens.com; dmarc=pass action=none header.from=siemens.com;
- dkim=pass header.d=siemens.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=siemens.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sNLOt8SKLbCnXLra5TV1pXRGlAofI4V5vJbsGXmmd4Q=;
- b=aYbO6/4CKUpoy3zy4dZb0iFPh9IFVvy0LcJgJcmdiJq8LlCQBdHh1OAyeYiStPHVqGnVWD8z2qGKgDZTIvvUB9uh+4vBaoSOvLSsZCl5npcgfiYA8hn/OJtiOESXaRI30ZcuzSzFbR7NadYtSkRXqSJhBrSZuQpSwOFpgOJFbNq9g+Yt2+j06DKD9hQsNrE613e2m40c6bGnXwCGurzD5reN49Uvl1f9Ozp0ZvW2TwPLPQL8EirX8vSnEhN6xvvQuwmbepN836EidKBwtc5KG5t4TSOetx2yglLQgBnpgCZruCmJ4wwhuLF+XMkSeteku1LFd/XSKUlFSeLqg6QA3A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siemens.com;
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:588::19)
- by PAXPR10MB5784.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:24a::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.30; Fri, 28 Jun
- 2024 11:45:33 +0000
-Received: from AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408]) by AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::8fe1:7e71:cf4a:7408%4]) with mapi id 15.20.7719.022; Fri, 28 Jun 2024
- 11:45:33 +0000
-Message-ID: <16e1fcae-1ea7-46be-b157-096e05661b15@siemens.com>
-Date: Fri, 28 Jun 2024 13:45:29 +0200
-User-Agent: Mozilla Thunderbird
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Subject: [PATCH v5] PCI: keystone: Add workaround for Errata #i2037 (AM65x SR
- 1.0)
-Content-Language: en-US
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: Siddharth Vadapalli <s-vadapalli@ti.com>,
- Vignesh Raghavendra <vigneshr@ti.com>, Nishanth Menon <nm@ti.com>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Autocrypt: addr=jan.kiszka@siemens.com; keydata=
- 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
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0368.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:f8::15) To AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:588::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 756D7158219
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 11:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719575225; cv=none; b=L5lseKo7So2/6NK3CLmS6Ukl6CQVE2YX6DmQBIMQVfRFW8/l+Z7Qzn/LV9W00DIbX1Uw3TtZtybMgap8d5QVX6yWrL7jMBFPRgkbEZWf4ydOZ6VhQO0k7NI9JPwOlyzCklu+INLfdMS0LLUfjCXUbhzzqxnFiXakqDhwyy3iVGc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719575225; c=relaxed/simple;
+	bh=dMuI+sr6mzwDxiaRRb026zow1xs3wDKo+kVL5+Ojcxk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sUE9vYfwq90HCWBuaJ3g5RDroNc7Pa7B0a1iVGo5n9uzZNl7Sk29lKqj2HrQf+sa0H3bP2LaeGuqicOZ7U0P7a5uas9H3p4HmPlSg3H+1D56VN8C8/O/sy66hZ+qo6i5L3n1w3qV/NHXckbvIpJSnYmjn58CtVVCm9xQRJpvZyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Jcx9a2VG; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ec5779b423so4811321fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 04:47:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1719575220; x=1720180020; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IAHg1VkP9tUqCTE3AHgnAJVWdN8CHrByRy9RBNCGkGk=;
+        b=Jcx9a2VGgHexiD9xrEnuzBIbTVJTvKIrGuYQcoFkaTbqe4bhEpvcwhvH/3euAzyHbl
+         SZLokX5w/RZiwJscUTZyzgeYzxstXjInN3rjjuVSgTr7c6GMRbYHU2lCHG5ZBgGsnBmv
+         bus01JwRlyG25z5QjBSQJhSdZpaz8Azyri7t0+BPejhzV18j+8gmNdVvBoRzkM938OtI
+         jqf1SF53fsae+DaHLzWy4EurC+LpVgoVOT/l0+PdAsNU+GVitTd4yoRvyU7ZIPF31nOP
+         v50kJvjBmC0Xz+4dUSQQxQdEwe4zCGv0JUc7TyFKdUyOGj8N0UtySyS9FnPRIGvcYo6U
+         aIiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719575220; x=1720180020;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IAHg1VkP9tUqCTE3AHgnAJVWdN8CHrByRy9RBNCGkGk=;
+        b=pcdPAHY2iQ+OG9ghhX4BXCiXHZFBfq87z/ItPM4efe3aBUcmDBDMfR0uSBAZ6SBqvS
+         1PbieyV0r++AQOPkL5B8Quxbz62aJraFVaY2dVKUHnG9+w9bYWY9vEoQo6Qr5KCAmM8G
+         P5BXC7qJteQHL0uXPsYU3OCBa5jnDkJDQUxjUFtISG6hNCAtoLvH2z7MApDhJecHQhK2
+         nH7OUWu0mo4qg07LJPY90QAu122biXpqvajrQuhp8i2NDO93S8q3usxHjFk5DatmmfaS
+         DtCuSnlp6Xjp2DfndsFqJ8MxA4eCXXJKB8i9MJACKCIBu7s4Xh7fH1H/qwwIQXBjbFx1
+         P/5w==
+X-Forwarded-Encrypted: i=1; AJvYcCWxM/JZqQH2mcXxaJyzqMB4Rw931bXU1SUSvBuwTEm8f45ZCdQ7JcSxVouJaIJaYY/cJ7J5EJhkAEeWKKnAm7J/iiCw87ZSrO3SKhng
+X-Gm-Message-State: AOJu0YyEWla+4lrBotKOMDgZHP04rX3g6qThuR1RFLkY5mWi1TCTx/AH
+	7rmczWkVYUNJlH31twfGRh7LsSgVaj8F1Cwr6rZzFoKY5guOXVxBDO31YWirnZQ=
+X-Google-Smtp-Source: AGHT+IE0xsW0T5AJ7ZSOTTVJxlHbt7P3Z4DRFeCO64J7ACcmeISazvH34Z6hgUEn09qXHXMZIeKfdA==
+X-Received: by 2002:a2e:2419:0:b0:2ec:422:126 with SMTP id 38308e7fff4ca-2ec5932a567mr116256651fa.30.1719575220375;
+        Fri, 28 Jun 2024 04:47:00 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91ce44d5esm1417161a91.19.2024.06.28.04.46.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 04:46:59 -0700 (PDT)
+Date: Fri, 28 Jun 2024 13:46:51 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH printk v2 12/18] printk: Add kthread for all legacy
+ consoles
+Message-ID: <Zn6iq3n2ggL138Gs@pathway.suse.cz>
+References: <20240603232453.33992-1-john.ogness@linutronix.de>
+ <20240603232453.33992-13-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS4PR10MB6181:EE_|PAXPR10MB5784:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8e85067f-7c2e-494b-28cc-08dc9767d15d
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TStWSVhidnBvQzRFMngrOVg5ODZIazltZ2lmaXoveTQ5SkkwTkFjditud2s3?=
- =?utf-8?B?NHMvT2ZpK2ROd0VTRkxWR2pINDg0aXpxSkZnTnZHWHdZbFNJZ0V6ejJtaUo2?=
- =?utf-8?B?NUhqbFZBZWNPNW9aT29Ka0ZEQ3Z4SWZ4WDB3VFBYUjJKVHVuanpvYituR2E0?=
- =?utf-8?B?QWNLS2hndStGb2o0aHk5NlRycDZ3SGJRM0V2OWFSbU1WL050SEVOaDI2dW9q?=
- =?utf-8?B?emZtQ2RYMUpPQVpycFdYUlpjdHdpRXNnOWZYZ2NGelp1WUpFZXcrMWE2VzBn?=
- =?utf-8?B?WUNSVFNGQXpLSVQzcU1JQllieHpzTklnMUN5d05BUHdQV0RFblc1bUNBeFNh?=
- =?utf-8?B?NzlGVnBwcnp6M0cxdHRoTUV6MnVqL2VMTmRhdTc2Ym9Id3dJWGtWdWsrSGJT?=
- =?utf-8?B?TEE1WkNkdUJJcHp5SG9XT3JiL016eDhscm5yVGtHb0FXWENabTF0WFZoMjla?=
- =?utf-8?B?ZTlIUWV0UnFEMmFUeFhRS3I5ZmxmRGdrdkhlaVVTUDd6WFp2WXNYUVNyWngr?=
- =?utf-8?B?SDV6c3UrdDhXY2wrMEFGNE9Lc0Y0V2RKaCtNdTc0M3JvdW15YWNjK2kxVWtJ?=
- =?utf-8?B?aTdId2ZKNVJ2enBOYitmRkx1UHZ4SzJlaFZCdmFhd2o2VkZibzZMS0ZHQ2Nw?=
- =?utf-8?B?OVhvR0Y5WWNhUEtsTURZeG9iTVNEZGpEUkR1NFBoU3llL0lHNXhrWVhMdG0z?=
- =?utf-8?B?NCtrbVN0b29HcWZNeFhoQ2RkVWk1bTVkUHo0SVpqMUU0ODV3MHczTlF6UFdk?=
- =?utf-8?B?M2h6QXVvVjk5WlJrSGpQeHFORDV0ZGJmTnY5UDd6SHhVdStSUEZrMHp1RWE4?=
- =?utf-8?B?dXNQSkhLVko0ZzRpbWpCdnRaV3pNelRmWlNTVjNhcGE5M0ZnN29yQ0YrNmRy?=
- =?utf-8?B?SklEWFhkM1BMUi91bUEyaTNvQVlsWWgxOUN5SldQZGFqN1MwWXR1bDBwWFlP?=
- =?utf-8?B?aHVWSUdCSGpOUW96YlBBbDdUck84dk5wZXZuclc3cEhBTUVQK2VaQWZEOWRO?=
- =?utf-8?B?d1FvZWkvRllwTDlBTElsem9LZXhtcWJMa0NpZkNBeU1tOVFZcmlOL3hJV0tB?=
- =?utf-8?B?UTBqTU1uOG9hN0IzZE5YdlV0NkZvQkQxbGxFSlpMV0U1bmpLeFlHdEVHdnJz?=
- =?utf-8?B?UG80alU5SktUZTd3QkJBN1Z0TWNXYXdkOE1lSDRML3JBWG1FVXVPeWJBTUtD?=
- =?utf-8?B?a3ppR1FHaVJObFNOSGI4Yk5SUnF6b0plNUJqYkRWNklxRG85cVQrYytUZmNa?=
- =?utf-8?B?OFRsUENybG9wUU1GZTE2M2krQmthSDVTL2w5OU90V0RMd0VDV1czTFhCZXNV?=
- =?utf-8?B?QUlOMHByRjc2blJRYmx2aHI0R0s4Ymdscnd6UG9OUmhQS3NPUmRxNzB1S0hk?=
- =?utf-8?B?Snhpb0l5VWdpY0J4NGltQktVWkVTZzJ6ZTNUdktqOFJkaHhZWFFPRkMyWEJI?=
- =?utf-8?B?R1VmcUMwdUJNVzBOT2NoSGVmb1dMWmROcUg3RUJoeG93NW5CNC9URXVmb0Fh?=
- =?utf-8?B?UWJOZ2hEbGJxd2V5ZVM1TEtyODFJNE8zWDZ3MnUxZWJuSldOdDlZb1BONmpk?=
- =?utf-8?B?MmFpRk84Q0dENC9nbEZtSHJnckd1NjVhT1k2aWNlNWdOa2RQUjZ3Q0hObjVR?=
- =?utf-8?B?ZGhpakRJbitvcHB1K1laWWdUWVJEN2VmQnMreDU1TU1Nam5CUmdaaWRCYURv?=
- =?utf-8?B?R1E2ZlJ4TlgvVUxBRFF2ci9uWTdTbUlyYmw3bTZ5VFR6dlJ4Vm1pellYVWZ1?=
- =?utf-8?Q?sSlqiunC/ijLuzLdrs=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RHhjbVdBOXV1dWw5NkpIQUtKN1N4MTJVcUFvdFIvdmcxQ1FnTmQrY3UwQndX?=
- =?utf-8?B?QlNwSElQU0RwUmNqL0lWMGFWSzhUbG5KTFhMK2hnS0VIWmIvbmk2TjFhMWNr?=
- =?utf-8?B?R0FNT2t1RHZiOGEreHFRUDk3MWovZ2UwYVllVW1OMzNBZzJwY3NZcEszbHBR?=
- =?utf-8?B?M3krc1Bvdm5EaTYwcWFJZ0lyczZrcjlnaXZzWFUyVVM1ODBiaGhEemxPOEoz?=
- =?utf-8?B?YVg2aHRjVkdCQWhybzNEZElmZldnbzJvVTYrVUlOc0VlbFlndS9jcEI5NnlZ?=
- =?utf-8?B?QVhpc0cvbkN4dUlnNEZ6b3VXVXFVYzFxSXpJMEtZam9VSVNuS2dnTzhoOU1w?=
- =?utf-8?B?aTQwZ0Y5bnpJV3p3SGcxKzFRK2tCQmROY2YzOTlSM1BGRitqTG5MWldQV3B5?=
- =?utf-8?B?ZmpBQVRia29EU0ZGUFJXRVZRYTczRm9HMmdNVHl6eVdWbzE3SjI0NGNwaG1R?=
- =?utf-8?B?ZmJPMnhPY2NPdlVlQTAycVdXb01lYXBNcHRVdkoxNGhxcU9ZVXNBOHJOT2ZF?=
- =?utf-8?B?WUlLV2g5aCtsU1liSDZQTVh5STR3TExWczJpWjhsUys2UXZoZS8vc1Z1dWJZ?=
- =?utf-8?B?WWgyYWNmaHl0N1VMaEZkMzZQeDVtYXhxUVREWW9USi9zYXJZNmxBWWhMV1lH?=
- =?utf-8?B?UWhlWVFMOUw2clc4QVRjTG0ycHlKYTBVUVVrSlMvSEU0V1hXVkx1UjI5MVRX?=
- =?utf-8?B?ZE5VMWFXdVhrVDZ4RElwd3pwMFZlYi94RVRjSUtrMkI5Mkk4WU56bTVHcmhz?=
- =?utf-8?B?bks2a0NQLzYrUHFqQUUwejB6V2p2Ri9FWWdsNU5FK0RkaDF0bWxRWG9uajVn?=
- =?utf-8?B?QWovc2hkQXpnUGNiVzdlREtNZlR6Q1kxNTcwTXFoRTQ3ckxOSTZSRDZpdVlj?=
- =?utf-8?B?dlV6Qnh6NUE5Zlg2bGlIZmNsakZOaExQc3lrTHRMcFZxZDlzZFpvcnI4d3or?=
- =?utf-8?B?T2ZhMSt3MFpjVU1wQi9KM2FyU2ozbUhRODgxZ3JObzluWC9HZHhOek1COURJ?=
- =?utf-8?B?Y2VOZ3lsWklKVzlNb2NEaTN1aU96SUg3MGNGTEFjWURwcXJCYzRtaXlwbjRL?=
- =?utf-8?B?bUlINnFiY0Y5QnVZeWs5ZnpMWXlEemFraXh2Wlo1Q1ByeEw1WlcwR3gvWWZu?=
- =?utf-8?B?UkhWVHlEQmk4UklFUmsvREkxUzROc091OWVBeWVHZVdVK0RmQ3pGenY2YklI?=
- =?utf-8?B?T3FBQzY2S3k4bmtySHZiYnBlSEJoblZSVG5JbUJLTEJENXp2WUdacHVlU0pM?=
- =?utf-8?B?a1cyUllCWUg2bDdDTGk3b0hjWEdySUd6a3pGMzJaZmFPNUI0cUU4MUNGQTdp?=
- =?utf-8?B?SnA2Vm9iKzJCdzdDRXN0dmpqbmcxMWhPWFlXaVJpRGlYVHRFY0dSSENLZXM4?=
- =?utf-8?B?NCtlam9DMHdNNlpYdjRVQWUvT3pvVExqdzh3YU14NXRMMVNUbGY3ZFl3bkN0?=
- =?utf-8?B?MUNCNDJCZTI0cnVFdkhGc3BqMzRwQklmNk1Hdm1SU3lLVXEwVVNnRWd3OHh1?=
- =?utf-8?B?djh5c1E0OGNxOUs3Q2xXTEdxaXZWYlZVNXpUV2dDSmV4cjRlaTJUQXRQQ2Rp?=
- =?utf-8?B?MER6RDJDK3Vhb3I4Y0phM0V3R0dLSlN5QkljYUxhNm8vNXJWdTRIeS9vc1dZ?=
- =?utf-8?B?a0ZxUXNXdzhlL3cwbUFjbGU4QzRSSWxGc0hCbG9KSEZSRmx4VVRHWmp6eTdh?=
- =?utf-8?B?MUpaMlVqSFRLTzZVSUhIMWdRM3NNQWY5Ly9PblFEcEJkTm9jRkZwNzN6WDdQ?=
- =?utf-8?B?K1Bza045YUFpUitMMXVodWRPb2RhZzM1WFZFc2ErLzNoNktXeXlLNytNNjN3?=
- =?utf-8?B?cVZNUkpYVVgxcUtseHhwTDl5ZHlLWXVPdkpqY0h4QWtDV0hDRS9iSnYrOS9Y?=
- =?utf-8?B?OS9VV3J0WmNMOEFvRHp6TTVhR1F0UFdjY3dEUStabTNhM3p3WTNlZzErdjla?=
- =?utf-8?B?OGJhY0JNcFA4NUdMRUtZbU81NGcxZ2d6eDBkUGMwdE1heGpvNExXeGZtWnFE?=
- =?utf-8?B?QWNrYThZVUt6eEllbHJDaW1aMTNmT0FJMUdVMzNLL2M1OGZ2eER2eUowbVpa?=
- =?utf-8?B?dXFtdXNMUkxxVThnTWV6ay9QR2FtUnFraC9BSHNtemkrL0ttdFQ4bE82Y1Fw?=
- =?utf-8?B?VGZSZVEyekI4UEJMM3lZYUFtY2FrL1hteFdyYnA3dC9oVjQyMnFZOGNEMlQ5?=
- =?utf-8?B?Mmc9PQ==?=
-X-OriginatorOrg: siemens.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8e85067f-7c2e-494b-28cc-08dc9767d15d
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR10MB6181.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jun 2024 11:45:33.0819
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 38ae3bcd-9579-4fd4-adda-b42e1495d55a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vSu+YOeezSAQMJD022z84gxlBymlnfuSfNYyRK/KekLM+iZzXhrMu1wsM/3H3Up3vvrPN2ptfxZpisDHXp2NAQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR10MB5784
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240603232453.33992-13-john.ogness@linutronix.de>
 
-From: Kishon Vijay Abraham I <kishon@ti.com>
+On Tue 2024-06-04 01:30:47, John Ogness wrote:
+> The write callback of legacy consoles makes use of spinlocks.
+> This is not permitted with PREEMPT_RT in atomic contexts.
+> 
+> For PREEMPT_RT, create a new kthread to handle printing of all
+> the legacy consoles (and nbcon consoles if boot consoles are
+> registered).
+> 
+> Since, if running from the kthread, the consoles are printing
+> in a task context, the legacy nbcon printing can use the
+> device_lock(), write_thread(), device_unlock() callbacks for
+> printing.
+> 
+> Introduce the macro force_printkthreads() to query if the
+> forced threading of legacy consoles is in effect.
+> 
+> These changes only affect CONFIG_PREEMPT_RT.
+> 
+> Signed-off-by: John Ogness <john.ogness@linutronix.de>
+> ---
+>  kernel/printk/internal.h |  11 +-
+>  kernel/printk/nbcon.c    |  54 ++++++---
+>  kernel/printk/printk.c   | 241 ++++++++++++++++++++++++++++++++-------
+>  3 files changed, 246 insertions(+), 60 deletions(-)
+> 
+> diff --git a/kernel/printk/internal.h b/kernel/printk/internal.h
+> index 9e027e08918d..b66dfa865591 100644
+> --- a/kernel/printk/internal.h
+> +++ b/kernel/printk/internal.h
+> @@ -21,6 +21,12 @@ int devkmsg_sysctl_set_loglvl(struct ctl_table *table, int write,
+>  		(con->flags & CON_BOOT) ? "boot" : "",		\
+>  		con->name, con->index, ##__VA_ARGS__)
+>  
+> +#ifdef CONFIG_PREEMPT_RT
+> +# define force_printkthreads()		(true)
+> +#else
+> +# define force_printkthreads()		(false)
+> +#endif
 
-Errata #i2037 in AM65x/DRA80xM Processors Silicon Revision 1.0
-(SPRZ452D_July 2018_Revised December 2019 [1]) mentions when an
-inbound PCIe TLP spans more than two internal AXI 128-byte bursts,
-the bus may corrupt the packet payload and the corrupt data may
-cause associated applications or the processor to hang.
+It seems that the only purpose of this variable is to decide
+whether the nbcon_legacy_kthread will be used or not.
 
-The workaround for Errata #i2037 is to limit the maximum read
-request size and maximum payload size to 128 bytes. Add workaround
-for Errata #i2037 here. The errata and workaround is applicable
-only to AM65x SR 1.0 and later versions of the silicon will have
-this fixed.
+I know that force_printkthreads() has been choosen to correlate with
+force_irqthreads(). But the situation is different here. In irq, there
+is only one type of kthreads (ksoftirqd). But in printk(), we
+have kthreads for nbcon consoles and a special kthread for legacy
+consoles.
 
-[1] -> https://www.ti.com/lit/er/sprz452i/sprz452i.pdf
+Also the variable is used together with:
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-Signed-off-by: Achal Verma <a-verma1@ti.com>
-Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+   + printing_via_unlock: boolean variable which is true when
+	some console need to be flushed in the legacy loop
+	under console_lock().
 
----
+   + nbcon_legacy_kthread: pointer to task_struct of the kthread
+	flushing the console in the legacy loop under console_lock().
 
-Original patch:
-Link: https://lore.kernel.org/linux-pci/20210325090026.8843-7-kishon@ti.com/
----
- drivers/pci/controller/dwc/pci-keystone.c | 44 ++++++++++++++++++++++-
- 1 file changed, 43 insertions(+), 1 deletion(-)
+   + wake_up_legacy_kthread(): function for waking up nbcon_legacy_kthread()
 
-diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-index d3a7d14ee685..25e365c0c5c7 100644
---- a/drivers/pci/controller/dwc/pci-keystone.c
-+++ b/drivers/pci/controller/dwc/pci-keystone.c
-@@ -34,6 +34,11 @@
- #define PCIE_DEVICEID_SHIFT	16
+   + console_emit_next_record(): function emitting the message in
+	the legacy loop under console_lock()
+
+
+It is a crazy mismatch of names ;-) The main used terms are: legacy, unlock,
+nbcon, console. From my POV, the most meaningful are: legacy and unlock.
+
+I would suggest to rename:
+
+   + nbcon_legacy_kthread -> printk_legacy_kthread
+   + force_printkthreads -> force_legacy_kthread
+
+or another "more legacy" names.
+
+>  #ifdef CONFIG_PRINTK
+>  
+>  #ifdef CONFIG_PRINTK_CALLER
+> @@ -92,9 +98,10 @@ void nbcon_free(struct console *con);
+>  enum nbcon_prio nbcon_get_default_prio(void);
+>  void nbcon_atomic_flush_pending(void);
+>  bool nbcon_legacy_emit_next_record(struct console *con, bool *handover,
+> -				   int cookie);
+> +				   int cookie, bool use_atomic);
+>  void nbcon_kthread_create(struct console *con);
+>  void nbcon_wake_threads(void);
+> +void nbcon_legacy_kthread_create(void);
+
+It is about legacy consoles. It is even implemented in printk.c.
+I would call it:
+
+     + legacy_kthread_create()
+     + create_legacy_kthread()
+
+> --- a/kernel/printk/nbcon.c
+> +++ b/kernel/printk/nbcon.c
+> @@ -1232,6 +1233,7 @@ static bool nbcon_atomic_emit_one(struct nbcon_write_context *wctxt)
+>   *		both the console_lock and the SRCU read lock. Otherwise it
+>   *		is set to false.
+>   * @cookie:	The cookie from the SRCU read lock.
+> + * @use_atomic:	True if the write_atomic() callback is to be used
+
+I would prefer to use a "hint style". Something like:
+
+ * @use_atomic:	Set true when called in an atomic or unknown context.
+ *		It affects which callback will be used: write_atomic()
+ *		wrt. write_thread().
+ *
+ *		When false, the write_thread() callback would be called
+ *		in a preemtible context unless disabled by the device_lock().
+ *		The handover won't be allowed in this mode.
+
+>   * Context:	Any context except NMI.
+>   * Return:	True, when a record has been printed and there are still
+> @@ -1247,26 +1249,38 @@ static bool nbcon_atomic_emit_one(struct nbcon_write_context *wctxt)
+>   * Essentially it is the nbcon version of console_emit_next_record().
+>   */
+
+>  bool nbcon_legacy_emit_next_record(struct console *con, bool *handover,
+> -				   int cookie)
+> +				   int cookie, bool use_atomic)
+>  {
+>  	struct nbcon_write_context wctxt = { };
+>  	struct nbcon_context *ctxt = &ACCESS_PRIVATE(&wctxt, ctxt);
+>  	unsigned long flags;
+>  	bool progress;
+>  
+> -	/* Use the same procedure as console_emit_next_record(). */
+> -	printk_safe_enter_irqsave(flags);
+> -	console_lock_spinning_enable();
+> -	stop_critical_timings();
+> +	ctxt->console = con;
+>  
+> -	ctxt->console	= con;
+> -	ctxt->prio	= nbcon_get_default_prio();
+> +	if (use_atomic) {
+> +		/* Use the same procedure as console_emit_next_record(). */
+
+I would extend it a bit:
+
+		/*
+		 * In an atomic or unknown context, use the same procedure as in
+		 * console_emit_next_record(). It allows to handower...
+		 */
+
+> +		printk_safe_enter_irqsave(flags);
+> +		console_lock_spinning_enable();
+> +		stop_critical_timings();
+>  
+> -	progress = nbcon_atomic_emit_one(&wctxt);
+> +		ctxt->prio = nbcon_get_default_prio();
+> +		progress = nbcon_emit_one(&wctxt, use_atomic);
+>  
+> -	start_critical_timings();
+> -	*handover = console_lock_spinning_disable_and_check(cookie);
+> -	printk_safe_exit_irqrestore(flags);
+> +		start_critical_timings();
+> +		*handover = console_lock_spinning_disable_and_check(cookie);
+> +		printk_safe_exit_irqrestore(flags);
+> +	} else {
+
+I would add a comment:
+
+		/*
+		 * In process context, use the same procedure as in
+		 * nbcon_kthread_func(). It might allow scheduling
+		 * depending on the devive_lock()...
+		 */
+
+> +		*handover = false;
+> +
+> +		con->device_lock(con, &flags);
+> +		cant_migrate();
+> +
+> +		ctxt->prio = nbcon_get_default_prio();
+> +		progress = nbcon_emit_one(&wctxt, use_atomic);
+
+This is repeated in both branches.
+
+> +		con->device_unlock(con, flags);
+> +	}
+
+
+I do not have strong opinion. But I slightly more like the variant
+where we do not repeat the common functions. It is easier to see
+the difference of the context in which nbcon_emit_one() is called.
+
+	if (use_atomic) {
+		/*
+		 * In an atomic or unknown context, use the same procedure as in
+		 * console_emit_next_record(). It allows to handower...
+		 */
+		printk_safe_enter_irqsave(flags);
+		console_lock_spinning_enable();
+		stop_critical_timings();
+	} else {
+		/*
+		 * In process context, use the same procedure as in
+		 * nbcon_kthread_func(). It might allow scheduling
+		 * depending on the devive_lock()...
+		 */
+		con->device_lock(con, &flags);
+		cant_migrate();
+	}
+
+	ctxt->prio = nbcon_get_default_prio();
+	progress = nbcon_emit_one(&wctxt, use_atomic);
+
+	if (use_atomic) {
+		start_critical_timings();
+		*handover = console_lock_spinning_disable_and_check(cookie);
+		printk_safe_exit_irqrestore(flags);
+	} else {
+		con->device_unlock(con, flags);
+		*handover = false;
+	}
+
+>  	return progress;
+>  }
+> @@ -1494,7 +1508,9 @@ void nbcon_cpu_emergency_exit(void)
+>  		 * to handle it.
+>  		 */
+>  		do_trigger_flush = true;
+> -		if (printing_via_unlock && !is_printk_deferred()) {
+> +		if (!force_printkthreads() &&
+
+Is this correct? We still need to flush the messages directly
+when the legacy kthread is not ready yet.
+
+We should check !nbcon_legacy_kthread instead.
+
+
+> +		    printing_via_unlock &&
+> +		    !is_printk_deferred()) {
+>  			if (console_trylock()) {
+>  				do_trigger_flush = false;
+>  				console_unlock();
+> @@ -1530,7 +1546,9 @@ void nbcon_cpu_emergency_flush(void)
+>  
+>  	nbcon_atomic_flush_pending();
+>  
+> -	if (printing_via_unlock && !is_printk_deferred()) {
+> +	if (!force_printkthreads() &&
+
+Same here. It should rather be !nbcon_legacy_kthread.
+
+> +	    printing_via_unlock &&
+> +	    !is_printk_deferred()) {
+>  		if (console_trylock())
+>  			console_unlock();
+
+The same tricky pattern is repeated in
+
+    + vprintk_emit()
+    + nbcon_cpu_emergency_exit()
+    + nbcon_cpu_emergency_flush()
+
+With each new condition, it is more and more complicated to see
+if all the locations do the right thing.
+
+It would be nice to somehow refactor this or create some
+helper scripts. I would do it even at the cost that
+some checks will be repeated.
+
+It is already being discussed in the thread about 5th patch,
+see https://lore.kernel.org/r/8734p0yca9.fsf@jogness.linutronix.de
+Let's continue there.
+
+>  	}
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index cf0d612329bf..1c63fd0c1166 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -2345,7 +2348,8 @@ asmlinkage int vprintk_emit(int facility, int level,
+>  			    const struct dev_printk_info *dev_info,
+>  			    const char *fmt, va_list args)
+>  {
+> -	bool do_trylock_unlock = printing_via_unlock;
+> +	bool do_trylock_unlock = !force_printkthreads() &&
+
+s/force_printkthreads/nbcon_legacy_kthread/  ???
+
+
+> +				 printing_via_unlock;
+>  	int printed_len;
+>  
+>  	/* Suppress unimportant messages after panic happens */
+> @@ -2740,7 +2756,9 @@ void resume_console(void)
+>   */
+>  static int console_cpu_notify(unsigned int cpu)
+>  {
+> -	if (!cpuhp_tasks_frozen && printing_via_unlock) {
+> +	if (!force_printkthreads() &&
+
+s/force_printkthreads/nbcon_legacy_kthread/  ???
+
+> +	    !cpuhp_tasks_frozen &&
+> +	    printing_via_unlock) {
+>  		/* If trylock fails, someone else is doing the printing */
+>  		if (console_trylock())
+>  			console_unlock();
+> @@ -3000,31 +3018,43 @@ static bool console_emit_next_record(struct console *con, bool *handover, int co
+>  		con->dropped = 0;
+>  	}
+>  
+> -	/*
+> -	 * While actively printing out messages, if another printk()
+> -	 * were to occur on another CPU, it may wait for this one to
+> -	 * finish. This task can not be preempted if there is a
+> -	 * waiter waiting to take over.
+> -	 *
+> -	 * Interrupts are disabled because the hand over to a waiter
+> -	 * must not be interrupted until the hand over is completed
+> -	 * (@console_waiter is cleared).
+> -	 */
+> -	printk_safe_enter_irqsave(flags);
+> -	console_lock_spinning_enable();
+> +	/* Write everything out to the hardware. */
+>  
+> -	/* Do not trace print latency. */
+> -	stop_critical_timings();
+> +	if (force_printkthreads()) {
+
+s/force_printkthreads/nbcon_legacy_kthread/  ???
+
+> +		/*
+> +		 * With forced threading this function is either in a thread
+> +		 * or panic context. So there is no need for concern about
+> +		 * printk reentrance or handovers.
+> +		 */
+
+The comment describes why it is "safe". But it does not describe the
+motivation.
+
+If I get it correctly, the motivation is to call con->write() with interrupts
+and preemption enabled. We should document it so that people won't
+break it in the future.
+
+Another question is how it is guaranteed. OK, it is called only from
+console_flush_all(). But it is called also from get_init_console_seq()
+aka from register_console(). I guess that it is OK because it is
+a well known and preemptible context. But it is not clear from
+the comment.
+
+> -	/* Write everything out to the hardware. */
+> -	con->write(con, outbuf, pmsg.outbuf_len);
+> +		con->write(con, outbuf, pmsg.outbuf_len);
+> +		con->seq = pmsg.seq + 1;
+> +	} else {
+> +		/*
+> +		 * While actively printing out messages, if another printk()
+> +		 * were to occur on another CPU, it may wait for this one to
+> +		 * finish. This task can not be preempted if there is a
+> +		 * waiter waiting to take over.
+> +		 *
+> +		 * Interrupts are disabled because the hand over to a waiter
+> +		 * must not be interrupted until the hand over is completed
+> +		 * (@console_waiter is cleared).
+> +		 */
+> +		printk_safe_enter_irqsave(flags);
+> +		console_lock_spinning_enable();
+>  
+> -	start_critical_timings();
+> +		/* Do not trace print latency. */
+> +		stop_critical_timings();
+>  
+> -	con->seq = pmsg.seq + 1;
+> +		con->write(con, outbuf, pmsg.outbuf_len);
+>  
+> -	*handover = console_lock_spinning_disable_and_check(cookie);
+> -	printk_safe_exit_irqrestore(flags);
+> +		start_critical_timings();
+> +
+> +		con->seq = pmsg.seq + 1;
+> +
+> +		*handover = console_lock_spinning_disable_and_check(cookie);
+> +		printk_safe_exit_irqrestore(flags);
+> +	}
+>  skip:
+>  	return true;
+>  }
+> @@ -3188,6 +3207,32 @@ void console_unlock(void)
+>  		 */
+>  	} while (prb_read_valid(prb, next_seq, NULL) && console_trylock());
+>  }
+> +
+> +/**
+> + * console_unlock - unblock the console subsystem from printing
+> + *
+> + * Releases the console_lock which the caller holds to block printing of
+> + * the console subsystem.
+> + *
+> + * While the console_lock was held, console output may have been buffered
+> + * by printk().  If this is the case, console_unlock(); emits
+> + * the output prior to releasing the lock.
+> + *
+> + * console_unlock(); may be called from any context.
+> + */
+> +void console_unlock(void)
+> +{
+> +	/*
+> +	 * Forced threading relies on kthread and atomic consoles for
+> +	 * printing. It never attempts to print from console_unlock().
+> +	 */
+> +	if (force_printkthreads()) {
+
+s/force_printkthreads/nbcon_legacy_kthread/  ???
+
+> +		__console_unlock();
+> +		return;
+> +	}
+> +
+> +	console_flush_and_unlock();
+> +}
+>  EXPORT_SYMBOL(console_unlock);
+>  
+>  /**
+> @@ -3411,12 +3456,107 @@ void console_start(struct console *console)
+>  	flags = console_srcu_read_flags(console);
+>  	if (flags & CON_NBCON)
+>  		nbcon_kthread_wake(console);
+> +	else
+> +		wake_up_legacy_kthread();
+>  	console_srcu_read_unlock(cookie);
+>  
+>  	__pr_flush(console, 1000, true);
+>  }
+>  EXPORT_SYMBOL(console_start);
+>  
+> +#ifdef CONFIG_PRINTK
+> +static bool printer_should_wake(void)
+
+I would call it printk_legacy_kthread_should_wakeup()
+to make it consistent with
+
+     + printk_legacy_kthread		# proposed above
+     + nbcon_kthread_should_wakeup()
+
+> +{
+> +	bool available = false;
+
+Nit: I would use "bool ret = false".
+
+     The word "available" is not much helpful because it is not
+     immediately obvious what is available. It might be console,
+     kthread, or pending record. One has to read the code and
+     "available" is not cscope-friendly ;-)
  
- /* Application registers */
-+#define PID				0x000
-+#define RTL				GENMASK(15, 11)
-+#define RTL_SHIFT			11
-+#define AM6_PCI_PG1_RTL_VER		0x15
-+
- #define CMD_STATUS			0x004
- #define LTSSM_EN_VAL		        BIT(0)
- #define OB_XLAT_EN_VAL		        BIT(1)
-@@ -104,6 +109,8 @@
- 
- #define to_keystone_pcie(x)		dev_get_drvdata((x)->dev)
- 
-+#define PCI_DEVICE_ID_TI_AM654X		0xb00c
-+
- struct ks_pcie_of_data {
- 	enum dw_pcie_device_mode mode;
- 	const struct dw_pcie_host_ops *host_ops;
-@@ -525,7 +532,11 @@ static int ks_pcie_start_link(struct dw_pcie *pci)
- static void ks_pcie_quirk(struct pci_dev *dev)
- {
- 	struct pci_bus *bus = dev->bus;
-+	struct keystone_pcie *ks_pcie;
-+	struct device *bridge_dev;
- 	struct pci_dev *bridge;
-+	u32 val;
-+
- 	static const struct pci_device_id rc_pci_devids[] = {
- 		{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCIE_RC_K2HK),
- 		 .class = PCI_CLASS_BRIDGE_PCI_NORMAL, .class_mask = ~0, },
-@@ -537,6 +548,11 @@ static void ks_pcie_quirk(struct pci_dev *dev)
- 		 .class = PCI_CLASS_BRIDGE_PCI_NORMAL, .class_mask = ~0, },
- 		{ 0, },
- 	};
-+	static const struct pci_device_id am6_pci_devids[] = {
-+		{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_AM654X),
-+		 .class = PCI_CLASS_BRIDGE_PCI << 8, .class_mask = ~0, },
-+		{ 0, },
-+	};
- 
- 	if (pci_is_root_bus(bus))
- 		bridge = dev;
-@@ -558,10 +574,36 @@ static void ks_pcie_quirk(struct pci_dev *dev)
- 	 */
- 	if (pci_match_id(rc_pci_devids, bridge)) {
- 		if (pcie_get_readrq(dev) > 256) {
--			dev_info(&dev->dev, "limiting MRRS to 256\n");
-+			dev_info(&dev->dev, "limiting MRRS to 256 bytes\n");
- 			pcie_set_readrq(dev, 256);
- 		}
- 	}
-+
-+	/*
-+	 * Memory transactions fail with PCI controller in AM654 PG1.0
-+	 * when MRRS is set to more than 128 bytes. Force the MRRS to
-+	 * 128 bytes in all downstream devices.
-+	 */
-+	if (pci_match_id(am6_pci_devids, bridge)) {
-+		bridge_dev = pci_get_host_bridge_device(dev);
-+		if (!bridge_dev && !bridge_dev->parent)
-+			return;
-+
-+		ks_pcie = dev_get_drvdata(bridge_dev->parent);
-+		if (!ks_pcie)
-+			return;
-+
-+		val = ks_pcie_app_readl(ks_pcie, PID);
-+		val &= RTL;
-+		val >>= RTL_SHIFT;
-+		if (val != AM6_PCI_PG1_RTL_VER)
-+			return;
-+
-+		if (pcie_get_readrq(dev) > 128) {
-+			dev_info(&dev->dev, "limiting MRRS to 128 bytes\n");
-+			pcie_set_readrq(dev, 128);
-+		}
-+	}
- }
- DECLARE_PCI_FIXUP_ENABLE(PCI_ANY_ID, PCI_ANY_ID, ks_pcie_quirk);
- 
--- 
-2.43.0
+
+> +	struct console *con;
+> +	int cookie;
+> +
+> +	if (kthread_should_stop())
+> +		return true;
+> +
+> +	cookie = console_srcu_read_lock();
+> +	for_each_console_srcu(con) {
+> +		short flags = console_srcu_read_flags(con);
+> +		u64 printk_seq;
+> +
+> +		/*
+> +		 * The legacy printer thread is only for legacy consoles,
+> +		 * unless the nbcon console has no kthread printer.
+> +		 */
+> +		if ((flags & CON_NBCON) && con->kthread)
+> +			continue;
+> +
+> +		if (!console_is_usable(con, flags, false))
+> +			continue;
+> +
+> +		if (flags & CON_NBCON) {
+> +			printk_seq = nbcon_seq_read(con);
+> +		} else {
+> +			/*
+> +			 * It is safe to read @seq because only this
+> +			 * thread context updates @seq.
+> +			 */
+> +			printk_seq = con->seq;
+> +		}
+> +
+> +		if (prb_read_valid(prb, printk_seq, NULL)) {
+> +			available = true;
+> +			break;
+> +		}
+> +	}
+> +	console_srcu_read_unlock(cookie);
+> +
+> +	return available;
+> +}
+> +
+> +void nbcon_legacy_kthread_create(void)
+> +{
+> +	struct task_struct *kt;
+> +
+> +	lockdep_assert_held(&console_mutex);
+> +
+> +	if (!force_printkthreads())
+> +		return;
+> +
+> +	if (!printk_threads_enabled || nbcon_legacy_kthread)
+> +		return;
+> +
+> +	kt = kthread_run(nbcon_legacy_kthread_func, NULL, "pr/legacy");
+> +	if (IS_ERR(kt)) {
+> +		pr_err("unable to start legacy printing thread\n");
+> +		return;
+
+Is this acceptable for RT, please?
+
+> +	}
+> +
+> +	nbcon_legacy_kthread = kt;
+> +
+> +	/*
+> +	 * It is important that console printing threads are scheduled
+> +	 * shortly after a printk call and with generous runtime budgets.
+> +	 */
+> +	sched_set_normal(nbcon_legacy_kthread, -20);
+> +}
+> +#endif /* CONFIG_PRINTK */
+> +
+>  static int __read_mostly keep_bootcon;
+>  
+>  static int __init keep_bootcon_setup(char *str)
+> @@ -3706,6 +3846,7 @@ void register_console(struct console *newcon)
+>  	} else {
+>  		have_legacy_console = true;
+>  		newcon->seq = init_seq;
+> +		nbcon_legacy_kthread_create();
+
+I would prefer to do:
+
+		if (force_printkthread)
+			nbcon_legacy_kthread_create();
+
+to make it clear that we start it only when explicitly requested.
+
+>  	}
+>  
+>  	if (newcon->flags & CON_BOOT)
+> @@ -4146,9 +4298,16 @@ static void wake_up_klogd_work_func(struct irq_work *irq_work)
+>  	int pending = this_cpu_xchg(printk_pending, 0);
+>  
+>  	if (pending & PRINTK_PENDING_OUTPUT) {
+> -		/* If trylock fails, someone else is doing the printing */
+> -		if (console_trylock())
+> -			console_unlock();
+> +		if (force_printkthreads()) {
+
+s/force_printkthreads/nbcon_legacy_kthread/  ???
+
+> +			wake_up_legacy_kthread();
+> +		} else {
+> +			/*
+> +			 * If trylock fails, some other context
+> +			 * will do the printing.
+> +			 */
+> +			if (console_trylock())
+> +				console_unlock();
+> +		}
+>  	}
+>  
+>  	if (pending & PRINTK_PENDING_WAKEUP)
+
+Best Regards,
+Petr
 
