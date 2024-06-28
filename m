@@ -1,113 +1,132 @@
-Return-Path: <linux-kernel+bounces-234550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5CAE91C7D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 23:09:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 796E491C7ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 23:13:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52026B2409F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:09:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9ABF1C20EBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:13:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5C07B3E1;
-	Fri, 28 Jun 2024 21:09:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBAF27D41D;
+	Fri, 28 Jun 2024 21:13:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Jh2KpHTB";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jMqQGIBa"
-Received: from fhigh7-smtp.messagingengine.com (fhigh7-smtp.messagingengine.com [103.168.172.158])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hYyhk1yR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0CBD7603A
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 21:09:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAAED1CF8D;
+	Fri, 28 Jun 2024 21:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719608961; cv=none; b=PiaC+WsoPGohNpXV9RKr0tjel4QUP9xS96dRQkoCy9ilZo8BNP5GcTGrQHJ0kngxKOfDjomzHeHyOupjx0eXjqkj3MlxOwrbyikpOACYexTNOR/I4wO5jH2zflNxvI9QUzrLb+0/jfhTaWz1MKmb6mtDx8ksWTAZXnN7ZcMj1jc=
+	t=1719609230; cv=none; b=Iqmlj58xnx6y7QJnjUCPzMJVKM7HFlNCOQ5UR/Z8nG/wLla7IMOdufgZRK6B0+aPzACoqHVqyW7lNH4nSeHkywMS0XmmAG0iUWUUL59mCup/r291+MnptKRfMyaHshR4WcppNvTjseiB32I4Eq6VRygeCmzUBx1Yq6At2fSByVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719608961; c=relaxed/simple;
-	bh=0qZJDGeuMw6g6Q4rr7lWfel+F3Oz08lh5E2NhPjZhcM=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=uiyx+CyZIuPW51gbFMkjJnEoshmfsFPTwveLIyKSeuwJ3HeXA7ndfkwncHstxNe7JZhaEgHYXuJORIEsQnNt7zWv5pVQ5gbA4qG5KXlJhJ71sTF2U8xaHI8mgMsmTIQdftmDE64pI2lDThANn6sG41mDRR8X0EFdYaS+6yJmgTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Jh2KpHTB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jMqQGIBa; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 19017114024E;
-	Fri, 28 Jun 2024 17:09:19 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Fri, 28 Jun 2024 17:09:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1719608959; x=1719695359; bh=scgODfwNL4
-	CYgwQvZcaLwj7iE8a/wz2sFq0wfLTcPuk=; b=Jh2KpHTB+wPSS+NB3D6qQQ6XGa
-	XRg//MuqGnF/27VM2cnj27V/o7gYkq5Rl4WcLCWtI9Y26Ybnsbh6BuJgzEMPrRX7
-	yZIzil6qldcUkYoEoaoBe8ZBr4rbF7noqIJXqu2yHA1j/1ZGiXlf3D2A2weFLCJ/
-	9jQEzpZJraXNANmVDn5vtRYyKuAm3iBzMyIMo49LAMALSh3tEr++fokBhIG6nWXa
-	Qx2hOTAeUaXrGxGSb5sUo+4SRDpjeLRIDnDUTo0Np9/DHtUB4Jq89F2O/JriLnpF
-	xqxdm4QO7pUUbCdj3sXloFTVQKfha3Ad5Unj+CQjpmzp9IqCuohEvpi3VfJQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1719608959; x=1719695359; bh=scgODfwNL4CYgwQvZcaLwj7iE8a/
-	wz2sFq0wfLTcPuk=; b=jMqQGIBaDf2k5fWi2k7jhNzL4gD2DizK8YYu0laz4+tE
-	tkMSEjk+N+aLX9cWsF0QjYAjY/FV8BccQnAfEJeh+mL/yCnBi4ZJann1IRjGhahS
-	Mo2FO6B+3wP6rL14ctnzTcU2PoznU77ADiid5zoGixzA77vvsphHzdJjhvFCpsSr
-	gYy4ozA2qoxpJEpGiRrxi8lrRj2RNpfkH9vuIXGhXOg8NkmXL6GRhxrEXm8XYgIJ
-	plLMNihmGLy98kOQORqS2r3tiocN+8BRgLGUtESnql622yQaJxRPCgTE7fG8FCF4
-	SevVR+jgUUl0VqUy+bm+3V4uhSY1elSs9gFmaYb3tw==
-X-ME-Sender: <xms:fiZ_ZmhbqDxbrVN0aQp8ULDXU-FRKDJVwZ_9CsBBVgwEonQTAN-ocQ>
-    <xme:fiZ_ZnB3pNHJJ8nIQUqtuCxLAec7ikkqlHDqogFHPQMydqyskr71zrrpOKB70wh-q
-    J_E0J-tKs4A78PCVps>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrtdejgddutdefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:fiZ_ZuHS9ThZbeOCz9uN-xzIJnw1Q493EgmzFdpNQc4gAuigGtdKtA>
-    <xmx:fiZ_ZvRbcOZAuciv0mMYD7GOnOnAP6Pyh9j_WwLWTz5g7A1jiiK5sw>
-    <xmx:fiZ_ZjwjqKnmMB0kwJ6QLkNSqreoIHnSjF2UbaymDVkCp5ZRWwxizA>
-    <xmx:fiZ_Zt6EdVC-1LjEl-4JhHWpbU4WuSM5yjyxec5UhehUbpcRewslGA>
-    <xmx:fyZ_Zqy92pTVURsYJXmfJvfZtHix0T1VsQyEGdo4eQNIl5s2r2YNFr3o>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id BC952B6008D; Fri, 28 Jun 2024 17:09:18 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-538-g1508afaa2-fm-20240616.001-g1508afaa
+	s=arc-20240116; t=1719609230; c=relaxed/simple;
+	bh=Iryb2m+gPPfQ3XTaob5zRURXXDuc2yMHNXPEQAvj6n8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Te9YrYTHqaTxc7cagxRSDMf+i5KEaBQAHJTkuCsovDbz3CWKA5wVg7jFrgoPj/9N4gYGW4eDdw1psNPIszvuviKjo22fnOE2mETqzsJMLc8ye0WMG7Th5V5CmgdT0HHepIDVkzo4H1g7dJf4PxF7XZHpn7WIjs8KWxwZMtS1vPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hYyhk1yR; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719609228; x=1751145228;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Iryb2m+gPPfQ3XTaob5zRURXXDuc2yMHNXPEQAvj6n8=;
+  b=hYyhk1yRzY/TxNECXv2mJn7i1LD+eFP40w6q+ogkc4v0jxrwAiUU0tSF
+   zPoyj8w4lIqJ65CYDMiVWbxkLt/UrlBZJYg9HlQRxVboytCJDOaAeygw2
+   Gv0+x1auZB8255Qah4jcTRRwa9PwmWBtKhCCX8k51o3CbelkaJf+PtAAG
+   JW2eqfHf17NaMb/AAtePmBa15uPJEACmgoMKktQ0MLum4bGrzNp6RGllR
+   21BMYmRlx8tVXc39VSp7IcNiM619eWq7XZ8I+vMfljg6TXArrMiUl52mY
+   0lY66EP+myOHH79A/ueVP9WDxrnexKjVUNOG/PgfIazzoOpwnG/xmTVoO
+   Q==;
+X-CSE-ConnectionGUID: HH0QmtnCRa+suO1VVI8KuA==
+X-CSE-MsgGUID: /nYmtFpESUKE2KOsXv7Ldw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11117"; a="42226285"
+X-IronPort-AV: E=Sophos;i="6.09,170,1716274800"; 
+   d="scan'208";a="42226285"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 14:13:44 -0700
+X-CSE-ConnectionGUID: boN5JxTlR36UuSKhRsTXaQ==
+X-CSE-MsgGUID: rUbbWsXOSXaE3yQ4xFmbHA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,170,1716274800"; 
+   d="scan'208";a="44838891"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 28 Jun 2024 14:13:41 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sNIuY-000IUI-18;
+	Fri, 28 Jun 2024 21:13:38 +0000
+Date: Sat, 29 Jun 2024 05:12:51 +0800
+From: kernel test robot <lkp@intel.com>
+To: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>, sboyd@kernel.org,
+	andersson@kernel.org, bjorn.andersson@linaro.org,
+	david.brown@linaro.org, devicetree@vger.kernel.org,
+	jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org, mark.rutland@arm.com,
+	mturquette@baylibre.com, ohad@wizery.com, robh@kernel.org,
+	sricharan@codeaurora.org
+Cc: oe-kbuild-all@lists.linux.dev, gokulsri@codeaurora.org
+Subject: Re: [PATCH v9 8/8] arm64: dts: qcom: Enable Q6v5 WCSS for ipq8074 SoC
+Message-ID: <202406290444.4W2Fba5X-lkp@intel.com>
+References: <20240621114659.2958170-9-quic_gokulsri@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <dcb8c64a-3dbf-4e23-83c3-2bb99b285f62@app.fastmail.com>
-In-Reply-To: <ed9dd921-56a6-48cf-9f25-b8bb079c4249@app.fastmail.com>
-References: <20240628180852.1738922-1-dmitry.torokhov@gmail.com>
- <ed9dd921-56a6-48cf-9f25-b8bb079c4249@app.fastmail.com>
-Date: Fri, 28 Jun 2024 23:08:55 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
- "Haojian Zhuang" <haojian.zhuang@gmail.com>,
- "Daniel Mack" <daniel@zonque.org>, "Robert Jarzmik" <robert.jarzmik@free.fr>,
- "Linus Walleij" <linus.walleij@linaro.org>, soc@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/10] ARM: pxa: use software nodes/properties for GPIOs
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240621114659.2958170-9-quic_gokulsri@quicinc.com>
 
-On Fri, Jun 28, 2024, at 22:59, Arnd Bergmann wrote:
-> I'm happy to pull these in directly, hopefully with some extra
-> review or ack from the maintainers. If there are no negative
-> comments, feel free to resend them to soc@kernel.org for me
-> to pick up.
+Hi Gokul,
 
-I just saw that you did in fact send it to soc@kernel.org
-already. I'll wait for comments then and just merge it
-if nobody has any objections.
+kernel test robot noticed the following build warnings:
 
-      Arnd
+[auto build test WARNING on remoteproc/rproc-next]
+[also build test WARNING on clk/clk-next robh/for-next linus/master v6.10-rc5 next-20240627]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Gokul-Sriram-Palanisamy/remoteproc-qcom-Add-PRNG-proxy-clock/20240625-162317
+base:   git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
+patch link:    https://lore.kernel.org/r/20240621114659.2958170-9-quic_gokulsri%40quicinc.com
+patch subject: [PATCH v9 8/8] arm64: dts: qcom: Enable Q6v5 WCSS for ipq8074 SoC
+config: arm64-randconfig-051-20240627 (https://download.01.org/0day-ci/archive/20240629/202406290444.4W2Fba5X-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project ad79a14c9e5ec4a369eed4adf567c22cc029863f)
+dtschema version: 2024.6.dev3+g650bf2d
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240629/202406290444.4W2Fba5X-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406290444.4W2Fba5X-lkp@intel.com/
+
+dtcheck warnings: (new ones prefixed by >>)
+   arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb: phy@59000: 'vdda-pll-supply' is a required property
+   	from schema $id: http://devicetree.org/schemas/phy/qcom,qusb2-phy.yaml#
+   arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb: phy@59000: 'vdda-phy-dpdm-supply' is a required property
+   	from schema $id: http://devicetree.org/schemas/phy/qcom,qusb2-phy.yaml#
+   arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb: phy@79000: 'vdd-supply' is a required property
+   	from schema $id: http://devicetree.org/schemas/phy/qcom,qusb2-phy.yaml#
+   arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb: phy@79000: 'vdda-pll-supply' is a required property
+   	from schema $id: http://devicetree.org/schemas/phy/qcom,qusb2-phy.yaml#
+   arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb: phy@79000: 'vdda-phy-dpdm-supply' is a required property
+   	from schema $id: http://devicetree.org/schemas/phy/qcom,qusb2-phy.yaml#
+>> arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb: /soc@0/remoteproc@cd00000: failed to match any schema with compatible: ['qcom,ipq8074-wcss-pil']
+--
+>> arch/arm64/boot/dts/qcom/ipq8074-hk10-c1.dtb: /soc@0/remoteproc@cd00000: failed to match any schema with compatible: ['qcom,ipq8074-wcss-pil']
+--
+>> arch/arm64/boot/dts/qcom/ipq8074-hk10-c2.dtb: /soc@0/remoteproc@cd00000: failed to match any schema with compatible: ['qcom,ipq8074-wcss-pil']
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
