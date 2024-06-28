@@ -1,82 +1,87 @@
-Return-Path: <linux-kernel+bounces-234556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 807F091C7FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 23:18:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07A0A91C801
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 23:18:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A27F71C20B2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:18:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B06981F22DCB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:18:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D34F7D3E4;
-	Fri, 28 Jun 2024 21:18:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B777D3EF;
+	Fri, 28 Jun 2024 21:18:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YVmM27N0"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w6lGdzN6"
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 727CD79945
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 21:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D53776025
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 21:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719609507; cv=none; b=ci/WiSV5jpHeyqHkowduYeGJ5SmQGL9Edw6sy/CsGgLy+dLTzIT7w5WzqL9ur44qAtApB4a535xqeCimD9S/lTvrFLmPTq93LHiRk7YUsi8csGHbx/UPzqpgwkxfmD54Ucihyn+tiUso19rnjfrXB7KZd/TVxJq96BnXlrLhnPE=
+	t=1719609523; cv=none; b=Z48la1KjSo5U6uJOLdgFiCSw/EdbO+sNtS2IvLkAm88ABCckRSuG9bsm9RMecoj5JQlZV7RHxu+gf6E/uRIZnOKTBP5lGWUSHjVgY4IXzGrWNAiVEUFtO50iAyGa6z+lvXcaUnTilhfy0l879FaU2XttGkjUw0mZdK8xaqxFryM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719609507; c=relaxed/simple;
-	bh=BoFZDuqPzGP40r4KEUuGHvfn6bb2wtaddf0wdcA3lzM=;
+	s=arc-20240116; t=1719609523; c=relaxed/simple;
+	bh=kHxWFVlmNHWAQf1QORSIdifFf5Z7ya20L13GAczi/nI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LTtTt90LG2UAnjZhJumtL4dKIh1HprsDetkciP8LmTxcDghQ5/C3o4+q27tKFceSvS7pEmQPKqm5fdp/m1SVhTCZ6q3mHnACM9qWF5UShVsd9P2t8SeZ8GA2vM8dmFTna7N2aXa2TBzHK3iguqaI6Fol8LggpVpCfbfvJWPzX0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YVmM27N0; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: sebastianene@google.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1719609503;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BLFP/6n6TmQFjaJH2t9PIEjVSqPuh54BsTLyCUC8RSI=;
-	b=YVmM27N0679cDACz5KF6MA8iFPbbDxxnz/WCFjirVh5/zUhCa9y9hhyCJkhv0aHLRtdfOm
-	Pp2Aa2N/di7yC62YGCgTIABkcS0wCBsjouiG9qaP9iPZjBuJcb3qFtzE0YogBYJLdcEAcA
-	uV4dwgERknKjnetYQlbk1QX+YEVdoDo=
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: alexghiti@rivosinc.com
-X-Envelope-To: ankita@nvidia.com
-X-Envelope-To: ardb@kernel.org
-X-Envelope-To: catalin.marinas@arm.com
-X-Envelope-To: christophe.leroy@csgroup.eu
-X-Envelope-To: james.morse@arm.com
-X-Envelope-To: vdonnefort@google.com
-X-Envelope-To: mark.rutland@arm.com
-X-Envelope-To: maz@kernel.org
-X-Envelope-To: rananta@google.com
-X-Envelope-To: ryan.roberts@arm.com
-X-Envelope-To: shahuang@redhat.com
-X-Envelope-To: suzuki.poulose@arm.com
-X-Envelope-To: will@kernel.org
-X-Envelope-To: yuzenghui@huawei.com
-X-Envelope-To: kvmarm@lists.linux.dev
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: kernel-team@android.com
-Date: Fri, 28 Jun 2024 21:18:16 +0000
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Sebastian Ene <sebastianene@google.com>
-Cc: akpm@linux-foundation.org, alexghiti@rivosinc.com, ankita@nvidia.com,
-	ardb@kernel.org, catalin.marinas@arm.com,
-	christophe.leroy@csgroup.eu, james.morse@arm.com,
-	vdonnefort@google.com, mark.rutland@arm.com, maz@kernel.org,
-	rananta@google.com, ryan.roberts@arm.com, shahuang@redhat.com,
-	suzuki.poulose@arm.com, will@kernel.org, yuzenghui@huawei.com,
-	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v7 5/6] KVM: arm64: Initialize the ptdump parser with
- stage-2 attributes
-Message-ID: <Zn8omLmCSIHun1uq@linux.dev>
-References: <20240621123230.1085265-1-sebastianene@google.com>
- <20240621123230.1085265-6-sebastianene@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pnSt/YCgzFYr2sM8ly8Vn4uWryix9Q/Zo3/9cEhxwVCAcimztoWrDfgNXvfaCAMQJFZRU0xyamqxIOGkzbbbK0Dla+hLTAe79flNfuKoyfexZrUh5eX3xsRceHdmTkNmUOEygrBFbzCO37k7WCVO3F364JQdrpMlC3HOJPLGRR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w6lGdzN6; arc=none smtp.client-ip=209.85.161.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5c21df2d0a6so490937eaf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 14:18:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719609520; x=1720214320; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=F7RDdRnu5U6agoCXx+bt+KWtAlm7zdXncLje7eabaTM=;
+        b=w6lGdzN63vkwP7tDgEHZvVT+r4qkD87QSgOrtNJRg6hlzMY3t8TSi3keodHdvgzmvu
+         22P/Co0BygKTjppRb/5rMgU2EpbxliqOX+yDk6DJDkK1UZVWkU7RPJDVzkgOglTh9rqq
+         W9X5pIpll5pKZGwVd345gHYoCB5Gq3mjt2AjAqnsE65abPHUSTxjxT5OG2wg0WmJiC4C
+         0nfzXRXoFTLUhWQP/3Kdh943r6DBl+Hz4jEB6rcw6PK14CRaV4cLgHGaEkmUDkARBB/r
+         ybgWjuYqmWbr1DvI8w7Vv732/KUMLclHHwQHJ0amDE686tPj0cypAo0/74lgJOCYkACp
+         rGGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719609520; x=1720214320;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F7RDdRnu5U6agoCXx+bt+KWtAlm7zdXncLje7eabaTM=;
+        b=Xzvhl6QIzf+qS1w/v2p5KItiAPFyUPCbgW2D9igJyfDcMOArOC4W44Ez1saW+JL4SR
+         vwSdePlxxACQXrNlpQ1gSsE/I6M0Ygir6Z7vMj1e16sxd+MfKR0ph2gzJ27lojceZ7Uw
+         e7iRzpb6E++wW6af1BAml0EsCUtXqwIw+8LBuSZTdYw2Kl6Zrhi+WLFf9cDpafsqKwlH
+         ni3C4wjiM65dQW+1QXrYwr8Z3w/aztn0HN5XT8FbCTV/7a3Ru7OCgDp0nEpPMSFSw2O/
+         8PjTIWkSguKMckLNfZYfqChmJtm1pSK76URjw6VRoDC3WeQ7It+VeE+tQLy8fzinc63D
+         /F+g==
+X-Forwarded-Encrypted: i=1; AJvYcCVtLUXKUb2nvR110waoCuTB3YATFfNF4n4D22kC4AFaC7t29GQ/nI/TBK11hdBgODCOOTMcCEZyRC0hXijoc6r2sRMXQG8bAMvgwccJ
+X-Gm-Message-State: AOJu0YxnqVgPHq0NWGrsGctnczBBz6zTjwnUquO5zKCQsZa27m+BZyTa
+	xaAiC/FCR/ChVU6zNqdyA1fiKfPtRl5fIDJgyun0/QNHPGFTahvQuGyB0cgAAF0=
+X-Google-Smtp-Source: AGHT+IFI2IfO4GAyS+D77AY5WcICSNCicQleQ/VFOi55ZTdWxGvITGied6rgwQkp/4Q4qX3pvU0HHg==
+X-Received: by 2002:a05:6358:6f82:b0:1a6:4ef2:86ba with SMTP id e5c5f4694b2df-1a64ef28b48mr848766655d.4.1719609520580;
+        Fri, 28 Jun 2024 14:18:40 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:e53e:a53d:f473:181e])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-72c6c7f76fbsm1699707a12.73.2024.06.28.14.18.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 14:18:40 -0700 (PDT)
+Date: Fri, 28 Jun 2024 15:18:36 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Richard Genoud <richard.genoud@bootlin.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Suman Anna <s-anna@ti.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Udit Kumar <u-kumar1@ti.com>,
+	Thomas Richard <thomas.richard@bootlin.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Hari Nagalla <hnagalla@ti.com>,
+	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] remoteproc: k3-r5: k3_r5_rproc_stop: code reorder
+Message-ID: <Zn8orCbTx9VtA9Em@p14s>
+References: <20240621150058.319524-1-richard.genoud@bootlin.com>
+ <20240621150058.319524-4-richard.genoud@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,182 +90,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240621123230.1085265-6-sebastianene@google.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20240621150058.319524-4-richard.genoud@bootlin.com>
 
-Hi Seb,
-
-On Fri, Jun 21, 2024 at 12:32:29PM +0000, Sebastian Ene wrote:
-> Define a set of attributes used by the ptdump parser to display the
-> properties of a guest memory region covered by a pagetable descriptor.
-> Build a description of the pagetable levels and initialize the parser
-> with this configuration.
+On Fri, Jun 21, 2024 at 05:00:57PM +0200, Richard Genoud wrote:
+> In the next commit, a RP_MBOX_SHUTDOWN message will be sent in
+> k3_r5_rproc_stop() to the remote proc (in lockstep on not)
+> Thus, the sanity check "do not allow core 0 to stop before core 1"
+> should be moved at the beginning of the function so that the generic case
+> can be dealt with.
 > 
-> Signed-off-by: Sebastian Ene <sebastianene@google.com>
-
-This patch should come *before* patch 4, no point in exposing the
-debugfs file if we aren't ready to handle it yet.
-
+> In order to have an easier patch to review, those actions are broke in
+> two patches:
+> - this patch: moving the sanity check at the beginning (No functional
+>   change).
+> - next patch: doing the real job (sending shutdown messages to remote
+>   procs before halting them).
+> 
+> Basically, we had:
+> - cluster_mode actions
+> - !cluster_mode sanity check
+> - !cluster_mode actions
+> And now:
+> - !cluster_mode sanity check
+> - cluster_mode actions
+> - !cluster_mode actions
+> 
+> Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
 > ---
->  arch/arm64/kvm/ptdump.c | 143 ++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 137 insertions(+), 6 deletions(-)
+>  drivers/remoteproc/ti_k3_r5_remoteproc.c | 24 ++++++++++++++----------
+>  1 file changed, 14 insertions(+), 10 deletions(-)
 > 
-> diff --git a/arch/arm64/kvm/ptdump.c b/arch/arm64/kvm/ptdump.c
-> index 36dc7662729f..cc1d4fdddc6e 100644
-> --- a/arch/arm64/kvm/ptdump.c
-> +++ b/arch/arm64/kvm/ptdump.c
-> @@ -14,6 +14,61 @@
->  #include <kvm_ptdump.h>
->  
->  
-> +#define MARKERS_LEN		(2)
-> +#define KVM_PGTABLE_MAX_LEVELS	(KVM_PGTABLE_LAST_LEVEL + 1)
-> +
-> +struct kvm_ptdump_guest_state {
-> +	struct kvm		*kvm;
-> +	struct pg_state		parser_state;
-> +	struct addr_marker	ipa_marker[MARKERS_LEN];
-> +	struct pg_level		level[KVM_PGTABLE_MAX_LEVELS];
-> +	struct ptdump_range	range[MARKERS_LEN];
-> +};
-> +
-> +static const struct prot_bits stage2_pte_bits[] = {
-> +	{
-> +		.mask	= PTE_VALID,
-> +		.val	= PTE_VALID,
-> +		.set	= " ",
-> +		.clear	= "F",
-> +	}, {
-> +		.mask	= KVM_PTE_LEAF_ATTR_HI_S2_XN | PTE_VALID,
-> +		.val	= KVM_PTE_LEAF_ATTR_HI_S2_XN | PTE_VALID,
-> +		.set	= "XN",
-> +		.clear	= "  ",
-> +	}, {
-> +		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_R | PTE_VALID,
-> +		.val	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_R | PTE_VALID,
-> +		.set	= "R",
-> +		.clear	= " ",
-> +	}, {
-> +		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_W | PTE_VALID,
-> +		.val	= KVM_PTE_LEAF_ATTR_LO_S2_S2AP_W | PTE_VALID,
-> +		.set	= "W",
-> +		.clear	= " ",
-> +	}, {
-> +		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_AF | PTE_VALID,
-> +		.val	= KVM_PTE_LEAF_ATTR_LO_S2_AF | PTE_VALID,
-> +		.set	= "AF",
-> +		.clear	= "  ",
-
-<snip>
-
-> +	}, {
-> +		.mask	= PTE_NG,
-> +		.val	= PTE_NG,
-> +		.set	= "FnXS",
-> +		.clear	= "  ",
-> +	}, {
-> +		.mask	= PTE_CONT | PTE_VALID,
-> +		.val	= PTE_CONT | PTE_VALID,
-> +		.set	= "CON",
-> +		.clear	= "   ",
-> +	}, {
-
-</snip>
-
-Neither of these bits are used at stage-2, why have descriptors for
-them?
-
-> +static int kvm_ptdump_build_levels(struct pg_level *level, u32 start_lvl)
-> +{
-> +	static const char * const level_names[] = {"PGD", "PUD", "PMD", "PTE"};
-> +	u32 i = 0;
-> +	u64 mask = 0;
-> +
-> +	if (start_lvl > 2) {
-> +		pr_err("invalid start_lvl %u\n", start_lvl);
-> +		return -EINVAL;
-> +	}
-
-	if (WARN_ON_ONCE(start_lvl >= KVM_PGTABLE_LAST_LEVEL))
-		return -EINVAL;
-
-> +	for (i = 0; i < ARRAY_SIZE(stage2_pte_bits); i++)
-> +		mask |= stage2_pte_bits[i].mask;
-> +
-> +	for (i = start_lvl; i < KVM_PGTABLE_MAX_LEVELS; i++) {
-> +		strscpy(level[i].name, level_names[i], sizeof(level[i].name));
-> +
-> +		level[i].num	= ARRAY_SIZE(stage2_pte_bits);
-> +		level[i].bits	= stage2_pte_bits;
-> +		level[i].mask	= mask;
-> +	}
-> +
-> +	if (start_lvl > 0)
-> +		strscpy(level[start_lvl].name, level_names[0], sizeof(level_names[0]));
-
-This should pass the size of @dst, not the source. This becomes slightly
-more self-documenting if you use a literal for "PGD" here too.
-
-		strscpy(level[start_lvl].name, "PGD", sizeof(level[start_lvl].name));
-
-> +	return 0;
-> +}
-> +
-> +static struct kvm_ptdump_guest_state
-> +*kvm_ptdump_parser_init(struct kvm *kvm)
-> +{
-> +	struct kvm_ptdump_guest_state *st;
-> +	struct kvm_s2_mmu *mmu = &kvm->arch.mmu;
-> +	struct kvm_pgtable *pgtable = mmu->pgt;
-> +	int ret;
-> +
-> +	st = kzalloc(sizeof(struct kvm_ptdump_guest_state), GFP_KERNEL_ACCOUNT);
-> +	if (!st)
-> +		return NULL;
-> +
-> +	ret = kvm_ptdump_build_levels(&st->level[0], pgtable->start_level);
-> +	if (ret)
-> +		goto free_with_state;
-
-I don't see any value in the use of goto here, as there isn't any sort
-of cascading initialization / cleanup. This also presents an opportunity
-to get an error back out to the caller.
-
-	if (ret) {
-		kfree(st);
-		return ERR_PTR(ret);
-	}
-
-> @@ -57,22 +176,34 @@ static int kvm_ptdump_guest_show(struct seq_file *m, void *unused)
->  static int kvm_ptdump_guest_open(struct inode *m, struct file *file)
->  {
->  	struct kvm *kvm = m->i_private;
-> +	struct kvm_ptdump_guest_state *st;
+> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> index 1f18b08618c8..a2ead87952c7 100644
+> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> @@ -636,16 +636,8 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+>  	struct k3_r5_core *core1, *core = kproc->core;
 >  	int ret;
 >  
->  	if (!kvm_get_kvm_safe(kvm))
->  		return -ENOENT;
->  
-> -	ret = single_open(file, kvm_ptdump_guest_show, m->i_private);
-> -	if (ret < 0)
-> -		kvm_put_kvm(kvm);
-> +	st = kvm_ptdump_parser_init(kvm);
-> +	if (!st) {
-> +		ret = -ENOMEM;
-> +		goto free_with_kvm_ref;
+> -	/* halt all applicable cores */
+> -	if (cluster->mode == CLUSTER_MODE_LOCKSTEP) {
+> -		list_for_each_entry(core, &cluster->cores, elem) {
+> -			ret = k3_r5_core_halt(core);
+> -			if (ret) {
+> -				core = list_prev_entry(core, elem);
+> -				goto unroll_core_halt;
+> -			}
+> -		}
+> -	} else {
+> +
+> +	if (cluster->mode != CLUSTER_MODE_LOCKSTEP) {
+>  		/* do not allow core 0 to stop before core 1 */
+>  		core1 = list_last_entry(&cluster->cores, struct k3_r5_core,
+>  					elem);
+> @@ -656,6 +648,18 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+>  			ret = -EPERM;
+>  			goto out;
+>  		}
 > +	}
+> +
+> +	/* halt all applicable cores */
+> +	if (cluster->mode == CLUSTER_MODE_LOCKSTEP) {
+> +		list_for_each_entry(core, &cluster->cores, elem) {
+> +			ret = k3_r5_core_halt(core);
+> +			if (ret) {
+> +				core = list_prev_entry(core, elem);
+> +				goto unroll_core_halt;
+> +			}
+> +		}
+> +	} else {
+>  
+>  		ret = k3_r5_core_halt(core);
+>  		if (ret)
 
-(with the earlier suggestion)
+With this patch, the "else" in this "if" condition is coupled with the "if" from
+the lockstep mode, making the code extremaly hard to read.  The original code
+has a k3_r5_core_halt() in both "if" conditions, making the condition
+independent from one another.
 
-	st = kvm_ptdump_parser_init(kvm);
-	if (IS_ERR(st)) {
-		ret = PTR_ERR(st);
-		goto free_with_kvm_ref;
-	}
-
-Otherwise genuine KVM bugs (-EINVAL) are getting lumped into ENOMEM.
-
--- 
-Thanks,
-Oliver
 
