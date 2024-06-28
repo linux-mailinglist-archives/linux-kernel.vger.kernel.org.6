@@ -1,130 +1,228 @@
-Return-Path: <linux-kernel+bounces-233248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB73491B4CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:52:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7543391B4C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:52:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64302B2179C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:52:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC49FB217DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148DA17C6D;
-	Fri, 28 Jun 2024 01:52:22 +0000 (UTC)
-Received: from norbury.hmeau.com (helcar.hmeau.com [216.24.177.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780AB1400A;
+	Fri, 28 Jun 2024 01:52:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="kJmtjvL+"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 792FB1CF8D;
-	Fri, 28 Jun 2024 01:52:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.24.177.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C7F12E75
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 01:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719539541; cv=none; b=m+OSniTPk8Yw2qlgQeacPf+TDPK1aZrHxE7dXGvWB1xndinrYnt6izzKHbadsf8wfuyTjmk4E8Jwl/bALZE4elrn0bLyiRFH+XCuERKMlV1cwc4Te4YUPjHsrgbDbkR3u/wBqJGwlKZRdfAKKoWbQS0BbFFgMU/zegGopC6g7/I=
+	t=1719539525; cv=none; b=cBUvsdcA7gxyKtQsKuNpBAOGFZpRjDUeNM+3soh5wTwHEPX6mDcNPgwBCQ+vsvPaMLpfqQUsJ43d3Ry77QHHbMezKxu8EahxAt44bgJW8/5QCaocOuwG6YLkXbCLTTJykbZBshlY9NQ6yARDiGIeQTGI4rzi+QppmOQHibM7X+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719539541; c=relaxed/simple;
-	bh=Rc7AeiG/odYTKnCHOfENoLw8Fc9nSy6jV4jQ9YhzV5U=;
+	s=arc-20240116; t=1719539525; c=relaxed/simple;
+	bh=NpbEpSTdbFRJ9jSFWZ/I6EHnZGo1rDdUX9yvuPzZo9A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QDprqGg6yzMoT9PfnzT7NpwN7eoQabEGmpIAIkcVPqVmUqSoMU2ogZNge1W3YKDJ8GGEVmyY+Ly1GjQwQb+HJfx7CVdUU02V2S0h31xw+WZK4mDHA9c7j1L9SyFTOS+mCT9xqCUUOFtvoDOTGB+g7XIHysDiHTcKLCwlgDr58No=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=216.24.177.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.103.7])
-	by norbury.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1sN0mL-004GFg-2g;
-	Fri, 28 Jun 2024 11:51:58 +1000
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 28 Jun 2024 11:51:58 +1000
-Date: Fri, 28 Jun 2024 11:51:58 +1000
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Jiwei Sun <sunjw10@outlook.com>
-Cc: giovanni.cabiddu@intel.com, davem@davemloft.net,
-	damian.muszynski@intel.com, tero.kristo@linux.intel.com,
-	siming.wan@intel.com, adam.guerin@intel.com,
-	ciunas.bennett@intel.com, qat-linux@intel.com,
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	sunjw10@lenovo.com, ahuang12@lenovo.com
-Subject: Re: [PATCH] crypto: qat - initialize user_input.lock for
- rate_limiting
-Message-ID: <Zn4XPseiC4hR6rbM@gondor.apana.org.au>
-References: <SEZPR01MB45275F2F7A32D2DE4D6E2C9BA8C82@SEZPR01MB4527.apcprd01.prod.exchangelabs.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nvvvaGm1i7Ho8QyS6fxrwQ3CxXMsxTI8nUD/XtilfqF3EXp+XXDpeNjLTd2PPwTyhxJm1Dw8ibYzSlLHARmkVt0qwr7WfHdA/3K4uEzwCKGYXxOFmAWv1H842I33nsYM0yiMkJMPZ24PBnU3RZLHBzvvvabrYYNwjYFjGmNuE+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=kJmtjvL+; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4256aee6d4fso674705e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 18:52:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1719539522; x=1720144322; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lvyvL7sSYnWF73nZZ2R616gtm5dM5S1yjRMp5jsz2YI=;
+        b=kJmtjvL+kVCEkCfyC1ayjD/WwmfNnhKUAR4bq3uhhKNc7YHljTeOTM4hyvbejxo9ds
+         Fd04uOYUIDWMglySRWlSqcP/B8P6tGkHkw5AaTFmp5IYyF1/oiuEHm3zubFW09+ZQ1tS
+         bRiH7xmNjvzE4tfQkEpMKOpu3nvzZOP7RWilRuFvjuUyzB10kGKKdhoG3gZdak6p7yVD
+         fOn/a7TgG20Ut6aOLRq0TVFV4+zyvxVKvMoToU8dRsmKdQcRStEG7TsTGPnC45EtGqu0
+         zEnCkySaxXmDWE5IRDETh76XkyWKoUv4/nRSZfLeS2m4NI2Kugdh9eJ0wJl6qZNCbKaC
+         13Ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719539522; x=1720144322;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lvyvL7sSYnWF73nZZ2R616gtm5dM5S1yjRMp5jsz2YI=;
+        b=DJLXw3GPDcXQbWoUvtt7rBJsmlSeHxt/VqsKXYorLBEc7POQGpCSa/Gf4bCfczEyaK
+         Qsi0CQl4IF3iL1HcA337fVr2kPYo3hefxreYTTWD3AC1YO3hfZFNgIvg47q6PRBeaWXo
+         k4cLgWz8zwDe4RKzT0wVdmOhnSSzYjHGG0LBOCTJCUAwW6/KTHXxMVVU/METdLVAf3wo
+         vXbDsACR+1MgI2GCTBbdBeAg7K7yWWTy4VsanPz/V5L4O/4Tn3CCcr+z/v0ZUgpIsEjn
+         6tctOK/30TJq53AxqD4ZSmiE8Fs/DcYd1PeurdYjv5rnR3bAD3vNFYM5pnWvIaDUr/pt
+         Tcag==
+X-Forwarded-Encrypted: i=1; AJvYcCXUqbnfoPKxxYQy+sL3UXZEIuk3btKuch/P3ypxYyGZekDji3jDqgyzVg+5TZmONirAeRa0Lv1QwzduM1USuOL+6MFtnZMrkFNP5qmP
+X-Gm-Message-State: AOJu0YxTBw/ov/s4KBRW6A87Bf4CwycmH7d5Bofcy6r5mNJMC49ryLck
+	IYMNWw0+Cy1bWss8v3TxyGXQZB5iSEhgqzQujF3na/RuK4Dj9gmYgTgyznonMl4=
+X-Google-Smtp-Source: AGHT+IHTJZg+LuweCmL8WGATnVT0JLoi2AWTzn3z8vnE4MboAjk01OaoXqEm1/sLrVCaDrDFi6rfbQ==
+X-Received: by 2002:a05:600c:19d3:b0:425:6b77:f5e0 with SMTP id 5b1f17b1804b1-4256b77f81cmr6169465e9.31.1719539522295;
+        Thu, 27 Jun 2024 18:52:02 -0700 (PDT)
+Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b097bcbsm13809025e9.35.2024.06.27.18.52.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 18:52:01 -0700 (PDT)
+Date: Fri, 28 Jun 2024 02:52:00 +0100
+From: Qais Yousef <qyousef@layalina.io>
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Daniel Bristot de Oliveira <bristot@redhat.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Christian Loehle <christian.loehle@arm.com>,
+	Hongyan Xia <hongyan.xia2@arm.com>,
+	John Stultz <jstultz@google.com>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6] sched: Consolidate cpufreq updates
+Message-ID: <20240628015200.vw75huo53redgkzf@airbuntu>
+References: <20240619201409.2071728-1-qyousef@layalina.io>
+ <f281ba07-d54a-460a-8f78-f7eb6bd8ed88@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <SEZPR01MB45275F2F7A32D2DE4D6E2C9BA8C82@SEZPR01MB4527.apcprd01.prod.exchangelabs.com>
+In-Reply-To: <f281ba07-d54a-460a-8f78-f7eb6bd8ed88@arm.com>
 
-On Thu, Jun 20, 2024 at 04:51:10PM +0800, Jiwei Sun wrote:
-> From: Jiwei Sun <sunjw10@lenovo.com>
-> 
-> If the following configurations are set,
-> CONFIG_DEBUG_RWSEMS=y
-> CONFIG_DEBUG_LOCK_ALLOC=y
-> CONFIG_RWSEM_SPIN_ON_OWNER=y
-> 
-> And run the following command,
-> [root@localhost sys]# cat /sys/devices/pci0000:6b/0000:6b:00.0/qat_rl/pir
-> The following warning log appears,
-> 
-> ------------[ cut here ]------------
-> DEBUG_RWSEMS_WARN_ON(sem->magic != sem): count = 0x0, magic = 0x0, owner = 0x1, curr 0xff11000119288040, list not empty
-> WARNING: CPU: 131 PID: 1254984 at kernel/locking/rwsem.c:1280 down_read+0x439/0x7f0
-> CPU: 131 PID: 1254984 Comm: cat Kdump: loaded Tainted: G        W          6.10.0-rc4+ #86 b2ae60c8ceabed15f4fd2dba03c1c5a5f7f4040c
-> Hardware name: Lenovo ThinkServer SR660 V3/SR660 V3, BIOS T8E166X-2.54 05/30/2024
-> RIP: 0010:down_read+0x439/0x7f0
-> Code: 44 24 10 80 3c 02 00 0f 85 05 03 00 00 48 8b 13 41 54 48 c7 c6 a0 3e 0e b4 48 c7 c7 e0 3e 0e b4 4c 8b 4c 24 08 e8 77 d5 40 fd <0f> 0b 59 e9 bc fc ff ff 0f 1f 44 00 00 e9 e2 fd ff ff 4c 8d 7b 08
-> RSP: 0018:ffa0000035f67a78 EFLAGS: 00010286
-> RAX: 0000000000000000 RBX: ff1100012b03a658 RCX: 0000000000000000
-> RDX: 0000000080000002 RSI: 0000000000000008 RDI: 0000000000000001
-> RBP: 1ff4000006becf53 R08: fff3fc0006becf17 R09: fff3fc0006becf17
-> R10: fff3fc0006becf16 R11: ffa0000035f678b7 R12: ffffffffb40e3e60
-> R13: ffffffffb627d1f4 R14: ff1100012b03a6d0 R15: ff1100012b03a6c8
-> FS:  00007fa9ff9a6740(0000) GS:ff1100081e600000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007fa9ff984000 CR3: 00000002118ae006 CR4: 0000000000771ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe07f0 DR7: 0000000000000400
-> PKRU: 55555554
-> Call Trace:
->  <TASK>
->  pir_show+0x5d/0xe0 [intel_qat 9e297e249ab040329cf58b657b06f418fd5c5855]
->  dev_attr_show+0x3f/0xc0
->  sysfs_kf_seq_show+0x1ce/0x400
->  seq_read_iter+0x3fa/0x10b0
->  vfs_read+0x6f5/0xb20
->  ksys_read+0xe9/0x1d0
->  do_syscall_64+0x8a/0x170
->  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> RIP: 0033:0x7fa9ff6fd9b2
-> Code: c0 e9 b2 fe ff ff 50 48 8d 3d ea 1d 0c 00 e8 c5 fd 01 00 0f 1f 44 00 00 f3 0f 1e fa 64 8b 04 25 18 00 00 00 85 c0 75 10 0f 05 <48> 3d 00 f0 ff ff 77 56 c3 0f 1f 44 00 00 48 83 ec 28 48 89 54 24
-> RSP: 002b:00007ffc0616b968 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-> RAX: ffffffffffffffda RBX: 0000000000020000 RCX: 00007fa9ff6fd9b2
-> RDX: 0000000000020000 RSI: 00007fa9ff985000 RDI: 0000000000000003
-> RBP: 00007fa9ff985000 R08: 00007fa9ff984010 R09: 0000000000000000
-> R10: 0000000000000022 R11: 0000000000000246 R12: 0000000000022000
-> R13: 0000000000000003 R14: 0000000000020000 R15: 0000000000020000
->  </TASK>
-> irq event stamp: 0
-> hardirqs last  enabled at (0): [<0000000000000000>] 0x0
-> hardirqs last disabled at (0): [<ffffffffb102c126>] copy_process+0x21e6/0x6e70
-> softirqs last  enabled at (0): [<ffffffffb102c176>] copy_process+0x2236/0x6e70
-> softirqs last disabled at (0): [<0000000000000000>] 0x0
-> ---[ end trace 0000000000000000 ]---
-> 
-> The rate_limiting->user_input.lock rwsem lock is not initialized before
-> use. Let's initialize it.
-> 
-> Signed-off-by: Jiwei Sun <sunjw10@lenovo.com>
-> Reviewed-by: Adrian Huang <ahuang12@lenovo.com>
-> ---
->  drivers/crypto/intel/qat/qat_common/adf_rl.c | 1 +
->  1 file changed, 1 insertion(+)
+On 06/25/24 14:58, Dietmar Eggemann wrote:
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> > @@ -4917,6 +4927,84 @@ static inline void __balance_callbacks(struct rq *rq)
+> >  
+> >  #endif
+> >  
+> > +static __always_inline void
+> > +__update_cpufreq_ctx_switch(struct rq *rq, struct task_struct *prev)
+> > +{
+> > +#ifdef CONFIG_CPU_FREQ
+> > +	if (prev && prev->dl.flags & SCHED_FLAG_SUGOV) {
+> > +		/* Sugov just did an update, don't be too aggressive */
+> > +		return;
+> > +	}
+> > +
+> > +	/*
+> > +	 * RT and DL should always send a freq update. But we can do some
+> > +	 * simple checks to avoid it when we know it's not necessary.
+> > +	 *
+> > +	 * iowait_boost will always trigger a freq update too.
+> > +	 *
+> > +	 * Fair tasks will only trigger an update if the root cfs_rq has
+> > +	 * decayed.
+> > +	 *
+> > +	 * Everything else should do nothing.
+> > +	 */
+> > +	switch (current->policy) {
+> > +	case SCHED_NORMAL:
+> > +	case SCHED_BATCH:
+> 
+> What about SCHED_IDLE tasks?
+
+I didn't think they matter from cpufreq perspective. These tasks will just run
+at whatever the idle system is happen to be at and have no specific perf
+requirement since they should only run when the system is idle which a recipe
+for starvation anyway?
+
+> 
+> > +		if (unlikely(current->in_iowait)) {
+> > +			cpufreq_update_util(rq, SCHED_CPUFREQ_IOWAIT | SCHED_CPUFREQ_FORCE_UPDATE);
+> > +			return;
+> > +		}
+> > +
+> > +#ifdef CONFIG_SMP
+> > +		if (unlikely(rq->cfs.decayed)) {
+> > +			rq->cfs.decayed = false;
+> > +			cpufreq_update_util(rq, 0);
+> > +			return;
+> > +		}
+> > +#else
+> > +		cpufreq_update_util(rq, 0);
+> > +#endif
+> 
+> We can have !CONFIG_SMP and CONFIG_FAIR_GROUP_SCHED systems. Does this
+> mean on those systems we call cpufreq_update_util() for each cfs_rq of
+> the hierarchy where on CONFIG_SMP we only do this for the root cfs_rq?
+
+No. This is called on context switch only and hierarchy doesn't matter here. We
+just do it unconditionally for UP since we only track the decayed at cfs_rq
+level and I didn't think it's worth trying to make it at rq level.
+
+> 
+> [...]
+> 
+> > @@ -4744,8 +4716,8 @@ static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
+> >  	if (se->avg.last_update_time && !(flags & SKIP_AGE_LOAD))
+> >  		__update_load_avg_se(now, cfs_rq, se);
+> >  
+> > -	decayed  = update_cfs_rq_load_avg(now, cfs_rq);
+> > -	decayed |= propagate_entity_load_avg(se);
+> > +	cfs_rq->decayed |= update_cfs_rq_load_avg(now, cfs_rq);
+> > +	cfs_rq->decayed |= propagate_entity_load_avg(se);
+> >  
+> >  	if (!se->avg.last_update_time && (flags & DO_ATTACH)) {
+> >  
+> > @@ -4766,11 +4738,8 @@ static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
+> >  		 */
+> >  		detach_entity_load_avg(cfs_rq, se);
+> >  		update_tg_load_avg(cfs_rq);
+> > -	} else if (decayed) {
+> > -		cfs_rq_util_change(cfs_rq, 0);
+> > -
+> > -		if (flags & UPDATE_TG)
+> > -			update_tg_load_avg(cfs_rq);
+> > +	} else if (cfs_rq->decayed && (flags & UPDATE_TG)) {
+> > +		update_tg_load_avg(cfs_rq);
+> >  	}
+> >  }
+> 
+> You set cfs_rq->decayed for each taskgroup level but you only reset it
+> for the root cfs_rq in __update_cpufreq_ctx_switch() and task_tick_fair()?
+
+Yes. We only care about using it for root level. Tracking the information at
+cfs_rq level is the most natural way to do it as this is what update_load_avg()
+is acting on.
+
+> 
+> [...]
+> 
+> > @@ -8418,6 +8378,14 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
+> >  	if (pick_eevdf(cfs_rq) == pse)
+> >  		goto preempt;
+> >  
+> > +nopreempt:
+> > +#ifdef CONFIG_SMP
+> > +	if (rq->cfs.decayed && rq->cfs.h_nr_running > 1)
+> > +		cpufreq_update_util(rq, SCHED_CPUFREQ_TASK_ENQUEUED);
+> 
+> Why don't you set rq->cfs.decayed to false here as well?
+> 
+> Is it because the request might fail in sugov_should_update_freq() in
+> case 'delta_ns < sysctl_sched_base_slice'?
+
+Yes. This call is likely to fail and we don't have a way to get a feedback to
+know whether it went through or not.
+
+FWIW I already have a patch that I considered sending along this submission
+but opted not to as it'll make things too complicated.
+
+But FWIW, I make cpufreq_update_util() return a bool to indicate whether
+cpufreq update has happened or not and this helps to reset rq->cfs.decayed more
+accurately in all call site like this one. But I think this should be another
+independent patch.
+
+
+Thanks!
+
+--
+Qais Yousef
 
