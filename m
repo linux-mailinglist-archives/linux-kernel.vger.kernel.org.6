@@ -1,149 +1,185 @@
-Return-Path: <linux-kernel+bounces-234091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DE2591C213
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:06:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A87D691C219
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:08:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33AD81F2793B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:06:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAD351C22440
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:08:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E341C2325;
-	Fri, 28 Jun 2024 15:06:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D83E51C2322;
+	Fri, 28 Jun 2024 15:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hpqbE3Yp"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="grvZHTLM"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F54539FEB;
-	Fri, 28 Jun 2024 15:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B23715884B;
+	Fri, 28 Jun 2024 15:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719587177; cv=none; b=mjYEo3Nqa9hKaJ+cZrO6orjjH1T4srC/GJzmkIKrvSUkkwo9fUTyCAs5QCgyB9Y0u9ApsUEU7hpRDkUG4C+PIwoUPCcSHoCuFRsn92DD1ktd+17Aku/40iGsINwqpjtq7U4KCANXjzNITv2s3uxIeyBaYKLTBHxx3x8L02UC1W0=
+	t=1719587288; cv=none; b=PFO4cxQka4sQMLMjCnjHIFQIRexN2y0ugs1hnScC1txhU3lEdRQkWsZ6tUrhY026FzoxJYK0jelZ0tJ/0Qxn+W4/o+/vrsMHtqo10EAqgt4+lwYvF954721+1SEVIh5eqY1WtJ/U40Pxz6sd+VIOEh6yzKfWB81TRYY8dxb7Pek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719587177; c=relaxed/simple;
-	bh=teoHZ68BbeP4g0FUcov5aAf3qrdoD1M0ZAbGmspqrO8=;
+	s=arc-20240116; t=1719587288; c=relaxed/simple;
+	bh=1hgI+rCZQWIqOF+m5AgAV+Lg3Mb2So8JWjgU+Urw7PI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F9OmXo/1lwKwFhYNggge9zH24uI0Lj15OOYb3iLrcX5jfeAwoJCUNtaywbbKxroqiyl+fRNx3EO3AiczqMbfAdfCERDVrIe0wVzJLiYeOp0wvRqRNa+JBJTSuZ+i22f06zEXlK8spEZjjtzy8JdSfC6R0+Ai0VHvVJg06Q03VO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hpqbE3Yp; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2eabd22d3f4so6800271fa.1;
-        Fri, 28 Jun 2024 08:06:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719587173; x=1720191973; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=byFX7b+g2YFL0Se4495noznBPNIYmBdRduirs65L2O0=;
-        b=hpqbE3YpCOW7IUuyIO1IazoGhgfQKLg8kNC01Ktdod26Y38q/WnEQ+cPa61WOAf7Ac
-         qLX/k7OAmjhqyBzTefBDAzZ5GMzRyWT5VnZncKQ5gHfstIhn2GAoZK0llStCBSbiK8f6
-         qvtF2rSDy2xZ2NBGMNID72gZVHwFrZVOxYVcCYcNMYMhbBrQ8vpyi7rAL1C1L5aHMNeb
-         XnUp6v23/WgPgEPcbJVO74HFUjN7toTcD1zI+RYINyIHRByZcnDxYJML8kmabdb6gxrI
-         bKbkUnHZ9U8nXHgTJVGsR0e+puoI+vXaqhjabtGs2oHGHl4MM6rIfOdsBIlW4l5rNnmh
-         BjDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719587173; x=1720191973;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=byFX7b+g2YFL0Se4495noznBPNIYmBdRduirs65L2O0=;
-        b=eZtx4EMD2OozOvw+IB5m5C/UVk8GbGS3D81gYdl4T3hDQrq2RZO5LzM1hawm7hzaDb
-         v8Ka7KVv/zV5kzL3yr4vifFdsemEbPZJO5xnbwev6QLY5TgH4lYHV8nyPxMrRu87AgKF
-         EfyZa3zIyrixgWm8LH7rVOrSYdNtiiuSiSpFFTxmse60rJT9YPdEuu2siajJJZWACLpj
-         wQYL3zzFfAMVgdY8SGWBmATDto919vXI38QeCuG3zhAO+Krqb8Dyh8Kkwf3LxaO5cAeI
-         VPEp/V1svk4wGBzR1kkp0RPu6xC+S4OEYgm4RLFVadNvx9ZqV6RmWEdgpZFzu+dcw3RW
-         BioQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8lUkaRzsmQwm2xsM3NPtRoq1ocLSOXNnJh7C7Y8U7x+e3Hhnkj7wBrRIWCpiEFSxl9lI2IfD6Guanll5EqfakH63ymlA6lBekT0kNtL/8ShdTNTWPvo0bYgQ+9gO5arVuz+aYZ3lAiv6Y/SPxC7WM9HfwD9TzqCf/gfGPdqMdWiQKbPnf
-X-Gm-Message-State: AOJu0YxzSx1m7Jszj5kh9EBt7r3J8eJvQTsN1Y+ZJS/LazZEBzscW9CO
-	ezezAl4NDruMj5Owwk9THDiEYO0edmddS17cQxsl8Mq9erk10Ekx
-X-Google-Smtp-Source: AGHT+IH+IBDKrbwb67wJZQY1PQz8Vr9gonBlqgAsSdkyvnNetOBliXJAAb1ffJe8fDb9NRUkMKWYDA==
-X-Received: by 2002:a2e:9087:0:b0:2ec:4d48:75f3 with SMTP id 38308e7fff4ca-2ec5b30765emr99738851fa.45.1719587172823;
-        Fri, 28 Jun 2024 08:06:12 -0700 (PDT)
-Received: from orome (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0e0661sm2557180f8f.47.2024.06.28.08.06.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 08:06:12 -0700 (PDT)
-Date: Fri, 28 Jun 2024 17:06:10 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: soc@kernel.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: Add/fix /memory node unit-addresses
-Message-ID: <lbv5dlpvjfolp3tidna6ft7o3c3xswu6udp6savazegbfovygp@uzf2yyrocfuj>
-References: <20240430191856.874600-2-robh@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DYSV3FL+afKoTgFc7Q5KDwt1uNEQuyHQFCERIeLSQE1Rmts2Rl5SBE9kOudXlJAj/nqcM9Rk2Z+O3JF0/CuOhCZBjsqX1v3TAZoRHZd4ELbjXHPJzL4nkrAd6FZBbwS0lJGGRZ8yuy1s5wJy6b9Vj+uQejNK+AtfIgxdeYjI3TI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=grvZHTLM; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=YKeNupwsPSrvE04qYcLHS5Qf0hnRaatid61rEYfWQaA=; b=grvZHTLMNbz8IGpB8IsDq8tVaB
+	O8Kdrj1Wm5knEHgfNK5PVm7zmHg5aOBb0W2yALLnd9JAxHZPlVV7+SWSG7goEQeSLhA8eCZ6PluMG
+	p+pgQxnqsxpUITKYfbPoZYOXhddo1ADVfTU+tHn2B939ipP/pM1cM7dX5/SdhBIKJnPVLg1EmDgAh
+	OKJumBhYWd2F94Veoeyfo2mWJDTJ9nXeyL7OUm69tRKjXtTBGAgbPzaIZKO6TuWsYTBHhq/nAerhD
+	qM4VHUw6Ex4bmKX4n29ir43HdS8MGMOKFsyRxTCY37pVyD6NEd1f91hGv4gLQiISeZo7Zx2zT3JGd
+	wIoqSNfw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:54812)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sNDCT-0006oN-1m;
+	Fri, 28 Jun 2024 16:07:45 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sNDCV-0006as-1Z; Fri, 28 Jun 2024 16:07:47 +0100
+Date: Fri, 28 Jun 2024 16:07:46 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Serge Semin <fancer.lancer@gmail.com>
+Cc: Andrew Halaney <ahalaney@redhat.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com, bpf@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC net-next v2 14/17] net: stmmac: Move internal PCS
+ PHYLINK ops to stmmac_pcs.c
+Message-ID: <Zn7Rwt9KNac2mMah@shell.armlinux.org.uk>
+References: <Zlmzu7/ANyZxOOQL@shell.armlinux.org.uk>
+ <20240624132802.14238-6-fancer.lancer@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="pjs3gbaie5x227iz"
-Content-Disposition: inline
-In-Reply-To: <20240430191856.874600-2-robh@kernel.org>
-
-
---pjs3gbaie5x227iz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240624132802.14238-6-fancer.lancer@gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Tue, Apr 30, 2024 at 02:18:54PM GMT, Rob Herring (Arm) wrote:
-[...]
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/b=
-oot/dts/nvidia/tegra210-smaug.dts
-> index 9ebb7369256e..2e5b6b2c1f56 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-> +++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-> @@ -25,7 +25,7 @@ chosen {
->  		stdout-path =3D "serial0:115200n8";
->  	};
-> =20
-> -	memory {
-> +	memory@80000000 {
->  		device_type =3D "memory";
->  		reg =3D <0x0 0x80000000 0x0 0xc0000000>;
->  	};
+On Mon, Jun 24, 2024 at 04:26:31PM +0300, Serge Semin wrote:
+> @@ -621,7 +548,6 @@ int dwmac1000_setup(struct stmmac_priv *priv)
+>  	mac->mii.clk_csr_shift = 2;
+>  	mac->mii.clk_csr_mask = GENMASK(5, 2);
+>  
+> -	mac->mac_pcs.ops = &dwmac1000_mii_pcs_ops;
+>  	mac->mac_pcs.neg_mode = true;
 
-[trimming the recipient list and adding Diogo]
+"mac->mac_pcs.neg_mode = true;" is a property of the "ops" so should
+move with it.
 
-Sorry I just noticed this as I was doing a cleanup path of patchwork.
+> @@ -1475,7 +1396,6 @@ int dwmac4_setup(struct stmmac_priv *priv)
+>  	mac->mii.clk_csr_mask = GENMASK(11, 8);
+>  	mac->num_vlan = dwmac4_get_num_vlan(priv->ioaddr);
+>  
+> -	mac->mac_pcs.ops = &dwmac4_mii_pcs_ops;
+>  	mac->mac_pcs.neg_mode = true;
 
-For tegra210-smaug, unfortunately we can't do this. The problem is that
-the firmware for this device looks for a hard-coded /memory device when
-updating with the proper memory size and this firmware can't always be
-updated.
+Also applies here.
 
-Diogo, you're one of the few remaining people that I know of that still
-use this device (with an upstream kernel). Do you have any more details
-about this? Is there any way the firmware can be safely updated on these
-devices?
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/hwif.c b/drivers/net/ethernet/stmicro/stmmac/hwif.c
+> index 3666893acb69..c42fb2437948 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/hwif.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/hwif.c
+> @@ -363,6 +363,7 @@ int stmmac_hwif_init(struct stmmac_priv *priv)
+>  		mac->tc = mac->tc ? : entry->tc;
+>  		mac->mmc = mac->mmc ? : entry->mmc;
+>  		mac->est = mac->est ? : entry->est;
+> +		mac->mac_pcs.ops = mac->mac_pcs.ops ?: entry->pcs;
 
-Thierry
+Removing both of the above means that mac->mac_pcs.ops won't ever be set
+prior to this, so this whole thing should just be:
 
---pjs3gbaie5x227iz
-Content-Type: application/pgp-signature; name="signature.asc"
+		mac->mac_pcs.ops = entry->pcs;
+		mac->mac_pcs.neg_mode = true;
 
------BEGIN PGP SIGNATURE-----
+> +static void dwmac_pcs_get_state(struct phylink_pcs *pcs,
+> +				struct phylink_link_state *state)
+>  {
+> +	struct mac_device_info *hw = phylink_pcs_to_mac_dev_info(pcs);
+>  	struct stmmac_priv *priv = hw->priv;
+>  	u32 val;
+>  
+> +	val = stmmac_pcs_get_config_reg(priv, hw);
+> +
+> +	/* TODO The next is SGMII/RGMII/SMII-specific */
+> +	state->link = !!(val & PCS_CFG_LNKSTS);
+> +	if (!state->link)
+> +		return;
+> +
+> +	switch (FIELD_GET(PCS_CFG_LNKSPEED, val)) {
+> +	case PCS_CFG_LNKSPEED_2_5:
+> +		state->speed = SPEED_10;
+> +		break;
+> +	case PCS_CFG_LNKSPEED_25:
+> +		state->speed = SPEED_100;
+> +		break;
+> +	case PCS_CFG_LNKSPEED_250:
+> +		state->speed = SPEED_1000;
+> +		break;
+> +	default:
+> +		netdev_err(priv->dev, "Unknown speed detected\n");
+> +		break;
+> +	}
+> +
+> +	state->duplex = val & PCS_CFG_LNKMOD ? DUPLEX_FULL : DUPLEX_HALF;
+> +
+> +	/* TODO Check the PCS_AN_STATUS.Link status here?.. Note the flag is latched-low */
+> +
+> +	/* TODO The next is the TBI/RTBI-specific and seems to be valid if PCS_AN_STATUS.ANC */
+>  	val = readl(priv->pcsaddr + PCS_ANE_LPA);
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmZ+0WIACgkQ3SOs138+
-s6ETww//fKn/izh6941gGmnNr73X80O4LhJqg2ssrOGsboYQJ9Ca2/+LImPyEeIv
-Hp4JfswrF2kNORV268f24OZ9dZG/XehTCR5yJwi3MRmF7uawKIItDOsafq7yh1GG
-B+QatqpwOlvX9JFq+uK61TIF/NR7NP+ILo1H4OnnbHmOfNfnm6wG/8bcV2GWGyHg
-Xax2H47PW+TvFKAi5m4yM/qzEfj6rCOOsANoqfhoMyzVQ3+C4SY7JyeHX3ZPn5uD
-nt1MJNxktXZkP45t2s99mEW3yDD5Jia88jIVgBvIRq/VWiT3RRqXoBOCfNxy4ne1
-mE06ZfEGZZeqQsSfdgcs1ZRsG2//h2EjCgOc7+JaE+yvbGC0LsIqoirH8foU+74w
-vrgQd9kY5y3XpoOxQuGJpTsKmVrtJDm1ScLcr3zAcpqR0HMLTEXxInL6gOFv2Lfv
-CI9ACx1cJsmzNNHrgrSWk39HeeoegCtrm+7DKrgaD6zUMUYbug5p2E3BfIKRMdiu
-+yMZ9CMYUD7dylywUIgrQXnsbgWWygMJUEuaLYFZHThzJ2jdCY1vX8FvvWVbDxqn
-Pa09zlWUsN6+BABlb8kqjPhU9FBS6o2FJ1eLFS+lpCwah6KE1fPfPRHhZHtn0oO9
-FXNNCTagT0b8RJc2RPiMTytbtHwherbP+QyYlfpIoHp6qSavTo8=
-=qW8X
------END PGP SIGNATURE-----
+I thought these registers only existed of dma_cap.pcs is true ? If we
+start checking PCS_AN_STATUS.Link here, and this register reads as
+zeros, doesn't it mean that RMGII inband mode won't ever signal link
+up?
 
---pjs3gbaie5x227iz--
+>  
+> -	/* TODO Make sure that STMMAC_PCS_PAUSE STMMAC_PCS_ASYM_PAUSE usage is legitimate */
+> +	/* TODO The databook says the encoding is defined in IEEE 802.3z,
+> +	 * Section 37.2.1.4. Do we need the STMMAC_PCS_PAUSE and
+> +	 * STMMAC_PCS_ASYM_PAUSE mask here?
+> +	 */
+>  	linkmode_mod_bit(ETHTOOL_LINK_MODE_Pause_BIT,
+>  			 state->lp_advertising,
+>  			 FIELD_GET(PCS_ANE_PSE, val) & STMMAC_PCS_PAUSE);
+
+If it's 802.3z aka 1000base-X format, then yes, we should be using
+these bits if we are getting state from this register.
+
+If TBI/RTBI is ever used, rather than trying to shoe-horn it all into
+these functions, please consider splitting them into separate PCSes,
+and sharing code between them e.g. using common functions called from
+the method functions or shared method functions where appropriate.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
