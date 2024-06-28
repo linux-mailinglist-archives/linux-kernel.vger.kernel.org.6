@@ -1,112 +1,171 @@
-Return-Path: <linux-kernel+bounces-234202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 495F091C39D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:17:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DAF491C3A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:20:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 064932825DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:17:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 435A71F235AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:20:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD1BA1C8FB1;
-	Fri, 28 Jun 2024 16:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF2B1C9EC3;
+	Fri, 28 Jun 2024 16:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YvW7s8iX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MX7Mj5hU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02CE8135A4A
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 16:17:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AEF220DE8;
+	Fri, 28 Jun 2024 16:19:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719591436; cv=none; b=C0qRmWKyJIxOisaGsU89plvyGEUthQ3ZO7+himvl2Qv3riEpoqyi3pb89+l9JZHOUL8m8IapgwGdAuLPT1s9ABz0feRAJzD5dVUSzh2JC6lH07vqDGoQWX2fRZb4fkiUgSBNsF1c+H26swWI5SfVjqJNyX9d5EWDj1YQleZhZxA=
+	t=1719591591; cv=none; b=E1fEgGHQ6I8szd2AiqJ+kBiYjG+RwJVPeNRycko8EX6nUsjo8HClZ7k3N8L6TwxinP2D8k3mIpqt9csVccb1xdggSMRkcMMERgpwnRmlfYyy/eTBscF104rzflFiQdjifnZYYVRVZr6+1G5vVq3kfFU3lS6H+MMdPPb4Nwad2P8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719591436; c=relaxed/simple;
-	bh=7GCvCVeQAzLxZxb8s5ctuFDRLxMM51i5QRKhOq519D8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=lf9UESV/jQP/mSAesk4ThFIsoVV/DWCDpjirfmzehPfqb6nj4unCTjvy62Aa/u3EMRvm1Y3nBrA7YdfXLObIfEtIIqx+Zfw618ecL7xY4m1L33R9v3k8A9XkkMwd7GwaEo9JVTLN8zD+tVrOgnLfaTC0jAJNcKA6mgQK2T/dAyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YvW7s8iX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86774C116B1;
-	Fri, 28 Jun 2024 16:17:15 +0000 (UTC)
+	s=arc-20240116; t=1719591591; c=relaxed/simple;
+	bh=LTxkkD/nY6lAd8Hm4iCQkiN/eHwDOA5Fki8VgmfgnRc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s3W/rVdYG0c5H+TgH9jp9qYxJU6QaSBjAWHJZdiBADOMR+2DDGRqfrMjecAU5CiHfJG18cFPDKSV7YBUfkWMTwkSTTKnQVMrFSN7XL7LgdW1TPoKjTn6Ggu4LfiSpyppoJdXzl9Jmxd49uZtD4zglE0yyMykbESumrkROha6UKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MX7Mj5hU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EAF5C116B1;
+	Fri, 28 Jun 2024 16:19:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719591435;
-	bh=7GCvCVeQAzLxZxb8s5ctuFDRLxMM51i5QRKhOq519D8=;
-	h=Date:From:To:Cc:Subject:From;
-	b=YvW7s8iXNm/upmYgqavTZqIRgP34NGqydvYndlZtkHTM8fOkGt24yW/+eyzR8MmkX
-	 OXmtrslNSubTAZfc3h+7Z5W5RLGPIoix83OEhR0tN3SvyjmcC7MI/4uilQTZ4ro5AT
-	 WbnaXydb1iQgL1nBQ/usWaxxL0aZk5leV3Payy1QOIHwp3x6Y+CGegYGjauhjcjs7I
-	 jnBe0dfU0ikS1mRdOYLQHC13OzKl+dxrULt9Dm4tEWnk17YTpoiVc5DqUEkSfGVcTU
-	 6gLERHU+PT0khVvT0LGq+q/GnLj4GCRd0XZeKNKZz5MVUauSLpkmi28b6oBtt6iefy
-	 dYjpwJtpjUhfg==
-Date: Fri, 28 Jun 2024 09:17:14 -0700
-From: Kees Cook <kees@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Kees Cook <kees@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Yuntao Liu <liuyuntao12@huawei.com>
-Subject: [GIT PULL] hardening fixes for v6.10-rc6
-Message-ID: <202406280915.FFE303A3@keescook>
+	s=k20201202; t=1719591590;
+	bh=LTxkkD/nY6lAd8Hm4iCQkiN/eHwDOA5Fki8VgmfgnRc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MX7Mj5hUhLiE91UIq2inljrT60PLH9e8l6QTgC6ZQNvAMBidqlAsUFcUWgh37xNtR
+	 hYDylhmsqCO1JbsewHKDHXasQRX+xLjibcRc7V3aV9D/23ehealjzGCzLAVTdkVLs+
+	 Qgmr2AIxylzGm8Vnz+W8zUvWobyOtbCGH3ImingcbS9miMBh7ILHe0QHegrE5SlZdD
+	 K3KFM2wBj4ib6ehtDKUtfgNuCw2TQRbDywW1I+NIhYzzbYvRBf3Sy7sL8/WaYVsgAD
+	 0V9b/A9JonF9gwm94KX6WWQwbU8dIQea/cXq/isAShfpX/FTIhMdkyb4uH/IWyJRZl
+	 j1Piq1IPNhbwg==
+Date: Fri, 28 Jun 2024 17:19:46 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org,
+	greentime.hu@sifive.com, vincent.chen@sifive.com,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 2/4] dt-bindings: riscv: Add Svade and Svadu Entries
+Message-ID: <20240628-clamp-vineyard-c7cdd40a6d50@spud>
+References: <20240628093711.11716-1-yongxuan.wang@sifive.com>
+ <20240628093711.11716-3-yongxuan.wang@sifive.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="zVY6bc51HzyyBUYM"
+Content-Disposition: inline
+In-Reply-To: <20240628093711.11716-3-yongxuan.wang@sifive.com>
+
+
+--zVY6bc51HzyyBUYM
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+On Fri, Jun 28, 2024 at 05:37:06PM +0800, Yong-Xuan Wang wrote:
+> Add entries for the Svade and Svadu extensions to the riscv,isa-extensions
+> property.
+>=20
+> Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+> ---
+>  .../devicetree/bindings/riscv/extensions.yaml | 28 +++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Do=
+cumentation/devicetree/bindings/riscv/extensions.yaml
+> index 468c646247aa..c3d053ce7783 100644
+> --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
+> +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> @@ -153,6 +153,34 @@ properties:
+>              ratified at commit 3f9ed34 ("Add ability to manually trigger
+>              workflow. (#2)") of riscv-time-compare.
+> =20
+> +        - const: svade
+> +          description: |
+> +            The standard Svade supervisor-level extension for SW-managed=
+ PTE A/D
+> +            bit updates as ratified in the 20240213 version of the privi=
+leged
+> +            ISA specification.
+> +
+> +            Both Svade and Svadu extensions control the hardware behavio=
+r when
+> +            the PTE A/D bits need to be set. The default behavior for th=
+e four
+> +            possible combinations of these extensions in the device tree=
+ are:
+> +            1) Neither Svade nor Svadu present in DT =3D>
 
-Please pull these few hardening fixes for v6.10-rc6.
+>                 It is technically
+> +               unknown whether the platform uses Svade or Svadu. Supervi=
+sor may
+> +               assume Svade to be present and enabled or it can discover=
+ based
+> +               on mvendorid, marchid, and mimpid.
 
-Thanks!
+I would just write "for backwards compatibility, if neither Svade nor
+Svadu appear in the devicetree the supervisor may assume Svade to be
+present and enabled". If there are systems that this behaviour causes
+problems for, we can deal with them iff they appear. I don't think
+looking at m*id would be sufficient here anyway, since the firmware can
+have an impact. I'd just drop that part entirely.
 
--Kees
+> +            2) Only Svade present in DT =3D> Supervisor must assume Svad=
+e to be
+> +               always enabled. (Obvious)
 
-The following changes since commit 1ab1a422c0daedbd76f9f25c297eca48986ddea0:
+nit: I'd drop the "(Obvious)" comments from here.
 
-  MAINTAINERS: Update entries for Kees Cook (2024-06-17 11:14:06 -0700)
+Cheers,
+Conor.
 
-are available in the Git repository at:
+> +            3) Only Svadu present in DT =3D> Supervisor must assume Svad=
+u to be
+> +               always enabled. (Obvious)
+> +            4) Both Svade and Svadu present in DT =3D> Supervisor must a=
+ssume
+> +               Svadu turned-off at boot time. To use Svadu, supervisor m=
+ust
+> +               explicitly enable it using the SBI FWFT extension.
+> +
+> +        - const: svadu
+> +          description: |
+> +            The standard Svadu supervisor-level extension for hardware u=
+pdating
+> +            of PTE A/D bits as ratified at commit c1abccf ("Merge pull r=
+equest
+> +            #25 from ved-rivos/ratified") of riscv-svadu. Please refer t=
+o Svade
+> +            dt-binding description for more details.
+> +
+>          - const: svinval
+>            description:
+>              The standard Svinval supervisor-level extension for fine-gra=
+ined
+> --=20
+> 2.17.1
+>=20
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/hardening-v6.10-rc6
+--zVY6bc51HzyyBUYM
+Content-Type: application/pgp-signature; name="signature.asc"
 
-for you to fetch changes up to 1c07c9be87dd3dd0634033bf08728b32465f08fb:
+-----BEGIN PGP SIGNATURE-----
 
-  tty: mxser: Remove __counted_by from mxser_board.ports[] (2024-06-28 08:54:56 -0700)
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZn7ioQAKCRB4tDGHoIJi
+0mVMAQCK/SejlGwyghvHwynQhnjL6X2rPW6tv4CtsmOgM3pYaAD+L/W8OKitFsGd
+/L1I8rbFj1EVzu2iWs17GMSaDJIGZgU=
+=ykY3
+-----END PGP SIGNATURE-----
 
-----------------------------------------------------------------
-hardening fixes for v6.10-rc6
-
-- Remove invalid tty __counted_by annotation (Nathan Chancellor)
-
-- Add missing MODULE_DESCRIPTION()s for KUnit string tests (Jeff Johnson)
-
-- Remove non-functional per-arch kstack entropy filtering
-
-----------------------------------------------------------------
-Jeff Johnson (1):
-      string: kunit: add missing MODULE_DESCRIPTION() macros
-
-Kees Cook (1):
-      randomize_kstack: Remove non-functional per-arch entropy filtering
-
-Nathan Chancellor (1):
-      tty: mxser: Remove __counted_by from mxser_board.ports[]
-
- arch/arm64/kernel/syscall.c          | 16 +++++++---------
- arch/s390/include/asm/entry-common.h |  2 +-
- arch/x86/include/asm/entry-common.h  | 15 ++++++---------
- drivers/tty/mxser.c                  |  2 +-
- lib/string_helpers_kunit.c           |  1 +
- lib/string_kunit.c                   |  1 +
- 6 files changed, 17 insertions(+), 20 deletions(-)
-
--- 
-Kees Cook
+--zVY6bc51HzyyBUYM--
 
