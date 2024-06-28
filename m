@@ -1,210 +1,115 @@
-Return-Path: <linux-kernel+bounces-234631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0AB791C8D3
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 00:00:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39AA091C8D5
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 00:01:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 788E11F2529C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:00:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6E3D1F25B9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:01:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE94881720;
-	Fri, 28 Jun 2024 21:56:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E09281ABA;
+	Fri, 28 Jun 2024 21:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="PKCKbYDs"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2048.outbound.protection.outlook.com [40.107.236.48])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XesoriSQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC261CF3E6
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 21:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719611807; cv=fail; b=YvSHeHIMhvSnmkQkiaEJ9dbvL86nhxtDiq76HaZCpQINnI6bQMV8oz2ModA0UFZxzDN533IFMlHb7PYsP4y2Fpzc8j7MZt1dSGIZSuULVC14Pho07ZcxsBh39ugIRxobgZqCKIy+DAveFEA/aJ3NeBbv/9b56ymOfGdUMYflrE4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719611807; c=relaxed/simple;
-	bh=tvMSoGPFYgDMUWpAr8+g43Sh3aiuJ7xbxv4MflaLYg0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=l5s+EREHRqgv5XPQ69qH5wh3XZ6pJr2R8ZjhcymGfzAZkVziXOexLYx93/G6bMDBXhH64OWRiO6vdJ5xKMhjm4dFECsXU9DMZb/0vHv1CQpaG8NRzYli7lp9njcI7L6TrTZUvW6KUSwvbAm24zi2ZXdaQjiOzUyuwRUVC3iyZJU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=PKCKbYDs; arc=fail smtp.client-ip=40.107.236.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=aiMqCqjpr9bpNxTSjx3DkyTHHfDjNlZ1+furZT/hPT2C1jJFtwYkmG3L4ctb+hGC6vnL37n7FsDBugeRbhJ0vfMjDxvp28GFJJh8OcX7/aA24Lc5Qgi/nbh78viYNd508RY3Tq9+3iwO0ShmhYmiXZ5pBMZD1ljoCs/oRCZP8RZP1Z4JpoXuYk+DnKj8lyc5ZLGUBP0lBPIu1G5Tig01/VYkF4Y+1jyUbVEipsS6oj6YRCUrHvf+Vd5P9hRpVMORqpBF0pBLg+v1em5B1OQe/wIpf9dPrXl/25KrPq7Ry3q3NEnf9Lekrcn1yQVaQ/SRNIH2Lvy3mN2DqtoddUNr1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Dke86N6k33qBDo0pR7lYMDfDKJM0swKDJ2evpn7/dZA=;
- b=n19jNY940pfoFVi2O/wQLJqVgV+GBQpJ6OqcOP6WxrG9l434cgFqQkSp11MmV+0wXwtVFL+y1V4976M+TtstpAgM69EfURQRL/AI+n96be+16BZkuSkfGH/lPFnxS5xq3Qinnz8xphKYN+8HdRsuPUdjBJVQ2A+kQ45goYtHwFZUjKYDhgQpbbM7hU1YVsJKk7yqnIZph7uuD2U2JSEIo4U6n894IOf617G3yVOwEe4LawjkiO5At1qXiZO6K8dZPx+h9ZijuWMAO/1LPnTrPyC4nUsskTvm7q980UuI6Z+THPwrlPWOSgeJuEPDH1zXWWsxz3h9m40EKirYHI8R4Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Dke86N6k33qBDo0pR7lYMDfDKJM0swKDJ2evpn7/dZA=;
- b=PKCKbYDsOE8SbKBoaiFecMrpbnm7gDLAHixeA0W7yzpm9ozbzrstv3QTzolpoGD94w0mz88mMvGLsSSLh0qmeXSjBDCfzhYeEP+4/kwDASdU9CzvZd+YHBFwWdEEyrS51F6XuzJeFO6tjrkkRbMO7evCxN/zRIeEyp26ej8lMiI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB6095.namprd12.prod.outlook.com (2603:10b6:8:9c::19) by
- SJ0PR12MB8091.namprd12.prod.outlook.com (2603:10b6:a03:4d5::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.29; Fri, 28 Jun
- 2024 21:56:41 +0000
-Received: from DS7PR12MB6095.namprd12.prod.outlook.com
- ([fe80::c48a:6eaf:96b0:8405]) by DS7PR12MB6095.namprd12.prod.outlook.com
- ([fe80::c48a:6eaf:96b0:8405%4]) with mapi id 15.20.7698.033; Fri, 28 Jun 2024
- 21:56:41 +0000
-Message-ID: <0265787a-617f-43bb-9cde-3b178ba24779@amd.com>
-Date: Fri, 28 Jun 2024 16:56:37 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] drm: panel-orientation-quirks: Add quirk for Valve
- Galileo
-To: Matthew Schwartz <mattschwartz@gwmail.gwu.edu>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Kyle Gospodnetich <me@kylegospodneti.ch>,
- Hans de Goede <hdegoede@redhat.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, John Schoenick <johns@valvesoftware.com>,
- Matthew Schwartz <mattschwartz@gwu.edu>
-References: <20240628205822.348402-1-mattschwartz@gwu.edu>
- <20240628205822.348402-2-mattschwartz@gwu.edu>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <20240628205822.348402-2-mattschwartz@gwu.edu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BL0PR01CA0007.prod.exchangelabs.com (2603:10b6:208:71::20)
- To DS7PR12MB6095.namprd12.prod.outlook.com (2603:10b6:8:9c::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D311B80630;
+	Fri, 28 Jun 2024 21:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719611828; cv=none; b=b6RYmK0FLDnc4JpKaw1qyX7p9+47TOjeQHLYpZcLRsXzBGWXqOBtQhogmFWWovsWzDxNT9ac8Dk5Sk8gWspZlTC4sGTLjmkFo2X21smYyLzeg5nEdd+qcD1jeGtqmBlHWM54RJIk/pUcY7yXre+CL7AKPCaEh8XPFjpkwmx7HTo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719611828; c=relaxed/simple;
+	bh=2SzSLQDtkY9neHotg9G5l9A/qZHaOlO/5cgaX8OuoYk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qb8dmySztojSGZnVE/QyvLJsWsIo3pBt4cnVMWZpIc4sfXGmAdEle4t5/A7He63cMIH34BTw3v6ELbeaqRVwTWo3UHTKBk/JqPIMLjOPBaaMnoPssnpizR1df+C/kxo02ylpjeflsiWp+HhRLGMxfLCCEHblSrUjvSOhM4DDuM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XesoriSQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47B41C116B1;
+	Fri, 28 Jun 2024 21:57:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719611828;
+	bh=2SzSLQDtkY9neHotg9G5l9A/qZHaOlO/5cgaX8OuoYk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XesoriSQQdUF02x7RS84iZD03IruGXLnqqOLjSrbFRPIw5rIbKH5RUrHiv0YdYJvd
+	 ayFozyvx0EshMjX8xEmOZIvexUrItS4mn9ysJTDHH1f4shANqgnmAEGG+9EicBE3SP
+	 38E5LJm/8cdc9r1ouCIT4RnDW2R1dfn/oP0BzcnJdfPHCVJwh7lh+VpHY2GFO3VTJN
+	 EIbSz7NLX5nqgWC9YSo7PpCmbWpvaUl+1DZy5xXpKlGPPmUgdMA3YWiGSsJN6ZTsr3
+	 eF94ESmTP5yKwRZX1Eay5WMd0biSLZco6jC3GzMWOHfPY6UG9SG+siWTnyQHlIlg98
+	 RvpdVTqJgx+FA==
+Received: by pali.im (Postfix)
+	id CDAF37A6; Fri, 28 Jun 2024 23:57:04 +0200 (CEST)
+Date: Fri, 28 Jun 2024 23:57:04 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: jdelvare@suse.com, linux@roeck-us.net, linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hwmon: (dell-smm) Add Dell OptiPlex 7060 to DMI table
+Message-ID: <20240628215704.i6ohbuz2zgegr27p@pali>
+References: <20240628214723.19665-1-W_Armin@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB6095:EE_|SJ0PR12MB8091:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4faa488e-ca3e-4f63-54e5-08dc97bd3197
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZzUvcGlGckVDQWpEK3lwTm9FZC9sa0VrRTliQVJIUVIzVFJWSTJrQWhiek1E?=
- =?utf-8?B?cTVCZ3RwN1VONzk1NmRnWERIaVAvaGZrU0xZWVNmK25qTUNlMGdCM1NRd09Q?=
- =?utf-8?B?NitlL2VTN1FQblJmclFMcmwzV21ORXVWbHc4NU54UUFlYTF0YVluckhzN2E0?=
- =?utf-8?B?NFJXZVJyM1E1aFdwQTR5b2ZtVDhIUWRnVldmQ1pHUDBMYTNpUlQrYWNLV0JC?=
- =?utf-8?B?eGsyb1ZYKzlEeVhkSEtNVFU5c0kxZHJGbnlaVXh5YmkxSG1HSXRtbHN1VUNN?=
- =?utf-8?B?Z2Nla2lIYndsVWR1M29XcWMveTZVai9KcUpUSGwrNmFLNEtVOUQ5VWVZWlg1?=
- =?utf-8?B?YkZUTXdhU1ErYWdjZUc0S3UzSmcxekpSS0hCUDZkV1JHRkZLNU9vd052L3Fi?=
- =?utf-8?B?dXJvYUs4Z1BHY3RpNVhnNlhHRjdQUDVvbmROV1pKenVDSEppRXN2WHc1V3Bo?=
- =?utf-8?B?VC9CM1NRc3VDWlVJM3draGdzSk9TdGw4dXlzaTVlUk1jdUxDVWp0RkI5ZWk5?=
- =?utf-8?B?eHlMMTB0VXpPZmJ1bjVna3JOMWNRZFA4YVU1UHdLanRRTEhNSWZWVlg0M0xp?=
- =?utf-8?B?YW1rTWVCR1llVW04aCtKajVzZjNlQ0Q1TW9qbUxWZFJzS1kwbS9McXFMd3RZ?=
- =?utf-8?B?aVZ6aGlmTGNleUI0SHkyUGxyWVN3UVNQY1UvSXIrR3ZCZXBNSk1oYXNhK0NS?=
- =?utf-8?B?KzlKeUYrdGw0STJoaWhOcDEwNWdKblRXelJPNTZMZmFpL3BKeWxMd1JBeEZK?=
- =?utf-8?B?UkY0Y3ovaTNqS3hQYzZwWUplbFJBVVBidDdESEhwNlJVOGFKY29EU1dPbDB4?=
- =?utf-8?B?OVo3TUI2NkhjbkZQakRGcUVjakk4Wk5DZ2hVL2xjMnJVREJ4ZzZGK1NpbHZE?=
- =?utf-8?B?NWlXODVPb0JqWjhBcjdHODVRTENXem82ZWZaWnNKMnZ4U3A2L3ZHV3FZZFA4?=
- =?utf-8?B?U2NmY1ZTOHlQdUNyR1RFb3FNV3BrVjRkTnUxTHJFMXVkR3hyZFUyQ3BlQ0o3?=
- =?utf-8?B?MVE5NTRGWUFRb0Z2MU9rZ2hkelJ0OFgyNFVhYlJKdHdHL2JaemI5cnRzeVh3?=
- =?utf-8?B?bDlwd1g0YjBjRDE4OElPVjB0RWVKcWlvdHE4aHE1MGtvM0lNLzJxWDdxcEJx?=
- =?utf-8?B?SC9ZRGJBM0N5VWYzWmJiaE81VUc2VzBHbVlKbFZ5aWlidHBFakQzdTUxTjZm?=
- =?utf-8?B?UzdnODRERmpBOFdkU1VVZWxaalZHTVlGQm1FSTVrVithdlN3Y3psVmUzL1BI?=
- =?utf-8?B?dkJTeGk3Y0xORk84VEZkbjQ4NWw0VWFmbkVmMDNkTjFVRWY5T2RJeW92MEMy?=
- =?utf-8?B?ekpoSXdiZ1E5NU03bE1wN1FjMFkzb1RQZEMrZ0Ivblc4U2MxQmJINE1nZmZt?=
- =?utf-8?B?WExxWFNZMkxxUUFtMVliZFVHaXBCMnRaQWZldlJpbW9vTHAzYnZreUlEOUsy?=
- =?utf-8?B?V1pkNkh2LzNoZlhXQ24xRDJkMTR2cDRPcTlRMWtqQ2ZOT0Nzc1lGcXNRRDRH?=
- =?utf-8?B?TytWTHVVKy9zM05kK0l5Sm9PWEpvYVNRSUpaSzRweE1FUFRXRS9LUHdFaUdi?=
- =?utf-8?B?TzljVG9FUHY0c0szNVNBMUVhQUxDRzFDRG13alBjL1QrQStuWndYdTJKQWNt?=
- =?utf-8?B?TnpoQzRGdUlkMmRiaXd2TmtUNnBPeFVudTFleVlndHhCTDFYSjJhYlhoNXhP?=
- =?utf-8?B?SVMxZ3pPRlpsc1hrNkFZc1dHbm9WWWI1Mi9LdzdpYTlVV29LZ1BXOWh4UzQ2?=
- =?utf-8?B?eFFXR1E2U0Z4dHZTbENsZ3AwVlRIbmlwRngyejJPajhQM1Y0dlZTSFRId3Ny?=
- =?utf-8?B?YTRXZ0pRbGFsQnFHVC8vUT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6095.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VXZRT3o0QXhEWkk1WEE1UUkwMVUvRS93QjNPcEJUZ1JJMndsQ3p2VlQ5UVNY?=
- =?utf-8?B?UjlEM09saEI5TUVVZEdTMlVBRTBvek4wM0pQWTFDUHZJUXpOVnhma1NKT1ZL?=
- =?utf-8?B?bU5MK2oxUHJKSXRWUEZ6ZE0xQWphTUx6TkZsdVRJbFZpaUF5YjZJd2hQdzAr?=
- =?utf-8?B?bTNqOHBiTmNCNjRUdFo3aEo3b0V6SzF6OTA4ZUVwY3NiMForREtQK3FVS0xK?=
- =?utf-8?B?emFBRE5jNm1IdEk0ZVluK2FnZ3d6RHg1SmtpaGtRZEs4ZFJiNnBaYlRGM0hP?=
- =?utf-8?B?TURBbHhuQXdZVFhPbjA1MzY1ZGFoMDBZMnlsSE4ra0s1SkRpMnQrQmdXSEt3?=
- =?utf-8?B?NWswNEFOMmJZQXNyYWNHUFFZWEF6RXhzUDhLUHhYR2o4ZGhNU2FGUFJvZ0Zm?=
- =?utf-8?B?SW5YU09kSmNyV3JLUGZHd0xIdm9LYlFTakVhOXZHN1AveXk2eGR5M1pUU1ZT?=
- =?utf-8?B?Zkc5TFJBQThCUVRqcjdBZlhBNEMwZWkzTERtbjhRMGJNdEJMdStrVEZLSTdO?=
- =?utf-8?B?ajRyZjBhb2hWdzBKclZwZHEwT09Eb0YrYW92N3FiVDRpSDlxUng5S0xlRVo5?=
- =?utf-8?B?Q3RGRUdUaXc0RW9XdWp3Rnc1a0Rzd0V6UW1DL2t6T2x2RUUwMkxoWGxYeVUz?=
- =?utf-8?B?V0J2aVloTnpXNDJFQ1ZZMWNmbG5Oc3RUVzAzZTBWNFpJNTR0OE9aMTFTQlEw?=
- =?utf-8?B?ZDFWQVhFZnl6ZW8yNVFjWTd4Q1hyY3IzZEYwYUdROHZtOGtYTTJ1NWtqVVRI?=
- =?utf-8?B?aEdzS0dOTHBtaHVtcDJmNXR6WHlpUG9oUWNMQjZqYk92UHMrMytJL3ljOXBH?=
- =?utf-8?B?UExweE5RSitvcjdwakhwR0VyL1VhRTRLVjNTWUxzRFNYOVdCRjZjQU1Sdmtr?=
- =?utf-8?B?QTNaL1VCZFN6cFd1WmhvNGUwNWJJY0JmQUs3UG9jaTZaZ1U0ckJTRHBaVTYr?=
- =?utf-8?B?MmhkbWxZWkxpbE9ZZUJjVnR5Slh0aXlMOWlUMEhib1c3Q1dNNGIzN1hHSHVI?=
- =?utf-8?B?ODNYdCtZYS9wUWFIQzF4cWlQZHhZYnRzcEVuZkcrTzVzemdubU1mM2ZmLzMx?=
- =?utf-8?B?UnM1empDY2dSSE0yNUU0NzBpUUY5RGF3MXhwajlkZWVpSnFPRnVuZjllVmFD?=
- =?utf-8?B?TWkzTGM1UUxvWi85cWIySGowNmE2clRjcndlS1Q2R3Fwb2kzejJrVTNmUTIz?=
- =?utf-8?B?QUxIRmZaNG55M1Y3MmU1ZGpmaExTazMrV0VLN2Y4M2RPa2NEMkZjenBCa0VZ?=
- =?utf-8?B?SlF6eWdJcXQzekhGZFd3MHNDQ0xHTmZJS0tMaU1UWmlnckV1azhDOXF1Q255?=
- =?utf-8?B?OVR4VXRzaU5NMmRmRmkrZStzS3UrK2wzbWJVV2pSMmszZjFEN092OGdNajFr?=
- =?utf-8?B?QTg2c0s1akR5NWNzalEydGIvZTY4NTlKZ0IxZnplaE5HWEZqcXY0VFd3TlMx?=
- =?utf-8?B?RXdnRUxJckk2ZVVFNjhpNnJma2ptc0tUczN5UFFXeUlUZ1J2enF6VGFodHFJ?=
- =?utf-8?B?ZVBzUURtZW00M0ZiNitnTkEyTTBrdkJWMUhnYWI3T0xDUVE0M05Pd1VrVjlV?=
- =?utf-8?B?NVBHaWVTUzFHL08vZlIyWGZNby9CRk82MHU1RUFqVEZvTmtmZ1pXR1hjUXlE?=
- =?utf-8?B?aFgyQWNQOGtJWmpDV204STJoVmR1RzRaZGt2VXJ1YWpHdWlqNEFoTmFZUG5k?=
- =?utf-8?B?b1gzK2diYXFRWEpaMnNvdysxMk1MN0xCR0tRaVoraGxrMWFzVTRZb2tuYmdT?=
- =?utf-8?B?N2dYcThBN0kwNkpTc2M3bzZrVGxFc0NYdnFOaHdDSHRNbUlvaG5QbGU2MExi?=
- =?utf-8?B?Yno4VkhBcitsejRIcmtYYTdST092bTVrSDJEN1hZWm5jaHF5SUZpd05TbFRq?=
- =?utf-8?B?VnJBZjdtbTNSL1orampOUlhwOTBMem5saitNZWhqbUl4b3Q3ZHJENXdocmpi?=
- =?utf-8?B?SUNWZmZIU0RKbE5PTFFFV211RGkrc1czcnBPK2VGZEZVWU9IZjBPUHdBZ2pJ?=
- =?utf-8?B?VlprL2tmem8xSUFtSzFSRTFWMFB3YmFWWUJEc3dKNk1KdlhleG5PMHYzUVRX?=
- =?utf-8?B?RGdrbiswQjdXaGlaNy9mTEpuL2xIUDd0ZW93bFhNSDJqMnlRUFFmT0Zic0Vn?=
- =?utf-8?Q?sU5HLRNZLLoRj9ND8o9vHYTpv?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4faa488e-ca3e-4f63-54e5-08dc97bd3197
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6095.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jun 2024 21:56:41.7545
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 541uBv/WbkxaXadcIeWJ9GowkOI8NsDjExgLxVFs/V/aR/uWPjdjIoww4gZjK/m2X3923YwtYhl3zczoIHcXSg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB8091
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240628214723.19665-1-W_Armin@gmx.de>
+User-Agent: NeoMutt/20180716
 
-On 6/28/2024 15:58, Matthew Schwartz wrote:
-> From: John Schoenick <johns@valvesoftware.com>
+On Friday 28 June 2024 23:47:23 Armin Wolf wrote:
+> The BIOS on this machine is buggy and will in some cases return
+> an error when trying to get the fan state, but reading of the
+> RPM values and the temperature sensors still works.
+
+Does this error affects machine usage (e.g. freeze of CPU or some
+erratic fan behavior)? Or just kernel does not receive fan state and is
+unable to report meaningful value to userspace?
+
 > 
-> Valve's Steam Deck Galileo revision has a 800x1280 OLED panel
-> 
-> Signed-off-by: John Schoenick <johns@valvesoftware.com>
-> Signed-off-by: Matthew Schwartz <mattschwartz@gwu.edu>
-
-Thanks!
-
-Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
-
+> Closes: https://github.com/vitorafsr/i8kutils/issues/38
+> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
 > ---
->   drivers/gpu/drm/drm_panel_orientation_quirks.c | 7 +++++++
->   1 file changed, 7 insertions(+)
+>  Documentation/hwmon/dell-smm-hwmon.rst | 2 ++
+>  drivers/hwmon/dell-smm-hwmon.c         | 7 +++++++
+>  2 files changed, 9 insertions(+)
 > 
-> diff --git a/drivers/gpu/drm/drm_panel_orientation_quirks.c b/drivers/gpu/drm/drm_panel_orientation_quirks.c
-> index 3d127127e7cb..ac8319d38e37 100644
-> --- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
-> +++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
-> @@ -427,6 +427,13 @@ static const struct dmi_system_id orientation_data[] = {
->   		  DMI_EXACT_MATCH(DMI_PRODUCT_VERSION, "1"),
->   		},
->   		.driver_data = (void *)&lcd800x1280_rightside_up,
-> +	}, {	/* Valve Steam Deck */
+> diff --git a/Documentation/hwmon/dell-smm-hwmon.rst b/Documentation/hwmon/dell-smm-hwmon.rst
+> index 977263cb57a8..74905675d71f 100644
+> --- a/Documentation/hwmon/dell-smm-hwmon.rst
+> +++ b/Documentation/hwmon/dell-smm-hwmon.rst
+> @@ -360,6 +360,8 @@ Firmware Bug                                            Affected Machines
+>  ======================================================= =================
+>  Reading of fan states return spurious errors.           Precision 490
+> 
+> +                                                        OptiPlex 7060
+> +
+>  Reading of fan types causes erratic fan behaviour.      Studio XPS 8000
+> 
+>                                                          Studio XPS 8100
+> diff --git a/drivers/hwmon/dell-smm-hwmon.c b/drivers/hwmon/dell-smm-hwmon.c
+> index 48a81c64f00d..c75bfe93f2f6 100644
+> --- a/drivers/hwmon/dell-smm-hwmon.c
+> +++ b/drivers/hwmon/dell-smm-hwmon.c
+> @@ -1263,6 +1263,13 @@ static const struct dmi_system_id i8k_dmi_table[] __initconst = {
+>  			DMI_MATCH(DMI_PRODUCT_NAME, "MP061"),
+>  		},
+>  	},
+> +	{
+> +		.ident = "Dell OptiPlex 7060",
 > +		.matches = {
-> +		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Valve"),
-> +		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Galileo"),
-> +		  DMI_EXACT_MATCH(DMI_PRODUCT_VERSION, "1"),
+> +			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
+> +			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "OptiPlex 7060"),
 > +		},
-> +		.driver_data = (void *)&lcd800x1280_rightside_up,
->   	}, {	/* VIOS LTH17 */
->   		.matches = {
->   		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "VIOS"),
-
+> +	},
+>  	{
+>  		.ident = "Dell Precision",
+>  		.matches = {
+> --
+> 2.39.2
+> 
 
