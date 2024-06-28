@@ -1,95 +1,109 @@
-Return-Path: <linux-kernel+bounces-234304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EBCD91C502
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:35:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5F9491C50D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:39:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42FD11F2193C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:35:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B6F5283FF2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:39:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B0051CCCD3;
-	Fri, 28 Jun 2024 17:35:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8671CCCD2;
+	Fri, 28 Jun 2024 17:39:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=o2.pl header.i=@o2.pl header.b="Stcy3Gxs"
-Received: from mx-out.tlen.pl (mx-out.tlen.pl [193.222.135.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="VT1AtZqs"
+Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8BB4CB37
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 17:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.222.135.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 495BC1B94F;
+	Fri, 28 Jun 2024 17:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719596128; cv=none; b=BRfGa7AEY7bYS8XyBoyjuMj5vGM3okCWeV9gn0nldEfEJtoC8dLqYg+D3p1asKLHOk5yS5CBdbXsB9yBWki1LxQynO45hq1P+AJUGN4xloqbJxvswWAlNKtjJDnhCDsADoDqST+jReuhKrMDsET39N2mePVQqdXXJ9hTUCPHKTM=
+	t=1719596344; cv=none; b=beKKzF6b9qhYfbd16TWObao1uifTx0tE9fTCkj2UaRVKzNmkrTgokbt2r48eHk5CrZULefcqOZkn/Q8W86i/NtQUdpuLU8Ar8CvSOi3Lj65WKcZNR/aNQzH6cBXqYBwRIE6qjO4roQGdSPOoFQu24lURxCaHkOCwsxdnwkqlQzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719596128; c=relaxed/simple;
-	bh=gsjx+rV4N04Kl1WCHhlJ4tV+7/Ofpag9Hxxm1AzjwuI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=r9Ppd+QXl+lgV/e4ST4mlcP7FXI06rCKugKXQJzFLp9YfAs21MFN8OrrpfL6OH7n1RQTxiqpugDYcXmYzdTm423w4V2JpszlC/4HK7M0Q659m0Ajw+dUVF7baGjvj389tY5kyZqAWUM89eb6B7BMZ3GcH83pkN0nB1xx8xLxYz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl; spf=pass smtp.mailfrom=o2.pl; dkim=pass (1024-bit key) header.d=o2.pl header.i=@o2.pl header.b=Stcy3Gxs; arc=none smtp.client-ip=193.222.135.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=o2.pl
-Received: (wp-smtpd smtp.tlen.pl 31124 invoked from network); 28 Jun 2024 19:28:42 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=o2.pl; s=1024a;
-          t=1719595722; bh=3R3PzXR8vg7/jMKEJYNILWpXdgNz/HP2r5QHUvDEtaA=;
-          h=From:To:Cc:Subject;
-          b=Stcy3GxskXr+IeTaF3EhBAn1RRn/sPKyXx/B9eKg9SWNyv16jfShJON1A/XLr8Kfj
-           4G8l0Uz5Kjja3U0If6cfe7UOzFIEmVxNIlCNgf6ZXblfthQzPTcdXceHx3sHb/gOc+
-           resX7SFr5I8rymY0825le39pFlfarhYhAN80mQFk=
-Received: from 95.49.236.131.ipv4.supernova.orange.pl (HELO ARXL0208.home) (cosiekvfj@o2.pl@[95.49.236.131])
-          (envelope-sender <cosiekvfj@o2.pl>)
-          by smtp.tlen.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <davem@davemloft.net>; 28 Jun 2024 19:28:42 +0200
-From: =?UTF-8?q?Kacper=20Piwi=C5=84ski?= <cosiekvfj@o2.pl>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Kacper=20Piwi=C5=84ski?= <cosiekvfj@o2.pl>
-Subject: [PATCH] net/socket: clamp negative backlog value to 0 in listen()
-Date: Fri, 28 Jun 2024 19:28:36 +0200
-Message-Id: <20240628172836.19213-1-cosiekvfj@o2.pl>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1719596344; c=relaxed/simple;
+	bh=BK09IPXEmALm8Gdo89s3fQ9e2NwgJoDJ3gLuk1S/nic=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QvH67ISuL3lSiolYlxv2XSJbRqmR7SMMtoKVsCvmqfZefWxGalP+B8z66o10hcH47hoW1m6u4jgdL866GTRuhl2kGuw3ASV818/x2cbEswkE+/LXGuob/YNXm74bq7zw44l5rso6xkiuHgGLy6uuH1SwycR7ltMSXN9cnBN5FLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=VT1AtZqs; arc=none smtp.client-ip=128.199.32.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lucaweiss.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
+	t=1719595832; bh=BK09IPXEmALm8Gdo89s3fQ9e2NwgJoDJ3gLuk1S/nic=;
+	h=From:Date:Subject:To:Cc;
+	b=VT1AtZqs98/uwP3P/YU+QlUlrx2apHg/XRtP93isHjKOssLUdW2wv/AylrG8s0qDo
+	 ng00yWuMFzNCor7IWpr42mf2i5Yhmp7pukkOIq1w3S8I81Ch3qyBRwdVThG1fiA2DN
+	 yhYNGfZrvCdOagURC7HXXd5YzGvw6gqr2JIxwdAs=
+From: Luca Weiss <luca@lucaweiss.eu>
+Date: Fri, 28 Jun 2024 19:30:23 +0200
+Subject: [PATCH] soc: qcom: smsm: Add missing mailbox dependency to Kconfig
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-WP-DKIM-Status: good (id: o2.pl)                                                      
-X-WP-MailID: 7c6cc2d9ab1e5ffadeab9a5258382423
-X-WP-AV: skaner antywirusowy Poczty o2
-X-WP-SPAM: NO 000000B [sTOU]                               
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240628-smsm-kconfig-v1-1-117d5af4ba1f@lucaweiss.eu>
+X-B4-Tracking: v=1; b=H4sIAC7zfmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDMyML3eLc4lzd7OT8vLTMdF2zRANDcwtjE3OjNAMloJaCotS0zAqwcdG
+ xtbUAekLAmV4AAAA=
+To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel test robot <lkp@intel.com>, Luca Weiss <luca@lucaweiss.eu>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1060; i=luca@lucaweiss.eu;
+ h=from:subject:message-id; bh=BK09IPXEmALm8Gdo89s3fQ9e2NwgJoDJ3gLuk1S/nic=;
+ b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBmfvM3tko9blewzgTgzwAB70K9tcux67YW7REKU
+ PsY/V5ShRGJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZn7zNwAKCRBy2EO4nU3X
+ VieMD/9au88RKFA4PK6YLlLbYdyrPrBvMGbLvmKLtcckx5TS22ylMYJmWaMo4KgZ8uus5uv/WfO
+ tmq+HgRkj379eqOWElufsHZs6AIXEzacyYhgux6ZgQW00dQUvcCa1jKEUIKlyARu7Ed8QB0yxTR
+ MEDogu7pK8U4a/s5+6v1bd/qnRb1Ay/91DNUbOeH7L2UOTz5vxCzOPKgR1WwC8leNGce5jBPj7O
+ DWpr62ht0sxuejANoelemC+Mx3bJkyD3Nl23lwkZF3kKdocwolPcp4r/vym8vYTJuHILl/jSH8U
+ pu+uTbAIG+czpMyVeBOr99IPqFR0jD7NZ8veB9rlSLLvkjBaR44Z9FHbuZ8EVojf/DVRrPL4rrx
+ S/LwmRqO7u/BoKGedzDsNiU3eyW/YROUjV8pnaOTIv6GKAAAjIjEpM4D/fud8MqvTgDazsPDGiR
+ YiZEMA3gMQvWsbjXLwgXS61qDV2j1iIyUuuoHw3DvqUm5I4J66Xs9XzZlR63uBjIXnVZrjRizhH
+ mLNSQ1vA4ObpwGpwHmybrnesp6mtAe0UtV1gAU8QwjM0YO4it5HsiFbPj2gOzgHqa7fpn1oJfCY
+ a7iMrsASR+yKu4L9y2WWM0tpTmHfnDWsJjeE2pW3k2KqeDcnuc6LmIVNB1w/pUWdMue5wxYgDgY
+ yZTz5kqoWem1HMw==
+X-Developer-Key: i=luca@lucaweiss.eu; a=openpgp;
+ fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
 
-According to manual: https://man7.org/linux/man-pages/man3/listen.3p.html
-If listen() is called with a backlog argument value that is less
-than 0, the function behaves as if it had been called with a
-backlog argument value of 0.
+Since the smsm driver got the ability to interact with the mailbox using
+the mailbox subsystem and not just syscon, we need to add the dependency
+to kconfig as well to avoid compile errors.
 
-Signed-off-by: Kacper Piwiński <cosiekvfj@o2.pl>
+Fixes: 75287992f58a ("soc: qcom: smsm: Support using mailbox interface")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202406180006.Z397C67h-lkp@intel.com/
+Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
 ---
- net/socket.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/soc/qcom/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/socket.c b/net/socket.c
-index e416920e9..9567223d7 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -1873,8 +1873,7 @@ int __sys_listen(int fd, int backlog)
- 	sock = sockfd_lookup_light(fd, &err, &fput_needed);
- 	if (sock) {
- 		somaxconn = READ_ONCE(sock_net(sock->sk)->core.sysctl_somaxconn);
--		if ((unsigned int)backlog > somaxconn)
--			backlog = somaxconn;
-+		backlog = clamp(backlog, 0, somaxconn);
+diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+index 5af33b0e3470..60efecd16380 100644
+--- a/drivers/soc/qcom/Kconfig
++++ b/drivers/soc/qcom/Kconfig
+@@ -194,6 +194,7 @@ config QCOM_SMP2P
  
- 		err = security_socket_listen(sock, backlog);
- 		if (!err)
+ config QCOM_SMSM
+ 	tristate "Qualcomm Shared Memory State Machine"
++	depends on MAILBOX
+ 	depends on QCOM_SMEM
+ 	select QCOM_SMEM_STATE
+ 	select IRQ_DOMAIN
+
+---
+base-commit: 642a16ca7994a50d7de85715996a8ce171a5bdfb
+change-id: 20240628-smsm-kconfig-6a01783472f0
+
+Best regards,
 -- 
-2.34.1
+Luca Weiss <luca@lucaweiss.eu>
 
 
