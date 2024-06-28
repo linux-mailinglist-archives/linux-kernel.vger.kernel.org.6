@@ -1,91 +1,151 @@
-Return-Path: <linux-kernel+bounces-234252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AE3F91C440
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:57:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFF4E91C443
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:00:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86C5CB210D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:57:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D9A71C2219B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE611CB310;
-	Fri, 28 Jun 2024 16:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB4061C9EDA;
+	Fri, 28 Jun 2024 17:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="YmfqWxER"
-Received: from gentwo.org (gentwo.org [62.72.0.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ME7HKGDy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA081E532
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 16:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02BD21E878;
+	Fri, 28 Jun 2024 17:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719593866; cv=none; b=j3UEexRdJXpDS6gnQjmfQJKs6awXVEEmt8SUOGBpKgmC0Eg78ZHbX30cMzywa3UC8aqE3RXe8jqwEk8k2QNYSQxs4l6FpgpsqZ7wSJxM8uKXjKG1GxOtie/xGB8Nkfw2e+VgMdrFZGjwwjMVC3FDJLsArrHi7UXTkpiV5HYE1XQ=
+	t=1719594030; cv=none; b=I4YWNbXgbSk4pn3AMIyBFnlexk+WKwISGxccr8JW+rp7Kn93AKHGsYmE7pYq5sWFgtSW9+mM8jHLhQJQYFmZ93fVgwXl/hyiQU/DyAC2r6dnvPBfKlD+2OXIqWdm2vENh0RwL175Bk6M9AXQ0SlWQucD4Kqr8p6tRZ1eBrBzjF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719593866; c=relaxed/simple;
-	bh=vq1lqtO2B4twNh3RMXFKKYkAgq3F2pc86OVJbHKxpCQ=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=eXO02W8TVsbQ9onzgbM0eKxFnBv0zxcNeAXpkBMy+FwyiFLVxcEIkp9RTBdG5ITXkQ1tkOj8CRiLpIP1zViv6DoO+fnore/axACgj+uB8P3GRVCR2NZcHLgcgWn95rBwOCmgdZguOkFo8NZYx07b5UXfIOgquHMZ6aWfJGS+6s4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=YmfqWxER; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
-	s=default; t=1719593857;
-	bh=vq1lqtO2B4twNh3RMXFKKYkAgq3F2pc86OVJbHKxpCQ=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=YmfqWxERyKWmhVqObJzlwqaUNaFEbLVvqXMeXtCa44tMIVc79tBlmNvs9LWSlXl9r
-	 T/oNSYn0uDKsc3KRaelnreK06sKzSoQdXnXiF1t936SD9X/pNFVxVUTPRuczH8tcHK
-	 kDRg65nXTRRq0iDlgRVEg1jAjlekx42+BtCMXiOM=
-Received: by gentwo.org (Postfix, from userid 1003)
-	id EA4D54037C; Fri, 28 Jun 2024 09:57:37 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id E9588401D7;
-	Fri, 28 Jun 2024 09:57:37 -0700 (PDT)
-Date: Fri, 28 Jun 2024 09:57:37 -0700 (PDT)
-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-cc: Yang Shi <yang@os.amperecomputing.com>, will@kernel.org, 
-    anshuman.khandual@arm.com, david@redhat.com, scott@os.amperecomputing.com, 
-    linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [v5 PATCH] arm64: mm: force write fault for atomic RMW
- instructions
-In-Reply-To: <Zn7q3oL1AE8jdM-g@arm.com>
-Message-ID: <773c8be7-eb73-010c-acea-1c2fefd65b84@gentwo.org>
-References: <20240626191830.3819324-1-yang@os.amperecomputing.com> <Zn7q3oL1AE8jdM-g@arm.com>
+	s=arc-20240116; t=1719594030; c=relaxed/simple;
+	bh=MxOYvKjuMI3QpMjNWfn56U4u2xBXujTyJcHf91HZg9s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=faZsur3odUHpktH6LOLVUsVfosa9YQQus+o4WNEoJjHk6FcuS43c2S0RTc4OjCXI5vra24hQUzxv3uqCaDy0FM5SMEeHG8b30RWTJwpc52VXjtUxm/bUrqSL3uljD3JHYoqwsY69X55p0w6GQqlq7OM79TkreiWxnZ+tIN5l/EQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ME7HKGDy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68470C2BD10;
+	Fri, 28 Jun 2024 17:00:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719594029;
+	bh=MxOYvKjuMI3QpMjNWfn56U4u2xBXujTyJcHf91HZg9s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ME7HKGDym/YY+UZq2i3/UIO4lFek7ScUa/1CjEH3iAnx8RuqdysJmZaenOzj7bl4h
+	 8jkiG6/Syd7VXRrbtXvM6IqEw5I4Mjjwn4JPuZEb2L09dVbUjvyS4BYPHR1WpvHmYO
+	 K1C0mRqOyTjT02LUYyp8FQrq0O6XL3knJV/JjUJN2JWXm2e4f3xN9jPMEDQAeELAif
+	 X0mvcAOjBfq7mO9j77DoRunae/18l6XTw/SEAriw3CXp1Vt8IJ1LnkvP5mW2xey64X
+	 T3eFGQFCPSyqwCIeCaCdkGmLrALvefWZo22ax2BIbeLPD/bkIpXHa5HA4hDOGdqkrd
+	 a7jh91FWxhl7A==
+Date: Fri, 28 Jun 2024 11:00:28 -0600
+From: Rob Herring <robh@kernel.org>
+To: Ayush Singh <ayush@beagleboard.org>
+Cc: Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Vaishnav M A <vaishnav@beagleboard.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	jkridner@beagleboard.org, robertcnelson@beagleboard.org,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 1/7] dt-bindings: connector: Add mikrobus-connector
+Message-ID: <20240628170028.GC3143032-robh@kernel.org>
+References: <20240627-mikrobus-scratch-spi-v5-0-9e6c148bf5f0@beagleboard.org>
+ <20240627-mikrobus-scratch-spi-v5-1-9e6c148bf5f0@beagleboard.org>
+ <D2AYUH4XY0SK.1SYOUCT0PLAKT@kernel.org>
+ <e0f9754e-4d84-4ab4-82a4-34cb12800927@beagleboard.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e0f9754e-4d84-4ab4-82a4-34cb12800927@beagleboard.org>
 
-On Fri, 28 Jun 2024, Catalin Marinas wrote:
+On Thu, Jun 27, 2024 at 10:59:46PM +0530, Ayush Singh wrote:
+> On 6/27/24 22:42, Michael Walle wrote:
+> 
+> > Hi,
+> > 
+> > Could you give us a DT snippet of how this should look like with a
+> > board?
+> > 
+> > On Thu Jun 27, 2024 at 6:26 PM CEST, Ayush Singh wrote:
+> > > +  board:
+> > > +    description: board attached to mikrobus connector
+> > > +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> > Shouldn't this be a subnode of the connector?
+> > 
+> > i.e.
+> > 
+> > connector {
+> > 	compatible = "mikrobus-connector";
+> > 
+> > 	// phandles to the parent controllers
 
-> On Wed, Jun 26, 2024 at 12:18:30PM -0700, Yang Shi wrote:
->> @@ -568,6 +596,12 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
->>  	if (!vma)
->>  		goto lock_mmap;
->>
->> +	if ((vm_flags & VM_READ) && (vma->vm_flags & VM_WRITE) &&
->> +	    is_el0_atomic_instr(regs)) {
->> +		vm_flags = VM_WRITE;
->> +		mm_flags |= FAULT_FLAG_WRITE;
->> +	}
->
-> The patch looks fine now and AFAICT there's no ABI change.
->
-> However, before deciding whether to merge this patch, I'd like to
-> understand why OpenJDK cannot use madvise(MADV_POPULATE_WRITE). This
-> would be the portable (Linux) solution that works better on
-> architectures without such atomic instructions (e.g. arm64 without LSE
-> atomics). So fixing user-space would be my preferred solution.
+These are per bus, so put them in the child bus nodes:
 
-Doing so would be requesting application code changes that are linux 
-and ARM64 specific from applications running on Linux. A lot of these are 
-proprietary.
+> > 
+> > 	spi {
+
+                spi-bus = <&spiN>;
+                spi-cs = ...
+
+The base DT would have the spi node and these properties. The overlay 
+would still apply to the connector node, but also have the 'spi' node 
+along with the devices.
+
+Note that whatever is done here, I expect to work on any connector with 
+SPI, I2C, etc. So structuring the bindings for that would be nice. There 
+is also this effort which needs the same bindings[1].
 
 
+> > 		temp-sensor@0 {
+> > 			compatible = "maxim,max31855k";
+> > 			reg = <0>;
+> > 		};
+> > 	};
+> > 
+> > 	i2c {
+> > 		..
+> > 	};
+> > };
+> > 
+> > I don't think you can introduce a new
+> >    compatible = "maxim,max31855k", "mikrobus,spi";
+> > if there is already a binding for "maxim,max31855k". But I might be
+> > wrong. Why is this compatible needed at all?
+> 
+> So I did consider the design you just proposed, but I was not able to solve
+> a few issues.
+> 
+> 1. How to deal with say 2 mikrobus connectors in a single system?
 
+I don't understand why that's a problem? It's no different than the same 
+overlay working on multiple vendor's boards which I imagine you want 
+too. The connector node in the base DT has to remap everything from base 
+DT into a mikrobus defined number/name space. For example, host GPIO N 
+is mapped to mikrobus connector GPIO 0 and so on.
+
+There is one issue in knowing what the target node is. Standardizing the 
+target path or connector node label only works for 1 connector per 
+system. You can have an empty target path in the overlay and something 
+else can decide the target. This is what's being done for overlays with 
+the dynamic PCI nodes. For example, maybe an eeprom tells the driver 
+what overlay to apply.
+
+Rob
+
+
+[1] https://lore.kernel.org/all/20240510-hotplug-drm-bridge-v2-0-ec32f2c66d56@bootlin.com/
 
