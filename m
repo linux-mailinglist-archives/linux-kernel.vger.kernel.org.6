@@ -1,119 +1,140 @@
-Return-Path: <linux-kernel+bounces-233669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0962291BB52
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:21:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FC2791BB58
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:22:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A1AC1C22758
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:21:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C1FD281730
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BC9E14F9DC;
-	Fri, 28 Jun 2024 09:21:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="HEfJ7MU/"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E59A1514E1;
+	Fri, 28 Jun 2024 09:22:23 +0000 (UTC)
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76CCE1465A1
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 09:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15CBB21105;
+	Fri, 28 Jun 2024 09:22:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719566507; cv=none; b=UmreX0JvC0CO5uMyZWVYwSdK2amhzulJwCjh5IvCedoE7XsKvrPhSkRlVQDEPtgGa+L9jszmrRxRy4zv44Md5iURHNODgC5SDOOPQnjtvDpY4dLflVcMJ1HM4ZStg+4Wlbt3xBlu281O3sNWStdG4ZGNNBOmvkU3DzIx/ovzaFQ=
+	t=1719566542; cv=none; b=KSCNkEpeiq82p0uRNJvB+mJHVTGXP2MzvIZ5uKBphKNpQSGS9C+7yrdGPvj2gO+D0AHvnbYBkS5PpOQO8mlD6QvC3yE4ZOQ52fJmKRlaMXFG+IueyFQU2WAwRf/CQBIHEJzLJr4dTXRAtWOw3StRo2h419ICM47BVN3MtDivR7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719566507; c=relaxed/simple;
-	bh=GUUeOl5OTYU1P+SJ7athIDCY6ruVMMiJN7zw6ctaH28=;
+	s=arc-20240116; t=1719566542; c=relaxed/simple;
+	bh=s2v0SCtuLdBGXTNA/pzfiqK5TXKCGtl+5CoWL2zIOrM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rST769345ztjboIcfAAHyN6EVTm899wp9VEWlVWBrnbCfQtt9g3frzqaHR+ticQbf3o3GuGa37rFLs2MRc+SbLFztrjEG6oiTlRTe5TpG81MjlAeRi99OLxms81lG8qBP3UlgD3gkf8X5cCzZ9NijgJzCazjaKOldKcNJf5p2xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=HEfJ7MU/; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a724958f118so49508066b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 02:21:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1719566504; x=1720171304; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GUUeOl5OTYU1P+SJ7athIDCY6ruVMMiJN7zw6ctaH28=;
-        b=HEfJ7MU/Jd8lvzm4b7NXvefu3oBBI3aUQ3HmdY7Ka56nU3D0ZZP3y2ORxf13STq/C/
-         wTQXlc7UO1fVVdor7ThEnexkyUYPY3LHWOrps/FmnuwQnc54EOumZd7Is0f0zh82RKov
-         w8pY/WDfzS0DsJ8X53O9j/juGaGuZ/MEZ+d+ul7bBfhhEoPfmjBtzo9APQvWKqBk2IzY
-         T1RFdypLm47gT/wd1hhCt45AM+V/AXCEjoGJFXL+ryuPpQJbfw2gcdgT/vwixiEr5tSe
-         +WST1RarTHp5gBwqd1WSHR6o5w0/B/GaboXSoT9dHcqKTFff7Sf+BXrJq7ddK6jYTKBZ
-         5c4Q==
+	 To:Cc:Content-Type; b=eN+xzs3lu1kIkacXjhQIxPQbLol6vpYITnYTLFNZFgP8wl2EZ2LDjlWIGXY+2EnE6ynUUtJxEu+NMFC9YOhE9IvAjbHFN08IoKfZd0ldlCap5UdzDVpsAUfaHACDslwKZuzVWnBNXcZG4WGcMz5jYrcidyasD2Bl9Wwmu9HiVbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6327e303739so3517797b3.2;
+        Fri, 28 Jun 2024 02:22:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719566504; x=1720171304;
+        d=1e100.net; s=20230601; t=1719566537; x=1720171337;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=GUUeOl5OTYU1P+SJ7athIDCY6ruVMMiJN7zw6ctaH28=;
-        b=WT4aWDVeYzbCXxJKSzNL3qtSHqV1zKuvPpSpGu7HFGMMNRcIYtgAdP5BqzwtPcwMeM
-         ebK20tJMJCVBsohi8KnGp8uUky23v/FXA42qX4QaxtJBQtZ4SekYrVNKQRvr5ou8C4VJ
-         m5gjx6gSi2byANB0fUTtRBsODSOy+uL3HT0pw+pSTGtUV42XZFGLTxJojN80OjiZLeMz
-         e/hLWMxhTuBZPqoAL/xWn6mEfJv2ysfR+qbjt+vob1AbR9r13lnRimwltsX+MW/guWqs
-         InQ/mk7NOaWHCiKFtMOtwoAutJywin8XnE1q2rtuuBQErSbLSbg8JCet+t2Jy0YN875m
-         HqLg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzdEb7gegViy9YxTIHi2AeN6vVcCDqxqREKJ73lpn/pB17/BZJlHoOgTUWQSqufwwbMNcoRGghTv5D9KBEcDje+j9HZFaU+v9YiIA/
-X-Gm-Message-State: AOJu0Yy1OAdh7ku+4SczIi8EfkSIxfbLjLjlk/Z2VUGRpiKw8VW3qfWc
-	DeOmKJDEUPW1GrUJ4ohcdgvXQVzfQNh20XNjD2YbbtrJ/018Bo1nBQN6cad6Cod0Q3Zze2MW/WO
-	hWxqkbPLD0dQn6NJW8eUD7NkdmhRURgKGElZR0A==
-X-Google-Smtp-Source: AGHT+IF7NFei1EQBJfySUv3C79EdZFXolxqVCoTcA7eZAbhURusjPaToikXelhSoNh/rrjdKoBeJoJz3xOL6E3X1Vt4=
-X-Received: by 2002:a17:906:c44d:b0:a72:548a:6f42 with SMTP id
- a640c23a62f3a-a72548a702emr1002466966b.18.1719566503875; Fri, 28 Jun 2024
- 02:21:43 -0700 (PDT)
+        bh=lPkiiuvvTvf4U3Ro8IqPKqYL9PdIgEp2Zf9jQK+VOus=;
+        b=oMPO7I0L4R2LYjIdQ4c6u7uRtIxsaDSbtyiwhlqlOXaTukyIi4HXkXlLTEEX8NtN64
+         BqOv5l1aep5FsWmB9kejIAFb4eJdLxjAY9AaCENEjoRJ5MoZCcmJXZ5EzJ9O+pof8Zoz
+         SqWcKIFZh47e+CFHSOTcoNLJgZIWnpohM6Q89sVX0XQGExJUbD8OxbWmA6DBtQdn9q4g
+         OGgxvQS3dAbEiQerXF26W5A9Hov1ikGspGG2j87X95n6OR44MmOOE4Vo2BVtWr2EatBs
+         TZuKq10xs3BPACE2Up2G4UZaqVeV6vA+e2WfRFbrUnY9DfwcRnF9h3/sU7/hdXX0Nh3m
+         ldQA==
+X-Forwarded-Encrypted: i=1; AJvYcCWI5l5WrCna+LLwqqcEEDE5omLEa/QAz8ip/niAqT9BElXA13rVeh+SNoyn9H0Z8dW5dRDTXVguvzPoeBpN7USxN9IZhwsFz1g6hMNn0sLLF7+JspYAcnkdnnxzwDyePhgzyi1J7uMmnVylhxba2NDz3Et82Z5FEOK9M0cOR25tgwhozMVrLFmgOCZUVr8mo184JxqUJAXOkC1xUzhoxlypUWeDvZiQPD7I7T/Qlua955Pf2zSHBVBmql3k3G7m99gk
+X-Gm-Message-State: AOJu0Yy7wVItFMjFayVGbBX7KXO8V4d3WseyuavraBCmGQsFwBGY3MvY
+	eZA7PSYGvsASepsyC9CZnNc7tjsKLY2J0lHBxjrHIpgLRMXDc+QhH0sijoNn
+X-Google-Smtp-Source: AGHT+IF2U2yL59gFoBHuaQ1ZeXCm8HFBJrGLAq524F2DrTFgDuSmurln8J3OH7v2V5dlY6M32jQHNg==
+X-Received: by 2002:a05:690c:360e:b0:64b:69f0:f900 with SMTP id 00721157ae682-64b69f10411mr2105477b3.23.1719566537524;
+        Fri, 28 Jun 2024 02:22:17 -0700 (PDT)
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-64a9a803a15sm2695677b3.68.2024.06.28.02.22.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Jun 2024 02:22:16 -0700 (PDT)
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-64b0d45a7aaso3209207b3.0;
+        Fri, 28 Jun 2024 02:22:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUL63FHWF6lOdRcp1BfDlfvNIi9cp+9pS8PiPfA0oh3J48DMFWP+gmmw/2+Yll302Lmr6niy/6qJBgGip53budHEU60ekm+uXj7cq8HY0wcUFmCWcCh6YHTVwKh9igcertpXBYRhj9RR4kVAleBDeQkk0SxVLDBf14oz7B4lka8bGnC6Fby/URj6UmseXjkpyG467OFDKoTXQktBKEFnYiH+DtMXkeVtEF/qhHOoScO72jO09eY96cfcd00HO0RsP7t
+X-Received: by 2002:a81:a20a:0:b0:61b:33c8:7bce with SMTP id
+ 00721157ae682-643aab82cc5mr155916427b3.31.1719566536472; Fri, 28 Jun 2024
+ 02:22:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240626171652.366415-1-jesse@rivosinc.com> <20240627-boring-handgun-40ae5bf2651e@wendy>
-In-Reply-To: <20240627-boring-handgun-40ae5bf2651e@wendy>
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-Date: Fri, 28 Jun 2024 11:21:33 +0200
-Message-ID: <CAHVXubik-T=dv3hds4VuJFFxen1CRhfintGdOu3JsdAeouuOtg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] RISC-V: pi: Force hidden visibility for all symbol references
-To: Conor Dooley <conor.dooley@microchip.com>
-Cc: Jesse Taube <jesse@rivosinc.com>, linux-riscv@lists.infradead.org, 
-	Ard Biesheuvel <ardb@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Wende Tan <twd2.me@gmail.com>, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Sami Tolvanen <samitolvanen@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, 
-	Chen Jiahao <chenjiahao16@huawei.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>, 
-	"Vishal Moola (Oracle)" <vishal.moola@gmail.com>, linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com> <20240625121358.590547-10-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20240625121358.590547-10-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 28 Jun 2024 11:22:05 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX4hWou9OtdE8XgU7-U0ghJ6vk2kVqgT90U0ZjsxzR5DA@mail.gmail.com>
+Message-ID: <CAMuHMdX4hWou9OtdE8XgU7-U0ghJ6vk2kVqgT90U0ZjsxzR5DA@mail.gmail.com>
+Subject: Re: [PATCH v2 09/12] i2c: riic: Add support for fast mode plus
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: chris.brandt@renesas.com, andi.shyti@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
+	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, 
+	wsa+renesas@sang-engineering.com, linux-renesas-soc@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jesse,
+Hi Claudiu,
 
-On Thu, Jun 27, 2024 at 12:35=E2=80=AFPM Conor Dooley
-<conor.dooley@microchip.com> wrote:
+On Tue, Jun 25, 2024 at 2:14=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >
-> On Wed, Jun 26, 2024 at 01:16:50PM -0400, Jesse Taube wrote:
-> > Eliminate all GOT entries in the .pi section, by forcing hidden
-> > visibility for all symbol references, which informs the compiler that
-> > such references will be resolved at link time without the need for
-> > allocating GOT entries.
-> >
-> > Include linux/hidden.h in Makefile, like arm64, for the
-> > hidden visibility attribute.
-> >
-> > Signed-off-by: Jesse Taube <jesse@rivosinc.com>
+> Fast mode plus is available on most of the IP variants that RIIC driver
+> is working with. The exception is (according to HW manuals of the SoCs
+> where this IP is available) the Renesas RZ/A1H. For this, patch
+> introduces the struct riic_of_data::fast_mode_plus.
 >
-> Did you forget to add --cover-letter to your format-patch incantation?
+> Fast mode plus was tested on RZ/G3S, RZ/G2{L,UL,LC}, RZ/Five by
+> instantiating the RIIC frequency to 1MHz and issuing i2c reads on the
+> fast mode plus capable devices (and the i2c clock frequency was checked o=
+n
+> RZ/G3S).
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-I admittedly don't understand all the details but it makes the GOT
-entry disappear and arm64 uses it too, so:
+Thanks for your patch!
 
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> --- a/drivers/i2c/busses/i2c-riic.c
+> +++ b/drivers/i2c/busses/i2c-riic.c
+> @@ -407,6 +413,9 @@ static int riic_init_hw(struct riic_dev *riic)
+>         riic_writeb(riic, 0, RIIC_ICSER);
+>         riic_writeb(riic, ICMR3_ACKWP | ICMR3_RDRFS, RIIC_ICMR3);
+>
+> +       if (info->fast_mode_plus && t->bus_freq_hz =3D=3D I2C_MAX_FAST_MO=
+DE_PLUS_FREQ)
+> +               riic_clear_set_bit(riic, 0, ICFER_FMPE, RIIC_ICFER);
 
-Thanks,
+Unless FM+ is specified, RIIC_ICFER is never written to.
+Probably the register should always be initialized, also to make sure
+the FMPE bit is cleared when it was set by the boot loader, but FM+
+is not to be used.
 
-Alex
+
+> +
+>         riic_clear_set_bit(riic, ICCR1_IICRST, 0, RIIC_ICCR1);
+>
+>         pm_runtime_mark_last_busy(dev);
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
