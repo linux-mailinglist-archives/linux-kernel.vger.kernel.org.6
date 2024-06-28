@@ -1,145 +1,123 @@
-Return-Path: <linux-kernel+bounces-234375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FA0F91C5DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:36:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B1E291C5E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:36:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 384CB1C22E24
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:36:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06438281A67
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:36:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B5C1CE0AA;
-	Fri, 28 Jun 2024 18:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3DD1CE0B9;
+	Fri, 28 Jun 2024 18:35:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VoQBUR+4"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iJNYv2JB"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8ADD1CE09B;
-	Fri, 28 Jun 2024 18:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC6B1CD5B2
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 18:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719599725; cv=none; b=mWO1Z8odh84AEGEeQPxZWHjboNN5VNE8aSfNAD4NWxyJnYi6sjX8ETZRKdXC2PfQljhfHza12kx78h4mUdhNvNX1naxJ3SC/QxzoEt5ywk8iBWwTjwhmcIc6P72qVmYA/k6bCQKUqjCNN7KscTWN4eEaV52iMv34FHQmU0neOWU=
+	t=1719599745; cv=none; b=Vyq91XxZZYDAyehhmX2LOEE+YVyR23zooIYNC+WHKFEUsyUlRM/zvZADR1pTSrfn28hEWsHYVk5TglaoQFe3G+Dq4ZGSIRo+cNQCYiq0H6jHFH0pJMVPsObiP90IUOXMmFN8MdGUWcQPxqkMUzJzLTeP4QDIZwtuLSDIl4TWeXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719599725; c=relaxed/simple;
-	bh=GOsdMilJvLMHAOsYb2Z083Z+B64KSGROgNmdiqfg0z4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=aUJZiCNFXjbFmYQk7me+BX4NdQj/HbX0hkgnlGuXHTftfriTVneHoVIrM+kWZ2Bve5bwVhxTVQo+1o7S5eM3qsrtY72khaC8801snA0Qr3ocrw+QDmEKVLR4ybsd8UTif2tV98H727SiPP/HASMhOnjaRLWIFIbuAfb/zEymvqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VoQBUR+4; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2c9357a2647so385519a91.0;
-        Fri, 28 Jun 2024 11:35:23 -0700 (PDT)
+	s=arc-20240116; t=1719599745; c=relaxed/simple;
+	bh=I2+vN1YtxeoCW1ZzBL6DjYHFnVPt3IlmCYIIwne0LuI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qUxl2wM38f3prXwQZ2/CPvt5E4hnk02NV1xJ6nK+Mhli++rj6xLIDhKmZCtlRYO6UvSJ1LaQaKuzj5zhhzo37wWzknnp8DG6Z6SWbpn5TgHC985vMfXi1ACwppZ36Vz5NpN6ut0DiGZlFvNsRtiQMwPyCzrjCFLdW3LaOiB9Rms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iJNYv2JB; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3762775e9ebso21655ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 11:35:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719599723; x=1720204523; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UBGqppPEgcrJ3GF42QUu1svvxoo9ZNIZ7HPafu0hexg=;
-        b=VoQBUR+4GVEH3eGryRk913rNaiMl+OLqoC9tVUDkwblXjkVCxb5Ma0CqrQIfQjNSPf
-         ALB432ey38ZhwU0yvy85UsVFpitLtudmyuiPBYCucQ0QvXI3CpshObZM2PvFogW7Mvf4
-         WfX3/82aeDK2Bic2LXUkFRyQXRexUznjl6JLFxOa2LuN+kg0QqcytdPIf06XfMO9pxaR
-         YZr4bIDcM0Cgns3MFJCtywHWkVep7E3GKSrLbPHEBZQGYPOLLUW/eXOqq/n70UC3yGbz
-         P/HXdf0OmCWnFtrYHwIWNw1dg6udpb1ucYxNH1cFThyKUGl6OOkj7ypCTFiYrbfIvWeF
-         Pmiw==
+        d=google.com; s=20230601; t=1719599743; x=1720204543; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RErrAs0DK8wPplxpianYaV5QcD/2TCRDQ9qb3zaOQoo=;
+        b=iJNYv2JBTf+A5JAIIDso1eauUx5zJN4FU0KCNgiuvEFfIPvbRJBzNAq7MG1uvuEZaU
+         F/r/St/PGmFfl+uNvARkm17Gpj56s11hWWgklNWDwI/QCz6I5aKPF2ofw+jnDR9zG/X1
+         BDgnPD69dw5zTozkg0wAd10+RlwR9i+MtkBuq6SUFT3/tfsn2XdbLE9p9sttdqm8pcGZ
+         nB+mml5ZCuDqsfwUASOqZ3VH90eyUZtQ1kLHbMxg3fuWTSINjoM/7r5zvqzCfvP/zB67
+         GS0R0MTT75Yq75sUDoj6GDBfqUiG9LN5CPn8Vr80+TbHDozKRZwMSUdYXkith4tSzBIt
+         ht4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719599723; x=1720204523;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UBGqppPEgcrJ3GF42QUu1svvxoo9ZNIZ7HPafu0hexg=;
-        b=p8GRPXGKHXA3aQw3NK0pMM3JUViOAhV9MtHB5JYHDHchXvClyJuBwk4+0xFCB0M5Dy
-         6TN4KFLX3ziMyQOtDZJKeNlEpqfbX416hgBN3ycdjSF6i35B/z0mOlLlH7myeaOJIkLb
-         M+LlOOp6z3pZLB6IDtwINfiXrS+tpfGHiFrRRqXK3RS3D8Pc9L3vD8ISQmFobn5bvURj
-         Pt2pQGj6FVqyAcffJCr2KRNnn4H9TMogYTp2Bm0awXocPx8QUq+Un+fsE8lGMhWiP3Ra
-         Qx5jjF2ATrdbbhM4j0XgdwR3SlQQ0m5fWE1PU4T6MRdbtIrdcya7U8ecAf8lWHzXKmYQ
-         l9tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkX7CkvwOma8a1h5UM4MVK87df7eKED3djgcQfp8+QmvNbv8u6bEs1EwWvtV0Gu42zZjw0C2lskMM7xmgQGLAP2UeVNHvWG5jHbVn5Bk6swTotydEogBDBdw4fMMnTFRt1Eg63o46T/A==
-X-Gm-Message-State: AOJu0Yw+ZRuw8qco0eOowXaf/LJYT5ll8sCZulnJjzhOgIQV292h1AQU
-	NkhyujzJz9ExWhO0QIBA47N6g0PjEzBGnRMBLBWIKRLQrHmSLHw9hx02Vw==
-X-Google-Smtp-Source: AGHT+IHlrJJkXKFLv3v4ZK3tPmFSE1CR+4ZgYoM2ZkbAKQ8LLKylZTEo4VpWF8zp7NYcjuECjSbq0w==
-X-Received: by 2002:a17:90a:fb55:b0:2c8:6582:16e8 with SMTP id 98e67ed59e1d1-2c865821805mr11332689a91.3.1719599722766;
-        Fri, 28 Jun 2024 11:35:22 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:c929:2998:720d:a104])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91d3bc596sm1962671a91.39.2024.06.28.11.35.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 11:35:22 -0700 (PDT)
-Date: Fri, 28 Jun 2024 11:35:19 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Martin Schiller <ms@dev.tdt.de>, Hauke Mehrtens <hauke@hauke-m.de>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] gpiolib: of: fix lookup quirk for MIPS Lantiq
-Message-ID: <Zn8CZ47e3LFncrDP@google.com>
+        d=1e100.net; s=20230601; t=1719599743; x=1720204543;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RErrAs0DK8wPplxpianYaV5QcD/2TCRDQ9qb3zaOQoo=;
+        b=e+vVGyXssMHAWcI1PDkJyiATSrJZfy6btP87plgxLr5lKlLEPzpqG27/52HUulPmVJ
+         crBYnBiz1KYTPQbcco3teoaYu6bAw6CQSw7zVHuapMSME8BC7oS6mH0FzMZqWXvUO/jN
+         7lMmxMQRyhCV1o68Zfj1X4Ppq0NYaEqcVKsKp75L/Mr3lfolS3dHIJJq4oDDMUE59v53
+         sztF1wZZywOifT9zTf1SsDqkxg43kwDSC6EM0ELGh8nKeRAN/ao6ddpPkYsKYVRgEDaC
+         k61w8zLdlKssUPxkn11xRfsa/jO8bvauBPbtZD4Tc+z+qKbZ6O9hqTbZk8MBg8ZEvaZh
+         87Pw==
+X-Forwarded-Encrypted: i=1; AJvYcCVVn8H7X7h15jr/YRx5zar1JxuvVJzZWgxYQEz/4k8ErwRbpe9VCLHqewrrnzgQw57oHWAuQGBKPOFFch3aA8SDy5fkA119KRpesUCm
+X-Gm-Message-State: AOJu0YwZwFymtVu7ph8xPv1bkeClhgDQr+JY8pG6GyKsUHCsOlU5Prm/
+	R6xe5ILUF7yD8Dk6hOt426X5AlGRo6pYBpOWbDEgKoQYLNIHIFAKxvMvJVUpL4N+6x0hFxOV5zO
+	+rZZq5NssZXftyRNvFSGPQfnpm2ukdB+OOOAR
+X-Google-Smtp-Source: AGHT+IEIdTlPMI5QX/9NDYi/RpkgzP+Z+ZzXVhld5+h7yexSsH86cZjoenbpLMSq/Lli4Dab5ND8vBPfg/LmAoRXHrM=
+X-Received: by 2002:a05:6e02:156b:b0:375:eeb4:78fd with SMTP id
+ e9e14a558f8ab-37c42e1f27emr210045ab.25.1719599743167; Fri, 28 Jun 2024
+ 11:35:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240628183224.452055-1-adubey@linux.ibm.com>
+In-Reply-To: <20240628183224.452055-1-adubey@linux.ibm.com>
+From: Ian Rogers <irogers@google.com>
+Date: Fri, 28 Jun 2024 11:35:32 -0700
+Message-ID: <CAP-5=fWT81saq2m+zaXrCsa_V-aqyZvNXDbQ28_wNSBo=-nByw@mail.gmail.com>
+Subject: Re: [PATCH] perf report: Calling available function for stats printing
+To: Abhishek Dubey <adubey@linux.ibm.com>
+Cc: linuxppc-dev@lists.ozlabs.org, naveen.n.rao@linux.vnet.ibm.com, 
+	mpe@ellerman.id.au, npiggin@gmail.com, peterz@infradead.org, mingo@redhat.com, 
+	namhyung@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
+	jolsa@kernel.org, adrian.hunter@intel.com, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-As it turns out, there is a large number of out-of-tree DTSes (in
-OpenWrt project) that used to specify incorrect (active high) polarity
-for the Lantiq reset GPIO, so to keep compatibility while they are
-being updated a quirk for force the polarity low is needed. Luckily
-these old DTSes used nonstandard name for the property ("gpio-reset" vs
-"reset-gpios") so the quirk will not hurt if there are any new devices
-that need inverted polarity as they can specify the right polarity in
-their DTS when using the standard "reset-gpios" property.
+On Fri, Jun 28, 2024 at 11:32=E2=80=AFAM Abhishek Dubey <adubey@linux.ibm.c=
+om> wrote:
+>
+> For printing dump_trace, just use existing stats_print()
+> function.
+>
+> Signed-off-by: Abhishek Dubey <adubey@linux.ibm.com>
 
-Additionally the condition to enable the translation from standard to
-non-standard reset GPIO property name was inverted and the replacement
-name for the property was not correct. Fix this as well.
+Reviewed-by: Ian Rogers <irogers@google.com>
 
-Fixes: fbbbcd177a27 ("gpiolib: of: add quirk for locating reset lines with legacy bindings")
-Fixes: 90c2d2eb7ab5 ("MIPS: pci: lantiq: switch to using gpiod API")
-Reported-by: Martin Schiller <ms@dev.tdt.de>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- drivers/gpio/gpiolib-of.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+Thanks,
+Ian
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 59c7f8a2431a..d21085830632 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -203,6 +203,16 @@ static void of_gpio_try_fixup_polarity(const struct device_node *np,
- 		 */
- 		{ "qi,lb60",		"rb-gpios",	true },
- #endif
-+#if IS_ENABLED(CONFIG_PCI_LANTIQ)
-+		/*
-+		 * According to the PCI specification, the RST# pin is an
-+		 * active-low signal. However, most of the device trees that
-+		 * have been widely used for a long time incorrectly describe
-+		 * reset GPIO as active-high, and were also using wrong name
-+		 * for the property.
-+		 */
-+		{ "lantiq,pci-xway",	"gpio-reset",	false },
-+#endif
- #if IS_ENABLED(CONFIG_TOUCHSCREEN_TSC2005)
- 		/*
- 		 * DTS for Nokia N900 incorrectly specified "active high"
-@@ -512,9 +522,9 @@ static struct gpio_desc *of_find_gpio_rename(struct device_node *np,
- 		{ "reset",	"reset-n-io",	"marvell,nfc-uart" },
- 		{ "reset",	"reset-n-io",	"mrvl,nfc-uart" },
- #endif
--#if !IS_ENABLED(CONFIG_PCI_LANTIQ)
-+#if IS_ENABLED(CONFIG_PCI_LANTIQ)
- 		/* MIPS Lantiq PCI */
--		{ "reset",	"gpios-reset",	"lantiq,pci-xway" },
-+		{ "reset",	"gpio-reset",	"lantiq,pci-xway" },
- #endif
- 
- 		/*
--- 
-2.45.2.803.g4e1b14247a-goog
-
-
--- 
-Dmitry
+> ---
+>  tools/perf/builtin-report.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+> index 9718770facb5..6edc0d4ce6fb 100644
+> --- a/tools/perf/builtin-report.c
+> +++ b/tools/perf/builtin-report.c
+> @@ -1089,8 +1089,7 @@ static int __cmd_report(struct report *rep)
+>                         perf_session__fprintf_dsos(session, stdout);
+>
+>                 if (dump_trace) {
+> -                       perf_session__fprintf_nr_events(session, stdout);
+> -                       evlist__fprintf_nr_events(session->evlist, stdout=
+);
+> +                       stats_print(rep);
+>                         return 0;
+>                 }
+>         }
+> --
+> 2.44.0
+>
 
