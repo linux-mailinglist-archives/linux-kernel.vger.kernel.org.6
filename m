@@ -1,121 +1,139 @@
-Return-Path: <linux-kernel+bounces-234169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F055D91C319
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:03:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 165B891C31D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:04:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3DEA1F22782
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:03:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B43121F22297
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF3871C8FB6;
-	Fri, 28 Jun 2024 16:03:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55B8D1C8FBC;
+	Fri, 28 Jun 2024 16:04:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nVCmwXzF"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TXGHVV84"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1801DDD1;
-	Fri, 28 Jun 2024 16:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B24D1C0DCC;
+	Fri, 28 Jun 2024 16:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719590595; cv=none; b=kWhXEq4xXJPtoDqq5m40D/zCBZAUO+H29RT0hUfziVnSBbeodaUBBYvKcOICyB4QcxPnRww6yBKAfGPg8FYxuSWobnjMF+EGfc1RvtCpefaFFSbafCvlGS9G0oCUgjk98IeVX16mSp5usZx0p3kjDlmHG/P2P4dBu6BHyif+JVk=
+	t=1719590679; cv=none; b=nWr8IFhe/t4+jrlB4EYG4Vi8Pof6dW9wWy7lKk/jIBeIihbdNG0PsVanVjQPNHRn+xWJZVRq34S0hohh6PyBA2zOTO7NLxVyeEsOUVzYJUE8w6WAFMcAjQJxFls+XMhbDVHvmLSGOKyV+a85YpiT1NOA1l3pknm/69GBq/q7PQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719590595; c=relaxed/simple;
-	bh=kUvXqnBvHtOKOVoyrAry8R2W3fNVDZiaIqfy/T8T2dU=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=cwkRdDq46xE6CYWDDplVF8G8OXdmoGLxDFAsCRk5fZ4t2fMgpVwfozU3BNaSXhE7H8x76VjfhhDJoEVT3i8G+S9cCX4HieGyMtF9hQ4n9uZB5rKl+Qo3s/K+vYOq18Ohti7JYiW/QNQD3RD+QB52bfwvu17W9L9GXI+hzUBc7po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nVCmwXzF; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-424f2b73629so7775685e9.2;
-        Fri, 28 Jun 2024 09:03:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719590592; x=1720195392; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0zbVPE5l8sPpmwo7i3sdwml8CIrNZKhRJoQm31HxkN0=;
-        b=nVCmwXzFGwR4q9ouV+sJ3SamEoLFBFZa4c6MkerS6/xiqqfkK4qStrakFDS4Pd/Omm
-         yggUi00detkPTErvqFvngbY8kEiSHX2aOnxlIdyQnM+l9RVVSv/KWCAdEGpZhK0gLFqo
-         WZUSURtfYhx8o362jtgvqYToSTaCTJPy6qfeNciICJfZDHsHvRhGRD9mjkNHpe4OpRN8
-         Gyi4JLzkhMH9LI0aI0aUT11mrgshxHiBc5cJdQZUzhH2du2oQmTfcTQUTseR/NDyUSGa
-         CVSzN6a1WlGnv6YfpdxmHnQf485u3kvun0xolpZG2VZaZ9q2/x+5airrJzQN8ZlN7vvl
-         YeAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719590592; x=1720195392;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0zbVPE5l8sPpmwo7i3sdwml8CIrNZKhRJoQm31HxkN0=;
-        b=IXvdAxS4mlD9T2W+3nlEBfmxk+JnSrv0Cn+yhB6HNM2UfG+coGvzIHzcHhX39Nr2Z4
-         iIXjb4pWZMiBymBOt603Rsst1aCmO3xP7ieb52fA5lkTwCIB3gnmDtuPUsxAOUVG3u3E
-         tlP4djaQA1PPI7sTs53UQmzM7zQzf/FUAPiRPVQ5uAz6Hi0qyyEJmODbluF+BpVvgltH
-         GJTAH01zM+MQB5Ay7Z72cbsBtErOJtlAHhT247rW74Rkl+r7TIl9097tj7NpbS0gDycB
-         peZYvAl4E+ZKdyjMrEcz2E1Z2/RUb5UIkfYeEBxjG9hYD6uOHFquvt/Mz8Lr8CIyRM57
-         PIFw==
-X-Forwarded-Encrypted: i=1; AJvYcCVlKw3Snl5TfI7sUzG5g2zMFZrmAuHJKahFfHB2Aq7D/Ml8UiU5unhJygROOfHxy96qGtu+gPEympDCVYlwsv8FU5mSjVeToWp1NCvTpf+L+GsRj1nv44RRVi2deuVs6JyfKSfc
-X-Gm-Message-State: AOJu0YzXI2I77lBqXm/YigQFQw7iid4nUfMKJAk/XSMilGOrskWB32ca
-	F8BZwazq10jzu4M/8ZQXwTaZD0xKMDqBX00JXykcbJPQUiYgsLS7qDHegGx+
-X-Google-Smtp-Source: AGHT+IElJ4ATJkyD0CGR+JjcC38BM3SAFZkxgvWcawFFLGQxuVVYAT5YI8FA3TVJ27luv+Fm5j/omg==
-X-Received: by 2002:a05:600c:484f:b0:424:ac79:5504 with SMTP id 5b1f17b1804b1-424ac7955demr83728935e9.17.1719590591673;
-        Fri, 28 Jun 2024 09:03:11 -0700 (PDT)
-Received: from [192.168.1.122] (cpc159313-cmbg20-2-0-cust161.5-4.cable.virginm.net. [82.0.78.162])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256af3cf85sm41015105e9.4.2024.06.28.09.03.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Jun 2024 09:03:11 -0700 (PDT)
-Subject: Re: [PATCH net-next 1/5] netdevice: convert private flags > BIT(31)
- to bitfields
-To: Jakub Kicinski <kuba@kernel.org>,
- Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- David Ahern <dsahern@kernel.org>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- Andrew Lunn <andrew@lunn.ch>, nex.sw.ncis.osdt.itp.upstreaming@intel.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240625114432.1398320-1-aleksander.lobakin@intel.com>
- <20240625114432.1398320-2-aleksander.lobakin@intel.com>
- <20240626075117.6a250653@kernel.org>
- <e0b66a74-b32b-4e77-a7f7-8fd9c28cb88b@intel.com>
- <20240627125541.3de68e1f@kernel.org>
-From: Edward Cree <ecree.xilinx@gmail.com>
-Message-ID: <c561738f-e28f-9231-af04-10937fac61da@gmail.com>
-Date: Fri, 28 Jun 2024 17:03:10 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1719590679; c=relaxed/simple;
+	bh=oTXfR2N6eN/rBWJlM/QQkHwnHvpBAkB6fBJKmFWgmyk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dJGVgwVrTieOhnnU+cZZZCd1jM4bhNPOneJ5keOSae65XwzHd4nvaWG4XFGQlgJjZCxa859GivQmIz3yxImwJrzq02z1cpt6rDgVeJmMVwlR2U3cl7D9DhgLJPtGo2f5GLDIuVIA+12+NU+ug4JBE/EkkpjkhuWxJjmeZn7diWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TXGHVV84; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96D7CC116B1;
+	Fri, 28 Jun 2024 16:04:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719590679;
+	bh=oTXfR2N6eN/rBWJlM/QQkHwnHvpBAkB6fBJKmFWgmyk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TXGHVV84R2UNCEu9g298LoeAx0ZyOEsBfQK44L0ec56H4f3VQwhojE+81Rnwy+TcM
+	 I5AjHgSndtYSBRNJQ6eVyUB8t3tCOT+iVlvVxoszKdjMcfTVVoCQQFdT/0CmcFaJBC
+	 CsQcOvngcssNeMhHRU4M7ho7VYtt115QGJR6zUEyNKoc3I0CQBRMNcV/NU1rfbIYPd
+	 11LIlC34+YcAO7Lork3rWefTA4utV4aLhP7kgdVDzv6iIqONVJf994omfi67deCeSB
+	 RytUpxaEetfcST35QVs9DQNLFl8scGjVrE/JtYVNVspVUrhNn998yVet/oDyZUtPh8
+	 Ur9qQgERo7pQA==
+Date: Fri, 28 Jun 2024 10:04:36 -0600
+From: Rob Herring <robh@kernel.org>
+To: Ayush Singh <ayush@beagleboard.org>
+Cc: Mark Brown <broonie@kernel.org>,
+	Vaishnav M A <vaishnav@beagleboard.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, Michael Walle <mwalle@kernel.org>,
+	Andrew Lunn <andrew@lunn.ch>, jkridner@beagleboard.org,
+	robertcnelson@beagleboard.org, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 2/7] dt-bindings: mikrobus: Add mikrobus board base
+Message-ID: <20240628160436.GA3143032-robh@kernel.org>
+References: <20240627-mikrobus-scratch-spi-v5-0-9e6c148bf5f0@beagleboard.org>
+ <20240627-mikrobus-scratch-spi-v5-2-9e6c148bf5f0@beagleboard.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240627125541.3de68e1f@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240627-mikrobus-scratch-spi-v5-2-9e6c148bf5f0@beagleboard.org>
 
-On 27/06/2024 20:55, Jakub Kicinski wrote:
-> On Thu, 27 Jun 2024 11:50:40 +0200 Alexander Lobakin wrote:
->>> I don't think we should group them indiscriminately. Better to add the
->>> asserts flag by flag. Neither of the flags you're breaking out in this
->>> patch are used on the fast path.
->>>
->>> Or is the problem that CACHELINE_ASSERT_GROUP_MEMBER doesn't work on
->>> bitfields?  
->>
->> It generates sizeof(bitfield) which the compilers don't like and don't
->> want to compile ._.
+On Thu, Jun 27, 2024 at 09:56:12PM +0530, Ayush Singh wrote:
+> Base dt bindings for mikrobus addon boards. Contains properties that are
+> part of all types of boards (SPI, I2C, etc).
 > 
-> Mm. Okay, I have no better ideas then.
+> Each pin in mikroBUS connector can either be used for it's original
+> purpose (UART, I2C, SPI, etc) or as a normal GPIO. Introducing
+> `pinctrl-apply` allows selecting the pin configuration by name.
+
+This seems pointless. If a board uses UART, then uart_default has to be 
+supported. Why does the board need to list it?
+
 > 
-> Do consider moving the cold flags next to wol_enabled, tho?
+> Note: Some mikrobus-connectors might not support all valid pinctrl.
+> 
+> Signed-off-by: Ayush Singh <ayush@beagleboard.org>
+> ---
+>  .../devicetree/bindings/mikrobus/mikrobus-board.yaml | 20 ++++++++++++++++++++
+>  MAINTAINERS                                          |  1 +
+>  2 files changed, 21 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mikrobus/mikrobus-board.yaml b/Documentation/devicetree/bindings/mikrobus/mikrobus-board.yaml
+> new file mode 100644
+> index 000000000000..42e2219c596f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mikrobus/mikrobus-board.yaml
+> @@ -0,0 +1,20 @@
+> +# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mikrobus/mikrobus-board.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: mikroBUS add-on board properties
+> +
+> +maintainers:
+> +  - Ayush Singh <ayush@beagleboard.org>
+> +
+> +properties:
+> +  pinctrl-apply:
 
-My RSS series moves wol_enabled out to struct ethtool_netdev_state [1] so
- this may not be worthwhile?
+Missing a description.
 
--ed
-
-[1]: https://lore.kernel.org/netdev/293a562278371de7534ed1eb17531838ca090633.1719502239.git.ecree.xilinx@gmail.com/
+> +    minItems: 1
+> +    maxItems: 9
+> +    items:
+> +      enum: [default, pwm_default, pwm_gpio, uart_default, uart_gpio, i2c_default, i2c_gpio, spi_default,
+> +             spi_gpio]
+> +
+> +additionalProperties: false
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 8e4115e93aeb..14eba18832d5 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -15113,6 +15113,7 @@ M:	Ayush Singh <ayush@beagleboard.org>
+>  M:	Vaishnav M A <vaishnav@beagleboard.org>
+>  S:	Maintained
+>  F:	Documentation/devicetree/bindings/connector/mikrobus-connector.yaml
+> +F:	Documentation/devicetree/bindings/mikrobus/mikrobus-board.yaml
+>  
+>  MIKROTIK CRS3XX 98DX3236 BOARD SUPPORT
+>  M:	Luka Kovacic <luka.kovacic@sartura.hr>
+> 
+> -- 
+> 2.45.2
+> 
 
