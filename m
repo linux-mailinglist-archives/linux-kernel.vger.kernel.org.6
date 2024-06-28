@@ -1,176 +1,163 @@
-Return-Path: <linux-kernel+bounces-233945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD1B191BFC3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:40:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E30D91BFCA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:43:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08EA1B224B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 13:40:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86C71B211C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 13:43:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C40A31BE84E;
-	Fri, 28 Jun 2024 13:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1D11BE843;
+	Fri, 28 Jun 2024 13:42:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qaAwq6zc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D7SP6Doy"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED59129B0;
-	Fri, 28 Jun 2024 13:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C851E495;
+	Fri, 28 Jun 2024 13:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719582027; cv=none; b=aDObQ7yDHBdKdZeTB2oEMdY9hFfzriZj2OsAydXtc2vcvJ2bCra0EWOlzSwRbBZF6Ldl1cRAkLAvbDbIFtq7nBtNmpM+tART1LMl85KpI1W9mKRboQCNO14oLfK0O4K0gy9MVZZfHuK/5XKXv5svF9oO2JsOfGbZdPtcyl/5Gks=
+	t=1719582169; cv=none; b=hxJ+/1474HUFTuu4/52cT2DlYLBfvqZapy/cPB3jd0dr3jryDejL01Jrj8ln2A9MLfcV5FgTQpePokSv/lyY9nvGMYccBecG/AGxNLnZ1I2UFRag5IqLS1lTJF/Vsobnp8T5+7EhlDDyQ9K7g0IGi0/4rzFi/2JWLa87AoDlfwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719582027; c=relaxed/simple;
-	bh=UWPWV5xOWPvWRohvXp3jsd5OyLdElhEyWkgsMgthC0s=;
+	s=arc-20240116; t=1719582169; c=relaxed/simple;
+	bh=ssHzJIF7S2KHuKDb9h3C0C+M5ebYBvfbT9APzG7dWSE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UT4L65XDonLV45nyyDFo/7eLTd80X6hIq59edirNqSqW+/E/RMEFq4T8iUnaorBlOYvr7RRbCHLJ4zz2SzXNPXN5fEqERyy+3FzytXPzw6UYnswz4JbX0wFyAHjo0lojatCZrBUepF8gDvwPM1bApK2z5ZTwuPibQRKB3SuWz1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qaAwq6zc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08C32C116B1;
-	Fri, 28 Jun 2024 13:40:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719582025;
-	bh=UWPWV5xOWPvWRohvXp3jsd5OyLdElhEyWkgsMgthC0s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qaAwq6zcOXnpgYUwN0NVIO0yqpZ0Zb5n2YZUgJX5BmAQYP2Cluav1xiJq0hZ1F060
-	 swoFvPvWsQ7X032KHtT6ExmTb2egebRNSVrf4Be3qEMXEjjOWdH0RacwDbG/wbJ/IL
-	 Lr5X0sHIKotDF4a8APUYV/YhbMEi97yJeuTM4Ndsjf4JMs3/HwJanR6v9/QibvkRsl
-	 44QEsuf0ytcePzl2v7ab0R9CGcp6eTRGf74VnAJH2ag50Yux/d5x/xrGpW/74HHWh3
-	 x7UXvQscwRb5ZzQo/H0341550qV2Cd13sb0hgnEiICw+icYbkcsRrPH5hsfSsGqiQB
-	 YLRRLIPVBVGow==
-Date: Fri, 28 Jun 2024 15:40:22 +0200
-From: "mripard@kernel.org" <mripard@kernel.org>
-To: Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>
-Cc: Jason-JH Lin =?utf-8?B?KOael+edv+elpSk=?= <Jason-JH.Lin@mediatek.com>, 
-	"daniel@ffwll.ch" <daniel@ffwll.ch>, "quic_vjitta@quicinc.com" <quic_vjitta@quicinc.com>, 
-	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>, "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>, 
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "jkardatzke@google.com" <jkardatzke@google.com>, 
-	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>, "joakim.bech@linaro.org" <joakim.bech@linaro.org>, 
-	Youlin Pei =?utf-8?B?KOijtOWPi+aelyk=?= <youlin.pei@mediatek.com>, "logang@deltatee.com" <logang@deltatee.com>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	Kuohong Wang =?utf-8?B?KOeOi+Wci+m0uyk=?= <kuohong.wang@mediatek.com>, 
-	Jianjiao Zeng =?utf-8?B?KOabvuWBpeWnoyk=?= <Jianjiao.Zeng@mediatek.com>, "contact@emersion.fr" <contact@emersion.fr>, 
-	"benjamin.gaignard@collabora.com" <benjamin.gaignard@collabora.com>, "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, 
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
-	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, "willy@infradead.org" <willy@infradead.org>, 
-	"pavel@ucw.cz" <pavel@ucw.cz>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
-	"Brian.Starkey@arm.com" <Brian.Starkey@arm.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, 
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"tjmercier@google.com" <tjmercier@google.com>, "jstultz@google.com" <jstultz@google.com>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "robin.murphy@arm.com" <robin.murphy@arm.com>, 
-	Yong Wu =?utf-8?B?KOWQtOWLhyk=?= <Yong.Wu@mediatek.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"ppaalanen@gmail.com" <ppaalanen@gmail.com>
-Subject: Re: [PATCH v5 2/9] scatterlist: Add a flag for the restricted memory
-Message-ID: <20240628-cuddly-brave-squid-e1cb22@houat>
-References: <cef8f87d-edab-41d8-8b95-f3fc39ad7f74@amd.com>
- <1050c44512374031d1349b5dced228d0efc3fbde.camel@mediatek.com>
- <3104b765-5666-44e4-8788-f1b1b296fe17@amd.com>
- <98c11bad7f40bcc79ed7a2039ddb3a46f99908f5.camel@mediatek.com>
- <75dc1136-7751-4772-9fa7-dd9124684cd2@amd.com>
- <ZnxWWtdShekGSUif@phenom.ffwll.local>
- <ae73a0203d6acf2878c9e3ae2d7554816b9c66ad.camel@mediatek.com>
- <5739abdb-0234-412a-9f25-49219411bbc6@amd.com>
- <20240627-impetuous-aboriginal-cougar-cdcbbf@houat>
- <304c9faa-5a9c-4520-a3d8-0818f76dd7c9@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uWBEWZsyh6S74uI63E0+VzhBBj8FQT7D+ohcFkMBdmgXGvR6bT+BYjZrwu2jML00Z0uIyYiUMTHQxhcjHotGK5ESbojg1yYGktRcww+WdBV0W075m78jPQ01IVJmxCgMnUeDiXA060bLGrsTu022G46NPTtFRkDoSzgG8DTikNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D7SP6Doy; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719582168; x=1751118168;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ssHzJIF7S2KHuKDb9h3C0C+M5ebYBvfbT9APzG7dWSE=;
+  b=D7SP6DoyBaA5s1v3ctQeFko9ekXSlOa890Dw4gZcuNxTqKtMHwqO3g6Y
+   ngjggBsiEWdpEETmeb3hp+m5bNRjyaWvcHeCsCam3NFqm+WQWrFlZbPBh
+   Tzpa1b1Xs38HdoPLYoZ9hdnVouoS+TWQFZfMz8VWKLU/ntFTaHq8EX4qE
+   2PNbVgWF54Pdm+fQU+HS+4sQ9xtJaekMbi7OTWmxO9ZQnHrnyIApFhzv+
+   j+WeUIhdAFsGaAOXVWxxbZvAf1wSZ2Qv19kJe5IH9ObLpHSm/Y8zxirob
+   P9pUf6QVxplZo6x4L5JRaG6irmNv89FtwTpJzYCwfJsbNLPsOFhpQN66u
+   A==;
+X-CSE-ConnectionGUID: 4tImmCVqShSErpJkIEnKIA==
+X-CSE-MsgGUID: HicpljxjSwa7lbdNf3v0Lg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11117"; a="16599310"
+X-IronPort-AV: E=Sophos;i="6.09,169,1716274800"; 
+   d="scan'208";a="16599310"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 06:42:47 -0700
+X-CSE-ConnectionGUID: GRkHS0RpTkGGdO3JdZ3Ytw==
+X-CSE-MsgGUID: 2Wo/Ldk7TPWz5O0SRuc0MA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,169,1716274800"; 
+   d="scan'208";a="67941648"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 28 Jun 2024 06:42:43 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sNBs9-000H9S-2C;
+	Fri, 28 Jun 2024 13:42:41 +0000
+Date: Fri, 28 Jun 2024 21:42:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: Luigi Leonardi via B4 Relay <devnull+luigi.leonardi.outlook.com@kernel.org>,
+	Stefano Garzarella <sgarzare@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, Luigi Leonardi <luigi.leonardi@outlook.com>,
+	Daan De Meyer <daan.j.demeyer@gmail.com>
+Subject: Re: [PATCH net-next v3 1/3] vsock: add support for SIOCOUTQ ioctl
+ for all vsock socket types.
+Message-ID: <202406282144.DxR5KwIu-lkp@intel.com>
+References: <20240626-ioctl_next-v3-1-63be5bf19a40@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wmmpztlpkqqsn5hy"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <304c9faa-5a9c-4520-a3d8-0818f76dd7c9@amd.com>
+In-Reply-To: <20240626-ioctl_next-v3-1-63be5bf19a40@outlook.com>
 
+Hi Luigi,
 
---wmmpztlpkqqsn5hy
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+kernel test robot noticed the following build warnings:
 
-On Fri, Jun 28, 2024 at 01:42:27PM GMT, Christian K=F6nig wrote:
-> Am 27.06.24 um 16:40 schrieb mripard@kernel.org:
-> > [SNIP]
-> > > > > > > > Why can't you get this information from userspace?
-> > > > > > Same reason amd and i915/xe also pass this around internally in=
- the
-> > > > > kernel, it's just that for those gpus the render and kms node are=
- the
-> > > > > same
-> > > > > driver so this is easy.
-> > > > >=20
-> > > The reason I ask is that encryption here looks just like another para=
-meter
-> > > for the buffer, e.g. like format, stride, tilling etc..
-> > >=20
-> > > So instead of this during buffer import:
-> > >=20
-> > > mtk_gem->secure =3D (!strncmp(attach->dmabuf->exp_name, "restricted",=
- 10));
-> > > mtk_gem->dma_addr =3D sg_dma_address(sg->sgl);
-> > > mtk_gem->size =3D attach->dmabuf->size;
-> > > mtk_gem->sg =3D sg;
-> > >=20
-> > > You can trivially say during use hey this buffer is encrypted.
-> > >=20
-> > > At least that's my 10 mile high view, maybe I'm missing some extensiv=
-e key
-> > > exchange or something like that.
-> > That doesn't work in all cases, unfortunately.
-> >=20
-> > If you're doing secure video playback, the firmware is typically in
-> > charge of the frame decryption/decoding, and you'd get dma-buf back that
-> > aren't accessible by the CPU (or at least, not at the execution level
-> > Linux runs with).
->=20
-> Yeah, that's perfectly fine. At least the AMD encryption solution
-> works exactly like that as well.
+[auto build test WARNING on 50b70845fc5c22cf7e7d25b57d57b3dca1725aa5]
 
-> > So nobody can map that buffer, and the firmware driver is the one who
-> > knows that this buffer cannot be accessed by anyone.
->=20
-> On most hw I know you can actually map that buffer, it's just that the
-> CPU sees only garbage in it because you don't have the necessary
-> decryption keys around.
+url:    https://github.com/intel-lab-lkp/linux/commits/Luigi-Leonardi-via-B4-Relay/vsock-add-support-for-SIOCOUTQ-ioctl-for-all-vsock-socket-types/20240627-023902
+base:   50b70845fc5c22cf7e7d25b57d57b3dca1725aa5
+patch link:    https://lore.kernel.org/r/20240626-ioctl_next-v3-1-63be5bf19a40%40outlook.com
+patch subject: [PATCH net-next v3 1/3] vsock: add support for SIOCOUTQ ioctl for all vsock socket types.
+config: i386-randconfig-141-20240628 (https://download.01.org/0day-ci/archive/20240628/202406282144.DxR5KwIu-lkp@intel.com/config)
+compiler: gcc-8 (Ubuntu 8.4.0-3ubuntu2) 8.4.0
 
-So you can always map and access the buffer, but only if you're in the
-right "context" the content would be correct?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406282144.DxR5KwIu-lkp@intel.com/
 
-I think that part is pretty different than what ARM SoCs are doing,
-where they would typically prevent any CPU access and fault on access.
+smatch warnings:
+net/vmw_vsock/af_vsock.c:1321 vsock_do_ioctl() warn: unsigned 'n_bytes' is never less than zero.
 
-> > Putting this on the userspace to know would be pretty weird, and
-> > wouldn't solve the case where the kernel would try to map it.
->=20
-> But that's exactly how all other implementations work as far as I know. I
-> mean what do you do if the kernel maps the encrypted buffer?
->=20
-> On AMD we also block userspace and kernel CPU accesses, but that is only
-> done to make it easier to find bugs not for correctness.
->=20
-> And userspace absolutely needs to be aware that a buffer is encrypted, ca=
-use
-> otherwise it could potentially try to access it with the CPU.
+vim +/n_bytes +1321 net/vmw_vsock/af_vsock.c
 
-I absolutely agree. I guess our discussion is whether it's something
-that should be implicit and understood by applications, or if it should
-be explicit and discoverable.
+  1295	
+  1296	static int vsock_do_ioctl(struct socket *sock, unsigned int cmd,
+  1297				  int __user *arg)
+  1298	{
+  1299		struct sock *sk = sock->sk;
+  1300		struct vsock_sock *vsk;
+  1301		int retval;
+  1302	
+  1303		vsk = vsock_sk(sk);
+  1304	
+  1305		switch (cmd) {
+  1306		case SIOCOUTQ: {
+  1307			size_t n_bytes;
+  1308	
+  1309			if (!vsk->transport || !vsk->transport->unsent_bytes) {
+  1310				retval = -EOPNOTSUPP;
+  1311				break;
+  1312			}
+  1313	
+  1314			if (vsk->transport->unsent_bytes) {
+  1315				if (sock_type_connectible(sk->sk_type) && sk->sk_state == TCP_LISTEN) {
+  1316					retval = -EINVAL;
+  1317					break;
+  1318				}
+  1319	
+  1320				n_bytes = vsk->transport->unsent_bytes(vsk);
+> 1321				if (n_bytes < 0) {
+  1322					retval = n_bytes;
+  1323					break;
+  1324				}
+  1325	
+  1326				retval = put_user(n_bytes, arg);
+  1327			}
+  1328			break;
+  1329		}
+  1330		default:
+  1331			retval = -ENOIOCTLCMD;
+  1332		}
+  1333	
+  1334		return retval;
+  1335	}
+  1336	
 
-Maxime
-
---wmmpztlpkqqsn5hy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZn69RgAKCRDj7w1vZxhR
-xW5vAQD0vblFH/q1MbM1OY/GsWrJEN+h1Zy8F/ROqZxXJoSP4wEA7MhRTaakqRAd
-6+tOX4+3tzAEZ0WOa+EHzLr+lzLYvQ0=
-=ivoa
------END PGP SIGNATURE-----
-
---wmmpztlpkqqsn5hy--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
