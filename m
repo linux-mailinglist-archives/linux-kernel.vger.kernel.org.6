@@ -1,151 +1,136 @@
-Return-Path: <linux-kernel+bounces-233562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B789391B985
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:10:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7528F91B98C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:12:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B4EB28313A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:10:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E8AF1F22700
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:12:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC07B145FEF;
-	Fri, 28 Jun 2024 08:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98068146586;
+	Fri, 28 Jun 2024 08:12:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nEuFO3UF"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Lc+D3vwQ"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42C0143881
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 08:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2A74436A
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 08:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719562229; cv=none; b=OnKXWba36jMco5t65TEz1AERRUpdCCNJxhVI5gm5dZP5VBYPKXjWdCr+aT0LwtZMc/3KjQpTYQ1A1+wxIg1OYEYbaknMsM94BNa6bjltBXeB8CCWtmZ4Ac1a2JGLjASQeUXK/Ap1o8HKkyYsM8Lf6u/Pllwn4oWa1Iwo/ELvMiE=
+	t=1719562334; cv=none; b=Y2Mp2xBQRDB6MuFISnXwNtZ/xNCb4SndIB0rJpYXmjisr9teV7pTT7/3/Q7qne2TmexSoR+rd7m8ayWQS0O2pJH0SMSjyUnd2bPGJDEk6LFupvXIlQPvrbT69OPMWM8kw2JgyAYu1PHnufcEsgT3tHcB5iKbILaUCpPohrWSZss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719562229; c=relaxed/simple;
-	bh=Lu06sykTGqIRcI8RMkVT9f/KiqOzh8P3mPtNhTs1gI0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=XmIt9aCxAj43myOlnrergGWmi81DIO8hHoBNoquPL0ZoValv0mceA+FSbToM+FWHjP0ofUzUqcApgJ+NvaPtefFpDCqqCDk49Ep9iGLlqBg/CYRaIdPO5yV//nGCfwGH76WclUld3gbGo++19/tYXXZ0q8iqHQMGFacvJj6ZWk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nEuFO3UF; arc=none smtp.client-ip=209.85.167.47
+	s=arc-20240116; t=1719562334; c=relaxed/simple;
+	bh=VfMZ3EyZOT/+Dlgo+TPCcRfEdLOwVwZ6yf9Azc6a5no=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=QIOV+mZWKNQQclXc0ZHtlq0Xz8mG0Wnm7gr5WNVMMHqyKzRfeRyNTqGGSWYGWXREC98HweyVpkPd/XnmOtAE468nqmz226Zr4m54WVtfDXKRd820yIEAi7nliRS1bdHcz0ZToZEhiLz4h2tcgo+7F0zXmNjhctqgHW1XClQz2dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Lc+D3vwQ; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52e764bb3fbso398914e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 01:10:26 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4248ff53f04so2744295e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 01:12:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719562225; x=1720167025; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Wx6Kfw8qVkhu43FPigNKkiagy9yQK+KD3/V0XMmuLoQ=;
-        b=nEuFO3UF3748dWAn//wloGFLic9Ikz5ybnzMIjF382VGBhQXDVvoMKasA8GXkyCq9/
-         14PPzzYkOagA7R0V08nnTcAKp0UrIcjZ9IRZBpxYApfPidyy4EyqSblwbjgrIeNQs33p
-         AfNxJtkCGVENwxCTLSXdVCyB23eXEQ2lNkNrVR0JBa3JowNhzIOxshTUEsQ88KO4MNR5
-         7xdg/1tSUYx5iLUddeJR1Fhr2/qXKBdLYRozbi9VLCiqQjq1GUj8dLugAseAbniv1GJl
-         De6RbCEqKJzPfENFjiYFSLSvbVhe6o9rQ/34IrDR3EZENQc9xuWbe+DyYVhj0cEKd1rP
-         M9pg==
+        d=linaro.org; s=google; t=1719562331; x=1720167131; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Za8GJzSQvEWguBnhsVgMgbxpdx2OWPVe0QVMP4Zex7M=;
+        b=Lc+D3vwQEKwwhXXBSCHzQImzDMqy0Fei/UstJEGLOw0wJkUgcQCS6IcrDs77WOv6sh
+         E7cXy8JBzF2B3awvqkjuvcrBNpNvcEesPGhoegfEBs24I6VK3JNQz4WNzhoL2XC1Rtqg
+         RLmrH/h57bfNAF5f3L34wo4ndM+4BWXd+dAhCGclUAc9V1XeDCAkk7cqYc5monBlyN+D
+         j1dOEnpICyzWz/q7p0fnhkBEUR5NSglFYnUKUFFPzJEGafWGgW14L1tXuseOmKh/Ce+I
+         JgOjvSP0y/JACynIim6Bi84AlPcKMN897HzTY2ZLeLYbNDd92hLANX7XT63LkKWHJcWt
+         7tcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719562225; x=1720167025;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Wx6Kfw8qVkhu43FPigNKkiagy9yQK+KD3/V0XMmuLoQ=;
-        b=KmlDQONTrjP9uYHEMS34R33UeAmKOuOsh1D2ZF+/+J13MMDMpRR5vgY24HKm+YelpV
-         5gINsHjFJYPtMjuUhJOHC5i8HnCd0Z5yM2Jsd2ippq6beSkqYMnapvKTMUVBH6COXIaa
-         ypOiH6NnwEftp0F7v1ubqbghkeO+0iBaFr8sK6i3AWbNTCbJq1PSQePEdYUBwRv9RnHk
-         trlCYC/A6SyuJgE/yJ54FAl00fpudob5RXdMYSC3KRQ4Odd+KkZRM1VAqgXuioAdypOL
-         6AuSo3hlrXq4d4QZ4lTprVO8GStMp837aMHuulC5w4KRUbQuJQ8rdaBP62lANcwps2o+
-         2tZg==
-X-Forwarded-Encrypted: i=1; AJvYcCXcRAe4OKWsmVbttYQjYHul36hcMFnyx2rQpvd8GL1Hj60p6T1RoxY4Rxc64enpzN3GIJZqAIm6c/eZ6sxk4cRGK7pBatWhYNFrVNts
-X-Gm-Message-State: AOJu0Yz7kZR9FAEgSGmC1gd8HaXvLq3tZkMivt53BRLZEfg54BprjuUe
-	LIipz/Etztje8Vx6/qsXEIfcK4j9haR1GOvpuBWM1GGFyVj9c6PWfyKziho9sqM=
-X-Google-Smtp-Source: AGHT+IGTO9W7Boht9fioCYhTcSmnpjcrLoWd1bSV6nEc8wC/5NmPCAVlrVj69S7MOt078ZRE7j0ZSA==
-X-Received: by 2002:ac2:43cd:0:b0:52c:cc46:d59 with SMTP id 2adb3069b0e04-52ce1834575mr9162934e87.18.1719562224200;
-        Fri, 28 Jun 2024 01:10:24 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:b17d:324d:ca1:ab31? ([2a01:e0a:982:cbb0:b17d:324d:ca1:ab31])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0cd60dsm1489067f8f.2.2024.06.28.01.10.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Jun 2024 01:10:23 -0700 (PDT)
-Message-ID: <16ec9c9a-badb-4626-9227-fb03f0ee3ee6@linaro.org>
-Date: Fri, 28 Jun 2024 10:10:22 +0200
+        d=1e100.net; s=20230601; t=1719562331; x=1720167131;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Za8GJzSQvEWguBnhsVgMgbxpdx2OWPVe0QVMP4Zex7M=;
+        b=vH4F2JpXxMHw3L/y95pRRBwlczm+Op3PQGSikVEGmZc4nYDzxPXj6Whv4XLa/8H2p4
+         ygB95yz0OYj+nPlb/VeI2iAksYtOvzeJ3TNO4OEBWwfSLc4Of5A5Ny+mSeh4LiE8x8NR
+         8hBT/HTTf4yTcOcW/Yt4Aes4INQ6mxG/hjtcWioUjRnmvI6tvJqZNffY+TY40r5JJ9E0
+         Y0Zexwhi3lzd26X0dGRCrFQznAXIcfd9U46nZlAKP5ZpJE6zKKMbXZXJpK2xCRsMbXTN
+         z8xbDt+2hnHPBAcJOoCvUibZBn4fwqbbhttPr4SkQovmah8qHpi6Rpoy9bFplS6zDmzT
+         viLg==
+X-Forwarded-Encrypted: i=1; AJvYcCWgybji0nkJXCrHwC+NgKZ2UqQnvqrEKejHIOyRulJT2bfEXj2BY6yS6Gb5z3xvqtBuq4rR1XOz3JbsVGQpUSohx5fXBI8S79z/5Bt0
+X-Gm-Message-State: AOJu0YzQGtsml6t25Jfn05fT/NO1GKQ0WqoYjfLSUBtzOh/ptOze6h2v
+	nGNx9C/xcsXn+aL3YTrptV+APamFGFbagnAjGLrgq0cQMqBngRGXM9CFH+1hFSI=
+X-Google-Smtp-Source: AGHT+IH1Ga8ve4A/0au2rmwtSixHp2ho56UaJ52/y9SYN40XIU8gYHAdzQXzwMD6SK6QXmXie5tssQ==
+X-Received: by 2002:a05:600c:56cc:b0:421:7bed:5274 with SMTP id 5b1f17b1804b1-4248b95d0edmr124015215e9.10.1719562331060;
+        Fri, 28 Jun 2024 01:12:11 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256d664052sm12589185e9.27.2024.06.28.01.12.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 01:12:10 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Kevin Hilman <khilman@baylibre.com>, linux-kernel@vger.kernel.org, 
+ linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+In-Reply-To: <20240626152733.1350376-1-jbrunet@baylibre.com>
+References: <20240626152733.1350376-1-jbrunet@baylibre.com>
+Subject: Re: [PATCH 0/2] arm64: dts: amlogic: handle hdmi system clock
+Message-Id: <171956233006.862799.7789348204436390137.b4-ty@linaro.org>
+Date: Fri, 28 Jun 2024 10:12:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 0/2] arm64: dts: amlogic: handle hdmi system clock
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Kevin Hilman <khilman@baylibre.com>, linux-kernel@vger.kernel.org,
- linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-References: <20240626152733.1350376-1-jbrunet@baylibre.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240626152733.1350376-1-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
 Hi,
 
-On 26/06/2024 17:27, Jerome Brunet wrote:
+On Wed, 26 Jun 2024 17:27:29 +0200, Jerome Brunet wrote:
 > This patchset adds the setup of the HDMI system clock for HDMI Tx.
 > 
 > This is another step in cleaning HDMI Tx and its direct usage of HHI
 > register space. Eventually, this will help remove component usage from
 > the Amlogic display drivers.
-
-Thanks,
-
-Beware we will need to keep old DT with new kernel functional for a while,
-do removal of component & HHI in meson_dw_hdmi would need to wait for multiple
-kernel releases.
-
-A migration step would be to add a phandle to hhi right now, so we can drop
-components earlier, then in a second time add a proper PHY and then mark
-the hhi reg as deprecated.
-
-Neil
-
 > 
 > Jerome Brunet (2):
->    arm64: dts: amlogic: gx: correct hdmi clocks
->    arm64: dts: amlogic: setup hdmi system clock
+>   arm64: dts: amlogic: gx: correct hdmi clocks
+>   arm64: dts: amlogic: setup hdmi system clock
 > 
->   arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi | 5 +++++
->   arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi       | 9 +++++++--
->   arch/arm64/boot/dts/amlogic/meson-gxl.dtsi        | 9 +++++++--
->   3 files changed, 19 insertions(+), 4 deletions(-)
-> 
+> [...]
+
+Thanks, Applied to https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git (v6.11/arm64-dt)
+
+[1/2] arm64: dts: amlogic: gx: correct hdmi clocks
+      https://git.kernel.org/amlogic/c/0602ba0dcd0e76067a0b7543e92b2de3fb231073
+[2/2] arm64: dts: amlogic: setup hdmi system clock
+      https://git.kernel.org/amlogic/c/1443b6ea806dfcdcee6c894784332c9c947ac319
+
+These changes has been applied on the intermediate git tree [1].
+
+The v6.11/arm64-dt branch will then be sent via a formal Pull Request to the Linux SoC maintainers
+for inclusion in their intermediate git branches in order to be sent to Linus during
+the next merge window, or sooner if it's a set of fixes.
+
+In the cases of fixes, those will be merged in the current release candidate
+kernel and as soon they appear on the Linux master branch they will be
+backported to the previous Stable and Long-Stable kernels [2].
+
+The intermediate git branches are merged daily in the linux-next tree [3],
+people are encouraged testing these pre-release kernels and report issues on the
+relevant mailing-lists.
+
+If problems are discovered on those changes, please submit a signed-off-by revert
+patch followed by a corrective changeset.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+
+-- 
+Neil
 
 
