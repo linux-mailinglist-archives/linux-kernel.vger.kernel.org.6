@@ -1,123 +1,109 @@
-Return-Path: <linux-kernel+bounces-234142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99A8F91C2BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:38:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D04591C2BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:38:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB1AB1C2176D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:38:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3F14B20F86
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0971E1C2325;
-	Fri, 28 Jun 2024 15:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 416DC1C6889;
+	Fri, 28 Jun 2024 15:38:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Yp5d38kj"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C6yDOwHA"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D713C17C66
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 15:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576E9156C67
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 15:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719589091; cv=none; b=O3YE2tjr14zJy6MyUt5hy7QcQcscL+pcD0WgluAEZIZFTTfbrJNw4KT+NIA5UYFRdfidB3HuvAWRRbXY5YndOdeyqgUY44nJvawupoiyARWfYYYuw21EF7pTCjMAYMUx9pUf2GqlmvTGRyFa+dntR9M1pmHEm6Ptd6+eboEP3B0=
+	t=1719589118; cv=none; b=TVOG72BTY4xbLkuCTHewfJDDp038spPPe8gN9ooMcHD+ZtSRtnouT4EQfWH8oq7nmTW+Ix9iF2jTMeqD9BhQN1oGjiC3n/EaM8VNbiXWEhvIltbB2XwFcLHlJFeFtnOUcTFcQJ/kgIu3f0cAG8oBP2WIi9JCyT3Ej+h/2Yria9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719589091; c=relaxed/simple;
-	bh=eJoAuJ6GL8stuFTFAGUqcwHeS8evgdssb5cWYJUx3rU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bkdr1W95Y+vvJ+cBvzjDkqvXflR4og6CqCblRyN3atueOpDM308V94PCIwngaZY+vf7G8SeB34+KEkXcjW9SKCXIUsfUELAeo7bcFCr3n6idsybOqECXbBC9j9VHrRin0sQ8TrkTAZ4q6LT72avbCN7iWdpGqiryx5wKVFDXrHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Yp5d38kj; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com [209.85.208.69])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id D8E8D3F738
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 15:38:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1719589084;
-	bh=MsEnv/M0byq8XC93iPUcxrjaR6EQLTcXh9kYUPdB+BE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
-	b=Yp5d38kjpQd5pAo1xbSlPXG8vrMRg0VsDt6ZM+nXAOzib84eouWq5yTHliH5lfaKD
-	 g4Aj3HiR1H+8D6lzsRDDSK8BAYwMUDloI2qByLQN31tDW/D2hPMUlmzVBcX2nZnPLW
-	 /4D5/YjaJrVCg7mewNexXGHYq1LiCMO3oAhvdNjDiH3AjLOgIMxWNtAWiOuc5+dY68
-	 ded3dAx1OqHYHsjfT2LmtHmAMXxtAVkmX67B16OkV6uuFkL8iSkeVJKg5sj+BZekV7
-	 rbhwQ8bPiDTMF2F3NpsL9Gh0YWvil5JHB6bHDc1mwmFq+HMh4w6C30on7tP9C1745b
-	 Hnj9Mxh3EFhtA==
-Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-57d27d8f691so264208a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 08:38:04 -0700 (PDT)
+	s=arc-20240116; t=1719589118; c=relaxed/simple;
+	bh=uacLHRN5rszX6vIJLri5UjMtNUEcG0qEZrXzdSa1lp0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=HEyFG16/p5ej50dZW95wUae5vWfnX1PO7QFjQDwKzyir+Ym4zO6LvFdKl5L6DIe4NiABIzsuj0ztpLI5vbGoCidoPVR9ctTgR54QtWYtPApTcgnKaFArJ7Yevsp/livjmvRab4CWeB8p9cN68EJjpYESAget7/tFVRaHU7ONzIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aniketmaurya.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=C6yDOwHA; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aniketmaurya.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e02fff66a83so1368284276.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 08:38:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719589115; x=1720193915; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9E6CDkEl8WVKZKqnxjSvSO7qQyb+0+zva6cbAiVPuvs=;
+        b=C6yDOwHAgEJvZB3VxEFZoowEhi0mAt0y24HjMN5Ie0db8c/gjrQ8/dTU7T/XCRauO5
+         xiMjYuX2316j5Gg92R/w8aS6QroUJkUG1r/csJldlZLz6MjiDnEYSbiIbH4wrgWL1Utt
+         uf8MFzac/1da+mkyPFHJDOBwgbtV9DseaglKndYQkAQ26d6o+glkyw4KRmzg0MWq8uQn
+         vO7Gohzdpq7c9bRJ2uYiStf+cqHPXC+Cus8hqYeYXqu4IjVHofZbnBlyvlplszUSbJue
+         8dUwV58YhVNTd+7Gf8ydjjMU3orvxOWmLEaw409YgA7WPEFXIMi4CJCprI3FdGBK2XPs
+         D3Dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719589084; x=1720193884;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MsEnv/M0byq8XC93iPUcxrjaR6EQLTcXh9kYUPdB+BE=;
-        b=P3G4T78fsQ/jmVBW+fsdmQmi219WgsQQoQeXvvsppirVKrzwfaGb+ZW7lAsyI19WIi
-         MK07HYJMiVP+hDopJSkN6SGCqa/IOZuBazayZtFq0rmiFb5zYn6ASazZBznAlLAEsrMq
-         we5MSv4I1Sj5gWiOFs9EPFEzPt1UFYVYF0uGbRdJHY5A3bmNq3SAK7ltECE+wqnrYUyh
-         NsM5rTygX89+aGkWbO0iSCSykpuQikLLOrXcsVBYwQS06DMUEHq1oP6K2cWLvIBcT6yO
-         7JkfNt662vAYRH/N8C31TbeDudnYV9Qj1eVJIgaOhxxKLashAJTO9ly0ckBQmM+KuSnD
-         38CQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWwz5afE8a987/H78h9pC2ZD7D9tkbkzDCNWTz9KuhSiWwsqQkxwGFlMFsdNWGKqrt+DuFln/xlLjpvBJOtWYQNe1GOQ1ynStDn7zua
-X-Gm-Message-State: AOJu0Yw9rN3SzdbG++5ysNS3hFwoQnsVT0oh+vDzHVGDBCK/BW0Wo7Oc
-	bXlXaPiFfyNfnT6llfym5OsQO5LHpPTb5wavipTco6UR5wyTpDwczIYkSmC7jdSnDOTcXz/3X8M
-	s3nl+M1KX+IQ6CjD+ja5qIyQ8vyE1owIsFbmhkGHyFgH1ysAK4rjngE6Rxp6fpfpJwwnbBrt1rR
-	FjzrecRm0E1g==
-X-Received: by 2002:a50:9ea6:0:b0:582:6eb6:2526 with SMTP id 4fb4d7f45d1cf-5826eb6b1edmr10770155a12.27.1719589084180;
-        Fri, 28 Jun 2024 08:38:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHcMeBrqelm0UsCNdD0vrQxedxQWDUu+xpgEbL98RcEO1wN4zX2klzsubVREOWWNGw8QAgCTw==
-X-Received: by 2002:a50:9ea6:0:b0:582:6eb6:2526 with SMTP id 4fb4d7f45d1cf-5826eb6b1edmr10770133a12.27.1719589083838;
-        Fri, 28 Jun 2024 08:38:03 -0700 (PDT)
-Received: from localhost.localdomain ([91.64.91.101])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58614d50593sm1164329a12.60.2024.06.28.08.38.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 08:38:03 -0700 (PDT)
-From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-To: john.johansen@canonical.com
-Cc: stgraber@stgraber.org,
-	brauner@kernel.org,
-	apparmor@lists.ubuntu.com,
-	linux-kernel@vger.kernel.org,
-	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Subject: [PATCH] apparmor: take nosymfollow flag into account
-Date: Fri, 28 Jun 2024 17:37:12 +0200
-Message-Id: <20240628153712.288166-1-aleksandr.mikhalitsyn@canonical.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1719589115; x=1720193915;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9E6CDkEl8WVKZKqnxjSvSO7qQyb+0+zva6cbAiVPuvs=;
+        b=EmPc+aT6jx/GAy+dW4MVwH01F3QOczMR79GUvI90CJElzzbJGzpMHYpb2jVXMiW3GW
+         JiVBM8oTMcgCaEovzh5qW0hns2D/v0WJlNcLcwWKB/MpVX+wAZvn0xaD991236so3Ytr
+         OSOCFKvtKlWdzOkQ+jAXvx5BBk2I4eicC5GV/DA5yGBSUz43J9YDpb6UTjaQidlIOHXo
+         pbSjdXDW0hMv5NPFiEYT0/j2zQ6welQUjUfQS0O+0nQYs66jTy6vpWw0HPNgdvuWMwtV
+         09R9rFrQOlznCL6+ApnwXbYZQF5NbYFVqVlEF0XOubBgH13rgJUia/efT7f1sX/frK6T
+         9ukw==
+X-Forwarded-Encrypted: i=1; AJvYcCWNLcsi4f8lpktCh8knLIr+Yn2oFm6LRy1QFgzcgZcONUNnCLK5uNjOwt7YQ5BDj2cV76uKZnBO0TMRTT64a1qJFTxlhvW9xr7a9/7o
+X-Gm-Message-State: AOJu0Yx0uKXT/ehd5jjDj8QWBVnzp7CgbE0cOaWSHya3FbQOYfIVaSd4
+	lVRgG+0JajLlFxwajMeiCfyc4GVy9IW+z+GXZsm89bQrZQLQAYqxRAXLwPtgnyVlipY0GuodsrE
+	26PbuEkabxZQ5dTjWqgN1TQOwzA==
+X-Google-Smtp-Source: AGHT+IFbAOblu3KJevq7sqlPwSTEqrm84WW13aJYNyxIrhWTYRRVG7+VxoRMM+Ura64VKD/rC6vfzOSr6fhwJ1JiTyY=
+X-Received: from aniketm.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:3387])
+ (user=aniketmaurya job=sendgmr) by 2002:a05:6902:20c1:b0:de5:3003:4b64 with
+ SMTP id 3f1490d57ef6-e0300ee84cbmr86403276.1.1719589115375; Fri, 28 Jun 2024
+ 08:38:35 -0700 (PDT)
+Date: Fri, 28 Jun 2024 15:38:26 +0000
+In-Reply-To: <20240624052851.1030799-1-aniketmaurya@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240624052851.1030799-1-aniketmaurya@google.com>
+X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
+Message-ID: <20240628153829.303719-1-aniketmaurya@google.com>
+Subject: [PATCH v3 0/3] i3c: dw: Add apb clk
+From: Aniket <aniketmaurya@google.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>, Jeremy Kerr <jk@codeconstruct.com.au>, 
+	Joel Stanley <joel@jms.id.au>, Billy Tsai <billy_tsai@aspeedtech.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Aniket <aniketmaurya@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-A "nosymfollow" flag was added in commit
-dab741e0e02b ("Add a "nosymfollow" mount option.")
+These patches add APB clk aka pclk to the dw i3c driver
+and the binding doc. Also move to _enabled clk_get APIs.
 
-While we don't need to implement any special logic on
-the AppArmor kernel side to handle it, we should provide
-user with a correct list of mount flags in audit logs.
+Changes from v2 to v3
+  - moved to _enabled API first and then added apb clk.
 
-Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
----
- security/apparmor/mount.c | 2 ++
- 1 file changed, 2 insertions(+)
+Changes from v1 to v2
+ - extra example removed from yaml file, minor renaming.
+ - 3rd patch added to migrate to *_enabled clk_get APIs. 
 
-diff --git a/security/apparmor/mount.c b/security/apparmor/mount.c
-index 49fe8da6fea4..bf8863253e07 100644
---- a/security/apparmor/mount.c
-+++ b/security/apparmor/mount.c
-@@ -44,6 +44,8 @@ static void audit_mnt_flags(struct audit_buffer *ab, unsigned long flags)
- 		audit_log_format(ab, ", mand");
- 	if (flags & MS_DIRSYNC)
- 		audit_log_format(ab, ", dirsync");
-+	if (flags & MS_NOSYMFOLLOW)
-+		audit_log_format(ab, ", nosymfollow");
- 	if (flags & MS_NOATIME)
- 		audit_log_format(ab, ", noatime");
- 	if (flags & MS_NODIRATIME)
+Aniket (3):
+  dt-bindings: i3c: dw: Add apb clock binding
+  i3c: dw: Use new *_enabled clk API
+  i3c: dw: Add optional apb clock
+
+ .../bindings/i3c/snps,dw-i3c-master.yaml          | 11 ++++++++++-
+ drivers/i3c/master/dw-i3c-master.c                | 15 +++++----------
+ drivers/i3c/master/dw-i3c-master.h                |  1 +
+ 3 files changed, 16 insertions(+), 11 deletions(-)
+
 -- 
-2.34.1
+2.45.2.803.g4e1b14247a-goog
 
 
