@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-233344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48C7E91B5C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 06:46:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17E7891B5CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 06:47:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D380AB22145
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 04:46:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9ADA284365
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 04:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9DDD2E64B;
-	Fri, 28 Jun 2024 04:46:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F7733086;
+	Fri, 28 Jun 2024 04:47:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lr48Y3e8"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QxGuB6+3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E43224D2;
-	Fri, 28 Jun 2024 04:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF38A224D2;
+	Fri, 28 Jun 2024 04:47:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719549965; cv=none; b=n5gNzOqLSjthJSJ+NnI0IuRz79eC5GpVX0kaHWB6CroUg5FybSxThwZeHIGrYUEgE9sqjn4wqvOp+3lwlsF5K7PmeICNBFZBsZgJpZj6W4G/ndfjw5Sa2f9MbQIwikOVODjEiG7QaiZRa01/NLMfM1vpn7YQ3jHFxpeXCpcVX4I=
+	t=1719550027; cv=none; b=FzAQpEPBqvCGotY1ZNitlWawUvAtWcJPrzqAkQS7kIm/BAAD9fUhsO6UJUjQr8Af2z/MjXq58lmYkolBu+vyNvYZxi+l+H7wQu/lubTHk4BQdG8qK7G08i3k0v5LroopcuW4PqmYiRr2ErmgImK8fdIpHy4qKlM+xGtdNeAKdEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719549965; c=relaxed/simple;
-	bh=TZaytH0FOBjY2yQDNKE2k83Kg5kahh8jLSo707GKNUw=;
+	s=arc-20240116; t=1719550027; c=relaxed/simple;
+	bh=OyGnYkVTMeo9E0tebP3hGIKqk4ivb+YBb/w6+AvD+AE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cEE7Y+KSiBqgJBxFIleVXVpWP5GTjgrVc32elR2la+OXRozCII2bPrpvKZH1pfO56HKRF91a88zLPqRs+mWq0bKY08J7I8M/UO5fWEKZ6Mcy7WTU8VMEPSO1C56yhtdGn/u3DY+YQhWQpDl//TddKnlygzZhv/6vOIs/UDL1Yys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lr48Y3e8; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=OWENhf3IvxmXVRFf5yQMQm7YyD2+KzXnZP3WnXTnfoI=; b=lr48Y3e8PTQJ+nEQ/sSUctbZ6s
-	TALaGDeZKcMePZdFl4XK9saGMPyX87Lz9o/t+6Zoh7RnCqrrdJQ4pQ3MmTL1+b+kuuEilA2fqN/n7
-	vdDh7ozE+Lkm95Sh19a7+E+MS2pEh0/+v/C6qegF3V0in2wBZHWBWA33pqS4wKNFW9OOfAMNH6W5d
-	725QV5o6I1blGT+XTEzrqZeILkCQqvSTSHInsj9c8wVmgRYPFdIljcRVMOMt7oedBeDT/NyQp2/ql
-	oLZjl2HrupBoN6ZRygslTiH856XMeJXvXE2SKL2rHBeIa467teJbC/u6mvGZ4DrVr6MR+3bjEblB9
-	fXwfHLdw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sN3UX-0000000CYSN-3JQs;
-	Fri, 28 Jun 2024 04:45:45 +0000
-Date: Thu, 27 Jun 2024 21:45:45 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>, Jens Axboe <axboe@kernel.dk>,
-	Hauke Mehrtens <hauke@hauke-m.de>, Felix Fietkau <nbd@nbd.name>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Dave Chinner <dchinner@redhat.com>, Jan Kara <jack@suse.cz>,
-	Christian Brauner <brauner@kernel.org>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Li Lingfeng <lilingfeng3@huawei.com>,
-	Christian Heusel <christian@heusel.eu>,
-	Min Li <min15.li@samsung.com>, Avri Altman <avri.altman@wdc.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Hannes Reinecke <hare@suse.de>,
-	Mikko Rapeli <mikko.rapeli@linaro.org>, Yeqi Fu <asuk4.q@gmail.com>,
-	Victor Shih <victor.shih@genesyslogic.com.tw>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Li Zhijian <lizhijian@fujitsu.com>,
-	"Ricardo B. Marliere" <ricardo@marliere.net>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH v4 3/4] block: add support for notifications
-Message-ID: <Zn4_-alKtxuZ6zNt@infradead.org>
-References: <cover.1719520771.git.daniel@makrotopia.org>
- <4ebef78f07ff1ea4d553c481ffa9e130d65db772.1719520771.git.daniel@makrotopia.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rgBT+Qvw/Y790yi9jbC7VzHKetufeDmmhNhoHWdNKWQNEUOB9kRDJBUrgiSre3QNmmPfZWXBrxShQJGnfnWSlO2k98FmHKxoWTwOjZyT37QmS/1MSxVHng42Nur3lXvAaxfsvV6gW1h9NSIF4gYZ7IoNBuXFxWr5uPfyXy8xzg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QxGuB6+3; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719550025; x=1751086025;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=OyGnYkVTMeo9E0tebP3hGIKqk4ivb+YBb/w6+AvD+AE=;
+  b=QxGuB6+3iT/QVDQTFze7dzyO8oGSjIfpZ1MFVlnAHwJRkCMo0tn5PTQN
+   oOMHwNBYrAWocGzxIay40K/P+p4WBBlpO8Y+0g20Bv/YAuZmbuublCFs1
+   vpdlVggD89v4dWcrqiefUHOvcVZWmlWF7UPX3CAi8UjL4loc7dNa3Q2ck
+   MoJMNrCNyCSS4y9SoYXAuQIyw7i+v0+JqVUkqUgkd/NlkvLoQGzzfPuU1
+   2NeydzlWYKllXBP1eq38gcV6aL+i4eiTvPUZ/60LMBCtr+9JW+gIrIC1Q
+   ZD3kbzD6YbW/+5P/uGayimdBByaHQ9JIRd9MB1qAIsNnzqYjv01fqjcMn
+   g==;
+X-CSE-ConnectionGUID: WLspNH3lTLW3YPHrv2m6PQ==
+X-CSE-MsgGUID: VwlnMdOHS8+R7nMDW/up8Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="16537250"
+X-IronPort-AV: E=Sophos;i="6.09,168,1716274800"; 
+   d="scan'208";a="16537250"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 21:47:04 -0700
+X-CSE-ConnectionGUID: ObfNnmmQSqu+01rg6yVn4g==
+X-CSE-MsgGUID: fzcF+uXKR22dAqq/M/L0Cw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,168,1716274800"; 
+   d="scan'208";a="45254061"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 27 Jun 2024 21:47:02 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sN3Vj-000Gnu-2f;
+	Fri, 28 Jun 2024 04:46:59 +0000
+Date: Fri, 28 Jun 2024 12:46:03 +0800
+From: kernel test robot <lkp@intel.com>
+To: David Lin <yu-hao.lin@nxp.com>, linux-wireless@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	briannorris@chromium.org, kvalo@kernel.org, francesco@dolcini.it,
+	tsung-hsien.hsieh@nxp.com, David Lin <yu-hao.lin@nxp.com>
+Subject: Re: [PATCH 42/43] wifi: nxpwifi: add Makefile and Kconfig files for
+ nxpwifi compilation
+Message-ID: <202406281235.idQnZtIJ-lkp@intel.com>
+References: <20240621075208.513497-43-yu-hao.lin@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,15 +79,195 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4ebef78f07ff1ea4d553c481ffa9e130d65db772.1719520771.git.daniel@makrotopia.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20240621075208.513497-43-yu-hao.lin@nxp.com>
 
-On Thu, Jun 27, 2024 at 09:50:50PM +0100, Daniel Golle wrote:
-> Add notifier block to notify other subsystems about the addition or
-> removal of block devices.
+Hi David,
 
-Notification for what?  I really hate the concept of random modular
-code being able to hook into device discovery / partition scanning.
-And not actually having a user for it is a complete no-go.
+kernel test robot noticed the following build warnings:
 
+[auto build test WARNING on 238d636723a30311e20fde0a361662e829fe488b]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/David-Lin/wifi-nxpwifi-add-11ac-c/20240625-161306
+base:   238d636723a30311e20fde0a361662e829fe488b
+patch link:    https://lore.kernel.org/r/20240621075208.513497-43-yu-hao.lin%40nxp.com
+patch subject: [PATCH 42/43] wifi: nxpwifi: add Makefile and Kconfig files for nxpwifi compilation
+config: i386-randconfig-062-20240628 (https://download.01.org/0day-ci/archive/20240628/202406281235.idQnZtIJ-lkp@intel.com/config)
+compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240628/202406281235.idQnZtIJ-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406281235.idQnZtIJ-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/net/wireless/nxp/nxpwifi/uap_cmd.c:541:19: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le16 [usertype] size @@     got unsigned int @@
+   drivers/net/wireless/nxp/nxpwifi/uap_cmd.c:541:19: sparse:     expected restricted __le16 [usertype] size
+   drivers/net/wireless/nxp/nxpwifi/uap_cmd.c:541:19: sparse:     got unsigned int
+>> drivers/net/wireless/nxp/nxpwifi/uap_cmd.c:554:29: sparse: sparse: cast from restricted __le16
+>> drivers/net/wireless/nxp/nxpwifi/uap_cmd.c:573:19: sparse: sparse: bad assignment (+=) to restricted __le16
+   drivers/net/wireless/nxp/nxpwifi/uap_cmd.c:584:27: sparse: sparse: bad assignment (+=) to restricted __le16
+   drivers/net/wireless/nxp/nxpwifi/uap_cmd.c:596:27: sparse: sparse: bad assignment (+=) to restricted __le16
+   drivers/net/wireless/nxp/nxpwifi/uap_cmd.c:609:27: sparse: sparse: bad assignment (+=) to restricted __le16
+   drivers/net/wireless/nxp/nxpwifi/uap_cmd.c:622:27: sparse: sparse: bad assignment (+=) to restricted __le16
+   drivers/net/wireless/nxp/nxpwifi/uap_cmd.c:640:27: sparse: sparse: bad assignment (+=) to restricted __le16
+   drivers/net/wireless/nxp/nxpwifi/uap_cmd.c:653:27: sparse: sparse: bad assignment (+=) to restricted __le16
+   drivers/net/wireless/nxp/nxpwifi/uap_cmd.c:666:21: sparse: sparse: cast from restricted __le16
+
+vim +541 drivers/net/wireless/nxp/nxpwifi/uap_cmd.c
+
+309a0039e40257 David Lin 2024-06-21  521  
+309a0039e40257 David Lin 2024-06-21  522  /* This function prepares AP specific add station command.
+309a0039e40257 David Lin 2024-06-21  523   */
+309a0039e40257 David Lin 2024-06-21  524  static int
+309a0039e40257 David Lin 2024-06-21  525  nxpwifi_cmd_uap_add_new_station(struct nxpwifi_private *priv,
+309a0039e40257 David Lin 2024-06-21  526  				struct host_cmd_ds_command *cmd,
+309a0039e40257 David Lin 2024-06-21  527  				u16 cmd_no, void *data_buf,
+309a0039e40257 David Lin 2024-06-21  528  				u16 cmd_action, u32 cmd_type)
+309a0039e40257 David Lin 2024-06-21  529  {
+309a0039e40257 David Lin 2024-06-21  530  	struct host_cmd_ds_add_station *new_sta = &cmd->params.sta_info;
+309a0039e40257 David Lin 2024-06-21  531  	struct nxpwifi_sta_info *add_sta = (struct nxpwifi_sta_info *)data_buf;
+309a0039e40257 David Lin 2024-06-21  532  	struct station_parameters *params = add_sta->params;
+309a0039e40257 David Lin 2024-06-21  533  	struct nxpwifi_sta_node *sta_ptr;
+309a0039e40257 David Lin 2024-06-21  534  	u8 *pos, *cmd_end;
+309a0039e40257 David Lin 2024-06-21  535  	u16 tlv_len;
+309a0039e40257 David Lin 2024-06-21  536  	struct nxpwifi_ie_types_sta_flag *sta_flag;
+309a0039e40257 David Lin 2024-06-21  537  	int i;
+309a0039e40257 David Lin 2024-06-21  538  
+309a0039e40257 David Lin 2024-06-21  539  	cmd->command = cpu_to_le16(HOST_CMD_ADD_NEW_STATION);
+309a0039e40257 David Lin 2024-06-21  540  	new_sta->action = cpu_to_le16(cmd_action);
+309a0039e40257 David Lin 2024-06-21 @541  	cmd->size = sizeof(struct host_cmd_ds_add_station) + S_DS_GEN;
+309a0039e40257 David Lin 2024-06-21  542  
+309a0039e40257 David Lin 2024-06-21  543  	if (cmd_action == HOST_ACT_ADD_STA)
+309a0039e40257 David Lin 2024-06-21  544  		sta_ptr = nxpwifi_add_sta_entry(priv, add_sta->peer_mac);
+309a0039e40257 David Lin 2024-06-21  545  	else
+309a0039e40257 David Lin 2024-06-21  546  		sta_ptr = nxpwifi_get_sta_entry(priv, add_sta->peer_mac);
+309a0039e40257 David Lin 2024-06-21  547  
+309a0039e40257 David Lin 2024-06-21  548  	if (!sta_ptr)
+309a0039e40257 David Lin 2024-06-21  549  		return -1;
+309a0039e40257 David Lin 2024-06-21  550  
+309a0039e40257 David Lin 2024-06-21  551  	memcpy(new_sta->peer_mac, add_sta->peer_mac, ETH_ALEN);
+309a0039e40257 David Lin 2024-06-21  552  
+309a0039e40257 David Lin 2024-06-21  553  	if (cmd_action == HOST_ACT_REMOVE_STA) {
+309a0039e40257 David Lin 2024-06-21 @554  		cmd->size = cpu_to_le16(cmd->size);
+309a0039e40257 David Lin 2024-06-21  555  		return 0;
+309a0039e40257 David Lin 2024-06-21  556  	}
+309a0039e40257 David Lin 2024-06-21  557  
+309a0039e40257 David Lin 2024-06-21  558  	new_sta->aid = cpu_to_le16(params->aid);
+309a0039e40257 David Lin 2024-06-21  559  	new_sta->listen_interval = cpu_to_le32(params->listen_interval);
+309a0039e40257 David Lin 2024-06-21  560  	new_sta->cap_info = cpu_to_le16(params->capability);
+309a0039e40257 David Lin 2024-06-21  561  
+309a0039e40257 David Lin 2024-06-21  562  	pos = new_sta->tlv;
+309a0039e40257 David Lin 2024-06-21  563  	cmd_end = (u8 *)cmd;
+309a0039e40257 David Lin 2024-06-21  564  	cmd_end += (NXPWIFI_SIZE_OF_CMD_BUFFER - 1);
+309a0039e40257 David Lin 2024-06-21  565  
+309a0039e40257 David Lin 2024-06-21  566  	if (params->sta_flags_set & NL80211_STA_FLAG_WME)
+309a0039e40257 David Lin 2024-06-21  567  		sta_ptr->is_wmm_enabled = 1;
+309a0039e40257 David Lin 2024-06-21  568  	sta_flag = (struct nxpwifi_ie_types_sta_flag *)pos;
+309a0039e40257 David Lin 2024-06-21  569  	sta_flag->header.type = cpu_to_le16(TLV_TYPE_UAP_STA_FLAGS);
+309a0039e40257 David Lin 2024-06-21  570  	sta_flag->header.len = cpu_to_le16(sizeof(__le32));
+309a0039e40257 David Lin 2024-06-21  571  	sta_flag->sta_flags = cpu_to_le32(params->sta_flags_set);
+309a0039e40257 David Lin 2024-06-21  572  	pos += sizeof(struct nxpwifi_ie_types_sta_flag);
+309a0039e40257 David Lin 2024-06-21 @573  	cmd->size += sizeof(struct nxpwifi_ie_types_sta_flag);
+309a0039e40257 David Lin 2024-06-21  574  
+309a0039e40257 David Lin 2024-06-21  575  	if (params->ext_capab_len) {
+309a0039e40257 David Lin 2024-06-21  576  		u8 *data = (u8 *)params->ext_capab;
+309a0039e40257 David Lin 2024-06-21  577  		u16 len = params->ext_capab_len;
+309a0039e40257 David Lin 2024-06-21  578  
+309a0039e40257 David Lin 2024-06-21  579  		tlv_len = nxpwifi_append_data_tlv(WLAN_EID_EXT_CAPABILITY,
+309a0039e40257 David Lin 2024-06-21  580  						  data, len, pos, cmd_end);
+309a0039e40257 David Lin 2024-06-21  581  		if (!tlv_len)
+309a0039e40257 David Lin 2024-06-21  582  			return -1;
+309a0039e40257 David Lin 2024-06-21  583  		pos += tlv_len;
+309a0039e40257 David Lin 2024-06-21  584  		cmd->size += tlv_len;
+309a0039e40257 David Lin 2024-06-21  585  	}
+309a0039e40257 David Lin 2024-06-21  586  
+309a0039e40257 David Lin 2024-06-21  587  	if (params->link_sta_params.supported_rates_len) {
+309a0039e40257 David Lin 2024-06-21  588  		u8 *data = (u8 *)params->link_sta_params.supported_rates;
+309a0039e40257 David Lin 2024-06-21  589  		u16 len = params->link_sta_params.supported_rates_len;
+309a0039e40257 David Lin 2024-06-21  590  
+309a0039e40257 David Lin 2024-06-21  591  		tlv_len = nxpwifi_append_data_tlv(WLAN_EID_SUPP_RATES,
+309a0039e40257 David Lin 2024-06-21  592  						  data, len, pos, cmd_end);
+309a0039e40257 David Lin 2024-06-21  593  		if (!tlv_len)
+309a0039e40257 David Lin 2024-06-21  594  			return -1;
+309a0039e40257 David Lin 2024-06-21  595  		pos += tlv_len;
+309a0039e40257 David Lin 2024-06-21  596  		cmd->size += tlv_len;
+309a0039e40257 David Lin 2024-06-21  597  	}
+309a0039e40257 David Lin 2024-06-21  598  
+309a0039e40257 David Lin 2024-06-21  599  	if (params->uapsd_queues || params->max_sp) {
+309a0039e40257 David Lin 2024-06-21  600  		u8 qos_capability = params->uapsd_queues | (params->max_sp << 5);
+309a0039e40257 David Lin 2024-06-21  601  		u8 *data = &qos_capability;
+309a0039e40257 David Lin 2024-06-21  602  		u16 len = sizeof(u8);
+309a0039e40257 David Lin 2024-06-21  603  
+309a0039e40257 David Lin 2024-06-21  604  		tlv_len = nxpwifi_append_data_tlv(WLAN_EID_QOS_CAPA,
+309a0039e40257 David Lin 2024-06-21  605  						  data, len, pos, cmd_end);
+309a0039e40257 David Lin 2024-06-21  606  		if (!tlv_len)
+309a0039e40257 David Lin 2024-06-21  607  			return -1;
+309a0039e40257 David Lin 2024-06-21  608  		pos += tlv_len;
+309a0039e40257 David Lin 2024-06-21  609  		cmd->size += tlv_len;
+309a0039e40257 David Lin 2024-06-21  610  		sta_ptr->is_wmm_enabled = 1;
+309a0039e40257 David Lin 2024-06-21  611  	}
+309a0039e40257 David Lin 2024-06-21  612  
+309a0039e40257 David Lin 2024-06-21  613  	if (params->link_sta_params.ht_capa) {
+309a0039e40257 David Lin 2024-06-21  614  		u8 *data = (u8 *)params->link_sta_params.ht_capa;
+309a0039e40257 David Lin 2024-06-21  615  		u16 len = sizeof(struct ieee80211_ht_cap);
+309a0039e40257 David Lin 2024-06-21  616  
+309a0039e40257 David Lin 2024-06-21  617  		tlv_len = nxpwifi_append_data_tlv(WLAN_EID_HT_CAPABILITY,
+309a0039e40257 David Lin 2024-06-21  618  						  data, len, pos, cmd_end);
+309a0039e40257 David Lin 2024-06-21  619  		if (!tlv_len)
+309a0039e40257 David Lin 2024-06-21  620  			return -1;
+309a0039e40257 David Lin 2024-06-21  621  		pos += tlv_len;
+309a0039e40257 David Lin 2024-06-21  622  		cmd->size += tlv_len;
+309a0039e40257 David Lin 2024-06-21  623  		sta_ptr->is_11n_enabled = 1;
+309a0039e40257 David Lin 2024-06-21  624  		sta_ptr->max_amsdu =
+309a0039e40257 David Lin 2024-06-21  625  			le16_to_cpu(params->link_sta_params.ht_capa->cap_info) &
+309a0039e40257 David Lin 2024-06-21  626  			IEEE80211_HT_CAP_MAX_AMSDU ?
+309a0039e40257 David Lin 2024-06-21  627  			NXPWIFI_TX_DATA_BUF_SIZE_8K :
+309a0039e40257 David Lin 2024-06-21  628  			NXPWIFI_TX_DATA_BUF_SIZE_4K;
+309a0039e40257 David Lin 2024-06-21  629  	}
+309a0039e40257 David Lin 2024-06-21  630  
+309a0039e40257 David Lin 2024-06-21  631  	if (params->link_sta_params.vht_capa) {
+309a0039e40257 David Lin 2024-06-21  632  		u8 *data = (u8 *)params->link_sta_params.vht_capa;
+309a0039e40257 David Lin 2024-06-21  633  		u16 len = sizeof(struct ieee80211_vht_cap);
+309a0039e40257 David Lin 2024-06-21  634  
+309a0039e40257 David Lin 2024-06-21  635  		tlv_len = nxpwifi_append_data_tlv(WLAN_EID_VHT_CAPABILITY,
+309a0039e40257 David Lin 2024-06-21  636  						  data, len, pos, cmd_end);
+309a0039e40257 David Lin 2024-06-21  637  		if (!tlv_len)
+309a0039e40257 David Lin 2024-06-21  638  			return -1;
+309a0039e40257 David Lin 2024-06-21  639  		pos += tlv_len;
+309a0039e40257 David Lin 2024-06-21  640  		cmd->size += tlv_len;
+309a0039e40257 David Lin 2024-06-21  641  		sta_ptr->is_11ac_enabled = 1;
+309a0039e40257 David Lin 2024-06-21  642  	}
+309a0039e40257 David Lin 2024-06-21  643  
+309a0039e40257 David Lin 2024-06-21  644  	if (params->link_sta_params.opmode_notif_used) {
+309a0039e40257 David Lin 2024-06-21  645  		u8 *data = &params->link_sta_params.opmode_notif;
+309a0039e40257 David Lin 2024-06-21  646  		u16 len = sizeof(u8);
+309a0039e40257 David Lin 2024-06-21  647  
+309a0039e40257 David Lin 2024-06-21  648  		tlv_len = nxpwifi_append_data_tlv(WLAN_EID_OPMODE_NOTIF,
+309a0039e40257 David Lin 2024-06-21  649  						  data, len, pos, cmd_end);
+309a0039e40257 David Lin 2024-06-21  650  		if (!tlv_len)
+309a0039e40257 David Lin 2024-06-21  651  			return -1;
+309a0039e40257 David Lin 2024-06-21  652  		pos += tlv_len;
+309a0039e40257 David Lin 2024-06-21  653  		cmd->size += tlv_len;
+309a0039e40257 David Lin 2024-06-21  654  	}
+309a0039e40257 David Lin 2024-06-21  655  
+309a0039e40257 David Lin 2024-06-21  656  	for (i = 0; i < MAX_NUM_TID; i++) {
+309a0039e40257 David Lin 2024-06-21  657  		if (sta_ptr->is_11n_enabled)
+309a0039e40257 David Lin 2024-06-21  658  			sta_ptr->ampdu_sta[i] =
+309a0039e40257 David Lin 2024-06-21  659  				      priv->aggr_prio_tbl[i].ampdu_user;
+309a0039e40257 David Lin 2024-06-21  660  		else
+309a0039e40257 David Lin 2024-06-21  661  			sta_ptr->ampdu_sta[i] = BA_STREAM_NOT_ALLOWED;
+309a0039e40257 David Lin 2024-06-21  662  	}
+309a0039e40257 David Lin 2024-06-21  663  
+309a0039e40257 David Lin 2024-06-21  664  	memset(sta_ptr->rx_seq, 0xff, sizeof(sta_ptr->rx_seq));
+309a0039e40257 David Lin 2024-06-21  665  
+309a0039e40257 David Lin 2024-06-21  666  	cmd->size = cpu_to_le16(cmd->size);
+309a0039e40257 David Lin 2024-06-21  667  
+309a0039e40257 David Lin 2024-06-21  668  	return 0;
+309a0039e40257 David Lin 2024-06-21  669  }
+309a0039e40257 David Lin 2024-06-21  670  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
