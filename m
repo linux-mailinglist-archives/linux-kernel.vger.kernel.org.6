@@ -1,94 +1,148 @@
-Return-Path: <linux-kernel+bounces-233170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D4FA91B331
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 02:10:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1656191B33F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 02:17:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCC3A1F23F29
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 00:10:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B85FA2834E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 00:17:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DEA91103;
-	Fri, 28 Jun 2024 00:10:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B001917CD;
+	Fri, 28 Jun 2024 00:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RiDnM8FG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gwmail.gwu.edu header.i=@gwmail.gwu.edu header.b="DH+T4J35"
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E5AB191;
-	Fri, 28 Jun 2024 00:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABECF37B
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 00:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719533429; cv=none; b=HQf6+yu9iDSJqwvi03QHdsR5kEMtmTcd2V8T4SHXknkI4ZLV8QkqPRysCC0lV3XeUz/Wsq6SRFDwBnRikU2D8CqHEM2EBx3eTe/qoFKzWVDZ5F5kQ+bpk8LN2TjQjSIEinzkIFYBeRRpJSD7Fg9NubOHbD7IZDZkVj3rUkbrv4Y=
+	t=1719533860; cv=none; b=cK9W1j7bhQN/yKxDgBE3sNiDP85dZCDK9isBwckGJja8Nf6FHXJle/p3xZkoAnCZRWwiGjJBWu95pnIB9Sa4Go4S49BoL4rVQ8P/eq7yjj11aJFB1HhNx8d3KxOME0W+tZKMq2NM64+fP83OYp1ZIbSqAv0Lf3Vp2/Y4jvUTdXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719533429; c=relaxed/simple;
-	bh=3GHMMp2TTP4bxQLBDw4fiztif1SW1cL0IEHns4AvqOo=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=t8S8AXcI4Xcx1cWe575kKxEDsuX664Xk4vGsgdqHiPf5a1JrNiv6tAB5B51a0VjsSDuaWW1DJuUbbbkrs4vOwdUgicYwNTuhRmxgGizoSvEhgYuakqiZzS/UF0t+IUOWsaaI80PEgp7EDJNo40Lub9qEBE11RsykuUgdiOk9LKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RiDnM8FG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 27EBBC32789;
-	Fri, 28 Jun 2024 00:10:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719533429;
-	bh=3GHMMp2TTP4bxQLBDw4fiztif1SW1cL0IEHns4AvqOo=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=RiDnM8FG2yKnOg3/0pOpMBb/HS8t1Wc685A2zYiXT3EpV6fJfincqYrnGSwkZpUOh
-	 0Bd19t2K0iJO4etdEmLJrMIguWmPfSxM1FJRMhzmOu3iK0UHZPvODQpKlB/sofaITu
-	 R1WYocvzroD5OHS3veoNFG7xVMcHcQ3egPC9UO+b4tpnIi5YT7KWY2o41Pghl4EEhQ
-	 3HL+G6UGXNevV5kMnU50YaB9R9PvZFs4VVJ66Q80stjRvv+yikYvYB9TmmDaaZnbtB
-	 QZJlV7wtzGO8MppSSzfMCODV5I52hcKutxCnTmCZtPhDPCwwGPqKRCaJCMG6RKCjMN
-	 6IqW3CItcxokg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 14981C43336;
-	Fri, 28 Jun 2024 00:10:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1719533860; c=relaxed/simple;
+	bh=N9ThLQ+7KgfFZ8cJDzO01kM2N2S6IKcjljMIIL0NUS8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FtUlSpgi6iAgbnPmlNZzpREB4ryLnNC4p1+S1jtneTeYdXXQGmqH/2XgJh4LogZLiXVEw/izhZ4aOxL5dqgKnrM1gfoBmUaGH2zJG8dIGL46rDsn0uM+zMcvYVpRdtAVOMOepqn62jTeloZOdM+ul4ZyD1nforJdhbmCGbhAcyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gwmail.gwu.edu; spf=pass smtp.mailfrom=gwmail.gwu.edu; dkim=pass (2048-bit key) header.d=gwmail.gwu.edu header.i=@gwmail.gwu.edu header.b=DH+T4J35; arc=none smtp.client-ip=209.85.166.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gwmail.gwu.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gwmail.gwu.edu
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-7f4e2703306so32781639f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 17:17:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gwmail.gwu.edu; s=google; t=1719533858; x=1720138658; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jnM2FwovgrQogO5x3uloG9tQo9wPv4O5SS6GjjUuiVU=;
+        b=DH+T4J35yMSU+v9xjathDlXoM291Fhc/qPU+xPzlHWnbBWUGTw/Cb0fWnEGHMG7k35
+         vIxhCh5Ksjbx6lDvA70DL77Jq0L3xpEYh+emegJLWfwKPcaUr4olPmPUTxACS0xZoNoy
+         vaYfCvi6z0evVvVRQBWZQ3YS/WsIYD2NoUIML73huTYYYzmFwdlq+z/Xq/0z5qlQKOxj
+         5d2IhdEBtXSWU8ppA/+kwzn3DWZo1jIe95vFfZPHZ1tyTo/9a4NM4LsgTIXP9Tzf6FO1
+         Ef3PsbHY0q/izdHCOerYY8wcOdC2z7y4cKCIjjN/IbvAEd3XSDvk7bPeay+MVBlsfFuK
+         4ejg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719533858; x=1720138658;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jnM2FwovgrQogO5x3uloG9tQo9wPv4O5SS6GjjUuiVU=;
+        b=oNKiWedFEVQOX1s/imzh/cEzHpgT15JNndHDljcTTisTYRZM0ugNDMtl9rF0ySKjqb
+         DOPRUp+ZZTs6HxQQcUWjGkDhvzV7qEP53LlHNrYAf2cIGQFYUP/SY7sqFuvN4DnbS4LF
+         d9p1l5U6C13LqptnUWmcwXWlfYpiVauS8TI9iFMhXjDeEl0C+F+jGNjRDk+Y9PxDzG3B
+         6Ej7xn6rPNfBqJxzzuAkLyEsRmGfWMn1GjklIKfOcLnEzxLll7k4zFrk2IaU7o1T8j9W
+         gEtgegZ4F1opwdWBPwfiuiQN4Dph0dXMTPzCZlZXCGWtWzDMwJrZ4zxPb0YyB3ifC8Gu
+         TqHw==
+X-Forwarded-Encrypted: i=1; AJvYcCX7dho2ZozdaXwdbqtjRBZmdNJcTY9L2rLvbLbmBA4i/ZpWimTOuaZBcsOGYirUKzVJwwFH6Rw2DKUdc6kLK8sEdEuTJ4YbdIZyFC4H
+X-Gm-Message-State: AOJu0YyUkfGxohrr8TBZGxpd8xpXRP2DUAv3BSKhvc0m2YcewkKbgYBT
+	OzytqiEN9wiBN7ICVL0BFxSQkTixEj37DffVGLR2PMXq0hrVPaGWYePoh57q0uQIrHx3U3m1Dme
+	uMUVLp5Yt/4i+t0hxqkDyUsM2AxQIn8eU3owi
+X-Google-Smtp-Source: AGHT+IHyRGLJvkEBIGRGo1vbnj9QgLJ7fr7zj3XE934AAsCrW0MPZKLToa3TeWyQKmD6e+YZZIirW5gMIfQOtuRKdx8=
+X-Received: by 2002:a92:c265:0:b0:375:dd94:29f with SMTP id
+ e9e14a558f8ab-37b26171927mr758175ab.0.1719533857696; Thu, 27 Jun 2024
+ 17:17:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2] net: thunderx: Unembed netdev structure
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171953342907.1107.6780824030224917954.git-patchwork-notify@kernel.org>
-Date: Fri, 28 Jun 2024 00:10:29 +0000
-References: <20240626173503.87636-1-leitao@debian.org>
-In-Reply-To: <20240626173503.87636-1-leitao@debian.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: kuba@kernel.org, sgoutham@marvell.com, davem@davemloft.net,
- edumazet@google.com, pabeni@redhat.com, horms@kernel.org,
- linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+References: <20240627203057.127034-1-mattschwartz@gwu.edu> <20240627203057.127034-2-mattschwartz@gwu.edu>
+ <19ca1a46-6a74-4eec-9e84-0092faaee7a1@amd.com>
+In-Reply-To: <19ca1a46-6a74-4eec-9e84-0092faaee7a1@amd.com>
+From: Matthew Schwartz <mattschwartz@gwmail.gwu.edu>
+Date: Thu, 27 Jun 2024 17:17:27 -0700
+Message-ID: <CAD9O9Dp89CprZFMn=ysduPmUTkmJ5y6qDw18X9pLr7=ChoD0Uw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] drm: panel-orientation-quirks: Add quirk for Valve Galileo
+To: Hamza Mahfooz <hamza.mahfooz@amd.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, John Schoenick <johns@valvesoftware.com>, 
+	Mario Limonciello <mario.limonciello@amd.com>, Kyle Gospodnetich <me@kylegospodneti.ch>, 
+	Hans de Goede <hdegoede@redhat.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, Matthew Schwartz <mattschwartz@gwu.edu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+On Thu, Jun 27, 2024 at 2:28=E2=80=AFPM Hamza Mahfooz <hamza.mahfooz@amd.co=
+m> wrote:
+>
+> On 6/27/24 16:30, Matthew Schwartz wrote:
+> > From: John Schoenick <johns@valvesoftware.com>
+>
+> Since this patch is from John, you would need his S-o-b in here as well
+> (assuming you have his permission to add it).
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+This patch will be pending approval from them in that case. The panel quirk
+follows the same structure as the Steam Deck Jupiter revision, but the quir=
+k
+has only been signed during merges by people who were not the original auth=
+or.
+Link: https://gitlab.com/evlaV/linux-integration/-/commit/b90ac393
 
-On Wed, 26 Jun 2024 10:35:02 -0700 you wrote:
-> Embedding net_device into structures prohibits the usage of flexible
-> arrays in the net_device structure. For more details, see the discussion
-> at [1].
-> 
-> Un-embed the net_devices from struct lmac by converting them
-> into pointers, and allocating them dynamically. Use the leverage
-> alloc_netdev() to allocate the net_device object at
-> bgx_lmac_enable().
-> 
-> [...]
+>
+> >
+> > Valve's Steam Deck Galileo revision has a 800x1280 OLED panel
+> >
+> > Suggested-by: John Schoenick <johns@valvesoftware.com>
+> > Link: https://gitlab.com/evlaV/linux-integration/-/commit/d2522d8bf88b3=
+5a8cf6978afbbd55c80d2d53f4f
+> > Signed-off-by: Matthew Schwartz <mattschwartz@gwu.edu>
+> > ---
+> >   drivers/gpu/drm/drm_panel_orientation_quirks.c | 7 +++++++
+> >   1 file changed, 7 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/drm_panel_orientation_quirks.c b/drivers/g=
+pu/drm/drm_panel_orientation_quirks.c
+> > index 3d127127e7cb..ac8319d38e37 100644
+> > --- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
+> > +++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
+> > @@ -427,6 +427,13 @@ static const struct dmi_system_id orientation_data=
+[] =3D {
+> >                 DMI_EXACT_MATCH(DMI_PRODUCT_VERSION, "1"),
+> >               },
+> >               .driver_data =3D (void *)&lcd800x1280_rightside_up,
+> > +     }, {    /* Valve Steam Deck */
+> > +             .matches =3D {
+> > +               DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Valve"),
+> > +               DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Galileo"),
+> > +               DMI_EXACT_MATCH(DMI_PRODUCT_VERSION, "1"),
+> > +             },
+> > +             .driver_data =3D (void *)&lcd800x1280_rightside_up,
 
-Here is the summary with links:
-  - [net-next,v2] net: thunderx: Unembed netdev structure
-    https://git.kernel.org/netdev/net-next/c/94833addfaba
+Unless I get a S-o-b, is authoring a different DMI check the only solution
+to get a functioning panel quirk upstreamed for the Galileo revision?
+Not quite sure how I'd maintain conformity with the existing Jupiter
+quirk while also writing something original here.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+> >       }, {    /* VIOS LTH17 */
+> >               .matches =3D {
+> >                 DMI_EXACT_MATCH(DMI_SYS_VENDOR, "VIOS"),
+> --
+> Hamza
+>
+--
+Matt
 
