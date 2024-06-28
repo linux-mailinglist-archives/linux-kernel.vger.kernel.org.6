@@ -1,212 +1,236 @@
-Return-Path: <linux-kernel+bounces-234135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2D6191C2A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:27:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F7B191C2A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:30:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 214E21F22535
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:27:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 412FE2887B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B50C1C6889;
-	Fri, 28 Jun 2024 15:27:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1751C6890;
+	Fri, 28 Jun 2024 15:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="mqNidJoh"
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LblRfXHv"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF4715539F
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 15:27:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719588454; cv=none; b=ZIc7pOdsnRAJvU7Is8xnZLjQ3q/9JvqKzAD0q+I/3j9GoQOplLu1M82QCAAkSpCwO8UrjlKorcvYhkZ+0E7mkjL4th5um3UqTS/UD093mwVXYhuu/c7KvwDT/2NJWqclG4xwufk9srrwJaOospwD4Vp/QJrRsYFEehdZIhMIMEQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719588454; c=relaxed/simple;
-	bh=7dm3fzLjJhdBgTI64sg7Fe/1GXDeWNR7syen0NF/qR8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GP2rg0Ch1LFU2o8mekyzG/wjMkK3mH2baaAJJwj7oD15KATqIbtg1bKb3o8mFfhYE76YKWUgt3sPBAYk+dlnosBWJNYFjrfzAaN0Qy0JnxrdACbqer0imbF4l0vcr1gYTiCjfFi8uH0CH6ekjz/KAKAa8t1JX+y53MkCnX6FvJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=mqNidJoh; arc=none smtp.client-ip=209.85.167.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3d5611cdc52so356750b6e.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 08:27:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719588450; x=1720193250; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9ep8FQKp5h6qhxZdvpS2nUixc52u7AV+YzCOLVDHtzk=;
-        b=mqNidJohCGwNjocbKUWfzyP+RCoOzTyzUXoF3j3LSH0/5bB1xsJyxFXSydwrUpEFt/
-         ytsE2O53/MGq2G0uBAqh6/bO45MzPlwG6UpeCrWY9rbZQ83R8pRf4mezmNSOEtoHOU1F
-         qCh+YXqxAmX5/QB03Ky2XRL74+wMhKkxeGyh2ONLUoeKvF/W/LOtObDb2KYVnsPZtnEj
-         OJeoM00cyp4jgAa2mqPBiZdBh4UaiiLcNwJKP/2+VcJHKD3lwLCzlNu4S+f5N3TNTVP2
-         fsNq/cUdr776nBTRBxPN4g0E5/LGklclQSU69ecxrjWm7U/snEQdDN/vrZdGiaho9iKS
-         dsfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719588450; x=1720193250;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9ep8FQKp5h6qhxZdvpS2nUixc52u7AV+YzCOLVDHtzk=;
-        b=oJESQpnz5CBq86C/djFkSXIT6s6lVICdyiI09OrQ1rx9Fp+6Swvvv4nDxVlmoh1TWb
-         qnEZ4DM/aiYINooKc/vj23w2l+eVc8G4Fsby5nXip+LzAOHoGz1bU2bi8QJxzdciOavZ
-         xCPJYs0kVrn608mGbiPaaAU3qEGo+ync7d0ULujmHE85eBJG5c5yAt5Pyg5NOtMwdiMK
-         lY7wAMA15h9ItUtyAX3dLOY3TD04pVPZFLVMMk2qDZm8fLGgwnhI6uyg73CE9safrUlg
-         nUYA0Ny8UjnOLTfG9kAOAKWTVPDwh1n7RV1jOHMkkGctRXWGzmwOIpOsRhrr8W1/5Pn8
-         ihLw==
-X-Forwarded-Encrypted: i=1; AJvYcCUMyWhf3FASaLeYXKz2SldMo74Jr1w//OXCYYmD1YNkQ8xyHYq1f1ydtSM/8Vrik5VX5gmdzQtLEz3mkmXoIj96A6nJnc9OEzDjQVfe
-X-Gm-Message-State: AOJu0YzIU5y5a7MduK0sV4r6XpmnmkO2nFf+MPTt1LhpZTz3/hh5tX4b
-	Jy3lDwm04AEr1Aaecfjs8iXI8vPgyfQ/YG+/gdRqg369NbJhvuhxKZKzW88aFwA=
-X-Google-Smtp-Source: AGHT+IG3AW1VWHamt1+TZ4zM1FUQvJW/rcxv4hQ6D03f9b9O+gfHvbOI3h12I4U4SJvEM+OXm5Bh/Q==
-X-Received: by 2002:a05:6808:1282:b0:3d2:308b:9bb4 with SMTP id 5614622812f47-3d545a5346emr22116323b6e.43.1719588449665;
-        Fri, 28 Jun 2024 08:27:29 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-701f7b20a7fsm336648a34.59.2024.06.28.08.27.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Jun 2024 08:27:29 -0700 (PDT)
-Message-ID: <9e6b5cff-8692-484e-9e1c-b89a1f49d6c7@baylibre.com>
-Date: Fri, 28 Jun 2024 10:27:28 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC581E878;
+	Fri, 28 Jun 2024 15:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719588596; cv=fail; b=iEXhzhURyEG5D/04l76ux1G2auFopq4UODrSvfXHazQsqnQCuWycsgCHTqZPNPlRwGvali2ZHl3+paAkzw+2JtcQ7b0uBJxJO71N+/j8of4NZDitQDJwgbZSKOjqjDc9X58tALiZpg0ZmjLRqBNSzOXnmB373vGvXIO7pOiaVDg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719588596; c=relaxed/simple;
+	bh=vgtXmN8cEPlVZx8dLg79GdRylmRBcPH7c//g3sVWiYQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=UeTrukiDRnrAmMiJ3cmUyknX5W8Meyxgayg4B9UBielx6Qsw3LuiR90SNJC36MQ0tr51fKpbTXDjpJ03+vn9WaGEsxD7KwPbW1ZK2aJQ6BbuDU4kaVdeYAnmYU4HzWDru+q/ANMciwmmAg0K4TDhtxa+sYRZBdBTbRBFMvRovLY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LblRfXHv; arc=fail smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719588594; x=1751124594;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   in-reply-to:mime-version;
+  bh=vgtXmN8cEPlVZx8dLg79GdRylmRBcPH7c//g3sVWiYQ=;
+  b=LblRfXHvGmMt4eOx69Oz8hPY2PdUxq0cpIFQ2VWr0YbOhiM/4tvN7RLf
+   ony6NTV1g3aEB5AbBi/pGUUy2CwS2Fddz7EFNmlAhwHKQg2GvCpBw1Nbf
+   yWqGNa/Q89aEsmXIGVMMd0qZp6VkHQFwNSlXjEbGCvthPq0b4PD+o3tYw
+   v2G+khwRd6Bw0IEdjs13NG2O+pRK9n5j5GTv3jQXhnl/J4lkwApEtMa4+
+   16mOj4sQ9SeaJjaHd6AdmZDMorW4/KdFswC+gaGdzhtR+r6q1oXrZlUE2
+   TT2uOLYfIw3JUmNYaE0TfHDSzwpJIKLbv9wp7gA8yao65NWLScK/vYOtK
+   A==;
+X-CSE-ConnectionGUID: rvyMPxc8R3O7u0sDIYW97Q==
+X-CSE-MsgGUID: QGQFApwGTJC9wKFksykxjw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11117"; a="16597568"
+X-IronPort-AV: E=Sophos;i="6.09,169,1716274800"; 
+   d="scan'208";a="16597568"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 08:29:54 -0700
+X-CSE-ConnectionGUID: akOrEKp6QHeSDGzkM3TG5Q==
+X-CSE-MsgGUID: H2I24YJBQ6C1UedfahySqA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,169,1716274800"; 
+   d="scan'208";a="82327739"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by orviesa001.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 28 Jun 2024 08:29:54 -0700
+Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 28 Jun 2024 08:29:53 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 28 Jun 2024 08:29:53 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.173)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 28 Jun 2024 08:29:53 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=AzfJjWx2c03gKWO8k3D8FND6s9z1t4+O3OsABQHirKJPhrJTqMar92lyz1EcOkqBHKczPZjfi9GIShUSTFt+JZmmcNN9IKphO15p6LOFMJydUMR26HCs6TmU9KNKyxkLOA7gvafLn4S3YKT+arB6olNkVlNNMB9zrWfg4AT38/LJNw2jGbQyPS6PisNwEbuHbzok2abY2tkeIeTXhMtrb4al+7DUbQSqmLB9mAPPfDOu3tWj3Qh6T+2iyLRFxGrUsjjeAmj3WA+S/Sqhq9Rf4Pwtps/nxNyv0STMErSb7j5DguhTSlf6xCJSljhxkX7OY16RMTg3KDaDYfRh8SiqUA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7apQsi9oWTdGdPSTezji8Jte1kF7XVnEMVasPIT8GDQ=;
+ b=iV+1dAKBifBF6muqGHBKM/qKP0bZg+LmCwW9368/txio59hJK5us7vYqZi8idvgSyuT4stEDJfTshM8+IvKVWETKczgHr+1wcbF+bW6U93E0AuReMY+iH4K3bAkwHdw3AKMTPXF4eqXsAuDpsAtwEHJ+ZaHmTLKEUZnU+x7XQ3SV4gbecgGWSPn1u4ZPK2XxZdUL3sR7VjhWOhZQQweCQ5S2Z3XKJgckWmyCCaCqHaoG/Hwur6KN2Bx1srqxXQZ1D6l2Dhyjw82C6126AdHbrbAd3yKmvl3iymIed2MdraNBkt3IFDTzx0IvznE8JanAzhv8d0qdyiXHEBdl7ay5gg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
+ SJ2PR11MB8568.namprd11.prod.outlook.com (2603:10b6:a03:56c::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.35; Fri, 28 Jun
+ 2024 15:29:46 +0000
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca%6]) with mapi id 15.20.7698.033; Fri, 28 Jun 2024
+ 15:29:46 +0000
+Date: Fri, 28 Jun 2024 23:28:33 +0800
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: Yi Liu <yi.l.liu@intel.com>
+CC: Jason Gunthorpe <jgg@nvidia.com>, "Tian, Kevin" <kevin.tian@intel.com>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "alex.williamson@redhat.com"
+	<alex.williamson@redhat.com>, "peterx@redhat.com" <peterx@redhat.com>,
+	"ajones@ventanamicro.com" <ajones@ventanamicro.com>
+Subject: Re: [PATCH] vfio: Reuse file f_inode as vfio device inode
+Message-ID: <Zn7WofbKsjhlN41U@yzhao56-desk.sh.intel.com>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <20240617095332.30543-1-yan.y.zhao@intel.com>
+ <20240626133528.GE2494510@nvidia.com>
+ <BN9PR11MB5276407FF3276B2D9C2D85798CD72@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <Zn02BUdJ7kvOg6Vw@yzhao56-desk.sh.intel.com>
+ <20240627124209.GK2494510@nvidia.com>
+ <Zn5IVqVsM/ehfRbv@yzhao56-desk.sh.intel.com>
+ <cba9e18a-3add-4fd1-89ad-bb5d0fc521e4@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <cba9e18a-3add-4fd1-89ad-bb5d0fc521e4@intel.com>
+X-ClientProxiedBy: SG2PR04CA0177.apcprd04.prod.outlook.com
+ (2603:1096:4:14::15) To DS7PR11MB5966.namprd11.prod.outlook.com
+ (2603:10b6:8:71::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] spi: add support for pre-cooking messages
-To: Marc Kleine-Budde <mkl@pengutronix.de>,
- Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Mark Brown <broonie@kernel.org>, Martin Sperl <kernel@martin.sperl.org>,
- David Jander <david@protonic.nl>, Jonathan Cameron <jic23@kernel.org>,
- Michael Hennerich <michael.hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Alain Volmat <alain.volmat@foss.st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>, linux-spi@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-iio@vger.kernel.org,
- Julien Stephan <jstephan@baylibre.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, kernel@pengutronix.de,
- T.Scherer@eckelmann.de
-References: <20240219-mainline-spi-precook-message-v2-0-4a762c6701b9@baylibre.com>
- <Zn6HMrYG2b7epUxT@pengutronix.de>
- <20240628-awesome-discerning-bear-1621f9-mkl@pengutronix.de>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20240628-awesome-discerning-bear-1621f9-mkl@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|SJ2PR11MB8568:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9fb77a6d-f1da-45d0-2fde-08dc97872431
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?IEfvvAfrPzKzLFj86XyXi0+6OQDd/g7pdQZ0GWra9ZKs6ai51LxUCGA6dzup?=
+ =?us-ascii?Q?mA4rEDnPC9A6zS+7pvsVmnjG3KPLivcvp+P1VEhVrOdR6lzFQqJer+4DpG2L?=
+ =?us-ascii?Q?rYjPFkOCfxm3upczgH+5nd2Tslm81o9IVaarqAbKKqjIhCodG6wTJieo9SCb?=
+ =?us-ascii?Q?LcfpfOgP+ULo3iQFu3gr2MYm+Bew3B6hz+VASX+FtTEcjrH2Cfl+98Le5gpN?=
+ =?us-ascii?Q?S3FL8XsKtIwaTcRYJbv8E6DhrJPm7wRYUD2Y9fd0VH6ptG+RO0WkICSYQjPN?=
+ =?us-ascii?Q?SY2PtPAcKoSAm2nS4nQGqDp7qrssQS2Lri+tIk43xgVZbhYyhNuFtZAiWT2d?=
+ =?us-ascii?Q?n4fmtOFPaVaRM/Lw9MxTh2ieBHuZtcyCVkKLcDax2xS9CiY1uoZHdEx4Kkdi?=
+ =?us-ascii?Q?gS0UtVkkWoXjK4i91WsCN007eQgu7quFRbwF4HAYGsnf/xI4bKlGxrN76kxg?=
+ =?us-ascii?Q?jbWVmqyYWwgcOPGSvK94ySK6Sy5ANDA+KBhceFhWwCyAKRmUaQ6rkh65DUuR?=
+ =?us-ascii?Q?q3MqXPGzGxAq2JbRRfCC5L2kgOhaDrisb05PkzKV86JAbWpM7+2kvLKzgJ1Y?=
+ =?us-ascii?Q?uz+TrWdmaV7HrRhWxBsu4yCs4hhoH+EtG6lA9lfrPOPScUHBZWoFq5SC8J99?=
+ =?us-ascii?Q?ZzEGVaJbrNyk2Xd7/rUlaSDPwSFvs4hYrSxnaY/eMcebjwh1LSNfiekBRjdH?=
+ =?us-ascii?Q?/98W+6IAIBeXmKkFMzvToj4knIgsU+Kqlt68qMlUb9L7KVoI8gMCtMDK7UUZ?=
+ =?us-ascii?Q?0YbcWUdFkvqV3Qs7NfeJgwmp7nBcoETxqIMraqIPzKizv4Z2gZ0APg9M+I2P?=
+ =?us-ascii?Q?TFtLlP/QGMJmXWeJxw1cWMvJowepXkioM+w7MXlhEcTXg7LvT6qWWIoE5rID?=
+ =?us-ascii?Q?7d627p2iDsS4fHENnClHHSPk0+QnRpV6vs1y7J4bZq+lDaKGvsdpoHcajaNa?=
+ =?us-ascii?Q?sHOG9R4a66L1f2kPfhd3QVWiPw78ZC7vUqrIs9J3hYRhNtFLtNBMaBeObf5m?=
+ =?us-ascii?Q?zcTJ5FYcj0l6Zuaa4F9bUkBYVYZEvPlEmkVHkxsnZYSBxwrqislRl903fDEf?=
+ =?us-ascii?Q?WrwH7lp4skqEFvxqqNXQh0Ten7snuCsZ7tk1GGAOZlcXV84hNPgOmsLWhwip?=
+ =?us-ascii?Q?qwpTe/lIHy7dL3GEJv59AsIiQWxy97ovc6PxCmFSIBF9ACHytxBVH7Xp1yKL?=
+ =?us-ascii?Q?tWN47Nn0lxunw5tyCA6NxgISaKlPUQ9FGn84mlCYWA7dsL8+kiK+MQ4eUT0C?=
+ =?us-ascii?Q?VcoWT4eDm9encfU7b34U9OAHtr1RvrfNidIZgI/kLOY27PSn7EAEwet2VUep?=
+ =?us-ascii?Q?YUXUuUfDlqsbvliPShGR29sjjyAK6eZ4Zowy5LLfH7MneQ=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?eUK+YTYrYpVOE1el7ers7bUKvnmJ4lU0LlCI8JzRXM+s9R4uZbFDmoIS6Zbn?=
+ =?us-ascii?Q?E9SvbXBAp88XQM9LSoOABNCIGI9VtTavfv6cF+f2NK5nuTi4GZyIjDZh90pY?=
+ =?us-ascii?Q?gRjDKdgRNz/5Y+b0a6uycNC7hEr2854nrd3ZArQklso8KA7y2uXOcSeSJGFX?=
+ =?us-ascii?Q?O7sF8i0Dqpa4HC5EbCaA8uypNrWZb5moP5cw6/8M8ihl2QnoLFNRJgO67Tww?=
+ =?us-ascii?Q?sn1HTAcSDteqahmR/BVZ+2ADP4IgDtxGlAg/qL4afOMrDxGeoB9VnuoAdLEa?=
+ =?us-ascii?Q?O3E5yc5OR4DLBDW9U+cGn5lsljBzNEDtvlNgWRqBsIeBtSZ35tafIOcNWW/Y?=
+ =?us-ascii?Q?xY3A7rTi5TT6uuR/HtQM7OlvKCo7VAxrpkJUZ6+WZtI2+2sgOMxeeZfC2W3m?=
+ =?us-ascii?Q?DH0Uawuh/DV2VyTmH4V9P90ry86C0KFaHodP5yIqslP3moBhoNDDDUAYGpMh?=
+ =?us-ascii?Q?wxOA2eQnlAM54cBDuvjaBOmYQyVEOODG51jXe9YGgZCMadFHdcb1cLY9ZDrV?=
+ =?us-ascii?Q?8tUwa03Wf6L9SKJVzeBILCgvPRBsGjmKRG2DTFuItQMDqafNh9SYVqmTJttr?=
+ =?us-ascii?Q?O5RnplW4yQvZCNW/s2kfBReilBeYUKFsQifxic2r3NzDZGkKV+pyztr7T2uL?=
+ =?us-ascii?Q?VyjSuhUgKExUDZoKHVq7Nl2YrWl5sZWiYCKKvO4zhatUuzGihBzIFNxB1VN9?=
+ =?us-ascii?Q?reUepKTnstlU0bPp0sO8V8LZDVaTBY/4KFrLFEDUaE1QosZpevAY4RX9+PyM?=
+ =?us-ascii?Q?uQV553b4IQzdL5x72DTQFmV5y716aHvH5WR6zvotJnAKGTrzUF8MRtZIpjr8?=
+ =?us-ascii?Q?NK/X+bpd1DmITyXfzLeHcabAkrOba3W61Yu0quGH1bNB6G8/KvyuWXEx+/YK?=
+ =?us-ascii?Q?oyrG8UGIK+Wp+3LV4NayAKTi8Zytm+OLDGlHKM+4Qe7hcPIHF+1ymdXVfK+z?=
+ =?us-ascii?Q?9XGu0x/KD5BxCQbdFmj46lLNfWO+67rht8quQXM1NewuoOSSRpu2fz+6Aw9K?=
+ =?us-ascii?Q?MmahBwVWp3QV/3NH13yIm7hmvrRdoFotyKpDWzvmG2mKeP6Z22MvQ4Sj9O1y?=
+ =?us-ascii?Q?dqMyiMga+AcVdXWTxHQHMwGUIeFzaW5nyc1UFy2T3Efk7YQM+UWkkmr4MTYL?=
+ =?us-ascii?Q?e61kRkbkmiDf7OxG7JLlBRDe6ejImF8xssII1YYoEKm8Qxvcf+eVbSZQcUUP?=
+ =?us-ascii?Q?s5uha8OD8fXAQzMJJOOGL1VsSdlQsqn3z/pR8ZPuOhmOTj8HjcHEJU/Xm251?=
+ =?us-ascii?Q?IsKjeOMjeULt4bTwRCUTgE03DMIV34s6uq0ilJ48JCwh4QvmWYe7EMJCXzNe?=
+ =?us-ascii?Q?GImdAp8JXLIqSUYAoUhTovs3ZoeEUuepWLXlBRCtecKDd0PW/Qhuia0U3c2V?=
+ =?us-ascii?Q?vV7w5cztuP2P4csumwCDCL5eJ78CcugN7ygdW05FiatMS/xtX2OuBLCU4BzN?=
+ =?us-ascii?Q?/VcS3lKgksj6An/eI3zGKH85KsdAGNRjQiM5a+1Neahps67i+Am9ZV2fNN1N?=
+ =?us-ascii?Q?Xye4lvKUMUTEbl/aziP73cQuh2D+X4U2+sGaiIAtJJdjpMRYhTQ38eW7/kZZ?=
+ =?us-ascii?Q?NjdrOT8nk4SmZgReR6X1oCyZ3o+qPXTg7/xgP9eA?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9fb77a6d-f1da-45d0-2fde-08dc97872431
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jun 2024 15:29:46.4897
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AHY78udFc+iHiixakptVRFBFiFxJeoRI93TWghDUI6VVK7LIGugZhAvDZQTjoQ5QWqZJz5GqKtSkESNRaufjXg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB8568
+X-OriginatorOrg: intel.com
 
-On 6/28/24 5:16 AM, Marc Kleine-Budde wrote:
-> On 28.06.2024 11:49:38, Oleksij Rempel wrote:
->> It seems to be spi_mux specific. We have seen similar trace on other system
->> with spi_mux.
+On Fri, Jun 28, 2024 at 05:48:11PM +0800, Yi Liu wrote:
+> On 2024/6/28 13:21, Yan Zhao wrote:
+> > On Thu, Jun 27, 2024 at 09:42:09AM -0300, Jason Gunthorpe wrote:
+> > > On Thu, Jun 27, 2024 at 05:51:01PM +0800, Yan Zhao wrote:
+> > > 
+> > > > > > > This doesn't seem right.. There is only one device but multiple file
+> > > > > > > can be opened on that device.
+> > > > Maybe we can put this assignment to vfio_df_ioctl_bind_iommufd() after
+> > > > vfio_df_open() makes sure device->open_count is 1.
+> > > 
+> > > Yeah, that seems better.
+> > > 
+> > > Logically it would be best if all places set the inode once the
+> > > inode/FD has been made to be the one and only way to access it.
+> > For group path, I'm afraid there's no such a place ensuring only one active fd
+> > in kernel.
+> > I tried modifying QEMU to allow two openings and two assignments of the same
+> > device. It works and appears to guest that there were 2 devices, though this
+> > ultimately leads to device malfunctions in guest.
+> > 
+> > > > BTW, in group path, what's the benefit of allowing multiple open of device?
+> > > 
+> > > I don't know, the thing that opened the first FD can just dup it, no
+> > > idea why two different FDs would be useful. It is something we removed
+> > > in the cdev flow
+> > > 
+> > Thanks. However, from the code, it reads like a drawback of the cdev flow :)
+> > I don't understand why the group path is secure though.
+> > 
+> >          /*
+> >           * Only the group path allows the device to be opened multiple
+> >           * times.  The device cdev path doesn't have a secure way for it.
+> >           */
+> >          if (device->open_count != 0 && !df->group)
+> >                  return -EINVAL;
+> > 
+> > 
 > 
-> Here is the other backtrace from another imx8mp system with a completely
-> different workload. Both have in common that they use a spi_mux on the
-> spi-imx driver.
-> 
-> Unable to handle kernel NULL pointer dereference at virtual address 0000000000000dd0
-> Mem abort info:
->   ESR = 0x0000000096000004
->   EC = 0x25: DABT (current EL), IL = 32 bits
->   SET = 0, FnV = 0
->   EA = 0, S1PTW = 0
->   FSC = 0x04: level 0 translation fault
-> Data abort info:
->   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
->   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
->   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> user pgtable: 4k pages, 48-bit VAs, pgdp=0000000046760000
-> [0000000000000dd0] pgd=0000000000000000, p4d=0000000000000000
-> Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-> Modules linked in: can_raw can ti_ads7950 industrialio_triggered_buffer kfifo_buf spi_mux fsl_imx8_ddr_perf at24 flexcan caam can_dev error rtc_snvs imx8mm_thermal spi_imx capture_events_irq cfg80211 iio_trig_hrtimer industrialio_sw_trigger ind>
-> CPU: 3 PID: 177 Comm: spi5 Not tainted 6.9.0 #1
-> Hardware name: xxxxxxxxxxxxxxxx (xxxxxxxxx) (DT)
-> pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> pc : spi_res_release+0x24/0xb8
-> lr : spi_async+0xac/0x118
-> sp : ffff8000823fbcc0
-> x29: ffff8000823fbcc0 x28: 0000000000000000 x27: 0000000000000000
-> x26: ffff8000807bef88 x25: ffff80008115c008 x24: 0000000000000000
-> x23: ffff8000826c3938 x22: 0000000000000000 x21: ffff0000076a9800
-> x20: 0000000000000000 x19: 0000000000000dc8 x18: 0000000000000000
-> x17: 0000000000000000 x16: 0000000000000000 x15: 0000ffff88c0e760
-> x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
-> x11: ffff8000815a1f98 x10: ffff8000823fbb40 x9 : ffff8000807b8420
-> x8 : ffff800081508000 x7 : 0000000000000004 x6 : 0000000003ce4c66
-> x5 : 0000000001000000 x4 : 0000000000000000 x3 : 0000000001000000
-> x2 : 0000000000000000 x1 : ffff8000826c38e0 x0 : ffff0000076a9800
-> Call trace:
->  spi_res_release+0x24/0xb8
->  spi_async+0xac/0x118
->  spi_mux_transfer_one_message+0xb8/0xf0 [spi_mux]
->  __spi_pump_transfer_message+0x260/0x5d8
->  __spi_pump_messages+0xdc/0x320
->  spi_pump_messages+0x20/0x38
->  kthread_worker_fn+0xdc/0x220
->  kthread+0x118/0x128
->  ret_from_fork+0x10/0x20
-> Code: a90153f3 a90363f7 91016037 f9403033 (f9400674) 
-> ---[ end trace 0000000000000000 ]---
-> 
-> regards,
-> Marc
-> 
-
-
-Hi Oleksij and Marc,
-
-I'm supposed to be on vacation so I didn't look into this deeply yet
-but I can see what is happening here.
-
-spi_mux_transfer_one_message() is calling spi_async() which is calling
-__spi_optimize_message() on an already optimized message.
-
-Then it also calls __spi_unoptimize_message() which tries to release
-resources. But this fails because the spi-mux driver has swapped
-out the pointer to the device in the SPI message. This causes the
-wrong ctlr to be passed to spi_res_release(), causing the crash.
-
-I don't know if a proper fix could be quite so simple, but here is
-something you could try (untested):
-
----
-
-diff --git a/drivers/spi/spi-mux.c b/drivers/spi/spi-mux.c
-index 5d72e3d59df8..ec837e28183d 100644
---- a/drivers/spi/spi-mux.c
-+++ b/drivers/spi/spi-mux.c
-@@ -42,6 +42,7 @@ struct spi_mux_priv {
- 	void			(*child_msg_complete)(void *context);
- 	void			*child_msg_context;
- 	struct spi_device	*child_msg_dev;
-+	bool			child_msg_pre_optimized;
- 	struct mux_control	*mux;
- };
- 
-@@ -94,6 +95,7 @@ static void spi_mux_complete_cb(void *context)
- 	m->complete = priv->child_msg_complete;
- 	m->context = priv->child_msg_context;
- 	m->spi = priv->child_msg_dev;
-+	m->pre_optimized = priv->child_msg_pre_optimized;
- 	spi_finalize_current_message(ctlr);
- 	mux_control_deselect(priv->mux);
- }
-@@ -116,10 +118,12 @@ static int spi_mux_transfer_one_message(struct spi_controller *ctlr,
- 	priv->child_msg_complete = m->complete;
- 	priv->child_msg_context = m->context;
- 	priv->child_msg_dev = m->spi;
-+	priv->child_msg_pre_optimized = m->pre_optimized;
- 
- 	m->complete = spi_mux_complete_cb;
- 	m->context = priv;
- 	m->spi = priv->spi;
-+	m->pre_optimized = true;
- 
- 	/* do the transfer */
- 	return spi_async(priv->spi, m);
-
+> The group path only allow single group open, so the device FDs retrieved
+> via the group is just within the opener of the group. This secure is built
+> on top of single open of group.
+What if the group is opened for only once but VFIO_GROUP_GET_DEVICE_FD
+ioctl is called for multiple times?
 
