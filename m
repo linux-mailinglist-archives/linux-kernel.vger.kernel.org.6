@@ -1,156 +1,169 @@
-Return-Path: <linux-kernel+bounces-234569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E86B291C822
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 23:28:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28FD691C824
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 23:30:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 644221F2396C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:28:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1EBD289D42
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6F27FBA1;
-	Fri, 28 Jun 2024 21:28:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD277F7D3;
+	Fri, 28 Jun 2024 21:30:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VHEVTrqq"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="OuhSqM7I"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2066.outbound.protection.outlook.com [40.107.237.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C042B7EEF5;
-	Fri, 28 Jun 2024 21:28:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719610093; cv=none; b=co5EeNHnBntaKr26PZXlnmj7Lky5FvwPITa0cdIB+mT5pXfYcou9c/CGlWA1n7IsbiMXrs0IQuyR1klAbsLxlNmSqHdP0bgSiU9BdoX2Uix/NaNvbZGk4pv/e4mDEII2XeF4atLAm567DlmBLCJ0WPFA6mvdr1Uy/AWSGVszyGs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719610093; c=relaxed/simple;
-	bh=xsDY8QdZRgTboHMIuie0O6lnfkxpq/5pzOpIBWqAYhs=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=uYtYn5VYbuRwPAR45p98RfoEFDTothJ9e8iYF79KOsSM2Y36NRdzszLS3+/zp96HrhaSxOmmF83OeHbKZPAFe4zftq87RYonSaIa6ot0u9ErqbUR1Jt4S9WChdkdTgCjNxKU8a2Liut7c9TLqmZoaWCtEEQgQt2ESijSYo1/dVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VHEVTrqq; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=xsDY8QdZRgTboHMIuie0O6lnfkxpq/5pzOpIBWqAYhs=; b=VHEVTrqqjkjcWuJ0PQtKaf3MzN
-	p+nYcY0Zt0P70x7BH6jO7K9M0M2SFruboWUAOxYnZoAKPjdYqPBjchCiIV2HTpqX0uIQfaJN2LQna
-	qiY9T9gSIfzyOLaYFN9tdaj29hYee4WINNqm9oXtzqm3USzhNSKLF3+H60a2OiBVpPX7IVXlfxSHZ
-	5a7SIEx0zaBwxAQU17pFofWBcFm2T7FsYGYStcs6pByPG3UX9Q00W0QlidIMXKeUyEl+vzieXxCMF
-	oWFujAx9ccp5fbQkPlYCPikIhgjpoj3b6xpJEklmFC4fo9lDsQZn8cr0aZtjbnYyikfwf2xBMQ92N
-	SyAX8ZWA==;
-Received: from [109.144.30.113] (helo=[127.0.0.1])
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sNJ8H-000000095jF-0oaD;
-	Fri, 28 Jun 2024 21:27:57 +0000
-Date: Fri, 28 Jun 2024 22:27:48 +0100
-From: David Woodhouse <dwmw2@infradead.org>
-To: Peter Hilber <peter.hilber@opensynergy.com>, linux-kernel@vger.kernel.org,
- virtualization@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-rtc@vger.kernel.org, "Ridoux, Julien" <ridouxj@amazon.com>,
- virtio-dev@lists.linux.dev, "Luu, Ryan" <rluu@amazon.com>
-CC: "Christopher S. Hall" <christopher.s.hall@intel.com>,
- Jason Wang <jasowang@redhat.com>, John Stultz <jstultz@google.com>,
- "Michael S. Tsirkin" <mst@redhat.com>, netdev@vger.kernel.org,
- Richard Cochran <richardcochran@gmail.com>, Stephen Boyd <sboyd@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Alessandro Zummo <a.zummo@towertech.it>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: Re: [RFC PATCH v2] ptp: Add vDSO-style vmclock support
-User-Agent: K-9 Mail for Android
-In-Reply-To: <2de9275f-b344-4a76-897b-52d5f4bdca59@opensynergy.com>
-References: <20231218073849.35294-1-peter.hilber@opensynergy.com> <684eac07834699889fdb67be4cee09319c994a42.camel@infradead.org> <671a784b-234f-4be6-80bf-5135e257ed40@opensynergy.com> <db594efd5a5774748a9ef07cc86741f5a677bdbf.camel@infradead.org> <c0ae63fc88365c93d5401972683a41112c094704.camel@infradead.org> <4a0a240dffc21dde4d69179288547b945142259f.camel@infradead.org> <8d9d7ce2-4dd1-4f54-a468-79ef5970a708@opensynergy.com> <bdcafc76ea44db244b52f8a092287cb33950d5d6.camel@infradead.org> <db1113d5-a427-4eb7-b5d1-8174a71e63b6@opensynergy.com> <c69d7d380575e49bd9cb995e060d205fb41aef8f.camel@infradead.org> <2de9275f-b344-4a76-897b-52d5f4bdca59@opensynergy.com>
-Message-ID: <BC212953-A043-4D65-ABF3-326DBF7F10F7@infradead.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B9614F98;
+	Fri, 28 Jun 2024 21:30:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719610212; cv=fail; b=B7o/XluwxZSsgoDpTq9wlvT8sLIZ+XILviKbtIovELRU2aH+L6gDhU+x79HTEI3/4obmK7vMIRS66odxWbekgg9Sk1o+7ymw3s0xD+0pjj0yDxGX0qxo4sPMRjHDPjGalwz0A/PnqSBRpbdIt7YJUFHVys/Kh4Z8WIEBYibOIB4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719610212; c=relaxed/simple;
+	bh=9WrvZFdJsE1zRsMJerhoGRjuj4fDVWmSVEF24AQM8Q8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A+tYTJRGWnu+20W0boMEm9atZroCjK4xCLRmg8iWm3fh7N6yh8XDmEIh+x0uETXA5bZGVTIlJ8I1BWHNbHisuz0IVE+JFqqrU26KACdWcsZ/5AWjPGg7ldUzBAHXsXYiLaq12CoTAkTvqTaXGzOqKpEuiKuyIZt72OGfkeZ1OsI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=OuhSqM7I; arc=fail smtp.client-ip=40.107.237.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=AmIObKThfeOb3NkPS7fwKEuJTLiWex58kIWbjbZpRsqRI5/mr2QDIPj6VekTc44pEuqRg8qSz/q7DpzBLOtJFVt/Pi8eJLOMLRziBSgUCioPHsNlrUGSYFI9S4+77tp2QcfFWJp/lvhVQt5sIvKeeqeIxVZc34djNNzKtO6HeSeYzHKyLd7hJrX49X8yIxocLAS5ujnRKXTYVh0IQmlGhCOsB/LM24mXDbYXmxEuX5sB1ktzaurszLWkP/y6psuazvopQ4Z+PCXr+mTH05PHNjJ06qDUNztIAfeteAtpzJfjc4Bx1R4IKSckn/UNDzZ7Zxczc+kOpWX7yAbmw7JXVA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=s/Tvdn0oswTUCEQeZHUsGnaHtivCYsM7Spn/Wpd/Gio=;
+ b=hdc75+boFHxTDF5tH0jXGsLrgPw1uHy1eh7ftbqfnh+TjgAFESbE+3gCzWPHBbuBp5HH88Y5rfqu1dVX79dOh56s9vFZsRiK1D1B0MrR2xb5yJ7PnMpDrIDcAtE/5LSeg6Ihw3eo1PWLNXmNrW533o1kiltnQW8owGkt3FjKBozHcvCPqsGz3a+RvnV+WqMZQFXqv2c3FIXRsT0YlojLle8htb6Pt0DQyjIjM/HlxKSCfzycJ+qvdKIeEXneqsPiSuCJZdn+L1IA6/CeNrlZW1ZDViF9XCC553L3mGzB/XA2Iw1nRrWX3kvKWNjm5meupA+yX14JZba9k0Bl6wFU1Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=ucw.cz smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=s/Tvdn0oswTUCEQeZHUsGnaHtivCYsM7Spn/Wpd/Gio=;
+ b=OuhSqM7IKpk1fMrt/2CtmyFT1Th/oiEW7YCDg6RuTxTU8arVXc/0uKSsHcvioC4KW4QND/qlQ2l6b34BX4QjEqsnsJCqc1XUdPXf9AN5+rWoUm8iKR3WWQ9zS7jMXcvj31WpygTp+pV+K0be1Lhi44XXtB1k3zgqM9Fm1TY9UJMTscGi07BHWStD0oea2vQbX0kb9eWTGJiTHy70CFp4xs3biPLTmtkTQBwEPkCts1W3gKWx9dmeecPHGg7Srh4Ow3DRp2upcWW6RxBcDoRK5QzXRkQwrLxQP5E7Wq7nrScsI6Y1S4dyTXe4DW8SN52RMSEoVlI98Kd53QqHtv2hrQ==
+Received: from BN8PR03CA0016.namprd03.prod.outlook.com (2603:10b6:408:94::29)
+ by SA1PR12MB7245.namprd12.prod.outlook.com (2603:10b6:806:2bf::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.26; Fri, 28 Jun
+ 2024 21:30:07 +0000
+Received: from BN3PEPF0000B076.namprd04.prod.outlook.com
+ (2603:10b6:408:94:cafe::49) by BN8PR03CA0016.outlook.office365.com
+ (2603:10b6:408:94::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.28 via Frontend
+ Transport; Fri, 28 Jun 2024 21:30:06 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BN3PEPF0000B076.mail.protection.outlook.com (10.167.243.121) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7677.15 via Frontend Transport; Fri, 28 Jun 2024 21:30:05 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 28 Jun
+ 2024 14:29:50 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 28 Jun
+ 2024 14:29:49 -0700
+Received: from Asurada-Nvidia (10.127.8.10) by mail.nvidia.com (10.129.68.8)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Fri, 28 Jun 2024 14:29:48 -0700
+Date: Fri, 28 Jun 2024 14:29:47 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Pavel Machek <pavel@ucw.cz>
+CC: <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
+	<jgg@nvidia.com>, <thierry.reding@gmail.com>, <vdumpa@nvidia.com>,
+	<jonathanh@nvidia.com>, <linux-kernel@vger.kernel.org>,
+	<iommu@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v9 0/6] Add Tegra241 (Grace) CMDQV Support (part 1/2)
+Message-ID: <Zn8rSzCVoVBYTf8R@Asurada-Nvidia>
+References: <cover.1718228494.git.nicolinc@nvidia.com>
+ <ZnXBrhcaiHqV9sn2@duo.ucw.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <ZnXBrhcaiHqV9sn2@duo.ucw.cz>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B076:EE_|SA1PR12MB7245:EE_
+X-MS-Office365-Filtering-Correlation-Id: fb21e57a-48a9-44f7-64c2-08dc97b97a68
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?C7Bh2XsDgynxbBlo6X2kBu9UfwCSMl9V2Wyl9VOeN7t7cOq+1g5DRLMfRUXG?=
+ =?us-ascii?Q?zJ5Jm53yiPrGC5HXCdmPrBPiZZhEnAbqE2Bzosq7WvdS0L7hHUzNh/DGX/oY?=
+ =?us-ascii?Q?tqE20K5of5NvBY64cX7u8522koug0/hTBb272KyiUYeyCgmvai27AVXhBmQS?=
+ =?us-ascii?Q?0Kbda4M73tq6UckhIjfAMrZNvS5UmlaeChIw3OU7pvJ+mSu3tQuKC1cZuK5P?=
+ =?us-ascii?Q?J7pMH7E4DnTTrw37wYwncMdID60cYOa80YBfVFCP3xdfT5HZ+Pxy2CKU9Wq7?=
+ =?us-ascii?Q?GizEBstoZc/iJTZVMVdVSHQT5cwdQS+a0QLrwL/Bv3ByyC53KbhvjAIbFgt9?=
+ =?us-ascii?Q?7Kzjqq3/SsLQX/t8TltbUE3QFs1ih0TtB+PHBhsBlHgNzlVufnR1qKSc6K17?=
+ =?us-ascii?Q?6/urTQX7hNlz0QT2iaAb3UxKvdW2LkvyC4exHLxvwwr6Eocu78DIlSnb7O4F?=
+ =?us-ascii?Q?PXRZHqicRMnBqSSQ4EuONeE0EoPuq88NOwzvrMpvQLRUJY9p2elbibjzFJDn?=
+ =?us-ascii?Q?OLQItsuxt5BJl6Uzj4TL1al8dzerUP0dBl4tyGM4grzLDDr4wdNoKNbDOjPN?=
+ =?us-ascii?Q?IrE4gVzoMhAjRw7ezR/zXaxZUE0VMqlxPRETQOhGJy+RacYE6HBYfl2d0VpL?=
+ =?us-ascii?Q?8GbgWoKiPoAlbVvaiTXIbcScI2BKlEYC0QxEqV+pCvJ7QDXiWPM0jnn24ckC?=
+ =?us-ascii?Q?lZtEoqvark3QpBpw+Dz8aqIYl2KD8ieSjz+jPnjXwCt6dVVgjXHHcSR+0cCP?=
+ =?us-ascii?Q?JTgNCnQgxO3SpaC60dzxkctmHR96psDR17Sdf2zVe/2SWjVeu1VLj5dy1KV4?=
+ =?us-ascii?Q?MQiLFoICgqf0CD/s/ylxDWPi68SuW92QeA6pRLGwufC+rxhYwhkglChMdlHc?=
+ =?us-ascii?Q?DaYt11faGCS0KjFyZYk4SvcAbOsOWMG8pf/7ccCGWpQx8cEiYsndP+CL4WZR?=
+ =?us-ascii?Q?uXh2+qFdAxc6iVbpQA6atCH6/ZSG29pXUjBf1UoHUCzTVxCm2TgjgvLOIfRJ?=
+ =?us-ascii?Q?Dcirat+PZWGjIxsdG3pFPDV/W4j671DhuHTgpGfPvM1NWA03Fn5eMgc4FRtM?=
+ =?us-ascii?Q?Ac6k4I+az1l4f9aWd0hxCg2xONEnVntexN9bk/IHOn1S6hkh1KvzXyZooUh3?=
+ =?us-ascii?Q?axK1XURNnlaSzWzffcjR7064J3Snes+YwqvcbvkEsxFcqo7hx4gh6CQZ/xAr?=
+ =?us-ascii?Q?zHuJwcL40swsiH+XY6xor386UMc+P1kyGrjKhfGmFgELu+X74AyEe3WcGAqk?=
+ =?us-ascii?Q?TILzT3ZGZIIqSqBzLQOLghG97ANIIi76Hd3u64d0TW7ETwp+VbGm89fP0vCG?=
+ =?us-ascii?Q?F5BtbUYc4Lh0AQg30Wk9ZNcgvDUlyDOpIbjt8EoAfampAQoNclihZiWqYZmx?=
+ =?us-ascii?Q?emszyq61PnnJDPk171p9PD20Cs7rN2ZERh4kqS4ioPzpAVhSglK/FphtdxOn?=
+ =?us-ascii?Q?jgU41ZF16u3LofTomAUi7Y8OPztr7nSF?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jun 2024 21:30:05.6298
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fb21e57a-48a9-44f7-64c2-08dc97b97a68
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B076.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7245
 
-On 28 June 2024 17:38:15 BST, Peter Hilber <peter=2Ehilber@opensynergy=2Eco=
-m> wrote:
->On 28=2E06=2E24 14:15, David Woodhouse wrote:
->> On Fri, 2024-06-28 at 13:33 +0200, Peter Hilber wrote:
->>> On 27=2E06=2E24 16:52, David Woodhouse wrote:
->>>> I already added a flags field, so this might look something like:
->>>>
->>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
->>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Smearing flags=2E =
-The UTC clock exposed through this structure
->>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * is only ever true =
-UTC, but a guest operating system may
->>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * choose to offer a =
-monotonic smeared clock to its users=2E This
->>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * merely offers a hi=
-nt about what kind of smearing to perform,
->>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * for consistency wi=
-th systems in the nearby environment=2E
->>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
->>>> #define VMCLOCK_FLAGS_SMEAR_UTC_SLS (1<<5) /* draft-kuhn-leapsecond-0=
-0=2Etxt */
->>>>
->>>> (UTC-SLS is probably a bad example but are there formal definitions f=
-or
->>>> anything else?)
->>>
->>> I think it could also be more generic, like flags for linear smearing,
->>> cosine smearing(?), and smear_start_sec and smear_end_sec fields (rela=
-tive
->>> to the leap second start)=2E That could also represent UTC-SLS, and
->>> noon-to-noon, and it would be well-defined=2E
->>>
->>> This should reduce the likelihood that the guest doesn't know the smea=
-ring
->>> variant=2E
->>=20
->> I'm wary of making it too generic=2E That would seem to encourage a
->> *proliferation* of false "UTC-like" clocks=2E
->>=20
->> It's bad enough that we do smearing at all, let alone that we don't
->> have a single definition of how to do it=2E
->>=20
->> I made the smearing hint a full uint8_t instead of using bits in flags,
->> in the end=2E That gives us a full 255 ways of lying to users about wha=
-t
->> the time is, so we're unlikely to run out=2E And it's easy enough to ad=
-d
->> a new VMCLOCK_SMEARING_XXX type to the 'registry' for any new methods
->> that get invented=2E
->>=20
->>=20
->
->My concern is that the registry update may come after a driver has alread=
-y
->been implemented, so that it may be hard to ensure that the smearing whic=
-h
->has been chosen is actually implemented=2E
+On Fri, Jun 28, 2024 at 09:26:00PM +0200, Pavel Machek wrote:
+> Hi!
+> 
+> > NVIDIA's Tegra241 (Grace) SoC has a CMDQ-Virtualization (CMDQV) hardware
+> > that extends standard ARM SMMUv3 to support multiple command queues with
+> > virtualization capabilities. Though this is similar to the ECMDQ in SMMU
+> > v3.3, CMDQV provides additional Virtual Interfaces (VINTFs) allowing VMs
+> > to have their own VINTFs and Virtual Command Queues (VCMDQs). The VCMDQs
+> > can only execute a limited set of commands, mainly invalidation commands
+> > when exclusively used by the VMs, compared to the standard SMMUv3 CMDQ.
+> 
+> Text is block-aligned without duplicated spaces. How did you do
+> that...?
 
-Well yes, but why in the name of all that is holy would anyone want to inv=
-ent *new* ways to lie to users about the time? If we capture the existing o=
-nes as we write this, surely it's a good thing that there's a barrier to en=
-try for adding more?
+By OCD? Nothing fancy :)
 
-
->But the error bounds could be large or missing=2E I am trying to address =
-use
->cases where the host steps or slews the clock as well=2E
-
-The host is absolutely intended to be skewing the clock to keep it accurat=
-e as the frequency of the underlying oscillator changes, and the seq_count =
-field will change every time the host does so=2E
-
-Do we need to handle steps differently? Or just let the guest deal with it=
-?
-
-If an NTP server suddenly steps the time it reports, what does the client =
-do?
-
+Thanks
+Nicolin
 
