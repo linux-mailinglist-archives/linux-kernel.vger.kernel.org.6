@@ -1,81 +1,85 @@
-Return-Path: <linux-kernel+bounces-233997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C75BB91C090
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:12:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88CD091C07F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:09:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 856D2282F73
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:12:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07E8AB23DE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94CB1BF32E;
-	Fri, 28 Jun 2024 14:11:59 +0000 (UTC)
-Received: from chessie.everett.org (chessie.fmt1.pfcs.com [66.220.13.234])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200161BE85F;
-	Fri, 28 Jun 2024 14:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.220.13.234
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719583919; cv=none; b=AQRazHUAcc+lhiYaR4c25gsMa5VDcBP/ccYUEVqWfZQr0vT80Ijo4fMBRuYa3T998Lvlbm7IbQRtww9xnlWyKUeWJbgyG0vO4BqJgpLeB5zr1ksXILDNwx+/jicv5k1Bjt1rH9dV3pZI6ouhOeU/E2sRqZQCQhD6I2OJO/x4tQs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719583919; c=relaxed/simple;
-	bh=Ukl6IswPq9u8vcIcLC9yjMxtDPey4eGMS6U5jtPmtWc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=He2I2EZqfjtvUilMqjdjuPxmskugC60/9c3RXPglygg2UB6T5GZVNudApp9FQCwZ8vyEWKF1uDeM3vT22WkPgj3IlurBLEsOgJaWgQkOqbyjVdeJlrNP+jpuhx0WspmC3O6D9jnOyU/Tl8i0jwUebjdPryTzbCopL5U2cA/txWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nwtime.org; spf=pass smtp.mailfrom=nwtime.org; arc=none smtp.client-ip=66.220.13.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nwtime.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nwtime.org
-Received: from localhost.localdomain (unknown [31.16.248.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C8FD1C005C;
+	Fri, 28 Jun 2024 14:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="eVhylS6i"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by chessie.everett.org (Postfix) with ESMTPSA id 4W9ccK4ZHBzMQKt;
-	Fri, 28 Jun 2024 14:04:01 +0000 (UTC)
-From: Erez Geva <erezgeva@nwtime.org>
-To: linux-mtd@lists.infradead.org,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Michael Walle <mwalle@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	devicetree@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Erez Geva <ErezGeva2@gmail.com>
-Subject: [PATCH 0/4] Add support for SPI-NOR Macronix OTP
-Date: Fri, 28 Jun 2024 16:03:24 +0200
-Message-Id: <20240628140328.279792-1-erezgeva@nwtime.org>
-X-Mailer: git-send-email 2.39.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6251C004C;
+	Fri, 28 Jun 2024 14:09:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719583759; cv=none; b=sDKngAiivVhhjyLtPzzf3TWjqZjqrxRnn/gD8h4sn8ezQq45GtmMclKOQy7QqklAzt1ZATrgnuOdk5fHtvOC70Apnivuwb8Ithrg/O2m04ynz9D4AEtLDTnrwecB3Q88EZy2FYCrvs7fJfMUh+HVi8YLKMtBtuSBJQ/AkIA6AIs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719583759; c=relaxed/simple;
+	bh=fiTFD6LjLZevOhP5yqiiJPUwf69YV0v89D1EEDrdqn8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OJgxQ9W0C2MlwBvjTrl/0fmxAm1MKVqWJ8KMa8ZEfON44PFVFFT06EcVI8cKkBWo96t040ywUugX+wf4bFYqDGpcH9r55EnRgIoOBTw+IQxMFqMgELxkRE5ZLJIj8bNreomiMPBE2p3Lv9eVTttauXt/o9qGwu+s17UVwkKhPdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=eVhylS6i; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=PUFq+r93SMKyXpphr8wL2rk6f2o0adTTc3NqfeVDy4s=; b=eVhylS6ivpR1cr0iVh/m1c4tFC
+	VHJsE5NfuUL+8ls44uXWFvgaBFmbOgUVNm9WekxIdE98o88NQHhLhBttw+R09fo3AxOko7a3GKlnw
+	82iWfEpMWNyCIA8EZtQAu5BafQw0HtucAPo7LzRWQf4X2f+53As19LApQi/f8WGkjPZQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sNCHd-001HyW-W0; Fri, 28 Jun 2024 16:09:01 +0200
+Date: Fri, 28 Jun 2024 16:09:01 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Daniel Golle <daniel@makrotopia.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v2 net-next 3/3] net: phy: aquantia: add support for
+ aqr115c
+Message-ID: <92078d5d-3b10-4651-a42b-4b2ffd23daca@lunn.ch>
+References: <20240627113018.25083-1-brgl@bgdev.pl>
+ <20240627113018.25083-4-brgl@bgdev.pl>
+ <Zn3q5f5yWznMjAXd@makrotopia.org>
+ <d227011a-b4bf-427f-85c2-5db61ad0086c@lunn.ch>
+ <Zn4Nq1QvhjAUaogb@makrotopia.org>
+ <CAMRc=Mcftb9MRAP50ZNMfQpsjLzc-=OKvxo5Xkeqdgs-rZFNug@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMRc=Mcftb9MRAP50ZNMfQpsjLzc-=OKvxo5Xkeqdgs-rZFNug@mail.gmail.com>
 
-From: Erez Geva <ErezGeva2@gmail.com>
+> Not sure what to do, should I still be adding a new mode here or is it
+> fine to just explain in the commit message that this really is
+> "2500Base-X-sans-in-band-signalling" and keep the code as is? Or maybe
+> some quirk disallowing `managed = "in-band-status"`?
 
-Add support for SPI-NOR Macronix OTP.
-And add mx25l12833f with OTP.
+Yes, please do make it clear in the commit message. It is good to have
+a full commit message explaining all the messy details to help the
+next person who needs to modify this code, or has the same issue with
+another vendor specific glue driver for stmmac, etc.
 
-Erez Geva (4):
-  Add generic functions for accessing the SPI chip.
-  Add support for SPI-NOR Macronix OTP.
-  dt-bindings: mtd: macronix,mx25l12833f: add SPI-NOR chip
-  Add Macronix SPI-NOR mx25l12833f with OTP.
-
- .../bindings/mtd/jedec,spi-nor.yaml           |   2 +-
- drivers/mtd/spi-nor/core.c                    | 131 ++++++++----
- drivers/mtd/spi-nor/core.h                    |  27 +--
- drivers/mtd/spi-nor/macronix.c                | 190 ++++++++++++++++++
- include/linux/mtd/spi-nor.h                   |  10 +
- 5 files changed, 301 insertions(+), 59 deletions(-)
-
--- 
-2.39.2
-
+	Andrew
 
