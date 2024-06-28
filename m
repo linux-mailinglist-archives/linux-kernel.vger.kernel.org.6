@@ -1,247 +1,265 @@
-Return-Path: <linux-kernel+bounces-234410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A18691C656
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:06:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E25FA91C65C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:07:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD1E6B21BF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:06:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 732341F21D4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01FB6F2F8;
-	Fri, 28 Jun 2024 19:06:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7267405A;
+	Fri, 28 Jun 2024 19:07:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="MAOmymTB"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oCgugXBT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B7A54662
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 19:06:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3A9D27E;
+	Fri, 28 Jun 2024 19:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719601586; cv=none; b=lft+/1Yz+PnmIGfuIwy82hj6ilIGMv7Du+/pOQpGODt83bm9F/4P3og9slAfxsEU37QbaRjRcie7QI8but1AvwNHaxXcOA1UNlYzhYfl+yEN86iokqOiL/yv98uhlOa8n5leCcbqhL0osJRRRraZ7PDgw+yguia18jvh/mhnP80=
+	t=1719601628; cv=none; b=cVrYQH3iDIz+aw6ppBHGAYJSj1OuLGJuCAbj1+Of6nCTppMmi2g+tbYYb7GQdmHN41XFoFe6bfxRs9l5NeraeU8zrHtqzs+7MocC7JyJyqE2HFE8gJuWGJi0y+paHCvgN4NGVAGBpk0vHH8Fmn/C4tNzgjOLUpxMiyPkeDpWDDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719601586; c=relaxed/simple;
-	bh=YilG7hAQ4bCoyFMO7jPkzeBtsMj8PhsOsGw/RlL9An4=;
-	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=lljX1GOc08KJDK5dmYWObJACrL7y2jFAB1Q2WQq9z5JhZLU6OwhCU7drQ/1T9B6jA+/Er+CxgBhwFu2wUszafrRKUCa8QwiXG0sxves1GtpYzXyrXE7AXre4O7vnlCA0e+vTLYjzCTy6irSq1Pj2FE3Y5wKFiPzkKo7fRQI+xTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=MAOmymTB; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-79c04e6e1b9so69119585a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 12:06:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719601582; x=1720206382; darn=vger.kernel.org;
-        h=mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/P0aKcr077J0eGdBMkba+QgmC++9HxUfIpvEXZ3V628=;
-        b=MAOmymTB0VDlstrPOW+kFxv1hMmwSuaflaJlLCNIJitF6lGXmrTwmVW1rzMxGFkQ06
-         NEvgPvjE1w4aRuT7YNmmTciLNZhkzeAx9EcpnFbuFmEIKGTCXKyvu0wTwVxGXfspeDhx
-         X50U/h6+5zVh8nwGSrY0rsbCf5WFcLfQhlf78NtEvhHAECuvB53S9hsMN+WgXso86UOE
-         nF1H9KfbF/y18F5e3UZ5BmDMjSECnPpLcvav45oF4lYfnldOnlOCX8emDal8weDoEeK6
-         /w0XjGMG6WcIbgbOlgHn7fGIxEPPeSOOkErsQTjp7x4iwCE1SVb74J5LyS1GmCwaVTEP
-         iu6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719601582; x=1720206382;
-        h=mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/P0aKcr077J0eGdBMkba+QgmC++9HxUfIpvEXZ3V628=;
-        b=nAgglH6AatGDpXsRMpSFxbvzUG61V30az2ZJLa2FZn/vyv1BpKU/ehT4jnF2lVtUq3
-         AnefmzO+og/nm5PYXo2Y4z/3oRDrO73jNtDvGGqp+i/8YYB81TMfUzZfdJK8JFRk6Hna
-         W7CB0FsLw4Ug46YuOeYMK0S7iJEyxPJQcHfddzqdj4y3HHDQHpEXcz3UGbybyXqTsttR
-         o3EzGWk1XmIEJ+h2YVzU1UQd+qX3Kw/vcIaawF1TAmyWi6NJvm4CQE6QObMpUh1IWZtA
-         jnhURdxxdr0qkhRALpQ0nX0y9woJWmbQlY6z/Fy/Eek3VRmf0Kug16DsNro5+4ta+8SL
-         q/og==
-X-Gm-Message-State: AOJu0YxB84WOg7nXun8zWt9H9OTRWDs/Q0dOgnmVrWo5Z4HF438NbYgS
-	vLK/Aqacd0Tpwdxqyf/KEuJCJT1ahsKc5l0A4uY0qhqfVguoTZwJAF1Rx/jHFjJh8SrhQT28+cZ
-	R
-X-Google-Smtp-Source: AGHT+IG69DJHDcmdiHD7SyEyLQpR/KoJw48t9mWYkz7+tg03DPrEL833+0HP3+shLqDeQu++rmN8Ew==
-X-Received: by 2002:a05:620a:1787:b0:79d:5cd6:9f60 with SMTP id af79cd13be357-79d5cd6a4b1mr687435485a.67.1719601582013;
-        Fri, 28 Jun 2024 12:06:22 -0700 (PDT)
-Received: from xanadu (modemcable018.15-162-184.mc.videotron.ca. [184.162.15.18])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79d692999c0sm98393285a.65.2024.06.28.12.06.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 12:06:21 -0700 (PDT)
-Date: Fri, 28 Jun 2024 15:06:20 -0400 (EDT)
-From: Nicolas Pitre <npitre@baylibre.com>
-To: Andrew Morton <akpm@linux-foundation.org>, 
-    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
-cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] mul_u64_u64_div_u64: make it precise always
-Message-ID: <39o9pnn4-p22s-rp4p-067n-83s18o5prnpn@onlyvoer.pbz>
+	s=arc-20240116; t=1719601628; c=relaxed/simple;
+	bh=RyPLhi7w8OO9gyuCrd5ByF7VZMJeWMWpNRSDkOtxo5c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fj3tjldOmk+3BkGHl7RUKI1ee3s4I8eC2op4QZf/GkOYDauwAY/pMyhkhhY0Sh2+A47HcoB1F3APHnH7sD/57pISFq7ZJfknLT8c9zgJpskGKuCLdDUI5lsCQnfiS9tMhPUpJGgNNfmyx8+35NfBZi6eRatAC0RG3r7he+cc3TA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oCgugXBT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33532C4AF0D;
+	Fri, 28 Jun 2024 19:07:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719601628;
+	bh=RyPLhi7w8OO9gyuCrd5ByF7VZMJeWMWpNRSDkOtxo5c=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=oCgugXBTOWJhoHrdKScGOZEezZxFxvQ17x9WgEa9sdniy5b4IQ4VQqGmxYC1Eo/+T
+	 crDc0D6eNycyjbvXwca0AfcoySWqEexYQfIa2P+JJHraI5aTdOZWaesE76PdRQ8zCT
+	 TQX6D96uKVJhDkhShqHhwRCY9oOwv5qc/vW5DKGAFmpO0Bi7O+VGLDJ/wn1+pkxhRZ
+	 zVagycpmhn10DAtJWybzRSQPA30B4bl/Cfs0LK0nStF4eC8cRL/R3jPIfYh/YtJkap
+	 OCjZmEMdJYvpaunfsOxrNtWv3jsF9yewPq12KlUg93BJMwJ+uVjDm36bROXvK/tKwi
+	 i/f2Wk71o9vNA==
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-24c582673a5so131802fac.2;
+        Fri, 28 Jun 2024 12:07:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW4+/fxSnPOd7N2gQ4NERUy5ur1COv6xM1nTUO9PnjQpmkA9SLBFlYccazLrVCHCX2gVctFD1alueVW2GJJ/WGEUeuwoIa0TlAfwiTz
+X-Gm-Message-State: AOJu0YyT3DPc022gLg9o3suwmHWzRirQP//HhicIevUCeCYWod88pshw
+	3uVsoH4oeoKTPwAZMobWIYKL7KlBAUzZNO1oPKAbocteq6hgIoDR/aoVfG37D3WVvY05bKq4P0t
+	yM8xXoF4vzvt6RuxNqtO7rYgKWV8=
+X-Google-Smtp-Source: AGHT+IHgptNGEYMDc8VZ8L/UAWHsLquuhFvV/QDBvFlP2qT6gSAJeDmhjr3fHia7sZmPfECMkzWFulECjLdiiktMCqs=
+X-Received: by 2002:a05:6870:4208:b0:25c:ad1f:b335 with SMTP id
+ 586e51a60fabf-25cf3fdb5f6mr20290991fac.4.1719601627441; Fri, 28 Jun 2024
+ 12:07:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20240628095955.34096-1-christian.loehle@arm.com>
+In-Reply-To: <20240628095955.34096-1-christian.loehle@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 28 Jun 2024 21:06:56 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jPyy0HgtQcSt=7ZO-khSGex2uAxL1x6HZFkFbvpbxcmA@mail.gmail.com>
+Message-ID: <CAJZ5v0jPyy0HgtQcSt=7ZO-khSGex2uAxL1x6HZFkFbvpbxcmA@mail.gmail.com>
+Subject: Re: [PATCHv3 0/3] cpuidle: teo: Fixing utilization and intercept logic
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, rafael@kernel.org, 
+	vincent.guittot@linaro.org, qyousef@layalina.io, peterz@infradead.org, 
+	daniel.lezcano@linaro.org, ulf.hansson@linaro.org, anna-maria@linutronix.de, 
+	dsmythies@telus.net, kajetan.puchalski@arm.com, lukasz.luba@arm.com, 
+	dietmar.eggemann@arm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Library facilities must always return exact results. If the caller may
-be contented with approximations then it should do the approximation on
-its own.
+On Fri, Jun 28, 2024 at 12:02=E2=80=AFPM Christian Loehle
+<christian.loehle@arm.com> wrote:
+>
+> Hi all,
+> so my investigation into teo lead to the following fixes.
+>
+> 1/3:
+> As discussed the utilization threshold is too high while
+> there are benefits in certain workloads, there are quite a few
+> regressions, too. Revert the Util-awareness patch.
+> This in itself leads to regressions, but part of it can be offset
+> by the later patches.
+> See
+> https://lore.kernel.org/lkml/CAKfTPtA6ZzRR-zMN7sodOW+N_P+GqwNv4tGR+aMB5VX=
+RT2b5bg@mail.gmail.com/
+> 2/3:
+> Remove the 'recent' intercept logic, see my findings in:
+> https://lore.kernel.org/lkml/0ce2d536-1125-4df8-9a5b-0d5e389cd8af@arm.com=
+/
+> I haven't found a way to salvage this properly, so I removed it.
+> The regular intercept seems to decay fast enough to not need this, but
+> we could change it if that turns out that we need this to be faster in
+> ramp-up and decaying.
+> 3/3:
+> The rest of the intercept logic had issues, too.
+> See the commit.
+>
+> Happy for anyone to take a look and test as well.
+>
+> Some numbers for context, comparing:
+> - IO workload (intercept heavy).
+> - Timer workload very low utilization (check for deepest state)
+> - hackbench (high utilization)
+> - Geekbench 5 on Pixel6 (high utilization)
+> Tests 1 to 3 are on RK3399 with CONFIG_HZ=3D100.
+> target_residencies: 1, 900, 2000
+>
+> 1. IO workload, 5 runs, results sorted, in read IOPS.
+> fio --minimal --time_based --name=3Dfiotest --filename=3D/dev/nvme0n1 --r=
+untime=3D30 --rw=3Drandread --bs=3D4k --ioengine=3Dpsync --iodepth=3D1 --di=
+rect=3D1 | cut -d \; -f 8;
+>
+> teo fixed v2:
+> /dev/nvme0n1
+> [4599, 4658, 4692, 4694, 4720]
+> /dev/mmcblk2
+> [5700, 5730, 5735, 5747, 5977]
+> /dev/mmcblk1
+> [2052, 2054, 2066, 2067, 2073]
+>
+> teo mainline:
+> /dev/nvme0n1
+> [3793, 3825, 3846, 3865, 3964]
+> /dev/mmcblk2
+> [3831, 4110, 4154, 4203, 4228]
+> /dev/mmcblk1
+> [1559, 1564, 1596, 1611, 1618]
+>
+> menu:
+> /dev/nvme0n1
+> [2571, 2630, 2804, 2813, 2917]
+> /dev/mmcblk2
+> [4181, 4260, 5062, 5260, 5329]
+> /dev/mmcblk1
+> [1567, 1581, 1585, 1603, 1769]
+>
+>
+> 2. Timer workload (through IO for my convenience =F0=9F=98=89 )
+> Results in read IOPS, fio same as above.
+> echo "0 2097152 zero" | dmsetup create dm-zeros
+> echo "0 2097152 delay /dev/mapper/dm-zeros 0 50" | dmsetup create dm-slow
+> (Each IO is delayed by timer of 50ms, should be mostly in state2, for 5s =
+total)
+>
+> teo fixed v2:
+> idle_state time
+> 2.0     4.807025
+> -1.0    0.219766
+> 0.0     0.072007
+> 1.0     0.169570
+>
+> 3199 cpu_idle total
+> 38 cpu_idle_miss
+> 31 cpu_idle_miss above
+> 7 cpu_idle_miss below
+>
+> teo mainline:
+> idle_state time
+> 1.0     4.897942
+> -1.0    0.095375
+> 0.0     0.253581
+>
+> 3221 cpu_idle total
+> 1269 cpu_idle_miss
+> 22 cpu_idle_miss above
+> 1247 cpu_idle_miss below
+>
+> menu:
+> idle_state time
+> 2.0     4.295546
+> -1.0    0.234164
+> 1.0     0.356344
+> 0.0     0.401507
+>
+> 3421 cpu_idle total
+> 129 cpu_idle_miss
+> 52 cpu_idle_miss above
+> 77 cpu_idle_miss below
+>
+> Residencies:
+> teo mainline isn't in state2 at all, teo fixed is more in state2 than men=
+u, but
+> both are in state2 the vast majority of the time as expected.
+>
+> tldr: overall teo fixed spends more time in state2 while having
+> fewer idle_miss than menu.
+> teo mainline was just way too aggressive at selecting shallow states.
+>
+> 3. Hackbench, 5 runs
+> for i in $(seq 0 4); do hackbench -l 100 -g 100 ; sleep 1; done
+>
+> teo fixed v2:
+> Time: 4.937
+> Time: 4.898
+> Time: 4.871
+> Time: 4.833
+> Time: 4.898
+>
+> teo mainline:
+> Time: 4.945
+> Time: 5.021
+> Time: 4.927
+> Time: 4.923
+> Time: 5.137
+>
+> menu:
+> Time: 4.964
+> Time: 4.847
+> Time: 4.914
+> Time: 4.841
+> Time: 4.800
+>
+> tldr: all comparable, teo mainline slightly worse
+>
+> 4. Geekbench 5 (multi-core) on Pixel6
+> (Device is cooled for each iteration separately)
+> teo mainline:
+> 3113, 3068, 3079
+> mean 3086.66
+>
+> teo revert util-awareness:
+> 2947, 2941, 2952
+> mean 2946.66 (-4.54%)
+>
+> teo fixed v2:
+> 3032, 3066, 3019
+> mean 3039 (-1.54%)
+>
+>
+> Changes since v2:
+> - Reworded commits according to Dietmar's comments
+> - Dropped the KTIME_MAX as hit part from 3/3 according to Dietmar's
+> remark.
+>
+> Changes since v1:
+> - Removed all non-fixes.
+> - Do a full revert of Util-awareness instead of increasing thresholds.
+> - Address Dietmar's comments.
+> https://lore.kernel.org/linux-kernel/20240606090050.327614-2-christian.lo=
+ehle@arm.com/T/
+>
+> Kind Regards,
+> Christian
+>
+> Christian Loehle (3):
+>   Revert: "cpuidle: teo: Introduce util-awareness"
+>   cpuidle: teo: Remove recent intercepts metric
+>   cpuidle: teo: Don't count non-existent intercepts
+>
+>  drivers/cpuidle/governors/teo.c | 189 +++++---------------------------
+>  1 file changed, 27 insertions(+), 162 deletions(-)
+>
+> --
 
-In this particular case the comment in the code says "the algorithm
-... might lose some precision". Well, if you try it with e.g.:
+Patches [1-2/3] have been applied as 6.11 material.
 
-	a = 18446462598732840960
-	b = 18446462598732840960
-	c = 18446462598732840961
+Patch [3/3] looks like it may be improved slightly, see my reply to that pa=
+tch.
 
-then the produced answer is 0 whereas the exact answer should be
-18446462598732840959. This is _some_ precision loss indeed!
-
-Let's reimplement this function so it always produces the exact result
-regardless of its inputs while preserving existing fast paths
-when possible.
-
-Signed-off-by: Nicolas Pitre <npitre@baylibre.com>
----
- lib/math/div64.c | 123 ++++++++++++++++++++++++++++++-----------------
- 1 file changed, 80 insertions(+), 43 deletions(-)
-
-diff --git a/lib/math/div64.c b/lib/math/div64.c
-index 191761b1b6..03881ab418 100644
---- a/lib/math/div64.c
-+++ b/lib/math/div64.c
-@@ -186,55 +186,92 @@ EXPORT_SYMBOL(iter_div_u64_rem);
- #ifndef mul_u64_u64_div_u64
- u64 mul_u64_u64_div_u64(u64 a, u64 b, u64 c)
- {
--	u64 res = 0, div, rem;
--	int shift;
-+	if (ilog2(a) + ilog2(b) <= 62)
-+		return div64_u64(a * b, c);
- 
--	/* can a * b overflow ? */
--	if (ilog2(a) + ilog2(b) > 62) {
--		/*
--		 * Note that the algorithm after the if block below might lose
--		 * some precision and the result is more exact for b > a. So
--		 * exchange a and b if a is bigger than b.
--		 *
--		 * For example with a = 43980465100800, b = 100000000, c = 1000000000
--		 * the below calculation doesn't modify b at all because div == 0
--		 * and then shift becomes 45 + 26 - 62 = 9 and so the result
--		 * becomes 4398035251080. However with a and b swapped the exact
--		 * result is calculated (i.e. 4398046510080).
--		 */
--		if (a > b)
--			swap(a, b);
-+#if defined(__SIZEOF_INT128__)
-+
-+	/* native 64x64=128 bits multiplication */
-+	unsigned __int128 prod = (unsigned __int128)a * b;
-+	u64 n_lo = prod, n_hi = prod >> 64;
-+
-+#else
-+
-+	/* perform a 64x64=128 bits multiplication manually */
-+	union {
-+		u64 v;
-+		struct {
-+#if defined(CONFIG_CPU_LITTLE_ENDIAN)
-+			u32 l;
-+			u32 h;
-+#elif defined(CONFIG_CPU_BIG_ENDIAN)
-+			u32 h;
-+			u32 l;
-+#else
-+#error "unknown endianness"
-+#endif
-+		};
-+	} A, B, X, Y, Z;
-+
-+	A.v = a;
-+	B.v = b;
-+
-+	X.v = (u64)A.l * B.l;
-+	Y.v = (u64)A.l * B.h + X.h;
-+	Z.v = (u64)A.h * B.h + Y.h;
-+	Y.v = (u64)A.h * B.l + Y.l;
-+	X.h = Y.l;
-+	Z.v += Y.h;
-+
-+	u64 n_lo = X.v, n_hi = Z.v;
-+
-+#endif
- 
-+	int shift = __builtin_ctzll(c);
-+
-+	/* try reducing the fraction in case the dividend becomes <= 64 bits */
-+	if ((n_hi >> shift) == 0) {
-+		u64 n = (n_lo >> shift) | (n_hi << (64 - shift));
-+
-+		return div64_u64(n, c >> shift);
- 		/*
--		 * (b * a) / c is equal to
--		 *
--		 *      (b / c) * a +
--		 *      (b % c) * a / c
--		 *
--		 * if nothing overflows. Can the 1st multiplication
--		 * overflow? Yes, but we do not care: this can only
--		 * happen if the end result can't fit in u64 anyway.
--		 *
--		 * So the code below does
--		 *
--		 *      res = (b / c) * a;
--		 *      b = b % c;
-+		 * The remainder value if needed would be:
-+		 *   res = div64_u64_rem(n, c >> shift, &rem);
-+		 *   rem = (rem << shift) + (n_lo - (n << shift));
- 		 */
--		div = div64_u64_rem(b, c, &rem);
--		res = div * a;
--		b = rem;
--
--		shift = ilog2(a) + ilog2(b) - 62;
--		if (shift > 0) {
--			/* drop precision */
--			b >>= shift;
--			c >>= shift;
--			if (!c)
--				return res;
--		}
- 	}
- 
--	return res + div64_u64(a * b, c);
-+	if (n_hi >= c) {
-+		/* overflow: result is unrepresentable in a u64 */
-+		return -1;
-+	}
-+
-+	/* Do the full 128 by 64 bits division */
-+
-+	shift = __builtin_clzll(c);
-+	c <<= shift;
-+
-+	int p = 64 + shift;
-+	u64 res = 0;
-+	bool carry;
-+
-+	do {
-+		carry = n_hi >> 63;
-+		shift = carry ? 1 : __builtin_clzll(n_hi);
-+		if (p < shift)
-+			break;
-+		p -= shift;
-+		n_hi <<= shift;
-+		n_hi |= n_lo >> (64 - shift);
-+		n_lo <<= shift;
-+		if (carry || (n_hi >= c)) {
-+			n_hi -= c;
-+			res |= 1ULL << p;
-+		}
-+	} while (n_hi);
-+	/* The remainder value if needed would be n_hi << p */
-+
-+	return res;
- }
- EXPORT_SYMBOL(mul_u64_u64_div_u64);
- #endif
--- 
-2.45.2
-
+Thanks!
 
