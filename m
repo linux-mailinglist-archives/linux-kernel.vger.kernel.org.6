@@ -1,131 +1,186 @@
-Return-Path: <linux-kernel+bounces-233527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DCBA91B8BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:45:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEF5F91B8BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:45:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19FAF286E3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:45:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EB5EB21201
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:45:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214D914372B;
-	Fri, 28 Jun 2024 07:45:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F8A314372D;
+	Fri, 28 Jun 2024 07:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="cBik3OzG"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="T15y8IUk"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35CD61420D0
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 07:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA925C89;
+	Fri, 28 Jun 2024 07:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719560725; cv=none; b=SML63J/Bwymmxn1VYOT6ePdGUQmlbeJXn4zIjl4NtmcZ1m2Xv3KaGlU6XPE2A9MyHNDya3Zn6f01QnM8s2ma8TxzyGRDuXQ9FD2mhEiXknJB8YxI3jl7Y9Rhige0nnBh/iyjAa9Bie4C4afrvcvzXJd+UFQe/FOcKTp5U6R27Sc=
+	t=1719560711; cv=none; b=nCIEYye7WbS+fr+7YMJAEJPZGv7B8uEGiola2kJLLIaWtM6UsB5cWGN53vTq5esEpfstlAGcwq9q2+I+EHR95kSlfD2Dd7uVotlezXULNh1g9RctzRp1aNM+wyzUcEbY6p4n7KyPVOqRGrACILPKbw2YnCDYY92YPtLVn8QfZ+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719560725; c=relaxed/simple;
-	bh=JUSBkqtlFZlGM2xrcHSRfAoIIHT2J2BMiHSuf0F3BaQ=;
+	s=arc-20240116; t=1719560711; c=relaxed/simple;
+	bh=p0jV8ElzLovC8PJpEjbIBYA1mtu9/RdPJD4TfKMl0XE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=roW5l2KWrCRLS8572uS8aqZoBDbCOQN8Q/x5xraZNaeyOsPVASJENJfWZRVPpbDO6w1Mk3yPSd89jg8z7tVqkd0k7zdA3tY3ruUHZGTEOGItibD8VERqmA2UUB7r8lX5SFnbZXzcocNmpbstvflYBS1nvwcSGIGDh5phTRkB7GA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=cBik3OzG; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-57d1782679fso380638a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 00:45:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1719560721; x=1720165521; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zK0IyvrzgL+xOXZeNs6NwkiIfLaj+g1X1XQRxC3Lni0=;
-        b=cBik3OzGJhPIfXH8ZDw6Rsg6uKBh2TKOAnZJdhIkhmOREobaEpOkdYKA3wilgcsmry
-         TV3PTsM094JRHfmM9GjObGYRWFQNf/WPsRBpESm5aWg879Nrx9qodMZWV6Kk6YjNgBlh
-         Z1WeQhQYfjEDwwQ2xf58mkxBop9MdC/JtAeT+sMPsmtp6GvTD24tYljAlmKcnbcnwZln
-         VQxebrsW+iPlz0N3qXWXdRpbZNUHC72939tIz97Ssg89coFNTbEWYoHrUr0xSXyaHHRg
-         HWtl925Qv169EZcVIx1f6L4C9oJNx68jIdicHLNEcuByKEfk+wLn5x/nyGqXVDgMyWLa
-         G6Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719560721; x=1720165521;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zK0IyvrzgL+xOXZeNs6NwkiIfLaj+g1X1XQRxC3Lni0=;
-        b=STH8o+ljC620lwxkwdNvAPPH1+YNz/PXjEhRCv+z+ehUZMjsrRt6Q+eBOTMWyzDA3U
-         h2g0tgUSdK1zwP5i4oeZGtZf7oorEJzlkF6EDogEL/qtRsrA3dJ9WSQz7Vzh5yGTETR4
-         UODbvg7WaAfOluXomWq7ufIKy3KH2rTadSpNLdVg07F01Nqcy5x8lYptOuA+ZFw1qtvB
-         CHdU3b8h/RNW6qSbo5tfLmu+dy+m3iwK0VnQcPVzHsCfqbVAT9zzccl/ppGFFzQi2iA5
-         hE9x1qrBIoj/QItBCiyVHj7wa3kLJydzvljeeM8t6mvZMAe3e5RH4DoSsYjZTHmp3HWf
-         qsmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVAvOSC59aukzg8JDuWssj3LVC0UPnk/BT2Cz37aiOYxSF0arz/4437ZebDVTxbmLUzSoXFqcNg6AvAvejOrqLkzIKUQnxau/tCFPah
-X-Gm-Message-State: AOJu0Yz5HbFxop1XItlVysVKZfmDCZTQUb+SM2TdT6+8SEFvwrvopNVK
-	V5d9Ow3kRbk9S/+DR7dcB9GbnDfJ757VryGHVUSzyc0S8ugTBI9DBr+HuLvTLko=
-X-Google-Smtp-Source: AGHT+IFbVaxM0DAkYtocL0zgPx+w3Uad0KAy3J9JWLJJFEoXMfvodZvIMdiV5+OAEx1nZLaxrud7Kw==
-X-Received: by 2002:a50:cd9e:0:b0:57d:785:7cc2 with SMTP id 4fb4d7f45d1cf-57d4bdcc05bmr9343309a12.28.1719560721489;
-        Fri, 28 Jun 2024 00:45:21 -0700 (PDT)
-Received: from localhost (109-81-86-16.rct.o2.cz. [109.81.86.16])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5861503b52esm610372a12.89.2024.06.28.00.45.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 00:45:21 -0700 (PDT)
-Date: Fri, 28 Jun 2024 09:45:20 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Xiu Jianfeng <xiujianfeng@huawei.com>
-Cc: hannes@cmpxchg.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, akpm@linux-foundation.org,
-	cgroups@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] mm: memcg: adjust the warning when seq_buf
- overflows
-Message-ID: <Zn5qELsJZ0CrdlZA@tiehlicka>
-References: <20240628072333.2496527-1-xiujianfeng@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=R6L0FvJ6wxVjTw2+7pMluzV/gM9M+1roYPEMvsGm1BWQJ0OvBS6edai/FLTyc0WZlEsRxlmAYN+WHK94uN7jZEzpFfuF6zqHmvZYDR8XM28eNNCce24w/qzTeaKmE3pfAgDy9UeDotBKDCn/UWRXeUPXfMWmoBbf6pxiSbSM0vA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=T15y8IUk reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id F07A140E0192;
+	Fri, 28 Jun 2024 07:45:06 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
+	reason="fail (body has been altered)" header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id sSMyDzu3hfvb; Fri, 28 Jun 2024 07:45:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1719560702; bh=7ldIwKtvzJ9yyJaNutYVVLJe0u6aE/RpeHC5fXaXUi4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=T15y8IUk+bsQfYjGmcY6To0pwblhcpGHNswc+3j5JXhvAbRzNuPlqQSefH/AHnwCc
+	 eOMQextITsSwFSnuTNoE9ab/AKH1XQn/07Y25ZVWhUisN6nzF7/LwFFb/eSuOSUxOe
+	 e8/I1A91o32iVgoTaRyjnNmIqNW1NRiathWQAr5S/njI/LQEgxrRrFBqgnd9yT5OSq
+	 92CkTxXPPdPY4E8pwZohAFPu1rEQE/pvgCyptIHRXVIlJDe6G6mqW/87VUvDVIKb7J
+	 qj0LrRfo3Fod96P3U0aDYzK9H0SdH90izxcANNjyDdXOwmo25pfDqUC4jNrLczlwpQ
+	 2smMW5CWnky12/0duRZKbNiQvj7vTrA6cM/xtJBNv3YLJaIRqkZLSTI3C/QLjiDdLA
+	 JeLJIhCYWHrxCWVNr/F6KlbGUIEzL4UsuCUESovO1GQ0bgYtUPSgS52SjZzltvvU+D
+	 AYbw7wvJsnHv/9UN8GjUzPSqDB/NJHZs2UAyEbkYE1hZQSVopJ526hncioN2IDsFNN
+	 xzkXkGijGLzCq3+SjZwJDCeBkZuvOvQxIUczCy5zRhIsRt57hL6r4jnmJyGlAfmT8+
+	 M459T/gYSYKXbnif4ygRocX5If+eZoqGGJeUR18T0vAuvQ2cWnmHjCim6x4GvncNGT
+	 r5KcbGjeg1Wf22a5cNHvvm3w=
+Received: from nazgul.tnic (business-24-134-159-81.pool2.vodafone-ip.de [24.134.159.81])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4FB9340E021A;
+	Fri, 28 Jun 2024 07:44:55 +0000 (UTC)
+Date: Fri, 28 Jun 2024 09:45:22 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: John Allen <john.allen@amd.com>
+Cc: rafael@kernel.org, lenb@kernel.org, yazen.ghannam@amd.com,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-edac@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] RAS/AMD/ATL: Translate normalized to system
+ physical addresses using PRM
+Message-ID: <20240628074522.GDZn5qEkTXG0EvQ4Lv@fat_crate.local>
+References: <20240506174721.72018-1-john.allen@amd.com>
+ <20240506174721.72018-3-john.allen@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240628072333.2496527-1-xiujianfeng@huawei.com>
+In-Reply-To: <20240506174721.72018-3-john.allen@amd.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri 28-06-24 07:23:33, Xiu Jianfeng wrote:
-> Currently it uses WARN_ON_ONCE() if seq_buf overflows when user reads
-> memory.stat, the only advantage of WARN_ON_ONCE is that the splat is
-> so verbose that it gets noticed. And also it panics the system if
-> panic_on_warn is enabled. It seems like the warning is just an over
-> reaction and a simple pr_warn should just achieve the similar effect.
-> 
-> Suggested-by: Michal Hocko <mhocko@suse.com>
-> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+On Mon, May 06, 2024 at 05:47:21PM +0000, John Allen wrote:
+> Future AMD platforms will provide a UEFI PRM module that implements a
+> number of address translation PRM handlers. This will provide an
+> interface for the OS to call platform specific code without requiring
+> the use of SMM or other heavy firmware operations.
+>=20
+> AMD Zen-based systems report memory error addresses through Machine
+> Check banks representing Unified Memory Controllers (UMCs) in the form
+> of UMC relative "normalized" addresses. A normalized address must be
+> converted to a system physical address to be usable by the OS.
 
-Acked-by: Michal Hocko <mhocko@suse.com>
+This should be your first paragraph.
 
-I would just squash this with other patch removing it from
-memcg_stat_format. But this is up to you.
+> Add support for the normalized to system physical address translation
+> PRM handler in the AMD Address Translation Library and prefer it over
+> native code if available. The GUID and parameter buffer structure are
+> specific to the normalized to system physical address handler provided
+> by the address translation PRM module included in future AMD systems.
+>=20
+> The address translation PRM module is documented in chapter 22 of the
+> publicly available "AMD Family 1Ah Models 00h=E2=80=930Fh and Models 10=
+h=E2=80=931Fh
+> ACPI v6.5 Porting Guide":
+> https://www.amd.com/content/dam/amd/en/documents/epyc-technical-docs/pr=
+ogrammer-references/58088-0.75-pub.pdf
 
-Thanks!
+Those URLs are flaky and become invalid over time. When you quote
+a document, quote it in such a way so that searching for it on the web,
+can find it. The name above works for me so that's good.
 
-> ---
->  mm/memcontrol.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index c251bbe35f4b..8e5590ac43d7 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -1484,7 +1484,8 @@ static void memory_stat_format(struct mem_cgroup *memcg, struct seq_buf *s)
->  		memcg_stat_format(memcg, s);
->  	else
->  		memcg1_stat_format(memcg, s);
-> -	WARN_ON_ONCE(seq_buf_has_overflowed(s));
-> +	if (seq_buf_has_overflowed(s))
-> +		pr_warn("%s: Warning, stat buffer overflow, please report\n", __func__);
->  }
->  
->  /**
-> -- 
-> 2.34.1
-> 
+> +#include "internal.h"
+> +
+> +#if defined(CONFIG_ACPI_PRMT)
 
--- 
-Michal Hocko
-SUSE Labs
+Instead of that ifdeffery you could do:
+
+config AMD_ATL_PRM
+	depends on AMD_ATL && ACPI_PRMT
+
+and it'll get enabled automatically and then you don't need the empty
+stub either.
+
+> +#include <linux/prmt.h>
+> +
+> +struct prm_umc_param_buffer_norm {
+
+What's a prm_umc_param_buffer_norm?
+
+> +	u64 norm_addr;
+> +	u8 socket;
+> +	u64 umc_bank_inst_id;
+> +	void *output_buffer;
+
+Use the usual short versions for such standard names: "out_buf"
+
+> +} __packed;
+> +
+> +static const guid_t norm_to_sys_prm_handler_guid =3D GUID_INIT(0xE7180=
+659, 0xA65D,
+> +							     0x451D, 0x92, 0xCD,
+> +							     0x2B, 0x56, 0xF1, 0x2B,
+> +							     0xEB, 0xA6);
+
+When you define such long variable names, your lines stick out
+unnecessarily. Shorten pls.
+
+> +unsigned long prm_umc_norm_to_sys_addr(u8 socket_id, u64 umc_bank_inst=
+_id, unsigned long addr)
+
+bank_id is fine.
+
+> +{
+> +	struct prm_umc_param_buffer_norm param_buffer;
+
+... p_buf;
+
+> +	unsigned long ret_addr;
+> +	int ret;
+> +
+> +	param_buffer.norm_addr        =3D addr;
+> +	param_buffer.socket           =3D socket_id;
+> +	param_buffer.umc_bank_inst_id =3D umc_bank_inst_id;
+> +	param_buffer.output_buffer    =3D &ret_addr;
+> +
+> +	ret =3D acpi_call_prm_handler(norm_to_sys_prm_handler_guid, &param_bu=
+ffer);
+> +	if (!ret)
+> +		return ret_addr;
+> +
+> +	if (ret =3D=3D -ENODEV)
+> +		pr_debug("PRM module/handler not available\n");
+> +	else
+> +		pr_notice_once("PRM address translation failed\n");
+> +
+> +	return ret;
+> +}
+
+--=20
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
