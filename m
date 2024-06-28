@@ -1,249 +1,195 @@
-Return-Path: <linux-kernel+bounces-233667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29EE891BB4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:17:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9B5B91BB4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:18:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACD221F23164
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:17:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5161F1F22F2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:18:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EADA41514EF;
-	Fri, 28 Jun 2024 09:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 699E114EC78;
+	Fri, 28 Jun 2024 09:18:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BBIXEal4";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="O9bOmpwC";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BBIXEal4";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="O9bOmpwC"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="o+5aXFEl"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3754221105;
-	Fri, 28 Jun 2024 09:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74AD43AC0
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 09:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719566240; cv=none; b=Xgnc8crXrRALcNrAOjv8VUtyaLaMPOnjRdN9/wG6d+O8uelHQCMDj1BLVy5DXCHcbBEe0oH66P3eSkEJ9ILbn+j6LEeN4AXOl3dGXE6SNwI4FBUozVo1v+T2ZztlMuHbxBxeN5HS/fy42EgsuDsoF5IOvnTbPmiouUH2NSosf8g=
+	t=1719566320; cv=none; b=ljCDHtOP2+rHoqk66x4JHXBlmF0WEWkTreoeL0vvJp4EDfgmlWXImNlvNkLVEhLHjmW10kCcWaFPkDZlQl+9g+3rABHMY42liOE4iY1+ghRF+yy/c74lBNe2va5wDemIeZHOivuE0oL6CPGZVxsRXsn4VNCVbePMjowXwpMgIHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719566240; c=relaxed/simple;
-	bh=fhOLmWc0SDC85qQYdG8vAEP1SqcKTgRIoLj4V2w5MY0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Pr2muL0GOvfNS/VzXYw//K8plEmkjagTPZIw5CjoNmLzk2oxHOMDh3PqltyEK9mc3xXrvcH+YBlo5dSfGUx2fOu0QcrYdDvhE8Wu5etg1Sew4wGRRO7aAUlRrGHkGZgA3trPStc0IdzVH1Za2qnpjZNYva3qTG5mNFKp6JHWCWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BBIXEal4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=O9bOmpwC; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BBIXEal4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=O9bOmpwC; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 586771FCF3;
-	Fri, 28 Jun 2024 09:17:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719566236; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=HPSHi62iPTx8+bcpaYNNSvFsA8tFGLe7dcFFpmR9SXg=;
-	b=BBIXEal4J/XIOdojlnmLuvCWSPm05vaBiEdlESdarzm5XHO5Z4VzjBNtlMRZz4Iaafv25r
-	ytmROKqhfyHYNE6cwy6gfnnH1LzZtix9A5PlS4rXczVmWLrPL4lVgk+usBhbbw3e4GbCr2
-	lsLsrgeIn9n83utj7c4Q4k/G8ZU4N6Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719566236;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=HPSHi62iPTx8+bcpaYNNSvFsA8tFGLe7dcFFpmR9SXg=;
-	b=O9bOmpwCE5KW3Un9+gNnNcrn5EtdNWnQ1ZmlPIzwdDacoyav/pE14AI95LHbxr1vghCqsS
-	4aRp5sZ1pj0INTAQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=BBIXEal4;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=O9bOmpwC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719566236; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=HPSHi62iPTx8+bcpaYNNSvFsA8tFGLe7dcFFpmR9SXg=;
-	b=BBIXEal4J/XIOdojlnmLuvCWSPm05vaBiEdlESdarzm5XHO5Z4VzjBNtlMRZz4Iaafv25r
-	ytmROKqhfyHYNE6cwy6gfnnH1LzZtix9A5PlS4rXczVmWLrPL4lVgk+usBhbbw3e4GbCr2
-	lsLsrgeIn9n83utj7c4Q4k/G8ZU4N6Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719566236;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=HPSHi62iPTx8+bcpaYNNSvFsA8tFGLe7dcFFpmR9SXg=;
-	b=O9bOmpwCE5KW3Un9+gNnNcrn5EtdNWnQ1ZmlPIzwdDacoyav/pE14AI95LHbxr1vghCqsS
-	4aRp5sZ1pj0INTAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 26F2F13A9A;
-	Fri, 28 Jun 2024 09:17:16 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 5kYmCZx/fmYYMQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 28 Jun 2024 09:17:16 +0000
-Message-ID: <c45eb0c9-21b9-4e29-a9d8-f3044c77822e@suse.cz>
-Date: Fri, 28 Jun 2024 11:17:15 +0200
+	s=arc-20240116; t=1719566320; c=relaxed/simple;
+	bh=JwGvK0qeOLrELKDXtXg20v+0XzyrOv8zOjOREGV38bw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iexIMx33Cj65JDXvKvgmLMVIMaI67kruXn1qMs+cEWg6RaGqEnnQzbYQCntnu02zbawjmVRNcHzfQY3J796eCSEA+Xm65fiUQUQNoZjkPrw3p9kMUe4NrvmUMvg8PX6YikxnbnKuoUvTOozRk9Pp4YCP/p0Ized63cGSZQNlVBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=o+5aXFEl; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a6fe81a5838so34791766b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 02:18:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1719566317; x=1720171117; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g4nRdrD3NJ1hYJ32BRxvgX77ACcWSuo5vSiMAPd1QEo=;
+        b=o+5aXFElerjlzv84wxAkPaRqlt91z0g2X9rhv4q4KoVJKp9p8GLK9NvMlLLgMEZXnF
+         RnD6PUHNUlQCDJk1+KkCsecaetFwAw7xT7ZUiHvavPixPs5nFVyHlDaHJBKrWBpXow3j
+         vQdlWhq0s9Rj8Qvq0rzQQcCSdAIFZ3fZfXW2KrBiXOh0+aP1ZnYIeBbRVKhbEBbwK5rv
+         6yLgjNHR+jW8/bx+J6HQGZ3zvpU0PlcZNkEYxMprEJ997C+bf3sRHgmUYMst+4eHuW3P
+         YjNA/zbLpQ5PWD2DTxeAxs+Ib6o1jq9g/HQG84rLfXW4v8pkyKnzL1HstKxEM/8OmqWR
+         t9qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719566317; x=1720171117;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g4nRdrD3NJ1hYJ32BRxvgX77ACcWSuo5vSiMAPd1QEo=;
+        b=IdO6q6xnqxdrO7VJFIOqlxo4rXdBx27R6GIH0J/XO4ORN0sDndjibdli69R0M7+hpi
+         dBuIsfxI0bS3UdpPd8/iSJDQGtJjsfTXHJ7TriSTfOd/h+c3j3/hfsajVjHstBhxHjA8
+         Nt5SktLbkkOK4K0XoBHzBmkWMf1LXvC1DLdmJ+yjtFjN4j9ZVKKpC7ihllwepVSQrFUj
+         lSB7bxK510rX6BmxLR5TAPpfb7iYEtuM2X1jUzqF/DtVZLSplg5s0+3tNSlVx9kcCzin
+         DBa+l3tBXDsAmfnnptKPRAZzFWGP9mr6StKHJLosmYAWLg+SmsI4umbWq68/SYaJCAqj
+         Cg8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU8+DoEodwd00ZZVRsac7MdcqissHtEdKaCFbjU0LTjTlZABQ74bgjKEaSVNWYF7qsWMZbmD/woJHfwD8EIQcyo5DQnHhfrRzYC7m//
+X-Gm-Message-State: AOJu0YyXMwuvFkcmgjW6LpEGMkB5OVQGLDzhiH6pB7e5039DaFJgTvE+
+	z7M81Bs5MRFL90b4bI5U29ktsBj8VwwT7NbYvQNvcpHOmdP1tt89rsSbvUUggIpH+rdw0PKSVdo
+	hAvnptcyoRsTt0hydIuI4nCGuxb4TNdivwBHgvA==
+X-Google-Smtp-Source: AGHT+IHQJz049InCepkhc9kI7uFveWNYHnmaFhmkq0HnaP5qPMrwHzUEhWfGz6Royoe7qcT6s2kIKsKqsb8mkKgqVpA=
+X-Received: by 2002:a17:906:9c87:b0:a72:7a71:7f59 with SMTP id
+ a640c23a62f3a-a727a7180b9mr787751266b.57.1719566317015; Fri, 28 Jun 2024
+ 02:18:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/6] mm/slab: Introduce kmem_buckets_create() and
- family
-Content-Language: en-US
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Kees Cook <kees@kernel.org>,
- "GONG, Ruiqi" <gongruiqi@huaweicloud.com>, Christoph Lameter <cl@linux.com>,
- Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>,
- Joonsoo Kim <iamjoonsoo.kim@lge.com>, jvoisin <julien.voisin@dustri.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, Xiu Jianfeng <xiujianfeng@huawei.com>,
- Suren Baghdasaryan <surenb@google.com>,
- Kent Overstreet <kent.overstreet@linux.dev>, Jann Horn <jannh@google.com>,
- Matteo Rizzo <matteorizzo@google.com>, Thomas Graf <tgraf@suug.ch>,
- Herbert Xu <herbert@gondor.apana.org.au>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, linux-hardening@vger.kernel.org, netdev@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-References: <20240619192131.do.115-kees@kernel.org>
- <20240619193357.1333772-4-kees@kernel.org>
- <cc301463-da43-4991-b001-d92521384253@suse.cz>
- <202406201147.8152CECFF@keescook>
- <1917c5a5-62af-4017-8cd0-80446d9f35d3@suse.cz>
- <Zn5LqMlnbuSMx7H3@Boquns-Mac-mini.home>
- <c5934f76-3ce8-466e-80d1-c56ebb5a158e@suse.cz>
- <CAH5fLggjrbdUuT-H-5vbQfMazjRDpp2+k3=YhPyS17ezEqxwcw@mail.gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <CAH5fLggjrbdUuT-H-5vbQfMazjRDpp2+k3=YhPyS17ezEqxwcw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 586771FCF3
-X-Spam-Score: -3.00
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-3.00 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	XM_UA_NO_VERSION(0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[24];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[gmail.com,kernel.org,huaweicloud.com,linux.com,google.com,lge.com,dustri.org,linux-foundation.org,linux.dev,huawei.com,suug.ch,gondor.apana.org.au,vger.kernel.org,kvack.org];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	TAGGED_RCPT(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+References: <20240626171652.366415-1-jesse@rivosinc.com> <20240626171652.366415-2-jesse@rivosinc.com>
+In-Reply-To: <20240626171652.366415-2-jesse@rivosinc.com>
+From: Alexandre Ghiti <alexghiti@rivosinc.com>
+Date: Fri, 28 Jun 2024 11:18:25 +0200
+Message-ID: <CAHVXubgUnHOQ4QF_sSYVD88W6Zuj32W3U9NSJ0Xzf9N36cqh6g@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] RISC-V: pi: Add kernel/pi/pi.h
+To: Jesse Taube <jesse@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, Ard Biesheuvel <ardb@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, Conor Dooley <conor.dooley@microchip.com>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Wende Tan <twd2.me@gmail.com>, 
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Sami Tolvanen <samitolvanen@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, 
+	Chen Jiahao <chenjiahao16@huawei.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>, 
+	"Vishal Moola (Oracle)" <vishal.moola@gmail.com>, linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/28/24 11:06 AM, Alice Ryhl wrote:
->> >>
->> >
->> > I took a quick look as what kmem_buckets is, and seems to me that align
->> > doesn't make sense here (and probably not useful in Rust as well)
->> > because a kmem_buckets is a set of kmem_caches, each has its own object
->> > size, making them share the same alignment is probably not what you
->> > want. But I could be missing something.
->>
->> How flexible do you need those alignments to be? Besides the power-of-two
->> guarantees, we currently have only two odd sizes with 96 and 192. If those
->> were guaranteed to be aligned 32 bytes, would that be sufficient? Also do
->> you ever allocate anything smaller than 32 bytes then?
->>
->> To summarize, if Rust's requirements can be summarized by some rules and
->> it's not completely ad-hoc per-allocation alignment requirement (or if it
->> is, does it have an upper bound?) we could perhaps figure out the creation
->> of rust-specific kmem_buckets to give it what's needed?
-> 
-> Rust's allocator API can take any size and alignment as long as:
-> 
-> 1. The alignment is a power of two.
-> 2. The size is non-zero.
-> 3. When you round up the size to the next multiple of the alignment,
-> then it must not overflow the signed type isize / ssize_t.
-> 
-> What happens right now is that when Rust wants an allocation with a
-> higher alignment than ARCH_SLAB_MINALIGN, then it will increase size
-> until it becomes a power of two so that the power-of-two guarantee
-> gives a properly aligned allocation.
+Hi Jesse,
 
-So am I correct thinking that, if the cache of size 96 bytes guaranteed a
-32byte alignment, and 192 bytes guaranteed 64byte alignment, and the rest of
-sizes with the already guaranteed power-of-two alignment, then on rust side
-you would only have to round up sizes to the next multiples of the alignemnt
-(rule 3 above) and that would be sufficient?
- Abstracting from the specific sizes of 96 and 192, the guarantee on kmalloc
-side would have to be - guarantee alignment to the largest power-of-two
-divisor of the size. Does that sound right?
+On Wed, Jun 26, 2024 at 7:17=E2=80=AFPM Jesse Taube <jesse@rivosinc.com> wr=
+ote:
+>
+> Add pi.h header for declarations of the kernel/pi prefixed functions
+> and any other related declarations.
+>
+> Signed-off-by: Jesse Taube <jesse@rivosinc.com>
+> ---
+>  arch/riscv/kernel/pi/cmdline_early.c | 10 ++--------
+>  arch/riscv/kernel/pi/fdt_early.c     |  7 +------
+>  arch/riscv/kernel/pi/pi.h            | 17 +++++++++++++++++
+>  3 files changed, 20 insertions(+), 14 deletions(-)
+>  create mode 100644 arch/riscv/kernel/pi/pi.h
+>
+> diff --git a/arch/riscv/kernel/pi/cmdline_early.c b/arch/riscv/kernel/pi/=
+cmdline_early.c
+> index f6d4dedffb84..fbcdc9e4e143 100644
+> --- a/arch/riscv/kernel/pi/cmdline_early.c
+> +++ b/arch/riscv/kernel/pi/cmdline_early.c
+> @@ -6,15 +6,9 @@
+>  #include <asm/pgtable.h>
+>  #include <asm/setup.h>
+>
+> -static char early_cmdline[COMMAND_LINE_SIZE];
+> +#include "pi.h"
+>
+> -/*
+> - * Declare the functions that are exported (but prefixed) here so that L=
+LVM
+> - * does not complain it lacks the 'static' keyword (which, if added, mak=
+es
+> - * LLVM complain because the function is actually unused in this file).
+> - */
+> -u64 set_satp_mode_from_cmdline(uintptr_t dtb_pa);
+> -bool set_nokaslr_from_cmdline(uintptr_t dtb_pa);
+> +static char early_cmdline[COMMAND_LINE_SIZE];
+>
+>  static char *get_early_cmdline(uintptr_t dtb_pa)
+>  {
+> diff --git a/arch/riscv/kernel/pi/fdt_early.c b/arch/riscv/kernel/pi/fdt_=
+early.c
+> index 899610e042ab..40ee299702bf 100644
+> --- a/arch/riscv/kernel/pi/fdt_early.c
+> +++ b/arch/riscv/kernel/pi/fdt_early.c
+> @@ -3,12 +3,7 @@
+>  #include <linux/init.h>
+>  #include <linux/libfdt.h>
+>
+> -/*
+> - * Declare the functions that are exported (but prefixed) here so that L=
+LVM
+> - * does not complain it lacks the 'static' keyword (which, if added, mak=
+es
+> - * LLVM complain because the function is actually unused in this file).
+> - */
+> -u64 get_kaslr_seed(uintptr_t dtb_pa);
+> +#include "pi.h"
+>
+>  u64 get_kaslr_seed(uintptr_t dtb_pa)
+>  {
+> diff --git a/arch/riscv/kernel/pi/pi.h b/arch/riscv/kernel/pi/pi.h
+> new file mode 100644
+> index 000000000000..65da99466baf
+> --- /dev/null
+> +++ b/arch/riscv/kernel/pi/pi.h
+> @@ -0,0 +1,17 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef _RISCV_PI_H_
+> +#define _RISCV_PI_H_
+> +
+> +#include <linux/types.h>
+> +
+> +/*
+> + * The folowing functions are exported (but prefixed) declare them here =
+so
 
-Then I think we could have some flag for kmem_buckets creation that would do
-the right thing.
+s/folowing/following
 
-> Alice
+And it lacks something between "(but prefixed)" and "declare": what
+was wrong with the initial comment?
 
+> + * that LLVM does not complain it lacks the 'static' keyword (which, if
+> + * added, makes LLVM complain because the function is unused).
+> + */
+> +
+> +u64 get_kaslr_seed(uintptr_t dtb_pa);
+> +bool set_nokaslr_from_cmdline(uintptr_t dtb_pa);
+> +u64 set_satp_mode_from_cmdline(uintptr_t dtb_pa);
+> +
+> +#endif /* _RISCV_PI_H_ */
+> --
+> 2.45.2
+>
+
+Suggested-by: Charlie Jenkins <charlie@rivosinc.com>
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+
+Thanks,
+
+Alex
 
