@@ -1,105 +1,131 @@
-Return-Path: <linux-kernel+bounces-233632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E277B91BA76
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:55:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4E4491BA82
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:56:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94FF41F2303A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:55:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A180282C29
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:56:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B8514E2CB;
-	Fri, 28 Jun 2024 08:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 607F814D422;
+	Fri, 28 Jun 2024 08:56:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sDERvh/6"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="UBDbLBJL"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB7F14D422
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 08:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B5014E2DA
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 08:56:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719564937; cv=none; b=aGVShiQf0qvLWgqnhqkbHMSbvrzlMImZPP/NwBHDcYLip1X4tNWhBC5z4ouJfxhff0FCIH4132B7Jz/iCPWtS01VK8AO9kAfFyaAZ7uWeQ6sdQhbKf8nphwjGwatNVN+8mx6uE5QUAUqhddfjqHz/bPB4B6O9sMDmxe+Q0gHEoQ=
+	t=1719565004; cv=none; b=syLs77jdquoMrWwGA34nj2uPhQbzQyvqTqhk5YktiyJ7k+RNA2Shc6Rfl9q3SkSKUS/4X+oXuOfWa4ubBOQ84uXIU0HNgXockxQ96ltRNj71J6T32h12853hBR2TJgxIGzt/uKmrhLAHMxlqZxDHHaL7R/eySJSskC4XDValyhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719564937; c=relaxed/simple;
-	bh=qNT24P69oZExcdybuxkfRZexZp2GF5cn+DnHmLdaWTw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NHDj3eStnMMfekTYsa9YRgFpBLKpolfjUDvB+o26HRKSWl95s+tn9rVRblVWIjAzRYvjPnJdNeEgPkJTcRYvkZkErj91A8OX+IIwp4zh8W3Sg6tniaia5HYS2vWLxLCApk2z6coZMpt3v3fglPKvE76Y84kJqKJXLW8gUh53IXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sDERvh/6; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4256f102e89so1899555e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 01:55:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719564934; x=1720169734; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qNT24P69oZExcdybuxkfRZexZp2GF5cn+DnHmLdaWTw=;
-        b=sDERvh/6LV89l7xKiPO8KcN5+doDSnLjYn+9F8AwvWIoprno4NYEAB9QLRGvi7JYpM
-         7L/u2qHCGSnFiMlWhl04GbkOAG9wTbdDLlx1mJMEzL68mRAKFkY39wpd1rhNDSucSIjI
-         3wuI07c4DVxuFECRHFyfed6V2ZVL3KxambDzMo1o3R3tw/glrEY74qZloXAoyYgyJlMN
-         NyvFX4ZWPQZqUohcZG7i+IS7ALZnZ8y5CxGosWN59WbIgSMUfa8D/KBQRRBf3DKKAcTK
-         ETdJBcUxQ2w0Y9UFG58KSRneWI1XN6JBAxzHly4bcAX7ba6nAK2+LymeEHhXSzE0uSV8
-         cQVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719564934; x=1720169734;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qNT24P69oZExcdybuxkfRZexZp2GF5cn+DnHmLdaWTw=;
-        b=C5oDPR0GEiv8OQCuJPWZmq7ovVRO8w9opc7yioia2K4bnHmi2sbyqCgYjTRAg7aKeG
-         mb9sgnxWUSTlgH/8qq+qr1jc0HLZeIGtGH5UXRcUUXDRlpy8PElop9YtdYU0AWA51hnd
-         74cr5sO39P9MVQ0j8IU/y5my2ifBwbY/GI5YN5HrTL+kmS8SBmV2sjHQ+PFNXAwQTdDJ
-         KCzK45e3ig6PS0ITgJYhPVqzGzR9QJghGdb4DD0TOCUn9EuC+pROSRDkHmPfZlre1RHP
-         WA28suO12XtGvtlq/TVF4pCQCrMGuEdeKiLWQf0VOU4E7yRtHKkmNcKQuvGmbcJCbhbe
-         7fdg==
-X-Forwarded-Encrypted: i=1; AJvYcCWNKvh2FEbwwevxAWeRQY/oYqAp6F47doYItKAT5PYrGSK+as3g93jA3WNpReBNRErJ2TWXZNguz3XpeF0eCzCLhgjy1GZVbKyJ1XGN
-X-Gm-Message-State: AOJu0Yzqnrgq5x7I8EOPlv/muSIPODXHfDZczAAqiY/k7UMfx9W+M1oO
-	ca/CR18ckNzHRdgdUei/AZGlQcuMij5nxtzpVce1YfoTvargz1IO7FmHYqogX/MIFvaNjaB+1EP
-	ugwTRP18UugFfJJ58mWKi4rtVoBcbfXQndisw
-X-Google-Smtp-Source: AGHT+IFEk7Cod2Hp9SvJIIWpoKIKJrvmi1ZmyTwUyea0Fir04rTr9IxaSmMdVqorrv7lReztOBBKgFNhP71zEk8/XfA=
-X-Received: by 2002:a05:6000:ac4:b0:362:c237:5569 with SMTP id
- ffacd0b85a97d-366e94d8815mr9649639f8f.2.1719564934113; Fri, 28 Jun 2024
- 01:55:34 -0700 (PDT)
+	s=arc-20240116; t=1719565004; c=relaxed/simple;
+	bh=znXyHZwpRegc3NlJkQFlZs+vsfwKbAj6NOxYYmocGbQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=myknmk7tGV8xbTIhq+UnxyMXDH8nVHnlGRk4AKrECP2/P+bPSU8BPX5ev9wLMSDzhyTfUmn3iQW3F/Hfsw8xp5v2Sc6bevatY/ccqjvGTqnAGrMvOOA7TI0qW021sNomFqyzxN7YcGcbtdaw9KQsXLi8n6iZ8wa8hBiq6kP4HUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=UBDbLBJL; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ABLvUC/ePHzSEuBbp1KLhmP8GQstWD4khOur3Y/Z+Is=; b=UBDbLBJLDaySytJdd/gG1JXQEK
+	LUqoxxEwnrvLmfKs0klpIjjoUNPz66cElli4bZRd5uRmnrV9bs5GfoYvqtzdpLggOFlMfiT5N1DXv
+	9imsnlKes9ddmUi4du72f9ekeb0kDCGIHENUjobK8hr1QOUUhvB86rRTnizukPD7NJgNhvr/fXn/A
+	BsQqOXtms4TFyeztfb7NHID60EduJg3EwagzX7Y4soBxDPFkKEpjzEN31ze2/v1LVc1atm3GeiLsh
+	g5LVCOMgCR6v5ftR9Pc+wRftfYg3HhFuLgebl7xxxIBCMdtJmQeoAZqFsulKch6I4QzTN3ROtYT5H
+	NA9PT2bA==;
+Received: from [84.69.19.168] (helo=[192.168.0.101])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1sN7Oo-008XRH-Hh; Fri, 28 Jun 2024 10:56:06 +0200
+Message-ID: <22e9cd24-1ed4-4f1d-b7de-b44cefca6009@igalia.com>
+Date: Fri, 28 Jun 2024 09:56:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240628004356.1384486-1-jhubbard@nvidia.com> <20240628004356.1384486-3-jhubbard@nvidia.com>
-In-Reply-To: <20240628004356.1384486-3-jhubbard@nvidia.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 28 Jun 2024 10:55:20 +0200
-Message-ID: <CAH5fLgjxd+nT4MzgY_DBj8STffAFETaqJZXjMP-_Zw5tqkbz=Q@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] Makefile: improve comment documentation for the
- rust-analyzer target
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Greg KH <greg@kroah.com>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Finn Behrens <me@kloenk.dev>, linux-kbuild@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/numa_balancing: Teach mpol_to_str about the balancing
+ mode
+To: "Huang, Ying" <ying.huang@intel.com>, Matthew Wilcox <willy@infradead.org>
+Cc: Tvrtko Ursulin <tursulin@igalia.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, kernel-dev@igalia.com,
+ Mel Gorman <mgorman@suse.de>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Rik van Riel <riel@surriel.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Dave Hansen <dave.hansen@intel.com>,
+ Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
+ David Rientjes <rientjes@google.com>
+References: <20240625132605.38428-1-tursulin@igalia.com>
+ <Zn3eBbJ377VeZGcc@casper.infradead.org>
+ <87bk3lpxp1.fsf@yhuang6-desk2.ccr.corp.intel.com>
+Content-Language: en-GB
+From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+In-Reply-To: <87bk3lpxp1.fsf@yhuang6-desk2.ccr.corp.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 28, 2024 at 2:44=E2=80=AFAM John Hubbard <jhubbard@nvidia.com> =
-wrote:
->
-> Replace the cryptic phrase ("IDE support targets") that initially
-> appears to be about how to support old hard drives, with a few sentences
-> that explain what "make rust-analyzer" provides.
->
-> Cc: Alice Ryhl <aliceryhl@google.com>
-> Cc: Finn Behrens <me@kloenk.dev>
-> Acked-by: Miguel Ojeda <ojeda@kernel.org>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+On 28/06/2024 04:12, Huang, Ying wrote:
+> Hi, Matthew,
+> 
+> Matthew Wilcox <willy@infradead.org> writes:
+> 
+>> On Tue, Jun 25, 2024 at 02:26:05PM +0100, Tvrtko Ursulin wrote:
+>>>   		/*
+>>> -		 * Currently, the only defined flags are mutually exclusive
+>>> +		 * The below two flags are mutually exclusive:
+>>>   		 */
+>>>   		if (flags & MPOL_F_STATIC_NODES)
+>>>   			p += snprintf(p, buffer + maxlen - p, "static");
+>>>   		else if (flags & MPOL_F_RELATIVE_NODES)
+>>>   			p += snprintf(p, buffer + maxlen - p, "relative");
+>>> +
+>>> +		if (flags & MPOL_F_NUMA_BALANCING)
+>>> +			p += snprintf(p, buffer + maxlen - p, "balancing");
+>>>   	}
+>>
+>> So if MPOL_F_STATIC_NODES and MPOL_F_NUMA_BALANCING are set, then we
+>> get a string "staticbalancing"?  Is that intended?
+>>
+>> Or are these three all mutually exclusive and that should have been
+>> as "else if"?
+> 
+> Yes, this is an issue!
+
+Sigh, my apologies. I was sure I tested it as this patch was part of a 
+larger series I have, but then I decided to extract it and send out and 
+the problems obviously go deeper. What I think happened is that I 
+probably only tested the other direction, setting of via mpol_parse_str().
+
+Andrew please dequeue it if you haven't already?
+
+> Dig the git history, in commit 2291990ab36b ("mempolicy: clean-up
+> mpol-to-str() mempolicy formatting"), the support for multiple flags are
+> removed.  I think that we need to restore it.
+> 
+> Done some basic testing.  It was found that when MPOL_F_NUMA_BALANCING
+> is set, /proc/PID/numa_maps always display "default".  That is wrong.
+> 
+> This make me think that this patch has never been tested!
+> 
+> The "default" displaying is introduced in commit 8790c71a18e5
+> ("mm/mempolicy.c: fix mempolicy printing in numa_maps").  We need to fix
+> it firstly for MPOL_F_NUMA_BALANCING with more accurate filtering.  The
+> fix needs to be backported to -stable kernel.
+
+Will you work on this or I can follow up if you want?
+
+Regards,
+
+Tvrtko
 
