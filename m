@@ -1,105 +1,121 @@
-Return-Path: <linux-kernel+bounces-234168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAD0991C315
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:01:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F055D91C319
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:03:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C31101C23113
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:01:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3DEA1F22782
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:03:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695391C9ECF;
-	Fri, 28 Jun 2024 16:00:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF3871C8FB6;
+	Fri, 28 Jun 2024 16:03:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D7ZgCR7W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nVCmwXzF"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B77182B9;
-	Fri, 28 Jun 2024 16:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1801DDD1;
+	Fri, 28 Jun 2024 16:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719590443; cv=none; b=eb1RMUAagDVlG91eHgS3fXHdM2CG+IJtBFqXaXi//bFQQCYADAvbrDyAXqi9bcpmvIX0qCK9e6k40BOhwxDhtPMeOFFrwGlJqOmoWqHtgOXXvx30OQ4RDnNWddaePPXEVk29uXmxrqA1Ute+K+QBLIJU12NVArMOMqPX0c9vooI=
+	t=1719590595; cv=none; b=kWhXEq4xXJPtoDqq5m40D/zCBZAUO+H29RT0hUfziVnSBbeodaUBBYvKcOICyB4QcxPnRww6yBKAfGPg8FYxuSWobnjMF+EGfc1RvtCpefaFFSbafCvlGS9G0oCUgjk98IeVX16mSp5usZx0p3kjDlmHG/P2P4dBu6BHyif+JVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719590443; c=relaxed/simple;
-	bh=d9+vGavIHjuofdvT9YcleeT1YhLvXjb51TCcEY2RgGI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QG6p5I7mWbETR8k5QuCwF89wMK8zeEUK6QTUR9Oc6Fv3abVsoqdd+KjswDl3PquCrbzbyJYum/HeoLvuNeYATu4sdceNfClN6880Z/UBRx3Dem69xZIlPmX+ICP6OuH9TXIWp49/955akJknUQNKQJXPZ/YVYDfLY4n+oi/pqOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D7ZgCR7W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8531DC116B1;
-	Fri, 28 Jun 2024 16:00:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719590443;
-	bh=d9+vGavIHjuofdvT9YcleeT1YhLvXjb51TCcEY2RgGI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D7ZgCR7W1RR8XTrsAVAvb9of2sucd2e/K7kgGry628m8JzAo1AVQQ3GIflWbdACVL
-	 YStgSOV9OrFI0jajAUxoKcPucGwGuKhuROG6JYZGBE+8K1KrVnSMrmo8CHlXp6ssJg
-	 8CQh6QBXjXLkAXk5V1L5PJSopXMRP3G2KfvH54DxcqRE0NxMIdkkI7/YcHIKSQoQC0
-	 gtGKYP1Deu1YwN0XY5+eBqUtU5DB7ENCUkQtoaKQ75/KMA89c+XLk7LLm8IPQCcFKb
-	 JVFwG7p/+SLFGmKDDCoTwrwzVdRaUGmRBRl7eldy6YWTnC6eRu2STatYDtcuvv5iLL
-	 TrUuypIzv/9IQ==
-Date: Fri, 28 Jun 2024 17:00:37 +0100
-From: Conor Dooley <conor@kernel.org>
-To: iansdannapel@gmail.com
-Cc: Moritz Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>,
-	Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko.stuebner@cherry.de>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Chris Morgan <macromorgan@hotmail.com>,
-	Michael Riesch <michael.riesch@wolfvision.net>,
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-fpga@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] dt-bindings: vendor-prefix: Add prefix for
- Efinix, Inc.
-Message-ID: <20240628-hash-prior-4efcc411aeb6@spud>
-References: <20240620144217.124733-1-iansdannapel@gmail.com>
- <20240628152348.61133-1-iansdannapel@gmail.com>
- <20240628152348.61133-4-iansdannapel@gmail.com>
+	s=arc-20240116; t=1719590595; c=relaxed/simple;
+	bh=kUvXqnBvHtOKOVoyrAry8R2W3fNVDZiaIqfy/T8T2dU=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=cwkRdDq46xE6CYWDDplVF8G8OXdmoGLxDFAsCRk5fZ4t2fMgpVwfozU3BNaSXhE7H8x76VjfhhDJoEVT3i8G+S9cCX4HieGyMtF9hQ4n9uZB5rKl+Qo3s/K+vYOq18Ohti7JYiW/QNQD3RD+QB52bfwvu17W9L9GXI+hzUBc7po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nVCmwXzF; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-424f2b73629so7775685e9.2;
+        Fri, 28 Jun 2024 09:03:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719590592; x=1720195392; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0zbVPE5l8sPpmwo7i3sdwml8CIrNZKhRJoQm31HxkN0=;
+        b=nVCmwXzFGwR4q9ouV+sJ3SamEoLFBFZa4c6MkerS6/xiqqfkK4qStrakFDS4Pd/Omm
+         yggUi00detkPTErvqFvngbY8kEiSHX2aOnxlIdyQnM+l9RVVSv/KWCAdEGpZhK0gLFqo
+         WZUSURtfYhx8o362jtgvqYToSTaCTJPy6qfeNciICJfZDHsHvRhGRD9mjkNHpe4OpRN8
+         Gyi4JLzkhMH9LI0aI0aUT11mrgshxHiBc5cJdQZUzhH2du2oQmTfcTQUTseR/NDyUSGa
+         CVSzN6a1WlGnv6YfpdxmHnQf485u3kvun0xolpZG2VZaZ9q2/x+5airrJzQN8ZlN7vvl
+         YeAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719590592; x=1720195392;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0zbVPE5l8sPpmwo7i3sdwml8CIrNZKhRJoQm31HxkN0=;
+        b=IXvdAxS4mlD9T2W+3nlEBfmxk+JnSrv0Cn+yhB6HNM2UfG+coGvzIHzcHhX39Nr2Z4
+         iIXjb4pWZMiBymBOt603Rsst1aCmO3xP7ieb52fA5lkTwCIB3gnmDtuPUsxAOUVG3u3E
+         tlP4djaQA1PPI7sTs53UQmzM7zQzf/FUAPiRPVQ5uAz6Hi0qyyEJmODbluF+BpVvgltH
+         GJTAH01zM+MQB5Ay7Z72cbsBtErOJtlAHhT247rW74Rkl+r7TIl9097tj7NpbS0gDycB
+         peZYvAl4E+ZKdyjMrEcz2E1Z2/RUb5UIkfYeEBxjG9hYD6uOHFquvt/Mz8Lr8CIyRM57
+         PIFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVlKw3Snl5TfI7sUzG5g2zMFZrmAuHJKahFfHB2Aq7D/Ml8UiU5unhJygROOfHxy96qGtu+gPEympDCVYlwsv8FU5mSjVeToWp1NCvTpf+L+GsRj1nv44RRVi2deuVs6JyfKSfc
+X-Gm-Message-State: AOJu0YzXI2I77lBqXm/YigQFQw7iid4nUfMKJAk/XSMilGOrskWB32ca
+	F8BZwazq10jzu4M/8ZQXwTaZD0xKMDqBX00JXykcbJPQUiYgsLS7qDHegGx+
+X-Google-Smtp-Source: AGHT+IElJ4ATJkyD0CGR+JjcC38BM3SAFZkxgvWcawFFLGQxuVVYAT5YI8FA3TVJ27luv+Fm5j/omg==
+X-Received: by 2002:a05:600c:484f:b0:424:ac79:5504 with SMTP id 5b1f17b1804b1-424ac7955demr83728935e9.17.1719590591673;
+        Fri, 28 Jun 2024 09:03:11 -0700 (PDT)
+Received: from [192.168.1.122] (cpc159313-cmbg20-2-0-cust161.5-4.cable.virginm.net. [82.0.78.162])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256af3cf85sm41015105e9.4.2024.06.28.09.03.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Jun 2024 09:03:11 -0700 (PDT)
+Subject: Re: [PATCH net-next 1/5] netdevice: convert private flags > BIT(31)
+ to bitfields
+To: Jakub Kicinski <kuba@kernel.org>,
+ Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ David Ahern <dsahern@kernel.org>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ Andrew Lunn <andrew@lunn.ch>, nex.sw.ncis.osdt.itp.upstreaming@intel.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240625114432.1398320-1-aleksander.lobakin@intel.com>
+ <20240625114432.1398320-2-aleksander.lobakin@intel.com>
+ <20240626075117.6a250653@kernel.org>
+ <e0b66a74-b32b-4e77-a7f7-8fd9c28cb88b@intel.com>
+ <20240627125541.3de68e1f@kernel.org>
+From: Edward Cree <ecree.xilinx@gmail.com>
+Message-ID: <c561738f-e28f-9231-af04-10937fac61da@gmail.com>
+Date: Fri, 28 Jun 2024 17:03:10 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="++Rd30xAIlfdFz2F"
-Content-Disposition: inline
-In-Reply-To: <20240628152348.61133-4-iansdannapel@gmail.com>
+In-Reply-To: <20240627125541.3de68e1f@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 
+On 27/06/2024 20:55, Jakub Kicinski wrote:
+> On Thu, 27 Jun 2024 11:50:40 +0200 Alexander Lobakin wrote:
+>>> I don't think we should group them indiscriminately. Better to add the
+>>> asserts flag by flag. Neither of the flags you're breaking out in this
+>>> patch are used on the fast path.
+>>>
+>>> Or is the problem that CACHELINE_ASSERT_GROUP_MEMBER doesn't work on
+>>> bitfields?  
+>>
+>> It generates sizeof(bitfield) which the compilers don't like and don't
+>> want to compile ._.
+> 
+> Mm. Okay, I have no better ideas then.
+> 
+> Do consider moving the cold flags next to wol_enabled, tho?
 
---++Rd30xAIlfdFz2F
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+My RSS series moves wol_enabled out to struct ethtool_netdev_state [1] so
+ this may not be worthwhile?
 
-On Fri, Jun 28, 2024 at 05:23:48PM +0200, iansdannapel@gmail.com wrote:
-> From: Ian Dannapel <iansdannapel@gmail.com>
->=20
-> Add entry for Efinix, Inc. (https://www.efinixinc.com/)
->=20
-> Signed-off-by: Ian Dannapel <iansdannapel@gmail.com>
+-ed
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
---++Rd30xAIlfdFz2F
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZn7eJQAKCRB4tDGHoIJi
-0t8gAP4p60AjNbDpk3hf65X2ivbOdXhL6s3iRXN8vLWp6k7TgwEA7D/ZwuyqkDAm
-Tf/kqqN12Tje3F4e97Kr2c9hOkF7JQI=
-=Rxew
------END PGP SIGNATURE-----
-
---++Rd30xAIlfdFz2F--
+[1]: https://lore.kernel.org/netdev/293a562278371de7534ed1eb17531838ca090633.1719502239.git.ecree.xilinx@gmail.com/
 
