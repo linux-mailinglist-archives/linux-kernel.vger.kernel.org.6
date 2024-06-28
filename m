@@ -1,85 +1,59 @@
-Return-Path: <linux-kernel+bounces-234034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 154B591C134
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:38:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAE8A91C146
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:41:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCFD01F20FF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:38:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D82031C23592
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C07541C007F;
-	Fri, 28 Jun 2024 14:38:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF61A1C0076;
+	Fri, 28 Jun 2024 14:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SPQWxdGH"
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SehGggs3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F341E53A;
-	Fri, 28 Jun 2024 14:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7521514E1;
+	Fri, 28 Jun 2024 14:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719585521; cv=none; b=H88hTUMc9WZdrvHYDoujfZWepCcKS5ryMMvydn6PJ2fUcEwDXGm8vYHYEqe/Kd/kh/ETCZRwq/lmBr7YzzeuwZ0XWKquAwZ/79zOzxy39f5+7UuaQN6bhex0QXECA1Twlxs/eWOtgN52q5INfzD5r2ijY7mXl48qG7/LXT9gZGs=
+	t=1719585700; cv=none; b=DCC7NJVDSOHLp/N6sVtvj6LBW27sA4efw0xWLba0JQFVOhAyoP85yY35SD9HAyC9Wf9hWUz+xm3d/tM9h9NPN3Slagb/vBDJHlsiEfafZ5F5T0WbvblVk0PjowBYkjxCKcAKlfU+bene2lt9RvAGOwIlOJ4prqBCOMHKLVxDOAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719585521; c=relaxed/simple;
-	bh=UnQJTA1Uho8wfMRllPRQMtJTW9ui2+eIhxm9q+jTY9A=;
+	s=arc-20240116; t=1719585700; c=relaxed/simple;
+	bh=Yj6cy91JoTBSw4EEoKl0+lYXCoG15CGxHS5xc7/9UnQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=blirdbgRKLQMAIclXHDg1mgt30SPpIJS8njJBR663T1qkBcVD5h/zzNUjWhI9ujqysCY7KfvIO1KBhlrJKE0hkjJt5sB4Ju5c6Hk4f46xt1696UxsugC9h6Q5AhLz27kcWLsqXAfCRzw4XWiqHSLjJeBhJQoW6p+vC0rdseN4I0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SPQWxdGH; arc=none smtp.client-ip=209.85.166.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-7f3c878d6d4so27251039f.0;
-        Fri, 28 Jun 2024 07:38:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719585519; x=1720190319; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VcQyE0yYDNTSkXwDduYitSPJ1KKImtXfpamQ+jJEONA=;
-        b=SPQWxdGHZS7cBj7J+Bjk/jPv8+wLO4TW9877MJ4gr0j7QypcVJQ42KdsXV6TckmKAz
-         n1GbOtofbbOdjo+GwcXnEYc/XUuBtNNQAoTgDtCQzeqJ36GooMBdZ4In/fhrP4Luu+vA
-         IUMzCBH1kQ2xV9e2Lx6I2rkLWQuzckuaD1nvm4M8/Yz1pRXFfmJjx72tYZ9jTxQNmY67
-         Kj6ffmSyevjsTQic5hwiuDZzQJkmwlYs61hy0+yv7KgCh+Mj1JbR4Y4eBAw9Mf+vLBc5
-         jz/Fx5Y4V0ANhOm8mBLtj3cmFok0rNYrAlEokEtyaAjPsSW/jMnbzQv/QCSL2q5obbsH
-         OmwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719585519; x=1720190319;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VcQyE0yYDNTSkXwDduYitSPJ1KKImtXfpamQ+jJEONA=;
-        b=eBKQNQyw3drzlYA6GDia24sdrCUsKJDx5DPfZLoD8Egr4WHkUqcApwI8J4w08MTsVQ
-         Zk8/Fj49LLGyKObWCUFU2hrtJ9RLhmc3llSknEh14UJ3Ahy2CcYzRvzZPZNBV/XuRJ9X
-         Z+zcn1oFhfHwctQlSjS5C3Fr3B1jfdB3QXN8a2NuWarq9Wu/dYNDVKkmjTV7CjpcnLsQ
-         GNzVL0O7GK1OIJrVoYBkzVBceHMNlKjYXSCRZdBJfULq+r8xSdvoyYbAxz47GvYx9uqv
-         f4gblYkP30Autva6ejiONbjspUdLtVJpBJY/266R/2BqxL0OH3o7jjjnlOjJtaJIkJQc
-         lDYA==
-X-Forwarded-Encrypted: i=1; AJvYcCX93dbdbSqJYEwWrUuWpqLvWl5RTZkZu5AOT7HZpkZQwwQrQ9cUU6t9kMyl/OrXipLfd5JsuskxkL5UuPr63DjzQrRpD0kC0lH5K1LDd9IJ9OZet8KKI+2RpummMMSwBCGpEDwddSqMVOEihEbNFvmLec7OGfMcdZvUxk5nARoccC6QheBkdeQwnOe+VL+XWgdHqNP5VM09tjSCG4nnPh4k/U+h29E0xtMjra9MInbw5FquKxqwEvWVXA==
-X-Gm-Message-State: AOJu0YyC/L5vVDnxivFcWN16UIMk4XFu0N3REVZ5M6JfErYGzXHeUVek
-	FJJJ0e1bIQ1X6Cey2vdu2seIPPqZDo81XeYU5iEkL+aK7GpRQkoa
-X-Google-Smtp-Source: AGHT+IHz9FFo+xEdO4eMyfNJdkl4np8V035GYfOzDC08kq0lJxY+ZuMnFlw/XDfGatIYJ2F8lUlsOg==
-X-Received: by 2002:a05:6602:1602:b0:7f3:d759:8fc2 with SMTP id ca18e2360f4ac-7f3d7599379mr765481339f.17.1719585518489;
-        Fri, 28 Jun 2024 07:38:38 -0700 (PDT)
-Received: from localhost ([2804:30c:96b:f700:cc1d:c0ae:96c9:c934])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-72c6d1f77bcsm1380841a12.79.2024.06.28.07.38.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 07:38:37 -0700 (PDT)
-Date: Fri, 28 Jun 2024 11:40:03 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
-	lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org, nuno.sa@analog.com, corbet@lwn.net,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 7/7] docs: iio: Add documentation for AD4000
-Message-ID: <Zn7LQ8AJo0U1pzN7@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1719351923.git.marcelo.schmitt@analog.com>
- <e553a7c6ba88b3d8ae2db0963212fdce0919805a.1719351923.git.marcelo.schmitt@analog.com>
- <55d0cc07-c877-4510-a052-4458ee964615@baylibre.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gOwUyvBgwqg0Z++aE+MFhfB0CK7NfTcpMU7ApomppVy/ie7CM6vGpgUllSfW958nw49W4vvvn5EyYg4u9iIYJHRM+1XDuYOgmvRQPYlEcUUjTPdlb1geuBddQysa72xRCFNM692kMGtgVDxJfMQDqc1eG5Ok6c+eomYD6//YZLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SehGggs3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C29DC116B1;
+	Fri, 28 Jun 2024 14:41:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719585699;
+	bh=Yj6cy91JoTBSw4EEoKl0+lYXCoG15CGxHS5xc7/9UnQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SehGggs3AT6JuDKxcRm9xAd4jqMyleLaDWRlGXMy1iGX+uiF+7L+xlYfkyADO9UaD
+	 3VXdxiuWwNogq5mmpSX6AW1La4RoUj4dHJQpllUr9V/RVv7I2HF1aXgKXsYs7bVVMH
+	 z4PnTV5CSq0Tqvl+MzOhFqWVhdCSNCxaSNi7cNR8pfmy5ciTUkWSJU07CV+Qab3Pg6
+	 8iAmA83XQR+HblOd00vwmXPvGHSlvjxjb2czj9awcki8z/d9VJOV1AVu2rdmxsxhu/
+	 V2ot62V/YauUWSAfbQb8D8Rk2cYy8zMv2Q2vHljs7A0+0i1RW2gGTqTQltnK7pIhhu
+	 m/YAiBqX5POIw==
+Date: Fri, 28 Jun 2024 11:41:37 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: adrian.hunter@intel.com, irogers@google.com, jolsa@kernel.org,
+	kan.liang@linux.intel.com, namhyung@kernel.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v3 4/8] perf trace: Filter enum arguments with enum names
+Message-ID: <Zn7LoTU45bhZaihh@x1>
+References: <20240624181345.124764-1-howardchu95@gmail.com>
+ <20240624181345.124764-5-howardchu95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,67 +62,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <55d0cc07-c877-4510-a052-4458ee964615@baylibre.com>
+In-Reply-To: <20240624181345.124764-5-howardchu95@gmail.com>
 
-On 06/26, David Lechner wrote:
-> On 6/25/24 4:55 PM, Marcelo Schmitt wrote:
-> > Document wiring configurations for the AD4000 series of ADCs.
-> > 
-> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> > ---
-> >  Documentation/iio/ad4000.rst | 131 +++++++++++++++++++++++++++++++++++
-> >  Documentation/iio/index.rst  |   1 +
-> >  MAINTAINERS                  |   1 +
-...
-> > +Wiring connections
-> > +------------------
-> > +
-> > +Devices of the AD4000 series can be connected to the SPI host controller in a
-> > +few different modes.
-> > +
-> > +CS mode, 3-wire turbo mode
-> > +^^^^^^^^^^^^^^^^^^^^^^^^^^
+On Tue, Jun 25, 2024 at 02:13:41AM +0800, Howard Chu wrote:
+> Before:
 > 
-> The datasheet also has the same diagram in _Figure 55. CS Mode, 4-Wire Turbo Mode
-> Connection Diagram_. So maybe we should call this "register support mode" or
-> something like that instead of mentioning 3 or 4-wire?
+> perf $ ./perf trace -e timer:hrtimer_start --filter='mode!=HRTIMER_MODE_ABS_PINNED_HARD' --max-events=1
+> No resolver (strtoul) for "mode" in "timer:hrtimer_start", can't set filter "(mode!=HRTIMER_MODE_ABS_PINNED_HARD) && (common_pid != 281988)"
 > 
-Humm, ADAQ4003 datasheet has the same figure for CS Mode, 4-wire turbo mode
-and CS mode, 4-wire with busy indicator although other datasheets have MOSI
-to SDI in 4-wire turbo as you said. The register read/write functionality
-sections say CNV must be brought low to access the configuration register.
-I'll leave it as it is for now as I have not tested reg access with CNV high.
-We can update this in the future if find out reg access to work in 4-wire mode.
+> After:
+> 
+> perf $ ./perf trace -e timer:hrtimer_start --filter='mode!=HRTIMER_MODE_ABS_PINNED_HARD' --max-events=1
+>      0.000 :0/0 timer:hrtimer_start(hrtimer: 0xffff9498a6ca5f18, function: 0xffffffffa77a5be0, expires: 12351248764875, softexpires: 12351248764875, mode: HRTIMER_MODE_ABS)
+> 
+> && and ||:
+> 
+> perf $ ./perf trace -e timer:hrtimer_start --filter='mode != HRTIMER_MODE_ABS_PINNED_HARD && mode != HRTIMER_MODE_ABS' --max-events=1
+>      0.000 Hyprland/534 timer:hrtimer_start(hrtimer: 0xffff9497801a84d0, function: 0xffffffffc04cdbe0, expires: 12639434638458, softexpires: 12639433638458, mode: HRTIMER_MODE_REL)
+> 
+> perf $ ./perf trace -e timer:hrtimer_start --filter='mode == HRTIMER_MODE_REL || mode == HRTIMER_MODE_PINNED' --max-events=1
+>      0.000 ldlck-test/60639 timer:hrtimer_start(hrtimer: 0xffffb16404ee7bf8, function: 0xffffffffa7790420, expires: 12772614418016, softexpires: 12772614368016, mode: HRTIMER_MODE_REL)
+> 
+> Switching it up, using both enum name and integer value(--filter='mode == HRTIMER_MODE_ABS_PINNED_HARD || mode == 0'):
+> 
+> perf $ ./perf trace -e timer:hrtimer_start --filter='mode == HRTIMER_MODE_ABS_PINNED_HARD || mode == 0' --max-events=3
+>      0.000 :0/0 timer:hrtimer_start(hrtimer: 0xffff9498a6ca5f18, function: 0xffffffffa77a5be0, expires: 12601748739825, softexpires: 12601748739825, mode: HRTIMER_MODE_ABS_PINNED_HARD)
+>      0.036 :0/0 timer:hrtimer_start(hrtimer: 0xffff9498a6ca5f18, function: 0xffffffffa77a5be0, expires: 12518758748124, softexpires: 12518758748124, mode: HRTIMER_MODE_ABS_PINNED_HARD)
+>      0.172 tmux: server/41881 timer:hrtimer_start(hrtimer: 0xffffb164081e7838, function: 0xffffffffa7790420, expires: 12518768255836, softexpires: 12518768205836, mode: HRTIMER_MODE_ABS)
+> 
+> P.S.
+> perf $ pahole hrtimer_mode
+> enum hrtimer_mode {
+>         HRTIMER_MODE_ABS             = 0,
+>         HRTIMER_MODE_REL             = 1,
+>         HRTIMER_MODE_PINNED          = 2,
+>         HRTIMER_MODE_SOFT            = 4,
+>         HRTIMER_MODE_HARD            = 8,
+>         HRTIMER_MODE_ABS_PINNED      = 2,
+>         HRTIMER_MODE_REL_PINNED      = 3,
+>         HRTIMER_MODE_ABS_SOFT        = 4,
+>         HRTIMER_MODE_REL_SOFT        = 5,
+>         HRTIMER_MODE_ABS_PINNED_SOFT = 6,
+>         HRTIMER_MODE_REL_PINNED_SOFT = 7,
+>         HRTIMER_MODE_ABS_HARD        = 8,
+>         HRTIMER_MODE_REL_HARD        = 9,
+>         HRTIMER_MODE_ABS_PINNED_HARD = 10,
+>         HRTIMER_MODE_REL_PINNED_HARD = 11,
+> };
+> 
+> Committer testing:
 
-> > +
-> > +Datasheet "3-wire" mode is what most resembles standard SPI connection which,
-> > +for these devices, comprises of connecting the controller CS line to device CNV
-> > +pin and other SPI lines as usual. This configuration is (misleadingly) called
-> > +"CS Mode, 3-Wire Turbo Mode" connection in datasheets.
-> > +NOTE: The datasheet definition of 3-wire mode for the AD4000 series is NOT the
-> > +same of standard spi-3wire mode.
-> > +This is the only connection mode that allows configuration register access but
-> > +it requires the SPI controller to support the ``SPI_MOSI_IDLE_HIGH`` feature.
-> > +
-> > +Omit the ``adi,sdi-pin`` property in device tree to select this mode.
-> > +
-> > +::
-> > +
-> > +                                         +-------------+
-> > +     + ----------------------------------| SDO         |
-> > +     |                                   |             |
-> > +     |               +-------------------| CS          |
-> > +     |               v                   |             |
-> > +     |    +--------------------+         |     HOST    |
-> > +     |    |        CNV         |         |             |
-> > +     +--->| SDI   AD4000   SDO |-------->| SDI         |
-> > +          |        SCK         |         |             |
-> > +          +--------------------+         |             |
-> > +                    ^                    |             |
-> > +                    +--------------------| SCLK        |
-> > +                                         +-------------+
-> > +
-> 
-> I think the rest of the explanations are good.
-> 
+Further testing:
+
+root@number:~# perf trace -e timer:hrtimer_start --filter='mode != HRTIMER_MODE_ABS_PINNED_WRONG'
+"HRTIMER_MODE_ABS_PINNED_WRONG" not found for "mode" in "timer:hrtimer_start", can't set filter "(mode != HRTIMER_MODE_ABS_PINNED_WRONG) && (common_pid != 103306 && common_pid != 3476)"
+root@number:~# 
+
+Maybe we can list the possibilities, i.e. print all of 'enum
+hrtimer_mode'
+
+This can be on a followup patch, just recording the idea here.
+
+- Arnaldo
 
