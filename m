@@ -1,235 +1,246 @@
-Return-Path: <linux-kernel+bounces-234671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35C7B91C94D
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 00:51:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A48BD91C950
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 00:51:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F4211C22778
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:51:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CA302845AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC50E82480;
-	Fri, 28 Jun 2024 22:50:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85B681ADB;
+	Fri, 28 Jun 2024 22:51:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qb5Ac7+X"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="vO3HjLKD"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 936247710F
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 22:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 032FC7710F;
+	Fri, 28 Jun 2024 22:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719615056; cv=none; b=LSavXYK0FLh95zzUEvqUsBrjwMMPvXlunvREtxgjtT77fBvivzrg+pQWQc5bwyg9JgZUju3872UULzrG8Tz25gnFNcPiKmnSUsNVWTXn7wpp0uX8tFJk3pmzLEf0d/n/4+DJKQGgYuRyh/yXUsv+jascW5ruBcCjR0ikBH75T/4=
+	t=1719615076; cv=none; b=LpI6eA9rxjJaT32psdhQC9T9ko/X62NOGVEwWeBYqjpXSz2qi0IMeFc8DIYrqF5t6U/8pSZ+14KukI5dUTvPA7GyUoxpbmueiKc7NDcC9B94UJphT9owMEGVM+wrc+Sx/MzYDrsdLBWy51tiL1hWQxL22m62wMi53WQp8E2sQeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719615056; c=relaxed/simple;
-	bh=jy93R+AfsRqMAGlNONjXHx3MTwYmbc0o5Y+QyO4nU/E=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=TbBu+WWxxWTVIHCn1rNe1JQo2x7O4mI/zdckrn0RJt5NOIAn3NfoszSd8Pjg65++WcMde9uPuS1JRjJD5Q7NBgN0eqVL6pWb6zLCd7R6p4K0sPFZYJkYIzjto/hGfDjOqCK8Xdc3q1eQ/ezk8CRQea8d8ikM+UzyXHVCTTo7cKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qb5Ac7+X; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e03641334e0so1230935276.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 15:50:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719615053; x=1720219853; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bu4QFZ07Tx/IOVEaQ53Qnu94rStFQkBj6hOEerB+McQ=;
-        b=qb5Ac7+XumS+Qxp9YK3Mu4zbYPCTOqrs1VxUfIs1ysp57H7t9qeCI59K7LIUTraBN1
-         KdduSod7m8qMmrt8lgYz5o3AZwR5UKEVutzD9Oxzx8c5H5WtkvMTmj6dDUfelBEZ4B/e
-         F7QgcoMnYTpm/JWahRHtkqMjhvVoxGTLPCc+9ugvwIDX1FbO0ra6vHPm/c0R4P22e3zs
-         g0YjsZo2ESpysVMTl5dq7sy7RRn4lYw2PSuNszaPn/LCGc1nMywGBj8uEP8JrJBJ0Ps0
-         wz1ZEcKQr2Mob8p9u8uCnh10woOg2o1Axox7vpKRfjLX3/RqKMpddvVnn1OrK9ZnqbqG
-         2lCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719615053; x=1720219853;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bu4QFZ07Tx/IOVEaQ53Qnu94rStFQkBj6hOEerB+McQ=;
-        b=rwvf28mBwFF5sClcEFoubhcgaSzumYQ5LrI+uyOSWk8+9NSieWEaWqFMWF8BCWqIKV
-         iO4OF7qewt4KvcISljfj+UTAuy5kZJFhI+PlahkveA8Ci2FROwoslGWJCDm+xmKrAaDP
-         R6/Srff51rhEB0FdkM0Ib9uAmx0+bWr3UJN3wgJt1BBr6KJ76UP/3pU+nZmzs8E91UgV
-         NUfLnKJcOxLiof5KiK03LoIe3KJ5BOZ2N7fucvJ5vS7Hg6jSaziUnlvWbJj1pst6pmVY
-         9EX/XruiSOA4ws5grkrZecmEkQXOJBnQsg2nwmXgK3qssu9zHl6+dBkSiyw93GaCD9dm
-         s5uA==
-X-Forwarded-Encrypted: i=1; AJvYcCUh6nb/jqroHbaxpxg0c2Ux/OTwZ+kB+UxHjUfgOMwkQS9Zf3vqoJlrvnFjJNTvm8a7XP/EtSpbOrk1CM65MUYA0GXUBmwqIhw+gIBS
-X-Gm-Message-State: AOJu0YyGDA8WZ5/nX3BEqD+ubXBhcr5L4MGcUtk4ithvm+Ds8EPDALsz
-	ROkD0MfAwmDmRJGuUtpkX5CnuPROQfNf33J7WWweAl4klPfaBZ/ZjoaeUMguTURFqVivnU4JVDF
-	bNw==
-X-Google-Smtp-Source: AGHT+IF/h7suUpPHaE6SsxKCTMo0m7O49IXDLR+c+LZnvsQxH+QhzdDpJWmE+hfpq58JCkdgFZQmcKv7iBg=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:1109:b0:e03:3683:e67f with SMTP id
- 3f1490d57ef6-e033683e751mr15350276.5.1719615053446; Fri, 28 Jun 2024 15:50:53
- -0700 (PDT)
-Date: Fri, 28 Jun 2024 15:50:51 -0700
-In-Reply-To: <2fccf35715b5ba8aec5e5708d86ad7015b8d74e6.1718214999.git.reinette.chatre@intel.com>
+	s=arc-20240116; t=1719615076; c=relaxed/simple;
+	bh=pA5C/H6YxUiV2vdWADKr9YMpQnjgZDOv/o6WNDTL2Ss=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=R+RYc2k+A2DBjN+mH+QticWeBckFh1hPAu+iRqfoSh5ucsnNIuwobUDbCTdtqA6t/e6PEA7BmBGLIh93c5xA2Mmp3UEFuvFelRvhnMdaefUj15JqibLXbdIU3FouP7wWLagc3GxiJdmKPPAXSpsViB+Fa5+vVY8aBU9tk7jWn7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=vO3HjLKD; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45SMorVO111278;
+	Fri, 28 Jun 2024 17:50:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1719615053;
+	bh=2R9YT7rCyPZ2fpTOPR5YigBlSmeQiT0rxfvaoKX+Hu4=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=vO3HjLKDhQtpQfzNc+GP8whnUU2v0I/wHMxRFhYXIGXQNPugRZ7rAg0cDou/o482W
+	 l7iTkiKWASYuMyaKZUhZ/7SuY/CjwUSXhygNf65UgoWY1FMfU9AtIty0R6v7W8S1Mv
+	 xv0sq+HfFcS/8N8v13KjlwiTifVNxqQL3n8ZOH6s=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45SMor0v051001
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 28 Jun 2024 17:50:53 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 28
+ Jun 2024 17:50:53 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 28 Jun 2024 17:50:52 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45SMoqf2091085;
+	Fri, 28 Jun 2024 17:50:52 -0500
+Message-ID: <33d97f00-dd9a-4643-8210-859c2ab38a97@ti.com>
+Date: Fri, 28 Jun 2024 17:50:52 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1718214999.git.reinette.chatre@intel.com> <2fccf35715b5ba8aec5e5708d86ad7015b8d74e6.1718214999.git.reinette.chatre@intel.com>
-Message-ID: <Zn8-S-QFSzm8du90@google.com>
-Subject: Re: [PATCH V9 2/2] KVM: selftests: Add test for configure of x86 APIC
- bus frequency
-From: Sean Christopherson <seanjc@google.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: isaku.yamahata@intel.com, pbonzini@redhat.com, erdemaktas@google.com, 
-	vkuznets@redhat.com, vannapurve@google.com, jmattson@google.com, 
-	mlevitsk@redhat.com, xiaoyao.li@intel.com, chao.gao@intel.com, 
-	rick.p.edgecombe@intel.com, yuan.yao@intel.com, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] remoteproc: k3-r5: support for graceful stop of
+ remote cores
+To: Richard Genoud <richard.genoud@bootlin.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC: Philipp Zabel <p.zabel@pengutronix.de>, Suman Anna <s-anna@ti.com>,
+        Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>,
+        Alexandre Belloni
+	<alexandre.belloni@bootlin.com>,
+        Udit Kumar <u-kumar1@ti.com>,
+        Thomas Richard
+	<thomas.richard@bootlin.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Hari Nagalla <hnagalla@ti.com>,
+        =?UTF-8?Q?Th=C3=A9o_Lebrun?=
+	<theo.lebrun@bootlin.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240621150058.319524-1-richard.genoud@bootlin.com>
+ <20240621150058.319524-5-richard.genoud@bootlin.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20240621150058.319524-5-richard.genoud@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Wed, Jun 12, 2024, Reinette Chatre wrote:
+On 6/21/24 10:00 AM, Richard Genoud wrote:
+> Introduce software IPC handshake between the K3-R5 remote proc driver
+> and the R5 MCU to gracefully stop/reset the remote core.
+> 
+> Upon a stop request, K3-R5 remote proc driver sends a RP_MBOX_SHUTDOWN
+> mailbox message to the remote R5 core.
+> The remote core is expected to:
+> - relinquish all the resources acquired through Device Manager (DM)
+> - disable its interrupts
+> - send back a mailbox acknowledgment RP_MBOX_SHUDOWN_ACK
+> - enter WFI state.
+> 
+> Meanwhile, the K3-R5 remote proc driver does:
+> - wait for the RP_MBOX_SHUTDOWN_ACK from the remote core
+> - wait for the remote proc to enter WFI state
+> - reset the remote core through device manager
+> 
+> Based on work from: Hari Nagalla <hnagalla@ti.com>
+> 
+> Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
+> ---
+>   drivers/remoteproc/omap_remoteproc.h     |  9 +++++-
+>   drivers/remoteproc/ti_k3_r5_remoteproc.c | 40 ++++++++++++++++++++++++
+>   2 files changed, 48 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/remoteproc/omap_remoteproc.h b/drivers/remoteproc/omap_remoteproc.h
+> index 828e13256c02..c008f11fa2a4 100644
+> --- a/drivers/remoteproc/omap_remoteproc.h
+> +++ b/drivers/remoteproc/omap_remoteproc.h
+> @@ -42,6 +42,11 @@
+>    * @RP_MBOX_SUSPEND_CANCEL: a cancel suspend response from a remote processor
+>    * on a suspend request
+>    *
+> + * @RP_MBOX_SHUTDOWN: shutdown request for the remote processor
+> + *
+> + * @RP_MBOX_SHUTDOWN_ACK: successful response from remote processor for a
+> + * shutdown request. The remote processor should be in WFI state short after.
+> + *
+>    * Introduce new message definitions if any here.
+>    *
+>    * @RP_MBOX_END_MSG: Indicates end of known/defined messages from remote core
+> @@ -59,7 +64,9 @@ enum omap_rp_mbox_messages {
+>   	RP_MBOX_SUSPEND_SYSTEM	= 0xFFFFFF11,
+>   	RP_MBOX_SUSPEND_ACK	= 0xFFFFFF12,
+>   	RP_MBOX_SUSPEND_CANCEL	= 0xFFFFFF13,
+> -	RP_MBOX_END_MSG		= 0xFFFFFF14,
+> +	RP_MBOX_SHUTDOWN	= 0xFFFFFF14,
+> +	RP_MBOX_SHUTDOWN_ACK	= 0xFFFFFF15,
+> +	RP_MBOX_END_MSG		= 0xFFFFFF16,
+>   };
+>   
+>   #endif /* _OMAP_RPMSG_H */
+> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> index a2ead87952c7..918a15e1dd9a 100644
+> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> @@ -21,6 +21,7 @@
+>   #include <linux/pm_runtime.h>
+>   #include <linux/remoteproc.h>
+>   #include <linux/suspend.h>
+> +#include <linux/iopoll.h>
+>   #include <linux/reset.h>
+>   #include <linux/slab.h>
+>   
+> @@ -172,8 +173,23 @@ struct k3_r5_rproc {
+>   	struct k3_r5_core *core;
+>   	struct k3_r5_mem *rmem;
+>   	int num_rmems;
+> +	struct completion shutdown_complete;
+>   };
+>   
 > +/*
-> + * Pick 25MHz for APIC bus frequency. Different enough from the default 1GHz.
-> + * User can override via command line.
+> + * This will return true if the remote core is in Wait For Interrupt state.
 > + */
-> +static uint64_t apic_hz = 25 * 1000 * 1000;
-> +
-> +/*
-> + * Delay in msec that guest uses to determine APIC bus frequency.
-> + * User can override via command line.
-> + */
-> +static unsigned long delay_ms = 100;
-
-There's no need for these to be global, it's easy enough to pass them as params
-to apic_guest_code().  Making is_x2apic is wortwhile as it cuts down on the noise,
-but for these, I think it's better to keep them local.
-
-> +
-> +/*
-> + * Possible TDCR values with matching divide count. Used to modify APIC
-> + * timer frequency.
-> + */
-> +static struct {
-> +	uint32_t tdcr;
-> +	uint32_t divide_count;
-
-These can/should all be const.
-
-> +} tdcrs[] = {
-> +	{0x0, 2},
-> +	{0x1, 4},
-> +	{0x2, 8},
-> +	{0x3, 16},
-> +	{0x8, 32},
-> +	{0x9, 64},
-> +	{0xa, 128},
-> +	{0xb, 1},
-> +};
-> +
-> +/* true if x2APIC test is running, false if xAPIC test is running. */
-> +static bool is_x2apic;
-> +
-> +static void apic_enable(void)
+> +static bool k3_r5_is_core_in_wfi(struct k3_r5_core *core)
 > +{
-> +	if (is_x2apic)
-> +		x2apic_enable();
-> +	else
-> +		xapic_enable();
+> +	int ret;
+> +	u64 boot_vec;
+> +	u32 cfg, ctrl, stat;
+> +
+> +	ret = ti_sci_proc_get_status(core->tsp, &boot_vec, &cfg, &ctrl, &stat);
+> +
+> +	return !ret ? !!(stat & PROC_BOOT_STATUS_FLAG_R5_WFI) : false;
+
+Too fancy for me :) Just return if (ret) right after get_status().
+
+Looks like this function is called in a polling loop, if
+ti_sci_proc_get_status() fails once, it won't get better,
+no need to keep checking, we should just error out of
+the polling loop.
+
+Andrew
+
 > +}
 > +
-> +static uint32_t apic_read_reg(unsigned int reg)
-> +{
-> +	return is_x2apic ? x2apic_read_reg(reg) : xapic_read_reg(reg);
-> +}
-> +
-> +static void apic_write_reg(unsigned int reg, uint32_t val)
-> +{
-> +	if (is_x2apic)
-> +		x2apic_write_reg(reg, val);
-> +	else
-> +		xapic_write_reg(reg, val);
-> +}
-> +
-> +static void apic_guest_code(void)
-> +{
-> +	uint64_t tsc_hz = (uint64_t)tsc_khz * 1000;
-> +	const uint32_t tmict = ~0u;
-> +	uint64_t tsc0, tsc1, freq;
-> +	uint32_t tmcct;
-> +	int i;
-> +
-> +	apic_enable();
-> +
-> +	/*
-> +	 * Setup one-shot timer.  The vector does not matter because the
-> +	 * interrupt should not fire.
-> +	 */
-> +	apic_write_reg(APIC_LVTT, APIC_LVT_TIMER_ONESHOT | APIC_LVT_MASKED);
-> +
-> +	for (i = 0; i < ARRAY_SIZE(tdcrs); i++) {
-> +
-> +		apic_write_reg(APIC_TDCR, tdcrs[i].tdcr);
-> +		apic_write_reg(APIC_TMICT, tmict);
-> +
-> +		tsc0 = rdtsc();
-> +		udelay(delay_ms * 1000);
-> +		tmcct = apic_read_reg(APIC_TMCCT);
-> +		tsc1 = rdtsc();
-> +
-> +		/*
-> +		 * Stop the timer _after_ reading the current, final count, as
-> +		 * writing the initial counter also modifies the current count.
-> +		 */
-> +		apic_write_reg(APIC_TMICT, 0);
-> +
-> +		freq = (tmict - tmcct) * tdcrs[i].divide_count * tsc_hz / (tsc1 - tsc0);
-> +		/* Check if measured frequency is within 1% of configured frequency. */
-
-1% is likely too aggressive, i.e. we'll get false failures due to host activity.
-On our systems, even a single pr_warn() in the timer path causes failure.  For
-now, I think 5% is good enough, e.g. it'll catch cases where KVM is waaay off.
-If we want to do better (or that's still too tight), then we can add a '-t <tolerance'
-param or something.
-
-> +		GUEST_ASSERT(freq < apic_hz * 101 / 100);
-> +		GUEST_ASSERT(freq > apic_hz * 99 / 100);
-
-Combine these into a single assert, and print the params, i.e. don't rely on the
-line number to figure out what's up.
-
-		__GUEST_ASSERT(freq < apic_hz * 105 / 100 && freq > apic_hz * 95 / 100,
-			       "Frequency = %lu (wanted %lu - %lu), bus = %lu, div = %u, tsc = %lu",
-			       freq, apic_hz * 95 / 100, apic_hz * 105 / 100,
-			       apic_hz, tdcrs[i].divide_count, tsc_hz);
-
-> +int main(int argc, char *argv[])
-> +{
-> +	int opt;
-> +
-> +	TEST_REQUIRE(kvm_has_cap(KVM_CAP_X86_APIC_BUS_CYCLES_NS));
-> +
-> +	while ((opt = getopt(argc, argv, "d:f:h")) != -1) {
-> +		switch (opt) {
-> +		case 'f':
-> +			apic_hz = atol(optarg);
-> +			break;
-> +		case 'd':
-> +			delay_ms = atol(optarg);
-> +			break;
-> +		case 'h':
-> +			help(argv[0]);
-> +			exit(0);
-> +		default:
-> +			help(argv[0]);
-> +			exit(1);
-
-Heh, selftests are anything but consistent, but this should be exit(KSFT_SKIP)
-for both.
-
+>   /**
+>    * k3_r5_rproc_mbox_callback() - inbound mailbox message handler
+>    * @client: mailbox client pointer used for requesting the mailbox channel
+> @@ -209,6 +225,10 @@ static void k3_r5_rproc_mbox_callback(struct mbox_client *client, void *data)
+>   	case RP_MBOX_ECHO_REPLY:
+>   		dev_info(dev, "received echo reply from %s\n", name);
+>   		break;
+> +	case RP_MBOX_SHUTDOWN_ACK:
+> +		dev_dbg(dev, "received shutdown_ack from %s\n", name);
+> +		complete(&kproc->shutdown_complete);
+> +		break;
+>   	default:
+>   		/* silently handle all other valid messages */
+>   		if (msg >= RP_MBOX_READY && msg < RP_MBOX_END_MSG)
+> @@ -634,6 +654,7 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+>   	struct k3_r5_cluster *cluster = kproc->cluster;
+>   	struct device *dev = kproc->dev;
+>   	struct k3_r5_core *core1, *core = kproc->core;
+> +	bool wfi;
+>   	int ret;
+>   
+>   
+> @@ -650,6 +671,24 @@ static int k3_r5_rproc_stop(struct rproc *rproc)
+>   		}
+>   	}
+>   
+> +	/* Send SHUTDOWN message to remote proc */
+> +	reinit_completion(&kproc->shutdown_complete);
+> +	ret = mbox_send_message(kproc->mbox, (void *)RP_MBOX_SHUTDOWN);
+> +	if (ret < 0) {
+> +		dev_err(dev, "Sending SHUTDOWN message failed: %d. Halting core anyway.\n", ret);
+> +	} else {
+> +		ret = wait_for_completion_timeout(&kproc->shutdown_complete,
+> +						  msecs_to_jiffies(1000));
+> +		if (ret == 0) {
+> +			dev_err(dev, "Timeout waiting SHUTDOWN_ACK message. Halting core anyway.\n");
+> +		} else {
+> +			ret = readx_poll_timeout(k3_r5_is_core_in_wfi, core,
+> +						 wfi, wfi, 200, 2000);
+> +			if (ret)
+> +				dev_err(dev, "Timeout waiting for remote proc to be in WFI state. Halting core anyway.\n");
 > +		}
 > +	}
 > +
-> +	run_apic_bus_clock_test(false);
-> +	run_apic_bus_clock_test(true);
-> +}
-> -- 
-> 2.34.1
+>   	/* halt all applicable cores */
+>   	if (cluster->mode == CLUSTER_MODE_LOCKSTEP) {
+>   		list_for_each_entry(core, &cluster->cores, elem) {
+> @@ -1410,6 +1449,7 @@ static int k3_r5_cluster_rproc_init(struct platform_device *pdev)
+>   			goto err_config;
+>   		}
+>   
+> +		init_completion(&kproc->shutdown_complete);
+>   init_rmem:
+>   		k3_r5_adjust_tcm_sizes(kproc);
+>   
 > 
 
