@@ -1,155 +1,338 @@
-Return-Path: <linux-kernel+bounces-234334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DB0C91C560
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:05:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6281091C563
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:06:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59F86B24012
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:05:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E134286953
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A211CCCA8;
-	Fri, 28 Jun 2024 18:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B46881CCCBD;
+	Fri, 28 Jun 2024 18:05:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="F5de3Ybp"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="h8BPRWu8"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CD71B94F;
-	Fri, 28 Jun 2024 18:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685C23FBA5
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 18:05:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719597917; cv=none; b=Whnwlk3ZJwvvehtUOFMyqPBCXG51lweyk5UUiTC+zrqjGlEhXQxZSoftTPEOedStwRg5bzC1IwMUjZJQ0ECOOFFYhkEnJn7JbHnnNGO15DK+l5QaAt6tjjW9EFf96tkIE4yMgPlm3Wvye7G/Y6euqSqmxxe/rP7+8b3WFZQtkNU=
+	t=1719597951; cv=none; b=uHfdz2Tqqer9UfO+/htVdgy/KYrz9D969+7TRiERSy7k5/rfyJPq0US6mSUPAwOhCHD1D+QiL8dYo9Vf2di9wbNXNrHFDomHs0oMBUrMDeHCXgasb/6SzMc7+Xp6fhiODqDFxbnjVd84BapwVvWPN64Q/eCypZjai5VYPkAhOJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719597917; c=relaxed/simple;
-	bh=mx/8AeXGv5la/SJKW47Hnq1sxQpaD4PV9moJu0IkY9w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bOF+QuKIWHYUk8QVd8LZeLMtBBdvZfqwXLyMD70SOhgxOPzmzYg2PT2ER2tLWmoipc8Bg/Kts3n94ojGYNIgv0vXXhyiMuP0QojYSSxB/a2ZL2TCOliwhoR6AemxJvajt0anptq7YSC8W1DZZbh/YbS4im8zPnVfLpyNfE1ZYBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=F5de3Ybp; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=dSrkPPHv57iagKOJvURV1RqHc0rOI3RdmSfKvjD0uAk=; b=F5de3YbpRIjcEh2iBGH8wgpDfZ
-	9mJQ+NFg4OmtDICFKWKVp9789hpyMVAulmI7ZeXi5WjABsnCTs1kdIh/wyUtgaFv2uO/uLYPyWqL6
-	+qgFJU8q9ahyVE3H46jvDykISEduUuCXRXhSBl0ZofhENpyKTTcbN3VRX+SgXAPdNnobWp1+J5Ja9
-	Dnv6I2Fzg2J7qGubn2gERdzsSilfhWwe41YyXrbEMYjNrXuQQLcVyv1e3pUHkVvq5ANoN/Y5lZyl9
-	8ea/RsWZXZKIF95au3hDMh5hADW+vGUSFO1oCpCnzfsTtwUBN0odqN3Lkkruc9+7A/yzlJWzJwgb0
-	20s6/0uQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sNFxj-000000094Vb-431B;
-	Fri, 28 Jun 2024 18:04:44 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 28A44300400; Fri, 28 Jun 2024 20:04:41 +0200 (CEST)
-Date: Fri, 28 Jun 2024 20:04:41 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Gatlin Newhouse <gatlin.newhouse@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Marco Elver <elver@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Mike Rapoport (IBM)" <rppt@kernel.org>,
-	Baoquan He <bhe@redhat.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Changbin Du <changbin.du@huawei.com>,
-	Pengfei Xu <pengfei.xu@intel.com>, Xin Li <xin3.li@intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Uros Bizjak <ubizjak@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-	linux-hardening@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v3] x86/traps: Enable UBSAN traps on x86
-Message-ID: <20240628180441.GJ31592@noisy.programming.kicks-ass.net>
-References: <20240625032509.4155839-1-gatlin.newhouse@gmail.com>
- <20240625093719.GW31592@noisy.programming.kicks-ass.net>
- <202406261205.E2435C68@keescook>
+	s=arc-20240116; t=1719597951; c=relaxed/simple;
+	bh=POF7Q9dj5GQdEO4Pb3zuduUf0KWAzz24w7afIMokwVs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MQXuTSKWKFDudr8XlbMIavGODfAZbS0qJquE3SB2NYXW6hQQmqK2mDTg3+NjkTyptnBRgkwR13ZwHgsfpimgTvkSiydo6h+BiiUYACYU3RdhLeGkQ2J6fLxLs6Mck0R7S2NmHGAO6JGbiaLk69QqTSOYS63+dQ5msObFdF9FkKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=h8BPRWu8; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=beagleboard.org
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f9cc1d7379so360155ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 11:05:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1719597950; x=1720202750; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=h9jhg57fS7Sxej2hwQNHjqF+6s4+CeCZMfG+JMi6knk=;
+        b=h8BPRWu8K3ApbnzXnFY/F2qdghjCHdnGTQiCEUmFJajMQwS3OtCMKoqist7o85/nAx
+         fpxoNq97P2cL7qgT82K3nKwcnm4enSjBn5atldkLF0Jjvity6zAh4uS48mi/z+3Bo+DO
+         aU3MlkrAB4C+h/LMDf1DrbxXfpvRXvBTXjTARRJR7a6rjcKtvq3foXaq/grgWurvjeJy
+         jgGnwbE/bJDzoKxh0w9vUYlzl46os+67OtuQ5HuNNh2nQId5WSqEUbIYuia3tJTis08D
+         ltu29F85GhPqZDMdsMlRTrQJqAgQV2wbAGLWXzEyF130l1of7hX97fNVkknnaqmES3sn
+         VQ6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719597950; x=1720202750;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=h9jhg57fS7Sxej2hwQNHjqF+6s4+CeCZMfG+JMi6knk=;
+        b=DKFxLWrOyA/8jTRzzS39BDq5zNvhoQHylSznD9BE5kSKtams0ejcFKLI9wmsDVzmPI
+         qvpA7iOBWKaepx44fcylOghs3XxdW74sARwIUNwM5TKebNipHdEcSyDbHWV0saEb+b4g
+         RfuAkLDyeG5JJI6ZIHJWc7ZoZ8G7MVu71NCIrsiQ/kSf1oWPLAJC/BQ25vdSGCwwRK9M
+         t5qav1L+G2Jk09jMibZdiWMmuYGeAbdLDpxFsoYIp2SqcJ+ch0grXWGkrfGBU1KP9V7B
+         4sV1fmGXQU4bZMuUdvczoRPgJZDjO6a7fpHD8ix8WlaJ0ZJY4KuI4NkpxZ33KVMtlLVv
+         nktQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8ZCHcBclTgh9L3gPzRrMT3EjsKUpWj7bzQgXI/2z3fHgQbnFnLUPMd6loR+/1kwS21blTpqAs3IKad4OOQDwH30qSzUG40/UZsj+T
+X-Gm-Message-State: AOJu0YxQInISOvhDzTmszMKV8Ef6wmxT1x3SoEowx3dL9/cbxW6zyubd
+	Rb7b5guB+s9omUgiNO7RU6gBnjRluih0pzJuj3bTGi8Klp+A0HZesGLK6UtnV1rCCKludjRb/r4
+	=
+X-Google-Smtp-Source: AGHT+IFrcpDIZ5c0lQMNUo+kKfK13yz1cfUtbJGi3wyM2dDPIT1iw2gy5owixpW50M/NCoZMRJi9Pw==
+X-Received: by 2002:a17:903:234a:b0:1f9:b35f:65dc with SMTP id d9443c01a7336-1fa0d832226mr208517705ad.6.1719597949507;
+        Fri, 28 Jun 2024 11:05:49 -0700 (PDT)
+Received: from ?IPV6:2401:4900:1f3e:18b0:e4e6:ed1:4c03:dcec? ([2401:4900:1f3e:18b0:e4e6:ed1:4c03:dcec])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fad207514csm8267095ad.110.2024.06.28.11.05.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Jun 2024 11:05:49 -0700 (PDT)
+Message-ID: <f9fa23b7-5039-49f4-9904-20699efa4564@beagleboard.org>
+Date: Fri, 28 Jun 2024 23:35:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202406261205.E2435C68@keescook>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/7] misc: Add mikroBUS driver
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Mark Brown <broonie@kernel.org>, Vaishnav M A <vaishnav@beagleboard.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Derek Kiernan <derek.kiernan@amd.com>,
+ Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nishanth Menon <nm@ti.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+ Michael Walle <mwalle@kernel.org>, jkridner@beagleboard.org,
+ robertcnelson@beagleboard.org, linux-spi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Ayush Singh <ayushdevel1325@gmail.com>
+References: <20240627-mikrobus-scratch-spi-v5-0-9e6c148bf5f0@beagleboard.org>
+ <1edcfd98-e73c-477e-a4ce-98cb41e66ab6@beagleboard.org>
+ <54c18009-40c6-4c92-852e-6b7117e706a2@lunn.ch>
+Content-Language: en-US
+From: Ayush Singh <ayush@beagleboard.org>
+In-Reply-To: <54c18009-40c6-4c92-852e-6b7117e706a2@lunn.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 26, 2024 at 12:07:52PM -0700, Kees Cook wrote:
-> On Tue, Jun 25, 2024 at 11:37:19AM +0200, Peter Zijlstra wrote:
-> > Also, wouldn't it be saner to write this something like:
-> > 
-> > __always_inline int decode_bug(unsigned long addr, u32 *imm)
-> > {
-> > 	u8 v;
-> > 
-> > 	if (addr < TASK_SIZE)
-> > 		return BUG_NONE;
-> > 
-> > 	v = *(u8 *)(addr++);
-> > 	if (v == 0x67)
-> > 		v = *(u8 *)(addr++);
-> > 	if (v != 0x0f)
-> > 		return BUG_NONE;
-> > 	v = *(u8 *)(addr++);
-> > 	if (v == 0x0b)
-> > 		return BUG_UD2;
-> > 	if (v != 0xb9)
-> > 		return BUG_NONE;
-> > 
 
-Looks like I lost:
+On 6/28/24 19:22, Andrew Lunn wrote:
+>> 3. Allowing creation of sysfs entries `new_device` and `delete_device`
+>> similar to what already exists for I2C, etc.
+> On the I2C bus, these operate at the device level, you instantiate a
+> new I2C device.  I assume here you are actually talking about board
+> level operations? So they would be 'new_board', and 'delete_board'
+> files in sysfs?
+>
+>> 4. Allow using 1-wire-eeprom in a fashion that allows automatic board
+>> discovery.
+>>
+>>
+>> Let me now introduce the 2 architectures we will be discussing:
+>>
+>> 1. mikrobus-connector has phandle to mikrobus-board:
+>>
+>> ```
+>>
+>> \ {
+>>
+>>      connector1 {
+>>
+>>          board = <&board1>;
+>>
+>>      };
+>>
+>>
+>>      mikrobus_boards {
+>>
+>>          board1 {
+>>
+>>              ...
+>>
+>>          };
+>>
+>>      };
+>>
+>> };
+>>
+>> ```
+>>
+>>
+>> 2. mikrobus board is a child node of mikrobus-connector:
+>>
+>> ```
+>>
+>> \ {
+>>
+>>      connector1 {
+>>
+>>          ...
+>>
+>>          spi {
+> So there would actually be multiple child nodes, one per bus, and then
+> maybe a simple-bus for nodes which do not correspond to a bus,
+> e.g. gpio-key, gpio-leds, etc.,
+>
+>>              board1 {
+>>
+>>                  ...
+>>
+>>              };
+>>
+>>          };
+>>
+>>      };
+>>
+>> };
+>>
+>> ```
+>>
+>>
+>> I will now go over how each of these goals might look like in both of the
+>> architecture.
+>>
+>> 1. Keeping the device tree properties upstream in a system independent way:
+>>
+>> a. mikrobus-connector has phandle to mikrobus-board
+>>
+>> It is possible to create an overlay as follows which will work with any
+>> system that defines the `mikrobus_boards` node. This node is completely
+>> independent of mikroBUS connector and thus does not need to be rewritten (or
+>> generated) for each board. There are no problems for system with more than 1
+>> mikrobus connector.
+>>
+>> ```
+>>
+>> &mikrobus_boards {
+>>
+>>      board2 {
+>>
+>>          ...
+>>
+>>      };
+>>
+>>
+>>      board3 {
+>>
+>>          ...
+>>
+>>      };
+>>
+>> };
+> So by default, you have an empty mikrobus_boards node? You then use DT
+> overlay to load the needed board into this node, and then update the
+> phandle in the connection node to point to the newly loaded node?
+>
+>> b. mikrobus board is a child node of mikrobus-connector:
+>>
+>> Not sure how to do something similar here. The overlay needs to be rewritten
+>> (or generated) for each board.
+> It would be good to explain why...
+>
+>> Systems with multiple mikrobus connectors
+>> will need multiple overlays adding the boards as child node of each
+>> connector (with status = "disabled").
+> Why? Just load the one overlay actually required.
+>
+>> &connector1 {
+>>
+>>      spi = {
+>>
+>>          board 2 {
+>>
+>>              ...
+>>
+>>          };
+>>
+>>          board 3 {
+>>
+>>              ...
+>>
+>>          };
+>>
+>>      };
+>>
+>> };
+> I don't actually understand this description. I was expecting more
+> like:
+>
+> connector1: {
+>
+> 	spi =  {
+> 	    /* Optional TI TSC2046 touchscreen controller */
+>              opt_touch: touchscreen@0 {
+>                      compatible = "ti,tsc2046";
+>                      spi-max-frequency = <2500000>;
+>                      reg = <0>;
+>                      pinctrl-0 = <&pmx_gpio_13>;
+>                      pinctrl-names = "default";
+>                      interrupts-extended = <&gpio0 13 IRQ_TYPE_EDGE_FALLING>;
+>              };
+> 	};
+>
+> 	i2c = {
+> 	        opt_audio: audio@1a {
+>                  compatible = "ti,tlv320aic23";
+>                  reg = <0x1a>;
+>          };
+>
+> 	the_rest = {
+>          	gpio_keys {
+>                      compatible = "gpio-keys";
+>                      #address-cells = <1>;
+>                      #size-cells = <0>;
+>                      pinctrl-0 = <&pmx_reset_button &pmx_USB_copy_button>;
+>                      pinctrl-names = "default";
+>      
+>                      copy {
+>                              label = "USB Copy";
+>                              linux,code = <KEY_COPY>;
+>                              gpios = <&gpio0 15 GPIO_ACTIVE_LOW>;
+>                      };
+>                      reset {
+>                              label = "Reset";
+>                              linux,code = <KEY_RESTART>;
+>                              gpios = <&gpio0 16 GPIO_ACTIVE_LOW>;
+>                      };
+>              };
+>
+> This is completely made up. You probably should use an example of a
+> real complex board using multiple busses.
+>
+> So for each actual bus on Mikrobus, you have a bus node, and then a
+> node for everything which is not bus orientated, like gpio-keys.
+>
+> So the overlay would simply populate these child nodes.
 
-	v = *(u8 *)(addr++);
-> > 	if (X86_MODRM_RM(v) == 4)
-> > 		addr++; /* consume SiB */
-> > 
-> > 	*imm = 0;
-> > 	if (X86_MODRM_MOD(v) == 1)
-> > 		*imm = *(u8 *)addr;
-> > 	if (X86_MORRM_MOD(v) == 2)
-> > 		*imm = *(u32 *)addr;
-> > 
-> > 	// WARN on MOD(v)==3 ??
-> > 
-> > 	return BUG_UD1;
-> > }
-> 
-> Thanks for the example! (I think it should use macros instead of
-> open-coded "0x67", "0x0f", etc, but yeah.)
+I think I had a fundamental misunderstanding of what dt overlays can do. 
+My understanding was that to say add thermo click in the above style 
+with child nodes, the overlay needs to look as follows
 
-Yeah, I didn't feel like hunting down pre-existing defines for all of
-them, but yeah.
+&connector1 {
 
-> > Why does the thing emit the asop prefix at all through? afaict it
-> > doesn't affect the immediate you want to get at. And if it does this
-> > prefix, should we worry about other prefixes? Ideally we'd not accept
-> > any prefixes.
-> 
-> AFAICT it's because it's a small immediate? For an x86_64 build, this is
-> how Clang is generating the UD1.
+     spi {
 
-So the disp8 immediate comes from MOD==1, MOD==2 has a disp32. What the
-prefix does is change the size of the memory being referenced from 32bit
-to 16bit iirc, but since UD does not actually perform the load, this is
-entirely superfluous afaict.
+         thermo_click: {
 
-It might be good to figure out *why* clang thinks it needs this.
+             compatible = "maxim,max31855k", "mikrobus-spi";
+             spi-max-frequency = <1000000>;
+             pinctrl-apply = "spi_default";
 
-A REX prefix is far more likely to be useful (upper 8 destination
-register for instance).
+         };
 
-Anyway, it seems to basically boil down to needing a fairly complete
-instruction decoder without being able the use the normal one :/
+     };
+
+};
+
+
+However, after going through the drm PR pointed by Rob and your 
+description, it seems it is possible to create an overlay as follows:
+
+&spi {
+
+     thermo_click: {
+
+         compatible = "maxim,max31855k";
+         spi-max-frequency = <1000000>;
+         pinctrl-apply = "spi_default";
+
+     };
+
+};
+
+
+and apply it to the particular connector node (say connector1), at least 
+from the driver. If that is the case, then yes, all of my reasons for 
+not wanting to use child nodes become irrelevant.
+
+
+DRM PR: 
+https://lore.kernel.org/all/20240510-hotplug-drm-bridge-v2-0-ec32f2c66d56@bootlin.com/
+
+
+Ayush Singh
+
+
 
