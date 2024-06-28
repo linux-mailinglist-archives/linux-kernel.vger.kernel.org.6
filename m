@@ -1,282 +1,158 @@
-Return-Path: <linux-kernel+bounces-233555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E09AE91B962
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:05:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9CD491B968
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:05:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97559284E2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:05:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9EF81C23052
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21CE9145B09;
-	Fri, 28 Jun 2024 08:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C0C145A1F;
+	Fri, 28 Jun 2024 08:05:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="GkEwpIVp"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AqEK5PJ2"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76736143C4A
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 08:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E62014389A
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 08:05:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719561897; cv=none; b=opfcBucrZtegQOzJBGrPtEtw3GaYc/mOVqx2qZqiSN7kZWEh1U4De2jEpCvnq9p4BmT5x5P6URoMGJ95gKsL8jrOyAHiaRJJu/g7l/RYxisFux6MAqjOM1hU8J2Czp14C+JEYtFtHSKr1g+pUYpP3ytgPgIRYp5K6WI+NEnhx7I=
+	t=1719561910; cv=none; b=b76ujAVYhsjOHQmucEcLb8Ep5YJsFmTLNuPF77oc2SK745Gpo6NGJUFyClkIEg0jCgCWaH5NfLUbgCWAM4kCHbeKBpjQ1h3w70IxcVnjCbVX0/0Co4Qw/ZmYtfcwDBrEqtcAjFME+Twg3QIddSEiJi/Cy2lmtN9PJJW/LD+cu5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719561897; c=relaxed/simple;
-	bh=lnOtj8I56jMsFfYKFuX/EzixqJd4tPPdOFoxBK7Mu48=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=GfNrcQFxFasi+FtpKn17LLGjJxXGGuyOQHLEIx0g+QCU4pCHaM+uUxtLAMoIevzGUVAC0Duj2ScK2gkDzOA+nwsxFH21ROiZtdFiG1RQwNcDOQEOgLJ0c4ClH/c1YcrP/9KKsVzI/01zwo7exUJT1Yva8b9nyvepcqLr6FL9FkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=GkEwpIVp; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5295eb47b48so425563e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 01:04:55 -0700 (PDT)
+	s=arc-20240116; t=1719561910; c=relaxed/simple;
+	bh=JzJrqoFrrLlYjlFvyfWzcuywlzt232DBEfu3youbBSY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XTX2wfLCN+rVmHkRTL/YMlsw+hgQMLjCl2kt5d3YDmluxfGZs6BWo6ulZVhyKaxOEQPzdbHSmiidiqVsaOm4F6CmwXBX/+amiUtBtmFDTLDkGOR0tTIfXpQRBCz8n9DulehSwN4tCRi32tsFAktimuenbkRifieAiYtPHv5P0x8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=AqEK5PJ2; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6b52eb2ee2eso1713996d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 01:05:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1719561894; x=1720166694; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aQTbdcsWjYj1lBw9v1FiUsxFG/GqhZjpAf7y14wz4Vc=;
-        b=GkEwpIVpS92RWV1cE9aWm1m+G+YrK5uHuO8ropmUb1/V3LuJ7kJC3/+D+FiccOBJl1
-         VNO4iLm5+VR7aNNtv/IrSc+29QwrnmKH4qUi2DZw7EZJ97ROVnpOsQ2jrrdVjEyzLsTX
-         D2npllU+0OxD8mJTejuvKZ0u0sVMs7pRne2xSggBOasCaVF5KTheB9idNMtKY9VLaB/1
-         VwkJhWfAy0ODz2Cx8ywy3uhc2yvtCcT7HqTeKSphetE4ATKCWtRZa3B6c/cXBW83tp7t
-         J+dp/SwTtQlL8hZBo3KHt+yKZnWwr1zgzoX599LuxLg9FU0Stjc/GGs3lQkb/EDqFdjR
-         Fnaw==
+        d=chromium.org; s=google; t=1719561907; x=1720166707; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=JzJrqoFrrLlYjlFvyfWzcuywlzt232DBEfu3youbBSY=;
+        b=AqEK5PJ2rxoIIIVQwXxRwNtPUpvxZNTbk3bFdnjTil6t4j9gHmOO9f6sn6LomA1z73
+         2If5fklFrF6ABz0j9aH8I+qYOdcIV9Ny9JHROITlwzF3UqtzcsTTjRfUPgl/DASBPTgf
+         L/eMf0v/jdf8UYw+9NiH/V4Yy1xyqDuFwpBBU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719561894; x=1720166694;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aQTbdcsWjYj1lBw9v1FiUsxFG/GqhZjpAf7y14wz4Vc=;
-        b=GYFJEoWAuBXAWGTbahkq0IpHr4dKlXkgMyysG+MQY5f4nlmzptrWJuYDzt6HRr58QX
-         7496iezECVELG8w0SEhJg9sp4VD6BhkQ6hupebjLXa3lPFCFjxAmtrCoE3lFvcPL/5FU
-         hegadPiGXptYVJ6r/4g60LbK7naJYjGbbDtm1IxftktYVDG3W9EjGoBTdogOkQ+/mqm3
-         6UoXuf2iGM6CTiucMWYWSASr2pBmwLJ0c5MiBwKONFC6/NQZS2v5wOkQD5+IMewSjCpJ
-         iIho3pWWJZk+iN6At5clm1Gbo6/10tTYv8jB1xTA3L83vHNP4QPt0f+P/SojCQQCxllm
-         PDUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVokmtwej4kjMD783x2lpYlOHrR1Zg8p3isl1dy4bZAsPH4vONOHETjKetKCp4Z8Xgy29PsamkolKW0HahYW46nbbX5jE5j2Vw378Bp
-X-Gm-Message-State: AOJu0YxvpAvtqcAnw0U5sZ6fO71PUpy0dWmQ4oC/lKLhiknGG+FEGUku
-	vQ9EnDvfPqz9iL/KMxrEsjvhOz2VLU+oE+4yIouHrjq3+d/EMPXKOhuQswfAxoU=
-X-Google-Smtp-Source: AGHT+IHNu9Q8Wq3NTTfdUge/DFwXYvXY70ZuXmhDK16DCxvOvq5z2lwiF6FDZR3J+aYhaLMBsqf6Jg==
-X-Received: by 2002:a19:c514:0:b0:52c:8591:1f7b with SMTP id 2adb3069b0e04-52ce061b07dmr11458375e87.24.1719561893435;
-        Fri, 28 Jun 2024 01:04:53 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.70])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b099c72sm22804585e9.37.2024.06.28.01.04.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Jun 2024 01:04:52 -0700 (PDT)
-Message-ID: <471b8375-3966-4e0a-98ba-3aee4254c969@tuxon.dev>
-Date: Fri, 28 Jun 2024 11:04:51 +0300
+        d=1e100.net; s=20230601; t=1719561907; x=1720166707;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JzJrqoFrrLlYjlFvyfWzcuywlzt232DBEfu3youbBSY=;
+        b=lJrZg334o3ceiviUs5SIqCTlGxQCtco/svUb8PrUWUbpONefUiqqlhmHRJOBVC3wXV
+         flTQkQ7KMtz/Un//H+M91wFtnGTAY0yb6/ZO5j4qmpeb/244KNxVuSVfSEUA4Epd9Fuv
+         akviEub6tnHoDOTwD3mLll8i3xU4OGPdkPLt7z+sa6gvm2vpBCOiaE1XdwkZoIOu9M0R
+         iUlhM8Swq92ZAT/GZ7p6mEbwoARXIoH028QJbQKanR207GCRT7t44YaelPnHCfO+CvG0
+         0MA9UZiWH50yQwBhJ2WEbZHQyXrWuHgPbmP+Ay5NCdRQi3iX737WxKX7Fg6p2BFc8cJu
+         kI4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV0D4Teq68JtnK3RX0Qj30UKysDMU2BCy+a2XvJsDSxSVwK5RI2YmYv2zo7piVRCCWkl9qk9lMrb6OQQSKBzW+ZGaFfXlhJ4eLH6YdM
+X-Gm-Message-State: AOJu0Yzjf7wZcDK8/VoWveimEurOoB54X1rLOJ1ujmllIJvc/RQ/3ZOz
+	1V5m79Eeo97c1m3RGkyLo9FJDbCB+0ma/DCcymERy7OcPJd+PoqvgDIdyeZAxxMap6lGeL7/LQV
+	anRfvQxMWwNA8TC2968zuMZ+VwwG+v0wXzJTQ
+X-Google-Smtp-Source: AGHT+IF0otSsDTnS1XWFIT01k1cgVlGvDRjEaZz815q/WnFkdlw4tS8NYw01YMmeU5bEvep9bbqcDylPNPoaN8d4UEU=
+X-Received: by 2002:a0c:f10b:0:b0:6b5:4b10:7849 with SMTP id
+ 6a1803df08f44-6b54b107986mr143489446d6.1.1719561907384; Fri, 28 Jun 2024
+ 01:05:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/12] i2c: riic: Define individual arrays to describe
- the register offsets
-Content-Language: en-US
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-To: Biju Das <biju.das.jz@bp.renesas.com>,
- Chris Brandt <Chris.Brandt@renesas.com>,
- "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>
-Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com>
- <20240625121358.590547-8-claudiu.beznea.uj@bp.renesas.com>
- <TY3PR01MB11346EF9A001F68162148B70F86D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <6289f329-118f-4970-a525-75c3a48bd28b@tuxon.dev>
- <TY3PR01MB1134603F92C72D9B6C6C3733C86D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <2f162986-33c5-4d80-958c-4f857adaad20@tuxon.dev>
-In-Reply-To: <2f162986-33c5-4d80-958c-4f857adaad20@tuxon.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240521-board-ids-v3-0-e6c71d05f4d2@quicinc.com>
+ <CAFLszTjexpNEjo1sGVs67L0CAgGZLNkyn9RGfHRD7iHak_mtmg@mail.gmail.com>
+ <20240605100246481-0700.eberman@hu-eberman-lv.qualcomm.com>
+ <CAFLszThbe_aUAq_5rCCiPV-bj60oq9UCc=vdDHwM3i6t44ohLw@mail.gmail.com>
+ <20240621142054973-0700.eberman@hu-eberman-lv.qualcomm.com> <CAFLszThO1doxsXSYTrTTPy9QCW4hrBb07k0VdSNWip=4MKtTnA@mail.gmail.com>
+In-Reply-To: <CAFLszThO1doxsXSYTrTTPy9QCW4hrBb07k0VdSNWip=4MKtTnA@mail.gmail.com>
+From: Simon Glass <sjg@chromium.org>
+Date: Fri, 28 Jun 2024 09:04:56 +0100
+Message-ID: <CAFLszTiACk98KaqA4Aa65d8ck9iJZevQyeFfq90JjsyZhx_HjA@mail.gmail.com>
+Subject: Re: [PATCH RFC v3 0/9] dt-bindings: hwinfo: Introduce board-id
+To: Elliot Berman <quic_eberman@quicinc.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Amrit Anand <quic_amrianan@quicinc.com>, Peter Griffin <peter.griffin@linaro.org>, 
+	Caleb Connolly <caleb.connolly@linaro.org>, Andy Gross <agross@kernel.org>, 
+	Doug Anderson <dianders@chromium.org>, Chen-Yu Tsai <wenst@chromium.org>, 
+	Julius Werner <jwerner@chromium.org>, "Humphreys, Jonathan" <j-humphreys@ti.com>, 
+	Sumit Garg <sumit.garg@linaro.org>, Michal Simek <michal.simek@amd.com>, 
+	boot-architecture@lists.linaro.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Fri, 28 Jun 2024 at 08:33, Simon Glass <sjg@chromium.org> wrote:
+>
+> Hi Elliot,
+>
+> On Fri, 21 Jun 2024 at 23:40, Elliot Berman <quic_eberman@quicinc.com> wrote:
+> >
+> > Hi Simon,
+> >
+> > On Thu, Jun 06, 2024 at 10:00:54AM -0600, Simon Glass wrote:
+> > > On Wed, 5 Jun 2024 at 11:17, Elliot Berman <quic_eberman@quicinc.com> wrote:
+> > > > On Wed, Jun 05, 2024 at 07:17:35AM -0600, Simon Glass wrote:
+> > > > > Hi Elliot,
+> > > > >
+> > > > > I am just picking up the discussion here, which was started on another thread.
+> > > > >
+> > > > > I can't see why this new feature is needed. We should be able to use
+> > > > > compatible strings, as we do now. I added a 'usage' section to the FIT
+> > > > > spec [1] which might help. I also incorporated the board revision and
+> > > > > variant information and some notes on how to add to the available
+> > > > > suffixes.
+> > > > >
+> > > > > Does that handle your use case?
+> > > >
+> > > > -rev and -sku don't fit the versioning scheme for QTI devices, so this
+> > > > isn't a generic enough approach. Patch 5 in this series describes the
+> > > > versioning scheme for us.
+> > > >
+> > > > In the other thread, we had talked about using some regex based approach
+> > > > for matching the root node compatible. I haven't had chance to work on
+> > > > that proposal and will try to get to it in the next couple weeks.
+> > >
+> > > OK, I look forward to it. Please do check the FIT best match approach
+> > > and see how it might be extended to handle your requirements. So far I
+> > > have not seen a need for regexes, but it is certainly a possibility.
+> > >
+> >
+> > I spent some time collecting feedback from the team on using compatible
+> > strings + regex-style approach and we're not able to add a regex library
+> > into firmware, so this approach unfortunately won't work for us.
+> > Because we have more axes of board identification than chromebook, using
+> > FIT's compatible strings isn't a scalable solution for us. I don't think
+> > we have incompatible problems, we only have more than 2-3 axes of
+> > information.
+>
+> I understand that. I assume that you have a lot of devices that use
+> the same SoC but different PMICs, displays, etc. Some of these can be
+> handled in the bootloader, e.g. by detecting hardware and applying an
+> overlay, or enabling/disabling a node in the DT. It can be useful to
+> have a hardware-readable ID to indicate things which cannot be probed,
+> e.g. with GPIOs or ADC + resistors.
+>
+> Another option is to give names to your projects, so that machines
+> with the same SoC but major hardware differences end up with a
+> different name (see rk3399-xx.dts for examples).
+>
+> I'm sure you are already doing some/all of these things. I still feel
+> (so far) that you don't need to invent something new here.
+>
+> Re "FIT's compatible strings isn't a scalable solution for us", how is
+> what you are doing different from other vendors? Is it the sheer
+> number of variations, or something else?
 
-
-On 28.06.2024 11:02, claudiu beznea wrote:
-> 
-> 
-> On 28.06.2024 10:55, Biju Das wrote:
->> Hi Claudiu,
->>
->>> -----Original Message-----
->>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
->>> Sent: Friday, June 28, 2024 8:32 AM
->>> Subject: Re: [PATCH v2 07/12] i2c: riic: Define individual arrays to describe the register offsets
->>>
->>> Hi, Biju,
->>>
->>> On 28.06.2024 08:59, Biju Das wrote:
->>>> Hi Claudiu,
->>>>
->>>>> -----Original Message-----
->>>>> From: Claudiu <claudiu.beznea@tuxon.dev>
->>>>> Sent: Tuesday, June 25, 2024 1:14 PM
->>>>> Subject: [PATCH v2 07/12] i2c: riic: Define individual arrays to
->>>>> describe the register offsets
->>>>>
->>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>>
->>>>> Define individual arrays to describe the register offsets. In this
->>>>> way we can describe different IP variants that share the same
->>>>> register offsets but have differences in other characteristics. Commit prepares for the addition
->>> of fast mode plus.
->>>>>
->>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>> ---
->>>>>
->>>>> Changes in v2:
->>>>> - none
->>>>>
->>>>>  drivers/i2c/busses/i2c-riic.c | 58
->>>>> +++++++++++++++++++----------------
->>>>>  1 file changed, 31 insertions(+), 27 deletions(-)
->>>>>
->>>>> diff --git a/drivers/i2c/busses/i2c-riic.c
->>>>> b/drivers/i2c/busses/i2c-riic.c index
->>>>> 9fe007609076..8ffbead95492 100644
->>>>> --- a/drivers/i2c/busses/i2c-riic.c
->>>>> +++ b/drivers/i2c/busses/i2c-riic.c
->>>>> @@ -91,7 +91,7 @@ enum riic_reg_list {  };
->>>>>
->>>>>  struct riic_of_data {
->>>>> -	u8 regs[RIIC_REG_END];
->>>>> +	const u8 *regs;
->>>>
->>>>
->>>> Since you are touching this part, can we drop struct and Use u8* as
->>>> device_data instead?
->>>
->>> Patch 09/12 "i2c: riic: Add support for fast mode plus" adds a new member to struct riic_of_data.
->>> That new member is needed to differentiate b/w hardware versions supporting fast mode plus based on
->>> compatible.
->>
->> Are we sure RZ/A does not support fast mode plus?
-> 
-> From commit description of patch 09/12:
-> 
-> Fast mode plus is available on most of the IP variants that RIIC driver
-> is working with. The exception is (according to HW manuals of the SoCs
-> where this IP is available) the Renesas RZ/A1H. For this, patch
-> introduces the struct riic_of_data::fast_mode_plus.
-> 
-> I checked the manuals of all the SoCs where this driver is used.
-> 
-> I haven't checked the H/W manual?
-
-That's Biju's previous statement. Sorry for not formatting it properly.
-
-> 
-> On the manual I've downloaded from Renesas web site the FMPE bit of
-> RIICnFER is not available on RZ/A1H.
-> 
-> Thank you,
-> Claudiu Beznea
-> 
->> If it does not, then it make sense to keep the patch as it is.
->>
->> Cheers,
->> Biju
->>
->>>
->>> Keeping struct riic_of_data is necessary (unless I misunderstood your proposal).
->>>
->>> Thank you,
->>> Claudiu Beznea
->>>
->>>>
->>>> ie, replace const struct riic_of_data *info->const u8 *regs in struct
->>>> riic_dev and use .data = riic_rz_xx_regs in of_match_table?
->>>>
->>>> Cheers,
->>>> Biju
->>>>>  };
->>>>>
->>>>>  struct riic_dev {
->>>>> @@ -531,36 +531,40 @@ static void riic_i2c_remove(struct platform_device *pdev)
->>>>>  	pm_runtime_dont_use_autosuspend(dev);
->>>>>  }
->>>>>
->>>>> +static const u8 riic_rz_a_regs[RIIC_REG_END] = {
->>>>> +	[RIIC_ICCR1] = 0x00,
->>>>> +	[RIIC_ICCR2] = 0x04,
->>>>> +	[RIIC_ICMR1] = 0x08,
->>>>> +	[RIIC_ICMR3] = 0x10,
->>>>> +	[RIIC_ICSER] = 0x18,
->>>>> +	[RIIC_ICIER] = 0x1c,
->>>>> +	[RIIC_ICSR2] = 0x24,
->>>>> +	[RIIC_ICBRL] = 0x34,
->>>>> +	[RIIC_ICBRH] = 0x38,
->>>>> +	[RIIC_ICDRT] = 0x3c,
->>>>> +	[RIIC_ICDRR] = 0x40,
->>>>> +};
->>>>> +
->>>>>  static const struct riic_of_data riic_rz_a_info = {
->>>>> -	.regs = {
->>>>> -		[RIIC_ICCR1] = 0x00,
->>>>> -		[RIIC_ICCR2] = 0x04,
->>>>> -		[RIIC_ICMR1] = 0x08,
->>>>> -		[RIIC_ICMR3] = 0x10,
->>>>> -		[RIIC_ICSER] = 0x18,
->>>>> -		[RIIC_ICIER] = 0x1c,
->>>>> -		[RIIC_ICSR2] = 0x24,
->>>>> -		[RIIC_ICBRL] = 0x34,
->>>>> -		[RIIC_ICBRH] = 0x38,
->>>>> -		[RIIC_ICDRT] = 0x3c,
->>>>> -		[RIIC_ICDRR] = 0x40,
->>>>> -	},
->>>>> +	.regs = riic_rz_a_regs,
->>>>> +};
->>>>> +
->>>>> +static const u8 riic_rz_v2h_regs[RIIC_REG_END] = {
->>>>> +	[RIIC_ICCR1] = 0x00,
->>>>> +	[RIIC_ICCR2] = 0x01,
->>>>> +	[RIIC_ICMR1] = 0x02,
->>>>> +	[RIIC_ICMR3] = 0x04,
->>>>> +	[RIIC_ICSER] = 0x06,
->>>>> +	[RIIC_ICIER] = 0x07,
->>>>> +	[RIIC_ICSR2] = 0x09,
->>>>> +	[RIIC_ICBRL] = 0x10,
->>>>> +	[RIIC_ICBRH] = 0x11,
->>>>> +	[RIIC_ICDRT] = 0x12,
->>>>> +	[RIIC_ICDRR] = 0x13,
->>>>>  };
->>>>>
->>>>>  static const struct riic_of_data riic_rz_v2h_info = {
->>>>> -	.regs = {
->>>>> -		[RIIC_ICCR1] = 0x00,
->>>>> -		[RIIC_ICCR2] = 0x01,
->>>>> -		[RIIC_ICMR1] = 0x02,
->>>>> -		[RIIC_ICMR3] = 0x04,
->>>>> -		[RIIC_ICSER] = 0x06,
->>>>> -		[RIIC_ICIER] = 0x07,
->>>>> -		[RIIC_ICSR2] = 0x09,
->>>>> -		[RIIC_ICBRL] = 0x10,
->>>>> -		[RIIC_ICBRH] = 0x11,
->>>>> -		[RIIC_ICDRT] = 0x12,
->>>>> -		[RIIC_ICDRR] = 0x13,
->>>>> -	},
->>>>> +	.regs = riic_rz_v2h_regs,
->>>>>  };
->>>>>
->>>>>  static int riic_i2c_suspend(struct device *dev)
->>>>> --
->>>>> 2.39.2
->>>>>
->>>>
+Here I am referring to the actual number of separate boards which
+appear in the wild, not the multiplication of the number of axes which
+produced them.
 
