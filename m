@@ -1,157 +1,94 @@
-Return-Path: <linux-kernel+bounces-233991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B454391C07D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:09:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31F4391C082
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:10:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CA6EB257F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:09:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3FEA28548E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:10:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2D11BF32E;
-	Fri, 28 Jun 2024 14:09:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 991B01BF329;
+	Fri, 28 Jun 2024 14:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="L5byYxpa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Ahnfd0qh"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3712C1BE843;
-	Fri, 28 Jun 2024 14:09:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7308619B5A2;
+	Fri, 28 Jun 2024 14:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719583750; cv=none; b=U1VMM65vetFpPfSP1PaDgh5Em4FchndeBWivp2wgjJ8c4+VMuqToXl9xm5EghpudIIUToC3RqHa7yJry/28LigSr460iWMQmvd4lUd09niZ6DigCjnLK2fW/L4BNr0//EsXmmNMcHJ5hpVJcOxJOoGza656uDhyO3GeSU3UA/HA=
+	t=1719583800; cv=none; b=h2ffSy3fu+QKMcZqyipBw7r8VNyHn9WzQq+ji7XiSJenhGk+H8VdvCwlVOQR8Z4JdyHmKdmOU2m/dYh9GsfavLllKwVKNvtSoDvu9XucZLFnyQQ02WkrjtCLJ3AvabPO8zInsIYnLh415fsdyj7ZsAev9dVQPfBAHdSXsiwrpbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719583750; c=relaxed/simple;
-	bh=PoxoWWl88O12e6KbvoEyRiWn5b5ve/LBlpPDCEhGhsI=;
+	s=arc-20240116; t=1719583800; c=relaxed/simple;
+	bh=uOtQMuL1X1bCXgLRk8CEj7G6Dj5LK1iiftQXY+Rv9Lk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QI+AjVJWP0QTSbTjDOrLYMkNOBOog5bJ/OptEiFqmZdayoV6qlwFdeDw8jDfbCo7bptokXnGZ5TF5KSwJaONQ0PTMomjtZgdiKIv0geTszO90L5leTktQnlz+x95J7Rz5VtNnLJPL3eOWzqSaYETZI2XM0hJxMG8Ab0R89HUpy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=L5byYxpa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3304BC116B1;
-	Fri, 28 Jun 2024 14:09:08 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="L5byYxpa"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1719583746;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J9G/8NSfD5bhb15ffQL7z+PnF+QkyW7FSyBk5NRxv10=;
-	b=L5byYxpa+NDlWYcN1RTTJibXvDJ5F9efTq0kO48Ze/QE2GCBmnGaNPM/R7dxzJ5S4Pjpvb
-	+5Eup6rRM20VxMq5Y/buyBUM+W1+Y+xy80UDu/gNrelTynZvhbzg3Y/bUCDzaB+3UlZcig
-	JooVYqDIomzZCidMd60ZHRjU8z294Lc=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 5ff92fdc (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Fri, 28 Jun 2024 14:09:05 +0000 (UTC)
-Date: Fri, 28 Jun 2024 16:09:01 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Aleksa Sarai <cyphar@cyphar.com>, linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev, linux-crypto@vger.kernel.org,
-	linux-api@vger.kernel.org, x86@kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
-	Carlos O'Donell <carlos@redhat.com>,
-	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-	Jann Horn <jannh@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	David Hildenbrand <dhildenb@redhat.com>
-Subject: Re: [PATCH v18 2/5] random: add vgetrandom_alloc() syscall
-Message-ID: <Zn7D_YBC2SXTa_jX@zx2c4.com>
-References: <20240620005339.1273434-1-Jason@zx2c4.com>
- <20240620005339.1273434-3-Jason@zx2c4.com>
- <20240620.020423-puny.wheat.mobile.arm-1wWnJHwWYyAl@cyphar.com>
- <ZnQeCRjgNXEAQjEo@zx2c4.com>
- <87v81txjb7.ffs@tglx>
+	 Content-Type:Content-Disposition:In-Reply-To; b=t1omIVBGRdVtnLPTrt8BKY8z2/S214iMGylhI6a2nK5V/scEPFa+dZDWkKN5sWOlvuitvd3MyOlZYviK1wRYtDVOzSH88mGM/Q++G+ONQ23nFZNubvaaGjPnPfjhdRP1Sqcrl1wNNpQn+sKg0w4Gt3JuG0JabTQuxbck87X42uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Ahnfd0qh; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=p9/TdaF6sDe7VwbrSuMbzC40JZtDM24SJtp78alf1DY=; b=Ahnfd0qh/15hFWKLitt7TYAlxC
+	qlfisPoWXjQK5TrxnqMA34GdmjB78L1VZufe8mes3tP3D0HqwL8NsJB8dQLCd6xaTNwebKYge8dhQ
+	9VtTKjAP/uETAaHtjbITw3pVgalTT1z0gQD8yL7eB0DQEhh4eaSCQlFFbreP826Nmops=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sNCIS-001HzG-5N; Fri, 28 Jun 2024 16:09:52 +0200
+Date: Fri, 28 Jun 2024 16:09:52 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Marek Vasut <marex@denx.de>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"kernel@dh-electronics.com" <kernel@dh-electronics.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] arm64: dts: imx8mp: Update Fast ethernet PHY MDIO
+ addresses to match DH i.MX8MP DHCOM rev.200
+Message-ID: <6687963b-1cbf-4093-aa8d-b90ce9ba7c0b@lunn.ch>
+References: <20240627233045.80551-1-marex@denx.de>
+ <AM6PR04MB5941804BFE1CC6F72E776F9588D02@AM6PR04MB5941.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87v81txjb7.ffs@tglx>
+In-Reply-To: <AM6PR04MB5941804BFE1CC6F72E776F9588D02@AM6PR04MB5941.eurprd04.prod.outlook.com>
 
-On Fri, Jun 28, 2024 at 03:56:12PM +0200, Thomas Gleixner wrote:
-> Jason!
+On Fri, Jun 28, 2024 at 01:01:49AM +0000, Peng Fan wrote:
+> > Subject: [PATCH v2] arm64: dts: imx8mp: Update Fast ethernet PHY
+> > MDIO addresses to match DH i.MX8MP DHCOM rev.200
+> > 
+> > The production DH i.MX8MP DHCOM SoM rev.200 uses updated PHY
+> > MDIO addresses for the Fast ethernet PHYs. Update the base SoM DT
+> > to cater for this change.
+> > Prototype rev.100 SoM was never publicly available and was
+> > manufactured in limited series, anything currently available is rev.200
+> > or newer, so it is safe to update the DT this way.
+> > 
+> > Signed-off-by: Marek Vasut <marex@denx.de>
+> > ---
 > 
-> On Thu, Jun 20 2024 at 14:18, Jason A. Donenfeld wrote:
-> > On Wed, Jun 19, 2024 at 07:13:26PM -0700, Aleksa Sarai wrote:
-> >> Then again, I guess since libc is planned to be the primary user,
-> >> creating a new syscall in a decade if necessary is probably not that big
-> >> of an issue.
-> >
-> > I'm not sure going the whole big struct thing is really necessary, and
-> > for an additional reason: this is only meant to be used with the vDSO
-> > function, which is also coupled with the kernel. It doesn't return
-> > information that's made to be used (or allowed to be used) anywhere
-> > else. So both the vdso code and the syscall code are part of the same
-> > basic thing that will evolve together. So I'm not convinced extensible
-> > struct really makes sense for this, as neat as it is.
-> >
-> > If there's wide consensus that it's desirable, in contrast to what I'm
-> > saying, I'm not vehemently opposed to it and could do it, but it just
-> > seems like massive overkill and not at all necessary. Things are
-> > intentionally as simple and straightforward as can be.
-> 
-> Right, but the problem is that this is a syscall, so people are free to
-> explore it even without the vdso part. Now when you want to change it
-> later then you are caught in the no-regression trap.
-> 
-> So making it extensible with backwards compability in place (add the
-> unused flag field and check for 0) will allow you to expand without
-> breaking users.
+> Reviewed-by: Peng Fan <peng.fan@nxp.com>
 
-Okay, so it sounds like you're also in camp-struct. I guess let's do it
-then. This opens up a few questions, but I think we can get them sorted.
-Right now this version of the patch has this signature:
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-  void *vgetrandom_alloc(unsigned int *num, unsigned int *size_per_each,
-                         unsigned long addr, unsigned int flags);
-
-The semantics are currently:
-
-- [in] unsigned int num - desired number of states
-- [in] unsigned long addr - reserved, nothing
-- [in] unsigned int flags - reserved, nothing
-- [out] unsigned int num - actual number of states
-- [out] unsigned int size_per_each - size of each state
-- [out] void* return value - the allocated thing
-
-Following Aleksa's suggestion, we keep the `[out] void* return value` as
-a return value, but move all the other into a struct:
-
-    void *vgetrandom_alloc(struct vgetrandom_args *arg, size_t size);
-
-So now the struct can become:
-
-    struct vgetrandom_args {
-        [in] u64 flags;
-        [in/out] u32 num;
-        [out] u32 size_per_each;
-    }
-
-Alternatively, this now opens the possibility to incorporate Eric's
-suggestion of also returning the number of allocated bytes, which is
-perhaps definitely to deal with, but I didn't do because I wanted
-symmetry in the argument list. So doing that, now we have:
-
-    struct vgetrandom_args {
-        [in] u64 flags;
-        [in/out] u32 num;
-        [out] u32 size_per_each;
-        [out] u64 bytes_allocated;
-    }
-
-Does that seem reasonable? There's a little bit of mixing of ins and
-outs within the struct, and the return value is still a return value,
-rather than a `[out] void *ret` inside of the struct. But maybe that's
-fine. Also I used u32 there for the two smaller arguments, but maybe
-that's silly and we should go straight to u64?
-
-Anyway, how does that look to you?
-
-Jason
+    Andrew
 
