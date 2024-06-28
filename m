@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-234643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E6B791C8F1
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 00:09:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 045A091C8F6
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 00:13:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B071B1C22C2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:09:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8333DB20BE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C95080C02;
-	Fri, 28 Jun 2024 22:09:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45E1D81204;
+	Fri, 28 Jun 2024 22:12:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mNtZziXz"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="URvGmxRW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E107FBC3;
-	Fri, 28 Jun 2024 22:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800AC7E57F;
+	Fri, 28 Jun 2024 22:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719612586; cv=none; b=TFlUjr9c/jJdlXYhGkeRahM2lEMzAVrmqNB2PGsSPMVxCtJJRGALirdyowRuqMgd7RZYnRctQ9BDCalqG7VVhq4AZa7xgRSMIQjKcL1tdgB0/4LYCUri3qJfeWtR3vTiOsUSBNQYygjWqEKCuw9sptX8RH7sAw/tjpUM2A5P1xo=
+	t=1719612769; cv=none; b=CFGBauCGQN1APatE88kI20VwDrysil6JFQva9JjFQ0Gj65Qd6TVWAhJEi0JmAlB1rUoSmXRrV6kyujRhSrDwnzEtcHCSYNmRBG92oqwP6Bq3zsTUNMjPA2H5sA0BM13TIynZq5zmLlRZCn1WgEVXIOlWGh2dqdyq7kVk8ip5UyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719612586; c=relaxed/simple;
-	bh=ZqOoAZCju1bnsFqWW9u+ByxJw132pnN+RULxSJPPKK8=;
+	s=arc-20240116; t=1719612769; c=relaxed/simple;
+	bh=AyisUTH6Ol1mb1jrlE0aMiW6gf83ZXx6hkss3LG5i/A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vp2TfjIMx3IAfwDmVep3WFuKQ1sz8MxvISqy0GQYzq6hK1z2l1C64Hm4+AgQ85FsP3qVDfATGYT/pJcDqTjRETOjIT/zJdG+GaoTBQ3haUOIJAnNFFcWSmVGwk+QTVY4xw44EEej1wdSW43CSiQ8c5KzeXQ7/0i54/xJNBB+uTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mNtZziXz; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-37613975e20so4425205ab.2;
-        Fri, 28 Jun 2024 15:09:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719612585; x=1720217385; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UQXNvdsZJ+A7BYWMkT+035uTNFax01gJqws1+kbJRz8=;
-        b=mNtZziXzaZmyjE/oGFlKwlYJXnLi3WkDrTgd214aQs0RWbyhfSsOl0VkAEVSlzk5qt
-         TFeRkDAroA/1q1+3PfvalimTOsTPFkJO8dUqSAiwnw+8UmMVOUTpKrZgMc6SJbjPjrEq
-         vPy9ojSH12uDadupzH93P1OTozdxEN2TDegug4TtnUUwmJ2PlZXABTtTVMcBWVTjMpGM
-         C+1HH7aScTvhUMjEJEf6XzGvK5mJ7kD4XxTu7EcuXt00QDPgakOvX4oWebvmhJUhAukd
-         MzdnIm+xWe8Hy5E6RdtF+TMaImkPIVBI6JwBWiyg4RFv1/goJutMwDn1TrpxJrS9VNwG
-         +7Pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719612585; x=1720217385;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UQXNvdsZJ+A7BYWMkT+035uTNFax01gJqws1+kbJRz8=;
-        b=f74VKyBdrVeK3SLwsCRddVGVLUZjGCZYIUZaIcxrMIQjt8IIF0gwjiVAAO4qiDDkQF
-         gwvD7buRC5wDmUou+VXkPtkz4oSnBkD3STEBr8sJFHM3jf4P55CgjtM2laqMyTNo1PQI
-         caeJOoUO+f6ay8UKJedmFeKf386s30hF894ZCTvRedKBZcQvs2MvzKvxaOoOEw80p/kl
-         8+u8fM5r9c7uBjk7YNX/jym0DUekk9IQ3uOcjLuXbv7ZO2/uFYwRD9BIKMBPQ3eZljzY
-         JGR0/Egd5V4lXHH3CZvJoLHl7Ln0pwW0EBfSpnq2Z+fMOa5x3xiKkjzmQkevkSvjUb6f
-         hS1w==
-X-Forwarded-Encrypted: i=1; AJvYcCV13NhjA7j+HMt47ILS41ZV0EQmSYxAv7yX8MF6C6V8GHnAgS3nJNETGxf2hLZq3Ofu6iJ2N0Mh5zDRcNMFeAdt5A7wvEQkSzHVVqOP
-X-Gm-Message-State: AOJu0YzQLCfzr+MkwaGg6pZjeIy+bdMsrmyi4GH6uAXUAefvE1Sn49hh
-	h0cT7HAw0VcwVJ4eAwsAFUMcYaCcGBFsEfIShUpYJcdK8AI1LUGU
-X-Google-Smtp-Source: AGHT+IEeAz2L8j1OqXHF967XCk3dgJbrG6mjXrYWNR/rbBHJ07URdNuyRfgJRE+7TbzEMqu9xmBT3Q==
-X-Received: by 2002:a05:6e02:b27:b0:375:c296:bf90 with SMTP id e9e14a558f8ab-3763f5ab3e4mr253193615ab.7.1719612584769;
-        Fri, 28 Jun 2024 15:09:44 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:9c98:1988:ce15:c0ac])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-708044ad3besm2118314b3a.169.2024.06.28.15.09.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 15:09:44 -0700 (PDT)
-Date: Fri, 28 Jun 2024 15:09:42 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: goodix_berlin - use __free() cleanup in SPI
- transport
-Message-ID: <Zn80pjK3Rv87Pt6P@google.com>
-References: <Zmk1SGwVt3rIbbMU@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sEF9rOIqAFH7t7mcUabqrPGVLFp5wIgIi2zZbol7qWG/UdSafhNP5i/ldVBjlfK5Wk4mAYwegnjLAMSyBlVCOeEOdkMoBg7zOXzGRLNmb/4n5YMV6cWdReM9L6TY7e/MhynONSstqvXA0JUJcPB+/NzOcwUcIh7HwlboIXdx0N0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=URvGmxRW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1BD8C116B1;
+	Fri, 28 Jun 2024 22:12:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719612769;
+	bh=AyisUTH6Ol1mb1jrlE0aMiW6gf83ZXx6hkss3LG5i/A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=URvGmxRWPzOuC2Z1GL011/xd9Zr8GFj7+4PjTus12MhMkaPcgoJabZK7FKyAtvnxL
+	 knElPOgi15X4njF8T++B5ljJJkzH/FUiaXUyOGYCVOIS0gY8U9KOKIv9Qm1y225JNZ
+	 35htzufXm7da+xXZcroUOpkdfOnvreY5oSJZjRoPjutvre9KLXxdVPN5bP1IKQaubV
+	 v9Cr3yPokQR0zo5ycCb9f+yfH4CuHcqSQo/Tlxq5tlJ6icsDB+h/5hk62f5SYDc8X7
+	 7SHStzB2rcJKwemgvPqWoNSUZ/P618druhC0UK04RTJ6+JBQU6T5EDaez33cQt7Hcl
+	 j7SGDlML3bk8g==
+Date: Fri, 28 Jun 2024 16:12:46 -0600
+From: Rob Herring <robh@kernel.org>
+To: Serge Semin <fancer.lancer@gmail.com>
+Cc: Conor Dooley <conor@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Sagar Cheluvegowda <quic_scheluve@quicinc.com>,
+	Abhishek Chauhan <quic_abchauha@quicinc.com>,
+	Andrew Halaney <ahalaney@redhat.com>,
+	Jiawen Wu <jiawenwu@trustnetic.com>,
+	Mengyuan Lou <mengyuanlou@net-swift.com>,
+	Tomer Maimon <tmaimon77@gmail.com>, openbmc@lists.ozlabs.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 06/10] dt-bindings: net: Add Synopsys DW xPCS
+ bindings
+Message-ID: <20240628221246.GA296233-robh@kernel.org>
+References: <20240627004142.8106-1-fancer.lancer@gmail.com>
+ <20240627004142.8106-7-fancer.lancer@gmail.com>
+ <20240627-hurry-gills-19a2496797f3@spud>
+ <e5mqaztxz62b7jktr47mojjrz7ht5m4ou4mqsxtozpp3xba7e4@uh7v5zn2pbn2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,18 +81,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zmk1SGwVt3rIbbMU@google.com>
+In-Reply-To: <e5mqaztxz62b7jktr47mojjrz7ht5m4ou4mqsxtozpp3xba7e4@uh7v5zn2pbn2>
 
-On Tue, Jun 11, 2024 at 10:42:32PM -0700, Dmitry Torokhov wrote:
-> Switch the driver to use __free(kfree) cleanup facility instead of
-> freeing memory by hand.
+On Thu, Jun 27, 2024 at 08:10:48PM +0300, Serge Semin wrote:
+> On Thu, Jun 27, 2024 at 04:51:22PM +0100, Conor Dooley wrote:
+> > On Thu, Jun 27, 2024 at 03:41:26AM +0300, Serge Semin wrote:
+> > > +  clocks:
+> > > +    description:
+> > > +      Both MCI and APB3 interfaces are supposed to be equipped with a clock
+> > > +      source connected via the clk_csr_i line.
+> > > +
+> > > +      PCS/PMA layer can be clocked by an internal reference clock source
+> > > +      (phyN_core_refclk) or by an externally connected (phyN_pad_refclk) clock
+> > > +      generator. Both clocks can be supplied at a time.
+> > > +    minItems: 1
+> > > +    maxItems: 3
+> > > +
+> > > +  clock-names:
+> > > +    oneOf:
+> > > +      - minItems: 1
+> > > +        items:
+> > > +          - enum: [core, pad]
+> > > +          - const: pad
+> > > +      - minItems: 1
+> > > +        items:
+> > > +          - const: pclk
+> > > +          - enum: [core, pad]
+> > > +          - const: pad
+> > 
 > 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> > While reading this, I'm kinda struggling to map "clk_csr_i" to a clock
+> > name. Is that pclk? And why pclk if it is connected to "clk_csr_i"?
+> 
+> Right. It's "pclk". The reason of using the "pclk" name is that it has
+> turned to be a de-facto standard name in the DT-bindings for the
+> peripheral bus clock sources utilized for the CSR-space IO buses.
+> Moreover the STMMAC driver responsible for the parental DW *MAC
+> devices handling also has the "pclk" name utilized for the clk_csr_i
+> signal. So using the "pclk" name in the tightly coupled devices (MAC
+> and PCS) for the same signal seemed a good idea.
 
-Applied since there were no objections.
+It is? That's really just the name of the bus clock for APB (Arm 
+Peripheral Bus). If there's a name that matches the docs, use that. 
+Though I'd drop 'clk_' part.
 
-Thanks.
-
--- 
-Dmitry
+Rob
 
