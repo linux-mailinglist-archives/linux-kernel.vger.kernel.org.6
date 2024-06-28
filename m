@@ -1,142 +1,165 @@
-Return-Path: <linux-kernel+bounces-233687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F110D91BB89
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:34:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0793F91BB84
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:32:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACE00283D4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:34:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40F831C21FD2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:32:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8952A15278C;
-	Fri, 28 Jun 2024 09:34:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F68152E03;
+	Fri, 28 Jun 2024 09:32:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hvkNPBwm"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MWqw/d7m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220022139A8
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 09:34:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92BA14B97E;
+	Fri, 28 Jun 2024 09:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719567248; cv=none; b=ERgtu4aZP1WKd5Xalv/SnvEIn4vQjX0ix4XhHug5em3W+b5DXlzhpHI66rZyHLzVrbgv25ANugQhdtVpKHMDq7dvwIDbxz7A3XnAYdVB/CJJ9dbwbL3vv6m5wORq7q0X5p8lj3nimX9+uU6GIwpn7U7M7eU8XBYKU65/CfhK9eE=
+	t=1719567142; cv=none; b=CzDTffc4X6lCe8D7UYDceIjDPbSoq4RlkVqfPIknKjkHGr7I63EJdf8Uj2lxW4G22wMOvShW3fYxelPWihYz/FP0mu6Ac1LayaFGcNVCZrNR4rtJ1FndNivFJOsesVRw2HJsPqta8AHKNxQZbGGrzU0pJfryHpRyl27MHVTaoRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719567248; c=relaxed/simple;
-	bh=LEVvzNioSQDou1T1dnSAxbhkKOKKKilGUTvJu0AQs5M=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=iV5RJFfTd1nBysSH+l/xDsqyU7WTs/goHT1dTZuYj/0epcvHjjdNHGuKp05Nxeq+P6lYKLPthT7mQ3RuAwRz2Fil1V7TqOmuMVB7rAcWaD2IB5uKtHc+UJ0AiTN99YO6u8AwmjYZLSC3y1WtWI+r1ooigMX4LHLi0J6/aWKlLss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hvkNPBwm; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719567247; x=1751103247;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=LEVvzNioSQDou1T1dnSAxbhkKOKKKilGUTvJu0AQs5M=;
-  b=hvkNPBwmv9svLvZ8PhSbsd6w0Oy4enVR4zLsOC3zmPy+JwVbXEcrqLaq
-   k+6gWOmvPOBL0pt8aWgWRU2dc4U7v2gUKsSGXE2Aw2bWCqV/uMVSnpb/T
-   io4HGygRND2aF2NdopBmCpaA+sGnK9/56YNz70F5W+V44an/YU98iMiwo
-   Wg3gUSSKOBoLAFr6kBBv0Xoq7iQj46zSEeQ26Qd3YHrpKqi/pHbzwhYCr
-   vj4NaWcI4HPtZqCm9zwFa9w+aAEl4acClwz19aZ8OAw9B6cYWfNZ2UFff
-   dmcBjrIsWDvV+uSlqTjrtLE7amz1TXrMyCASNhoH8Z46b/WSebi/C8p0u
-   Q==;
-X-CSE-ConnectionGUID: 8rkc5kebQFOpYz7IeYvCcw==
-X-CSE-MsgGUID: 8bL1FWFoTSK4Vnsr6f4YSw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="27364259"
-X-IronPort-AV: E=Sophos;i="6.09,168,1716274800"; 
-   d="scan'208";a="27364259"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 02:34:07 -0700
-X-CSE-ConnectionGUID: qRsbWrKJR1a+tDtL0TkKLg==
-X-CSE-MsgGUID: e9HS4RXUQpKptKvk9Z+pMw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,168,1716274800"; 
-   d="scan'208";a="49026398"
-Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 02:34:03 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-Cc: Matthew Wilcox <willy@infradead.org>,  Tvrtko Ursulin
- <tursulin@igalia.com>,  linux-mm@kvack.org,  linux-kernel@vger.kernel.org,
-  kernel-dev@igalia.com,  Mel Gorman <mgorman@suse.de>,  Peter Zijlstra
- <peterz@infradead.org>,  Ingo Molnar <mingo@redhat.com>,  Rik van Riel
- <riel@surriel.com>,  Johannes Weiner <hannes@cmpxchg.org>,  Dave Hansen
- <dave.hansen@intel.com>,  Andi Kleen <ak@linux.intel.com>,  Michal Hocko
- <mhocko@suse.com>,  David Rientjes <rientjes@google.com>
-Subject: Re: [PATCH] mm/numa_balancing: Teach mpol_to_str about the
- balancing mode
-In-Reply-To: <22e9cd24-1ed4-4f1d-b7de-b44cefca6009@igalia.com> (Tvrtko
-	Ursulin's message of "Fri, 28 Jun 2024 09:56:05 +0100")
-References: <20240625132605.38428-1-tursulin@igalia.com>
-	<Zn3eBbJ377VeZGcc@casper.infradead.org>
-	<87bk3lpxp1.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<22e9cd24-1ed4-4f1d-b7de-b44cefca6009@igalia.com>
-Date: Fri, 28 Jun 2024 17:32:12 +0800
-Message-ID: <87y16po1k3.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1719567142; c=relaxed/simple;
+	bh=tZ4mnqBxiyX3UIhp44aHn7n1X6SzClOpCAotFkByDYA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TNrGvDdbbjCn12uvL/fbOyj1/pmkZVYt4xDEd3pN1q4D1JKTG7AJeSgf0I3zXi6v3tr2aYsRP1jwgAt2eUS6JBYJxZXUGD4PS748Gr7dB0kYbQNNT1v6FOvq1yU93wu5pNSwl7yjkQcGbkW3AppPSLCED+aseTuHEB+3D21IMQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MWqw/d7m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E96AC32781;
+	Fri, 28 Jun 2024 09:32:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719567142;
+	bh=tZ4mnqBxiyX3UIhp44aHn7n1X6SzClOpCAotFkByDYA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MWqw/d7mONr2rdDnz+55RluFb39+8ksf6cbjudE5jfKJOtZf4P+aMeY8kCeDl/3Yq
+	 XqwFmC4pqL2TSfBLEPG0GXJiL+Guakcb9wN0U59RX7pKpmMiW8LAQtm124j/ltpgXe
+	 tinmMKlOzd8E9vci/XzDGumcZo7DjK0BsyNL3Ae8phoojPdS9bD28TXcXIRQlv4TuB
+	 ysccbjc9tUuNYxHn/FLaa2J3YgIoftEvmNJ0HmAhjM7c5blhm5hT9TXeNLlQdd+XAz
+	 z4MNTUrFRxtcBvhIzouXoCyb7/dCQFiSSoffJStc3Wgna1OKHNproz6Tfh2Jrq1xfo
+	 3p9mdYB6le9WA==
+Message-ID: <88588f06-66e1-47a9-b5ab-7849b1c53fb0@kernel.org>
+Date: Fri, 28 Jun 2024 12:32:17 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] interconnect: qcom: Add MSM8953 driver
+To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, Vladimir Lypak <vladimir.lypak@gmail.com>
+References: <20240627-msm8953-interconnect-v2-0-b4940a8eab69@mainlining.org>
+ <20240627-msm8953-interconnect-v2-2-b4940a8eab69@mainlining.org>
+Content-Language: en-US
+From: Georgi Djakov <djakov@kernel.org>
+In-Reply-To: <20240627-msm8953-interconnect-v2-2-b4940a8eab69@mainlining.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Tvrtko Ursulin <tvrtko.ursulin@igalia.com> writes:
+On 27.06.24 18:08, Barnabás Czémán wrote:
+> From: Vladimir Lypak <vladimir.lypak@gmail.com>
+> 
+> Add driver for interconnect busses found in MSM8953 based platforms.
+> The topology consists of four NoCs that are partially controlled by a
+> RPM processor.
+> 
+> Note that one of NoCs (System NoC) has a counterpart (System NoC MM)
+> that is modelled as child device to avoid resource conflicts, since it
+> uses same MMIO space for configuration.
+> 
+> Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
+> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+> ---
+>   drivers/interconnect/qcom/Kconfig   |    9 +
+>   drivers/interconnect/qcom/Makefile  |    2 +
+>   drivers/interconnect/qcom/msm8953.c | 1325 +++++++++++++++++++++++++++++++++++
+>   3 files changed, 1336 insertions(+)
+> 
+[..]
+> +
+> +static struct qcom_icc_node * const msm8953_pcnoc_nodes[] = {
+> +	[MAS_SPDM] = &mas_spdm,
+> +	[MAS_BLSP_1] = &mas_blsp_1,
+> +	[MAS_BLSP_2] = &mas_blsp_2,
+> +	[MAS_USB3] = &mas_usb3,
+> +	[MAS_CRYPTO] = &mas_crypto,
+> +	[MAS_SDCC_1] = &mas_sdcc_1,
+> +	[MAS_SDCC_2] = &mas_sdcc_2,
+> +	[MAS_SNOC_PCNOC] = &mas_snoc_pcnoc,
+> +	[PCNOC_M_0] = &pcnoc_m_0,
+> +	[PCNOC_M_1] = &pcnoc_m_1,
+> +	[PCNOC_INT_1] = &pcnoc_int_1,
+> +	[PCNOC_INT_2] = &pcnoc_int_2,
+> +	[PCNOC_S_0] = &pcnoc_s_0,
+> +	[PCNOC_S_1] = &pcnoc_s_1,
+> +	[PCNOC_S_2] = &pcnoc_s_2,
+> +	[PCNOC_S_3] = &pcnoc_s_3,
+> +	[PCNOC_S_4] = &pcnoc_s_4,
+> +	[PCNOC_S_6] = &pcnoc_s_6,
+> +	[PCNOC_S_7] = &pcnoc_s_7,
+> +	[PCNOC_S_8] = &pcnoc_s_8,
+> +	[PCNOC_S_9] = &pcnoc_s_9,
+> +	[SLV_SPDM] = &slv_spdm,
+> +	[SLV_PDM] = &slv_pdm,
+> +	[SLV_TCSR] = &slv_tcsr,
+> +	[SLV_SNOC_CFG] = &slv_snoc_cfg,
+> +	[SLV_TLMM] = &slv_tlmm,
+> +	[SLV_MESSAGE_RAM] = &slv_message_ram,
+> +	[SLV_BLSP_1] = &slv_blsp_1,
+> +	[SLV_BLSP_2] = &slv_blsp_2,
+> +	[SLV_PRNG] = &slv_prng,
+> +	[SLV_CAMERA_SS_CFG] = &slv_camera_ss_cfg,
+> +	[SLV_DISP_SS_CFG] = &slv_disp_ss_cfg,
+> +	[SLV_VENUS_CFG] = &slv_venus_cfg,
+> +	[SLV_GPU_CFG] = &slv_gpu_cfg,
+> +	[SLV_SDCC_1] = &slv_sdcc_1,
+> +	[SLV_SDCC_2] = &slv_sdcc_2,
+> +	[SLV_CRYPTO_0_CFG] = &slv_crypto_0_cfg,
+> +	[SLV_PMIC_ARB] = &slv_pmic_arb,
+> +	[SLV_USB3] = &slv_usb3,
+> +	[SLV_IPA_CFG] = &slv_ipa_cfg,
+> +	[SLV_TCU] = &slv_tcu,
+> +	[SLV_PCNOC_SNOC] = &slv_pcnoc_snoc,
+> +};
+> +
+> +static const char * const msm8953_pcnoc_bus_clocks[] = {
+> +	"bus", "bus_a"
+> +};
 
-> On 28/06/2024 04:12, Huang, Ying wrote:
->> Hi, Matthew,
->> Matthew Wilcox <willy@infradead.org> writes:
->> 
->>> On Tue, Jun 25, 2024 at 02:26:05PM +0100, Tvrtko Ursulin wrote:
->>>>   		/*
->>>> -		 * Currently, the only defined flags are mutually exclusive
->>>> +		 * The below two flags are mutually exclusive:
->>>>   		 */
->>>>   		if (flags & MPOL_F_STATIC_NODES)
->>>>   			p += snprintf(p, buffer + maxlen - p, "static");
->>>>   		else if (flags & MPOL_F_RELATIVE_NODES)
->>>>   			p += snprintf(p, buffer + maxlen - p, "relative");
->>>> +
->>>> +		if (flags & MPOL_F_NUMA_BALANCING)
->>>> +			p += snprintf(p, buffer + maxlen - p, "balancing");
->>>>   	}
->>>
->>> So if MPOL_F_STATIC_NODES and MPOL_F_NUMA_BALANCING are set, then we
->>> get a string "staticbalancing"?  Is that intended?
->>>
->>> Or are these three all mutually exclusive and that should have been
->>> as "else if"?
->> Yes, this is an issue!
->
-> Sigh, my apologies. I was sure I tested it as this patch was part of a
-> larger series I have, but then I decided to extract it and send out
-> and the problems obviously go deeper. What I think happened is that I
-> probably only tested the other direction, setting of via
-> mpol_parse_str().
->
-> Andrew please dequeue it if you haven't already?
->
->> Dig the git history, in commit 2291990ab36b ("mempolicy: clean-up
->> mpol-to-str() mempolicy formatting"), the support for multiple flags are
->> removed.  I think that we need to restore it.
->> Done some basic testing.  It was found that when
->> MPOL_F_NUMA_BALANCING
->> is set, /proc/PID/numa_maps always display "default".  That is wrong.
->> This make me think that this patch has never been tested!
->> The "default" displaying is introduced in commit 8790c71a18e5
->> ("mm/mempolicy.c: fix mempolicy printing in numa_maps").  We need to fix
->> it firstly for MPOL_F_NUMA_BALANCING with more accurate filtering.  The
->> fix needs to be backported to -stable kernel.
->
-> Will you work on this or I can follow up if you want?
+This seems to be unused?
 
-Please go forward to work on this, Thanks!
+BR,
+Georgi
 
---
-Best Regards,
-Huang, Ying
+> +
+> +static const char * const msm8953_pcnoc_intf_clocks[] = {
+> +	"pcnoc_usb3_axi"
+> +};
+> +
+> +static const struct regmap_config msm8953_pcnoc_regmap_config = {
+> +	.fast_io = true,
+> +	.max_register = 0x12080,
+> +	.reg_bits = 32,
+> +	.reg_stride = 4,
+> +	.val_bits = 32,
+> +};
+> +
+> +static const struct qcom_icc_desc msm8953_pcnoc = {
+> +	.type = QCOM_ICC_NOC,
+> +	.bus_clk_desc = &bus_0_clk,
+> +	.intf_clocks = msm8953_pcnoc_intf_clocks,
+> +	.num_intf_clocks = ARRAY_SIZE(msm8953_pcnoc_intf_clocks),
+> +	.nodes = msm8953_pcnoc_nodes,
+> +	.num_nodes = ARRAY_SIZE(msm8953_pcnoc_nodes),
+> +	.qos_offset = 0x7000,
+> +	.regmap_cfg = &msm8953_pcnoc_regmap_config,
+> +};
+
 
