@@ -1,99 +1,119 @@
-Return-Path: <linux-kernel+bounces-234441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14DC791C6B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:35:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC4CD91C6B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:35:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E62E1C23C94
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:35:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AAF0B23463
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8E8A7641D;
-	Fri, 28 Jun 2024 19:35:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996AE7603A;
+	Fri, 28 Jun 2024 19:35:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="d3ntJzVJ"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="fkaYtyaT"
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E52757FD;
-	Fri, 28 Jun 2024 19:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A6217580C
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 19:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719603305; cv=none; b=qtOABXOGbyIT71e89HI7GeLBHSHH5kT/+nP7oHy30SYOeMO/6PDYAvzSOqBi3ktW0auOOr/El0OFN9jrhl0cmTthQ6pW2JJlujB5x/jgY/3D5KE/+kCwuH3Kd61CBxCysucV0v2/31VY3C4LaMvhYKqwAPyRpMEuUgrpD8xBGIE=
+	t=1719603331; cv=none; b=cZvztYgv7eP50KzmqFL/q077q5MwgsBDeyFaePaqiDYL1Zuc72eCsu/4XKf/FOtGHY0YRg4mSKI6mlAhd8Y+oIMntAbMCKhkGxyTsCkj0cPIXzuYVAEivF7V6kxpUSGLjKs4WD1a8OmbKGGcwByt1naTT6qR8WOiiFKTswr3lmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719603305; c=relaxed/simple;
-	bh=9ulH12oh7FjjTpOQeU3qE+dupFcYQqE/c3YvYkKKbt0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=btMgXqkJ7ArFggu7LL6YbkApuAbnLuWpYFoDXn2ZfZDk+W821BZFj8q8u6nANRNE2PCifJp8iT7mdeMxvCwXDoQZA3qx1kV/r9baI4I8uKKCufpinKsULvJ6elhkXGKgesWXJGAk2sWiw9EY7UkJxq9vSIrBgvQyhnmp41ZJ9jE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=d3ntJzVJ; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=q3FcIZm77VSDuAoHFtwOeQQ0ovJfkuSbdgulNSGhm1E=; b=d3ntJzVJ7Rd4KgC4LUQXF13MyG
-	k0cT/gQ/9PDM9u7udcY7WE6d6ehlkuAIiT291VU2WPsVTit+H8zVLfr+Iqj513Lf7wXPh+lyYcQYV
-	MNHkxxtpjiusnUbMpycTFvCH5K2LN+5NYXsbfp7pceok7Mqu+MCuS8ek4vqAJACnouADJn7PbdxrJ
-	HuOA7RuTtXvFTXyWUQCMX9yb26UTs/mvw25WGHnZ5QGAI0TwmaDV2TMiUhCZSH3ldr1E6qjkalHGx
-	OCCWmNFEWuM3h4ngVVdZRnUKv6RqK9Y1R8jilbRfuRP4dLiUaS2Yrg7KrQ5t+y/eANdZs+SBnkf+7
-	CQkpzpgw==;
-Received: from [50.53.4.147] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sNHN5-0000000ElPm-1YOE;
-	Fri, 28 Jun 2024 19:34:59 +0000
-Message-ID: <d0d03b08-e21f-4e8a-9a2c-98b9176c9576@infradead.org>
-Date: Fri, 28 Jun 2024 12:34:58 -0700
+	s=arc-20240116; t=1719603331; c=relaxed/simple;
+	bh=V1n0jSVI7xMfEz9FUwuO2gqV3cikEUg92c/eEUOkS50=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=grWbkcSNCtOqXouP5ZLLgPGTPZu8gTPGwW/uWnFQfvQ27Y49qPsSCvY4vLd82z0JA0vPSFtla4aBrWB+mGK2DKgxd4UcVri4RQ19GQNF3k/dlLuUi9GB80h8ij1qbY9eETqDveWlfgyDhCMHl8K/n7IuuH2JbUpy0TRSyY5Wf/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=fkaYtyaT; arc=none smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+	by m0089730.ppops.net (8.18.1.2/8.18.1.2) with ESMTP id 45SICamJ026311
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 12:35:29 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from
+	:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding:content-type; s=s2048-2021-q4; bh=qi5
+	EVzJwLUQs420W6Yudug3rC6S4mmrf0e4GLHSgKKE=; b=fkaYtyaT9TrtHElmWEs
+	sB1HRcQUMdy/QI7L5cZ4Pz7s4h6u3H5l7mNKAtt7JYTqZL7XLltuvE6RTK+hOyeO
+	JXCAfA5vdjCeylEz910qigq/IYHTMf52i8VuFFp6ZHTxx8sP6VUkZsCO0sJ4bdZ5
+	h7U7ySN4qDJSNkNiars8OBZACZ5B+0PTMB1Zme/bF9iNxKWO/aWz0q2hccj3U0Kn
+	+ucUZOVO2BRSrZAruycB5ZIbLZOsaq5g2Mj83xJNTs6unL5pygM/ZrezmrLlN4s1
+	0AZRXz2JcKdmLyT2L+Wuw4gk/36FsHqCOi2eilFYsi5EOaSDDc3w/+gCcUYX2Duz
+	oEw==
+Received: from maileast.thefacebook.com ([163.114.130.16])
+	by m0089730.ppops.net (PPS) with ESMTPS id 4016w2tfkb-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 12:35:28 -0700 (PDT)
+Received: from twshared48820.07.ash9.facebook.com (2620:10d:c0a8:1b::30) by
+ mail.thefacebook.com (2620:10d:c0a9:6f::8fd4) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1544.11; Fri, 28 Jun 2024 19:35:28 +0000
+Received: by devbig638.nha1.facebook.com (Postfix, from userid 544533)
+	id 06CE9FF8D73F; Fri, 28 Jun 2024 12:35:23 -0700 (PDT)
+From: Keith Busch <kbusch@meta.com>
+To: <linux-kernel@vger.kernel.org>, <bhelgaas@google.com>
+CC: Keith Busch <kbusch@kernel.org>, Dan Williams <dan.j.williams@intel.com>
+Subject: [PATCH] PCI: fix recusive device locking
+Date: Fri, 28 Jun 2024 12:35:14 -0700
+Message-ID: <20240628193514.1680137-1-kbusch@meta.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 2/2] docs: media: Debugging guide for the media
- subsystem
-To: Adrian Larumbe <adrian.larumbe@collabora.com>,
- Sebastian Fricke <sebastian.fricke@collabora.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- laurent.pinchart@ideasonboard.com, hverkuil-cisco@xs4all.nl,
- mauro.chehab@linux.intel.com, kernel@collabora.com
-References: <20240529-b4-media_docs_improve-v1-0-9ddb111c4433@collabora.com>
- <20240529-b4-media_docs_improve-v1-2-9ddb111c4433@collabora.com>
- <l5kou3gto442yl4uchmmahbpw53yfmluqyub4oxtlwinxsw3pn@njqimzbp2zmq>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <l5kou3gto442yl4uchmmahbpw53yfmluqyub4oxtlwinxsw3pn@njqimzbp2zmq>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: Z3eZXuiu2luSr_3CfgKIhwBNMBXtQZwH
+X-Proofpoint-GUID: Z3eZXuiu2luSr_3CfgKIhwBNMBXtQZwH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-28_14,2024-06-28_01,2024-05-17_01
 
-Hi,
+From: Keith Busch <kbusch@kernel.org>
 
-On 6/28/24 12:08 PM, Adrian Larumbe wrote:
-> On 29.05.2024 18:22, Sebastian Fricke wrote:
->> Create a guides section for all documentation material, that isn't
->> strictly related to a specific piece of code.
->>
->> Provide a guide for developers on how to debug code with a focus on the
->> media subsystem. This document aims to provide a rough overview over the
->> possibilities and a rational to help choosing the right tool for the
->> given circumstances.
-> Just like you, I'm not an English native speaker myself, so sometimes I make
-> style mistakes that only seem obvious to someone whose native tongue is English.
-> 
-> What I do in the case of documentation patches is running the whole thing
-> through languagetool (https://www.languagetool.org). It's LGPL and I suppose
-> some vim versions might have a plugin that lets you interface with it from
-> within the buffer you're editing. On my side, when running it on the previous
-> paragraph, it showed the following warning:
-> 
-> [ADVISE_VBG[3] premium: false] The verb ‘help’ is used with an infinitive. -> (to choose, choose)
+If one of the bus' devices has subordinates, the recursive call locks
+itself, so no need to lock the device before the recusion or it will
+surely deadlock.
 
-Ack that one. Also in that same sentence, s/rational/rationale/.
+Fixes: dbc5b5c0d268f87 ("PCI: Add missing bridge lock to pci_bus_lock()"
+Cc: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Keith Busch <kbusch@kernel.org>
+---
+ drivers/pci/pci.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
--- 
-~Randy
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 46beaf1815fab..d9f357812b3c5 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -5487,9 +5487,10 @@ static void pci_bus_lock(struct pci_bus *bus)
+=20
+ 	pci_dev_lock(bus->self);
+ 	list_for_each_entry(dev, &bus->devices, bus_list) {
+-		pci_dev_lock(dev);
+ 		if (dev->subordinate)
+ 			pci_bus_lock(dev->subordinate);
++		else
++			pci_dev_lock(dev);
+ 	}
+ }
+=20
+@@ -5501,7 +5502,8 @@ static void pci_bus_unlock(struct pci_bus *bus)
+ 	list_for_each_entry(dev, &bus->devices, bus_list) {
+ 		if (dev->subordinate)
+ 			pci_bus_unlock(dev->subordinate);
+-		pci_dev_unlock(dev);
++		else
++			pci_dev_unlock(dev);
+ 	}
+ 	pci_dev_unlock(bus->self);
+ }
+--=20
+2.43.0
+
 
