@@ -1,357 +1,228 @@
-Return-Path: <linux-kernel+bounces-233361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1DB391B606
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:20:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3977491B615
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:23:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAAE72848C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 05:20:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74DF3B21863
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 05:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C7F46453;
-	Fri, 28 Jun 2024 05:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 759393BBE9;
+	Fri, 28 Jun 2024 05:22:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BxTrCIyh"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bkijMOMO"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08CA544384
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 05:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719552032; cv=none; b=gnRm9/wJYNzaWMqIzFG0ZxlWUsMYvM1NsFaByI8uaTwAWOFrr9EWe3EGfCXo7y574d59fQS8T8aXbUQiTwkvv17JzSdwKJpeKf9p1ynIsuOuKT/Xxm1KDMZLg0p9ND7URelxKiDoGzb7W/y2UYpDz1AspX6W0/9TTYMo4tg2IF8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719552032; c=relaxed/simple;
-	bh=1bGciu1Uk/4GERHUYF3OlGIdZfgztwypx+e0LXmmIIc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pjjlqF9HrHstbbGdSjiIwu+ET3VuPu7gv7uzesM5Kb7Hbl4gKMR5mY6FpMWs988cDeuNwH3Er1jHrmgFsTG8jSAjy1QHh18HVI6tts+p9MVNowkXit7W2PzyzMPzXcB6uRAZ8KPTzBG8e+gLCO5mgp3jKAibz7U8Hy4KcEjZn1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BxTrCIyh; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52cdf579dd2so189232e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 22:20:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719552028; x=1720156828; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mlBuOCd228OEzTi+Lw7sdjUybkFAFwm+zLxjPBpTo+8=;
-        b=BxTrCIyhsQFKWyfJQH7aCDQel/Mcj116qgFC1f0r/0YNOh+lZNwt9clnLjYsuh/hTS
-         bA++35HH2KTksRmaS5dyyhzNhW+e+qt2UX+jSusPXZDZ061x9oJAlleL6CVcO14TQOLj
-         RTkqHA0YD4eOWOju6XTv8FFA+mVqOhdfBCxAqEDJb6HmnZNUn/wQRkvWWP0B41bjMNn4
-         sI+jqOBxs77kzu6KBVNv6KEHhRWw2l332dWz2YJbdZQL/450sidn1OFFsBKCm8fF7sx4
-         3iRYHYuPfm0F1XonWmIoVQTvPNrPB6JHHUS+0o5gVyGkDM8hKL7Oqx78HawlrFxYFO9j
-         KAww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719552028; x=1720156828;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mlBuOCd228OEzTi+Lw7sdjUybkFAFwm+zLxjPBpTo+8=;
-        b=Xql2GlR6CxAgzeiqCSLHsS1g0UbwWJopgxIW0jt7vryBi2x9dONlbsdfEYmIItrifm
-         7EVWMXu4RDnnN3gYltlCT+0/yIIO7eXkLSEkqfc0r+KQhsAqKgiA66ngOVHw6SzvXoP2
-         ihTffvWvEaIo6MlvR0YVGWXOIPwy0LeAI6iRlNchqtF/ZVPcEEBb3U8DqJ0y8W+j0AOO
-         oJgEUS6i6YXhVW7lGEQGvsjo4yyMqx2sZTpxQD8BW6Z1OG8g5tYrJpB7wWN3A3Z6Js49
-         6hsOkUO74404Q7lZBPGRjWymrfHM3JSYppdJ68CyiXVLbSpxNZthDGzYP1YLy9MGSX28
-         VCFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXcXBVqid9IjrqlDQ4Tgho05Mo6JDxYfl0kOOUArS2tGMa6pD833HlQ3kT81+LDv4cBNC0Fc911CGO+J0u/nDgsrZdq4opy76fH6Zvu
-X-Gm-Message-State: AOJu0Yyb4LZDGam8FLqFa8A7wsiwvGtNm5Uvhf5lYx1VuVLHYqq9kDa2
-	60Ij2NHbGUDBcyVI3DDdCjov8K7LvMtZnjhHQUMDCjBTvsLioQ03Pjh91BrlhPw=
-X-Google-Smtp-Source: AGHT+IHdmwUv1L4uOgagl5p7XUPby7N5Y24wsABGjreWma06d+9L1p8cL+OwF8s138CWYo/vGvbJpw==
-X-Received: by 2002:a05:6512:480c:b0:52c:ab88:6340 with SMTP id 2adb3069b0e04-52cdf8261a9mr10051298e87.65.1719552028156;
-        Thu, 27 Jun 2024 22:20:28 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab101c5sm167736e87.79.2024.06.27.22.20.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 22:20:27 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 28 Jun 2024 08:20:23 +0300
-Subject: [PATCH 2/2] clk: qcom: gpucc-*: use qcom_cc_map_norequest
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9880228DBC;
+	Fri, 28 Jun 2024 05:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719552169; cv=fail; b=Q2wK60B4zcxq/4kjPudm1lQW5cL12aIbBHtyzZkDmGu/fPXd1SQNRKl90oK6pMet7pAdvb7eEIL8t6iZjDaVp3UgJxCanPNzkJ7W2sGJk6Iz1JoAqFgkZ3z9tMkhG0BM36o+Vz6NRgQEhCTNcU3xF08k5SceuOKX94fGm3oQ8JI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719552169; c=relaxed/simple;
+	bh=GAzxzGReNQvow2jxI+z3OuaXYsC14uDNHW0vJZBoB3I=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=qzo4liv1UChdyMtiQqY+9GekFVvrjeRhV+XsGnTzYC794UPGBVivzi9LY+n7a7zyPS5cVJPP88IG28YvSXGIGEYxZtY9vx/fI7t3hJCr49hYw+jjZvNZh8fvEXAaJB16z1+aEUoLBsA/W85LT0oWW8L8EQXQXSmUfWlYgx1rkIM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bkijMOMO; arc=fail smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719552168; x=1751088168;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   in-reply-to:mime-version;
+  bh=GAzxzGReNQvow2jxI+z3OuaXYsC14uDNHW0vJZBoB3I=;
+  b=bkijMOMO8rNcDjjE+iCpMrJ4knKgnhAmDMbJ0tqUmh7gC3V3qInoZlpk
+   fK/FC+tLqGMUi+J64gPIkUC0+pdkcPnLPf6QXg6Oqnmas2NLfp28YQHzF
+   EHN2ZJulvi2glQTufeIowU+sBGSmJ92iIZxvG47GWc75vIRYoGPuEMaKU
+   bpGul4xsUoqYsIC2Th2DVJ0QEYpnyzS0+XPQYgNcdzTHM3bK4ugjms2H2
+   oY0zZPg6NkRm3nwEDnHz1IKols1qY+M9ysNFNeP76z9Z7VM8W72M8PvMD
+   Eq8AqLJV5IHkJw54njU6nZbXOSgquE4DREddmk3LBXBTdWjKWnerJmY72
+   w==;
+X-CSE-ConnectionGUID: TpPkYuQdToqhCx4Lm+1Ong==
+X-CSE-MsgGUID: tw0uGN3ER+SqlevvNAFy1w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="27406667"
+X-IronPort-AV: E=Sophos;i="6.09,168,1716274800"; 
+   d="scan'208";a="27406667"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 22:22:47 -0700
+X-CSE-ConnectionGUID: jkmgYU5aStmxr/XVVYnxpw==
+X-CSE-MsgGUID: k9EHsJEbR4OLR4fst95h1w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,168,1716274800"; 
+   d="scan'208";a="75371690"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by orviesa002.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 27 Jun 2024 22:22:46 -0700
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 27 Jun 2024 22:22:46 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 27 Jun 2024 22:22:46 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 27 Jun 2024 22:22:46 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.101)
+ by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 27 Jun 2024 22:22:45 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=PXxqSK/7mQjDEfrVzBwuOmtMMuOiwlr2uOlEHSQmIcT9vJoJfbucMMqYMwtDo/ItEHXBaNa9fFIDAJxDXYk/VKZwodh5WvcHPHVl2KLXfIGBXMTB4Ka6FQbq+7NVZ3BpFkAQzG1AGbmEA5KBsXpe3bPapdBaRAlWqvS2w237sw7gjlJe6bJkeBYV9KIK/Zj8IGhJfgbYE8S2cQ84eR8/vWagfVFe4exX0CfvO+kl8QMKIFiqrAcPmFVKYdqyprZtTIE5kw6ynoCOnDtXJUkpwvnA97FqGmD6dkC3Zb6NUgPE7m5X36vogA4QCbmeDzjOHtAOB4zX1eaIdzG77d8owA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wr9dEe1lZSV2IJYuuY00uY5RAWUYYVky8+yBq7mzUTM=;
+ b=Azm7Jma3jigNBR6XIUPA2mGXUZ2WoblFl8kmSzd25+9v7rVc7aQp2yWTgM4nm8sXbq5PY9C2m8ORT6FqK6YLIZbmVbmumJQt5Gw6gLd8EnOZFLvB0zyMT0MzvHfQ3oiFqRALv4iIo2eebiX0eICG8nVMSTedfE/2HJFM/lYMxqfW5JbwEAW4/QlH86tQftHXRwnu9iAdBC8QBWF5pR1luc7il22onaR7Wwm2LmG0PXUSFunlCOinDuDz9+Oaa7puFwOYoCVeOK3z2+sgU9hMfs2GhdHtPVVgwoxGjKebUT/4bCVtjyw/MIt7J5S3pNH3/uBnHgTUi4cIf1W6LaLqcw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
+ DS0PR11MB8133.namprd11.prod.outlook.com (2603:10b6:8:15b::21) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7698.32; Fri, 28 Jun 2024 05:22:39 +0000
+Received: from DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
+ ([fe80::e971:d8f4:66c4:12ca%6]) with mapi id 15.20.7698.033; Fri, 28 Jun 2024
+ 05:22:39 +0000
+Date: Fri, 28 Jun 2024 13:21:26 +0800
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: "Tian, Kevin" <kevin.tian@intel.com>, "kvm@vger.kernel.org"
+	<kvm@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "alex.williamson@redhat.com"
+	<alex.williamson@redhat.com>, "peterx@redhat.com" <peterx@redhat.com>,
+	"ajones@ventanamicro.com" <ajones@ventanamicro.com>
+Subject: Re: [PATCH] vfio: Reuse file f_inode as vfio device inode
+Message-ID: <Zn5IVqVsM/ehfRbv@yzhao56-desk.sh.intel.com>
+Reply-To: Yan Zhao <yan.y.zhao@intel.com>
+References: <20240617095332.30543-1-yan.y.zhao@intel.com>
+ <20240626133528.GE2494510@nvidia.com>
+ <BN9PR11MB5276407FF3276B2D9C2D85798CD72@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <Zn02BUdJ7kvOg6Vw@yzhao56-desk.sh.intel.com>
+ <20240627124209.GK2494510@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240627124209.GK2494510@nvidia.com>
+X-ClientProxiedBy: SI2PR01CA0022.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:192::14) To DS7PR11MB5966.namprd11.prod.outlook.com
+ (2603:10b6:8:71::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240628-gpucc-no-request-v1-2-b680c2f90817@linaro.org>
-References: <20240628-gpucc-no-request-v1-0-b680c2f90817@linaro.org>
-In-Reply-To: <20240628-gpucc-no-request-v1-0-b680c2f90817@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: Rob Clark <robdclark@gmail.com>, linux-arm-msm@vger.kernel.org, 
- linux-clk@vger.kernel.org, freedreno@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9724;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=1bGciu1Uk/4GERHUYF3OlGIdZfgztwypx+e0LXmmIIc=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmfkgaBW3ISFsbQGMeb/kfZiOArwWQw8Fwqkl/K
- RH5x/vnUG2JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZn5IGgAKCRCLPIo+Aiko
- 1QOYB/9khv9fUYZ27iWVrv3evKiaqXr+DDIJQDuZVl2gqZGyJCumcKKx7+qeB4SZzj1WbpbNWdR
- kwreBfaMxWMVLLMGsRobtgAnANE5kXMt2SsN7qfCGgPk0gfFnFGtgjtyxyBjsL0xLR9yxPWYnV8
- Ryds0kkGOt9DGxstVs9Cg0Pr5dHqoR7IyzT2AyItMU+YocHyQU/eLniw8S1zRpLzfHBh8KhBIvq
- IbbfjS3HUjbVfSjorzyqE0/K+k33asbJ49MLo6zEMe96fTCz74zvyaRzAHC/gQvog2pVDeKBNq7
- oV43fb2d33itTvNPjX5m/cscIrcmcb31t8K5Ubkat3wLWwB0
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|DS0PR11MB8133:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8e915b71-afb9-45e4-5cc0-08dc973253cf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?iCMcP2nlql6MDljcDCWoF5Ee7L0wmII7yOJYCLtbXBKnkz+1y0c7nsh3vIfJ?=
+ =?us-ascii?Q?RhUPeyMbEGo12p5CDvvyr/yGlT8G1dVMnrWLthgccIRCmCN6U+5vaH84+Ykh?=
+ =?us-ascii?Q?Hn/793pjKWxLvCEFVjxOShmGzWBkrKi3THrUYgjeedYACeV8lU6Q3tsMi5OQ?=
+ =?us-ascii?Q?TRHxG4jN1brVlADqWbiPC6SWSL0TP4nI0dP2xbzqlYLw5NbkFbm5MLs0f+dr?=
+ =?us-ascii?Q?K/mGd06x8+PvWy7SOwFZATv69QvtvikWyelOZqXZdX3Xysr46TzFTf4rvQao?=
+ =?us-ascii?Q?564sIhbpBduqOkgV3rlYEKxxBjhryaUprDAZ+3vZzyHvt4UAfMTYIlaKBn4c?=
+ =?us-ascii?Q?fjH259G8GPFWfQd2eSq5MQzUG7qnoWiQxwdBvbDkhiOoTOyWgetOe7r9kUpy?=
+ =?us-ascii?Q?OnBYIjlhTcTUHA9Y6L6/d8r/dUTeMKfh60QdP9NLdr9WB0haiUB8+x8aiJUo?=
+ =?us-ascii?Q?WlBypaCnPyQH8pw/aEtd6dAuJzbLqLoJu2IwE8Xq085xLecOovuA7NFM4HzA?=
+ =?us-ascii?Q?hm4XBZdzzVH5GLeCQVO3uePBwdB87cgZPT57FCrbVRvnhYGHSYpmVxaxXv1J?=
+ =?us-ascii?Q?yjYkQs2beXrJXhx4FxYozhNDSqBTU/RvZw8RIR6ro0DthM2Ajm1yWI6/W4l0?=
+ =?us-ascii?Q?BaLEtDajqqwzDpEr5rBVyWbj7/4nlX9fkjozhOZCF9zYiM9IeMvhSkw2q9QG?=
+ =?us-ascii?Q?eAx+sTDvsmyXPdH4liUhKhkm579I2+6YldcSbdn6mqFojGD5yj+zKNWdHr0Y?=
+ =?us-ascii?Q?bKkMvBVki0+1dncbAdXXU1HCcg9nQwwEP0GHOdEpB6octdrzIMwIfSjGx6TO?=
+ =?us-ascii?Q?Um+1p4N0IoXfs8MOdapvpakIK8XTjsf87Kq0rrlN7iPyVLob+wofaxRtXqzA?=
+ =?us-ascii?Q?RotqFNlsebGHfEAcwex/Ijtdgprh3EpHCYVn8/iHaO9ygjcudlIK0/OwiWG4?=
+ =?us-ascii?Q?xuI6oyknbofJxrhfJCLeW755BDnaHkqQF8Qk+Agf8T5DnXuXetJdsKgzL3gm?=
+ =?us-ascii?Q?c4ac6QYbKPUAlmsAD0LEQp+stQHXrCzaGzlzPBi2Tmd2pUQShhxpdkUdc4Cc?=
+ =?us-ascii?Q?F8+nnMRmJ3cX9+xLaQ23tlR+Inz69RbVC0ewcOe6feRLIA+7cyLj1xu7oee5?=
+ =?us-ascii?Q?xa9ijpLTvB7by9B3RhwtbezxHeW5mmGHiPq4E4l8Q9j3ZIOtZcDg6LpCCSQg?=
+ =?us-ascii?Q?ocPUrhLLBZojvxhRGp2NslCuBJK6DbmBXVBjvM9l6k8sDGn8DOr4zGuwlUDr?=
+ =?us-ascii?Q?ZPZPYrFRPhVgaI1WLzBDKrqym56wOhkwMbqYaOEBGiUNbsXE7ZpLcwIUPzD8?=
+ =?us-ascii?Q?sxIxI5OkwelIVgBuQeHJn8LV14Rr0/F+Nj6IbJTmuJq7DQ=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?rhxh1NX4dv8zlU1N+F3oXSnICK772VcAcA6hQH3n7r0i2bLJcM9hqivnbHMU?=
+ =?us-ascii?Q?we7NSVv6LlskVDaMch3kkJaAUK0Isgbdt+qbwGLlkHr9DEpTN5FSI9dt4udD?=
+ =?us-ascii?Q?Np/T0zXybJzhJ050Wvz+1edoPrghCJcz3LvxQ+csV8TbK5cYgIZ1TiAftqWY?=
+ =?us-ascii?Q?Pvl80QGz8N13fmfdaH2qR6r6GPRQhG5XJUPowZxIpaLt1kjzkybHhJnzROeo?=
+ =?us-ascii?Q?N2NiLX2ewhR2F6z9jBPExniV1K+jjoEPG41ljrE4x3jWhSqu7kwS7dD6FAgH?=
+ =?us-ascii?Q?3A+8OcTPgOuMvB16oLdnSEU1mFT3+xDlTMIcD3oDr/fiMEyUcifN3iU5Ezj7?=
+ =?us-ascii?Q?D8OoKnXJjaEG1LJBFScUeibYMCrDHSVjgGYSwu+Wjlx+MjAVP5ROQqKIIoo7?=
+ =?us-ascii?Q?zOABDxruh4IKz/fqcqXcyS7SAfIMeHf8fhh0y/YWSZ6O38Rgp3o8CBWIQe2Y?=
+ =?us-ascii?Q?8uydoD4rIHPrL/2SDCMjgVQdrdrbgZadcbQ30+7a7Uk9HS7qbhQ0rHoiCm2t?=
+ =?us-ascii?Q?m5TYnn8AGuklBUXN2+WlLrmto97B+AbxzH13lB/iUnXD4zAz5AOwCd697316?=
+ =?us-ascii?Q?4RHgAX63wDhMuOH0dtwF/rj2zN9cGb+Q/hj1w+6epOFWYJB0W2YhfQpUR8k4?=
+ =?us-ascii?Q?MCeSWfBVrdSwNbJ1IPCAJ5PD170VsRbyydL1h5s2Z/jGXov0Sb8QEeWV9YfG?=
+ =?us-ascii?Q?b/6PmbnE8ME7V6mXw1iWZBCRWII3TkIb2y0bLtoskkrd2MAvquKQL7LWUliw?=
+ =?us-ascii?Q?KzhNLfnAlKVWs+MNdeNaeBQlkhkD67J9pQdYUzXuHABD2K5IiybKBUGv8hwp?=
+ =?us-ascii?Q?YVbadvfR59C73j9I1Cq7fQwVwaNcJJl+ztxoKDigYR4wpgSktjMQk4+5qvMy?=
+ =?us-ascii?Q?eK2gW1GKyHCFnR5uAqQGySHy7jVo8fVAK9J7GfPY3JdgF3IUqVa/a54ZGLy+?=
+ =?us-ascii?Q?3rJ56XUrIcecVC3anlul7TxTmr9C5mQf2lTJlJ1jzGGqyGtJXVG3wFLmiJ/5?=
+ =?us-ascii?Q?qP5J6TPA7iblCP9iP6H1qOY6Hod37l9oNlADKFBYywjMA0ASzaeTrihEkOEV?=
+ =?us-ascii?Q?3dIYOgkWux3k8UTJTwF7OVlO+dwY0d0QeoEpLihC6+yktSzPRBTrLM7xJvUg?=
+ =?us-ascii?Q?C9QMBcVf6rlTXdem9wj72WsoyN8Y6qR1HU+Hs8sMptkSWkPzb+BXtfEoE7aY?=
+ =?us-ascii?Q?Mtdp/dLQunNLls3yqRrk29ifTeGgxnqke5hwOHs4fdBKNteLdxnDZKHTcdRu?=
+ =?us-ascii?Q?F73FuHCe/C8cSkPd3bn2ONHOLMfD8KWVu6aUkjhbrF2wAnhxnt/l6K+evFA5?=
+ =?us-ascii?Q?PQH2H9ppNcRc+1RAXpqq6nKxCzqW5apTORAM8ahRUbPkBvA/oFmCkhZolVIm?=
+ =?us-ascii?Q?LiEhFWO/IYn2UHWIifSWJ7tBMEtllgZ4NzQMNp37jFyTKE9QapFaZY/pLDVX?=
+ =?us-ascii?Q?74E/6Fqr7FbNqE9XbR8G0h4gCNjg+vizqvBNkOIv/QEIYRVI653TW3YWSkG4?=
+ =?us-ascii?Q?7uYlMheM2WRS00HZQuj6SOV3B91RaRH5Qmo3TmGwsuyOjWtMECCnyj3nsZ4U?=
+ =?us-ascii?Q?HWlxeRSispAebAX64/qsMtd/2PibSqfPyxP9Ce5G?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e915b71-afb9-45e4-5cc0-08dc973253cf
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jun 2024 05:22:39.1237
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: l3XAsECCRXn/VbZ6/YB7BMJmGbu3Myn9u1v5JcIHoSfRJ8tODd+hFARYOdXQAe4VzxVwWaFyfL0JTmfbd8jQ9g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB8133
+X-OriginatorOrg: intel.com
 
-On most of the Qualcomm platforms GPU clock controller registers are
-located inside the GMU's register space. By using qcom_cc_map() gpucc
-drivers mark the region as used, prevening GMU driver from claiming the
-bigger region.
+On Thu, Jun 27, 2024 at 09:42:09AM -0300, Jason Gunthorpe wrote:
+> On Thu, Jun 27, 2024 at 05:51:01PM +0800, Yan Zhao wrote:
+> 
+> > > > > This doesn't seem right.. There is only one device but multiple file
+> > > > > can be opened on that device.
+> > Maybe we can put this assignment to vfio_df_ioctl_bind_iommufd() after
+> > vfio_df_open() makes sure device->open_count is 1.
+> 
+> Yeah, that seems better.
+> 
+> Logically it would be best if all places set the inode once the
+> inode/FD has been made to be the one and only way to access it.
+For group path, I'm afraid there's no such a place ensuring only one active fd
+in kernel.
+I tried modifying QEMU to allow two openings and two assignments of the same
+device. It works and appears to guest that there were 2 devices, though this
+ultimately leads to device malfunctions in guest.
 
-Make affected GPU clock controller drivers use qcom_cc_map_norequest(),
-allowing GMU driver to use devm_ioremap_resource().
+> > BTW, in group path, what's the benefit of allowing multiple open of device?
+> 
+> I don't know, the thing that opened the first FD can just dup it, no
+> idea why two different FDs would be useful. It is something we removed
+> in the cdev flow
+>
+Thanks. However, from the code, it reads like a drawback of the cdev flow :)
+I don't understand why the group path is secure though.
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/clk/qcom/gpucc-qcm2290.c  | 2 +-
- drivers/clk/qcom/gpucc-sa8775p.c  | 2 +-
- drivers/clk/qcom/gpucc-sc7180.c   | 2 +-
- drivers/clk/qcom/gpucc-sc7280.c   | 2 +-
- drivers/clk/qcom/gpucc-sc8280xp.c | 2 +-
- drivers/clk/qcom/gpucc-sdm845.c   | 2 +-
- drivers/clk/qcom/gpucc-sm6115.c   | 2 +-
- drivers/clk/qcom/gpucc-sm6125.c   | 2 +-
- drivers/clk/qcom/gpucc-sm6350.c   | 2 +-
- drivers/clk/qcom/gpucc-sm6375.c   | 2 +-
- drivers/clk/qcom/gpucc-sm8150.c   | 2 +-
- drivers/clk/qcom/gpucc-sm8250.c   | 2 +-
- drivers/clk/qcom/gpucc-sm8350.c   | 2 +-
- drivers/clk/qcom/gpucc-sm8450.c   | 2 +-
- drivers/clk/qcom/gpucc-sm8550.c   | 2 +-
- drivers/clk/qcom/gpucc-sm8650.c   | 2 +-
- drivers/clk/qcom/gpucc-x1e80100.c | 2 +-
- 17 files changed, 17 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/clk/qcom/gpucc-qcm2290.c b/drivers/clk/qcom/gpucc-qcm2290.c
-index dc369dff882e..2a886b3d6ab4 100644
---- a/drivers/clk/qcom/gpucc-qcm2290.c
-+++ b/drivers/clk/qcom/gpucc-qcm2290.c
-@@ -372,7 +372,7 @@ static int gpu_cc_qcm2290_probe(struct platform_device *pdev)
- 	struct regmap *regmap;
- 	int ret;
- 
--	regmap = qcom_cc_map(pdev, &gpu_cc_qcm2290_desc);
-+	regmap = qcom_cc_map_norequest(pdev, &gpu_cc_qcm2290_desc);
- 	if (IS_ERR(regmap))
- 		return PTR_ERR(regmap);
- 
-diff --git a/drivers/clk/qcom/gpucc-sa8775p.c b/drivers/clk/qcom/gpucc-sa8775p.c
-index f8a8ac343d70..312b45e6fc29 100644
---- a/drivers/clk/qcom/gpucc-sa8775p.c
-+++ b/drivers/clk/qcom/gpucc-sa8775p.c
-@@ -592,7 +592,7 @@ static int gpu_cc_sa8775p_probe(struct platform_device *pdev)
- {
- 	struct regmap *regmap;
- 
--	regmap = qcom_cc_map(pdev, &gpu_cc_sa8775p_desc);
-+	regmap = qcom_cc_map_norequest(pdev, &gpu_cc_sa8775p_desc);
- 	if (IS_ERR(regmap))
- 		return PTR_ERR(regmap);
- 
-diff --git a/drivers/clk/qcom/gpucc-sc7180.c b/drivers/clk/qcom/gpucc-sc7180.c
-index 08f3983d016f..03480a2fa78c 100644
---- a/drivers/clk/qcom/gpucc-sc7180.c
-+++ b/drivers/clk/qcom/gpucc-sc7180.c
-@@ -220,7 +220,7 @@ static int gpu_cc_sc7180_probe(struct platform_device *pdev)
- 	struct alpha_pll_config gpu_cc_pll_config = {};
- 	unsigned int value, mask;
- 
--	regmap = qcom_cc_map(pdev, &gpu_cc_sc7180_desc);
-+	regmap = qcom_cc_map_norequest(pdev, &gpu_cc_sc7180_desc);
- 	if (IS_ERR(regmap))
- 		return PTR_ERR(regmap);
- 
-diff --git a/drivers/clk/qcom/gpucc-sc7280.c b/drivers/clk/qcom/gpucc-sc7280.c
-index bd699a624517..86f89fbb4aec 100644
---- a/drivers/clk/qcom/gpucc-sc7280.c
-+++ b/drivers/clk/qcom/gpucc-sc7280.c
-@@ -458,7 +458,7 @@ static int gpu_cc_sc7280_probe(struct platform_device *pdev)
- {
- 	struct regmap *regmap;
- 
--	regmap = qcom_cc_map(pdev, &gpu_cc_sc7280_desc);
-+	regmap = qcom_cc_map_norequest(pdev, &gpu_cc_sc7280_desc);
- 	if (IS_ERR(regmap))
- 		return PTR_ERR(regmap);
- 
-diff --git a/drivers/clk/qcom/gpucc-sc8280xp.c b/drivers/clk/qcom/gpucc-sc8280xp.c
-index c96be61e3f47..519940dc99eb 100644
---- a/drivers/clk/qcom/gpucc-sc8280xp.c
-+++ b/drivers/clk/qcom/gpucc-sc8280xp.c
-@@ -436,7 +436,7 @@ static int gpu_cc_sc8280xp_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	regmap = qcom_cc_map(pdev, &gpu_cc_sc8280xp_desc);
-+	regmap = qcom_cc_map_norequest(pdev, &gpu_cc_sc8280xp_desc);
- 	if (IS_ERR(regmap)) {
- 		pm_runtime_put(&pdev->dev);
- 		return PTR_ERR(regmap);
-diff --git a/drivers/clk/qcom/gpucc-sdm845.c b/drivers/clk/qcom/gpucc-sdm845.c
-index ef26690cf504..b78f8b632601 100644
---- a/drivers/clk/qcom/gpucc-sdm845.c
-+++ b/drivers/clk/qcom/gpucc-sdm845.c
-@@ -177,7 +177,7 @@ static int gpu_cc_sdm845_probe(struct platform_device *pdev)
- 	struct regmap *regmap;
- 	unsigned int value, mask;
- 
--	regmap = qcom_cc_map(pdev, &gpu_cc_sdm845_desc);
-+	regmap = qcom_cc_map_norequest(pdev, &gpu_cc_sdm845_desc);
- 	if (IS_ERR(regmap))
- 		return PTR_ERR(regmap);
- 
-diff --git a/drivers/clk/qcom/gpucc-sm6115.c b/drivers/clk/qcom/gpucc-sm6115.c
-index d43c86cf73a5..ab3e33fbe401 100644
---- a/drivers/clk/qcom/gpucc-sm6115.c
-+++ b/drivers/clk/qcom/gpucc-sm6115.c
-@@ -474,7 +474,7 @@ static int gpu_cc_sm6115_probe(struct platform_device *pdev)
- {
- 	struct regmap *regmap;
- 
--	regmap = qcom_cc_map(pdev, &gpu_cc_sm6115_desc);
-+	regmap = qcom_cc_map_norequest(pdev, &gpu_cc_sm6115_desc);
- 	if (IS_ERR(regmap))
- 		return PTR_ERR(regmap);
- 
-diff --git a/drivers/clk/qcom/gpucc-sm6125.c b/drivers/clk/qcom/gpucc-sm6125.c
-index ed6a6e505801..14dc75b3771a 100644
---- a/drivers/clk/qcom/gpucc-sm6125.c
-+++ b/drivers/clk/qcom/gpucc-sm6125.c
-@@ -395,7 +395,7 @@ static int gpu_cc_sm6125_probe(struct platform_device *pdev)
- {
- 	struct regmap *regmap;
- 
--	regmap = qcom_cc_map(pdev, &gpu_cc_sm6125_desc);
-+	regmap = qcom_cc_map_norequest(pdev, &gpu_cc_sm6125_desc);
- 	if (IS_ERR(regmap))
- 		return PTR_ERR(regmap);
- 
-diff --git a/drivers/clk/qcom/gpucc-sm6350.c b/drivers/clk/qcom/gpucc-sm6350.c
-index 1e12ad8948db..f0a6a6fb693f 100644
---- a/drivers/clk/qcom/gpucc-sm6350.c
-+++ b/drivers/clk/qcom/gpucc-sm6350.c
-@@ -489,7 +489,7 @@ static int gpu_cc_sm6350_probe(struct platform_device *pdev)
- 	struct regmap *regmap;
- 	unsigned int value, mask;
- 
--	regmap = qcom_cc_map(pdev, &gpu_cc_sm6350_desc);
-+	regmap = qcom_cc_map_norequest(pdev, &gpu_cc_sm6350_desc);
- 	if (IS_ERR(regmap))
- 		return PTR_ERR(regmap);
- 
-diff --git a/drivers/clk/qcom/gpucc-sm6375.c b/drivers/clk/qcom/gpucc-sm6375.c
-index 41f59024143e..4ec7399f8fc4 100644
---- a/drivers/clk/qcom/gpucc-sm6375.c
-+++ b/drivers/clk/qcom/gpucc-sm6375.c
-@@ -446,7 +446,7 @@ static int gpucc_sm6375_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	regmap = qcom_cc_map(pdev, &gpucc_sm6375_desc);
-+	regmap = qcom_cc_map_norequest(pdev, &gpucc_sm6375_desc);
- 	if (IS_ERR(regmap)) {
- 		pm_runtime_put(&pdev->dev);
- 		return PTR_ERR(regmap);
-diff --git a/drivers/clk/qcom/gpucc-sm8150.c b/drivers/clk/qcom/gpucc-sm8150.c
-index d711464a71b6..b01531ca13d9 100644
---- a/drivers/clk/qcom/gpucc-sm8150.c
-+++ b/drivers/clk/qcom/gpucc-sm8150.c
-@@ -295,7 +295,7 @@ static int gpu_cc_sm8150_probe(struct platform_device *pdev)
- {
- 	struct regmap *regmap;
- 
--	regmap = qcom_cc_map(pdev, &gpu_cc_sm8150_desc);
-+	regmap = qcom_cc_map_norequest(pdev, &gpu_cc_sm8150_desc);
- 	if (IS_ERR(regmap))
- 		return PTR_ERR(regmap);
- 
-diff --git a/drivers/clk/qcom/gpucc-sm8250.c b/drivers/clk/qcom/gpucc-sm8250.c
-index 113b486a6d2f..ded2faff96ce 100644
---- a/drivers/clk/qcom/gpucc-sm8250.c
-+++ b/drivers/clk/qcom/gpucc-sm8250.c
-@@ -305,7 +305,7 @@ static int gpu_cc_sm8250_probe(struct platform_device *pdev)
- 	struct regmap *regmap;
- 	unsigned int value, mask;
- 
--	regmap = qcom_cc_map(pdev, &gpu_cc_sm8250_desc);
-+	regmap = qcom_cc_map_norequest_norequest(pdev, &gpu_cc_sm8250_desc);
- 	if (IS_ERR(regmap))
- 		return PTR_ERR(regmap);
- 
-diff --git a/drivers/clk/qcom/gpucc-sm8350.c b/drivers/clk/qcom/gpucc-sm8350.c
-index f3b6bdc24485..c11ba4c5f254 100644
---- a/drivers/clk/qcom/gpucc-sm8350.c
-+++ b/drivers/clk/qcom/gpucc-sm8350.c
-@@ -596,7 +596,7 @@ static int gpu_cc_sm8350_probe(struct platform_device *pdev)
- {
- 	struct regmap *regmap;
- 
--	regmap = qcom_cc_map(pdev, &gpu_cc_sm8350_desc);
-+	regmap = qcom_cc_map_norequest(pdev, &gpu_cc_sm8350_desc);
- 	if (IS_ERR(regmap)) {
- 		dev_err(&pdev->dev, "Failed to map gpu cc registers\n");
- 		return PTR_ERR(regmap);
-diff --git a/drivers/clk/qcom/gpucc-sm8450.c b/drivers/clk/qcom/gpucc-sm8450.c
-index b3c5d6923cd2..34c709baeefa 100644
---- a/drivers/clk/qcom/gpucc-sm8450.c
-+++ b/drivers/clk/qcom/gpucc-sm8450.c
-@@ -744,7 +744,7 @@ static int gpu_cc_sm8450_probe(struct platform_device *pdev)
- {
- 	struct regmap *regmap;
- 
--	regmap = qcom_cc_map(pdev, &gpu_cc_sm8450_desc);
-+	regmap = qcom_cc_map_norequest(pdev, &gpu_cc_sm8450_desc);
- 	if (IS_ERR(regmap))
- 		return PTR_ERR(regmap);
- 
-diff --git a/drivers/clk/qcom/gpucc-sm8550.c b/drivers/clk/qcom/gpucc-sm8550.c
-index 7486edf56160..e77c287604e6 100644
---- a/drivers/clk/qcom/gpucc-sm8550.c
-+++ b/drivers/clk/qcom/gpucc-sm8550.c
-@@ -568,7 +568,7 @@ static int gpu_cc_sm8550_probe(struct platform_device *pdev)
- {
- 	struct regmap *regmap;
- 
--	regmap = qcom_cc_map(pdev, &gpu_cc_sm8550_desc);
-+	regmap = qcom_cc_map_norequest(pdev, &gpu_cc_sm8550_desc);
- 	if (IS_ERR(regmap))
- 		return PTR_ERR(regmap);
- 
-diff --git a/drivers/clk/qcom/gpucc-sm8650.c b/drivers/clk/qcom/gpucc-sm8650.c
-index f15aeecc512d..f7370ec3bac2 100644
---- a/drivers/clk/qcom/gpucc-sm8650.c
-+++ b/drivers/clk/qcom/gpucc-sm8650.c
-@@ -640,7 +640,7 @@ static int gpu_cc_sm8650_probe(struct platform_device *pdev)
- {
- 	struct regmap *regmap;
- 
--	regmap = qcom_cc_map(pdev, &gpu_cc_sm8650_desc);
-+	regmap = qcom_cc_map_norequest(pdev, &gpu_cc_sm8650_desc);
- 	if (IS_ERR(regmap))
- 		return PTR_ERR(regmap);
- 
-diff --git a/drivers/clk/qcom/gpucc-x1e80100.c b/drivers/clk/qcom/gpucc-x1e80100.c
-index 2eec20dd0254..e583a4a96629 100644
---- a/drivers/clk/qcom/gpucc-x1e80100.c
-+++ b/drivers/clk/qcom/gpucc-x1e80100.c
-@@ -630,7 +630,7 @@ static int gpu_cc_x1e80100_probe(struct platform_device *pdev)
- {
- 	struct regmap *regmap;
- 
--	regmap = qcom_cc_map(pdev, &gpu_cc_x1e80100_desc);
-+	regmap = qcom_cc_map_norequest(pdev, &gpu_cc_x1e80100_desc);
- 	if (IS_ERR(regmap))
- 		return PTR_ERR(regmap);
- 
-
--- 
-2.39.2
+        /*
+         * Only the group path allows the device to be opened multiple
+         * times.  The device cdev path doesn't have a secure way for it.
+         */
+        if (device->open_count != 0 && !df->group)
+                return -EINVAL;
 
 
