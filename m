@@ -1,61 +1,64 @@
-Return-Path: <linux-kernel+bounces-234018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3628991C0F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:29:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 549F691C0F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:29:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93384B242C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:29:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10243282805
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:29:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1551C0061;
-	Fri, 28 Jun 2024 14:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E527A1C0053;
+	Fri, 28 Jun 2024 14:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mu02ujgO"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="a2QxQOJQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3977B1BE85C;
-	Fri, 28 Jun 2024 14:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316F11BE843;
+	Fri, 28 Jun 2024 14:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719584933; cv=none; b=fMOKTTWqQ2Q+Sc1MxRMTMxSS1nT4IhU9eHGbNfmS55UcGiP8nDqDGE3t/5brYRXycmqOpE8/+/DIK0LEeSTT4jYao5U8uHmVXgnLs7ts8SsgSebxeHU1M1fJXWwk/45FaDkM6g+ilBZ3yYp3AB4rLWfF13Bvd7bDX8U9kzxhUZQ=
+	t=1719584982; cv=none; b=kBnEBvxOS1IKJvx7vLil7XQ6XC64wXjTRA1uWWtCbqK1k1KHQiuNI7cedztUpU2iK1+HgdXeEfjXO3HTM8uGcID3bhdhrOTVIA7CeUJRmk7pqhroAgbt7NxgUG8AGienc728nJ3QR4pIeeBT4Nvt3JyWg/2DRMoBK3TiB5jyta8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719584933; c=relaxed/simple;
-	bh=o0+FtQLeO2U5JLYoyvwKKH3oaXIVFsGVeZboLFjghKU=;
+	s=arc-20240116; t=1719584982; c=relaxed/simple;
+	bh=kL2tETLKqVwjJYlaNcjDteqOWD5Jwtaof/gDNuH6kGA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fFrsI95RPmny82m+pSew7fuIxTuKLJbp5Ooc26ici/vUUe0JxN1aAay3EwhB/Q/XasMe1rHA1AiBgmj51aZe7Q6+asYWS6AgBRTIbgBUG0h6KUFBNvtddVrcGi4XiFHhlzP+cv2tTZoJif3hjB0nCRkjyOr9ts7gHi3KEaO2bjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mu02ujgO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88819C2BBFC;
-	Fri, 28 Jun 2024 14:28:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719584932;
-	bh=o0+FtQLeO2U5JLYoyvwKKH3oaXIVFsGVeZboLFjghKU=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZJO4xW/fnMpA/s1XpRtoI+wmL1ypi5hRvOiEGR3CEY2YUxJO+jxfGga1agKg+syBx+CQP18F7V9ZieJVZ8QUtVa0vQ2HrvgEdttiuaBpGnWfGF1yiHIzXkgoP65Oqx9mOj8J4K6tqAQbsjWgbnJnFhOhqAquqR2NoU1BA5FRq+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=a2QxQOJQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB426C116B1;
+	Fri, 28 Jun 2024 14:29:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1719584981;
+	bh=kL2tETLKqVwjJYlaNcjDteqOWD5Jwtaof/gDNuH6kGA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Mu02ujgOzG9d5fUcolSqf5bxAVmHpy6dZ5S0T1uPrLfBOtg+yFHwB1KaAEXkSU0du
-	 ctkaxwqC33ETdkMU7jSNbMxGH6RlrziiewF4YsEeAEw+LdZsxL+wJjwr2ytlKXy2OZ
-	 ++pQM0IhzEZiGHdhxu9PyOgNp/nqx7pqmayHI+8wVHrQfUoklJ7PvpR6vCxHkYv8c6
-	 Iey0vKm6hMA4DQlJglfC/kXE858Gf6bDLglvno17PsdAK/kmUab+Ru+U8A+csxDGlH
-	 qJPK0FBxbSMd34ubrREIzzhHz8CV44rJe4P6QLrUBTsZQH1/S9gFfhwqs3QUahdmWO
-	 sqkqgQ3VzAzJQ==
-Date: Fri, 28 Jun 2024 15:28:47 +0100
-From: Lee Jones <lee@kernel.org>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-	William Breathitt Gray <wbg@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-pwm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Thorsten Scherer <T.Scherer@eckelmann.de>
-Subject: [GIT PULL] Immutable branch between MFD and Counter due for the
- v5.11 merge window
-Message-ID: <20240628142847.GN2532839@google.com>
-References: <cover.1718791090.git.u.kleine-koenig@baylibre.com>
- <20240626151343.GA2504017@google.com>
+	b=a2QxQOJQyiXjljP25DKWOu9KP3a0BdNyi92/nJyUyCRfueo0an168oQTibnWq74EJ
+	 EABYn40fg1u0GnZ9Z7I7m7bRuxFhQGNhX9alAZesPa0UCBglnQU5bXtBgcHrtjniCP
+	 qGxFYZ7lfkh6BQO74YXihP6Aa0PQaxMN83Mu6LoI=
+Date: Fri, 28 Jun 2024 10:29:37 -0400
+From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: Atish Kumar Patra <atishp@rivosinc.com>, 
+	Samuel Holland <samuel.holland@sifive.com>, linux-riscv@lists.infradead.org, kvm-riscv@lists.infradead.org, 
+	Atish Patra <atishp@atishpatra.org>, Anup Patel <anup@brainfault.org>, Will Deacon <will@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Andrew Jones <ajones@ventanamicro.com>, 
+	Conor Dooley <conor.dooley@microchip.com>, Palmer Dabbelt <palmer@rivosinc.com>, 
+	Alexandre Ghiti <alexghiti@rivosinc.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] drivers/perf: riscv: Reset the counter to
+ hpmevent mapping while starting cpus
+Message-ID: <20240628-quantum-sophisticated-ferret-5eaec4@lemur>
+References: <20240626-misc_perf_fixes-v3-0-de3f8ed88dab@rivosinc.com>
+ <20240626-misc_perf_fixes-v3-2-de3f8ed88dab@rivosinc.com>
+ <96ff4dd2-db66-4653-80e9-97d4f1381581@sifive.com>
+ <CAHBxVyHx9hTRPosizV_yn6DUZi-MTNTrAbJdkV3049D-qsDHcw@mail.gmail.com>
+ <20240626-eraser-unselect-99e68a1f5a3e@spud>
+ <20240626-spyglass-clutter-4ff4d7b26dd4@spud>
+ <CAHBxVyEg2uKKdikXib77JDmCKs8qDGJHvj3stsFgCgO0U9omRg@mail.gmail.com>
+ <20240626-pedigree-retype-dd7f1e54ac2b@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,37 +67,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240626151343.GA2504017@google.com>
+In-Reply-To: <20240626-pedigree-retype-dd7f1e54ac2b@spud>
 
-Enjoy!
+On Wed, Jun 26, 2024 at 11:11:54PM GMT, Conor Dooley wrote:
+> > Strange. I modified and sent the patch using b4 as well. It's missing
+> > my sign off too.
+> 
+> `b4 shazam` should pick up trailers provided on the list, signoffs
+> included. `b4 shazam -s` will add yours. TBH, I am not sure why that is
+> not the default behaviour.
 
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
+Some projects don't use the DCO model, so they don't require Signed-off-by
+trailers.
 
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
-
-are available in the Git repository at:
-
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/ib-mfd-counter-v5.11
-
-for you to fetch changes up to 304d02aa711369da89b4f8c01702bf1b5d1f7abc:
-
-  mfd: stm32-timers: Drop unused TIM_DIER_CC_IE (2024-06-26 16:09:58 +0100)
-
-----------------------------------------------------------------
-Immutable branch between MFD and Counter due for the v5.11 merge window
-
-----------------------------------------------------------------
-Uwe Kleine-König (4):
-      mfd: stm32-timers: Unify alignment of register definition
-      mfd: stm32-timers: Add some register definitions with a parameter
-      counter: stm32-timer-cnt: Use TIM_DIER_CCxIE(x) instead of TIM_DIER_CCxIE(x)
-      mfd: stm32-timers: Drop unused TIM_DIER_CC_IE
-
- drivers/counter/stm32-timer-cnt.c |   4 +-
- include/linux/mfd/stm32-timers.h  | 179 ++++++++++++++++++++------------------
- 2 files changed, 96 insertions(+), 87 deletions(-)
-
--- 
-Lee Jones [李琼斯]
+-K
 
