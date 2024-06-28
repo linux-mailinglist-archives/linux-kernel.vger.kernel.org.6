@@ -1,99 +1,97 @@
-Return-Path: <linux-kernel+bounces-233203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 055C391B448
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 02:54:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4590F91B44B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 02:55:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 370731C20F8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 00:54:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 780551C2112B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 00:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3897D567F;
-	Fri, 28 Jun 2024 00:54:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867A36FC1;
+	Fri, 28 Jun 2024 00:55:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="dw3FWGCl"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LdmHBwJw"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A10C3FF1;
-	Fri, 28 Jun 2024 00:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91432567F
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 00:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719536077; cv=none; b=ayND6MJ/BBxT+NWFi5nIo6esine/dzMQY8fBAyvk5Z1VfsUtKwGVQdwdghYf2dOmEfaBjcPwHaZhQVJlbFJzzV36TYxmxh/lwcOf9TRT1UDirW/PVH9izdj7LpoK92wyBLurbTK92Zmilxqq8zoUXxfD/Yr+fkhZnWqudILcgNI=
+	t=1719536129; cv=none; b=FJuDMnBB5eMlJEzonAFuI+WM8MH0nuMWbecSeNqu0F34R8YKvb0SRiyh+543i6ozGhh/H/3uzeXKXDoul4YBQi2+PSCAZZgFZi1IRt1kIUTNTYZtq87DhnJouLDzycFW5FZbvWzoMQivqYCWDD1l/vZ/X6t8BuLrlzb/NW3B8GA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719536077; c=relaxed/simple;
-	bh=ftjf9Zry7d4W0sWAh+GqOrORzQ7DO8qY20Opciici6Q=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=lXPiGdwo0j+dmShQLn5x1wLSwjhEF4cvlb3RLC95dINVOACotNnPb/1eWRJwNBdtPNVtuIczRrLnzNBkwZsroiM8Vw+ZFoWkrYuvsj860bQNm6T1jtfhKboD4Hp6CE6yd0IvaU0CfJ8vW5VJwqm/LKIoc6hM0ePICLhoY1ASMTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=dw3FWGCl; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1719536073;
-	bh=nK6ECkNoWWUSbgwv/8Nj8pwVUjgeZlZeQEQ65DI3FjQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=dw3FWGCl3P1VHFi8yriJUkoxa2i6gMD7vyIVjlRNnE+dSEi+QCTwW0ti6cCo5P4Bs
-	 Zp3+N4QjGAhAIo8fSBG3V7is3heKklaJWPI9TaBUyK4mKGrSlcM3YdU88fBX3+PUO0
-	 Ov86/kuCrhKKMq/OGTA7/A72/hTPsZeOIaTAcxQ+sxc1670631sByC0lgYD/+XZbTu
-	 WjPM68tNBEq7AepAepoqZwDLK0CxECqLpBQxNeKkHmeeTOGzKx9F07F2ovZr1f2oLK
-	 1rBKnDY5fQZu705WcZ0eE65kSe4wuCMr9VUjixPNpprQQAkCa2r/iCpo92AVDTJFQW
-	 FHBUTpnaglwjQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4W9H5N6hF0z4w2N;
-	Fri, 28 Jun 2024 10:54:32 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: regressions@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org, naveen.n.rao@linux.ibm.com, Stefan Berger
- <stefanb@linux.ibm.com>, Stefan Berger <stefanb@linux.ibm.com>,
- linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- jarkko@kernel.org
-Subject: Re: [PATCH] tpm: ibmvtpm: Call tpm2_sessions_init() to initialize
- session support
-In-Reply-To: <20240617193408.1234365-1-stefanb@linux.ibm.com>
-References: <20240617193408.1234365-1-stefanb@linux.ibm.com>
-Date: Fri, 28 Jun 2024 10:54:31 +1000
-Message-ID: <87pls1lwe0.fsf@mail.lhotse>
+	s=arc-20240116; t=1719536129; c=relaxed/simple;
+	bh=sSpXWCyEk2EDRMlCds1q4O2Vm7aRvAgsbc9ryA4bNHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GUYyyqwRVJ9Xxc8IcrOhtadqFOjmeT2BbMJmMaxOUffRC/J3F+5JvATsIUwhizpzsEs064wkK29Pq5bbdKLC+ApmTUMXWj7QVQSPTdJlU+6qZXXHVZzLzYMEOwB0a8wFrkK1IRsXIHKwzVvTYjliACQqwSkoQlz0EWclKhFGLkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LdmHBwJw; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-71910dfb8c0so22013a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 17:55:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1719536128; x=1720140928; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=X4lJQzCRPoEPhHVSEfjDtIXs2Lfn884K9fgq+Lhgsbo=;
+        b=LdmHBwJwWPPIFZ3i5wHk+nTywrl5zz46syf9vud08LPB4CdWW+hPY4p6qpznqD34Vf
+         WAAqcouEHNGmdlmTGD2vaIay8QuGFLQLjmGUDjfgNvAK9fOY7Ty9XkOHTKdMUZponsRK
+         TgOWw2jQyHiRoDwb/EbUCyB3avC5LF4qtBJvU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719536128; x=1720140928;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X4lJQzCRPoEPhHVSEfjDtIXs2Lfn884K9fgq+Lhgsbo=;
+        b=Lv7t3ZbfyRywDtEZ1/+3j9EolDnq8P6xPw6qaxK0tmDhQDMA5LTr4Hok7g9gmrLX9n
+         3QKS9IIraDAuBfNDdicQjLxmG8TWbDKKLvpUDSlRoL2oUXPhQr85ON9H8cRYqGL00ot9
+         9iKNzCtmSXlaGTtzJsIFS/Ssqbqo8WH9qjxr2BWkHxeH8VAhOnU9ABSDwLI2xHThLbO0
+         Sl1Yf8Ytw6wJbg5fS0xlP2QoqXSiIaYUBFe1i7aS0RyEeT+mWl6sOjv+e6mh1L4XMjTE
+         98m6HEaj3NqdWU1TMd+VrMbPQM8LSJOOqSED2DcW9Eqb6sduEqt9c++wBAW7rUCocFFN
+         JloQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVwNH6zIhRarFd1+Tmw3TPQYjjWIO2+8X+91MAp9r8EdXonDfjikWGKL+4rlDpBcNQMjuPbuUsUWVjmLsde+XGDz1HdVZM/WsFkylh5
+X-Gm-Message-State: AOJu0YyEvujcTzKua/keJsKJdPf9tGHptNu8hlXveLKbavOEYq7e01Rf
+	+H6wQvtlsqA5V4EmyhqOZRcrvf2sm5acmzZfWW/M6bd5veflBJK+MUvaNo/8rg==
+X-Google-Smtp-Source: AGHT+IEOCloo8kkoRoiQKPVId5pLv0VtG6h8sTIAWnQGJ5/+CLOJodNeklIIV+t7oQQsWSdNQD6UWA==
+X-Received: by 2002:a05:6a20:8b28:b0:1bd:286c:b0f5 with SMTP id adf61e73a8af0-1bd286cb1efmr7445570637.42.1719536127797;
+        Thu, 27 Jun 2024 17:55:27 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:c19a:b9a8:4bd1:72c0])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac10d1482sm3804625ad.3.2024.06.27.17.55.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 17:55:27 -0700 (PDT)
+Date: Fri, 28 Jun 2024 09:55:23 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Chengming Zhou <chengming.zhou@linux.dev>
+Cc: minchan@kernel.org, senozhatsky@chromium.org, akpm@linux-foundation.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] mm/zsmalloc: fix class per-fullness zspage counts
+Message-ID: <20240628005523.GC15925@google.com>
+References: <20240627075959.611783-1-chengming.zhou@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240627075959.611783-1-chengming.zhou@linux.dev>
 
-Stefan Berger <stefanb@linux.ibm.com> writes:
-> Fix the following type of error message caused by a missing call to
-> tpm2_sessions_init() in the IBM vTPM driver:
->
-> [    2.987131] tpm tpm0: tpm2_load_context: failed with a TPM error 0x01C4
-> [    2.987140] ima: Error Communicating to TPM chip, result: -14
->
-> Fixes: d2add27cf2b8 ("tpm: Add NULL primary creation")
-> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> ---
->  drivers/char/tpm/tpm_ibmvtpm.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
-> index d3989b257f42..1e5b107d1f3b 100644
-> --- a/drivers/char/tpm/tpm_ibmvtpm.c
-> +++ b/drivers/char/tpm/tpm_ibmvtpm.c
-> @@ -698,6 +698,10 @@ static int tpm_ibmvtpm_probe(struct vio_dev *vio_dev,
->  		rc = tpm2_get_cc_attrs_tbl(chip);
->  		if (rc)
->  			goto init_irq_cleanup;
-> +
-> +		rc = tpm2_sessions_init(chip);
-> +		if (rc)
-> +			goto init_irq_cleanup;
->  	}
->  
->  	return tpm_chip_register(chip);
+On (24/06/27 15:59), Chengming Zhou wrote:
+> We always use insert_zspage() and remove_zspage() to update zspage's
+> fullness location, which will account correctly.
+> 
+> But this special async free path use "splice" instead of remove_zspage(),
+> so the per-fullness zspage count for ZS_INUSE_RATIO_0 won't decrease.
+> 
+> Fix it by decreasing when iterate over the zspage free list.
 
-#regzbot ^introduced: d2add27cf2b8 
+So this doesn't fix anything.  ZS_INUSE_RATIO_0 is just a "placeholder"
+which is never used anywhere.
+
+We can land this patch, if you insist/prefer, but it's some sort of
+a NOOP, essentially (in a sense that it has no visible effects).
 
