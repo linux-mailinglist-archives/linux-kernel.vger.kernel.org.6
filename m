@@ -1,113 +1,163 @@
-Return-Path: <linux-kernel+bounces-234504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12B6A91C773
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:42:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FD0891C775
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:44:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79FFAB22C2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:42:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36ADA1F23538
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:44:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937B378C93;
-	Fri, 28 Jun 2024 20:42:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D4E78C9D;
+	Fri, 28 Jun 2024 20:44:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="qrP9bV/9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ZvYAOjBD"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D38754D8BC;
-	Fri, 28 Jun 2024 20:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960485381A
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 20:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719607362; cv=none; b=j+4M9Tvm4zFL14YJVm+yvlb4TvRaqaxx988yYBcmn5/aX+WXkgskFc0GLxwcgL4sQTK4wWW3dri/lFrSIyuOM02uv1ZstEKVWtLwC2EbxwohAUxhWws+3sL56jX1HmmZcdv5K4JdgfOUMc0g8twCH4Y5FxB2JrUIpf3zYCHciLs=
+	t=1719607449; cv=none; b=ZaEymWiCPorFeuP8kuT+hCrbgd0enMKWydwo0zC4ALS9P2vQK0hle6cMDgvxmYD+d6t8RN9ONRnB7NZFkRAKd4L5TJyIBDBrWAsAxhWMl8qDaqFIBszfhfFrfMb6GYu+qHPlgr3Boxqo2mIWC7APouaPkwlMBttxTmtzFU4rT78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719607362; c=relaxed/simple;
-	bh=sC5/XjAiHZDzOKF4zecBptmEbklTx74wU/VV/LkSRnw=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=MzPMY7hnxWDhy2sEndY+LPdoSAXi9MMIUyLHAE+wbvpKDKY2BHbL5hmjaEIv4FIahC/bxgGw+6xE1JkWvNkJBIwdYfTZzvqtD0bHHLSVtb6eYN3EE3jl7WvqVyUhe4mcNLiNtfOaVuCaHlkSuy4C5hq91Di2VZqnK68CzJ4wWwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=qrP9bV/9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 227F7C116B1;
-	Fri, 28 Jun 2024 20:42:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1719607362;
-	bh=sC5/XjAiHZDzOKF4zecBptmEbklTx74wU/VV/LkSRnw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qrP9bV/90gz4EOySJs+s89K63a+KU7/tOJYGmIh8CD5h6ETR+GklndnjiEGnKJ1R8
-	 M604UOHtSmzC1HeNySuPnqGBSkZTXXyMTW67OXeNjWW91KP1aDjsJtlmh0/Eq//E+l
-	 QM/coZ2FsdKZ3ICWX4GgLz/5fbxT5MLuc29dxJEM=
-Date: Fri, 28 Jun 2024 13:42:41 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: yangge1116@126.com
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, 21cnbao@gmail.com, peterx@redhat.com,
- yang@os.amperecomputing.com, baolin.wang@linux.alibaba.com,
- liuzixing@hygon.cn
-Subject: Re: [PATCH V2] mm/gup: Fix longterm pin on slow gup regression
-Message-Id: <20240628134241.53c5f68f936efe0aa8f0b789@linux-foundation.org>
-In-Reply-To: <1719554518-11006-1-git-send-email-yangge1116@126.com>
-References: <1719554518-11006-1-git-send-email-yangge1116@126.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719607449; c=relaxed/simple;
+	bh=8dGdkVxWgN9JzcpOHdS5PlD3VTcxy/ssHnXcSzuLaoI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KBJEeY2ruD+SCyokqYNXNti2f9C1YcTa/iDQWg8vBUX8MJcENQJTMvEOyIqDD2o5RQQ7NfrMqTIQ441Xs3TKJk0VB5QG1eOYwir6p330/U6gDSq9loYBXdUnSuuRDqOnigR/ttG4cblCN4QgUrbSJH+45J7i3kjPBYnq1TVtunA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ZvYAOjBD; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3745eeedc76so501895ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 13:44:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1719607446; x=1720212246; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VV0l09SoWGJ1SnpCeKyT1K1d8xCV8UNByaKVaVGNTYE=;
+        b=ZvYAOjBDPphjCXH1463daJzlPV5xiadtceEvLrBBPzmodsnmqf0vBiBoiRPS0jNQOc
+         5ESJjckOJ5/ZPpR20mHoO7ks1WaerkZuPJeHOo0aBirallwi0TuExZEwORnKzfKwGvea
+         udNqqKhzFToHW5qQ8UwoCsiTa4xk/3/q5SFaI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719607446; x=1720212246;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VV0l09SoWGJ1SnpCeKyT1K1d8xCV8UNByaKVaVGNTYE=;
+        b=sQVtlyA8ks1iK6LAjQcwQj2ET5xadJ0yrk4oVnO4wmnSn3/KK4w3bi6+iTmpAVwmhB
+         aEsujAUYG2+lsPG+lhN1iaC3wm/dW4cmDDenPs0lep/ceXCokSF6JRv05QUthS7fwJjR
+         kscw1ifF46k4yvW5PAuPQwMdohCjGulQ7P3n4o6ZJ8yk2uhGkPR1wosZy3dkIxxvdHhN
+         sERguUY6awGLyrC4lxlC6BuIdMgKahvcILApz3mLH3LGQazONaS8o1Yes18K67nvecca
+         LxbuSNV3ZvALlI0L7iG2ViYLTQ8rR3xXuXtX9pPwWhd2G/IMlmAK7qTd9Je5SoDiL9Zg
+         AsiA==
+X-Forwarded-Encrypted: i=1; AJvYcCVurYExpgtWqKgxvCoXu6RAUBOde7/h4Nb0dhv39SrUbcgUoF0Ob5lqtRamKBPYcIo39otOfbblYO1006asrHlVccg8hS8oGWnefIQD
+X-Gm-Message-State: AOJu0Yz0LuIT5tgv5GegR0m2xilZNSJyAybPL0zlHeGmxEKwXzG3WAib
+	/IS5i5+rPUYFU/jps1fbTXSnYAPJMhTNqwMePW4TLTkSVcKyrjoRT+qJ/1Pg4mhzrQLcOMU4NjP
+	f
+X-Google-Smtp-Source: AGHT+IG+om/imzFgy8LRRQHUqfx2XPHiL05dYxs+tlDZTUfjHA5g2wsrx/jwjMi5O5hKd/5yau5siw==
+X-Received: by 2002:a92:c981:0:b0:375:bdfe:287a with SMTP id e9e14a558f8ab-3763807c15emr188331605ab.0.1719607445733;
+        Fri, 28 Jun 2024 13:44:05 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-37ad2e4bfabsm5782135ab.38.2024.06.28.13.44.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Jun 2024 13:44:05 -0700 (PDT)
+Message-ID: <cfee36c5-c5d9-49db-bc94-c6e5fdb77840@linuxfoundation.org>
+Date: Fri, 28 Jun 2024 14:44:04 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cpupower: fix lib default installation path
+To: Roman Storozhenko <romeusmeister@gmail.com>,
+ Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>
+Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240623-fix-lib-install-v1-1-bcbd03b78d87@gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240623-fix-lib-install-v1-1-bcbd03b78d87@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Fri, 28 Jun 2024 14:01:58 +0800 yangge1116@126.com wrote:
+On 6/23/24 07:10, Roman Storozhenko wrote:
+> Invocation the tool built with the default settings fails:
+> $ cpupower
+> cpupower: error while loading shared libraries: libcpupower.so.1: cannot
+> open shared object file: No such file or directory> The issue is that Makefile puts the library to "/usr/lib64" dir for a 64
+> bit machine. This is wrong. According to the "File hierarchy standard
+> specification:
+> https://en.wikipedia.org/wiki/Filesystem_Hierarchy_Standard
+> https://refspecs.linuxfoundation.org/FHS_3.0/fhs-3.0.pdf
+> 
+> "/usr/lib<qual>" dirs are intended for alternative-format libraries
+> (e.g., "/usr/lib32" for 32-bit libraries on a 64-bit machine (optional)).
+> 
+> The utility is built for the current machine and doesn't change bit
+> depth.
+> Fix the issue by changing library destination dir to "/usr/lib".
+> 
+> Signed-off-by: Roman Storozhenko <romeusmeister@gmail.com>
+> ---
+>   tools/power/cpupower/Makefile | 10 +---------
+>   1 file changed, 1 insertion(+), 9 deletions(-)
+> 
+> diff --git a/tools/power/cpupower/Makefile b/tools/power/cpupower/Makefile
+> index cd0225a312b4..6c02f401069e 100644
+> --- a/tools/power/cpupower/Makefile
+> +++ b/tools/power/cpupower/Makefile
+> @@ -67,6 +67,7 @@ LANGUAGES = 			de fr it cs pt ka
+>   bindir ?=	/usr/bin
+>   sbindir ?=	/usr/sbin
+>   mandir ?=	/usr/man
+> +libdir ?=	/usr/lib
+>   includedir ?=	/usr/include
+>   localedir ?=	/usr/share/locale
+>   docdir ?=       /usr/share/doc/packages/cpupower
+> @@ -94,15 +95,6 @@ RANLIB = $(CROSS)ranlib
+>   HOSTCC = gcc
+>   MKDIR = mkdir
 
-> From: yangge <yangge1116@126.com>
-> 
-> If a large number of CMA memory are configured in system (for
-> example, the CMA memory accounts for 50% of the system memory),
-> starting a SEV virtual machine will fail. During starting the SEV
-> virtual machine, it will call pin_user_pages_fast(..., FOLL_LONGTERM,
-> ...) to pin memory. Normally if a page is present and in CMA area,
-> pin_user_pages_fast() will first call __get_user_pages_locked() to
-> pin the page in CMA area, and then call
-> check_and_migrate_movable_pages() to migrate the page from CMA area
-> to non-CMA area. But the current code calling __get_user_pages_locked()
-> will fail, because it call try_grab_folio() to pin page in gup slow
-> path.
-> 
-> The commit 57edfcfd3419 ("mm/gup: accelerate thp gup even for "pages
-> != NULL"") uses try_grab_folio() in gup slow path, which seems to be
-> problematic because try_grap_folio() will check if the page can be
-> longterm pinned. This check may fail and cause __get_user_pages_lock()
-> to fail. However, these checks are not required in gup slow path,
-> seems we can use try_grab_page() instead of try_grab_folio(). In
-> addition, in the current code, try_grab_page() can only add 1 to the
-> page's refcount. We extend this function so that the page's refcount
-> can be increased according to the parameters passed in.
-> 
-> The following log reveals it:
-> 
-> [  464.325306] WARNING: CPU: 13 PID: 6734 at mm/gup.c:1313 __get_user_pages+0x423/0x520
-> [  464.325464] CPU: 13 PID: 6734 Comm: qemu-kvm Kdump: loaded Not tainted 6.6.33+ #6
-> [  464.325477] RIP: 0010:__get_user_pages+0x423/0x520
-> [  464.325515] Call Trace:
-> [  464.325520]  <TASK>
-> [  464.325523]  ? __get_user_pages+0x423/0x520
-> [  464.325528]  ? __warn+0x81/0x130
-> [  464.325536]  ? __get_user_pages+0x423/0x520
-> [  464.325541]  ? report_bug+0x171/0x1a0
-> [  464.325549]  ? handle_bug+0x3c/0x70
-> [  464.325554]  ? exc_invalid_op+0x17/0x70
-> [  464.325558]  ? asm_exc_invalid_op+0x1a/0x20
-> [  464.325567]  ? __get_user_pages+0x423/0x520
-> [  464.325575]  __gup_longterm_locked+0x212/0x7a0
-> [  464.325583]  internal_get_user_pages_fast+0xfb/0x190
-> [  464.325590]  pin_user_pages_fast+0x47/0x60
-> [  464.325598]  sev_pin_memory+0xca/0x170 [kvm_amd]
-> [  464.325616]  sev_mem_enc_register_region+0x81/0x130 [kvm_amd]
-> 
+These are set when make invoked from the kernel main
+Makefile - see "make tools" option in main Makefile
+>   
+> -# 64bit library detection
+> -include ../../scripts/Makefile.arch
 
-Well, we also have Yang Shi's patch
-(https://lkml.kernel.org/r/20240627231601.1713119-1-yang@os.amperecomputing.com)
-which takes a significantly different approach.  Which way should we
-go?
+This does the 64-librray detection based on arch.
+> -
+> -ifeq ($(IS_64_BIT), 1)
+> -libdir ?=	/usr/lib64
+> -else
+> -libdir ?=	/usr/lib
+> -endif
+> -
+>   # Now we set up the build system
+>   #
+>   
+> 
+> ---
+> base-commit: f76698bd9a8ca01d3581236082d786e9a6b72bb7
+> change-id: 20240623-fix-lib-install-3b7dccdbdf45
+> 
+> Best regards,
+
+What happens if you cross-compile with this patch? Take a look at this
+commit that fixed cross-compile:
+
+a73f6e2fbe8077811ea9546e0d44a7533111f0ba
+
+This makefile has to be in sync with the rest of the tools - see
+"make tools" in the kernel main Makefile.
+
+thanks,
+-- Shuah
+
+
 
