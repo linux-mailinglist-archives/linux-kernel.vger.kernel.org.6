@@ -1,186 +1,110 @@
-Return-Path: <linux-kernel+bounces-233525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEF5F91B8BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:45:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B14791B8C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:46:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EB5EB21201
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:45:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05AEB1F230AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F8A314372D;
-	Fri, 28 Jun 2024 07:45:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFB9D1465BD;
+	Fri, 28 Jun 2024 07:45:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="T15y8IUk"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZKxRiur2"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA925C89;
-	Fri, 28 Jun 2024 07:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB64F143752
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 07:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719560711; cv=none; b=nCIEYye7WbS+fr+7YMJAEJPZGv7B8uEGiola2kJLLIaWtM6UsB5cWGN53vTq5esEpfstlAGcwq9q2+I+EHR95kSlfD2Dd7uVotlezXULNh1g9RctzRp1aNM+wyzUcEbY6p4n7KyPVOqRGrACILPKbw2YnCDYY92YPtLVn8QfZ+Y=
+	t=1719560736; cv=none; b=O3bsnltvd8aXK/z4yYD6bKHU/9w05hA6eZD6O1LvNNuOR2I2e9C/70idGuRmk7eMivIvIMf0/R8SRpapjQq8pnOIRzs1pHBbcsg/Jo3lwJDhUGcVgzJEnWJ4nWajsDW5u0ulY1QqhXuCgy+y60N6p4VllIHKaIPj5t1htkv+9y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719560711; c=relaxed/simple;
-	bh=p0jV8ElzLovC8PJpEjbIBYA1mtu9/RdPJD4TfKMl0XE=;
+	s=arc-20240116; t=1719560736; c=relaxed/simple;
+	bh=TIn3dSD9Y/O5J9F3VJziLjzKGSBP8XVxfPmWbVXuIdg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R6L0FvJ6wxVjTw2+7pMluzV/gM9M+1roYPEMvsGm1BWQJ0OvBS6edai/FLTyc0WZlEsRxlmAYN+WHK94uN7jZEzpFfuF6zqHmvZYDR8XM28eNNCce24w/qzTeaKmE3pfAgDy9UeDotBKDCn/UWRXeUPXfMWmoBbf6pxiSbSM0vA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=T15y8IUk reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id F07A140E0192;
-	Fri, 28 Jun 2024 07:45:06 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
-	reason="fail (body has been altered)" header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id sSMyDzu3hfvb; Fri, 28 Jun 2024 07:45:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1719560702; bh=7ldIwKtvzJ9yyJaNutYVVLJe0u6aE/RpeHC5fXaXUi4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T15y8IUk+bsQfYjGmcY6To0pwblhcpGHNswc+3j5JXhvAbRzNuPlqQSefH/AHnwCc
-	 eOMQextITsSwFSnuTNoE9ab/AKH1XQn/07Y25ZVWhUisN6nzF7/LwFFb/eSuOSUxOe
-	 e8/I1A91o32iVgoTaRyjnNmIqNW1NRiathWQAr5S/njI/LQEgxrRrFBqgnd9yT5OSq
-	 92CkTxXPPdPY4E8pwZohAFPu1rEQE/pvgCyptIHRXVIlJDe6G6mqW/87VUvDVIKb7J
-	 qj0LrRfo3Fod96P3U0aDYzK9H0SdH90izxcANNjyDdXOwmo25pfDqUC4jNrLczlwpQ
-	 2smMW5CWnky12/0duRZKbNiQvj7vTrA6cM/xtJBNv3YLJaIRqkZLSTI3C/QLjiDdLA
-	 JeLJIhCYWHrxCWVNr/F6KlbGUIEzL4UsuCUESovO1GQ0bgYtUPSgS52SjZzltvvU+D
-	 AYbw7wvJsnHv/9UN8GjUzPSqDB/NJHZs2UAyEbkYE1hZQSVopJ526hncioN2IDsFNN
-	 xzkXkGijGLzCq3+SjZwJDCeBkZuvOvQxIUczCy5zRhIsRt57hL6r4jnmJyGlAfmT8+
-	 M459T/gYSYKXbnif4ygRocX5If+eZoqGGJeUR18T0vAuvQ2cWnmHjCim6x4GvncNGT
-	 r5KcbGjeg1Wf22a5cNHvvm3w=
-Received: from nazgul.tnic (business-24-134-159-81.pool2.vodafone-ip.de [24.134.159.81])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4FB9340E021A;
-	Fri, 28 Jun 2024 07:44:55 +0000 (UTC)
-Date: Fri, 28 Jun 2024 09:45:22 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: John Allen <john.allen@amd.com>
-Cc: rafael@kernel.org, lenb@kernel.org, yazen.ghannam@amd.com,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-edac@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] RAS/AMD/ATL: Translate normalized to system
- physical addresses using PRM
-Message-ID: <20240628074522.GDZn5qEkTXG0EvQ4Lv@fat_crate.local>
-References: <20240506174721.72018-1-john.allen@amd.com>
- <20240506174721.72018-3-john.allen@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tYijNpdBSernaLs7qqx/Ni0CcoXDcjjJaSWgDpa6W7AEnOmvCAo/rNlkY+tx6khOQ3agy41cD+8mJ8fTlJz7ggG+rEzvRnIJUijBAvN3Aj4+ZiyOlVekYp+eJJ40d66P47f29R5IvzCR3pKPPU8o8ryZaIltqCY23uQVzqXtJoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZKxRiur2; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2eabd22d3f4so2612381fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 00:45:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719560732; x=1720165532; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ta6pOQl7Ba5DSAPgv+iFZZAffaH8uQvfzLUSjfY48d8=;
+        b=ZKxRiur2uw+Ob41YMzaY+MPU0HMX/paXToRlgrM2EhGXcaJMFkR1TXlkW+dEjskXEi
+         pIu1jl60kAOodXrv2fWITfEQJyVZG1cT8LkVnweKmYYh5tyI+90dce0ZDARHIWsiWv8q
+         sSQKTO4005xNTZGqs9bMsNTrqalXQRKp9liFFty5jMsRHZ3op0G0pshgpj0C/fCVTCli
+         Vc6TY6pu0RScd2KBfQ6S6rsHIzLYfjE1FGWDys/FAdHKgJEGG/YzRYoVgNLbZ61RYW4S
+         1HVBCA00AtehjpYta1O0c7USQFcJ4gc2sE/ElVuxOAfka7kcLfqwEDY0lpIvq98rmkOk
+         c5Aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719560732; x=1720165532;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ta6pOQl7Ba5DSAPgv+iFZZAffaH8uQvfzLUSjfY48d8=;
+        b=bf1eqRgPt/gzHmBQ8rWgmIXdUZlGiAkqc8liH7yTOAOg2Xs3BHKnP+Ycp8zAxZpznm
+         pRCo9hOKJqSuJ7mcI+BsTgNVZF7Eq2lx2TWoo4Wq8snLyMou6RfP/ADNCCTEC2FvFwyE
+         mlTg0T/cNNj4NB2oJc8QwM44YjEZMo1RtZEiAFxUm3dK7NTMCs6KXz+LMz5CTbSheDdg
+         jwzKhOhjmyWsFHMlsnnWKFU1EB7tLCTUfFTBEBYg9p/jqt4acY6cp1qrtZ4DhGvyTFI7
+         vfUYbxJx0AMiXQ26w5FjPF4YKrvtQIrvfbLLALVNbCAG96gI8LYhXIcT8LHZZ5fD2zIZ
+         QM9w==
+X-Forwarded-Encrypted: i=1; AJvYcCXD2QKB/5coUPAf3ZhRFrpFy+WpYIk7Zu46w6Zzn+YC5DYQu+hj3reDqJI/W3FEmO53ZsG0WCHwdisD6tIccdn7gmRxPmXSb0iWgMs1
+X-Gm-Message-State: AOJu0YwEnKMU/PmlEnaefv9K+CY6yEoIINtC7m76Uq1gm0lxZipuVsDA
+	DWIW5ti665CzmVaSkBHVc0fsGAGI6OcHvtiF5LyJ0QjBWbVThYbTkVF/plg2PIY=
+X-Google-Smtp-Source: AGHT+IHqmAR6Aan/s3t39wcFt4NqZCBUJkjEf/RYG6yrSKTVA4mH3xmpTPmcNJL1Afj2I7QNcp83Kw==
+X-Received: by 2002:a05:651c:1046:b0:2ec:6756:e3ea with SMTP id 38308e7fff4ca-2ec6756e4d7mr71538561fa.43.1719560732156;
+        Fri, 28 Jun 2024 00:45:32 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ee51680450sm2017551fa.76.2024.06.28.00.45.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 00:45:31 -0700 (PDT)
+Date: Fri, 28 Jun 2024 10:45:30 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Alexey Klimov <alexey.klimov@linaro.org>
+Cc: linux-sound@vger.kernel.org, srinivas.kandagatla@linaro.org, 
+	bgoswami@quicinc.com, lgirdwood@gmail.com, broonie@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org, 
+	konrad.dybcio@linaro.org, perex@perex.cz, tiwai@suse.com, linux-arm-msm@vger.kernel.org, 
+	alsa-devel@alsa-project.org, devicetree@vger.kernel.org, elder@linaro.org, 
+	krzysztof.kozlowski@linaro.org, caleb.connolly@linaro.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/7] arm64: dts: qcom: sm6115: add description of
+ lpi_i2s2 pins
+Message-ID: <qe62q5k7r3wwlceqkapwntdwhpngbwtvpwhq5wxwslhke3h6lt@kaveepinffka>
+References: <20240628010715.438471-1-alexey.klimov@linaro.org>
+ <20240628010715.438471-7-alexey.klimov@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240506174721.72018-3-john.allen@amd.com>
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240628010715.438471-7-alexey.klimov@linaro.org>
 
-On Mon, May 06, 2024 at 05:47:21PM +0000, John Allen wrote:
-> Future AMD platforms will provide a UEFI PRM module that implements a
-> number of address translation PRM handlers. This will provide an
-> interface for the OS to call platform specific code without requiring
-> the use of SMM or other heavy firmware operations.
->=20
-> AMD Zen-based systems report memory error addresses through Machine
-> Check banks representing Unified Memory Controllers (UMCs) in the form
-> of UMC relative "normalized" addresses. A normalized address must be
-> converted to a system physical address to be usable by the OS.
+On Fri, Jun 28, 2024 at 02:07:14AM GMT, Alexey Klimov wrote:
+> This is required to enable to HDMI audio playback on
+> QRB4210 RB2 board.
 
-This should be your first paragraph.
+Are they SoC-specific or board-specific? In the latter case it might be
+more suitable to move them to the board DT file.
 
-> Add support for the normalized to system physical address translation
-> PRM handler in the AMD Address Translation Library and prefer it over
-> native code if available. The GUID and parameter buffer structure are
-> specific to the normalized to system physical address handler provided
-> by the address translation PRM module included in future AMD systems.
->=20
-> The address translation PRM module is documented in chapter 22 of the
-> publicly available "AMD Family 1Ah Models 00h=E2=80=930Fh and Models 10=
-h=E2=80=931Fh
-> ACPI v6.5 Porting Guide":
-> https://www.amd.com/content/dam/amd/en/documents/epyc-technical-docs/pr=
-ogrammer-references/58088-0.75-pub.pdf
+> 
+> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sm6115.dtsi | 34 ++++++++++++++++++++++++++++
+>  1 file changed, 34 insertions(+)
+> 
 
-Those URLs are flaky and become invalid over time. When you quote
-a document, quote it in such a way so that searching for it on the web,
-can find it. The name above works for me so that's good.
 
-> +#include "internal.h"
-> +
-> +#if defined(CONFIG_ACPI_PRMT)
-
-Instead of that ifdeffery you could do:
-
-config AMD_ATL_PRM
-	depends on AMD_ATL && ACPI_PRMT
-
-and it'll get enabled automatically and then you don't need the empty
-stub either.
-
-> +#include <linux/prmt.h>
-> +
-> +struct prm_umc_param_buffer_norm {
-
-What's a prm_umc_param_buffer_norm?
-
-> +	u64 norm_addr;
-> +	u8 socket;
-> +	u64 umc_bank_inst_id;
-> +	void *output_buffer;
-
-Use the usual short versions for such standard names: "out_buf"
-
-> +} __packed;
-> +
-> +static const guid_t norm_to_sys_prm_handler_guid =3D GUID_INIT(0xE7180=
-659, 0xA65D,
-> +							     0x451D, 0x92, 0xCD,
-> +							     0x2B, 0x56, 0xF1, 0x2B,
-> +							     0xEB, 0xA6);
-
-When you define such long variable names, your lines stick out
-unnecessarily. Shorten pls.
-
-> +unsigned long prm_umc_norm_to_sys_addr(u8 socket_id, u64 umc_bank_inst=
-_id, unsigned long addr)
-
-bank_id is fine.
-
-> +{
-> +	struct prm_umc_param_buffer_norm param_buffer;
-
-... p_buf;
-
-> +	unsigned long ret_addr;
-> +	int ret;
-> +
-> +	param_buffer.norm_addr        =3D addr;
-> +	param_buffer.socket           =3D socket_id;
-> +	param_buffer.umc_bank_inst_id =3D umc_bank_inst_id;
-> +	param_buffer.output_buffer    =3D &ret_addr;
-> +
-> +	ret =3D acpi_call_prm_handler(norm_to_sys_prm_handler_guid, &param_bu=
-ffer);
-> +	if (!ret)
-> +		return ret_addr;
-> +
-> +	if (ret =3D=3D -ENODEV)
-> +		pr_debug("PRM module/handler not available\n");
-> +	else
-> +		pr_notice_once("PRM address translation failed\n");
-> +
-> +	return ret;
-> +}
-
---=20
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+-- 
+With best wishes
+Dmitry
 
