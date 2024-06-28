@@ -1,133 +1,126 @@
-Return-Path: <linux-kernel+bounces-234274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7E5791C490
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:16:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 370EF91C491
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:16:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93280282A61
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:16:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7272B21B14
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:16:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2DE1CB321;
-	Fri, 28 Jun 2024 17:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC21F1CCCC4;
+	Fri, 28 Jun 2024 17:16:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jW4Zgyaj"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FXUoZ8qG"
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F150623D0;
-	Fri, 28 Jun 2024 17:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9BD158DDC
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 17:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719594989; cv=none; b=EiMSrwcyp24lXrpuoBp+AKLPPfti/+njINVfPGojMI4srFwFHAIG82ip7tBCrJW0R9hAJg0ry1dNPtekV9hIM+eUYK2IvwewsjRgYrUKnzWew5ji9WC8tFlyJxvWxhbicEAjt9ixinWXn2mRQxRqw//sMWW4mfyNx8gkEdJ4WxM=
+	t=1719594991; cv=none; b=QGcPe9fyOLAx1vVs4XHiKsGhsGB3ZZe6ISYQuUCsEShtuZK+u36i/gp/5a3YZTFhjHMEojlMqHsAr/YzKbR1NLYW5J/try1HT6IsbjuNG2BLefYvurmq8o9S2TEjDxvGAPo5WM0BDmKRzY1n1pHrSCvFlbbctZl68Bd+t1+uMik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719594989; c=relaxed/simple;
-	bh=BVzadzBv3km8XG6p6BKHxmV5dz6nhJeKjWoOEMkG+jY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WrA+RG5hTbiWRS3v9C1oezfdO+JyaJAIqtjFrST01jOSllsD39srlCECngolk4/wNAmnI2X7Vb94hDVq+P62+vZfX2ws/sh7TNAwsdymC7oJyIu8hpSshQjgXps2YmNFHRqvNTt7uJcn2k9+MTfLql3zwn5tU72S2ysUP2YDgBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jW4Zgyaj; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Sgu1R12gnRao8J6vIMSWPtxCpqtZokT+JjQHwgSLSU8=; b=jW4Zgyaj9EIcAYS4j4F/3j2EF0
-	lEzZeWPOXwMjfOjDPzGZym3D/PLMspR2kRZNnVKhQuODUYUGH8VxVcA2eb+YwpwJbHEpkWcf/KstI
-	Li/hnWKKjO3CmpCisFwkH6w0KjAVWkdSGAdfwHeVrdot6Fz0NrTyXvhV2DU7BDc6HwOWhCm0xF3EF
-	zd9BUdeSLEByZ220TPXMVH2FWWJRhsp8+udslbC4cUlpMTo5xixlxqPmxmFvK/I6aWWUvAv/Y1xHV
-	UxhE6b/2SSpa7NiSHiRj4TCkKSOOF4lWv4XYO4zfA6lvM2lI3eB0sSN8UAnYXAuOKmkGMd4posG/z
-	BdTORQLg==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sNFCz-0000000ETQN-2OTt;
-	Fri, 28 Jun 2024 17:16:25 +0000
-Date: Fri, 28 Jun 2024 10:16:25 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Yusong Gao <a869920004@gmail.com>
-Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] module: Add log info for verifying module signature
-Message-ID: <Zn7v6XGbSTxo3T4f@bombadil.infradead.org>
-References: <20240628103923.1677347-1-a869920004@gmail.com>
+	s=arc-20240116; t=1719594991; c=relaxed/simple;
+	bh=HDethv1SZLS+naRJvAeYJVIme+PRI3d8lM7PY0zTCCQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ivOYijpd0Gmhz4shG2NOyrD3sG0BJgnuJAhkfprauak/tFrrc6qzMVRYO5ij/p5NQxHxaYykaBEVapLYNwy1swI431jjfiucxNF8kVLTLWsMxsnPIVpysIZoQ6UNvD5P0fK1S6+Rqk69h1p9+jh3P3bRcJr7NcS54pxVEsCrgkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FXUoZ8qG; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-375df7da74cso496015ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 10:16:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1719594988; x=1720199788; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Dyak7fcy4WheUrx/4rowppCVwuEbhDjQTwxSTAFmUc4=;
+        b=FXUoZ8qGOme1XfCi1jmcmREmO/1IXYRY4EXzcTZoHAog0HkqQqJeFZDDbF9gOo9lm7
+         Zy+L5VDRQMvLvfiMP5TDs3pCFwbGkXbix7KB4nnivwHKkYZN+fTjUzyn3CDObkSqZ+65
+         dZRlEGsjZZSeAC+GJtzO996B6e9C9pKfnQ2u8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719594988; x=1720199788;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dyak7fcy4WheUrx/4rowppCVwuEbhDjQTwxSTAFmUc4=;
+        b=V7dJMevQ4BYaPRA8OY8YTIieEo0pv9pH4Nz+5qM6ZIKoBcP39RRHs9ycjJEKhpnAPn
+         Bm+66gB12v9S6WMvfqFbLp6/kCEe8/FzTcr3UsrDhKZEdYr6lSeAX/peXXZEa31RJCEA
+         P3KrHKQ3GpmMC12c05WvU0fHSCtxseOsgOP6JlNlDJYDEcwjYPlywYbzNjrolI8bB3kA
+         NmyxXXzxFWSfB8xTw2wOPTJNoiigvGxkXGzwITnJnk4qs4+7lmF0+YkN3nvb+MAeeeMH
+         QH/SjIrhOKd4ZUiUmwz0skIlQ310/WMOAocMW+Gq52EolJc7KAVaJ0f3XGusqj26nw3e
+         zqLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXsTDlqB6nq3+UVRnj4jnUzy0goNxu8qWXGZfq7H+dl145EvEuZmIPApPX/dcIigb/r6CTTYYksgRMJiLjgyQoWoWZG+4c41WZHxWue
+X-Gm-Message-State: AOJu0YxOEeV9IHFCsYFjy/V8EIxzXNyzhWQL19MajPaXaLc5kERXXrF7
+	T1BPsZs57ZqYrfp9as0olR3gO1oAkz5vhsc3X9mmxoXJVduDdql5urOTH27TYxA=
+X-Google-Smtp-Source: AGHT+IFK3DO4c20czIEvbq5qRhqWcSTIKZNPs0uSrMmXkXhSNxR4GXk5EtfU0/1h6EjR3whEXfik5w==
+X-Received: by 2002:a5d:994f:0:b0:7f3:b778:6966 with SMTP id ca18e2360f4ac-7f3b7786c2amr1445450439f.2.1719594988622;
+        Fri, 28 Jun 2024 10:16:28 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-7f61ce88113sm58879939f.7.2024.06.28.10.16.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Jun 2024 10:16:28 -0700 (PDT)
+Message-ID: <53a6df2e-a160-48ec-92eb-44b1ee2d663d@linuxfoundation.org>
+Date: Fri, 28 Jun 2024 11:16:27 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240628103923.1677347-1-a869920004@gmail.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] usb/usbip: remove unnecessary code
+To: Xiaobo Liu <cppcoffee@gmail.com>, valentina.manea.m@gmail.com,
+ shuah@kernel.org, i@zenithal.me
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240625051321.63761-1-cppcoffee@gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240625051321.63761-1-cppcoffee@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 28, 2024 at 10:39:23AM +0000, Yusong Gao wrote:
-> Add log information in kernel-space when loading module failures.
-> Try to load the unsigned module and the module with bad signature
-> when set 1 to /sys/module/module/parameters/sig_enforce.
+On 6/24/24 23:13, Xiaobo Liu wrote:
+> Both if branches assign a value to the `cmd` variable.
+> We can remove the cmd variable and use `pdu->base.command` directly.
 > 
-> Unsigned module case:
-> (linux) insmod unsigned.ko
-> [   18.714661] Loading of unsigned module is rejected
-> insmod: can't insert 'unsigned.ko': Key was rejected by service
-> (linux)
-> 
-> Bad signature module case:
-> (linux) insmod bad_signature.ko
-> insmod: can't insert 'bad_signature.ko': Key was rejected by service
-> (linux)
-> 
-> There have different logging behavior the bad signature case only log
-> in user-space, add log info for fatal errors in module_sig_check().
-> 
-> Signed-off-by: Yusong Gao <a869920004@gmail.com>
+> Signed-off-by: Xiaobo Liu <cppcoffee@gmail.com>
+
+This is a duplicate patch and same comments and NAK on this
+patch.
+
 > ---
-> V3: Clarify the message type and the error code meaning.
-> V2: Change print level from notice to debug.
-> ---
->  kernel/module/signing.c | 27 +++++++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
+>   drivers/usb/usbip/usbip_common.c | 10 +---------
+>   1 file changed, 1 insertion(+), 9 deletions(-)
 > 
-> diff --git a/kernel/module/signing.c b/kernel/module/signing.c
-> index a2ff4242e623..826cdab8e3e4 100644
-> --- a/kernel/module/signing.c
-> +++ b/kernel/module/signing.c
-> @@ -67,6 +67,31 @@ int mod_verify_sig(const void *mod, struct load_info *info)
->  				      NULL, NULL);
->  }
->  
-> +static const char *mod_decode_error(int errno)
-> +{
-> +	char *errstr = "Unrecognized error";
+> diff --git a/drivers/usb/usbip/usbip_common.c b/drivers/usb/usbip/usbip_common.c
+> index a2b2da125..74a01a265 100644
+> --- a/drivers/usb/usbip/usbip_common.c
+> +++ b/drivers/usb/usbip/usbip_common.c
+> @@ -568,17 +568,9 @@ static void correct_endian_ret_unlink(struct usbip_header_ret_unlink *pdu,
+>   
+>   void usbip_header_correct_endian(struct usbip_header *pdu, int send)
+>   {
+> -	__u32 cmd = 0;
+> -
+> -	if (send)
+> -		cmd = pdu->base.command;
+> -
+>   	correct_endian_basic(&pdu->base, send);
+>   
+> -	if (!send)
+> -		cmd = pdu->base.command;
+> -
+> -	switch (cmd) {
+> +	switch (pdu->base.command) {
+>   	case USBIP_CMD_SUBMIT:
+>   		correct_endian_cmd_submit(&pdu->u.cmd_submit, send);
+>   		break;
 
-This is not safe. You can just extend the existing debug switch for
-strict module loading and re-use the variable there and use that,
-for example
-
-diff --git a/kernel/module/signing.c b/kernel/module/signing.c
-index a2ff4242e623..9111822116e6 100644
---- a/kernel/module/signing.c
-+++ b/kernel/module/signing.c
-@@ -106,6 +106,9 @@ int module_sig_check(struct load_info *info, int flags)
- 	case -ENOKEY:
- 		reason = "module with unavailable key";
- 		break;
-+	case -EKEYREJECTED:
-+		reason = "Key was rejected by service";
-+		break;
- 
- 	default:
- 		/*
-@@ -113,6 +116,7 @@ int module_sig_check(struct load_info *info, int flags)
- 		 * unparseable signatures, and signature check failures --
- 		 * even if signatures aren't required.
- 		 */
-+		pr_debug("Verifying module signature failed: %s\n", reason);
- 		return err;
- 	}
-
-Also certs/system_keyring.c already has a lot of pr_devel stuff too, so
-do we really need this?
-
-  Luis
+thanks,
+-- Shuah
 
