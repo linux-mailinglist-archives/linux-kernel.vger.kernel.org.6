@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-234098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F1AC91C237
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:14:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 355D691C239
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:14:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3EB5B22AD1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:14:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E71A1C21377
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98511C6899;
-	Fri, 28 Jun 2024 15:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576D41C68BB;
+	Fri, 28 Jun 2024 15:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PWVZF2Nq"
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XeX4VMJa"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD4A1C232B;
-	Fri, 28 Jun 2024 15:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A0051C688C;
+	Fri, 28 Jun 2024 15:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719587637; cv=none; b=ARKDAM1sYEd1w3Z4Yu4BOZK6pU12c/RYydkLpM8KN2r3xncWC8GgMZeEz57z46iRBsBs3COreYBBX0AN8p3+AVpvNKZAfezVb+B6WBZptk8RD4Won7TBHFDgWslQajOSNNi+DJQSHRpAwTMVkzkM+CVdawSkHxJCFh1yMK5qd60=
+	t=1719587638; cv=none; b=t8NWDoRuqaQH/Y1mrCt+h7I+vEXQPzonf9jXQPRDwEnUoH/3ZL/2TwJcFkXXBffraqRktBbSQM98qx4MNAmZvqHKcf9X97IVOZgqOLkFKAc9yGFN9sMmRLn5IUM0GJx1ElVecoIvFUSSlL/Cv6Eoflrn61RYuNNw4lfoXm7LcWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719587637; c=relaxed/simple;
-	bh=3hujbniO9E+7eki3q2BbKuhFLjYti8XPiyEFCjHGHDw=;
+	s=arc-20240116; t=1719587638; c=relaxed/simple;
+	bh=PmtaC7yNgiN26bRHbRk6FNqhEr90OZ1Ci7FKulVXAHg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TmPHB2pKQFhW4DiWtaZlh294EsOpe5nagZue6rwn5Ywv0UcfaFfmAlsOw/h+ij8SJQUnZzfKM+nFh2GN0PZ1ndWDJOm2h2WAhEKs6N2EGdF6HEIqFEGyT1sNBbyh6BqrZO98xNIVVm2Nb8OSjDQZAI183EO72hfYcxQvByGXcWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PWVZF2Nq; arc=none smtp.client-ip=209.85.160.42
+	 MIME-Version; b=dwPV67YZTFeKzPbTHpV2eQPymKIMGygwb0LBI0mIcqjIDmz7U5WowwFY/NZql1LrmtJ2MRnQ6OofFu8FwoqTYcnPFLZSp46s/ZGUBbTGhbQUD8bQTa3pGp2SJnNpgPH+B/3pgbJCou2ciFk7Rj+Pi49gEaw7lssotvlyeIEs6NU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XeX4VMJa; arc=none smtp.client-ip=209.85.215.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-25d584e9fe6so410628fac.1;
-        Fri, 28 Jun 2024 08:13:55 -0700 (PDT)
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7226821ad86so505127a12.2;
+        Fri, 28 Jun 2024 08:13:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719587634; x=1720192434; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1719587636; x=1720192436; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oxplXSHYof55UO1G/jgJi+L4qN2gtkU5KLIacw8Hjj0=;
-        b=PWVZF2Nqut7H3yTgozFPqjXj+M2+RhiMKCRC3P/AHmb6B6umLd5wMbqpX5gFYe3Y1P
-         zLEKLDlgBBLSTTA41a/5tpZ6GQFS3VhJP2lNoxvOIcF3gFRHpIKUeb9sP7tWAm6gxymb
-         YFi/uxEfn1vRiEo3lLi9Jik6ZrbOEF7wjrxmKoLuppXvrN6cNJOOnMLnzbeAinS0bTN6
-         C3WvIwrChA+JBMvJ8RhS+25Jo+3qgnuuyk4658ujYBcgzSiDzuGeWneGBn6B4EAaxhb3
-         JAS+D7/oqhBFFa2fM1HA8dL75S69zisZqBGCcyioWwR42w1XKMFunbxggUpY6YzWH5OB
-         ZDjQ==
+        bh=uIApeW/cxziZeQ8Lx+W3IMHYVE9x+3UeM0rtM4gqy8U=;
+        b=XeX4VMJaXv7ODexsJvrUNeIXzeKsRmhgngAZk86pSKw9Gncm2ShX5EQD/Oo9GE2+QV
+         0mv2LILf4wyZ472q+gq8FHsuaRZwA5c0JFejjU2GSQYgPOz3iuVfW0EwfmmHySAnC0aN
+         49QUedchuTdJDApQ6kgHvMox4zhU/kXX8e8ylkTiWPX0rHnUtlfS/YthVX4/B6fapzX5
+         mcgEYxROCcWDNiF0c7vaoGcUEZ61e/ichNwlqa1LpPIhb8wBDZI99yoOuYbfUIN+CzH6
+         aEY9GqPWP805Fr9UVxceJqFYyZQvTRCDRoajfucOB8vxvyliGKEdPzqNe9M/gzKhEpA8
+         NibA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719587634; x=1720192434;
+        d=1e100.net; s=20230601; t=1719587636; x=1720192436;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=oxplXSHYof55UO1G/jgJi+L4qN2gtkU5KLIacw8Hjj0=;
-        b=xVAlkbpyzuWkIIaXYKYiUr1JW0BLjvq3RrOiHkxZAEWRzJ3NRgUH/BAhoX+AuKc56Z
-         Rh3ghTaqSBYjdxRy5fYoX/bO0BFhzZHOeCTNtH7L3++2dUuYzzZ7OIZIIDd1iM/63d2m
-         WQ+aKTjIoVciIpbgmnodWiv2QbSwrJ94StydIFJ+Jm1FmNQR65xFjqJMoZ1Oa4vlkw/F
-         vLDprTcGnNNnqkMGZSy+N5jxszfDM26XcEY1IODCoYQxVcf1ThG430yxpM5e0UTULEyo
-         p3lcOJT4o+EUmjYE5h7yjRH9qzEIwiQtlyhmxzlNO39sHdpZ57Jhiqj0HDvNAicMjZpF
-         hOAA==
-X-Gm-Message-State: AOJu0YxYoCJdG/eCIH4V+TsSuhOwC1bpgV1RRr5oQsMvFk+7zTI1ultJ
-	6KoTSUpEYxno/6eZU6ii2J0LPBXErBtSruxSh2eDVc/Oouq0527KRkiVCg==
-X-Google-Smtp-Source: AGHT+IG2OMomzezGRUbhXJ8XKQRxHM7sYn+iB6h+hM408aY2K+C2NCXzblw6WdDmmtXdpKIgQm07lQ==
-X-Received: by 2002:a05:6871:3429:b0:254:a753:d1cc with SMTP id 586e51a60fabf-25d06b73676mr17322060fac.3.1719587634250;
-        Fri, 28 Jun 2024 08:13:54 -0700 (PDT)
+        bh=uIApeW/cxziZeQ8Lx+W3IMHYVE9x+3UeM0rtM4gqy8U=;
+        b=EWyKK2sS02OTDrM5K5y3g9u1wOf/SFRl5II7wzweAXqIKPS5dIcPwi8ItE1HoKSIx8
+         YBkXZFzgcfx0dE4Pv3aISIAUhc9ObDF/PxxTlndfMd1lMwwJOU775a5rlhbYmrcAgwhj
+         UnWETsiPkZxrcqAzGBRXqXwClvT2qqk6jfs0cvgiPnKLHBpbgDlpQPniz1bbZzMyYuLE
+         2I3aHdTO7d+AjYcwJHHlJ2S7NibRnDS/z5VxVkhQ02Z2BLS1G2DdFHSGY+xBH+lPvSVb
+         WROpScrS6ujHE+VC0cSu1dwNrIWGxb6SZyTdDW5t2v2/yoKiU61wdBIpMjn6TGUrGD4V
+         yutw==
+X-Gm-Message-State: AOJu0YyUGYv/s3TZcURVYc6QWgvX7Md0o1o+mXkVZFFm6OkjGazIK/dg
+	N9CMRNMxmdhDvLSojvQGswBNGWfmTNXvlZ7yl73h/hmfIRc1JkmDlaobsw==
+X-Google-Smtp-Source: AGHT+IHue1VwqUFliIN/gVVynrnVva168H1Z1HzB5eiyeNvpjelRrSEIc0JcDEmbDug1owseqc/n+w==
+X-Received: by 2002:a05:6a20:3016:b0:1be:c551:b74f with SMTP id adf61e73a8af0-1bec551ba09mr6967503637.27.1719587635912;
+        Fri, 28 Jun 2024 08:13:55 -0700 (PDT)
 Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7080246e1d9sm1720955b3a.71.2024.06.28.08.13.53
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91c7df8b0sm1787504a91.0.2024.06.28.08.13.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 08:13:53 -0700 (PDT)
+        Fri, 28 Jun 2024 08:13:55 -0700 (PDT)
 Sender: Guenter Roeck <groeck7@gmail.com>
 From: Guenter Roeck <linux@roeck-us.net>
 To: linux-hwmon@vger.kernel.org
@@ -72,9 +72,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Farouk Bouabid <farouk.bouabid@cherry.de>,
 	Quentin Schulz <quentin.schulz@cherry.de>,
 	Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 01/10] hwmon: (amc6821) Stop accepting invalid pwm values
-Date: Fri, 28 Jun 2024 08:13:37 -0700
-Message-Id: <20240628151346.1152838-2-linux@roeck-us.net>
+Subject: [PATCH 02/10] hwmon: (amc6821) Make reading and writing fan speed limits consistent
+Date: Fri, 28 Jun 2024 08:13:38 -0700
+Message-Id: <20240628151346.1152838-3-linux@roeck-us.net>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240628151346.1152838-1-linux@roeck-us.net>
 References: <20240628151346.1152838-1-linux@roeck-us.net>
@@ -86,50 +86,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The pwm value range is well defined from 0..255. Don't accept
-any values outside this range.
+The default value of the maximum fan speed limit register is 0,
+essentially translating to an unlimited fan speed. When reading
+the limit, a value of 0 is reported in this case. However, writing
+a value of 0 results in writing a value of 0xffff into the register,
+which is inconsistent.
 
 Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 ---
- drivers/hwmon/amc6821.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ drivers/hwmon/amc6821.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/hwmon/amc6821.c b/drivers/hwmon/amc6821.c
-index 9b02b304c2f5..3c614a0bd192 100644
+index 3c614a0bd192..e37257ae1a6b 100644
 --- a/drivers/hwmon/amc6821.c
 +++ b/drivers/hwmon/amc6821.c
-@@ -360,8 +360,11 @@ static ssize_t pwm1_store(struct device *dev,
+@@ -601,7 +601,7 @@ static ssize_t fan_show(struct device *dev, struct device_attribute *devattr,
+ 	struct amc6821_data *data = amc6821_update_device(dev);
+ 	int ix = to_sensor_dev_attr(devattr)->index;
+ 	if (0 == data->fan[ix])
+-		return sprintf(buf, "0");
++		return sprintf(buf, "6000000");
+ 	return sprintf(buf, "%d\n", (int)(6000000 / data->fan[ix]));
+ }
+ 
+@@ -625,10 +625,10 @@ static ssize_t fan_store(struct device *dev, struct device_attribute *attr,
+ 	int ret = kstrtol(buf, 10, &val);
  	if (ret)
  		return ret;
+-	val = 1 > val ? 0xFFFF : 6000000/val;
++	val = val < 1 ? 0xFFFF : 6000000 / val;
  
-+	if (val < 0 || val > 255)
-+		return -EINVAL;
-+
  	mutex_lock(&data->update_lock);
--	data->pwm1 = clamp_val(val , 0, 255);
-+	data->pwm1 = val;
- 	i2c_smbus_write_byte_data(client, AMC6821_REG_DCY, data->pwm1);
- 	mutex_unlock(&data->update_lock);
- 	return count;
-@@ -558,13 +561,16 @@ static ssize_t pwm1_auto_point_pwm_store(struct device *dev,
- 	struct amc6821_data *data = dev_get_drvdata(dev);
- 	struct i2c_client *client = data->client;
- 	int dpwm;
--	long val;
--	int ret = kstrtol(buf, 10, &val);
-+	unsigned long val;
-+	int ret = kstrtoul(buf, 10, &val);
- 	if (ret)
- 		return ret;
- 
-+	if (val > 255)
-+		return -EINVAL;
-+
- 	mutex_lock(&data->update_lock);
--	data->pwm1_auto_point_pwm[1] = clamp_val(val, 0, 254);
-+	data->pwm1_auto_point_pwm[1] = val;
- 	if (i2c_smbus_write_byte_data(client, AMC6821_REG_DCY_LOW_TEMP,
- 			data->pwm1_auto_point_pwm[1])) {
+-	data->fan[ix] = (u16) clamp_val(val, 1, 0xFFFF);
++	data->fan[ix] = (u16)clamp_val(val, 0, 0xFFFF);
+ 	if (i2c_smbus_write_byte_data(client, fan_reg_low[ix],
+ 			data->fan[ix] & 0xFF)) {
  		dev_err(&client->dev, "Register write error, aborting.\n");
 -- 
 2.39.2
