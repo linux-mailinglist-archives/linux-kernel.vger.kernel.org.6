@@ -1,244 +1,316 @@
-Return-Path: <linux-kernel+bounces-234208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFD0091C3B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:27:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAC4391C3BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:28:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BD94283FC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:27:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A74D1C21577
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6911D1C9EC5;
-	Fri, 28 Jun 2024 16:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DDF11C9EC6;
+	Fri, 28 Jun 2024 16:28:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aSYP1xDF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WsENvp9g"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD9A1C2336;
-	Fri, 28 Jun 2024 16:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2CB31C6895;
+	Fri, 28 Jun 2024 16:28:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719592040; cv=none; b=LFltV2f/pb+AO2VxrIV33hdMcld6Ek2C4xy558UmMG8YJnvMYBcvUSDP8pk2Sba+j9n63vaokTut3xAKYbuNpEOzD4UwnjkQpfqLzpgVYECLBrzTNv7+lIBAtz3wkaTA/3UDXkvjxvozvFcjMav5xAlP+xbx3WFgQoxSWokhQ9g=
+	t=1719592129; cv=none; b=ALHXz+t/vBZEgMibQDRMdcN4Fg4SGamkGexrQ+g3Weq9lmXd0m4UgeCgiO6EaKFBulhhhwoAlEMmpE2GT2XwqAhkar+KLAKXtmm8yz+gHSarKxMZByKcB6WkWTLjKqQJ/wYMehdJO+Z13fMFeuqfAswuHLFMX5zvPq3M3y7iHc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719592040; c=relaxed/simple;
-	bh=b8temVV0TllxhDo4Ny297auVo63BjKTKc7Hu9KyJGQM=;
+	s=arc-20240116; t=1719592129; c=relaxed/simple;
+	bh=7vECTHfgeCEAWexnrrbGDmKKQAj38//6iVmI7aX727k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lUl6llZ83gJltS606p2Me0AAioD3MBppu8TeH2iyAUp2OUQiFQ6BH9m8g5YtLqBps89Y/uCUeHuME35EB8nv/3Oh7lnPWW5haUu9t7/6y5PsEUAr6NsLGcq62yQCRE/0+1gtEhzF7EWWuFfsVD43q+olm4lsqjY6awCY93ycOlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aSYP1xDF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C049C116B1;
-	Fri, 28 Jun 2024 16:27:16 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=gzZWg74DjUkX88hLDz3wRfZoibIOvCk42T9Qzz9BuRj8Cx0kfZzqookJ8Li9QB5d7jFLrteMuIC6hvsAjWfa3vGEgrWpIpE1gDHUQoAAqSMbtTKH8Drwwjb8O8FRLNL+z4DZrKIYFHQY0dQS0WYh2mzevXqly2adUa0gB+tqF1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WsENvp9g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6513C116B1;
+	Fri, 28 Jun 2024 16:28:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719592040;
-	bh=b8temVV0TllxhDo4Ny297auVo63BjKTKc7Hu9KyJGQM=;
+	s=k20201202; t=1719592129;
+	bh=7vECTHfgeCEAWexnrrbGDmKKQAj38//6iVmI7aX727k=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aSYP1xDF0sDOfd3XlqFaopvPmmfe6zBNsUmghSX65fM3WHuZWrwuoNTg9boJof6fQ
-	 rNZTb4+r4a01b5rTh18QuqAZ8JoTCc2fLmrD2my2MHyAt8dro7xw9WQFqV40oUwctj
-	 rGrAY3qwmbhBF2qjNU4eEmzHlelCU+8zvfzoQNvQaNbVLdyco/3SOhsvwtIxi6e8Rw
-	 gWwBPUx84gPYcZ1yoeaStvz00qdYswMrz07XZ3FGlbKiN/ai0vlWNGwoipoUhuigvL
-	 OP7PrpsiAAUX41gYCnpM8hkPINPm4j8cLDwfAgjx9RI8zzFiiLHOCxRxHgr1CYmITW
-	 FOL8i334zE/cQ==
-Date: Fri, 28 Jun 2024 17:27:14 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Hironori KIKUCHI <kikuchan98@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Jagan Teki <jagan@amarulasolutions.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Sam Ravnborg <sam@ravnborg.org>, David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
+	b=WsENvp9g4AVpEH3ObIr3mnX5XmJgybRNO+U/vQgSrSSpIIiCOWCuTTdb6Z/dN4vNp
+	 babGkHdiTjh5RWugOThE4CQfxH369QlRPwt6ggF0cFGsvb1ihGMXFOXAmbYe2G7Yac
+	 1SNycbL5UoD4kmoycuFBO8qpAzSPJ19MlTe4J8tehDv46gt9Ss1M1RJC7HOUEaltD2
+	 wBj8Oo/9Sc0lxzZ67D2qKyTEv4DLG2bZxIvNiwjJeESF+eizDyifW+0LIkzMazAHJa
+	 loXJ1W91pEy+itggIfADVe88AvqCzM3XXNk+Oef23vXRo99pCezhIWvGZpYFrC4x91
+	 eiN92hhxBKeWA==
+Date: Fri, 28 Jun 2024 10:28:47 -0600
+From: Rob Herring <robh@kernel.org>
+To: Ayush Singh <ayush@beagleboard.org>
+Cc: Mark Brown <broonie@kernel.org>,
+	Vaishnav M A <vaishnav@beagleboard.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: display: st7701: Add Anbernic RG28XX
- panel
-Message-ID: <20240628-splashy-slug-1d74e3fd9fe6@spud>
-References: <20240628051019.975172-1-kikuchan98@gmail.com>
- <20240628051019.975172-2-kikuchan98@gmail.com>
+	Conor Dooley <conor+dt@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, Michael Walle <mwalle@kernel.org>,
+	Andrew Lunn <andrew@lunn.ch>, jkridner@beagleboard.org,
+	robertcnelson@beagleboard.org, linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 1/7] dt-bindings: connector: Add mikrobus-connector
+Message-ID: <20240628162847.GB3143032-robh@kernel.org>
+References: <20240627-mikrobus-scratch-spi-v5-0-9e6c148bf5f0@beagleboard.org>
+ <20240627-mikrobus-scratch-spi-v5-1-9e6c148bf5f0@beagleboard.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="pgsu2z4eVwfR5zRj"
-Content-Disposition: inline
-In-Reply-To: <20240628051019.975172-2-kikuchan98@gmail.com>
-
-
---pgsu2z4eVwfR5zRj
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240627-mikrobus-scratch-spi-v5-1-9e6c148bf5f0@beagleboard.org>
 
-On Fri, Jun 28, 2024 at 02:10:15PM +0900, Hironori KIKUCHI wrote:
-> The RG28XX panel is a display panel of the Anbernic RG28XX, a handheld
-> gaming device from Anbernic. It is 2.8 inches in size (diagonally) with
-> a resolution of 480x640.
->=20
-> This panel is driven by a variant of the ST7701 driver IC internally,
-> confirmed by dumping and analyzing its BSP initialization sequence
-> by using a logic analyzer. It is very similar to the existing
-> densitron,dmt028vghmcmi-1a panel, but differs in some unknown
-> register values, so add a new entry for the panel to distinguish them.
->=20
-> Additionally, the panel is connected via SPI instead of MIPI DSI.
-> So add and modify for SPI as well.
->=20
-> Signed-off-by: Hironori KIKUCHI <kikuchan98@gmail.com>
+On Thu, Jun 27, 2024 at 09:56:11PM +0530, Ayush Singh wrote:
+> Add DT bindings for mikroBUS interface. MikroBUS is an open standard
+> developed by MikroElektronika for connecting add-on boards to
+> microcontrollers or microprocessors.
+> 
+> mikroBUS is a connector and does not have a controller. Instead the
+> software is responsible for identification of board and setting up uart,
+> spi, i2c, pwm and other buses. Additionally, some new mikroBUS boards
+> contain 1-wire EEPROM that contains a manifest to describe the addon
+> board to provide plug and play capabilities.
+> 
+> A mikroBUS addon board is free to leave some of the pins unused which
+> are marked as NC or Not Connected.
+> 
+> Some of the pins might need to be configured as GPIOs deviating from their
+> reserved purposes Eg: SHT15 Click where the SCL and SDA Pins need to be
+> configured as GPIOs for the driver (drivers/hwmon/sht15.c) to work.
+> 
+> For some add-on boards the driver may not take care of some additional
+> signals like reset/wake-up/other. Eg: ENC28J60 click where the reset line
+> (RST pin on the mikrobus port) needs to be pulled high.
+> 
+> Some SPI addon boards use other pins like RST, AN etc as chipselect (eg.
+> SPI Extend Click). Thus, `spi-cs` and `spi-cs-names` property is added
+> to allow mikroBUS addon board to specify chipselect by name.
+> 
+> Here's the list of pins in mikroBUS connector:
+> AN - Analog
+> RST - Reset
+> CS - SPI Chip Select
+> SCK - SPI Clock
+> MISO - SPI Master Input Slave Output
+> MOSI - SPI Master Output Slave Input
+> +3.3V - VCC-3.3V power
+> GND - Reference Ground
+> PWM - PWM output
+> INT - Hardware Interrupt
+> RX - UART Receive
+> TX - UART Transmit
+> SCL - I2C Clock
+> SDA - I2C Data
+> +5V - VCC-5V power
+> GND - Reference Ground
+> 
+> Link: https://www.mikroe.com/mikrobus
+> Link:
+> https://download.mikroe.com/documents/standards/mikrobus/mikrobus-standard-specification-v200.pdf
+> mikroBUS specification
+> Link: https://www.mikroe.com/sht1x-click SHT15 Click
+> Link: https://www.mikroe.com/eth-click ENC28J60 Click
+> Link: https://www.mikroe.com/spi-extend-click SPI Extend Click
+> 
+> Co-developed-by: Vaishnav M A <vaishnav@beagleboard.org>
+> Signed-off-by: Vaishnav M A <vaishnav@beagleboard.org>
+> Signed-off-by: Ayush Singh <ayush@beagleboard.org>
 > ---
->  .../display/panel/sitronix,st7701.yaml        | 69 +++++++++++++++++--
->  1 file changed, 64 insertions(+), 5 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/display/panel/sitronix,st7=
-701.yaml b/Documentation/devicetree/bindings/display/panel/sitronix,st7701.=
-yaml
-> index b348f5bf0a9..835ea436531 100644
-> --- a/Documentation/devicetree/bindings/display/panel/sitronix,st7701.yaml
-> +++ b/Documentation/devicetree/bindings/display/panel/sitronix,st7701.yaml
-> @@ -20,21 +20,19 @@ description: |
->    Densitron DMT028VGHMCMI-1A is 480x640, 2-lane MIPI DSI LCD panel
->    which has built-in ST7701 chip.
-> =20
-> -allOf:
-> -  - $ref: panel-common.yaml#
-> -
->  properties:
->    compatible:
->      items:
->        - enum:
->            - anbernic,rg-arc-panel
-> +          - anbernic,rg28xx-panel
+>  .../bindings/connector/mikrobus-connector.yaml     | 107 +++++++++++++++++++++
+>  MAINTAINERS                                        |   6 ++
+>  2 files changed, 113 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/connector/mikrobus-connector.yaml b/Documentation/devicetree/bindings/connector/mikrobus-connector.yaml
+> new file mode 100644
+> index 000000000000..033479f8604f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/connector/mikrobus-connector.yaml
+> @@ -0,0 +1,107 @@
+> +# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/connector/mikrobus-connector.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: mikroBUS add-on board connector
+> +
+> +maintainers:
+> +  - Ayush Singh <ayush@beagleboard.org>
+> +
+> +properties:
+> +  compatible:
+> +    const: mikrobus-connector
+> +
+> +  pinctrl-0: true
+> +  pinctrl-1: true
+> +  pinctrl-2: true
+> +  pinctrl-3: true
+> +  pinctrl-4: true
+> +  pinctrl-5: true
+> +  pinctrl-6: true
+> +  pinctrl-7: true
+> +  pinctrl-8: true
+> +
+> +  pinctrl-names:
+> +    minItems: 1
+> +    maxItems: 9
+> +    items:
+> +      enum: [default, pwm_default, pwm_gpio, uart_default, uart_gpio, i2c_default, i2c_gpio, spi_default,
+> +             spi_gpio]
 
-Please no wildcards in compatibles - what is the actual model of this
-panel? I don't really want to see the model of the handheld here if
-possible.
+Generally, each pinctrl-N is mutually exclusive. It looks like here you 
+want multiple states active at one time. Does this work?
 
->            - densitron,dmt028vghmcmi-1a
->            - elida,kd50t048a
->            - techstar,ts8550b
->        - const: sitronix,st7701
-> =20
->    reg:
-> -    description: DSI virtual channel used by that screen
-> +    description: DSI / SPI channel used by that screen
->      maxItems: 1
-> =20
->    VCC-supply:
-> @@ -43,6 +41,13 @@ properties:
->    IOVCC-supply:
->      description: I/O system regulator
-> =20
-> +  dc-gpios:
+> +
+> +  spi-controller:
+> +    description: spi-controller of mikroBUS SPI pins along with cs pins.
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +
+> +  spi-cs:
+> +    description: spi chip-select corresponding to the chip-selects on the mikrobus socket.
+
+Wrap lines at 80 char.
+
+The array index is the chip-select number on the connector and the 
+value is the host SPI controller CS numbers? Or the other way around? 
+This needs a better description.
+
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+
+Maximum number of entries? 
+
+> +
+> +  spi-cs-names:
+> +    minItems: 1
+> +    maxItems: 12
+> +    items:
+> +      enum: [default, pwm, int, rx, tx, scl, sda, an, rst, sck, cipo, copi]
+> +
+> +  i2c-controller:
+> +    description: i2c controller attached to the mikrobus socket.
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+
+i2c-bus is the somewhat standard property for this.
+
+Really, I'd expect connectors to look something like this:
+
+connector {
+  i2c-0 {
+    i2c-bus = <&i2c3>;
+    #address-cells = <1>;
+    #size-cells = <0>;
+    device@12 {
+      compatible = "some-i2c-device";
+    };
+  };
+};
+
+That form allows for multiple buses (of the same type or different) on 
+the connector.
+
+> +
+> +  uart-controller:
+> +    description: uart controller attached to the mikrobus socket
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +
+> +  pwms:
+> +    description: the pwm-controller corresponding to the mikroBUS PWM pin.
 > +    maxItems: 1
-> +    description:
-> +      Controller data/command selection (D/CX) in 4-line SPI mode.
-> +      If not set, the controller is in 3-line SPI mode.
-> +      Disallowed for DSI.
 > +
->    port: true
->    reset-gpios: true
->    rotation: true
-> @@ -57,7 +62,38 @@ required:
->    - port
->    - reset-gpios
-> =20
-> -additionalProperties: false
-> +allOf:
-> +  - $ref: panel-common.yaml#
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            # SPI connected panels
-> +            enum:
-> +              - anbernic,rg28xx-panel
-> +    then:
-> +      $ref: /schemas/spi/spi-peripheral-props.yaml
+> +  mikrobus-gpios:
+> +    minItems: 1
+> +    maxItems: 12
+> +
+> +  mikrobus-gpio-names:
 
-I'm not really keen on this. I'd rather see a different binding for the
-SPI version compared to the MIPI ones. Is doing things like this common
-for panels? If it is, I'll turn a blind eye..
+The GPIO binding does not work this way as the name is in the property. 
+Either drop if you want to keep the array or you have to do something 
+like this:
+
+pwm-gpios
+int-gpios
+rx-gpios
+
+Really, the intention was for connectors to use gpio-map property to 
+renumber GPIOs relative to the connector.
+
+> +    minItems: 1
+> +    maxItems: 12
+> +    items:
+> +      enum: [pwm, int, rx, tx, scl, sda, an, rst, cs, sck, cipo, copi]
+> +
+> +  board:
+> +    description: board attached to mikrobus connector
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+
+What is this for?
 
 > +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          not:
-> +            contains:
-> +              # DSI or SPI without D/CX pin
-> +              enum:
-> +                - anbernic,rg-arc-panel
-> +                - anbernic,rg28xx-panel
-> +                - densitron,dmt028vghmcmi-1a
-> +                - elida,kd50t048a
-> +                - techstar,ts8550b
-
-This is all the compatibles in the file, so nothing is allowed to use
-dc-gpios? Why bother adding it?
-
-Confused,
-Conor.
-
-> +    then:
-> +      required:
-> +        - dc-gpios
-> +    else:
-> +      properties:
-> +        dc-gpios: false
+> +required:
+> +  - compatible
+> +  - pinctrl-0
 > +
-> +unevaluatedProperties: false
-> =20
->  examples:
->    - |
-> @@ -82,3 +118,26 @@ examples:
->              };
->          };
->      };
+> +additionalProperties: false
+> +
+> +examples:
 > +  - |
 > +    #include <dt-bindings/gpio/gpio.h>
-> +
-> +    spi {
-> +        #address-cells =3D <1>;
-> +        #size-cells =3D <0>;
-> +
-> +        panel@0 {
-> +            compatible =3D "anbernic,rg28xx-panel", "sitronix,st7701";
-> +            reg =3D <0>;
-> +            spi-max-frequency =3D <3125000>;
-> +            VCC-supply =3D <&reg_lcd>;
-> +            IOVCC-supply =3D <&reg_lcd>;
-> +            reset-gpios =3D <&pio 8 14 GPIO_ACTIVE_HIGH>; /* LCD-RST: PI=
-14 */
-> +            backlight =3D <&backlight>;
-> +
-> +            port {
-> +                panel_in_rgb: endpoint {
-> +                    remote-endpoint =3D <&tcon_lcd0_out_lcd>;
-> +                };
-> +            };
-> +        };
+> +    mikrobus {
+> +      compatible = "mikrobus-connector";
+> +      pinctrl-names = "default", "pwm_default", "pwm_gpio","uart_default", "uart_gpio", "i2c_default",
+> +                      "i2c_gpio", "spi_default", "spi_gpio";
+> +      pinctrl-0 = <&P2_03_gpio_input_pin &P1_04_gpio_pin &P1_02_gpio_pin>;
+> +      pinctrl-1 = <&P2_01_pwm_pin>;
+> +      pinctrl-2 = <&P2_01_gpio_pin>;
+> +      pinctrl-3 = <&P2_05_uart_pin &P2_07_uart_pin>;
+> +      pinctrl-4 = <&P2_05_gpio_pin &P2_07_gpio_pin>;
+> +      pinctrl-5 = <&P2_09_i2c_pin &P2_11_i2c_pin>;
+> +      pinctrl-6 = <&P2_09_gpio_pin &P2_11_gpio_pin>;
+> +      pinctrl-7 = <&P1_12_spi_pin &P1_10_spi_pin &P1_08_spi_sclk_pin &P1_06_spi_cs_pin>;
+> +      pinctrl-8 = <&P1_12_gpio_pin &P1_10_gpio_pin &P1_08_gpio_pin &P1_06_gpio_pin>;
+> +      pwms = <&ehrpwm1 0 500000 0>;
+> +      i2c-controller = <&i2c1>;
+> +      uart-controller = <&uart1>;
+> +      spi-controller = <&spi1>;
+> +      spi-cs = <0 1>;
+> +      spi-cs-names = "default", "rst";
+> +      mikrobus-gpios = <&gpio1 18 GPIO_ACTIVE_HIGH>, <&gpio0 23 GPIO_ACTIVE_HIGH>,
+> +                       <&gpio0 30 GPIO_ACTIVE_HIGH>, <&gpio0 31 GPIO_ACTIVE_HIGH>,
+> +                       <&gpio0 15 GPIO_ACTIVE_HIGH>, <&gpio0 14 GPIO_ACTIVE_HIGH>,
+> +                       <&gpio0 4 GPIO_ACTIVE_HIGH>, <&gpio0 3 GPIO_ACTIVE_HIGH>,
+> +                       <&gpio0 2 GPIO_ACTIVE_HIGH>, <&gpio0 5 GPIO_ACTIVE_HIGH>,
+> +                       <&gpio2 25 GPIO_ACTIVE_HIGH>, <&gpio2 3 GPIO_ACTIVE_HIGH>;
 > +    };
-> --=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 807feae089c4..8e4115e93aeb 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -15108,6 +15108,12 @@ M:	Oliver Neukum <oliver@neukum.org>
+>  S:	Maintained
+>  F:	drivers/usb/image/microtek.*
+>  
+> +MIKROBUS
+> +M:	Ayush Singh <ayush@beagleboard.org>
+> +M:	Vaishnav M A <vaishnav@beagleboard.org>
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/connector/mikrobus-connector.yaml
+> +
+>  MIKROTIK CRS3XX 98DX3236 BOARD SUPPORT
+>  M:	Luka Kovacic <luka.kovacic@sartura.hr>
+>  M:	Luka Perkov <luka.perkov@sartura.hr>
+> 
+> -- 
 > 2.45.2
->=20
-
---pgsu2z4eVwfR5zRj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZn7kYgAKCRB4tDGHoIJi
-0pznAQCKC1Je5s1v+LFS2US28Hr1eEQJ2Gs+Thz3sMqhwKdSSQEA0hr0INeGetBN
-6uay1QTnj82kx/CUcLALbjyKpRnrPAU=
-=OKdQ
------END PGP SIGNATURE-----
-
---pgsu2z4eVwfR5zRj--
+> 
 
