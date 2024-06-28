@@ -1,129 +1,235 @@
-Return-Path: <linux-kernel+bounces-234670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5CA591C94C
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 00:48:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35C7B91C94D
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 00:51:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03F011C22364
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:48:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F4211C22778
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 873A3824A1;
-	Fri, 28 Jun 2024 22:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC50E82480;
+	Fri, 28 Jun 2024 22:50:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uDc7DmPL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qb5Ac7+X"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D3A13AD12;
-	Fri, 28 Jun 2024 22:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 936247710F
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 22:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719614879; cv=none; b=rPa9Pmr/XvxvJ4Bi2dEIIObrpLZQSO5Ci4EB6Iu5km3e7WIkhc4G3Refw9/LlVatPX4LXFLtdhAioTVRXXOxP2JpWc32QaTbtEhF7WGvgbmMH1C8HamGCqxsm2RcBLj0tA901iPE2ShGkxWGBUFblUaanQw7NmXKrrTGOta7mpA=
+	t=1719615056; cv=none; b=LSavXYK0FLh95zzUEvqUsBrjwMMPvXlunvREtxgjtT77fBvivzrg+pQWQc5bwyg9JgZUju3872UULzrG8Tz25gnFNcPiKmnSUsNVWTXn7wpp0uX8tFJk3pmzLEf0d/n/4+DJKQGgYuRyh/yXUsv+jascW5ruBcCjR0ikBH75T/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719614879; c=relaxed/simple;
-	bh=nUc92aZzSmfiZuXR49U6JmcFa5EHLz6CQ+N7uWdpTs8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nilKth8KVZ9Neu11s9BnSRaF24BvBJRKkPgeLYXSoVFahscBkhqL+LtrboBmTkU5I/oerbJ+GawWhNwMx1kQ5WkW3tZPhE1tM85R0iVm/RA3d7oh9s1Vaavoo/SrSsLd80dcs0UQLOR2485JEoNM10l45/NgzbMPiD0FhdBoRws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uDc7DmPL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2776CC116B1;
-	Fri, 28 Jun 2024 22:47:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719614879;
-	bh=nUc92aZzSmfiZuXR49U6JmcFa5EHLz6CQ+N7uWdpTs8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uDc7DmPLroi2czVUHCWkUx98Qq6Ly5uXIwqCdBlmX/qEe/+BScaunkpGRq82/V1JR
-	 mgP05KFUjNODgqpZpsVSQdjK7vnWuDZqAMwz7l030CPkZobFSWwtm6VnXomoV7Nv9U
-	 6qN5dVl2lDlxlcx0nMWytwtBupSI7AH1CZwtlMLHNtFHnefS6jCCKvnHTpb8GRVHYK
-	 6zRMOKTXkpEEpsEftCfMFwhGcNadOXALh3EaZxEwGyM5PUD5IjUR8QLM3Mby5NX/IR
-	 ViyDJ9e0gN2cMnPLLLGvQu918CJ5P+CXPrDFLLctkgH2Mf/vk8xmuiH9qNi5hSAu8W
-	 Nnf6IjdmFurvA==
-Received: by pali.im (Postfix)
-	id 155F47A6; Sat, 29 Jun 2024 00:47:56 +0200 (CEST)
-Date: Sat, 29 Jun 2024 00:47:55 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Armin Wolf <W_Armin@gmx.de>
-Cc: jdelvare@suse.com, linux@roeck-us.net, linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hwmon: (dell-smm) Add Dell OptiPlex 7060 to DMI table
-Message-ID: <20240628224755.kxbyydhpoqeyyyzy@pali>
-References: <20240628214723.19665-1-W_Armin@gmx.de>
- <20240628215704.i6ohbuz2zgegr27p@pali>
- <b4e555cf-dae3-4af3-98b7-15633eb3cc63@gmx.de>
+	s=arc-20240116; t=1719615056; c=relaxed/simple;
+	bh=jy93R+AfsRqMAGlNONjXHx3MTwYmbc0o5Y+QyO4nU/E=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=TbBu+WWxxWTVIHCn1rNe1JQo2x7O4mI/zdckrn0RJt5NOIAn3NfoszSd8Pjg65++WcMde9uPuS1JRjJD5Q7NBgN0eqVL6pWb6zLCd7R6p4K0sPFZYJkYIzjto/hGfDjOqCK8Xdc3q1eQ/ezk8CRQea8d8ikM+UzyXHVCTTo7cKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qb5Ac7+X; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e03641334e0so1230935276.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 15:50:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719615053; x=1720219853; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bu4QFZ07Tx/IOVEaQ53Qnu94rStFQkBj6hOEerB+McQ=;
+        b=qb5Ac7+XumS+Qxp9YK3Mu4zbYPCTOqrs1VxUfIs1ysp57H7t9qeCI59K7LIUTraBN1
+         KdduSod7m8qMmrt8lgYz5o3AZwR5UKEVutzD9Oxzx8c5H5WtkvMTmj6dDUfelBEZ4B/e
+         F7QgcoMnYTpm/JWahRHtkqMjhvVoxGTLPCc+9ugvwIDX1FbO0ra6vHPm/c0R4P22e3zs
+         g0YjsZo2ESpysVMTl5dq7sy7RRn4lYw2PSuNszaPn/LCGc1nMywGBj8uEP8JrJBJ0Ps0
+         wz1ZEcKQr2Mob8p9u8uCnh10woOg2o1Axox7vpKRfjLX3/RqKMpddvVnn1OrK9ZnqbqG
+         2lCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719615053; x=1720219853;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bu4QFZ07Tx/IOVEaQ53Qnu94rStFQkBj6hOEerB+McQ=;
+        b=rwvf28mBwFF5sClcEFoubhcgaSzumYQ5LrI+uyOSWk8+9NSieWEaWqFMWF8BCWqIKV
+         iO4OF7qewt4KvcISljfj+UTAuy5kZJFhI+PlahkveA8Ci2FROwoslGWJCDm+xmKrAaDP
+         R6/Srff51rhEB0FdkM0Ib9uAmx0+bWr3UJN3wgJt1BBr6KJ76UP/3pU+nZmzs8E91UgV
+         NUfLnKJcOxLiof5KiK03LoIe3KJ5BOZ2N7fucvJ5vS7Hg6jSaziUnlvWbJj1pst6pmVY
+         9EX/XruiSOA4ws5grkrZecmEkQXOJBnQsg2nwmXgK3qssu9zHl6+dBkSiyw93GaCD9dm
+         s5uA==
+X-Forwarded-Encrypted: i=1; AJvYcCUh6nb/jqroHbaxpxg0c2Ux/OTwZ+kB+UxHjUfgOMwkQS9Zf3vqoJlrvnFjJNTvm8a7XP/EtSpbOrk1CM65MUYA0GXUBmwqIhw+gIBS
+X-Gm-Message-State: AOJu0YyGDA8WZ5/nX3BEqD+ubXBhcr5L4MGcUtk4ithvm+Ds8EPDALsz
+	ROkD0MfAwmDmRJGuUtpkX5CnuPROQfNf33J7WWweAl4klPfaBZ/ZjoaeUMguTURFqVivnU4JVDF
+	bNw==
+X-Google-Smtp-Source: AGHT+IF/h7suUpPHaE6SsxKCTMo0m7O49IXDLR+c+LZnvsQxH+QhzdDpJWmE+hfpq58JCkdgFZQmcKv7iBg=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:1109:b0:e03:3683:e67f with SMTP id
+ 3f1490d57ef6-e033683e751mr15350276.5.1719615053446; Fri, 28 Jun 2024 15:50:53
+ -0700 (PDT)
+Date: Fri, 28 Jun 2024 15:50:51 -0700
+In-Reply-To: <2fccf35715b5ba8aec5e5708d86ad7015b8d74e6.1718214999.git.reinette.chatre@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b4e555cf-dae3-4af3-98b7-15633eb3cc63@gmx.de>
-User-Agent: NeoMutt/20180716
+Mime-Version: 1.0
+References: <cover.1718214999.git.reinette.chatre@intel.com> <2fccf35715b5ba8aec5e5708d86ad7015b8d74e6.1718214999.git.reinette.chatre@intel.com>
+Message-ID: <Zn8-S-QFSzm8du90@google.com>
+Subject: Re: [PATCH V9 2/2] KVM: selftests: Add test for configure of x86 APIC
+ bus frequency
+From: Sean Christopherson <seanjc@google.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: isaku.yamahata@intel.com, pbonzini@redhat.com, erdemaktas@google.com, 
+	vkuznets@redhat.com, vannapurve@google.com, jmattson@google.com, 
+	mlevitsk@redhat.com, xiaoyao.li@intel.com, chao.gao@intel.com, 
+	rick.p.edgecombe@intel.com, yuan.yao@intel.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Saturday 29 June 2024 00:43:08 Armin Wolf wrote:
-> Am 28.06.24 um 23:57 schrieb Pali Rohár:
+On Wed, Jun 12, 2024, Reinette Chatre wrote:
+> +/*
+> + * Pick 25MHz for APIC bus frequency. Different enough from the default 1GHz.
+> + * User can override via command line.
+> + */
+> +static uint64_t apic_hz = 25 * 1000 * 1000;
+> +
+> +/*
+> + * Delay in msec that guest uses to determine APIC bus frequency.
+> + * User can override via command line.
+> + */
+> +static unsigned long delay_ms = 100;
+
+There's no need for these to be global, it's easy enough to pass them as params
+to apic_guest_code().  Making is_x2apic is wortwhile as it cuts down on the noise,
+but for these, I think it's better to keep them local.
+
+> +
+> +/*
+> + * Possible TDCR values with matching divide count. Used to modify APIC
+> + * timer frequency.
+> + */
+> +static struct {
+> +	uint32_t tdcr;
+> +	uint32_t divide_count;
+
+These can/should all be const.
+
+> +} tdcrs[] = {
+> +	{0x0, 2},
+> +	{0x1, 4},
+> +	{0x2, 8},
+> +	{0x3, 16},
+> +	{0x8, 32},
+> +	{0x9, 64},
+> +	{0xa, 128},
+> +	{0xb, 1},
+> +};
+> +
+> +/* true if x2APIC test is running, false if xAPIC test is running. */
+> +static bool is_x2apic;
+> +
+> +static void apic_enable(void)
+> +{
+> +	if (is_x2apic)
+> +		x2apic_enable();
+> +	else
+> +		xapic_enable();
+> +}
+> +
+> +static uint32_t apic_read_reg(unsigned int reg)
+> +{
+> +	return is_x2apic ? x2apic_read_reg(reg) : xapic_read_reg(reg);
+> +}
+> +
+> +static void apic_write_reg(unsigned int reg, uint32_t val)
+> +{
+> +	if (is_x2apic)
+> +		x2apic_write_reg(reg, val);
+> +	else
+> +		xapic_write_reg(reg, val);
+> +}
+> +
+> +static void apic_guest_code(void)
+> +{
+> +	uint64_t tsc_hz = (uint64_t)tsc_khz * 1000;
+> +	const uint32_t tmict = ~0u;
+> +	uint64_t tsc0, tsc1, freq;
+> +	uint32_t tmcct;
+> +	int i;
+> +
+> +	apic_enable();
+> +
+> +	/*
+> +	 * Setup one-shot timer.  The vector does not matter because the
+> +	 * interrupt should not fire.
+> +	 */
+> +	apic_write_reg(APIC_LVTT, APIC_LVT_TIMER_ONESHOT | APIC_LVT_MASKED);
+> +
+> +	for (i = 0; i < ARRAY_SIZE(tdcrs); i++) {
+> +
+> +		apic_write_reg(APIC_TDCR, tdcrs[i].tdcr);
+> +		apic_write_reg(APIC_TMICT, tmict);
+> +
+> +		tsc0 = rdtsc();
+> +		udelay(delay_ms * 1000);
+> +		tmcct = apic_read_reg(APIC_TMCCT);
+> +		tsc1 = rdtsc();
+> +
+> +		/*
+> +		 * Stop the timer _after_ reading the current, final count, as
+> +		 * writing the initial counter also modifies the current count.
+> +		 */
+> +		apic_write_reg(APIC_TMICT, 0);
+> +
+> +		freq = (tmict - tmcct) * tdcrs[i].divide_count * tsc_hz / (tsc1 - tsc0);
+> +		/* Check if measured frequency is within 1% of configured frequency. */
+
+1% is likely too aggressive, i.e. we'll get false failures due to host activity.
+On our systems, even a single pr_warn() in the timer path causes failure.  For
+now, I think 5% is good enough, e.g. it'll catch cases where KVM is waaay off.
+If we want to do better (or that's still too tight), then we can add a '-t <tolerance'
+param or something.
+
+> +		GUEST_ASSERT(freq < apic_hz * 101 / 100);
+> +		GUEST_ASSERT(freq > apic_hz * 99 / 100);
+
+Combine these into a single assert, and print the params, i.e. don't rely on the
+line number to figure out what's up.
+
+		__GUEST_ASSERT(freq < apic_hz * 105 / 100 && freq > apic_hz * 95 / 100,
+			       "Frequency = %lu (wanted %lu - %lu), bus = %lu, div = %u, tsc = %lu",
+			       freq, apic_hz * 95 / 100, apic_hz * 105 / 100,
+			       apic_hz, tdcrs[i].divide_count, tsc_hz);
+
+> +int main(int argc, char *argv[])
+> +{
+> +	int opt;
+> +
+> +	TEST_REQUIRE(kvm_has_cap(KVM_CAP_X86_APIC_BUS_CYCLES_NS));
+> +
+> +	while ((opt = getopt(argc, argv, "d:f:h")) != -1) {
+> +		switch (opt) {
+> +		case 'f':
+> +			apic_hz = atol(optarg);
+> +			break;
+> +		case 'd':
+> +			delay_ms = atol(optarg);
+> +			break;
+> +		case 'h':
+> +			help(argv[0]);
+> +			exit(0);
+> +		default:
+> +			help(argv[0]);
+> +			exit(1);
+
+Heh, selftests are anything but consistent, but this should be exit(KSFT_SKIP)
+for both.
+
+> +		}
+> +	}
+> +
+> +	run_apic_bus_clock_test(false);
+> +	run_apic_bus_clock_test(true);
+> +}
+> -- 
+> 2.34.1
 > 
-> > On Friday 28 June 2024 23:47:23 Armin Wolf wrote:
-> > > The BIOS on this machine is buggy and will in some cases return
-> > > an error when trying to get the fan state, but reading of the
-> > > RPM values and the temperature sensors still works.
-> > Does this error affects machine usage (e.g. freeze of CPU or some
-> > erratic fan behavior)? Or just kernel does not receive fan state and is
-> > unable to report meaningful value to userspace?
-> 
-> Basically, it seems that the BIOS will return an error if the to-be-returned fan state is less than 2.
-> Everything else seems to work.
-
-Ok, if there is no negative impact then fine for me.
-
-Acked-by: Pali Rohár <pali@kernel.org>
-
-> Thanks,
-> Armin Wolf
-> 
-> > > Closes: https://github.com/vitorafsr/i8kutils/issues/38
-> > > Signed-off-by: Armin Wolf <W_Armin@gmx.de>
-> > > ---
-> > >   Documentation/hwmon/dell-smm-hwmon.rst | 2 ++
-> > >   drivers/hwmon/dell-smm-hwmon.c         | 7 +++++++
-> > >   2 files changed, 9 insertions(+)
-> > > 
-> > > diff --git a/Documentation/hwmon/dell-smm-hwmon.rst b/Documentation/hwmon/dell-smm-hwmon.rst
-> > > index 977263cb57a8..74905675d71f 100644
-> > > --- a/Documentation/hwmon/dell-smm-hwmon.rst
-> > > +++ b/Documentation/hwmon/dell-smm-hwmon.rst
-> > > @@ -360,6 +360,8 @@ Firmware Bug                                            Affected Machines
-> > >   ======================================================= =================
-> > >   Reading of fan states return spurious errors.           Precision 490
-> > > 
-> > > +                                                        OptiPlex 7060
-> > > +
-> > >   Reading of fan types causes erratic fan behaviour.      Studio XPS 8000
-> > > 
-> > >                                                           Studio XPS 8100
-> > > diff --git a/drivers/hwmon/dell-smm-hwmon.c b/drivers/hwmon/dell-smm-hwmon.c
-> > > index 48a81c64f00d..c75bfe93f2f6 100644
-> > > --- a/drivers/hwmon/dell-smm-hwmon.c
-> > > +++ b/drivers/hwmon/dell-smm-hwmon.c
-> > > @@ -1263,6 +1263,13 @@ static const struct dmi_system_id i8k_dmi_table[] __initconst = {
-> > >   			DMI_MATCH(DMI_PRODUCT_NAME, "MP061"),
-> > >   		},
-> > >   	},
-> > > +	{
-> > > +		.ident = "Dell OptiPlex 7060",
-> > > +		.matches = {
-> > > +			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-> > > +			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "OptiPlex 7060"),
-> > > +		},
-> > > +	},
-> > >   	{
-> > >   		.ident = "Dell Precision",
-> > >   		.matches = {
-> > > --
-> > > 2.39.2
-> > > 
 
