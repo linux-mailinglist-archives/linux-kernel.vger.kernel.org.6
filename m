@@ -1,166 +1,167 @@
-Return-Path: <linux-kernel+bounces-233769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7970591BCDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:50:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E073991BCDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:50:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B2E91C22097
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:50:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CA7FB2032B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5DDC156237;
-	Fri, 28 Jun 2024 10:50:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA6DC155747;
+	Fri, 28 Jun 2024 10:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="JlRLMEk8"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="UlZW5/Px"
+Received: from out187-2.us.a.mail.aliyun.com (out187-2.us.a.mail.aliyun.com [47.90.187.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4F0481D7;
-	Fri, 28 Jun 2024 10:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4750F1459EF
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 10:50:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.187.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719571821; cv=none; b=sUZtRLDGVFSKzrXdNPVBQjw1HobQVA5aZ3eaVsX9n8ZIThJTLlxfansr3YTYl8jq850ehs6LCk8cCwdAW4kJ5dzWK3yaNvido3kT3MO/qSNzY5l7GIAU3etoQKePYk6/1kX88RW8ni+yOGwl9r9jK0yQs+hPpgHxPnpbT9AWGuo=
+	t=1719571810; cv=none; b=rw0C6ECLnlf4jSjhnguwoBORp6BrbwYqCFFe0/IB3HsyHCTxVOdDKHVw6znrlWr8EwcEDO+QhnISFMy5QGBbKK9vMbYkKM+6jXOLQwxWFRfmiyfZbrzbZRSUTvdF4r+bUTY52/aTrFHMKJPZgqx+7bNbOMZYnIWiHJwEEazbwTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719571821; c=relaxed/simple;
-	bh=ewJYo5B5Gn5p+bUGXnTqJoyHMt2jjLTs26XZMLBY5ts=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mkfFLgWN5laBbNdzXB1bHEiWeE2zgE6kRmLul8WiORFgkdlPEHGDDTTMjaIFRroKpc2w6DZ2im6ODRAW3oXOwa4smGSUZg0gTMqL+38dQXXVqBe4QdVN5KAJrDdtGzYqM4o8PXjZ6TgYgQTaAhO2lkWcCOOH11AvAL46B6+/NRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=JlRLMEk8; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1719571818; x=1751107818;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ewJYo5B5Gn5p+bUGXnTqJoyHMt2jjLTs26XZMLBY5ts=;
-  b=JlRLMEk838rFfCJCz65dqELDlrDMmS7cWmpSd5Zy2HVsEilZZ8kEe5Y4
-   eRmF0pU+VNkKHMyPZGpvOEUh3NHkXAJRUfvJ5F9Y9jOi6nu/qO8h6U/9v
-   shH8G/QrMtcQ+o803kX5b4Isb22iUDvRmuROZZNpvQYEecdNZHV6nrkwc
-   BDeJnIeQtp0FqV3PDYOY7gqNNIqGx6GoaK+v+JqQQgsI8FsQgTLqaE0HG
-   9W0OkUJc/ORPIqYj1E4X+GwCPcX7z/ejIZLzXhjb4tisRvC8v+albtArK
-   vse7Zs3AxNzwT+gXVO46NdBFQP+FtA0lzwanYDAFLI0UkD2i6wXRiubrp
-   g==;
-X-CSE-ConnectionGUID: 1fcM70mTSxeGp3bdmK8x+A==
-X-CSE-MsgGUID: 6jb0hYoOSIuLQoRgVTRgyQ==
-X-IronPort-AV: E=Sophos;i="6.09,168,1716274800"; 
-   d="asc'?scan'208";a="196017444"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 28 Jun 2024 03:50:16 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 28 Jun 2024 03:49:43 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex02.mchp-main.com (10.10.85.144)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Fri, 28 Jun 2024 03:49:39 -0700
-Date: Fri, 28 Jun 2024 11:49:23 +0100
-From: Conor Dooley <conor.dooley@microchip.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-CC: Thomas Bonnefille <thomas.bonnefille@bootlin.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Jisheng Zhang <jszhang@kernel.org>, Guo Ren
-	<guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Drew Fustini
-	<dfustini@tenstorrent.com>, Emil Renner Berthing
-	<emil.renner.berthing@canonical.com>, Conor Dooley <conor@kernel.org>, Jarkko
- Nikula <jarkko.nikula@linux.intel.com>, Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Paul Walmsley <paul.walmsley@sifive.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, =?iso-8859-1?Q?Miqu=E8l?=
- Raynal <miquel.raynal@bootlin.com>, <linux-i2c@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH v3 0/3] Add I2C support on TH1520
-Message-ID: <20240628-joining-blooming-64aefbfd9897@wendy>
-References: <20240618-i2c-th1520-v3-0-3042590a16b1@bootlin.com>
- <xkdmrmtiizoqo6mpc7i6iyhilxlw57nawn6ogv6dryaveyqddc@ach3rwy4abpe>
+	s=arc-20240116; t=1719571810; c=relaxed/simple;
+	bh=9icl2M1nIaxMsLS/xkjRdnN+tiSDjEtL2rllD0abne4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YJFY5CiPvD/7acrJemQFKXmlPXzjrGsK8/cC1dd96z4Uvu2M7VkjJNcwjc5J6dejqmo2mxB0AFTDViv+m8yoyigV4AB5MDE3Sul/iidhRwkbpj0VdKUCLeezlFKat0XwKawMM7fRveAZ1e7S2eOPd8wlVf0nEaBc11Cnais/bgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=UlZW5/Px; arc=none smtp.client-ip=47.90.187.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=antgroup.com; s=default;
+	t=1719571789; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=PmC6WY0awgsY9XoqlRu++2CjZX1SiBFOFYun5TXen0I=;
+	b=UlZW5/Px0r0H/u4/ZMS/FrCQTXdgi314V1Pf7PQVFXGBbcpo2+X/PQbWcjo9xr/r63fpLPGfilqxjPgx4EG2V5fg6xAuVslv9oquBXbTBJr7wmw+R5erUytCmiibE2Qqll8sC0UxdjACYYhB6XiSpG+m2ibmhCH3K7PGZ6TetPk=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033023108233;MF=libang.li@antgroup.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---.YCQ5T17_1719571788;
+Received: from localhost(mailfrom:libang.li@antgroup.com fp:SMTPD_---.YCQ5T17_1719571788)
+          by smtp.aliyun-inc.com;
+          Fri, 28 Jun 2024 18:49:48 +0800
+From: "Bang Li" <libang.li@antgroup.com>
+To: hughd@google.com,
+	akpm@linux-foundation.org
+Cc:  <david@redhat.com>,
+   <ryan.roberts@arm.com>,
+   <wangkefeng.wang@huawei.com>,
+   <baolin.wang@linux.alibaba.com>,
+   <ziy@nvidia.com>,
+   <linux-kernel@vger.kernel.org>,
+   <linux-mm@kvack.org>,
+  "Bang Li" <libang.li@antgroup.com>
+Subject: [PATCH] support "THPeligible" semantics for mTHP with anonymous shmem
+Date: Fri, 28 Jun 2024 18:49:26 +0800
+Message-Id: <20240628104926.34209-1-libang.li@antgroup.com>
+X-Mailer: git-send-email 2.19.1.6.gb485710b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="TjGWQMt2mYPYXnt4"
-Content-Disposition: inline
-In-Reply-To: <xkdmrmtiizoqo6mpc7i6iyhilxlw57nawn6ogv6dryaveyqddc@ach3rwy4abpe>
+Content-Transfer-Encoding: 8bit
 
---TjGWQMt2mYPYXnt4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+After the commit 7fb1b252afb5 ("mm: shmem: add mTHP support for
+anonymous shmem"), we can configure different policies through
+the multi-size THP sysfs interface for anonymous shmem. But
+currently "THPeligible" indicates only whether the mapping is
+eligible for allocating THP-pages as well as the THP is PMD
+mappable or not for anonymous shmem, we need to support semantics
+for mTHP with anonymous shmem similar to those for mTHP with
+anonymous memory.
 
-On Fri, Jun 28, 2024 at 11:30:28AM +0200, Andi Shyti wrote:
-> Hi,
->=20
-> On Tue, Jun 18, 2024 at 09:42:37AM GMT, Thomas Bonnefille wrote:
-> > This adds I2C support in the device tree of the T-Head TH1520 RISCV-SoC
-> > and a default configuration for the BeagleV-Ahead. It appears that the
-> > TH1520 I2C is already supported in the upstream kernel through the
-> > Synopsis Designware I2C adapter driver.
-> >=20
-> > This patch depends on the clock patch from Drew Fustini
-> > Link: https://lore.kernel.org/linux-riscv/20240615-th1520-clk-v1-0-3ba4=
-978c4d6b@tenstorrent.com
-> > and the pinctrl patch from Emil Renner Berthing
-> > Link: https://lore.kernel.org/linux-riscv/20240103132852.298964-1-emil.=
-renner.berthing@canonical.com
->=20
-> I think after these two go in...
->=20
-> > Changed from v1:
-> > 1. Remove redundant example for Synopsis DesignWare-I2C bindings
-> > 2. Remove Node Ordering commit as it has already been taken
-> > 3. Remove EEPROM label
-> > 4. Rebase on pinctrl and clock driver patches
-> > 5. Add pinctrl configuration
-> > 6. Replaced the fixed-clock with a correct configuration
-> >=20
-> > Changed from v2:
-> > 1. Reorder nodes to conserve ascending register node ordering
-> > 2. Add support for I2C2 as it probably use the same controller
-> > 3. Format comments to match kernel coding style
-> > 4. Reorder nodes to conserve alphabetical node ordering
-> > 6. Declare I2C2
-> > 6. Set pinctrl pull-up resistor to the highest value
-> >=20
-> > Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-> > ---
-> > Thomas Bonnefille (3):
-> >       dt-bindings: i2c: dw: Document compatible thead,th1520-i2c
->=20
-> ... this goes throught i2c...
->=20
-> >       riscv: dts: thead: Add TH1520 I2C nodes
-> >       riscv: dts: thead: Enable I2C on the BeagleV-Ahead
->=20
-> ... and these two go thrhough Conor's branches.
->=20
-> Do you mind sending a ping when Drew's patches are included in
-> the merge window? I can put the first patch on a special branch
-> to keep it under my watch.
+Signed-off-by: Bang Li <libang.li@antgroup.com>
+---
+ fs/proc/task_mmu.c      | 10 +++++++---
+ include/linux/huge_mm.h | 11 +++++++++++
+ mm/shmem.c              |  9 +--------
+ 3 files changed, 19 insertions(+), 11 deletions(-)
 
-I think you can apply the binding whenever you want actually, there's no
-need for the i2c binding (or driver changes, were there to be any) to
-be held until the clock binding/driver is accepted.
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 93fb2c61b154..09b5db356886 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -870,6 +870,7 @@ static int show_smap(struct seq_file *m, void *v)
+ {
+ 	struct vm_area_struct *vma = v;
+ 	struct mem_size_stats mss = {};
++	bool thp_eligible;
+ 
+ 	smap_gather_stats(vma, &mss, 0);
+ 
+@@ -882,9 +883,12 @@ static int show_smap(struct seq_file *m, void *v)
+ 
+ 	__show_smap(m, &mss, false);
+ 
+-	seq_printf(m, "THPeligible:    %8u\n",
+-		   !!thp_vma_allowable_orders(vma, vma->vm_flags,
+-			   TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL));
++	thp_eligible = !!thp_vma_allowable_orders(vma, vma->vm_flags,
++						TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL);
++	if (vma_is_anon_shmem(vma))
++		thp_eligible = !!shmem_allowable_huge_orders(file_inode(vma->vm_file),
++							vma, vma->vm_pgoff, thp_eligible);
++	seq_printf(m, "THPeligible:    %8u\n", thp_eligible);
+ 
+ 	if (arch_pkeys_enabled())
+ 		seq_printf(m, "ProtectionKey:  %8u\n", vma_pkey(vma));
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index 212cca384d7e..f87136f38aa1 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -267,6 +267,10 @@ unsigned long thp_vma_allowable_orders(struct vm_area_struct *vma,
+ 	return __thp_vma_allowable_orders(vma, vm_flags, tva_flags, orders);
+ }
+ 
++unsigned long shmem_allowable_huge_orders(struct inode *inode,
++				struct vm_area_struct *vma, pgoff_t index,
++				bool global_huge);
++
+ struct thpsize {
+ 	struct kobject kobj;
+ 	struct list_head node;
+@@ -460,6 +464,13 @@ static inline unsigned long thp_vma_allowable_orders(struct vm_area_struct *vma,
+ 	return 0;
+ }
+ 
++static inline unsigned long shmem_allowable_huge_orders(struct inode *inode,
++				struct vm_area_struct *vma, pgoff_t index,
++				bool global_huge)
++{
++	return 0;
++}
++
+ #define transparent_hugepage_flags 0UL
+ 
+ #define thp_get_unmapped_area	NULL
+diff --git a/mm/shmem.c b/mm/shmem.c
+index d495c0701a83..aa85df9c662a 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1622,7 +1622,7 @@ static gfp_t limit_gfp_mask(gfp_t huge_gfp, gfp_t limit_gfp)
+ }
+ 
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+-static unsigned long shmem_allowable_huge_orders(struct inode *inode,
++unsigned long shmem_allowable_huge_orders(struct inode *inode,
+ 				struct vm_area_struct *vma, pgoff_t index,
+ 				bool global_huge)
+ {
+@@ -1707,13 +1707,6 @@ static unsigned long shmem_suitable_orders(struct inode *inode, struct vm_fault
+ 	return orders;
+ }
+ #else
+-static unsigned long shmem_allowable_huge_orders(struct inode *inode,
+-				struct vm_area_struct *vma, pgoff_t index,
+-				bool global_huge)
+-{
+-	return 0;
+-}
+-
+ static unsigned long shmem_suitable_orders(struct inode *inode, struct vm_fault *vmf,
+ 					   struct address_space *mapping, pgoff_t index,
+ 					   unsigned long orders)
+-- 
+2.19.1.6.gb485710b
 
-Thanks,
-Conor.
-
---TjGWQMt2mYPYXnt4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZn6VMwAKCRB4tDGHoIJi
-0jNHAP4m1oXXhAI8AJklzSf40W3ivqUXLHUeMZ8nHNOHB8i0pQD8CfKBFliZjMqv
-1e2iWkfTxBaM5iXO5IGnLhbQWp5W1gw=
-=AKI+
------END PGP SIGNATURE-----
-
---TjGWQMt2mYPYXnt4--
 
