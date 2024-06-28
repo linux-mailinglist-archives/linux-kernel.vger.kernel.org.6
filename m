@@ -1,163 +1,157 @@
-Return-Path: <linux-kernel+bounces-233423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3320891B6DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:16:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84C9D91B6D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62487B2097A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 06:16:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5C47282647
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 06:16:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3DF955886;
-	Fri, 28 Jun 2024 06:16:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4358A4CE04;
+	Fri, 28 Jun 2024 06:16:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fKO05Pcs"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R3wqgRTC"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D87554278;
-	Fri, 28 Jun 2024 06:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDAA74D8A4
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 06:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719555378; cv=none; b=m3JdQqozjplqsj19z7vIkzW8MwfBwUE9lh6FFXbRuk77lmk3T06Mb3S0hOCz3jXuMPLap/hqQCURiYeb+4FAUZ8DIRSp11ACqKJgSEAW+ZjedsHOWAE9sh2adwAT1IghHJiaiFNRv0wNwRXYpyL4CDBAv41gqK4Z0Zko64c/P9Q=
+	t=1719555370; cv=none; b=ZMZwexeOOBicB1fE5jpwALorMFdMXEt1w6BcRPLcI2YQRBMykPJpj001jjde8miwXjGnyuezYpZLxBRD+tQvUzhywfuVGPysko+mR1KWGaXPCTVo6cZ+pJo23TT7yBKpSLevkepfpaOO6heOhAwEtnvJroXayVezcLT/PbaqhsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719555378; c=relaxed/simple;
-	bh=VHivx3TXk6rbGD53jPWHJbhtFADdjRmAebTMKel3LII=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QONk+iqQ1nihFFXC/VauK26iNxKin1B7Q2vDtA0groFwsy4w0DDXE/zvvABz30RCDUeGTVVMsWmH5lAD9JSSBZ5kGRXPux+YWi1QCriHLJw9QZtZsVOsCKhEOER3zi0Z67Po4IYPxCeVvbepUP42EvfFUu9XOlh3F3jzdqRg/Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fKO05Pcs; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719555377; x=1751091377;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=VHivx3TXk6rbGD53jPWHJbhtFADdjRmAebTMKel3LII=;
-  b=fKO05Pcs/ho9TK8Zlhv4JaJKS72QKEnVRBJXXQDY03MpnChX5xQxa5v5
-   OBRqy9y3npWi+/3SgfCIHFjIKSUZw64m9F/vUHjkmFAGNmi6KCs1KHSgM
-   qFbtgpZehF0umLMIVrthQoq2/2CB0WkGzChq3TsSWgJxgRXtv7LSklcbn
-   NF7CKuyIXFkBSsDVCRMYtmw9/O3msPQv6/prrJ/U2sphJhmn79U2T1Q7j
-   fAZ3Xc7T4lbL5hWqszd6c59+6ZVWqbjh16w8T6YSo4sL0CKPiwFYBC8AB
-   CJXmMYUYL94IL75jxKMkYvIWCtcROwZWGoCzl182V8xO7HnV4vrtZv3t0
-   g==;
-X-CSE-ConnectionGUID: WGG2NTRHRySHc3rhQMS4Cw==
-X-CSE-MsgGUID: 4JAUWHoUTnaRMTCXH1Q38g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="28118913"
-X-IronPort-AV: E=Sophos;i="6.09,168,1716274800"; 
-   d="scan'208";a="28118913"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 23:16:15 -0700
-X-CSE-ConnectionGUID: 1Db3jF/gRaSXKeo8tyf+bA==
-X-CSE-MsgGUID: LPQGGceOT/GqBxTXASLnug==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,168,1716274800"; 
-   d="scan'208";a="44548736"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 27 Jun 2024 23:16:08 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sN4ty-000Gs2-0m;
-	Fri, 28 Jun 2024 06:16:06 +0000
-Date: Fri, 28 Jun 2024 14:15:45 +0800
-From: kernel test robot <lkp@intel.com>
-To: Luigi Leonardi via B4 Relay <devnull+luigi.leonardi.outlook.com@kernel.org>,
-	Stefano Garzarella <sgarzare@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Stefan Hajnoczi <stefanha@redhat.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, Luigi Leonardi <luigi.leonardi@outlook.com>,
-	Daan De Meyer <daan.j.demeyer@gmail.com>
-Subject: Re: [PATCH net-next v3 1/3] vsock: add support for SIOCOUTQ ioctl
- for all vsock socket types.
-Message-ID: <202406281355.d1jNVGBc-lkp@intel.com>
-References: <20240626-ioctl_next-v3-1-63be5bf19a40@outlook.com>
+	s=arc-20240116; t=1719555370; c=relaxed/simple;
+	bh=AneQCkbY/cQogK9upva4XOfFk3Om035v2bCBkchxhEM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=odVukN7CZqB9od3jHy50jvZMhNl+L/kNzcGl1a41aYqwlGy3Ds6+y9MMfTfv1pGfff3DN970RV2ErcXNzEWcFee02Wch0Dm863zsfldS1e4QkIxy2uiC2ooZKOROZfS0aEUhQhzw42TZRz+LEktkj9zIdYi0nRsUbkIbxb5Dc4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R3wqgRTC; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52cd628f21cso229434e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 23:16:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719555367; x=1720160167; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=4kMx75Yulrng/FdlL6y95jTJoRfya8ekwLjBMuEhsaQ=;
+        b=R3wqgRTCEmFahi0J/NupwPIWGr0yLNWxZCGR6eaNiYgWRTnv0BFMBOYmd2l2SgYGNy
+         XXpSgPP5Z/MV5YImyixm6GNgYac9vXUWdBoUpJDcfOt2ogPRKpSqcomPPO6RpCDl0myL
+         rSeNzVvrlhRSdWyBTikETgaU7fnhWm5pGbhti2LX0p706K4g3H117LZpd+GxQ8dMQZny
+         Cdc1SBafswk/XKuPBeRHWMpOq/r8jdcqq6hvQ6G7W2aYMvkDb27XtbYLBlApHP5+8DRW
+         z0DNxwXp+KmQiuFr+kZBY4dZ5x3IkCmIPvv+w49Jl6xB0gs63YitLtyz7LhwQfJko52f
+         6u4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719555367; x=1720160167;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4kMx75Yulrng/FdlL6y95jTJoRfya8ekwLjBMuEhsaQ=;
+        b=Ax3sR4rehOHcJWgqoMfZf6TkBKkmFQBcVeE4KBIK0I3nRWF5sluiSTVpefry6Sq8Et
+         RsVHrZ8gXmjTFCrdvSnEb3QgnjWUEWQM6/YcrmapcvjhQ2zCU86q2fVRqpa649Hg8SgQ
+         YFmTFg13hyJDzK4HVG5t8Hz6mQ2v4cMxUCIrlMFmxexqhHCcX4CoxabFipQ9PMrRT8Kj
+         UlyTLU+UMt3anebLYKzoAEHjIqjAFO/9PTmOK4+dEQAmprcrgjGb2EenntTLREUCUWLL
+         u1v1zXNvMDycXElY8JQE+8tRIY+WzsLZE0b7uaFrX1dMXbLc0ooHHpHTVLx8JKEfLF9Q
+         oNGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVgQiatDIeji1eZZ6FPv+fBc6KZPEjHrI+COV718CKHV7Rhc3pxK62ghaZyLoWFD6409BJoKKG6138B61v30thUxnXkBrGJn4a0Q9DL
+X-Gm-Message-State: AOJu0YwqKa2fd6P55HkS3OKqBuhdSgLXQgjI0G2bW9izMJ+TPhMCkzPu
+	BRfyRY59mJMJCSHPFq/YpbywpWAUHLl7CS43AMYS0ONuBx3AvlMriA8njMbu/GI=
+X-Google-Smtp-Source: AGHT+IEV7eFaSP/m3xouuSYf9kFIIXNH+dXsGe0h6ycnpBTVM544dUvJ1G53bzN62Zf7TG6R/+nejw==
+X-Received: by 2002:ac2:4ed4:0:b0:52c:d8ce:c323 with SMTP id 2adb3069b0e04-52ce183b77emr8380535e87.35.1719555366868;
+        Thu, 27 Jun 2024 23:16:06 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b09a828sm19847595e9.37.2024.06.27.23.16.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Jun 2024 23:16:06 -0700 (PDT)
+Message-ID: <33b7e7f7-0965-4538-94af-67108ebf9b76@linaro.org>
+Date: Fri, 28 Jun 2024 08:16:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240626-ioctl_next-v3-1-63be5bf19a40@outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/7] arm64: dts: qcom: sm6115: add apr, its services and
+ simple sound node
+To: Alexey Klimov <alexey.klimov@linaro.org>, linux-sound@vger.kernel.org,
+ srinivas.kandagatla@linaro.org, bgoswami@quicinc.com, lgirdwood@gmail.com,
+ broonie@kernel.org
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ andersson@kernel.org, konrad.dybcio@linaro.org, perex@perex.cz,
+ tiwai@suse.com, linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org,
+ devicetree@vger.kernel.org, elder@linaro.org, dmitry.baryshkov@linaro.org,
+ caleb.connolly@linaro.org, linux-kernel@vger.kernel.org
+References: <20240628010715.438471-1-alexey.klimov@linaro.org>
+ <20240628010715.438471-5-alexey.klimov@linaro.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240628010715.438471-5-alexey.klimov@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Luigi,
+On 28/06/2024 03:07, Alexey Klimov wrote:
+> Add apr (asynchronous packet router) node and its associated services
+> required to enable audio on QRB4210 RB2 platform.
+> Also, add an empty sound{} device node. This allows board dts
+> files to fill in required board specific properties.
+> 
+> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sm6115.dtsi | 59 ++++++++++++++++++++++++++++
+>  1 file changed, 59 insertions(+)
 
-kernel test robot noticed the following build warnings:
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-[auto build test WARNING on 50b70845fc5c22cf7e7d25b57d57b3dca1725aa5]
+Best regards,
+Krzysztof
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Luigi-Leonardi-via-B4-Relay/vsock-add-support-for-SIOCOUTQ-ioctl-for-all-vsock-socket-types/20240627-023902
-base:   50b70845fc5c22cf7e7d25b57d57b3dca1725aa5
-patch link:    https://lore.kernel.org/r/20240626-ioctl_next-v3-1-63be5bf19a40%40outlook.com
-patch subject: [PATCH net-next v3 1/3] vsock: add support for SIOCOUTQ ioctl for all vsock socket types.
-config: i386-randconfig-141-20240628 (https://download.01.org/0day-ci/archive/20240628/202406281355.d1jNVGBc-lkp@intel.com/config)
-compiler: gcc-8 (Ubuntu 8.4.0-3ubuntu2) 8.4.0
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406281355.d1jNVGBc-lkp@intel.com/
-
-smatch warnings:
-net/vmw_vsock/af_vsock.c:1321 vsock_do_ioctl() warn: unsigned 'n_bytes' is never less than zero.
-
-vim +/n_bytes +1321 net/vmw_vsock/af_vsock.c
-
-  1295	
-  1296	static int vsock_do_ioctl(struct socket *sock, unsigned int cmd,
-  1297				  int __user *arg)
-  1298	{
-  1299		struct sock *sk = sock->sk;
-  1300		struct vsock_sock *vsk;
-  1301		int retval;
-  1302	
-  1303		vsk = vsock_sk(sk);
-  1304	
-  1305		switch (cmd) {
-  1306		case SIOCOUTQ: {
-  1307			size_t n_bytes;
-  1308	
-  1309			if (!vsk->transport || !vsk->transport->unsent_bytes) {
-  1310				retval = -EOPNOTSUPP;
-  1311				break;
-  1312			}
-  1313	
-  1314			if (vsk->transport->unsent_bytes) {
-  1315				if (sock_type_connectible(sk->sk_type) && sk->sk_state == TCP_LISTEN) {
-  1316					retval = -EINVAL;
-  1317					break;
-  1318				}
-  1319	
-  1320				n_bytes = vsk->transport->unsent_bytes(vsk);
-> 1321				if (n_bytes < 0) {
-  1322					retval = n_bytes;
-  1323					break;
-  1324				}
-  1325	
-  1326				retval = put_user(n_bytes, arg);
-  1327			}
-  1328			break;
-  1329		}
-  1330		default:
-  1331			retval = -ENOIOCTLCMD;
-  1332		}
-  1333	
-  1334		return retval;
-  1335	}
-  1336	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
