@@ -1,154 +1,155 @@
-Return-Path: <linux-kernel+bounces-233266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9957791B4F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 04:14:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D798091B50F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 04:20:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E7461F22C07
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 02:14:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 938EE283A2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 02:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FDBA18029;
-	Fri, 28 Jun 2024 02:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vPB3T6pE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D9717999;
+	Fri, 28 Jun 2024 02:20:30 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403E818046;
-	Fri, 28 Jun 2024 02:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C508480;
+	Fri, 28 Jun 2024 02:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719540836; cv=none; b=KFukUJeI1pEoAjygl4RNahZzWSqo1XnBkfEnv3cVMW3l653POVY5u0UdRzqF2bk1+oEe8RDBcXb/qkaA7JTNInH86F0ZTPH8Q1j3NhYNs1R/93q7S0ZAER4UfNOUkGdelXPzCvbuztCrETcZACW2+gZ9r7TwJqNv90aLQGBsuPE=
+	t=1719541229; cv=none; b=pJ4Dsx9+SfCCXyJQAXnZraRAjPyxFxS9OG5qQ9kYmhIuIHlWtH1qdtS/L2ebgPKZdVNU/J9JR8taPwTfcI6HBeyhuhuFc6ATxdxePqXd+B0zGrC97h5HV6iUDHU95ArIXzS+XN3Wli0ZpXebRnRg+cCj61np43w+HzR8ZVKnBeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719540836; c=relaxed/simple;
-	bh=1QZMjqfr5KF1bfI3lvjjy/2VD24ylLZNVuIb/71bNPk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X5k5u0Y4mZcxJJx8Ow05v5OHFi5lhVsZPsYCXZ/HICZPFRmD9q4w0VtISeAybZUDgc/xjkqE0UTFmoiKn8Qt51B3R88loY/cfg+pY9FRMCri+yL+qREu4ys3GwP1Uq4fgC9tElKtbJXOK5sha/YrqrAZ1RdMcvGfZcne5kxhvLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vPB3T6pE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8FEAC4AF09;
-	Fri, 28 Jun 2024 02:13:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719540835;
-	bh=1QZMjqfr5KF1bfI3lvjjy/2VD24ylLZNVuIb/71bNPk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=vPB3T6pENwWubEYz4+H3s4o7QkZpZbX3vVFuIUvqx0Otrq5yl7HqRxs4e55ST45Me
-	 wkV7VXfL7NtVPwoxhiB67qegN0SoPxy/IAnTujCggRXTWh4FZ2E6QY7qoIZsNxDQ4r
-	 kyVrEH5DjuJt4SeersxFysWDaH/WdpL5shGuAOnFunL21tKJa5OACN/2UIn3jqKS7z
-	 Qro65m4c1C++1yKiS/Ve7zIURoT0NvrHqPapCB2txydyhVwcIuia1qjdP3iZ91ohZe
-	 9AwL6sTfLx1M5Wa/O+STZ5MMCTn5ejUZRWhpTOTRlx/D5zZ4hEAyxxEyQ6emf/tL9I
-	 EqJbNy9tZZrpA==
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2eaa89464a3so773391fa.3;
-        Thu, 27 Jun 2024 19:13:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVk6Qt3xiWPOfDB0BFCttNQIrvJg3enWqkxE6jyQ7v3tSRTSrhWY7D5gh3OOXy+AptMc/eA4v1n43aifX/DHll3WBVinKNK9KSqvBqGA6GtaeGvea16CVivR4WMW10GAGFLHqrCcgqTw7VeSDCHUZdSFI0jbkmR97e0QDW3RQu3LqHLqAeP1A==
-X-Gm-Message-State: AOJu0YyKZDjGIPHO29RHc3qmQYM2VrHMBActlTfvyJiEfXfx6tKeqbHe
-	1TEhXJh+Vgl/rs17BpzBHkErFTv0/XRi1isPxYlLsyCeMnIdyXHAxpMPXmgym35Zxj0h01Akrz4
-	YhQoHxMPbTb1Awnv4foRAg80UDis=
-X-Google-Smtp-Source: AGHT+IH6vcsYs/f2tBTsB2l/yZmtIVQ+iwQAeqaKwBBrQfT2k1vyIQgzg8OwSIo6A3510Z6MhvuCGIs9TLh+uhflC5Y=
-X-Received: by 2002:a2e:b0f3:0:b0:2ec:5785:ee94 with SMTP id
- 38308e7fff4ca-2ec579fefd8mr92910221fa.52.1719540834420; Thu, 27 Jun 2024
- 19:13:54 -0700 (PDT)
+	s=arc-20240116; t=1719541229; c=relaxed/simple;
+	bh=dO9qBeiAL60YekJlPz1a+cPxvLl0Q9VNiXYv1VwjvYw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=R7NOoAdyXhAWD9CGXhx6W4arSoD1HYKN2Q8/zYBxKsRFI/WZweMv5ho5QDlTyBbF6XZCwibKMHPgnBGay0SednUT4XCYM4xIKemfRKhTqY+JtHNmBeIp0FtAdoeyQPNQ2mht5O9zHuOVu55gaM3fAMeqwYZVDXYaLATYPUkm3X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4W9Jvp5d7Wz2Ckks;
+	Fri, 28 Jun 2024 10:16:22 +0800 (CST)
+Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4514714011F;
+	Fri, 28 Jun 2024 10:20:24 +0800 (CST)
+Received: from [10.67.110.112] (10.67.110.112) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 28 Jun 2024 10:20:23 +0800
+Message-ID: <ad7cfc60-d6d5-ca16-c93a-d200febccc9b@huawei.com>
+Date: Fri, 28 Jun 2024 10:20:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240427145502.2804311-1-masahiroy@kernel.org>
- <20240427145502.2804311-5-masahiroy@kernel.org> <ea24aa9b-291d-47bc-98cf-5893926ff8da@kernel.org>
- <CAK7LNAT5_pDn1ZOfm8TzubH-s2HR4DQu9eEx0RgdJ3s4Cmxqow@mail.gmail.com> <9771d50d95e508bf8971a36b6475c782c42b46a1.camel@intel.com>
-In-Reply-To: <9771d50d95e508bf8971a36b6475c782c42b46a1.camel@intel.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Fri, 28 Jun 2024 11:13:18 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATGGibmjZzYX_A2SkJthmOPbKw2K3R7JYuHTWzgGL2Zjg@mail.gmail.com>
-Message-ID: <CAK7LNATGGibmjZzYX_A2SkJthmOPbKw2K3R7JYuHTWzgGL2Zjg@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] kbuild: use $(src) instead of $(srctree)/$(src)
- for source directory
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "krzk@kernel.org" <krzk@kernel.org>, "nicolas@fjasle.eu" <nicolas@fjasle.eu>, 
-	"conor@kernel.org" <conor@kernel.org>, "robh@kernel.org" <robh@kernel.org>, 
-	"linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH -next] mm: memcg: remove redundant
+ seq_buf_has_overflowed()
+Content-Language: en-US
+To: Michal Hocko <mhocko@suse.com>
+CC: <hannes@cmpxchg.org>, <roman.gushchin@linux.dev>,
+	<shakeel.butt@linux.dev>, <muchun.song@linux.dev>,
+	<akpm@linux-foundation.org>, <cgroups@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240626094232.2432891-1-xiujianfeng@huawei.com>
+ <Zn0RGTZxrEUnI1KZ@tiehlicka>
+ <a351c609-4968-398a-9316-2ad19d934e9c@huawei.com>
+ <Zn1LFyO_cww9W758@tiehlicka>
+ <10b948cd-5fbf-78e7-c3e8-6867661fa50b@huawei.com>
+ <Zn1S70yo4VQ24UNT@tiehlicka>
+From: xiujianfeng <xiujianfeng@huawei.com>
+In-Reply-To: <Zn1S70yo4VQ24UNT@tiehlicka>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Jun 28, 2024 at 2:14=E2=80=AFAM Edgecombe, Rick P
-<rick.p.edgecombe@intel.com> wrote:
->
-> On Fri, 2024-05-10 at 04:36 +0900, Masahiro Yamada wrote:
-> >
-> > Or, fix the code.
-> >
-> >
-> > Now fixed. Thanks for the report.
-> >
->
-> Hi,
->
-> This commit broke my build in a similar way:
-> make ARCH=3Dx86_64 O=3D../linux-tdx-kvm-out/ -j36 M=3Darch/x86/kvm/
-> make[1]: Entering directory '/home/rpedgeco/repos/linux-tdx-kvm-out'
-> /home/rpedgeco/repos/linux/scripts/Makefile.build:41: arch/x86/kvm/Makefi=
-le: No
-> such file or directory
-> make[3]: *** No rule to make target 'arch/x86/kvm/Makefile'.  Stop.
-> make[2]: *** [/home/rpedgeco/repos/linux/Makefile:1934: arch/x86/kvm] Err=
-or 2
-> make[1]: *** [/home/rpedgeco/repos/linux/Makefile:240: __sub-make] Error =
-2
-> make[1]: Leaving directory '/home/rpedgeco/repos/linux-tdx-kvm-out'
-> make: *** [Makefile:240: __sub-make] Error 2
->
-> This patch didn=E2=80=99t fix it:
-> https://lore.kernel.org/lkml/20240624-kbuild-fix-xconfig-v1-1-7c06eae6d3a=
-a@avm.de/
->
-> But reverting b1992c3772e6 ("kbuild: use $(src) instead of $(srctree)/$(s=
-rc) for
-> source directory") does.
->
-> I'm guess it has something to do with the "M=3D" option because:
-> make ARCH=3Dx86_64 O=3D../linux-tdx-kvm-out/ -j36 arch/x86/kvm/kvm.ko
-> arch/x86/kvm/kvm-intel.ko
->
-> ...works.
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpeml500023.china.huawei.com (7.185.36.114)
 
 
 
-There are two solutions, depending on what you want to achieve.
+On 2024/6/27 19:54, Michal Hocko wrote:
+> On Thu 27-06-24 19:43:06, xiujianfeng wrote:
+>>
+>>
+>> On 2024/6/27 19:20, Michal Hocko wrote:
+>>> On Thu 27-06-24 16:33:00, xiujianfeng wrote:
+>>>>
+>>>>
+>>>> On 2024/6/27 15:13, Michal Hocko wrote:
+>>>>> On Wed 26-06-24 09:42:32, Xiu Jianfeng wrote:
+>>>>>> Both the end of memory_stat_format() and memcg_stat_format() will call
+>>>>>> WARN_ON_ONCE(seq_buf_has_overflowed()). However, memory_stat_format()
+>>>>>> is the only caller of memcg_stat_format(), when memcg is on the default
+>>>>>> hierarchy, seq_buf_has_overflowed() will be executed twice, so remove
+>>>>>> the reduntant one.
+>>>>>
+>>>>> Shouldn't we rather remove both? Are they giving us anything useful
+>>>>> actually? Would a simpl pr_warn be sufficient? Afterall all we care
+>>>>> about is to learn that we need to grow the buffer size because our stats
+>>>>> do not fit anymore. It is not really important whether that is an OOM or
+>>>>> cgroupfs interface path.
+>>>>
+>>>> I did a test, when I removed both of them and added a lot of prints in
+>>>> memcg_stat_format() to make the seq_buf overflow, and then cat
+>>>> memory.stat in user mode, no OOM occurred, and there were no warning
+>>>> logs in the kernel.
+>>>
+>>> The default buffer size is PAGE_SIZE.
+>>
+>> Hi Michal,
+>>
+>> I'm sorry, I didn't understand what you meant by this sentence. What I
+>> mean is that we can't remove both, otherwise, neither the kernel nor
+>> user space would be aware of a buffer overflow. From my test, there was
+>> no OOM or other exceptions when the overflow occurred; it just resulted
+>> in the displayed information being truncated. Therefore, we need to keep
+>> one.
+> 
+> I've had this in mind
+> 
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 71fe2a95b8bd..3e17b9c3a27a 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -1845,9 +1845,6 @@ static void memcg_stat_format(struct mem_cgroup *memcg, struct seq_buf *s)
+>  			       vm_event_name(memcg_vm_event_stat[i]),
+>  			       memcg_events(memcg, memcg_vm_event_stat[i]));
+>  	}
+> -
+> -	/* The above should easily fit into one page */
+> -	WARN_ON_ONCE(seq_buf_has_overflowed(s));
+>  }
+>  
+>  static void memcg1_stat_format(struct mem_cgroup *memcg, struct seq_buf *s);
+> @@ -1858,7 +1855,8 @@ static void memory_stat_format(struct mem_cgroup *memcg, struct seq_buf *s)
+>  		memcg_stat_format(memcg, s);
+>  	else
+>  		memcg1_stat_format(memcg, s);
+> -	WARN_ON_ONCE(seq_buf_has_overflowed(s));
+> +	if (seq_buf_has_overflowed(s))
+> +		pr_warn("%s: Stat buffer insufficient please report\n", __FUNCTION__);
 
-The official way is to pass the absolute path to M=3D
-(or relative path to ../linux-tdm-kvm-out)
+I found that after the change, the effect is as follows:
 
-The other unofficial way is to pass VPATH.
-The external module build does not officially support
-the separate output directory, but you can still
-do it in this case.
+# dmesg
+[   51.028327] memory_stat_format: Stat buffer insufficient please report
 
-[1] will work like before.
+with no keywords such as "Failed", "Warning" to draw attention to this
+printout. Should we change it to the following?
 
-
-
-[1] Output module objects to linux-tdm-kvm-out/arch/x86/kvm/ (unofficial)
+if (seq_buf_has_overflowed(s))
+      pr_warn("%s: Warning, Stat buffer overflow, please report\n",
+__FUNCTION__);
 
 
-$ make ARCH=3Dx86_64 O=3D../linux-tdx-kvm-out/ -j36 M=3Darch/x86/kvm VPATH=
-=3D$(pwd)
-
-
-[2] Output the module objects into arch/x86/kvm/ of the source tree (offici=
-al)
-
-
-$ make ARCH=3Dx86_64 O=3D../linux-tdx-kvm-out/ -j36 M=3D$(realpath arch/x86=
-/kvm)
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+>  }
+> >  /**
+> 
+> Because WARN_ON_ONCE doesn't buy us anything actually. It will dump
+> stack trace and it seems really mouthfull (and it will panic when
+> panic_on_warn is enabled which is likely not a great thing).
 
