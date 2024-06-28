@@ -1,130 +1,67 @@
-Return-Path: <linux-kernel+bounces-234708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 343E591C9B2
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 01:57:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E407591C9B3
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 01:59:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B887FB2264E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 23:57:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98CE52850FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 23:59:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE3184DE7;
-	Fri, 28 Jun 2024 23:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D418282D9F;
+	Fri, 28 Jun 2024 23:59:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lT0qBc/Y"
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GGSqFKvO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814FE17BDC;
-	Fri, 28 Jun 2024 23:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE23280C04
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 23:59:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719619029; cv=none; b=aZMGHPHAqzNQ3F7qAc3ebdAJaJr1W5jdSgy4tdK+Y3wIBSVPNRek6PNWpGlUqq7EmdtuR4RscCaDKVfNjN5/6xEDrQAAlIvftFJzWXq0OKKo8naj7ham1H0U7w8/Une1rsg04QnkWqxgQ/+zAwJdynIW0kdgeyQU8awFcWfiBb4=
+	t=1719619160; cv=none; b=MmBvqjpcRFONRFlNWmsV9L10Wsnbh7nOGY0v47q83opCeWCHDaRgapP90gkv/2RHEyf5t/rDoXbDP7jzPv9B4EzpF9Pt9938eFXAh36kN1ROsrLXJpXtjCVPvvq6IGAQzHKnWydP9AtfRbGloCcoAJIO1l4ZT4MboHM5MYd1CgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719619029; c=relaxed/simple;
-	bh=s2UII4ggSpYu8K1rwyFgZkco//+d7d5M5JqxT1hxTMI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bPr/FXoBUPZXeDRZMwmoT4iskPs2Opcn9tZfKNF52ZDMkh8TeUsxUefE7GCPV1vUi3XjZBRRhfJRuzXDsOhxtV7edX4iCtc9Vms5Lp0o2vq1w/EdLAlIXQpIjE7mq/rryEsQ/gj8q90dTpWWcjGjm2jqV0pl08EL67neJD8oR+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lT0qBc/Y; arc=none smtp.client-ip=209.85.210.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-701f227c256so569387a34.3;
-        Fri, 28 Jun 2024 16:57:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719619027; x=1720223827; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s2UII4ggSpYu8K1rwyFgZkco//+d7d5M5JqxT1hxTMI=;
-        b=lT0qBc/YwLyRTMlASxdetJYnFj/J6pcfChFJl9Xcs+N51wu2ypOIRq2K5DW++udWTg
-         EGWPI7Vn0LLBKfRTUmXBJPbEpYJf1uQdWS2iLtZV5NYl+WzL4h8wMJllDxwYGHWg9UVT
-         54/Xwxp2jwPXJVQDU7y0HMqdhHwq8TsjQKkBBDO9bSUBtDvVFggVvcbS4PGwM6CpTOn4
-         lyH91R3z9K41R1tf3Byrk8GpLWY6bOA+nm+MResbVIpz+P/JgOAQEht/RA5+QOZeo+J2
-         BhEfSvsslVQDzlHe2RbqzA+GWvuxiRp2A+56fCrpOpwN4FqOdUnBqxEmFlpV9U8mrag+
-         3/rA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719619027; x=1720223827;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s2UII4ggSpYu8K1rwyFgZkco//+d7d5M5JqxT1hxTMI=;
-        b=Bz18UCgB976/NvfZnpjuKWwAgqjPV2v7aLIOZLShuxeasecowFteyIB6hrFb/1P5Ta
-         J+t11EsdUNc+8VA/vrV41Wacz41eXVSiH74uFEStT4pbw7FdLyJlt+huZSVhUMg8a5Ye
-         F3s9vDtTT271YDaGQWWk0qfWuOMyyDFBE5WfQyM5RcLaW3NnDG4OgocLdFfEPw1I1Fhp
-         /exHkO2SLTXryG45gwJYDLJpIiNC8Jpv+E/3lhs3FRh64uw97G8xTFYA7FeOgwFjHYDn
-         PhOssXNePmRn9hvM+4FJSRI0TPxB3r5ilYqoNNM4Z72OkLUov9v67rM2ae0pjDUDgwcp
-         EmAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWpYTXLwn+PRwJ8RnWfHTo3WM/LhbMtHf2rB3q3fpqitm9eboTib3zeao71/SU05koApflFxsnWhaS9A1E30Qa06AApoEFhh98bZoebSilWlwUTUA9LntcgEBpmnvo3JPaB
-X-Gm-Message-State: AOJu0Yx3N9J5LvaPl2kRtgAlAcGABBljMtLGiTYiAFgy6eJqX18R00gW
-	cXU6oNZeJyHcPkPp5bWOafeUyUtE+eloqRxRzdobVjuoOZfYsPWqyIIWXpjua8HME6LlA1Lv5V/
-	dW/VaOjf8eaf78uCfvVxqQCs8lS7/3g==
-X-Google-Smtp-Source: AGHT+IEhQcbluO1CXSh5xOdYE4gVK3nJCbamaiXjrZH7jXnBiR8u95ET0HqVL2++YRNjxPoSgHI+GDSwrVXfwwA6+jI=
-X-Received: by 2002:a05:6359:6e07:b0:1a2:5caa:1482 with SMTP id
- e5c5f4694b2df-1a25caa1c60mr865462855d.32.1719619027545; Fri, 28 Jun 2024
- 16:57:07 -0700 (PDT)
+	s=arc-20240116; t=1719619160; c=relaxed/simple;
+	bh=INzl0VAMtB9S7QxnFkCqH/p4EcPJarQG0UL4FcqhOq4=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=UcSVaeZj+MINVTAcqNlq8LteS3EXKX/Q/iM9hMP7b0JhfqDw0uGcGL0SYQsGHR3P03FXgaeN7hkEqQEeiqozwkKT6kWSOuH9YugiO99HDYqbuI/xpBQ0KXLtzh8Wg/yuUKAJ3TW3X2fVdDqzCQ7lr8raVswDH9D3JNnQAWc10bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=GGSqFKvO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F0B9C116B1;
+	Fri, 28 Jun 2024 23:59:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1719619159;
+	bh=INzl0VAMtB9S7QxnFkCqH/p4EcPJarQG0UL4FcqhOq4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GGSqFKvONULBPIcg9d7uxnX18/RdTnWWAQqVSsoj4b5pHffSZs57Dr3JaM4RePolX
+	 Tv7BfovQQ0cAI5IRoZzNcHtN2Wngr6lUSt9r6ods1kfLRcdh3gqRCVpDmJLJB0iVto
+	 s0ZDIxl+ee+XiqC4APqXH5uKh+xJc6qkaegV/Uo0=
+Date: Fri, 28 Jun 2024 16:59:18 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Chengming Zhou <chengming.zhou@linux.dev>
+Cc: david@redhat.com, aarcange@redhat.com, hughd@google.com,
+ shr@devkernel.io, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ zhouchengming@bytedance.com
+Subject: Re: [PATCH v2 0/3] mm/ksm: cmp_and_merge_page() optimizations and
+ cleanup
+Message-Id: <20240628165918.f9f2d7eb230cf26cd6d0c81b@linux-foundation.org>
+In-Reply-To: <20240621-b4-ksm-scan-optimize-v2-0-1c328aa9e30b@linux.dev>
+References: <20240621-b4-ksm-scan-optimize-v2-0-1c328aa9e30b@linux.dev>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <Zn4BupVa65CVayqQ@slm.duckdns.org> <Zn4Cw4FDTmvXnhaf@slm.duckdns.org>
- <CAADnVQJym9sDF1xo1hw3NCn9XVPJzC1RfqtS4m2yY+YMOZEJYA@mail.gmail.com>
- <Zn8xzgG4f8vByVL3@slm.duckdns.org> <CAEf4BzbVorxvJdGA0eLviRhboaisxe4Ng=VErZVh3MG9YrRaKw@mail.gmail.com>
- <Zn9BZB8tE-CySXnn@slm.duckdns.org> <Zn9De_70fy-DVA-_@slm.duckdns.org>
-In-Reply-To: <Zn9De_70fy-DVA-_@slm.duckdns.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 28 Jun 2024 16:56:55 -0700
-Message-ID: <CAEf4BzY9-CW+SamvwkrHBH1RgB3bxybRmnrK_E0p_Np=V5MsMg@mail.gmail.com>
-Subject: Re: [PATCH sched_ext/for-6.11 2/2] sched_ext: Implement scx_bpf_consume_task()
-To: Tejun Heo <tj@kernel.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	David Vernet <void@manifault.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 28, 2024 at 4:13=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
->
-> Hello, again.
->
-> On Fri, Jun 28, 2024 at 01:04:04PM -1000, Tejun Heo wrote:
-> ...
-> > Not a stupid question at all. It's just that all the existing interface=
- is
-> > based on IDs. This is partly because there's not much the BPF code can =
-do
-> > with the DSQ data structure and partly because DSQs are usually not acc=
-essed
-> > multiple times in sequence (ie. if the BPF code isn't going to look it =
-up
-> > and hold it persistently, it's going to have to look it up each time
-> > anyway).
-> >
-> > The multiple lookups aren't the end of the world. They're all on a resi=
-zing
-> > hashtable, so lookups should be pretty low cost. It's just a little bit=
- sad
-> > to look at.
->
-> Just a bit of addition and a question. scx_bpf_consume_task() is maybe na=
-med
-> too generically and I have a hard time imagining it being useful outside
-> iteration loop. So, it does work out kinda neatly if we can tie the whole
-> thing (DSQ lookup, barrier seq) to the iterator.
->
-> The reason why this becomes nasty is because I can't pass the pointer to =
-the
-> iterator to a kfunc, so maybe allowing that can be a solution here too?
->
+On Fri, 21 Jun 2024 15:54:28 +0800 Chengming Zhou <chengming.zhou@linux.dev> wrote:
 
-Sure, if that's the best way to go about this.
+> This series mainly optimizes cmp_and_merge_page() to have more efficient
+> separate code flow for ksm page and non-ksm anon page.
 
-
-> Thanks.
->
-> --
-> tejun
+Is anyone interested in reviewing this patchset further?
 
