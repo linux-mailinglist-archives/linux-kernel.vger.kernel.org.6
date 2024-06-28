@@ -1,128 +1,291 @@
-Return-Path: <linux-kernel+bounces-234352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C03F691C587
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:15:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0404891C58B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:16:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BA2D284F0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:15:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57475B20D16
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C776C1CD5BA;
-	Fri, 28 Jun 2024 18:15:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0BD21CCCB1;
+	Fri, 28 Jun 2024 18:16:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EArBTuls"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iXPGoK0d"
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0E71C9EA7
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 18:15:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CEA33FBA5
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 18:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719598519; cv=none; b=ix4A3G5VitwPcy8pdfLDUrCAIEvS+Pdv4rspe34XsrxdJDgoDeewgYOjSEjFyUA7vj72oK/m0PJasml1y232uy8Hex0G6RkRX6rIlXKl9kICCi9Cuew21Vg31KsOVqo6sUHfrJxNETqx7HIoQ0qaoNjPzDHG4P+kjIIM8TDmubM=
+	t=1719598594; cv=none; b=Vy1TRLRgAlydlYQF7bv0Z00ARRSHlc8w9bprCSx8gp0aYt9Yb18oC0rnhSHzjhM7iWv/+r+EkoPkrCi4r0LitHm/rdWReiXK2FWMyBl6HL/hsl5G2AYrGirL2IVk/UsFqcL1aoXWzG/9XqWwpKlbTPkJ/cWwH2sbkVB0nWAyQTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719598519; c=relaxed/simple;
-	bh=I6SwX75zD4uLLMOyEySdEAkaogA/COnC9oOl2ywW3O0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ocMSBCUOS3E9PgQGgfaPtMK0hUbON9VriiRHBPeKcJx5XgFxGmVtcksGsZEBiS47iggu7bgZ1VqE9OqBzp19FRZ7xPa57L95R55ATROt+LI5Eay90vv6P2GjNnnZ95JOmZHGDapKYIb/OjWZtC4t6+VbMC4xd66Lta1RY55w+PM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EArBTuls; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719598516;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I6SwX75zD4uLLMOyEySdEAkaogA/COnC9oOl2ywW3O0=;
-	b=EArBTuls+sXTlwRCzWffOn0L41peN1XDZLB2w6CXFU0ppqSMU0BYEVzDyV3ZLRNY1RI8s/
-	io1aqywyWbEMKas+5Y30au6TxZv+8roTWRqCrnzyf18CBqPqB+yvb7AIah6HtDHKNIV9Bm
-	QisRpuGHEwuiTQmgt+5Wt95e8ulbpiQ=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-633-wnqp5D4UNluum20LF7vxZQ-1; Fri, 28 Jun 2024 14:15:14 -0400
-X-MC-Unique: wnqp5D4UNluum20LF7vxZQ-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a72af056bffso71631966b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 11:15:14 -0700 (PDT)
+	s=arc-20240116; t=1719598594; c=relaxed/simple;
+	bh=AbXpYfWa3WekkbKdkR50dkfMIXEVbHy46HiSuzZd87E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DD61KXmICEj/PZpGbS+BKJ6Kl8GI+Cez/F3SSXbA9/Pcr8PkVgQTe8eIR3575Oe7UVXyQH/CnUbdNjma1pjx/nUzAORSrXCVegfdsVciI6muzhzQf1keoZUTQLpuB55kLx8KZgMc8Oi36Ams0yVib66SAiSSHZUOv2HKo6y0E+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iXPGoK0d; arc=none smtp.client-ip=209.85.166.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-37636c38d6aso4270335ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 11:16:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719598590; x=1720203390; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oCsaVaw4BhqD+Xyg8ynJ6DJaSe0bJqCFl9DQMDKbxYg=;
+        b=iXPGoK0dsZuemMpln0UgAvSF2yvzRHHsSTvXuMzPHV9m8fJOTTzwofAwFELT63xe9C
+         GJGPM28l5818PFvWm7wNu8aaAQtDEtnyUSBPsdX4DKIZ1JClpY2YSt7t/bLtFoXA2kbS
+         IblEKDErMXdUCs6jdfMnMDY5l6wDM22baGXuQnRw+W8N+vhfzd49j6LPVjceJdxKUiVg
+         RyRoe0zdHY5Z68wRf2C0tgfebH4E+qFrnogTiGwYvNvn+zGeVCKuyyDl+h1EgH2VG2q1
+         9MVKjIRX5ZRoKffVqjWaO2vm6VtPeQ2NvZopP1FAnqceyteMUk2infaTrL6yHuQ3CBN9
+         DKGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719598513; x=1720203313;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I6SwX75zD4uLLMOyEySdEAkaogA/COnC9oOl2ywW3O0=;
-        b=Z10yyxwbNal1vQPjKglh3nExQB2OonkFdUqHo722f2ti5Dn608PihD8Subke06GAgK
-         gGeSnAaBkGAOB7yt66hrFFAc2vFQBoyNQSmjzI0v998eA3gVy99umGjYXFk/CGD3ofhJ
-         fXI0cdtJThC3QOxLxl/0N1Hw/AXFTFR9W9XnOJaRibzEZOhUz08JmZLp+LS+wqOWjwB0
-         teFmRyTSf3vWHGOnf5aOtzPHMjzIPNkuk8EQxSECcELTnbObAGTIdPgaqRVlPh5bS3X9
-         U2lG7fHVzGEDkX6laockwMp8QPoF70MfRfLVzZ1xeuSlA8nE7Y+J/8JH+3GGTLTF6jGJ
-         yQrg==
-X-Forwarded-Encrypted: i=1; AJvYcCW+gjAW2iwNO2R8k3gzMnoK3C1I2qaS5SO5iKK4ZTlKb0eZ1cDmCchuTMMeNQpeurFJ08VdXiI9F6xhXZ5OA/ZRa0fu6St2rlRAp+3r
-X-Gm-Message-State: AOJu0YzpnEvONEN9GkxC8hF6/9iBNZAdpgpdySk6CmLqmrHVYrPd0AwS
-	/i324Kg0FcOuVB1czH3YDusdl0A9vst7GKlhkmJ7esqM6OzjGzg1ax3fgt1SMpSOHDO5Vj5JlVX
-	ewiqYLX4qmlrnoB3efWvTq7ysoTF+aVi5aq+jF5aDzpIRT9NC4AQMpKbt5Euh6Q==
-X-Received: by 2002:a17:907:6d19:b0:a72:b055:3dd7 with SMTP id a640c23a62f3a-a72b055407bmr190680166b.1.1719598513221;
-        Fri, 28 Jun 2024 11:15:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGqybnIlUkh6FCuDhsxUzrNgEu8zdev7yIXr+vZIF1T8yLJCjO+nmuU1Eaa1BjPkAvAX9eDrA==
-X-Received: by 2002:a17:907:6d19:b0:a72:b055:3dd7 with SMTP id a640c23a62f3a-a72b055407bmr190677866b.1.1719598512804;
-        Fri, 28 Jun 2024 11:15:12 -0700 (PDT)
-Received: from [10.39.193.120] (5920ab7b.static.cust.trined.nl. [89.32.171.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab0b8892sm99875466b.222.2024.06.28.11.15.12
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 28 Jun 2024 11:15:12 -0700 (PDT)
-From: Eelco Chaudron <echaudro@redhat.com>
-To: Adrian Moreno <amorenoz@redhat.com>
-Cc: netdev@vger.kernel.org, aconole@redhat.com, horms@kernel.org,
- i.maximets@ovn.org, dev@openvswitch.org,
- Donald Hunter <donald.hunter@gmail.com>, Jakub Kicinski <kuba@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Pravin B Shelar <pshelar@ovn.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v6 05/10] net: openvswitch: add psample action
-Date: Fri, 28 Jun 2024 20:15:11 +0200
-X-Mailer: MailMate (1.14r6039)
-Message-ID: <437859E4-AD40-4257-8860-841097AEE51D@redhat.com>
-In-Reply-To: <20240628110559.3893562-6-amorenoz@redhat.com>
-References: <20240628110559.3893562-1-amorenoz@redhat.com>
- <20240628110559.3893562-6-amorenoz@redhat.com>
+        d=1e100.net; s=20230601; t=1719598590; x=1720203390;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oCsaVaw4BhqD+Xyg8ynJ6DJaSe0bJqCFl9DQMDKbxYg=;
+        b=RhyO1K42zpgRj5tHZUuC9vxvmWrBc0L9rGMl4DdZP2KTgN3Zla4QfZdz/NAeBq9J1S
+         1e2dMf6dYA0PAkrWqhXHUnHvF4XDl3UiJ2qq7K68DBRzyFxE9qKssXXxrBH9vvIlcZVv
+         NVzxbH4KOIGebb4jElQPYrDzDd+B196+gx/q7/LgPTyM7fpptBWGv25bdEKDQm7g8r/a
+         HqADpa9rMxvyzN/m2q2HG5O/s6EU3v2VfFyG9tUVQf+w2npTAMy+u0PQ7aR6z/WeYIId
+         DoBH4E61FAbehgHCtSB4iKLZRv7dwsol0a0Mfo6EHI2DqJXPImd8+olcoRhgVqlZGvPz
+         c0fA==
+X-Forwarded-Encrypted: i=1; AJvYcCVvlzfXAw4jDt3lLx9hfodWSngnK3kd13NntXyCIdzhH4+5tIe4bRsPaNuWomycY/r2tu7aK7kzzuwsku1QYnJg6cBZQZwdtwKmRyAV
+X-Gm-Message-State: AOJu0Yyb7fmyfdbr/bJtegebnPFEXkXOYnHkCFG7ua+gPSq+xr0b8hm2
+	Ttg6pAnJLulbRtCbRzZCV8c4XJ2x9O01UN8Dn0rl+bvrbw+d5gCG
+X-Google-Smtp-Source: AGHT+IGuKG9hnWHCmMAXNatkQYs5+I9y300IdNC6/HNAZ5tSrEEUeSsWTdrlSPRh9aBkW3sh3wAz9A==
+X-Received: by 2002:a05:6602:2dd2:b0:7eb:5250:a54a with SMTP id ca18e2360f4ac-7f3a75a6321mr2326073139f.7.1719598590363;
+        Fri, 28 Jun 2024 11:16:30 -0700 (PDT)
+Received: from [10.0.0.19] ([122.172.84.231])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-708044b1124sm1920736b3a.181.2024.06.28.11.16.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Jun 2024 11:16:30 -0700 (PDT)
+Message-ID: <db64751c-1305-4dc2-a889-3d5da2ebd455@gmail.com>
+Date: Fri, 28 Jun 2024 23:46:26 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/panel: asus-z00t-tm5p5-n35596: transition to mipi_dsi
+ wrapped functions
+To: neil.armstrong@linaro.org, quic_jesszhan@quicinc.com
+Cc: dianders@chromium.org, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240628181238.169681-1-tejasvipin76@gmail.com>
+ <20240628181238.169681-4-tejasvipin76@gmail.com>
+Content-Language: en-US
+From: Tejas Vipin <tejasvipin76@gmail.com>
+In-Reply-To: <20240628181238.169681-4-tejasvipin76@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Sorry, didn't intend to send this. please ignore it :p
 
+On 6/28/24 11:42 PM, Tejas Vipin wrote:
+> Use functions introduced in commit 966e397e4f60 ("drm/mipi-dsi:
+> Introduce mipi_dsi_*_write_seq_multi()") and commit f79d6d28d8fe
+> ("drm/mipi-dsi: wrap more functions for streamline handling") for the
+> asus-z00t-tm5p5-n35596 panel.
+> 
+> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+> ---
+>  .../drm/panel/panel-asus-z00t-tm5p5-n35596.c  | 140 ++++++++----------
+>  1 file changed, 59 insertions(+), 81 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-asus-z00t-tm5p5-n35596.c b/drivers/gpu/drm/panel/panel-asus-z00t-tm5p5-n35596.c
+> index bcaa63d1955f..b05a663c134c 100644
+> --- a/drivers/gpu/drm/panel/panel-asus-z00t-tm5p5-n35596.c
+> +++ b/drivers/gpu/drm/panel/panel-asus-z00t-tm5p5-n35596.c
+> @@ -33,119 +33,97 @@ static void tm5p5_nt35596_reset(struct tm5p5_nt35596 *ctx)
+>  	usleep_range(15000, 16000);
+>  }
+>  
+> -static int tm5p5_nt35596_on(struct tm5p5_nt35596 *ctx)
+> +static void tm5p5_nt35596_on(struct mipi_dsi_multi_context *dsi_ctx)
+>  {
+> -	struct mipi_dsi_device *dsi = ctx->dsi;
+> -
+> -	mipi_dsi_generic_write_seq(dsi, 0xff, 0x05);
+> -	mipi_dsi_generic_write_seq(dsi, 0xfb, 0x01);
+> -	mipi_dsi_generic_write_seq(dsi, 0xc5, 0x31);
+> -	mipi_dsi_generic_write_seq(dsi, 0xff, 0x04);
+> -	mipi_dsi_generic_write_seq(dsi, 0x01, 0x84);
+> -	mipi_dsi_generic_write_seq(dsi, 0x05, 0x25);
+> -	mipi_dsi_generic_write_seq(dsi, 0x06, 0x01);
+> -	mipi_dsi_generic_write_seq(dsi, 0x07, 0x20);
+> -	mipi_dsi_generic_write_seq(dsi, 0x08, 0x06);
+> -	mipi_dsi_generic_write_seq(dsi, 0x09, 0x08);
+> -	mipi_dsi_generic_write_seq(dsi, 0x0a, 0x10);
+> -	mipi_dsi_generic_write_seq(dsi, 0x0b, 0x10);
+> -	mipi_dsi_generic_write_seq(dsi, 0x0c, 0x10);
+> -	mipi_dsi_generic_write_seq(dsi, 0x0d, 0x14);
+> -	mipi_dsi_generic_write_seq(dsi, 0x0e, 0x14);
+> -	mipi_dsi_generic_write_seq(dsi, 0x0f, 0x14);
+> -	mipi_dsi_generic_write_seq(dsi, 0x10, 0x14);
+> -	mipi_dsi_generic_write_seq(dsi, 0x11, 0x14);
+> -	mipi_dsi_generic_write_seq(dsi, 0x12, 0x14);
+> -	mipi_dsi_generic_write_seq(dsi, 0x17, 0xf3);
+> -	mipi_dsi_generic_write_seq(dsi, 0x18, 0xc0);
+> -	mipi_dsi_generic_write_seq(dsi, 0x19, 0xc0);
+> -	mipi_dsi_generic_write_seq(dsi, 0x1a, 0xc0);
+> -	mipi_dsi_generic_write_seq(dsi, 0x1b, 0xb3);
+> -	mipi_dsi_generic_write_seq(dsi, 0x1c, 0xb3);
+> -	mipi_dsi_generic_write_seq(dsi, 0x1d, 0xb3);
+> -	mipi_dsi_generic_write_seq(dsi, 0x1e, 0xb3);
+> -	mipi_dsi_generic_write_seq(dsi, 0x1f, 0xb3);
+> -	mipi_dsi_generic_write_seq(dsi, 0x20, 0xb3);
+> -	mipi_dsi_generic_write_seq(dsi, 0xfb, 0x01);
+> -	mipi_dsi_generic_write_seq(dsi, 0xff, 0x00);
+> -	mipi_dsi_generic_write_seq(dsi, 0xfb, 0x01);
+> -	mipi_dsi_generic_write_seq(dsi, 0x35, 0x01);
+> -	mipi_dsi_generic_write_seq(dsi, 0xd3, 0x06);
+> -	mipi_dsi_generic_write_seq(dsi, 0xd4, 0x04);
+> -	mipi_dsi_generic_write_seq(dsi, 0x5e, 0x0d);
+> -	mipi_dsi_generic_write_seq(dsi, 0x11, 0x00);
+> -	msleep(100);
+> -	mipi_dsi_generic_write_seq(dsi, 0x29, 0x00);
+> -	mipi_dsi_generic_write_seq(dsi, 0x53, 0x24);
+> -
+> -	return 0;
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xff, 0x05);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xfb, 0x01);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xc5, 0x31);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xff, 0x04);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x01, 0x84);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x05, 0x25);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x06, 0x01);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x07, 0x20);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x08, 0x06);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x09, 0x08);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x0a, 0x10);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x0b, 0x10);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x0c, 0x10);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x0d, 0x14);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x0e, 0x14);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x0f, 0x14);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x10, 0x14);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x11, 0x14);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x12, 0x14);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x17, 0xf3);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x18, 0xc0);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x19, 0xc0);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x1a, 0xc0);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x1b, 0xb3);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x1c, 0xb3);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x1d, 0xb3);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x1e, 0xb3);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x1f, 0xb3);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x20, 0xb3);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xfb, 0x01);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xff, 0x00);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xfb, 0x01);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x35, 0x01);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xd3, 0x06);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xd4, 0x04);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x5e, 0x0d);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x11, 0x00);
+> +
+> +	mipi_dsi_msleep(dsi_ctx, 100);
+> +
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x29, 0x00);
+> +	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x53, 0x24);
+>  }
+>  
+> -static int tm5p5_nt35596_off(struct tm5p5_nt35596 *ctx)
+> +static void tm5p5_nt35596_off(struct mipi_dsi_multi_context *dsi_ctx)
+>  {
+> -	struct mipi_dsi_device *dsi = ctx->dsi;
+> -	struct device *dev = &dsi->dev;
+> -	int ret;
+> -
+> -	ret = mipi_dsi_dcs_set_display_off(dsi);
+> -	if (ret < 0) {
+> -		dev_err(dev, "Failed to set display off: %d\n", ret);
+> -		return ret;
+> -	}
+> -	msleep(60);
+> +	mipi_dsi_dcs_set_display_off_multi(dsi_ctx);
+>  
+> -	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
+> -	if (ret < 0) {
+> -		dev_err(dev, "Failed to enter sleep mode: %d\n", ret);
+> -		return ret;
+> -	}
+> +	mipi_dsi_msleep(dsi_ctx, 60);
+>  
+> -	mipi_dsi_dcs_write_seq(dsi, 0x4f, 0x01);
+> +	mipi_dsi_dcs_enter_sleep_mode_multi(dsi_ctx);
+>  
+> -	return 0;
+> +	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0x4f, 0x01);
+>  }
+>  
+>  static int tm5p5_nt35596_prepare(struct drm_panel *panel)
+>  {
+>  	struct tm5p5_nt35596 *ctx = to_tm5p5_nt35596(panel);
+> -	struct device *dev = &ctx->dsi->dev;
+> -	int ret;
+> +	struct mipi_dsi_multi_context dsi_ctx =	{.dsi = ctx->dsi};
+>  
+> -	ret = regulator_bulk_enable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
+> -	if (ret < 0) {
+> -		dev_err(dev, "Failed to enable regulators: %d\n", ret);
+> -		return ret;
+> -	}
+> +	dsi_ctx.accum_err = regulator_bulk_enable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
+> +	if (dsi_ctx.accum_err)
+> +		return dsi_ctx.accum_err;
+>  
+>  	tm5p5_nt35596_reset(ctx);
+>  
+> -	ret = tm5p5_nt35596_on(ctx);
+> -	if (ret < 0) {
+> -		dev_err(dev, "Failed to initialize panel: %d\n", ret);
+> +	tm5p5_nt35596_on(&dsi_ctx);
+> +
+> +	if (dsi_ctx.accum_err) {
+>  		gpiod_set_value_cansleep(ctx->reset_gpio, 0);
+>  		regulator_bulk_disable(ARRAY_SIZE(ctx->supplies),
+>  				       ctx->supplies);
+> -		return ret;
+>  	}
+>  
+> -	return 0;
+> +	return dsi_ctx.accum_err;
+>  }
+>  
+>  static int tm5p5_nt35596_unprepare(struct drm_panel *panel)
+>  {
+>  	struct tm5p5_nt35596 *ctx = to_tm5p5_nt35596(panel);
+> -	struct device *dev = &ctx->dsi->dev;
+> -	int ret;
+> +	struct mipi_dsi_multi_context dsi_ctx =	{.dsi = ctx->dsi};
+>  
+> -	ret = tm5p5_nt35596_off(ctx);
+> -	if (ret < 0)
+> -		dev_err(dev, "Failed to un-initialize panel: %d\n", ret);
+> +	tm5p5_nt35596_off(&dsi_ctx);
+>  
+>  	gpiod_set_value_cansleep(ctx->reset_gpio, 0);
+>  	regulator_bulk_disable(ARRAY_SIZE(ctx->supplies),
+>  			       ctx->supplies);
+>  
+> -	return 0;
+> +	return dsi_ctx.accum_err;
+>  }
+>  
+>  static const struct drm_display_mode tm5p5_nt35596_mode = {
 
-On 28 Jun 2024, at 13:05, Adrian Moreno wrote:
-
-> Add support for a new action: psample.
->
-> This action accepts a u32 group id and a variable-length cookie and use=
-s
-> the psample multicast group to make the packet available for
-> observability.
->
-> The maximum length of the user-defined cookie is set to 16, same as
-> tc_cookie, to discourage using cookies that will not be offloadable.
->
-> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
-
-I think this patch looks good. After some offline discussion on alignment=
- with the userspace model, we decided to proceed with a psample() specifi=
-c action.
-
-With that in mind, and considering the additional changes, this patch loo=
-ks good to me.
-
-Acked-by: Eelco Chaudron echaudro@redhat.com
-
-Cheers,
-
-Eelco
-
+-- 
+Tejas Vipin
 
