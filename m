@@ -1,173 +1,110 @@
-Return-Path: <linux-kernel+bounces-234645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 276E191C8FA
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 00:14:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65EA591C8FC
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 00:15:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 449EFB24743
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:14:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 236FC282262
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:15:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B518381204;
-	Fri, 28 Jun 2024 22:14:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08B725381A;
+	Fri, 28 Jun 2024 22:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tsrak5nj"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Cq3jLC09"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04657AE5D;
-	Fri, 28 Jun 2024 22:14:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC474DA08
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 22:15:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719612854; cv=none; b=CyOVKYJ5k1jy0cDZ+GMhQmsORK4XUCSwrElxTJTcDLLspTERIz1VheMbsGfHjwR6GLLJP/w/Iq0GlTFpHsEqHiS6yshlIfvehXkKARXUBBWyPEp2x+tE5BNC/+Hm654HeSIaXHwJSXC955lsOSxcsyNubZ/VmL+LNfdOc/SjnXw=
+	t=1719612940; cv=none; b=aozCmVA1XwOw2mhk6dRJi7zBaKB69Dv7ooDMBdLszkOuZeRlzTj4RcOT5oN6b0dp8SmKdWIQ34clkBQeMi2aVX5RuVbmIHubwPwd6zEc2GobpJkd2OnueEptyuefeds5VGOiFzIn9V/zl3zWn1ohh+4BRhaCWMlODJlvSj1eq28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719612854; c=relaxed/simple;
-	bh=UryOYHRfqwcEcZIwwThwQfd3CAfjpi2BLQY5PX2Iahw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UFJIyP/15454PgIuFKKxrJYCBmrdqggKjaQYfOw0lLxIWEnHdgX3vpXghLFUmQR/t0eWYZQ10uDL4q7WYxyOWr7f+NgiK8/+NPQTBo3YaakLvWCZfnIs0oW0/NGA+lEx0wc9KPXkh3UuNImRSXJE7sy9wZKhtWHAuYFCVpbK6dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tsrak5nj; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-711b1512aeaso816329a12.3;
-        Fri, 28 Jun 2024 15:14:12 -0700 (PDT)
+	s=arc-20240116; t=1719612940; c=relaxed/simple;
+	bh=+FljSmn4Grrsg7NrcyiPVuMjCR2+pSwHRt+HFRG+zT4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gC5DuYoUCa20seDDDeRuj1psEPP6haUW5S1ZGkXq4xo926DpqPxPJEaX3F7FxHoAXkEGcOfQS5/hhLtefpqZbOoFTXFzAyMoNUOFrBuvR7BrT7u3hHWWviKR0WjGRrwrDsmc4G8GwUelYMqPhpTDbHHmyFttNrD4wItWmizkeFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Cq3jLC09; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3636c572257so843740f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 15:15:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719612852; x=1720217652; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NG/zAGwOMU7QiFsKf3DVczTFTidF/ku76yZcjdSekbs=;
-        b=Tsrak5njCi0iVSCr1yw/sckmI5S7LlKLOn0u1bpSJeZummvWW8hawtZ0mV3F1g6IDV
-         J/pHCD/jmBRefKGQ1Yzt4umeCziFbB1oBjnMYPArmdNW6huZFmVc43Q4s/UL98j1LYum
-         ghgi8Jl4mCTld6P67KV9Ood8t95yMRed/cxrI5MZANv3RuuYCCYL9QB1SGnLX2uSBZv7
-         OwqaYoemI7cUN0tmV4LGp/drm/hMAilVS7LN1EGWHe6iZLhlen2N02tyRVkuKtkMzoSs
-         vdSsapEPtIsJ8v9Sytrl2Y5GNhbFIGtRPXzeerzgooZvX+blhlLAetTHWGarno1YDIuV
-         eNJw==
+        d=google.com; s=20230601; t=1719612937; x=1720217737; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=EnG8rg72r8ffPCSx11YhZAxAKEur5ua59dSNQgnuQfA=;
+        b=Cq3jLC09UtyKLnGcVX4c53Ue6g8SoQHXBHCkQvybiarAlvmwimL4Ug4wCRoVrDZ0gS
+         xP6iMpvY0z7b4CACMLQ/4om+feeFZIm1Vl7x4X5pYZSBIfGc3c/54sqwKvqDbo6RNvF3
+         KoAs1MLZHZdZzrN3Wf6c6sGwAzAx87JjDLPOlzoTTncjFcnmjG+kSQcxcqiPjV777H86
+         re1GpyUZACSEwFGO784mAnK/TQ21vkqilwy2vf9B3vIcfGue69T0/A1vjAUvcb1Gek4T
+         Nh03HtKhqN/fAZMym48VsmiSG7y4UZ+PqQEZpK3iAudDw2gkYNvjKkUHsQW7vix2Sq7c
+         Dwyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719612852; x=1720217652;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NG/zAGwOMU7QiFsKf3DVczTFTidF/ku76yZcjdSekbs=;
-        b=MI20xv5DYVPoDwPq5YKuC7I+fxsYsnyTotk/ZDOamTrYUQ4ls3oehZNeps6MSAewqr
-         3WE+7jMZ7iy82o9e+yw8am40zxy1khSbojzHV93fNGJlRPmb7sKgsXGBm6qkQdrCiaLx
-         6I4Fu3KEg6B/sJl4ywUqLG2S9W2N+VuTJSvC1AtqDNzqVBu3GF1UjMUx2fv+3vAvRzv8
-         suU+3yto74lpwtR2o5AbHmzaK38D6FMq656Dvc+DKMdjqgFrB836Fwi9m2T4iJMMGz0F
-         emG+WST3hG0gpNrtPMSbkrqj5rjGuSZU44aTlwUgXgzWKnEjJ+IC4tG0LT7Ak6L50+2A
-         SbrA==
-X-Forwarded-Encrypted: i=1; AJvYcCXeYKgoC7mJhNMxzOag1zcNVuWf5th9kMRPvXS2harpImqVMLEDkWW9Rth38J3hOnS1qchgZaXBKUkbq690rIE9IA2Z+df3HfD389wChPTf6sK7iA+zJEo8JoENyafcOXWb
-X-Gm-Message-State: AOJu0YxeeoUa1l8GAiI6p7etncG5krwZxL3/94v25sWmXzOQJLR9Wo6P
-	7phaA9Z1KaBzC/L9oztdeJPs7nyp4f/KhM7bdM4O1nLMyWfuXgjr
-X-Google-Smtp-Source: AGHT+IG06LEYrzDPjN/VFMJR+p9b0ziDdCaGqHxCPwJAKdwZ5f9gNybXlc7TzGsVkJ0PT+ErKTV3oA==
-X-Received: by 2002:a05:6a20:9681:b0:1aa:6167:b6d6 with SMTP id adf61e73a8af0-1bcf462105emr18535309637.42.1719612851761;
-        Fri, 28 Jun 2024 15:14:11 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-708045aac85sm2182868b3a.174.2024.06.28.15.14.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 15:14:11 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Fri, 28 Jun 2024 12:14:10 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-	David Vernet <void@manifault.com>
-Subject: Re: [PATCH sched_ext/for-6.11 1/2] sched_ext: Implement DSQ iterator
-Message-ID: <Zn81srqbHfKBC7zZ@slm.duckdns.org>
-References: <Zn4BupVa65CVayqQ@slm.duckdns.org>
- <CAADnVQ+h2W88nWnj_frPa24vYmE+yebHYaT6mronRnDYvC+JLQ@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1719612937; x=1720217737;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EnG8rg72r8ffPCSx11YhZAxAKEur5ua59dSNQgnuQfA=;
+        b=cY4BjYK4gQnyIqiUxydyxl2pPkE4/exBmnlJ0witaMRLFBbV8YFTJyu3ZJfm4F9jPw
+         LV4MSUNWn2ugTR+fvUK/XAsWxs2XeYfj1197+yQwBCWTt4L9mHRDgJVK4ziroZAqv+Rx
+         gnmnYOrDQHuBc+VuwFUve7Y2XgtXQ27171B4utx6PJKoeTfXm9nfhW1ukzYu7H0UgCNa
+         2bGXtGkNx/4TCcvObaxXrhdhXNEavlgbfLiXQhPyLEW5GN2c6bskvRVcWT8/3X0hKIJI
+         KQng2oDnTtK6Vnf1NU/vUywIDP3jNN7imJk2XQZlsMRpZs4j98fTagZZjemIP5hlwFW2
+         TKqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVgATVSSgZz7npouzWc3rgOceBgE2pbXrKIYB15zH6kkHErvg4QJbuA1aV3S9xT1J3R2K256O9IOqaXS+PUbIoRERjev6ZV4Ah4b1vZ
+X-Gm-Message-State: AOJu0YycawuNwrltgbnjviafqB2iD1BMLAsfNwWVuegg67D3vPWyawFU
+	mLZ5GR72WCmRdO7TiKwopugtB5AZW7HBpWL13TmthgIJs4tPdjGhYckIoNsXgZbiygB5uSu04eg
+	0gktzHN/UPkzNY8kBQYEBLW2woRg5fjLOZFLv
+X-Google-Smtp-Source: AGHT+IECZerCUyDd0NywEbdAnhdWpLjgakOOtsegyVbF35KWlN7IkS8C++spqmKiKCk2AqXQhz4EyJIPc8mgKKGXDw8=
+X-Received: by 2002:adf:b1d1:0:b0:362:ff67:272f with SMTP id
+ ffacd0b85a97d-366e94db3e5mr14589349f8f.41.1719612936743; Fri, 28 Jun 2024
+ 15:15:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAADnVQ+h2W88nWnj_frPa24vYmE+yebHYaT6mronRnDYvC+JLQ@mail.gmail.com>
+References: <171952310959.1810550.17003659816794335660.stgit@firesoul>
+ <171952312320.1810550.13209360603489797077.stgit@firesoul>
+ <4n3qu75efpznkomxytm7irwfiq44hhi4hb5igjbd55ooxgmvwa@tbgmwvcqsy75> <7ecdd625-37a0-49f1-92fc-eef9791fbe5b@kernel.org>
+In-Reply-To: <7ecdd625-37a0-49f1-92fc-eef9791fbe5b@kernel.org>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Fri, 28 Jun 2024 15:15:00 -0700
+Message-ID: <CAJD7tkaybPFoM697dtp0CiEJ2zmSYiH2+0yL+KG_LD=ZiscOJA@mail.gmail.com>
+Subject: Re: [PATCH V4 2/2] cgroup/rstat: Avoid thundering herd problem by
+ kswapd across NUMA nodes
+To: Jesper Dangaard Brouer <hawk@kernel.org>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>, tj@kernel.org, cgroups@vger.kernel.org, 
+	hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com, 
+	kernel-team@cloudflare.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+[..]
+> >> +    /* Obtained lock, record this cgrp as the ongoing flusher */
+> >> +    if (!READ_ONCE(cgrp_rstat_ongoing_flusher)) {
+> >
+> > Can the above condition will ever be false?
+> >
+>
+> Yes, I think so, because I realized that cgroup_rstat_flush_locked() can
+> release/"yield" the lock.  Thus, other CPUs/threads have a chance to
+> call cgroup_rstat_flush, and try to become the "ongoing-flusher".
 
-On Thu, Jun 27, 2024 at 06:11:48PM -0700, Alexei Starovoitov wrote:
-> > +struct bpf_iter_scx_dsq_kern {
-> > +       struct scx_dsq_node             cursor;
-> > +       struct scx_dispatch_q           *dsq;
-> > +       u32                             dsq_seq;
-> > +       u32                             flags;
-> > +} __attribute__((aligned(8)));
-> > +
-> > +struct bpf_iter_scx_dsq {
-> > +       u64                             __opaque[12];
-> > +} __attribute__((aligned(8)));
-> 
-> I think this is a bit too much to put on the prog stack.
-> Folks are working on increasing this limit and moving
-> the stack into "divided stack", so it won't be an issue eventually,
-> but let's find a way to reduce it.
+Right, there may actually be multiple ongoing flushers. I am now
+wondering if it would be better if we drop cgrp_rstat_ongoing_flusher
+completely, add a per-cgroup under_flush boolean/flag, and have the
+cgroup iterate its parents here to check if any of them is under_flush
+and wait for it instead.
 
-Yeah, it is kinda big. Do you have some idea on where the boundary between
-okay and too big would fall on?
+Yes, we have to add parent iteration here, but I think it may be fine
+because the flush path is already expensive. This will allow us to
+detect if any ongoing flush is overlapping with us, not just the one
+that happened to update cgrp_rstat_ongoing_flusher first.
 
-> It seems to me scx_dsq_node has a bunch of fields,
-> but if I'm reading the code correctly this patch is
-> only using cursor.list part of it ?
-
-Great point. Cursors used to have to go on the rbtrees too but that's no
-longer the case, so I should be able to drop the rbnode which should help
-reducing the size substantially. I'll see what I can do.
-
-> Another alternative is to use bpf_mem_alloc() like we do
-> in bpf_iter_css_task and others?
-
-This might be okay but given that this can be used pretty frequently (e.g.
-every scheduling event) and it *seems* possible to reduce its size
-substantially, I'd like to keep it on stack if possible.
-
-> > +__bpf_kfunc int bpf_iter_scx_dsq_new(struct bpf_iter_scx_dsq *it, u64 dsq_id,
-> > +                                    u64 flags)
-> > +{
-> > +       struct bpf_iter_scx_dsq_kern *kit = (void *)it;
-> > +
-> > +       BUILD_BUG_ON(sizeof(struct bpf_iter_scx_dsq_kern) >
-> > +                    sizeof(struct bpf_iter_scx_dsq));
-> > +       BUILD_BUG_ON(__alignof__(struct bpf_iter_scx_dsq_kern) !=
-> > +                    __alignof__(struct bpf_iter_scx_dsq));
-> > +
-> > +       if (flags & ~__SCX_DSQ_ITER_ALL_FLAGS)
-> > +               return -EINVAL;
-> > +
-> > +       kit->dsq = find_non_local_dsq(dsq_id);
-> > +       if (!kit->dsq)
-> > +               return -ENOENT;
-> > +
-> > +       INIT_LIST_HEAD(&kit->cursor.list);
-> > +       RB_CLEAR_NODE(&kit->cursor.priq);
-> > +       kit->cursor.flags = SCX_TASK_DSQ_CURSOR;
-> 
-> Are these two assignments really necessary?
-> Something inside nldsq_next_task() is using that?
-> 
-> > +       kit->dsq_seq = READ_ONCE(kit->dsq->seq);
-> > +       kit->flags = flags;
-
-I'm a bit confused whether you're referring to the statements above or
-below, but AFAICS, they're all used except for kit->cursor.priq.
-
-- SCX_TASK_DSQ_CURSOR assignment is what tells nldsq_next_task() that the
-  node is a cursor, not a real task, and thus should be skipped for internal
-  iterations.
-
-- kit->dsq_seq is used by bpf_iter_scx_dsq_next() to ignore tasks that are
-  queued after the iteration has started. This, among other things,
-  guarantees that p->scx.dsq_vtime increases monotonically throughout
-  iteration.
-
-- kit->flags carries SCX_DSQ_ITER_REV which tells bpf_iter_scx_dsq_next()
-  the direction of the iteration.
-
-Thanks.
-
--- 
-tejun
+WDYT?
 
