@@ -1,115 +1,131 @@
-Return-Path: <linux-kernel+bounces-234355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19FC591C594
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:23:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF44291C599
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:23:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 535871C22ECA
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:23:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 761A81F24033
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:23:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322A71CD5CF;
-	Fri, 28 Jun 2024 18:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E6661CD5BE;
+	Fri, 28 Jun 2024 18:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AcxSceGu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZdyI0W+n"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9AA1E532;
-	Fri, 28 Jun 2024 18:23:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85701C0DF0;
+	Fri, 28 Jun 2024 18:23:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719598994; cv=none; b=LyvsFVGRvkhNLqo7A4D4jMuvqGydAFL51FqkUTxAypeWTuOsaMqALgYgsDKhkaQ9bzxPsvm4yiKkcHV4NZ3EsoawOeTL+JjQPw6WNmjizHsbeWV8YAiZGRS84q6+adtcR5qgZwRSiLDbAJIv+x6wiS+2SHU+RlSU1faZ2u2TY2g=
+	t=1719599023; cv=none; b=XCteQ3jldpDEaxn6A+zQ+qNn6MVXjXiBQ2r/pyjnbKQFfXUHMK6ojF7M4Dve58TdeIpdHfMHHwMrxQkoxXPVMoTC9V06p6xv3fgaZ2JOGSnmnZ3JumUs66BhxNfF9z7niKviBTSOGSHfYdqRN7rL79kGZrcIDGdCiBzb9KlUuEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719598994; c=relaxed/simple;
-	bh=cb+WMxhhWTVOUFDmRnkqtfo3qZmA4hA8QTbiIA68f5o=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=awyPwvmUTNa4dgkIh8iTIwWAFsgoxtkMqgVeV94gcRBZwkJetjvibT7ndcDC2oIxb+BXQokumBszaoAa1X8YgWzkknQ1GOg4F6zqHHe4LlWrkUCSAU9PZXjZT7xlMkIK8s/r8GrlgfIuzYg2mTYI7K0SwoU3eKTAKxzpTOSU01Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AcxSceGu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0A3F3C32786;
-	Fri, 28 Jun 2024 18:23:14 +0000 (UTC)
+	s=arc-20240116; t=1719599023; c=relaxed/simple;
+	bh=PSU3tdTo76FLPP7xiWLKc41rwOiwu52i+9dzvpqpwII=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=YITa3NWvSVBIJjjxew5TnX4sWnkMae3Eutk+9DibksXkIDizWHyu7ipLcjvDU7nqaY97yMWQ7PeKp8q9qcPfbG5/o0JjfkclRLVAI7l5PD9MZcvc39+61gDClDmXz8ALQLB1f5yjNv3BL8snxTt3kHFJizvlVcTJoo3wDoQG64I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZdyI0W+n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72894C116B1;
+	Fri, 28 Jun 2024 18:23:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719598994;
-	bh=cb+WMxhhWTVOUFDmRnkqtfo3qZmA4hA8QTbiIA68f5o=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=AcxSceGu7L5XdsxF1/H+vDN69Np0bgoLh3iRplpaBdQA2NlqvJtVbwCUQxPlE3/k3
-	 xlS9kRtssxDu4rkXRWZ9cSW1BrHJ5RiILa2b5Wff8OKw4TbByHcYXn65TdtaYYaMe/
-	 07kpwp3oq2C9KMTDUxFY73wssKY9P54E5rSF+NbZZgd/epB04Wu3q6rPv+pRLWbrhO
-	 6/MNNpq60pnpDa3CBKhmDkErtRLXVKRlQ39VPGmkgV5Ltce2xtAI2pLXszArMtCfnT
-	 ODq1dogkS2+OaIelCgynZhW00Ap/rcAfKNXo+oDz82EjrqYIDieHRsuZdPvkVb0AO/
-	 Xy2xPts8PggPQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id EC5E7C4332E;
-	Fri, 28 Jun 2024 18:23:13 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1719599023;
+	bh=PSU3tdTo76FLPP7xiWLKc41rwOiwu52i+9dzvpqpwII=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=ZdyI0W+nmqUJCWipPdNf4cmBtY+rypYDwx+itWdMspkZMxFXGqTXLiqwqj+P/L2HW
+	 ayxR9qnJXpys3ydRLPfokVQx98MOeqM03nKa/ytsBexikuA9liqDpHV1OfVVALU+tE
+	 f7Fj4nqi4PEUTPns+yPNM8egQuCOh0Ovv/wpOD+UZ/8SlcGE22Ghaiomf6798XikSx
+	 0fgHRjbt7tZT77y95s6ou8xunrmc2rYTHBH4XJGA+fSkOoEi4YpexqWOIht15+aPX7
+	 D00T9WThNkC2oKuTUBzvB83od0XpV7aqlLaIS7DCv64svIp/Io9uTUPLn1flWW5vhe
+	 Y1c3dtBmP4QfA==
+From: Mark Brown <broonie@kernel.org>
+To: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ "J.M.B. Downing" <jonathan.downing@nautel.com>, 
+ Vladimir Zapolskiy <vz@mleia.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Arnd Bergmann <arnd@arndb.de>, Yangtao Li <frank.li@vivo.com>, 
+ Li Zetao <lizetao1@huawei.com>, Chancel Liu <chancel.liu@nxp.com>, 
+ Michael Ellerman <mpe@ellerman.id.au>, Corentin Labbe <clabbe@baylibre.com>, 
+ dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, 
+ linux-sound@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org, 
+ Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
+In-Reply-To: <20240627150046.258795-1-piotr.wojtaszczyk@timesys.com>
+References: <20240627150046.258795-1-piotr.wojtaszczyk@timesys.com>
+Subject: Re: (subset) [Patch v5 00/12] Add audio support for LPC32XX CPUs
+Message-Id: <171959901719.141669.17001815513243855671.b4-ty@kernel.org>
+Date: Fri, 28 Jun 2024 19:23:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] USB: class: cdc-wdm: Fix CPU lockup caused by excessive log
- messages
-From: patchwork-bot+bluetooth@kernel.org
-Message-Id: 
- <171959899396.26186.528799806468905607.git-patchwork-notify@kernel.org>
-Date: Fri, 28 Jun 2024 18:23:13 +0000
-References: <29855215-52f5-4385-b058-91f42c2bee18@rowland.harvard.edu>
-In-Reply-To: <29855215-52f5-4385-b058-91f42c2bee18@rowland.harvard.edu>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: gregkh@linuxfoundation.org,
- syzbot+1b2abad17596ad03dcff@syzkaller.appspotmail.com,
- syzbot+5f996b83575ef4058638@syzkaller.appspotmail.com,
- johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- luiz.dentz@gmail.com, marcel@holtmann.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev-d4707
 
-Hello:
-
-This patch was applied to bluetooth/bluetooth-next.git (master)
-by Greg Kroah-Hartman <gregkh@linuxfoundation.org>:
-
-On Thu, 13 Jun 2024 21:30:43 -0400 you wrote:
-> The syzbot fuzzer found that the interrupt-URB completion callback in
-> the cdc-wdm driver was taking too long, and the driver's immediate
-> resubmission of interrupt URBs with -EPROTO status combined with the
-> dummy-hcd emulation to cause a CPU lockup:
+On Thu, 27 Jun 2024 17:00:18 +0200, Piotr Wojtaszczyk wrote:
+> This pach set is to bring back audio to machines with a LPC32XX CPU.
+> The legacy LPC32XX SoC used to have audio spport in linux 2.6.27.
+> The support was dropped due to lack of interest from mainaeners.
 > 
-> 
-> cdc_wdm 1-1:1.0: nonzero urb status received: -71
-> cdc_wdm 1-1:1.0: wdm_int_callback - 0 bytes
-> watchdog: BUG: soft lockup - CPU#0 stuck for 26s! [syz-executor782:6625]
-> CPU#0 Utilization every 4s during lockup:
-> 	#1:  98% system,	  0% softirq,	  3% hardirq,	  0% idle
-> 	#2:  98% system,	  0% softirq,	  3% hardirq,	  0% idle
-> 	#3:  98% system,	  0% softirq,	  3% hardirq,	  0% idle
-> 	#4:  98% system,	  0% softirq,	  3% hardirq,	  0% idle
-> 	#5:  98% system,	  1% softirq,	  3% hardirq,	  0% idle
-> Modules linked in:
-> irq event stamp: 73096
-> hardirqs last  enabled at (73095): [<ffff80008037bc00>] console_emit_next_record kernel/printk/printk.c:2935 [inline]
-> hardirqs last  enabled at (73095): [<ffff80008037bc00>] console_flush_all+0x650/0xb74 kernel/printk/printk.c:2994
-> hardirqs last disabled at (73096): [<ffff80008af10b00>] __el1_irq arch/arm64/kernel/entry-common.c:533 [inline]
-> hardirqs last disabled at (73096): [<ffff80008af10b00>] el1_interrupt+0x24/0x68 arch/arm64/kernel/entry-common.c:551
-> softirqs last  enabled at (73048): [<ffff8000801ea530>] softirq_handle_end kernel/softirq.c:400 [inline]
-> softirqs last  enabled at (73048): [<ffff8000801ea530>] handle_softirqs+0xa60/0xc34 kernel/softirq.c:582
-> softirqs last disabled at (73043): [<ffff800080020de8>] __do_softirq+0x14/0x20 kernel/softirq.c:588
-> CPU: 0 PID: 6625 Comm: syz-executor782 Tainted: G        W          6.10.0-rc2-syzkaller-g8867bbd4a056 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+> Piotr Wojtaszczyk (12):
+>   dt-bindings: dma: pl08x: Add dma-cells description
+>   dt-bindings: dma: Add lpc32xx DMA mux binding
+>   ASoC: dt-bindings: lpc32xx: Add lpc32xx i2s DT binding
+>   ARM: dts: lpc32xx: Use simple-mfd for clock control block
+>   ARM: dts: lpc32xx: Add missing dma properties
+>   ARM: dts: lpc32xx: Add missing i2s properties
+>   clk: lpc32xx: initialize regmap using parent syscon
+>   dmaengine: Add dma router for pl08x in LPC32XX SoC
+>   ARM: lpc32xx: Remove pl08x platform data in favor for device tree
+>   mtd: rawnand: lpx32xx: Request DMA channels using DT entries
+>   ASoC: fsl: Add i2s and pcm drivers for LPC32xx CPUs
+>   i2x: pnx: Fix potential deadlock warning from del_timer_sync() call in
+>     isr
 > 
 > [...]
 
-Here is the summary with links:
-  - USB: class: cdc-wdm: Fix CPU lockup caused by excessive log messages
-    https://git.kernel.org/bluetooth/bluetooth-next/c/22f008128625
+Applied to
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
+Thanks!
+
+[03/12] ASoC: dt-bindings: lpc32xx: Add lpc32xx i2s DT binding
+        commit: 752fea92d9b3e4255a2f75e7efa6fe148562ccbf
+[11/12] ASoC: fsl: Add i2s and pcm drivers for LPC32xx CPUs
+        commit: 0959de657a10cc40b2cc41cff9169ab0e0fd4456
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
