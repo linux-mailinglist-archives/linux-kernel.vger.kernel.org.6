@@ -1,252 +1,172 @@
-Return-Path: <linux-kernel+bounces-233659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74A5191BB28
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:10:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47A0D91BB2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:11:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97C0F1C23234
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:10:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 792551C227C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41AAD155A2F;
-	Fri, 28 Jun 2024 09:09:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9E21514E0;
+	Fri, 28 Jun 2024 09:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VsifPcFn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="KR5ufZlM"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF7D152E02
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 09:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE251465A1;
+	Fri, 28 Jun 2024 09:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719565763; cv=none; b=RYAitwyl40amM80gvVMm/+pdG17KhDzjpb4pWIMjEv99rQ88zpDBrEyPwRU9AzS+NjsYXxw+1R+9D200Si9UoDizTbKD4VdP1zaVLpQKoacxUgFJm3+FmlPWe2EqD7sEtlROe1Y7NCwlS7M/HGVPu7w2OvURKpszdlX8ppmMD60=
+	t=1719565825; cv=none; b=p5PtBUiyoJ4SsxyeQdMURkU+KEOrWsZa3vOMtjF/3xNWj/ZZ+4aviIvDiDD46sqU30vatB2li0aR9d/43BsWs1BAm4t6i9AWaR4oCcMhOpg0RHHmpJMpAQRUEEWeEaYbSpUoogoajTYQXZyuCNQaCC4BWZOZ4U5TGa+vZ3cqCyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719565763; c=relaxed/simple;
-	bh=SIySpQCkV++Gn01uCQqrsxns8iu5uDxRGSSIfvZ6WqY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l0L4GImobdvQdFPryWt78Re2Yz1/9RLMxvTO0uK76WC2nYtzdhhq1JbybyzDvVenyEdrmo/jSVsznuqs2hFPgjfIsKWDswQeF4YDpeuS0a38DwYadgJXp5Rs+ZRjpuClkcLfToVUflPTie1SlCcMdsAZADzYcKDVOvx32alQBJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VsifPcFn; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719565760;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9yWBbb3piCGdDy7HD6ZzfPnqrZTOJPMpN0iR2xh32w0=;
-	b=VsifPcFn+H7KiB6cunIidud6ZM5LD3s9BL2pUWT0e/r3QTn313+FFmsZfqXmxkXltHOwgN
-	/SYQN0RKsO0aLTRGLBSQvyNVkXLr8vosuMCVI4l27fTYmZTtaAqlEffmgT6Q1XJxWsaFO1
-	zPimsbMmTsTPHqV7NiLEP/y7PAiIg6E=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-556-mjC0WyUdP6qqtdpEJrKQwQ-1; Fri, 28 Jun 2024 05:09:18 -0400
-X-MC-Unique: mjC0WyUdP6qqtdpEJrKQwQ-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4255f94080bso3650885e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 02:09:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719565758; x=1720170558;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9yWBbb3piCGdDy7HD6ZzfPnqrZTOJPMpN0iR2xh32w0=;
-        b=pUPa93PkKtirICdy7iaCtIvqndCegZS02zpevce86qQZqlyB5TulYCJusdUXDbya/T
-         zrxnaQk7UZgeSKzJO6MKGdvXqHSRy+nIkfnDktc72D9pfrPhyUXaJNC8/2+ltEXhxm10
-         R7FsTzhpChCzr7fiQ3oRLC86nrRyKuNZx+h61Ni48cYINRlLl5EtoQNOfM2UBw+QbnJF
-         XP9Q8A2WzDYU0Hu/RTLoPOI52uztJU1qP5IpsAwNRH1xis6Dsag+g+gKCUtVdSTcn4ao
-         1LuzthXfVCDQ84q3JqkKwv36rTfI2bfJz8zBi/VmGaG3PYsh81v72N7pzQac/XW+k6Sl
-         K9Xw==
-X-Forwarded-Encrypted: i=1; AJvYcCXSI5lUlc1EABW1hRbiji6g1T6XJzPNOqhJ22hDbuoktLKPayuNXFJOADtuFJUCW6ABSkDUYCX27XcUYTagMn6g0ArovTXSx1KQnnae
-X-Gm-Message-State: AOJu0Yz1SUKhfWT0yjSPvl3Gcur00ulifvg9kks2w5ncdPw0ygrgzt1E
-	O1A2nvgQyQytNAedAOO7JluKMSKOmDyv3n3ZiP3+nsBoPnp6YA80ag2LP8qQ5i7CFv5DKvizJS7
-	XJxqNdd/tiPlkc9MHiq6frAWPdG0ZjKaC9v9pGz6zQTVYpbh9t0IAVDQFb3ERXw==
-X-Received: by 2002:a05:600c:2e16:b0:425:5f25:c926 with SMTP id 5b1f17b1804b1-4255f25ca11mr49899655e9.19.1719565757847;
-        Fri, 28 Jun 2024 02:09:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFLU+57BTTkzFmhEgyrNonqIAqaUPJ6LrIcPsHkgfDROh96pQSfJWSfs9ZVKQcYxxBa29DKHg==
-X-Received: by 2002:a05:600c:2e16:b0:425:5f25:c926 with SMTP id 5b1f17b1804b1-4255f25ca11mr49899415e9.19.1719565757149;
-        Fri, 28 Jun 2024 02:09:17 -0700 (PDT)
-Received: from sgarzare-redhat ([193.207.132.11])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b0c0fb3sm25546245e9.40.2024.06.28.02.09.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 02:09:16 -0700 (PDT)
-Date: Fri, 28 Jun 2024 11:09:09 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: luigi.leonardi@outlook.com
-Cc: "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	virtualization@lists.linux.dev, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org, Daan De Meyer <daan.j.demeyer@gmail.com>
-Subject: Re: [PATCH net-next v3 1/3] vsock: add support for SIOCOUTQ ioctl
- for all vsock socket types.
-Message-ID: <nasvwizxcxeu64dux7yop3bwxdpbneu2bts6ob6ahwwietoxh6@wtffmxmiq5g3>
-References: <20240626-ioctl_next-v3-0-63be5bf19a40@outlook.com>
- <20240626-ioctl_next-v3-1-63be5bf19a40@outlook.com>
+	s=arc-20240116; t=1719565825; c=relaxed/simple;
+	bh=18XyDU6KxQP0I3pISmWb4VOCYmhixglX1iyFMD05Xhk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lUur3aTo3H6JvJNFbE0kIgmbAGyJmU8bOidzNyN0tjOU2l7LbdmqNGV7ERMyynGD1Qp1IS+cFNobZZ/SoGaNmdkvfNACFOHHcy4dlVpinsnCNmLu3yp7YxX2ZUsTM7jjbUKgbSvT42e6YrxyHPD/vg/4MBUHIFADB1GL5cVYNdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=KR5ufZlM; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1719565823; x=1751101823;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=18XyDU6KxQP0I3pISmWb4VOCYmhixglX1iyFMD05Xhk=;
+  b=KR5ufZlMcL09qWES+6rR6ahMqUgrkRlo0e2RfT/oldQK6NCPZTmq/8wf
+   Im0jtzqFni4ZAsMSaE28DjnnWm12YttjRxr78sdhkXGHCxggG+9mMOHU4
+   K6AQ2imFk526a0dJbgrWwLtEjSypDFEsgEMAUOEH7hE7K/Pmqd7rNLk+D
+   mQXiKb+sPCYAKHYTdBXGqG+w4EzRDfoUihJi7RBOKCGypi7rQOzxIpZNB
+   FtCB/0wwGHIKxWWkpcyz7TuwKwMnINGaQCunD6nojiIOaG3BLFYw8j9Et
+   C2qZD3ceMssy4gMrxIuqO2UCUHn0nDwd2cmC0NjyxeX7YMgknrRP1cUZ+
+   g==;
+X-CSE-ConnectionGUID: emjLZb+xQLGEIhpt6YhZ7A==
+X-CSE-MsgGUID: 6cb5ts00QnykAsc7VOYgvA==
+X-IronPort-AV: E=Sophos;i="6.09,168,1716274800"; 
+   d="asc'?scan'208";a="196014344"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 28 Jun 2024 02:10:22 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Fri, 28 Jun 2024 02:09:49 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex01.mchp-main.com (10.10.85.143)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Fri, 28 Jun 2024 02:09:46 -0700
+Date: Fri, 28 Jun 2024 10:09:29 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Andrei Simion <andrei.simion@microchip.com>
+CC: <brgl@bgdev.pl>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <nicolas.ferre@microchip.com>,
+	<alexandre.belloni@bootlin.com>, <claudiu.beznea@tuxon.dev>, <arnd@arndb.de>,
+	<gregkh@linuxfoundation.org>, <linux-i2c@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 3/3] dt-bindings: eeprom: at24: Add Microchip
+ 24AA025E48/24AA025E64
+Message-ID: <20240628-plunder-wackiness-72b0acf3624b@wendy>
+References: <20240628080146.49545-1-andrei.simion@microchip.com>
+ <20240628080146.49545-4-andrei.simion@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Lv+YdYS0y6vWVfZO"
 Content-Disposition: inline
-In-Reply-To: <20240626-ioctl_next-v3-1-63be5bf19a40@outlook.com>
+In-Reply-To: <20240628080146.49545-4-andrei.simion@microchip.com>
 
-nit: in theory in this patch we don't support it for any of the 
-transports, so I wouldn't confuse and take that part out of the title.
+--Lv+YdYS0y6vWVfZO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-WDYT with someting like:
+Hey,
 
-     vsock: add support for SIOCOUTQ ioctl
+On Fri, Jun 28, 2024 at 11:01:46AM +0300, Andrei Simion wrote:
+> Add compatible for Microchip 24AA025E48/24AA025E64 EEPROMs.
+>=20
+> Reviewed-by: Connor Dooley <conor.dooley@microchip.com>
+                 ^^             ^
+There's no way that I provided a tag with my name spelt incorrectly
+given I use a macro to insert them. Please copy-paste tags or use b4
+to pick them up, rather than type them out yourself.
 
-On Wed, Jun 26, 2024 at 02:08:35PM GMT, Luigi Leonardi via B4 Relay 
-wrote:
->From: Luigi Leonardi <luigi.leonardi@outlook.com>
->
->Add support for ioctl(s) for SOCK_STREAM SOCK_SEQPACKET and SOCK_DGRAM
->in AF_VSOCK.
->The only ioctl available is SIOCOUTQ/TIOCOUTQ, which returns the number
->of unsent bytes in the socket. This information is transport-specific
->and is delegated to them using a callback.
->
->Suggested-by: Daan De Meyer <daan.j.demeyer@gmail.com>
->Signed-off-by: Luigi Leonardi <luigi.leonardi@outlook.com>
->---
-> include/net/af_vsock.h   |  3 +++
-> net/vmw_vsock/af_vsock.c | 60 +++++++++++++++++++++++++++++++++++++++++++++---
-> 2 files changed, 60 insertions(+), 3 deletions(-)
->
->diff --git a/include/net/af_vsock.h b/include/net/af_vsock.h
->index 535701efc1e5..7b5375ae7827 100644
->--- a/include/net/af_vsock.h
->+++ b/include/net/af_vsock.h
->@@ -169,6 +169,9 @@ struct vsock_transport {
-> 	void (*notify_buffer_size)(struct vsock_sock *, u64 *);
-> 	int (*notify_set_rcvlowat)(struct vsock_sock *vsk, int val);
->
->+	/* SIOCOUTQ ioctl */
->+	size_t (*unsent_bytes)(struct vsock_sock *vsk);
+> Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
+> ---
+> v2 -> v3:
+> - commit subject changed to reference Microchip 24AA025E48/24AA025E64
+> - drop the pattern: mac02e4$ and mac02e6$ and a-z from regex
+> - add these two devices down at the bottom
+> - added Reviewed-by
+>=20
+> v1 -> v2:
+> - change pattern into "^atmel,(24(c|cs|mac)[a-z0-9]+|spd)$" to keep simpl=
+er
+> ---
+>  Documentation/devicetree/bindings/eeprom/at24.yaml | 4 ++++
+>  1 file changed, 4 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/eeprom/at24.yaml b/Documen=
+tation/devicetree/bindings/eeprom/at24.yaml
+> index 3c36cd0510de..699c2bbc16f5 100644
+> --- a/Documentation/devicetree/bindings/eeprom/at24.yaml
+> +++ b/Documentation/devicetree/bindings/eeprom/at24.yaml
+> @@ -132,6 +132,10 @@ properties:
+>                - renesas,r1ex24128
+>                - samsung,s524ad0xd1
+>            - const: atmel,24c128
+> +      - items:
+> +          - const: microchip,24aa025e48
+> +      - items:
+> +          - const: microchip,24aa025e64
 
-If you want to return also errors, maybe better returning ssize_t.
-This should fix one of the error reported by kernel bots.
+I don't think this patch works, the schema has a select in it that only
+matches ^atmel,(24(c|cs|mac)[0-9]+|spd)$. You either need to have these
+fall back to an existing compatible (iff actually compatible) or else do
+something like:
+diff --git a/Documentation/devicetree/bindings/eeprom/at24.yaml b/Documenta=
+tion/devicetree/bindings/eeprom/at24.yaml
+index 699c2bbc16f5..4d46b8c5439d 100644
+--- a/Documentation/devicetree/bindings/eeprom/at24.yaml
++++ b/Documentation/devicetree/bindings/eeprom/at24.yaml
+@@ -18,7 +18,9 @@ select:
+   properties:
+     compatible:
+       contains:
+-        pattern: "^atmel,(24(c|cs|mac)[0-9]+|spd)$"
++        anyOf:
++          - pattern: "^atmel,(24(c|cs|mac)[0-9]+|spd)$"
++          - enum: ["microchip,24aa025e48", "microchip,24aa025e64"]
 
->+
-> 	/* Shutdown. */
-> 	int (*shutdown)(struct vsock_sock *, int);
->
->diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
->index 4b040285aa78..d6140d73d122 100644
->--- a/net/vmw_vsock/af_vsock.c
->+++ b/net/vmw_vsock/af_vsock.c
->@@ -112,6 +112,7 @@
-> #include <net/sock.h>
-> #include <net/af_vsock.h>
-> #include <uapi/linux/vm_sockets.h>
->+#include <uapi/asm-generic/ioctls.h>
->
-> static int __vsock_bind(struct sock *sk, struct sockaddr_vm *addr);
-> static void vsock_sk_destruct(struct sock *sk);
->@@ -1292,6 +1293,59 @@ int vsock_dgram_recvmsg(struct socket *sock, struct msghdr *msg,
-> }
-> EXPORT_SYMBOL_GPL(vsock_dgram_recvmsg);
->
->+static int vsock_do_ioctl(struct socket *sock, unsigned int cmd,
->+			  int __user *arg)
->+{
->+	struct sock *sk = sock->sk;
->+	struct vsock_sock *vsk;
->+	int retval;
->+
->+	vsk = vsock_sk(sk);
->+
->+	switch (cmd) {
->+	case SIOCOUTQ: {
->+		size_t n_bytes;
->+
->+		if (!vsk->transport || !vsk->transport->unsent_bytes) {
->+			retval = -EOPNOTSUPP;
->+			break;
->+		}
->+
->+		if (vsk->transport->unsent_bytes) {
+Thanks,
+Conor.
 
-This if is not necessary after the check we did earlier, right?
+>        - pattern: '^atmel,24c(32|64)d-wl$' # Actual vendor is st
+> =20
+>    label:
+> --=20
+> 2.34.1
+>=20
 
-Removing it should fix the other issue reported by the bot.
+--Lv+YdYS0y6vWVfZO
+Content-Type: application/pgp-signature; name="signature.asc"
 
->+			if (sock_type_connectible(sk->sk_type) && sk->sk_state == TCP_LISTEN) {
->+				retval = -EINVAL;
->+				break;
->+			}
->+
->+			n_bytes = vsk->transport->unsent_bytes(vsk);
->+			if (n_bytes < 0) {
->+				retval = n_bytes;
->+				break;
->+			}
->+
->+			retval = put_user(n_bytes, arg);
->+		}
->+		break;
->+	}
->+	default:
->+		retval = -ENOIOCTLCMD;
->+	}
->+
->+	return retval;
->+}
->+
->+static int vsock_ioctl(struct socket *sock, unsigned int cmd,
->+		       unsigned long arg)
->+{
->+	int ret;
->+
->+	lock_sock(sock->sk);
->+	ret = vsock_do_ioctl(sock, cmd, (int __user *)arg);
->+	release_sock(sock->sk);
->+
->+	return ret;
->+}
->+
-> static const struct proto_ops vsock_dgram_ops = {
-> 	.family = PF_VSOCK,
-> 	.owner = THIS_MODULE,
->@@ -1302,7 +1356,7 @@ static const struct proto_ops vsock_dgram_ops = {
-> 	.accept = sock_no_accept,
-> 	.getname = vsock_getname,
-> 	.poll = vsock_poll,
->-	.ioctl = sock_no_ioctl,
->+	.ioctl = vsock_ioctl,
-> 	.listen = sock_no_listen,
-> 	.shutdown = vsock_shutdown,
-> 	.sendmsg = vsock_dgram_sendmsg,
->@@ -2286,7 +2340,7 @@ static const struct proto_ops vsock_stream_ops = {
-> 	.accept = vsock_accept,
-> 	.getname = vsock_getname,
-> 	.poll = vsock_poll,
->-	.ioctl = sock_no_ioctl,
->+	.ioctl = vsock_ioctl,
-> 	.listen = vsock_listen,
-> 	.shutdown = vsock_shutdown,
-> 	.setsockopt = vsock_connectible_setsockopt,
->@@ -2308,7 +2362,7 @@ static const struct proto_ops vsock_seqpacket_ops = {
-> 	.accept = vsock_accept,
-> 	.getname = vsock_getname,
-> 	.poll = vsock_poll,
->-	.ioctl = sock_no_ioctl,
->+	.ioctl = vsock_ioctl,
-> 	.listen = vsock_listen,
-> 	.shutdown = vsock_shutdown,
-> 	.setsockopt = vsock_connectible_setsockopt,
->
->-- 
->2.45.2
->
->
->
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZn59yQAKCRB4tDGHoIJi
+0pbWAP9lw36XATcOJnKRPW3/m90qj11xA11z1cjkMvJSaLhYswD+J0qymDWKbMDe
+6CYdmhIP5LTEvRfu8+ZdsTtp5Q1ckgY=
+=2QcV
+-----END PGP SIGNATURE-----
+
+--Lv+YdYS0y6vWVfZO--
 
