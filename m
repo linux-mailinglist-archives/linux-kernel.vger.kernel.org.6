@@ -1,217 +1,181 @@
-Return-Path: <linux-kernel+bounces-233313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E10E91B560
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 05:18:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1257A91B55F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 05:18:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54ACB282604
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:18:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ABD41F21AD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:18:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487A722619;
-	Fri, 28 Jun 2024 03:18:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BL4zoSYp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25EF2033A;
+	Fri, 28 Jun 2024 03:17:57 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46AF200DB
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 03:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013B914F98;
+	Fri, 28 Jun 2024 03:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719544679; cv=none; b=UQ8m336mXzk+gQBb4YwAVini+JU4po15iC3Hd0nkFQFh7+jt6gTLZhwcuZsZj8vEIyYtwBWmj5haVOsBZUdsS9JxggncqJy2DY2UfV0+c1oS8pNe70KYdiV0iTqzVgQbt3082jB1rHWXvL94tGNiEeZm+Q56Ytx1BScJzOqMMII=
+	t=1719544677; cv=none; b=QzxuM/qfQRGs09+7pIbMBBCJy00DSGs608lVMoNIjQ9xewhlkpdtHEuv2WkYyHhtbF4WnI8igGBhykNfbh0XfoVFmkYiymJbJrUBbS5iY5Jt8sXo0OkuVojRB76WDV3jXVum/eLCQ7mDtE5dMjHRAyYSTC0DvxwCHISE2Gac260=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719544679; c=relaxed/simple;
-	bh=fdCjEuFjhYeeY9vzbpQuPVm4W9bNTsY5MKRpYPvF7YM=;
+	s=arc-20240116; t=1719544677; c=relaxed/simple;
+	bh=dMy4fHHtJeHBGQuTQc8XZeB7AVBx9rY1azNnkx0dm20=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C3E4Pxljqzw7AxoHTUfUgcS8k8xJLW3ocqbmj9ETe4Uste9skLp09e+9nC2FY+iau/6E/SSUqnjimphAyZX/cQoW9ZQYbbaQe1SwGY0pjvWT/LPeFvhd5ddcF55fHXTEFKiWiqJTgL/tTg3zEWtWqy3vUT7WPNoOW9yvP5jGyX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BL4zoSYp; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719544676;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=WS8VRRBGVPt+4KeY3/sBO8pTWhEejzFxWJJwTlTI53E=;
-	b=BL4zoSYpGAljrSJ+zAIyZD73u0OrSDT5wjbtBrQiBfvZKfyshGbnz0RmcDe0+5amre7Z2V
-	GdNPv+HwLohctpY0X8Gq1slHkWUyu1KAZ96Ju9OhQdAZaNb0QZB5uWggq++dit8q4TzQVI
-	bGBmGPJXussESxcII616ixeOiUnex74=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-505-lxfW5V6fO56N7pQLn-flHA-1; Thu, 27 Jun 2024 23:17:50 -0400
-X-MC-Unique: lxfW5V6fO56N7pQLn-flHA-1
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2c78c2b7f4bso244413a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 20:17:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719544670; x=1720149470;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WS8VRRBGVPt+4KeY3/sBO8pTWhEejzFxWJJwTlTI53E=;
-        b=jR+TIvsGeeUBClME/Va+fsat7sXJVLcEjjGK4X0GxgQBGKipM3lq74BLOVCEDbLKg/
-         9VQ3E2IfVRLQN8RCf9rHefHubfnjdHk3J6VxMVIV+MSBRQ1T5ogIUqeiHw6qbJJJFJ5W
-         bNSzx9vJFqnMrAJT3fp9oujGINaDCg/bGlQs6zQ4okYpb4u4DAApt7ogTNqEX5R9hvLy
-         J+GPxk9vOx6+0M6hF3onmKDZCc8RJ022Y+1AIhQJskZLmMAp669+0EUcKsKig/UNohQ5
-         nH2I7CrTpC3q6DiP5P1Ab2NryFGlaziPs9LqysKXo0/qyJ+IfGgbUh68jRXioNU/Ttha
-         XwzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUb/JYEzZbbdSmWtkno2PA30qCoO1Y+933zVGAVyHd7P0bPERN00mFRjgB255fCjN3vCxNFIopJ3YweKn1LHY7bXZ88sCsvYGVK1Wg6
-X-Gm-Message-State: AOJu0YylPXd89WZsr5zksg+i65LTr7tD5anCD2mQi9DhJVjYsJ8EZak/
-	HqoK9q5PxyeT8GL44RMH0pjDerLVPTI9nQ+AGMVXAPkB2eeRWuQFLPhpJrDypXFm3ZnOBIilcIc
-	u4f2OgDBZPnVXxlyGOsnYPFFjgoAGi0pi+KoSTfFo3I/4sL/Mk/KCsb00YdBofg==
-X-Received: by 2002:a17:90b:1644:b0:2c7:d414:a93d with SMTP id 98e67ed59e1d1-2c8612689cfmr14164938a91.24.1719544669886;
-        Thu, 27 Jun 2024 20:17:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IECesyWJa75m/ilpX2WXnRmR8zZe5yxJszHIy5IEJpEIC6jmzf018yU/YV85XyeNW9lapYOag==
-X-Received: by 2002:a17:90b:1644:b0:2c7:d414:a93d with SMTP id 98e67ed59e1d1-2c8612689cfmr14164921a91.24.1719544669510;
-        Thu, 27 Jun 2024 20:17:49 -0700 (PDT)
-Received: from ?IPV6:2403:580f:7fe0:0:ae49:39b9:2ee8:2187? (2403-580f-7fe0-0-ae49-39b9-2ee8-2187.ip6.aussiebb.net. [2403:580f:7fe0:0:ae49:39b9:2ee8:2187])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91ce76935sm539044a91.34.2024.06.27.20.17.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Jun 2024 20:17:48 -0700 (PDT)
-Message-ID: <d1b449cb-7ff8-4953-84b9-04dd56ddb187@redhat.com>
-Date: Fri, 28 Jun 2024 11:17:43 +0800
+	 In-Reply-To:Content-Type; b=QTiqauBNI9x00iyyQPFcC1uTv9kd5uMYGMaWs7sbCGr9tXXYdRtjGBjQpnyMRTzMfDVVlaKuPy3cWv95yyrxUf15EBqE5SYw3CzSNphd9SE0lZY0Cm7QjMN8WINKcM+RcT7CmubODQn0QVgi73QkZUkp4bafH+CB8GJzmKvKDTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4W9LGc3kssz4f3jYb;
+	Fri, 28 Jun 2024 11:17:44 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id AA1121A0572;
+	Fri, 28 Jun 2024 11:17:51 +0800 (CST)
+Received: from [10.174.179.155] (unknown [10.174.179.155])
+	by APP2 (Coremail) with SMTP id Syh0CgB34YZdK35mKJgzAg--.48554S3;
+	Fri, 28 Jun 2024 11:17:51 +0800 (CST)
+Message-ID: <6b4baf79-365f-946f-3d71-e78fafbd0988@huaweicloud.com>
+Date: Fri, 28 Jun 2024 11:17:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v3 1/1] fs/namespace: remove RCU sync for MNT_DETACH umount
-To: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: Matthew Wilcox <willy@infradead.org>,
- Lucas Karpinski <lkarpins@redhat.com>, viro@zeniv.linux.org.uk,
- raven@themaw.net, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Alexander Larsson <alexl@redhat.com>,
- Eric Chanudet <echanude@redhat.com>
-References: <20240626201129.272750-2-lkarpins@redhat.com>
- <20240626201129.272750-3-lkarpins@redhat.com>
- <Znx-WGU5Wx6RaJyD@casper.infradead.org>
- <50512ec3-da6d-4140-9659-58e0514a4970@redhat.com>
- <20240627115418.lcnpctgailhlaffc@quack3>
- <20240627-abkassieren-grinsen-6ce528fe5526@brauner>
-Content-Language: en-US
-From: Ian Kent <ikent@redhat.com>
-Autocrypt: addr=ikent@redhat.com; keydata=
- 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
-In-Reply-To: <20240627-abkassieren-grinsen-6ce528fe5526@brauner>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:104.0) Gecko/20100101
+ Thunderbird/104.0
+Subject: Re: [PATCH] blk-cgroup: don't clear stat in blkcg_reset_stats()
+To: Waiman Long <longman@redhat.com>, tj@kernel.org, josef@toxicpanda.com,
+ hch@lst.de, axboe@kernel.dk
+Cc: ming.lei@redhat.com, cgroups@vger.kernel.org,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yangerkun@huawei.com, yukuai1@huaweicloud.com, houtao1@huawei.com,
+ yi.zhang@huawei.com, lilingfeng3@huawei.com, paolo.valente@unimore.it
+References: <20240627090856.2345018-1-lilingfeng@huaweicloud.com>
+ <66095664-5a14-422a-a703-dec437577a3d@redhat.com>
+From: Li Lingfeng <lilingfeng@huaweicloud.com>
+In-Reply-To: <66095664-5a14-422a-a703-dec437577a3d@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgB34YZdK35mKJgzAg--.48554S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxJw1rtrW3Ar13KF45Cw18Grg_yoWrGF13pF
+	WkC3W3C3yDKF1kJr10ga47XryF9ws5t34DJr15Xa4rKr1qyrySvF1DZrZY9FyUAFWxXr48
+	Xr1jqr9rZay5K3JanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9F14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E
+	3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
+	sGvfC2KfnxnUUI43ZEXa7VUbXdbUUUUUU==
+X-CM-SenderInfo: polox0xjih0w46kxt4xhlfz01xgou0bp/
 
 
-On 27/6/24 23:16, Christian Brauner wrote:
-> On Thu, Jun 27, 2024 at 01:54:18PM GMT, Jan Kara wrote:
->> On Thu 27-06-24 09:11:14, Ian Kent wrote:
->>> On 27/6/24 04:47, Matthew Wilcox wrote:
->>>> On Wed, Jun 26, 2024 at 04:07:49PM -0400, Lucas Karpinski wrote:
->>>>> +++ b/fs/namespace.c
->>>>> @@ -78,6 +78,7 @@ static struct kmem_cache *mnt_cache __ro_after_init;
->>>>>    static DECLARE_RWSEM(namespace_sem);
->>>>>    static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
->>>>>    static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
->>>>> +static bool lazy_unlock = false; /* protected by namespace_sem */
->>>> That's a pretty ugly way of doing it.  How about this?
->>> Ha!
->>>
->>> That was my original thought but I also didn't much like changing all the
->>> callers.
->>>
->>> I don't really like the proliferation of these small helper functions either
->>> but if everyone
->>>
->>> is happy to do this I think it's a great idea.
->> So I know you've suggested removing synchronize_rcu_expedited() call in
->> your comment to v2. But I wonder why is it safe? I *thought*
->> synchronize_rcu_expedited() is there to synchronize the dropping of the
->> last mnt reference (and maybe something else) - see the comment at the
->> beginning of mntput_no_expire() - and this change would break that?
-> Yes. During umount mnt->mnt_ns will be set to NULL with namespace_sem
-> and the mount seqlock held. mntput() doesn't acquire namespace_sem as
-> that would get rather problematic during path lookup. It also elides
-> lock_mount_hash() by looking at mnt->mnt_ns because that's set to NULL
-> when a mount is actually unmounted.
+在 2024/6/28 5:03, Waiman Long 写道:
 >
-> So iirc synchronize_rcu_expedited() will ensure that it is actually the
-> system call that shuts down all the mounts it put on the umounted list
-> and not some other task that also called mntput() as that would cause
-> pretty blatant EBUSY issues.
+> On 6/27/24 05:08, Li Lingfeng wrote:
+>> From: Li Lingfeng <lilingfeng3@huawei.com>
+>>
+>> The list corruption described in commit 6da668063279 ("blk-cgroup: fix
+>> list corruption from resetting io stat") has no effect. It's unnecessary
+>> to fix it.
+>>
+>> As for cgroup v1, it does not use iostat any more after commit
+>> ad7c3b41e86b("blk-throttle: Fix io statistics for cgroup v1"), so using
+>> memset to clear iostat has no real effect.
+>> As for cgroup v2, it will not call blkcg_reset_stats() to corrupt the
+>> list.
+>>
+>> The list of root cgroup can be used by both cgroup v1 and v2 while
+>> non-root cgroup can't since it must be removed before switch between
+>> cgroup v1 and v2.
+>> So it may has effect if the list of root used by cgroup v2 was corrupted
+>> after switching to cgroup v1, and switch back to cgroup v2 to use the
+>> corrupted list again.
+>> However, the root cgroup will not use the list any more after commit
+>> ef45fe470e1e("blk-cgroup: show global disk stats in root cgroup 
+>> io.stat").
+>>
+>> Although this has no negative effect, it is not necessary. Remove the
+>> related code.
+> You may be right that it may not be necessary in the mainline kernel, 
+> it does fix the issue on distros with older kernels or some stable 
+> releases where commit ad7c3b41e86b("blk-throttle: Fix io statistics 
+> for cgroup v1") may not be present.
 >
-> So callers that come before mnt->mnt_ns = NULL simply return of course
-> but callers that come after mnt->mnt_ns = NULL will acquire
-> lock_mount_hash() _under_ rcu_read_lock(). These callers see an elevated
-> reference count and thus simply return while namespace_lock()'s
-> synchronize_rcu_expedited() prevents the system call from making
-> progress.
+>>
+>> Fixes: 6da668063279 ("blk-cgroup: fix list corruption from resetting 
+>> io stat")
+> I don't think there should be a fixes tag or it will be backported to 
+> stable releases.
+OK, I will remove it.
+>> Signed-off-by: Li Lingfeng <lilingfeng3@huawei.com>
+>> ---
+>>   block/blk-cgroup.c | 24 ------------------------
+>>   1 file changed, 24 deletions(-)
+>>
+>> diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
+>> index 37e6cc91d576..1113c398a742 100644
+>> --- a/block/blk-cgroup.c
+>> +++ b/block/blk-cgroup.c
+>> @@ -629,29 +629,6 @@ static void blkg_iostat_set(struct blkg_iostat 
+>> *dst, struct blkg_iostat *src)
+>>       }
+>>   }
+>>   -static void __blkg_clear_stat(struct blkg_iostat_set *bis)
+>> -{
+>> -    struct blkg_iostat cur = {0};
+>> -    unsigned long flags;
+>> -
+>> -    flags = u64_stats_update_begin_irqsave(&bis->sync);
+>> -    blkg_iostat_set(&bis->cur, &cur);
+>> -    blkg_iostat_set(&bis->last, &cur);
+>> -    u64_stats_update_end_irqrestore(&bis->sync, flags);
+>> -}
+>> -
+>> -static void blkg_clear_stat(struct blkcg_gq *blkg)
+>> -{
+>> -    int cpu;
+>> -
+>> -    for_each_possible_cpu(cpu) {
+>> -        struct blkg_iostat_set *s = per_cpu_ptr(blkg->iostat_cpu, cpu);
+>> -
+>> -        __blkg_clear_stat(s);
+>> -    }
+>> -    __blkg_clear_stat(&blkg->iostat);
+>> -}
+>> -
+>>   static int blkcg_reset_stats(struct cgroup_subsys_state *css,
+>>                    struct cftype *cftype, u64 val)
+>>   {
+>> @@ -668,7 +645,6 @@ static int blkcg_reset_stats(struct 
+>> cgroup_subsys_state *css,
+>>        * anyway.  If you get hit by a race, retry.
+>>        */
+>>       hlist_for_each_entry(blkg, &blkcg->blkg_list, blkcg_node) {
+>> -        blkg_clear_stat(blkg);
+>>           for (i = 0; i < BLKCG_MAX_POLS; i++) {
+>>               struct blkcg_policy *pol = blkcg_policy[i];
 >
-> But I also don't see it working without risk even with MNT_DETACH. It
-> still has potential to cause issues in userspace. Any program that
-> always passes MNT_DETACH simply to ensure that even in the very rare
-> case that a mount might still be busy is unmounted might now end up
-> seeing increased EBUSY failures for mounts that didn't actually need to
-> be unmounted with MNT_DETACH. In other words, this is only inocuous if
-> userspace only uses MNT_DETACH for stuff they actually know is busy when
-> they're trying to unmount. And I don't think that's the case.
+> If you are saying that iostat is no longer used in cgroup v1, why not 
+> remove the blkcg_reset_stats() and its supporting functions and 
+> deprecate the v1 reset_stats control file. The file should still be 
+> there to avoid userspace regression, but it will be a nop.
+I'm not sure if we can just remove blkcg_reset_stats() since
+bfq_pd_reset_stats() may be called in it.
+
+Thanks.
 >
-I'm sorry but how does an MNT_DETACH umount system call return EBUSY, I 
-can't
-
-see how that can happen?
-
-
-I have used lazy umount a lot over the years and I haven't had problems 
-with it.
-
-There is a tendency to think there might be problems using it but I've 
-never been
-
-able to spot them.
-
-
-Ian
+> Cheers,
+> Longman
 
 
