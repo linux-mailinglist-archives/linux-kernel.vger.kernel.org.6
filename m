@@ -1,113 +1,134 @@
-Return-Path: <linux-kernel+bounces-234379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34D2B91C5EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:40:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECCDC91C5F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:40:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6830E1C20F27
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:40:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29CDD1C20E1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6D71CE08D;
-	Fri, 28 Jun 2024 18:39:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D8F1CE0AB;
+	Fri, 28 Jun 2024 18:40:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S05dfqxr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CjpwMZmg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2AA1C8FAB;
-	Fri, 28 Jun 2024 18:39:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48BEB1C8FAB;
+	Fri, 28 Jun 2024 18:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719599996; cv=none; b=jCPFvdpls3hI1Njjr2cMwPWr6A4xyN2DMR5YChUJAKbRYT32C/BUtecybvgXURCBIUnT/1jyUdjPK0Rel6N/P4a2YoFTz1u4hxclmukrIW3UAoF7TvtlYr4Q/gRRNDHtE/1zoIurH91QA+TFF9Z9gbjX0IjQf+v6dtlAfvFi5KI=
+	t=1719600004; cv=none; b=aoIaxmhKRL7C8OQkRd/oo/C8toRedM1tw3ZaOjKnjuuDsCqaZh5q7YfDg2BwOkDdA0KalaVCODoni1Pgw/WV9Df475kdvyVrJpHUipzTffv7gIfJnznsJv/6+z4G/TctdWovpsQ5R8DQog/5CV/n8nUYXSr9orqJk4EshpBc7E4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719599996; c=relaxed/simple;
-	bh=XoSwQPaw4xVSbnAE6h9xsyMVlZcN3NV1inNXV2TNqpI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g2yEGqdU5gNc57FUa9YkuSrRi8VXnpj6MdWofX1DmCutrGffKYOexVQl4ryT5ZgQx/j9wnLDY00WJYop8NWOQ5EUyKUaMh3Ej7Jxj+T+DGpM5YDk7sJkWgalt0cbq5oz52+sKi3KMVf18D9b3POmqzjhtmyugxK1YzPcLLlLCAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S05dfqxr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB8A5C116B1;
-	Fri, 28 Jun 2024 18:39:53 +0000 (UTC)
+	s=arc-20240116; t=1719600004; c=relaxed/simple;
+	bh=lhiXVKbviQVZDcIxC0i6nBahft0To6SW9QRHyVQkt6E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YgbiekM2fV/xq2tyGg+M8qNWoZQsBpZszal5HKAdpx0DVB8mghpLEEP8u6AOtRPYw1s0ZMMLrmtaFta9HLXVU0TfsYgcxXK03eQfi6gH2KpY1hSRpeETHIxsj1z6WfubnZtQIUX+Xxbpsf3E5CXOjetp4FfHkZX6G5f15haqSVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CjpwMZmg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B42F0C2BD10;
+	Fri, 28 Jun 2024 18:39:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719599995;
-	bh=XoSwQPaw4xVSbnAE6h9xsyMVlZcN3NV1inNXV2TNqpI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=S05dfqxrMD31tfJs1vAXWacCilgnvjqVWdB1Xp39HiiTM0CrR3S+Tb089H6w4CVBt
-	 8jY6m0l2TZKR5W8WgBIfdhJ9V+BIHKIF7ZEHnbzEQoZNeKZ9LFOkhI+5bC2i0f8veI
-	 P/cmNZH3WX5lQuzFugKlbga0w5mkS0Cdu/njXy2ud3Cwozg1GqhLIRVhwxLeY41U6i
-	 papDbkXage/4s79R1YO+gGpk/0E2O5c7+xkz215PS3/ydxCpUASihT+mleSKII5Xrq
-	 bM+F/uMhLOYzK0Ja6cFGMWQPteYWGYQ/rJKnbTaONXXO0obod4x3jFC1upElwYHPxL
-	 6q65VHUIhsqHw==
-Message-ID: <f0f09455-5bfd-4dbc-b393-dbef75441e8a@kernel.org>
-Date: Fri, 28 Jun 2024 21:39:50 +0300
+	s=k20201202; t=1719600004;
+	bh=lhiXVKbviQVZDcIxC0i6nBahft0To6SW9QRHyVQkt6E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CjpwMZmgklwfr1/22p3YPqxaOdvRtEMKw5x7Ogw0I3JWU0gpPq04VqQ52t9veAExu
+	 ijmdCcNhb3mWg4uXu6E14qGBx53X074OfBvBKWqu02b9P62wyYjPViOW5g/jK73ZpL
+	 o52LoMKKlBrNijB3o5hDdJY8WbYWZTuHRiXIgwqqWP1YfrvQOLZcZ8/IO+NROCb772
+	 uJWtz25dSWUxBs+t4qoWcSwH8+TNgnZLQTxNyOSo0zmCXtG26/R+/6DryiuV2M/Z1q
+	 h+uQAbjNzWyQCwPdQnQZwcsMWClFKdzQb2HvYrQWrIqhGGktOx3jNb4/Rv+1ucHdRd
+	 y1NgB91bttdAA==
+Date: Fri, 28 Jun 2024 19:39:54 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: "Tinaco, Mariel" <Mariel.Tinaco@analog.com>
+Cc: David Lechner <dlechner@baylibre.com>, "linux-iio@vger.kernel.org"
+ <linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org"
+ <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark
+ Brown <broonie@kernel.org>, "Hennerich, Michael"
+ <Michael.Hennerich@analog.com>, Marcelo Schmitt
+ <marcelo.schmitt1@gmail.com>, Dimitri Fedrau <dima.fedrau@gmail.com>,
+ Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH 0/2] add AD8460 DAC driver
+Message-ID: <20240628193954.2f3dfc55@jic23-huawei>
+In-Reply-To: <SJ0PR03MB62242BD5117C5B2026CCC5D191D42@SJ0PR03MB6224.namprd03.prod.outlook.com>
+References: <20240510064053.278257-1-Mariel.Tinaco@analog.com>
+	<CAMknhBHd2XCJH4rgYDq=vbCL5E_tM3FxFPWbNy9PvxLCJL4tcA@mail.gmail.com>
+	<20240511172155.08bc0987@jic23-huawei>
+	<SJ0PR03MB62242BD5117C5B2026CCC5D191D42@SJ0PR03MB6224.namprd03.prod.outlook.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] interconnect: qcom: Add MSM8953 driver
-To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- Vladimir Lypak <vladimir.lypak@gmail.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20240628-msm8953-interconnect-v3-0-a70d582182dc@mainlining.org>
- <20240628-msm8953-interconnect-v3-2-a70d582182dc@mainlining.org>
-Content-Language: en-US
-From: Georgi Djakov <djakov@kernel.org>
-In-Reply-To: <20240628-msm8953-interconnect-v3-2-a70d582182dc@mainlining.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Barnabás,
 
-Thank you for the patches!
+> >  =20
+> > > >   * Programmable quiescent current (optional) =20
+> > Could probably figure out a suitable control for this, but I'm not enti=
+rely sure
+> > what it is :) =20
+>=20
+> Thinking about it, wouldn't the raw attribute be a suitable control for t=
+his? This=20
+> Value is relative to nominal supply current and acts as a "monotonic but =
+nonlinear"
+> multiplier.=20
+> A register value maps to a current level from 0 to 2 times the nominal
+> current supplied. I also thought that it could be hardware gain but the g=
+ain
+> computation wasn't explicitly indicated in the datasheet and there is not=
+ yet
+> "current_hardwaregain" attribute available in the ABI. So I settled with =
+raw.=20
 
-On 28.06.24 17:01, Barnabás Czémán wrote:
-> From: Vladimir Lypak <vladimir.lypak@gmail.com>
-> 
-> Add driver for interconnect busses found in MSM8953 based platforms.
-> The topology consists of four NoCs that are partially controlled by a
-> RPM processor.
-> 
-> Note that one of NoCs (System NoC) has a counterpart (System NoC MM)
-> that is modelled as child device to avoid resource conflicts, since it
-> uses same MMIO space for configuration.
-> 
-> Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
-> ---
->   drivers/interconnect/qcom/Kconfig   |    9 +
->   drivers/interconnect/qcom/Makefile  |    2 +
->   drivers/interconnect/qcom/msm8953.c | 1321 +++++++++++++++++++++++++++++++++++
->   3 files changed, 1332 insertions(+)
-[..]
-> +++ b/drivers/interconnect/qcom/msm8953.c
-[..]
-> +static const struct of_device_id msm8953_noc_of_match[] = {
-> +	{ .compatible = "qcom,msm8953-bimc", .data = &msm8953_bimc },
-> +	{ .compatible = "qcom,msm8953-pcnoc", .data = &msm8953_pcnoc },
-> +	{ .compatible = "qcom,msm8953-snoc", .data = &msm8953_snoc },
-> +	{ .compatible = "qcom,msm8953-snoc-mm", .data = &msm8953_snoc_mm },
-> +	{ }
-> +};
-> +
-> +static struct platform_driver msm8953_noc_driver = {
-> +	.probe = qnoc_probe,
-> +	.remove_new = qnoc_remove,
-> +	.driver = {
-> +		.name = "qnoc-msm8953",
-> +		.of_match_table = msm8953_noc_of_match,
+I don't entirely understand what is actually for, but a raw current output
+might be appropriate.
 
-Why no .sync_state?
+>I
+> Think there would only be an issue of we expose the "processed" attribute
+> Because it has a particular computation. But I'm not planning to expose t=
+he=20
+> Processed attribute
 
-BR,
-Georgi
+Is there any reason someone might in future though?
+
+>=20
+> > > >   * Thermal monitoring is done by measuring voltage on TMP pin
+> > > > (unlikely to be included) =20
+> >
+> > If you did want to, the usual trick for these is to include an optional=
+ use as a
+> > consumer of an IIO provider which would be a separate ADC. =20
+>=20
+> I included this in my current revision, thanks for the idea. Although the=
+ optional use
+> Isn=E2=80=99t yet available in the consumer API. My question is, in case =
+the ADC channel to read
+> The TMP pin is not available, should I still make the temp raw value avai=
+lable and
+> Set to 0? Or should the temp raw attribute be unavailable or unlisted com=
+pletely from
+> IIO Info.
+If no ADC channel then remove it from the chan_spec.  That probably means y=
+ou
+need separate arrays of struct iio_chan_spec for the two case.
+
+Jonathan
+
+> > > > =20
+> > >
+> > > Adding myself to the cc: here since I'm interested to see what
+> > > Jonathan (or anyone else) has to say about the fault monitoring. =20
+> >=20
+> > Jonathan =20
+
 
