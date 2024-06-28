@@ -1,223 +1,118 @@
-Return-Path: <linux-kernel+bounces-234151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFD0E91C2DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:45:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC20091C2E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:45:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69E4D1F21233
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:45:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C3BD2817C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D411C68AD;
-	Fri, 28 Jun 2024 15:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E161C689D;
+	Fri, 28 Jun 2024 15:45:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QXjZRA2Z"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JmVFwc0l"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B616B1DFFB;
-	Fri, 28 Jun 2024 15:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB141CD39
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 15:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719589528; cv=none; b=pSS3J5UgmZ4K8brPWBXMxYNkQn4UHOIxU5NLOzR1H/4wY7DR3g//ePr6ITSkSvOvIuWBWltYD+xCy1ZYK7c1QI3PJ4u14IVCXuYq9YbdGkT/8ZlXrtZyWTMrD/p0OX5Qd5jr2JVunB6c7WuiRXJ4FlHDqVW7a0DsjGQluitbZvo=
+	t=1719589536; cv=none; b=aAzrhwB8pm+SWJmoYv8oy6Yl4ar4OSEvic8cg6HjWag9BxxYZBPdpSMexUVo1Qo9VAftJ42w93mYXwaMVZN78Gcl5ty7e8AOkUNE6eJjP0+5/N9ExSaZE2GEedy1haVKmqfCKzziCmag2dY/Ck58CYYKd9a11xIf/JAMKs54pGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719589528; c=relaxed/simple;
-	bh=S+sJWHqWZoXrfvBmxSaHrYo7Br+7IHD8kAPP9u3CkTo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IEtn0ZqevSYow8TYbSLbjSdML64Bm2eb1FWyvcDc158y7A8V03B2+cvXLahHjR2Jrc5PU2jMYjZkmMl+wPtcYpCnwbMkOdoBP64yJ8BBPrgZWHEBpguOb6sgmLZJtJ0nnMugvOjHt5JRDj2xzu13j+2KwJyFovtSYnsAmoNrNjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QXjZRA2Z; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52cdb0d816bso779316e87.1;
-        Fri, 28 Jun 2024 08:45:26 -0700 (PDT)
+	s=arc-20240116; t=1719589536; c=relaxed/simple;
+	bh=HsKpHTxO2qZZAKegni6aUmxcivarzWwp0eI+cMurg4U=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=dC1PxJAQjeewpvMyXFx6i+zQqVB/ZbcEUN5eOA7tHHWwG5jlHwmSdR7mhAHFbGHVfCiaTZ6eUHnyopIPjq/ZFm5n5NcSldf6RjABTwxwQcnCM1s2eKpcdI43AVOUPhjJqf5Kupx6oVjSmvh4sAGlcD1VPt/uPE+Id4tzHza1aOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aniketmaurya.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JmVFwc0l; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aniketmaurya.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-64399573fd3so14196447b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 08:45:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719589525; x=1720194325; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=C5jYmtDyMsBks9HOK7YKwsTxAghw5ezyRltrHdspFHU=;
-        b=QXjZRA2ZOYkmSFFnqJkGzCX2T61TtM4O4PqsggzxaDmz0s6CNmp6KTZadCLCyREYye
-         TKyQJA4+0lZ4jPgvJC0/SALoEIJpSFElSBgQ1heWX+ok6renvl8P9W9vIELv4aYcIBeY
-         m3AN1lyL/sF6fBhSGxog+vPTdIxBPbwXa2y4iO7kNg3StrcnMVwIDhJ6DJBOT6WrJAM/
-         YiD1mCrx4L9iVZojzzW4QiEpOK6dX7sxhQJWmGGx+vPthSrEhJSFv4xs64vgCZUpTCyg
-         GfAscoa8BRsTzJdDyMsZmgA1UItW5osI8cwSjpPB4olPdjVxv3pwrDemHlgYXwhOVnqL
-         Ky1w==
+        d=google.com; s=20230601; t=1719589534; x=1720194334; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yTiNPLIdhtP6pyhi64HYkOcFsA7q03RXOkGSgCbbU/c=;
+        b=JmVFwc0l07xWdsqV80lL0lNYMJHJxOlpNEZKBpP4Sq4nY4FIn3RwzuNlo3LSYVYUdU
+         bSMK/S+8jARnCjxHyOPw8GIKFZJlIpZntgFxspYUH266c5vs0C7UVauFl1xHl9UYZQQc
+         0b6hwdvilgS3d4WFtGsxUY4Hduhxi/utPZLSum5uo2Ev1YOXl1SAkhC4sRwoPgolo6UA
+         WROgRecmWZ/eRaq7HbNDpuQMZSs+A1qXjyvacUVsfCelVwgPvcfLgkZrTJQJ9kQ00yUm
+         mtvIwVE0GGpMLEDyPpHDK1cmz67lErYaVQAH6tEOfhErGRAgCoRNNlwSKZMWPOnYMFRT
+         tOKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719589525; x=1720194325;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C5jYmtDyMsBks9HOK7YKwsTxAghw5ezyRltrHdspFHU=;
-        b=rDIjAqnj9WyhWb/GeVdsHndajC7rm1gFWywyxgmmoSSoqJWaw+rtv5RYTvkkcYH3Qh
-         AD/89ihWQR9QtvWrf8H9/uoNsulGeoi2FfEm9vkHlFnAHxamBOErGyHNTd/6jhZ4mGMg
-         t1kJfcBNMKvwftGaw7UUZwp8NNQAZYS5icV8ZVAkT9iqifdlgW1BwALDGiG2NY40hh5I
-         Av/na3VGId+komUrOBZn+SrqUahsmhkfOj5TS7rXalPVzLfRuhLbGkJ6v39tmXgV8Xpp
-         ZLOfK2RjpDSeLQTpnLuWfC3pUxNRPKKhWnag3sG/+vvn6qrX/77XR6sCxMEuXDds5hhc
-         A05A==
-X-Forwarded-Encrypted: i=1; AJvYcCVqwzx5ltqZrpNqQtiBVyYVlPVfjNtv1gQfhZtuHET3RMXr4hUcmB3dvJI0RDxDy9wogP/ISAf3SPD2H7UBcjWaK24+n40sY7A7wOCIt+X9PWKBwmeQrE3upPZZFCs5SlCUOQhFhF7qkw==
-X-Gm-Message-State: AOJu0Ywh35ENDvuPlxGL2RCCKnUjVomBVo6k1LwLRZNUWXQP/u7Td0/r
-	yp+UkySHQvkUVE/orJRymT2xJpSKeuDHuf5M7ksTl66qXhq+4TKS
-X-Google-Smtp-Source: AGHT+IFq7AQRfYM2GxU9KBwkSxdM7k+i3cYB+sSVbzdWG1Jpk+aL9Bk0vGy+BNtba4DsenjFUxqcmw==
-X-Received: by 2002:a05:6512:e9f:b0:52c:df96:1726 with SMTP id 2adb3069b0e04-52e7b8e033bmr898324e87.1.1719589524518;
-        Fri, 28 Jun 2024 08:45:24 -0700 (PDT)
-Received: from localhost ([213.79.110.82])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab27776sm304605e87.169.2024.06.28.08.45.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 08:45:24 -0700 (PDT)
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] dt-bindings: net: dwmac: Validate PBL for all IP-cores
-Date: Fri, 28 Jun 2024 18:45:12 +0300
-Message-ID: <20240628154515.8783-1-fancer.lancer@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1719589534; x=1720194334;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yTiNPLIdhtP6pyhi64HYkOcFsA7q03RXOkGSgCbbU/c=;
+        b=LyetPmBEnowyQMebtbUtRc20gFDXjuX9U0016WMgNmeaL1g1z5i1hJBj2gdH+vWBsx
+         QE5tJUTR3EJn6aiW7yfXAH9Knkz3x+emtKJSw2fJWZKB8wLOcwqpif7IUwH2GI5PUOWt
+         8vT6pIxfZ3Y4+PJVk37EOxp7UgGCFDKCy90XytTBNeu8gSC+Lp8eiIMORFSO5/EwUaeV
+         2wD4csoQXVl4XGstjulhETJPiammUkkVW2vYoHeKUyh0WvR/COYWxetU0742gFU6yShh
+         x/vdS56tiSFB0KpVqy9xSS7lAx6azayo7S1G7WNdgxRFzIYK/+j5vweITOiZ7+0CApz5
+         hRdg==
+X-Forwarded-Encrypted: i=1; AJvYcCUo+qoxcBchNZUJRKc2ZODnBZuHdsAGzDJHB1qeuLjWqgJOgvXYJ4AcyrNqD1ylnDNShGYXtslqHlXIngDyOzI00U3R8SH+8Si4sX/V
+X-Gm-Message-State: AOJu0Ywc91yIoLZHbE1+y+VZkAa9gpWRTe8AtjvQgzF8mYmlOZR1ORkM
+	Gwqc7zaGIgarhjbJ7X6O3BuTlE3dlao4WoBQb9/hOAgINGhBiwLyEgX3m4SbX/FcaVyeab/t4tE
+	WOy3nWdlVek2c3fnwfOb898QR0A==
+X-Google-Smtp-Source: AGHT+IHW+w0N4Pm/D4C73M71WR7MUwhZIC3G5b/P9aMWl8aREiz5+MCB11v8g9AB/i/7uh4YYcl8gXlJzUZwxH8Dwyk=
+X-Received: from aniketm.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:3387])
+ (user=aniketmaurya job=sendgmr) by 2002:a05:6902:1109:b0:df7:8f43:f8a3 with
+ SMTP id 3f1490d57ef6-e0303e603bfmr1005307276.0.1719589533819; Fri, 28 Jun
+ 2024 08:45:33 -0700 (PDT)
+Date: Fri, 28 Jun 2024 15:45:26 +0000
+In-Reply-To: <20240624052851.1030799-1-aniketmaurya@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240624052851.1030799-1-aniketmaurya@google.com>
+X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
+Message-ID: <20240628154526.324068-1-aniketmaurya@google.com>
+Subject: [PATCH v3 1/3] dt-bindings: i3c: dw: Add apb clock binding
+From: Aniket <aniketmaurya@google.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>, Jeremy Kerr <jk@codeconstruct.com.au>, 
+	Joel Stanley <joel@jms.id.au>, Billy Tsai <billy_tsai@aspeedtech.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Aniket <aniketmaurya@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Indeed the maximum DMA burst length can be programmed not only for DW
-xGMACs, Allwinner EMACs and Spear SoC GMAC, but in accordance with
-[1, 2, 3] for Generic DW *MAC IP-cores. Moreover the STMMAC driver parses
-the property and then apply the configuration for all supported DW MAC
-devices. All of that makes the property being available for all IP-cores
-the bindings supports. Let's make sure the PBL-related properties are
-validated for all of them by the common DW *MAC DT schema.
+Add dt binding for optional apb clock. Core clock is mandatory.
 
-[1] DesignWare Cores Ethernet MAC Universal Databook, Revision 3.73a,
-    October 2013, p.378.
-
-[2] DesignWare Cores Ethernet Quality-of-Service Databook, Revision 5.10a,
-    December 2017, p.1223.
-
-[3] DesignWare Cores XGMAC - 10G Ethernet MAC Databook, Revision 2.11a,
-    September 2015, p.469-473.
-
-Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
-
+Signed-off-by: Aniket <aniketmaurya@google.com>
 ---
+ .../devicetree/bindings/i3c/snps,dw-i3c-master.yaml   | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-The discussion where we agreed to submit this change:
-Link: https://lore.kernel.org/netdev/20240625215442.190557-2-robh@kernel.org
-
----
- .../devicetree/bindings/net/snps,dwmac.yaml   | 80 ++++++-------------
- 1 file changed, 26 insertions(+), 54 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-index 5a39d931e429..509086b76211 100644
---- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-+++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-@@ -447,6 +447,32 @@ properties:
-     description:
-       Use Address-Aligned Beats
+diff --git a/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.yaml b/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.yaml
+index c0e805e531be..4fc13e3c0f75 100644
+--- a/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.yaml
++++ b/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.yaml
+@@ -20,7 +20,16 @@ properties:
+     maxItems: 1
  
-+  snps,pbl:
-+    description:
-+      Programmable Burst Length (tx and rx)
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [1, 2, 4, 8, 16, 32]
+   clocks:
+-    maxItems: 1
++    minItems: 1
++    items:
++      - description: Core clock
++      - description: APB clock
 +
-+  snps,txpbl:
-+    description:
-+      Tx Programmable Burst Length. If set, DMA tx will use this
-+      value rather than snps,pbl.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [1, 2, 4, 8, 16, 32]
-+
-+  snps,rxpbl:
-+    description:
-+      Rx Programmable Burst Length. If set, DMA rx will use this
-+      value rather than snps,pbl.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum: [1, 2, 4, 8, 16, 32]
-+
-+  snps,no-pbl-x8:
-+    $ref: /schemas/types.yaml#/definitions/flag
-+    description:
-+      Don\'t multiply the pbl/txpbl/rxpbl values by 8. For core
-+      rev < 3.50, don\'t multiply the values by 4.
-+
-   snps,fixed-burst:
-     $ref: /schemas/types.yaml#/definitions/flag
-     description:
-@@ -577,60 +603,6 @@ dependencies:
++  clock-names:
++    minItems: 1
++    items:
++      - const: core
++      - const: apb
  
- allOf:
-   - $ref: ethernet-controller.yaml#
--  - if:
--      properties:
--        compatible:
--          contains:
--            enum:
--              - allwinner,sun7i-a20-gmac
--              - allwinner,sun8i-a83t-emac
--              - allwinner,sun8i-h3-emac
--              - allwinner,sun8i-r40-gmac
--              - allwinner,sun8i-v3s-emac
--              - allwinner,sun50i-a64-emac
--              - ingenic,jz4775-mac
--              - ingenic,x1000-mac
--              - ingenic,x1600-mac
--              - ingenic,x1830-mac
--              - ingenic,x2000-mac
--              - qcom,sa8775p-ethqos
--              - qcom,sc8280xp-ethqos
--              - snps,dwmac-3.50a
--              - snps,dwmac-4.10a
--              - snps,dwmac-4.20a
--              - snps,dwmac-5.20
--              - snps,dwxgmac
--              - snps,dwxgmac-2.10
--              - st,spear600-gmac
--
--    then:
--      properties:
--        snps,pbl:
--          description:
--            Programmable Burst Length (tx and rx)
--          $ref: /schemas/types.yaml#/definitions/uint32
--          enum: [1, 2, 4, 8, 16, 32]
--
--        snps,txpbl:
--          description:
--            Tx Programmable Burst Length. If set, DMA tx will use this
--            value rather than snps,pbl.
--          $ref: /schemas/types.yaml#/definitions/uint32
--          enum: [1, 2, 4, 8, 16, 32]
--
--        snps,rxpbl:
--          description:
--            Rx Programmable Burst Length. If set, DMA rx will use this
--            value rather than snps,pbl.
--          $ref: /schemas/types.yaml#/definitions/uint32
--          enum: [1, 2, 4, 8, 16, 32]
--
--        snps,no-pbl-x8:
--          $ref: /schemas/types.yaml#/definitions/flag
--          description:
--            Don\'t multiply the pbl/txpbl/rxpbl values by 8. For core
--            rev < 3.50, don\'t multiply the values by 4.
--
-   - if:
-       properties:
-         compatible:
+   interrupts:
+     maxItems: 1
 -- 
-2.43.0
+2.45.2.803.g4e1b14247a-goog
 
 
