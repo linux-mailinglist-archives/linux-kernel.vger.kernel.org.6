@@ -1,168 +1,84 @@
-Return-Path: <linux-kernel+bounces-234236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBB0B91C420
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:50:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A86E591C425
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:51:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 976822867B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:50:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA46E1C21162
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 243321C9ED4;
-	Fri, 28 Jun 2024 16:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cjCVicOi"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 952BF1CB303;
+	Fri, 28 Jun 2024 16:51:13 +0000 (UTC)
+Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC72D2E5;
-	Fri, 28 Jun 2024 16:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89336D2E5;
+	Fri, 28 Jun 2024 16:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719593405; cv=none; b=K9OanpYrAHyLxpBWePCfPr1kKHLWurDhAFzJ12EDVNw0O8raUI20dwdFXdaOJ4z6aFAvG62PiX1XzNqPTkD3f2TNMucf6rthAw5iZgc8mBSFPYYIssKtTTHjYuj+F6tr6aAp6+40FCl/E1BDThn0KNcd9rESx2jgmdKQt+oBu4M=
+	t=1719593473; cv=none; b=dM3yXq8O1hdP0czlQ/Kke/zrsky7Lcjrjl0VPt52lWzm8DQlgvjHXSygLZNSnJANql6YIPmbkKReakzeecm9LnqG9osYyZUdvUY+OY7UkAmiEnn5AoI8EsVawpMRy7262JGcPVN1vfn6HaqCabMCdj9F3AJKWNRDbH7007Xw7FA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719593405; c=relaxed/simple;
-	bh=G8DqdW0trZFUQupStjt8vVkzmJRjh9xErUsIAV7fWGc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=eooraNT5BzAlfnrajIHCwkQAL/yDxLuE8RAMj/fKtHViNG2lrurqH54qM2rSs6v8+ysgMWqaR5mGoep3enR5PDILi4rBuLzb5FpX4N9Rrvg72IG5WV36uydopen71yNaK3TpizPPlfxxbD9SKSS8/zf1VngLwrRaY5+6BJ4ddtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cjCVicOi; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7067435d376so621635b3a.0;
-        Fri, 28 Jun 2024 09:50:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719593403; x=1720198203; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4Sai30B2m2oMAFo6GShhCdpzgtuTKYbcDM5PCHgdK/E=;
-        b=cjCVicOiq7ys/CLxt+56boRgg6GAineGyvTnM+4frCcvPWB+LBVdKY4kUbekfh267T
-         I983ZJ5FjShEt2IU8IL49sifXcYoi7YhDxU02E6pXBIr8nw4hSs4X0zq9OXi0ii9JXVI
-         GXEGb6n8IHGFRSZcFAGX9d2UxlcExFuDVk4MS4sQ2lwZx7YT13xMZ5dITudJXkjbdj90
-         hsvzEaHFW7dRZ8OSUyrCVS8r/EkYIE+T58wSXGXVIharTpB1jKEjnu7Z59kaCApEfmAI
-         ewEEzSiz09CAi+i/lDd9/vlv3rt1KpIDnsd0HRP25JZ3tR5FZJ6sIHdLbP1EHQIwynjT
-         PpZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719593403; x=1720198203;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4Sai30B2m2oMAFo6GShhCdpzgtuTKYbcDM5PCHgdK/E=;
-        b=gbxmbpAcYL1ZDOHlITm5K5V4jzsFPqYwoowu0KIl/7ge/YdT9pkxVuYCAMr2Jq3RZL
-         8go5GzM/RH0vvxCtmsL9ZO8hpYADMicKz4E6yIEux8vB+ldyMpzagwNiBc6SuoJnAFJw
-         qFArwvHGhiymLhSsEMcruDM6ayw6oOxk47Gz3gu5LX0SiYPcNm1fxD/xS12fNVffAf3A
-         YAOzXiMxHNhmZ0HcZDQSkKj2N9H9Gj2gWfzTrSmwRMzop99g3RFaxbX7ZgIOaKDb9gQd
-         ru4SDeoVz4ztNs7HuH5rfJ9unYrB++Xnnc9npgFfb+akDFs+wW7QpOqwBFh9iJ+ryuHe
-         FzCg==
-X-Forwarded-Encrypted: i=1; AJvYcCVXaZl6+V+e51sGLh9hSvxwrKIPVcdX7AKUpgeNbFX1VggranBYS3qt6oG2cNzl/EfvtqB0hPCj97wWX8ML2bartn4z90p4+g6Rlyse
-X-Gm-Message-State: AOJu0YywSd4jnBepPZrtQ41UxiQpSnSpozlK73VwEazS/26MU4T1+F5e
-	owK5zpkyx+wi9ntQKo8xCRBrlmLkvUbh8RN7GMMp1HkohtAlhtTt
-X-Google-Smtp-Source: AGHT+IG7FBBAz50J+1PFvwI0HOFkFmVVr1ZgKD18MFU3u1JUmFFVaxoC3Ga0nwWFX4ys9XykVWm3pQ==
-X-Received: by 2002:aa7:91d3:0:b0:706:5daf:efa5 with SMTP id d2e1a72fcca58-70851f55b1bmr2832674b3a.9.1719593403189;
-        Fri, 28 Jun 2024 09:50:03 -0700 (PDT)
-Received: from carrot.. (i114-180-52-104.s42.a014.ap.plala.or.jp. [114.180.52.104])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70804a95402sm1827690b3a.198.2024.06.28.09.50.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 09:50:02 -0700 (PDT)
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-nilfs <linux-nilfs@vger.kernel.org>,
-	syzbot <syzbot+d3abed1ad3d367fa2627@syzkaller.appspotmail.com>,
-	syzkaller-bugs@googlegroups.com,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH] nilfs2: fix kernel bug on rename operation of broken directory
-Date: Sat, 29 Jun 2024 01:51:07 +0900
-Message-Id: <20240628165107.9006-1-konishi.ryusuke@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <0000000000003002be06179e2f61@google.com>
-References: <0000000000003002be06179e2f61@google.com>
+	s=arc-20240116; t=1719593473; c=relaxed/simple;
+	bh=vuiLWhFs/4dgSOcAzxk+VPRyXw33EbyQ0Ll/O8Trnk4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=kQi4v2GQqUPo0obzDovX6VM4dLMcvwpXtnUvKRH+Y3jZ0b9HvHsAIAK0S7WcGetwrb6WpT23d/hXgsPvx84lNKDlByrx8edCVG4o2Gzvc2IJgF9BOTZH/hnCWb9NcHTedGn6ZwWmSNlTLTwuubZputykF4VcRWDmmuEQkUnk8lA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=walle.cc; arc=none smtp.client-ip=159.69.201.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
+Received: from localhost (unknown [IPv6:2a02:810b:4340:4ee9:4685:ff:fe12:5967])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.3ffe.de (Postfix) with ESMTPSA id 1B01D144A;
+	Fri, 28 Jun 2024 18:51:09 +0200 (CEST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 28 Jun 2024 18:51:08 +0200
+Message-Id: <D2BT0DT9UQ66.2L497FSY7GMAL@kernel.org>
+Subject: Re: [PATCH 3/4] dt-bindings: mtd: macronix,mx25l12833f: add SPI-NOR
+ chip
+Cc: "Conor Dooley" <conor@kernel.org>, "Erez Geva" <erezgeva@nwtime.org>,
+ <linux-mtd@lists.infradead.org>, "Tudor Ambarus"
+ <tudor.ambarus@linaro.org>, "Pratyush Yadav" <pratyush@kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Miquel Raynal"
+ <miquel.raynal@bootlin.com>, "Richard Weinberger" <richard@nod.at>,
+ "Vignesh Raghavendra" <vigneshr@ti.com>, <devicetree@vger.kernel.org>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>
+From: "Michael Walle" <mwalle@kernel.org>
+To: "Erez" <erezgeva2@gmail.com>
+X-Mailer: aerc 0.16.0
+References: <20240628140328.279792-1-erezgeva@nwtime.org>
+ <20240628140328.279792-4-erezgeva@nwtime.org>
+ <20240628-refuse-actress-b76985aa020c@spud>
+ <D2BS0YMA48BG.1PEPFC3KMFV8N@kernel.org>
+ <CANeKEMMrXK=mw=n=9DuTnprkTs3ct446oaC2QTJyst8Nd+D6rw@mail.gmail.com>
+In-Reply-To: <CANeKEMMrXK=mw=n=9DuTnprkTs3ct446oaC2QTJyst8Nd+D6rw@mail.gmail.com>
 
-Syzbot reported that in rename directory operation on broken directory
-on nilfs2, __block_write_begin_int() called to prepare block write may
-fail BUG_ON check for access exceeding the folio/page size.
+On Fri Jun 28, 2024 at 6:30 PM CEST, Erez wrote:
+> I do not know why they decided to use the same JEDEC ID for two chips.
+> Your guess is as good as mine.
 
-This is because nilfs_dotdot(), which gets parent directory reference
-entry ("..") of the directory to be moved or renamed, does not check
-consistency enough, and may return location exceeding folio/page size
-for broken directories.
+That's a common pattern and we try hard to figure that out during
+probe time instead of hardcoding it. E.g. by looking at the SFDP
+data. Have a look at various fixups in drivers/mtd/spi-nor/.
 
-Fix this issue by checking required directory entries ("." and "..")
-in the first chunk of the directory in nilfs_dotdot().
+compatibles are really the last resort to distinguish flash devices.
 
-Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Reported-by: syzbot+d3abed1ad3d367fa2627@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=d3abed1ad3d367fa2627
-Fixes: 2ba466d74ed7 ("nilfs2: directory entry operations")
-Tested-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Cc: stable@vger.kernel.org
----
-Hi Andrew, please apply this as a bug fix.
+Next time, please mention such information in the commit message,
+please.
 
-This fixes a potential kernel bug reported by syzbot regarding broken
-directory rename operations.
+Also please have a look at
+https://docs.kernel.org/driver-api/mtd/spi-nor.html
 
-Thanks,
-Ryusuke Konishi
-
- fs/nilfs2/dir.c | 32 ++++++++++++++++++++++++++++++--
- 1 file changed, 30 insertions(+), 2 deletions(-)
-
-diff --git a/fs/nilfs2/dir.c b/fs/nilfs2/dir.c
-index dddfa604491a..4a29b0138d75 100644
---- a/fs/nilfs2/dir.c
-+++ b/fs/nilfs2/dir.c
-@@ -383,11 +383,39 @@ struct nilfs_dir_entry *nilfs_find_entry(struct inode *dir,
- 
- struct nilfs_dir_entry *nilfs_dotdot(struct inode *dir, struct folio **foliop)
- {
--	struct nilfs_dir_entry *de = nilfs_get_folio(dir, 0, foliop);
-+	struct folio *folio;
-+	struct nilfs_dir_entry *de, *next_de;
-+	size_t limit;
-+	char *msg;
- 
-+	de = nilfs_get_folio(dir, 0, &folio);
- 	if (IS_ERR(de))
- 		return NULL;
--	return nilfs_next_entry(de);
-+
-+	limit = nilfs_last_byte(dir, 0);  /* is a multiple of chunk size */
-+	if (unlikely(!limit || le64_to_cpu(de->inode) != dir->i_ino ||
-+		     !nilfs_match(1, ".", de))) {
-+		msg = "missing '.'";
-+		goto fail;
-+	}
-+
-+	next_de = nilfs_next_entry(de);
-+	/*
-+	 * If "next_de" has not reached the end of the chunk, there is
-+	 * at least one more record.  Check whether it matches "..".
-+	 */
-+	if (unlikely((char *)next_de == (char *)de + nilfs_chunk_size(dir) ||
-+		     !nilfs_match(2, "..", next_de))) {
-+		msg = "missing '..'";
-+		goto fail;
-+	}
-+	*foliop = folio;
-+	return next_de;
-+
-+fail:
-+	nilfs_error(dir->i_sb, "directory #%lu %s", dir->i_ino, msg);
-+	folio_release_kmap(folio, de);
-+	return NULL;
- }
- 
- ino_t nilfs_inode_by_name(struct inode *dir, const struct qstr *qstr)
--- 
-2.34.1
-
+-michael
 
