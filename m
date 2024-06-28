@@ -1,62 +1,44 @@
-Return-Path: <linux-kernel+bounces-233234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAC3391B49B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:26:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A2FF91B49E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:27:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DF0C1F225A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:26:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7A1B1F223BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:27:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3786125AC;
-	Fri, 28 Jun 2024 01:26:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC8910A0A;
+	Fri, 28 Jun 2024 01:27:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KGZ1U/cz"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71433C0B;
-	Fri, 28 Jun 2024 01:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="Rn3fwgiy"
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B51A83C0B;
+	Fri, 28 Jun 2024 01:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719537977; cv=none; b=A1Zsrk9NAtTqo95aOJW2aCfJTJTZxFmi2Ok7wNp5S8e4CW872gHGeRS/TkJrBCzq9ks9REAACIRyj+YLhri+mmIFhHhO8it92j9XdVLsIOzUj+1JyEOq78iWDny4HtLiqS8QrqDkzDHvIKsutF+zdMWiIM7UkCrDkY4yb5sZTzQ=
+	t=1719538025; cv=none; b=Ki56mVkyhDTOzKru3gbO1jdnxAZkbFFaIpYMYLfgpVJ9exymCJKgwJPGykSbzBvW96hsH8SHd+V8Utj3oaef3Cq6ITJPJoaURizOuPSVbd9WH1cQtkNmEiFZn+xJ7dt7qc42AUr7l26X6irPy6edG/1fT0B6Luj0/MW6V9LNOCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719537977; c=relaxed/simple;
-	bh=QIulrbdqgLBg8LYdbjyIr0A0/MV7SuElK4NFVXpuRhI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ql3IakB7klA7L2VJFbdp6NEvhdLku38tx1M2x8y1BVRQSnytyeua9C/1Dri5GXYfwFS2AkOOwsv61b2EbsHvKgtMibRym7vUqHbPCgGqcBFGwYc9ror9JMRnEYBE93aFKpQrR1IuijtaMAiR8vfzBMIGKc4gvwXzhkF3H7TX/aA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KGZ1U/cz; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45RKUuAN015311;
-	Fri, 28 Jun 2024 01:25:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	oPqn4DxZJhJDlUwH0EtgcnI6DHlwDxBK7PtrA09Ja4U=; b=KGZ1U/czbct2I68f
-	siCeZnIJEDsCM/nMiYN2kTXVpgKcvtzg+0S+hMPJQpCTn68mXOON8Ym6xfwyRbC3
-	Wvg3SQEk1JEzttNhIE/T7s81R6mCFQ1Dp28Vc0UKkd1b+6vyc7T6BBi5P2nB0Lxf
-	7zSrWHvtWJFKZmW7Ro8YHmWqLFgmc5HqCc4IR/Zhs/S88OJUTjNtJfHf1ui9b1PV
-	X7qpmF6oOyIW/Ql9LN9+S24ic4A0PxVUs3+9Si9C1VTUPlnHNFnq/HaOFKxNErWQ
-	kE/wrXyXoKuW3rc0W8c4GMYgs3PQ2mcx3+6shsxF8CqDFQV3RJSoBq72kSVX8Rb1
-	tVeuow==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 400gcmd2nt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Jun 2024 01:25:38 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45S1Pcrd026347
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Jun 2024 01:25:38 GMT
-Received: from [10.231.195.67] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 27 Jun
- 2024 18:25:36 -0700
-Message-ID: <f362d96f-0926-4d91-811a-c6e71b2d3d0b@quicinc.com>
-Date: Fri, 28 Jun 2024 09:25:34 +0800
+	s=arc-20240116; t=1719538025; c=relaxed/simple;
+	bh=V38sFmASQfqGcoseLmQq14vgW3z2xQfKhNYM+Pd/RXQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dezlBHKCrL17girD1r011yucgAPGGsMrFjXlYrVaMzLufD3l6uVMYWNpcKv8FqmiE8DYBYwRKhTBskPqaJ8bdA8fRRssmU4Gh4++9KoaSgbCSfxSy7onWEOzl3AGisjC7Il68iAZVqgls8GdvcV7/GeumfKxJn6sf/KKJtWgCGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=Rn3fwgiy; arc=none smtp.client-ip=220.197.31.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=tTOy6Kq3aNVWHj/osQBSoy/9+UEn0MO184Z7Lmt65g4=;
+	b=Rn3fwgiy5jx0QWHgKQoup4vLNXxWu8hqTUrCjxxT7XMicWWAgC+NigrX4NebqS
+	gLdQ7j41rHMR0rFgFFfVBPCr0HEspsoX3z/M7Rabp1D+tkZrQg+LgEa8Iux26xfP
+	RgvQYhCAWfejscynWy7EEiidX+yNHv8IvysoS5geF3SP0=
+Received: from [172.21.22.210] (unknown [118.242.3.34])
+	by gzga-smtp-mta-g1-0 (Coremail) with SMTP id _____wDX_9kZEX5m77HCAA--.18751S2;
+	Fri, 28 Jun 2024 09:25:48 +0800 (CST)
+Message-ID: <4850060d-7fc2-4869-a901-38f11058bd40@126.com>
+Date: Fri, 28 Jun 2024 09:25:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,131 +46,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: invalid vht params rate 1920 100kbps nss 2 mcs 9
-To: Kalle Valo <kvalo@kernel.org>, James Prestwood <prestwoj@gmail.com>
-CC: Paul Menzel <pmenzel@molgen.mpg.de>, <linux-wireless@vger.kernel.org>,
-        <ath10k@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>
-References: <fba24cd3-4a1e-4072-8585-8402272788ff@molgen.mpg.de>
- <1faa7eee-ed1e-477b-940d-a5cf4478cf73@gmail.com> <87iky7mvxt.fsf@kernel.org>
- <37ba6cb0-d887-4fcf-b7dc-c93a5fc5900f@gmail.com> <875xu6mtgh.fsf@kernel.org>
- <f7faff80-864a-4411-ad28-4f1151bc1e51@quicinc.com>
- <d9f95dcc-6343-4af3-8acc-a150fb4e5923@gmail.com> <87a5j6gs4e.fsf@kernel.org>
-Content-Language: en-US
-From: Baochen Qiang <quic_bqiang@quicinc.com>
-In-Reply-To: <87a5j6gs4e.fsf@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [v2 PATCH] mm: gup: do not call try_grab_folio() in slow path
+To: Peter Xu <peterx@redhat.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Yang Shi <yang@os.amperecomputing.com>, david@redhat.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20240627221413.671680-1-yang@os.amperecomputing.com>
+ <Zn3zjKnKIZjCXGrU@x1n>
+ <20240627163242.39b0a716bd950a895c032136@linux-foundation.org>
+ <Zn35MMS_kq3p0m7q@x1n>
+From: Ge Yang <yangge1116@126.com>
+In-Reply-To: <Zn35MMS_kq3p0m7q@x1n>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: AYay9ZVt-vjvdcfv9DPIuge6HtEQW6E2
-X-Proofpoint-ORIG-GUID: AYay9ZVt-vjvdcfv9DPIuge6HtEQW6E2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-27_16,2024-06-27_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- mlxlogscore=999 clxscore=1015 mlxscore=0 phishscore=0 impostorscore=0
- adultscore=0 malwarescore=0 lowpriorityscore=0 priorityscore=1501
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406280009
+X-CM-TRANSID:_____wDX_9kZEX5m77HCAA--.18751S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxZFW5CF48Cw13Ar48Gr1UGFg_yoW5GF4xpF
+	y3Ka9xKFWkJr10kws7tws5XFWFyrZ8JryUXws5Gr1xua98ua4xWr48X34FkF98W348Ga10
+	vFW2y3srZa1DZa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jt5rxUUUUU=
+X-CM-SenderInfo: 51dqwwjhrrila6rslhhfrp/1tbiOhwMG2VExE332wABs0
 
 
 
-On 6/28/2024 2:25 AM, Kalle Valo wrote:
-> James Prestwood <prestwoj@gmail.com> writes:
-> 
->> HI Baochen,
+在 2024/6/28 7:43, Peter Xu 写道:
+> On Thu, Jun 27, 2024 at 04:32:42PM -0700, Andrew Morton wrote:
+>> On Thu, 27 Jun 2024 19:19:40 -0400 Peter Xu <peterx@redhat.com> wrote:
 >>
->> On 6/26/24 1:53 AM, Baochen Qiang wrote:
+>>> Yang,
 >>>
->>> On 6/18/2024 6:33 PM, Kalle Valo wrote:
->>>> + baochen
->>>>
->>>> James Prestwood <prestwoj@gmail.com> writes:
->>>>
->>>>> Hi Kalle,
->>>>>
->>>>> On 6/17/24 8:27 AM, Kalle Valo wrote:
->>>>>> James Prestwood <prestwoj@gmail.com> writes:
->>>>>>
->>>>>>> Hi Paul,
->>>>>>>
->>>>>>> On 6/16/24 6:10 AM, Paul Menzel wrote:
->>>>>>>> Dear Linux folks,
->>>>>>>>
->>>>>>>>
->>>>>>>> Linux 6.10-rc3 (commit a3e18a540541) logged the warning below when
->>>>>>>> connecting to a public WiFi:
->>>>>>>>
->>>>>>>>       ath10k_pci 0000:3a:00.0: invalid vht params rate 1920 100kbps
->>>>>>>> nss 2 mcs 9
->>>>>>> This has been reported/discussed [1]. It was hinted that there was a
->>>>>>> firmware fix for this, but none that I tried got rid of it. I got fed
->>>>>>> up enough with the logs filling up with this I patched our kernel to
->>>>>>> remove the warning. AFAICT it appears benign (?). Removing the warning
->>>>>>> was purely "cosmetic" so other devs stopped complaining about it :)
->>>>>>>
->>>>>>> [1] https://www.mail-archive.com/ath10k@lists.infradead.org/msg13406.html
->>>>>> More reliable link to the discussion:
->>>>>>
->>>>>> https://lore.kernel.org/ath10k/76a816d983e6c4d636311738396f97971b5523fb.1612915444.git.skhan@linuxfoundation.org/
->>>>>>
->>>>>> I think we should add this workaround I mentioned in 2021:
->>>>>>
->>>>>>      "If the firmware still keeps sending invalid rates we should add a
->>>>>>       specific check to ignore the known invalid values, but not all of
->>>>>>       them."
->>>>>>
->>>>>>      https://lore.kernel.org/ath10k/87h7mktjgi.fsf@codeaurora.org/
->>>>>>
->>>>>> I guess that would be mcs == 7 and rate == 1440?
->>>>> I think its more than this combination (Paul's are different).
->>>> Good point.
->>>>
->>>>> So how many combinations are we willing to add here? Seems like that
->>>>> could get out of hand if there are more than a few invalid
->>>>> combinations.
->>>> Yeah, but there haven't been that many different values reported yet,
->>>> right? And I expect that ath10k user base will just get smaller in the
->>>> future so the chances are that we will get less reports.
->>>>
->>>>> Would we also want to restrict the workaround to specific
->>>>> hardware/firmware?
->>>> Good idea, limiting per hardware would be simple to implement using
->>>> hw_params. Of course we could even limit this per firmware version using
->>>> enum ath10k_fw_features, but not sure if that's worth all the extra work.
->>>>
->>>> Baochen, do you know more about this firmware bug? Any suggestions?
+>>> On Thu, Jun 27, 2024 at 03:14:13PM -0700, Yang Shi wrote:
+>>>> The try_grab_folio() is supposed to be used in fast path and it elevates
+>>>> folio refcount by using add ref unless zero.  We are guaranteed to have
+>>>> at least one stable reference in slow path, so the simple atomic add
+>>>> could be used.  The performance difference should be trivial, but the
+>>>> misuse may be confusing and misleading.
 >>>
->>> OK, there are two issues here:
+>>> This first paragraph is IMHO misleading itself..
 >>>
->>> 1. invalid HT rate: "ath10k_pci 0000:02:00.0: invalid ht params rate
->>> 1440 100kbps nss 2 mcs 7".
+>>> I think we should mention upfront the important bit, on the user impact.
 >>>
->>> As commented by Wen quite some time ago, this has been fixed from
->>> firmware side, and firmware newer than [ver:241] has the fix
->>> included.
+>>> Here IMO the user impact should be: Linux may fail longterm pin in some
+>>> releavnt paths when applied over CMA reserved blocks.  And if to extend a
+>>> bit, that include not only slow-gup but also the new memfd pinning, because
+>>> both of them used try_grab_folio() which used to be only for fast-gup.
 >>
->> Thanks for pointing this out, I guess I didn't look close enough at
->> the log and missed "ht" vs "vht" when I brought it up on that older
->> thread. I thought i was seeing the same problem even with newer
->> firmware.
->>>
->>> 2. invaid VHT rate: "ath10k_pci 0000:3a:00.0: invalid vht params
->>> rate 1920 100kbps nss 2 mcs 9".
->>>
->>> After checking with firmware team, I thought this is because there
->>> is a mismatch in rate definition between host and firmware: In host,
->>> the rate for 'nss 2 mcs 9' is defined as {1560, 1733}, see
->>> supported_vht_mcs_rate_nss2[]. While in firmware this is defined as
->>> {1730, 1920}. So seems we can update host definition to avoid this
->>> issue.
->>
->> That would be great!
+>> It's still unclear how users will be affected.  What do the *users*
+>> see?  If it's a slight slowdown, do we need to backport this at all?
 > 
-> Indeed! Baochen, can you work on a patch for ath10k to fix this?
-Sure, Kalle.
+> The user will see the pin fails, for gpu-slow it further triggers the WARN
+> right below that failure (as in the original report):
+> 
+>          folio = try_grab_folio(page, page_increm - 1,
+>                                  foll_flags);
+>          if (WARN_ON_ONCE(!folio)) { <------------------------ here
+>                  /*
+>                          * Release the 1st page ref if the
+>                          * folio is problematic, fail hard.
+>                          */
+>                  gup_put_folio(page_folio(page), 1,
+>                                  foll_flags);
+>                  ret = -EFAULT;
+>                  goto out;
+>          }
+> 
+> For memfd pin and hugepd paths, they should just observe GUP failure on
+> those longterm pins, and it'll be the caller context to decide what user
+> can see, I think.
+> 
+>>
+>>>
+>>> The patch itself looks mostly ok to me.
+>>>
+>>> There's still some "cleanup" part mangled together, e.g., the real meat
+>>> should be avoiding the folio_is_longterm_pinnable() check in relevant
+>>> paths.  The rest (e.g. switch slow-gup / memfd pin to use folio_ref_add()
+>>> not try_get_folio(), and renames) could be good cleanups.
+>>>
+>>> So a smaller fix might be doable, but again I don't have a strong opinion
+>>> here.
+>>
+>> The smaller the better for backporting, of course.
+> 
+> I think a smaller version might be yangge's patch, plus Yang's hugepd
+> "fast" parameter for the hugepd stack, then hugepd can also use
+> try_grab_page().  memfd-pin change can be a separate small patch perhaps
+> squashed.
+> 
 
+If needed, I can submit a new version based on Yang's V1 version.
+
+> I'll leave how to move on to Yang.
 > 
+> Thanks,
+> 
+
 
