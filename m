@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-233497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA9B791B847
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:28:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE04C91B852
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:30:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 471251F22ADE
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:28:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66A95B218F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382BE140363;
-	Fri, 28 Jun 2024 07:28:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA376140394;
+	Fri, 28 Jun 2024 07:30:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oGXpFF0K"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UtEoMJkU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD3F2D05E;
-	Fri, 28 Jun 2024 07:28:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C102D05E;
+	Fri, 28 Jun 2024 07:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719559698; cv=none; b=o7bdTxU4vJn0po2/bg9mf8t0I4nZttRpQGxcfmi0MZtj08li1ZCjOaeP8/eQ9Lvm2EooVHNT/c5H8hLunh50u9bt7b28SM1EVcFmnVNZgZ3gXsSx2dygQofhSq39r4a4NPU2VnUcGnUmFBwhzJ4QYBDBc3/9ZHROfe75gUq2/5U=
+	t=1719559801; cv=none; b=tFupC6/hjL2kcRYfWjtRGdVLD6/fjb5CcGbMgjsjNcbKNY95D9z8r0b6GeFWbI9t/iNhWUpvMPdQrAwDb1J9YE6onkSIJTONMN+JpwZtIZtdkBFZtor3gQCa1fxeIjLzhuOclEXlWMaqBDPVqAc6x/Cbcn96Gily2h5+EZB6WFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719559698; c=relaxed/simple;
-	bh=P1rkD1ZLttF6haWdELRr7ZVi3OVnI20vQQSBpE8Bt1g=;
+	s=arc-20240116; t=1719559801; c=relaxed/simple;
+	bh=v7HCpoRE++zio/wxE3XZnrIfncfD7RXHvoaxUiF9O8k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mZfQO8HVJm/Srj8De6tWBwU/xd2Hb7PYejMw6BC8SZ6DPg44blh6/EJo4948gV5ZG4/pAF0/DIFtuaVQNddRh0/7BkBD/ZI0ZK3Pc30ARYFA5ovljXogISVEvA0Af7JaX9sTv8lJx4+eWCRqmizTGCTt8Kp6eyOFmvC5kqqKtcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oGXpFF0K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29D08C116B1;
-	Fri, 28 Jun 2024 07:28:14 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=kAE5qWyrL5evpxdDV19UAE36fCGAVXNoJ/5uajKxphCA2oiDht4QovWQTAVC8bjsOo0fwBFx1OWJHEmqpcuyvjHMgV1lEDlxU8I+f2IfhO4k+ZMD2A9m+BiQOyZa66ZyJbv5Vmfb3KaiKKmc+RyrST1c+Dz5dh7bwDV4BoNyZgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UtEoMJkU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD58BC116B1;
+	Fri, 28 Jun 2024 07:29:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719559698;
-	bh=P1rkD1ZLttF6haWdELRr7ZVi3OVnI20vQQSBpE8Bt1g=;
+	s=k20201202; t=1719559800;
+	bh=v7HCpoRE++zio/wxE3XZnrIfncfD7RXHvoaxUiF9O8k=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oGXpFF0KO6sH+ORQiqWd2VaIQHoPKHscfNL6tL6UgBDDP7y2I6fCoN/qmHHLudDAc
-	 P8B5VAywvNqQtf7TOBmJTxly+zWLrtkWTwNvekNcqCHSR+3Jr1CUDlEChPJzaCQyqp
-	 iL/I88XvGusxUDaiBUB1cn+4S7+fmllBRk7vXD2c2GQsc+Ea6jPDOyP5OBmeeFX01O
-	 9K7IuYyz4UQSXC+NNmoUcVRExvnRtMsBUM1Z4U5rIw0n97PPa04VvftmXle4d90Un4
-	 hwm9hTcLHpXNxAlOMUkplAVpMP32DeJm9AkuOLaU0PF44tt+ji/E4u8Z84lWVdnXZs
-	 jctb5wkqUeE7w==
-Message-ID: <ead8926a-f56f-4102-b7de-4464dc087d3d@kernel.org>
-Date: Fri, 28 Jun 2024 09:28:12 +0200
+	b=UtEoMJkUhbvPcX7xbb0iBOrd96ZqMmhHwG2TLpnByf6UNa9mt9TYlcAJ9wPJHLdE/
+	 sTA3lxxpvMsiXON+/ZXaMo/Vftl4DW5azdoRL+naK4MA/jaFYDm7C6xiTucbp85eva
+	 scuVeNuFFkd6CQdl5lQh5lMnrYA2AS02WW18V1NxHHFFSEYGXhkDZSkDUlWM9bAQCv
+	 oTQfdu0UBjG4kToSiul4alsE6dd1IqdwGJiGDvfbDOkNAfF3Kkp6/1aCeIG0mh0ne0
+	 UmiNEDElpScpCBSb3ze3Uw0gKiSq9diYKKl/XK1GceGJVsfSrk9diAj21isIjqeVK0
+	 xyfM8rYdB2ZTQ==
+Message-ID: <ccf4c88c-50ba-46ad-9af7-b9e0d72f2ec2@kernel.org>
+Date: Fri, 28 Jun 2024 09:29:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,19 +49,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] dt-bindings: gpio: fsl,qoriq-gpio: add common
- property gpio-line-names
-To: Frank Li <Frank.Li@nxp.com>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, "open list:GPIO SUBSYSTEM"
- <linux-gpio@vger.kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Cc: imx@lists.linux.dev
-References: <20240627202151.456812-1-Frank.Li@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: mmc: nuvoton,ma35d1-sdhci: Document
+ MA35D1 SDHCI controller
+To: Shan-Chun Hung <shanchun1218@gmail.com>, ulf.hansson@linaro.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ adrian.hunter@intel.com, p.zabel@pengutronix.de, pbrobinson@gmail.com,
+ serghox@gmail.com, mcgrof@kernel.org,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, forbidden405@outlook.com,
+ tmaimon77@gmail.com, andy.shevchenko@gmail.com,
+ linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: ychuang3@nuvoton.com, schung@nuvoton.com
+References: <20240626094900.581552-1-shanchun1218@gmail.com>
+ <20240626094900.581552-2-shanchun1218@gmail.com>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -105,20 +107,43 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240627202151.456812-1-Frank.Li@nxp.com>
+In-Reply-To: <20240626094900.581552-2-shanchun1218@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 27/06/2024 22:21, Frank Li wrote:
-> Add common gpio-line-names property for fsl,qoriq-gpio to fix below
-> warning.
-> 
-> arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-kbox-a-230-ls.dtb: gpio@2300000: 'gpio-line-names' does not match any of the regexes: 'pinctrl-[0-9]+'
->         from schema $id: http://devicetree.org/schemas/gpio/fsl,qoriq-gpio.yaml
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+On 26/06/2024 11:48, Shan-Chun Hung wrote:
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> +    soc {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +        mmc@40190000 {
+> +            compatible = "nuvoton,ma35d1-sdhci";
+> +            reg = <0x0 0x40190000 0x0 0x2000>;
+> +            interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
+> +            clocks = <&clk SDH1_GATE>;
+> +            pinctrl-names = "default", "state_uhs";
+> +            pinctrl-0 = <&pinctrl_sdhci1>;
+> +            pinctrl-1 = <&pinctrl_sdhci1_uhs>;
+> +            resets = <&sys MA35D1_RESET_SDH1>;
+> +            nuvoton,sys = <&sys>;
+> +            vqmmc-supply = <&sdhci1_vqmmc_regulator>;
+> +            bus-width = <8>;
+> +            max-frequency = <200000000>;
+> +            status = "disabled";
+
+Again: Drop
+
+<form letter>
+This is a friendly reminder during the review process.
+
+It seems my or other reviewer's previous comments were not fully
+addressed. Maybe the feedback got lost between the quotes, maybe you
+just forgot to apply it. Please go back to the previous discussion and
+either implement all requested changes or keep discussing them.
+
+Thank you.
+</form letter>
+
 
 Best regards,
 Krzysztof
