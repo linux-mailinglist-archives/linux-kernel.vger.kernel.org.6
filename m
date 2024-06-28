@@ -1,96 +1,176 @@
-Return-Path: <linux-kernel+bounces-233715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3089191BC09
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:59:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7410C91BC0B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:59:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87740B21157
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:59:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B1A81F233C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2596F15442D;
-	Fri, 28 Jun 2024 09:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KL5hi7+D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663D5153561;
-	Fri, 28 Jun 2024 09:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5DAB154435;
+	Fri, 28 Jun 2024 09:59:36 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1CC8153810;
+	Fri, 28 Jun 2024 09:59:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719568755; cv=none; b=cZ3Pev9/MJxT82Z5j8HQLDXcND7jscv8hjRB6LGwkyMTyyJ7Hd0v+Zl/pIJjpo5YF030cCZbdG31JbyTXxQCXgMa/X7ZK5UG20zoK01++9IuLYyk7SOVH0LSOvwQj0vbupGPSF0pKjjUbrKMnKhEZ5+Cm5JX+qpXDO9Ue4PZfec=
+	t=1719568776; cv=none; b=hD6ql1+I069Kw2I3MLuOljJKqwOQQ2wwBdrSJSB2XCfgwOuJaqUotsB2Tak2DYKovvXV7uKyQtDOIAtD+fBRo7sv5plW4Lp09E82BMCYQH4y5qd/2LTsJwh750rwz+5XyFHyofPq65jmRrhqCP04ppVMtyDEwtsiMUAwY5zxwto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719568755; c=relaxed/simple;
-	bh=QVKhCfYfeNUH52VsmRhkQmesdrNRb+Wa8cQp+EHzPIU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=WcqmOukVc3U45CEDrsCIk730ZQJ9DxAOvNVn/RblqFMorPAiO+RDcdshlQ03lEowvGsjukv6nnXtgktCmV5SujQlJW0Di6gYcl07K3v273pIl6mhcnK9R6C/r4tRPzgSwJWjIKjt+8MBAHhvgxLloqOZClnwf4Puyv+4E4o7MmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KL5hi7+D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5584EC32781;
-	Fri, 28 Jun 2024 09:59:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719568755;
-	bh=QVKhCfYfeNUH52VsmRhkQmesdrNRb+Wa8cQp+EHzPIU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=KL5hi7+DVmbAKVSNlQFMItMnSKgvaz/47ys2KsFuAyCH9JhMlgZvuIJ/K6TU5stMV
-	 /anIY60TjEGMbSchASh79z3FWZm/yFqqr39wyOX2irQHsfvVJvQVFWknBtUVoDNys4
-	 70MCPF8f5B31LWEtx+BgVd6vg4XS3nFYZGluvUjYctL4HB2nlKABjHnFAxg2W06QUH
-	 yrSH9XobmRGoUEZP/TQ9NcbyFY6KNeFOQ2DLLCOgoRci1QLbIFcgNMOPRswWz0HY8d
-	 YqcIvgFbQHQOqQbf8Q25huwNK7W/4sVwl/h6IAGAuTE7Lr+AaeJehgsI7Pkjn9T+l7
-	 Hl8FpEapURUpA==
-Date: Fri, 28 Jun 2024 11:59:11 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa@kernel.org>
-Cc: linux-i2c <linux-i2c@vger.kernel.org>, 
-	lkml <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@kernel.org>, 
-	Andi Shyti <andi.shyti@kernel.org>
-Subject: i2c-host-fixes for v6.10-rc6
-Message-ID: <a6byafqkslh6wjsgfotnv3ibkax7gpuvlalf5bgtzc46imy6uu@6b2fsl4d4hh2>
+	s=arc-20240116; t=1719568776; c=relaxed/simple;
+	bh=apYPCiCCBhhW47PGckaJryPnErPTII7yZQmGkZShW+g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ucs9N9QMrOOarKRs2XZ779a+W4rdkdx6My+QVfuyoUbJFkyNQugzY1Jcn738beWxlxpvOxtVQ+DfHYrJuC0mo+r9PWXCI5tTttwb3q5TtkVvlkeiyQIf0ja/ke41bNo3asHp3s4itR4vSqEHncdEampGPajplo8U6ut6vNCM7K4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E4C1B106F;
+	Fri, 28 Jun 2024 02:59:56 -0700 (PDT)
+Received: from [10.1.29.17] (e122027.cambridge.arm.com [10.1.29.17])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 571CF3F6A8;
+	Fri, 28 Jun 2024 02:59:28 -0700 (PDT)
+Message-ID: <01b48dc0-8f69-435c-86c5-bc22ea148e3a@arm.com>
+Date: Fri, 28 Jun 2024 10:59:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 12/14] arm64: realm: Support nonsecure ITS emulation
+ shared
+To: Michael Kelley <mhklinux@outlook.com>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
+ <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
+ Fuad Tabba <tabba@google.com>,
+ "linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+References: <20240605093006.145492-1-steven.price@arm.com>
+ <20240605093006.145492-13-steven.price@arm.com>
+ <SN6PR02MB415702A53E8516F1BEEC7EDAD4CD2@SN6PR02MB4157.namprd02.prod.outlook.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <SN6PR02MB415702A53E8516F1BEEC7EDAD4CD2@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Wolfram,
+On 17/06/2024 04:54, Michael Kelley wrote:
+> From: Steven Price <steven.price@arm.com> Sent: Wednesday, June 5, 2024 2:30 AM
+>>
+>> Within a realm guest the ITS is emulated by the host. This means the
+>> allocations must have been made available to the host by a call to
+>> set_memory_decrypted(). Introduce an allocation function which performs
+>> this extra call.
+>>
+>> Co-developed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> Signed-off-by: Steven Price <steven.price@arm.com>
+>> ---
+>> Changes since v2:
+>>  * Drop 'shared' from the new its_xxx function names as they are used
+>>    for non-realm guests too.
+>>  * Don't handle the NUMA_NO_NODE case specially - alloc_pages_node()
+>>    should do the right thing.
+>>  * Drop a pointless (void *) cast.
+>> ---
+>>  drivers/irqchip/irq-gic-v3-its.c | 90 ++++++++++++++++++++++++--------
+>>  1 file changed, 67 insertions(+), 23 deletions(-)
+>>
+>> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+>> index 40ebf1726393..ca72f830f4cc 100644
+>> --- a/drivers/irqchip/irq-gic-v3-its.c
+>> +++ b/drivers/irqchip/irq-gic-v3-its.c
+>> @@ -18,6 +18,7 @@
+>>  #include <linux/irqdomain.h>
+>>  #include <linux/list.h>
+>>  #include <linux/log2.h>
+>> +#include <linux/mem_encrypt.h>
+>>  #include <linux/memblock.h>
+>>  #include <linux/mm.h>
+>>  #include <linux/msi.h>
+>> @@ -27,6 +28,7 @@
+>>  #include <linux/of_pci.h>
+>>  #include <linux/of_platform.h>
+>>  #include <linux/percpu.h>
+>> +#include <linux/set_memory.h>
+>>  #include <linux/slab.h>
+>>  #include <linux/syscore_ops.h>
+>>
+>> @@ -163,6 +165,7 @@ struct its_device {
+>>  	struct its_node		*its;
+>>  	struct event_lpi_map	event_map;
+>>  	void			*itt;
+>> +	u32			itt_order;
+>>  	u32			nr_ites;
+>>  	u32			device_id;
+>>  	bool			shared;
+>> @@ -198,6 +201,30 @@ static DEFINE_IDA(its_vpeid_ida);
+>>  #define gic_data_rdist_rd_base()	(gic_data_rdist()->rd_base)
+>>  #define gic_data_rdist_vlpi_base()	(gic_data_rdist_rd_base() + SZ_128K)
+>>
+>> +static struct page *its_alloc_pages_node(int node, gfp_t gfp,
+>> +					 unsigned int order)
+>> +{
+>> +	struct page *page;
+>> +
+>> +	page = alloc_pages_node(node, gfp, order);
+>> +
+>> +	if (page)
+>> +		set_memory_decrypted((unsigned long)page_address(page),
+>> +				     1 << order);
+> 
+> There's been considerable discussion on the x86 side about
+> what to do when set_memory_decrypted() or set_memory_encrypted()
+> fails. The conclusions are:
+> 
+> 1) set_memory_decrypted()/encrypted() *could* fail due to a
+> compromised/malicious host, due to a bug somewhere in the
+> software stack, or due to resource constraints (x86 might need to
+> split a large page mapping, and need to allocate additional page
+> table pages, which could fail).
+> 
+> 2) The guest memory that was the target of such a failed call could
+> be left in an indeterminate state that the guest could not reliably
+> undo or correct. The guest's view of the page's decrypted/encrypted
+> state might not match the host's view. Therefore, any such guest
+> memory must be leaked rather than being used or put back on the
+> free list.
+> 
+> 3) After some discussion, we decided not to panic in such a case.
+> Instead, set_memory_decrypted()/encrypted() generates a WARN,
+> as well as returns a failure result. The most security conscious
+> users could set panic_on_warn=1 in their VMs, and thereby stop
+> further operation if there any indication that the transition between
+> encrypted and decrypt is suspect. The caller of these functions
+> also can take explicit action in the case of a failure.
+> 
+> It seems like the same guidelines should apply here. On the x86
+> side we've also cleaned up cases where the return value isn't
+> checked, like here and the use of set_memory_encrypted() below.
 
-thanks for pinging me on Arnd's patch. You'll find it in this
-pull request.
+Very good points - this code was lacking error handling. I think you are
+also right that the correct situation when set_memory_{en,de}crypted()
+fails is to WARN() and leak the page. It's something that shouldn't
+happen with a well behaving host and it's unclear how to safely recover
+the page - so leaking the page is the safest result. And the WARN()
+approach gives the user the option as to whether this is fatal via
+panic_on_warn.
 
 Thanks,
-Andi
+Steve
 
-The following changes since commit f2661062f16b2de5d7b6a5c42a9a5c96326b8454:
-
-  Linux 6.10-rc5 (2024-06-23 17:08:54 -0400)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags/i2c-host-fixes-6.10-rc6
-
-for you to fetch changes up to 103458874baca0bbc8ae0b66d50201d5faa8c17b:
-
-  i2c: viai2c: turn common code into a proper module (2024-06-26 16:07:21 +0200)
-
-----------------------------------------------------------------
-Fixed a build error following the major refactoring involving the
-VIA-I2C modules. Originally, the code was split to group together
-parts that would be used by different drivers. This caused build
-issues when two modules linked to the same code.
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      i2c: viai2c: turn common code into a proper module
-
- drivers/i2c/busses/Makefile             |   6 ++----
- drivers/i2c/busses/i2c-viai2c-common.c  |  71 +++++++++--------------------------------------------------------------
- drivers/i2c/busses/i2c-viai2c-common.h  |   2 +-
- drivers/i2c/busses/i2c-viai2c-wmt.c     |  36 ++++++++++++++++++++++++++++++++++++
- drivers/i2c/busses/i2c-viai2c-zhaoxin.c | 113 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++----------------------
- 5 files changed, 139 insertions(+), 89 deletions(-)
 
