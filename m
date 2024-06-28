@@ -1,88 +1,85 @@
-Return-Path: <linux-kernel+bounces-233655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A30691BB1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:09:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F6A491BB1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:10:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8CD8280FDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:09:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBA581F21FF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:10:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A0E154BE2;
-	Fri, 28 Jun 2024 09:07:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A27A155322;
+	Fri, 28 Jun 2024 09:07:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gVJetfdf"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UceR3ffq"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD1B14E2E3
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 09:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BEBD14F114
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 09:07:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719565643; cv=none; b=YLAMZCl9MtYMcimM58m4LOkTmfsE0SeEQT0yRzT6zSzSeviuMgMNYuLg6fl9DktRTozfdD5hZzWzu0BwGv/hKMpzN/9JNDf2U6eEAkP+yBqYa81f6U5X2y/ZFpCMwjR+ADMIhK9QPNUPz6YOw3XxVfA9vcyXJcAYTEAXDX7mugM=
+	t=1719565644; cv=none; b=PS1FaG0Vr3eDyw5hFXUgMvZToAiyb5p+XfB55nZQNnodEe3mqpRhiqSSyrF5oPZrFNwk5GPf0vzGOJfxdVTAQUDVoeKEBEHns0GQySEsscjw79HJ6GLulFX/AADXGqHY7ggw25DqFJuHGeqsdgTDhkIQ6EpjS9NMcQN1VBl405A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719565643; c=relaxed/simple;
-	bh=uwPKeY4YAFWk+GuFqb+c0ljykA9M16vP1oj8QsN1i1w=;
+	s=arc-20240116; t=1719565644; c=relaxed/simple;
+	bh=t+G3fd+ijv9xUdbGUKk79N+1x4Cu8Lqf+seYfUdMczk=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=nadYDa7zOMR4+nj7SKNAMo3RC5rTeCSkpyYVbArc7lYOXZeQjH8ucZSVwqcBUn/Z1LelKNdKdlmVwo4K/Tz0D/DxortJVQ1lBs9u7jUjAWN4YD+XrCxgOQ3arf7LDzk9R0VSE2GtpJo/fZ1GLuV9nKAscVTQ9HToxqTS18PDANQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gVJetfdf; arc=none smtp.client-ip=209.85.221.45
+	 MIME-Version:Content-Type; b=QTvSQCsZbRHNieN3UflrFBIasMC4NAmIAHoRrOjFpEg6fUXEbwds9OMhzoqQS8DPJwXNMiryndXf5DUqk79izlPzmRpruiNnx9u4MXEd17ibaBuO64DxUn3r8ymL/rFeZ5YXTiqaBAzqFE0gEl+P2Cz2IoTvfloVRuKen1Rh9iQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UceR3ffq; arc=none smtp.client-ip=209.85.167.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-367601ca463so227157f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 02:07:21 -0700 (PDT)
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52cdd03d6aaso434473e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 02:07:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719565640; x=1720170440; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1719565641; x=1720170441; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sAojY8v61Oq5pXWhl+jbz8qnbn0iqqHxroEEAHU3dVw=;
-        b=gVJetfdfr38QbLRVVbFr/wn0v2SB4qEduvVTlFZdk8u3h3bzgcoRCYp49YUkA13o2B
-         ntP0UEhhS6Te/h+8+fJcRNM+4F2AOLJN9HVTMaTH3W2mtBOal81cYHh5Xzw6laNEI2Ft
-         0OyJN72hg+b3hsyXBCdN6jP+6yroCtFy71hnJOOD/CHvTocslAEa53Q+tDV3lk3Jynmj
-         d1IGyDSvpJ7uf11oNA6KIT7Lsf2yJ4tOoTh8X2LVqCi9Mp6blsX1FxyWrsvJqbw6acum
-         56RrCQMoqc5viJUaDk/Nrzo0+wDEfMpsx5BgFKSgPpzz/Ih94IqYQ07H8k9KtgZy9pnh
-         +jpw==
+        bh=XB5EvDrakOPexl9GfGTU4JrWCssuFa6ZQG7ub++KlZM=;
+        b=UceR3ffqDXvl9HZm08vdBJIwTYA+P5a8X4lQ3uWl+uk3MJOTkDP9c6ohElUu8rHGHY
+         C3u67QnC3Y1ut6KTx79Po/zJ6NSZoZCFxMHdk/JOLRzFIRT5zg3es/Z1w66g2dZ9qTNv
+         gA5QObfSk6UFlFzXmhmBykFDv+MPWGH2rrZcLcAmr1hpw1y68HLn+a+E1tAwYZ8dHhYC
+         KHWTsVFQ/fg7h7kcfgZU+LUoxhHbYWTGsPxXVvS6GfTz4Ilkqe6Ulp6R5ZeB4iFN404o
+         gmGhZBRXjfLqd3ym75LeyTb5sRPYWifeOmhR7VRI6r4dspjq3f+AEiubDSkXpzOL2B7O
+         a2Ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719565640; x=1720170440;
+        d=1e100.net; s=20230601; t=1719565641; x=1720170441;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sAojY8v61Oq5pXWhl+jbz8qnbn0iqqHxroEEAHU3dVw=;
-        b=YSicO/mq26El9mRZMA77xdRJw772LLROF4o64f0aKqqpSO/0pACbOxGGG0bJLgCQgO
-         +7ab+NbIlfQhT9eW7B7vHPYE6VGgER37T/GXrtrQZPPcAA6Lj3i/mwbxyaE6ibtkSZaH
-         C7+Re5al7YsbGeGbVhtO0tWrRnoXhjVmSGMh6OjaSYi/icX2WckAXtQzxLw9zrjZix4z
-         1wuigiqGhYnb8Ns63+YCAh+VI8x0p5ABCtGM/+EesoaT2YdrUNRCdx6Knu+U29FazMu4
-         oCNqyAKxMfR/NTuWKLJWhwB9tHRJlY+liSZVF/SMdywjphGIXlU6gLQpPEBv195Vachx
-         26fQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXBqswStgpIvMB83gFS+Yxi6rVUHx77rGp5ItvMlM3u3xBWEWSgUiMYu+zN1roqPN3v3v8z+mn5Fc2JhR5/7xhvQwR25v718YPHjVvI
-X-Gm-Message-State: AOJu0YyxlkREI5RlXEsrXa1vxHKAq5zkJTkHjg7e7w1ih87kc2RnNLhq
-	hHH8UoNpdgXAldKJ3AkY2MXM8IoI4fdwy9bTVWIo4llIznbf5hvPmt3fna9hZD4=
-X-Google-Smtp-Source: AGHT+IH1p4Lr0/8BDnffNORPkUxB15wlpiN10FAgg7kp26WVIDI1u2ehlcIyNvLqTtsh8o3u98LDqA==
-X-Received: by 2002:adf:fd4b:0:b0:367:2ae1:9c4d with SMTP id ffacd0b85a97d-3672ae19d30mr5031112f8f.29.1719565640035;
-        Fri, 28 Jun 2024 02:07:20 -0700 (PDT)
+        bh=XB5EvDrakOPexl9GfGTU4JrWCssuFa6ZQG7ub++KlZM=;
+        b=FRNl2p51ImDVGVyEjrvm3yn7DP3ROxi75fNkoF9aG8CUqQazGVDfgKZHMNJG2oTfHE
+         r9IeBvrgIlOMAvx+8cPVsMu7Dxts93T7avYPtp2zOzjCGsdlboqcrVnlpxcsJ8BHGDbD
+         Fmd8YxP9DcMT2cUhPLwPUIWIQcGonh+KZoT6Qh4LPul+TSsbrkV0OdBDjsm79kPwVTox
+         Zq0gAFcnNzqsYnQyRCnDJoQ6y3HrSEWmwWEER+JbKj9LwLA7+peFat0CO/zcKqEdmyE6
+         piGJQRMOhTr45xc8C1yn+dUgB6G6wHndQlD2VDrAai29CDnvwOnPuflzhH9SB68071F0
+         9NSw==
+X-Forwarded-Encrypted: i=1; AJvYcCVkenNoAO3hFW8nKXjmrCCVuXC6OEhIOWPX2rd5gINunZ8mw3Rl6I/+Q3MpTLQGG55nngnVNHFdVTcI8hYXLxhbQvax7LWliaD16Tfl
+X-Gm-Message-State: AOJu0YyDoFfq9+VbONse5HcMdyp+6wtrhfI2U5xRuaH2kEsqlbcqzbvZ
+	PO6M7OWQmbc6ekIzbTRnbpTj+DFby1SomPyjB6KXd0bm81uaDtnpytOvbSVi9vg=
+X-Google-Smtp-Source: AGHT+IHR5Ql6wS15UNWAOVb5aKvdINi1DnDQLmYnWVu5yPtbmbQXdKi7BzF02P3kLBpPAnSoB8LhRw==
+X-Received: by 2002:a05:6512:2083:b0:52c:e040:7d9 with SMTP id 2adb3069b0e04-52ce0680398mr10053969e87.59.1719565641000;
+        Fri, 28 Jun 2024 02:07:21 -0700 (PDT)
 Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0fb967sm1612896f8f.82.2024.06.28.02.07.19
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0fb967sm1612896f8f.82.2024.06.28.02.07.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 02:07:19 -0700 (PDT)
+        Fri, 28 Jun 2024 02:07:20 -0700 (PDT)
 From: Neil Armstrong <neil.armstrong@linaro.org>
-To: Jessica Zhang <quic_jesszhan@quicinc.com>, 
- Sam Ravnborg <sam@ravnborg.org>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Paul Gerber <paul.gerber@ew.tq-group.com>
+To: dmitry.torokhov@gmail.com, robh@kernel.org, 
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, jikos@kernel.org, 
+ benjamin.tissoires@redhat.co, dianders@google.com, hsinyi@google.com, 
+ jagan@edgeble.ai, quic_jesszhan@quicinc.com, dmitry.baryshkov@linaro.org, 
+ Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
 Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org
-In-Reply-To: <20240627084446.3197196-1-paul.gerber@ew.tq-group.com>
-References: <20240627084446.3197196-1-paul.gerber@ew.tq-group.com>
-Subject: Re: [PATCH v2 0/2] Add AUO G104STN01 panel
-Message-Id: <171956563914.990484.5258309901602303917.b4-ty@linaro.org>
-Date: Fri, 28 Jun 2024 11:07:19 +0200
+In-Reply-To: <20240624141926.5250-1-lvzhaoxiong@huaqin.corp-partner.google.com>
+References: <20240624141926.5250-1-lvzhaoxiong@huaqin.corp-partner.google.com>
+Subject: Re: [PATCH v5 0/5] Add kd101ne3-40ti configuration in driver
+ jd9365da
+Message-Id: <171956564012.990484.13901393761695275896.b4-ty@linaro.org>
+Date: Fri, 28 Jun 2024 11:07:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,25 +92,29 @@ X-Mailer: b4 0.13.0
 
 Hi,
 
-On Thu, 27 Jun 2024 10:44:42 +0200, Paul Gerber wrote:
-> Changes in v2:
-> - put explanatory comment for display binding before the list entry
-> - collected Acked-by and Reviewed-by
+On Mon, 24 Jun 2024 22:19:21 +0800, Zhaoxiong Lv wrote:
+> This kingdisplay panel uses the jd9365da controller, so add it to
+> panel-jadard-jd9365da-h3.c driver, but because the init_code and timing
+> are different, some variables are added in struct jadard_panel_des to
+> control it.
 > 
-> Link to v1: https://lore.kernel.org/dri-devel/20240626044727.2330191-1-paul.gerber@ew.tq-group.com/
-> 
-> Paul Gerber (2):
->   dt-bindings: display: simple: Add AUO G104STN01 panel
->   drm/panel: simple: Add AUO G104STN01 panel entry
+> In addition, since sending init_code in the enable() function takes a long time,
+> it is moved to the prepare() function.
 > 
 > [...]
 
 Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
 
-[1/2] dt-bindings: display: simple: Add AUO G104STN01 panel
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/21335cf6af98d524d01296865fd0a1c6886ace54
-[2/2] drm/panel: simple: Add AUO G104STN01 panel entry
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/6c2b2cd33705b43cb19699500bbf7bd77bc8b60b
+[1/5] drm/panel: jd9365da: Modify the method of sending commands
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/38cae7b626ec7b89cd14f15efb36f64682c76371
+[2/5] dt-bindings: display: panel: Add compatible for kingdisplay-kd101ne3
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/e7f5112ae111a125366039666e9c6ff8dd71d0a4
+[3/5] drm/panel: panel-jadard-jd9365da-h3: use wrapped MIPI DCS functions
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/35583e129995164aebb169103fe64614482ccf8e
+[4/5] drm/panel: jd9365da: Support for kd101ne3-40ti MIPI-DSI panel
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/2b976ad760dc3a62e4ff4c4e5afa02ec16e4013a
+[5/5] drm/panel: jd9365da: Add the function of adjusting orientation
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/e1c550898f75eec9c6dcfc16a584d5bc58eebf77
 
 -- 
 Neil
