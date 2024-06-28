@@ -1,154 +1,148 @@
-Return-Path: <linux-kernel+bounces-234036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF34191C13A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:39:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DCD8E91C13C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:39:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 745791F22766
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:39:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 948CE1F20FF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:39:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938AF1C0DD4;
-	Fri, 28 Jun 2024 14:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C3591C0DF8;
+	Fri, 28 Jun 2024 14:39:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iJ6VPt1t"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uGUhr/Q+"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806471E53A;
-	Fri, 28 Jun 2024 14:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E481C0DE7
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 14:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719585554; cv=none; b=u4YlkDS++upZP+CLlUrGLS8rrieRFt8vZngZOzdHsPl+k7tlR0UIRfkfVo51zCup8bp7mdmgKquiNXCAdHkUE1UOyBL8BAujH50bwzB76oeJGJg66o/noncGi+4tcm4/VKmD+Ls3j3FmrMuavkI8O+SSFhCBDY4Et26PSnUAhVo=
+	t=1719585560; cv=none; b=h/StwMf/lzlygrahfeA3gnooN9EMoMwk3FEk3bezFo02PUm6CvJ8E+Lc68WFaZMS7zhbD86nL6B6m0aAou62KFxsAuOaowwy2D2XMTO2RN5UmlLioYG0kPW/frKLwY+HyKrhneWVnl/6aYd6+QBSu9hWhV+CNVbAaDkv4dZZ0Uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719585554; c=relaxed/simple;
-	bh=fbKwqXlvo36CXSMeJryZJPdETSPPD5sl/c0WBnH8V4Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=BdYPu1yGHwHcDFWdfXoUgS6RefbocjsmeP4mgjhc8dhqM0JIpUzStIRy2IArRgfvmEK6CL9zCY7uwKKY1FDCLAKNUw61pIWcXlh/o1mawSk4d2XBpZ0fIDuD2e8YdVs6NeNZ1XzOSKbVqC3Kd+1v3/2xEtMyV4XqT2gKk5C8upk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iJ6VPt1t; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45S8d61C012603;
-	Fri, 28 Jun 2024 14:38:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vmsoo87nXpQIGp4+dpf035YqcbLL73mjN+51Tgx2Oh0=; b=iJ6VPt1toWRAphns
-	KeLg7V6++K2120XDsnNO3gzxAy2lpfHZOOmTLf0jGdA8aHEgx179wDkIo38uRD6w
-	Ol0Fx/eYsZTNPuWv0T4t1X9BTA5Sdhhelb94INMU2hn31qDiwYVUqml25fPJwneg
-	XpbgDtCfXBCs3v9Ic4jTEGeMZQqkt3PKi4OZbPnnwx7kkkapswtSzUmSm0Xo1vHl
-	UXfW30IO/4sDeQp1lO9/Q9ItwEFtacNykPWFDI59Nc8a2OOJ3pQckfsaqMdZeCtp
-	2/fOcrmT5DYfTbQpEwXOyCHRSO0BORydFz4HeejmgA7d6VT99SSUeBE/gpP5RU/u
-	UbQKMQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 401njr9tke-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Jun 2024 14:38:59 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45SEcwfI027146
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Jun 2024 14:38:58 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 28 Jun
- 2024 07:38:58 -0700
-Message-ID: <cde35f69-4d6e-d46d-88ca-9c5d6d5e757f@quicinc.com>
-Date: Fri, 28 Jun 2024 08:38:57 -0600
+	s=arc-20240116; t=1719585560; c=relaxed/simple;
+	bh=DnPbeFhnpqo7ICi6RF3F2geQeT0KbWfD+cwPIsOtWoc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=OCU1fEtgxhiXHeD6LVsHqj2t/PFQqD2QP9RCKEmUcSnNlQk8Doqb4jKKTOfOa1eGUxB1Hn1bcfCb/GXd5aNLWp+BokdcXV2ShGmD4E17ghZ9KXhKtVj1ttC0E0XOMs47OhIoVKqNtN8VX4BHgwl1fSk0TPgPPgdmn2cgnWsPiic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uGUhr/Q+; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: torvalds@linux-foundation.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1719585555;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=d/hVC8tJYHzflhtDbd2o075Ru39jFiSORBp8C8axaVU=;
+	b=uGUhr/Q+8TWgW3+NPJRnDhMwJ0tl9QM0ehv4wnF5gt//Y//SfZPyLBjMmny6GW5n5y2wux
+	8KY6zSCJvn49wSBD4oCVoC7of+QCTwVZeHXLItRyOCbQQoa2M1svIpyz4Z/Jlzhv6ttkco
+	eS8OTEOfHhKU6J7v/vZWTj1GKLb6ftM=
+X-Envelope-To: linux-bcachefs@vger.kernel.org
+X-Envelope-To: linux-fsdevel@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+Date: Fri, 28 Jun 2024 10:39:11 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] bcachefs fixes for 6.10-rc6
+Message-ID: <2taurilom54hdpzwsk5qwfln3elficdoarykhakvmhaoneg455@iylhhiq7mauv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH v3 2/3] bus: mhi: host: Add name for mhi_controller
-Content-Language: en-US
-To: Slark Xiao <slark_xiao@163.com>, <manivannan.sadhasivam@linaro.org>,
-        <loic.poulain@linaro.org>, <ryazanov.s.a@gmail.com>,
-        <johannes@sipsolutions.net>
-CC: <netdev@vger.kernel.org>, <mhi@lists.linux.dev>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240628073626.1447288-1-slark_xiao@163.com>
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20240628073626.1447288-1-slark_xiao@163.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: jEkA4FUUieoR8WaoPVsF-2cM8dNthUvb
-X-Proofpoint-ORIG-GUID: jEkA4FUUieoR8WaoPVsF-2cM8dNthUvb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-28_10,2024-06-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 spamscore=0
- malwarescore=0 bulkscore=0 adultscore=0 suspectscore=0 priorityscore=1501
- clxscore=1011 phishscore=0 impostorscore=0 lowpriorityscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2406280109
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Migadu-Flow: FLOW_OUT
 
-On 6/28/2024 1:36 AM, Slark Xiao wrote:
->   For SDX72 MBIM mode, it starts data mux id from 112 instead of 0.
->   This would lead to device can't ping outside successfully.
->   Also MBIM side would report "bad packet session (112)".
+Hi Linus, fresh batch of fixes for you...
 
-Weird indentation
+Cheers,
+Kent
 
->   In oder to fix this issue, we decide to use the modem name
+The following changes since commit bd4da0462ea7bf26b2a5df5528ec20c550f7ec41:
 
-"order"
+  bcachefs: Move the ei_flags setting to after initialization (2024-06-21 10:17:07 -0400)
 
-> to do a match in client driver side. Then client driver could
-> set a corresponding mux_id value for this modem product.
-> 
-> Signed-off-by: Slark Xiao <slark_xiao@163.com>
-> ---
->   drivers/bus/mhi/host/pci_generic.c | 1 +
->   include/linux/mhi.h                | 2 ++
->   2 files changed, 3 insertions(+)
-> 
-> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
-> index 1fb1c2f2fe12..14a11880bcea 100644
-> --- a/drivers/bus/mhi/host/pci_generic.c
-> +++ b/drivers/bus/mhi/host/pci_generic.c
-> @@ -1086,6 +1086,7 @@ static int mhi_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->   	mhi_cntrl->runtime_get = mhi_pci_runtime_get;
->   	mhi_cntrl->runtime_put = mhi_pci_runtime_put;
->   	mhi_cntrl->mru = info->mru_default;
-> +	mhi_cntrl->name = info->name;
->   
->   	if (info->edl_trigger)
->   		mhi_cntrl->edl_trigger = mhi_pci_generic_edl_trigger;
-> diff --git a/include/linux/mhi.h b/include/linux/mhi.h
-> index b573f15762f8..86aa4f52842c 100644
-> --- a/include/linux/mhi.h
-> +++ b/include/linux/mhi.h
-> @@ -361,6 +361,7 @@ struct mhi_controller_config {
->    * @wake_set: Device wakeup set flag
->    * @irq_flags: irq flags passed to request_irq (optional)
->    * @mru: the default MRU for the MHI device
-> + * @name: name of the modem
+are available in the Git repository at:
 
-Why restrict this to modems?  There are plenty of other MHI devices
+  https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2024-06-28
 
->    *
->    * Fields marked as (required) need to be populated by the controller driver
->    * before calling mhi_register_controller(). For the fields marked as (optional)
-> @@ -445,6 +446,7 @@ struct mhi_controller {
->   	bool wake_set;
->   	unsigned long irq_flags;
->   	u32 mru;
-> +	const char *name;
+for you to fetch changes up to 64cd7de998f393e73981e2aa4ee13e4e887f01ea:
 
-Please run pahole
+  bcachefs: Fix kmalloc bug in __snapshot_t_mut (2024-06-25 20:51:14 -0400)
 
->   };
->   
->   /**
+----------------------------------------------------------------
+bcachefs fixes for 6.10-rc6
 
+simple stuff:
+- null ptr/err ptr deref fixes
+- fix for getting wedged on shutdown after journal error
+
+- fix missing recalc_capacity() call, capacity now changes correctly
+  after a device goes read only
+
+  however: our capacity calculation still doesn't take into account when
+  we have mixed ro/rw devices and the ro devices have data on them,
+  that's going to be a more involved fix to separate accounting for
+  "capacity used on ro devices" and "capacity used on rw devices"
+
+- boring syzbot stuff
+
+slightly more involved:
+- discard, invalidate workers are now per device
+  this has the effect of simplifying how we take device refs in these
+  paths, and the device ref cleanup fixes a longstanding race between
+  the device removal path and the discard path
+
+- fixes for how the debugfs code takes refs on btree_trans objects
+  we have debugfs code that prints in use btree_trans objects. It uses
+  closure_get() on trans->ref, which is mainly for the cycle detector,
+  but the debugfs code was using it on a closure that may have hit 0,
+  which is not allowed; for performance reasons we cannot avoid having
+  not-in-use transactions on the global list.
+
+  introduce some new primitives to fix this and make the synchronization
+  here a whole lot saner
+
+----------------------------------------------------------------
+Kent Overstreet (10):
+      bcachefs: Fix freeing of error pointers
+      bcachefs: fix seqmutex_relock()
+      bcachefs: Make btree_deadlock_to_text() clearer
+      closures: closure_get_not_zero(), closure_return_sync()
+      bcachefs: Fix race between trans_put() and btree_transactions_read()
+      bcachefs: Fix btree_trans list ordering
+      bcachefs: Add missing recalc_capacity() call
+      bcachefs: Fix null ptr deref in journal_pins_to_text()
+      bcachefs: Add missing bch2_journal_do_writes() call
+      bcachefs: Discard, invalidate workers are now per device
+
+Pei Li (3):
+      bcachefs: slab-use-after-free Read in bch2_sb_errors_from_cpu
+      bcachefs: Fix shift-out-of-bounds in bch2_blacklist_entries_gc
+      bcachefs: Fix kmalloc bug in __snapshot_t_mut
+
+ fs/bcachefs/alloc_background.c      | 263 +++++++++++++++++++-----------------
+ fs/bcachefs/alloc_background.h      |   6 +-
+ fs/bcachefs/alloc_foreground.c      |   4 +-
+ fs/bcachefs/bcachefs.h              |  16 ++-
+ fs/bcachefs/btree_iter.c            |  19 +--
+ fs/bcachefs/chardev.c               |   9 +-
+ fs/bcachefs/debug.c                 | 109 +++++++++------
+ fs/bcachefs/journal.c               |   5 +
+ fs/bcachefs/journal_io.c            |   7 +
+ fs/bcachefs/journal_seq_blacklist.c |   2 +-
+ fs/bcachefs/sb-errors.c             |  14 +-
+ fs/bcachefs/seqmutex.h              |  11 +-
+ fs/bcachefs/snapshot.c              |   3 +
+ fs/bcachefs/super.c                 |   6 +-
+ include/linux/closure.h             |  23 ++++
+ lib/closure.c                       |  52 ++++++-
+ 16 files changed, 342 insertions(+), 207 deletions(-)
 
