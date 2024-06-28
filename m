@@ -1,251 +1,328 @@
-Return-Path: <linux-kernel+bounces-234464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E5FC91C707
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:06:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAF8391C710
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52CB128568E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:06:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18AD31C230F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:07:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D7D74429;
-	Fri, 28 Jun 2024 20:06:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD9477F08;
+	Fri, 28 Jun 2024 20:07:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="dMf5PUsI"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2058.outbound.protection.outlook.com [40.107.236.58])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bNSN7tTX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64856EB56;
-	Fri, 28 Jun 2024 20:06:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719605209; cv=fail; b=TUKfT4qaxUa581OvkUTE/PKoXDl4ncuYYz2m6Rvz82za7rq8rl0z4XGZmgM1C4XScKPt4t6QGpoX5AmE6ZNUOS+1hUlaoblVrhti3ZJXMOXwQKesCAvVrQCx4GAeU+r0Hg+oEN/FWZ8cJ4XbDqk5hVAbrDal5FEEOogpzfFOo0s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719605209; c=relaxed/simple;
-	bh=LkOo+I3sEzdZ5/0q576r0E970NdnLtaFTo698XeHLHA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Nd2CgvGJU0tqcVKUPcPrpdUbE2d/P0nV9Z4Vu2YLNjKlieC0h6NEiHU7r0umYGl3oKuJN92xY3q4to1ujzFasjSItoQB/oYY8GRtwwIQxHq4QKTk2OX+WutihcfAWJCOk60oa4W1od93Sd4Jpln6dhW8r4MW8dquZYAv7frrTVw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=dMf5PUsI; arc=fail smtp.client-ip=40.107.236.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fc4O8m4HD3xhh3t+L2iQOFN3o5svh7mgQ2GM3plgnVbx6qImIARFvlu7ezZkFx16v/MVknVet6fZy8Lbh8AxTPrYwMcOnPsSPlF2Il9bldQgxJyPqRG5Pu9Wl1+LCffDGD6RuOIAFWp72cN+BtcqsdqUJ8AMLZfkp1hlDqi/IJCnhg4QAhSeHk8sDLh2OTkj+/kYeGx6EdcJAtPWilggEgyq6zof0/OM2kJdfCud1HlVcjIjhbcTz2rfCoR/BJ0zXc6uYElBr+VZ8UMH8FmaKobZCEMcqCJX0kKvnT3GtjPYLOHaQi/FISft8K5BFF+22cb8+bQrbZSgigWPO/Uf7A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JR8iVXnZdeKDigGW433l+j2NWxVpvqJBxaKw2PS0muk=;
- b=b8Gz90KbeLDSOvihhclR1e0rTo02vJoZZmgioGaU0m32EXFZZecqPsoorz0Pr4Le5Qo5AYschluz+y9wBdxo+U+6cMf/V1anIUhqMFPwxGeRvlNf5Z8bgDEs84ss2guzs6bRobhrn5KWQ8hEJGSELiyUWP/VuiNT6IDmiWkPtRJl0/Cdl1LQ0pArRQvbPp5ZbPWA8BVNoue4tOZJBFnDX1iOnHkZDVBszl5L1FNAbcUco129Ft8yZiNIrNNIsZdh7HXaeLUGMmhYppTo7G6RAVL88kA2XvZyZTDsExcpSRXaOJ2nJlmXXRZq45j+erTdy0LjTtPTu0gCprFEThHodg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JR8iVXnZdeKDigGW433l+j2NWxVpvqJBxaKw2PS0muk=;
- b=dMf5PUsIzYdQEJbayuybz8t2Tok9tmo0qLtNBbNzN/169GdOKf7l1WbS/Nxu+BepA6B8njgXLHfROUjFeUasfQf/TAgDGleu4VP0ZjoKIQ0SScr8aQnBgCsLiU5Rt/frQngbS/OG4022aZ0xs6B7chW2UMEiwSeQA2NWyKHbm82QXqVN5BPXHHwGGhqS6Z+xtpIFe4xzw1qZcD5GZ0Jq2fRWHiE0ma7ySm5CQyT8YR2pleHxhdmb2+9RbbMsR61fQD7YbhlQkaqwUiAXGxnKY5ogHrgh7VcPZKgBSTbvyysMBEY/BH18Mg2pWmvDircCNyR6zPByFG26/ii99mI3Xg==
-Received: from PH7P221CA0016.NAMP221.PROD.OUTLOOK.COM (2603:10b6:510:32a::20)
- by MN0PR12MB5932.namprd12.prod.outlook.com (2603:10b6:208:37f::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.32; Fri, 28 Jun
- 2024 20:06:41 +0000
-Received: from CY4PEPF0000FCBE.namprd03.prod.outlook.com
- (2603:10b6:510:32a:cafe::2f) by PH7P221CA0016.outlook.office365.com
- (2603:10b6:510:32a::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.28 via Frontend
- Transport; Fri, 28 Jun 2024 20:06:40 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CY4PEPF0000FCBE.mail.protection.outlook.com (10.167.242.100) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7677.15 via Frontend Transport; Fri, 28 Jun 2024 20:06:40 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 28 Jun
- 2024 13:06:20 -0700
-Received: from [10.110.48.28] (10.126.230.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 28 Jun
- 2024 13:06:19 -0700
-Message-ID: <d9c56b70-6120-4de7-920b-9ece52905c00@nvidia.com>
-Date: Fri, 28 Jun 2024 13:06:18 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BCE8770F0;
+	Fri, 28 Jun 2024 20:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719605257; cv=none; b=P/JOOTaF8rfgFGiZz7R40Kc8kfQz7srxVG8RQ+pj5XCWvyVnfhM24mZuiW1ZU+iDICto6w2+XRFhjSPMx4os1RfNvlcqvDkrGbFAfZ4cwNVoxcnBQZCN1j84w5m4r4oPBJI4BBTb5g0ZV9o9tFGrnCAXmcOVMuovpEcQN184Hqc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719605257; c=relaxed/simple;
+	bh=0PjGwPWldCD0xPnSfdbjRAC8QfzgJtyroxiHeScz7FQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OR0pfWrhfcgoRceqRy2eFg2zbaE8Df5CNZYVQR5k1+UJcKmnvJGSyPUr38Bj1vE68Uzu5pTEF7ogNeM4ErBNliKEbncrwhZ/qhey4+5VeCkRaLmo9zbkOyxoJrBiBppOd68M7qIi69tIoTqMFFkWq/WyMZEkl6M2Lcw/TEoEt7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bNSN7tTX; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719605255; x=1751141255;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0PjGwPWldCD0xPnSfdbjRAC8QfzgJtyroxiHeScz7FQ=;
+  b=bNSN7tTX8oJG/BRJd6Y6RoJfbnlmet0eiiD6QOjPhgEQ5t8lhi9zrpta
+   26DEtV6I5jJo2Vy9YuYp9Axs3hNaXff5zeSp9xmb7KM1MDGnl0Up5y8f4
+   61gxtFn4J8HqejZgX3EAQlJXUJ492UQ93h5x8+k9Yy8swoM/6rXzVILvl
+   RV1U2lGLPVwgu3OYP0oDobNq1BoHfxqBY15YMZyHLSLB/cCFZEy/twH2D
+   nlzvp14I2GI0HuinSIUOwzkMCHrG0Z5HSSGgmMkdKaJWR9WW8MfYwR8/3
+   CFl9o1bXBe9x5QIsi6Fh4a26PY8mEhJYsZfLUhXIhjyDVDayR686XE3pA
+   A==;
+X-CSE-ConnectionGUID: vfSKR3j0Saia4+s+jeAXpQ==
+X-CSE-MsgGUID: y8Zeq06QSdytcxknkykEXg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11117"; a="16622499"
+X-IronPort-AV: E=Sophos;i="6.09,170,1716274800"; 
+   d="scan'208";a="16622499"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 13:07:34 -0700
+X-CSE-ConnectionGUID: JfGYV9VQQpSB9ks5i7ayxA==
+X-CSE-MsgGUID: ryZkIDmVRNOOzPzx+J8UHw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,170,1716274800"; 
+   d="scan'208";a="49456002"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 28 Jun 2024 13:07:29 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sNHsU-000IIG-0l;
+	Fri, 28 Jun 2024 20:07:26 +0000
+Date: Sat, 29 Jun 2024 04:06:44 +0800
+From: kernel test robot <lkp@intel.com>
+To: Daniel Golle <daniel@makrotopia.org>,
+	Aurelien Jarno <aurelien@aurel32.net>,
+	Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@debian.org>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Martin Kaiser <martin@kaiser.cx>, Tony Luck <tony.luck@intel.com>,
+	Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v5 3/3] arm64: dts: rockchip: add DT entry for RNG to
+ RK356x
+Message-ID: <202406290305.M3hDJkwM-lkp@intel.com>
+References: <2181f2207391fb8fb8ae2cfda07d38f65da05ed9.1719365406.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/7] selftests/x86: fix build errors and warnings found
- via clang
-To: Shuah Khan <shuah@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>
-CC: angquan yu <angquan21@gmail.com>, "Kirill A . Shutemov"
-	<kirill.shutemov@linux.intel.com>, Ingo Molnar <mingo@kernel.org>, Binbin Wu
-	<binbin.wu@linux.intel.com>, Alexey Dobriyan <adobriyan@gmail.com>, "Rick
- Edgecombe" <rick.p.edgecombe@intel.com>, Sohil Mehta <sohil.mehta@intel.com>,
-	Yu-cheng Yu <yu-cheng.yu@intel.com>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Muhammad Usama Anjum
-	<usama.anjum@collabora.com>, Valentin Obst <kernel@valentinobst.de>,
-	<linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	<llvm@lists.linux.dev>, <x86@kernel.org>
-References: <20240531193838.108454-1-jhubbard@nvidia.com>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <20240531193838.108454-1-jhubbard@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000FCBE:EE_|MN0PR12MB5932:EE_
-X-MS-Office365-Filtering-Correlation-Id: 715b5eec-e144-488d-2b3e-08dc97add31e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|7416014|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?R0kvWkN1ay81QmFMTnZqYTBWVFY5elRlMkM1Tk42b21UcEU1bmFRemthcjBF?=
- =?utf-8?B?Q29TMGFxcS9NWTZDZ1d3NVVHVmJIMUhtRGlRRXFFZlR3a2ZoVGRJcHBFejN3?=
- =?utf-8?B?UEY3TmJSNm80SFdEcE1wWjV1ZmI5S3Vvc0lZelZseXNNdmdyQXV3R3l1NDV1?=
- =?utf-8?B?cllGQzhsc2VCSFFzVFoxcWs0MndDRlNVbUUyNWxlLzVMSGczUW1kMnpQdWJC?=
- =?utf-8?B?eFRyUm1VTmlZc25FM05tV1kyVjk3TTJ4blRpZlpwTW5rOWVCMzdyeEdlTGVX?=
- =?utf-8?B?andZcGwzc1kwUzFNZ2xMK2hETE5CRmJVdG04VVBBWndnVVVSUEk3b201TXJJ?=
- =?utf-8?B?Nm9oajBkSm1CNkc3MWNxVktUOUFzSEgvUmRrL1N6UnVIVnRwRFhEbTcwUytK?=
- =?utf-8?B?aksvSVpMY29Id1hJdG5mV0FtVExsdlJlcnl2czZTN0tHQW02UUV1bjU5Z2d0?=
- =?utf-8?B?RnFLUEI1TFNhVUpCNlNaUXowd2pEc0VJY0JucllTeVRDSWh5ODdaSklWS2ll?=
- =?utf-8?B?MG5sYm8vM3l6YyttWWNsUHVSR0IwMVRDa0wzTW1vSWh1YktiM0hIV2x6VVRU?=
- =?utf-8?B?QVBEaXJORStsaE1WY0RCOGMwVTdmYlJnMlJlZFdUbVNpZjFobm9DUll0U0xy?=
- =?utf-8?B?M1NuL21FYVdXNk1NVS9QbzdlOGhIblFLcWhPcys3bGhzb1F2SHdLODdxQ2tw?=
- =?utf-8?B?cFJnM1hMVm1OTkdVL2NMUEtoMnZneTZZL1VSRzhFMFZLVmpwK0E4TW5jTEJo?=
- =?utf-8?B?OW13MHNKQkJwOU84YnRSN3U0Vy9aQm1aeXNGdkl2ZitxMlZrQlV6aVVZN3NR?=
- =?utf-8?B?R1BRS2ZOS2tpdkVtUytGMTdQYmxlQ0U0TnhpeEg2MTg2eEpmWGcyeTdHWmNm?=
- =?utf-8?B?QmZTSFR0RWdVK21ObXJiQTlzaVhNNTUvRXNHNElmWUFpVkpSNytyVTA3K2ds?=
- =?utf-8?B?MjlURlVTRHpwUlQyZlhjdEdWaUl3RW1WWjIydHc5REJGbDRSTU5IOFlFY3No?=
- =?utf-8?B?M3F2by91YldXQWVKam5hYzVmeWp4SGxQcnltWU9oM1FhQnNkYXNKMmxwZElH?=
- =?utf-8?B?ZExJS3h6WW9sWnVxWUkwM3lrRGRPd1VuQmlqeTVmdGJXMnBYZ0RVdGxPVGdY?=
- =?utf-8?B?QXdlQmJsV0RERTUxZjNtYzA4NXJpdU1selFDaDVpcGlSNTFTUDRwNmo2aEZC?=
- =?utf-8?B?bXJwSTl6TUVRUThyOXBTVFNBUnF5N2c1ckg5MXI4ZVQ2SGsvVUxWY1JvZFZV?=
- =?utf-8?B?QmxhSEN0QjA1MmphcmV5WXlxTjhuYTdVL2FLdkx1Tmk0NUF3YjM0T1hHTzlV?=
- =?utf-8?B?cjlaWnNaaStsNTM1NE1BUGZveEVOZW8vSVpYNkdXVmE1NE5XY0IwUy9TSUF6?=
- =?utf-8?B?dDVITnh0dXNtSDJuaThHejRwWkZZUXdtN1hDSWJFRmJSZHRXdFNUb09Ja2ty?=
- =?utf-8?B?V0NoS2J2OXZEbUwvWmdOSGg3RmpvNjZ1VFhoU1U0VGtRTnZNMjRobVY3UWty?=
- =?utf-8?B?eGkwNThsN2VEK3l1bExJQWE1V2hYS3lqc2Jkb0VHSXUvSFhrRThXbFZvSkdz?=
- =?utf-8?B?WWs0bjJKT1BybExvVVk2NEFVQUlOWm4vaEk0NWZaRUNjRkc3WUdhWHZZeExL?=
- =?utf-8?B?YWppZmZINk90U1RqWGZXNVpscDlKTllHTlkrSTIzc0t2QXhiTWpPSGRKSEV2?=
- =?utf-8?B?eXhEUlhZM3loSkQ5TWVtMUtoSVRqS3UyMnZzY0dXOEh2elhBc0QraHNvQ3hQ?=
- =?utf-8?B?Q040eVVld1pvT1g1MXJrMkRYdEtocHlmc3pQcWtoR2hjdExKTy9ZZTFRWDVx?=
- =?utf-8?B?UEh3dWpNQ0JrYytIb2drVmZ2eUVRYlp5bDczTmd3SzZ1KzZWclVFQW1OdlFi?=
- =?utf-8?B?Tm1Kdk42bDVadTdGTjNYVHdJUTlDeFR5VkxFNnV0ZWdPZk5xTERwNGQyWmVo?=
- =?utf-8?Q?oU5j4wh/lHTAi2kmPMLhf/mAYTSz5Vee?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(7416014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jun 2024 20:06:40.4998
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 715b5eec-e144-488d-2b3e-08dc97add31e
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000FCBE.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5932
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2181f2207391fb8fb8ae2cfda07d38f65da05ed9.1719365406.git.daniel@makrotopia.org>
 
-On 5/31/24 12:38 PM, John Hubbard wrote:
-> Hi,
-> 
-> Dave Hansen, Muhammad Usama Anjum, here is the combined series that we
-> discussed yesterday [1].
+Hi Daniel,
 
-Hi Dave, Shuah,
+kernel test robot noticed the following build warnings:
 
-Are either of you planning to take this series? I ask because I have a
-very slightly overlapping series that enhances the LLVM/clang checks,
-that I'm about to post. And I'm not sure if I should try to include
-a small fix that would apply to patch 5/7 here.
+[auto build test WARNING on char-misc/char-misc-testing]
+[also build test WARNING on char-misc/char-misc-next char-misc/char-misc-linus rockchip/for-next robh/for-next herbert-cryptodev-2.6/master linus/master v6.10-rc5 next-20240627]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-(This is not urgent, because it's merely a deferral of adding LLVM/clang
-support to these kselftests.)
+url:    https://github.com/intel-lab-lkp/linux/commits/Daniel-Golle/dt-bindings-rng-Add-Rockchip-RK3568-TRNG/20240626-114623
+base:   char-misc/char-misc-testing
+patch link:    https://lore.kernel.org/r/2181f2207391fb8fb8ae2cfda07d38f65da05ed9.1719365406.git.daniel%40makrotopia.org
+patch subject: [PATCH v5 3/3] arm64: dts: rockchip: add DT entry for RNG to RK356x
+config: arm64-randconfig-051-20240628 (https://download.01.org/0day-ci/archive/20240629/202406290305.M3hDJkwM-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 13.2.0
+dtschema version: 2024.6.dev3+g650bf2d
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240629/202406290305.M3hDJkwM-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406290305.M3hDJkwM-lkp@intel.com/
 
-thanks,
+dtcheck warnings: (new ones prefixed by >>)
+>> arch/arm64/boot/dts/rockchip/rk3566-anbernic-rg-arc-d.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+--
+>> arch/arm64/boot/dts/rockchip/rk3566-anbernic-rg-arc-s.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+--
+>> arch/arm64/boot/dts/rockchip/rk3566-anbernic-rg353p.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+   arch/arm64/boot/dts/rockchip/rk3566-anbernic-rg353p.dtb: i2c@fe5b0000: Unevaluated properties are not allowed ('pintctrl-names' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/i2c/i2c-rk3x.yaml#
+--
+>> arch/arm64/boot/dts/rockchip/rk3566-anbernic-rg353ps.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+--
+>> arch/arm64/boot/dts/rockchip/rk3566-anbernic-rg353v.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+   arch/arm64/boot/dts/rockchip/rk3566-anbernic-rg353v.dtb: i2c@fe5b0000: Unevaluated properties are not allowed ('pintctrl-names' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/i2c/i2c-rk3x.yaml#
+--
+>> arch/arm64/boot/dts/rockchip/rk3566-anbernic-rg353vs.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+--
+>> arch/arm64/boot/dts/rockchip/rk3566-anbernic-rg503.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+--
+   arch/arm64/boot/dts/rockchip/rk3566-pinenote.dtsi:486.10-497.6: Warning (graph_child_address): /i2c@fe5c0000/tcpc@60/connector/ports: graph node has single child node 'port@0', #address-cells/#size-cells are not necessary
+>> arch/arm64/boot/dts/rockchip/rk3566-pinenote-v1.1.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+   arch/arm64/boot/dts/rockchip/rk3566-pinenote-v1.1.dtb: bluetooth: reset-gpios: False schema does not allow [[34, 20, 1]]
+   	from schema $id: http://devicetree.org/schemas/net/broadcom-bluetooth.yaml#
+   arch/arm64/boot/dts/rockchip/rk3566-pinenote-v1.1.dtb: bluetooth: 'device-wake-gpios', 'host-wake-gpios' do not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/net/broadcom-bluetooth.yaml#
+   arch/arm64/boot/dts/rockchip/rk3566-pinenote-v1.1.dtb: usb2phy@fe8a0000: otg-port: 'port' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/phy/rockchip,inno-usb2phy.yaml#
+--
+   arch/arm64/boot/dts/rockchip/rk3566-pinetab2.dtsi:288.10-292.5: Warning (unit_address_vs_reg): /dsi@fe060000/panel@0/port@0: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/rockchip/rk3566-pinetab2.dtsi:289.29-291.6: Warning (unit_address_vs_reg): /dsi@fe060000/panel@0/port@0/endpoint@0: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/rockchip/rk3566-pinetab2-v0.1.dtb: panel@0: 'port@0', 'reset-gpios' do not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/display/panel/boe,th101mb31ig002-28a.yaml#
+>> arch/arm64/boot/dts/rockchip/rk3566-pinetab2-v0.1.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+   arch/arm64/boot/dts/rockchip/rk3566-pinetab2-v0.1.dtb: phy@fe870000: 'power-domains' is a required property
+   	from schema $id: http://devicetree.org/schemas/phy/rockchip-inno-csi-dphy.yaml#
+--
+   arch/arm64/boot/dts/rockchip/rk3566-pinetab2.dtsi:288.10-292.5: Warning (unit_address_vs_reg): /dsi@fe060000/panel@0/port@0: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/rockchip/rk3566-pinetab2.dtsi:289.29-291.6: Warning (unit_address_vs_reg): /dsi@fe060000/panel@0/port@0/endpoint@0: node has a unit name, but no reg or ranges property
+   arch/arm64/boot/dts/rockchip/rk3566-pinetab2-v2.0.dtb: panel@0: 'port@0', 'reset-gpios' do not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/display/panel/boe,th101mb31ig002-28a.yaml#
+>> arch/arm64/boot/dts/rockchip/rk3566-pinetab2-v2.0.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+   arch/arm64/boot/dts/rockchip/rk3566-pinetab2-v2.0.dtb: phy@fe870000: 'power-domains' is a required property
+   	from schema $id: http://devicetree.org/schemas/phy/rockchip-inno-csi-dphy.yaml#
+--
+>> arch/arm64/boot/dts/rockchip/rk3566-powkiddy-rgb10max3.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+--
+>> arch/arm64/boot/dts/rockchip/rk3566-powkiddy-rgb30.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+--
+>> arch/arm64/boot/dts/rockchip/rk3566-powkiddy-rk2023.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+--
+>> arch/arm64/boot/dts/rockchip/rk3566-powkiddy-x55.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+--
+>> arch/arm64/boot/dts/rockchip/rk3566-quartz64-a.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+--
+   arch/arm64/boot/dts/rockchip/rk3566-quartz64-b.dtb: pmic@20: '#sound-dai-cells', 'assigned-clock-parents', 'assigned-clocks', 'clock-names', 'clocks' do not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/mfd/rockchip,rk809.yaml#
+>> arch/arm64/boot/dts/rockchip/rk3566-quartz64-b.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+--
+   arch/arm64/boot/dts/rockchip/rk3566-radxa-cm3-io.dtb: wifi@1: compatible: 'oneOf' conditional failed, one must be fixed:
+   	['brcm,bcm43455-fmac'] is too short
+   	'brcm,bcm43455-fmac' is not one of ['brcm,bcm4329-fmac', 'pci14e4,43dc', 'pci14e4,4464', 'pci14e4,4488', 'pci14e4,4425', 'pci14e4,4433']
+   	from schema $id: http://devicetree.org/schemas/net/wireless/brcm,bcm4329-fmac.yaml#
+   arch/arm64/boot/dts/rockchip/rk3566-radxa-cm3-io.dtb: wifi@1: Unevaluated properties are not allowed ('compatible' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/net/wireless/brcm,bcm4329-fmac.yaml#
+>> arch/arm64/boot/dts/rockchip/rk3566-radxa-cm3-io.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+   arch/arm64/boot/dts/rockchip/rk3566-radxa-cm3-io.dtb: bluetooth: reset-gpios: False schema does not allow [[103, 16, 1]]
+   	from schema $id: http://devicetree.org/schemas/net/broadcom-bluetooth.yaml#
+--
+   arch/arm64/boot/dts/rockchip/rk3566-roc-pc.dtb: pmic@20: '#sound-dai-cells', 'assigned-clock-parents', 'assigned-clocks', 'clock-names', 'clocks', 'codec' do not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/mfd/rockchip,rk809.yaml#
+>> arch/arm64/boot/dts/rockchip/rk3566-roc-pc.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+--
+>> arch/arm64/boot/dts/rockchip/rk3566-rock-3c.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+--
+>> arch/arm64/boot/dts/rockchip/rk3566-soquartz-blade.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+   arch/arm64/boot/dts/rockchip/rk3566-soquartz-blade.dtb: phy@fe840000: 'phy-supply' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/phy/phy-rockchip-naneng-combphy.yaml#
+--
+>> arch/arm64/boot/dts/rockchip/rk3566-soquartz-cm4.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+   arch/arm64/boot/dts/rockchip/rk3566-soquartz-cm4.dtb: phy@fe840000: 'phy-supply' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/phy/phy-rockchip-naneng-combphy.yaml#
+--
+>> arch/arm64/boot/dts/rockchip/rk3566-soquartz-model-a.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+   arch/arm64/boot/dts/rockchip/rk3566-soquartz-model-a.dtb: phy@fe840000: 'phy-supply' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/phy/phy-rockchip-naneng-combphy.yaml#
+--
+>> arch/arm64/boot/dts/rockchip/rk3566-box-demo.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+   arch/arm64/boot/dts/rockchip/rk3566-box-demo.dtb: bluetooth: clock-names: 'oneOf' conditional failed, one must be fixed:
+   	['ext_clock'] is too short
+   	'extclk' was expected
+   	'txco' was expected
+   	'lpo' was expected
+   	from schema $id: http://devicetree.org/schemas/net/broadcom-bluetooth.yaml#
+   arch/arm64/boot/dts/rockchip/rk3566-box-demo.dtb: bluetooth: 'device-wake-gpios', 'host-wake-gpios' do not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/net/broadcom-bluetooth.yaml#
+--
+   arch/arm64/boot/dts/rockchip/rk3566-lubancat-1.dtb: mmc@fe2b0000: Unevaluated properties are not allowed ('supports-sd' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/mmc/rockchip-dw-mshc.yaml#
+   arch/arm64/boot/dts/rockchip/rk3566-lubancat-1.dtb: mmc@fe310000: Unevaluated properties are not allowed ('supports-emmc' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/mmc/snps,dwcmshc-sdhci.yaml#
+>> arch/arm64/boot/dts/rockchip/rk3566-lubancat-1.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+--
+   arch/arm64/boot/dts/rockchip/rk3568-bpi-r2-pro.dtb: sata@fc800000: Unevaluated properties are not allowed ('power-domains' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/ata/rockchip,dwc-ahci.yaml#
+>> arch/arm64/boot/dts/rockchip/rk3568-bpi-r2-pro.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+   arch/arm64/boot/dts/rockchip/rk3568-bpi-r2-pro.dtb: phy@fe8c0000: 'phy-supply' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/phy/rockchip,pcie3-phy.yaml#
+--
+   arch/arm64/boot/dts/rockchip/rk3568-evb1-v10.dtb: pmic@20: '#sound-dai-cells', 'assigned-clock-parents', 'assigned-clocks', 'clock-names', 'clocks', 'codec' do not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/mfd/rockchip,rk809.yaml#
+>> arch/arm64/boot/dts/rockchip/rk3568-evb1-v10.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+--
+>> arch/arm64/boot/dts/rockchip/rk3568-fastrhino-r66s.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+--
+>> arch/arm64/boot/dts/rockchip/rk3568-fastrhino-r68s.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+--
+   arch/arm64/boot/dts/rockchip/rk3568-lubancat-2.dtb: pmic@20: '#sound-dai-cells', 'assigned-clock-parents', 'assigned-clocks', 'clock-names', 'clocks' do not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/mfd/rockchip,rk809.yaml#
+   arch/arm64/boot/dts/rockchip/rk3568-lubancat-2.dtb: mmc@fe310000: Unevaluated properties are not allowed ('supports-emmc' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/mmc/snps,dwcmshc-sdhci.yaml#
+>> arch/arm64/boot/dts/rockchip/rk3568-lubancat-2.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+   arch/arm64/boot/dts/rockchip/rk3568-lubancat-2.dtb: sata@fc000000: Unevaluated properties are not allowed ('power-domains' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/ata/rockchip,dwc-ahci.yaml#
+--
+>> arch/arm64/boot/dts/rockchip/rk3568-mecsbc.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+--
+>> arch/arm64/boot/dts/rockchip/rk3568-nanopi-r5c.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+--
+>> arch/arm64/boot/dts/rockchip/rk3568-nanopi-r5s.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+--
+   arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dtb: sata@fc800000: Unevaluated properties are not allowed ('power-domains' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/ata/rockchip,dwc-ahci.yaml#
+   arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dtb: pmic@20: '#sound-dai-cells', 'assigned-clock-parents', 'assigned-clocks', 'clock-names', 'clocks' do not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/mfd/rockchip,rk809.yaml#
+>> arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+   arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dtb: phy@fe830000: 'phy-supply' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/phy/phy-rockchip-naneng-combphy.yaml#
+   arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dtb: phy@fe820000: 'phy-supply' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/phy/phy-rockchip-naneng-combphy.yaml#
+--
+>> arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+--
+   arch/arm64/boot/dts/rockchip/rk3568-radxa-e25.dtb: sata@fc400000: Unevaluated properties are not allowed ('power-domains' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/ata/rockchip,dwc-ahci.yaml#
+>> arch/arm64/boot/dts/rockchip/rk3568-radxa-e25.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+   arch/arm64/boot/dts/rockchip/rk3568-radxa-e25.dtb: phy@fe830000: 'phy-supply' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/phy/phy-rockchip-naneng-combphy.yaml#
+--
+   arch/arm64/boot/dts/rockchip/rk3568-roc-pc.dtb: sata@fc800000: Unevaluated properties are not allowed ('power-domains' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/ata/rockchip,dwc-ahci.yaml#
+   arch/arm64/boot/dts/rockchip/rk3568-roc-pc.dtb: pmic@20: regulators:DCDC_REG1: Unevaluated properties are not allowed ('regulator-init-microvolt' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/mfd/rockchip,rk809.yaml#
+   arch/arm64/boot/dts/rockchip/rk3568-roc-pc.dtb: pmic@20: regulators:DCDC_REG2: Unevaluated properties are not allowed ('regulator-init-microvolt' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/mfd/rockchip,rk809.yaml#
+   arch/arm64/boot/dts/rockchip/rk3568-roc-pc.dtb: pmic@20: regulators:DCDC_REG4: Unevaluated properties are not allowed ('regulator-init-microvolt' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/mfd/rockchip,rk809.yaml#
+>> arch/arm64/boot/dts/rockchip/rk3568-roc-pc.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+--
+   arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dtb: pmic@20: '#sound-dai-cells', 'assigned-clock-parents', 'assigned-clocks', 'clock-names', 'clocks', 'codec' do not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/mfd/rockchip,rk809.yaml#
+>> arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+   arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dtb: phy@fe8c0000: 'phy-supply' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/phy/rockchip,pcie3-phy.yaml#
+--
+>> arch/arm64/boot/dts/rockchip/rk3568-wolfvision-pf5.dtb: rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/rng/rockchip,rk3568-rng.yaml#
+
 -- 
-John Hubbard
-NVIDIA
-
-> 
-> As I mentioned then, this is a bit intrusive--but no more than
-> necessary, IMHO. Specifically, it moves some clang-un-inlineable things
-> out to "pure" assembly code files.
-> 
-> I've tested this by building with clang, then running each binary on my
-> x86_64 test system with today's 6.10-rc1, and comparing the console and
-> dmesg output to a gcc-based build without these patches applied. Aside
-> from timestamps and virtual addresses, it looks identical.
-> 
-> Earlier cover letter:
-> 
-> Just a bunch of build and warnings fixes that show up when building with
-> clang. Some of these depend on each other, so I'm sending them as a
-> series.
-> 
-> Changes since v2:
-> 
-> 1) Dropped my test_FISTTP.c patch, and picked up Muhammad's fix instead,
->     seeing as how that was posted first.
-> 
-> 2) Updated patch descriptions to reflect that Valentin Obst's build fix
->     for LLVM [1] has already been merged into Linux main.
-> 
-> 3) Minor wording and typo corrections in the commit logs throughout.
-> 
-> Changes since the first version:
-> 1) Rebased onto Linux 6.10-rc1
-> 
-> Enjoy!
-> 
-> [1] https://lore.kernel.org/44428518-4d21-4de7-8587-04eceefb330d@nvidia.com
-> 
-> thanks,
-> John Hubbard
-> 
-> John Hubbard (6):
->    selftests/x86: fix Makefile dependencies to work with clang
->    selftests/x86: build fsgsbase_restore.c with clang
->    selftests/x86: build sysret_rip.c with clang
->    selftests/x86: avoid -no-pie warnings from clang during compilation
->    selftests/x86: remove (or use) unused variables and functions
->    selftests/x86: fix printk warnings reported by clang
-> 
-> Muhammad Usama Anjum (1):
->    selftests: x86: test_FISTTP: use fisttps instead of ambiguous fisttp
-> 
->   tools/testing/selftests/x86/Makefile          | 31 +++++++++++++++----
->   tools/testing/selftests/x86/amx.c             | 16 ----------
->   .../testing/selftests/x86/clang_helpers_32.S  | 11 +++++++
->   .../testing/selftests/x86/clang_helpers_64.S  | 28 +++++++++++++++++
->   tools/testing/selftests/x86/fsgsbase.c        |  6 ----
->   .../testing/selftests/x86/fsgsbase_restore.c  | 11 +++----
->   tools/testing/selftests/x86/sigreturn.c       |  2 +-
->   .../testing/selftests/x86/syscall_arg_fault.c |  1 -
->   tools/testing/selftests/x86/sysret_rip.c      | 20 ++++--------
->   tools/testing/selftests/x86/test_FISTTP.c     |  8 ++---
->   tools/testing/selftests/x86/test_vsyscall.c   | 15 +++------
->   tools/testing/selftests/x86/vdso_restorer.c   |  2 ++
->   12 files changed, 87 insertions(+), 64 deletions(-)
->   create mode 100644 tools/testing/selftests/x86/clang_helpers_32.S
->   create mode 100644 tools/testing/selftests/x86/clang_helpers_64.S
-> 
-> 
-> base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
-
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
