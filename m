@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-233305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2FE891B54C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 05:10:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39A6891B54D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 05:11:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87AD81F21B64
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:10:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D67B41F2159F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A66274BE0;
-	Fri, 28 Jun 2024 03:07:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14410763FD;
+	Fri, 28 Jun 2024 03:08:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DvOnLEDk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mk0Y3czk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7913A7441A
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 03:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541337605E
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 03:07:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719544075; cv=none; b=owJId4deZTph7+B/mppObMsO7Tvkr0SBc6+2wIVhOHKNst6n+9u49m/KpTuwfVgkqJq307hkVSLIeJ1wtN7UdDsn0m8pFDJNdNUtAw83YCrM12vVnF8d5Kn0qa+A+Nha6ywDNFyhZkT0rOmf9pXa78gUlIXWwK4F9JLWgluOYuQ=
+	t=1719544079; cv=none; b=L0f7OGuysewkj5ekbL3lZvNot08jUb1oy0ByMl5+TQ3SnIblGcCE0FvInjKn57gUBuvtAGfWgW8tF/x8/YjY4elBdykvA+3hpGY07Y1r7Ge/3/p5fXuE8S5+QRPeggRI1BLcoera/DL8QmmyAukl7d/7IiVu9CeTKWfScTJeQX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719544075; c=relaxed/simple;
-	bh=fr0OSLBdVEu4PiREH2sgZbNiunlztN2rB5Cg12p8Bfw=;
+	s=arc-20240116; t=1719544079; c=relaxed/simple;
+	bh=1b2JRlKwTFXQCKXls2arw2ZYXd32r3yXKlFqVVcujQo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QUzJBIhYqSenohi9jCH+ODyaeeCWmn37/7nitMe/Z352ZFitUo8MviDUbozh1SCvYNv8qDecNOMK5aMF01N4LUw5GbvFY4ud+do+EDFq2LWohrbLa8PfxN4Ey6+727i11jsnH47rXWawPe86axNmhS5kF04GTJCAWgxqTaJ6VSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DvOnLEDk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8258FC32781;
-	Fri, 28 Jun 2024 03:07:52 +0000 (UTC)
+	 MIME-Version; b=AKIBRq9jVEsLOCot5BApZdFgik6WbLYKde/w/W3BcuyBlcZWhwVf9iEFhc/oe8BEgMeTQbGKRuYvV4f0dkcYD1PiKuJkovzHpkuCIhtbrphAEACAg+7aWciCWby15X3DqAgDW647NH/FXezdR/4L/yIVSLLB+IPg4xIKbaOhwE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mk0Y3czk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13BFEC2BBFC;
+	Fri, 28 Jun 2024 03:07:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719544075;
-	bh=fr0OSLBdVEu4PiREH2sgZbNiunlztN2rB5Cg12p8Bfw=;
+	s=k20201202; t=1719544078;
+	bh=1b2JRlKwTFXQCKXls2arw2ZYXd32r3yXKlFqVVcujQo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DvOnLEDkbTMaJdXPPoE1HQN7ICZRZxu/wx2iuZ1D7NCvHtiBu/yFUSmpp5eoK+R+Z
-	 TvQqHcw2vcNpwhurl3xIfOeKvMoBgVhkiFsLwk0VU4++awCje1qxplJZfPZn0cbjYD
-	 5x1ZXJrtgAeHdcFkb8/i8YpR1zJv1PKsrAXbqKRKqZPO0plgI5cGurmLzHbirBSPEc
-	 dhk0stZxfzY2xA42dD8R6xyMrrBjAVjxbF2X/2AT1IGkp3TraKKTbrLLOCjiOnZ3+K
-	 08leqFILaTWgWWtRcj3nawG+h99Vs1nRjoc37yqyeL2bdDuvr6V5RNmcnnWddzGbGs
-	 yfGXWvqCkDi6g==
+	b=Mk0Y3czkLU95tgGbkMh1dc7Ujh5UVx4rFxHwXuxVsgEsk/u+S4AReBO1g56nW+Nhh
+	 3YmhlRIT03b0vDYM21OStct7U9LXxp1hcClg6Ir+2o7e3MxGkjqKbb5TODMs8B/69m
+	 s+9yoffNOB1dnVjRcLRz7Za2COjRzhajsk6g2M9mBVyu1yDZ0XyVjnPwzMhEO2SUBx
+	 oWnWAdZdNEGIBe+7XR2MbwfFfO024TyLiN67b3jo42V6s/nL20YHE/H5HsXiKGt9jr
+	 6ax09zDtLSK7qDG6FRD4gBONZiiKEkcRz4bX6SQ4ufwhNd7vi0wDAs2fplpKZqB0GJ
+	 479dAcAhfe1uA==
 From: alexs@kernel.org
 To: Vitaly Wool <vitaly.wool@konsulko.com>,
 	Miaohe Lin <linmiaohe@huawei.com>,
@@ -52,9 +52,9 @@ To: Vitaly Wool <vitaly.wool@konsulko.com>,
 	david@redhat.com,
 	42.hyeyoo@gmail.com
 Cc: Alex Shi <alexs@kernel.org>
-Subject: [PATCH 18/20] mm/zsmalloc: introduce __zpdesc_clear_movable
-Date: Fri, 28 Jun 2024 11:11:33 +0800
-Message-ID: <20240628031138.429622-19-alexs@kernel.org>
+Subject: [PATCH 19/20] mm/zsmalloc: introduce __zpdesc_clear_zsmalloc
+Date: Fri, 28 Jun 2024 11:11:34 +0800
+Message-ID: <20240628031138.429622-20-alexs@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240628031138.429622-1-alexs@kernel.org>
 References: <20240628031138.429622-1-alexs@kernel.org>
@@ -68,44 +68,53 @@ Content-Transfer-Encoding: 8bit
 
 From: Alex Shi <alexs@kernel.org>
 
-Add a helper __zpdesc_clear_movable() for __ClearPageMovable(), and use it
-in callers to make code clear.
+Add a helper __zpdesc_clear_zsmalloc() for __ClearPageZsmalloc(), and use
+it in callers to make code clear.
 
 Signed-off-by: Alex Shi <alexs@kernel.org>
 ---
  mm/zpdesc.h   | 5 +++++
- mm/zsmalloc.c | 2 +-
- 2 files changed, 6 insertions(+), 1 deletion(-)
+ mm/zsmalloc.c | 4 ++--
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/mm/zpdesc.h b/mm/zpdesc.h
-index 17941774c46e..c6a44fe04f97 100644
+index c6a44fe04f97..e346b39aba59 100644
 --- a/mm/zpdesc.h
 +++ b/mm/zpdesc.h
-@@ -102,6 +102,11 @@ static inline void __zpdesc_set_movable(struct zpdesc *zpdesc,
- 	__SetPageMovable(zpdesc_page(zpdesc), mops);
+@@ -107,6 +107,11 @@ static inline void __zpdesc_clear_movable(struct zpdesc *zpdesc)
+ 	__ClearPageMovable(zpdesc_page(zpdesc));
  }
  
-+static inline void __zpdesc_clear_movable(struct zpdesc *zpdesc)
++static inline void __zpdesc_clear_zsmalloc(struct zpdesc *zpdesc)
 +{
-+	__ClearPageMovable(zpdesc_page(zpdesc));
++	__ClearPageZsmalloc(zpdesc_page(zpdesc));
 +}
 +
  static inline bool zpdesc_is_isolated(struct zpdesc *zpdesc)
  {
  	return PageIsolated(zpdesc_page(zpdesc));
 diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
-index 3ce49f0372cc..abecc8a5c566 100644
+index abecc8a5c566..eaf8dad04f2c 100644
 --- a/mm/zsmalloc.c
 +++ b/mm/zsmalloc.c
-@@ -848,7 +848,7 @@ static void reset_zpdesc(struct zpdesc *zpdesc)
- {
- 	struct page *page = zpdesc_page(zpdesc);
- 
--	__ClearPageMovable(page);
-+	__zpdesc_clear_movable(zpdesc);
- 	ClearPagePrivate(page);
+@@ -853,7 +853,7 @@ static void reset_zpdesc(struct zpdesc *zpdesc)
  	zpdesc->zspage = NULL;
  	zpdesc->next = NULL;
+ 	reset_first_obj_offset(zpdesc);
+-	__ClearPageZsmalloc(page);
++	__zpdesc_clear_zsmalloc(zpdesc);
+ }
+ 
+ static int trylock_zspage(struct zspage *zspage)
+@@ -1026,7 +1026,7 @@ static struct zspage *alloc_zspage(struct zs_pool *pool,
+ 		if (!zpdesc) {
+ 			while (--i >= 0) {
+ 				zpdesc_dec_zone_page_state(zpdescs[i]);
+-				__ClearPageZsmalloc(zpdesc_page(zpdescs[i]));
++				__zpdesc_clear_zsmalloc(zpdescs[i]);
+ 				free_zpdesc(zpdescs[i]);
+ 			}
+ 			cache_free_zspage(pool, zspage);
 -- 
 2.43.0
 
