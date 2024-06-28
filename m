@@ -1,188 +1,156 @@
-Return-Path: <linux-kernel+bounces-234392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84E2191C60E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:48:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9C3091C611
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:49:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BF47285266
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:48:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FCAEB25AD6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:49:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D4257CA2;
-	Fri, 28 Jun 2024 18:48:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEDAC5381B;
+	Fri, 28 Jun 2024 18:48:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tz9qzgO1"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PHcpK7oo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB0D4D8A4
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 18:48:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A646F067;
+	Fri, 28 Jun 2024 18:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719600501; cv=none; b=RvcpfAy7qm7awgSlCu2gh8Fb/QeAtEx5leAx81CHMUB/k/HzUtBZ7FcA/sU73eMMv0BFlSRpua+H9Pd7qd94Fta82N+ao5yqxdcBjZS9CforhnIr78I70a9zF43QGpzqVT9kK4LCti1oztqHMfwxRItVarZECvzWUweU21397XA=
+	t=1719600513; cv=none; b=Wv9kyDEV80XcSpezG2abTkC9r5HZbgFY1DWlXV/FAwCeYHNK9TbjYHZ7VhXgt5UYeaL2Y3j/0BWy9LAwOgm+OpW4JJob13P3v9cC7pGncddV2CDX8Ea6hA4u0F+7SSAtqB186nOMECtGTrPunV+18OEhy4eV+VCspUU/D2mu1SE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719600501; c=relaxed/simple;
-	bh=ohOu82hKGb5O5vKCUnXPReCL/omt2P2cGsq6dzVpQgg=;
+	s=arc-20240116; t=1719600513; c=relaxed/simple;
+	bh=O74nKorjjjYbawiM/zepyV3dpVqB8zVQLl01qtUoxJg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IPpuJUOLv2kUI887xif1gu7P7/U/Gc64gPILkxZxNLQP1JeQ+xF9DRrlnJGLVRLMOME61xry4n9fQIMuDwQY5lfpqfjTPvZSyqwiIybFnLsRzI4OrFBKci3Yt3O/zSwNaTBHKv4pzfVIUxE1KCuTA7cWBMdAn5tl39bkTT8QyFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tz9qzgO1; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57a16f4b8bfso2035a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 11:48:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719600498; x=1720205298; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=abJZGCGg9p3AOHP9CmO0KWDwdL1MOoAGeXSRn8P2SRI=;
-        b=tz9qzgO1A6KeptWzG/jL4LrAbMgTzkp8d2uaXLFQj2ZCRs/tBxR13Kp0VbLZS+bd7P
-         MDeBJtSffSCAqFuR2h4snAaGXcr6SnA9sbhKGdOMcjnuq2ypsoPG7mmsNEGeG/vef4MP
-         hTL8SPqOrLsN/V1UkCRa9ZKW3TLPuCzCDiLooPunK3vFtMEoKuyTYVXrzdtkbUh3+6J6
-         SHlNUeQLGiAsEausPgkxVmk44T4e68GcLfgtwoyUYwQLW4ieGEfa58xvNlTQ0daQ4aqg
-         34swiID1QV+CUWRXVYL3zfZ9iI5ZWucLOevtmUZtuQlazV7cn5YU9tIjY7X9l19vwZL3
-         y5ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719600498; x=1720205298;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=abJZGCGg9p3AOHP9CmO0KWDwdL1MOoAGeXSRn8P2SRI=;
-        b=ZbKIER7ePHZDGmg1QcJaP2pwZsOxlTjKlkPfPmZL3iVPQnM7KdbLlx/JVVRVw0SGkw
-         IsIA5VjHBen90H0AKVVZ/JGsCtPljJKM3dyPHPZ+6oUq7bREMbHCIZybut4+n+sNMXjt
-         8OOqNZ7MXZ8P+x9jvxiwZ+5Brc9FZVB24VzVxskfSLnzjyAcAu1pw/pepmTy5rlL+t6R
-         EKstS1o2IDkx7EX9LmPBP+q6/D0ajK73n6GGWLmSBmReyA0blC4CyEzJRsQOBKoR5ZSr
-         Qh8GdT1YHe/FZMlIkWHzIHlLsZSR/qOgHk/24wb3eW+RRP72BBBPbs9AFyb8KH6HYOUO
-         PZwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWFmKnfu51ZfQSXcOk8kVTG5BQHmDTBDrygydDRRgdJGh1a3jQgYfga/GtWif+0D9VdUtu0Gd6iEklZ/Y3wiQzuQNo8MGuxFLCyCHZ6
-X-Gm-Message-State: AOJu0YzHPWP4pvE+WVbhypd9J57mYsX6T/CxXCtKEKEfE9gy+oZ8PoRU
-	CMljH9EQ2WpYFc04HyfWgk++JR0Ww223NWZZ+x7zWM/cAJ9fITqGV+Uc4lZPXWg31Wjt9FWJtrX
-	VhPq/z4vaSVmwwTo+8+Ie7pdHcAOmee3xfzv5
-X-Google-Smtp-Source: AGHT+IGvihwbUhusHWWPdSiPPgnic5+W6UFEhcbEi6LwWX3TzgMS2Jus/PkdwrB0oVy3pMw/VwbpYLaEqgYy9fp4c1M=
-X-Received: by 2002:a50:f68d:0:b0:57c:bb0d:5e48 with SMTP id
- 4fb4d7f45d1cf-5872f673e4bmr22935a12.2.1719600498008; Fri, 28 Jun 2024
- 11:48:18 -0700 (PDT)
+	 To:Cc:Content-Type; b=P68DVmGRXb78pKVAPpvfVVacJB5+d3gl4Nsi5I6qzCKQ9VLGBVutxkx/bqPvyH6rorz/8UL88+zklprDzqoTKDajUSAuuxrc/hYr0A4MAKBuzjpDjmkRCBtF2/oUa+WAT8RdGDnnFaZJphAcGHFsdFzWHO7NIv91ho4Tv+B0+jQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PHcpK7oo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 882C8C4AF0B;
+	Fri, 28 Jun 2024 18:48:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719600511;
+	bh=O74nKorjjjYbawiM/zepyV3dpVqB8zVQLl01qtUoxJg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=PHcpK7ooH9D+C+qMf5zlrdJIenjwIt0DIniqjxJJzMAsm6Kt4gTBgw0DHMRdQ1uq1
+	 U1vFg61ZmiFdQ+1LVCft6SYJwDWj3p+W5y3s1xUhdWPVnO8v9S9KkeD/k0fUtwbsFD
+	 cnLru4UV25gxPUaqU3oBTwK2YW9QnfquODRB53ld15HP151plg3d9T2IkKgKyNFZXj
+	 okmO4z0IAO14Z0/I4V/TP1ZyENxlpBRbBuxcGo+8BOmrmADXSKkT/0FQClxZrFjFjD
+	 +M2he7xgrXwO94irnu8Tq/4w5O+a+/Pf8aFuqoiuKlWrDbaLjdwjI5REbLrf59o9CA
+	 zI6cfDc/A3qyQ==
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-25c98395938so135730fac.3;
+        Fri, 28 Jun 2024 11:48:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXzf8uM118GC1jLE3wkjbCMHFZPViylrUDqvaG05IgD3IPm1xpBxirH1PqiyAxpfSruu1EGT1MN84BUVL4NNYYUcHW7z1uLWhFJaUHz
+X-Gm-Message-State: AOJu0YyEbC5ywqPnStQkzvpqpHVgwcFXeQ1pdnxulq9Uref3htDN4LRz
+	g4PNocqqZEFUvB0ENXFyAnFPLzGESQXYLZHw6lcmmgqmu0Yil5QpwTy3uqWqsLT5G2MtfMHjBsZ
+	xUz7wUHw+h+g8wLwmHebiARsIiv8=
+X-Google-Smtp-Source: AGHT+IHAPevpOc/Kde96geQuxUjIszE0YxsYUdZ74D8YKLdaEqNaOVcuuJaZC5/hrhtWudI4/h4T4LIYoGabCTOBCA0=
+X-Received: by 2002:a05:6870:b50b:b0:255:1fea:340d with SMTP id
+ 586e51a60fabf-25cf3686c8bmr19950818fac.0.1719600510724; Fri, 28 Jun 2024
+ 11:48:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240626073719.5246-1-amit@kernel.org> <Zn7gK9KZKxBwgVc_@google.com>
-In-Reply-To: <Zn7gK9KZKxBwgVc_@google.com>
-From: Jim Mattson <jmattson@google.com>
-Date: Fri, 28 Jun 2024 11:48:01 -0700
-Message-ID: <CALMp9eSfZsGTngMSaWbFrdvMoWHyVK_SWf9W1Ps4BFdwAzae_g@mail.gmail.com>
-Subject: Re: [PATCH v2] KVM: SVM: let alternatives handle the cases when RSB
- filling is required
-To: Sean Christopherson <seanjc@google.com>
-Cc: Amit Shah <amit@kernel.org>, pbonzini@redhat.com, x86@kernel.org, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, amit.shah@amd.com, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, hpa@zytor.com, kim.phillips@amd.com, 
-	david.kaplan@amd.com
+References: <20240628095955.34096-1-christian.loehle@arm.com> <20240628095955.34096-4-christian.loehle@arm.com>
+In-Reply-To: <20240628095955.34096-4-christian.loehle@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 28 Jun 2024 20:48:19 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jaEt2yo9OvYqpzfcbPtAvTk63tKXjm6QCi7zeKuU2SUA@mail.gmail.com>
+Message-ID: <CAJZ5v0jaEt2yo9OvYqpzfcbPtAvTk63tKXjm6QCi7zeKuU2SUA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] cpuidle: teo: Don't count non-existent intercepts
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, rafael@kernel.org, 
+	vincent.guittot@linaro.org, qyousef@layalina.io, peterz@infradead.org, 
+	daniel.lezcano@linaro.org, ulf.hansson@linaro.org, anna-maria@linutronix.de, 
+	dsmythies@telus.net, kajetan.puchalski@arm.com, lukasz.luba@arm.com, 
+	dietmar.eggemann@arm.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 28, 2024 at 9:09=E2=80=AFAM Sean Christopherson <seanjc@google.=
-com> wrote:
+On Fri, Jun 28, 2024 at 12:02=E2=80=AFPM Christian Loehle
+<christian.loehle@arm.com> wrote:
 >
-> On Wed, Jun 26, 2024, Amit Shah wrote:
-> > ---
-> >  arch/x86/kvm/svm/vmenter.S | 8 ++------
-> >  1 file changed, 2 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/arch/x86/kvm/svm/vmenter.S b/arch/x86/kvm/svm/vmenter.S
-> > index a0c8eb37d3e1..2ed80aea3bb1 100644
-> > --- a/arch/x86/kvm/svm/vmenter.S
-> > +++ b/arch/x86/kvm/svm/vmenter.S
-> > @@ -209,10 +209,8 @@ SYM_FUNC_START(__svm_vcpu_run)
-> >  7:   vmload %_ASM_AX
-> >  8:
-> >
-> > -#ifdef CONFIG_MITIGATION_RETPOLINE
-> >       /* IMPORTANT: Stuff the RSB immediately after VM-Exit, before RET=
-! */
-> > -     FILL_RETURN_BUFFER %_ASM_AX, RSB_CLEAR_LOOPS, X86_FEATURE_RETPOLI=
-NE
-> > -#endif
-> > +     FILL_RETURN_BUFFER %_ASM_AX, RSB_CLEAR_LOOPS, X86_FEATURE_RSB_VME=
-XIT
+> When bailing out early, teo will not query the sleep length anymore
+> since commit 6da8f9ba5a87 ("cpuidle: teo:
+> Skip tick_nohz_get_sleep_length() call in some cases") with an
+> expected sleep_length_ns value of KTIME_MAX.
+> This lead to state0 accumulating lots of 'intercepts' because
+> the actually measured sleep length was < KTIME_MAX, so query the sleep
+> length instead for teo to recognize if it still is in an
+> intercept-likely scenario without alternating between the two modes.
 >
-> Out of an abundance of paranoia, shouldn't this be?
+> Fundamentally we can only do one of the two:
+> 1. Skip sleep_length_ns query when we think intercept is likely
+> 2. Have accurate data if sleep_length_ns is actually intercepted when
+> we believe it is currently intercepted.
 >
->         FILL_RETURN_BUFFER %_ASM_CX, RSB_CLEAR_LOOPS, X86_FEATURE_RSB_VME=
-XIT,\
->                            X86_FEATURE_RSB_VMEXIT_LITE
+> Previously teo did the former while this patch chooses the latter as
+> the additional time it takes to query the sleep length was found to be
+> negligible and the variants of option 1 (count all unknowns as misses
+> or count all unknown as hits) had significant regressions (as misses
+> had lots of too shallow idle state selections and as hits had terrible
+> performance in intercept-heavy workloads).
 >
-> Hmm, but it looks like that would incorrectly trigger the "lite" flavor f=
-or
-> families 0xf - 0x12.  I assume those old CPUs aren't affected by whatever=
- on earth
-> EIBRS_PBRSB is.
+> Fixes: 6da8f9ba5a87 ("cpuidle: teo: Skip tick_nohz_get_sleep_length() cal=
+l in some cases")
+> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+> ---
+> v3:
+> Drop counting KTIME_MAX as hit and reword commit accordingly
 >
->         /* AMD Family 0xf - 0x12 */
->         VULNWL_AMD(0x0f,        NO_MELTDOWN | NO_SSB | NO_L1TF | NO_MDS |=
- NO_SWAPGS | NO_ITLB_MULTIHIT | NO_MMIO | NO_BHI),
->         VULNWL_AMD(0x10,        NO_MELTDOWN | NO_SSB | NO_L1TF | NO_MDS |=
- NO_SWAPGS | NO_ITLB_MULTIHIT | NO_MMIO | NO_BHI),
->         VULNWL_AMD(0x11,        NO_MELTDOWN | NO_SSB | NO_L1TF | NO_MDS |=
- NO_SWAPGS | NO_ITLB_MULTIHIT | NO_MMIO | NO_BHI),
->         VULNWL_AMD(0x12,        NO_MELTDOWN | NO_SSB | NO_L1TF | NO_MDS |=
- NO_SWAPGS | NO_ITLB_MULTIHIT | NO_MMIO | NO_BHI),
+>  drivers/cpuidle/governors/teo.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
 >
->         /* FAMILY_ANY must be last, otherwise 0x0f - 0x12 matches won't w=
-ork */
->         VULNWL_AMD(X86_FAMILY_ANY,      NO_MELTDOWN | NO_L1TF | NO_MDS | =
-NO_SWAPGS | NO_ITLB_MULTIHIT | NO_MMIO | NO_EIBRS_PBRSB | NO_BHI),
->         VULNWL_HYGON(X86_FAMILY_ANY,    NO_MELTDOWN | NO_L1TF | NO_MDS | =
-NO_SWAPGS | NO_ITLB_MULTIHIT | NO_MMIO | NO_EIBRS_PBRSB | NO_BHI),
+> diff --git a/drivers/cpuidle/governors/teo.c b/drivers/cpuidle/governors/=
+teo.c
+> index 200a3598cbcf..c2d73507d23b 100644
+> --- a/drivers/cpuidle/governors/teo.c
+> +++ b/drivers/cpuidle/governors/teo.c
+> @@ -287,6 +287,7 @@ static int teo_select(struct cpuidle_driver *drv, str=
+uct cpuidle_device *dev,
+>         unsigned int hit_sum =3D 0;
+>         int constraint_idx =3D 0;
+>         int idx0 =3D 0, idx =3D -1;
+> +       int prev_intercept_idx;
+>         s64 duration_ns;
+>         int i;
+>
+> @@ -364,6 +365,7 @@ static int teo_select(struct cpuidle_driver *drv, str=
+uct cpuidle_device *dev,
+>          * all of the deeper states a shallower idle state is likely to b=
+e a
+>          * better choice.
+>          */
+> +       prev_intercept_idx =3D idx;
+>         if (2 * idx_intercept_sum > cpu_data->total - idx_hit_sum) {
+>                 int first_suitable_idx =3D idx;
+>
+> @@ -415,6 +417,14 @@ static int teo_select(struct cpuidle_driver *drv, st=
+ruct cpuidle_device *dev,
+>                         first_suitable_idx =3D i;
+>                 }
+>         }
+> +       if (!idx && prev_intercept_idx) {
+> +               /*
+> +                * We have to query the sleep length here otherwise we do=
+n't
+> +                * know after wakeup if our guess was correct.
+> +                */
+> +               duration_ns =3D tick_nohz_get_sleep_length(&delta_tick);
+> +               cpu_data->sleep_length_ns =3D duration_ns;
 
-Your assumption is correct. As for why the cpu_vuln_whitelist[]
-doesn't say so explicitly, you need to read between the lines...
+This is going to select the shallowest state anyway AFAICS, so is it
+useful to check constraint_idx in this case?
 
->        /*
->         * AMD's AutoIBRS is equivalent to Intel's eIBRS - use the Intel f=
-eature
->         * flag and protect from vendor-specific bugs via the whitelist.
->         *
->         * Don't use AutoIBRS when SNP is enabled because it degrades host
->         * userspace indirect branch performance.
->         */
->        if ((x86_arch_cap_msr & ARCH_CAP_IBRS_ALL) ||
->            (cpu_has(c, X86_FEATURE_AUTOIBRS) &&
->             !cpu_feature_enabled(X86_FEATURE_SEV_SNP))) {
->                setup_force_cpu_cap(X86_FEATURE_IBRS_ENHANCED);
->                if (!cpu_matches(cpu_vuln_whitelist, NO_EIBRS_PBRSB) &&
->                    !(x86_arch_cap_msr & ARCH_CAP_PBRSB_NO))
->                        setup_force_cpu_bug(X86_BUG_EIBRS_PBRSB);
->        }
-
-Families 0FH through 12H don't have EIBRS or AutoIBRS, so there's no
-cpu_vuln_whitelist[] lookup. Hence, no need to set the NO_EIBRS_PBRSB
-bit, even if it is accurate.
-
-> >
-> >       /* Clobbers RAX, RCX, RDX.  */
-> >       RESTORE_HOST_SPEC_CTRL
-> > @@ -348,10 +346,8 @@ SYM_FUNC_START(__svm_sev_es_vcpu_run)
-> >
-> >  2:   cli
-> >
-> > -#ifdef CONFIG_MITIGATION_RETPOLINE
-> >       /* IMPORTANT: Stuff the RSB immediately after VM-Exit, before RET=
-! */
-> > -     FILL_RETURN_BUFFER %rax, RSB_CLEAR_LOOPS, X86_FEATURE_RETPOLINE
-> > -#endif
-> > +     FILL_RETURN_BUFFER %rax, RSB_CLEAR_LOOPS, X86_FEATURE_RSB_VMEXIT
-> >
-> >       /* Clobbers RAX, RCX, RDX, consumes RDI (@svm) and RSI (@spec_ctr=
-l_intercepted). */
-> >       RESTORE_HOST_SPEC_CTRL
-> > --
-> > 2.45.2
-> >
+> +       }
 >
+>         /*
+>          * If there is a latency constraint, it may be necessary to selec=
+t an
+> --
 
