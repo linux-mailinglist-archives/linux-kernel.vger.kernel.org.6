@@ -1,135 +1,210 @@
-Return-Path: <linux-kernel+bounces-234447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A22091C6C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:43:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2553291C6C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C49061F24E2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:43:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97BF71F20F11
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:44:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34900762DF;
-	Fri, 28 Jun 2024 19:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC6AD770E7;
+	Fri, 28 Jun 2024 19:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V0Dtfvbo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="J9DEP9xn"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D9156444;
-	Fri, 28 Jun 2024 19:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D2F56444;
+	Fri, 28 Jun 2024 19:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719603778; cv=none; b=QJ1xuYxdXK218SIWn6s3GiYy6KFsX8DdEhegBxMH9amOXNGe0q6pfb9aKV1Kfqx6p541qEy/A83CP3SyJmLQzvimAVCmq6n1cDeDwN4uihnharAQ3I+lRhXtuEUfeSygOVkDfcH9o2DwhYM2ohu/1/66SLxU8N47BHt0o8EHbXg=
+	t=1719603835; cv=none; b=jl+o2v35v2Ma8+sga63g52V7aK14Ssf8ITXIQrl8hZ0dS9H2nx5qfeyyDDkMEMvT9TU8nKKElML04ELKiNU7/bRw0ORsftXAuUPmqeCybv/sD9Y0CYCWU7ulvV0lUVErPHxPYaOlnEeHQxuW6LfRdGrG3jRLndcooaj8/zxU/eI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719603778; c=relaxed/simple;
-	bh=azzMXAYWdML81bvBEeMLV/S4wFPRaOArS+pvGUlUIL4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fc/VgJsPwuEVj1Xo9KnrMe1Hga3o2DeGvSRiSK6INGIOSmX1ECuLJNU5xugV6mD4Nb3IDGhh1KSQECvUbPOeMXeXimDrfQuhrodJzBNICR+bjMkyRGlgUNV2pEuK5PaXkO1sMqqXeRnliX8FIdW9c+R057xwRV5EfLm9+jUvDpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V0Dtfvbo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5221C116B1;
-	Fri, 28 Jun 2024 19:42:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719603778;
-	bh=azzMXAYWdML81bvBEeMLV/S4wFPRaOArS+pvGUlUIL4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V0DtfvboT9qXDQsxvgCjCzxwqtlQOmR6ntEJFj1Vnd1cJ9DV77yWK+ektlrZ3WELy
-	 rjzg7+5boW1xf0K06TadxfCWlpoWyxn/4gm0k2h26+EI0AnRDjMFH5m6tsns0I54nM
-	 eAS6bS8BXbgmKy6nmtU0NKIRo37nxLHPm/MO3w7EluGAOy9hNmHUUzKKJby8WEX2tT
-	 GiMf1IzjSOi9Z9B6qLqN348DviFeN2SJ4LiOchoO13YIVSP5V/+oqZHp8qE2pjBfTH
-	 5h8G9v68S8JHx93XIO+w6H5Fipkzq0W0SxyKZ++T+gRwlpLDh3oIex4PJPpaFiM+jM
-	 q5COyddYjdxEQ==
-Date: Fri, 28 Jun 2024 21:42:53 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Igor Pylypiv <ipylypiv@google.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 6/6] ata: libata-scsi: Check ATA_QCFLAG_RTF_FILLED
- before using result_tf
-Message-ID: <Zn8SPZG4y4wvSH-g@ryzen.lan>
-References: <20240626230411.3471543-1-ipylypiv@google.com>
- <20240626230411.3471543-7-ipylypiv@google.com>
+	s=arc-20240116; t=1719603835; c=relaxed/simple;
+	bh=WGNksG5kOJNWNCKgCePps0v1mU4HZN9ji19NGJ4mjE4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GEjNO4JbSREX4Fi5jmKSdmUSUC+r8gwg96CneaohqKnjSVvkQQxA6MRRpAOpppKvv1BlXxlGSeEcJw+JaYigzySf13EjlIOOXYuM6CYOoV6NUhpr7fVrvQ/jIw3UJNg5pqjSs5HNtfzYZSv6qWtN9Au5kIN3glbxThNK3YgpQsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=J9DEP9xn; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45SG03G2023502;
+	Fri, 28 Jun 2024 19:43:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Q2LwIZf2YSx0t9IwF7Za6LUyQTFQF1vHoMrv5nB0WaQ=; b=J9DEP9xngBn2qDZu
+	tBRk+/+oD2MHpfdgB+U46Fu2pb/3jgLEgiB4nluSn66JxqzcmOYS1zEFBDJSfWpA
+	RvXrg0CRybCERedwaI9jqdOzGElEaUqWeQCJkfaHRQQeZggNed7wP2uaRNQUtn0T
+	YUJWFuyi67f74BvX9YI8rPLJlP/HZn9OqiXzrq62lYwVwAxuFMk15XdkxUWvPIef
+	7/cYMHk4tZu17XqfzE5mv5HQXZ0lYBiwaS39cYc8A5EkUFfEjMpZ4KGEgzidTGBo
+	gBO9xN63t8tRyCpnoHfvADxJScIPB27Tb23+nSJUDAdag3wWPUuyUa0J/2dwbZqq
+	tCPsBA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 400f90rbn6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Jun 2024 19:43:19 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45SJhIRF026415
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Jun 2024 19:43:18 GMT
+Received: from [10.110.112.228] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 28 Jun
+ 2024 12:43:14 -0700
+Message-ID: <0666cba0-a5bb-44bf-845a-6a1c689cb485@quicinc.com>
+Date: Fri, 28 Jun 2024 12:43:04 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240626230411.3471543-7-ipylypiv@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] net: stmmac: Add interconnect support
+To: Krzysztof Kozlowski <krzk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Jose Abreu
+	<joabreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        "Russell
+ King" <linux@armlinux.org.uk>, Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Bhupesh
+ Sharma" <bhupesh.sharma@linaro.org>
+CC: <kernel@quicinc.com>, Andrew Halaney <ahalaney@redhat.com>,
+        Andrew Lunn
+	<andrew@lunn.ch>, <linux-arm-msm@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <20240625-icc_bw_voting_from_ethqos-v2-0-eaa7cf9060f0@quicinc.com>
+ <20240625-icc_bw_voting_from_ethqos-v2-2-eaa7cf9060f0@quicinc.com>
+ <da62cf15-0329-40e5-83f3-16c4b60f7b46@kernel.org>
+Content-Language: en-US
+From: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+In-Reply-To: <da62cf15-0329-40e5-83f3-16c4b60f7b46@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 0FeFVnqejeMeELFyeYLIzzxaZwFUhdS1
+X-Proofpoint-GUID: 0FeFVnqejeMeELFyeYLIzzxaZwFUhdS1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-28_14,2024-06-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
+ spamscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0 adultscore=0
+ impostorscore=0 lowpriorityscore=0 phishscore=0 priorityscore=1501
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406280147
 
-On Wed, Jun 26, 2024 at 11:04:11PM +0000, Igor Pylypiv wrote:
-> qc->result_tf contents are only valid when the ATA_QCFLAG_RTF_FILLED flag
-> is set. The ATA_QCFLAG_RTF_FILLED flag should be always set for commands
-> that failed or for commands that have the ATA_QCFLAG_RESULT_TF flag set.
+
+
+On 6/26/2024 12:40 AM, Krzysztof Kozlowski wrote:
+> On 26/06/2024 01:49, Sagar Cheluvegowda wrote:
+>> Add interconnect support to vote for bus bandwidth based
+>> on the current speed of the driver.This change adds support
 > 
-> Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
-> ---
->  drivers/ata/libata-scsi.c | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
+> Please do not use "This commit/patch/change", but imperative mood. See
+> longer explanation here:
+> https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
 > 
-> diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-> index 02af4d5d5799..d5874d4b9253 100644
-> --- a/drivers/ata/libata-scsi.c
-> +++ b/drivers/ata/libata-scsi.c
-> @@ -242,10 +242,16 @@ void ata_scsi_set_sense_information(struct ata_device *dev,
->   */
->  static void ata_scsi_set_passthru_sense_fields(struct ata_queued_cmd *qc)
->  {
-> +	struct ata_device *dev = qc->dev;
->  	struct scsi_cmnd *cmd = qc->scsicmd;
->  	struct ata_taskfile *tf = &qc->result_tf;
->  	unsigned char *sb = cmd->sense_buffer;
->  
-> +	if (!(qc->flags & ATA_QCFLAG_RTF_FILLED)) {
-> +		ata_dev_dbg(dev, "Missing RTF: cannot set ATA PT sense fields.\n");
-> +		return;
-> +	}
-> +
->  	if ((sb[0] & 0x7f) >= 0x72) {
->  		unsigned char *desc;
->  		u8 len;
-> @@ -923,10 +929,16 @@ static void ata_to_sense_error(u8 drv_stat, u8 drv_err, u8 *sk, u8 *asc,
->   */
->  static void ata_gen_passthru_sense(struct ata_queued_cmd *qc)
->  {
-> +	struct ata_device *dev = qc->dev;
->  	struct scsi_cmnd *cmd = qc->scsicmd;
->  	struct ata_taskfile *tf = &qc->result_tf;
->  	u8 sense_key, asc, ascq;
->  
-> +	if (!(qc->flags & ATA_QCFLAG_RTF_FILLED)) {
-> +		ata_dev_dbg(dev, "Missing RTF: cannot generate ATA PT sense data.\n");
-> +		return;
-> +	}
-> +
->  	/*
->  	 * Use ata_to_sense_error() to map status register bits
->  	 * onto sense key, asc & ascq.
-> @@ -970,6 +982,12 @@ static void ata_gen_ata_sense(struct ata_queued_cmd *qc)
->  		ata_scsi_set_sense(dev, cmd, NOT_READY, 0x04, 0x21);
->  		return;
->  	}
-> +
-> +	if (!(qc->flags & ATA_QCFLAG_RTF_FILLED)) {
-> +		ata_dev_dbg(dev, "Missing RTF: cannot generate sense data.\n");
-> +		return;
-> +	}
-> +
->  	/* Use ata_to_sense_error() to map status register bits
->  	 * onto sense key, asc & ascq.
->  	 */
-> -- 
-> 2.45.2.803.g4e1b14247a-goog
+> Also, space after full stop.
+> Agreed, i will fix this in my next patch.
+>> for two different paths - one from ethernet to DDR and the
+>> other from Apps to ethernet.
+>> Vote from each interconnect client is aggregated and the on-chip
+>> interconnect hardware is configured to the most appropriate
+>> bandwidth profile.
+>>
+>> Suggested-by: Andrew Halaney <ahalaney@redhat.com>
+>> Signed-off-by: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+>> ---
+>>  drivers/net/ethernet/stmicro/stmmac/stmmac.h          |  1 +
+>>  drivers/net/ethernet/stmicro/stmmac/stmmac_main.c     |  8 ++++++++
+>>  drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c | 12 ++++++++++++
+>>  include/linux/stmmac.h                                |  2 ++
+>>  4 files changed, 23 insertions(+)
+>>
+>> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac.h b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
+>> index b23b920eedb1..56a282d2b8cd 100644
+>> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac.h
+>> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
+>> @@ -21,6 +21,7 @@
+>>  #include <linux/ptp_clock_kernel.h>
+>>  #include <linux/net_tstamp.h>
+>>  #include <linux/reset.h>
+>> +#include <linux/interconnect.h>
+>>  #include <net/page_pool/types.h>
+>>  #include <net/xdp.h>
+>>  #include <uapi/linux/bpf.h>
+>> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+>> index b3afc7cb7d72..ec7c61ee44d4 100644
+>> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+>> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+>> @@ -985,6 +985,12 @@ static void stmmac_fpe_link_state_handle(struct stmmac_priv *priv, bool is_up)
+>>  	}
+>>  }
+>>  
+>> +static void stmmac_set_icc_bw(struct stmmac_priv *priv, unsigned int speed)
+>> +{
+>> +	icc_set_bw(priv->plat->axi_icc_path, Mbps_to_icc(speed), Mbps_to_icc(speed));
+>> +	icc_set_bw(priv->plat->ahb_icc_path, Mbps_to_icc(speed), Mbps_to_icc(speed));
+>> +}
+>> +
+>>  static void stmmac_mac_link_down(struct phylink_config *config,
+>>  				 unsigned int mode, phy_interface_t interface)
+>>  {
+>> @@ -1080,6 +1086,8 @@ static void stmmac_mac_link_up(struct phylink_config *config,
+>>  	if (priv->plat->fix_mac_speed)
+>>  		priv->plat->fix_mac_speed(priv->plat->bsp_priv, speed, mode);
+>>  
+>> +	stmmac_set_icc_bw(priv, speed);
+>> +
+>>  	if (!duplex)
+>>  		ctrl &= ~priv->hw->link.duplex;
+>>  	else
+>> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+>> index 54797edc9b38..e46c94b643a3 100644
+>> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+>> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+>> @@ -642,6 +642,18 @@ stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac)
+>>  		dev_dbg(&pdev->dev, "PTP rate %d\n", plat->clk_ptp_rate);
+>>  	}
+>>  
+>> +	plat->axi_icc_path = devm_of_icc_get(&pdev->dev, "axi");
+>> +	if (IS_ERR(plat->axi_icc_path)) {
+>> +		ret = (void *)plat->axi_icc_path;
+>> +		goto error_hw_init;
 > 
+> This sounds like an ABI break. Considering the interconnects are not
+> required by the binding, are you sure this behaves correctly without
+> interconnects in DTS?
+>
+> Best regards,
+> Krzysztof
+> 
+Yes, i did check without the interconnect entries in the dtsi and
+things are working fine, devm_of_icc_get is properly clearing out
+all the references in the case when "interconnects" are not present
+in the dtsi.
+In the stmmac driver we are only handling the error case and 
+if the entries are not present in the dtsi we are simply continuing with
+the regular code flow.
 
-In order to be more consistent with existing prints in this file,
-please do not capitalize the first letter, and remove the punctuation.
-
-
-Kind regards,
-Niklas
+Regards,
+Sagar
 
