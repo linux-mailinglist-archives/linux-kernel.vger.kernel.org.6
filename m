@@ -1,184 +1,178 @@
-Return-Path: <linux-kernel+bounces-233210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C96C91B45D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:00:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71DAC91B45F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:00:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01F25284318
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:00:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C9BC28430E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:00:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D80BF9EB;
-	Fri, 28 Jun 2024 00:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1DA17556;
+	Fri, 28 Jun 2024 00:59:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QfFnqfq8"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="ZLPdVCZH"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2072.outbound.protection.outlook.com [40.107.20.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4968C18028;
-	Fri, 28 Jun 2024 00:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719536389; cv=none; b=gLYlNr1ULhsGx/jOnrbt4ndtynkhF1Om2fq3LSxJE1PP0/pUTJ0TXSkhD/UGmSLduQNUw1VlJBILb2XAtWtA2UeHEghIX18ODTRILEQtRk5Y+Xpi8DANOQeJVzLeiarIlMgwKTgHd4Uaqat619KjiPW535YnMkbk8+Sn93Ssckk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719536389; c=relaxed/simple;
-	bh=k/O1dWo/zAC1tNUGUZJKfZkv4B/bidKsE11l9K373b8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=X9SMnhVlYJvHUF3PqncdXg3m68ihkZmMkFahLQGP3EicmM6eRinulyCq3hg1farMuPTzVr0QsbVtrX/Onk/uHsuRQw+brFJIzFW25i7lcMy78QY0nhXRHI6QESns1oGY3jYcqpINqhcA74NPFmjE0q+zRnTSP97daJmQjSzLLkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QfFnqfq8; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45RKDOaH010655;
-	Fri, 28 Jun 2024 00:59:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	k/O1dWo/zAC1tNUGUZJKfZkv4B/bidKsE11l9K373b8=; b=QfFnqfq8tG7g6dfm
-	efc93a6syk0bnFKBqUzBuwinQmJsjh1TXeXZYJnENI9EYFTJncgPd5jnWCyCdCMW
-	0+usnKLImAGRgku8/UPVsFk8atD9uGmoRDIkGOCdospSSs9En3p4GcVqr5zauBQ/
-	HxhhyHJv/2h1sjdsXmvJ+V43GwOiNrQ6KY6eQHLHeTekkCqosx0aWtr/gnqJfXQ6
-	db+C/EBH7WkH90heksU4eX0Hk++o0aZ5GlSpyBS4CafcJrxeo9cHbfAeQ4yOt7P/
-	gHDcsdnhk1MKiDXMjY+tlP/8DfhCfj76/fCXoPKWScTrROXmWP08uM1Fz3qqWtMt
-	PexYtA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 400bdqdt5h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Jun 2024 00:59:15 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45S0xDuK008732
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Jun 2024 00:59:13 GMT
-Received: from [10.71.115.79] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 27 Jun
- 2024 17:59:12 -0700
-Message-ID: <fd8f1eb0-4b21-4697-8175-a61bc3858852@quicinc.com>
-Date: Thu, 27 Jun 2024 17:59:12 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8BB9125AC;
+	Fri, 28 Jun 2024 00:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.72
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719536393; cv=fail; b=V2+LxCxw/bFAyEmyUZTyXkkVCYQAGE7sm+y3kgfVBg4zAS7P8sogy27T8xTc28cTULUZ5Jh2q9N73hZI42eZTRbpvoK9K4wsP3KZ+VZEAilMykfS3yjNgegXdwGcSKfobzl5gXG9fvZT+JEob1wwBblshut9UJOg5buAIL+ELfQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719536393; c=relaxed/simple;
+	bh=mADTsOX+yf2waOl9cljMNnpftU78Q4JOAhqIxnrJSJs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=hGiEPUcZYd+aXs2O/58q/sIOe1gIzo67PHLqb+hdXMpl+o86uu2QWfePoiTsivVn7+h7ce+GOICU7QzZKxOb7DKwXPJ+QLWw5MJurLMnXcIgyWbb71nZwqniq0uAVLZOyuojTc2hTIxZurCUtgO220eoNwaOPb4Eg6Gq5h1f6Fc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=ZLPdVCZH; arc=fail smtp.client-ip=40.107.20.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GP/feqvhhv7lOwKhm6WjxIg9ubidKa8N5VXMKz/VNLiIZsQPHIIA6xCKpT19GzPCC5Td0fJF9K+suvJDTZYi9IkOrZLO0TtulsZ1J7afT1iM6m5U3qGFZAKZ9xL34x/445bGsH+Fo437XfVnnKo6QJckmltqDNtkIoOkvEDRArv+ZyyGAbvc99kgvCtvDD7N1ZAmrKoRI6vnmudKejfT3iC1gr9mROQahsQ+pRoXAZVXhNH8AlXHvWzH+61FhNYBhuN+YTklulyy2bEeu05d11Oia8Dc0nsYRjnRu+SmFDrppNTmTV4uK//GXXt9aTq061a2fJf5Sb9bj00rgASmDw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mADTsOX+yf2waOl9cljMNnpftU78Q4JOAhqIxnrJSJs=;
+ b=Vw3VWXzWyUJg1WeFVnp7xk7MDbKQEsBuUwmzFv5S9+83cNsIxDWoZ0SpObAqHujtSOEOrHP5bVqHRnW3qKcUULp8BmK0jrioTlR+b6dDUkIEYNnp+UVhYGA5O2leoRdMiuVFUWhBMI5Nh9uMcVeI12gLJZnxh0QvKr8uoS6klTLSLV2cts4qduaLf6bTjoWsLOi4zt8tkaM7RELBFClOdmWafZvUBuUoDIruVDIpVAmieetDDnpjTVj50+UC96aJ53COYY1NbNxlIEazSHh+7iNn2kUap71FzNv/m95kPjgNjrHmeVVv82GJTTwe5Lc8xk0auQ5h4LOwZ/tUAHCJcA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mADTsOX+yf2waOl9cljMNnpftU78Q4JOAhqIxnrJSJs=;
+ b=ZLPdVCZHVV1pWTZm+RqOa/KWNT5XlGIJyIjnQJOpQj8JgfC8DPiJPpw31x/CwWa/2rizmOSaITg6o9KhXF2l/zmCNN/wCvfjoYG3kZiGmBFToBYWUMT+rvLxbc00EhiMGrhrc883waKLzu3YvkdLxyGF/nh0lLydG6OhGFBx/V8=
+Received: from AM6PR04MB5941.eurprd04.prod.outlook.com (2603:10a6:20b:9e::16)
+ by PAWPR04MB9933.eurprd04.prod.outlook.com (2603:10a6:102:385::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.35; Fri, 28 Jun
+ 2024 00:59:49 +0000
+Received: from AM6PR04MB5941.eurprd04.prod.outlook.com
+ ([fe80::9f4e:b695:f5f0:5256]) by AM6PR04MB5941.eurprd04.prod.outlook.com
+ ([fe80::9f4e:b695:f5f0:5256%4]) with mapi id 15.20.7698.025; Fri, 28 Jun 2024
+ 00:59:49 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Frank Li <frank.li@nxp.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo
+	<shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+	<devicetree@vger.kernel.org>, "open list:ARM/FREESCALE IMX / MXC ARM
+ ARCHITECTURE" <imx@lists.linux.dev>, "moderated list:ARM/FREESCALE IMX / MXC
+ ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, open list
+	<linux-kernel@vger.kernel.org>
+CC: "imx@lists.linux.dev" <imx@lists.linux.dev>
+Subject: RE: [PATCH 7/7] arm64: dts: imx95-19x19-evk: add pwm fan control
+Thread-Topic: [PATCH 7/7] arm64: dts: imx95-19x19-evk: add pwm fan control
+Thread-Index: AQHayN2hHsBSu4/Ql06sgFiypv87f7HcWwuQ
+Date: Fri, 28 Jun 2024 00:59:49 +0000
+Message-ID:
+ <AM6PR04MB5941A14C59816F435D6AEBE388D02@AM6PR04MB5941.eurprd04.prod.outlook.com>
+References: <20240627220001.692875-1-Frank.Li@nxp.com>
+ <20240627220001.692875-7-Frank.Li@nxp.com>
+In-Reply-To: <20240627220001.692875-7-Frank.Li@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM6PR04MB5941:EE_|PAWPR04MB9933:EE_
+x-ms-office365-filtering-correlation-id: 9f9dfb7f-8c9b-4a85-5799-08dc970d9c55
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|7416014|376014|366016|38070700018|921020;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?zI9bC5NKFspnhgWbfn7yvjyJOdzQj7raPGayRQqjtiLUgobqJMVEAjPqinjC?=
+ =?us-ascii?Q?kRTi4DXJwPx63IDnaqcA0uEJp5XXd5dMLeDKGrVaiPftIbyEYBsugqvUVMyi?=
+ =?us-ascii?Q?hmzhgmalEPItRLjYDojCe8nJ/Y0y/7xjHrg1X3O6Cagp8nD50AAAuoXXpzrE?=
+ =?us-ascii?Q?uFiP/enws3hHzh79QnOFOEnE2SPl/vUJzHq2G1XPvq/+CAtSR5mYE7v+M/Rs?=
+ =?us-ascii?Q?mkbWIZWF6Ajpho9wrYY1WIoQiwqcZ4uHMG2RJDAf9YLI32BRxmCZZy2ewzjc?=
+ =?us-ascii?Q?FOlwytIPBEkdqUT6bftOcit5GiKQkyxegTdkTj3eVyv5Wg33mmtEPQNECusK?=
+ =?us-ascii?Q?edCHHcGvsItDvzS/Tx0tA2nFbHkyqPL5wgysLbHeuQVxw77gNeTFvS+7krhC?=
+ =?us-ascii?Q?5WYz/hsV1p6oywIWMqWGzzrcXd1iLfK7+8O8Lvy5wVn6ANbGfxw8vijSoanq?=
+ =?us-ascii?Q?UA3MZfBLjc2TKoHeshfQz6SNGU3IaSNyL3eel8cJJmXcq91MDCz6SS9HPu60?=
+ =?us-ascii?Q?+9uY48JSGosZ3huE8s+6KBN9TO+edmI1JceYwx40UJrBDnR9332Nx8h/y/h8?=
+ =?us-ascii?Q?YeVCjsSJtzBm/NeOAbUagvoN60VHcECPeMUqc85I/sILHZPIeilY83CVmfZE?=
+ =?us-ascii?Q?NTFu2yye0o2AwOwa5531GPQ50dpodOBzx0+uOXQAzrEsJdB0+y/bOLieoiOd?=
+ =?us-ascii?Q?htnelbInpZlMuZm3nJVhu564IoDmqwVnefyISD+AD7tonYCFiqKZ7tKiEP3e?=
+ =?us-ascii?Q?3RzgN9jplZ69yj9c7j6+NthHoE1gxpS4eQ0keiMQSdGWNMFjosbdgLwTez6c?=
+ =?us-ascii?Q?WV8Qlzk4TqvmloKcLfbgUlrIp2P8imQj+SxVTFT+tKlkEdNnOePveGJgHC3+?=
+ =?us-ascii?Q?EYyYH1PuvWB4Kd6RswnveJ7+33XvLyeSwxq8CyfYQc1B+aX/74VXrkIw0cR3?=
+ =?us-ascii?Q?yyGmRPBmHZRJm3KSrFAtqqa7Ho4d4EpalDwH94LDqb6E+6V3XQa2cJ9twWCy?=
+ =?us-ascii?Q?lV53ApId3FH0OqL1sHwspNanIXR2PfucQxEED2hNkAuAY/dv5xU8G4I30l/Q?=
+ =?us-ascii?Q?mhk4oT/aBL1/+9Py8n6aCP78imBhH+0ADmrHd/KRA+rZ9gEFJ8sjN563ZfVu?=
+ =?us-ascii?Q?AsRq7CvYhKfjZTjxT4yRExXSmZoOMxvym93Nfu9oPogiu4PzInBNXiRXICf3?=
+ =?us-ascii?Q?FushafI4B2YYIr8iJTaoutHqMbIDjUZJr+tawUVYSUW4ynOROeztsKKIFPtl?=
+ =?us-ascii?Q?dsWGiAgft2RfPIPh+jSr16lont0+5NjYmtZdhZtv2c5ySN4DRP3M8Ij4c6QX?=
+ =?us-ascii?Q?xnypxKXZkPu4Js7vV974a1vAhT5uM61ECghnQqvS1s1o1sz0gijpusNiH807?=
+ =?us-ascii?Q?f7YLpo8JSrlDZTrq2lfODwr6wU2XNlVgyzpgwzKLXAddDU83SHF/TqVDjn/I?=
+ =?us-ascii?Q?m0MR72F/Dk0=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB5941.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(38070700018)(921020);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?ngCQ3s9TtNfIeskoGuEh9WjJD91HKE5adMUb4ZCp6MqJT443YJBrL30+z1xW?=
+ =?us-ascii?Q?64lMV164U6M448llpkQcf+MW3M/fkUzP9bPpury045fQuYbboTSryzZNKLMa?=
+ =?us-ascii?Q?JeFL2l+Oe1/0HmhkRjDTUzFnnZIEzApggigCFshZw8Es8HpVrKDebtJcj7Qw?=
+ =?us-ascii?Q?5u6RqpKok42MVYUa+9RoDU0Nd8Lnw1hKg1gme6EUHUenU/08k1kkVu44uXPc?=
+ =?us-ascii?Q?FEXblo+dbzSuhjSBgvoFR5JvSmnrmnEair5s9o1CBtfCxwsH0qSZE+KDM5Zi?=
+ =?us-ascii?Q?5GWAwFkZF7OCHgxd6l9wFTdCeHjoFiV0YD2rpgwrK+FMzecsbIdsBTMH4clj?=
+ =?us-ascii?Q?CdM+FcSdIqb2AxBU0WnmkidvK4ldE75x1Ph0k1ZPZcBDPYM4dKVUrYg8NKzQ?=
+ =?us-ascii?Q?t6b9/4140mBQ57/ZHWovzEqMp+JSnULHUhhQFGBCuTejYnV/yhP5M3hlNaTQ?=
+ =?us-ascii?Q?tcIdsmgVvQW50wCo0PcqyZuRpOKDUlRytooz2wpnwJj1CqoKJoOO1Q2uI2Wf?=
+ =?us-ascii?Q?6QaJSENUm/o9b3BGe9mCpoqDuUWYEFFnCEDdY2dC1O58/G7/YHu0gQkE/Yai?=
+ =?us-ascii?Q?YSFhe9OKBajXGvjkcrebncE3f/tlUiID2q5QsPbDnTMHpJ4ETOw7FDlnN28e?=
+ =?us-ascii?Q?B1e5ak8F22Dg+GEMnP5EyLiDomYncm10d7qgvhL7gYYMyZULbBaXBvhUi3sI?=
+ =?us-ascii?Q?lji6uW9yqqfw88v696gA5XmiXA2q6mVzYES/kx9+tOFbtX7kPVxGh+WDN8nI?=
+ =?us-ascii?Q?UeRqvfayGH7olXIgZm2r8wfovU3IBNu57h6aEoJKxjWu0DCM11iHysFMj7gw?=
+ =?us-ascii?Q?iqhlf6f5QefDzYlBgB4YUK4qAb/i9r2G1XSBppFoElJWGhQWjuUCA6qr1NH7?=
+ =?us-ascii?Q?BA7DsL4v4r6BmbdyRZxLg0+qz/YW1bS+rXdCKDQI9siFc/JY+hdIISm2k46P?=
+ =?us-ascii?Q?BKfsqp87RyQRPc+XewyzuvW0VR24fEqhQNZWGYX/Wyse8Psdrliss3qXJOfW?=
+ =?us-ascii?Q?4oq+wdX3FMka+HiV6K4v0FyrvzqzO80efdHfWzKJ+zNluRgxFWV30K4vpP8m?=
+ =?us-ascii?Q?73OtIOfa9qu2fOrta0omQJB0req60Cpd/LnT7mHyPtOMccun7tCNtqDwveUi?=
+ =?us-ascii?Q?DqZrOJbxj84SeJ9W5QAfgvU1xEyTs6nAvudlvFw2lAAV27uHNBjxRXgPViRP?=
+ =?us-ascii?Q?cgqDitXmGacjvsKJVYhtmnhSHWTOQd25K81Xa3/q9d5g/AySx+DD4on45knr?=
+ =?us-ascii?Q?CZ24NWjfygiUhI2FAPz1VH+MB2cz2UwcmqmciBhhY2IC/sQ6dGRN2nOu105s?=
+ =?us-ascii?Q?rHZg1oM/mcnsqzOrK39d37B6Dg1FgGGC4dnkiEtjz3Uakt9SNMlIrPXNJ4Yg?=
+ =?us-ascii?Q?dLiYfnmYjQKLPx5Z+tT7UUZpm/yt1PxfLP6krz5Ylc+6+Z2+8+stObjC8X5c?=
+ =?us-ascii?Q?TJMv47fNVy+NdCf4ZLAnlOHOTB2wL1dAU0Is0igABzOLNbLHzkdUiTJhbFXV?=
+ =?us-ascii?Q?Da1F1282XzzAIo0Rgj+P9d0d/M60YHZSRL7Fp3/0aJxYg1pj5DH646cN3EM4?=
+ =?us-ascii?Q?uf2zvogFSGH0ockVlbw=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v23 32/32] ASoC: doc: Add documentation for SOC USB
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
-	<amadeuszx.slawinski@linux.intel.com>,
-        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <corbet@lwn.net>,
-        <broonie@kernel.org>, <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
-        <Thinh.Nguyen@synopsys.com>, <bgoswami@quicinc.com>, <tiwai@suse.com>,
-        <robh@kernel.org>, <gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>
-References: <20240610235808.22173-1-quic_wcheng@quicinc.com>
- <20240610235808.22173-33-quic_wcheng@quicinc.com>
- <5be51e1f-70c9-4bbc-96fa-1e50e441bd35@linux.intel.com>
- <408d9e8e-0f40-7e66-54be-2f8d2c0783a3@quicinc.com>
- <ca1e1063-e1bd-4e03-a7cd-91985e9954e9@linux.intel.com>
- <096d59a0-5e18-092c-c9ae-d98130226f06@quicinc.com>
- <368d9019-2c96-468e-b472-7e1127f76213@linux.intel.com>
- <eb6370ea-47a0-3659-3c10-cb7f95e3e520@quicinc.com>
- <510468c7-b181-48d0-bf2d-3e478b2f2aca@linux.intel.com>
- <c7a95157-1b71-1489-3657-8fe67f9acb4e@quicinc.com>
- <90463a4e-c2e7-4b59-9a79-23533b4acd1e@linux.intel.com>
-Content-Language: en-US
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <90463a4e-c2e7-4b59-9a79-23533b4acd1e@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: I7ji9nTic-FHqo6aBSK-W7atlFLOSzuU
-X-Proofpoint-GUID: I7ji9nTic-FHqo6aBSK-W7atlFLOSzuU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-27_16,2024-06-27_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=999
- adultscore=0 bulkscore=0 lowpriorityscore=0 impostorscore=0 malwarescore=0
- mlxscore=0 suspectscore=0 priorityscore=1501 clxscore=1015 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2406280005
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM6PR04MB5941.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9f9dfb7f-8c9b-4a85-5799-08dc970d9c55
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jun 2024 00:59:49.2683
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 8yYH38DmGiJ3Xn+oXHbgoDc1ze7hrwU1UhmbsgT6M5BTwHGicoECv7yoawZsjcfUHWnyH7ST/zY36xR66jJUZQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR04MB9933
 
-Hi Pierre,
+> Subject: [PATCH 7/7] arm64: dts: imx95-19x19-evk: add pwm fan
+> control
+>=20
+> Add pwm fan and overwrite default thermal nodes.
+>=20
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
 
-On 6/21/2024 1:27 AM, Pierre-Louis Bossart wrote:
->
->
->> I'll spend some time to evaluate your suggestion about moving the logic
->> to control the offloading from USB SND versus ASoC, since there are
->> valid points.  However, before I do that, I just want to make sure folks
->> are also inline with that thinking.  I've had to put a lot of effort
->> moving things around such as the previous example, and now you've
->> suggested to move it back to the vendor specific drivers.
->>
->> @Pierre, since you've helped with providing a lot of valuable input in
->> the previous revisions on the kcontrol uses, what do you think about the
->> proposal from Amadeusz?  Basically shifting the offload device selection
->> into USB SND from the ASoC USB BE driver, and having this per USB SND
->> device.
->>
->> [1]
->> https://lore.kernel.org/linux-usb/20231017200109.11407-30-quic_wcheng@quicinc.com/
-> This thread is very hard to follow, I am not sure I fully understood the
-> initial proposal, and I am not sure I follow Amadeusz' either.
->
-> There are really multiple layers to deal with
->
-> a) is the controller able to support the offload path? IIRC this is
-> embedded in an obscure XHCI property, it would make sense to expose it
-> as a control, or component string, of the USB card.
+tpm6 not enabled?
 
-If a component string/tag is desired, I already have some way of doing that.  I can add it to the USB card.
-
->
-> b) is there a companion card capable of dealing with the offload path?
-> Since the presence of this card may depend on driver probe, there should
-> be a control on the USB card. userspace could detect changes to this
-> control and detect if that path is or is no longer enabled.
-
-So currently, the "USB Offload Playback Capable Card" kcontrol (on the USB card) will determine if there is an offload path.  However, this differs than what Amadeusz is suggesting, in that he wants a single kcontrol created for EACH USB card identified (per USB audio device), and a simple enable/disable control to determine if the offload path is enabled for that card/pcm stream.
-
-It would be a simpler approach for the userspace, and if the card that handles the offload card isn't present, then these enable/disable control will be set to "disabled," and even if users attempt to set the control, it won't go through.
-
->
-> c) which PCM device is actually offloaded? This could be plural for some
-> implementations. The mapping between PCM devices exposed by the USB
-> card, and those exposed by the companion card, should be known to
-> userspace. I am not sure how this would be done though, a variable
-> number of controls is a sure way to confuse userspace.
-
-Expanding on Amadeusz's suggestion, my idea is to have an enable/disable kcontrol per USB stream.  For example, one USB card could have multiple PCM devices (USB streams).  So we would have something like:
-
-PCM Offload Playback Enable Stream#0  enable/disable
-
-PCM Offload Playback Enable Stream#1  enable/disable
-
-....
-
-So we'd know which USB card and PCM device is selected for USB SND.  However, I see what you're getting at in case there are multiple supported streams, because userspace needs to know which ASoC card/pcm combination corresponds to which USB device/combination.
-
-What do you think about having a USB card kcontrol to display the mapped ASoC card and PCM indexes?
-
-PCM Offload Playback Enable Stream Mapping#0  0, 1 (ASoC card#0, PCM device#1)
-
-To summarize, if we did this, I'd plan to remove all the kcontrols in ASoC card, and have the following in the USB card for an USB audio device that supports one USB stream:
-
-PCM Offload Playback Enable Stream#0  enable/disable
-
-PCM Offload Playback Enable Stream Mapping#0  0, 1 (ASoC card#0, PCM device#1)
-
-
-Thanks
-
-Wesley Cheng
-
+Regards,
+Peng.
 
