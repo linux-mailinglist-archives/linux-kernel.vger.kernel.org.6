@@ -1,131 +1,109 @@
-Return-Path: <linux-kernel+bounces-234366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B09291C5B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:33:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A78491C5B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:32:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7ED828530A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:33:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA71EB2128B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:32:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39591CCCDB;
-	Fri, 28 Jun 2024 18:32:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QGQOnwF3"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055011CD5BF;
+	Fri, 28 Jun 2024 18:32:29 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E9F1E50B;
-	Fri, 28 Jun 2024 18:32:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB181E50B;
+	Fri, 28 Jun 2024 18:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719599575; cv=none; b=KsOxvlGOR81zSrOe+z74qPf/kLvpxkqEQAdWARaUwYXJsdsvYklgueYV+MsY+Xzpu0LWwpFhzdL3u8t1FmvtY/GulAUz3wd1lEU01CykfjLegnvU7M5qkCLU/NgdX2LajOha6N0cfUWJW34PwZed5wdMv/6m5BjTVUVpcTPVifA=
+	t=1719599548; cv=none; b=g2J7rl7kTNJm1wjS4HbP2r3oALqesFEcJ2fv6YGsPOmOHm/fHcr6Xva9ptf9KgglIKrgy/a2UWrUW9vjtRZlShAZDxWM8iMKqCBKiE1bUyHRNTmsCNbG04wFPvvjrDyfo5NEqlPaMhj5alAv2F+9Tkh0gqmBnHBQxwf3xsuqiOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719599575; c=relaxed/simple;
-	bh=3WMX+8dYH4smiEAoQsiSB6rmSuaLqfLq5O2FIcd3ijA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hLWQQaQXrGv812mlAsdUDJOnOpVFUrWetBNFT3R3OuOzqVBJa5TrdZcXML1SAqbpW0lN8Px31jxPOgrWNJCa3wPYlkL3mP+jxC7NVwLcMuMl5UoL6AMip2DWAyDUYVnAZmIv7aQQ9Jtl/Vd1nF8qNXXkiN+QUWrSSO2YEmbHIhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QGQOnwF3; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45SITjmB019024;
-	Fri, 28 Jun 2024 18:32:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding; s=pp1; bh=uWEtcjQkVsXYP7zz5baR3/Agzt
-	ubsT255FVG3/FAg/g=; b=QGQOnwF3F16H25E6l1YBEkHE9TLX65GCu31rHhI3hI
-	9nC5yj+dYrFVTXzweTZ+G8Jnt0sn/w2m3RLyOsaDzAcMA3jYBeS72sA6jK4AGLUV
-	XG7RyiRNc/3xH0B3tG/UdmXlZWIdEYQCLbNBMO9Wyb5FzhoMKAexKw0yUjqAjVSZ
-	7qbVfOskkmF8zhUXdROJTGKsdEmAiOZmgr66aPzv5fh+Ecykbvk/Ci7fL4vegPFD
-	njZxXxUV8C8BJv4iTPeQuQ3Dv/2Jy4JhB5xsPFTBONR1awM5nZh/B6ZN1mIQjJ0M
-	mLYz5BGS2bo7dog+kLeWA9t7mDQUdhorSvJw5muNayLw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4022fvg094-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Jun 2024 18:32:35 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45SIWYgj023524;
-	Fri, 28 Jun 2024 18:32:34 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4022fvg08u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Jun 2024 18:32:34 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45SFMfHH000411;
-	Fri, 28 Jun 2024 18:32:33 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yxbn3scsr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Jun 2024 18:32:33 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45SIWUa656361282
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 28 Jun 2024 18:32:32 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F23DA20043;
-	Fri, 28 Jun 2024 18:32:29 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B9F0220040;
-	Fri, 28 Jun 2024 18:32:27 +0000 (GMT)
-Received: from ltcden3-lp14.aus.stglabs.ibm.com (unknown [9.53.174.165])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 28 Jun 2024 18:32:27 +0000 (GMT)
-From: Abhishek Dubey <adubey@linux.ibm.com>
-To: linuxppc-dev@lists.ozlabs.org
-Cc: naveen.n.rao@linux.vnet.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
-        peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
-        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-        jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Abhishek Dubey <adubey@linux.ibm.com>
-Subject: [PATCH] perf report: Calling available function for stats printing
+	s=arc-20240116; t=1719599548; c=relaxed/simple;
+	bh=xmAHf1q3wfr6LlUw9tXkd1fc2eHakw/YNd7upQANybk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fwRfc9RbteTFxbX7J4EMsvuUrClXVU6+6rnroqMlwZjf4Qhfq+vOItpLOYLiIdmGCkVXkjalzNEpE3R4C9thpBkaKSk9pkPU2sUppqynXZ6DO0rwmQxaCL82HQLLXro6zywyo/04QzvrrcYbOlKi0jTi64Mn7cekaolQf32nQo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2938DC116B1;
+	Fri, 28 Jun 2024 18:32:26 +0000 (UTC)
 Date: Fri, 28 Jun 2024 14:32:24 -0400
-Message-ID: <20240628183224.452055-1-adubey@linux.ibm.com>
-X-Mailer: git-send-email 2.44.0
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Cc: Thorsten Leemhuis <linux@leemhuis.info>, Randy Dunlap
+ <rdunlap@infradead.org>, Jonathan Corbet <corbet@lwn.net>, Kees Cook
+ <kees@kernel.org>, Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ workflows@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ ksummit@lists.linux.dev
+Subject: Re: [PATCH v2 2/2] Documentation: best practices for using Link
+ trailers
+Message-ID: <20240628143224.6fb67dfd@rorschach.local.home>
+In-Reply-To: <20240628-mindful-jackal-of-education-95059f@lemur>
+References: <20240619-docs-patch-msgid-link-v2-0-72dd272bfe37@linuxfoundation.org>
+	<20240619-docs-patch-msgid-link-v2-2-72dd272bfe37@linuxfoundation.org>
+	<202406211355.4AF91C2@keescook>
+	<20240621-amorphous-topaz-cormorant-cc2ddb@lemur>
+	<87cyo3fgcb.fsf@trenco.lwn.net>
+	<4709c2fa-081f-4307-bc9e-eef928255c08@infradead.org>
+	<62647fab-b3d4-48ac-af4c-78c655dcff26@leemhuis.info>
+	<20240628-mindful-jackal-of-education-95059f@lemur>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 5VwGW74Y-WPaUyKou2ABU2nyy_sv7MlL
-X-Proofpoint-ORIG-GUID: _9a9l5m5VVUfykp2eAShrtnLgRYzVwRS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-28_13,2024-06-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- priorityscore=1501 mlxscore=0 phishscore=0 adultscore=0 clxscore=1015
- bulkscore=0 lowpriorityscore=0 suspectscore=0 malwarescore=0 spamscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406280137
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-For printing dump_trace, just use existing stats_print()
-function.
+On Fri, 28 Jun 2024 10:52:37 -0400
+Konstantin Ryabitsev <konstantin@linuxfoundation.org> wrote:
 
-Signed-off-by: Abhishek Dubey <adubey@linux.ibm.com>
----
- tools/perf/builtin-report.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+> On Thu, Jun 27, 2024 at 05:51:47AM GMT, Thorsten Leemhuis wrote:
+> > I thought it was documented, but either I was wrong or can't find it.
+> > But I found process/5.Posting.rst, which provides this example:
+> > 
+> >         Link: https://example.com/somewhere.html  optional-other-stuff
+> > 
+> > So no "# " there. So to avoid inconsistencies I guess this should not be
+> > applied, unless that document is changed as well.  
+> 
+> This is inconsistent with every other trailer that includes comments.
+> Currently, there are two mechanisms to provide comments with trailers:
+> 
+> 1:
+> 
+>     | Trailer-name: trailer-content # trailer-comment
+> 
+> 2:
+> 
+>     | Trailer-name: trailer-content
+>     | [trailer-comment]
 
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index 9718770facb5..6edc0d4ce6fb 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -1089,8 +1089,7 @@ static int __cmd_report(struct report *rep)
- 			perf_session__fprintf_dsos(session, stdout);
- 
- 		if (dump_trace) {
--			perf_session__fprintf_nr_events(session, stdout);
--			evlist__fprintf_nr_events(session->evlist, stdout);
-+			stats_print(rep);
- 			return 0;
- 		}
- 	}
--- 
-2.44.0
+Where do you see that?
+
+Whenever I do the second one, it has nothing to do with the tag, but
+what I have done to the patch/commit.
+
+    Signed-off-by: Random Developer <rdevelop@company.com>
+    [ Fixed formatting ]
+    Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+
+That is, if I do any modification of the original submission, I
+document it this way.
+
+-- Steve
+
+
+> 
+> For the sake of consistency, all trailers, including Link, should use one of
+> these two mechanisms for "optional-other-stuff".
+> 
+> -K
 
 
