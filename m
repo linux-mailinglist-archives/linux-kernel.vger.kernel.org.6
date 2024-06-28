@@ -1,74 +1,75 @@
-Return-Path: <linux-kernel+bounces-234061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9933591C19A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:50:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03D8091C1A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:50:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 561222867FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:50:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 925791F26DB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 400671C9ED3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F7C1CB312;
 	Fri, 28 Jun 2024 14:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="sdjG6zKE"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="OmUH3gU2"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955031C6890
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 14:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39EF01C68AB
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 14:48:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719586126; cv=none; b=opKPtzrVrcQYKPZWR+aXVMeaY9qryTRE73BOpiX7cxHFvj/DWmOci/xn546lB3tFLWay3mJUcqOdwRwXDz/dCZxpGLHEC2HVET5BU2jHXkSCn1gaOq1Omk2/RbIOvwrwjVUMlQYDbcccruvhBE2TUdIxk54r5KQ7Wv4qDS8f7oo=
+	t=1719586127; cv=none; b=RcqUt/JtXmeiWfUAV78BDQ0Md/1L0wPtoKmzJWxRD0BtTcF1befC6Pu5DTzdTxbi+NjyUIZ0dZMFAiPeS9wrxhujpMwNq9wWs/V68yFk8+Rknohje4H9hJUqj5r/26o++YXQj3CzEaOHIX/M5utjGF2Sz+kt3VpowH47Yv7kAA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719586126; c=relaxed/simple;
-	bh=RRVxrhmiJTmhlGYh89+GPwU4++bLSJaxdW8aC4AKucw=;
+	s=arc-20240116; t=1719586127; c=relaxed/simple;
+	bh=TIZIXKMsUIcBcBNX8jkDzeY8VA7Mhb/sJ7N5yvRpSuw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=d27EkJ+QinO8caYnYYSlEKAqKCmhlelC5MDCnkBKBGGrPmop9e6RGtHWTFoKvf4aLIJ42i/q+jwzrJKv+AVbeNbkpD4a/qqjkBERi0oWBguWXVUF8ersg2bvse6h5iR5qZ5xCvYZFaFPKHVtGQsljwjaCYJr2vliGRinX1BwcRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=sdjG6zKE; arc=none smtp.client-ip=209.85.167.49
+	 In-Reply-To:To:Cc; b=ilildtK0c6qifX0vTenlbRi0JjzQSl7z5Lqv1kp9bSFLY+F9o3HC+/QqIXdkdNu0DAuqwWZtNZTjqJ6EJ6/FQjmzkRcRpaS19g4J6lYZnosni8CiCbfi7sR2/ON8J+OGL8yCzOkLZdfYfptR0GKJpIo4zB1L44eHIaypi8PkxMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=OmUH3gU2; arc=none smtp.client-ip=209.85.208.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52e764bb3fbso893853e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 07:48:44 -0700 (PDT)
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ec61eeed8eso8274621fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 07:48:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719586122; x=1720190922; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719586123; x=1720190923; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=IfIReJIeFXvHpoiQHEHuzoccsHNqOqmDnyW69xYvlNI=;
-        b=sdjG6zKEGCjpZZT3n+bLMSLi1LVhn7HvOK5Gl7RAFAXoTsqxR1Gkmuq9wPrfbMl1qj
-         dN8ASkjCFr90cCyn4U1AJQAs52aB9ew+F1xev3bPX7hTrV9+G+Ag4YT98JA3wrXvict1
-         HkzOkfqaeGMWi+Zeh0n1rK8faoZQpBopzW4+oNjo/QnbLglPxinal/n8EdUHgCIF4z5S
-         qa5Qnr8MVQRLyQ4qLKrE40A63KYXuRiB4Yu8NsCjsCln2jBtRT9dT0tzV8d9sZGke0eP
-         rf4KJL0KhRxTEE55+Jn8r/NxCenmYCaSCwYqwpkC/cYfG3ZFsxIZ26/2DXKPSFgmacZf
-         4Ohg==
+        bh=0syamWwYKEIgGFfBRP6mPS2Iu9QxWFGeekc+8eB0dRA=;
+        b=OmUH3gU2HjJ08h9gcbgCvhKQ60f0zK7OETyEt+VYQlMd6YONKXyjpJtz+0tXymzTCj
+         9WPDx731RI9Bhiysus0vUGiw4MxjAvNRqEcdLHYu1iiDaClmcDHMsoOsUMArpdOzVsPb
+         jgCO7LKDPkJD136yVvewajpVgvxfvh6H/I3H7DtNY25J5HZeOnUGLLkMDAvZokVjtyyu
+         Vd3xVDTLsQxSYwG286oGlWr4hFC6WGQxnVqiN1mdbkQKypNvFnZC2xESUgKD1vP9K5GN
+         MihOjbiFQnI8UbkETcPJvny+UGWyycPXAHQhp8sSHZmtIvtGfN9e0629V7775o/L3ROV
+         MORg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719586122; x=1720190922;
+        d=1e100.net; s=20230601; t=1719586123; x=1720190923;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IfIReJIeFXvHpoiQHEHuzoccsHNqOqmDnyW69xYvlNI=;
-        b=FYov0oVG7ZsCfgNjOLWFHXpreZGJPXGY20AFhZayh+PMFF2RSwqH/rUg1MnpybrymE
-         IF2RmZ4KG7J55IlxMov0B0AiAiu4sXVf7B1fXDea/XRnwqn32Rt4beo5HZlClLnl/AcZ
-         R/VUFeTwRPTs2LDKGi1/4dy022kn2zxsuevWXTdoEyC0UnRbl9xHvjCp24mR/m4Ft5B4
-         V0ZbQ1sq8t5EWxwD0byKHZ8OMhGbnavuizfuZbpvkQXD7X8DXg/Hrn1llKWyH56Y12cz
-         5utZRT8UJ+CwUEE/zgfL9+jupF69JJeXTWa/rXupuAKGEOW7/M4kFfbbfIL8jSRKfK5E
-         iKKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKW/5QE6j6upSgouWSVb8JEDWOxmbNQnMt6zc8uEeNVilONWOY/91IjpzL9U9eoYP4mY3iES++RLSJ9XWuLZzFM7NFIGsOrcHJs7n4
-X-Gm-Message-State: AOJu0Yyh9wTWfX5qDrSpv7TB82KdzaXmCjENOalSHTm8X6QUxORRMCo3
-	qEDX3f5NWwnL2krH/IVLTJOGitphWk6wcac3rWaEGeBG9nA3alJ7CX7YfrDsaKM=
-X-Google-Smtp-Source: AGHT+IF81L4/up6bPW02mm70ucgyml0B1zImJ0pYtdBOId4ZIEAeB4DjvRZW4P6xwugwAET/wtM+1Q==
-X-Received: by 2002:a05:6512:2254:b0:52c:e17c:3753 with SMTP id 2adb3069b0e04-52ce18320e6mr12902911e87.5.1719586122396;
-        Fri, 28 Jun 2024 07:48:42 -0700 (PDT)
+        bh=0syamWwYKEIgGFfBRP6mPS2Iu9QxWFGeekc+8eB0dRA=;
+        b=TpA/u9PCdW9nWuzp/8Mapd8ubPPkaas9Qz4LCdi2DNN3pAucv7qabafrra7DxuhM8j
+         QLj7IgH25eCblP0yu14EoNh1JJzt25MQusK2evhe0eCeU8DPZkihLmjf+ggpdJZG+ctz
+         BUUq+j27pxqkobtTZgbeWVoXWfRezd6H4myikirF6c2MRkBJzWSRvP4+FouZLqCQVy4X
+         z/8UK2SMajek13iuEXqVKoA1zehEkkH+8LyLH1R3I7R6/4MXQWTmIkeW1xnZpxc+qM6A
+         63biSgHrAGcZ3yVOZlYl1Oa7ldl2AbMwoRkGw3zktWYEBJlK63W9EvCP4Jh38cC3mXkS
+         fm+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVBpNxzXgRDOsDs3bKLvDi94YscQUqAC6y9ibBhTIEdgCJsv1RfhmdDYBG9qJwALHxueSPu20k+QZFiYxturaOwPAUsJDbkyD9BWVhX
+X-Gm-Message-State: AOJu0YzFTF33YDDwqGxw/lDkhIkScBkwo9ZXk0XkiUfhzWIbnKjWjWTc
+	OpvzVEq0vhJeJGzjcoTT2oh2eCxNjq8zdImVcCV01ox8EwbwttzmqJnz+WDfHrw=
+X-Google-Smtp-Source: AGHT+IGdYd+dELr8zIKWmQcy9X5n0z09TSJbmVdeFrFpZc6IVQh56XrFpIW3yj6V8h5TPsPZTCvydg==
+X-Received: by 2002:a2e:8913:0:b0:2ec:6755:a0cf with SMTP id 38308e7fff4ca-2ec6755a196mr77843931fa.32.1719586123293;
+        Fri, 28 Jun 2024 07:48:43 -0700 (PDT)
 Received: from [127.0.1.1] (frhb82016ds.ikexpress.com. [185.246.87.17])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256af55c0asm37972575e9.15.2024.06.28.07.48.41
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256af55c0asm37972575e9.15.2024.06.28.07.48.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 28 Jun 2024 07:48:42 -0700 (PDT)
 From: Guillaume Stols <gstols@baylibre.com>
-Date: Fri, 28 Jun 2024 14:48:26 +0000
-Subject: [PATCH v2 08/10] iio: adc: ad7606: fix oversampling gpio array
+Date: Fri, 28 Jun 2024 14:48:27 +0000
+Subject: [PATCH v2 09/10] iio: adc: ad7606: fix standby gpio state to match
+ the documentation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240628-cleanup-ad7606-v2-8-96e02f90256d@baylibre.com>
+Message-Id: <20240628-cleanup-ad7606-v2-9-96e02f90256d@baylibre.com>
 References: <20240628-cleanup-ad7606-v2-0-96e02f90256d@baylibre.com>
 In-Reply-To: <20240628-cleanup-ad7606-v2-0-96e02f90256d@baylibre.com>
 To: Lars-Peter Clausen <lars@metafoo.de>, 
@@ -94,58 +95,39 @@ Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
  dlechner@baylibre.com
 X-Mailer: b4 0.14.0
 
-gpiod_set_array_value was misused here: the implementation relied on the
-assumption that an unsigned long was required for each gpio, while the
-function expects a bit array stored in "as much unsigned long as needed
-for storing one bit per GPIO", i.e it is using a bit field.
+The binding's documentation specifies that "As the line is active low, it
+should be marked GPIO_ACTIVE_LOW". However, in the driver, it was handled
+the opposite way. This commit sets the driver's behaviour in sync with the
+documentation
 
-Fixes: d2a415c86c6b ("iio: adc: ad7606: Add support for AD7606B ADC")
+Fixes: 722407a4e8c0 ("staging:iio:ad7606: Use GPIO descriptor API")
 Signed-off-by: Guillaume Stols <gstols@baylibre.com>
 ---
- drivers/iio/adc/ad7606.c     | 4 ++--
- drivers/iio/adc/ad7606_spi.c | 5 +++--
- 2 files changed, 5 insertions(+), 4 deletions(-)
+ drivers/iio/adc/ad7606.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
-index 3a417595294f..8cce1fad9763 100644
+index 8cce1fad9763..50ccc245e314 100644
 --- a/drivers/iio/adc/ad7606.c
 +++ b/drivers/iio/adc/ad7606.c
-@@ -236,9 +236,9 @@ static int ad7606_write_os_hw(struct iio_dev *indio_dev, int val)
- 	struct ad7606_state *st = iio_priv(indio_dev);
- 	DECLARE_BITMAP(values, 3);
+@@ -443,7 +443,7 @@ static int ad7606_request_gpios(struct ad7606_state *st)
+ 		return PTR_ERR(st->gpio_range);
  
--	values[0] = val;
-+	values[0] = val & GENMASK(2, 0);
+ 	st->gpio_standby = devm_gpiod_get_optional(dev, "standby",
+-						   GPIOD_OUT_HIGH);
++						   GPIOD_OUT_LOW);
+ 	if (IS_ERR(st->gpio_standby))
+ 		return PTR_ERR(st->gpio_standby);
  
--	gpiod_set_array_value(ARRAY_SIZE(values), st->gpio_os->desc,
-+	gpiod_set_array_value(st->gpio_os->ndescs, st->gpio_os->desc,
- 			      st->gpio_os->info, values);
+@@ -686,7 +686,7 @@ static int ad7606_suspend(struct device *dev)
  
- 	/* AD7616 requires a reset to update value */
-diff --git a/drivers/iio/adc/ad7606_spi.c b/drivers/iio/adc/ad7606_spi.c
-index 263a778bcf25..287a0591533b 100644
---- a/drivers/iio/adc/ad7606_spi.c
-+++ b/drivers/iio/adc/ad7606_spi.c
-@@ -249,8 +249,9 @@ static int ad7616_sw_mode_config(struct iio_dev *indio_dev)
- static int ad7606B_sw_mode_config(struct iio_dev *indio_dev)
- {
- 	struct ad7606_state *st = iio_priv(indio_dev);
--	unsigned long os[3] = {1};
-+	DECLARE_BITMAP(os, 3);
- 
-+	bitmap_fill(os, 3);
- 	/*
- 	 * Software mode is enabled when all three oversampling
- 	 * pins are set to high. If oversampling gpios are defined
-@@ -258,7 +259,7 @@ static int ad7606B_sw_mode_config(struct iio_dev *indio_dev)
- 	 * otherwise, they must be hardwired to VDD
- 	 */
- 	if (st->gpio_os) {
--		gpiod_set_array_value(ARRAY_SIZE(os),
-+		gpiod_set_array_value(st->gpio_os->ndescs,
- 				      st->gpio_os->desc, st->gpio_os->info, os);
+ 	if (st->gpio_standby) {
+ 		gpiod_set_value(st->gpio_range, 1);
+-		gpiod_set_value(st->gpio_standby, 0);
++		gpiod_set_value(st->gpio_standby, 1);
  	}
- 	/* OS of 128 and 256 are available only in software mode */
+ 
+ 	return 0;
 
 -- 
 2.34.1
