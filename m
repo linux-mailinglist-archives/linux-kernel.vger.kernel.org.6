@@ -1,172 +1,195 @@
-Return-Path: <linux-kernel+bounces-234634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3439B91C8D9
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 00:01:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FDF491C8DF
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 00:02:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E26AB28590C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:01:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A546A1F26C3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 369F912D76C;
-	Fri, 28 Jun 2024 21:57:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98511327E5;
+	Fri, 28 Jun 2024 21:58:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lQvg/Poq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Qirre7mH"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C7586255;
-	Fri, 28 Jun 2024 21:57:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F85880023;
+	Fri, 28 Jun 2024 21:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719611872; cv=none; b=eDNtH+tz1TzGiYE7iz87LQUYVD2kqBfgzaW/5y4sRn3lQfFyCDC9BbVrsItkhDAl+OYYdrc3GxKP06/nZ3DtUH2k6byfDNls02guVU2KEww89Xsvfz0OR/tnJdyXFl6Q/TzkYTh0O4ZUF3MGuHoO3vVcYLdhIl5/XPQmTu55cUE=
+	t=1719611937; cv=none; b=grIUp1AAzvLOkz1MRfwpPQwInJEuC30+61+g4lIAiqeqssP5OldiarASbRew1DKOvvXFH2+prt+AlBrSLnStKh9Lv1Gvm1OwCdYbwXm4ACVNHweBTj/AGi84Uvvja1zB6HL26iz4LH4GKQxhWzM0h71VCG1inkrj2nXi/TaahXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719611872; c=relaxed/simple;
-	bh=sQWoZdouFGgGJyVce9TZ9u7xhn+//WZ7qPNM/DbfT7k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f4V34B7h/Vnd5PXd4FLxL/jBKret2bx+suXffT7ZV+Gp7f+gBsLGiuRL3WGDW3JSrL5vyiWq5uJzN/z0jtQB3BQTBRhuAw0Wi5QKP7w0H08jjTGmaXQgp3KDtC0M42/HxZ81QkwgTBBZIUqpouZTRI9YPVRdO/wmMXXAI4p1bP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lQvg/Poq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0388C116B1;
-	Fri, 28 Jun 2024 21:57:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719611872;
-	bh=sQWoZdouFGgGJyVce9TZ9u7xhn+//WZ7qPNM/DbfT7k=;
-	h=From:To:Cc:Subject:Date:From;
-	b=lQvg/PoqKno9nlrZcVlQuJ7OxCWobD1L2IVCayBjtKJ0ebQ5JSBrEGimqX7MLDwcE
-	 CajgwHC3v8iL6ff0vW9UqvtBcFFWc/R9oTI2NqRaOEtGRfkREHazsxCrokMbGmAzFa
-	 LZg3g7XIUcku/+6YJgXoZb4ssanHq8HbNzOEyycmsDgbb4sRvGQeTxiP25rPQuTqxe
-	 j1uDJsbZSwfhTnDwmtI70BYT3afBAh2z3CPr+Px5nQQGSKlVsSVs39Zooydm4KKzBs
-	 U1ZQ2vpt3BcUfhQWXfClpGMXcfOxIME65aNQpeeyiVHUMsRdSpCKS1XRxgV285S/b1
-	 nWlJK0dzyADpw==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH] perf test: Print test description first
-Date: Fri, 28 Jun 2024 14:57:50 -0700
-Message-ID: <20240628215751.1512250-1-namhyung@kernel.org>
-X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
+	s=arc-20240116; t=1719611937; c=relaxed/simple;
+	bh=aNx5wKKGglJ25DAiffP1QsM3xJSJSymxhK2portxqrU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MxCu4Mz6XDEcM1DkJKruKPKFEl2xaThqtPtfRth38MGVLZF4HxkL18O1YkmfD9IBuRF5rEjpYBheRRpm4ttIgn4J6/PNkwOJTQtszVm4oNraXPfKSilumnKh7yLS05oh562v+k/+N/ur70xLFdncor8Sse13rR3LquvPIGVyoIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Qirre7mH; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45SL02oo016462;
+	Fri, 28 Jun 2024 21:58:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	0J2akENPIzOdoRjL2gN/Jt9bSjm4NMwCA+OZVI573+8=; b=Qirre7mHDVTOq+4Q
+	hj1ZjF8KfOdtyBjca5GwZWPQnWbG8MIdc0UhdnR4nFpFJFg4rjcKID/9Y8Z9iqhw
+	n3r2xKtTD3hWDp2siaVfpmpmv/Eci/fj6TA1sZmffQ1C6vB1+9nzqOqIY0lQ7zTq
+	OxqqaoUlbvI/uvhayvoo75r0A50/FLD/jHzqhUmKaAJha/RD+hI1l0eDVT+z6q2u
+	m99Nbk3mpK7RMPblh0ro/TRjmLylpYKX/Z3T6OLgTDnznil4dqXkEmHU27HYY7uw
+	kaWKYlSeGTaU54otTmE+2wNVuIObmsWLKzyijCrCbDqDuG765UrBZIUqYJKXeJ75
+	pOPGSg==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 401pm5twqx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Jun 2024 21:58:30 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45SLwSfl007583
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Jun 2024 21:58:28 GMT
+Received: from [10.110.112.228] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 28 Jun
+ 2024 14:58:25 -0700
+Message-ID: <22edcb67-9c25-4d16-ab5c-7522c710b1e2@quicinc.com>
+Date: Fri, 28 Jun 2024 14:58:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] net: stmmac: Add interconnect support
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Vinod Koul <vkoul@kernel.org>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        "David S.
+ Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Russell King <linux@armlinux.org.uk>, "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Bhupesh Sharma <bhupesh.sharma@linaro.org>, <kernel@quicinc.com>,
+        Andrew Halaney <ahalaney@redhat.com>, <linux-arm-msm@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <20240625-icc_bw_voting_from_ethqos-v2-0-eaa7cf9060f0@quicinc.com>
+ <20240625-icc_bw_voting_from_ethqos-v2-2-eaa7cf9060f0@quicinc.com>
+ <4123b96c-ae1e-4fdd-aab2-70478031c59a@lunn.ch>
+ <81e97c36-e244-4e94-b752-b06334a06db0@quicinc.com>
+ <974114ca-98ed-44a7-a038-eb3f71bd03ef@lunn.ch>
+Content-Language: en-US
+From: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+In-Reply-To: <974114ca-98ed-44a7-a038-eb3f71bd03ef@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Ct61UG8KzFfDtH6q0f7ehA3guyUqO1k_
+X-Proofpoint-GUID: Ct61UG8KzFfDtH6q0f7ehA3guyUqO1k_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-28_16,2024-06-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
+ lowpriorityscore=0 phishscore=0 suspectscore=0 adultscore=0 mlxscore=0
+ bulkscore=0 priorityscore=1501 spamscore=0 malwarescore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2406280165
 
-Currently perf test prints the description of the test when it finishes
-to run the test.  But sometimes it runs long and users want to see which
-test it is running.  Change it to print the info in start_test() so that
-we can see it right after the test.
 
-No functional changes intended.
 
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/tests/builtin-test.c | 54 ++++++++++++++++++---------------
- 1 file changed, 30 insertions(+), 24 deletions(-)
+On 6/26/2024 5:12 PM, Andrew Lunn wrote:
+> On Wed, Jun 26, 2024 at 04:36:06PM -0700, Sagar Cheluvegowda wrote:
+>>
+>>
+>> On 6/26/2024 6:07 AM, Andrew Lunn wrote:
+>>>> +	plat->axi_icc_path = devm_of_icc_get(&pdev->dev, "axi");
+>>>> +	if (IS_ERR(plat->axi_icc_path)) {
+>>>> +		ret = (void *)plat->axi_icc_path;
+>>>
+>>> Casting	to a void * seems odd. ERR_PTR()?
+>>>
+>>> 	Andrew
+>>
+>> The output of devm_of_icc_get is a pointer of type icc_path,
+>> i am getting below warning when i try to ERR_PTR instead of Void*
+>> as ERR_PTR will try to convert a long integer to a Void*.
+>>
+>> "warning: passing argument 1 of ‘ERR_PTR’ makes integer from pointer without a cast"
+>>
+> 
+> https://elixir.bootlin.com/linux/v6.10-rc5/source/drivers/crypto/qce/core.c#L224
+> https://elixir.bootlin.com/linux/v6.10-rc5/source/drivers/gpu/drm/msm/adreno/a3xx_gpu.c#L591
+> https://elixir.bootlin.com/linux/v6.10-rc5/source/drivers/gpu/drm/msm/adreno/a3xx_gpu.c#L597
+> https://elixir.bootlin.com/linux/v6.10-rc5/source/drivers/spi/spi-qup.c#L1052
+> 
+> Sorry, PTR_ERR().
+> 
+> In general, a cast to a void * is a red flag and will get looked
+> at. It is generally wrong. So you might want to fixup where ever you
+> copied this from.
+> 
+> 	Andrew
+the return type of stmmac_probe_config_dt is a pointer of type plat_stmmacenet_data,
+as PTR_ERR would give long integer value i don't think it would be ideal to
+return an integer value here, if casting plat->axi_icc_path to a void * doesn't look
+good, let me if the below solution is better or not?
 
-diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
-index c3d84b67ca8e..33defd3b7185 100644
---- a/tools/perf/tests/builtin-test.c
-+++ b/tools/perf/tests/builtin-test.c
-@@ -243,12 +243,17 @@ static int run_test_child(struct child_process *process)
- 
- static int print_test_result(struct test_suite *t, int i, int subtest, int result, int width)
- {
--	if (has_subtests(t)) {
--		int subw = width > 2 ? width - 2 : width;
-+	/* If it printed other messages, print the header again. */
-+	if (verbose > 1 || (verbose == 1 && result == TEST_FAIL)) {
-+		if (has_subtests(t)) {
-+			int subw = width > 2 ? width - 2 : width;
- 
--		pr_info("%3d.%1d: %-*s:", i + 1, subtest + 1, subw, test_description(t, subtest));
--	} else
--		pr_info("%3d: %-*s:", i + 1, width, test_description(t, subtest));
-+			pr_info("%3d.%1d: %-*s:", i + 1, subtest + 1, subw,
-+				test_description(t, subtest));
-+		} else {
-+			pr_info("%3d: %-*s:", i + 1, width, test_description(t, -1));
-+		}
-+	}
- 
- 	switch (result) {
- 	case TEST_OK:
-@@ -282,25 +287,12 @@ static int finish_test(struct child_test *child_test, int width)
- 	struct strbuf err_output = STRBUF_INIT;
- 	int ret;
- 
--	/*
--	 * For test suites with subtests, display the suite name ahead of the
--	 * sub test names.
--	 */
--	if (has_subtests(t) && subi == 0)
--		pr_info("%3d: %-*s:\n", i + 1, width, test_description(t, -1));
--
- 	/*
- 	 * Busy loop reading from the child's stdout/stderr that are set to be
- 	 * non-blocking until EOF.
- 	 */
- 	if (!err_done)
- 		fcntl(err, F_SETFL, O_NONBLOCK);
--	if (verbose > 1) {
--		if (has_subtests(t))
--			pr_info("%3d.%1d: %s:\n", i + 1, subi + 1, test_description(t, subi));
--		else
--			pr_info("%3d: %s:\n", i + 1, test_description(t, -1));
--	}
- 	while (!err_done) {
- 		struct pollfd pfds[1] = {
- 			{ .fd = err,
-@@ -330,12 +322,8 @@ static int finish_test(struct child_test *child_test, int width)
- 	/* Clean up child process. */
- 	ret = finish_command(&child_test->process);
- 	if (verbose == 1 && ret == TEST_FAIL) {
--		/* Add header for test that was skipped above. */
--		if (has_subtests(t))
--			pr_info("%3d.%1d: %s:\n", i + 1, subi + 1, test_description(t, subi));
--		else
--			pr_info("%3d: %s:\n", i + 1, test_description(t, -1));
--		fprintf(stderr, "%s", err_output.buf);
-+		/* It printed the header first, print messages in a new line */
-+		fprintf(stderr, "\n%s", err_output.buf);
- 	}
- 	strbuf_release(&err_output);
- 	print_test_result(t, i, subi, ret, width);
-@@ -376,6 +364,24 @@ static int start_test(struct test_suite *test, int i, int subi, struct child_tes
- 		(*child)->process.err = -1;
- 	}
- 	(*child)->process.no_exec_cmd = run_test_child;
-+
-+	if (has_subtests(test)) {
-+		int subw = width > 2 ? width - 2 : width;
-+
-+		/*
-+		 * For test suites with subtests, display the suite name ahead of the
-+		 * sub test names.
-+		 */
-+		if (has_subtests(test) && subi == 0)
-+			pr_info("%3d: %-*s:\n", i + 1, width, test_description(test, -1));
-+
-+		pr_info("%3d.%1d: %-*s:", i + 1, subi + 1, subw, test_description(test, subi));
-+	} else
-+		pr_info("%3d: %-*s:", i + 1, width, test_description(test, -1));
-+
-+	if (verbose > 1)
-+		pr_info("\n");
-+
- 	err = start_command(&(*child)->process);
- 	if (err || !sequential)
- 		return  err;
--- 
-2.45.2.803.g4e1b14247a-goog
 
+ 	plat->axi_icc_path = devm_of_icc_get(&pdev->dev, "axi");
+	if (IS_ERR(plat->axi_icc_path)) {
+		rc = PTR_ERR(plat->axi_icc_path);
+		ret = ERR_PTR(rc);
+		goto error_hw_init;
+	}
+
+	plat->ahb_icc_path = devm_of_icc_get(&pdev->dev, "ahb");
+	if (IS_ERR(plat->ahb_icc_path)) {
+		rc = PTR_ERR(plat->ahb_icc_path);
+		ret = ERR_PTR(rc);
+		goto error_hw_init;
+	}
+
+	plat->stmmac_rst = devm_reset_control_get_optional(&pdev->dev,
+							   STMMAC_RESOURCE_NAME);
+	if (IS_ERR(plat->stmmac_rst)) {
+		ret = plat->stmmac_rst;
+		goto error_hw_init;
+	}
+
+	plat->stmmac_ahb_rst = devm_reset_control_get_optional_shared(
+							&pdev->dev, "ahb");
+	if (IS_ERR(plat->stmmac_ahb_rst)) {
+		ret = plat->stmmac_ahb_rst;
+		goto error_hw_init;
+	}
+
+	return plat;
+
+error_hw_init:
+	clk_disable_unprepare(plat->pclk);
+error_pclk_get:
+	clk_disable_unprepare(plat->stmmac_clk);
+
+	return ret;
+}
+
+Regards,
+Sagar
 
