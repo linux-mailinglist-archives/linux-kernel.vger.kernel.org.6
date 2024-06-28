@@ -1,147 +1,136 @@
-Return-Path: <linux-kernel+bounces-234303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B6A791C4F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:33:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 055A991C504
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:36:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9A691F21524
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:33:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36D221C22F69
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158751CCCB6;
-	Fri, 28 Jun 2024 17:33:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFAED1CCCC6;
+	Fri, 28 Jun 2024 17:36:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GWkXsvii"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PcXrirVn"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF5B4CB37
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 17:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69764CB37;
+	Fri, 28 Jun 2024 17:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719595980; cv=none; b=SNeaODvcWnTAE93R52C3eX/Oj3FHSPMQssB1JcRC3csXso2GTpj0FuV3+aP5IM3PdV1EK2VeLEXRQ/TWUEwnuY3yp0MPQ3dfh2v2AGDKj+6scTc/Z7w9lpgE4yO8P6XGOAF38wbimHr8fPGQpm6G/C25rtHFpdm2OW9i3/ltNrU=
+	t=1719596210; cv=none; b=secOgvDXR6gV2oN9ZwODbwaspbRnJynF3d7oqg7RraXlNpD+9gE7i/mUYDKmXXlOxXizc5SLYtgcH0V/f8HGEioB3NycSTFRqGzKWlEqSZ+uuxImUAzgF+pchewPlDYUpBNVPYWK0VgQHtwlP4UUb7FTyBQrxTICcvZJKMfu0GU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719595980; c=relaxed/simple;
-	bh=BIrB4fK9301sI6Aq8wDLNsbZpmrpFpWY3QIPSv2FJBM=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=mdv2iTPgHdYoH8DZfNKqyrQPMRp/2W1XLU0ZY0C3vG61JuyoQu6AuNqmIWyE9VbRt2IKOlS15bdSgF8DRaKixvTMoO8f49mcggTqV9C8Yh/Xeco7TPAV/sViaPSLVpTk01sKxKuwrbidsjSnAD9HeegLcLUQK4hAcVVAwo4u5NM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GWkXsvii; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-62d032a07a9so13476597b3.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 10:32:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719595978; x=1720200778; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=wIYiwzVQ2MGNzQexNoTOeXlDfhxqH6305pepeHUbiXE=;
-        b=GWkXsviiiXcyTI5deLG6sO/Z2p4l2funD5Kd5ZirCsT4j22Xa8M+mleudiHxALQSWX
-         RhluksXLzC2BOdejvlOSJaQp/ITrvbnEmbmbP2G0/9+Footx6PIVOwIx46L4WxqFbK6v
-         wC43IUy2DEUdlIkpAt8rbLCIxqUp9HoJB+qiV57fkZ1wPqf56U2kBunA+dZtGpDG3lze
-         lCWTDUCYrRgrvoyzouhG/C5aXCPhKejRI658vONVsvDFOaN+A2/MPoo91kuxTDyJ62EK
-         VjLQ8SGUgojda4d2flxqtSOs7xQoEkD+HrPheF9gQpQZIg2dCIGT2xILJMVZBDKfMM8+
-         nScA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719595978; x=1720200778;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wIYiwzVQ2MGNzQexNoTOeXlDfhxqH6305pepeHUbiXE=;
-        b=m2SYFm9AY+WH+llsG/2YylB1X/s8ETNkGuVLV+587SfWgFsYdf568Cs8PM7t9xYbEA
-         WFlTQJ5BfwN/G06ZMoFbtB+wijGNVp5fIlBlRHNKS2S6FwLrSONkxrdGmUISK9jNlIRK
-         xadoi/XZfAcmAtD2AqWbhSdkU19GZ5iJLxA1X71I8QQSLxV/xYi5pGaBwbGYJpP+B/SI
-         NWIa5i4QaYJWCrpMvMTK34sG/rlCSeiTZjFQ902ssEWqLc5UNVtRNYFE+thY3lrTaWX/
-         7SOzXgtBrQ8vrddN1vV9pI34662PHSZUa8kxiGyoAPtcQGIb3dBQF2q+OLZJslqzfLKv
-         Dxlg==
-X-Forwarded-Encrypted: i=1; AJvYcCVdpjeZeBze274NgyepURKoaMRKKgeSoepsPlQVpnGP+Li/WNvpk39U8HMbDnOOccClzj/xYTkozpfnZqJzWl67HCLEkSlVdJZnh1dN
-X-Gm-Message-State: AOJu0YyjWFkXNN3hSY4j1qTjpFhlBIpsVPpxXaLRNfAV6QJaeae+6Td2
-	ycdT0MjmXyacQFMYncJzNt/ZbVIirDqVHXnU8rIa/t0jj1ApClCPjx9/PbDPvzJA8G+JnytmpDl
-	dBA==
-X-Google-Smtp-Source: AGHT+IFf+aPnAdJDjhVSSSXaFCZJ7EnOHriEKCrQPp8uEWIg28LanR8e8knsUxMiAFvorLCWWizLwUOcIgM=
-X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:5b61:bd29:8f38:b8dd])
- (user=surenb job=sendgmr) by 2002:a0d:ebc8:0:b0:64a:e220:bfb5 with SMTP id
- 00721157ae682-64ae220c130mr104637b3.1.1719595977696; Fri, 28 Jun 2024
- 10:32:57 -0700 (PDT)
-Date: Fri, 28 Jun 2024 10:32:47 -0700
+	s=arc-20240116; t=1719596210; c=relaxed/simple;
+	bh=EhZk8ov/+gx8/lrWCRB2HKYFrjU/LYKtTPr2bfFADkQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uLEzoaE0CpvyiY+lQPLYoJlz6EY7gj2iWvvTOrZSR2scE9X+UzUThJU9NITpPSe9PMO55neH9mjyFZdX76XlPpKUBai5cQaIXqKnr5Nlkar/EPW9qyxEdeJbAdvb6fb6Dype3HYpWuhrAq/qYKvmJhTI9Nlh9UnYpLldRdgRLAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PcXrirVn; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=Oedd6VxbM8c0ETZBw+6nJVaIHdNvh+x7QH0mcDQfB2U=; b=PcXrirVnlv4NdeggBI1FIfE26O
+	LXErvKkvGhncHmcOBY+1kWkfaJkKeIEaYJpDTAMsbfSJMHYA6U7zFojHE1y6tRWUB93eFZ9UI1ZE1
+	snf7aPWYCr/KaJb0/BbxN/khNnOWvNOlr3NolTGZ0W2dQaUCaoqw+Q/6duCECdwNvLdOPP33G2o7g
+	QU9k3MUw3X7LAKq3DsXAr25TDR8vQ7FIoLj4SpSsSExg+BZ/1SW83cAtCKTrJ3SWgSuOJFR2BrBxR
+	VtDuMbnlz79ek7nJB/KRstJwgqlbRcZajZOqf6ySJPxj4wYBdJ+wS+JVj1UnaakslJMHSWtGxyBEG
+	supYSOtA==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sNFWf-0000000EWKx-24rt;
+	Fri, 28 Jun 2024 17:36:46 +0000
+Date: Fri, 28 Jun 2024 10:36:45 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Miroslav Benes <mbenes@suse.cz>,
+	Sami Tolvanen <samitolvanen@google.com>
+Cc: Song Liu <song@kernel.org>, live-patching@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jpoimboe@kernel.org, jikos@kernel.org,
+	pmladek@suse.com, joe.lawrence@redhat.com, nathan@kernel.org,
+	morbo@google.com, justinstitt@google.com,
+	thunder.leizhen@huawei.com, kees@kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH] kallsyms, livepatch: Fix livepatch with CONFIG_LTO_CLANG
+Message-ID: <Zn70rQE1HkJ_2h6r@bombadil.infradead.org>
+References: <20240605032120.3179157-1-song@kernel.org>
+ <alpine.LSU.2.21.2406071458531.29080@pobox.suse.cz>
+ <CAPhsuW5th55V3PfskJvpG=4bwacKP8c8DpVYUyVUzt70KC7=gw@mail.gmail.com>
+ <alpine.LSU.2.21.2406281420590.15826@pobox.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
-Message-ID: <20240628173247.3507846-1-surenb@google.com>
-Subject: [PATCH 1/1] signal: on exit skip waiting for an ack from the tracer
- if it is frozen
-From: Suren Baghdasaryan <surenb@google.com>
-To: akpm@linux-foundation.org
-Cc: oleg@redhat.com, mhocko@suse.com, brauner@kernel.org, 
-	tandersen@netflix.com, bigeasy@linutronix.de, vincent.whitchurch@axis.com, 
-	ardb@kernel.org, linux-kernel@vger.kernel.org, 
-	Suren Baghdasaryan <surenb@google.com>, Martin Liu <liumartin@google.com>, 
-	Minchan Kim <minchan@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.LSU.2.21.2406281420590.15826@pobox.suse.cz>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-When a process is being killed or exiting and it has a tracer, it will
-notify the tracer and wait for an ack from the tracer to proceed. However
-if the tracer is frozen, this ack will not arrive until the tracer gets
-thawed. This poses a problem especially during memory pressure because
-resources of the process are not released.
-Things become even more interesting if OOM killer picks such tracee
-and adds it into oom_victims. oom_victims counter will get incremented
-and stay that way until tracee exits. In the meantime, if the system
-tries to go into suspend, it will call oom_killer_disable() after
-freezing all processes. That call will fail due to positive oom_victims,
-but not until freeze_timeout_msecs passes. For the whole duration of the
-freeze_timeout_msecs (20sec by default) the system will appear
-unresponsive.
-To fix this problem, skip the ack waiting step in the tracee when it's
-exiting and the tracer is frozen. Per ptrace(2) manual, the tracer
-cannot assume that the ptrace-stopped tracee exists. Therefore this
-change does not break any valid assumptions.
+On Fri, Jun 28, 2024 at 02:23:49PM +0200, Miroslav Benes wrote:
+> On Fri, 7 Jun 2024, Song Liu wrote:
+> 
+> > Hi Miroslav,
+> > 
+> > Thanks for reviewing the patch!
+> > 
+> > On Fri, Jun 7, 2024 at 6:06 AM Miroslav Benes <mbenes@suse.cz> wrote:
+> > >
+> > > Hi,
+> > >
+> > > On Tue, 4 Jun 2024, Song Liu wrote:
+> > >
+> > > > With CONFIG_LTO_CLANG, the compiler may postfix symbols with .llvm.<hash>
+> > > > to avoid symbol duplication. scripts/kallsyms.c sorted the symbols
+> > > > without these postfixes. The default symbol lookup also removes these
+> > > > postfixes before comparing symbols.
+> > > >
+> > > > On the other hand, livepatch need to look up symbols with the full names.
+> > > > However, calling kallsyms_on_each_match_symbol with full name (with the
+> > > > postfix) cannot find the symbol(s). As a result, we cannot livepatch
+> > > > kernel functions with .llvm.<hash> postfix or kernel functions that use
+> > > > relocation information to symbols with .llvm.<hash> postfixes.
+> > > >
+> > > > Fix this by calling kallsyms_on_each_match_symbol without the postfix;
+> > > > and then match the full name (with postfix) in klp_match_callback.
+> > > >
+> > > > Signed-off-by: Song Liu <song@kernel.org>
+> > > > ---
+> > > >  include/linux/kallsyms.h | 13 +++++++++++++
+> > > >  kernel/kallsyms.c        | 21 ++++++++++++++++-----
+> > > >  kernel/livepatch/core.c  | 32 +++++++++++++++++++++++++++++++-
+> > > >  3 files changed, 60 insertions(+), 6 deletions(-)
+> > >
+> > > I do not like much that something which seems to be kallsyms-internal is
+> > > leaked out. You need to export cleanup_symbol_name() and there is now a
+> > > lot of code outside. I would feel much more comfortable if it is all
+> > > hidden from kallsyms users and kept there. Would it be possible?
+> > 
+> > I think it is possible. Currently, kallsyms_on_each_match_symbol matches
+> > symbols without the postfix. We can add a variation or a parameter, so
+> > that it matches the full name with post fix.
+> 
+> I think it might be better.
+> 
+> Luis, what is your take on this?
+> 
+> If I am not mistaken, there was a patch set to address this. Luis might 
+> remember more.
 
-Debugged-by: Martin Liu <liumartin@google.com>
-Debugged-by: Minchan Kim <minchan@google.com>
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
----
- kernel/signal.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Yeah this is a real issue outside of CONFIG_LTO_CLANG, Rust modules is
+another example where instead of symbol names they want to use full
+hashes. So, as I hinted to you Sami, can we knock two birds with one stone
+here and move CONFIG_LTO_CLANG to use the same strategy as Rust so we
+have two users instead of just one? Then we resolve this. In fact
+what I suggested was even to allow even non-Rust, and in this case
+even with gcc to enable this world. This gives much more wider scope
+of testing / review / impact of these sorts of changes and world view
+and it would resolve the Rust case, the live patch CONFIG_LTO_CLANG world too.
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 1f9dd41c04be..dd9c18fdaaa5 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -2320,6 +2320,19 @@ static int ptrace_stop(int exit_code, int why, unsigned long message,
- 	if (gstop_done && (!current->ptrace || ptrace_reparented(current)))
- 		do_notify_parent_cldstop(current, false, why);
- 
-+	/*
-+	 * If tracer is frozen, it won't ack until it gets unfrozen and if the
-+	 * tracee is exiting this means its resources do not get freed until
-+	 * the tracer is thawed. Skip waiting for the tracer. Per ptrace(2)
-+	 * manual, the tracer cannot assume that the ptrace-stopped tracee
-+	 * exists, so exiting now should not be an issue.
-+	 */
-+	if (current->ptrace && (exit_code >> 8) == PTRACE_EVENT_EXIT &&
-+	    cgroup_task_frozen(current->parent)) {
-+		read_unlock(&tasklist_lock);
-+		goto skip_wait;
-+	}
-+
- 	/*
- 	 * The previous do_notify_parent_cldstop() invocation woke ptracer.
- 	 * One a PREEMPTION kernel this can result in preemption requirement
-@@ -2356,6 +2369,7 @@ static int ptrace_stop(int exit_code, int why, unsigned long message,
- 	schedule();
- 	cgroup_leave_frozen(true);
- 
-+skip_wait:
- 	/*
- 	 * We are back.  Now reacquire the siglock before touching
- 	 * last_siginfo, so that we are sure to have synchronized with
+Thoughts?
 
-base-commit: 6c0483dbfe7223f2b8390e3d5fe942629d3317b7
--- 
-2.45.2.803.g4e1b14247a-goog
-
+  Luis
 
