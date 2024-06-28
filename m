@@ -1,104 +1,165 @@
-Return-Path: <linux-kernel+bounces-234294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 780FA91C4CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:25:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 494D391C4CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:26:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 331DE285808
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:25:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B88891F2460D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:26:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C721CCCBF;
-	Fri, 28 Jun 2024 17:25:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F341CB327;
+	Fri, 28 Jun 2024 17:26:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bssi4Vb6"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=valvesoftware.com header.i=@valvesoftware.com header.b="jahStvWW"
+Received: from us-smtp-delivery-172.mimecast.com (us-smtp-delivery-172.mimecast.com [170.10.129.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13BF81CB306;
-	Fri, 28 Jun 2024 17:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880551C230B
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 17:26:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719595548; cv=none; b=LywiJQ2+L2SQqsroL2OWbrmaZ4jMCTsBXWEs4NSsdFQ28VPD5Nl+b5b0NXt9pOofMY+vgRiuu9I9hP+sDU37ElOyDdMocZdv3H6q0dgfkZZjzeXFFNs3ExVG0nu7xbKwmVgt3ps1FA+HYoISRnC4IoBgf5lWZzVCetcydxTI2HQ=
+	t=1719595568; cv=none; b=g/vJ6e+c82nOQSXOLu2xf1ICWWHWQ6FdkRn8fzfM6DrTUHUAcwtC8ZQTnAL8/Nw5BZZ7wE7CCmBa0smtuNZsFEToEORiJwT1UTfKD3zOOxhja3TXQF2vNOhVa7cJgt6JSjnp9cBNSEMUGNwcpxvRq9oCc+Qk3dHsxpx+TpCIYqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719595548; c=relaxed/simple;
-	bh=Ka1TJNVLbhH+PgynFj/tZxJjME7coKvKnwCbbyM3MrA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SK4TwtfvbCibFXf0zGgjbl9HO8roVBQLseNf5Y+9g5+fTOqsjCepTAE7YO/UAKlo2+xZY2b6NVyB78NhS/b5tU04pGyYJGWHjkt6X1uWQm3ITcHt0lkuh6boe59s0D641Hay6EdzPAV7psWwIAdcXMK9uTPpC2uPK5VsTF/4fy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bssi4Vb6; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fa2ea1c443so6579105ad.0;
-        Fri, 28 Jun 2024 10:25:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719595546; x=1720200346; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xXxHt+NjVKoiybQ7NTFTQy5xGBJFko4J6pQhKbbNlUk=;
-        b=bssi4Vb6d0R/ndLnoAwGjkuIOaiaV+aHPXgIckzxHwyNPZADSXtoLJF8EDHsJeq8e9
-         sKH+mSCUDcF+xEXqaMd5lxN793N3vCIEqy4eFbGMcMRtLv9cC+358Iuz7lyyaHSl0xTn
-         GxzAy1VpWHCwXbhyU+get/siRVWeb3Bwpj8PBRmzLB64JqBPlTJx0wVoUnIaHlpB0Qft
-         GQMGF4SmH5wruPz7ttRJtSngnVhc7enHlU7jOuhY0sv30wrN50DUXFJHSySoCiA468Zk
-         pUDlgYFJjFlq0f2R9RiKra1x8pIgN276mRQ0NXQtkJG6J0jDKZ4fdRtjx3a8Iue9zG9T
-         1RfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719595546; x=1720200346;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xXxHt+NjVKoiybQ7NTFTQy5xGBJFko4J6pQhKbbNlUk=;
-        b=segaTJu5MLNyqPo6bcPWJZeBOPQuhO7/yNDnxbB9nJYsL3o9aXxFN2mPJ42zPuaBj1
-         LpBlRiMvd/DG+KwTKQdHG8JCEUWK/wXLtLoAZ50/O/Mx9PR9NBPY8faeAeOxFJo1aeUo
-         CpnziD3fPQBbb5tWALYLpQzVoZAGORyiCpisZtpmYm11ZYI9429kUfjUJiKO99neJZXv
-         fz0JrnWpmvMV5LtpkIUrmbk3gVeCJptNzSz6MXUBWs+DwN10aKgkNeUzuPa+HAHmevbC
-         kniusy7fJG+XRB16xT0K3cbNODcWgD8uXOvQS7slrJog+m39e46xGPPLs3YzCRmANbGi
-         6G1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUniJeeyrMPUADy8TSbtXP3i29ve4n73BNQl/vbVnq7IWTHMR0g3jox549FpGts1S8a76WSwOuAv/ShAt8+trccODgFztxy3qOlZsAm7/S2rjwf1hYu3h2cxMTyzWRd6woWjDjp0t+JjeTLWrCt66cFoAZH9+QDKoWAzK7C0MrYTzG/FTyuBjyUoSi+fHsejUTh6u1QxXZ2DGPDRJaKALoc6dlqR6ZVV1l5A4i33Tu3IgmBh6FCeGc+PadH
-X-Gm-Message-State: AOJu0YwSdS6UpgdL1a4EwxEtoHAC7HYIxL3Ixi9kF1eqegs0YFwjVHFG
-	PnSJpRsNA8fQOoX4KW75NvIu217ojM54QmYjg+U9+rBQzDLvhClO
-X-Google-Smtp-Source: AGHT+IFcasRnsbhhq7yD+4DSD1/IEFOT7vexlWQsQmNhyaHSO6Dm8AlD9UHNt9ec/oCAhgVoY0nX9A==
-X-Received: by 2002:a17:902:6f08:b0:1fa:2001:d8f5 with SMTP id d9443c01a7336-1fa23f02bbemr123904115ad.62.1719595546239;
-        Fri, 28 Jun 2024 10:25:46 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac11d8cbbsm17943285ad.106.2024.06.28.10.25.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 10:25:45 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Fri, 28 Jun 2024 10:25:44 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Noah Wang <noahwang.wang@outlook.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	jdelvare@suse.com, corbet@lwn.net, Delphine_CC_Chiu@wiwynn.com,
-	peteryin.openbmc@gmail.com, javier.carrasco.cruz@gmail.com,
-	patrick.rudolph@9elements.com, bhelgaas@google.com, lukas@wunner.de,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] dt-bindings: hwmon: Add MPS mp2891
-Message-ID: <b11cca9b-f956-42d1-93f6-505081bd45c8@roeck-us.net>
-References: <SEYPR04MB6482EE353C207DA6977C974DFAD62@SEYPR04MB6482.apcprd04.prod.outlook.com>
- <SEYPR04MB6482BC95D1242A5675FF9DAEFAD62@SEYPR04MB6482.apcprd04.prod.outlook.com>
+	s=arc-20240116; t=1719595568; c=relaxed/simple;
+	bh=3toKfkefklQuqnFmzsR6BLu9S7GErzc295gsRBJ/UJw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PWHtoKbNTYdDqFnrA4elbAs4YNLfT4LOS6SHauWihLqRCeydW5TNhism6FEEvU57iZVF6nnmJI4Fj41fpFzXiAdwN5kvaMSxXURC5L/afk5+8OnQL/vAo7k70KkcRa5lTt2m/vW1WBYzATCkW/FMn3YTrGVJw018HryI9kWQbbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=valvesoftware.com; spf=pass smtp.mailfrom=valvesoftware.com; dkim=pass (1024-bit key) header.d=valvesoftware.com header.i=@valvesoftware.com header.b=jahStvWW; arc=none smtp.client-ip=170.10.129.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=valvesoftware.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valvesoftware.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=valvesoftware.com;
+	s=mc20150811; t=1719595565;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XKtCW3Er86rGfQYrPBdk0AkxyGBnrD1aUtOlms/i3Os=;
+	b=jahStvWWA5kMAAAK54JxjrAxQFgDxb9hSGsYG/GdCRE70S5ErWiURlP7qzVPXNAuZxYRxS
+	tp6Lxi2uAs5RnJBy7Wxha6M7PtTDbm8ySYfU0itXQyE9olh+fsFwFrZl8rhXOH+MeMQW27
+	zPoOMr8njLXPla+4QW+yOirWeTydFcc=
+Received: from smtp-01-blv1.valvesoftware.com
+ (smtp-01-blv1.valvesoftware.com [208.64.203.181]) by relay.mimecast.com
+ with ESMTP with STARTTLS (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384)
+ id us-mta-509-H9YTwKGXPeW6f0huGGxihw-1; Fri, 28 Jun 2024 13:26:04 -0400
+X-MC-Unique: H9YTwKGXPeW6f0huGGxihw-1
+Received: from antispam.valve.org ([172.16.1.107])
+	by smtp-01-blv1.valvesoftware.com with esmtp (Exim 4.93)
+	(envelope-from <johns@valvesoftware.com>)
+	id 1sNFMJ-004VPr-K6
+	for linux-kernel@vger.kernel.org; Fri, 28 Jun 2024 10:26:03 -0700
+Received: from antispam.valve.org (127.0.0.1) id hfrp2m0171sj for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 10:26:03 -0700 (envelope-from <johns@valvesoftware.com>)
+Received: from mail2.valvemail.org ([172.16.144.23])
+	by antispam.valve.org ([172.16.1.107]) (SonicWall 10.0.15.7233)
+	with ESMTP id o202406281726030074293-5; Fri, 28 Jun 2024 10:26:03 -0700
+Received: from [172.16.36.27] (172.16.36.27) by mail2.valvemail.org
+ (172.16.144.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 28 Jun
+ 2024 10:26:03 -0700
+Message-ID: <884684ce-53b1-48db-8dcb-6b2bcd0d151d@valvesoftware.com>
+Date: Fri, 28 Jun 2024 10:25:58 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SEYPR04MB6482BC95D1242A5675FF9DAEFAD62@SEYPR04MB6482.apcprd04.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] drm: panel-orientation-quirks: Add quirk for Valve
+ Galileo
+To: Matthew Schwartz <mattschwartz@gwmail.gwu.edu>, Hamza Mahfooz
+	<hamza.mahfooz@amd.com>
+CC: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Mario
+ Limonciello <mario.limonciello@amd.com>, Kyle Gospodnetich
+	<me@kylegospodneti.ch>, Hans de Goede <hdegoede@redhat.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>, Matthew
+ Schwartz <mattschwartz@gwu.edu>
+References: <20240627203057.127034-1-mattschwartz@gwu.edu>
+ <20240627203057.127034-2-mattschwartz@gwu.edu>
+ <19ca1a46-6a74-4eec-9e84-0092faaee7a1@amd.com>
+ <CAD9O9Dp89CprZFMn=ysduPmUTkmJ5y6qDw18X9pLr7=ChoD0Uw@mail.gmail.com>
+From: John Schoenick <johns@valvesoftware.com>
+In-Reply-To: <CAD9O9Dp89CprZFMn=ysduPmUTkmJ5y6qDw18X9pLr7=ChoD0Uw@mail.gmail.com>
+X-ClientProxiedBy: mail2.valvemail.org (172.16.144.23) To mail2.valvemail.org
+ (172.16.144.23)
+X-Mlf-DSE-Version: 6871
+X-Mlf-Rules-Version: s20240627204322; ds20230628172248;
+	di20240626213040; ri20160318003319; fs20240628163459
+X-Mlf-Smartnet-Version: 20210917223710
+X-Mlf-Envelope-From: johns@valvesoftware.com
+X-Mlf-Version: 10.0.15.7233
+X-Mlf-License: BSV_C_AP____
+X-Mlf-UniqueId: o202406281726030074293
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: valvesoftware.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 26, 2024 at 05:46:00PM +0800, Noah Wang wrote:
-> Add support for MPS mp2891 controller
-> 
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: Noah Wang <noahwang.wang@outlook.com>
 
-Applied.
+On 6/27/24 5:17 PM, Matthew Schwartz wrote:
+> On Thu, Jun 27, 2024 at 2:28=E2=80=AFPM Hamza Mahfooz <hamza.mahfooz@amd.=
+com> wrote:
+>> On 6/27/24 16:30, Matthew Schwartz wrote:
+>>> From: John Schoenick <johns@valvesoftware.com>
+>> Since this patch is from John, you would need his S-o-b in here as well
+>> (assuming you have his permission to add it).
+> This patch will be pending approval from them in that case. The panel qui=
+rk
+> follows the same structure as the Steam Deck Jupiter revision, but the qu=
+irk
+> has only been signed during merges by people who were not the original au=
+thor.
+> Link: https://gitlab.com/evlaV/linux-integration/-/commit/b90ac393
 
-Thanks,
-Guenter
+Hey, thanks for taking the initiative to upstream this -- feel free to=20
+add my S-o-b
+
+>>
+>>> Valve's Steam Deck Galileo revision has a 800x1280 OLED panel
+>>>
+>>> Suggested-by: John Schoenick <johns@valvesoftware.com>
+>>> Link: https://gitlab.com/evlaV/linux-integration/-/commit/d2522d8bf88b3=
+5a8cf6978afbbd55c80d2d53f4f
+>>> Signed-off-by: Matthew Schwartz <mattschwartz@gwu.edu>
+>>> ---
+>>>    drivers/gpu/drm/drm_panel_orientation_quirks.c | 7 +++++++
+>>>    1 file changed, 7 insertions(+)
+>>>
+>>> diff --git a/drivers/gpu/drm/drm_panel_orientation_quirks.c b/drivers/g=
+pu/drm/drm_panel_orientation_quirks.c
+>>> index 3d127127e7cb..ac8319d38e37 100644
+>>> --- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
+>>> +++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
+>>> @@ -427,6 +427,13 @@ static const struct dmi_system_id orientation_data=
+[] =3D {
+>>>                  DMI_EXACT_MATCH(DMI_PRODUCT_VERSION, "1"),
+>>>                },
+>>>                .driver_data =3D (void *)&lcd800x1280_rightside_up,
+>>> +     }, {    /* Valve Steam Deck */
+>>> +             .matches =3D {
+>>> +               DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Valve"),
+>>> +               DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Galileo"),
+>>> +               DMI_EXACT_MATCH(DMI_PRODUCT_VERSION, "1"),
+>>> +             },
+>>> +             .driver_data =3D (void *)&lcd800x1280_rightside_up,
+> Unless I get a S-o-b, is authoring a different DMI check the only solutio=
+n
+> to get a functioning panel quirk upstreamed for the Galileo revision?
+> Not quite sure how I'd maintain conformity with the existing Jupiter
+> quirk while also writing something original here.
+>
+>>>        }, {    /* VIOS LTH17 */
+>>>                .matches =3D {
+>>>                  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "VIOS"),
+>> --
+>> Hamza
+>>
+> --
+> Matt
+>
+
 
