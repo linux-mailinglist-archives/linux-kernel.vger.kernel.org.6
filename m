@@ -1,109 +1,78 @@
-Return-Path: <linux-kernel+bounces-234309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02CF691C512
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:41:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72FFB91C516
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:44:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A94492845CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:41:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E7BD285AB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417481CCCCE;
-	Fri, 28 Jun 2024 17:41:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BFDC1CD5A2;
+	Fri, 28 Jun 2024 17:44:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="ZBjX/H8V"
-Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="WQV8+I1U"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306391B94F;
-	Fri, 28 Jun 2024 17:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167A2153561;
+	Fri, 28 Jun 2024 17:44:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719596477; cv=none; b=s+5R50q4FDMC7S/u4K0cXDy34GMALBDaDplX/DQN9HX8VNanue2eam21oywD+eBfcsqXy75u+Dt5v/td1xiiY95ntxrJsQgiQtnA3DLUheTruDyZpFyfK+kCKmJemXxz6dNGcaNQ0un0coAH7GGSEDFCkGPPOaTS8JpLbMAkagQ=
+	t=1719596682; cv=none; b=qJGLUgIVOzZwL0e6WDk+3wDk8rc5oHjg1onomjV2F+Q9TlIPxX89DQs9wtwA+izShVetiuDvDVmvyYmFlX4AqvLBdoH1zNpQ9709ou0mkhivNsOWaMhG3dD1yoioM9A6AxBfSnkoOZRnlXEFvjRMcjYR9xdyKEn0BBm23G5ixac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719596477; c=relaxed/simple;
-	bh=toIiav45hbrwvCItcKkP6A45Os2fpVL346q+vWA/6IE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=eetTjuYMffnFyw14oGyemDrYEiXsLw/cG1df/3gzlHiaDV+WQNj5qU3gTdimPE30AaFz8JWxx1s6ywdbvKZX4yCG6Bfj9nOXVWsYOccU5KxMiBqoNAHI2OquQamzzgECd5Cr/CMNZhHWRH5fWDVxRvEwj6z09KbgV0EC1UnZang=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=ZBjX/H8V; arc=none smtp.client-ip=128.199.32.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lucaweiss.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
-	t=1719596473; bh=toIiav45hbrwvCItcKkP6A45Os2fpVL346q+vWA/6IE=;
-	h=From:Date:Subject:To:Cc;
-	b=ZBjX/H8VWPTvLPm1ftDaOFAaEcOi9R2E+Ce4Rg9vfolEY8AwPd1FKpvVdunhqwMOJ
-	 e1X8wMkWwHdFB7QNZ2L8RFF2Md2ew913WUQya7Kw9yumX9SPrxTAPXhXBgtajBC8B7
-	 rVxd7C906/TRN62YPlAEuhevkUIfv/r8cF08232s=
-From: Luca Weiss <luca@lucaweiss.eu>
-Date: Fri, 28 Jun 2024 19:40:55 +0200
-Subject: [PATCH] mailmap: Update Luca Weiss's email address
+	s=arc-20240116; t=1719596682; c=relaxed/simple;
+	bh=7kyxnTw/ovYpmPNUHNRxkg99qZBf5rcdJPMsvgfs5a4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mHMulZac7+gIpRpcg+J/sEgG3Da8lfPgPYGFXblhJ2Ze5sPSpmxYoDMktX0NPKkmnbdLRNJDEpmCp+ETb2hw5zkNWmnkY3N7DOX7YcBygTT435uohSGYZ3ymX699i1oTi1qKx4CSvhgHsQBbu7wInGODECw4PNq01mMYTXe+WOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=WQV8+I1U; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+X-Virus-Scanned: SPAM Filter at disroot.org
+From: Daniel Hejduk <danielhejduk@disroot.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1719596676; bh=7kyxnTw/ovYpmPNUHNRxkg99qZBf5rcdJPMsvgfs5a4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=WQV8+I1UPMBhDb+9E9g21BxZ124JyoueSz4ZxhQRBEfR/bWxYyiOZ57n6b0EM4wJh
+	 AzdQ9ozkANSzO1eEeD3gpzeVNZvaszaOp2iGLfyYJkl28u2QeY76bDkMGmIrUiXtmk
+	 4vgQ6ypIh0EvE5TJsO3ON3DILny2nSn6Xn/nTrJxa5IOSXBIrqQDXE8wcu0V23o/ZJ
+	 w2DqN0CEEFnXvYDWoa6YJW7408p63s52YbfyJJo1FR/02DBAzwWz+r64CCA3Ubxc+c
+	 wRu4bS1S9U/tORNuiyNANLoP/UT5iSZxYpLK43KYtztApFYgznIxtraIb8ALrQp3GR
+	 byxaAatTSJaPQ==
+To: shuah@kernel.org,
+	trenn@suse.com,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Daniel Hejduk <danielhejduk@disroot.org>
+Subject: [PATCH 0/3] Updating maintainer and correcting Czech translation in cpupower
+Date: Fri, 28 Jun 2024 19:44:15 +0200
+Message-ID: <20240628174420.5370-1-danielhejduk@disroot.org>
+In-Reply-To: <ba4d74fd-6762-4e9d-8346-5f3384cb60ce@linuxfoundation.org>
+References: <ba4d74fd-6762-4e9d-8346-5f3384cb60ce@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240628-mailmap-v1-1-a0d12ffd1cd9@lucaweiss.eu>
-X-B4-Tracking: v=1; b=H4sIAKb1fmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDMyML3dzEzJzcxAJdY1MjizRzYzPTxKQkJaDqgqLUtMwKsEnRsbW1AOn
- eJpNZAAAA
-To: Bjorn Andersson <andersson@kernel.org>, 
- ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- Luca Weiss <luca@lucaweiss.eu>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1240; i=luca@lucaweiss.eu;
- h=from:subject:message-id; bh=toIiav45hbrwvCItcKkP6A45Os2fpVL346q+vWA/6IE=;
- b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBmfvW4le6rriyujXy0XorJNe8GloR7MugOVonFA
- faFM5vNEl6JAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZn71uAAKCRBy2EO4nU3X
- VrKvEACgd7YTcnp9R2cdZnmGgIjv9KZojIHB+mzQNcQFZg7z5ZyCLOgF4GnMyH8noKOwAEecfFL
- GbJg1DCQd3UrYuw01OeAvtFyjK9JU2oIk+pWYY68QOP/JOJM6NwNr7e6nCG1s9y4TLup4u/m1U1
- 0jlDiAUgjcR8pmYz+b0p035PbGdKG1Mp56w3+Up/ufu2NABVr8/fOa/jMkvFBea/fa4obfdKon7
- u1JdOt3OCfznujgKW4B7bHMM3gXBqJSYjGM5xsRNmg3gpSODahztn5LdEB7bxIgAQWEBQK5FBnv
- BTVujGIsdu4oC2yurvIjBro90sc7vHhlvIwyGZVCJ13Tt4k9hIco2XTeqE2EQWZHNiMXJ+mta+h
- dlp8HyB0WluDjpgxbZp1Kj2tw322WJDHIoJ9IiBUa0h0UHZJiD6oOFcl8SMxD6YixPkHhfwKI7N
- JajdnWhuwFqeVhX7gmzlud17pqJJ2EcpN+dMuwoL0rbA95Z3boma5EcqupyHLOGWCyhZ2oe8aGr
- 4w/BWW4WoYC1DkKNME2j2FGXp4jusrfsHd204xdv9LVUlrVAn9c37UW+Vj7uQ98Gl1FS2nJXzjg
- oJZmPqkmpMFvDmHQtH1UoWncJO47Fv4y4+jevnX9rTxBnl2RFmCSwARvIkpjtgH9KNFGBTnzdgW
- sMdR7f0cTE9hilg==
-X-Developer-Key: i=luca@lucaweiss.eu; a=openpgp;
- fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
+Content-Transfer-Encoding: 8bit
 
-I'm slowly migrating my mail to a new domain, add an entry to map the
-mail address. Just for clarity, my work-related @fairphone.com email
-stays unchanged.
+*** BLURB HERE ***
 
-Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
----
-Since my email address also appears in a bunch of drivers and arm(64)
-files, and two devicetree binding files, how are those normally handled?
-Just ignore them and let mailmap handle everything relevant?
----
- .mailmap | 1 +
- 1 file changed, 1 insertion(+)
+Daniel Hejduk (3):
+  Updating cpupower's Czech translation maintainer
+  Correcting needs work strings and adding new to cpupower's Czech
+    translation
+  Adding changelog for cpupower
 
-diff --git a/.mailmap b/.mailmap
-index a6c619e22efc..e169a99ce7c7 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -385,6 +385,7 @@ Li Yang <leoyang.li@nxp.com> <leo@zh-kernel.org>
- Lior David <quic_liord@quicinc.com> <liord@codeaurora.org>
- Lorenzo Pieralisi <lpieralisi@kernel.org> <lorenzo.pieralisi@arm.com>
- Luca Ceresoli <luca.ceresoli@bootlin.com> <luca@lucaceresoli.net>
-+Luca Weiss <luca@lucaweiss.eu> <luca@z3ntu.xyz>
- Lukasz Luba <lukasz.luba@arm.com> <l.luba@partner.samsung.com>
- Luo Jie <quic_luoj@quicinc.com> <luoj@codeaurora.org>
- Maciej W. Rozycki <macro@mips.com> <macro@imgtec.com>
+ tools/power/cpupower/ChangeLog |   3 +
+ tools/power/cpupower/po/cs.po  | 174 +++++++++++++++++----------------
+ 2 files changed, 95 insertions(+), 82 deletions(-)
+ create mode 100644 tools/power/cpupower/ChangeLog
 
----
-base-commit: 642a16ca7994a50d7de85715996a8ce171a5bdfb
-change-id: 20240628-mailmap-3528f7365abb
-
-Best regards,
 -- 
-Luca Weiss <luca@lucaweiss.eu>
+2.45.2
 
 
