@@ -1,345 +1,114 @@
-Return-Path: <linux-kernel+bounces-233558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08FAB91B975
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:08:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C73191B97B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:09:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C75C1C231ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:08:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DE731C231B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:09:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B54F0144D3E;
-	Fri, 28 Jun 2024 08:08:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bmPOOXus"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23292145B31;
+	Fri, 28 Jun 2024 08:09:09 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFEFC14389A
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 08:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895BE4436A;
+	Fri, 28 Jun 2024 08:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719562091; cv=none; b=ugaq3tL93elgcA3kT6lNZUBgYE0/EO2EjZ0jlFWLZbtcpAXdLvRBQANPIhGvMKR7xNdmYoU7KpePJEyBvIWQ83df1IGliuV3isO3rp9pOkSREJeY8aX05KJJ1axmRS9rIhCwCB+jG1rMIr9VpOERITP8+yIL1xhO2hFZyO+grmI=
+	t=1719562148; cv=none; b=qf35aBNrzDL9thW6wxlEXy8VeKFujMfFFtN6rv8Lg2j5KqksR2WAlfpMn1NRwcyxYLuPRx6c4vsAjPtHaUUpGciBfGL8KY7uOVkRW2c+LQD5s/lHhKu5R54JaCXchVJ0BKlgiinRC1cKcaFgTqfIjFbjTJwXVciRvk3vUMYIzCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719562091; c=relaxed/simple;
-	bh=41oNDz5c7oUAokOmMhFzKnI6wjskS3LVFUFAxJD2zSo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=jhmBfMEkDssoTmiTQQNth38ncdzF7hU3Z6k1mBYclNCp4Sbq8TnotCYa8u4P7suLh2zYwG082O6hmR+g2psu5GoyVn7dWEjDMD2Ta4QZrQRqXJG+orgU64RehowrhZiAkDhwr1MZmW3vgQfnkgQ9Vu4UBd7oVKT0U+HzGTFrmtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bmPOOXus; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42565697036so8684315e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 01:08:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719562088; x=1720166888; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=06TDJZgyAHNoK7t/slRh8KPNLeMLNVUhost2fyavEJg=;
-        b=bmPOOXusJE+eU0MfzucwbY6aCDlYkjP2Qvu8dw+Zap/A3Zgs87ZW6XRTLcWTvL8sgU
-         0gfxSdZb4ceG+mn6qMeAzZrHYSaFQMALab+khCYNuhMv2CnkRJC4JSAKcD4/afaJQ5Eq
-         nH5/gskVQhoENBl0/letkrG/8/v4ucx3AVEzrc5SyzPtNFg+0GLJ9ukONAQvqfxrp5rV
-         kWHjOPAb5dMRAk2QnK0W4L3nFG2mE0bjIx1KTXloqhAQ6illDNUHOsqG2gUTUXkH+nkP
-         dulfWvqHN4WNaStbOeqqD18HiS7Uvvmlh0W+YX22GV2/n1aHJwzOWyMcI3kBHSPKheqJ
-         rHjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719562088; x=1720166888;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=06TDJZgyAHNoK7t/slRh8KPNLeMLNVUhost2fyavEJg=;
-        b=CFCdSY18cpv386POlXJG4owMlCDaE4Ddw9JYtvuGKQfnG9sb/Iyizkgeyge9MAAOQu
-         ADxfWsDxbr/0Vwfh9E0He+N1itXa/UzRJTz0pjWOUQC0XMOVdJckOo3FgsP+03eCLbIL
-         hFOseL8ofbTfMZf1WeEVKetTQak3V9a0V4xbVXbg3nEbHX5uNToj4LFz054lReGPo5vO
-         cjjKZzMXfEVxXs8AbcT3XgMAqvV88TPq97b9TG+XcCStsTCefzR4qBw34E4t4fwoNfG4
-         9vFYEV9HIMbRjdLCaFsaZjYUu1Ecjtgdv2R6xmEJCgxh41Zks4Jh77ahrBPJV1YeYsCO
-         UHcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWLc40bx/iJXSNrtHEYVQa6P+Dg9n0fttTXYHhnkBDjm6OBLMg9M+Pg9LGqcHRZ3mKGPZ5J2o7soo4ro02/ya9IZC3UTje7T9f46ePS
-X-Gm-Message-State: AOJu0YxKUTO4ivavbGs7K+t88BkLi1XwwZa8UQ5fpglUkdhUQ4Uo76rN
-	begjAis6GVQAR05AOi6RwSWrdocL2208ue73pnkRqkT7KmF6H160cfXw+rx2+Mk=
-X-Google-Smtp-Source: AGHT+IEIq35I7WeKeHK0Wc3gJvM94orx6EJ4F9tXOSc1HodODK7qNv0a6SRLI0lKd1nzuFPTLdWpkg==
-X-Received: by 2002:a5d:468a:0:b0:35f:fd7:6102 with SMTP id ffacd0b85a97d-36760a975d9mr728000f8f.35.1719562088034;
-        Fri, 28 Jun 2024 01:08:08 -0700 (PDT)
-Received: from [127.0.1.1] ([82.79.124.209])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a103f0bsm1447899f8f.110.2024.06.28.01.08.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 01:08:07 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Fri, 28 Jun 2024 11:08:00 +0300
-Subject: [PATCH v2] clk: qcom: gcc-x1e80100: Fix halt_check for all pipe
- clocks
+	s=arc-20240116; t=1719562148; c=relaxed/simple;
+	bh=hwR37mpitfXqaglW1XKiP3SvjhzhbS+E11sEx8aR4MU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pSanAz3S5PnENtHvPha7r8vyxxTDpqJpggJWMjoy3Bi9f1O2/Mbmq38wiOtyOj7rIF98V7POL0f4Ox5l53l2DWNmMrfBk2HHDHa7ZpN+/ZO3ZSCvXN5CMDN5YrlfTmcGDhH96yuecgTtvmp4U/MwLk8iU0jZIwfjT++Dog7n9TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4W9Sf44z9Kz1X4HC;
+	Fri, 28 Jun 2024 16:05:00 +0800 (CST)
+Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
+	by mail.maildlp.com (Postfix) with ESMTPS id B48451A0188;
+	Fri, 28 Jun 2024 16:09:02 +0800 (CST)
+Received: from [10.67.110.112] (10.67.110.112) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 28 Jun 2024 16:09:02 +0800
+Message-ID: <0e44be2c-7039-710b-202f-c452bfc3f1ad@huawei.com>
+Date: Fri, 28 Jun 2024 16:09:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH -next] mm: memcg: adjust the warning when seq_buf
+ overflows
+Content-Language: en-US
+To: Michal Hocko <mhocko@suse.com>
+CC: <hannes@cmpxchg.org>, <roman.gushchin@linux.dev>,
+	<shakeel.butt@linux.dev>, <muchun.song@linux.dev>,
+	<akpm@linux-foundation.org>, <cgroups@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240628072333.2496527-1-xiujianfeng@huawei.com>
+ <Zn5qELsJZ0CrdlZA@tiehlicka>
+From: xiujianfeng <xiujianfeng@huawei.com>
+In-Reply-To: <Zn5qELsJZ0CrdlZA@tiehlicka>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240628-x1e80100-clk-gcc-fix-halt-check-for-usb-phy-pipe-clks-v2-1-db3be54b1143@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAF9vfmYC/6WOQQqEMAxFryJdT4ZWrcis5h6DCxtTGxQrrSOKe
- PepXmHI6oX/83KISIEpild2iEArR/ZTgvyRCXTt1BNwl1jkMi+lLiRsimqppAQcB+gRwfIGrh0
- XQEc4gPUBvtHA7HaYeaYrF4FsjVYbXRXKiHR7DpR6t/fTJHYcFx/2+41VXdt/jauCNBVWtuwQT
- affI09t8E8fetGc5/kDixX33fsAAAA=
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rajendra Nayak <quic_rjendra@quicinc.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Taniya Das <quic_tdas@quicinc.com>, Johan Hovold <johan@kernel.org>, 
- Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Abel Vesa <abel.vesa@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8179; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=41oNDz5c7oUAokOmMhFzKnI6wjskS3LVFUFAxJD2zSo=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBmfm9iRYHd+6ihAwGxJxdAYY5fH15cJ0bJgWh5k
- dMnF9nlHPWJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZn5vYgAKCRAbX0TJAJUV
- VoeWEAC8JBNMHMFMaqXaXmLlWmtrGtgQsO42AAOrzNHgkTr1CLDDrHgkcbfDSXkxiHzhbUZujyJ
- QMFvewNA9zIvVAnVj0NakfJ4LKXDYYGMMDV28ejfEcwbAHWvbRO965v3XwoMeDomZMjD8FzTg5y
- LljZ9UpDNrD8a07lOindseFdq6Kg7grzezHQqcZ/ezOD3RWsGW+iLLxMfoe/8ieZLNVRz7yrePq
- 40b6kpwx+VhwGlLyXAyQM510Y4RXgkrgweBXETOrWQynPEaxBiEiEBYaEFJU+R2ILmmZ5O5AJzd
- 0ZUbRjDUXRMZ242BwPDAeDIohrP+Q2Vrgd8f6Z9zEaK1o8Romc0WYER8KyCIHhRwzZYcuAwJwgQ
- C0VdvcE4hyWIdPEAObTC8V51VVU9CAIWfg6olFFQXyDBVqPMTtmakjecmKHcIY5CMRSoYAplj5w
- VUgLLSFvR6GFOfCsxpUddN0aL85RfzNw2vERNMzBJBTVveDNAQybWPKAol260OnkpePefg5PQXN
- qQsk6D9OsCpBDXgAc4qW/7mSChHj+KAgVLhyIEPcMH2S3PxHtpJnEKXeKTcrur0bHPPOYUiA/JF
- Sd1mS1cgJosR6y2yKvHtqRKGKVjkc0bKMCaDZFs9cR/Wg9+a3oRvC5qd/MGlbmmrUG8z27yDiLd
- k9qbCNigPsMFY3w==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpeml500023.china.huawei.com (7.185.36.114)
 
-In case of all pipe clocks, there is a QMP PHY clock that is feeding them.
-If, for whatever reason, the clock from the PHY is not enabled, halt bit
-will not get set, and the clock controller driver will assume the clock
-is stuck in a specific state. The way this is supposed to be properly
-fixed is to defer the checking of the halt bit until after the PHY clock
-has been initialized, but doing so complicates the clock controller
-driver. In fact, since these pipe clocks are consumed by the PHY, while
-the PHY is also the one providing the source, if clock gets stuck, the PHY
-driver would be to blame. So instead of checking the halt bit in here,
-just skip it and assume the PHY driver is handling the source clock
-correctly.
 
-Fixes: 161b7c401f4b ("clk: qcom: Add Global Clock controller (GCC) driver for X1E80100")
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
-Changes in v2:
-- Re-worded the commit message from scratch.
-- Changed all pipe clocks halt_check to skip.
-- Link to v1: https://lore.kernel.org/r/20240530-x1e80100-clk-gcc-fix-halt-check-for-usb-phy-pipe-clks-v1-1-16c6f4dccbd5@linaro.org
----
- drivers/clk/qcom/gcc-x1e80100.c | 44 ++++++++++++++++++++---------------------
- 1 file changed, 22 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/clk/qcom/gcc-x1e80100.c b/drivers/clk/qcom/gcc-x1e80100.c
-index eb7e36ebd7ae..fc80011342da 100644
---- a/drivers/clk/qcom/gcc-x1e80100.c
-+++ b/drivers/clk/qcom/gcc-x1e80100.c
-@@ -2812,7 +2812,7 @@ static struct clk_branch gcc_pcie_0_mstr_axi_clk = {
- 
- static struct clk_branch gcc_pcie_0_pipe_clk = {
- 	.halt_reg = 0xa0044,
--	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x52010,
- 		.enable_mask = BIT(25),
-@@ -2901,7 +2901,7 @@ static struct clk_branch gcc_pcie_1_mstr_axi_clk = {
- 
- static struct clk_branch gcc_pcie_1_pipe_clk = {
- 	.halt_reg = 0x2c044,
--	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x52020,
- 		.enable_mask = BIT(30),
-@@ -2990,7 +2990,7 @@ static struct clk_branch gcc_pcie_2_mstr_axi_clk = {
- 
- static struct clk_branch gcc_pcie_2_pipe_clk = {
- 	.halt_reg = 0x13044,
--	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x52020,
- 		.enable_mask = BIT(23),
-@@ -3110,7 +3110,7 @@ static struct clk_branch gcc_pcie_3_phy_rchng_clk = {
- 
- static struct clk_branch gcc_pcie_3_pipe_clk = {
- 	.halt_reg = 0x58050,
--	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x52020,
- 		.enable_mask = BIT(3),
-@@ -3235,7 +3235,7 @@ static struct clk_branch gcc_pcie_4_phy_rchng_clk = {
- 
- static struct clk_branch gcc_pcie_4_pipe_clk = {
- 	.halt_reg = 0x6b044,
--	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x52008,
- 		.enable_mask = BIT(4),
-@@ -3360,7 +3360,7 @@ static struct clk_branch gcc_pcie_5_phy_rchng_clk = {
- 
- static struct clk_branch gcc_pcie_5_pipe_clk = {
- 	.halt_reg = 0x2f044,
--	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x52018,
- 		.enable_mask = BIT(17),
-@@ -3498,7 +3498,7 @@ static struct clk_branch gcc_pcie_6a_phy_rchng_clk = {
- 
- static struct clk_branch gcc_pcie_6a_pipe_clk = {
- 	.halt_reg = 0x31050,
--	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x52018,
- 		.enable_mask = BIT(26),
-@@ -3636,7 +3636,7 @@ static struct clk_branch gcc_pcie_6b_phy_rchng_clk = {
- 
- static struct clk_branch gcc_pcie_6b_pipe_clk = {
- 	.halt_reg = 0x8d050,
--	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x52000,
- 		.enable_mask = BIT(30),
-@@ -5109,7 +5109,7 @@ static struct clk_branch gcc_usb3_mp_phy_com_aux_clk = {
- 
- static struct clk_branch gcc_usb3_mp_phy_pipe_0_clk = {
- 	.halt_reg = 0x17290,
--	.halt_check = BRANCH_HALT,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x17290,
- 		.enable_mask = BIT(0),
-@@ -5122,7 +5122,7 @@ static struct clk_branch gcc_usb3_mp_phy_pipe_0_clk = {
- 
- static struct clk_branch gcc_usb3_mp_phy_pipe_1_clk = {
- 	.halt_reg = 0x17298,
--	.halt_check = BRANCH_HALT,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x17298,
- 		.enable_mask = BIT(0),
-@@ -5186,7 +5186,7 @@ static struct clk_regmap_mux gcc_usb3_prim_phy_pipe_clk_src = {
- 
- static struct clk_branch gcc_usb3_prim_phy_pipe_clk = {
- 	.halt_reg = 0x39068,
--	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.hwcg_reg = 0x39068,
- 	.hwcg_bit = 1,
- 	.clkr = {
-@@ -5257,7 +5257,7 @@ static struct clk_regmap_mux gcc_usb3_sec_phy_pipe_clk_src = {
- 
- static struct clk_branch gcc_usb3_sec_phy_pipe_clk = {
- 	.halt_reg = 0xa1068,
--	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.hwcg_reg = 0xa1068,
- 	.hwcg_bit = 1,
- 	.clkr = {
-@@ -5327,7 +5327,7 @@ static struct clk_regmap_mux gcc_usb3_tert_phy_pipe_clk_src = {
- 
- static struct clk_branch gcc_usb3_tert_phy_pipe_clk = {
- 	.halt_reg = 0xa2068,
--	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.hwcg_reg = 0xa2068,
- 	.hwcg_bit = 1,
- 	.clkr = {
-@@ -5405,7 +5405,7 @@ static struct clk_branch gcc_usb4_0_master_clk = {
- 
- static struct clk_branch gcc_usb4_0_phy_p2rr2p_pipe_clk = {
- 	.halt_reg = 0x9f0d8,
--	.halt_check = BRANCH_HALT,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x9f0d8,
- 		.enable_mask = BIT(0),
-@@ -5418,7 +5418,7 @@ static struct clk_branch gcc_usb4_0_phy_p2rr2p_pipe_clk = {
- 
- static struct clk_branch gcc_usb4_0_phy_pcie_pipe_clk = {
- 	.halt_reg = 0x9f048,
--	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x52010,
- 		.enable_mask = BIT(19),
-@@ -5457,7 +5457,7 @@ static struct clk_branch gcc_usb4_0_phy_rx1_clk = {
- 
- static struct clk_branch gcc_usb4_0_phy_usb_pipe_clk = {
- 	.halt_reg = 0x9f0a4,
--	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.hwcg_reg = 0x9f0a4,
- 	.hwcg_bit = 1,
- 	.clkr = {
-@@ -5582,7 +5582,7 @@ static struct clk_branch gcc_usb4_1_master_clk = {
- 
- static struct clk_branch gcc_usb4_1_phy_p2rr2p_pipe_clk = {
- 	.halt_reg = 0x2b0d8,
--	.halt_check = BRANCH_HALT,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x2b0d8,
- 		.enable_mask = BIT(0),
-@@ -5595,7 +5595,7 @@ static struct clk_branch gcc_usb4_1_phy_p2rr2p_pipe_clk = {
- 
- static struct clk_branch gcc_usb4_1_phy_pcie_pipe_clk = {
- 	.halt_reg = 0x2b048,
--	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x52028,
- 		.enable_mask = BIT(0),
-@@ -5634,7 +5634,7 @@ static struct clk_branch gcc_usb4_1_phy_rx1_clk = {
- 
- static struct clk_branch gcc_usb4_1_phy_usb_pipe_clk = {
- 	.halt_reg = 0x2b0a4,
--	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.hwcg_reg = 0x2b0a4,
- 	.hwcg_bit = 1,
- 	.clkr = {
-@@ -5759,7 +5759,7 @@ static struct clk_branch gcc_usb4_2_master_clk = {
- 
- static struct clk_branch gcc_usb4_2_phy_p2rr2p_pipe_clk = {
- 	.halt_reg = 0x110d8,
--	.halt_check = BRANCH_HALT,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x110d8,
- 		.enable_mask = BIT(0),
-@@ -5772,7 +5772,7 @@ static struct clk_branch gcc_usb4_2_phy_p2rr2p_pipe_clk = {
- 
- static struct clk_branch gcc_usb4_2_phy_pcie_pipe_clk = {
- 	.halt_reg = 0x11048,
--	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x52028,
- 		.enable_mask = BIT(1),
-@@ -5811,7 +5811,7 @@ static struct clk_branch gcc_usb4_2_phy_rx1_clk = {
- 
- static struct clk_branch gcc_usb4_2_phy_usb_pipe_clk = {
- 	.halt_reg = 0x110a4,
--	.halt_check = BRANCH_HALT_VOTED,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.hwcg_reg = 0x110a4,
- 	.hwcg_bit = 1,
- 	.clkr = {
+On 2024/6/28 15:45, Michal Hocko wrote:
+> On Fri 28-06-24 07:23:33, Xiu Jianfeng wrote:
+>> Currently it uses WARN_ON_ONCE() if seq_buf overflows when user reads
+>> memory.stat, the only advantage of WARN_ON_ONCE is that the splat is
+>> so verbose that it gets noticed. And also it panics the system if
+>> panic_on_warn is enabled. It seems like the warning is just an over
+>> reaction and a simple pr_warn should just achieve the similar effect.
+>>
+>> Suggested-by: Michal Hocko <mhocko@suse.com>
+>> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+> 
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> 
+> I would just squash this with other patch removing it from
+> memcg_stat_format. But this is up to you.
 
----
-base-commit: 0fc4bfab2cd45f9acb86c4f04b5191e114e901ed
-change-id: 20240530-x1e80100-clk-gcc-fix-halt-check-for-usb-phy-pipe-clks-ef8cf5b5631b
+Sorry, I might have misunderstood, if you can squash them, it looks good
+to me, thanks.
 
-Best regards,
--- 
-Abel Vesa <abel.vesa@linaro.org>
-
+> 
+> Thanks!
+> 
+>> ---
+>>  mm/memcontrol.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+>> index c251bbe35f4b..8e5590ac43d7 100644
+>> --- a/mm/memcontrol.c
+>> +++ b/mm/memcontrol.c
+>> @@ -1484,7 +1484,8 @@ static void memory_stat_format(struct mem_cgroup *memcg, struct seq_buf *s)
+>>  		memcg_stat_format(memcg, s);
+>>  	else
+>>  		memcg1_stat_format(memcg, s);
+>> -	WARN_ON_ONCE(seq_buf_has_overflowed(s));
+>> +	if (seq_buf_has_overflowed(s))
+>> +		pr_warn("%s: Warning, stat buffer overflow, please report\n", __func__);
+>>  }
+>>  
+>>  /**
+>> -- 
+>> 2.34.1
+>>
+> 
 
