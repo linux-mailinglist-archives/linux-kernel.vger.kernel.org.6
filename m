@@ -1,132 +1,111 @@
-Return-Path: <linux-kernel+bounces-234445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 274A591C6BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:37:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F21791C6BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:39:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56E1A1C2110C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:37:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EAA71F25C04
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA42C76410;
-	Fri, 28 Jun 2024 19:37:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D8A762D0;
+	Fri, 28 Jun 2024 19:39:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="UnSPCGS+"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="EUESVM0x"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD6E674077;
-	Fri, 28 Jun 2024 19:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95ABC74077
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 19:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719603458; cv=none; b=BGhQQzGMKFSmT4qZf3x71+dqes3dg+pnY8H/ZH89gFDDcWLiYgsWArMkvLYtQB1bv0eJfTPGrKewdhVR48iMrYbhaUYXJpcmKlChMsTGIQD5tmTXpn+02eG7YkkJ60sGDvycMIrgWNfM+Zuc52ecvAfsLNcRarL5RVBxeXaU3TY=
+	t=1719603584; cv=none; b=o4tenbDV09S+w1H7ib4eRLKeIeXpSJgRpk+cPeqVlTjBVmIaSGAfwbYbmBzgegl0k7MN6SSbtFkNIAFy0t0oh+ILCR360YfCRdWxPoHZPppOhDeLL2ANPJX5rLQo4w2aqc77dP8Y3T/Xrmg2J0nzNLbNuBDK1soXzYXRbAi5pZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719603458; c=relaxed/simple;
-	bh=AGpCS8hQZ138VVZpeiyGcB/4CY4Qk1mQJKl2GkSTaHs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ffxLStKzE9046W+uKxJTb6vRQCm3xiiIo98smvDQ9GKZuQAkbKh8sT2BU27ZtV6+6ZsqHFl9uJccNjRed8bgzJ+3l9D3BnQXv2kRJyD35pW5dRtGl0QhTJcVnXJRIpAjgduAK/xe1+w2bIzOH1AqYFS5TB9E04U4Ds39fARO5kU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=UnSPCGS+; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f4a5344ec7so7775715ad.1;
-        Fri, 28 Jun 2024 12:37:36 -0700 (PDT)
+	s=arc-20240116; t=1719603584; c=relaxed/simple;
+	bh=AiKlbNF2JyzTB73CXpB1ZJjuPsbUQGJbXOtwJrCQavA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=CoLifUoCYkwQ8MLBvpsQ5kz1g53t6IWybEH3+9+XN33hVSumXF21mC2qSVnYEnJQMWPIk5tQAQRMLzMz9mSKgoKX2TmifAoD76E7K4PcHwuGPasCQNsFvSe+vTHeC4QCxH4ewAljHThbcQAsTBkug73/7JQnx6sBKf4D/NbLVH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=EUESVM0x; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3772749962dso660475ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 12:39:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1719603456; x=1720208256; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AGpCS8hQZ138VVZpeiyGcB/4CY4Qk1mQJKl2GkSTaHs=;
-        b=UnSPCGS+zYIT4QjM+Ph1l1cmigJzLQ7cuIaWFC+6KZNydVjyiA1M6QAlfRJRF20Sef
-         XBXcEsn1XdYyb6DQ8lgoClvZKlXwNBLrTwemexUFcTsjIhtHtPBezfwhaiGRHZPz07C+
-         jRnxzdEYl3dGG4HpUT1p4oCpjlW+7P3Uo6CtjnAJ8q1i/fNyqlwm68pcvNKmtxmAxhHM
-         x+KfP+aK+ZhfDwn1zTx3TxAcxa5PN7fmQC1RmaIVKHPSIntnEz3GOQmIBya618hv+AHk
-         Y09octkUjZFye9jJANeeY7C1cFzD8VMu8H+v6FbQvIOUL3BgSUHXy9CXg7ST1YcsdN+f
-         T17Q==
+        d=linuxfoundation.org; s=google; t=1719603581; x=1720208381; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=Jlu7OFoSigy4VBRWahwI/CAdqSq3ZHba+Z6d6xpDy0s=;
+        b=EUESVM0x+XPkNnj5nWjY/8assAO+ASkJX3u3d8foYc88i2FbJvO/pxfC/Uouel6kMt
+         zV9LpmUPTaryLRWIbiOF1wJUavylRu4mfAXHr/9mNJqMFqypHRQu3lAkJNq/8ZeSKWRq
+         0K/0G8NwUBL/d+4rd3QWreJBhwFJBQ/vlnO7E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719603456; x=1720208256;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AGpCS8hQZ138VVZpeiyGcB/4CY4Qk1mQJKl2GkSTaHs=;
-        b=JB0/tZGO2q6t7b/5R+SY/oNzS6FEVqPmzEjccVlWDpZvnaF6rrFFDM1Vgwuwo6aj54
-         piDRCYQ00qN1DnydEGC4Sgdmn9i/6KMJM0QrM+HEMbxehgNoakR4To9nZjyxGekLQP44
-         V3AEQm/KKl5vqNkgG0CMxGpSSb0FkEK5OBZ7QDug9oOTSIdTlpOKQKtmxyKq4U4+jTTg
-         nAL4NhRjvLGBa4TnQyhEjW/tfKJgq7TUQpVt6Yut1ucnm0o7iqh4zZiszZEtC8mw4ENf
-         b7ruCx92+H5OEAmMsJnvnUV1XpCEWBoVAhCs9qWhLTrAMRrYF3+tyrUP+R+ltU+EdZQd
-         61YQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXWdOzqd+ybowVnTplW2kWdFHuZH9KKYA9/ndgNh3HWKZ/hym/XhQJXS2Puctjmey4UyVCJjTEsGuJYXFlzp0QqlOJ9FKdRdknuW+tUYlcEnH9n1QLf8os7ZBXOf9FSoP2AKlgzMek3
-X-Gm-Message-State: AOJu0YwpdA7L+oqglw+xdOo+yA0yNuWTSgL1bm8mkS4/DTbmgfNUtZom
-	o48CTXJZBtw+JIinfAMjatWWVJ1fg8TB1rghVWhQeR7UzwEugq7MFuVg2hJ63FcE6Ar/kCRfQRe
-	0ld6QwxkjVl7ulMHBuTzFlMPv1jQ=
-X-Google-Smtp-Source: AGHT+IHHfMbbbqoHw7krBAVZH5xIrK1wStJic0o14Qv3VVkQCXlhqzmOi6B3o/2GgWrCH6yfMZoswawJg5W20oOAKY8=
-X-Received: by 2002:a17:902:c94a:b0:1fa:2b11:657d with SMTP id
- d9443c01a7336-1fac7ea493cmr32184185ad.10.1719603455826; Fri, 28 Jun 2024
- 12:37:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719603581; x=1720208381;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jlu7OFoSigy4VBRWahwI/CAdqSq3ZHba+Z6d6xpDy0s=;
+        b=wcgEropY6QEgVa1ftyfen/qPu7t0Scrajt/EZ5drD1+M1L+HMpG0bcmAsg//JV1jug
+         ZDzaha5dBUHHreV3JDXLvNNbjatDkoPQj3Qk8Oh3gNlHkofsZiyiPqplB7KrjVizYL7N
+         xtSCsOT24FWMrOzhiDiYmBFERCsGx3kLaLEQBeDQZGSlddqp2wP8Gr91gOHA/ED5Usox
+         qfHRjjdO+1u3NiCwZ4aeC15XuTjlRo+vF29gLD2Mc5bHybmqLur8hoMRSHYoWqMnJFDz
+         Xudbgq6b22FBEUlAcYFSJfGqQXpuY8dBO3lT+A0QEDQhxhcpA1ubmEu+dF8w4zcT+6Qt
+         VfIA==
+X-Forwarded-Encrypted: i=1; AJvYcCVhOpUl9Z/ANs3KId5bU3y66SzbkbCeS6wVnSDJ0FcKY5IEWVj5sXajLwZTMJPnxjdyBFWzhxth4TRN0yXgWiO3QugDnDFWdJ2WyrP/
+X-Gm-Message-State: AOJu0YyYBrU5KhCf/9uGJ1tNn2PBZiyQ7E2ZLsz9HBLNV+pt9OI3xOJc
+	lEzzx7Fu3cdt9UYVLRi78/6X+1f150ylFYtHzW3e9sYG2yZ2xaR3deay1JRs/AY=
+X-Google-Smtp-Source: AGHT+IEFN9w6La20dA4pfLcoEu0o6yN5RPDj+kWUC6AC8H3QgED7762nwW8XTv0QM/TYaxu3/bA0JQ==
+X-Received: by 2002:a05:6e02:13a5:b0:376:3918:c50 with SMTP id e9e14a558f8ab-37639180e02mr219326075ab.0.1719603581458;
+        Fri, 28 Jun 2024 12:39:41 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-37ad2f40743sm5547015ab.43.2024.06.28.12.39.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Jun 2024 12:39:41 -0700 (PDT)
+Message-ID: <74e09bb5-6226-4c6c-8694-7f4235dbb9f9@linuxfoundation.org>
+Date: Fri, 28 Jun 2024 13:39:40 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507131522.3546113-1-clabbe@baylibre.com> <20240507131522.3546113-2-clabbe@baylibre.com>
- <A4B2BDF4-263F-4879-A0C3-399D8A1BF3FE@aparcar.org> <CAFBinCBwCCKUS1k0Qb0GttucF3_Nn6CJUTe090RV5AD4CDM-NQ@mail.gmail.com>
- <Zn0RaATKGAn2Ja3b@hovoldconsulting.com>
-In-Reply-To: <Zn0RaATKGAn2Ja3b@hovoldconsulting.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Fri, 28 Jun 2024 21:37:24 +0200
-Message-ID: <CAFBinCCgBtMi6CaRUT41y5MO-EHNM12R1UOGizkB-Ka99O3AaQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1 v7] usb: serial: add support for CH348
-To: Johan Hovold <johan@kernel.org>
-Cc: Paul Spooren <mail@aparcar.org>, Corentin Labbe <clabbe@baylibre.com>, gregkh@linuxfoundation.org, 
-	linux-kernel <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org, david@ixit.cz
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] Updating maintainer and correcting Czech translation
+ in cpupower
+To: Daniel Hejduk <danielhejduk@disroot.org>, shuah@kernel.org,
+ trenn@suse.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <ba4d74fd-6762-4e9d-8346-5f3384cb60ce@linuxfoundation.org>
+ <20240628174420.5370-1-danielhejduk@disroot.org>
+Content-Language: en-US
+Cc: Shuah Khan <skhan@linuxfoundation.org>
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240628174420.5370-1-danielhejduk@disroot.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 27, 2024 at 9:14=E2=80=AFAM Johan Hovold <johan@kernel.org> wro=
-te:
->
-> On Sat, Jun 22, 2024 at 09:00:17PM +0200, Martin Blumenstingl wrote:
-> > On Wed, Jun 19, 2024 at 3:35=E2=80=AFPM Paul Spooren <mail@aparcar.org>=
- wrote:
-> > > > On 7. May 2024, at 15:15, Corentin Labbe <clabbe@baylibre.com> wrot=
-e:
-> > > >
-> > > > The CH348 is an USB octo port serial adapter.
-> > > > The device multiplexes all 8 ports in the same pair of Bulk endpoin=
-ts.
-> > > > Since there is no public datasheet, unfortunately it remains some m=
-agic values
-> > > >
-> > > > Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
-> > > Tested-by: Paul Spooren <mail@aparcar.org <mailto:mail@aparcar.org>>
->
-> > Thanks Paul!
-> > Johan, is the Tested-by something that you can fix up while applying?
->
-> Sure.
-Great, thank you!
+On 6/28/24 11:44, Daniel Hejduk wrote:
+> *** BLURB HERE ***
 
-> > Speaking of applying this patch, it would be great to have it queued
-> > for Linux 6.11.
-> > If you have any questions or review comments then please let Corentin
-> > and me know.
->
-> If you think the outstanding issues have been addressed now then I'll
-> find some time to review it again.
-The issue reported originally by Nicolas and then confirmed by
-Corentin in [0] is indeed fixed with this v7.
-I am not aware of any other functional issues.
+Explain what this patch series does.
+> 
+> Daniel Hejduk (3):
+>    Updating cpupower's Czech translation maintainer
+>    Correcting needs work strings and adding new to cpupower's Czech
+>      translation
+>    Adding changelog for cpupower
 
-There's additional features that the hardware supports which the
-driver doesn't yet - for example modem control.
-Those features can be implemented later - as necessary.
+short summary format is wrong. Refer to commits in the kernel
+rep for reference on how to write summary and commit logs.
+  
+> 
+>   tools/power/cpupower/ChangeLog |   3 +
+>   tools/power/cpupower/po/cs.po  | 174 +++++++++++++++++----------------
+>   2 files changed, 95 insertions(+), 82 deletions(-)
+>   create mode 100644 tools/power/cpupower/ChangeLog
 
+thanks,
+-- Shuah
 
-Best regards,
-Martin
-
-
-[0] https://lore.kernel.org/lkml/ZVtRNZmCMImCT9sN@Red/
 
