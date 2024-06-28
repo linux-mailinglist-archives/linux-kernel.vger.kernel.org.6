@@ -1,281 +1,207 @@
-Return-Path: <linux-kernel+bounces-234292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 003D091C4C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:25:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F1CF91C4BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:25:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA40C28537F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:25:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 365061C20FC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:25:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9012D1CCCD5;
-	Fri, 28 Jun 2024 17:25:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19561CB338;
+	Fri, 28 Jun 2024 17:25:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TngJkhIB"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fahcjlzO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16F7155756;
-	Fri, 28 Jun 2024 17:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF010155756;
+	Fri, 28 Jun 2024 17:25:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719595508; cv=none; b=VFzP4Ej8H4cIXCgsAsTcxZF/EbRH9xpbRt7SbNF/A9l5EGsaFSYcqfnsrl8/bJcuNrd43WtX5AOjoBk0xKyx9DMNy5m3hp9NTWWwBbhVgqzDMNLrj2b2frv1yQAF2G3Il84OmUEYZwAyxJxPRfmqPgj+Kk9E7eBr4Cgllt+Rb1U=
+	t=1719595501; cv=none; b=mQW0rteXmTUjgEHlCD5c1ZMCbfXOc6gdcI3hVHoSLtvWSWN3uldBK/y/Yra9O2EA8JfFjrHcFs7BoPQWbDO6CPdyL87FYEKxN9TKAPiD/ubwPY3I+5LqZpNsenBxDK6uoat6vBIHRiIXDMTuiwUrkNFF6TVSvH4MgY13MSXmj6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719595508; c=relaxed/simple;
-	bh=DJhP7GoIk/qt5X5kuqeZpGRybx/3RYS6nV2Cp6S/YM4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nq46esdGepfS6fMeXwm5hhpkDEaX5QvbJHtIXyDcvbk8inBKZgSbXju7E6kLZiePS8J2wAYpFwGlQj1t+u4W1RLetddoBDsqZt4XedeAInPZHScDpmTZiQKMpvjcq8BlRm3muyG2dD8fO3pwvgO71Nr7ZRZ8iwlGyh2SC4uMluY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TngJkhIB; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45SCokmo032524;
-	Fri, 28 Jun 2024 17:24:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=6/Uy8PhucSMAV+NNEij24RhK
-	OX5VL7DwO9C6xpr1cEk=; b=TngJkhIBBZc0LaAcBv6/k3xI3RSj+k+7nYKe9h3i
-	3SuyvM9MisY36SSNU8OhcekG9P3Ouek5M4hjpfNJ4Ey3iVsdKux1rqRabMFQ/iE+
-	KYiArjdrn9U5KVUXD0HRU6rD/guPmM6czUnXJLy7V2sPQv5C00XH63lYo40qHN2v
-	LfMZb6kYiFDY4Rp2BPVIUpMLwBmjKmFZpojmubLN3gXte14v0gH3QxRW1i6mOPpe
-	wLtoVXRVEyt4cuf6MSqMElo5sFJ4c90RCKk6rbkRZ4OyEh2sCkelAQTT/ZxoYbzb
-	vA7tyQ/tIVuI1A7YI+8SlcGJNkdImKMKVeGASVNZZVQHQQ==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 401pm5ab1s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Jun 2024 17:24:54 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45SHOrn2005949
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Jun 2024 17:24:53 GMT
-Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 28 Jun 2024 10:24:53 -0700
-Date: Fri, 28 Jun 2024 10:24:52 -0700
-From: Elliot Berman <quic_eberman@quicinc.com>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        "Abhinav
- Kumar" <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        David Airlie <airlied@gmail.com>, "Daniel
- Vetter" <daniel@ffwll.ch>,
-        Bjorn Andersson <andersson@kernel.org>, Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v4 1/5] drm/msm/adreno: Implement SMEM-based speed bin
-Message-ID: <20240628101549127-0700.eberman@hu-eberman-lv.qualcomm.com>
-References: <20240625-topic-smem_speedbin-v4-0-f6f8493ab814@linaro.org>
- <20240625-topic-smem_speedbin-v4-1-f6f8493ab814@linaro.org>
+	s=arc-20240116; t=1719595501; c=relaxed/simple;
+	bh=AKDp42mRsUBja/ZLr+8Y1Iqms9ORd+ytnrDKdKS7MIg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GPLxyw92keeYB2o2T6jUFJgeB0Seuxa4qp1nAZOAAeD271H/sviyds0py5lg1ZiOf56vMwGVmpYiyU4GmrRLb0h0Nnxzfbvptf87lWVBbsoTcf/H/31aJSQ24e/eYb8xy6PWe9klI5T3dgbOOpB6KZS1UHRlBKi241SyXnYpv5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fahcjlzO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60717C116B1;
+	Fri, 28 Jun 2024 17:25:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719595501;
+	bh=AKDp42mRsUBja/ZLr+8Y1Iqms9ORd+ytnrDKdKS7MIg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fahcjlzO7Dqk88dt4n1sOJ3BAs41JLixAADOHyJdH1tdvF4vPVb70vNM2lEYg82EX
+	 lUIB9ziaAEx23iFz/0dMlDSxHLQrQ+7vVGXIZxV+7ughBdShqrnkAqExIeAznTNTyf
+	 f1jAseVHD4vNp3CCYuUhvJGVzMsl7zf7s4Nssmo3m6oZxYkZ900Wuyw8KAgYiV+X75
+	 JTlTzKlbnwage8O2OokM5LfGCbiICwrSKlGqgGTc4jxXnI0/S6h9LWxg1OfmVQxAgH
+	 X7Xm4NPthPo71OYampk8m6uAJq1TeR3vZrzMrdabHkJ6Yu6hwrHKNqznf99H1YZkKW
+	 3pq/u56GHHRpQ==
+Date: Fri, 28 Jun 2024 10:24:58 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	James Clark <james.clark@arm.com>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Nick Terrell <terrelln@fb.com>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Song Liu <song@kernel.org>,
+	Ilkka Koskinen <ilkka@os.amperecomputing.com>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Yanteng Si <siyanteng@loongson.cn>,
+	Sun Haiyong <sunhaiyong@loongson.cn>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 00/27] Constify tool pointers
+Message-ID: <Zn7x6u7cedoFIHSi@google.com>
+References: <20240626203630.1194748-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240625-topic-smem_speedbin-v4-1-f6f8493ab814@linaro.org>
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: PPP3ksJZvVXfBVo3D8j7YEhxqeIO6Mey
-X-Proofpoint-ORIG-GUID: PPP3ksJZvVXfBVo3D8j7YEhxqeIO6Mey
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-28_12,2024-06-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
- priorityscore=1501 phishscore=0 adultscore=0 suspectscore=0 spamscore=0
- malwarescore=0 lowpriorityscore=0 bulkscore=0 impostorscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406280129
+In-Reply-To: <20240626203630.1194748-1-irogers@google.com>
 
-On Tue, Jun 25, 2024 at 08:28:06PM +0200, Konrad Dybcio wrote:
-> On recent (SM8550+) Snapdragon platforms, the GPU speed bin data is
-> abstracted through SMEM, instead of being directly available in a fuse.
+On Wed, Jun 26, 2024 at 01:36:02PM -0700, Ian Rogers wrote:
+> struct perf_tool provides a set of function pointers that are called
+> through when processing perf data. To make filling the pointers less
+> cumbersome, if they are NULL perf_tools__fill_defaults will add
+> default do nothing implementations.
 > 
-> Add support for SMEM-based speed binning, which includes getting
-> "feature code" and "product code" from said source and parsing them
-> to form something that lets us match OPPs against.
+> This change refactors struct perf_tool to have an init function that
+> provides the default implementation. The special use of NULL and
+> perf_tools__fill_defaults are removed. As a consequence the tool
+> pointers can then all be made const, which better reflects the
+> behavior a particular perf command would expect of the tool and to
+> some extent can reduce the cognitive load on someone working on a
+> command.
+
+I thought you actually wanted to make the tool const (rodata) but it
+seems you leave it as is but treat it as const.
+
+I'm curious if we can change the event delivery code something like:
+
+  if (tool->func)
+      tool->func(...);
+  else
+      stub_func(...);
+
+Then probably we don't need to touch the tool and make it const.
+Thoughts?
+
+Thanks,
+Namhyung
+
 > 
-> Due to the product code being ignored in the context of Adreno on
-> production parts (as of SM8650), hardcode it to SOCINFO_PC_UNKNOWN.
+> v2: Remove dummy tool initialization [Adrian] and make zero sized. Add
+>     cs-etm fix for address sanitizer build, found necessary when
+>     testing dummy tool change.
 > 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> ---
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.c      |  8 +++---
->  drivers/gpu/drm/msm/adreno/adreno_device.c |  2 ++
->  drivers/gpu/drm/msm/adreno/adreno_gpu.c    | 41 +++++++++++++++++++++++++++---
->  drivers/gpu/drm/msm/adreno/adreno_gpu.h    |  7 ++++-
->  4 files changed, 50 insertions(+), 8 deletions(-)
+> Ian Rogers (27):
+>   perf auxevent: Zero size dummy tool
+>   perf cs-etm: Fix address sanitizer dso build failure
+>   perf tool: Constify tool pointers
+>   perf tool: Move fill defaults into tool.c
+>   perf tool: Add perf_tool__init
+>   perf kmem: Use perf_tool__init
+>   perf buildid-list: Use perf_tool__init
+>   perf kvm: Use perf_tool__init
+>   perf lock: Use perf_tool__init
+>   perf evlist: Use perf_tool__init
+>   perf record: Use perf_tool__init
+>   perf c2c: Use perf_tool__init
+>   perf script: Use perf_tool__init
+>   perf inject: Use perf_tool__init
+>   perf report: Use perf_tool__init
+>   perf stat: Use perf_tool__init
+>   perf annotate: Use perf_tool__init
+>   perf sched: Use perf_tool__init
+>   perf mem: Use perf_tool__init
+>   perf timechart: Use perf_tool__init
+>   perf diff: Use perf_tool__init
+>   perf data convert json: Use perf_tool__init
+>   perf data convert ctf: Use perf_tool__init
+>   perf test event_update: Ensure tools is initialized
+>   perf kwork: Use perf_tool__init
+>   perf tool: Remove perf_tool__fill_defaults
+>   perf session: Constify tool
 > 
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> index c98cdb1e9326..8ace096bb68c 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> @@ -2124,13 +2124,15 @@ static u32 fuse_to_supp_hw(const struct adreno_info *info, u32 fuse)
->  	return UINT_MAX;
->  }
->  
-> -static int a6xx_set_supported_hw(struct device *dev, const struct adreno_info *info)
-> +static int a6xx_set_supported_hw(struct adreno_gpu *adreno_gpu,
-> +				 struct device *dev,
-> +				 const struct adreno_info *info)
->  {
->  	u32 supp_hw;
->  	u32 speedbin;
->  	int ret;
->  
-> -	ret = adreno_read_speedbin(dev, &speedbin);
-> +	ret = adreno_read_speedbin(adreno_gpu, dev, &speedbin);
->  	/*
->  	 * -ENOENT means that the platform doesn't support speedbin which is
->  	 * fine
-> @@ -2290,7 +2292,7 @@ struct msm_gpu *a6xx_gpu_init(struct drm_device *dev)
->  
->  	a6xx_llc_slices_init(pdev, a6xx_gpu, is_a7xx);
->  
-> -	ret = a6xx_set_supported_hw(&pdev->dev, config->info);
-> +	ret = a6xx_set_supported_hw(adreno_gpu, &pdev->dev, config->info);
->  	if (ret) {
->  		a6xx_llc_slices_destroy(a6xx_gpu);
->  		kfree(a6xx_gpu);
-> diff --git a/drivers/gpu/drm/msm/adreno/adreno_device.c b/drivers/gpu/drm/msm/adreno/adreno_device.c
-> index 1e789ff6945e..e514346088f9 100644
-> --- a/drivers/gpu/drm/msm/adreno/adreno_device.c
-> +++ b/drivers/gpu/drm/msm/adreno/adreno_device.c
-> @@ -6,6 +6,8 @@
->   * Copyright (c) 2014,2017 The Linux Foundation. All rights reserved.
->   */
->  
-> +#include <linux/soc/qcom/socinfo.h>
-> +
->  #include "adreno_gpu.h"
->  
->  bool hang_debug = false;
-> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> index 1c6626747b98..6ffd02f38499 100644
-> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> @@ -21,6 +21,9 @@
->  #include "msm_gem.h"
->  #include "msm_mmu.h"
->  
-> +#include <linux/soc/qcom/smem.h>
-> +#include <linux/soc/qcom/socinfo.h>
-> +
->  static u64 address_space_size = 0;
->  MODULE_PARM_DESC(address_space_size, "Override for size of processes private GPU address space");
->  module_param(address_space_size, ullong, 0600);
-> @@ -1061,9 +1064,39 @@ void adreno_gpu_ocmem_cleanup(struct adreno_ocmem *adreno_ocmem)
->  			   adreno_ocmem->hdl);
->  }
->  
-> -int adreno_read_speedbin(struct device *dev, u32 *speedbin)
-> +int adreno_read_speedbin(struct adreno_gpu *adreno_gpu,
-> +			 struct device *dev, u32 *fuse)
->  {
-> -	return nvmem_cell_read_variable_le_u32(dev, "speed_bin", speedbin);
-> +	u32 fcode;
-> +	int ret;
-> +
-> +	/*
-> +	 * Try reading the speedbin via a nvmem cell first
-> +	 * -ENOENT means "no nvmem-cells" and essentially means "old DT" or
-> +	 * "nvmem fuse is irrelevant", simply assume it's fine.
-> +	 */
-> +	ret = nvmem_cell_read_variable_le_u32(dev, "speed_bin", fuse);
-> +	if (!ret)
-> +		return 0;
-> +	else if (ret != -ENOENT)
-> +		return dev_err_probe(dev, ret, "Couldn't read the speed bin fuse value\n");
-> +
-> +#ifdef CONFIG_QCOM_SMEM
-> +	/*
-> +	 * Only check the feature code - the product code only matters for
-> +	 * proto SoCs unavailable outside Qualcomm labs, as far as GPU bin
-> +	 * matching is concerned.
-> +	 *
-> +	 * Ignore EOPNOTSUPP, as not all SoCs expose this info through SMEM.
-> +	 */
-> +	ret = qcom_smem_get_feature_code(&fcode);
-> +	if (!ret)
-> +		*fuse = ADRENO_SKU_ID(fcode);
-> +	else if (ret != -EOPNOTSUPP)
-> +		return dev_err_probe(dev, ret, "Couldn't get feature code from SMEM\n");
-
-Probably want to update a6xx_set_supported_hw() error handling to ignore
--EOPNOTSUPP or do:
-
-	else /* ret == -EOPNOTSUPP */
-		return -ENOENT;
-
-
-
-> +#endif
-> +
-> +	return 0;
-
-I noticed that if SMEM isn't enabled and nvmem returns -ENOENT, we still
-return 0. That could lead to uninitialized access of speedbin in both
-users of adreno_read_speedbin(). Maybe:
-
-	return ret;
-
->  }
->  
->  int adreno_gpu_init(struct drm_device *drm, struct platform_device *pdev,
-> @@ -1102,9 +1135,9 @@ int adreno_gpu_init(struct drm_device *drm, struct platform_device *pdev,
->  			devm_pm_opp_set_clkname(dev, "core");
->  	}
->  
-> -	if (adreno_read_speedbin(dev, &speedbin) || !speedbin)
-> +	if (adreno_read_speedbin(adreno_gpu, dev, &speedbin) || !speedbin)
->  		speedbin = 0xffff;
-> -	adreno_gpu->speedbin = (uint16_t) (0xffff & speedbin);
-> +	adreno_gpu->speedbin = speedbin;
->  
->  	gpu_name = devm_kasprintf(dev, GFP_KERNEL, "%"ADRENO_CHIPID_FMT,
->  			ADRENO_CHIPID_ARGS(config->chip_id));
-> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-> index cff8ce541d2c..563c08b44624 100644
-> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-> @@ -79,6 +79,10 @@ struct adreno_reglist {
->  
->  struct adreno_speedbin {
->  	uint16_t fuse;
-> +/* As of SM8650, PCODE on production SoCs is meaningless wrt the GPU bin */
-> +#define ADRENO_SKU_ID_FCODE		GENMASK(15, 0)
-> +#define ADRENO_SKU_ID(fcode)	(fcode)
-> +
->  	uint16_t speedbin;
->  };
->  
-> @@ -545,7 +549,8 @@ int adreno_fault_handler(struct msm_gpu *gpu, unsigned long iova, int flags,
->  			 struct adreno_smmu_fault_info *info, const char *block,
->  			 u32 scratch[4]);
->  
-> -int adreno_read_speedbin(struct device *dev, u32 *speedbin);
-> +int adreno_read_speedbin(struct adreno_gpu *adreno_gpu,
-> +			 struct device *dev, u32 *speedbin);
->  
->  /*
->   * For a5xx and a6xx targets load the zap shader that is used to pull the GPU
+>  tools/perf/arch/x86/util/event.c    |   4 +-
+>  tools/perf/bench/synthesize.c       |   2 +-
+>  tools/perf/builtin-annotate.c       |  44 ++--
+>  tools/perf/builtin-buildid-list.c   |  10 +
+>  tools/perf/builtin-c2c.c            |  33 ++-
+>  tools/perf/builtin-diff.c           |  30 ++-
+>  tools/perf/builtin-evlist.c         |  10 +-
+>  tools/perf/builtin-inject.c         | 159 +++++++------
+>  tools/perf/builtin-kmem.c           |  20 +-
+>  tools/perf/builtin-kvm.c            |  19 +-
+>  tools/perf/builtin-kwork.c          |  33 ++-
+>  tools/perf/builtin-lock.c           |  41 ++--
+>  tools/perf/builtin-mem.c            |  37 +--
+>  tools/perf/builtin-record.c         |  47 ++--
+>  tools/perf/builtin-report.c         |  67 +++---
+>  tools/perf/builtin-sched.c          |  50 ++--
+>  tools/perf/builtin-script.c         | 106 ++++-----
+>  tools/perf/builtin-stat.c           |  26 +--
+>  tools/perf/builtin-timechart.c      |  25 +-
+>  tools/perf/builtin-top.c            |   2 +-
+>  tools/perf/builtin-trace.c          |   4 +-
+>  tools/perf/tests/cpumap.c           |   6 +-
+>  tools/perf/tests/dlfilter-test.c    |   2 +-
+>  tools/perf/tests/dwarf-unwind.c     |   2 +-
+>  tools/perf/tests/event_update.c     |   9 +-
+>  tools/perf/tests/stat.c             |   6 +-
+>  tools/perf/tests/thread-map.c       |   2 +-
+>  tools/perf/util/Build               |   1 +
+>  tools/perf/util/arm-spe.c           |  14 +-
+>  tools/perf/util/auxtrace.c          |  12 +-
+>  tools/perf/util/auxtrace.h          |  20 +-
+>  tools/perf/util/bpf-event.c         |   4 +-
+>  tools/perf/util/build-id.c          |  34 +--
+>  tools/perf/util/build-id.h          |   8 +-
+>  tools/perf/util/cs-etm.c            |  24 +-
+>  tools/perf/util/data-convert-bt.c   |  34 ++-
+>  tools/perf/util/data-convert-json.c |  47 ++--
+>  tools/perf/util/dso.h               |  10 +
+>  tools/perf/util/event.c             |  54 +++--
+>  tools/perf/util/event.h             |  38 ++--
+>  tools/perf/util/header.c            |   6 +-
+>  tools/perf/util/header.h            |   4 +-
+>  tools/perf/util/hisi-ptt.c          |   6 +-
+>  tools/perf/util/intel-bts.c         |  14 +-
+>  tools/perf/util/intel-pt.c          |  15 +-
+>  tools/perf/util/jitdump.c           |   4 +-
+>  tools/perf/util/s390-cpumsf.c       |  11 +-
+>  tools/perf/util/session.c           | 342 ++--------------------------
+>  tools/perf/util/session.h           |   6 +-
+>  tools/perf/util/synthetic-events.c  |  80 +++----
+>  tools/perf/util/synthetic-events.h  |  70 +++---
+>  tools/perf/util/tool.c              | 294 ++++++++++++++++++++++++
+>  tools/perf/util/tool.h              |  18 +-
+>  tools/perf/util/tsc.c               |   2 +-
+>  54 files changed, 967 insertions(+), 1001 deletions(-)
+>  create mode 100644 tools/perf/util/tool.c
 > 
 > -- 
-> 2.45.2
-> 
+> 2.45.2.741.gdbec12cfda-goog
 > 
 
