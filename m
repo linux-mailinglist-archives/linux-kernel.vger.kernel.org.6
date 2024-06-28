@@ -1,114 +1,134 @@
-Return-Path: <linux-kernel+bounces-233792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CF8B91BD6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 13:30:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C072F91BD72
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 13:30:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B89BC1F2304C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:30:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0A291C22A48
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA9D155A59;
-	Fri, 28 Jun 2024 11:30:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4687B15746F;
+	Fri, 28 Jun 2024 11:30:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Vw3h66Ic"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XIvtcWUm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DB436B11
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 11:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FEC156972;
+	Fri, 28 Jun 2024 11:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719574222; cv=none; b=F/YNx4zVhPCQO//Xu7ksznAl3iBvYJTR1+6HLxze41q7eqkciw9gtnm18gktFPY7kqe/HYPW3rRQNbJg5ZZQ6+V9dCphBrHu+/++r3iMta8eyg1+8P8ibGA9DPaJ3HYiwzYB4/cv/7UEEn9eRSSobCDQHJk72I4N7fHHx35yZsI=
+	t=1719574223; cv=none; b=DHKdogVG8NvgecBE91OfDsgsbIIWmMI13nemWbSMRAgewx6kaI5CLBX16mFhBYGlExGekYFvgoj1NNC7msOnLrh3D0lcc25NrV3uMWBa8Bzqw9nHXDiOMScfMn6Z8Kfifmm3Gu8TZtNhEKFx/0HdwpA2v620q0+90X1vXAXVndY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719574222; c=relaxed/simple;
-	bh=0EQePSRiBV0bqp1McXfFeQFrK5vwQYcgBf5qhIHPeJY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Lktlm36h2+hDE4JqKhRdaBITPHe6yUWhLuJxbNoLfr9F5gLfBEr6eEFG5pXXprzRF3xfbOOFLbyOrUyNBmCx/cd2LNSj6TOAeqBveGugGr8u776UxS/NckGprzJsN6/XuLW5rFMj9YSmOtBp0mhStWlEbnnESPgxrr/LKG3S1b4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Vw3h66Ic; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: ca5a569a354111ef99dc3f8fac2c3230-20240628
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=+danxBg72kkVWhHZ7NufVUsP5WdRg7pgzK5U7q+oXYY=;
-	b=Vw3h66IcM7Ih/RuLuPAitnpVkOahLYiB1KN0xW0o3rMhMSliiACVhdHUAuNOxVrC/YwAY6B6TEm0/hRokSClEqcj2xLXvwyb/mFIWjvOQAawRaXBqW6CisTgdn+RDpKKIHu4R+L5eS/GgGXJVpMg0mg7u9XA44WxDZgaJHvUPBQ=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.40,REQID:3f9ccaf6-48d3-45d8-9760-ccb85f6a391f,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:ba885a6,CLOUDID:a147ad44-a117-4f46-a956-71ffeac67bfa,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: ca5a569a354111ef99dc3f8fac2c3230-20240628
-Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
-	(envelope-from <mark-pk.tsai@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1768470028; Fri, 28 Jun 2024 19:30:15 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Fri, 28 Jun 2024 19:30:13 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Fri, 28 Jun 2024 19:30:13 +0800
-From: Mark-PK Tsai <mark-pk.tsai@mediatek.com>
-To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, "Robin
- Murphy" <robin.murphy@arm.com>, Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-CC: <yj.chiang@mediatek.com>, Mark-PK Tsai <mark-pk.tsai@mediatek.com>,
-	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
-Subject: [PATCH] iommu: Remove iommu_sva_unbind_gpasid
-Date: Fri, 28 Jun 2024 19:30:04 +0800
-Message-ID: <20240628113011.3535-1-mark-pk.tsai@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+	s=arc-20240116; t=1719574223; c=relaxed/simple;
+	bh=SnoK7XdshzEQwvq+kBt0n1g2IoUbW1LSA0WpSE8grF8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Hf9lgpUrK0aztza0ltHaITdsqKYx11Eg81H3mAbaiFhRGSHIl61PTb1RNJSXpXCYNz2RwdIzThRx0eFZ8ZFK60AylAR+1dPfYxDSK0kGnUcUslJGPnVG8jft5XVeEuUDhuxP8F8J2JLUCFM6n2GESE3JzPYCs9U0IE93S9bfBX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XIvtcWUm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1F81CC116B1;
+	Fri, 28 Jun 2024 11:30:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719574223;
+	bh=SnoK7XdshzEQwvq+kBt0n1g2IoUbW1LSA0WpSE8grF8=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=XIvtcWUmHsuaOknxdb+cHwWInshmrTO4AUMiol/Sbgz5CkvJ6W2kLR5LzPfT8xZJ/
+	 8Ax56BbHxtQ1C+O2pOsgqjG87gN4L9mucKlpJiYRgjqtroMSiiwVJRMsWpUtcnadnm
+	 8aLY14dcWbRkncsDvkZ39P3iDouun7JRcRUhDTCpb/P3IgmdiDS1Ea0EULmGxFU5rM
+	 H7Rr4OtmR2qamZ3K+pLMu/mnyVlaMJ+PUu54COI7fnHeCXn717zOGqvhvpsCOR0h72
+	 fo6li7JK7QODEaFGw1rTYe/8DuttXTvsF6+HxydAjVZ9mvfEaZ5JQi430r9c4Xnw1Q
+	 pXxunRXcknKMQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04423C2BBCA;
+	Fri, 28 Jun 2024 11:30:23 +0000 (UTC)
+From: Xilin Wu via B4 Relay <devnull+wuxilin123.gmail.com@kernel.org>
+Subject: [PATCH 0/2] Introduce ASUS Vivobook S 15
+Date: Fri, 28 Jun 2024 19:30:11 +0800
+Message-Id: <20240628-asus-vivobook-s15-v1-0-2a1e4571b8ab@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--1.239400-8.000000
-X-TMASE-MatchedRID: S6zgMyN4g9KGsPek1xLHVnH7HV/mO4UTT9kSL7SwB1hq1Zuz1uJuCNn7
-	b/+Y15IvMm6uZ1zccZcQCEi5k+nQxB8TzIzimOwP0C1sQRfQzEHEQdG7H66TyHEqm8QYBtMOvwY
-	XYCR6VwgLQgZ3u/DVwAgsD3ZCYFN1JDDLO9wvb7dnPqKjSU9SXe7o5tZbWcdZRvCkNdMmYoFxsN
-	4zhBrsExsXRXHy1IH0eZUpm6wun3ba/06NhYDa4wyzCDjlUx89djekYOaiKTo=
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--1.239400-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP: 9C659BD85D1E1F99FDEC3C8CB47448B2FD5AFBB33DCB9AD1BC9FAA614F21077D2000:8
-X-MTK: N
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMOefmYC/x3MQQ5AMBBA0avIrE2iRZWriEUxmEhUOtFIxN01l
+ m/x/wNCgUmgyx4IFFnYHwkqz2Da3LES8pwMutBVYbRFJ5dg5OhH73cUVWOjXdU21pTKWEjdGWj
+ h+3/2w/t+vmqEiWMAAAA=
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>, 
+ Johan Hovold <johan+linaro@kernel.org>, Xilin Wu <wuxilin123@gmail.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1719574221; l=1810;
+ i=wuxilin123@gmail.com; s=20240424; h=from:subject:message-id;
+ bh=SnoK7XdshzEQwvq+kBt0n1g2IoUbW1LSA0WpSE8grF8=;
+ b=TTxkSJn9k9bv9UPn73ineqV4So/coDMuxKSmdV0vQQPcrEVXym9fSKlzUrOGby9hlRXIZ6xnN
+ lXLDDNUmRQgAItMxIXoskxaAgKbJt6JsuV3Uvbsuah8E/u+PEk3XRR2
+X-Developer-Key: i=wuxilin123@gmail.com; a=ed25519;
+ pk=vPnxeJnlD/PfEbyQPZzaay5ezxI/lMrke7qXy31lSM8=
+X-Endpoint-Received: by B4 Relay for wuxilin123@gmail.com/20240424 with
+ auth_id=157
+X-Original-From: Xilin Wu <wuxilin123@gmail.com>
+Reply-To: wuxilin123@gmail.com
 
-This is a left over of commit 0c9f17877891
-("iommu: Remove guest pasid related interfaces and definitions")
+ASUS Vivobook S 15 is a laptop based on the Qualcomm Snapdragon X Elite
+SoC (X1E78100). This series adds initial support for the device.
 
-Signed-off-by: Mark-PK Tsai <mark-pk.tsai@mediatek.com>
+Currently working features:
+
+- CPU frequency scaling up to 3.4GHz
+- NVMe storage on PCIe 6a (capable of Gen4x4, currently limited to Gen4x2)
+- Keyboard and touchpad
+- WCN7850 Wi-Fi
+- Two Type-C ports on the left side
+- internal eDP display
+- ADSP and CDSP remoteprocs
+
+Some features which can get working with out of tree patches:
+
+- GPU [1]
+- Bluetooth [2]
+
+Notably not working features:
+
+- Battery monitoring via battmgr
+- Orientation switching and altmode on the Type-C ports (USB4 retimer driver needed?)
+- Two USB Type-A ports on the right side (dwc3 multiport controller)
+- Front camera
+- SD card slot
+- HDMI connector (using a Parade PS186 DP 1.4 to HDMI 2.0 converter) 
+- USB4 and the retimer (Parade PS8830?)
+- Anything using the EC
+
+Dump of the ACPI tables could be found here: [3]
+
+[1] https://lore.kernel.org/all/20240623110753.141400-1-quic_akhilpo@quicinc.com/
+[2] https://git.codelinaro.org/abel.vesa/linux/-/commits/topic/b4/x1e80100-bt
+[3] https://github.com/aarch64-laptops/build/pull/103
+
+Signed-off-by: Xilin Wu <wuxilin123@gmail.com>
 ---
- include/linux/iommu.h | 2 --
- 1 file changed, 2 deletions(-)
+Xilin Wu (2):
+      dt-bindings: arm: qcom: Add ASUS Vivobook S 15
+      arm64: dts: qcom: Add device tree for ASUS Vivobook S 15
 
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index 17b3f36ad843..225403cfe614 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -785,8 +785,6 @@ extern int iommu_attach_device(struct iommu_domain *domain,
- 			       struct device *dev);
- extern void iommu_detach_device(struct iommu_domain *domain,
- 				struct device *dev);
--extern int iommu_sva_unbind_gpasid(struct iommu_domain *domain,
--				   struct device *dev, ioasid_t pasid);
- extern struct iommu_domain *iommu_get_domain_for_dev(struct device *dev);
- extern struct iommu_domain *iommu_get_dma_domain(struct device *dev);
- extern int iommu_map(struct iommu_domain *domain, unsigned long iova,
+ Documentation/devicetree/bindings/arm/qcom.yaml    |   1 +
+ arch/arm64/boot/dts/qcom/Makefile                  | 515 ++++++++---------
+ .../boot/dts/qcom/x1e80100-asus-vivobook-s15.dts   | 613 +++++++++++++++++++++
+ 3 files changed, 872 insertions(+), 257 deletions(-)
+---
+base-commit: 642a16ca7994a50d7de85715996a8ce171a5bdfb
+change-id: 20240628-asus-vivobook-s15-72a497863168
+
+Best regards,
 -- 
-2.18.0
+Xilin Wu <wuxilin123@gmail.com>
+
 
 
