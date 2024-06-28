@@ -1,168 +1,139 @@
-Return-Path: <linux-kernel+bounces-234337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE2EF91C56B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:07:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFD8491C570
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:09:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 780ED286C1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:07:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31FB4B2529B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D29D1CCCB2;
-	Fri, 28 Jun 2024 18:07:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E30F1C9EC6;
+	Fri, 28 Jun 2024 18:09:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kuBWd4bX"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MJGGwwdF"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51BC11B94F;
-	Fri, 28 Jun 2024 18:07:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1117ADDC0
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 18:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719598031; cv=none; b=N+MLZTG7Kn4UcoIyNtQ7UJEW91PD3stfXTxDDeI8v4ghNquef16zjbFdBuAhgTKuomU26CNnsKfR8V9VO2/DV5H39TZ9jgj5FDz7wH1zuvHnzN3W04OczfumC2ukZfeVI/L48b3xR7+fARtoRGD8Q2khC1k3hTc7rdSqoCoBOZs=
+	t=1719598144; cv=none; b=ZiZ0fBXGkL6O9mpEtXseoPekwuEGbYlk03nJUaUoi2E8BxgYXyo2j5ZFsCokH5Alhh9l2zIIU/locn63ahFG+6evdtyTkrgGGgmENtCRtVq7pt9Fo99FFN1TJjQG0jwMI4TqyJWTlH8Pm05MJXEjHn7QtQ4FL3A/VKhaH7ekTJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719598031; c=relaxed/simple;
-	bh=EMbVzbnsLSmtwf7hpcQDvwkGp+gUbKkbpsvhQ6740Jo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=lb0qE+cPgO4Nv6WRkGLFOrKLtcpgaWsRJQKBL3kjD5MbyFHPZxBb51Tvp3+U8PTygqOmaXpISnyWVdKQbQI2GX414KUhCilSYSGk6XFIiVbrrhe7c9EBopyp5R/DDeV92eWxJ1kpJ5P29nPqYkQ+trKTfJCcY/HmhxSvF5wtuTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kuBWd4bX; arc=none smtp.client-ip=209.85.208.54
+	s=arc-20240116; t=1719598144; c=relaxed/simple;
+	bh=LkC+AyRW6KOAweUkexREBddR2bp/ahp+8M6DIK9SAVo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E1ZvmUmrE6NTqKUkNs7amKRUMtTuefxwlZ8rfQhe2yNpu23wk5z0XGuArDo0n4BVoF62wKwWWpV9qGYiyTJ83ELZ9RMR7DyruTeSqQWkZNqcgIQz+Ws6a7DLFXr9LxRtSLncDdm5Y8uuy4OFlNf0vY8nShIfZGk8ds5QJlAev2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MJGGwwdF; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57cbc66a0a6so350114a12.1;
-        Fri, 28 Jun 2024 11:07:09 -0700 (PDT)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-707f9c3bd02so776525b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 11:09:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719598028; x=1720202828; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:from:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8EdFRuIjAMdYahk4Kci0WZzTsWWkZ1bOHj3GXMpTCuY=;
-        b=kuBWd4bX2XPaqgSDGCr1UaTEJWMC9Eylv5MoJcrMnAY6ZT64zvO4eFrz5mHt2M74rc
-         cUwGDJBAHgoXzvstknjO6EJiCnHZ0bR6ifSxkwa+fdE36LgOHA5XD2n75tn/HuP4hFcS
-         uj0zJRg5PNJ5IFpnkVhrJsywC00lrUt/2r50+1iVLyA9qBRWxmyLAGBY99j9bPGoiPY+
-         Y4wcgcmGbNwW48PNc0mgcSGF7j20VFuWpxczBhNvizPu4aDXSVOyeURisqHX+bDTs63J
-         lJKC+uOTSqRUJPsfB2XBu/1j+tfRBQXmz1QJoWFFTVmLcH5obdhq2Q+Vir14Ww6yN7D/
-         +4fQ==
+        d=gmail.com; s=20230601; t=1719598142; x=1720202942; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gLbYfpHailMRml8tkooKFu5Un3e2ZVQ3TTsmePLSQUo=;
+        b=MJGGwwdFvogAfON4PIOsPzZAkYMYHZC05ZsubI2HjJJPyerLAmirY2Bo64kDtmb6Wc
+         Q53zG/8nO0avKZ754XN2YazfG1fDDI903i2AE1SZE+A5f2hYM7+NvJhf1uJ+bEuKYEwr
+         4jUOXAe2DGcT9IgtGyzIldgk0b49Tzqrh15qE2uybTagrdNEaDLITRqIpR13buTk5f9C
+         wHluuy8k6YwGrzSE+UUc3fLw8w9lb+0X2TV+A/5dOO4HCTiHef8I2VJYKPQPpm4OU1Ag
+         YVhNIy4yoRv/i1aYaNXIvGIydM78dbnjdgvgueko6alQDrtmgfYd2Lv0+bzK0B+O/qoB
+         sb2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719598028; x=1720202828;
-        h=content-transfer-encoding:cc:to:subject:from:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8EdFRuIjAMdYahk4Kci0WZzTsWWkZ1bOHj3GXMpTCuY=;
-        b=gcCSIkBnRFuVoV1YQIvCVs2pD0uyF2L+1CLy9uRij+fn8Qv/RU7CEMWYcwcWlmn96a
-         lUwp6YIuKKCp1JjusXZ0nkbY4fVYCFI7ZM+2xtW549UdriqqtgfuYBVnRm6k2Ini2p4G
-         yUoo9m9PNP77rM81/pQ2zMFHjWCmAUk4n4jxuXPn6kB+E/sb85JOmSYnvCG0jrxNh9iO
-         vYYK8LUCkud6wLLVmwVmCDj7ikkpHMVujHpX30H9tid3YQkTYmd70zAuXaNfj1TniuAg
-         G+/6r7OZzcgkElILnjQle8XfxblziREY9x/wCef9lK+NftBilDbaLMGnQntAVPNojtTR
-         7LkA==
-X-Forwarded-Encrypted: i=1; AJvYcCVJMPigF/teWLFkN2mf7cKK/+29jHcTFm0du3faY9v4HaHtimusBDTJTj3PEzqZESkQ5E8TDhfbFq5MJYGw3Vo8uzWq51e53LqXzsoyiRqPNAg9eLoddxCmKPRnmCRcP1f9QahQyqagrUM=
-X-Gm-Message-State: AOJu0YwkVz7/Ma82RZkvHNoZvJrXMDiISUMWQy+vWau2SKd6QfW34Klp
-	kUnDaBtzrVeerdG8chWjkVfHbj8+F0OaYv993RY7Xj/4oe0zuyDyhZNKoA==
-X-Google-Smtp-Source: AGHT+IEl1RM1Aavl6HBjqIB0gZ1mW30dOcVOnvOK4VHVcakerUJ4rmBQ6+rZkKMOWDndnw9kJKXR0w==
-X-Received: by 2002:a05:6402:22e3:b0:57c:ff0d:b781 with SMTP id 4fb4d7f45d1cf-5865d4737cfmr1703648a12.16.1719598027336;
-        Fri, 28 Jun 2024 11:07:07 -0700 (PDT)
-Received: from [192.168.178.20] (dh207-41-166.xnet.hr. [88.207.41.166])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58612c83534sm1308168a12.10.2024.06.28.11.07.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Jun 2024 11:07:06 -0700 (PDT)
-Message-ID: <bc73207a-4b52-423d-833a-fb2a4221a5bc@gmail.com>
-Date: Fri, 28 Jun 2024 20:07:05 +0200
+        d=1e100.net; s=20230601; t=1719598142; x=1720202942;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gLbYfpHailMRml8tkooKFu5Un3e2ZVQ3TTsmePLSQUo=;
+        b=uFvaoraw+noY9v0PWSewZgC7IZ+urhwL44sQSzF/wXyPkMqE96X/U7mNemshXS9nk9
+         MEZI8jlx5ZiVgSiuPaGvuQImM7QVul3mZf3jt4SjLTc8BQcw4GwGuZtfuswG6vk+ciTL
+         WxGm0td+lGts42lOwGiQvCbTuO2BSPxGemJ05RuUx83Y10VGTnB0iErMFXAq8nQLfEGs
+         YrhY7UcdI7meW5TwZCVJFytHq+N+suLnYbE/ovKObr3+MEz/Gtizn6hd01JZmu0nW/bC
+         nJVZlFpuAiEVsBDj40gz8HoECtoqsNLhMcsMpM8/Hvo5us835VLEREm8F8SqqWnD6atQ
+         UOpg==
+X-Forwarded-Encrypted: i=1; AJvYcCXKMgTfaoYgMpOBlnlmGMIPKWHkd+583NZvu2C/Gdc5b9avLZ2zBNVILIL4l3HgQANCklECqI7ov40J/dWrslE8+022NleHNndKip9S
+X-Gm-Message-State: AOJu0Yy7Cdc0osmCGTFL9902VToXZPmLcCjfuDXcvpRwgKHp49K179I9
+	laugoHcBWrzdcQg5Q0JqTRg7S7eI77IgpHPOf+YB542QV9MQ0KDa
+X-Google-Smtp-Source: AGHT+IFbkw/YIbsa2PVh7LWrxn8qvAeoCj2gyLAqUcrhU9vdDH2p3fp08Z8dbHZsDhlcNXfAx9MKCA==
+X-Received: by 2002:a05:6a20:baa2:b0:1bd:2520:1fa5 with SMTP id adf61e73a8af0-1bd25202067mr9679591637.4.1719598142077;
+        Fri, 28 Jun 2024 11:09:02 -0700 (PDT)
+Received: from dtor-ws.sjc.corp.google.com ([2620:15c:9d:2:c929:2998:720d:a104])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7080295d1f4sm1982911b3a.91.2024.06.28.11.09.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 11:09:01 -0700 (PDT)
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Daniel Mack <daniel@zonque.org>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	soc@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 00/10] ARM: pxa: use software nodes/properties for GPIOs
+Date: Fri, 28 Jun 2024 11:08:40 -0700
+Message-ID: <20240628180852.1738922-1-dmitry.torokhov@gmail.com>
+X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-Subject: [PROBLEM linux-next] drivers/hid/hidraw.c: error: cast from pointer
- to integer of different size [-Werror=pointer-to-int-cast]
-To: linux-kernel@vger.kernel.org
-Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
- linux-input@vger.kernel.org,
- Linux Kernel Build System <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi all,
+This series converts legacy pxa boards (spitz, gumstix) to use software
+nodes/properties to describe various GPIOs instead of relying on GPIO
+lookup tables. The benefit is that structure and behavior is closer to
+DT-described GPIOs.
 
-While testing randconfig with vanilla next-20240627, the following KCONFIG_SEED=0x14021E00
-gave this particular build error:
+The very first patch ("ARM: spitz: fix GPIO assignment for backlight")
+is actually a fix that IMO should be applied sooner rather than later,
+the rest of patches are enhancements. The reason it is sent with the
+rest of the series is that later changes contextually depend on it.
 
-drivers/hid/hidraw.c: In function ‘hidraw_send_report’:
-drivers/hid/hidraw.c:143:63: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
-  143 |                 ret = __hid_hw_output_report(dev, buf, count, (__u64)file, false);
-      |                                                               ^
-drivers/hid/hidraw.c:154:56: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
-  154 |                                    HID_REQ_SET_REPORT, (__u64)file, false);
-      |                                                        ^
-drivers/hid/hidraw.c: In function ‘hidraw_get_report’:
-drivers/hid/hidraw.c:231:56: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
-  231 |                                    HID_REQ_GET_REPORT, (__u64)file, false);
-      |                                                        ^
+The last patch ("ARM: spitz: Use software nodes for the ADS7846
+touchscreen") soft-depends on corresponding changes by Linus Walleij to
+the ads7846 driver in input tree. It compiles without it, but the device
+will not sync with display refreshes. I have created an immutable branch
+(branched from v6.9) at:
 
-Apparently, on this architecture, sizeof(struct file *) != sizeof(__u64)?
+git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git ib/ads7846-hsync
 
-→ 105 static ssize_t hidraw_send_report(struct file *file, const char __user *buffer, size_t count, unsigned char report_type)
-  106 {
-  107         unsigned int minor = iminor(file_inode(file));
-  108         struct hid_device *dev;
-  109         __u8 *buf;
-  110         int ret = 0;
-  111 
-  112         lockdep_assert_held(&minors_rwsem);
-  113 
-  114         if (!hidraw_table[minor] || !hidraw_table[minor]->exist) {
-  115                 ret = -ENODEV;
-  116                 goto out;
-  117         }
-  118 
-  119         dev = hidraw_table[minor]->hid;
-  120 
-  121         if (count > HID_MAX_BUFFER_SIZE) {
-  122                 hid_warn(dev, "pid %d passed too large report\n",
-  123                          task_pid_nr(current));
-  124                 ret = -EINVAL;
-  125                 goto out;
-  126         }
-  127 
-  128         if (count < 2) {
-  129                 hid_warn(dev, "pid %d passed too short report\n",
-  130                          task_pid_nr(current));
-  131                 ret = -EINVAL;
-  132                 goto out;
-  133         }
-  134 
-  135         buf = memdup_user(buffer, count);
-  136         if (IS_ERR(buf)) {
-  137                 ret = PTR_ERR(buf);
-  138                 goto out;
-  139         }
-  140 
-  141         if ((report_type == HID_OUTPUT_REPORT) &&
-  142             !(dev->quirks & HID_QUIRK_NO_OUTPUT_REPORTS_ON_INTR_EP)) {
-  143                 ret = __hid_hw_output_report(dev, buf, count, (__u64)file, false);
-  144                 /*
-  145                  * compatibility with old implementation of USB-HID and I2C-HID:
-  146                  * if the device does not support receiving output reports,
-  147                  * on an interrupt endpoint, fallback to SET_REPORT HID command.
-  148                  */
-  149                 if (ret != -ENOSYS)
-  150                         goto out_free;
-  151         }
-  152         
-  153         ret = __hid_hw_raw_request(dev, buf[0], buf, count, report_type,
-→ 154                                    HID_REQ_SET_REPORT, (__u64)file, false);
-  155 
-  156 out_free:
-  157         kfree(buf);
-  158 out:    
-  159         return ret;
-  160 }
+in case you wish to pull it in.
 
-Thank you very much for examining this bug report.
+Regretfully it was only compiled as I do not have access to the relevant
+hardware.
 
-Best regards,
-Mirsad Todorovac
+Dmitry Torokhov (8):
+  ARM: spitz: fix GPIO assignment for backlight
+  ARM: pxa: consolidate GPIO chip platform data
+  ARM: pxa/gumstix: convert vbus gpio to use software nodes
+  ARM: spitz: Simplify instantiating SPI controller
+  ARM: spitz: Use software nodes to describe audio GPIOs
+  ARM: spitz: Use software nodes to describe LCD GPIOs
+  ARM: spitz: Use software nodes to describe MMC GPIOs
+  ARM: spitz: Use software nodes to describe LED GPIOs
+
+Linus Walleij (2):
+  ARM: spitz: Use software nodes to describe SPI CS lines
+  ARM: spitz: Use software nodes for the ADS7846 touchscreen
+
+ arch/arm/mach-pxa/devices.c              |  53 +++--
+ arch/arm/mach-pxa/devices.h              |   5 +-
+ arch/arm/mach-pxa/gumstix.c              |  24 +-
+ arch/arm/mach-pxa/pxa25x.c               |   8 +-
+ arch/arm/mach-pxa/pxa27x.c               |   9 +-
+ arch/arm/mach-pxa/spitz.c                | 284 ++++++++++++-----------
+ include/linux/platform_data/mmc-pxamci.h |   4 +-
+ 7 files changed, 208 insertions(+), 179 deletions(-)
+
+Thanks.
+
+-- 
+2.45.2.803.g4e1b14247a-goog
+
 
