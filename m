@@ -1,78 +1,135 @@
-Return-Path: <linux-kernel+bounces-234258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A00A91C44D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:01:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76EA091C451
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:02:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 487211C23063
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:01:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E270285497
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:02:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25ED21CD5A2;
-	Fri, 28 Jun 2024 17:01:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39571C2339;
+	Fri, 28 Jun 2024 17:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q7W7Pyc+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cViiUIpm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60AB61CCCC4;
-	Fri, 28 Jun 2024 17:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007E11CE09B;
+	Fri, 28 Jun 2024 17:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719594068; cv=none; b=MCqxcCJsTamFS0tl1ZSPtnSSwGhJwv0D12zGObzueC5BfjgLBwDqmB5HTq0UHroBHhV21z3rcYqSFlDjuFHjdrq/Scp9uj7/BZiDtZRHGHOHDLRYPPMzIVF7YjNXrw/QkIh+JZhr1mFMh9d6a5LHk+vkmZKViNXl+tTs7LCrgi4=
+	t=1719594079; cv=none; b=PioCb2NzX5lWU0qSbewqncXUXesMUe6FefHzzaMSTULEIY6aQMDgsfrQAhVx6z+ChE6+9fAhSpjMr2VjmMBzCfJcpa4Lmd7m40xr5WR3G+Jflrq3jhVJSVnU2zf2Wi1JaCSO3N9FwSW5LS9hQcZycSBlEr/TBEbQS072rM7/QCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719594068; c=relaxed/simple;
-	bh=27t2NpUtT177OCmqX/RiVtZBck3ggj+tk5lX6t0hULU=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=KtnCtBjpoy6v6GBZhe6bJhNeGvd77jSpdK7kjiIrrwPjVXrAGnTzosYhWxVTryCuUfq4xoXEBxz+OxuauYYhDLKDdmV2l/i8v8hrbqbS+SoRT7L2NQ+QJiETVl6qOmczvLI53ffqbrb3YNHhGW/WAuzjtNlStRsg2njr8k5w9cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q7W7Pyc+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id EBA1CC2BD10;
-	Fri, 28 Jun 2024 17:01:07 +0000 (UTC)
+	s=arc-20240116; t=1719594079; c=relaxed/simple;
+	bh=p7XecSFWemJziWOM6nnkfXSrciddlpO1NrCyTpT36gk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mO6RIgQFJ9ldouXwbYcLan+I9WNbsq6R2hthNG89/LhU8ul4dB3zZtk0DDXFUwpnSnLDWcgoe9TXf1OfEE1vtSuDAIQrrvV243xxyq7guCEhCJxp2EqbC2jNWsFv3Q+YUlogtI+l4dL7YyqpqT4AqYrBWJug/sqw+/VzeHjIUJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cViiUIpm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3EDFC2BD10;
+	Fri, 28 Jun 2024 17:01:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719594068;
-	bh=27t2NpUtT177OCmqX/RiVtZBck3ggj+tk5lX6t0hULU=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=q7W7Pyc+jkEqaCVvonj2MxyPeBC01tc7ZNvkVasheXgQDS/jjeEWondmYO7niM5bm
-	 2ojEkHlb2HnQyOazrayYQvwBbTel3hBN2BbKds1/flSodO7fj+zC6uc2Z0JkvbOBd4
-	 QO4W06CbxTDR2hfR+7+MYARzKD6hYhk6c4PgUu4bg4uCngrG81yEJTfpMGiihmzcy5
-	 ImexkaNHer0XodpecxyycL9NP4TKTcgtZF6CZokkhLIo+Q7G62MjymF0XP8w168wFt
-	 icFdRM11VsWnBuVexqXVFH6bTZJ1JobJnBivVb41DRgQHPbUje4y97zEk7kTqHgySu
-	 43un7RMXb0OlA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E1036C433A2;
-	Fri, 28 Jun 2024 17:01:07 +0000 (UTC)
-Subject: Re: [GIT PULL] Additional fixes for NFSD in v6.10-rc
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <Zn7PNqLWc1Q4MqZ6@tissot.1015granger.net>
-References: <Zn7PNqLWc1Q4MqZ6@tissot.1015granger.net>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <Zn7PNqLWc1Q4MqZ6@tissot.1015granger.net>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git tags/nfsd-6.10-3
-X-PR-Tracked-Commit-Id: ac03629b1612ad008ea6603a3d142e291e3de9bb
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 6c0483dbfe7223f2b8390e3d5fe942629d3317b7
-Message-Id: <171959406791.14402.4815054769860774296.pr-tracker-bot@kernel.org>
-Date: Fri, 28 Jun 2024 17:01:07 +0000
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+	s=k20201202; t=1719594078;
+	bh=p7XecSFWemJziWOM6nnkfXSrciddlpO1NrCyTpT36gk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cViiUIpm7GccXdL91WYZwBA6vfIz3FXP1EP+Z5hH2nFw0YIyF/aqMO7xHbPJGTpGs
+	 Mvp8C6rIrzM/ip4FiZGH2egfAkMnibx/3yqfPf+QwvAkBqQ5KRGGTk5OCEq6TB0PYq
+	 lfRlGspaupX89aewme8yAhS3qz64pAlp6mAEdHusddcsLXT0OBupGilhevgOn3JAId
+	 7z/0oX9D06jXIjS11cpdtc7Zjb1LEpriCSz3lD05v2cAEvA7J9lv89rTmE5HYMYrN8
+	 /JqB9Fxz6kBnCRr5YJOpWhsqQ6VNeFP1iyd5AQB/3KKK/qo6iE8/VVdBwM10Pp51h0
+	 34rZPJiQMvi5g==
+Date: Fri, 28 Jun 2024 10:01:18 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Eric Sandeen <sandeen@sandeen.net>
+Cc: Jiwei Sun <sunjw10@outlook.com>, chandan.babu@oracle.com,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	sunjw10@lenovo.com, ahuang12@lenovo.com, yi.zhang@redhat.com
+Subject: Re: [PATCH] xfs: add __GFP_NOLOCKDEP when allocating memory in
+ xfs_attr_shortform_list()
+Message-ID: <20240628170118.GD612460@frogsfrogsfrogs>
+References: <SEZPR01MB45270BCD2BC28813FCB39AEDA8D72@SEZPR01MB4527.apcprd01.prod.exchangelabs.com>
+ <9b8357bf-a1bf-43d0-b617-030882540b34@sandeen.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9b8357bf-a1bf-43d0-b617-030882540b34@sandeen.net>
 
-The pull request you sent on Fri, 28 Jun 2024 10:56:54 -0400:
+On Fri, Jun 28, 2024 at 11:25:10AM -0500, Eric Sandeen wrote:
+> On 6/27/24 8:12 AM, Jiwei Sun wrote:
+> > From: Jiwei Sun <sunjw10@lenovo.com>
+> > 
+> > If the following configuration is set
+> > CONFIG_LOCKDEP=y
+> > 
+> > The following warning log appears,
+> 
+> Was just about to send this. :)
+> 
+> I had talked to dchinner about this and he also suggested that this was 
+> missed in the series that removed GFP_NOFS, i.e.
+> 
+> [PATCH 00/12] xfs: remove remaining kmem interfaces and GFP_NOFS usage
+> at https://lore.kernel.org/linux-mm/20240622094411.GA830005@ceph-admin/T/
+> 
+> So, I think this could also use one or both of:
+> 
+> Fixes: 204fae32d5f7 ("xfs: clean up remaining GFP_NOFS users")
+> Fixes: 94a69db2367e ("xfs: use __GFP_NOLOCKDEP instead of GFP_NOFS")
+> 
+> ...
+> 
+> > This is a false positive. If a node is getting reclaimed, it cannot be
+> > the target of a flistxattr operation. Commit 6dcde60efd94 ("xfs: more
+> > lockdep whackamole with kmem_alloc*") has the similar root cause.
+> > 
+> > Fix the issue by adding __GFP_NOLOCKDEP in order to shut up lockdep.
+> > 
+> > Signed-off-by: Jiwei Sun <sunjw10@lenovo.com>
+> > Suggested-by: Adrian Huang <ahuang12@lenovo.com>
+> > ---
+> >  fs/xfs/xfs_attr_list.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/xfs/xfs_attr_list.c b/fs/xfs/xfs_attr_list.c
+> > index 5c947e5ce8b8..506ade0befa4 100644
+> > --- a/fs/xfs/xfs_attr_list.c
+> > +++ b/fs/xfs/xfs_attr_list.c
+> > @@ -114,7 +114,8 @@ xfs_attr_shortform_list(
+> >  	 * It didn't all fit, so we have to sort everything on hashval.
+> >  	 */
+> >  	sbsize = sf->count * sizeof(*sbuf);
+> > -	sbp = sbuf = kmalloc(sbsize, GFP_KERNEL | __GFP_NOFAIL);
+> > +	sbp = sbuf = kmalloc(sbsize, GFP_KERNEL | __GFP_NOFAIL |
+> > +			     __GFP_NOLOCKDEP);
+> 
+> Minor nitpick, style-wise we seem to do:
+> 
+>         sbp = sbuf = kmalloc(sbsize,
+>                         GFP_KERNEL | __GFP_NOLOCKDEP | __GFP_NOFAIL);
+> 
+> in most other places, and not split the flags onto 2 lines, since you need
+> to add a line anyway.
+> 
+> Otherwise,
+> 
+> Acked-by: Eric Sandeen <sandeen@redhat.com>
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git tags/nfsd-6.10-3
+Hey, could you all please read the list before sending duplicate
+patches?
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/6c0483dbfe7223f2b8390e3d5fe942629d3317b7
+https://lore.kernel.org/linux-xfs/20240622082631.2661148-1-leo.lilong@huawei.com/
 
-Thank you!
+--D
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+> >  	/*
+> >  	 * Scan the attribute list for the rest of the entries, storing
+> 
+> 
 
