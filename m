@@ -1,105 +1,191 @@
-Return-Path: <linux-kernel+bounces-233285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B87C391B536
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 05:01:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1267791B538
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 05:02:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D304A1C21357
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:01:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC6FB1F22C7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B521CD32;
-	Fri, 28 Jun 2024 03:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6AA1CA9F;
+	Fri, 28 Jun 2024 03:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RsgjUevz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9D83C3C;
-	Fri, 28 Jun 2024 03:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="qba0I7in"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9197C1BF37;
+	Fri, 28 Jun 2024 03:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719543657; cv=none; b=k98ctgtfKoDtcedUmOLCdBhV9LWBSG5LDmu2E/tdbRWo+hgA3+olQMMCNUQEsjnY7BKOCDM0oCMpwcNaaSEc2/nRsngImBQaiqG1Mi0bgbu7VX8Gmd3MPsiWZVXYJ8LQEcXTR/cSCDaUKeBxwmPtRux266r8D3n0gX/COtAcnsA=
+	t=1719543762; cv=none; b=EN1h1fYTq4fLSGCE79jxEm5VepktKDuo2QAWciVFoGFfqVqHfZ5AOTnCyFiXUba4qllcrVXfS8IiY+3zQczrVAjqW6UpCGQjK7EmZESZppIGG2tA57I1R5gGn35EuLHpk6xkp0to6RZ6f3zET13olrqz6TITKbH6fLDvMygQdw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719543657; c=relaxed/simple;
-	bh=DkmVFzIEUy4/EhH4jI1kRN0AcPesnvhyjVO39S2JJTs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G2qTnECdHWEaxcbqfAK8nxh5ZOaYfu16jBDhM7RBxGFkOnsbRMqFxNnFkkWSfaYaK9lul0zrfMMaaCZ5qewLCw1m6tBycDQMavmFTIHcCMbN6scu6NAPeCQCDE3Ma/smaxblUV07d7w0u6WPqlxBPufvppY3YlkM4xKLeVaETik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RsgjUevz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D46EC2BBFC;
-	Fri, 28 Jun 2024 03:00:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719543656;
-	bh=DkmVFzIEUy4/EhH4jI1kRN0AcPesnvhyjVO39S2JJTs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RsgjUevzE3HqxEmrKCMLUPKCwxMZtYPJPqihDvl/DsEoPWvzGgJIfN3OfDBHx1zZn
-	 hWh8kSYoLEE0+WYsR/B4lp+jwOiVaRN9Ndt7zB1QSRIqAgIKR3O/C7vdYT+R3xMeu5
-	 0yUvy56RjFL8PGZt/LiKJ9yyRTT6ntqeW5uNt8Cop+V198aFJCiAiGqfTr2QDZUV9U
-	 6IgzwAMWnlYXad1Nt+2rBkdeOlvcppSZ6lC+1EB+lMr7xw0zEPiNqHpG/I2BK/wf9Q
-	 U+mn9LN9ndxN0sYaUSxpanptEd+2nSPOsnT80vLyGVECAJIwN6fg8By2EL4w67RJcb
-	 tT+E4Yi2bGWNQ==
-Date: Fri, 28 Jun 2024 11:00:49 +0800
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Daisuke Nojiri <dnojiri@chromium.org>
-Cc: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Reka Norman <rekanorman@chromium.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Gwendal Grignou <gwendal@chromium.org>,
-	Pavan Holla <pholla@chromium.org>,
-	Lukasz Majczak <lma@chromium.org>,
-	Ching-Kang Yen <chingkang@chromium.org>,
-	Stephen Boyd <swboyd@chromium.org>,
-	Prashant Malani <pmalani@chromium.org>,
-	chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] cros_ec_proto: Consolidate
- ec_response_get_next_event
-Message-ID: <Zn4nYT8k7EeEp_5P@tzungbi-laptop>
-References: <cover.1719531519.git.dnojiri@chromium.org>
- <fc251d6935c1cfc39d7a31d3cfe735d31a0371d1.1719531519.git.dnojiri@chromium.org>
+	s=arc-20240116; t=1719543762; c=relaxed/simple;
+	bh=1NrxczpmN4bxmVpjUaGYnOOj6Lak5FUxVpqQZrkS0MI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=iceGAej7+WMIAycgTy900u3UhIdjf+9+grVSw2ZJ8ZocTk2ZchyNl4LENtKWq3XIDdWBi7axuW5BR+BroiQHSCox7Gk6w5Gh3aT/KdgN86jHmCkZnldK16p+rem2StYrBgkl6Tg3I9zifLH973UxzrQ/Be+CP1CyhDLXF1uNTXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=qba0I7in; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=LqCEG
+	j6lMZuJHj86R+aZ0jn06rkwtuAQt/xBP5lb1fA=; b=qba0I7inz0fYvLov7dUDd
+	yztP0vKgvpKYji3U5dbdN7doofy5701f3ETN3z7641rC1fYTsMcPZQ7xZUdod8zs
+	HtZ43pTunFsIxUbMjmdqwfVAf02/ycuwMPaGuwUfGlTBb3iyOluugojMaJM8MLvH
+	76lxCxmjg3D03iNIJ4r+mY=
+Received: from localhost.localdomain (unknown [193.203.214.57])
+	by gzga-smtp-mta-g2-3 (Coremail) with SMTP id _____wDnHpiXJ35mN8MXAg--.32613S4;
+	Fri, 28 Jun 2024 11:01:45 +0800 (CST)
+From: ran xiaokai <ranxiaokai627@163.com>
+To: david@redhat.com
+Cc: akpm@linux-foundation.org,
+	baohua@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	peterx@redhat.com,
+	ran.xiaokai@zte.com.cn,
+	ranxiaokai627@163.com,
+	ryan.roberts@arm.com,
+	svetly.todorov@memverge.com,
+	vbabka@suse.cz,
+	willy@infradead.org,
+	ziy@nvidia.com
+Subject: Re: [PATCH 2/2] kpageflags: fix wrong KPF_THP on non-pmd-mappable compound pages
+Date: Fri, 28 Jun 2024 03:01:43 +0000
+Message-Id: <20240628030143.27191-1-ranxiaokai627@163.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <1fddf73d-577f-4b4c-996a-818dd99eb489@redhat.com>
+References: <1fddf73d-577f-4b4c-996a-818dd99eb489@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fc251d6935c1cfc39d7a31d3cfe735d31a0371d1.1719531519.git.dnojiri@chromium.org>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDnHpiXJ35mN8MXAg--.32613S4
+X-Coremail-Antispam: 1Uf129KBjvJXoWxAFyfAw17Xr15ZFWfZw4rAFb_yoWrWrWxpF
+	W5KF92yw4DJ3Z0kr1xXw1jyryFgr98WF4jyFy3Kw1xZrs8t3Z7KrW8tw1rA3W7JrWxXF4I
+	vayjgF9093Z8ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JUN189UUUUU=
+X-CM-SenderInfo: xudq5x5drntxqwsxqiywtou0bp/1tbiqRIMTGVOBJWk6wAAsO
 
-On Thu, Jun 27, 2024 at 04:53:07PM -0700, Daisuke Nojiri wrote:
+>On 26.06.24 04:49, ran xiaokai wrote:
+>> From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+>> 
+>> KPF_COMPOUND_HEAD and KPF_COMPOUND_TAIL are set on "common" compound
+>> pages, which means of any order, but KPF_THP should only be set
+>> when the folio is a 2M pmd mappable THP. Since commit 19eaf44954df
+>
+>"should only be set" -- who says that? :)
+>
+>The documentation only talks about "Contiguous pages which construct 
+>transparent hugepages". Sure, when it was added there were only PMD ones.
 
-Your previous patches have been applied to for-next branch:
-ba098ed9829c ("platform/chrome: Add struct ec_response_get_next_event_v3")
-106d67398233 ("platform/chrome: cros_ec_proto: Upgrade get_next_event to v3")
+Hi, David,
+I am working on tools/testing/selftests/mm/split_huge_page_test to support
+splitint THP to more orders, not only order-0, and the testcases failed.
+It seems the testcodes rely on KPF_THP to indicate only 2M THP.
 
-Please send incremental patches based on for-next.
+>> ("mm: thp: support allocation of anonymous multi-size THP"),
+>> multiple orders of folios can be allocated and mapped to userspace,
+>> so the folio_test_large() check is not sufficient here,
+>> replace it with folio_test_pmd_mappable() to fix this.
+>> 
+>
+>A couple of points:
+>
+>1) If I am not daydreaming, ever since we supported non-PMD THP in the
+>    pagecache (much longer than anon mTHP), we already indicate KPF_THP
+>    for them here. So this is not anon specific? Or am I getting the
+>    PG_lru check all wrong?
 
-> Consolidate struct ec_response_get_next_event_v*.
-> 
-> Let X->Y indicate kernel X sending EC_CMD_GET_NEXT_EVENT to FW Y.
-> 
-> Old->New:
->    Existing kernels send a smaller container (e.g.
->    ec_response_get_next_data) which may or may not fit the last few
->    bytes. The FW copies as many bytes as possible to the container. The
->    kernel processes as many leading bytes as it can understand.
-> 
-> New->Old:
->    New kernels send a bigger container. Existing FW copies as many bytes
->    as it wants, leaving the last few bytes empty. The kernel knows it
->    didn't receive full size data from the returned data length.
-> 
-> Signed-off-by: Daisuke Nojiri <dnojiri@chromium.org>
-> ---
->  drivers/platform/chrome/cros_ec_proto.c       | 16 ++++-----
->  .../linux/platform_data/cros_ec_commands.h    | 34 +------------------
+Thanks for the clarification.
 
-NACK, we don't do it: diverging cros_ec_commands.h and EC's ec_commands.h.
+>2) Anon THP are disabled as default. If some custom tool cannot deal
+>    with that "extension" we did with smaller THP, it shall be updated if
+>    it really has to special-case PMD-mapped THP, before enabled by the
+>    admin.
+
+ok, it seems that it is the testcodes which should be updated.
+
+>
+>I think this interface does exactly what we want, as it is right now. 
+>Unless there is *good* reason, we should keep it like that.
+>
+>So I suggest
+>
+>a) Extend the documentation to just state "THP of any size and any 
+>mapping granularity" or sth like that.
+
+yes, it is neccessay to update the documentation to make it more clear.
+Since the definition of KPF_THP has been expanded since it was firstly introduced.
+
+>b) Maybe using folio_test_large_rmappable() instead of "(k & (1 <<
+>    PG_lru)) || is_anon", so even isolated-from-LRU THPs are indicated
+>    properly.
+
+i will investigate on this.
+
+>c) Whoever is interested in getting the folio size, use this flag along
+>    with a scan for the KPF_COMPOUND_HEAD.
+
+yes, we can use the combination of KPF_COMPOUND_HEAD and KPF_COMPOUND_TAIL
+to figure out the compound order.
+
+>
+>I'll note that, scanning documentation, PAGE_IS_HUGE currently only 
+>applies to PMD *mapped* THP. It doesn't consider PTE-mapped THP at all 
+>(including PMD-ones). Likely, documentation should be updated to state 
+>"PMD-mapped THP or any hugetlb page".
+
+i will also investigate on this.
+
+>> Also kpageflags is not only for userspace memory but for all valid pfn
+>> pages,including slab pages or drivers used pages, so the PG_lru and
+>> is_anon check are unnecessary here.
+>
+>I'm completely confused about that statements. We do have KPF_OFFLINE, 
+>KPF_PGTABLE, KPF_SLAB, ... I'm missing something important.
+
+My statement is wrong, please ignore this.
+
+>> 
+>> Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+>> ---
+>>   fs/proc/page.c | 14 ++++----------
+>>   1 file changed, 4 insertions(+), 10 deletions(-)
+>> 
+>> diff --git a/fs/proc/page.c b/fs/proc/page.c
+>> index 2fb64bdb64eb..3e7b70449c2f 100644
+>> --- a/fs/proc/page.c
+>> +++ b/fs/proc/page.c
+>> @@ -146,19 +146,13 @@ u64 stable_page_flags(const struct page *page)
+>>   		u |= kpf_copy_bit(k, KPF_COMPOUND_HEAD, PG_head);
+>>   	else
+>>   		u |= 1 << KPF_COMPOUND_TAIL;
+>> +
+>>   	if (folio_test_hugetlb(folio))
+>>   		u |= 1 << KPF_HUGE;
+>> -	/*
+>> -	 * We need to check PageLRU/PageAnon
+>> -	 * to make sure a given page is a thp, not a non-huge compound page.
+>> -	 */
+>> -	else if (folio_test_large(folio)) {
+>> -		if ((k & (1 << PG_lru)) || is_anon)
+>> -			u |= 1 << KPF_THP;
+>> -		else if (is_huge_zero_folio(folio)) {
+>> +	else if (folio_test_pmd_mappable(folio)) {
+>
+>folio_test_pmd_mappable() would not be future safe. It includes anything 
+> >= PMD_ORDER as well.
+>
+>
+>-- 
+>Cheers,
+>
+>David / dhildenb
+
 
