@@ -1,92 +1,143 @@
-Return-Path: <linux-kernel+bounces-234434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB28791C695
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:30:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 973E691C6A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:32:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A69E42867CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:30:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40FF51F2567D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:32:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D221F757ED;
-	Fri, 28 Jun 2024 19:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C1F757F5;
+	Fri, 28 Jun 2024 19:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jnJn2U9V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B2llm/2b"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171F9FC0E;
-	Fri, 28 Jun 2024 19:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C496F2EA;
+	Fri, 28 Jun 2024 19:32:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719603024; cv=none; b=qs/OhD7S2ZWDGwfkACeBDHOilqmNKLlstvZ9U243YXrESEDQ01Dh0nmD960TkMszmCb9zeT0S6BPiMkLvnHf1fODOX2jzJ0S5IRLHsSXocdgSo+gI48ekDpl39jlKwb8wV7SqUhbikNHfqYVHVVPLttBoxxLP66yMDMDNN7CPN4=
+	t=1719603138; cv=none; b=DKXSCvc7fsYC6cfCfHIcRg9qczZefRkZUydi62QsIQDHn59CvRREHTpjoRC0HM2dlbOaBx9hU6/tfRHqHYhsxNyPEBFws8TxAgmCT51je8FI0hV/I/2cnk6JjCAkCqB0rBvjMt+H/OplUbQYj6W1wIlRhvfUHaXtbPRcyoxSduA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719603024; c=relaxed/simple;
-	bh=ye6Xuii5TXxpYf0CfrgPnALJ0r4UWESs4M4nurh1zfg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dfkE2ANFbSBqv9zBQOw2CSuhy4ohkxiWLMEFYnfvrB9U9ysMfTdyULbexgj3d5ZPswsJJVT/VHzmQus2rLt3LWDJewIZusFPpn9qaPVzvaPPysz/7bK7YgodymVBg/sZzh+3iCJluW1VJojTqS14h62oxzpyWDfAPyiu2A795Wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jnJn2U9V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24724C116B1;
-	Fri, 28 Jun 2024 19:30:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719603023;
-	bh=ye6Xuii5TXxpYf0CfrgPnALJ0r4UWESs4M4nurh1zfg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jnJn2U9V3pDIUpRXYaeIfLw1l6cV3DfVRKA/3+Jdf37cZ87Nde7z7zzhHz4as9er+
-	 sLdqQqjQQWGd8XreetEX3Of3AOEy+16BL5FQ02VYNZBiB8dArs3U//NRLikBH0dNob
-	 pQ+uT8TsOve5+Unv6/9Alb0op2B2x2AaFW2KlzL+4Kf+IrKrGT3RkkiRAi1Q8pe/q1
-	 PBCvqCbcLFPAvGnIQXj9lG3IV4HKM+wA8IYDFgzC2auQTO5neRAzaOmrJLg9L1Nl7w
-	 1ZOTggS7ptyJOV46/D35n11s1nUpiRiMqJviV61K0p1tIJOtSzdvrv5jZBea7VVplz
-	 GTIb74DjEUydg==
-Date: Fri, 28 Jun 2024 16:30:20 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: namhyung@kernel.org, Yang Li <yang.lee@linux.alibaba.com>
-Cc: peterz@infradead.org, mingo@redhat.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: Re: [PATCH -next] perf: pmus: Remove unneeded semicolon
-Message-ID: <Zn8PTKYPAehGaZ2D@x1>
-References: <20240628053049.44521-1-yang.lee@linux.alibaba.com>
+	s=arc-20240116; t=1719603138; c=relaxed/simple;
+	bh=PxckOsAOkmt2Z/dhIOH0h8pCT8yqSu788yaL0xNxpAg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=szFzc9uES+Qp8QIypGF+DbXVlOwgczmdO8smMTI+7g+JxXHARCjdmBGwdtVFikh2ZZe46oCWP1Jh/rvnKypHSEZJ4gGgRxu/qHDWDxumNjaZSRzWQbfZfZTarUVl22b1x/fajBUCc25DKrhels5FYdQuX1J9hLxYvIXBs6/a2+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B2llm/2b; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a724a8097deso119598466b.1;
+        Fri, 28 Jun 2024 12:32:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719603135; x=1720207935; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PxckOsAOkmt2Z/dhIOH0h8pCT8yqSu788yaL0xNxpAg=;
+        b=B2llm/2bC9v3seUx5RvEi4SEBE7Bl/Mz3zmR0t4jAsjYrXvjvoms0bBZHs5kB8wIka
+         CSK5IW04CXJacJxWAtMfOS9NZuxwyYnqJDc3GcSB/Rb/zf+bpLGKYZXLsM8kATOJZxWe
+         o8x7m7Hsj45PSaTW9rfVi3nJIGsyKvrpbHSbL3ZgCcemE1mk3+uaq7uJT6O/a1O+/fqH
+         CoNYVWfcpzBh1tVQlN4f6lYQ8xdvxV3x3UFqbWxxSr0rZtiRwOjtmyZqwQ/DSdU2pbCE
+         nL6xz7PwXPsWzw8Dy6TjYWGGl7fUYaTC1+RSwfKM9HNFy00PXUxzbDb3TDC+5evnq/wo
+         rBdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719603135; x=1720207935;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PxckOsAOkmt2Z/dhIOH0h8pCT8yqSu788yaL0xNxpAg=;
+        b=bQkSrrbJoGjzyeaoTC6NUP7A8m7W2/JlT5cTLZ7w76UVnZIQIqX1JygZoWOUJ/1S6s
+         tQa5QfDZf7SroesdfyqEF8dLW33Y1Tk8KF3xsF0/4Wj9v0jXCMV4vMoz28wyM+W58i0O
+         q6Q8pKC1ixb3X86+NOCwJix/QPmOixCWgqoiF6FOXq1L2PwcCDODzi8h+E+D4PhmtF8W
+         RNgem96TkQDk+pu946v3FqeuH/Y42o5UaHd6MahBdIpVuiDH/T/+mL8itiJGgkHDOwiR
+         LviMWjdGgMQexFeL2KLJ0+xlXWQ+x45Jcn+nQ/KPpmr7YNAaCuOR4iaO9HRXA1P+55/2
+         4qiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUh3qHRxp4dFfrhQlRLzOX5yb9MqYWr9eVN4+y+AnlVbHhUe2IEdAzVdLjpugrCrX6Ys3Fbf6iULHF8mEYvrBz7DZQvsOmjTP3OqxNEti92h9/TnFazYKeuShbINzdOXVuyx/RxBR6vEQ==
+X-Gm-Message-State: AOJu0Yzlp/xiELyxtjtNAaZUVvd3gfHcPPc/gIN5vKZQtb/CWnI+Nh85
+	VfzTxDpKqklDUAavxmhyFy0w3539zqQT96WBujKwKuLIwJlhn9iaAw6JqVt44E8OzZ3osznl9c9
+	/lApiUPHnp+jQRqdXrU513SXgkg==
+X-Google-Smtp-Source: AGHT+IEcIJk3aOEVCfHZaTOBEzliwOv1OW0IgkYWVgv3YyCrG+TRBh+fl5e85vwIPrct8FMab5SprzZALrLoAgdlAkc=
+X-Received: by 2002:a17:907:c816:b0:a6e:f594:a292 with SMTP id
+ a640c23a62f3a-a7242e119dbmr1458130966b.63.1719603134625; Fri, 28 Jun 2024
+ 12:32:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240628053049.44521-1-yang.lee@linux.alibaba.com>
+References: <20240628140328.279792-1-erezgeva@nwtime.org> <20240628140328.279792-4-erezgeva@nwtime.org>
+ <20240628-refuse-actress-b76985aa020c@spud> <D2BS0YMA48BG.1PEPFC3KMFV8N@kernel.org>
+ <CANeKEMMrXK=mw=n=9DuTnprkTs3ct446oaC2QTJyst8Nd+D6rw@mail.gmail.com>
+ <D2BT0DT9UQ66.2L497FSY7GMAL@kernel.org> <CANeKEMO9hBhBs91nZkZRht9J29iRC2Tgf6ucWq=nbO7XAqzzng@mail.gmail.com>
+ <D2BU69BDUOL0.63A7T034CORP@kernel.org>
+In-Reply-To: <D2BU69BDUOL0.63A7T034CORP@kernel.org>
+From: Erez <erezgeva2@gmail.com>
+Date: Fri, 28 Jun 2024 21:31:37 +0200
+Message-ID: <CANeKEMPLqdc0iKPcD5d16r91tsbKZwZ0getq2gxOhc42sdu7Mg@mail.gmail.com>
+Subject: Re: [PATCH 3/4] dt-bindings: mtd: macronix,mx25l12833f: add SPI-NOR chip
+To: Michael Walle <mwalle@kernel.org>
+Cc: Conor Dooley <conor@kernel.org>, Erez Geva <erezgeva@nwtime.org>, linux-mtd@lists.infradead.org, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Pratyush Yadav <pratyush@kernel.org>, 
+	linux-kernel@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, devicetree@vger.kernel.org, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jun 28, 2024 at 01:30:49PM +0800, Yang Li wrote:
-> ./tools/perf/util/pmu.c:1776:49-50: Unneeded semicolon
+On Fri, 28 Jun 2024 at 19:45, Michael Walle <mwalle@kernel.org> wrote:
+>
+> > What is the kernel policy regarding obsolete flash chips?
+> > Macronix annonce on end of life of mx25l12805d in 2010.
+>
+> Which doesn't mean there are no boards using it. But EOL in 2010
+> might be a strong argument to remove it. But I don't see the need
+> for it, yet.
 
-Reviewed-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fair enough. That means I was in the right direction.
+Just need a better description for the patch :-)
+I'll update for version 2.
 
-- Arnaldo
- 
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9443
-> Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
-> ---
->  tools/perf/util/pmu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-> index c94a91645b21..884eb23445e4 100644
-> --- a/tools/perf/util/pmu.c
-> +++ b/tools/perf/util/pmu.c
-> @@ -1773,7 +1773,7 @@ size_t perf_pmu__num_events(struct perf_pmu *pmu)
->  	size_t nr;
->  
->  	pmu_aliases_parse(pmu);
-> -	nr = pmu->sysfs_aliases + pmu->sys_json_aliases;;
-> +	nr = pmu->sysfs_aliases + pmu->sys_json_aliases;
->  
->  	if (pmu->cpu_aliases_added)
->  		 nr += pmu->cpu_json_aliases;
-> -- 
-> 2.20.1.7.g153144c
-> 
+>
+> > > Also please have a look at
+> > > https://docs.kernel.org/driver-api/mtd/spi-nor.html
+> >
+> > The new mx25l12833f supports SFDP, the obsolete mx25l12805d does not.
+> > I did manage to read the SFDP, though I do not have a copy of it (I do
+> > not have the hardware any more).
+>
+> So how would you test newer versions of this series?
+
+I develop the OTP callbacks with a mx25l12805d for a company using it.
+I am no longer in contact with them.
+
+The testing can be done with any Macronix SPI-NOR with OTP.
+I did not check, but I guess most of their chips have an OTP using the
+same opcodes/methods.
+
+At least mx25l12805d and mx25l12833f use the same.
+I did not add mx25l12833f as I did not use it and as it uses
+asymmetric OTP (the MTD supports symmetric OTP).
+
+>
+> > To my best knowledge SFDP table do not contain information on OTP,
+>
+> That's true, but we need it to detect flashes during runtime in the
+> future. Imagine sometime later, there's a third flash with this
+> exact ID, then we need to have the SFDP to figure out if there are
+> any differences between yours and the new one.
+
+Sure, as I said the mx25l12833f does provide SFDP.
+In patch 4, I removed the size property to force the driver to read SFDP.
+I was not sure about the flags though.
+I did not see any difference compared to using the setting of
+mx25l12805d without SFDP.
+Yet my focus of work was the OTP.
+
+Erez
+
+>
+> -michael
 
