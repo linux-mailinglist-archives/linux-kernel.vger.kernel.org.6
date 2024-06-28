@@ -1,138 +1,146 @@
-Return-Path: <linux-kernel+bounces-234423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04F1991C676
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:16:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8223B91C645
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:59:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3AC4285132
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:16:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8062B1C230E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA396F2F8;
-	Fri, 28 Jun 2024 19:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 459056F067;
+	Fri, 28 Jun 2024 18:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="InO2wkxB"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lky0WtaY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC1117C6D;
-	Fri, 28 Jun 2024 19:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E426A8BE;
+	Fri, 28 Jun 2024 18:59:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719602159; cv=none; b=p9wJS1cU8knZirYz8O+XKxHhdBwWe/AC/4F8LoO9gMcwGzLOmBxxEhODUWofMLJ/9ZyOECyWynsPsPl2OmYkUSQ30lxQ4xrZRArzaryWmTTlEGzXH5E7TC2lkLGfO9M//ITrih3+2oYiFesFlt//865bE1EQXXbzEZ64D5f/3f4=
+	t=1719601163; cv=none; b=j0UeT0HUnzES3Hlmc2vbXZ0vB1C0Ykr/lcTURLnDu4z45KQSXqYSdA6DjTRBqzHcLdsKAegKfWqlbuMtc1VP4bgWJOgmyac/90GRAT1lHbB5x88tVE3R7EGazHcCP1VGTO4LKQbvS5axuHP/qv0Pi4ms7FP84P9W83+n+QOqa0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719602159; c=relaxed/simple;
-	bh=VQ0oJozePE0vhUiowrlkloG2tzYcH7wzcR84m1+pPVw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uABI1j/WV5r0H59JMMWa65rBG+IXexBNIYTPftCC5WIEXgHssnOKn/lG5MZEdcJ0tCK03zupp4mIIdAwtogeyzBtOZLdqNMAsi0JruOnZrSqdJWNExzTnnnvTlDAbW21lXyOmXC1ORZ/2w0IhzUSDdUGN5muBoFz2K/AeSUeQuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=InO2wkxB; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id C0072881EC;
-	Fri, 28 Jun 2024 21:15:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1719602154;
-	bh=oINkqH9AcxU9yB663ckTotTFJrsnQBZc8vW3NmUf1tg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=InO2wkxBtTVNTp15sGlyLYHfry+sjDy/836Xzo5cdZohEYELUmGqIecxZFxBUAzkG
-	 GhBStbrqPoIjtPEA6Y6KRr8bkYCoTrI2YBlrjH5xrrlScHbwEOFbtjkXrsUwnukDdq
-	 bjhr4VRg9yFQ2+a+GBmWyoD13GmZ9+XUc1ku2ot0CkDjoGa9eFDR9mFg6iUG+1hW3N
-	 qSpLPUhK3Jw94SQ4uoCmylQWEYVYZ5s0F/9Io4hNQkZWGhDMVGpJHTCm3lCR19nYPP
-	 upsLott4y511NNFEjA/uPzwmI4E3NNPaRfocMfFNcTb024mZ3lgJIhGdvDgzMvJmRf
-	 n9dEw+8vT7TNw==
-Message-ID: <a7f614cd-fe39-4746-8a83-2a2d14fc46f4@denx.de>
-Date: Fri, 28 Jun 2024 20:58:51 +0200
+	s=arc-20240116; t=1719601163; c=relaxed/simple;
+	bh=e+e7fSsfY1C3BBErHbLSk9HJdSyiw+J5R+fAtwg1pJ0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HJlcZS+fSM2JXzGI9Ot8fTF2RV5czDoSyx9RohzhCj6D+rWuxVkD5DTuoKCSLakpxphCxP2EcQPL6ITK6f9OQWlxTkUKFye3J7qAwTrRXDlaOO6koOAA0+NsCSCNGeXCIlniBvhNL4bedAfZLUNiSGHOWZhfhnH2hVgYSg6VOb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lky0WtaY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11488C2BD10;
+	Fri, 28 Jun 2024 18:59:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719601163;
+	bh=e+e7fSsfY1C3BBErHbLSk9HJdSyiw+J5R+fAtwg1pJ0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Lky0WtaYuX9PtdrDhTgm23grSRxDhHGxW4BhJUHnVqn8GHOUFSnSROVzVO4VgWTQz
+	 SHKeJSXNzyrDfbL4TahWt2t52sR9ajV42iSG94c/6IjUIg0vHcIV8iHCWRULoGgc22
+	 hJlosNQRftqIoKlzmIOwCuBSCaVIb5fXp1uSRt/FBQKhSvsvg0qPYDjWKhAnVon1Zy
+	 CFuoWtPyLpqqPVlIp7NF1ryKDOCQieRdGEGU1isA0zTxupD82MIBEPUmbfiPdLlgib
+	 E7RvYplbxoYaEcG10JKgWhGQCGmNHjRnHMz5TOqc2RvYdJ0uB9FIQr/Unp9AHsGsVN
+	 zSAypOoa20OwA==
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-24c5ec50da1so142627fac.3;
+        Fri, 28 Jun 2024 11:59:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV1DmNDMbpZco8IKYuZbsQM3VQD/RSLp7vfweGYjFKxGFk6pMXLa8mor+y1TJ9iuxGky0bBdNc0uJyMxVGyrr3UjCBQ9AzLQgzzuW3jdQOYs2RHJHYCME543P+7bPWJfPp7LgYPx+4=
+X-Gm-Message-State: AOJu0YzOTGIFM2fVYsBu38wmjZHO6wClz/7EJPLc3OtcMNG3IqLRdnD1
+	es3aRpPgSzwK5NVpw5qOUdHmWVF3uAjl9z1TAiSpZFsY7sdQWRFscEkANBrwfq3rD4SJDyJq/Ns
+	B2jyQStYpCSbYt7gcOHnwVjzxzDs=
+X-Google-Smtp-Source: AGHT+IFCGem2eoo0rvWIQme4AModLWMeThmakQhaXznbYg6pzoUdgPw1z1j4Z3n03wPqWNcgzKpINtZF+b7Ieem+r/0=
+X-Received: by 2002:a05:6870:7d1a:b0:25d:7935:43b7 with SMTP id
+ 586e51a60fabf-25d7935f4f4mr6079402fac.0.1719601162419; Fri, 28 Jun 2024
+ 11:59:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next,PATCH v2] net: phy: realtek: Add support for PHY LEDs
- on RTL8211F
-To: Simon Horman <horms@kernel.org>
-Cc: netdev@vger.kernel.org, Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Andrew Lunn <andrew@lunn.ch>,
- Christophe Roullier <christophe.roullier@foss.st.com>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Heiner Kallweit <hkallweit1@gmail.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Russell King <linux@armlinux.org.uk>, kernel@dh-electronics.com,
- linux-kernel@vger.kernel.org
-References: <20240625204221.265139-1-marex@denx.de>
- <20240628142742.GH783093@kernel.org>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <20240628142742.GH783093@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+References: <20240627060117.1809477-1-d-gole@ti.com> <31841424-c6dd-49e2-ac2c-2394662b7f30@amd.com>
+In-Reply-To: <31841424-c6dd-49e2-ac2c-2394662b7f30@amd.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 28 Jun 2024 20:59:11 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hqvdTo5TJkB1S+23dMfC8ivs5_rNbV1XnhkaTntkZ3Aw@mail.gmail.com>
+Message-ID: <CAJZ5v0hqvdTo5TJkB1S+23dMfC8ivs5_rNbV1XnhkaTntkZ3Aw@mail.gmail.com>
+Subject: Re: [PATCH V2] cpufreq: make cpufreq_boost_enabled return bool
+To: Mario Limonciello <mario.limonciello@amd.com>, Dhruva Gole <d-gole@ti.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, 
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/28/24 4:27 PM, Simon Horman wrote:
-> On Tue, Jun 25, 2024 at 10:42:17PM +0200, Marek Vasut wrote:
->> Realtek RTL8211F Ethernet PHY supports 3 LED pins which are used to
->> indicate link status and activity. Add minimal LED controller driver
->> supporting the most common uses with the 'netdev' trigger.
->>
->> Signed-off-by: Marek Vasut <marex@denx.de>
->> ---
->> Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
->> Cc: Andrew Lunn <andrew@lunn.ch>
->> Cc: Christophe Roullier <christophe.roullier@foss.st.com>
->> Cc: David S. Miller <davem@davemloft.net>
->> Cc: Eric Dumazet <edumazet@google.com>
->> Cc: Heiner Kallweit <hkallweit1@gmail.com>
->> Cc: Jakub Kicinski <kuba@kernel.org>
->> Cc: Paolo Abeni <pabeni@redhat.com>
->> Cc: Russell King <linux@armlinux.org.uk>
->> Cc: kernel@dh-electronics.com
->> Cc: linux-kernel@vger.kernel.org
->> Cc: netdev@vger.kernel.org
->> ---
->> V2: - RX and TX are not differentiated, either both are set or not set,
->>        filter this in rtl8211f_led_hw_is_supported()
->> ---
->>   drivers/net/phy/realtek.c | 106 ++++++++++++++++++++++++++++++++++++++
->>   1 file changed, 106 insertions(+)
->>
->> diff --git a/drivers/net/phy/realtek.c b/drivers/net/phy/realtek.c
->> index 2174893c974f3..bed839237fb55 100644
->> --- a/drivers/net/phy/realtek.c
->> +++ b/drivers/net/phy/realtek.c
->> @@ -32,6 +32,15 @@
->>   #define RTL8211F_PHYCR2				0x19
->>   #define RTL8211F_INSR				0x1d
->>   
->> +#define RTL8211F_LEDCR				0x10
->> +#define RTL8211F_LEDCR_MODE			BIT(15)
->> +#define RTL8211F_LEDCR_ACT_TXRX			BIT(4)
->> +#define RTL8211F_LEDCR_LINK_1000		BIT(3)
->> +#define RTL8211F_LEDCR_LINK_100			BIT(1)
->> +#define RTL8211F_LEDCR_LINK_10			BIT(0)
->> +#define RTL8211F_LEDCR_MASK			GENMASK(4, 0)
->> +#define RTL8211F_LEDCR_SHIFT			5
->> +
-> 
-> Hi Marek,
-> 
-> FWIIW, I think that if you use FIELD_PREP and FIELD_GET then
-> RTL8211F_LEDCR_SHIFT can be removed.
+On Thu, Jun 27, 2024 at 8:57=E2=80=AFPM Mario Limonciello
+<mario.limonciello@amd.com> wrote:
+>
+> On 6/27/2024 01:01, Dhruva Gole wrote:
+> > Since this function is supposed to return boost_enabled which is anyway
+> > a bool type make sure that it's return value is also marked as bool.
+> > This helps maintain better consistency in data types being used.
+> >
+> > Signed-off-by: Dhruva Gole <d-gole@ti.com>
+>
+> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
 
-FIELD_PREP/FIELD_GET only works for constant mask, in this case the mask 
-is not constant but shifted by SHIFT*index .
+Applied as 6.11 material, thanks!
 
-Other drivers introduce workarounds like this for exactly this issue:
-
-drivers/clk/at91/pmc.h:#define field_prep(_mask, _val) (((_val) << 
-(ffs(_mask) - 1)) & (_mask))
-
-I don't think it is worth perpetuating that.
+> > ---
+> >
+> > Changelog:
+> > "return false" instead of 0 as per Mario's suggestion.
+> >
+> > Link to previous patch:
+> > https://lore.kernel.org/linux-pm/20240626084354.1762483-1-d-gole@ti.com=
+/
+> >
+> > ---
+> >
+> >   drivers/cpufreq/cpufreq.c | 2 +-
+> >   include/linux/cpufreq.h   | 6 +++---
+> >   2 files changed, 4 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> > index 82c500389a40..709e7b1f9826 100644
+> > --- a/drivers/cpufreq/cpufreq.c
+> > +++ b/drivers/cpufreq/cpufreq.c
+> > @@ -2873,7 +2873,7 @@ int cpufreq_enable_boost_support(void)
+> >   }
+> >   EXPORT_SYMBOL_GPL(cpufreq_enable_boost_support);
+> >
+> > -int cpufreq_boost_enabled(void)
+> > +bool cpufreq_boost_enabled(void)
+> >   {
+> >       return cpufreq_driver->boost_enabled;
+> >   }
+> > diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
+> > index 20f7e98ee8af..6f57de7de433 100644
+> > --- a/include/linux/cpufreq.h
+> > +++ b/include/linux/cpufreq.h
+> > @@ -785,7 +785,7 @@ ssize_t cpufreq_show_cpus(const struct cpumask *mas=
+k, char *buf);
+> >
+> >   #ifdef CONFIG_CPU_FREQ
+> >   int cpufreq_boost_trigger_state(int state);
+> > -int cpufreq_boost_enabled(void);
+> > +bool cpufreq_boost_enabled(void);
+> >   int cpufreq_enable_boost_support(void);
+> >   bool policy_has_boost_freq(struct cpufreq_policy *policy);
+> >
+> > @@ -1164,9 +1164,9 @@ static inline int cpufreq_boost_trigger_state(int=
+ state)
+> >   {
+> >       return 0;
+> >   }
+> > -static inline int cpufreq_boost_enabled(void)
+> > +static inline bool cpufreq_boost_enabled(void)
+> >   {
+> > -     return 0;
+> > +     return false;
+> >   }
+> >
+> >   static inline int cpufreq_enable_boost_support(void)
+> >
+> > base-commit: df9574a57d02b265322e77fb8628d4d33641dda9
+>
+>
 
