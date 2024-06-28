@@ -1,123 +1,230 @@
-Return-Path: <linux-kernel+bounces-233455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06CDF91B755
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:51:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E64391B750
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:47:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A60E41F22BF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 06:51:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 805B71F26488
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 06:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133AC13C66F;
-	Fri, 28 Jun 2024 06:51:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B80137C35;
+	Fri, 28 Jun 2024 06:47:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="OEX5NlER"
-Received: from uho.ysoft.cz (uho.ysoft.cz [81.19.3.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CW8O+Ywc";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="IDqriNwh";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="S+V/gfO7";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Z3ce36HF"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B74A513A25F;
-	Fri, 28 Jun 2024 06:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.3.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F6C13212E;
+	Fri, 28 Jun 2024 06:47:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719557475; cv=none; b=Z/xMEZ3rnAOfWc+ICot32ukGngI5sO/cay7lH5FD+25sLDa66QJTy3JBOictTFVwywMImZrL+In+gceGtM6rIDqdyJcL7kI4Rp9fpES6xc1hLyuWx/W+OkGAs4Y+ItAu+NFh57aMBBikCUcPmBRTrcroAMrCYXuAtqJYn7BsVBI=
+	t=1719557229; cv=none; b=nH3Z6NVPZenAlVblEKbB0RRyiH67/kUpjUTJ+1NmOqZrDfmu5nBzU9tfyLLcNY2pS9XXBeDrdl++IqHepgx8RuiUj1mduHvx87enOEW2qXJN/oCYYPzNGQK5fM4FLxdeZZm9BN75XIfDjgFrFY1RV0WZAakVZuBn8o/xcoxJUy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719557475; c=relaxed/simple;
-	bh=u414rfeE3/PGEAbO8mrduL6b05JdCIfBfS0EOPuhan8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SmYIU+CRPyqnYEon47Ejxs5jg0U13K4Qhj7ISrAFiHIQ1yKXttIYNJS52rtV/xB/B6Q3aZW4Zg9xO0MmML/z1892gR0z//4YenPKJcpfEwO3dIopmrZRfKzlbmK/jCTAUXqTXRSzAbXfe5esujmDRE5ZCKexw8Ik9SXw3lx5DWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com; spf=pass smtp.mailfrom=ysoft.com; dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b=OEX5NlER; arc=none smtp.client-ip=81.19.3.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ysoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ysoft.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
-	s=20160406-ysoft-com; t=1719557137;
-	bh=q7o52HcaL89kemR/r0QVrL2VxpnFBrZ85Vrac4b+Eus=;
-	h=From:To:Cc:Subject:Date:From;
-	b=OEX5NlER23vpvmuJDwIBUNbDqLlyEUfeNrqOJfUK6s7LHGZNz7yqeZN1M+4skL/OP
-	 xv6HidXA0j+Zu55jDMjpdw/eLfflqqod2PNCShbBPnwmZx6HQRK0WC416knhNsOX88
-	 fRcmSk9EGJcv8EcIP4b+pCmUz8lWOCw4d/k+Q0Gk=
-Received: from vokac-nb.ysoft.local (unknown [10.1.8.111])
-	by uho.ysoft.cz (Postfix) with ESMTP id 3C533A0522;
-	Fri, 28 Jun 2024 08:45:37 +0200 (CEST)
-From: =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
-To: Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>
-Cc: linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>
-Subject: [PATCH] leds: lp5562: Add multicolor brightness control
-Date: Fri, 28 Jun 2024 08:45:15 +0200
-Message-ID: <20240628064515.3765371-1-michal.vokac@ysoft.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1719557229; c=relaxed/simple;
+	bh=0J96qKAEDd/h8VrJnW4J277OL5HIXy7QqDMtTkoapoU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Gtxo4DvD6hN11KwY6ZPE8hmMh0onABo8sgNRDHWqillxlNJYOz6B+IBNIp+Q5bQur+/nISRwMhtqpMEanStQpCSrrH1Ay78R13MIa6KU4LduV/FUI1ltmwTYtr3V3RydaKWQMY+ZqN2RR2fc/WfYIPDIxVfh2pn2qG3p21WkGYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CW8O+Ywc; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=IDqriNwh; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=S+V/gfO7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Z3ce36HF; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1C35521BB1;
+	Fri, 28 Jun 2024 06:47:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1719557225; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/NyMKB4vbEkOX9JP/G0gqTNXDgdRRXPcyqgszdS/lb8=;
+	b=CW8O+Ywc4p4Iez7o9OsIEadtdzPmuzki5Kq6EZjhFKhTPTqlGDRrSUF42L6+S7K7PkISAI
+	P2dpGM+Ke0ZkdYECQwSCFW7LFnWvq1yJexOp7uXWvBqwWM5cSN4e65Y3C0jdt0RsHC7DJL
+	2ZfXSJCgqNqengZshE8yptD8VuZW0LY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1719557225;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/NyMKB4vbEkOX9JP/G0gqTNXDgdRRXPcyqgszdS/lb8=;
+	b=IDqriNwhRcdj/dixZ33zW/IcX0Ss2vVwTrm2qS0vwGwmXmuD6mKX9lGlVHZKttxBGH++ix
+	6pnBxRfSBQT5TPBw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="S+V/gfO7";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Z3ce36HF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1719557224; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/NyMKB4vbEkOX9JP/G0gqTNXDgdRRXPcyqgszdS/lb8=;
+	b=S+V/gfO7O8eSWnn+3JNfqgipivkSMKOy4uhTbWM1k1CskbyFn37hHUV9IwxyWuuJF5QJq8
+	nVNDdNl0kCMlWWq6cMY9GnBuEQupWlPdxfiXzX+JO3xA6qA+a1UWw1kT1sWtDoLyIm2Ixo
+	dpzk0HdxPPSS2g0LRagG4fRiZUekMjY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1719557224;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/NyMKB4vbEkOX9JP/G0gqTNXDgdRRXPcyqgszdS/lb8=;
+	b=Z3ce36HFqUsoQ35cVZei+za8nUS7Ympl6d2TqE6OEIV2/ngrW2QP66M9Xrw/+2bZmsZSZs
+	3KLArUt/04Fx3RAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 961211373E;
+	Fri, 28 Jun 2024 06:47:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id +0/aIWdcfmY2AwAAD6G6ig
+	(envelope-from <hare@suse.de>); Fri, 28 Jun 2024 06:47:03 +0000
+Message-ID: <0fbf1756-5b97-44fc-9802-d481190d2bd8@suse.de>
+Date: Fri, 28 Jun 2024 08:47:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/6] ata: libata-scsi: Fix offsets for the fixed format
+ sense data
+Content-Language: en-US
+To: Niklas Cassel <cassel@kernel.org>, Igor Pylypiv <ipylypiv@google.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>, Tejun Heo <tj@kernel.org>,
+ linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Akshat Jain <akshatzen@google.com>, stable@vger.kernel.org
+References: <20240626230411.3471543-1-ipylypiv@google.com>
+ <20240626230411.3471543-2-ipylypiv@google.com> <Zn1WUhmLglM4iais@ryzen.lan>
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <Zn1WUhmLglM4iais@ryzen.lan>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 1C35521BB1
+X-Spam-Score: -4.50
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-4.50 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	XM_UA_NO_VERSION(0.01)[];
+	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
-The framework for multicolor brightness control is already in place
-in the lp55xx-common code but the function to control the multicolor
-brightness for this particular chip is still missing.
+On 6/27/24 14:08, Niklas Cassel wrote:
+> Hello Igor, Hannes,
+> 
+> The changes in this patch looks good, however, there is still one thing that
+> bothers me:
+> https://github.com/torvalds/linux/blob/v6.10-rc5/drivers/ata/libata-scsi.c#L873-L877
+> 
+> Specifically the code in the else statement below:
+> 
+> 	if (qc->err_mask ||
+> 	    tf->status & (ATA_BUSY | ATA_DF | ATA_ERR | ATA_DRQ)) {
+> 		ata_to_sense_error(qc->ap->print_id, tf->status, tf->error,
+> 				   &sense_key, &asc, &ascq);
+> 		ata_scsi_set_sense(qc->dev, cmd, sense_key, asc, ascq);
+> 	} else {
+> 		/*
+> 		 * ATA PASS-THROUGH INFORMATION AVAILABLE
+> 		 * Always in descriptor format sense.
+> 		 */
+> 		scsi_build_sense(cmd, 1, RECOVERED_ERROR, 0, 0x1D);
+> 	}
+> 
+> Looking at sat6r01, I see that this is table:
+> Table 217 — ATA command results
+> 
+> And this text:
+> No error, successful completion or command in progress. The SATL
+> shall terminate the command with CHECK CONDITION status with
+> the sense key set to RECOVERED ERROR with the additional
+> sense code set to ATA PASS-THROUGH INFORMATION
+> AVAILABLE (see SPC-5). Descriptor format sense data shall include
+> the ATA Status Return sense data descriptor (see 12.2.2.7).
+> 
+> However, I don't see anything in this text that says that the
+> sense key should always be in descriptor format sense.
+> 
+> In fact, what will happen if the user has not set the D_SENSE bit
+> (libata will default not set it), is that:
+> 
+> The else statement above will be executed, filling in sense key in
+> descriptor format, after this if/else, we will continue checking
+> if the sense buffer is in descriptor format, or fixed format.
+> 
+> Since the scsi_build_sense(cmd, 1, RECOVERED_ERROR, 0, 0x1D);
+> is called with (..., 1, ..., ..., ...) it will always generate
+> the sense data in descriptor format, regardless of
+> dev->flags ATA_DFLAG_D_SENSE being set or not.
+> 
+> Should perhaps the code in the else statement be:
+> 
+> } else {
+> 	ata_scsi_set_sense(qc->dev, cmd, RECOVERED_ERROR, 0, 0x1D);
+> }
+> 
+> So that we actually respect the D_SENSE bit?
+> 
+> (We currently respect if when filling the sense data buffer with
+> sense data from REQUEST SENSE EXT, so I'm not sure why we shouldn't
+> respect it for successful ATA PASS-THROUGH commands.)
+> 
+I guess that we've misread the spec.
 
-Implement the multicolor_brightness_fn function to allow multicolor
-brightness control of LEDs connected to the LP5562 LED driver.
+The sentence:
 
-Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
----
-This was tested on the imx6dl-yapp43-pegasus board (in tree) that uses
-this LED driver. There is only an RGB LED on the board so I could not
-test the white channel.
+"Descriptor format sense data shall include the ATA Status Return
+  Descriptor"
 
- drivers/leds/leds-lp5562.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+should be interpreted as:
 
-diff --git a/drivers/leds/leds-lp5562.c b/drivers/leds/leds-lp5562.c
-index 39db9aeb67c5..903b3f749fbe 100644
---- a/drivers/leds/leds-lp5562.c
-+++ b/drivers/leds/leds-lp5562.c
-@@ -312,6 +312,30 @@ static int lp5562_post_init_device(struct lp55xx_chip *chip)
- 	return 0;
- }
- 
-+static int lp5562_multicolor_brightness(struct lp55xx_led *led)
-+{
-+	struct lp55xx_chip *chip = led->chip;
-+	static const u8 addr[] = {
-+		LP5562_REG_R_PWM,
-+		LP5562_REG_G_PWM,
-+		LP5562_REG_B_PWM,
-+		LP5562_REG_W_PWM,
-+	};
-+	int ret;
-+	int i;
-+
-+	mutex_lock(&chip->lock);
-+	for (i = 0; i < led->mc_cdev.num_colors; i++) {
-+		ret = lp55xx_write(chip,
-+				   addr[led->mc_cdev.subled_info[i].channel],
-+				   led->mc_cdev.subled_info[i].brightness);
-+		if (ret)
-+			break;
-+	}
-+	mutex_unlock(&chip->lock);
-+	return ret;
-+}
-+
- static int lp5562_led_brightness(struct lp55xx_led *led)
- {
- 	struct lp55xx_chip *chip = led->chip;
-@@ -506,6 +530,7 @@ static struct lp55xx_device_config lp5562_cfg = {
- 	.post_init_device   = lp5562_post_init_device,
- 	.set_led_current    = lp5562_set_led_current,
- 	.brightness_fn      = lp5562_led_brightness,
-+	.multicolor_brightness_fn = lp5562_multicolor_brightness,
- 	.run_engine         = lp5562_run_engine,
- 	.firmware_cb        = lp5562_firmware_loaded,
- 	.dev_attr_group     = &lp5562_group,
+  _If_ the sense code is formatted in descriptor format _then_ the
+  ATA Status Return Descriptor should be included.
+
+IE if the sense code is not in descriptor format then the ATA Status
+Return Descriptor shouldn't be included (kinda obvious, really).
+But of course the D_SENSE bit should be honoured.
+
+Cheers,
+
+Hannes
 -- 
-2.43.0
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
 
