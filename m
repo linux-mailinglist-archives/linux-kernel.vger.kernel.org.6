@@ -1,205 +1,156 @@
-Return-Path: <linux-kernel+bounces-234327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0C1091C53D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:55:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4518491C531
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:49:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6751928630C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:55:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E55521F24D86
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:49:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E6D1CCCB1;
-	Fri, 28 Jun 2024 17:55:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96BE61CCCB9;
+	Fri, 28 Jun 2024 17:49:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NuPWh2x2"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S3iqH3LN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24AFA15253B;
-	Fri, 28 Jun 2024 17:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63723225CE
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 17:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719597347; cv=none; b=BNDGGt3rEcT/eStqsauqm1mF7CNa7DBL800pOD1CVOw/N/d/F+Sd8smH0Dcn1MiTSmqkjWsq844rg6iFjs+Myk+Z6w2usFglp0EcuvweeSBMwiz7YC/3EYUbqlykKqTO7ohiVY7grvlyW55HHpgoFnbm1whsormGPmDP4ILuw0I=
+	t=1719596956; cv=none; b=R9Me8IN930MNpUq5gn1ES5aCIZsc7FFMbhZesgKJpEoUN8J2cusUcCpxrgobsrr9c+ooVThQewyaldMd1yH+BDoAAwXFJE3co3zkCT+drgjT5kWtUdy2w3iGZ0sfHIKTaOzNyNuRBnGDHuVeTOhqRTJw6s1J/13UXv6e6y1WyBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719597347; c=relaxed/simple;
-	bh=RbeZW0Wlzc0mLCx/jtbjh/TrjzaKWO+6tkhNz/h4y+8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gwhIxugs5u9FpiyNWjk4DYrPoJ2rYG1RrOzMhayi9d3lu5lL0hTU0Rf8w4iIXv6qSQxFfDjzj0vLn3kjrIN0H3TsB9zg5ws/eouUFrevj/q3KWXsH0r9czJ2frzz3OpH0z9Ltax43LxUBNOpmDUNyQ8gdlubQG7hI9FS+hzS+Pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NuPWh2x2; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719597345; x=1751133345;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=RbeZW0Wlzc0mLCx/jtbjh/TrjzaKWO+6tkhNz/h4y+8=;
-  b=NuPWh2x2SYPj0f11ipmINegpjQtVxo8V+BDCCkbJ1dhTloe7VDqtnuRK
-   h0O7/yIYH1D4Ri5FQ4ujXPhNIn5o6n6bRE/2py27pSBqKphjK53IkwjP0
-   M8xICpgEhs6w19Sv7jpICPUVcmVfRjc1RkFMwr+1uDkj8GlumjoP6gLiR
-   F0HZX4+aVpgQcI1aI+756G03vyJRVYNglcPuGYl/eNO9LoLOjBAyMtRjF
-   l5VjuZdqYAFEcmy/DcHGte2dJYb3FKvPpoXgkwzqYOwqtbAmhmspuqboV
-   ejNh3iUD5JN+aE6y48mmleNKGJSsSxHbcNg5PS9ZfGaR42jj1Xc9nBMiz
-   g==;
-X-CSE-ConnectionGUID: I9Pq51a7S5ODjdonZlbTGQ==
-X-CSE-MsgGUID: I0x0uvSxTcOWNI8OsRMVog==
-X-IronPort-AV: E=McAfee;i="6700,10204,11117"; a="16627256"
-X-IronPort-AV: E=Sophos;i="6.09,169,1716274800"; 
-   d="scan'208";a="16627256"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 10:55:45 -0700
-X-CSE-ConnectionGUID: 3rCB9qDUSVq2D8cyHLbvxQ==
-X-CSE-MsgGUID: y0B9bD+/RC2agQ9iyCQe/A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,169,1716274800"; 
-   d="scan'208";a="45473920"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.intel.com) ([10.245.246.5])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 10:55:41 -0700
-From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-To: Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org
-Cc: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-Subject: [PATCH v2] cxl/acpi: Warn on mixed CXL VH and RCH/RCD Hierarchy
-Date: Fri, 28 Jun 2024 19:48:07 +0200
-Message-ID: <20240628175535.272472-1-fabio.m.de.francesco@linux.intel.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1719596956; c=relaxed/simple;
+	bh=TAd485aghXUIWa3RvWf2lTA7jc9MG6PA9b0qtG0r2DY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rt9+E5DgehpQQf/RcZdu5HtM0+fSKJLQXhXIV2asCDd+aIuiutrU8aZT0QTyTVctJFM6qwUh32iFZEQH5spjqa607HEIrs+Xt1oXB34J1Uo6NPDm4WVSm7nxk1UK6C5oiQoXjJVrVTK/hseAtpnmcJhIhfbIJnmU7cZuvxHUsUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S3iqH3LN; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719596954;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TAd485aghXUIWa3RvWf2lTA7jc9MG6PA9b0qtG0r2DY=;
+	b=S3iqH3LNAvUoNUWHov2Wptrhks49cUWK8R52LSCa6n1Pc1II1Ns/+zOUNngEfoxtEs8/xz
+	yKZKfqCYJw5ne/wpAiw74zMZd6uBrvgoeEWeCbmCR694IwAJFhOULeQtUEbUOp7d8imF59
+	EEkH2z7c0yyueC1UlfMlX681dX7djho=
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
+ [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-134-lkI0jnnYMPChTK4ly7CwkA-1; Fri, 28 Jun 2024 13:49:13 -0400
+X-MC-Unique: lkI0jnnYMPChTK4ly7CwkA-1
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6b5912466dcso10759536d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 10:49:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719596952; x=1720201752;
+        h=mime-version:user-agent:content-transfer-encoding:organization
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TAd485aghXUIWa3RvWf2lTA7jc9MG6PA9b0qtG0r2DY=;
+        b=qDEy90Ywg0grI546a7Wlv/1/IsM6k+pYFZBfX1wZKi+I9snphkA1y/kF5dbHDFcV0T
+         f9jNmW9PuTYQH43tkZ/m4+9Eo0qA3+1sABYXGWE0ZVhLdhln75K4BNS+Ad/g8NhbzVC1
+         z4zRByqGN0CHWYaAj5txL1GyTeLtZps5Heu74gPpTbLdefXiDpP8FWH2bCNCgJEDn0oH
+         zh+BCoilNVchEuZQww5i/Q53cbq/SuO6SZtR3kWZ6TuiwSDR/RvhtvZoFJ+0W0LaH2Bi
+         92KZIOdzC0C8jOokq/Re/yTHYS+tBVDzpTXjM6gDg28CGYDldugGsYVhlQ4YCCfoFgHT
+         mI+A==
+X-Forwarded-Encrypted: i=1; AJvYcCURJCqshO1DjZqPXSgR6DoNJ6/6TttNgPDb7DF83UEvLuXLbeN1t1L3SckWtt7XwSxS9fDotQ4V1cZw9nXlOP6IVi2ARQl+dtzvdcwm
+X-Gm-Message-State: AOJu0YwSY4ocLhqgMwTyfxnOu7ZyNPKIMEb4DIc07AV5BKxzKrXuUizO
+	IjAo27Mv6s6USZHMJiiDz0VwmQrvnEUQ7D6WYe7z8LOd9MDITCysC3+R0oHLmeLGOmS/0qQMhIg
+	eHw8N7Pd7fvDXbaGw1vlP6mONlOoEGRGzEGhZuzBkMU4k8OQxqa8lCvGzOu0Dm/6Q6N07Ow==
+X-Received: by 2002:ad4:4082:0:b0:6b0:76f1:8639 with SMTP id 6a1803df08f44-6b540aaa739mr160298516d6.42.1719596952150;
+        Fri, 28 Jun 2024 10:49:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFD6uWQmG4g/igtbloLZSfV+o6cXp2Ckk4uZLpiMQfw5WzwRbofwx6QnvQrMRlxIyNBmHOHyQ==
+X-Received: by 2002:ad4:4082:0:b0:6b0:76f1:8639 with SMTP id 6a1803df08f44-6b540aaa739mr160298396d6.42.1719596951873;
+        Fri, 28 Jun 2024 10:49:11 -0700 (PDT)
+Received: from chopper.lyude.net ([2600:4040:5c4c:a000::789])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b59e627242sm9625366d6.130.2024.06.28.10.49.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 10:49:11 -0700 (PDT)
+Message-ID: <790dbe8aee621b58ec0ef8d029106cb1c1830a31.camel@redhat.com>
+Subject: Re: [PATCH v3] drm/nouveau: fix null pointer dereference in
+ nouveau_connector_get_modes
+From: Lyude Paul <lyude@redhat.com>
+To: Markus Elfring <Markus.Elfring@web.de>, Ma Ke <make24@iscas.ac.cn>, 
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Ben Skeggs
+	 <bskeggs@redhat.com>, Daniel Vetter <daniel@ffwll.ch>, Danilo Krummrich
+	 <dakr@redhat.com>, Dave Airlie <airlied@redhat.com>, Karol Herbst
+	 <kherbst@redhat.com>
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, David
+ Airlie <airlied@gmail.com>
+Date: Fri, 28 Jun 2024 13:49:10 -0400
+In-Reply-To: <d0bef439-5e1d-4ce0-9a24-da74ddc29755@web.de>
+References: <20240627074204.3023776-1-make24@iscas.ac.cn>
+	 <d0bef439-5e1d-4ce0-9a24-da74ddc29755@web.de>
+Organization: Red Hat Inc.
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Each Host Bridge instance has a corresponding CXL Host Bridge Structure
-(CHBS) ACPI table that identifies its capabilities. CHBS tables can be
-two types (CXL 3.1 Table 9-21): The PCIe Root Complex Register Block
-(RCRB) and CXL Host Bridge Component Registers (CHBCR).
+Ma Ke - I assume you already know but you can just ignore this message
+from Markus as it is just spam. Sorry about the trouble!
 
-If a Host Bridge is attached to a device that is operating in Restricted
-CXL Device Mode (RCD), BIOS publishes an RCRB with the base address of
-registers that describe its capabilities (CXL 3.1 sec. 9.11).
+Markus, you've already been asked by Greg so I will ask a bit more
+sternly in case there is actually a person on the other end: you've
+already been asked to stop by Greg and are being ignored by multiple
+kernel maintainers. If I keep seeing messages like this from you I will
+assume you are a bot and I will block your email from both DRI related
+mailing lists (nouveau and dri-devel) accordingly. You've done this 3
+times now.
 
-Instead, the new (CXL 2.0+) Component registers can only be accessed
-by means of a base address published with a CHBCR (CXL 3.1 sec. 9.12).
+(...I doubt I'll get a response from Markus, but I certainly want to
+make sure they are a bot and not an actual person before removing them
+:)
 
-If an eRCD (a device that forces the host-bridge into CXL 1.1 Restricted
-CXL Host mode) is attached to a CXL 2.0+ Host-Bridge, the current CXL
-specification does not define a mechanism for finding CXL-2.0-only
-root-port component registers like HDM decoders and Extended Security
-capability.
+On Thu, 2024-06-27 at 11:02 +0200, Markus Elfring wrote:
+> > In nouveau_connector_get_modes(), the return value of
+> > drm_mode_duplicate()
+> > is assigned to mode, which will lead to a possible NULL pointer
+> > dereference on failure of drm_mode_duplicate(). Add a check to
+> > avoid npd.
+>=20
+> A) Can a wording approach (like the following) be a better change
+> description?
+>=20
+> =C2=A0=C2=A0 A null pointer is stored in the local variable =E2=80=9Cmode=
+=E2=80=9D after a call
+> =C2=A0=C2=A0 of the function =E2=80=9Cdrm_mode_duplicate=E2=80=9D failed.=
+ This pointer was
+> passed to
+> =C2=A0=C2=A0 a subsequent call of the function =E2=80=9Cdrm_mode_probed_a=
+dd=E2=80=9D where an
+> undesirable
+> =C2=A0=C2=A0 dereference will be performed then.
+> =C2=A0=C2=A0 Thus add a corresponding return value check.
+>=20
+>=20
+> B) How do you think about to append parentheses to the function name
+> =C2=A0=C2=A0 in the summary phrase?
+>=20
+>=20
+> C) How do you think about to put similar results from static source
+> code
+> =C2=A0=C2=A0 analyses into corresponding patch series?
+>=20
+>=20
+> Regards,
+> Markus
+>=20
 
-An algorithm to locate a CHBCR associated with an RCRB, would be too
-invasive to land without some concrete motivation.
-
-Therefore, just print a message to inform of unsupported config.
-
-Count how many different CHBS "Version" types are detected by
-cxl_get_chbs_iter(). Then make cxl_get_chbs() print a warning if that sum
-is greater than 1.
-
-Tested-by: Alison Schofield <alison.schofield@intel.com>
-Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
----
-
---- Changes for v2 ---
-
-	- Rewrite the Subject line (Alison)
-	- Address a bug found by Alison while testing (thanks!)
-	- Add reference to CXL 3.1 Spec. (Alison)
-	- Extend the commit messages by borrowing comments to v1 (Dan)
-	- Rename field "count" to "nr_versions" (Alison)
-	- Add brackets to oneline 'if' statement in precence of comments
-	  (Dan)
-
---- Link to v1 ---
-
-https://lore.kernel.org/linux-cxl/20240619125949.167936-1-fabio.m.de.francesco@linux.intel.com/
-
- drivers/cxl/acpi.c | 34 +++++++++++++++++++++++++++-------
- 1 file changed, 27 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
-index 571069863c62..f9035dbabb1c 100644
---- a/drivers/cxl/acpi.c
-+++ b/drivers/cxl/acpi.c
-@@ -482,6 +482,8 @@ struct cxl_chbs_context {
- 	unsigned long long uid;
- 	resource_size_t base;
- 	u32 cxl_version;
-+	int nr_versions;
-+	u32 saved_version;
- };
- 
- static int cxl_get_chbs_iter(union acpi_subtable_headers *header, void *arg,
-@@ -490,22 +492,31 @@ static int cxl_get_chbs_iter(union acpi_subtable_headers *header, void *arg,
- 	struct cxl_chbs_context *ctx = arg;
- 	struct acpi_cedt_chbs *chbs;
- 
--	if (ctx->base != CXL_RESOURCE_NONE)
--		return 0;
--
- 	chbs = (struct acpi_cedt_chbs *) header;
- 
--	if (ctx->uid != chbs->uid)
-+	if (chbs->cxl_version == ACPI_CEDT_CHBS_VERSION_CXL11 &&
-+	    chbs->length != CXL_RCRB_SIZE)
- 		return 0;
- 
--	ctx->cxl_version = chbs->cxl_version;
- 	if (!chbs->base)
- 		return 0;
- 
--	if (chbs->cxl_version == ACPI_CEDT_CHBS_VERSION_CXL11 &&
--	    chbs->length != CXL_RCRB_SIZE)
-+	if (ctx->saved_version != chbs->cxl_version) {
-+		/*
-+		 * cxl_version cannot be overwritten before the next two
-+		 * checks, then use saved_version
-+		 */
-+		ctx->saved_version = chbs->cxl_version;
-+		ctx->nr_versions++;
-+	}
-+
-+	if (ctx->base != CXL_RESOURCE_NONE)
-+		return 0;
-+
-+	if (ctx->uid != chbs->uid)
- 		return 0;
- 
-+	ctx->cxl_version = chbs->cxl_version;
- 	ctx->base = chbs->base;
- 
- 	return 0;
-@@ -529,10 +540,19 @@ static int cxl_get_chbs(struct device *dev, struct acpi_device *hb,
- 		.uid = uid,
- 		.base = CXL_RESOURCE_NONE,
- 		.cxl_version = UINT_MAX,
-+		.saved_version = UINT_MAX,
- 	};
- 
- 	acpi_table_parse_cedt(ACPI_CEDT_TYPE_CHBS, cxl_get_chbs_iter, ctx);
- 
-+	if (ctx->nr_versions > 1) {
-+		/*
-+		 * Disclaim eRCD support given some component register may
-+		 * only be found via CHBCR
-+		 */
-+		dev_info(dev, "Unsupported platform config, mixed Virtual Host and Restricted CXL Host hierarchy.");
-+	}
-+
- 	return 0;
- }
- 
--- 
-2.45.2
+--=20
+Cheers,
+ Lyude Paul (she/her)
+ Software Engineer at Red Hat
 
 
