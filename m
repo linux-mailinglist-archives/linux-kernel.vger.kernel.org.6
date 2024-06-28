@@ -1,182 +1,121 @@
-Return-Path: <linux-kernel+bounces-233654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0402D91BB17
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:09:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A30691BB1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:09:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B27EB28586E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:09:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8CD8280FDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:09:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DF56153BD7;
-	Fri, 28 Jun 2024 09:07:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A0E154BE2;
+	Fri, 28 Jun 2024 09:07:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3tt+TQqm"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gVJetfdf"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D14B153812
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 09:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD1B14E2E3
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 09:07:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719565621; cv=none; b=Of+s8A1tu7Ia3GmSq0+vnVVYXpsdStS0WPmqmG5rup4iLRWGL0bW1qL5RiPa1QqgXYe9MgLy0QTjHwes24STbU1GukdAIjBlb86Yp04fjn6uwbdJrbRK3IeeHT+RsN03M1LentMH9FLA549mp2h4n4Oi0khJIBYXyARPVyX4llU=
+	t=1719565643; cv=none; b=YLAMZCl9MtYMcimM58m4LOkTmfsE0SeEQT0yRzT6zSzSeviuMgMNYuLg6fl9DktRTozfdD5hZzWzu0BwGv/hKMpzN/9JNDf2U6eEAkP+yBqYa81f6U5X2y/ZFpCMwjR+ADMIhK9QPNUPz6YOw3XxVfA9vcyXJcAYTEAXDX7mugM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719565621; c=relaxed/simple;
-	bh=6lILPXsSnuRcIB/1aRICDr7E5gU8xTfXClxW1Kv+tcQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cNLZs9AQRBj1500Evmg6tE1DtSq7wc2aqi1rK7F7LbX+J9Lky8NxcHLHgOhRbRdc1DYHDlMZB66oUMsj84RY4w/gU8dfzoY2zvR3FATyP5slm3+bDxtmeqS86YW5tx4Od7PaTtMVy9HqHDsVjZ+m6l1QNS4MDvngeGRPIMQo57o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3tt+TQqm; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-424720e73e1so3233675e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 02:06:59 -0700 (PDT)
+	s=arc-20240116; t=1719565643; c=relaxed/simple;
+	bh=uwPKeY4YAFWk+GuFqb+c0ljykA9M16vP1oj8QsN1i1w=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=nadYDa7zOMR4+nj7SKNAMo3RC5rTeCSkpyYVbArc7lYOXZeQjH8ucZSVwqcBUn/Z1LelKNdKdlmVwo4K/Tz0D/DxortJVQ1lBs9u7jUjAWN4YD+XrCxgOQ3arf7LDzk9R0VSE2GtpJo/fZ1GLuV9nKAscVTQ9HToxqTS18PDANQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gVJetfdf; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-367601ca463so227157f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 02:07:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719565618; x=1720170418; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1719565640; x=1720170440; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=E9XuEmOGKQmnl44REDZJmwUjYzwybPJMiDqkTMARv5k=;
-        b=3tt+TQqm9H+hvHvRw7ccI2Oo6nQXQQE9yu9wC+Q+iSLf5Zc0iE2Bl912zkjMiBJnqk
-         VWRSr3ymgsntgvf3zCENLNYs5XAdQq5SmQ6v7mRQ7CAUVxS5mrVLxD1OQj66s5JP9XLu
-         UoHlmpyacSOr+/mwdjricc6g5hm+F6B0Iink9vuz9c6ThNtwiJ3Hs//S2uSrYveRAQv9
-         QnkrYMAyav1DT0mnEWhc8Coj1ULXG9D/ioYzCtxZgTADvJ3C08NHX+KozSURWF3i6AZN
-         K7x0EgCE7OeiRmDcV2vv01fOp8F64tP9WkdX19MnAi5U++lBU/8x6POmbHubaOrveG4G
-         aShg==
+        bh=sAojY8v61Oq5pXWhl+jbz8qnbn0iqqHxroEEAHU3dVw=;
+        b=gVJetfdfr38QbLRVVbFr/wn0v2SB4qEduvVTlFZdk8u3h3bzgcoRCYp49YUkA13o2B
+         ntP0UEhhS6Te/h+8+fJcRNM+4F2AOLJN9HVTMaTH3W2mtBOal81cYHh5Xzw6laNEI2Ft
+         0OyJN72hg+b3hsyXBCdN6jP+6yroCtFy71hnJOOD/CHvTocslAEa53Q+tDV3lk3Jynmj
+         d1IGyDSvpJ7uf11oNA6KIT7Lsf2yJ4tOoTh8X2LVqCi9Mp6blsX1FxyWrsvJqbw6acum
+         56RrCQMoqc5viJUaDk/Nrzo0+wDEfMpsx5BgFKSgPpzz/Ih94IqYQ07H8k9KtgZy9pnh
+         +jpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719565618; x=1720170418;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1719565640; x=1720170440;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=E9XuEmOGKQmnl44REDZJmwUjYzwybPJMiDqkTMARv5k=;
-        b=FoYvIJfsq8kY0ICBNAsL8GUJZf3wrll2oTIgwq7Tfeq0DsQHgo5kfguv1WT/n3wzVn
-         EybH5ehJg3Rt+KpK6Qi2j63eJZeTz59Yr3BQ35LXbRQDCUs5i/bkfbRRrpbd2JjKDhVH
-         jrbYuiy3TWAYLRU6dnJqZ3pTMlpJ/NJb4kyLUD2czO9cla3BB9JKpJsO6FAPDt9OjZLT
-         LxHGBfcpcxXT4gq1+lKupkbRm+L+Q53a+ntC3t8u/n1MIEY7rvzxPumrJm2zTAo09GLQ
-         VSLYHXepI00hhIEnjTWkOifT6VhhI4qmlrYrt0TbqjFK/gukASIdQLulO8hH2KSHhogu
-         ak8A==
-X-Forwarded-Encrypted: i=1; AJvYcCVRg3uC5qo9CecCvxeL8he5GL3eHEDhEhnrNUxQs1ZXd3ILDj58PyBH5Iyqgkw610h6wj9pmkP6i7YRYc0dBhOjmTok3FMzs3euh4ge
-X-Gm-Message-State: AOJu0YyBoTrHGWS8kSyTkl4hFTLsBJsehdZHPNNBhig3j9V72RC0NZ9c
-	zlWiahT/xCDwEhLizF2l0BYNAzx5oeEuhTcmC4LgKL3j7jHjChlAQ2GvDF+5SlwjHY08i7GC545
-	HPCl6st6g94uYXeE3UNmlkUlFYQFflGwDeO6zAx7FC35jtIEwMErUKR6miw==
-X-Google-Smtp-Source: AGHT+IH7t15ZxEn2LETHAyDOXDZSewj9x0ofxPVWbHBdCjBgMBIveOKBhoflOM22vJXoMJ9CySG9QwFCPP9ol/FJosc=
-X-Received: by 2002:a05:6000:dcd:b0:35f:1c34:adfc with SMTP id
- ffacd0b85a97d-366e96bf06bmr10949760f8f.67.1719565618293; Fri, 28 Jun 2024
- 02:06:58 -0700 (PDT)
+        bh=sAojY8v61Oq5pXWhl+jbz8qnbn0iqqHxroEEAHU3dVw=;
+        b=YSicO/mq26El9mRZMA77xdRJw772LLROF4o64f0aKqqpSO/0pACbOxGGG0bJLgCQgO
+         +7ab+NbIlfQhT9eW7B7vHPYE6VGgER37T/GXrtrQZPPcAA6Lj3i/mwbxyaE6ibtkSZaH
+         C7+Re5al7YsbGeGbVhtO0tWrRnoXhjVmSGMh6OjaSYi/icX2WckAXtQzxLw9zrjZix4z
+         1wuigiqGhYnb8Ns63+YCAh+VI8x0p5ABCtGM/+EesoaT2YdrUNRCdx6Knu+U29FazMu4
+         oCNqyAKxMfR/NTuWKLJWhwB9tHRJlY+liSZVF/SMdywjphGIXlU6gLQpPEBv195Vachx
+         26fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXBqswStgpIvMB83gFS+Yxi6rVUHx77rGp5ItvMlM3u3xBWEWSgUiMYu+zN1roqPN3v3v8z+mn5Fc2JhR5/7xhvQwR25v718YPHjVvI
+X-Gm-Message-State: AOJu0YyxlkREI5RlXEsrXa1vxHKAq5zkJTkHjg7e7w1ih87kc2RnNLhq
+	hHH8UoNpdgXAldKJ3AkY2MXM8IoI4fdwy9bTVWIo4llIznbf5hvPmt3fna9hZD4=
+X-Google-Smtp-Source: AGHT+IH1p4Lr0/8BDnffNORPkUxB15wlpiN10FAgg7kp26WVIDI1u2ehlcIyNvLqTtsh8o3u98LDqA==
+X-Received: by 2002:adf:fd4b:0:b0:367:2ae1:9c4d with SMTP id ffacd0b85a97d-3672ae19d30mr5031112f8f.29.1719565640035;
+        Fri, 28 Jun 2024 02:07:20 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0fb967sm1612896f8f.82.2024.06.28.02.07.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 02:07:19 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+To: Jessica Zhang <quic_jesszhan@quicinc.com>, 
+ Sam Ravnborg <sam@ravnborg.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Paul Gerber <paul.gerber@ew.tq-group.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240627084446.3197196-1-paul.gerber@ew.tq-group.com>
+References: <20240627084446.3197196-1-paul.gerber@ew.tq-group.com>
+Subject: Re: [PATCH v2 0/2] Add AUO G104STN01 panel
+Message-Id: <171956563914.990484.5258309901602303917.b4-ty@linaro.org>
+Date: Fri, 28 Jun 2024 11:07:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619192131.do.115-kees@kernel.org> <20240619193357.1333772-4-kees@kernel.org>
- <cc301463-da43-4991-b001-d92521384253@suse.cz> <202406201147.8152CECFF@keescook>
- <1917c5a5-62af-4017-8cd0-80446d9f35d3@suse.cz> <Zn5LqMlnbuSMx7H3@Boquns-Mac-mini.home>
- <c5934f76-3ce8-466e-80d1-c56ebb5a158e@suse.cz>
-In-Reply-To: <c5934f76-3ce8-466e-80d1-c56ebb5a158e@suse.cz>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 28 Jun 2024 11:06:45 +0200
-Message-ID: <CAH5fLggjrbdUuT-H-5vbQfMazjRDpp2+k3=YhPyS17ezEqxwcw@mail.gmail.com>
-Subject: Re: [PATCH v5 4/6] mm/slab: Introduce kmem_buckets_create() and family
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Kees Cook <kees@kernel.org>, 
-	"GONG, Ruiqi" <gongruiqi@huaweicloud.com>, Christoph Lameter <cl@linux.com>, 
-	Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>, jvoisin <julien.voisin@dustri.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, Xiu Jianfeng <xiujianfeng@huawei.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	Jann Horn <jannh@google.com>, Matteo Rizzo <matteorizzo@google.com>, Thomas Graf <tgraf@suug.ch>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-hardening@vger.kernel.org, netdev@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On Fri, Jun 28, 2024 at 10:40=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> w=
-rote:
->
-> On 6/28/24 7:35 AM, Boqun Feng wrote:
-> > On Thu, Jun 20, 2024 at 10:43:39PM +0200, Vlastimil Babka wrote:
-> >> On 6/20/24 8:54 PM, Kees Cook wrote:
-> >> > On Thu, Jun 20, 2024 at 03:56:27PM +0200, Vlastimil Babka wrote:
-> >> >> > @@ -549,6 +549,11 @@ void *kmem_cache_alloc_lru_noprof(struct kme=
-m_cache *s, struct list_lru *lru,
-> >> >> >
-> >> >> >  void kmem_cache_free(struct kmem_cache *s, void *objp);
-> >> >> >
-> >> >> > +kmem_buckets *kmem_buckets_create(const char *name, unsigned int=
- align,
-> >> >> > +                                 slab_flags_t flags,
-> >> >> > +                                 unsigned int useroffset, unsign=
-ed int usersize,
-> >> >> > +                                 void (*ctor)(void *));
-> >> >>
-> >> >> I'd drop the ctor, I can't imagine how it would be used with variab=
-le-sized
-> >> >> allocations.
-> >> >
-> >> > I've kept it because for "kmalloc wrapper" APIs, e.g. devm_kmalloc()=
-,
-> >> > there is some "housekeeping" that gets done explicitly right now tha=
-t I
-> >> > think would be better served by using a ctor in the future. These AP=
-Is
-> >> > are variable-sized, but have a fixed size header, so they have a
-> >> > "minimum size" that the ctor can still operate on, etc.
-> >> >
-> >> >> Probably also "align" doesn't make much sense since we're just
-> >> >> copying the kmalloc cache sizes and its implicit alignment of any
-> >> >> power-of-two allocations.
-> >> >
-> >> > Yeah, that's probably true. I kept it since I wanted to mirror
-> >> > kmem_cache_create() to make this API more familiar looking.
-> >>
-> >> Rust people were asking about kmalloc alignment (but I forgot the deta=
-ils)
-> >
-> > It was me! The ask is whether we can specify the alignment for the
-> > allocation API, for example, requesting a size=3D96 and align=3D32 memo=
-ry,
-> > or the allocation API could do a "best alignment", for example,
-> > allocating a size=3D96 will give a align=3D32 memory. As far as I
-> > understand, kmalloc() doesn't support this.
->
-> Hm yeah we only have guarantees for power-or-2 allocations.
->
-> >> so maybe this could be useful for them? CC rust-for-linux.
-> >>
-> >
-> > I took a quick look as what kmem_buckets is, and seems to me that align
-> > doesn't make sense here (and probably not useful in Rust as well)
-> > because a kmem_buckets is a set of kmem_caches, each has its own object
-> > size, making them share the same alignment is probably not what you
-> > want. But I could be missing something.
->
-> How flexible do you need those alignments to be? Besides the power-of-two
-> guarantees, we currently have only two odd sizes with 96 and 192. If thos=
-e
-> were guaranteed to be aligned 32 bytes, would that be sufficient? Also do
-> you ever allocate anything smaller than 32 bytes then?
->
-> To summarize, if Rust's requirements can be summarized by some rules and
-> it's not completely ad-hoc per-allocation alignment requirement (or if it
-> is, does it have an upper bound?) we could perhaps figure out the creatio=
-n
-> of rust-specific kmem_buckets to give it what's needed?
+Hi,
 
-Rust's allocator API can take any size and alignment as long as:
+On Thu, 27 Jun 2024 10:44:42 +0200, Paul Gerber wrote:
+> Changes in v2:
+> - put explanatory comment for display binding before the list entry
+> - collected Acked-by and Reviewed-by
+> 
+> Link to v1: https://lore.kernel.org/dri-devel/20240626044727.2330191-1-paul.gerber@ew.tq-group.com/
+> 
+> Paul Gerber (2):
+>   dt-bindings: display: simple: Add AUO G104STN01 panel
+>   drm/panel: simple: Add AUO G104STN01 panel entry
+> 
+> [...]
 
-1. The alignment is a power of two.
-2. The size is non-zero.
-3. When you round up the size to the next multiple of the alignment,
-then it must not overflow the signed type isize / ssize_t.
+Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
 
-What happens right now is that when Rust wants an allocation with a
-higher alignment than ARCH_SLAB_MINALIGN, then it will increase size
-until it becomes a power of two so that the power-of-two guarantee
-gives a properly aligned allocation.
+[1/2] dt-bindings: display: simple: Add AUO G104STN01 panel
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/21335cf6af98d524d01296865fd0a1c6886ace54
+[2/2] drm/panel: simple: Add AUO G104STN01 panel entry
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/6c2b2cd33705b43cb19699500bbf7bd77bc8b60b
 
-Alice
+-- 
+Neil
+
 
