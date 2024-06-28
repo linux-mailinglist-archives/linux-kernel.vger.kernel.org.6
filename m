@@ -1,149 +1,335 @@
-Return-Path: <linux-kernel+bounces-233481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4625091B7DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:10:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C627691B7E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:13:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB753287624
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:10:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BE35286981
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:13:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8822113DDC9;
-	Fri, 28 Jun 2024 07:10:16 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645D2125AC;
+	Fri, 28 Jun 2024 07:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G1BZhPGj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4DC125AC
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 07:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41097F498
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 07:13:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719558616; cv=none; b=uMnbZDDyrhES2e3t0i5LGtIdusyYPZ2QLdvMpSls9aqfk8gpHxwRK68gxYHtaWSeV+ucdU2AtFpzDPVpFaqwJ5sDpgARwEx/RAVQK+NaBriG6nQDMotXcNo8MF/EK4L6hxa4yzGyqYjCLg8PNitObLwbwHglYddtjy9lCixIB+w=
+	t=1719558800; cv=none; b=CkI4C6wQmYLSGBXbugPTrW0GXprnO2ia8awnOQkqpGYQ33adtY22CZsrM1N2XQJAUarxx23fJLVIVs8VaC3iFGZ8eqUQSIw5jemGcNG0YfMQDMVbQybOCjeahZDA1EJj+e9tBtzSarB7nh4+sS65alwRadUyu4E6ZhuBj6mSoSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719558616; c=relaxed/simple;
-	bh=nf5rb/48jsspwKFlqnW2lDafPBBOtGlJGSJpAH2LFDs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gPaq5FmATrJj66BaNyF5Kz/YGvwQzPhsYyLErvWPvHctqF01oGB9CGMSfJ0RZNZBgVGq3CWvRVlfEJ8RD29tPlMRAZlUmc9KmCs/4E8EQVCMwjUxicGBuc3flrEUoRMv4Ladn94vP6rl4U9MIWmJrbeO515nzAPNYUZjsLsq7uU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sN5kB-00056V-62; Fri, 28 Jun 2024 09:10:03 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sN5k9-005Y2z-B2; Fri, 28 Jun 2024 09:10:01 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sN5k9-002N6S-0l;
-	Fri, 28 Jun 2024 09:10:01 +0200
-Date: Fri, 28 Jun 2024 09:10:01 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Vladimir Oltean <olteanv@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Andrew Lunn <andrew@lunn.ch>,
-	Eric Dumazet <edumazet@google.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Arun Ramadoss <arun.ramadoss@microchip.com>,
-	Lucas Stach <l.stach@pengutronix.de>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com
-Subject: Re: [PATCH net-next v1 2/3] net: dsa: microchip: lan937x: force
- RGMII interface into PHY mode
-Message-ID: <Zn5hyR1AKV81nulo@pengutronix.de>
-References: <20240627123911.227480-1-o.rempel@pengutronix.de>
- <20240627123911.227480-3-o.rempel@pengutronix.de>
- <20240627222543.rcx3i5o43toopwcm@skbuf>
+	s=arc-20240116; t=1719558800; c=relaxed/simple;
+	bh=RwA6DNAy80mutbsLBHzLNYjy0s1N5E3RGjgs2E4XDr8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jVVQrv4ME31mvtrtAMPNjW81fZwI5GNZVciikxNnaNs+PSeuh49TH4zAwnjm2uP52DazH7IReeS+eTjrkifaCNgx0TSmOZBQT5Hqe406cLzXFil1mS+xHRoMJMkde76oR7Yu7pElHMvLJ8CR2Y9CsnGcG3QHMvsvY6WbktljUsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G1BZhPGj; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719558797;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uBCG6Aq7g5s4IKz6cGy3Qa4TvJeSerIQI/YPWTkVSgw=;
+	b=G1BZhPGj/8qN5SKsEVi7e/Jm+KGYZSJNRAoVmN20uX8fXJBklm3ddTsPsMsl75RnZx9G0v
+	afKmC6LEmIKh+1W0ozlhypsvV8ePyVtsBxRUGWm+A1CL4mqy746KH2qA/xidmJGVGscw6Q
+	1irbj3/EvYV8Cplzq4dds5wN1HstA/g=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-328-oSLnrBo3Nv6iw_RAeYNYyA-1; Fri, 28 Jun 2024 03:13:15 -0400
+X-MC-Unique: oSLnrBo3Nv6iw_RAeYNYyA-1
+Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-52cdc4a8f44so297429e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 00:13:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719558794; x=1720163594;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uBCG6Aq7g5s4IKz6cGy3Qa4TvJeSerIQI/YPWTkVSgw=;
+        b=fX0wXE0TNqjKHiY/GLWewY/SWiK+QxVLM6Z0Xmfp78IyKNbE37T4zi5wnJrKXccq1E
+         yLnfZzmWoOYJA6NsJG55eZYg4eq1TKscny2CWlL4CNxHHSMyOl2kXCIYGVu33vtXFNzQ
+         IcdUAffPyrOJi2YYloPDGziWmhuyiDUM3YB6L3zOvrwcdNOJykZEPbT3Z/5knFfEBsZT
+         0YVRXMcVH1cf7YL0AW/4la0inCDLDs9EeF628LBI+My9PrmYyQKzr3ma6asxWPSL74EE
+         8YS8krKBRC0lGXopX8MlrpqmC072WHxF9yPtTIl5lh5ze9RnX2oI6fzeJeynhXmLNsuD
+         XQYw==
+X-Forwarded-Encrypted: i=1; AJvYcCW1Kap2zd4MkzE5/zj4HptqlRS0GvbZ+KguRnIXefozzFI0iS1lOIJv+O0gygp6qjw6yc1Er9yOgnWSfMzDJ/bS6Et8zxGBhF1zQZtk
+X-Gm-Message-State: AOJu0YzQ1DpcN59t42aNkh+OnPA7XIoZevzBEo3/vYT499Cf8x1c/6tf
+	l1OQCwrATF3ctwCMLoTxZSXBR/1RsDqt7zDHXvm9eaEDV8lmGJCKjRe3TiXUZQAfLHhqOvTYaYC
+	MZXV9ipc1CYP562V188V3bOaTTV/ndhiopZfuP6z0HWsk0bI7iPoSbwVXx507jg==
+X-Received: by 2002:a05:6512:398f:b0:52e:6d6e:5770 with SMTP id 2adb3069b0e04-52e6d6e580emr4883301e87.14.1719558794367;
+        Fri, 28 Jun 2024 00:13:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGRNgxsh6SyinhqzjcyCteF/29SBwjZ8FpGkU83w6uoSo0McICUu/E5sqzerM5X1kwtLLuEIw==
+X-Received: by 2002:a05:6512:398f:b0:52e:6d6e:5770 with SMTP id 2adb3069b0e04-52e6d6e580emr4883265e87.14.1719558793916;
+        Fri, 28 Jun 2024 00:13:13 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:c:37e0:38da:a7d9:7cc9:db3e? ([2a01:e0a:c:37e0:38da:a7d9:7cc9:db3e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b0642acsm22012305e9.25.2024.06.28.00.13.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Jun 2024 00:13:13 -0700 (PDT)
+Message-ID: <06899fda-de75-4d44-bda5-dcbb3e35d037@redhat.com>
+Date: Fri, 28 Jun 2024 09:13:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240627222543.rcx3i5o43toopwcm@skbuf>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] printk: Add a short description string to kmsg_dump()
+To: Kees Cook <kees@kernel.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
+ <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ "K. Y. Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Tony Luck <tony.luck@intel.com>, "Guilherme G. Piccoli"
+ <gpiccoli@igalia.com>, Petr Mladek <pmladek@suse.com>,
+ Steven Rostedt <rostedt@goodmis.org>, John Ogness
+ <john.ogness@linutronix.de>, Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Jani Nikula <jani.nikula@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Uros Bizjak <ubizjak@gmail.com>,
+ linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-hyperv@vger.kernel.org,
+ linux-mtd@lists.infradead.org, linux-hardening@vger.kernel.org
+References: <20240625123954.211184-1-jfalempe@redhat.com>
+ <202406260906.533095B1@keescook>
+Content-Language: en-US, fr
+From: Jocelyn Falempe <jfalempe@redhat.com>
+In-Reply-To: <202406260906.533095B1@keescook>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 28, 2024 at 01:25:43AM +0300, Vladimir Oltean wrote:
-> On Thu, Jun 27, 2024 at 02:39:10PM +0200, Oleksij Rempel wrote:
-> > From: Lucas Stach <l.stach@pengutronix.de>
-> > 
-> > The register manual and datasheet documentation for the LAN937x series
-> > disagree about the polarity of the MII mode strap. As a consequence
-> > there are hardware designs that have the RGMII interface strapped into
-> > MAC mode, which is a invalid configuration and will prevent the internal
-> > clock from being fed into the port TX interface.
-> > 
-> > Force the MII mode to PHY for RGMII interfaces where this is the only
-> > valid mode, to override the inproper strapping.
-> > 
-> > Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> > ---
+
+
+On 26/06/2024 18:26, Kees Cook wrote:
+> On Tue, Jun 25, 2024 at 02:39:29PM +0200, Jocelyn Falempe wrote:
+>> kmsg_dump doesn't forward the panic reason string to the kmsg_dumper
+>> callback.
+>> This patch adds a new parameter "const char *desc" to the kmsg_dumper
+>> dump() callback, and update all drivers that are using it.
+>>
+>> To avoid updating all kmsg_dump() call, it adds a kmsg_dump_desc()
+>> function and a macro for backward compatibility.
+>>
+>> I've written this for drm_panic, but it can be useful for other
+>> kmsg_dumper.
+>> It allows to see the panic reason, like "sysrq triggered crash"
+>> or "VFS: Unable to mount root fs on xxxx" on the drm panic screen.
 > 
-> What's the difference between MAC mode and PHY mode with RGMII for this switch?
+> Seems reasonable. Given the prototype before/after:
+> 
+> dump(struct kmsg_dumper *dumper, enum kmsg_dump_reason reason)
+> 
+> dump(struct kmsg_dumper *dumper, enum kmsg_dump_reason reason,
+>       const char *desc)
+> 
+> Perhaps this should instead be a struct that the panic fills in? Then
+> it'll be easy to adjust the struct in the future:
 
-Let's take a step back. I'll describe first my initial findings, the symptoms,
-and my new findings from today, so my argumentation and the patch itself should
-be updated.
+yes that's a good idea, so it's a bit more flexible.
 
-Initially, we identified that the RGMIIx_MODE[1,0] strap pins select between
-RGMII, RMII, and MII. The MIIx_PHY_MODE pin configures PHY mode for MII or
-clock direction in RMII but should have no effect in RGMII mode. However, if
-MIIx_PHY_MODE = 1, RGMII exhibits the following symptoms:
+> 
+> struct kmsg_dump_detail {
+> 	enum kmsg_dump_reason reason;
+> 	const char *description;
+> };
+> 
+> dump(struct kmsg_dumper *dumper, struct kmsg_dump *detail)
+> 
+> This .cocci could do the conversion:
+> 
+> 
+> @ dump_func @
+> identifier DUMPER, CALLBACK;
+> @@
+> 
+>    struct kmsg_dumper DUMPER = {
+>      .dump = CALLBACK,
+>    };
+> 
+> @ detail @
+> identifier dump_func.CALLBACK;
+> identifier DUMPER, REASON;
+> @@
+> 
+> 	CALLBACK(struct kmsg_dumper *DUMPER,
+> -		 enum kmsg_dump_reason REASON
+> +		 struct kmsg_dump_detail *detail
+> 		)
+> 	{
+> 		<...
+> -		REASON
+> +		detail->reason
+> 		...>
+> 	}
+> 
+> 
+> Also, just to double-check, doesn't the panic reason show up in the
+> kmsg_dump log itself (at the end?) I ask since for pstore, "desc" is
+> likely redundant since it's capturing the entire console log.
 
-- No signal on RGMII TXD[]
-- No TX counters increase on the related MAC port.
-- RX interface works, and data from the CPU through the switch is properly
-  accounted for.
+It is present in the kdump log, but before all the register dumps.
+So to retrieve it you need to parse the last 30~40 lines of logs, and 
+search for a line starting with "Kernel panic - not syncing".
+https://elixir.bootlin.com/linux/v6.10-rc5/source/kernel/panic.c#L341
+But I think that's a bit messy, and I prefer having a kmsg_dump parameter.
 
-Due to the absence of TX counters even for broadcast traffic, we interpreted
-this as a disabled MAC TX functionality or disabled TX clock for the MAC. This
-issue was resolved by unsetting Bit 2 on register 0x301, which is undocumented
-for RGMII.
-
-Now, comparing LAN937x documentation with publicly available documentation for
-other switches, for example KSZ9893R, may give some clue on the undocumented
-part in the LAN937x datasheet:
-RGMII Interface:
- 1 = In-Band Status (IBS) enabled (requires IBS-capable PHY)
- 0 = IBS disabled
-
-The issue likely stems from active IBS mode, confirmed by an article
-recommending IBS disablement via register 0x302.
-https://microchip.my.site.com/s/article/LAN937X-The-required-configuration-for-the-external-MAC-port-to-operate-at-RGMII-to-RGMII-1Gbps-link-speed
-
-The same effect seems to be achieved by toggling the undocumented 0x301 bit 2.
-The ksz_set_xmii() function contains existing code to handle this:
-	case PHY_INTERFACE_MODE_RGMII_RXID:
-	    data8 |= bitval[P_RGMII_SEL];
-	    /* On KSZ9893, disable RGMII in-band status support */
-	    if (dev->chip_id == KSZ9893_CHIP_ID ||
-		dev->chip_id == KSZ8563_CHIP_ID ||
-		dev->chip_id == KSZ9563_CHIP_ID)
-		data8 &= ~P_MII_MAC_MODE;
-	    break;
-	default:
-
-Regards,
-Oleksij
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+Jocelyn
+> 
+> -Kees
+> 
+> Here's the patch from the above cocci:
+> 
+> 
+> diff -u -p a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
+> --- a/drivers/hv/hv_common.c
+> +++ b/drivers/hv/hv_common.c
+> @@ -207,13 +207,13 @@ static int hv_die_panic_notify_crash(str
+>    * buffer and call into Hyper-V to transfer the data.
+>    */
+>   static void hv_kmsg_dump(struct kmsg_dumper *dumper,
+> -			 enum kmsg_dump_reason reason)
+> +			 struct kmsg_dump_detail *detail)
+>   {
+>   	struct kmsg_dump_iter iter;
+>   	size_t bytes_written;
+>   
+>   	/* We are only interested in panics. */
+> -	if (reason != KMSG_DUMP_PANIC || !sysctl_record_panic_msg)
+> +	if (detail->reason != KMSG_DUMP_PANIC || !sysctl_record_panic_msg)
+>   		return;
+>   
+>   	/*
+> diff -u -p a/arch/powerpc/platforms/powernv/opal-kmsg.c b/arch/powerpc/platforms/powernv/opal-kmsg.c
+> --- a/arch/powerpc/platforms/powernv/opal-kmsg.c
+> +++ b/arch/powerpc/platforms/powernv/opal-kmsg.c
+> @@ -20,13 +20,13 @@
+>    * message, it just ensures that OPAL completely flushes the console buffer.
+>    */
+>   static void kmsg_dump_opal_console_flush(struct kmsg_dumper *dumper,
+> -				     enum kmsg_dump_reason reason)
+> +				     struct kmsg_dump_detail *detail)
+>   {
+>   	/*
+>   	 * Outside of a panic context the pollers will continue to run,
+>   	 * so we don't need to do any special flushing.
+>   	 */
+> -	if (reason != KMSG_DUMP_PANIC)
+> +	if (detail->reason != KMSG_DUMP_PANIC)
+>   		return;
+>   
+>   	opal_flush_console(0);
+> diff -u -p a/arch/powerpc/kernel/nvram_64.c b/arch/powerpc/kernel/nvram_64.c
+> --- a/arch/powerpc/kernel/nvram_64.c
+> +++ b/arch/powerpc/kernel/nvram_64.c
+> @@ -73,7 +73,7 @@ static const char *nvram_os_partitions[]
+>   };
+>   
+>   static void oops_to_nvram(struct kmsg_dumper *dumper,
+> -			  enum kmsg_dump_reason reason);
+> +			  struct kmsg_dump_detail *detail);
+>   
+>   static struct kmsg_dumper nvram_kmsg_dumper = {
+>   	.dump = oops_to_nvram
+> @@ -643,7 +643,7 @@ void __init nvram_init_oops_partition(in
+>    * partition.  If that's too much, go back and capture uncompressed text.
+>    */
+>   static void oops_to_nvram(struct kmsg_dumper *dumper,
+> -			  enum kmsg_dump_reason reason)
+> +			  struct kmsg_dump_detail *detail)
+>   {
+>   	struct oops_log_info *oops_hdr = (struct oops_log_info *)oops_buf;
+>   	static unsigned int oops_count = 0;
+> @@ -655,7 +655,7 @@ static void oops_to_nvram(struct kmsg_du
+>   	unsigned int err_type = ERR_TYPE_KERNEL_PANIC_GZ;
+>   	int rc = -1;
+>   
+> -	switch (reason) {
+> +	switch (detail->reason) {
+>   	case KMSG_DUMP_SHUTDOWN:
+>   		/* These are almost always orderly shutdowns. */
+>   		return;
+> @@ -671,7 +671,7 @@ static void oops_to_nvram(struct kmsg_du
+>   		break;
+>   	default:
+>   		pr_err("%s: ignoring unrecognized KMSG_DUMP_* reason %d\n",
+> -		       __func__, (int) reason);
+> +		       __func__, (int) detail->reason);
+>   		return;
+>   	}
+>   
+> warning: detail, node 59: record.reason = ... ;[1,2,21,22,32] in pstore_dump may be inconsistently modified
+> warning: detail, node 105: if[1,2,21,22,54] in pstore_dump may be inconsistently modified
+> diff -u -p a/fs/pstore/platform.c b/fs/pstore/platform.c
+> --- a/fs/pstore/platform.c
+> +++ b/fs/pstore/platform.c
+> @@ -275,7 +275,7 @@ void pstore_record_init(struct pstore_re
+>    * end of the buffer.
+>    */
+>   static void pstore_dump(struct kmsg_dumper *dumper,
+> -			enum kmsg_dump_reason reason)
+> +			struct kmsg_dump_detail *detail)
+>   {
+>   	struct kmsg_dump_iter iter;
+>   	unsigned long	total = 0;
+> @@ -285,9 +285,9 @@ static void pstore_dump(struct kmsg_dump
+>   	int		saved_ret = 0;
+>   	int		ret;
+>   
+> -	why = kmsg_dump_reason_str(reason);
+> +	why = kmsg_dump_reason_str(detail->reason);
+>   
+> -	if (pstore_cannot_block_path(reason)) {
+> +	if (pstore_cannot_block_path(detail->reason)) {
+>   		if (!spin_trylock_irqsave(&psinfo->buf_lock, flags)) {
+>   			pr_err("dump skipped in %s path because of concurrent dump\n",
+>   					in_nmi() ? "NMI" : why);
+> @@ -311,7 +311,7 @@ static void pstore_dump(struct kmsg_dump
+>   		pstore_record_init(&record, psinfo);
+>   		record.type = PSTORE_TYPE_DMESG;
+>   		record.count = oopscount;
+> -		record.reason = reason;
+> +		record.reason = detail->reason;
+>   		record.part = part;
+>   		record.buf = psinfo->buf;
+>   
+> @@ -352,7 +352,7 @@ static void pstore_dump(struct kmsg_dump
+>   		}
+>   
+>   		ret = psinfo->write(&record);
+> -		if (ret == 0 && reason == KMSG_DUMP_OOPS) {
+> +		if (ret == 0 && detail->reason == KMSG_DUMP_OOPS) {
+>   			pstore_new_entry = 1;
+>   			pstore_timer_kick();
+>   		} else {
+> diff -u -p a/arch/um/kernel/kmsg_dump.c b/arch/um/kernel/kmsg_dump.c
+> --- a/arch/um/kernel/kmsg_dump.c
+> +++ b/arch/um/kernel/kmsg_dump.c
+> @@ -8,7 +8,7 @@
+>   #include <os.h>
+>   
+>   static void kmsg_dumper_stdout(struct kmsg_dumper *dumper,
+> -				enum kmsg_dump_reason reason)
+> +				struct kmsg_dump_detail *detail)
+>   {
+>   	static struct kmsg_dump_iter iter;
+>   	static DEFINE_SPINLOCK(lock);
+> 
+
 
