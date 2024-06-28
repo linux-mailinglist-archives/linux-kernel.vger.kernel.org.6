@@ -1,117 +1,96 @@
-Return-Path: <linux-kernel+bounces-233322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B1E591B572
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 05:27:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F05291B57A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 05:30:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF9B91F22A38
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:27:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AC7E282E63
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B628DBA53;
-	Fri, 28 Jun 2024 03:27:35 +0000 (UTC)
-Received: from mx1.zhaoxin.com (MX1.ZHAOXIN.COM [210.0.225.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B1C1CA8A;
+	Fri, 28 Jun 2024 03:30:01 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68DB01BF47
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 03:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.0.225.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEEC01C6A4;
+	Fri, 28 Jun 2024 03:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719545255; cv=none; b=TkGIFioYecfPUNW5yuxZwzz1Peq/JvjTfI/LknnqjEVMsj+n65zRn/LDtLmmuONB/Rsphz+/+NzKIemInLnjfftOZv0KSBAl6GD3IGY2jeTk6veJEr7DoRY/2CLCqPaBN02HLA3NTcP2E6SRelhtbCjCAe5Ob6e032kHce1a96c=
+	t=1719545400; cv=none; b=QCyaCD5NVLlLjfxDVRBAaSvk3sPqmTselQqHjhT0eWQAr7DKpDI8DViIAx0cXLNSH1g4z0zVCjCQN4wTYfyGSU6JztEd/5EHe5D2LlC3rxqYODGE3KxB0R+xGujM+Tn2Tzpl2g5w+yXCQ+6zhpAhHKc/GAlrhf43FRn6It0A8FY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719545255; c=relaxed/simple;
-	bh=a3olSj8nVDgW4q/EBPpehEZzXrNx6E2BpkN/BcooknI=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=HmQakiCcVzhduNSxzGNTAezYZ80kyDqsQ0hS4oN45lEwV7wmtxxleWIc7ib/dxQkVC4y7BfLfvm+ajsNhUp9StioZPXj/ueRGluqTTrOXxBNq9/dOfT3Fl+Q0ulgip/utO48zak2UY66vj/Wa8rV+xkTe80XCx2FOMshP1Si3bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=210.0.225.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
-X-ASG-Debug-ID: 1719545240-086e231108138f50001-xx1T2L
-Received: from ZXSHMBX1.zhaoxin.com (ZXSHMBX1.zhaoxin.com [10.28.252.163]) by mx1.zhaoxin.com with ESMTP id tbdnvh16gC4lZJdo (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Fri, 28 Jun 2024 11:27:20 +0800 (CST)
-X-Barracuda-Envelope-From: LindaChai@zhaoxin.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.163
-Received: from zxbjmbx1.zhaoxin.com (10.29.252.163) by ZXSHMBX1.zhaoxin.com
- (10.28.252.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 28 Jun
- 2024 11:27:20 +0800
-Received: from zxbjmbx1.zhaoxin.com (10.29.252.163) by zxbjmbx1.zhaoxin.com
- (10.29.252.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 28 Jun
- 2024 11:27:19 +0800
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.163
-Received: from zxbjmbx1.zhaoxin.com ([fe80::2c4a:ac53:52a8:1a13]) by
- zxbjmbx1.zhaoxin.com ([fe80::2c4a:ac53:52a8:1a13%3]) with mapi id
- 15.01.2507.039; Fri, 28 Jun 2024 11:27:19 +0800
-X-Barracuda-RBL-Trusted-Forwarder: 10.29.252.163
-From: "Linda Chai(BJ-RD)" <LindaChai@zhaoxin.com>
-To: Tony W Wang-oc <TonyWWang-oc@zhaoxin.com>
-CC: "Cobe Chen(BJ-RD)" <CobeChen@zhaoxin.com>, LeoLiu-oc
-	<LeoLiu-oc@zhaoxin.com>, "Linda Chai(BJ-RD)" <LindaChai@zhaoxin.com>, "Tim
- Guo(BJ-RD)" <TimGuo@zhaoxin.com>, "acpica-devel@lists.linux.dev"
-	<acpica-devel@lists.linux.dev>, "bp@alien8.de" <bp@alien8.de>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "hpa@zytor.com"
-	<hpa@zytor.com>, "j.granados@samsung.com" <j.granados@samsung.com>,
-	"lenb@kernel.org" <lenb@kernel.org>, "linux-acpi@vger.kernel.org"
-	<linux-acpi@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org"
-	<linux-pm@vger.kernel.org>, "mcgrof@kernel.org" <mcgrof@kernel.org>,
-	"mingo@redhat.com" <mingo@redhat.com>, "peterz@infradead.org"
-	<peterz@infradead.org>, "rafael@kernel.org" <rafael@kernel.org>,
-	"ricardo.neri-calderon@linux.intel.com"
-	<ricardo.neri-calderon@linux.intel.com>, "robert.moore@intel.com"
-	<robert.moore@intel.com>, "tglx@linutronix.de" <tglx@linutronix.de>,
-	"viresh.kumar@linaro.org" <viresh.kumar@linaro.org>, "x86@kernel.org"
-	<x86@kernel.org>
-Subject: Re: [PATCH 3/3] ACPI: cpufreq: Add ITMT support when CPPC enabled for
- Zhaoxin CPUs
-Thread-Topic: Re: [PATCH 3/3] ACPI: cpufreq: Add ITMT support when CPPC
- enabled for Zhaoxin CPUs
-X-ASG-Orig-Subj: Re: [PATCH 3/3] ACPI: cpufreq: Add ITMT support when CPPC enabled for
- Zhaoxin CPUs
-Thread-Index: AdrJCJizLp8Sv9dXStirpjor4h554A==
-Date: Fri, 28 Jun 2024 03:27:19 +0000
-Message-ID: <4bee9e6ac2c84311ad7f7654d398f62a@zhaoxin.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1719545400; c=relaxed/simple;
+	bh=X8j+d7Ppn01ukU2yrL8s3zRacqDFRpKXE/Iqg1qpifw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hevr+Ifm4axU0xtoOmWpTnI5jkglJ9W4ly0nNTYsfw2SSBsmYc50IQ2p1g/tN5s5COAjNb30hEwc8cdNDm0tRDxz+4XcI3XACaTJFgu88BWG87rISt33GV6oiZjQn+gS6I4MQ5zFLJ310u+7KE9xQ4nr9a+eC/lCZpCzhLvUBsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-03 (Coremail) with SMTP id rQCowADn7tYoLn5mB1vZEg--.9834S2;
+	Fri, 28 Jun 2024 11:29:44 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: deller@gmx.de,
+	laurent.pinchart@ideasonboard.com,
+	kuninori.morimoto.gx@renesas.com
+Cc: linux-omap@vger.kernel.org,
+	linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] fbdev: omap2: Return clk_prepare_enable to transfer the error
+Date: Fri, 28 Jun 2024 11:28:12 +0800
+Message-Id: <20240628032812.280895-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Barracuda-Connect: ZXSHMBX1.zhaoxin.com[10.28.252.163]
-X-Barracuda-Start-Time: 1719545240
-X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
-X-Barracuda-URL: https://10.28.252.35:4443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at zhaoxin.com
-X-Barracuda-Scan-Msg-Size: 574
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
-X-Barracuda-Spam-Score: -1.99
-X-Barracuda-Spam-Status: No, SCORE=-1.99 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=BSF_SC0_SA_TO_FROM_DOMAIN_MATCH, THREAD_INDEX, THREAD_TOPIC
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.126861
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------------------------
-	0.01 THREAD_INDEX           thread-index: AcO7Y8iR61tzADqsRmmc5wNiFHEOig==
-	0.01 THREAD_TOPIC           Thread-Topic: ...(Japanese Subject)...
-	0.01 BSF_SC0_SA_TO_FROM_DOMAIN_MATCH Sender Domain Matches Recipient
-	                           Domain
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowADn7tYoLn5mB1vZEg--.9834S2
+X-Coremail-Antispam: 1UD129KBjvdXoWruF1DuFyDCw4kZw1kuF4rZrb_yoW3Arc_Ca
+	nrurZxGF9xtrWvk3Wrtws8CrZ2y3WIqFyfur92g3yfKry7Cr1fXryDZr13A3yDXr40yFyD
+	ur17X340yr1fujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbckFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26F
+	4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
+	7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r
+	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY02Avz4vE14v_
+	Gr4l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxV
+	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI
+	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
+	1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI
+	42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUShFxUUUUU=
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-SGmjrEFsbA0KSSBoYXZlbid0IHJlY2VpdmVkIGFueSByZXBseSBhYm91dCB0aGlzIG1haWwgZm9y
-IGEgbG9uZyB0aW1lLiBJIGRvdWJ0IGlmIHlvdSBoYXZlIG5vdGljZWQgaXQ/DQpJIHJlYWxseSBs
-b29rIGZvcndhcmQgdG8gcmVjZWl2aW5nIHlvdXIgc3VnZ2VzdGlvbiBhYm91dCB0aGlzIG5ldyBw
-YXRjaC4NCg0KQlJzDQpMaW5kYQ0KDQoNCrGjw9zJ+cP3o7oNCrG+08q8/rqs09Cxo8Pcu/LXqNPQ
-0MXPoqOsvfa5qda4tqjK1bz+yMvKudPDoaPRz737ttSxvtPKvP678sbkxNrI3df2yM66zs60vq3K
-2siotcSy6dTEoaLKudPDoaK4tNbGu/LXqreioaMNCkNPTkZJREVOVElBTCBOT1RFOg0KVGhpcyBl
-bWFpbCBjb250YWlucyBjb25maWRlbnRpYWwgb3IgbGVnYWxseSBwcml2aWxlZ2VkIGluZm9ybWF0
-aW9uIGFuZCBpcyBmb3IgdGhlIHNvbGUgdXNlIG9mIGl0cyBpbnRlbmRlZCByZWNpcGllbnQuIEFu
-eSB1bmF1dGhvcml6ZWQgcmV2aWV3LCB1c2UsIGNvcHlpbmcgb3IgZm9yd2FyZGluZyBvZiB0aGlz
-IGVtYWlsIG9yIHRoZSBjb250ZW50IG9mIHRoaXMgZW1haWwgaXMgc3RyaWN0bHkgcHJvaGliaXRl
-ZC4NCg==
+Return clk_prepare_enable() in order to transfer the error if it fails.
+
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/video/fbdev/omap2/omapfb/dss/venc.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/video/fbdev/omap2/omapfb/dss/venc.c b/drivers/video/fbdev/omap2/omapfb/dss/venc.c
+index 0bd80d3b8f1b..d13ad00d353b 100644
+--- a/drivers/video/fbdev/omap2/omapfb/dss/venc.c
++++ b/drivers/video/fbdev/omap2/omapfb/dss/venc.c
+@@ -903,9 +903,7 @@ static int venc_runtime_resume(struct device *dev)
+ 	if (r < 0)
+ 		return r;
+ 
+-	clk_prepare_enable(venc.tv_dac_clk);
+-
+-	return 0;
++	return clk_prepare_enable(venc.tv_dac_clk);
+ }
+ 
+ static const struct dev_pm_ops venc_pm_ops = {
+-- 
+2.25.1
+
 
