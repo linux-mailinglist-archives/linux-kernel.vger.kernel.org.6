@@ -1,140 +1,133 @@
-Return-Path: <linux-kernel+bounces-234326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18F6191C53B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:55:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7462E91C541
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:56:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0F12B23EB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:55:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6AA41C23724
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 163471CB33D;
-	Fri, 28 Jun 2024 17:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VCDZSyvN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7C11CD5A4;
+	Fri, 28 Jun 2024 17:56:39 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D619615253B
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 17:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B18815253B;
+	Fri, 28 Jun 2024 17:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719597297; cv=none; b=t3vm4uPUvBZQxzXGOXH209pEJUuWNnePBL6jetuOEbD1MgbM6rcdQJRuQGAvKf+CqnHqX7sb8TQ7hOm1NDt55cHFSH3mZj3SM976+rfvo1hbNZ4ZRPOe2m1zu0X+NxNyXv06omyjCR+T/l4Y33+csyI3aJnqceKdWC3mVoO1ves=
+	t=1719597399; cv=none; b=Af22rg3dW6eqT0hnSs8A4eez5iLFqpxuBjF4FSfgPLIxJag83nvTsLCZF4l7AcVA0a30tRr4N9kqbZPvTVnjBpF9kJ4j35DgAGNdTpkprjaeU0YYF4HslikjLJPpsZjzJoYjvQ4/zITU3ho66fs6YY0bzvs/jDrlTve2ruDOgAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719597297; c=relaxed/simple;
-	bh=LS6myUf6u19q1cqPvIL4lLcsNWvd6H16mjwaDkr4S80=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=r5IezrH3usvcnWptsvf9I5WOAVU70MXqEELBnVuIjA+GG9MaXAqX+3IlxQNIIld99d+/RsW2BO16S9+RyoWHXivG43cGrWeSbULTRoryHiiy1BP+6AlvbaqhGqnsQahA2jrTH7nfma5ogkgrX+b2aJVyTmg9xdLHK1y1hR3DkLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VCDZSyvN; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719597294;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TB1YvVhQLn/H70Rr+uFCjpzP9CQR7nQAEPIty/GMlrU=;
-	b=VCDZSyvNI26H3yZB0FLraE8wGLh410EbEAG8huTSq2nsjfbJnzPm/xa4Ue8LeijmWbnsmi
-	NuUBROuMiZZkGOfsrQ7aXclLOf0pn25TFu2a9h4PQOgexozBAnu4F8EKntgQFZp5+PXXT4
-	ZJdEBTTTD+JRFLwYphCRxVrZIbV4hlk=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-611-3R_UgxsqPf6_0D6_0KgqkA-1; Fri, 28 Jun 2024 13:54:53 -0400
-X-MC-Unique: 3R_UgxsqPf6_0D6_0KgqkA-1
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-44502b8579cso14679401cf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 10:54:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719597293; x=1720202093;
-        h=mime-version:user-agent:content-transfer-encoding:organization
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TB1YvVhQLn/H70Rr+uFCjpzP9CQR7nQAEPIty/GMlrU=;
-        b=VhvztdKgGs+/EKn7MtOIa1x3/ELCOTBBcPr5JCd9y24KPAo5Es0gEs1T8n9Ce7n6DB
-         wF50B4mMwI8rN1EgM9xIxU5uxNEqpatEzN4LGfsSKaqGVojjZ4v7RUtFoXtS2j3akERe
-         MUGWrL1f8ynrW3LYfQxI5aDc0sdvjQESDnKocqoxNhqndywIuJAw//DMeQjyKMBrm9bM
-         exAORiRvRF6SDFN1+frVAIHbkQ3pxt+EEH4xj5nYtcCRNqOLTZJkU5uxkJJNtkxYxEva
-         xDYqLfYwRsyiSrR0KhbMYciKPYK1OfN25XPvNP1FBHLl8rRLDmcxoTJZ+aZ0mr78Fs6Q
-         Q9uQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUvoJOaDJ7h7xHpKNkkkn22nOD9xWyAC/YAHSCVy/JZpnNU3PPCEyLEUFnPnbs6GKdPCw5hbWgqcWA1/y6B3pPS4oV9EEEI0TG/sArr
-X-Gm-Message-State: AOJu0YzV1z5k/bTEvKfm1lJRg7LjpSXOrI4hmYXhQJ8Kg/k/ETmQq9De
-	fgQ18fRJg0YKc4QK3Tartyyvn723u84JcIWnJOjmnC5iyoBAGBn5cQ4e+ge+T0kh2AP7w11vvcx
-	NFuZdhqP/Si4upjV2c5Sk+0rVFWUJkV5gW49ka+2y36f0qLG8TFpfmUACpFdMHg==
-X-Received: by 2002:ac8:5a15:0:b0:43d:e4c8:8059 with SMTP id d75a77b69052e-444d92335aamr216984571cf.38.1719597292936;
-        Fri, 28 Jun 2024 10:54:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHliaKczNq59esZ7bbqWZZwIg7BK0Qk7e2Vg6tc6pE8nfO36/kFIUgUN4o6+qKPkamp6yxIxA==
-X-Received: by 2002:ac8:5a15:0:b0:43d:e4c8:8059 with SMTP id d75a77b69052e-444d92335aamr216984461cf.38.1719597292583;
-        Fri, 28 Jun 2024 10:54:52 -0700 (PDT)
-Received: from chopper.lyude.net ([2600:4040:5c4c:a000::789])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44651428177sm9074601cf.40.2024.06.28.10.54.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 10:54:52 -0700 (PDT)
-Message-ID: <c7f963fa69a8bff65c54dbacad4c890ce26f57a4.camel@redhat.com>
-Subject: Re: [PATCH v2] drm/nouveau: fix null pointer dereference in
- nouveau_connector_get_modes
-From: Lyude Paul <lyude@redhat.com>
-To: Ma Ke <make24@iscas.ac.cn>, kherbst@redhat.com, dakr@redhat.com, 
-	airlied@gmail.com, daniel@ffwll.ch, airlied@redhat.com, bskeggs@redhat.com
-Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Date: Fri, 28 Jun 2024 13:54:51 -0400
-In-Reply-To: <20240627022732.2978601-1-make24@iscas.ac.cn>
-References: <20240627022732.2978601-1-make24@iscas.ac.cn>
-Organization: Red Hat Inc.
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+	s=arc-20240116; t=1719597399; c=relaxed/simple;
+	bh=oYS7jmYESQRNo05AqB51F3nXEy6uK/Kv0yx6spSKe/o=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Aq7n43jp/31Fjqz7YX1+eij7oNbVxTwbSGkpgiQj6vRbXaJxknUzd6rujOORRwUWrTLfaWU4GbY3gEhpKlcvSxxGmWsEKs6EsA6FDBpVqvDZuRR/7UJ7rz4F7JTQmIMdRaF7U9RiS9HOktj23D6ead7gEBDeV2LW+SG6TNpNEZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8572C116B1;
+	Fri, 28 Jun 2024 17:56:33 +0000 (UTC)
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Marc Zyngier <maz@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	linux-acpi@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-pm@vger.kernel.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	loongarch@lists.linux.dev,
+	x86@kernel.org,
+	Russell King <linux@armlinux.org.uk>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Miguel Luis <miguel.luis@oracle.com>,
+	James Morse <james.morse@arm.com>,
+	Salil Mehta <salil.mehta@huawei.com>,
+	Jean-Philippe Brucker <jean-philippe@linaro.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	linuxarm@huawei.com,
+	justin.he@arm.com,
+	jianyong.wu@arm.com
+Subject: Re: [PATCH v10 00/19] ACPI/arm64: add support for virtual cpu hotplug
+Date: Fri, 28 Jun 2024 18:56:31 +0100
+Message-Id: <171959723432.44645.7883276197359651212.b4-ty@arm.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240529133446.28446-1-Jonathan.Cameron@huawei.com>
+References: <20240529133446.28446-1-Jonathan.Cameron@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Reviewed-by: Lyude Paul <lyude@redhat.com>
+On Wed, 29 May 2024 14:34:27 +0100, Jonathan Cameron wrote:
+> v10:
+> - Make acpi_processor_set_per_cpu() return 0 / error rather than bool
+>   to simplify error handling at the call sites.
+>   (Thanks to both Rafael and Gavin who commented on this)
+> - Gather tags.
+> - Rebase on v6.10-rc1
+> 
+> [...]
 
-Will push this upstream in just a moment, thanks!
+Applied to arm64 (for-next/vcpu-hotplug), thanks! If nothing falls
+apart, it should end up in mainline for 6.11.
 
-On Thu, 2024-06-27 at 10:27 +0800, Ma Ke wrote:
-> In nouveau_connector_get_modes(), the return value of
-> drm_mode_duplicate()
-> is assigned to mode, which will lead to a possible NULL pointer
-> dereference on failure of drm_mode_duplicate(). Add a check to avoid
-> npd.
->=20
-> Fixes: 6ee738610f41 ("drm/nouveau: Add DRM driver for NVIDIA GPUs")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
-> Changes in v2:
-> - modified the patch according to suggestions.
-> ---
-> =C2=A0drivers/gpu/drm/nouveau/nouveau_connector.c | 3 +++
-> =C2=A01 file changed, 3 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.c
-> b/drivers/gpu/drm/nouveau/nouveau_connector.c
-> index 856b3ef5edb8..0c71d761d378 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_connector.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
-> @@ -1001,6 +1001,9 @@ nouveau_connector_get_modes(struct
-> drm_connector *connector)
-> =C2=A0		struct drm_display_mode *mode;
-> =C2=A0
-> =C2=A0		mode =3D drm_mode_duplicate(dev, nv_connector-
-> >native_mode);
-> +		if (!mode)
-> +			return 0;
-> +
-> =C2=A0		drm_mode_probed_add(connector, mode);
-> =C2=A0		ret =3D 1;
-> =C2=A0	}
+Thomas, the GICv3 patches have been acked by Marc but they are missing
+your ack. If you want it added, I can refresh the series in the next day
+or so, otherwise the branch should remain stable. Thanks.
 
---=20
-Cheers,
- Lyude Paul (she/her)
- Software Engineer at Red Hat
+[01/19] ACPI: processor: Simplify initial onlining to use same path for cold and hotplug
+        https://git.kernel.org/arm64/c/c1385c1f0ba3
+[02/19] cpu: Do not warn on arch_register_cpu() returning -EPROBE_DEFER
+        https://git.kernel.org/arm64/c/d830ef3ac569
+[03/19] ACPI: processor: Drop duplicated check on _STA (enabled + present)
+        https://git.kernel.org/arm64/c/157080f03c7a
+[04/19] ACPI: processor: Return an error if acpi_processor_get_info() fails in processor_add()
+        https://git.kernel.org/arm64/c/fadf231f0a06
+[05/19] ACPI: processor: Fix memory leaks in error paths of processor_add()
+        https://git.kernel.org/arm64/c/47ec9b417ed9
+[06/19] ACPI: processor: Move checks and availability of acpi_processor earlier
+        https://git.kernel.org/arm64/c/cd9239660b8c
+[07/19] ACPI: processor: Add acpi_get_processor_handle() helper
+        https://git.kernel.org/arm64/c/36b921637e90
+[08/19] ACPI: processor: Register deferred CPUs from acpi_processor_get_info()
+        https://git.kernel.org/arm64/c/b398a91decd9
+[09/19] ACPI: scan: switch to flags for acpi_scan_check_and_detach()
+        https://git.kernel.org/arm64/c/1859a671bdb9
+[10/19] ACPI: Add post_eject to struct acpi_scan_handler for cpu hotplug
+        https://git.kernel.org/arm64/c/3b9d0a78aeda
+[11/19] arm64: acpi: Move get_cpu_for_acpi_id() to a header
+        https://git.kernel.org/arm64/c/8d34b6f17b9a
+[12/19] arm64: acpi: Harden get_cpu_for_acpi_id() against missing CPU entry
+        https://git.kernel.org/arm64/c/2488444274c7
+[13/19] irqchip/gic-v3: Don't return errors from gic_acpi_match_gicc()
+        https://git.kernel.org/arm64/c/fa2dabe57220
+[14/19] irqchip/gic-v3: Add support for ACPI's disabled but 'online capable' CPUs
+        https://git.kernel.org/arm64/c/d633da5d3ab1
+[15/19] arm64: psci: Ignore DENIED CPUs
+        https://git.kernel.org/arm64/c/643e12da4a49
+[16/19] arm64: arch_register_cpu() variant to check if an ACPI handle is now available.
+        https://git.kernel.org/arm64/c/eba4675008a6
+[17/19] arm64: Kconfig: Enable hotplug CPU on arm64 if ACPI_PROCESSOR is enabled.
+        https://git.kernel.org/arm64/c/9d0873892f4d
+[18/19] arm64: document virtual CPU hotplug's expectations
+        https://git.kernel.org/arm64/c/828ce929d1c3
+[19/19] cpumask: Add enabled cpumask for present CPUs that can be brought online
+        https://git.kernel.org/arm64/c/4e1a7df45480
+
+-- 
+Catalin
 
 
