@@ -1,207 +1,145 @@
-Return-Path: <linux-kernel+bounces-234291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F1CF91C4BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:25:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 639A791C4C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:25:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 365061C20FC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:25:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EB041F2369E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:25:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19561CB338;
-	Fri, 28 Jun 2024 17:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6B81CCCC3;
+	Fri, 28 Jun 2024 17:25:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fahcjlzO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GVgXdC7E"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF010155756;
-	Fri, 28 Jun 2024 17:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A841CCCB0;
+	Fri, 28 Jun 2024 17:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719595501; cv=none; b=mQW0rteXmTUjgEHlCD5c1ZMCbfXOc6gdcI3hVHoSLtvWSWN3uldBK/y/Yra9O2EA8JfFjrHcFs7BoPQWbDO6CPdyL87FYEKxN9TKAPiD/ubwPY3I+5LqZpNsenBxDK6uoat6vBIHRiIXDMTuiwUrkNFF6TVSvH4MgY13MSXmj6A=
+	t=1719595521; cv=none; b=lyi+JErPZp/4wilRWKJFtYBWQambhwTkak3MjYKW7Xd51peJGc9tIWAS2mYNyaqAeNmTX9XkdSoqh+yALnZ34TZxMK5OYVr2IhP/rY1PSl/UkrU7sbdAJHSQsDR70VClMANxWIyjO1lz84qFC66LrGWIxfDdIKjJXWzvLhG3AeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719595501; c=relaxed/simple;
-	bh=AKDp42mRsUBja/ZLr+8Y1Iqms9ORd+ytnrDKdKS7MIg=;
+	s=arc-20240116; t=1719595521; c=relaxed/simple;
+	bh=x6j73uoCRrZ14yA3p55yPP6y7FL+Uk8sLbq29Ko5E/4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GPLxyw92keeYB2o2T6jUFJgeB0Seuxa4qp1nAZOAAeD271H/sviyds0py5lg1ZiOf56vMwGVmpYiyU4GmrRLb0h0Nnxzfbvptf87lWVBbsoTcf/H/31aJSQ24e/eYb8xy6PWe9klI5T3dgbOOpB6KZS1UHRlBKi241SyXnYpv5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fahcjlzO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60717C116B1;
-	Fri, 28 Jun 2024 17:25:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719595501;
-	bh=AKDp42mRsUBja/ZLr+8Y1Iqms9ORd+ytnrDKdKS7MIg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fahcjlzO7Dqk88dt4n1sOJ3BAs41JLixAADOHyJdH1tdvF4vPVb70vNM2lEYg82EX
-	 lUIB9ziaAEx23iFz/0dMlDSxHLQrQ+7vVGXIZxV+7ughBdShqrnkAqExIeAznTNTyf
-	 f1jAseVHD4vNp3CCYuUhvJGVzMsl7zf7s4Nssmo3m6oZxYkZ900Wuyw8KAgYiV+X75
-	 JTlTzKlbnwage8O2OokM5LfGCbiICwrSKlGqgGTc4jxXnI0/S6h9LWxg1OfmVQxAgH
-	 X7Xm4NPthPo71OYampk8m6uAJq1TeR3vZrzMrdabHkJ6Yu6hwrHKNqznf99H1YZkKW
-	 3pq/u56GHHRpQ==
-Date: Fri, 28 Jun 2024 10:24:58 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	James Clark <james.clark@arm.com>,
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Nick Terrell <terrelln@fb.com>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Song Liu <song@kernel.org>,
-	Ilkka Koskinen <ilkka@os.amperecomputing.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Yanteng Si <siyanteng@loongson.cn>,
-	Sun Haiyong <sunhaiyong@loongson.cn>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 00/27] Constify tool pointers
-Message-ID: <Zn7x6u7cedoFIHSi@google.com>
-References: <20240626203630.1194748-1-irogers@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HedZ2xHMs36f7H2YZ4FWRqPi96fp4JFIzYQsQxwXacdvC+JqO7jzVupvYGt7uvkM6OsQlwGVyxvWUZF4fhsW5rpO983w2K5B9lwwRQgtb4LElIMzW9AdCaf1OrNq3U1BABGEN1JLFNNj+jM9u5F+CrM2aaoqdWbAOYRsqgLJ+P8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GVgXdC7E; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=O7+BgIEUquUKXJpFeq9QGAUW5FT/jrmi5BFL0thD5sA=; b=GVgXdC7EJuEzd74wgwyZ5FwRom
+	dzWhaI0TFTg/RWPZ+R3b6EEsG3B3UforTugwa1SO0oraiF/+YqoUFOOYopUs3BGleJffU1gcXDGGn
+	VQIniY7lH6eBBxlrPo8sYWNOmwmZlNy+iI9jeWIo2yoPeOQbKviosSx2+sYxMe0QgxLRXW4PrXlQ/
+	B0IzjGnrfr/eakrN1gykJWkBssEPEJ8OjcR7bD5UCChFfsnVkE/1jd69G5v687id+7Rf9TtvvG1Cl
+	F9DdDmd0TIIMelYcvmaybgXf6q+1ib4nv0ssa+PI0IxkA51zRo1TmjUBCkfyRSdXXN1tfStoxfgv1
+	vjjZNb2w==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sNFLc-0000000EUqx-0579;
+	Fri, 28 Jun 2024 17:25:20 +0000
+Date: Fri, 28 Jun 2024 10:25:19 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Daniel von Kirschten <danielkirschten@gmail.com>
+Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6.10.0-rc2] kernel/module: avoid panic on loading broken
+ module
+Message-ID: <Zn7x_9BpJLwYSORn@bombadil.infradead.org>
+References: <230772fc-1076-4afb-8f7a-e7c402548c3b@gmail.com>
+ <ZnHm-5oljP8_5dFB@bombadil.infradead.org>
+ <82da9ad9-6a79-4edf-b38f-ef000b68c50a@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240626203630.1194748-1-irogers@google.com>
+In-Reply-To: <82da9ad9-6a79-4edf-b38f-ef000b68c50a@gmail.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-On Wed, Jun 26, 2024 at 01:36:02PM -0700, Ian Rogers wrote:
-> struct perf_tool provides a set of function pointers that are called
-> through when processing perf data. To make filling the pointers less
-> cumbersome, if they are NULL perf_tools__fill_defaults will add
-> default do nothing implementations.
+On Fri, Jun 21, 2024 at 04:05:27PM +0200, Daniel von Kirschten wrote:
+> Am 18.06.2024 um 21:58 schrieb Luis Chamberlain:
+> > On Thu, Jun 06, 2024 at 03:31:49PM +0200, Daniel v. Kirschten wrote:
+> > > If a module is being loaded, and the .gnu.linkonce.this_module section
+> > > in the module's ELF file does not have the WRITE flag, the kernel will
+> > > map the finished module struct of that module as read-only.
+> > > This causes a kernel panic when the struct is written to the first time
+> > > after it has been marked read-only. Currently this happens in
+> > > complete_formation in kernel/module/main.c:2765 when the module's state is
+> > > set to MODULE_STATE_COMING, just after setting up the memory protections.
+> > 
+> > How did you find this issue?
 > 
-> This change refactors struct perf_tool to have an init function that
-> provides the default implementation. The special use of NULL and
-> perf_tools__fill_defaults are removed. As a consequence the tool
-> pointers can then all be made const, which better reflects the
-> behavior a particular perf command would expect of the tool and to
-> some extent can reduce the cognitive load on someone working on a
-> command.
+> In a university course I got the assignment to manually craft a loadable .ko
+> file, given only a regular object file, without using Kbuild. During testing
+> my module files, most of them were simply (correctly) rejected by the kernel
+> with an appropriate error message, but at some point I ran into this exact
+> kernel panic, and investigated it to understand why my module file was
+> invalid.
 
-I thought you actually wanted to make the tool const (rodata) but it
-seems you leave it as is but treat it as const.
+OK, then the commit log should describe that this doesn't fix any known
+real world issue, but rather a custom crafted module without the regular
+module build system.
 
-I'm curious if we can change the event delivery code something like:
-
-  if (tool->func)
-      tool->func(...);
-  else
-      stub_func(...);
-
-Then probably we don't need to touch the tool and make it const.
-Thoughts?
-
-Thanks,
-Namhyung
-
+> > > Down the line, this seems to lead to unpredictable freezes when trying to
+> > > load other modules - I guess this is due to some structures not being
+> > > cleaned up properly, but I didn't investigate this further.
+> > > 
+> > > A check already exists which verifies that .gnu.linkonce.this_module
+> > > is ALLOC. This patch simply adds an analogous check for WRITE.
+> > 
+> > Can you check to ensure our modules generated have a respective check to
+> > ensure this check exists at build time? That would proactively inform
+> > userspace when a built module is not built correctly, and the tool
+> > responsible can be identified.
 > 
-> v2: Remove dummy tool initialization [Adrian] and make zero sized. Add
->     cs-etm fix for address sanitizer build, found necessary when
->     testing dummy tool change.
-> 
-> Ian Rogers (27):
->   perf auxevent: Zero size dummy tool
->   perf cs-etm: Fix address sanitizer dso build failure
->   perf tool: Constify tool pointers
->   perf tool: Move fill defaults into tool.c
->   perf tool: Add perf_tool__init
->   perf kmem: Use perf_tool__init
->   perf buildid-list: Use perf_tool__init
->   perf kvm: Use perf_tool__init
->   perf lock: Use perf_tool__init
->   perf evlist: Use perf_tool__init
->   perf record: Use perf_tool__init
->   perf c2c: Use perf_tool__init
->   perf script: Use perf_tool__init
->   perf inject: Use perf_tool__init
->   perf report: Use perf_tool__init
->   perf stat: Use perf_tool__init
->   perf annotate: Use perf_tool__init
->   perf sched: Use perf_tool__init
->   perf mem: Use perf_tool__init
->   perf timechart: Use perf_tool__init
->   perf diff: Use perf_tool__init
->   perf data convert json: Use perf_tool__init
->   perf data convert ctf: Use perf_tool__init
->   perf test event_update: Ensure tools is initialized
->   perf kwork: Use perf_tool__init
->   perf tool: Remove perf_tool__fill_defaults
->   perf session: Constify tool
-> 
->  tools/perf/arch/x86/util/event.c    |   4 +-
->  tools/perf/bench/synthesize.c       |   2 +-
->  tools/perf/builtin-annotate.c       |  44 ++--
->  tools/perf/builtin-buildid-list.c   |  10 +
->  tools/perf/builtin-c2c.c            |  33 ++-
->  tools/perf/builtin-diff.c           |  30 ++-
->  tools/perf/builtin-evlist.c         |  10 +-
->  tools/perf/builtin-inject.c         | 159 +++++++------
->  tools/perf/builtin-kmem.c           |  20 +-
->  tools/perf/builtin-kvm.c            |  19 +-
->  tools/perf/builtin-kwork.c          |  33 ++-
->  tools/perf/builtin-lock.c           |  41 ++--
->  tools/perf/builtin-mem.c            |  37 +--
->  tools/perf/builtin-record.c         |  47 ++--
->  tools/perf/builtin-report.c         |  67 +++---
->  tools/perf/builtin-sched.c          |  50 ++--
->  tools/perf/builtin-script.c         | 106 ++++-----
->  tools/perf/builtin-stat.c           |  26 +--
->  tools/perf/builtin-timechart.c      |  25 +-
->  tools/perf/builtin-top.c            |   2 +-
->  tools/perf/builtin-trace.c          |   4 +-
->  tools/perf/tests/cpumap.c           |   6 +-
->  tools/perf/tests/dlfilter-test.c    |   2 +-
->  tools/perf/tests/dwarf-unwind.c     |   2 +-
->  tools/perf/tests/event_update.c     |   9 +-
->  tools/perf/tests/stat.c             |   6 +-
->  tools/perf/tests/thread-map.c       |   2 +-
->  tools/perf/util/Build               |   1 +
->  tools/perf/util/arm-spe.c           |  14 +-
->  tools/perf/util/auxtrace.c          |  12 +-
->  tools/perf/util/auxtrace.h          |  20 +-
->  tools/perf/util/bpf-event.c         |   4 +-
->  tools/perf/util/build-id.c          |  34 +--
->  tools/perf/util/build-id.h          |   8 +-
->  tools/perf/util/cs-etm.c            |  24 +-
->  tools/perf/util/data-convert-bt.c   |  34 ++-
->  tools/perf/util/data-convert-json.c |  47 ++--
->  tools/perf/util/dso.h               |  10 +
->  tools/perf/util/event.c             |  54 +++--
->  tools/perf/util/event.h             |  38 ++--
->  tools/perf/util/header.c            |   6 +-
->  tools/perf/util/header.h            |   4 +-
->  tools/perf/util/hisi-ptt.c          |   6 +-
->  tools/perf/util/intel-bts.c         |  14 +-
->  tools/perf/util/intel-pt.c          |  15 +-
->  tools/perf/util/jitdump.c           |   4 +-
->  tools/perf/util/s390-cpumsf.c       |  11 +-
->  tools/perf/util/session.c           | 342 ++--------------------------
->  tools/perf/util/session.h           |   6 +-
->  tools/perf/util/synthetic-events.c  |  80 +++----
->  tools/perf/util/synthetic-events.h  |  70 +++---
->  tools/perf/util/tool.c              | 294 ++++++++++++++++++++++++
->  tools/perf/util/tool.h              |  18 +-
->  tools/perf/util/tsc.c               |   2 +-
->  54 files changed, 967 insertions(+), 1001 deletions(-)
->  create mode 100644 tools/perf/util/tool.c
-> 
-> -- 
-> 2.45.2.741.gdbec12cfda-goog
-> 
+> See above - I don't think it's possible to create such a broken module file
+> with any of "official" tools.
+
+That should be clearly stated on the commit log.
+
+> I haven't looked too deeply into how Kbuild
+> actually builds modules, but as far as I know, the user doesn't even come
+> into contact with this_module w
+
+Consider that a next level university assignment and is more useful to the world
+than this debug message. Because above you suggest "I don't think", go
+out and now be sure.
+
+> hen using the regular toolchain, because
+> Kbuild is responsible for creating the .this_module section. And Kbuild of
+> course creates it with the correct flags. So if I understand correctly,
+
+...
+
+> this
+> problem can only occur when the module was built by some external tooling
+> (or manually, in my case).
+
+Who would create custom modules without the Linux kernel module build
+system, and what uses does that provide? It seems you are proving why
+this would be terribly silly thing to do.
+
+Now, the *value* your change has is it can prevent a crash in case of a
+corrupted module, which *can* occur, consider an odd filesystem
+live corruption, at least this would be caught at module load attempt
+and not crash. That's worth committing for this reason but your commit
+log really needs much more clarity. Why? Because stupid bots want to
+assign stupid CVEs for anything that seems like a security issue and
+this could escalate to such type of things. Providing clarity helps
+system integrators decide if they want to backport this sort of patch.
+Providing clarify on the chances of this happening and how we think it
+can happen helps a lot.
+
+If you want to be more proactive, try to enhance userspace kmod modprobe
+so that this is also verified.
+
+  Luis
 
