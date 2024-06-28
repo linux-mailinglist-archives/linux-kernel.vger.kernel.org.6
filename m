@@ -1,56 +1,62 @@
-Return-Path: <linux-kernel+bounces-233951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4D1391BFED
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:48:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FAB191BFF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:52:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FE9728220D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 13:48:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15A43B21A33
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 13:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE7E1BE872;
-	Fri, 28 Jun 2024 13:48:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857ED1BE851;
+	Fri, 28 Jun 2024 13:52:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cP8fNepE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XtfOJMUq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604341BE852;
-	Fri, 28 Jun 2024 13:48:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C473B1E89A;
+	Fri, 28 Jun 2024 13:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719582490; cv=none; b=DhNcYmIfeMwC+zdL1L63L0no2fhApxupxc3paRUHzhd0QLhY7ltOMkdlUtrtcMCTJ81CNCsvnbeAUddirTPa6CZXvSKwo8wI26ZSFBRWEeaRaM4GCYETfFMeszGvuYY/EJsqjToX6HnT46XQ9ZTSNphmx6PtpWNtgoi3TU+ivYs=
+	t=1719582761; cv=none; b=HVP5UgCF8LeJYHIjibEYiByYp2UNqnwPbjvt9cralxYM3NiVan/Ac69xK+R1waqcQssA+trd7AEhmiwpYrP4g28vzJcBvq9FwhNSBSSIz9+O9t1gL76PeENnEiFST6FjpQGus1CSukvja3mBMiFLU5e9kJ2olnFgyPJky4MGnNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719582490; c=relaxed/simple;
-	bh=51p8tLOllbBPP6+2ZYdUf1YIHJ3vRaAuOQq31kR6V+o=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Xg2aUujoT8lwJkr6UFM4EIMTpDhWn96TPSn+xEqLltXycmPZPzIE8QILu/tt1zVloYao8+eR67hhwtLVm03jr17tYlbPM3Uos9z1QnvKWZyC4Dj3FCRoe1zf4u+RMreQCroHdhVg0VjXg/10uAarCLwuUcbBhX1ktlh9GZEa5NY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cP8fNepE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EF6DC2BBFC;
-	Fri, 28 Jun 2024 13:48:06 +0000 (UTC)
+	s=arc-20240116; t=1719582761; c=relaxed/simple;
+	bh=QrLD6NwYv62ULzfSXLfedCtj42u+DCBUSMv9l6b6uUo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s8LB24qd2BS5kPuq6TTBviiE8jtB1ibq9iWY+QzKUGlFo6ZNdNyMAY0csI+J6B8Kci7jAW8HdJYtJXm476koYPSPiNcpcaMC0YQ4Ww/Bj8u+ANAYD2AVZOja4JqVsMvNoy+LNipoje4xw/oUC/Ie7hurOAasntY7m1w1wrlycgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XtfOJMUq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70813C116B1;
+	Fri, 28 Jun 2024 13:52:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719582489;
-	bh=51p8tLOllbBPP6+2ZYdUf1YIHJ3vRaAuOQq31kR6V+o=;
-	h=Date:From:To:Cc:Subject:From;
-	b=cP8fNepExjgTBPXi3I35TKygQl32c/NmA20DiQEymrpHVmncNobAcDU1SUpmx87cU
-	 983+ypDG8wb5grlrMkgtnSfO8dT91pxdgKVl3E7ZHl+7kvOlFUcqV42EW/p5aUocca
-	 jKr2CC/Ojb/Ladt9/UqtyRmSPX0GNZay5H0j7BRLB/xFPPythoqlxYk6rxydunKmYb
-	 12FwwgwxKUxRdK82UqRUXV5zuY9ow9IpALAXsyYCDikhJMe+kJ4jHTB2hF7T7yA6Yd
-	 L+/GwzSGAvrq1M4YFz4Yw/GNEZLlNyYepvqmVLQNFs7HjXG8SrohFES/sxROS7kgdP
-	 R+tu9jUHTnfrw==
-Date: Fri, 28 Jun 2024 14:48:03 +0100
+	s=k20201202; t=1719582761;
+	bh=QrLD6NwYv62ULzfSXLfedCtj42u+DCBUSMv9l6b6uUo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XtfOJMUq8TQHjHnw4nZkDZKeevRdRyc7lZG/YwrPWvw07lRf0zvt6+44Wt3KPbXNA
+	 n43QPP7mlojZHl4wrk1mopAs7SWSEiUW/h0XKafYtTZreVjza0S+vajiN8f7Xx/Ch4
+	 ZsxoUQdik6o9bz83SE4uVZ/+HoOK50El9Yd8vkFtQQtam3UYOjrgC4fXP/Y9F3d92U
+	 TzeBgMpxjxlAS1OoELcBVzpzULPhXEyVwYcPX2rKXE0wD8qAdCjoNYdXyIRgBDMpN/
+	 RLRMBpN7pY13qPuV4dpLrsu27Fy/0tY28GnNGb4FyyGrhh1owFEMYltgl92pe/2PHv
+	 EqaYPgNJ2LIKA==
+Date: Fri, 28 Jun 2024 14:52:36 +0100
 From: Mark Brown <broonie@kernel.org>
-To: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul@pwsan.com>
-Cc: Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Samuel Holland <samuel.holland@sifive.com>
-Subject: linux-next: manual merge of the risc-v tree with the risc-v-fixes
- tree
-Message-ID: <Zn6_EyxJmwD82JX1@sirena.org.uk>
+To: Witold Sadowski <wsadowski@marvell.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"pthombar@cadence.com" <pthombar@cadence.com>
+Subject: Re: [EXTERNAL] Re: [PATCH v9 4/9] spi: cadence: Add Marvell SDMA
+ operations
+Message-ID: <f3fd9ac0-3bcb-4281-94fa-cadfdc2b26af@sirena.org.uk>
+References: <20240619141716.1785467-1-wsadowski@marvell.com>
+ <20240619141716.1785467-5-wsadowski@marvell.com>
+ <67123003-9987-492f-b9ab-718e5dab0acc@sirena.org.uk>
+ <CO6PR18MB40981FD7DB1DA13E851F9EEBB0D02@CO6PR18MB4098.namprd18.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,86 +64,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="XM8fDG3yiU/xHRk7"
+	protocol="application/pgp-signature"; boundary="+/hGhQrEAiEQUTFJ"
 Content-Disposition: inline
+In-Reply-To: <CO6PR18MB40981FD7DB1DA13E851F9EEBB0D02@CO6PR18MB4098.namprd18.prod.outlook.com>
+X-Cookie: divorce, n:
 
 
---XM8fDG3yiU/xHRk7
+--+/hGhQrEAiEQUTFJ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Fri, Jun 28, 2024 at 01:45:13PM +0000, Witold Sadowski wrote:
+> Hi Mark
 
-Today's linux-next merge of the risc-v tree got a conflict in:
+> > > +	while (len) {
+> > > +		tmp_buf = readq(addr);
+> > > +		memcpy(buf, &tmp_buf, len > 8 ? 8 : len);
+> > > +		len = len > 8 ? len - 8 : 0;
+> > > +		buf += 8;
+> > > +	}
+> > > +}
 
-  arch/riscv/kernel/patch.c
+> > Wouldn't it be more efficient and readable to only do the memcpy() for the
+> > trailing bytes and just do this memcpy() for the final word?
 
-between commit:
+> The whole problem is with SDMA end - addr in that case. If code will try to
+> Read it in non 64b mode, all remaining bits, will be lost.
+> For example - doing 1B read on that register, will return 1B, but SDMA will
+> transfer 8B, dropping remaining 7B.
+> I have tried memcpy approach, and it was not stable.
 
-  edf2d546bfd6f ("riscv: patch: Flush the icache right after patching to av=
-oid illegal insns")
+That's not what I'm suggesting, like I said above I'm suggesting to
+*only* do the memcpy() for the trailing word.
 
-=66rom the risc-v-fixes tree and commit:
-
-  47742484ee162 ("riscv: Remove extra variable in patch_text_nosync()")
-
-=66rom the risc-v tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc arch/riscv/kernel/patch.c
-index ab03732d06c46,5b3f6406e8c44..0000000000000
---- a/arch/riscv/kernel/patch.c
-+++ b/arch/riscv/kernel/patch.c
-@@@ -200,10 -186,11 +202,9 @@@ NOKPROBE_SYMBOL(patch_insn_set)
- =20
-  int patch_text_set_nosync(void *addr, u8 c, size_t len)
-  {
-- 	u32 *tp =3D addr;
-  	int ret;
- =20
-- 	ret =3D patch_insn_set(tp, c, len);
-+ 	ret =3D patch_insn_set(addr, c, len);
- -	if (!ret)
- -		flush_icache_range((uintptr_t)addr, (uintptr_t)addr + len);
- =20
-  	return ret;
-  }
-@@@ -232,10 -222,11 +236,9 @@@ NOKPROBE_SYMBOL(patch_insn_write)
- =20
-  int patch_text_nosync(void *addr, const void *insns, size_t len)
-  {
-- 	u32 *tp =3D addr;
-  	int ret;
- =20
-- 	ret =3D patch_insn_write(tp, insns, len);
-+ 	ret =3D patch_insn_write(addr, insns, len);
- -	if (!ret)
- -		flush_icache_range((uintptr_t)addr, (uintptr_t)addr + len);
- =20
-  	return ret;
-  }
-
---XM8fDG3yiU/xHRk7
+--+/hGhQrEAiEQUTFJ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ+vxIACgkQJNaLcl1U
-h9AQkwf9E6WgE4VKrfVrS84zknqc76iNM+/7fR+9Ce1xVlv8Fa0H4k7r4/aMQAfS
-r8HHC1IXV078WwNb8eaAdrtQqnwoox1hYJVCDhZxv1h+NBQizwUFU3y8Mheel9/t
-rnv4xTJzl7dQZlEIyd+VQIlxkge9PE/4w8KNYzSzLo0/8FX4K3fEtyt2x/o0b+bB
-E9Pp9ZhF/0HJSW/+JB1nO6pFa4AdOONfBNrWXL9yRUERLVHqFczbliUOJIQLq1Yx
-gTLGSkso+n4usB8acAMs3QfvnpwbUEbZTi8011lVm4CcRM/AkshvZSlXqWPqqlBu
-Gy6WMebWhp7Q0ys8+cq7+6iwvEE9eg==
-=r/BA
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ+wCMACgkQJNaLcl1U
+h9DjuQf+IZSApslS3GD8CqaP8KF4OVAEFw2m2uoMAV2JZqzX5f9OUnE3QwWfQeZU
+qMWPAhOE/gtBGNTB7LzQY5YANWjvUW3LqR4f2Fg9biwd/bHYmwx7bQuLFiUR3r5z
+HNppZkmIMAmFaCRwGez4wYqP2V6E5VY13ylgflrVZCAwn6J7WW5jhPohsVg0N8/X
+SC3QFc2xZiKkJNeAO1npEOwlCM5UGMGR0s3vrEthVQFbkluLL50n/MYCPIoar2Sz
+2i71+q4jEU80QvoUZjhB7qtjcKAsfgTsLp3xI4oJOeU1vyzHCppBfqBnfk7fgbNW
+zo+AmINxWzEgVxrj7E8DeZFie1jTvQ==
+=OP4J
 -----END PGP SIGNATURE-----
 
---XM8fDG3yiU/xHRk7--
+--+/hGhQrEAiEQUTFJ--
 
