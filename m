@@ -1,108 +1,112 @@
-Return-Path: <linux-kernel+bounces-233856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B41E291BE54
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:17:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 227DF91BE5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:17:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 609CD1F24151
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:17:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53C851C2351B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1347158849;
-	Fri, 28 Jun 2024 12:17:04 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB3115748F;
+	Fri, 28 Jun 2024 12:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F2GYbI1n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A0D1DFF7;
-	Fri, 28 Jun 2024 12:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD2B71E898;
+	Fri, 28 Jun 2024 12:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719577024; cv=none; b=ng/pf89OhO9TaAGd1e+XKLtgUzBi5GQa3tWBaQ5CTC9Fwh09b/Kg58zVq+hX3Zr0uoeF54d7kLaSAMuLekAJ+smx6Moxgruy7FAS3Qs1uoPEf3tR4d3nmwCuo4xJqH+Mf3jwPKt8n++mHJulgKYR/F7Ku2NIQc8KaemtgnWY8YU=
+	t=1719577064; cv=none; b=gKXsK60ib6PFcWaK4N7+NTY4nUgYfes5o1tVcO+21MiWbR/ZZ4lw3vY5SD1B2Q4Pr65cnfx5XF2zuN5h7BeYqcRbe7dtinIv5WrglvktpWB/jPuf+Gm5qfG175n0ZoN2R+vLUAGxUY905dY63DFMse1OA0SiNnSVLOwd6vwx25A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719577024; c=relaxed/simple;
-	bh=TFtNw1QJxkB2xWynZD+N88ma/reysTzvF3rsH+P5DIs=;
+	s=arc-20240116; t=1719577064; c=relaxed/simple;
+	bh=lPJqidH6rh/hlQuWyzH6JWqpzeGhRdafVAMs4oSHz4E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aDfCgGJg6Ht1ohNMVJl7mbtJGrUpZqOeoVzKxHLNLeCF0+d7lr8qfCm2su/vxma1BRzDJWLG/pm6iV61TntMNX+MsjShefnpqRo72XNKpASq/DzE4yRmr3tGy5MVI+opRI8xTf+KZ1XHiNRTuwbgJBv7dON3xwQiaEEK3farfZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.97.1)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1sNAWa-000000002oo-2LIO;
-	Fri, 28 Jun 2024 12:16:20 +0000
-Date: Fri, 28 Jun 2024 13:16:13 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>, Jens Axboe <axboe@kernel.dk>,
-	Hauke Mehrtens <hauke@hauke-m.de>, Felix Fietkau <nbd@nbd.name>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Dave Chinner <dchinner@redhat.com>, Jan Kara <jack@suse.cz>,
-	Christian Brauner <brauner@kernel.org>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Li Lingfeng <lilingfeng3@huawei.com>,
-	Christian Heusel <christian@heusel.eu>,
-	Min Li <min15.li@samsung.com>, Avri Altman <avri.altman@wdc.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Hannes Reinecke <hare@suse.de>,
-	Mikko Rapeli <mikko.rapeli@linaro.org>, Yeqi Fu <asuk4.q@gmail.com>,
-	Victor Shih <victor.shih@genesyslogic.com.tw>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Li Zhijian <lizhijian@fujitsu.com>,
-	"Ricardo B. Marliere" <ricardo@marliere.net>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH v4 2/4] block: partitions: populate fwnode
-Message-ID: <Zn6pje4DcAYEk6Kw@makrotopia.org>
-References: <cover.1719520771.git.daniel@makrotopia.org>
- <6acc459a392d562abc58f7e55c6f04dba8073257.1719520771.git.daniel@makrotopia.org>
- <Zn4_rMJVm6cpIEZV@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FoPiKMQn730OVP6ZnhzKtoJbLj5CF7X1+DGfU5g+8fN1lnzM2ZNbuBoA3c4jtATqNynDIEoiLf0HOJgpxZDo9QWnf4ly7PjXq3M7xD4iUvgrB8qpr75Qtw6KOPxFoGKHfgNHhzhhfXatx+zof7uoL0KxlJIHfysXWHsu/pFqpZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F2GYbI1n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0990C116B1;
+	Fri, 28 Jun 2024 12:17:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719577064;
+	bh=lPJqidH6rh/hlQuWyzH6JWqpzeGhRdafVAMs4oSHz4E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F2GYbI1nQ/yRuFUoE73M98TleeFTikguAos6EIvQhQHMmeptwXiBxBZu97ptu8dRC
+	 ZGFHqwpYzKjKOYqx7iszA/QHESDYTXOqKJeVKfmrgIr/bmf992ebpNrUEKX5Ob/QKK
+	 8qIl6Hfov8OaIqS5yN08WC7bUgnrg1xW1KIaH8gLNO1JY+mnqWq1ybNWDvL/jvklWK
+	 qfPM1sfex6KWU4vttFtXTlUje4z6efY3Uo3A82rVXk6W8VGtJg38sJIoA0SFRwOHfH
+	 A7ghmVbjUc/wNQguxLYcQgDWcOidHQNUI/MeP3XEZ+8IBVd2z33vhrCuwUYL+OCb4Y
+	 mSG1TTbQP9vbw==
+Date: Fri, 28 Jun 2024 13:17:38 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: David Lechner <dlechner@baylibre.com>,
+	Martin Sperl <kernel@martin.sperl.org>,
+	David Jander <david@protonic.nl>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-iio@vger.kernel.org,
+	Julien Stephan <jstephan@baylibre.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v2 0/5] spi: add support for pre-cooking messages
+Message-ID: <15effa16-696a-4cc5-941b-375d1bbc31df@sirena.org.uk>
+References: <20240219-mainline-spi-precook-message-v2-0-4a762c6701b9@baylibre.com>
+ <Zn6HMrYG2b7epUxT@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="HJ5q/Xqa/ExsXZ/6"
+Content-Disposition: inline
+In-Reply-To: <Zn6HMrYG2b7epUxT@pengutronix.de>
+X-Cookie: divorce, n:
+
+
+--HJ5q/Xqa/ExsXZ/6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zn4_rMJVm6cpIEZV@infradead.org>
 
-Hi Christoph,
+On Fri, Jun 28, 2024 at 11:49:38AM +0200, Oleksij Rempel wrote:
+> On Mon, Feb 19, 2024 at 04:33:17PM -0600, David Lechner wrote:
 
-thank you for reviewing.
+> I have a regression after this patch set. My system explodes with
+> following trace:
 
-On Thu, Jun 27, 2024 at 09:44:28PM -0700, Christoph Hellwig wrote:
-> On Thu, Jun 27, 2024 at 09:50:39PM +0100, Daniel Golle wrote:
-> > +		/*
-> > +		 * In case 'uuid' is defined in the partitions firmware node require
-> > +		 * partition meta info being present and the specified uuid to match.
-> > +		 */
-> 
-> Overly long lines, which is really annyoing for block comments.
+Not looked at this at all but were you able to try a bisect?
 
-Should I use 80 chars as limit everywhere?
+>  Call trace:
+>   0x64f69bfd319200
+>   spi_async+0xac/0x110
+> 9H0[]6 spi_mux_transfer_one_message+0xb8/0xf0
 
-> 
-> > +		got_uuid = !fwnode_property_read_string(fw_part, "uuid", &uuid);
-> > +		if (got_uuid && (!bdev->bd_meta_info ||
-> > +				 !part_meta_match(uuid, bdev->bd_meta_info->uuid,
-> > +						  PARTITION_META_INFO_UUIDLTH)))
-> 
-> Can we please not use the crazy part_meta stuff for anything new?
-> We should never have merge it, and right now it is at least isolated
-> to the boot time root dev_t partsing, and I'd really prefer to keep it
-> in that corner.
-> 
+Could you run this through addr2line please?
 
-At least up to my understanding there isn't any other to know a
-partitions UUID or volume name.
+--HJ5q/Xqa/ExsXZ/6
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If there is another way to access this information I'd happily make
-use of it, but I couldn't find any.
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ+qeEACgkQJNaLcl1U
+h9DIsQf+LObiaHYQilaxnoCMNm6d/Ie3c221fUY6BfaRAVRU7kBHxpM1/DtRXMzN
+B+OJxgTKmT726SMZoT+JX+fRfF4GWYQhPpM47Ic6leC/uwk8EjhNGT5rHXCUutIN
+58EmKsfMBn2KI/L4avav/nigQE0hsB7EJK8QnjsYEi29TdZVWXEGiRTJRK3VoDTI
+Xd1vroVy2Y2NCVjkW6QvxeSmdYtcoYtH/SUH5omPJTDea3+5kyLnHO2Ufftsluo5
+C0hJrSchIpWOPBU704f0MQ8ZscKPsVEa8Cjuqf2w3qyBcs0ORGWlD7HJdtfP8BGB
+vCyX+tJs4JccE01WgzZGfEQoreK5Jg==
+=vIz6
+-----END PGP SIGNATURE-----
+
+--HJ5q/Xqa/ExsXZ/6--
 
