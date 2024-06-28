@@ -1,76 +1,87 @@
-Return-Path: <linux-kernel+bounces-233345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17E7891B5CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 06:47:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4352191B5CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 06:47:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9ADA284365
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 04:47:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C68B71F2356C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 04:47:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F7733086;
-	Fri, 28 Jun 2024 04:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F593F8F1;
+	Fri, 28 Jun 2024 04:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QxGuB6+3"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F7htaq3d"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF38A224D2;
-	Fri, 28 Jun 2024 04:47:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA1D22612;
+	Fri, 28 Jun 2024 04:47:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719550027; cv=none; b=FzAQpEPBqvCGotY1ZNitlWawUvAtWcJPrzqAkQS7kIm/BAAD9fUhsO6UJUjQr8Af2z/MjXq58lmYkolBu+vyNvYZxi+l+H7wQu/lubTHk4BQdG8qK7G08i3k0v5LroopcuW4PqmYiRr2ErmgImK8fdIpHy4qKlM+xGtdNeAKdEw=
+	t=1719550029; cv=none; b=YP7d5JrOApMI0sJBtsSadsmiFEHCWR8TV3LwSnd1Fh9bl0O0grKhZOH0Ti9iVDRHOoMtoDsQ/F/bn3Jt2GF+ovX4UI7YIM/4MhuiUTUtCPRcE4YtrJlxR7UTaAMLlzN4x5BWeTJPoVcLqhtj7uwjr54JTj7RcMRcjM+lyWU1Qy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719550027; c=relaxed/simple;
-	bh=OyGnYkVTMeo9E0tebP3hGIKqk4ivb+YBb/w6+AvD+AE=;
+	s=arc-20240116; t=1719550029; c=relaxed/simple;
+	bh=hhSOyJfbZRZhIjSoV5AnADdHQZS1XJORgVzByzcsybE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rgBT+Qvw/Y790yi9jbC7VzHKetufeDmmhNhoHWdNKWQNEUOB9kRDJBUrgiSre3QNmmPfZWXBrxShQJGnfnWSlO2k98FmHKxoWTwOjZyT37QmS/1MSxVHng42Nur3lXvAaxfsvV6gW1h9NSIF4gYZ7IoNBuXFxWr5uPfyXy8xzg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QxGuB6+3; arc=none smtp.client-ip=198.175.65.20
+	 Content-Type:Content-Disposition:In-Reply-To; b=StXbEOL/QT75t4LuaPmBypJx4+OEBjXkC7uqhgWGpdtuMWbZsQUQdX/HXOISjEsjpvl+RvnKhMZG7O2gmMsi1mu6xL1fYiCTIhdgKldx5plqYme7ETgmzwtsWur+o/An72bS8duVFRhIBn09Bux7j9RbSnlvt/ikWBMqhD//VKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F7htaq3d; arc=none smtp.client-ip=198.175.65.20
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719550025; x=1751086025;
+  t=1719550027; x=1751086027;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=OyGnYkVTMeo9E0tebP3hGIKqk4ivb+YBb/w6+AvD+AE=;
-  b=QxGuB6+3iT/QVDQTFze7dzyO8oGSjIfpZ1MFVlnAHwJRkCMo0tn5PTQN
-   oOMHwNBYrAWocGzxIay40K/P+p4WBBlpO8Y+0g20Bv/YAuZmbuublCFs1
-   vpdlVggD89v4dWcrqiefUHOvcVZWmlWF7UPX3CAi8UjL4loc7dNa3Q2ck
-   MoJMNrCNyCSS4y9SoYXAuQIyw7i+v0+JqVUkqUgkd/NlkvLoQGzzfPuU1
-   2NeydzlWYKllXBP1eq38gcV6aL+i4eiTvPUZ/60LMBCtr+9JW+gIrIC1Q
-   ZD3kbzD6YbW/+5P/uGayimdBByaHQ9JIRd9MB1qAIsNnzqYjv01fqjcMn
+  bh=hhSOyJfbZRZhIjSoV5AnADdHQZS1XJORgVzByzcsybE=;
+  b=F7htaq3d082niNVfoeAVgjzk0fchFSd5q0HH2QaP+r5kJ6kW2gDjfRpR
+   uO0e97xg+WR0ICipk9A6KFvSwsYHasaC+DOKgR29kt133mgnL3CIqRink
+   q3CeTa//4CavZWEL8Gu4Gw9SiFvs+EUZ2m2+dO9TJ8A/BYUkSgvhiqVkl
+   1JsBWQ7LKq7dqoEfwnJvVclUdFmEFjBK4SYBd9IjYjTDQv3md9p/JatvV
+   X4we4RthwqdNK96glJK7EiS9h1XozrqCjYVAu8r6YZWcuewUb53QFwpKF
+   46856jRG1B+4OHlqUN7gtbhLN6qzYBoRv+J3iRGsQjtsOnzfj3dS+cajD
    g==;
-X-CSE-ConnectionGUID: WLspNH3lTLW3YPHrv2m6PQ==
-X-CSE-MsgGUID: VwlnMdOHS8+R7nMDW/up8Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="16537250"
+X-CSE-ConnectionGUID: gbLliY+eSru6S8c9WWLaxA==
+X-CSE-MsgGUID: FyPUZP6CTZWOT6W681WI0w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="16537255"
 X-IronPort-AV: E=Sophos;i="6.09,168,1716274800"; 
-   d="scan'208";a="16537250"
+   d="scan'208";a="16537255"
 Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 21:47:04 -0700
-X-CSE-ConnectionGUID: ObfNnmmQSqu+01rg6yVn4g==
-X-CSE-MsgGUID: fzcF+uXKR22dAqq/M/L0Cw==
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 21:47:06 -0700
+X-CSE-ConnectionGUID: cCW7NoNoRpib26TeZ6KruA==
+X-CSE-MsgGUID: hLb0L9vtSdmkdnpJYFiLHw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,168,1716274800"; 
-   d="scan'208";a="45254061"
+   d="scan'208";a="45254075"
 Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
   by orviesa007.jf.intel.com with ESMTP; 27 Jun 2024 21:47:02 -0700
 Received: from kbuild by 68891e0c336b with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1sN3Vj-000Gnu-2f;
+	id 1sN3Vj-000Gnw-2k;
 	Fri, 28 Jun 2024 04:46:59 +0000
-Date: Fri, 28 Jun 2024 12:46:03 +0800
+Date: Fri, 28 Jun 2024 12:46:04 +0800
 From: kernel test robot <lkp@intel.com>
-To: David Lin <yu-hao.lin@nxp.com>, linux-wireless@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	briannorris@chromium.org, kvalo@kernel.org, francesco@dolcini.it,
-	tsung-hsien.hsieh@nxp.com, David Lin <yu-hao.lin@nxp.com>
-Subject: Re: [PATCH 42/43] wifi: nxpwifi: add Makefile and Kconfig files for
- nxpwifi compilation
-Message-ID: <202406281235.idQnZtIJ-lkp@intel.com>
-References: <20240621075208.513497-43-yu-hao.lin@nxp.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
+	Daniel Ferguson <danielf@os.amperecomputing.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+	James Morse <james.morse@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Len Brown <lenb@kernel.org>, Shengwei Luo <luoshengwei@huawei.com>,
+	Shiju Jose <shiju.jose@huawei.com>,
+	Shuai Xue <xueshuai@linux.alibaba.com>,
+	Tony Luck <tony.luck@intel.com>, linux-acpi@vger.kernel.org,
+	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: Re: [PATCH 1/2] RAS: ACPI: APEI: add conditional compilation to ARM
+ error report functions
+Message-ID: <202406281232.xTKmzO76-lkp@intel.com>
+References: <95baa46a5e1c88f08e328dbbfbbd01602e092234.1719471257.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,193 +90,93 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240621075208.513497-43-yu-hao.lin@nxp.com>
+In-Reply-To: <95baa46a5e1c88f08e328dbbfbbd01602e092234.1719471257.git.mchehab+huawei@kernel.org>
 
-Hi David,
+Hi Mauro,
 
-kernel test robot noticed the following build warnings:
+kernel test robot noticed the following build errors:
 
-[auto build test WARNING on 238d636723a30311e20fde0a361662e829fe488b]
+[auto build test ERROR on rafael-pm/linux-next]
+[also build test ERROR on rafael-pm/bleeding-edge linus/master v6.10-rc5 next-20240627]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/David-Lin/wifi-nxpwifi-add-11ac-c/20240625-161306
-base:   238d636723a30311e20fde0a361662e829fe488b
-patch link:    https://lore.kernel.org/r/20240621075208.513497-43-yu-hao.lin%40nxp.com
-patch subject: [PATCH 42/43] wifi: nxpwifi: add Makefile and Kconfig files for nxpwifi compilation
-config: i386-randconfig-062-20240628 (https://download.01.org/0day-ci/archive/20240628/202406281235.idQnZtIJ-lkp@intel.com/config)
+url:    https://github.com/intel-lab-lkp/linux/commits/Mauro-Carvalho-Chehab/RAS-ACPI-APEI-add-conditional-compilation-to-ARM-error-report-functions/20240627-225843
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/95baa46a5e1c88f08e328dbbfbbd01602e092234.1719471257.git.mchehab%2Bhuawei%40kernel.org
+patch subject: [PATCH 1/2] RAS: ACPI: APEI: add conditional compilation to ARM error report functions
+config: x86_64-buildonly-randconfig-003-20240628 (https://download.01.org/0day-ci/archive/20240628/202406281232.xTKmzO76-lkp@intel.com/config)
 compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240628/202406281235.idQnZtIJ-lkp@intel.com/reproduce)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240628/202406281232.xTKmzO76-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406281235.idQnZtIJ-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406281232.xTKmzO76-lkp@intel.com/
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/net/wireless/nxp/nxpwifi/uap_cmd.c:541:19: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le16 [usertype] size @@     got unsigned int @@
-   drivers/net/wireless/nxp/nxpwifi/uap_cmd.c:541:19: sparse:     expected restricted __le16 [usertype] size
-   drivers/net/wireless/nxp/nxpwifi/uap_cmd.c:541:19: sparse:     got unsigned int
->> drivers/net/wireless/nxp/nxpwifi/uap_cmd.c:554:29: sparse: sparse: cast from restricted __le16
->> drivers/net/wireless/nxp/nxpwifi/uap_cmd.c:573:19: sparse: sparse: bad assignment (+=) to restricted __le16
-   drivers/net/wireless/nxp/nxpwifi/uap_cmd.c:584:27: sparse: sparse: bad assignment (+=) to restricted __le16
-   drivers/net/wireless/nxp/nxpwifi/uap_cmd.c:596:27: sparse: sparse: bad assignment (+=) to restricted __le16
-   drivers/net/wireless/nxp/nxpwifi/uap_cmd.c:609:27: sparse: sparse: bad assignment (+=) to restricted __le16
-   drivers/net/wireless/nxp/nxpwifi/uap_cmd.c:622:27: sparse: sparse: bad assignment (+=) to restricted __le16
-   drivers/net/wireless/nxp/nxpwifi/uap_cmd.c:640:27: sparse: sparse: bad assignment (+=) to restricted __le16
-   drivers/net/wireless/nxp/nxpwifi/uap_cmd.c:653:27: sparse: sparse: bad assignment (+=) to restricted __le16
-   drivers/net/wireless/nxp/nxpwifi/uap_cmd.c:666:21: sparse: sparse: cast from restricted __le16
+All error/warnings (new ones prefixed by >>):
 
-vim +541 drivers/net/wireless/nxp/nxpwifi/uap_cmd.c
+   drivers/acpi/apei/ghes.c: In function 'ghes_handle_arm_hw_error':
+>> drivers/acpi/apei/ghes.c:575:16: error: 'queued' undeclared (first use in this function)
+     575 |         return queued;
+         |                ^~~~~~
+   drivers/acpi/apei/ghes.c:575:16: note: each undeclared identifier is reported only once for each function it appears in
+>> drivers/acpi/apei/ghes.c:576:1: warning: control reaches end of non-void function [-Wreturn-type]
+     576 | }
+         | ^
 
-309a0039e40257 David Lin 2024-06-21  521  
-309a0039e40257 David Lin 2024-06-21  522  /* This function prepares AP specific add station command.
-309a0039e40257 David Lin 2024-06-21  523   */
-309a0039e40257 David Lin 2024-06-21  524  static int
-309a0039e40257 David Lin 2024-06-21  525  nxpwifi_cmd_uap_add_new_station(struct nxpwifi_private *priv,
-309a0039e40257 David Lin 2024-06-21  526  				struct host_cmd_ds_command *cmd,
-309a0039e40257 David Lin 2024-06-21  527  				u16 cmd_no, void *data_buf,
-309a0039e40257 David Lin 2024-06-21  528  				u16 cmd_action, u32 cmd_type)
-309a0039e40257 David Lin 2024-06-21  529  {
-309a0039e40257 David Lin 2024-06-21  530  	struct host_cmd_ds_add_station *new_sta = &cmd->params.sta_info;
-309a0039e40257 David Lin 2024-06-21  531  	struct nxpwifi_sta_info *add_sta = (struct nxpwifi_sta_info *)data_buf;
-309a0039e40257 David Lin 2024-06-21  532  	struct station_parameters *params = add_sta->params;
-309a0039e40257 David Lin 2024-06-21  533  	struct nxpwifi_sta_node *sta_ptr;
-309a0039e40257 David Lin 2024-06-21  534  	u8 *pos, *cmd_end;
-309a0039e40257 David Lin 2024-06-21  535  	u16 tlv_len;
-309a0039e40257 David Lin 2024-06-21  536  	struct nxpwifi_ie_types_sta_flag *sta_flag;
-309a0039e40257 David Lin 2024-06-21  537  	int i;
-309a0039e40257 David Lin 2024-06-21  538  
-309a0039e40257 David Lin 2024-06-21  539  	cmd->command = cpu_to_le16(HOST_CMD_ADD_NEW_STATION);
-309a0039e40257 David Lin 2024-06-21  540  	new_sta->action = cpu_to_le16(cmd_action);
-309a0039e40257 David Lin 2024-06-21 @541  	cmd->size = sizeof(struct host_cmd_ds_add_station) + S_DS_GEN;
-309a0039e40257 David Lin 2024-06-21  542  
-309a0039e40257 David Lin 2024-06-21  543  	if (cmd_action == HOST_ACT_ADD_STA)
-309a0039e40257 David Lin 2024-06-21  544  		sta_ptr = nxpwifi_add_sta_entry(priv, add_sta->peer_mac);
-309a0039e40257 David Lin 2024-06-21  545  	else
-309a0039e40257 David Lin 2024-06-21  546  		sta_ptr = nxpwifi_get_sta_entry(priv, add_sta->peer_mac);
-309a0039e40257 David Lin 2024-06-21  547  
-309a0039e40257 David Lin 2024-06-21  548  	if (!sta_ptr)
-309a0039e40257 David Lin 2024-06-21  549  		return -1;
-309a0039e40257 David Lin 2024-06-21  550  
-309a0039e40257 David Lin 2024-06-21  551  	memcpy(new_sta->peer_mac, add_sta->peer_mac, ETH_ALEN);
-309a0039e40257 David Lin 2024-06-21  552  
-309a0039e40257 David Lin 2024-06-21  553  	if (cmd_action == HOST_ACT_REMOVE_STA) {
-309a0039e40257 David Lin 2024-06-21 @554  		cmd->size = cpu_to_le16(cmd->size);
-309a0039e40257 David Lin 2024-06-21  555  		return 0;
-309a0039e40257 David Lin 2024-06-21  556  	}
-309a0039e40257 David Lin 2024-06-21  557  
-309a0039e40257 David Lin 2024-06-21  558  	new_sta->aid = cpu_to_le16(params->aid);
-309a0039e40257 David Lin 2024-06-21  559  	new_sta->listen_interval = cpu_to_le32(params->listen_interval);
-309a0039e40257 David Lin 2024-06-21  560  	new_sta->cap_info = cpu_to_le16(params->capability);
-309a0039e40257 David Lin 2024-06-21  561  
-309a0039e40257 David Lin 2024-06-21  562  	pos = new_sta->tlv;
-309a0039e40257 David Lin 2024-06-21  563  	cmd_end = (u8 *)cmd;
-309a0039e40257 David Lin 2024-06-21  564  	cmd_end += (NXPWIFI_SIZE_OF_CMD_BUFFER - 1);
-309a0039e40257 David Lin 2024-06-21  565  
-309a0039e40257 David Lin 2024-06-21  566  	if (params->sta_flags_set & NL80211_STA_FLAG_WME)
-309a0039e40257 David Lin 2024-06-21  567  		sta_ptr->is_wmm_enabled = 1;
-309a0039e40257 David Lin 2024-06-21  568  	sta_flag = (struct nxpwifi_ie_types_sta_flag *)pos;
-309a0039e40257 David Lin 2024-06-21  569  	sta_flag->header.type = cpu_to_le16(TLV_TYPE_UAP_STA_FLAGS);
-309a0039e40257 David Lin 2024-06-21  570  	sta_flag->header.len = cpu_to_le16(sizeof(__le32));
-309a0039e40257 David Lin 2024-06-21  571  	sta_flag->sta_flags = cpu_to_le32(params->sta_flags_set);
-309a0039e40257 David Lin 2024-06-21  572  	pos += sizeof(struct nxpwifi_ie_types_sta_flag);
-309a0039e40257 David Lin 2024-06-21 @573  	cmd->size += sizeof(struct nxpwifi_ie_types_sta_flag);
-309a0039e40257 David Lin 2024-06-21  574  
-309a0039e40257 David Lin 2024-06-21  575  	if (params->ext_capab_len) {
-309a0039e40257 David Lin 2024-06-21  576  		u8 *data = (u8 *)params->ext_capab;
-309a0039e40257 David Lin 2024-06-21  577  		u16 len = params->ext_capab_len;
-309a0039e40257 David Lin 2024-06-21  578  
-309a0039e40257 David Lin 2024-06-21  579  		tlv_len = nxpwifi_append_data_tlv(WLAN_EID_EXT_CAPABILITY,
-309a0039e40257 David Lin 2024-06-21  580  						  data, len, pos, cmd_end);
-309a0039e40257 David Lin 2024-06-21  581  		if (!tlv_len)
-309a0039e40257 David Lin 2024-06-21  582  			return -1;
-309a0039e40257 David Lin 2024-06-21  583  		pos += tlv_len;
-309a0039e40257 David Lin 2024-06-21  584  		cmd->size += tlv_len;
-309a0039e40257 David Lin 2024-06-21  585  	}
-309a0039e40257 David Lin 2024-06-21  586  
-309a0039e40257 David Lin 2024-06-21  587  	if (params->link_sta_params.supported_rates_len) {
-309a0039e40257 David Lin 2024-06-21  588  		u8 *data = (u8 *)params->link_sta_params.supported_rates;
-309a0039e40257 David Lin 2024-06-21  589  		u16 len = params->link_sta_params.supported_rates_len;
-309a0039e40257 David Lin 2024-06-21  590  
-309a0039e40257 David Lin 2024-06-21  591  		tlv_len = nxpwifi_append_data_tlv(WLAN_EID_SUPP_RATES,
-309a0039e40257 David Lin 2024-06-21  592  						  data, len, pos, cmd_end);
-309a0039e40257 David Lin 2024-06-21  593  		if (!tlv_len)
-309a0039e40257 David Lin 2024-06-21  594  			return -1;
-309a0039e40257 David Lin 2024-06-21  595  		pos += tlv_len;
-309a0039e40257 David Lin 2024-06-21  596  		cmd->size += tlv_len;
-309a0039e40257 David Lin 2024-06-21  597  	}
-309a0039e40257 David Lin 2024-06-21  598  
-309a0039e40257 David Lin 2024-06-21  599  	if (params->uapsd_queues || params->max_sp) {
-309a0039e40257 David Lin 2024-06-21  600  		u8 qos_capability = params->uapsd_queues | (params->max_sp << 5);
-309a0039e40257 David Lin 2024-06-21  601  		u8 *data = &qos_capability;
-309a0039e40257 David Lin 2024-06-21  602  		u16 len = sizeof(u8);
-309a0039e40257 David Lin 2024-06-21  603  
-309a0039e40257 David Lin 2024-06-21  604  		tlv_len = nxpwifi_append_data_tlv(WLAN_EID_QOS_CAPA,
-309a0039e40257 David Lin 2024-06-21  605  						  data, len, pos, cmd_end);
-309a0039e40257 David Lin 2024-06-21  606  		if (!tlv_len)
-309a0039e40257 David Lin 2024-06-21  607  			return -1;
-309a0039e40257 David Lin 2024-06-21  608  		pos += tlv_len;
-309a0039e40257 David Lin 2024-06-21  609  		cmd->size += tlv_len;
-309a0039e40257 David Lin 2024-06-21  610  		sta_ptr->is_wmm_enabled = 1;
-309a0039e40257 David Lin 2024-06-21  611  	}
-309a0039e40257 David Lin 2024-06-21  612  
-309a0039e40257 David Lin 2024-06-21  613  	if (params->link_sta_params.ht_capa) {
-309a0039e40257 David Lin 2024-06-21  614  		u8 *data = (u8 *)params->link_sta_params.ht_capa;
-309a0039e40257 David Lin 2024-06-21  615  		u16 len = sizeof(struct ieee80211_ht_cap);
-309a0039e40257 David Lin 2024-06-21  616  
-309a0039e40257 David Lin 2024-06-21  617  		tlv_len = nxpwifi_append_data_tlv(WLAN_EID_HT_CAPABILITY,
-309a0039e40257 David Lin 2024-06-21  618  						  data, len, pos, cmd_end);
-309a0039e40257 David Lin 2024-06-21  619  		if (!tlv_len)
-309a0039e40257 David Lin 2024-06-21  620  			return -1;
-309a0039e40257 David Lin 2024-06-21  621  		pos += tlv_len;
-309a0039e40257 David Lin 2024-06-21  622  		cmd->size += tlv_len;
-309a0039e40257 David Lin 2024-06-21  623  		sta_ptr->is_11n_enabled = 1;
-309a0039e40257 David Lin 2024-06-21  624  		sta_ptr->max_amsdu =
-309a0039e40257 David Lin 2024-06-21  625  			le16_to_cpu(params->link_sta_params.ht_capa->cap_info) &
-309a0039e40257 David Lin 2024-06-21  626  			IEEE80211_HT_CAP_MAX_AMSDU ?
-309a0039e40257 David Lin 2024-06-21  627  			NXPWIFI_TX_DATA_BUF_SIZE_8K :
-309a0039e40257 David Lin 2024-06-21  628  			NXPWIFI_TX_DATA_BUF_SIZE_4K;
-309a0039e40257 David Lin 2024-06-21  629  	}
-309a0039e40257 David Lin 2024-06-21  630  
-309a0039e40257 David Lin 2024-06-21  631  	if (params->link_sta_params.vht_capa) {
-309a0039e40257 David Lin 2024-06-21  632  		u8 *data = (u8 *)params->link_sta_params.vht_capa;
-309a0039e40257 David Lin 2024-06-21  633  		u16 len = sizeof(struct ieee80211_vht_cap);
-309a0039e40257 David Lin 2024-06-21  634  
-309a0039e40257 David Lin 2024-06-21  635  		tlv_len = nxpwifi_append_data_tlv(WLAN_EID_VHT_CAPABILITY,
-309a0039e40257 David Lin 2024-06-21  636  						  data, len, pos, cmd_end);
-309a0039e40257 David Lin 2024-06-21  637  		if (!tlv_len)
-309a0039e40257 David Lin 2024-06-21  638  			return -1;
-309a0039e40257 David Lin 2024-06-21  639  		pos += tlv_len;
-309a0039e40257 David Lin 2024-06-21  640  		cmd->size += tlv_len;
-309a0039e40257 David Lin 2024-06-21  641  		sta_ptr->is_11ac_enabled = 1;
-309a0039e40257 David Lin 2024-06-21  642  	}
-309a0039e40257 David Lin 2024-06-21  643  
-309a0039e40257 David Lin 2024-06-21  644  	if (params->link_sta_params.opmode_notif_used) {
-309a0039e40257 David Lin 2024-06-21  645  		u8 *data = &params->link_sta_params.opmode_notif;
-309a0039e40257 David Lin 2024-06-21  646  		u16 len = sizeof(u8);
-309a0039e40257 David Lin 2024-06-21  647  
-309a0039e40257 David Lin 2024-06-21  648  		tlv_len = nxpwifi_append_data_tlv(WLAN_EID_OPMODE_NOTIF,
-309a0039e40257 David Lin 2024-06-21  649  						  data, len, pos, cmd_end);
-309a0039e40257 David Lin 2024-06-21  650  		if (!tlv_len)
-309a0039e40257 David Lin 2024-06-21  651  			return -1;
-309a0039e40257 David Lin 2024-06-21  652  		pos += tlv_len;
-309a0039e40257 David Lin 2024-06-21  653  		cmd->size += tlv_len;
-309a0039e40257 David Lin 2024-06-21  654  	}
-309a0039e40257 David Lin 2024-06-21  655  
-309a0039e40257 David Lin 2024-06-21  656  	for (i = 0; i < MAX_NUM_TID; i++) {
-309a0039e40257 David Lin 2024-06-21  657  		if (sta_ptr->is_11n_enabled)
-309a0039e40257 David Lin 2024-06-21  658  			sta_ptr->ampdu_sta[i] =
-309a0039e40257 David Lin 2024-06-21  659  				      priv->aggr_prio_tbl[i].ampdu_user;
-309a0039e40257 David Lin 2024-06-21  660  		else
-309a0039e40257 David Lin 2024-06-21  661  			sta_ptr->ampdu_sta[i] = BA_STREAM_NOT_ALLOWED;
-309a0039e40257 David Lin 2024-06-21  662  	}
-309a0039e40257 David Lin 2024-06-21  663  
-309a0039e40257 David Lin 2024-06-21  664  	memset(sta_ptr->rx_seq, 0xff, sizeof(sta_ptr->rx_seq));
-309a0039e40257 David Lin 2024-06-21  665  
-309a0039e40257 David Lin 2024-06-21  666  	cmd->size = cpu_to_le16(cmd->size);
-309a0039e40257 David Lin 2024-06-21  667  
-309a0039e40257 David Lin 2024-06-21  668  	return 0;
-309a0039e40257 David Lin 2024-06-21  669  }
-309a0039e40257 David Lin 2024-06-21  670  
+
+vim +/queued +575 drivers/acpi/apei/ghes.c
+
+7f17b4a121d0d5 James Morse     2020-05-01  530  
+a70297d2213253 Shuai Xue       2023-12-18  531  static bool ghes_handle_arm_hw_error(struct acpi_hest_generic_data *gdata,
+a70297d2213253 Shuai Xue       2023-12-18  532  				     int sev, bool sync)
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  533  {
+4a485d7f807462 Daniel Ferguson 2024-06-27  534  #if defined(CONFIG_ARM) || defined (CONFIG_ARM64)
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  535  	struct cper_sec_proc_arm *err = acpi_hest_get_payload(gdata);
+a70297d2213253 Shuai Xue       2023-12-18  536  	int flags = sync ? MF_ACTION_REQUIRED : 0;
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  537  	bool queued = false;
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  538  	int sec_sev, i;
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  539  	char *p;
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  540  
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  541  	log_arm_hw_error(err);
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  542  
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  543  	sec_sev = ghes_severity(gdata->error_severity);
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  544  	if (sev != GHES_SEV_RECOVERABLE || sec_sev != GHES_SEV_RECOVERABLE)
+7f17b4a121d0d5 James Morse     2020-05-01  545  		return false;
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  546  
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  547  	p = (char *)(err + 1);
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  548  	for (i = 0; i < err->err_info_num; i++) {
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  549  		struct cper_arm_err_info *err_info = (struct cper_arm_err_info *)p;
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  550  		bool is_cache = (err_info->type == CPER_ARM_CACHE_ERROR);
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  551  		bool has_pa = (err_info->validation_bits & CPER_ARM_INFO_VALID_PHYSICAL_ADDR);
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  552  		const char *error_type = "unknown error";
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  553  
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  554  		/*
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  555  		 * The field (err_info->error_info & BIT(26)) is fixed to set to
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  556  		 * 1 in some old firmware of HiSilicon Kunpeng920. We assume that
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  557  		 * firmware won't mix corrected errors in an uncorrected section,
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  558  		 * and don't filter out 'corrected' error here.
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  559  		 */
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  560  		if (is_cache && has_pa) {
+a70297d2213253 Shuai Xue       2023-12-18  561  			queued = ghes_do_memory_failure(err_info->physical_fault_addr, flags);
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  562  			p += err_info->length;
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  563  			continue;
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  564  		}
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  565  
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  566  		if (err_info->type < ARRAY_SIZE(cper_proc_error_type_strs))
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  567  			error_type = cper_proc_error_type_strs[err_info->type];
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  568  
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  569  		pr_warn_ratelimited(FW_WARN GHES_PFX
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  570  				    "Unhandled processor error type: %s\n",
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  571  				    error_type);
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  572  		p += err_info->length;
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11  573  	}
+4a485d7f807462 Daniel Ferguson 2024-06-27  574  #endif
+ccb5ecdc2ddeaf Xiaofei Tan     2021-06-11 @575  	return queued;
+cf870c70a19444 Naveen N. Rao   2013-07-10 @576  }
+cf870c70a19444 Naveen N. Rao   2013-07-10  577  
 
 -- 
 0-DAY CI Kernel Test Service
