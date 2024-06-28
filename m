@@ -1,130 +1,192 @@
-Return-Path: <linux-kernel+bounces-234488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7021291C74B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:24:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5A8D91C74C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:27:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2797A288026
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:24:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D93C71C24574
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F9C77114;
-	Fri, 28 Jun 2024 20:24:07 +0000 (UTC)
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4741A77114;
+	Fri, 28 Jun 2024 20:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CVq5uRba"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05CA66F2E9
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 20:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E85C46F2E9;
+	Fri, 28 Jun 2024 20:27:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719606247; cv=none; b=eBXesw/52jEmxICb1nQmdWda7+dLH/1MndOpQQgqEJ3QqH1RbdcT9mrkuNk6jowOqu3Cf+1X0QHT40C1Zn4ZsaCl7TVN4v4FRfeDYtUwYYUByHTtvFbOd+gcRVgqDqiVNWLLj0xxsnigbEng8kyx0Pz6YLv3AHv2tT3XIZo5JFk=
+	t=1719606462; cv=none; b=Em5UPCPSlZfXCTAPH95ME+TgZ78xwUbO7XtPpYkbUw+dKuQ2FBg3mWxvGwi5K6hRXVrxGCOdnF/0sGr7QMH3DZdKxeY9inWSBodhKglT/+E2/pzO6wFaIgCc0uU+pd4KXFHwifG9BsXFjMdHsGOVKgnF8XFj9VlJ+ODglKWg7wM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719606247; c=relaxed/simple;
-	bh=LrU/vFZBwQrEY3O4d/bDlnG+nvye4/jK5v7HbWF0d/A=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YSc3He3/qBjPFa+C9SEcYeOapsUzf+vMXAvHnKGtekMCHKGlYpYOWrt0QvZejcr5RmThcisPqX+d6Qxi92DSvL9wNKkwlLH1L/g1xVqO+camN+eHUec6o6/O6ajMSM/UjeloYPIrSWLYZoZ4vPS0JrIE/EHZi3R8BW9BPONjDiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=baylibre.com; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1f9a78c6c5dso7185465ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 13:24:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719606245; x=1720211045;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LrU/vFZBwQrEY3O4d/bDlnG+nvye4/jK5v7HbWF0d/A=;
-        b=Dwx2iPQK/Uq6LkDmfxzmxCD4tiALIjTFKzEwDcHA84fVPMNp3rviy/ZA0FHsg49EQU
-         8d4/1Iu+h+RZ4meEfPFdFnPOk8yg5iIl0tDh/zW22oHoSDbL4Nc++e87ryawjMOu0Lzo
-         ZDpRYVcumyuNzVMPRgaxCJQdNpHvS3i+pjaawgsjzl3QmWJwnV2Ura6uBHe+8alPBOmG
-         yInN7vIxf2Zn21PBsxX42gYmeHper/tQEc26s3x1L0pbdJafkYWIpJuUV4fAXb4uGeX6
-         MqREWv0skToAKxWVUWz+4s0sIC5jDbNGhmJjoI7k93EfIZkSfhfPj+A1BdBEl8aLFoFr
-         P5+A==
-X-Forwarded-Encrypted: i=1; AJvYcCUZ/UsHswFK+HDLiJlPmEL/YjL2hwSZOglmTa+C/oNb0A3ZzAPQizgCnrkTZYnC9FgmUgiWnWJUXv/NKwgmenlp7EZtK0Cfyb4w6cL4
-X-Gm-Message-State: AOJu0YxAyqYBVNGKz8rVwiYbO/QwdjQEgcJfrS2LYNxE1n7WavoDuFBQ
-	MLF+NrYMO/B8SjbiInDrRVbbK9VthwWHv2e/5H/WNwr65r9XrW00Ux0CiiJEfYYFLqIVJ8H8A/E
-	Y
-X-Google-Smtp-Source: AGHT+IGsgsVYu6rWLpCbmby0pBi1fFO3CA/5IHmqHnu0PlXeWkGkqHi0uDn6hd57XrYtAzALVB/XDA==
-X-Received: by 2002:a17:902:e548:b0:1f7:1aff:679e with SMTP id d9443c01a7336-1fa23f49b40mr164375045ad.66.1719606245335;
-        Fri, 28 Jun 2024 13:24:05 -0700 (PDT)
-Received: from localhost (97-126-77-189.tukw.qwest.net. [97.126.77.189])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac1535b5fsm19527145ad.174.2024.06.28.13.24.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 13:24:04 -0700 (PDT)
-From: Kevin Hilman <khilman@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Robert Nelson
- <robertcnelson@gmail.com>, "Andrew F. Davis" <afd@ti.com>, Roger Quadros
- <rogerq@ti.com>
-Cc: Tony Lindgren <tony@atomide.com>, devicetree@vger.kernel.org,
- linux-omap@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, kernel test robot <lkp@intel.com>,
- linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH] ARM: dts: omap am5729-beagleboneai: drop unneeded
- ti,enable-id-detection
-In-Reply-To: <2c71aa2e-2039-4941-b8ed-e7b9dd3d6d3a@linaro.org>
-References: <20240615174904.39012-1-krzysztof.kozlowski@linaro.org>
- <dcd6afee-b17d-4633-af7a-4a5dbf68be94@linaro.org>
- <CAOCHtYh8YucHNwV6+S-3vfHvygs=5_UGVwPt6R+i+qBTc3eOTA@mail.gmail.com>
- <2c71aa2e-2039-4941-b8ed-e7b9dd3d6d3a@linaro.org>
-Date: Fri, 28 Jun 2024 13:24:04 -0700
-Message-ID: <7hcyo0eryz.fsf@baylibre.com>
+	s=arc-20240116; t=1719606462; c=relaxed/simple;
+	bh=Us54NdZBLL9uoG+/Ak/v/dZ5UZ7mtgXS7aFpwxX7P3I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Kf+wS5p8J7lT+kwDEubtddgnBJE5oLDR1FGEyEBOj9fca4BXfax87wHt7WLwaLjOgYecEcK3bV7qIBoL+1qqD2Q4RqZfwI6YxDzKEMTFrrNAcLpZB5Ze2ZwZIjoqTXmOTUazTy3cuaoEQdf9XLVxoHQT40G8FFOA9KKasQPIx0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CVq5uRba; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719606461; x=1751142461;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Us54NdZBLL9uoG+/Ak/v/dZ5UZ7mtgXS7aFpwxX7P3I=;
+  b=CVq5uRbaANbw07D2eeQdbE8b+A2f3mCloKGfuIcJlCYPUkHUeCZ5t9Cg
+   Xy7GlnHUBLNSBoHwpJtgKtr/Buijhk6gWTLNC72FSskrN9SGw12eaGg7B
+   w4cxfQNZoP+QHF3EFSOLoQYeE3yi5JEOmgPbtHIOVnm0oNPBSB8SEtm3Y
+   Ntv/CKD8HpVuRqIvfgFeaySjaGJhHUtC/fCKFdT0Ja8vkrCoZBZY8X5Cg
+   0S+KB4gZUoo81X0Uk0SUQnSTJ6NIO5UibPZ6Ebg1a3XXiRQIn10SH4xgl
+   Pmpedu3EFIv5MdLkDUN0mpbTSjH+FdKMa0mb2G2uFW2/KpbeRmW0XEcuG
+   Q==;
+X-CSE-ConnectionGUID: fSV8cqexSAmREcc1GhC+uA==
+X-CSE-MsgGUID: ss0Fqa7uRjCaue5XA3DhWA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11117"; a="34341887"
+X-IronPort-AV: E=Sophos;i="6.09,170,1716274800"; 
+   d="scan'208";a="34341887"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 13:27:40 -0700
+X-CSE-ConnectionGUID: hHioXxSTRpKKugq5f+EKbQ==
+X-CSE-MsgGUID: GD1zjEu7QIWE0yvvCTHpEg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,170,1716274800"; 
+   d="scan'208";a="49738798"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 13:27:41 -0700
+Received: from [10.212.75.30] (kliang2-mobl1.ccr.corp.intel.com [10.212.75.30])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id BFD6220B5702;
+	Fri, 28 Jun 2024 13:27:38 -0700 (PDT)
+Message-ID: <350e5bf7-23ee-4a7f-8b62-e3d07604cbe1@linux.intel.com>
+Date: Fri, 28 Jun 2024 16:27:37 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf topdown: Correct leader selection with sample_read
+ enabled
+To: Ian Rogers <irogers@google.com>, "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Dapeng Mi <dapeng1.mi@intel.com>
+References: <20240614213908.352840-1-dapeng1.mi@linux.intel.com>
+ <df56c6e1-5d99-4cbe-abd4-772e7ff948af@linux.intel.com>
+ <4f5dbf6f-3805-43b6-867c-2503ccec7c1a@linux.intel.com>
+ <CAP-5=fVYmUvYawOBtUc_-PVzsTQhpOuMx4wxA7bHjwaZejii8Q@mail.gmail.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <CAP-5=fVYmUvYawOBtUc_-PVzsTQhpOuMx4wxA7bHjwaZejii8Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> writes:
 
-> On 26/06/2024 18:48, Robert Nelson wrote:
->> On Wed, Jun 26, 2024 at 6:34=E2=80=AFAM Krzysztof Kozlowski
->> <krzysztof.kozlowski@linaro.org> wrote:
+
+On 2024-06-28 2:28 p.m., Ian Rogers wrote:
+> On Thu, Jun 27, 2024 at 11:17 PM Mi, Dapeng <dapeng1.mi@linux.intel.com> wrote:
+>> On 6/27/2024 11:11 PM, Liang, Kan wrote:
+>>> On 2024-06-14 5:39 p.m., Dapeng Mi wrote:
 >>>
->>> On 15/06/2024 19:49, Krzysztof Kozlowski wrote:
->>>> There is a ti,enable-id-detection property in the Extcon Palmas
->>>> (extcon-palmas), but not in the Extcon USB GPIO binding and driver.
->>>>
->>>> Reported-by: kernel test robot <lkp@intel.com>
->>>> Closes: https://lore.kernel.org/oe-kbuild-all/202406152004.F2fNnorG-lk=
-p@intel.com/
->>>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>
->>> Tony,
->>>
->>> Do you still pick up patches for OMAP? Any comments on this?
->>=20
->> Krzysztof,
->>=20
->> It looks like Tony didn't send his final MAINTAINERS update:
->>=20
->> https://lore.kernel.org/linux-arm-kernel/20240419055249.GE5156@atomide.c=
-om/T/
+>>> Besides, we need a test for the sampling read as well.
+>>> Ian has provided a very good base. Please add a topdown sampling read
+>>> case on top of it as well.
+>>> https://lore.kernel.org/lkml/CAP-5=fUkg-cAXTb+3wbFOQCfdXgpQeZw40XHjfrNFbnBD=NMXg@mail.gmail.com/
+>>
+>> Sure. I would look at it and add a test case.
+> 
+> Thanks Dapeng and thanks Kan too! I wonder if we can do a regular
+> counter and a leader sample counter then compare the counts are
+> reasonably consistent. Something like this:
+> 
+> ```
+> $ perf stat -e instructions perf test -w noploop
+> 
+> Performance counter stats for '/tmp/perf/perf test -w noploop':
+> 
+>    25,779,785,496      instructions
+> 
+>       1.008047696 seconds time elapsed
+> 
+>       1.003754000 seconds user
+>       0.003999000 seconds sys
+> ```
+> 
+> ```
+> cat << "_end_of_file_" > a.py
+> last_count = None
+> 
+> def process_event(param_dict):
+>    if ("ev_name" in param_dict and "sample" in param_dict and
+>        param_dict["ev_name"] == "instructions"):
+>        sample = param_dict["sample"]
+>        if "values" in sample:
+>            global last_count
+>            last_count = sample["values"][1][1]
+> 
+> def trace_end():
+>    global last_count
+>    print(last_count)
+> _end_of_file_
+> $ sudo perf record -o -  -e "{cycles,instructions}:S" perf test -w
+> noploop|perf script -i - -s ./a.py
+> [ perf record: Woken up 2 times to write data ]
+> [ perf record: Captured and wrote 0.459 MB - ]
+> 22195356100
+> ```
+> 
+> I didn't see a simpler way to get count and I don't think it is right.
+
+The perf stat can cover the whole life cycle of a workload. But I think
+the result of perf record can only give the sum from the beginning to
+the last sample.
+There are some differences.
+
+> There's some similar perf script checking of data in
+> tools/perf/tests/shell/test_intel_pt.sh.
 >
-> Oh, thanks for letting me know.
->
->>=20
->> @Andrew F. Davis
->> and @Roger Quadros have you guys set up a git tree for omap patches?
->
-> I will pick up this patch to my DTS cleanups/fixes, but let me know if
-> anyone prefers to take it instead.
 
-As discussed with Tony, I will be starting to manage patches for these
-platforms next month, but I'm happy for you to take this.
+I think the case should be to test the output of the perf script, rather
+than verify the accuracy of an event.
 
-A bit late, since I see you already applied it, but FWIW:
+If so, we may run two same events. They should show the exact same
+results in a sample.
 
-Acked-by: Kevin Hilman <khilman@baylibre.com>
+For example,
 
-Thank you for picking this up.
+perf record  -e "{branches,branches}:Su" -c 1000000 ./perf test -w brstack
+perf script
+perf  752598 349300.123884:    1000002 branches:      7f18676a875a
+do_lookup_x+0x2fa (/usr/lib64/l>
+perf  752598 349300.123884:    1000002 branches:      7f18676a875a
+do_lookup_x+0x2fa (/usr/lib64/l>
+perf  752598 349300.124854:    1000005 branches:      7f18676a90b6
+_dl_lookup_symbol_x+0x56 (/usr/>
+perf  752598 349300.124854:    1000005 branches:      7f18676a90b6
+_dl_lookup_symbol_x+0x56 (/usr/>
+perf  752598 349300.125914:     999998 branches:      7f18676a8556
+do_lookup_x+0xf6 (/usr/lib64/ld>
+perf  752598 349300.125914:     999998 branches:      7f18676a8556
+do_lookup_x+0xf6 (/usr/lib64/ld>
+perf  752598 349300.127401:    1000009 branches:            4c1adf
+brstack_bench+0x15 (/home/kan/o>
+perf  752598 349300.127401:    1000009 branches:            4c1adf
+brstack_bench+0x15 (/home/kan/o>
 
-Kevin
+Thanks,
+Kan
 
-
-
+> Thanks,
+> Ian
+> 
 
