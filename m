@@ -1,143 +1,154 @@
-Return-Path: <linux-kernel+bounces-234038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E4A591C13E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:40:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 154B591C134
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:38:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90BC51C21005
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:40:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCFD01F20FF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:38:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 280D61C007C;
-	Fri, 28 Jun 2024 14:39:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C07541C007F;
+	Fri, 28 Jun 2024 14:38:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mBUKDczh"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SPQWxdGH"
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B551E53A
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 14:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F341E53A;
+	Fri, 28 Jun 2024 14:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719585598; cv=none; b=g0MATWP397LomBzKu7mUWu2a67HdMl/okLgWkOGsq+BX+8CtincrtY20CwnIYGY3t3jf9dI1LFeMCNiq/U+RRtlTBun8xXsdxkZUCYzzrkC1bVTKf4Ens0H3Bu+g32E06eHnm63zP3YdziRwvTSv6pMEBBtkWFJyvGqV4MrgFHQ=
+	t=1719585521; cv=none; b=H88hTUMc9WZdrvHYDoujfZWepCcKS5ryMMvydn6PJ2fUcEwDXGm8vYHYEqe/Kd/kh/ETCZRwq/lmBr7YzzeuwZ0XWKquAwZ/79zOzxy39f5+7UuaQN6bhex0QXECA1Twlxs/eWOtgN52q5INfzD5r2ijY7mXl48qG7/LXT9gZGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719585598; c=relaxed/simple;
-	bh=Zkc0OU91HUSJKg9h2HoiHVtFijVhqu/DfMdfPlf7dRk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M14l+659pER+9iIJevr+ipKR3zv1HghumFT32/B7ovJvMTkK1nJijX8vhir/n48LWokn/tvbwrNR83keS/cZ2tzF7LQcrB+VLoKZy55psyjZkm4hDPd5JxfE2d7kkhp9g6UAldxMukcZvHP318cgGQG/mH5wzGoJ2UVau1PdoMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mBUKDczh; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4217c7eb6b4so5836105e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 07:39:55 -0700 (PDT)
+	s=arc-20240116; t=1719585521; c=relaxed/simple;
+	bh=UnQJTA1Uho8wfMRllPRQMtJTW9ui2+eIhxm9q+jTY9A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=blirdbgRKLQMAIclXHDg1mgt30SPpIJS8njJBR663T1qkBcVD5h/zzNUjWhI9ujqysCY7KfvIO1KBhlrJKE0hkjJt5sB4Ju5c6Hk4f46xt1696UxsugC9h6Q5AhLz27kcWLsqXAfCRzw4XWiqHSLjJeBhJQoW6p+vC0rdseN4I0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SPQWxdGH; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-7f3c878d6d4so27251039f.0;
+        Fri, 28 Jun 2024 07:38:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719585594; x=1720190394; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5fX1MMnIpDBOm77iDLoe1RG1qLzLS5Do9mpyDQwOVT4=;
-        b=mBUKDczhZciHkQUM2cLJ3nUm9wdmNJZKTe8kgmEVTpNbfTXkem+hmQzEJJ41F6/FJd
-         VdrQ/91S1jsYeOQTF5fCUNo6b1eNRAC1QzbAHR7CVK830OiYdWOgzAO3mMdiSEMnTGmw
-         xA5eooNyQ+Oa8KsBzxPVirqfuvVWHOW4RkLAPqFHUliulIEA34P2wbhKR67muIho0OzH
-         3ip3ibF+aDQoGE1k9Q4zg5bxQS/EByXlu54KwT5Vc/53Fly4qUEcSCbtWlBJP5S7vBPp
-         dhk0xgcZW254ijzVynpALLORYjWBYtTaeqzf4CgxIcgkHR3FkWhiHLOndtXDwg02i5rs
-         kxsA==
+        d=gmail.com; s=20230601; t=1719585519; x=1720190319; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VcQyE0yYDNTSkXwDduYitSPJ1KKImtXfpamQ+jJEONA=;
+        b=SPQWxdGHZS7cBj7J+Bjk/jPv8+wLO4TW9877MJ4gr0j7QypcVJQ42KdsXV6TckmKAz
+         n1GbOtofbbOdjo+GwcXnEYc/XUuBtNNQAoTgDtCQzeqJ36GooMBdZ4In/fhrP4Luu+vA
+         IUMzCBH1kQ2xV9e2Lx6I2rkLWQuzckuaD1nvm4M8/Yz1pRXFfmJjx72tYZ9jTxQNmY67
+         Kj6ffmSyevjsTQic5hwiuDZzQJkmwlYs61hy0+yv7KgCh+Mj1JbR4Y4eBAw9Mf+vLBc5
+         jz/Fx5Y4V0ANhOm8mBLtj3cmFok0rNYrAlEokEtyaAjPsSW/jMnbzQv/QCSL2q5obbsH
+         OmwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719585594; x=1720190394;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5fX1MMnIpDBOm77iDLoe1RG1qLzLS5Do9mpyDQwOVT4=;
-        b=U3Wn48f7nDndyb6AtuqCGzdWxjyohDJI/wNCvAfG9c1vqX6nd+nKzr3HtPz+EB2fnV
-         6niJJQ0mFhiCq9V7rYEKAv6xxqoirV9TqYwGJzIdaCHShBauC1ZYfezNP7/mnVeXn81f
-         NYfFzTwSDD4679vpCVMYlkE4J6ZMUo+d9fP8SCQdpePw14U77Sd6U4jSq/nO6zblMpPs
-         hYjRC9i22OMDUU61lJiqW/Q7ugHIzLnkMpWGQXMIWSjM7d6S3FU8xY+LgxHFaFr84pN+
-         NVH6gebuvVIUrBn6oigSxhDsdGHtnfmfLDXoSqtdsMESREFjZUYMfskESntdR6+OAuXW
-         gPeg==
-X-Gm-Message-State: AOJu0Yx4zsrjbq6vj06RlOB/VKlon5h29C7r9BxrisDaUJXmh+XRhQAl
-	48Y+VPts8HideL7NBd8C1tbEgZMgDit9ifQxcKch4zs8CxLlQcXtleBOM8TqEXA=
-X-Google-Smtp-Source: AGHT+IFiwW/g9bMvX363nZWYpupjIfTEXXcoSHzUKGy6GKc+YaQcE+dP2/YqcheNmOHdUbTm/7lcFw==
-X-Received: by 2002:a05:600c:4da1:b0:425:65c5:9af4 with SMTP id 5b1f17b1804b1-42565c59c70mr28348295e9.41.1719585594358;
-        Fri, 28 Jun 2024 07:39:54 -0700 (PDT)
-Received: from [192.168.0.107] ([79.115.63.178])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b061006sm37150835e9.22.2024.06.28.07.39.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Jun 2024 07:39:53 -0700 (PDT)
-Message-ID: <aa4df0e5-bbd4-46f7-8e58-b42a8c909327@linaro.org>
-Date: Fri, 28 Jun 2024 15:39:51 +0100
+        d=1e100.net; s=20230601; t=1719585519; x=1720190319;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VcQyE0yYDNTSkXwDduYitSPJ1KKImtXfpamQ+jJEONA=;
+        b=eBKQNQyw3drzlYA6GDia24sdrCUsKJDx5DPfZLoD8Egr4WHkUqcApwI8J4w08MTsVQ
+         Zk8/Fj49LLGyKObWCUFU2hrtJ9RLhmc3llSknEh14UJ3Ahy2CcYzRvzZPZNBV/XuRJ9X
+         Z+zcn1oFhfHwctQlSjS5C3Fr3B1jfdB3QXN8a2NuWarq9Wu/dYNDVKkmjTV7CjpcnLsQ
+         GNzVL0O7GK1OIJrVoYBkzVBceHMNlKjYXSCRZdBJfULq+r8xSdvoyYbAxz47GvYx9uqv
+         f4gblYkP30Autva6ejiONbjspUdLtVJpBJY/266R/2BqxL0OH3o7jjjnlOjJtaJIkJQc
+         lDYA==
+X-Forwarded-Encrypted: i=1; AJvYcCX93dbdbSqJYEwWrUuWpqLvWl5RTZkZu5AOT7HZpkZQwwQrQ9cUU6t9kMyl/OrXipLfd5JsuskxkL5UuPr63DjzQrRpD0kC0lH5K1LDd9IJ9OZet8KKI+2RpummMMSwBCGpEDwddSqMVOEihEbNFvmLec7OGfMcdZvUxk5nARoccC6QheBkdeQwnOe+VL+XWgdHqNP5VM09tjSCG4nnPh4k/U+h29E0xtMjra9MInbw5FquKxqwEvWVXA==
+X-Gm-Message-State: AOJu0YyC/L5vVDnxivFcWN16UIMk4XFu0N3REVZ5M6JfErYGzXHeUVek
+	FJJJ0e1bIQ1X6Cey2vdu2seIPPqZDo81XeYU5iEkL+aK7GpRQkoa
+X-Google-Smtp-Source: AGHT+IHz9FFo+xEdO4eMyfNJdkl4np8V035GYfOzDC08kq0lJxY+ZuMnFlw/XDfGatIYJ2F8lUlsOg==
+X-Received: by 2002:a05:6602:1602:b0:7f3:d759:8fc2 with SMTP id ca18e2360f4ac-7f3d7599379mr765481339f.17.1719585518489;
+        Fri, 28 Jun 2024 07:38:38 -0700 (PDT)
+Received: from localhost ([2804:30c:96b:f700:cc1d:c0ae:96c9:c934])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-72c6d1f77bcsm1380841a12.79.2024.06.28.07.38.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 07:38:37 -0700 (PDT)
+Date: Fri, 28 Jun 2024 11:40:03 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
+	lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org, nuno.sa@analog.com, corbet@lwn.net,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 7/7] docs: iio: Add documentation for AD4000
+Message-ID: <Zn7LQ8AJo0U1pzN7@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1719351923.git.marcelo.schmitt@analog.com>
+ <e553a7c6ba88b3d8ae2db0963212fdce0919805a.1719351923.git.marcelo.schmitt@analog.com>
+ <55d0cc07-c877-4510-a052-4458ee964615@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] Add generic functions for accessing the SPI-NOR chip.
-To: Erez Geva <erezgeva@nwtime.org>, linux-mtd@lists.infradead.org,
- Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Erez Geva <ErezGeva2@gmail.com>
-References: <20240628140328.279792-1-erezgeva@nwtime.org>
- <20240628140328.279792-2-erezgeva@nwtime.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20240628140328.279792-2-erezgeva@nwtime.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <55d0cc07-c877-4510-a052-4458ee964615@baylibre.com>
 
-Hi, Erez,
-
-On 6/28/24 3:03 PM, Erez Geva wrote:
-> From: Erez Geva <ErezGeva2@gmail.com>
+On 06/26, David Lechner wrote:
+> On 6/25/24 4:55 PM, Marcelo Schmitt wrote:
+> > Document wiring configurations for the AD4000 series of ADCs.
+> > 
+> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> > ---
+> >  Documentation/iio/ad4000.rst | 131 +++++++++++++++++++++++++++++++++++
+> >  Documentation/iio/index.rst  |   1 +
+> >  MAINTAINERS                  |   1 +
+...
+> > +Wiring connections
+> > +------------------
+> > +
+> > +Devices of the AD4000 series can be connected to the SPI host controller in a
+> > +few different modes.
+> > +
+> > +CS mode, 3-wire turbo mode
+> > +^^^^^^^^^^^^^^^^^^^^^^^^^^
 > 
-> Functions:
+> The datasheet also has the same diagram in _Figure 55. CS Mode, 4-Wire Turbo Mode
+> Connection Diagram_. So maybe we should call this "register support mode" or
+> something like that instead of mentioning 3 or 4-wire?
 > 
->  - Send a opcode
+Humm, ADAQ4003 datasheet has the same figure for CS Mode, 4-wire turbo mode
+and CS mode, 4-wire with busy indicator although other datasheets have MOSI
+to SDI in 4-wire turbo as you said. The register read/write functionality
+sections say CNV must be brought low to access the configuration register.
+I'll leave it as it is for now as I have not tested reg access with CNV high.
+We can update this in the future if find out reg access to work in 4-wire mode.
+
+> > +
+> > +Datasheet "3-wire" mode is what most resembles standard SPI connection which,
+> > +for these devices, comprises of connecting the controller CS line to device CNV
+> > +pin and other SPI lines as usual. This configuration is (misleadingly) called
+> > +"CS Mode, 3-Wire Turbo Mode" connection in datasheets.
+> > +NOTE: The datasheet definition of 3-wire mode for the AD4000 series is NOT the
+> > +same of standard spi-3wire mode.
+> > +This is the only connection mode that allows configuration register access but
+> > +it requires the SPI controller to support the ``SPI_MOSI_IDLE_HIGH`` feature.
+> > +
+> > +Omit the ``adi,sdi-pin`` property in device tree to select this mode.
+> > +
+> > +::
+> > +
+> > +                                         +-------------+
+> > +     + ----------------------------------| SDO         |
+> > +     |                                   |             |
+> > +     |               +-------------------| CS          |
+> > +     |               v                   |             |
+> > +     |    +--------------------+         |     HOST    |
+> > +     |    |        CNV         |         |             |
+> > +     +--->| SDI   AD4000   SDO |-------->| SDI         |
+> > +          |        SCK         |         |             |
+> > +          +--------------------+         |             |
+> > +                    ^                    |             |
+> > +                    +--------------------| SCLK        |
+> > +                                         +-------------+
+> > +
 > 
->  - Read a register
+> I think the rest of the explanations are good.
 > 
->  - Write a register
-> 
-
-Please describe your changes. You may want to re-read:
-
-https://www.kernel.org/doc/html/latest/process/submitting-patches.html#submitting-patches-the-essential-guide-to-getting-your-code-into-the-kernel
-
-> Signed-off-by: Erez Geva <ErezGeva2@gmail.com>
-> ---
->  drivers/mtd/spi-nor/core.c | 130 +++++++++++++++++++++++++++----------
->  drivers/mtd/spi-nor/core.h |  27 +-------
->  2 files changed, 99 insertions(+), 58 deletions(-)
-> 
-> diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
-> index 028514c6996f..0f267da339a4 100644
-> --- a/drivers/mtd/spi-nor/core.c
-> +++ b/drivers/mtd/spi-nor/core.c
-> @@ -354,53 +354,134 @@ int spi_nor_write_any_volatile_reg(struct spi_nor *nor, struct spi_mem_op *op,
->  }
->  
->  /**
-> - * spi_nor_write_enable() - Set write enable latch with Write Enable command.
-> + * _nor_send_cmd() - Send instruction without address or data to the chip.
->   * @nor:	pointer to 'struct spi_nor'.
-> + * @opcode:	Command to send
->   *
->   * Return: 0 on success, -errno otherwise.
->   */
-> -int spi_nor_write_enable(struct spi_nor *nor)
-> +static inline int _nor_send_cmd(struct spi_nor *nor, u8 opcode)
-
-and my review stops here. Why did you think it is good to introduce a
-_nor* method and not an spi_nor* one?
-
-I'm not going to review the rest of the patches. Please send a v2 that
-convinces me to spend more than 2 minutes on it.
-
-Cheers,
-ta
 
