@@ -1,83 +1,157 @@
-Return-Path: <linux-kernel+bounces-234610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1FA891C8A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 23:56:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FAB991C8A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 23:56:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C6791F22456
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:56:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3A84B20CA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C351180624;
-	Fri, 28 Jun 2024 21:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF8380BF2;
+	Fri, 28 Jun 2024 21:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="nrVVFn8K"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nm1UqR2X"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A2778C9D
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 21:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C196278C9D
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 21:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719611764; cv=none; b=rUx70+JQ8PG46Z6fAmN7nkHHeenOtuVOaivWh0QbDD26K3TbyB2oq8K6yhsRtCU+lx5rnw6Z9wyTU3CpnhjVUv8CbjL5MrPc7yEsRzzIsCj0u8P3Nu61z97dKMVuEnq5/27T71pE+fWdErYT1KW4hvb299ViTkyU4ZWLFKo7LIw=
+	t=1719611788; cv=none; b=p/T4iz2xpigOZzmJI0M6Tqu5hCECzzqP7mdIlUZZ5SFmyWVQmUdxa0E4Ju+WjeOFKZTkqHK1P0fII1o/OtqNtHDZxRs6NkCW0hc47KcJpwhwLCH6lLGOZiSpeBaMPTFwusnTmKmSYShYX9yQaP6fzwtCWf2LZiKv4nUS+xqzQHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719611764; c=relaxed/simple;
-	bh=O1ACOLEzbgJkv3hF8uDDssoICGLyodWuiq9rELIVgVY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uXhM7XsUKMtGg0rga4J8NWcIQ1KyoHSgxz7ZCI9w4707vZY8AyF4SHiSuFq9J9WqtcLelepc2sRgROKuR5x8hvRXfdwieJM9oDo0DDNlab2LQbcexjmOsjZscZ8GUG27ACn56ozu218cpKdhzKShEsdG+Bkdl6OziQyovPd64H8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=nrVVFn8K; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=bcLWSIe52sGLdEKTBdAQolHpPpJtK55zL5ImUo+lw7M=; b=nrVVFn8KPcUmP6gGPax+zt0zjX
-	SSgbQWkl/aH34+jC0q3O8thp4VONsZLPp9RU2PYpZEzMk1SQKUjNyJC+CFtI90YozUwiScUWMVlxr
-	Py9qXbhaEy/OeaOaDI/7ehcng4pHblPPpgFsFDeZVuC5oU1jjEu4Riinmm1O/iDxdWdPg+VAfmArl
-	atOXnSuIkFWBHVBoHzOy0cuJC3hKGhXhY7fmCtgCxHWCw6lL/24pgpVSXmjZvj1XkyOaafQ43bTWM
-	aSKbfHmFvWayQ6Q3v3jSNveVMxXUTtv8EXN9NIMDdbwRom1eyU07qjE0ejt6T9798jNkQ643TUQda
-	Ani9vf+A==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:43222)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sNJZO-0007Xj-2x;
-	Fri, 28 Jun 2024 22:55:50 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sNJZS-0006pf-0x; Fri, 28 Jun 2024 22:55:54 +0100
-Date: Fri, 28 Jun 2024 22:55:53 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: mingo@kernel.org, sshegde@linux.ibm.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM, sched/topology: Check return value of kcalloc()
-Message-ID: <Zn8xae/b6lNaWcKq@shell.armlinux.org.uk>
-References: <20240628194350.542376-2-thorsten.blum@toblux.com>
+	s=arc-20240116; t=1719611788; c=relaxed/simple;
+	bh=VALfNi/4TVa/iaQqSjXTociderrHdkMJNYdcIRqCWUM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uW2C/83RtQa3m1pZMlrQZjaXLM4edFIbTrLaz5Z6iOTxca19LYmJstrfEfeuSBWtYj1N9LzThW+LpEvTlge3ruTHixRnebldQfPOPIsDoWVp2kzpo+1YmK60pcHJTO3dxO//JIQ74VPIrS/CsyqKu9QYF30AQVPRlVF2Od5lZlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nm1UqR2X; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719611787; x=1751147787;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=VALfNi/4TVa/iaQqSjXTociderrHdkMJNYdcIRqCWUM=;
+  b=nm1UqR2X6fZy7CfL1T9Y2Qt/NmR4AO+7zjzJFdmqVcO0yQ67BBKWUBrF
+   qrVJzwwsY3M9tVZdt1i7L9JWO77q0KM3VdQjf57ALWL3d94eJMqM4klOA
+   vtqQeVf/CnRfEYcQ4aYQodFH8Uec5s+2gLL4+vQKex//TdBVMUfV6XgxL
+   xCJDAvRv7ZP5+IwJE+8GtDmMKaYxlqgxA+CPE3blk/HiusPBj2p7L6YWp
+   SfNmfn4JfG9jWeFG9KhwInvBmWzpjGniMG7zRyKwJeZFwW6bRC2+kpyeK
+   RkP/pOGdi4z8h9ETyU/aMYTelhmr6WVSDcoEFY5RgPoxxJzJYrv/1wO3D
+   A==;
+X-CSE-ConnectionGUID: uXcamtavTy28tNNnrshucA==
+X-CSE-MsgGUID: E/fDX1c1TIeSwyr95wZsxw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11117"; a="16762525"
+X-IronPort-AV: E=Sophos;i="6.09,170,1716274800"; 
+   d="scan'208";a="16762525"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 14:56:26 -0700
+X-CSE-ConnectionGUID: Gin8q+5MRo2MUMhK1EK/+A==
+X-CSE-MsgGUID: 8ZAuzHCfRPSgQl2M43QS8w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,170,1716274800"; 
+   d="scan'208";a="68065633"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 14:56:26 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>,
+	Babu Moger <babu.moger@amd.com>,
+	Drew Fustini <dfustini@baylibre.com>,
+	Dave Martin <Dave.Martin@arm.com>
+Cc: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	Tony Luck <tony.luck@intel.com>
+Subject: [PATCH v23 00/19] Add support for Sub-NUMA cluster (SNC) systems
+Date: Fri, 28 Jun 2024 14:56:00 -0700
+Message-ID: <20240628215619.76401-1-tony.luck@intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240628194350.542376-2-thorsten.blum@toblux.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 28, 2024 at 09:43:51PM +0200, Thorsten Blum wrote:
-> Check the return value of kcalloc() and return early if memory
-> allocation fails.
+This series based on top of tip x86/cache commit f385f0246394
+("x86/resctrl: Replace open coded cacheinfo searches")
 
-If we fail this allocation even with your fix, how likely is it that the
-system will boot and manage to run userspace?
+The Sub-NUMA cluster feature on some Intel processors partitions the CPUs
+that share an L3 cache into two or more sets. This plays havoc with the
+Resource Director Technology (RDT) monitoring features.  Prior to this
+patch Intel has advised that SNC and RDT are incompatible.
 
+Some of these CPUs support an MSR that can partition the RMID counters
+in the same way. This allows monitoring features to be used. Legacy
+monitoring files provide the sum of counters from each SNC node for
+backwards compatibility. Additional  files per SNC node provide details
+per node.
+
+Memory bandwidth allocation features continue to operate at
+the scope of the L3 cache.
+
+L3 cache occupancy and allocation operate on the portion of
+L3 cache available for each SNC node.
+
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+
+---
+Changes since v21: https://lore.kernel.org/all/20240627203856.66628-1-tony.luck@intel.com/
+
+No net code changes (final version v23 == v22)
+
+* Patch 9 split into two (9 & 10 in this series) Added Reinette's Reviewed-by tag to both.
+* Added Reinette's Reviewed-by tag to parts 15 & 16 (were 14, 15 in v22)
+
+Tony Luck (19):
+  x86/resctrl: Prepare for new domain scope
+  x86/resctrl: Prepare to split rdt_domain structure
+  x86/resctrl: Prepare for different scope for control/monitor
+    operations
+  x86/resctrl: Split the rdt_domain and rdt_hw_domain structures
+  x86/resctrl: Add node-scope to the options for feature scope
+  x86/resctrl: Introduce snc_nodes_per_l3_cache
+  x86/resctrl: Block use of mba_MBps mount option on Sub-NUMA Cluster
+    (SNC) systems
+  x86/resctrl: Prepare for new Sub-NUMA Cluster (SNC) monitor files
+  x86/resctrl: Add a new field to struct rmid_read for summation of
+    domains
+  x86/resctrl: Initialize on-stack struct rmid_read instances
+  x86/resctrl: Refactor mkdir_mondata_subdir() with a helper function
+  x86/resctrl: Allocate a new field in union mon_data_bits
+  x86/resctrl: Create Sub-NUMA Cluster (SNC) monitor files
+  x86/resctrl: Handle removing directories in Sub-NUMA Cluster (SNC)
+    mode
+  x86/resctrl: Fill out rmid_read structure for smp_call*() to read a
+    counter
+  x86/resctrl: Make __mon_event_count() handle sum domains
+  x86/resctrl: Enable shared RMID mode on Sub-NUMA Cluster (SNC) systems
+  x86/resctrl: Sub-NUMA Cluster (SNC) detection
+  x86/resctrl: Update documentation with Sub-NUMA cluster changes
+
+ Documentation/arch/x86/resctrl.rst        |  27 ++
+ include/linux/resctrl.h                   |  88 ++++--
+ arch/x86/include/asm/msr-index.h          |   1 +
+ arch/x86/kernel/cpu/resctrl/internal.h    | 108 +++++---
+ arch/x86/kernel/cpu/resctrl/core.c        | 312 ++++++++++++++++------
+ arch/x86/kernel/cpu/resctrl/ctrlmondata.c |  89 +++---
+ arch/x86/kernel/cpu/resctrl/monitor.c     | 256 +++++++++++++++---
+ arch/x86/kernel/cpu/resctrl/pseudo_lock.c |  27 +-
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c    | 281 ++++++++++++-------
+ 9 files changed, 865 insertions(+), 324 deletions(-)
+
+
+base-commit: f385f024639431bec3e70c33cdbc9563894b3ee5
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+2.45.2
+
 
