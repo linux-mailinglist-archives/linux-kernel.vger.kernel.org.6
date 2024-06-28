@@ -1,167 +1,123 @@
-Return-Path: <linux-kernel+bounces-234157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29DC591C2ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:49:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AB5991C2F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:51:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C54421F22B81
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:49:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB2EA1C22942
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:51:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C3331C68AD;
-	Fri, 28 Jun 2024 15:49:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41DF01C68BB;
+	Fri, 28 Jun 2024 15:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dE3fXaFx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3871DFFB;
-	Fri, 28 Jun 2024 15:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ct79PK2S"
+Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.219])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B4031C2329;
+	Fri, 28 Jun 2024 15:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719589768; cv=none; b=nuz95v3Y1uTb2PB+mFjEaZxw8Dh4OZHaUpSgQl9guqJxWnjr+qmY/L+SKKiGncd0lmrCBWPvqvjLyBKx23o9z8CpuJLjhS5AAtITPKrtyYCcHmbFlTjLQvLn9W7y3NSQUTgr4t91n07e352JhQNIkm+nx3IDLTqmfmJIOGk+DwU=
+	t=1719589907; cv=none; b=MVyA1KR66Fe8E05w8ssx4mwqDJQloaiNXtT90IzpMWJqaY6klCRR9juoX9IXdi6LSO2Gngw5lnLy1Qvxr040wrvDM1qhZEG93Oy2T5XCb/Q7QGeqsGsQzwHQb/3kAt7QLUXovhFc46Y/3E8xuQM7WWEztM/mCKZiK7v/cT0tppw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719589768; c=relaxed/simple;
-	bh=ZWoGkvRBYm3yrCpfNumHr+jeYorOXA8KfCQtFdrxRto=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YE7OFauP9daPLBqBObCCztEsoll9HXInzyY137KF4Hi4SgxzdmtKjbpaWYJh5C3UN6Y8ZuGY1wsn27+Q4veaNrPVZOzxeVcDWK2rGipD2zIruKmbj/JZcw3wUH23ecZpU6fuUgd00ULeocq7h74jssmDhBTYKM5xVukGPnkm1nY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dE3fXaFx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8394DC116B1;
-	Fri, 28 Jun 2024 15:49:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719589767;
-	bh=ZWoGkvRBYm3yrCpfNumHr+jeYorOXA8KfCQtFdrxRto=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dE3fXaFx2mNsixe+U6jdMlDL61W8Nk4IFr2pIO8b/FxrrgR9ga30hkU9ShFVXOpBG
-	 cAlpmWBXgXPvOYzCajKBwBcGUTlnZYqJs3N84N41v4NmPUVH2vmrnxlB+GK9XKj1WJ
-	 CofTvM4pq09/HSqK5FukvkHHObuCximz2bRHIK+MpSkJO9F7pbOdVJ0BFLeXuR7dmg
-	 fybWtOuZdZelwNOYwPqHDnEDQahC/FuGjBAZbAe5V7sXHpYt5wHAVszfF2eQWALQf+
-	 CUPzW7JUMrS9kFPsm51mN8gB91qBcF7ZkM9hl4N0vWGp5OqoUoonq+VteYyatiTIUg
-	 /GIfGVbjVU6AA==
-Date: Fri, 28 Jun 2024 17:49:22 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Hannes Reinecke <hare@suse.de>
-Cc: Igor Pylypiv <ipylypiv@google.com>, Damien Le Moal <dlemoal@kernel.org>,
-	Tejun Heo <tj@kernel.org>, linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Akshat Jain <akshatzen@google.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v3 1/6] ata: libata-scsi: Fix offsets for the fixed
- format sense data
-Message-ID: <Zn7bghgsMR062xbb@ryzen.lan>
-References: <20240626230411.3471543-1-ipylypiv@google.com>
- <20240626230411.3471543-2-ipylypiv@google.com>
- <Zn1WUhmLglM4iais@ryzen.lan>
- <0fbf1756-5b97-44fc-9802-d481190d2bd8@suse.de>
+	s=arc-20240116; t=1719589907; c=relaxed/simple;
+	bh=JZwPPIkhyFRqxAleqe5fNX8WbkaeqPpf7vUxiuYuUaI=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=eAIReD3Q8qm0aznA9bk8P+L2uWAgn64Qh2iwvc3izRMcEsQJVtPLbwmO+H7tZ8/X4ZuNneisdXMOMtGpfeTMahssXIRN46DG2iRYixskEGQ9tc8uizKhNc3VZtzZsNTSLsjGSALpuNBJIMKo4OqDTFkSkfEYM87ojL3Ikt5BJHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ct79PK2S; arc=none smtp.client-ip=45.254.50.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id; bh=MUygOs7rlNEqd3apO4
+	imoIIi+WIT5IxawzxSj+Zc+0M=; b=ct79PK2SJNaKRJxjQD2nSYaUfF/c34APCi
+	prGO71lWsXAgoKHLXpL3/gZFDpefn1ewYm3QwmNfFUtK1T//9nK7ckHrr3Yr5DOl
+	igqMnDYmildnCmhQev3tNyVL/MoRud1MaWaJLAJJdsRl58GbfbWpydFeQ5xoXie3
+	L/fHBtSco=
+Received: from localhost.localdomain (unknown [114.92.92.233])
+	by gzga-smtp-mta-g0-4 (Coremail) with SMTP id _____wD3n7Ly235mondeAw--.10451S2;
+	Fri, 28 Jun 2024 23:51:30 +0800 (CST)
+From: Lizhe <sensor1010@163.com>
+To: mathias.nyman@intel.com,
+	gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lizhe <sensor1010@163.com>
+Subject: [PATCH] usb: xhci: Covert to update_device callback returning void
+Date: Fri, 28 Jun 2024 08:51:02 -0700
+Message-Id: <20240628155103.3585-1-sensor1010@163.com>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID:_____wD3n7Ly235mondeAw--.10451S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7ZryfAFyfKFWDuryfJrW5Wrg_yoW8uw15pF
+	Wfua4fKrWUKr43Wr1UZr48Aa1rZw4kA345tryxG34S939Fkw4rKFyDArZ5GayfXrWDCF1a
+	qF42grW5C3WUCF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0p_7KIdUUUUU=
+X-CM-SenderInfo: 5vhq20jurqiii6rwjhhfrp/1tbiKAMMq2XAmAMSpwAAsH
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0fbf1756-5b97-44fc-9802-d481190d2bd8@suse.de>
 
-On Fri, Jun 28, 2024 at 08:47:03AM +0200, Hannes Reinecke wrote:
-> On 6/27/24 14:08, Niklas Cassel wrote:
-> > Hello Igor, Hannes,
-> > 
-> > The changes in this patch looks good, however, there is still one thing that
-> > bothers me:
-> > https://github.com/torvalds/linux/blob/v6.10-rc5/drivers/ata/libata-scsi.c#L873-L877
-> > 
-> > Specifically the code in the else statement below:
-> > 
-> > 	if (qc->err_mask ||
-> > 	    tf->status & (ATA_BUSY | ATA_DF | ATA_ERR | ATA_DRQ)) {
-> > 		ata_to_sense_error(qc->ap->print_id, tf->status, tf->error,
-> > 				   &sense_key, &asc, &ascq);
-> > 		ata_scsi_set_sense(qc->dev, cmd, sense_key, asc, ascq);
-> > 	} else {
-> > 		/*
-> > 		 * ATA PASS-THROUGH INFORMATION AVAILABLE
-> > 		 * Always in descriptor format sense.
-> > 		 */
-> > 		scsi_build_sense(cmd, 1, RECOVERED_ERROR, 0, 0x1D);
-> > 	}
-> > 
-> > Looking at sat6r01, I see that this is table:
-> > Table 217 — ATA command results
-> > 
-> > And this text:
-> > No error, successful completion or command in progress. The SATL
-> > shall terminate the command with CHECK CONDITION status with
-> > the sense key set to RECOVERED ERROR with the additional
-> > sense code set to ATA PASS-THROUGH INFORMATION
-> > AVAILABLE (see SPC-5). Descriptor format sense data shall include
-> > the ATA Status Return sense data descriptor (see 12.2.2.7).
-> > 
-> > However, I don't see anything in this text that says that the
-> > sense key should always be in descriptor format sense.
-> > 
-> > In fact, what will happen if the user has not set the D_SENSE bit
-> > (libata will default not set it), is that:
-> > 
-> > The else statement above will be executed, filling in sense key in
-> > descriptor format, after this if/else, we will continue checking
-> > if the sense buffer is in descriptor format, or fixed format.
-> > 
-> > Since the scsi_build_sense(cmd, 1, RECOVERED_ERROR, 0, 0x1D);
-> > is called with (..., 1, ..., ..., ...) it will always generate
-> > the sense data in descriptor format, regardless of
-> > dev->flags ATA_DFLAG_D_SENSE being set or not.
-> > 
-> > Should perhaps the code in the else statement be:
-> > 
-> > } else {
-> > 	ata_scsi_set_sense(qc->dev, cmd, RECOVERED_ERROR, 0, 0x1D);
-> > }
-> > 
-> > So that we actually respect the D_SENSE bit?
-> > 
-> > (We currently respect if when filling the sense data buffer with
-> > sense data from REQUEST SENSE EXT, so I'm not sure why we shouldn't
-> > respect it for successful ATA PASS-THROUGH commands.)
-> > 
-> I guess that we've misread the spec.
+the returned value is ignored, and to improve this situation,
+it is proposed to modify the return type of the xhci_update_device()
+callback function to void.
 
-I think I might have an idea where you got this from:
+Signed-off-by: Lizhe <sensor1010@163.com>
+---
+ drivers/usb/host/xhci.c | 8 +++-----
+ include/linux/usb/hcd.h | 2 +-
+ 2 files changed, 4 insertions(+), 6 deletions(-)
 
-In sat5r06.pdf
-"""
-12.2.2.8 Fixed format sense data
+diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+index 37eb37b0affa..63db4957d3af 100644
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -4507,19 +4507,19 @@ static int xhci_set_usb2_hardware_lpm(struct usb_hcd *hcd,
+ 	return 0;
+ }
+ 
+-static int xhci_update_device(struct usb_hcd *hcd, struct usb_device *udev)
++static void xhci_update_device(struct usb_hcd *hcd, struct usb_device *udev)
+ {
+ 	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
+ 	struct xhci_port *port;
+ 	u32 capability;
+ 
+ 	if (hcd->speed >= HCD_USB3 || !udev->lpm_capable || !xhci->hw_lpm_support)
+-		return 0;
++		return;
+ 
+ 	/* we only support lpm for non-hub device connected to root hub yet */
+ 	if (!udev->parent || udev->parent->parent ||
+ 			udev->descriptor.bDeviceClass == USB_CLASS_HUB)
+-		return 0;
++		return;
+ 
+ 	port = xhci->usb2_rhub.ports[udev->portnum - 1];
+ 	capability = port->port_cap->protocol_caps;
+@@ -4531,8 +4531,6 @@ static int xhci_update_device(struct usb_hcd *hcd, struct usb_device *udev)
+ 		if (capability & XHCI_BLC)
+ 			udev->usb2_hw_lpm_besl_capable = 1;
+ 	}
+-
+-	return 0;
+ }
+ 
+ /*---------------------- USB 3.0 Link PM functions ------------------------*/
+diff --git a/include/linux/usb/hcd.h b/include/linux/usb/hcd.h
+index ac95e7c89df5..c3fd1643ff1a 100644
+--- a/include/linux/usb/hcd.h
++++ b/include/linux/usb/hcd.h
+@@ -386,7 +386,7 @@ struct hc_driver {
+ 		/* Notifies the HCD after a device is connected and its
+ 		 * address is set
+ 		 */
+-	int	(*update_device)(struct usb_hcd *, struct usb_device *);
++	void	(*update_device)(struct usb_hcd *, struct usb_device *);
+ 	int	(*set_usb2_hw_lpm)(struct usb_hcd *, struct usb_device *, int);
+ 	/* USB 3.0 Link Power Management */
+ 		/* Returns the USB3 hub-encoded value for the U1/U2 timeout. */
+-- 
+2.17.1
 
-Table 212 shows the fields returned in the fixed format sense data (see SPC-5) for ATA PASS-THROUGH
-commands. SATLs compliant with ANSI INCITS 431-2007, SCSI/ATA Translation (SAT) return descriptor
-format sense data for the ATA PASS-THROUGH commands regardless of the setting of the D_SENSE bit.
-"""
-
-In sat6r01.pdf:
-"""
-12.2.2.8 Fixed format sense data
-
-Table 219 shows the fields returned in the fixed format sense data (see SPC-5)
-for ATA PASS-THROUGH
-commands.
-"""
-
-In SAT-6 there is no mention of compliance with ANSI INCITS 431-2007 should
-ignore D_SENSE bit and unconditionally return sense data in descriptor format.
-
-Anyway, considering that:
-1) I'm not sure how a SAT would expose that it is compliant with ANSI INCITS
-   431-2007.
-2) This text has been removed from SAT-6.
-3) We currently honour the D_SENSE bit when creating the sense buffer with the
-   SK/ASC/ASCQ that we get from the device.
-
-I think that it makes sense to honour the D_SENSE bit also when generating
-sense data for successful ATA PASS-THROUGH commands (from ATA registers).
-
-
-Kind regards,
-Niklas
 
