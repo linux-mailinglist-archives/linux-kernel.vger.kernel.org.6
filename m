@@ -1,99 +1,112 @@
-Return-Path: <linux-kernel+bounces-233717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C97891BC0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:00:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 470FA91BC16
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:00:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 543DE1F2352B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:00:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F357C285928
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C3F15443B;
-	Fri, 28 Jun 2024 10:00:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D00C154C1E;
+	Fri, 28 Jun 2024 10:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TqMknCVj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A6A153561;
-	Fri, 28 Jun 2024 10:00:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4228C46B9A;
+	Fri, 28 Jun 2024 10:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719568809; cv=none; b=P4QX7F41FKncHmlP7oYzphv/6ibyrQNzZQm0oFU7S8/vaV5aFKGtTDVQjckddhsZRr0WgEnuyuswgQtczewgnsJIZMUep/0zxEy0Pf/6pn3hqRRt8FFjL/UXrTsxGiKhiqekf7A/ETL9s8jH+ZBR32P1PKJseVkk9qjfAxe1mgs=
+	t=1719568835; cv=none; b=T1YDdbm4UYDuWzUPtcymeIMS62wobkfY1EjsOEdf7ZAKSPMe6KYcQtKoRtjq+42cDPaulDMcuDCgvoiZOeyBk9OrhZbodbggiJysZlfNfQ6/aEoW7jbXjulGbzFWFK9ZP0gxNIO0FutVndJnOnAybRSJ1EjfVJT7t2wHnuqanzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719568809; c=relaxed/simple;
-	bh=CgF0fdtMrFKBEO9+/Ow/VYFg8b9/1qosPCQhoWQ3G9c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I9iCfv4/4jYGxEVcRYcQHWO6vPC94FdG0RJ2dwPMrMSTm0nmzPs6zbRL3rWws/zQe65VdZQsjOej2n9q2xeEYlafe5G7ss9bi2vuKm5JU1JTQzJX6J265ebGyJ1ZuV2UB+CHjrGmleP2gnC/sCgX/CgRm36XEO3AoIOVLC5EmAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 956EFC116B1;
-	Fri, 28 Jun 2024 10:00:06 +0000 (UTC)
-Message-ID: <32e23a79-ad3a-465f-97e3-d32cbc75019e@xs4all.nl>
-Date: Fri, 28 Jun 2024 12:00:04 +0200
+	s=arc-20240116; t=1719568835; c=relaxed/simple;
+	bh=8UYRdrbjDouh2qhlWxjBAxJ8E6JMHZqMchqcT9QVL+k=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Qv7OgR2mg8dtkpa/mFBaKNCRmf/DaCU5NfvGbVXTnzHP+o4XFdAUjnNQAfcleLTBpMAZDJzOLLmhIE0AsXdp7oK4QnHvEdmDrhU1FZgTrBAkCmTDR1gtIqDnh2NJFeYwm9+bQH4LCOZgUsjxJEM2EZ0/j3Ab5zHZPcBkwxGLfWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TqMknCVj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B6A85C4AF0A;
+	Fri, 28 Jun 2024 10:00:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719568834;
+	bh=8UYRdrbjDouh2qhlWxjBAxJ8E6JMHZqMchqcT9QVL+k=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=TqMknCVjQLOovdnO4R/tOAs/Z7FmaIJH+RRPa3erTB+E97DQUhTZpgahoFMoQPa2o
+	 MIjstNcnxH3L8F9b+xH7wKrTDziVdMrcoVt/3ipxW6SnweHdJXsZLBaWP1nRfMXphU
+	 tmXb+g5uONhdG5/FhgYi5vLiTvAyBR1psUIv9TXs8sH9GfxWfVxn0aa0EcaV+EkPWf
+	 24PXye+kA0BIP4tTuH+T362rqAuQZItmaGjKgmrvul6qw2Y+/07iQ3iHxQVBjA6P1t
+	 eofAz80CtC2mIqKAPcaoy7RfFRW1ty+A4Yo62V2pzNdn2iBM6xGRDoZDob6zufpqwJ
+	 sgoVyEsSTW9yw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A6CCFC43335;
+	Fri, 28 Jun 2024 10:00:34 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: qcom: camss: Remove unused phy_sel variable in
- csid gen2
-To: Gjorgji Rosikopulos <quic_grosikop@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, bryan.odonoghue@linaro.org, andersson@kernel.org,
- konrad.dybcio@linaro.org, mchehab@kernel.org
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, laurent.pinchart@ideasonboard.com,
- quic_hariramp@quicinc.com
-References: <20240626074730.85-1-quic_grosikop@quicinc.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-In-Reply-To: <20240626074730.85-1-quic_grosikop@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v8 0/9] Add ability to flash modules' firmware
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171956883468.3919.7096273991570928378.git-patchwork-notify@kernel.org>
+Date: Fri, 28 Jun 2024 10:00:34 +0000
+References: <20240627140857.1398100-1-danieller@nvidia.com>
+In-Reply-To: <20240627140857.1398100-1-danieller@nvidia.com>
+To: Danielle Ratson <danieller@nvidia.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, corbet@lwn.net, linux@armlinux.org.uk,
+ sdf@google.com, kory.maincent@bootlin.com, maxime.chevallier@bootlin.com,
+ vladimir.oltean@nxp.com, przemyslaw.kitszel@intel.com, ahmed.zaki@intel.com,
+ richardcochran@gmail.com, shayagr@amazon.com, paul.greenwalt@intel.com,
+ jiri@resnulli.us, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ mlxsw@nvidia.com, idosch@nvidia.com, petrm@nvidia.com
 
-On 26/06/2024 09:47, Gjorgji Rosikopulos wrote:
-> The issue is introduced with:
+Hello:
+
+This series was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
+
+On Thu, 27 Jun 2024 17:08:47 +0300 you wrote:
+> CMIS compliant modules such as QSFP-DD might be running a firmware that
+> can be updated in a vendor-neutral way by exchanging messages between
+> the host and the module as described in section 7.2.2 of revision
+> 4.0 of the CMIS standard.
 > 
-> [PATCH v4 0/8] Move camss version related defs in to resources
-
-In the pull request I posted today I folded this patch into that 6/8 of the
-patch series, rather than having this patch on top.
-
-I forgot to mention that in my PR.
-
-Regards,
-
-	Hans
-
+> According to the CMIS standard, the firmware update process is done
+> using a CDB commands sequence.
 > 
-> Signed-off-by: Gjorgji Rosikopulos <quic_grosikop@quicinc.com>
-> ---
->  drivers/media/platform/qcom/camss/camss-csid-gen2.c | 7 +------
->  1 file changed, 1 insertion(+), 6 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/camss/camss-csid-gen2.c b/drivers/media/platform/qcom/camss/camss-csid-gen2.c
-> index 2d8398a91fc2..e1c757933e27 100644
-> --- a/drivers/media/platform/qcom/camss/camss-csid-gen2.c
-> +++ b/drivers/media/platform/qcom/camss/camss-csid-gen2.c
-> @@ -260,17 +260,12 @@ static void __csid_configure_testgen(struct csid_device *csid, u8 enable, u8 vc)
->  
->  static void __csid_configure_rdi_stream(struct csid_device *csid, u8 enable, u8 vc)
->  {
-> -	struct csid_testgen_config *tg = &csid->testgen;
-> -	u32 val;
-> -	u32 phy_sel = 0;
->  	/* Source pads matching RDI channels on hardware. Pad 1 -> RDI0, Pad 2 -> RDI1, etc. */
->  	struct v4l2_mbus_framefmt *input_format = &csid->fmt[MSM_CSID_PAD_FIRST_SRC + vc];
->  	const struct csid_format_info *format = csid_get_fmt_entry(csid->res->formats->formats,
->  								   csid->res->formats->nformats,
->  								   input_format->code);
-> -
-> -	if (!tg->enabled)
-> -		phy_sel = csid->phy.csiphy_id;
-> +	u32 val;
->  
->  	/*
->  	 * DT_ID is a two bit bitfield that is concatenated with
+> [...]
+
+Here is the summary with links:
+  - [net-next,v8,1/9] ethtool: Add ethtool operation to write to a transceiver module EEPROM
+    https://git.kernel.org/netdev/net-next/c/69540b7987ef
+  - [net-next,v8,2/9] mlxsw: Implement ethtool operation to write to a transceiver module EEPROM
+    https://git.kernel.org/netdev/net-next/c/1983a8007032
+  - [net-next,v8,3/9] ethtool: Add an interface for flashing transceiver modules' firmware
+    https://git.kernel.org/netdev/net-next/c/46fb3ba95b93
+  - [net-next,v8,4/9] ethtool: Add flashing transceiver modules' firmware notifications ability
+    https://git.kernel.org/netdev/net-next/c/d7d4cfc4c97c
+  - [net-next,v8,5/9] ethtool: Veto some operations during firmware flashing process
+    https://git.kernel.org/netdev/net-next/c/31e0aa99dc02
+  - [net-next,v8,6/9] net: sfp: Add more extended compliance codes
+    https://git.kernel.org/netdev/net-next/c/e4f91936993c
+  - [net-next,v8,7/9] ethtool: cmis_cdb: Add a layer for supporting CDB commands
+    https://git.kernel.org/netdev/net-next/c/a39c84d79625
+  - [net-next,v8,8/9] ethtool: cmis_fw_update: add a layer for supporting firmware update using CDB
+    https://git.kernel.org/netdev/net-next/c/c4f78134d45c
+  - [net-next,v8,9/9] ethtool: Add ability to flash transceiver modules' firmware
+    https://git.kernel.org/netdev/net-next/c/32b4c8b53ee7
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
