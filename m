@@ -1,147 +1,140 @@
-Return-Path: <linux-kernel+bounces-233227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58F4191B489
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:10:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58B6291B48A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:11:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAE80B22B7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:10:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F01AF1F23044
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:11:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1EFF13FF9;
-	Fri, 28 Jun 2024 01:09:24 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E7D410A0A;
+	Fri, 28 Jun 2024 01:11:22 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E06182B9;
-	Fri, 28 Jun 2024 01:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C286FC7;
+	Fri, 28 Jun 2024 01:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719536964; cv=none; b=kw0LJWq0cX1/zhB1O50flHNG+RwGY4Jrj0D9je8xGUlIaOIGQVW0icf24OO98s+u06Md+h13ogPjuYWhVUCk1Q8jVg1U+bO9aIfUNAIl+w6ZCqw6yjff5H0TdXW6xt4LBTMfrvvV0A2uvt6vUgNc1kRKF3NmQkuI1aBl433JnXc=
+	t=1719537081; cv=none; b=G43UINnsZQOJc4yYF7QfFn3Qow8ECyTLI+5fHBXUXi01C5vc6laGAzU+WHNq94wFnfrjcEMjnC1NEpU4H+7KJETTCjTTdwDli252zrtZyokQVy+exfAm7cdLD+Pr3A8Eiv5t9oc5ymTYJU42qwNYUbyshLLgvXDe/yD7AYzopYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719536964; c=relaxed/simple;
-	bh=FJBS0qNoYdakN29J3gj/ZaHV91m7vyqEgcjmwOvd7w8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WYmDlkeS2T+LkjeutY1sgNEP6V3RG0YXGcOb7qbYVKC3Ee/2gmnykUgBX9ERdXdHhrTAwons/7YKF2lNnmvZG8OYUEFZpj32IPiWIeDT+3oW+yGc7QyI4eeGm4LaqWfTtwMdMvPhEkN5VeyrFWX8a5VXxLVF6mdrZWcQsd+gqL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4W9HQC0lClz4f3jHy;
-	Fri, 28 Jun 2024 09:09:07 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 05BDB1A0568;
-	Fri, 28 Jun 2024 09:09:18 +0800 (CST)
-Received: from [10.174.177.174] (unknown [10.174.177.174])
-	by APP1 (Coremail) with SMTP id cCh0CgAnUn45DX5mgaIaAg--.2390S3;
-	Fri, 28 Jun 2024 09:09:17 +0800 (CST)
-Message-ID: <b68920cc-28ab-4e8b-994a-93f4148b4b8b@huaweicloud.com>
-Date: Fri, 28 Jun 2024 09:09:13 +0800
+	s=arc-20240116; t=1719537081; c=relaxed/simple;
+	bh=AX6vzRoEhZIXhTB8bmQXDahq6Kmf4gcwbghJqr+xbNo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QokUq3X5ZRfHg7N3FsABrbJXuGk3PSLoNb4TvoxVX+sDfY/fAttKVP3LeEfgua+9CSRwDq/JM4mh17/IQU5CKRZuSKXHf+cpX+NqWlOB8fi2FDT432bsKqayuUBqfhDn4RZV6Tr7a0BetQvMwgiRSbWh3YN1NvNqmXBJr+aBnPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.97.1)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1sN08u-000000000E1-0yNQ;
+	Fri, 28 Jun 2024 01:11:12 +0000
+Date: Fri, 28 Jun 2024 02:11:07 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v2 net-next 3/3] net: phy: aquantia: add support for
+ aqr115c
+Message-ID: <Zn4Nq1QvhjAUaogb@makrotopia.org>
+References: <20240627113018.25083-1-brgl@bgdev.pl>
+ <20240627113018.25083-4-brgl@bgdev.pl>
+ <Zn3q5f5yWznMjAXd@makrotopia.org>
+ <d227011a-b4bf-427f-85c2-5db61ad0086c@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] cachefiles: flush all requests for the object that
- is being dropped
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev,
- dhowells@redhat.com, hsiangkao@linux.alibaba.com,
- jefflexu@linux.alibaba.com, zhujia.zj@bytedance.com,
- linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
- yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>,
- Baokun Li <libaokun@huaweicloud.com>
-References: <20240515125136.3714580-1-libaokun@huaweicloud.com>
- <20240515125136.3714580-3-libaokun@huaweicloud.com>
- <5bb711c4bbc59ea9fff486a86acce13880823e7b.camel@kernel.org>
- <e40b80fc-52b8-4f89-800a-3ffa0034a072@huaweicloud.com>
- <20240627-beizeiten-hecht-0efad69e0e38@brauner>
-Content-Language: en-US
-From: Baokun Li <libaokun@huaweicloud.com>
-In-Reply-To: <20240627-beizeiten-hecht-0efad69e0e38@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAnUn45DX5mgaIaAg--.2390S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7KFy3Gr1rZr18AFy3XFyUAwb_yoW8KFyUpF
-	Waya4akFW8ur17Crn2vF1YvrySy3s3ArnrXr1aqryjyrs0qrna9r1Iqr1DuF1DJrs3Gr4I
-	qr4UWF93GryqyrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkE14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j
-	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQvt
-	AUUUUU=
-X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAgAHBV1jkHrAYQABs0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d227011a-b4bf-427f-85c2-5db61ad0086c@lunn.ch>
 
-On 2024/6/27 23:18, Christian Brauner wrote:
-> On Thu, Jun 27, 2024 at 07:20:16PM GMT, Baokun Li wrote:
->> On 2024/6/27 19:01, Jeff Layton wrote:
->>> On Wed, 2024-05-15 at 20:51 +0800, libaokun@huaweicloud.com wrote:
->>>> From: Baokun Li <libaokun1@huawei.com>
->>>>
->>>> Because after an object is dropped, requests for that object are
->>>> useless,
->>>> flush them to avoid causing other problems.
->>>>
->>>> This prepares for the later addition of cancel_work_sync(). After the
->>>> reopen requests is generated, flush it to avoid cancel_work_sync()
->>>> blocking by waiting for daemon to complete the reopen requests.
->>>>
->>>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
->>>> ---
->>>>    fs/cachefiles/ondemand.c | 19 +++++++++++++++++++
->>>>    1 file changed, 19 insertions(+)
->>>>
->>>> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
->>>> index 73da4d4eaa9b..d24bff43499b 100644
->>>> --- a/fs/cachefiles/ondemand.c
->>>> +++ b/fs/cachefiles/ondemand.c
->>>> @@ -564,12 +564,31 @@ int cachefiles_ondemand_init_object(struct
->>>> cachefiles_object *object)
->>>>    void cachefiles_ondemand_clean_object(struct cachefiles_object
->>>> *object)
->>>>    {
->>>> +	unsigned long index;
->>>> +	struct cachefiles_req *req;
->>>> +	struct cachefiles_cache *cache;
->>>> +
->>>>    	if (!object->ondemand)
->>>>    		return;
->>>>    	cachefiles_ondemand_send_req(object, CACHEFILES_OP_CLOSE, 0,
->>>>    			cachefiles_ondemand_init_close_req, NULL);
->>>> +
->>>> +	if (!object->ondemand->ondemand_id)
->>>> +		return;
->>>> +
->>>> +	/* Flush all requests for the object that is being dropped.
->>>> */
->>> I wouldn't call this a "Flush". In the context of writeback, that
->>> usually means that we're writing out pages now in order to do something
->>> else. In this case, it looks like you're more canceling these requests
->>> since you're marking them with an error and declaring them complete.
->> Makes sense, I'll update 'flush' to 'cancel' in the comment and subject.
->>
->> I am not a native speaker of English, so some of the expressions may
->> not be accurate, thank you for correcting me.
-> Can you please resend all patch series that we're supposed to take for
-> this cycle, please?
-Sure, I'm organising to combine the two patch series today and
-send it out as v3.
+On Fri, Jun 28, 2024 at 02:18:45AM +0200, Andrew Lunn wrote:
+> On Thu, Jun 27, 2024 at 11:42:45PM +0100, Daniel Golle wrote:
+> > Hi Bartosz,
+> > 
+> > On Thu, Jun 27, 2024 at 01:30:17PM +0200, Bartosz Golaszewski wrote:
+> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > > 
+> > > Add support for a new model to the Aquantia driver. This PHY supports
+> > > Overlocked SGMII mode with 2.5G speeds.
+> > 
+> > I don't think that there is such a thing as "Overclocked SGMII mode with
+> > 2.5G speed".
+> 
+> Unfortunately, there is. A number of vendors say they do this, without
+> saying quite what they actually do.  As you point out, symbol
+> replication does not work, and in-band signalling also makes no
+> sense. So they throw all that away. Leaving just the higher clock
+> rate, single speed, and no in-band signalling.
+> 
+> In the end, that looks very similar to 2500BaseX with broken inband
+> signalling.
 
--- 
-With Best Regards,
-Baokun Li
+Let's call it that then: "2500Base-X with broken in-band signalling".
 
+MaxLinear describes that quite clearly in their (open!) datasheets[1],
+and gives some insight into the (mis-)use of the term "SGMII" in the
+industry as synonymous to just any type of serialized Ethernet MII:
+
+"
+3.4 SGMII Interface
+
+The GPY211 implements a serial data interface, called SGMII or SerDes,
+to connect to another chip implementing the MAC layer (MAC SoC).
+"
+(page 32)
+
+Later on they mention that
+"
+3.4.7 Auto-negotiation Modes Supported by SGMII
+
+Two modes are supported for the SGMII auto-negotiation protocol:
+ * Cisco* Serial-GMII Specification 1.8 [4]
+ * 1000BX IEEE 802.3 following IEEE Clause 37 [2]
+"
+(page 37)
+
+Aquantia's datasheets are only available under NDA, so I cannot quote
+them directly, but I can tell you that their definition of "SGMII" is
+pretty similar to that of MaxLinear.
+
+> 
+> > Hence I assume that what you meant to say here is that the PHY uses
+> > 2500Base-X as interface mode and performs rate-adaptation for speeds
+> > less than 2500M (or half-duplex) using pause frames.
+> 
+> Not all systems assume rate adaptation. Some are known to use SGMII
+> for 10/100/1G with inband signalling, and then swap to 2500BaseX
+> without inband-signalling for 2.5G operation!
+
+Yes, most 2.5G PHYs out there (MaxLinear, RealTek) actually support both,
+with interface-mode switching being the better option compared to often
+rather problematic rate-adaptation...
+
+When it comes to Aquantia we are using 2500Base-X with rate adaptation
+for the older 2.5G PHYs, so I assume the newer ones would not differ in
+that regard. Or rather: If we were to introduce interface-mode-switching
+also for the Aquantia 2.5G PHYs then we should try doing it for all of
+them at least.
+
+> 
+> 2.5G is a mess.
+
++1
+
+[1]: https://assets.maxlinear.com/web/documents/617810_gpy211b1vc_gpy211c0vc_ds_rev1.4.pdf
 
