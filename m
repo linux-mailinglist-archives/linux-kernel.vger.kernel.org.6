@@ -1,58 +1,86 @@
-Return-Path: <linux-kernel+bounces-234293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 639A791C4C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:25:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 780FA91C4CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:25:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EB041F2369E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:25:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 331DE285808
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6B81CCCC3;
-	Fri, 28 Jun 2024 17:25:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C721CCCBF;
+	Fri, 28 Jun 2024 17:25:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GVgXdC7E"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bssi4Vb6"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A841CCCB0;
-	Fri, 28 Jun 2024 17:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13BF81CB306;
+	Fri, 28 Jun 2024 17:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719595521; cv=none; b=lyi+JErPZp/4wilRWKJFtYBWQambhwTkak3MjYKW7Xd51peJGc9tIWAS2mYNyaqAeNmTX9XkdSoqh+yALnZ34TZxMK5OYVr2IhP/rY1PSl/UkrU7sbdAJHSQsDR70VClMANxWIyjO1lz84qFC66LrGWIxfDdIKjJXWzvLhG3AeE=
+	t=1719595548; cv=none; b=LywiJQ2+L2SQqsroL2OWbrmaZ4jMCTsBXWEs4NSsdFQ28VPD5Nl+b5b0NXt9pOofMY+vgRiuu9I9hP+sDU37ElOyDdMocZdv3H6q0dgfkZZjzeXFFNs3ExVG0nu7xbKwmVgt3ps1FA+HYoISRnC4IoBgf5lWZzVCetcydxTI2HQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719595521; c=relaxed/simple;
-	bh=x6j73uoCRrZ14yA3p55yPP6y7FL+Uk8sLbq29Ko5E/4=;
+	s=arc-20240116; t=1719595548; c=relaxed/simple;
+	bh=Ka1TJNVLbhH+PgynFj/tZxJjME7coKvKnwCbbyM3MrA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HedZ2xHMs36f7H2YZ4FWRqPi96fp4JFIzYQsQxwXacdvC+JqO7jzVupvYGt7uvkM6OsQlwGVyxvWUZF4fhsW5rpO983w2K5B9lwwRQgtb4LElIMzW9AdCaf1OrNq3U1BABGEN1JLFNNj+jM9u5F+CrM2aaoqdWbAOYRsqgLJ+P8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GVgXdC7E; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=O7+BgIEUquUKXJpFeq9QGAUW5FT/jrmi5BFL0thD5sA=; b=GVgXdC7EJuEzd74wgwyZ5FwRom
-	dzWhaI0TFTg/RWPZ+R3b6EEsG3B3UforTugwa1SO0oraiF/+YqoUFOOYopUs3BGleJffU1gcXDGGn
-	VQIniY7lH6eBBxlrPo8sYWNOmwmZlNy+iI9jeWIo2yoPeOQbKviosSx2+sYxMe0QgxLRXW4PrXlQ/
-	B0IzjGnrfr/eakrN1gykJWkBssEPEJ8OjcR7bD5UCChFfsnVkE/1jd69G5v687id+7Rf9TtvvG1Cl
-	F9DdDmd0TIIMelYcvmaybgXf6q+1ib4nv0ssa+PI0IxkA51zRo1TmjUBCkfyRSdXXN1tfStoxfgv1
-	vjjZNb2w==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sNFLc-0000000EUqx-0579;
-	Fri, 28 Jun 2024 17:25:20 +0000
-Date: Fri, 28 Jun 2024 10:25:19 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Daniel von Kirschten <danielkirschten@gmail.com>
-Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6.10.0-rc2] kernel/module: avoid panic on loading broken
- module
-Message-ID: <Zn7x_9BpJLwYSORn@bombadil.infradead.org>
-References: <230772fc-1076-4afb-8f7a-e7c402548c3b@gmail.com>
- <ZnHm-5oljP8_5dFB@bombadil.infradead.org>
- <82da9ad9-6a79-4edf-b38f-ef000b68c50a@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SK4TwtfvbCibFXf0zGgjbl9HO8roVBQLseNf5Y+9g5+fTOqsjCepTAE7YO/UAKlo2+xZY2b6NVyB78NhS/b5tU04pGyYJGWHjkt6X1uWQm3ITcHt0lkuh6boe59s0D641Hay6EdzPAV7psWwIAdcXMK9uTPpC2uPK5VsTF/4fy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bssi4Vb6; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fa2ea1c443so6579105ad.0;
+        Fri, 28 Jun 2024 10:25:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719595546; x=1720200346; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xXxHt+NjVKoiybQ7NTFTQy5xGBJFko4J6pQhKbbNlUk=;
+        b=bssi4Vb6d0R/ndLnoAwGjkuIOaiaV+aHPXgIckzxHwyNPZADSXtoLJF8EDHsJeq8e9
+         sKH+mSCUDcF+xEXqaMd5lxN793N3vCIEqy4eFbGMcMRtLv9cC+358Iuz7lyyaHSl0xTn
+         GxzAy1VpWHCwXbhyU+get/siRVWeb3Bwpj8PBRmzLB64JqBPlTJx0wVoUnIaHlpB0Qft
+         GQMGF4SmH5wruPz7ttRJtSngnVhc7enHlU7jOuhY0sv30wrN50DUXFJHSySoCiA468Zk
+         pUDlgYFJjFlq0f2R9RiKra1x8pIgN276mRQ0NXQtkJG6J0jDKZ4fdRtjx3a8Iue9zG9T
+         1RfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719595546; x=1720200346;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xXxHt+NjVKoiybQ7NTFTQy5xGBJFko4J6pQhKbbNlUk=;
+        b=segaTJu5MLNyqPo6bcPWJZeBOPQuhO7/yNDnxbB9nJYsL3o9aXxFN2mPJ42zPuaBj1
+         LpBlRiMvd/DG+KwTKQdHG8JCEUWK/wXLtLoAZ50/O/Mx9PR9NBPY8faeAeOxFJo1aeUo
+         CpnziD3fPQBbb5tWALYLpQzVoZAGORyiCpisZtpmYm11ZYI9429kUfjUJiKO99neJZXv
+         fz0JrnWpmvMV5LtpkIUrmbk3gVeCJptNzSz6MXUBWs+DwN10aKgkNeUzuPa+HAHmevbC
+         kniusy7fJG+XRB16xT0K3cbNODcWgD8uXOvQS7slrJog+m39e46xGPPLs3YzCRmANbGi
+         6G1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUniJeeyrMPUADy8TSbtXP3i29ve4n73BNQl/vbVnq7IWTHMR0g3jox549FpGts1S8a76WSwOuAv/ShAt8+trccODgFztxy3qOlZsAm7/S2rjwf1hYu3h2cxMTyzWRd6woWjDjp0t+JjeTLWrCt66cFoAZH9+QDKoWAzK7C0MrYTzG/FTyuBjyUoSi+fHsejUTh6u1QxXZ2DGPDRJaKALoc6dlqR6ZVV1l5A4i33Tu3IgmBh6FCeGc+PadH
+X-Gm-Message-State: AOJu0YwSdS6UpgdL1a4EwxEtoHAC7HYIxL3Ixi9kF1eqegs0YFwjVHFG
+	PnSJpRsNA8fQOoX4KW75NvIu217ojM54QmYjg+U9+rBQzDLvhClO
+X-Google-Smtp-Source: AGHT+IFcasRnsbhhq7yD+4DSD1/IEFOT7vexlWQsQmNhyaHSO6Dm8AlD9UHNt9ec/oCAhgVoY0nX9A==
+X-Received: by 2002:a17:902:6f08:b0:1fa:2001:d8f5 with SMTP id d9443c01a7336-1fa23f02bbemr123904115ad.62.1719595546239;
+        Fri, 28 Jun 2024 10:25:46 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac11d8cbbsm17943285ad.106.2024.06.28.10.25.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 10:25:45 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Fri, 28 Jun 2024 10:25:44 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Noah Wang <noahwang.wang@outlook.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	jdelvare@suse.com, corbet@lwn.net, Delphine_CC_Chiu@wiwynn.com,
+	peteryin.openbmc@gmail.com, javier.carrasco.cruz@gmail.com,
+	patrick.rudolph@9elements.com, bhelgaas@google.com, lukas@wunner.de,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v5 1/2] dt-bindings: hwmon: Add MPS mp2891
+Message-ID: <b11cca9b-f956-42d1-93f6-505081bd45c8@roeck-us.net>
+References: <SEYPR04MB6482EE353C207DA6977C974DFAD62@SEYPR04MB6482.apcprd04.prod.outlook.com>
+ <SEYPR04MB6482BC95D1242A5675FF9DAEFAD62@SEYPR04MB6482.apcprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,85 +89,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <82da9ad9-6a79-4edf-b38f-ef000b68c50a@gmail.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+In-Reply-To: <SEYPR04MB6482BC95D1242A5675FF9DAEFAD62@SEYPR04MB6482.apcprd04.prod.outlook.com>
 
-On Fri, Jun 21, 2024 at 04:05:27PM +0200, Daniel von Kirschten wrote:
-> Am 18.06.2024 um 21:58 schrieb Luis Chamberlain:
-> > On Thu, Jun 06, 2024 at 03:31:49PM +0200, Daniel v. Kirschten wrote:
-> > > If a module is being loaded, and the .gnu.linkonce.this_module section
-> > > in the module's ELF file does not have the WRITE flag, the kernel will
-> > > map the finished module struct of that module as read-only.
-> > > This causes a kernel panic when the struct is written to the first time
-> > > after it has been marked read-only. Currently this happens in
-> > > complete_formation in kernel/module/main.c:2765 when the module's state is
-> > > set to MODULE_STATE_COMING, just after setting up the memory protections.
-> > 
-> > How did you find this issue?
+On Wed, Jun 26, 2024 at 05:46:00PM +0800, Noah Wang wrote:
+> Add support for MPS mp2891 controller
 > 
-> In a university course I got the assignment to manually craft a loadable .ko
-> file, given only a regular object file, without using Kbuild. During testing
-> my module files, most of them were simply (correctly) rejected by the kernel
-> with an appropriate error message, but at some point I ran into this exact
-> kernel panic, and investigated it to understand why my module file was
-> invalid.
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Noah Wang <noahwang.wang@outlook.com>
 
-OK, then the commit log should describe that this doesn't fix any known
-real world issue, but rather a custom crafted module without the regular
-module build system.
+Applied.
 
-> > > Down the line, this seems to lead to unpredictable freezes when trying to
-> > > load other modules - I guess this is due to some structures not being
-> > > cleaned up properly, but I didn't investigate this further.
-> > > 
-> > > A check already exists which verifies that .gnu.linkonce.this_module
-> > > is ALLOC. This patch simply adds an analogous check for WRITE.
-> > 
-> > Can you check to ensure our modules generated have a respective check to
-> > ensure this check exists at build time? That would proactively inform
-> > userspace when a built module is not built correctly, and the tool
-> > responsible can be identified.
-> 
-> See above - I don't think it's possible to create such a broken module file
-> with any of "official" tools.
-
-That should be clearly stated on the commit log.
-
-> I haven't looked too deeply into how Kbuild
-> actually builds modules, but as far as I know, the user doesn't even come
-> into contact with this_module w
-
-Consider that a next level university assignment and is more useful to the world
-than this debug message. Because above you suggest "I don't think", go
-out and now be sure.
-
-> hen using the regular toolchain, because
-> Kbuild is responsible for creating the .this_module section. And Kbuild of
-> course creates it with the correct flags. So if I understand correctly,
-
-...
-
-> this
-> problem can only occur when the module was built by some external tooling
-> (or manually, in my case).
-
-Who would create custom modules without the Linux kernel module build
-system, and what uses does that provide? It seems you are proving why
-this would be terribly silly thing to do.
-
-Now, the *value* your change has is it can prevent a crash in case of a
-corrupted module, which *can* occur, consider an odd filesystem
-live corruption, at least this would be caught at module load attempt
-and not crash. That's worth committing for this reason but your commit
-log really needs much more clarity. Why? Because stupid bots want to
-assign stupid CVEs for anything that seems like a security issue and
-this could escalate to such type of things. Providing clarity helps
-system integrators decide if they want to backport this sort of patch.
-Providing clarify on the chances of this happening and how we think it
-can happen helps a lot.
-
-If you want to be more proactive, try to enhance userspace kmod modprobe
-so that this is also verified.
-
-  Luis
+Thanks,
+Guenter
 
