@@ -1,143 +1,119 @@
-Return-Path: <linux-kernel+bounces-233889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7CE491BEC3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:41:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30B9891BEC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:40:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8451C284C50
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:41:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEB191F219EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 578F015886C;
-	Fri, 28 Jun 2024 12:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="jsoxR+dJ"
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A1C1586FE
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 12:40:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719578460; cv=none; b=jKHv9lXmNLBMFp5IXZ0LLNRVgzfsJfW0dnFOv2zijcFXeglcT82CyaK9lu86Oe5WrCf5LAlIGFZWbZo9Vdvmto01VFSAWDHT47uvPXp6e4AtF6b+hgiaQf56Rsb4yPrSSXnJtFV3RbZzgs+Z6llXyN0mXtxLXeN3C59nwoKIPS0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719578460; c=relaxed/simple;
-	bh=bICnReZls0MrKkjCA8zJ3u+312ywetkt85F00cBM/Uk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=AJFgTfFWHYpuv5xakzZDlinZVjvGlbj6Xrs1mV1TXJSQmjCAPWBgpTf1sn1Nxyi0CB8QsUl5Z8OY5h5BFm8RvluXbZOgQJGzEUEyzyxcJKiogFCeq1GwxNFjj3VtcKh+O6JHsq4PCCbLOmpgS1ra+dewxgfA6RH8b6Tz9RrwKPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=jsoxR+dJ; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from 8bytes.org (pd9fe9dd8.dip0.t-ipconnect.de [217.254.157.216])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 665C315885D;
+	Fri, 28 Jun 2024 12:40:46 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id BBB541C8929;
-	Fri, 28 Jun 2024 14:40:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1719578457;
-	bh=bICnReZls0MrKkjCA8zJ3u+312ywetkt85F00cBM/Uk=;
-	h=Date:From:To:Cc:Subject:From;
-	b=jsoxR+dJiA7+31ql8zhFfpfx1G+LXZIzAI/XMmSMjQbrI8K2o0DIveWltbAxwdXJC
-	 QaCgrrNErNbl3eEPFXvB+wTgRHKB87eJELnANTjox8HagmNdiQJweCHrImZtM3RN4D
-	 EJ50QcQwPmwEtFbtHuwm5YjFmy5LMe50d2vg2MCru5FvQVPU4cFgEk6zC7ktbm3PpG
-	 KzRDgHUHmZ7TF8xE6zWMaOeZtJNiF7k0vh/s4BKgZO0gZImZzvy+lEVFbjjRF/CJ1B
-	 9TmAHOhhvt+TGY3UQICiLRwMBnAFI+9LaX6qtHn8stExLjQvPB+2gO9QJSiwdFURwh
-	 wWO8IMwMQ3Jng==
-Date: Fri, 28 Jun 2024 14:40:56 +0200
-From: Joerg Roedel <joro@8bytes.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev
-Subject: [git pull] IOMMU Fixes for Linux v6.10-rc5
-Message-ID: <Zn6vWO1Caf6R998K@8bytes.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E670E156967
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 12:40:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719578445; cv=none; b=H1q4o6vTgczpArMF/Xqv43Frl/qFB8OjPh8h70asXPHN+aO5EX6+jKTcLj00H23NyM6kEBMaEebqlh/bXx9fMM71kmUgvHCikfB+mlym7majzyLQgqZnxyCwkt77hf3hP463E8EEPpzcI5mmLpskd1nW5jGI8mhE2PzqLGCcwLc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719578445; c=relaxed/simple;
+	bh=k+tHhvsXLqC0pkWc1z2zD5HL9oEtyeNTJH18mQOk0Bc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ejYrpfa+jjt4jAw7WczUwo7Wo+mCAAJ8fLyaDi2nZc34/mRL+GGbl8XDmrorhfaUqrk0FUmhxLf3AVXurixmSMEamhseJJ/Gadg4PcZmAaWOk08lHN+Bi8gqHa2GRFQcnEjNdWvAldPfJuZ8pv3Oyn44zVTUYgKlKgEIr6K9eew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89E85C116B1;
+	Fri, 28 Jun 2024 12:40:44 +0000 (UTC)
+Date: Fri, 28 Jun 2024 08:41:37 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: richard clark <richard.xnu.clark@gmail.com>
+Cc: Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ will@kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, "Russell King (Oracle)"
+ <linux@armlinux.org.uk>, Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: Will smp_call_function_single(cpu, ...) broadcast IPI to all
+ other cpus?
+Message-ID: <20240628084137.3338ab75@gandalf.local.home>
+In-Reply-To: <CAJNi4rMeDgDJbN0jjPguU_v5uoscJJN=5bZaShXpu7Q8X60hcg@mail.gmail.com>
+References: <CAJNi4rMfRmWoYdsyH6ibNKN8DSCL_DO8Wa08mWbe8t7vH21Dpw@mail.gmail.com>
+	<86pls2isal.wl-maz@kernel.org>
+	<20240627101207.0bbbead0@rorschach.local.home>
+	<CAJNi4rMeDgDJbN0jjPguU_v5uoscJJN=5bZaShXpu7Q8X60hcg@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="WUFP6s1EtIXwIMDM"
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, 28 Jun 2024 18:21:25 +0800
+richard clark <richard.xnu.clark@gmail.com> wrote:
 
---WUFP6s1EtIXwIMDM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Hi Steven,
+>=20
+> On Thu, Jun 27, 2024 at 10:12=E2=80=AFPM Steven Rostedt <rostedt@goodmis.=
+org> wrote:
+> >
+> > On Thu, 27 Jun 2024 11:38:58 +0100
+> > Marc Zyngier <maz@kernel.org> wrote:
+> > =20
+> > > You may want to enable stack trace recording and find out for yourself
+> > > where these ipi_raise() calls are coming from. =20
+> >
+> > Try trace-cmd:
+> >
+> >   # trace-cmd start -e ipi_raise -R 'stacktrace if reason=3D=3D"Functio=
+n call interrupts"'
+> >   # taskset -c 0 insmod /kmods/ipi_test.ko
+> >   # trace-cmd stop
+> >   # trace-cmd show
+> > =20
+> I found that the 'stacktrace' seems like a stick bit. Run the above
+> '# trace-cmd start -e ipi_raise -R 'stacktrace if reason=3D=3D"Function
+> call interrupts"' ... command sequence, then
+> # trace-cmd start -e ipi -f 'reason=3D=3D"Function call interrupts"' -v -e
+> ipi_exit; taskset -c 0 insmod /kmods/ipi_lat.ko; trace-cmd stop;
+> trace-cmd show; trace-cmd clear;
+> The output is:
+>=20
+>           insmod-1746    [000] dn.h1..   928.400039: ipi_raise:
+> target_mask=3D00000000,000000ffe (Function call interrupts)
+>           insmod-1746    [000] dn.h2..   928.400042: <stack trace>
+>  =3D> trace_event_raw_event_ipi_raise
+>  =3D> smp_cross_call
+>  =3D> arch_send_call_function_single_ipi
+>  =3D> send_call_function_single_ipi =20
+> ...
+> Actually, the behavior hoped like this(no stacktrace):
+>=20
+>           insmod-1677    [000] ....1..   473.474846: ipi_raise:
+> target_mask=3D00000000,00000ffe (Function call interrupts)
+>           <idle>-0       [002] d..h1..   473.474848: ipi_entry:
+> (Function call interrupts)
+>           <idle>-0       [003] d..h1..   473.474849: ipi_entry:
+> (Function call interrupts)
+>           ...
+>           insmod-1677    [000] ....1..   473.474859: ipi_raise:
+> target_mask=3D00000000,00000ffe (Function call interrupts)
+>           <idle>-0       [001] d..h1..   473.474861: ipi_entry:
+> (Function call interrupts) magic=3D0x55aa55aa
+>           ...
+>=20
+> I tried to add '# trace-cmd stack --stop/reset' before the above
+> command, but it did not work. Any help to disable the 'stacktrace' in
+> this scenario?
 
-Hi Linus,
+ trace-cmd reset
 
-A note: I will be off for the next two weeks and Will Deacon takes over
-IOMMU maintenance during that time. I should be back in time for the
-next merge window.
+will put everything back. But yeah, I need to fix it so that it's easier to
+reset triggers.
 
-With that being said, here is a bunch of fixes:
-
-The following changes since commit f2661062f16b2de5d7b6a5c42a9a5c96326b8454:
-
-  Linux 6.10-rc5 (2024-06-23 17:08:54 -0400)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git tags/iommu-fixes-v6.10-rc5
-
-for you to fetch changes up to 09aaa2d0642359fddae607b6950b2ca7bd1cf04f:
-
-  MAINTAINERS: Update IOMMU tree location (2024-06-28 14:31:50 +0200)
-
-----------------------------------------------------------------
-IOMMU Fixes for Linux v6.10-rc5
-
-Including:
-
-	- Two cache flushing fixes for Intel and AMD drivers
-	- AMD guest translation enabling fix
-	- Update IOMMU tree location in MAINTAINERS file
-
-----------------------------------------------------------------
-Joerg Roedel (1):
-      MAINTAINERS: Update IOMMU tree location
-
-Lu Baolu (1):
-      iommu/vt-d: Fix missed device TLB cache tag
-
-Vasant Hegde (2):
-      iommu/amd: Invalidate cache before removing device from domain list
-      iommu/amd: Fix GT feature enablement again
-
- MAINTAINERS                 |  8 ++++----
- drivers/iommu/amd/init.c    |  1 +
- drivers/iommu/amd/iommu.c   | 12 ++++++------
- drivers/iommu/intel/iommu.c | 20 ++++++++++----------
- 4 files changed, 21 insertions(+), 20 deletions(-)
-
-Please pull.
-
-Thanks,
-
-	Joerg
-
---WUFP6s1EtIXwIMDM
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEr9jSbILcajRFYWYyK/BELZcBGuMFAmZ+r1gACgkQK/BELZcB
-GuPYIw/+JMjA1uBV/L2txL/ZPCTjYwPpqYreORkJuaW/Oi1UMptvedBFbBqRczhb
-5uLGsMzlEMEG0I+OJWgsCWf6O8IefVoY9x25y/DMl0EqkCn8vlh+3gpbjt6FPUVN
-Nip5G+gXf/T/k/6CCrDL/At0B6Gz457ve5buxfauyxYnLeVCwGjDo0yqjqtnOlF2
-AcEZZ4i3gyHuc1GRSIlEKuwM1Sjy0GP+H/T5CxpTVBVNKrT5/nRJtWHq4Dv3NnWo
-X7h5z/AfFQZdroeNho/+5+3JUZ28sjtoRb3qlxVlTffMVQrVJW1cCaWC+hQlrhlq
-K9FWFyAXBwqA3tPV2QLgXeacJ+tDTOBIqCzdRLe2xlDkdPAK7lmnCiRCBC6wN9kw
-2wZfY8t4Iefq1B4rI7arIXAAwcoyS4Zsq9i+rdMQv9mrHcNzB169/w1ld/Vne3Z+
-h+HI5u6DrJA1ufS+mIpf2hol0JsAAcd1H/yG6lk6BFfnFFMCZeghf10F2HcClrKI
-wWAx7ZSRjVhwcNeDMfchneHkP9JfoEbCh5igLSSx4bGb5lEpqhUoG/zuvPnm7JSW
-kGghta33hXUjzuRKaqtPauz8EJnyWF6j05wdFq1uoZVrLQi86Xk3L/5DP7f9SCpK
-N/84kOSF6aJ/RyXHaOfm1TsFVPBmi4ka+BQnQBhw6qfNTbUpUb0=
-=opjv
------END PGP SIGNATURE-----
-
---WUFP6s1EtIXwIMDM--
+-- Steve
 
