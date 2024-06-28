@@ -1,136 +1,114 @@
-Return-Path: <linux-kernel+bounces-233630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6BE091BA71
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:53:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C99E591BA72
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:53:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 921CF2823FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:53:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06CDD1C226AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:53:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0B814E2C9;
-	Fri, 28 Jun 2024 08:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Pso5GkyE"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79EC314D702;
+	Fri, 28 Jun 2024 08:53:47 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1986A14D422;
-	Fri, 28 Jun 2024 08:53:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B260614D2AB
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 08:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719564816; cv=none; b=NgpAX1vjvb0r8dItTeeQFW8EsCSS3CG283g1/Qb8b0xgBLe8ftOw9tdogEr+pcnogBstNj1aJETcEyApe+PB3Muzzo2XjW3FsHdC5oh6B8L55HOveVCuP3BWzBhfbdl5dN/0u8nF5AxsVfYVQ/DgMQUCAtA4XrvNsnSoJ/w4aQM=
+	t=1719564827; cv=none; b=qmT3mfbN3TirfbChtHIxBGTV02KCXnUQ/AEAJGq5Mkog4gt4dP4p2RWj5HMAMpByh51iG0LrY2FJTsD0ZLFHTET1jZNShogsBBbAhoQ++2HRH9XW0RALVbYH24iKx5/Bq20CzigmbrRZHsrpm6GMGGvgT3fThMuVoZEs32zRzU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719564816; c=relaxed/simple;
-	bh=oxTnH17qDngqxivrM5yoTjoI0FurZB5eV9GU0Bc8qMc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Dg6YvXetZh5QVQxo38y2WINbh/ODSGhmtul7I58jPVKb+XvPePqj2swkL8V0+1Wa98TW2SQpsaCOUGpLq4cN/8OSdBDyT0BY7rL/OF0IBCEdGUAxYqIFOUgalsrJKyV2qUYQcb6hgB6W0SheEv/puE36e8VhGnxNU1oLXksgMMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Pso5GkyE; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45S4vs7J026976;
-	Fri, 28 Jun 2024 08:53:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+Kq22wU7wwsGYjhBl9xtahOdtEa8X2tZidLfwDtYSi0=; b=Pso5GkyEZP2QbA+o
-	fveJJtbnmUXFiuhuivdKvTBD5SIsLlvwes7hPiSvkmqvKyBTn/IfmTjca661wAit
-	SRNUz5gN/h5M6kX8gqqyopVn+Y+nZflMTjm6cPFVGmCESIPJ8YaEQGWiqOsUFkyu
-	GixmaNnVqoJHMW/5XiDjGIIoo73K601XUpV6OQGx8nYSsJi1mWApzG2OoKkddnYB
-	GHRTyN8bvKJqevREb+NQeJavaJKYpT8IyCw+aphDbz9ZSidnhEoIKBauPxJvlhnz
-	S3La1x9nKhpiaVyHNMxoBD/Q4nsJFGQ1MjQTYe/2OuVYxzDAv9FLM/e8Nn7EVV0x
-	MQg2mg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 401pm30nhc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Jun 2024 08:53:31 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45S8rT7x006124
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Jun 2024 08:53:29 GMT
-Received: from [10.217.216.152] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 28 Jun
- 2024 01:53:25 -0700
-Message-ID: <18458d55-0ba9-4cee-85ca-88b38cebee0f@quicinc.com>
-Date: Fri, 28 Jun 2024 14:23:21 +0530
+	s=arc-20240116; t=1719564827; c=relaxed/simple;
+	bh=OIT17qLKWGJWizrdyplsr8lba2jbjmLexGyFkIyw9L0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GzZMCcBOZV0QmhxDluPysRMZWn5YzMm5EIFxmfeqFasZvaxl23roYz4/6mroBmA4MjKdugVQMMPljzSNeiTPZonukLh6MtfYuGAjg8p5C5mVk1i+OB6QnJAYbZyfORMZp4anKwA4mbD2lB8mGU1XHjo+86hk4RvMQkrGtJy5KCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sN7MO-000220-SY; Fri, 28 Jun 2024 10:53:36 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sN7MN-005Z8k-5m; Fri, 28 Jun 2024 10:53:35 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1sN7MN-002PCC-0F;
+	Fri, 28 Jun 2024 10:53:35 +0200
+Date: Fri, 28 Jun 2024 10:53:35 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Dent Project <dentproject@linuxfoundation.org>,
+	kernel@pengutronix.de, linux-doc@vger.kernel.org,
+	Sai Krishna <saikrishnag@marvell.com>
+Subject: Re: [PATCH net-next v5 4/7] net: pse-pd: Add new power limit get and
+ set c33 features
+Message-ID: <Zn56D_6QYqHH-ziO@pengutronix.de>
+References: <20240628-feature_poe_power_cap-v5-0-5e1375d3817a@bootlin.com>
+ <20240628-feature_poe_power_cap-v5-4-5e1375d3817a@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] clk: qcom: gcc-x1e80100: Fix halt_check for all pipe
- clocks
-To: Abel Vesa <abel.vesa@linaro.org>, Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-CC: Johan Hovold <johan@kernel.org>, Sibi Sankar <quic_sibis@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240628-x1e80100-clk-gcc-fix-halt-check-for-usb-phy-pipe-clks-v2-1-db3be54b1143@linaro.org>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <20240628-x1e80100-clk-gcc-fix-halt-check-for-usb-phy-pipe-clks-v2-1-db3be54b1143@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ddnQDAzrZO6JdrBG3p-rRsy007guMOy2
-X-Proofpoint-GUID: ddnQDAzrZO6JdrBG3p-rRsy007guMOy2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-28_05,2024-06-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- impostorscore=0 adultscore=0 phishscore=0 lowpriorityscore=0
- malwarescore=0 priorityscore=1501 suspectscore=0 mlxscore=0 bulkscore=0
- clxscore=1011 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406280065
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240628-feature_poe_power_cap-v5-4-5e1375d3817a@bootlin.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-
-
-On 6/28/2024 1:38 PM, Abel Vesa wrote:
-> In case of all pipe clocks, there is a QMP PHY clock that is feeding them.
-> If, for whatever reason, the clock from the PHY is not enabled, halt bit
-> will not get set, and the clock controller driver will assume the clock
-> is stuck in a specific state. The way this is supposed to be properly
-> fixed is to defer the checking of the halt bit until after the PHY clock
-> has been initialized, but doing so complicates the clock controller
-> driver. In fact, since these pipe clocks are consumed by the PHY, while
-> the PHY is also the one providing the source, if clock gets stuck, the PHY
-> driver would be to blame. So instead of checking the halt bit in here,
-> just skip it and assume the PHY driver is handling the source clock
-> correctly.
+On Fri, Jun 28, 2024 at 10:31:57AM +0200, Kory Maincent wrote:
+> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
 > 
-> Fixes: 161b7c401f4b ("clk: qcom: Add Global Clock controller (GCC) driver for X1E80100")
-> Signed-off-by: Abel Vesa<abel.vesa@linaro.org>
-> ---
-> Changes in v2:
-> - Re-worded the commit message from scratch.
-> - Changed all pipe clocks halt_check to skip.
-> - Link to v1:https://lore.kernel.org/r/20240530-x1e80100-clk-gcc-fix-halt-check-for-usb-phy-pipe-clks-v1-1-16c6f4dccbd5@linaro.org
-> ---
->   drivers/clk/qcom/gcc-x1e80100.c | 44 ++++++++++++++++++++---------------------
->   1 file changed, 22 insertions(+), 22 deletions(-)
+> This patch add a way to get and set the power limit of a PSE PI.
+> For that it uses regulator API callbacks wrapper like get_voltage() and
+> get/set_current_limit() as power is simply V * I.
+> We used mW unit as defined by the IEEE 802.3-2022 standards.
 > 
-> diff --git a/drivers/clk/qcom/gcc-x1e80100.c b/drivers/clk/qcom/gcc-x1e80100.c
-> index eb7e36ebd7ae..fc80011342da 100644
-> --- a/drivers/clk/qcom/gcc-x1e80100.c
-> +++ b/drivers/clk/qcom/gcc-x1e80100.c
+> set_current_limit() uses the voltage return by get_voltage() and the
+> desired power limit to calculate the current limit. get_voltage() callback
+> is then mandatory to set the power limit.
+> 
+> get_current_limit() callback is by default looking at a driver callback
+> and fallback to extracting the current limit from _pse_ethtool_get_status()
+> if the driver does not set its callback. We prefer let the user the choice
+> because ethtool_get_status return much more information than the current
+> limit.
+> 
+> expand pse status with c33_pw_limit_ranges to return the ranges available
+> to configure the power limit.
+> 
+> Reviewed-by: Sai Krishna <saikrishnag@marvell.com>
+> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 
-Reviewed-by: Taniya Das <quic_tdas@quicinc.com>
+Acked-by: Oleksij Rempel <o.rempel@pengutronix.de>
+
+Thank you!
 
 -- 
-Thanks & Regards,
-Taniya Das.
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
