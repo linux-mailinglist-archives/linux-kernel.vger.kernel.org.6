@@ -1,103 +1,271 @@
-Return-Path: <linux-kernel+bounces-234050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4155E91C166
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:45:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1676991C16F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:46:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC320B2370E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:45:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1CC2281525
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9EF21C0053;
-	Fri, 28 Jun 2024 14:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331131C0DE7;
+	Fri, 28 Jun 2024 14:46:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="USazIl4K"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="x47XdDmE"
+Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8743FD4;
-	Fri, 28 Jun 2024 14:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719585930; cv=none; b=MiApb57CKgJK1ki7MDthAUJjWCHHP/O8EjALiRivoLiF+ggk1k9LimCOxmK7X84cis4rbSN0ZEDmyikyaxU/hdvlRi8fI+UvP6xcjKM+ChGxzOPP/TsDb9DS3gStKEbatAzd67nZdBsWBJsdNQDQ0uknfBpmrsYBt8aX4BZu1pA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719585930; c=relaxed/simple;
-	bh=aICuprWnSjP9eScCzHB3FMUjG8kNJF3xR6iAE6BPq08=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E7g9on3Px+ZRiAWyVdQDLPGYS8xReARixiCA6MKhSigx9ASTpyVNlUTt1hwB3pcbqikAaTUXe1TfD+Wz3dKDAb6Ef2hg+7bOmtCmJLJ+I1YeFG1kHK8yE7aHgoeU64GpEbTI9vR5GyrdBrP0FM29sL30+4PtDV1M6vaP90yz0dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=USazIl4K; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 439A340E0027;
-	Fri, 28 Jun 2024 14:45:24 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 1EkaqO1vDdWG; Fri, 28 Jun 2024 14:45:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1719585921; bh=g878iQcJ2TWlDYARgfF2E7Nv6DYEvGZ50sNVanN/6IM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=USazIl4KIKWFGJggBkcn4pn9HbQL+ZTwfgEYfzyzVCSUcYSjim2PUX/NrVS32WgNL
-	 uuq8LrVYkMp0T4ubO0S4wIEmihMmrBOLZSxMpP4bjTV+6bjifMY5Up1H6hqzr9tU5Y
-	 3OhSK4bZS3N6oiclMAjabZhKgWK/TJ+XZcUWpgnMkncqy8OXqaqBxHcmMxDOjFZFjA
-	 soGytd/vrG5sKCvaZxXL7D+imGHKYdT6l8fsGz0Nq2lIGI/Hxnplr2CJk9SptW1+/u
-	 QRs6or3+ERwtA3lOVCW5yHjWEvHIn+Jqj/MygxFIoV3ayyTOw71N8yOypTn4ylIniX
-	 tiYnqoLbm01C7x0u+64mGRiLlwWA+twu2efmwIWfJQig6bgwXeKpa0v9wL60VNTIyd
-	 uejLl9tkfsl9ApR/1HK9PlQlz3gMrvuj1zV/uufLidJ3Tf+8Cg45cLJ1rLeHk0mYY6
-	 yoIGwJ2SR59k4x3o3riODckeoZ6HXcUqJ54D95YID52tQWCz/xkr39LX4ixolzkMvO
-	 6ZIwiFjnQjecqh3Djc5n+wruOCarUP0o6m5lyj3GguxVZkV/D3D8DGcnqaYKNXnuDQ
-	 vIgCR/VXBrKWGlOp03J7JSvd/6v0D9erTLKla9hT7Wba90sCGBAvplhS9GM7QTHXCr
-	 STL1xVkn3q4lCPrsq/uZe8fg=
-Received: from nazgul.tnic (business-24-134-159-81.pool2.vodafone-ip.de [24.134.159.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF401DDE9;
+	Fri, 28 Jun 2024 14:46:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719585967; cv=pass; b=St0k3wHZqqaS03II+fP8yVFQLnyWbdTEPjCl+RCFJVlbHlfPc8jAuE/8+dJ5rwwWaAfnvh9UJQno/oAv3LLi1lDQVEq5oMwiRuW6OmWVQfGIFXW2sjlHeTUp2ZKv56XVkm/s4Iqj9CaaUZKjQFUkOLawX/VXiRiE10T9l8sr9yU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719585967; c=relaxed/simple;
+	bh=xi3MsJ24rqKtt58ZcTwE+6ytS76F6inUaZWTbu1VV90=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=vGEO/FnIujPuFg0tzokSNPJVBWNYpQBJATcf880KVYzK0QLaI70M/f3dNqxAHzrM2p7Op9zc8ogwHmR/Hox53r94Q+2oUx3dYKAsk29l5XYq7O0Q+8QKiKsetuUSX8NOftMlZts3rNBsZ07pcovDEw7teaL7eEpxkVNHGTQq1gs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=x47XdDmE; arc=pass smtp.client-ip=195.140.195.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from [192.168.1.215] (83-245-197-232.elisa-laajakaista.fi [83.245.197.232])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3C48E40E0187;
-	Fri, 28 Jun 2024 14:45:13 +0000 (UTC)
-Date: Fri, 28 Jun 2024 16:45:35 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tony.luck@intel.com, x86@kernel.org,
-	avadhut.naik@amd.com, john.allen@amd.com
-Subject: Re: [PATCH v2 1/5] x86/topology: Export helper to get CPU number
- from APIC ID
-Message-ID: <20240628144535.GAZn7Mj4jofP3Vz2xf@fat_crate.local>
-References: <20240624212008.663832-1-yazen.ghannam@amd.com>
- <20240624212008.663832-2-yazen.ghannam@amd.com>
- <87ed8l7byy.ffs@tglx>
- <20240626014212.GA1086@yaz-khff2.amd.com>
- <20240628083722.GFZn52QnltR_2gjuO5@fat_crate.local>
- <20240628141542.GA124261@yaz-khff2.amd.com>
+	(Authenticated sender: sakkinen)
+	by meesny.iki.fi (Postfix) with ESMTPSA id 4W9dXd425vzyQb;
+	Fri, 28 Jun 2024 17:45:53 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
+	t=1719585957;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WWKHLgmudvMlwluvp3Stzu4k/6CZp2skiMXIPd54CxY=;
+	b=x47XdDmEctKtaybdA5GvS+Q7kPTHMjglvlqxpd7wJ1qZCnYZAqadJrM82qWAN9hkJw9qya
+	ArcSjW2anjIUCoreelJdVL2vlkPcnKtJvRbeg/lqoTfNWYZW6xSnQg7nduh1yLA2rVbPuU
+	bnqj0zoDIACXDnSY+Uqae9B+o+mxBYk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=meesny; t=1719585957;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WWKHLgmudvMlwluvp3Stzu4k/6CZp2skiMXIPd54CxY=;
+	b=RxUpuY06Tm7bdQ+ZP2YSeV2sZ0d26kGW+yfvErGUjN0RqKtm0McdqrYuekNb0pGvzE+qm7
+	iuNlXj2O8FbpJDeehRl+K0JeKQeaRmeSYauJacKq29s6uBRrtri7KjBnhn89xVkrtvvaVt
+	5hMvMcoH5A/jWQetK3y8OT94tMYIngU=
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sakkinen smtp.mailfrom=jarkko.sakkinen@iki.fi
+ARC-Seal: i=1; s=meesny; d=iki.fi; t=1719585957; a=rsa-sha256; cv=none;
+	b=wz7CPul/aLpW+AkOpy+q+2hOgYuNK2/HqS/jHykc4lXi7fbJVcsx4BSPq1RSy4MXAK4YCL
+	YMEG6IroCIxVWFa5vosVXJ7wmDo9nZEnRkcQT2Nc2HYn4VErl62+Oyb3XbEnCw7Tw+qsRn
+	X2ennwOnY7aYQMkNbAXIm+aPPy2PuKs=
+Message-ID: <177e16dafed37ab361cf0ccc436573be1d717d94.camel@iki.fi>
+Subject: Re: [PATCH v2 2/4] capabilities: Add securebit to restrict userns
+ caps
+From: Jarkko Sakkinen <jarkko.sakkinen@iki.fi>
+To: Jonathan Calmels <jcalmels@3xx0.net>, brauner@kernel.org, 
+ ebiederm@xmission.com, Jonathan Corbet <corbet@lwn.net>, Paul Moore
+ <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn"
+ <serge@hallyn.com>, KP Singh <kpsingh@kernel.org>, Matt Bobrowski
+ <mattbobrowski@google.com>, Alexei Starovoitov <ast@kernel.org>, Daniel
+ Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>, Yonghong Song
+ <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>,
+ Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa
+ <jolsa@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Kees Cook
+ <kees@kernel.org>, Joel Granados <j.granados@samsung.com>, John Johansen
+ <john.johansen@canonical.com>, David Howells <dhowells@redhat.com>, Jarkko
+ Sakkinen <jarkko@kernel.org>, Stephen Smalley
+ <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+ Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>
+Cc: containers@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
+ apparmor@lists.ubuntu.com, keyrings@vger.kernel.org,
+ selinux@vger.kernel.org,  linux-kselftest@vger.kernel.org
+Date: Fri, 28 Jun 2024 17:45:52 +0300
+In-Reply-To: <f4de777099b0dff819ee6277b3b7cd7e18d96c78.camel@iki.fi>
+References: <20240609104355.442002-1-jcalmels@3xx0.net>
+	 <20240609104355.442002-3-jcalmels@3xx0.net>
+	 <f4de777099b0dff819ee6277b3b7cd7e18d96c78.camel@iki.fi>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240628141542.GA124261@yaz-khff2.amd.com>
 
-On Fri, Jun 28, 2024 at 10:15:42AM -0400, Yazen Ghannam wrote:
-> Thanks for the tip. It looks to me that SMP and X86_LOCAL_APIC are
-> generally independent.
+On Fri, 2024-06-28 at 17:43 +0300, Jarkko Sakkinen wrote:
+> On Sun, 2024-06-09 at 03:43 -0700, Jonathan Calmels wrote:
+> > This patch adds a new capability security bit designed to constrain
+> > a
+>=20
+>=20
+> nit: if you think of it "This patch adds" could be just "add", right?
+> :-)
+>=20
+> Also name the exact thing/symbol/whatever here. This is not a HBO
+> series.
+>=20
+> > task=E2=80=99s userns capability set to its bounding set. The reason fo=
+r
+> > this
+> > is
+> > twofold:
+> >=20
+> > - This serves as a quick and easy way to lock down a set of
+> > capabilities
+> > =C2=A0 for a task, thus ensuring that any namespace it creates will
+> > never
+> > be
+> > =C2=A0 more privileged than itself is.
+> > - This helps userspace transition to more secure defaults by not
+> > requiring
+> > =C2=A0 specific logic for the userns capability set, or libcap support.
+> >=20
+> > Example:
+> >=20
+> > =C2=A0=C2=A0=C2=A0 # capsh --secbits=3D$((1 << 8)) --drop=3Dcap_sys_raw=
+io -- \
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -c '=
+unshare -r grep Cap /proc/self/status'
+> > =C2=A0=C2=A0=C2=A0 CapInh: 0000000000000000
+> > =C2=A0=C2=A0=C2=A0 CapPrm: 000001fffffdffff
+> > =C2=A0=C2=A0=C2=A0 CapEff: 000001fffffdffff
+> > =C2=A0=C2=A0=C2=A0 CapBnd: 000001fffffdffff
+> > =C2=A0=C2=A0=C2=A0 CapAmb: 0000000000000000
+> > =C2=A0=C2=A0=C2=A0 CapUNs: 000001fffffdffff
+> >=20
+> > Signed-off-by: Jonathan Calmels <jcalmels@3xx0.net>
+> > ---
+> > =C2=A0include/linux/securebits.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 =
+1 +
+> > =C2=A0include/uapi/linux/securebits.h | 11 ++++++++++-
+> > =C2=A0kernel/user_namespace.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 |=C2=A0 5 +++++
+> > =C2=A03 files changed, 16 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/include/linux/securebits.h
+> > b/include/linux/securebits.h
+> > index 656528673983..5f9d85cd69c3 100644
+> > --- a/include/linux/securebits.h
+> > +++ b/include/linux/securebits.h
+> > @@ -5,4 +5,5 @@
+> > =C2=A0#include <uapi/linux/securebits.h>
+> > =C2=A0
+> > =C2=A0#define issecure(X)		(issecure_mask(X) &
+> > current_cred_xxx(securebits))
+> > +#define iscredsecure(cred, X)	(issecure_mask(X) & cred-
+> > > securebits)
+> > =C2=A0#endif /* !_LINUX_SECUREBITS_H */
+> > diff --git a/include/uapi/linux/securebits.h
+> > b/include/uapi/linux/securebits.h
+> > index d6d98877ff1a..2da3f4be4531 100644
+> > --- a/include/uapi/linux/securebits.h
+> > +++ b/include/uapi/linux/securebits.h
+> > @@ -52,10 +52,19 @@
+> > =C2=A0#define SECBIT_NO_CAP_AMBIENT_RAISE_LOCKED \
+> > =C2=A0			(issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE
+> > _L
+> > OCKED))
+> > =C2=A0
+> > +/* When set, user namespace capabilities are restricted to their
+> > parent's bounding set. */
+> > +#define SECURE_USERNS_STRICT_CAPS			8
+> > +#define SECURE_USERNS_STRICT_CAPS_LOCKED		9=C2=A0 /* make
+>=20
+>=20
+>=20
+> > bit-8 immutable */
+> > +
+> > +#define SECBIT_USERNS_STRICT_CAPS
+> > (issecure_mask(SECURE_USERNS_STRICT_CAPS))
+> > +#define SECBIT_USERNS_STRICT_CAPS_LOCKED \
+> > +			(issecure_mask(SECURE_USERNS_STRICT_CAPS_L
+> > OC
+> > KED))
+> > +
+> > =C2=A0#define
+> > SECURE_ALL_BITS		(issecure_mask(SECURE_NOROOT) | \
+> > =C2=A0			=09
+> > issecure_mask(SECURE_NO_SETUID_FIXUP) | \
+> > =C2=A0				 issecure_mask(SECURE_KEEP_CAPS) |
+> > \
+> > -			=09
+> > issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE))
+> > +			=09
+> > issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE) | \
+> > +			=09
+>=20
+> spurious new lines in the diff
+>=20
+> please as first priority aim for absolute minimal diff or at least
+> do grow diff proactively like this.
+>=20
+> If we really think after that, that we need some "extras" to the
+> patch set, then we decide that. These only take energy away from
+> reviewers.
+>=20
+>=20
+> > issecure_mask(SECURE_USERNS_STRICT_CAPS))
+> > =C2=A0#define SECURE_ALL_LOCKS	(SECURE_ALL_BITS << 1)
+> > =C2=A0
+> > =C2=A0#endif /* _UAPI_LINUX_SECUREBITS_H */
+> > diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
+> > index 7e624607330b..53848e2b68cd 100644
+> > --- a/kernel/user_namespace.c
+> > +++ b/kernel/user_namespace.c
+> > @@ -10,6 +10,7 @@
+> > =C2=A0#include <linux/cred.h>
+> > =C2=A0#include <linux/securebits.h>
+> > =C2=A0#include <linux/security.h>
+> > +#include <linux/capability.h>
+> > =C2=A0#include <linux/keyctl.h>
+> > =C2=A0#include <linux/key-type.h>
+> > =C2=A0#include <keys/user-type.h>
+> > @@ -42,6 +43,10 @@ static void dec_user_namespaces(struct ucounts
+> > *ucounts)
+> > =C2=A0
+> > =C2=A0static void set_cred_user_ns(struct cred *cred, struct
+> > user_namespace *user_ns)
+> > =C2=A0{
+> > +	/* Limit userns capabilities to our parent's bounding set.
+> > */
+> > +	if (iscredsecure(cred, SECURE_USERNS_STRICT_CAPS))
+> > +		cred->cap_userns =3D cap_intersect(cred->cap_userns,
+> > cred->cap_bset);
+> > +
+> > =C2=A0	/* Start with the capabilities defined in the userns set.
+> > */
+> > =C2=A0	cred->cap_bset =3D cred->cap_userns;
+> > =C2=A0	cred->cap_permitted =3D cred->cap_userns;
+>=20
+> Going for 4 week holiday starting for next week so focus in on nits
+> but since this is something to do access control:
+>=20
+> 1. Please go surgical with the diff's because this type of patches
+> also require a surgical review. Now reviewing this like riding on=20
+> a bumpy road with a car of which suspension mechanics is broken
+> ;-)
+>=20
+> Hope you grab my argument here. I only want to look at the problem
+> and solution for that not random stuff..
 
-They are?
+I skip the other patches because of my eager to get on holiday but
+my instinct tells me that at least some of this feedback applies
+to all of the patches.
 
-config X86_LOCAL_APIC
-        def_bool y
-        depends on X86_64 || SMP
-	^^^^^^^		     ^^^
+So put your solution in sight, not clean ups.
 
--- 
-Regards/Gruss,
-    Boris.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+BR, Jarkko
 
