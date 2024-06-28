@@ -1,111 +1,130 @@
-Return-Path: <linux-kernel+bounces-233516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 308F091B89B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:39:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9229991B89E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:39:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBBDE1F2254D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:39:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01965B214DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23BD11420DD;
-	Fri, 28 Jun 2024 07:39:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F61140363;
+	Fri, 28 Jun 2024 07:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RgmH5uCl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Jjde3unv"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB5A5FBB1;
-	Fri, 28 Jun 2024 07:39:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A56140E29;
+	Fri, 28 Jun 2024 07:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719560359; cv=none; b=otn5AAmoX+PSglleEep7xWdCe4mIB1lDzAhNjXFgVAXHu1D88IBhfemBG1AvCWsn1RwRhXcQnTjSYcJ48v5zZIJlb3vS9fnwQCHTX8enr2KHTzJK+jYQLzBt7c00X9hpmck2zt/Jl+FROlMObYuTKzqpw/Q8Relty8hZyJX0t9I=
+	t=1719560371; cv=none; b=ZQcoX/bCZ85Uy+zcoCMJbcw6mcoXtJTjeoQQqDhS9yirCaEcDQ1nvKI2KIsmv6tXJt5ueQqIscNBRGOy4HaekhGevQAnIFH6T7hoVMXKI/77UZZ959CeqJWEt2D5ognb/9N8Ng3j+TIULyMokdSRP51x2S87cSli1boIZwO1+4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719560359; c=relaxed/simple;
-	bh=1AZuypACBJ1EVl+EHSFcbj8lkbWG2c9CwFzXru13aDs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k/kEnHwGGLLnsBIbOaRiGqfSk7fqEddXznUabBerAjkZKxAMjxXxzDXCWKYi2lpQVhP8wTI6yYvAwsGJMwm+RJLDZ2mv2626NQ0vrdzhH7VWt/XcXkfCmpPfd04OGrl0V7pk9WQHv/KRT3Oo2TzClNEtUTAVA6OLcLiW9iovJ/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RgmH5uCl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 789FEC116B1;
-	Fri, 28 Jun 2024 07:39:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719560359;
-	bh=1AZuypACBJ1EVl+EHSFcbj8lkbWG2c9CwFzXru13aDs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RgmH5uClfa6lPYENsvQSkGudX3DSBGvDv2yWm1rN/s3Nv6gBV6RAd5xY3AfmD0A0s
-	 XHW8XhNwd1ZxnZLkVS6ItiSuH96efKaxQHM91MF4eveJMKt2R9igca9Xf6pfgulCS6
-	 f4tK1tFbgFQIl1V9zEoap/K/oYT/hr8vZwRlTXZBLJRoQ/u8AOmmcRncjhswmjYiP9
-	 f54EwGygdxIYiXHSGhBvBTc+MPEIkIhnl4l6fsmKrIGBFu6TWqjc6MPnZTP/VgdZ5n
-	 bYwb8J1t2p5BAsLe+D+0d9ZDNE5/azNOIm/zIf3FP6iuUu0MXI0gC1CS9f5hsDH9hY
-	 gBcTAlSJIaYMg==
-Date: Fri, 28 Jun 2024 13:09:15 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: JiaJie Ho <jiajie.ho@starfivetech.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>
-Subject: Re: [PATCH v5 1/3] dmaengine: dw-axi-dmac: Support hardware quirks
-Message-ID: <Zn5oo3rZCnxgc5Ns@matsya>
-References: <20240530031112.4952-1-jiajie.ho@starfivetech.com>
- <20240530031112.4952-2-jiajie.ho@starfivetech.com>
- <ZmiOemWQrG-3EdIB@matsya>
- <NT0PR01MB11826C9F142FCD1A1199A11B8AC02@NT0PR01MB1182.CHNPR01.prod.partner.outlook.cn>
+	s=arc-20240116; t=1719560371; c=relaxed/simple;
+	bh=tHW0KMxF0Le+fZFdbDVVw/G/3C67/mNlFJa2G6YHrE8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=snVRK/qmiNQ68VJXiqb7z/tieXb9vbVwoZ2ihgPqN7QMqUJXb67Y44E3zuqVIKHbvFd/VSCbQuQM+yArDheLyic8pRCQpIAKxMeqwamEp5OEXS2cYf5snvR8AEwX24O27bH7xFUf1y9qF7+IuOOdyqjq0ghpBveLXzl1s6LOot4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Jjde3unv; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1719560366; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=BL+alWHXQ+GW6lLZJwH43dW4UHUN5EClmD0/pcFXBWQ=;
+	b=Jjde3unvFIDMqkQDjk/kGfHG7aclt1j/yzhl9QaEv5cL1RTDk2txEqCRBAMnY/gP4C0dsWjZDuNcbChyfBFnxWZrt8BpoMe+/DRKi8sviPZpSwHYA4OZs/pu7xeeKJZUQL8i8T2pniDxWNOTCfxItws00OOfv9FGbBOpihFLeFc=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0W9Pclg9_1719560365;
+Received: from 30.97.48.160(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W9Pclg9_1719560365)
+          by smtp.aliyun-inc.com;
+          Fri, 28 Jun 2024 15:39:25 +0800
+Message-ID: <ce6a7e15-5bea-413a-951e-b252319e1dfd@linux.alibaba.com>
+Date: Fri, 28 Jun 2024 15:39:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <NT0PR01MB11826C9F142FCD1A1199A11B8AC02@NT0PR01MB1182.CHNPR01.prod.partner.outlook.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/9] cachefiles: random bugfixes
+To: libaokun@huaweicloud.com, netfs@lists.linux.dev, dhowells@redhat.com,
+ jlayton@kernel.org, Christian Brauner <brauner@kernel.org>
+Cc: jefflexu@linux.alibaba.com, zhujia.zj@bytedance.com,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
+ yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>
+References: <20240628062930.2467993-1-libaokun@huaweicloud.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20240628062930.2467993-1-libaokun@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+Hi Baokun,
 
-Hi JiaJie
-
-On 12-06-24, 10:13, JiaJie Ho wrote:
-> > On 30-05-24, 11:11, Jia Jie Ho wrote:
-> > 
-> > > +
-> > > +struct dw_axi_peripheral_config {
-> > > +#define DWAXIDMAC_STARFIVE_SM_ALGO	BIT(0)
-> > 
-> > what does this quirk mean?
-> > 
-> > > +	u32 quirks;
-> > 
-> > Can you explain why you need this to be exposed. I would prefer we use
-> > existing interfaces and not define a new one...
-> > 
+On 2024/6/28 14:29, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
 > 
-> Hi Vinod,
-> Thanks for reviewing this.
-> This is a dedicated dma controller for the crypto engine.
-> I am adding this quirk to:
-> 1. Select the src and dest AXI master for transfers between mem and dev. 
->     Driver currently only uses AXI0 for both.
+> Hi all!
+> 
+> This is the third version of this patch series, in which another patch set
+> is subsumed into this one to avoid confusing the two patch sets.
+> (https://patchwork.kernel.org/project/linux-fsdevel/list/?series=854914)
+> 
+> Thank you, Jia Zhu, Gao Xiang, Jeff Layton, for the feedback in the
+> previous version.
+> 
+> We've been testing ondemand mode for cachefiles since January, and we're
+> almost done. We hit a lot of issues during the testing period, and this
+> patch series fixes some of the issues. The patches have passed internal
+> testing without regression.
+> 
+> The following is a brief overview of the patches, see the patches for
+> more details.
+> 
+> Patch 1-2: Add fscache_try_get_volume() helper function to avoid
+> fscache_volume use-after-free on cache withdrawal.
+> 
+> Patch 3: Fix cachefiles_lookup_cookie() and cachefiles_withdraw_cache()
+> concurrency causing cachefiles_volume use-after-free.
+> 
+> Patch 4: Propagate error codes returned by vfs_getxattr() to avoid
+> endless loops.
+> 
+> Patch 5-7: A read request waiting for reopen could be closed maliciously
+> before the reopen worker is executing or waiting to be scheduled. So
+> ondemand_object_worker() may be called after the info and object and even
+> the cache have been freed and trigger use-after-free. So use
+> cancel_work_sync() in cachefiles_ondemand_clean_object() to cancel the
+> reopen worker or wait for it to finish. Since it makes no sense to wait
+> for the daemon to complete the reopen request, to avoid this pointless
+> operation blocking cancel_work_sync(), Patch 1 avoids request generation
+> by the DROPPING state when the request has not been sent, and Patch 2
+> flushes the requests of the current object before cancel_work_sync().
+> 
+> Patch 8: Cyclic allocation of msg_id to avoid msg_id reuse misleading
+> the daemon to cause hung.
+> 
+> Patch 9: Hold xas_lock during polling to avoid dereferencing reqs causing
+> use-after-free. This issue was triggered frequently in our tests, and we
+> found that anolis 5.10 had fixed it. So to avoid failing the test, this
+> patch is pushed upstream as well.
+> 
+> Comments and questions are, as always, welcome.
+> Please let me know what you think.
 
-why cant this information be passed thru DT, that is typically done by
-most controllers?
+Patch 4-9 looks good to me, and they are independent to patch 1-3
+so personally I guess they could go upstream in advance.
 
-> 2. Workaround a hardware limitation on the crypto engine to
->      transfer data > 256B by incrementing the peripheral FIFO offset.
+I hope the way to fix cachefiles in patch 1-4 could be also
+confirmed by David and Jeff since they relates the generic
+cachefiles logic anyway.
 
-Dont set the transfer data > 256B, you should ideally use maxburst for
-configuring the FIFO...
+Thanks,
+Gao Xiang
 
 > 
-> What is the recommended way to handle such cases besides using 
-> peripheral_config in dma_slave_config?
-
-First use dma_slave_config() fields, if they are not appropriate, lets
-discuss why before we add custom methods or use peripheral_config
-
--- 
-~Vinod
+> Thanks,
+> Baokun
 
