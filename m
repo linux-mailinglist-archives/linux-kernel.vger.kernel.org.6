@@ -1,156 +1,159 @@
-Return-Path: <linux-kernel+bounces-234323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4518491C531
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:49:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8913E91C535
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:52:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E55521F24D86
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:49:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0567A288E32
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:52:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96BE61CCCB9;
-	Fri, 28 Jun 2024 17:49:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9F3F1CCCC5;
+	Fri, 28 Jun 2024 17:52:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S3iqH3LN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oh8L48dM"
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63723225CE
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 17:49:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D8E158219
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 17:52:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719596956; cv=none; b=R9Me8IN930MNpUq5gn1ES5aCIZsc7FFMbhZesgKJpEoUN8J2cusUcCpxrgobsrr9c+ooVThQewyaldMd1yH+BDoAAwXFJE3co3zkCT+drgjT5kWtUdy2w3iGZ0sfHIKTaOzNyNuRBnGDHuVeTOhqRTJw6s1J/13UXv6e6y1WyBU=
+	t=1719597140; cv=none; b=EhhpSlfBWXyr9DL+yKR0d/jWP3eqfqrPyG8DvcDajmmlHadZi8VMS83xvRBPY3xe6fVAliyu1ePRPEZKUIB5y54+YmF4ApE9U8ne1DjY72F3HhEkzevZ0rwjWpNurxVfVmqJGrYXQYzGN4DsW5DrIUvB8kjffCvPMkCkzELUDSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719596956; c=relaxed/simple;
-	bh=TAd485aghXUIWa3RvWf2lTA7jc9MG6PA9b0qtG0r2DY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=rt9+E5DgehpQQf/RcZdu5HtM0+fSKJLQXhXIV2asCDd+aIuiutrU8aZT0QTyTVctJFM6qwUh32iFZEQH5spjqa607HEIrs+Xt1oXB34J1Uo6NPDm4WVSm7nxk1UK6C5oiQoXjJVrVTK/hseAtpnmcJhIhfbIJnmU7cZuvxHUsUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S3iqH3LN; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719596954;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TAd485aghXUIWa3RvWf2lTA7jc9MG6PA9b0qtG0r2DY=;
-	b=S3iqH3LNAvUoNUWHov2Wptrhks49cUWK8R52LSCa6n1Pc1II1Ns/+zOUNngEfoxtEs8/xz
-	yKZKfqCYJw5ne/wpAiw74zMZd6uBrvgoeEWeCbmCR694IwAJFhOULeQtUEbUOp7d8imF59
-	EEkH2z7c0yyueC1UlfMlX681dX7djho=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-134-lkI0jnnYMPChTK4ly7CwkA-1; Fri, 28 Jun 2024 13:49:13 -0400
-X-MC-Unique: lkI0jnnYMPChTK4ly7CwkA-1
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6b5912466dcso10759536d6.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 10:49:13 -0700 (PDT)
+	s=arc-20240116; t=1719597140; c=relaxed/simple;
+	bh=gFvyB44eZxW+rZLLLtn4UtRbw9O0gdT48JudAO1dRQ0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qyB6uS5H/k4wZGmzm8DCGQKgDUUXyZkpJ2uPrTCKmRJNu+PgZBYf1ETwFMQw75qGc37YoF4sZ9/BCfuaJd9h6XOuhNfPMUqkzuWWVkcnqsB/dei85XZ/RJwIgG804xi6SixMjOQUuT0zrfmSSfNdL7SCeN9LI6R4IhfMcLD8hKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oh8L48dM; arc=none smtp.client-ip=209.85.166.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3762775e9ebso13755ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 10:52:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719597138; x=1720201938; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fg9T/mfcnl1CD0r165TjIqJmT4cASY+E7dxfeveE1u0=;
+        b=oh8L48dMZO8vwG33ZZNphxYK57ZakgYTpvWzK+/gMV0/Aqp42W+OML6w5NkL6+QUfE
+         E3mlyGFc1kDReRxbNVPcHNTAZkPfnEmcKCLX86zEgrt4ACI/04MistrN/Fj5dCESSXVf
+         rFpoKj5nX5PpYBjc9aX0SoPcSNYPopA1VCGUDoaWm6W6HY4T+Xe8ngVukWySP/CKa6qU
+         ErKSbMb34PUFJMPyF+1hw2JoGNc4fvJmhI9CnDa66UpqM5E7H0etF+IEnvH3ZAGrEwyY
+         +N20pLSGHuzcwSco7aIfn6wO9k095oyxQ0w9b++dSMhXr7oy4Wr83ElYV/XVHljxZRMq
+         Uuhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719596952; x=1720201752;
-        h=mime-version:user-agent:content-transfer-encoding:organization
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TAd485aghXUIWa3RvWf2lTA7jc9MG6PA9b0qtG0r2DY=;
-        b=qDEy90Ywg0grI546a7Wlv/1/IsM6k+pYFZBfX1wZKi+I9snphkA1y/kF5dbHDFcV0T
-         f9jNmW9PuTYQH43tkZ/m4+9Eo0qA3+1sABYXGWE0ZVhLdhln75K4BNS+Ad/g8NhbzVC1
-         z4zRByqGN0CHWYaAj5txL1GyTeLtZps5Heu74gPpTbLdefXiDpP8FWH2bCNCgJEDn0oH
-         zh+BCoilNVchEuZQww5i/Q53cbq/SuO6SZtR3kWZ6TuiwSDR/RvhtvZoFJ+0W0LaH2Bi
-         92KZIOdzC0C8jOokq/Re/yTHYS+tBVDzpTXjM6gDg28CGYDldugGsYVhlQ4YCCfoFgHT
-         mI+A==
-X-Forwarded-Encrypted: i=1; AJvYcCURJCqshO1DjZqPXSgR6DoNJ6/6TttNgPDb7DF83UEvLuXLbeN1t1L3SckWtt7XwSxS9fDotQ4V1cZw9nXlOP6IVi2ARQl+dtzvdcwm
-X-Gm-Message-State: AOJu0YwSY4ocLhqgMwTyfxnOu7ZyNPKIMEb4DIc07AV5BKxzKrXuUizO
-	IjAo27Mv6s6USZHMJiiDz0VwmQrvnEUQ7D6WYe7z8LOd9MDITCysC3+R0oHLmeLGOmS/0qQMhIg
-	eHw8N7Pd7fvDXbaGw1vlP6mONlOoEGRGzEGhZuzBkMU4k8OQxqa8lCvGzOu0Dm/6Q6N07Ow==
-X-Received: by 2002:ad4:4082:0:b0:6b0:76f1:8639 with SMTP id 6a1803df08f44-6b540aaa739mr160298516d6.42.1719596952150;
-        Fri, 28 Jun 2024 10:49:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFD6uWQmG4g/igtbloLZSfV+o6cXp2Ckk4uZLpiMQfw5WzwRbofwx6QnvQrMRlxIyNBmHOHyQ==
-X-Received: by 2002:ad4:4082:0:b0:6b0:76f1:8639 with SMTP id 6a1803df08f44-6b540aaa739mr160298396d6.42.1719596951873;
-        Fri, 28 Jun 2024 10:49:11 -0700 (PDT)
-Received: from chopper.lyude.net ([2600:4040:5c4c:a000::789])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b59e627242sm9625366d6.130.2024.06.28.10.49.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 10:49:11 -0700 (PDT)
-Message-ID: <790dbe8aee621b58ec0ef8d029106cb1c1830a31.camel@redhat.com>
-Subject: Re: [PATCH v3] drm/nouveau: fix null pointer dereference in
- nouveau_connector_get_modes
-From: Lyude Paul <lyude@redhat.com>
-To: Markus Elfring <Markus.Elfring@web.de>, Ma Ke <make24@iscas.ac.cn>, 
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Ben Skeggs
-	 <bskeggs@redhat.com>, Daniel Vetter <daniel@ffwll.ch>, Danilo Krummrich
-	 <dakr@redhat.com>, Dave Airlie <airlied@redhat.com>, Karol Herbst
-	 <kherbst@redhat.com>
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, David
- Airlie <airlied@gmail.com>
-Date: Fri, 28 Jun 2024 13:49:10 -0400
-In-Reply-To: <d0bef439-5e1d-4ce0-9a24-da74ddc29755@web.de>
-References: <20240627074204.3023776-1-make24@iscas.ac.cn>
-	 <d0bef439-5e1d-4ce0-9a24-da74ddc29755@web.de>
-Organization: Red Hat Inc.
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+        d=1e100.net; s=20230601; t=1719597138; x=1720201938;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fg9T/mfcnl1CD0r165TjIqJmT4cASY+E7dxfeveE1u0=;
+        b=aFUqoHq+wUtyRG1RwPyh/zu6FtGqt3wiq3Vh/rFn7qfv5q/JFvx/uuDcPWviSKC30Y
+         Nd/1+pGfZ69xSTtRBvum869Q9DgCr/3FKXp6o+8MFljZcD4Bi7mt98AUC2TPSpzf6DWS
+         3gXOvaQoW3JWrHCkL2ybvEPBUPylDOvpyWVqRZ6gJr/5ei/B/qM8zuvPWYzmC8VgKv1A
+         MZgy+XCVhIOcUSUq8EkTKm7S4U5a4zhV4nlkooaovbG6zsZtlyFIKPa4i7WQMFpg/qx8
+         DBE3+0Zv3/ukyfaLzA8CrOAw68jxcqNM83+jFFVJmPldpbiR1onglpcACtxgNdMAutLd
+         3ymg==
+X-Forwarded-Encrypted: i=1; AJvYcCVl1zK5ajWWUdgeN1bF4RSl6K6yHYgUEiiRMH5mQfX/fCp7T6waHE7is96V7WmycFuvhf7ZQJe0MbKh/3Gb8C986tWPBjN8kvWJN9JO
+X-Gm-Message-State: AOJu0YwMNYaqaqzBxridXbjHchyHVE7NpMVckpyhNj+4d6BGb30Rqo2q
+	yWs/jaUiaiytCp51b4cDcXE2f/xEEYZTi7NQeLaZQFYrZx/f/mOuQK0NCA3c8f3bcoykmDVNbZD
+	tl7kzkgQr8R4UHTC/BM4kdwad0bwXgBaYFIc4
+X-Google-Smtp-Source: AGHT+IH/9la8ID59tweWNYIiYUYSkt6KsWUDgv0y1VttYV5sTQwJHmCUkqes6fLoxa8JK68vFQ/bUOHL6uTiABBZlT4=
+X-Received: by 2002:a05:6e02:17ca:b0:376:44b9:c363 with SMTP id
+ e9e14a558f8ab-37c3d4a8b3bmr119375ab.6.1719597138302; Fri, 28 Jun 2024
+ 10:52:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240626203630.1194748-1-irogers@google.com> <Zn7x6u7cedoFIHSi@google.com>
+In-Reply-To: <Zn7x6u7cedoFIHSi@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Fri, 28 Jun 2024 10:52:06 -0700
+Message-ID: <CAP-5=fXQ3nFZQRMTd+7wp2jEecRt2ykJ57oBO2=qqbnEeyQRvA@mail.gmail.com>
+Subject: Re: [PATCH v2 00/27] Constify tool pointers
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
+	James Clark <james.clark@arm.com>, Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Yicong Yang <yangyicong@hisilicon.com>, 
+	Jonathan Cameron <jonathan.cameron@huawei.com>, Nick Terrell <terrelln@fb.com>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Anshuman Khandual <anshuman.khandual@arm.com>, Song Liu <song@kernel.org>, 
+	Ilkka Koskinen <ilkka@os.amperecomputing.com>, Huacai Chen <chenhuacai@kernel.org>, 
+	Yanteng Si <siyanteng@loongson.cn>, Sun Haiyong <sunhaiyong@loongson.cn>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Ma Ke - I assume you already know but you can just ignore this message
-from Markus as it is just spam. Sorry about the trouble!
+On Fri, Jun 28, 2024 at 10:25=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
+>
+> On Wed, Jun 26, 2024 at 01:36:02PM -0700, Ian Rogers wrote:
+> > struct perf_tool provides a set of function pointers that are called
+> > through when processing perf data. To make filling the pointers less
+> > cumbersome, if they are NULL perf_tools__fill_defaults will add
+> > default do nothing implementations.
+> >
+> > This change refactors struct perf_tool to have an init function that
+> > provides the default implementation. The special use of NULL and
+> > perf_tools__fill_defaults are removed. As a consequence the tool
+> > pointers can then all be made const, which better reflects the
+> > behavior a particular perf command would expect of the tool and to
+> > some extent can reduce the cognitive load on someone working on a
+> > command.
+>
+> I thought you actually wanted to make the tool const (rodata) but it
+> seems you leave it as is but treat it as const.
 
-Markus, you've already been asked by Greg so I will ask a bit more
-sternly in case there is actually a person on the other end: you've
-already been asked to stop by Greg and are being ignored by multiple
-kernel maintainers. If I keep seeing messages like this from you I will
-assume you are a bot and I will block your email from both DRI related
-mailing lists (nouveau and dri-devel) accordingly. You've done this 3
-times now.
+So I think that is a next step on top of these changes but it would
+need something a bit special as we want to default initialize some
+fields but then initialize others. Something like (which wouldn't
+work):
 
-(...I doubt I'll get a response from Markus, but I certainly want to
-make sure they are a bot and not an actual person before removing them
-:)
+.tool =3D DEFAULT_TOOL_STUBS({
+               .sample         =3D process_sample_event,
+               .fork           =3D perf_event__process_fork,
+               .exit           =3D perf_event__process_exit,
+               .comm           =3D perf_event__process_comm,
+               .namespaces     =3D perf_event__process_namespaces,
+               .mmap           =3D build_id__process_mmap,
+               .mmap2          =3D build_id__process_mmap2,
+               .itrace_start   =3D process_timestamp_boundary,
+               .aux            =3D process_timestamp_boundary})
 
-On Thu, 2024-06-27 at 11:02 +0200, Markus Elfring wrote:
-> > In nouveau_connector_get_modes(), the return value of
-> > drm_mode_duplicate()
-> > is assigned to mode, which will lead to a possible NULL pointer
-> > dereference on failure of drm_mode_duplicate(). Add a check to
-> > avoid npd.
->=20
-> A) Can a wording approach (like the following) be a better change
-> description?
->=20
-> =C2=A0=C2=A0 A null pointer is stored in the local variable =E2=80=9Cmode=
-=E2=80=9D after a call
-> =C2=A0=C2=A0 of the function =E2=80=9Cdrm_mode_duplicate=E2=80=9D failed.=
- This pointer was
-> passed to
-> =C2=A0=C2=A0 a subsequent call of the function =E2=80=9Cdrm_mode_probed_a=
-dd=E2=80=9D where an
-> undesirable
-> =C2=A0=C2=A0 dereference will be performed then.
-> =C2=A0=C2=A0 Thus add a corresponding return value check.
->=20
->=20
-> B) How do you think about to append parentheses to the function name
-> =C2=A0=C2=A0 in the summary phrase?
->=20
->=20
-> C) How do you think about to put similar results from static source
-> code
-> =C2=A0=C2=A0 analyses into corresponding patch series?
->=20
->=20
-> Regards,
-> Markus
->=20
+Being const is just saying hey all these event callbacks aren't going
+to mutate the tool, something I wanted to rule out as part of a change
+I'm working on.
 
---=20
-Cheers,
- Lyude Paul (she/her)
- Software Engineer at Red Hat
+> I'm curious if we can change the event delivery code something like:
+>
+>   if (tool->func)
+>       tool->func(...);
+>   else
+>       stub_func(...);
+>
+> Then probably we don't need to touch the tool and make it const.
+> Thoughts?
 
+It works but the approach needs to change all tool func callers. I
+think it is also more obvious as an API to have a default value and
+override it, rather than giving special properties to NULL that
+callers should adhere to - we're doing a kind of poor man's virtual
+method dispatch and you wouldn't typically expect a NULL check as part
+of that.
+
+Thanks,
+Ian
+
+> Thanks,
+> Namhyung
 
