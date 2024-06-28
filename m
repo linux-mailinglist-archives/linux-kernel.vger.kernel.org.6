@@ -1,148 +1,170 @@
-Return-Path: <linux-kernel+bounces-233756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A42491BC9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:30:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C4D991BCA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:31:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABD951C22982
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:29:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D0651F24514
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:31:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDEA51553A6;
-	Fri, 28 Jun 2024 10:29:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D225415358F;
+	Fri, 28 Jun 2024 10:30:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nGrdi3t7"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZUxtLCh+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993A51514DD;
-	Fri, 28 Jun 2024 10:29:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C22D249F9;
+	Fri, 28 Jun 2024 10:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719570592; cv=none; b=S8QtnM5kXyeZ5YNngxCav6WiNb9/OGJ6bxqgNOTukOUWC+ijQF4DQW6LsDhuiikic6WtdFVWGhonTIaab1tDL4nI+vLMNpUGPmh1SUki92u3d16VjifIWNF/OMCdiLNYMIL8O2AeXlLf/cZuKDpkw0X43ltPNpWaZEKQnEQtvDc=
+	t=1719570646; cv=none; b=rXJaM73rbvt4tgDylVVvJ7VafZU91oiai9C4vMOiCIXM0lT6t2KBX+zwXRHHEqYgVgIXWAroO2HXYCVVatXsGqM9fUEODU4OZvoPWUAzvzjhSyfEQ6LwS4b4wzOZJRS05tabJdOGVfw20SfFen6xRK+sFNBsMbp5ZA3oBT5Vcm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719570592; c=relaxed/simple;
-	bh=g0UlWRpuWPHqJatkY6d1jhQBJAHBe6XAKHB8uo046Z0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=WE7Xet7nw9UUNE9UIcVkbKBeaLEJVGwSUH04H5KH9iRSlo+dJXqwrdGV6LiY07ksQGnVSVLyLtlN+i/GuuITqAkSh5huvsbOpDdqKytoOrB6TGS52TblTBVDP+9sb0+0i/fJAej/JGyq48p3N8gn4bwtmJAl/ZInNsZR8G7j27E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nGrdi3t7; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45SALtv8001294;
-	Fri, 28 Jun 2024 10:29:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Tj/dXJvb3tdoEKfiVsF1o+98MLXQ+GvKIKHtJVX1pwE=; b=nGrdi3t7Xbfog2Js
-	je+GpVABigJ9JKFQGX2sfmIF8ZS4RKuXSXjYxJhWb5dxkpjkBhtXC4dj96ZmzrUC
-	EYhYNl+ac5PxzKW5OrQ4AUcvZYTcci24KkU9mOIyOn6G9QPIqyKl0+/So4bPS+No
-	9795lNJAe4c9L2JoaTkp+CwLpLZBCuhHu3JsyH11azLchJvyZ2Ob+jZkFySFr/xD
-	4Xo6E0gEKtzAt/3beJU3zMGBg5CXWV/qLbGi129mcdjbh2rG1B8mddTmi2U4dhlp
-	986cERMmq3Apkh+zyuzXe+CNh/5BDTaf2Ye3yDI/a0D4X9uss7GB3jFtRGf2HZPf
-	5UgFPA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 401ubvr0tu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Jun 2024 10:29:43 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45SATgtO020903
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Jun 2024 10:29:42 GMT
-Received: from [10.204.65.49] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 28 Jun
- 2024 03:29:39 -0700
-Message-ID: <f3d502ca-228e-4be4-b296-a9073975d34b@quicinc.com>
-Date: Fri, 28 Jun 2024 15:59:36 +0530
+	s=arc-20240116; t=1719570646; c=relaxed/simple;
+	bh=7s5ogNzyt8BizN/SoVLnkRF+hEWXvPTRujMkUyZErLY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DkQPGnAipKufoiA6Thd5B03pNMQWbW4U9sWhSkOQEC8QaQcOcK7ewnKxeMxcrVm3B6Dh7LR8nXwar09MAdXvLd/SGDfBaRa9R/cR/y6VTpXmKNiMBa0VclKW1RRHlX3LOP2cnqSSt35glg8d9pg4ElFzBQ59zFX/eKSYU+x5SLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZUxtLCh+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6BD0C116B1;
+	Fri, 28 Jun 2024 10:30:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719570645;
+	bh=7s5ogNzyt8BizN/SoVLnkRF+hEWXvPTRujMkUyZErLY=;
+	h=From:Date:Subject:To:Cc:From;
+	b=ZUxtLCh+gISZAFfU51+R9ukNxdOpfXfdMATsOR0bnFGwYxMe6UJbh/5XxEJu8IL3J
+	 J0q7xUcOQjz4sfcb/y2vLYPFx0rHXfUO4mL3p9xYmaP1OU7AIuJCs+IE4Um8Swbluc
+	 Dq36N+cfPOsMZHAGv3QU/sUFXfkqbySgggleXJYCgNn3Be85HUPWOLcE3Sv7h6tRYT
+	 /HNG3vq4Q0jUZlMzdB7ydkYb5QcNhCDk3PX1yeophQ9lFmSrZK4ydbA2etTvMdlmDt
+	 RL7ONioUrUbMivKrSqiBs8FdZY/1FnFRDKKY4SY3mEor/yT4bl1lTdn3vzA7yWkJlW
+	 r55wM+GDKgFUQ==
+From: Roger Quadros <rogerq@kernel.org>
+Date: Fri, 28 Jun 2024 13:30:38 +0300
+Subject: [PATCH v2] arm: dts: k3-am642-evm-nand: Add bootph-all to NAND
+ related nodes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] misc: fastrpc: Remove user PD initmem size check
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <gregkh@linuxfoundation.org>, <quic_bkumar@quicinc.com>,
-        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>,
-        <dri-devel@lists.freedesktop.org>, <arnd@arndb.de>,
-        stable
-	<stable@kernel.org>
-References: <20240627060518.1510124-1-quic_ekangupt@quicinc.com>
- <62dzilcvsp3efxpxulzkf6e62rzcrhp55k6yjk5fymkqthdfzw@yageexbx6ddz>
-From: Ekansh Gupta <quic_ekangupt@quicinc.com>
-In-Reply-To: <62dzilcvsp3efxpxulzkf6e62rzcrhp55k6yjk5fymkqthdfzw@yageexbx6ddz>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 0wpf4uAaiK_XRH1ZL7sFYkVyiRI7g3Jx
-X-Proofpoint-GUID: 0wpf4uAaiK_XRH1ZL7sFYkVyiRI7g3Jx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-28_06,2024-06-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
- bulkscore=0 clxscore=1015 suspectscore=0 spamscore=0 mlxlogscore=999
- adultscore=0 impostorscore=0 lowpriorityscore=0 priorityscore=1501
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406280077
+Message-Id: <20240628-am642-evm-nand-bootph-v2-1-387bfa1533a6@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAM2QfmYC/4WNQQ6CMBBFr0Jm7ZgyJSiuvIdhUdqBNkpLWtJoC
+ He3cgGX7yX//Q0SR8cJbtUGkbNLLvgCdKpAW+UnRmcKAwlqREsS1dw2hJxn9MobHEJYF4tCDu1
+ 1aHRnOoayXSKP7n10H31h69Ia4ue4yfXP/ivmGms0WqpRXpSURPcnR8+vc4gT9Pu+fwHvnuWfu
+ wAAAA==
+To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: srk@ti.com, praneeth@ti.com, linux-arm-kernel@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Roger Quadros <rogerq@kernel.org>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2270; i=rogerq@kernel.org;
+ h=from:subject:message-id; bh=7s5ogNzyt8BizN/SoVLnkRF+hEWXvPTRujMkUyZErLY=;
+ b=owEBbQKS/ZANAwAIAdJaa9O+djCTAcsmYgBmfpDSZOU8hSI99GVUPgn9G3ICVU+3t9tzQvw0H
+ V5QhXeLqE+JAjMEAAEIAB0WIQRBIWXUTJ9SeA+rEFjSWmvTvnYwkwUCZn6Q0gAKCRDSWmvTvnYw
+ k8H+EACSdGr548OGGWaZq4OAozn6mmUvihviAE7ad0oY0H/4C59IXrIUkdsZ3UJl7WTae9CyjEg
+ Jot18sY0gg08MreYNdVIgVlX299CLkiYpp2dwwEhNQY2NHVbXDkrkePJSkMFSgi/5Iw3u508oue
+ 2hwHXWjui2fWftiDiftjU2JH0JMn/vMn5KCDcxRHJVWlO0iGb7bhwfGkQABfEA1oJlXwjUZZBCe
+ xPl8ALxcd8snGHT9DacvFHCCFyMb/htv4c4/BVhIuaYsF3EMQeH/yVdPIhz/R8MbDO8JGOFZrD2
+ tw0qNOmM9fJTroFxQSg4sOmEfDU4JpqX7c5FEx2gCIcA+2xAyXIF4Imx+UfDX+qJTP2IjQdWWOp
+ lhi2J1vbJ4rm0GSo29EZMbrrGMKfQATe0YhqaaN8fiOxiwDOEA4FRKS3jT0JdGTBETG3ysM+5UG
+ HOdQLR4PMxlPulb7+9/kA7QxDOctI1YMzkppzWSbz/+ypP0J/DQZNFUnIjzh+S+LkFvsjnDju4n
+ nE2Mwsi6t+AtOBQb2exd+Il5eGON3giMpCaN0Ce66ZY5OM8nCIZaHFN48gUaS+TNCPwaSXcQhhd
+ xIR2l/ODpTm1a7iw9U9E8ZqfFgyy2j+z5FEFHaM0ZW01hy7Ucjjb+K8OKpgw5nE5qp7oV0ka//8
+ 3tzizn/FjFu0AjA==
+X-Developer-Key: i=rogerq@kernel.org; a=openpgp;
+ fpr=412165D44C9F52780FAB1058D25A6BD3BE763093
 
+NAND boot would require these nodes to be present at early stage.
+Ensure that by adding "bootph-all" to relevant nodes.
 
+Signed-off-by: Roger Quadros <rogerq@kernel.org>
+---
+Changes in v2:
+- Add 'bootph-all' only to leaf nodes
+---
+ arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtso | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-On 6/27/2024 4:43 PM, Dmitry Baryshkov wrote:
-> On Thu, Jun 27, 2024 at 11:35:18AM GMT, Ekansh Gupta wrote:
->> For user PD initialization, initmem is allocated and sent to DSP for
->> initial memory requirements like shell loading. This size is passed
->> by user space and is checked against a max size. For unsigned PD
->> offloading, more than 2MB size could be passed by user which would
->> result in PD initialization failure. Remove the user PD initmem size
->> check and allow buffer allocation for user passed size. Any additional
->> memory sent to DSP during PD init is used as the PD heap.
-> Would it allow malicious userspace to allocate big enough buffers and
-> reduce the amount of memory available to the system? To other DSP
-> programs?
-The allocation here is happening from SMMU context bank which is uniquely assigned
-to processes going to DSP. As per my understanding process can allocate maximum
-4GB of memory from the context bank and the memory availability will be taken care
-by kernel memory management. Please correct me if my understanding is incorrect.
+diff --git a/arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtso b/arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtso
+index dc70b6fbc3d7..f08c0e272b53 100644
+--- a/arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtso
++++ b/arch/arm64/boot/dts/ti/k3-am642-evm-nand.dtso
+@@ -13,6 +13,7 @@
+ 
+ &main_pmx0 {
+ 	gpmc0_pins_default: gpmc0-pins-default {
++		bootph-all;
+ 		pinctrl-single,pins = <
+ 			AM64X_IOPAD(0x0094, PIN_INPUT, 7) /* (T19) GPMC0_BE1n.GPIO0_36 */
+ 			AM64X_IOPAD(0x003c, PIN_INPUT, 0) /* (T20) GPMC0_AD0 */
+@@ -50,6 +51,7 @@ AM64X_IOPAD(0x00a4, PIN_OUTPUT, 0) /* (N17) GPMC0_DIR */
+ 
+ &main_gpio0 {
+ 	gpio0-36 {
++		bootph-all;
+ 		gpio-hog;
+ 		gpios = <36 0>;
+ 		input;
+@@ -58,6 +60,7 @@ gpio0-36 {
+ };
+ 
+ &elm0 {
++	bootph-all;
+ 	status = "okay";
+ };
+ 
+@@ -106,30 +109,37 @@ partitions {
+ 			#size-cells = <1>;
+ 
+ 			partition@0 {
++				bootph-all;
+ 				label = "NAND.tiboot3";
+ 				reg = <0x00000000 0x00200000>;	/* 2M */
+ 			};
+ 			partition@200000 {
++				bootph-all;
+ 				label = "NAND.tispl";
+ 				reg = <0x00200000 0x00200000>;	/* 2M */
+ 			};
+ 			partition@400000 {
++				bootph-all;
+ 				label = "NAND.tiboot3.backup";	/* 2M */
+ 				reg = <0x00400000 0x00200000>;	/* BootROM looks at 4M */
+ 			};
+ 			partition@600000 {
++				bootph-all;
+ 				label = "NAND.u-boot";
+ 				reg = <0x00600000 0x00400000>;	/* 4M */
+ 			};
+ 			partition@a00000 {
++				bootph-all;
+ 				label = "NAND.u-boot-env";
+ 				reg = <0x00a00000 0x00040000>;	/* 256K */
+ 			};
+ 			partition@a40000 {
++				bootph-all;
+ 				label = "NAND.u-boot-env.backup";
+ 				reg = <0x00a40000 0x00040000>;	/* 256K */
+ 			};
+ 			partition@a80000 {
++				bootph-all;
+ 				label = "NAND.file-system";
+ 				reg = <0x00a80000 0x3f580000>;
+ 			};
 
---Ekansh
->> Fixes: 7f1f481263c3 ("misc: fastrpc: check before loading process to the DSP")
->> Cc: stable <stable@kernel.org>
->> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
->> ---
->> Changes in v2:
->>   - Modified commit text.
->>   - Removed size check instead of updating max file size.
->>
->>  drivers/misc/fastrpc.c | 5 -----
->>  1 file changed, 5 deletions(-)
->>
->> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
->> index 5204fda51da3..9d064deeac89 100644
->> --- a/drivers/misc/fastrpc.c
->> +++ b/drivers/misc/fastrpc.c
->> @@ -1389,11 +1389,6 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
->>  		goto err;
->>  	}
->>  
->> -	if (init.filelen > INIT_FILELEN_MAX) {
->> -		err = -EINVAL;
->> -		goto err;
->> -	}
->> -
->>  	inbuf.pgid = fl->tgid;
->>  	inbuf.namelen = strlen(current->comm) + 1;
->>  	inbuf.filelen = init.filelen;
->> -- 
->> 2.34.1
->>
+---
+base-commit: 4031a2866a9f0f5c585cfee65b3fb5ab17c95276
+change-id: 20240623-am642-evm-nand-bootph-03b68b4c9d9e
+
+Best regards,
+-- 
+Roger Quadros <rogerq@kernel.org>
 
 
