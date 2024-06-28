@@ -1,213 +1,114 @@
-Return-Path: <linux-kernel+bounces-233791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A31191BD68
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 13:29:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CF8B91BD6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 13:30:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1957D1F23175
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:29:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B89BC1F2304C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09479156C52;
-	Fri, 28 Jun 2024 11:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA9D155A59;
+	Fri, 28 Jun 2024 11:30:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nKSsS2Y9"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Vw3h66Ic"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7695D152179;
-	Fri, 28 Jun 2024 11:29:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DB436B11
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 11:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719574163; cv=none; b=Wpo02WGydzhIvMqRyhxWhr3tdQ+tc/LR52Tv9cvaCqAHQ8+haPuKmQ2jDOldAzyUdm4nLpKDGiDUWTagB2nn1h7a7YLCMVFsJJ7Zt8hAH8usDtYuhQkiQlw8pd72nFrWaeQ179ir+LoXH0m2IduHV6haDovudF/4olaTHiGLhXg=
+	t=1719574222; cv=none; b=F/YNx4zVhPCQO//Xu7ksznAl3iBvYJTR1+6HLxze41q7eqkciw9gtnm18gktFPY7kqe/HYPW3rRQNbJg5ZZQ6+V9dCphBrHu+/++r3iMta8eyg1+8P8ibGA9DPaJ3HYiwzYB4/cv/7UEEn9eRSSobCDQHJk72I4N7fHHx35yZsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719574163; c=relaxed/simple;
-	bh=k0zq4I2xpIIHUPwrd+noMDLx1nxxe1on/uPa8q9W890=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kTaA818V65IHXUHqwktGGEceXrc53Itm93wo8mJNE5POQhgFBMkBU5ufq+w3aS1am/4vxU9251+fGetEUaV3fNUPmmIIIZ8KycqJRUicNG0CImHR+wS7CnAAelS4WtSo3zS70OIrC38LknKy6TAxYNrQlgU5c7JWUFmlK4ZmbWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nKSsS2Y9; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3629c517da9so423143f8f.2;
-        Fri, 28 Jun 2024 04:29:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719574160; x=1720178960; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VwHyv+/nheDOEQqvCDypmg/zh1UxDN8rLzkHFy0r5dk=;
-        b=nKSsS2Y9hyTym2ulGQNvdGhOc1mrC8sjdB55Gi3wkzV0CwRxDJNKhMXAwmtFeCDg6R
-         gCxfOqBwJgtQE8CIaJw9hRRzUHJMUjsUSWox/f4DfXztlBVpgbwZrMMPvDUtVGlDtZHs
-         5CgSwbh09MIBuOxgY9VjlGLRxdvbD/ey4WhoaUNfwxo1yGFeH1u7oKEtZxID9GmrTT56
-         Q2gTd4JTJraRI/hfC9zMrucooEZ1FTs0vf/FHsEi4jBvk6Gs0y5NZvjFLZFWk3b7pmyZ
-         mBq3BeISpP8q1WLkGHUEyLKcKdFgNAkvLqbUutru8el45hNYT9gMV7waHYXGxY2FO01Q
-         RoEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719574160; x=1720178960;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VwHyv+/nheDOEQqvCDypmg/zh1UxDN8rLzkHFy0r5dk=;
-        b=OWaPHIMCH5OjdZ+nUNNOOx1m0IeHUj8Lhoy8td+yOUh5UG/2D8ZpBmDITlxbxAuthe
-         fyu1BqSLnnVFtxrVdZy1XHB/VHHUMzmNxY5FpF8BTl87CX5HARZ4D7gJOtriGyf1oz7y
-         uf1D3AMRw93vfrPsX0038M2TGGu+yFZH0jXvXR7YZdvtkHp2ymBDq2cHEQ+6eiMpP44Y
-         7L8OJ/zYceZgnfIQctu1bQtRPtVV5t43rr0IMQU47x1vChGSte6ebHDmL6VpvKDl9u3W
-         2+KrdvKV8ox77ATTicaaAGkNt+RfB/0OyV7SIUUye6YzVLCEHwjmjq8HE0W1katvJtrf
-         18GA==
-X-Forwarded-Encrypted: i=1; AJvYcCXun0fzgY5gtGvEu7y9EEvTBOBf5JCOd5Kh2hkmi2T4ex90vGy/jILFURXeT2wcvfElDdKLjsej7vDwbarJv3QcYxXNul+X+wMvMAtfXWgJzXq5BwgZah+u7Eh47K3wwwMHLY2w56IiIf0OxH7fAkNg75jK3FzoXMOHKieTSLAsMawh6Jyu
-X-Gm-Message-State: AOJu0Yy1L7AM+mT6rDvCmB0KP9Qyxkk2aT7Ph4APT13kQB9y6CGyA/zq
-	e7mJvr6GMrXYyGYI7GEOuaDPasxKEyQneIAVZE2EQveEIIsifipZ/3Xyqg==
-X-Google-Smtp-Source: AGHT+IHSIPxiCQZHyj0KQ1gk5pY4ojyWZH16385yV/UYI3N9XukgmcAnac3lAWtu5FDl9Cb+4IKZ9g==
-X-Received: by 2002:adf:f450:0:b0:360:9a40:3dd8 with SMTP id ffacd0b85a97d-366e96567cemr12944422f8f.65.1719574159201;
-        Fri, 28 Jun 2024 04:29:19 -0700 (PDT)
-Received: from orome (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b09a828sm31184325e9.37.2024.06.28.04.29.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 04:29:18 -0700 (PDT)
-Date: Fri, 28 Jun 2024 13:29:17 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: John Stultz <jstultz@google.com>, Maxime Ripard <mripard@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
-	Brian Starkey <Brian.Starkey@arm.com>, "T.J. Mercier" <tjmercier@google.com>, 
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, Mattijs Korpershoek <mkorpershoek@baylibre.com>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH 0/8] dma-buf: heaps: Support carved-out heaps and ECC
- related-flags
-Message-ID: <qy7aczeu6kumv5utemoevi7omp5ryq55zmgzxh5hrz5orf2osp@wypg66awof4n>
-References: <20240515-dma-buf-ecc-heap-v1-0-54cbbd049511@kernel.org>
- <CANDhNCoOKwtpstFE2VDcUvzdXUWkZ-Zx+fz6xrdPWTyciVXMXQ@mail.gmail.com>
- <ZkXmWwmdPsqAo7VU@phenom.ffwll.local>
- <CANDhNCo5hSC-sLwdkBi3e-Ja-MzdqcGGbn-4G3XNYwCzZUwscw@mail.gmail.com>
- <ZkyOOwpM57HIiO3v@phenom.ffwll.local>
+	s=arc-20240116; t=1719574222; c=relaxed/simple;
+	bh=0EQePSRiBV0bqp1McXfFeQFrK5vwQYcgBf5qhIHPeJY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Lktlm36h2+hDE4JqKhRdaBITPHe6yUWhLuJxbNoLfr9F5gLfBEr6eEFG5pXXprzRF3xfbOOFLbyOrUyNBmCx/cd2LNSj6TOAeqBveGugGr8u776UxS/NckGprzJsN6/XuLW5rFMj9YSmOtBp0mhStWlEbnnESPgxrr/LKG3S1b4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Vw3h66Ic; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: ca5a569a354111ef99dc3f8fac2c3230-20240628
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=+danxBg72kkVWhHZ7NufVUsP5WdRg7pgzK5U7q+oXYY=;
+	b=Vw3h66IcM7Ih/RuLuPAitnpVkOahLYiB1KN0xW0o3rMhMSliiACVhdHUAuNOxVrC/YwAY6B6TEm0/hRokSClEqcj2xLXvwyb/mFIWjvOQAawRaXBqW6CisTgdn+RDpKKIHu4R+L5eS/GgGXJVpMg0mg7u9XA44WxDZgaJHvUPBQ=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.40,REQID:3f9ccaf6-48d3-45d8-9760-ccb85f6a391f,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:ba885a6,CLOUDID:a147ad44-a117-4f46-a956-71ffeac67bfa,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: ca5a569a354111ef99dc3f8fac2c3230-20240628
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
+	(envelope-from <mark-pk.tsai@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1768470028; Fri, 28 Jun 2024 19:30:15 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Fri, 28 Jun 2024 19:30:13 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Fri, 28 Jun 2024 19:30:13 +0800
+From: Mark-PK Tsai <mark-pk.tsai@mediatek.com>
+To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, "Robin
+ Murphy" <robin.murphy@arm.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+CC: <yj.chiang@mediatek.com>, Mark-PK Tsai <mark-pk.tsai@mediatek.com>,
+	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
+Subject: [PATCH] iommu: Remove iommu_sva_unbind_gpasid
+Date: Fri, 28 Jun 2024 19:30:04 +0800
+Message-ID: <20240628113011.3535-1-mark-pk.tsai@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="kapzi2mpfibvyjib"
-Content-Disposition: inline
-In-Reply-To: <ZkyOOwpM57HIiO3v@phenom.ffwll.local>
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--1.239400-8.000000
+X-TMASE-MatchedRID: S6zgMyN4g9KGsPek1xLHVnH7HV/mO4UTT9kSL7SwB1hq1Zuz1uJuCNn7
+	b/+Y15IvMm6uZ1zccZcQCEi5k+nQxB8TzIzimOwP0C1sQRfQzEHEQdG7H66TyHEqm8QYBtMOvwY
+	XYCR6VwgLQgZ3u/DVwAgsD3ZCYFN1JDDLO9wvb7dnPqKjSU9SXe7o5tZbWcdZRvCkNdMmYoFxsN
+	4zhBrsExsXRXHy1IH0eZUpm6wun3ba/06NhYDa4wyzCDjlUx89djekYOaiKTo=
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--1.239400-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP: 9C659BD85D1E1F99FDEC3C8CB47448B2FD5AFBB33DCB9AD1BC9FAA614F21077D2000:8
+X-MTK: N
 
+This is a left over of commit 0c9f17877891
+("iommu: Remove guest pasid related interfaces and definitions")
 
---kapzi2mpfibvyjib
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Mark-PK Tsai <mark-pk.tsai@mediatek.com>
+---
+ include/linux/iommu.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-On Tue, May 21, 2024 at 02:06:19PM GMT, Daniel Vetter wrote:
-> On Thu, May 16, 2024 at 09:51:35AM -0700, John Stultz wrote:
-> > On Thu, May 16, 2024 at 3:56=E2=80=AFAM Daniel Vetter <daniel@ffwll.ch>=
- wrote:
-> > > On Wed, May 15, 2024 at 11:42:58AM -0700, John Stultz wrote:
-> > > > But it makes me a little nervous to add a new generic allocation fl=
-ag
-> > > > for a feature most hardware doesn't support (yet, at least). So it's
-> > > > hard to weigh how common the actual usage will be across all the
-> > > > heaps.
-> > > >
-> > > > I apologize as my worry is mostly born out of seeing vendors really
-> > > > push opaque feature flags in their old ion heaps, so in providing a
-> > > > flags argument, it was mostly intended as an escape hatch for
-> > > > obviously common attributes. So having the first be something that
-> > > > seems reasonable, but isn't actually that common makes me fret some.
-> > > >
-> > > > So again, not an objection, just something for folks to stew on to
-> > > > make sure this is really the right approach.
-> > >
-> > > Another good reason to go with full heap names instead of opaque flag=
-s on
-> > > existing heaps is that with the former we can use symlinks in sysfs to
-> > > specify heaps, with the latter we need a new idea. We haven't yet got=
-ten
-> > > around to implement this anywhere, but it's been in the dma-buf/heap =
-todo
-> > > since forever, and I like it as a design approach. So would be a good=
- idea
-> > > to not toss it. With that display would have symlinks to cma-ecc and =
-cma,
-> > > and rendering maybe cma-ecc, shmem, cma heaps (in priority order) for=
- a
-> > > SoC where the display needs contig memory for scanout.
-> >=20
-> > So indeed that is a good point to keep in mind, but I also think it
-> > might re-inforce the choice of having ECC as a flag here.
-> >=20
-> > Since my understanding of the sysfs symlinks to heaps idea is about
-> > being able to figure out a common heap from a collection of devices,
-> > it's really about the ability for the driver to access the type of
-> > memory. If ECC is just an attribute of the type of memory (as in this
-> > patch series), it being on or off won't necessarily affect
-> > compatibility of the buffer with the device.  Similarly "uncached"
-> > seems more of an attribute of memory type and not a type itself.
-> > Hardware that can access non-contiguous "system" buffers can access
-> > uncached system buffers.
->=20
-> Yeah, but in graphics there's a wide band where "shit performance" is
-> defacto "not useable (as intended at least)".
->=20
-> So if we limit the symlink idea to just making sure zero-copy access is
-> possible, then we might not actually solve the real world problem we need
-> to solve. And so the symlinks become somewhat useless, and we need to
-> somewhere encode which flags you need to use with each symlink.
->=20
-> But I also see the argument that there's a bit a combinatorial explosion
-> possible. So I guess the question is where we want to handle it ...
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index 17b3f36ad843..225403cfe614 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -785,8 +785,6 @@ extern int iommu_attach_device(struct iommu_domain *domain,
+ 			       struct device *dev);
+ extern void iommu_detach_device(struct iommu_domain *domain,
+ 				struct device *dev);
+-extern int iommu_sva_unbind_gpasid(struct iommu_domain *domain,
+-				   struct device *dev, ioasid_t pasid);
+ extern struct iommu_domain *iommu_get_domain_for_dev(struct device *dev);
+ extern struct iommu_domain *iommu_get_dma_domain(struct device *dev);
+ extern int iommu_map(struct iommu_domain *domain, unsigned long iova,
+-- 
+2.18.0
 
-Sorry for jumping into this discussion so late. But are we really
-concerned about this combinatorial explosion in practice? It may be
-theoretically possible to create any combination of these, but do we
-expect more than a couple of heaps to exist in any given system?
-
-Would it perhaps make more sense to let a platform override the heap
-name to make it more easily identifiable? Maybe this is a naive
-assumption, but aren't userspace applications and drivers not primarily
-interested in the "type" of heap rather than whatever specific flags
-have been set for it?
-
-For example, if an applications wants to use a protected buffer, the
-application doesn't (and shouldn't need to) care about whether the heap
-for that buffer supports ECC or is backed by CMA. All it really needs to
-know is that it's the system's "protected" heap.
-
-This rather than try to represent every possible combination we
-basically make this a "configuration" issue. System designers need to
-settle on whatever combination of flags work for all the desired use-
-cases and then we expose that combination as a named heap.
-
-One problem that this doesn't solve is that we still don't have a way of
-retrieving these flags in drivers which may need them. Perhaps one way
-to address this would be to add in-kernel APIs to allocate from a heap.
-That way a DRM/KMS driver (for example) could find a named heap,
-allocate from it and implicitly store flags about the heap/buffer. Or
-maybe we could add in-kernel API to retrieve flags, which would be a bit
-better than having to expose them to userspace.
-
-Thierry
-
---kapzi2mpfibvyjib
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmZ+nooACgkQ3SOs138+
-s6E98RAAv7+i/7uJg+tq6+f8CJRlZOqAtn8prnuvk6eIf4H6fKxsN81OpDd288mJ
-Xq9XkIUEjLpb/ZGcXZXqQn8lO9d5/Q8aSuFOPNmDJwNdV/XXs+gNkf9lEvs61oPa
-lO3xPqP2BN7AZKwF6iVCUQ2pLcIFGbhVtJNcLkNNh0GtdH76bpHubTMGL+RoPtm6
-e1ktKqwr4Z0ur56l00LBy+OQ3A38tTIMq/5XLfESeAOQbqx7gszLJOYzvh58tAS5
-EYH/1c09cLk82EGjb0xb8IWvDhWn8RzCNeyX2F+gpfJsYHIWO9R/ygk+lBiMXgHx
-8Ynhlb7gL7fmO0M+vx63IkvPD6YSxlqAkLU+IDs7GMzRBrwh8NPcgkfWTXRu4vYf
-3r5Ere84xSZpat+ijjGDnckkMN4QeMXLn8wj0ZuaP26kjSX6R7gTKBINxm3LsivH
-gGI4Ab2FlVU5dGrHmewZt79+dAiWBd6y6ks6MVVBdzSNp9DCALKMDU2yZqh+fieA
-+FCuIknJvPSZFr57m89YBZ2VqgoW+SHiaUabiscvldcW8DE/1QLNa54NN/1oLaJ3
-GCH34Xrl9BzuuD9Ph7Og7AoU7Y4nrB0NxgHWeMtpGTZqGvafMMZ9doVxBkHfT3z3
-rfQFVdZn2sWNqJFdLwzfR9O8UmF0w/rOxi9mwriAeGVXmUjUB/I=
-=6/gO
------END PGP SIGNATURE-----
-
---kapzi2mpfibvyjib--
 
