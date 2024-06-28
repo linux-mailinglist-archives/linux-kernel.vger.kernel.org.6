@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-234530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67D5091C7A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:57:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FCB091C7A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:58:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98D401C2607F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:57:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2268D1F2199D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065C81304A3;
-	Fri, 28 Jun 2024 20:56:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E21C133987;
+	Fri, 28 Jun 2024 20:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LoRjkfuf"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jlVQwsY4"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FDCD7A715
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 20:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B861812FF63
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 20:56:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719608171; cv=none; b=f5fMkVGNJ/TQWKbAeQLnDyvwK2mOSh8diFZXtvPDeCS47o5lgObD5tpy6fjwYoyNpkwdo4kjw7vByF4H0AV6rXKfMd12K5C+tXu/Kmcf/w604iqiuEpOLhmN4F6XDgtlBgTWzeNoHRJMX4jd/mB+bQqF99NRiweBgEalQU4bnZA=
+	t=1719608173; cv=none; b=DRPzHmFGg3+8TVypA2ESlDfjKdPRarPqmkaSMIUTs8LH3NX6nJXqb1GF37Tsy/z519Yz75z0+GyF0CdwwR64s/Et0GmQKhOdF7hkuaAfnez++KBjja1u9NljYLpyHoDveYQiAVf+QDct0qMUfu6hgILgDQDh3IGArC8AEYQ/fZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719608171; c=relaxed/simple;
-	bh=fGwvdcJajYq+BAliIScip+LfollDtBbRdL8TeQU386Y=;
+	s=arc-20240116; t=1719608173; c=relaxed/simple;
+	bh=Vr4GWAtkI0RK8RKzAPo9ZX18QXiqWSiamhRUG0ug9As=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XNWXIUX9SEF2hzT0T1hf86lVmfQxiD784XCZ1PQkz2BOaBr3tWTF89XlzYKzdVV7i0ELJiT8e7J2NmwaH3BKdl3tYMP7pIAICFEwTvQiLbJ6Hn3kRWwysUcwiQhUNxYle/PLwkKV56BlazkAmZvA1dcv0SJZe/JnEVVLYRZwgxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LoRjkfuf; arc=none smtp.client-ip=95.215.58.182
+	 MIME-Version; b=NIUMm4t3fwiD5RUzNyKfe2AZ24xGnvodTUJ1KvgN2nB4j7v7fgE3QWj4bIIZodSjXFM/DN2p02TyWiA1GZTn6ybU/QkZi4MyLSlUGOQPsDcEhrGwPzkiQNqSWOEjNAK6OKO4Ttss2dgMdAqb7qj7vK4lPK56dhTppp+6QTmiL3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jlVQwsY4; arc=none smtp.client-ip=95.215.58.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Envelope-To: radhey.shyam.pandey@amd.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1719608167;
+	t=1719608170;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ePtnv+mOy1V2a9C9AGkoMpYJ4bWTIeHu876bvQ6PA7w=;
-	b=LoRjkfufmI+It1uHsu+j94T3quZNHVJZk802KYnAcvZadmEkuQvNWwdhnFHJ4kw+oR2Ajg
-	p6tUKCEhXJioBIeC4VbIwlNoiQnr6fhdJV6h52a03Xhh2CiwUHtWPLPzjFNlBEEx0KrMkM
-	SF3sSn/s3gj1eQhQb7b1oiKD9rrpHro=
+	bh=cc0/PQs/I7BBZwE0Aen+Vq0PIaX9cTiisku8tz9D9Po=;
+	b=jlVQwsY43r14MNC0D6Flo6YEepgaDVnzgdU91I+spzzM5yeGX12vDVymiuiuwed3w1+dwF
+	zkX4UQWOAOtby4t7+krBw4qHLQ3oQohWjYNn6s7/oU6gf5nqaUb6A7upuxwMeslkcfziLy
+	9Eb2ApDhlfu9CO+BrOWHjSLDWf5CDzk=
 X-Envelope-To: laurent.pinchart@ideasonboard.com
 X-Envelope-To: linux-phy@lists.infradead.org
 X-Envelope-To: vkoul@kernel.org
@@ -60,9 +60,9 @@ Cc: Vinod Koul <vkoul@kernel.org>,
 	linux-kernel@vger.kernel.org,
 	Michal Simek <michal.simek@amd.com>,
 	Sean Anderson <sean.anderson@linux.dev>
-Subject: [PATCH v3 4/5] phy: zynqmp: Take the phy mutex in xlate
-Date: Fri, 28 Jun 2024 16:55:39 -0400
-Message-Id: <20240628205540.3098010-5-sean.anderson@linux.dev>
+Subject: [PATCH v3 5/5] phy: zynqmp: Add debugfs support
+Date: Fri, 28 Jun 2024 16:55:40 -0400
+Message-Id: <20240628205540.3098010-6-sean.anderson@linux.dev>
 In-Reply-To: <20240628205540.3098010-1-sean.anderson@linux.dev>
 References: <20240628205540.3098010-1-sean.anderson@linux.dev>
 Precedence: bulk
@@ -74,34 +74,95 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Take the phy mutex in xlate to protect against concurrent
-modification/access to gtr_phy. This does not typically cause any
-issues, since in most systems the phys are only xlated once and
-thereafter accessed with the phy API (which takes the locks). However,
-we are about to allow userspace to access phys for debugging, so it's
-important to avoid any data races.
+Add support for printing some basic status information to debugfs. This
+is helpful when debugging phy consumers to make sure they are configuring
+the phy appropriately.
 
 Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
 ---
 
 Changes in v3:
-- New
+- Use "none" to represent ICM_PROTOCOL_PD, since the lane may not
+  actually be powered-down.
 
- drivers/phy/xilinx/phy-zynqmp.c | 1 +
- 1 file changed, 1 insertion(+)
+Changes in v2:
+- Use debugfs_create_devm_seqfile
+
+ drivers/phy/xilinx/phy-zynqmp.c | 40 +++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
 diff --git a/drivers/phy/xilinx/phy-zynqmp.c b/drivers/phy/xilinx/phy-zynqmp.c
-index 4d697e11d8eb..991be42eef3d 100644
+index 991be42eef3d..cb15041371c9 100644
 --- a/drivers/phy/xilinx/phy-zynqmp.c
 +++ b/drivers/phy/xilinx/phy-zynqmp.c
-@@ -759,6 +759,7 @@ static struct phy *xpsgtr_xlate(struct device *dev,
- 	phy_type = args->args[1];
- 	phy_instance = args->args[2];
+@@ -13,6 +13,7 @@
+  */
  
-+	guard(mutex)(&gtr_phy->phy->mutex);
- 	ret = xpsgtr_set_lane_type(gtr_phy, phy_type, phy_instance);
- 	if (ret < 0) {
- 		dev_err(gtr_dev->dev, "Invalid PHY type and/or instance\n");
+ #include <linux/clk.h>
++#include <linux/debugfs.h>
+ #include <linux/delay.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+@@ -123,6 +124,15 @@
+ #define ICM_PROTOCOL_DP			0x4
+ #define ICM_PROTOCOL_SGMII		0x5
+ 
++static const char *const xpsgtr_icm_str[] = {
++	[ICM_PROTOCOL_PD] = "none",
++	[ICM_PROTOCOL_PCIE] = "PCIe",
++	[ICM_PROTOCOL_SATA] = "SATA",
++	[ICM_PROTOCOL_USB] = "USB",
++	[ICM_PROTOCOL_DP] = "DisplayPort",
++	[ICM_PROTOCOL_SGMII] = "SGMII",
++};
++
+ /* Test Mode common reset control  parameters */
+ #define TM_CMN_RST			0x10018
+ #define TM_CMN_RST_EN			0x1
+@@ -787,6 +797,34 @@ static struct phy *xpsgtr_xlate(struct device *dev,
+ 	return ERR_PTR(-EINVAL);
+ }
+ 
++/*
++ * DebugFS
++ */
++
++static int xpsgtr_status_read(struct seq_file *seq, void *data)
++{
++	struct device *dev = seq->private;
++	struct xpsgtr_phy *gtr_phy = dev_get_drvdata(dev);
++	struct clk *clk;
++	u32 pll_status;
++
++	mutex_lock(&gtr_phy->phy->mutex);
++	pll_status = xpsgtr_read_phy(gtr_phy, L0_PLL_STATUS_READ_1);
++	clk = gtr_phy->dev->clk[gtr_phy->refclk];
++
++	seq_printf(seq, "Lane:            %u\n", gtr_phy->lane);
++	seq_printf(seq, "Protocol:        %s\n",
++		   xpsgtr_icm_str[gtr_phy->protocol]);
++	seq_printf(seq, "Instance:        %u\n", gtr_phy->instance);
++	seq_printf(seq, "Reference clock: %u (%pC)\n", gtr_phy->refclk, clk);
++	seq_printf(seq, "Reference rate:  %lu\n", clk_get_rate(clk));
++	seq_printf(seq, "PLL locked:      %s\n",
++		   pll_status & PLL_STATUS_LOCKED ? "yes" : "no");
++
++	mutex_unlock(&gtr_phy->phy->mutex);
++	return 0;
++}
++
+ /*
+  * Power Management
+  */
+@@ -936,6 +974,8 @@ static int xpsgtr_probe(struct platform_device *pdev)
+ 
+ 		gtr_phy->phy = phy;
+ 		phy_set_drvdata(phy, gtr_phy);
++		debugfs_create_devm_seqfile(&phy->dev, "status", phy->debugfs,
++					    xpsgtr_status_read);
+ 	}
+ 
+ 	/* Register the PHY provider. */
 -- 
 2.35.1.1320.gc452695387.dirty
 
