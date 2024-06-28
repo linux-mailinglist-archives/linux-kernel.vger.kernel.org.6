@@ -1,97 +1,96 @@
-Return-Path: <linux-kernel+bounces-234086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6363F91C200
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:02:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19DB391C205
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D18D1F26961
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:02:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89141B214E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC7B1C230B;
-	Fri, 28 Jun 2024 15:01:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wK1GDIo5"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28461C2336;
+	Fri, 28 Jun 2024 15:04:45 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04921BE852
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 15:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A056B18C31
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 15:04:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719586916; cv=none; b=OXgsD+m3w6drdjeJ/cWUTp/GcpoVUDFi8X7wwaWs2fiOfZspemTkcAwmBCejOYzrXehbw24c7DKhrbhIvyEcbmgZkNIIW9OBYjhOjxrxqzzPucd2iBQv6dMcxji9wMpGIB9u9PdAVaG2VcoBofjl/6Kw+lbbvzf3bFgFZnwSoys=
+	t=1719587085; cv=none; b=FrvsdvLqtI7qKcfkkhACvKuCkl/TZZpCB+y1bu70XDRUiVn5pSSHM9XUTjcx9PT79/F92DSt7yLrXK/PIK+jBt0XEa1QeYQ+FtSXWsskwcNJOEnOJvD/ZZTZkN6aEsQaDE4X7Nr+ajI0UuUS1FRYgXE4WhPB2IxVyKThyBY5Bkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719586916; c=relaxed/simple;
-	bh=5AM+ks3kbuAODFXCbuJgrzHkfUbhDJpA2xaseF4KDew=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b/sQ5tUbVAcGsEpD1NZ9Obo50vu5HxgNk9tq1l5wla30JlCso2FJj+4k4EG4ZdFo7MvhCJ+tLyrbsqbtHP4wjCrnYvqUKCjf6HsBwMZYUIP6g6xJmUlor9gDdJ31eX26GLMhuIIGvd9dx02opsaYERYdAVZ+L3WtT0klsM3adlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wK1GDIo5; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-444fe7e9f11so273671cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 08:01:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719586914; x=1720191714; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=pV4F7RdKKxqX+CEk9cel20GI2s9HbIhc31hrc3gEuKM=;
-        b=wK1GDIo5+rV1ElkTMa3g/cXHF9rdL0NHTKrsWu7T+0HbKqEoU0BHhGiIc/OHdQAZPE
-         C0CugS7G76cv+qRFiCTQT7yQafzdurKme7RNZKw9IL/UPTfI2lmjJkc2J/QtnlVcky3z
-         vNJGUF8X95ZfXoaBuqBgr0geQpFmgFLN3WQHEra9uSqEEX6KKIvpUp23RyM4UPkDKHtC
-         M2QiwVkz2wsAKnys789voUWJTCla1EW21bmEH18vdXAwfbq0+PO1DEQMO+zw2swFhWuQ
-         f94PCz9RO8njPOqCFsSLIfaCXvOibL2T6NvhEZse8EOWjJ08J6z5gCyhFdunw+CkujkK
-         4Cfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719586914; x=1720191714;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pV4F7RdKKxqX+CEk9cel20GI2s9HbIhc31hrc3gEuKM=;
-        b=v7J/BXQyiChSC9WeR4tT7j/zxgd4pgdS1oLBc9+lJGYZGxDVS8/BFRO3wliGawIsdq
-         4WRWyn+hEMpFsp9piQABZkeOC803LUxeEW4zJCz3RQ51AI4oZ076EZEwgqx19ZLxcQAh
-         rmuql4QajO6QiYwzhZnVgXDx7i432Hz/mYGfLP/U1w219ykX3srSYxRYjSUvWobdqHVJ
-         9OBMJep74H57DMtOT8KPcVU6eLS7fzaeayK5/9sHlu0Ojc75m0uTB9ZG8DukAprMyf8h
-         I0c9tXEePTdBpIky0Rk6TvwztpW91TvEyFPJL7em/vqew7DBG5L+Avobf3I4/BNgs3mA
-         e6Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCV0rPoRhEpaKtq7wnKklSlRQyyN34KFz3MUnGhedTJ94eNc7XtmV6sA7vjZkrr4g3SiR/R5Lvja15ixW7EzxzXTz20ftOelyRP1TJNk
-X-Gm-Message-State: AOJu0YxxWZYIzNDhG1eSFI8WFDRR34iV35fJ1sV4nPFYhTlUTZQgH9Uy
-	jTk0KSCXyok5imrE2tVEcmew1mXPrUcTkG7XSAOhCLgDqctI+a6sj3vag2b0ERoouZpwq5kTUd6
-	B1myaOIg2XNYE93VUdKgOpUyCHeJGQD9klYvb
-X-Google-Smtp-Source: AGHT+IFSa8ePRVVy+0pw+2BgpZBsYhEdqdOqUKgO/gqHs/9djL6GlfhMWqhA6kA1DlyLbQRpSh8UWRI6Jz7YD4+eot8=
-X-Received: by 2002:ac8:45d4:0:b0:444:aba7:8c07 with SMTP id
- d75a77b69052e-44651b1dac0mr3382951cf.18.1719586913372; Fri, 28 Jun 2024
- 08:01:53 -0700 (PDT)
+	s=arc-20240116; t=1719587085; c=relaxed/simple;
+	bh=dAF/CagxWagf171GUiR+pxLkeIzVmgfwJ+b+Po3AhsM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=hqDSEqIEV6V+W6X0GFjQXzrMFvN6MNBWbQMqVihC1Eqg8APVcwHZIzwBWD2Yt1CfJ/tadFoiL2k7yO0rxKyObXPM7Q4qUkv3E2fBqEFtGOmUaJEVAytG5NeYK87WDOGPVUL3/S2+wa62AZhl5bC4YEyKfLvC7KtGjcNv4EwIa7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-167-sofw076GMKu0l37qeHp-MQ-1; Fri, 28 Jun 2024 16:04:35 +0100
+X-MC-Unique: sofw076GMKu0l37qeHp-MQ-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Fri, 28 Jun
+ 2024 16:03:58 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Fri, 28 Jun 2024 16:03:58 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Alexey Dobriyan' <adobriyan@gmail.com>, Marco Elver <elver@google.com>
+CC: Thomas Gleixner <tglx@linutronix.de>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>
+Subject: RE: [PATCH v2] compiler.h: simplify data_race() macro
+Thread-Topic: [PATCH v2] compiler.h: simplify data_race() macro
+Thread-Index: AQHaxkyxmcs1TfRDYEaTbXk0NMQQRbHdS/5g
+Date: Fri, 28 Jun 2024 15:03:58 +0000
+Message-ID: <c452e41ed3d14c86aa0e05b4936c670b@AcuMS.aculab.com>
+References: <f214f15e-4a0a-4f24-9bd7-8f84cbc12e5a@p183>
+ <CANpmjNO=zv6D807cNLAQ3eGLrigUs9xtYNxoHhyuYvHkhhSUWg@mail.gmail.com>
+ <2aab04d1-c16b-44e4-a283-7bbf8cba28e7@p183>
+ <CANpmjNMZU=T6J5OBpELxB=ZqOnrkou2iRG7zaqoNy7bCGgH9hA@mail.gmail.com>
+ <fb62163f-ba21-4661-be5b-bb5124abc87d@p183>
+In-Reply-To: <fb62163f-ba21-4661-be5b-bb5124abc87d@p183>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240611171600.1105124-1-aniketmaurya@google.com>
- <20240624052851.1030799-1-aniketmaurya@google.com> <20240627221225e3517e4e@mail.local>
-In-Reply-To: <20240627221225e3517e4e@mail.local>
-From: "Aniket ." <aniketmaurya@google.com>
-Date: Fri, 28 Jun 2024 20:31:42 +0530
-Message-ID: <CAMmmMt0GKHaTbPbY_qubw09TGnAkVO+M_EAZB1bLZBQ3Ev3iJw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] i3c: dw: Add apb clk
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Jeremy Kerr <jk@codeconstruct.com.au>, Joel Stanley <joel@jms.id.au>, 
-	Billy Tsai <billy_tsai@aspeedtech.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, linux-i3c@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-> >   dt-bindings: i3c: dw: Add apb clock binding
-> >   i3c: dw: Add optional apb clock
-> >   i3c: dw: Use new *_enabled clk APIs
->
-> You should reorder your patches to have 3/3 before 2/3, else you
-> introduce code that you immediately remove.
+RnJvbTogQWxleGV5IERvYnJpeWFuDQo+IFNlbnQ6IDI0IEp1bmUgMjAyNCAxNjo0MA0KPiANCj4g
+LVdkZWNsYXJhdGlvbi1hZnRlci1zdGF0ZW1lbnQgdXNlZCBzaW5jZSBmb3JldmVyIHJlcXVpcmVk
+IHN0YXRlbWVudA0KPiBleHByZXNzaW9ucyB0byBpbmplY3QgX19rY3Nhbl9kaXNhYmxlX2N1cnJl
+bnQoKSwgX19rY3Nhbl9lbmFibGVfY3VycmVudCgpDQo+IHRvIG1hcmsgZGF0YSByYWNlLiBOb3cg
+dGhhdCBpdCBpcyBnb25lLCBtYWtlIG1hY3JvIGV4cGFuc2lvbiBzaW1wbGVyLg0KPiANCj4gX191
+bnF1YWxfc2NhbGFyX3R5cGVvZigpIGlzIHdvcmR5IG1hY3JvIGJ5IGl0c2VsZi4NCj4gImV4cHIi
+IGlzIGV4cGFuZGVkIHR3aWNlLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogQWxleGV5IERvYnJpeWFu
+IDxhZG9icml5YW5AZ21haWwuY29tPg0KPiAtLS0NCj4gDQo+ICBpbmNsdWRlL2xpbnV4L2NvbXBp
+bGVyLmggfCAgICA2ICsrLS0tLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwg
+NCBkZWxldGlvbnMoLSkNCj4gDQo+IC0tLSBhL2luY2x1ZGUvbGludXgvY29tcGlsZXIuaA0KPiAr
+KysgYi9pbmNsdWRlL2xpbnV4L2NvbXBpbGVyLmgNCj4gQEAgLTIwMCwxMCArMjAwLDggQEAgdm9p
+ZCBmdHJhY2VfbGlrZWx5X3VwZGF0ZShzdHJ1Y3QgZnRyYWNlX2xpa2VseV9kYXRhICpmLCBpbnQg
+dmFsLA0KPiAgICovDQo+ICAjZGVmaW5lIGRhdGFfcmFjZShleHByKQkJCQkJCQlcDQo+ICAoewkJ
+CQkJCQkJCVwNCj4gLQlfX3VucXVhbF9zY2FsYXJfdHlwZW9mKCh7IGV4cHI7IH0pKSBfX3YgPSAo
+ewkJCVwNCj4gLQkJX19rY3Nhbl9kaXNhYmxlX2N1cnJlbnQoKTsJCQkJXA0KPiAtCQlleHByOwkJ
+CQkJCQlcDQo+IC0JfSk7CQkJCQkJCQlcDQo+ICsJX19rY3Nhbl9kaXNhYmxlX2N1cnJlbnQoKTsJ
+CQkJCVwNCj4gKwlfX2F1dG9fdHlwZSBfX3YgPSAoZXhwcik7CQkJCQlcDQo+ICAJX19rY3Nhbl9l
+bmFibGVfY3VycmVudCgpOwkJCQkJXA0KPiAgCV9fdjsJCQkJCQkJCVwNCj4gIH0pDQoNCkkgdGhp
+bmsgeW91IGNhbiByZW1vdmUgYSBsb3Qgb2YgdGhlIHRhYnMuLi4NCg0KCURhdmlkDQoNCi0NClJl
+Z2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0
+b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykN
+Cg==
 
-Ahh! Sorry, let me fix this.
-
-Thanks,
-Aniket.
 
