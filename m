@@ -1,275 +1,142 @@
-Return-Path: <linux-kernel+bounces-233552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7036C91B94D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:03:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0F9191B955
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:03:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3D2D1F23DAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:03:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EDAC286F1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B078145353;
-	Fri, 28 Jun 2024 08:02:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5EC146D6E;
+	Fri, 28 Jun 2024 08:03:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="kalId1eJ"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="GCLgh/3S"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5D414389A
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 08:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95E514375A;
+	Fri, 28 Jun 2024 08:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719561776; cv=none; b=U96vmbSgijHPX8PCke3F+hZzgVKOn70aTfKy/HLYpRgW9/6i36tqeejK3sFxfDbC2TJiE9ejqTjhPDN2v62La81QvBKAU49u01xKdMiI9JZPlsD5xKbLeCN6pF7zsnUPnSsMF4SKvgVhlX9jJGQjOYY9rWohou1gOtIa6Uc6VvM=
+	t=1719561793; cv=none; b=joD+uo8j55Yb2FDj00CwgLJlWwa5ggsnCFKMMlgjq1Kyboumzf+fngZXIY3eC73VZ0eQINTbNsWQ6TJ+1EVkwXvqze2cf2MRP+vPbIzEZT8PRqdtMg9gi7+B+T2ervKQpQeHfU1+NDaP7EBtfKegtDzOiJXmcPnForyYSI/fJCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719561776; c=relaxed/simple;
-	bh=QXYx6rkU0AQabrspd6YVjPYtAZW/WYWgvStOMy1phM8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=snIK9U4h77N8YJ50YcQqbwr67AJRXlDnmG2eWjn91qXHA/DkmiV2aC+S3Qj7KJcKBZWFCf/psznBxFzQ45+7kardop5kFI8EdnZ9lxmr9QjkaLrJ7al1x0Bl9DdzjWL51tWvrHx1j2ENBnw7DENpg1ml7djzqXRpW2Bl57Xot+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=kalId1eJ; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52d259dbe3cso322645e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 01:02:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1719561773; x=1720166573; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yRZz2tsfNxD7GWDFKOlUJ52oUZ9Phz5yzlW6R6P2fIk=;
-        b=kalId1eJcHB2c+gA1rSMEHEJ/HFeAFBQQzBA9bGjlTrAKalHAkO7SyxoD3ZnF2NnH3
-         mmHQceD3SNd9WLw6u0DOTNiwkkKm1JReIUjaMGwJn9cmxi2VsG+VQ/Yny574qXgkWTZT
-         y988OYooRtWoyH0CH1iVCNzvs2ypbG+CZ+4RZWpVP9PDWnUumAX8jNHYsutfsiIS4mSV
-         jstiQ+Z5D8eaFQ3bPD6U26m8WFZY+o5m0TIuziOBnObb7UpF87WI52/uLebVMiW4GAfL
-         KbD46+EnUdXz5Z6Vw2WvPnVDILwdd6T1sxmGbijtdPqUeBJ3Ud9et8/V78EvEF7UxBhk
-         lNFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719561773; x=1720166573;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yRZz2tsfNxD7GWDFKOlUJ52oUZ9Phz5yzlW6R6P2fIk=;
-        b=NvEIebNtYLmhCbM72haTVHcyAPoif5WO88Fs5cFcvxnzVLM6KNupWmpbzD/U4rlyLu
-         HRK98ireSyOHIlt0mKwQ0daHhGNTmIcc30YB+ubUopAtMeSUlQGvM/BTguP5Twc228Ws
-         iwKRdeRD4dOQa0SIAC5P4NykU/dOMNdWAECJ702MTggBLNQSYR/6AVm2DL2Q3HJ1Tt+P
-         AfFdxC6+QWsAPix4dcQdJrdt0S/rZIkN3/AMIGSIzZKk+NBR45Om2M4TWJPdi8lsntGo
-         5KEiDJvdTjBcXLmY39CPRjtIDM1FHPLob8/0eS96xe/h16rgAnp5/sdqsZae5YyZcFsG
-         9nsw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPZfahbHOuEdRDgI2k1KPwW8M4HzdZL6wjdN1xlFIVP53vOSe7S9d91gks6IvzRp7OTKDiNnRCMemPiNmtcAB/STl+vdmfXJ3c+E07
-X-Gm-Message-State: AOJu0YwWDxk9FSB3qfoZYJOKt90i2ArqfeLhGCDFoQRKX5NxQGjhwXf+
-	7V7A5nYV8HgJo0ahu0tU1bqO2TS1svt6bco7gVmoTg8BqH9gA+RdFtjzOVwaUiE=
-X-Google-Smtp-Source: AGHT+IFT/fp8+C8tAy9VJfwqFHoTu04HnMgmLLyaEnM4DD3aQT6hgmQpsdTV/mdHCYEPvuo5cEcr+g==
-X-Received: by 2002:a19:8c4d:0:b0:52c:d36f:f78b with SMTP id 2adb3069b0e04-52ce061f766mr11031618e87.31.1719561772772;
-        Fri, 28 Jun 2024 01:02:52 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.70])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b097b82sm23496605e9.34.2024.06.28.01.02.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Jun 2024 01:02:52 -0700 (PDT)
-Message-ID: <2f162986-33c5-4d80-958c-4f857adaad20@tuxon.dev>
-Date: Fri, 28 Jun 2024 11:02:50 +0300
+	s=arc-20240116; t=1719561793; c=relaxed/simple;
+	bh=yPCtwntitwnq3P1LKmfs4zz3mc8+InZdnuHc3hi9Ylk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KXZ8lvDpMH+IeW+uKKWHihg+X1hEB5UQXbPO6rpugLcw957FA30X37if9kMAHmRk3I/5QvAcehL1IatKh5V34eQE7bfE+iVS4DPQXRZe1M0+HuRj0bx38HsD+QTfpHkYEkdZc1k03ssAPTKJbBVqSDt6qp5HerjhCXxcIlUTv0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=GCLgh/3S; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 728DB40E021A;
+	Fri, 28 Jun 2024 08:03:09 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id JE-v6gqwM-Fi; Fri, 28 Jun 2024 08:03:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1719561786; bh=cVfSEJoYI9K0X4J37xQ+u9NuE3Ao5q+TdjlnQbav5uQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GCLgh/3SKA7iIa6OISo/2RyK4dTZnRR1eaus1F4iNpS0fGSrj95b9hJYqTZTKgkXz
+	 /2oZRRnzy3Ga6cUnjGEcQyXSdtHOV9opsrWvl2dRvgdkfg/ZvK1bN9/zSA9aBTmoi3
+	 +W64B7IZbySGJJefzyFJ2/L+FHoECPjkyr9yx76MLv7Rxb3pDcpsoeQicY3vhMwdXd
+	 4Q5VykYuRSmpE9ZrmK44aoNHdUFF83D9BQFKDUEeJsZO682rkNlPLDsbSpjVSIuZXv
+	 afFrbfUTlpKIM6oawmgpuRuXf/ql/mds8ZmQ+32l4zm0bIsec7ARNz1DGDnBbXvbYQ
+	 JSPeKQDLZaHGjWoIbCGjQ7t2+ZWCmpk21XbcGQG4zNqttTBZdOPUH5hrYa58gGIHVJ
+	 HI9vmI/F40jN9LRqOun6xbX0Xruqcr0/mnwS7EPXqfI7JKaLf2PaMkDfTx5onrD+8c
+	 N967Y8tDCxQhNoaUnRKjD/YL6I38NScreg2i3zHZe3pbQcHK6du8rlAfKD/lkp12f2
+	 vCJ8OLmWenLMP7RvUn7lfiFSdV99yr5adTmAlMGLlFbikTcpZsdc/lZeqWcm2iCagU
+	 QQqax4fFN7CSdzzKvOUouemsQXWBBj48nR5JCU1/Zyqb+7Bs3gQEn5TlXq1d6+fLNa
+	 9Xeg1iUIeJYEZPkq+jC0Om5E=
+Received: from nazgul.tnic (business-24-134-159-81.pool2.vodafone-ip.de [24.134.159.81])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D935140E0219;
+	Fri, 28 Jun 2024 08:02:45 +0000 (UTC)
+Date: Fri, 28 Jun 2024 10:03:05 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	daniel.sneddon@linux.intel.com, tony.luck@intel.com,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Brice Goglin <brice.goglin@gmail.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Perry Yuan <Perry.Yuan@amd.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: Re: [PATCH PATCH v2 1/9] x86/cpu/topology: Add CPU type to struct
+ cpuinfo_topology
+Message-ID: <20240628080305.GEZn5uOSnW40fVgaNA@fat_crate.local>
+References: <20240627-add-cpu-type-v2-0-f927bde83ad0@linux.intel.com>
+ <20240627-add-cpu-type-v2-1-f927bde83ad0@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/12] i2c: riic: Define individual arrays to describe
- the register offsets
-Content-Language: en-US
-To: Biju Das <biju.das.jz@bp.renesas.com>,
- Chris Brandt <Chris.Brandt@renesas.com>,
- "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>
-Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com>
- <20240625121358.590547-8-claudiu.beznea.uj@bp.renesas.com>
- <TY3PR01MB11346EF9A001F68162148B70F86D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <6289f329-118f-4970-a525-75c3a48bd28b@tuxon.dev>
- <TY3PR01MB1134603F92C72D9B6C6C3733C86D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <TY3PR01MB1134603F92C72D9B6C6C3733C86D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240627-add-cpu-type-v2-1-f927bde83ad0@linux.intel.com>
 
-
-
-On 28.06.2024 10:55, Biju Das wrote:
-> Hi Claudiu,
+On Thu, Jun 27, 2024 at 01:44:06PM -0700, Pawan Gupta wrote:
+> The hw_cpu_type is populated in the below debugfs file:
 > 
->> -----Original Message-----
->> From: claudiu beznea <claudiu.beznea@tuxon.dev>
->> Sent: Friday, June 28, 2024 8:32 AM
->> Subject: Re: [PATCH v2 07/12] i2c: riic: Define individual arrays to describe the register offsets
->>
->> Hi, Biju,
->>
->> On 28.06.2024 08:59, Biju Das wrote:
->>> Hi Claudiu,
->>>
->>>> -----Original Message-----
->>>> From: Claudiu <claudiu.beznea@tuxon.dev>
->>>> Sent: Tuesday, June 25, 2024 1:14 PM
->>>> Subject: [PATCH v2 07/12] i2c: riic: Define individual arrays to
->>>> describe the register offsets
->>>>
->>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>
->>>> Define individual arrays to describe the register offsets. In this
->>>> way we can describe different IP variants that share the same
->>>> register offsets but have differences in other characteristics. Commit prepares for the addition
->> of fast mode plus.
->>>>
->>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>> ---
->>>>
->>>> Changes in v2:
->>>> - none
->>>>
->>>>  drivers/i2c/busses/i2c-riic.c | 58
->>>> +++++++++++++++++++----------------
->>>>  1 file changed, 31 insertions(+), 27 deletions(-)
->>>>
->>>> diff --git a/drivers/i2c/busses/i2c-riic.c
->>>> b/drivers/i2c/busses/i2c-riic.c index
->>>> 9fe007609076..8ffbead95492 100644
->>>> --- a/drivers/i2c/busses/i2c-riic.c
->>>> +++ b/drivers/i2c/busses/i2c-riic.c
->>>> @@ -91,7 +91,7 @@ enum riic_reg_list {  };
->>>>
->>>>  struct riic_of_data {
->>>> -	u8 regs[RIIC_REG_END];
->>>> +	const u8 *regs;
->>>
->>>
->>> Since you are touching this part, can we drop struct and Use u8* as
->>> device_data instead?
->>
->> Patch 09/12 "i2c: riic: Add support for fast mode plus" adds a new member to struct riic_of_data.
->> That new member is needed to differentiate b/w hardware versions supporting fast mode plus based on
->> compatible.
-> 
-> Are we sure RZ/A does not support fast mode plus?
+>   # cat /sys/kernel/debug/x86/topo/cpus/#
 
-From commit description of patch 09/12:
+What "below debugfs file"? A '#'?
 
-Fast mode plus is available on most of the IP variants that RIIC driver
-is working with. The exception is (according to HW manuals of the SoCs
-where this IP is available) the Renesas RZ/A1H. For this, patch
-introduces the struct riic_of_data::fast_mode_plus.
+> diff --git a/arch/x86/kernel/cpu/debugfs.c b/arch/x86/kernel/cpu/debugfs.c
+> index 3baf3e435834..8082e03a5976 100644
+> --- a/arch/x86/kernel/cpu/debugfs.c
+> +++ b/arch/x86/kernel/cpu/debugfs.c
+> @@ -22,6 +22,7 @@ static int cpu_debug_show(struct seq_file *m, void *p)
+>  	seq_printf(m, "die_id:              %u\n", c->topo.die_id);
+>  	seq_printf(m, "cu_id:               %u\n", c->topo.cu_id);
+>  	seq_printf(m, "core_id:             %u\n", c->topo.core_id);
+> +	seq_printf(m, "hw_cpu_type:         %x\n", c->topo.hw_cpu_type);
 
-I checked the manuals of all the SoCs where this driver is used.
+Yeah, no, we're not going to perpetuate this silliness of printing hex
+values without a preceding "0x".
 
-I haven't checked the H/W manual?
+>  	seq_printf(m, "logical_pkg_id:      %u\n", c->topo.logical_pkg_id);
+>  	seq_printf(m, "logical_die_id:      %u\n", c->topo.logical_die_id);
+>  	seq_printf(m, "llc_id:              %u\n", c->topo.llc_id);
+> diff --git a/arch/x86/kernel/cpu/topology_common.c b/arch/x86/kernel/cpu/topology_common.c
+> index 9a6069e7133c..8b47bd6b0623 100644
+> --- a/arch/x86/kernel/cpu/topology_common.c
+> +++ b/arch/x86/kernel/cpu/topology_common.c
+> @@ -140,6 +140,14 @@ static void parse_topology(struct topo_scan *tscan, bool early)
+>  	}
+>  }
+>  
+> +static void topo_set_hw_cpu_type(struct cpuinfo_x86 *c)
+> +{
+> +	c->topo.hw_cpu_type = X86_HW_CPU_TYPE_UNKNOWN;
+> +
+> +	if (c->x86_vendor == X86_VENDOR_INTEL && c->cpuid_level >= 0x1a)
+> +		c->topo.hw_cpu_type = cpuid_eax(0x1a) >> X86_CPU_TYPE_INTEL_SHIFT;
+> +}
 
-On the manual I've downloaded from Renesas web site the FMPE bit of
-RIICnFER is not available on RZ/A1H.
+Why isn't this happening in cpu/intel.c? And then you don't need yet
+another silly function.
 
-Thank you,
-Claudiu Beznea
+-- 
+Regards/Gruss,
+    Boris.
 
-> If it does not, then it make sense to keep the patch as it is.
-> 
-> Cheers,
-> Biju
-> 
->>
->> Keeping struct riic_of_data is necessary (unless I misunderstood your proposal).
->>
->> Thank you,
->> Claudiu Beznea
->>
->>>
->>> ie, replace const struct riic_of_data *info->const u8 *regs in struct
->>> riic_dev and use .data = riic_rz_xx_regs in of_match_table?
->>>
->>> Cheers,
->>> Biju
->>>>  };
->>>>
->>>>  struct riic_dev {
->>>> @@ -531,36 +531,40 @@ static void riic_i2c_remove(struct platform_device *pdev)
->>>>  	pm_runtime_dont_use_autosuspend(dev);
->>>>  }
->>>>
->>>> +static const u8 riic_rz_a_regs[RIIC_REG_END] = {
->>>> +	[RIIC_ICCR1] = 0x00,
->>>> +	[RIIC_ICCR2] = 0x04,
->>>> +	[RIIC_ICMR1] = 0x08,
->>>> +	[RIIC_ICMR3] = 0x10,
->>>> +	[RIIC_ICSER] = 0x18,
->>>> +	[RIIC_ICIER] = 0x1c,
->>>> +	[RIIC_ICSR2] = 0x24,
->>>> +	[RIIC_ICBRL] = 0x34,
->>>> +	[RIIC_ICBRH] = 0x38,
->>>> +	[RIIC_ICDRT] = 0x3c,
->>>> +	[RIIC_ICDRR] = 0x40,
->>>> +};
->>>> +
->>>>  static const struct riic_of_data riic_rz_a_info = {
->>>> -	.regs = {
->>>> -		[RIIC_ICCR1] = 0x00,
->>>> -		[RIIC_ICCR2] = 0x04,
->>>> -		[RIIC_ICMR1] = 0x08,
->>>> -		[RIIC_ICMR3] = 0x10,
->>>> -		[RIIC_ICSER] = 0x18,
->>>> -		[RIIC_ICIER] = 0x1c,
->>>> -		[RIIC_ICSR2] = 0x24,
->>>> -		[RIIC_ICBRL] = 0x34,
->>>> -		[RIIC_ICBRH] = 0x38,
->>>> -		[RIIC_ICDRT] = 0x3c,
->>>> -		[RIIC_ICDRR] = 0x40,
->>>> -	},
->>>> +	.regs = riic_rz_a_regs,
->>>> +};
->>>> +
->>>> +static const u8 riic_rz_v2h_regs[RIIC_REG_END] = {
->>>> +	[RIIC_ICCR1] = 0x00,
->>>> +	[RIIC_ICCR2] = 0x01,
->>>> +	[RIIC_ICMR1] = 0x02,
->>>> +	[RIIC_ICMR3] = 0x04,
->>>> +	[RIIC_ICSER] = 0x06,
->>>> +	[RIIC_ICIER] = 0x07,
->>>> +	[RIIC_ICSR2] = 0x09,
->>>> +	[RIIC_ICBRL] = 0x10,
->>>> +	[RIIC_ICBRH] = 0x11,
->>>> +	[RIIC_ICDRT] = 0x12,
->>>> +	[RIIC_ICDRR] = 0x13,
->>>>  };
->>>>
->>>>  static const struct riic_of_data riic_rz_v2h_info = {
->>>> -	.regs = {
->>>> -		[RIIC_ICCR1] = 0x00,
->>>> -		[RIIC_ICCR2] = 0x01,
->>>> -		[RIIC_ICMR1] = 0x02,
->>>> -		[RIIC_ICMR3] = 0x04,
->>>> -		[RIIC_ICSER] = 0x06,
->>>> -		[RIIC_ICIER] = 0x07,
->>>> -		[RIIC_ICSR2] = 0x09,
->>>> -		[RIIC_ICBRL] = 0x10,
->>>> -		[RIIC_ICBRH] = 0x11,
->>>> -		[RIIC_ICDRT] = 0x12,
->>>> -		[RIIC_ICDRR] = 0x13,
->>>> -	},
->>>> +	.regs = riic_rz_v2h_regs,
->>>>  };
->>>>
->>>>  static int riic_i2c_suspend(struct device *dev)
->>>> --
->>>> 2.39.2
->>>>
->>>
+https://people.kernel.org/tglx/notes-about-netiquette
 
