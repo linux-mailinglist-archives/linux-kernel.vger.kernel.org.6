@@ -1,137 +1,155 @@
-Return-Path: <linux-kernel+bounces-233904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B6F991BF0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:51:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E27D91BF15
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:54:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D62F1C23431
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:51:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 965991C2258B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:54:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C781BE844;
-	Fri, 28 Jun 2024 12:51:15 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3543C1BE24C;
-	Fri, 28 Jun 2024 12:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62EC71BE256;
+	Fri, 28 Jun 2024 12:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DIG+wuYo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A092E4C3BE;
+	Fri, 28 Jun 2024 12:54:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719579074; cv=none; b=Cf6vqCTX7Hadj5W/owajm8gxFFaOA5UbbitZaX9cRWfZHGPUkXg1fZTDaZcVFCfHvsmqRFrw0z/fzFyl+iIjDzDTqh16UxynmNGviVpKq9C5r3zfY2nTJmwt7ktEI70iPQ/UllhsdJaRaX9wls4TItDrtaCgz812s5+g/XOnCpc=
+	t=1719579273; cv=none; b=J3hRxj9kc4c6SEQzg2rcglsYql9exew6QHN018bJhc+nGPBox/4Cd2c8VZ3835pynO5jvoKbx4tSJlYRzF3bT1k+Nedqe3ZI8ey/04bXcDSvbR5rZpyTjA2jjA1cq8iEeC+RA7GHLbVqWbOel/5EPreJRY8AGFda7jnHG8JeIuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719579074; c=relaxed/simple;
-	bh=H5gIxHrgOR9xxPPd9H0f4XSK1Nm06i4f3r2x9UoDmuI=;
+	s=arc-20240116; t=1719579273; c=relaxed/simple;
+	bh=T5ZiFqiiahTf0Z+foH93BsTf+Jw1dMPer/7O4oy2z5Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qZQrXGiQ/6YJhuZr3Rhnie1RiXUoR3anZYoQ90XR1HijseXejTyQF0fomXWYsUz0CG1LuAIfOyCa4JCGt96mVQGfbQVVUJE3j1qvMsg7NjIixWCtP+TT4LIbtCokrdhLTYWHJRIIm3sYQZvc6yrVyGQmW+p2Hwf0BgzlD7SiKQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5C5D5106F;
-	Fri, 28 Jun 2024 05:51:36 -0700 (PDT)
-Received: from bogus (unknown [10.57.81.131])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EA06D3F73B;
-	Fri, 28 Jun 2024 05:51:06 -0700 (PDT)
-Date: Fri, 28 Jun 2024 13:51:06 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: David Dai <davidai@google.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Quentin Perret <qperret@google.com>,
-	Masami Hiramatsu <mhiramat@google.com>,
-	Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Pavan Kondeti <quic_pkondeti@quicinc.com>,
-	Gupta Pankaj <pankaj.gupta@amd.com>, Mel Gorman <mgorman@suse.de>,
-	kernel-team@android.com, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 2/2] cpufreq: add virtual-cpufreq driver
-Message-ID: <20240628125106.i4hhyzdgt3uoskat@bogus>
-References: <20240521043102.2786284-1-davidai@google.com>
- <20240521043102.2786284-3-davidai@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=i9bVTB6ctStAm96AVmsq/ASJHwlXsqDVVuqsjIYy6r0eGeK0/Noa7LdXSKs4AllI6ncZycrheNvjy/t17lntWh8fJOjCwwBA3KofEQndPAGO5sDYf/ZFILtvCqTPLYv6TI9FzkTIwNuJcs4B9CnJ1fah/770EFAsz/R/d8by9Dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DIG+wuYo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7919CC116B1;
+	Fri, 28 Jun 2024 12:54:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719579273;
+	bh=T5ZiFqiiahTf0Z+foH93BsTf+Jw1dMPer/7O4oy2z5Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DIG+wuYoEequKJNofhPtykiiv4T2PXApI8UT87e60SQ7YyR0aOZwnHq1eSXwVTqwa
+	 ZLdkEyc70XkIGuRUhNMA8V3+SYVVsV/4x9isg4SZWH/GWjHJh93HXzxaER20xr13Q9
+	 7GSnAO10++PNJY+rXosfEm8/z2+//HNPK+V3k9CmHjIeLy1wo4octhWbhO5ebVMy9a
+	 AFU9b7GC9xc35JIA1O2For1RUDfsHdOggwSZ07DWM4Kot4s60G1joiL09BBoV7AfDN
+	 kbabwETJsQG73rKsgkDEq9Dkk5E9CYQncEOtg5wtP6fu/W29i2x9NOcAVw69UUyBv+
+	 45ZJqFa8/1uEg==
+Date: Fri, 28 Jun 2024 14:54:27 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Ian Kent <ikent@redhat.com>
+Cc: Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>, 
+	Lucas Karpinski <lkarpins@redhat.com>, viro@zeniv.linux.org.uk, raven@themaw.net, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Alexander Larsson <alexl@redhat.com>, Eric Chanudet <echanude@redhat.com>
+Subject: Re: [RFC v3 1/1] fs/namespace: remove RCU sync for MNT_DETACH umount
+Message-ID: <20240628-gelingen-erben-0f6e14049e68@brauner>
+References: <20240626201129.272750-2-lkarpins@redhat.com>
+ <20240626201129.272750-3-lkarpins@redhat.com>
+ <Znx-WGU5Wx6RaJyD@casper.infradead.org>
+ <50512ec3-da6d-4140-9659-58e0514a4970@redhat.com>
+ <20240627115418.lcnpctgailhlaffc@quack3>
+ <20240627-abkassieren-grinsen-6ce528fe5526@brauner>
+ <d1b449cb-7ff8-4953-84b9-04dd56ddb187@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240521043102.2786284-3-davidai@google.com>
+In-Reply-To: <d1b449cb-7ff8-4953-84b9-04dd56ddb187@redhat.com>
 
-On Mon, May 20, 2024 at 09:30:52PM -0700, David Dai wrote:
-> Introduce a virtualized cpufreq driver for guest kernels to improve
-> performance and power of workloads within VMs.
->
-> This driver does two main things:
->
-> 1. Sends the frequency of vCPUs as a hint to the host. The host uses the
-> hint to schedule the vCPU threads and decide physical CPU frequency.
->
-> 2. If a VM does not support a virtualized FIE(like AMUs), it queries the
-> host CPU frequency by reading a MMIO region of a virtual cpufreq device
-> to update the guest's frequency scaling factor periodically. This enables
-> accurate Per-Entity Load Tracking for tasks running in the guest.
->
-> +
-> +/*
-> + * CPU0..CPUn
-> + * +-------------+-------------------------------+--------+-------+
-> + * | Register    | Description                   | Offset |   Len |
-> + * +-------------+-------------------------------+--------+-------+
-> + * | cur_perf    | read this register to get     |    0x0 |   0x4 |
-> + * |             | the current perf (integer val |        |       |
-> + * |             | representing perf relative to |        |       |
-> + * |             | max performance)              |        |       |
-> + * |             | that vCPU is running at       |        |       |
-> + * +-------------+-------------------------------+--------+-------+
-> + * | set_perf    | write to this register to set |    0x4 |   0x4 |
-> + * |             | perf value of the vCPU        |        |       |
-> + * +-------------+-------------------------------+--------+-------+
-> + * | perftbl_len | number of entries in perf     |    0x8 |   0x4 |
-> + * |             | table. A single entry in the  |        |       |
-> + * |             | perf table denotes no table   |        |       |
-> + * |             | and the entry contains        |        |       |
-> + * |             | the maximum perf value        |        |       |
-> + * |             | that this vCPU supports.      |        |       |
-> + * |             | The guest can request any     |        |       |
-> + * |             | value between 1 and max perf  |        |       |
-> + * |             | when perftbls are not used.   |        |       |
-> + * +---------------------------------------------+--------+-------+
-> + * | perftbl_sel | write to this register to     |    0xc |   0x4 |
-> + * |             | select perf table entry to    |        |       |
-> + * |             | read from                     |        |       |
-> + * +---------------------------------------------+--------+-------+
-> + * | perftbl_rd  | read this register to get     |   0x10 |   0x4 |
-> + * |             | perf value of the selected    |        |       |
-> + * |             | entry based on perftbl_sel    |        |       |
-> + * +---------------------------------------------+--------+-------+
-> + * | perf_domain | performance domain number     |   0x14 |   0x4 |
-> + * |             | that this vCPU belongs to.    |        |       |
-> + * |             | vCPUs sharing the same perf   |        |       |
-> + * |             | domain number are part of the |        |       |
-> + * |             | same performance domain.      |        |       |
-> + * +-------------+-------------------------------+--------+-------+
-> + */
+On Fri, Jun 28, 2024 at 11:17:43AM GMT, Ian Kent wrote:
+> 
+> On 27/6/24 23:16, Christian Brauner wrote:
+> > On Thu, Jun 27, 2024 at 01:54:18PM GMT, Jan Kara wrote:
+> > > On Thu 27-06-24 09:11:14, Ian Kent wrote:
+> > > > On 27/6/24 04:47, Matthew Wilcox wrote:
+> > > > > On Wed, Jun 26, 2024 at 04:07:49PM -0400, Lucas Karpinski wrote:
+> > > > > > +++ b/fs/namespace.c
+> > > > > > @@ -78,6 +78,7 @@ static struct kmem_cache *mnt_cache __ro_after_init;
+> > > > > >    static DECLARE_RWSEM(namespace_sem);
+> > > > > >    static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
+> > > > > >    static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
+> > > > > > +static bool lazy_unlock = false; /* protected by namespace_sem */
+> > > > > That's a pretty ugly way of doing it.  How about this?
+> > > > Ha!
+> > > > 
+> > > > That was my original thought but I also didn't much like changing all the
+> > > > callers.
+> > > > 
+> > > > I don't really like the proliferation of these small helper functions either
+> > > > but if everyone
+> > > > 
+> > > > is happy to do this I think it's a great idea.
+> > > So I know you've suggested removing synchronize_rcu_expedited() call in
+> > > your comment to v2. But I wonder why is it safe? I *thought*
+> > > synchronize_rcu_expedited() is there to synchronize the dropping of the
+> > > last mnt reference (and maybe something else) - see the comment at the
+> > > beginning of mntput_no_expire() - and this change would break that?
+> > Yes. During umount mnt->mnt_ns will be set to NULL with namespace_sem
+> > and the mount seqlock held. mntput() doesn't acquire namespace_sem as
+> > that would get rather problematic during path lookup. It also elides
+> > lock_mount_hash() by looking at mnt->mnt_ns because that's set to NULL
+> > when a mount is actually unmounted.
+> > 
+> > So iirc synchronize_rcu_expedited() will ensure that it is actually the
+> > system call that shuts down all the mounts it put on the umounted list
+> > and not some other task that also called mntput() as that would cause
+> > pretty blatant EBUSY issues.
+> > 
+> > So callers that come before mnt->mnt_ns = NULL simply return of course
+> > but callers that come after mnt->mnt_ns = NULL will acquire
+> > lock_mount_hash() _under_ rcu_read_lock(). These callers see an elevated
+> > reference count and thus simply return while namespace_lock()'s
+> > synchronize_rcu_expedited() prevents the system call from making
+> > progress.
+> > 
+> > But I also don't see it working without risk even with MNT_DETACH. It
+> > still has potential to cause issues in userspace. Any program that
+> > always passes MNT_DETACH simply to ensure that even in the very rare
+> > case that a mount might still be busy is unmounted might now end up
+> > seeing increased EBUSY failures for mounts that didn't actually need to
+> > be unmounted with MNT_DETACH. In other words, this is only inocuous if
+> > userspace only uses MNT_DETACH for stuff they actually know is busy when
+> > they're trying to unmount. And I don't think that's the case.
+> > 
+> I'm sorry but how does an MNT_DETACH umount system call return EBUSY, I
+> can't
+> 
+> see how that can happen?
 
-I think it is good idea to version this table, so that it gives flexibility
-to update the entries. It is a must if we are getting away with DT. I didn't
-give complete information in my previous response where I agreed with Rafael.
+Not the umount() call is the problem. Say you have the following
+sequence:
 
-I am not sure how much feasible it is, but can it be queried via KVM IOCTLs
-to VMM. Just a thought, I am exploring how to make this work even on ACPI
-systems. It is simpler if we neednot rely on DT or ACPI.
+(1) mount(ext4-device, /mnt)
+    umount(/mnt, 0)
+    mount(ext4-device, /mnt)
 
---
-Regards,
-Sudeep
+If that ext4 filesystem isn't in use anymore then umount() will succeed.
+The same task can immediately issue a second mount() call on the same
+device and it must succeed.
+
+Today the behavior for this is the same whether or no the caller uses
+MNT_DETACH. So:
+
+(2) mount(ext4-device, /mnt)
+    umount(/mnt, MNT_DETACH)
+    mount(ext4-device, /mnt)
+
+All that MNT_DETACH does is to skip the check for busy mounts otherwise
+it's identical to a regular umount. So (1) and (2) will behave the same
+as long as the filesystem isn't used anymore.
+
+But afaict with your changes this wouldn't be true anymore. If someone
+uses (2) on a filesystem that isn't busy then they might end up getting
+EBUSY on the second mount. And if I'm right then that's potentially a
+rather visible change.
 
