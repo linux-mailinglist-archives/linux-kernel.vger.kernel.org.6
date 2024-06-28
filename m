@@ -1,171 +1,122 @@
-Return-Path: <linux-kernel+bounces-234407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7690991C64D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:03:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A1F391C651
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:03:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A74371C210DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:03:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83B5CB2310E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:03:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92DF6F2E2;
-	Fri, 28 Jun 2024 19:02:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 455C259147;
+	Fri, 28 Jun 2024 19:03:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uqc8rRT+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="LtaATfW9"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B474F5FA;
-	Fri, 28 Jun 2024 19:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 008BF6F2E2;
+	Fri, 28 Jun 2024 19:03:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719601375; cv=none; b=dTgMxpdKWvKZftil0reYk8j91gZshgzyZm7iYWkjMAt8tBd8X9/7S77RdbueISwg43AKhgWaJm1N9/g/rhB1d8w0bgmvhDU7cJZ1GwMHP8nDQw7+iSCSbbB/qA+42N4P/RcI+72Sfsk5KZ5Ho+6wmx+oanTgC4yUpz3GPwu5zkI=
+	t=1719601403; cv=none; b=QJAL2jJ+NhNyraiRisRnPVWLqzrAJ/4uxkFl7k4LZg6a3YgwL00ma5ttkpKb9lYubxz5vSoa4umteFq80lHHAHFSCxm9S0XEetuc/Wf9nl0ZJ8vKLqX2OjIWhATAto634VTqE8eTfQc6SkgyLojHk+K/nWf+PINvdtGTuU3sGeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719601375; c=relaxed/simple;
-	bh=N9t03XZKgQccCItCN7cqx3ors/e3qKc5BJRS16l4OdQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SyA6fDGfqTDbJIYW83/7KIgrwZ6yQT9e6IJD5uzo3ODynIZK4fm6haD1toqKDbGqwx4rCO0k6AdsU+DMIWIuoIXzDWHJxy9I2TiGVkSlMUPrEGtXxSIsVnL1TRymcDV1AojGjorb++c90TGflnCRI7cwhzt4eKKrJv5Co3Pts2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uqc8rRT+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEE7DC116B1;
-	Fri, 28 Jun 2024 19:02:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719601374;
-	bh=N9t03XZKgQccCItCN7cqx3ors/e3qKc5BJRS16l4OdQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uqc8rRT+E+dEuSRf1LMFu46ldn2wDeNlGcbaNLP2xEd5uy2x2zJX+3VNnmQN0ive1
-	 vj3i9NtqbGXY8EcZWmlOaR/4PXl6zqC7ktciSnIdvvv8xLms2pXljt7Ev+yWQPvnc8
-	 Pthtz1fF5CsIGkFW8ZGEPco4bv4xYw4zSAh83lQJbKz0OxlSotSRfwsAk/J+FiziKE
-	 DvRzMbxcSPZtKf1SKFcZRZCnTqoqtP9fglEimi+HPKhjLsf/8jzXkwzdtmPF/Yb0c3
-	 Zsnj38yGIxHQjdY1wrNoN+UaUkKpp3wzFHu4ZUvjGwGcgMeCtRzR4GCW/dBSNGNDIr
-	 dDImIql4s6Xxw==
-Date: Fri, 28 Jun 2024 20:02:43 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Conor Dooley <conor@kernel.org>
-Cc: "Paller, Kim Seer" <KimSeer.Paller@analog.com>, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "linux-iio@vger.kernel.org"
- <linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org"
- <devicetree@vger.kernel.org>, David Lechner <dlechner@baylibre.com>,
- Lars-Peter Clausen <lars@metafoo.de>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, "Hennerich, Michael"
- <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=
- <noname.nuno@gmail.com>
-Subject: Re: [PATCH v4 4/5] dt-bindings: iio: dac: Add adi,ltc2672.yaml
-Message-ID: <20240628200243.14b5f1b5@jic23-huawei>
-In-Reply-To: <20240625-roster-umbrella-3782caa23791@spud>
-References: <20240619064904.73832-1-kimseer.paller@analog.com>
-	<20240619064904.73832-5-kimseer.paller@analog.com>
-	<20240619-vanity-crowd-24d93dda47b8@spud>
-	<20240623144339.6a5087cf@jic23-huawei>
-	<PH0PR03MB71419D55571B07479B4F4FB8F9D42@PH0PR03MB7141.namprd03.prod.outlook.com>
-	<20240624-untracked-molasses-31e8769dddd3@spud>
-	<20240624183753.0000218c@Huawei.com>
-	<PH0PR03MB7141EE1309B35372201A6A80F9D52@PH0PR03MB7141.namprd03.prod.outlook.com>
-	<20240625-roster-umbrella-3782caa23791@spud>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719601403; c=relaxed/simple;
+	bh=0uICK04EcBkilneERG6wnrmIvJb2XbKZRvZwWeRJhBU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qA8l1WZp5sT0NHiNaPrYUP06iJEZgncoouK0nu6z80U61AKiAa9ZvMYXImbBSoori6L5rZvXfnVbq5wxWUfloulE4dOWCxXfn/zstotFa4XiEP2nNBrrsj2uofIeKiTFe/IDp9blsgF7Pe1UDCOiDmF+VRF4qzD8jcNH1CdAvHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=LtaATfW9; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719601374; x=1720206174; i=markus.elfring@web.de;
+	bh=ADjl6HYwPE4fmEIQRqZxfeS3MwMxTa4HLg75Y0SxIFQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=LtaATfW9wk4gLt6AZc8vHwCfOgU6s3zVo4STy7h3Y3tsOzAPevLTAmIzrQr035WT
+	 Cfm1OdKUjmhYC2Ue8b9XYuq6wiCewCb8f0pzrIvF3OTKW8Cy4dZwd5Qxd9KlWgdOc
+	 I8uHIs1P/RRog0nb1RVbqqM9uTJ9b7wU8TODdjU0H1/Zm+txlFANPOsHPrBFcfO+Y
+	 9z9TSJ96Y28xhZk/aCOH6TdSHyh8hIRoQa4KHRUaV0iSOqjOgpe895KvcQaCTDjmN
+	 Rlj16sCmD3dnIdHT65DC3GJW/JaEDcBkq0X59wIf1Filnk09/uU7vEcbt4CsMcV4q
+	 8Dw0phVkG2t9tRiFkg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MBSB3-1sANdp0e6R-006WI1; Fri, 28
+ Jun 2024 21:02:54 +0200
+Message-ID: <c41b19ac-6bf9-4f30-8c00-0cf63246d825@web.de>
+Date: Fri, 28 Jun 2024 21:02:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v3] drm/nouveau: fix null pointer dereference in
+ nouveau_connector_get_modes
+To: Lyude Paul <lyude@redhat.com>, nouveau@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>,
+ Danilo Krummrich <dakr@redhat.com>, Dave Airlie <airlied@redhat.com>,
+ Karol Herbst <kherbst@redhat.com>
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ David Airlie <airlied@gmail.com>,
+ Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
+ Julia Lawall <julia.lawall@inria.fr>
+References: <20240627074204.3023776-1-make24@iscas.ac.cn>
+ <d0bef439-5e1d-4ce0-9a24-da74ddc29755@web.de>
+ <790dbe8aee621b58ec0ef8d029106cb1c1830a31.camel@redhat.com>
+ <a91bbb5f-8980-420b-b465-97691203347e@web.de>
+ <eab9d109981bae8a443649bc4a2c1a08870590c7.camel@redhat.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <eab9d109981bae8a443649bc4a2c1a08870590c7.camel@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:fNjEYGC1kGG0cm10RiO9/XQQ9wQYz9pp73x93aPWF/5vpTm2dxu
+ Z37o/+6CdBZor0CYYoxPRzNdzOGjsFWfOIEZyFaU+FnWqDFs6aGw0ZiSHj3rtCMDFh6FS+D
+ +3bLFoj6RTUIF3Ud4Ol0fz77ZNr/Gq1sEOIcthHm3VXkQ2RMoGxWBmX3FbfqemcZ2Yqnbnq
+ wnBUevXfqGIFrkM2aw2rg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:mlv8LWiymOc=;rEVPoNl4k/tPhkPXY7S3RXvPTAV
+ 95mFDZ5dxJeItnSc2SPxs8FQL07nWI7/E/XXy3/bL/jyUUajobe+g0TPZS939tzv2nwut5FzR
+ hqmuJlG+chYGovLStb5X2g1939vehPF5RvqCrhB2FFCCg9jpptYxcrQopR3+dYbaSVIRIkTlf
+ VuPGKznOjJ9K1V7QIC+DZoSi8Rbn0qvsL0q4MMLOwaMi0Xs53lTp7kQmL8kYZCmsYUtGW2+Q8
+ zR0FaVIq94eyzjmCqb3NE+rLmQ9+IFuTwgEHQM82xrdqRmc70pyN/xWuZFAHPdDsgeCkhCWaR
+ Z8nLm1mzun5FlgEOrDQZF6u/8GGfo1u98QJwvzjq4zysmgMX396/jv3SKrNSL27vyqyUN1IhH
+ c48D4SkHE2eDQESRtIGOGDpdY9o5m6zPb894MRpkKW/TksY7Ro6r7aIdxQryrHe6aQPADnQIi
+ jpp6t1ju4xVKTLzclUc2W46j80f1+AW4QjDsZF+9xAMEyA7G84z1CK+xRSvIEy73mytPw53uo
+ WHZ9Niu6ynFxWHJdBppZEu5/g7Y+AdH4wqwfCHDAnXX2sWGGpQiTLdPwu4h2D27rTRefl5I9n
+ 2eVUTNUTbzBmToGUNALfImfjbSvVOGI8xIgIULAhjy49xqqu4+6u7eqOCm6itW/GRDxQ/P5AV
+ jbtNDHIS150dLkJ29YErJEWKhOAnvvhngKqSy1qn4JzBDmKGq+tE+q4NrfIvRSvIt0P+IYhEC
+ Gtowg+yvSSPpSjawlqe7UwrI+bUxXkTbnaXYj+x4ZSDjWIpF47LiysjxonTX+4EeFvRT1svZU
+ 9p4I2Iwb4GKo6tgpAx8W+pDefiomkcsOZIfQSA96Tfw2s=
 
-On Tue, 25 Jun 2024 17:20:48 +0100
-Conor Dooley <conor@kernel.org> wrote:
+> Because the responses you have been given read like a bot,
 
-> On Tue, Jun 25, 2024 at 03:51:27PM +0000, Paller, Kim Seer wrote:
-> > 
-> >   
-> > > From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>  
-> 
-> > > On Mon, 24 Jun 2024 18:00:24 +0100
-> > > Conor Dooley <conor@kernel.org> wrote:
-> > >   
-> > > > On Mon, Jun 24, 2024 at 03:26:26PM +0000, Paller, Kim Seer wrote:  
-> > > > >
-> > > > >  
-> > > > > > From: Jonathan Cameron <jic23@kernel.org>  
-> 
-> > > > > > Subject: Re: [PATCH v4 4/5] dt-bindings: iio: dac: Add adi,ltc2672.yaml
-> > > > > >
-> > > > > >
-> > > > > > On Wed, 19 Jun 2024 18:57:59 +0100
-> > > > > > Conor Dooley <conor@kernel.org> wrote:
-> > > > > >  
-> > > > > > > On Wed, Jun 19, 2024 at 02:49:03PM +0800, Kim Seer Paller wrote:  
-> > > > > > > > +patternProperties:
-> > > > > > > > +  "^channel@[0-4]$":
-> > > > > > > > +    type: object
-> > > > > > > > +    additionalProperties: false
-> > > > > > > > +
-> > > > > > > > +    properties:
-> > > > > > > > +      reg:
-> > > > > > > > +        description: The channel number representing the DAC output  
-> > > > > > channel.  
-> > > > > > > > +        maximum: 4
-> > > > > > > > +
-> > > > > > > > +      adi,toggle-mode:
-> > > > > > > > +        description:
-> > > > > > > > +          Set the channel as a toggle enabled channel. Toggle operation  
-> > > > > > enables  
-> > > > > > > > +          fast switching of a DAC output between two different DAC  
-> > > codes  
-> > > > > > without  
-> > > > > > > > +          any SPI transaction.
-> > > > > > > > +        type: boolean
-> > > > > > > > +
-> > > > > > > > +      adi,output-range-microamp:
-> > > > > > > > +        description: Specify the channel output full scale range.
-> > > > > > > > +        enum: [3125000, 6250000, 12500000, 25000000, 50000000,  
-> > > > > > 100000000,  
-> > > > > > > > +               200000000, 300000000]  
-> > > > > > >
-> > > > > > > IIO folks, is this sort of thing common/likely to exist on other DACs?  
-> > > > > >
-> > > > > > Fair point. It is probably time to conclude this is at least moderately  
-> > > common  
-> > > > > > and generalize it - which will need a dac.yaml similar to the one we have  
-> > > for  
-> > > > > > ADCs in adc/adc.yaml.  That will need to make this a per channel node  
-> > > property  
-> > > > > > (same as the adc ones).  
-> > > > >
-> > > > > Should I proceed with generalizing common DAC properties in this series  
-> > > and does  
-> > > >
-> > > > I think so, yes.  
-> > > 
-> > > Yes, that would great.  
-> > 
-> > I was wondering who would be the designated maintainer for new dac.yaml?  
-> 
-> I'd suggest Jonathan!
+I find it interesting that you interpret provided information
+in such a direction.
 
-Sure.  Though if anyone else wants to maintain this one they'd be welcome :)
 
-> 
-> > > > > this mean somehow removing these common properties from existing DAC  
-> > > bindings?  
-> > > >
-> > > > I think that that one is up to Jonathan.  
-> > > 
-> > > We can deprecate them.  At somepoint we can remove them form the
-> > > documented bindings
-> > > but we will need to keep them in drivers forever (which won't be costly in this
-> > > case).  
-> 
-> Right. Anything where the name _would change_ needs to be deprecated and
-> kept forever. I was thinking more about properties that are defined in
-> multiple locations with the same name, e.g. if "output-range-microvolts"
-> existed in 6 different bindings.
-> 
-> Thanks,
-> Conor.
+>                                                            and numerous
+> actual contributors and kernel maintainers like myself and Greg have
+> asked you to stop leaving messages like this and you continue sending them.
 
+I hope still that further information can be handled in constructive ways.
+
+
+>       I promise you, maintainers are more then capable of being able to
+> tell a contributor when they need to improve the summary they've
+> provided in a git commit.
+
+There are usual possibilities.
+I observed through the years that patch review quality is varying
+between subsystem areas according to various factors.
+
+Regards,
+Markus
 
