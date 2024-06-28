@@ -1,110 +1,143 @@
-Return-Path: <linux-kernel+bounces-233347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BEDB91B5D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 06:48:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 601C291B5E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:06:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A88001C224AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 04:48:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8147B1C2272A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 05:06:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45B2D2AF0D;
-	Fri, 28 Jun 2024 04:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="D8GdUb3r"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222C528DBC;
+	Fri, 28 Jun 2024 05:06:03 +0000 (UTC)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [58.251.27.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504467FF;
-	Fri, 28 Jun 2024 04:48:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE48182
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 05:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=58.251.27.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719550092; cv=none; b=u6P1ynsoR7SnptLdq/zyqO6Gykhf09ucYbePdvC8jDmWtx4YAmH8xE8WkXwHM1l+NdLyxKpFwyqMwymhvFMWgjqMGR6B8Gs+L9PbROiP1epNQuNK0MWGz7GfzfKt0xdvX3zTNCrZLRa1J2rNNP6a3xP+GYc6PJ5iBflRo0c3YxU=
+	t=1719551162; cv=none; b=L/Vw6bTUbb7UHMOalSauCDwgKQ6AgqPZD+z0bbpb4m3c4Sfkkv7K+f+lk10qVDHwYdF6s+V1cfU+3hEDLDeXCpbFEO6w7RrDj4Rd6mYJfmeyzRZZC7+soNASHM1U15/oRRpfd8tnd0rEYYCqD/BiVuI7MEXXn2WRs+omRr69lN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719550092; c=relaxed/simple;
-	bh=HfYfwremNs7nyB+emuM1KJ5DCt7NL31plk/0m7Qnyd4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=nGB1uFBrr1SAgEAOXTjBcFdMbvLz4PkouBYnC/v6aW940UCyCsm7F2v/tQBVgn+p1lvVqR7i5y1qbe/9r1+V7TSo+Sz5tswdXuTQz2VKc4V8JeSJgvciwUd9P1jpKxYVo/5VDZKqWmY2Jy96kQhfbeRRaGgaZBvX/YkPc8eN5DQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=D8GdUb3r; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1719550082;
-	bh=ICrtbbo/Rr3JpMXpVIu+Axfy69UgjoXGiFz4s0/41Qk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=D8GdUb3r1uENTAKRfM/6e4uiLkma/tmvuCMcEziFWml1iJ9NSIkF8iODVW/zO+MpZ
-	 nHKkdDALkcTi/1cAKbebm9g4wQ3cFqTOlmbVkKFMLVHbvGiWI5LP0Lx+AxBKBFmaiB
-	 6+Se2tDamzLCxjRZyi073lfiTZWycz/kK0SGDpuOAlFv4/75LEIpuwt2hE9v99sKVW
-	 lwHaFmirr6klc39ufXRUAqlScOe5BAZtDKqA82rbGHcD/fKeAsQMKV3iJoI8SNO7Ty
-	 NMgTYbN4J9lnbnTrcrRGgZTpKCAy7v8lVlshvJFZii9f0LyUwX082zCVzAr2/4Y0cS
-	 CHqHD8sU9B5YA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	s=arc-20240116; t=1719551162; c=relaxed/simple;
+	bh=O6odAaLU4M0s/Y2oJk3d4HUD5kB9CphNXGI7MtaBKD8=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=K3cbGOA2h0L8PgqhSaeNfn7K7PtjwwuJ9tZFX5Bj/VU2Uq4FR0gjtG8Gzvi78itVYJXeZMtO77DjfZTIzZzQJS1uInhF0EXCHR1R3Un53HGrjOgz4jyN5XbQbxw2iJiqsjb6znNTeDmvzivgEoa/Fzzn21zjsDu8A1xEJ4BvvXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=58.251.27.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mxde.zte.com.cn (unknown [10.35.20.121])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4W9NGn67r6z4w2N;
-	Fri, 28 Jun 2024 14:48:01 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Shawn Anastasio <sanastasio@raptorengineering.com>, Krishna Kumar
- <krishnak@linux.ibm.com>, npiggin@gmail.com
-Cc: nathanl@linux.ibm.com, aneesh.kumar@kernel.org,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- christophe.leroy@csgroup.eu, gbatra@linux.ibm.com, bhelgaas@google.com,
- tpearson@raptorengineering.com, oohall@gmail.com,
- brking@linux.vnet.ibm.com, mahesh.salgaonkar@in.ibm.com,
- linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v3 1/2] pci/hotplug/pnv_php: Fix hotplug driver crash on
- Powernv
-In-Reply-To: <888d3984-d00e-4148-a1ca-f7887c0af413@raptorengineering.com>
-References: <20240624121052.233232-1-krishnak@linux.ibm.com>
- <20240624121052.233232-2-krishnak@linux.ibm.com>
- <888d3984-d00e-4148-a1ca-f7887c0af413@raptorengineering.com>
-Date: Fri, 28 Jun 2024 14:48:00 +1000
-Message-ID: <87msn5llkv.fsf@mail.lhotse>
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4W9NWp3kvhzKjS
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 12:59:18 +0800 (CST)
+Received: from mxhk.zte.com.cn (unknown [192.168.250.138])
+	(using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by mxde.zte.com.cn (FangMail) with ESMTPS id 4W9NWg4zzQzBRHKQ
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 12:59:11 +0800 (CST)
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4W9NWV0HDnz4xtgw;
+	Fri, 28 Jun 2024 12:59:02 +0800 (CST)
+Received: from xaxapp01.zte.com.cn ([10.88.99.176])
+	by mse-fl2.zte.com.cn with SMTP id 45S4s3g3026024;
+	Fri, 28 Jun 2024 12:54:03 +0800 (+08)
+	(envelope-from xu.xin16@zte.com.cn)
+Received: from mapi (xaxapp03[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Fri, 28 Jun 2024 12:54:04 +0800 (CST)
+Date: Fri, 28 Jun 2024 12:54:04 +0800 (CST)
+X-Zmail-TransId: 2afb667e41ec0c5-229d6
+X-Mailer: Zmail v1.0
+Message-ID: <20240628125404912pr89b8ev3h97gu5cn280C@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+From: <xu.xin16@zte.com.cn>
+To: <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
+        <vincent.guittot@linaro.org>, <ietmar.eggemann@arm.com>,
+        <ostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
+        <bristot@redhat.com>
+Cc: <he.peilin@zte.com.cn>, <yang.yang29@zte.com.cn>, <tu.qiang35@zte.com.cn>,
+        <jiang.kun2@zte.com.cn>, <xu.xin16@zte.com.cn>,
+        <zhang.yunkai@zte.com.cn>, <liu.chun2@zte.com.cn>,
+        <fan.yu9@zte.com.cn>, <linux-kernel@vger.kernel.org>
+Subject: =?UTF-8?B?W1BBVENIIGxpbnV4LW5leHRdIHNjaGVkL2NvcmU6IEFkZCBXQVJOKCkgdG8gY2hlY2tzIGluIG1pZ3JhdGVfZGlzYWJsZSgp?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 45S4s3g3026024
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 667E4325.000/4W9NWp3kvhzKjS
 
-Shawn Anastasio <sanastasio@raptorengineering.com> writes:
-> Hi Krishna,
->
-> On 6/24/24 7:09 AM, Krishna Kumar wrote:
->> Description of the problem: The hotplug driver for powerpc
->> (pci/hotplug/pnv_php.c) gives kernel crash when we try to
->> hot-unplug/disable the PCIe switch/bridge from the PHB.
->> 
->> Root Cause of Crash: The crash is due to the reason that, though the msi
->> data structure has been released during disable/hot-unplug path and it
->> has been assigned with NULL, still during unregistartion the code was
->> again trying to explicitly disable the msi which causes the Null pointer
->> dereference and kernel crash.
->> 
->> Proposed Fix : The fix is to correct the check during unregistration path
->> so that the code should not  try to invoke pci_disable_msi/msix() if its
->> data structure is already freed.
->> 
->> Cc: Michael Ellerman <mpe@ellerman.id.au>
->> Cc: Nicholas Piggin <npiggin@gmail.com>
->> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
->> Cc: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>
->> Cc: Bjorn Helgaas <bhelgaas@google.com>
->> Cc: Gaurav Batra <gbatra@linux.ibm.com>
->> Cc: Nathan Lynch <nathanl@linux.ibm.com>
->> Cc: Brian King <brking@linux.vnet.ibm.com>
->> 
->> Signed-off-by: Krishna Kumar <krishnak@linux.ibm.com>
->
-> As with v1, I can confirm that this patch solves the panic encountered
-> when hotplugging PCIe bridges on POWER9.
+From: Peilin He <he.peilin@zte.com.cn>
 
-Was the panic reported anywhere? So we can link to the report in the
-commit.
+Background
+==========
+When repeated migrate_disable() calls are made with missing 
+the corresponding migrate_enable() calls, there is a risk of 
+'migration_disabled' going upper overflow because 
+'migration_disabled' is a type of unsigned short whose max
+value is 65535.
 
-cheers
+In PREEMPT_RT kernel, if 'migration_disabled' goes upper
+overflow, it may make the migrate_disable() ineffective 
+within local_lock_irqsave(). This is because, during the 
+scheduling procedure, the value of 'migration_disabled' will be 
+checked, which can trigger CPU migration. Consequently, 
+the count of 'rcu_read_lock_nesting' may leak due to 
+local_lock_irqsave() and local_unlock_irqrestore() occurring on 
+different CPUs.
+
+Usecase
+========
+For example, When I developed a driver, I encountered 
+a "WARNING: CPU: 4 PID: 260 at kernel/rcu/tree_plugin.h:315 
+rcu_note_context_switch+0xa8/0x4e8" warning. It took me 
+half a month to locate this issue. Ultimately, I discovered 
+that the lack of upper overflow detection mechanism in 
+migrate_disable() was the root cause, leading to a significant 
+amount of time spent on problem localization.
+
+If the upper overflow detection mechanism was added to 
+migrate_disable(), the root cause could be very quickly and 
+easily identified.
+
+Effect
+======
+Using WARN() to check if 'migration_disabled' is upper overflow 
+can help developers quickly identify the issue.
+
+Signed-off-by: Peilin He<he.peilin@zte.com.cn>
+Signed-off-by: xu xin <xu.xin16@zte.com.cn>
+Reviewed-by: Yunkai Zhang <zhang.yunkai@zte.com.cn>
+Reviewed-by: Qiang Tu <tu.qiang35@zte.com.cn>
+Reviewed-by: Kun Jiang <jiang.kun2@zte.com.cn>
+Reviewed-by: Fan Yu <fan.yu9@zte.com.cn>
+Cc: Yang Yang <yang.yang29@zte.com.cn>
+Cc: Liu Chun <liu.chun2@zte.com.cn>
+---
+ kernel/sched/core.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 8cc4975d6b2b..14671291564c 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -2259,6 +2259,8 @@ void migrate_disable(void)
+ 	struct task_struct *p = current;
+
+ 	if (p->migration_disabled) {
++		if (p->migration_disabled == USHRT_MAX)
++			WARN(1, "migration_disabled has encountered an overflow.\n");
+ 		p->migration_disabled++;
+ 		return;
+ 	}
+-- 
+2.17.1
 
