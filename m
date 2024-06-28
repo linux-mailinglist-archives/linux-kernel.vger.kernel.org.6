@@ -1,127 +1,103 @@
-Return-Path: <linux-kernel+bounces-234438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C61CC91C6A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:34:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DA6991C6AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:34:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 498AA1F240A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:34:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9DD4B24FE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:34:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1DC76026;
-	Fri, 28 Jun 2024 19:34:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401DD757FD;
+	Fri, 28 Jun 2024 19:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SW7PCzVX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="OrGlDFBg"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964354CB4B;
-	Fri, 28 Jun 2024 19:34:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180E475817;
+	Fri, 28 Jun 2024 19:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719603246; cv=none; b=Pq4ey8s4qALlJurFZCEaS4ppnkVeirppOnLPtnn21Qjrxlo5WlEwqzpR0YFoEBZ8x53IDjTi9H2x6OsttUlmJrfKUgugSmzTGjl02J3/lEAbAJ5rNq1JUHLm5mrTQa5OsjD6NMWFEZbPcMeeozd+Tza6Jbni3hBShAh7BXPLdK4=
+	t=1719603267; cv=none; b=VjCi4QJGgIC3IMosNHEJ1A8Yvme8N8bGf+ulbBgr/gmFST/JEuiOzWi+EoBSY3FZefLC815aPohmbi1nses5Y70lvFLWsyio23RVxl4tELObEchAW8VXf3db4R+JjU/ofWCq7Xki2DiK5vQvrlEbY4S3kY8WwDdqYLvGJ2ka89M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719603246; c=relaxed/simple;
-	bh=yjCUTIYEfShWpFf89z1mVEG427+uOb9/A8IYTG9e/NM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kxI/vZde9tWqxfTKgi6Lg/VRiMp/X27RXLBV7vDSUrLkO4a1S1UBGENSoi6CYdgDkmUmlRghxVSgo7HMwSVB7TyoBV/BQUa6s6L4ESjKfGZ92oAwAVC3B1ulYBMIBBTFpKEvbUkF2TZFRNYk3+4OM0pV6WB06PdDb3Ojpqst7Fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SW7PCzVX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0591C116B1;
-	Fri, 28 Jun 2024 19:34:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719603246;
-	bh=yjCUTIYEfShWpFf89z1mVEG427+uOb9/A8IYTG9e/NM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SW7PCzVX3hluUKlCIYLBXkd409r8ZtagalI+cC5oRATkdJDzhkspjuEdvljwoAKC3
-	 vQJ6YP+YPTnI5dsUIFpD1ZVwU48sbb7jgwrNVxoffS6u43IRf2AbrH/u2cWXBSnFcH
-	 rsh1ICVvPDoNrqHLF5AA1sB0NAkCq78Xvh5+lXIBJ/LHOlwyS8HS2NbM+5NVU3sB2H
-	 sk17EFxOOkmgv1h6WKuFOcAdyiGcaMsE0liX1Eu9dh+jHH4ZTMo93ZnOuGthcH70E2
-	 cmC8ybSf6k7OOUusaGff9Nv2//61BM93dz8t39YZkNywe9Uo843EKpWeYM5nnj9j3k
-	 hTjcmmuNRi43A==
-Date: Fri, 28 Jun 2024 13:34:04 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] dt-bindings: soc: fsl: Convert q(b)man-* to yaml
- format
-Message-ID: <171960324209.86780.5210954798222723537.robh@kernel.org>
-References: <20240626193753.2088926-1-Frank.Li@nxp.com>
+	s=arc-20240116; t=1719603267; c=relaxed/simple;
+	bh=iAEFb35oLFTCo2yTiMK2mj7WuJO99K5w/pJahz9BZYc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bUG8suu00v1xcwO3vaQZSH1PJJIznSL+9UkxI/kwUWIJJ3l5XqjqSALHtzISP5pewKXEEpv+fhi2ayC128Z5r05I9dbOE2/WZWm/HASPlUJzbGAkhJMKFGzj9B03u6gXkzVI/2xo+sIpSbtFxadCaT32AyLxyoxj5bTXnBroNeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=OrGlDFBg; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4W9lxY3ynKzlnNry;
+	Fri, 28 Jun 2024 19:34:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1719603261; x=1722195262; bh=SlQ7Rs5iPCIdRs1gRL9mnMHS
+	6/Cs9HjGDCtVA9dFewc=; b=OrGlDFBgKXSQhp/Yep1GIIgYSE9uHZ/1BECbrhGn
+	67GBTIbjunq5YbtnUnlJ5bs9hBXTl0+a6AUzi+L4V25vGa2W2RMUeqOQN4Gnuol4
+	NgGV2OI4JEhv/7n7bAec8z4GXIqTnyRox0na31N2g4qAp3Iy4UyLIUIjDmwRBw4J
+	WuRVExqVM8dfNEm4DIKOt0SImkzI93bCqbGKD+vU39DF0fhYdIDDYp+LLvfGK60Q
+	Drm2935BSm8XE2ykGKGDvAcYEl6/YVpsfmycRY7wDw6FMZ2eLXAtqnSAvxvS22+4
+	twAflTHx12T4TmZoKSOlVAQG6AB2ouFxLGrQjfzA3hCAFQ==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id P-5wYDRghwpM; Fri, 28 Jun 2024 19:34:21 +0000 (UTC)
+Received: from [192.168.50.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4W9lxQ01FQzlfp29;
+	Fri, 28 Jun 2024 19:34:17 +0000 (UTC)
+Message-ID: <ad0a495d-b1c4-4e87-a9b8-77df2de8927a@acm.org>
+Date: Fri, 28 Jun 2024 12:34:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240626193753.2088926-1-Frank.Li@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 0/2] Suspend clk scaling when there is no request
+To: Ram Prakash Gupta <quic_rampraka@quicinc.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
+ linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, quic_cang@quicinc.com,
+ quic_nguyenb@quicinc.com, quic_pragalla@quicinc.com,
+ quic_nitirawa@quicinc.com
+References: <20240627083756.25340-1-quic_rampraka@quicinc.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240627083756.25340-1-quic_rampraka@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 6/27/24 1:37 AM, Ram Prakash Gupta wrote:
+> Currently ufs clk scaling is getting suspended only when the
+> clks are scaled down, but next when high load is generated its
+> adding a huge amount of latency in scaling up the clk and complete
+> the request post that.
+> 
+> Now if the scaling is suspended in its existing state, and when high
+> load is generated it is helping improve the random performance KPI by
+> 28%. So suspending the scaling when there is no request. And the clk
+> would be put in low scaled state when the actual request load is low.
+> 
+> Making this change as optional for other vendor by having the check
+> enabled using vops as for some vendor suspending without bringing the
+> clk in low scaled state might have impact on power consumption on the
+> SoC.
 
-On Wed, 26 Jun 2024 15:37:53 -0400, Frank Li wrote:
-> Convert qman, bman, qman-portals, bman-portals to yaml format.
-> 
-> Additional Change for fsl,q(b)man-portal:
-> - Only keep one example.
-> - Add fsl,qman-channel-id property.
-> - Use interrupt type macro.
-> - Remove top level qman-portals@ff4200000 at example.
-> 
-> Additional change for fsl,q(b)man:
-> - Fixed example error.
-> - Remove redundent part, only keep fsl,qman node.
-> - Change memory-regions to memory-region.
-> - fsl,q(b)man-portals is not required property
-> 
-> Additional change for fsl,qman-fqd.yaml:
-> - Fixed example error.
-> - Only keep one example.
-> - Ref to reserve-memory.yaml
-> - Merge fsl,bman reserver memory part
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> Change from v1 to v2
-> - fix typo chang
-> - fix typo porta
-> - Add | for reg description
-> - wrap to 80 for reg descritption
-> - memory-region set maxItems: 2
-> - fix regex parttern
-> - drop  See clock-bindings.txt
-> - "see reserved-memory.yaml" change to
-> "see reserved-memory/reserved-memory.yaml in dtschema project"
-> 
-> - A strange thing in fsl,qman-fqd.yaml, if example compatible string
-> change to fsl,qman-fqd, dt_binding_check report below error.
-> 	qman-fqd: False schema does not allow {'compatible': ['fsl,qman-fqd'], 'size': [[4194304]], 'alignment': [[4194304]], 'no-map': True, '$nodename': ['qman-fqd']}
-> 
-> but I replace "fsl,qman-fqd" with "abc", it pass check.
-> ---
->  .../bindings/soc/fsl/bman-portals.txt         |  56 ------
->  .../devicetree/bindings/soc/fsl/bman.txt      | 137 -------------
->  .../bindings/soc/fsl/fsl,bman-portal.yaml     |  52 +++++
->  .../devicetree/bindings/soc/fsl/fsl,bman.yaml |  83 ++++++++
->  .../bindings/soc/fsl/fsl,qman-fqd.yaml        |  69 +++++++
->  .../bindings/soc/fsl/fsl,qman-portal.yaml     | 110 +++++++++++
->  .../devicetree/bindings/soc/fsl/fsl,qman.yaml |  93 +++++++++
->  .../bindings/soc/fsl/qman-portals.txt         | 134 -------------
->  .../devicetree/bindings/soc/fsl/qman.txt      | 187 ------------------
->  9 files changed, 407 insertions(+), 514 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/soc/fsl/bman-portals.txt
->  delete mode 100644 Documentation/devicetree/bindings/soc/fsl/bman.txt
->  create mode 100644 Documentation/devicetree/bindings/soc/fsl/fsl,bman-portal.yaml
->  create mode 100644 Documentation/devicetree/bindings/soc/fsl/fsl,bman.yaml
->  create mode 100644 Documentation/devicetree/bindings/soc/fsl/fsl,qman-fqd.yaml
->  create mode 100644 Documentation/devicetree/bindings/soc/fsl/fsl,qman-portal.yaml
->  create mode 100644 Documentation/devicetree/bindings/soc/fsl/fsl,qman.yaml
->  delete mode 100644 Documentation/devicetree/bindings/soc/fsl/qman-portals.txt
->  delete mode 100644 Documentation/devicetree/bindings/soc/fsl/qman.txt
-> 
+For both patches:
 
-Applied, thanks!
-
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
 
