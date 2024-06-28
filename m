@@ -1,63 +1,57 @@
-Return-Path: <linux-kernel+bounces-233398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 587CF91B68D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:51:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 573B791B68F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:51:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 565831C22E37
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 05:51:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 877321C230BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 05:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2084D5BF;
-	Fri, 28 Jun 2024 05:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33BC2481B8;
+	Fri, 28 Jun 2024 05:51:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rdUwTOa6"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="L+C4pNvN"
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEBEE224CC;
-	Fri, 28 Jun 2024 05:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5180323775;
+	Fri, 28 Jun 2024 05:51:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719553857; cv=none; b=LVJ6BHts80LPxNJSe+bbV9VofaTLSiIpxSlNivfVwyQm2+vHAgLcMAURZNV6wxoOsE6cFGmYXoyXbQLRqDYyWecwCkJfmMXcDYfnDI+F/807iaMygB/3xAGhwU8jvF1Wi0ANRb3o7S1tytkej/lFd0NSphVJev0x+qHBMlC8d00=
+	t=1719553883; cv=none; b=gn4mEYG9Sg+ScjAHIOnkOYJb5j6Ogw24sv6uacLVYsejvuUXuSwl0wOIIjzvQwWz3ppm2DNLAz8rVL5NjD1EmKSkLS6UjWUgd89Stk6qgFQd3CRtrxGdRyok+EADrtIZnQpSUAEGg+3Dc/VVxPRINW7UzqxWOTLiJLGhJQXXYhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719553857; c=relaxed/simple;
-	bh=+2ls3ugjUjVk0S9jGlw9ITT5uQcjiG6uVmAAY04diqM=;
+	s=arc-20240116; t=1719553883; c=relaxed/simple;
+	bh=UwG26qV1qLI4MCsZ+T917xmt7ZsZ35IoJK+u+Dm09BU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QTgxgNFx/Gy2HK+gQl50A04OFoo5/Wap11COJdr3uHGV1i0JSdEi0xJgfQV2aY6nAWQPewxixhOreNss9EN+Ua6MekUyKWvYgBJOSKMU9glSY9kxthSZu/LQV9XSPgzZ1U/Oak4XsKYL8v6479kxI5zaGxFPNFwg0wwoA742TcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rdUwTOa6; arc=none smtp.client-ip=198.137.202.133
+	 Content-Type:Content-Disposition:In-Reply-To; b=LY3h25IJfKwbC+lLz3jIFhfTpC77QYnN64Fi/LDa7JznlDAvHA08VVFGE3n09fhrpsybj0s5uuhrls5i8VkRAbqyXDGaFTeP6qc9eWXVgHVr0Jsp+f4jX7EiRbkM5eI1EbcIZa4M7nnrhMek0ruVioTx3e3d+w28nU3fGU7kOlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=L+C4pNvN; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
 	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=VvUsrQOsamYudQc0HKFkKTKBGBKa/qA2+34N2aoqyGE=; b=rdUwTOa67wU9N59zz37rsh/+o1
-	GA75HAY+5cNOjzkV4XQ3Nmvbg0g62+p7fNhBELnC/cfw91duH4rRyA6dxORlyijxHNTw5EN3yossl
-	mfaW0RpOqtsSjAD73v5xwoXGVafAVER/jrTQxNk0rIGWARX8WpNR+rGygBVWDyK8Rgk48pcs1EH3i
-	6yhUPCZFgxnatmhdkCcaAq7mEx5sKfqtfwKO4hwy6SexJAnpJYj1yXU8Lkldvt0ShSViC5g71Pivs
-	tGu9GFnI2IQM2sp1JpWKQcSMjIUx7bM4E2/miGTuFOIrlAj5jRPm262Dsz2GPPLmzuyadiMWStMI5
-	P6Seta7g==;
+	bh=UwG26qV1qLI4MCsZ+T917xmt7ZsZ35IoJK+u+Dm09BU=; b=L+C4pNvNdHxAlz2lKuzY4+1C7h
+	qkOG6rgZze9D2Zjyn9ykZJEnBSvRGEyDAmMzx28fDfYPJ/5PS9si3qpOpCSN4hXDzKbbpu2Zwewnw
+	TnmpWe3Kf/QsXiBActNfgIqxCWCoFRw4br2pHoLRdF+wro+1TlDldnT+kQDrnpJ5BfsD36yudxBVJ
+	iuzooyRUYMupSzDeopYIGes+5GjnWSb+0O7cIzv7N/dQ9KzslOCB31KEki/JjS5eimVW9NZRxvxXv
+	xBJwl/qceCQKVnaotYmL613iwDLJjUtDqdQECP0Weher/bbo1xUAZj/xKrDtDu7IpJ+qgXem/R0lV
+	N4DheEqw==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sN4VW-0000000CfVS-3Aeb;
-	Fri, 28 Jun 2024 05:50:50 +0000
-Date: Thu, 27 Jun 2024 22:50:50 -0700
+	id 1sN4Vz-0000000Cfad-3B4H;
+	Fri, 28 Jun 2024 05:51:19 +0000
+Date: Thu, 27 Jun 2024 22:51:19 -0700
 From: Christoph Hellwig <hch@infradead.org>
-To: Gerd Bayer <gbayer@linux.ibm.com>
-Cc: Ma Ke <make24@iscas.ac.cn>, wintera@linux.ibm.com,
-	twinkler@linux.ibm.com, Niklas Schnelle <schnelle@linux.ibm.com>,
-	Wenjia Zhang <wenjia@linux.ibm.com>, linux-s390@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
-	borntraeger@linux.ibm.com, svens@linux.ibm.com, davem@davemloft.net,
-	Stefan Raspl <raspl@linux.ibm.com>
-Subject: Re: [PATCH] s390/ism: Add check for dma_set_max_seg_size in
- ism_probe()
-Message-ID: <Zn5POphJ8pckZ3hY@infradead.org>
-References: <20240626081215.2824627-1-make24@iscas.ac.cn>
- <4ab328297c12d1c286c56dbc01d611b77ea2da03.camel@linux.ibm.com>
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: vkoul@kernel.org, andriy.shevchenko@linux.intel.com,
+	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: hsu: Add check for dma_set_max_seg_size in
+ hsu_dma_probe()
+Message-ID: <Zn5PV3z27uXQBcJ0@infradead.org>
+References: <20240626082711.2826915-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,19 +60,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4ab328297c12d1c286c56dbc01d611b77ea2da03.camel@linux.ibm.com>
+In-Reply-To: <20240626082711.2826915-1-make24@iscas.ac.cn>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, Jun 26, 2024 at 02:48:30PM +0200, Gerd Bayer wrote:
-> 
-> However, since ISM devices are PCI attached (and will remain PCI
-> attached I believe) we can take the existance of dev->dma_parms for
-> granted since pci_device_add() (in drivers/pci/probe.c) will make that
-> point to the pci_dev's dma_parms for every PCI device.
-> 
-> So I'm not sure how important this fix is.
+On Wed, Jun 26, 2024 at 04:27:11PM +0800, Ma Ke wrote:
+> As the possible failure of the dma_set_max_seg_size(), we should better
+> check the return value of the dma_set_max_seg_size().
 
-It's not just important, it is stupid and I told them to stop sending
-these kinds of crap patches.
+As I've told you before: no.
 
+We'll remove the return value from dma_set_max_seg_size.
 
