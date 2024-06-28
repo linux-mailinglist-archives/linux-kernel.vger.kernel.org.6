@@ -1,205 +1,117 @@
-Return-Path: <linux-kernel+bounces-233252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D366991B4D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:59:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E30091B4E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 04:04:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8866C2835AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:59:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A4C828396F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 02:04:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D2161CD39;
-	Fri, 28 Jun 2024 01:59:15 +0000 (UTC)
-Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [118.143.206.90])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE361CD11
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 01:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.143.206.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B70418028;
+	Fri, 28 Jun 2024 02:04:28 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6219B23A8;
+	Fri, 28 Jun 2024 02:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719539954; cv=none; b=MVsjiPEWyPb/iQ9/9alVGN/60ljVNLBlo7rMct7iuPUn/cm3hDftuZ5o3cPHU5i2Xks9hm4W8uplxjJh0B9xGiZ4WY4ZO9N8HKaaE6cT+VIU+GHxERtl3Opf1/Cv9mu+bW7gcui57Z8QXVQVdUDh2fD0MaVCMyW8M2cNw0n7u38=
+	t=1719540267; cv=none; b=DWtQ5XDRaaI9uW5cwcOiVEk1zkx2ocM92PZvKrtdYBwFK+5z84STkqgoZ3oKsP/wzMcRZz2FlxaA/qh61mVUkKi4MQufOdzyVxcVNLF8ebZvqcnFzRWALh/KgfYsWz5m9DqwXXMmRGueCD4jF8k8lyrc1CxYyN8vVw5YW3WT0L4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719539954; c=relaxed/simple;
-	bh=tHz0ETxGUjMmqs0QL9IU4UcusIwi4JFzZ4iA/q2R48o=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=q7GfGu70vKb/BMFuL7TcOtq7jPav/VoAqZ5b23VPZfLHHsHxPxlpmkGDiwxaK9Suj/Kx/h0YSC1KHchy4BXKUywL7MAbVuxJGeJ4AFzowF0HmnL1+OY1hGwdG8NgNPu6DZ3Yjvqzt0zXyK6gjUfMdYE6RCWYGTvXNFuov3LZO9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=118.143.206.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
-X-CSE-ConnectionGUID: LxzmufuZTRqWUSjIvwze1g==
-X-CSE-MsgGUID: 2ertYfZ9SPq/T6ePoiW7cg==
-X-IronPort-AV: E=Sophos;i="6.09,167,1716220800"; 
-   d="scan'208";a="89331574"
-From: =?utf-8?B?5pyx5oG65Lm+?= <zhukaiqian@xiaomi.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano
-	<daniel.lezcano@linaro.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	=?utf-8?B?546L6Z+s?= <lingyue@xiaomi.com>, =?utf-8?B?54aK5Lqu?=
-	<xiongliang@xiaomi.com>, "isaacmanjarres@google.com"
-	<isaacmanjarres@google.com>, Frederic Weisbecker <frederic@kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>
-Subject: RE: [External Mail]Re: Race condition when replacing the broadcast
- timer
-Thread-Topic: [External Mail]Re: Race condition when replacing the broadcast
- timer
-Thread-Index: AdrHa8Ctven+S08/SKWKg8CfgMneBAA1hJcAAC8tusA=
-Date: Fri, 28 Jun 2024 01:59:03 +0000
-Message-ID: <b07f9746a58d46919b1600b22f5dff05@xiaomi.com>
-References: <042520850d394f0bb0004a226db63d0d@xiaomi.com>
- <87o77m1v9r.ffs@tglx>
-In-Reply-To: <87o77m1v9r.ffs@tglx>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1719540267; c=relaxed/simple;
+	bh=ofbM0xcK0jusdVrO6osOKxJNrsO1OiueOBSmdDE4d5A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CP3LDbAgoIciNKe/UCpyn4eHGm4LQLUhhcDgYw0dWZo/zsAsMXl5RCna8q2HlvgYXOMV/knG1zC5T238gscG+O2PYfZN56KjjZtXe2lBQYybyECVlcJB2F5QQFozvXHzhwql2Y3VOe/51U8tMueWR2cow8MB/mmkzyINhA4vjsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4W9Jdp6S6Fz4f3jtc;
+	Fri, 28 Jun 2024 10:04:14 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 1095F1A016E;
+	Fri, 28 Jun 2024 10:04:22 +0800 (CST)
+Received: from [10.174.179.155] (unknown [10.174.179.155])
+	by APP2 (Coremail) with SMTP id Syh0CgBn0YYkGn5meawuAg--.45870S3;
+	Fri, 28 Jun 2024 10:04:21 +0800 (CST)
+Message-ID: <c9802312-d9c9-f262-e1d3-9d3343255b6b@huaweicloud.com>
+Date: Fri, 28 Jun 2024 10:04:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:104.0) Gecko/20100101
+ Thunderbird/104.0
+Subject: Re: [PATCH v2] block: flush all throttled bios when deleting the
+ cgroup
+To: Tejun Heo <tj@kernel.org>
+Cc: josef@toxicpanda.com, hch@lst.de, axboe@kernel.dk, mkoutny@suse.com,
+ cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yangerkun@huawei.com, yukuai1@huaweicloud.com,
+ houtao1@huawei.com, yi.zhang@huawei.com, lilingfeng3@huawei.com
+References: <20240627142606.3709394-1-lilingfeng@huaweicloud.com>
+ <Zn3O47DUoLliwbWm@slm.duckdns.org>
+From: Li Lingfeng <lilingfeng@huaweicloud.com>
+In-Reply-To: <Zn3O47DUoLliwbWm@slm.duckdns.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgBn0YYkGn5meawuAg--.45870S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7try3Cw45XrWkur1fCw18AFb_yoW8JFy7pF
+	WfZ347KryDJr9I9F4rZr4SvrWrZrZ7Jr45Ar93K345JrW3Wr1xtFy3trWFqFy7ZF93C3Wa
+	vr1Fyr9rAF4DCFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
+	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
+	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
+	9x07UWE__UUUUU=
+X-CM-SenderInfo: polox0xjih0w46kxt4xhlfz01xgou0bp/
 
-VGhhbmtzIGZvciB0aGUgZmFzdCByZXBseS4NCk1heSBJIGtub3cgd2hlbiB0aGVyZSdsbCBiZSBh
-IGZvcm1hbCBwYXRjaCBvbiB0aGUgbWFpbmxpbmU/DQoNCi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0t
-LS0tDQpGcm9tOiBUaG9tYXMgR2xlaXhuZXIgPHRnbHhAbGludXRyb25peC5kZT4NClNlbnQ6IFRo
-dXJzZGF5LCBKdW5lIDI3LCAyMDI0IDc6MjcgUE0NClRvOiDmnLHmgbrkub4gPHpodWthaXFpYW5A
-eGlhb21pLmNvbT47IERhbmllbCBMZXpjYW5vIDxkYW5pZWwubGV6Y2Fub0BsaW5hcm8ub3JnPg0K
-Q2M6IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IOeOi+mfrCA8bGluZ3l1ZUB4aWFvbWku
-Y29tPjsg54aK5LquIDx4aW9uZ2xpYW5nQHhpYW9taS5jb20+OyBpc2FhY21hbmphcnJlc0Bnb29n
-bGUuY29tOyBGcmVkZXJpYyBXZWlzYmVja2VyIDxmcmVkZXJpY0BrZXJuZWwub3JnPjsgQW5uYS1N
-YXJpYSBCZWhuc2VuIDxhbm5hLW1hcmlhQGxpbnV0cm9uaXguZGU+DQpTdWJqZWN0OiBbRXh0ZXJu
-YWwgTWFpbF1SZTogUmFjZSBjb25kaXRpb24gd2hlbiByZXBsYWNpbmcgdGhlIGJyb2FkY2FzdCB0
-aW1lcg0KDQpb5aSW6YOo6YKu5Lu2XSDmraTpgq7ku7bmnaXmupDkuo7lsI/nsbPlhazlj7jlpJbp
-g6jvvIzor7fosKjmhY7lpITnkIbjgILoi6Xlr7npgq7ku7blronlhajmgKflrZjnlpHvvIzor7fl
-sIbpgq7ku7bovazlj5Hnu5ltaXNlY0B4aWFvbWkuY29t6L+b6KGM5Y+N6aaIDQoNCk9uIFdlZCwg
-SnVuIDI2IDIwMjQgYXQgMDI6MTcsIOacseaBuuS5viB3cm90ZToNCj4gV2UgZmluZCBhIHBvc3Np
-YmxlIHJhY2UgY29uZGl0aW9uIHdoZW4gcmVwbGFjaW5nIHRoZSBicm9hZGNhc3QgdGltZXIuDQo+
-IEhlcmUgaXMgaG93IHRoZSByYWNlIGhhcHBlbmQsDQoNCj4gMS4gSW4gdGhyZWFkIDAsIF9fX3Rp
-Y2tfYnJvYWRjYXN0X29uZXNob3RfY29udHJvbCwgdGltZXIgMCBhcyBhDQo+IGJyb2FkY2FzdCB0
-aW1lciBpcyB1cGRhdGluZyB0aGUgbmV4dF9ldmVudC4NCg0KPiAyLiBJbiB0aHJlYWQgMSwgdGlj
-a19pbnN0YWxsX2Jyb2FkY2FzdF9kZXZpY2UsIHRpbWVyIDAgaXMgZ29pbmcgdG8gYmUNCj4gcmVw
-bGFjZWQgYnkgYSBuZXcgdGltZXIgMS4NCg0KPiAzLiBJZiB0aHJlYWQgMCBnZXRzIHRoZSBicm9h
-ZGNhc3QgdGltZXIgZmlyc3QsIGl0IHdvdWxkIGhhdmUgdGhlIG9sZA0KPiB0aW1lciByZXR1cm5l
-ZCAodGltZXIgMCkuIFdoZW4gdGhyZWFkIDEgc2h1dHMgdGhlIG9sZCB0aW1lciBkb3duIGFuZA0K
-PiBtYXJrcyBpdCBhcyBkZXRhY2hlZCwgVGhyZWFkIDAgc3RpbGwgaGF2ZSB0aGUgY2hhbmNlIHRv
-IHJlLWVuYWJsZSB0aGUNCj4gb2xkIHRpbWVyIHdpdGggYSBub29wIGhhbmRsZXIgaWYgaXQgZXhl
-Y3V0ZXMgc2xvd2VyIHRoYW4gdGhyZWFkIDEuDQoNCj4gNC4gQXMgdGhlIG9sZCB0aW1lciBpcyBi
-aW5kZWQgdG8gYSBDUFUsIHdoZW4gcGx1ZyBvdXQgdGhhdCBDUFUsIGtlcm5lbA0KPiBmYWlscyBh
-dCBjbG9ja2V2ZW50cy5jOjY1Mw0KDQpDbGVhcmx5IHRpY2tfaW5zdGFsbF9icm9hZGNhc3RfZGV2
-aWNlKCkgbGFja3Mgc2VyaWFsaXphdGlvbi4NCg0KVGhlIHVudGVzdGVkIHBhdGNoIGJlbG93IHNo
-b3VsZCBjdXJlIHRoYXQuDQoNClRoYW5rcywNCg0KICAgICAgICB0Z2x4DQotLS0NCiBrZXJuZWwv
-dGltZS9jbG9ja2V2ZW50cy5jICAgIHwgICAzMSArKysrKysrKysrKysrKysrKysrLS0tLS0tLS0t
-LS0tDQoga2VybmVsL3RpbWUvdGljay1icm9hZGNhc3QuYyB8ICAgMzYgKysrKysrKysrKysrKysr
-KysrKysrKy0tLS0tLS0tLS0tLS0tDQoga2VybmVsL3RpbWUvdGljay1pbnRlcm5hbC5oICB8ICAg
-IDIgKysNCiAzIGZpbGVzIGNoYW5nZWQsIDQzIGluc2VydGlvbnMoKyksIDI2IGRlbGV0aW9ucygt
-KQ0KDQotLS0gYS9rZXJuZWwvdGltZS9jbG9ja2V2ZW50cy5jDQorKysgYi9rZXJuZWwvdGltZS9j
-bG9ja2V2ZW50cy5jDQpAQCAtNTU3LDIzICs1NTcsMTQgQEAgdm9pZCBjbG9ja2V2ZW50c19oYW5k
-bGVfbm9vcChzdHJ1Y3QgY2xvYyAgeyAgfQ0KDQotLyoqDQotICogY2xvY2tldmVudHNfZXhjaGFu
-Z2VfZGV2aWNlIC0gcmVsZWFzZSBhbmQgcmVxdWVzdCBjbG9jayBkZXZpY2VzDQotICogQG9sZDog
-ICAgICAgZGV2aWNlIHRvIHJlbGVhc2UgKGNhbiBiZSBOVUxMKQ0KLSAqIEBuZXc6ICAgICAgIGRl
-dmljZSB0byByZXF1ZXN0IChjYW4gYmUgTlVMTCkNCi0gKg0KLSAqIENhbGxlZCBmcm9tIHZhcmlv
-dXMgdGljayBmdW5jdGlvbnMgd2l0aCBjbG9ja2V2ZW50c19sb2NrIGhlbGQgYW5kDQotICogaW50
-ZXJydXB0cyBkaXNhYmxlZC4NCi0gKi8NCi12b2lkIGNsb2NrZXZlbnRzX2V4Y2hhbmdlX2Rldmlj
-ZShzdHJ1Y3QgY2xvY2tfZXZlbnRfZGV2aWNlICpvbGQsDQotICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICBzdHJ1Y3QgY2xvY2tfZXZlbnRfZGV2aWNlICpuZXcpDQordm9pZCBfX2Nsb2Nr
-ZXZlbnRzX2V4Y2hhbmdlX2RldmljZShzdHJ1Y3QgY2xvY2tfZXZlbnRfZGV2aWNlICpvbGQsDQor
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBjbG9ja19ldmVudF9kZXZp
-Y2UgKm5ldykNCiB7DQogICAgICAgIC8qDQogICAgICAgICAqIENhbGxlciByZWxlYXNlcyBhIGNs
-b2NrIGV2ZW50IGRldmljZS4gV2UgcXVldWUgaXQgaW50byB0aGUNCiAgICAgICAgICogcmVsZWFz
-ZWQgbGlzdCBhbmQgZG8gYSBub3RpZnkgYWRkIGxhdGVyLg0KICAgICAgICAgKi8NCiAgICAgICAg
-aWYgKG9sZCkgew0KLSAgICAgICAgICAgICAgIG1vZHVsZV9wdXQob2xkLT5vd25lcik7DQogICAg
-ICAgICAgICAgICAgY2xvY2tldmVudHNfc3dpdGNoX3N0YXRlKG9sZCwgQ0xPQ0tfRVZUX1NUQVRF
-X0RFVEFDSEVEKTsNCiAgICAgICAgICAgICAgICBsaXN0X21vdmUoJm9sZC0+bGlzdCwgJmNsb2Nr
-ZXZlbnRzX3JlbGVhc2VkKTsNCiAgICAgICAgfQ0KQEAgLTU4NSw2ICs1NzYsMjIgQEAgdm9pZCBj
-bG9ja2V2ZW50c19leGNoYW5nZV9kZXZpY2Uoc3RydWN0DQogfQ0KDQogLyoqDQorICogY2xvY2tl
-dmVudHNfZXhjaGFuZ2VfZGV2aWNlIC0gcmVsZWFzZSBhbmQgcmVxdWVzdCBjbG9jayBkZXZpY2Vz
-DQorICogQG9sZDogICAgICAgZGV2aWNlIHRvIHJlbGVhc2UgKGNhbiBiZSBOVUxMKQ0KKyAqIEBu
-ZXc6ICAgICAgIGRldmljZSB0byByZXF1ZXN0IChjYW4gYmUgTlVMTCkNCisgKg0KKyAqIENhbGxl
-ZCBmcm9tIHZhcmlvdXMgdGljayBmdW5jdGlvbnMgd2l0aCBjbG9ja2V2ZW50c19sb2NrIGhlbGQg
-YW5kDQorICogaW50ZXJydXB0cyBkaXNhYmxlZC4NCisgKi8NCit2b2lkIGNsb2NrZXZlbnRzX2V4
-Y2hhbmdlX2RldmljZShzdHJ1Y3QgY2xvY2tfZXZlbnRfZGV2aWNlICpvbGQsDQorICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgY2xvY2tfZXZlbnRfZGV2aWNlICpuZXcpIHsN
-CisgICAgICAgaWYgKG9sZCkNCisgICAgICAgICAgICAgICBtb2R1bGVfcHV0KG9sZC0+b3duZXIp
-Ow0KKyAgICAgICBfX2Nsb2NrZXZlbnRzX2V4Y2hhbmdlX2RldmljZShvbGQsIG5ldyk7IH0NCisN
-CisvKioNCiAgKiBjbG9ja2V2ZW50c19zdXNwZW5kIC0gc3VzcGVuZCBjbG9jayBkZXZpY2VzDQog
-ICovDQogdm9pZCBjbG9ja2V2ZW50c19zdXNwZW5kKHZvaWQpDQpAQCAtNjUwLDcgKzY1Nyw3IEBA
-IHZvaWQgdGlja19jbGVhbnVwX2RlYWRfY3B1KGludCBjcHUpDQogICAgICAgICAgICAgICAgaWYg
-KGNwdW1hc2tfdGVzdF9jcHUoY3B1LCBkZXYtPmNwdW1hc2spICYmDQogICAgICAgICAgICAgICAg
-ICAgIGNwdW1hc2tfd2VpZ2h0KGRldi0+Y3B1bWFzaykgPT0gMSAmJg0KICAgICAgICAgICAgICAg
-ICAgICAhdGlja19pc19icm9hZGNhc3RfZGV2aWNlKGRldikpIHsNCi0gICAgICAgICAgICAgICAg
-ICAgICAgIEJVR19PTighY2xvY2tldmVudF9zdGF0ZV9kZXRhY2hlZChkZXYpKTsNCisgICAgICAg
-ICAgICAgICAgICAgICAgIFdBUk5fT04oIWNsb2NrZXZlbnRfc3RhdGVfZGV0YWNoZWQoZGV2KSk7
-DQogICAgICAgICAgICAgICAgICAgICAgICBsaXN0X2RlbCgmZGV2LT5saXN0KTsNCiAgICAgICAg
-ICAgICAgICB9DQogICAgICAgIH0NCi0tLSBhL2tlcm5lbC90aW1lL3RpY2stYnJvYWRjYXN0LmMN
-CisrKyBiL2tlcm5lbC90aW1lL3RpY2stYnJvYWRjYXN0LmMNCkBAIC0xNjIsMjMgKzE2MiwzMSBA
-QCBzdGF0aWMgYm9vbCB0aWNrX3NldF9vbmVzaG90X3dha2V1cF9kZXZpDQogICovDQogdm9pZCB0
-aWNrX2luc3RhbGxfYnJvYWRjYXN0X2RldmljZShzdHJ1Y3QgY2xvY2tfZXZlbnRfZGV2aWNlICpk
-ZXYsIGludCBjcHUpICB7DQotICAgICAgIHN0cnVjdCBjbG9ja19ldmVudF9kZXZpY2UgKmN1ciA9
-IHRpY2tfYnJvYWRjYXN0X2RldmljZS5ldnRkZXY7DQorICAgICAgIHN0cnVjdCBjbG9ja19ldmVu
-dF9kZXZpY2UgKmN1cjsNCg0KLSAgICAgICBpZiAodGlja19zZXRfb25lc2hvdF93YWtldXBfZGV2
-aWNlKGRldiwgY3B1KSkNCi0gICAgICAgICAgICAgICByZXR1cm47DQorICAgICAgIHNjb3BlZF9n
-dWFyZChyYXdfc3BpbmxvY2tfaXJxc2F2ZSwgJnRpY2tfYnJvYWRjYXN0X2xvY2spIHsNCg0KLSAg
-ICAgICBpZiAoIXRpY2tfY2hlY2tfYnJvYWRjYXN0X2RldmljZShjdXIsIGRldikpDQotICAgICAg
-ICAgICAgICAgcmV0dXJuOw0KKyAgICAgICAgICAgICAgIGlmICh0aWNrX3NldF9vbmVzaG90X3dh
-a2V1cF9kZXZpY2UoZGV2LCBjcHUpKQ0KKyAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuOw0K
-DQotICAgICAgIGlmICghdHJ5X21vZHVsZV9nZXQoZGV2LT5vd25lcikpDQotICAgICAgICAgICAg
-ICAgcmV0dXJuOw0KKyAgICAgICAgICAgICAgIGN1ciA9IHRpY2tfYnJvYWRjYXN0X2RldmljZS5l
-dnRkZXY7DQorICAgICAgICAgICAgICAgaWYgKCF0aWNrX2NoZWNrX2Jyb2FkY2FzdF9kZXZpY2Uo
-Y3VyLCBkZXYpKQ0KKyAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuOw0KDQotICAgICAgIGNs
-b2NrZXZlbnRzX2V4Y2hhbmdlX2RldmljZShjdXIsIGRldik7DQorICAgICAgICAgICAgICAgaWYg
-KCF0cnlfbW9kdWxlX2dldChkZXYtPm93bmVyKSkNCisgICAgICAgICAgICAgICAgICAgICAgIHJl
-dHVybjsNCisNCisgICAgICAgICAgICAgICBfX2Nsb2NrZXZlbnRzX2V4Y2hhbmdlX2RldmljZShj
-dXIsIGRldik7DQorICAgICAgICAgICAgICAgaWYgKGN1cikNCisgICAgICAgICAgICAgICAgICAg
-ICAgIGN1ci0+ZXZlbnRfaGFuZGxlciA9IGNsb2NrZXZlbnRzX2hhbmRsZV9ub29wOw0KKyAgICAg
-ICAgICAgICAgIFdSSVRFX09OQ0UodGlja19icm9hZGNhc3RfZGV2aWNlLmV2dGRldiwgZGV2KTsN
-CisgICAgICAgICAgICAgICBpZiAoIWNwdW1hc2tfZW1wdHkodGlja19icm9hZGNhc3RfbWFzaykp
-DQorICAgICAgICAgICAgICAgICAgICAgICB0aWNrX2Jyb2FkY2FzdF9zdGFydF9wZXJpb2RpYyhk
-ZXYpOw0KKyAgICAgICB9DQorDQorICAgICAgIC8qIE1vZHVsZSByZWxlYXNlIG11c3QgYmUgb3V0
-c2lkZSBvZiB0aGUgbG9jayAqLw0KICAgICAgICBpZiAoY3VyKQ0KLSAgICAgICAgICAgICAgIGN1
-ci0+ZXZlbnRfaGFuZGxlciA9IGNsb2NrZXZlbnRzX2hhbmRsZV9ub29wOw0KLSAgICAgICB0aWNr
-X2Jyb2FkY2FzdF9kZXZpY2UuZXZ0ZGV2ID0gZGV2Ow0KLSAgICAgICBpZiAoIWNwdW1hc2tfZW1w
-dHkodGlja19icm9hZGNhc3RfbWFzaykpDQotICAgICAgICAgICAgICAgdGlja19icm9hZGNhc3Rf
-c3RhcnRfcGVyaW9kaWMoZGV2KTsNCisgICAgICAgICAgICAgICBtb2R1bGVfcHV0KG9sZC0+b3du
-ZXIpOw0KDQogICAgICAgIGlmICghKGRldi0+ZmVhdHVyZXMgJiBDTE9DS19FVlRfRkVBVF9PTkVT
-SE9UKSkNCiAgICAgICAgICAgICAgICByZXR1cm47DQpAQCAtMTE4NSw3ICsxMTkzLDcgQEAgaW50
-IHRpY2tfYnJvYWRjYXN0X29uZXNob3RfYWN0aXZlKHZvaWQpDQogICovDQogYm9vbCB0aWNrX2Jy
-b2FkY2FzdF9vbmVzaG90X2F2YWlsYWJsZSh2b2lkKQ0KIHsNCi0gICAgICAgc3RydWN0IGNsb2Nr
-X2V2ZW50X2RldmljZSAqYmMgPSB0aWNrX2Jyb2FkY2FzdF9kZXZpY2UuZXZ0ZGV2Ow0KKyAgICAg
-ICBzdHJ1Y3QgY2xvY2tfZXZlbnRfZGV2aWNlICpiYyA9DQorIFJFQURfT05DRSh0aWNrX2Jyb2Fk
-Y2FzdF9kZXZpY2UuZXZ0ZGV2KTsNCg0KICAgICAgICByZXR1cm4gYmMgPyBiYy0+ZmVhdHVyZXMg
-JiBDTE9DS19FVlRfRkVBVF9PTkVTSE9UIDogZmFsc2U7ICB9IEBAIC0xMTkzLDcgKzEyMDEsNyBA
-QCBib29sIHRpY2tfYnJvYWRjYXN0X29uZXNob3RfYXZhaWxhYmxlKHZvDQogI2Vsc2UNCiBpbnQg
-X190aWNrX2Jyb2FkY2FzdF9vbmVzaG90X2NvbnRyb2woZW51bSB0aWNrX2Jyb2FkY2FzdF9zdGF0
-ZSBzdGF0ZSkgIHsNCi0gICAgICAgc3RydWN0IGNsb2NrX2V2ZW50X2RldmljZSAqYmMgPSB0aWNr
-X2Jyb2FkY2FzdF9kZXZpY2UuZXZ0ZGV2Ow0KKyAgICAgICBzdHJ1Y3QgY2xvY2tfZXZlbnRfZGV2
-aWNlICpiYyA9DQorIFJFQURfT05DRSh0aWNrX2Jyb2FkY2FzdF9kZXZpY2UuZXZ0ZGV2KTsNCg0K
-ICAgICAgICBpZiAoIWJjIHx8IChiYy0+ZmVhdHVyZXMgJiBDTE9DS19FVlRfRkVBVF9IUlRJTUVS
-KSkNCiAgICAgICAgICAgICAgICByZXR1cm4gLUVCVVNZOw0KLS0tIGEva2VybmVsL3RpbWUvdGlj
-ay1pbnRlcm5hbC5oDQorKysgYi9rZXJuZWwvdGltZS90aWNrLWludGVybmFsLmgNCkBAIC01Myw2
-ICs1Myw4IEBAIHN0YXRpYyBpbmxpbmUgdm9pZCBjbG9ja2V2ZW50X3NldF9zdGF0ZSggIH0NCg0K
-IGV4dGVybiB2b2lkIGNsb2NrZXZlbnRzX3NodXRkb3duKHN0cnVjdCBjbG9ja19ldmVudF9kZXZp
-Y2UgKmRldik7DQorZXh0ZXJuIHZvaWQgX19jbG9ja2V2ZW50c19leGNoYW5nZV9kZXZpY2Uoc3Ry
-dWN0IGNsb2NrX2V2ZW50X2RldmljZSAqb2xkLA0KKyAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgc3RydWN0IGNsb2NrX2V2ZW50X2RldmljZQ0KKypuZXcpOw0KIGV4dGVy
-biB2b2lkIGNsb2NrZXZlbnRzX2V4Y2hhbmdlX2RldmljZShzdHJ1Y3QgY2xvY2tfZXZlbnRfZGV2
-aWNlICpvbGQsDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0
-IGNsb2NrX2V2ZW50X2RldmljZSAqbmV3KTsgIGV4dGVybiB2b2lkIGNsb2NrZXZlbnRzX3N3aXRj
-aF9zdGF0ZShzdHJ1Y3QgY2xvY2tfZXZlbnRfZGV2aWNlICpkZXYsDQojLyoqKioqKuacrOmCruS7
-tuWPiuWFtumZhOS7tuWQq+acieWwj+exs+WFrOWPuOeahOS/neWvhuS/oeaBr++8jOS7hemZkOS6
-juWPkemAgee7meS4iumdouWcsOWdgOS4reWIl+WHuueahOS4quS6uuaIlue+pOe7hOOAguemgeat
-ouS7u+S9leWFtuS7luS6uuS7peS7u+S9leW9ouW8j+S9v+eUqO+8iOWMheaLrOS9huS4jemZkOS6
-juWFqOmDqOaIlumDqOWIhuWcsOazhOmcsuOAgeWkjeWItuOAgeaIluaVo+WPke+8ieacrOmCruS7
-tuS4reeahOS/oeaBr+OAguWmguaenOaCqOmUmeaUtuS6huacrOmCruS7tu+8jOivt+aCqOeri+WN
-s+eUteivneaIlumCruS7tumAmuefpeWPkeS7tuS6uuW5tuWIoOmZpOacrOmCruS7tu+8gSBUaGlz
-IGUtbWFpbCBhbmQgaXRzIGF0dGFjaG1lbnRzIGNvbnRhaW4gY29uZmlkZW50aWFsIGluZm9ybWF0
-aW9uIGZyb20gWElBT01JLCB3aGljaCBpcyBpbnRlbmRlZCBvbmx5IGZvciB0aGUgcGVyc29uIG9y
-IGVudGl0eSB3aG9zZSBhZGRyZXNzIGlzIGxpc3RlZCBhYm92ZS4gQW55IHVzZSBvZiB0aGUgaW5m
-b3JtYXRpb24gY29udGFpbmVkIGhlcmVpbiBpbiBhbnkgd2F5IChpbmNsdWRpbmcsIGJ1dCBub3Qg
-bGltaXRlZCB0bywgdG90YWwgb3IgcGFydGlhbCBkaXNjbG9zdXJlLCByZXByb2R1Y3Rpb24sIG9y
-IGRpc3NlbWluYXRpb24pIGJ5IHBlcnNvbnMgb3RoZXIgdGhhbiB0aGUgaW50ZW5kZWQgcmVjaXBp
-ZW50KHMpIGlzIHByb2hpYml0ZWQuIElmIHlvdSByZWNlaXZlIHRoaXMgZS1tYWlsIGluIGVycm9y
-LCBwbGVhc2Ugbm90aWZ5IHRoZSBzZW5kZXIgYnkgcGhvbmUgb3IgZW1haWwgaW1tZWRpYXRlbHkg
-YW5kIGRlbGV0ZSBpdCEqKioqKiovIw0K
+
+在 2024/6/28 4:43, Tejun Heo 写道:
+> Hello, Li.
+>
+> On Thu, Jun 27, 2024 at 10:26:06PM +0800, Li Lingfeng wrote:
+>> From: Li Lingfeng <lilingfeng3@huawei.com>
+>>
+>> When a process migrates to another cgroup and the original cgroup is deleted,
+>> the restrictions of throttled bios cannot be removed. If the restrictions
+>> are set too low, it will take a long time to complete these bios.
+>>
+>> Refer to the process of deleting a disk to remove the restrictions and
+>> issue bios when deleting the cgroup.
+>>
+>> This makes difference on the behavior of throttled bios:
+>> Before: the limit of the throttled bios can't be changed and the bios will
+>> complete under this limit;
+>> Now: the limit will be canceled and the throttled bios will be flushed
+>> immediately.
+> I'm not necessarily against this but the description doesn't explain why
+> this is better either. Can you please detail why this behavior is better?
+I think it may be more appropriate to remove the limit of bios after the
+cgroup is deleted, rather than let the bios continue to be throttled by a
+non-existent cgroup.
+
+If the limit is set too low, and the original cgourp has been deleted, we
+now have no way to make the bios complete immediately, but to wait for the
+bios to slowly complete under the limit.
+
+Thanks.
+
+>
+> Thanks.
+>
+
 
