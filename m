@@ -1,184 +1,105 @@
-Return-Path: <linux-kernel+bounces-233653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E573C91BB16
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:09:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E277B91BA76
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:55:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A02B8284BC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:09:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94FF41F2303A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF6D157481;
-	Fri, 28 Jun 2024 09:06:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B8514E2CB;
+	Fri, 28 Jun 2024 08:55:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="imTUli1q"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sDERvh/6"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60BA157478
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 09:06:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB7F14D422
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 08:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719565608; cv=none; b=CzsyZ9EJhNRFUden+77oIOl/Yi6djLcNw5U2cKiTd0GYNMlyaFvXaNTkNqHm7j2Mhw0+/YxPc47mGBdcmsiOE/GQJh9PM4fsMBpSEob/z/PeNeQXeonYtdnBT35ceJ7MwoFGlU2EXi3f2Giy6Cvp4NnXBdh1pmTKpB3FXemv1l8=
+	t=1719564937; cv=none; b=aGVShiQf0qvLWgqnhqkbHMSbvrzlMImZPP/NwBHDcYLip1X4tNWhBC5z4ouJfxhff0FCIH4132B7Jz/iCPWtS01VK8AO9kAfFyaAZ7uWeQ6sdQhbKf8nphwjGwatNVN+8mx6uE5QUAUqhddfjqHz/bPB4B6O9sMDmxe+Q0gHEoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719565608; c=relaxed/simple;
-	bh=4Dsj9ayn2Oa78jorOX6zSODmYZsKhMC24a4bT2nQZFA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PbX2pcSt43H0rQgfb+2qaHG/IBX4mVswfRkuxlH3kr8c2cw+edc9D/FQrwnwCoxvlLriufNZqnGmdie/8EBxhjuokMc+ICsTLo9Gp+yIk7ouGD9tPHiusBYxbl6BP/XFJqA2SCPMv9Wg14myN73v0N6X170J1ZHgRFJFrDtSjDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=imTUli1q; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7065a2f4573so302253b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 02:06:46 -0700 (PDT)
+	s=arc-20240116; t=1719564937; c=relaxed/simple;
+	bh=qNT24P69oZExcdybuxkfRZexZp2GF5cn+DnHmLdaWTw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NHDj3eStnMMfekTYsa9YRgFpBLKpolfjUDvB+o26HRKSWl95s+tn9rVRblVWIjAzRYvjPnJdNeEgPkJTcRYvkZkErj91A8OX+IIwp4zh8W3Sg6tniaia5HYS2vWLxLCApk2z6coZMpt3v3fglPKvE76Y84kJqKJXLW8gUh53IXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sDERvh/6; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4256f102e89so1899555e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 01:55:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719565606; x=1720170406; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1719564934; x=1720169734; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KE+GAHekiqQQ+6g1wyBk2AinFm8Z+Wz7HeNtPOPPiPc=;
-        b=imTUli1qDpU+B/VfgGHrP3hb7zRAQU9cT7U27dyWCrzW6TUz5ufo1CKPsf5wJBiIHa
-         +8mRh6hY4BTL6Gq5rXdewkTOXipjpvfuG9c4d2HNdhPTbh3kTBPBg/4x+W/nZBeJvctE
-         EE1QrH4W2IKRWqRn0tRUN3g1VYDx/AjcWjke9C+urVciS6BfOVppHVYO7dy9XZNSmj6x
-         uuB3E9rkuDn9d10uQJlGyeCq0mJHvIdHgyXS/3rcgnYUwLk5pNuav+dOmp8twIORKOg1
-         frAg6Cke0wcm58t6f1GzGmUzu2PNWaDS4gHFOl47773rRnoPpk3ppZU/EVfelT91d/Ec
-         5vSw==
+        bh=qNT24P69oZExcdybuxkfRZexZp2GF5cn+DnHmLdaWTw=;
+        b=sDERvh/6LV89l7xKiPO8KcN5+doDSnLjYn+9F8AwvWIoprno4NYEAB9QLRGvi7JYpM
+         7L/u2qHCGSnFiMlWhl04GbkOAG9wTbdDLlx1mJMEzL68mRAKFkY39wpd1rhNDSucSIjI
+         3wuI07c4DVxuFECRHFyfed6V2ZVL3KxambDzMo1o3R3tw/glrEY74qZloXAoyYgyJlMN
+         NyvFX4ZWPQZqUohcZG7i+IS7ALZnZ8y5CxGosWN59WbIgSMUfa8D/KBQRRBf3DKKAcTK
+         ETdJBcUxQ2w0Y9UFG58KSRneWI1XN6JBAxzHly4bcAX7ba6nAK2+LymeEHhXSzE0uSV8
+         cQVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719565606; x=1720170406;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1719564934; x=1720169734;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KE+GAHekiqQQ+6g1wyBk2AinFm8Z+Wz7HeNtPOPPiPc=;
-        b=Eb9vFup/H2Dct6zoJzv2mwz3WswRwQoaGDajjqc4LSHxgLmioVXGnfuEo54lGhXFEI
-         lq2Sit9HXn8gRnlxiPOTeCpkIh/OgGpCrjCARjguB9eqPPJnel6A1aLgzrqwz67JbHtQ
-         TFc7aEsuLsQcf7Dlu+0mk5fDPzLv/R7RKtbIjsbsDmdyfOvH1iRId/F1X7749RWl/495
-         f7hzg+/+UIAjkrT613/GTdEm+pT1AznPRBV9cVOjyofH6x3o1579PP/s4B8hz+37hPnX
-         zhuUnncOiSnPSHnoEwjB/RiIyVDz41DdExsB3muA9Q7gs2I+3cmi3BcIzzSoLjaGAKMX
-         N5QA==
-X-Forwarded-Encrypted: i=1; AJvYcCVYt6BSrfeFFM160iLz96WQTccoKWB9rHGZD0LecTzK+ODUwRDmwEoRIjC9Y+8DvI0DBzLCVVP1bs5/82FLN1FqcSj/6rZgehebO3wI
-X-Gm-Message-State: AOJu0Yyotbg8Tt9nq9Wk1iqe6EQgrIVsey/U9XFsOCNlXU96gDxY5AIo
-	wbUVwJdXBSDZB4XDWzyWD12Q0xdLjL8aekcj7kVjwx7pCfq3Tu7P
-X-Google-Smtp-Source: AGHT+IH7O3ceew/tSG3NDVJpYlbtMuwR5IFLdkA8b8eK+PcdH6NneHqE1C+XNacGpenvZxl/Ayl5vA==
-X-Received: by 2002:a05:6a00:2d93:b0:706:8066:5cd6 with SMTP id d2e1a72fcca58-70680665df3mr17761645b3a.32.1719565605922;
-        Fri, 28 Jun 2024 02:06:45 -0700 (PDT)
-Received: from twhmp6px (mxsmtp211.mxic.com.tw. [211.75.127.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70801e63250sm1086981b3a.29.2024.06.28.02.06.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 02:06:45 -0700 (PDT)
-Received: from hqs-appsw-a2o.mp600.macronix.com (linux-patcher [172.17.236.67])
-	by twhmp6px (Postfix) with ESMTPS id 3A8A180570;
-	Fri, 28 Jun 2024 17:09:00 +0800 (CST)
-From: Cheng Ming Lin <linchengming884@gmail.com>
-To: miquel.raynal@bootlin.com,
-	vigneshr@ti.com
-Cc: richard@nod.at,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	alvinzhou@mxic.com.tw,
-	leoyu@mxic.com.tw,
-	Cheng Ming Lin <chengminglin@mxic.com.tw>
-Subject: [PATCH 2/2] mtd: spinand: macronix: Add support for serial NAND flash
-Date: Fri, 28 Jun 2024 16:54:44 +0800
-Message-Id: <20240628085444.132714-3-linchengming884@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240628085444.132714-1-linchengming884@gmail.com>
-References: <20240628085444.132714-1-linchengming884@gmail.com>
+        bh=qNT24P69oZExcdybuxkfRZexZp2GF5cn+DnHmLdaWTw=;
+        b=C5oDPR0GEiv8OQCuJPWZmq7ovVRO8w9opc7yioia2K4bnHmi2sbyqCgYjTRAg7aKeG
+         mb9sgnxWUSTlgH/8qq+qr1jc0HLZeIGtGH5UXRcUUXDRlpy8PElop9YtdYU0AWA51hnd
+         74cr5sO39P9MVQ0j8IU/y5my2ifBwbY/GI5YN5HrTL+kmS8SBmV2sjHQ+PFNXAwQTdDJ
+         KCzK45e3ig6PS0ITgJYhPVqzGzR9QJghGdb4DD0TOCUn9EuC+pROSRDkHmPfZlre1RHP
+         WA28suO12XtGvtlq/TVF4pCQCrMGuEdeKiLWQf0VOU4E7yRtHKkmNcKQuvGmbcJCbhbe
+         7fdg==
+X-Forwarded-Encrypted: i=1; AJvYcCWNKvh2FEbwwevxAWeRQY/oYqAp6F47doYItKAT5PYrGSK+as3g93jA3WNpReBNRErJ2TWXZNguz3XpeF0eCzCLhgjy1GZVbKyJ1XGN
+X-Gm-Message-State: AOJu0Yzqnrgq5x7I8EOPlv/muSIPODXHfDZczAAqiY/k7UMfx9W+M1oO
+	ca/CR18ckNzHRdgdUei/AZGlQcuMij5nxtzpVce1YfoTvargz1IO7FmHYqogX/MIFvaNjaB+1EP
+	ugwTRP18UugFfJJ58mWKi4rtVoBcbfXQndisw
+X-Google-Smtp-Source: AGHT+IFEk7Cod2Hp9SvJIIWpoKIKJrvmi1ZmyTwUyea0Fir04rTr9IxaSmMdVqorrv7lReztOBBKgFNhP71zEk8/XfA=
+X-Received: by 2002:a05:6000:ac4:b0:362:c237:5569 with SMTP id
+ ffacd0b85a97d-366e94d8815mr9649639f8f.2.1719564934113; Fri, 28 Jun 2024
+ 01:55:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240628004356.1384486-1-jhubbard@nvidia.com> <20240628004356.1384486-3-jhubbard@nvidia.com>
+In-Reply-To: <20240628004356.1384486-3-jhubbard@nvidia.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 28 Jun 2024 10:55:20 +0200
+Message-ID: <CAH5fLgjxd+nT4MzgY_DBj8STffAFETaqJZXjMP-_Zw5tqkbz=Q@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] Makefile: improve comment documentation for the
+ rust-analyzer target
+To: John Hubbard <jhubbard@nvidia.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Greg KH <greg@kroah.com>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Finn Behrens <me@kloenk.dev>, linux-kbuild@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Cheng Ming Lin <chengminglin@mxic.com.tw>
+On Fri, Jun 28, 2024 at 2:44=E2=80=AFAM John Hubbard <jhubbard@nvidia.com> =
+wrote:
+>
+> Replace the cryptic phrase ("IDE support targets") that initially
+> appears to be about how to support old hard drives, with a few sentences
+> that explain what "make rust-analyzer" provides.
+>
+> Cc: Alice Ryhl <aliceryhl@google.com>
+> Cc: Finn Behrens <me@kloenk.dev>
+> Acked-by: Miguel Ojeda <ojeda@kernel.org>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 
-MX35{U,L}F{2,4}G24AD-Z4I8 are Macronix serial NAND flashes.
-
-Their main difference from MX35{U,L}F{2,4}G24AD lies in
-the plane number. The plane number for those with the
-postfix Z4I8 is 1.
-
-These flashes have been validated on Xilinx zynq-picozed
-board which include Macronix SPI Host.
-
-Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
----
- drivers/mtd/nand/spi/macronix.c | 38 +++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
-
-diff --git a/drivers/mtd/nand/spi/macronix.c b/drivers/mtd/nand/spi/macronix.c
-index ffcaf1a6947e..ae33bdca94e0 100644
---- a/drivers/mtd/nand/spi/macronix.c
-+++ b/drivers/mtd/nand/spi/macronix.c
-@@ -158,6 +158,15 @@ static const struct spinand_info macronix_spinand_table[] = {
- 					      &update_cache_variants),
- 		     SPINAND_HAS_QE_BIT,
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL)),
-+	SPINAND_INFO("MX35LF2G24AD-Z4I8",
-+		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x64, 0x03),
-+		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 1, 1, 1),
-+		     NAND_ECCREQ(8, 512),
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-+					      &write_cache_variants,
-+					      &update_cache_variants),
-+		     SPINAND_HAS_QE_BIT,
-+		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL)),
- 	SPINAND_INFO("MX35LF4G24AD",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x35, 0x03),
- 		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 2, 1, 1),
-@@ -167,6 +176,15 @@ static const struct spinand_info macronix_spinand_table[] = {
- 					      &update_cache_variants),
- 		     SPINAND_HAS_QE_BIT,
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL)),
-+	SPINAND_INFO("MX35LF4G24AD-Z4I8",
-+		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x75, 0x03),
-+		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 1),
-+		     NAND_ECCREQ(8, 512),
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-+					      &write_cache_variants,
-+					      &update_cache_variants),
-+		     SPINAND_HAS_QE_BIT,
-+		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL)),
- 	SPINAND_INFO("MX31LF1GE4BC",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x1e),
- 		     NAND_MEMORG(1, 2048, 64, 64, 1024, 20, 1, 1, 1),
-@@ -207,6 +225,16 @@ static const struct spinand_info macronix_spinand_table[] = {
- 		     SPINAND_HAS_QE_BIT,
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
- 				     mx35lf1ge4ab_ecc_get_status)),
-+	SPINAND_INFO("MX35UF4G24AD-Z4I8",
-+		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xf5, 0x03),
-+		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 1),
-+		     NAND_ECCREQ(8, 512),
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-+					      &write_cache_variants,
-+					      &update_cache_variants),
-+		     SPINAND_HAS_QE_BIT,
-+		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
-+				     mx35lf1ge4ab_ecc_get_status)),
- 	SPINAND_INFO("MX35UF4GE4AD",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xb7, 0x03),
- 		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 1),
-@@ -237,6 +265,16 @@ static const struct spinand_info macronix_spinand_table[] = {
- 		     SPINAND_HAS_QE_BIT,
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
- 				     mx35lf1ge4ab_ecc_get_status)),
-+	SPINAND_INFO("MX35UF2G24AD-Z4I8",
-+		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xe4, 0x03),
-+		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 1, 1, 1),
-+		     NAND_ECCREQ(8, 512),
-+		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-+					      &write_cache_variants,
-+					      &update_cache_variants),
-+		     SPINAND_HAS_QE_BIT,
-+		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
-+				     mx35lf1ge4ab_ecc_get_status)),
- 	SPINAND_INFO("MX35UF2GE4AD",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xa6, 0x03),
- 		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 1, 1, 1),
--- 
-2.25.1
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
