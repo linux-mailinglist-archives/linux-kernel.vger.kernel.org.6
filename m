@@ -1,151 +1,154 @@
-Return-Path: <linux-kernel+bounces-233508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2462991B87A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:33:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BED591B87E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:33:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 604EBB23373
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:33:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C2F6B2373E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:33:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C77140394;
-	Fri, 28 Jun 2024 07:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50CCA140E47;
+	Fri, 28 Jun 2024 07:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nwpElAs8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AO1y54mf"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3539654BD4;
-	Fri, 28 Jun 2024 07:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C54B13F437
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 07:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719559983; cv=none; b=QjN0pfb4+ETSXaJ5onsVGWg0Xlg4W+bmi87se2woteHG33NBjuSo1n2apY/moVPmWvTYIhuLd4lzpS2toeDHi+YnHsx9ZmoygMiZVSWuh1lidoWLPxvB91ciobSWeQ2C0mHjvfN0C32e/kkzvCTgR0PVotsC8UMFA/4Jr+kVcAM=
+	t=1719559996; cv=none; b=cV5r+NkmZkP+YYSo7XBKZZBWSFwGfzJfJaoFIhgypDSvnunQj1Or0JDzFx7+37YKfmNeGue7FAllDGGwPwduEFgJimWmjSHcZ6yNZyZtOBxb4hhBgAwEC1Do4NegZWDeHLEwmuVwRq99XH3VWEIu4Y5RFNosBUs53ei+S1UuPwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719559983; c=relaxed/simple;
-	bh=atYDRZGv2wPyuhFP2xfANv9df+nkmPvlsRewheA6zC4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hCFAzv+df/QXA1SAuYNoBWj+hw2Zzw9Nzi7/M92SHujvn63UHjaYgubfNGc9zKD8c7p1zJNXhqZTUYrCj7MOlLIhI0AarQxJ+7oJ8wX5C6GyCnizgF+hAts07QP8Eg7O8d0sRg0VH36BC1cNvGo52IBNQOB1izOvKM7UUWkmVmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nwpElAs8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 604D7C2BD10;
-	Fri, 28 Jun 2024 07:32:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719559982;
-	bh=atYDRZGv2wPyuhFP2xfANv9df+nkmPvlsRewheA6zC4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nwpElAs8hqVGc4pKp4mceW9qTGTlWDzBJwqULG6JLPFBqAX4YZCiv8FDgZtmczKt2
-	 Cjst1hw70MVOUaFS1MRNCj8nMQ8+KzzUq4CA8F/6wmzvxK3ouhESnmpI1fLhiyB07r
-	 OLTDhh2ECnODreRJ0UsegykCiq8QxzfPNGqRhzIpzyq6l/dyvjNoZuRSCmisIfkePs
-	 sF3C0i1aE/+HDibCoFVQ3+pXAqKlRYMzrA5zrm2F96XmarA1jvoY0n9nhIONRBTkV3
-	 EryhsUT8lswcBzALkRtVkweuzPYo3YLu4v5sjSIBefLoo1VwXWojHjpLRK9vegXp5y
-	 GrOn/LNgxXnaQ==
-Message-ID: <9e0ea356-7bed-4516-9e1f-739190d63be4@kernel.org>
-Date: Fri, 28 Jun 2024 09:32:53 +0200
+	s=arc-20240116; t=1719559996; c=relaxed/simple;
+	bh=fhEQxG2qTbjZN91S0rg0hi1K9A0vwX6aPYn6QxWZCPY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z5POJALhKxPUnxgEzYORqYkpl1LrYOXvBhQopYppsl8/f2rmVMaHfXqRcl/2E3viSKNmMX2ygIMty0NvhE/UAwHHmHSL/3+NIgZqJ5KNesXlCtGpyrkJhWBzSvm3xG+K6rz7RIMjRgrl+z8XrEju3XSGsmhUO/FxV2PdTe3l178=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=AO1y54mf; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-79c076c0d83so18597185a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 00:33:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1719559994; x=1720164794; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=fhEQxG2qTbjZN91S0rg0hi1K9A0vwX6aPYn6QxWZCPY=;
+        b=AO1y54mf9HRww1t3oz0Ru/7x11VOoxqf0tXFYi1ZO7aIAvQC5BO75G5jmicqxetUHC
+         27GQkTaYWYElOJyaPS3uXWUXajyYGVrSS6vuvyPwJUMe7f4yPnCgImLQKmUBUi+P14pX
+         NeyqitqiYjHrT/7bhJRh330nL9BGu7P3zRxzE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719559994; x=1720164794;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fhEQxG2qTbjZN91S0rg0hi1K9A0vwX6aPYn6QxWZCPY=;
+        b=ZAt9viBstJMuKQQ3ysqEUK4Pk3uHTbTGmQIoTsWFMm6TWNCW2QZvlFuYeWHK0wPkGf
+         PTgkUsMLnuv663OHfUh/3kVJRMtTKVyQjt5NomFadxgu3wX6inuE8PLnoWF0ynVfMj0q
+         EsNunPm3POhoT53uhZt1bPx69O1ykkrcndPEuDNH2hQJmsBME/dGZAnlFzgZXpuvcidM
+         NdahINCXHBAHUsTibx8hc7bU1PFmLcCfttM4ds3SSyu5MVatW94jkVN6ksKRhvOCPLWs
+         1KX2DgV2xeYKeX0/agghMy3Tf0WCUK820Ab12EnKFyQI7KWheR/3agt3WWZKUXHFy3ti
+         ANIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVocRyQnikcNdU32SXa4fl+qWPwhbvAyc4RATtclQVxIhIKjhXZ28TexanqzKDSjLErhKso4aNEwRVmElO7llG324a7PL8MpzMdXMqm
+X-Gm-Message-State: AOJu0YzzjnugVJYAiDmldqXZQdJjBvOo9Y8XCuMYlCcy06+zBgm82Xlz
+	1H3f9qROnVmFOI5yUZzu0YnMH4j/+bvex3I6mJ7TLfNymqJFQXcpYIbSnctavXIMZAj7DXGGSXI
+	c74wo3iRjbHpb59UX9tmB/mswoNbv68E+0hQ0
+X-Google-Smtp-Source: AGHT+IFtlg4GXqIUq6G8KVbY0YyTZlltS5N4rP5s+jMEbCRSz6H+GikKFPEyRJA+V2iuVaZcHJs5KdP+l4D4Ob4meq4=
+X-Received: by 2002:a05:6214:27c5:b0:6b5:7f22:d7c7 with SMTP id
+ 6a1803df08f44-6b57f22da77mr92908946d6.65.1719559993953; Fri, 28 Jun 2024
+ 00:33:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/10] dt-bindings: vendor-prefixes: add spacemit
-To: Yixun Lan <dlan@gentoo.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Samuel Holland <samuel.holland@sifive.com>, Anup Patel
- <anup@brainfault.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Palmer Dabbelt <palmer@sifive.com>, linux-riscv@lists.infradead.org,
- linux-serial@vger.kernel.org, Inochi Amaoto <inochiama@outlook.com>,
- Meng Zhang <zhangmeng.kevin@spacemit.com>, Yangyu Chen <cyy@cyyself.name>
-References: <20240627-k1-01-basic-dt-v2-0-cc06c7555f07@gentoo.org>
- <20240627-k1-01-basic-dt-v2-1-cc06c7555f07@gentoo.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240627-k1-01-basic-dt-v2-1-cc06c7555f07@gentoo.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240521-board-ids-v3-0-e6c71d05f4d2@quicinc.com>
+ <CAFLszTjexpNEjo1sGVs67L0CAgGZLNkyn9RGfHRD7iHak_mtmg@mail.gmail.com>
+ <20240605100246481-0700.eberman@hu-eberman-lv.qualcomm.com>
+ <CAFLszThbe_aUAq_5rCCiPV-bj60oq9UCc=vdDHwM3i6t44ohLw@mail.gmail.com> <20240621142054973-0700.eberman@hu-eberman-lv.qualcomm.com>
+In-Reply-To: <20240621142054973-0700.eberman@hu-eberman-lv.qualcomm.com>
+From: Simon Glass <sjg@chromium.org>
+Date: Fri, 28 Jun 2024 08:33:03 +0100
+Message-ID: <CAFLszThO1doxsXSYTrTTPy9QCW4hrBb07k0VdSNWip=4MKtTnA@mail.gmail.com>
+Subject: Re: [PATCH RFC v3 0/9] dt-bindings: hwinfo: Introduce board-id
+To: Elliot Berman <quic_eberman@quicinc.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Amrit Anand <quic_amrianan@quicinc.com>, Peter Griffin <peter.griffin@linaro.org>, 
+	Caleb Connolly <caleb.connolly@linaro.org>, Andy Gross <agross@kernel.org>, 
+	Doug Anderson <dianders@chromium.org>, Chen-Yu Tsai <wenst@chromium.org>, 
+	Julius Werner <jwerner@chromium.org>, "Humphreys, Jonathan" <j-humphreys@ti.com>, 
+	Sumit Garg <sumit.garg@linaro.org>, Michal Simek <michal.simek@amd.com>, 
+	boot-architecture@lists.linaro.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 27/06/2024 17:31, Yixun Lan wrote:
-> From: Yangyu Chen <cyy@cyyself.name>
-> 
-> Add new vendor strings to dt bindings for SpacemiT K1 SoC.
-> 
-> Link: https://www.spacemit.com/en/spacemit-key-stone-2/
-> 
-> Signed-off-by: Yangyu Chen <cyy@cyyself.name>
-> Signed-off-by: Yixun Lan <dlan@gentoo.org>
+Hi Elliot,
 
-So you just ignored all feedback and tags?
+On Fri, 21 Jun 2024 at 23:40, Elliot Berman <quic_eberman@quicinc.com> wrote:
+>
+> Hi Simon,
+>
+> On Thu, Jun 06, 2024 at 10:00:54AM -0600, Simon Glass wrote:
+> > On Wed, 5 Jun 2024 at 11:17, Elliot Berman <quic_eberman@quicinc.com> wrote:
+> > > On Wed, Jun 05, 2024 at 07:17:35AM -0600, Simon Glass wrote:
+> > > > Hi Elliot,
+> > > >
+> > > > I am just picking up the discussion here, which was started on another thread.
+> > > >
+> > > > I can't see why this new feature is needed. We should be able to use
+> > > > compatible strings, as we do now. I added a 'usage' section to the FIT
+> > > > spec [1] which might help. I also incorporated the board revision and
+> > > > variant information and some notes on how to add to the available
+> > > > suffixes.
+> > > >
+> > > > Does that handle your use case?
+> > >
+> > > -rev and -sku don't fit the versioning scheme for QTI devices, so this
+> > > isn't a generic enough approach. Patch 5 in this series describes the
+> > > versioning scheme for us.
+> > >
+> > > In the other thread, we had talked about using some regex based approach
+> > > for matching the root node compatible. I haven't had chance to work on
+> > > that proposal and will try to get to it in the next couple weeks.
+> >
+> > OK, I look forward to it. Please do check the FIT best match approach
+> > and see how it might be extended to handle your requirements. So far I
+> > have not seen a need for regexes, but it is certainly a possibility.
+> >
+>
+> I spent some time collecting feedback from the team on using compatible
+> strings + regex-style approach and we're not able to add a regex library
+> into firmware, so this approach unfortunately won't work for us.
+> Because we have more axes of board identification than chromebook, using
+> FIT's compatible strings isn't a scalable solution for us. I don't think
+> we have incompatible problems, we only have more than 2-3 axes of
+> information.
 
-<form letter>
-This is a friendly reminder during the review process.
+I understand that. I assume that you have a lot of devices that use
+the same SoC but different PMICs, displays, etc. Some of these can be
+handled in the bootloader, e.g. by detecting hardware and applying an
+overlay, or enabling/disabling a node in the DT. It can be useful to
+have a hardware-readable ID to indicate things which cannot be probed,
+e.g. with GPIOs or ADC + resistors.
 
-It looks like you received a tag and forgot to add it.
+Another option is to give names to your projects, so that machines
+with the same SoC but major hardware differences end up with a
+different name (see rk3399-xx.dts for examples).
 
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions, under or above your Signed-off-by tag. Tag is "received", when
-provided in a message replied to you on the mailing list. Tools like b4
-can help here. However, there's no need to repost patches *only* to add
-the tags. The upstream maintainer will do that for tags received on the
-version they apply.
+I'm sure you are already doing some/all of these things. I still feel
+(so far) that you don't need to invent something new here.
 
-https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+Re "FIT's compatible strings isn't a scalable solution for us", how is
+what you are doing different from other vendors? Is it the sheer
+number of variations, or something else?
 
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
-
-Best regards,
-Krzysztof
-
+Regards,
+Simon
 
