@@ -1,282 +1,119 @@
-Return-Path: <linux-kernel+bounces-234359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52EE491C5A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:25:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED93A91C5A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:26:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8F971F23EA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:25:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AAC71C230F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30DE51CE09D;
-	Fri, 28 Jun 2024 18:25:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 376131CD5AE;
+	Fri, 28 Jun 2024 18:25:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jMSbMrg9"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j1WY5Ykx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0AD11CE092
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 18:25:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763841CCCD7;
+	Fri, 28 Jun 2024 18:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719599122; cv=none; b=kidF1LvCw+nus4zKKVzNTbHK/008wxWmZ7AtrK4u/0VTv4LzXeUhPPOnwMEUsU8DaDY1YiK5Bhx3TUTdzm8TcdzAPQJ6YAYJeSZR2gATyDx75sW1gdZW1lLELksnrP7XS/WQH3vbhljjuNdJW4feY+g6dHlUBoZe3snovS3BPsk=
+	t=1719599145; cv=none; b=jtN7jMEi9HFWf2gv7QcAGw0NA31tgki55FCXmHz3YSfk8klYOR9IEdEr6akKQWqctBRX76pSxItNRn02H8i6tGFIwt7ozM3PXNATl6VLfLHN0y1aCNW/CGZNze3fnGin/iXhv3VJ/NeXi8yj8+JuCzilrSR5n2S+mmTq32j1tJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719599122; c=relaxed/simple;
-	bh=vuQi+2JeDlGLQM0NgGprIEwEDkk9NbJ1EoRRt5hN9fw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=awuE256t53Yuw/7bWQ2Aac7t89KpFBzh7oIyxDh2iEKsuCGHyK5IUztHv9v0sFuyW0xUMNScFM4S7APttUzcUvplgy2LY47uoSactVQEGc53sh5GlC1F6V8JHnW/nhoHX6h5cilGmR/1v0cM9i5qgMIjORjnrmU9wMmDfJRCktw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jMSbMrg9; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1fa07e4f44eso5834215ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 11:25:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719599119; x=1720203919; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wfBm8V9NV7G6pqPtIBKn244UHr+yYxygJZ9Qu/8ilKA=;
-        b=jMSbMrg93vlrk0Vs8YKhiliG3XWD3ma+e+VXFwCkpztl+MkIkbXXfmMyFQDYOH8WLA
-         NJhrVRiqJcSKEVDzldPCFfz2wLrtNSe8f9WE4IGT01CyN35I0FvCWl7P804iA2M4BpT6
-         9gq9N1o1hPZmLZNXn50GdDjg+LuTapeS4MahEXPB9dIjq29Xpp1DvjpSA90IpcJmDxrT
-         TJ8ZD4/Jj7X2pNmrUP2k3i13/xUNeoIsHB58B9iTYZfN8rOt3GPd5hJkz2Nh0u9KU45r
-         7cfpCCZwMbBzc27b7OxQBpjWzj6srcw5aX2pUB2f7/ij4vyi5GTEVJxrWI6TQ/JNtMDb
-         FacQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719599119; x=1720203919;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wfBm8V9NV7G6pqPtIBKn244UHr+yYxygJZ9Qu/8ilKA=;
-        b=VH9N93TQ6blD1F0hS4mJ9oqxojboPKtw67UNWROJxykEF4Qdh4EsymnT+4vYn+NLD2
-         hf9OMsF2xIz9uJUo85byVuB5M1TOYw0pmCngSFX8dBGrWmM5oZqT/tMn4U3dhvtUgwfM
-         Tpb0WjVEbLEK112dNlsFJOqIfjVVXauG/pdBFJcpLrRm/QHfUNjfHzfAQZni7EmDhl7k
-         v3HBk2JJYjwKtoucZ5XmuB7o0zjjBi3glHZ5t4PJbR+AM1RbfgmhonB9ciGsewKsIJNM
-         EWIunQmgUJQWP/nUEWJoRup3aV9vxfAgiCRgoTIc1Wx/hb/th+UQHs7JMMtygQPW/i6A
-         Wvrg==
-X-Forwarded-Encrypted: i=1; AJvYcCWGgxbVa1mNVnx2L3Emk5+7d+UhMByx7tJNBhzrGcE6VN4S/m0Xdctq7PItNJiqdjzJfz0Zr8DzeKuDRjaASNP6kG/hm8VVu3N5VvU8
-X-Gm-Message-State: AOJu0Yy2FZGTMCEWR7kFNjDtdtCrrccF77AcItw9fL2iwPHIWRHbgemf
-	fL7Xk3wVYSZdaSp+CrO9fpeIIP+clHTvm/CYcWNaLBKBdgAGQ4EE
-X-Google-Smtp-Source: AGHT+IF2h8mtrMLcscWEwhh6vN6i5Afk/cteeBt9wnk4CW19G9u0jb4V25LgKABMzllKERcphwATgw==
-X-Received: by 2002:a17:902:c401:b0:1f9:9a24:dc29 with SMTP id d9443c01a7336-1fa23be2439mr193767495ad.24.1719599119217;
-        Fri, 28 Jun 2024 11:25:19 -0700 (PDT)
-Received: from distilledx.localdomain ([122.172.84.231])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac10e21aesm18557465ad.64.2024.06.28.11.25.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 11:25:18 -0700 (PDT)
-From: Tejas Vipin <tejasvipin76@gmail.com>
-To: neil.armstrong@linaro.org,
-	quic_jesszhan@quicinc.com
-Cc: dianders@chromium.org,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Tejas Vipin <tejasvipin76@gmail.com>
-Subject: [PATCH 2/2] drm/panel: startek-kd070fhfid015: transition to mipi_dsi wrapped functions
-Date: Fri, 28 Jun 2024 23:54:28 +0530
-Message-ID: <20240628182428.171031-3-tejasvipin76@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240628182428.171031-1-tejasvipin76@gmail.com>
-References: <20240628182428.171031-1-tejasvipin76@gmail.com>
+	s=arc-20240116; t=1719599145; c=relaxed/simple;
+	bh=fw7LUEm0VJhFKEe6LsJ1RGteKkItUj3kp0zZxdlvHws=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R9bGXazBpTKy8PfP4nQEF7BSCAW0N9KSTVBkIwhPsGEyREXd6yUBwOP3uy0LxQ27uG7GohkIsGjMw2Qn53ekqOQeRKCNXOIVGMgeUej8gAXA29XME1DhzB8Kr757qBSoEj4kBWn/mSIjlZlL/C9hshhWRyaVfkgvhpTFtd+jyV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j1WY5Ykx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CF43C116B1;
+	Fri, 28 Jun 2024 18:25:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719599145;
+	bh=fw7LUEm0VJhFKEe6LsJ1RGteKkItUj3kp0zZxdlvHws=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=j1WY5Ykx4PkJyvKwLeBLi+IuVCeO24HXBeWIG2Ii3uKYd6PbiUhasTGJTU/5noUd1
+	 RlKI8POHXo/rUwo9pLAj2mEQSJXbPbH2XeZz2iQR0fdTTk3Wnm88CXPuh1Prpn+4EC
+	 ZjIerqowc0yMwcR4pmFlajIjLWZAoce0IDMqT4zoQ1dSy+rwpV6rL7txfym5f3cZzs
+	 nBqCH9JJNVeX5Ef0s3yBTH6mCvoEGHDWUDuy38SE4eyCVFEnn2jh7yIx0+VA3GQeoa
+	 I48FwdadTMHv+6nuK1n9lj3b2n8bgvUnvU6RuTHYwNVd+cX+k9xVRniq1tq9Hql+UV
+	 Rm95PyQf5kpPw==
+Date: Fri, 28 Jun 2024 20:25:40 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Hannes Reinecke <hare@suse.de>
+Cc: Igor Pylypiv <ipylypiv@google.com>, Damien Le Moal <dlemoal@kernel.org>,
+	Tejun Heo <tj@kernel.org>, linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Akshat Jain <akshatzen@google.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v3 1/6] ata: libata-scsi: Fix offsets for the fixed
+ format sense data
+Message-ID: <Zn8AJHdybqdQwsZs@ryzen.lan>
+References: <20240626230411.3471543-1-ipylypiv@google.com>
+ <20240626230411.3471543-2-ipylypiv@google.com>
+ <Zn1WUhmLglM4iais@ryzen.lan>
+ <0fbf1756-5b97-44fc-9802-d481190d2bd8@suse.de>
+ <Zn7bghgsMR062xbb@ryzen.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zn7bghgsMR062xbb@ryzen.lan>
 
-Use multi style wrapped functions for mipi_dsi in the
-startek-kd070fhfid015 panel.
+On Fri, Jun 28, 2024 at 05:49:22PM +0200, Niklas Cassel wrote:
+> On Fri, Jun 28, 2024 at 08:47:03AM +0200, Hannes Reinecke wrote:
+> > On 6/27/24 14:08, Niklas Cassel wrote:
+> 
+> In SAT-6 there is no mention of compliance with ANSI INCITS 431-2007 should
+> ignore D_SENSE bit and unconditionally return sense data in descriptor format.
+> 
+> Anyway, considering that:
+> 1) I'm not sure how a SAT would expose that it is compliant with ANSI INCITS
+>    431-2007.
+> 2) This text has been removed from SAT-6.
+> 3) We currently honour the D_SENSE bit when creating the sense buffer with the
+>    SK/ASC/ASCQ that we get from the device.
+> 
+> I think that it makes sense to honour the D_SENSE bit also when generating
+> sense data for successful ATA PASS-THROUGH commands (from ATA registers).
 
-Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
----
- .../drm/panel/panel-startek-kd070fhfid015.c   | 107 ++++++------------
- 1 file changed, 35 insertions(+), 72 deletions(-)
+Igor, I think you should add a new patch in your series that does:
 
-diff --git a/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c b/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c
-index 0156689f41cd..d58c81c43724 100644
---- a/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c
-+++ b/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c
-@@ -52,92 +52,63 @@ static inline struct stk_panel *to_stk_panel(struct drm_panel *panel)
- static int stk_panel_init(struct stk_panel *stk)
- {
- 	struct mipi_dsi_device *dsi = stk->dsi;
--	struct device *dev = &stk->dsi->dev;
--	int ret;
-+	struct mipi_dsi_multi_context dsi_ctx = {.dsi = dsi};
- 
--	ret = mipi_dsi_dcs_soft_reset(dsi);
--	if (ret < 0) {
--		dev_err(dev, "failed to mipi_dsi_dcs_soft_reset: %d\n", ret);
--		return ret;
--	}
--	mdelay(5);
-+	mipi_dsi_dcs_soft_reset_multi(&dsi_ctx);
- 
--	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
--	if (ret < 0) {
--		dev_err(dev, "failed to set exit sleep mode: %d\n", ret);
--		return ret;
--	}
--	msleep(120);
-+	if (!dsi_ctx.accum_err)
-+		mdelay(5);
-+
-+	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
- 
--	mipi_dsi_generic_write_seq(dsi, DSI_REG_MCAP, 0x04);
-+	mipi_dsi_msleep(&dsi_ctx, 120);
-+
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_MCAP, 0x04);
- 
- 	/* Interface setting, video mode */
--	mipi_dsi_generic_write_seq(dsi, DSI_REG_IS, 0x14, 0x08, 0x00, 0x22, 0x00);
--	mipi_dsi_generic_write_seq(dsi, DSI_REG_IIS, 0x0C, 0x00);
--	mipi_dsi_generic_write_seq(dsi, DSI_REG_CTRL, 0x3A, 0xD3);
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_IS, 0x14, 0x08, 0x00, 0x22, 0x00);
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_IIS, 0x0C, 0x00);
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_CTRL, 0x3A, 0xD3);
- 
--	ret = mipi_dsi_dcs_set_display_brightness(dsi, 0x77);
--	if (ret < 0) {
--		dev_err(dev, "failed to write display brightness: %d\n", ret);
--		return ret;
--	}
-+	mipi_dsi_dcs_set_display_brightness_multi(&dsi_ctx, 0x77);
- 
--	mipi_dsi_dcs_write_seq(dsi, MIPI_DCS_WRITE_CONTROL_DISPLAY,
--			       MIPI_DCS_WRITE_MEMORY_START);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MIPI_DCS_WRITE_CONTROL_DISPLAY,
-+				     MIPI_DCS_WRITE_MEMORY_START);
- 
--	ret = mipi_dsi_dcs_set_pixel_format(dsi, 0x77);
--	if (ret < 0) {
--		dev_err(dev, "failed to set pixel format: %d\n", ret);
--		return ret;
--	}
-+	mipi_dsi_dcs_set_pixel_format_multi(&dsi_ctx, 0x77);
- 
--	ret = mipi_dsi_dcs_set_column_address(dsi, 0, stk->mode->hdisplay - 1);
--	if (ret < 0) {
--		dev_err(dev, "failed to set column address: %d\n", ret);
--		return ret;
--	}
-+	mipi_dsi_dcs_set_column_address_multi(&dsi_ctx, 0, stk->mode->hdisplay - 1);
- 
--	ret = mipi_dsi_dcs_set_page_address(dsi, 0, stk->mode->vdisplay - 1);
--	if (ret < 0) {
--		dev_err(dev, "failed to set page address: %d\n", ret);
--		return ret;
--	}
-+	mipi_dsi_dcs_set_page_address_multi(&dsi_ctx, 0, stk->mode->vdisplay - 1);
- 
--	return 0;
-+	return dsi_ctx.accum_err;
+diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+index d5874d4b9253..5b211551ac10 100644
+--- a/drivers/ata/libata-scsi.c
++++ b/drivers/ata/libata-scsi.c
+@@ -949,11 +949,8 @@ static void ata_gen_passthru_sense(struct ata_queued_cmd *qc)
+                                   &sense_key, &asc, &ascq);
+                ata_scsi_set_sense(qc->dev, cmd, sense_key, asc, ascq);
+        } else {
+-               /*
+-                * ATA PASS-THROUGH INFORMATION AVAILABLE
+-                * Always in descriptor format sense.
+-                */
+-               scsi_build_sense(cmd, 1, RECOVERED_ERROR, 0, 0x1D);
++               /* ATA PASS-THROUGH INFORMATION AVAILABLE */
++               ata_scsi_set_sense(qc->dev, cmd, RECOVERED_ERROR, 0, 0x1D);
+        }
  }
- 
- static int stk_panel_on(struct stk_panel *stk)
- {
- 	struct mipi_dsi_device *dsi = stk->dsi;
--	struct device *dev = &stk->dsi->dev;
--	int ret;
-+	struct mipi_dsi_multi_context dsi_ctx = {.dsi = dsi};
- 
--	ret = mipi_dsi_dcs_set_display_on(dsi);
--	if (ret < 0)
--		dev_err(dev, "failed to set display on: %d\n", ret);
-+	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
- 
--	mdelay(20);
-+	if (!dsi_ctx.accum_err)
-+		mdelay(20);
- 
--	return ret;
-+	return dsi_ctx.accum_err;
- }
- 
- static void stk_panel_off(struct stk_panel *stk)
- {
- 	struct mipi_dsi_device *dsi = stk->dsi;
--	struct device *dev = &stk->dsi->dev;
--	int ret;
-+	struct mipi_dsi_multi_context dsi_ctx = {.dsi = dsi};
- 
- 	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
- 
--	ret = mipi_dsi_dcs_set_display_off(dsi);
--	if (ret < 0)
--		dev_err(dev, "failed to set display off: %d\n", ret);
-+	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
- 
--	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
--	if (ret < 0)
--		dev_err(dev, "failed to enter sleep mode: %d\n", ret);
-+	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
- 
--	msleep(100);
-+	mipi_dsi_msleep(&dsi_ctx, 100);
- }
- 
- static int stk_panel_unprepare(struct drm_panel *panel)
-@@ -155,7 +126,6 @@ static int stk_panel_unprepare(struct drm_panel *panel)
- static int stk_panel_prepare(struct drm_panel *panel)
- {
- 	struct stk_panel *stk = to_stk_panel(panel);
--	struct device *dev = &stk->dsi->dev;
- 	int ret;
- 
- 	gpiod_set_value(stk->reset_gpio, 0);
-@@ -175,16 +145,12 @@ static int stk_panel_prepare(struct drm_panel *panel)
- 	gpiod_set_value(stk->reset_gpio, 1);
- 	mdelay(10);
- 	ret = stk_panel_init(stk);
--	if (ret < 0) {
--		dev_err(dev, "failed to init panel: %d\n", ret);
-+	if (ret < 0)
- 		goto poweroff;
--	}
- 
- 	ret = stk_panel_on(stk);
--	if (ret < 0) {
--		dev_err(dev, "failed to set panel on: %d\n", ret);
-+	if (ret < 0)
- 		goto poweroff;
--	}
- 
- 	return 0;
- 
-@@ -250,18 +216,15 @@ static int dsi_dcs_bl_get_brightness(struct backlight_device *bl)
- static int dsi_dcs_bl_update_status(struct backlight_device *bl)
- {
- 	struct mipi_dsi_device *dsi = bl_get_data(bl);
--	struct device *dev = &dsi->dev;
--	int ret;
-+	struct mipi_dsi_multi_context dsi_ctx = {.dsi = dsi};
- 
- 	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
--	ret = mipi_dsi_dcs_set_display_brightness(dsi, bl->props.brightness);
--	if (ret < 0) {
--		dev_err(dev, "failed to set DSI control: %d\n", ret);
--		return ret;
--	}
-+	mipi_dsi_dcs_set_display_brightness_multi(&dsi_ctx, bl->props.brightness);
-+	if (dsi_ctx.accum_err)
-+		return dsi_ctx.accum_err;
- 
- 	dsi->mode_flags |= MIPI_DSI_MODE_LPM;
--	return 0;
-+	return dsi_ctx.accum_err;
- }
- 
- static const struct backlight_ops dsi_bl_ops = {
--- 
-2.45.2
 
+
+Feel free to copy my arguments above.
+
+I also checked VPD page 89h (ATA Information VPD page), and there are
+no bits there either to claim certain SAT version compliance.
+
+And since this text is not in SAT-6, I can only imagine that they decided
+that is was not a good idea to not always honor D_SENSE...
+
+(It does seem simpler to just always honor it...)
+
+
+Kind regards,
+Niklas
 
