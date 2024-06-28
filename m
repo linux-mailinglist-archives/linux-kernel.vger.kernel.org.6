@@ -1,89 +1,140 @@
-Return-Path: <linux-kernel+bounces-233996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDEA891C08C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:11:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC72491C086
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ADAB2844D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:11:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67A8D1F2186D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:11:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5131C0076;
-	Fri, 28 Jun 2024 14:11:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0091BF311;
+	Fri, 28 Jun 2024 14:11:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Gml5pEvC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HEqMAkNO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/tv6x01s"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF46A1BF301;
-	Fri, 28 Jun 2024 14:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEF8819B5A2
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 14:11:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719583883; cv=none; b=okUVpInfn+dR+wNFTg77unNp56IuGhwEl7VKbCJw3W0vRCyy2V3wXklczDs+BwtMvVm89TNi23Xg35Tb0Un8AKUxc5oKZHXe6hsHFj7Xa6A+6l5ZeJp4i9pPjVapjsalsJnpOFH63RDNlUl73lcrnEO08SulEM6QxREmZkZX5QM=
+	t=1719583877; cv=none; b=NUM/i/JPIHRThmNzBsIp62knj2fgeY6pfHSIciqd3+Iswxyibd4fUhBeNIldgKPVZIAb2F4REgN+gs5CYiPnB5AE2uygbxdJLv1tR8Oji5MBPK41XxIkGbu9sXa3Gh8HVKZFDWXBJfuYoU6TIX5rMHd3xFOPrKLZpuLUIh3LZHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719583883; c=relaxed/simple;
-	bh=kiBm5EREbGVMfrUkvJrKTbweEBAPn9IDvv8OAj+0kdw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aLQLCmguaCbYdxEKA+Q3DsELd3ZKaUP9gq+6xm6qOEFSevYaSk5W9i6neChhoA0CGg7mDL9uRwT5iIDfFjZCkL0E+gnHspSM1rd/5BYmzjCYlUPOseUjzO5tBnwv3X+Qx99/BHJCnNpF7woU6a0TnDS6oqubxaMiy67Emn44Qzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=Gml5pEvC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 828B4C2BBFC;
-	Fri, 28 Jun 2024 14:11:22 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Gml5pEvC"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1719583878;
+	s=arc-20240116; t=1719583877; c=relaxed/simple;
+	bh=z0Z6+L/8dFrrvyR8eVGAuh87cInBmCHWpD/EUJPQNFA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HUaNup6Wy0R2xRlELzP+GJMvnfcBgnORV4x6z08DBUJJztwEx9msyAUFAKrdFMCENIkbSIG6Prb1ABpkULpuovRDGXUMw4dGCRlqedwbng0sGvg5G4cI3H42F11T5F/dSYZMSEdaVXXNw1WefjcCrvrIXlisnePpQRG2N0VfMgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HEqMAkNO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/tv6x01s; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1719583874;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=kiBm5EREbGVMfrUkvJrKTbweEBAPn9IDvv8OAj+0kdw=;
-	b=Gml5pEvC5ni9IAzAR1oW+Oj+x3zyt15OFmcQ1zGpIqCIlQV2uQF5zWcLXP5llpcdjhzVUv
-	LQjbVGfjr/OBSHtFnyfFS8XBDM3NUtbNxH9XudJV/+vl1D1IFFLPttSshM0Du83epmHrBF
-	LXRCEHds8p5+NbwoB9rsorvLcSkhXyA=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id b05e2421 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Fri, 28 Jun 2024 14:11:18 +0000 (UTC)
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-25ca169f861so254188fac.1;
-        Fri, 28 Jun 2024 07:11:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVBp6rysrrQZInySymq3xa0SdrevEYndq0lKYKFHIlNZUfAQnozvuAmDafq//gKNFXbrS87dcOgzPlraaGrghs5GUZd9oAJ7LF+h0Oaz2LAsJHEKhBOYeGZrVbUTmxoIb/t2jafpHAGXVlMzopiBb2p7/DLdhD2+Or4iyBA2jOM9SrHRY0R
-X-Gm-Message-State: AOJu0Yy2E0JIyiBP2COEVEKJlUY77ewiU+tTDAphmE3EaFNYyd6jy4ZC
-	h3eoxnIgVe8ltGy2gugmViwhd+bdtaH7OAaOm3XytldGPThmbJLdbWKnD5g+y9Ej0776yld8tbI
-	Ehq534ad8Ku6+/oLKKuDZT22kWZo=
-X-Google-Smtp-Source: AGHT+IH73i4vWkUwP/nwORa1lPm13U0mDbFmM3PEnMtqyVA68Re9x3Dv2/wlZYajXycXMVpAiSG9Efnf12qa3yZKoaM=
-X-Received: by 2002:a05:6870:2cf:b0:254:b337:eeb5 with SMTP id
- 586e51a60fabf-25d970c8faamr711542fac.18.1719583877248; Fri, 28 Jun 2024
- 07:11:17 -0700 (PDT)
+	bh=WfnJBJaJKRfMnoTosqnImnuIvhFpBT55UVzSmIC18b0=;
+	b=HEqMAkNOsIxlX+e8E9AxdPhoSapNz5c7ZfBzaTJ/xAEZwIVd5o8PI1iKavrpmahfpxU4EU
+	kYbpLSf0IBVhYhHoNvzBI/EFz2AwXEURu5RbhHF94b0yAs4noNmBAtJAumgZPANdfjVQCh
+	Hv7gWDwJ4+wTW8wu4bo8MPPgBzMDXwToNuJ5kCa+PDqTsyMybT9lOn8JOE8ZeoevfsOpza
+	G9fG6rO3WRmiyc6quHQCol3j9V7CedvOvk2aSUSoA97aOYjOwRHJpvIkFQzzzmDNTJF98g
+	TvdHP67OwbavmkqPHMEb36b/HbXalhSmwN/CyZUskvVhsHdyXOKDXTeJHDsw8g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1719583874;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WfnJBJaJKRfMnoTosqnImnuIvhFpBT55UVzSmIC18b0=;
+	b=/tv6x01s1EgwEJdiM5wenpXhkXhHl1sxyr4md1mp5i1qa5A3aCkR+q6EvMKFICSvGf+s1j
+	zspQVUWx+sAGZQDg==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH printk v2 12/18] printk: Add kthread for all legacy
+ consoles
+In-Reply-To: <Zn67hDCEHdgtYPv3@pathway.suse.cz>
+References: <20240603232453.33992-1-john.ogness@linutronix.de>
+ <20240603232453.33992-13-john.ogness@linutronix.de>
+ <Zn6iq3n2ggL138Gs@pathway.suse.cz> <87cyo1xnmw.fsf@jogness.linutronix.de>
+ <Zn67hDCEHdgtYPv3@pathway.suse.cz>
+Date: Fri, 28 Jun 2024 16:17:13 +0206
+Message-ID: <877ce9xim6.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620005339.1273434-1-Jason@zx2c4.com> <20240620005339.1273434-3-Jason@zx2c4.com>
- <20240620.020423-puny.wheat.mobile.arm-1wWnJHwWYyAl@cyphar.com>
- <ZnQeCRjgNXEAQjEo@zx2c4.com> <87v81txjb7.ffs@tglx> <Zn7D_YBC2SXTa_jX@zx2c4.com>
-In-Reply-To: <Zn7D_YBC2SXTa_jX@zx2c4.com>
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date: Fri, 28 Jun 2024 16:11:06 +0200
-X-Gmail-Original-Message-ID: <CAHmME9pBvKRUnpU1tgRBELRBoPV6m+56Rw9+K+QFsjmzh1fT-w@mail.gmail.com>
-Message-ID: <CAHmME9pBvKRUnpU1tgRBELRBoPV6m+56Rw9+K+QFsjmzh1fT-w@mail.gmail.com>
-Subject: Re: [PATCH v18 2/5] random: add vgetrandom_alloc() syscall
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Aleksa Sarai <cyphar@cyphar.com>, linux-kernel@vger.kernel.org, 
-	patches@lists.linux.dev, linux-crypto@vger.kernel.org, 
-	linux-api@vger.kernel.org, x86@kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>, "Carlos O'Donell" <carlos@redhat.com>, 
-	Florian Weimer <fweimer@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>, 
-	Christian Brauner <brauner@kernel.org>, David Hildenbrand <dhildenb@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Fri, Jun 28, 2024 at 4:09=E2=80=AFPM Jason A. Donenfeld <Jason@zx2c4.com=
-> wrote:
-> perhaps definitely to deal with,
+On 2024-06-28, Petr Mladek <pmladek@suse.com> wrote:
+> On Fri 2024-06-28 14:28:47, John Ogness wrote:
+>> On 2024-06-28, Petr Mladek <pmladek@suse.com> wrote:
+>> >> @@ -1494,7 +1508,9 @@ void nbcon_cpu_emergency_exit(void)
+>> >>  		 * to handle it.
+>> >>  		 */
+>> >>  		do_trigger_flush = true;
+>> >> -		if (printing_via_unlock && !is_printk_deferred()) {
+>> >> +		if (!force_printkthreads() &&
+>> >
+>> > Is this correct? We still need to flush the messages directly
+>> > when the legacy kthread is not ready yet.
+>> 
+>> No! If force_printkthreads() is set, messages will never flush directly
+>> except for console_flush_on_panic().
+>
+> But this is an _emergency_ context! This would be inconsistent with
+> the nbcon consoles where the messages are flushed directly.
+>
+> Is RT sheduling quaranteed when the system reached emergency state?
 
-What?! I meant "definitely easier to deal with".
+No.
+
+> In fact, we probably should not check force_printkthreads() here at
+> all. It would be only for NBCON_PRIO_NORMAL context.
+
+On PREEMPT_RT, legacy consoles are not allowed to print from
+non-preemptible contexts because they use spinlocks (rtmutexes).
+
+This is a disadvantage for legacy consoles on PREEMPT_RT. If people want
+a legacy console to gain the reliability attribute on PREEMPT_RT, then
+that console _must_ be converted to nbcon.
+
+force_printkthreads() is used to establish the same console printing
+behavior as PREEMPT_RT. (A later patch makes this behavior available to
+all preemption models so that users can enjoy the non-interference
+attribute of the rework.)
+
+>> For the next version, any failed
+>> thread creation leads to unregistering the console. In the case of the
+>> legacy thread, it will mean unregistering all legacy consoles on
+>> failure.
+>
+> It means that the system would become silent. Is this a good idea?
+
+In the threaded model, the thread is a critical component of the
+console. If the thread cannot start, it is the same as if memory could
+not be allocated. The registration must fail. And just as it is now, the
+user will only see that it failed via dmesg (or some other console that
+did not fail).
+
+> IMHO, we have a fundamental problem here.
+> Are RT guarantees more important than printk() or vice versa?
+
+That is not the issue. The problem is that you want legacy consoles in
+RT to print without the printing thread. That is not possible. Those
+drivers are not RT compatible and will cause deadlocks. They _must_ be
+modified i.e. converted to nbcon consoles.
+
+We have worked really hard to allow legacy consoles to work "as is" for
+!PREEMPT_RT. But when PREEMPT_RT is enabled legacy consoles must be
+forced into the thread (except for panic, where we close our eyes and
+hope for the best).
+
+John
 
