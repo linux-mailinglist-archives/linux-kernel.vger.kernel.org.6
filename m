@@ -1,127 +1,96 @@
-Return-Path: <linux-kernel+bounces-234042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAE8A91C146
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:41:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61BAF91C14A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:42:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D82031C23592
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:41:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FB1228920D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF61A1C0076;
-	Fri, 28 Jun 2024 14:41:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 491EC1C0DEF;
+	Fri, 28 Jun 2024 14:41:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SehGggs3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PU+Qtx99"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7521514E1;
-	Fri, 28 Jun 2024 14:41:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811661C0DD3;
+	Fri, 28 Jun 2024 14:41:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719585700; cv=none; b=DCC7NJVDSOHLp/N6sVtvj6LBW27sA4efw0xWLba0JQFVOhAyoP85yY35SD9HAyC9Wf9hWUz+xm3d/tM9h9NPN3Slagb/vBDJHlsiEfafZ5F5T0WbvblVk0PjowBYkjxCKcAKlfU+bene2lt9RvAGOwIlOJ4prqBCOMHKLVxDOAc=
+	t=1719585702; cv=none; b=HEY8wMf/s1DuqXXhodgE9IdAzAYUK2Pao8uvtV6ukKrhrkklAt2qfSgj/31rkzQ5bBYxRfUMRqsaIo2u9DLN2QfDX1F7p2nwqQ96MtDCiQTKwZZpCZGx1Lss2NZRJ2H04EBYEpzFOqnUsakPV/cvOTk41/LfumAiFmgBvGtu4VM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719585700; c=relaxed/simple;
-	bh=Yj6cy91JoTBSw4EEoKl0+lYXCoG15CGxHS5xc7/9UnQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gOwUyvBgwqg0Z++aE+MFhfB0CK7NfTcpMU7ApomppVy/ie7CM6vGpgUllSfW958nw49W4vvvn5EyYg4u9iIYJHRM+1XDuYOgmvRQPYlEcUUjTPdlb1geuBddQysa72xRCFNM692kMGtgVDxJfMQDqc1eG5Ok6c+eomYD6//YZLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SehGggs3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C29DC116B1;
+	s=arc-20240116; t=1719585702; c=relaxed/simple;
+	bh=YMs2picdLkkIkIWd4bCAgdTjEW1+BtE93cngzWn0Qh0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=roPb+DGVWKuv5iglePWgp7QHmrq5wNcJ2N313v7F9PnOBiiXhEfQwvY306o5HlFmKO7pOJT42AHme/iEPu7EJbdd/Spi4VSQpNYvGpN2+5v3kMgrPlyMLKjnrB1fm9QiudDLPmu+1kMlH32kOOh4mW37l1WDxHgLYgfUBxmZO3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PU+Qtx99; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BBF5C2BBFC;
 	Fri, 28 Jun 2024 14:41:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719585699;
-	bh=Yj6cy91JoTBSw4EEoKl0+lYXCoG15CGxHS5xc7/9UnQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SehGggs3AT6JuDKxcRm9xAd4jqMyleLaDWRlGXMy1iGX+uiF+7L+xlYfkyADO9UaD
-	 3VXdxiuWwNogq5mmpSX6AW1La4RoUj4dHJQpllUr9V/RVv7I2HF1aXgKXsYs7bVVMH
-	 z4PnTV5CSq0Tqvl+MzOhFqWVhdCSNCxaSNi7cNR8pfmy5ciTUkWSJU07CV+Qab3Pg6
-	 8iAmA83XQR+HblOd00vwmXPvGHSlvjxjb2czj9awcki8z/d9VJOV1AVu2rdmxsxhu/
-	 V2ot62V/YauUWSAfbQb8D8Rk2cYy8zMv2Q2vHljs7A0+0i1RW2gGTqTQltnK7pIhhu
-	 m/YAiBqX5POIw==
-Date: Fri, 28 Jun 2024 11:41:37 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: adrian.hunter@intel.com, irogers@google.com, jolsa@kernel.org,
-	kan.liang@linux.intel.com, namhyung@kernel.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v3 4/8] perf trace: Filter enum arguments with enum names
-Message-ID: <Zn7LoTU45bhZaihh@x1>
-References: <20240624181345.124764-1-howardchu95@gmail.com>
- <20240624181345.124764-5-howardchu95@gmail.com>
+	s=k20201202; t=1719585702;
+	bh=YMs2picdLkkIkIWd4bCAgdTjEW1+BtE93cngzWn0Qh0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=PU+Qtx99bWVB2hiWppYPmZmeTiDjV3BsJ5BV/wbWaKvqSrXP4K/BsfVJ8yDpbhjHC
+	 geo3FKH/+g+cS0xL+mXrnG+KuZYDo7RBjQxpqrWvc+duYgOaTTh+WzsLJ0gzk+PGEI
+	 0bmDhB4i8Hba4UyLgwF3qZmGUe501OimB1G9LhiRBkPCiJqgqxgFP0k52+S/4YE7uI
+	 2jlK5Ixu1zWbstNZt1fcqbRnjDRWnXcVQiZhhxIW/+/CeB0vUxhYSLqH3sAN9EcAwV
+	 Ih9RF11YV8VYj9LW2ZjbGnNudIddxXsZPn2TRkVM4AH0dunKao0O/cV/SHEtM8GsMZ
+	 Eo1XoSie7Kk1g==
+From: Lee Jones <lee@kernel.org>
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-input@vger.kernel.org, Karel Balej <balejk@matfyz.cz>
+Cc: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>, 
+ ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org
+In-Reply-To: <20240531175109.15599-1-balejk@matfyz.cz>
+References: <20240531175109.15599-1-balejk@matfyz.cz>
+Subject: Re: [PATCH v7 0/5] initial support for Marvell 88PM886 PMIC
+Message-Id: <171958569931.3316488.12728822093231549974.b4-ty@kernel.org>
+Date: Fri, 28 Jun 2024 15:41:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240624181345.124764-5-howardchu95@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-On Tue, Jun 25, 2024 at 02:13:41AM +0800, Howard Chu wrote:
-> Before:
+On Fri, 31 May 2024 19:34:55 +0200, Karel Balej wrote:
+> the following implements basic support for Marvell's 88PM886 PMIC which
+> is found for instance as a component of the samsung,coreprimevelte
+> smartphone which inspired this and also serves as a testing platform.
 > 
-> perf $ ./perf trace -e timer:hrtimer_start --filter='mode!=HRTIMER_MODE_ABS_PINNED_HARD' --max-events=1
-> No resolver (strtoul) for "mode" in "timer:hrtimer_start", can't set filter "(mode!=HRTIMER_MODE_ABS_PINNED_HARD) && (common_pid != 281988)"
+> The code for the MFD is based primarily on this old series [1] with the
+> addition of poweroff based on the smartphone's downstream kernel tree
+> [2]. The onkey and regulators drivers are based on the latter. I am not
+> in possesion of the datasheet.
 > 
-> After:
-> 
-> perf $ ./perf trace -e timer:hrtimer_start --filter='mode!=HRTIMER_MODE_ABS_PINNED_HARD' --max-events=1
->      0.000 :0/0 timer:hrtimer_start(hrtimer: 0xffff9498a6ca5f18, function: 0xffffffffa77a5be0, expires: 12351248764875, softexpires: 12351248764875, mode: HRTIMER_MODE_ABS)
-> 
-> && and ||:
-> 
-> perf $ ./perf trace -e timer:hrtimer_start --filter='mode != HRTIMER_MODE_ABS_PINNED_HARD && mode != HRTIMER_MODE_ABS' --max-events=1
->      0.000 Hyprland/534 timer:hrtimer_start(hrtimer: 0xffff9497801a84d0, function: 0xffffffffc04cdbe0, expires: 12639434638458, softexpires: 12639433638458, mode: HRTIMER_MODE_REL)
-> 
-> perf $ ./perf trace -e timer:hrtimer_start --filter='mode == HRTIMER_MODE_REL || mode == HRTIMER_MODE_PINNED' --max-events=1
->      0.000 ldlck-test/60639 timer:hrtimer_start(hrtimer: 0xffffb16404ee7bf8, function: 0xffffffffa7790420, expires: 12772614418016, softexpires: 12772614368016, mode: HRTIMER_MODE_REL)
-> 
-> Switching it up, using both enum name and integer value(--filter='mode == HRTIMER_MODE_ABS_PINNED_HARD || mode == 0'):
-> 
-> perf $ ./perf trace -e timer:hrtimer_start --filter='mode == HRTIMER_MODE_ABS_PINNED_HARD || mode == 0' --max-events=3
->      0.000 :0/0 timer:hrtimer_start(hrtimer: 0xffff9498a6ca5f18, function: 0xffffffffa77a5be0, expires: 12601748739825, softexpires: 12601748739825, mode: HRTIMER_MODE_ABS_PINNED_HARD)
->      0.036 :0/0 timer:hrtimer_start(hrtimer: 0xffff9498a6ca5f18, function: 0xffffffffa77a5be0, expires: 12518758748124, softexpires: 12518758748124, mode: HRTIMER_MODE_ABS_PINNED_HARD)
->      0.172 tmux: server/41881 timer:hrtimer_start(hrtimer: 0xffffb164081e7838, function: 0xffffffffa7790420, expires: 12518768255836, softexpires: 12518768205836, mode: HRTIMER_MODE_ABS)
-> 
-> P.S.
-> perf $ pahole hrtimer_mode
-> enum hrtimer_mode {
->         HRTIMER_MODE_ABS             = 0,
->         HRTIMER_MODE_REL             = 1,
->         HRTIMER_MODE_PINNED          = 2,
->         HRTIMER_MODE_SOFT            = 4,
->         HRTIMER_MODE_HARD            = 8,
->         HRTIMER_MODE_ABS_PINNED      = 2,
->         HRTIMER_MODE_REL_PINNED      = 3,
->         HRTIMER_MODE_ABS_SOFT        = 4,
->         HRTIMER_MODE_REL_SOFT        = 5,
->         HRTIMER_MODE_ABS_PINNED_SOFT = 6,
->         HRTIMER_MODE_REL_PINNED_SOFT = 7,
->         HRTIMER_MODE_ABS_HARD        = 8,
->         HRTIMER_MODE_REL_HARD        = 9,
->         HRTIMER_MODE_ABS_PINNED_HARD = 10,
->         HRTIMER_MODE_REL_PINNED_HARD = 11,
-> };
-> 
-> Committer testing:
+> [...]
 
-Further testing:
+Applied, thanks!
 
-root@number:~# perf trace -e timer:hrtimer_start --filter='mode != HRTIMER_MODE_ABS_PINNED_WRONG'
-"HRTIMER_MODE_ABS_PINNED_WRONG" not found for "mode" in "timer:hrtimer_start", can't set filter "(mode != HRTIMER_MODE_ABS_PINNED_WRONG) && (common_pid != 103306 && common_pid != 3476)"
-root@number:~# 
+[1/5] dt-bindings: mfd: add entry for Marvell 88PM886 PMIC
+      commit: c4725350a9f76fbec45cbbfffb20be2e574eb6ef
+[2/5] mfd: add driver for Marvell 88PM886 PMIC
+      commit: 860f8e3beac0b800bbe20f23c5f3440b1c470b8f
+[3/5] regulator: add regulators driver for Marvell 88PM886 PMIC
+      commit: 5d1a5144396e9570efea02d467df0a68fd28db6f
+[4/5] input: add onkey driver for Marvell 88PM886 PMIC
+      commit: 914089db309ccc590314b6c21df5a1f812e9ab0b
+[5/5] MAINTAINERS: add myself for Marvell 88PM886 PMIC
+      commit: f53d3efa366b1754f0389944401bb53397d22468
 
-Maybe we can list the possibilities, i.e. print all of 'enum
-hrtimer_mode'
+--
+Lee Jones [李琼斯]
 
-This can be on a followup patch, just recording the idea here.
-
-- Arnaldo
 
