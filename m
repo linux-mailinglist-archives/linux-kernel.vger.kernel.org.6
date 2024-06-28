@@ -1,75 +1,62 @@
-Return-Path: <linux-kernel+bounces-234689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BD4B91C977
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 01:09:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17F0F91C978
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 01:11:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0912E28632E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 23:09:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B8831C2224F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 23:11:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB90823D1;
-	Fri, 28 Jun 2024 23:09:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3A78249B;
+	Fri, 28 Jun 2024 23:11:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eigCCS1z"
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TbueYSR8"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A5C78C8B;
-	Fri, 28 Jun 2024 23:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B32278C8B;
+	Fri, 28 Jun 2024 23:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719616155; cv=none; b=XcVuS23iyJ57Q3YLG9Cxgu/sNHF4FnUcCU46WXR1i2tDSKtd5MNgXDEMXvHQlYhTUZlcBkG0FTFtzAZeX6B7JPAn5iI2yd+PDVmhfvDPeI0tQy7fDPJ033VVAAEUr2G5EsP+jACQQNCQtBtSgHLA+MEQ7OyN6IV4wAV7GtvEr/k=
+	t=1719616261; cv=none; b=kQoSSn8HB3/xZl57d6dnDXj8/Yz+Ay7TGJuGhlKqHuzfTPYLS0+9RobVmursBoJHUXH/Hl3APn1HiAn1IoW7eEFCDeujIzdR5T+x6lgM/Z+15y0Kth9QIW0joIbExdQX8bB+v22B0euryr1zVHCqou58D33LlhEUCeJVrM7RLwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719616155; c=relaxed/simple;
-	bh=z7JoLm3IXpavqAJHJCUvHP2e2QGFZ2aV/bO4oxR/MLM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HZr/BJF0mGI7anOPdOTbCxFaQ4+AlBvmUrujZGkrj3ywidnJ5JTLtutBPzAxVi249Yw3LEke02eFUupnzlunBNBG2BfR66oU1KHIe8+VHvmxAyiKTJqt9ShRQXeslrpOhC3T++1/EK3Fs1DASlsd3jStS9QY2NpnZ0bclvewKRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eigCCS1z; arc=none smtp.client-ip=209.85.210.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-701fa273824so648699a34.2;
-        Fri, 28 Jun 2024 16:09:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719616152; x=1720220952; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=AB5VXkhFLy7bVZlsjKePD5M7nT8UqPknmWbvDbQuVy8=;
-        b=eigCCS1zZScFSFF8SKogJJiRIBCHpMsEXgxFqYqVYsFjxaulSZFOEWM2Am3ZhJVhTD
-         +uZj31yyAykRkz1A+jIZ7LC+/T2UvPfOngzA/5mt/oPzLKtrNMpYhJRy6VWhYI2e3ISO
-         3keiRy0ZPLFiw6NfO2mDQsFF+ulxL6wEJ8Ex5/U8TbAd/g/LOWT+DX4YOhc8XbD2xyrK
-         A+bqHfM0v94t8fRg0OVNk+MfhQukduyhO8KLTjYmcmHJBF8/0/Z45EnCq8wScRWSFJKO
-         dcP92TQROFe8mmkFIkBe31T5AgJAWhz0PM8ANy8SB6b9xB9yEr9jc+Mfa930q5/Jqh7B
-         eu4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719616152; x=1720220952;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AB5VXkhFLy7bVZlsjKePD5M7nT8UqPknmWbvDbQuVy8=;
-        b=AQvGQvzjlO3c9Ej8bjB7dEdBFRgDIEq9JSGW8SRomHdfJAEuMt+mZigQMMx865Jk4B
-         QjDdu4ZUXTr2+8SK3wUwmSHeoJlWivHXr1tA/zH+i2LAzehma5x9NcTqoRu0xTPVbZ/Y
-         r+fLgH4k7y7rVK1xF2NbfmIpKrI7QE5l4D45Z50elTXD9EZcWoIF84Vqm5uLfSLb3gfv
-         KuVvVPIuwCsGVO48vNo9Lbtzfkck+7kbRSE8sJU0LH0cUWFL2ivP/WHXnsjIzy2uHXxn
-         XOWUZXQPRlvPvmWyoYWb4aaMB6YLkTsp7HD+8sEH7wEXiFxxjQmty+8dZax6/lGOQKrD
-         /ohA==
-X-Forwarded-Encrypted: i=1; AJvYcCVRkLiw7ft5QLbnp6BLol/vOBmz1el7Pb9l6SRlWayEtRNcsSi+OsS+7Bb9KJT3kSG0SeLRTNqdG1TmmOOKgdPqPtpD62QTTqDHN7F8
-X-Gm-Message-State: AOJu0Ywn/eD103x2Pysf5wjmhiGTXTlwfZBIxqpys1ktn7MTKcohfdiL
-	1eHD9KW6KrT6dzHXYY4wJV7pbn0lD/IDnuPxkwFGWunyE506F9Bl
-X-Google-Smtp-Source: AGHT+IGkRtyP/TvqQ2OIjsu7j55ykZfful5elMmYNHfS/vzIUWYSM+oiXDywUwMFd1wu9klkLBDcdg==
-X-Received: by 2002:a05:6808:144a:b0:3d6:3217:3775 with SMTP id 5614622812f47-3d632173a27mr3659638b6e.44.1719616152465;
-        Fri, 28 Jun 2024 16:09:12 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70803ecfc61sm2165966b3a.132.2024.06.28.16.09.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Jun 2024 16:09:11 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <2bbdb1bd-ea4d-4c14-9ea7-9fce09ac76b7@roeck-us.net>
-Date: Fri, 28 Jun 2024 16:09:09 -0700
+	s=arc-20240116; t=1719616261; c=relaxed/simple;
+	bh=diwPSGCQ/3is+Q9UM6pr9xoXIVN6+1oJq+sPJlLoIbc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=F4QSc2X+3OTefveg6peEG5Xz7fBTw83NguUTgQ7mooQ6Khd/bqDN/4lxVgvebaRn2McZSYzib9VH/iNHdwbtWassK+volnm05WYakqPHIF0hRn7Bb+0miLUBmOR8XDOiCYqlwhCZol1hdrOgUgzgtW27woc5YshuDw5JZQWUymM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TbueYSR8; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45SL01f8012190;
+	Fri, 28 Jun 2024 23:10:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	K4Vtj89JvpeHdJUXiXZIoDps+CGpgJrfhB1YQvFKDes=; b=TbueYSR8oMf7Qc+J
+	J0e9jUIfzJ6gjbD+/ASULcPfK8I06RIm20GDB1+80USl2F3g1H4Wgab6rY/qdtwj
+	l0mV9F8gRri17CPLBcOcWuqGaRwcofhEqZ7Lm4T2QUDW1iuPCtYHvrYvBN98hxH9
+	ClW1mseUdKRbXpGnRb4QEaE0/DVUIEK05lv6zunXhXdJ6kTUtNJe4UlA+/5yKhzL
+	uErQrhmIqpheiZwCyFi5Hp8uuX1HIdaBnOlDIDUF+P3t3VdrGUpX5XQ3kthRc3Kj
+	MUnKKVD15YaEERPNjk4JHMyNioD7oayCukhSgRh2rizlSahEEclJ5AdkgviaABbS
+	DIo6vQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 400f90rmqb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Jun 2024 23:10:33 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45SNAW5g032120
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Jun 2024 23:10:32 GMT
+Received: from [10.48.245.152] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 28 Jun
+ 2024 16:10:31 -0700
+Message-ID: <75edb9c4-7fb9-4fea-9cd7-4a8565d1438e@quicinc.com>
+Date: Fri, 28 Jun 2024 16:10:30 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,83 +64,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] i2c: piix4: Register SPDs
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- Andi Shyti <andi.shyti@kernel.org>, Jean Delvare <jdelvare@suse.com>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Heiner Kallweit <hkallweit1@gmail.com>
-References: <20240627-piix4-spd-v2-0-617ce47b8ff4@weissschuh.net>
- <20240627-piix4-spd-v2-4-617ce47b8ff4@weissschuh.net>
+Subject: Re: [PATCH v2] KVM: x86: add missing MODULE_DESCRIPTION() macros
 Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20240627-piix4-spd-v2-4-617ce47b8ff4@weissschuh.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+To: Sean Christopherson <seanjc@google.com>,
+        Paolo Bonzini
+	<pbonzini@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+	<mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>,
+        "H. Peter Anvin"
+	<hpa@zytor.com>
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240622-md-kvm-v2-1-29a60f7c48b1@quicinc.com>
+ <171961376508.228791.6632768103700293303.b4-ty@google.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <171961376508.228791.6632768103700293303.b4-ty@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 9mpPY3iBAMr9mpi90jkW1Yq2AemO7L-D
+X-Proofpoint-GUID: 9mpPY3iBAMr9mpi90jkW1Yq2AemO7L-D
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-28_16,2024-06-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
+ spamscore=0 malwarescore=0 mlxlogscore=978 mlxscore=0 adultscore=0
+ impostorscore=0 lowpriorityscore=0 phishscore=0 priorityscore=1501
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406280175
 
-On 6/27/24 10:48, Thomas Weißschuh wrote:
-> The piix4 I2C bus can carry SPDs, register them if present.
-> Only look on bus 0, as this is where the SPDs seem to be located.
+On 6/28/2024 3:55 PM, Sean Christopherson wrote:
+> On Sat, 22 Jun 2024 22:44:55 -0700, Jeff Johnson wrote:
+>> Fix the following allmodconfig 'make W=1' warnings when building for x86:
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/kvm/kvm.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/kvm/kvm-intel.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/kvm/kvm-amd.o
 > 
-> Only the first 8 slots are supported. If the system has more,
-> then these will not be visible.
+> I split this into two commits.  The x86 changes went to `kvm-x86 misc`, and the
+> generic KVM one went to `kvm-x86 generic`.  I split them partly so that I could
+> opportunistically delete the VT-x comment from kvm_main.c, which was comically
+> stale.
 > 
-> The AUX bus can not be probed as on some platforms it reports all
-> devices present and all reads return "0".
-> This would allow the ee1004 to be probed incorrectly.
-
-Was this reported somewhere ? I don't see it happen on any of my systems
-(of course that doesn't really mean anything).
-
+> Holler if anything looks wrong.  Thanks!
 > 
-> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-
-Reviewed-and-tested-by: Guenter Roeck <linux@roeck-us.net>
-
-Thanks,
-Guenter
-
+> [1/1] KVM: x86: add missing MODULE_DESCRIPTION() macros
+>       https://github.com/kvm-x86/linux/commit/8815d77cbc99
+> 
+> [1/1] KVM: Add missing MODULE_DESCRIPTION()
+>       https://github.com/kvm-x86/linux/commit/25bc6af60f61
+> 
+> --
+> https://github.com/kvm-x86/linux/tree/next
+LGTM, thanks!
 
