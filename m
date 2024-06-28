@@ -1,77 +1,188 @@
-Return-Path: <linux-kernel+bounces-234223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9669891C3F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:43:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B44891C3F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:43:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C90AA1C2265C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:43:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FF801C224BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:43:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A384A1CB331;
-	Fri, 28 Jun 2024 16:42:57 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A800D1CB31D;
-	Fri, 28 Jun 2024 16:42:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B14081CB333;
+	Fri, 28 Jun 2024 16:43:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DTdsSCmp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB2B51BE87E;
+	Fri, 28 Jun 2024 16:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719592977; cv=none; b=rimFINLxSJ/BKcLC5uTCv85cAvqQZ7BNJK/LuolduyL7VIYLMuz++LRRY+CXGk7NsHH7/6QFYoJETF8ORJ6eDH9knQTFfRCVspQIEcWdBLFBEvFd1Y7GS3NPXsANxYH72hDecQOwZrVh7DvnZqflFZ6DR+pPeng/SsAI8hRpzFg=
+	t=1719592987; cv=none; b=lY5g++lUCW5HWTp05jnm+IzmSiXdJMsQ3k+blKhcKDdfW1W78sYjqKdvg5Gw33P8WSpUepCwNyCL7eAS+ea7TB78S83wPUJWSUmnXs2cRXV/husNpSntlBaw1HgAurCmieRJ3Ux4u7GZDZM+yIwPCW7FUL7EvIoblk/mC+UUi2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719592977; c=relaxed/simple;
-	bh=kf9Cz5WqooZnsLSJUPTvU+ghJLUuob00vSQBA2ikd2c=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=if/S5dO/5T9bFBI4H5VsHpsk/xXNF1DXud+XVm/QaztgaTZbLGY89XAgKm+oHDM5v2h8NcYouR5az8VcRgfhpa3NJqT+p0XIbEE0Czs7/14iM1md8Zfdq6LboQftLx8UJ7LfWkN8DKrtMMtI207YU8yg0THLmeKjsHiLCMX4L7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 8297D92009C; Fri, 28 Jun 2024 18:42:51 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 7DC2A92009B;
-	Fri, 28 Jun 2024 17:42:51 +0100 (BST)
-Date: Fri, 28 Jun 2024 17:42:51 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: WangYuli <wangyuli@uniontech.com>
-cc: herbert@gondor.apana.org.au, linux-crypto@vger.kernel.org, 
-    linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    Guan Wentao <guanwentao@uniontech.com>, 
-    "David S. Miller" <davem@davemloft.net>, 
-    Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Subject: Re: [PATCH] MIPS: crypto: Clean up useless assignment operations
-In-Reply-To: <CD5FFEE4BEA56308+0122a540-e098-4982-9bb1-110b449cbe02@uniontech.com>
-Message-ID: <alpine.DEB.2.21.2406281713040.43454@angie.orcam.me.uk>
-References: <1D248893502B75F5+20240628084117.84264-1-wangyuli@uniontech.com> <CD5FFEE4BEA56308+0122a540-e098-4982-9bb1-110b449cbe02@uniontech.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1719592987; c=relaxed/simple;
+	bh=/k1CPyU+XO2vXsbEnUV0QGlSHspgxIC0z5i/wwJgdsQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DisBPNiDHq9Evkuwk86+TxbWR5Rqrf3TteycVbxrhF+wOOkPBieWf8Ve3JDfAZ4i+CoP0aeZ3WHA3jsWt9ZMn2In1N5Qv0HFjKDrXuKjDReurLHRebadYBAyF5VQmCcM9vrJeACPgauD2XsDiBEeB/AoDaQtH6ak4Pmpv49K4HE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DTdsSCmp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AC1FC116B1;
+	Fri, 28 Jun 2024 16:43:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719592986;
+	bh=/k1CPyU+XO2vXsbEnUV0QGlSHspgxIC0z5i/wwJgdsQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DTdsSCmp/RV3A0DWzYJo5AY5jA6vTjzSmfYAvRAmsjcejNx+rZ5x209iqIc4/hpSo
+	 j3QbrCS5MLZ2CsJIVid/k4a6xgeb6lqe04SheFd78mUZ8MU31dj6oOUbCQP3lm/vTH
+	 yviwXfPLD4odoqzN9OUcNaxPvQklUukKh7r3jKDd1Dxnf1Utl8c09LnN4+gUzndEmv
+	 XfayDPc4WE7vMMIkY3Ea5q4/IqxQhne4bOKB/HtMAaXbJsZR4nFcWosgsTprm8pqAJ
+	 hqJwVXZCIxEE+UtLXksaioXvIBQi7pVOnIARt5FNSX6xpydywhJKpB1hhskB0Cw0/X
+	 mJjfAh/GBjgYQ==
+Date: Fri, 28 Jun 2024 17:42:58 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Serge Semin <fancer.lancer@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Jose Abreu <Jose.Abreu@synopsys.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Sagar Cheluvegowda <quic_scheluve@quicinc.com>,
+	Abhishek Chauhan <quic_abchauha@quicinc.com>,
+	Andrew Halaney <ahalaney@redhat.com>,
+	Jiawen Wu <jiawenwu@trustnetic.com>,
+	Mengyuan Lou <mengyuanlou@net-swift.com>,
+	Tomer Maimon <tmaimon77@gmail.com>, openbmc@lists.ozlabs.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 06/10] dt-bindings: net: Add Synopsys DW xPCS
+ bindings
+Message-ID: <20240628-ovary-bucket-3d23c67c82ed@spud>
+References: <20240627004142.8106-1-fancer.lancer@gmail.com>
+ <20240627004142.8106-7-fancer.lancer@gmail.com>
+ <20240627-hurry-gills-19a2496797f3@spud>
+ <e5mqaztxz62b7jktr47mojjrz7ht5m4ou4mqsxtozpp3xba7e4@uh7v5zn2pbn2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="BMxyj/+lWel1Q7do"
+Content-Disposition: inline
+In-Reply-To: <e5mqaztxz62b7jktr47mojjrz7ht5m4ou4mqsxtozpp3xba7e4@uh7v5zn2pbn2>
 
-On Fri, 28 Jun 2024, WangYuli wrote:
 
-> As you can see, regardless of the Clang or GCC version, this redundant
-> operation affects the generated
-> 
-> assembly code.
+--BMxyj/+lWel1Q7do
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- Boy, this code is horribly structured!
+On Thu, Jun 27, 2024 at 08:10:48PM +0300, Serge Semin wrote:
+> On Thu, Jun 27, 2024 at 04:51:22PM +0100, Conor Dooley wrote:
+> > On Thu, Jun 27, 2024 at 03:41:26AM +0300, Serge Semin wrote:
+> > > +  clocks:
+> > > +    description:
+> > > +      Both MCI and APB3 interfaces are supposed to be equipped with =
+a clock
+> > > +      source connected via the clk_csr_i line.
+> > > +
+> > > +      PCS/PMA layer can be clocked by an internal reference clock so=
+urce
+> > > +      (phyN_core_refclk) or by an externally connected (phyN_pad_ref=
+clk) clock
+> > > +      generator. Both clocks can be supplied at a time.
+> > > +    minItems: 1
+> > > +    maxItems: 3
+> > > +
+> > > +  clock-names:
+> > > +    oneOf:
+> > > +      - minItems: 1
+> > > +        items:
+> > > +          - enum: [core, pad]
+> > > +          - const: pad
+> > > +      - minItems: 1
+> > > +        items:
+> > > +          - const: pclk
+> > > +          - enum: [core, pad]
+> > > +          - const: pad
+> >=20
+>=20
+> > While reading this, I'm kinda struggling to map "clk_csr_i" to a clock
+> > name. Is that pclk? And why pclk if it is connected to "clk_csr_i"?
+>=20
+> Right. It's "pclk". The reason of using the "pclk" name is that it has
+> turned to be a de-facto standard name in the DT-bindings for the
+> peripheral bus clock sources utilized for the CSR-space IO buses.
+> Moreover the STMMAC driver responsible for the parental DW *MAC
+> devices handling also has the "pclk" name utilized for the clk_csr_i
+> signal. So using the "pclk" name in the tightly coupled devices (MAC
+> and PCS) for the same signal seemed a good idea.
+>=20
+> > If two interfaces are meant to be "equipped" with that clock, how come
+> > it is optional? I'm probably missing something...
+>=20
+> MCI and APB3 interfaces are basically the same from the bindings
+> pointer of view. Both of them can be utilized for the DW XPCS
+> installed on the SoC system bus, so the device could be accessed using
+> the simple MMIO ops.
+>=20
+> The first "clock-names" schema is meant to be applied on the DW XPCS
+> accessible over an _MDIO_ bus, which obviously doesn't have any
+> special CSR IO bus. In that case the DW XPCS device is supposed to be
+> defined as a subnode of the MDIO-bus DT-node.
+>=20
+> The second "clock-names" constraint is supposed to be applied to the
+> DW XPCS synthesized with the MCI/APB3 CSRs IO interface. The device in
+> that case should be defined in the DT source file as a normal memory
+> mapped device.
+>=20
+> >=20
+> > Otherwise this binding looks fine to me.
+>=20
+> Shall I add a note to the clock description that the "clk_csr_i"
+> signal is named as "pclk"? I'll need to resubmit the series anyway.
 
- Anyway, rather than making it yet worse with another #ifdef I'd suggest 
-replacing both `while' loops with equivalent `for' ones with `len' being 
-the worker variable, which will then make the code structure a little bit 
-better and as a side effect address the missed optimisation automagically.
+Better yet, could you mention MDIO? It wasn't clear to me (but I'm just
+reviewing bindings not a dwmac-ist) that MCI and APB3 were only two of
+the options and that the first clock-names was for MDIO. Maybe something
+like:
 
- You might also consider Herbert's suggestion to use IS_ENABLED, however 
-in the current shape of code I find it kind of pointless anyway.  Instead 
-I think that it would make more sense to factor out the block bodies to 
-small static inline helpers and then restructure the call sites so that 
-IS_ENABLED controls the loops, the conditionals, and the choice between 
-them as applicable.
+  clock-names:
+    oneOf:
+      - minItems: 1
+        items: # MDIO
+          - enum: [core, pad]
+          - const: pad
+      - minItems: 1
+        items: # MCI or APB
+          - const: pclk
+          - enum: [core, pad]
+          - const: pad
 
-  Maciej
+--BMxyj/+lWel1Q7do
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZn7oEgAKCRB4tDGHoIJi
+0vUkAP91mL5HozxNT6oDCThjtd+7mltthe8Q+r0IJLYFCEMEEgEAma2+j1iod5gj
+qAd6c89tOFymOHfSWvAKjyGEyH9YZwE=
+=8AMU
+-----END PGP SIGNATURE-----
+
+--BMxyj/+lWel1Q7do--
 
