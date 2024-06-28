@@ -1,46 +1,47 @@
-Return-Path: <linux-kernel+bounces-233489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35AB491B82C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:22:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37A7791B82B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:22:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD69B1F22DA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:22:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5FF72879A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:21:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F7B1420DD;
-	Fri, 28 Jun 2024 07:21:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF36D13F43A;
+	Fri, 28 Jun 2024 07:21:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="K7Lk1RkA"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kvV4tadm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67C0E1F934;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3260B7EF10;
 	Fri, 28 Jun 2024 07:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719559312; cv=none; b=Ad6BsHrnYpFuZRXLGIu/VR1LBnBpwz9eQoO5w7c7Nm+mh12vqwcn1w9RZ2TOgWGm6wsWreeR8FkRSzB8C5UL4s5XEsTliow+Ak1TQUPkHfqislUVwGlA8HuSmvPCAnnjToA8sKG4m7/NK94AbliavmuWPg+R77BOn5gzf/1pyLo=
+	t=1719559310; cv=none; b=ssb0qf8GAH6KBy+rPsVrmCuZM1FVVLyigPLILWiYFKJIIsKUP490oTe6QtNmGoTKUHoDMe66thLBQ3xvtx7BNh8aNgj7/bJ2GtensCyH/4eS74t3WPVgYI7xKd6NIl49q4sVSMsCjdYo/UMgUydNiY755++AQaD/ZtrT7R07qYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719559312; c=relaxed/simple;
-	bh=jstsD5F1mmwI3IOn9+JB22BT5GB52pFJXcbAWZgx4oY=;
+	s=arc-20240116; t=1719559310; c=relaxed/simple;
+	bh=SYGh3+wgopvebKlBdvpsU2nh/VSvDxCDCRg0tLLkWO0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QuKwxhOoHwsr6jAgWk3lT/NX4tKY/k10/dw+ri7kDaNOP7UYHPg5GIgJxDG81B0ziDZSrn0dXhm1hucSgOEZWa8vWzwtQhma4pBfceTtSy2c3ngzlH57azjiz5JGzb5nLBfvNKN+TsXTP3RvTy+oU1Nhbp7uLoAqaIgH+dq2UeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=K7Lk1RkA; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1719559301; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=AGBFJbCTt8aNt0KeD+i2UNzEgqWHOy1kpHd3ZOzb0Vs=;
-	b=K7Lk1RkAWefcOcxcFo9LbVTusfdQGA3JxL++v1epjKlMMTFCEoCiAIhtI9LvhCYRrlP1reiEKvZtqvWiNPRwtJ/uolbCwKIm79qettFr2OGOwUBANJAqZXcVFFDntEYSw/77BMXK8SGOMd92EP5skSo58/zFncZr73GefrV3atk=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0W9PYzHJ_1719559299;
-Received: from 30.97.48.160(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W9PYzHJ_1719559299)
-          by smtp.aliyun-inc.com;
-          Fri, 28 Jun 2024 15:21:40 +0800
-Message-ID: <860fd191-eecf-4044-8057-18fca747cceb@linux.alibaba.com>
-Date: Fri, 28 Jun 2024 15:21:39 +0800
+	 In-Reply-To:Content-Type; b=gkad6bq4UahpT4v5xTzhoASRKFeu9227awHoXDDkRSp382NqqiUJ+kcPekJlb+NLDcm2ZfDdYd94UNKSrSsnJjl3lW+0CcdtsTcoqu/xz1NG45H+OyoyifUsnZOalew0tghITC5QhoVeOCzb0HeVmFMp3LxOuk4bE9CScCPCsag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kvV4tadm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82122C2BD10;
+	Fri, 28 Jun 2024 07:21:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719559309;
+	bh=SYGh3+wgopvebKlBdvpsU2nh/VSvDxCDCRg0tLLkWO0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kvV4tadmHL/IAM0MIkO8N7mutdPMbFOYKoIMlxG+iIKi4hUfSA/+/5WLfUeoJf6o9
+	 Yq6MKD29reDww/dsyMGiCByn8f44uEZSxuMXO7bH+GvhddW6iDUaz28xQbGHlU0l8O
+	 Z9tabKWQFhBlQzDRr1mHOrEAvd65QZ8G2DjYWspzGLgP9bg7jUYYMz7PT/FMOjun19
+	 iLreZ6ZXm4FT90ckdZVp9NsJo95DiEKvOiDtsqBIho/nNiAZYltUkQBYoy1X7pxqtL
+	 69JsovfbAaQUpRRC/+gPrMppB8prpl2tcLwtKkjwY6Xc1NOATBcEbhzoBtQHiv392m
+	 TvHWDWTyOD7xg==
+Message-ID: <8c89d74a-2fb3-40f4-bcd1-7539aee30065@kernel.org>
+Date: Fri, 28 Jun 2024 09:21:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,39 +49,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/9] cachefiles: cancel all requests for the object
- that is being dropped
-To: libaokun@huaweicloud.com, netfs@lists.linux.dev, dhowells@redhat.com,
- jlayton@kernel.org
-Cc: jefflexu@linux.alibaba.com, zhujia.zj@bytedance.com,
- linux-erofs@lists.ozlabs.org, brauner@kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- yangerkun@huawei.com, houtao1@huawei.com, yukuai3@huawei.com,
- wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>
-References: <20240628062930.2467993-1-libaokun@huaweicloud.com>
- <20240628062930.2467993-7-libaokun@huaweicloud.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20240628062930.2467993-7-libaokun@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH 1/1] spi: dt-bindings: fsl-dspi: add dmas and dma-names
+ properties
+To: Frank Li <Frank.Li@nxp.com>, Vladimir Oltean <olteanv@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>,
+ "open list:FREESCALE DSPI DRIVER" <linux-spi@vger.kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Cc: imx@lists.linux.dev
+References: <20240627203308.476437-1-Frank.Li@nxp.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240627203308.476437-1-Frank.Li@nxp.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-
-On 2024/6/28 14:29, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
+On 27/06/2024 22:33, Frank Li wrote:
+> Add dmas and dma-names properties because dspi support dma transfer.
+> Fix below warnings:
+> arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var1.dtb: spi@2120000: Unevaluated properties are not allowed ('dma-names', 'dmas', 'little-endian' were unexpected)
+>         from schema $id: http://devicetree.org/schemas/spi/fsl,dspi.yaml#
 > 
-> Because after an object is dropped, requests for that object are useless,
-> cancel them to avoid causing other problems.
-> 
-> This prepares for the later addition of cancel_work_sync(). After the
-> reopen requests is generated, cancel it to avoid cancel_work_sync()
-> blocking by waiting for daemon to complete the reopen requests.
-> 
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> Acked-by: Jeff Layton <jlayton@kernel.org>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Thanks,
-Gao Xiang
+Best regards,
+Krzysztof
+
 
