@@ -1,272 +1,205 @@
-Return-Path: <linux-kernel+bounces-234455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4511C91C6D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:48:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BFB691C6DB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:49:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDAFB1F2218D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:48:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F4D91C23CAA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F883770EF;
-	Fri, 28 Jun 2024 19:48:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339EE768EF;
+	Fri, 28 Jun 2024 19:49:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VdelCPIu"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hHsfzGRu"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7628C7581A;
-	Fri, 28 Jun 2024 19:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719604115; cv=none; b=Cq0qg7o2ev0fMXK8zQpHHQvlAJTAk7zdffD346tUqYU9RXzTR1DwAzIGmDSIuyT+Ihj4WpZbksrarDH8BvAca3vmySi/irXXgNiFqzgI7llgKCcTkYRqepCp7Wp9LDJR58Xhu+YBItAK35oy1lo5VfBj4i2kBHeUCQ2tJDANYIk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719604115; c=relaxed/simple;
-	bh=paO3Q85MhNCJaXdzxnipweZ72m9WbwKAh6xyx8Yrj2k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=aXD8Yon2f0hiHvClaNcM5ZXdxJlelvHPdvo4S4LCYuHDqp/uANT1hpD5tW4loa3PJb40AdwqhFV0OcWuTuwUMf0sG03tTJt0/vcVd8lAQjr4dakmYvr9pUJ/H9+RYrPjW7mippw2h56HxT7IB8yI+5YeKuC25Hy8kpdW820nSC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VdelCPIu; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1719604111;
-	bh=paO3Q85MhNCJaXdzxnipweZ72m9WbwKAh6xyx8Yrj2k=;
-	h=From:Date:Subject:To:Cc:From;
-	b=VdelCPIu23TTul7DOTm/ObQnaDsLxrwtLUVnUecVFnTMw5MGFAapqd4180iLJkYVz
-	 DfY8bCjNYRsxSgw+71MAZSoDxMBhcYv7foDLTIMckQJq2kCk4HCugpc8lPyx7c9dMY
-	 n8ft00UMEOsFmwU7U7qrAAHxfZ0BI4+Zqn7oTxxksN05HylSlEpIWGqWvcrhllwBQu
-	 p+pPsRp80ygruO/hDwASjbV5ciCCI+wxRca00g4ovQtbVYJDAtsNAAwcH1VJuLvyYm
-	 Z0j0B1cDweXmA4hsq54tSlqoNnJ/7N/NLL0GX0mjpuRD0NKIFN7XbdK1WLD404EwGI
-	 sjJpSDjzDi78Q==
-Received: from [192.168.1.175] (zone.collabora.co.uk [167.235.23.81])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id A0F37378219E;
-	Fri, 28 Jun 2024 19:48:29 +0000 (UTC)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Fri, 28 Jun 2024 15:48:23 -0400
-Subject: [PATCH] cpufreq: mediatek: Use dev_err_probe in every error path
- in probe
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5553C74059;
+	Fri, 28 Jun 2024 19:48:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719604140; cv=fail; b=WZV32rj2QaYty7WkMf/U2dNwMXdZCjjWm4gv/YaZfWKKnJ1ILfLsEgsSsLD2m7XtDi5JcPuohoHWrucG9AHfL3RwWm418DyRQ8z8tH9yA2ZFh8Hu87KdnL8OuGMvf6qXYB5T5WJLUDhXXHATWUQ+zFBwpIngWKLXOKyB0i270mU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719604140; c=relaxed/simple;
+	bh=lGp2nLZRkNYNCsr2twMWK6dUmuP22BYw5nY6iYkI5TM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=MLCwXhvSNCgqhMB4LNSG83fMMHjEo06TZLWLWwsf0z+FUoZj6r3/Z4fV+9jLEPx70WQeZeC+Vj7GUcXLXpCIGcKjRv0hZq2FXu5qe2kxWoKT7503XCknb9iEzRJWH/7tdAsRlhHWFNV+X35ArrSi4EwH0NK3tAP7Oj2h7Q+8m4A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hHsfzGRu; arc=fail smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719604138; x=1751140138;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=lGp2nLZRkNYNCsr2twMWK6dUmuP22BYw5nY6iYkI5TM=;
+  b=hHsfzGRunU5TJInqb5Isgbw2n58q98vLrxUHPsPazSfXudFIWNkzA4Oh
+   XUDTYHEZnU/fhhgatMByWvVpq57i2ka7GxJ9CckCBlRi8tB3/ZXjIuEfL
+   /7NgsdOnGxdKsWsMR3F351/hJhbJjmxD++zaaBoetkeEpM+pA6gL+XErV
+   3cmA5z4K1sJbGM0LrjwILmiNyZf+uc2u2hHEgBtUjNNuiTu2/NdJ5dHaq
+   jmChn0T3n0rvTcHdlNJmn6BzEfoKVy1msagUC95Au9UFXhDt4BAxr4Sy7
+   lSljIzu7tvwlStDYhlEc/9hsfXW6kb5KXxYYQ9et3XFcaO75th+Z7MH2j
+   w==;
+X-CSE-ConnectionGUID: A6k22ylKTK+h8awb98bH7A==
+X-CSE-MsgGUID: QnVcvcSjSda5CBKVHffTrQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11117"; a="27932929"
+X-IronPort-AV: E=Sophos;i="6.09,170,1716274800"; 
+   d="scan'208";a="27932929"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 12:48:58 -0700
+X-CSE-ConnectionGUID: QTaSEaInSGSFyAtMe4lAow==
+X-CSE-MsgGUID: YzW8wycGQaGNc73/oew8OA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,170,1716274800"; 
+   d="scan'208";a="45257162"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 28 Jun 2024 12:48:58 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 28 Jun 2024 12:48:57 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 28 Jun 2024 12:48:57 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 28 Jun 2024 12:48:57 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.169)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 28 Jun 2024 12:48:56 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IEfTadZDZoxN35IpWfE/Dwn1TGnqtysiN6xE1PWZfOrxg/6XoidbVPUNDBLNKCcz9yUnn9krNLknr56mGDiC0PkzHh7hiCDPZ+DHrzuidQR/nCCzOt+c/mjYijvq/iZ4cZNNkqC7HcdnutE7Q8zdXwH3zT4FZB0A3UZTbqmoH4KZPXt69lNVJDphMntanDy3biSmqg4MuR4ncpuJY+ifc4cYSHuKwQN8B3UCNfEGmG6q1bNQ/a9TBl0w1b5JXYfySxBnznhXrRTKppBf6HEknOfDRABqnu0B6bB6rjVaBTKxe9MJdXLq++WHoHHpPXcYRLcKZlkUULg58wk0OOqQBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1pWK7hmSf0Nit/NJIM+PHYbRSuSG3xvPu7rvqFB096o=;
+ b=Q4O/NyG+2z25oiUTGuNKo6J7LEBmhE0aytXFTbaVCNsKP7mbS/vXeia6qmvcgglNuqtCDc4qXOpDXYc4AeDf84D89QKwxrvKZTHH8VGJX7YpKe1QlXvxGHDHZyEbmlDIgV4tWrX3bcr7bqusrV5IpsNfehbVUXr1+zZYpYaRqofc8/arZmeDqmNZezqZf1PcCDcS1uP26zWSIUq3iA+QCA9XTpVAJcQtxa7WEHSG5Wct3LStRJMqlPIAfNZfcfpuTMBa//7z8FITSd21t8gkqVqSe6/IOmm/pBFu4RQ0Z7u+V7Mq2dCfjLMk+xsMVRCAimuya5EWPxb3g+Y9MoMRRA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by SJ1PR11MB6202.namprd11.prod.outlook.com (2603:10b6:a03:45b::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.34; Fri, 28 Jun
+ 2024 19:48:53 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8%4]) with mapi id 15.20.7719.022; Fri, 28 Jun 2024
+ 19:48:53 +0000
+Date: Fri, 28 Jun 2024 12:48:51 -0700
+From: Dan Williams <dan.j.williams@intel.com>
+To: Keith Busch <kbusch@meta.com>, <linux-kernel@vger.kernel.org>,
+	<bhelgaas@google.com>
+CC: Keith Busch <kbusch@kernel.org>, Dan Williams <dan.j.williams@intel.com>,
+	<linux-pci@vger.kernel.org>
+Subject: Re: [PATCH] PCI: fix recusive device locking
+Message-ID: <667f13a334844_5639294d7@dwillia2-xfh.jf.intel.com.notmuch>
+References: <20240628193514.1680137-1-kbusch@meta.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240628193514.1680137-1-kbusch@meta.com>
+X-ClientProxiedBy: MW2PR2101CA0023.namprd21.prod.outlook.com
+ (2603:10b6:302:1::36) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240628-mtk-cpufreq-dvfs-fail-init-err-v1-1-19c55db23011@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAIYTf2YC/x3NQQqDMBBA0avIrB2IgyTQq4iLkEzaoW3UiQZBv
- HtDl2/z/wWFVbjAo7tAuUqRJTcMfQfh5fOTUWIzkKHRWHL43d8Y1iMpbxhrKpi8fFCy7MiqaLy
- 1FLyjyAQtsionOf+Dab7vHxN1UZdwAAAA
-To: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Viresh Kumar <viresh.kumar@linaro.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: kernel@collabora.com, linux-pm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-X-Mailer: b4 0.13.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|SJ1PR11MB6202:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9962a785-486e-4cc3-4bdd-08dc97ab5725
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?t2SKquySbJULR2FjiydYoDYARmB0nBqM+WYMUqLYdedChP30ZsphyejvD3bT?=
+ =?us-ascii?Q?0vSaDbwCeferMMIwRWTWNEvz8MlneJek96hqWfRUx6Rf0ziDzjrq1Z3lSobm?=
+ =?us-ascii?Q?W6w2Z5rLexRzV7dxA93PYXEtHPd1LeQRJ2hLY7yYXaLSE0Z7KmlD8GlClnvH?=
+ =?us-ascii?Q?cD8y46MBPxY4YeMcXG1dJEbMQ/uITHhQtrgi7xaoZJr/eU+KCZLevajpUD/O?=
+ =?us-ascii?Q?Y/nEe2ek2gaiYKa2vz0ll/+XRhOqcT3FmUslsBgG7qp6fs0YuLnApv0Ps+oS?=
+ =?us-ascii?Q?MZvvQD/yors0Jlh6Q0PmRviiy2WRK2k/i8p6jUX5ygDMJi+SHwMTZO5jkAzJ?=
+ =?us-ascii?Q?KUYTmJJWFk4LjziFjmXFY6r9fYViOAuku1JXOPDL4VMbF/G49BKTCHNUBuBh?=
+ =?us-ascii?Q?dEdp3SvY3a13gmdLTDb03Hzky+gr6bAn/1wnnj2+nXxCj+eW331yKnvu8tzo?=
+ =?us-ascii?Q?Sa6+1Fp8WdX4r8d5EOfjF3LJ5L5lPIx7dkODYZoqKqxyC4Qj5/w2wmNuGEBG?=
+ =?us-ascii?Q?9W8WzDEHLICXBb4XD9hbyFOoYnsYgBXC8eYL/3PrRyleRKuGjHB5c7HSzhMT?=
+ =?us-ascii?Q?z9jxZ0yEOEucrBs3mbjUn9H768XCPNwrP3u7SKqiXmU57HBO4hZS8fU08KnV?=
+ =?us-ascii?Q?yHAlhHrw4VcQSWTsIi3SzrWxf6XvLyY/Ag+hLsHSKlWgGyN+xuBgLSyHqnyX?=
+ =?us-ascii?Q?9LcCEgktpYVXYElFXrb2DrrawzWXq+oq5ZjncMQz5YfTRtslCyKgekDhkNHJ?=
+ =?us-ascii?Q?sQGLUgSoGFelwzDLm/wZkJs+qeIbISgtovN4JK5tAdmYJKoV9s/1euGe8Ayf?=
+ =?us-ascii?Q?Rbu2AoRSNNVBdGDL2Liizwse9zMqVdJbvyLSebzcY0bgKDFJVKSB5YRBlYWO?=
+ =?us-ascii?Q?HRAi4xgSUZWXE+BkvH/O4V73AIP41CdqJLqcLOdTfdrwvG4JmWvUmxSqitNn?=
+ =?us-ascii?Q?ugz/DAdvIFoh+UuABPeufW3ucKJIaW5yimA4I6Rq+7qBegwhGw/ok22Q54Co?=
+ =?us-ascii?Q?mmgs7R2HS8oP4Ae53TmHTznaSmB/XqP2I5rsfSXdLELV3jJ4chBSV11et6Ae?=
+ =?us-ascii?Q?aBjri+wIBZgud5U8fMHQ/qOBjdwtzP9cRpB9VdWaAnGWcSJE9UMJXTZ+g5pe?=
+ =?us-ascii?Q?wBLOK+tRMcT+VX9WOqDAUeh03ipwb/zir3ncX4t4jLh5PNodkqsfpPQ7H3bW?=
+ =?us-ascii?Q?QTMC+HWtAvhPTPULkKje8y3fk8zgSVTarypO8xZmH9wzoPgfdxbwR6eTCOZt?=
+ =?us-ascii?Q?5bQjWAUG/Gi15+scBwkFvv4rGIdgsGNGGi7uyTN14ZoPceCaDTXuIE1jOfZ6?=
+ =?us-ascii?Q?EJTgZaz502hWhxWOOVX0o7EwXklp5kWzmbfhB+wVnDVnOA=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?bZ9ERBeqh8ZaMvaSYOWvpBliQFqX4aLPcljp3y0Y+FDfXoStp7G7OnXWTylT?=
+ =?us-ascii?Q?uattUyGPSITlgIohbdNA7EQ5AHSKGmPTmQ8d3vd3ZzbEqLZBv4L8/L6axZEq?=
+ =?us-ascii?Q?OkfwOINyljo6dHgEhXLJSPz04EGwb/bs6aqbdjHKgmwIoW73hivWhDQg5UlF?=
+ =?us-ascii?Q?iooaHMRytep7O4BmbMCy3BjU/0TArjBRBHD1vyM14fttFHsxxGhT/5QxMul8?=
+ =?us-ascii?Q?YU7OhuoTnoSm5Wf4bTsXmXrp4HYt8MHRXR767B3P0Y1T5BVHQQFpY/l4H3PV?=
+ =?us-ascii?Q?24Z4SH1rxLn1yO67JBsZkmVnf+NzXUzQtBtz+02FPEusYUzxGKBT/TaFQUK2?=
+ =?us-ascii?Q?ZnX5i74plvYhAUFw0Av50enQ8XbdgKKRcYerjPiBcLVaqT225j9Hcbd9S0rL?=
+ =?us-ascii?Q?FH0iL1DlXte8fNo3J+bLv0xz4+Fcurz6CsJy3yb9ikFcssBubj9RHhsddQpF?=
+ =?us-ascii?Q?/d6FMPTYb0NU+GBr2HZXo4seYJOhwUbbb2LqM+j2yLLkdzGCeDzF85nepH16?=
+ =?us-ascii?Q?8/m1CGotZ5vWI17TxVodAXgm9PPF4AJLlMblCF+19PyEythubq2atvKxXFH6?=
+ =?us-ascii?Q?lv/uE1K8RqCsbirWcnIMpHy5qsjWW52n1PY/IaXLZreQ/eMLSCAbk4qNbdv7?=
+ =?us-ascii?Q?hSQiAIOwj8FMpxL4E6+gakLuE2YbpgYjDKmfcrZKX3Mp3nRMZB5Vds1+X7vc?=
+ =?us-ascii?Q?q8bxCncsFLQPTuC+XLFxxkrGklG9yzAfjt6Ost40ILSii87NZAd8qBzjX0sO?=
+ =?us-ascii?Q?rCrK+S5Rngm+Ebv0ap6GUR9yZ2yFt/kSJ6NegQAtI6/M55GASYlJ4Wc6ShS9?=
+ =?us-ascii?Q?2UvMGZ3LAYz0GKdGkqx5hFIZxLQh9YrI/r3PaByvmCX/ZqSWZHVTxq+JDWUO?=
+ =?us-ascii?Q?mPmrsW871Lc8gjuGAVlOqXqTfO+7ueYMRMeNd+8Qj9jSDxQIQbkn1R1uSlJI?=
+ =?us-ascii?Q?tznPX4WSDPQ2ZtYVKrp+Upmhoor7i0JKJhLkoBd/QDJweP8W4nUth+eSepg4?=
+ =?us-ascii?Q?LyhRUxL6VFR5DYcoR8Ye0fkW8sHSlW4DOkX/6aG6G6AwE4UC+jjtLH45PjD+?=
+ =?us-ascii?Q?yP86ReNiErz/kd2pijJGNehvCMR0RsBFS23IpOzi3N13kSgymZbLp9oVB1G8?=
+ =?us-ascii?Q?MS8DmUjjirsXu/W5AEjvB8rtpR6JKflPzmPgHpG4eHXXyv9+tZAeA+c8yF88?=
+ =?us-ascii?Q?yryYjsEdXS61Pq+EZYRYCsLR5IJhAfVKAp97hYv8nr9jnyhl91ENrx//T/7o?=
+ =?us-ascii?Q?Gy1kAGvYIB2nFYEPShm7F1H0VEq6iLIZ8aeFjinewvfrYSmTBa6BeQ3s+39b?=
+ =?us-ascii?Q?AQte5m17bAzAM5Za9Aj88/MS88/CBjfRgIsYAkwi5dcDlcFiQuQNsBkeFk/0?=
+ =?us-ascii?Q?YaO6xVF++x+tIvGmFOAc8rbteaSQIhGf6OpNYue9RU1/GNd7zeapz/CBzKJE?=
+ =?us-ascii?Q?LvZsuN+1LdXiw9yUsSHRcrxHTP6wL4YRFTspTgqGRHPn3wtBhBAodWaJIPk5?=
+ =?us-ascii?Q?Blw3WkKQsP6pYHgD+Gy6V8WjGyS9yKwgy94p3y3TLyzEY8mauqRh9jwYgSFP?=
+ =?us-ascii?Q?NmDFxmctfJl7r82C71Lqd/9NmIYX3bNCDtqEK047/foKmb9q96AT/rSss8bF?=
+ =?us-ascii?Q?cQ=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9962a785-486e-4cc3-4bdd-08dc97ab5725
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jun 2024 19:48:53.8044
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: z+SNYJYQ68TxYGFHePoXqkVdPqB1CQNANj3+xZnR3xN5HjJfzHvlS9O6RRBmYP2W7+L3kR7uhrSs+mBiDzE6kOA8rHWpQF3N42rwo/tPvo4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR11MB6202
+X-OriginatorOrg: intel.com
 
-Use the dev_err_probe() helper to log the errors on every error path in
-the probe function and its sub-functions. This includes
-* adding error messages where there was none
-* converting over dev_err/dev_warn
-* removing the top-level error message after mtk_cpu_dvfs_info_init() is
-  called, since every error path inside that function already logs the
-  error reason. This gets rid of the misleading error message when probe
-  is deferred:
+[ add linux-pci ]
 
-    mtk-cpufreq mtk-cpufreq: failed to initialize dvfs info for cpu0
+Keith Busch wrote:
+> From: Keith Busch <kbusch@kernel.org>
+> 
+> If one of the bus' devices has subordinates, the recursive call locks
+> itself, so no need to lock the device before the recusion or it will
+> surely deadlock.
+> 
+> Fixes: dbc5b5c0d268f87 ("PCI: Add missing bridge lock to pci_bus_lock()"
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Keith Busch <kbusch@kernel.org>
 
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
----
- drivers/cpufreq/mediatek-cpufreq.c | 66 ++++++++++++++++++--------------------
- 1 file changed, 31 insertions(+), 35 deletions(-)
+Looks good, thanks for the fixup Keith!
 
-diff --git a/drivers/cpufreq/mediatek-cpufreq.c b/drivers/cpufreq/mediatek-cpufreq.c
-index 518606adf14e..b21425bb83be 100644
---- a/drivers/cpufreq/mediatek-cpufreq.c
-+++ b/drivers/cpufreq/mediatek-cpufreq.c
-@@ -390,28 +390,23 @@ static int mtk_cpu_dvfs_info_init(struct mtk_cpu_dvfs_info *info, int cpu)
- 	int ret;
- 
- 	cpu_dev = get_cpu_device(cpu);
--	if (!cpu_dev) {
--		dev_err(cpu_dev, "failed to get cpu%d device\n", cpu);
--		return -ENODEV;
--	}
-+	if (!cpu_dev)
-+		return dev_err_probe(cpu_dev, -ENODEV, "failed to get cpu%d device\n", cpu);
- 	info->cpu_dev = cpu_dev;
- 
- 	info->ccifreq_bound = false;
- 	if (info->soc_data->ccifreq_supported) {
- 		info->cci_dev = of_get_cci(info->cpu_dev);
--		if (IS_ERR(info->cci_dev)) {
--			ret = PTR_ERR(info->cci_dev);
--			dev_err(cpu_dev, "cpu%d: failed to get cci device\n", cpu);
--			return -ENODEV;
--		}
-+		if (IS_ERR(info->cci_dev))
-+			return dev_err_probe(cpu_dev, PTR_ERR(info->cci_dev),
-+					     "cpu%d: failed to get cci device\n",
-+					     cpu);
- 	}
- 
- 	info->cpu_clk = clk_get(cpu_dev, "cpu");
--	if (IS_ERR(info->cpu_clk)) {
--		ret = PTR_ERR(info->cpu_clk);
--		return dev_err_probe(cpu_dev, ret,
-+	if (IS_ERR(info->cpu_clk))
-+		return dev_err_probe(cpu_dev, PTR_ERR(info->cpu_clk),
- 				     "cpu%d: failed to get cpu clk\n", cpu);
--	}
- 
- 	info->inter_clk = clk_get(cpu_dev, "intermediate");
- 	if (IS_ERR(info->inter_clk)) {
-@@ -431,7 +426,7 @@ static int mtk_cpu_dvfs_info_init(struct mtk_cpu_dvfs_info *info, int cpu)
- 
- 	ret = regulator_enable(info->proc_reg);
- 	if (ret) {
--		dev_warn(cpu_dev, "cpu%d: failed to enable vproc\n", cpu);
-+		dev_err_probe(cpu_dev, ret, "cpu%d: failed to enable vproc\n", cpu);
- 		goto out_free_proc_reg;
- 	}
- 
-@@ -439,14 +434,17 @@ static int mtk_cpu_dvfs_info_init(struct mtk_cpu_dvfs_info *info, int cpu)
- 	info->sram_reg = regulator_get_optional(cpu_dev, "sram");
- 	if (IS_ERR(info->sram_reg)) {
- 		ret = PTR_ERR(info->sram_reg);
--		if (ret == -EPROBE_DEFER)
-+		if (ret == -EPROBE_DEFER) {
-+			dev_err_probe(cpu_dev, ret,
-+				      "cpu%d: Failed to get sram regulator\n", cpu);
- 			goto out_disable_proc_reg;
-+		}
- 
- 		info->sram_reg = NULL;
- 	} else {
- 		ret = regulator_enable(info->sram_reg);
- 		if (ret) {
--			dev_warn(cpu_dev, "cpu%d: failed to enable vsram\n", cpu);
-+			dev_err_probe(cpu_dev, ret, "cpu%d: failed to enable vsram\n", cpu);
- 			goto out_free_sram_reg;
- 		}
- 	}
-@@ -454,31 +452,34 @@ static int mtk_cpu_dvfs_info_init(struct mtk_cpu_dvfs_info *info, int cpu)
- 	/* Get OPP-sharing information from "operating-points-v2" bindings */
- 	ret = dev_pm_opp_of_get_sharing_cpus(cpu_dev, &info->cpus);
- 	if (ret) {
--		dev_err(cpu_dev,
-+		dev_err_probe(cpu_dev, ret,
- 			"cpu%d: failed to get OPP-sharing information\n", cpu);
- 		goto out_disable_sram_reg;
- 	}
- 
- 	ret = dev_pm_opp_of_cpumask_add_table(&info->cpus);
- 	if (ret) {
--		dev_warn(cpu_dev, "cpu%d: no OPP table\n", cpu);
-+		dev_err_probe(cpu_dev, ret, "cpu%d: no OPP table\n", cpu);
- 		goto out_disable_sram_reg;
- 	}
- 
- 	ret = clk_prepare_enable(info->cpu_clk);
--	if (ret)
-+	if (ret) {
-+		dev_err_probe(cpu_dev, ret, "cpu%d: failed to enable cpu clk\n", cpu);
- 		goto out_free_opp_table;
-+	}
- 
- 	ret = clk_prepare_enable(info->inter_clk);
--	if (ret)
-+	if (ret) {
-+		dev_err_probe(cpu_dev, ret, "cpu%d: failed to enable inter clk\n", cpu);
- 		goto out_disable_mux_clock;
-+	}
- 
- 	if (info->soc_data->ccifreq_supported) {
- 		info->vproc_on_boot = regulator_get_voltage(info->proc_reg);
- 		if (info->vproc_on_boot < 0) {
- 			ret = info->vproc_on_boot;
--			dev_err(info->cpu_dev,
--				"invalid Vproc value: %d\n", info->vproc_on_boot);
-+			dev_err_probe(info->cpu_dev, ret, "invalid Vproc value\n");
- 			goto out_disable_inter_clock;
- 		}
- 	}
-@@ -487,7 +488,7 @@ static int mtk_cpu_dvfs_info_init(struct mtk_cpu_dvfs_info *info, int cpu)
- 	rate = clk_get_rate(info->inter_clk);
- 	opp = dev_pm_opp_find_freq_ceil(cpu_dev, &rate);
- 	if (IS_ERR(opp)) {
--		dev_err(cpu_dev, "cpu%d: failed to get intermediate opp\n", cpu);
-+		dev_err_probe(cpu_dev, ret, "cpu%d: failed to get intermediate opp\n", cpu);
- 		ret = PTR_ERR(opp);
- 		goto out_disable_inter_clock;
- 	}
-@@ -501,7 +502,7 @@ static int mtk_cpu_dvfs_info_init(struct mtk_cpu_dvfs_info *info, int cpu)
- 	info->opp_nb.notifier_call = mtk_cpufreq_opp_notifier;
- 	ret = dev_pm_opp_register_notifier(cpu_dev, &info->opp_nb);
- 	if (ret) {
--		dev_err(cpu_dev, "cpu%d: failed to register opp notifier\n", cpu);
-+		dev_err_probe(cpu_dev, ret, "cpu%d: failed to register opp notifier\n", cpu);
- 		goto out_disable_inter_clock;
- 	}
- 
-@@ -629,11 +630,9 @@ static int mtk_cpufreq_probe(struct platform_device *pdev)
- 	int cpu, ret;
- 
- 	data = dev_get_platdata(&pdev->dev);
--	if (!data) {
--		dev_err(&pdev->dev,
--			"failed to get mtk cpufreq platform data\n");
--		return -ENODEV;
--	}
-+	if (!data)
-+		return dev_err_probe(&pdev->dev, -ENODEV,
-+				     "failed to get mtk cpufreq platform data\n");
- 
- 	for_each_possible_cpu(cpu) {
- 		info = mtk_cpu_dvfs_info_lookup(cpu);
-@@ -643,24 +642,21 @@ static int mtk_cpufreq_probe(struct platform_device *pdev)
- 		info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
- 		if (!info) {
- 			ret = -ENOMEM;
-+			dev_err_probe(&pdev->dev, ret, "Failed to allocate dvfs_info\n");
- 			goto release_dvfs_info_list;
- 		}
- 
- 		info->soc_data = data;
- 		ret = mtk_cpu_dvfs_info_init(info, cpu);
--		if (ret) {
--			dev_err(&pdev->dev,
--				"failed to initialize dvfs info for cpu%d\n",
--				cpu);
-+		if (ret)
- 			goto release_dvfs_info_list;
--		}
- 
- 		list_add(&info->list_head, &dvfs_info_list);
- 	}
- 
- 	ret = cpufreq_register_driver(&mtk_cpufreq_driver);
- 	if (ret) {
--		dev_err(&pdev->dev, "failed to register mtk cpufreq driver\n");
-+		dev_err_probe(&pdev->dev, ret, "failed to register mtk cpufreq driver\n");
- 		goto release_dvfs_info_list;
- 	}
- 
-
----
-base-commit: 0fc4bfab2cd45f9acb86c4f04b5191e114e901ed
-change-id: 20240627-mtk-cpufreq-dvfs-fail-init-err-0a662ca72de2
-
-Best regards,
--- 
-Nícolas F. R. A. Prado <nfraprado@collabora.com>
-
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
 
