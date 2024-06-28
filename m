@@ -1,153 +1,154 @@
-Return-Path: <linux-kernel+bounces-233576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1091391B9BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:23:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EF2D91B9C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:24:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAC5A2840EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:23:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9959281E09
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:24:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB543149007;
-	Fri, 28 Jun 2024 08:23:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C14E51487C5;
+	Fri, 28 Jun 2024 08:24:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Db0PubL5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b="VTyPt68i"
+Received: from smtp44.i.mail.ru (smtp44.i.mail.ru [95.163.41.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF010146D7D;
-	Fri, 28 Jun 2024 08:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF067146599;
+	Fri, 28 Jun 2024 08:24:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.163.41.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719562979; cv=none; b=Bd2mF+2yuU+MLwmQjn6FGJmsxVckb8HR9KSHviSq+kIN5e+BLiRbflAeuSaKeAPNgM5PpU+Ui0NE0TNSQFYB2KJv0LmBW4LcjGv7lK5WVEflohKlmLyIQ00+cYQ6yC6mUYOpiVvpQOf7iSbtcO2S1Ah2h+uR0U6rUoDv1k/6c5c=
+	t=1719563047; cv=none; b=oL+TEP+JSiwxx+aoolRMlcMbzG9Eb+t3PqfopqFtkc2Q7KUOWY66rpf+kLIagO3VlNOTTuhN62oZPnJ0xaQJlSG06svHXDUOQVoA6cqg3U2YmD/UzYOO5PEmR/B5EblgH1VoQgbiipirgXlzjfT4xAhUZ8q5XJQ1dsieUa+fdv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719562979; c=relaxed/simple;
-	bh=9plJAFYzP0h3s0xF2CkUYDNUSTdFH0Wk8KQf+HNwatY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pNs0HfK9czCUTuiZ89ePwkT0N3zZr5xrnHijfjvTCUGZAmokzV0/hO/e1yy2DCTJEntP39M+FQZuyHX0osjgfxCQKdK2tSYL/FBV1ognvcDGsqe/zvtAEgjsijWbUUhY8dQ/Isl8GD+TJ0wmkgThd0bkNsMsIYQVsnveQfZfwjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Db0PubL5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D46FAC2BD10;
-	Fri, 28 Jun 2024 08:22:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719562979;
-	bh=9plJAFYzP0h3s0xF2CkUYDNUSTdFH0Wk8KQf+HNwatY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Db0PubL52ny26QX2oYWSeEC2vtXXTphG441aCfoCr5tRe79Y71KYwpow96gRfc0qK
-	 Oqdbqz51U44+JbdkinLP3v9BqtANH5V9d5y2/4zP9Hcm5vIA0lgaaMiuMEorCkIbiE
-	 WA2CSUfrHGMif+rKN9lnIz0jf+t62xso+IL36nEKp55bFpYBwURhE7qlkKr9htkaZf
-	 IPjzMFMWf6OzrhFwkHrZ4XOG/Ci2AjrHt5+zJKSLhBwpbrQhew0Tlj6Key+xERpDPN
-	 cX35kUFTxXdeLVT5oAy69VT21cftRsDiRPXimOM34arp45nldOIr/wyM68SMdAyfT1
-	 1MP/mDjdd7FMw==
-Message-ID: <4bd9a2da-6ac8-40b3-ad50-01ae53caeef0@kernel.org>
-Date: Fri, 28 Jun 2024 10:22:53 +0200
+	s=arc-20240116; t=1719563047; c=relaxed/simple;
+	bh=asHcuAl7r8QenUKBzhsD0GbU0S1f0h9eCI4qmsQcE/c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FfIAGzaMGm5N7YM6cVAmdumi9LStoUmNMf48Im3VLHCBx68GXarf2VZEuZud3WHMEWqDUw90rrbcycwBBRLZp3iqQ6QQbeSnAxZjHPwxIDrWXNNa6T76kBeCixBqrCYVwG8YJNH68fMOi7ccXktV1aVBt7eA28U01xc5K3tvO9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jiaxyga.com; spf=pass smtp.mailfrom=jiaxyga.com; dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b=VTyPt68i; arc=none smtp.client-ip=95.163.41.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jiaxyga.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jiaxyga.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=jiaxyga.com
+	; s=mailru; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:From:Sender:Reply-To:To:Cc:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive:
+	X-Cloud-Ids:Disposition-Notification-To;
+	bh=LaaUV0VkMf1DANwLhFBP6gjgsIuUX6P9t17fzqjEX+I=; t=1719563043; x=1719653043; 
+	b=VTyPt68iGytQE5taQhznnvvR7R2s6hoqhZ5DKgDCLPBJBEyI6UpJu7uz9rpab+tbYqOMQtzU4h8
+	bZmmrHqW6O1c+LVtoUCgUS/ewE2RbtbHsHVJNSo+3H71xKJT/ajtxvKxEJ9ADmazgaMooYRrf22gZ
+	bZqUmLBg8XwF5OUR/FU=;
+Received: by exim-smtp-84f7fbf7d8-dklnz with esmtpa (envelope-from <danila@jiaxyga.com>)
+	id 1sN6ta-00000000a5W-3MSN; Fri, 28 Jun 2024 11:23:51 +0300
+From: Danila Tikhonov <danila@jiaxyga.com>
+To: Rob Clark <robdclark@gmail.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krishna Manikandan <quic_mkrishn@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Danila Tikhonov <danila@jiaxyga.com>
+Subject: [PATCH 0/1] Document QCOM SM7150 Compatibility for DSI Controller
+Date: Fri, 28 Jun 2024 11:23:42 +0300
+Message-ID: <20240628082343.28341-1-danila@jiaxyga.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] dt-bindings: clock: rk3188-cru-common: remove
- CLK_NR_CLKS
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Johan Jonker <jbx6244@gmail.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <6f21c09b-e8d2-4749-aca6-572c79df775d@gmail.com>
- <d8df3cd5-c602-4693-b78a-63a963aa6522@kernel.org> <2016066.NnIJQXNAa5@diego>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <2016066.NnIJQXNAa5@diego>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Authentication-Results: exim-smtp-84f7fbf7d8-dklnz; auth=pass smtp.auth=danila@jiaxyga.com smtp.mailfrom=danila@jiaxyga.com
+X-Mailru-Src: smtp
+X-7564579A: B8F34718100C35BD
+X-77F55803: 4F1203BC0FB41BD9749DDC91F62168F96858D558BB6F8ECDBC1E4CBB32F923D0182A05F5380850407E970E300784EBF73DE06ABAFEAF6705B98F21777A066CAAD4BAB75C247D3C8D22153E7FBF342507
+X-7FA49CB5: FF5795518A3D127A4AD6D5ED66289B5278DA827A17800CE7E9A0F80F179600C6EA1F7E6F0F101C67BD4B6F7A4D31EC0BCC500DACC3FED6E28638F802B75D45FF8AA50765F7900637F91103FA893F53AB8638F802B75D45FF36EB9D2243A4F8B5A6FCA7DBDB1FC311F39EFFDF887939037866D6147AF826D838025C3A5B9412FF7927E4C5451573B752D1DD4039E1804DCC7F00164DA146DAFE8445B8C89999728AA50765F7900637E603D20A273AEC4F389733CBF5DBD5E9C8A9BA7A39EFB766F5D81C698A659EA7CC7F00164DA146DA9985D098DBDEAEC82D01283D1ACF37BAF6B57BC7E6449061A352F6E88A58FB86F5D81C698A659EA73AA81AA40904B5D9A18204E546F3947C643FE6A0CAC512C72D242C3BD2E3F4C64AD6D5ED66289B523666184CF4C3C14F6136E347CC761E07725E5C173C3A84C3E4A64BF2429643C8BA3038C0950A5D36B5C8C57E37DE458B330BD67F2E7D9AF16D1867E19FE14079C09775C1D3CA48CF27ED053E960B195E1DD303D21008E298D5E8D9A59859A8B636DA1BED736F932875ECD9A6C639B01B78DA827A17800CE70012B0FBE38D23AE731C566533BA786AA5CC5B56E945C8DA
+X-C1DE0DAB: 0D63561A33F958A5B5CFE3E409210B8A5002B1117B3ED69611710AED4E1E549869995D676B7B4CBE823CB91A9FED034534781492E4B8EEAD528DE7AA5F2BD788C79554A2A72441328621D336A7BC284946AD531847A6065AED8438A78DFE0A9EBDAD6C7F3747799A
+X-C8649E89: 1C3962B70DF3F0ADE00A9FD3E00BEEDF77DD89D51EBB7742D3581295AF09D3DF87807E0823442EA2ED31085941D9CD0AF7F820E7B07EA4CF642EFD2B9E647312A980CF9BD1F21904FA62FE58E6AFF9FA101A404DC1BB4AA0519D809D4148B49644A12D68860EECB74CF54DF889A5E7DAA6FFEC9055B244E7A5741F83D6A553B18100E6DA90CB805802C26D483E81D6BE72B480F99247062FEE42F474E8A1C6FD34D382445848F2F3
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2biojbL9S8ysBdXgIPg1gB8EuTLd17mbo9BnP
+X-Mailru-Sender: 0A26D9779F8DDEABFA5A783B5DB0061BD828DBAB7F771040B951B70A5BD4BD8EDD32FCFE91D9EA90B9A8FEFFB5F7F2D5210985D6C440852E55B4A2144138A88088F510C62CFD139357C462056C5AD9112068022A3E05D37EB4A721A3011E896F
+X-Mras: Ok
 
-On 28/06/2024 10:13, Heiko Stübner wrote:
-> Hi Krzysztof,
-> 
-> Am Freitag, 28. Juni 2024, 09:27:14 CEST schrieb Krzysztof Kozlowski:
->> On 27/06/2024 23:17, Johan Jonker wrote:
->>> CLK_NR_CLKS should not be part of the binding.
->>> Remove since the kernel code no longer uses it.
->>
->> Please wrap neither too early nor over the limit. Not one sentence per line.
->>
->>
->>
->>>
->>> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
->>> ---
->>>  include/dt-bindings/clock/rk3188-cru-common.h | 2 --
->>>  1 file changed, 2 deletions(-)
->>>
->>> diff --git a/include/dt-bindings/clock/rk3188-cru-common.h b/include/dt-bindings/clock/rk3188-cru-common.h
->>> index afad90680fce..01e14ab252a7 100644
->>> --- a/include/dt-bindings/clock/rk3188-cru-common.h
->>> +++ b/include/dt-bindings/clock/rk3188-cru-common.h
->>> @@ -132,8 +132,6 @@
->>>  #define HCLK_VDPU		472
->>>  #define HCLK_HDMI		473
->>>
->>> -#define CLK_NR_CLKS		(HCLK_HDMI + 1)
->>
->> I still see it as being used in linux-next. Some explanation is missing.
-> 
-> I think me applying Johan's patch [0] removing the constant's usage, simply
-> overlapped with yesterday's next-creation.
-> 
+This patch updates the DSI controller schema to include the missing
+SM7150 compatibility. It should addresses the following warning in the
+SM7150 MDSS schema:
 
-These should be sent in one patchset, which makes it obvious. Splitting
-does not help...
+qcom,sm7150-mdss.example.dtb:
+dsi@ae94000: compatible: 'oneOf' conditional failed, one must be
+fixed:
+        ['qcom,sm7150-dsi-ctrl', 'qcom,mdss-dsi-ctrl'] is too long
+        'qcom,sm7150-dsi-ctrl' is not one of ['qcom,apq8064-dsi-ctrl',
+'qcom,msm8226-dsi-ctrl', 'qcom,msm8916-dsi-ctrl',
+'qcom,msm8953-dsi-ctrl', 'qcom,msm8974-dsi-ctrl',
+'qcom,msm8976-dsi-ctrl', 'qcom,msm8996-dsi-ctrl',
+'qcom,msm8998-dsi-ctrl', 'qcom,qcm2290-dsi-ctrl',
+'qcom,sc7180-dsi-ctrl', 'qcom,sc7280-dsi-ctrl',
+'qcom,sdm660-dsi-ctrl', 'qcom,sdm670-dsi-ctrl',
+'qcom,sdm845-dsi-ctrl', 'qcom,sm6115-dsi-ctrl',
+'qcom,sm6125-dsi-ctrl', 'qcom,sm6350-dsi-ctrl',
+'qcom,sm6375-dsi-ctrl', 'qcom,sm8150-dsi-ctrl',
+'qcom,sm8250-dsi-ctrl', 'qcom,sm8350-dsi-ctrl',
+'qcom,sm8450-dsi-ctrl', 'qcom,sm8550-dsi-ctrl',
+'qcom,sm8650-dsi-ctrl']
+        'qcom,sm7150-dsi-ctrl' is not one of
+['qcom,dsi-ctrl-6g-qcm2290', 'qcom,mdss-dsi-ctrl']
+        from schema $id:
+http://devicetree.org/schemas/display/msm/dsi-controller-main.yaml#
+Documentation/devicetree/bindings/display/msm/qcom,sm7150-mdss.example.dtb:
+dsi@ae94000: Unevaluated properties are not allowed ('compatible' was
+unexpected)
+        from schema $id:
+http://devicetree.org/schemas/display/msm/dsi-controller-main.yaml#
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+For this reason, the patch should be applied promptly once reviewed.
 
-Best regards,
-Krzysztof
+Link to report:
+https://lore.kernel.org/all/CAL_Jsq+vL2fBJBBj13A=qgTQX1rj7tK=ybn+7tXBdpobpRoi6Q@mail.gmail.com/
+
+To: Rob Clark <robdclark@gmail.com>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Sean Paul <sean@poorly.run>
+To: Marijn Suijten <marijn.suijten@somainline.org>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+To: Maxime Ripard <mripard@kernel.org>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+To: David Airlie <airlied@gmail.com>
+To: Daniel Vetter <daniel@ffwll.ch>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Krishna Manikandan <quic_mkrishn@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: freedreno@lists.freedesktop.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
+
+Danila Tikhonov (1):
+  dt-bindings: display/msm: dsi-controller-main: Add SM7150
+
+ .../devicetree/bindings/display/msm/dsi-controller-main.yaml    | 2 ++
+ 1 file changed, 2 insertions(+)
+
+-- 
+2.44.0
 
 
