@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-233668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9B5B91BB4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:18:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0962291BB52
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:21:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5161F1F22F2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:18:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A1AC1C22758
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:21:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 699E114EC78;
-	Fri, 28 Jun 2024 09:18:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BC9E14F9DC;
+	Fri, 28 Jun 2024 09:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="o+5aXFEl"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="HEfJ7MU/"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74AD43AC0
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 09:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76CCE1465A1
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 09:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719566320; cv=none; b=ljCDHtOP2+rHoqk66x4JHXBlmF0WEWkTreoeL0vvJp4EDfgmlWXImNlvNkLVEhLHjmW10kCcWaFPkDZlQl+9g+3rABHMY42liOE4iY1+ghRF+yy/c74lBNe2va5wDemIeZHOivuE0oL6CPGZVxsRXsn4VNCVbePMjowXwpMgIHQ=
+	t=1719566507; cv=none; b=UmreX0JvC0CO5uMyZWVYwSdK2amhzulJwCjh5IvCedoE7XsKvrPhSkRlVQDEPtgGa+L9jszmrRxRy4zv44Md5iURHNODgC5SDOOPQnjtvDpY4dLflVcMJ1HM4ZStg+4Wlbt3xBlu281O3sNWStdG4ZGNNBOmvkU3DzIx/ovzaFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719566320; c=relaxed/simple;
-	bh=JwGvK0qeOLrELKDXtXg20v+0XzyrOv8zOjOREGV38bw=;
+	s=arc-20240116; t=1719566507; c=relaxed/simple;
+	bh=GUUeOl5OTYU1P+SJ7athIDCY6ruVMMiJN7zw6ctaH28=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iexIMx33Cj65JDXvKvgmLMVIMaI67kruXn1qMs+cEWg6RaGqEnnQzbYQCntnu02zbawjmVRNcHzfQY3J796eCSEA+Xm65fiUQUQNoZjkPrw3p9kMUe4NrvmUMvg8PX6YikxnbnKuoUvTOozRk9Pp4YCP/p0Ized63cGSZQNlVBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=o+5aXFEl; arc=none smtp.client-ip=209.85.218.43
+	 To:Cc:Content-Type; b=rST769345ztjboIcfAAHyN6EVTm899wp9VEWlVWBrnbCfQtt9g3frzqaHR+ticQbf3o3GuGa37rFLs2MRc+SbLFztrjEG6oiTlRTe5TpG81MjlAeRi99OLxms81lG8qBP3UlgD3gkf8X5cCzZ9NijgJzCazjaKOldKcNJf5p2xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=HEfJ7MU/; arc=none smtp.client-ip=209.85.218.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a6fe81a5838so34791766b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 02:18:38 -0700 (PDT)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a724958f118so49508066b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 02:21:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1719566317; x=1720171117; darn=vger.kernel.org;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1719566504; x=1720171304; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=g4nRdrD3NJ1hYJ32BRxvgX77ACcWSuo5vSiMAPd1QEo=;
-        b=o+5aXFElerjlzv84wxAkPaRqlt91z0g2X9rhv4q4KoVJKp9p8GLK9NvMlLLgMEZXnF
-         RnD6PUHNUlQCDJk1+KkCsecaetFwAw7xT7ZUiHvavPixPs5nFVyHlDaHJBKrWBpXow3j
-         vQdlWhq0s9Rj8Qvq0rzQQcCSdAIFZ3fZfXW2KrBiXOh0+aP1ZnYIeBbRVKhbEBbwK5rv
-         6yLgjNHR+jW8/bx+J6HQGZ3zvpU0PlcZNkEYxMprEJ997C+bf3sRHgmUYMst+4eHuW3P
-         YjNA/zbLpQ5PWD2DTxeAxs+Ib6o1jq9g/HQG84rLfXW4v8pkyKnzL1HstKxEM/8OmqWR
-         t9qg==
+        bh=GUUeOl5OTYU1P+SJ7athIDCY6ruVMMiJN7zw6ctaH28=;
+        b=HEfJ7MU/Jd8lvzm4b7NXvefu3oBBI3aUQ3HmdY7Ka56nU3D0ZZP3y2ORxf13STq/C/
+         wTQXlc7UO1fVVdor7ThEnexkyUYPY3LHWOrps/FmnuwQnc54EOumZd7Is0f0zh82RKov
+         w8pY/WDfzS0DsJ8X53O9j/juGaGuZ/MEZ+d+ul7bBfhhEoPfmjBtzo9APQvWKqBk2IzY
+         T1RFdypLm47gT/wd1hhCt45AM+V/AXCEjoGJFXL+ryuPpQJbfw2gcdgT/vwixiEr5tSe
+         +WST1RarTHp5gBwqd1WSHR6o5w0/B/GaboXSoT9dHcqKTFff7Sf+BXrJq7ddK6jYTKBZ
+         5c4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719566317; x=1720171117;
+        d=1e100.net; s=20230601; t=1719566504; x=1720171304;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=g4nRdrD3NJ1hYJ32BRxvgX77ACcWSuo5vSiMAPd1QEo=;
-        b=IdO6q6xnqxdrO7VJFIOqlxo4rXdBx27R6GIH0J/XO4ORN0sDndjibdli69R0M7+hpi
-         dBuIsfxI0bS3UdpPd8/iSJDQGtJjsfTXHJ7TriSTfOd/h+c3j3/hfsajVjHstBhxHjA8
-         Nt5SktLbkkOK4K0XoBHzBmkWMf1LXvC1DLdmJ+yjtFjN4j9ZVKKpC7ihllwepVSQrFUj
-         lSB7bxK510rX6BmxLR5TAPpfb7iYEtuM2X1jUzqF/DtVZLSplg5s0+3tNSlVx9kcCzin
-         DBa+l3tBXDsAmfnnptKPRAZzFWGP9mr6StKHJLosmYAWLg+SmsI4umbWq68/SYaJCAqj
-         Cg8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU8+DoEodwd00ZZVRsac7MdcqissHtEdKaCFbjU0LTjTlZABQ74bgjKEaSVNWYF7qsWMZbmD/woJHfwD8EIQcyo5DQnHhfrRzYC7m//
-X-Gm-Message-State: AOJu0YyXMwuvFkcmgjW6LpEGMkB5OVQGLDzhiH6pB7e5039DaFJgTvE+
-	z7M81Bs5MRFL90b4bI5U29ktsBj8VwwT7NbYvQNvcpHOmdP1tt89rsSbvUUggIpH+rdw0PKSVdo
-	hAvnptcyoRsTt0hydIuI4nCGuxb4TNdivwBHgvA==
-X-Google-Smtp-Source: AGHT+IHQJz049InCepkhc9kI7uFveWNYHnmaFhmkq0HnaP5qPMrwHzUEhWfGz6Royoe7qcT6s2kIKsKqsb8mkKgqVpA=
-X-Received: by 2002:a17:906:9c87:b0:a72:7a71:7f59 with SMTP id
- a640c23a62f3a-a727a7180b9mr787751266b.57.1719566317015; Fri, 28 Jun 2024
- 02:18:37 -0700 (PDT)
+        bh=GUUeOl5OTYU1P+SJ7athIDCY6ruVMMiJN7zw6ctaH28=;
+        b=WT4aWDVeYzbCXxJKSzNL3qtSHqV1zKuvPpSpGu7HFGMMNRcIYtgAdP5BqzwtPcwMeM
+         ebK20tJMJCVBsohi8KnGp8uUky23v/FXA42qX4QaxtJBQtZ4SekYrVNKQRvr5ou8C4VJ
+         m5gjx6gSi2byANB0fUTtRBsODSOy+uL3HT0pw+pSTGtUV42XZFGLTxJojN80OjiZLeMz
+         e/hLWMxhTuBZPqoAL/xWn6mEfJv2ysfR+qbjt+vob1AbR9r13lnRimwltsX+MW/guWqs
+         InQ/mk7NOaWHCiKFtMOtwoAutJywin8XnE1q2rtuuBQErSbLSbg8JCet+t2Jy0YN875m
+         HqLg==
+X-Forwarded-Encrypted: i=1; AJvYcCUzdEb7gegViy9YxTIHi2AeN6vVcCDqxqREKJ73lpn/pB17/BZJlHoOgTUWQSqufwwbMNcoRGghTv5D9KBEcDje+j9HZFaU+v9YiIA/
+X-Gm-Message-State: AOJu0Yy1OAdh7ku+4SczIi8EfkSIxfbLjLjlk/Z2VUGRpiKw8VW3qfWc
+	DeOmKJDEUPW1GrUJ4ohcdgvXQVzfQNh20XNjD2YbbtrJ/018Bo1nBQN6cad6Cod0Q3Zze2MW/WO
+	hWxqkbPLD0dQn6NJW8eUD7NkdmhRURgKGElZR0A==
+X-Google-Smtp-Source: AGHT+IF7NFei1EQBJfySUv3C79EdZFXolxqVCoTcA7eZAbhURusjPaToikXelhSoNh/rrjdKoBeJoJz3xOL6E3X1Vt4=
+X-Received: by 2002:a17:906:c44d:b0:a72:548a:6f42 with SMTP id
+ a640c23a62f3a-a72548a702emr1002466966b.18.1719566503875; Fri, 28 Jun 2024
+ 02:21:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240626171652.366415-1-jesse@rivosinc.com> <20240626171652.366415-2-jesse@rivosinc.com>
-In-Reply-To: <20240626171652.366415-2-jesse@rivosinc.com>
+References: <20240626171652.366415-1-jesse@rivosinc.com> <20240627-boring-handgun-40ae5bf2651e@wendy>
+In-Reply-To: <20240627-boring-handgun-40ae5bf2651e@wendy>
 From: Alexandre Ghiti <alexghiti@rivosinc.com>
-Date: Fri, 28 Jun 2024 11:18:25 +0200
-Message-ID: <CAHVXubgUnHOQ4QF_sSYVD88W6Zuj32W3U9NSJ0Xzf9N36cqh6g@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] RISC-V: pi: Add kernel/pi/pi.h
-To: Jesse Taube <jesse@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, Ard Biesheuvel <ardb@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Conor Dooley <conor.dooley@microchip.com>, 
+Date: Fri, 28 Jun 2024 11:21:33 +0200
+Message-ID: <CAHVXubik-T=dv3hds4VuJFFxen1CRhfintGdOu3JsdAeouuOtg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] RISC-V: pi: Force hidden visibility for all symbol references
+To: Conor Dooley <conor.dooley@microchip.com>
+Cc: Jesse Taube <jesse@rivosinc.com>, linux-riscv@lists.infradead.org, 
+	Ard Biesheuvel <ardb@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
 	Masahiro Yamada <masahiroy@kernel.org>, Wende Tan <twd2.me@gmail.com>, 
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Sami Tolvanen <samitolvanen@google.com>, 
 	Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, 
@@ -92,101 +92,25 @@ Content-Transfer-Encoding: quoted-printable
 
 Hi Jesse,
 
-On Wed, Jun 26, 2024 at 7:17=E2=80=AFPM Jesse Taube <jesse@rivosinc.com> wr=
-ote:
+On Thu, Jun 27, 2024 at 12:35=E2=80=AFPM Conor Dooley
+<conor.dooley@microchip.com> wrote:
 >
-> Add pi.h header for declarations of the kernel/pi prefixed functions
-> and any other related declarations.
+> On Wed, Jun 26, 2024 at 01:16:50PM -0400, Jesse Taube wrote:
+> > Eliminate all GOT entries in the .pi section, by forcing hidden
+> > visibility for all symbol references, which informs the compiler that
+> > such references will be resolved at link time without the need for
+> > allocating GOT entries.
+> >
+> > Include linux/hidden.h in Makefile, like arm64, for the
+> > hidden visibility attribute.
+> >
+> > Signed-off-by: Jesse Taube <jesse@rivosinc.com>
 >
-> Signed-off-by: Jesse Taube <jesse@rivosinc.com>
-> ---
->  arch/riscv/kernel/pi/cmdline_early.c | 10 ++--------
->  arch/riscv/kernel/pi/fdt_early.c     |  7 +------
->  arch/riscv/kernel/pi/pi.h            | 17 +++++++++++++++++
->  3 files changed, 20 insertions(+), 14 deletions(-)
->  create mode 100644 arch/riscv/kernel/pi/pi.h
->
-> diff --git a/arch/riscv/kernel/pi/cmdline_early.c b/arch/riscv/kernel/pi/=
-cmdline_early.c
-> index f6d4dedffb84..fbcdc9e4e143 100644
-> --- a/arch/riscv/kernel/pi/cmdline_early.c
-> +++ b/arch/riscv/kernel/pi/cmdline_early.c
-> @@ -6,15 +6,9 @@
->  #include <asm/pgtable.h>
->  #include <asm/setup.h>
->
-> -static char early_cmdline[COMMAND_LINE_SIZE];
-> +#include "pi.h"
->
-> -/*
-> - * Declare the functions that are exported (but prefixed) here so that L=
-LVM
-> - * does not complain it lacks the 'static' keyword (which, if added, mak=
-es
-> - * LLVM complain because the function is actually unused in this file).
-> - */
-> -u64 set_satp_mode_from_cmdline(uintptr_t dtb_pa);
-> -bool set_nokaslr_from_cmdline(uintptr_t dtb_pa);
-> +static char early_cmdline[COMMAND_LINE_SIZE];
->
->  static char *get_early_cmdline(uintptr_t dtb_pa)
->  {
-> diff --git a/arch/riscv/kernel/pi/fdt_early.c b/arch/riscv/kernel/pi/fdt_=
-early.c
-> index 899610e042ab..40ee299702bf 100644
-> --- a/arch/riscv/kernel/pi/fdt_early.c
-> +++ b/arch/riscv/kernel/pi/fdt_early.c
-> @@ -3,12 +3,7 @@
->  #include <linux/init.h>
->  #include <linux/libfdt.h>
->
-> -/*
-> - * Declare the functions that are exported (but prefixed) here so that L=
-LVM
-> - * does not complain it lacks the 'static' keyword (which, if added, mak=
-es
-> - * LLVM complain because the function is actually unused in this file).
-> - */
-> -u64 get_kaslr_seed(uintptr_t dtb_pa);
-> +#include "pi.h"
->
->  u64 get_kaslr_seed(uintptr_t dtb_pa)
->  {
-> diff --git a/arch/riscv/kernel/pi/pi.h b/arch/riscv/kernel/pi/pi.h
-> new file mode 100644
-> index 000000000000..65da99466baf
-> --- /dev/null
-> +++ b/arch/riscv/kernel/pi/pi.h
-> @@ -0,0 +1,17 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _RISCV_PI_H_
-> +#define _RISCV_PI_H_
-> +
-> +#include <linux/types.h>
-> +
-> +/*
-> + * The folowing functions are exported (but prefixed) declare them here =
-so
+> Did you forget to add --cover-letter to your format-patch incantation?
 
-s/folowing/following
+I admittedly don't understand all the details but it makes the GOT
+entry disappear and arm64 uses it too, so:
 
-And it lacks something between "(but prefixed)" and "declare": what
-was wrong with the initial comment?
-
-> + * that LLVM does not complain it lacks the 'static' keyword (which, if
-> + * added, makes LLVM complain because the function is unused).
-> + */
-> +
-> +u64 get_kaslr_seed(uintptr_t dtb_pa);
-> +bool set_nokaslr_from_cmdline(uintptr_t dtb_pa);
-> +u64 set_satp_mode_from_cmdline(uintptr_t dtb_pa);
-> +
-> +#endif /* _RISCV_PI_H_ */
-> --
-> 2.45.2
->
-
-Suggested-by: Charlie Jenkins <charlie@rivosinc.com>
 Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 
 Thanks,
