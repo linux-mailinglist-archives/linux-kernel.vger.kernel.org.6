@@ -1,191 +1,126 @@
-Return-Path: <linux-kernel+bounces-233216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93E0291B469
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:06:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE3F691B46C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:07:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7D921C214E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:06:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74B6F1F22A1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF4BCA40;
-	Fri, 28 Jun 2024 01:06:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2DB014A85;
+	Fri, 28 Jun 2024 01:06:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OqpNC25W"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="esuA+8gU";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ObXzR877"
+Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F089A196
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 01:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA33F12B72;
+	Fri, 28 Jun 2024 01:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719536799; cv=none; b=iwCaMavbGBFFHLFIPB6Rr6JL+U21h6sgs1NE7IoqodXs6Ji0LaJDgLR+bBrGwE0fnWEXi+lfMVK2/3ybgnlb/CKyrorfoqUZJsIEfaNZmHR40IUUCeSn6kVajM37IQE50CDZHHsvN6lXpog71UJhG/3u/ZwvEhgnUCtVr2Snads=
+	t=1719536805; cv=none; b=kKfBSxH2bXiQUF+uJ16yCLqwYB5vMr7W+ZwQysW/dHB1B/UMVvq0pyL0Gsx/sE7+L3S8ij33ZvmlEZxhTxo1cf/0YQULtLHcNUc52LAF1Zici2w/PxevDmdgInJCUJZe797HPOSk0ViUznpJ6MNqYkqdpBOwn51ZywUM8ag0XpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719536799; c=relaxed/simple;
-	bh=EdWj89pVbXZmQQrbfZ+xE1Hxi0Y4Z/pBNi+RgO87Lgc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=O58oEBB49Z72nej/gfJgPMcXtyWU0zm234rchFus2SbYlPsAdBTAEM6bVN2iyLr6KACC9DO2WrBpKs1eI/RPscAoj91BlG6ErxRnRZzilZ7URakTp6RX/CbQz96QYFqOKiNlhcRAhp9sgF77nR4dejsjRG65DYNEgYE75/+F8jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OqpNC25W; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719536796;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=njkkozG9EFlh7coxFPh179Qtw83r0T/2ltt/6G5V93o=;
-	b=OqpNC25WaNh2cpmkzqneOpKAi4+F5c8sGIW20FJSMVhmMSzfYxBT5OqOkFgbmMbXux3NY3
-	U4WHCJ8S1FUOG1QTnd7DXRV9eiY6l47c/xVh1OjqhN+rdAW5/zbi0UIr7m/wQHAPSSV6M6
-	L3fRhcTmN9yPXkgmiLk+pgQ7jgIKoIQ=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-361-DsioewEANdKRqGGg7Q38Eg-1; Thu,
- 27 Jun 2024 21:06:32 -0400
-X-MC-Unique: DsioewEANdKRqGGg7Q38Eg-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 499A31955F03;
-	Fri, 28 Jun 2024 01:06:30 +0000 (UTC)
-Received: from [10.22.32.240] (unknown [10.22.32.240])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BEB0F300021A;
-	Fri, 28 Jun 2024 01:06:27 +0000 (UTC)
-Message-ID: <4b86e9ec-f94d-4838-ad24-e1a3c89c9939@redhat.com>
-Date: Thu, 27 Jun 2024 21:06:26 -0400
+	s=arc-20240116; t=1719536805; c=relaxed/simple;
+	bh=yefVHsO4JUxqb/nsWn/gvTjbRftGeWGVUg0tvn1oRxk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a1fSI6ktExuGm8brapFZYwmJwcuIjExlhy9skplZNqTklvXgSQTxm/Yhe4UM/f7OWgKCdtyPaRosxXg8RQHVbTtbv7Fr5kUGXUapvtIaX6PwiWoLBqR3eqbM2s+i/hjI5aKyRd6LjLP0oJX5WyZ5xdU74vhSwYSRzzoleTpvRzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=esuA+8gU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ObXzR877; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id C5B961140211;
+	Thu, 27 Jun 2024 21:06:40 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute7.internal (MEProxy); Thu, 27 Jun 2024 21:06:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1719536800; x=
+	1719623200; bh=yI8GYT0tC7+Zux+1Ug0067pja9GoxuFh1z+fEwMhgEc=; b=e
+	suA+8gUrtmAQDn6IbWY8U9edenoYbcGM2aS9w9obOtMXg9mUwNmKj+lh/f7lpgjo
+	dY2B4FuUz4J5FiXx9rZjc4NyRl4/W5aAD1cSJDAQoAnxms9KtFR0v15bLbYGajSv
+	7g/GtqYJce/JlbqHmV8635BgVbx3fAlNn5/iEe+rMA8uQyc94eqm43mgNOc/Kls6
+	C2LzONO6Jp7kN0zkkWovF+Fc7bQKd/g6ygqt7ebUMvy4GPyXL4xGNqzP17f66gEN
+	c35hVB/LnPBuJGWSX2Dbv49KqqrrcjxFcTh2+8FJOQ0vhlogtji+w/AlA7VhNiHF
+	g+BUG9H7S0nNifhmnaW/g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1719536800; x=1719623200; bh=yI8GYT0tC7+Zux+1Ug0067pja9Go
+	xuFh1z+fEwMhgEc=; b=ObXzR877lhFsQ7HaW7o0H/rrLmUNlgdckXnOZ2wogGRj
+	uK3iKs19OOhVLaAikisMQ+6qABqildl7F7E8xPPCG5uN2jGWNMNJqfm5orFRCBqz
+	kCUZIK+jdNvyVWq/HTG0IInMf10ZUQEMCtrr/XmWe9dj4gAW2y6dBzqG8H2gC2Ss
+	/9TdK1ArE63SWL69EhTo2RjF4Hq61yWXIAWcW2behrxjmiBvEVM4kptRnpz/4zoI
+	vshHtVfz3ACISeVNZD/whfDPadt1EnUsXh8EH7VsZRXYuaQz6DIorcOhJRCnPl+U
+	skA0z6GIQFWlDk5A8s3dnVsR0GcGgu77TqfTrQpEQQ==
+X-ME-Sender: <xms:oAx-ZgFq8jI5nO1NIy76el02fqScLWM4SCJ-H3sLpaGM9D-ZNHavmg>
+    <xme:oAx-ZpUkVlu3C5SLJ1VSiOJ6nsxiqWEEdUtUaXYTlatw1BDwPUPSlrVOwrCUFSMwD
+    r44HchR5doKgv6bxvI>
+X-ME-Received: <xmr:oAx-ZqLJRy9GWTWg89LgnvLC1BH7COp8HVgi_9y0-cj7GJZMTQ7VJLs6TZxGrsoU_SezpjkgKw_3B1wjQxVh7tHo__59m5ZK0S0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrtdehgdeggecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefvrghkrghs
+    hhhiucfurghkrghmohhtohcuoehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjh
+    hpqeenucggtffrrghtthgvrhhnpeehhffhteetgfekvdeiueffveevueeftdelhfejieei
+    tedvleeftdfgfeeuudekueenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhp
+X-ME-Proxy: <xmx:oAx-ZiHS80IbLPHSfGChMHfy0jaPxaYblv4qbcFvLTGQJ9Ae7U5hiA>
+    <xmx:oAx-ZmXiSSGeaG2urRqFJz4UYdBJAi0dFsgnfu4SdR6y8WuZpzPm8A>
+    <xmx:oAx-ZlO_3lm9GjhZwOjrLYPVLnxykzF408QAmGwW1WWpvSPBjp9GOg>
+    <xmx:oAx-Zt2Z3TAgfMh-MIHDth8PowV0QVjJrWOiQ23sniEoBROeKQLrIw>
+    <xmx:oAx-ZhH-FUPUj75UTKQIPARRPc0nlw4LtRJ0alNT_Erl-VKirGeiWLHq>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 27 Jun 2024 21:06:38 -0400 (EDT)
+Date: Fri, 28 Jun 2024 10:06:37 +0900
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] firewire: core: Fix spelling mistakes in
+ tracepoint messages
+Message-ID: <20240628010637.GA978284@workstation.local>
+Mail-Followup-To: Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+References: <20240627170847.125531-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 1/2] cgroup/rstat: Helper functions for locking expose
- trylock
-From: Waiman Long <longman@redhat.com>
-To: Jesper Dangaard Brouer <hawk@kernel.org>, tj@kernel.org,
- cgroups@vger.kernel.org, yosryahmed@google.com, shakeel.butt@linux.dev
-Cc: hannes@cmpxchg.org, lizefan.x@bytedance.com, kernel-team@cloudflare.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <171952310959.1810550.17003659816794335660.stgit@firesoul>
- <08062501-f3fb-4e4d-b72c-f1b0f964640f@redhat.com>
-Content-Language: en-US
-In-Reply-To: <08062501-f3fb-4e4d-b72c-f1b0f964640f@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240627170847.125531-1-colin.i.king@gmail.com>
 
-On 6/27/24 18:22, Waiman Long wrote:
->
-> On 6/27/24 17:18, Jesper Dangaard Brouer wrote:
->> Signed-off-by: Jesper Dangaard Brouer <hawk@kernel.org>
->> ---
->>   kernel/cgroup/rstat.c |   40 ++++++++++++++++++++++++++++++----------
->>   1 file changed, 30 insertions(+), 10 deletions(-)
->>
->> diff --git a/kernel/cgroup/rstat.c b/kernel/cgroup/rstat.c
->> index fb8b49437573..2a42be3a9bb3 100644
->> --- a/kernel/cgroup/rstat.c
->> +++ b/kernel/cgroup/rstat.c
->> @@ -279,17 +279,30 @@ __bpf_hook_end();
->>    * value -1 is used when obtaining the main lock else this is the CPU
->>    * number processed last.
->>    */
->> -static inline void __cgroup_rstat_lock(struct cgroup *cgrp, int 
->> cpu_in_loop)
->> +static inline bool __cgroup_rstat_trylock(struct cgroup *cgrp, int 
->> cpu_in_loop)
->> +{
->> +    bool locked;
->> +
->> +    locked = spin_trylock_irq(&cgroup_rstat_lock);
->> +    if (!locked)
->> +        trace_cgroup_rstat_lock_contended(cgrp, cpu_in_loop, !locked);
->> +
->> +    return locked;
->> +}
->> +
->> +static inline void __cgroup_rstat_lock(struct cgroup *cgrp, int 
->> cpu_in_loop,
->> +                       bool check_contention)
->>       __acquires(&cgroup_rstat_lock)
->>   {
->> -    bool contended;
->> +    bool locked = false;
->>   -    contended = !spin_trylock_irq(&cgroup_rstat_lock);
->> -    if (contended) {
->> -        trace_cgroup_rstat_lock_contended(cgrp, cpu_in_loop, 
->> contended);
->> +    if (check_contention)
->> +        locked = __cgroup_rstat_trylock(cgrp, cpu_in_loop);
->> +
->> +    if (!locked)
->>           spin_lock_irq(&cgroup_rstat_lock);
->> -    }
->> -    trace_cgroup_rstat_locked(cgrp, cpu_in_loop, contended);
->> +
->> +    trace_cgroup_rstat_locked(cgrp, cpu_in_loop, !locked);
->>   }
->>     static inline void __cgroup_rstat_unlock(struct cgroup *cgrp, int 
->> cpu_in_loop)
->> @@ -328,7 +341,7 @@ static void cgroup_rstat_flush_locked(struct 
->> cgroup *cgrp)
->>               __cgroup_rstat_unlock(cgrp, cpu);
->>               if (!cond_resched())
->>                   cpu_relax();
->> -            __cgroup_rstat_lock(cgrp, cpu);
->> +            __cgroup_rstat_lock(cgrp, cpu, true);
->>           }
->>       }
->>   }
->> @@ -348,9 +361,16 @@ static void cgroup_rstat_flush_locked(struct 
->> cgroup *cgrp)
->>    */
->>   __bpf_kfunc void cgroup_rstat_flush(struct cgroup *cgrp)
->>   {
->> +    bool locked;
->> +
->>       might_sleep();
->>   -    __cgroup_rstat_lock(cgrp, -1);
->> +    locked = __cgroup_rstat_trylock(cgrp, -1);
->> +    if (!locked) {
->> +        /* Opportunity to ongoing flush detection */
->> +        __cgroup_rstat_lock(cgrp, -1, false);
->> +    }
->> +
->>       cgroup_rstat_flush_locked(cgrp);
->>       __cgroup_rstat_unlock(cgrp, -1);
->>   }
->> @@ -368,7 +388,7 @@ void cgroup_rstat_flush_hold(struct cgroup *cgrp)
->>       __acquires(&cgroup_rstat_lock)
->>   {
->>       might_sleep();
->> -    __cgroup_rstat_lock(cgrp, -1);
->> +    __cgroup_rstat_lock(cgrp, -1, true);
->>       cgroup_rstat_flush_locked(cgrp);
->>   }
->>
->>
-> Will it be cleaner to add a "bool *flushed" output parameter to 
-> __cgroup_rstat_lock() so that the caller can respond differently 
-> whether the flushed flag is set or not? In that way, you don't need to 
-> expose a separate trylock() API. Also your commit log is empty.
+On Thu, Jun 27, 2024 at 06:08:47PM +0100, Colin Ian King wrote:
+> There are two spelling mistakes in the tracepoint message text. Fix them.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  include/trace/events/firewire.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Looking at the use case in patch 2, I would suggest the following APIs.
-
-- bool cgroup_rstat_lock(struct cgroup *cgrp)
-- bool cgroup_rstat_lock_or_flushed(struct cgroup *cgrp)
-
-Both will return a bool indicating a flush has already been done if 
-true. The 2nd function will not take the lock if a flush is ongoing. 
-Both will wait if a flush is ongoing.
-
-Cheers,
-Longman
+Applied to for-next branch. I'll use spellcheck program when posting this
+kind of changes.
 
 
+Thanks
+
+Takashi Sakamoto
 
