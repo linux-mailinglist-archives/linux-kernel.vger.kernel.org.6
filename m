@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-234229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3A4191C413
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:45:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FF9091C414
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:46:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F387B22268
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:45:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58A2CB21206
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B457C1C9ED1;
-	Fri, 28 Jun 2024 16:45:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C749A1C8FB5;
+	Fri, 28 Jun 2024 16:46:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KtI3FXCD"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BppCZ+Hm"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D7BD2E5
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 16:45:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF2AD2E5
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 16:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719593136; cv=fail; b=TFhyok1JWY8Hyv9R64Z/c+yPPtyMwH3ilVBa9MEXkEHIZuCuf8eXqF8RbhSUrszTgeFqcirrYHmN5011X6SEignVKUbDFptfK/orrI8DZqhWfDiWFeOvpQEz9Ouq5RgeBvbAxism/MKh+YGGQ+zEoALKh3ShnLtlzQy6rISnyVE=
+	t=1719593189; cv=fail; b=kmJE1SOtT3jPwhKcQLLWHgYVXNKbjPSkliWOYKa3xZE/IgzZkuG+BSVw66dw1/J1L7r5js8dzXV4+cJ8dzms7sKnzFu8zgNkPGulAG7P556iz9EX9FGnaf0vd/WCeSARCXzPWeiAdlsbSiDp3eHN7hAmqlP9/XwA1C6veRnXU9g=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719593136; c=relaxed/simple;
-	bh=ndyFCmLFFsoTk9fZpO2JZoJGFu8wNuwF12BY7ie2Gcw=;
+	s=arc-20240116; t=1719593189; c=relaxed/simple;
+	bh=Y+mOlK3WBeQ51Z2M9Azr8+JXPDbIIcERHvrI3MGLxbU=;
 	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=r2h7qTz1YIcYFfy7XdqiOs/IOAy9K7QssF9TDUR1lHHh+7bhA0kI8q3ZQE9WyVrMw2wpCO5iaWlj1eOrsVKdPEH1Sf9826jk0RBiDrnhAxuITTOTKGO/OucbKj1egls5V2pHZcvd1WBEwPNgDuv4tzz+Mnf7toJ8HP5fh0z7SZU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KtI3FXCD; arc=fail smtp.client-ip=192.198.163.19
+	 Content-Type:MIME-Version; b=q/AZh8Ux7W6PgT4iHybIhaJUjB7eYgYTveHApKJWzX368VaM1LYWYSh9adJ39iqB8e1U170katoWATHCuocXwTZ2Ebk8tIHPUKS17VMiqaKf80jAwq3ZspYclDmaFgGCDi9X5unXa7tK5hGcmz9xWPrhTcfjrW4y8mSAn7fHilA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BppCZ+Hm; arc=fail smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719593135; x=1751129135;
+  t=1719593188; x=1751129188;
   h=message-id:date:subject:to:cc:references:from:
    in-reply-to:content-transfer-encoding:mime-version;
-  bh=ndyFCmLFFsoTk9fZpO2JZoJGFu8wNuwF12BY7ie2Gcw=;
-  b=KtI3FXCD3HnqTIzAC2ZDgjPtUBhgLlxWFd2LDYLoGKQKape7SCpxEv7e
-   wMbjlR38djZM+cRUa9GnW2HESC0Z6VvpDVESj7+0gSHlH8Iy4zLRlPX3f
-   fO8zRJikgwXxS9KyHEJm3b558IZbOgwE+X6OZXwv5LejvWv/+gNduBb8p
-   DOrh7xaEeFisgn3xhYB5tzjw1TZODc8IWii1AXo2/zie/in3T6cndH1wH
-   y8mfDjcQ9UK2tKi/5yoSSJUR0fcV8JghASnr4vq8wVBb+R7r9XWlC66oi
-   86EtHGFHRhpJ0CTvyj0gib0HKId8QhZGceMZywWFVZkJ6M/Dcwq57Zff/
+  bh=Y+mOlK3WBeQ51Z2M9Azr8+JXPDbIIcERHvrI3MGLxbU=;
+  b=BppCZ+HmlV3t7mbcukN9/n3fZhE5+vGnVeiv+c/TF6DpbF8juOhUPKoe
+   j9PhEnfUkJNXEfP2BwaWp1Q8Yz8v/Fp7yId5qvcj9eSe3bz5PhDaCjmHi
+   VBbblq5sgIGWZudkbqIezMqbLys5O3ZbUx43Mm+TC5GbXPZIeooE4+a+o
+   Fe/U8/zmeRduAfDld2GGyTHQRinU6eS6TacO+2Kpz++q3Efar8gnriFro
+   6Uhz0bipfwDjSBz1DgUpe0vpMI75yVBl623p8+mYNCd2Z/vwVbbvxyojO
+   Dmg6z8YrNXvGn4HpyY4S8PFUOuh7p+oVyM9GMTPaK/tNk14+gH1pEWJPF
    g==;
-X-CSE-ConnectionGUID: cVPUZssPRxucEf/YOEhsWA==
-X-CSE-MsgGUID: PDTN9ADYS9OQi8PnT+0a8Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11117"; a="16521339"
+X-CSE-ConnectionGUID: HeeigCnlS+OWLQ7EpFaweA==
+X-CSE-MsgGUID: mKzvRDl/R3CO2pItTCq2UQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11117"; a="27918028"
 X-IronPort-AV: E=Sophos;i="6.09,169,1716274800"; 
-   d="scan'208";a="16521339"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 09:45:34 -0700
-X-CSE-ConnectionGUID: BRK94mEGStewXl5x+pEeYQ==
-X-CSE-MsgGUID: Ue7U0e0lRse8jntDEn2k9A==
+   d="scan'208";a="27918028"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 09:46:05 -0700
+X-CSE-ConnectionGUID: wEU5wo1iQdqNEg5iWzoMwQ==
+X-CSE-MsgGUID: 7nkHRY0QSmK2JMkrBYPEUw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,169,1716274800"; 
-   d="scan'208";a="44873674"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 28 Jun 2024 09:45:34 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+   d="scan'208";a="75987144"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 28 Jun 2024 09:46:04 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 28 Jun 2024 09:45:33 -0700
+ 15.1.2507.39; Fri, 28 Jun 2024 09:46:04 -0700
 Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Fri, 28 Jun 2024 09:45:33 -0700
+ 15.1.2507.39 via Frontend Transport; Fri, 28 Jun 2024 09:46:04 -0700
 Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.168)
  by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 28 Jun 2024 09:45:32 -0700
+ 15.1.2507.39; Fri, 28 Jun 2024 09:46:04 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nb8jRdgxZzjW/0zrglAB5p2bivRYNdnqusuQUl5JSx/oIxiN5YFdztpbQUPg3vGeriFO2vO/xA+VYSGtAaR3mxmYBAUJlby0YlmT+XHhFpED/9t4rxnEWnz+VBTWEzFb9jUSbO1eaGqddW0r3rLx/IEoQex+cON18mI//PoRiiaSy3U+rZLMkOK+V4SYuYA/SWe5s6jTcfX78c4Rj6oHsAoy2KMZV3uHBoHNnpeJMindGK72au5/cMPHFd/mgarkXxVZG5Rrgh8E7LxqnW3xW8sy96DU4MMrl2g5/fDZFauHaUCReFd6qOVXc2SQfFfdDMWIWyMX225+vBnZldICVA==
+ b=O6W9lm9Cx+2motbMKuL6exvMuZLL28cale99TSL0cmz3vkqbuhcnrU1XTLuWHJuWr5AUtrd9GovDYkZG9kwQRx4D5ZKdsNkOYamM0363nddKwsOklb2T0BfyfyJWU20uD0Js9+P3Q3xGEX0y0kifFkncqxVJMtEps2H/bXmNYwCqPXJp/rV0YRdVzGCERh7K5giuH/xHT+RQv6k8/pLhqNS+uKPnayYGn6iYnxTxw10yzh1tQmP6rbXO45AcWs8FNWGH4l1H2TAnxukC++AXAvIS0vqvkVQ45yackP+4NV8ioCa411IThySE2Qk2fmAK8s8pGGs9j/zE/M68MGkwrg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Y7pvx+Cor+SecViQ2aLr/+3V7dkt5hA8bAcU3kLiBy0=;
- b=VX8EA4yNUSMhT0l8KjvdCmCt+T8VPZ8sraU9Um1xtyg+juLoF7zmTOmpjZOvWfdbYf228AT1n9yDzEmpNp6eSrkSNMRnZfdn8h0kqRQ1nGablyFeeIRdK1C60cCMAlZDrkHMYx3mLEzydkrF0aTTkd+ohxf4zsC4xOQMIfv0ewvp0b+lNsTy8oabGL58QqdlTY4Uf54W+jhmf3vzijOFMC9A67G8+XfVPADBqCRl8+gkEDqp3sG60+Ldg19tv1C7HbSpqUvHAWHDseqh2IQylEuiU3uo5VKH7pN2BNUKaNj331q+u68L1kkK4S9ndunWY9gGAkmn0JfbQtVEMY+TaQ==
+ bh=LvSFF87uHYVvxdFJEQ4jkfSft0f2lmYrkZxG62iqTaE=;
+ b=DOdC9XT8HGm6n3kIIYbBHI6v6JhjkjNdcq/L3wBIjJswNUIL7Pgfp3NkMneszhu9zvaxNl0eHMWaMXidxdOeUetJPQUjo+Grn7lGAKTgRHEFgwOLUiq7Vn623+27ucACZzNTpLMNWnrnCJ6uB5gQqdxNcnIMoZppA2znGvJDLBWv50ZcgK+CA89jXJ8jnCHxoGg3thKOXlHrQ4u/M94lh0GVbOdTEIJsKhqgy2VujPiHqL77hMM1kgNw1rFlwiC+JJ3sfTlJpWRZ1/orGw7vunc9LjeBVmXh+oc0chLZwLNJeql6PG9QZx5czmbZHG/nhxHhprGGvynTbwVZAUguYQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
@@ -85,16 +85,16 @@ Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
  by DS7PR11MB6173.namprd11.prod.outlook.com (2603:10b6:8:9b::21) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.26; Fri, 28 Jun
- 2024 16:45:29 +0000
+ 2024 16:45:58 +0000
 Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
  ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
  ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.7698.033; Fri, 28 Jun 2024
- 16:45:29 +0000
-Message-ID: <d9568ea8-08cc-4e3b-9951-78acbcd54075@intel.com>
-Date: Fri, 28 Jun 2024 09:45:26 -0700
+ 16:45:58 +0000
+Message-ID: <0b51606b-2799-4d31-815d-d5f6f5f35047@intel.com>
+Date: Fri, 28 Jun 2024 09:45:55 -0700
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/38] x86/resctrl: Move data_width to be a schema
- property
+Subject: Re: [PATCH v3 13/38] x86/resctrl: Move resctrl types to a separate
+ header
 To: James Morse <james.morse@arm.com>, <x86@kernel.org>,
 	<linux-kernel@vger.kernel.org>
 CC: Fenghua Yu <fenghua.yu@intel.com>, Thomas Gleixner <tglx@linutronix.de>,
@@ -107,16 +107,17 @@ CC: Fenghua Yu <fenghua.yu@intel.com>, Thomas Gleixner <tglx@linutronix.de>,
 	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
 	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
 	David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
-	"Dave Martin" <dave.martin@arm.com>
+	"Dave Martin" <dave.martin@arm.com>, Shaopeng Tan
+	<tan.shaopeng@jp.fujitsu.com>
 References: <20240614150033.10454-1-james.morse@arm.com>
- <20240614150033.10454-7-james.morse@arm.com>
+ <20240614150033.10454-14-james.morse@arm.com>
 From: Reinette Chatre <reinette.chatre@intel.com>
 Content-Language: en-US
-In-Reply-To: <20240614150033.10454-7-james.morse@arm.com>
+In-Reply-To: <20240614150033.10454-14-james.morse@arm.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4P222CA0024.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:303:114::29) To SJ2PR11MB7573.namprd11.prod.outlook.com
+X-ClientProxiedBy: MW4P222CA0004.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:303:114::9) To SJ2PR11MB7573.namprd11.prod.outlook.com
  (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -126,273 +127,161 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|DS7PR11MB6173:EE_
-X-MS-Office365-Filtering-Correlation-Id: 78ae98f1-616b-4e94-28b8-08dc9791b84c
+X-MS-Office365-Filtering-Correlation-Id: 5c1b3bd2-415e-422c-02cc-08dc9791c980
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?bG1GMFhRRklqSmU0QWd5MGRTUlQxWGdxNFhrVWx3S280aTh4bG1rRXRmQldN?=
- =?utf-8?B?NWVwVDQrSU1CbkJBOGNQTS9iTVZIaUpvZWRQTk0xWk5oeHBFeWp4SG1EVVpj?=
- =?utf-8?B?NXpKbGxObEo0Q0FJYVFsei9sOXc5RGVFNDVGSnpibmFJYmdFQjNFMjlxZHRy?=
- =?utf-8?B?UnhjT05KZVh5a2w5NmhZTWEzdlZndWVLTGlpRHNwNVQ5UWNIU0RXMXBvczRD?=
- =?utf-8?B?cTZ4ditRMGg4VTIzV1BESWVPVlZQSkp4cUcvSVFNS2ZPYW51UnpQUGZPc0Ja?=
- =?utf-8?B?b3VwQnBIc2h2T3dZOVhlL1YxUFR5Nnl2NG9VM1M2TjYveGtYOGhlRUpFbHd2?=
- =?utf-8?B?Z2s0VWpUZXI1U2lVcWdIcHQ4a0dsN21sQ09XQVprUmpWRFpKVGEyZE82TmtY?=
- =?utf-8?B?VlArU1VhdlJiOGIrWkhrNGpmL0Q3NTRVRWc1NnVTMmcvWmR0M1lrblpScnBi?=
- =?utf-8?B?V3I1VTF0Y3E5azZ6b3hOeSs0MjdZaWZIYTJTV2VaeTIya250ODJuWlRrSGNF?=
- =?utf-8?B?eU5ISE0yYVZRbWRWaTY2YVVCRGVJc01KYmNjeE9QRHJGN3g5eU9lWUo1blpW?=
- =?utf-8?B?UGJBZFZvczZVUEg0YkhnWTBoV3QwRGRuUE15WW5RRmZIdURVRHB0RUtGS3J1?=
- =?utf-8?B?clZFQkpxL3E2ZUNkWXZQZUM0czFuZk4ydXNyZjlLNG5IR21lbUx3cnkzTU9w?=
- =?utf-8?B?MFlNYUZnN1k3SS9zM3dYM2kzWUYwVnJFR1BrYTMwMXI5M2k0dGR5eGVHU0FB?=
- =?utf-8?B?ZVBWd0FPSVhraWdQT21uZkVOSHVEN0hnck9MMzdrUm1wVHRkQ2E4cUROZm5m?=
- =?utf-8?B?ZVJnODBPNXVDMm1HL1dKUGhzQStsbUtMYWxuUlNTNGt5UFRoelM0cmFzeS81?=
- =?utf-8?B?aUVOR3N3WjExN2c2NHFiSTR1Znd1SEtySEx4bUF1bDcxeWNSd0JQMjVtcDhK?=
- =?utf-8?B?dytSU3hocnlrMjMzMDlBZTF1ZlZiK2s2MC9ZN0YwZHcxdEovWStMYzR5V3NC?=
- =?utf-8?B?cHgxeEI0Wnh4OFFJNDgxYS9QbSsyanBFUHhFUDhtK2U1L2I0WmV2RnZjYTJp?=
- =?utf-8?B?dWhGTUpQNHVuSEVuYmxNcVNZSEZ1dTVpY2hQOEFodFp4aWNtMXhQYjRHeE9w?=
- =?utf-8?B?OFllOEMxSEMwOUZPR05KdHJRVFpWdzNDLzhMN2lVVU5USUw0b2FTR1dNTzRZ?=
- =?utf-8?B?YnJ1Y1FIZnZBSHMvcnFDUnZwMkVLN25ZUG5pSnBDTjlqdmJUSU9jcjN1YjVF?=
- =?utf-8?B?VlpUOUZWZVdJdjlqUlR1cHo1MlFhbG1sQzh4WGxIVjkrUXFuWHBBOTNBYXAy?=
- =?utf-8?B?Z05BNks3dDVEdlllNHFzdXNlTUo2dGkzckVIZHBTb1FQK2IrOHY3MENZMHYz?=
- =?utf-8?B?SUNqbzFnb1RjbjBpWGpqeHRaS3F6eHJtaU8rNkxLQ09KajRDMVpiMzJOM3dK?=
- =?utf-8?B?QmJFa293cFIwMndYQ0tBcXpMV0pWeGxZano3NnQzeGo1ZFpKVXM0ZE81QkFh?=
- =?utf-8?B?cGY2c0kvWFFJNEdMTUJ5aTVDaEJ6Yk8wKzZYdDJzWm5YMlhCN1FReU9wTFMv?=
- =?utf-8?B?MVBqbW9PNUROclpEL2wwQ2sva0p2ZVgzdWlYTW50RTIzdGppOVhNSmRjelRH?=
- =?utf-8?B?WHlsVVkvTjhjS0V3REU4WVl1clYrWjlEQ1p1Rm9tUTB4VUYvS1REaGVITkFm?=
- =?utf-8?B?cFI5enpjTUtkQURPaHJRQ2tITVoyNFM1QUdXZmNxRFE0TWsxODBlTTlQZHFV?=
- =?utf-8?B?MXAva1N1czZoQkR2dHd3ODRLQUlaYzBEKzROcVVwbUlDUXBWeFdab21yeWN6?=
- =?utf-8?B?cjhTUkQvd2NKZVdvL3RSUT09?=
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?VW41YkxmOVJDNHc1TzJNZzFseHE5VVhXd2J5YTNGRDNzWWFKMDBlUC9kOTB0?=
+ =?utf-8?B?MXdQdVJDM2NCTk4vRGtXYkxqMWFYd0ZETjZyTEpOSnBNejhCRmlvZ3lhaGFn?=
+ =?utf-8?B?bGE5ckJ6TU80U3hENjFWelNIM3FaQmtlYjN6WnRZNCtYMVZWbExYWmkrUmJ6?=
+ =?utf-8?B?RXhGRmZMT0pMbmJsVE9YLzFOVVlXUERiaFl0WVdMYlNoUzJmWXVPL0ZVbFRJ?=
+ =?utf-8?B?OGRFN1RLaTZYVnorTVF5VHVPVU1WQ2JzQXZlQk4yZkRkTmVDaFk1K25sdVpW?=
+ =?utf-8?B?RzVWZ1o0YU1BSmVvdExlRTc1MTBETFo3bHM3TzNMUjdlN2d4UnNvdUdTSnYr?=
+ =?utf-8?B?VFBvOUt3cWZ3ZWpKUThjQWw1UTE5OTVReEhwZjZLK214cnlhMDBXRldQOGlz?=
+ =?utf-8?B?bjVWcEVwMmtTWUo2QlcxdGtuT1VoQjRlanNjM0gyWVVVSG9tMm1YaDlkbGlp?=
+ =?utf-8?B?RUpwV3JES0k5WEtHSkdEeGVYeE1HTSszZ3NzejlzTDNUU3RaWTJZRExoa2g4?=
+ =?utf-8?B?OWZvZEpjVXlxNG90dXNPcktyUWpIV2cyYy9TSDFBQitHODI0ZXNrTWZvVDJD?=
+ =?utf-8?B?cnRmSEVGVk9ZQWZPR0RMWU0wSVBRMm9SRkJacUtFZnRockJIM2pkeUdPMU5u?=
+ =?utf-8?B?MVIxNkJPckFydGM4Yk5zU2xackpYNDRjbEw2SGtvSTIzNzBJN3RBNERSeGM5?=
+ =?utf-8?B?OGlMaFB1Vk13N1Y1WTNpZU4xOE00UElFak4waGpmRjdOa0ZwVUYxbEZhdUl1?=
+ =?utf-8?B?VUVWbXpvZmM5Z2ZJS1BFVmh6WVVpWFk4QnhJZVVnV3RpcE5MNW9heFgvMmU4?=
+ =?utf-8?B?VmpBcys3NkdKNXkvaXVhNzFzMmRqQjh6TU9sSlZlS0J4TWNvd3FVd2g2WTly?=
+ =?utf-8?B?OEhrSktDMzBaRHJUajNmMlJhVmUvQmVtelVmRjA1cFFvSGtZb0JPakptN2tO?=
+ =?utf-8?B?V2lGQnJGVS9yWDlhUW1mUUxmaUJLc0R5OC84UnRIR3BGY1NoSkMzUVlFVi9a?=
+ =?utf-8?B?VERFWG1lMHZqaVV4ejhIZGIyMDZEd1RIWm5HeWpjODFHQ1AwQkdkdUJuYkdm?=
+ =?utf-8?B?eGl5ZWUvb1hmUkpLS3J0cWQ0UmZvRitPaVNEQUEyaEVVb3cyUzhrYlA0NUV5?=
+ =?utf-8?B?OTllZnl1Y2w1RHFWekV2TFhPeUdBV083eXdHc3hLMGkrb25VcEp6Z3o1TjZy?=
+ =?utf-8?B?N2h5S29vc1lvRDZHWE15cHBFdWpjZFRUcktHRjRsdDZBVEhCSktLcGtVU2N5?=
+ =?utf-8?B?Y2J0STN3VmQwZm9vdWU5cnBZRmpoQWNqbThRMlZyNXZmemlkcWtsTDFWQWUr?=
+ =?utf-8?B?Sm5WSWZ2U1J0VlNrYWIreGRZd0lvZm5PRCszVnBqd21CTC9TZmRHclRvUGJs?=
+ =?utf-8?B?ZU0yaWJQMWk3azlFZk9lRWVvQTRpWDdTdDhtOHFvZ2tGZEEzb2Q5QlpiL1hK?=
+ =?utf-8?B?SlFYamVybEN2NzZDR1FkanNMZzc5VG00TVRnMUI3VE5LdWIwbmQ0TU9oUVVa?=
+ =?utf-8?B?a1JIc0U0LzBuRWZNa015TkRPWHZGaE9yZEhtdG9YV0hTOWg1S2xqVllWTGhJ?=
+ =?utf-8?B?OXNiUzZJN3NNanU0VmRkUldyMFppU21GeVM4Umc1YllrTXVSNGtCclkrSXJO?=
+ =?utf-8?B?Zm4yOUhTUlovTGtWNWQ5djJmOS8zVlljaFRwbDQyTWpjU1Y3M2hQVjRmenFo?=
+ =?utf-8?B?ZjdKNm9hVFJ0N3VRM2dSNDhqUUZsWHFGMHF3V3JTY0ZkYnhyTUJIQ251ZHh2?=
+ =?utf-8?B?SlJRb0JZOVZzMmZlSTRWeVhGWkxZMGdiS25pWWhqclRiZ0FQcitQRTk4bGtK?=
+ =?utf-8?B?dTFIMjVpNDl4TmRSTndrZz09?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?czFHak5hTDVsMys4d3VGbTZNRDRFSkdWeU1JZ1dYZFExQWxRdXFYbXhBblJp?=
- =?utf-8?B?RFFOeWVwcEkySURvbFpMUDh4SytwckkwVHB4NGlZWlVjMzc0ZlFZdWNKeC9E?=
- =?utf-8?B?RHZhOTVCTVVYVE1jYmtSNGVYc1pkWFZUcTU0MnZuVDhDR0tuandYdHB5MTJr?=
- =?utf-8?B?M3ljcVZZL3g2WnJVT1pUbnlzVUhmZjhVSERlT09oZFNTc2NuL1dhZ0FlT1dj?=
- =?utf-8?B?Kyt5NEx3UCtUeFhlZ2VCZVRoNXFlUWlwQlNwSHZZcHZ1SitvVDJRWlYwbTlO?=
- =?utf-8?B?YlNBMlVIaSszbG5qaW9kY1hUUDZITFFLLzcrSi94OWxsd3pmZFlab0dMellT?=
- =?utf-8?B?RHhKdzFpcjdTaFBEK2pYSHdVVlRQT05YWHgvRjVsTGRQNWNRWHlGTU1jVXZO?=
- =?utf-8?B?cnYweEo5UHAwRCt0dmdlL3hhRWZwZDZQZVFYOWJGbHNObk8rbmVNNHU4L0VX?=
- =?utf-8?B?bllOSEVQcWp4SXFnOTBzQXRCc3N6MHRpOGJjR0E0dlBKVlZyZkxvd25hc2ZT?=
- =?utf-8?B?WTYxQzY2K1FGWmZjTHV1b1F3OW1RWXlIRDVQY1crRjE2S2NQZUhGR1RjSHRl?=
- =?utf-8?B?Z1JlNFEvcXVIcUg0ZGZ5YkZZV2VCeExabTlLMUg1TVNFVHNEaGx4UW5qK1Ra?=
- =?utf-8?B?ZWV6TDFvOUFJaElIS0E3M3NVY2V5UFV5ekVNd21GNW1GRTFJdWpQd2MyRlY3?=
- =?utf-8?B?ZU9VRFAvZ21GZTNYTkdEdDY3QWFXZGFyek1VcE5YS1dOSVowU0N0RVR1TVdq?=
- =?utf-8?B?RHRzSXc0TnpxM0hVZENaNm1iSnNCbHZzY3hncVZrTDZKejVFOEJ0K0hEMmY1?=
- =?utf-8?B?NTZlK3gxWTUydW9oTWErWFNmQlMvNHQxNUNQY0REZnAxZTgyZzkxc1lzK01O?=
- =?utf-8?B?NDRxalBpNmV4MmZPdFAwU1h1ME5jYW1sbmM0OTZSMXF3RWRCd0RiY24vVTdY?=
- =?utf-8?B?Um1qeS8vN2trbWl4WlY5eEJaVUNpSm85bm9WemI1M0g1ZmswQmZwcVdqVGFp?=
- =?utf-8?B?cDZMMUNYejcwYVZWV3EvUzdKOFJUaHVWMDVTWXgvMkhxYmtaNDZ0d3NvajhB?=
- =?utf-8?B?KzdIN3gvY2prS3FSejVEODFjNW9iRExnUnlscWpFcHBvNzhIS29hdnhuamQ4?=
- =?utf-8?B?ajNvSC90dDcwVWJ6NzNhYjVYaklJSi9WSlNOR1luUmJKN2dvZUx1anYrdUtZ?=
- =?utf-8?B?d2h3RWpCYjJ4eXM3cCtMVFBBclQ3VXNaVS9DcUtJK3Q4UmIvWUF1aVVXdDFQ?=
- =?utf-8?B?d1ZBNTA1Y1VaTzNUYzNCSmVMdmEzWEgwa25jSXNycW8zalZWVFJnOHplRFRo?=
- =?utf-8?B?ZlpHeFluY3BqNFZxczlzd3dyUlVMbEM1c2JHUXgzMXhTZ05kYmJua3JKdDZI?=
- =?utf-8?B?SE13SCtFN3Y5RzhTeUpOenJZdzdxZGJHYnYzdjNkbFA0bkpuc3VXZlJOSjdz?=
- =?utf-8?B?a3k1bitaZi9hVHFpUG9YWTJ5MzA0d0lQaEJIbC90Rk40M0dzOUpvblVSS1NC?=
- =?utf-8?B?QVRZRUNJNHNubTl0SHFoZ0hwN2EvckVTK2Vub2lyOHVqS2Rjc1liMG51TVp3?=
- =?utf-8?B?b1JtNTl5Y2VUTUdHYWYyTk44bDZMMWpxQTJWRzMrSHIxdDlTNXlBaWttWE5Q?=
- =?utf-8?B?L0JheDN4NVo1S3FGaHpodXoyN2VUbW1kYUZFMGE0Wk04eHFhcHIzRk9RZGFZ?=
- =?utf-8?B?L0JzMk0zd1d3ZXRzejcrT2hJdjhZbjVndUV6aVVRVVpKeURNYWE3cWtoRVMz?=
- =?utf-8?B?Ym5LMWpCY3F6Y3Zwbjh3eWNGVFozRWpKVTZWNmhzU3JJclp0ZGVESEZycmds?=
- =?utf-8?B?ek1rVDNwZlFiSU54S0VsSXBtcll3VWxaUzNuVEZjQjRtblVqaEc0NzU5NTFC?=
- =?utf-8?B?VTBzTXJwQW1IaGQ5V21EOE00TnFOeHNNaVJUdzE4SDI0VUhqbm5FSWdmM3hO?=
- =?utf-8?B?S28zUWsvTlBkakVEZmhvTlBEeTBXSzAvSlEvc2VZQ0VSZ3R2Q1I5bTlqQ1ow?=
- =?utf-8?B?cVdIZlBhSGdvbVVwaGU4T2hZdmllUUtrNzFHakJVeEtKb3F4aUg2R2IxMU5l?=
- =?utf-8?B?YTVlZ1JIY1RVdlh1VDYwbjc1TVcvbVRHSmtIWnl1bU9vR2NYWnJ5OWhBQk1W?=
- =?utf-8?B?cnpXMGZDeEhHNlZOSlo2WWcvU3NtNnpqSU55bVlFOTVXK0krbFAzQUUxcDZn?=
- =?utf-8?B?eFE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 78ae98f1-616b-4e94-28b8-08dc9791b84c
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?bmxEL3gxZTBJUFVITm1lc01CWEx3M0F0cUl5ZlJJMUhwTW02eU5Rb0RsVkxh?=
+ =?utf-8?B?QkNxa2ZoQlFRNUN0VnJjWlRNUTR5SEtxMmlxbFdIRHVDbFJsWlVPV3JQNHNN?=
+ =?utf-8?B?L2pGZkFoT2JJdGViemVjcDZ1bFhjR3dhRnoxdmwvMFRqcFY0c1BRSlhXZ0pG?=
+ =?utf-8?B?U2ZEWmFMbzdDM0VQa3JzWldWQ2hEUWYzNS9MZGo2dE5Gb0loZ0xsRlAwSTJu?=
+ =?utf-8?B?Q1dWR0NkY2tYQUthUjQ1Rm9GcWo3R0s5VTNUU1lpcCtwTzVnRUIya1NxTXdh?=
+ =?utf-8?B?SmRQOGc2UlNIdy9OYmpHcXcvcGZpUGliNmY0ZHF6ZitnYjlCbWFHUWFKT0M4?=
+ =?utf-8?B?cG81Q1pVMG9LZ2NzWTVibkFtUk5YWEpBZ0J2SHA2MWU5U0JOd2Nla2ZReWxz?=
+ =?utf-8?B?a0dOQUtUaEg0WGpzZ2JNdE91N25pbmxZZnNVYm9ZTnZ5bDB2TnUyc2NWaENv?=
+ =?utf-8?B?SEd1dnVQSkt5SFhJRE96K2dDdjlDeXlBR3lxT1I2cW8rdkpaSHBaOU8xWnFH?=
+ =?utf-8?B?Z2ZZL08yNmVGckM5QzRHbGVtS2hNZFdRVlZXWkhtNUpJZStjSldrbzk1Y1E1?=
+ =?utf-8?B?KzVnWDgrY2hvUncrLzVrWU1rYVA1UmtucVdoVEhtajI5cnVnYk9YZzA1ZWtu?=
+ =?utf-8?B?c2ovOVdNa1JLT2VXaHd3VnNoUVlnVEdwOXhPQUJhV0JWWkg4MmFhbnJ0eEVI?=
+ =?utf-8?B?NjBNVlFSck1PMmNwQzB0VVBVZ0trWlNLQ0k0ZGtzQzNBbFN6V29VanFob0Fl?=
+ =?utf-8?B?RGJFNElQQUU1VmQ0THJUeWoraituVkYzS1pvb2ozUmNzbnhjNlhUUXllZnRo?=
+ =?utf-8?B?UHYvSTRtb0pRdUtzTXhtKzdhNDBKa3kzcEFlcW1qUEpBTHRVNGpWZnFFVDRq?=
+ =?utf-8?B?azlQcGIxek9JaFQxajlmWUNNVjF4eExNSHVPRmY2RmlXb05wdnlGbmxsZnN0?=
+ =?utf-8?B?YkNnN0toZ0VpV2dHMVo0elFVbFNJWWQ5MCtaVnNtTXNzeVBYWWdXeHlYdUM5?=
+ =?utf-8?B?N0t5OGNuVHh5WmRGZC8ybjFTNjV5YVpqc01LdGxURmlHY1lCK2tmK09aT1k1?=
+ =?utf-8?B?SExjMzJoMWpoQkgvVHBXSjR0YXY4YllIZFVwenBvVmtWb1BveERDSWQzb2dX?=
+ =?utf-8?B?V0xTV1ROZlo4eGVnQjF4NWcyZjBOY2ozUWN1MGhuWEJ0cTh5S2VTT21vb3c3?=
+ =?utf-8?B?RVgxdkJrYXBRZkEyY1BaMGZXZFdoM1o3VGQ1blNBOEFERkhnWm1iNExqWm1o?=
+ =?utf-8?B?SEtDVGFOeUdCejZVTnQxUyt4eXRMVTZOVDBqOXNTR0tQQlRHczZ1aG1HaGZ6?=
+ =?utf-8?B?aGwrMTZ6SHcranA5bmpJRlVhWEo3KzhIZUNKbEU2Y3ZDZURFRDRYZ29sYzMy?=
+ =?utf-8?B?Nmh6a0Zod1JGNmlCZTVrNEF0WjZLcFF1QTRMdVk4RjhUMUxQSldPZytxSEpx?=
+ =?utf-8?B?NWhlTXpsRlBGZS8xNk5VWkFrR3pqRElkYlVyODUxcmlzUm9LZGRsVTZ2UEU2?=
+ =?utf-8?B?S1VSZmNzQ254N1FRNC8reS8yOGJ3UHFVYXZPL2FmdnF4cElTd09lVFc3NGt6?=
+ =?utf-8?B?bkx5ZnpTSEdpQ0RJMllENVluaGNXekhNRWZaTVRrQmxwSVRzVlBmeitGcGZB?=
+ =?utf-8?B?bjArdUtmeXk5UmhrWFQxNFpPYzlkL2R0UFY5ZHZ0eXkyMmUxU3JJREJ6dTRZ?=
+ =?utf-8?B?NC9Ja0UxMFNEekdXMmhDaUpFaE9Na1UxZ2E5Y1U1QTUxQ2N5a25oSkVVNURj?=
+ =?utf-8?B?OUxzQXhSdWVrdEJkOXIwL0xnTzQ5NUJoZ1FFUFlwM0s0MkM3NDhJZDZQUlE4?=
+ =?utf-8?B?WlVwS0RFWmgwQjNFWXpuUTVzUGhkQm52QjZIQ09GVzROT2owVVh5akJNQlNX?=
+ =?utf-8?B?Y0hoVkVUbWpLOWVyOXB6RzBaQWhLc0c4ZksyTzR3REN5eG9acUJOdDVITXFP?=
+ =?utf-8?B?MkNpSzYxaGJwRXloTm5Bazg0RDB0ZTIxU2diendrYjMrQ1VncjZpa0tYVTNZ?=
+ =?utf-8?B?RTM0bTRhQ3dvQjlnaUwzd2ttQ0g3NUlzNVg5SncxMlY0UEJ4alNYaGkwallL?=
+ =?utf-8?B?UVNvWHFXRDJDdzFGd0pmK29OSlJKdEg0UWlWbHg0ZjEwT0dodEk5cWdXT2lF?=
+ =?utf-8?B?OVdVaStPVnhtZFVwM0RYeFVzQUdobmgrQ214MlZzZGhxM0VRVTM2a3Mwb2R3?=
+ =?utf-8?B?T2c9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5c1b3bd2-415e-422c-02cc-08dc9791c980
 X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jun 2024 16:45:29.8626
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jun 2024 16:45:58.7293
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rSASBrgBzSLJWKR985TAMza2Ep7OmN2vQKh3B7lipIM6F65022ThKLNluJCWNEqc37AasADMgX+l3mYlGUuoPFdZntfkZwx/7VusVdy7X1w=
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0v6k8AJnw9NyOYUjbdWNKXIOAKiQye/9/I/S0NLZsJNUCoDdDzLUFxyhPFroTBvV7RiA+/bF68VWYLvoJpOyWIHcUy/vxNsw2BZulM8JS8Q=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB6173
 X-OriginatorOrg: intel.com
 
 Hi James,
 
 On 6/14/24 8:00 AM, James Morse wrote:
-> The resctrl architecture code gets to specify the width of the schema
-> entries that are used by resctrl. These are determined by the schema
-> format, e.g. percentage or bitmap.
+> When resctrl is fully factored into core and per-arch code, each arch
+> will need to use some resctrl common definitions in order to define its
+> own specializations and helpers.  Following conventional practice, it
+> would be desirable to put the dependent arch definitions in an
+> <asm/resctrl.h> header that is included by the common <linux/resctrl.h>
+> header.  However, this can make it awkward to avoid a circular
+> dependency between <linux/resctrl.h> and the arch header.
 > 
-> Move this property into struct resctrl_schema and get the filesystem
-> parts of resctrl to set it based on the schema format.
+> To avoid such dependencies, move the affected common types and
+> constants into a new header that does not need to depend on
+> <linux/resctrl.h> or on the arch headers.
 > 
-> This allows rdt_init_padding() to be removed, its work can be done
-> by schemata_list_add(), allowing max_name_width and max_data_width
-> to be moved out of core.c which has no counterpart after the
-> move to fs.
+> The same logic applies to the monitor-configuration defines, move these
+> too.
+> 
+> Some kind of enumeration for events is needed between the filesystem
+> and architecture code. Take the x86 definition as its convenient for
+> x86.
+> 
+> The definition of enum resctrl_event_id is need to allow the architecture
 
-Please do write commit messages in imperative mood.
+"is need" -> "is needed" ?
 
+> code to define resctrl_arch_event_is_free_running(),
+
+Cannot find resctrl_arch_event_is_free_running()
+
+> resctrl_arch_set_cdp_enabled(), resctrl_arch_mon_ctx_alloc() and
+
+resctrl_arch_set_cdp_enabled() should not need enum resctrl_event_id
+
+
+> resctrl_arch_mon_ctx_free().
 > 
-> The logic for calculating max_name_width was moved in earlier patches,
-> but the definition was not moved.
+> The definition of enum resctrl_res_level is needed to allow the
+> architecture code to define resctrl_arch_set_cdp_enabled() and
+> resctrl_arch_get_cdp_enabled().
+> 
+> The bits for mbm_local_bytes_config et al are ABI, and must be the same
+> on all architectures. These are documented in
+> Documentation/arch/x86/resctrl.rst
+> 
+> The maintainers entry for these headers was missed when resctrl.h was
+> created. Add a wildcard entry to match both resctrl.h and
+> resctrl_types.h.
 > 
 > Signed-off-by: James Morse <james.morse@arm.com>
+> Tested-by: Peter Newman <peternewman@google.com>
+> Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
 > ---
 > Changes since v2:
->   * This patch is new.
-> ---
->   arch/x86/kernel/cpu/resctrl/core.c     | 26 --------------------------
->   arch/x86/kernel/cpu/resctrl/rdtgroup.c | 11 +++++++++++
->   include/linux/resctrl.h                |  4 ++--
->   3 files changed, 13 insertions(+), 28 deletions(-)
+>   * Added to the commit message why each of these things is necessary.
+>   * Moved the enum resctrl_conf_type back to resctrl.h - this week arm's
+>     CDP emulation code gets away without this...
 > 
-> diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-> index 4a5216a13b46..4de7d20aa5aa 100644
-> --- a/arch/x86/kernel/cpu/resctrl/core.c
-> +++ b/arch/x86/kernel/cpu/resctrl/core.c
-> @@ -44,12 +44,6 @@ static DEFINE_MUTEX(domain_list_lock);
->    */
->   DEFINE_PER_CPU(struct resctrl_pqr_state, pqr_state);
->   
-> -/*
-> - * Used to store the max resource name width and max resource data width
-> - * to display the schemata in a tabular format
-> - */
-> -int max_name_width, max_data_width;
-> -
->   /*
->    * Global boolean for rdt_alloc which is true if any
->    * resource allocation is enabled.
-> @@ -222,7 +216,6 @@ static bool __get_mem_config_intel(struct rdt_resource *r)
->   			return false;
->   		r->membw.arch_needs_linear = false;
->   	}
-> -	r->data_width = 3;
->   
->   	if (boot_cpu_has(X86_FEATURE_PER_THREAD_MBA))
->   		r->membw.throttle_mode = THREAD_THROTTLE_PER_THREAD;
-> @@ -262,8 +255,6 @@ static bool __rdt_get_mem_config_amd(struct rdt_resource *r)
->   	r->membw.throttle_mode = THREAD_THROTTLE_UNDEFINED;
->   	r->membw.min_bw = 0;
->   	r->membw.bw_gran = 1;
-> -	/* Max value is 2048, Data width should be 4 in decimal */
-> -	r->data_width = 4;
->   
->   	r->alloc_capable = true;
->   
-> @@ -283,7 +274,6 @@ static void rdt_get_cache_alloc_cfg(int idx, struct rdt_resource *r)
->   	r->cache.cbm_len = eax.split.cbm_len + 1;
->   	r->default_ctrl = BIT_MASK(eax.split.cbm_len + 1) - 1;
->   	r->cache.shareable_bits = ebx & r->default_ctrl;
-> -	r->data_width = (r->cache.cbm_len + 3) / 4;
->   	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL)
->   		r->cache.arch_has_sparse_bitmasks = ecx.split.noncont;
->   	r->alloc_capable = true;
-> @@ -631,20 +621,6 @@ static int resctrl_arch_offline_cpu(unsigned int cpu)
->   	return 0;
->   }
->   
-> -/*
-> - * Choose a width for the resource name and resource data based on the
-> - * resource that has widest name and cbm.
-> - */
-> -static __init void rdt_init_padding(void)
-> -{
-> -	struct rdt_resource *r;
-> -
-> -	for_each_alloc_capable_rdt_resource(r) {
-> -		if (r->data_width > max_data_width)
-> -			max_data_width = r->data_width;
-> -	}
-> -}
-> -
->   enum {
->   	RDT_FLAG_CMT,
->   	RDT_FLAG_MBM_TOTAL,
-> @@ -942,8 +918,6 @@ static int __init resctrl_late_init(void)
->   	if (!get_rdt_resources())
->   		return -ENODEV;
->   
-> -	rdt_init_padding();
-> -
->   	state = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
->   				  "x86/resctrl/cat:online:",
->   				  resctrl_arch_online_cpu,
-> diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-> index af9968328771..4f8e20cc06eb 100644
-> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-> @@ -58,6 +58,12 @@ static struct kernfs_node *kn_mongrp;
->   /* Kernel fs node for "mon_data" directory under root */
->   static struct kernfs_node *kn_mondata;
->   
-> +/*
-> + * Used to store the max resource name width and max resource data width
-> + * to display the schemata in a tabular format
-> + */
+> Changes since v1:
+>   * [Commit message only] Rewrite commit message to clarify the the
+>     rationale for refactoring the headers in this way.
+> ---
+>   MAINTAINERS                            |  1 +
+>   arch/x86/kernel/cpu/resctrl/internal.h | 24 ------------
+>   include/linux/resctrl.h                | 21 +---------
+>   include/linux/resctrl_types.h          | 54 ++++++++++++++++++++++++++
 
-I understand that you just copied existing text here, but since you touch this line
-could you please have this sentence end with a period?
-
-> +int max_name_width, max_data_width;
-> +
->   static struct seq_buf last_cmd_status;
->   static char last_cmd_status_buf[512];
->   
-> @@ -2600,15 +2606,20 @@ static int schemata_list_add(struct rdt_resource *r, enum resctrl_conf_type type
->   	switch (r->schema_fmt) {
->   	case RESCTRL_SCHEMA_BITMAP:
->   		s->fmt_str = "%d=%0*x";
-> +		s->data_width = (r->cache.cbm_len + 3) / 4;
->   		break;
->   	case RESCTRL_SCHEMA_PERCENTAGE:
->   		s->fmt_str = "%d=%0*u";
-> +		s->data_width = 3;
->   		break;
->   	case RESCTRL_SCHEMA_MBPS:
->   		s->fmt_str = "%d=%0*u";
-> +		s->data_width = 4;
->   		break;
->   	}
->   
-> +	max_data_width = max(max_data_width, s->data_width);
-> +
->   	INIT_LIST_HEAD(&s->list);
->   	list_add(&s->list, &resctrl_schema_all);
->   
-> diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-> index abecbd92ac93..ddcd938972d2 100644
-> --- a/include/linux/resctrl.h
-> +++ b/include/linux/resctrl.h
-> @@ -182,7 +182,6 @@ enum resctrl_schema_fmt {
->    * @membw:		If the component has bandwidth controls, their properties.
->    * @domains:		RCU list of all domains for this resource
->    * @name:		Name to use in "schemata" file.
-> - * @data_width:		Character width of data when displaying
->    * @default_ctrl:	Specifies default cache cbm or memory B/W percent.
->    * @schema_fmt:	Which format string and parser is used for this schema.
->    * @evt_list:		List of monitoring events
-> @@ -198,7 +197,6 @@ struct rdt_resource {
->   	struct resctrl_membw	membw;
->   	struct list_head	domains;
->   	char			*name;
-> -	int			data_width;
->   	u32			default_ctrl;
->   	enum resctrl_schema_fmt	schema_fmt;
->   	struct list_head	evt_list;
-> @@ -218,6 +216,7 @@ struct rdt_resource *resctrl_arch_get_resource(enum resctrl_res_level l);
->    * @list:	Member of resctrl_schema_all.
->    * @name:	The name to use in the "schemata" file.
->    * @fmt_str:	Format string to show domain value
-> + * @data_width:	Character width of data when displaying
->    * @conf_type:	Whether this schema is specific to code/data.
->    * @res:	The resource structure exported by the architecture to describe
->    *		the hardware that is configured by this schema.
-> @@ -229,6 +228,7 @@ struct resctrl_schema {
->   	struct list_head		list;
->   	char				name[8];
->   	const char			*fmt_str;
-> +	int				data_width;
->   	enum resctrl_conf_type		conf_type;
->   	struct rdt_resource		*res;
->   	u32				num_closid;
+Considering the motivation I also expected to see a change in
+arch/x86/include/asm/resctrl.h that adds the #include of the new file.
 
 Reinette
 
