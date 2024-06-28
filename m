@@ -1,75 +1,87 @@
-Return-Path: <linux-kernel+bounces-234246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6968A91C437
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:55:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D4C4791C439
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:55:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F5F01F22926
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:55:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A0831F22B2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:55:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF041CB307;
-	Fri, 28 Jun 2024 16:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F6D21CB314;
+	Fri, 28 Jun 2024 16:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n8nOEbwZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1978E1C9ED9
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 16:54:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62221157A4D;
+	Fri, 28 Jun 2024 16:55:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719593699; cv=none; b=LeYj8UwrG4OeyAJ4zbfBdALma7EBQ6MdOuXtgdu9OX68bgBTWsSY4jvsqTvidFtCnNGAXX/CAZjyXXdHEqjlfkweVawMO2BfcnTuUH54T8y4fitIpIgipZfuH6UtYhApr2ixKJ4tbJuBVqFiJNadodcLFcOT0YotYpvvoXCxQ5U=
+	t=1719593730; cv=none; b=MgAitVoeiXpK95ihTL/s8I24H448e74JCv1a48QiLL8jlG4xBsBqogeFkfSvuf0e1jvQMeBEzu8Zp+eO1b9/B3KLZvPa4RJvuhXMBM4Puri03Wg4nUBWWcM3iV1mZX49jO9ZDm6N0n5E1qnaZXuIuzQzL3Uy94x6hEX8SgUDzto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719593699; c=relaxed/simple;
-	bh=xpN1RtShbaagkW48F5gdrFANRJk+tsIyoVaEvLDJEc4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YPODT+JHZ7cUuGDDgJr4sSj0pR0rbW0Wa/RGJMLjUuArJXInIHJDHH8XLefuBhtpPBesiKz59LMlAE6u7uy7UiMPFxO+kGfF4vxnpqw/PFTJWL/sSpY7vOjGPpmsLE7XPEhp/4m75eQxvigouu8VC1M073kIrtXvJm3IgZado4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD81BC116B1;
-	Fri, 28 Jun 2024 16:54:56 +0000 (UTC)
-Date: Fri, 28 Jun 2024 17:54:54 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Yang Shi <yang@os.amperecomputing.com>
-Cc: will@kernel.org, anshuman.khandual@arm.com, david@redhat.com,
-	scott@os.amperecomputing.com, cl@gentwo.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [v5 PATCH] arm64: mm: force write fault for atomic RMW
- instructions
-Message-ID: <Zn7q3oL1AE8jdM-g@arm.com>
-References: <20240626191830.3819324-1-yang@os.amperecomputing.com>
+	s=arc-20240116; t=1719593730; c=relaxed/simple;
+	bh=PdtVANYrctrqBCWwv7ov4lV+6JM4za0XB1mLtDqcKb4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bvTfK/D8qg0R+Wb//hX2tnvFbUwMfN7qQKLOdDNt2BNAmszuODCFAuZGlvSzro4AK3cXYZMZ/pqngdyc269beq/Y58EW7gIfOdWWPbdeIoE79Hwn6TMT6acjHvgvzf1Gjy/E4Wci1QQMBjRva9SHDC1Y++elz3NultS9S+sT0AI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n8nOEbwZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F43EC116B1;
+	Fri, 28 Jun 2024 16:55:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719593730;
+	bh=PdtVANYrctrqBCWwv7ov4lV+6JM4za0XB1mLtDqcKb4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=n8nOEbwZiv9U/FhaA/M9kX/5+9XP2zYEVMEjjF5lN/ZHUOA9Fh2NiddbPVutlITdR
+	 vnY7xi05PDWGYOzZynaF1DnSF8NVVwDZeFoTbd0t3eOBdlXjD9lXIUzdgXK0GBN4H4
+	 arJjtIk3wz+P3JrULoSIDUdVqs+LrTzbt8KrgeP5P721KL7N5R1O37rRv0uOTSgwC4
+	 0hO/ABmmjR/ygxwXlVB6CTmYtaQl1VgIzERy7MR49pcQpPkZ5WnYnC4f94BUAJpH0z
+	 XDETqyzPsqFVyLASVg7CIRFKPlTdqDKF9RQ87IBeKftAliwzs5i/xOjT+qoo+aMz7B
+	 Eq9qxXXk6q1tA==
+From: Namhyung Kim <namhyung@kernel.org>
+To: linux-perf-users@vger.kernel.org,
+	irogers@google.com,
+	James Clark <james.clark@arm.com>
+Cc: robin.murphy@arm.com,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] perf pmu: Event parsing and listing fixes
+Date: Fri, 28 Jun 2024 09:55:28 -0700
+Message-ID: <171959369425.545185.4436181413717608549.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
+In-Reply-To: <20240626145448.896746-1-james.clark@arm.com>
+References: <20240626145448.896746-1-james.clark@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240626191830.3819324-1-yang@os.amperecomputing.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 26, 2024 at 12:18:30PM -0700, Yang Shi wrote:
-> @@ -568,6 +596,12 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
->  	if (!vma)
->  		goto lock_mmap;
->  
-> +	if ((vm_flags & VM_READ) && (vma->vm_flags & VM_WRITE) &&
-> +	    is_el0_atomic_instr(regs)) {
-> +		vm_flags = VM_WRITE;
-> +		mm_flags |= FAULT_FLAG_WRITE;
-> +	}
+On Wed, 26 Jun 2024 15:54:44 +0100, James Clark wrote:
 
-The patch looks fine now and AFAICT there's no ABI change.
+> The second fix is related to the discussion here [1].
+> 
+> The first fix is unrelated but I just noticed it while fixing the
+> listing issue.
+> 
+> [1]: https://lore.kernel.org/all/ce31a50b-53db-4c6f-9cb1-242280b0951c@arm.com/
+> 
+> [...]
 
-However, before deciding whether to merge this patch, I'd like to
-understand why OpenJDK cannot use madvise(MADV_POPULATE_WRITE). This
-would be the portable (Linux) solution that works better on
-architectures without such atomic instructions (e.g. arm64 without LSE
-atomics). So fixing user-space would be my preferred solution.
+Applied to perf-tools-next, thanks!
 
-(I poked some people in Arm working in the area, hopefully I'll get some
-more information)
-
--- 
-Catalin
+Best regards,
+Namhyung
 
