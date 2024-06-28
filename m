@@ -1,52 +1,55 @@
-Return-Path: <linux-kernel+bounces-233874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3940291BE89
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:28:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F12FF91BE94
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:30:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A8031C20ABC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:28:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B251028455E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93ADE158D88;
-	Fri, 28 Jun 2024 12:27:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8634C158860;
+	Fri, 28 Jun 2024 12:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bHnwe2Kx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="TD6S8m/7"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC72158A1C;
-	Fri, 28 Jun 2024 12:27:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE621E898;
+	Fri, 28 Jun 2024 12:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719577668; cv=none; b=tECFXTrLuZTbWoiQpfwzwPcwFwT4C75VqTdqWTbAqlE+cr8x9ptshUE4p5MpCz49Qvply7IOV9qREBgQV+8xB5tfwJy67IHm7e0c4/pPJEw1D6DgavNUpbWHMGpffcxBfvp0PBOkQ4WDzTs3hasO0GX+hMGdk89b9n1r/Jck8Jw=
+	t=1719577796; cv=none; b=n5wDqA+UJNU0TYQvZq7R+6jicE/iG5tP/dscIyXniCXJ7ANXO05JqQgVBdNDm6ZEkd0O+rq84h7KJNXIrzFCpm0f+ZK3U3zmgiC/nWks9/pHSAP/Esdkdttivu8eLD+JIgvyqT8x+41djecJlzymLaGFQYhOlTz0HHIJSyNxTdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719577668; c=relaxed/simple;
-	bh=z6oyl79I8NC5of/6nM0UNbEIpkWqKcp2re1J+nHNR5k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dgiAZnuWP6Ht4uTTUD/ZS6aNRti89ehNAW4FOsAKGToSl1CP2FoHDE27LpDeqh0X9l6HQSh8fCvzDF6BfnSNYQ07oMt7aV9EWp5IczSJzXazT9JIVoi2o8xxqTAUGP7E/ra42naCCWFdy11KSp4QcCMCFWQDJ/EuqybhQsOyfHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bHnwe2Kx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 840C2C4AF0D;
-	Fri, 28 Jun 2024 12:27:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719577668;
-	bh=z6oyl79I8NC5of/6nM0UNbEIpkWqKcp2re1J+nHNR5k=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=bHnwe2KxwVlR1KJzzEwY7jK1EwbEG1JsXlU1GZNUG7GViU8EsKQs02lEBLZZpSlSl
-	 sPNN2P2oiH9LkqhIcBwH7Ehl8+9qSTEPm7yCr5j7MkNhzj4BWiIEZz2TohPS37cCSo
-	 I6k2ggwEVPBEifjk65NX5Ojw8bQfaxG+M1TZLJNw618yf10LzQCH94G/5Cd560bqoa
-	 kJMyrvV94lg/tDBjZ3+8R296Gl5SRsR4hi5Nwf4rHCoP1z7qEzkzWrMxWxFwCUHx3n
-	 C0ON8KombicJ28G+5al8lgwSwsDj46bFB07l89hwuPP5d8xN8icjJlnRduwTudLBZv
-	 HWbbe0ZBspGcg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7610EC3065B;
-	Fri, 28 Jun 2024 12:27:48 +0000 (UTC)
-From: Joel Granados via B4 Relay <devnull+j.granados.samsung.com@kernel.org>
-Date: Fri, 28 Jun 2024 14:27:43 +0200
-Subject: [PATCH RFC 5/5] iommu/vt-d: Remove dev_iommu_priv_get call from
- domain_get_id_for_dev
+	s=arc-20240116; t=1719577796; c=relaxed/simple;
+	bh=rq+CB3fFlZBvv7BCrp1A1UAxIDsR9Q3w5bWH0xgRzjY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=slGB4UzgQnPgH4KUIfq2fY86sk1NrgyMfDI3N5bJGH1pQkJKD1g2wh6+0tB2G2w/ukG/REjKFmGYsS1Al+P9GL6SjbG/3zCbSJt54OkvXYzV8cWRgq19uDBslokQYrROBNqOubLrWDtHruq2IhMp4B2fZZ0IOkcFl5boJjveIrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=TD6S8m/7; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1719577793;
+	bh=rq+CB3fFlZBvv7BCrp1A1UAxIDsR9Q3w5bWH0xgRzjY=;
+	h=From:Subject:Date:To:Cc:From;
+	b=TD6S8m/7XvXf1Kf7RPS16n7gKSdYtH38TiKRX/MuVxuExkrcWlF4XwYHunK+w401z
+	 wqIJ4Y1LsnlJckvyn1GtwjW+AhUtgwNRfThcL6N0Ft50eCDpLPhf2hji7nf+j9Iqqr
+	 pRQb1xz1o/v4A4Ed05bPGTTGGdX562G8zC2xpndETp96s/WWGbTsWF7mx3FrL06es2
+	 X74ibF3BEpntH8JmDcDZ0JjtbzdJ4dRwxylu/LFUKzN/VeAABFpDzf1qzm3d0KmIlv
+	 zGABAzgPLn0bgej+xzyi5RQYbnn+Xc6DmM4RcZOiJn493ajKraueJQNY4b+uus7YYq
+	 HjFzUEdKfPtxA==
+Received: from fedora.home (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: jmassot)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 37CF237821F9;
+	Fri, 28 Jun 2024 12:29:53 +0000 (UTC)
+From: Julien Massot <julien.massot@collabora.com>
+Subject: [PATCH 0/2] MAX96714/7 style fixup
+Date: Fri, 28 Jun 2024 14:29:26 +0200
+Message-Id: <20240628-gmsl2-drivers-style-fixup-v1-0-a4bb49f4c7a1@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,85 +58,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240628-jag-revisit_cache_tag_assign-v1-5-a0c19063c983@samsung.com>
-References: <20240628-jag-revisit_cache_tag_assign-v1-0-a0c19063c983@samsung.com>
-In-Reply-To: <20240628-jag-revisit_cache_tag_assign-v1-0-a0c19063c983@samsung.com>
-To: David Woodhouse <dwmw2@infradead.org>, 
- Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, 
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
- Joel Granados <j.granados@samsung.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1737;
- i=j.granados@samsung.com; h=from:subject:message-id;
- bh=bSKT5KATPjuI2PxohgEgtnVEXQsN8h24B4pOY9NhzjU=;
- b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGZ+rEF2V7Oo9xvBBkRnBcyi7uYIJn2E2BmRL
- zd6A97flRB21YkBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJmfqxBAAoJELqXzVK3
- lkFPc4sL/RP2u/N7pZpUkjwF9ibuOdDKPQq0mcziIN7z5zfCccwR8R5f28tiBqm36muQHDl3qVE
- b827WJyDMCL/DX2xxrJTBpjp5dK0mHykkG3RJ4RCV8FawkmJf7dZus7Knc80cToJNl+7baUGdFP
- 0iOflA4jFxAIOQRS03F4+gj6NLIwkskCHNi/WQFz+pbkia1uBdd3swWzbqIAygVmswB0blfRN6U
- rkOc0E3WRWU6dGBigInYECE2YF1z14kJwzScXiptlXUP/5jSi2f65k0iwlK1CV4pBVVNN/USNO5
- vemGoTl1yPL8RCHMoLShNtc4Z1unj6CK7zCn6QsanxX49UT0Gp2/yOxZDb0ZrDHLNzB0K1G9TBO
- YhntrSay+2lqRYzp2s+QIAkhKLkLWGdvCrxpnvMN4cx+E05EKMo5oug1tfRQ4ISCwz9Yh0R+Kkr
- epg/Nod559pIr+Um5Yx6eWnjR6msc473VzqHPXAilzwSkwnxds3QegrN+CospmIlMhmle9VBof4
- 8I=
-X-Developer-Key: i=j.granados@samsung.com; a=openpgp;
- fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
-X-Endpoint-Received: by B4 Relay for j.granados@samsung.com/default with
- auth_id=70
-X-Original-From: Joel Granados <j.granados@samsung.com>
-Reply-To: j.granados@samsung.com
+X-B4-Tracking: v=1; b=H4sIAKasfmYC/y2NSw6DMAxEr4K8rlEIf1a9R8UigEstEaAxoFaIu
+ zeCLt+MZt4OQo5JoAp2cLSx8DR6iG4BtC8z9oTceQatdKIyXWBvZdDYOd7ICcryHQif/FlnLJo
+ 8STOdx01cgt/Pjnxxfj/qix29V69YrhAsiZhTUQV/QR6lUaGyMC7LMlEKNS6TtaEl17Lhe28ND
+ 2E7WaiP4we0DWAvvQAAAA==
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Tommaso Merciai <tomm.merciai@gmail.com>, linux-media@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Julien Massot <julien.massot@collabora.com>, 
+ 20240627151806.3999400-2-tomm.merciai@gmail.com
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1719577793; l=761;
+ i=julien.massot@collabora.com; s=20240628; h=from:subject:message-id;
+ bh=rq+CB3fFlZBvv7BCrp1A1UAxIDsR9Q3w5bWH0xgRzjY=;
+ b=ab2ZKdG6zNnzWvWwgXA6VC9xUVxsqbUi8chK4piANFfhza4D6lDLh74Lld/w0nujAi5x0jGUw
+ J1tFJXUTeMRCw4QYAey9rYGM2ldp4zV6tW5q51IoULE4j9Krr5tgsGk
+X-Developer-Key: i=julien.massot@collabora.com; a=ed25519;
+ pk=upOGEnAvrsJB2Icg0lU3KQah5azRr6NNj9LMEeI1c88=
 
-From: Joel Granados <j.granados@samsung.com>
+There was still some open comments from Sakari that haven't been
+addressed.
 
-We don't need to run dev_iommu_priv_get as we already have the struct
-intel_iommu. Pass the intel_iommu instead of the device and rename the
-function to domain_id_for_iommu to express what it is really doing.
-
-Signed-off-by: Joel Granados <j.granados@samsung.com>
+Signed-off-by: Julien Massot <julien.massot@collabora.com>
 ---
- drivers/iommu/intel/cache.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+Julien Massot (2):
+      media: i2c: max96717: coding style fixes
+      media: i2c: max96714: coding style fixes
 
-diff --git a/drivers/iommu/intel/cache.c b/drivers/iommu/intel/cache.c
-index c630f4485a06..e55d700fcd29 100644
---- a/drivers/iommu/intel/cache.c
-+++ b/drivers/iommu/intel/cache.c
-@@ -147,11 +147,9 @@ static void __cache_tag_unassign_parent_domain(struct dmar_domain *domain,
- 		cache_tag_unassign_type(domain, tag_id, CACHE_TAG_NESTING_DEVTLB);
- }
- 
--static u16 domain_get_id_for_dev(struct dmar_domain *domain, struct device *dev)
-+static u16 domain_id_for_iommu(struct dmar_domain *domain,
-+			       struct intel_iommu *iommu)
- {
--	struct device_domain_info *info = dev_iommu_priv_get(dev);
--	struct intel_iommu *iommu = info->iommu;
--
- 	/*
- 	 * The driver assigns different domain IDs for all domains except
- 	 * the SVA type.
-@@ -178,7 +176,7 @@ int cache_tag_assign_domain(struct dmar_domain *domain,
- 		.pasid = pasid,
- 		.iommu = info->iommu,
- 		.dev = dev,
--		.domain_id = domain_get_id_for_dev(domain, dev),
-+		.domain_id = domain_id_for_iommu(domain, info->iommu),
- 	};
- 	int ret;
- 
-@@ -209,7 +207,7 @@ void cache_tag_unassign_domain(struct dmar_domain *domain,
- 		.pasid = pasid,
- 		.iommu = info->iommu,
- 		.dev = dev,
--		.domain_id = domain_get_id_for_dev(domain, dev)
-+		.domain_id = domain_id_for_iommu(domain, info->iommu)
- 	};
- 
- 	__cache_tag_unassign_domain(domain, &tag_id, info->ats_enabled);
+ drivers/media/i2c/max96714.c | 14 +++++++-------
+ drivers/media/i2c/max96717.c | 31 ++++++++++++-------------------
+ 2 files changed, 19 insertions(+), 26 deletions(-)
+---
+base-commit: aac87ca083749ad835878df10915d8569c9fb34a
+change-id: 20240628-gmsl2-drivers-style-fixup-8b7456273b39
+prerequisite-message-id: 20240627151806.3999400-2-tomm.merciai@gmail.com
+prerequisite-patch-id: 962642e5bbea7583a1b4f6eb0a962e60ef9ffba3
 
+Best regards,
 -- 
-2.43.0
-
+Julien Massot <julien.massot@collabora.com>
 
 
