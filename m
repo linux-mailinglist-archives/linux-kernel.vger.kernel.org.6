@@ -1,95 +1,122 @@
-Return-Path: <linux-kernel+bounces-234023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0CDD91C109
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:33:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FB8991C110
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:34:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AF07B217ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:33:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92D661C20FA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D2C1C0059;
-	Fri, 28 Jun 2024 14:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E881C0069;
+	Fri, 28 Jun 2024 14:34:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kSJextqC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZzIWXVmc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E27BB645;
-	Fri, 28 Jun 2024 14:33:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B581E522;
+	Fri, 28 Jun 2024 14:34:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719585195; cv=none; b=eLAdzO9Ue6RLqA8p2QTvGbHsRoQaSYiNLBR4pWxFCb1idgeVN8OHJctic/57nPW6obFCpuquPB1M37CjcHKx3V4saFZt3CUdg50hWJsq1ttu370xBcRBrGf6giJKBp8RMVf2G3JB9d4MFTRAt4ayaemhUBBPXa2cBb6/gbwhRKo=
+	t=1719585265; cv=none; b=p6vItlEfm3RskuyZMOnXyIFpBZ+GqXFZsMZy85jgmBt8xa7CiQyooij3wgAz16A3TgAHjnyCXlilk9g5uzxPnvgIna9GTkGLdp0NvLrRYlV5BxGCREoP8ykPaggP3GAGm/18N7iWZBoWP8SpsglIF/FIMIAFVO3StyHLAiDmRu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719585195; c=relaxed/simple;
-	bh=WyJTOIt7cxoBsyCF9/n3lzkLNe+gMV2BR/X+HP7Nh14=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KOcsuv7BknlxorCqltO//Cojxhu7hr5QL2NNU0BIuddn+uKovrtqfWaz6g3V6xrlzf+K6vVEv9jVIWN6Sesd9rGk+kg87uYnML4uLulV4P8eIPc8P0BNcjvr2HcY9KOFFQDQdSArvbZDTXE7J6TAh3FE3F971231YmK9gZr3lg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kSJextqC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 014A6C116B1;
-	Fri, 28 Jun 2024 14:33:15 +0000 (UTC)
+	s=arc-20240116; t=1719585265; c=relaxed/simple;
+	bh=M93Nvl53wprdqB1rCgjlA3JH/jyBzpgsj3DjF0i+/Uc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oZenfuvy6Jptjzi3gqTSuDOqqqxrz+ylIl80HiEH0erLaJ1GGKUJ/zPN0zsPQSpBFlCPdLWpP1+ziaIfy/I9g+M4oxtLYy3BtYAfL3N0Y2BCNAZMu3ZrPQPPEi6k44o77G2ngfxyVl0IQ7UOOtb3m48pef6TXL+Z836n5C/ihUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZzIWXVmc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A0E8C116B1;
+	Fri, 28 Jun 2024 14:34:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719585195;
-	bh=WyJTOIt7cxoBsyCF9/n3lzkLNe+gMV2BR/X+HP7Nh14=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=kSJextqCb8VPmwyeeBKoJucKrv515A2ecPmjbGI2cblgalwPUGsPGjOdMtbTUNAY0
-	 RbXkfbKwefn8wkE+QiIVEElnQFpWrcrPXAMpAvxt3ygFXbeUAsvJs9m1E+8EYxIrQj
-	 1DI+Wr82ufbhIGLLhss6Rz66piDafzFITIOiFfOi5mQkEK9jAekDijIKsZovUA213+
-	 bmY3qB7At3HgJ43Rgy8WvRpHYyS595Wt7n4yvpJmvwTJNP1EqiFYd4fOq7Rp5WTn8b
-	 JV0IBCk5zMaA3q/Op8Tp7HrLEBIfZEFEl3kj4/GsZrVjcQgySwe9Tph9GYSCYhCdfb
-	 5RvjOZNsGjt3w==
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-63bce128c70so5982737b3.0;
-        Fri, 28 Jun 2024 07:33:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWVkZ9ITFfn4P3ybDDAXWSx9K4T5EHDXnGGqmvNZIFndfVUXLie5J52Fzo0QhKHpoPswwermF61sqQGoA730tX/UENaDV8T/Z6g41X8y6MLw41kuXgaRPFTzM1aAe+yDfrm67P7Z1ts4Q==
-X-Gm-Message-State: AOJu0YxpegKmdseQ6Pr8PWC3dCCOAQr5+cQ5rAxoHOZB6S8/4eduxT6x
-	Cg9lxZB+5e/EwlKy9naslrN+Wx8N5BJnAMeoY5uoKAcl7Pcq/EnL1yzsMPrZYd67432xgD74+s3
-	IYqCADDxLP+K8t8Hy9906rplmGw==
-X-Google-Smtp-Source: AGHT+IFU21dt8LrHcxEjSvfyuAYkAPL8NoSPX57Ogw11Hxuy3RaXgmL/H8pjad+U48hUpOLdI/HW0KJwJNHfNteQZ8o=
-X-Received: by 2002:a05:690c:397:b0:62f:19da:a53f with SMTP id
- 00721157ae682-64af0532705mr11197707b3.0.1719585194209; Fri, 28 Jun 2024
- 07:33:14 -0700 (PDT)
+	s=k20201202; t=1719585265;
+	bh=M93Nvl53wprdqB1rCgjlA3JH/jyBzpgsj3DjF0i+/Uc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZzIWXVmc2KqAbYAU7z50dq5r2g665ts4K1cpp2jdj1J6YPrDCEB6HMK/GOJNdjRb6
+	 9C0DYeiuqZdZMZbuE3RYCXBMjHOLstLaQ3PLpZ8iIFp3iw9EaZDMH2NmH5LaHf+OMQ
+	 bTBeSzPmEPVO3z5ecU+9iVdlNzqsVaY1fomUGHeI+VLb3V1HjASRJ2rE+gBacxxmzz
+	 goG2+AaLa6/JT8bHF6r8FP0Nw422XgA2LnvkkXua6cACceBw8GLLzGBQCTLrOzUApF
+	 rlCy9LaLzIPpX0iIWjk1Ex0uuB4cmttnD/NrS0rxDeOsm4mt6u1du9g+E0v8lCn51o
+	 o+slq1Moa5gUQ==
+Date: Fri, 28 Jun 2024 15:34:19 +0100
+From: Lee Jones <lee@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: [GIT PULL] Immutable branch between MFD, Regulator and Watchdog due
+ for the v6.11 merge window
+Message-ID: <20240628143419.GO2532839@google.com>
+References: <cover.1719473802.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528191536.1444649-1-robh@kernel.org> <20240528191536.1444649-2-robh@kernel.org>
- <20240602160020.azbf7pytiu57vwo5@bogus>
-In-Reply-To: <20240602160020.azbf7pytiu57vwo5@bogus>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 28 Jun 2024 08:32:59 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLE_KKEYQQc098vVDVopSD=_7ESC8qWVFakp5fZjYH1nw@mail.gmail.com>
-Message-ID: <CAL_JsqLE_KKEYQQc098vVDVopSD=_7ESC8qWVFakp5fZjYH1nw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm/arm64: dts: arm: Use generic clock and regulator nodenames
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1719473802.git.mazziesaccount@gmail.com>
 
-On Sun, Jun 2, 2024 at 10:00=E2=80=AFAM Sudeep Holla <sudeep.holla@arm.com>=
- wrote:
->
-> On Tue, May 28, 2024 at 02:15:32PM -0500, Rob Herring (Arm) wrote:
-> > With the recent defining of preferred naming for fixed clock and
-> > regulator nodes, convert the Arm Ltd. boards to use the preferred
-> > names. In the cases which had a unit-address, warnings about missing
-> > "reg" property are fixed.
-> >
->
-> Thanks for the cleanup.
->
-> Do you want to take it through DT tree or prefer me to take it. I think
-> I have one another patch from Krzysztof for Juno DTS IIRC.
+Enjoy!
 
-I *never* take dts patches. Please take it. And I think you need to
-take patch 1. Not completely sure, but I expect there's some context
-dependencies.
+The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
 
-Rob
+  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+
+are available in the Git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/ib-mfd-regulator-watchdog-v6.11
+
+for you to fetch changes up to fcf1f960a6aa45a22efd4d49114c672ed305b85f:
+
+  MAINTAINERS: Add ROHM BD96801 'scalable PMIC' entries (2024-06-27 09:24:45 +0100)
+
+----------------------------------------------------------------
+Immutable branch between MFD, Regulator and Watchdog due for the v6.11 merge window
+
+----------------------------------------------------------------
+Matti Vaittinen (6):
+      dt-bindings: ROHM BD96801 PMIC regulators
+      dt-bindings: mfd: bd96801 PMIC core
+      mfd: support ROHM BD96801 PMIC core
+      regulator: bd96801: ROHM BD96801 PMIC regulators
+      watchdog: ROHM BD96801 PMIC WDG driver
+      MAINTAINERS: Add ROHM BD96801 'scalable PMIC' entries
+
+ .../devicetree/bindings/mfd/rohm,bd96801-pmic.yaml | 173 ++++
+ .../bindings/regulator/rohm,bd96801-regulator.yaml |  63 ++
+ MAINTAINERS                                        |   4 +
+ drivers/mfd/Kconfig                                |  13 +
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/rohm-bd96801.c                         | 273 +++++++
+ drivers/regulator/Kconfig                          |  12 +
+ drivers/regulator/Makefile                         |   1 +
+ drivers/regulator/bd96801-regulator.c              | 908 +++++++++++++++++++++
+ drivers/watchdog/Kconfig                           |  13 +
+ drivers/watchdog/Makefile                          |   1 +
+ drivers/watchdog/bd96801_wdt.c                     | 416 ++++++++++
+ include/linux/mfd/rohm-bd96801.h                   | 215 +++++
+ include/linux/mfd/rohm-generic.h                   |   1 +
+ 14 files changed, 2094 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd96801-pmic.yaml
+ create mode 100644 Documentation/devicetree/bindings/regulator/rohm,bd96801-regulator.yaml
+ create mode 100644 drivers/mfd/rohm-bd96801.c
+ create mode 100644 drivers/regulator/bd96801-regulator.c
+ create mode 100644 drivers/watchdog/bd96801_wdt.c
+ create mode 100644 include/linux/mfd/rohm-bd96801.h
+
+-- 
+Lee Jones [李琼斯]
 
