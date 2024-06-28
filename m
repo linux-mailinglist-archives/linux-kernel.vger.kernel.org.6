@@ -1,140 +1,116 @@
-Return-Path: <linux-kernel+bounces-234664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA71491C93F
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 00:47:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0770C91C944
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 00:47:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AC112871BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:47:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 397FF1C22462
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A6DD81ADB;
-	Fri, 28 Jun 2024 22:47:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DDD9824BC;
+	Fri, 28 Jun 2024 22:47:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qTEtxyk+"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HOeHdQBi"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2052C1878
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 22:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95678374F6;
+	Fri, 28 Jun 2024 22:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719614821; cv=none; b=dHXZyGsVHTIL52s9Ov1WKbMZLaTPr1gJDvQfYYPEHhXRqxXgYHcN4lOlDhq0oaaS6UvgRhjXtSUi65/rldqEFt/o8wN9JACVrGBkwy4DebIaepRaj+o3P/d1eVmchhTp5H9BX/LcaSMSaukvYu1mVwtP4IB/IsHa7xky15jGRUI=
+	t=1719614859; cv=none; b=lQ6nejEofnEJJzLtanJStlN/n1uBiASGz3X03PmrSL66DrXqNpgqb4ZAxCp/w3fT2G1c/u4Uyo0B7kOeMeybQr0oq74HxOxKbybfe4wWRQuHPBebIWvrcaWt2QYXd4e/cuW++KHiH4YcdZUvH52Z6k9OIKU4m9Ph0WOLKjJ3uaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719614821; c=relaxed/simple;
-	bh=1rm+2QXZvWJIdH1pbYM8kEGJ0tmdpnbCYdV+icbh3Wg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=o1J/gxBq/i01TmDo4IQzuLhi43+bqNJ5iPjN2cUJUnqXAsyo1pRTb8N5Fd+4/UTPqVCM0S71scSgI9E+fwOLPw2sQ4staTLCvwwWsjjBm5lkvNhq6KwL81biKyfUGQ3HDmzKO7N0G6+V1UU2mZ9usPpM1k3gtm2WbRuDh/8Fy9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qTEtxyk+; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-643acc141cbso12528777b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 15:46:59 -0700 (PDT)
+	s=arc-20240116; t=1719614859; c=relaxed/simple;
+	bh=VjjujlCVFcHz2nze48uuOYdNp99HkR1aJ2t0p77G3vo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ifVewnjoagr7peBl+ckAThNzgWhQYKxjC/bJyUTQ7uOn/8OzAqpWKUepB+j4Obmq9f8SsOCIE+BKI7W4KSgdXwNJthxOH0qGleoZwwMAVMPaQIG2RegkdMNaeSuU88FDSK4U7p3sXH5o/Equm6h4h95YvDZIsOEz9HUEaoPo0zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HOeHdQBi; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2c70c372755so858680a91.1;
+        Fri, 28 Jun 2024 15:47:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719614819; x=1720219619; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=c553QvwYlm1gsxBaq0BWcW6YmP4giZ2L7AzyIKkPgyc=;
-        b=qTEtxyk+5sBHE9npi1Pt2IdbfQgfmqYxfX01uanbur9x4H2nL5u9EmNs10nw8BLtMy
-         Pdnb7d0NhntaM9kM8cMIfIdcSGArsCyb+Mizz/uaBPKewrSjgFIJ2AFaEzQyUrgIiv1y
-         uVEr+8bCa0gtVJKKO8kE6gXidhEVIGW3LX1vIw/UT9ck2AyBJ57Odz4vmvEsjM4r6dFt
-         H++5x01hDQzsNZye8ibRwk6ck0GfaZ5d2VIfb7w0SJmFCUmgJM+qcDiwGxCvB7FMX0Zm
-         l9yU08Es+D8qosmGEJkpg3lIIWa485dRG4/r0su5PXQVNRUAzGULL3i22/pV22CKlUXs
-         K1Dw==
+        d=gmail.com; s=20230601; t=1719614857; x=1720219657; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=C65iYCiYAPW1ZdKuKBfIjw9waLCg7LXK5ZuuXcqO96E=;
+        b=HOeHdQBiPlFUtYwThxvqFZ7CNuzVcdg5WxThHQRpWS7irTO54a8GP3/f0PWGfdCxri
+         KtK4ckVnSmpDndroXQD1tGkw7WTxrbQsfS71tel3sGsqcxeKDUEWW6RYsLmN1jI95h54
+         2SFhrTcPZgwLeXVMmKzZVr1+JTVPbyPlbdvKQFon0esCCyipUY+5LELlCX2AsOMsSZa2
+         zIhMSDhfcn+JVm6eYqtb0XYYACu4+Jdb1qEmyMqLU4p3Dkjor9MPRYrg8ESoYrWU/zRS
+         lmvfLtuHPbk+48tita2Zaejclj/HNStDaqYU4h1dECuYJ2VJo4jddyXelMZI+j995Jpj
+         Nf/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719614819; x=1720219619;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=c553QvwYlm1gsxBaq0BWcW6YmP4giZ2L7AzyIKkPgyc=;
-        b=VHA1yEUBPuwjLzrZ4irzgK2eTJHwmfCN5QQvPWRhLpXb8gCsWh5tLmUsBjVKsJ3IK5
-         hhN5GuKFgZP/LLB5DXOJvrHQ7x38eu/9oCpMDAvjULVss6ZN95WCNE/v7lq0Lj8qy40D
-         4J7tGTw+oRB9KeUoxRxkB0sOP64WoQY5jK2m/2pArJ3sBjyonxedY7qIAKwWK+ukkDLM
-         b8dx7Jca6w/rWiO39cVoyL1ofvZiLqzLh33zLMdShoqev8NCH+pdG7Rp2JDizul9ID/l
-         WT7YQGrXDjvve7veC/DPfD2c7lKpUNyEM6VjWrsbv9hgUChAG8JVgo9WYp/eGYbuC7lT
-         cbOg==
-X-Forwarded-Encrypted: i=1; AJvYcCVMcUhvDXhKcG8+sfp9IEnaDkRh7xqRZVJZCg2NBCA0/ytRnT8bVbWe6Ii1E5qoN6ahRzeuKiM4PSGjRcV5vB2Ng/eDmcYr+K0lkTi3
-X-Gm-Message-State: AOJu0Yxxrd3dfYfmdLA5tDEYGoIBLpCmJe3m92vdFr4qEdqPAtqhD3Qh
-	pt5NcH8gSM7vn+jFlHmH2Rt3AxtkhO4/h0HPVL5erJa9fdSf55ZF9efT6IQ3bdlsyfXklM4y8uU
-	byw==
-X-Google-Smtp-Source: AGHT+IGbOFOcq+TOC4/0immBeMnJQ2HimuXSOoFdC2haiG042WexdfLtZnLaiyDfntCqDBCvZMky5p0H+oM=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a81:8303:0:b0:64b:5675:3ff5 with SMTP id
- 00721157ae682-64b56754363mr53627b3.2.1719614819050; Fri, 28 Jun 2024 15:46:59
- -0700 (PDT)
-Date: Fri, 28 Jun 2024 15:46:57 -0700
-In-Reply-To: <5aa86285d1c1d7fe1960e3fe490f4b22273977e6.1718214999.git.reinette.chatre@intel.com>
+        d=1e100.net; s=20230601; t=1719614857; x=1720219657;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C65iYCiYAPW1ZdKuKBfIjw9waLCg7LXK5ZuuXcqO96E=;
+        b=UoUQxNZJZWHM1eN3/qo/e07Wsw6cxeMbp8PzD+2Sg4/1OIK5djBTTTgp/RGaH8/AyM
+         sbCNZ13wWvYd6l7QDzl5sTd0KYRI2F9cu5BLrSgTK4Zr4SVEAqP4AA5KswIaNXGlRzvs
+         oMLKsjQ6Sd7EhVix+NshTr49AWIw9ZxblsE0FPocJA8Vi3LVoVbY8avcO//Q6tPYsC3T
+         al7FvrrLrFmAX1VSE+lISsW2UZg3OPdYFQ+qWMI5Gat3D1I0a7dbnQVct12Y8MROqeyD
+         2zCZmjeKQJXGe2fsuufxnNyRbkmtERb5q+U2c2zA1kMmgOa055q8M8KK/ZxnnZ+IFEwu
+         fXIQ==
+X-Gm-Message-State: AOJu0YyxmRXvhbO/sMTVNOKU8Ze02GgEg1F21ANbwNZk7mGwP5kvFJYF
+	EMokmbekM6dzCKzV0FGRpTSrdv53cZBKT13M7u8RIlSgTRLIr3EAoukCPw==
+X-Google-Smtp-Source: AGHT+IG2ibJMUsuW/RAww0S7aXD48nptuMYJbS/NsA8uub/9qUsG1O75gWKKCAQVT7+TU0itlTurDQ==
+X-Received: by 2002:a17:90a:77c4:b0:2c7:cfdb:7789 with SMTP id 98e67ed59e1d1-2c8612a60demr14319885a91.16.1719614856419;
+        Fri, 28 Jun 2024 15:47:36 -0700 (PDT)
+Received: from dtor-ws.sjc.corp.google.com ([2620:15c:9d:2:9c98:1988:ce15:c0ac])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91ce58877sm2187163a91.24.2024.06.28.15.47.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 15:47:36 -0700 (PDT)
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: linux-input@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH 1/5] Input: cypress_ps2 - clean up setting reporting rate
+Date: Fri, 28 Jun 2024 15:47:23 -0700
+Message-ID: <20240628224728.2180126-1-dmitry.torokhov@gmail.com>
+X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1718214999.git.reinette.chatre@intel.com> <5aa86285d1c1d7fe1960e3fe490f4b22273977e6.1718214999.git.reinette.chatre@intel.com>
-Message-ID: <Zn89YTYQcEEu9Jrw@google.com>
-Subject: Re: [PATCH V9 1/2] KVM: selftests: Add x86_64 guest udelay() utility
-From: Sean Christopherson <seanjc@google.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: isaku.yamahata@intel.com, pbonzini@redhat.com, erdemaktas@google.com, 
-	vkuznets@redhat.com, vannapurve@google.com, jmattson@google.com, 
-	mlevitsk@redhat.com, xiaoyao.li@intel.com, chao.gao@intel.com, 
-	rick.p.edgecombe@intel.com, yuan.yao@intel.com, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 12, 2024, Reinette Chatre wrote:
-> ---
->  .../selftests/kvm/include/x86_64/processor.h    | 17 +++++++++++++++++
->  .../selftests/kvm/lib/x86_64/processor.c        | 11 +++++++++++
->  2 files changed, 28 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/kvm/include/x86_64/processor.h b/tools/testing/selftests/kvm/include/x86_64/processor.h
-> index c0c7c1fe93f9..383a0f7fa9ef 100644
-> --- a/tools/testing/selftests/kvm/include/x86_64/processor.h
-> +++ b/tools/testing/selftests/kvm/include/x86_64/processor.h
-> @@ -23,6 +23,7 @@
->  
->  extern bool host_cpu_is_intel;
->  extern bool host_cpu_is_amd;
-> +extern uint32_t tsc_khz;
+Casting an integer field containing desired rate to a pointer to bytes
+works on little endian architectures where the driver is used, but not
+a good practice. Use a temporary of proper type instead.
 
-This should be guest_tsc_khz, because it most definitely isn't guaranteed to be
-the host TSC frequency.  And because it's global, we should try to avoid variable
-shadowing, e.g. tsc_scaling_sync.c also defines tsc_khz.
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+ drivers/input/mouse/cypress_ps2.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Which, by the by, probably needs to be addressed, i.e. we should probably add a
-helper for setting KVM_SET_TSC_KHZ+guest_tsc_khz.
+diff --git a/drivers/input/mouse/cypress_ps2.c b/drivers/input/mouse/cypress_ps2.c
+index c693130bef41..32b55b2b9b76 100644
+--- a/drivers/input/mouse/cypress_ps2.c
++++ b/drivers/input/mouse/cypress_ps2.c
+@@ -612,6 +612,7 @@ static psmouse_ret_t cypress_protocol_handler(struct psmouse *psmouse)
+ static void cypress_set_rate(struct psmouse *psmouse, unsigned int rate)
+ {
+ 	struct cytp_data *cytp = psmouse->private;
++	u8 rate_param;
+ 
+ 	if (rate >= 80) {
+ 		psmouse->rate = 80;
+@@ -621,8 +622,8 @@ static void cypress_set_rate(struct psmouse *psmouse, unsigned int rate)
+ 		cytp->mode &= ~CYTP_BIT_HIGH_RATE;
+ 	}
+ 
+-	ps2_command(&psmouse->ps2dev, (unsigned char *)&psmouse->rate,
+-		    PSMOUSE_CMD_SETRATE);
++	rate_param = (u8)rate;
++	ps2_command(&psmouse->ps2dev, &rate_param, PSMOUSE_CMD_SETRATE);
+ }
+ 
+ static void cypress_disconnect(struct psmouse *psmouse)
+-- 
+2.45.2.803.g4e1b14247a-goog
 
-I think it also makes sense to have this be a 64-bit value, even though KVM
-*internally* tracks a 32-bit value.  That way we don't have to worry about
-casting to avoid truncation.
-
->  /* Forced emulation prefix, used to invoke the emulator unconditionally. */
->  #define KVM_FEP "ud2; .byte 'k', 'v', 'm';"
-> @@ -816,6 +817,22 @@ static inline void cpu_relax(void)
->  	asm volatile("rep; nop" ::: "memory");
->  }
->  
-> +static inline void udelay(unsigned long usec)
-> +{
-> +	uint64_t start, now, cycles;
-> +
-> +	GUEST_ASSERT(tsc_khz);
-> +	cycles = tsc_khz / 1000 * usec;
-> +
-> +	start = rdtsc();
-> +	for (;;) {
-> +		now = rdtsc();
-> +		if (now - start >= cycles)
-> +			break;
-> +		cpu_relax();
-
-Given that this is guest code, we should omit the PAUSE so that it doesn't trigger
-PLE exits, i.e. to make the delay as accurate as possible.  Then this simply becomes:
-
-	start = rdtsc();
-	do {
-		now = rdtsc();
-	} while (now - start < cycles);
 
