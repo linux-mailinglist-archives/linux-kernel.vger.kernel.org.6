@@ -1,106 +1,114 @@
-Return-Path: <linux-kernel+bounces-234676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0A4091C95B
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 00:56:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F267791C95E
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 00:57:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F29431C22AC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:56:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ED511C229F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9084C12F392;
-	Fri, 28 Jun 2024 22:56:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D50D3824A0;
+	Fri, 28 Jun 2024 22:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1i3w6crr"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IWfgKgPM"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2163824B2
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 22:56:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE198136E30
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 22:56:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719615379; cv=none; b=cURfgG+YtPuw7Hrkf8qhVO5C7du6lCTKbyZqp+Vht6Bm2LFTQtI3DHY284F18gO4XGIwbIswkqvXFpOKpS37UvEsj9hgZHXHNq/W1QQM1RiwZNF2s5a1aE70OL81bnx14mqFG423trW7rUj9aDK1SUHmJMBiaUe2h5I84d6bO8A=
+	t=1719615405; cv=none; b=k0gdMCuUFRNS7iEw9euZsCGq/lzQcHVNI7BrKFhisokqpdSX+ssj8cmSzTwPTEx6ivyvIk5oVeaVn4HJ21phNae15Y2KmoX5kfCQkeFpDiBUWK5BLZgX2BjKb04yuvo5idYwh1UkJHwQ85B03tVAkoBXflEELiUvzfqVMjYn5I4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719615379; c=relaxed/simple;
-	bh=tYHwGPzeAgpklCMmG17VwiaX8VetjCTGdecbXelbbUs=;
+	s=arc-20240116; t=1719615405; c=relaxed/simple;
+	bh=V8Xs5oEFMyWlCgx0JVqqdmlYRkAst9Z46Jf62IzRvcE=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=kWxySbq3Yv4GZuCtf9wxflCJUl2JEtbEiKT55+os89jywzwB1U6hvBVIJSl3NpxRNRBjaF6c6mhswlvZpEu7EA48PKnXxsohb9P3g3/cPpyqrUQN3FE+VynJ0AhlbzNcSQdAZr88gjQ1YZ3w1OE2eZEqKNVgkBCvbh98cp53GXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1i3w6crr; arc=none smtp.client-ip=209.85.215.201
+	 To:Cc:Content-Type; b=ZQZ5N46SsX6xZX8ENsNHPnW6/lScC5Bt0lstuaRqfjrHk2c8z/FmneeY3elS9Xio6f5np8Rdfqzv74F3Pw1NzULk2jCzAdLb7SVNfJF9L065mB743E+VNCYOyryjEMUkC4OobK9eDFayscORtjyYY+AV86BwFqI1Ozx/GdspJJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IWfgKgPM; arc=none smtp.client-ip=209.85.210.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-72c1d0fafb3so927198a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 15:56:18 -0700 (PDT)
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7065ba27265so1067880b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 15:56:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719615378; x=1720220178; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1719615403; x=1720220203; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XDxiiVVnrl82x4ZZMEBuMnAQFf8fEn2Km8Ydtn4qydE=;
-        b=1i3w6crrMOB3lD6fXWDCjvcdEBG/t9q/Ziwz48DilkxHBwZ8Ybljy28mD/meJPcElU
-         EI1tAjboUQ9dUUpTjy/ZZtNFOpmVzFK6s2nJw0qjX7DQlfNt6wOoIS09fp4e2ynF5rQ6
-         1xBMr6fiOaFBxN9uehfgYF3SoenJU385lb2ksZ55z8Kc9qmfgZq/Oi2U1wjNEjMfwOfL
-         RhKbz/jnslXFgWwxluvVG3ReBJ2WHWev8zMzhtRr90WT1zD4si9MKUZNJgmbpEB7Y/0V
-         HNDpnDYw3AKTfT5N3kWsjPNpiD5SaEUamTxVwZCUJbPgsyjpT9Jrp6CCrm0mRSNzzKPN
-         evRQ==
+        bh=3g7HC7NkoYhxDVDG92lRPzaTUiH58rybHEhDqDsZUck=;
+        b=IWfgKgPMXlAe2P3mDNq5XsvdOKgmGEJ86xCJ/m4fnHOQOpcrNRZazRgmriElJWvZ3B
+         ixY4OaPe6fF+h09HiqPlnaCf+58gt6HFiGsJ0LN/xrMk8GfKKtLMc8TTP4L8QQIKLcF9
+         s3v4wrHplm+kH7RrDlPudOzS0Ooxqu7R99s/SwsboD1uITkzJ1CtQ4q4myCYEN2IZsLl
+         ysptAJYwGkbtlmsmi/AMxQt2B3fdjbsMR3xx5Es9yKkFqw7VWrS4h1vmhZc1h9ta1P3F
+         nDz3AuNf8BfDSNRC2g1HEn1mxF/ITdH1SuUE6wlRKZEnWo6WTip/wT306hxu4IHJkV5x
+         i+Yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719615378; x=1720220178;
+        d=1e100.net; s=20230601; t=1719615403; x=1720220203;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XDxiiVVnrl82x4ZZMEBuMnAQFf8fEn2Km8Ydtn4qydE=;
-        b=HG5hxm0siCriI3ehg0TgfYtvZmbLqK5x/RDrGvCle8BMAddyNU9/TL8TRafRPpK13Z
-         xIn75c1LgaqisApfMUIKYlxOjO+m2xsUqPuSizUCWY/QNw0vwHbWNcwHvmDT/kB0dTzA
-         nhJsAtr/xnYfYTMoLcV46gzcCPGQErYPZFTyXHsu8e/0lSwe9kyKvKr45dzkin/WHLZS
-         DRzx+PL4wpED5lePVDFiOXZDlst91eWaQk08Qs4j+PdNLneCYSeI//2xzok9GeamUsK2
-         4oJwvpbOvKyk7R3dbqviCo6PNQ01ZIht85B/K7qmgYM5PKTIxXYnuusl2urg4ROBZGHv
-         rJvA==
-X-Forwarded-Encrypted: i=1; AJvYcCVG2E+eUKLqInSBLOX9XiccCy3jz9kml+9qMU9QrFcH8T5fu5425E1AyXro8Wxct/FD3J8crrLSL3x//jsprB1nIdgSU233Z4Yyr2FN
-X-Gm-Message-State: AOJu0YwGAosghb7t1KZdf+ojfvV8mBZ82PEZIG/r9i7XdO913KAGdL3c
-	C00vVyfSWvJSMgH8DxYq2yIQ4eiozBRN1a3EtydKo1rjrNgPzpCgETaAgequJ8HFLNPZEgF0xxC
-	U1Q==
-X-Google-Smtp-Source: AGHT+IFuclu+QRiL03Nr/e3Jt+cogkBXUNrfgJqbhX0E0zDCMxVddXN2gK9vtSiGxK0P1fMNG/gRlzq8QuI=
+        bh=3g7HC7NkoYhxDVDG92lRPzaTUiH58rybHEhDqDsZUck=;
+        b=j1CZwIFSw37q37TGO9lShBXJ/7w733XZiNPXOetrSY9ain/o054X05OC06yBle7sgT
+         N1kvFuxzDNFqJ6zL00jQ94T8DllMsMKGH7wR54rrBnbqmGT9y85bjYqlv1+cJX2qxcve
+         yurEEDEdPw32+W8zHF8l8NDjxpbtA2ciiudf5aGaj/WPbM7IJM5VzArKRuhzNOQCrqMx
+         kGJuG7TBXCzgqpi61fxjHpb/tOoriTxsLONgsnM4eAb282O5JOdMJkdm2RBp4y+r305z
+         RltNtA2+8uksOS1zJHMXkdhCQi+dTpCbCvxu1gYeLf58jWwI+CoHxYviKCdQCb8izgtk
+         TEpg==
+X-Forwarded-Encrypted: i=1; AJvYcCUX7qQS7Q7DY6TPP0zywuDu/PbKywr7U3fiG3+AN8YWXYKyA145t/E9olHZdhauQmFSoL1abaCb+VC709LoF7WuxDnPn4HlD9AhsSKt
+X-Gm-Message-State: AOJu0YzEUNsnpdyJ1+pO6BdNqXHytgnym+535vV+GVqGLwB1IvVTMU+q
+	URW4C5eOjBptd8X0NSDCFOHHTxZaUauadhenhOmcaFo2kJ8DO+hP55AwPw1d8yz8vpcxTV4JAri
+	J3Q==
+X-Google-Smtp-Source: AGHT+IFZIbWVtsJRk3IDXMv9GyWL21Uev0d/2w5PPrA739Xt6Gum+2Y1d5bUgMYVpteoD7TlihsqXTeYBvU=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a02:117:b0:659:23db:a4b2 with SMTP id
- 41be03b00d2f7-71b5f3516f0mr48811a12.8.1719615377866; Fri, 28 Jun 2024
- 15:56:17 -0700 (PDT)
-Date: Fri, 28 Jun 2024 15:55:26 -0700
-In-Reply-To: <20240622-md-kvm-v2-1-29a60f7c48b1@quicinc.com>
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:1d0e:b0:706:2a35:66e3 with SMTP id
+ d2e1a72fcca58-7067482fc9bmr387477b3a.6.1719615402966; Fri, 28 Jun 2024
+ 15:56:42 -0700 (PDT)
+Date: Fri, 28 Jun 2024 15:55:28 -0700
+In-Reply-To: <cover.1718214999.git.reinette.chatre@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20240622-md-kvm-v2-1-29a60f7c48b1@quicinc.com>
+References: <cover.1718214999.git.reinette.chatre@intel.com>
 X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
-Message-ID: <171961376508.228791.6632768103700293303.b4-ty@google.com>
-Subject: Re: [PATCH v2] KVM: x86: add missing MODULE_DESCRIPTION() macros
+Message-ID: <171961507216.241377.3829798983563243860.b4-ty@google.com>
+Subject: Re: [PATCH V9 0/2] KVM: x86: Make bus clock frequency for vAPIC timer configurable
 From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Jeff Johnson <quic_jjohnson@quicinc.com>
+To: Sean Christopherson <seanjc@google.com>, isaku.yamahata@intel.com, pbonzini@redhat.com, 
+	erdemaktas@google.com, vkuznets@redhat.com, vannapurve@google.com, 
+	jmattson@google.com, mlevitsk@redhat.com, xiaoyao.li@intel.com, 
+	chao.gao@intel.com, rick.p.edgecombe@intel.com, yuan.yao@intel.com, 
+	Reinette Chatre <reinette.chatre@intel.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="utf-8"
 
-On Sat, 22 Jun 2024 22:44:55 -0700, Jeff Johnson wrote:
-> Fix the following allmodconfig 'make W=1' warnings when building for x86:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/kvm/kvm.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/kvm/kvm-intel.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/kvm/kvm-amd.o
+On Wed, 12 Jun 2024 11:16:10 -0700, Reinette Chatre wrote:
+> Changes from v8:
+> - v8: https://lore.kernel.org/lkml/cover.1718043121.git.reinette.chatre@intel.com/
+> - Many changes to new udelay() utility patch as well as the APIC bus
+>   frequency test aimed to make it more robust (additional ASSERTs,
+>   consistent types, eliminate duplicate code, etc.) and useful with
+>   support for more user configuration. Please refer to individual patches for
+>   detailed changes.
+> - Series applies cleanly to next branch of kvm-x86 with HEAD
+>   e4e9e1067138e5620cf0500c3e5f6ebfb9d322c8.
+> 
+> [...]
 
-I split this into two commits.  The x86 changes went to `kvm-x86 misc`, and the
-generic KVM one went to `kvm-x86 generic`.  I split them partly so that I could
-opportunistically delete the VT-x comment from kvm_main.c, which was comically
-stale.
+Applied to kvm-x86 misc, with all the changes mentioned in my earlier replies.
+I'm out next week, and don't want to merge the KVM changes without these tests,
+hence the rushed application.
 
-Holler if anything looks wrong.  Thanks!
+Please holler if you disagree with anything (or if I broke something).  I won't
+respond until July 8th at the earliest, but worst case scenario we can do fixup
+patches after 6.11-rc1.
 
-[1/1] KVM: x86: add missing MODULE_DESCRIPTION() macros
-      https://github.com/kvm-x86/linux/commit/8815d77cbc99
-
-[1/1] KVM: Add missing MODULE_DESCRIPTION()
-      https://github.com/kvm-x86/linux/commit/25bc6af60f61
+[1/2] KVM: selftests: Add x86_64 guest udelay() utility
+      https://github.com/kvm-x86/linux/commit/6b878cbb87bf
+[2/2] KVM: selftests: Add test for configure of x86 APIC bus frequency
+      https://github.com/kvm-x86/linux/commit/82222ee7e84c
 
 --
 https://github.com/kvm-x86/linux/tree/next
