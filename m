@@ -1,146 +1,171 @@
-Return-Path: <linux-kernel+bounces-234406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8223B91C645
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:59:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7690991C64D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:03:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8062B1C230E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:59:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A74371C210DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:03:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 459056F067;
-	Fri, 28 Jun 2024 18:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92DF6F2E2;
+	Fri, 28 Jun 2024 19:02:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lky0WtaY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uqc8rRT+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E426A8BE;
-	Fri, 28 Jun 2024 18:59:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B474F5FA;
+	Fri, 28 Jun 2024 19:02:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719601163; cv=none; b=j0UeT0HUnzES3Hlmc2vbXZ0vB1C0Ykr/lcTURLnDu4z45KQSXqYSdA6DjTRBqzHcLdsKAegKfWqlbuMtc1VP4bgWJOgmyac/90GRAT1lHbB5x88tVE3R7EGazHcCP1VGTO4LKQbvS5axuHP/qv0Pi4ms7FP84P9W83+n+QOqa0Y=
+	t=1719601375; cv=none; b=dTgMxpdKWvKZftil0reYk8j91gZshgzyZm7iYWkjMAt8tBd8X9/7S77RdbueISwg43AKhgWaJm1N9/g/rhB1d8w0bgmvhDU7cJZ1GwMHP8nDQw7+iSCSbbB/qA+42N4P/RcI+72Sfsk5KZ5Ho+6wmx+oanTgC4yUpz3GPwu5zkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719601163; c=relaxed/simple;
-	bh=e+e7fSsfY1C3BBErHbLSk9HJdSyiw+J5R+fAtwg1pJ0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HJlcZS+fSM2JXzGI9Ot8fTF2RV5czDoSyx9RohzhCj6D+rWuxVkD5DTuoKCSLakpxphCxP2EcQPL6ITK6f9OQWlxTkUKFye3J7qAwTrRXDlaOO6koOAA0+NsCSCNGeXCIlniBvhNL4bedAfZLUNiSGHOWZhfhnH2hVgYSg6VOb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lky0WtaY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11488C2BD10;
-	Fri, 28 Jun 2024 18:59:23 +0000 (UTC)
+	s=arc-20240116; t=1719601375; c=relaxed/simple;
+	bh=N9t03XZKgQccCItCN7cqx3ors/e3qKc5BJRS16l4OdQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SyA6fDGfqTDbJIYW83/7KIgrwZ6yQT9e6IJD5uzo3ODynIZK4fm6haD1toqKDbGqwx4rCO0k6AdsU+DMIWIuoIXzDWHJxy9I2TiGVkSlMUPrEGtXxSIsVnL1TRymcDV1AojGjorb++c90TGflnCRI7cwhzt4eKKrJv5Co3Pts2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uqc8rRT+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEE7DC116B1;
+	Fri, 28 Jun 2024 19:02:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719601163;
-	bh=e+e7fSsfY1C3BBErHbLSk9HJdSyiw+J5R+fAtwg1pJ0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Lky0WtaYuX9PtdrDhTgm23grSRxDhHGxW4BhJUHnVqn8GHOUFSnSROVzVO4VgWTQz
-	 SHKeJSXNzyrDfbL4TahWt2t52sR9ajV42iSG94c/6IjUIg0vHcIV8iHCWRULoGgc22
-	 hJlosNQRftqIoKlzmIOwCuBSCaVIb5fXp1uSRt/FBQKhSvsvg0qPYDjWKhAnVon1Zy
-	 CFuoWtPyLpqqPVlIp7NF1ryKDOCQieRdGEGU1isA0zTxupD82MIBEPUmbfiPdLlgib
-	 E7RvYplbxoYaEcG10JKgWhGQCGmNHjRnHMz5TOqc2RvYdJ0uB9FIQr/Unp9AHsGsVN
-	 zSAypOoa20OwA==
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-24c5ec50da1so142627fac.3;
-        Fri, 28 Jun 2024 11:59:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV1DmNDMbpZco8IKYuZbsQM3VQD/RSLp7vfweGYjFKxGFk6pMXLa8mor+y1TJ9iuxGky0bBdNc0uJyMxVGyrr3UjCBQ9AzLQgzzuW3jdQOYs2RHJHYCME543P+7bPWJfPp7LgYPx+4=
-X-Gm-Message-State: AOJu0YzOTGIFM2fVYsBu38wmjZHO6wClz/7EJPLc3OtcMNG3IqLRdnD1
-	es3aRpPgSzwK5NVpw5qOUdHmWVF3uAjl9z1TAiSpZFsY7sdQWRFscEkANBrwfq3rD4SJDyJq/Ns
-	B2jyQStYpCSbYt7gcOHnwVjzxzDs=
-X-Google-Smtp-Source: AGHT+IFCGem2eoo0rvWIQme4AModLWMeThmakQhaXznbYg6pzoUdgPw1z1j4Z3n03wPqWNcgzKpINtZF+b7Ieem+r/0=
-X-Received: by 2002:a05:6870:7d1a:b0:25d:7935:43b7 with SMTP id
- 586e51a60fabf-25d7935f4f4mr6079402fac.0.1719601162419; Fri, 28 Jun 2024
- 11:59:22 -0700 (PDT)
+	s=k20201202; t=1719601374;
+	bh=N9t03XZKgQccCItCN7cqx3ors/e3qKc5BJRS16l4OdQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=uqc8rRT+E+dEuSRf1LMFu46ldn2wDeNlGcbaNLP2xEd5uy2x2zJX+3VNnmQN0ive1
+	 vj3i9NtqbGXY8EcZWmlOaR/4PXl6zqC7ktciSnIdvvv8xLms2pXljt7Ev+yWQPvnc8
+	 Pthtz1fF5CsIGkFW8ZGEPco4bv4xYw4zSAh83lQJbKz0OxlSotSRfwsAk/J+FiziKE
+	 DvRzMbxcSPZtKf1SKFcZRZCnTqoqtP9fglEimi+HPKhjLsf/8jzXkwzdtmPF/Yb0c3
+	 Zsnj38yGIxHQjdY1wrNoN+UaUkKpp3wzFHu4ZUvjGwGcgMeCtRzR4GCW/dBSNGNDIr
+	 dDImIql4s6Xxw==
+Date: Fri, 28 Jun 2024 20:02:43 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: "Paller, Kim Seer" <KimSeer.Paller@analog.com>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "linux-iio@vger.kernel.org"
+ <linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org"
+ <devicetree@vger.kernel.org>, David Lechner <dlechner@baylibre.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Dimitri Fedrau <dima.fedrau@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, "Hennerich, Michael"
+ <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=
+ <noname.nuno@gmail.com>
+Subject: Re: [PATCH v4 4/5] dt-bindings: iio: dac: Add adi,ltc2672.yaml
+Message-ID: <20240628200243.14b5f1b5@jic23-huawei>
+In-Reply-To: <20240625-roster-umbrella-3782caa23791@spud>
+References: <20240619064904.73832-1-kimseer.paller@analog.com>
+	<20240619064904.73832-5-kimseer.paller@analog.com>
+	<20240619-vanity-crowd-24d93dda47b8@spud>
+	<20240623144339.6a5087cf@jic23-huawei>
+	<PH0PR03MB71419D55571B07479B4F4FB8F9D42@PH0PR03MB7141.namprd03.prod.outlook.com>
+	<20240624-untracked-molasses-31e8769dddd3@spud>
+	<20240624183753.0000218c@Huawei.com>
+	<PH0PR03MB7141EE1309B35372201A6A80F9D52@PH0PR03MB7141.namprd03.prod.outlook.com>
+	<20240625-roster-umbrella-3782caa23791@spud>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240627060117.1809477-1-d-gole@ti.com> <31841424-c6dd-49e2-ac2c-2394662b7f30@amd.com>
-In-Reply-To: <31841424-c6dd-49e2-ac2c-2394662b7f30@amd.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 28 Jun 2024 20:59:11 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hqvdTo5TJkB1S+23dMfC8ivs5_rNbV1XnhkaTntkZ3Aw@mail.gmail.com>
-Message-ID: <CAJZ5v0hqvdTo5TJkB1S+23dMfC8ivs5_rNbV1XnhkaTntkZ3Aw@mail.gmail.com>
-Subject: Re: [PATCH V2] cpufreq: make cpufreq_boost_enabled return bool
-To: Mario Limonciello <mario.limonciello@amd.com>, Dhruva Gole <d-gole@ti.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, 
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jun 27, 2024 at 8:57=E2=80=AFPM Mario Limonciello
-<mario.limonciello@amd.com> wrote:
->
-> On 6/27/2024 01:01, Dhruva Gole wrote:
-> > Since this function is supposed to return boost_enabled which is anyway
-> > a bool type make sure that it's return value is also marked as bool.
-> > This helps maintain better consistency in data types being used.
-> >
-> > Signed-off-by: Dhruva Gole <d-gole@ti.com>
->
-> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+On Tue, 25 Jun 2024 17:20:48 +0100
+Conor Dooley <conor@kernel.org> wrote:
 
-Applied as 6.11 material, thanks!
+> On Tue, Jun 25, 2024 at 03:51:27PM +0000, Paller, Kim Seer wrote:
+> > 
+> >   
+> > > From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>  
+> 
+> > > On Mon, 24 Jun 2024 18:00:24 +0100
+> > > Conor Dooley <conor@kernel.org> wrote:
+> > >   
+> > > > On Mon, Jun 24, 2024 at 03:26:26PM +0000, Paller, Kim Seer wrote:  
+> > > > >
+> > > > >  
+> > > > > > From: Jonathan Cameron <jic23@kernel.org>  
+> 
+> > > > > > Subject: Re: [PATCH v4 4/5] dt-bindings: iio: dac: Add adi,ltc2672.yaml
+> > > > > >
+> > > > > >
+> > > > > > On Wed, 19 Jun 2024 18:57:59 +0100
+> > > > > > Conor Dooley <conor@kernel.org> wrote:
+> > > > > >  
+> > > > > > > On Wed, Jun 19, 2024 at 02:49:03PM +0800, Kim Seer Paller wrote:  
+> > > > > > > > +patternProperties:
+> > > > > > > > +  "^channel@[0-4]$":
+> > > > > > > > +    type: object
+> > > > > > > > +    additionalProperties: false
+> > > > > > > > +
+> > > > > > > > +    properties:
+> > > > > > > > +      reg:
+> > > > > > > > +        description: The channel number representing the DAC output  
+> > > > > > channel.  
+> > > > > > > > +        maximum: 4
+> > > > > > > > +
+> > > > > > > > +      adi,toggle-mode:
+> > > > > > > > +        description:
+> > > > > > > > +          Set the channel as a toggle enabled channel. Toggle operation  
+> > > > > > enables  
+> > > > > > > > +          fast switching of a DAC output between two different DAC  
+> > > codes  
+> > > > > > without  
+> > > > > > > > +          any SPI transaction.
+> > > > > > > > +        type: boolean
+> > > > > > > > +
+> > > > > > > > +      adi,output-range-microamp:
+> > > > > > > > +        description: Specify the channel output full scale range.
+> > > > > > > > +        enum: [3125000, 6250000, 12500000, 25000000, 50000000,  
+> > > > > > 100000000,  
+> > > > > > > > +               200000000, 300000000]  
+> > > > > > >
+> > > > > > > IIO folks, is this sort of thing common/likely to exist on other DACs?  
+> > > > > >
+> > > > > > Fair point. It is probably time to conclude this is at least moderately  
+> > > common  
+> > > > > > and generalize it - which will need a dac.yaml similar to the one we have  
+> > > for  
+> > > > > > ADCs in adc/adc.yaml.  That will need to make this a per channel node  
+> > > property  
+> > > > > > (same as the adc ones).  
+> > > > >
+> > > > > Should I proceed with generalizing common DAC properties in this series  
+> > > and does  
+> > > >
+> > > > I think so, yes.  
+> > > 
+> > > Yes, that would great.  
+> > 
+> > I was wondering who would be the designated maintainer for new dac.yaml?  
+> 
+> I'd suggest Jonathan!
 
-> > ---
-> >
-> > Changelog:
-> > "return false" instead of 0 as per Mario's suggestion.
-> >
-> > Link to previous patch:
-> > https://lore.kernel.org/linux-pm/20240626084354.1762483-1-d-gole@ti.com=
-/
-> >
-> > ---
-> >
-> >   drivers/cpufreq/cpufreq.c | 2 +-
-> >   include/linux/cpufreq.h   | 6 +++---
-> >   2 files changed, 4 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> > index 82c500389a40..709e7b1f9826 100644
-> > --- a/drivers/cpufreq/cpufreq.c
-> > +++ b/drivers/cpufreq/cpufreq.c
-> > @@ -2873,7 +2873,7 @@ int cpufreq_enable_boost_support(void)
-> >   }
-> >   EXPORT_SYMBOL_GPL(cpufreq_enable_boost_support);
-> >
-> > -int cpufreq_boost_enabled(void)
-> > +bool cpufreq_boost_enabled(void)
-> >   {
-> >       return cpufreq_driver->boost_enabled;
-> >   }
-> > diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-> > index 20f7e98ee8af..6f57de7de433 100644
-> > --- a/include/linux/cpufreq.h
-> > +++ b/include/linux/cpufreq.h
-> > @@ -785,7 +785,7 @@ ssize_t cpufreq_show_cpus(const struct cpumask *mas=
-k, char *buf);
-> >
-> >   #ifdef CONFIG_CPU_FREQ
-> >   int cpufreq_boost_trigger_state(int state);
-> > -int cpufreq_boost_enabled(void);
-> > +bool cpufreq_boost_enabled(void);
-> >   int cpufreq_enable_boost_support(void);
-> >   bool policy_has_boost_freq(struct cpufreq_policy *policy);
-> >
-> > @@ -1164,9 +1164,9 @@ static inline int cpufreq_boost_trigger_state(int=
- state)
-> >   {
-> >       return 0;
-> >   }
-> > -static inline int cpufreq_boost_enabled(void)
-> > +static inline bool cpufreq_boost_enabled(void)
-> >   {
-> > -     return 0;
-> > +     return false;
-> >   }
-> >
-> >   static inline int cpufreq_enable_boost_support(void)
-> >
-> > base-commit: df9574a57d02b265322e77fb8628d4d33641dda9
->
->
+Sure.  Though if anyone else wants to maintain this one they'd be welcome :)
+
+> 
+> > > > > this mean somehow removing these common properties from existing DAC  
+> > > bindings?  
+> > > >
+> > > > I think that that one is up to Jonathan.  
+> > > 
+> > > We can deprecate them.  At somepoint we can remove them form the
+> > > documented bindings
+> > > but we will need to keep them in drivers forever (which won't be costly in this
+> > > case).  
+> 
+> Right. Anything where the name _would change_ needs to be deprecated and
+> kept forever. I was thinking more about properties that are defined in
+> multiple locations with the same name, e.g. if "output-range-microvolts"
+> existed in 6 different bindings.
+> 
+> Thanks,
+> Conor.
+
 
