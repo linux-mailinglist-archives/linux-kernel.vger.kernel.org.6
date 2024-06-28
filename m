@@ -1,307 +1,296 @@
-Return-Path: <linux-kernel+bounces-233995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3651991C089
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:11:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8342691C091
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:12:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB7CB282E7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:11:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C99372818CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:12:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB1851C0059;
-	Fri, 28 Jun 2024 14:11:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679081C0048;
+	Fri, 28 Jun 2024 14:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GiVWpopY"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jiBIj5v8"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC181BF305;
-	Fri, 28 Jun 2024 14:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD081BE843;
+	Fri, 28 Jun 2024 14:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719583879; cv=none; b=u2+S4B4C6dhsnat1yVqwUpl5GQtzqwiRHnhuGxN7+pk9KSBhrNVYD6T8VyvxpPeuDxh66kMd3yWu4vJq7VzNr5sabbACapVzQnI3ls0n0Y9aepaZDZ2VFAyPSHbuRTgKMNh1xGpMfQUM1jm/CoUrJkyv7jgUOzvMP1mMDiqHjTw=
+	t=1719583919; cv=none; b=bshtoJngsOaKasFgR5BxXTUewsc5Q6HaGHvjEB5UpoWieXen0JMEgPFcKxeDArjxRW7FnW1ijNFixZ3jR4F6hm+p4xpyCEEXigYtyMpC6yrVm9EwxxrKJA4mfys3ksz1YfqXt6EQLxrwCpK8Oa4M9TomwU0FTTdQTw8KPgFzWdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719583879; c=relaxed/simple;
-	bh=fSw3ru4jN9d4ybV2khk34iBEEicROSB4m//SX5Nqhgw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pvxl4wQQNL9sF4tSgJ7IOP/DF+Ndw0/3Ft2fDHZncumIjqbZQm/bHeswP4TW1jiYPDIM6JaDXL6bLETJLBTSTg9anMs/+bJFrMNB/INFkM5pYgE2PSLLyak8UWGUgSXr0bb8aC/uib2V+AcIBMHXJKUvYZ+BlpIKpOwk3vrYIug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GiVWpopY; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42138eadf64so5593335e9.3;
-        Fri, 28 Jun 2024 07:11:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719583876; x=1720188676; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZxKiQR1WifW9R4T+o00BES3qwoMoa9ISf2D6Aafrxx8=;
-        b=GiVWpopYA3pwEakHILukhD7qUXwagNIgabL+/W8C6+tw15xyIanXeX6H7Smh76aJja
-         Vj+JtjcMpOdzhd/q5umUe1etQD1FAI4t+KsIXYONelpad51mWxhEgv2eZvrg/MoNzQRw
-         XHbCgz5SB61/0bfFDgU9ZirV/jBuY/MgjJBj+r8ZfRMgAm9/GlbpWP2soymXp4UEhaeS
-         iSxyC7jFPrXS8d4sREa6wy0yhHfJ42E9m5jmlf4TfvFOxjaFtHbZLG6h8caocs/8q5zn
-         ZYriWMGnKhqYZ5yLtGcqISpcGPWEo0+/Uf0eluc+Xaq6p5/Mwr9bBNC7pxASNXKST7gv
-         asUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719583876; x=1720188676;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZxKiQR1WifW9R4T+o00BES3qwoMoa9ISf2D6Aafrxx8=;
-        b=f0Td/EqkxFeSnaaigMnoxlE493v8GK8dzbqP+BNf56GLOQG3d1BwlAEnMvFPgtLhRD
-         Dqxnl31ZJhkgdbLKPYMQhC6DmDG2F3V6oybZwP8BvswSA8Ux5f61NyggXGBADEfX0y3C
-         ARJD34KFfq6D9aT2JqexUamfeOcv1MW4ICnjAo/4rC+DQSopGq2cfcaxWw+v87e9u3dt
-         zoF8AAxnHBY5i5fJirrfnEiVo5t8yP+nBPK8SZeko3y6ZmodX4XDapD704yMpRxqYq6q
-         Axho/4eZBlD7RoF6PB/FEs6Y3TWnKVjoerZeXy8ALE8tbxYZMpUDA860HNQ0ywQjPBZi
-         p0Ag==
-X-Forwarded-Encrypted: i=1; AJvYcCVaegBT04uHZ7+uNbcPmZ4EWGi/f6hjH61gGwEOxinPAFobKzlANZQRexcCTgZBcllUc3tzKNX3obkGWTWASDKTkl4+QAMAv+zus+Zrm+uX1Rv5n/HsDO2g4rzdwgvPHQbuMvI+VBRbrD/9haJRRnoznVTAgWJdFzEOvbBSI2zOkZPHOM+y
-X-Gm-Message-State: AOJu0Yx5iokB0cREd4N+1YATd2fdKjadLsHtxHC5WmSjndVElcfrFq/s
-	5rkrekiM9+8StcWkWDhUI445nuhIw41KFfQYhCKaks9kjycuIBiK
-X-Google-Smtp-Source: AGHT+IGbRNARcyszw7Fxct+HFR/l8/HkdbHi7l9tRcmptWJeUjqa7yMsnwT9j/blr6nU6pxbXF7nyA==
-X-Received: by 2002:a05:600c:4f09:b0:425:680b:a6a8 with SMTP id 5b1f17b1804b1-425680ba7camr36139395e9.15.1719583875564;
-        Fri, 28 Jun 2024 07:11:15 -0700 (PDT)
-Received: from orome (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256af55d0fsm36838285e9.19.2024.06.28.07.11.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 07:11:15 -0700 (PDT)
-Date: Fri, 28 Jun 2024 16:11:13 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: "mripard@kernel.org" <mripard@kernel.org>
-Cc: Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	Jason-JH Lin =?utf-8?B?KOael+edv+elpSk=?= <Jason-JH.Lin@mediatek.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, 
-	"quic_vjitta@quicinc.com" <quic_vjitta@quicinc.com>, 
-	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>, "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>, 
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "jkardatzke@google.com" <jkardatzke@google.com>, 
-	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>, "joakim.bech@linaro.org" <joakim.bech@linaro.org>, 
-	Youlin Pei =?utf-8?B?KOijtOWPi+aelyk=?= <youlin.pei@mediatek.com>, "logang@deltatee.com" <logang@deltatee.com>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	Kuohong Wang =?utf-8?B?KOeOi+Wci+m0uyk=?= <kuohong.wang@mediatek.com>, 
-	Jianjiao Zeng =?utf-8?B?KOabvuWBpeWnoyk=?= <Jianjiao.Zeng@mediatek.com>, "contact@emersion.fr" <contact@emersion.fr>, 
-	"benjamin.gaignard@collabora.com" <benjamin.gaignard@collabora.com>, "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, 
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
-	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, "willy@infradead.org" <willy@infradead.org>, 
-	"pavel@ucw.cz" <pavel@ucw.cz>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
-	"Brian.Starkey@arm.com" <Brian.Starkey@arm.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, 
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"tjmercier@google.com" <tjmercier@google.com>, "jstultz@google.com" <jstultz@google.com>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "robin.murphy@arm.com" <robin.murphy@arm.com>, 
-	Yong Wu =?utf-8?B?KOWQtOWLhyk=?= <Yong.Wu@mediatek.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"ppaalanen@gmail.com" <ppaalanen@gmail.com>
-Subject: Re: [PATCH v5 2/9] scatterlist: Add a flag for the restricted memory
-Message-ID: <72dx7gqentafhwqnfjmosemm35vfl3blqrfiu5skm3cj33eqqu@vj7kmbllgehk>
-References: <1050c44512374031d1349b5dced228d0efc3fbde.camel@mediatek.com>
- <3104b765-5666-44e4-8788-f1b1b296fe17@amd.com>
- <98c11bad7f40bcc79ed7a2039ddb3a46f99908f5.camel@mediatek.com>
- <75dc1136-7751-4772-9fa7-dd9124684cd2@amd.com>
- <ZnxWWtdShekGSUif@phenom.ffwll.local>
- <ae73a0203d6acf2878c9e3ae2d7554816b9c66ad.camel@mediatek.com>
- <5739abdb-0234-412a-9f25-49219411bbc6@amd.com>
- <20240627-impetuous-aboriginal-cougar-cdcbbf@houat>
- <w3xcvakoytubud6dw4wxr6ntbe6uvfrldihnd26vai6uyyto6j@vcq7gizxolag>
- <20240628-hypnotic-kagu-of-hurricane-5fbc82@houat>
+	s=arc-20240116; t=1719583919; c=relaxed/simple;
+	bh=HJiNVUenrkpqIN2gP/lwqzwZf+2XF4T8utiJoCJNGog=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YPOSyrsjgPh7ZhTrdc+V3O2EKzWt5oNSLAB2xvM8sPVdO/4AHDfFQNWZL2GsRbdHVOP7ES2JR2I6YMavPLkjsm4jB/Dhhi8Bey1X/SZtQUTEb5zv5j4ZaFcuxU175QTLOCVcPhcS9SpX0RNhjYczRgwFEAwoPk8Je9u1wfzDh68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jiBIj5v8; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45SCQALY016635;
+	Fri, 28 Jun 2024 14:11:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	0zHYXNiUad47lL5+UtK3kyPsgWQIl89RRUCENXZ0c5Q=; b=jiBIj5v8pZhfVa0O
+	WNr5BwyCesdnZkm/cjrVTkuod1VNNWlkvSgSSMYFsvunnh/wJxVI7kmKeSHWZJI/
+	5ZbgeFOuiPiPtPiRErWoqSS1n9rZtZvGUNe3tUHTFKcZuXNpr5gJewttgnQOVjcA
+	4RpzduHdc/8qu+88zcZVXHi9rU4YmTOepWs+wUm2DGjby6CK3vRXBbh+TppuKrAw
+	/LNS7ofRUWIlQ/InTx1TpKW+P21fxieQObq3gyot/oYCrfKepwfEXwJx32tNeVrT
+	oz7SZQy2nT3xzPzBSH1Z29w6NtVBz1tM4al/YwAmjQ+kBoLL76fAn+j7N2CJUocB
+	fc3xEQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 401pm5sh90-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Jun 2024 14:11:42 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45SEBfgO025473
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Jun 2024 14:11:41 GMT
+Received: from [10.214.66.253] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 28 Jun
+ 2024 07:11:36 -0700
+Message-ID: <6c2f3dfa-2945-4932-ae35-4e7bf3361a61@quicinc.com>
+Date: Fri, 28 Jun 2024 19:41:26 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="xr2rzsuy6pm7a5h3"
-Content-Disposition: inline
-In-Reply-To: <20240628-hypnotic-kagu-of-hurricane-5fbc82@houat>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 6/6] iommu/arm-smmu: add support for PRR bit setup
+To: Rob Clark <robdclark@gmail.com>
+CC: <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
+        <jgg@ziepe.ca>, <jsnitsel@redhat.com>, <robh@kernel.org>,
+        <krzysztof.kozlowski@linaro.org>, <quic_c_gdjako@quicinc.com>,
+        <dmitry.baryshkov@linaro.org>, <konrad.dybcio@linaro.org>,
+        <iommu@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20240605121713.3596499-1-quic_bibekkum@quicinc.com>
+ <20240605121713.3596499-7-quic_bibekkum@quicinc.com>
+ <CAF6AEGtSCfQVtNTmwB4Jkec5rDmZsr59z2717H76kwWu0wovsw@mail.gmail.com>
+ <ae35bf9b-4401-4a99-abd7-c0d9d399a46b@quicinc.com>
+ <CAF6AEGtDvMR3LNwfMOBa9rNzS4gH0Lb_+AgFJrkALPB2GPh+4Q@mail.gmail.com>
+Content-Language: en-US
+From: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+In-Reply-To: <CAF6AEGtDvMR3LNwfMOBa9rNzS4gH0Lb_+AgFJrkALPB2GPh+4Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: fS4Bg0zOUnfHkXbsvYSqNDEijjf2sZZG
+X-Proofpoint-GUID: fS4Bg0zOUnfHkXbsvYSqNDEijjf2sZZG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-28_10,2024-06-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
+ lowpriorityscore=0 phishscore=0 suspectscore=0 adultscore=0 mlxscore=0
+ bulkscore=0 priorityscore=1501 spamscore=0 malwarescore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2406280105
 
 
---xr2rzsuy6pm7a5h3
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 28, 2024 at 03:21:51PM GMT, mripard@kernel.org wrote:
-> On Fri, Jun 28, 2024 at 01:47:01PM GMT, Thierry Reding wrote:
-> > On Thu, Jun 27, 2024 at 04:40:02PM GMT, mripard@kernel.org wrote:
-> > > On Thu, Jun 27, 2024 at 08:57:40AM GMT, Christian K=C3=B6nig wrote:
-> > > > Am 27.06.24 um 05:21 schrieb Jason-JH Lin (=E6=9E=97=E7=9D=BF=E7=A5=
-=A5):
-> > > > >=20
-> > > > > On Wed, 2024-06-26 at 19:56 +0200, Daniel Vetter wrote:
-> > > > > >   > External email : Please do not click links or open attachme=
-nts
-> > > > > until
-> > > > > > you have verified the sender or the content.
-> > > > > >  On Wed, Jun 26, 2024 at 12:49:02PM +0200, Christian K=C3=B6nig=
- wrote:
-> > > > > > > Am 26.06.24 um 10:05 schrieb Jason-JH Lin (=E6=9E=97=E7=9D=BF=
-=E7=A5=A5):
-> > > > > > > > > > I think I have the same problem as the ECC_FLAG mention=
- in:
-> > > > > > > > > > > > > https://lore.kernel.org/linux-media/20240515-dma-=
-buf-ecc-heap-v1-0-54cbbd049511@kernel.org/
-> > > > > > > > > > > > I think it would be better to have the user configu=
-rable
-> > > > > > private
-> > > > > > > > > > information in dma-buf, so all the drivers who have the=
- same
-> > > > > > > > > > requirement can get their private information from dma-=
-buf
-> > > > > > directly
-> > > > > > > > > > and
-> > > > > > > > > > no need to change or add the interface.
-> > > > > > > > > > > > What's your opinion in this point?
-> > > > > > > > >  > Well of hand I don't see the need for that.
-> > > > > > > > > > What happens if you get a non-secure buffer imported in=
- your
-> > > > > > secure
-> > > > > > > > > device?
-> > > > > > > > > > > We use the same mediatek-drm driver for secure and
-> > > > > non-secure
-> > > > > > buffer.
-> > > > > > > > If non-secure buffer imported to mediatek-drm driver, it's =
-go to
-> > > > > > the
-> > > > > > > > normal flow with normal hardware settings.
-> > > > > > > > > > > We use different configurations to make hardware have
-> > > > > different
-> > > > > > > > permission to access the buffer it should access.
-> > > > > > > > > > > So if we can't get the information of "the buffer is
-> > > > > allocated
-> > > > > > from
-> > > > > > > > restricted_mtk_cma" when importing the buffer into the driv=
-er, we
-> > > > > > won't
-> > > > > > > > be able to configure the hardware correctly.
-> > > > > > > > > Why can't you get this information from userspace?
-> > > > > > > Same reason amd and i915/xe also pass this around internally =
-in the
-> > > > > > kernel, it's just that for those gpus the render and kms node a=
-re the
-> > > > > > same
-> > > > > > driver so this is easy.
-> > > > > >
-> > > >=20
-> > > > The reason I ask is that encryption here looks just like another pa=
-rameter
-> > > > for the buffer, e.g. like format, stride, tilling etc..
-> > > >=20
-> > > > So instead of this during buffer import:
-> > > >=20
-> > > > mtk_gem->secure =3D (!strncmp(attach->dmabuf->exp_name, "restricted=
-", 10));
-> > > > mtk_gem->dma_addr =3D sg_dma_address(sg->sgl);
-> > > > mtk_gem->size =3D attach->dmabuf->size;
-> > > > mtk_gem->sg =3D sg;
-> > > >=20
-> > > > You can trivially say during use hey this buffer is encrypted.
-> > > >=20
-> > > > At least that's my 10 mile high view, maybe I'm missing some extens=
-ive key
-> > > > exchange or something like that.
-> > >=20
-> > > That doesn't work in all cases, unfortunately.
-> > >=20
-> > > If you're doing secure video playback, the firmware is typically in
-> > > charge of the frame decryption/decoding, and you'd get dma-buf back t=
-hat
-> > > aren't accessible by the CPU (or at least, not at the execution level
-> > > Linux runs with).
-> >=20
-> > Can you clarify which firmware you're talking about? Is this secure
-> > firmware, or firmware running on the video decoding hardware?
->=20
-> Secure firmware
+On 6/27/2024 12:16 AM, Rob Clark wrote:
+> On Thu, Jun 13, 2024 at 1:11 AM Bibek Kumar Patro
+> <quic_bibekkum@quicinc.com> wrote:
+>>
+>>
+>>
+>> On 6/12/2024 12:32 AM, Rob Clark wrote:
+>>> On Wed, Jun 5, 2024 at 5:18 AM Bibek Kumar Patro
+>>> <quic_bibekkum@quicinc.com> wrote:
+>>>>
+>>>> Add an adreno-smmu-priv interface for drm/msm to call
+>>>> into arm-smmu-qcom and initiate the PRR bit setup or reset
+>>>> sequence as per request.
+>>>>
+>>>> This will be used by GPU side to setup the PRR bit and
+>>>> related configuration registers through adreno-smmu private
+>>>> interface instead of directly poking the smmu hardware.
+>>>>
+>>>> Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+>>>> ---
+>>>>    drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 21 +++++++++++++++++++++
+>>>>    drivers/iommu/arm/arm-smmu/arm-smmu.h      |  2 ++
+>>>>    include/linux/adreno-smmu-priv.h           |  5 ++++-
+>>>>    3 files changed, 27 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+>>>> index 8dabc26fa10e..2f4ee22f740a 100644
+>>>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+>>>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+>>>> @@ -28,6 +28,7 @@
+>>>>    #define PREFETCH_SHALLOW       (1 << PREFETCH_SHIFT)
+>>>>    #define PREFETCH_MODERATE      (2 << PREFETCH_SHIFT)
+>>>>    #define PREFETCH_DEEP          (3 << PREFETCH_SHIFT)
+>>>> +#define GFX_ACTLR_PRR          (1 << 5)
+>>>>
+>>>>    static const struct actlr_config sc7280_apps_actlr_cfg[] = {
+>>>>           { 0x0800, 0x24e1, PREFETCH_DEFAULT | CMTLB },
+>>>> @@ -212,6 +213,25 @@ static void qcom_adreno_smmu_resume_translation(const void *cookie, bool termina
+>>>>           arm_smmu_cb_write(smmu, cfg->cbndx, ARM_SMMU_CB_RESUME, reg);
+>>>>    }
+>>>>
+>>>> +static void qcom_adreno_smmu_set_actlr_bit(const void *cookie, phys_addr_t page_addr, bool set)
+>>>> +{
+>>>
+>>> _set_actlr_bit() is a bit more of an implementation detail.  Maybe
+>>> _set_prr() would be a better name?
+>>>
+>>
+>> Yes set_prr sounds more explanatory. Infact Initially planned to name it
+>> as set_actlr_prr() but later changed it to set_actlr_bit() so to keep
+>> this interface extendible.
+>> Incase if gfx driver in future wants to control some other ACTLR bit as
+>> well along with PRR bit, then we can extend this same interface to
+>> handle other bits.
+>> So any additional adreno-smmu-priv interface would note be needed, and
+>> set_actlr_bit can itself be used for gfx handling of all required ACTLR
+>> bits.
+>> I think we can name it set_actlr_prr() for now, and later can change the
+>> name incase we extend it. What's your thought on this?
+> 
+> I think set_prr() or set_acltr_prr() is fine.. we can worry about
+> making it more generic if and when there are other ACLTR bits the gpu
+> wants to control
+> 
 
-Ah... interesting. So you actually need to interop with that firmware in
-order to start decryption/decoding. That's quite different from how this
-works on Tegra. Well, maybe not entirely. For Tegra there is firmware
-that runs on the hardware decoder and which has access to the keys, so
-in that way I guess it's similar to your use-case, except the firmware
-runs on a different chip.
+Ack, sounds good to me as well. I've used set_prr() for now.
 
-> > > So nobody can map that buffer, and the firmware driver is the one who
-> > > knows that this buffer cannot be accessed by anyone. Putting this on =
-the
-> > > userspace to know would be pretty weird, and wouldn't solve the case
-> > > where the kernel would try to map it.
-> >=20
-> > Doesn't userspace need to know from the start whether it's trying to do
-> > secure playback or not?
->=20
-> It does, but it won't know the capabilities of the buffer it gets back
-> from the secure firmware.
+>>> Also, the version of this patch that I typed up (but haven't sent to
+>>> list yet) took a `struct page *` instead of a phys_addr_t.. passing
+>>> NULL would disable PRR, so I didn't need the third arg
+>>>
+>>>> +       struct arm_smmu_domain *smmu_domain = (void *)cookie;
+>>>> +       struct arm_smmu_cfg *cfg = &smmu_domain->cfg;
+>>>> +       struct arm_smmu_device *smmu = smmu_domain->smmu;
+>>>> +       u32 reg = 0;
+>>>> +
+>>>> +       writel_relaxed(lower_32_bits(page_addr),
+>>>> +                               (void *)smmu->ioaddr + ARM_SMMU_GFX_PRR_CFG_LADDR);
+>>>> +
+>>>> +       writel_relaxed(upper_32_bits(page_addr),
+>>>> +                               (void *)smmu->ioaddr + ARM_SMMU_GFX_PRR_CFG_UADDR);
+>>>
+>>> I know downstream writes it as upper+lower, but I'd guess we could
+>>> just writeq, couldn't we?
+>>>
+>>
+>> Actually ARM_SMMU_GFX_PRR_CFG_LADDR, ARM_SMMU_GFX_PRR_CFG_UADDR both are
+>> separate 32 bit registers. So I think writeq for 64bit write might not
+>> work, as these are not 64 bit registers nor these two are separated by
+>> 64 aligned address.
+> 
+> ahh, ok
+> 
+>>>> +
+>>>> +       reg =  arm_smmu_cb_read(smmu, cfg->cbndx, ARM_SMMU_CB_ACTLR);
+>>>> +       reg |= FIELD_PREP(GFX_ACTLR_PRR, set ? 1 : 0);
+>>>
+>>> this won't clear the ENABLE_PRR bit if we try to disable it after
+>>> enabling (unless this bit is read-as-zero
+>>>
+>>
+>> Ah okay right, got it. Thanks for pointing this out.
+>> Will take care of this in next version.
+>> will use set/reset in side if() instead with different
+>> bitwise ops for set and reset.
+>>
+>>
+>>> Also, can we give a name to PRR?  I'm guessing it is something like
+>>> physical-range-remap?
+>>
+>> Yes sure. I checked on this, PRR here actually stands for
+>> partially-resident-region.
+> 
+> ahh, ok, that makes sense
+> 
+>> So would be better If we add expansion for PRR in a comment ?
+>> Because if we expand PRR in variables/defines then wouldn't
+>> the names become too long?
+> 
+> Yeah, I was just thinking to mention it in the comment for set_prr()
+> 
 
-I think that's kind of the point. Does it really have to know the
-capabilities? Isn't it enough to know that it's got some sort of
-protected buffer back and then use it more or less blindly? I mean
-these are things that have to be tightly coupled no matter what, so
-how much point is there in trying to validate what you get?
+Yes, that seemed to be an appropriate place to add the expansion.
+Mentioned it in the comment for now.
 
-> > Typically this involves more than just the decoding part. You'd
-> > typically set up things like HDCP as part of the process, so userspace
-> > probably already does know that the buffers being passed around are
-> > protected.
-> >=20
-> > Also, the kernel shouldn't really be mapping these buffers unless
-> > explicitly told to. In most cases you also wouldn't want the kernel to
-> > map these kinds of buffers, right? Are there any specific cases where
-> > you expect the kernel to need to map these?
-> >=20
-> > I've been looking at this on the Tegra side recently and the way it
-> > works on these chips is that you basically get an opaque carveout region
-> > that has been locked down by secure firmware or early bootloaders, so
-> > only certain hardware blocks can access it. We can allocate from that
-> > carveout and then pass the buffers around.
->=20
-> So you allocate both the input and output buffers (and from different
-> regions) from the application, and pass both to the secure firmware?
->=20
-> Yeah, I guess that would work then.
+Thanks & regards,
+Bibek
 
-It doesn't really matter who allocates the buffers. It could be the
-application allocating the scanout buffer from a DRM/KMS device and the
-input buffer from the multimedia decoder. Or it could be the application
-allocating both buffers from different DMA-BUF heaps. In the end it
-shouldn't really matter where they are coming from. It's effectively up
-to the application to pass the right buffers into the right IOCTLs.
-
-> > It may be possible to use these protected carveout regions exclusively
-> > from the DRM/KMS driver and share them with multimedia engines via DMA-
-> > BUF, but I've also been looking into perhaps using DMA-BUF heaps to
-> > expose the carveout, which would make this a bit more flexible and allow
-> > either userspace to allocate the buffers or have multiple kernel drivers
-> > share the carveout via the DMA-BUF heap. Though the latter would require
-> > that there be in-kernel APIs for heaps, so not too sure about that yet.
->=20
-> What would be the advantage of using a heap compared to having all these
-> devices in DT use the reserved-memory property and point to that
-> carveout? It should already work today.
-
-You can't just have all of these point to a common reserved-memory node
-because there can be multiple concurrent users. You could have multiple
-protected streams running at the same time. DMA-BUF heaps allows us to
-expose a central provider for the protected memory so that allocations
-can be properly arbitrated.
-
-Thierry
-
---xr2rzsuy6pm7a5h3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmZ+xH4ACgkQ3SOs138+
-s6Ewkw/+OuesTDwI4fSJ/OgnfnSYV+09dFmZnKCi7T9XiPqeHlgY+7yQJEjWaSog
-9Kad7Sr83CNyrKHDePh/SHKyReazx+0HaT6abYiBlidEjZ7D74N6GoGMp3Kz6W23
-pctq1hflyNgDWkElJ0pVxfY7MwJoHURxaxDEgnLpWITye8AHU5mwP47H/XgdGBYq
-jd2ygGo/LZ3M8S48QlBayvRkrQC76OaAzG/u/TzJSNpMFZOQuU3Yh9m+t11VHr1g
-Gf9SYQDRk/Rd7pHqGGrQjHXPlKXz+sz51HpX8dj3j9xtupjHgOd8jWLfQKMU7AlA
-waDv9+KFWQd7L6u9fBpLAkT00toK9JvEW0/3bOZ/IOhZr5wLlPDkd91dwHbl94sz
-yawHtAEcFQDZktRqkiq3PWig4mFb12tlBWR1dPH/BiRQaghyw3FZ0LzmrmmoGowR
-Rd7ceZA+13m3e+XcoY6TYNFIuJNQP+OPrmPbzUaUxD/JEIfGBMlzVrZl/8Tx+0kV
-hiehAiVeC1uXPzllCHvoV8pYBpfFArXSTwrWg6P8QevwWOqOa/SJBfauBpvJB7Go
-gGCfcVEJXQ+VQrqgGo/5ked+5djU5Qwz5PEOxJ2+XH0n92rpXH1Ml4Mkv2Xlp0lk
-0Eftw28P6ER9Nkh82eV4TOpX6r0vhePu4x3bq4vDUWMmr6q+k40=
-=kVmy
------END PGP SIGNATURE-----
-
---xr2rzsuy6pm7a5h3--
+> BR,
+> -R
+> 
+>>
+>> Thanks & regards,
+>> Bibek
+>>
+>>>
+>>> BR,
+>>> -R
+>>>
+>>>> +       arm_smmu_cb_write(smmu, cfg->cbndx, ARM_SMMU_CB_ACTLR, reg);
+>>>> +
+>>>> +}
+>>>> +
+>>>>    #define QCOM_ADRENO_SMMU_GPU_SID 0
+>>>>
+>>>>    static bool qcom_adreno_smmu_is_gpu_device(struct device *dev)
+>>>> @@ -384,6 +404,7 @@ static int qcom_adreno_smmu_init_context(struct arm_smmu_domain *smmu_domain,
+>>>>           priv->get_fault_info = qcom_adreno_smmu_get_fault_info;
+>>>>           priv->set_stall = qcom_adreno_smmu_set_stall;
+>>>>           priv->resume_translation = qcom_adreno_smmu_resume_translation;
+>>>> +       priv->set_actlr_bit = qcom_adreno_smmu_set_actlr_bit;
+>>>>
+>>>>           actlrvar = qsmmu->data->actlrvar;
+>>>>           if (!actlrvar)
+>>>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.h b/drivers/iommu/arm/arm-smmu/arm-smmu.h
+>>>> index d9c2ef8c1653..3076bef49e20 100644
+>>>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.h
+>>>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.h
+>>>> @@ -154,6 +154,8 @@ enum arm_smmu_cbar_type {
+>>>>    #define ARM_SMMU_SCTLR_M               BIT(0)
+>>>>
+>>>>    #define ARM_SMMU_CB_ACTLR              0x4
+>>>> +#define ARM_SMMU_GFX_PRR_CFG_LADDR     0x6008
+>>>> +#define ARM_SMMU_GFX_PRR_CFG_UADDR     0x600C
+>>>>
+>>>>    #define ARM_SMMU_CB_RESUME             0x8
+>>>>    #define ARM_SMMU_RESUME_TERMINATE      BIT(0)
+>>>> diff --git a/include/linux/adreno-smmu-priv.h b/include/linux/adreno-smmu-priv.h
+>>>> index c637e0997f6d..448e191eeb52 100644
+>>>> --- a/include/linux/adreno-smmu-priv.h
+>>>> +++ b/include/linux/adreno-smmu-priv.h
+>>>> @@ -49,7 +49,9 @@ struct adreno_smmu_fault_info {
+>>>>     *                 before set_ttbr0_cfg().  If stalling on fault is enabled,
+>>>>     *                 the GPU driver must call resume_translation()
+>>>>     * @resume_translation: Resume translation after a fault
+>>>> - *
+>>>> + * @set_actlr_bits: Extendible interface to be used  by GPU to modify the
+>>>> + *                 ACTLR bits, currently used to intitate PRR bit setup or
+>>>> + *                 reset sequence for ACTLR registers as requested.
+>>>>     *
+>>>>     * The GPU driver (drm/msm) and adreno-smmu work together for controlling
+>>>>     * the GPU's SMMU instance.  This is by necessity, as the GPU is directly
+>>>> @@ -67,6 +69,7 @@ struct adreno_smmu_priv {
+>>>>        void (*get_fault_info)(const void *cookie, struct adreno_smmu_fault_info *info);
+>>>>        void (*set_stall)(const void *cookie, bool enabled);
+>>>>        void (*resume_translation)(const void *cookie, bool terminate);
+>>>> +    void (*set_actlr_bit)(const void *cookie, phys_addr_t page_addr, bool set);
+>>>>    };
+>>>>
+>>>>    #endif /* __ADRENO_SMMU_PRIV_H */
+>>>> --
+>>>> 2.34.1
+>>>>
+> 
 
