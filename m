@@ -1,138 +1,262 @@
-Return-Path: <linux-kernel+bounces-234386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 746C291C600
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:45:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F71B91C609
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:47:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2098B24793
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:45:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62C9B1C23ABB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:47:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C4531CE09C;
-	Fri, 28 Jun 2024 18:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D82596BB33;
+	Fri, 28 Jun 2024 18:46:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kQJx335b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lw29LH26"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5167E1CE087;
-	Fri, 28 Jun 2024 18:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD1E457C9F
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 18:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719600286; cv=none; b=ZvMdQHqHKyalz80Io6rMJjF4Nj1Vi42AwZ2JhNErq8xqJrq1NlPT7QqjtuJyNBeCoT/QdQriOnsvbVF4lQdUSNhu0M6Oyn5T4usxK9ENijoAIEZ8oL08Q1hSbP3NpiIN5mnn/1acPNRZPHA7ofUbRETHL4iILCZaL9kDj9Am8GI=
+	t=1719600394; cv=none; b=jGd2q9x/aUZnbONrJVlFuW8SxndOR1QnlrD75e/TN8HuaeO2htCFe3NdZxXxITJBLxYPTP9J/vKRyhoEJIyCVPFDtN+C13eQoEh1PJoTtZSSqjGxKtTZ6Rf9IyEHoW4BjNxUvCdRHEdHRGnRhKWUi2UoMPBM6GgV0JJuYKkgwII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719600286; c=relaxed/simple;
-	bh=TojJnQL9RaBjm4QgGb02q4GOqfk8aC6iXrl2HScJwXw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J991ihSYEVIkVq8yTucv6la3gibVExfPqqCLbiwjOGDo6T36jThr3GP85DXMCOJR+3/VJXNl1qFe9SuWOUaw81Wvv/Ll5Mhf0yfcJtrjigpsREdwRtFwTRn54Nl7YWOkzkIRS5pAJj6hrMhmi5MElWGBsTlbc4BQbB5nJvyGod4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kQJx335b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46313C116B1;
-	Fri, 28 Jun 2024 18:44:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719600285;
-	bh=TojJnQL9RaBjm4QgGb02q4GOqfk8aC6iXrl2HScJwXw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kQJx335budzDjbxiJmgE8ap98NyXQ39VbGjrPcOUYHNg57UCVY1ot/cDtE0FMqjnU
-	 x+9hUpMZdwEP5LC4HnTo+yqOb1XNN8ELJtrvPo1zR44DlDpfM0T6zaozstVa3AWHGt
-	 qxye3+r3kT+BmY7/4OJazOhdlDZUErsaQHktHINxmzAOlOMbmf00mC42neGxAp95bu
-	 dj6kvVEblhVcJBKU+PwZdbguEMSMi/tI4J47SaoQ/Ni+vOJrZ2EaZyzjEJN+c2AOlg
-	 SOYBguHOmA4wykK86YpS6y+XizW7aMrfkMCBgIYtah0vkcdnsE+gY9xVs8Na6wECsf
-	 7Xrntfb4eJV5A==
-Date: Fri, 28 Jun 2024 20:44:41 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Igor Pylypiv <ipylypiv@google.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v3 2/6] ata: libata-scsi: Do not overwrite valid sense
- data when CK_COND=1
-Message-ID: <Zn8EmT1fefVzgy0F@ryzen.lan>
-References: <20240626230411.3471543-1-ipylypiv@google.com>
- <20240626230411.3471543-3-ipylypiv@google.com>
- <Zn1zsaTLE3hYbSsK@ryzen.lan>
- <Zn3ffnqsN4pVZA4m@google.com>
+	s=arc-20240116; t=1719600394; c=relaxed/simple;
+	bh=DwKrj950LqieQk+fbHw4JLEU1NPChmdIiVc7nrYmDNI=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=eupMdn/9fp0e9krypYUODNrUIgpF4NSkvlMtMybs8nDZreoktmuGevCceUIyNqWtHx/zuf4rLtIAIBopDAuLoYUxV8sfPmpasorwrJAk2wRQkxxVF5OtI5tZ9LzftKMwx7KI9iDkdMZQofQrO4dJIt2j8C9NivQmmJgP/p+Pipg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lw29LH26; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719600393; x=1751136393;
+  h=date:from:to:cc:subject:message-id;
+  bh=DwKrj950LqieQk+fbHw4JLEU1NPChmdIiVc7nrYmDNI=;
+  b=Lw29LH26GeyA3PxKfx2gv6DH+HC9eBx+4BRKimKguHI4rWIEJ2kA6u0v
+   td83+iO0e8ZG6U2fhlcKVLkecKwoLTTSD5EM9nEfd3e3ufpKzJIq082/E
+   gAIt1yp0IynuIt1XPZECoveWf3t0RNSaeIIxD5Cf3lrcr0EbE9lro7Iq7
+   KjzjhZObl3MP0bvthMviFDd+yRkNLQDNytJzziiLCL1a9grRfPMVkV3iQ
+   Hn88RZ+OMtT77qn2W6Sq0PFIw4orcnGdGz1SC3IqxDwb81+3s+rJ0uZxA
+   1X0aYGfLsaMgsztWPh7vV1F3tGvKLCDaRvUWBfmEF6xeKKgQK7Y3s7s65
+   g==;
+X-CSE-ConnectionGUID: Wui9ru7JTLqgZ7z41LzgXQ==
+X-CSE-MsgGUID: hjDRwaZWSn+GNPZt0B3ghg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11117"; a="16531905"
+X-IronPort-AV: E=Sophos;i="6.09,170,1716274800"; 
+   d="scan'208";a="16531905"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 11:46:32 -0700
+X-CSE-ConnectionGUID: K9ddv40dQhSItvzrj4KmoQ==
+X-CSE-MsgGUID: IJunQ/QcS7qZKhWbxeiU4Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,170,1716274800"; 
+   d="scan'208";a="76010557"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 28 Jun 2024 11:46:31 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sNGc9-000Hla-0D;
+	Fri, 28 Jun 2024 18:46:29 +0000
+Date: Sat, 29 Jun 2024 02:45:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:irq/urgent] BUILD SUCCESS
+ 9eee5330656bf92f51cb1f09b2dc9f8cf975b3d1
+Message-ID: <202406290241.y3nXRZGL-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zn3ffnqsN4pVZA4m@google.com>
 
-On Thu, Jun 27, 2024 at 09:54:06PM +0000, Igor Pylypiv wrote:
-> 
-> Thank you, Niklas! I agree that this code is too complicated and should be
-> simplified. I don't think we should change the code too much in this patch
-> since it is going to be backported to stable releases.
-> 
-> Would you mind sending a patch for the proposed simplifications following
-> this patch series?
-> 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/urgent
+branch HEAD: 9eee5330656bf92f51cb1f09b2dc9f8cf975b3d1  PCI/MSI: Fix UAF in msi_capability_init
 
-I would prefer if we changed it as part of this commit to be honest.
+elapsed time: 5562m
 
+configs tested: 170
+configs skipped: 2
 
-I also re-read the SAT spec, and found that it says that:
-"""
-If the CK_COND bit is set to:
-a) one, then the SATL shall return a status of CHECK CONDITION upon ATA command completion,
-without interpreting the contents of the STATUS field and returning the ATA fields from the request
-completion in the sense data as specified in table 209; and
-b) zero, then the SATL shall terminate the command with CHECK CONDITION status only if an error
-occurs in processing the command. See clause 11 for a description of ATA error conditions.
-"""
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-So it seems quite clear that if CK_COND == 1, we should set CHECK CONDITION,
-so that answers the question/uncertainty I asked/expressed in earlier emails.
+tested configs:
+alpha                             allnoconfig   gcc-13.2.0
+alpha                               defconfig   gcc-13.2.0
+arc                              allmodconfig   gcc-13.2.0
+arc                               allnoconfig   gcc-13.2.0
+arc                              allyesconfig   gcc-13.2.0
+arc                                 defconfig   gcc-13.2.0
+arc                   randconfig-001-20240628   gcc-13.2.0
+arc                   randconfig-002-20240628   gcc-13.2.0
+arm                              allmodconfig   gcc-13.2.0
+arm                               allnoconfig   gcc-13.2.0
+arm                              allyesconfig   gcc-13.2.0
+arm                     am200epdkit_defconfig   gcc-13.2.0
+arm                         bcm2835_defconfig   gcc-13.2.0
+arm                     davinci_all_defconfig   gcc-13.2.0
+arm                                 defconfig   gcc-13.2.0
+arm                        multi_v5_defconfig   gcc-13.2.0
+arm                         mv78xx0_defconfig   gcc-13.2.0
+arm                        mvebu_v7_defconfig   gcc-13.2.0
+arm                           omap1_defconfig   gcc-13.2.0
+arm                   randconfig-001-20240628   gcc-13.2.0
+arm                   randconfig-002-20240628   gcc-13.2.0
+arm                   randconfig-003-20240628   gcc-13.2.0
+arm                   randconfig-004-20240628   gcc-13.2.0
+arm                           tegra_defconfig   gcc-13.2.0
+arm64                            allmodconfig   gcc-13.2.0
+arm64                             allnoconfig   gcc-13.2.0
+arm64                            allyesconfig   clang-19
+arm64                               defconfig   gcc-13.2.0
+arm64                 randconfig-001-20240628   gcc-13.2.0
+arm64                 randconfig-002-20240628   gcc-13.2.0
+arm64                 randconfig-003-20240628   gcc-13.2.0
+arm64                 randconfig-004-20240628   gcc-13.2.0
+csky                              allnoconfig   gcc-13.2.0
+csky                                defconfig   gcc-13.2.0
+csky                  randconfig-001-20240628   gcc-13.2.0
+csky                  randconfig-002-20240628   gcc-13.2.0
+i386                             allmodconfig   clang-18
+i386                              allnoconfig   clang-18
+i386                             allyesconfig   clang-18
+i386         buildonly-randconfig-001-20240628   gcc-10
+i386         buildonly-randconfig-002-20240628   gcc-10
+i386         buildonly-randconfig-003-20240628   gcc-10
+i386         buildonly-randconfig-004-20240628   gcc-10
+i386         buildonly-randconfig-005-20240628   gcc-10
+i386         buildonly-randconfig-006-20240628   gcc-10
+i386                                defconfig   clang-18
+i386                  randconfig-001-20240628   gcc-10
+i386                  randconfig-002-20240628   gcc-10
+i386                  randconfig-003-20240628   gcc-10
+i386                  randconfig-004-20240628   gcc-10
+i386                  randconfig-005-20240628   gcc-10
+i386                  randconfig-006-20240628   gcc-10
+i386                  randconfig-011-20240628   gcc-10
+i386                  randconfig-012-20240628   gcc-10
+i386                  randconfig-013-20240628   gcc-10
+i386                  randconfig-014-20240628   gcc-10
+i386                  randconfig-015-20240628   gcc-10
+i386                  randconfig-016-20240628   gcc-10
+loongarch                        allmodconfig   gcc-13.2.0
+loongarch                         allnoconfig   gcc-13.2.0
+loongarch                           defconfig   gcc-13.2.0
+loongarch             randconfig-001-20240628   gcc-13.2.0
+loongarch             randconfig-002-20240628   gcc-13.2.0
+m68k                             allmodconfig   gcc-13.2.0
+m68k                              allnoconfig   gcc-13.2.0
+m68k                             allyesconfig   gcc-13.2.0
+m68k                                defconfig   gcc-13.2.0
+microblaze                       allmodconfig   gcc-13.2.0
+microblaze                        allnoconfig   gcc-13.2.0
+microblaze                       allyesconfig   gcc-13.2.0
+microblaze                          defconfig   gcc-13.2.0
+mips                             allmodconfig   clang-19
+mips                              allnoconfig   gcc-13.2.0
+mips                             allyesconfig   clang-19
+mips                          ath79_defconfig   gcc-13.2.0
+mips                        qi_lb60_defconfig   gcc-13.2.0
+nios2                            allmodconfig   gcc-13.2.0
+nios2                             allnoconfig   gcc-13.2.0
+nios2                            allyesconfig   gcc-13.2.0
+nios2                               defconfig   gcc-13.2.0
+nios2                 randconfig-001-20240628   gcc-13.2.0
+nios2                 randconfig-002-20240628   gcc-13.2.0
+openrisc                         allmodconfig   gcc-13.2.0
+openrisc                          allnoconfig   gcc-13.2.0
+openrisc                         allyesconfig   gcc-13.2.0
+openrisc                            defconfig   gcc-13.2.0
+parisc                           allmodconfig   gcc-13.2.0
+parisc                            allnoconfig   gcc-13.2.0
+parisc                           allyesconfig   gcc-13.2.0
+parisc                              defconfig   gcc-13.2.0
+parisc                randconfig-001-20240628   gcc-13.2.0
+parisc                randconfig-002-20240628   gcc-13.2.0
+parisc64                            defconfig   gcc-13.2.0
+powerpc                          allmodconfig   gcc-13.2.0
+powerpc                           allnoconfig   gcc-13.2.0
+powerpc                          allyesconfig   gcc-13.2.0
+powerpc                    amigaone_defconfig   gcc-13.2.0
+powerpc                    klondike_defconfig   gcc-13.2.0
+powerpc                    mvme5100_defconfig   gcc-13.2.0
+powerpc                      ppc44x_defconfig   gcc-13.2.0
+powerpc               randconfig-001-20240628   gcc-13.2.0
+powerpc               randconfig-002-20240628   gcc-13.2.0
+powerpc               randconfig-003-20240628   gcc-13.2.0
+powerpc64             randconfig-001-20240628   gcc-13.2.0
+powerpc64             randconfig-002-20240628   gcc-13.2.0
+powerpc64             randconfig-003-20240628   gcc-13.2.0
+riscv                            allmodconfig   gcc-13.2.0
+riscv                             allnoconfig   gcc-13.2.0
+riscv                            allyesconfig   gcc-13.2.0
+riscv                               defconfig   gcc-13.2.0
+riscv                 randconfig-001-20240628   gcc-13.2.0
+riscv                 randconfig-002-20240628   gcc-13.2.0
+s390                              allnoconfig   gcc-13.2.0
+s390                                defconfig   gcc-13.2.0
+s390                  randconfig-001-20240628   gcc-13.2.0
+s390                  randconfig-002-20240628   gcc-13.2.0
+sh                                allnoconfig   gcc-13.2.0
+sh                                  defconfig   gcc-13.2.0
+sh                          lboxre2_defconfig   gcc-13.2.0
+sh                    randconfig-001-20240628   gcc-13.2.0
+sh                    randconfig-002-20240628   gcc-13.2.0
+sh                          rsk7264_defconfig   gcc-13.2.0
+sh                        sh7785lcr_defconfig   gcc-13.2.0
+sparc                            allyesconfig   gcc-13.2.0
+sparc64                          allmodconfig   gcc-13.2.0
+sparc64                          allyesconfig   gcc-13.2.0
+sparc64                             defconfig   gcc-13.2.0
+sparc64               randconfig-001-20240628   gcc-13.2.0
+sparc64               randconfig-002-20240628   gcc-13.2.0
+um                                allnoconfig   gcc-13.2.0
+um                                  defconfig   gcc-13.2.0
+um                             i386_defconfig   gcc-13.2.0
+um                    randconfig-001-20240628   gcc-13.2.0
+um                    randconfig-002-20240628   gcc-13.2.0
+um                           x86_64_defconfig   gcc-13.2.0
+x86_64                            allnoconfig   clang-18
+x86_64                           allyesconfig   clang-18
+x86_64       buildonly-randconfig-001-20240628   gcc-13
+x86_64       buildonly-randconfig-002-20240628   gcc-13
+x86_64       buildonly-randconfig-003-20240628   gcc-13
+x86_64       buildonly-randconfig-004-20240628   gcc-13
+x86_64       buildonly-randconfig-005-20240628   gcc-13
+x86_64       buildonly-randconfig-006-20240628   gcc-13
+x86_64                              defconfig   clang-18
+x86_64                                  kexec   clang-18
+x86_64                randconfig-001-20240628   gcc-13
+x86_64                randconfig-002-20240628   gcc-13
+x86_64                randconfig-003-20240628   gcc-13
+x86_64                randconfig-004-20240628   gcc-13
+x86_64                randconfig-005-20240628   gcc-13
+x86_64                randconfig-006-20240628   gcc-13
+x86_64                randconfig-011-20240628   gcc-13
+x86_64                randconfig-012-20240628   gcc-13
+x86_64                randconfig-013-20240628   gcc-13
+x86_64                randconfig-014-20240628   gcc-13
+x86_64                randconfig-015-20240628   gcc-13
+x86_64                randconfig-016-20240628   gcc-13
+x86_64                randconfig-071-20240628   gcc-13
+x86_64                randconfig-072-20240628   gcc-13
+x86_64                randconfig-073-20240628   gcc-13
+x86_64                randconfig-074-20240628   gcc-13
+x86_64                randconfig-075-20240628   gcc-13
+x86_64                randconfig-076-20240628   gcc-13
+x86_64                          rhel-8.3-func   clang-18
+x86_64                          rhel-8.3-rust   clang-18
+x86_64                               rhel-8.3   clang-18
+xtensa                            allnoconfig   gcc-13.2.0
+xtensa                           allyesconfig   gcc-13.2.0
+xtensa                randconfig-001-20240628   gcc-13.2.0
+xtensa                randconfig-002-20240628   gcc-13.2.0
 
-
-I think this patch (which should be applied on top of your v3 series),
-makes the code way easier to read/understand:
-
-diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-index d5874d4b9253..5b211551ac10 100644
---- a/drivers/ata/libata-scsi.c
-+++ b/drivers/ata/libata-scsi.c
-@@ -1659,26 +1656,27 @@ static void ata_scsi_qc_complete(struct ata_queued_cmd *qc)
- {
-        struct scsi_cmnd *cmd = qc->scsicmd;
-        u8 *cdb = cmd->cmnd;
--       int need_sense = (qc->err_mask != 0) &&
--               !(qc->flags & ATA_QCFLAG_SENSE_VALID);
--       int need_passthru_sense = (qc->err_mask != 0) ||
--               (qc->flags & ATA_QCFLAG_SENSE_VALID);
-+       bool have_sense = qc->flags & ATA_QCFLAG_SENSE_VALID;
-+       bool is_ata_passthru = cdb[0] == ATA_16 || cdb[0] == ATA_12;
-+       bool is_ck_cond_request = cdb[2] & 0x20;
-+       bool is_error = qc->err_mask != 0;
- 
-        /* For ATA pass thru (SAT) commands, generate a sense block if
-         * user mandated it or if there's an error.  Note that if we
--        * generate because the user forced us to [CK_COND =1], a check
-+        * generate because the user forced us to [CK_COND=1], a check
-         * condition is generated and the ATA register values are returned
-         * whether the command completed successfully or not. If there
--        * was no error, we use the following sense data:
-+        * was no error, and CK_COND=1, we use the following sense data:
-         * sk = RECOVERED ERROR
-         * asc,ascq = ATA PASS-THROUGH INFORMATION AVAILABLE
-         */
--       if (((cdb[0] == ATA_16) || (cdb[0] == ATA_12)) &&
--           ((cdb[2] & 0x20) || need_passthru_sense)) {
--               if (!(qc->flags & ATA_QCFLAG_SENSE_VALID))
-+       if (is_ata_passthru && (is_ck_cond_request || is_error || have_sense)) {
-+               if (!have_sense)
-                        ata_gen_passthru_sense(qc);
-                ata_scsi_set_passthru_sense_fields(qc);
--       } else if (need_sense) {
-+               if (is_ck_cond_request)
-+                       set_status_byte(qc->scsicmd, SAM_STAT_CHECK_CONDITION);
-+       } else if (is_error && !have_sense) {
-                ata_gen_ata_sense(qc);
-        } else {
-                /* Keep the SCSI ML and status byte, clear host byte. */
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
