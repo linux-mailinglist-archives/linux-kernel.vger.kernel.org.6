@@ -1,107 +1,100 @@
-Return-Path: <linux-kernel+bounces-234192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DB0791C37C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:13:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 526CE91C399
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:16:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5A601F22A78
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:13:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83DCB1C20C26
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:16:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B606A1CD5C5;
-	Fri, 28 Jun 2024 16:12:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323C31CD5D5;
+	Fri, 28 Jun 2024 16:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VoJAHBvY"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29439158DDC;
-	Fri, 28 Jun 2024 16:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="YrcbyJAZ"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A011C9ED6;
+	Fri, 28 Jun 2024 16:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719591123; cv=none; b=WZOQkGTbwHv+e5UosobdWIhkc1jlcmTE3cPNABr1ZnqFGlmESIvo5gaGDYP9baMzm22XfBAjcnhiHbvoVlES8YQOYFz1ViSTaRwXqPm12wjK0t8amfKShqckk4zoitFImL6OWCvSAmEwwrvVjKOhmW53leBr3lSBRIVRqk/B3ec=
+	t=1719591323; cv=none; b=VmtvkwzGusnmy+2G45xolCEKPpLXklYbVLez4+PwxOwyTUpccLjdQ8oLyJ+cVR03GZ5BTF/VnuCNpvk/29FX/Arl6Wlcfxpbu3ci1WCcp5PKcdhFZm/6pgesAnpt+Pl9Dg27HGnmz2hpaXWJhOjpxav7AoS+LN3DfT1MXoykxds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719591123; c=relaxed/simple;
-	bh=nvuGFq7viiCmUzzdZASK97mwCpK0qNQUOS8MBZluUkU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Es3NOFJZs9z1wTt6KrdSLRTE9uFcuozIjVphk7hxS90vra6Dt6QSMbgX52CDYIfP3u5oBxqOAM7dpliFTfYz+0fT1T71UkwfrMRAyRwTdJSIHdf4bJGK5xlBLipS8p8a0j30LiqMWPmoF9ooKLArGQvmfI2VgYJPH0R4Dv9G9h4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VoJAHBvY; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id CFEA41BF204;
-	Fri, 28 Jun 2024 16:11:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1719591114;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Tz2vT/oZG6SWYh6OdnXILH4h+RDaqZezQzWQ9iPCvbw=;
-	b=VoJAHBvYfj2mrNJ8NlPxptnNHkabiZRfSWe33h6I5K0kQzb94En2Yq5J0TyrLFXwnpc0/+
-	Z8edMApK/lkh8G7duZNlseWKwj2ZjS7MwJJ8aM8HSc4J1tauunL97NnyUUsf9GogBQg7zO
-	YxwcdrBU/FmlLV6YmwduCHcXCrmuHv9FOXRhASiWsN3FNlPr9hiLY3eytu83r3Y7+aUqw9
-	pHQSAa70vjGmLAjj9yB2O85Pz0FPqZsCChcRV/nfhsNVLIARHggAcnviWML3/NUvAXqpc4
-	PJeRA1N/EsWXWRe2IXoimklirtTAkD9KzCe60xWp/adO16lgbQgzKE54+yZ/DQ==
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Fri, 28 Jun 2024 18:11:52 +0200
-Subject: [PATCH 3/3] MAINTAINERS: Mobileye: add OLB drivers and dt-bindings
+	s=arc-20240116; t=1719591323; c=relaxed/simple;
+	bh=bhI5kE4hAd1o3laQddk5jl4FZovXpusYq/ZppIDUcA0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=gYhY6a2kxYKhXLBIEvcPIujzqxkB0535CllHDb0cDElNycX5uBSMafpD9daxAsr3up+dkJI7Hq8Ed3rtiiZgUiaZd5OhYFqCD6l2EOC6p3q2eu+lbXMG4NZBuE+bn7Dmb0BUmvC32tqWc9u6iaeSKS0GPT05toQJJBCDegt/2Z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=YrcbyJAZ; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=p/G4v
+	yxvP45JZ+F3kYh7ClYPIcW38TqkgmgFskTyUuE=; b=YrcbyJAZKH9BIs9uT5J1g
+	VcxX154iBscXazc5XMFqsKEXVinyTS1Kr7SurHhOImVU2FGUOdIeCtSGniGs0if3
+	HcjTrgpFIuSLmUeXOw+VEu00wTSq7BGmAhbuaHBYzq1oqtO3Uj6mGZf9U7cnV4xw
+	wnVdPw9agqDZHl4XM0H4xo=
+Received: from localhost (unknown [101.132.132.191])
+	by gzga-smtp-mta-g2-1 (Coremail) with SMTP id _____wD3f0sP4X5mIE2ZAw--.25173S2;
+	Sat, 29 Jun 2024 00:13:03 +0800 (CST)
+From: Xavier <xavier_qy@163.com>
+To: tj@kernel.org
+Cc: longman@redhat.com,
+	mkoutny@suse.com,
+	lizefan.x@bytedance.com,
+	hannes@cmpxchg.org,
+	cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	Xavier <xavier_qy@163.com>
+Subject: [PATCH-cpuset v8 0/2] Add Union-Find and use it to optimize cpuset
+Date: Sat, 29 Jun 2024 00:13:00 +0800
+Message-Id: <20240628161302.240043-1-xavier_qy@163.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <Zn3UaMouBYYIMQr_@slm.duckdns.org>
+References: <Zn3UaMouBYYIMQr_@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240628-mbly-mips-v1-3-f53f5e4c422b@bootlin.com>
-References: <20240628-mbly-mips-v1-0-f53f5e4c422b@bootlin.com>
-In-Reply-To: <20240628-mbly-mips-v1-0-f53f5e4c422b@bootlin.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-X-Mailer: b4 0.15-dev-13183
-X-GND-Sasl: theo.lebrun@bootlin.com
+X-CM-TRANSID:_____wD3f0sP4X5mIE2ZAw--.25173S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrKF4xKFy5Ar4UJFW5JF4ruFg_yoWkZwcEgF
+	WkWa4ak3W8WF1xtFWxCFyftFZFvrWF934vk3WUtFZrXF1DJrZrGr1Dtas8X3y8XF4kJr43
+	GFyDtr4IvrnrZjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUUO6pPUUUUU==
+X-CM-SenderInfo: 50dyxvpubt5qqrwthudrp/1tbiZRIMEGXAmsmNBwABsW
 
-Register OLB-related files part of the "MOBILEYE MIPS SOCS" MAINTAINERS
-section. Those include:
+Hi Tejun,
 
- - drivers (clk-eyeq, reset-eyeq, pinctrl-eyeq5),
- - dt-bindings (mobileye,eyeq5-olb.yaml file),
- - bindings includes file <dt-bindings/clock/mobileye,eyeq5-clk.h>.
+Thank you for your suggestion. I agree with your point that it is indeed more
+appropriate to place it within the cpuset structure, and I have already made
+the modification. Additionally, I looked into the relevant modules of the
+kernel, and it seems that the union-find data structure may have optimization
+potential in network topology management and the Open vSwitch module. I will
+further investigate this in the future.
 
-Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
----
- MAINTAINERS | 5 +++++
- 1 file changed, 5 insertions(+)
+Kindly review.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2ca8f35dfe03..b3732165b824 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15194,9 +15194,14 @@ M:	Théo Lebrun <theo.lebrun@bootlin.com>
- L:	linux-mips@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/mips/mobileye.yaml
-+F:	Documentation/devicetree/bindings/soc/mobileye/
- F:	arch/mips/boot/dts/mobileye/
- F:	arch/mips/configs/eyeq5_defconfig
- F:	arch/mips/mobileye/board-epm5.its.S
-+F:	drivers/clk/clk-eyeq.c
-+F:	drivers/pinctrl/pinctrl-eyeq5.c
-+F:	drivers/reset/reset-eyeq.c
-+F:	include/dt-bindings/clock/mobileye,eyeq5-clk.h
- 
- MODULE SUPPORT
- M:	Luis Chamberlain <mcgrof@kernel.org>
+Xavier (2):
+  Union-Find: add a new module in kernel library
+  cpuset: use Union-Find to optimize the merging of cpumasks
+
+ Documentation/core-api/union_find.rst         | 101 ++++++++++++++++++
+ .../zh_CN/core-api/union_find.rst             |  86 +++++++++++++++
+ MAINTAINERS                                   |   9 ++
+ include/linux/union_find.h                    |  24 +++++
+ kernel/cgroup/cpuset.c                        |  96 +++++++----------
+ lib/Makefile                                  |   2 +-
+ lib/union_find.c                              |  33 ++++++
+ 7 files changed, 291 insertions(+), 60 deletions(-)
+ create mode 100644 Documentation/core-api/union_find.rst
+ create mode 100644 Documentation/translations/zh_CN/core-api/union_find.rst
+ create mode 100644 include/linux/union_find.h
+ create mode 100644 lib/union_find.c
 
 -- 
 2.45.2
