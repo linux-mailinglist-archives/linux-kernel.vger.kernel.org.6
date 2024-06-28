@@ -1,170 +1,110 @@
-Return-Path: <linux-kernel+bounces-234126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A63691C27C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:21:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B351291C279
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:20:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57413283F71
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:21:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71A612866A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9271C9ED2;
-	Fri, 28 Jun 2024 15:20:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E48DE1C8FAD;
+	Fri, 28 Jun 2024 15:18:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L281UsoW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XqD6TzJG"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADDF11C2336;
-	Fri, 28 Jun 2024 15:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C881C6888;
+	Fri, 28 Jun 2024 15:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719588001; cv=none; b=PTOlQjg9GB2BFMbejZMQPAqyPnfhMJDqSiJumMd/SaJdVOxxqjm3BZeQ6GxK8lNIx3oSNXIlKYsj5cbubDUeTPUO/siulm9aMNhiT/mkPlSL2vdKVjKCUBRs5pWkq8N95eKGokCFNTRESaico+fIeEWDpuSZZ0pxCdd42BafRAA=
+	t=1719587934; cv=none; b=nJ0xm6gi1OnDmjAZn4WYVkOoYM/42lNDFlBG+CjHRFhhPpJguSSTNkFkW43BPi7ALKIGJplAPDCsFSHku0ZSF20CeJLr/aWnp/BdyyN9y2Pl49G/fsxy/VAcUkCw6ydRMGVbHTSa48n7YG1UcoZf3P7IW2usqJ1lau/FfErUQeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719588001; c=relaxed/simple;
-	bh=3I4qytfU1UkShz8BnwuREmBojQJIahzWA24/ByvF5Os=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IPLppcf4kO8romoKbCWBH1fQU/tb/XB5iNtMWMqlhLqQ3y+zWFUxqCl55XLgH+tSbny/XwoBCzddusQv43yGXpdbogBbSAjZDM+zW9YBoYf2+X935DYyfH4Xmm/rWV3hiNo0riadiwb5qXakxCXrN6E13lIJINTs9jkwzGFNsiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L281UsoW; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719588000; x=1751124000;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=3I4qytfU1UkShz8BnwuREmBojQJIahzWA24/ByvF5Os=;
-  b=L281UsoWVssHfMl+PfA04aEGS84eiFvZd2O6v6/dy2XcFprt+wszWpz9
-   DvgAB+Oqc7vDLQPMlqlvLiHgTS+RISU/hjOK61wTjh4P548SDE5VfPnyt
-   zn4wzTev9imAWDOapcMLtUTZ+Pnt5rd3d/v6JSAgkeXDv0SWKf3LdK1fg
-   jCiaxSDI5bvhrUNhH7dAzgcP9dOM1E0v1GK8tz2gYny/ygqz0hHqHmURZ
-   XglTTzg6bQy3bz/PfSKJTD5xKpgWs9Ldhx2/YVdahopcmrmJx3XRCpunD
-   rbBalrwP+Hj87kd7TE0rp5ruGPXmBOG8IYld18XLIbxZF63WFsT5j3+mY
-   Q==;
-X-CSE-ConnectionGUID: MGoOhvq6QNih6FoaftcOOw==
-X-CSE-MsgGUID: Kdv8Vbm7QridZPxGg8PBXw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11117"; a="42195707"
-X-IronPort-AV: E=Sophos;i="6.09,169,1716274800"; 
-   d="scan'208";a="42195707"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 08:19:59 -0700
-X-CSE-ConnectionGUID: w/00j5kkSKC7Ae7PujqBPQ==
-X-CSE-MsgGUID: rb0JCCsZRNiSX+Z+MEO3yQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,169,1716274800"; 
-   d="scan'208";a="75972129"
-Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 08:19:57 -0700
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: kvm@vger.kernel.org,
+	s=arc-20240116; t=1719587934; c=relaxed/simple;
+	bh=UnmzAObiTewC7DteWfiWC3+Z5O7/tri0FOBSovqBYrI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aYX3WllzTjcsE2gEVXeyvgGR6Lp+9EyXAt7hpF8f8TQOpg3tR6O5TDZXidEA4Zl+ORVfSoRMBJ8WKtapD0hKwM0ajtIZrfs26rXZZEQmQr6iIyx9SWW3qLv0ImdejKjCaxBr2HmtaJIZbUopknN2SLk3NaMOpRov/mxJmqbYv+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XqD6TzJG; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-424acfff613so7536365e9.0;
+        Fri, 28 Jun 2024 08:18:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719587931; x=1720192731; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qlajlQEnGW0AoAsezBOWXulgbRPHRHotNcM1iK7xOhg=;
+        b=XqD6TzJGqPpZ7rr2/I3S353+OoWS77gyvbOf8hrab+mFET15hxEYKHHkCjw9fsimQx
+         wFbWt9LVZYC6kZDZ4CO5PtG+gtvisZVLglWPtpY2CsIt0j5+XyZcSNaeleREHO8yLpZN
+         yHVM2mVc3oBLMTvqCS+K6l8EdHgfzxGVCDe8Sb5MUkioIXA7d0bLhXgatWv5iiBt1JL0
+         SG6d93w/v99TKYnvWB4aCQGFdgszgFptV5DDWY0UqOeUN1pmTQMxD6Bg20F2bthgifbw
+         3OxlMjMHjkMDVKvVGP05HWLzAJ7ppYAzEbE83CngDkFG+TI/Wpm/3rbUVuPuPNXJb0ZH
+         kseg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719587931; x=1720192731;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qlajlQEnGW0AoAsezBOWXulgbRPHRHotNcM1iK7xOhg=;
+        b=WmJLlId7yVJAsf6AeCR61LdFuk/Jwr2h+IE42jFA0bqoMnx8NxsejmgRm+hMwFxXbN
+         HB0YkTHM2BiMNIPsx/2dAP3Vdor6SCp43rgrX1icoYdRfh+aUaeJTHPFfAY/2LXVElkN
+         RQ4rYLpqHr/xa6jxG4/b1WZjz0ZurdVNyQoh+u0DJGwrL7KKDJCvacaDMUcH5+vxb02z
+         pZMPlkZLwlrO0fX6fit1a2z0Knp1JhkNM3WzhLqEkFgyQLnOGD4uiB/8vKk7auv9ZUuR
+         FDhR60+BlUW3exWBSHRHdPkNP04ZfNelMQDovvWsPe2pfImsWVAnX7Ua0g6vywu+d2+1
+         /hMg==
+X-Forwarded-Encrypted: i=1; AJvYcCXkHQY4x3q68o4MVhwPi685p43A8O2L3alZDaVQoru5777gBrg86DxPljwGwT6m5goBCGiAWoLn7Yj+9060bFK8+p9iM2yUUWGOdTqI
+X-Gm-Message-State: AOJu0Yyp2K+wLk9ohrmz+t5hllhsrHB9cTSJ+Skuage8Kv6P3JtjIVUi
+	AcYl3COUxQefLVg/vHuyMVk7xCV6TUkfPNqV0iBncsKvJJ9ReE0l
+X-Google-Smtp-Source: AGHT+IFBYO20wkq72Ype6rhOOKYEbI8cMPMAmtzTs2wRpVBRkotZub69tVwnHGVoh4R6jtkg0gYYBw==
+X-Received: by 2002:a05:600c:4306:b0:424:aa86:cc2a with SMTP id 5b1f17b1804b1-424aa86cc80mr86680405e9.20.1719587930227;
+        Fri, 28 Jun 2024 08:18:50 -0700 (PDT)
+Received: from localhost (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b099c72sm39268705e9.37.2024.06.28.08.18.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 08:18:49 -0700 (PDT)
+From: Thierry Reding <thierry.reding@gmail.com>
+To: thierry.reding@gmail.com,
+	jonathanh@nvidia.com,
+	kkartik@nvidia.com,
+	rdunlap@infradead.org,
+	frank.li@vivo.com,
+	Jason Sikes <sikes@qlogo.org>
+Cc: linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: alex.williamson@redhat.com,
-	kevin.tian@intel.com,
-	jgg@nvidia.com,
-	yi.l.liu@intel.com,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: [PATCH] vfio: Get/put KVM only for the first/last vfio_df_open/close in cdev path
-Date: Fri, 28 Jun 2024 23:18:45 +0800
-Message-ID: <20240628151845.22166-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.43.2
+Subject: Re: [PATCH] Fix warning in tegra_fuse_add_lookups
+Date: Fri, 28 Jun 2024 17:18:48 +0200
+Message-ID: <171958790864.2433364.265100419611870394.b4-ty@nvidia.com>
+X-Mailer: git-send-email 2.44.0
+In-Reply-To: <20240616073721.5696-1-sikes@qlogo.org>
+References: <20240616073721.5696-1-sikes@qlogo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-In the device cdev path, adjust the handling of the KVM reference count to
-only increment with the first vfio_df_open() and decrement after the final
-vfio_df_close(). This change addresses a KVM reference leak that occurs
-when a device cdev file is opened multiple times and attempts to bind to
-iommufd repeatedly.
+From: Thierry Reding <treding@nvidia.com>
 
-Currently, vfio_df_get_kvm_safe() is invoked prior to each vfio_df_open()
-in the cdev path during iommufd binding. The corresponding
-vfio_device_put_kvm() is executed either when iommufd is unbound or if an
-error occurs during the binding process.
 
-However, issues arise when a device binds to iommufd more than once. The
-second vfio_df_open() will fail during iommufd binding, and
-vfio_device_put_kvm() will be triggered, setting device->kvm to NULL.
-Consequently, when iommufd is unbound from the first successfully bound
-device, vfio_device_put_kvm() becomes ineffective, leading to a leak in the
-KVM reference count.
+On Sun, 16 Jun 2024 00:36:57 -0700, Jason Sikes wrote:
+> gcc 14.1.1 warns [-Wcalloc-transposed-args] when sizeof() is
+> used in the first, but not the second, of two size_t arguments.
+> 
+> 
 
-Below is the calltrace that will be produced in this scenario when the KVM
-module is unloaded afterwards, reporting "BUG kvm_vcpu (Tainted: G S):
-Objects remaining in kvm_vcpu on __kmem_cache_shutdown()".
+Applied, thanks!
 
-Call Trace:
- <TASK>
- dump_stack_lvl+0x80/0xc0
- slab_err+0xb0/0xf0
- ? __kmem_cache_shutdown+0xc1/0x4e0
- ? rcu_is_watching+0x11/0x50
- ? lock_acquired+0x144/0x3c0
- __kmem_cache_shutdown+0x1b7/0x4e0
- kmem_cache_destroy+0xa6/0x260
- kvm_exit+0x80/0xc0 [kvm]
- vmx_exit+0xe/0x20 [kvm_intel]
- __x64_sys_delete_module+0x143/0x250
- ? ktime_get_coarse_real_ts64+0xd3/0xe0
- ? syscall_trace_enter+0x143/0x210
- do_syscall_64+0x6f/0x140
- entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[1/1] Fix warning in tegra_fuse_add_lookups
+      commit: f56da7f4048ff41cb029a715935394f5958a825f
 
-Fixes: 5fcc26969a16 ("vfio: Add VFIO_DEVICE_BIND_IOMMUFD")
-Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
----
- drivers/vfio/device_cdev.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/vfio/device_cdev.c b/drivers/vfio/device_cdev.c
-index bb1817bd4ff3..3b85d01d1b27 100644
---- a/drivers/vfio/device_cdev.c
-+++ b/drivers/vfio/device_cdev.c
-@@ -65,6 +65,7 @@ long vfio_df_ioctl_bind_iommufd(struct vfio_device_file *df,
- {
- 	struct vfio_device *device = df->device;
- 	struct vfio_device_bind_iommufd bind;
-+	bool put_kvm = false;
- 	unsigned long minsz;
- 	int ret;
- 
-@@ -101,12 +102,15 @@ long vfio_df_ioctl_bind_iommufd(struct vfio_device_file *df,
- 	}
- 
- 	/*
--	 * Before the device open, get the KVM pointer currently
-+	 * Before the device's first open, get the KVM pointer currently
- 	 * associated with the device file (if there is) and obtain
--	 * a reference.  This reference is held until device closed.
-+	 * a reference.  This reference is held until device's last closed.
- 	 * Save the pointer in the device for use by drivers.
- 	 */
--	vfio_df_get_kvm_safe(df);
-+	if (device->open_count == 0) {
-+		vfio_df_get_kvm_safe(df);
-+		put_kvm = true;
-+	}
- 
- 	ret = vfio_df_open(df);
- 	if (ret)
-@@ -129,7 +133,8 @@ long vfio_df_ioctl_bind_iommufd(struct vfio_device_file *df,
- out_close_device:
- 	vfio_df_close(df);
- out_put_kvm:
--	vfio_device_put_kvm(device);
-+	if (put_kvm)
-+		vfio_device_put_kvm(device);
- 	iommufd_ctx_put(df->iommufd);
- 	df->iommufd = NULL;
- out_unlock:
-
-base-commit: 6ba59ff4227927d3a8530fc2973b80e94b54d58f
+Best regards,
 -- 
-2.43.2
-
+Thierry Reding <treding@nvidia.com>
 
