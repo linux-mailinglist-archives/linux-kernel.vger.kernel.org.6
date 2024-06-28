@@ -1,160 +1,156 @@
-Return-Path: <linux-kernel+bounces-234568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A56E91C81E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 23:27:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E86B291C822
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 23:28:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BB201C21147
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:27:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 644221F2396C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:28:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ED0C7F490;
-	Fri, 28 Jun 2024 21:27:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6F27FBA1;
+	Fri, 28 Jun 2024 21:28:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h8z16KLh"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VHEVTrqq"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81A12261D;
-	Fri, 28 Jun 2024 21:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C042B7EEF5;
+	Fri, 28 Jun 2024 21:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719610064; cv=none; b=N5tGlaa6T7IklBnGDwKTzMskepMKlDCi4lsuPza/NXO/P4Nf6HMXjF6UM2uU0RLp6K74QHp8KZ4Odb7Y4puUkcyBogu1Dl0T27yIbyEIcaNAE76BKeJNCegvh5GUKVbzQOFpgbgileg3Y/Z4VNzs9gZtlU4hGzqxZYsyP8Xy1sg=
+	t=1719610093; cv=none; b=co5EeNHnBntaKr26PZXlnmj7Lky5FvwPITa0cdIB+mT5pXfYcou9c/CGlWA1n7IsbiMXrs0IQuyR1klAbsLxlNmSqHdP0bgSiU9BdoX2Uix/NaNvbZGk4pv/e4mDEII2XeF4atLAm567DlmBLCJ0WPFA6mvdr1Uy/AWSGVszyGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719610064; c=relaxed/simple;
-	bh=gLCeMcW/W5xH2loF3OJCF3hppfcfcxUYscsZ4ttuHHo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z4lZ6w0pYbFLxJX4QnpFqy9Ux5I7f3TZLkBiGoztg+CcTWBi5+pFMv/6OlA0WouCOsawIbLY9YJua43jEdwLW2+oJXO1b0HP6HMIiCvPfUyw7O/Y8atMWLkUmP5wo+dxWHPany6I5WlY7s3jVolIeaV972DrUYTQy9Ef2+sebXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h8z16KLh; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4256742f67fso7995505e9.3;
-        Fri, 28 Jun 2024 14:27:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719610061; x=1720214861; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zgEdlzw9XjsUTNXXXaGCI8dP7taYT5nGJNjUj9cLM84=;
-        b=h8z16KLhjo0rT5Tz9geQl4UaO+kmIPpR+q2jAZFjv/v45HgIuFE++P2E+LU1ohHYxk
-         yKwxzhPvZtKTln7ZVlRYfQmiKV8UwDRY+d3tDXXPtCc94iHWj1cCBGrcqi7O5DlwnvEd
-         VpepSuGJv2WdncOLlhFNmz4zxMuO1+Eobvaa/xSYPlL7fvYeGyu9p5heyZOR0RRrTp5p
-         3WCKq15LV2LTTr6X+VSc+BbtvSPvFtSZw0LYV6BoR/pKDUcWz7t1P5auPqIVU5WYN6YI
-         W73p0tf9BVlnf9MIQu0U/wPvUvX9G3bpYWgIQ1WQxvhlau0mxU+968h+bI2uY2PiPSqu
-         EF0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719610061; x=1720214861;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zgEdlzw9XjsUTNXXXaGCI8dP7taYT5nGJNjUj9cLM84=;
-        b=c+d9hVQa2+wXQgh3FC8obgWd9Am48W/AOuwn2hK2eX85NxTy+SObyVvTbbLZ1g5FcK
-         5MUJiti2tiyvT2MDrV0Rk29CcTjpufgAusWrPlu1BUn8YxpCAdq9bjv4hkFgMCSGSvBs
-         JuOp4ri3pjCC6taUuvF20kTMZyusgnzt7NN5DWEmJ1nm1Yi7b19QrdAuoYEwx66YEKwR
-         3hrlTgh5fU0WhTINzxGmflfAM8Ls1Q0RrM+V45ExoK4dqYfKG1Azbcp+Sw43JBhQpwU5
-         +SVstOenAmTgR0WjYwplPyEnuWFMG+gDd8yZ9UlAKcrPQsgytjeDsV/sdz0mqKyC1wd9
-         olNw==
-X-Forwarded-Encrypted: i=1; AJvYcCXjPHOn8fcTNmLkxhiiotGZUPYsnwVvVuibCdXgmVU+VNkpNInh/5H4aInhGLCtEplPazj84EtjXtz69ehO2SBAa02Jl/upSHms9vzGcj0GgdG5tyz3tCHBfIXM/o5efBcAJNYb9ESeGt0=
-X-Gm-Message-State: AOJu0Yxcd9JLpD0mZ/RkkdKooHrHUmiCDh4PV3E6x6AY0236zm76cwp7
-	mvLbGqz1XSzY4gp+Dj1XyLcc7Ggg+Swnjzm5aWVSzMxpzaS5sH4997KSng==
-X-Google-Smtp-Source: AGHT+IGcI4XOLMUI1tuUrwBvOB03t8Ul9sEUloMbNhm+P/g/OvOVuarVraZRCYtkc28ZpeI9v7jy+A==
-X-Received: by 2002:a05:600c:68cc:b0:425:5eec:d261 with SMTP id 5b1f17b1804b1-4255eecd2bcmr67846315e9.34.1719610060701;
-        Fri, 28 Jun 2024 14:27:40 -0700 (PDT)
-Received: from orome (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0e169dsm3326199f8f.65.2024.06.28.14.27.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 14:27:40 -0700 (PDT)
-Date: Fri, 28 Jun 2024 23:27:38 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: sikes@qlogo.org
-Cc: jonathanh@nvidia.com, kkartik@nvidia.com, rdunlap@infradead.org, 
-	frank.li@vivo.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Fix warning in tegra_fuse_add_lookups
-Message-ID: <2etkg2arvsxtjgoxuaks34th5llpe5kn3bakelz7naeghexval@s5up5vt4a5gk>
-References: <20240616073721.5696-1-sikes@qlogo.org>
- <171958790864.2433364.265100419611870394.b4-ty@nvidia.com>
- <xyxjlp6hb7jcwlhbm4tpmt5npx74qpuzybzakdkev6ta2nl6go@txh4ue7faenk>
- <8963AF0A-16DA-46FE-BAA9-602752410E8E@qlogo.org>
+	s=arc-20240116; t=1719610093; c=relaxed/simple;
+	bh=xsDY8QdZRgTboHMIuie0O6lnfkxpq/5pzOpIBWqAYhs=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=uYtYn5VYbuRwPAR45p98RfoEFDTothJ9e8iYF79KOsSM2Y36NRdzszLS3+/zp96HrhaSxOmmF83OeHbKZPAFe4zftq87RYonSaIa6ot0u9ErqbUR1Jt4S9WChdkdTgCjNxKU8a2Liut7c9TLqmZoaWCtEEQgQt2ESijSYo1/dVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VHEVTrqq; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=xsDY8QdZRgTboHMIuie0O6lnfkxpq/5pzOpIBWqAYhs=; b=VHEVTrqqjkjcWuJ0PQtKaf3MzN
+	p+nYcY0Zt0P70x7BH6jO7K9M0M2SFruboWUAOxYnZoAKPjdYqPBjchCiIV2HTpqX0uIQfaJN2LQna
+	qiY9T9gSIfzyOLaYFN9tdaj29hYee4WINNqm9oXtzqm3USzhNSKLF3+H60a2OiBVpPX7IVXlfxSHZ
+	5a7SIEx0zaBwxAQU17pFofWBcFm2T7FsYGYStcs6pByPG3UX9Q00W0QlidIMXKeUyEl+vzieXxCMF
+	oWFujAx9ccp5fbQkPlYCPikIhgjpoj3b6xpJEklmFC4fo9lDsQZn8cr0aZtjbnYyikfwf2xBMQ92N
+	SyAX8ZWA==;
+Received: from [109.144.30.113] (helo=[127.0.0.1])
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sNJ8H-000000095jF-0oaD;
+	Fri, 28 Jun 2024 21:27:57 +0000
+Date: Fri, 28 Jun 2024 22:27:48 +0100
+From: David Woodhouse <dwmw2@infradead.org>
+To: Peter Hilber <peter.hilber@opensynergy.com>, linux-kernel@vger.kernel.org,
+ virtualization@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-rtc@vger.kernel.org, "Ridoux, Julien" <ridouxj@amazon.com>,
+ virtio-dev@lists.linux.dev, "Luu, Ryan" <rluu@amazon.com>
+CC: "Christopher S. Hall" <christopher.s.hall@intel.com>,
+ Jason Wang <jasowang@redhat.com>, John Stultz <jstultz@google.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>, netdev@vger.kernel.org,
+ Richard Cochran <richardcochran@gmail.com>, Stephen Boyd <sboyd@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Alessandro Zummo <a.zummo@towertech.it>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: Re: [RFC PATCH v2] ptp: Add vDSO-style vmclock support
+User-Agent: K-9 Mail for Android
+In-Reply-To: <2de9275f-b344-4a76-897b-52d5f4bdca59@opensynergy.com>
+References: <20231218073849.35294-1-peter.hilber@opensynergy.com> <684eac07834699889fdb67be4cee09319c994a42.camel@infradead.org> <671a784b-234f-4be6-80bf-5135e257ed40@opensynergy.com> <db594efd5a5774748a9ef07cc86741f5a677bdbf.camel@infradead.org> <c0ae63fc88365c93d5401972683a41112c094704.camel@infradead.org> <4a0a240dffc21dde4d69179288547b945142259f.camel@infradead.org> <8d9d7ce2-4dd1-4f54-a468-79ef5970a708@opensynergy.com> <bdcafc76ea44db244b52f8a092287cb33950d5d6.camel@infradead.org> <db1113d5-a427-4eb7-b5d1-8174a71e63b6@opensynergy.com> <c69d7d380575e49bd9cb995e060d205fb41aef8f.camel@infradead.org> <2de9275f-b344-4a76-897b-52d5f4bdca59@opensynergy.com>
+Message-ID: <BC212953-A043-4D65-ABF3-326DBF7F10F7@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ftlj6pznsxb4jvop"
-Content-Disposition: inline
-In-Reply-To: <8963AF0A-16DA-46FE-BAA9-602752410E8E@qlogo.org>
-
-
---ftlj6pznsxb4jvop
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
 
-On Fri, Jun 28, 2024 at 10:17:13AM GMT, sikes@qlogo.org wrote:
->=20
->=20
-> > On Jun 28, 2024, at 8:29=E2=80=AFAM, Thierry Reding <thierry.reding@gma=
-il.com> wrote:
-> >=20
-> > On Fri, Jun 28, 2024 at 05:18:48PM GMT, Thierry Reding wrote:
-> >> From: Thierry Reding <treding@nvidia.com>
-> >>=20
-> >>=20
-> >> On Sun, 16 Jun 2024 00:36:57 -0700, Jason Sikes wrote:
-> >>> gcc 14.1.1 warns [-Wcalloc-transposed-args] when sizeof() is
-> >>> used in the first, but not the second, of two size_t arguments.
-> >>>=20
-> >>>=20
-> >>=20
-> >> Applied, thanks!
-> >>=20
-> >> [1/1] Fix warning in tegra_fuse_add_lookups
-> >>      commit: f56da7f4048ff41cb029a715935394f5958a825f
-> >>=20
-> >> Best regards,
-> >=20
-> > Scratch that. Looks like gcc isn't warning correctly here.
-> > kmemdup_array() does have "size_t element_size, size_t count", so the
-> > existing code is correct.
-> >=20
-> > Thierry
->=20
->=20
-> The order changed in kernel mainline recently (very recently).
->=20
-> Commit: 0ee14725471cea66e03e3cd4f4c582d759de502c
-> Subject: mm/util: Swap kmemdup_array() arguments
->=20
-> Apologies if you received this as a duplicate message. The previous was s=
-ent with HTML, and Vger rightfully rejected it.
+On 28 June 2024 17:38:15 BST, Peter Hilber <peter=2Ehilber@opensynergy=2Eco=
+m> wrote:
+>On 28=2E06=2E24 14:15, David Woodhouse wrote:
+>> On Fri, 2024-06-28 at 13:33 +0200, Peter Hilber wrote:
+>>> On 27=2E06=2E24 16:52, David Woodhouse wrote:
+>>>> I already added a flags field, so this might look something like:
+>>>>
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Smearing flags=2E =
+The UTC clock exposed through this structure
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * is only ever true =
+UTC, but a guest operating system may
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * choose to offer a =
+monotonic smeared clock to its users=2E This
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * merely offers a hi=
+nt about what kind of smearing to perform,
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * for consistency wi=
+th systems in the nearby environment=2E
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+>>>> #define VMCLOCK_FLAGS_SMEAR_UTC_SLS (1<<5) /* draft-kuhn-leapsecond-0=
+0=2Etxt */
+>>>>
+>>>> (UTC-SLS is probably a bad example but are there formal definitions f=
+or
+>>>> anything else?)
+>>>
+>>> I think it could also be more generic, like flags for linear smearing,
+>>> cosine smearing(?), and smear_start_sec and smear_end_sec fields (rela=
+tive
+>>> to the leap second start)=2E That could also represent UTC-SLS, and
+>>> noon-to-noon, and it would be well-defined=2E
+>>>
+>>> This should reduce the likelihood that the guest doesn't know the smea=
+ring
+>>> variant=2E
+>>=20
+>> I'm wary of making it too generic=2E That would seem to encourage a
+>> *proliferation* of false "UTC-like" clocks=2E
+>>=20
+>> It's bad enough that we do smearing at all, let alone that we don't
+>> have a single definition of how to do it=2E
+>>=20
+>> I made the smearing hint a full uint8_t instead of using bits in flags,
+>> in the end=2E That gives us a full 255 ways of lying to users about wha=
+t
+>> the time is, so we're unlikely to run out=2E And it's easy enough to ad=
+d
+>> a new VMCLOCK_SMEARING_XXX type to the 'registry' for any new methods
+>> that get invented=2E
+>>=20
+>>=20
+>
+>My concern is that the registry update may come after a driver has alread=
+y
+>been implemented, so that it may be hard to ensure that the smearing whic=
+h
+>has been chosen is actually implemented=2E
 
-That commit seems to take care of the change in fuse-tegra.c already, so
-this patch is no longer needed, right?
+Well yes, but why in the name of all that is holy would anyone want to inv=
+ent *new* ways to lie to users about the time? If we capture the existing o=
+nes as we write this, surely it's a good thing that there's a barrier to en=
+try for adding more?
 
-Thierry
 
---ftlj6pznsxb4jvop
-Content-Type: application/pgp-signature; name="signature.asc"
+>But the error bounds could be large or missing=2E I am trying to address =
+use
+>cases where the host steps or slews the clock as well=2E
 
------BEGIN PGP SIGNATURE-----
+The host is absolutely intended to be skewing the clock to keep it accurat=
+e as the frequency of the underlying oscillator changes, and the seq_count =
+field will change every time the host does so=2E
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmZ/KsoACgkQ3SOs138+
-s6HsrhAAlfElg5d6FHc+qYUMpOZvIZhdsstYPGkcviH0IcNXE3biMjnOuu149hBx
-oV2UL9sQ17AOVJQvMvKQTKQ0tSvokAjrJ9lKEv/1zH04P1cWKezO60LbyYKN81Lc
-/d6SRS0GTenO9NKolUEN/rHjMTP0zSLywW73YrdnoGO+LuAZZ+L6ultZ4NQbzesb
-/Xa5m/0Rw1lTptPYCiS5Jpy+AnNDoYpncs/R4JUcuAc7E1POFzQ+Er7KhceZnurA
-idXksG1btbMJ8gDlik48eMtfXk0AhJznFX/XXfUSODBBiYZldQBWRXKQWxKs2WOW
-XNmEi7IVziy85L4KVAxgALZsuunI0ao2Uvkbx3z5vSqMefg0zYQ9B7xCObQxX/1l
-bXwazMxcVBLz0DC4Tm94/Yxjh7qc0PRtU3w2fCCP4iLKDB9Qt81GsA+C8qPe7VUS
-Si2DY+Gc3UNBCj8URQfTZVODqHWX7UX+JYsLOkm4b+6S8EHU6rMG8ps/3u3jtgeS
-3mHeTNs6sUGb0pnc2KiFmJrpcqC4Ibyb6rSe7f2CmY2zbgAMjwxUPi9So8r7c6g7
-Q1rvjxrtJlLQd+mn381q+LT4t0OBXSe3PfAYJhhmnmnKelwU5ER33Hunmnlnrvkp
-ZAb08C42+7TqFYospO6O8kG0wxKN3sXDXWAD1w2sl355nbryr5I=
-=OehG
------END PGP SIGNATURE-----
+Do we need to handle steps differently? Or just let the guest deal with it=
+?
 
---ftlj6pznsxb4jvop--
+If an NTP server suddenly steps the time it reports, what does the client =
+do?
+
 
