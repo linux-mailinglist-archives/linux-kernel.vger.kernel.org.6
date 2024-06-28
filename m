@@ -1,143 +1,128 @@
-Return-Path: <linux-kernel+bounces-233770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAA6391BCE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:51:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1894491BD3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 13:18:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 275621C2200A
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:51:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4E841F230ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:18:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A85D155A32;
-	Fri, 28 Jun 2024 10:51:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A4D9156237;
+	Fri, 28 Jun 2024 11:18:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="KeHDYMX6"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IdPk/6ij"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738F72139A8
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 10:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5DD51865A;
+	Fri, 28 Jun 2024 11:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719571908; cv=none; b=nicW7yhDsoo57KNZZl20PIczl/c4hgtO4K2ayBEGSsPC9rPULja4lDo8bPIantHLF0rAwfUF1MNTcLoaI7dI2lkLOktrCYNSwj8pquio0/Xa73w7TeXBA4tLroTWkrYRfCrkAV5YqgfFrI58qvQrlNuSbiRG2RshvYjCfS8R3tw=
+	t=1719573496; cv=none; b=oAOeFWs2t6DsSKL+K9q9qvVa6CthPJPhZ1oh30EROgHG1h1SMxaRHx/hXTPrWTqu6Udvn3ZTCj5cn9JLOJ9nXlakwxcohR3gjvxNgR61G2qxA4K2onO5YCjsRrQqjTJuqACfEbCaz1RP6/hFJspleCEHzc7Q+aJiVqtH2gHXmPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719571908; c=relaxed/simple;
-	bh=yC3zrmJsDFn4NNsURX00uMCRtNgsdOVTIJqhvdm5cQQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mpKAFojxJYT4rrsTShC+KB5zF8GFCnzaKCNeOeipeqtQbwt9qLXA1CRVw1oFOFdhp+9QZ/FaaN+ECXCZORthhXp6PSqquGzx2bHPgB9OHkiKSec3KftGlrIji1BC5ro6MxF0A+NZ+5jUUQapcQObB7GGZppCrxZzTky9TWwnuG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=KeHDYMX6; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-425624255f3so2994995e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 03:51:46 -0700 (PDT)
+	s=arc-20240116; t=1719573496; c=relaxed/simple;
+	bh=lj3alnjoF6IS2vUlkaWQ49CLsjb6nBsT1IQIE4C6OPo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s/GkTXUGDRu35rsBpRPCeRcivN4HvLa8sjmh+7sEi2x+icvS2yVBcUtA1+5FbyafkkYQLl/62cayvKKWiCG2YIlLVUqegaRJ3qcYaxrwx67bZWgvBDBY+5Yc+UY5t/OZkWbMkh+N7AGGg/XZWBbYecb9zzqK8MtW9COYiepQBmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IdPk/6ij; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42138eadf64so4327465e9.3;
+        Fri, 28 Jun 2024 04:18:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719571905; x=1720176705; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=24rzTIfM+vOUQFqHFBXjGKtWGaOLrsXGcAgDzPUbzu4=;
-        b=KeHDYMX6sQHen7GTIcU1mBqop+EEf9dirb6BXudSsp0MJhwdeSSBkzShPfDBCqcPLp
-         rMUC0tp+ExwNPUYJ03ULsuoF0h1JLbWLHgTLmCMimR+rjCSa4LdgnYZ/+FAxS2EuO5Ai
-         oTZ/a3aFE4ge5NGdiVRBNQVydkpAo8jEG64BfqK3Am4MNOzLdewBryW6oDyg4hAT5WOi
-         +Mk1kGmJgjPllI80jERykJ+VmQdAyiHZ9dACo0unenWC9RzIP/kGNxAV9Thn0ifIkYot
-         UdYOMTowTQTMGVF5GoCxLRzU5MoRSvizg0/YQFc/QAtZxWW71n+/ZaBYADPm5eGp2Ayg
-         +GyA==
+        d=gmail.com; s=20230601; t=1719573493; x=1720178293; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xfb8qh56GtYXoD9jZvOPRH85DxPa0JeSyiOdHUBDC38=;
+        b=IdPk/6ij5a9AcZuZJvAhoetFu2wX0EWUdvTOO8jGsQYfD+p+MyOu/9LPf5uGWZM1d0
+         uh8rUymlALqy05rVx6usyWfOYlB6LGi8x8hcg2OC70EvD2UlVUEwRM0imAcqotMs9Xi5
+         BGcUmCW17TSnryZVu0s3vOJSbQOOa3iSseHhQNPwFUkCLhNS+f/TZXBez0TtrsFyMaGv
+         BmCktTgyjXSxCdFDdvqwM4dGFTzJ1jdfmTEqizs8qbyM+0+WTnvZtDdkwvNDsXfkiZCo
+         HIjsG68IMTT8vHYYDvu76nj/D4qocJcu3BJtDJ9iIr9vd6EyUSaB9LIEhEOJXiDcErJZ
+         0SwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719571905; x=1720176705;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=24rzTIfM+vOUQFqHFBXjGKtWGaOLrsXGcAgDzPUbzu4=;
-        b=J1OdbroM8nBlOX1JRGEdghDpwZfcQ97oFKPeLEcqhN9j4Cb6S1DmtuevQYX2uYrzAe
-         Bt85O8ZgXbORoToe0veKsWxptWO82+fQmRJYhRAVLHRDFxVkNelncA5Lp7xAC6NvsKs5
-         8ZSblvysQyEnkaQm5ioTDTI55eRSKzdAJxEWlL2tRT4NaJQ9QSk4xreCeDrqzhnGnCO/
-         ZADy0TQ61xlJisWGiIYGEc2r4AkIBf7CRMC6yb2VbTedaxSzScXvQXwOPwmX4RPHfvp9
-         9GHy2Teud0ZMlJmdUm/Uy/lhdP+1S8Xv7Q3eqmwedc8Yc/Jul+pegwvmnoQz9TONjcdL
-         3xbg==
-X-Forwarded-Encrypted: i=1; AJvYcCXSmoTTsNHMb3gkc7fQvXVwRAw0qemNhaApSVawNMTf8X1wdSYh3pyNEdBfAalZxm+bejAp1P6fnKV0qbU1UCAh2zJRnU2N7DgFlx+n
-X-Gm-Message-State: AOJu0YwrSCVqfG+T1lXyxCXqdi0c8GBnVQr26wYroJake8hiAYPfOvtW
-	Y2ZgSCM/758R93jOCks/zAN0jdk11Z3hD9MCHN/q5++8YVcyJQhsbXIjzG+va/E=
-X-Google-Smtp-Source: AGHT+IEk/iGdd84gJ4j2qvNNhASVwVZ9UV0L9RuSnlH6TwRAjAnRiiHru5Ptw881AQ0IzfYy6F1GzQ==
-X-Received: by 2002:a05:600c:1616:b0:421:b65d:2235 with SMTP id 5b1f17b1804b1-4256d4246f3mr13155895e9.0.1719571904866;
-        Fri, 28 Jun 2024 03:51:44 -0700 (PDT)
-Received: from localhost (p50915e7b.dip0.t-ipconnect.de. [80.145.94.123])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4249b4233b3sm84824425e9.0.2024.06.28.03.51.44
+        d=1e100.net; s=20230601; t=1719573493; x=1720178293;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Xfb8qh56GtYXoD9jZvOPRH85DxPa0JeSyiOdHUBDC38=;
+        b=JoCpPTo4eEnQpavJP7x2GsRCxAgoDIc4kvHF7m04Yn48/pWV8qIGp06kTbfuOKXuEx
+         1Evb4VTpXGVnrceJU9l+EAuLqFL4H+1X6snfWCV3RmNLcUgOspxub7wutDaIozT2W0md
+         cOdMAfwAY8Q3oaLZtgFhJVuuCUm7D6Lw29EFyW9iReWZSpWLL087WPLYSVms4q7q07Bp
+         HqqDq9WQimsRok39wAO6CZeyuAhHmaaDZUtN+Ftc5IW5oYJy+BlaoI8PQAmjwD0U64Rn
+         DzBtPFfM3aisSSbUP525vIl3TvWAKZ++fdyYRWRK22VS5AM/Htn7Zu4g5MKOhRNAzc2y
+         1HTg==
+X-Forwarded-Encrypted: i=1; AJvYcCWuAdQbyOeNzcyyPgKZc1Daj62+fo4cgTf5qh7jzywW04RWDrHOvzNKoAbI6fgFbYWnJz9w+Zjn5E1swCWzqtIc8+Y00gPNCm285gwNl93J8PdqLbDIizK1xq3wwr1hlZZQMzYYF6FLLvu/jLe+4dUsBY0gD1bCCTTNf8R7Yg3moXxAJw1yRIZMp6oaeTF9x9xVoQpTHCapQk6PaQ==
+X-Gm-Message-State: AOJu0YyQUjJN2k27HVbj1werxpo3g09KiZNLNAxmoppAfGou6Br1RQ9N
+	k61GPJLT8tpNjx3SU0wCFsmh/KlJr3wbdmNjILIFWdBm+1WqwETu
+X-Google-Smtp-Source: AGHT+IEgaXUd+94Izm1S8dyRGK9F05m7nglJMAYA5JVpVKSGCoyzmAAlgx33pqSiP1IHukiCb84uNQ==
+X-Received: by 2002:a05:600c:2d84:b0:425:622e:32f4 with SMTP id 5b1f17b1804b1-425622e3408mr45368885e9.26.1719573492849;
+        Fri, 28 Jun 2024 04:18:12 -0700 (PDT)
+Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3675a1055b9sm1979495f8f.95.2024.06.28.04.18.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 03:51:44 -0700 (PDT)
-Date: Fri, 28 Jun 2024 12:51:43 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: linus.walleij@linaro.org, dan.carpenter@linaro.org, 
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, aisheng.dong@nxp.com, festevam@gmail.com, shawnguo@kernel.org, 
-	kernel@pengutronix.de, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH V3 1/3] pinctrl: ti: iodelay: Use scope based
- of_node_put() cleanups
-Message-ID: <dldl7dkdcsuajjjpg2pczfnupqrsghmpz27i45xi5beeou5ntg@y2ysounw3pqq>
-References: <20240627131721.678727-1-peng.fan@oss.nxp.com>
- <20240627131721.678727-2-peng.fan@oss.nxp.com>
+        Fri, 28 Jun 2024 04:18:12 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Cc: Christian Marangi <ansuelsmth@gmail.com>,
+	Frank Wunderlich <frank-w@public-files.de>,
+	stable@vger.kernel.org
+Subject: [PATCH v2 1/2] arm64: dts: mediatek: mt7622: readd syscon to pciesys node
+Date: Fri, 28 Jun 2024 12:55:40 +0200
+Message-ID: <20240628105542.5456-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fbfmjvvswzyejj4y"
-Content-Disposition: inline
-In-Reply-To: <20240627131721.678727-2-peng.fan@oss.nxp.com>
+Content-Transfer-Encoding: 8bit
 
+Sata node reference the pciesys with the property mediatek,phy-node
+and that is used as a syscon to access the pciesys regs.
 
---fbfmjvvswzyejj4y
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Readd the syscon compatible to pciesys node to restore correct
+functionality of the SATA interface.
 
-Hello Peng,
+Fixes: 3ba5a6159434 ("arm64: dts: mediatek: mt7622: fix clock controllers")
+Reported-by: Frank Wunderlich <frank-w@public-files.de>
+Co-developed-by: Frank Wunderlich <frank-w@public-files.de>
+Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+Cc: stable@vger.kernel.org
+---
+ arch/arm64/boot/dts/mediatek/mt7622.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Thu, Jun 27, 2024 at 09:17:19PM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
->=20
-> Use scope based of_node_put() cleanup to simplify code.
->=20
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/pinctrl/ti/pinctrl-ti-iodelay.c | 43 +++++++++----------------
->  1 file changed, 15 insertions(+), 28 deletions(-)
->=20
-> diff --git a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c b/drivers/pinctrl/ti=
-/pinctrl-ti-iodelay.c
-> index ef9758638501..f5e5a23d2226 100644
-> --- a/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
-> +++ b/drivers/pinctrl/ti/pinctrl-ti-iodelay.c
-> @@ -822,53 +822,48 @@ MODULE_DEVICE_TABLE(of, ti_iodelay_of_match);
->  static int ti_iodelay_probe(struct platform_device *pdev)
->  {
->  	struct device *dev =3D &pdev->dev;
-> -	struct device_node *np =3D of_node_get(dev->of_node);
-> +	struct device_node *np __free(device_node) =3D of_node_get(dev->of_node=
-);
+diff --git a/arch/arm64/boot/dts/mediatek/mt7622.dtsi b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
+index 917fa39a74f8..bb0ec1edbe5b 100644
+--- a/arch/arm64/boot/dts/mediatek/mt7622.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
+@@ -790,7 +790,7 @@ u2port1: usb-phy@1a0c5000 {
+ 	};
+ 
+ 	pciesys: clock-controller@1a100800 {
+-		compatible = "mediatek,mt7622-pciesys";
++		compatible = "mediatek,mt7622-pciesys", "syscon";
+ 		reg = <0 0x1a100800 0 0x1000>;
+ 		#clock-cells = <1>;
+ 		#reset-cells = <1>;
+-- 
+2.45.1
 
-of_node_put? -------------------------------------------^
-
-Best regards
-Uwe
-
---fbfmjvvswzyejj4y
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZ+lbwACgkQj4D7WH0S
-/k507QgAp3CUpkL3MAeTxcSbGb2q3fYllnUF2w6t16mJ9xh6+hDLS9FBcJ6O4AyY
-kfpU0V1qpde9069gwMOiEFDkWetC+p0oivQ5VP5/+qesfrOrP/Xlr+TRL1zTtv84
-OoV+pxdYC5nFaHgtymb4Sj9ixL4HpxAdlZ1gwF99BtJK/qW9JymS3K/DOVzsvmwe
-7uIdatoBkLDNIf+QsByESnmWnWsdv0qeUq00WBUCX62TlAcZuzjLhROUz1Odgy75
-no4hamGZVW4Q/fXIFEyWWgAu5YLTGDZx5c5bI4nKYuwscGDwRbQ7xiGfjIcYgEOZ
-AfMzaxHv9AbFEoueeQ6q0rfMts8XsA==
-=uBDP
------END PGP SIGNATURE-----
-
---fbfmjvvswzyejj4y--
 
