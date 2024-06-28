@@ -1,78 +1,82 @@
-Return-Path: <linux-kernel+bounces-234177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD13391C352
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:08:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C4C991C350
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:08:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 099981C22F45
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:08:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8C3F280CCC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:08:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61231C8FC3;
-	Fri, 28 Jun 2024 16:08:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D141C8FCB;
+	Fri, 28 Jun 2024 16:08:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ARCEWVTT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OWzUdkq7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CAC1C232D;
-	Fri, 28 Jun 2024 16:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE841C232D;
+	Fri, 28 Jun 2024 16:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719590908; cv=none; b=GBuunNvbOvnclFPp32/bIDGXV9yU5XNXOP/f4tA9SiI3hwz7qv1UFane9LLuvYQwLfzJVMW+otXVVKpBeCd/8Vn4B5eh3M2EnPbHbD1nAIYhFcf4O54Yl18Q/gDatjB+d2aEETtW0J5pXmAUsrb1T/p5CkWbC9IpjjQL1SXELX8=
+	t=1719590899; cv=none; b=bGUfPicrRxEuETSu/WoaHhy1N589KgMMA0r7x5MxmP1pnGNigt22My2Rq6M06eE9tG+Ucmbe4FWL3ytYBIvwpHtU8ctt3kDZ+TVg+b/kTl3Zyx/MK0FdItffNsfikPX6YJ3U1UfGtyAIEPk/uCw6tGBRztPJ5bE49Sd2UBmMjdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719590908; c=relaxed/simple;
-	bh=R4kwb7inTePxkXUgwaD3xEPqRk0IkjAOzJgUSxQSk00=;
+	s=arc-20240116; t=1719590899; c=relaxed/simple;
+	bh=zzorYU/27hnfjB1vjJiodp8DNsccMxFGZ8yXSPHKSPw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pr0poQakTh3LtNv/7UWdT9LuoG1U1M0yMjfh5TuIL7cVYCF7hmPIJXFCIEpTLQkjiPz2+aYw3lKrgdPUi7aYT7WZV+/YRq2xYaQ1Opug9Zf7lC/w0zNH7ctgF03u5/MV2JI1Xg1KFrohppuJidrdcFGlB91nvtPBoGQrYn9oO+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ARCEWVTT; arc=none smtp.client-ip=192.198.163.14
+	 Content-Type:Content-Disposition:In-Reply-To; b=YveUBvcIy5AO+X1rmzHzv668NOAM/lEeOJOKMBhV7bDcOtTQ0NDW+Ii7dhY3A4hd3fHsA3hDFcPtvpPX7GVMGU5LPHSf4PCHQ6HVVSybV6zxcL9OWQi2mfwm0IENJ+E6t3uoqV08GbJGhY0+jfi2YdVJBXrbLe2EgEnsy5jTAI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OWzUdkq7; arc=none smtp.client-ip=192.198.163.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719590907; x=1751126907;
+  t=1719590897; x=1751126897;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=R4kwb7inTePxkXUgwaD3xEPqRk0IkjAOzJgUSxQSk00=;
-  b=ARCEWVTTn80jzUOJgvLz+xJf0DgTmYLTcZ8tgGWR1KDqWlskOwtKp7HP
-   Oqhh6axS8XdECp3nhSov70lxQaZcnZ3cTZeNKuCCxriH+BiGpwHVYglxW
-   UEmveG0WHVelQ8dMczbkoTDO1H1dI+K0nSXPOf2kBzOPj/U36WW19F47Z
-   VQXM34CVTuAJnBqhAa/HPVfw/ImuAQTeklYS4yiicb1lB+bvGxIBODbDR
-   S7beqfEvzSatYD88jDnMQYYpFrcJMPkHbQ0+E1GSE7nnqxN1qqwJfwAZ1
-   RiRYi7fr7O47CtEbAvvJqPEoWSDo5kqJhDCjDVMwj2vNcAmmA5TLWGrSk
-   g==;
-X-CSE-ConnectionGUID: ra/4F/mLT2C+CwQG5nqZRQ==
-X-CSE-MsgGUID: 3S3G5/IrSb2oQ7szdIlQFw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11117"; a="17005111"
+  bh=zzorYU/27hnfjB1vjJiodp8DNsccMxFGZ8yXSPHKSPw=;
+  b=OWzUdkq7INJ1DYSHSxDhGCQFLwqTS0juuly81ExZWArlbzURHN1Nn7Le
+   O5TfdmGfP0kk5MRDWAYr42eYkBDkRiCdbTCpLY8BR5sRsmQf9y7EFApNe
+   urHNnXA75xBqSsRRJxQGOBMVIs2lIdscroPELLRqgB2Ehxxw4DLYvewAk
+   5Dd+jZc1glCkzD/gHdNkNP4oxg645AlrfC2rJv6IJMU52iaiSAI/43v24
+   w3dqtETtJKpL0CSr6EfzfmjCnAEG3LpGQO5+sef6ejqx9zFWQqFUDf1cX
+   fKvDqm/N86SeCN/sZ6UtTIOkEC/6uYaJT3AXcNJPWQzLpQAFL0pve+ZIX
+   A==;
+X-CSE-ConnectionGUID: jMxsMrIiSzGCBF51oJ6cWw==
+X-CSE-MsgGUID: HdnRXe/zQKeKMhM1GS6XAA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11117"; a="42201322"
 X-IronPort-AV: E=Sophos;i="6.09,169,1716274800"; 
-   d="scan'208";a="17005111"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 09:08:26 -0700
-X-CSE-ConnectionGUID: WSVqjr6pQbaADbCz/moyeQ==
-X-CSE-MsgGUID: pbgkgWDkQlKzrfXSbQu4ug==
+   d="scan'208";a="42201322"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 09:08:16 -0700
+X-CSE-ConnectionGUID: acw2AI8ZR92T05WVV7j1zw==
+X-CSE-MsgGUID: 6iW7oFrTT8ShSatx/+rPiQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,169,1716274800"; 
-   d="scan'208";a="75979078"
+   d="scan'208";a="49395167"
 Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 28 Jun 2024 09:08:18 -0700
+  by fmviesa004.fm.intel.com with ESMTP; 28 Jun 2024 09:08:13 -0700
 Received: from kbuild by 68891e0c336b with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1sNE8w-000HJq-1l;
+	id 1sNE8w-000HJm-1d;
 	Fri, 28 Jun 2024 16:08:10 +0000
-Date: Sat, 29 Jun 2024 00:07:13 +0800
+Date: Sat, 29 Jun 2024 00:07:14 +0800
 From: kernel test robot <lkp@intel.com>
-To: Roman Kagan <rkagan@amazon.de>, linux-arm-kernel@lists.infradead.org
+To: Shiji Yang <yangshiji66@outlook.com>, linux-mips@vger.kernel.org
 Cc: oe-kbuild-all@lists.linux.dev,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, nh-open-source@amazon.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>
-Subject: Re: [PATCH] irqchip/gicv3-its: Workaround for GIC-700 erratum 2195890
-Message-ID: <202406282359.98P8jJ4c-lkp@intel.com>
-References: <20240624165541.1286227-1-rkagan@amazon.de>
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Khalid Aziz <khalid@gonehiking.org>, Baoquan He <bhe@redhat.com>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Serge Semin <fancer.lancer@gmail.com>, linux-kernel@vger.kernel.org,
+	Shiji Yang <yangshiji66@outlook.com>,
+	Mieczyslaw Nalewaj <namiltd@yahoo.com>
+Subject: Re: [PATCH V2] mips: kernel: fix detect_memory_region() function
+Message-ID: <202406282354.0hGuOKo0-lkp@intel.com>
+References: <TYCP286MB089598ABD1E2F66003D71EB8BCD52@TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,96 +85,81 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240624165541.1286227-1-rkagan@amazon.de>
+In-Reply-To: <TYCP286MB089598ABD1E2F66003D71EB8BCD52@TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM>
 
-Hi Roman,
+Hi Shiji,
 
 kernel test robot noticed the following build warnings:
 
-[auto build test WARNING on arm64/for-next/core]
-[also build test WARNING on soc/for-next tip/irq/core linus/master v6.10-rc5 next-20240627]
+[auto build test WARNING on soc/for-next]
+[also build test WARNING on linus/master v6.10-rc5 next-20240627]
 [If your patch is applied to the wrong git tree, kindly drop us a note.
 And when submitting patch, we suggest to use '--base' as documented in
 https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Roman-Kagan/irqchip-gicv3-its-Workaround-for-GIC-700-erratum-2195890/20240625-212945
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-next/core
-patch link:    https://lore.kernel.org/r/20240624165541.1286227-1-rkagan%40amazon.de
-patch subject: [PATCH] irqchip/gicv3-its: Workaround for GIC-700 erratum 2195890
-config: arm64-randconfig-004-20240628 (https://download.01.org/0day-ci/archive/20240628/202406282359.98P8jJ4c-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240628/202406282359.98P8jJ4c-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Shiji-Yang/mips-kernel-fix-detect_memory_region-function/20240626-070033
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
+patch link:    https://lore.kernel.org/r/TYCP286MB089598ABD1E2F66003D71EB8BCD52%40TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM
+patch subject: [PATCH V2] mips: kernel: fix detect_memory_region() function
+config: mips-randconfig-r113-20240628 (https://download.01.org/0day-ci/archive/20240628/202406282354.0hGuOKo0-lkp@intel.com/config)
+compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
+reproduce: (https://download.01.org/0day-ci/archive/20240628/202406282354.0hGuOKo0-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406282359.98P8jJ4c-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406282354.0hGuOKo0-lkp@intel.com/
 
-All warnings (new ones prefixed by >>, old ones prefixed by <<):
+sparse warnings: (new ones prefixed by >>)
+>> arch/mips/kernel/setup.c:104:53: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void volatile [noderef] __iomem *mem @@     got void *dm @@
+   arch/mips/kernel/setup.c:104:53: sparse:     expected void volatile [noderef] __iomem *mem
+   arch/mips/kernel/setup.c:104:53: sparse:     got void *dm
+>> arch/mips/kernel/setup.c:105:33: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *mem @@     got void *dm @@
+   arch/mips/kernel/setup.c:105:33: sparse:     expected void const volatile [noderef] __iomem *mem
+   arch/mips/kernel/setup.c:105:33: sparse:     got void *dm
+>> arch/mips/kernel/setup.c:105:55: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *mem @@     got void * @@
+   arch/mips/kernel/setup.c:105:55: sparse:     expected void const volatile [noderef] __iomem *mem
+   arch/mips/kernel/setup.c:105:55: sparse:     got void *
+   arch/mips/kernel/setup.c:106:62: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void volatile [noderef] __iomem *mem @@     got void *dm @@
+   arch/mips/kernel/setup.c:106:62: sparse:     expected void volatile [noderef] __iomem *mem
+   arch/mips/kernel/setup.c:106:62: sparse:     got void *dm
+   arch/mips/kernel/setup.c:107:41: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *mem @@     got void *dm @@
+   arch/mips/kernel/setup.c:107:41: sparse:     expected void const volatile [noderef] __iomem *mem
+   arch/mips/kernel/setup.c:107:41: sparse:     got void *dm
+   arch/mips/kernel/setup.c:107:63: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *mem @@     got void * @@
+   arch/mips/kernel/setup.c:107:63: sparse:     expected void const volatile [noderef] __iomem *mem
+   arch/mips/kernel/setup.c:107:63: sparse:     got void *
+   arch/mips/kernel/setup.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/xarray.h, ...):
+   include/linux/page-flags.h:240:46: sparse: sparse: self-comparison always evaluates to false
+   include/linux/page-flags.h:240:46: sparse: sparse: self-comparison always evaluates to false
 
->> WARNING: modpost: vmlinux: section mismatch in reference: its_enable_quirk_gic700_2195890+0x24 (section: .text) -> lpi_id_base (section: .init.data)
-WARNING: modpost: vmlinux: section mismatch in reference: its_enable_quirk_gic700_2195890+0x34 (section: .text) -> lpi_id_base (section: .init.data)
-WARNING: modpost: vmlinux: section mismatch in reference: its_enable_quirk_gic700_2195890+0x44 (section: .text) -> lpi_id_base (section: .init.data)
-WARNING: modpost: missing MODULE_DESCRIPTION() in arch/arm64/crypto/crct10dif-ce.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in arch/arm64/crypto/aes-neon-bs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/test-ww_mutex.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/time/test_udelay.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp850.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp860.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp862.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp863.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp949.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp950.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp1251.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-7.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-centeuro.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-gaelic.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/binfmt_misc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/cramfs/cramfs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/fat/fat.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/ufs/ufs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/efs/efs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/adfs/adfs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/btrfs/btrfs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in security/keys/trusted-keys/trusted.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/algif_hash.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/algif_skcipher.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in crypto/xor.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/crypto/libdes.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_hexdump.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_bpf.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_firmware.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test-kstrtox.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_module.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_user_copy.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_blackhole_dev.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/atomic64_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/asn1_encoder.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl-mcp23s08_i2c.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pinctrl/pinctrl-mcp23s08.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/backlight/platform_lcd.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/qcom/hdma.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/serial/8250/8250_base.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/serial/serial_mctrl_gpio.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/n_hdlc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/n_gsm.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/ttynull.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/hw_random/omap-rng.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/hw_random/omap3-rom-rng.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/hw_random/arm_smccc_trng.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/ppdev.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/misc/fastrpc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/auxdisplay/line-display.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/tuners/tda9887.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/dvb-frontends/au8522_decoder.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/dvb-frontends/mb86a16.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/pwrseq_emmc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/core/sdio_uart.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/arm-ccn.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/greybus/greybus.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/rpmsg/rpmsg_char.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iio/buffer/kfifo_buf.o
+vim +104 arch/mips/kernel/setup.c
+
+    97	
+    98	void __init detect_memory_region(phys_addr_t start, phys_addr_t sz_min, phys_addr_t sz_max)
+    99	{
+   100		void *dm = (void *)KSEG1ADDR(&detect_magic);
+   101		phys_addr_t size;
+   102	
+   103		for (size = sz_min; size < sz_max; size <<= 1) {
+ > 104			__raw_writel(MIPS_MEM_TEST_PATTERN, dm);
+ > 105			if (__raw_readl(dm) == __raw_readl(dm + size)) {
+   106				__raw_writel(~MIPS_MEM_TEST_PATTERN, dm);
+   107				if (__raw_readl(dm) == __raw_readl(dm + size))
+   108					break;
+   109			}
+   110		}
+   111	
+   112		pr_debug("Memory: %lluMB of RAM detected at 0x%llx (min: %lluMB, max: %lluMB)\n",
+   113			((unsigned long long) size) / SZ_1M,
+   114			(unsigned long long) start,
+   115			((unsigned long long) sz_min) / SZ_1M,
+   116			((unsigned long long) sz_max) / SZ_1M);
+   117	
+   118		memblock_add(start, size);
+   119	}
+   120	#endif /* CONFIG_64BIT */
+   121	
 
 -- 
 0-DAY CI Kernel Test Service
