@@ -1,352 +1,291 @@
-Return-Path: <linux-kernel+bounces-234349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7002291C57B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:11:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2CA091C57F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:13:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27E07286C2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:11:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FA41B24C3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:13:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F09CE1CD5B9;
-	Fri, 28 Jun 2024 18:10:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDAD01C8FA8;
+	Fri, 28 Jun 2024 18:12:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SFrmw0RF"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LAcnE1zx"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B981CD5A2
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 18:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E0A25634
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 18:12:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719598199; cv=none; b=u8FqkaIbWdoCMOz3JwA+mL97/uiKvGhGUNL6v4QeYlkYIbhZOhZaO8izCYeHpH8vBzOc4bpKi2KLePE1nOLkYLu5MH1t8vLJ8l1hDN14HRw6+qgvbq1MWWRErQYPsOe7C5SqB2qnwruuWAjWNUZUYsQ+PFFCdHR3A7IHO35d18o=
+	t=1719598372; cv=none; b=QOq6pJZbvO8aihJ1HMexd5szMxTpuksLQ6FgBovbmKOSiqhZ67TE4sBfsS1mP5kmgDEHbSi/tZaxOZuNZy1MgqtCdXIxSHHxGdWsdrfHuBwEDx4/9W8Rep4Zw4Vg2bkjnZGxOiqqPrKKDqU8M3j5867J6kcJq87ALxUf3/EKfBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719598199; c=relaxed/simple;
-	bh=knP1p+6Nvbs+YUVc8oJLXVeZbfdj2rDPJkbyOMpLPGA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=bNW3+BG05bfaTVcd41LNKF2ePtwscYNTWr+3z3A4QJPjwVRCUjE7+aG9esq6Q6oXYj0zmRC98x+WSKQREyBwf1hSkbaDSWE51m7sNBzyuYVhc/5MVg5srQXIlvoc1rJaUUsqG5XN6uYByM9nANbD2OYLkj7DkDhszpcObADk458=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SFrmw0RF; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719598194;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J7XmElWXpcZc5uAjWs/vfVFKMP8/65rj+87D2Ss6ZVg=;
-	b=SFrmw0RF5KmjxFuoKk8kCwJ4ILp5TfwrhJxiZ4ZuRbym74fqqd4mTL+AAgcYVpzAsHz16T
-	X4JMohRwdH3s89y4rBYCZ79SX1a7CCvZd75gApfZTrBQkiqxvCDUhZQMxQYccIX7a/vleZ
-	G8k+4Gl9x60HznSXFX153fVKXn4OVfw=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-320-V02knYwgN-aaTZfKP94vVg-1; Fri,
- 28 Jun 2024 14:09:49 -0400
-X-MC-Unique: V02knYwgN-aaTZfKP94vVg-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 59E291956089;
-	Fri, 28 Jun 2024 18:09:43 +0000 (UTC)
-Received: from RHTRH0061144 (unknown [10.22.8.184])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2A8E71956054;
-	Fri, 28 Jun 2024 18:09:38 +0000 (UTC)
-From: Aaron Conole <aconole@redhat.com>
-To: Adrian Moreno <amorenoz@redhat.com>
-Cc: netdev@vger.kernel.org,  echaudro@redhat.com,  horms@kernel.org,
-  i.maximets@ovn.org,  dev@openvswitch.org,  Donald Hunter
- <donald.hunter@gmail.com>,  Jakub Kicinski <kuba@kernel.org>,  "David S.
- Miller" <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Paolo
- Abeni <pabeni@redhat.com>,  Pravin B Shelar <pshelar@ovn.org>,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v6 05/10] net: openvswitch: add psample action
-In-Reply-To: <20240628110559.3893562-6-amorenoz@redhat.com> (Adrian Moreno's
-	message of "Fri, 28 Jun 2024 13:05:41 +0200")
-References: <20240628110559.3893562-1-amorenoz@redhat.com>
-	<20240628110559.3893562-6-amorenoz@redhat.com>
-Date: Fri, 28 Jun 2024 14:09:32 -0400
-Message-ID: <f7tcyo1x7kz.fsf@redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1719598372; c=relaxed/simple;
+	bh=hLcOFwi2J2KZcT+28pyhB884XMs4WErv3F9SncFRe8U=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=GPEtipm2HMuQAAXzH/MwojO6svJJ0yfJCv76zTycPoIA6oOGPP5pCN9opmHk0rhc1pCoK7lxHdVu9rA9hFzk7niw1bQ0JjSYOn3QsO5+ctv1aEYlcamB9/k4p2Uc77bGXlfK3lZ/uifpc0/o5GBxjeiio6ugeRu2IEFE8P/cYLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LAcnE1zx; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-706a1711ee5so644849b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 11:12:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719598371; x=1720203171; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q8Jo6W/oSNP8jr6rmsVk9Fz1TTt99fPqwc+b/r8xVV4=;
+        b=LAcnE1zxCGk5h3WbsBePz0qfZKde6Z4niY8+SHcfAUMwN1PvwDIvzcsK15CqZ4pzHd
+         X7HRdflo5DbaBkn+xWzEYqrVKMQ1/Bu2lcHjd2kP4qhbW7R972pmPVp6iUi7m+4uoYnm
+         haryFqM4IznrVXBydeTNlh10lWE9cKT6/K+78CRw2eRB5+dZ1eqaodwfJ3ubKxhsEY1s
+         i70QXlHXSdVtSadLsnTKThW8iZxHbEih5urVaKt1nfaj439xrTpbKN8x7thlYe9kvtEh
+         XIhhwYemTJ9RzYWtp4I7aTiKOou6QafSvlLiNzRHveFtyeqdHOfi8vTGLwxNh1SjS/DM
+         frdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719598371; x=1720203171;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q8Jo6W/oSNP8jr6rmsVk9Fz1TTt99fPqwc+b/r8xVV4=;
+        b=UYMewcQ+TI+jzHodu0q87TTlHPCHl4VTf6uB1kot/2yVsbBBEWd4g2tjLq4iFalbfn
+         vveHEbo29eQ5sqvSMoV8ebQ+YWfCviXiju5//+J1NXlmbo+yEnaAaT3nXraWyB5ssPee
+         8ITgQBlj1gEiQZnAqvJ7kG0p2urs+UjTd3iLvB/3xsOGku92CsIIauyZkbGyS+6+SncZ
+         6siSo8kAU8K/smL4vdmqTH9w7QhI65IapRDfc/bEMOqT/7Kwft6TkN03YHkIcYA0I6H9
+         IbxxSVXYeIhskMqaFQ9wy0MaVXDQ6+GZ1NzIslXwNp848deMaRr6cwF0MwnT7lmZaXzM
+         P9oQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXpmPW8MxyWRzbjP8fuak1uBTIFQmlezPAuOt14mFADLfwh+WfrNya+k1rN1NnyYNvbJG92sSkY5RDQmUwHmm5LcstzpT8ipSYyJxsZ
+X-Gm-Message-State: AOJu0YySxalxGbTm/iS2mjA2ypXpKUSOh+xSS/YWEvTMddChsBVBMh91
+	F0bn+38FGwljiQUuDL99e6gMt/JSvjxQMc+G+6yEzPUKGjB5vYlFpkztVA==
+X-Google-Smtp-Source: AGHT+IF3AjHxyLKw/pfm6Tp0dYJXbY0D7ipNfh1LjJnjgv4OthC3bqatVYyRUQTKQR31MgPFGEPKnA==
+X-Received: by 2002:a05:6a00:2d2:b0:704:2b6e:f10b with SMTP id d2e1a72fcca58-706745d6c9dmr14857451b3a.15.1719598370562;
+        Fri, 28 Jun 2024 11:12:50 -0700 (PDT)
+Received: from distilledx.localdomain ([122.172.84.231])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70804989f5asm1926960b3a.195.2024.06.28.11.12.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 11:12:50 -0700 (PDT)
+From: Tejas Vipin <tejasvipin76@gmail.com>
+To: tejasvipin76@gmail.com,
+	neil.armstrong@linaro.org,
+	quic_jesszhan@quicinc.com
+Cc: dianders@chromium.org,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/panel: asus-z00t-tm5p5-n35596: transition to mipi_dsi wrapped functions
+Date: Fri, 28 Jun 2024 23:42:38 +0530
+Message-ID: <20240628181238.169681-4-tejasvipin76@gmail.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240628181238.169681-1-tejasvipin76@gmail.com>
+References: <20240628181238.169681-1-tejasvipin76@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Transfer-Encoding: 8bit
 
-Adrian Moreno <amorenoz@redhat.com> writes:
+Use functions introduced in commit 966e397e4f60 ("drm/mipi-dsi:
+Introduce mipi_dsi_*_write_seq_multi()") and commit f79d6d28d8fe
+("drm/mipi-dsi: wrap more functions for streamline handling") for the
+asus-z00t-tm5p5-n35596 panel.
 
-> Add support for a new action: psample.
->
-> This action accepts a u32 group id and a variable-length cookie and uses
-> the psample multicast group to make the packet available for
-> observability.
->
-> The maximum length of the user-defined cookie is set to 16, same as
-> tc_cookie, to discourage using cookies that will not be offloadable.
->
-> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
-> ---
+Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+---
+ .../drm/panel/panel-asus-z00t-tm5p5-n35596.c  | 140 ++++++++----------
+ 1 file changed, 59 insertions(+), 81 deletions(-)
 
-I didn't thoroughly review this, but just wanted to comment that I like
-the idea of a psample action here specific to the actual action that is
-being performed on the packet - psample.  Much like we do for userspace
-and other actions.
-
->  Documentation/netlink/specs/ovs_flow.yaml | 17 ++++++++
->  include/uapi/linux/openvswitch.h          | 28 ++++++++++++++
->  net/openvswitch/Kconfig                   |  1 +
->  net/openvswitch/actions.c                 | 47 +++++++++++++++++++++++
->  net/openvswitch/flow_netlink.c            | 32 ++++++++++++++-
->  5 files changed, 124 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/netlink/specs/ovs_flow.yaml b/Documentation/netlink/specs/ovs_flow.yaml
-> index 4fdfc6b5cae9..46f5d1cd8a5f 100644
-> --- a/Documentation/netlink/specs/ovs_flow.yaml
-> +++ b/Documentation/netlink/specs/ovs_flow.yaml
-> @@ -727,6 +727,12 @@ attribute-sets:
->          name: dec-ttl
->          type: nest
->          nested-attributes: dec-ttl-attrs
-> +      -
-> +        name: psample
-> +        type: nest
-> +        nested-attributes: psample-attrs
-> +        doc: |
-> +          Sends a packet sample to psample for external observation.
->    -
->      name: tunnel-key-attrs
->      enum-name: ovs-tunnel-key-attr
-> @@ -938,6 +944,17 @@ attribute-sets:
->        -
->          name: gbp
->          type: u32
-> +  -
-> +    name: psample-attrs
-> +    enum-name: ovs-psample-attr
-> +    name-prefix: ovs-psample-attr-
-> +    attributes:
-> +      -
-> +        name: group
-> +        type: u32
-> +      -
-> +        name: cookie
-> +        type: binary
->  
->  operations:
->    name-prefix: ovs-flow-cmd-
-> diff --git a/include/uapi/linux/openvswitch.h b/include/uapi/linux/openvswitch.h
-> index efc82c318fa2..07086759556b 100644
-> --- a/include/uapi/linux/openvswitch.h
-> +++ b/include/uapi/linux/openvswitch.h
-> @@ -914,6 +914,31 @@ struct check_pkt_len_arg {
->  };
->  #endif
->  
-> +#define OVS_PSAMPLE_COOKIE_MAX_SIZE 16
-> +/**
-> + * enum ovs_pample_attr - Attributes for %OVS_ACTION_ATTR_PSAMPLE
-> + * action.
-> + *
-> + * @OVS_PSAMPLE_ATTR_GROUP: 32-bit number to identify the source of the
-> + * sample.
-> + * @OVS_PSAMPLE_ATTR_COOKIE: An optional variable-length binary cookie that
-> + * contains user-defined metadata. The maximum length is
-> + * OVS_PSAMPLE_COOKIE_MAX_SIZE bytes.
-> + *
-> + * Sends the packet to the psample multicast group with the specified group and
-> + * cookie. It is possible to combine this action with the
-> + * %OVS_ACTION_ATTR_TRUNC action to limit the size of the sample.
-> + */
-> +enum ovs_psample_attr {
-> +	OVS_PSAMPLE_ATTR_GROUP = 1,	/* u32 number. */
-> +	OVS_PSAMPLE_ATTR_COOKIE,	/* Optional, user specified cookie. */
-> +
-> +	/* private: */
-> +	__OVS_PSAMPLE_ATTR_MAX
-> +};
-> +
-> +#define OVS_PSAMPLE_ATTR_MAX (__OVS_PSAMPLE_ATTR_MAX - 1)
-> +
->  /**
->   * enum ovs_action_attr - Action types.
->   *
-> @@ -966,6 +991,8 @@ struct check_pkt_len_arg {
->   * of l3 tunnel flag in the tun_flags field of OVS_ACTION_ATTR_ADD_MPLS
->   * argument.
->   * @OVS_ACTION_ATTR_DROP: Explicit drop action.
-> + * @OVS_ACTION_ATTR_PSAMPLE: Send a sample of the packet to external observers
-> + * via psample.
->   *
->   * Only a single header can be set with a single %OVS_ACTION_ATTR_SET.  Not all
->   * fields within a header are modifiable, e.g. the IPv4 protocol and fragment
-> @@ -1004,6 +1031,7 @@ enum ovs_action_attr {
->  	OVS_ACTION_ATTR_ADD_MPLS,     /* struct ovs_action_add_mpls. */
->  	OVS_ACTION_ATTR_DEC_TTL,      /* Nested OVS_DEC_TTL_ATTR_*. */
->  	OVS_ACTION_ATTR_DROP,         /* u32 error code. */
-> +	OVS_ACTION_ATTR_PSAMPLE,      /* Nested OVS_PSAMPLE_ATTR_*. */
->  
->  	__OVS_ACTION_ATTR_MAX,	      /* Nothing past this will be accepted
->  				       * from userspace. */
-> diff --git a/net/openvswitch/Kconfig b/net/openvswitch/Kconfig
-> index 29a7081858cd..2535f3f9f462 100644
-> --- a/net/openvswitch/Kconfig
-> +++ b/net/openvswitch/Kconfig
-> @@ -10,6 +10,7 @@ config OPENVSWITCH
->  		   (NF_CONNTRACK && ((!NF_DEFRAG_IPV6 || NF_DEFRAG_IPV6) && \
->  				     (!NF_NAT || NF_NAT) && \
->  				     (!NETFILTER_CONNCOUNT || NETFILTER_CONNCOUNT)))
-> +	depends on PSAMPLE || !PSAMPLE
->  	select LIBCRC32C
->  	select MPLS
->  	select NET_MPLS_GSO
-> diff --git a/net/openvswitch/actions.c b/net/openvswitch/actions.c
-> index 964225580824..a035b7e677dd 100644
-> --- a/net/openvswitch/actions.c
-> +++ b/net/openvswitch/actions.c
-> @@ -24,6 +24,11 @@
->  #include <net/checksum.h>
->  #include <net/dsfield.h>
->  #include <net/mpls.h>
-> +
-> +#if IS_ENABLED(CONFIG_PSAMPLE)
-> +#include <net/psample.h>
-> +#endif
-> +
->  #include <net/sctp/checksum.h>
->  
->  #include "datapath.h"
-> @@ -1299,6 +1304,39 @@ static int execute_dec_ttl(struct sk_buff *skb, struct sw_flow_key *key)
->  	return 0;
->  }
->  
-> +#if IS_ENABLED(CONFIG_PSAMPLE)
-> +static void execute_psample(struct datapath *dp, struct sk_buff *skb,
-> +			    const struct nlattr *attr)
-> +{
-> +	struct psample_group psample_group = {};
-> +	struct psample_metadata md = {};
-> +	const struct nlattr *a;
-> +	int rem;
-> +
-> +	nla_for_each_attr(a, nla_data(attr), nla_len(attr), rem) {
-> +		switch (nla_type(a)) {
-> +		case OVS_PSAMPLE_ATTR_GROUP:
-> +			psample_group.group_num = nla_get_u32(a);
-> +			break;
-> +
-> +		case OVS_PSAMPLE_ATTR_COOKIE:
-> +			md.user_cookie = nla_data(a);
-> +			md.user_cookie_len = nla_len(a);
-> +			break;
-> +		}
-> +	}
-> +
-> +	psample_group.net = ovs_dp_get_net(dp);
-> +	md.in_ifindex = OVS_CB(skb)->input_vport->dev->ifindex;
-> +	md.trunc_size = skb->len - OVS_CB(skb)->cutlen;
-> +
-> +	psample_sample_packet(&psample_group, skb, 0, &md);
-> +}
-> +#else
-> +static inline void execute_psample(struct datapath *dp, struct sk_buff *skb,
-> +				   const struct nlattr *attr) {}
-> +#endif
-> +
->  /* Execute a list of actions against 'skb'. */
->  static int do_execute_actions(struct datapath *dp, struct sk_buff *skb,
->  			      struct sw_flow_key *key,
-> @@ -1502,6 +1540,15 @@ static int do_execute_actions(struct datapath *dp, struct sk_buff *skb,
->  			ovs_kfree_skb_reason(skb, reason);
->  			return 0;
->  		}
-> +
-> +		case OVS_ACTION_ATTR_PSAMPLE:
-> +			execute_psample(dp, skb, a);
-> +			OVS_CB(skb)->cutlen = 0;
-> +			if (nla_is_last(a, rem)) {
-> +				consume_skb(skb);
-> +				return 0;
-> +			}
-> +			break;
->  		}
->  
->  		if (unlikely(err)) {
-> diff --git a/net/openvswitch/flow_netlink.c b/net/openvswitch/flow_netlink.c
-> index f224d9bcea5e..c92bdc4dfe19 100644
-> --- a/net/openvswitch/flow_netlink.c
-> +++ b/net/openvswitch/flow_netlink.c
-> @@ -64,6 +64,7 @@ static bool actions_may_change_flow(const struct nlattr *actions)
->  		case OVS_ACTION_ATTR_TRUNC:
->  		case OVS_ACTION_ATTR_USERSPACE:
->  		case OVS_ACTION_ATTR_DROP:
-> +		case OVS_ACTION_ATTR_PSAMPLE:
->  			break;
->  
->  		case OVS_ACTION_ATTR_CT:
-> @@ -2409,7 +2410,7 @@ static void ovs_nla_free_nested_actions(const struct nlattr *actions, int len)
->  	/* Whenever new actions are added, the need to update this
->  	 * function should be considered.
->  	 */
-> -	BUILD_BUG_ON(OVS_ACTION_ATTR_MAX != 24);
-> +	BUILD_BUG_ON(OVS_ACTION_ATTR_MAX != 25);
->  
->  	if (!actions)
->  		return;
-> @@ -3157,6 +3158,28 @@ static int validate_and_copy_check_pkt_len(struct net *net,
->  	return 0;
->  }
->  
-> +static int validate_psample(const struct nlattr *attr)
-> +{
-> +	static const struct nla_policy policy[OVS_PSAMPLE_ATTR_MAX + 1] = {
-> +		[OVS_PSAMPLE_ATTR_GROUP] = { .type = NLA_U32 },
-> +		[OVS_PSAMPLE_ATTR_COOKIE] = {
-> +			.type = NLA_BINARY,
-> +			.len = OVS_PSAMPLE_COOKIE_MAX_SIZE,
-> +		},
-> +	};
-> +	struct nlattr *a[OVS_PSAMPLE_ATTR_MAX + 1];
-> +	int err;
-> +
-> +	if (!IS_ENABLED(CONFIG_PSAMPLE))
-> +		return -EOPNOTSUPP;
-> +
-> +	err = nla_parse_nested(a, OVS_PSAMPLE_ATTR_MAX, attr, policy, NULL);
-> +	if (err)
-> +		return err;
-> +
-> +	return a[OVS_PSAMPLE_ATTR_GROUP] ? 0 : -EINVAL;
-> +}
-> +
->  static int copy_action(const struct nlattr *from,
->  		       struct sw_flow_actions **sfa, bool log)
->  {
-> @@ -3212,6 +3235,7 @@ static int __ovs_nla_copy_actions(struct net *net, const struct nlattr *attr,
->  			[OVS_ACTION_ATTR_ADD_MPLS] = sizeof(struct ovs_action_add_mpls),
->  			[OVS_ACTION_ATTR_DEC_TTL] = (u32)-1,
->  			[OVS_ACTION_ATTR_DROP] = sizeof(u32),
-> +			[OVS_ACTION_ATTR_PSAMPLE] = (u32)-1,
->  		};
->  		const struct ovs_action_push_vlan *vlan;
->  		int type = nla_type(a);
-> @@ -3490,6 +3514,12 @@ static int __ovs_nla_copy_actions(struct net *net, const struct nlattr *attr,
->  				return -EINVAL;
->  			break;
->  
-> +		case OVS_ACTION_ATTR_PSAMPLE:
-> +			err = validate_psample(a);
-> +			if (err)
-> +				return err;
-> +			break;
-> +
->  		default:
->  			OVS_NLERR(log, "Unknown Action type %d", type);
->  			return -EINVAL;
+diff --git a/drivers/gpu/drm/panel/panel-asus-z00t-tm5p5-n35596.c b/drivers/gpu/drm/panel/panel-asus-z00t-tm5p5-n35596.c
+index bcaa63d1955f..b05a663c134c 100644
+--- a/drivers/gpu/drm/panel/panel-asus-z00t-tm5p5-n35596.c
++++ b/drivers/gpu/drm/panel/panel-asus-z00t-tm5p5-n35596.c
+@@ -33,119 +33,97 @@ static void tm5p5_nt35596_reset(struct tm5p5_nt35596 *ctx)
+ 	usleep_range(15000, 16000);
+ }
+ 
+-static int tm5p5_nt35596_on(struct tm5p5_nt35596 *ctx)
++static void tm5p5_nt35596_on(struct mipi_dsi_multi_context *dsi_ctx)
+ {
+-	struct mipi_dsi_device *dsi = ctx->dsi;
+-
+-	mipi_dsi_generic_write_seq(dsi, 0xff, 0x05);
+-	mipi_dsi_generic_write_seq(dsi, 0xfb, 0x01);
+-	mipi_dsi_generic_write_seq(dsi, 0xc5, 0x31);
+-	mipi_dsi_generic_write_seq(dsi, 0xff, 0x04);
+-	mipi_dsi_generic_write_seq(dsi, 0x01, 0x84);
+-	mipi_dsi_generic_write_seq(dsi, 0x05, 0x25);
+-	mipi_dsi_generic_write_seq(dsi, 0x06, 0x01);
+-	mipi_dsi_generic_write_seq(dsi, 0x07, 0x20);
+-	mipi_dsi_generic_write_seq(dsi, 0x08, 0x06);
+-	mipi_dsi_generic_write_seq(dsi, 0x09, 0x08);
+-	mipi_dsi_generic_write_seq(dsi, 0x0a, 0x10);
+-	mipi_dsi_generic_write_seq(dsi, 0x0b, 0x10);
+-	mipi_dsi_generic_write_seq(dsi, 0x0c, 0x10);
+-	mipi_dsi_generic_write_seq(dsi, 0x0d, 0x14);
+-	mipi_dsi_generic_write_seq(dsi, 0x0e, 0x14);
+-	mipi_dsi_generic_write_seq(dsi, 0x0f, 0x14);
+-	mipi_dsi_generic_write_seq(dsi, 0x10, 0x14);
+-	mipi_dsi_generic_write_seq(dsi, 0x11, 0x14);
+-	mipi_dsi_generic_write_seq(dsi, 0x12, 0x14);
+-	mipi_dsi_generic_write_seq(dsi, 0x17, 0xf3);
+-	mipi_dsi_generic_write_seq(dsi, 0x18, 0xc0);
+-	mipi_dsi_generic_write_seq(dsi, 0x19, 0xc0);
+-	mipi_dsi_generic_write_seq(dsi, 0x1a, 0xc0);
+-	mipi_dsi_generic_write_seq(dsi, 0x1b, 0xb3);
+-	mipi_dsi_generic_write_seq(dsi, 0x1c, 0xb3);
+-	mipi_dsi_generic_write_seq(dsi, 0x1d, 0xb3);
+-	mipi_dsi_generic_write_seq(dsi, 0x1e, 0xb3);
+-	mipi_dsi_generic_write_seq(dsi, 0x1f, 0xb3);
+-	mipi_dsi_generic_write_seq(dsi, 0x20, 0xb3);
+-	mipi_dsi_generic_write_seq(dsi, 0xfb, 0x01);
+-	mipi_dsi_generic_write_seq(dsi, 0xff, 0x00);
+-	mipi_dsi_generic_write_seq(dsi, 0xfb, 0x01);
+-	mipi_dsi_generic_write_seq(dsi, 0x35, 0x01);
+-	mipi_dsi_generic_write_seq(dsi, 0xd3, 0x06);
+-	mipi_dsi_generic_write_seq(dsi, 0xd4, 0x04);
+-	mipi_dsi_generic_write_seq(dsi, 0x5e, 0x0d);
+-	mipi_dsi_generic_write_seq(dsi, 0x11, 0x00);
+-	msleep(100);
+-	mipi_dsi_generic_write_seq(dsi, 0x29, 0x00);
+-	mipi_dsi_generic_write_seq(dsi, 0x53, 0x24);
+-
+-	return 0;
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xff, 0x05);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xfb, 0x01);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xc5, 0x31);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xff, 0x04);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x01, 0x84);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x05, 0x25);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x06, 0x01);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x07, 0x20);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x08, 0x06);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x09, 0x08);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x0a, 0x10);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x0b, 0x10);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x0c, 0x10);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x0d, 0x14);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x0e, 0x14);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x0f, 0x14);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x10, 0x14);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x11, 0x14);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x12, 0x14);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x17, 0xf3);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x18, 0xc0);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x19, 0xc0);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x1a, 0xc0);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x1b, 0xb3);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x1c, 0xb3);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x1d, 0xb3);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x1e, 0xb3);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x1f, 0xb3);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x20, 0xb3);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xfb, 0x01);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xff, 0x00);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xfb, 0x01);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x35, 0x01);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xd3, 0x06);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0xd4, 0x04);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x5e, 0x0d);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x11, 0x00);
++
++	mipi_dsi_msleep(dsi_ctx, 100);
++
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x29, 0x00);
++	mipi_dsi_generic_write_seq_multi(dsi_ctx, 0x53, 0x24);
+ }
+ 
+-static int tm5p5_nt35596_off(struct tm5p5_nt35596 *ctx)
++static void tm5p5_nt35596_off(struct mipi_dsi_multi_context *dsi_ctx)
+ {
+-	struct mipi_dsi_device *dsi = ctx->dsi;
+-	struct device *dev = &dsi->dev;
+-	int ret;
+-
+-	ret = mipi_dsi_dcs_set_display_off(dsi);
+-	if (ret < 0) {
+-		dev_err(dev, "Failed to set display off: %d\n", ret);
+-		return ret;
+-	}
+-	msleep(60);
++	mipi_dsi_dcs_set_display_off_multi(dsi_ctx);
+ 
+-	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
+-	if (ret < 0) {
+-		dev_err(dev, "Failed to enter sleep mode: %d\n", ret);
+-		return ret;
+-	}
++	mipi_dsi_msleep(dsi_ctx, 60);
+ 
+-	mipi_dsi_dcs_write_seq(dsi, 0x4f, 0x01);
++	mipi_dsi_dcs_enter_sleep_mode_multi(dsi_ctx);
+ 
+-	return 0;
++	mipi_dsi_dcs_write_seq_multi(dsi_ctx, 0x4f, 0x01);
+ }
+ 
+ static int tm5p5_nt35596_prepare(struct drm_panel *panel)
+ {
+ 	struct tm5p5_nt35596 *ctx = to_tm5p5_nt35596(panel);
+-	struct device *dev = &ctx->dsi->dev;
+-	int ret;
++	struct mipi_dsi_multi_context dsi_ctx =	{.dsi = ctx->dsi};
+ 
+-	ret = regulator_bulk_enable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
+-	if (ret < 0) {
+-		dev_err(dev, "Failed to enable regulators: %d\n", ret);
+-		return ret;
+-	}
++	dsi_ctx.accum_err = regulator_bulk_enable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
++	if (dsi_ctx.accum_err)
++		return dsi_ctx.accum_err;
+ 
+ 	tm5p5_nt35596_reset(ctx);
+ 
+-	ret = tm5p5_nt35596_on(ctx);
+-	if (ret < 0) {
+-		dev_err(dev, "Failed to initialize panel: %d\n", ret);
++	tm5p5_nt35596_on(&dsi_ctx);
++
++	if (dsi_ctx.accum_err) {
+ 		gpiod_set_value_cansleep(ctx->reset_gpio, 0);
+ 		regulator_bulk_disable(ARRAY_SIZE(ctx->supplies),
+ 				       ctx->supplies);
+-		return ret;
+ 	}
+ 
+-	return 0;
++	return dsi_ctx.accum_err;
+ }
+ 
+ static int tm5p5_nt35596_unprepare(struct drm_panel *panel)
+ {
+ 	struct tm5p5_nt35596 *ctx = to_tm5p5_nt35596(panel);
+-	struct device *dev = &ctx->dsi->dev;
+-	int ret;
++	struct mipi_dsi_multi_context dsi_ctx =	{.dsi = ctx->dsi};
+ 
+-	ret = tm5p5_nt35596_off(ctx);
+-	if (ret < 0)
+-		dev_err(dev, "Failed to un-initialize panel: %d\n", ret);
++	tm5p5_nt35596_off(&dsi_ctx);
+ 
+ 	gpiod_set_value_cansleep(ctx->reset_gpio, 0);
+ 	regulator_bulk_disable(ARRAY_SIZE(ctx->supplies),
+ 			       ctx->supplies);
+ 
+-	return 0;
++	return dsi_ctx.accum_err;
+ }
+ 
+ static const struct drm_display_mode tm5p5_nt35596_mode = {
+-- 
+2.45.2
 
 
