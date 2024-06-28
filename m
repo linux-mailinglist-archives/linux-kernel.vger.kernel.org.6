@@ -1,150 +1,173 @@
-Return-Path: <linux-kernel+bounces-234395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5CC691C616
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:50:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3106F91C619
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:51:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 159C11C22162
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:50:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DBD3B263BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83FDF50A8F;
-	Fri, 28 Jun 2024 18:50:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3A2535DC;
+	Fri, 28 Jun 2024 18:51:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZgA3vrk1"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G9JLlm0A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3964F4D8C5
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 18:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C593FB88;
+	Fri, 28 Jun 2024 18:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719600620; cv=none; b=YW9YkM7hS7SeJuW26mZWGGB1Ehss4sZ6iJ9DNKCZK3SJMvsauVoGenDhcyo2ZxtazntaVoQ0VtGRR3SfRqhjmnOMKfh5paRQkaiYInoEjExU9RSpcJv+ScfVqtYPRFwdFiOazLzfYH+h5bEqD8rUZHZNHJrTyTaHL1hX5+epwAw=
+	t=1719600678; cv=none; b=HT9f+rVSN1yZXNq8PXva6vsaWjTAFAhS0LKHpsqQsBX0C+gRBY29T58tQajn5me7yxiMnPqSR5Ahz7fKbv8qQpWuttIXELZya6PFLqxz7dXlbTtpsmpzS7wL9WxI3Vu79hhze/PtyiUxWJuRBwZqMFS8l3cj769ivYqwohFOxKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719600620; c=relaxed/simple;
-	bh=O9Im7C0b3C4adLpd6iBlek+WA4C2wJk0bna3KFnoeYU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YHtbaLsTbUOjDk79xgFuII42nRj5qNapPlAxAA6kJWZ7QiS7zZ4CfqU48YRYRRG7WoJf7vDqaRweSqHx4a/bRctK12ifNG7zMT3I21Z90voomkz+ZCh3BGxMMFxnPg4UEgi/z2BiJrHh/Nyg9GbIstfVqMtqVe9aGtKFDW5bBYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZgA3vrk1; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719600617;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O9Im7C0b3C4adLpd6iBlek+WA4C2wJk0bna3KFnoeYU=;
-	b=ZgA3vrk13SNV8ehvmUbDzTXwTyQ2jbOnW9meYnRlN7oJwoMsgzQK/Z9HRjtgt8kWc1jbBs
-	PQhDf8jGbQOHWPgQtTGPynhGFNFAHu6nPrgyxr5S8rBe4JUsbxxa7sVWW1mWQAnUACzjFd
-	6wQPwTnHhNmT4Li62DUaaYXgKYXwgjc=
-Received: from mail-vs1-f72.google.com (mail-vs1-f72.google.com
- [209.85.217.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-262-1rfpYnpDMwOC6eQ27BwJ9Q-1; Fri, 28 Jun 2024 14:50:16 -0400
-X-MC-Unique: 1rfpYnpDMwOC6eQ27BwJ9Q-1
-Received: by mail-vs1-f72.google.com with SMTP id ada2fe7eead31-48f79297073so440210137.3
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 11:50:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719600616; x=1720205416;
-        h=mime-version:user-agent:content-transfer-encoding:organization
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O9Im7C0b3C4adLpd6iBlek+WA4C2wJk0bna3KFnoeYU=;
-        b=pOYbzRsWpal9+Shkb3Q+kk5I1XC1x70kLB8stwfLOUUWfsK7JOZCZtSk6BQ+W1KfO5
-         q/FTm5c51D1pRgxY7mBLyipetErhLoxPss3Y0aUwrByqk7lpfnhpk2BUsn4AhR+6c7tl
-         eF9r8fACAIeK7yj8XZTwVtUmjQ+OnCRmKm4hGFjS7xheanNClZ1DWp8d5pDDtahdlrcH
-         y8oxJtc8xCr+NWbGMozN9P+fI4IOLwsaXJtVFUcSwJsD1Oeqmz6tiPqdAAtcnKgZ8tl7
-         hUjnDvLenAP5AALMrhLnk4nGWSDfIe4OJ281oLV+tNQCLavaCo2T6lME7fdO6gCaKG2V
-         AElA==
-X-Forwarded-Encrypted: i=1; AJvYcCXvl2FHlQdLkdyRNc7to5j+O8ZjRVSkYyBh5mxgGUty1lD8Sy+U5WcpYOLb9QhSLGG9W7KjP3AbucjNQuik3wrPJK63Y44tDYzSUTtV
-X-Gm-Message-State: AOJu0YxiT3ahiK/kLEbxkC4IbJs9DZlWE9vCzbxzS8vuixKAeSutlR+0
-	kLha31e0GsRHxqQ6rNMo+gjVLenRkWkPI92YfoZnRQXS5JoKxWDtnazg+OY/NNhIaHOg8XReOnP
-	Om20+oqiwNWi71u7Ko9knsok/2AR1qIXvNoXU8BrEUQ8ouHR5RaV65LNaHaJM3w==
-X-Received: by 2002:a67:ff12:0:b0:48b:a44b:c935 with SMTP id ada2fe7eead31-48f4f136bc9mr16622136137.33.1719600615814;
-        Fri, 28 Jun 2024 11:50:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IElvRmmINNGnNs7Wpa+F7s40QSKueqKBDp+NCHe0hsGIwjIG9K8A2Un/dqoNkhQbEKVTVc0/g==
-X-Received: by 2002:a67:ff12:0:b0:48b:a44b:c935 with SMTP id ada2fe7eead31-48f4f136bc9mr16622116137.33.1719600615434;
-        Fri, 28 Jun 2024 11:50:15 -0700 (PDT)
-Received: from chopper.lyude.net ([2600:4040:5c4c:a000::789])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79d69308142sm96504585a.117.2024.06.28.11.50.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 11:50:15 -0700 (PDT)
-Message-ID: <eab9d109981bae8a443649bc4a2c1a08870590c7.camel@redhat.com>
-Subject: Re: [v3] drm/nouveau: fix null pointer dereference in
- nouveau_connector_get_modes
-From: Lyude Paul <lyude@redhat.com>
-To: Markus Elfring <Markus.Elfring@web.de>, nouveau@lists.freedesktop.org, 
- dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>, Danilo
- Krummrich <dakr@redhat.com>, Dave Airlie <airlied@redhat.com>, Karol Herbst
- <kherbst@redhat.com>
-Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, David
- Airlie <airlied@gmail.com>, Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
- Julia Lawall <julia.lawall@inria.fr>
-Date: Fri, 28 Jun 2024 14:50:13 -0400
-In-Reply-To: <a91bbb5f-8980-420b-b465-97691203347e@web.de>
-References: <20240627074204.3023776-1-make24@iscas.ac.cn>
-	 <d0bef439-5e1d-4ce0-9a24-da74ddc29755@web.de>
-	 <790dbe8aee621b58ec0ef8d029106cb1c1830a31.camel@redhat.com>
-	 <a91bbb5f-8980-420b-b465-97691203347e@web.de>
-Organization: Red Hat Inc.
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+	s=arc-20240116; t=1719600678; c=relaxed/simple;
+	bh=IRsyeZlE22rUDDc0+sSGMLdZ22/Kx3XdIJdAXDhbitw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LoI2Fcog/VlSIEgy1nB8eFMqQX3jjz6HDleFNTtzY2MNjbT4iMWi0dCbmkw5j2cKu9dAai4OgEmI0FQi2SACyJggOeJmyDEJ8MiLlnAnPQZ43bhW392gEjW/y8EiX124G0wVmY5GY26Hd4kXLgq2/FUcsiR1qvrXOqaWiHEvHsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G9JLlm0A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A8F2C116B1;
+	Fri, 28 Jun 2024 18:51:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719600677;
+	bh=IRsyeZlE22rUDDc0+sSGMLdZ22/Kx3XdIJdAXDhbitw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=G9JLlm0ATACU3fcEBByrFM7REN2luh5VGlvNeWlbqxDHW8+XOdEfzrgwpD3fM1wYS
+	 62PmGiQxzHm/AZ2CW2K51jWsfVzOv+QmuJrp6HIvowacYyFYiDmxCCU5MnWPRI3xbz
+	 r3BLrEM1OvFxDAybmDc+JCVwIG6MhAoRMwvMdXhYZcQ4Tjhvw9pSlDRmMIRJC6cNT5
+	 Ng6KdkSyq14NccIWdENRJr8Yuio1QioeWhO9KT+R15RCb+eRApHjQPndsoVNsG+eMS
+	 P1so7xdtrOTqMdxURNY/RA8A0sExQsyvI1c7lDRrugKyNPcoLlUMVVHVKmsUCqgrtw
+	 OikjF8+78ikRQ==
+Date: Fri, 28 Jun 2024 19:51:06 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: "Tinaco, Mariel" <Mariel.Tinaco@analog.com>
+Cc: "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Lars-Peter
+ Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Liam
+ Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ "Hennerich, Michael" <Michael.Hennerich@analog.com>, Marcelo Schmitt
+ <marcelo.schmitt1@gmail.com>, Dimitri Fedrau <dima.fedrau@gmail.com>,
+ Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH 2/2] iio: dac: support the ad8460 Waveform DAC
+Message-ID: <20240628195106.215839df@jic23-huawei>
+In-Reply-To: <SJ0PR03MB6224D9A14475071E8A1D921A91D42@SJ0PR03MB6224.namprd03.prod.outlook.com>
+References: <20240510064053.278257-1-Mariel.Tinaco@analog.com>
+	<20240510064053.278257-3-Mariel.Tinaco@analog.com>
+	<20240511174405.10d7fce8@jic23-huawei>
+	<SJ0PR03MB6224D9A14475071E8A1D921A91D42@SJ0PR03MB6224.namprd03.prod.outlook.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2024-06-28 at 20:42 +0200, Markus Elfring wrote:
-> > (...I doubt I'll get a response from Markus,
->=20
-> Why?
+On Mon, 24 Jun 2024 04:56:57 +0000
+"Tinaco, Mariel" <Mariel.Tinaco@analog.com> wrote:
 
-Because the responses you have been given read like a bot, and numerous
-actual contributors and kernel maintainers like myself and Greg have
-asked you to stop leaving messages like this and you continue sending
-them. I promise you, maintainers are more then capable of being able to
-tell a contributor when they need to improve the summary they've
-provided in a git commit.
+> > -----Original Message-----
+> > From: Jonathan Cameron <jic23@kernel.org>
+> > Sent: Sunday, May 12, 2024 12:44 AM
+> > To: Tinaco, Mariel <Mariel.Tinaco@analog.com>
+> > Cc: linux-iio@vger.kernel.org; devicetree@vger.kernel.org; linux-
+> > kernel@vger.kernel.org; Lars-Peter Clausen <lars@metafoo.de>; Rob Herri=
+ng
+> > <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dool=
+ey
+> > <conor+dt@kernel.org>; Liam Girdwood <lgirdwood@gmail.com>; Mark Brown
+> > <broonie@kernel.org>; Hennerich, Michael <Michael.Hennerich@analog.com>;
+> > Marcelo Schmitt <marcelo.schmitt1@gmail.com>; Dimitri Fedrau
+> > <dima.fedrau@gmail.com>; Guenter Roeck <linux@roeck-us.net>
+> > Subject: Re: [PATCH 2/2] iio: dac: support the ad8460 Waveform DAC
+> >=20
+> > [External]
+> >=20
+> > On Fri, 10 May 2024 14:40:53 +0800
+> > Mariel Tinaco <Mariel.Tinaco@analog.com> wrote:
+> >  =20
+> > > The AD8460 is a =E2=80=9Cbits in, power out=E2=80=9D high voltage, hi=
+gh-power,
+> > > highspeed driver optimized for large output current (up to =C2=B11 A)=
+ and
+> > > high slew rate (up to =C2=B11800 V/=CE=BCs) at high voltage (up to =
+=C2=B140 V) into
+> > > capacitive loads.
+> > >
+> > > A digital engine implements user-configurable features: modes for
+> > > digital input, programmable supply current, and fault monitoring and
+> > > programmable protection settings for output current, output voltage,
+> > > and junction temperature. The AD8460 operates on high voltage dual
+> > > supplies up to =C2=B155 V and a single low voltage supply of 5 V.
+> > >
+> > > Signed-off-by: Mariel Tinaco <Mariel.Tinaco@analog.com> =20
+> >=20
+> > I'd like to see some ABI docs for the debugfs interface.
+> > The device is unusual enough that a general intro document or a lot mor=
+e in the
+> > series cover letter would be useful.
+> >=20
+> > I'm not sure what the dmaengine usage in here is doing for example?
+> > Driving the parallel bus perhaps?  David was correct that the binding s=
+hould
+> > reflect that part as well. I was assuming you'd only implemented the sp=
+i part.
+> >=20
+> > How to handle the pattern generator is also an interesting question.
+> > That probably wants a version of the symbol interfaces we use for PSK a=
+nd
+> > similar.  We did have some DDS drivers a long time back in staging but =
+they only
+> > did a few fixed waveforms so this is breaking new ground. =20
+>=20
+> I also thought about how should the pattern generator be handled. IN the =
+last
+> revision, there were two debug attributes that make up this feature. Patt=
+ern depth
+> and pattern memory. Ultimately I found a way to combine these two attribu=
+tes
+> into one called "test_pattern". The attribute is a string containing an a=
+rray
+> of values with a maximum of 16 data words, which the DAC will cycle throu=
+gh
+> to generate a pattern. The number of values within the string can be anyw=
+here
+> between 1 to 16 and have a space in between. I also added a "test_pattern=
+_enable"
+> debug attribute. For the ABI file, should I create one alongside other "d=
+ebugfs-*"
+> files and just mention the name of the part? e.g. "debugfs-driver-ad8460"=
+=20
 
->=20
->=20
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 but I certainly want
-> > to
-> > make sure they are a bot
->=20
-> Can I ever adjust your views into more desirable directions
-> (as it occasionally happened with other contributors)?
+Doing this in debugfs basically means you aren't intending it to get used i=
+n real
+usecases.  So we need some sysfs ABI.
 
-No, because you're not contributing anything of value to the discussion
-- you are just confusing new contributors despite having been told
-explicitly to stop.
+That probably means a mode switch similar to the ones we have for devices t=
+hat use
+an external toggle (typically for Frequency Shift Keying or similar or some=
+times just
+to flip between two DC voltages).  We need a new term though as this isn't =
+a toggle.
 
->=20
->=20
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- and not an actual person before removing
-> > them
->=20
-> I hope still that affected development discussions can become
-> more constructive again.
->=20
-> Regards,
-> Markus
->=20
+For the values we could map it to that interface which is something like
 
---=20
-Cheers,
- Lyude Paul (she/her)
- Software Engineer at Red Hat
+out_voltage0_raw0
+out_voltage0_raw1
+
+etc.  That avoids need for a new ABI for the values, but perhaps isn't that
+elegant if the patterns on other devices we eventually support this on get
+large.
+
+Anyone know how large these typically get? I'm being lazy and don't want to
+datasheet dive this evening!
+
+Jonathan
 
 
