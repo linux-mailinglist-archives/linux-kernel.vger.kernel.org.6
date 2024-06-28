@@ -1,113 +1,200 @@
-Return-Path: <linux-kernel+bounces-233962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E10191C022
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:59:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ADCE91C029
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:00:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D3011C21598
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 13:59:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3812B22089
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A7EE1BE85E;
-	Fri, 28 Jun 2024 13:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KcwcSxxD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B371BF301;
+	Fri, 28 Jun 2024 14:00:43 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C66E1E89A;
-	Fri, 28 Jun 2024 13:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878711E889;
+	Fri, 28 Jun 2024 14:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719583165; cv=none; b=RGOMpYX3uWNRcVKTzuWpyXQK7weVXoaAQU0DfeVnPfmA7+BK3sCam2+rE2jAiUJ5JKKLkLKTsh97tItfSEAmbsPUnbFQb/uP0Nmcx1Av3P0G4ugjlQF31loq+kCam5K2aI1BL6aaasp8fKuSsxb6ryiPU67y43gxb/qa+6WF+Kc=
+	t=1719583242; cv=none; b=EOGFEVf3RGpXyouZNcZYZhYxjJCPYs2bpW+U1Bq1GQfGDBx7R3/XkNQpag46d+S6gBThpOGWwr+0NjtJyVWn/KW3MasU7DZyiQc5UAG+a6atZ275kyn6rYzpNT6crYE6DpYIB4UA9dvygmCZf3k6Vp4RAUQmCorUFlKW8nMea7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719583165; c=relaxed/simple;
-	bh=JKP5LbX/sS4jmKSQXTGB/C89N6UVsIaQooxZpoxlQoM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=htla7djwNaR52Uwx0pULqwksQ5wUZKI+oNlDIlUKpqYu2c2Hc9rdIN72fhgqUX1qpk3U/0FpAKLcsWF6cdTUlzRU7eY7LkWOeRtroLheNxVxztgzF/6akkLqkvg4uz/4GgP55vtEYekMARTafTEE1JEBl9iBYn90GkYLYOsO2KU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KcwcSxxD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C52B1C116B1;
-	Fri, 28 Jun 2024 13:59:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719583165;
-	bh=JKP5LbX/sS4jmKSQXTGB/C89N6UVsIaQooxZpoxlQoM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=KcwcSxxD0OLOaqLA2+rjs0yKqgiMLAr0VJzHmKrhsuNXAo4RS1AzPokPDqeUj2U9t
-	 cOaLx8eNj3rJ5BoGzjyNt5EVWmHIvX4h1cnOa4MjXcjJoS8H7CJibSfbj+caGQnCSf
-	 Mit+6Im7rDs68yuCkeaOJN56HR4mXOAaiXp/G+fwDuc+0C2hltWr0LCKT+T8i5VUzz
-	 epQWkg3z6EebIyeZTK/yf8tntWZDojOM8WjPgA2qBrhbJPqW7V03kg2C3wBbUhaKcc
-	 K8jBLBOvf9oPwTa9Lxt/YnA/7CEZNMJM1KmgWkLNBe665vJyfOWUEXYtgxKb1Avrcp
-	 HsM6V+oHv08aw==
-Date: Fri, 28 Jun 2024 14:59:20 +0100
-From: Mark Brown <broonie@kernel.org>
-To: David Sterba <dsterba@suse.cz>
-Cc: David Sterba <dsterba@suse.com>, Filipe Manana <fdmanana@suse.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the btrfs tree with the fs-current tree
-Message-ID: <Zn7BuMWlQxmzB7lm@sirena.org.uk>
+	s=arc-20240116; t=1719583242; c=relaxed/simple;
+	bh=gJSDCDl2ZLDs8dW8dJhpapFBbEIcKabxr5MXo+v0kGI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oa4SzKBfxxCyjPxSiji2nmVWpVv0opmYtUIraXk8ddaAdzV4aY4QVqZv95vAB7GC4pMLfmWCNbM9KMkqgyhlu2pc8bF6aRw/40I8m2nt613Y9NxZsV5k79C8hLhOObgYGHep41ip+t39qf+BHMS+L8MmU+ur/n23DSlr33KeyDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.97.1)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1sNC94-000000003K2-3H22;
+	Fri, 28 Jun 2024 14:00:10 +0000
+Date: Fri, 28 Jun 2024 15:00:05 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>, Jens Axboe <axboe@kernel.dk>,
+	Hauke Mehrtens <hauke@hauke-m.de>, Felix Fietkau <nbd@nbd.name>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Dave Chinner <dchinner@redhat.com>, Jan Kara <jack@suse.cz>,
+	Christian Brauner <brauner@kernel.org>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Li Lingfeng <lilingfeng3@huawei.com>,
+	Christian Heusel <christian@heusel.eu>,
+	Min Li <min15.li@samsung.com>, Avri Altman <avri.altman@wdc.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Hannes Reinecke <hare@suse.de>,
+	Mikko Rapeli <mikko.rapeli@linaro.org>, Yeqi Fu <asuk4.q@gmail.com>,
+	Victor Shih <victor.shih@genesyslogic.com.tw>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Li Zhijian <lizhijian@fujitsu.com>,
+	"Ricardo B. Marliere" <ricardo@marliere.net>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: [PATCH v4 3/4] block: add support for notifications
+Message-ID: <Zn7B5adt82suLrRq@makrotopia.org>
+References: <cover.1719520771.git.daniel@makrotopia.org>
+ <4ebef78f07ff1ea4d553c481ffa9e130d65db772.1719520771.git.daniel@makrotopia.org>
+ <Zn4_-alKtxuZ6zNt@infradead.org>
+ <Zn6rU-mCYQcyCkGT@makrotopia.org>
+ <Zn6xjP8eH470wWXC@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="caGNKGGUnezGAgPE"
-Content-Disposition: inline
-
-
---caGNKGGUnezGAgPE
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <Zn6xjP8eH470wWXC@infradead.org>
 
-Hi all,
+Hi Christoph,
 
-Today's linux-next merge of the btrfs tree got a conflict in:
+On Fri, Jun 28, 2024 at 05:50:20AM -0700, Christoph Hellwig wrote:
+> On Fri, Jun 28, 2024 at 01:23:47PM +0100, Daniel Golle wrote:
+> > So that's what I did consequently. Using the notification interface
+> > the NVMEM driver can live in drivers/nvmem/ and doesn't need to be
+> > using block internals.
+> > 
+> > > And not actually having a user for it is a complete no-go.
+> > > 
+> > 
+> > The user will be the nvmem provider, you can see the code in earlier
+> > versions of the patchset where I had included it:
+> > 
+> > https://patchwork.kernel.org/project/linux-block/patch/96554d6b4d9fa72f936c2c476eb0b023cdd60a64.1717031992.git.daniel@makrotopia.org/
+> > 
+> > Being another subsystem I thought it'd be better to deal with the
+> > block related things first, and once that has been sorted out I will
+> > move on to add the NVMEM driver and make the necessary changes for
+> > using it on eMMC.
+> 
+> It is rather hard to review an interface without the users.
 
-  fs/btrfs/qgroup.c
+I understand that, please take a look at previous iterations of this very
+series or use the link to the patch which I have sent before (see above).
 
-between commit:
+> 
+> I still dislike the idea of notifications from bdev discovery /
+> partition scanning into the users of them.  We have one such users
+> in the MD legacy autodetect code, but that has largely been considered
+> at bad idea and distros tend to use mdadm based assembly from initramfs
+> instead.  Which IMHO feels like the right thing for nvmem as well,
+> just have an nvmem provider that opens a file for a user provided
+> path and use kernel_read on it.  This can covered block devices,
+> character devices and even regular files.  It will require initramfs
+> support, but that is pretty much used everywhere for storage discovery
+> and setup anyway.
 
-  a7e4c6a3031c7 ("btrfs: qgroup: fix quota root leak after quota disable fa=
-ilure")
+The problem there is that then we cannot use Device Tree to device the
+NVMEM layouts, and reference NVMEM bits to the dirvers which need them.
+Hence also the definition of the NVMEM layout would have to happen in
+userspace, inside an initramfs. I know that having an initramfs is
+common for classic desktop or server distributions, but the same is not
+true on more simple embedded devices such as router/firewall or WiFi
+access point appliances running OpenWrt.
 
-=66rom the fs-current tree and commit:
+Carrying all that board-specific knowledge in the form of scripts
+identifying the board is not exactly nice, nor is creating an individual
+initramfs for each of the 1000+ boards supported by OpenWrt, for
+example. Extracting the layout information from /sys/firmware/devicetree
+in userspace just to then somehow use libblkid to identify the block
+device and throw that information back at the kernel which requested it
+e.g. using a firmware hotplug call is an option, but imho an unnecessary
+complication. And obviously it would still prevent things like nfsroot
+(which requires the MAC address and potentially a WiFi calibration data
+to be setup) from working out of the box.
 
-  27a6520fbc259 ("btrfs: do not BUG_ON() when freeing tree block after erro=
-r")
+Doing the detour via userspace only for devices with an eMMC would be
+different from how it is done for any other type of backing storage such
+as simple I2C EEPROMs, (SPI-)flashes or UBI volumes.
+Having a unified approach for all of them would make things much more
+convenient, as typically the actual layouts are even the same and can be
+reused accross devices of the same vendor. GL-iNet or ASUS router
+devices are a good example for that: The more high-end ones come with an
+eMMC and use the same NVMEM layout inside a GPT partition than mid-field
+devices on SPI-NAND or UBI, and older and/or lower-end devices on an
+SPI-NOR flash MTD partition.
 
-=66rom the btrfs tree.
+To better understand the situation, maybe look at a few examples for
+which we are currently already using this patchset downstream at
+OpenWrt:
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Inside a GPT partition on an eMMC:
+https://git.openwrt.org/?p=openwrt/openwrt.git;a=blob;f=target/linux/mediatek/dts/mt7981b-unielec-u7981-01-emmc.dts;h=abd4d4e59d74cc0d24e8c9e10e16c0859844e003;hb=HEAD#l39
 
-diff --cc fs/btrfs/qgroup.c
-index bf0f81d59b6bc,3cf9724eb188c..0000000000000
---- a/fs/btrfs/qgroup.c
-+++ b/fs/btrfs/qgroup.c
+On raw SPI-NAND (already possible with vanilla Linux):
+https://git.openwrt.org/?p=openwrt/openwrt.git;a=blob;f=target/linux/mediatek/dts/mt7981b-unielec-u7981-01-nand.dts;h=230a612a34f7d370eb09e92284950d9949bf10cd;hb=HEAD#l45
 
---caGNKGGUnezGAgPE
-Content-Type: application/pgp-signature; name="signature.asc"
+Inside a UBI volume (also already possible with vanilla Linux):
+https://git.openwrt.org/?p=openwrt/openwrt.git;a=blob;f=target/linux/mediatek/dts/mt7986a-asus-tuf-ax4200.dts;h=e40602fa215e1a677b534c85b767e824af041518;hb=HEAD#l255
 
------BEGIN PGP SIGNATURE-----
+Inside the boot hwpartition of the eMMC:
+https://git.openwrt.org/?p=openwrt/openwrt.git;a=blob;f=target/linux/mediatek/dts/mt7981b-glinet-gl-mt2500.dts;h=15818a90fca02955879d1bcca55ba2153e390621;hb=HEAD#l156
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ+wbgACgkQJNaLcl1U
-h9CyVwgAgYefifBatz0MEFkP3KCf+hQeCRKEJUt6iFc7bm/0Tb/6rUGybumFIb4j
-FE6lpidRTj/KdVqGvNFNxjSE/pElELA4zEyrIG7WNvx3m83JKTYs7a/LIbkpcRjh
-tU8v7R5k71O8lZNW8gRa0kIENQ/Mk4EV2R5Rd13HgtZy/+/f3WX6yFvOS3WT9MF9
-dgksXSfSeEBoiUrVI4fnfzLEaGnm7/JvWZ7GgVSOfwfZ87NXjLbGiTCgo/VWhJFw
-xEcTjTjXGRXxzbWqWYYFSOfeINzbRyruxP7KmKRNUzwLLDmqsjfqABrWcRO6PIm5
-uNM2pI+uoVC1agDSZGHMSYpXu2WTLQ==
-=83SX
------END PGP SIGNATURE-----
+Inside a GPT partition on an eMMC:
+https://git.openwrt.org/?p=openwrt/openwrt.git;a=blob;f=target/linux/mediatek/dts/mt7986a-glinet-gl-mt6000.dts;h=fd0e1a69157ed0f27c32376aabab0fcc85ce23b9;hb=HEAD#l317
 
---caGNKGGUnezGAgPE--
+https://git.openwrt.org/?p=openwrt/openwrt.git;a=blob;f=target/linux/mediatek/dts/mt7988a-smartrg-mt-stuart.dtsi;h=2b468f9bb311141d083e51ca5edaa7dce253c91c;hb=HEAD#l504
+
+Those are just the examples I have been working on myself, so it was
+easy to come up with them. There are also ASUS devices with Qualcomm
+SoC using the same layout as the MediaTek-based devices inside a UBI
+volume.
+
+Once a unified way to describe the loaction of the NVMEM bits is also
+present in upstream Linux, all those downstream device trees could be
+submitted for inclusion in Linux, and one could install a
+general-purpose OS like Debian **which wouldn't need to know anything
+about the details of where to read MAC addresses or calibration data
+from**, all hardware-specific knowledge would reside in DT.
+
+The failure of defining this in a nice way results in very ugly
+situations such as distributions carrying the (board-specific!)
+calibration data for very few but very common single-board computers
+like the RaspberryPi in their rootfs or even in initramfs. Each
+distribution with a different level of hacks to give them individual MAC
+addresses and to load the correct file... And while this doesn't look so
+bad for systems which anyway come only with removable microSD storage,
+it **does* get ugly when it comes to systems which do store that
+information on their eMMC (typically "appliances" rather than SBCs meant
+for tinkerers).
+
+Please take all that into consiration and also note that obviously, on
+systems not making use of any of that, you may simple not enable
+CONFIG_BLOCK_NOTIFIERS -- other than in previous iterations of the
+patchset this is all completely optional now.
+
+
+Cheers
+
+
+Daniel
 
