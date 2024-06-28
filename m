@@ -1,96 +1,175 @@
-Return-Path: <linux-kernel+bounces-233366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3947391B61B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:28:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F201291B61E
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:29:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA20C1F2251D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 05:27:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82FC01F23EE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 05:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF423C08A;
-	Fri, 28 Jun 2024 05:27:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753283DB89;
+	Fri, 28 Jun 2024 05:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dvvywQi4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kwdpu6n8"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D262D05E
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 05:27:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5032D36B11;
+	Fri, 28 Jun 2024 05:29:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719552471; cv=none; b=QdzNAlbQlXM2xZ46kLoVriCT7OIlXv4Qo/fQyze1k7BmIxM5uTC+dQH+Au+pxP5W65YITBWCsDdOqc7KSZcHMDkggstHkwY9shcr9nyDJdkUgrTCNg2SVNyfjnJdjTQxeilOObbMDhDzXunpa7rVjoFeAXgh/2g/0xTFEtom9Lo=
+	t=1719552574; cv=none; b=GfNfIFZ1695A9uF+TMrmhouHXlqR6uuMwom3+W/8hxynRA3vO1Jc/+lgA+BHQbMwFRSPKYt+R5oUG9BDa7rVAxqLfJ6kPdGfdCg+zh6maKmu+QXRA9MPskxnj5jmMGwxJjNbSDIFAf/wX6fd6B3X2UuuFd/5jLN7cqvA6tnKkM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719552471; c=relaxed/simple;
-	bh=EbWFE2VnTSRfIqIsYblunUdrhQzg/C0mSK2Ujk57jGg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hiG1jgA+/mf+GBHLrlZ7h2PwlVVmBmY3gJh7N2uGeJRLAkMyx6ELYinZDq+KW/JPS9VBhL1s505myzfPQYNFVhp6Ec0DE1R0CuGEbZ9RWXyoLcyv6aIGQvE3ZIo1xzFCf8rTryF1Q55vV3Qs1xyNYRJIcgPwte5pg+6Ebbe7Qlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dvvywQi4; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719552469; x=1751088469;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=EbWFE2VnTSRfIqIsYblunUdrhQzg/C0mSK2Ujk57jGg=;
-  b=dvvywQi4YYKYnoumopw65Ae9pER4nlnlMGcrcSFRN97xvfJI6qZ6TY53
-   bJ9wWOqIfidbZ2643qw+Fun6xhcmeNHrtGwz4tN1MtneHeZn5qfcDBKjZ
-   5sL1v+LXYhjXJTdpdUC4kfrrHpa43s/Ocbx4TBuQ6khf+pqXXkkJPkcFN
-   oGRKU32jrbU3MLwc4EA/4o5kWHXCODdhTh9vI1IN+D3OzFvFbAFoQ1H/Y
-   KHACrOoOl93UC417Qsr0NYMbPwU6jzSg847ISUaE/9rjLLNkMcevqa32x
-   X4VGYQl2bl+FxBi5CGxISfpPY4Zv9oyMviMAEAfSSc13j2w8jbbYIvVmH
-   w==;
-X-CSE-ConnectionGUID: 6KizJdhdS1WEAUiKJLmCOA==
-X-CSE-MsgGUID: EjxzyoO9Ss634TDZe41Lyg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="20593221"
-X-IronPort-AV: E=Sophos;i="6.09,168,1716274800"; 
-   d="scan'208";a="20593221"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 22:27:48 -0700
-X-CSE-ConnectionGUID: qrvTILA6TI6zx5MgNg1xmw==
-X-CSE-MsgGUID: W50Q72weR1SfU3HNkX4jxA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,168,1716274800"; 
-   d="scan'208";a="49085086"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.54.38.190])
-  by fmviesa005.fm.intel.com with ESMTP; 27 Jun 2024 22:27:48 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-	id E9A88302A3B; Thu, 27 Jun 2024 22:27:47 -0700 (PDT)
-From: Andi Kleen <ak@linux.intel.com>
-To: Ruidong Tian <tianruidong@linux.alibaba.com>
-Cc: linux-kernel@vger.kernel.org,  linux-mm@kvack.org,
-  akpm@linux-foundation.org,  nao.horiguchi@gmail.com,
-  linmiaohe@huawei.com,  tianruidong@alibaba.linux.com,
-  xueshuai@linux.alibaba.com
-Subject: Re: [PATCH] mm/hwpoison: avoid speculation access after soft/hard
- offline
-In-Reply-To: <20240628033509.27612-1-tianruidong@linux.alibaba.com> (Ruidong
-	Tian's message of "Fri, 28 Jun 2024 11:35:09 +0800")
-References: <20240628033509.27612-1-tianruidong@linux.alibaba.com>
-Date: Thu, 27 Jun 2024 22:27:47 -0700
-Message-ID: <871q4hzlf0.fsf@linux.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1719552574; c=relaxed/simple;
+	bh=ks1F6Sn9pTxTI0BwOCBA0EESvxRrUUHI3vfdcNjpIUw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TOrjZwJQELbdlNiDAKFj05T1a2Stdqe6Ij0Fptc3zFQD8ZESsUUpFAJmBMP18F0QA3/hHnhpp5Io0SYqt8KlV1IzM8gG+4CzFVvGmJsMVDa3wwC2i8C/5UWL44d9C6ktoSF5A6+YalAvUJWgLUvvnUbVat+KgxH3Pri7uunf++U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kwdpu6n8; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2c7af3116aaso56096a91.2;
+        Thu, 27 Jun 2024 22:29:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719552572; x=1720157372; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PJ/M56ThtwrsFD5Lfw9SbGejoYETZHoSJEMo2+pp2ms=;
+        b=kwdpu6n8pNn9eyb+lBJKj44mYs5+fAc4M3IRux4ckG5ZGhHbCLMln9GxjW/V9Mdt6H
+         EYTtcjXGwCp2DXcQTftMIM20Nl8+zjOJEuSYePhPNBK8GU3TYQU+4qzQt5vrvoiCxvEk
+         qcbeageydIWL2hpkGPlHQuXZMondcrNUTJMsiJoUGL28wpgvUfYKNCLk8CaGG751yLnV
+         Z8dv+pjvSJ8kiAfQWfQoops2dtTXBqLmjd9z5RArzTLNKw9g6ntvMaGeA0cPaQwudACj
+         ln+/xqr42P/amow7KThd6eWB2XVAh4ta95l5lqTZM5w/3LMVLUzJBYM1YdFFNd9eV2hw
+         4qHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719552572; x=1720157372;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PJ/M56ThtwrsFD5Lfw9SbGejoYETZHoSJEMo2+pp2ms=;
+        b=CGc3q46fNmzYXzX0ujBC3obDay9B5H3WltfmT9GW0Gc9RUI8ENZ41IJbkWKL3ppkUg
+         JiehWops1buy+JKWsH9Rmg2Fl8P8+VFxp01/Hq90Ab0nXu38qDyb5M/sLmlUkEae/6c/
+         7qJSGdfcnqPdQ9a0zYWNHIIqQNryJNdZst4Cn32M2GIu4Dd1EY8/FRNvI6DjRnnDKQJt
+         ba6hgBjINDY+wJYByYBb3mA2X/l10SkUD/dyW7GmmMq2kpN59GozmXMd2fyv7fDDH2NE
+         b9WDU5LkQ7sQadIi7/428npytwlhs/Qr/yZzcSlCg6N0hB3x7hjh+VvARazVnkW91xTL
+         Spwg==
+X-Forwarded-Encrypted: i=1; AJvYcCVzfFUJ9G7XD3djr+ZiEARnbN+1dSQ1w/vRRIqZyph5Yx+2qj2B/sRKRw/QZLGI+E/lNTLWl1jDfn+tHjBqvFMOmtZJXkI5BJB8haiCkRWksQnGlYoCHu6J318M5uTg2edBsHZj
+X-Gm-Message-State: AOJu0YwyCEntHdUVHFx4e8MaBQuRBPxWhzRmGdiZmbnbm+L4FjLYck86
+	fL01xDw6o++cdmdRUrDrBAQDWhD4Qyvijr7968kqx+SHrb+SnRx3KP23bS15
+X-Google-Smtp-Source: AGHT+IHLv5sQ9sNkcIC/nJeiyanw64nDmI2PGR16Y8htj0wpAT+P7CbV8FfgwKGWVS9OAZ3ykXJVGA==
+X-Received: by 2002:a17:90a:db94:b0:2c2:d11b:14dd with SMTP id 98e67ed59e1d1-2c8452e0fdbmr15923350a91.0.1719552572391;
+        Thu, 27 Jun 2024 22:29:32 -0700 (PDT)
+Received: from localhost.localdomain (122-117-151-175.hinet-ip.hinet.net. [122.117.151.175])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91c7ddb23sm735599a91.0.2024.06.27.22.29.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 22:29:31 -0700 (PDT)
+From: Kuangyi Chiang <ki.chiang65@gmail.com>
+To: mathias.nyman@intel.com,
+	gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ki.chiang65@gmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH v3] xhci: Don't issue Reset Device command to Etron xHCI host
+Date: Fri, 28 Jun 2024 13:29:14 +0800
+Message-Id: <20240628052914.5215-1-ki.chiang65@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Ruidong Tian <tianruidong@linux.alibaba.com> writes:
+Sometimes the hub driver does not recognize the USB device connected
+to the external USB2.0 hub when the system resumes from S4.
 
-> Page that offlined can report CE/UE event due to speculation access.
-> Delete kernel 1:1 linner mapping after soft/hard offline to avoid it.
+After the SetPortFeature(PORT_RESET) request is completed, the hub
+driver calls the HCD reset_device callback, which will issue a Reset
+Device command and free all structures associated with endpoints
+that were disabled.
 
-But that will split the large pages for the direct mapping, costing you
-every time there is TLB pressure. You can probably do the math, with
-enough uptime and a reasonable error rate aand this patch there might be
-not even be 2MB pages left at some point. Cheaper to just ignore them,
-since they shouldn't cause any other problems.
+This happens when the xHCI driver issue a Reset Device command to
+inform the Etron xHCI host that the USB device associated with a
+device slot has been reset. Seems that the Etron xHCI host can not
+perform this command correctly, affecting the USB device.
 
--Andi
+To work around this, the xHCI driver should obtain a new device slot
+with reference to commit 651aaf36a7d7 ("usb: xhci: Handle USB transaction
+error on address command"), which is another way to inform the Etron
+xHCI host that the USB device has been reset.
+
+Both EJ168 and EJ188 have the same problem, applying this patch then
+the problem is gone.
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Kuangyi Chiang <ki.chiang65@gmail.com>
+---
+Changes in v3:
+- Modify commit message
+- Modify comment
+- Fix coding style, add a #define PCI_VENDOR_ID_ETRON
+- Code refactor, call xhci_disable_slot() + xhci_free_virt_device() helper
+
+Changes in v2:
+- Change commit log
+- Add a comment for the workaround
+- Revert "global xhci_free_dev()"
+- Remove XHCI_ETRON_HOST quirk bit
+
+ drivers/usb/host/xhci.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+index 37eb37b0affa..abaef0adacf1 100644
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -3682,6 +3682,10 @@ void xhci_free_device_endpoint_resources(struct xhci_hcd *xhci,
+ 				xhci->num_active_eps);
+ }
+ 
++#define PCI_VENDOR_ID_ETRON		0x1b6f
++
++static void xhci_free_dev(struct usb_hcd *hcd, struct usb_device *udev);
++
+ /*
+  * This submits a Reset Device Command, which will set the device state to 0,
+  * set the device address to 0, and disable all the endpoints except the default
+@@ -3711,6 +3715,7 @@ static int xhci_discover_or_reset_device(struct usb_hcd *hcd,
+ 	struct xhci_command *reset_device_cmd;
+ 	struct xhci_slot_ctx *slot_ctx;
+ 	int old_active_eps = 0;
++	struct device *dev = hcd->self.controller;
+ 
+ 	ret = xhci_check_args(hcd, udev, NULL, 0, false, __func__);
+ 	if (ret <= 0)
+@@ -3752,6 +3757,23 @@ static int xhci_discover_or_reset_device(struct usb_hcd *hcd,
+ 						SLOT_STATE_DISABLED)
+ 		return 0;
+ 
++	if (dev_is_pci(dev) && to_pci_dev(dev)->vendor == PCI_VENDOR_ID_ETRON) {
++		/*
++		 * Obtaining a new device slot to inform the xHCI host that
++		 * the USB device has been reset.
++		 */
++		ret = xhci_disable_slot(xhci, udev->slot_id);
++		xhci_free_virt_device(xhci, udev->slot_id);
++		if (!ret) {
++			ret = xhci_alloc_dev(hcd, udev);
++			if (ret == 1)
++				ret = 0;
++			else
++				ret = -EINVAL;
++		}
++		return ret;
++	}
++
+ 	trace_xhci_discover_or_reset_device(slot_ctx);
+ 
+ 	xhci_dbg(xhci, "Resetting device with slot ID %u\n", slot_id);
+-- 
+2.25.1
+
 
