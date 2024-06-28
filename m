@@ -1,146 +1,154 @@
-Return-Path: <linux-kernel+bounces-233900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E144091BEFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:47:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3FE491BF01
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:47:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7BECB21D3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:47:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5F971C225E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1B51946D6;
-	Fri, 28 Jun 2024 12:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F210D1AC790;
+	Fri, 28 Jun 2024 12:47:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="2Pd9qWSs"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OKMyiVYs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6CF1953A8
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 12:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403421AC244;
+	Fri, 28 Jun 2024 12:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719578827; cv=none; b=UfSmJQPxdZx/gghfSz4zAdQe2I0neBXN0ZEaAqSiT2kt5YQZ5l6+9P6rutNcsBPYTLVu4va1FhVnJ6TER4qfU1ZQXXW3N3vKb860tsV4H2dX90Q/pTXCD6X2vUcNSjoVR94dGi4jgfgNfqYn9zmVtG+bCxqePRqlqpAhcLAAmlI=
+	t=1719578854; cv=none; b=QgXwEd5OmMGxYmN/BL6oCzJe7Xe5rIxlAD059NoPXJKLD8egkuQ7M6QTiozHMdCX1shccuSddRxnsk6P1QzJ5yNUDLdE+PQdm3NtOE4auIKpAFPkHqryCYTyAnYExYm8HASkI79mMnJJ4hNaQodEOkuw9bvy/9f2o8xANxJzYWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719578827; c=relaxed/simple;
-	bh=7jPexHrV/W4ImEvkL858EPEYGhVlC87FfSGCCPQU1BM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=R89q5p4HtlrTaAjPnHbcaUUtnEI33UgnoUi2lHWO4kXwWn0a3JjWhM+yXDGpRiuS2skaalUF63XrRjG0SKnCZSOdIWCMT9Q94nwWijitImiv47Ltj+DyJakxEy40/Y+7qA2ds+54Z1EeOOKAw2lQZD0l0DYKsNGyFIBlf/rkDMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=2Pd9qWSs; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45S958Kt022997;
-	Fri, 28 Jun 2024 14:46:33 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	ZAPW0T4mk6+g9RGuq3Ms922nET7aswPOyugOIngcHKU=; b=2Pd9qWSsIfkL0qEw
-	+CjoWW7KavAWCHIpnaFU6LkIKt6De71CvzkU3m7Y28k4TqSs5FR7/LWHRL+EWTRq
-	lrD88aB4Sc7RByWtbwnzKGBDPPmhUbhN8EkIe5YHhlnuZAmGVXzH43NcGHkfACEW
-	GeoE/b1aLOVnXtL7/XYnexWBUwGWf9EQcziidRafZKmBwBwdaG1ECHCgjLXXQXOK
-	LV/0WWmsxAO1JHOLKTXcmYRpKhdyC0uEeYuXjboOV8s+BT3pYeY+UA3anR09+awV
-	pC/r4CAoVMHooouVSg0xrYiIqT2XoiIEtWwr1LmVmTTGcNxkW7PJWSrOoGwzi3Bn
-	PVbEfQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yx9jjqgfe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Jun 2024 14:46:33 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 9E1C740048;
-	Fri, 28 Jun 2024 14:46:27 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CA7A02258A2;
-	Fri, 28 Jun 2024 14:45:45 +0200 (CEST)
-Received: from [10.48.86.145] (10.48.86.145) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Fri, 28 Jun
- 2024 14:45:45 +0200
-Message-ID: <21f4d43d-4abd-4aca-7abb-7321bcfa0f1d@foss.st.com>
-Date: Fri, 28 Jun 2024 14:45:44 +0200
+	s=arc-20240116; t=1719578854; c=relaxed/simple;
+	bh=LHijR0kl7hNylO84H4MwHL6n5jNx5enYAaT3OgCdYX0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FpNsc1Q9auiuWvDKm+7LWtAS5xEUynOkuWuxv+JV6So32M36KQurS80oABlZ0vYMwD+J9Vdg+X4aM9f/ixN377uniA/IqkdY1vQR0Sgqdcy7rtyhZWD+Lq9izzHpcBP+Zze4NiAzETSEZDkL8MxBYhOIKi6u553icb/9ZH2CIA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OKMyiVYs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 679CFC116B1;
+	Fri, 28 Jun 2024 12:47:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719578853;
+	bh=LHijR0kl7hNylO84H4MwHL6n5jNx5enYAaT3OgCdYX0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OKMyiVYsyRe1/pt43HihCWtQxR3ZEwpB9M7ibE6ziN+SrgD+Ss8kcyDdkoBGAfhQr
+	 FawZLNmO6T64KgF9Xqi8r/UbCSZQR9FA6lgsPKMEC/ssBGwSYAIbJJXUy73oq2MFTf
+	 jeAqUpcOaBM5MSEgl7KhA6NdMXKkrhsyy6DI2fkRAUANbA2l969qNLYm7+UTJK5Kzo
+	 ZENn2tWegXElhOjphbcLlGGU2rQEbNq27K07KUUBkfC26K7qnu6WWJZk2xmmx+W8p0
+	 Ayzt97AC1lmzfnhyUXMoxJYJL38XGrDRm+6Emw3S/F+9RLZW7OQUUa0KUI1eu2XAaH
+	 uGx/YqiBu/K0w==
+Date: Fri, 28 Jun 2024 09:47:30 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Yicong Yang <yangyicong@hisilicon.com>
+Subject: Re: [PATCH 2/2] perf stat: Fix a segfault with --per-cluster
+ --metric-only
+Message-ID: <Zn6w4pO7VkU4IFYm@x1>
+References: <20240627200353.1230407-1-namhyung@kernel.org>
+ <20240627200353.1230407-2-namhyung@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH RESEND v3 0/3] Update STM DSI PHY driver
-Content-Language: en-US
-To: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
-        Yannick Fertre
-	<yannick.fertre@foss.st.com>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
-CC: <dri-devel@lists.freedesktop.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20240129104106.43141-1-raphael.gallais-pou@foss.st.com>
-From: Philippe CORNU <philippe.cornu@foss.st.com>
-In-Reply-To: <20240129104106.43141-1-raphael.gallais-pou@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-28_08,2024-06-28_01,2024-05-17_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240627200353.1230407-2-namhyung@kernel.org>
 
+On Thu, Jun 27, 2024 at 01:03:53PM -0700, Namhyung Kim wrote:
+> The new --per-cluster option was added recently but it forgot to update
+> the aggr_header fields which are used for --metric-only option.  And it
+> resulted in a segfault due to NULL string in fputs().
 
+Before:
 
-On 1/29/24 11:41, Raphael Gallais-Pou wrote:
-> 
-> This patch series aims to add several features of the dw-mipi-dsi phy
-> driver that are missing or need to be updated.
-> 
-> First patch update a PM macro.
-> 
-> Second patch adds runtime PM functionality to the driver.
-> 
-> Third patch adds a clock provider generated by the PHY itself.  As
-> explained in the commit log of the second patch, a clock declaration is
-> missing.  Since this clock is parent of 'dsi_k', it leads to an orphan
-> clock.  Most importantly this patch is an anticipation for future
-> versions of the DSI PHY, and its inclusion within the display subsystem
-> and the DRM framework.
-> 
-> Last patch fixes a corner effect introduced previously.  Since 'dsi' and
-> 'dsi_k' are gated by the same bit on the same register, both reference
-> work as peripheral clock in the device-tree.
-> 
+acme@number:~$ sudo ~acme/bin/perf stat -a -x : --per-cluster -M tma_core_bound --metric-only true
+Segmentation fault
+acme@number:~$ 
+acme@number:~$ sudo su -
+root@number:~# gdb perf
+(gdb) run stat -a -x : --per-cluster -M tma_core_bound --metric-only true
+Starting program: /root/bin/perf stat -a -x : --per-cluster -M tma_core_bound --metric-only true
+
+Program received signal SIGSEGV, Segmentation fault.
+0x00007ffff6f7f8dd in __strlen_avx2 () from /lib64/libc.so.6
+(gdb) bt
+#0  0x00007ffff6f7f8dd in __strlen_avx2 () from /lib64/libc.so.6
+#1  0x00007ffff6e97a3a in fputs () from /lib64/libc.so.6
+#2  0x000000000056b805 in print_metric_headers ()
+#3  0x000000000056e084 in evlist.print_counters ()
+#4  0x0000000000432513 in cmd_stat ()
+#5  0x00000000004c5fb9 in run_builtin ()
+#6  0x00000000004c62c9 in handle_internal_command ()
+#7  0x0000000000410e57 in main ()
+(gdb)
+
+After:
+
+acme@number:~$ sudo ~acme/bin/perf stat -a -x : --per-cluster -M tma_core_bound --metric-only true
+cluster:cpus:%  tma_core_bound:%  tma_core_bound:
+S0-D0-CLS0:2:18.2::::
+S0-D0-CLS8:2:26.7::::
+S0-D0-CLS16:2:14.2::::
+S0-D0-CLS24:2:10.6::::
+S0-D0-CLS32:2:0.6::::
+S0-D0-CLS40:2:42.5::::
+S0-D0-CLS48:2:21.1::::
+S0-D0-CLS56:2:36.8::::
+S0-D0-CLS64:0:::::::1.0:
+S0-D0-CLS72:0:::::::0.8:
+S0-D0-CLS80:0:::::::1.0:
+acme@number:~$
+
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+
+- Arnaldo
+ 
+> Fixes: cbc917a1b03b ("perf stat: Support per-cluster aggregation")
+> Cc: Yicong Yang <yangyicong@hisilicon.com>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 > ---
-> Changes in v3-resend:
-> 	- Removed last patch as it has been merged
-> https://lore.kernel.org/lkml/bf49f4c9-9e81-4c91-972d-13782d996aaa@foss.st.com/
+>  tools/perf/util/stat-display.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> Changes in v3:
-> 	- Fix smatch warning (disable dsi->pclk when clk_register fails)
-> 
-> Changes in v2:
-> 	- Added patch 1/4 to use SYSTEM_SLEEP_PM_OPS instead of old macro
-> 	  and removed __maybe_used for accordingly
-> 	- Changed SET_RUNTIME_PM_OPS to RUNTIME_PM_OPS
-> 
-> Raphael Gallais-Pou (3):
->    drm/stm: dsi: use new SYSTEM_SLEEP_PM_OPS() macro
->    drm/stm: dsi: expose DSI PHY internal clock
-> 
-> Yannick Fertre (1):
->    drm/stm: dsi: add pm runtime ops
-> 
->   drivers/gpu/drm/stm/dw_mipi_dsi-stm.c | 279 ++++++++++++++++++++++----
->   1 file changed, 238 insertions(+), 41 deletions(-)
-> 
-
-Hi Raphaël & Yannick,
-Applied on drm-misc-next.
-Many thanks,
-Philippe :-)
+> diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
+> index e8673c9f6b49..462227f663cb 100644
+> --- a/tools/perf/util/stat-display.c
+> +++ b/tools/perf/util/stat-display.c
+> @@ -38,6 +38,7 @@
+>  static int aggr_header_lens[] = {
+>  	[AGGR_CORE] 	= 18,
+>  	[AGGR_CACHE]	= 22,
+> +	[AGGR_CLUSTER]	= 20,
+>  	[AGGR_DIE] 	= 12,
+>  	[AGGR_SOCKET] 	= 6,
+>  	[AGGR_NODE] 	= 6,
+> @@ -49,6 +50,7 @@ static int aggr_header_lens[] = {
+>  static const char *aggr_header_csv[] = {
+>  	[AGGR_CORE] 	= 	"core%scpus%s",
+>  	[AGGR_CACHE]	= 	"cache%scpus%s",
+> +	[AGGR_CLUSTER]	= 	"cluster%scpus%s",
+>  	[AGGR_DIE] 	= 	"die%scpus%s",
+>  	[AGGR_SOCKET] 	= 	"socket%scpus%s",
+>  	[AGGR_NONE] 	= 	"cpu%s",
+> @@ -60,6 +62,7 @@ static const char *aggr_header_csv[] = {
+>  static int aggr_header_num[] = {
+>  	[AGGR_CORE] 	= 	2,
+>  	[AGGR_CACHE]	= 	2,
+> +	[AGGR_CLUSTER]	= 	2,
+>  	[AGGR_DIE] 	= 	2,
+>  	[AGGR_SOCKET] 	= 	2,
+>  	[AGGR_NONE] 	= 	1,
+> -- 
+> 2.45.2.803.g4e1b14247a-goog
 
