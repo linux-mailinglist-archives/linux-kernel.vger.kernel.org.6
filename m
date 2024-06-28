@@ -1,122 +1,170 @@
-Return-Path: <linux-kernel+bounces-233656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F6A491BB1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:10:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB6BA91BB1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:10:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBA581F21FF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:10:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7234D284E34
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A27A155322;
-	Fri, 28 Jun 2024 09:07:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A17C1527B1;
+	Fri, 28 Jun 2024 09:08:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UceR3ffq"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aL9hMGs8"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BEBD14F114
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 09:07:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A471514CE;
+	Fri, 28 Jun 2024 09:07:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719565644; cv=none; b=PS1FaG0Vr3eDyw5hFXUgMvZToAiyb5p+XfB55nZQNnodEe3mqpRhiqSSyrF5oPZrFNwk5GPf0vzGOJfxdVTAQUDVoeKEBEHns0GQySEsscjw79HJ6GLulFX/AADXGqHY7ggw25DqFJuHGeqsdgTDhkIQ6EpjS9NMcQN1VBl405A=
+	t=1719565679; cv=none; b=HhgE6iRk83JHG3zEI97tOUP1C9vP/v0mO5hjVdCEQzDUd3UZeL5p7tCkVQoEFP4bD3BpWM5m0S/ll8T/K236zJsIqtO8hjp7e0TGTLwdhmmGZVeaI9aH//J5izdHGFEZUq1gifIlCjX/GD0YdhfxAG7q3c+mTQ6+8gUE3c8GZOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719565644; c=relaxed/simple;
-	bh=t+G3fd+ijv9xUdbGUKk79N+1x4Cu8Lqf+seYfUdMczk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=QTvSQCsZbRHNieN3UflrFBIasMC4NAmIAHoRrOjFpEg6fUXEbwds9OMhzoqQS8DPJwXNMiryndXf5DUqk79izlPzmRpruiNnx9u4MXEd17ibaBuO64DxUn3r8ymL/rFeZ5YXTiqaBAzqFE0gEl+P2Cz2IoTvfloVRuKen1Rh9iQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UceR3ffq; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52cdd03d6aaso434473e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 02:07:23 -0700 (PDT)
+	s=arc-20240116; t=1719565679; c=relaxed/simple;
+	bh=5fQWibtpOshGtirNX2M3Lzqc/lxOsvsf7eoeRN+pJxo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qQc1rhITNTHxMvsT2nv/iKmv174p6EuX9MBPiHE/THfDM3L5Eb+vlYIBI3X6N9A41r5aCzHzLd9lcQomtXzbaWUOM9F3j7a0ml5MhlVUg3xB1mQgWOg6jjvvNMzlbcfsmJAFHFIS85YOHOyb2PsB5nxx6nK/RJDW7tdduBgBU+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aL9hMGs8; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4248ff53f04so3094295e9.0;
+        Fri, 28 Jun 2024 02:07:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719565641; x=1720170441; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XB5EvDrakOPexl9GfGTU4JrWCssuFa6ZQG7ub++KlZM=;
-        b=UceR3ffqDXvl9HZm08vdBJIwTYA+P5a8X4lQ3uWl+uk3MJOTkDP9c6ohElUu8rHGHY
-         C3u67QnC3Y1ut6KTx79Po/zJ6NSZoZCFxMHdk/JOLRzFIRT5zg3es/Z1w66g2dZ9qTNv
-         gA5QObfSk6UFlFzXmhmBykFDv+MPWGH2rrZcLcAmr1hpw1y68HLn+a+E1tAwYZ8dHhYC
-         KHWTsVFQ/fg7h7kcfgZU+LUoxhHbYWTGsPxXVvS6GfTz4Ilkqe6Ulp6R5ZeB4iFN404o
-         gmGhZBRXjfLqd3ym75LeyTb5sRPYWifeOmhR7VRI6r4dspjq3f+AEiubDSkXpzOL2B7O
-         a2Ow==
+        d=gmail.com; s=20230601; t=1719565676; x=1720170476; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cew9yHu3J9evLv4jKck/18U0eJGnpQ5whgz3tg5sGmw=;
+        b=aL9hMGs8ImReec1XdLta2UITLJT8DB0dDcpL4wv/9MKctfMnmOk+M0F7yq2mPkbM6B
+         22SGrEr33+6Qv90mqzrL4JC/zg4xbjQxec3MS5UYv76M8C2p9d1lW2RbLafQj6XgvQkQ
+         xGqRogBHW1bXB+6i23JAYkiovPrh1X1oVDla9kKrZhBSmhNhBTMPDC+kJnt9TmaN+Jcx
+         ZHpET6GfDXCV9oA9hcqavZnpQMqS/KfLUuYU6gET+8OvhLdlGOGfgA33yeoCtezl6ksg
+         R+xRI8T85QuWqCn/846d2SBAC92Dgt4LZIt8eMcn2DIXlFI1HyTFipYKknl8N3hvLYZj
+         vbyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719565641; x=1720170441;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XB5EvDrakOPexl9GfGTU4JrWCssuFa6ZQG7ub++KlZM=;
-        b=FRNl2p51ImDVGVyEjrvm3yn7DP3ROxi75fNkoF9aG8CUqQazGVDfgKZHMNJG2oTfHE
-         r9IeBvrgIlOMAvx+8cPVsMu7Dxts93T7avYPtp2zOzjCGsdlboqcrVnlpxcsJ8BHGDbD
-         Fmd8YxP9DcMT2cUhPLwPUIWIQcGonh+KZoT6Qh4LPul+TSsbrkV0OdBDjsm79kPwVTox
-         Zq0gAFcnNzqsYnQyRCnDJoQ6y3HrSEWmwWEER+JbKj9LwLA7+peFat0CO/zcKqEdmyE6
-         piGJQRMOhTr45xc8C1yn+dUgB6G6wHndQlD2VDrAai29CDnvwOnPuflzhH9SB68071F0
-         9NSw==
-X-Forwarded-Encrypted: i=1; AJvYcCVkenNoAO3hFW8nKXjmrCCVuXC6OEhIOWPX2rd5gINunZ8mw3Rl6I/+Q3MpTLQGG55nngnVNHFdVTcI8hYXLxhbQvax7LWliaD16Tfl
-X-Gm-Message-State: AOJu0YyDoFfq9+VbONse5HcMdyp+6wtrhfI2U5xRuaH2kEsqlbcqzbvZ
-	PO6M7OWQmbc6ekIzbTRnbpTj+DFby1SomPyjB6KXd0bm81uaDtnpytOvbSVi9vg=
-X-Google-Smtp-Source: AGHT+IHR5Ql6wS15UNWAOVb5aKvdINi1DnDQLmYnWVu5yPtbmbQXdKi7BzF02P3kLBpPAnSoB8LhRw==
-X-Received: by 2002:a05:6512:2083:b0:52c:e040:7d9 with SMTP id 2adb3069b0e04-52ce0680398mr10053969e87.59.1719565641000;
-        Fri, 28 Jun 2024 02:07:21 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0fb967sm1612896f8f.82.2024.06.28.02.07.20
+        d=1e100.net; s=20230601; t=1719565676; x=1720170476;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cew9yHu3J9evLv4jKck/18U0eJGnpQ5whgz3tg5sGmw=;
+        b=HZSF7X8HapzoXuLUBQ1TiSeIcLg/x/JdxlAKXoRGsqr66uP9MmmaitqSFj6qUWuFJm
+         dWF4yQ5gFOLhi86YyDI84AnsuQfr5mHN8vlS2mIEUdu+AiSuTxBdCX1nA3JZ2VRymsaq
+         +FV/4nIKbjw6G3bgUUHK85tucJD6IHOwC2FPAp1iaUaLmn5M6X7H2337yHBoNAOAC53w
+         Pepmfs3yzJWXt9gzI8oqVqj0OREVD7x+cTdGQHzZOWgvw6NOaZ/qcqmX7PQLmE/Jrnrs
+         xd8lhwDY8Fj1qVR4tXQi6KYSvNBboZQBQPIrkmD4Qdv1LwAsisCZ5MFkNRn/klK4IZr1
+         EbPw==
+X-Forwarded-Encrypted: i=1; AJvYcCVgZrnYzDhgFVnbUmpwvtV+rgWzCn/kQhGLzrs7a3zGqFDZ/XwQOVGHh/l5CLWGDHS5hJJT/SU/nRcWuYWLMWBqN7IhGzZcoDsW4LPA4jrLCyIahVhnuu+25MA2XH7NgT/XM34NiIVCdw==
+X-Gm-Message-State: AOJu0YyZcMDmNc7jZ+pAOkNpbkA+pmkPNwzubDu4kE/1Z1yO0XnB5hul
+	vfean939tHEkpzBtmA6yjCAiMSMWnHqFUYpD30GVAyiqkWotcBt8
+X-Google-Smtp-Source: AGHT+IFQmp20IWKSZUXJyuTq3KzuQCJ5ILSvfoBtaCo0ZNshBsYzvl/EkkAk09uYIl3jP5aG0vhWMQ==
+X-Received: by 2002:a05:600c:4f8f:b0:425:6f96:8bce with SMTP id 5b1f17b1804b1-4256f968deemr4401445e9.21.1719565675854;
+        Fri, 28 Jun 2024 02:07:55 -0700 (PDT)
+Received: from vitor-nb.. ([2001:8a0:e622:f700:9efe:cd99:5e7d:a75])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b09a94csm25226885e9.33.2024.06.28.02.07.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 02:07:20 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-To: dmitry.torokhov@gmail.com, robh@kernel.org, 
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, jikos@kernel.org, 
- benjamin.tissoires@redhat.co, dianders@google.com, hsinyi@google.com, 
- jagan@edgeble.ai, quic_jesszhan@quicinc.com, dmitry.baryshkov@linaro.org, 
- Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240624141926.5250-1-lvzhaoxiong@huaqin.corp-partner.google.com>
-References: <20240624141926.5250-1-lvzhaoxiong@huaqin.corp-partner.google.com>
-Subject: Re: [PATCH v5 0/5] Add kd101ne3-40ti configuration in driver
- jd9365da
-Message-Id: <171956564012.990484.13901393761695275896.b4-ty@linaro.org>
-Date: Fri, 28 Jun 2024 11:07:20 +0200
+        Fri, 28 Jun 2024 02:07:55 -0700 (PDT)
+From: Vitor Soares <ivitro@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: Vitor Soares <vitor.soares@toradex.com>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	ivitro@gmail.com
+Subject: [PATCH v3] arm64: dts: imx8mm-verdin: add TPM device
+Date: Fri, 28 Jun 2024 10:07:51 +0100
+Message-Id: <20240628090751.797818-1-ivitro@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: 8bit
 
-Hi,
+From: Vitor Soares <vitor.soares@toradex.com>
 
-On Mon, 24 Jun 2024 22:19:21 +0800, Zhaoxiong Lv wrote:
-> This kingdisplay panel uses the jd9365da controller, so add it to
-> panel-jadard-jd9365da-h3.c driver, but because the init_code and timing
-> are different, some variables are added in struct jadard_panel_des to
-> control it.
-> 
-> In addition, since sending init_code in the enable() function takes a long time,
-> it is moved to the prepare() function.
-> 
-> [...]
+Add TPM device found on Verdin iMX8M Mini PID4 0090 variant.
 
-Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
+While adding the node, rename `pinctrl_pmic_tpm_ena` to
+`pinctrl_tpm_spi_cs`.
 
-[1/5] drm/panel: jd9365da: Modify the method of sending commands
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/38cae7b626ec7b89cd14f15efb36f64682c76371
-[2/5] dt-bindings: display: panel: Add compatible for kingdisplay-kd101ne3
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/e7f5112ae111a125366039666e9c6ff8dd71d0a4
-[3/5] drm/panel: panel-jadard-jd9365da-h3: use wrapped MIPI DCS functions
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/35583e129995164aebb169103fe64614482ccf8e
-[4/5] drm/panel: jd9365da: Support for kd101ne3-40ti MIPI-DSI panel
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/2b976ad760dc3a62e4ff4c4e5afa02ec16e4013a
-[5/5] drm/panel: jd9365da: Add the function of adjusting orientation
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/e1c550898f75eec9c6dcfc16a584d5bc58eebf77
+Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
+---
+v2->v3
+  - Match node name with label `pinctrl_tpm_spi_cs`.
 
+v1->v2
+  - rename `pinctrl_pmic_tpm_ena` to `pinctrl_tpm_spi_cs`.
+
+ .../boot/dts/freescale/imx8mm-verdin.dtsi      | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi b/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
+index 98544741ce17..085498fa471c 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi
+@@ -228,15 +228,16 @@ &ecspi2 {
+ 	pinctrl-0 = <&pinctrl_ecspi2>;
+ };
+ 
+-/* Verdin CAN_1 (On-module) */
++/* On-module SPI */
+ &ecspi3 {
+ 	#address-cells = <1>;
+ 	#size-cells = <0>;
+-	cs-gpios = <&gpio5 25 GPIO_ACTIVE_LOW>;
++	cs-gpios = <&gpio5 25 GPIO_ACTIVE_LOW>, <&gpio4 19 GPIO_ACTIVE_LOW>;
+ 	pinctrl-names = "default";
+-	pinctrl-0 = <&pinctrl_ecspi3>;
++	pinctrl-0 = <&pinctrl_ecspi3>, <&pinctrl_tpm_spi_cs>;
+ 	status = "okay";
+ 
++	/* Verdin CAN_1 */
+ 	can1: can@0 {
+ 		compatible = "microchip,mcp251xfd";
+ 		clocks = <&clk40m>;
+@@ -246,6 +247,12 @@ can1: can@0 {
+ 		reg = <0>;
+ 		spi-max-frequency = <8500000>;
+ 	};
++
++	verdin_som_tpm: tpm@1 {
++		compatible = "atmel,attpm20p", "tcg,tpm_tis-spi";
++		reg = <0x1>;
++		spi-max-frequency = <36000000>;
++	};
+ };
+ 
+ /* Verdin ETH_1 (On-module PHY) */
+@@ -808,8 +815,7 @@ &iomuxc {
+ 	pinctrl-0 = <&pinctrl_gpio1>, <&pinctrl_gpio2>,
+ 		    <&pinctrl_gpio3>, <&pinctrl_gpio4>,
+ 		    <&pinctrl_gpio7>, <&pinctrl_gpio8>,
+-		    <&pinctrl_gpio_hog1>, <&pinctrl_gpio_hog2>, <&pinctrl_gpio_hog3>,
+-		    <&pinctrl_pmic_tpm_ena>;
++		    <&pinctrl_gpio_hog1>, <&pinctrl_gpio_hog2>, <&pinctrl_gpio_hog3>;
+ 
+ 	pinctrl_can1_int: can1intgrp {
+ 		fsl,pins =
+@@ -1111,7 +1117,7 @@ pinctrl_sai5: sai5grp {
+ 	};
+ 
+ 	/* control signal for optional ATTPM20P or SE050 */
+-	pinctrl_pmic_tpm_ena: pmictpmenagrp {
++	pinctrl_tpm_spi_cs: tpmspicsgrp {
+ 		fsl,pins =
+ 			<MX8MM_IOMUXC_SAI1_TXD7_GPIO4_IO19		0x106>;	/* PMIC_TPM_ENA */
+ 	};
 -- 
-Neil
+2.34.1
 
 
