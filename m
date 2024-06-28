@@ -1,111 +1,168 @@
-Return-Path: <linux-kernel+bounces-234336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0382B91C566
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:06:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE2EF91C56B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:07:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 352161C2389E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:06:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 780ED286C1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:07:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A711CCCC4;
-	Fri, 28 Jun 2024 18:06:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D29D1CCCB2;
+	Fri, 28 Jun 2024 18:07:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lWVBdVMH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kuBWd4bX"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B6C1C232C;
-	Fri, 28 Jun 2024 18:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51BC11B94F;
+	Fri, 28 Jun 2024 18:07:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719597976; cv=none; b=D+c3Q1+UrT2rZFf2Ilq2HclDXUipeNDLmn4oJk0/3bGHKTxSGKgyBNQq0XSxhErXwjpSuxRtbuugQ9v6eTdX8Pu4/qoUmrWjIa34OJTdIpmxgGy0D10epTm0r/6gyRpHnL+qkFCFfT7k+s/g9gGUrhr4bmGQdUDeNYxQhW9pP/I=
+	t=1719598031; cv=none; b=N+MLZTG7Kn4UcoIyNtQ7UJEW91PD3stfXTxDDeI8v4ghNquef16zjbFdBuAhgTKuomU26CNnsKfR8V9VO2/DV5H39TZ9jgj5FDz7wH1zuvHnzN3W04OczfumC2ukZfeVI/L48b3xR7+fARtoRGD8Q2khC1k3hTc7rdSqoCoBOZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719597976; c=relaxed/simple;
-	bh=D6G5cgdXjZim32WgMxh26x4xF+2B++m4mGBohG1cWfM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nM4A0EW06j8re4vnKxgk+NONEvB70VZA47F1FcLQPGZ5HVZK7CmucwRteruiaOJuUDi3z611oIcEZcJ0U4w64pDGH3c+8adxjwah/+Cv39JyQuNWxO5VKJqwMXfY6hCBc+DTp6zR5RF35PGnHp8/2k0mg9VpjAVsbmsEPUnNtRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lWVBdVMH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3618EC116B1;
-	Fri, 28 Jun 2024 18:06:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719597975;
-	bh=D6G5cgdXjZim32WgMxh26x4xF+2B++m4mGBohG1cWfM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lWVBdVMHaNApe4NP3aO54pCa+yOyFbbRm6jMbYLwqNPbPM8FDjV4ELdqaezOr7LJs
-	 dn9aYNxFc2Od47zWhJ/snAubr2ng9M3giYum2zQ9SqdWp+NCNIYC86H2O7ZmlluXNH
-	 Q1KU6Ldv9Az+D3vyN9Bg7f4guB8jaKXVitvR46IohYvVqAMoIcTm3RIwLiMvJEQu+h
-	 uJeBCpG9lsEO8ZSFvJj8Mu1a3Sd/Ym2hNHo4uZpBpnMnXa1ey3MHlKNhBxOa4ArtGg
-	 QYVw4Sfgz2yZbvJZIzB99s70FkVfiDJVV2RTOyo7tcl1RYrhpNjiWQWrRywasAB0Pi
-	 aUQzMxmMCr0PA==
-Date: Fri, 28 Jun 2024 19:06:09 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Michal Wajdeczko <michal.wajdeczko@intel.com>
-Cc: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>,
-	Piotr =?iso-8859-1?Q?Pi=F3rkowski?= <piotr.piorkowski@intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	buildfailureaftermergeofthedrmtree@sirena.org.uk,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the drm
-Message-ID: <e45299d9-379e-4f28-bfdf-82927d78a15e@sirena.org.uk>
-References: <Zn7s611xnutUFxR0@sirena.org.uk>
- <712046ed-2481-4644-80d7-707bbe8b5c20@intel.com>
+	s=arc-20240116; t=1719598031; c=relaxed/simple;
+	bh=EMbVzbnsLSmtwf7hpcQDvwkGp+gUbKkbpsvhQ6740Jo=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=lb0qE+cPgO4Nv6WRkGLFOrKLtcpgaWsRJQKBL3kjD5MbyFHPZxBb51Tvp3+U8PTygqOmaXpISnyWVdKQbQI2GX414KUhCilSYSGk6XFIiVbrrhe7c9EBopyp5R/DDeV92eWxJ1kpJ5P29nPqYkQ+trKTfJCcY/HmhxSvF5wtuTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kuBWd4bX; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57cbc66a0a6so350114a12.1;
+        Fri, 28 Jun 2024 11:07:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719598028; x=1720202828; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:from:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8EdFRuIjAMdYahk4Kci0WZzTsWWkZ1bOHj3GXMpTCuY=;
+        b=kuBWd4bX2XPaqgSDGCr1UaTEJWMC9Eylv5MoJcrMnAY6ZT64zvO4eFrz5mHt2M74rc
+         cUwGDJBAHgoXzvstknjO6EJiCnHZ0bR6ifSxkwa+fdE36LgOHA5XD2n75tn/HuP4hFcS
+         uj0zJRg5PNJ5IFpnkVhrJsywC00lrUt/2r50+1iVLyA9qBRWxmyLAGBY99j9bPGoiPY+
+         Y4wcgcmGbNwW48PNc0mgcSGF7j20VFuWpxczBhNvizPu4aDXSVOyeURisqHX+bDTs63J
+         lJKC+uOTSqRUJPsfB2XBu/1j+tfRBQXmz1QJoWFFTVmLcH5obdhq2Q+Vir14Ww6yN7D/
+         +4fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719598028; x=1720202828;
+        h=content-transfer-encoding:cc:to:subject:from:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=8EdFRuIjAMdYahk4Kci0WZzTsWWkZ1bOHj3GXMpTCuY=;
+        b=gcCSIkBnRFuVoV1YQIvCVs2pD0uyF2L+1CLy9uRij+fn8Qv/RU7CEMWYcwcWlmn96a
+         lUwp6YIuKKCp1JjusXZ0nkbY4fVYCFI7ZM+2xtW549UdriqqtgfuYBVnRm6k2Ini2p4G
+         yUoo9m9PNP77rM81/pQ2zMFHjWCmAUk4n4jxuXPn6kB+E/sb85JOmSYnvCG0jrxNh9iO
+         vYYK8LUCkud6wLLVmwVmCDj7ikkpHMVujHpX30H9tid3YQkTYmd70zAuXaNfj1TniuAg
+         G+/6r7OZzcgkElILnjQle8XfxblziREY9x/wCef9lK+NftBilDbaLMGnQntAVPNojtTR
+         7LkA==
+X-Forwarded-Encrypted: i=1; AJvYcCVJMPigF/teWLFkN2mf7cKK/+29jHcTFm0du3faY9v4HaHtimusBDTJTj3PEzqZESkQ5E8TDhfbFq5MJYGw3Vo8uzWq51e53LqXzsoyiRqPNAg9eLoddxCmKPRnmCRcP1f9QahQyqagrUM=
+X-Gm-Message-State: AOJu0YwkVz7/Ma82RZkvHNoZvJrXMDiISUMWQy+vWau2SKd6QfW34Klp
+	kUnDaBtzrVeerdG8chWjkVfHbj8+F0OaYv993RY7Xj/4oe0zuyDyhZNKoA==
+X-Google-Smtp-Source: AGHT+IEl1RM1Aavl6HBjqIB0gZ1mW30dOcVOnvOK4VHVcakerUJ4rmBQ6+rZkKMOWDndnw9kJKXR0w==
+X-Received: by 2002:a05:6402:22e3:b0:57c:ff0d:b781 with SMTP id 4fb4d7f45d1cf-5865d4737cfmr1703648a12.16.1719598027336;
+        Fri, 28 Jun 2024 11:07:07 -0700 (PDT)
+Received: from [192.168.178.20] (dh207-41-166.xnet.hr. [88.207.41.166])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58612c83534sm1308168a12.10.2024.06.28.11.07.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Jun 2024 11:07:06 -0700 (PDT)
+Message-ID: <bc73207a-4b52-423d-833a-fb2a4221a5bc@gmail.com>
+Date: Fri, 28 Jun 2024 20:07:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xDxHcWHH3x0pf4KO"
-Content-Disposition: inline
-In-Reply-To: <712046ed-2481-4644-80d7-707bbe8b5c20@intel.com>
-X-Cookie: divorce, n:
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+From: Mirsad Todorovac <mtodorovac69@gmail.com>
+Subject: [PROBLEM linux-next] drivers/hid/hidraw.c: error: cast from pointer
+ to integer of different size [-Werror=pointer-to-int-cast]
+To: linux-kernel@vger.kernel.org
+Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
+ linux-input@vger.kernel.org,
+ Linux Kernel Build System <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Hi all,
 
---xDxHcWHH3x0pf4KO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+While testing randconfig with vanilla next-20240627, the following KCONFIG_SEED=0x14021E00
+gave this particular build error:
 
-On Fri, Jun 28, 2024 at 07:58:23PM +0200, Michal Wajdeczko wrote:
-> On 28.06.2024 19:03, Mark Brown wrote:
+drivers/hid/hidraw.c: In function ‘hidraw_send_report’:
+drivers/hid/hidraw.c:143:63: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
+  143 |                 ret = __hid_hw_output_report(dev, buf, count, (__u64)file, false);
+      |                                                               ^
+drivers/hid/hidraw.c:154:56: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
+  154 |                                    HID_REQ_SET_REPORT, (__u64)file, false);
+      |                                                        ^
+drivers/hid/hidraw.c: In function ‘hidraw_get_report’:
+drivers/hid/hidraw.c:231:56: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
+  231 |                                    HID_REQ_GET_REPORT, (__u64)file, false);
+      |                                                        ^
 
-> > /tmp/next/build/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c: In function 'pf_get_threshold':
-> > /tmp/next/build/drivers/gpu/drm/xe/xe_gt_sriov_pf_config.c:1788:27: error: unused variable 'xe' [-Werror=unused-variable]
-> >  1788 |         struct xe_device *xe = gt_to_xe(gt);
-> >       |                           ^~
-> > cc1: all warnings being treated as errors
+Apparently, on this architecture, sizeof(struct file *) != sizeof(__u64)?
 
-> >   629df234bfe73d ("drm/xe/pf: Introduce functions to configure VF thresholds")
+→ 105 static ssize_t hidraw_send_report(struct file *file, const char __user *buffer, size_t count, unsigned char report_type)
+  106 {
+  107         unsigned int minor = iminor(file_inode(file));
+  108         struct hid_device *dev;
+  109         __u8 *buf;
+  110         int ret = 0;
+  111 
+  112         lockdep_assert_held(&minors_rwsem);
+  113 
+  114         if (!hidraw_table[minor] || !hidraw_table[minor]->exist) {
+  115                 ret = -ENODEV;
+  116                 goto out;
+  117         }
+  118 
+  119         dev = hidraw_table[minor]->hid;
+  120 
+  121         if (count > HID_MAX_BUFFER_SIZE) {
+  122                 hid_warn(dev, "pid %d passed too large report\n",
+  123                          task_pid_nr(current));
+  124                 ret = -EINVAL;
+  125                 goto out;
+  126         }
+  127 
+  128         if (count < 2) {
+  129                 hid_warn(dev, "pid %d passed too short report\n",
+  130                          task_pid_nr(current));
+  131                 ret = -EINVAL;
+  132                 goto out;
+  133         }
+  134 
+  135         buf = memdup_user(buffer, count);
+  136         if (IS_ERR(buf)) {
+  137                 ret = PTR_ERR(buf);
+  138                 goto out;
+  139         }
+  140 
+  141         if ((report_type == HID_OUTPUT_REPORT) &&
+  142             !(dev->quirks & HID_QUIRK_NO_OUTPUT_REPORTS_ON_INTR_EP)) {
+  143                 ret = __hid_hw_output_report(dev, buf, count, (__u64)file, false);
+  144                 /*
+  145                  * compatibility with old implementation of USB-HID and I2C-HID:
+  146                  * if the device does not support receiving output reports,
+  147                  * on an interrupt endpoint, fallback to SET_REPORT HID command.
+  148                  */
+  149                 if (ret != -ENOSYS)
+  150                         goto out_free;
+  151         }
+  152         
+  153         ret = __hid_hw_raw_request(dev, buf[0], buf, count, report_type,
+→ 154                                    HID_REQ_SET_REPORT, (__u64)file, false);
+  155 
+  156 out_free:
+  157         kfree(buf);
+  158 out:    
+  159         return ret;
+  160 }
 
+Thank you very much for examining this bug report.
 
-> it must have been something else wrong, as this commit [1] does not
-> contain this line, it was not part of patch itself [2] and I can't find
-> any other commit related to this function on drm-tip
-
-> but it was noticed today and some fixup was already applied [3]
-
-The fixup claims that it was a bogus merge in drm-tip rather than the
-commit above which introduced the function.
-
---xDxHcWHH3x0pf4KO
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ++5AACgkQJNaLcl1U
-h9DI8wf/Z/6rn/29mmom7wmhgOyXTuF7vg18jFMo05WnlRj+fcbQbilaRWVak7Yz
-tyavZdHu6nF+ah1mmHp1blvMeiu2k4xGplS+DKKlAx5q6f6wYNrQQXbFF+p8+DUG
-PXX4v1cjGjVDmzXfNf0DrOq/qyd7b54jo+HYmLasqhA06NufhHDD9dDOO9e5d+ny
-aUxIAszJSd/mYH9IhMuYHp7MRiGwaOBLzjE2a77sPGRJxdlyRbibb/XzEA5mr+rz
-f5pvlcaNf7mintvMlZWznUX2oXIrvGgC4iBZCbgiYxsnC1SHmqHYRykPqWGfX20k
-KfeQqIDobo6u2ScThk9aQszj1bwLFg==
-=YRKj
------END PGP SIGNATURE-----
-
---xDxHcWHH3x0pf4KO--
+Best regards,
+Mirsad Todorovac
 
