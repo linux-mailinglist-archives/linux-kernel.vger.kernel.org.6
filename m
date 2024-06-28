@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-233652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C478691BB14
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:09:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E573C91BB16
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:09:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E82A21C2384B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:09:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A02B8284BC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEAE615748A;
-	Fri, 28 Jun 2024 09:06:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF6D157481;
+	Fri, 28 Jun 2024 09:06:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fGVlS+b0"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="imTUli1q"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2880A152E0F
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 09:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60BA157478
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 09:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719565606; cv=none; b=AhZbWwOT7tIosJgV+5raXlC6SZGJshvDoMP+zyRKgf/4XY/LmZ83HEht1W26XCOvoJy74gMFGU5nj1ruIqe+zeYh+eBJHRXqAk/VgVSEBdAkafywAiTzmXWJKVCitmGW2ddbXa8NtuOC7em7Sx2mjn4LZsR7oq4RVwyHy177OCM=
+	t=1719565608; cv=none; b=CzsyZ9EJhNRFUden+77oIOl/Yi6djLcNw5U2cKiTd0GYNMlyaFvXaNTkNqHm7j2Mhw0+/YxPc47mGBdcmsiOE/GQJh9PM4fsMBpSEob/z/PeNeQXeonYtdnBT35ceJ7MwoFGlU2EXi3f2Giy6Cvp4NnXBdh1pmTKpB3FXemv1l8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719565606; c=relaxed/simple;
-	bh=JB4PvqID6ojtG420JAqpoFIb6OoFtvGqmn4YIEYHD7A=;
+	s=arc-20240116; t=1719565608; c=relaxed/simple;
+	bh=4Dsj9ayn2Oa78jorOX6zSODmYZsKhMC24a4bT2nQZFA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QriPmaby5GPnUmJAtDDGqvcwWR5eFKiuFnkgaJMbJfqmo+X1vHoxBDf4GdioGy6NgcbGdaXWgM0vN03T213rBMd421hFSAgZuxpw/tJ/wGOY3fFAaC2JxtnlgYnNb94nRduHtzDdS+gKPJ2eNrJ5h8mURYhGYZKcMF3+DILpgWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fGVlS+b0; arc=none smtp.client-ip=209.85.214.180
+	 MIME-Version; b=PbX2pcSt43H0rQgfb+2qaHG/IBX4mVswfRkuxlH3kr8c2cw+edc9D/FQrwnwCoxvlLriufNZqnGmdie/8EBxhjuokMc+ICsTLo9Gp+yIk7ouGD9tPHiusBYxbl6BP/XFJqA2SCPMv9Wg14myN73v0N6X170J1ZHgRFJFrDtSjDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=imTUli1q; arc=none smtp.client-ip=209.85.210.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fab50496f0so2227895ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 02:06:45 -0700 (PDT)
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7065a2f4573so302253b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 02:06:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719565604; x=1720170404; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1719565606; x=1720170406; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lKX2koxtQ56ao0FRSrDSZsJj2eDYzYc0pgBLGWiezOw=;
-        b=fGVlS+b0Q7A4MROfg3lBSA5iXCFOPMGX+JvQMJ5of9jKc37BEeVzymozyp8zwXvtJe
-         ZCvZzkc4iLvWtqjy55UjVfhuvZmjWAzT4EV7Io2ePiYEZK0Zqu6VQv2baWhrzZC6VQf5
-         +3cNAMhCmeHcLHhPxcFRkvAq4yeUH4eXCczowcrywA7yVOa9GotX3U/uk9pEFN/6xqLs
-         EaEZ5r2+/ErbXorIB2hQwjfbOchFDw6+SgUAQFmHBIqAO1/ZEaiX2naztAjqY94ArbHN
-         vh9HDUkTf46MZyNf1a5A1VpLEoq8Y61lEDW/kqqHYATcDCiVXvoBL36suO5qceMvUHsr
-         4DOw==
+        bh=KE+GAHekiqQQ+6g1wyBk2AinFm8Z+Wz7HeNtPOPPiPc=;
+        b=imTUli1qDpU+B/VfgGHrP3hb7zRAQU9cT7U27dyWCrzW6TUz5ufo1CKPsf5wJBiIHa
+         +8mRh6hY4BTL6Gq5rXdewkTOXipjpvfuG9c4d2HNdhPTbh3kTBPBg/4x+W/nZBeJvctE
+         EE1QrH4W2IKRWqRn0tRUN3g1VYDx/AjcWjke9C+urVciS6BfOVppHVYO7dy9XZNSmj6x
+         uuB3E9rkuDn9d10uQJlGyeCq0mJHvIdHgyXS/3rcgnYUwLk5pNuav+dOmp8twIORKOg1
+         frAg6Cke0wcm58t6f1GzGmUzu2PNWaDS4gHFOl47773rRnoPpk3ppZU/EVfelT91d/Ec
+         5vSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719565604; x=1720170404;
+        d=1e100.net; s=20230601; t=1719565606; x=1720170406;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lKX2koxtQ56ao0FRSrDSZsJj2eDYzYc0pgBLGWiezOw=;
-        b=xCi+PWw9D6OyigttqfysBvj8fsL0cQ/cJ2eJ8Oyp+Sgbjk7LbVsqQe2iEBQlaNNY5r
-         HJgjBGqQLopLFns6y3SeHNCCT7LgZxUR6dtUDW+xenfBUwi0uk4oja+XmesW2FGeLM4D
-         E31vP2KlzvPM6VSPMMsFh2Xz8LK56tZbo4bphZtXECctwIh8xV9p292JEXl5tuVG/+t3
-         poETL2aH22OQcj3+hoBNcen8Je1Fok6ibXS6o6BQNpWRyRs9HocHqfdIc/ACgxT1uS28
-         XaauiYikin85TCiPNyMd5VZSOj6Hp+OMeWxT/1f9NXv+ZfvfgN+sa86DFqVdL4KpJbO7
-         oyDw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNuK6EfovWDMfsr4nW85o8sw2bdpdbcet6/XVgkYUJz+RRxqg6jyETQs8p5Vs59/TWZkyjK6md6WXiaERnQkROj0fwRa44dYEVvdR4
-X-Gm-Message-State: AOJu0YzteQeliEF6DrPKqjiM8dujNaRiQFKy44rcJjPk0Mk4LFBy2OTE
-	ty+DfwQTQnxQoVB+J/GgY1TF5GIXcJYN2mtG8z1UW4JEz22GpdT4/THsyA==
-X-Google-Smtp-Source: AGHT+IErcUKu07sf+r/UZe4i/z/ko2RZ5RQNo9daor+w6z9jUbmZOnLKgKQsCTaN+p4RufI6CbmKyg==
-X-Received: by 2002:a17:903:2441:b0:1fa:ce44:f542 with SMTP id d9443c01a7336-1face44f69fmr3392865ad.9.1719565604451;
-        Fri, 28 Jun 2024 02:06:44 -0700 (PDT)
+        bh=KE+GAHekiqQQ+6g1wyBk2AinFm8Z+Wz7HeNtPOPPiPc=;
+        b=Eb9vFup/H2Dct6zoJzv2mwz3WswRwQoaGDajjqc4LSHxgLmioVXGnfuEo54lGhXFEI
+         lq2Sit9HXn8gRnlxiPOTeCpkIh/OgGpCrjCARjguB9eqPPJnel6A1aLgzrqwz67JbHtQ
+         TFc7aEsuLsQcf7Dlu+0mk5fDPzLv/R7RKtbIjsbsDmdyfOvH1iRId/F1X7749RWl/495
+         f7hzg+/+UIAjkrT613/GTdEm+pT1AznPRBV9cVOjyofH6x3o1579PP/s4B8hz+37hPnX
+         zhuUnncOiSnPSHnoEwjB/RiIyVDz41DdExsB3muA9Q7gs2I+3cmi3BcIzzSoLjaGAKMX
+         N5QA==
+X-Forwarded-Encrypted: i=1; AJvYcCVYt6BSrfeFFM160iLz96WQTccoKWB9rHGZD0LecTzK+ODUwRDmwEoRIjC9Y+8DvI0DBzLCVVP1bs5/82FLN1FqcSj/6rZgehebO3wI
+X-Gm-Message-State: AOJu0Yyotbg8Tt9nq9Wk1iqe6EQgrIVsey/U9XFsOCNlXU96gDxY5AIo
+	wbUVwJdXBSDZB4XDWzyWD12Q0xdLjL8aekcj7kVjwx7pCfq3Tu7P
+X-Google-Smtp-Source: AGHT+IH7O3ceew/tSG3NDVJpYlbtMuwR5IFLdkA8b8eK+PcdH6NneHqE1C+XNacGpenvZxl/Ayl5vA==
+X-Received: by 2002:a05:6a00:2d93:b0:706:8066:5cd6 with SMTP id d2e1a72fcca58-70680665df3mr17761645b3a.32.1719565605922;
+        Fri, 28 Jun 2024 02:06:45 -0700 (PDT)
 Received: from twhmp6px (mxsmtp211.mxic.com.tw. [211.75.127.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac155c382sm10505575ad.189.2024.06.28.02.06.43
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70801e63250sm1086981b3a.29.2024.06.28.02.06.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 02:06:44 -0700 (PDT)
+        Fri, 28 Jun 2024 02:06:45 -0700 (PDT)
 Received: from hqs-appsw-a2o.mp600.macronix.com (linux-patcher [172.17.236.67])
-	by twhmp6px (Postfix) with ESMTPS id BE13A80493;
-	Fri, 28 Jun 2024 17:08:59 +0800 (CST)
+	by twhmp6px (Postfix) with ESMTPS id 3A8A180570;
+	Fri, 28 Jun 2024 17:09:00 +0800 (CST)
 From: Cheng Ming Lin <linchengming884@gmail.com>
 To: miquel.raynal@bootlin.com,
 	vigneshr@ti.com
@@ -78,9 +78,9 @@ Cc: richard@nod.at,
 	alvinzhou@mxic.com.tw,
 	leoyu@mxic.com.tw,
 	Cheng Ming Lin <chengminglin@mxic.com.tw>
-Subject: [PATCH 1/2] mtd: spinand: Support serial NAND for reading two bytes ID
-Date: Fri, 28 Jun 2024 16:54:43 +0800
-Message-Id: <20240628085444.132714-2-linchengming884@gmail.com>
+Subject: [PATCH 2/2] mtd: spinand: macronix: Add support for serial NAND flash
+Date: Fri, 28 Jun 2024 16:54:44 +0800
+Message-Id: <20240628085444.132714-3-linchengming884@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240628085444.132714-1-linchengming884@gmail.com>
 References: <20240628085444.132714-1-linchengming884@gmail.com>
@@ -94,165 +94,90 @@ Content-Transfer-Encoding: 8bit
 
 From: Cheng Ming Lin <chengminglin@mxic.com.tw>
 
-Adding the Device ID 2 on Macronix Serial Flash.
+MX35{U,L}F{2,4}G24AD-Z4I8 are Macronix serial NAND flashes.
 
-When the number of flashes increases, we need to utilize
-Device ID 2 to distinguish between different flashes.
+Their main difference from MX35{U,L}F{2,4}G24AD lies in
+the plane number. The plane number for those with the
+postfix Z4I8 is 1.
 
 These flashes have been validated on Xilinx zynq-picozed
-board which included Macronix SPI Host.
+board which include Macronix SPI Host.
 
 Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
 ---
- drivers/mtd/nand/spi/macronix.c | 30 ++++++++++++++----------------
- 1 file changed, 14 insertions(+), 16 deletions(-)
+ drivers/mtd/nand/spi/macronix.c | 38 +++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
 diff --git a/drivers/mtd/nand/spi/macronix.c b/drivers/mtd/nand/spi/macronix.c
-index 3dfc7e1e5241..ffcaf1a6947e 100644
+index ffcaf1a6947e..ae33bdca94e0 100644
 --- a/drivers/mtd/nand/spi/macronix.c
 +++ b/drivers/mtd/nand/spi/macronix.c
-@@ -121,7 +121,7 @@ static const struct spinand_info macronix_spinand_table[] = {
+@@ -158,6 +158,15 @@ static const struct spinand_info macronix_spinand_table[] = {
+ 					      &update_cache_variants),
  		     SPINAND_HAS_QE_BIT,
  		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL)),
- 	SPINAND_INFO("MX35LF2GE4AD",
--		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x26),
-+		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x26, 0x03),
- 		     NAND_MEMORG(1, 2048, 64, 64, 2048, 40, 1, 1, 1),
- 		     NAND_ECCREQ(8, 512),
- 		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-@@ -131,7 +131,7 @@ static const struct spinand_info macronix_spinand_table[] = {
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
- 				     mx35lf1ge4ab_ecc_get_status)),
- 	SPINAND_INFO("MX35LF4GE4AD",
--		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x37),
-+		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x37, 0x03),
- 		     NAND_MEMORG(1, 4096, 128, 64, 2048, 40, 1, 1, 1),
- 		     NAND_ECCREQ(8, 512),
- 		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-@@ -141,7 +141,7 @@ static const struct spinand_info macronix_spinand_table[] = {
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
- 				     mx35lf1ge4ab_ecc_get_status)),
- 	SPINAND_INFO("MX35LF1G24AD",
--		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x14),
-+		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x14, 0x03),
- 		     NAND_MEMORG(1, 2048, 128, 64, 1024, 20, 1, 1, 1),
- 		     NAND_ECCREQ(8, 512),
- 		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-@@ -150,7 +150,7 @@ static const struct spinand_info macronix_spinand_table[] = {
- 		     SPINAND_HAS_QE_BIT,
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL)),
- 	SPINAND_INFO("MX35LF2G24AD",
--		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x24),
-+		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x24, 0x03),
- 		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 2, 1, 1),
- 		     NAND_ECCREQ(8, 512),
- 		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-@@ -159,7 +159,7 @@ static const struct spinand_info macronix_spinand_table[] = {
- 		     SPINAND_HAS_QE_BIT,
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL)),
++	SPINAND_INFO("MX35LF2G24AD-Z4I8",
++		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x64, 0x03),
++		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 1, 1, 1),
++		     NAND_ECCREQ(8, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL)),
  	SPINAND_INFO("MX35LF4G24AD",
--		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x35),
-+		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x35, 0x03),
+ 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x35, 0x03),
  		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 2, 1, 1),
- 		     NAND_ECCREQ(8, 512),
- 		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-@@ -187,7 +187,6 @@ static const struct spinand_info macronix_spinand_table[] = {
+@@ -167,6 +176,15 @@ static const struct spinand_info macronix_spinand_table[] = {
+ 					      &update_cache_variants),
  		     SPINAND_HAS_QE_BIT,
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
- 				     mx35lf1ge4ab_ecc_get_status)),
--
- 	SPINAND_INFO("MX35LF2G14AC",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x20),
- 		     NAND_MEMORG(1, 2048, 64, 64, 2048, 40, 2, 1, 1),
-@@ -199,7 +198,7 @@ static const struct spinand_info macronix_spinand_table[] = {
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
- 				     mx35lf1ge4ab_ecc_get_status)),
- 	SPINAND_INFO("MX35UF4G24AD",
--		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xb5),
-+		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xb5, 0x03),
- 		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 2, 1, 1),
- 		     NAND_ECCREQ(8, 512),
- 		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-@@ -209,7 +208,7 @@ static const struct spinand_info macronix_spinand_table[] = {
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
- 				     mx35lf1ge4ab_ecc_get_status)),
- 	SPINAND_INFO("MX35UF4GE4AD",
--		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xb7),
-+		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xb7, 0x03),
- 		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 1),
- 		     NAND_ECCREQ(8, 512),
- 		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-@@ -229,7 +228,7 @@ static const struct spinand_info macronix_spinand_table[] = {
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
- 				     mx35lf1ge4ab_ecc_get_status)),
- 	SPINAND_INFO("MX35UF2G24AD",
--		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xa4),
-+		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xa4, 0x03),
- 		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 2, 1, 1),
- 		     NAND_ECCREQ(8, 512),
- 		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-@@ -239,7 +238,7 @@ static const struct spinand_info macronix_spinand_table[] = {
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
- 				     mx35lf1ge4ab_ecc_get_status)),
- 	SPINAND_INFO("MX35UF2GE4AD",
--		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xa6),
-+		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xa6, 0x03),
- 		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 1, 1, 1),
- 		     NAND_ECCREQ(8, 512),
- 		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-@@ -249,7 +248,7 @@ static const struct spinand_info macronix_spinand_table[] = {
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
- 				     mx35lf1ge4ab_ecc_get_status)),
- 	SPINAND_INFO("MX35UF2GE4AC",
--		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xa2),
-+		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xa2, 0x01),
- 		     NAND_MEMORG(1, 2048, 64, 64, 2048, 40, 1, 1, 1),
- 		     NAND_ECCREQ(4, 512),
- 		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-@@ -269,7 +268,7 @@ static const struct spinand_info macronix_spinand_table[] = {
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
- 				     mx35lf1ge4ab_ecc_get_status)),
- 	SPINAND_INFO("MX35UF1G24AD",
--		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x94),
-+		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x94, 0x03),
- 		     NAND_MEMORG(1, 2048, 128, 64, 1024, 20, 1, 1, 1),
- 		     NAND_ECCREQ(8, 512),
- 		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-@@ -279,7 +278,7 @@ static const struct spinand_info macronix_spinand_table[] = {
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
- 				     mx35lf1ge4ab_ecc_get_status)),
- 	SPINAND_INFO("MX35UF1GE4AD",
--		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x96),
-+		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x96, 0x03),
- 		     NAND_MEMORG(1, 2048, 128, 64, 1024, 20, 1, 1, 1),
- 		     NAND_ECCREQ(8, 512),
- 		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-@@ -289,7 +288,7 @@ static const struct spinand_info macronix_spinand_table[] = {
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
- 				     mx35lf1ge4ab_ecc_get_status)),
- 	SPINAND_INFO("MX35UF1GE4AC",
--		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x92),
-+		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x92, 0x01),
+ 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL)),
++	SPINAND_INFO("MX35LF4G24AD-Z4I8",
++		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x75, 0x03),
++		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 1),
++		     NAND_ECCREQ(8, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL)),
+ 	SPINAND_INFO("MX31LF1GE4BC",
+ 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x1e),
  		     NAND_MEMORG(1, 2048, 64, 64, 1024, 20, 1, 1, 1),
- 		     NAND_ECCREQ(4, 512),
- 		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-@@ -298,7 +297,6 @@ static const struct spinand_info macronix_spinand_table[] = {
+@@ -207,6 +225,16 @@ static const struct spinand_info macronix_spinand_table[] = {
  		     SPINAND_HAS_QE_BIT,
  		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
  				     mx35lf1ge4ab_ecc_get_status)),
--
- 	SPINAND_INFO("MX31LF2GE4BC",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x2e),
- 		     NAND_MEMORG(1, 2048, 64, 64, 2048, 40, 1, 1, 1),
-@@ -309,7 +307,7 @@ static const struct spinand_info macronix_spinand_table[] = {
++	SPINAND_INFO("MX35UF4G24AD-Z4I8",
++		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xf5, 0x03),
++		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 1),
++		     NAND_ECCREQ(8, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
++				     mx35lf1ge4ab_ecc_get_status)),
+ 	SPINAND_INFO("MX35UF4GE4AD",
+ 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xb7, 0x03),
+ 		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 1),
+@@ -237,6 +265,16 @@ static const struct spinand_info macronix_spinand_table[] = {
  		     SPINAND_HAS_QE_BIT,
  		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
  				     mx35lf1ge4ab_ecc_get_status)),
--	SPINAND_INFO("MX3UF2GE4BC",
-+	SPINAND_INFO("MX31UF2GE4BC",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xae),
- 		     NAND_MEMORG(1, 2048, 64, 64, 2048, 40, 1, 1, 1),
- 		     NAND_ECCREQ(8, 512),
++	SPINAND_INFO("MX35UF2G24AD-Z4I8",
++		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xe4, 0x03),
++		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 1, 1, 1),
++		     NAND_ECCREQ(8, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
++				     mx35lf1ge4ab_ecc_get_status)),
+ 	SPINAND_INFO("MX35UF2GE4AD",
+ 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xa6, 0x03),
+ 		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 1, 1, 1),
 -- 
 2.25.1
 
