@@ -1,117 +1,121 @@
-Return-Path: <linux-kernel+bounces-233765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B0AD91BCCB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:47:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8611991BCDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:50:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9D6DB22D6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:47:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B49981C22097
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:50:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336B0155CB8;
-	Fri, 28 Jun 2024 10:47:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E3A1553AA;
+	Fri, 28 Jun 2024 10:49:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bDG1VjsX"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N0aefskv"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E2774DA0C;
-	Fri, 28 Jun 2024 10:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF7F1553A0;
+	Fri, 28 Jun 2024 10:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719571635; cv=none; b=DUuDSiaBocVDFUDjCRlolWUpsK6S2b/8R72DYiVIjmoXStzhp0k73lXLE2rGvqSHZjSZGOVgrloA0ZbqiLiV4Z6Ln3p1XhtasGDo1LW2P4/aXL00xkc3QNHXXW76O2OoIDAUNI/eoVy8YaIQtdJYopOFu8PgFll+Eru8fokqpAU=
+	t=1719571798; cv=none; b=p4NdLg8CcpThry8/VIsgNEmlBJ8TWRqOnjyesAgGc2Oksg1isJX+6giTMjSNAEC2MftzKsbPV2c2ase7Vh1Mo60lPfncNbIcOLAa2ER+hJ3XAUnOwcw68+oKhVt3lKuwhd0KBq4LlweWVskiO2nAdHYAy7EduzfFX91xjfPIrrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719571635; c=relaxed/simple;
-	bh=tu81VLihDtiB2EU/b16jwlMJgEGb3wRkp9Jv94c7K7I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mxTJwdUAxAjbRIpJYrh1XbmNXXteqPm5gE+ABU8fWmpzLObc/WE2eR6CO8n/k0z5Z5XQbIlbykzATQBdvcgYRNNZxSETZw1TlYXTUL/L8tnQ50g5BJQHsxcISoiAKFJBaiOmWUtgagkH+TRkQqJLfGVGUp38qXY/bRcPHNUCcfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bDG1VjsX; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45S8Y4hs010650;
-	Fri, 28 Jun 2024 10:47:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	dl0rYJ1SY742x7n44ent2QKcUViTZ8BpLhl0ihXX8PI=; b=bDG1VjsX5Q+k6Kcr
-	phNRceKLOHLh7HPPRaRToV0+kQMfwTQ2AbqBHq7QJOq/IOX9vPGGLOvYZdrmveYG
-	qHZZVMpX59G+HV62ZjM3nYZR8e6Pj7gu6ttBuHNLOtp+pNbOyZW39sIot+CiEjfv
-	5IiB81Kg2PnK6NGbGO/DmUUzBjczSPRQo/g6oV0N+VlbuO6upebcKAz+ckLVVXY0
-	yjNramgH2XlWGPUHG3wEe4sVvq/cV+hGkTil5j8Jmu4xq56ZKZw8rpleBYTDWLZY
-	1bAUSZzJQQAX+3pX7d1cr0txCrVKzjoOPLCbHgQLEeIGVHJ8ZURY25iJ4HJ3AR49
-	TUntgw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 400bdqf9n2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Jun 2024 10:47:08 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45SAl6oB019972
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 28 Jun 2024 10:47:06 GMT
-Received: from [10.251.44.199] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 28 Jun
- 2024 03:47:03 -0700
-Message-ID: <75f15e4c-0e79-455a-a356-85c73a0f96ee@quicinc.com>
-Date: Fri, 28 Jun 2024 13:47:01 +0300
+	s=arc-20240116; t=1719571798; c=relaxed/simple;
+	bh=4yLS4SO15+GZgSV9YAquPD11MCf9dm2ee3l4KGzL7uk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=btRDDEYwpZKtch/MxanGeNgyrIo87sOrM51TxEPmrNXt4i1Li1dyYA19VQ6Fc+rNk3wVgC119ydNxkY1YqYfeMQiVQOIuemWLmsZJycaWGJtQcAxpesi3y3LyAONsHYH3lAZU3HN9ZGI7oGAmD8z04qPHHGxw1+He9Z6oLJ9ONA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N0aefskv; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719571797; x=1751107797;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=4yLS4SO15+GZgSV9YAquPD11MCf9dm2ee3l4KGzL7uk=;
+  b=N0aefskv9SNxsP9IwAuM/D3VYfms1bupr/1/PbnylIAB8HFCzxOIbErE
+   4zW2YZ8/BxRfUH2i4jfD1TKmVUnzNXmOFb1eLEBOAsHmVxQSv8w1BWcOv
+   +E7mxtkr1Xauq2ish41oqExWlh1h2PjNOkksMTu3boBkcP4HICVyaEhTZ
+   RDLWQCHQIT8CZFTh7fmhzn2cF5DAdlwZ5oIXopjr5ku+moFAk7WnIQcsd
+   YtaaMqlIsSQMH5AusZM4ClJenRWSwr2CoKzVsvsAepIZ0J1HYp0e/eoab
+   vmUsYJoSZXutbU9Wzl8yBdKcQq6aojp0pG8q2R6+WG+qsaNoAniokur4h
+   g==;
+X-CSE-ConnectionGUID: pQLa4ZS7Qq6mc1dnNm6Viw==
+X-CSE-MsgGUID: FzMvkoNIT86TKchcRU43UA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="16583413"
+X-IronPort-AV: E=Sophos;i="6.09,168,1716274800"; 
+   d="scan'208";a="16583413"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 03:49:36 -0700
+X-CSE-ConnectionGUID: bnRvln6hT6a4BNTMtrWfNA==
+X-CSE-MsgGUID: B+Rix3d/R7OrlEn3C8UPfw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,168,1716274800"; 
+   d="scan'208";a="44759393"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 28 Jun 2024 03:49:34 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sN9AZ-000H1Z-1p;
+	Fri, 28 Jun 2024 10:49:31 +0000
+Date: Fri, 28 Jun 2024 18:49:10 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jonas Karlman <jonas@kwiboo.se>, Heiko Stuebner <heiko@sntech.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Jonas Karlman <jonas@kwiboo.se>
+Subject: Re: [PATCH v2 2/2] arm64: dts: rockchip: Add Xunlong Orange Pi 3B
+Message-ID: <202406281834.nNnojcHy-lkp@intel.com>
+References: <20240626230319.1425316-3-jonas@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: qcom: camss: Remove unused phy_sel variable in
- csid gen2
-Content-Language: en-US
-To: Hans Verkuil <hverkuil-cisco@xs4all.nl>, <rfoss@kernel.org>,
-        <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
-        <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
-        <mchehab@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <laurent.pinchart@ideasonboard.com>,
-        <quic_hariramp@quicinc.com>
-References: <20240626074730.85-1-quic_grosikop@quicinc.com>
- <32e23a79-ad3a-465f-97e3-d32cbc75019e@xs4all.nl>
-From: "Gjorgji Rosikopulos (Consultant)" <quic_grosikop@quicinc.com>
-In-Reply-To: <32e23a79-ad3a-465f-97e3-d32cbc75019e@xs4all.nl>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: OuzYOImc_n7Ez2JkUCZA4PE2r_tNN8xU
-X-Proofpoint-GUID: OuzYOImc_n7Ez2JkUCZA4PE2r_tNN8xU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-28_06,2024-06-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=999
- adultscore=0 bulkscore=0 lowpriorityscore=0 impostorscore=0 malwarescore=0
- mlxscore=0 suspectscore=0 priorityscore=1501 clxscore=1015 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2406280080
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240626230319.1425316-3-jonas@kwiboo.se>
 
-Hi Hans,
+Hi Jonas,
 
-On 6/28/2024 1:00 PM, Hans Verkuil wrote:
-> On 26/06/2024 09:47, Gjorgji Rosikopulos wrote:
->> The issue is introduced with:
->>
->> [PATCH v4 0/8] Move camss version related defs in to resources
-> 
-> In the pull request I posted today I folded this patch into that 6/8 of the
-> patch series, rather than having this patch on top.
-> 
-> I forgot to mention that in my PR.
+kernel test robot noticed the following build warnings:
 
-Thank you for this.
+[auto build test WARNING on rockchip/for-next]
+[also build test WARNING on robh/for-next krzk/for-next krzk-dt/for-next krzk-mem-ctrl/for-next linus/master v6.10-rc5 next-20240627]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Regards,
+url:    https://github.com/intel-lab-lkp/linux/commits/Jonas-Karlman/dt-bindings-arm-rockchip-Add-Xunlong-Orange-Pi-3B/20240627-175050
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git for-next
+patch link:    https://lore.kernel.org/r/20240626230319.1425316-3-jonas%40kwiboo.se
+patch subject: [PATCH v2 2/2] arm64: dts: rockchip: Add Xunlong Orange Pi 3B
+config: arm64-randconfig-051-20240628 (https://download.01.org/0day-ci/archive/20240628/202406281834.nNnojcHy-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 13.2.0
+dtschema version: 2024.6.dev3+g650bf2d
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240628/202406281834.nNnojcHy-lkp@intel.com/reproduce)
 
-~Gjorgji
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406281834.nNnojcHy-lkp@intel.com/
 
+dtcheck warnings: (new ones prefixed by >>)
+>> arch/arm64/boot/dts/rockchip/rk3566-orangepi-3b-v1.1.dtb: pmic@20: '#sound-dai-cells', 'assigned-clock-parents', 'assigned-clocks', 'clock-names', 'clocks' do not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/mfd/rockchip,rk809.yaml#
+--
+>> arch/arm64/boot/dts/rockchip/rk3566-orangepi-3b-v2.1.dtb: pmic@20: '#sound-dai-cells', 'assigned-clock-parents', 'assigned-clocks', 'clock-names', 'clocks' do not match any of the regexes: 'pinctrl-[0-9]+'
+   	from schema $id: http://devicetree.org/schemas/mfd/rockchip,rk809.yaml#
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
