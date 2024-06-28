@@ -1,175 +1,146 @@
-Return-Path: <linux-kernel+bounces-233546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A79EE91B927
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:58:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF94491B928
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:59:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDF0BB22B81
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:58:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 987812823D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F27514532C;
-	Fri, 28 Jun 2024 07:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C1414389C;
+	Fri, 28 Jun 2024 07:58:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="v+on2P6b"
-Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nNEq6kZ0"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3580413E3FD
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 07:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F197714386F
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 07:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719561484; cv=none; b=fgFpQGAhzxeWYens44u2OsC0eBivUEdDVwjVs2zKD7+P/I+Yifb8r7PU0WzR/SFhcdhqZEkCqeTqqleG7ckCAZYnurdrMBjuccAFQbOOUCvrMpq9FidqBXB3oh/fxtxEr2ui9DnAqmByOlOL0B6PB6FlSxxbFa4KPub2SLNirL8=
+	t=1719561534; cv=none; b=LSUi9Ftfw+6rIhjVIrt3JDvxFYh/z9OqnZYluLZ3iYVs6Oq48ufZdFO1pIRhyZTyGTNJUdwp3k4FTZrCZNXEvsSdUMG6gb4C4wiaVS7sndWDZeZx9A1yn95BTnB8z2vm3trqd4yh2asSchSGc+jonh9vRraaUBmBylbQeCHk4f0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719561484; c=relaxed/simple;
-	bh=w1+N5w9tuw9P2bWefrIa1jOUi6yMbsWDcntSow2e86o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=exDxQm+V8ylmm5KscghUybzc9pAk3iHkjmSBhmCuv72YkluBb4cvOQ7nqviv/NsDJRAzNSX7EDtSnON17KdX2n5gw72Of2dVOe6FJhbkUXZmc9Ou1ZmQaoH7f+gOG81CYK/G9l8WXtvSr42MuMJIMc0XUSbRZdniNEwxv221lC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=v+on2P6b; arc=none smtp.client-ip=91.218.175.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: anand.a.khoje@oracle.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1719561479;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ow9DZSi3OdvJbzDq/MxF59b5LtvOqbCNC3S2td/yhJ4=;
-	b=v+on2P6bYSunCDPl++eZqGgiiOrbrQqUYZhnwVwT3gOtoRbYLBFy4HGLPvy8LfiGUpP1p8
-	JEw2zNHNYx85CmtggEdetACuoVRBdaLP6HTWexh0kWEOf0TdRyTP/WKMjsbdhUWKIUJgeK
-	EIH0+fTp3THyoUM3ok9oGWlJatVpFEo=
-X-Envelope-To: linux-rdma@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: netdev@vger.kernel.org
-X-Envelope-To: saeedm@mellanox.com
-X-Envelope-To: leon@kernel.org
-X-Envelope-To: tariqt@nvidia.com
-X-Envelope-To: edumazet@google.com
-X-Envelope-To: kuba@kernel.org
-X-Envelope-To: pabeni@redhat.com
-X-Envelope-To: davem@davemloft.net
-X-Envelope-To: rama.nichanamatlu@oracle.com
-X-Envelope-To: manjunath.b.patil@oracle.com
-Message-ID: <1e60b5ae-8015-41c5-a60d-e2a5b0d7c01b@linux.dev>
-Date: Fri, 28 Jun 2024 15:57:53 +0800
+	s=arc-20240116; t=1719561534; c=relaxed/simple;
+	bh=KSHFHEJQOwcEyLomFOH9oKcThmx8vwRpmht/1wMqglM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VnVoK5/R/S6qdVi81i7Wqdl8lhmuXWWqCXK5dWjiEfk7IJQfjSI32f8G0pDhomDix5wM11Q29Wx7rgq7SSa49AIxltEBRMkxpLO+78OAVv+v1ANsxIdZfhC8cm5lqKiRHCR9JUNxh2FNEdso/lv279eibXenecuVvrlRO08hUVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nNEq6kZ0; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ec10324791so2638711fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 00:58:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719561531; x=1720166331; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hpVThxLKAwW8nm2tVnNjG2KBHYs+YTfM3+uWLBBi4MI=;
+        b=nNEq6kZ0iW5NUaPNWFEldF4tC0Od5jCUKwZiQC8ywXRgZ8GG8H67+BDd5fonVVfBDk
+         TfMtvRg7tBmVc+8DaZvZ+EWtKzqGdm1ZW9JNriQsQxvg3yalQkMuN9MCrAcliMP4Q68N
+         s+4Rif/AitBee/1Z99+I4YgietHpZaxtfVCUEyHw0oY6cznVaBscAs7j2x9H6JRYuDiN
+         vrS4IT1TkRkw/x1V8uMzc666z0qYiYGS8WjHCIXYG/GWmJe2hpvEw2A/ZWISgBKTAzxg
+         jjsDl1Hc3XbscfxEMP72nnd7xZve90USQGtLoK6XtSjp/re7zWL++pbuXxr5xdR0n/qV
+         lL6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719561531; x=1720166331;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hpVThxLKAwW8nm2tVnNjG2KBHYs+YTfM3+uWLBBi4MI=;
+        b=WmpL3hfAJ2/lVwdlgjWVkU5xVcbv7UDGg9HbH4zzVX4KA3Od/9bGhvYpHPOm+/OpSv
+         Y0lf1NXfKhiAdOK8M9WRCtl5tWbcMRwS/oa+p9JkVUiS3q6RHTwlot3RKoih3Iv+4BSC
+         KmoOqYxX926sx+IV4RqnEJDE3xeYnBTPmXZ+RERkASgPrbXtck31Rvo23HdpDm1NmAo+
+         oTTS+VyDRQS7VsyCW+e2RD3zYsjdo4d0Pc8VGqKPkVzfcVSXDu86k50BDRRBAM8NczUC
+         5GtybwFWUyS2846iliHQWtYeXOrmT23NOePt5n9cF6lQXucs/iE1W6EoYVac3gyq4rGn
+         jB6w==
+X-Forwarded-Encrypted: i=1; AJvYcCW8zGxy5+RKEbRXl2Xcpa6I7Oc2UOd+vGZc6JUp5SclVKL8MVBqxP7kFVgjgsggbvqSu+MV421gsv4GZ85oORFbwm44uP7HC3BJL+zb
+X-Gm-Message-State: AOJu0YzTlTZxOrBHvVe3ONvyeJTMlYc+CRV+1x0v5KO9fye/PBruX2b8
+	PzkxusRDHlRIKRID2cENJwiwH1RrpborRuJL4gx3UPNqDik6dTsXE//lCRZkOpU=
+X-Google-Smtp-Source: AGHT+IHT1dN0X9G5ooLDoHTtpwGUZgml6ThHILx7KnXjSbHrlHKUYpf6rwFCzqavRCfGgLPHp3W0wA==
+X-Received: by 2002:a2e:8792:0:b0:2ec:5699:5e6 with SMTP id 38308e7fff4ca-2ec5b28ba0dmr94114421fa.26.1719561531089;
+        Fri, 28 Jun 2024 00:58:51 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ee51680226sm2034711fa.95.2024.06.28.00.58.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 00:58:50 -0700 (PDT)
+Date: Fri, 28 Jun 2024 10:58:49 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Alexey Klimov <alexey.klimov@linaro.org>
+Cc: linus.walleij@linaro.org, srinivas.kandagatla@linaro.org, 
+	linux-arm-msm@vger.kernel.org, andersson@kernel.org, krzysztof.kozlowski@linaro.org, 
+	linux-gpio@vger.kernel.org, konradybcio@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: qcom: lpass-lpi: increase MAX_NR_GPIO to 32
+Message-ID: <bkl3ry452jzhpoyzvidcvr3cquyx3dq5wbzulut3dzmlozi6ev@zjfdd6z2aqso>
+References: <20240627003654.242870-1-alexey.klimov@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v6] net/mlx5: Reclaim max 50K pages at once
-To: Anand Khoje <anand.a.khoje@oracle.com>, linux-rdma@vger.kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Cc: saeedm@mellanox.com, leon@kernel.org, tariqt@nvidia.com,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- davem@davemloft.net, rama.nichanamatlu@oracle.com,
- manjunath.b.patil@oracle.com
-References: <20240627182443.19254-1-anand.a.khoje@oracle.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <20240627182443.19254-1-anand.a.khoje@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240627003654.242870-1-alexey.klimov@linaro.org>
 
-在 2024/6/28 2:24, Anand Khoje 写道:
-> In non FLR context, at times CX-5 requests release of ~8 million FW pages.
-> This needs humongous number of cmd mailboxes, which to be released once
-> the pages are reclaimed. Release of humongous number of cmd mailboxes is
-> consuming cpu time running into many seconds. Which with non preemptible
-> kernels is leading to critical process starving on that cpu’s RQ.
-> To alleviate this, this change restricts the total number of pages
-> a worker will try to reclaim maximum 50K pages in one go.
-> The limit 50K is aligned with the current firmware capacity/limit of
-> releasing 50K pages at once per MLX5_CMD_OP_MANAGE_PAGES + MLX5_PAGES_TAKE
-> device command.
+On Thu, Jun 27, 2024 at 01:36:54AM GMT, Alexey Klimov wrote:
+> Account for more than only 23 GPIOs in LPASS Low Power Island pinctrl
+> generic driver. The previous value 23 was chosen to satisfy existing
+> SoC-specific drivers. However SM4250 LPI pinctrl uses more than 23 GPIOs
+> and its probe routine fails on:
 > 
-> Our tests have shown significant benefit of this change in terms of
-> time consumed by dma_pool_free().
-> During a test where an event was raised by HCA
-> to release 1.3 Million pages, following observations were made:
+>         if (WARN_ON(data->npins > MAX_NR_GPIO))
+>                 return -EINVAL;
 > 
-> - Without this change:
-> Number of mailbox messages allocated was around 20K, to accommodate
-> the DMA addresses of 1.3 million pages.
-> The average time spent by dma_pool_free() to free the DMA pool is between
-> 16 usec to 32 usec.
->             value  ------------- Distribution ------------- count
->               256 |                                         0
->               512 |@                                        287
->              1024 |@@@                                      1332
->              2048 |@                                        656
->              4096 |@@@@@                                    2599
->              8192 |@@@@@@@@@@                               4755
->             16384 |@@@@@@@@@@@@@@@                          7545
->             32768 |@@@@@                                    2501
->             65536 |                                         0
+> with the following message:
 > 
-> - With this change:
-> Number of mailbox messages allocated was around 800; this was to
-> accommodate DMA addresses of only 50K pages.
-> The average time spent by dma_pool_free() to free the DMA pool in this case
-> lies between 1 usec to 2 usec.
->             value  ------------- Distribution ------------- count
->               256 |                                         0
->               512 |@@@@@@@@@@@@@@@@@@                       346
->              1024 |@@@@@@@@@@@@@@@@@@@@@@                   435
->              2048 |                                         0
->              4096 |                                         0
->              8192 |                                         1
->             16384 |                                         0
+> [   10.709014] ------------[ cut here ]------------
+> [   10.719085] WARNING: CPU: 1 PID: 56 at
+> drivers/pinctrl/qcom/pinctrl-lpass-lpi.c:446
+> lpi_pinctrl_probe+0x308/0x388 [pinctrl_lpass_lpi]
+> [   10.719108] Modules linked in: [...]
+> [   10.719238] CPU: 1 PID: 56 Comm: kworker/u33:0 Not tainted
+> 6.10.0-rc2-00012-ge45ddb1f8d34-dirty #7
+> [   10.719245] Hardware name: Qualcomm Technologies, Inc. QRB4210 RB2 (DT)
+> [   10.719250] Workqueue: events_unbound deferred_probe_work_func
+> [   10.719265] pstate: 20000005 (nzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [   10.719271] pc : lpi_pinctrl_probe+0x308/0x388 [pinctrl_lpass_lpi]
+> [   10.719278] lr : lpi_pinctrl_probe+0x44/0x388 [pinctrl_lpass_lpi]
+>         ...
+> [   10.719357] Call trace:
+> [   10.719361]  lpi_pinctrl_probe+0x308/0x388 [pinctrl_lpass_lpi]
+> [   10.719369]  platform_probe+0x68/0xc4
+> [   10.719378]  really_probe+0xbc/0x29c
+> [   10.719384]  __driver_probe_device+0x78/0x12c
+> [   10.719390]  driver_probe_device+0xd8/0x15c
+> [   10.719395]  __device_attach_driver+0xb8/0x134
+> [   10.719401]  bus_for_each_drv+0x88/0xe8
+> [   10.719407]  __device_attach+0xa0/0x190
+> [   10.719412]  device_initial_probe+0x14/0x20
+> [   10.719418]  bus_probe_device+0xac/0xb0
+> [   10.719423]  deferred_probe_work_func+0x88/0xc0
+> [   10.719429]  process_one_work+0x150/0x294
+> [   10.719439]  worker_thread+0x2f8/0x408
+> [   10.719445]  kthread+0x110/0x114
+> [   10.719452]  ret_from_fork+0x10/0x20
+> [   10.719459] ---[ end trace 0000000000000000 ]---
+> [   10.719589] qcom-sm4250-lpass-lpi-pinctrl a7c0000.pinctrl: probe
+
+Nit: usually you can ommit timestamps when posting the backtrace.
+
+> with driver qcom-sm4250-lpass-lpi-pinctrl failed with error -22
 > 
-> Signed-off-by: Anand Khoje <anand.a.khoje@oracle.com>
+> Fixes: c2e5a25e8d88 ("pinctrl: qcom: Introduce SM4250 LPI pinctrl driver")
+> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
 > ---
-> Changes in v6
->   - Added comments to explain usage os negative MAX_RECLAIM_NPAGES
-> ---
->   drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c | 16 +++++++++++++++-
->   1 file changed, 15 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c b/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
-> index d894a88..972e8e9 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
-> @@ -608,6 +608,11 @@ enum {
->   	RELEASE_ALL_PAGES_MASK = 0x4000,
->   };
->   
-> +/* This limit is based on the capability of the firmware as it cannot release
-> + * more than 50000 back to the host in one go.
-> + */
-> +#define MAX_RECLAIM_NPAGES (-50000)
-> +
->   static int req_pages_handler(struct notifier_block *nb,
->   			     unsigned long type, void *data)
->   {
-> @@ -639,7 +644,16 @@ static int req_pages_handler(struct notifier_block *nb,
->   
->   	req->dev = dev;
->   	req->func_id = func_id;
-> -	req->npages = npages;
-> +
-> +	/* npages > 0 means HCA asking host to allocate/give pages,
-> +	 * npages < 0 means HCA asking host to reclaim back the pages allocated.
-> +	 * Here we are restricting the maximum number of pages that can be
-> +	 * reclaimed to be MAX_RECLAIM_NPAGES. Note that MAX_RECLAIM_NPAGES is
-> +	 * a negative value.
-> +	 * Since MAX_RECLAIM is negative, we are using max() to restrict
-> +	 * req->npages (and not min ()).
-> +	 */
+>  drivers/pinctrl/qcom/pinctrl-lpass-lpi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
 
-Thanks,
-Zhu Yanjun
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-> +	req->npages = max_t(s32, npages, MAX_RECLAIM_NPAGES);
->   	req->ec_function = ec_function;
->   	req->release_all = release_all;
->   	INIT_WORK(&req->work, pages_work_handler);
-
+-- 
+With best wishes
+Dmitry
 
