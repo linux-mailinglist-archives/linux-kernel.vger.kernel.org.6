@@ -1,91 +1,97 @@
-Return-Path: <linux-kernel+bounces-233891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A5EC91BECF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:42:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FBAF91BED0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:42:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55CC028188B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:42:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00A1BB22CDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:42:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4929158D6F;
-	Fri, 28 Jun 2024 12:42:14 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FB515572B;
-	Fri, 28 Jun 2024 12:42:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7301158A27;
+	Fri, 28 Jun 2024 12:42:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mSDstujL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF96615885D;
+	Fri, 28 Jun 2024 12:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719578534; cv=none; b=bKwM2aBLENIYS/0gvw/KR/0vU1BEl/2ddVXu+Qd0MXjV2w3CQY+CoaPfcRALlzYAq8GROsV/RnzG+q0jIFpQu5e/vD/2QQPz3nHOGFD660h189SVVcBybxjxlC8mRhHdlzCxq6DCw+Xl/DIj2vryUxsGiVWuMaiSeKegtdNg6/Y=
+	t=1719578552; cv=none; b=L4GBY+BeiXuuMFNVZr30wTWWm66/MsesgppmA4B59bd52YIu6YrOcVKIB2EzQmscwIwX5C+QfrvFxYgF+CaZzeK/YhCF/rWWNfL45Bl+dITh6L7IXhAGYEYi2HWRf+2l697jrhGLUuh5KRlEzmFR6vWBtHi9Pc8YVL62AlvcR1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719578534; c=relaxed/simple;
-	bh=XC0hcIAUM/jpVJyP+KwrsMF68vxYpQhsEFJXuiyM+5c=;
+	s=arc-20240116; t=1719578552; c=relaxed/simple;
+	bh=N0otqIc3ONhcPh2fSlqdXklkUC8yTJ+pjdVnueEHiBU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MLqr7Q0PElYgi2++XCxWF5L+3iANopSefljdD96eYAuCUev2Th8sWE3Q+VnYVr5vezX+xXNVVKBjkG+xPqmnvzg1TiEIwu779kZ998G4P1S9d14Gnhcdg1CL/MafdVYfhdWX94/TFL8lqfsB94wMh+T8ejIM5aTIqiQucbmsLGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DB213106F;
-	Fri, 28 Jun 2024 05:42:36 -0700 (PDT)
-Received: from bogus (unknown [10.57.81.131])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 624DF3F6A8;
-	Fri, 28 Jun 2024 05:42:07 -0700 (PDT)
-Date: Fri, 28 Jun 2024 13:42:07 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: David Dai <davidai@google.com>, Viresh Kumar <viresh.kumar@linaro.org>,
-	Sudeep Holla <sudeep.holla@arm.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Quentin Perret <qperret@google.com>,
-	Masami Hiramatsu <mhiramat@google.com>,
-	Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Pavan Kondeti <quic_pkondeti@quicinc.com>,
-	Gupta Pankaj <pankaj.gupta@amd.com>, Mel Gorman <mgorman@suse.de>,
-	kernel-team@android.com, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 2/2] cpufreq: add virtual-cpufreq driver
-Message-ID: <20240628124207.qnu5jypprsibpx72@bogus>
-References: <20240521043102.2786284-1-davidai@google.com>
- <20240521043102.2786284-3-davidai@google.com>
- <CABN1KCKirjdVxF7Mc38tToB9OKH3n2kdN6k1tJbC-cyUtsVAFA@mail.gmail.com>
- <CAJZ5v0jcZW92zm916VAD2a9_CMusuG-K968hWBS+tS1BL-Lspw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WDTN6QdzDjY3JNafRl3eAUW8B5rsMX7hQO6154xcML26q9DDeZCLuiWCFO4TJfW+e7ikAii7K3D9F6YG9d+0yzVT8ruAvd4XcwMVDBm5eDbk+AzvDc8bFobReimgqA+9y6Gyx/8dvyh1S/E11TLNHjBgz5HcSmPbqGEkg+x8Dz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mSDstujL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3D9DC116B1;
+	Fri, 28 Jun 2024 12:42:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719578550;
+	bh=N0otqIc3ONhcPh2fSlqdXklkUC8yTJ+pjdVnueEHiBU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mSDstujL69YFplT8GMQUW6etXVqYim2UsIpevYJxJHHC7OJCf+oXQfDkAVpvlgAjX
+	 oQdKrVah3u/DFIRL4vD7+vZraOfY7NihkywFTeId2c52CgK2NFM0sq/PULKvxqUIhE
+	 RqI0usWQdI3h9e+ZOa9aSXrkhG1gJgzaxtBSe4iLlE6M6lMN57g5XMytNRwBFPsn0R
+	 wFxGJyNCykH++jhK+GgQm7g8DPVryaI67RQ6kkUR082lMWB1R579E4nMpxtp54uJnP
+	 TR/vjyajsKnpKCcywKOpWskjW62Ay+K9rsHlhF+K40dG0+I9xIbcdVq7Wzp/Kx/FIn
+	 JbUPIWWZkuZxA==
+Date: Fri, 28 Jun 2024 13:42:26 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Prasad Kumpatla <quic_pkumpatl@quicinc.com>,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	quic_rohkumar@quicinc.com
+Subject: Re: [PATCH v1 3/3] ASoC: codecs: wcd937x: Remove separate handling
+ for vdd-buck supply
+Message-ID: <53015d64-a194-4596-8950-a55b4b0e429a@sirena.org.uk>
+References: <20240628101143.1508513-1-quic_mohs@quicinc.com>
+ <20240628101143.1508513-4-quic_mohs@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="moOJjz50aeceZ/EA"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0jcZW92zm916VAD2a9_CMusuG-K968hWBS+tS1BL-Lspw@mail.gmail.com>
+In-Reply-To: <20240628101143.1508513-4-quic_mohs@quicinc.com>
+X-Cookie: divorce, n:
 
-On Fri, Jun 28, 2024 at 02:01:16PM +0200, Rafael J. Wysocki wrote:
-> Hi,
-> 
-> On Thu, Jun 27, 2024 at 11:22 PM David Dai <davidai@google.com> wrote:
-> >
-> > Hi folks,
-> >
-> > Gentle nudge on this patch to see if there's any remaining concerns?
-> 
-> Yes, there are.
-> 
-> The dependency of OF is pretty much a no-go from my perspective.
-> 
 
-I agree and I don't think it is needed as well, can be removed easily IMO.
+--moOJjz50aeceZ/EA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
---
-Regards,
-Sudeep
+On Fri, Jun 28, 2024 at 03:41:43PM +0530, Mohammad Rafi Shaik wrote:
+
+> Replace free_irq() with devm_free_irq() because irq have been requested
+> wth devm_request_threaded_irq().
+
+This seems like an unrelated change, and TBH if explict frees are
+required I'd question if devm_ should be being used in the first place.
+
+--moOJjz50aeceZ/EA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ+r7EACgkQJNaLcl1U
+h9DDoQf8CENJNEqvh0heJLuo8hBLqvgk9WIppf3jh5PzOjDdRdXS2nahpPtX5PTD
+1uTxZdTMlGXpxSlGlXckNbCU9JxM4gWFTwd5Wtda6FH4KNQi6DUlIZJEUvN2w9CG
+6up05y4UUj5L9bBJyhypenv/WdWBUmXYKqzHsYw6zMIA9yW1IPiVVSIVK7c7YOKm
+a8ItfxzMnfhnfvlsYPnNl4a1PwwY2y/3s97sJqcQM8aVqD+yC1yxOiFZPtyKGjUJ
+QrGaLsV85yaQkec8o01fU1G6ZCYAG+Rj/eEci4ydMUQLgwI/G5bTebF9OT+Y/9BY
+YoVYikmuGY4eIDvy1p4d7xY89yFUpQ==
+=lr/h
+-----END PGP SIGNATURE-----
+
+--moOJjz50aeceZ/EA--
 
