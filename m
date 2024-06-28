@@ -1,271 +1,276 @@
-Return-Path: <linux-kernel+bounces-234051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1676991C16F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:46:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E16C191C174
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 16:46:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1CC2281525
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:46:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C9BF1F25EA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331131C0DE7;
-	Fri, 28 Jun 2024 14:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58EA61C0DC0;
+	Fri, 28 Jun 2024 14:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="x47XdDmE"
-Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="lRVGvHK5"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF401DDE9;
-	Fri, 28 Jun 2024 14:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719585967; cv=pass; b=St0k3wHZqqaS03II+fP8yVFQLnyWbdTEPjCl+RCFJVlbHlfPc8jAuE/8+dJ5rwwWaAfnvh9UJQno/oAv3LLi1lDQVEq5oMwiRuW6OmWVQfGIFXW2sjlHeTUp2ZKv56XVkm/s4Iqj9CaaUZKjQFUkOLawX/VXiRiE10T9l8sr9yU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719585967; c=relaxed/simple;
-	bh=xi3MsJ24rqKtt58ZcTwE+6ytS76F6inUaZWTbu1VV90=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=vGEO/FnIujPuFg0tzokSNPJVBWNYpQBJATcf880KVYzK0QLaI70M/f3dNqxAHzrM2p7Op9zc8ogwHmR/Hox53r94Q+2oUx3dYKAsk29l5XYq7O0Q+8QKiKsetuUSX8NOftMlZts3rNBsZ07pcovDEw7teaL7eEpxkVNHGTQq1gs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=x47XdDmE; arc=pass smtp.client-ip=195.140.195.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from [192.168.1.215] (83-245-197-232.elisa-laajakaista.fi [83.245.197.232])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sakkinen)
-	by meesny.iki.fi (Postfix) with ESMTPSA id 4W9dXd425vzyQb;
-	Fri, 28 Jun 2024 17:45:53 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
-	t=1719585957;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WWKHLgmudvMlwluvp3Stzu4k/6CZp2skiMXIPd54CxY=;
-	b=x47XdDmEctKtaybdA5GvS+Q7kPTHMjglvlqxpd7wJ1qZCnYZAqadJrM82qWAN9hkJw9qya
-	ArcSjW2anjIUCoreelJdVL2vlkPcnKtJvRbeg/lqoTfNWYZW6xSnQg7nduh1yLA2rVbPuU
-	bnqj0zoDIACXDnSY+Uqae9B+o+mxBYk=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=meesny; t=1719585957;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WWKHLgmudvMlwluvp3Stzu4k/6CZp2skiMXIPd54CxY=;
-	b=RxUpuY06Tm7bdQ+ZP2YSeV2sZ0d26kGW+yfvErGUjN0RqKtm0McdqrYuekNb0pGvzE+qm7
-	iuNlXj2O8FbpJDeehRl+K0JeKQeaRmeSYauJacKq29s6uBRrtri7KjBnhn89xVkrtvvaVt
-	5hMvMcoH5A/jWQetK3y8OT94tMYIngU=
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=sakkinen smtp.mailfrom=jarkko.sakkinen@iki.fi
-ARC-Seal: i=1; s=meesny; d=iki.fi; t=1719585957; a=rsa-sha256; cv=none;
-	b=wz7CPul/aLpW+AkOpy+q+2hOgYuNK2/HqS/jHykc4lXi7fbJVcsx4BSPq1RSy4MXAK4YCL
-	YMEG6IroCIxVWFa5vosVXJ7wmDo9nZEnRkcQT2Nc2HYn4VErl62+Oyb3XbEnCw7Tw+qsRn
-	X2ennwOnY7aYQMkNbAXIm+aPPy2PuKs=
-Message-ID: <177e16dafed37ab361cf0ccc436573be1d717d94.camel@iki.fi>
-Subject: Re: [PATCH v2 2/4] capabilities: Add securebit to restrict userns
- caps
-From: Jarkko Sakkinen <jarkko.sakkinen@iki.fi>
-To: Jonathan Calmels <jcalmels@3xx0.net>, brauner@kernel.org, 
- ebiederm@xmission.com, Jonathan Corbet <corbet@lwn.net>, Paul Moore
- <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn"
- <serge@hallyn.com>, KP Singh <kpsingh@kernel.org>, Matt Bobrowski
- <mattbobrowski@google.com>, Alexei Starovoitov <ast@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>, Yonghong Song
- <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>,
- Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa
- <jolsa@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Kees Cook
- <kees@kernel.org>, Joel Granados <j.granados@samsung.com>, John Johansen
- <john.johansen@canonical.com>, David Howells <dhowells@redhat.com>, Jarkko
- Sakkinen <jarkko@kernel.org>, Stephen Smalley
- <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
- Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>
-Cc: containers@lists.linux.dev, linux-kernel@vger.kernel.org, 
- linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
- linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
- apparmor@lists.ubuntu.com, keyrings@vger.kernel.org,
- selinux@vger.kernel.org,  linux-kselftest@vger.kernel.org
-Date: Fri, 28 Jun 2024 17:45:52 +0300
-In-Reply-To: <f4de777099b0dff819ee6277b3b7cd7e18d96c78.camel@iki.fi>
-References: <20240609104355.442002-1-jcalmels@3xx0.net>
-	 <20240609104355.442002-3-jcalmels@3xx0.net>
-	 <f4de777099b0dff819ee6277b3b7cd7e18d96c78.camel@iki.fi>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44EF01E532
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 14:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719586010; cv=none; b=mrk49dj4V91gra8+nhXVxXM+3TX/r4k95NXOzcRQO5AGiu71Crc8xJ3gaTl6vpIoaFqhO8b2AEUdNjQiZ4EaV+MR3WTH/5I6mzMcQRwIZhni5cD9RElpixBMZ3lkWmBL3qMqTHMIsDCH0rNG997F0y6RHnUS/XjqquuDIX8PUaY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719586010; c=relaxed/simple;
+	bh=edaHmvHbc8a5eSoGysusOi/UdYbwcqedB7i5VwDuYho=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FDSDoWfVpAOylXYYrR0CdtqJsaI99RcYfSDW0kAZcstesE6cn4j9oMc9YmSG/+S5aGDesPHGUtnfG2b/HloytEr1/0kFqCsNG3K/lpVrMVnsC0Ui7VYq/Xmfi+ypSAHDNDeto0j6CjV8g8z+30EQLpSTLJT9qBQGTOSTtC+QR50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=lRVGvHK5; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ec002caeb3so8236331fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 07:46:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719586005; x=1720190805; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NJEUwCbOzu7QTCraes4nwXff/wo8VWMthQe2KP3OzRY=;
+        b=lRVGvHK5KqBPGlE3u18fMAx25djbMN3pfyXLbvdNXlfDwcsV8ygCI3Tox7Lj5NiVVB
+         fZug/66kPW9I6wk2n06huduluGhoERe3NYD5tRczjSo/kd1Oh/IKPXdqNZEycoEM380+
+         xMYhl3tD2MOISBgR5LM4N+gu7e8km+MifFhFsOVTFSfvq3Zonbje03p78y+ua8DTY623
+         0agRiKfjoCxd+eGGzcAYNc0aBjvUdQa27SN1tZ+ShO/Bp0tydeldbZjLFYH6Pt75M01l
+         zryt/AwOT4tR/tE/ob7DkQKfiA6tS0lAzClpQX/+q4fw4SgAFb6Y1zxS2Uk03S8758uk
+         RuhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719586005; x=1720190805;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NJEUwCbOzu7QTCraes4nwXff/wo8VWMthQe2KP3OzRY=;
+        b=ha2qiF30NLh8yBn6nPJ+3gIr1H6opyrTwf5J5aNjyM1qe2GfDKTMIavrGun8dKVoQK
+         xv7s2MPhsI9oUiYWHsQriHLpPqYegbxnZEjcqsLJiyl/YR97xlrN9M6THJxj+lFq2Nwo
+         5Ef2DGReOMZn18lQFKO7NsMI27pQokRYl+9Is5xExW82RYEHKOzImKDxb1m4j2GM+ZA/
+         FysNiAOUXl1O+Bexi4Bkt+UydAflJ0vnb3tSr38m7s2IdQdfjORmy2cFP4GOrnFI5dpf
+         JpzdjGLYTQ+1cjZU/jPWFuR+e+9M69nuc+s/rcEjqgf0+3jmtLeGuR/J+S1ltqhWmDrL
+         Hrsw==
+X-Forwarded-Encrypted: i=1; AJvYcCUnHrCG7MX/CeCzsUG8oXAeRiNgzVkfcJNn0OglGpkZDnqhIi93srRlklt0TQ2IMeStAtbeq8ADIOXGzMxk9edErurfOjlaVW7/MliD
+X-Gm-Message-State: AOJu0Yzu22kE7gdO/TaYKzto/fqWJBIWrWjKbYvWhyt/iVr7roYPatM5
+	J/5WJ8guB4AbcAleB2tQ/hG90Aj3Zydtda5EFL+bm+fxsXAu79CLuTk1qp2y/o7nfSdFwbwOtqw
+	xkTfswjV41w9vHcF1wcbKlYxewnI1WT6SaHggGg==
+X-Google-Smtp-Source: AGHT+IEAssqeG4VkYeYz5wXFHCqHzEcG+3pK46RbnFe7VFKCuQh/uxD4sVggsDU85mjCD+hFTgZO6iEuWF8/K3V8VGM=
+X-Received: by 2002:a2e:8909:0:b0:2ec:4fec:812c with SMTP id
+ 38308e7fff4ca-2ec579fefcbmr106765681fa.44.1719586005212; Fri, 28 Jun 2024
+ 07:46:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240628080146.49545-1-andrei.simion@microchip.com>
+ <20240628080146.49545-2-andrei.simion@microchip.com> <CAMRc=MeJyByMvcFT2aJDK87bz4=+UXEuMtQ4G4MZUAUt39SS1Q@mail.gmail.com>
+ <67d3646f-1b84-4d2d-9e36-be898f13be90@microchip.com>
+In-Reply-To: <67d3646f-1b84-4d2d-9e36-be898f13be90@microchip.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 28 Jun 2024 16:46:33 +0200
+Message-ID: <CAMRc=MeJM4LmczCbZ8bKytLZKY_mP=Q8eaUprLMmO8BYHecStw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] eeprom: at24: avoid adjusting offset for
+ 24AA025E{48, 64}
+To: Andrei.Simion@microchip.com
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com, 
+	claudiu.beznea@tuxon.dev, arnd@arndb.de, gregkh@linuxfoundation.org, 
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	claudiu.beznea@microchip.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2024-06-28 at 17:43 +0300, Jarkko Sakkinen wrote:
-> On Sun, 2024-06-09 at 03:43 -0700, Jonathan Calmels wrote:
-> > This patch adds a new capability security bit designed to constrain
-> > a
->=20
->=20
-> nit: if you think of it "This patch adds" could be just "add", right?
-> :-)
->=20
-> Also name the exact thing/symbol/whatever here. This is not a HBO
-> series.
->=20
-> > task=E2=80=99s userns capability set to its bounding set. The reason fo=
-r
-> > this
-> > is
-> > twofold:
-> >=20
-> > - This serves as a quick and easy way to lock down a set of
-> > capabilities
-> > =C2=A0 for a task, thus ensuring that any namespace it creates will
-> > never
-> > be
-> > =C2=A0 more privileged than itself is.
-> > - This helps userspace transition to more secure defaults by not
-> > requiring
-> > =C2=A0 specific logic for the userns capability set, or libcap support.
-> >=20
-> > Example:
-> >=20
-> > =C2=A0=C2=A0=C2=A0 # capsh --secbits=3D$((1 << 8)) --drop=3Dcap_sys_raw=
-io -- \
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -c '=
-unshare -r grep Cap /proc/self/status'
-> > =C2=A0=C2=A0=C2=A0 CapInh: 0000000000000000
-> > =C2=A0=C2=A0=C2=A0 CapPrm: 000001fffffdffff
-> > =C2=A0=C2=A0=C2=A0 CapEff: 000001fffffdffff
-> > =C2=A0=C2=A0=C2=A0 CapBnd: 000001fffffdffff
-> > =C2=A0=C2=A0=C2=A0 CapAmb: 0000000000000000
-> > =C2=A0=C2=A0=C2=A0 CapUNs: 000001fffffdffff
-> >=20
-> > Signed-off-by: Jonathan Calmels <jcalmels@3xx0.net>
-> > ---
-> > =C2=A0include/linux/securebits.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 =
-1 +
-> > =C2=A0include/uapi/linux/securebits.h | 11 ++++++++++-
-> > =C2=A0kernel/user_namespace.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 |=C2=A0 5 +++++
-> > =C2=A03 files changed, 16 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/include/linux/securebits.h
-> > b/include/linux/securebits.h
-> > index 656528673983..5f9d85cd69c3 100644
-> > --- a/include/linux/securebits.h
-> > +++ b/include/linux/securebits.h
-> > @@ -5,4 +5,5 @@
-> > =C2=A0#include <uapi/linux/securebits.h>
-> > =C2=A0
-> > =C2=A0#define issecure(X)		(issecure_mask(X) &
-> > current_cred_xxx(securebits))
-> > +#define iscredsecure(cred, X)	(issecure_mask(X) & cred-
-> > > securebits)
-> > =C2=A0#endif /* !_LINUX_SECUREBITS_H */
-> > diff --git a/include/uapi/linux/securebits.h
-> > b/include/uapi/linux/securebits.h
-> > index d6d98877ff1a..2da3f4be4531 100644
-> > --- a/include/uapi/linux/securebits.h
-> > +++ b/include/uapi/linux/securebits.h
-> > @@ -52,10 +52,19 @@
-> > =C2=A0#define SECBIT_NO_CAP_AMBIENT_RAISE_LOCKED \
-> > =C2=A0			(issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE
-> > _L
-> > OCKED))
-> > =C2=A0
-> > +/* When set, user namespace capabilities are restricted to their
-> > parent's bounding set. */
-> > +#define SECURE_USERNS_STRICT_CAPS			8
-> > +#define SECURE_USERNS_STRICT_CAPS_LOCKED		9=C2=A0 /* make
->=20
->=20
->=20
-> > bit-8 immutable */
-> > +
-> > +#define SECBIT_USERNS_STRICT_CAPS
-> > (issecure_mask(SECURE_USERNS_STRICT_CAPS))
-> > +#define SECBIT_USERNS_STRICT_CAPS_LOCKED \
-> > +			(issecure_mask(SECURE_USERNS_STRICT_CAPS_L
-> > OC
-> > KED))
-> > +
-> > =C2=A0#define
-> > SECURE_ALL_BITS		(issecure_mask(SECURE_NOROOT) | \
-> > =C2=A0			=09
-> > issecure_mask(SECURE_NO_SETUID_FIXUP) | \
-> > =C2=A0				 issecure_mask(SECURE_KEEP_CAPS) |
-> > \
-> > -			=09
-> > issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE))
-> > +			=09
-> > issecure_mask(SECURE_NO_CAP_AMBIENT_RAISE) | \
-> > +			=09
->=20
-> spurious new lines in the diff
->=20
-> please as first priority aim for absolute minimal diff or at least
-> do grow diff proactively like this.
->=20
-> If we really think after that, that we need some "extras" to the
-> patch set, then we decide that. These only take energy away from
-> reviewers.
->=20
->=20
-> > issecure_mask(SECURE_USERNS_STRICT_CAPS))
-> > =C2=A0#define SECURE_ALL_LOCKS	(SECURE_ALL_BITS << 1)
-> > =C2=A0
-> > =C2=A0#endif /* _UAPI_LINUX_SECUREBITS_H */
-> > diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
-> > index 7e624607330b..53848e2b68cd 100644
-> > --- a/kernel/user_namespace.c
-> > +++ b/kernel/user_namespace.c
-> > @@ -10,6 +10,7 @@
-> > =C2=A0#include <linux/cred.h>
-> > =C2=A0#include <linux/securebits.h>
-> > =C2=A0#include <linux/security.h>
-> > +#include <linux/capability.h>
-> > =C2=A0#include <linux/keyctl.h>
-> > =C2=A0#include <linux/key-type.h>
-> > =C2=A0#include <keys/user-type.h>
-> > @@ -42,6 +43,10 @@ static void dec_user_namespaces(struct ucounts
-> > *ucounts)
-> > =C2=A0
-> > =C2=A0static void set_cred_user_ns(struct cred *cred, struct
-> > user_namespace *user_ns)
-> > =C2=A0{
-> > +	/* Limit userns capabilities to our parent's bounding set.
-> > */
-> > +	if (iscredsecure(cred, SECURE_USERNS_STRICT_CAPS))
-> > +		cred->cap_userns =3D cap_intersect(cred->cap_userns,
-> > cred->cap_bset);
-> > +
-> > =C2=A0	/* Start with the capabilities defined in the userns set.
-> > */
-> > =C2=A0	cred->cap_bset =3D cred->cap_userns;
-> > =C2=A0	cred->cap_permitted =3D cred->cap_userns;
->=20
-> Going for 4 week holiday starting for next week so focus in on nits
-> but since this is something to do access control:
->=20
-> 1. Please go surgical with the diff's because this type of patches
-> also require a surgical review. Now reviewing this like riding on=20
-> a bumpy road with a car of which suspension mechanics is broken
-> ;-)
->=20
-> Hope you grab my argument here. I only want to look at the problem
-> and solution for that not random stuff..
+On Fri, Jun 28, 2024 at 4:17=E2=80=AFPM <Andrei.Simion@microchip.com> wrote=
+:
+>
+> On 28.06.2024 11:30, Bartosz Golaszewski wrote:
+> > EXTERNAL EMAIL: Do not click links or open attachments unless you know =
+the content is safe
+> >
+> > On Fri, Jun 28, 2024 at 10:02=E2=80=AFAM Andrei Simion
+> > <andrei.simion@microchip.com> wrote:
+> >>
+> >> From: Claudiu Beznea <claudiu.beznea@microchip.com>
+> >>
+> >> The EEPROMs could be used only for MAC storage. In this case the
+> >> EEPROM areas where MACs resides could be modeled as NVMEM cells
+> >> (directly via DT bindings) such that the already available networking
+> >> infrastructure to read properly the MAC addresses (via
+> >> of_get_mac_address()). The previously available compatibles needs the
+> >> offset adjustment probably for compatibility w/ old DT bindings.
+> >> Add "microchip,24aa025e48", "microchip,24aa025e64" compatible for the
+> >> usage w/ 24AA025E{48, 64} type of EEPROMs where "24aa025e48" stands
+> >> for EUI-48 address and "24aa025e64" stands for EUI-64 address.
+> >>
+> >> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+> >> [andrei.simion@microchip.com: Add extended macros to initialize the st=
+ructure
+> >> with explicit value to adjusting offset. Add extra description for the=
+ commit
+> >> message.]
+> >> Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
+> >> ---
+> >> v2 -> v3:
+> >> - add specific compatible names according with
+> >> https://ww1.microchip.com/downloads/en/DeviceDoc/24AA02E48-24AA025E48-=
+24AA02E64-24AA025E64-Data-Sheet-20002124H.pdf
+> >> - add extended macros to initialize the structure with explicit value =
+for adjoff
+> >> - drop co-developed-by to maintain the commit history
+> >>  (chronological order of modifications)
+> >>
+> >> v1 -> v2:
+> >> - no change
+> >> ---
+> >>  drivers/misc/eeprom/at24.c | 28 +++++++++++++++++++++++-----
+> >>  1 file changed, 23 insertions(+), 5 deletions(-)
+> >>
+> >> diff --git a/drivers/misc/eeprom/at24.c b/drivers/misc/eeprom/at24.c
+> >> index 4bd4f32bcdab..e2ac08f656cf 100644
+> >> --- a/drivers/misc/eeprom/at24.c
+> >> +++ b/drivers/misc/eeprom/at24.c
+> >> @@ -121,20 +121,29 @@ struct at24_chip_data {
+> >>         u32 byte_len;
+> >>         u8 flags;
+> >>         u8 bank_addr_shift;
+> >> +       u8 adjoff;
+> >>         void (*read_post)(unsigned int off, char *buf, size_t count);
+> >>  };
+> >>
+> >> -#define AT24_CHIP_DATA(_name, _len, _flags)                          =
+  \
+> >> +#define AT24_CHIP_DATA_AO(_name, _len, _flags, _ao)                  =
+  \
+> >
+> > Please, don't try to save space on a few letters, call it
+> > AT24_CHIP_DATA_ADJOFF() for better readability.
+> >
+>
+> I will change in next the version.
+>
+> >>         static const struct at24_chip_data _name =3D {                =
+    \
+> >>                 .byte_len =3D _len, .flags =3D _flags,                =
+      \
+> >> +               .adjoff =3D _ao                                       =
+    \
+> >>         }
+> >>
+> >> -#define AT24_CHIP_DATA_CB(_name, _len, _flags, _read_post)           =
+  \
+> >> +#define AT24_CHIP_DATA(_name, _len, _flags)                          =
+  \
+> >> +       AT24_CHIP_DATA_AO(_name, _len, _flags, 0)
+> >> +
+> >> +#define AT24_CHIP_DATA_CB_AO(_name, _len, _flags, _ao, _read_post)   =
+  \
+> >>         static const struct at24_chip_data _name =3D {                =
+    \
+> >>                 .byte_len =3D _len, .flags =3D _flags,                =
+      \
+> >> +               .adjoff =3D _ao,                                      =
+    \
+> >>                 .read_post =3D _read_post,                            =
+    \
+> >>         }
+> >>
+> >> +#define AT24_CHIP_DATA_CB(_name, _len, _flags, _read_post)           =
+  \
+> >> +       AT24_CHIP_DATA_CB_AO(_name, _len, _flags, 0, _read_post)
+> >> +
+> >>  #define AT24_CHIP_DATA_BS(_name, _len, _flags, _bank_addr_shift)     =
+  \
+> >>         static const struct at24_chip_data _name =3D {                =
+    \
+> >>                 .byte_len =3D _len, .flags =3D _flags,                =
+      \
+> >> @@ -170,9 +179,13 @@ AT24_CHIP_DATA(at24_data_24cs01, 16,
+> >>  AT24_CHIP_DATA(at24_data_24c02, 2048 / 8, 0);
+> >>  AT24_CHIP_DATA(at24_data_24cs02, 16,
+> >>         AT24_FLAG_SERIAL | AT24_FLAG_READONLY);
+> >> -AT24_CHIP_DATA(at24_data_24mac402, 48 / 8,
+> >> +AT24_CHIP_DATA_AO(at24_data_24mac402, 48 / 8,
+> >> +       AT24_FLAG_MAC | AT24_FLAG_READONLY, 1);
+> >
+> > And this will not break existing users? I guess you refer to these
+> > changes in your commit message but it's not very clear what you're
+> > doing and why.
+> >
+>
+> For those types of eeprom 24AA025E{48, 64} adjusting offset is not requir=
+ed (at24_get_offset_adj()).
+> So, indeed, it is an entanglement in logic.
+> To keep the implementation as it is:
+> adjoff (which is a flag that indicates when to use the adjusting offset) =
+needs to be 1 for old compatibles but for these new ones needs to be 0.
+>
+> I think that is enough not to break the existing users. What are your tho=
+ughts?
+>
 
-I skip the other patches because of my eager to get on holiday but
-my instinct tells me that at least some of this feedback applies
-to all of the patches.
+Wait... is the adjoff field effectively a boolean? Why u8?
 
-So put your solution in sight, not clean ups.
+Bart
 
-
-BR, Jarkko
+> Best Regards,
+> Andrei Simion
+>
+> >> +AT24_CHIP_DATA_AO(at24_data_24mac602, 64 / 8,
+> >> +       AT24_FLAG_MAC | AT24_FLAG_READONLY, 1);
+> >> +AT24_CHIP_DATA(at24_data_24aa025e48, 48 / 8,
+> >>         AT24_FLAG_MAC | AT24_FLAG_READONLY);
+> >> -AT24_CHIP_DATA(at24_data_24mac602, 64 / 8,
+> >> +AT24_CHIP_DATA(at24_data_24aa025e64, 64 / 8,
+> >>         AT24_FLAG_MAC | AT24_FLAG_READONLY);
+> >>  /* spd is a 24c02 in memory DIMMs */
+> >>  AT24_CHIP_DATA(at24_data_spd, 2048 / 8,
+> >> @@ -218,6 +231,8 @@ static const struct i2c_device_id at24_ids[] =3D {
+> >>         { "24cs02",     (kernel_ulong_t)&at24_data_24cs02 },
+> >>         { "24mac402",   (kernel_ulong_t)&at24_data_24mac402 },
+> >>         { "24mac602",   (kernel_ulong_t)&at24_data_24mac602 },
+> >> +       { "24aa025e48", (kernel_ulong_t)&at24_data_24aa025e48 },
+> >> +       { "24aa025e64", (kernel_ulong_t)&at24_data_24aa025e64 },
+> >>         { "spd",        (kernel_ulong_t)&at24_data_spd },
+> >>         { "24c02-vaio", (kernel_ulong_t)&at24_data_24c02_vaio },
+> >>         { "24c04",      (kernel_ulong_t)&at24_data_24c04 },
+> >> @@ -270,6 +285,8 @@ static const struct of_device_id __maybe_unused at=
+24_of_match[] =3D {
+> >>         { .compatible =3D "atmel,24c1024",        .data =3D &at24_data=
+_24c1024 },
+> >>         { .compatible =3D "atmel,24c1025",        .data =3D &at24_data=
+_24c1025 },
+> >>         { .compatible =3D "atmel,24c2048",        .data =3D &at24_data=
+_24c2048 },
+> >> +       { .compatible =3D "microchip,24aa025e48", .data =3D &at24_data=
+_24aa025e48 },
+> >> +       { .compatible =3D "microchip,24aa025e64", .data =3D &at24_data=
+_24aa025e64 },
+> >>         { /* END OF LIST */ },
+> >>  };
+> >>  MODULE_DEVICE_TABLE(of, at24_of_match);
+> >> @@ -690,7 +707,8 @@ static int at24_probe(struct i2c_client *client)
+> >>         at24->read_post =3D cdata->read_post;
+> >>         at24->bank_addr_shift =3D cdata->bank_addr_shift;
+> >>         at24->num_addresses =3D num_addresses;
+> >> -       at24->offset_adj =3D at24_get_offset_adj(flags, byte_len);
+> >> +       at24->offset_adj =3D cdata->adjoff ?
+> >> +                               at24_get_offset_adj(flags, byte_len) :=
+ 0;
+> >>         at24->client_regmaps[0] =3D regmap;
+> >>
+> >>         at24->vcc_reg =3D devm_regulator_get(dev, "vcc");
+> >> --
+> >> 2.34.1
+> >>
+> >
+> > Bart
 
