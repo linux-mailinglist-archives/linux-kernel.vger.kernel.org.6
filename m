@@ -1,110 +1,110 @@
-Return-Path: <linux-kernel+bounces-234123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B351291C279
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:20:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1E3A91C27B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:20:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71A612866A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:20:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B48E1F24A61
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:20:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E48DE1C8FAD;
-	Fri, 28 Jun 2024 15:18:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99AA61C8FD0;
+	Fri, 28 Jun 2024 15:19:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XqD6TzJG"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zh4PM90K"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C881C6888;
-	Fri, 28 Jun 2024 15:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A01461C9EAC
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 15:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719587934; cv=none; b=nJ0xm6gi1OnDmjAZn4WYVkOoYM/42lNDFlBG+CjHRFhhPpJguSSTNkFkW43BPi7ALKIGJplAPDCsFSHku0ZSF20CeJLr/aWnp/BdyyN9y2Pl49G/fsxy/VAcUkCw6ydRMGVbHTSa48n7YG1UcoZf3P7IW2usqJ1lau/FfErUQeY=
+	t=1719587971; cv=none; b=Wuos31lt4nTofH57/KEGo8cbAs8KobzkV7I3c9rxaG9kpwgMGoxaBlMl4cw0JzFlHCaq2SxqAZO2rWxadv7DIjmyof2iXsgmLCQsBlURHCF7KFauUPLFLu7bQLjC3NImQQ+u6Cd8N2q5icapL6QL70XBmlKEbhwz1ozXrQcjE6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719587934; c=relaxed/simple;
-	bh=UnmzAObiTewC7DteWfiWC3+Z5O7/tri0FOBSovqBYrI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aYX3WllzTjcsE2gEVXeyvgGR6Lp+9EyXAt7hpF8f8TQOpg3tR6O5TDZXidEA4Zl+ORVfSoRMBJ8WKtapD0hKwM0ajtIZrfs26rXZZEQmQr6iIyx9SWW3qLv0ImdejKjCaxBr2HmtaJIZbUopknN2SLk3NaMOpRov/mxJmqbYv+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XqD6TzJG; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1719587971; c=relaxed/simple;
+	bh=Pmjri7yaLe7QXW9juAdGl9QopQ/cO6H/4cwPORHxTGQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qhFl1tSsrRVx+z99oBtilSoxeBBHYQeFA6bxW3CNuNz7wz6TovmIk3+TrhubJnORb0Q4WQKBzosg7Nh/q/R8aHilfEY2Kfftotjuhg1K6Xfp800dYynQwDCvq9gMcS14uhNvlPgjNHtHGRlvdIOFAkf8yWrcZyhrQqrAFyq+9HM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zh4PM90K; arc=none smtp.client-ip=209.85.216.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-424acfff613so7536365e9.0;
-        Fri, 28 Jun 2024 08:18:52 -0700 (PDT)
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2c7bf925764so547307a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 08:19:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719587931; x=1720192731; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1719587969; x=1720192769; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qlajlQEnGW0AoAsezBOWXulgbRPHRHotNcM1iK7xOhg=;
-        b=XqD6TzJGqPpZ7rr2/I3S353+OoWS77gyvbOf8hrab+mFET15hxEYKHHkCjw9fsimQx
-         wFbWt9LVZYC6kZDZ4CO5PtG+gtvisZVLglWPtpY2CsIt0j5+XyZcSNaeleREHO8yLpZN
-         yHVM2mVc3oBLMTvqCS+K6l8EdHgfzxGVCDe8Sb5MUkioIXA7d0bLhXgatWv5iiBt1JL0
-         SG6d93w/v99TKYnvWB4aCQGFdgszgFptV5DDWY0UqOeUN1pmTQMxD6Bg20F2bthgifbw
-         3OxlMjMHjkMDVKvVGP05HWLzAJ7ppYAzEbE83CngDkFG+TI/Wpm/3rbUVuPuPNXJb0ZH
-         kseg==
+        bh=Pmjri7yaLe7QXW9juAdGl9QopQ/cO6H/4cwPORHxTGQ=;
+        b=Zh4PM90K8Os5aOk5d1RmK6q4pOMGMHqg1JfzJDVYIfpiCxI3jVen/8BZcR5ao/sHHc
+         bRXdImGjZG6dP+iPZ4gVfLze0YV5NraThdIq1h+yuyXcAY3iFyT1jtozk9XlvhrJebR3
+         ayHg7Bet05N1L+zkh67lbTsLqc5F1wb84/SniBX+8L1jIeEUN00PUrrGxvbcgVR2nnFU
+         x7fCL/3GGRNtx8wz7o38zehA8lfuRZiMSo54XUjIsudz5Y28JRM8doaO8p4WVf7sMw8S
+         yVDq/WhvgbTrpbk0au4BcYq+ETq8lm0hvJNYisg8GfBCuf2kLwpipKO0Oc7MbXEBJehz
+         W9zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719587931; x=1720192731;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1719587969; x=1720192769;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qlajlQEnGW0AoAsezBOWXulgbRPHRHotNcM1iK7xOhg=;
-        b=WmJLlId7yVJAsf6AeCR61LdFuk/Jwr2h+IE42jFA0bqoMnx8NxsejmgRm+hMwFxXbN
-         HB0YkTHM2BiMNIPsx/2dAP3Vdor6SCp43rgrX1icoYdRfh+aUaeJTHPFfAY/2LXVElkN
-         RQ4rYLpqHr/xa6jxG4/b1WZjz0ZurdVNyQoh+u0DJGwrL7KKDJCvacaDMUcH5+vxb02z
-         pZMPlkZLwlrO0fX6fit1a2z0Knp1JhkNM3WzhLqEkFgyQLnOGD4uiB/8vKk7auv9ZUuR
-         FDhR60+BlUW3exWBSHRHdPkNP04ZfNelMQDovvWsPe2pfImsWVAnX7Ua0g6vywu+d2+1
-         /hMg==
-X-Forwarded-Encrypted: i=1; AJvYcCXkHQY4x3q68o4MVhwPi685p43A8O2L3alZDaVQoru5777gBrg86DxPljwGwT6m5goBCGiAWoLn7Yj+9060bFK8+p9iM2yUUWGOdTqI
-X-Gm-Message-State: AOJu0Yyp2K+wLk9ohrmz+t5hllhsrHB9cTSJ+Skuage8Kv6P3JtjIVUi
-	AcYl3COUxQefLVg/vHuyMVk7xCV6TUkfPNqV0iBncsKvJJ9ReE0l
-X-Google-Smtp-Source: AGHT+IFBYO20wkq72Ype6rhOOKYEbI8cMPMAmtzTs2wRpVBRkotZub69tVwnHGVoh4R6jtkg0gYYBw==
-X-Received: by 2002:a05:600c:4306:b0:424:aa86:cc2a with SMTP id 5b1f17b1804b1-424aa86cc80mr86680405e9.20.1719587930227;
-        Fri, 28 Jun 2024 08:18:50 -0700 (PDT)
-Received: from localhost (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b099c72sm39268705e9.37.2024.06.28.08.18.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 08:18:49 -0700 (PDT)
-From: Thierry Reding <thierry.reding@gmail.com>
-To: thierry.reding@gmail.com,
-	jonathanh@nvidia.com,
-	kkartik@nvidia.com,
-	rdunlap@infradead.org,
-	frank.li@vivo.com,
-	Jason Sikes <sikes@qlogo.org>
-Cc: linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Fix warning in tegra_fuse_add_lookups
-Date: Fri, 28 Jun 2024 17:18:48 +0200
-Message-ID: <171958790864.2433364.265100419611870394.b4-ty@nvidia.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240616073721.5696-1-sikes@qlogo.org>
-References: <20240616073721.5696-1-sikes@qlogo.org>
+        bh=Pmjri7yaLe7QXW9juAdGl9QopQ/cO6H/4cwPORHxTGQ=;
+        b=BENey3l4wvHy56ZjHqfYVdBD73WDNvOPvWKqLAx7hW9nZvzaEyrYajOnuWvI7OPoo9
+         RBSlqh6Ps0dezgzUG4LZYzBlCwTbn9m7nw+sTQzo0hX6CsXlG0/3Y1wWxtw4aAl96qsC
+         dSAGBmA7L8Gkij74Z/hXOf23r0CaHVHEmfJqAefqNN31uEt7KRdH5Gg8lYfuPqJKEQ1X
+         8YOQ0RZi1JtGepnMbC0+ownic8JwSCgun9dYW30TQez2WRHQbWtPU/Hx9oXAKudfSBkw
+         Ig2KYMh24yLvOmEyMdlqhmHg79h7IDatT7LJJLlBmw9OTWgrYJtl8wiD+u8Zer9B3cQx
+         jPqA==
+X-Forwarded-Encrypted: i=1; AJvYcCWiHTL5wlMR0yQt6ZJtdzhrqsQAUF7OWG+uRDzjjJp/IpUKJacGWq5gBijC8cZDF67PzzeUjsioAHINFwUhPvec0OEz22B+abVsnu8l
+X-Gm-Message-State: AOJu0YwEQSAiIQLNJK7QUagVy6z6spFUlwvbrDxYkCrvQ8NNrOB9K45Q
+	t9W/Q4+tywN1jbtJRz8PkmLRD4Wttvpuu3cmdUGeTiCCTSyIYWo1QbFA+BeSAaTB9VsNb2bCNJY
+	h8x4/HN2fLoUkAfzmvyA7176sOzo=
+X-Google-Smtp-Source: AGHT+IFl/ePdhUfWsByY453UJoZtJx+hjy/QQ0/MmsxXqE51xtMz7GT1s16IgCAaFz1nVwJbQE6MR1Er5Iz8x1FG1QA=
+X-Received: by 2002:a17:90a:6885:b0:2c7:e24d:f695 with SMTP id
+ 98e67ed59e1d1-2c861246b47mr15446562a91.12.1719587968869; Fri, 28 Jun 2024
+ 08:19:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <CABXGCsNptxsQO=5=qi-JYiFX=rX8Ok5inK80Gn0qrUFWbtBGng@mail.gmail.com>
+ <CADnq5_PDxJ8O1JUQ9RBYRFB9G1WZJos05ZAM4jUKuPBwPxjNkA@mail.gmail.com>
+ <CABXGCsNN9LwHc2x2AAEH=5UNwpvkWkBqRYz3OP8MZ6Woy+HDXA@mail.gmail.com>
+ <b6c440ca-e63e-429b-af41-5f27d4b8b2a2@leemhuis.info> <CABXGCsNoFfMn7LaqqFgEPg-ECyUPN=f=SXVrFi=GZk6c69-Gqw@mail.gmail.com>
+In-Reply-To: <CABXGCsNoFfMn7LaqqFgEPg-ECyUPN=f=SXVrFi=GZk6c69-Gqw@mail.gmail.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Fri, 28 Jun 2024 11:19:16 -0400
+Message-ID: <CADnq5_PDSkr4hOHJmb1J30UC0a7sXsm5-TPkEmjzffMK_A+7ug@mail.gmail.com>
+Subject: Re: 6.10/bisected/regression - commits bc87d666c05 and 6d4279cb99ac
+ cause appearing green flashing bar on top of screen on Radeon 6900XT and 120Hz
+To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>, "Mahfooz, Hamza" <Hamza.Mahfooz@amd.com>
+Cc: Linux regressions mailing list <regressions@lists.linux.dev>, Rodrigo.Siqueira@amd.com, 
+	"Deucher, Alexander" <alexander.deucher@amd.com>, amd-gfx list <amd-gfx@lists.freedesktop.org>, 
+	dri-devel <dri-devel@lists.freedesktop.org>, 
+	Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Thierry Reding <treding@nvidia.com>
+On Fri, Jun 21, 2024 at 6:45=E2=80=AFAM Mikhail Gavrilov
+<mikhail.v.gavrilov@gmail.com> wrote:
+>
+> On Fri, Jun 21, 2024 at 12:56=E2=80=AFPM Linux regression tracking (Thors=
+ten
+> Leemhuis) <regressions@leemhuis.info> wrote:
+> > Hmmm, I might have missed something, but it looks like nothing happened
+> > here since then. What's the status? Is the issue still happening?
+>
+> Yes. Tested on e5b3efbe1ab1.
+>
+> I spotted that the problem disappears after forcing the TV to sleep
+> (activate screensaver <Super> + <L>) and then wake it up by pressing
+> any button and entering a password.
+> Hope this information can't help figure out how to fix it.
 
+@Siqueira, Rodrigo @Mahfooz, Hamza any ideas?
 
-On Sun, 16 Jun 2024 00:36:57 -0700, Jason Sikes wrote:
-> gcc 14.1.1 warns [-Wcalloc-transposed-args] when sizeof() is
-> used in the first, but not the second, of two size_t arguments.
-> 
-> 
-
-Applied, thanks!
-
-[1/1] Fix warning in tegra_fuse_add_lookups
-      commit: f56da7f4048ff41cb029a715935394f5958a825f
-
-Best regards,
--- 
-Thierry Reding <treding@nvidia.com>
+Alex
 
