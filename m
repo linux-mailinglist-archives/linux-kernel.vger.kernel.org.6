@@ -1,175 +1,187 @@
-Return-Path: <linux-kernel+bounces-233367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F201291B61E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:29:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14D1D91B623
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 07:30:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82FC01F23EE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 05:29:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9506F284CE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 05:30:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753283DB89;
-	Fri, 28 Jun 2024 05:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 706113FB88;
+	Fri, 28 Jun 2024 05:29:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kwdpu6n8"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="URWNnbeE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5032D36B11;
-	Fri, 28 Jun 2024 05:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2BD2D05E;
+	Fri, 28 Jun 2024 05:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719552574; cv=none; b=GfNfIFZ1695A9uF+TMrmhouHXlqR6uuMwom3+W/8hxynRA3vO1Jc/+lgA+BHQbMwFRSPKYt+R5oUG9BDa7rVAxqLfJ6kPdGfdCg+zh6maKmu+QXRA9MPskxnj5jmMGwxJjNbSDIFAf/wX6fd6B3X2UuuFd/5jLN7cqvA6tnKkM4=
+	t=1719552588; cv=none; b=baN39cJhxNUy0V1SYKCQGiRHaOY9wx1nrb6ri+D9Snszon4KOsUcW1+yF3cDdmkSs6Z93Ze2n4Bwz0BACAQigCNB2qTvz3YgR223TgXLERIQeGIDA0bLPUM1OjfqV4M0wXaPfKJAH00jTqHIROGovWP4VI3qQwi2RuABlLcdv0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719552574; c=relaxed/simple;
-	bh=ks1F6Sn9pTxTI0BwOCBA0EESvxRrUUHI3vfdcNjpIUw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TOrjZwJQELbdlNiDAKFj05T1a2Stdqe6Ij0Fptc3zFQD8ZESsUUpFAJmBMP18F0QA3/hHnhpp5Io0SYqt8KlV1IzM8gG+4CzFVvGmJsMVDa3wwC2i8C/5UWL44d9C6ktoSF5A6+YalAvUJWgLUvvnUbVat+KgxH3Pri7uunf++U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kwdpu6n8; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2c7af3116aaso56096a91.2;
-        Thu, 27 Jun 2024 22:29:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719552572; x=1720157372; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PJ/M56ThtwrsFD5Lfw9SbGejoYETZHoSJEMo2+pp2ms=;
-        b=kwdpu6n8pNn9eyb+lBJKj44mYs5+fAc4M3IRux4ckG5ZGhHbCLMln9GxjW/V9Mdt6H
-         EYTtcjXGwCp2DXcQTftMIM20Nl8+zjOJEuSYePhPNBK8GU3TYQU+4qzQt5vrvoiCxvEk
-         qcbeageydIWL2hpkGPlHQuXZMondcrNUTJMsiJoUGL28wpgvUfYKNCLk8CaGG751yLnV
-         Z8dv+pjvSJ8kiAfQWfQoops2dtTXBqLmjd9z5RArzTLNKw9g6ntvMaGeA0cPaQwudACj
-         ln+/xqr42P/amow7KThd6eWB2XVAh4ta95l5lqTZM5w/3LMVLUzJBYM1YdFFNd9eV2hw
-         4qHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719552572; x=1720157372;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PJ/M56ThtwrsFD5Lfw9SbGejoYETZHoSJEMo2+pp2ms=;
-        b=CGc3q46fNmzYXzX0ujBC3obDay9B5H3WltfmT9GW0Gc9RUI8ENZ41IJbkWKL3ppkUg
-         JiehWops1buy+JKWsH9Rmg2Fl8P8+VFxp01/Hq90Ab0nXu38qDyb5M/sLmlUkEae/6c/
-         7qJSGdfcnqPdQ9a0zYWNHIIqQNryJNdZst4Cn32M2GIu4Dd1EY8/FRNvI6DjRnnDKQJt
-         ba6hgBjINDY+wJYByYBb3mA2X/l10SkUD/dyW7GmmMq2kpN59GozmXMd2fyv7fDDH2NE
-         b9WDU5LkQ7sQadIi7/428npytwlhs/Qr/yZzcSlCg6N0hB3x7hjh+VvARazVnkW91xTL
-         Spwg==
-X-Forwarded-Encrypted: i=1; AJvYcCVzfFUJ9G7XD3djr+ZiEARnbN+1dSQ1w/vRRIqZyph5Yx+2qj2B/sRKRw/QZLGI+E/lNTLWl1jDfn+tHjBqvFMOmtZJXkI5BJB8haiCkRWksQnGlYoCHu6J318M5uTg2edBsHZj
-X-Gm-Message-State: AOJu0YwyCEntHdUVHFx4e8MaBQuRBPxWhzRmGdiZmbnbm+L4FjLYck86
-	fL01xDw6o++cdmdRUrDrBAQDWhD4Qyvijr7968kqx+SHrb+SnRx3KP23bS15
-X-Google-Smtp-Source: AGHT+IHLv5sQ9sNkcIC/nJeiyanw64nDmI2PGR16Y8htj0wpAT+P7CbV8FfgwKGWVS9OAZ3ykXJVGA==
-X-Received: by 2002:a17:90a:db94:b0:2c2:d11b:14dd with SMTP id 98e67ed59e1d1-2c8452e0fdbmr15923350a91.0.1719552572391;
-        Thu, 27 Jun 2024 22:29:32 -0700 (PDT)
-Received: from localhost.localdomain (122-117-151-175.hinet-ip.hinet.net. [122.117.151.175])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91c7ddb23sm735599a91.0.2024.06.27.22.29.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 22:29:31 -0700 (PDT)
-From: Kuangyi Chiang <ki.chiang65@gmail.com>
-To: mathias.nyman@intel.com,
-	gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ki.chiang65@gmail.com,
-	stable@vger.kernel.org
-Subject: [PATCH v3] xhci: Don't issue Reset Device command to Etron xHCI host
-Date: Fri, 28 Jun 2024 13:29:14 +0800
-Message-Id: <20240628052914.5215-1-ki.chiang65@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1719552588; c=relaxed/simple;
+	bh=MuOWgcJQOSUBmO2Vy37Xg7xftpXiU+ZC8r+Ven/mpw4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l1ZLqlbbLF+/AlohTkaUWS3IpnlNfQonzd7N2wEYVxy56PhDPs9UodM3HH2y53YxSUTBReq9Huj/P3nTHbm+JN1BaKzvtijjXnBqe8Qn1yLjFUhtN8cFFX6PeWKfQg308uMAWq0atbbaRrWxIRwV8X0gKjk9Zj0c1+VIRO+qKeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=URWNnbeE; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719552587; x=1751088587;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MuOWgcJQOSUBmO2Vy37Xg7xftpXiU+ZC8r+Ven/mpw4=;
+  b=URWNnbeES5n+B6OWdZfGcITG4kkZGUcGMnMbyQN5SWruZk4yUiSDgqN0
+   YNT2NdXA2AYXCyr5qCi5aoj0sZo3ceXgSarl2PQEM/n3JWubfi3uNUinx
+   iIVIw4GG+YFe+HMs8obzdfgtK/xWKCY3LBg+J0qol4lEVfMvW8i7Lih8h
+   oAWAYjV2e8vC1uZSmzwBC+rtQZmePybw6rnmRMlEbD5dqBMXdkMM6txgk
+   aVs+OIYGSuT6tjqQbNa4KX9x63cjKJlr70IRghpP+qNVUrlfx7LrGKX3T
+   pFgUWlDfPK/Rw7PG3N0XX5ZUOu563Wd7amnJVt0NEVtE8E1xn5kgUf/sl
+   A==;
+X-CSE-ConnectionGUID: z9SLJq7CQdGYRBlHqGg69A==
+X-CSE-MsgGUID: meu3jU/jTUy7ylbJ7x4yPg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="19621229"
+X-IronPort-AV: E=Sophos;i="6.09,168,1716274800"; 
+   d="scan'208";a="19621229"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 22:29:46 -0700
+X-CSE-ConnectionGUID: gIPGBZVMRcK+8kzmzM3kyw==
+X-CSE-MsgGUID: 1rkE5azqT8KLfF+K4mIHQQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,168,1716274800"; 
+   d="scan'208";a="49802219"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 27 Jun 2024 22:29:43 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sN4B2-000Gpm-0Y;
+	Fri, 28 Jun 2024 05:29:40 +0000
+Date: Fri, 28 Jun 2024 13:29:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alex Vdovydchenko <keromvp@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sean Anderson <sean.anderson@linux.dev>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+Cc: oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org,
+	Alex Vdovydchenko <xzeol@yahoo.com>
+Subject: Re: [PATCH v2 2/2] hwmon: add MP5920 driver
+Message-ID: <202406281339.YzOThRyw-lkp@intel.com>
+References: <20240627090113.391730-3-xzeol@yahoo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240627090113.391730-3-xzeol@yahoo.com>
 
-Sometimes the hub driver does not recognize the USB device connected
-to the external USB2.0 hub when the system resumes from S4.
+Hi Alex,
 
-After the SetPortFeature(PORT_RESET) request is completed, the hub
-driver calls the HCD reset_device callback, which will issue a Reset
-Device command and free all structures associated with endpoints
-that were disabled.
+kernel test robot noticed the following build errors:
 
-This happens when the xHCI driver issue a Reset Device command to
-inform the Etron xHCI host that the USB device associated with a
-device slot has been reset. Seems that the Etron xHCI host can not
-perform this command correctly, affecting the USB device.
+[auto build test ERROR on groeck-staging/hwmon-next]
+[also build test ERROR on next-20240627]
+[cannot apply to robh/for-next krzk-dt/for-next linus/master v6.10-rc5]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-To work around this, the xHCI driver should obtain a new device slot
-with reference to commit 651aaf36a7d7 ("usb: xhci: Handle USB transaction
-error on address command"), which is another way to inform the Etron
-xHCI host that the USB device has been reset.
+url:    https://github.com/intel-lab-lkp/linux/commits/Alex-Vdovydchenko/dt-bindings-hwmon-Add-MPS-mp5920/20240628-021125
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-next
+patch link:    https://lore.kernel.org/r/20240627090113.391730-3-xzeol%40yahoo.com
+patch subject: [PATCH v2 2/2] hwmon: add MP5920 driver
+config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20240628/202406281339.YzOThRyw-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240628/202406281339.YzOThRyw-lkp@intel.com/reproduce)
 
-Both EJ168 and EJ188 have the same problem, applying this patch then
-the problem is gone.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406281339.YzOThRyw-lkp@intel.com/
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Kuangyi Chiang <ki.chiang65@gmail.com>
----
-Changes in v3:
-- Modify commit message
-- Modify comment
-- Fix coding style, add a #define PCI_VENDOR_ID_ETRON
-- Code refactor, call xhci_disable_slot() + xhci_free_virt_device() helper
+All error/warnings (new ones prefixed by >>):
 
-Changes in v2:
-- Change commit log
-- Add a comment for the workaround
-- Revert "global xhci_free_dev()"
-- Remove XHCI_ETRON_HOST quirk bit
+>> drivers/hwmon/pmbus/mp5920.c:26:9: error: 'pages' undeclared here (not in a function); did you mean 'page'?
+      26 |         pages = 1,
+         |         ^~~~~
+         |         page
+>> drivers/hwmon/pmbus/mp5920.c:27:9: error: 'format' undeclared here (not in a function)
+      27 |         format[PSC_VOLTAGE_IN] = direct,
+         |         ^~~~~~
+>> drivers/hwmon/pmbus/mp5920.c:32:9: error: 'm' undeclared here (not in a function); did you mean 'tm'?
+      32 |         m[PSC_VOLTAGE_IN] = 2266,
+         |         ^
+         |         tm
+>> drivers/hwmon/pmbus/mp5920.c:33:9: error: 'b' undeclared here (not in a function); did you mean 'mb'?
+      33 |         b[PSC_VOLTAGE_IN] = 0,
+         |         ^
+         |         mb
+>> drivers/hwmon/pmbus/mp5920.c:34:9: error: 'R' undeclared here (not in a function)
+      34 |         R[PSC_VOLTAGE_IN] = -1,
+         |         ^
+>> drivers/hwmon/pmbus/mp5920.c:44:9: warning: excess elements in struct initializer
+      44 |         m[PSC_TEMPERATURE] = 1067,
+         |         ^
+   drivers/hwmon/pmbus/mp5920.c:44:9: note: (near initialization for 'mp5920_info')
+   drivers/hwmon/pmbus/mp5920.c:45:9: warning: excess elements in struct initializer
+      45 |         b[PSC_TEMPERATURE] = 20500,
+         |         ^
+   drivers/hwmon/pmbus/mp5920.c:45:9: note: (near initialization for 'mp5920_info')
+   drivers/hwmon/pmbus/mp5920.c:46:9: warning: excess elements in struct initializer
+      46 |         R[PSC_TEMPERATURE] = -2,
+         |         ^
+   drivers/hwmon/pmbus/mp5920.c:46:9: note: (near initialization for 'mp5920_info')
+>> drivers/hwmon/pmbus/mp5920.c:47:9: error: 'func' undeclared here (not in a function)
+      47 |         func[0] = PMBUS_HAVE_VIN  | PMBUS_HAVE_VOUT |
+         |         ^~~~
+   drivers/hwmon/pmbus/mp5920.c:47:9: warning: excess elements in struct initializer
+   drivers/hwmon/pmbus/mp5920.c:47:9: note: (near initialization for 'mp5920_info')
 
- drivers/usb/host/xhci.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
 
-diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-index 37eb37b0affa..abaef0adacf1 100644
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -3682,6 +3682,10 @@ void xhci_free_device_endpoint_resources(struct xhci_hcd *xhci,
- 				xhci->num_active_eps);
- }
- 
-+#define PCI_VENDOR_ID_ETRON		0x1b6f
-+
-+static void xhci_free_dev(struct usb_hcd *hcd, struct usb_device *udev);
-+
- /*
-  * This submits a Reset Device Command, which will set the device state to 0,
-  * set the device address to 0, and disable all the endpoints except the default
-@@ -3711,6 +3715,7 @@ static int xhci_discover_or_reset_device(struct usb_hcd *hcd,
- 	struct xhci_command *reset_device_cmd;
- 	struct xhci_slot_ctx *slot_ctx;
- 	int old_active_eps = 0;
-+	struct device *dev = hcd->self.controller;
- 
- 	ret = xhci_check_args(hcd, udev, NULL, 0, false, __func__);
- 	if (ret <= 0)
-@@ -3752,6 +3757,23 @@ static int xhci_discover_or_reset_device(struct usb_hcd *hcd,
- 						SLOT_STATE_DISABLED)
- 		return 0;
- 
-+	if (dev_is_pci(dev) && to_pci_dev(dev)->vendor == PCI_VENDOR_ID_ETRON) {
-+		/*
-+		 * Obtaining a new device slot to inform the xHCI host that
-+		 * the USB device has been reset.
-+		 */
-+		ret = xhci_disable_slot(xhci, udev->slot_id);
-+		xhci_free_virt_device(xhci, udev->slot_id);
-+		if (!ret) {
-+			ret = xhci_alloc_dev(hcd, udev);
-+			if (ret == 1)
-+				ret = 0;
-+			else
-+				ret = -EINVAL;
-+		}
-+		return ret;
-+	}
-+
- 	trace_xhci_discover_or_reset_device(slot_ctx);
- 
- 	xhci_dbg(xhci, "Resetting device with slot ID %u\n", slot_id);
+vim +26 drivers/hwmon/pmbus/mp5920.c
+
+    24	
+    25	static struct pmbus_driver_info mp5920_info = {
+  > 26		pages = 1,
+  > 27		format[PSC_VOLTAGE_IN] = direct,
+    28		format[PSC_VOLTAGE_OUT] = direct,
+    29		format[PSC_CURRENT_OUT] = direct,
+    30		format[PSC_POWER] = direct,
+    31		format[PSC_TEMPERATURE] = direct,
+  > 32		m[PSC_VOLTAGE_IN] = 2266,
+  > 33		b[PSC_VOLTAGE_IN] = 0,
+  > 34		R[PSC_VOLTAGE_IN] = -1,
+    35		m[PSC_VOLTAGE_OUT] = 2266,
+    36		b[PSC_VOLTAGE_OUT] = 0,
+    37		R[PSC_VOLTAGE_OUT] = -1,
+    38		m[PSC_CURRENT_OUT] = 546,
+    39		b[PSC_CURRENT_OUT] = 0,
+    40		R[PSC_CURRENT_OUT] = -2,
+    41		m[PSC_POWER] = 5840,
+    42		b[PSC_POWER] = 0,
+    43		R[PSC_POWER] = -3,
+  > 44		m[PSC_TEMPERATURE] = 1067,
+    45		b[PSC_TEMPERATURE] = 20500,
+    46		R[PSC_TEMPERATURE] = -2,
+  > 47		func[0] = PMBUS_HAVE_VIN  | PMBUS_HAVE_VOUT |
+    48			PMBUS_HAVE_IOUT | PMBUS_HAVE_POUT |
+    49			PMBUS_HAVE_TEMP,
+    50	};
+    51	
+
 -- 
-2.25.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
