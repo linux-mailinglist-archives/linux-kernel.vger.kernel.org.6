@@ -1,184 +1,160 @@
-Return-Path: <linux-kernel+bounces-233851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F78591BE32
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:08:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 407B291BE36
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 14:10:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB3321F24CC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:08:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B73061F24F7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:10:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90DED1586F5;
-	Fri, 28 Jun 2024 12:08:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1CD1586D0;
+	Fri, 28 Jun 2024 12:10:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c4+L47Br"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="jJsZNUIZ"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A88A1E492;
-	Fri, 28 Jun 2024 12:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26A11E492;
+	Fri, 28 Jun 2024 12:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719576497; cv=none; b=Y/PESww6HT3+IYSkw5P643MePBs08tXw6evoC9rIM4e2DFdKxim05YEuRh2y484xlTyxX2++OyXpK9vcDlymFVXQfUIgIpIpeBMu/R6/kekXYVFjhrnKXsOQlJwRHRAO6VHPYrOPOgO1QuwyGLrRjH0lMFnJZTytewbMT0CsAZk=
+	t=1719576614; cv=none; b=g6K6KGGCubusfea3HG1ts0e3OKnA6SdCq3ZY35bcETyjucJQZOnkqV0ZlUcUx4L9krWIfLCF9dP4u2civGeBzokbGHNRakTB4HpgQaNpCOJLvMEaL3zHhc46s/Cbom/2g6RxqnCoGuwLn1gPOetyMMW/EEjBakTKDEgGpKmfQco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719576497; c=relaxed/simple;
-	bh=Rlq0WqzihhkeL6wZg4CBjygd+CaipHSo+ZHvvPst5+Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z3Q+oIfaoAzSRWtDRls9BkYWit0fLRBN8kqxJcftew7EGOEs9fFABOeGSM5SSeMMPoDNxqve8TW44adel15ce7Fzcv9zscZ7nDMhPav1TenpWdTmp0uTE5p+qDA7TimUmn7hogIafvqrHhVsfcBQT0kWr5Me8iSFsccqScLoU6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c4+L47Br; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57ccd1111aeso700041a12.0;
-        Fri, 28 Jun 2024 05:08:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719576494; x=1720181294; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O/QwPiwzSZOk4Q6RbA8p937/Li3WK6XZCuDkf/fR6vE=;
-        b=c4+L47BrHNlQV0RP8wPu6SjtrrJLr6IixOX97xCYvMASpze6paZM3dxgIYiO3Esf6m
-         mx9y7ELypwdqV2OBnRnP2iDLnppWZZP5mlQIJkesy9Zf4WnOPLsawawNhA/P6bthSM62
-         wyPg1sztcNRPMR9WKrROouarhfu6VeFosJIc6h9geZb4lUmoLjA6evQw5xMKUfYo6mCG
-         HJxn2ORc98XJYREHfjfbOzYdN0XPMtM76v3G8AfbK2SR2ShESqO7v2GDRoeMOghDa7qL
-         DJsIfIMuOoJU5lhmW+j9E63iM7WDyPCtWDeFJ/tMyD3PtJ84q42vj34hZc71BnME+Oll
-         Y9wA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719576494; x=1720181294;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=O/QwPiwzSZOk4Q6RbA8p937/Li3WK6XZCuDkf/fR6vE=;
-        b=T8NPi3EtBniz9hMALQdUOv2uaxE7jmssTM8pxSIYRM/LwVZUD+fJ7HEosdfdAX2bj0
-         W4uldbedC79BOPBZaWoawr1iQUfHCODSAysEbzGdi2arzcXfnv7T9xV0kxdFb7tQxcAt
-         a6eqYfmrKUluqQI3d+2vugnDknkHGPrdzJb1wEuY7bT47RgOG8xw3VOtjw2g+F0kv2jx
-         vV7RiRz47ZNjJ3ZMvVxRhuw+yfxGreogqN6RpvE/M5BfBRcoU7C3jC++6Fvs3hZrYtdb
-         4m9bvpwKUM4RasiH3MagWMEcc5xEl3wFpdPzlJaIh9ZzI6Q0GKkAvJ+v/vKxGwr6qp3q
-         X83w==
-X-Forwarded-Encrypted: i=1; AJvYcCXzVlUmd36/7EhFx7FQ2nAJ/B/Ri7xDZQ9NDpd37B/12ktqenSEEI4jhL8Q8A+70YBIqFejJegCYC/zMCwZbj9KSSUnSa2CI82bZg9VpNO/5qIsaXmTi0yRWXETRlcLfCy572R6NA8JOV/vLotmxrjBf9sbQ1K186Em+uk/jzzmTRezOuEyEXnlTVCnSMb/5dLAGxc57RIlIZppmTTQ/uY=
-X-Gm-Message-State: AOJu0Yyl8xPyqMqlV/ZSsW1a/+f5FV2Opsu2K2VAxWh3yO7xn5fIpp9H
-	a7p8/GwN/S2ELX8FSc0aOVQ3G7o6pDHIokXWYg57zLsWkn3DDtNxglXZ9suj6cna1TAvdJzInAk
-	1V+/HkNQL5Wa+z33O5l6i7Psqclw=
-X-Google-Smtp-Source: AGHT+IEeOmHcYeyBM9vdMvSUCMXEjfEksvTMrtTl63tXcl5SMpXT8DoHqdqha8zQeeVtKUpRgDLSBKLuB/8RprKcdsM=
-X-Received: by 2002:a50:d503:0:b0:57d:4d7:4c06 with SMTP id
- 4fb4d7f45d1cf-57d4a2815b1mr13818662a12.13.1719576494290; Fri, 28 Jun 2024
- 05:08:14 -0700 (PDT)
+	s=arc-20240116; t=1719576614; c=relaxed/simple;
+	bh=zMLRRZP9wfLE3lVdkubb3rFIBsBc+tdqcAt5bkXMZSs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tQf+d7fPNgSSnySeCS2zrMqmgey3Q2Q5sASOg0e/efAUbIPT2HGx0uVYKTh4mVGQHpRMRf3yBV5p6ws9Fuo6EyH4h5xufXDAshMUtuPqJcAIPUAWti9XtlBWRwfPa1FwBtK1/p5Q+poKc90czWgGem5HWnGZ+EEQOjKWfCqEM1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=jJsZNUIZ reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id 5abed22abdc8bb9b; Fri, 28 Jun 2024 14:10:04 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id AEB70933B0F;
+	Fri, 28 Jun 2024 14:10:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1719576604;
+	bh=zMLRRZP9wfLE3lVdkubb3rFIBsBc+tdqcAt5bkXMZSs=;
+	h=From:To:Cc:Subject:Date;
+	b=jJsZNUIZQaDJOjWbtzIGBFIq587exLAu7kqo2/FvPNyaXnmqGHwOyBYC0ihb7C2kZ
+	 5vYRBq402+8cPbYMxvEhcyh9lNLdgnMeUO5zsLMQYwOrI0o1Zspu+3daJG/lBkqPIC
+	 TLkvelnTm2WLaJyJwqSdD5Yd0QKTvGBZZ8TUHN/jqNGDpxsOPH/YKAKSRJqDXbwxEX
+	 EJ/qe9UXQRLPD9GMavcRxiYFw2HL4Jc0yGj6ta9qN9wuztYkMZiRdXOODlZ+Ajh+sX
+	 cd8/faq8UEKIWUkeQBt/7apkp8V9SpQ8QMlnnNldzes6Rb3L0ayg2HdocMO+04uOEJ
+	 0w7XVBaH+lZKg==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+ LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Zhang Rui <rui.zhang@intel.com>
+Subject:
+ [PATCH v2] thermal: core: Call monitor_thermal_zone() if zone temperature is
+ invalid
+Date: Fri, 28 Jun 2024 14:10:03 +0200
+Message-ID: <2764814.mvXUDI8C0e@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613-loongson1-dma-v9-0-6181f2c7dece@gmail.com>
-In-Reply-To: <20240613-loongson1-dma-v9-0-6181f2c7dece@gmail.com>
-From: Keguang Zhang <keguang.zhang@gmail.com>
-Date: Fri, 28 Jun 2024 20:07:38 +0800
-Message-ID: <CAJhJPsWMs0=k+7051mxG+DiOG8oNrPoG_3RUoC-ni7t2_3dyDg@mail.gmail.com>
-Subject: Re: [PATCH v9 0/2] Add support for Loongson1 APB DMA
-To: keguang.zhang@gmail.com
-Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-mips@vger.kernel.org, dmaengine@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Conor Dooley <conor.dooley@microchip.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddrtdeigdegjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeffffffkefgheehffelteeiveeffeevhfelteejvddvieejjeelvdeiheeuveeuffenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeeipdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtohepshhrihhnihhv
+ rghsrdhprghnughruhhvrggurgeslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhm
+X-DCC--Metrics: v370.home.net.pl 1024; Body=6 Fuz1=6 Fuz2=6
 
-Hi Vinod,
-Sorry to bother you.
-For this patchset, is there anything that needs improvement?
-Thank very much!
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
+Commit 202aa0d4bb53 ("thermal: core: Do not call handle_thermal_trip()
+if zone temperature is invalid") caused __thermal_zone_device_update()
+to return early if the current thermal zone temperature was invalid.
 
-On Thu, Jun 13, 2024 at 7:50=E2=80=AFPM Keguang Zhang via B4 Relay
-<devnull+keguang.zhang.gmail.com@kernel.org> wrote:
->
-> Add the driver and dt-binding document for Loongson1 APB DMA.
->
-> ---
-> Changes in v9:
-> - Fix all the errors and warnings when building with W=3D1 and C=3D1
-> - Link to v8: https://lore.kernel.org/r/20240607-loongson1-dma-v8-0-f9992=
-d257250@gmail.com
->
-> Changes in v8:
-> - Change 'interrupts' property to an items list
-> - Link to v7: https://lore.kernel.org/r/20240329-loongson1-dma-v7-0-37db5=
-8608de5@gmail.com
->
-> Changes in v7:
-> - Change the comptible to 'loongson,ls1*-apbdma' (suggested by Huacai Che=
-n)
-> - Update the title and description part accordingly
-> - Rename the file to loongson,ls1b-apbdma.yaml
-> - Add a compatible string for LS1A
-> - Delete minItems of 'interrupts'
-> - Change patterns of 'interrupt-names' to const
-> - Rename the file to loongson1-apb-dma.c to keep the consistency
-> - Update Kconfig and Makefile accordingly
-> - Link to v6: https://lore.kernel.org/r/20240316-loongson1-dma-v6-0-90de2=
-c3cc928@gmail.com
->
-> Changes in v6:
-> - Change the compatible to the fallback
-> - Implement .device_prep_dma_cyclic for Loongson1 sound driver,
-> - as well as .device_pause and .device_resume.
-> - Set the limitation LS1X_DMA_MAX_DESC and put all descriptors
-> - into one page to save memory
-> - Move dma_pool_zalloc() into ls1x_dma_alloc_desc()
-> - Drop dma_slave_config structure
-> - Use .remove_new instead of .remove
-> - Use KBUILD_MODNAME for the driver name
-> - Improve the debug information
-> - Some minor fixes
->
-> Changes in v5:
-> - Add the dt-binding document
-> - Add DT support
-> - Use DT information instead of platform data
-> - Use chan_id of struct dma_chan instead of own id
-> - Use of_dma_xlate_by_chan_id() instead of ls1x_dma_filter()
-> - Update the author information to my official name
->
-> Changes in v4:
-> - Use dma_slave_map to find the proper channel.
-> - Explicitly call devm_request_irq() and tasklet_kill().
-> - Fix namespace issue.
-> - Some minor fixes and cleanups.
->
-> Changes in v3:
-> - Rename ls1x_dma_filter_fn to ls1x_dma_filter.
->
-> Changes in v2:
-> - Change the config from 'DMA_LOONGSON1' to 'LOONGSON1_DMA',
-> - and rearrange it in alphabetical order in Kconfig and Makefile.
-> - Fix comment style.
->
-> ---
-> Keguang Zhang (2):
->       dt-bindings: dma: Add Loongson-1 APB DMA
->       dmaengine: Loongson1: Add Loongson-1 APB DMA driver
->
->  .../bindings/dma/loongson,ls1b-apbdma.yaml         |  67 +++
->  drivers/dma/Kconfig                                |   9 +
->  drivers/dma/Makefile                               |   1 +
->  drivers/dma/loongson1-apb-dma.c                    | 665 +++++++++++++++=
-++++++
->  4 files changed, 742 insertions(+)
-> ---
-> base-commit: d35b2284e966c0bef3e2182a5c5ea02177dd32e4
-> change-id: 20231120-loongson1-dma-163afe5708b9
->
-> Best regards,
-> --
-> Keguang Zhang <keguang.zhang@gmail.com>
->
->
+This was done to avoid running handle_thermal_trip() and governor
+callbacks in that case which led to confusion.  However, it went too
+far because monitor_thermal_zone() still needs to be called even when
+the zone temperature is invalid to ensure that it will be updated
+eventually in case thermal polling is enabled and the driver has no
+other means to notify the core of zone temperature changes (for example,
+it does not register an interrupt handler or ACPI notifier).
+
+Also if the .set_trips() zone callback is expected to set up monitoring
+interrupts for a thermal zone, it has to be provided with valid
+boundaries and that can only happen if the zone temperature is known.
+
+Accordingly, to ensure that __thermal_zone_device_update() will
+run again after a failing zone temperature check, make it call
+monitor_thermal_zone() regardless of whether or not the zone
+temperature is valid and make the latter schedule a thermal zone
+temperature update if the zone temperature is invalid even if
+polling is not enabled for the thermal zone.
+
+Fixes: 202aa0d4bb53 ("thermal: core: Do not call handle_thermal_trip() if zone temperature is invalid")
+Reported-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/thermal/thermal_core.c |    5 ++++-
+ drivers/thermal/thermal_core.h |    6 ++++++
+ 2 files changed, 10 insertions(+), 1 deletion(-)
+
+Index: linux-pm/drivers/thermal/thermal_core.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.c
++++ linux-pm/drivers/thermal/thermal_core.c
+@@ -300,6 +300,8 @@ static void monitor_thermal_zone(struct
+ 		thermal_zone_device_set_polling(tz, tz->passive_delay_jiffies);
+ 	else if (tz->polling_delay_jiffies)
+ 		thermal_zone_device_set_polling(tz, tz->polling_delay_jiffies);
++	else if (tz->temperature == THERMAL_TEMP_INVALID)
++		thermal_zone_device_set_polling(tz, msecs_to_jiffies(THERMAL_RECHECK_DELAY_MS));
+ }
+ 
+ static struct thermal_governor *thermal_get_tz_governor(struct thermal_zone_device *tz)
+@@ -514,7 +516,7 @@ void __thermal_zone_device_update(struct
+ 	update_temperature(tz);
+ 
+ 	if (tz->temperature == THERMAL_TEMP_INVALID)
+-		return;
++		goto monitor;
+ 
+ 	tz->notify_event = event;
+ 
+@@ -536,6 +538,7 @@ void __thermal_zone_device_update(struct
+ 
+ 	thermal_debug_update_trip_stats(tz);
+ 
++monitor:
+ 	monitor_thermal_zone(tz);
+ }
+ 
+Index: linux-pm/drivers/thermal/thermal_core.h
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.h
++++ linux-pm/drivers/thermal/thermal_core.h
+@@ -133,6 +133,12 @@ struct thermal_zone_device {
+ 	struct thermal_trip_desc trips[] __counted_by(num_trips);
+ };
+ 
++/*
++ * Default delay after a failing thermal zone temperature check before
++ * attempting to check it again.
++ */
++#define THERMAL_RECHECK_DELAY_MS	100
++
+ /* Default Thermal Governor */
+ #if defined(CONFIG_THERMAL_DEFAULT_GOV_STEP_WISE)
+ #define DEFAULT_THERMAL_GOVERNOR       "step_wise"
 
 
---
-Best regards,
 
-Keguang Zhang
 
