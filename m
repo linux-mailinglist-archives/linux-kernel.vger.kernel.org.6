@@ -1,180 +1,123 @@
-Return-Path: <linux-kernel+bounces-233689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CE1391BB8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:35:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D2C991BB93
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 11:37:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCA89283FBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:35:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED2101F22A5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 09:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0D6152530;
-	Fri, 28 Jun 2024 09:34:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1333C1527A0;
+	Fri, 28 Jun 2024 09:37:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0jEGxzm9"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="rVPPdSHJ"
+Received: from out0-193.mail.aliyun.com (out0-193.mail.aliyun.com [140.205.0.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC99815252C
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 09:34:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52071CD32
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 09:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719567291; cv=none; b=Iw/FSjzavJ+TuVM1i8tg7fvQY/XRDeo6800OlWYHDQymOVocRagFobE77dsa7JBjf6LuzAk8Ry3jWHg0RX5WIJKEvv0rxNP7IM+bI/0MlSKVZAqzrb/e7t3p5wv41/i5rQB7d/zuwrS+ddTIJv3f8ev8Zm6+k6UcV3N+ivNS21w=
+	t=1719567429; cv=none; b=sNO9oCpQ02rQlnFn/BRe4oKMDOJ3xekFfR0gOceGqNRm/XDMWzDn831FA2cvVJ5wJ8m3m3TDIRTaRGypZegSFAoIVqn2KsgrL28Wzdyl5n+mBssPSe7uazyeUx+D+G8FQW8Fa1bGfp3II9lc6l+y35b8O0N4++xiYGh9eVgUOXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719567291; c=relaxed/simple;
-	bh=mVgpkGZeEUIJG9UJ4SJVmxmneMeKnT/4EHHpcMGGZ2U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=er6TGkSZuh+w3u5cV2QK3lBB/ullegXhFW1ErygpWpymrmrZpd8v0Dc/wsTNJ+1Tsj88OHgWdi7cNGN8AXiK6+alYNnDvb7Rsa2fWJwXdH6u/QaPvMv2AZvCWjWtGQXR6pzuUdmqNx2910KZKpMvvOFuyePQ0YmOALbBKU+RXao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0jEGxzm9; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-424ad991c1cso4375675e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 02:34:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719567288; x=1720172088; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R5Gyzd0KEYojFlORA9Zt8V98aCcTYQ8VgOMnEXwuyS0=;
-        b=0jEGxzm9bjV7qzwpsbLi/sY/bku21UXzhP846PPiz3H7hFYF4Q/cErPNFDbeJmGcbW
-         RzeySL5v8Q/vBMEAB8IQe6Oy7Wm7K6hwHewCnUBeRVbxQwEGzK8rE76ztohLnOmlQYqc
-         g5dY7JdMaZsMrJESPO+MhLQ8HDr9C4DSani1tsHd2PSxsvzgnXEPKcb1EwSCuDco6qmH
-         HWT/R2Yjn+fTIK47svur0u+p1G8xgJq8y0YroZVtrNGLYukVoX9Wi+uQKV0OomaVDM6u
-         yb98FQP9rZ54aoRIv0tn1YFWp1dDQhEZba1Gry3Wss1f6oBNJUOeck4JiuhZbP2KRzKU
-         wUQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719567288; x=1720172088;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R5Gyzd0KEYojFlORA9Zt8V98aCcTYQ8VgOMnEXwuyS0=;
-        b=sDIqrgKoUMcnI2YHHvsNoxeP40PxW5QeXRzIgoWmY+jI8U96FLE1m0GV6Xi9kL01Y2
-         x1cEVqtk64EtI+z0sllBGf86KheHRRNB+2d/p/2difvn8BlEZpwDZG3FNrma3eWluBIb
-         9ylq+dN1bZcXwdZNlypE1GTCZ7i+itPyY1nqN9ECgYitPvzoVUezBWLhqFFZiwgzLCIO
-         s6H2F+L+S0NNctFzB8yaLe2576NtyiOxTwYy6mxI01d1v2/9nwJSSk++/IeirfxHZT5O
-         BfUTPBo09AJf9Re21UfMZ1vJuJSIKcD/7TtOioEbes654Rgdlm+ofiisOJSsLjInCaq2
-         tj4A==
-X-Forwarded-Encrypted: i=1; AJvYcCXwzZBgLrtE3M6Acb6mQjFWjln4YhCDngqcKDlRKInc1ukGVjvmFkYknWkmihIe7+xJSRcJqf+nALjcZoeiRJYqVVFkoElAyW/0ETyo
-X-Gm-Message-State: AOJu0YwVJkiFN+NP2SrPaEW/iNDMaYlHF0R2LGxCspzlcwPZzBWDX0y1
-	ZHNV8TcE6W91WGyil/TM+p4D5ejphYOf5Mq8x3DiVzUt9uaWqRlBTnHg90Gcy/BiDEJP0jqJZHe
-	elX0PwIrPE2tMF6yZ1XrPmbvJpg1zpDXkYi5S
-X-Google-Smtp-Source: AGHT+IHkMX5345OLYcmRT3XnelwwzbNOLPwlwqhS2DVYP+oCW1ISdTPYj99BI+fmIoO/MdYp0rp3L25a15KF4hw0UuA=
-X-Received: by 2002:a05:600c:1c1e:b0:425:692d:c72d with SMTP id
- 5b1f17b1804b1-425692dd443mr23095585e9.32.1719567287924; Fri, 28 Jun 2024
- 02:34:47 -0700 (PDT)
+	s=arc-20240116; t=1719567429; c=relaxed/simple;
+	bh=t3UL8J/O+o4c7pBzKx74njRp5r1qLFjEJjSHUU2CA5M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aHp8QaLjgvyUJGZAOdNbhcpom6sSZq7V9lqjLzb9VB10l3ezBrqqFvQiWVH/46gEOv9TqmAwt6iXRsAFDa1+dE2UxNrZF2AdcWco/53gx5WNi8KALysXufgxaVSoR8DZoFkVSLrS4bW8B+o9GeKBCNbnGGjaHVkcxRu1Bz0+iOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=rVPPdSHJ; arc=none smtp.client-ip=140.205.0.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=antgroup.com; s=default;
+	t=1719567417; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=1D+1NUOBPHywlhTO4OCjOr2oX4V4Y1BZUKPeeO0NK/s=;
+	b=rVPPdSHJeJzFzkhGuZmQjPgVoe0FB0JOLW8Q0EaYcuFze+vj51AP1EqceEpYR3DFLxO3tMjBIAr+DPJaN3DNGlboAjwpYpsEyMW4eRyEnOgFP2y9I6gk4n+A/GPncOaCZ8m3HD1HInFqT16s7C8dpLTsQ3utuJkVZBROk/zkUd4=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R221e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033023108233;MF=houwenlong.hwl@antgroup.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---.YCMkH59_1719567416;
+Received: from localhost(mailfrom:houwenlong.hwl@antgroup.com fp:SMTPD_---.YCMkH59_1719567416)
+          by smtp.aliyun-inc.com;
+          Fri, 28 Jun 2024 17:36:57 +0800
+Date: Fri, 28 Jun 2024 17:36:56 +0800
+From: "Hou Wenlong" <houwenlong.hwl@antgroup.com>
+To: Xin Li <xin@zytor.com>
+Cc:  <linux-kernel@vger.kernel.org>,
+  "Lai Jiangshan" <jiangshan.ljs@antgroup.com>,
+  "Thomas Gleixner" <tglx@linutronix.de>,
+  "Ingo Molnar" <mingo@redhat.com>,
+  "Borislav Petkov" <bp@alien8.de>,
+  "Dave Hansen" <dave.hansen@linux.intel.com>,
+   <x86@kernel.org>,
+  "H. Peter Anvin" <hpa@zytor.com>,
+  "Xin Li" <xin3.li@intel.com>,
+  "Jacob Pan" <jacob.jun.pan@linux.intel.com>,
+  "Rick Edgecombe" <rick.p.edgecombe@intel.com>,
+  "Paolo Bonzini" <pbonzini@redhat.com>
+Subject: Re: [PATCH 1/2] x86/fred: Always install system interrupt handler
+ into IDT
+Message-ID: <20240628093656.GA103025@k08j02272.eu95sqa>
+References: <cover.1718972598.git.houwenlong.hwl@antgroup.com>
+ <2f632ef59c8c9cc27c3702bc2d286496ed298d65.1718972598.git.houwenlong.hwl@antgroup.com>
+ <dca1635b-1e08-4dbb-9dbb-335cbdcf9b9d@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619192131.do.115-kees@kernel.org> <20240619193357.1333772-4-kees@kernel.org>
- <cc301463-da43-4991-b001-d92521384253@suse.cz> <202406201147.8152CECFF@keescook>
- <1917c5a5-62af-4017-8cd0-80446d9f35d3@suse.cz> <Zn5LqMlnbuSMx7H3@Boquns-Mac-mini.home>
- <c5934f76-3ce8-466e-80d1-c56ebb5a158e@suse.cz> <CAH5fLggjrbdUuT-H-5vbQfMazjRDpp2+k3=YhPyS17ezEqxwcw@mail.gmail.com>
- <c45eb0c9-21b9-4e29-a9d8-f3044c77822e@suse.cz>
-In-Reply-To: <c45eb0c9-21b9-4e29-a9d8-f3044c77822e@suse.cz>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 28 Jun 2024 11:34:35 +0200
-Message-ID: <CAH5fLghsZRemYUwVvhk77o6y1foqnCeDzW4WZv6ScEWna2+_jw@mail.gmail.com>
-Subject: Re: [PATCH v5 4/6] mm/slab: Introduce kmem_buckets_create() and family
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Kees Cook <kees@kernel.org>, 
-	"GONG, Ruiqi" <gongruiqi@huaweicloud.com>, Christoph Lameter <cl@linux.com>, 
-	Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>, jvoisin <julien.voisin@dustri.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, Xiu Jianfeng <xiujianfeng@huawei.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	Jann Horn <jannh@google.com>, Matteo Rizzo <matteorizzo@google.com>, Thomas Graf <tgraf@suug.ch>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-hardening@vger.kernel.org, netdev@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dca1635b-1e08-4dbb-9dbb-335cbdcf9b9d@zytor.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-On Fri, Jun 28, 2024 at 11:17=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> w=
-rote:
->
-> On 6/28/24 11:06 AM, Alice Ryhl wrote:
-> >> >>
-> >> >
-> >> > I took a quick look as what kmem_buckets is, and seems to me that al=
-ign
-> >> > doesn't make sense here (and probably not useful in Rust as well)
-> >> > because a kmem_buckets is a set of kmem_caches, each has its own obj=
-ect
-> >> > size, making them share the same alignment is probably not what you
-> >> > want. But I could be missing something.
-> >>
-> >> How flexible do you need those alignments to be? Besides the power-of-=
-two
-> >> guarantees, we currently have only two odd sizes with 96 and 192. If t=
-hose
-> >> were guaranteed to be aligned 32 bytes, would that be sufficient? Also=
- do
-> >> you ever allocate anything smaller than 32 bytes then?
-> >>
-> >> To summarize, if Rust's requirements can be summarized by some rules a=
-nd
-> >> it's not completely ad-hoc per-allocation alignment requirement (or if=
- it
-> >> is, does it have an upper bound?) we could perhaps figure out the crea=
-tion
-> >> of rust-specific kmem_buckets to give it what's needed?
+On Tue, Jun 25, 2024 at 05:19:20PM +0800, Xin Li wrote:
+> On 6/21/2024 6:12 AM, Hou Wenlong wrote:
+> >In sysvec_install(), the system interrupt handler is not installed into
+> >the IDT when the FRED feature is present, but FRED can be disabled
+> >in trap_init(). However, sysvec_install() can be used
+> >before trap_init(), e.g., the HYPERVISOR_CALLBACK_VECTOR handler is
+> >registered in kvm_guest_init(), which is called by setup_arch() before
+> >trap_init(). If FRED is disabled later, then the spurious_interrupt()
+> >handler will be used due to the handler not being installed into the
+> >IDT. Therefore, always install system interrupt handler into IDT.
 > >
-> > Rust's allocator API can take any size and alignment as long as:
+> >Fixes: 3810da12710a ("x86/fred: Add a fred= cmdline param")
+> >Signed-off-by: Hou Wenlong <houwenlong.hwl@antgroup.com>
+> >---
+> >  arch/x86/include/asm/idtentry.h | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
 > >
-> > 1. The alignment is a power of two.
-> > 2. The size is non-zero.
-> > 3. When you round up the size to the next multiple of the alignment,
-> > then it must not overflow the signed type isize / ssize_t.
-> >
-> > What happens right now is that when Rust wants an allocation with a
-> > higher alignment than ARCH_SLAB_MINALIGN, then it will increase size
-> > until it becomes a power of two so that the power-of-two guarantee
-> > gives a properly aligned allocation.
->
-> So am I correct thinking that, if the cache of size 96 bytes guaranteed a
-> 32byte alignment, and 192 bytes guaranteed 64byte alignment, and the rest=
- of
-> sizes with the already guaranteed power-of-two alignment, then on rust si=
-de
-> you would only have to round up sizes to the next multiples of the aligne=
-mnt
-> (rule 3 above) and that would be sufficient?
->  Abstracting from the specific sizes of 96 and 192, the guarantee on kmal=
-loc
-> side would have to be - guarantee alignment to the largest power-of-two
-> divisor of the size. Does that sound right?
->
-> Then I think we could have some flag for kmem_buckets creation that would=
- do
-> the right thing.
+> >diff --git a/arch/x86/include/asm/idtentry.h b/arch/x86/include/asm/idtentry.h
+> >index d4f24499b256..daee9f7765bc 100644
+> >--- a/arch/x86/include/asm/idtentry.h
+> >+++ b/arch/x86/include/asm/idtentry.h
+> >@@ -470,8 +470,7 @@ static inline void fred_install_sysvec(unsigned int vector, const idtentry_t fun
+> >  #define sysvec_install(vector, function) {				\
+> >  	if (cpu_feature_enabled(X86_FEATURE_FRED))			\
+> >  		fred_install_sysvec(vector, function);			\
+> >-	else								\
+> >-		idt_install_sysvec(vector, asm_##function);		\
+> 
+> empty line, it improves readability.
+> 
+> And please put a comment here to explain why this is unconditionally
+> done for IDT.
+> 
+Hi Xin,
 
-If kmalloc/krealloc guarantee that an allocation is aligned according
-to the largest power-of-two divisor of the size, then the Rust
-allocator would definitely be simplified as we would not longer need
-this part:
+It seems preferable to parse the FRED command line and disable FRED
+early instead of using this method. As mentioned in my cover letter, I
+initially attempted to fix the problem this way (by parsing the command
+line in cpu_parse_early_param()). Should I send a new patch for it, or
+will you be covering it in your work to enable FRED early?
 
-if layout.align() > bindings::ARCH_SLAB_MINALIGN {
-    // The alignment requirement exceeds the slab guarantee, thus try
-to enlarge the size
-    // to use the "power-of-two" size/alignment guarantee (see
-comments in `kmalloc()` for
-    // more information).
-    //
-    // Note that `layout.size()` (after padding) is guaranteed to be a
-multiple of
-    // `layout.align()`, so `next_power_of_two` gives enough alignment
-guarantee.
-    size =3D size.next_power_of_two();
-}
+Thanks!
 
-We would only need to keep the part that rounds up the size to a
-multiple of the alignment.
-
-Alice
+> >+	idt_install_sysvec(vector, asm_##function);			\
+> >  }
+> >  #else /* !__ASSEMBLY__ */
+> 
+> Thanks!
+>     Xin
 
