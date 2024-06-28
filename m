@@ -1,145 +1,152 @@
-Return-Path: <linux-kernel+bounces-233243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A89591B4B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:43:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1758D91B4AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:36:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55E01283F42
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:43:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0B6D1F22B58
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4601A12B7F;
-	Fri, 28 Jun 2024 01:42:57 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C8D11CA9;
+	Fri, 28 Jun 2024 01:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="v9xK6vHq"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1718C11711;
-	Fri, 28 Jun 2024 01:42:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6948B2139A7;
+	Fri, 28 Jun 2024 01:36:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719538976; cv=none; b=NIgOIPDFYt5pWTjMnkPO10GCv/01Ou+urxqBT3Ni1nrYKVz8V1HSvchhRnQc435Xomtle0ngQQ9u/VsGw6cSI8kZMWc1kFacWaeQEeM9R2F3DFtf8AvrBZNFF85CcDsTvVo4Jq7ZSyn2OCCmSbh/8ltuHh/WSpNnLBDGzjH5ntY=
+	t=1719538611; cv=none; b=T8QGbQtiZVZISnptWEryaxoLSDfxvwhFMOjtrbZqP2jvp/wuQhd67wlAMq+k6vjyDGLCg02WT4AN7vjmT9ne8/K9j9VxkogSStLoxL+NB9iO/3xa0QWeSsNeurLS/mjLkKpqO+qVAy1fuCxuLPDKlkxfVsgboCt781yRXx8nogI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719538976; c=relaxed/simple;
-	bh=10ieK9j+Fg1JJ/lmqES5nKrD6yeWCfUlSvB+9we3Lp8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XCTk65hhTAvt4MN7JmAoWEgbSCqW9OMebiObllP+jrUA0xnzRM17cI1cbQ5TT8F8Im0PS3t0hE9MwcaoPhG7NooKczU2EnN+znsc8qmdsHlwEJi0jRP5O6jjK1+iP7OmbJJiJWTYl2VicIiEwjIr6765HaUl+zTb+NpOgOizDnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4W9J4S3lLTz1X4Gv;
-	Fri, 28 Jun 2024 09:38:48 +0800 (CST)
-Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4018F140381;
-	Fri, 28 Jun 2024 09:42:50 +0800 (CST)
-Received: from huawei.com (10.67.174.121) by kwepemd100013.china.huawei.com
- (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Fri, 28 Jun
- 2024 09:42:49 +0800
-From: Chen Ridong <chenridong@huawei.com>
-To: <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
-	<longman@redhat.com>, <adityakali@google.com>, <sergeh@kernel.org>,
-	<mkoutny@suse.com>
-CC: <cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH V4] cgroup/cpuset: Prevent UAF in proc_cpuset_show()
-Date: Fri, 28 Jun 2024 01:36:04 +0000
-Message-ID: <20240628013604.573498-1-chenridong@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1719538611; c=relaxed/simple;
+	bh=cm+QsmGQ91yNDaHPh+Q0+zctgCiUlvxaouRRHE+n9Ak=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=X32HrJ7lrt/OIDXO+MS7qZSpvGFo0r25ymhAIKEhUGC6QUc+OqreXSLJFGlp2IwASq09ej1agLATaVfHia0GLAPbWoO5UhhvfsTMprcXGTWKsjJJBDVbuycFZPD9hf1bWwaJNCuu0+UX5JiBDwBQpaEPcpR7SocJNbZUBDIZRsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=v9xK6vHq; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1719538600; h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
+	bh=Kmb8kttOq7xbDfKI1ccEDiYQbB2zK2LbPs9zivACKls=;
+	b=v9xK6vHqxY7n+FWlhhmNnmQ99NxeJXIznv8hxMdUmCzMYmYxHxrLwiDMdZDC1/rI92E+SkCi9EHMenWi01uUgUHgCj8BLWUxFLeoG1b7IACmhUUHbgYnCO/Ujt5uvg9bYvtry0m4VyUo55qMZIkstDAkkSoyzpXgIocup4gFk7E=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033023225041;MF=wodemia@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0W9OGQul_1719538598;
+Received: from localhost.localdomain(mailfrom:wodemia@linux.alibaba.com fp:SMTPD_---0W9OGQul_1719538598)
+          by smtp.aliyun-inc.com;
+          Fri, 28 Jun 2024 09:36:39 +0800
+From: Tao Zou <wodemia@linux.alibaba.com>
+To: Alex Shi <alexs@kernel.org>,
+	Yanteng Si <siyanteng@loongson.cn>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: Tao Zou <wodemia@linux.alibaba.com>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 RESEND] zh_CN/admin-guide: Add zh_CN/admin-guide/numastat.rst translation document
+Date: Fri, 28 Jun 2024 09:36:20 +0800
+Message-Id: <20240628013621.46741-1-wodemia@linux.alibaba.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemd100013.china.huawei.com (7.221.188.163)
 
-An UAF can happen when /proc/cpuset is read as reported in [1].
+Add translation zh_CN/admin-guide/numastat.rst and link it to
+zh_CN/admin-guide/index.rst while clean its todo entry.
 
-This can be reproduced by the following methods:
-1.add an mdelay(1000) before acquiring the cgroup_lock In the
- cgroup_path_ns function.
-2.$cat /proc/<pid>/cpuset   repeatly.
-3.$mount -t cgroup -o cpuset cpuset /sys/fs/cgroup/cpuset/
-$umount /sys/fs/cgroup/cpuset/   repeatly.
+commit 77691ee92d4a ("Documentation: update numastat explanation")
 
-The race that cause this bug can be shown as below:
-
-(umount)		|	(cat /proc/<pid>/cpuset)
-css_release		|	proc_cpuset_show
-css_release_work_fn	|	css = task_get_css(tsk, cpuset_cgrp_id);
-css_free_rwork_fn	|	cgroup_path_ns(css->cgroup, ...);
-cgroup_destroy_root	|	mutex_lock(&cgroup_mutex);
-rebind_subsystems	|
-cgroup_free_root 	|
-			|	// cgrp was freed, UAF
-			|	cgroup_path_ns_locked(cgrp,..);
-
-When the cpuset is initialized, the root node top_cpuset.css.cgrp
-will point to &cgrp_dfl_root.cgrp. In cgroup v1, the mount operation will
-allocate cgroup_root, and top_cpuset.css.cgrp will point to the allocated
-&cgroup_root.cgrp. When the umount operation is executed,
-top_cpuset.css.cgrp will be rebound to &cgrp_dfl_root.cgrp.
-
-The problem is that when rebinding to cgrp_dfl_root, there are cases
-where the cgroup_root allocated by setting up the root for cgroup v1
-is cached. This could lead to a Use-After-Free (UAF) if it is
-subsequently freed. The descendant cgroups of cgroup v1 can only be
-freed after the css is released. However, the css of the root will never
-be released, yet the cgroup_root should be freed when it is unmounted.
-This means that obtaining a reference to the css of the root does
-not guarantee that css.cgrp->root will not be freed.
-
-Fix this problem by using rcu_read_lock in proc_cpuset_show().
-As cgroup_root is kfree_rcu after commit d23b5c577715
-("cgroup: Make operations on the cgroup root_list RCU safe"),
-css->cgroup won't be freed during the critical section.
-To call cgroup_path_ns_locked, css_set_lock is needed, so it is safe to
-replace task_get_css with task_css.
-
-[1] https://syzkaller.appspot.com/bug?extid=9b1ff7be974a403aa4cd
-
-Fixes: a79a908fd2b0 ("cgroup: introduce cgroup namespaces")
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
+Signed-off-by: Tao Zou <wodemia@linux.alibaba.com>
+Reviewed-by: Yanteng Si <siyanteng@loongson.cn>
+Reviewed-by: Alex Shi <alexs@kernel.org>
 ---
- kernel/cgroup/cpuset.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ .../translations/zh_CN/admin-guide/index.rst  |  2 +-
+ .../zh_CN/admin-guide/numastat.rst            | 48 +++++++++++++++++++
+ 2 files changed, 49 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/translations/zh_CN/admin-guide/numastat.rst
 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index c12b9fdb22a4..bcb4da8f54c8 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -21,6 +21,7 @@
-  *  License.  See the file COPYING in the main directory of the Linux
-  *  distribution for more details.
-  */
-+#include "cgroup-internal.h"
- 
- #include <linux/cpu.h>
- #include <linux/cpumask.h>
-@@ -5051,10 +5052,14 @@ int proc_cpuset_show(struct seq_file *m, struct pid_namespace *ns,
- 	if (!buf)
- 		goto out;
- 
--	css = task_get_css(tsk, cpuset_cgrp_id);
--	retval = cgroup_path_ns(css->cgroup, buf, PATH_MAX,
--				current->nsproxy->cgroup_ns);
--	css_put(css);
-+	rcu_read_lock();
-+	spin_lock_irq(&css_set_lock);
-+	css = task_css(tsk, cpuset_cgrp_id);
-+	retval = cgroup_path_ns_locked(css->cgroup, buf, PATH_MAX,
-+				       current->nsproxy->cgroup_ns);
-+	spin_unlock_irq(&css_set_lock);
-+	rcu_read_unlock();
+diff --git a/Documentation/translations/zh_CN/admin-guide/index.rst b/Documentation/translations/zh_CN/admin-guide/index.rst
+index ac2960da33e6..0db80ab830a0 100644
+--- a/Documentation/translations/zh_CN/admin-guide/index.rst
++++ b/Documentation/translations/zh_CN/admin-guide/index.rst
+@@ -68,6 +68,7 @@ Todolist:
+    cpu-load
+    cputopology
+    lockup-watchdogs
++   numastat
+    unicode
+    sysrq
+    mm/index
+@@ -109,7 +110,6 @@ Todolist:
+ *   module-signing
+ *   mono
+ *   namespaces/index
+-*   numastat
+ *   parport
+ *   perf-security
+ *   pm/index
+diff --git a/Documentation/translations/zh_CN/admin-guide/numastat.rst b/Documentation/translations/zh_CN/admin-guide/numastat.rst
+new file mode 100644
+index 000000000000..c0f54d9a6b05
+--- /dev/null
++++ b/Documentation/translations/zh_CN/admin-guide/numastat.rst
+@@ -0,0 +1,48 @@
++.. SPDX-License-Identifier: GPL-2.0
++.. include:: ../disclaimer-zh_CN.rst
 +
- 	if (retval == -E2BIG)
- 		retval = -ENAMETOOLONG;
- 	if (retval < 0)
++:Original: Documentation/admin-guide/numastat.rst
++:Translator: Tao Zou <wodemia@linux.alibaba.com>
++
++
++=======================
++Numa策略命中/未命中统计
++=======================
++
++/sys/devices/system/node/node*/numastat
++
++所有数据的单位都是页面。巨页有独立的计数器。
++
++numa_hit、numa_miss和numa_foreign计数器反应了进程是否能够在他们偏好的节点上分配内存。
++如果进程成功在偏好的节点上分配内存则在偏好的节点上增加numa_hit计数，否则在偏好的节点上增
++加numa_foreign计数同时在实际内存分配的节点上增加numa_miss计数。
++
++通常，偏好的节点是进程运行所在的CPU的本地节点，但是一些限制可以改变这一行为，比如内存策略，
++因此同样有两个基于CPU本地节点的计数器。local_node和numa_hit类似，当在CPU所在的节点上分
++配内存时增加local_node计数，other_node和numa_miss类似，当在CPU所在节点之外的其他节点
++上成功分配内存时增加other_node计数。需要注意，没有和numa_foreign对应的计数器。
++
++更多细节内容:
++
++=============== ============================================================
++numa_hit        一个进程想要从本节点分配内存并且成功。
++
++numa_miss       一个进程想要从其他节点分配内存但是最终在本节点完成内存分配。
++
++numa_foreign    一个进程想要在本节点分配内存但是最终在其他节点完成内存分配。
++
++local_node      一个进程运行在本节点的CPU上并且从本节点上获得了内存。
++
++other_node      一个进程运行在其他节点的CPU上但是在本节点上获得了内存。
++
++interleave_hit  内存交叉分配策略下想要从本节点分配内存并且成功。
++=============== ============================================================
++
++你可以使用numactl软件包（http://oss.sgi.com/projects/libnuma/）中的numastat工具
++来辅助阅读。需要注意，numastat工具目前只在有少量CPU的机器上运行良好。
++
++需要注意，在包含无内存节点（一个节点有CPUs但是没有内存）的系统中numa_hit、numa_miss和
++numa_foreign统计数据会被严重曲解。在当前的内核实现中，如果一个进程偏好一个无内存节点（即
++进程正在该节点的一个本地CPU上运行），实际上会从距离最近的有内存节点中挑选一个作为偏好节点。
++结果会导致相应的内存分配不会增加无内存节点上的numa_foreign计数器，并且会扭曲最近节点上的
++numa_hit、numa_miss和numa_foreign统计数据。
 -- 
-2.34.1
+2.39.3 (Apple Git-146)
 
 
