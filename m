@@ -1,293 +1,145 @@
-Return-Path: <linux-kernel+bounces-233237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74F9F91B4AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:34:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A89591B4B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:43:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F8A01C217F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:34:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55E01283F42
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:43:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A63912B72;
-	Fri, 28 Jun 2024 01:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cIrcrPjQ"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4601A12B7F;
+	Fri, 28 Jun 2024 01:42:57 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630922139A7;
-	Fri, 28 Jun 2024 01:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1718C11711;
+	Fri, 28 Jun 2024 01:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719538469; cv=none; b=anoz0F2In0Ld5rpVMs/VC9XAMZqPcyFxYS9HtNsUqJ8gsL2WXS1YfIeDbDEOk11nlqOmjReVSeak7/h6RENisJ1W6dtJHuyqZ3OLqtdGMAB9kvBkHdO9Bb0f7WHxoalKt9OViOjOnT1zTtALovflY/7b7GY4oNy7x+7945GIOus=
+	t=1719538976; cv=none; b=NIgOIPDFYt5pWTjMnkPO10GCv/01Ou+urxqBT3Ni1nrYKVz8V1HSvchhRnQc435Xomtle0ngQQ9u/VsGw6cSI8kZMWc1kFacWaeQEeM9R2F3DFtf8AvrBZNFF85CcDsTvVo4Jq7ZSyn2OCCmSbh/8ltuHh/WSpNnLBDGzjH5ntY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719538469; c=relaxed/simple;
-	bh=t0INylUNf2k0kJwVKbtRu+K6PLesJ41tzUOSeafL+Uo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UP8T5NF10BKW0Youl34CCwu5TIqE0oN0JOCGZl91AmXzBABwqJEQ77KNkAKfqxAfrFADd6iERV6Tum3vgXvhdqJgRtdd1SsK9EiWGoLSqV5SEpCbGU5FH5JWI+mOTt69iabKFmj4hXf7aBkWupdUv4cu4Ww+wQ1TqbI/jqCN8js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cIrcrPjQ; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3627ef1fc07so42619f8f.3;
-        Thu, 27 Jun 2024 18:34:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719538466; x=1720143266; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rnvbgBjmT2j00SWL77w/wmw1cd/5GofeGMuapdrdl3U=;
-        b=cIrcrPjQfm2cwR8huJ9O+N45w9iBdY53TIwQ298IM+e5A4JBgckpx4LuLI85ynNLc3
-         +TRqEoPF/kvoEJzye8tzYd4hiuTek1AjbOj7nDU6CGFp7P/Fgf5N5ywMDmz8bwfCYs56
-         z4oyWDIQ/qg60jqjEWCSBSwZRNrqhJus/WgbFcz5OH7JJC1dOyn95AhAWZkxtgipKWQP
-         ewlz829bUR/jMBAERsPI2Yb6Lhz8J0x4Rkz+WuuNQtubLESzmok3KhJV/NWR55HJcYXo
-         wtMS3o4tO0Bti/fTrVCsbIEByxywKL/M2ziCWfsfhOqlnAAht9fMb5zhDHd43xUK/sJr
-         hcEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719538466; x=1720143266;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rnvbgBjmT2j00SWL77w/wmw1cd/5GofeGMuapdrdl3U=;
-        b=cXSdK12NDbX5dMnG+OhY6ZbzylIONUd+kxwn5gJPnz5ezcO/SMzCUKBKCT1cZejyo1
-         qW8iqCNPoX08C4G7ad4eltF2EA29q8OCufFeKTVFsipnuvT6fUN9PToSpO2QS/32wg6K
-         EH3X442+xegi1FnqENrXXGyYoSso9Y9RZvkk6I4HUczhXffBEhgemZdMCah+/aKvz46T
-         6RpbMzbJRX9nz0WV+h/vD84g3lkSiEU7o3XHlhiqLNpq+/HVqWCHgkKrXYjbOV+Qsesc
-         y33IFfgyRZjvVJVawfqQRtQGdeUSnxALjfBr5NYs5cgJ5cNwg7dlloCL8M4ongKx2WCS
-         G4Wg==
-X-Forwarded-Encrypted: i=1; AJvYcCUynNu4IwsNlKVLQqjaZvGVtH6pHVm4j8tY8xqVbci35Sv2OimJq057epPRFWz3C2oYWGS3U+IoDed6Fpc9uDJNbcSGa6gC515WwWDkZ/QG7rZgTQzdrCZ0mj4rI5XF+fJc
-X-Gm-Message-State: AOJu0Yxs/rt+khY8uiy4Uk9vIXkoh3t70bTHn7gcKtGxhlc0RWasZPMh
-	JeGYkxL0guNGp1gNbqf/rshPLwOHvHVH3i+F79FPI5nWuFdJlb3iFYOcd1t+etQhmerdeD0toK5
-	viR9ZHaN2GQd+5Pp2jXbevklClHJgdcO7
-X-Google-Smtp-Source: AGHT+IGW6vS18JQdvcuaosTgfTX2kjePBtN2gY5E87HIqzc7Nd3vlLCPrXvCcCx3k5gUpKoFtlMzJgl6D/aonoEMyaI=
-X-Received: by 2002:a05:6000:459a:b0:363:7bbf:efcc with SMTP id
- ffacd0b85a97d-366e96bef86mr8625498f8f.62.1719538465465; Thu, 27 Jun 2024
- 18:34:25 -0700 (PDT)
+	s=arc-20240116; t=1719538976; c=relaxed/simple;
+	bh=10ieK9j+Fg1JJ/lmqES5nKrD6yeWCfUlSvB+9we3Lp8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XCTk65hhTAvt4MN7JmAoWEgbSCqW9OMebiObllP+jrUA0xnzRM17cI1cbQ5TT8F8Im0PS3t0hE9MwcaoPhG7NooKczU2EnN+znsc8qmdsHlwEJi0jRP5O6jjK1+iP7OmbJJiJWTYl2VicIiEwjIr6765HaUl+zTb+NpOgOizDnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4W9J4S3lLTz1X4Gv;
+	Fri, 28 Jun 2024 09:38:48 +0800 (CST)
+Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4018F140381;
+	Fri, 28 Jun 2024 09:42:50 +0800 (CST)
+Received: from huawei.com (10.67.174.121) by kwepemd100013.china.huawei.com
+ (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Fri, 28 Jun
+ 2024 09:42:49 +0800
+From: Chen Ridong <chenridong@huawei.com>
+To: <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
+	<longman@redhat.com>, <adityakali@google.com>, <sergeh@kernel.org>,
+	<mkoutny@suse.com>
+CC: <cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH V4] cgroup/cpuset: Prevent UAF in proc_cpuset_show()
+Date: Fri, 28 Jun 2024 01:36:04 +0000
+Message-ID: <20240628013604.573498-1-chenridong@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zn4BupVa65CVayqQ@slm.duckdns.org> <Zn4Cw4FDTmvXnhaf@slm.duckdns.org>
-In-Reply-To: <Zn4Cw4FDTmvXnhaf@slm.duckdns.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 27 Jun 2024 18:34:14 -0700
-Message-ID: <CAADnVQJym9sDF1xo1hw3NCn9XVPJzC1RfqtS4m2yY+YMOZEJYA@mail.gmail.com>
-Subject: Re: [PATCH sched_ext/for-6.11 2/2] sched_ext: Implement scx_bpf_consume_task()
-To: Tejun Heo <tj@kernel.org>
-Cc: Alexei Starovoitov <ast@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	bpf <bpf@vger.kernel.org>, David Vernet <void@manifault.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemd100013.china.huawei.com (7.221.188.163)
 
-On Thu, Jun 27, 2024 at 5:24=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
->
-> Implement scx_bpf_consume_task() which allows consuming arbitrary tasks o=
-n
-> the DSQ in any order while iterating in the dispatch path.
->
-> scx_qmap is updated to implement periodic dumping of the shared DSQ and a
-> rather silly prioritization mechanism to demonstrate the use of DSQ
-> iteration and selective consumption.
->
-> Note that it does a bit of nastry dance to pass in the pointer to the
-> iterator to __scx_bpf_consume_task(). This is to work around the current
-> limitation in the BPF verifier where it doesn't allow the memory area use=
-d
-> for an iterator to be passed into kfuncs. This may be too nasty and might
-> require a different approach.
->
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Reviewed-by: David Vernet <dvernet@meta.com>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: bpf@vger.kernel.org
-> ---
-> Hello, again.
->
-> (continuing from the previous patch) so, the problem is that I need to
-> distinguish the tasks which have left a queue and then get requeued while=
- an
-> iteration is in progress. The iterator itself already does this - it
-> remembers a sequence number when iteration starts and ignores tasks which
-> are queued afterwards.
->
-> As a task can get removed and requeued anytime, I need
-> scx_bpf_consume_task() to do the same testing, so I want to pass in the
-> iterator pointer into scx_bpf_consume_task() so that it can read the
-> sequence number stored in the iterator. However, BPF doesn't allow this, =
-so
-> I'm doing the weird self pointer probe read thing, to obtain it, which is
-> quite nasty.
->
-> What do you think?
->
-> Thanks.
->
->  kernel/sched/ext.c                       |   89 ++++++++++++++++++++++++=
-+++++--
->  tools/sched_ext/include/scx/common.bpf.h |   16 +++++
->  tools/sched_ext/scx_qmap.bpf.c           |   34 ++++++++++-
->  tools/sched_ext/scx_qmap.c               |   14 +++-
->  4 files changed, 142 insertions(+), 11 deletions(-)
->
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -1122,6 +1122,12 @@ enum scx_dsq_iter_flags {
->  };
->
->  struct bpf_iter_scx_dsq_kern {
-> +       /*
-> +        * Must be the first field. Used to work around BPF restriction a=
-nd pass
-> +        * in the iterator pointer to scx_bpf_consume_task().
-> +        */
-> +       struct bpf_iter_scx_dsq_kern    *self;
-> +
->         struct scx_dsq_node             cursor;
->         struct scx_dispatch_q           *dsq;
->         u32                             dsq_seq;
-> @@ -1518,7 +1524,7 @@ static void dispatch_enqueue(struct scx_
->         p->scx.dsq_seq =3D dsq->seq;
->
->         dsq_mod_nr(dsq, 1);
-> -       p->scx.dsq =3D dsq;
-> +       WRITE_ONCE(p->scx.dsq, dsq);
->
->         /*
->          * scx.ddsp_dsq_id and scx.ddsp_enq_flags are only relevant on th=
-e
-> @@ -1611,7 +1617,7 @@ static void dispatch_dequeue(struct rq *
->                 WARN_ON_ONCE(task_linked_on_dsq(p));
->                 p->scx.holding_cpu =3D -1;
->         }
-> -       p->scx.dsq =3D NULL;
-> +       WRITE_ONCE(p->scx.dsq, NULL);
->
->         if (!is_local)
->                 raw_spin_unlock(&dsq->lock);
-> @@ -2107,7 +2113,7 @@ static void consume_local_task(struct rq
->         list_add_tail(&p->scx.dsq_node.list, &rq->scx.local_dsq.list);
->         dsq_mod_nr(dsq, -1);
->         dsq_mod_nr(&rq->scx.local_dsq, 1);
-> -       p->scx.dsq =3D &rq->scx.local_dsq;
-> +       WRITE_ONCE(p->scx.dsq, &rq->scx.local_dsq);
->         raw_spin_unlock(&dsq->lock);
->  }
->
-> @@ -5585,12 +5591,88 @@ __bpf_kfunc bool scx_bpf_consume(u64 dsq
->         }
->  }
->
-> +/**
-> + * __scx_bpf_consume_task - Transfer a task from DSQ iteration to the lo=
-cal DSQ
-> + * @it: DSQ iterator in progress
-> + * @p: task to consume
-> + *
-> + * Transfer @p which is on the DSQ currently iterated by @it to the curr=
-ent
-> + * CPU's local DSQ. For the transfer to be successful, @p must still be =
-on the
-> + * DSQ and have been queued before the DSQ iteration started. This funct=
-ion
-> + * doesn't care whether @p was obtained from the DSQ iteration. @p just =
-has to
-> + * be on the DSQ and have been queued before the iteration started.
-> + *
-> + * Returns %true if @p has been consumed, %false if @p had already been =
-consumed
-> + * or dequeued.
-> + */
-> +__bpf_kfunc bool __scx_bpf_consume_task(unsigned long it, struct task_st=
-ruct *p)
-> +{
-> +       struct bpf_iter_scx_dsq_kern *kit =3D (void *)it;
-> +       struct scx_dispatch_q *dsq, *kit_dsq;
-> +       struct scx_dsp_ctx *dspc =3D this_cpu_ptr(scx_dsp_ctx);
-> +       struct rq *task_rq;
-> +       u64 kit_dsq_seq;
-> +
-> +       /* can't trust @kit, carefully fetch the values we need */
-> +       if (get_kernel_nofault(kit_dsq, &kit->dsq) ||
-> +           get_kernel_nofault(kit_dsq_seq, &kit->dsq_seq)) {
-> +               scx_ops_error("invalid @it 0x%lx", it);
-> +               return false;
-> +       }
+An UAF can happen when /proc/cpuset is read as reported in [1].
 
-With scx_bpf_consume_task() it's only a compile time protection from bugs.
-Since kfunc doesn't dereference any field in kit_dsq it won't crash
-immediately, but let's figure out how to make it work properly.
+This can be reproduced by the following methods:
+1.add an mdelay(1000) before acquiring the cgroup_lock In the
+ cgroup_path_ns function.
+2.$cat /proc/<pid>/cpuset   repeatly.
+3.$mount -t cgroup -o cpuset cpuset /sys/fs/cgroup/cpuset/
+$umount /sys/fs/cgroup/cpuset/   repeatly.
 
-Since kit_dsq and kit_dsq_seq are pretty much anything in this implementati=
-on
-can they be passed as two scalars instead ?
-I guess not, since tricking dsq !=3D kit_dsq and
-time_after64(..,kit_dsq_seq) can lead to real issues ?
+The race that cause this bug can be shown as below:
 
-Can some of it be mitigated by passing dsq into kfunc that
-was used to init the iter ?
-Then kfunc will read dsq->seq from it instead of kit->dsq_seq ?
+(umount)		|	(cat /proc/<pid>/cpuset)
+css_release		|	proc_cpuset_show
+css_release_work_fn	|	css = task_get_css(tsk, cpuset_cgrp_id);
+css_free_rwork_fn	|	cgroup_path_ns(css->cgroup, ...);
+cgroup_destroy_root	|	mutex_lock(&cgroup_mutex);
+rebind_subsystems	|
+cgroup_free_root 	|
+			|	// cgrp was freed, UAF
+			|	cgroup_path_ns_locked(cgrp,..);
 
-> +
-> +       /*
-> +        * @kit can't be trusted and we can only get the DSQ from @p. As =
-we
-> +        * don't know @p's rq is locked, use READ_ONCE() to access the fi=
-eld.
-> +        * Derefing is safe as DSQs are RCU protected.
-> +        */
-> +       dsq =3D READ_ONCE(p->scx.dsq);
-> +
-> +       if (unlikely(!dsq || dsq !=3D kit_dsq))
-> +               return false;
-> +
-> +       if (unlikely(dsq->id =3D=3D SCX_DSQ_LOCAL)) {
-> +               scx_ops_error("local DSQ not allowed");
-> +               return false;
-> +       }
-> +
-> +       if (!scx_kf_allowed(SCX_KF_DISPATCH))
-> +               return false;
-> +
-> +       flush_dispatch_buf(dspc->rq, dspc->rf);
-> +
-> +       raw_spin_lock(&dsq->lock);
-> +
-> +       /*
-> +        * Did someone else get to it? @p could have already left $dsq, g=
-ot
-> +        * re-enqueud, or be in the process of being consumed by someone =
-else.
-> +        */
-> +       if (unlikely(p->scx.dsq !=3D dsq ||
-> +                    time_after64(p->scx.dsq_seq, kit_dsq_seq) ||
+When the cpuset is initialized, the root node top_cpuset.css.cgrp
+will point to &cgrp_dfl_root.cgrp. In cgroup v1, the mount operation will
+allocate cgroup_root, and top_cpuset.css.cgrp will point to the allocated
+&cgroup_root.cgrp. When the umount operation is executed,
+top_cpuset.css.cgrp will be rebound to &cgrp_dfl_root.cgrp.
 
-In the previous patch you do:
-(s32)(p->scx.dsq_seq - kit->dsq_seq) > 0
-and here
-time_after64().
-Close enough, but 32 vs 64 and equality difference?
+The problem is that when rebinding to cgrp_dfl_root, there are cases
+where the cgroup_root allocated by setting up the root for cgroup v1
+is cached. This could lead to a Use-After-Free (UAF) if it is
+subsequently freed. The descendant cgroups of cgroup v1 can only be
+freed after the css is released. However, the css of the root will never
+be released, yet the cgroup_root should be freed when it is unmounted.
+This means that obtaining a reference to the css of the root does
+not guarantee that css.cgrp->root will not be freed.
 
-> +                    p->scx.holding_cpu >=3D 0))
-> +               goto out_unlock;
-> +
-> +       task_rq =3D task_rq(p);
-> +
-> +       if (dspc->rq =3D=3D task_rq) {
-> +               consume_local_task(dspc->rq, dsq, p);
-> +               return true;
-> +       }
-> +
-> +       if (task_can_run_on_remote_rq(p, dspc->rq))
-> +               return consume_remote_task(dspc->rq, dspc->rf, dsq, p, ta=
-sk_rq);
-> +
-> +out_unlock:
-> +       raw_spin_unlock(&dsq->lock);
-> +       return false;
-> +}
-> +
->  __bpf_kfunc_end_defs();
+Fix this problem by using rcu_read_lock in proc_cpuset_show().
+As cgroup_root is kfree_rcu after commit d23b5c577715
+("cgroup: Make operations on the cgroup root_list RCU safe"),
+css->cgroup won't be freed during the critical section.
+To call cgroup_path_ns_locked, css_set_lock is needed, so it is safe to
+replace task_get_css with task_css.
+
+[1] https://syzkaller.appspot.com/bug?extid=9b1ff7be974a403aa4cd
+
+Fixes: a79a908fd2b0 ("cgroup: introduce cgroup namespaces")
+Signed-off-by: Chen Ridong <chenridong@huawei.com>
+---
+ kernel/cgroup/cpuset.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index c12b9fdb22a4..bcb4da8f54c8 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -21,6 +21,7 @@
+  *  License.  See the file COPYING in the main directory of the Linux
+  *  distribution for more details.
+  */
++#include "cgroup-internal.h"
+ 
+ #include <linux/cpu.h>
+ #include <linux/cpumask.h>
+@@ -5051,10 +5052,14 @@ int proc_cpuset_show(struct seq_file *m, struct pid_namespace *ns,
+ 	if (!buf)
+ 		goto out;
+ 
+-	css = task_get_css(tsk, cpuset_cgrp_id);
+-	retval = cgroup_path_ns(css->cgroup, buf, PATH_MAX,
+-				current->nsproxy->cgroup_ns);
+-	css_put(css);
++	rcu_read_lock();
++	spin_lock_irq(&css_set_lock);
++	css = task_css(tsk, cpuset_cgrp_id);
++	retval = cgroup_path_ns_locked(css->cgroup, buf, PATH_MAX,
++				       current->nsproxy->cgroup_ns);
++	spin_unlock_irq(&css_set_lock);
++	rcu_read_unlock();
++
+ 	if (retval == -E2BIG)
+ 		retval = -ENAMETOOLONG;
+ 	if (retval < 0)
+-- 
+2.34.1
+
 
