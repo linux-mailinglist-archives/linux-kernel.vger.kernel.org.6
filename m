@@ -1,155 +1,98 @@
-Return-Path: <linux-kernel+bounces-233267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D798091B50F
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 04:20:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DB7791B510
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 04:22:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 938EE283A2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 02:20:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C0F51C219FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 02:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D9717999;
-	Fri, 28 Jun 2024 02:20:30 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82BD18C31;
+	Fri, 28 Jun 2024 02:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hf9KSrPS"
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C508480;
-	Fri, 28 Jun 2024 02:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 640BD18046
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 02:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719541229; cv=none; b=pJ4Dsx9+SfCCXyJQAXnZraRAjPyxFxS9OG5qQ9kYmhIuIHlWtH1qdtS/L2ebgPKZdVNU/J9JR8taPwTfcI6HBeyhuhuFc6ATxdxePqXd+B0zGrC97h5HV6iUDHU95ArIXzS+XN3Wli0ZpXebRnRg+cCj61np43w+HzR8ZVKnBeo=
+	t=1719541346; cv=none; b=UgzP1dUUmyBHGLBh4q1INZGfbaoFq+IE3/+fPSczgdkJT2VILutjUQrJTjMvh+r8jBfGJ40emr5KLrTXz09Lu5ilssG03o9tbmH7jo3/w3Wg8vjKSRwUYPwVxGFdsAoBmf3QzFm/4c5VKrZObNh1FHRwSnSIlRgoieXMda+6tCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719541229; c=relaxed/simple;
-	bh=dO9qBeiAL60YekJlPz1a+cPxvLl0Q9VNiXYv1VwjvYw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=R7NOoAdyXhAWD9CGXhx6W4arSoD1HYKN2Q8/zYBxKsRFI/WZweMv5ho5QDlTyBbF6XZCwibKMHPgnBGay0SednUT4XCYM4xIKemfRKhTqY+JtHNmBeIp0FtAdoeyQPNQ2mht5O9zHuOVu55gaM3fAMeqwYZVDXYaLATYPUkm3X4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4W9Jvp5d7Wz2Ckks;
-	Fri, 28 Jun 2024 10:16:22 +0800 (CST)
-Received: from dggpeml500023.china.huawei.com (unknown [7.185.36.114])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4514714011F;
-	Fri, 28 Jun 2024 10:20:24 +0800 (CST)
-Received: from [10.67.110.112] (10.67.110.112) by
- dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 28 Jun 2024 10:20:23 +0800
-Message-ID: <ad7cfc60-d6d5-ca16-c93a-d200febccc9b@huawei.com>
-Date: Fri, 28 Jun 2024 10:20:23 +0800
+	s=arc-20240116; t=1719541346; c=relaxed/simple;
+	bh=zcxnldfNeqNg1S/9+A/HSWxLzrKfZNK+wLswGlM0IOM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lze0hYVijbrMsCYW3NU298bIXVLXzTX1jGhd0xFDKnFdvicklCBl0/YLOzLFd+NbODJhGxffm23GvgR1M+Tlv7BDpmuU9WP+oFtLLqvbZ3wjZPBY21G4ok3akZujkbnMbEO8KjYuDFzfdR+CPMBREkJIpVBOh5fCT9geVHQ1QtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hf9KSrPS; arc=none smtp.client-ip=209.85.167.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3d561e564d0so76811b6e.1
+        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 19:22:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1719541343; x=1720146143; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hVxz21dbKRa8K35SUlK2JJeWf/rQA8jAFy3VGCptuN0=;
+        b=hf9KSrPS2v8aUX23Ackw5Z5nrCS3/CcYM9tvD5uqXcuPti6zbPHwx9r2rNr0gbCOaz
+         m13CrpoimVbhv1QN+vQjjx2eK7QJHzH5ljxC5xKjZAx//Uu2Q5P8Q34wpCHJKH5cSwTj
+         sym4cfUFsRapcZuHA6fXCp7Fa5TYGFEvMStlU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719541343; x=1720146143;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hVxz21dbKRa8K35SUlK2JJeWf/rQA8jAFy3VGCptuN0=;
+        b=prsy/5mDWaOv+5Tqz1tZyMcOvy/EfbJaIPN7LGDhPdfMopNvOdNx0kEp3I2Le/UY+7
+         jY+/NR6+FkeNSBk65xGjk15T0q0pL7t3qkFsY400UobfWvtcaV+TDw7q873VeSVD6RKw
+         3Iej1DsKjIctsQnlHSHvD13w3kg+gURhGPgMS3QQLNbCASKnKpX66SZ+g1gv3o5ARhxA
+         2huSdBcGQehDmiEtDSHkmFS3rnTdSblu2H3RoMfyddnaDBsjF9lv9p9NOSeHQ+jR9CAx
+         BZvfF5DNFxjM5eBmtO63EZghuV7MR8rPPE1L/9tEQDfMt3xernT+2/yrz+XwSQCQJRGS
+         XeLw==
+X-Forwarded-Encrypted: i=1; AJvYcCVURpI86Cb5iG8ewH6u7t8kwHzHdzacS4eTq1Ay62Vaj0nIfjLEIbt8ZkvazobsXrxCMLS/vJLpEJF+Qu5cQT1emtUheQc5oGVyrPOm
+X-Gm-Message-State: AOJu0YzrbqqZs+xx3u1t+c2i04ocXr1VD6PdhQsxsJnEVU2g3jXTgHlO
+	dFYP/EmTlFP/OthmvBPQGOFNyS8HEleR2Y5fYTnZAdugXNcpzP85PJ06uUS0Fg==
+X-Google-Smtp-Source: AGHT+IHcJkuyyKYOPFcF3S9TzhD4NfoyJqqa31mXZ6JF3GxCl8pmGORtv9tjXlHDsEHwneXRdHBTgQ==
+X-Received: by 2002:a05:6808:1822:b0:3d5:1eba:10b5 with SMTP id 5614622812f47-3d541c5062dmr19251439b6e.12.1719541343373;
+        Thu, 27 Jun 2024 19:22:23 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:c19a:b9a8:4bd1:72c0])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70803ecf950sm412002b3a.113.2024.06.27.19.22.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 19:22:22 -0700 (PDT)
+Date: Fri, 28 Jun 2024 11:22:18 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Chengming Zhou <chengming.zhou@linux.dev>
+Cc: Minchan Kim <minchan@kernel.org>, linux-kernel@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH] zsmalloc: rename class stat mutators
+Message-ID: <20240628022218.GE15925@google.com>
+References: <20240628015154.3230389-1-senozhatsky@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH -next] mm: memcg: remove redundant
- seq_buf_has_overflowed()
-Content-Language: en-US
-To: Michal Hocko <mhocko@suse.com>
-CC: <hannes@cmpxchg.org>, <roman.gushchin@linux.dev>,
-	<shakeel.butt@linux.dev>, <muchun.song@linux.dev>,
-	<akpm@linux-foundation.org>, <cgroups@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240626094232.2432891-1-xiujianfeng@huawei.com>
- <Zn0RGTZxrEUnI1KZ@tiehlicka>
- <a351c609-4968-398a-9316-2ad19d934e9c@huawei.com>
- <Zn1LFyO_cww9W758@tiehlicka>
- <10b948cd-5fbf-78e7-c3e8-6867661fa50b@huawei.com>
- <Zn1S70yo4VQ24UNT@tiehlicka>
-From: xiujianfeng <xiujianfeng@huawei.com>
-In-Reply-To: <Zn1S70yo4VQ24UNT@tiehlicka>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpeml500023.china.huawei.com (7.185.36.114)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240628015154.3230389-1-senozhatsky@chromium.org>
 
-
-
-On 2024/6/27 19:54, Michal Hocko wrote:
-> On Thu 27-06-24 19:43:06, xiujianfeng wrote:
->>
->>
->> On 2024/6/27 19:20, Michal Hocko wrote:
->>> On Thu 27-06-24 16:33:00, xiujianfeng wrote:
->>>>
->>>>
->>>> On 2024/6/27 15:13, Michal Hocko wrote:
->>>>> On Wed 26-06-24 09:42:32, Xiu Jianfeng wrote:
->>>>>> Both the end of memory_stat_format() and memcg_stat_format() will call
->>>>>> WARN_ON_ONCE(seq_buf_has_overflowed()). However, memory_stat_format()
->>>>>> is the only caller of memcg_stat_format(), when memcg is on the default
->>>>>> hierarchy, seq_buf_has_overflowed() will be executed twice, so remove
->>>>>> the reduntant one.
->>>>>
->>>>> Shouldn't we rather remove both? Are they giving us anything useful
->>>>> actually? Would a simpl pr_warn be sufficient? Afterall all we care
->>>>> about is to learn that we need to grow the buffer size because our stats
->>>>> do not fit anymore. It is not really important whether that is an OOM or
->>>>> cgroupfs interface path.
->>>>
->>>> I did a test, when I removed both of them and added a lot of prints in
->>>> memcg_stat_format() to make the seq_buf overflow, and then cat
->>>> memory.stat in user mode, no OOM occurred, and there were no warning
->>>> logs in the kernel.
->>>
->>> The default buffer size is PAGE_SIZE.
->>
->> Hi Michal,
->>
->> I'm sorry, I didn't understand what you meant by this sentence. What I
->> mean is that we can't remove both, otherwise, neither the kernel nor
->> user space would be aware of a buffer overflow. From my test, there was
->> no OOM or other exceptions when the overflow occurred; it just resulted
->> in the displayed information being truncated. Therefore, we need to keep
->> one.
+On (24/06/28 10:42), Sergey Senozhatsky wrote:
+> A cosmetic change.
 > 
-> I've had this in mind
+> o Rename class_stat_inc() and class_stat_dec() to class_stat_add()
+>   and class_stat_sub() correspondingly. inc/dec are usually associated
+>   with +1/-1 modifications, while zsmlloc can modify stats by up
+>   to ->objs_per_zspage. Use add/sub (follow atomics naming).
 > 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 71fe2a95b8bd..3e17b9c3a27a 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -1845,9 +1845,6 @@ static void memcg_stat_format(struct mem_cgroup *memcg, struct seq_buf *s)
->  			       vm_event_name(memcg_vm_event_stat[i]),
->  			       memcg_events(memcg, memcg_vm_event_stat[i]));
->  	}
-> -
-> -	/* The above should easily fit into one page */
-> -	WARN_ON_ONCE(seq_buf_has_overflowed(s));
->  }
->  
->  static void memcg1_stat_format(struct mem_cgroup *memcg, struct seq_buf *s);
-> @@ -1858,7 +1855,8 @@ static void memory_stat_format(struct mem_cgroup *memcg, struct seq_buf *s)
->  		memcg_stat_format(memcg, s);
->  	else
->  		memcg1_stat_format(memcg, s);
-> -	WARN_ON_ONCE(seq_buf_has_overflowed(s));
-> +	if (seq_buf_has_overflowed(s))
-> +		pr_warn("%s: Stat buffer insufficient please report\n", __FUNCTION__);
+> o Rename zs_stat_get() to class_stat_read()
+>   get() is usually associated with ref-counting and is paired with put().
+>   zs_stat_get() simply reads class stat so rename to reflect it.
+>   (This also follows atomics naming).
 
-I found that after the change, the effect is as follows:
-
-# dmesg
-[   51.028327] memory_stat_format: Stat buffer insufficient please report
-
-with no keywords such as "Failed", "Warning" to draw attention to this
-printout. Should we change it to the following?
-
-if (seq_buf_has_overflowed(s))
-      pr_warn("%s: Warning, Stat buffer overflow, please report\n",
-__FUNCTION__);
-
-
->  }
-> >  /**
-> 
-> Because WARN_ON_ONCE doesn't buy us anything actually. It will dump
-> stack trace and it seems really mouthfull (and it will panic when
-> panic_on_warn is enabled which is likely not a great thing).
+I think I will resend this after Chengming patches land.
 
