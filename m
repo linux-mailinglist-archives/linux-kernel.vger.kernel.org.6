@@ -1,227 +1,106 @@
-Return-Path: <linux-kernel+bounces-234160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85CC591C2FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:53:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A47991C2FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:54:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B38BC1F21735
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:53:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 210941F22333
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 15:54:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5BFC1C68BA;
-	Fri, 28 Jun 2024 15:52:54 +0000 (UTC)
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 266C01C8FA0;
+	Fri, 28 Jun 2024 15:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IzY94ja1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70731DFFB;
-	Fri, 28 Jun 2024 15:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2C81DDCE;
+	Fri, 28 Jun 2024 15:53:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719589974; cv=none; b=YIfaA53G9lz054YJF1WsVG+VxTsQgl4Vnv4/7aV6hF5csRr1QP3oTCv3Tnip+g7S3OZh7FtWhOqKnASZ/AxQUfpNgHuHtEBqTY65hICV5QaeE2r7wLS374b56xvumHoDdFdprZQhsk5f/RYyMeaab4LRcLuQnqlahLhYvUN3P94=
+	t=1719590036; cv=none; b=ZWu28ALrSw3iiB4Sd/EFNhTL0vXTVjpyWG0RDY4xeZXUppMBRzKXQ1oR7TnuEJ46Ooxb9w/lHAeOnYz2sMm1vwBEjQkZhuKWgEGAn2T4LdpGLKC1nu+XNmt7aQsUucJvsBfx2VeXNyyN02b/jbtH35lAMV2QUPb0zftUF9Kw1KM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719589974; c=relaxed/simple;
-	bh=AESRoCtdfYIEKI2FzdomGfG8TR8mQBKd5L+uqnwzWp0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PRq2pPLfljC/yJa3at0gR1nqdOzZr1kUaHx34o+h6tYYKAz5atStKi7FzeJcY/ZzehRVMPO96lrtEUA9k5IowWP/F+e/mfuse7Jyyear+ExCScxqqiGHUi/C3ZPZhFkBU+UYXE9PfBeKgtikRhHwn4wPeTXaNqF7fOCd0DDF/Y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; arc=none smtp.client-ip=54.92.39.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-X-QQ-mid: bizesmtpsz13t1719589914t2js4i
-X-QQ-Originating-IP: ge8KyYfF/y74egXHDOj1Cmc5ujh0vTQl+zJIQK3W50k=
-Received: from [10.20.53.89] ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 28 Jun 2024 23:51:53 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 14412566357318969333
-Message-ID: <CD5FFEE4BEA56308+0122a540-e098-4982-9bb1-110b449cbe02@uniontech.com>
-Date: Fri, 28 Jun 2024 23:51:53 +0800
+	s=arc-20240116; t=1719590036; c=relaxed/simple;
+	bh=f2DbslJCY1gFdYcU6f+K7BGTq549TBoQpQaAN0WbFCg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ip9RvnmpuAwCyABuTp8pUhzTdgQGYMLjzG5GUuAZ0KNEvuH23KdE+Gb3dr3MeX7KlpLXx4YX9LilwZTwbMPnynunCy0/Ciehf0xD7pYBbyo8DhNFeLUSdOQ41kNl+a/w2nfeQBrrxXiz/7N/GC7gT6LYzu2lJjrQhgNq/aOudQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IzY94ja1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA11EC116B1;
+	Fri, 28 Jun 2024 15:53:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719590035;
+	bh=f2DbslJCY1gFdYcU6f+K7BGTq549TBoQpQaAN0WbFCg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IzY94ja1U0YcPSsXed2k98HFyvkihNwVvJObp3QA1rt/FRFUm+HeB9lKnlA5UYfs2
+	 aKswXYw03UB9U9gWKz3BebX/Gt57f0m4YPm2HLxdZc6SuPZxR4N/ICj+BkHn5Jhx4C
+	 EwkWKOFUIfe76cGObwNDCnB5JsBO9N0XVjTXw80nrcx0Pp4uup7blUYlqgLFS8ttqJ
+	 x+wgrmpR7fUU31qZWd61wQ+n+j/CZVOEA7ByhnnOsuMh6rxOxI+yqCPV/3pYDKF4EH
+	 xRXp/1vdfto9EzNlj3e+wf4TBh8fUTgwthTjkyz4J8RbZ7W86XTImJh5wv92z4XTbT
+	 0KPqVHymsOJbA==
+Date: Fri, 28 Jun 2024 16:53:50 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Guillaume Stols <gstols@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Beniamin Bia <beniamin.bia@analog.com>,
+	Stefan Popa <stefan.popa@analog.com>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	jstephan@baylibre.com, dlechner@baylibre.com
+Subject: Re: [PATCH v2 00/10] iio: adc: ad7606: Improvements
+Message-ID: <20240628-trustful-urchin-741943d2e98d@spud>
+References: <20240628-cleanup-ad7606-v2-0-96e02f90256d@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MIPS: crypto: Clean up useless assignment operations
-To: herbert@gondor.apana.org.au
-Cc: linux-crypto@vger.kernel.org, linux-mips@vger.kernel.org,
- linux-kernel@vger.kernel.org, Guan Wentao <guanwentao@uniontech.com>,
- davem@davemloft.net, tsbogend@alpha.franken.de
-References: <1D248893502B75F5+20240628084117.84264-1-wangyuli@uniontech.com>
-From: WangYuli <wangyuli@uniontech.com>
-In-Reply-To: <1D248893502B75F5+20240628084117.84264-1-wangyuli@uniontech.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Lfrz9cr24dwOHE+X"
+Content-Disposition: inline
+In-Reply-To: <20240628-cleanup-ad7606-v2-0-96e02f90256d@baylibre.com>
 
 
-On 2024/6/28 18:12, Herbert Xu wrote:
- > On Fri, Jun 28, 2024 at 04:41:17PM +0800, WangYuli wrote:
- >> When entering the "len & sizeof(u32)" branch, len must be less than 8.
- >> So after one operation, len must be less than 4.
- >> At this time, "len -= sizeof(u32)" is not necessary for 64-bit CPUs.
- >>
- >> A similar issue has been solved at Loongarch.
- >>
- >> Link: 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?h=v6.10-rc5&id=fea1c949f6ca5059e12de00d0483645debc5b206
- >> Signed-off-by: Guan Wentao <guanwentao@uniontech.com>
- >> Signed-off-by: WangYuli <wangyuli@uniontech.com>
- >> ---
- >>  arch/mips/crypto/crc32-mips.c | 4 ++++
- >>  1 file changed, 4 insertions(+)
- >>
- >> diff --git a/arch/mips/crypto/crc32-mips.c 
-b/arch/mips/crypto/crc32-mips.c
- >> index ec6d58008f8e..505d2d897849 100644
- >> --- a/arch/mips/crypto/crc32-mips.c
- >> +++ b/arch/mips/crypto/crc32-mips.c
- >> @@ -94,7 +94,9 @@ static u32 crc32_mips_le_hw(u32 crc_, const u8 *p, 
-unsigned int len)
- >>
- >>          CRC32(crc, value, w);
- >>          p += sizeof(u32);
- >> +#ifndef CONFIG_64BIT
- >>          len -= sizeof(u32);
- >> +#endif
- >
- > First of all, did you verify that this actually makes a difference?
- > Please post the actual assembly output with and without this patch.
+--Lfrz9cr24dwOHE+X
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sure.
+On Fri, Jun 28, 2024 at 02:48:18PM +0000, Guillaume Stols wrote:
+> This series adds the following improvements over the current AD7606's
+> driver implementation:
+>=20
+> - Fix wrong usage of gpio array
+> - Fix standby that was documented as ACTIVE_LOW but handled in the
+>   driver as if it was ACTIVE_HIGH
+> - Improve dt-bindings documentation
+> - Switch mutex lock to scoped guard
+>=20
+> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
 
-The left shows the assembly after applying this patch, while the right 
-shows the origin. ( Generated by Clang 17.0.6 )
-
-0000000000000018 <chksum_update>: 0000000000000018 <chksum_update>:
-;     ctx->crc = crc32_mips_le_hw(ctx->crc, data, length); ;     
-ctx->crc = crc32_mips_le_hw(ctx->crc, data, length);
-       18: 08 00 82 8c      lw    $2, 0x8($4) 18: 08 00 82 8c      lw    
-$2, 0x8($4)
-;     while (len >= sizeof(u64)) { ;     while (len >= sizeof(u64)) {
-       1c: 08 00 c1 2c      sltiu    $1, $6, 0x8 <chksum_init+0x8> 1c: 
-08 00 c1 2c      sltiu    $1, $6, 0x8 <chksum_init+0x8>
-       20: 06 00 20 f8      bnezc    $1, 0x3c <chksum_update+0x24> 20: 
-06 00 20 f8      bnezc    $1, 0x3c <chksum_update+0x24>
-;     return le64_to_cpu(__get_unaligned_t(__le64, p)); ;     return 
-le64_to_cpu(__get_unaligned_t(__le64, p));
-       24: 00 00 a3 dc      ld    $3, 0x0($5) 24: 00 00 a3 dc      ld    
-$3, 0x0($5)
-;         CRC32(crc, value, d); ;         CRC32(crc, value, d);
-       28: cf 00 62 7c      <unknown> crc32d v0,v1,v0 28: cf 00 62 
-7c      <unknown> crc32d    v0,v1,v0
-;         len -= sizeof(u64); ;         len -= sizeof(u64);
-       2c: f8 ff c6 24      addiu    $6, $6, -0x8 
-<chksumc_digest+0xfffffffffffffce0> 2c: f8 ff c6 24      addiu    $6, 
-$6, -0x8 <chksumc_digest+0xfffffffffffffd48>
-;     while (len >= sizeof(u64)) { ;     while (len >= sizeof(u64)) {
-       30: 08 00 c1 2c      sltiu    $1, $6, 0x8 <chksum_init+0x8> 30: 
-08 00 c1 2c      sltiu    $1, $6, 0x8 <chksum_init+0x8>
-       34: fb ff 20 10      beqz    $1, 0x24 <chksum_update+0xc> 34: fb 
-ff 20 10      beqz    $1, 0x24 <chksum_update+0xc>
-       38: 08 00 a5 64      daddiu    $5, $5, 0x8 <chksum_init+0x8> 38: 
-08 00 a5 64      daddiu    $5, $5, 0x8 <chksum_init+0x8>
-;     if (len & sizeof(u32)) { ;     if (len & sizeof(u32)) {
-       3c: 04 00 c1 2c      sltiu    $1, $6, 0x4 <chksum_init+0x4> 3c: 
-04 00 c1 2c      sltiu    $1, $6, 0x4 <chksum_init+0x4>
-       40: 0a 00 20 10      beqz    $1, 0x6c <chksum_update+0x54> 40: 04 
-00 20 f8      bnezc    $1, 0x54 <chksum_update+0x3c>
-       44: 03 f8 c3 7c      dext    $3, $6, 0x0, 0x20 
-<chksum_update+0x8> ;     return le32_to_cpu(__get_unaligned_t(__le32, p));
-;     if (len & sizeof(u16)) { 44: 00 00 a3 8c      lw    $3, 0x0($5)
-       48: 02 00 61 30      andi    $1, $3, 0x2 <chksum_init+0x2> 
-;         CRC32(crc, value, w);
-       4c: 0c 00 20 f8      bnezc    $1, 0x80 <chksum_update+0x68>
-;     if (len & sizeof(u8)) { 48: 8f 00 62 7c      <unknown> crc32w    
-v0,v1,v0
-       50: 01 00 61 30      andi    $1, $3, 0x1 <chksum_init+0x1>
-       54: 02 00 20 d8      beqzc    $1, 0x60 <chksum_update+0x48> 
-;         len -= sizeof(u32);
-;         CRC32(crc, value, b); 4c: fc ff c6 24      addiu    $6, $6, 
--0x4 <chksumc_digest+0xfffffffffffffd4c>
-       58: 00 00 a3 90      lbu    $3, 0x0($5) ;         p += sizeof(u32);
-50: 04 00 a5 64      daddiu    $5, $5, 0x4 <chksum_init+0x4>
-       5c: 0f 00 62 7c      <unknown> crc32b v0,v1,v0 ;     if (len & 
-sizeof(u16)) {
-54: 03 f8 c3 7c      dext    $3, $6, 0x0, 0x20 <chksum_update+0x8>
-;     ctx->crc = crc32_mips_le_hw(ctx->crc, data, length); 58: 02 00 61 
-30      andi    $1, $3, 0x2 <chksum_init+0x2>
-       60: 08 00 82 ac      sw    $2, 0x8($4) 5c: 03 00 20 d8      
-beqzc    $1, 0x6c <chksum_update+0x54>
-;     return 0; ;         CRC32(crc, value, h);
-       64: 09 00 e0 03      jr $ra 60: 00 00 a6 94      lhu    $6, 0x0($5)
-       68: 00 00 02 64      daddiu    $2, $zero, 0x0 <chksum_init>
-;     return le32_to_cpu(__get_unaligned_t(__le32, p)); 64: 4f 00 c2 
-7c      <unknown> crc32h    v0,a2,v0
-       6c: 00 00 a6 8c      lw    $6, 0x0($5)
-;         CRC32(crc, value, w); ;         p += sizeof(u16);
-       70: 8f 00 c2 7c      <unknown> crc32w v0,a2,v0 68: 02 00 a5 
-64      daddiu    $5, $5, 0x2 <chksum_init+0x2>
-;     if (len & sizeof(u16)) { ;     if (len & sizeof(u8)) {
-       74: 02 00 61 30      andi    $1, $3, 0x2 <chksum_init+0x2> 6c: 01 
-00 61 30      andi    $1, $3, 0x1 <chksum_init+0x1>
-       78: f5 ff 20 10      beqz    $1, 0x50 <chksum_update+0x38> 70: 02 
-00 20 d8      beqzc    $1, 0x7c <chksum_update+0x64>
-       7c: 04 00 a5 64      daddiu    $5, $5, 0x4 <chksum_init+0x4>
-;         CRC32(crc, value, h); ;         CRC32(crc, value, b);
-       80: 00 00 a6 94      lhu    $6, 0x0($5) 74: 00 00 a3 90      
-lbu    $3, 0x0($5)
-
-       84: 4f 00 c2 7c      <unknown> crc32h v0,a2,v0 78: 0f 00 62 
-7c      <unknown> crc32b    v0,v1,v0
-
-;     if (len & sizeof(u8)) { ;     ctx->crc = 
-crc32_mips_le_hw(ctx->crc, data, length);
-       88: 01 00 61 30      andi    $1, $3, 0x1 <chksum_init+0x1> 7c: 08 
-00 82 ac      sw    $2, 0x8($4)
-       8c: f4 ff 20 10      beqz    $1, 0x60 <chksum_update+0x48> ;     
-return 0;
-       90: 02 00 a5 64      daddiu    $5, $5, 0x2 <chksum_init+0x2> 80: 
-09 00 e0 03      jr    $ra
-       94: 00 00 00 08      j    0x0 <chksum_init> 84: 00 00 02 64      
-daddiu    $2, $zero, 0x0 <chksum_init>
+You missed Acks from Rob on several patches that he gave yesterday:
+https://lore.kernel.org/all/171952025424.477297.14698127361119381011.robh@k=
+ernel.org/
 
 
-In our testing, this assignment operation affects Clang's code expansion 
-and instruction reordering.
+--Lfrz9cr24dwOHE+X
+Content-Type: application/pgp-signature; name="signature.asc"
 
-This redundant assignment operation confuses Clang and prevents us from 
-obtaining optimized
+-----BEGIN PGP SIGNATURE-----
 
-assembly code.
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZn7cjgAKCRB4tDGHoIJi
+0vGqAP9kkiynQc0u8lZgHbdNgoQtzknMP8zXuThf1eqF4APomQD/aHqSEiu1w8U1
+G7zidcdXu37DkZjIbBGQTemOMyhyZw4=
+=ipV1
+-----END PGP SIGNATURE-----
 
-
-I extracted the 'crc32_mips_le_hw()' function as a user-mode demo to 
-analyze the assembly code
-
-generated for it on MIPS64.
-
-Link: https://godbolt.org/z/r4dGbhTGf
-
-
-
-As you can see, regardless of the Clang or GCC version, this redundant 
-operation affects the generated
-
-assembly code.
- >
- > If it does make a difference, you should avoid doing ifdefs as they
- > are more likely to cause build failures.  Instead do something like
- >
- >         if (!IS_ENABLED(CONFIG_64BIT))
- >             len -= sizeof(u32);
-Okay, I'll send a Patch V2 to fix this and update the commit message 
-based on above.
- >
- >
- > Cheers,
-
--- 
-WangYuli <wangyuli@uniontech.com>
-
-
+--Lfrz9cr24dwOHE+X--
 
