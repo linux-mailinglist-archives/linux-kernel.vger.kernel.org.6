@@ -1,144 +1,101 @@
-Return-Path: <linux-kernel+bounces-233330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3851A91B588
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 05:40:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90A0691B58C
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 05:44:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A68C71F223FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:40:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16926B21F61
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:44:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A171F951;
-	Fri, 28 Jun 2024 03:40:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D02A1208AD;
+	Fri, 28 Jun 2024 03:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UW5cGCxb"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WAc6ioRZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8819817583
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 03:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F811CD32;
+	Fri, 28 Jun 2024 03:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719546021; cv=none; b=flAIfZ0dJwe2ETGdfe9laUdgkCL6t5CsW2BL5bpWnNQXJGIVKS3uLIWraHY9GjMdtj/bT5b3rf1NTTfF6RPl8eswFb708f4Iwo1el4ThGf//3ArZtXLt65aJEsOK673Qo5ssXXi6JDAqPxeS9pdsuZEL6emfVkiY8NZFwV9wmYY=
+	t=1719546287; cv=none; b=Y9nhnfzjEGbjqtB+UNMwOadwNFRQvmUM8D7NpAW17kO3jimk0rRkk6Ce0Z4pOHl7XnCaU4lHX3oAMMNkhQTRvQBwbivSbXez5xe3fl5DA2CO69UIzC1iP7ZjlwcQbMJYwhpx6dSw/b5s24gim4BTsWlMxBzI65WQ8JUKuhXCA7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719546021; c=relaxed/simple;
-	bh=GenQpBNyMA0AYju4nRnS2e5xNG75gyrxio66tWTcCwc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e3v1IOvBadBxTottihELxylhqxgA79fgO7vqcZFI3AmZmGo7ULVCm3y0rFwVuVQfG0/z9ArMRB9nPm47Oy7BCBBrEZ/+4PCd1NiEajmX7MhL5062VZUiFiQhAFtIvxo9gLLhlt8T/s73f0AZMQjDUqaQim25ZtLyD5okmp44kUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UW5cGCxb; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57d4ee2aaabso129472a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 20:40:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719546018; x=1720150818; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OS9xqoZMcwoei5o8ahNVSTlTxVXDSb1SnPAKATTACBA=;
-        b=UW5cGCxbClRmamlebVvt3LF4Vdtrs1/oTbZGAcv/iPza8jjZhtF+gZERWzB1DwkWOh
-         +AYk8bYeVYAyI5rpRTU8/KZybN+mAt65blECnUpkqNys2LKC781I+a3rwaXyQbNil9qd
-         kA8XMRFUcc0uoVDux3E72vzlT353Z+MIM8zyHl3RQJnyjTLODutSMHpU3Amu83AWeWNH
-         jYSbDD0r1ZaGNF2b8vLiGfCnFbMJTHD4hXXA502iTtohwVInaNx8yVz6FbdyfHBwqqJS
-         csQfba3bs3JxJ38L/ufdelRPBkH69KQ29h0wemi75J7UvO2Q2zH/9a79qI30hOFZCN04
-         uXXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719546018; x=1720150818;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OS9xqoZMcwoei5o8ahNVSTlTxVXDSb1SnPAKATTACBA=;
-        b=sCFjj86Qw9n8ZgVuW9EoZtK4dXTyeW+Ou+LgEMm1tGBprmnuO1zXOEPPq/nC/GMbge
-         K4EaZzLvAR+SUDTUr/2QGMjEqPbzuRI1TeU0LQBFCwzyel5jCHzgs9QrPuW88hntYUw5
-         uZ7YbRJtGGY7nLeJeIbtLpSymYGgcQ2+1sca4jJCZEIlHx0m/O0zI+IrC+nvSTmqsGwh
-         cMv7JTFgFunbzN4yuX8jibtpz5y9f3QM7nlkoc947OIKr7oMolu3+wzs5kFt2s7eemSB
-         2eHRN23xEDhzCBZW5cLoTGYmbKudCldOEt69Zi1Pn19SPUJVBypQ/tL/UibQvdAZyLB0
-         JF1A==
-X-Gm-Message-State: AOJu0YxSFn8yNdxn3ETPnCueCDikKW9MvZlTkEXdOdU44SWIfvTa1f9j
-	NCj5Ey0o+27qdNCVsVPDD0sN9NpDQYFORs8+wm/bXJ9qK3+aqWoDAuwzJhqX2Kn/cpCwv+T3LXV
-	ph9qqzsWokMwwK5cX8UbJDH9++H9o7JgI
-X-Google-Smtp-Source: AGHT+IEd4MYYyTGYgkdpW1lBusF7xMCqtMtDwYx3Q7a/fEbXrt6+jDUrcup32wPvlQ319IyI0k41m3aS8JS63hLYlkY=
-X-Received: by 2002:a17:906:2a5b:b0:a6f:1785:d18 with SMTP id
- a640c23a62f3a-a7245cf2ee7mr928568166b.44.1719546017566; Thu, 27 Jun 2024
- 20:40:17 -0700 (PDT)
+	s=arc-20240116; t=1719546287; c=relaxed/simple;
+	bh=incWKKmZyowAMqcf56j8FOwILPp/7dyPp3aXpCaLNz4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gLP+Ihkh9Ja/V0r12XLMiJQlEQT2wfyqg3WRMyMysH29EUqsImJfcWrrKsXyKAWSAJf1z0/UVLnRLoi98ihYVIGHpGC+yg9Sa317XYQUQk+Mv6xQV62sQ5sXJrDjaN2WCAW3sTwMNvZtJ0VrVSfB82Y9aU7t5GQmvvRtDHlbdJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WAc6ioRZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40824C116B1;
+	Fri, 28 Jun 2024 03:44:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719546286;
+	bh=incWKKmZyowAMqcf56j8FOwILPp/7dyPp3aXpCaLNz4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WAc6ioRZsAR4SVI457Ows1D0UCi7tZBZdRyWEWSNCOuQk0tFG4Aru5vsQllQMTfVS
+	 dFAZab5hYzUJtF9TP66Pj2VyAhhFj3iLrdUQuGe7skGvbm95E2I9SaIdDbSFGtDTqI
+	 J9X2gXAOT0WxfUBHLahtgXDgJFHCbvVjSCgXO5hf0QzURAE/QO436umidJejdABV+k
+	 IAhcaVWOyexnhbuVcRCiloQzk13OKQzdhwWIZ4ZYkeF6xVLqWD20a/W3adQw+jGhaB
+	 AGFk5lcfr+Hx5moIoE4MW2tbpxu//48e9b0fbUaA0K2sU2auVfT4b2zx1Mtd88JDEX
+	 8/friCpV4BjZw==
+Message-ID: <6408b923-d9e8-4a86-bd0d-7cbe050433e6@kernel.org>
+Date: Fri, 28 Jun 2024 12:44:43 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240614040133.24967-1-jason-jh.lin@mediatek.com>
- <20240614040133.24967-3-jason-jh.lin@mediatek.com> <CABb+yY2bwj2BcdJLGe1ZYwCrnXL3LtcePMb=wQPaBKorBSs2yA@mail.gmail.com>
- <fc92d51cc6e55301c081ea2d589e1ba6cdd295ee.camel@mediatek.com>
- <CABb+yY1L+YGjf6O9UgPYkS2gWAdo=7QoojSAUNWC_8o7XtZQSg@mail.gmail.com>
- <1f815ff8-2b7a-48de-8b47-0bc9b3cb67ab@collabora.com> <CABb+yY1Yy8o3ofAiC-uV+gDrO3QDTWz3_XTUMai_2uyrnj-VrQ@mail.gmail.com>
- <b7ebc021d391452eaf2149976ea2d53fba3d89fc.camel@mediatek.com>
- <CABb+yY3+pnuXDK_jZMDYOAzahdSZ5iig51VqzM=FFHrFpK+9LA@mail.gmail.com>
- <4e5d4362-4940-4ba0-95aa-627b82e21e41@collabora.com> <CABb+yY3eXvJRUq7MOqB8QZ9N4aiuogaUCTfP7MerKdNbAbLkvw@mail.gmail.com>
- <895af04e45d286c38d01f48b29ad41598b7dadb7.camel@mediatek.com>
- <CABb+yY1EZOsKUR7WUX0Ni0Ukbqz0+yRHswiu07tNXtY1A1gNUQ@mail.gmail.com> <d6f0e7072ec0e89e573e5720fb2b9c621eb9154c.camel@mediatek.com>
-In-Reply-To: <d6f0e7072ec0e89e573e5720fb2b9c621eb9154c.camel@mediatek.com>
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Date: Thu, 27 Jun 2024 22:40:06 -0500
-Message-ID: <CABb+yY0+fFw7Bg578DFEdrigVFgf4-v3qo2JVruEa3ExtvRsMg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mailbox: mtk-cmdq: Move pm_runimte_get and put to
- mbox_chan_ops API
-To: =?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
-	=?UTF-8?B?U2luZ28gQ2hhbmcgKOW8teiIiOWciyk=?= <Singo.Chang@mediatek.com>, 
-	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>, =?UTF-8?B?TmFuY3kgTGluICjmnpfmrKPonqIp?= <Nancy.Lin@mediatek.com>, 
-	Project_Global_Chrome_Upstream_Group <Project_Global_Chrome_Upstream_Group@mediatek.com>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, 
-	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5.10/5.15] ata: libata-scsi: check cdb length for
+ VARIABLE_LENGTH_CMD commands
+To: Sasha Levin <sashal@kernel.org>
+Cc: Mikhail Ukhin <mish.uxin2012@yandex.ru>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jens Axboe
+ <axboe@kernel.dk>, Niklas Cassel <cassel@kernel.org>,
+ stable@vger.kernel.org, linux-ide@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Pavel Koshutin <koshutin.pavel@yandex.ru>,
+ lvc-project@linuxtesting.org
+References: <20240626211358.148625-1-mish.uxin2012@yandex.ru>
+ <ab75136a-cdf5-4eb1-a09a-bc59beb6b8df@kernel.org> <Zn3Gzc46q_gXoD59@sashalap>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <Zn3Gzc46q_gXoD59@sashalap>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jun 26, 2024 at 4:32=E2=80=AFAM Jason-JH Lin (=E6=9E=97=E7=9D=BF=E7=
-=A5=A5)
-<Jason-JH.Lin@mediatek.com> wrote:
-> >
-> > The idea is that
-> > 1) If the gap between transfers on a busy channel is ~10ms or
-> > more.  And ..
-> > 2) The silence on the mailbox channel is multiple of 100ms. And ...
->
-> The mailbox channel would not be always busy and the gap is not
-> consistent as well.
-> For example, display driver calls mbox_send_message() every ~16ms while
-> UI is updating in 60fps.
-> If UI dose not update, display driver won't call mbox_send_message(),
-> so user may not has the gap and the silence like this.
->
-From your logs, send_diff only increases from 16ms if the UI is not
-updating. Which makes it more prudent to release the channel.
+On 6/28/24 5:08 AM, Sasha Levin wrote:
+> On Thu, Jun 27, 2024 at 11:02:23AM +0900, Damien Le Moal wrote:
+>> On 6/27/24 06:13, Mikhail Ukhin wrote:
+>>> Fuzzing of 5.10 stable branch reports a slab-out-of-bounds error in
+>>> ata_scsi_pass_thru.
+>>>
+>>> The error is fixed in 5.18 by commit ce70fd9a551a ("scsi: core: Remove the
+>>> cmd field from struct scsi_request") upstream.
+>>> Backporting this commit would require significant changes to the code so
+>>> it is bettter to use a simple fix for that particular error.
+>>
+>> This sentence is not needed in the commit message. That is a discussion to have
+>> when applying (or not) the patch.
+> 
+> It's good to have this reasoning in the commit message to, so that later
+> when we look at the patch and try to understand why we needed something
+> custom for the backport, the justification will be right there.
 
-The user needs the channel for mbox_send_message, while actual power
-saving comes from cmdq_runtime_suspend/resume.
-So for your target usage pattern, trace mbox_send_message() ,
-cmdq_runtime_resume() and cmdq_runtime_suspend() and compare the
-timestamped logs with and without this patchset.
+OK then, let's keep the commit message as it is.
 
-> > 3) startup() and shutdown() are empty (as in your driver)
-> >   ... then you could afford to release/suspend and resume/request
-> > during the silence period because the _api_ cost of request/release
-> > should not even be 1ms. Your stack may be designed to make doing that
-> > difficult but numbers wise it should work.
->
-> Yes, that's true, but I think we can not achieve the goal during the
-> suspend/resume stage.
->
-> Currently, we use the pm_runtime_get_sync() and
-> pm_runtime_auto_suspend() to achieve this.
-> So I think adding the PM function hook in mailbox driver is much better
-> for users driver and also more flexible for the controller driver.
->
-> Please correct me if there is something I misunderstood :)
->
-I have a gut feeling the logs above will make it clear :)
+Mikhail,
 
-Cheers!
+Please send a v5 patch with the correction I commented and the patch will be
+good to go.
+
+Thanks !
+
+-- 
+Damien Le Moal
+Western Digital Research
+
 
