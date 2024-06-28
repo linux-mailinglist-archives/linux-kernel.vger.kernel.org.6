@@ -1,123 +1,137 @@
-Return-Path: <linux-kernel+bounces-234691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA29991C980
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 01:13:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA94591C983
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 01:14:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AD541F229EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 23:13:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96F8828476A
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 23:14:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062618249B;
-	Fri, 28 Jun 2024 23:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F13E82494;
+	Fri, 28 Jun 2024 23:14:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eAs7S9XK"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qlogo.org header.i=@qlogo.org header.b="rt4Xfrue"
+Received: from pv50p00im-zteg10011501.me.com (pv50p00im-zteg10011501.me.com [17.58.6.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0294578C8B;
-	Fri, 28 Jun 2024 23:13:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74FE8121F
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 23:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719616383; cv=none; b=OXez6iy0XBIhWv1dWy/K6iB13OhGySI5O/l1mTgoRS5/US7Tya5fh0nIqPnhzkUPXUfR1RHYXtCyqCCZviS2Ou9Ts87guI5GCLDdKL/2u27Tbx8ea5mjEYMhrJwVN3AjR8HgcUPi1dGJwsylcwHf8GV6PXvN5ld5HrlmiVa20KA=
+	t=1719616486; cv=none; b=M3gSWrCXg7wcdLdzWf8A07wNU5kiTwuG2uQR99p4dYiodogewQw1nqMdGlHLudLNMnMFtM/rxv0CCSRyKXrNT7XSfQ0r6a8VPNZlFPvblPtAREGTgGy+0OZKeBaEln06yrjGkAtAKoU1qyyKUUErasKFQko6FuFY4msRyX6NcPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719616383; c=relaxed/simple;
-	bh=1sshCpT+0EycR4rf2JwnncQxgvXJDIezprx6cwy48gk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KbWtShASMFbdz6ctNJWk4LnzI9oE724ZpckmyxseVjydO4377ivKL3UZasqDFm7d7woalgEcnLGr1I5a12elT5DfLglonyhGyZGdFv9nKAPuPDbGj1iUhzM6pO+YMUY/esOpglljBCSzr9nn1xBeB16exnR5jjI3uHjPnIGHklU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eAs7S9XK; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fa2ea1c443so8774585ad.0;
-        Fri, 28 Jun 2024 16:13:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719616381; x=1720221181; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rPbFviwPsE9tM/dVYGBsIcnnS8pzc1tI10a/z4Viceg=;
-        b=eAs7S9XKGDSGRdMicw7Gts6tVDRn54OZab5t87TIV8cJfLoyclthbkj0meUCtrnnj2
-         YX24/ZoiM1BWJkF7V2bbnPjSJenK5MQafDyGYby/SXcHbz7f9C0U+mmDoTfSLjMpdyk4
-         hISprEu/fTo/O4/MkFm4PKVSdZ0kCRBY5fE1q1xwG274LfUY6o9P0+8deAwbJwBMZL+z
-         2EaYxI0hMqHhqNTLJkYcmiEXkf9cLttuY9RaQqXduHijt2ov6evfs0P9BAYUKXl1IEtV
-         Q+l4oi44Kd3DvorvXELusmUiXI6W0QPAw4bY2IqrTDtkMAYZybh156GQGBnAkoOegDQM
-         q4SQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719616381; x=1720221181;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rPbFviwPsE9tM/dVYGBsIcnnS8pzc1tI10a/z4Viceg=;
-        b=boyxS05+Lmr2N7AbHCMhI4JgZY9z3TjHze51mIG3p0i63Pwyc1quAdSjmD3Xb+H09E
-         d9owSE4tvtAAaqqwZb6d1ImaOR6faUcLhQN3JYbcXb1juFGIdCY2hpiS9r2nuYt9+Ell
-         H4KdhsYJcim1kbuI4d+ukf290OHHfWZFEMnRsa1RI5Pp5dZynVpBTNgAcy28tyB5KCqL
-         B1qrzj0KEXr5zwoTeUt+o5mVPC2hsH1j8ZS8F3wkmbwWztHUmbeSGrAep5Bk6lexe1Ll
-         zIX5R77Z6AX6RLOlvRJntD8hvX+a9sMb9yGE01oIxGF+GiazDoRXQunoHjMfuJceUL13
-         ybpg==
-X-Forwarded-Encrypted: i=1; AJvYcCUpCm3Al6FABVunq3DunbzRfxR+ZrhVSOKxa8jUXTF58L12U3Ol/t/7fRaYyBhwEPbI10cvHylkKqHHk2iDn1w5IiJ01Qdq6mdJZXQlwS0U6fWdOzZMyty2NZ+3zlcecM60
-X-Gm-Message-State: AOJu0YwvsSTqwJCv2MIvexlu5BEyyTyGUBHqv1CzvmyOiL7Ls34T3VGg
-	zxfoHW+U97ntIIJzPIZp38RbuvvninLETw1jWoQ40H0vbP5gbQp3
-X-Google-Smtp-Source: AGHT+IGbQGQYeVcgQiCfQj0hVKk7f2EV83ovxNX17a+d9LnTOdo1hGizn6b3TpU/lV9v0Wqdf/0QGA==
-X-Received: by 2002:a17:902:dacc:b0:1fa:cea0:c5fd with SMTP id d9443c01a7336-1facea0c66amr18268285ad.50.1719616381067;
-        Fri, 28 Jun 2024 16:13:01 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac10e2ea7sm20889825ad.81.2024.06.28.16.13.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 16:13:00 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Fri, 28 Jun 2024 13:12:59 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-	David Vernet <void@manifault.com>
-Subject: Re: [PATCH sched_ext/for-6.11 2/2] sched_ext: Implement
- scx_bpf_consume_task()
-Message-ID: <Zn9De_70fy-DVA-_@slm.duckdns.org>
-References: <Zn4BupVa65CVayqQ@slm.duckdns.org>
- <Zn4Cw4FDTmvXnhaf@slm.duckdns.org>
- <CAADnVQJym9sDF1xo1hw3NCn9XVPJzC1RfqtS4m2yY+YMOZEJYA@mail.gmail.com>
- <Zn8xzgG4f8vByVL3@slm.duckdns.org>
- <CAEf4BzbVorxvJdGA0eLviRhboaisxe4Ng=VErZVh3MG9YrRaKw@mail.gmail.com>
- <Zn9BZB8tE-CySXnn@slm.duckdns.org>
+	s=arc-20240116; t=1719616486; c=relaxed/simple;
+	bh=keWjHNwrplzMe1yHzdfjb9hGCOvcOJn7XkaJ1+yBGak=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=WLJ5EdRTYc6as0dAAqTKquTC8G5FlFvLUfKIrMreg5a+QD4VhGMUuYvKaLi72VSq/oIWaJ/OB5ZkHO1IW9V/1q2zcDJFudQWksvV3VVdVUak4fa3mCpkdtXlb5LCDeqnZW4mTrSbcV9fwZAXr+3SpVExV7y8uaMIXWy1W1IrkXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=qlogo.org; spf=pass smtp.mailfrom=qlogo.org; dkim=pass (2048-bit key) header.d=qlogo.org header.i=@qlogo.org header.b=rt4Xfrue; arc=none smtp.client-ip=17.58.6.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=qlogo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qlogo.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qlogo.org; s=sig1;
+	t=1719616484; bh=U+mM5AgSKk9Kx0J4JYeP8IL8tu70jv7di4g/FWoIVWQ=;
+	h=Content-Type:Mime-Version:Subject:From:Date:Message-Id:To;
+	b=rt4XfrueK0kB0XAHMjZZDAxT+A9HMKA7kEaRnge9X7S09Tf0NeSerM3RT1KoohDXD
+	 JwbWgmw+MWR6T7OwPuwH73+zT64r4pnalvy+Z/WV8SecV4snYJznKNUANSVA5PWEtI
+	 UM04yy/jv1y72gaDWLLmJels04Wb4JanfQGRZT1jGg+1AOFzJpLUSXL+lh4KE+UJSH
+	 KUxS5hrSOGkIsyBitUqzYB25rSCofH50KOBY7qJxOynGJ0KLNbtSebKlQV8jARe2zx
+	 nJ/mcXW79YcPr/hiTLMhyUapWB4KRMym5maD3iX0lZs1JN+e8nNGZtCkJlNDqICXUS
+	 NUy5lsDjmrkxg==
+Received: from smtpclient.apple (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-zteg10011501.me.com (Postfix) with ESMTPSA id B2CE64A0181;
+	Fri, 28 Jun 2024 23:14:42 +0000 (UTC)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zn9BZB8tE-CySXnn@slm.duckdns.org>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH] Fix warning in tegra_fuse_add_lookups
+From: sikes@qlogo.org
+In-Reply-To: <2etkg2arvsxtjgoxuaks34th5llpe5kn3bakelz7naeghexval@s5up5vt4a5gk>
+Date: Fri, 28 Jun 2024 16:14:31 -0700
+Cc: jonathanh@nvidia.com,
+ kkartik@nvidia.com,
+ rdunlap@infradead.org,
+ frank.li@vivo.com,
+ linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <F7BBCA12-BFCA-4B19-89EA-A9B251FEDC7C@qlogo.org>
+References: <20240616073721.5696-1-sikes@qlogo.org>
+ <171958790864.2433364.265100419611870394.b4-ty@nvidia.com>
+ <xyxjlp6hb7jcwlhbm4tpmt5npx74qpuzybzakdkev6ta2nl6go@txh4ue7faenk>
+ <8963AF0A-16DA-46FE-BAA9-602752410E8E@qlogo.org>
+ <2etkg2arvsxtjgoxuaks34th5llpe5kn3bakelz7naeghexval@s5up5vt4a5gk>
+To: Thierry Reding <thierry.reding@gmail.com>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
+X-Proofpoint-GUID: S4eL8GHs_Vg0hLqjRzI6e6ipvbnYK_Jk
+X-Proofpoint-ORIG-GUID: S4eL8GHs_Vg0hLqjRzI6e6ipvbnYK_Jk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-28_16,2024-06-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 adultscore=0
+ phishscore=0 malwarescore=0 clxscore=1030 mlxlogscore=798 spamscore=0
+ bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2406280176
 
-Hello, again.
 
-On Fri, Jun 28, 2024 at 01:04:04PM -1000, Tejun Heo wrote:
-...
-> Not a stupid question at all. It's just that all the existing interface is
-> based on IDs. This is partly because there's not much the BPF code can do
-> with the DSQ data structure and partly because DSQs are usually not accessed
-> multiple times in sequence (ie. if the BPF code isn't going to look it up
-> and hold it persistently, it's going to have to look it up each time
-> anyway).
-> 
-> The multiple lookups aren't the end of the world. They're all on a resizing
-> hashtable, so lookups should be pretty low cost. It's just a little bit sad
-> to look at.
 
-Just a bit of addition and a question. scx_bpf_consume_task() is maybe named
-too generically and I have a hard time imagining it being useful outside
-iteration loop. So, it does work out kinda neatly if we can tie the whole
-thing (DSQ lookup, barrier seq) to the iterator.
+> On Jun 28, 2024, at 2:27=E2=80=AFPM, Thierry Reding =
+<thierry.reding@gmail.com> wrote:
+>=20
+> On Fri, Jun 28, 2024 at 10:17:13AM GMT, sikes@qlogo.org wrote:
+>>=20
+>>=20
+>>> On Jun 28, 2024, at 8:29=E2=80=AFAM, Thierry Reding =
+<thierry.reding@gmail.com> wrote:
+>>>=20
+>>> On Fri, Jun 28, 2024 at 05:18:48PM GMT, Thierry Reding wrote:
+>>>> From: Thierry Reding <treding@nvidia.com>
+>>>>=20
+>>>>=20
+>>>> On Sun, 16 Jun 2024 00:36:57 -0700, Jason Sikes wrote:
+>>>>> gcc 14.1.1 warns [-Wcalloc-transposed-args] when sizeof() is
+>>>>> used in the first, but not the second, of two size_t arguments.
+>>>>>=20
+>>>>>=20
+>>>>=20
+>>>> Applied, thanks!
+>>>>=20
+>>>> [1/1] Fix warning in tegra_fuse_add_lookups
+>>>>     commit: f56da7f4048ff41cb029a715935394f5958a825f
+>>>>=20
+>>>> Best regards,
+>>>=20
+>>> Scratch that. Looks like gcc isn't warning correctly here.
+>>> kmemdup_array() does have "size_t element_size, size_t count", so =
+the
+>>> existing code is correct.
+>>>=20
+>>> Thierry
+>>=20
+>>=20
+>> The order changed in kernel mainline recently (very recently).
+>>=20
+>> Commit: 0ee14725471cea66e03e3cd4f4c582d759de502c
+>> Subject: mm/util: Swap kmemdup_array() arguments
+>>=20
+>> Apologies if you received this as a duplicate message. The previous =
+was sent with HTML, and Vger rightfully rejected it.
+>=20
+> That commit seems to take care of the change in fuse-tegra.c already, =
+so
+> this patch is no longer needed, right?
+>=20
+> Thierry
 
-The reason why this becomes nasty is because I can't pass the pointer to the
-iterator to a kfunc, so maybe allowing that can be a solution here too?
+Ah. Yes, you are correct. All is well.
 
-Thanks.
+=E2=80=94Thank you for your time,
 
--- 
-tejun
+=E2=80=94Jason=
 
