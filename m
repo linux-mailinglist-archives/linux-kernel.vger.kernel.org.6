@@ -1,141 +1,272 @@
-Return-Path: <linux-kernel+bounces-234454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 537C491C6D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:48:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4511C91C6D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 21:48:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 783741C23E0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:48:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDAFB1F2218D
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42EB276C61;
-	Fri, 28 Jun 2024 19:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F883770EF;
+	Fri, 28 Jun 2024 19:48:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PHy2RwaK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VdelCPIu"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818EA4CB37;
-	Fri, 28 Jun 2024 19:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7628C7581A;
+	Fri, 28 Jun 2024 19:48:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719604096; cv=none; b=H7jOCO8kGE37ipEJ1mN2MZas5GLDtbSSU3C4KX06uJDLdNj2clWznHrgRmaDS1d5xt1AnoZEeqV3A71zN8q9/631XtJ8K/GsWRR4rM0HwWhp3iiCjbzSHJ454U+fUUQe8vQAEaueVuP7l3wk4Wa7zpwGDRM1dS++y9TLRl9qdtQ=
+	t=1719604115; cv=none; b=Cq0qg7o2ev0fMXK8zQpHHQvlAJTAk7zdffD346tUqYU9RXzTR1DwAzIGmDSIuyT+Ihj4WpZbksrarDH8BvAca3vmySi/irXXgNiFqzgI7llgKCcTkYRqepCp7Wp9LDJR58Xhu+YBItAK35oy1lo5VfBj4i2kBHeUCQ2tJDANYIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719604096; c=relaxed/simple;
-	bh=5FdmDkaWpo3LN7jjmcP0NcHbokgjZpTdv+O+AA9Pzgk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iYn24OUqA4EFoiOUAYTR3R9mpGhlCZOw8tIG0+dxt+rtTaUrL7z3qDQ49E7njUnHzUV3UDqB5bDANKcRualBUw3Ea/0sGT4FMpOKBZ7mnHKCVinnUn6paKuomOVO6CdrPfaEZDQqifQDMs3uUIUV0m85HsG+mtjgoRPzM75LwWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PHy2RwaK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB0B3C116B1;
-	Fri, 28 Jun 2024 19:48:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719604096;
-	bh=5FdmDkaWpo3LN7jjmcP0NcHbokgjZpTdv+O+AA9Pzgk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PHy2RwaKCuVGRDcOUI5i2ynt5XTskyxExuOwDLTbiD4FSnMkFv+nqJI+ie8/GLbKn
-	 HTyviYO1Hw+/LNJ8z/EAN4qTaprMul/rh3exbyfj7eL4s+rDd49YpjpyqOJPFDebDH
-	 Z50Ytv6eL9FEJDX5cZ+wh6BUfyb1eeqJdEtfhEJ01gLiJOyiaO6txGFQcIf+dBe6Pm
-	 iqEuzc9/6mCEN8q9vkwSe3PpBg+eV2mzsaN3bqNJgPzChd3CLlm8N/YhM6AtaWyRLW
-	 zqv20u6DZcBzX4MNNTVydvGyTNZ+R93TGvIzok+5k8vhMwxpwVInLhL7byy8vS7U/Z
-	 dLa3xo3/3UJZw==
-Date: Fri, 28 Jun 2024 12:48:14 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Howard Chu <howardchu95@gmail.com>, adrian.hunter@intel.com,
-	irogers@google.com, jolsa@kernel.org, kan.liang@linux.intel.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/8] perf trace: Augment enum arguments with BTF
-Message-ID: <Zn8TfuQi0iq7bMVD@google.com>
-References: <20240624181345.124764-1-howardchu95@gmail.com>
- <Znnt4sTOx6ANJZPV@x1>
+	s=arc-20240116; t=1719604115; c=relaxed/simple;
+	bh=paO3Q85MhNCJaXdzxnipweZ72m9WbwKAh6xyx8Yrj2k=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=aXD8Yon2f0hiHvClaNcM5ZXdxJlelvHPdvo4S4LCYuHDqp/uANT1hpD5tW4loa3PJb40AdwqhFV0OcWuTuwUMf0sG03tTJt0/vcVd8lAQjr4dakmYvr9pUJ/H9+RYrPjW7mippw2h56HxT7IB8yI+5YeKuC25Hy8kpdW820nSC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VdelCPIu; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1719604111;
+	bh=paO3Q85MhNCJaXdzxnipweZ72m9WbwKAh6xyx8Yrj2k=;
+	h=From:Date:Subject:To:Cc:From;
+	b=VdelCPIu23TTul7DOTm/ObQnaDsLxrwtLUVnUecVFnTMw5MGFAapqd4180iLJkYVz
+	 DfY8bCjNYRsxSgw+71MAZSoDxMBhcYv7foDLTIMckQJq2kCk4HCugpc8lPyx7c9dMY
+	 n8ft00UMEOsFmwU7U7qrAAHxfZ0BI4+Zqn7oTxxksN05HylSlEpIWGqWvcrhllwBQu
+	 p+pPsRp80ygruO/hDwASjbV5ciCCI+wxRca00g4ovQtbVYJDAtsNAAwcH1VJuLvyYm
+	 Z0j0B1cDweXmA4hsq54tSlqoNnJ/7N/NLL0GX0mjpuRD0NKIFN7XbdK1WLD404EwGI
+	 sjJpSDjzDi78Q==
+Received: from [192.168.1.175] (zone.collabora.co.uk [167.235.23.81])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id A0F37378219E;
+	Fri, 28 Jun 2024 19:48:29 +0000 (UTC)
+From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+Date: Fri, 28 Jun 2024 15:48:23 -0400
+Subject: [PATCH] cpufreq: mediatek: Use dev_err_probe in every error path
+ in probe
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Znnt4sTOx6ANJZPV@x1>
+Message-Id: <20240628-mtk-cpufreq-dvfs-fail-init-err-v1-1-19c55db23011@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAIYTf2YC/x3NQQqDMBBA0avIrB2IgyTQq4iLkEzaoW3UiQZBv
+ HtDl2/z/wWFVbjAo7tAuUqRJTcMfQfh5fOTUWIzkKHRWHL43d8Y1iMpbxhrKpi8fFCy7MiqaLy
+ 1FLyjyAQtsionOf+Dab7vHxN1UZdwAAAA
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: kernel@collabora.com, linux-pm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, 
+ =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+X-Mailer: b4 0.13.0
 
-On Mon, Jun 24, 2024 at 07:06:26PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Tue, Jun 25, 2024 at 02:13:37AM +0800, Howard Chu wrote:
-> > In this patch, BTF is used to turn enum value to the corresponding
-> > enum variable name. There is only one system call that uses enum value
-> > as its argument, that is `landlock_add_rule()`.
-> > 
-> > Enum arguments of non-syscall tracepoints can also be augmented, for
-> > instance timer:hrtimer_start and timer:hrtimer_init's 'mode' argument.
-> > 
-> > Changes in v3:
-> 
-> Did a quick test, from a quick look you did the adjustments we agreed
-> (if (val == 0 && !trace->show_zeros && !arg->show_zero && arg->strtoul
-> != STUL_BTF_TYPE), etc), thanks!
-> 
-> And that is the way for collaboration we go on talking on the mailing
-> list and sometimes writing code, making it available for review and
-> adopting what we deem best at that point, rinse repeat.
-> 
-> Now I think it would be great if someone like Namhyung or Ian could try
-> this last patch.
-> 
-> I have to comb thru it but, again, from a quick look and test, it seems
-> great and probably ready for merging.
+Use the dev_err_probe() helper to log the errors on every error path in
+the probe function and its sub-functions. This includes
+* adding error messages where there was none
+* converting over dev_err/dev_warn
+* removing the top-level error message after mtk_cpu_dvfs_info_init() is
+  called, since every error path inside that function already logs the
+  error reason. This gets rid of the misleading error message when probe
+  is deferred:
 
-So I'm trying to test this but I got a build error like this:
+    mtk-cpufreq mtk-cpufreq: failed to initialize dvfs info for cpu0
 
-tests/workloads/landlock.c: In function ‘landlock’:
-tests/workloads/landlock.c:22:16: error: variable ‘net_port_attr’ has initializer but incomplete type
-   22 |         struct landlock_net_port_attr net_port_attr = {
-      |                ^~~~~~~~~~~~~~~~~~~~~~
-tests/workloads/landlock.c:23:18: error: ‘struct landlock_net_port_attr’ has no member named ‘port’
-   23 |                 .port = 19,
-      |                  ^~~~
-tests/workloads/landlock.c:23:25: error: excess elements in struct initializer [-Werror]
-   23 |                 .port = 19,
-      |                         ^~
-tests/workloads/landlock.c:23:25: note: (near initialization for ‘net_port_attr’)
-tests/workloads/landlock.c:24:18: error: ‘struct landlock_net_port_attr’ has no member named ‘allowed_access’
-   24 |                 .allowed_access = LANDLOCK_ACCESS_NET_CONNECT_TCP,
-      |                  ^~~~~~~~~~~~~~
-tests/workloads/landlock.c:24:35: error: ‘LANDLOCK_ACCESS_NET_CONNECT_TCP’ undeclared (first use in this function); did you mean ‘LANDLOCK_ACCESS_FS_TRUNCATE’?
-   24 |                 .allowed_access = LANDLOCK_ACCESS_NET_CONNECT_TCP,
-      |                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      |                                   LANDLOCK_ACCESS_FS_TRUNCATE
-tests/workloads/landlock.c:24:35: note: each undeclared identifier is reported only once for each function it appears in
-tests/workloads/landlock.c:24:35: error: excess elements in struct initializer [-Werror]
-tests/workloads/landlock.c:24:35: note: (near initialization for ‘net_port_attr’)
-tests/workloads/landlock.c:22:39: error: storage size of ‘net_port_attr’ isn’t known
-   22 |         struct landlock_net_port_attr net_port_attr = {
-      |                                       ^~~~~~~~~~~~~
-tests/workloads/landlock.c:30:45: error: ‘LANDLOCK_RULE_NET_PORT’ undeclared (first use in this function); did you mean ‘LANDLOCK_RULE_PATH_BENEATH’?
-   30 |         syscall(__NR_landlock_add_rule, fd, LANDLOCK_RULE_NET_PORT,
-      |                                             ^~~~~~~~~~~~~~~~~~~~~~
-      |                                             LANDLOCK_RULE_PATH_BENEATH
-tests/workloads/landlock.c:22:39: error: unused variable ‘net_port_attr’ [-Werror=unused-variable]
-   22 |         struct landlock_net_port_attr net_port_attr = {
-      |                                       ^~~~~~~~~~~~~
+Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+---
+ drivers/cpufreq/mediatek-cpufreq.c | 66 ++++++++++++++++++--------------------
+ 1 file changed, 31 insertions(+), 35 deletions(-)
 
-And I found it's reported before:
-https://lore.kernel.org/linux-perf-users/Zn5aGnyjyCqAX+66@rli9-mobl/
+diff --git a/drivers/cpufreq/mediatek-cpufreq.c b/drivers/cpufreq/mediatek-cpufreq.c
+index 518606adf14e..b21425bb83be 100644
+--- a/drivers/cpufreq/mediatek-cpufreq.c
++++ b/drivers/cpufreq/mediatek-cpufreq.c
+@@ -390,28 +390,23 @@ static int mtk_cpu_dvfs_info_init(struct mtk_cpu_dvfs_info *info, int cpu)
+ 	int ret;
+ 
+ 	cpu_dev = get_cpu_device(cpu);
+-	if (!cpu_dev) {
+-		dev_err(cpu_dev, "failed to get cpu%d device\n", cpu);
+-		return -ENODEV;
+-	}
++	if (!cpu_dev)
++		return dev_err_probe(cpu_dev, -ENODEV, "failed to get cpu%d device\n", cpu);
+ 	info->cpu_dev = cpu_dev;
+ 
+ 	info->ccifreq_bound = false;
+ 	if (info->soc_data->ccifreq_supported) {
+ 		info->cci_dev = of_get_cci(info->cpu_dev);
+-		if (IS_ERR(info->cci_dev)) {
+-			ret = PTR_ERR(info->cci_dev);
+-			dev_err(cpu_dev, "cpu%d: failed to get cci device\n", cpu);
+-			return -ENODEV;
+-		}
++		if (IS_ERR(info->cci_dev))
++			return dev_err_probe(cpu_dev, PTR_ERR(info->cci_dev),
++					     "cpu%d: failed to get cci device\n",
++					     cpu);
+ 	}
+ 
+ 	info->cpu_clk = clk_get(cpu_dev, "cpu");
+-	if (IS_ERR(info->cpu_clk)) {
+-		ret = PTR_ERR(info->cpu_clk);
+-		return dev_err_probe(cpu_dev, ret,
++	if (IS_ERR(info->cpu_clk))
++		return dev_err_probe(cpu_dev, PTR_ERR(info->cpu_clk),
+ 				     "cpu%d: failed to get cpu clk\n", cpu);
+-	}
+ 
+ 	info->inter_clk = clk_get(cpu_dev, "intermediate");
+ 	if (IS_ERR(info->inter_clk)) {
+@@ -431,7 +426,7 @@ static int mtk_cpu_dvfs_info_init(struct mtk_cpu_dvfs_info *info, int cpu)
+ 
+ 	ret = regulator_enable(info->proc_reg);
+ 	if (ret) {
+-		dev_warn(cpu_dev, "cpu%d: failed to enable vproc\n", cpu);
++		dev_err_probe(cpu_dev, ret, "cpu%d: failed to enable vproc\n", cpu);
+ 		goto out_free_proc_reg;
+ 	}
+ 
+@@ -439,14 +434,17 @@ static int mtk_cpu_dvfs_info_init(struct mtk_cpu_dvfs_info *info, int cpu)
+ 	info->sram_reg = regulator_get_optional(cpu_dev, "sram");
+ 	if (IS_ERR(info->sram_reg)) {
+ 		ret = PTR_ERR(info->sram_reg);
+-		if (ret == -EPROBE_DEFER)
++		if (ret == -EPROBE_DEFER) {
++			dev_err_probe(cpu_dev, ret,
++				      "cpu%d: Failed to get sram regulator\n", cpu);
+ 			goto out_disable_proc_reg;
++		}
+ 
+ 		info->sram_reg = NULL;
+ 	} else {
+ 		ret = regulator_enable(info->sram_reg);
+ 		if (ret) {
+-			dev_warn(cpu_dev, "cpu%d: failed to enable vsram\n", cpu);
++			dev_err_probe(cpu_dev, ret, "cpu%d: failed to enable vsram\n", cpu);
+ 			goto out_free_sram_reg;
+ 		}
+ 	}
+@@ -454,31 +452,34 @@ static int mtk_cpu_dvfs_info_init(struct mtk_cpu_dvfs_info *info, int cpu)
+ 	/* Get OPP-sharing information from "operating-points-v2" bindings */
+ 	ret = dev_pm_opp_of_get_sharing_cpus(cpu_dev, &info->cpus);
+ 	if (ret) {
+-		dev_err(cpu_dev,
++		dev_err_probe(cpu_dev, ret,
+ 			"cpu%d: failed to get OPP-sharing information\n", cpu);
+ 		goto out_disable_sram_reg;
+ 	}
+ 
+ 	ret = dev_pm_opp_of_cpumask_add_table(&info->cpus);
+ 	if (ret) {
+-		dev_warn(cpu_dev, "cpu%d: no OPP table\n", cpu);
++		dev_err_probe(cpu_dev, ret, "cpu%d: no OPP table\n", cpu);
+ 		goto out_disable_sram_reg;
+ 	}
+ 
+ 	ret = clk_prepare_enable(info->cpu_clk);
+-	if (ret)
++	if (ret) {
++		dev_err_probe(cpu_dev, ret, "cpu%d: failed to enable cpu clk\n", cpu);
+ 		goto out_free_opp_table;
++	}
+ 
+ 	ret = clk_prepare_enable(info->inter_clk);
+-	if (ret)
++	if (ret) {
++		dev_err_probe(cpu_dev, ret, "cpu%d: failed to enable inter clk\n", cpu);
+ 		goto out_disable_mux_clock;
++	}
+ 
+ 	if (info->soc_data->ccifreq_supported) {
+ 		info->vproc_on_boot = regulator_get_voltage(info->proc_reg);
+ 		if (info->vproc_on_boot < 0) {
+ 			ret = info->vproc_on_boot;
+-			dev_err(info->cpu_dev,
+-				"invalid Vproc value: %d\n", info->vproc_on_boot);
++			dev_err_probe(info->cpu_dev, ret, "invalid Vproc value\n");
+ 			goto out_disable_inter_clock;
+ 		}
+ 	}
+@@ -487,7 +488,7 @@ static int mtk_cpu_dvfs_info_init(struct mtk_cpu_dvfs_info *info, int cpu)
+ 	rate = clk_get_rate(info->inter_clk);
+ 	opp = dev_pm_opp_find_freq_ceil(cpu_dev, &rate);
+ 	if (IS_ERR(opp)) {
+-		dev_err(cpu_dev, "cpu%d: failed to get intermediate opp\n", cpu);
++		dev_err_probe(cpu_dev, ret, "cpu%d: failed to get intermediate opp\n", cpu);
+ 		ret = PTR_ERR(opp);
+ 		goto out_disable_inter_clock;
+ 	}
+@@ -501,7 +502,7 @@ static int mtk_cpu_dvfs_info_init(struct mtk_cpu_dvfs_info *info, int cpu)
+ 	info->opp_nb.notifier_call = mtk_cpufreq_opp_notifier;
+ 	ret = dev_pm_opp_register_notifier(cpu_dev, &info->opp_nb);
+ 	if (ret) {
+-		dev_err(cpu_dev, "cpu%d: failed to register opp notifier\n", cpu);
++		dev_err_probe(cpu_dev, ret, "cpu%d: failed to register opp notifier\n", cpu);
+ 		goto out_disable_inter_clock;
+ 	}
+ 
+@@ -629,11 +630,9 @@ static int mtk_cpufreq_probe(struct platform_device *pdev)
+ 	int cpu, ret;
+ 
+ 	data = dev_get_platdata(&pdev->dev);
+-	if (!data) {
+-		dev_err(&pdev->dev,
+-			"failed to get mtk cpufreq platform data\n");
+-		return -ENODEV;
+-	}
++	if (!data)
++		return dev_err_probe(&pdev->dev, -ENODEV,
++				     "failed to get mtk cpufreq platform data\n");
+ 
+ 	for_each_possible_cpu(cpu) {
+ 		info = mtk_cpu_dvfs_info_lookup(cpu);
+@@ -643,24 +642,21 @@ static int mtk_cpufreq_probe(struct platform_device *pdev)
+ 		info = devm_kzalloc(&pdev->dev, sizeof(*info), GFP_KERNEL);
+ 		if (!info) {
+ 			ret = -ENOMEM;
++			dev_err_probe(&pdev->dev, ret, "Failed to allocate dvfs_info\n");
+ 			goto release_dvfs_info_list;
+ 		}
+ 
+ 		info->soc_data = data;
+ 		ret = mtk_cpu_dvfs_info_init(info, cpu);
+-		if (ret) {
+-			dev_err(&pdev->dev,
+-				"failed to initialize dvfs info for cpu%d\n",
+-				cpu);
++		if (ret)
+ 			goto release_dvfs_info_list;
+-		}
+ 
+ 		list_add(&info->list_head, &dvfs_info_list);
+ 	}
+ 
+ 	ret = cpufreq_register_driver(&mtk_cpufreq_driver);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "failed to register mtk cpufreq driver\n");
++		dev_err_probe(&pdev->dev, ret, "failed to register mtk cpufreq driver\n");
+ 		goto release_dvfs_info_list;
+ 	}
+ 
 
-It seems my system has an old copy of the linux/landlock.h and it
-doesn't have the new struct and macro.  I think you can change it to
-include what we have in the source tree.  Maybe like
+---
+base-commit: 0fc4bfab2cd45f9acb86c4f04b5191e114e901ed
+change-id: 20240627-mtk-cpufreq-dvfs-fail-init-err-0a662ca72de2
 
-#include "../../../../include/uapi/linux/landlock.h"
-
-Probably the same for the syscall number by reading it from unistd.h in
-the source tree.  Then we probably don't need to make it conditional as
-we use the latest version.  But I'm not sure if it's ok to read the
-syscall number from asm-generic header since it might be different on
-other arch.
-
-Thanks,
-Namhyung
+Best regards,
+-- 
+Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
 
