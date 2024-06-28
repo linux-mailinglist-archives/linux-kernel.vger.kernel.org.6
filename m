@@ -1,165 +1,86 @@
-Return-Path: <linux-kernel+bounces-234295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 494D391C4CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:26:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D449F91C4D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 19:27:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B88891F2460D
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:26:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10D801C22BA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 17:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F341CB327;
-	Fri, 28 Jun 2024 17:26:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AAA61CCCAD;
+	Fri, 28 Jun 2024 17:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=valvesoftware.com header.i=@valvesoftware.com header.b="jahStvWW"
-Received: from us-smtp-delivery-172.mimecast.com (us-smtp-delivery-172.mimecast.com [170.10.129.172])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ETorOl2e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880551C230B
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 17:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8FF81C6899;
+	Fri, 28 Jun 2024 17:27:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719595568; cv=none; b=g/vJ6e+c82nOQSXOLu2xf1ICWWHWQ6FdkRn8fzfM6DrTUHUAcwtC8ZQTnAL8/Nw5BZZ7wE7CCmBa0smtuNZsFEToEORiJwT1UTfKD3zOOxhja3TXQF2vNOhVa7cJgt6JSjnp9cBNSEMUGNwcpxvRq9oCc+Qk3dHsxpx+TpCIYqs=
+	t=1719595631; cv=none; b=Yg0QgqlCnqnE9Vkodfx8Kgkcb0Vi8rToJtwMlVhw0gxfvTbTu+1T7EL/5RYjZeKTLcg8mCzRrOorJq1f+SdAQ93m+0W4CBSLGjD3cGslp7JPwLCNGX2HsBpjfJQs/wJYHGWjCCc/JHViH91qUZvbC5icwZvyvZQGARoi1SJe9dI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719595568; c=relaxed/simple;
-	bh=3toKfkefklQuqnFmzsR6BLu9S7GErzc295gsRBJ/UJw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PWHtoKbNTYdDqFnrA4elbAs4YNLfT4LOS6SHauWihLqRCeydW5TNhism6FEEvU57iZVF6nnmJI4Fj41fpFzXiAdwN5kvaMSxXURC5L/afk5+8OnQL/vAo7k70KkcRa5lTt2m/vW1WBYzATCkW/FMn3YTrGVJw018HryI9kWQbbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=valvesoftware.com; spf=pass smtp.mailfrom=valvesoftware.com; dkim=pass (1024-bit key) header.d=valvesoftware.com header.i=@valvesoftware.com header.b=jahStvWW; arc=none smtp.client-ip=170.10.129.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=valvesoftware.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valvesoftware.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=valvesoftware.com;
-	s=mc20150811; t=1719595565;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XKtCW3Er86rGfQYrPBdk0AkxyGBnrD1aUtOlms/i3Os=;
-	b=jahStvWWA5kMAAAK54JxjrAxQFgDxb9hSGsYG/GdCRE70S5ErWiURlP7qzVPXNAuZxYRxS
-	tp6Lxi2uAs5RnJBy7Wxha6M7PtTDbm8ySYfU0itXQyE9olh+fsFwFrZl8rhXOH+MeMQW27
-	zPoOMr8njLXPla+4QW+yOirWeTydFcc=
-Received: from smtp-01-blv1.valvesoftware.com
- (smtp-01-blv1.valvesoftware.com [208.64.203.181]) by relay.mimecast.com
- with ESMTP with STARTTLS (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384)
- id us-mta-509-H9YTwKGXPeW6f0huGGxihw-1; Fri, 28 Jun 2024 13:26:04 -0400
-X-MC-Unique: H9YTwKGXPeW6f0huGGxihw-1
-Received: from antispam.valve.org ([172.16.1.107])
-	by smtp-01-blv1.valvesoftware.com with esmtp (Exim 4.93)
-	(envelope-from <johns@valvesoftware.com>)
-	id 1sNFMJ-004VPr-K6
-	for linux-kernel@vger.kernel.org; Fri, 28 Jun 2024 10:26:03 -0700
-Received: from antispam.valve.org (127.0.0.1) id hfrp2m0171sj for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 10:26:03 -0700 (envelope-from <johns@valvesoftware.com>)
-Received: from mail2.valvemail.org ([172.16.144.23])
-	by antispam.valve.org ([172.16.1.107]) (SonicWall 10.0.15.7233)
-	with ESMTP id o202406281726030074293-5; Fri, 28 Jun 2024 10:26:03 -0700
-Received: from [172.16.36.27] (172.16.36.27) by mail2.valvemail.org
- (172.16.144.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 28 Jun
- 2024 10:26:03 -0700
-Message-ID: <884684ce-53b1-48db-8dcb-6b2bcd0d151d@valvesoftware.com>
-Date: Fri, 28 Jun 2024 10:25:58 -0700
+	s=arc-20240116; t=1719595631; c=relaxed/simple;
+	bh=Pl4fx3mvrC8/402KEMfdyFxzgN4b2vpnlOw2DUaW5DA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M0JpjE/n1qa3O4KHawU1arL6UYQ8Pcxnf56bKE97wW+NESpKC9z+kMpR1kFFVmDHm5oN1DF5ocDCzb4Uhrn5K9aS2TCNEortFa9/uxFIptC6JDIKzdIM1ssdjyAPQ1UM2FHnN/TeSRp2Hbreu7Oy0zoQTVxaRvD9OszyIxTtasw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ETorOl2e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68480C2BD10;
+	Fri, 28 Jun 2024 17:27:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719595631;
+	bh=Pl4fx3mvrC8/402KEMfdyFxzgN4b2vpnlOw2DUaW5DA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ETorOl2eupSSPftAGmIP9VZ69J20eRXYr4GZWeYjotdBvXRYpdPyYFnja92PuCzek
+	 gKlFI69Yz4OffhjcwJpzuQGuhLUwWfTHbIvuH4FDEU+1I605KvLXV+0TrVjx6BS+Wd
+	 aKVvR4aE5J/YbJKQCl17TtSfXImqbA8TM6rCvv5CPVVWgPWDqiS//AVBKroiui8pAk
+	 G0baifVUeoNdUiU1K5iP1KUerKIDNZUdJP2jR9C35QMNaX+7Ibzx7YgnWMAT2B1p9R
+	 MCgIAfjRY+DUQvVVNGGiXa82Y9+tV9Gg0ssuHU+qJvrPJth2/qUD9KaU5pYxzzMsNt
+	 ix5xfcxBir2Zg==
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-25ce35c52e7so121077fac.2;
+        Fri, 28 Jun 2024 10:27:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX9/KRFoHSX3enBLwLFERu/ZnIE2x9XTJLeixqmaqkzKs9jxSNvVEwx9+DW83J2moloAsC0zda4KcEvBH8eBhsfG4wiODllPvUFhsXZPHaPoS8FCI+O9V4Qq0Bixy4sHi/d5YPmqxkgnQ==
+X-Gm-Message-State: AOJu0Yys0YpLHldMpYisUmvX/z8EbJMYSKjHXZeRhgrvdoNcKUNfBu1h
+	GSv1i91JLBhyBy114HrkcVWJhlf+H3duOfbg22dOc3/GnpZWW0qRJ50Kd8R4gcZSFwm7jxpkU9+
+	+gC8HbiGvI293d132qTj+iTyttVA=
+X-Google-Smtp-Source: AGHT+IFDSFlkBcA1UtUiyWxUVT0UTQuwjc1IEII89TUuy5oCwtaa5V2sEhUNiihyJ9+lo7439NmQBVZqeSON5l1J/T8=
+X-Received: by 2002:a05:6870:8a24:b0:254:cae6:a812 with SMTP id
+ 586e51a60fabf-25cf3f17d37mr20750734fac.3.1719595630627; Fri, 28 Jun 2024
+ 10:27:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] drm: panel-orientation-quirks: Add quirk for Valve
- Galileo
-To: Matthew Schwartz <mattschwartz@gwmail.gwu.edu>, Hamza Mahfooz
-	<hamza.mahfooz@amd.com>
-CC: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
-	<mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Mario
- Limonciello <mario.limonciello@amd.com>, Kyle Gospodnetich
-	<me@kylegospodneti.ch>, Hans de Goede <hdegoede@redhat.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>, Matthew
- Schwartz <mattschwartz@gwu.edu>
-References: <20240627203057.127034-1-mattschwartz@gwu.edu>
- <20240627203057.127034-2-mattschwartz@gwu.edu>
- <19ca1a46-6a74-4eec-9e84-0092faaee7a1@amd.com>
- <CAD9O9Dp89CprZFMn=ysduPmUTkmJ5y6qDw18X9pLr7=ChoD0Uw@mail.gmail.com>
-From: John Schoenick <johns@valvesoftware.com>
-In-Reply-To: <CAD9O9Dp89CprZFMn=ysduPmUTkmJ5y6qDw18X9pLr7=ChoD0Uw@mail.gmail.com>
-X-ClientProxiedBy: mail2.valvemail.org (172.16.144.23) To mail2.valvemail.org
- (172.16.144.23)
-X-Mlf-DSE-Version: 6871
-X-Mlf-Rules-Version: s20240627204322; ds20230628172248;
-	di20240626213040; ri20160318003319; fs20240628163459
-X-Mlf-Smartnet-Version: 20210917223710
-X-Mlf-Envelope-From: johns@valvesoftware.com
-X-Mlf-Version: 10.0.15.7233
-X-Mlf-License: BSV_C_AP____
-X-Mlf-UniqueId: o202406281726030074293
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: valvesoftware.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <20240613-acpi-sysfs-groups-v1-0-665e0deb052a@weissschuh.net>
+ <20240613-acpi-sysfs-groups-v1-2-665e0deb052a@weissschuh.net>
+ <a72495c3-c996-4be7-bc64-ba10d5400971@sirena.org.uk> <111f7a2c-403b-40b3-9e25-8c4a040d8dfb@t-8ch.de>
+ <d599e864-9961-44e3-8b9b-bc41a8044319@sirena.org.uk> <4cd2352c-4e95-4ddf-a366-75dad45bf7e6@t-8ch.de>
+In-Reply-To: <4cd2352c-4e95-4ddf-a366-75dad45bf7e6@t-8ch.de>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 28 Jun 2024 19:26:59 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hMbd_y5P0mvVktSEesYs5hGjGaFpqm3KuHqzgT2diy3g@mail.gmail.com>
+Message-ID: <CAJZ5v0hMbd_y5P0mvVktSEesYs5hGjGaFpqm3KuHqzgT2diy3g@mail.gmail.com>
+Subject: Re: [PATCH 2/5] ACPI: sysfs: use device lifecycle for _STR result
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Robert Moore <robert.moore@intel.com>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev, 
+	Aishwarya.TCV@arm.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-
-On 6/27/24 5:17 PM, Matthew Schwartz wrote:
-> On Thu, Jun 27, 2024 at 2:28=E2=80=AFPM Hamza Mahfooz <hamza.mahfooz@amd.=
-com> wrote:
->> On 6/27/24 16:30, Matthew Schwartz wrote:
->>> From: John Schoenick <johns@valvesoftware.com>
->> Since this patch is from John, you would need his S-o-b in here as well
->> (assuming you have his permission to add it).
-> This patch will be pending approval from them in that case. The panel qui=
-rk
-> follows the same structure as the Steam Deck Jupiter revision, but the qu=
-irk
-> has only been signed during merges by people who were not the original au=
-thor.
-> Link: https://gitlab.com/evlaV/linux-integration/-/commit/b90ac393
-
-Hey, thanks for taking the initiative to upstream this -- feel free to=20
-add my S-o-b
-
->>
->>> Valve's Steam Deck Galileo revision has a 800x1280 OLED panel
->>>
->>> Suggested-by: John Schoenick <johns@valvesoftware.com>
->>> Link: https://gitlab.com/evlaV/linux-integration/-/commit/d2522d8bf88b3=
-5a8cf6978afbbd55c80d2d53f4f
->>> Signed-off-by: Matthew Schwartz <mattschwartz@gwu.edu>
->>> ---
->>>    drivers/gpu/drm/drm_panel_orientation_quirks.c | 7 +++++++
->>>    1 file changed, 7 insertions(+)
->>>
->>> diff --git a/drivers/gpu/drm/drm_panel_orientation_quirks.c b/drivers/g=
-pu/drm/drm_panel_orientation_quirks.c
->>> index 3d127127e7cb..ac8319d38e37 100644
->>> --- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
->>> +++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
->>> @@ -427,6 +427,13 @@ static const struct dmi_system_id orientation_data=
-[] =3D {
->>>                  DMI_EXACT_MATCH(DMI_PRODUCT_VERSION, "1"),
->>>                },
->>>                .driver_data =3D (void *)&lcd800x1280_rightside_up,
->>> +     }, {    /* Valve Steam Deck */
->>> +             .matches =3D {
->>> +               DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Valve"),
->>> +               DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "Galileo"),
->>> +               DMI_EXACT_MATCH(DMI_PRODUCT_VERSION, "1"),
->>> +             },
->>> +             .driver_data =3D (void *)&lcd800x1280_rightside_up,
-> Unless I get a S-o-b, is authoring a different DMI check the only solutio=
-n
-> to get a functioning panel quirk upstreamed for the Galileo revision?
-> Not quite sure how I'd maintain conformity with the existing Jupiter
-> quirk while also writing something original here.
+On Thu, Jun 27, 2024 at 7:17=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@weisss=
+chuh.net> wrote:
 >
->>>        }, {    /* VIOS LTH17 */
->>>                .matches =3D {
->>>                  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "VIOS"),
->> --
->> Hamza
->>
-> --
-> Matt
+> Rafael:
 >
+> Would you mind backing this series out for now?
+> I'll do some more experiments and resubmit.
 
+Done, thank you!
 
