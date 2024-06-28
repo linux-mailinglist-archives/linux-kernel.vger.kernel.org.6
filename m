@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-234701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF51D91C99B
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 01:35:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4185591C99C
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 01:36:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC34A1C21CDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 23:35:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F15B2286945
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 23:36:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62C6C82866;
-	Fri, 28 Jun 2024 23:35:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4FA785624;
+	Fri, 28 Jun 2024 23:35:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gqLLm6+B"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gTOnB3eA"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB5778286
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 23:35:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B183980C02
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 23:35:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719617750; cv=none; b=P3zy3dYPDY5lW3caabmXvBmQhxsVq89dGhBGXWNf1cyfMlrlYAf1tDRvIzJdK6bKA6jwmPzq6i1t3vhXZ7aqBUbzTg+lx8JjWvGxBEcMtCrAHKKHeXpLgQixcV5nbPTVNVgLRrNknl6NxxV0vXNgfWbteQzXwrc0mEOJ5s+HESU=
+	t=1719617752; cv=none; b=Gq10HFBI11e5hM76Yg+Iz4VDkNuiMcIW3d09hbP3WB+AXVbDiB7FqbVxF12tc9fhcrgvUl+bvR90NwfXakchp45QchGtQiwWHKFtYQbfzrT7oT6I0cIEcEARcIdVh3hyFaUSuggiyzgeA8l20ceYGeUaYn7ns6pCD/rkOmhVJDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719617750; c=relaxed/simple;
-	bh=uwOwcCLt1q4uROCTzISF5KXz+wEZMoPhC1AORFnpp1I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LYN/94UN00T0yy0f73trdCU4a2eaurfWpWo75Jmv+odU2P+IOsgBgSK7jRiQEJ0bh+Q0aL8zaYznGhyUDEM7ly0SHa3IHbFzUylT7ZYBCSvXOctN5MwWvnWRPgQDgsY1GrtcZpKHhxEoqM4Al+DY7+39Yr2fs7rGPnhb0UpUNsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gqLLm6+B; arc=none smtp.client-ip=198.175.65.15
+	s=arc-20240116; t=1719617752; c=relaxed/simple;
+	bh=nQh6PiV/uejYwwxC/7SvfuZ8z+tRvvLwVBKHdSI3S/0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=rdSLvRcUtH5Fmffnl965a3BmR2IeV/8b5Ws4HI9dOL2t5m71Ric7nB3am+ZYsAIB78sEKwyD0D6xT9qZ1PqaQSAvlyErLwJUH7G9tvHU8edpCyXzF5Zr89O9gh1PkTSDsWEFa8TVjsQr7BJEM2476OUsYktGuGyy/1e9ZG1r8yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gTOnB3eA; arc=none smtp.client-ip=198.175.65.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719617749; x=1751153749;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=uwOwcCLt1q4uROCTzISF5KXz+wEZMoPhC1AORFnpp1I=;
-  b=gqLLm6+B2jBsiLC66XrpkYTtDjCj1ZSwTemSumpJ+eWzW4daV+Mpwkjl
-   m3+JOYSOqEKgTlKz5Zd/LeUatHd8L/puQjrWXrF4xLaLyw40NNnHL9oDa
-   /ILjUAhgdq6oDjaxRO9pdMA25Ehm0vMGilHj3GKRuY7xEW5cCXPqknUAI
-   8ViVMCXcjn9aiBljh8Ci1Bfsk7vcjX1Unj9BHsQUgiyoDMHH14McA0XR3
-   u88rsnKVaYaLE3w404tw+KP4BA1GtUZG01De4GcdDQVuwGuGLVZLpSDRr
-   Z1NsEkIXyDWiKxBQkgPHF87URzf1lYP1pnyutsHu6rzAwHDXZSzY13xNu
+  t=1719617751; x=1751153751;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=nQh6PiV/uejYwwxC/7SvfuZ8z+tRvvLwVBKHdSI3S/0=;
+  b=gTOnB3eAVpVawKHVqGRGVBu+inhEsmQAt9GlvgRIJQnIZJ4OvASqWjf1
+   TSx3SQ45oAjM8Z297iPJc7F/GSPoYb76j2aaxJ7BwgbP7Rd6LebvNjhGQ
+   pVtUemQ6Va/NMnln+WMhhv4hLUGiMN7qKBh6empJDv35YvsPPgYzH3/oo
+   yEo24hciF06VvlysT2y8cJ5wrDoJddXRLJVPa104Qx61jnpOtPY0SsWsl
+   0aEaVSWRieTIwxh1XC22wDKTADdhfU4mairy+sXc1gHPhw0xeKteudVZi
+   8eK1NGv7dIXnpcdSFhFLtG6CZbYv669Tcc8EKKfByKkMlSEb1D2qyXEvl
    A==;
-X-CSE-ConnectionGUID: 0D0qWBgfQAC3ybRj7nxNLA==
-X-CSE-MsgGUID: IuBz7yWvSqioGkMy3TX2xw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11117"; a="20575389"
+X-CSE-ConnectionGUID: st4UtkHYSP2L3uLBn6cCVQ==
+X-CSE-MsgGUID: pNEpJhy6S3iLDTgd8yRq3Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11117"; a="20575395"
 X-IronPort-AV: E=Sophos;i="6.09,170,1716274800"; 
-   d="scan'208";a="20575389"
+   d="scan'208";a="20575395"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
   by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 16:35:48 -0700
-X-CSE-ConnectionGUID: Nn82DNXYRgiCiGHMkKdCKA==
-X-CSE-MsgGUID: OF/4E9F4TeOjiHfSk7djUQ==
+X-CSE-ConnectionGUID: h95JEMSJQIG5vIFOROq0hA==
+X-CSE-MsgGUID: IZH4+3OERyidObRE9yyqoA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,170,1716274800"; 
-   d="scan'208";a="45300261"
+   d="scan'208";a="45300266"
 Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
   by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 16:35:48 -0700
 From: Tony Luck <tony.luck@intel.com>
@@ -67,10 +68,12 @@ Cc: "H. Peter Anvin" <hpa@zytor.com>,
 	linux-kernel@vger.kernel.org,
 	patches@lists.linux.dev,
 	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v7 0/2] New Intel CPUID families
-Date: Fri, 28 Jun 2024 16:35:38 -0700
-Message-ID: <20240628233540.77900-1-tony.luck@intel.com>
+Subject: [PATCH v7 1/2] x86/cpu/vfm: Delete X86_MATCH_INTEL_FAM6_MODEL[_STEPPING]() macros
+Date: Fri, 28 Jun 2024 16:35:39 -0700
+Message-ID: <20240628233540.77900-2-tony.luck@intel.com>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240628233540.77900-1-tony.luck@intel.com>
+References: <20240628233540.77900-1-tony.luck@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,85 +82,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Final steps in the migration to new Intel family support.
-
-These two patches should be applied at the end of the v6.11 merge window
-after all the trees listed below have been merged.
-
-Maybe right before v6.11-rc1 is tagged, or in the rc1..rc2 week of
-updates.
-
-Posting patches now as I'll be offline for the merge window.
-
-Base for this series in linux-next 1eb586a9782c ("Add linux-next specific
-files for 20240628") which I used to test build allmodconfig.
+These macros have been replaced by X86_MATCH_VFM[_STEPPING]()
 
 Signed-off-by: Tony Luck <tony.luck@intel.com>
+---
+ arch/x86/include/asm/cpu_device_id.h | 20 --------------------
+ 1 file changed, 20 deletions(-)
 
-Original cover letter here:
-Link: https://lore.kernel.org/all/20240416211941.9369-1-tony.luck@intel.com/
-
-Changes since v6 https://lore.kernel.org/all/20240520224620.9480-1-tony.luck@intel.com/
-
-All but the final two cleanup patches have been applied to various
-maintainer trees and are staged in linux-next ready for the v6.11
-merge window. Trees (as named in linux-next Next/SHA1s) commit-ids and
-shortlog names here:
-
-char-misc	a43b9ec091b1 peci, hwmon: Switch to new Intel CPU model defines
-crypto		adc5167be555 crypto: x86/poly1305 - Switch to new Intel CPU model defines
-crypto		b2d3d79780fa crypto: x86/twofish - Switch to new Intel CPU model defines
-drivers-x86	0ff9c76fda20 platform/x86: intel_telemetry: Switch to new Intel CPU model defines
-drivers-x86	12929ac3ef8d platform/x86: intel_ips: Switch to new Intel CPU model defines
-drivers-x86	1630dc626c87 platform/x86: ISST: Add model specific loading for common module
-drivers-x86	33af65ad6749 platform/x86/intel/pmc: Switch to new Intel CPU model defines
-drivers-x86	490d573b5a85 platform/x86/intel/ifs: Switch to new Intel CPU model defines
-drivers-x86	568e639a617f platform/x86: intel-uncore-freq: Switch to new Intel CPU model defines
-drivers-x86	5b3eaf10e2e0 x86/platform/atom: Switch to new Intel CPU model defines
-drivers-x86	70a4fa3f4fc1 platform/x86: intel_turbo_max_3: Switch to new Intel CPU model defines
-drivers-x86	a42f41466f98 platform/x86: intel_speed_select_if: Switch to new Intel CPU model defines
-drivers-x86	d30f57b7413f platform/x86: intel_scu_wdt: Switch to new Intel CPU model defines
-drivers-x86	fad21268dc31 platform/x86: p2sb: Switch to new Intel CPU model defines
-edac		9593189cf061 EDAC/sb_edac: Switch to new Intel CPU model defines
-edac		bc39bfbaa2c8 EDAC/i10nm: Switch to new Intel CPU model defines
-edac		c2c887e9f967 EDAC/skx: Switch to new Intel CPU model defines
-edac		e09d576c862e EDAC, pnd2: Switch to new Intel CPU model defines
-extcon		089a6e37c539 extcon: axp288: Switch to new Intel CPU model defines
-jc_docs		f77afc2796d5 Documentation/x86: Switch to new Intel CPU model defines
-kvm-x86		0c468a6a020c KVM: VMX: Switch to new Intel CPU model infrastructure
-kvm-x86		8387435bebac KVM: x86/pmu: Switch to new Intel CPU model defines
-pci		d5debddce5b6 PCI/PM: Switch to new Intel CPU model defines
-pm		0f46ecc4242a thermal: intel: intel_tcc_cooling: Switch to new Intel CPU model defines
-pm		17c4fc386b0c intel_idle: Switch to new Intel CPU model defines
-pm		35ba8ec0fbd0 ACPI: x86: Switch to new Intel CPU model defines
-pm		4b32e5e873f7 powercap: intel_rapl_msr: Switch to new Intel CPU model defines
-pm		691fef8ccbb7 cpufreq: Switch to new Intel CPU model defines
-pm		a31a0a3e90b4 thermal: intel: intel_soc_dts_thermal: Switch to new Intel CPU model defines
-pm		b9064fb834bf powercap: intel_rapl: Switch to new Intel CPU model defines
-pm		ca8752384c6f cpufreq: intel_pstate: Switch to new Intel CPU model defines
-pm		dde8ec86c3fd ACPI: LPSS: Switch to new Intel CPU model defines
-sound-asoc	34864c05a54d ASoC: Intel: avs: es8336: Switch to new Intel CPU model defines
-tip		189e8d4b9849 x86/virt/tdx: Switch to new Intel CPU model defines
-tip		2cf615a4519b x86/platform/intel-mid: Switch to new Intel CPU model defines
-tip		6568fc18c2f6 x86/cpu/intel: Switch to new Intel CPU model defines
-tip		6fd5e8855e60 x86/boot: Switch to new Intel CPU model defines
-tip		744866f5c0e2 x86/cpu: Switch to new Intel CPU model defines
-tip		8e887536b896 perf/x86/rapl: Switch to new Intel CPU model defines
-tip		ac6bee4bf73c x86/PCI: Switch to new Intel CPU model defines
-tip		d142df13f357 perf/x86/intel: Switch to new Intel CPU model defines
-turbostat	1b3bf0747d4f tools/power/turbostat: Switch to new Intel CPU model defines
-v4l-dvb-next	156922faabce media: atomisp: Switch to new Intel CPU model defines
-
-Tony Luck (2):
-  x86/cpu/vfm: Delete X86_MATCH_INTEL_FAM6_MODEL[_STEPPING]() macros
-  x86/cpu/vfm: Delete all the *_FAM6_ CPU #defines
-
- arch/x86/include/asm/cpu_device_id.h | 20 -------
- arch/x86/include/asm/intel-family.h  | 85 +---------------------------
- 2 files changed, 2 insertions(+), 103 deletions(-)
-
-
-base-commit: 1eb586a9782cde8e5091b9de74603e0a8386b09e
+diff --git a/arch/x86/include/asm/cpu_device_id.h b/arch/x86/include/asm/cpu_device_id.h
+index 3831f612e89c..e4121d9aa9e1 100644
+--- a/arch/x86/include/asm/cpu_device_id.h
++++ b/arch/x86/include/asm/cpu_device_id.h
+@@ -192,26 +192,6 @@
+ #define X86_MATCH_VENDOR_FAM(vendor, family, data)			\
+ 	X86_MATCH_VENDOR_FAM_MODEL(vendor, family, X86_MODEL_ANY, data)
+ 
+-/**
+- * X86_MATCH_INTEL_FAM6_MODEL - Match vendor INTEL, family 6 and model
+- * @model:	The model name without the INTEL_FAM6_ prefix or ANY
+- *		The model name is expanded to INTEL_FAM6_@model internally
+- * @data:	Driver specific data or NULL. The internal storage
+- *		format is unsigned long. The supplied value, pointer
+- *		etc. is casted to unsigned long internally.
+- *
+- * The vendor is set to INTEL, the family to 6 and all other missing
+- * arguments of X86_MATCH_VENDOR_FAM_MODEL_FEATURE() are set to wildcards.
+- *
+- * See X86_MATCH_VENDOR_FAM_MODEL_FEATURE() for further information.
+- */
+-#define X86_MATCH_INTEL_FAM6_MODEL(model, data)				\
+-	X86_MATCH_VENDOR_FAM_MODEL(INTEL, 6, INTEL_FAM6_##model, data)
+-
+-#define X86_MATCH_INTEL_FAM6_MODEL_STEPPINGS(model, steppings, data)	\
+-	X86_MATCH_VENDOR_FAM_MODEL_STEPPINGS_FEATURE(INTEL, 6, INTEL_FAM6_##model, \
+-						     steppings, X86_FEATURE_ANY, data)
+-
+ /**
+  * X86_MATCH_VFM - Match encoded vendor/family/model
+  * @vfm:	Encoded 8-bits each for vendor, family, model
 -- 
 2.45.2
 
