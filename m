@@ -1,188 +1,151 @@
-Return-Path: <linux-kernel+bounces-233733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CBDF91BC50
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:11:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1A4E91BC27
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 12:04:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FC521F23BAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:11:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 305AE1C22762
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:04:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2E8156C6C;
-	Fri, 28 Jun 2024 10:10:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F24F9154444;
+	Fri, 28 Jun 2024 10:04:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NF0XEaJw"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AJsz0jr0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837101103;
-	Fri, 28 Jun 2024 10:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713091509B6;
+	Fri, 28 Jun 2024 10:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719569436; cv=none; b=PqDxy7K5mAAjmMVF4z5i3rOB/g0ZxH4d4tV/JA0gkBrcsZhtjyABvRzAVL2UT3Hdm+JR0BAQ+J52Bh3TQXRHy/vLpzNM4mDFv1I0jqQE4Dbo26Y/FVZoYqbywxmu41FI977NyDUJr8ymWg+8HVUNsclThSa/3in5p3tTxBV8d8s=
+	t=1719569089; cv=none; b=bl9RGBqLpHNFuJYcMneoqdc3/8pZScyJuXUdFwKpw+3yAlITiPpfhpZlp2066IaYuy4KKXL9hrjk4uzTYLSDya+5YGEvNpgfW5dkIge2rtZWegBoZBB+Ct46D6WB+kxeiAeAoOZrZdyayNWGWc6jKAP2e6vxRMNnmVWmGDWLB0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719569436; c=relaxed/simple;
-	bh=K94KMvBSXhAu/31lsvMQcNpt1QEBEngszk5FchDEdAc=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-Version:Content-Type; b=YCrAZxJUUqHs6vpJTUz2hkkoHCr85KYHn3Syw8cRJnSIs77iKDh9ZZO2FIk8ZVlAQMhrC7j7ziyhiffU1+o98X1q0AZKBPcorODTgHWRqbBMqkY+8HlL2cwdjZHfkHrVyVdk73IKK4OCPWCehbqzI4kvZXNNrlD2nZUSLaHRr84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NF0XEaJw; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52cdb0d8107so497269e87.1;
-        Fri, 28 Jun 2024 03:10:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719569433; x=1720174233; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JoVOae80H1zl51jGISvif7zbZc8/4VB5Y/Zsc6sy8rw=;
-        b=NF0XEaJwdNBW2CijSK+FTHzcdgGW5jiu15I0WTIo4DMWAb1LDlVL65PWuStIn8u79a
-         Vg6BGYT9IRcKDIE/StfqWPehO7HpxAoSS4+rW8NkpqwuWcDUb8msZLCDfzjJt8kP82KT
-         8lF6LbT1ku47IDcuLuWxRAEu89Jy0uFEnQKvxcKy9sv5Iu/AZl+k1ZE0e6cXt0WkCGNd
-         ytj7E0zTQAVGs7VksqVwv1jVeH950/BmhXvaWbrteuFRuv6pOavaD/GXvAAQ6zBuDhtB
-         KAAhCuoFpO/IwXF1FFf9InOovznqu2KJrvkQjGIsn1uCGFHI5fXoENtgNeY8NSPk8P5p
-         yY8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719569433; x=1720174233;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JoVOae80H1zl51jGISvif7zbZc8/4VB5Y/Zsc6sy8rw=;
-        b=T3N4PKN3y3wv/fHBdMzq9V8wDPSQYBjnQhXfyM8jVy/swXmXpDmzAj7zfyklLAsYgo
-         ZN9geXv06upcsepjYtwpVk0BlBV9zXte2yYyM09JyczuimR7MN999XuVXGoihdxNSo6T
-         Y5HMlEWuQB2GJBcnnici5q368w5TVf5rkgpLeAlpmFjpkhcR2nw0j9k80uhPcjto2Lhj
-         vBRI3d6yVo6t8ZDubmXnlRDUCA9XVeULUQ9+WvA5U7jYIUi1MgAJ2GYCq86qAhFHXfPs
-         LsksqVxeHvDmgr+xNzIuvKudbPAHxnOUIcraJgny5PlPYzexYp7JojtcrgJB6MSdv6p2
-         gMjA==
-X-Forwarded-Encrypted: i=1; AJvYcCUpZkMAU5Qy8anWhV9QYpekgAu/Oagv+PFboR5RiELyZJcu9RAlrj1WAQZsW+EHxc8fGElYSqJ+kK4Pr3mbs+bEai5TTH0aqpdokC+qmfRvA3DVg6jP9nPEGAJXp8ZiH5pij40OUAASD7UmRzIn5uLdz1csjJedSkMal6UUUwvIa2NtftP/URAT/74wr9nNO+jQ3HZKFEGoypPfTadWs1vSxFjTOAwBe0d6DRMWjT8BO3+3Cczj3DfVpeh5XqqrEed4sezPz8A2kgpHB/W1IAe9D+ATpVQGipYll38K/cVewL8UlHoqIjmlsk9VXd7vHmnN0MshF9vu5PadDRsbpJI3BNd6l/0aYTRAQwhn94DLpFQ308YvgaBzB+c7vilAWRJBBHxCFMtJUErmFG0Fh/wwb4+n4Z3mHEuVoj9LAFSmxohDVa4RFylZrYIl35/Ot9fE7JX3avT5RhNOe6snTii9yMQLzZNv4qwFHK4oNw==
-X-Gm-Message-State: AOJu0YyhVZ2+evcwbtHVjqXEvxtDfrES3nj8s7xQzyWaKI+bQu6rOUYI
-	CxuQE61ET/AdRe2IqvbXg618tn7uQkc0kZ97awCTiBBMWQSVmrHq
-X-Google-Smtp-Source: AGHT+IFKCvR38XvVqm5Um9a+klNoommoEfbRwaz/Xc5lSqRtlPbKvQJbMiSu5WsIA9vNHRnXI96lzA==
-X-Received: by 2002:a19:f012:0:b0:52c:8024:1db with SMTP id 2adb3069b0e04-52cdf82671amr9494131e87.63.1719569432448;
-        Fri, 28 Jun 2024 03:10:32 -0700 (PDT)
-Received: from imac ([2a02:8010:60a0:0:49ff:2a2d:712c:9944])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256af5b66csm27439095e9.18.2024.06.28.03.10.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 03:10:31 -0700 (PDT)
-From: Donald Hunter <donald.hunter@gmail.com>
-To: Mina Almasry <almasrymina@google.com>
-Cc: netdev@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-doc@vger.kernel.org,  linux-alpha@vger.kernel.org,
-  linux-mips@vger.kernel.org,  linux-parisc@vger.kernel.org,
-  sparclinux@vger.kernel.org,  linux-trace-kernel@vger.kernel.org,
-  linux-arch@vger.kernel.org,  bpf@vger.kernel.org,
-  linux-kselftest@vger.kernel.org,  linux-media@vger.kernel.org,
-  dri-devel@lists.freedesktop.org,  "David S. Miller"
- <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
- Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  Jonathan
- Corbet <corbet@lwn.net>,  Richard Henderson
- <richard.henderson@linaro.org>,  Ivan Kokshaysky
- <ink@jurassic.park.msu.ru>,  Matt Turner <mattst88@gmail.com>,  Thomas
- Bogendoerfer <tsbogend@alpha.franken.de>,  "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>,  Helge Deller <deller@gmx.de>,
-  Andreas Larsson <andreas@gaisler.com>,  Jesper Dangaard Brouer
- <hawk@kernel.org>,  Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-  Steven Rostedt <rostedt@goodmis.org>,  Masami Hiramatsu
- <mhiramat@kernel.org>,  Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>,  Arnd Bergmann <arnd@arndb.de>,  Alexei
- Starovoitov <ast@kernel.org>,  Daniel Borkmann <daniel@iogearbox.net>,
-  Andrii Nakryiko <andrii@kernel.org>,  Martin KaFai Lau
- <martin.lau@linux.dev>,  Eduard Zingerman <eddyz87@gmail.com>,  Song Liu
- <song@kernel.org>,  Yonghong Song <yonghong.song@linux.dev>,  John
- Fastabend <john.fastabend@gmail.com>,  KP Singh <kpsingh@kernel.org>,
-  Stanislav Fomichev <sdf@fomichev.me>,  Hao Luo <haoluo@google.com>,  Jiri
- Olsa <jolsa@kernel.org>,  Steffen Klassert <steffen.klassert@secunet.com>,
-  Herbert Xu <herbert@gondor.apana.org.au>,  David Ahern
- <dsahern@kernel.org>,  Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-  Shuah Khan <shuah@kernel.org>,  Sumit Semwal <sumit.semwal@linaro.org>,
-  =?utf-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,  Bagas
- Sanjaya
- <bagasdotme@gmail.com>,  Christoph Hellwig <hch@infradead.org>,  Nikolay
- Aleksandrov <razor@blackwall.org>,  Pavel Begunkov
- <asml.silence@gmail.com>,  David Wei <dw@davidwei.uk>,  Jason Gunthorpe
- <jgg@ziepe.ca>,  Yunsheng Lin <linyunsheng@huawei.com>,  Shailend Chand
- <shailend@google.com>,  Harshitha Ramamurthy <hramamurthy@google.com>,
-  Shakeel Butt <shakeel.butt@linux.dev>,  Jeroen de Borst
- <jeroendb@google.com>,  Praveen Kaligineedi <pkaligineedi@google.com>,
-  Stanislav Fomichev <sdf@google.com>
-Subject: Re: [PATCH net-next v15 02/14] net: netdev netlink api to bind
- dma-buf to a net device
-In-Reply-To: <20240628003253.1694510-3-almasrymina@google.com> (Mina Almasry's
-	message of "Fri, 28 Jun 2024 00:32:39 +0000")
-Date: Fri, 28 Jun 2024 11:04:27 +0100
-Message-ID: <m27ce9cris.fsf@gmail.com>
-References: <20240628003253.1694510-1-almasrymina@google.com>
-	<20240628003253.1694510-3-almasrymina@google.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1719569089; c=relaxed/simple;
+	bh=27RE7aMAeMSuXKrXKtMiDDZRYnA99jnOQEs5p75D+vQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fJm2xzgbk3zN1HI9kJJghnPUTDeDDm2yMDPJ2FHwWy4XTZQNsOXym1sym1vTkLe/Lsc6otB6J5MtP6p33VFVEsBpBy9PyHVUJG1BLTjkFALXKraZgS8coj6Scsid/PeCSZb3NZ1aehXV/v2oKVTeUdvtK9EQ4Ye6DwwvZff1q2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AJsz0jr0; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719569088; x=1751105088;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=27RE7aMAeMSuXKrXKtMiDDZRYnA99jnOQEs5p75D+vQ=;
+  b=AJsz0jr0bpFxl+QCT2gblBayhRwEtv9RfyrDYyAHNir2HgMApjaz0hdQ
+   XuuDdkmTETWva4wM1ajfm0lrB3+mx6fiheP0V4nDprHXVH3JnmW3Pgds7
+   XPgLjH4DHtGafvTe0fapYRzznf50/7pJ4uAyBgHi4J5z9d8tkw7pihLgq
+   euODGkDVf3f/HefV8Uv30mdHpY4si8sM8rgpsmSchhREg1j8vLeoqI8oa
+   iTmD/XD6P+1V+FuprYUTJQ0ZbCFVT531FPjkrAA7AN+vdU8kfsu2qMV+i
+   JpwPmA12al1DnsWSRsVS0DgV5ypF6Q51ntvVWGP1PyFpPqYpHldu2uiWi
+   w==;
+X-CSE-ConnectionGUID: jxq2vWX0S36zn5L9Ql1KsA==
+X-CSE-MsgGUID: gAbxT1ZsTACYYnFroCVe7w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="34282929"
+X-IronPort-AV: E=Sophos;i="6.09,168,1716274800"; 
+   d="scan'208";a="34282929"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 03:04:47 -0700
+X-CSE-ConnectionGUID: Kil1170XTI+k0keiXikvKA==
+X-CSE-MsgGUID: /CtWA+6ATAqABZBcEzIDUA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,168,1716274800"; 
+   d="scan'208";a="75890944"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa001.fm.intel.com with ESMTP; 28 Jun 2024 03:04:39 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 91FCB1C7; Fri, 28 Jun 2024 13:04:38 +0300 (EEST)
+Date: Fri, 28 Jun 2024 13:04:38 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Dexuan Cui <decui@microsoft.com>
+Cc: x86@kernel.org, linux-coco@lists.linux.dev, ak@linux.intel.com, 
+	arnd@arndb.de, bp@alien8.de, brijesh.singh@amd.com, dan.j.williams@intel.com, 
+	dave.hansen@intel.com, dave.hansen@linux.intel.com, haiyangz@microsoft.com, 
+	hpa@zytor.com, jane.chu@oracle.com, kys@microsoft.com, luto@kernel.org, 
+	mingo@redhat.com, peterz@infradead.org, rostedt@goodmis.org, 
+	sathyanarayanan.kuppuswamy@linux.intel.com, seanjc@google.com, tglx@linutronix.de, tony.luck@intel.com, 
+	wei.liu@kernel.org, Jason@zx2c4.com, nik.borisov@suse.com, mhklinux@outlook.com, 
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, Tianyu.Lan@microsoft.com, 
+	rick.p.edgecombe@intel.com, andavis@redhat.com, mheslin@redhat.com, vkuznets@redhat.com, 
+	xiaoyao.li@intel.com, stable@vger.kernel.org
+Subject: Re: [PATCH] x86/tdx: Support vmalloc() for tdx_enc_status_changed()
+Message-ID: <kjt2m2aqnhmwqgn3ox6bkqtn5qurxawgnx3xyh42pu5sp3mwyj@qwyjttwubfck>
+References: <20240521021238.1803-1-decui@microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240521021238.1803-1-decui@microsoft.com>
 
-Mina Almasry <almasrymina@google.com> writes:
-> +  -
-> +    name: bind-dmabuf
-> +    attributes:
-> +      -
-> +        name: ifindex
-> +        doc: netdev ifindex to bind the dma-buf to.
-
-Minor nit:
-
-The series uses a mix of dmabuf and dma-buf but the doc additions
-(devmem.rst) consistently uses dmabuf. I think it would be helpful to be
-consistent here and say 'devmem dmabuf' in the docstring to highlight
-whos dmabuf it is and keep the generated netdev docs in alignment.
-
-> +        type: u32
-> +        checks:
-> +          min: 1
-> +      -
-> +        name: queues
-> +        doc: receive queues to bind the dma-buf to.
-
-And here.
-
-> +        type: nest
-> +        nested-attributes: queue-dmabuf
-> +        multi-attr: true
-> +      -
-> +        name: dmabuf-fd
-> +        doc: dmabuf file descriptor to bind.
-> +        type: u32
-> +      -
-> +        name: dmabuf-id
-> +        doc: id of the dmabuf binding
-> +        type: u32
-> +        checks:
-> +          min: 1
-> +
+On Mon, May 20, 2024 at 07:12:38PM -0700, Dexuan Cui wrote:
+> @@ -785,15 +799,22 @@ static bool tdx_map_gpa(phys_addr_t start, phys_addr_t end, bool enc)
+>   */
+>  static bool tdx_enc_status_changed(unsigned long vaddr, int numpages, bool enc)
+>  {
+> -	phys_addr_t start = __pa(vaddr);
+> -	phys_addr_t end   = __pa(vaddr + numpages * PAGE_SIZE);
+> +	unsigned long start = vaddr;
+> +	unsigned long end = start + numpages * PAGE_SIZE;
+> +	unsigned long step = end - start;
+> +	unsigned long addr;
 >  
->    -
->      name: qstats
-> @@ -579,6 +618,20 @@ operations:
->            attributes:
->              - ifindex
->          reply: *queue-get-op
-> +    -
-> +      name: bind-rx
-> +      doc: Bind dmabuf to netdev
+> -	if (!tdx_map_gpa(start, end, enc))
+> -		return false;
+> +	/* Step through page-by-page for vmalloc() mappings */
+> +	if (is_vmalloc_addr((void *)vaddr))
+> +		step = PAGE_SIZE;
+>  
+> -	/* shared->private conversion requires memory to be accepted before use */
+> -	if (enc)
+> -		return tdx_accept_memory(start, end);
+> +	for (addr = start; addr < end; addr += step) {
+> +		phys_addr_t start_pa = slow_virt_to_phys((void *)addr);
+> +		phys_addr_t end_pa   = start_pa + step;
+> +
+> +		if (!tdx_enc_status_changed_phys(start_pa, end_pa, enc))
+> +			return false;
+> +	}
+>  
+>  	return true;
+>  }
 
-And here.
+This patch collied with kexec changes. tdx_kexec_finish() calls
+tdx_enc_status_changed() after clearing pte, so slow_virt_to_phys()
+crashes on in.
 
-> +      attribute-set: bind-dmabuf
-> +      flags: [ admin-perm ]
-> +      do:
-> +        request:
-> +          attributes:
-> +            - ifindex
-> +            - dmabuf-fd
-> +            - queues
-> +        reply:
-> +          attributes:
-> +            - dmabuf-id
+Daxuan, could you check if the fixup below works for you on vmalloc
+addresses?
+
+diff --git a/arch/x86/coco/tdx/tdx.c b/arch/x86/coco/tdx/tdx.c
+index ef8ec2425998..5e455c883bcc 100644
+--- a/arch/x86/coco/tdx/tdx.c
++++ b/arch/x86/coco/tdx/tdx.c
+@@ -813,8 +813,15 @@ static bool tdx_enc_status_changed(unsigned long vaddr, int numpages, bool enc)
+ 		step = PAGE_SIZE;
+ 
+ 	for (addr = start; addr < end; addr += step) {
+-		phys_addr_t start_pa = slow_virt_to_phys((void *)addr);
+-		phys_addr_t end_pa   = start_pa + step;
++		phys_addr_t start_pa;
++		phys_addr_t end_pa;
++
++		if (virt_addr_valid(addr))
++			start_pa = __pa(addr);
++		else
++			start_pa = slow_virt_to_phys((void *)addr);
++
++		end_pa = start_pa + step;
+ 
+ 		if (!tdx_enc_status_changed_phys(start_pa, end_pa, enc))
+ 			return false;
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
