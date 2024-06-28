@@ -1,92 +1,147 @@
-Return-Path: <linux-kernel+bounces-233226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70F5391B486
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:09:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58F4191B489
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 03:10:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EC8A283238
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:09:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAE80B22B7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 01:10:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BAF710A0A;
-	Fri, 28 Jun 2024 01:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="egwdW+db"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1EFF13FF9;
+	Fri, 28 Jun 2024 01:09:24 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C8CDDBD
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 01:08:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E06182B9;
+	Fri, 28 Jun 2024 01:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719536898; cv=none; b=g7lt7HGUmAG90b1RGipGCVtdOhrnYSLi9lgTfxnhKbm2HyUcgnOBKDUwHslx4nvwuzkgR/Ncp1NKcrP07WpeI/bc8y7dPFWJAq4gbEa7rzRNfjh6ufcku7EH09JPbEEI8CE+2jgC6fMz58yIa4ThaCcwnRz3zj6/HGmOjNpR3po=
+	t=1719536964; cv=none; b=kw0LJWq0cX1/zhB1O50flHNG+RwGY4Jrj0D9je8xGUlIaOIGQVW0icf24OO98s+u06Md+h13ogPjuYWhVUCk1Q8jVg1U+bO9aIfUNAIl+w6ZCqw6yjff5H0TdXW6xt4LBTMfrvvV0A2uvt6vUgNc1kRKF3NmQkuI1aBl433JnXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719536898; c=relaxed/simple;
-	bh=VLCVuH+TgQTouKRhnEi8003sNMdanj8ij8JQnMaL3OE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kQAHzpndt7Q9n0Fc+2CoUetYab0BfjP2jBciv2GppHuS9zMyRHMSAuaB3IFgtZjWAqsqW5SQgqy1lPY6D5c5tJfGeaGXmEz5AKw6GrGZmgwlUkaqFUcX/KrxIbj+qug5/ERGs9KX9neW3E/Lqbd4mdA8EqdtoY69DiDKxoRtmfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=egwdW+db; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f6a837e9a3so239335ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 27 Jun 2024 18:08:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1719536896; x=1720141696; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=a2utnmsw1xb4DBsUqmmJwnVko+nFbfKDW1nfGRRIJcA=;
-        b=egwdW+dbE8OjWIYbr+1bUPnJ4Sc5ojXoRx95GrIMOQO12SXoN2sjHgBcTV6tqkhkfD
-         5spZTZZL//3q+MqdHwNOY3EqXSUyqVLyjSS/M17Kd45Bxl4v9NJy5+cqut0ENOHt5+jv
-         9Fr37WNlilQRhhr2lqtf4YzkIoI6+sJJtvUjI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719536896; x=1720141696;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a2utnmsw1xb4DBsUqmmJwnVko+nFbfKDW1nfGRRIJcA=;
-        b=LGvYGrAYQbUUm+1kAD5pjsnF2ApipVY/rkJr/3ICapGZY34Ce6A+XxYK4nePnieiP+
-         YfdDs8K4NC0ssyr8fnZQeV6Z0AMssoNtF8YdZ9N7Wd7G3b5iRgVVum9T4cGrNnknDRet
-         vGlALFt5uSn58S27eX/HtyBRobRR7zyqS8TI9vCBc5HjcVY7tIvQOodmwhwHAd+6wTku
-         fUJGcIwH5X+RtNCDHJYdGfhHLV67b+WWL2/vC/34PPpgumBhZkV3+fHHt8OCIGi6bPj9
-         enTVPcHjLnd8UZKvHYAMB/tPkHWL/hBMvSjCBCQBZyysrWVjLeT/F9Zw3ircvmBRbYlg
-         sEww==
-X-Forwarded-Encrypted: i=1; AJvYcCUoLVPC3LahUlI1E1c/6+aTnZu105jiZA4zIjFKsEje3uwjDiNe7r8P9RRpobfiRQEmwlRlItVG/1UVin7QrRv2JMBQcdI/tCHThnm+
-X-Gm-Message-State: AOJu0YyCLu+UYPKycJ1c2kYeU0cAbt0V/AftHz3GDBnvXoRxtziI0FQv
-	mV3badrGW/RXx96iFft3YOCLMOh7M2uDZofyBByKusFqKbHMzYt6ZyNcp07+8w==
-X-Google-Smtp-Source: AGHT+IGwkepPg18peE3iKJtzQXjCutZ85rLoUEu++EzilFhy0HLWBnKs2pOQG8bChfgfC3yiuZlNpw==
-X-Received: by 2002:a17:903:230e:b0:1f9:f018:6973 with SMTP id d9443c01a7336-1fa240822c2mr154709215ad.51.1719536896549;
-        Thu, 27 Jun 2024 18:08:16 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:c19a:b9a8:4bd1:72c0])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac159ac64sm3802795ad.295.2024.06.27.18.08.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Jun 2024 18:08:16 -0700 (PDT)
-Date: Fri, 28 Jun 2024 10:08:12 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Chengming Zhou <chengming.zhou@linux.dev>
-Cc: minchan@kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH 1/2] mm/zsmalloc: fix class per-fullness zspage counts
-Message-ID: <20240628010812.GD15925@google.com>
-References: <20240627075959.611783-1-chengming.zhou@linux.dev>
- <20240628005523.GC15925@google.com>
+	s=arc-20240116; t=1719536964; c=relaxed/simple;
+	bh=FJBS0qNoYdakN29J3gj/ZaHV91m7vyqEgcjmwOvd7w8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WYmDlkeS2T+LkjeutY1sgNEP6V3RG0YXGcOb7qbYVKC3Ee/2gmnykUgBX9ERdXdHhrTAwons/7YKF2lNnmvZG8OYUEFZpj32IPiWIeDT+3oW+yGc7QyI4eeGm4LaqWfTtwMdMvPhEkN5VeyrFWX8a5VXxLVF6mdrZWcQsd+gqL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4W9HQC0lClz4f3jHy;
+	Fri, 28 Jun 2024 09:09:07 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 05BDB1A0568;
+	Fri, 28 Jun 2024 09:09:18 +0800 (CST)
+Received: from [10.174.177.174] (unknown [10.174.177.174])
+	by APP1 (Coremail) with SMTP id cCh0CgAnUn45DX5mgaIaAg--.2390S3;
+	Fri, 28 Jun 2024 09:09:17 +0800 (CST)
+Message-ID: <b68920cc-28ab-4e8b-994a-93f4148b4b8b@huaweicloud.com>
+Date: Fri, 28 Jun 2024 09:09:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240628005523.GC15925@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/5] cachefiles: flush all requests for the object that
+ is being dropped
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev,
+ dhowells@redhat.com, hsiangkao@linux.alibaba.com,
+ jefflexu@linux.alibaba.com, zhujia.zj@bytedance.com,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yangerkun@huawei.com, houtao1@huawei.com,
+ yukuai3@huawei.com, wozizhi@huawei.com, Baokun Li <libaokun1@huawei.com>,
+ Baokun Li <libaokun@huaweicloud.com>
+References: <20240515125136.3714580-1-libaokun@huaweicloud.com>
+ <20240515125136.3714580-3-libaokun@huaweicloud.com>
+ <5bb711c4bbc59ea9fff486a86acce13880823e7b.camel@kernel.org>
+ <e40b80fc-52b8-4f89-800a-3ffa0034a072@huaweicloud.com>
+ <20240627-beizeiten-hecht-0efad69e0e38@brauner>
+Content-Language: en-US
+From: Baokun Li <libaokun@huaweicloud.com>
+In-Reply-To: <20240627-beizeiten-hecht-0efad69e0e38@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgAnUn45DX5mgaIaAg--.2390S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7KFy3Gr1rZr18AFy3XFyUAwb_yoW8KFyUpF
+	Waya4akFW8ur17Crn2vF1YvrySy3s3ArnrXr1aqryjyrs0qrna9r1Iqr1DuF1DJrs3Gr4I
+	qr4UWF93GryqyrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkE14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
+	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIY
+	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
+	v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQvt
+	AUUUUU=
+X-CM-SenderInfo: 5olet0hnxqqx5xdzvxpfor3voofrz/1tbiAgAHBV1jkHrAYQABs0
 
-On (24/06/28 09:55), Sergey Senozhatsky wrote:
-> We can land this patch, if you insist/prefer, but it's some sort of
-> a NOOP, essentially (in a sense that it has no visible effects).
+On 2024/6/27 23:18, Christian Brauner wrote:
+> On Thu, Jun 27, 2024 at 07:20:16PM GMT, Baokun Li wrote:
+>> On 2024/6/27 19:01, Jeff Layton wrote:
+>>> On Wed, 2024-05-15 at 20:51 +0800, libaokun@huaweicloud.com wrote:
+>>>> From: Baokun Li <libaokun1@huawei.com>
+>>>>
+>>>> Because after an object is dropped, requests for that object are
+>>>> useless,
+>>>> flush them to avoid causing other problems.
+>>>>
+>>>> This prepares for the later addition of cancel_work_sync(). After the
+>>>> reopen requests is generated, flush it to avoid cancel_work_sync()
+>>>> blocking by waiting for daemon to complete the reopen requests.
+>>>>
+>>>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+>>>> ---
+>>>>    fs/cachefiles/ondemand.c | 19 +++++++++++++++++++
+>>>>    1 file changed, 19 insertions(+)
+>>>>
+>>>> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
+>>>> index 73da4d4eaa9b..d24bff43499b 100644
+>>>> --- a/fs/cachefiles/ondemand.c
+>>>> +++ b/fs/cachefiles/ondemand.c
+>>>> @@ -564,12 +564,31 @@ int cachefiles_ondemand_init_object(struct
+>>>> cachefiles_object *object)
+>>>>    void cachefiles_ondemand_clean_object(struct cachefiles_object
+>>>> *object)
+>>>>    {
+>>>> +	unsigned long index;
+>>>> +	struct cachefiles_req *req;
+>>>> +	struct cachefiles_cache *cache;
+>>>> +
+>>>>    	if (!object->ondemand)
+>>>>    		return;
+>>>>    	cachefiles_ondemand_send_req(object, CACHEFILES_OP_CLOSE, 0,
+>>>>    			cachefiles_ondemand_init_close_req, NULL);
+>>>> +
+>>>> +	if (!object->ondemand->ondemand_id)
+>>>> +		return;
+>>>> +
+>>>> +	/* Flush all requests for the object that is being dropped.
+>>>> */
+>>> I wouldn't call this a "Flush". In the context of writeback, that
+>>> usually means that we're writing out pages now in order to do something
+>>> else. In this case, it looks like you're more canceling these requests
+>>> since you're marking them with an error and declaring them complete.
+>> Makes sense, I'll update 'flush' to 'cancel' in the comment and subject.
+>>
+>> I am not a native speaker of English, so some of the expressions may
+>> not be accurate, thank you for correcting me.
+> Can you please resend all patch series that we're supposed to take for
+> this cycle, please?
+Sure, I'm organising to combine the two patch series today and
+send it out as v3.
 
-Forgot to mention, sorry.  If we land this then I'll ask for a different
-commit message.  "Fix" sounds alarming.  It would be better to say something
-like "keep that stat counter accurate, but RATIO_O is never used anywhere".
+-- 
+With Best Regards,
+Baokun Li
+
 
