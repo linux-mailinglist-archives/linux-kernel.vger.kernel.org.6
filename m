@@ -1,307 +1,129 @@
-Return-Path: <linux-kernel+bounces-234669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D662991C94A
-	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 00:48:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5CA591C94C
+	for <lists+linux-kernel@lfdr.de>; Sat, 29 Jun 2024 00:48:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 062C51C22334
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:48:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03F011C22364
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 22:48:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1F6137747;
-	Fri, 28 Jun 2024 22:47:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 873A3824A1;
+	Fri, 28 Jun 2024 22:48:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Af3tsJkk"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uDc7DmPL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA2385285;
-	Fri, 28 Jun 2024 22:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D3A13AD12;
+	Fri, 28 Jun 2024 22:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719614863; cv=none; b=CCF5mBNp00VLL6A/HmNRskpKiCjTv81+23ppYeUkgKUj6exCWXUhciaPRJ1//W/9dV7HDORegsFXdLd0J3++x7jceh2/TAerV69d7oq3FvBqS5QKDoQdhPGXF8yn4CKwIiombdxPWard3VXX6Rf+mEZDANeUS0Mm9cvKv71P0yg=
+	t=1719614879; cv=none; b=rPa9Pmr/XvxvJ4Bi2dEIIObrpLZQSO5Ci4EB6Iu5km3e7WIkhc4G3Refw9/LlVatPX4LXFLtdhAioTVRXXOxP2JpWc32QaTbtEhF7WGvgbmMH1C8HamGCqxsm2RcBLj0tA901iPE2ShGkxWGBUFblUaanQw7NmXKrrTGOta7mpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719614863; c=relaxed/simple;
-	bh=+8nNly24xuCx20eSYpE+qDD01oAcNayYe8T7Y/xuscw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OlDw/8t4yVoNn2qCQ4cZC1jzddDLi8GpNDCV6bgY7ESO0J+75YN8OdOOh0frgePlCpAPZ79dduyyJQtrQNbVF+QwDwqFES/V+FEOZDX4q2juUHDoSFdrWQuqze0hDaTBgxdXKm1uxy5aQZ3aCzbfRjzvdgXihn3JbPqqTMFHfn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Af3tsJkk; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fa3bdd91c1so8259325ad.2;
-        Fri, 28 Jun 2024 15:47:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719614860; x=1720219660; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OFNDKpw6QkRM2hybf3Ehw0BO3Qpr8ju6XyIUPGNVdl4=;
-        b=Af3tsJkkleq4JJJ6U2ZTRjkj7uIHACZXG7EnvG33skojnLiCZTcN5c/d5I4fAHLh2V
-         cMtTAkmAKExrfuXQFZyj5OvSSYCXMdMF+viyVdlTmWFnUmJAyOK5Cl5/jiJ5znv+y5e4
-         WsGQPv1oxEk+enYmVRsPIbGLwJ9N3T3UON6LHAYFpWjKJVd4iDWx3glINt6ScUzNjivb
-         vgwaMpW7ZnO3z0mjKhmcequuxd24EirPJOB/VNetnkCVtOrivNWcLSrjCGL651axeLFw
-         LTUyJcZAV8/k+h3Yoov9EL/2rxg6jcKS3haEi4jxPis1AbO3/MF0If4e+1CB4H+fiFpk
-         nL+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719614860; x=1720219660;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OFNDKpw6QkRM2hybf3Ehw0BO3Qpr8ju6XyIUPGNVdl4=;
-        b=wUvDFoT0GP4P3Nfg9gy6FQ8CoHtLeavTYnZsA6i8scCPnPJXWdYhzKd5x/wBI6H/2V
-         lGV+2WuCuqmKNjJAbtBng7Vne7RrVqy9PEs8RTq+vlgLNuwgPVZk4yvH3OwWZfCg5htj
-         CATSby2PADuPYpcBo9J0MbQnGNzMPGA0NXnpfm5FojhnBDYqfYp++gKYQRkWGA62R+uT
-         l/4Li5x4oEcWKXsJ8jFi+s9Lci9++++W8QC6n1cOr1dKhBZAy/mIjkuyDTbbHWWE44US
-         PJgpp8m6oCKecd2r5HqwhvLZ7S5QoC0ecLHO+jo3chd/UlfDM8uUkOCecWE/vNBrMvvy
-         /1iw==
-X-Gm-Message-State: AOJu0YxMrxaro7n1S0PAynxka0zFcJ7MH1hezCnIgqdVkDHYgRObASAI
-	b60X1Z1bpJ2FH37xOZ8Qd9/FA5y17szboPZkPKuWoMRq1i+DZGqVkHP5BA==
-X-Google-Smtp-Source: AGHT+IH1RMusHDvaC5rsF76b8ZnLdMQucMVlLxtx2vgOFFp00lGuInrqSXv51dW4moylnLYoHtxirA==
-X-Received: by 2002:a17:90a:d397:b0:2bf:9566:7c58 with SMTP id 98e67ed59e1d1-2c86141c69bmr15632363a91.41.1719614860509;
-        Fri, 28 Jun 2024 15:47:40 -0700 (PDT)
-Received: from dtor-ws.sjc.corp.google.com ([2620:15c:9d:2:9c98:1988:ce15:c0ac])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c91ce58877sm2187163a91.24.2024.06.28.15.47.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 15:47:39 -0700 (PDT)
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: linux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] Input: cypress_ps2 - use u8 when dealing with byte data
-Date: Fri, 28 Jun 2024 15:47:27 -0700
-Message-ID: <20240628224728.2180126-5-dmitry.torokhov@gmail.com>
-X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
-In-Reply-To: <20240628224728.2180126-1-dmitry.torokhov@gmail.com>
-References: <20240628224728.2180126-1-dmitry.torokhov@gmail.com>
+	s=arc-20240116; t=1719614879; c=relaxed/simple;
+	bh=nUc92aZzSmfiZuXR49U6JmcFa5EHLz6CQ+N7uWdpTs8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nilKth8KVZ9Neu11s9BnSRaF24BvBJRKkPgeLYXSoVFahscBkhqL+LtrboBmTkU5I/oerbJ+GawWhNwMx1kQ5WkW3tZPhE1tM85R0iVm/RA3d7oh9s1Vaavoo/SrSsLd80dcs0UQLOR2485JEoNM10l45/NgzbMPiD0FhdBoRws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uDc7DmPL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2776CC116B1;
+	Fri, 28 Jun 2024 22:47:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719614879;
+	bh=nUc92aZzSmfiZuXR49U6JmcFa5EHLz6CQ+N7uWdpTs8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uDc7DmPLroi2czVUHCWkUx98Qq6Ly5uXIwqCdBlmX/qEe/+BScaunkpGRq82/V1JR
+	 mgP05KFUjNODgqpZpsVSQdjK7vnWuDZqAMwz7l030CPkZobFSWwtm6VnXomoV7Nv9U
+	 6qN5dVl2lDlxlcx0nMWytwtBupSI7AH1CZwtlMLHNtFHnefS6jCCKvnHTpb8GRVHYK
+	 6zRMOKTXkpEEpsEftCfMFwhGcNadOXALh3EaZxEwGyM5PUD5IjUR8QLM3Mby5NX/IR
+	 ViyDJ9e0gN2cMnPLLLGvQu918CJ5P+CXPrDFLLctkgH2Mf/vk8xmuiH9qNi5hSAu8W
+	 Nnf6IjdmFurvA==
+Received: by pali.im (Postfix)
+	id 155F47A6; Sat, 29 Jun 2024 00:47:56 +0200 (CEST)
+Date: Sat, 29 Jun 2024 00:47:55 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: jdelvare@suse.com, linux@roeck-us.net, linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hwmon: (dell-smm) Add Dell OptiPlex 7060 to DMI table
+Message-ID: <20240628224755.kxbyydhpoqeyyyzy@pali>
+References: <20240628214723.19665-1-W_Armin@gmx.de>
+ <20240628215704.i6ohbuz2zgegr27p@pali>
+ <b4e555cf-dae3-4af3-98b7-15633eb3cc63@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <b4e555cf-dae3-4af3-98b7-15633eb3cc63@gmx.de>
+User-Agent: NeoMutt/20180716
 
-When dealing with byte data use u8 instead of unsigned char or int.
-Stop layering error handling in cypress_ps2_sendbyte() and simply
-pass on error code from ps2_sendbyte().
+On Saturday 29 June 2024 00:43:08 Armin Wolf wrote:
+> Am 28.06.24 um 23:57 schrieb Pali Rohár:
+> 
+> > On Friday 28 June 2024 23:47:23 Armin Wolf wrote:
+> > > The BIOS on this machine is buggy and will in some cases return
+> > > an error when trying to get the fan state, but reading of the
+> > > RPM values and the temperature sensors still works.
+> > Does this error affects machine usage (e.g. freeze of CPU or some
+> > erratic fan behavior)? Or just kernel does not receive fan state and is
+> > unable to report meaningful value to userspace?
+> 
+> Basically, it seems that the BIOS will return an error if the to-be-returned fan state is less than 2.
+> Everything else seems to work.
 
-Additionally use u8 instead of unisgned char throughout the code.
+Ok, if there is no negative impact then fine for me.
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- drivers/input/mouse/cypress_ps2.c | 78 ++++++++++++++-----------------
- 1 file changed, 34 insertions(+), 44 deletions(-)
+Acked-by: Pali Rohár <pali@kernel.org>
 
-diff --git a/drivers/input/mouse/cypress_ps2.c b/drivers/input/mouse/cypress_ps2.c
-index 87b87f14e749..b3c34ebcc4ef 100644
---- a/drivers/input/mouse/cypress_ps2.c
-+++ b/drivers/input/mouse/cypress_ps2.c
-@@ -32,32 +32,30 @@ static void cypress_set_packet_size(struct psmouse *psmouse, unsigned int n)
- 	cytp->pkt_size = n;
- }
- 
--static const unsigned char cytp_rate[] = {10, 20, 40, 60, 100, 200};
--static const unsigned char cytp_resolution[] = {0x00, 0x01, 0x02, 0x03};
-+static const u8 cytp_rate[] = {10, 20, 40, 60, 100, 200};
-+static const u8 cytp_resolution[] = {0x00, 0x01, 0x02, 0x03};
- 
--static int cypress_ps2_sendbyte(struct psmouse *psmouse, int value)
-+static int cypress_ps2_sendbyte(struct psmouse *psmouse, u8 cmd)
- {
- 	struct ps2dev *ps2dev = &psmouse->ps2dev;
- 	int error;
- 
--	error = ps2_sendbyte(ps2dev, value & 0xff, CYTP_CMD_TIMEOUT);
-+	error = ps2_sendbyte(ps2dev, cmd, CYTP_CMD_TIMEOUT);
- 	if (error) {
- 		psmouse_dbg(psmouse,
- 			    "sending command 0x%02x failed, resp 0x%02x, error %d\n",
--			    value & 0xff, ps2dev->nak, error);
-+			    cmd, ps2dev->nak, error);
- 		return error;
- 	}
- 
- #ifdef CYTP_DEBUG_VERBOSE
--	psmouse_dbg(psmouse, "sending command 0x%02x succeeded, resp 0xfa\n",
--			value & 0xff);
-+	psmouse_dbg(psmouse, "sending command 0x%02x succeeded\n", cmd);
- #endif
- 
- 	return 0;
- }
- 
--static int cypress_ps2_ext_cmd(struct psmouse *psmouse, unsigned short cmd,
--			       unsigned char data)
-+static int cypress_ps2_ext_cmd(struct psmouse *psmouse, u8 prefix, u8 nibble)
- {
- 	struct ps2dev *ps2dev = &psmouse->ps2dev;
- 	int tries = CYTP_PS2_CMD_TRIES;
-@@ -71,7 +69,7 @@ static int cypress_ps2_ext_cmd(struct psmouse *psmouse, unsigned short cmd,
- 		 * If sending the command fails, send recovery command
- 		 * to make the device return to the ready state.
- 		 */
--		rc = cypress_ps2_sendbyte(psmouse, cmd & 0xff);
-+		rc = cypress_ps2_sendbyte(psmouse, prefix);
- 		if (rc == -EAGAIN) {
- 			rc = cypress_ps2_sendbyte(psmouse, 0x00);
- 			if (rc == -EAGAIN)
-@@ -79,9 +77,9 @@ static int cypress_ps2_ext_cmd(struct psmouse *psmouse, unsigned short cmd,
- 		}
- 
- 		if (!rc) {
--			rc = cypress_ps2_sendbyte(psmouse, data);
-+			rc = cypress_ps2_sendbyte(psmouse, nibble);
- 			if (rc == -EAGAIN)
--				rc = cypress_ps2_sendbyte(psmouse, data);
-+				rc = cypress_ps2_sendbyte(psmouse, nibble);
- 
- 			if (!rc)
- 				break;
-@@ -94,8 +92,7 @@ static int cypress_ps2_ext_cmd(struct psmouse *psmouse, unsigned short cmd,
- }
- 
- static int cypress_ps2_read_cmd_status(struct psmouse *psmouse,
--				       unsigned char cmd,
--				       unsigned char *param)
-+				       u8 cmd, u8 *param)
- {
- 	struct ps2dev *ps2dev = &psmouse->ps2dev;
- 	enum psmouse_state old_state;
-@@ -111,7 +108,7 @@ static int cypress_ps2_read_cmd_status(struct psmouse *psmouse,
- 	pktsize = (cmd == CYTP_CMD_READ_TP_METRICS) ? 8 : 3;
- 	memset(param, 0, pktsize);
- 
--	rc = cypress_ps2_sendbyte(psmouse, 0xe9);
-+	rc = cypress_ps2_sendbyte(psmouse, PSMOUSE_CMD_GETINFO & 0xff);
- 	if (rc)
- 		goto out;
- 
-@@ -136,8 +133,7 @@ static int cypress_ps2_read_cmd_status(struct psmouse *psmouse,
- 	return rc;
- }
- 
--static bool cypress_verify_cmd_state(struct psmouse *psmouse,
--				     unsigned char cmd, unsigned char *param)
-+static bool cypress_verify_cmd_state(struct psmouse *psmouse, u8 cmd, u8* param)
- {
- 	bool rate_match = false;
- 	bool resolution_match = false;
-@@ -167,31 +163,24 @@ static bool cypress_verify_cmd_state(struct psmouse *psmouse,
- 	return false;
- }
- 
--static int cypress_send_ext_cmd(struct psmouse *psmouse, unsigned char cmd,
--				unsigned char *param)
-+static int cypress_send_ext_cmd(struct psmouse *psmouse, u8 cmd, u8 *param)
- {
-+	u8 cmd_prefix = PSMOUSE_CMD_SETRES & 0xff;
- 	int tries = CYTP_PS2_CMD_TRIES;
--	int rc;
-+	int error;
- 
- 	psmouse_dbg(psmouse, "send extension cmd 0x%02x, [%d %d %d %d]\n",
- 		 cmd, DECODE_CMD_AA(cmd), DECODE_CMD_BB(cmd),
- 		 DECODE_CMD_CC(cmd), DECODE_CMD_DD(cmd));
- 
- 	do {
--		cypress_ps2_ext_cmd(psmouse,
--				    PSMOUSE_CMD_SETRES, DECODE_CMD_DD(cmd));
--		cypress_ps2_ext_cmd(psmouse,
--				    PSMOUSE_CMD_SETRES, DECODE_CMD_CC(cmd));
--		cypress_ps2_ext_cmd(psmouse,
--				    PSMOUSE_CMD_SETRES, DECODE_CMD_BB(cmd));
--		cypress_ps2_ext_cmd(psmouse,
--				    PSMOUSE_CMD_SETRES, DECODE_CMD_AA(cmd));
--
--		rc = cypress_ps2_read_cmd_status(psmouse, cmd, param);
--		if (rc)
--			continue;
--
--		if (cypress_verify_cmd_state(psmouse, cmd, param))
-+		cypress_ps2_ext_cmd(psmouse, cmd_prefix, DECODE_CMD_DD(cmd));
-+		cypress_ps2_ext_cmd(psmouse, cmd_prefix, DECODE_CMD_CC(cmd));
-+		cypress_ps2_ext_cmd(psmouse, cmd_prefix, DECODE_CMD_BB(cmd));
-+		cypress_ps2_ext_cmd(psmouse, cmd_prefix, DECODE_CMD_AA(cmd));
-+
-+		error = cypress_ps2_read_cmd_status(psmouse, cmd, param);
-+		if (!error && cypress_verify_cmd_state(psmouse, cmd, param))
- 			return 0;
- 
- 	} while (--tries > 0);
-@@ -201,7 +190,7 @@ static int cypress_send_ext_cmd(struct psmouse *psmouse, unsigned char cmd,
- 
- int cypress_detect(struct psmouse *psmouse, bool set_properties)
- {
--	unsigned char param[3];
-+	u8 param[3];
- 
- 	if (cypress_send_ext_cmd(psmouse, CYTP_CMD_READ_CYPRESS_ID, param))
- 		return -ENODEV;
-@@ -221,7 +210,7 @@ int cypress_detect(struct psmouse *psmouse, bool set_properties)
- static int cypress_read_fw_version(struct psmouse *psmouse)
- {
- 	struct cytp_data *cytp = psmouse->private;
--	unsigned char param[3];
-+	u8 param[3];
- 
- 	if (cypress_send_ext_cmd(psmouse, CYTP_CMD_READ_CYPRESS_ID, param))
- 		return -ENODEV;
-@@ -250,7 +239,7 @@ static int cypress_read_fw_version(struct psmouse *psmouse)
- static int cypress_read_tp_metrics(struct psmouse *psmouse)
- {
- 	struct cytp_data *cytp = psmouse->private;
--	unsigned char param[8];
-+	u8 param[8];
- 
- 	/* set default values for tp metrics. */
- 	cytp->tp_width = CYTP_DEFAULT_WIDTH;
-@@ -338,7 +327,7 @@ static int cypress_query_hardware(struct psmouse *psmouse)
- static int cypress_set_absolute_mode(struct psmouse *psmouse)
- {
- 	struct cytp_data *cytp = psmouse->private;
--	unsigned char param[3];
-+	u8 param[3];
- 	int error;
- 
- 	error = cypress_send_ext_cmd(psmouse, CYTP_CMD_ABS_WITH_PRESSURE_MODE,
-@@ -418,9 +407,9 @@ static int cypress_set_input_params(struct input_dev *input,
- 	return 0;
- }
- 
--static int cypress_get_finger_count(unsigned char header_byte)
-+static int cypress_get_finger_count(u8 header_byte)
- {
--	unsigned char bits6_7;
-+	u8 bits6_7;
- 	int finger_count;
- 
- 	bits6_7 = header_byte >> 6;
-@@ -445,10 +434,11 @@ static int cypress_get_finger_count(unsigned char header_byte)
- 
- 
- static int cypress_parse_packet(struct psmouse *psmouse,
--				struct cytp_data *cytp, struct cytp_report_data *report_data)
-+				struct cytp_data *cytp,
-+				struct cytp_report_data *report_data)
- {
--	unsigned char *packet = psmouse->packet;
--	unsigned char header_byte = packet[0];
-+	u8 *packet = psmouse->packet;
-+	u8 header_byte = packet[0];
- 
- 	memset(report_data, 0, sizeof(struct cytp_report_data));
- 
-@@ -563,7 +553,7 @@ static psmouse_ret_t cypress_validate_byte(struct psmouse *psmouse)
- {
- 	int contact_cnt;
- 	int index = psmouse->pktcnt - 1;
--	unsigned char *packet = psmouse->packet;
-+	u8 *packet = psmouse->packet;
- 	struct cytp_data *cytp = psmouse->private;
- 
- 	if (index < 0 || index > cytp->pkt_size)
--- 
-2.45.2.803.g4e1b14247a-goog
-
+> Thanks,
+> Armin Wolf
+> 
+> > > Closes: https://github.com/vitorafsr/i8kutils/issues/38
+> > > Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+> > > ---
+> > >   Documentation/hwmon/dell-smm-hwmon.rst | 2 ++
+> > >   drivers/hwmon/dell-smm-hwmon.c         | 7 +++++++
+> > >   2 files changed, 9 insertions(+)
+> > > 
+> > > diff --git a/Documentation/hwmon/dell-smm-hwmon.rst b/Documentation/hwmon/dell-smm-hwmon.rst
+> > > index 977263cb57a8..74905675d71f 100644
+> > > --- a/Documentation/hwmon/dell-smm-hwmon.rst
+> > > +++ b/Documentation/hwmon/dell-smm-hwmon.rst
+> > > @@ -360,6 +360,8 @@ Firmware Bug                                            Affected Machines
+> > >   ======================================================= =================
+> > >   Reading of fan states return spurious errors.           Precision 490
+> > > 
+> > > +                                                        OptiPlex 7060
+> > > +
+> > >   Reading of fan types causes erratic fan behaviour.      Studio XPS 8000
+> > > 
+> > >                                                           Studio XPS 8100
+> > > diff --git a/drivers/hwmon/dell-smm-hwmon.c b/drivers/hwmon/dell-smm-hwmon.c
+> > > index 48a81c64f00d..c75bfe93f2f6 100644
+> > > --- a/drivers/hwmon/dell-smm-hwmon.c
+> > > +++ b/drivers/hwmon/dell-smm-hwmon.c
+> > > @@ -1263,6 +1263,13 @@ static const struct dmi_system_id i8k_dmi_table[] __initconst = {
+> > >   			DMI_MATCH(DMI_PRODUCT_NAME, "MP061"),
+> > >   		},
+> > >   	},
+> > > +	{
+> > > +		.ident = "Dell OptiPlex 7060",
+> > > +		.matches = {
+> > > +			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
+> > > +			DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "OptiPlex 7060"),
+> > > +		},
+> > > +	},
+> > >   	{
+> > >   		.ident = "Dell Precision",
+> > >   		.matches = {
+> > > --
+> > > 2.39.2
+> > > 
 
