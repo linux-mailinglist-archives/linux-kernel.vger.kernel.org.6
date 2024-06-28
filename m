@@ -1,236 +1,158 @@
-Return-Path: <linux-kernel+bounces-233581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E346A91B9D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:29:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5080E91B9E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 10:31:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27F4C1C2154C
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:29:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81AD91C22FF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 08:31:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B74014885B;
-	Fri, 28 Jun 2024 08:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B8CE14E2D7;
+	Fri, 28 Jun 2024 08:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M2g1EV3c"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32545024E
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 08:29:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="kz0DJCWM"
+Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.219])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28C2143751;
+	Fri, 28 Jun 2024 08:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719563363; cv=none; b=LCEu3C41hVICR74vI/4YNfqxxJPL/FM+Tn8e7y5R1xWQC40FNw125e5VTj2Pit69FPE4jV58yRnftaVGSMPtwAUp2v6ZP8GoOw+SEwczIicjcPPU72DGZcKVQjRtWQ+6hCiqI+CAqQp/OgjhYTwfZpHCk2a2tLoI1mn7vaFRupM=
+	t=1719563428; cv=none; b=Igo305vFRhAxW8PPbiFlpDcViOX9puuVuNLd07mLmiTCeraFne429kBLALXx6Ct9SHQQhIRiBy/24ByyYjrFAUuE3C7H/5dI+Lj3XM/GPKsOffqW0nrjWPdkoCNN+9U4gne4xMxwSiALRc1Lwnc5fp6O0gVh9OuTT4Fi3EKOA2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719563363; c=relaxed/simple;
-	bh=FhnmmwRsgt7q9OpUqfd3kxwu+nTktaxW9bMtPJ2FQU4=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=CXYJqOub7Ug+WWh4kbGMg8TUdlP1gZItSkXzZHh5Yzi2fcUPJMptmF09csrLCWs3BbfyfDEr4m0n39VaJIPNsM8DKn0ivM0rh7Er4fDYyFuwdFED74AOWOi7ab4Ce1iyeokIEvh/w5yPVg9czqU0BBHXg9z725OlAy9aOesnTE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M2g1EV3c; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719563361; x=1751099361;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=FhnmmwRsgt7q9OpUqfd3kxwu+nTktaxW9bMtPJ2FQU4=;
-  b=M2g1EV3czL6U/I51h69VfDUmlG5gmo1OWnPjjYbaQGFn8wq2AOqbGlXf
-   8WTKWG/YQP5CsNZEiaYOXGOkF4SrtSr/UsMgvwWVFWXGvV8yLQPOYgaKk
-   rbEl1mPcfk0qkfQizCOxRAzA9CCw405PITZPOk9MkVl31bQ3LUYJTS3Ws
-   +7oko5LTzsP97OhdHZxITHfcN8392+zRYqvx9xErMoksjc9EI4Hq2rh46
-   Z1HjvMO7gjFQXsZkyl4WYF+B1CTkm0dSrTe7CkYU753LxoQrb8IX3Tkhb
-   ZpkSOluyJ4CF8+y0hAhomyw/NiaozaPP8+5FQP2Z7z9DPuboDFMtua+yJ
-   w==;
-X-CSE-ConnectionGUID: Yp4+ku6KQzKwzl5RCiJhGw==
-X-CSE-MsgGUID: s6pYYoHkQ8ChqkUUk4dTLg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11116"; a="16867416"
-X-IronPort-AV: E=Sophos;i="6.09,168,1716274800"; 
-   d="scan'208";a="16867416"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 01:29:21 -0700
-X-CSE-ConnectionGUID: zrjDGM4cTFOB7XZjM3TJ0A==
-X-CSE-MsgGUID: oy92/Yr/QYuzmi6T5Mdjuw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,168,1716274800"; 
-   d="scan'208";a="49580626"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.125.248.220]) ([10.125.248.220])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 01:29:16 -0700
-Message-ID: <1a62d729-878d-4c26-9619-43514c90aa35@linux.intel.com>
-Date: Fri, 28 Jun 2024 16:29:13 +0800
+	s=arc-20240116; t=1719563428; c=relaxed/simple;
+	bh=92AGGsrcbotljDKeMUOW1yDTBBo1NNwetVgmd8RhVRo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SkQjhcw/5ITNHjFz+hv/ob4LieCJDFZnkHOTiazd80djpnHG/nOH5i1iBe+mohXcpY60HCYb2wGEOuCnU6aw+g5rY1SWrLemHoXTmXZQHfIa1wFTFjhRNK1z47thQ7W+Exrz/tHAlWP+n8axv77wgpDcw3hp/NhPYvDNbKXTeqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=kz0DJCWM; arc=none smtp.client-ip=45.254.50.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=qOVWR
+	6aXQqry3nItjJ+e8OBR8po78qC5/g5g+JfJjCI=; b=kz0DJCWM+Fi2tK32ADffB
+	U5aU1g6HRZgqc+pZPk2HKk09/yQrgNDQAqJs+5SMHUX48b1ixCrs2IxIN/2TlKNb
+	BLyqTSdIicpoMbkV0yOlL9N9rlJj5w85ak4UKBLCW7KgaHtq5IiVOTDbbbl5IgHS
+	S3siijhF2OrF6q1lmGbNI0=
+Received: from localhost.localdomain (unknown [112.97.61.84])
+	by gzga-smtp-mta-g0-4 (Coremail) with SMTP id _____wD3v7BzdH5mWbI3Aw--.3813S2;
+	Fri, 28 Jun 2024 16:29:40 +0800 (CST)
+From: Slark Xiao <slark_xiao@163.com>
+To: manivannan.sadhasivam@linaro.org,
+	loic.poulain@linaro.org,
+	ryazanov.s.a@gmail.com,
+	johannes@sipsolutions.net,
+	quic_jhugo@quicinc.com
+Cc: netdev@vger.kernel.org,
+	mhi@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Slark Xiao <slark_xiao@163.com>
+Subject: [PATCH v3 1/3] bus: mhi: host: Add Foxconn SDX72 related support
+Date: Fri, 28 Jun 2024 16:29:19 +0800
+Message-Id: <20240628082921.1449860-1-slark_xiao@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Kalle Valo <kvalo@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Alex Williamson <alex.williamson@redhat.com>, mst@redhat.com,
- Jason Wang <jasowang@redhat.com>, Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Mikko Perttunen <mperttunen@nvidia.com>,
- Jeff Johnson <quic_jjohnson@quicinc.com>, ath10k@lists.infradead.org,
- ath11k@lists.infradead.org, iommu@lists.linux.dev,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 15/21] iommu/vt-d: Add helper to allocate paging domain
-To: Yi Liu <yi.l.liu@intel.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>
-References: <20240610085555.88197-1-baolu.lu@linux.intel.com>
- <20240610085555.88197-16-baolu.lu@linux.intel.com>
- <86dbf286-bb0b-4beb-b26f-a74562b0ace8@intel.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <86dbf286-bb0b-4beb-b26f-a74562b0ace8@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3v7BzdH5mWbI3Aw--.3813S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxur15Kry7Zw47JF4rKw4UArb_yoW5KrykpF
+	s3Z3yUta1kJFWrKFW8A34DG3Z5GrsxCr93KFnrKw1Igw1Yy3yYqFZ7K342kryYy3sFqryS
+	yF95WFy293ZrJF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRuBT5UUUUU=
+X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbioxYMZGVOEH3ZdwAAs1
 
-On 2024/6/28 13:42, Yi Liu wrote:
-> On 2024/6/10 16:55, Lu Baolu wrote:
->> The domain_alloc_user operation is currently implemented by allocating a
->> paging domain using iommu_domain_alloc(). This is because it needs to 
->> fully
->> initialize the domain before return. Add a helper to do this to avoid 
->> using
->> iommu_domain_alloc().
->>
->> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
->> ---
->>   drivers/iommu/intel/iommu.c | 87 +++++++++++++++++++++++++++++++++----
->>   1 file changed, 78 insertions(+), 9 deletions(-)
->>
->> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
->> index 2e9811bf2a4e..ccde5f5972e4 100644
->> --- a/drivers/iommu/intel/iommu.c
->> +++ b/drivers/iommu/intel/iommu.c
->> @@ -3633,6 +3633,79 @@ static struct iommu_domain blocking_domain = {
->>       }
->>   };
->> +static int iommu_superpage_capability(struct intel_iommu *iommu, bool 
->> first_stage)
->> +{
->> +    if (!intel_iommu_superpage)
->> +        return 0;
->> +
->> +    if (first_stage)
->> +        return cap_fl1gp_support(iommu->cap) ? 2 : 1;
->> +
->> +    return fls(cap_super_page_val(iommu->cap));
->> +}
->> +
->> +static struct dmar_domain *paging_domain_alloc(struct device *dev, 
->> bool first_stage)
->> +{
->> +    struct device_domain_info *info = dev_iommu_priv_get(dev);
->> +    struct intel_iommu *iommu = info->iommu;
->> +    struct dmar_domain *domain;
->> +    int addr_width;
->> +
->> +    domain = kzalloc(sizeof(*domain), GFP_KERNEL);
->> +    if (!domain)
->> +        return ERR_PTR(-ENOMEM);
->> +
->> +    INIT_LIST_HEAD(&domain->devices);
->> +    INIT_LIST_HEAD(&domain->dev_pasids);
->> +    INIT_LIST_HEAD(&domain->cache_tags);
->> +    spin_lock_init(&domain->lock);
->> +    spin_lock_init(&domain->cache_lock);
->> +    xa_init(&domain->iommu_array);
->> +
->> +    domain->nid = dev_to_node(dev);
->> +    domain->has_iotlb_device = info->ats_enabled;
->> +    domain->use_first_level = first_stage;
->> +
->> +    /* calculate the address width */
->> +    addr_width = agaw_to_width(iommu->agaw);
->> +    if (addr_width > cap_mgaw(iommu->cap))
->> +        addr_width = cap_mgaw(iommu->cap);
->> +    domain->gaw = addr_width;
->> +    domain->agaw = iommu->agaw;
->> +    domain->max_addr = __DOMAIN_MAX_ADDR(addr_width);
->> +
->> +    /* iommu memory access coherency */
->> +    domain->iommu_coherency = iommu_paging_structure_coherency(iommu);
->> +
->> +    /* pagesize bitmap */
->> +    domain->domain.pgsize_bitmap = SZ_4K;
->> +    domain->iommu_superpage = iommu_superpage_capability(iommu, 
->> first_stage);
->> +    domain->domain.pgsize_bitmap |= domain_super_pgsize_bitmap(domain);
->> +
->> +    /*
->> +     * IOVA aperture: First-level translation restricts the 
->> input-address
->> +     * to a canonical address (i.e., address bits 63:N have the same 
->> value
->> +     * as address bit [N-1], where N is 48-bits with 4-level paging and
->> +     * 57-bits with 5-level paging). Hence, skip bit [N-1].
->> +     */
->> +    domain->domain.geometry.force_aperture = true;
->> +    domain->domain.geometry.aperture_start = 0;
->> +    if (first_stage)
->> +        domain->domain.geometry.aperture_end = 
->> __DOMAIN_MAX_ADDR(domain->gaw - 1);
->> +    else
->> +        domain->domain.geometry.aperture_end = 
->> __DOMAIN_MAX_ADDR(domain->gaw);
->> +
->> +    /* always allocate the top pgd */
->> +    domain->pgd = iommu_alloc_page_node(domain->nid, GFP_KERNEL);
->> +    if (!domain->pgd) {
->> +        kfree(domain);
->> +        return ERR_PTR(-ENOMEM);
->> +    }
->> +    domain_flush_cache(domain, domain->pgd, PAGE_SIZE);
->> +
->> +    return domain;
->> +}
->> +
->>   static struct iommu_domain *intel_iommu_domain_alloc(unsigned type)
->>   {
->>       struct dmar_domain *dmar_domain;
->> @@ -3695,15 +3768,11 @@ intel_iommu_domain_alloc_user(struct device 
->> *dev, u32 flags,
->>       if (user_data || (dirty_tracking && !ssads_supported(iommu)))
->>           return ERR_PTR(-EOPNOTSUPP);
->> -    /*
->> -     * domain_alloc_user op needs to fully initialize a domain before
->> -     * return, so uses iommu_domain_alloc() here for simple.
->> -     */
->> -    domain = iommu_domain_alloc(dev->bus);
->> -    if (!domain)
->> -        return ERR_PTR(-ENOMEM);
->> -
->> -    dmar_domain = to_dmar_domain(domain);
->> +    /* Do not use first stage for user domain translation. */
->> +    dmar_domain = paging_domain_alloc(dev, false);
-> 
-> this is not an apple-to-apple replacement yet. You need to set the type,
-> owner and domain->ops as well.
+Align with Qcom SDX72, add ready timeout item for Foxconn SDX72.
+And also, add firehose support since SDX72.
 
-Yes. You are right. I will add below lines.
+Signed-off-by: Slark Xiao <slark_xiao@163.com>
+---
+v2: (1). Update the edl file path and name (2). Set SDX72 support
+trigger edl mode by default
+v3: Divide into 2 parts for Foxconn sdx72 platform
+---
+ drivers/bus/mhi/host/pci_generic.c | 43 ++++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index d51f840715e5..c5d9c2283977 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -3732,6 +3732,9 @@ intel_iommu_domain_alloc_user(struct device *dev, 
-u32 flags,
-         if (IS_ERR(dmar_domain))
-                 return ERR_CAST(dmar_domain);
-         domain = &dmar_domain->domain;
-+       domain->type = IOMMU_DOMAIN_UNMANAGED;
-+       domain->owner = &intel_iommu_ops;
-+       domain->ops = intel_iommu_ops.default_domain_ops;
+diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+index 35ae7cd0711f..1fb1c2f2fe12 100644
+--- a/drivers/bus/mhi/host/pci_generic.c
++++ b/drivers/bus/mhi/host/pci_generic.c
+@@ -399,6 +399,8 @@ static const struct mhi_channel_config mhi_foxconn_sdx55_channels[] = {
+ 	MHI_CHANNEL_CONFIG_DL(13, "MBIM", 32, 0),
+ 	MHI_CHANNEL_CONFIG_UL(32, "DUN", 32, 0),
+ 	MHI_CHANNEL_CONFIG_DL(33, "DUN", 32, 0),
++	MHI_CHANNEL_CONFIG_UL_FP(34, "FIREHOSE", 32, 0),
++	MHI_CHANNEL_CONFIG_DL_FP(35, "FIREHOSE", 32, 0),
+ 	MHI_CHANNEL_CONFIG_HW_UL(100, "IP_HW0_MBIM", 128, 2),
+ 	MHI_CHANNEL_CONFIG_HW_DL(101, "IP_HW0_MBIM", 128, 3),
+ };
+@@ -419,6 +421,16 @@ static const struct mhi_controller_config modem_foxconn_sdx55_config = {
+ 	.event_cfg = mhi_foxconn_sdx55_events,
+ };
+ 
++static const struct mhi_controller_config modem_foxconn_sdx72_config = {
++	.max_channels = 128,
++	.timeout_ms = 20000,
++	.ready_timeout_ms = 50000,
++	.num_channels = ARRAY_SIZE(mhi_foxconn_sdx55_channels),
++	.ch_cfg = mhi_foxconn_sdx55_channels,
++	.num_events = ARRAY_SIZE(mhi_foxconn_sdx55_events),
++	.event_cfg = mhi_foxconn_sdx55_events,
++};
++
+ static const struct mhi_pci_dev_info mhi_foxconn_sdx55_info = {
+ 	.name = "foxconn-sdx55",
+ 	.fw = "qcom/sdx55m/sbl1.mbn",
+@@ -488,6 +500,28 @@ static const struct mhi_pci_dev_info mhi_foxconn_dw5932e_info = {
+ 	.sideband_wake = false,
+ };
+ 
++static const struct mhi_pci_dev_info mhi_foxconn_t99w515_info = {
++	.name = "foxconn-t99w515",
++	.edl = "fox/sdx72m/edl.mbn",
++	.edl_trigger = true,
++	.config = &modem_foxconn_sdx72_config,
++	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
++	.dma_data_width = 32,
++	.mru_default = 32768,
++	.sideband_wake = false,
++};
++
++static const struct mhi_pci_dev_info mhi_foxconn_dw5934e_info = {
++	.name = "foxconn-dw5934e",
++	.edl = "fox/sdx72m/edl.mbn",
++	.edl_trigger = true,
++	.config = &modem_foxconn_sdx72_config,
++	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
++	.dma_data_width = 32,
++	.mru_default = 32768,
++	.sideband_wake = false,
++};
++
+ static const struct mhi_channel_config mhi_mv3x_channels[] = {
+ 	MHI_CHANNEL_CONFIG_UL(0, "LOOPBACK", 64, 0),
+ 	MHI_CHANNEL_CONFIG_DL(1, "LOOPBACK", 64, 0),
+@@ -720,6 +754,15 @@ static const struct pci_device_id mhi_pci_id_table[] = {
+ 	/* DW5932e (sdx62), Non-eSIM */
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe0f9),
+ 		.driver_data = (kernel_ulong_t) &mhi_foxconn_dw5932e_info },
++	/* T99W515 (sdx72) */
++	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe118),
++		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w515_info },
++	/* DW5934e(sdx72), With eSIM */
++	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe11d),
++		.driver_data = (kernel_ulong_t) &mhi_foxconn_dw5934e_info },
++	/* DW5934e(sdx72), Non-eSIM */
++	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe11e),
++		.driver_data = (kernel_ulong_t) &mhi_foxconn_dw5934e_info },
+ 	/* MV31-W (Cinterion) */
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_THALES, 0x00b3),
+ 		.driver_data = (kernel_ulong_t) &mhi_mv31_info },
+-- 
+2.25.1
 
-         if (nested_parent) {
-                 dmar_domain->nested_parent = true;
-
-Best regards,
-baolu
 
