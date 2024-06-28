@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-234358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-234359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55FE791C5A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:25:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52EE491C5A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 20:25:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A1BB286BBD
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:25:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8F971F23EA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 18:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 284B61CE088;
-	Fri, 28 Jun 2024 18:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30DE51CE09D;
+	Fri, 28 Jun 2024 18:25:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HMPke/Ii"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jMSbMrg9"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3BFC1CD5D2
-	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 18:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0AD11CE092
+	for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 18:25:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719599118; cv=none; b=Ll6GOQa/yIZTelu9f/7jrsNtQCFEbwggL19BOcru42Yigqa4prrbwEo8kL/lOmk6gA6qvEzXXqoKimxE337avGiLLCsQDDcASuT23n8WQ4eqN8TjXXqfJ/oUTebaKurRCVKKhsKhoOArEANisOs9B5El28VTlNaypuQI84E2cys=
+	t=1719599122; cv=none; b=kidF1LvCw+nus4zKKVzNTbHK/008wxWmZ7AtrK4u/0VTv4LzXeUhPPOnwMEUsU8DaDY1YiK5Bhx3TUTdzm8TcdzAPQJ6YAYJeSZR2gATyDx75sW1gdZW1lLELksnrP7XS/WQH3vbhljjuNdJW4feY+g6dHlUBoZe3snovS3BPsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719599118; c=relaxed/simple;
-	bh=9HzQRUxArmfCRKcKAxBIIo8OnEWX1WShUk7sdHwZEZA=;
+	s=arc-20240116; t=1719599122; c=relaxed/simple;
+	bh=vuQi+2JeDlGLQM0NgGprIEwEDkk9NbJ1EoRRt5hN9fw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=k4vaePwdJ7Ojk8QryBG4GI+dPAxXV8tuG6WQ8WbtuXLtfJjqNul5HS9zPhPkgRm8sLxqNzrPy/IJdf5yyfB6/IAXC9CyVU72tvCboaWplzoLDWTnt+lvPUnSfbxZAsKp2P+2CwlD+1qE2PtznoXyegowvjrUwYLnCeOtRi6w2VY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HMPke/Ii; arc=none smtp.client-ip=209.85.215.179
+	 MIME-Version; b=awuE256t53Yuw/7bWQ2Aac7t89KpFBzh7oIyxDh2iEKsuCGHyK5IUztHv9v0sFuyW0xUMNScFM4S7APttUzcUvplgy2LY47uoSactVQEGc53sh5GlC1F6V8JHnW/nhoHX6h5cilGmR/1v0cM9i5qgMIjORjnrmU9wMmDfJRCktw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jMSbMrg9; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-6e3741519d7so624024a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 11:25:16 -0700 (PDT)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1fa07e4f44eso5834215ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 28 Jun 2024 11:25:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719599116; x=1720203916; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1719599119; x=1720203919; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZY2P1E432InDtUHAxbRlDlnKMwO9s6Lbp9JbCU+YOkk=;
-        b=HMPke/IiSnBzugOsui1UZ2ED4NCOZHahdQmxBShU9+Ipzg14ndpcx/tjkduc/FpxY6
-         eqIfp0RfPL0zLl3fxAHX0Eub+wD8xnWsS6rx8wiVjsDCleUFlEvjrQD0CJ4M8vzoX7ED
-         2iu4OWL8+98e8aTKL09rhlKJUON4vadxBLwpCtw333PxwoAgEeNtZBifDbQpNxR9o2vR
-         0eGC/c+rCzDmFQN3Mk8jjjxlRpNTKv0v9i8dDWL+ZamvLlB52dHgmyoqMsJI2q+T1dBK
-         cvuJwvIrjA7imKIGjJQP4j1cLKu82Edt+IsVh1sKzGO/7l4MzTmnc7s1cMi0xbmu5HMD
-         605w==
+        bh=wfBm8V9NV7G6pqPtIBKn244UHr+yYxygJZ9Qu/8ilKA=;
+        b=jMSbMrg93vlrk0Vs8YKhiliG3XWD3ma+e+VXFwCkpztl+MkIkbXXfmMyFQDYOH8WLA
+         NJhrVRiqJcSKEVDzldPCFfz2wLrtNSe8f9WE4IGT01CyN35I0FvCWl7P804iA2M4BpT6
+         9gq9N1o1hPZmLZNXn50GdDjg+LuTapeS4MahEXPB9dIjq29Xpp1DvjpSA90IpcJmDxrT
+         TJ8ZD4/Jj7X2pNmrUP2k3i13/xUNeoIsHB58B9iTYZfN8rOt3GPd5hJkz2Nh0u9KU45r
+         7cfpCCZwMbBzc27b7OxQBpjWzj6srcw5aX2pUB2f7/ij4vyi5GTEVJxrWI6TQ/JNtMDb
+         FacQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719599116; x=1720203916;
+        d=1e100.net; s=20230601; t=1719599119; x=1720203919;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZY2P1E432InDtUHAxbRlDlnKMwO9s6Lbp9JbCU+YOkk=;
-        b=pcHVJxQ/kMVEZqm/3J3uPBRljANjVg6MQrsZE/+y5vIWljp+dV9rm8Y4N6tln4DwXu
-         qjZuPzsJyIG450dwU83Mx6Wc1Bxi1oKqZqt1C9UGF7gguXDUd3pIIBcEowuyl9iOjpKE
-         stXCLNFineXJqp+zz/VgLa3H6AwgRoyzkyozdSN4/pslyGY8aC2PF9bDuAJwBKDY6BOn
-         t7h/GnkKwrwj/WPXun9yCF8tMWUgXAAccb6ukUNKwtQMV5eCxSSK5VUdoe3DLT0KPwfN
-         zJutByCqgjXmUttEI9hs2kwK0YTRMpU4ACIBs+XohJmIqLVLWMqVkKsNbP+2ES72twyF
-         ymHw==
-X-Forwarded-Encrypted: i=1; AJvYcCX2TJyFx7ieBg64OpB5F6nt1qPt1D4RgD/QhSG/GI7eOp5ZPUlZ+ZzPD/YqbFxmFcpUrkQxSOx7l+nDrn2W8Fvqgs13GL/yo5ZFjQjb
-X-Gm-Message-State: AOJu0YwSmXpL0yGS90s8Sxt4AAyAsv7MxnrfU96Z1dXJHsB+7AlE78ui
-	45hUGT5HSHp02SYQCpCBLnbagyalTwr0I8nUnVEr7QALoKda9PNB
-X-Google-Smtp-Source: AGHT+IFd227CU4NsKhgIV1ptlu36fNPRaWha69js3+JNj18Wns8bvFJngeFgg2rvQ4Dg5Ge6fu0USQ==
-X-Received: by 2002:a05:6a21:99a8:b0:1be:c641:de2a with SMTP id adf61e73a8af0-1bec641df45mr9487173637.47.1719599115903;
-        Fri, 28 Jun 2024 11:25:15 -0700 (PDT)
+        bh=wfBm8V9NV7G6pqPtIBKn244UHr+yYxygJZ9Qu/8ilKA=;
+        b=VH9N93TQ6blD1F0hS4mJ9oqxojboPKtw67UNWROJxykEF4Qdh4EsymnT+4vYn+NLD2
+         hf9OMsF2xIz9uJUo85byVuB5M1TOYw0pmCngSFX8dBGrWmM5oZqT/tMn4U3dhvtUgwfM
+         Tpb0WjVEbLEK112dNlsFJOqIfjVVXauG/pdBFJcpLrRm/QHfUNjfHzfAQZni7EmDhl7k
+         v3HBk2JJYjwKtoucZ5XmuB7o0zjjBi3glHZ5t4PJbR+AM1RbfgmhonB9ciGsewKsIJNM
+         EWIunQmgUJQWP/nUEWJoRup3aV9vxfAgiCRgoTIc1Wx/hb/th+UQHs7JMMtygQPW/i6A
+         Wvrg==
+X-Forwarded-Encrypted: i=1; AJvYcCWGgxbVa1mNVnx2L3Emk5+7d+UhMByx7tJNBhzrGcE6VN4S/m0Xdctq7PItNJiqdjzJfz0Zr8DzeKuDRjaASNP6kG/hm8VVu3N5VvU8
+X-Gm-Message-State: AOJu0Yy2FZGTMCEWR7kFNjDtdtCrrccF77AcItw9fL2iwPHIWRHbgemf
+	fL7Xk3wVYSZdaSp+CrO9fpeIIP+clHTvm/CYcWNaLBKBdgAGQ4EE
+X-Google-Smtp-Source: AGHT+IF2h8mtrMLcscWEwhh6vN6i5Afk/cteeBt9wnk4CW19G9u0jb4V25LgKABMzllKERcphwATgw==
+X-Received: by 2002:a17:902:c401:b0:1f9:9a24:dc29 with SMTP id d9443c01a7336-1fa23be2439mr193767495ad.24.1719599119217;
+        Fri, 28 Jun 2024 11:25:19 -0700 (PDT)
 Received: from distilledx.localdomain ([122.172.84.231])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac10e21aesm18557465ad.64.2024.06.28.11.25.12
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fac10e21aesm18557465ad.64.2024.06.28.11.25.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 11:25:15 -0700 (PDT)
+        Fri, 28 Jun 2024 11:25:18 -0700 (PDT)
 From: Tejas Vipin <tejasvipin76@gmail.com>
 To: neil.armstrong@linaro.org,
 	quic_jesszhan@quicinc.com
@@ -78,9 +78,9 @@ Cc: dianders@chromium.org,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	Tejas Vipin <tejasvipin76@gmail.com>
-Subject: [PATCH 1/2] drm/mipi-dsi: add more multi functions for better error handling
-Date: Fri, 28 Jun 2024 23:54:27 +0530
-Message-ID: <20240628182428.171031-2-tejasvipin76@gmail.com>
+Subject: [PATCH 2/2] drm/panel: startek-kd070fhfid015: transition to mipi_dsi wrapped functions
+Date: Fri, 28 Jun 2024 23:54:28 +0530
+Message-ID: <20240628182428.171031-3-tejasvipin76@gmail.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240628182428.171031-1-tejasvipin76@gmail.com>
 References: <20240628182428.171031-1-tejasvipin76@gmail.com>
@@ -92,211 +92,190 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add more functions that can benefit from being multi style, which
-reduces code size in panels where they appear.
+Use multi style wrapped functions for mipi_dsi in the
+startek-kd070fhfid015 panel.
 
 Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
 ---
- drivers/gpu/drm/drm_mipi_dsi.c | 164 +++++++++++++++++++++++++++++++++
- include/drm/drm_mipi_dsi.h     |  10 ++
- 2 files changed, 174 insertions(+)
+ .../drm/panel/panel-startek-kd070fhfid015.c   | 107 ++++++------------
+ 1 file changed, 35 insertions(+), 72 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mipi_dsi.c
-index a471c46f5ca6..3f7fe734b684 100644
---- a/drivers/gpu/drm/drm_mipi_dsi.c
-+++ b/drivers/gpu/drm/drm_mipi_dsi.c
-@@ -1639,6 +1639,170 @@ void mipi_dsi_dcs_set_tear_on_multi(struct mipi_dsi_multi_context *ctx,
- }
- EXPORT_SYMBOL(mipi_dsi_dcs_set_tear_on_multi);
- 
-+/**
-+ * mipi_dsi_turn_on_peripheral_multi() - sends a Turn On Peripheral command
-+ * @ctx: Context for multiple DSI transactions
-+ *
-+ * Like mipi_dsi_turn_on_peripheral() but deals with errors in a way that
-+ * makes it convenient to make several calls in a row.
-+ */
-+void mipi_dsi_turn_on_peripheral_multi(struct mipi_dsi_multi_context *ctx)
-+{
-+	struct mipi_dsi_device *dsi = ctx->dsi;
-+	struct device *dev = &dsi->dev;
-+	ssize_t ret;
-+
-+	if (ctx->accum_err)
-+		return;
-+
-+	ret = mipi_dsi_turn_on_peripheral(dsi);
-+	if (ret < 0) {
-+		ctx->accum_err = ret;
-+		dev_err(dev, "Failed to turn on peripheral: %d\n",
-+			ctx->accum_err);
-+	}
-+}
-+EXPORT_SYMBOL(mipi_dsi_turn_on_peripheral_multi);
-+
-+/**
-+ * mipi_dsi_dcs_soft_reset_multi() - perform a software reset of the display module
-+ * @ctx: Context for multiple DSI transactions
-+ *
-+ * Like mipi_dsi_dcs_soft_reset() but deals with errors in a way that
-+ * makes it convenient to make several calls in a row.
-+ */
-+void mipi_dsi_dcs_soft_reset_multi(struct mipi_dsi_multi_context *ctx)
-+{
-+	struct mipi_dsi_device *dsi = ctx->dsi;
-+	struct device *dev = &dsi->dev;
-+	ssize_t ret;
-+
-+	if (ctx->accum_err)
-+		return;
-+
-+	ret = mipi_dsi_dcs_soft_reset(dsi);
-+	if (ret < 0) {
-+		ctx->accum_err = ret;
-+		dev_err(dev, "Failed to mipi_dsi_dcs_soft_reset: %d\n",
-+			ctx->accum_err);
-+	}
-+}
-+EXPORT_SYMBOL(mipi_dsi_dcs_soft_reset_multi);
-+
-+/**
-+ * mipi_dsi_dcs_set_display_brightness_multi() - sets the brightness value of
-+ *	the display
-+ * @ctx: Context for multiple DSI transactions
-+ * @brightness: brightness value
-+ *
-+ * Like mipi_dsi_dcs_set_display_brightness() but deals with errors in a way that
-+ * makes it convenient to make several calls in a row.
-+ */
-+void mipi_dsi_dcs_set_display_brightness_multi(struct mipi_dsi_multi_context *ctx,
-+					       u16 brightness)
-+{
-+	struct mipi_dsi_device *dsi = ctx->dsi;
-+	struct device *dev = &dsi->dev;
-+	ssize_t ret;
-+
-+	if (ctx->accum_err)
-+		return;
-+
-+	ret = mipi_dsi_dcs_set_display_brightness(dsi, brightness);
-+	if (ret < 0) {
-+		ctx->accum_err = ret;
-+		dev_err(dev, "Failed to write display brightness: %d\n",
-+			ctx->accum_err);
-+	}
-+}
-+EXPORT_SYMBOL(mipi_dsi_dcs_set_display_brightness_multi);
-+
-+/**
-+ * mipi_dsi_dcs_set_pixel_format_multi() - sets the pixel format for the RGB image
-+ *	data used by the interface
-+ * @ctx: Context for multiple DSI transactions
-+ * @format: pixel format
-+ *
-+ * Like mipi_dsi_dcs_set_pixel_format() but deals with errors in a way that
-+ * makes it convenient to make several calls in a row.
-+ */
-+void mipi_dsi_dcs_set_pixel_format_multi(struct mipi_dsi_multi_context *ctx,
-+					 u8 format)
-+{
-+	struct mipi_dsi_device *dsi = ctx->dsi;
-+	struct device *dev = &dsi->dev;
-+	ssize_t ret;
-+
-+	if (ctx->accum_err)
-+		return;
-+
-+	ret = mipi_dsi_dcs_set_pixel_format(dsi, format);
-+	if (ret < 0) {
-+		ctx->accum_err = ret;
-+		dev_err(dev, "Failed to set pixel format: %d\n",
-+			ctx->accum_err);
-+	}
-+}
-+EXPORT_SYMBOL(mipi_dsi_dcs_set_pixel_format_multi);
-+
-+/**
-+ * mipi_dsi_dcs_set_column_address_multi() - define the column extent of the
-+ *	frame memory accessed by the host processor
-+ * @ctx: Context for multiple DSI transactions
-+ * @start: first column of frame memory
-+ * @end: last column of frame memory
-+ *
-+ * Like mipi_dsi_dcs_set_column_address() but deals with errors in a way that
-+ * makes it convenient to make several calls in a row.
-+ */
-+void mipi_dsi_dcs_set_column_address_multi(struct mipi_dsi_multi_context *ctx,
-+					   u16 start, u16 end)
-+{
-+	struct mipi_dsi_device *dsi = ctx->dsi;
-+	struct device *dev = &dsi->dev;
-+	ssize_t ret;
-+
-+	if (ctx->accum_err)
-+		return;
-+
-+	ret = mipi_dsi_dcs_set_column_address(dsi, start, end);
-+	if (ret < 0) {
-+		ctx->accum_err = ret;
-+		dev_err(dev, "Failed to set column address: %d\n",
-+			ctx->accum_err);
-+	}
-+}
-+EXPORT_SYMBOL(mipi_dsi_dcs_set_column_address_multi);
-+
-+/**
-+ * mipi_dsi_dcs_set_page_address_multi() - define the column extent of the
-+ *	frame memory accessed by the host processor
-+ * @ctx: Context for multiple DSI transactions
-+ * @start: first column of frame memory
-+ * @end: last column of frame memory
-+ *
-+ * Like mipi_dsi_dcs_set_page_address() but deals with errors in a way that
-+ * makes it convenient to make several calls in a row.
-+ */
-+void mipi_dsi_dcs_set_page_address_multi(struct mipi_dsi_multi_context *ctx,
-+					   u16 start, u16 end)
-+{
-+	struct mipi_dsi_device *dsi = ctx->dsi;
-+	struct device *dev = &dsi->dev;
-+	ssize_t ret;
-+
-+	if (ctx->accum_err)
-+		return;
-+
-+	ret = mipi_dsi_dcs_set_page_address(dsi, start, end);
-+	if (ret < 0) {
-+		ctx->accum_err = ret;
-+		dev_err(dev, "Failed to set page address: %d\n",
-+			ctx->accum_err);
-+	}
-+}
-+EXPORT_SYMBOL(mipi_dsi_dcs_set_page_address_multi);
-+
- static int mipi_dsi_drv_probe(struct device *dev)
+diff --git a/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c b/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c
+index 0156689f41cd..d58c81c43724 100644
+--- a/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c
++++ b/drivers/gpu/drm/panel/panel-startek-kd070fhfid015.c
+@@ -52,92 +52,63 @@ static inline struct stk_panel *to_stk_panel(struct drm_panel *panel)
+ static int stk_panel_init(struct stk_panel *stk)
  {
- 	struct mipi_dsi_driver *drv = to_mipi_dsi_driver(dev->driver);
-diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
-index 71d121aeef24..203b5d53d58f 100644
---- a/include/drm/drm_mipi_dsi.h
-+++ b/include/drm/drm_mipi_dsi.h
-@@ -358,6 +358,16 @@ void mipi_dsi_dcs_set_display_off_multi(struct mipi_dsi_multi_context *ctx);
- void mipi_dsi_dcs_set_display_on_multi(struct mipi_dsi_multi_context *ctx);
- void mipi_dsi_dcs_set_tear_on_multi(struct mipi_dsi_multi_context *ctx,
- 				    enum mipi_dsi_dcs_tear_mode mode);
-+void mipi_dsi_turn_on_peripheral_multi(struct mipi_dsi_multi_context *ctx);
-+void mipi_dsi_dcs_soft_reset_multi(struct mipi_dsi_multi_context *ctx);
-+void mipi_dsi_dcs_set_display_brightness_multi(struct mipi_dsi_multi_context *ctx,
-+					       u16 brightness);
-+void mipi_dsi_dcs_set_pixel_format_multi(struct mipi_dsi_multi_context *ctx,
-+					 u8 format);
-+void mipi_dsi_dcs_set_column_address_multi(struct mipi_dsi_multi_context *ctx,
-+					   u16 start, u16 end);
-+void mipi_dsi_dcs_set_page_address_multi(struct mipi_dsi_multi_context *ctx,
-+					   u16 start, u16 end);
+ 	struct mipi_dsi_device *dsi = stk->dsi;
+-	struct device *dev = &stk->dsi->dev;
+-	int ret;
++	struct mipi_dsi_multi_context dsi_ctx = {.dsi = dsi};
  
- /**
-  * mipi_dsi_generic_write_seq - transmit data using a generic write packet
+-	ret = mipi_dsi_dcs_soft_reset(dsi);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to mipi_dsi_dcs_soft_reset: %d\n", ret);
+-		return ret;
+-	}
+-	mdelay(5);
++	mipi_dsi_dcs_soft_reset_multi(&dsi_ctx);
+ 
+-	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to set exit sleep mode: %d\n", ret);
+-		return ret;
+-	}
+-	msleep(120);
++	if (!dsi_ctx.accum_err)
++		mdelay(5);
++
++	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
+ 
+-	mipi_dsi_generic_write_seq(dsi, DSI_REG_MCAP, 0x04);
++	mipi_dsi_msleep(&dsi_ctx, 120);
++
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_MCAP, 0x04);
+ 
+ 	/* Interface setting, video mode */
+-	mipi_dsi_generic_write_seq(dsi, DSI_REG_IS, 0x14, 0x08, 0x00, 0x22, 0x00);
+-	mipi_dsi_generic_write_seq(dsi, DSI_REG_IIS, 0x0C, 0x00);
+-	mipi_dsi_generic_write_seq(dsi, DSI_REG_CTRL, 0x3A, 0xD3);
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_IS, 0x14, 0x08, 0x00, 0x22, 0x00);
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_IIS, 0x0C, 0x00);
++	mipi_dsi_generic_write_seq_multi(&dsi_ctx, DSI_REG_CTRL, 0x3A, 0xD3);
+ 
+-	ret = mipi_dsi_dcs_set_display_brightness(dsi, 0x77);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to write display brightness: %d\n", ret);
+-		return ret;
+-	}
++	mipi_dsi_dcs_set_display_brightness_multi(&dsi_ctx, 0x77);
+ 
+-	mipi_dsi_dcs_write_seq(dsi, MIPI_DCS_WRITE_CONTROL_DISPLAY,
+-			       MIPI_DCS_WRITE_MEMORY_START);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MIPI_DCS_WRITE_CONTROL_DISPLAY,
++				     MIPI_DCS_WRITE_MEMORY_START);
+ 
+-	ret = mipi_dsi_dcs_set_pixel_format(dsi, 0x77);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to set pixel format: %d\n", ret);
+-		return ret;
+-	}
++	mipi_dsi_dcs_set_pixel_format_multi(&dsi_ctx, 0x77);
+ 
+-	ret = mipi_dsi_dcs_set_column_address(dsi, 0, stk->mode->hdisplay - 1);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to set column address: %d\n", ret);
+-		return ret;
+-	}
++	mipi_dsi_dcs_set_column_address_multi(&dsi_ctx, 0, stk->mode->hdisplay - 1);
+ 
+-	ret = mipi_dsi_dcs_set_page_address(dsi, 0, stk->mode->vdisplay - 1);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to set page address: %d\n", ret);
+-		return ret;
+-	}
++	mipi_dsi_dcs_set_page_address_multi(&dsi_ctx, 0, stk->mode->vdisplay - 1);
+ 
+-	return 0;
++	return dsi_ctx.accum_err;
+ }
+ 
+ static int stk_panel_on(struct stk_panel *stk)
+ {
+ 	struct mipi_dsi_device *dsi = stk->dsi;
+-	struct device *dev = &stk->dsi->dev;
+-	int ret;
++	struct mipi_dsi_multi_context dsi_ctx = {.dsi = dsi};
+ 
+-	ret = mipi_dsi_dcs_set_display_on(dsi);
+-	if (ret < 0)
+-		dev_err(dev, "failed to set display on: %d\n", ret);
++	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
+ 
+-	mdelay(20);
++	if (!dsi_ctx.accum_err)
++		mdelay(20);
+ 
+-	return ret;
++	return dsi_ctx.accum_err;
+ }
+ 
+ static void stk_panel_off(struct stk_panel *stk)
+ {
+ 	struct mipi_dsi_device *dsi = stk->dsi;
+-	struct device *dev = &stk->dsi->dev;
+-	int ret;
++	struct mipi_dsi_multi_context dsi_ctx = {.dsi = dsi};
+ 
+ 	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
+ 
+-	ret = mipi_dsi_dcs_set_display_off(dsi);
+-	if (ret < 0)
+-		dev_err(dev, "failed to set display off: %d\n", ret);
++	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
+ 
+-	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
+-	if (ret < 0)
+-		dev_err(dev, "failed to enter sleep mode: %d\n", ret);
++	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
+ 
+-	msleep(100);
++	mipi_dsi_msleep(&dsi_ctx, 100);
+ }
+ 
+ static int stk_panel_unprepare(struct drm_panel *panel)
+@@ -155,7 +126,6 @@ static int stk_panel_unprepare(struct drm_panel *panel)
+ static int stk_panel_prepare(struct drm_panel *panel)
+ {
+ 	struct stk_panel *stk = to_stk_panel(panel);
+-	struct device *dev = &stk->dsi->dev;
+ 	int ret;
+ 
+ 	gpiod_set_value(stk->reset_gpio, 0);
+@@ -175,16 +145,12 @@ static int stk_panel_prepare(struct drm_panel *panel)
+ 	gpiod_set_value(stk->reset_gpio, 1);
+ 	mdelay(10);
+ 	ret = stk_panel_init(stk);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to init panel: %d\n", ret);
++	if (ret < 0)
+ 		goto poweroff;
+-	}
+ 
+ 	ret = stk_panel_on(stk);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to set panel on: %d\n", ret);
++	if (ret < 0)
+ 		goto poweroff;
+-	}
+ 
+ 	return 0;
+ 
+@@ -250,18 +216,15 @@ static int dsi_dcs_bl_get_brightness(struct backlight_device *bl)
+ static int dsi_dcs_bl_update_status(struct backlight_device *bl)
+ {
+ 	struct mipi_dsi_device *dsi = bl_get_data(bl);
+-	struct device *dev = &dsi->dev;
+-	int ret;
++	struct mipi_dsi_multi_context dsi_ctx = {.dsi = dsi};
+ 
+ 	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
+-	ret = mipi_dsi_dcs_set_display_brightness(dsi, bl->props.brightness);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to set DSI control: %d\n", ret);
+-		return ret;
+-	}
++	mipi_dsi_dcs_set_display_brightness_multi(&dsi_ctx, bl->props.brightness);
++	if (dsi_ctx.accum_err)
++		return dsi_ctx.accum_err;
+ 
+ 	dsi->mode_flags |= MIPI_DSI_MODE_LPM;
+-	return 0;
++	return dsi_ctx.accum_err;
+ }
+ 
+ static const struct backlight_ops dsi_bl_ops = {
 -- 
 2.45.2
 
