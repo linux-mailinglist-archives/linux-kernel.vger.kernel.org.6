@@ -1,122 +1,199 @@
-Return-Path: <linux-kernel+bounces-233341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-233342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6260691B5B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 06:30:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19E4D91B5BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 06:39:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A7FF1F226B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 04:30:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 440E5B21AC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 28 Jun 2024 04:39:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62A5B23775;
-	Fri, 28 Jun 2024 04:30:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA42E288DB;
+	Fri, 28 Jun 2024 04:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E/HsRWj7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SimwJTW5"
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971002139DB;
-	Fri, 28 Jun 2024 04:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF40E22619;
+	Fri, 28 Jun 2024 04:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719549037; cv=none; b=mkNG0oa2oi0grxYa+ov99FbS3jghtCbrDEu/NQV51ta2WFVA44u3yXzHEd8roYsFnaqPI1NNA8h1bSSZM4nGBvkNjIw2ageJCI0mTSMx4SzzZ4yHFo5UPSL5cpQG1pIk9997xWjPmQajIa8g20XrAnDruf4M41Q12Owj6hwzaqU=
+	t=1719549555; cv=none; b=qhEJnh6m2yHNw2jUg0oc0xJ+4xdDZxYjJzXa7v0mvhUywhSsSQOn4DQa+dYlchRNbrZKgEXWNWQFhllzsjLMv5vqaVbU1QZ6Ss049pRc5Hyy+s9hMSQLL4pkmpIJF5nDAKFoQbPldeNpp4prDFonj5tEJjeFaHwDPZeUTEooCis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719549037; c=relaxed/simple;
-	bh=vQckPhpKqiMAKzoCbF5rVgOEtJBMfOEiLX2FgCp4+Yo=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Vx/LJSUu2oMjgwI77MeTKJgJDM9vc3bQDnE3b+4Kjj2TVrttLEOAegFwpLAvNN0xHy+AtZtRtds56uK3Q7d7WkOj+j4sSRgQ2enU5XJnUxSBtVdnpfzpmX+kvlgdsTzdimjj9rDQhDiX/PTVTVMhYeABieTf+XunK8hkYmwCOYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E/HsRWj7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB4B1C116B1;
-	Fri, 28 Jun 2024 04:30:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719549037;
-	bh=vQckPhpKqiMAKzoCbF5rVgOEtJBMfOEiLX2FgCp4+Yo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=E/HsRWj7Q0RlDBrb3+r2vtZk5iO+q7ciURaFaXEhlnqKxqmitsgBmrfX7I4eVXNPv
-	 vPU5A9vn5Ds1FxKfbkZZm//yHG1BtwoWIQc8poqIUXaRD18Ks/BwmAdqfwVey1qR4K
-	 /G19cllxyneBX1OyBVwli+k5pMaGNA3kDb9AkUgS3h7CMiBoVhSdfK3bXjVpY5OJ1v
-	 WKLwVdFyS2KqVLHha93pXoiI1qsu/CLGRIMJJwRR9UK32RYne1K/t0uq4cz7UrUV4c
-	 KmMUZgu7n3bLBlRRY5J1rcYn/PLzs61Jki2FZoL0bBYbgAlt/qq7q1t6jxuBig0php
-	 jQopWswJrLQDA==
-Date: Fri, 28 Jun 2024 13:30:33 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Tiezhu Yang
- <yangtiezhu@loongson.cn>, Jiri Olsa <jolsa@kernel.org>, Steven Rostedt
- <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, Andrii
- Nakryiko <andrii@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- bpf@vger.kernel.org, Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui
- <kernel@xen0n.name>, loongarch@lists.linux.dev
-Subject: Re: [PATCH] LoongArch: uprobes: make
- UPROBE_SWBP_INSN/UPROBE_XOLBP_INSN constant
-Message-Id: <20240628133033.c9f1856455058f9bb97db6a7@kernel.org>
-In-Reply-To: <20240627173806.GC21813@redhat.com>
-References: <20240618194306.1577022-1-jolsa@kernel.org>
-	<20240627160255.GA25374@redhat.com>
-	<CAEf4BzZVmKjfQD1zKMDOD-Zc4pVp+EGgb8h2veg=bXe1Pjn_Uw@mail.gmail.com>
-	<20240627173806.GC21813@redhat.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719549555; c=relaxed/simple;
+	bh=co/vR/XWIMc1kuuqUdZlcYOIyhugYjuq1IRBG21/9V4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q/u/rznrHoHoyOJCpTnnho/M3TNa4N2d6wrTHgHfWj2PKGfmVR2nObBvfX0RXdIwpe16OPfs6DoKZXAOXrgaWGGFJ/PGESGZ+V5YoqG4RNIGMl5m6m1mno6L9tJseow/Ey4YvPX+rJnC6yJFLMvHeMeGBSosPlu3enS98bpWC5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SimwJTW5; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-6f8ffe1b65dso103061a34.0;
+        Thu, 27 Jun 2024 21:39:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719549553; x=1720154353; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4A1myKhDtKpBD1HgzlCC9/RwlNtnnSCgm8rGrnmPwkg=;
+        b=SimwJTW5oFTBAi3djUGa+EVGgqyhCTRHxiCEatGArWmTujtAmLIJf82mtW1+ij18+U
+         DNg7Sp9QIljs4a1iB6Nrq2jR3TIV6GV0PYgxOA8mlGqQP9FsBd/VL2fnpftZADrCQole
+         gtAEySrUCnBSEh8+acIyoImSYFcz8SzwC3qXI/lirk83/Ymcn+MEHNPxwMeHa/Kblm4l
+         L9Hn8hbUXEUsE7i+9/jkIGnxvv+mjoE/5ASavhPZXEUv8nnxo0thNEVdR4do0yDyBx9u
+         3aSby31X5bLuPL9QQ/05LbK3dgYG1rU3DjNbeNvCN4xQTG07s7obzpSKH+8XHxAzwbn7
+         h1cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719549553; x=1720154353;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4A1myKhDtKpBD1HgzlCC9/RwlNtnnSCgm8rGrnmPwkg=;
+        b=tYa5gYQQscTn8nOvYUaj24e7LipyQVr3RPsAUgYqpYFI2gK7i/r/E1ETsbe5S0ONtc
+         aoE4/qhph12lhaGUNhEm6IAFOxuphzO6kwUZGpSlZOyGyFChUMg+Vt+UhgOvXWO2LKJR
+         ZYdfo4ghZslrRSM2vsEmHOwgCrd2fg8itUh3WdzvfhMLAqjBrhFvHMOY3BDQCOZCWKwv
+         aDHOxSQHB5utRHaPST47TRL72ePp23LMdTOVCR3Qp36AWAmtwrMICWGB0rcmRz1Br27g
+         GssLVqcdmC8N1AAuNyvfVfm+Yx58V5vwhYXMzLtJ/9iBoX5AYXL/0eu+HDXDIrzzctb1
+         +dFg==
+X-Forwarded-Encrypted: i=1; AJvYcCX7uXaYwqC7saUzBAqxaVKIQJbRwiOafpMipMLHT5sNTLOLoAIsrJG0KnJ5D0nHvmpolRLoMiVggJKjQklu2gMDKOgW0axxkrXXMy9R3o9pBogteH5z0QGoKnmlkeVuUlFY4Fg7BA0q485ZLw4qvZuLGBDt4oRWuA6FeLsE5yenkux7CcsnkY4=
+X-Gm-Message-State: AOJu0Yxo+Z0dvoplZdmGn/Z8r1ADjpmvgq67/UeiyEE5yc7lhT8X3rom
+	pku791PgbXQ/TUzYU5OLvbIiaQCBWZONTOpXO0Ls1/08vvLkPTeYDPdgomcj
+X-Google-Smtp-Source: AGHT+IEFutYK8aZdJ//n/IRqE4LDzLKmmJScOAjOOPa5VPHcRKb2EwXZjmgF49v8sbNgmV/Jv+c0wA==
+X-Received: by 2002:a9d:68c6:0:b0:6f9:d203:8d13 with SMTP id 46e09a7af769-701fa7c1f42mr252753a34.0.1719549552620;
+        Thu, 27 Jun 2024 21:39:12 -0700 (PDT)
+Received: from [192.168.7.110] (c-98-57-15-22.hsd1.tx.comcast.net. [98.57.15.22])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5c4149c37c4sm153200eaf.42.2024.06.27.21.39.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Jun 2024 21:39:12 -0700 (PDT)
+Message-ID: <79e57338-1671-4574-b1e2-3b3aa9045ec9@gmail.com>
+Date: Thu, 27 Jun 2024 23:39:10 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 8/8] arm64: dts: qcom: ipq9574: add PCIe2 and PCIe3
+ nodes
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ quic_kathirav@quicinc.com, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240501040800.1542805-1-mr.nuke.me@gmail.com>
+ <20240501040800.1542805-9-mr.nuke.me@gmail.com>
+ <20240624041832.GD10250@thinkpad>
+Content-Language: en-US
+From: "Alex G." <mr.nuke.me@gmail.com>
+In-Reply-To: <20240624041832.GD10250@thinkpad>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Thu, 27 Jun 2024 19:38:06 +0200
-Oleg Nesterov <oleg@redhat.com> wrote:
-
-> On 06/27, Andrii Nakryiko wrote:
-> >
-> > Acked-by: Andrii Nakryiko <andrii@kernel.org>
-> 
-> Thanks!
-> 
-> > > --- a/arch/loongarch/kernel/uprobes.c
-> > > +++ b/arch/loongarch/kernel/uprobes.c
-> > > @@ -7,6 +7,14 @@
-> > >
-> > >  #define UPROBE_TRAP_NR UINT_MAX
-> > >
-> > > +static __init int check_emit_break(void)
-> > > +{
-> > > +       BUG_ON(UPROBE_SWBP_INSN  != larch_insn_gen_break(BRK_UPROBE_BP));
-> > > +       BUG_ON(UPROBE_XOLBP_INSN != larch_insn_gen_break(BRK_UPROBE_XOLBP));
-> > > +       return 0;
-> > > +}
-> > > +arch_initcall(check_emit_break);
-> > > +
-> >
-> > I wouldn't even bother with this, but whatever.
-> 
-> Agreed, this looks a bit ugly. I did this only because I can not test
-> this (hopefully trivial) patch and the maintainers didn't reply.
-> 
-> If LoongArch boots at least once with this change, this run-time check
-> can be removed.
-> 
-> And just in case... I didn't dare to make a more "generic" change, but
-> perhaps KPROBE_BP_INSN and KPROBE_SSTEPBP_INSN should be redefined the
-> same way for micro-optimization. In this case __emit_break() should be
-> probably moved into arch/loongarch/include/asm/inst.h.
-
-That idea sounds good to me too. If it is good to loongarch maintainers,
-(e.g. breakpoint instruction is stable), it is better to define in
-asm/insn.h.
-
-Thank you,
-
-> 
-> Oleg.
-> 
-> 
 
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On 6/23/24 23:18, Manivannan Sadhasivam wrote:
+> On Tue, Apr 30, 2024 at 11:07:50PM -0500, Alexandru Gagniuc wrote:
+>> On ipq9574, there are 4 PCIe controllers. Describe the pcie2 and pcie3
+>> nodes, and their PHYs in devicetree.
+>>
+>> The pcie0 and pcie1 controllers use a gen3x1 PHY, which is not
+>> currently supported. Hence, only pcie2 and pcie3 are described. Only
+>> pcie2 was tested because my devboard only has conenctions to pcie2.
+>>
+>> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/ipq9574.dtsi | 178 +++++++++++++++++++++++++-
+>>   1 file changed, 176 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+>> index 7f2e5cbf3bbb..c391886cf9ab 100644
+>> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+>> @@ -300,8 +300,8 @@ gcc: clock-controller@1800000 {
+>>   				 <0>,
+>>   				 <0>,
+>>   				 <0>,
+>> -				 <0>,
+>> -				 <0>,
+>> +				 <&pcie2_phy>,
+>> +				 <&pcie3_phy>,
+>>   				 <0>;
+>>   			#clock-cells = <1>;
+>>   			#reset-cells = <1>;
+>> @@ -745,6 +745,180 @@ frame@b128000 {
+>>   				status = "disabled";
+>>   			};
+>>   		};
+>> +
+>> +		pcie2_phy: phy@8c000 {
+>> +			compatible = "qcom,ipq9574-qmp-gen3x2-pcie-phy";
+>> +			reg = <0x0008c000 0x14f4>;
+>> +
+>> +			clocks = <&gcc GCC_PCIE2_AUX_CLK>,
+>> +				 <&gcc GCC_PCIE2_AHB_CLK>,
+>> +				 <&gcc GCC_PCIE2_PIPE_CLK>;
+>> +			clock-names = "aux",
+>> +				      "cfg_ahb",
+>> +				      "pipe";
+>> +
+>> +			clock-output-names = "pcie_phy2_pipe_clk";
+>> +			#clock-cells = <0>;
+>> +			#phy-cells = <0>;
+>> +
+>> +			resets = <&gcc GCC_PCIE2_PHY_BCR>,
+>> +				 <&gcc GCC_PCIE2PHY_PHY_BCR>;
+>> +			reset-names = "phy",
+>> +				      "common";
+>> +			status = "disabled";
+>> +		};
+>> +
+>> +		pcie3_phy: phy@f4000 {
+>> +			compatible = "qcom,ipq9574-qmp-gen3x2-pcie-phy";
+>> +			reg = <0x000f4000 0x14f4>;
+>> +
+>> +			clocks = <&gcc GCC_PCIE3_AUX_CLK>,
+>> +				 <&gcc GCC_PCIE3_AHB_CLK>,
+>> +				 <&gcc GCC_PCIE3_PIPE_CLK>;
+>> +			clock-names = "aux",
+>> +				      "cfg_ahb",
+>> +				      "pipe";
+>> +
+>> +			clock-output-names = "pcie_phy3_pipe_clk";
+>> +			#clock-cells = <0>;
+>> +			#phy-cells = <0>;
+>> +
+>> +			resets = <&gcc GCC_PCIE3_PHY_BCR>,
+>> +				 <&gcc GCC_PCIE3PHY_PHY_BCR>;
+>> +			reset-names = "phy",
+>> +				      "common";
+>> +			status = "disabled";
+>> +		};
+>> +
+>> +		/* TODO: Populate pcie0/pcie1 when gen3x1 phy support is added. */
+>> +
+>> +		pcie2: pcie@20000000 {
+>> +			compatible = "qcom,pcie-ipq9574";
+>> +			reg = <0x20000000 0xf1d>,
+>> +			      <0x20000f20 0xa8>,
+>> +			      <0x20001000 0x1000>,
+>> +			      <0x00088000 0x4000>,
+>> +			      <0x20100000 0x1000>;
+>> +			reg-names = "dbi", "elbi", "atu", "parf", "config";
+>> +
+>> +			ranges = <0x81000000 0x0 0x20200000 0x20200000 0x0 0x00100000>,
+>> +				 <0x82000000 0x0 0x20300000 0x20300000 0x0 0x07d00000>;
+> 
+> Please cross check 'ranges' property with other platforms.
+> 
+<snip>
+> 
+> Cross check 'interrupt-map' as well.
+
+I'm not seeing the smoking gun. What am I looking for?
+
+Alex
 
